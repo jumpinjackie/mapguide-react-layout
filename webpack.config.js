@@ -1,0 +1,98 @@
+'use strict';
+
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const proxy = require('./server/webpack-dev-proxy');
+const loaders = require('./webpack/loaders');
+
+const baseAppEntries = [
+  './src/entries/entry.tsx',
+];
+
+const devAppEntries = [
+  'webpack-hot-middleware/client?reload=true',
+];
+
+const appEntries = baseAppEntries.concat(process.env.NODE_ENV === 'development' ? devAppEntries : []);
+const vendorEntries = [
+  'react',
+  'react-dom'
+];
+
+const basePlugins = [
+  new webpack.DefinePlugin({
+    __DEV__: process.env.NODE_ENV !== 'production'
+  }),
+  new webpack.optimize.CommonsChunkPlugin('vendor', '[name].[hash].js') /*,
+  new HtmlWebpackPlugin({
+    template: './src/index.html',
+    inject: 'body'
+  })*/
+];
+
+const devPlugins = [
+  new webpack.NoErrorsPlugin(),
+];
+
+const prodPlugins = [
+  new webpack.optimize.UglifyJsPlugin({
+    compress: {
+      warnings: false
+    }
+  })
+];
+
+const plugins = basePlugins
+  .concat(process.env.NODE_ENV === 'production' ? prodPlugins : [])
+  .concat(process.env.NODE_ENV === 'development' ? devPlugins : []);
+
+module.exports = {
+
+  entry: {
+    app: appEntries,
+    vendor: vendorEntries
+  },
+
+  output: {
+    path: path.join(__dirname, 'dist'),
+    filename: '[name].[hash].js',
+    publicPath: '/',
+    sourceMapFilename: '[name].[hash].js.map',
+    chunkFilename: '[id].chunk.js'
+  },
+
+  devtool: 'source-map',
+
+  resolve: {
+    modulesDirectories: [
+      'node_modules'
+    ],
+    extensions: ['', '.webpack.js', '.web.js', '.tsx', '.ts', '.js']
+  },
+
+  plugins: plugins,
+
+  devServer: {
+    historyApiFallback: { index: '/' },
+    proxy: proxy(),
+  },
+
+  module: {
+    preLoaders: [
+      loaders.tslint,
+    ],
+    loaders: [
+      loaders.tsx,
+      loaders.html,
+      loaders.css,
+      loaders.less,
+      loaders.svg,
+      loaders.eot,
+      loaders.woff,
+      loaders.woff2,
+      loaders.ttf,
+      loaders.image
+    ]
+  },
+};

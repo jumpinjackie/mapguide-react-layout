@@ -7,7 +7,7 @@ const proxy = require('./server/webpack-dev-proxy');
 const loaders = require('./webpack/loaders');
 
 const baseAppEntries = [
-  './src/entries/entry.tsx',
+  './src/entries/library.tsx',
 ];
 
 const devAppEntries = [
@@ -17,14 +17,15 @@ const devAppEntries = [
 const appEntries = baseAppEntries.concat(process.env.NODE_ENV === 'development' ? devAppEntries : []);
 const vendorEntries = [
   'react',
-  'react-dom'
+  'react-dom',
+  'openlayers'
 ];
 
 const basePlugins = [
   new webpack.DefinePlugin({
     __DEV__: process.env.NODE_ENV !== 'production'
-  }),
-  new webpack.optimize.CommonsChunkPlugin('vendor', '[name].[hash].js') /*,
+  })/*,
+  new webpack.optimize.CommonsChunkPlugin('vendor', '[name].[hash].js'),
   new HtmlWebpackPlugin({
     template: './src/index.html',
     inject: 'body'
@@ -50,15 +51,20 @@ const plugins = basePlugins
 module.exports = {
 
   entry: {
-    app: appEntries,
-    vendor: vendorEntries
+    viewer: appEntries
+    //app: appEntries,
+    //vendor: vendorEntries
   },
 
   output: {
+    libraryTarget: "var",
+    library: "MapGuide",
     path: path.join(__dirname, 'dist'),
-    filename: '[name].[hash].js',
+    //filename: '[name].[hash].js',
+    filename: '[name].js',
     publicPath: '/',
-    sourceMapFilename: '[name].[hash].js.map',
+    //sourceMapFilename: '[name].[hash].js.map',
+    sourceMapFilename: '[name].js.map',
     chunkFilename: '[id].chunk.js'
   },
 

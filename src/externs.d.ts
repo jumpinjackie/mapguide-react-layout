@@ -7,3 +7,6 @@
  *  b. The typings are for a version of a library that is out of date
  *  c. The typings are poor quality or unusable
  */
+
+// Stamped by webpack
+declare const __DEV__: boolean;

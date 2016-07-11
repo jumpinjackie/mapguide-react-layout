@@ -1,4 +1,6 @@
 import * as React from "react";
+import * as ReactDOM from "react-dom";
+import { MapViewer } from "./map-viewer";
 
 export interface IAppLayoutProps {
 
@@ -9,6 +11,18 @@ export class AppLayout extends React.Component<IAppLayoutProps, any> {
         super(props);
     }
     render(): JSX.Element {
-        return <div>Hello World</div>;
+        return <MapViewer />;
+    }
+}
+
+/**
+ * This is the entry point to the AppLayout component
+ */
+export class AppLayoutViewModel {
+    constructor() {
+
+    }
+    public mount(node: Element, props: IAppLayoutProps) {
+        ReactDOM.render(<AppLayout {...props}/>, node);
     }
 }

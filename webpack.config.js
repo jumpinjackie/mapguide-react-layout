@@ -84,10 +84,10 @@ module.exports = {
     proxy: proxy(),
   },
 
-  module: {
+  module: {/*
     preLoaders: [
       loaders.tslint,
-    ],
+    ],*/
     loaders: [
       loaders.tsx,
       loaders.html,

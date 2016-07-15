@@ -10,3 +10,14 @@
 
 // Stamped by webpack
 declare const __DEV__: boolean;
+
+declare module "object-assign" {
+    function assign(target: any, ...objectsToMerge: any[]);
+    export = assign;
+}
+
+declare module "react-dimensions" {
+    import * as React from "react";
+    function Dimensions<TProps>(options?: any): (componentClass: React.ComponentClass<TProps>) => React.ComponentClass<TProps>;
+    export = Dimensions;
+}

@@ -94,6 +94,12 @@ export enum GroupType {
 
 export interface MapLayer extends MapElement {
     Type: LayerType;
+    /**
+     * Gets whether this layer is selectable 
+     * 
+     * @type {boolean}
+     */
+    Selectable: boolean;
     LayerDefinition: Common.ResourceIdentifier;
     FeatureSource?: FeatureSourceInfo;
     ScaleRange?: ScaleRangeInfo[];

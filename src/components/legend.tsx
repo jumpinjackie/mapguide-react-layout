@@ -2,10 +2,14 @@ import * as React from "react";
 import { RuntimeMap, MapElement, MapLayer, MapGroup } from "../api/contracts/runtime-map";
 
 export const LEGEND_CONTEXT_VALIDATION_MAP: React.ValidationMap<any> = {
+    getStdIcon: React.PropTypes.func.isRequired,
+    getIconMimeType: React.PropTypes.func.isRequired,
     getChildren: React.PropTypes.func.isRequired
 };
 
 export interface ILegendContext {
+    getStdIcon(iconRelPath: string): string;
+    getIconMimeType(): string;
     getChildren(objectId: string): (MapLayer | MapGroup)[];
 }
 
@@ -13,20 +17,85 @@ export interface ILegendProps {
     map: RuntimeMap;
 }
 
+function getIconUri(iconMimeType: string, iconBase64: string): string {
+    return `data:${iconMimeType};base64,${iconBase64}`;
+}
+
 function isLayer(layer: any): layer is MapLayer {
     return layer.LayerDefinition !== undefined;
 }
+
+const RuleNode = (props) => {
+    const icon = getIconUri(props.iconMimeType, props.rule.Icon);
+    const label = (props.rule.LegendLabel ? props.rule.LegendLabel : "");
+    return <li>
+        <img src={icon} /> {label}
+    </li>;
+};
 
 interface ILayerNodeProps {
     layer: MapLayer;
 }
 
 class LayerNode extends React.Component<ILayerNodeProps, any> {
+    static contextTypes = LEGEND_CONTEXT_VALIDATION_MAP;
+    context: ILegendContext;
     constructor(props) {
         super(props);
     }
     render(): JSX.Element {
-        return <li>LAYER: {this.props.layer.LegendLabel}</li>;
+        const { layer } = this.props;
+        const label = layer.LegendLabel ? layer.LegendLabel : "";
+        const iconMimeType = this.context.getIconMimeType();
+        let text = label;
+        let icon = "legend-layer.png";
+        if (layer.ScaleRange) {
+            for (const scaleRange of layer.ScaleRange) {
+                if (scaleRange.FeatureStyle) {
+                    //if (this.debug)
+                    //    text = label + " (" + scaleRange.MinScale + " - " + scaleRange.MaxScale + ")";
+                    const fts = scaleRange.FeatureStyle[0];
+                    const ruleCount = fts.Rule.length;
+                    let body = null;
+                    if (ruleCount > 1) {
+                        icon = this.context.getStdIcon("lc_theme.gif");
+                        body = <ul>
+                        {(() => {
+                            const items = [];
+                            //Test compression
+                            var bCompressed = false;
+                            if (ruleCount > 3) {
+                                bCompressed = !(fts.Rule[1].Icon);
+                            }
+                            if (bCompressed) {
+                                items.push(<RuleNode key={`layer-${layer.ObjectId}-rule-first`} iconMimeType={iconMimeType} rule={fts.Rule[0]} />);
+                                items.push(<li key={`layer-${layer.ObjectId}-rule-compressed`}>... ({ruleCount - 2} other theme rules)</li>);
+                                items.push(<RuleNode key={`layer-${layer.ObjectId}-rule-last`} iconMimeType={iconMimeType} rule={fts.Rule[ruleCount-1]} />);
+                            } else {
+                                for (var i = 0; i < ruleCount; i++) {
+                                    const rule = fts.Rule[i];
+                                    items.push(<RuleNode key={`layer-${layer.ObjectId}-rule-${i}`} iconMimeType={iconMimeType} rule={rule} />);
+                                }
+                            }
+                            return items;
+                        })()}
+                        </ul>;
+                    } else {
+                        icon = getIconUri(iconMimeType, fts.Rule[0].Icon);
+                    }
+                    let chkbox = null;
+                    if (layer.Type == 1) //Dynamic
+                        chkbox = <input type='checkbox' class='layer-checkbox' value={layer.ObjectId} checked={(layer.Visible == true)} />;
+                    return <li class='layer-node' 
+                        data-layer-name={layer.Name}
+                        data-layer-selectable={layer.Selectable}
+                        data-layer-min-scale={scaleRange.MinScale}
+                        data-layer-max-scale={scaleRange.MaxScale}>{chkbox}<img src={icon} /> {text} {body}</li>;
+                }
+            }
+        } else {
+            return <li>LAYER: {label}</li>;
+        }
     }
 }
 
@@ -68,8 +137,16 @@ export class Legend extends React.Component<ILegendProps, any> {
     }
     getChildContext(): ILegendContext {
         return {
+            getStdIcon: this.getStdIcon.bind(this),
+            getIconMimeType: this.getIconMimeType.bind(this),
             getChildren: this.getChildren.bind(this)
         };
+    }
+    private getStdIcon(relPath: string): string {
+        return relPath;
+    }
+    private getIconMimeType(): string {
+        return this.props.map.IconMimeType;
     }
     private getChildren(objectId: string): (MapLayer | MapGroup)[] {
         return this.state.tree.groupChildren[objectId] || [];

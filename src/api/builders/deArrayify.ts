@@ -76,6 +76,7 @@ function deArrayifyLayers(layers: any[]): Contracts.RtMap.MapLayer[] {
     return layers.map(lyr => {
         const layer: Contracts.RtMap.MapLayer = {
             Type: tryGetAsProperty(lyr, "Type", "int"),
+            Selectable: tryGetAsProperty(lyr, "Selectable", "boolean"),
             LayerDefinition: tryGetAsProperty(lyr, "LayerDefinition"),
             Name: tryGetAsProperty(lyr, "Name"),
             LegendLabel: tryGetAsProperty(lyr, "LegendLabel"),

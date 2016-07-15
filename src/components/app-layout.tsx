@@ -2,7 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { CreateRuntimeMapFeatureFlags } from "../api/request-builder";
 import { MapViewer } from "./map-viewer";
-
+import { Legend } from "./legend";
 import { ClientContext, ClientKind } from '../api/client';
 
 export interface IApplicationProps {
@@ -52,7 +52,18 @@ export class Application extends React.Component<IApplicationProps, any> {
     }
     render(): JSX.Element {
         if (this.state.runtimeMap) {
-            return <MapViewer map={this.state.runtimeMap} agentUri={this.props.agent.uri} imageFormat="PNG" />;
+            return <table style={{ width: "100%", height: "100%", border: "none" }}>
+                <colgroup>
+                    <col width={250} />
+                    <col width="*" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <td><Legend map={this.state.runtimeMap} /></td>
+                        <td><MapViewer map={this.state.runtimeMap} agentUri={this.props.agent.uri} imageFormat="PNG" /></td>
+                    </tr>
+                </tbody>
+            </table>
         } else {
             return <div>Loading Map ...</div>;
         }

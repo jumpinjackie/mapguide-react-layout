@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { CreateRuntimeMapFeatureFlags, IMapGuideClient } from "../api/request-builder";
+import { TaskPane } from "./task-pane";
 import { MapViewer, IMapViewer } from "./map-viewer";
 import { Legend, MapElementChangeFunc } from "./legend";
 import { ClientContext, ClientKind } from "../api/client";
@@ -81,12 +82,15 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                                     onGroupVisibilityChanged={this.fnGroupVisibilityChanged}
                                     onLayerVisibilityChanged={this.fnLayerVisibilityChanged} />
                 </div>
-                <div style={{ position: "absolute", left: SIDEBAR_WIDTH, top: 0, bottom: 0, right: 0 }}>
+                <div style={{ position: "absolute", left: SIDEBAR_WIDTH, top: 0, bottom: 0, right: SIDEBAR_WIDTH }}>
                     <MapViewer ref={this.fnMapViewerMounted}
                                        map={this.state.runtimeMap} 
                                        agentUri={this.props.agent.uri}
                                        onViewChanged={this.fnViewChanged}
                                        imageFormat="PNG" />
+                </div>
+                <div style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: SIDEBAR_WIDTH }}>
+                    <TaskPane initialUrl="/mapguide/localized/help/en/mapguide_viewer_command_list.htm" />
                 </div>
             </div>;
         } else {

@@ -21,3 +21,15 @@ declare module "react-dimensions" {
     function Dimensions<TProps>(options?: any): (componentClass: React.ComponentClass<TProps>) => React.ComponentClass<TProps>;
     export = Dimensions;
 }
+
+// lodash is the kitchen sink, lodash.debounce only exports _.debounce
+declare module "lodash.debounce" {
+    import * as _ from "lodash";
+    export = _.debounce;
+}
+
+// lodash is the kitchen sink, lodash.uniq only exports _.uniq
+declare module "lodash.uniq" {
+    import * as _ from "lodash";
+    export = _.uniq;
+}

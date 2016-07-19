@@ -80,6 +80,18 @@ export interface IMapGuideClient {
      * @returns {PromiseLike<RtMap.RuntimeMap>}
      */
     describeRuntimeMap(options: IDescribeRuntimeMapOptions): PromiseLike<Contracts.RtMap.RuntimeMap>;
+
+    /**
+     * Gets the tile template URL used by the viewer to send tile requests
+     * 
+     * @param {string} resourceId
+     * @param {string} groupName
+     * @param {string} xPlaceholder
+     * @param {string} yPlaceholder
+     * @param {string} zPlaceholder
+     * @returns {string}
+     */
+    getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string): string;
 }
 
 export abstract class RequestBuilder implements IMapGuideClient {
@@ -95,4 +107,6 @@ export abstract class RequestBuilder implements IMapGuideClient {
     public abstract queryMapFeatures(options: IQueryMapFeaturesOptions): PromiseLike<Contracts.Query.QueryMapFeaturesResponse>;
 
     public abstract describeRuntimeMap(options: IDescribeRuntimeMapOptions): PromiseLike<Contracts.RtMap.RuntimeMap>;
+
+    public abstract getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string): string;
 }

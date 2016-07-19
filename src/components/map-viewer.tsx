@@ -1,21 +1,115 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import * as ol from "openlayers";
+import { 
+    IApplicationContext,
+    IMapViewerContext,
+    IMapView,
+    APPLICATION_CONTEXT_VALIDATION_MAP,
+    MAP_VIEWER_CONTEXT_VALIDATION_MAP
+} from "./context";
 import * as Contracts from '../api/contracts';
 import Dimensions = require("react-dimensions");
+import debounce = require("lodash.debounce");
+import { areNumbersEqual } from '../utils/number';
+import * as logger from '../utils/logger';
 
 export interface IMapViewerProps {
     map: Contracts.RtMap.RuntimeMap;
     agentUri: string;
     imageFormat: "PNG" | "PNG8" | "JPG" | "GIF";
+    stateChangeDebounceTimeout?: number;
+    onViewChanged?: (view: IMapView) => void;
 }
 
-class MapViewerBase extends React.Component<IMapViewerProps, any> {
+export interface IMapViewer extends IMapViewerContext {
+
+}
+
+class MapViewerBase extends React.Component<IMapViewerProps, any> 
+                    implements IMapViewerContext, IMapViewer {
+    /**
+     * The internal OpenLayers map instance
+     * 
+     * @private
+     * @type {ol.Map}
+     */
     private _map: ol.Map;
-    constructor(props) {
+    /**
+     * The MapGuide overlay image layer
+     * 
+     * @private
+     * @type {ol.layer.Image}
+     */
+    private _overlay: ol.layer.Image;
+    /**
+     * The initial map view
+     * 
+     * @private
+     * @type {IMapView}
+     */
+    private _initialView: IMapView;
+    context: IApplicationContext;
+    /**
+     * This is a throttled version of _refreshOnStateChange(). Call this on any 
+     * modifications to pendingStateChanges 
+     * 
+     * @private
+     */
+    private refreshOnStateChange: () => void;
+    constructor(props: IMapViewerProps) {
         super(props);
         this._map = null;
+        this.state = this.buildInitialState(props);
+        this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), props.stateChangeDebounceTimeout || 500);
     }
+    buildInitialState(props: IMapViewerProps) {
+        const layerMap: any = {};
+        const groupMap: any = {};
+        for (const layer of props.map.Layer) {
+            layerMap[layer.ObjectId] = layer;
+        }
+        for (const group of props.map.Group) {
+            groupMap[group.ObjectId] = group;
+        }
+        return {
+            map: props.map,
+            navigationStack: [],
+            pendingStateChanges: {
+                showLayers: [],
+                showGroups: [],
+                hideLayers: [],
+                hideGroups: []
+            },
+            layerMap: layerMap,
+            groupMap: groupMap
+        };
+    }
+    /**
+     * DO NOT CALL DIRECTLY, call this.refreshOnStateChange() instead, which is a throttled version
+     * of this method
+     * @private
+     */
+    private _refreshOnStateChange() {
+        const changes = this.state.pendingStateChanges;
+        //Send the request
+        const imgSource = this._overlay.getSource() as ol.source.ImageMapGuide;
+        imgSource.updateParams({
+            showlayers: changes.showLayers || [],
+            showgroups: changes.showGroups || [],
+            hidelayers: changes.hideLayers || [],
+            hidegroups: changes.hideGroups || []
+        });
+        //Reset the pending state changes
+        //FIXME: Should only do this on successful refresh. Can we hook in somewhere?
+        changes.showLayers = [];
+        changes.showGroups = [];
+        changes.hideLayers = [];
+        changes.hideGroups = [];
+        this.setState({ pendingStateChanges: changes });
+    }
+    static childContextTypes = MAP_VIEWER_CONTEXT_VALIDATION_MAP;
+    static contextTypes = APPLICATION_CONTEXT_VALIDATION_MAP;
     componentWillReceiveProps(nextProps) {
         /**
          * React (no pun intended) to the following prop changes:
@@ -27,6 +121,12 @@ class MapViewerBase extends React.Component<IMapViewerProps, any> {
             nextProps.containerHeight != props.containerHeight) &&
             this._map != null) {
             setTimeout(() => this._map.updateSize(), 300);
+        }
+        if (nextProps.imageFormat != props.imageFormat) {
+            console.warn(`Unsupported change of props: imageFormat`);
+        }
+        if (nextProps.agentUri != props.agentUri) {
+            console.warn(`Unsupported change of props: agentUri`);
         }
     }
     componentDidMount() {
@@ -63,7 +163,7 @@ class MapViewerBase extends React.Component<IMapViewerProps, any> {
         }
         
         if (map.CoordinateSystem.EpsgCode.length > 0) {
-            projection = "EPSG:" + map.CoordinateSystem.EpsgCode;
+            projection = `EPSG:${map.CoordinateSystem.EpsgCode}`;
         }
         
         const tileGrid = new ol.tilegrid.TileGrid({
@@ -110,7 +210,7 @@ class MapViewerBase extends React.Component<IMapViewerProps, any> {
         }
         */
         
-        const overlay = new ol.layer.Image({
+        this._overlay = new ol.layer.Image({
             //name: "MapGuide Dynamic Overlay",
             extent: extent,
             source: new ol.source.ImageMapGuide({
@@ -131,14 +231,14 @@ class MapViewerBase extends React.Component<IMapViewerProps, any> {
         for (var i = groupLayers.length - 1; i >= 0; i--) {
             layers.push(groupLayers[i]);
         }
-        layers.push(overlay);
+        layers.push(this._overlay);
         /*
         console.log("Draw Order:");
         for (var i = 0; i < layers.length; i++) {
             console.log(" " + layers[i].get("name"));
         }
         */
-        var view = null;
+        let view: ol.View = null;
         if (resolutions.length == 0) {
             view = new ol.View({
                 projection: projection
@@ -155,19 +255,41 @@ class MapViewerBase extends React.Component<IMapViewerProps, any> {
             view: view
         });
         view.fit(extent, this._map.getSize());
-        view.on("change:resolution", (e) => {
-            this.updateScale(view.getResolution() * dpi * inPerUnit);
+        //Set initial view
+        const center = view.getCenter();
+        this._initialView = { x: center[0], y: center[1], scale: view.getResolution() * dpi * inPerUnit };
+        this.setState({ navigationStack: [ this._initialView ] });
+        if (this.props.onViewChanged != null) {
+            this.props.onViewChanged(this._initialView);
+        }
+        //Listen for scale changes
+
+        this._overlay.getSource().on("imageloadend", (e) => {
+            const newScale = view.getResolution() * dpi * inPerUnit;
+            const newCenter = view.getCenter();
+            this.pushView({ x: newCenter[0], y: newCenter[1], scale: newScale });
         });
-        this.updateScale(view.getResolution() * dpi * inPerUnit);
+        /*
+        view.on("change:resolution", (e) => {
+            const newScale = view.getResolution() * dpi * inPerUnit;
+            this.updateScale(newScale);
+        });
+        view.on("change:center", (e) => {
+            const newScale = view.getResolution() * dpi * inPerUnit;
+            const newCenter = view.getCenter();
+            this.pushView({ x: newCenter[0], y: newCenter[1], scale: newScale });
+        });
+        */
     }
     updateScale(scale) {
-        console.log(`Scale: ${scale}`);
+        const view = this.getView();
+        this.pushView({ x: view.x, y: view.y, scale: scale });
     }
     componentWillUnmount() {
         
     }
     private getTileUrlFunctionForGroup(resourceId, groupName, zOrigin) {
-        const urlTemplate = `${this.props.agentUri}?OPERATION=GETTILEIMAGE&VERSION=1.2.0&USERNAME=Anonymous&MAPDEFINITION=${resourceId}&BASEMAPLAYERGROUPNAME=${groupName}&TILECOL={x}&TILEROW={y}&SCALEINDEX={z}`;
+        const urlTemplate = this.context.getClient().getTileTemplateUrl(resourceId, groupName, '{x}', '{y}', '{z}');
         return function(tileCoord) {
             return urlTemplate
                 .replace('{z}', (zOrigin - tileCoord[0]).toString())
@@ -180,6 +302,67 @@ class MapViewerBase extends React.Component<IMapViewerProps, any> {
 
         return <div style={{ width: props.containerWidth, height: props.containerHeight }} />;
     }
+    //-------- IMapViewerContext ---------//
+    getView(): IMapView {
+        const stack = this.state.navigationStack;
+        if (stack && stack.length > 0) {
+            return stack[stack.length - 1];
+        } else {
+            return null;
+        }
+    }
+    pushView(view: IMapView): void {
+        const currentView = this.getView();
+        //Short-circuit: Don't bother recording identical or insignificantly different views
+        if (currentView != null &&
+            areNumbersEqual(view.x, currentView.x) &&
+            areNumbersEqual(view.y, currentView.y) &&
+            areNumbersEqual(view.scale, currentView.scale)) {
+            logger.debug(`New view (${view.x}, ${view.y}, ${view.scale}) is same or near-identical to previous view (${currentView.x}, ${currentView.y}, ${currentView.scale}). Not pushing to nav stack`);
+            return;
+        }
+        const state = this.state;
+        state.navigationStack.push(view);
+        this.setState(state);
+        if (this.props.onViewChanged != null) {
+            this.props.onViewChanged(view);
+        }
+    }
+    popView(): IMapView {
+        const state = this.state;
+        const view = state.navigationStack.pop();
+        this.setState(state);
+        return view;
+    }
+    public setLayerVisibility(layerId: string, visible: boolean): void {
+        const changes = this.state.pendingStateChanges;
+        if (visible) {
+            //Remove from hidelayers if previously set
+            changes.hideLayers = changes.hideLayers.filter(id => id != layerId);
+            changes.showLayers.push(layerId);
+        } else {
+            //Remove from showlayers if previously set
+            changes.showLayers = changes.showLayers.filter(id => id != layerId);
+            changes.hideLayers.push(layerId);
+        }
+        this.setState({ pendingStateChanges: changes });
+        this.refreshOnStateChange();
+    }
+    public setGroupVisibility(groupId: string, visible: boolean): void {
+        const changes = this.state.pendingStateChanges;
+        if (visible) {
+            //Remove from hideGroups if previously set
+            changes.hideGroups = changes.hideGroups.filter(id => id != groupId);
+            changes.showGroups.push(groupId);
+        } else {
+            //Remove from showGroups if previously set
+            changes.showGroups = changes.showGroups.filter(id => id != groupId);
+            changes.hideGroups.push(groupId);
+        }
+        this.setState({ pendingStateChanges: changes });
+        this.refreshOnStateChange();
+    }
+    //------------------------------------//
 }
 
 export const MapViewer = Dimensions<IMapViewerProps>({elementResize: true, className: 'react-dimensions-wrapper'})(MapViewerBase);

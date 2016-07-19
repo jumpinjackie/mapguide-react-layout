@@ -49,4 +49,8 @@ class Client implements Request.IMapGuideClient {
     public queryMapFeatures(options: Request.IQueryMapFeaturesOptions): PromiseLike<Contracts.Query.QueryMapFeaturesResponse> {
         return this.builder.queryMapFeatures(options);
     }
+
+    public getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string): string {
+        return this.builder.getTileTemplateUrl(resourceId, groupName, xPlaceholder, yPlaceholder, zPlaceholder);
+    }
 }

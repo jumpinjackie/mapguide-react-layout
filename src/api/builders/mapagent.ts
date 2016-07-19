@@ -103,4 +103,9 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         const url = this.stringifyGetUrl(assign(options, { operation: "DESCRIBERUNTIMEMAP", version: "3.0.0" }));
         return this.get<Contracts.RtMap.RuntimeMap>(url);
     }
+
+    public getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string): string {
+        const urlTemplate = `${this.agentUri}?OPERATION=GETTILEIMAGE&VERSION=1.2.0&USERNAME=Anonymous&MAPDEFINITION=${resourceId}&BASEMAPLAYERGROUPNAME=${groupName}&TILECOL=${xPlaceholder}&TILEROW=${yPlaceholder}&SCALEINDEX=${zPlaceholder}`;
+        return urlTemplate;
+    }
 }

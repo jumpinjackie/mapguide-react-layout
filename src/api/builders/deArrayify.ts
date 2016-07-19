@@ -1,7 +1,16 @@
 /**
  * deArrayify.ts
  * 
- * This module provides 
+ * This module provides JSON sanitization of JSON responses from the mapagent
+ * 
+ * Being a transformation of the XML form, and taking a lowest-common-denominator
+ * approach to JSON conversion, the JSON responses from MapGuide are un-wieldy to 
+ * use from the client-side due to:
+ * 
+ *  a) All properties being arrays
+ *  b) All property values being strings
+ * 
+ * These functions help "clean" those responses to be of the form we expect (and prefer)
  */
 import * as Contracts from "../contracts";
 import { MgError } from "../error";

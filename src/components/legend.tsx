@@ -40,8 +40,16 @@ interface ILayerNodeProps {
 class LayerNode extends React.Component<ILayerNodeProps, any> {
     static contextTypes = LEGEND_CONTEXT_VALIDATION_MAP;
     context: ILegendContext;
+    fnVisibilityChanged: (e) => void;
     constructor(props) {
         super(props);
+        this.fnVisibilityChanged = this.onVisibilityChanged.bind(this);
+        this.state = {
+            layerVisible: props.layer.Visible
+        };
+    }
+    onVisibilityChanged(e) {
+        this.setState({ layerVisible: e.target.checked });
     }
     render(): JSX.Element {
         const { layer } = this.props;
@@ -49,6 +57,11 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
         const iconMimeType = this.context.getIconMimeType();
         let text = label;
         let icon = "legend-layer.png";
+
+        let chkbox = null;
+        if (layer.Type == 1) //Dynamic
+            chkbox = <input type='checkbox' className='layer-checkbox' value={layer.ObjectId} onChange={this.fnVisibilityChanged} checked={(this.state.layerVisible)} />;
+
         if (layer.ScaleRange) {
             for (const scaleRange of layer.ScaleRange) {
                 if (scaleRange.FeatureStyle) {
@@ -82,19 +95,12 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
                         </ul>;
                     } else {
                         icon = getIconUri(iconMimeType, fts.Rule[0].Icon);
-                    }
-                    let chkbox = null;
-                    if (layer.Type == 1) //Dynamic
-                        chkbox = <input type='checkbox' class='layer-checkbox' value={layer.ObjectId} checked={(layer.Visible == true)} />;
-                    return <li class='layer-node' 
-                        data-layer-name={layer.Name}
-                        data-layer-selectable={layer.Selectable}
-                        data-layer-min-scale={scaleRange.MinScale}
-                        data-layer-max-scale={scaleRange.MaxScale}>{chkbox}<img src={icon} /> {text} {body}</li>;
+                    }                    
+                    return <li className='layer-node'>{chkbox}<img src={icon} /> {text} {body}</li>;
                 }
             }
         } else {
-            return <li>LAYER: {label}</li>;
+            return <li className='layer-node'>{chkbox} LAYER: {label}</li>;
         }
     }
 }

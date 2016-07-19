@@ -299,7 +299,6 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
     }
     render(): JSX.Element {
         const props: any = this.props;
-
         return <div style={{ width: props.containerWidth, height: props.containerHeight }} />;
     }
     //-------- IMapViewerContext ---------//

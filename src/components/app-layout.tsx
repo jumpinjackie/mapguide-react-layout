@@ -84,10 +84,10 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                 </div>
                 <div style={{ position: "absolute", left: SIDEBAR_WIDTH, top: 0, bottom: 0, right: SIDEBAR_WIDTH }}>
                     <MapViewer ref={this.fnMapViewerMounted}
-                                       map={this.state.runtimeMap} 
-                                       agentUri={this.props.agent.uri}
-                                       onViewChanged={this.fnViewChanged}
-                                       imageFormat="PNG" />
+                               map={this.state.runtimeMap} 
+                               agentUri={this.props.agent.uri}
+                               onViewChanged={this.fnViewChanged}
+                               imageFormat="PNG" />
                 </div>
                 <div style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: SIDEBAR_WIDTH }}>
                     <TaskPane initialUrl="/mapguide/localized/help/en/mapguide_viewer_command_list.htm" />

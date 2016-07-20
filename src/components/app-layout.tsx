@@ -31,6 +31,9 @@ export interface IApplicationProps {
 
 const SIDEBAR_WIDTH = 250;
 
+/**
+ * Application is the root component of a MapGuide viewer application
+ */
 export class Application extends React.Component<IApplicationProps, any> implements IApplicationContext {
     fnLegendMounted: (component) => void;
     fnMapViewerMounted: (component) => void;
@@ -49,7 +52,8 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         this.fnGroupVisibilityChanged = this.onGroupVisibilityChanged.bind(this);
         this.fnLayerVisibilityChanged = this.onLayerVisibilityChanged.bind(this);
         this.state = {
-            runtimeMap: null
+            runtimeMap: null,
+            error: null
         };
     }
     getChildContext(): IApplicationContext {
@@ -71,6 +75,8 @@ export class Application extends React.Component<IApplicationProps, any> impleme
             username: "Anonymous"
         }).then(res => {
             this.setState({ runtimeMap: res });
+        }).catch(err => {
+            this.setState({ runtimeMap: null, error: err });
         });
     }
     render(): JSX.Element {
@@ -94,7 +100,16 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                 </div>
             </div>;
         } else {
-            return <div>Loading Map ...</div>;
+            if (this.state.error != null) {
+                return <div>
+                    <h3>An error occurred while loading this application</h3>
+                    <pre>
+                        {this.state.error.message}
+                    </pre>
+                </div>;
+            } else {
+                return <div>Loading Map ...</div>;
+            }
         }
     }
     private getViewer(): IMapViewer {

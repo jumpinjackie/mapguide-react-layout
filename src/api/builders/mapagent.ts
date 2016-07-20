@@ -4,6 +4,8 @@ import { MgError } from '../error';
 import assign = require("object-assign");
 import { deArrayify } from './deArrayify';
 
+const MG_MAPAGENT_ERROR_CODE = 559;
+
 export class MapAgentRequestBuilder extends Request.RequestBuilder {
     private locale: string;
     constructor(agentUri: string, locale: string = "en") {
@@ -11,7 +13,11 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         this.locale = locale;
     }
 
-    private get<T>(url: string): PromiseLike<T> {
+    private isErrorResponse(response: Response): boolean {
+        return !response.ok || response.status === MG_MAPAGENT_ERROR_CODE;
+    }
+
+    private get<T>(url: string): Promise<T> {
         return new Promise<T>((resolve, reject) => {
             fetch(url, {
                 headers: {
@@ -21,7 +27,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
                 method: "GET"
             })
             .then(response => {
-                if (!response.ok) {
+                if (this.isErrorResponse(response)) {
                     throw new MgError(response.statusText);
                 } else {
                     return response.json();
@@ -34,7 +40,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         });
     }
 
-    private post<T>(url: string, data: any): PromiseLike<T> {
+    private post<T>(url: string, data: any): Promise<T> {
         const form = new FormData();
         for (const key of data) {
             form.append(key.toUpperCase(), data[key]);
@@ -49,7 +55,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
                 body: form
             })
             .then(response => {
-                if (!response.ok) {
+                if (this.isErrorResponse(response)) {
                     throw new MgError(response.statusText);
                 } else {
                     return response.json();
@@ -85,21 +91,21 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         return url;
     }
 
-    public getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier): PromiseLike<T> {
+    public getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier): Request.IPromise<T> {
         const url = this.stringifyGetUrl({ operation: "GETRESOURCE", resourceId: resourceId });
         return this.get<T>(url);
     }
     
-    public createRuntimeMap(options: Request.ICreateRuntimeMapOptions): PromiseLike<Contracts.RtMap.RuntimeMap> {
+    public createRuntimeMap(options: Request.ICreateRuntimeMapOptions): Request.IPromise<Contracts.RtMap.RuntimeMap> {
         const url = this.stringifyGetUrl(assign(options, { operation: "CREATERUNTIMEMAP", version: "3.0.0" }));
         return this.get<Contracts.RtMap.RuntimeMap>(url);
     }
     
-    public queryMapFeatures(options: Request.IQueryMapFeaturesOptions): PromiseLike<Contracts.Query.QueryMapFeaturesResponse> {
+    public queryMapFeatures(options: Request.IQueryMapFeaturesOptions): Request.IPromise<Contracts.Query.QueryMapFeaturesResponse> {
         return this.post<Contracts.Query.QueryMapFeaturesResponse>(this.agentUri, assign(options, { version: "2.6.0" }));
     }
 
-    public describeRuntimeMap(options: Request.IDescribeRuntimeMapOptions): PromiseLike<Contracts.RtMap.RuntimeMap> {
+    public describeRuntimeMap(options: Request.IDescribeRuntimeMapOptions): Request.IPromise<Contracts.RtMap.RuntimeMap> {
         const url = this.stringifyGetUrl(assign(options, { operation: "DESCRIBERUNTIMEMAP", version: "3.0.0" }));
         return this.get<Contracts.RtMap.RuntimeMap>(url);
     }

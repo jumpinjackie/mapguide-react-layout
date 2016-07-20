@@ -34,19 +34,19 @@ class Client implements Request.IMapGuideClient {
         }
     }
     
-    public getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier): PromiseLike<T> {
+    public getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier): Request.IPromise<T> {
         return this.builder.getResource<T>(resourceId);
     }
     
-    public createRuntimeMap(options: Request.ICreateRuntimeMapOptions): PromiseLike<Contracts.RtMap.RuntimeMap> {
+    public createRuntimeMap(options: Request.ICreateRuntimeMapOptions): Request.IPromise<Contracts.RtMap.RuntimeMap> {
         return this.builder.createRuntimeMap(options);
     }
 
-    public describeRuntimeMap(options: Request.IDescribeRuntimeMapOptions): PromiseLike<Contracts.RtMap.RuntimeMap> {
+    public describeRuntimeMap(options: Request.IDescribeRuntimeMapOptions): Request.IPromise<Contracts.RtMap.RuntimeMap> {
         return this.builder.describeRuntimeMap(options);
     }
     
-    public queryMapFeatures(options: Request.IQueryMapFeaturesOptions): PromiseLike<Contracts.Query.QueryMapFeaturesResponse> {
+    public queryMapFeatures(options: Request.IQueryMapFeaturesOptions): Request.IPromise<Contracts.Query.QueryMapFeaturesResponse> {
         return this.builder.queryMapFeatures(options);
     }
 

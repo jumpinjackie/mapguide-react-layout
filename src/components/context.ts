@@ -15,10 +15,16 @@ export interface IMapView {
 
 export interface IApplicationContext {
     getClient(): IMapGuideClient;
+    getSession(): string;
+    getMapName(): string;
+    getLocale(): string;
 }
 
 export const APPLICATION_CONTEXT_VALIDATION_MAP: React.ValidationMap<any> = {
-    getClient: React.PropTypes.func.isRequired
+    getClient: React.PropTypes.func.isRequired,
+    getSession: React.PropTypes.func.isRequired,
+    getMapName: React.PropTypes.func.isRequired,
+    getLocale: React.PropTypes.func.isRequired
 };
 
 export interface IMapViewerContext {

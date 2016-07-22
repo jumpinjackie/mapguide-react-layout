@@ -11,6 +11,16 @@
 // Stamped by webpack
 declare const __DEV__: boolean;
 
+declare module "query-string" {
+    function parse(queryStringOrHash: string): any;
+    function stringify(params: any): string; 
+
+    export = {
+        parse: parse,
+        stringify: stringify
+    };
+}
+
 declare module "object-assign" {
     function assign(target: any, ...objectsToMerge: any[]);
     export = assign;
@@ -32,10 +42,4 @@ declare module "lodash.debounce" {
 declare module "lodash.uniq" {
     import * as _ from "lodash";
     export = _.uniq;
-}
-
-// lodash is the kitchen sink, lodash.uniq only exports _.assign
-declare module "lodash.assign" {
-    import * as _ from "lodash";
-    export = _.assign;
 }

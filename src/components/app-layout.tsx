@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { CreateRuntimeMapFeatureFlags, IMapGuideClient } from "../api/request-builder";
+import { RuntimeMap } from "../api/contracts/runtime-map";
 import { TaskPane } from "./task-pane";
 import { MapViewer, IMapViewer } from "./map-viewer";
 import { Legend, MapElementChangeFunc } from "./legend";
@@ -58,12 +59,32 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     }
     getChildContext(): IApplicationContext {
         return {
-            getClient: this.getClient.bind(this)
+            getClient: this.getClient.bind(this),
+            getSession: this.getSession.bind(this),
+            getMapName: this.getMapName.bind(this),
+            getLocale: this.getLocale.bind(this)
         };
     }
     //-------- IApplicationContext --------//
     getClient(): IMapGuideClient {
         return this.clientContext.agent;
+    }
+    getSession(): string {
+        const runtimeMap: RuntimeMap = this.state.runtimeMap;
+        if (runtimeMap != null) {
+            return runtimeMap.SessionId;
+        }
+        return null;
+    }
+    getMapName(): string {
+        const runtimeMap: RuntimeMap = this.state.runtimeMap;
+        if (runtimeMap != null) {
+            return runtimeMap.Name;
+        }
+        return null;
+    }
+    getLocale(): string {
+        return "en";
     }
     //-------------------------------------//
     componentDidMount() {

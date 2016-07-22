@@ -1,37 +1,15 @@
 import * as React from "react";
 import { Toolbar, IItem, IMenu, DEFAULT_TOOLBAR_HEIGHT } from "./toolbar";
+import { 
+    IApplicationContext,
+    APPLICATION_CONTEXT_VALIDATION_MAP
+} from "./context";
+import queryString = require("query-string");
+const parse = require("url-parse");
 
 export interface ITaskPaneProps {
     initialUrl?: string;
 }
-
-/*
-function getIcon(relPath: string): string {
-    return `stdicons/${relPath}`;
-}
-
-const TOOLBAR_HEIGHT = 32;
-
-const TaskMenu = (props) => {
-    return <div style={{ position: "absolute", right: 0, display: "inline-block", height: TOOLBAR_HEIGHT, padding: ((TOOLBAR_HEIGHT - 16) / 2) }} title={props.title} onClick={props.onClick}>
-        <img style={{ verticalAlign: "middle", lineHeight: TOOLBAR_HEIGHT }} src={getIcon("ui-menu.png")} /> Tasks
-    </div>;
-}
-
-const TaskButton = (props) => {
-    return <div style={{ display: "inline-block", height: TOOLBAR_HEIGHT, padding: ((TOOLBAR_HEIGHT - 16) / 2) }} title={props.title} onClick={props.onClick}>
-        <img style={{ verticalAlign: "middle", lineHeight: TOOLBAR_HEIGHT }} src={getIcon(props.icon)} />
-    </div>;
-};
-
-const TaskBar = (props) => {
-    return <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: TOOLBAR_HEIGHT }}>
-        <TaskButton enabled={props.canGoBack} icon="back.png" title="Go Back" onClick={props.onBack} />
-        <TaskButton enabled={props.canGoForward} icon="forward.png" title="Go Forward" onClick={props.onForward} />
-        <TaskMenu />
-    </div>;
-};
-*/
 
 function buildTaskMenu(): IItem[] {
     const taskMenu: IMenu = {
@@ -69,6 +47,35 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         };
         this.taskMenu = buildTaskMenu();
         this.taskButtons = buildTaskButtons(this);
+    }
+    static contextTypes = APPLICATION_CONTEXT_VALIDATION_MAP;
+    context: IApplicationContext;
+    private ensureParameters(url: string): string {
+        if (url == null)
+            return null;
+        const parsed = parse(url);
+        const params = queryString.parse(parsed.query);
+        let bNeedMapName = true;
+        let bNeedSession = true;
+        for (const key in params) {
+            const name = key.toLowerCase();
+            switch (name) {
+                case "session":
+                    bNeedSession = false;
+                    break;
+                case "mapname":
+                    bNeedMapName = false;
+                    break;
+            }
+        }
+        if (bNeedMapName) {
+            params.MAPNAME = this.context.getMapName();
+        }
+        if (bNeedSession) {
+            params.SESSION = this.context.getSession();
+        }
+        parsed.query = queryString.stringify(params);
+        return parsed.toString();
     }
     loadUrl(url: string) {
         let index = this.state.navIndex;
@@ -110,7 +117,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
     }
     render(): JSX.Element {
         const { navigation, navIndex } = this.state;
-        const currentUrl = navIndex >= 0 ? navigation[navIndex] : this.props.initialUrl;
+        const currentUrl = this.ensureParameters(navIndex >= 0 ? navigation[navIndex] : this.props.initialUrl);
         return <div style={{ width: "100%", height: "100%", fontFamily: "Verdana, Sans-serif", fontSize: "10pt" }}>
             <Toolbar childItems={this.taskButtons} containerStyle={{ position: "absolute", top: 0, left: 0, height: DEFAULT_TOOLBAR_HEIGHT }} />
             <Toolbar childItems={this.taskMenu} containerStyle={{ position: "absolute", top: 0, right: 0, height: DEFAULT_TOOLBAR_HEIGHT }} />

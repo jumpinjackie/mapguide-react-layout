@@ -8,6 +8,7 @@ import { Legend, MapElementChangeFunc } from "./legend";
 import { ClientContext, ClientKind } from "../api/client";
 import { IMapView, IApplicationContext, APPLICATION_CONTEXT_VALIDATION_MAP } from "./context";
 import { AjaxViewerShim } from "../api/ajax-viewer-shim";
+import { SelectionPanel } from "./selection-panel";
 
 export interface IApplicationProps {
     /**
@@ -32,6 +33,7 @@ export interface IApplicationProps {
 }
 
 const SIDEBAR_WIDTH = 250;
+const PROPERTY_PALETTE_HEIGHT = 450;
 
 /**
  * Application is the root component of a MapGuide viewer application
@@ -43,6 +45,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     fnLayerVisibilityChanged: MapElementChangeFunc;
     fnViewChanged: (view: IMapView) => void;
     fnSelectionChange: (selectionSet: any) => void;
+    fnZoomToSelectedFeature: (feature: any) => void;
     _viewer: any;
     _legend: Legend;
     clientContext: ClientContext;
@@ -55,6 +58,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         this.fnGroupVisibilityChanged = this.onGroupVisibilityChanged.bind(this);
         this.fnLayerVisibilityChanged = this.onLayerVisibilityChanged.bind(this);
         this.fnSelectionChange = this.onSelectionChange.bind(this);
+        this.fnZoomToSelectedFeature = this.onZoomToSelectedFeature.bind(this);
         this.state = {
             selection: null,
             runtimeMap: null,
@@ -105,13 +109,21 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         });
     }
     render(): JSX.Element {
-        if (this.state.runtimeMap) {
+        const { runtimeMap, selection } = this.state;
+        if (runtimeMap) {
+            const sel = selection ? selection.SelectedFeatures : null;
             return <div style={{ width: "100%", height: "100%" }}>
                 <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: SIDEBAR_WIDTH, overflowY: "auto" }}>
-                    <Legend ref={this.fnLegendMounted}
-                                    map={this.state.runtimeMap} 
-                                    onGroupVisibilityChanged={this.fnGroupVisibilityChanged}
-                                    onLayerVisibilityChanged={this.fnLayerVisibilityChanged} />
+                    <div style={{ position: "absolute", left: 0, top: 0, right: 0 }}>
+                        <Legend ref={this.fnLegendMounted}
+                                        map={this.state.runtimeMap} 
+                                        onGroupVisibilityChanged={this.fnGroupVisibilityChanged}
+                                        onLayerVisibilityChanged={this.fnLayerVisibilityChanged} />
+                    </div>
+                    <div style={{ position: "absolute", left: 0, bottom: 0, right: 0, height: PROPERTY_PALETTE_HEIGHT }}>
+                        <SelectionPanel selection={sel}
+                                        onRequestZoomToFeature={this.fnZoomToSelectedFeature} />
+	                </div>
                 </div>
                 <div style={{ position: "absolute", left: SIDEBAR_WIDTH, top: 0, bottom: 0, right: SIDEBAR_WIDTH }}>
                     <MapViewer ref={this.fnMapViewerMounted}
@@ -141,6 +153,9 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     private getViewer(): IMapViewer {
         var viewer = this._viewer.refs['wrappedInstance'];
         return viewer;
+    }
+    onZoomToSelectedFeature(feature: any) {
+
     }
     onSelectionChange(selectionSet: any) {
         this.setState({ selection: selectionSet });

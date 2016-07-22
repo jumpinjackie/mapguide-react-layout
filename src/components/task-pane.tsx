@@ -133,6 +133,6 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                 
                 </iframe>
             </div>
-        </div>
+        </div>;
     }
 }

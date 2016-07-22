@@ -7,6 +7,7 @@ import { MapViewer, IMapViewer } from "./map-viewer";
 import { Legend, MapElementChangeFunc } from "./legend";
 import { ClientContext, ClientKind } from "../api/client";
 import { IMapView, IApplicationContext, APPLICATION_CONTEXT_VALIDATION_MAP } from "./context";
+import { AjaxViewerShim } from "../api/ajax-viewer-shim";
 
 export interface IApplicationProps {
     /**
@@ -167,6 +168,8 @@ export class ApplicationViewModel {
 
     }
     public mount(node: Element, props: IApplicationProps) {
-        ReactDOM.render(<Application {...props}/>, node);
+        const app: Application = ReactDOM.render(<Application {...props}/>, node) as Application;
+        const win: any = window;
+        AjaxViewerShim.install(win, app);
     }
 }

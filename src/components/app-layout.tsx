@@ -70,8 +70,10 @@ export class Application extends React.Component<IApplicationProps, any> impleme
             error: null
         };
         this.commands = [
+            { icon: "select.png", tooltip: "Select" },
             { icon: "zoom-in-fixed.png", tooltip: "Zoom In" },
             { icon: "zoom-out-fixed.png", tooltip: "Zoom Out" },
+            { icon: "zoom-full.png", tooltip: "Zoom Extents" },
             { icon: "buffer.png", tooltip: "Buffer", invoke: () => this._taskpane.loadUrl("/mapguide/mapviewernet/bufferui.aspx") },
             { icon: "measure.png", tooltip: "Measure", invoke: () => this._taskpane.loadUrl("/mapguide/mapviewernet/measureui.aspx") },
             { icon: "print.png", tooltip: "Quick Plot", invoke: () => this._taskpane.loadUrl("/mapguide/mapviewernet/quickplotpanel.aspx") }

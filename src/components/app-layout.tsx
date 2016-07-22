@@ -9,7 +9,7 @@ import { ClientContext, ClientKind } from "../api/client";
 import { IMapView, IApplicationContext, APPLICATION_CONTEXT_VALIDATION_MAP } from "./context";
 import { AjaxViewerShim } from "../api/ajax-viewer-shim";
 import { SelectionPanel } from "./selection-panel";
-import { Toolbar, DEFAULT_TOOLBAR_HEIGHT, IItem } from "./toolbar";
+import { Toolbar, DEFAULT_TOOLBAR_HEIGHT, TOOLBAR_BACKGROUND_COLOR, IItem } from "./toolbar";
 
 export interface IApplicationProps {
     /**
@@ -138,7 +138,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
 	                </div>
                 </div>
                 <div style={{ position: "absolute", left: SIDEBAR_WIDTH, top: 0, bottom: 0, right: SIDEBAR_WIDTH }}>
-                    <Toolbar childItems={this.commands} containerStyle={{ position: "absolute", left: 10, top: 10, height: DEFAULT_TOOLBAR_HEIGHT, zIndex: 100, backgroundColor: "#f0f0f0" }} />
+                    <Toolbar childItems={this.commands} containerStyle={{ position: "absolute", left: 10, top: 10, height: DEFAULT_TOOLBAR_HEIGHT, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />
                     <MapViewer ref={this.fnMapViewerMounted}
                                map={this.state.runtimeMap} 
                                agentUri={this.props.agent.uri}

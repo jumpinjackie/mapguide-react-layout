@@ -9,6 +9,7 @@ import { ClientContext, ClientKind } from "../api/client";
 import { IMapView, IApplicationContext, APPLICATION_CONTEXT_VALIDATION_MAP } from "./context";
 import { AjaxViewerShim } from "../api/ajax-viewer-shim";
 import { SelectionPanel } from "./selection-panel";
+import { Toolbar, DEFAULT_TOOLBAR_HEIGHT, IItem } from "./toolbar";
 
 export interface IApplicationProps {
     /**
@@ -41,6 +42,7 @@ const PROPERTY_PALETTE_HEIGHT = 450;
 export class Application extends React.Component<IApplicationProps, any> implements IApplicationContext {
     fnLegendMounted: (component) => void;
     fnMapViewerMounted: (component) => void;
+    fnTaskPaneMounted: (component) => void;
     fnGroupVisibilityChanged: MapElementChangeFunc;
     fnLayerVisibilityChanged: MapElementChangeFunc;
     fnViewChanged: (view: IMapView) => void;
@@ -48,12 +50,15 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     fnZoomToSelectedFeature: (feature: any) => void;
     _viewer: any;
     _legend: Legend;
+    _taskpane: TaskPane;
+    private commands: IItem[]; 
     clientContext: ClientContext;
     static childContextTypes = APPLICATION_CONTEXT_VALIDATION_MAP;
     constructor(props) {
         super(props);
         this.fnLegendMounted = this.onLegendMounted.bind(this);
         this.fnMapViewerMounted = this.onMapViewerMounted.bind(this);
+        this.fnTaskPaneMounted = this.onTaskPaneMounted.bind(this);
         this.fnViewChanged = this.onViewChanged.bind(this);
         this.fnGroupVisibilityChanged = this.onGroupVisibilityChanged.bind(this);
         this.fnLayerVisibilityChanged = this.onLayerVisibilityChanged.bind(this);
@@ -64,6 +69,13 @@ export class Application extends React.Component<IApplicationProps, any> impleme
             runtimeMap: null,
             error: null
         };
+        this.commands = [
+            { icon: "zoom-in-fixed.png", tooltip: "Zoom In" },
+            { icon: "zoom-out-fixed.png", tooltip: "Zoom Out" },
+            { icon: "buffer.png", tooltip: "Buffer", invoke: () => this._taskpane.loadUrl("/mapguide/mapviewernet/bufferui.aspx") },
+            { icon: "measure.png", tooltip: "Measure", invoke: () => this._taskpane.loadUrl("/mapguide/mapviewernet/measureui.aspx") },
+            { icon: "print.png", tooltip: "Quick Plot", invoke: () => this._taskpane.loadUrl("/mapguide/mapviewernet/quickplotpanel.aspx") }
+        ];
     }
     getChildContext(): IApplicationContext {
         return {
@@ -126,6 +138,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
 	                </div>
                 </div>
                 <div style={{ position: "absolute", left: SIDEBAR_WIDTH, top: 0, bottom: 0, right: SIDEBAR_WIDTH }}>
+                    <Toolbar childItems={this.commands} containerStyle={{ position: "absolute", left: 10, top: 10, height: DEFAULT_TOOLBAR_HEIGHT, zIndex: 100, backgroundColor: "#f0f0f0" }} />
                     <MapViewer ref={this.fnMapViewerMounted}
                                map={this.state.runtimeMap} 
                                agentUri={this.props.agent.uri}
@@ -134,7 +147,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                                imageFormat="PNG" />
                 </div>
                 <div style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: SIDEBAR_WIDTH }}>
-                    <TaskPane initialUrl="/mapguide/localized/help/en/mapguide_viewer_command_list.htm" />
+                    <TaskPane ref={this.fnTaskPaneMounted} initialUrl="/mapguide/localized/help/en/mapguide_viewer_command_list.htm" />
                 </div>
             </div>;
         } else {
@@ -165,6 +178,9 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     }
     onMapViewerMounted(component) {
         this._viewer = component;
+    }
+    onTaskPaneMounted(component) {
+        this._taskpane = component;
     }
     onGroupVisibilityChanged(groupId: string, visible: boolean) {
         const viewer = this.getViewer();

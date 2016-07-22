@@ -33,3 +33,9 @@ declare module "lodash.uniq" {
     import * as _ from "lodash";
     export = _.uniq;
 }
+
+// lodash is the kitchen sink, lodash.uniq only exports _.assign
+declare module "lodash.assign" {
+    import * as _ from "lodash";
+    export = _.assign;
+}

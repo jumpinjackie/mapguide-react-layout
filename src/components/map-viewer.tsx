@@ -20,10 +20,18 @@ export interface IMapViewerProps {
     imageFormat: "PNG" | "PNG8" | "JPG" | "GIF";
     stateChangeDebounceTimeout?: number;
     onViewChanged?: (view: IMapView) => void;
+    onRequestSelectedLayers?: () => string[];
+    onSelectionChange?: (selectionSet: any) => void;
+    pointSelectionBuffer?: number;
 }
 
 export interface IMapViewer extends IMapViewerContext {
 
+}
+
+export enum ActiveMapTool {
+    ZoomPan,
+    Select
 }
 
 class MapViewerBase extends React.Component<IMapViewerProps, any> 
@@ -49,6 +57,9 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
      * @type {IMapView}
      */
     private _initialView: IMapView;
+
+    private _wktFormat: ol.format.WKT;
+
     context: IApplicationContext;
     /**
      * This is a throttled version of _refreshOnStateChange(). Call this on any 
@@ -62,6 +73,7 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
         this._map = null;
         this.state = this.buildInitialState(props);
         this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), props.stateChangeDebounceTimeout || 500);
+        this._wktFormat = new ol.format.WKT();
     }
     buildInitialState(props: IMapViewerProps) {
         const layerMap: any = {};
@@ -73,6 +85,7 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
             groupMap[group.ObjectId] = group;
         }
         return {
+            tool: ActiveMapTool.ZoomPan,
             map: props.map,
             navigationStack: [],
             pendingStateChanges: {
@@ -252,7 +265,10 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
         this._map = new ol.Map({
             target: mapNode,
             layers: layers,
-            view: view
+            view: view,
+            controls: [
+                new ol.control.Attribution()
+            ]
         });
         view.fit(extent, this._map.getSize());
         //Set initial view
@@ -269,6 +285,8 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
             const newCenter = view.getCenter();
             this.pushView({ x: newCenter[0], y: newCenter[1], scale: newScale });
         });
+
+        this._map.on("click", this.onMapClick.bind(this));
         /*
         view.on("change:resolution", (e) => {
             const newScale = view.getResolution() * dpi * inPerUnit;
@@ -280,6 +298,40 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
             this.pushView({ x: newCenter[0], y: newCenter[1], scale: newScale });
         });
         */
+    }
+    private onMapClick(e) {
+        if (this.state.tool === ActiveMapTool.Select) {
+            const ptBuffer = this.props.pointSelectionBuffer || 2;
+            const ll = this._map.getCoordinateFromPixel([e.pixel[0] - ptBuffer, e.pixel[1] - ptBuffer]);
+            const ur = this._map.getCoordinateFromPixel([e.pixel[0] + ptBuffer, e.pixel[1] + ptBuffer]);
+            const box = [ ll[0], ll[1], ur[0], ur[1] ];
+            const geom = ol.geom.Polygon.fromExtent(box);
+            const selLayerNames = (this.props.onRequestSelectedLayers != null)
+                ? this.props.onRequestSelectedLayers() 
+                : null; 
+            this.sendSelectionQuery(geom, selLayerNames);
+        }
+    }
+    private sendSelectionQuery(geom, selectedLayerNames, persist = 1) {
+        const reqQueryFeatures = 1 | 2; //Attributes and inline selection
+	    const wkt = this._wktFormat.writeGeometry(geom);
+        const client = this.context.getClient();
+        client.queryMapFeatures({
+            mapname: this.context.getMapName(),
+            session: this.context.getSession(),
+            geometry: wkt,
+            persist: persist,
+            selectionvariant: "INTERSECTS",
+            selectioncolor: "0xFF000000",
+            selectionformat: "PNG8",
+            maxfeatures: -1,
+            requestdata: reqQueryFeatures
+        }).then(res => {
+            //Only broadcast if persistent change, otherwise it's transient
+            //so the current selection set is still the same
+            if (persist === 1 && this.props.onSelectionChange != null)
+                this.props.onSelectionChange(res);
+        })
     }
     updateScale(scale) {
         const view = this.getView();

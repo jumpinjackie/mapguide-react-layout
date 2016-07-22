@@ -40,19 +40,27 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         });
     }
 
+    private serialize(data) {
+        return Object.keys(data).map((keyName) => {
+            return encodeURIComponent(keyName.toUpperCase()) + '=' + encodeURIComponent(data[keyName])
+        }).join('&');
+    };
+
     private post<T>(url: string, data: any): Promise<T> {
-        const form = new FormData();
-        for (const key of data) {
-            form.append(key.toUpperCase(), data[key]);
+        if (!data.format) {
+            data.format = "application/json";
         }
+        //const form = new FormData();
+        //for (const key in data) {
+        //    form.append(key.toUpperCase(), data[key]);
+        //}
         return new Promise<T>((resolve, reject) => {
             fetch(url, {
                 headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                 },
                 method: "POST",
-                body: form
+                body: this.serialize(data) //form
             })
             .then(response => {
                 if (this.isErrorResponse(response)) {
@@ -102,7 +110,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
     }
     
     public queryMapFeatures(options: Request.IQueryMapFeaturesOptions): Request.IPromise<Contracts.Query.QueryMapFeaturesResponse> {
-        return this.post<Contracts.Query.QueryMapFeaturesResponse>(this.agentUri, assign(options, { version: "2.6.0" }));
+        return this.post<Contracts.Query.QueryMapFeaturesResponse>(this.agentUri, assign(options, { operation: "QUERYMAPFEATURES", version: "2.6.0" }));
     }
 
     public describeRuntimeMap(options: Request.IDescribeRuntimeMapOptions): Request.IPromise<Contracts.RtMap.RuntimeMap> {

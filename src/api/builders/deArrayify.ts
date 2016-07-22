@@ -185,9 +185,135 @@ function deArrayifyRuntimeMap(json: any): Contracts.RtMap.RuntimeMap {
     return rtMap;
 }
 
+function deArrayifyFeatureSetClass(json: any): Contracts.Query.FeatureSetClass {
+    const root = json;
+    if (root.length != 1) {
+        return null;
+    }
+    const cls = {
+        "@id": tryGetAsProperty(root[0], "@id"),
+        ID: root[0].ID
+    };
+    return cls;
+}
+
+function deArrayifyFeatureSetLayers(json: any[]): Contracts.Query.FeatureSetLayer[] {
+    return json.map(root => {
+        const layer = {
+            "@id": tryGetAsProperty(root, "@id"),
+            "@name": tryGetAsProperty(root, "@name"),
+            Class: deArrayifyFeatureSetClass(root.Class)
+        };
+        return layer;
+    });
+}
+
+function deArrayifyFeatureSet(json: any): Contracts.Query.FeatureSet {
+    const root = json;
+    if (root.length != 1) {
+        return null;
+    }
+    const fs = {
+        Layer: deArrayifyFeatureSetLayers(root[0].Layer)
+    };
+    return fs;
+}
+
+function deArrayifyInlineSelectionImage(json: any): Contracts.Query.SelectionImage {
+    const root = json;
+    if (root.length != 1) {
+        return null;
+    }
+    const img = {
+        MimeType: tryGetAsProperty(root[0], "MimeType"),
+        Content: tryGetAsProperty(root[0], "Content")
+    };
+    return img;
+}
+
+function deArrayifyFeatureProperties(json: any[]): Contracts.Query.FeatureProperty[] {
+    return json.map(root => {
+        const prop = {
+            Name: tryGetAsProperty(root, "Name"),
+            Value: tryGetAsProperty(root, "Value")
+        };
+        return prop;
+    });
+}
+
+function deArrayifyFeatures(json: any[]): Contracts.Query.SelectedFeature[] {
+    return json.map(root => {
+        const feat = {
+            Bounds: tryGetAsProperty(root, "Bounds"),
+            Property: deArrayifyFeatureProperties(root.Property)
+        };
+        return feat;
+    });
+}
+
+function deArrayifyLayerMetadataProperties(json: any[]): Contracts.Query.LayerPropertyMetadata[] {
+    return json.map(root => {
+        const prop = {
+            DisplayName: tryGetAsProperty(root, "DisplayName"),
+            Name: tryGetAsProperty(root, "Name"),
+            Type: tryGetAsProperty(root, "Type", "int")
+        };
+        return prop;
+    });
+}
+
+function deArrayifyLayerMetadata(json: any): Contracts.Query.LayerMetadata {
+    const root = json;
+    if (root.length != 1) {
+        return null;
+    }
+    const meta = {
+        Property: deArrayifyLayerMetadataProperties(root[0].Property)
+    };
+    return meta;
+}
+
+function deArrayifySelectedLayer(json: any[]): Contracts.Query.SelectedLayer[] {
+    return json.map(root => {
+        const layer = {
+            "@id": tryGetAsProperty(root, "@id"),
+            "@name": tryGetAsProperty(root, "@name"),
+            Feature: deArrayifyFeatures(root.Feature),
+            LayerMetadata: deArrayifyLayerMetadata(root.LayerMetadata)
+        };
+        return layer;
+    });
+}
+
+function deArrayifySelectedFeatures(json: any): Contracts.Query.SelectedFeatureSet {
+    const root = json;
+    if (root.length != 1) {
+        return null;
+    }
+    const sf = {
+        SelectedLayer: deArrayifySelectedLayer(root[0].SelectedLayer)
+    };
+    return sf;
+}
+
+function deArrayifyFeatureInformation(json: any): Contracts.Query.QueryMapFeaturesResponse {
+    const root = json;
+    const resp = {
+        FeatureSet: deArrayifyFeatureSet(root.FeatureSet),
+        Hyperlink: tryGetAsProperty(root, "Hyperlink"),
+        InlineSelectionImage: deArrayifyInlineSelectionImage(root.InlineSelectionImage),
+        SelectedFeatures: deArrayifySelectedFeatures(root.SelectedFeatures),
+        Tooltip: tryGetAsProperty(root, "Tooltip")
+    };
+    return resp;
+}
+
 export function deArrayify(json: any): any {
     if (json["RuntimeMap"]) {
         return deArrayifyRuntimeMap(json.RuntimeMap);
+    }
+    if (json["FeatureInformation"]) {
+        return deArrayifyFeatureInformation(json.FeatureInformation);
     }
     const keys = [];
     for (const k in json) {

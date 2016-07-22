@@ -29,8 +29,64 @@ export interface IRuntimeMapRequest extends ISessionBasedRequest {
     mapname: string;
 }
 
-export interface IQueryMapFeaturesOptions extends IRuntimeMapRequest {
+export enum QueryFeaturesSet {
+    Attributes = 1,
+    InlineSelection = 2,
+    Tooltip = 4,
+    Hyperlink = 8
+}
 
+export interface IQueryMapFeaturesOptions extends IRuntimeMapRequest {
+    /**
+     * A comma-seperated list of layer name to restrict the query on. Omit to
+     * cover all selectable layers 
+     * 
+     * @type {string}
+     */
+    layernames?: string;
+    /**
+     * The WKT of the query geometry 
+     * 
+     * @type {string}
+     */
+    geometry?: string;
+    /**
+     * The spatial query operator to use with the input geometry 
+     * 
+     * @type {("INTERSECTS" | "TOUCHES" | "WITHIN" | "ENVELOPEINTERSECTS")}
+     */
+    selectionvariant?: "INTERSECTS" | "TOUCHES" | "WITHIN" | "ENVELOPEINTERSECTS";
+    /**
+     * A bitmask containing what features to ask for 
+     * 
+     * @type {QueryFeaturesSet}
+     */
+    requestdata?: QueryFeaturesSet;
+    /**
+     * The color of the selection 
+     * 
+     * @type {string}
+     */
+    selectioncolor?: string;
+    /**
+     * The image format of the requested selection image
+     * 
+     * @type {("PNG" | "JPG" | "GIF" | "PNG8")}
+     */
+    selectionformat?: "PNG" | "JPG" | "GIF" | "PNG8";
+    /**
+     * The maximum number of features to select. Use -1 for no limit. 
+     * 
+     * @type {number}
+     */
+    maxfeatures?: number;
+    /**
+     * 1 = Persist the query selection changes to the current selection set
+     * 0 = The query selection does not modify the current selection set 
+     * 
+     * @type {number}
+     */
+    persist?: number;
 }
 
 export interface IDescribeRuntimeMapOptions extends IRuntimeMapRequest {

@@ -42,6 +42,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     fnGroupVisibilityChanged: MapElementChangeFunc;
     fnLayerVisibilityChanged: MapElementChangeFunc;
     fnViewChanged: (view: IMapView) => void;
+    fnSelectionChange: (selectionSet: any) => void;
     _viewer: any;
     _legend: Legend;
     clientContext: ClientContext;
@@ -53,7 +54,9 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         this.fnViewChanged = this.onViewChanged.bind(this);
         this.fnGroupVisibilityChanged = this.onGroupVisibilityChanged.bind(this);
         this.fnLayerVisibilityChanged = this.onLayerVisibilityChanged.bind(this);
+        this.fnSelectionChange = this.onSelectionChange.bind(this);
         this.state = {
+            selection: null,
             runtimeMap: null,
             error: null
         };
@@ -115,6 +118,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                                map={this.state.runtimeMap} 
                                agentUri={this.props.agent.uri}
                                onViewChanged={this.fnViewChanged}
+                               onSelectionChange={this.fnSelectionChange}
                                imageFormat="PNG" />
                 </div>
                 <div style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: SIDEBAR_WIDTH }}>
@@ -137,6 +141,9 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     private getViewer(): IMapViewer {
         var viewer = this._viewer.refs['wrappedInstance'];
         return viewer;
+    }
+    onSelectionChange(selectionSet: any) {
+        this.setState({ selection: selectionSet });
     }
     onLegendMounted(legend: Legend) {
         this._legend = legend;

@@ -57,6 +57,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         const params = queryString.parse(parsed.query);
         let bNeedMapName = true;
         let bNeedSession = true;
+        let bNeedLocale = true;
         for (const key in params) {
             const name = key.toLowerCase();
             switch (name) {
@@ -66,6 +67,9 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                 case "mapname":
                     bNeedMapName = false;
                     break;
+                case "locale":
+                    bNeedLocale = false;
+                    break;
             }
         }
         if (bNeedMapName) {
@@ -73,6 +77,9 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         }
         if (bNeedSession) {
             params.SESSION = this.context.getSession();
+        }
+        if (bNeedLocale) {
+            params.LOCALE = this.context.getLocale();
         }
         parsed.query = queryString.stringify(params);
         return parsed.toString();

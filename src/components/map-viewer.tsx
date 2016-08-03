@@ -34,6 +34,7 @@ export interface IMapViewer extends IMapViewerContext {
     zoomToView(x: number, y: number, scale: number): void;
     setSelectionXml(xml: string): void;
     refreshMap(mode?: RefreshMode): void;
+    getMetersPerUnit(): number;
 }
 
 export enum ActiveMapTool {
@@ -492,6 +493,9 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
                 seq: (new Date()).getTime()
             });
         }
+    }
+    public getMetersPerUnit(): number {
+        return this._inPerUnit / 39.37;
     }
     //------------------------------------//
 }

@@ -88,6 +88,13 @@ export class MapShim {
         }
         return selLayers;
     }
+    public GetMetersPerUnit(): number {
+        const viewer = this.app.getViewer();
+        if (viewer) {
+            return viewer.getMetersPerUnit();
+        }
+        return null;
+    }
     public GetMapHeight(): number {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetMapHeight()`);
     }

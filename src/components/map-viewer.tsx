@@ -12,6 +12,14 @@ import * as Contracts from '../api/contracts';
 import debounce = require("lodash.debounce");
 import { areNumbersEqual } from '../utils/number';
 import * as logger from '../utils/logger';
+import { MgError } from '../api/error';
+
+export interface IExternalBaseLayer {
+    name: string;
+    kind: string;
+    visible?: boolean;
+    options?: any;
+}
 
 export interface IMapViewerProps {
     map: Contracts.RtMap.RuntimeMap;
@@ -22,6 +30,7 @@ export interface IMapViewerProps {
     onRequestSelectedLayers?: () => string[];
     onSelectionChange?: (selectionSet: any) => void;
     pointSelectionBuffer?: number;
+    externalBaseLayers?: IExternalBaseLayer[];
 }
 
 export enum RefreshMode {
@@ -281,6 +290,22 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
             })
         });
 
+        if (this.props.externalBaseLayers != null) {
+            const groupOpts: any = {
+                title: "External Base Layers",
+                layers: this.props.externalBaseLayers.map(ext => {
+                    const options: any = {
+                        title: ext.name,
+                        type: "base",
+                        visible: ext.visible === true,
+                        source: this.createExternalSource(ext)
+                    };
+                    return new ol.layer.Tile(options)
+                })
+            };
+            layers.push(new ol.layer.Group(groupOpts));
+        }
+
         for (var i = groupLayers.length - 1; i >= 0; i--) {
             layers.push(groupLayers[i]);
         }
@@ -339,6 +364,16 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
             this.pushView({ x: newCenter[0], y: newCenter[1], scale: newScale });
         });
         */
+    }
+    private createExternalSource(layer: IExternalBaseLayer) {
+        let sourceCtor = ol.source[layer.kind];
+        if (typeof(sourceCtor) == 'undefined')
+            throw new MgError(`Unknown external base layer provider: ${layer.kind}`);
+
+        if (typeof(layer.options) != 'undefined')
+            return new sourceCtor(layer.options);
+        else
+            return new sourceCtor();
     }
     private scaleToResolution(scale: number): number {
         return scale / this._inPerUnit / this._dpi;

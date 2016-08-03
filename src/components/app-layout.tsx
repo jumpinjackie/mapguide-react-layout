@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import { RuntimeMapFeatureFlags, IMapGuideClient } from "../api/request-builder";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { TaskPane } from "./task-pane";
-import { MapViewer, IMapViewer, ActiveMapTool } from "./map-viewer";
+import { MapViewer, IMapViewer, ActiveMapTool, IExternalBaseLayer } from "./map-viewer";
 import { Legend, MapElementChangeFunc } from "./legend";
 import { ClientContext, ClientKind } from "../api/client";
 import { IMapView, IApplicationContext, APPLICATION_CONTEXT_VALIDATION_MAP } from "./context";
@@ -33,6 +33,7 @@ export interface IApplicationProps {
      * @type {string}
      */
     resourceId: string;
+    externalBaseLayers?: IExternalBaseLayer[];
 }
 
 const SIDEBAR_WIDTH = 250;
@@ -215,6 +216,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                                agentUri={this.props.agent.uri}
                                onViewChanged={this.fnViewChanged}
                                onSelectionChange={this.fnSelectionChange}
+                               externalBaseLayers={this.props.externalBaseLayers}
                                imageFormat="PNG" />
                 </div>
                 <div style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: SIDEBAR_WIDTH }}>

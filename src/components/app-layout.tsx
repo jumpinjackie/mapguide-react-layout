@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { CreateRuntimeMapFeatureFlags, IMapGuideClient } from "../api/request-builder";
+import { RuntimeMapFeatureFlags, IMapGuideClient } from "../api/request-builder";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { TaskPane } from "./task-pane";
 import { MapViewer, IMapViewer, ActiveMapTool } from "./map-viewer";
@@ -183,7 +183,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         this.clientContext = new ClientContext(agent.uri, agent.kind);
         this.clientContext.agent.createRuntimeMap({
             mapDefinition: this.props.resourceId,
-            requestedFeatures: CreateRuntimeMapFeatureFlags.LayerFeatureSources | CreateRuntimeMapFeatureFlags.LayerIcons | CreateRuntimeMapFeatureFlags.LayersAndGroups,
+            requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
             username: "Anonymous"
         }).then(res => {
             this.setState({ runtimeMap: res });

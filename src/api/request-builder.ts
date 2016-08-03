@@ -6,7 +6,7 @@ export interface IAuthenticatedRequest {
     password?: string;
 }
 
-export enum CreateRuntimeMapFeatureFlags {
+export enum RuntimeMapFeatureFlags {
     LayersAndGroups = 1,
     LayerIcons = 2,
     LayerFeatureSources = 4
@@ -14,7 +14,7 @@ export enum CreateRuntimeMapFeatureFlags {
 
 export interface ICreateRuntimeMapOptions extends IAuthenticatedRequest {
     mapDefinition: Contracts.Common.ResourceIdentifier;
-    requestedFeatures: number | CreateRuntimeMapFeatureFlags;
+    requestedFeatures: number | RuntimeMapFeatureFlags;
     iconsPerScaleRange?: number;
     iconFormat?: "PNG" | "PNG8" | "GIF" | "JPG";
     iconWidth?: number;
@@ -95,7 +95,11 @@ export interface IQueryMapFeaturesOptions extends IRuntimeMapRequest {
 }
 
 export interface IDescribeRuntimeMapOptions extends IRuntimeMapRequest {
-
+    requestedFeatures?: number | RuntimeMapFeatureFlags;
+    iconsPerScaleRange?: number;
+    iconFormat?: "PNG" | "PNG8" | "GIF" | "JPG";
+    iconWidth?: number;
+    iconHeight?: number;
 }
 
 // Why does PromiseLike<T> not define catch() ?

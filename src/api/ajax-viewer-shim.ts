@@ -4,6 +4,7 @@ import { MgError } from "./error";
 import * as logger from "../utils/logger";
 import { RuntimeMap } from "./contracts/runtime-map";
 import { FeatureSet, SelectedFeatureSet } from "./contracts/query";
+import { RuntimeMapFeatureFlags } from "./request-builder";
 
 interface IAjaxViewerPoint {
     X: number;
@@ -243,7 +244,18 @@ export class AjaxViewerShim {
     }
     public fullRefresh(): void {
         this.map.Refresh();
-        logger.warn("TODO: Refresh legend as well");
+        const client = this.app.getClient();
+        client.describeRuntimeMap({
+            mapname: this.app.getMapName(),
+            session: this.app.getSession(),
+            requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups
+        }).then(res => {
+            //TODO: Yeah yeah, shouldn't directly mess with other component's states
+            this.app.setState({ runtimeMap: res });
+        }).catch(err => {
+            //TODO: Yeah yeah, shouldn't directly mess with other component's states
+            this.app.setState({ runtimeMap: null, error: err });
+        });
     }
     /**
      * Installs the AJAX viewer shim APIs 

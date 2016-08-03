@@ -107,8 +107,24 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                     }
                 }
             },
-            { icon: "zoom-in-fixed.png", tooltip: "Zoom In" },
-            { icon: "zoom-out-fixed.png", tooltip: "Zoom Out" },
+            { 
+                icon: "zoom-in-fixed.png", tooltip: "Zoom In",
+                invoke: () => {
+                    const viewer = this.getViewer();
+                    if (viewer) {
+                        viewer.zoomDelta(1);
+                    }
+                } 
+            },
+            { 
+                icon: "zoom-out-fixed.png", tooltip: "Zoom Out",
+                invoke: () => {
+                    const viewer = this.getViewer();
+                    if (viewer) {
+                        viewer.zoomDelta(-1);
+                    }
+                } 
+            },
             { 
                 icon: "zoom-full.png", tooltip: "Zoom Extents", 
                 invoke: () => {

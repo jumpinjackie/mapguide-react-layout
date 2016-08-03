@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import * as ol from "openlayers";
-import { 
+import {
     IApplicationContext,
     IMapViewerContext,
     IMapView,
@@ -38,6 +38,7 @@ export interface IMapViewer extends IMapViewerContext {
     getActiveTool(): ActiveMapTool;
     initialView(): void;
     clearSelection(): void;
+    zoomDelta(delta: number): void;
 }
 
 export enum ActiveMapTool {
@@ -45,8 +46,8 @@ export enum ActiveMapTool {
     Select
 }
 
-export class MapViewer extends React.Component<IMapViewerProps, any> 
-                       implements IMapViewerContext, IMapViewer {
+export class MapViewer extends React.Component<IMapViewerProps, any>
+    implements IMapViewerContext, IMapViewer {
     /**
      * The internal OpenLayers map instance
      * 
@@ -180,7 +181,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
                 finiteScales.push(map.FiniteDisplayScale[i]);
             }
         }
-        
+
         //If a tile set definition is defined it takes precedence over the map definition, this enables
         //this example to work with older releases of MapGuide where no such resource type exists.
         const resourceId = map.TileSetDefinition || map.MapDefinition;
@@ -196,17 +197,17 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         for (let i = 0; i < finiteScales.length; ++i) {
             resolutions[i] = this.scaleToResolution(finiteScales[i]);
         }
-        
+
         if (map.CoordinateSystem.EpsgCode.length > 0) {
             projection = `EPSG:${map.CoordinateSystem.EpsgCode}`;
         }
-        
+
         const tileGrid = new ol.tilegrid.TileGrid({
             origin: ol.extent.getTopLeft(this._extent),
             resolutions: resolutions,
             tileSize: [tileWidth, tileHeight]
         });
-        
+
         const groupLayers = [];
         for (let i = 0; i < map.Group.length; i++) {
             const group = map.Group[i];
@@ -225,7 +226,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
                 })
             );
         }
-        
+
         /*
         if (groupLayers.length > 0) {
             groupLayers.push( 
@@ -244,7 +245,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
             );
         }
         */
-        
+
         this._overlay = new ol.layer.Image({
             //name: "MapGuide Dynamic Overlay",
             extent: this._extent,
@@ -279,7 +280,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
                 ratio: 2
             })
         });
-        
+
         for (var i = groupLayers.length - 1; i >= 0; i--) {
             layers.push(groupLayers[i]);
         }
@@ -314,7 +315,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         //Set initial view
         const center = view.getCenter();
         this._initialView = { x: center[0], y: center[1], scale: this.resolutionToScale(view.getResolution()) };
-        this.setState({ navigationStack: [ this._initialView ] });
+        this.setState({ navigationStack: [this._initialView] });
         if (this.props.onViewChanged != null) {
             this.props.onViewChanged(this._initialView);
         }
@@ -350,17 +351,17 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
             const ptBuffer = this.props.pointSelectionBuffer || 2;
             const ll = this._map.getCoordinateFromPixel([e.pixel[0] - ptBuffer, e.pixel[1] - ptBuffer]);
             const ur = this._map.getCoordinateFromPixel([e.pixel[0] + ptBuffer, e.pixel[1] + ptBuffer]);
-            const box = [ ll[0], ll[1], ur[0], ur[1] ];
+            const box = [ll[0], ll[1], ur[0], ur[1]];
             const geom = ol.geom.Polygon.fromExtent(box);
             const selLayerNames = (this.props.onRequestSelectedLayers != null)
-                ? this.props.onRequestSelectedLayers() 
-                : null; 
+                ? this.props.onRequestSelectedLayers()
+                : null;
             this.sendSelectionQuery(geom, selLayerNames);
         }
     }
     private sendSelectionQuery(geom, selectedLayerNames, persist = 1) {
         const reqQueryFeatures = 1 | 2; //Attributes and inline selection
-	    const wkt = this._wktFormat.writeGeometry(geom);
+        const wkt = this._wktFormat.writeGeometry(geom);
         const client = this.context.getClient();
         client.queryMapFeatures({
             mapname: this.context.getMapName(),
@@ -380,16 +381,29 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
                 this.props.onSelectionChange(res);
         });
     }
-    updateScale(scale) {
+    private zoomByDelta(delta) {
+        const view = this._map.getView();
+        if (!view) {
+            return;
+        }
+        const currentResolution = view.getResolution();
+        if (currentResolution) {
+            this._map.beforeRender(ol.animation.zoom({
+                resolution: currentResolution,
+                duration: 250,
+                easing: ol.easing.easeOut
+            }));
+            const newResolution = view.constrainResolution(currentResolution, delta);
+            view.setResolution(newResolution);
+        }
+    }
+    private updateScale(scale) {
         const view = this.getView();
         this.pushView({ x: view.x, y: view.y, scale: scale });
     }
-    componentWillUnmount() {
-        
-    }
     private getTileUrlFunctionForGroup(resourceId, groupName, zOrigin) {
         const urlTemplate = this.context.getClient().getTileTemplateUrl(resourceId, groupName, '{x}', '{y}', '{z}');
-        return function(tileCoord) {
+        return function (tileCoord) {
             return urlTemplate
                 .replace('{z}', (zOrigin - tileCoord[0]).toString())
                 .replace('{x}', tileCoord[1].toString())
@@ -399,8 +413,11 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
     render(): JSX.Element {
         return <div style={{ width: "100%", height: "100%" }} />;
     }
+    componentWillUnmount() {
+
+    }
     //-------- IMapViewerContext ---------//
-    getView(): IMapView {
+    public getView(): IMapView {
         const stack = this.state.navigationStack;
         if (stack && stack.length > 0) {
             return stack[stack.length - 1];
@@ -408,7 +425,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
             return null;
         }
     }
-    pushView(view: IMapView): void {
+    public pushView(view: IMapView): void {
         const currentView = this.getView();
         //Short-circuit: Don't bother recording identical or insignificantly different views
         if (currentView != null &&
@@ -425,7 +442,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
             this.props.onViewChanged(view);
         }
     }
-    popView(): IMapView {
+    public popView(): IMapView {
         const state = this.state;
         const view = state.navigationStack.pop();
         this.setState(state);
@@ -462,7 +479,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
     public zoomToView(x: number, y: number, scale: number): void {
         if (this._map) {
             const view = this._map.getView();
-            view.setCenter([ x, y ]);
+            view.setCenter([x, y]);
             view.setResolution(this.scaleToResolution(scale));
         }
     }
@@ -512,6 +529,9 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
     }
     public clearSelection(): void {
         this.setSelectionXml("");
+    }
+    public zoomDelta(delta: number): void {
+        this.zoomByDelta(delta);
     }
     //------------------------------------//
 }

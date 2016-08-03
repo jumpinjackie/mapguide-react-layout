@@ -2,7 +2,7 @@ import * as React from "react";
 import { isMenu } from "../utils/type-guards";
 
 export const TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";
-export const DEFAULT_TOOLBAR_HEIGHT = 32;
+export const DEFAULT_TOOLBAR_HEIGHT = 30;
 const TOOLBAR_STYLE = {
     backgroundColor: TOOLBAR_BACKGROUND_COLOR,
     border: "1px solid rgb(240, 240, 240)"
@@ -31,7 +31,7 @@ function getIconStyle(enabled: boolean, height: number): React.CSSProperties {
     return imgStyle;
 }
 
-function getItemStyle(enabled: boolean, height: number, isMouseOver: boolean): React.CSSProperties {
+function getItemStyle(enabled: boolean, selected: boolean, height: number, isMouseOver: boolean): React.CSSProperties {
     const pad = ((height - 16) / 2);
     const style: React.CSSProperties = {
         display: "inline-block",
@@ -41,7 +41,7 @@ function getItemStyle(enabled: boolean, height: number, isMouseOver: boolean): R
         paddingTop: 6,
         paddingBottom: 6
     };
-    if (enabled && isMouseOver === true) {
+    if (enabled && (isMouseOver === true || selected)) {
         style.cursor = "pointer";
         style.border = "1px solid rgb(153, 181, 202)";
         style.paddingLeft = pad - 1; //To compensate for border
@@ -76,9 +76,10 @@ class FlyoutMenuItem extends React.Component<IFlyoutMenuItemProps, any> {
     }
     render(): JSX.Element {
         const { height, menu } = this.props;
+        const selected = menu.selected != null ? menu.selected() : false;
         const enabled = menu.enabled != null ? menu.enabled() : true;
         const imgStyle = getIconStyle(enabled, height);
-        const style = getItemStyle(enabled, height, this.state.isMouseOver);
+        const style = getItemStyle(enabled, selected, height, this.state.isMouseOver);
         return <div style={style} title={menu.tooltip}>
             <img style={imgStyle} src={getIcon(menu.icon || "ui-menu.png")} /> {menu.label}
         </div>;
@@ -93,10 +94,12 @@ interface IToolbarButtonProps {
 class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
     fnMouseLeave: (e) => void;
     fnMouseEnter: (e) => void;
+    fnClick: (e) => void;
     constructor(props) {
         super(props);
         this.fnMouseEnter = this.onMouseEnter.bind(this);
         this.fnMouseLeave = this.onMouseLeave.bind(this);
+        this.fnClick = this.onClick.bind(this);
         this.state = {
             isMouseOver: false
         };
@@ -107,13 +110,22 @@ class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
     onMouseEnter(e) {
         this.setState({ isMouseOver: true });
     }
+    onClick(e) {
+        e.preventDefault();
+        const { item } = this.props;
+        const enabled = item.enabled != null ? item.enabled() : true;
+        if (enabled) {
+            item.invoke();
+        }
+        return false;
+    }
     render(): JSX.Element {
         const { height, item } = this.props;
+        const selected = item.selected != null ? item.selected() : false;
         const enabled = item.enabled != null ? item.enabled() : true;
         const imgStyle = getIconStyle(enabled, height);
-        const style = getItemStyle(enabled, height, this.state.isMouseOver);
-        const handler = enabled ? item.invoke : null;
-        return <div onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} style={style} title={item.tooltip} onClick={handler}>
+        const style = getItemStyle(enabled, selected, height, this.state.isMouseOver);
+        return <div onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} style={style} title={item.tooltip} onClick={this.fnClick}>
             <img style={imgStyle} src={getIcon(item.icon)} />
         </div>;
     }
@@ -123,8 +135,9 @@ export interface IItem {
     label?: string;
     tooltip?: string;
     icon?: string;
-    invoke?: (e) => void;
+    invoke?: () => void;
     enabled?: () => boolean;
+    selected?: () => boolean;
 }
 
 export interface IMenu extends IItem {

@@ -34,6 +34,10 @@ export interface IMapViewer extends IMapViewerContext {
     setSelectionXml(xml: string): void;
     refreshMap(mode?: RefreshMode): void;
     getMetersPerUnit(): number;
+    setActiveTool(tool: ActiveMapTool): void;
+    getActiveTool(): ActiveMapTool;
+    initialView(): void;
+    clearSelection(): void;
 }
 
 export enum ActiveMapTool {
@@ -76,6 +80,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
 
     private _inPerUnit: number;
     private _dpi: number;
+    private _extent: ol.Extent;
 
     context: IApplicationContext;
     /**
@@ -163,7 +168,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         const { map, agentUri, imageFormat } = this.props;
         const mapNode = ReactDOM.findDOMNode(this);
         const layers = [];
-        const extent = [
+        this._extent = [
             map.Extents.LowerLeftCoordinate.X,
             map.Extents.LowerLeftCoordinate.Y,
             map.Extents.UpperRightCoordinate.X,
@@ -197,7 +202,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         }
         
         const tileGrid = new ol.tilegrid.TileGrid({
-            origin: ol.extent.getTopLeft(extent),
+            origin: ol.extent.getTopLeft(this._extent),
             resolutions: resolutions,
             tileSize: [tileWidth, tileHeight]
         });
@@ -242,7 +247,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         
         this._overlay = new ol.layer.Image({
             //name: "MapGuide Dynamic Overlay",
-            extent: extent,
+            extent: this._extent,
             source: new ol.source.ImageMapGuide({
                 projection: projection,
                 url: agentUri,
@@ -259,7 +264,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         });
         this._selectionOverlay = new ol.layer.Image({
             //name: "MapGuide Dynamic Overlay",
-            extent: extent,
+            extent: this._extent,
             source: new ol.source.ImageMapGuide({
                 projection: projection,
                 url: agentUri,
@@ -305,7 +310,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
                 new ol.control.Attribution()
             ]
         });
-        view.fit(extent, this._map.getSize());
+        view.fit(this._extent, this._map.getSize());
         //Set initial view
         const center = view.getCenter();
         this._initialView = { x: center[0], y: center[1], scale: this.resolutionToScale(view.getResolution()) };
@@ -368,6 +373,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
             maxfeatures: -1,
             requestdata: reqQueryFeatures
         }).then(res => {
+            this.refreshMap(RefreshMode.SelectionOnly);
             //Only broadcast if persistent change, otherwise it's transient
             //so the current selection set is still the same
             if (persist === 1 && this.props.onSelectionChange != null)
@@ -391,7 +397,6 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         };
     }
     render(): JSX.Element {
-        const props: any = this.props;
         return <div style={{ width: "100%", height: "100%" }} />;
     }
     //-------- IMapViewerContext ---------//
@@ -495,6 +500,18 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
     }
     public getMetersPerUnit(): number {
         return this._inPerUnit / 39.37;
+    }
+    public getActiveTool(): ActiveMapTool {
+        return this.state.tool;
+    }
+    public setActiveTool(tool: ActiveMapTool): void {
+        this.setState({ tool: tool });
+    }
+    public initialView(): void {
+        this._map.getView().fit(this._extent, this._map.getSize());
+    }
+    public clearSelection(): void {
+        this.setSelectionXml("");
     }
     //------------------------------------//
 }

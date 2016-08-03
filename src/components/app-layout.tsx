@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import { CreateRuntimeMapFeatureFlags, IMapGuideClient } from "../api/request-builder";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { TaskPane } from "./task-pane";
-import { MapViewer, IMapViewer } from "./map-viewer";
+import { MapViewer, IMapViewer, ActiveMapTool } from "./map-viewer";
 import { Legend, MapElementChangeFunc } from "./legend";
 import { ClientContext, ClientKind } from "../api/client";
 import { IMapView, IApplicationContext, APPLICATION_CONTEXT_VALIDATION_MAP } from "./context";
@@ -75,10 +75,58 @@ export class Application extends React.Component<IApplicationProps, any> impleme
             error: null
         };
         this.commands = [
-            { icon: "select.png", tooltip: "Select" },
+            { 
+                icon: "select.png", tooltip: "Select",
+                selected: () => {
+                    const viewer = this.getViewer();
+                    if (viewer) {
+                        return viewer.getActiveTool() === ActiveMapTool.Select;
+                    }
+                    return false;
+                },
+                invoke: () => {
+                    const viewer = this.getViewer();
+                    if (viewer) {
+                        viewer.setActiveTool(ActiveMapTool.Select);
+                    }
+                }
+            },
+            { 
+                icon: "zoom-in.png", tooltip: "Zoom",
+                selected: () => {
+                    const viewer = this.getViewer();
+                    if (viewer) {
+                        return viewer.getActiveTool() === ActiveMapTool.ZoomPan;
+                    }
+                    return false;
+                },
+                invoke: () => {
+                    const viewer = this.getViewer();
+                    if (viewer) {
+                        viewer.setActiveTool(ActiveMapTool.ZoomPan);
+                    }
+                }
+            },
             { icon: "zoom-in-fixed.png", tooltip: "Zoom In" },
             { icon: "zoom-out-fixed.png", tooltip: "Zoom Out" },
-            { icon: "zoom-full.png", tooltip: "Zoom Extents" },
+            { 
+                icon: "zoom-full.png", tooltip: "Zoom Extents", 
+                invoke: () => {
+                    const viewer = this.getViewer();
+                    if (viewer) {
+                        viewer.initialView();
+                    }
+                } 
+            },
+            { 
+                icon: "select-clear.png", tooltip: "Clear Selection",
+                invoke: () => {
+                    const viewer = this.getViewer();
+                    if (viewer) {
+                        viewer.clearSelection();
+                    }
+                }
+            },
             { icon: "buffer.png", tooltip: "Buffer", invoke: () => this._taskpane.loadUrl("/mapguide/mapviewernet/bufferui.aspx") },
             { icon: "measure.png", tooltip: "Measure", invoke: () => this._taskpane.loadUrl("/mapguide/mapviewernet/measureui.aspx") },
             { icon: "print.png", tooltip: "Quick Plot", invoke: () => this._taskpane.loadUrl("/mapguide/mapviewernet/quickplotpanel.aspx") }

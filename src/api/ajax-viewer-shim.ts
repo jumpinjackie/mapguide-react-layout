@@ -40,7 +40,10 @@ export class MapShim {
         return this.app.getSession() != null;
     }
     public ClearSelection(): void {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.ClearSelection()`);
+        const viewer = this.app.getViewer();
+        if (viewer) {
+            viewer.clearSelection();
+        }
     }
     public DigitizeCircle(handler): void {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.DigitizeCircle(handler)`);

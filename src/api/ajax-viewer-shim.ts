@@ -61,7 +61,12 @@ export class MapShim {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.DigitizeRectangle(handler)`);
     }
     public GetCenter(): IAjaxViewerPoint {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetCenter())`);
+        const viewer = this.app.getViewer();
+        if (viewer) {
+            const view = viewer.getView();
+            return { X: view.x, Y: view.y };
+        }
+        return null;
     }
     public GetLayers(onlyVisible: boolean, onlySelectable: boolean): IAjaxViewerLayer[] {
         const selLayers: IAjaxViewerLayer[] = [];
@@ -96,7 +101,12 @@ export class MapShim {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetMapWidth()`);
     }
     public GetScale(): number {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetScale()`);
+        const viewer = this.app.getViewer();
+        if (viewer) {
+            const view = viewer.getView();
+            return view.scale;
+        }
+        return null;
     }
     public GetSelectedLayers(): IAjaxViewerLayer[] {
         const selLayers: IAjaxViewerLayer[] = [];

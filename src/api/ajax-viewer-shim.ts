@@ -3,7 +3,7 @@ import { RefreshMode } from "../components/map-viewer";
 import { MgError } from "./error";
 import * as logger from "../utils/logger";
 import { RuntimeMap } from "./contracts/runtime-map";
-import { FeatureSet } from "./contracts/query";
+import { FeatureSet, SelectedFeatureSet } from "./contracts/query";
 
 interface IAjaxViewerPoint {
     X: number;
@@ -137,10 +137,42 @@ export class MapShim {
         return this.app.getSession();
     }
     public GetSelectedBounds(): IAjaxViewerBounds {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetSelectedBounds()`);
+        let bounds: IAjaxViewerBounds = null;
+        const selection = this.app.state.selection;
+        if (selection && selection.SelectedFeatures) {
+            const fset: SelectedFeatureSet = selection.SelectedFeatures;
+            fset.SelectedLayer.forEach(layer => {
+                layer.Feature.forEach(feature => {
+                    const bbox = feature.Bounds.split(" ").map(s => parseFloat(s));
+                    if (bounds == null) {
+                        bounds = { minx: bbox[0], miny: bbox[1], maxx: bbox[2], maxy: bbox[3] };
+                    } else {
+                        if (bbox[0] < bounds.minx)
+                            bounds.minx = bbox[0];
+                        if (bbox[1] < bounds.miny)
+                            bounds.miny = bbox[1];
+                        if (bbox[2] > bounds.maxx)
+                            bounds.maxx = bbox[2];
+                        if (bbox[3] > bounds.maxy)
+                            bounds.maxy = bbox[3];
+                    }
+                });
+            });
+        }
+        return bounds;
     }
     public GetSelectedCount(): number {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetSelectedCount()`);
+        let count = 0;
+        const selection = this.app.state.selection;
+        if (selection && selection.FeatureSet) {
+            const fset: FeatureSet = selection.FeatureSet;
+            fset.Layer.forEach(layer => {
+                layer.Class.ID.forEach(element => {
+                    count++;
+                });
+            });
+        }
+        return count;
     }
     public GetSelectedFeatures(): IAjaxViewerSelectionSet {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetSelectedFeatures()`);

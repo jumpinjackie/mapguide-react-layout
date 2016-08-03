@@ -184,7 +184,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                 <Toolbar childItems={this.taskMenu} containerStyle={{ position: "absolute", top: 0, right: 0, height: DEFAULT_TOOLBAR_HEIGHT }} />
             </div>
             <div style={{ position: "absolute", top: DEFAULT_TOOLBAR_HEIGHT, left: 0, right: 0, bottom: 0, overflow: "hidden" }}>
-                <iframe ref={this.fnFrameMounted} onLoad={this.fnFrameLoaded} style={{ border: "none", width: "100%", height: "100%" }}>
+                <iframe name="taskPaneFrame" ref={this.fnFrameMounted} onLoad={this.fnFrameLoaded} style={{ border: "none", width: "100%", height: "100%" }}>
                 
                 </iframe>
                 <iframe name="scriptFrame" style={{ width: 0, height: 0, visibility: "hidden" }}></iframe>

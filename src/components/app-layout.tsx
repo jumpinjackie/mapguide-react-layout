@@ -10,6 +10,8 @@ import { IMapView, IApplicationContext, APPLICATION_CONTEXT_VALIDATION_MAP } fro
 import { AjaxViewerShim } from "../api/ajax-viewer-shim";
 import { SelectionPanel } from "./selection-panel";
 import { Toolbar, DEFAULT_TOOLBAR_HEIGHT, TOOLBAR_BACKGROUND_COLOR, IItem } from "./toolbar";
+import { buildSelectionXml } from "../api/builders/deArrayify";
+import { FormFrameShim } from "./form-frame-shim";
 
 export interface IApplicationProps {
     /**
@@ -43,6 +45,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     private fnLegendMounted: (component) => void;
     private fnMapViewerMounted: (component) => void;
     private fnTaskPaneMounted: (component) => void;
+    private fnFormFrameMounted: (component) => void;
     private fnGroupVisibilityChanged: MapElementChangeFunc;
     private fnLayerVisibilityChanged: MapElementChangeFunc;
     private fnViewChanged: (view: IMapView) => void;
@@ -51,6 +54,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     private _viewer: any;
     private _legend: Legend;
     private _taskpane: TaskPane;
+    private _formFrame: FormFrameShim;
     private commands: IItem[]; 
     private clientContext: ClientContext;
     static childContextTypes = APPLICATION_CONTEXT_VALIDATION_MAP;
@@ -60,6 +64,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         this.fnMapViewerMounted = this.onMapViewerMounted.bind(this);
         this.fnTaskPaneMounted = this.onTaskPaneMounted.bind(this);
         this.fnViewChanged = this.onViewChanged.bind(this);
+        this.fnFormFrameMounted = this.onFormFrameMounted.bind(this);
         this.fnGroupVisibilityChanged = this.onGroupVisibilityChanged.bind(this);
         this.fnLayerVisibilityChanged = this.onLayerVisibilityChanged.bind(this);
         this.fnSelectionChange = this.onSelectionChange.bind(this);
@@ -152,6 +157,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                 {/* <TaskPane ref={this.fnTaskPaneMounted} initialUrl="/mapguide/localized/help/en/mapguide_viewer_command_list.htm" /> */}
                     <TaskPane ref={this.fnTaskPaneMounted} initialUrl="/mapguide/phpsamples/index.php" />
                 </div>
+                <FormFrameShim ref={this.fnFormFrameMounted} />
             </div>;
         } else {
             if (this.state.error != null) {
@@ -166,9 +172,22 @@ export class Application extends React.Component<IApplicationProps, any> impleme
             }
         }
     }
+    public getSelectionXml(): string {
+        const { selection } = this.state;
+        if (!selection || !selection.FeatureSet) {
+            return "";
+        } else {
+            return buildSelectionXml(selection.FeatureSet);
+        }
+    }
     public getViewer(): IMapViewer {
         var viewer = this._viewer.refs['wrappedInstance'];
         return viewer;
+    }
+    public submitForm(url: string, params: string[], frameTarget: string) {
+        if (this._formFrame) {
+            this._formFrame.submit(url, params, frameTarget);
+        }
     }
     private onZoomToSelectedFeature(feature: any) {
 
@@ -184,6 +203,9 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     }
     private onTaskPaneMounted(component) {
         this._taskpane = component;
+    }
+    private onFormFrameMounted(component) {
+        this._formFrame = component;
     }
     private onGroupVisibilityChanged(groupId: string, visible: boolean) {
         const viewer = this.getViewer();

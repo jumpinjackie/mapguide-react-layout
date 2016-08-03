@@ -87,6 +87,11 @@ export interface IQueryMapFeaturesOptions extends IRuntimeMapRequest {
      * @type {number}
      */
     persist?: number;
+    /**
+     * An optional selection XML string. If specified, the rendering/query will be based off of
+     * a selection initialized with this selection XML
+     */
+    featurefilter?: string;
 }
 
 export interface IDescribeRuntimeMapOptions extends IRuntimeMapRequest {

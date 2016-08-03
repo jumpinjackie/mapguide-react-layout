@@ -1,4 +1,5 @@
 import { Application } from "../components/app-layout";
+import { RefreshMode } from "../components/map-viewer";
 import { MgError } from "./error";
 import * as logger from "../utils/logger";
 
@@ -67,7 +68,7 @@ export class MapShim {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetMapHeight()`);
     }
     public GetMapName(): string {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetMapName()`);
+        return this.app.getMapName();
     }
     public GetMapUnitsType(): string {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetMapUnitsType()`);
@@ -82,10 +83,10 @@ export class MapShim {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetSelectedLayers()`);
     }
     public GetSelectionXML(): string {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetSelectionXML()`);
+        return this.app.getSelectionXml();
     }
     public GetSessionId(): string {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetSessionId()`);
+        return this.app.getSession();
     }
     public GetSelectedBounds(): IAjaxViewerBounds {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetSelectedBounds()`);
@@ -109,7 +110,8 @@ export class MapShim {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.MapUnitsToLatLon(x, y)`);
     }
     public Refresh(): void {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.Refresh()`);
+        const viewer = this.app.getViewer();
+        viewer.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
     }
     public ScreenToMapUnits(x: number, y: number): IAjaxViewerPoint {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.ScreenToMapUnits(x, y)`);
@@ -121,11 +123,22 @@ export class MapShim {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.SetLatLongDisplayUnits(latLon)`);
     }
     public SetSelectionXML(xmlSet): void {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.SetSelectionXML(xmlSet)`);
+        const viewer = this.app.getViewer();
+        viewer.setSelectionXml(xmlSet);
     }
     public ZoomToView(x: number, y: number, scale: number, refresh: boolean) {
         const viewer = this.app.getViewer();
         viewer.zoomToView(x, y, scale);
+    }
+    //This isn't in the AJAX Viewer API reference, but there are samples referencing it!
+    public ZoomToScale(scale: number): void {
+        const viewer = this.app.getViewer();
+        const view = viewer.getView();
+        viewer.zoomToView(view.x, view.y, scale);
+    }
+    //Form frame
+    public Submit(url: string, params: string[], frameTarget: string) {
+        this.app.submitForm(url, params, frameTarget);
     }
 }
 
@@ -136,12 +149,18 @@ export class MapShim {
  * @class AjaxViewerShim
  */
 export class AjaxViewerShim {
+    private app: Application;
     private map: MapShim;
     constructor(app: Application) {
         this.map = new MapShim(app);
+        this.app = app;
     }
     public getMapShim(): MapShim {
         return this.map;
+    }
+    public fullRefresh(): void {
+        this.map.Refresh();
+        logger.warn("TODO: Refresh legend as well");
     }
     /**
      * Installs the AJAX viewer shim APIs 
@@ -162,7 +181,9 @@ export class AjaxViewerShim {
         //NOTE: mapFrame is technically not part of the "public" API for the AJAX viewer, but since most examples test
         //for this in place of GetMapFrame(), we might as well emulate it here
         browserWindow.mapFrame = browserWindow.GetMapFrame();
+        browserWindow.formFrame = browserWindow.mapFrame;
 
+        browserWindow.Refresh = browserWindow.Refresh || (() => shim.fullRefresh());
         browserWindow.SetSelectionXML = browserWindow.SetSelectionXML || ((xmlSet) => map.SetSelectionXML(xmlSet));
         browserWindow.ZoomToView = browserWindow.ZoomToView || ((x, y, scale, refresh) => map.ZoomToView(x, y, scale, refresh)); 
     }

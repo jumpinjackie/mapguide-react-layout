@@ -25,8 +25,15 @@ export interface IMapViewerProps {
     pointSelectionBuffer?: number;
 }
 
+export enum RefreshMode {
+    LayersOnly = 1,
+    SelectionOnly = 2
+}
+
 export interface IMapViewer extends IMapViewerContext {
     zoomToView(x: number, y: number, scale: number): void;
+    setSelectionXml(xml: string): void;
+    refreshMap(mode?: RefreshMode): void;
 }
 
 export enum ActiveMapTool {
@@ -50,6 +57,13 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
      * @type {ol.layer.Image}
      */
     private _overlay: ol.layer.Image;
+    /**
+     * The MapGuide selection overlay image layer
+     * 
+     * @private
+     * @type {ol.layer.Image}
+     */
+    private _selectionOverlay: ol.layer.Image;
     /**
      * The initial map view
      * 
@@ -243,11 +257,29 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
                 ratio: 2
             })
         });
+        this._selectionOverlay = new ol.layer.Image({
+            //name: "MapGuide Dynamic Overlay",
+            extent: extent,
+            source: new ol.source.ImageMapGuide({
+                projection: projection,
+                url: agentUri,
+                useOverlay: true,
+                metersPerUnit: metersPerUnit,
+                params: {
+                    MAPNAME: map.Name,
+                    FORMAT: 'PNG',
+                    SESSION: map.SessionId,
+                    BEHAVIOR: 1 | 4 //selected features + include outside current scale
+                },
+                ratio: 2
+            })
+        });
         
         for (var i = groupLayers.length - 1; i >= 0; i--) {
             layers.push(groupLayers[i]);
         }
         layers.push(this._overlay);
+        layers.push(this._selectionOverlay);
         /*
         console.log("Draw Order:");
         for (var i = 0; i < layers.length; i++) {
@@ -340,7 +372,7 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
             //so the current selection set is still the same
             if (persist === 1 && this.props.onSelectionChange != null)
                 this.props.onSelectionChange(res);
-        })
+        });
     }
     updateScale(scale) {
         const view = this.getView();
@@ -427,6 +459,38 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
             const view = this._map.getView();
             view.setCenter([ x, y ]);
             view.setResolution(this.scaleToResolution(scale));
+        }
+    }
+    public setSelectionXml(xml: string): void {
+        const reqQueryFeatures = 1 | 2; //Attributes and inline selection
+        const client = this.context.getClient();
+        client.queryMapFeatures({
+            mapname: this.context.getMapName(),
+            session: this.context.getSession(),
+            persist: 1,
+            featurefilter: xml,
+            selectioncolor: "0xFF000000",
+            selectionformat: "PNG8",
+            maxfeatures: -1,
+            requestdata: reqQueryFeatures
+        }).then(res => {
+            this.refreshMap(RefreshMode.SelectionOnly);
+            if (this.props.onSelectionChange != null)
+                this.props.onSelectionChange(res);
+        })
+    }
+    public refreshMap(mode: RefreshMode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly): void {
+        if ((mode & RefreshMode.LayersOnly) == RefreshMode.LayersOnly) {
+            const imgSource = this._overlay.getSource() as ol.source.ImageMapGuide;
+            imgSource.updateParams({
+                seq: (new Date()).getTime()
+            });
+        }
+        if ((mode & RefreshMode.SelectionOnly) == RefreshMode.SelectionOnly) {
+            const imgSource = this._selectionOverlay.getSource() as ol.source.ImageMapGuide;
+            imgSource.updateParams({
+                seq: (new Date()).getTime()
+            });
         }
     }
     //------------------------------------//

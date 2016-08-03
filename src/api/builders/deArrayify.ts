@@ -198,7 +198,7 @@ function deArrayifyFeatureSetClass(json: any): Contracts.Query.FeatureSetClass {
 }
 
 function deArrayifyFeatureSetLayers(json: any[]): Contracts.Query.FeatureSetLayer[] {
-    return json.map(root => {
+    return (json || []).map(root => {
         const layer = {
             "@id": tryGetAsProperty(root, "@id"),
             "@name": tryGetAsProperty(root, "@name"),
@@ -232,7 +232,7 @@ function deArrayifyInlineSelectionImage(json: any): Contracts.Query.SelectionIma
 }
 
 function deArrayifyFeatureProperties(json: any[]): Contracts.Query.FeatureProperty[] {
-    return json.map(root => {
+    return (json || []).map(root => {
         const prop = {
             Name: tryGetAsProperty(root, "Name"),
             Value: tryGetAsProperty(root, "Value")
@@ -242,7 +242,7 @@ function deArrayifyFeatureProperties(json: any[]): Contracts.Query.FeatureProper
 }
 
 function deArrayifyFeatures(json: any[]): Contracts.Query.SelectedFeature[] {
-    return json.map(root => {
+    return (json || []).map(root => {
         const feat = {
             Bounds: tryGetAsProperty(root, "Bounds"),
             Property: deArrayifyFeatureProperties(root.Property)
@@ -252,7 +252,7 @@ function deArrayifyFeatures(json: any[]): Contracts.Query.SelectedFeature[] {
 }
 
 function deArrayifyLayerMetadataProperties(json: any[]): Contracts.Query.LayerPropertyMetadata[] {
-    return json.map(root => {
+    return (json || []).map(root => {
         const prop = {
             DisplayName: tryGetAsProperty(root, "DisplayName"),
             Name: tryGetAsProperty(root, "Name"),
@@ -274,7 +274,7 @@ function deArrayifyLayerMetadata(json: any): Contracts.Query.LayerMetadata {
 }
 
 function deArrayifySelectedLayer(json: any[]): Contracts.Query.SelectedLayer[] {
-    return json.map(root => {
+    return (json || []).map(root => {
         const layer = {
             "@id": tryGetAsProperty(root, "@id"),
             "@name": tryGetAsProperty(root, "@name"),
@@ -287,7 +287,7 @@ function deArrayifySelectedLayer(json: any[]): Contracts.Query.SelectedLayer[] {
 
 function deArrayifySelectedFeatures(json: any): Contracts.Query.SelectedFeatureSet {
     const root = json;
-    if (root.length != 1) {
+    if (root == null || root.length != 1) {
         return null;
     }
     const sf = {
@@ -320,4 +320,21 @@ export function deArrayify(json: any): any {
         keys.push(k);
     }
     throw new MgError(`Unsure how to process JSON response. Root elements are: (${keys.join(", ")})`);
+}
+
+export function buildSelectionXml(selection: Contracts.Query.FeatureSet): string {
+    let xml = '<?xml version="1.0" encoding="utf-8"?>';
+    xml += '<FeatureSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FeatureSet-1.0.0.xsd">';
+    for (const layer of selection.Layer) {
+        xml += `<Layer id="${layer["@id"]}">`;
+        const cls = layer.Class;
+        xml += `<Class id="${cls["@id"]}">`;
+        for (const id of cls.ID) {
+            xml += `<ID>${id}</ID>`;
+        }
+        xml += '</Class>';
+        xml += '</Layer>';
+    }
+    xml += '</FeatureSet>';
+    return xml;
 }

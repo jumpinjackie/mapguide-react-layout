@@ -9,7 +9,6 @@ import {
     MAP_VIEWER_CONTEXT_VALIDATION_MAP
 } from "./context";
 import * as Contracts from '../api/contracts';
-import Dimensions = require("react-dimensions");
 import debounce = require("lodash.debounce");
 import { areNumbersEqual } from '../utils/number';
 import * as logger from '../utils/logger';
@@ -42,8 +41,8 @@ export enum ActiveMapTool {
     Select
 }
 
-class MapViewerBase extends React.Component<IMapViewerProps, any> 
-                    implements IMapViewerContext, IMapViewer {
+export class MapViewer extends React.Component<IMapViewerProps, any> 
+                       implements IMapViewerContext, IMapViewer {
     /**
      * The internal OpenLayers map instance
      * 
@@ -393,7 +392,7 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
     }
     render(): JSX.Element {
         const props: any = this.props;
-        return <div style={{ width: props.containerWidth, height: props.containerHeight }} />;
+        return <div style={{ width: "100%", height: "100%" }} />;
     }
     //-------- IMapViewerContext ---------//
     getView(): IMapView {
@@ -500,4 +499,4 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
     //------------------------------------//
 }
 
-export const MapViewer = Dimensions<IMapViewerProps>({elementResize: true, className: 'react-dimensions-wrapper'})(MapViewerBase);
+//export const MapViewer = Dimensions<IMapViewerProps>({elementResize: true, className: 'react-dimensions-wrapper'})(MapViewerBase);

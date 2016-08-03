@@ -181,7 +181,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         }
     }
     public getViewer(): IMapViewer {
-        var viewer = this._viewer.refs['wrappedInstance'];
+        var viewer = this._viewer; //.refs['wrappedInstance'];
         return viewer;
     }
     public submitForm(url: string, params: string[], frameTarget: string) {

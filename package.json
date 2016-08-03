@@ -6,6 +6,7 @@
     "prebuild": "npm run clean",
     "build": "cross-env NODE_ENV=production webpack -p",
     "build:dev": "cross-env NODE_ENV=development webpack",
+    "watch:dev": "cross-env NODE_ENV=development webpack -w",
     "clean": "rimraf dist/",
     "dev": "cross-env NODE_ENV=development webpack-dev-server -d --inline --hot --progress --no-info",
     "lint": "tslint 'src/**/*.tsx' 'src/**/*.ts' 'test/**/*.tsx' 'test/**/*.ts'",

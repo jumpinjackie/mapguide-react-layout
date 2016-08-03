@@ -149,7 +149,8 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                                imageFormat="PNG" />
                 </div>
                 <div style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: SIDEBAR_WIDTH }}>
-                    <TaskPane ref={this.fnTaskPaneMounted} initialUrl="/mapguide/localized/help/en/mapguide_viewer_command_list.htm" />
+                {/* <TaskPane ref={this.fnTaskPaneMounted} initialUrl="/mapguide/localized/help/en/mapguide_viewer_command_list.htm" /> */}
+                    <TaskPane ref={this.fnTaskPaneMounted} initialUrl="/mapguide/phpsamples/index.php" />
                 </div>
             </div>;
         } else {

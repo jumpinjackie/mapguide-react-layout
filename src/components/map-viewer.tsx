@@ -26,7 +26,7 @@ export interface IMapViewerProps {
 }
 
 export interface IMapViewer extends IMapViewerContext {
-
+    zoomToView(x: number, y: number, scale: number): void;
 }
 
 export enum ActiveMapTool {
@@ -59,6 +59,9 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
     private _initialView: IMapView;
 
     private _wktFormat: ol.format.WKT;
+
+    private _inPerUnit: number;
+    private _dpi: number;
 
     context: IApplicationContext;
     /**
@@ -166,13 +169,13 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
         const tileWidth = map.TileWidth || 300;
         const tileHeight = map.TileHeight || 300;
         const metersPerUnit = map.CoordinateSystem.MetersPerUnit;
-        const dpi = map.DisplayDpi;
+        this._dpi = map.DisplayDpi;
         let projection = null;
         const zOrigin = finiteScales.length - 1;
-        const inPerUnit = 39.37 * metersPerUnit;
+        this._inPerUnit = 39.37 * metersPerUnit;
         const resolutions = new Array(finiteScales.length);
         for (let i = 0; i < finiteScales.length; ++i) {
-            resolutions[i] = finiteScales[i] / inPerUnit / dpi;
+            resolutions[i] = this.scaleToResolution(finiteScales[i]);
         }
         
         if (map.CoordinateSystem.EpsgCode.length > 0) {
@@ -273,7 +276,7 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
         view.fit(extent, this._map.getSize());
         //Set initial view
         const center = view.getCenter();
-        this._initialView = { x: center[0], y: center[1], scale: view.getResolution() * dpi * inPerUnit };
+        this._initialView = { x: center[0], y: center[1], scale: this.resolutionToScale(view.getResolution()) };
         this.setState({ navigationStack: [ this._initialView ] });
         if (this.props.onViewChanged != null) {
             this.props.onViewChanged(this._initialView);
@@ -281,7 +284,7 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
         //Listen for scale changes
 
         this._overlay.getSource().on("imageloadend", (e) => {
-            const newScale = view.getResolution() * dpi * inPerUnit;
+            const newScale = this.resolutionToScale(view.getResolution());
             const newCenter = view.getCenter();
             this.pushView({ x: newCenter[0], y: newCenter[1], scale: newScale });
         });
@@ -298,6 +301,12 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
             this.pushView({ x: newCenter[0], y: newCenter[1], scale: newScale });
         });
         */
+    }
+    private scaleToResolution(scale: number): number {
+        return scale / this._inPerUnit / this._dpi;
+    }
+    private resolutionToScale(resolution: number): number {
+        return resolution * this._dpi * this._inPerUnit;
     }
     private onMapClick(e) {
         if (this.state.tool === ActiveMapTool.Select) {
@@ -412,6 +421,13 @@ class MapViewerBase extends React.Component<IMapViewerProps, any>
         }
         this.setState({ pendingStateChanges: changes });
         this.refreshOnStateChange();
+    }
+    public zoomToView(x: number, y: number, scale: number): void {
+        if (this._map) {
+            const view = this._map.getView();
+            view.setCenter([ x, y ]);
+            view.setResolution(this.scaleToResolution(scale));
+        }
     }
     //------------------------------------//
 }

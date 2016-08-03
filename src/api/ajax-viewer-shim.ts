@@ -124,7 +124,8 @@ export class MapShim {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.SetSelectionXML(xmlSet)`);
     }
     public ZoomToView(x: number, y: number, scale: number, refresh: boolean) {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.ZoomToView(x, ym scale, refresh)`);
+        const viewer = this.app.getViewer();
+        viewer.zoomToView(x, y, scale);
     }
 }
 

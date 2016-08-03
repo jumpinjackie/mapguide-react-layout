@@ -40,19 +40,19 @@ const PROPERTY_PALETTE_HEIGHT = 450;
  * Application is the root component of a MapGuide viewer application
  */
 export class Application extends React.Component<IApplicationProps, any> implements IApplicationContext {
-    fnLegendMounted: (component) => void;
-    fnMapViewerMounted: (component) => void;
-    fnTaskPaneMounted: (component) => void;
-    fnGroupVisibilityChanged: MapElementChangeFunc;
-    fnLayerVisibilityChanged: MapElementChangeFunc;
-    fnViewChanged: (view: IMapView) => void;
-    fnSelectionChange: (selectionSet: any) => void;
-    fnZoomToSelectedFeature: (feature: any) => void;
-    _viewer: any;
-    _legend: Legend;
-    _taskpane: TaskPane;
+    private fnLegendMounted: (component) => void;
+    private fnMapViewerMounted: (component) => void;
+    private fnTaskPaneMounted: (component) => void;
+    private fnGroupVisibilityChanged: MapElementChangeFunc;
+    private fnLayerVisibilityChanged: MapElementChangeFunc;
+    private fnViewChanged: (view: IMapView) => void;
+    private fnSelectionChange: (selectionSet: any) => void;
+    private fnZoomToSelectedFeature: (feature: any) => void;
+    private _viewer: any;
+    private _legend: Legend;
+    private _taskpane: TaskPane;
     private commands: IItem[]; 
-    clientContext: ClientContext;
+    private clientContext: ClientContext;
     static childContextTypes = APPLICATION_CONTEXT_VALIDATION_MAP;
     constructor(props) {
         super(props);
@@ -166,36 +166,36 @@ export class Application extends React.Component<IApplicationProps, any> impleme
             }
         }
     }
-    private getViewer(): IMapViewer {
+    public getViewer(): IMapViewer {
         var viewer = this._viewer.refs['wrappedInstance'];
         return viewer;
     }
-    onZoomToSelectedFeature(feature: any) {
+    private onZoomToSelectedFeature(feature: any) {
 
     }
-    onSelectionChange(selectionSet: any) {
+    private onSelectionChange(selectionSet: any) {
         this.setState({ selection: selectionSet });
     }
-    onLegendMounted(legend: Legend) {
+    private onLegendMounted(legend: Legend) {
         this._legend = legend;
     }
-    onMapViewerMounted(component) {
+    private onMapViewerMounted(component) {
         this._viewer = component;
     }
-    onTaskPaneMounted(component) {
+    private onTaskPaneMounted(component) {
         this._taskpane = component;
     }
-    onGroupVisibilityChanged(groupId: string, visible: boolean) {
+    private onGroupVisibilityChanged(groupId: string, visible: boolean) {
         const viewer = this.getViewer();
         if (viewer != null)
             viewer.setGroupVisibility(groupId, visible);
     }
-    onLayerVisibilityChanged(layerId: string, visible: boolean) {
+    private onLayerVisibilityChanged(layerId: string, visible: boolean) {
         const viewer = this.getViewer();
         if (viewer != null)
             viewer.setLayerVisibility(layerId, visible);
     }
-    onViewChanged(view: IMapView) {
+    private onViewChanged(view: IMapView) {
         if (this._legend != null)
             this._legend.setState({ currentScale: view.scale });
     }

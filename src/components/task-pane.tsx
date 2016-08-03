@@ -132,7 +132,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
     }
     loadUrl(url: string) {
         if (this._iframe) {
-            this._iframe.src = url;
+            this._iframe.src = this.ensureParameters(url);
             //this._iframe.contentWindow.location.replace(url);
         }
     }
@@ -172,7 +172,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
     }
     componentDidMount() {
         if (this.props.initialUrl) {
-            this.loadUrl(this.ensureParameters(this.props.initialUrl));
+            this.loadUrl(this.props.initialUrl);
         }
     }
     render(): JSX.Element {

@@ -2,6 +2,8 @@ import { Application } from "../components/app-layout";
 import { RefreshMode } from "../components/map-viewer";
 import { MgError } from "./error";
 import * as logger from "../utils/logger";
+import { RuntimeMap } from "./contracts/runtime-map";
+import { FeatureSet } from "./contracts/query";
 
 interface IAjaxViewerPoint {
     X: number;
@@ -62,7 +64,24 @@ export class MapShim {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetCenter())`);
     }
     public GetLayers(onlyVisible: boolean, onlySelectable: boolean): IAjaxViewerLayer[] {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetLayers(onlyVisible, onlySelectable)`);
+        const selLayers: IAjaxViewerLayer[] = [];
+        const map: RuntimeMap = this.app.state.runtimeMap;
+        const selection = this.app.state.selection;
+        if (map && selection && selection.FeatureSet) {
+            const fset: FeatureSet = selection.FeatureSet;
+            const ids = fset.Layer.map(l => l["@id"]);
+            for (const layer of map.Layer) {
+                if (ids.indexOf(layer.ObjectId) >= 0) {
+                    if (onlyVisible === true && layer.Visible === true) {
+                        selLayers.push({ legend: layer.LegendLabel, name: layer.Name, objectid: layer.ObjectId });
+                    }
+                    if (onlySelectable === true && layer.Selectable === true) {
+                        selLayers.push({ legend: layer.LegendLabel, name: layer.Name, objectid: layer.ObjectId });
+                    }
+                }
+            }
+        }
+        return selLayers;
     }
     public GetMapHeight(): number {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetMapHeight()`);
@@ -80,7 +99,19 @@ export class MapShim {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetScale()`);
     }
     public GetSelectedLayers(): IAjaxViewerLayer[] {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetSelectedLayers()`);
+        const selLayers: IAjaxViewerLayer[] = [];
+        const map: RuntimeMap = this.app.state.runtimeMap;
+        const selection = this.app.state.selection;
+        if (map && selection && selection.FeatureSet) {
+            const fset: FeatureSet = selection.FeatureSet;
+            const ids = fset.Layer.map(l => l["@id"]);
+            for (const layer of map.Layer) {
+                if (ids.indexOf(layer.ObjectId) >= 0) {
+                    selLayers.push({ legend: layer.LegendLabel, name: layer.Name, objectid: layer.ObjectId });
+                }
+            }
+        }
+        return selLayers;
     }
     public GetSelectionXML(): string {
         return this.app.getSelectionXml();

@@ -27,6 +27,15 @@ export class MapShim {
     constructor(app: Application) {
         this.app = app;
     }
+    /**
+     * Indicates if the map frame is ready
+     * 
+     * Although this not part of the "public" API, most AJAX viewer examples test for this
+     * flag anyways, so we might as well emulate it here
+     */
+    public get mapInit(): boolean {
+        return this.app.getSession() != null;
+    }
     public ClearSelection(): void {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.ClearSelection()`);
     }
@@ -143,7 +152,16 @@ export class AjaxViewerShim {
     public static install(browserWindow: any, app: Application) {
         const shim = new AjaxViewerShim(app);
         const map = shim.getMapShim();
+        //NOTE: A top-level window's parent is itself, what this means is we just need to emulate all the accessible
+        //functions in the AJAX viewer API at the browser window. No matter how many parents the Task Pane JS walks
+        //up, as long as we emulate the functions it's expecting at that particular "frame" in the browser window, 
+        //things should still be fine
+        
         browserWindow.GetMapFrame = browserWindow.GetMapFrame || (() => map);
+        //NOTE: mapFrame is technically not part of the "public" API for the AJAX viewer, but since most examples test
+        //for this in place of GetMapFrame(), we might as well emulate it here
+        browserWindow.mapFrame = browserWindow.GetMapFrame();
+
         browserWindow.SetSelectionXML = browserWindow.SetSelectionXML || ((xmlSet) => map.SetSelectionXML(xmlSet));
         browserWindow.ZoomToView = browserWindow.ZoomToView || ((x, y, scale, refresh) => map.ZoomToView(x, y, scale, refresh)); 
     }

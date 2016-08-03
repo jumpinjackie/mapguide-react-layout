@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as uuid from "node-uuid";
 import { Toolbar, IItem, IMenu, DEFAULT_TOOLBAR_HEIGHT, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
 import { 
     IApplicationContext,

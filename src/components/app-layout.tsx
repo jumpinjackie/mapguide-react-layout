@@ -255,6 +255,9 @@ export class Application extends React.Component<IApplicationProps, any> impleme
             this._formFrame.submit(url, params, frameTarget);
         }
     }
+    public getTaskPane(): TaskPane {
+        return this._taskpane;
+    }
     private onZoomToSelectedFeature(feature: any) {
 
     }

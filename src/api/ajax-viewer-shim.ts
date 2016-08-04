@@ -257,6 +257,12 @@ export class AjaxViewerShim {
             this.app.setState({ runtimeMap: null, error: err });
         });
     }
+    public goHome(): void {
+        const taskPane = this.app.getTaskPane();
+        if (taskPane) {
+            taskPane.goHome();
+        }
+    }
     /**
      * Installs the AJAX viewer shim APIs 
      * 
@@ -280,6 +286,7 @@ export class AjaxViewerShim {
 
         browserWindow.Refresh = browserWindow.Refresh || (() => shim.fullRefresh());
         browserWindow.SetSelectionXML = browserWindow.SetSelectionXML || ((xmlSet) => map.SetSelectionXML(xmlSet));
-        browserWindow.ZoomToView = browserWindow.ZoomToView || ((x, y, scale, refresh) => map.ZoomToView(x, y, scale, refresh)); 
+        browserWindow.ZoomToView = browserWindow.ZoomToView || ((x, y, scale, refresh) => map.ZoomToView(x, y, scale, refresh));
+        browserWindow.GotoHomePage = browserWindow.GotoHomePage || (() => shim.goHome());
     }
 }

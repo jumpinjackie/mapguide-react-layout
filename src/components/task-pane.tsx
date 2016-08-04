@@ -22,6 +22,12 @@ function buildTaskMenu(): IItem[] {
 function buildTaskButtons(pane: TaskPane): IItem[] {
     return [
         {
+            icon: "icon_home.gif",
+            tooltip: "Go Home",
+            enabled: () => pane.canGoHome(),
+            invoke: () => pane.goHome()
+        },
+        {
             icon: "back.png",
             tooltip: "Go back",
             enabled: () => pane.canGoBack(),
@@ -135,6 +141,11 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             //this._iframe.contentWindow.location.replace(url);
         }
     }
+    goHome() {
+        if (this.props.initialUrl && this.canGoHome()) {
+            this.loadUrl(this.props.initialUrl);
+        }
+    }
     goForward() {
         let index = this.state.navIndex;
         const nav = this.state.navigation;
@@ -160,6 +171,11 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
     }
     onForward(e) {
         this.goForward();
+    }
+    canGoHome() {
+        return this.props.initialUrl != null //An initial URL was set
+            && this.state.navigation.length > 0 //We have a navigation stack
+            && this.state.navigation[this.state.navIndex] != this.ensureParameters(this.props.initialUrl); //The current URL is not initial
     }
     canGoBack() {
         const { navIndex } = this.state;

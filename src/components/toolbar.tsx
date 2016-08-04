@@ -167,7 +167,7 @@ class FlyoutMenuItem extends React.Component<IFlyoutMenuItemProps, any> {
         const style = getItemStyle(enabled, selected, height, this.state.isMouseOver);
         return <div className="has-flyout noselect" onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={menu.tooltip}>
             <div data-flyout-id={`flyout-${this.flyoutId}`}>
-                <img style={imgStyle} src={getIcon(menu.icon || "ui-menu.png")} /> {menu.label}
+                <img style={imgStyle} src={getIcon(menu.icon || ((this.state.isFlownOut) ? "icon_menuarrowup.gif" : "icon_menuarrow.gif"))} /> {menu.label}
             </div>
             <FlyoutWrapper id={`flyout-${this.flyoutId}`} open={this.state.isFlownOut} options={{ type: "dropdown", align: menu.flyoutAlign }}>
                 <ul className="mg-flyout-menu-content">

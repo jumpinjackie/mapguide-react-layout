@@ -4,7 +4,7 @@ import FlyoutWrapper from "@aneves/react-flyout";
 import * as uuid from "node-uuid";
 
 export const TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";
-export const DEFAULT_TOOLBAR_HEIGHT = 30;
+export const DEFAULT_TOOLBAR_HEIGHT = 29;
 const TOOLBAR_STYLE = {
     backgroundColor: TOOLBAR_BACKGROUND_COLOR,
     border: "1px solid rgb(240, 240, 240)"

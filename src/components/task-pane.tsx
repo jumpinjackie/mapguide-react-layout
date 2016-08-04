@@ -11,10 +11,15 @@ export interface ITaskPaneProps {
     initialUrl?: string;
 }
 
-function buildTaskMenu(): IItem[] {
+function buildTaskMenu(taskPane: TaskPane): IItem[] {
     const taskMenu: IMenu = {
         label: "Tasks",
-        childItems: []
+        flyoutAlign: "bottom left",
+        childItems: [
+            { icon: "buffer.png", label: "Buffer", invoke: () => taskPane.loadUrl("/mapguide/mapviewernet/bufferui.aspx") },
+            { icon: "measure.png", label: "Measure", invoke: () => taskPane.loadUrl("/mapguide/mapviewernet/measureui.aspx") },
+            { icon: "print.png", label: "Quick Plot", invoke: () => taskPane.loadUrl("/mapguide/mapviewernet/quickplotpanel.aspx") }
+        ]
     };
     return [ taskMenu ];
 }
@@ -68,7 +73,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             navIndex: -1,
             navigation: []
         };
-        this.taskMenu = buildTaskMenu();
+        this.taskMenu = buildTaskMenu(this);
         this.taskButtons = buildTaskButtons(this);
         this._pushLoadedUrl = true;
         this.fnFrameLoaded = this.onFrameLoaded.bind(this);

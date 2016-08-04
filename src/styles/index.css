@@ -1,1 +1,25 @@
 @import "~openlayers/css/ol.css";
+@import '~@aneves/react-flyout/dist/flyout.css';
+
+.mg-flyout-menu-content {
+    width: 200px;
+    font-size: 10pt;
+}
+
+.flyout .flyout__wrapper {
+    padding: 5px;
+}
+
+.flyout.flyout--dropdown .flyout__wrapper > ul > li {
+    padding: 0;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+  -khtml-user-select: none;    /* Konqueror */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* Internet Explorer/Edge */
+  user-select: none;           /* Non-prefixed version, currently
+                                  not supported by any browser */
+}

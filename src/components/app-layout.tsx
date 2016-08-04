@@ -9,7 +9,7 @@ import { ClientContext, ClientKind } from "../api/client";
 import { IMapView, IApplicationContext, APPLICATION_CONTEXT_VALIDATION_MAP } from "./context";
 import { AjaxViewerShim } from "../api/ajax-viewer-shim";
 import { SelectionPanel } from "./selection-panel";
-import { Toolbar, DEFAULT_TOOLBAR_HEIGHT, TOOLBAR_BACKGROUND_COLOR, IItem } from "./toolbar";
+import { Toolbar, DEFAULT_TOOLBAR_HEIGHT, TOOLBAR_BACKGROUND_COLOR, IItem, IMenu } from "./toolbar";
 import { buildSelectionXml } from "../api/builders/deArrayify";
 import { FormFrameShim } from "./form-frame-shim";
 
@@ -56,7 +56,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     private _legend: Legend;
     private _taskpane: TaskPane;
     private _formFrame: FormFrameShim;
-    private commands: IItem[]; 
+    private commands: (IItem|IMenu)[]; 
     private clientContext: ClientContext;
     static childContextTypes = APPLICATION_CONTEXT_VALIDATION_MAP;
     constructor(props) {
@@ -108,26 +108,37 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                     }
                 }
             },
-            { 
-                icon: "zoom-in-fixed.png", tooltip: "Zoom In",
-                invoke: () => {
-                    const viewer = this.getViewer();
-                    if (viewer) {
-                        viewer.zoomDelta(1);
+            {
+                label: "Zoom",
+                childItems: [
+                    { 
+                        icon: "zoom-in-fixed.png",
+                        label: "Zoom In",
+                        tooltip: "Zoom In",
+                        invoke: () => {
+                            const viewer = this.getViewer();
+                            if (viewer) {
+                                viewer.zoomDelta(1);
+                            }
+                        } 
+                    },
+                    { 
+                        icon: "zoom-out-fixed.png",
+                        label: "Zoom Out",
+                        tooltip: "Zoom Out",
+                        invoke: () => {
+                            const viewer = this.getViewer();
+                            if (viewer) {
+                                viewer.zoomDelta(-1);
+                            }
+                        } 
                     }
-                } 
+                ]
             },
             { 
-                icon: "zoom-out-fixed.png", tooltip: "Zoom Out",
-                invoke: () => {
-                    const viewer = this.getViewer();
-                    if (viewer) {
-                        viewer.zoomDelta(-1);
-                    }
-                } 
-            },
-            { 
-                icon: "zoom-full.png", tooltip: "Zoom Extents", 
+                icon: "zoom-full.png",
+                label: "Zoom Extents",
+                tooltip: "Zoom Extents",
                 invoke: () => {
                     const viewer = this.getViewer();
                     if (viewer) {
@@ -136,7 +147,9 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                 } 
             },
             { 
-                icon: "select-clear.png", tooltip: "Clear Selection",
+                icon: "select-clear.png",
+                label: "Clear Selection",
+                tooltip: "Clear Selection",
                 invoke: () => {
                     const viewer = this.getViewer();
                     if (viewer) {
@@ -210,7 +223,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
 	                </div>
                 </div>
                 <div style={{ position: "absolute", left: SIDEBAR_WIDTH, top: 0, bottom: 0, right: SIDEBAR_WIDTH }}>
-                    <Toolbar childItems={this.commands} containerStyle={{ position: "absolute", left: 10, top: 10, height: DEFAULT_TOOLBAR_HEIGHT, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />
+                    <Toolbar childItems={this.commands} containerStyle={{ position: "absolute", left: 10, top: 10, height: DEFAULT_TOOLBAR_HEIGHT, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR, fontFamily: "Verdana, Sans-serif", fontSize: "10pt" }} />
                     <MapViewer ref={this.fnMapViewerMounted}
                                map={this.state.runtimeMap} 
                                agentUri={this.props.agent.uri}

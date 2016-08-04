@@ -2,6 +2,7 @@ import * as React from "react";
 import { IExternalBaseLayer } from "./map-viewer";
 import { RuntimeMap, MapLayer, MapGroup } from "../api/contracts/runtime-map";
 import { ILegendContext, LEGEND_CONTEXT_VALIDATION_MAP } from "./context";
+import { BaseLayerSwitcher } from "./base-layer-switcher";
 import { isLayer } from "../utils/type-guards";
 import { betweenInclusive } from "../utils/number";
 
@@ -21,6 +22,7 @@ const LegendLabel = (props) => {
 export interface ILegendProps {
     map: RuntimeMap;
     externalBaseLayers?: IExternalBaseLayer[];
+    onBaseLayerChanged?: (name: string) => void;
     onLayerVisibilityChanged?: MapElementChangeFunc;
     onGroupVisibilityChanged?: MapElementChangeFunc;
 }
@@ -246,16 +248,13 @@ export class Legend extends React.Component<ILegendProps, any> {
         if (Groups) {
             var remainingGroups = {};
             //1st pass, un-parented groups
-            //for (var i = 0; i < Groups.length; i++) {
             for (const group of Groups) {
                 if (group.ParentId) {
                     remainingGroups[group.ObjectId] = group;
                     continue;
                 }
-                //var el = this.createGroupElement(group);
-                //groupElMap[group.ObjectId] = el;
-                //this.rootEl.append(el);
                 root.push(group);
+                groupChildren[group.ObjectId] = [];
             }
             //2nd pass, parented groups
             var itemCount = 0;
@@ -269,14 +268,14 @@ export class Legend extends React.Component<ILegendProps, any> {
                     var group = remainingGroups[objId];
                     //Do we have a parent?
                     if (typeof(groupChildren[group.ParentId]) != 'undefined') {
-                        //var el = this.createGroupElement(group);
-                        groupChildren[group.ObjectId] = [];
+                        if (typeof(groupChildren[group.ObjectId]) != 'undefined') {
+                            groupChildren[group.ObjectId] = [];
+                        }
                         groupChildren[group.ParentId].push(group);
                         removeIds.push(group.ObjectId);
                     }
                 }
-                //for (var i = 0; i < removeIds.length; i++) {
-                for (const id in removeIds) {
+                for (const id of removeIds) {
                     delete remainingGroups[id];
                 }
             
@@ -287,22 +286,10 @@ export class Legend extends React.Component<ILegendProps, any> {
             }
         }
         if (Layers) {
-            //for (var i = 0; i < Layers.length; i++) {
             for (const layer of Layers) {
-                /*
-                var els = this.createLayerElements(layer);
-                for (var j = 0; j < els.length; j++) {
-                    if (layer.ParentId) {
-                        groupChildren[layer.ParentId].push(els[j]);
-                    } else {
-                        this.rootEl.append(els[j]);
-                    }
-                }
-                */
                 if (layer.ParentId) {
                     //Do we have a parent?
                     if (typeof(groupChildren[layer.ParentId]) === 'undefined') {
-                        //var el = this.createGroupElement(group);
                         groupChildren[layer.ParentId] = [];
                     }
                     groupChildren[layer.ParentId].push(layer);
@@ -316,7 +303,17 @@ export class Legend extends React.Component<ILegendProps, any> {
     }
     render(): JSX.Element {
         const { tree, currentScale } = this.state;
+        const { externalBaseLayers, onBaseLayerChanged } = this.props;
         return <div style={{ fontFamily: "Verdana, Sans-serif", fontSize: "10pt" }}>
+            {(() => {
+                if (externalBaseLayers != null &&
+                    externalBaseLayers.length > 0) {
+                    return <div>
+                        <strong>External Base Layers</strong>
+                        <BaseLayerSwitcher externalBaseLayers={externalBaseLayers} onBaseLayerChanged={onBaseLayerChanged} />
+                    </div>;
+                }
+            })()}
             <ul style={UL_LIST_STYLE}>
             {tree.root.map(item => {
                 if (isLayer(item) && isLayerVisibleAtScale(item, currentScale)) {

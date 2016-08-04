@@ -92,6 +92,8 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
     private _dpi: number;
     private _extent: ol.Extent;
 
+    private _baseLayerGroup: ol.layer.Group;
+
     context: IApplicationContext;
     /**
      * This is a throttled version of _refreshOnStateChange(). Call this on any 
@@ -160,6 +162,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
          * React (no pun intended) to the following prop changes:
          * 
          * - Container size changes (call ol.Map.updateSize())
+         * - Visiblity change of external base layers
          */
         const props: any = this.props;
         if ((nextProps.containerWidth != props.containerWidth ||
@@ -172,6 +175,19 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         }
         if (nextProps.agentUri != props.agentUri) {
             console.warn(`Unsupported change of props: agentUri`);
+        }
+        if (nextProps.externalBaseLayers != null && 
+            nextProps.externalBaseLayers.length > 0 &&
+            this._baseLayerGroup != null) {
+            const layers = this._baseLayerGroup.getLayers();
+            layers.forEach((l: ol.layer.Base) => {
+                const match = nextProps.externalBaseLayers.filter(el => el.name === l.get("title"));
+                if (match.length == 1) {
+                    l.setVisible(match[0].visible);
+                } else {
+                    l.setVisible(false);
+                }
+            })
         }
     }
     componentDidMount() {
@@ -303,7 +319,8 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
                     return new ol.layer.Tile(options)
                 })
             };
-            layers.push(new ol.layer.Group(groupOpts));
+            this._baseLayerGroup = new ol.layer.Group(groupOpts);
+            layers.push(this._baseLayerGroup);
         }
 
         for (var i = groupLayers.length - 1; i >= 0; i--) {

@@ -12,6 +12,7 @@ import { SelectionPanel } from "./selection-panel";
 import { Toolbar, DEFAULT_TOOLBAR_HEIGHT, TOOLBAR_BACKGROUND_COLOR, IItem, IMenu } from "./toolbar";
 import { buildSelectionXml } from "../api/builders/deArrayify";
 import { FormFrameShim } from "./form-frame-shim";
+import assign = require("object-assign");
 
 export interface IApplicationProps {
     /**
@@ -47,6 +48,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     private fnMapViewerMounted: (component) => void;
     private fnTaskPaneMounted: (component) => void;
     private fnFormFrameMounted: (component) => void;
+    private fnBaseLayerChanged: (baseLayerName) => void;
     private fnGroupVisibilityChanged: MapElementChangeFunc;
     private fnLayerVisibilityChanged: MapElementChangeFunc;
     private fnViewChanged: (view: IMapView) => void;
@@ -70,10 +72,12 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         this.fnLayerVisibilityChanged = this.onLayerVisibilityChanged.bind(this);
         this.fnSelectionChange = this.onSelectionChange.bind(this);
         this.fnZoomToSelectedFeature = this.onZoomToSelectedFeature.bind(this);
+        this.fnBaseLayerChanged = this.onBaseLayerChanged.bind(this);
         this.state = {
             selection: null,
             runtimeMap: null,
-            error: null
+            error: null,
+            externalBaseLayers: (props.externalBaseLayers || []).map(l => { return { name: l.name, visible: l.visible === true }; })
         };
         this.commands = [
             { 
@@ -209,12 +213,14 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         const { runtimeMap, selection } = this.state;
         if (runtimeMap) {
             const sel = selection ? selection.SelectedFeatures : null;
+            const externalLayers = this.getActiveExternalBaseLayerState();
             return <div style={{ width: "100%", height: "100%" }}>
                 <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: SIDEBAR_WIDTH }}>
                     <div style={{ position: "absolute", left: 0, top: 0, right: 0, height: LEGEND_HEIGHT, overflow: "auto" }}>
                         <Legend ref={this.fnLegendMounted}
                                 map={this.state.runtimeMap}
-                                externalBaseLayers={this.props.externalBaseLayers}
+                                externalBaseLayers={externalLayers}
+                                onBaseLayerChanged={this.fnBaseLayerChanged}
                                 onGroupVisibilityChanged={this.fnGroupVisibilityChanged}
                                 onLayerVisibilityChanged={this.fnLayerVisibilityChanged} />
                     </div>
@@ -230,7 +236,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                                agentUri={this.props.agent.uri}
                                onViewChanged={this.fnViewChanged}
                                onSelectionChange={this.fnSelectionChange}
-                               externalBaseLayers={this.props.externalBaseLayers}
+                               externalBaseLayers={externalLayers}
                                imageFormat="PNG" />
                 </div>
                 <div style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: SIDEBAR_WIDTH }}>
@@ -271,6 +277,26 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     }
     public getTaskPane(): TaskPane {
         return this._taskpane;
+    }
+    private getActiveExternalBaseLayerState(): IExternalBaseLayer[] {
+        const layers: IExternalBaseLayer[] = [];
+        if (this.props.externalBaseLayers != null) {
+            for (const layer of this.props.externalBaseLayers) {
+                const match = (this.state.externalBaseLayers || []).filter(l => l.name === layer.name);
+                layers.push(assign({}, layer, { visible: (match.length == 1 ? match[0].visible : false) }));
+            }
+        }
+        return layers;
+    }
+    private onBaseLayerChanged(layerName: string) {
+        const layers = this.state.externalBaseLayers;
+        //Clear selection state
+        layers.forEach(l => l.visible = false);
+        const matches = layers.filter(l => l.name === layerName);
+        //Should only be one result here
+        matches.forEach(l => l.visible = true);
+        //Pass back to state
+        this.setState({ externalBaseLayers: layers });
     }
     private onZoomToSelectedFeature(feature: any) {
 

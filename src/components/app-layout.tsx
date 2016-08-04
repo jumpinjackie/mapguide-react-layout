@@ -37,7 +37,7 @@ export interface IApplicationProps {
 }
 
 const SIDEBAR_WIDTH = 250;
-const PROPERTY_PALETTE_HEIGHT = 450;
+const LEGEND_HEIGHT = 350;
 
 /**
  * Application is the root component of a MapGuide viewer application
@@ -210,14 +210,15 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         if (runtimeMap) {
             const sel = selection ? selection.SelectedFeatures : null;
             return <div style={{ width: "100%", height: "100%" }}>
-                <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: SIDEBAR_WIDTH, overflowY: "auto" }}>
-                    <div style={{ position: "absolute", left: 0, top: 0, right: 0 }}>
+                <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: SIDEBAR_WIDTH }}>
+                    <div style={{ position: "absolute", left: 0, top: 0, right: 0, height: LEGEND_HEIGHT, overflow: "auto" }}>
                         <Legend ref={this.fnLegendMounted}
-                                        map={this.state.runtimeMap} 
-                                        onGroupVisibilityChanged={this.fnGroupVisibilityChanged}
-                                        onLayerVisibilityChanged={this.fnLayerVisibilityChanged} />
+                                map={this.state.runtimeMap}
+                                externalBaseLayers={this.props.externalBaseLayers}
+                                onGroupVisibilityChanged={this.fnGroupVisibilityChanged}
+                                onLayerVisibilityChanged={this.fnLayerVisibilityChanged} />
                     </div>
-                    <div style={{ position: "absolute", left: 0, bottom: 0, right: 0, height: PROPERTY_PALETTE_HEIGHT }}>
+                    <div style={{ position: "absolute", left: 0, bottom: 0, right: 0, top: LEGEND_HEIGHT }}>
                         <SelectionPanel selection={sel}
                                         onRequestZoomToFeature={this.fnZoomToSelectedFeature} />
 	                </div>

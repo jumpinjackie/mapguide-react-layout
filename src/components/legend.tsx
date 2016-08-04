@@ -1,4 +1,5 @@
 import * as React from "react";
+import { IExternalBaseLayer } from "./map-viewer";
 import { RuntimeMap, MapLayer, MapGroup } from "../api/contracts/runtime-map";
 import { ILegendContext, LEGEND_CONTEXT_VALIDATION_MAP } from "./context";
 import { isLayer } from "../utils/type-guards";
@@ -19,6 +20,7 @@ const LegendLabel = (props) => {
 
 export interface ILegendProps {
     map: RuntimeMap;
+    externalBaseLayers?: IExternalBaseLayer[];
     onLayerVisibilityChanged?: MapElementChangeFunc;
     onGroupVisibilityChanged?: MapElementChangeFunc;
 }

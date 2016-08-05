@@ -51,8 +51,10 @@ export interface IMapViewer extends IMapViewerContext {
 }
 
 export enum ActiveMapTool {
-    ZoomPan,
-    Select
+    Zoom,
+    Select,
+    Pan,
+    None
 }
 
 export class MapViewer extends React.Component<IMapViewerProps, any>
@@ -93,6 +95,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
     private _extent: ol.Extent;
 
     private _baseLayerGroup: ol.layer.Group;
+    private _zoomSelectBox: ol.interaction.DragBox;
 
     context: IApplicationContext;
     /**
@@ -119,7 +122,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
             groupMap[group.ObjectId] = group;
         }
         return {
-            tool: ActiveMapTool.ZoomPan,
+            tool: ActiveMapTool.None,
             map: props.map,
             navigationStack: [],
             pendingStateChanges: {
@@ -345,12 +348,30 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
                 resolutions: resolutions
             });
         }
+
+        this._zoomSelectBox = new ol.interaction.DragBox({
+            condition: (e) => this.getActiveTool() === ActiveMapTool.Select || this.getActiveTool() === ActiveMapTool.Zoom
+        });
+        this._zoomSelectBox.on("boxend", this.onZoomSelectBox.bind(this));
+
         this._map = new ol.Map({
             target: mapNode,
             layers: layers,
             view: view,
             controls: [
                 new ol.control.Attribution()
+            ],
+            interactions: [
+                new ol.interaction.DragRotate(),
+                new ol.interaction.DragPan({
+                    condition: (e) => this.getActiveTool() === ActiveMapTool.Pan
+                }),
+                new ol.interaction.PinchRotate(),
+                new ol.interaction.PinchZoom(),
+                new ol.interaction.KeyboardPan(),
+                new ol.interaction.KeyboardZoom(),
+                new ol.interaction.MouseWheelZoom(),
+                this._zoomSelectBox
             ]
         });
         view.fit(this._extent, this._map.getSize());
@@ -409,6 +430,24 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
                 ? this.props.onRequestSelectedLayers()
                 : null;
             this.sendSelectionQuery(geom, selLayerNames);
+        }
+    }
+    private onZoomSelectBox(e) {
+        const extent = this._zoomSelectBox.getGeometry();
+        switch (this.getActiveTool()) {
+            case ActiveMapTool.Zoom:
+                {
+                    this.zoomToExtent(extent.getExtent());
+                }
+                break;
+            case ActiveMapTool.Select:
+                {
+                    const selLayerNames = (this.props.onRequestSelectedLayers != null)
+                        ? this.props.onRequestSelectedLayers()
+                        : null;
+                    this.sendSelectionQuery(extent, selLayerNames);
+                }
+                break;
         }
     }
     private sendSelectionQuery(geom, selectedLayerNames, persist = 1) {
@@ -577,7 +616,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         this.setState({ tool: tool });
     }
     public initialView(): void {
-        this._map.getView().fit(this._extent, this._map.getSize());
+        this.zoomToExtent(this._extent);
     }
     public clearSelection(): void {
         this.setSelectionXml("");
@@ -585,7 +624,8 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
     public zoomDelta(delta: number): void {
         this.zoomByDelta(delta);
     }
+    public zoomToExtent(extent: number[]) {
+        this._map.getView().fit(extent, this._map.getSize());
+    }
     //------------------------------------//
 }
-
-//export const MapViewer = Dimensions<IMapViewerProps>({elementResize: true, className: 'react-dimensions-wrapper'})(MapViewerBase);

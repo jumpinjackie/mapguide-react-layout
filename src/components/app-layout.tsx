@@ -97,18 +97,34 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                 }
             },
             { 
-                icon: "zoom-in.png", tooltip: "Zoom",
+                icon: "pan.png", tooltip: "Pan",
                 selected: () => {
                     const viewer = this.getViewer();
                     if (viewer) {
-                        return viewer.getActiveTool() === ActiveMapTool.ZoomPan;
+                        return viewer.getActiveTool() === ActiveMapTool.Pan;
                     }
                     return false;
                 },
                 invoke: () => {
                     const viewer = this.getViewer();
                     if (viewer) {
-                        viewer.setActiveTool(ActiveMapTool.ZoomPan);
+                        viewer.setActiveTool(ActiveMapTool.Pan);
+                    }
+                }
+            },
+            { 
+                icon: "zoom-in.png", tooltip: "Zoom",
+                selected: () => {
+                    const viewer = this.getViewer();
+                    if (viewer) {
+                        return viewer.getActiveTool() === ActiveMapTool.Zoom;
+                    }
+                    return false;
+                },
+                invoke: () => {
+                    const viewer = this.getViewer();
+                    if (viewer) {
+                        viewer.setActiveTool(ActiveMapTool.Zoom);
                     }
                 }
             },

@@ -22,6 +22,9 @@ const vendorEntries = [
 ];
 
 const basePlugins = [
+    new webpack.ProvidePlugin({
+        "proj4": "proj4"
+    }),
     new webpack.DefinePlugin({
         __DEV__: process.env.NODE_ENV !== 'production',
         'process.env': {

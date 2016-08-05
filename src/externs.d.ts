@@ -11,6 +11,11 @@
 // Stamped by webpack
 declare const __DEV__: boolean;
 
+declare module "proj4" {
+    type Proj4 = any;
+    export = Proj4;
+}
+
 declare module "@aneves/react-flyout" {
     import * as React from "react";
 

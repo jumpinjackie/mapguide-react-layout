@@ -6,6 +6,28 @@ import { RuntimeMap } from "./contracts/runtime-map";
 import { FeatureSet, SelectedFeatureSet } from "./contracts/query";
 import { RuntimeMapFeatureFlags } from "./request-builder";
 
+class AjaxViewerLineStringOrPolygon {
+    private coordinates: IAjaxViewerPoint[];
+    constructor(coordinates: IAjaxViewerPoint[]) {
+        this.coordinates = coordinates;
+    }
+    public get Count(): number { return this.coordinates.length; }
+    public Point(i: number): IAjaxViewerPoint {
+        const pt = this.coordinates[i];
+        return pt;
+    }
+}
+
+interface IAjaxViewerRect {
+    Point1: IAjaxViewerPoint;
+    Point2: IAjaxViewerPoint;
+}
+
+interface IAjaxViewerCircle {
+    Center: IAjaxViewerPoint;
+    Radius: number;
+}
+
 interface IAjaxViewerPoint {
     X: number;
     Y: number;
@@ -46,23 +68,81 @@ export class MapShim {
             viewer.clearSelection();
         }
     }
-    public DigitizeCircle(handler): void {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.DigitizeCircle(handler)`);
+    public DigitizeCircle(handler: (circle: IAjaxViewerCircle) => void): void {
+        const viewer = this.app.getViewer();
+        viewer.digitizeCircle(circle => {
+            const center = circle.getCenter();
+            const radius = circle.getRadius();
+            handler({
+                Center: { 
+                    X: center[0],
+                    Y: center[1]
+                },
+                Radius: radius 
+            });
+        });
     }
-    public DigitizeLine(handler): void {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.DigitizeLine(handler)`);
+    public DigitizeLine(handler: (geom: AjaxViewerLineStringOrPolygon) => void): void {
+        const viewer = this.app.getViewer();
+        viewer.digitizeLine(line => {
+            const coords = line.getCoordinates().map<IAjaxViewerPoint>(coord => {
+                return {
+                    X: coord[0],
+                    Y: coord[1]
+                }
+            });
+            handler(new AjaxViewerLineStringOrPolygon(coords));
+        });
     }
-    public DigitizePoint(handler): void {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.DigitizePoint(handler)`);
+    public DigitizePoint(handler: (geom: IAjaxViewerPoint) => void): void {
+        const viewer = this.app.getViewer();
+        viewer.digitizePoint(pt => {
+            const coords = pt.getCoordinates();
+            handler({ X: coords[0], Y: coords[1] });
+        });
     }
-    public DigitizePolygon(handler): void {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.DigitizePolygon(handler)`);
+    public DigitizePolygon(handler: (geom: AjaxViewerLineStringOrPolygon) => void): void {
+        const viewer = this.app.getViewer();
+        viewer.digitizePolygon(poly => {
+            //Our API isn't expected to allow drawing polygons with holes, so the first (outer) ring
+            //is what we're after
+            const ring = poly.getLinearRing(0);
+            const coords = ring.getCoordinates().map<IAjaxViewerPoint>(coord => {
+                return {
+                    X: coord[0],
+                    Y: coord[1]
+                }
+            });
+            handler(new AjaxViewerLineStringOrPolygon(coords));
+        });
     }
-    public DigitizeLineString(handler): void {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.DigitizeLineString(handler)`);
+    public DigitizeLineString(handler: (geom: AjaxViewerLineStringOrPolygon) => void): void {
+        const viewer = this.app.getViewer();
+        viewer.digitizeLineString(line => {
+            const coords = line.getCoordinates().map<IAjaxViewerPoint>(coord => {
+                return {
+                    X: coord[0],
+                    Y: coord[1]
+                }
+            });
+            handler(new AjaxViewerLineStringOrPolygon(coords));
+        });
     }
-    public DigitizeRectangle(handler): void {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.DigitizeRectangle(handler)`);
+    public DigitizeRectangle(handler: (geom: IAjaxViewerRect) => void): void {
+        const viewer = this.app.getViewer();
+        viewer.digitizeRectangle(rect => {
+            const extent = rect.getExtent();
+            handler({
+                Point1: {
+                    X: extent[0],
+                    Y: extent[1]
+                },
+                Point2: {
+                    X: extent[2],
+                    Y: extent[3]
+                }
+            })
+        });
     }
     public GetCenter(): IAjaxViewerPoint {
         const viewer = this.app.getViewer();
@@ -182,7 +262,8 @@ export class MapShim {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetSelectedFeatures()`);
     }
     public IsDigitizing(): boolean {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.IsDigitizing()`);
+        const viewer = this.app.getViewer();
+        return viewer.isDigitizing();
     }
     public IsEnglishUnits(): boolean {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.IsEnglishUnits()`);

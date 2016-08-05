@@ -38,6 +38,8 @@ export enum RefreshMode {
     SelectionOnly = 2
 }
 
+export type DigitizerCallback<T extends ol.geom.Geometry> = (geom: T) => void;
+
 export interface IMapViewer extends IMapViewerContext {
     zoomToView(x: number, y: number, scale: number): void;
     setSelectionXml(xml: string): void;
@@ -48,6 +50,13 @@ export interface IMapViewer extends IMapViewerContext {
     initialView(): void;
     clearSelection(): void;
     zoomDelta(delta: number): void;
+    isDigitizing(): boolean;
+    digitizePoint(handler: DigitizerCallback<ol.geom.Point>): void;
+    digitizeLine(handler: DigitizerCallback<ol.geom.LineString>): void;
+    digitizeLineString(handler: DigitizerCallback<ol.geom.LineString>): void;
+    digitizeCircle(handler: DigitizerCallback<ol.geom.Circle>): void;
+    digitizeRectangle(handler: DigitizerCallback<ol.geom.Polygon>): void;
+    digitizePolygon(handler: DigitizerCallback<ol.geom.Polygon>): void;
 }
 
 export enum ActiveMapTool {
@@ -112,7 +121,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), props.stateChangeDebounceTimeout || 500);
         this._wktFormat = new ol.format.WKT();
     }
-    buildInitialState(props: IMapViewerProps) {
+    private buildInitialState(props: IMapViewerProps) {
         const layerMap: any = {};
         const groupMap: any = {};
         for (const layer of props.map.Layer) {
@@ -160,6 +169,124 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
     }
     static childContextTypes = MAP_VIEWER_CONTEXT_VALIDATION_MAP;
     static contextTypes = APPLICATION_CONTEXT_VALIDATION_MAP;
+
+    private createExternalSource(layer: IExternalBaseLayer) {
+        let sourceCtor = ol.source[layer.kind];
+        if (typeof(sourceCtor) == 'undefined')
+            throw new MgError(`Unknown external base layer provider: ${layer.kind}`);
+
+        if (typeof(layer.options) != 'undefined')
+            return new sourceCtor(layer.options);
+        else
+            return new sourceCtor();
+    }
+    private scaleToResolution(scale: number): number {
+        return scale / this._inPerUnit / this._dpi;
+    }
+    private resolutionToScale(resolution: number): number {
+        return resolution * this._dpi * this._inPerUnit;
+    }
+    private onMapClick(e) {
+        if (this.state.tool === ActiveMapTool.Select) {
+            const ptBuffer = this.props.pointSelectionBuffer || 2;
+            const ll = this._map.getCoordinateFromPixel([e.pixel[0] - ptBuffer, e.pixel[1] - ptBuffer]);
+            const ur = this._map.getCoordinateFromPixel([e.pixel[0] + ptBuffer, e.pixel[1] + ptBuffer]);
+            const box = [ll[0], ll[1], ur[0], ur[1]];
+            const geom = ol.geom.Polygon.fromExtent(box);
+            const selLayerNames = (this.props.onRequestSelectedLayers != null)
+                ? this.props.onRequestSelectedLayers()
+                : null;
+            this.sendSelectionQuery(geom, selLayerNames);
+        }
+    }
+    private onZoomSelectBox(e) {
+        const extent = this._zoomSelectBox.getGeometry();
+        switch (this.getActiveTool()) {
+            case ActiveMapTool.Zoom:
+                {
+                    this.zoomToExtent(extent.getExtent());
+                }
+                break;
+            case ActiveMapTool.Select:
+                {
+                    const selLayerNames = (this.props.onRequestSelectedLayers != null)
+                        ? this.props.onRequestSelectedLayers()
+                        : null;
+                    this.sendSelectionQuery(extent, selLayerNames);
+                }
+                break;
+        }
+    }
+    private sendSelectionQuery(geom, selectedLayerNames, persist = 1) {
+        const reqQueryFeatures = 1 | 2; //Attributes and inline selection
+        const wkt = this._wktFormat.writeGeometry(geom);
+        const client = this.context.getClient();
+        client.queryMapFeatures({
+            mapname: this.context.getMapName(),
+            session: this.context.getSession(),
+            geometry: wkt,
+            persist: persist,
+            selectionvariant: "INTERSECTS",
+            selectioncolor: "0xFF000000",
+            selectionformat: "PNG8",
+            maxfeatures: -1,
+            requestdata: reqQueryFeatures
+        }).then(res => {
+            this.refreshMap(RefreshMode.SelectionOnly);
+            //Only broadcast if persistent change, otherwise it's transient
+            //so the current selection set is still the same
+            if (persist === 1 && this.props.onSelectionChange != null)
+                this.props.onSelectionChange(res);
+        });
+    }
+    private zoomByDelta(delta) {
+        const view = this._map.getView();
+        if (!view) {
+            return;
+        }
+        const currentResolution = view.getResolution();
+        if (currentResolution) {
+            this._map.beforeRender(ol.animation.zoom({
+                resolution: currentResolution,
+                duration: 250,
+                easing: ol.easing.easeOut
+            }));
+            const newResolution = view.constrainResolution(currentResolution, delta);
+            view.setResolution(newResolution);
+        }
+    }
+    private updateScale(scale) {
+        const view = this.getView();
+        this.pushView({ x: view.x, y: view.y, scale: scale });
+    }
+    private getTileUrlFunctionForGroup(resourceId, groupName, zOrigin) {
+        const urlTemplate = this.context.getClient().getTileTemplateUrl(resourceId, groupName, '{x}', '{y}', '{z}');
+        return function (tileCoord) {
+            return urlTemplate
+                .replace('{z}', (zOrigin - tileCoord[0]).toString())
+                .replace('{x}', tileCoord[1].toString())
+                .replace('{y}', (-tileCoord[2] - 1).toString());
+        };
+    }
+    private _activeDrawInteraction: ol.interaction.Draw;
+    private removeActiveDrawInteraction() {
+        if (this._activeDrawInteraction != null) {
+            this._map.removeInteraction(this._activeDrawInteraction);
+            this._activeDrawInteraction = null;
+        }
+    }
+    private pushDrawInteraction<T extends ol.geom.Geometry>(draw: ol.interaction.Draw, handler: DigitizerCallback<T>): void {
+        this.removeActiveDrawInteraction();
+        this._activeDrawInteraction = draw;
+        this._activeDrawInteraction.once("drawend", (e) => {
+            const drawnFeature: ol.Feature = e.feature;
+            const geom: T = drawnFeature.getGeometry() as T;
+            this.removeActiveDrawInteraction();
+            handler(geom);
+        })
+        this._map.addInteraction(this._activeDrawInteraction);
+    }
+    // ----------------- React Lifecycle ----------------- //
     componentWillReceiveProps(nextProps) {
         /**
          * React (no pun intended) to the following prop changes:
@@ -326,14 +453,14 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
             layers.push(this._baseLayerGroup);
         }
 
-        for (var i = groupLayers.length - 1; i >= 0; i--) {
+        for (let i = groupLayers.length - 1; i >= 0; i--) {
             layers.push(groupLayers[i]);
         }
         layers.push(this._overlay);
         layers.push(this._selectionOverlay);
         /*
         console.log("Draw Order:");
-        for (var i = 0; i < layers.length; i++) {
+        for (let i = 0; i < layers.length; i++) {
             console.log(" " + layers[i].get("name"));
         }
         */
@@ -402,104 +529,6 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
             this.pushView({ x: newCenter[0], y: newCenter[1], scale: newScale });
         });
         */
-    }
-    private createExternalSource(layer: IExternalBaseLayer) {
-        let sourceCtor = ol.source[layer.kind];
-        if (typeof(sourceCtor) == 'undefined')
-            throw new MgError(`Unknown external base layer provider: ${layer.kind}`);
-
-        if (typeof(layer.options) != 'undefined')
-            return new sourceCtor(layer.options);
-        else
-            return new sourceCtor();
-    }
-    private scaleToResolution(scale: number): number {
-        return scale / this._inPerUnit / this._dpi;
-    }
-    private resolutionToScale(resolution: number): number {
-        return resolution * this._dpi * this._inPerUnit;
-    }
-    private onMapClick(e) {
-        if (this.state.tool === ActiveMapTool.Select) {
-            const ptBuffer = this.props.pointSelectionBuffer || 2;
-            const ll = this._map.getCoordinateFromPixel([e.pixel[0] - ptBuffer, e.pixel[1] - ptBuffer]);
-            const ur = this._map.getCoordinateFromPixel([e.pixel[0] + ptBuffer, e.pixel[1] + ptBuffer]);
-            const box = [ll[0], ll[1], ur[0], ur[1]];
-            const geom = ol.geom.Polygon.fromExtent(box);
-            const selLayerNames = (this.props.onRequestSelectedLayers != null)
-                ? this.props.onRequestSelectedLayers()
-                : null;
-            this.sendSelectionQuery(geom, selLayerNames);
-        }
-    }
-    private onZoomSelectBox(e) {
-        const extent = this._zoomSelectBox.getGeometry();
-        switch (this.getActiveTool()) {
-            case ActiveMapTool.Zoom:
-                {
-                    this.zoomToExtent(extent.getExtent());
-                }
-                break;
-            case ActiveMapTool.Select:
-                {
-                    const selLayerNames = (this.props.onRequestSelectedLayers != null)
-                        ? this.props.onRequestSelectedLayers()
-                        : null;
-                    this.sendSelectionQuery(extent, selLayerNames);
-                }
-                break;
-        }
-    }
-    private sendSelectionQuery(geom, selectedLayerNames, persist = 1) {
-        const reqQueryFeatures = 1 | 2; //Attributes and inline selection
-        const wkt = this._wktFormat.writeGeometry(geom);
-        const client = this.context.getClient();
-        client.queryMapFeatures({
-            mapname: this.context.getMapName(),
-            session: this.context.getSession(),
-            geometry: wkt,
-            persist: persist,
-            selectionvariant: "INTERSECTS",
-            selectioncolor: "0xFF000000",
-            selectionformat: "PNG8",
-            maxfeatures: -1,
-            requestdata: reqQueryFeatures
-        }).then(res => {
-            this.refreshMap(RefreshMode.SelectionOnly);
-            //Only broadcast if persistent change, otherwise it's transient
-            //so the current selection set is still the same
-            if (persist === 1 && this.props.onSelectionChange != null)
-                this.props.onSelectionChange(res);
-        });
-    }
-    private zoomByDelta(delta) {
-        const view = this._map.getView();
-        if (!view) {
-            return;
-        }
-        const currentResolution = view.getResolution();
-        if (currentResolution) {
-            this._map.beforeRender(ol.animation.zoom({
-                resolution: currentResolution,
-                duration: 250,
-                easing: ol.easing.easeOut
-            }));
-            const newResolution = view.constrainResolution(currentResolution, delta);
-            view.setResolution(newResolution);
-        }
-    }
-    private updateScale(scale) {
-        const view = this.getView();
-        this.pushView({ x: view.x, y: view.y, scale: scale });
-    }
-    private getTileUrlFunctionForGroup(resourceId, groupName, zOrigin) {
-        const urlTemplate = this.context.getClient().getTileTemplateUrl(resourceId, groupName, '{x}', '{y}', '{z}');
-        return function (tileCoord) {
-            return urlTemplate
-                .replace('{z}', (zOrigin - tileCoord[0]).toString())
-                .replace('{x}', tileCoord[1].toString())
-                .replace('{y}', (-tileCoord[2] - 1).toString());
-        };
     }
     render(): JSX.Element {
         return <div style={{ width: "100%", height: "100%" }} />;
@@ -626,6 +655,60 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
     }
     public zoomToExtent(extent: number[]) {
         this._map.getView().fit(extent, this._map.getSize());
+    }
+    public isDigitizing(): boolean {
+        return this._activeDrawInteraction != null;
+    }
+    public digitizePoint(handler: DigitizerCallback<ol.geom.Point>): void {
+        const draw = new ol.interaction.Draw({
+            type: "Point"//ol.geom.GeometryType.POINT
+        });
+        this.pushDrawInteraction(draw, handler);
+    }
+    public digitizeLine(handler: DigitizerCallback<ol.geom.LineString>): void {
+        const draw = new ol.interaction.Draw({
+            type: "LineString", //ol.geom.GeometryType.LINE_STRING,
+            minPoints: 2,
+            maxPoints: 2
+        });
+        this.pushDrawInteraction(draw, handler);
+    }
+    public digitizeLineString(handler: DigitizerCallback<ol.geom.LineString>): void {
+        const draw = new ol.interaction.Draw({
+            type: "LineString", //ol.geom.GeometryType.LINE_STRING,
+            minPoints: 2
+        });
+        this.pushDrawInteraction(draw, handler);
+    }
+    public digitizeCircle(handler: DigitizerCallback<ol.geom.Circle>): void {
+        const draw = new ol.interaction.Draw({
+            type: "Circle" //ol.geom.GeometryType.CIRCLE
+        });
+        this.pushDrawInteraction(draw, handler);
+    }
+    public digitizeRectangle(handler: DigitizerCallback<ol.geom.Polygon>): void {
+        const draw = new ol.interaction.Draw({
+            type: "LineString", //ol.geom.GeometryType.LINE_STRING,
+            maxPoints: 2,
+            geometryFunction: (coordinates, geometry) => {
+                if (!geometry) {
+                    geometry = new ol.geom.Polygon(null);
+                }
+                const start = coordinates[0];
+                const end = coordinates[1];
+                (geometry as any).setCoordinates([
+                    [start, [start[0], end[1]], end, [end[0], start[1]], start]
+                ]);
+                return geometry;
+            }
+        });
+        this.pushDrawInteraction(draw, handler);
+    }
+    public digitizePolygon(handler: DigitizerCallback<ol.geom.Polygon>): void {
+        const draw = new ol.interaction.Draw({
+            type: "Polygon" //ol.geom.GeometryType.POLYGON
+        });
+        this.pushDrawInteraction(draw, handler);
     }
     //------------------------------------//
 }

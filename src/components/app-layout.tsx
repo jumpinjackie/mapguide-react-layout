@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import * as ol from "openlayers";
 import { RuntimeMapFeatureFlags, IMapGuideClient } from "../api/request-builder";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { TaskPane } from "./task-pane";
@@ -154,6 +155,33 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                         } 
                     }
                 ]
+            },
+            { 
+                icon: "select-radius.png",
+                label: "Select Radius",
+                tooltip: "Select Radius",
+                invoke: () => {
+                    const viewer = this.getViewer();
+                    if (viewer) {
+                        viewer.digitizeCircle(circle => {
+                            const geom = ol.geom.Polygon.fromCircle(circle);
+                            viewer.selectByGeometry(geom);
+                        });
+                    }
+                } 
+            },
+            { 
+                icon: "select-polygon.png",
+                label: "Select Polygon",
+                tooltip: "Select Polygon",
+                invoke: () => {
+                    const viewer = this.getViewer();
+                    if (viewer) {
+                        viewer.digitizePolygon(geom => {
+                            viewer.selectByGeometry(geom);
+                        });
+                    }
+                } 
             },
             { 
                 icon: "zoom-full.png",

@@ -57,6 +57,7 @@ export interface IMapViewer extends IMapViewerContext {
     digitizeCircle(handler: DigitizerCallback<ol.geom.Circle>): void;
     digitizeRectangle(handler: DigitizerCallback<ol.geom.Polygon>): void;
     digitizePolygon(handler: DigitizerCallback<ol.geom.Polygon>): void;
+    selectByGeometry(geom: ol.geom.Geometry): void;
 }
 
 export enum ActiveMapTool {
@@ -709,6 +710,12 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
             type: "Polygon" //ol.geom.GeometryType.POLYGON
         });
         this.pushDrawInteraction(draw, handler);
+    }
+    public selectByGeometry(geom: ol.geom.Geometry): void {
+        const selLayerNames = (this.props.onRequestSelectedLayers != null)
+            ? this.props.onRequestSelectedLayers()
+            : null;
+        this.sendSelectionQuery(geom, selLayerNames);
     }
     //------------------------------------//
 }

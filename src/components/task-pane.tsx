@@ -32,6 +32,7 @@ function buildTaskButtons(pane: TaskPane): IItem[] {
             enabled: () => pane.canGoHome(),
             invoke: () => pane.goHome()
         },
+        { isSeparator: true },
         {
             icon: "back.png",
             tooltip: "Go back",

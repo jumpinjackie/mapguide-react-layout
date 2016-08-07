@@ -12,6 +12,7 @@ const UL_LIST_STYLE = { listStyle: "none", paddingLeft: 20 };
 const LI_LIST_STYLE = { listStyle: "none", marginTop: 2, marginBottom: 2 };
 const ROW_ITEM_ELEMENT_STYLE = { verticalAlign: "middle" };
 const CHK_STYLE = { margin: 0, width: `${ICON_WIDTH - 2}px`, height: `${ICON_HEIGHT - 2}px`, padding: 1, verticalAlign: "middle" };
+const EMPTY_STYLE = { display: "inline-block", margin: 0, width: `${ICON_WIDTH}px`, height: `${ICON_HEIGHT}px`, verticalAlign: "middle" };
 
 export type MapElementChangeFunc = (objectId: string, visible: boolean) => void;
 
@@ -31,11 +32,15 @@ function getIconUri(iconMimeType: string, iconBase64: string): string {
     return `data:${iconMimeType};base64,${iconBase64}`;
 }
 
+const EmptyNode = (props) => {
+    return <div style={EMPTY_STYLE}>{'\u00a0'}</div>;
+};
+
 const RuleNode = (props) => {
     const icon = getIconUri(props.iconMimeType, props.rule.Icon);
     const label = (props.rule.LegendLabel ? props.rule.LegendLabel : "");
     return <li style={LI_LIST_STYLE}>
-        <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> <LegendLabel text={label} />
+        <EmptyNode /> <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> <LegendLabel text={label} />
     </li>;
 };
 
@@ -48,25 +53,33 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
     context: ILegendContext;
     fnVisibilityChanged: (e) => void;
     fnToggleSelectability: (e) => void;
+    fnToggleExpansion: (e) => void;
     constructor(props) {
         super(props);
         this.fnVisibilityChanged = this.onVisibilityChanged.bind(this);
         this.fnToggleSelectability = this.onToggleSelectability.bind(this);
+        this.fnToggleExpansion = this.onToggleExpansion.bind(this);
         this.state = {
             layerVisible: props.layer.Visible
         };
     }
-    onVisibilityChanged(e) {
+    private onVisibilityChanged(e) {
         this.setState({ layerVisible: e.target.checked });
         this.context.setLayerVisibility(this.props.layer.ObjectId, e.target.checked);
     }
-    onToggleSelectability(e) {
-        const layerId = this.props.layer.ObjectId;
-        let selectable = this.context.getLayerSelectability(layerId);
-        if (selectable == null) {
-            selectable = this.props.layer.Selectable;
-        }
-        this.context.setLayerSelectability(layerId, !selectable);
+    private onToggleSelectability(e) {
+        const selectable = this.getLayerSelectability(this.props.layer.ObjectId);
+        this.context.setLayerSelectability(this.props.layer.ObjectId, !selectable);
+    }
+    private getExpanded(): boolean {
+        let expanded = this.context.getLayerExpanded(this.props.layer.ObjectId);
+        if (expanded == null)
+            expanded = this.props.layer.ExpandInLegend;
+        return expanded;
+    }
+    private onToggleExpansion(e) {
+        const expanded = this.getExpanded();
+        this.context.setLayerExpanded(this.props.layer.ObjectId, !expanded);
     }
     private getLayerSelectability(layerId: string): boolean {
         let selectable = this.context.getLayerSelectability(layerId);
@@ -96,7 +109,6 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
                             onChange={this.fnVisibilityChanged}
                             checked={(this.state.layerVisible)} />;
         }
-
         if (layer.ScaleRange) {
             for (const scaleRange of layer.ScaleRange) {
                 if (scaleRange.FeatureStyle) {
@@ -105,7 +117,8 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
                     const fts = scaleRange.FeatureStyle[0];
                     const ruleCount = fts.Rule.length;
                     let body = null;
-                    if (ruleCount > 1) {
+                    let isExpanded = this.getExpanded();
+                    if (isExpanded && ruleCount > 1) {
                         icon = this.context.getStdIcon("legend-theme.png");
                         body = <ul style={UL_LIST_STYLE}>
                         {(() => {
@@ -128,14 +141,25 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
                             return items;
                         })()}
                         </ul>;
+                    } else { //Collapsed
+                        if (ruleCount > 1) {
+                            icon = this.context.getStdIcon("legend-theme.png");
+                        } else {
+                            icon = getIconUri(iconMimeType, fts.Rule[0].Icon);
+                        }
+                    }
+
+                    let expanded = null;
+                    if (ruleCount > 1) {
+                        expanded = <img style={ROW_ITEM_ELEMENT_STYLE} onClick={this.fnToggleExpansion} src={this.context.getStdIcon(isExpanded ? "toggle.png" : "toggle-expand.png")} />;;
                     } else {
-                        icon = getIconUri(iconMimeType, fts.Rule[0].Icon);
-                    }                    
-                    return <li style={LI_LIST_STYLE} className='layer-node'>{chkbox} {selectable} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> <LegendLabel text={text} /> {body}</li>;
+                        expanded = <EmptyNode />;
+                    }
+                    return <li style={LI_LIST_STYLE} className='layer-node'>{expanded} {chkbox} {selectable} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> <LegendLabel text={text} /> {body}</li>;
                 }
             }
         } else {
-            return <li style={LI_LIST_STYLE} className='layer-node'>{chkbox} {selectable} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> {label}</li>;
+            return <li style={LI_LIST_STYLE} className='layer-node'><EmptyNode /> {chkbox} {selectable} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> {label}</li>;
         }
     }
 }
@@ -147,29 +171,45 @@ interface IGroupNodeProps {
 
 class GroupNode extends React.Component<IGroupNodeProps, any> {
     fnVisibilityChanged: (e) => void;
+    fnToggleExpansion: (e) => void;
     static contextTypes = LEGEND_CONTEXT_VALIDATION_MAP;
     context: ILegendContext;
     constructor(props) {
         super(props);
         this.fnVisibilityChanged = this.onVisibilityChanged.bind(this);
+        this.fnToggleExpansion = this.onToggleExpansion.bind(this);
         this.state = {
             groupVisible: props.group.Visible
         };
     }
+    onToggleExpansion(e) {
+        const expanded = this.getExpanded();
+        this.context.setGroupExpanded(this.props.group.ObjectId, !expanded);
+    }
     onVisibilityChanged(e) {
         this.setState({ groupVisible: e.target.checked });
         this.context.setGroupVisibility(this.props.group.ObjectId, e.target.checked);
+    }
+    getExpanded(): boolean {
+        let expanded = this.context.getGroupExpanded(this.props.group.ObjectId);
+        if (expanded == null)
+            expanded = this.props.group.ExpandInLegend;
+        return expanded;
     }
     render(): JSX.Element {
         const { group } = this.props;
         const currentScale = this.context.getCurrentScale();
         const tree = this.context.getTree();
         const icon = this.context.getStdIcon("folder-horizontal.png");
+        const isExpanded = this.getExpanded();
+        const expanded = <img style={ROW_ITEM_ELEMENT_STYLE}
+                              onClick={this.fnToggleExpansion}
+                              src={this.context.getStdIcon(isExpanded ? "toggle.png" : "toggle-expand.png")} />;
         const chkbox = <input type='checkbox' className='group-checkbox' style={CHK_STYLE} value={group.ObjectId} onChange={this.fnVisibilityChanged} checked={(this.state.groupVisible)} />;
         return <li style={LI_LIST_STYLE}>
-            <span>{chkbox} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> <LegendLabel text={this.props.group.LegendLabel} /></span>
+            <span>{expanded} {chkbox} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> <LegendLabel text={this.props.group.LegendLabel} /></span>
             {(() => {
-                if (this.props.childItems.length > 0) {
+                if (isExpanded && this.props.childItems.length > 0) {
                     return <ul style={UL_LIST_STYLE}>{this.props.childItems.map(item => {
                         if (isLayer(item)) {
                             if (isLayerVisibleAtScale(item, currentScale)) {

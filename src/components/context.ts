@@ -50,8 +50,8 @@ export interface ILegendContext {
     setLayerVisibility(layerId: string, visible: boolean): void;
     getLayerSelectability(layerId: string): boolean;
     setLayerSelectability(layerId: string, selectable: boolean): void;
-    getGroupExpanded(layerId: string): boolean;
-    setGroupExpanded(layerId: string, expanded: boolean): void;
+    getGroupExpanded(groupId: string): boolean;
+    setGroupExpanded(groupId: string, expanded: boolean): void;
     getLayerExpanded(layerId: string): boolean;
     setLayerExpanded(layerId: string, expanded: boolean): void;
 }

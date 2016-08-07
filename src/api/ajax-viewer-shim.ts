@@ -49,9 +49,11 @@ interface IAjaxViewerBounds {
 type IAjaxViewerSelectionSet = any;
 
 export class MapShim {
+    private us: boolean;
     private app: Application;
     constructor(app: Application) {
         this.app = app;
+        this.us = true;
     }
     /**
      * Indicates if the map frame is ready
@@ -266,10 +268,10 @@ export class MapShim {
         return viewer.isDigitizing();
     }
     public IsEnglishUnits(): boolean {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.IsEnglishUnits()`);
+        return this.us;
     }
-    public IsLatLonDisplayUnits(): boolean {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.IsLatLonDisplayUnits()`);
+    public IsLatLongDisplayUnits(): boolean {
+        return true; //This is what the AJAX viewer returns
     }
     public MapUnitsToLatLon(x: number, y: number): IAjaxViewerPoint {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.MapUnitsToLatLon(x, y)`);
@@ -282,10 +284,10 @@ export class MapShim {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.ScreenToMapUnits(x, y)`);
     }
     public SetEnglishUnits(usEnglish: boolean): void {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.SetEnglishUnits(usEnglish)`);
+        this.us = usEnglish;
     }
     public SetLatLongDisplayUnits(latLon: boolean): void {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.SetLatLongDisplayUnits(latLon)`);
+        //This is what the AJAX viewer does
     }
     public SetSelectionXML(xmlSet): void {
         const viewer = this.app.getViewer();

@@ -188,16 +188,16 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         return resolution * this._dpi * this._inPerUnit;
     }
     private onMapClick(e) {
+        if (this.isDigitizing()) {
+            return;
+        }
         if (this.state.tool === ActiveMapTool.Select) {
             const ptBuffer = this.props.pointSelectionBuffer || 2;
             const ll = this._map.getCoordinateFromPixel([e.pixel[0] - ptBuffer, e.pixel[1] - ptBuffer]);
             const ur = this._map.getCoordinateFromPixel([e.pixel[0] + ptBuffer, e.pixel[1] + ptBuffer]);
             const box = [ll[0], ll[1], ur[0], ur[1]];
             const geom = ol.geom.Polygon.fromExtent(box);
-            const selLayerNames = (this.props.onRequestSelectedLayers != null)
-                ? this.props.onRequestSelectedLayers()
-                : null;
-            this.sendSelectionQuery(geom, selLayerNames);
+            this.selectByGeometry(geom);
         }
     }
     private onZoomSelectBox(e) {

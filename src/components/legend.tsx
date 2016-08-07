@@ -262,7 +262,11 @@ export class Legend extends React.Component<ILegendProps, any> {
         this.state = this.setupTree(props.map);
     }
     componentWillReceiveProps(props) {
-        this.setState(this.setupTree(props.map));
+        const tree: any = this.setupTree(props.map);
+        //Preserve existing client-side changes
+        tree.OverrideSelectableLayers = this.state.OverrideSelectableLayers;
+        tree.OverrideExpandedItems = this.state.OverrideExpandedItems;
+        this.setState(tree);
     }
     getChildContext(): ILegendContext {
         return {

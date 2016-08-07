@@ -264,7 +264,8 @@ function deArrayifyLayerMetadataProperties(json: any[]): Contracts.Query.LayerPr
 
 function deArrayifyLayerMetadata(json: any): Contracts.Query.LayerMetadata {
     const root = json;
-    if (root.length != 1) {
+    //NOTE: root could be null if the layer selected has no properties beyond id/geom
+    if (root == null || root.length != 1) {
         return null;
     }
     const meta = {

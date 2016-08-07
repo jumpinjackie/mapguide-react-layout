@@ -55,6 +55,19 @@ function getItemStyle(enabled: boolean, selected: boolean, height: number, isMou
     return style;
 }
 
+function getToolbarSeparatorItemStyle(height: number): React.CSSProperties {
+    const vertPad = 6;
+    const style: React.CSSProperties = {
+        display: "inline-block",
+        borderLeft: "1px solid black",
+        paddingTop: 0,
+        paddingBottom: 0,
+        marginLeft: 2,
+        marginRight: -2
+    };
+    return style;
+}
+
 function getMenuItemStyle(enabled: boolean, selected: boolean, height: number, isMouseOver: boolean): React.CSSProperties {
     const pad = ((height - 16) / 2);
     const vertPad = 6;
@@ -178,6 +191,20 @@ class FlyoutMenuItem extends React.Component<IFlyoutMenuItemProps, any> {
     }
 }
 
+interface IToolbarSeparatorProps {
+    height: number;
+}
+
+class ToolbarSeparator extends React.Component<IToolbarSeparatorProps, any> {
+    constructor(props) {
+        super(props);
+    }
+    render(): JSX.Element {
+        const style = getToolbarSeparatorItemStyle(this.props.height);
+        return <div className="noselect" style={style}>{'\u00a0'}</div>;
+    }
+}
+
 interface IToolbarButtonProps {
     height: number;
     item: IItem;
@@ -230,6 +257,7 @@ export interface IItem {
     invoke?: () => void;
     enabled?: () => boolean;
     selected?: () => boolean;
+    isSeparator?: boolean;
 }
 
 export interface IMenu extends IItem {
@@ -255,6 +283,8 @@ export class Toolbar extends React.Component<IToolbarProps, any> {
             {childItems.map((item, index) => {
                 if (isMenu(item)) {
                     return <FlyoutMenuItem key={index} height={height} menu={item} />;
+                } else if (item.isSeparator === true) {
+                    return <ToolbarSeparator key={index} height={height} />;
                 } else {
                     return <ToolbarButton key={index} height={height} item={item} />;
                 }

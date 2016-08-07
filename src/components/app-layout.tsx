@@ -129,6 +129,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                     }
                 }
             },
+            { isSeparator: true },
             {
                 label: "Zoom",
                 childItems: [
@@ -156,6 +157,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                     }
                 ]
             },
+            { isSeparator: true },
             { 
                 icon: "select-radius.png",
                 label: "Select Radius",

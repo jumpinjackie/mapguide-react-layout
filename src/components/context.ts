@@ -48,6 +48,12 @@ export interface ILegendContext {
     getTree(): any;
     setGroupVisibility(groupId: string, visible: boolean): void;
     setLayerVisibility(layerId: string, visible: boolean): void;
+    getLayerSelectability(layerId: string): boolean;
+    setLayerSelectability(layerId: string, selectable: boolean): void;
+    getGroupExpanded(layerId: string): boolean;
+    setGroupExpanded(layerId: string, expanded: boolean): void;
+    getLayerExpanded(layerId: string): boolean;
+    setLayerExpanded(layerId: string, expanded: boolean): void;
 }
 
 export const LEGEND_CONTEXT_VALIDATION_MAP: React.ValidationMap<any> = {
@@ -57,5 +63,11 @@ export const LEGEND_CONTEXT_VALIDATION_MAP: React.ValidationMap<any> = {
     getCurrentScale: React.PropTypes.func.isRequired,
     getTree: React.PropTypes.func.isRequired,
     setGroupVisibility: React.PropTypes.func.isRequired,
-    setLayerVisibility: React.PropTypes.func.isRequired
+    setLayerVisibility: React.PropTypes.func.isRequired,
+    getLayerSelectability: React.PropTypes.func.isRequired,
+    setLayerSelectability: React.PropTypes.func.isRequired,
+    getGroupExpanded: React.PropTypes.func.isRequired,
+    setGroupExpanded: React.PropTypes.func.isRequired,
+    getLayerExpanded: React.PropTypes.func.isRequired,
+    setLayerExpanded: React.PropTypes.func.isRequired
 };

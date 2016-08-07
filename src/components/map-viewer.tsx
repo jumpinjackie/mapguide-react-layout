@@ -219,6 +219,9 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         }
     }
     private sendSelectionQuery(geom, selectedLayerNames, persist = 1) {
+        if (selectedLayerNames != null && selectedLayerNames.length == 0) {
+            return;
+        }
         const reqQueryFeatures = 1 | 2; //Attributes and inline selection
         const wkt = this._wktFormat.writeGeometry(geom);
         const client = this.context.getClient();

@@ -47,9 +47,11 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
     static contextTypes = LEGEND_CONTEXT_VALIDATION_MAP;
     context: ILegendContext;
     fnVisibilityChanged: (e) => void;
+    fnToggleSelectability: (e) => void;
     constructor(props) {
         super(props);
         this.fnVisibilityChanged = this.onVisibilityChanged.bind(this);
+        this.fnToggleSelectability = this.onToggleSelectability.bind(this);
         this.state = {
             layerVisible: props.layer.Visible
         };
@@ -58,16 +60,42 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
         this.setState({ layerVisible: e.target.checked });
         this.context.setLayerVisibility(this.props.layer.ObjectId, e.target.checked);
     }
+    onToggleSelectability(e) {
+        const layerId = this.props.layer.ObjectId;
+        let selectable = this.context.getLayerSelectability(layerId);
+        if (selectable == null) {
+            selectable = this.props.layer.Selectable;
+        }
+        this.context.setLayerSelectability(layerId, !selectable);
+    }
+    private getLayerSelectability(layerId: string): boolean {
+        let selectable = this.context.getLayerSelectability(layerId);
+        if (selectable == null) {
+            selectable = this.props.layer.Selectable;
+        }
+        return selectable;
+    }
     render(): JSX.Element {
         const { layer } = this.props;
         const label = layer.LegendLabel ? layer.LegendLabel : "";
         const iconMimeType = this.context.getIconMimeType();
         let text = label;
         let icon = this.context.getStdIcon("legend-layer.png");
-
+        let selectable = null;
+        if (layer.Selectable === true) {
+            selectable = <img style={ROW_ITEM_ELEMENT_STYLE}
+                              onClick={this.fnToggleSelectability}
+                              src={this.context.getStdIcon(this.getLayerSelectability(layer.ObjectId) ? "icon_select.gif" : "lc_unselect.gif")} />;
+        }
         let chkbox = null;
-        if (layer.Type == 1) //Dynamic
-            chkbox = <input type='checkbox' className='layer-checkbox' style={CHK_STYLE} value={layer.ObjectId} onChange={this.fnVisibilityChanged} checked={(this.state.layerVisible)} />;
+        if (layer.Type == 1) { //Dynamic
+            chkbox = <input type='checkbox' 
+                            className='layer-checkbox'
+                            style={CHK_STYLE}
+                            value={layer.ObjectId}
+                            onChange={this.fnVisibilityChanged}
+                            checked={(this.state.layerVisible)} />;
+        }
 
         if (layer.ScaleRange) {
             for (const scaleRange of layer.ScaleRange) {
@@ -103,11 +131,11 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
                     } else {
                         icon = getIconUri(iconMimeType, fts.Rule[0].Icon);
                     }                    
-                    return <li style={LI_LIST_STYLE} className='layer-node'>{chkbox} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> <LegendLabel text={text} /> {body}</li>;
+                    return <li style={LI_LIST_STYLE} className='layer-node'>{chkbox} {selectable} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> <LegendLabel text={text} /> {body}</li>;
                 }
             }
         } else {
-            return <li style={LI_LIST_STYLE} className='layer-node'>{chkbox} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> {label}</li>;
+            return <li style={LI_LIST_STYLE} className='layer-node'>{chkbox} {selectable} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> {label}</li>;
         }
     }
 }
@@ -204,8 +232,54 @@ export class Legend extends React.Component<ILegendProps, any> {
             getCurrentScale: () => this.state.currentScale,
             getTree: () => this.state.tree,
             setGroupVisibility: this.setGroupVisibility.bind(this),
-            setLayerVisibility: this.setLayerVisibility.bind(this)
+            setLayerVisibility: this.setLayerVisibility.bind(this),
+            getLayerSelectability: this.getLayerSelectability.bind(this),
+            setLayerSelectability: this.setLayerSelectability.bind(this),
+            getGroupExpanded: this.getGroupExpanded.bind(this),
+            setGroupExpanded: this.setGroupExpanded.bind(this),
+            getLayerExpanded: this.getLayerExpanded.bind(this),
+            setLayerExpanded: this.setLayerExpanded.bind(this)
         };
+    }
+    public getSelectedLayers(): string[] {
+        const layers = [];
+        for (const layerId in this.state.LayerMap) {
+            const layer = this.state.LayerMap[layerId];
+            if (layer.Selectable === true) {
+                if (this.state.OverrideSelectableLayers[layerId] === false) {
+                    continue;
+                }
+                layers.push(layer.ObjectId);
+            }
+        }
+        return layers;
+    }
+    private getLayerSelectability(layerId: string): boolean {
+        const items: any = this.state.OverrideSelectableLayers;
+        return items[layerId];
+    }
+    private setLayerSelectability(layerId: string, selectable: boolean): void {
+        const items: any = this.state.OverrideSelectableLayers;
+        items[layerId] = selectable;
+        this.setState({ OverrideSelectableLayers: items });
+    }
+    private getGroupExpanded(layerId: string): boolean {
+        const items: any = this.state.OverrideExpandedItems;
+        return items[layerId];
+    }
+    private setGroupExpanded(layerId: string, expanded: boolean): void {
+        const items: any = this.state.OverrideExpandedItems;
+        items[layerId] = expanded;
+        this.setState({ OverrideExpandedItems: items });
+    }
+    private getLayerExpanded(layerId: string): boolean {
+        const items: any = this.state.OverrideExpandedItems;
+        return items[layerId];
+    }
+    private setLayerExpanded(layerId: string, expanded: boolean): void {
+        const items: any = this.state.OverrideExpandedItems;
+        items[layerId] = expanded;
+        this.setState({ OverrideExpandedItems: items });
     }
     private setGroupVisibility(groupId: string, visible: boolean) {
         if (this.props.onGroupVisibilityChanged != null) {
@@ -231,7 +305,9 @@ export class Legend extends React.Component<ILegendProps, any> {
             Layers: map.Layer,
             Groups: map.Group,
             LayerMap: {},
-            GroupMap: {}
+            GroupMap: {},
+            OverrideSelectableLayers: {},
+            OverrideExpandedItems: {}
         };
         for (const layer of map.Layer) {
             state.LayerMap[layer.ObjectId] = layer;

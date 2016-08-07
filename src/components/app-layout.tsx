@@ -55,6 +55,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     private fnViewChanged: (view: IMapView) => void;
     private fnSelectionChange: (selectionSet: any) => void;
     private fnZoomToSelectedFeature: (feature: any) => void;
+    private fnRequestSelectedLayers: () => string[];
     private _viewer: any;
     private _legend: Legend;
     private _taskpane: TaskPane;
@@ -74,6 +75,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         this.fnSelectionChange = this.onSelectionChange.bind(this);
         this.fnZoomToSelectedFeature = this.onZoomToSelectedFeature.bind(this);
         this.fnBaseLayerChanged = this.onBaseLayerChanged.bind(this);
+        this.fnRequestSelectedLayers = this.onRequestSelectedLayers.bind(this);
         this.state = {
             selection: null,
             runtimeMap: null,
@@ -282,6 +284,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                                agentUri={this.props.agent.uri}
                                onViewChanged={this.fnViewChanged}
                                onSelectionChange={this.fnSelectionChange}
+                               onRequestSelectedLayers={this.fnRequestSelectedLayers}
                                externalBaseLayers={externalLayers}
                                imageFormat="PNG" />
                 </div>
@@ -343,6 +346,12 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         matches.forEach(l => l.visible = true);
         //Pass back to state
         this.setState({ externalBaseLayers: layers });
+    }
+    private onRequestSelectedLayers(): string[] {
+        if (this._legend) {
+            return this._legend.getSelectedLayers();
+        }
+        return null;
     }
     private onZoomToSelectedFeature(feature: any) {
 

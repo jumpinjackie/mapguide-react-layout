@@ -13,6 +13,9 @@ import { SelectionPanel } from "./selection-panel";
 import { Toolbar, DEFAULT_TOOLBAR_HEIGHT, TOOLBAR_BACKGROUND_COLOR, IItem, IMenu } from "./toolbar";
 import { buildSelectionXml } from "../api/builders/deArrayify";
 import { FormFrameShim } from "./form-frame-shim";
+import { MouseCoordinates } from "./mouse-coordinates";
+import { PoweredByMapGuide } from "./pbmg";
+import { SelectedFeatureCount } from "./selected-feature-count";
 import assign = require("object-assign");
 
 export interface IApplicationProps {
@@ -56,6 +59,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     private fnSelectionChange: (selectionSet: any) => void;
     private fnZoomToSelectedFeature: (feature: any) => void;
     private fnRequestSelectableLayers: () => string[];
+    private fnMouseCoordinatesChanged: (coords) => void;
     private _viewer: any;
     private _legend: Legend;
     private _taskpane: TaskPane;
@@ -76,11 +80,13 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         this.fnZoomToSelectedFeature = this.onZoomToSelectedFeature.bind(this);
         this.fnBaseLayerChanged = this.onBaseLayerChanged.bind(this);
         this.fnRequestSelectableLayers = this.onRequestSelectableLayers.bind(this);
+        this.fnMouseCoordinatesChanged = this.onMouseCoordinatesChanged.bind(this);
         this.state = {
             selection: null,
             runtimeMap: null,
             error: null,
-            externalBaseLayers: (props.externalBaseLayers || []).map(l => { return { name: l.name, visible: l.visible === true }; })
+            externalBaseLayers: (props.externalBaseLayers || []).map(l => { return { name: l.name, visible: l.visible === true }; }),
+            trackedCoordinate: null
         };
         this.commands = [
             { 
@@ -279,7 +285,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         });
     }
     render(): JSX.Element {
-        const { runtimeMap, selection } = this.state;
+        const { runtimeMap, selection, trackedCoordinate } = this.state;
         if (runtimeMap) {
             const sel = selection ? selection.SelectedFeatures : null;
             const externalLayers = this.getActiveExternalBaseLayerState();
@@ -307,7 +313,19 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                                onSelectionChange={this.fnSelectionChange}
                                onRequestSelectableLayers={this.fnRequestSelectableLayers}
                                externalBaseLayers={externalLayers}
+                               onMouseCoordinateChanged={this.fnMouseCoordinatesChanged}
                                imageFormat="PNG" />
+                    {((() => {
+                        if (trackedCoordinate != null) {
+                            return <MouseCoordinates decimals={6} style={{ position: "absolute", bottom: 0, left: 0, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} coords={trackedCoordinate} />;
+                        }
+                    })())}
+                    {(() => {
+                        if (selection != null && selection.FeatureSet != null && selection.FeatureSet.Layer.length > 0) {
+                            return <SelectedFeatureCount style={{ position: "absolute", bottom: 0, right: 140, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} selection={selection.FeatureSet} />;
+                        }
+                    })()}
+                    <PoweredByMapGuide style={{ position: "absolute", bottom: 0, right: 0, zIndex: 100 }} />
                 </div>
                 <div style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: SIDEBAR_WIDTH }}>
                 {/* <TaskPane ref={this.fnTaskPaneMounted} initialUrl="/mapguide/localized/help/en/mapguide_viewer_command_list.htm" /> */}
@@ -409,6 +427,9 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     private onViewChanged(view: IMapView) {
         if (this._legend != null)
             this._legend.setState({ currentScale: view.scale });
+    }
+    private onMouseCoordinatesChanged(coords) {
+        this.setState({ trackedCoordinate: coords });
     }
 }
 

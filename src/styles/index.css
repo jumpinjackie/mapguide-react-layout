@@ -24,6 +24,17 @@
                                   not supported by any browser */
 }
 
+.ol-attribution {
+    bottom: 25px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.component-mouse-coordinates, .component-selected-feature-count {
+    padding: 3px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 8pt;
+}
+
 .feature-tooltip {
     position: relative;
     background: rgb(255, 255, 153);

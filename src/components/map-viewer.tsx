@@ -32,6 +32,7 @@ export interface IMapViewerProps {
     onSelectionChange?: (selectionSet: any) => void;
     pointSelectionBuffer?: number;
     externalBaseLayers?: IExternalBaseLayer[];
+    onMouseCoordinateChanged?: (coords: number[]) => void;
 }
 
 export enum RefreshMode {
@@ -466,6 +467,11 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
                 break;
         }
     }
+    private onMouseMove(e) {
+        if (this.props.onMouseCoordinateChanged != null) {
+            this.props.onMouseCoordinateChanged(e.coordinate);
+        }
+    }
     // ----------------- React Lifecycle ----------------- //
     componentWillReceiveProps(nextProps) {
         /**
@@ -684,6 +690,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
                 this._zoomSelectBox
             ]
         });
+        this._map.on("pointermove", this.onMouseMove.bind(this));
         this._mouseTooltip = new MouseTrackingTooltip(this._map);
         this._featureTooltip = new FeatureQueryTooltip(this._map, this.context, this.getSelectableLayers.bind(this));
         document.addEventListener("keydown", this.fnKeyPress);

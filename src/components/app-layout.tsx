@@ -52,6 +52,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     private fnMapViewerMounted: (component) => void;
     private fnTaskPaneMounted: (component) => void;
     private fnFormFrameMounted: (component) => void;
+    private fnMouseCoordsMounted: (component) => void;
     private fnBaseLayerChanged: (baseLayerName) => void;
     private fnGroupVisibilityChanged: MapElementChangeFunc;
     private fnLayerVisibilityChanged: MapElementChangeFunc;
@@ -64,6 +65,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     private _legend: Legend;
     private _taskpane: TaskPane;
     private _formFrame: FormFrameShim;
+    private _coords: MouseCoordinates;
     private commands: (IItem|IMenu)[]; 
     private clientContext: ClientContext;
     static childContextTypes = APPLICATION_CONTEXT_VALIDATION_MAP;
@@ -81,12 +83,12 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         this.fnBaseLayerChanged = this.onBaseLayerChanged.bind(this);
         this.fnRequestSelectableLayers = this.onRequestSelectableLayers.bind(this);
         this.fnMouseCoordinatesChanged = this.onMouseCoordinatesChanged.bind(this);
+        this.fnMouseCoordsMounted = this.onMouseCoordsMounted.bind(this);
         this.state = {
             selection: null,
             runtimeMap: null,
             error: null,
             externalBaseLayers: (props.externalBaseLayers || []).map(l => { return { name: l.name, visible: l.visible === true }; }),
-            trackedCoordinate: null
         };
         this.commands = [
             { 
@@ -285,7 +287,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         });
     }
     render(): JSX.Element {
-        const { runtimeMap, selection, trackedCoordinate } = this.state;
+        const { runtimeMap, selection } = this.state;
         if (runtimeMap) {
             const sel = selection ? selection.SelectedFeatures : null;
             const externalLayers = this.getActiveExternalBaseLayerState();
@@ -315,11 +317,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                                externalBaseLayers={externalLayers}
                                onMouseCoordinateChanged={this.fnMouseCoordinatesChanged}
                                imageFormat="PNG" />
-                    {((() => {
-                        if (trackedCoordinate != null) {
-                            return <MouseCoordinates decimals={6} style={{ position: "absolute", bottom: 0, left: 0, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} coords={trackedCoordinate} />;
-                        }
-                    })())}
+                    <MouseCoordinates ref={this.fnMouseCoordsMounted} decimals={6} style={{ position: "absolute", bottom: 0, left: 0, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />
                     {(() => {
                         if (selection != null && selection.FeatureSet != null && selection.FeatureSet.Layer.length > 0) {
                             return <SelectedFeatureCount style={{ position: "absolute", bottom: 0, right: 140, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} selection={selection.FeatureSet} />;
@@ -414,6 +412,9 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     private onFormFrameMounted(component) {
         this._formFrame = component;
     }
+    private onMouseCoordsMounted(component) {
+        this._coords = component;
+    }
     private onGroupVisibilityChanged(groupId: string, visible: boolean) {
         const viewer = this.getViewer();
         if (viewer != null)
@@ -429,7 +430,9 @@ export class Application extends React.Component<IApplicationProps, any> impleme
             this._legend.setState({ currentScale: view.scale });
     }
     private onMouseCoordinatesChanged(coords) {
-        this.setState({ trackedCoordinate: coords });
+        if (this._coords) {
+            this._coords.setState({ coords: coords });
+        }
     }
 }
 

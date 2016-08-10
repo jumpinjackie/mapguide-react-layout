@@ -671,6 +671,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         this._zoomSelectBox.on("boxend", this.onZoomSelectBox.bind(this));
 
         this._map = new ol.Map({
+            logo: false,
             target: mapNode,
             layers: layers,
             view: view,

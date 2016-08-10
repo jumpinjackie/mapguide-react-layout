@@ -58,6 +58,7 @@ export interface IMapViewer extends IMapViewerContext {
     digitizeRectangle(handler: DigitizerCallback<ol.geom.Polygon>): void;
     digitizePolygon(handler: DigitizerCallback<ol.geom.Polygon>): void;
     selectByGeometry(geom: ol.geom.Geometry): void;
+    zoomToExtent(extent: number[]): void;
 }
 
 export enum ActiveMapTool {
@@ -657,7 +658,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
     public zoomDelta(delta: number): void {
         this.zoomByDelta(delta);
     }
-    public zoomToExtent(extent: number[]) {
+    public zoomToExtent(extent: number[]): void {
         this._map.getView().fit(extent, this._map.getSize());
     }
     public isDigitizing(): boolean {

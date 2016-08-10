@@ -354,7 +354,11 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         return null;
     }
     private onZoomToSelectedFeature(feature: any) {
-
+        const viewer = this.getViewer();
+        if (viewer != null) {
+            const bbox: number[] = feature.Bounds.split(" ").map(s => parseFloat(s));
+            viewer.zoomToExtent(bbox);
+        }
     }
     private onSelectionChange(selectionSet: any) {
         this.setState({ selection: selectionSet });

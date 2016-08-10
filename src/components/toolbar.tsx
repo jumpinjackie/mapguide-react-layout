@@ -46,7 +46,8 @@ function getItemStyle(enabled: boolean, selected: boolean, height: number, isMou
     };
     if (enabled && (isMouseOver === true || selected)) {
         style.cursor = "pointer";
-        style.border = "1px solid rgb(153, 181, 202)";
+        style.background = "rgb(220, 220, 220)";
+        style.border = "1px solid rgb(160, 160, 160)";
         style.paddingLeft = pad - 1; //To compensate for border
         style.paddingRight = pad - 1; //To compensate for border
         style.paddingTop = vertPad - 1; //To compensate for border
@@ -132,6 +133,22 @@ class FlyoutMenuChildItem extends React.Component<any, any> {
                 <img style={imgStyle} src={getIcon(item.icon)} /> {item.label}
             </div>
         </li>;
+    }
+}
+
+interface IToolbarContentContainerProps {
+    height: number;
+}
+
+class ToolbarContentContainer extends React.Component<IToolbarContentContainerProps, any> {
+    constructor(props) {
+        super(props);
+    }
+    render(): JSX.Element {
+        const { height } = this.props;
+        const imgStyle = getIconStyle(true, height);
+        const style = getItemStyle(true, false, height, false);
+        return <div className="noselect">{this.props.children}</div>;
     }
 }
 
@@ -263,6 +280,10 @@ export interface IItem {
 export interface IMenu extends IItem {
     childItems: IItem[];
     flyoutAlign?: string;
+}
+
+export interface IContainerItem extends IItem {
+    renderContainerContent: () => JSX.Element;
 }
 
 export interface IToolbarProps {

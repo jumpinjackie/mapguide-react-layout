@@ -262,7 +262,7 @@ class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
         const imgStyle = getIconStyle(enabled, height);
         const style = getItemStyle(enabled, selected, height, this.state.isMouseOver);
         return <div className="noselect" onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} style={style} title={item.tooltip} onClick={this.fnClick}>
-            <img style={imgStyle} src={getIcon(item.icon)} />
+            <img style={imgStyle} src={getIcon(item.icon)} /> {item.label}
         </div>;
     }
 }

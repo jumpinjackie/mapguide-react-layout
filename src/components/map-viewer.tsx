@@ -51,12 +51,12 @@ export interface IMapViewer extends IMapViewerContext {
     clearSelection(): void;
     zoomDelta(delta: number): void;
     isDigitizing(): boolean;
-    digitizePoint(handler: DigitizerCallback<ol.geom.Point>): void;
-    digitizeLine(handler: DigitizerCallback<ol.geom.LineString>): void;
-    digitizeLineString(handler: DigitizerCallback<ol.geom.LineString>): void;
-    digitizeCircle(handler: DigitizerCallback<ol.geom.Circle>): void;
-    digitizeRectangle(handler: DigitizerCallback<ol.geom.Polygon>): void;
-    digitizePolygon(handler: DigitizerCallback<ol.geom.Polygon>): void;
+    digitizePoint(handler: DigitizerCallback<ol.geom.Point>, prompt?: string): void;
+    digitizeLine(handler: DigitizerCallback<ol.geom.LineString>, prompt?: string): void;
+    digitizeLineString(handler: DigitizerCallback<ol.geom.LineString>, prompt?: string): void;
+    digitizeCircle(handler: DigitizerCallback<ol.geom.Circle>, prompt?: string): void;
+    digitizeRectangle(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void;
+    digitizePolygon(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void;
     selectByGeometry(geom: ol.geom.Geometry): void;
     zoomToExtent(extent: number[]): void;
 }
@@ -66,6 +66,64 @@ export enum ActiveMapTool {
     Select,
     Pan,
     None
+}
+
+const KC_ESCAPE = 27;
+
+class DigitizerMessages {
+    public static get Point(): string { return "Click to finish and draw a point at this location<br/><br/>Press ESC to cancel"; }
+    public static get Line(): string { return "Click to set this position as the start.<br/>Click again to finish the line at this position<br/><br/>Press ESC to cancel"; }
+    public static get LineString(): string { return "Click to set this position as the start.<br/>Click again to add a vertex at this position.<br/></br>Double click to finish<br/>Press ESC to cancel"; }
+    public static get Circle(): string { return "Click to set this position as the center.<br/>Move out to the desired radius and click again to finish<br/><br/>Press ESC to cancel"; }
+    public static get Rectangle(): string { return "Click to set this position as one corner.<br/>Click again to finish and set this position as the other corner<br/><br/>Press ESC to cancel"; }
+    public static get Polygon(): string { return "Click to set this positon as the start.<br/>Click again to add a vertex at this position.<br/><br/>Double click to finish and close the polygon<br/>Press ESC to cancel"; }
+}
+
+const HIDDEN_CLASS_NAME = "tooltip-hidden";
+
+class MouseTrackingTooltip {
+    private tooltip: ol.Overlay;
+    private tooltipElement: Element;
+    private map: ol.Map;
+    private text: string;
+    constructor(map: ol.Map) {
+        this.map = map;
+        this.map.on("pointermove", this.onMouseMove.bind(this));
+        this.map.getViewport().addEventListener("mouseout", this.onMouseOut.bind(this));
+        this.tooltipElement = document.createElement("div");
+        this.tooltipElement.className = 'tooltip';
+        this.tooltip = new ol.Overlay({
+            element: this.tooltipElement,
+            offset: [15, 0],
+            positioning: "center-left" /*ol.OverlayPositioning.CENTER_LEFT*/
+        })
+        this.map.addOverlay(this.tooltip);
+        this.text = null;
+        this.tooltipElement.classList.add(HIDDEN_CLASS_NAME);
+    }
+    private onMouseMove(e) {
+        this.tooltip.setPosition(e.coordinate);
+        if (this.text)
+            this.tooltipElement.classList.remove(HIDDEN_CLASS_NAME);
+        else
+            this.tooltipElement.classList.add(HIDDEN_CLASS_NAME);
+    }
+    private onMouseOut(e) {
+        this.tooltipElement.classList.add(HIDDEN_CLASS_NAME);
+    }
+    public setText(prompt: string) {
+        this.text = prompt;
+        this.tooltipElement.innerHTML = this.text;
+    }
+    public clear() {
+        this.text = null;
+        this.tooltipElement.innerHTML = null;
+    }
+    public destroy() {
+        if (this.tooltipElement) {
+            this.tooltipElement.parentNode.removeChild(this.tooltipElement);
+        }
+    }
 }
 
 export class MapViewer extends React.Component<IMapViewerProps, any>
@@ -108,6 +166,10 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
     private _baseLayerGroup: ol.layer.Group;
     private _zoomSelectBox: ol.interaction.DragBox;
 
+    private _mouseTooltip: MouseTrackingTooltip;
+
+    private fnKeyPress: (e) => void;
+
     context: IApplicationContext;
     /**
      * This is a throttled version of _refreshOnStateChange(). Call this on any 
@@ -122,6 +184,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         this.state = this.buildInitialState(props);
         this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), props.stateChangeDebounceTimeout || 500);
         this._wktFormat = new ol.format.WKT();
+        this.fnKeyPress = this.onKeyPress.bind(this);
     }
     private buildInitialState(props: IMapViewerProps) {
         const layerMap: any = {};
@@ -280,16 +343,33 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
             this._activeDrawInteraction = null;
         }
     }
-    private pushDrawInteraction<T extends ol.geom.Geometry>(draw: ol.interaction.Draw, handler: DigitizerCallback<T>): void {
+    private cancelDigitization() {
+        if (this.isDigitizing()) {
+            this.removeActiveDrawInteraction();
+            this._mouseTooltip.clear();
+        }
+    }
+    private pushDrawInteraction<T extends ol.geom.Geometry>(draw: ol.interaction.Draw, handler: DigitizerCallback<T>, prompt?: string): void {
         this.removeActiveDrawInteraction();
+        this._mouseTooltip.clear();
+        if (prompt) {
+            this._mouseTooltip.setText(prompt);
+        }
         this._activeDrawInteraction = draw;
         this._activeDrawInteraction.once("drawend", (e) => {
             const drawnFeature: ol.Feature = e.feature;
             const geom: T = drawnFeature.getGeometry() as T;
-            this.removeActiveDrawInteraction();
+            this.cancelDigitization();
             handler(geom);
         })
         this._map.addInteraction(this._activeDrawInteraction);
+    }
+    private onKeyPress(e) {
+        switch (e.keyCode) {
+            case KC_ESCAPE:
+                this.cancelDigitization();
+                break;
+        }
     }
     // ----------------- React Lifecycle ----------------- //
     componentWillReceiveProps(nextProps) {
@@ -506,6 +586,9 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
                 this._zoomSelectBox
             ]
         });
+        this._mouseTooltip = new MouseTrackingTooltip(this._map);
+        document.addEventListener("keydown", this.fnKeyPress);
+
         view.fit(this._extent, this._map.getSize());
         //Set initial view
         const center = view.getCenter();
@@ -664,34 +747,34 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
     public isDigitizing(): boolean {
         return this._activeDrawInteraction != null;
     }
-    public digitizePoint(handler: DigitizerCallback<ol.geom.Point>): void {
+    public digitizePoint(handler: DigitizerCallback<ol.geom.Point>, prompt?: string): void {
         const draw = new ol.interaction.Draw({
             type: "Point"//ol.geom.GeometryType.POINT
         });
-        this.pushDrawInteraction(draw, handler);
+        this.pushDrawInteraction(draw, handler, prompt || DigitizerMessages.Point);
     }
-    public digitizeLine(handler: DigitizerCallback<ol.geom.LineString>): void {
+    public digitizeLine(handler: DigitizerCallback<ol.geom.LineString>, prompt?: string): void {
         const draw = new ol.interaction.Draw({
             type: "LineString", //ol.geom.GeometryType.LINE_STRING,
             minPoints: 2,
             maxPoints: 2
         });
-        this.pushDrawInteraction(draw, handler);
+        this.pushDrawInteraction(draw, handler, prompt || DigitizerMessages.Line);
     }
-    public digitizeLineString(handler: DigitizerCallback<ol.geom.LineString>): void {
+    public digitizeLineString(handler: DigitizerCallback<ol.geom.LineString>, prompt?: string): void {
         const draw = new ol.interaction.Draw({
             type: "LineString", //ol.geom.GeometryType.LINE_STRING,
             minPoints: 2
         });
-        this.pushDrawInteraction(draw, handler);
+        this.pushDrawInteraction(draw, handler, prompt || DigitizerMessages.LineString);
     }
-    public digitizeCircle(handler: DigitizerCallback<ol.geom.Circle>): void {
+    public digitizeCircle(handler: DigitizerCallback<ol.geom.Circle>, prompt?: string): void {
         const draw = new ol.interaction.Draw({
             type: "Circle" //ol.geom.GeometryType.CIRCLE
         });
-        this.pushDrawInteraction(draw, handler);
+        this.pushDrawInteraction(draw, handler, prompt || DigitizerMessages.Circle);
     }
-    public digitizeRectangle(handler: DigitizerCallback<ol.geom.Polygon>): void {
+    public digitizeRectangle(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void {
         const draw = new ol.interaction.Draw({
             type: "LineString", //ol.geom.GeometryType.LINE_STRING,
             maxPoints: 2,
@@ -707,13 +790,13 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
                 return geometry;
             }
         });
-        this.pushDrawInteraction(draw, handler);
+        this.pushDrawInteraction(draw, handler, prompt || DigitizerMessages.Rectangle);
     }
-    public digitizePolygon(handler: DigitizerCallback<ol.geom.Polygon>): void {
+    public digitizePolygon(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void {
         const draw = new ol.interaction.Draw({
             type: "Polygon" //ol.geom.GeometryType.POLYGON
         });
-        this.pushDrawInteraction(draw, handler);
+        this.pushDrawInteraction(draw, handler, prompt || DigitizerMessages.Polygon);
     }
     public selectByGeometry(geom: ol.geom.Geometry): void {
         const selLayerNames = (this.props.onRequestSelectedLayers != null)

@@ -25,9 +25,10 @@ export interface IMapViewerProps {
     map: Contracts.RtMap.RuntimeMap;
     agentUri: string;
     imageFormat: "PNG" | "PNG8" | "JPG" | "GIF";
+    selectionColor?: string;
     stateChangeDebounceTimeout?: number;
     onViewChanged?: (view: IMapView) => void;
-    onRequestSelectedLayers?: () => string[];
+    onRequestSelectableLayers?: () => string[];
     onSelectionChange?: (selectionSet: any) => void;
     pointSelectionBuffer?: number;
     externalBaseLayers?: IExternalBaseLayer[];
@@ -59,6 +60,8 @@ export interface IMapViewer extends IMapViewerContext {
     digitizePolygon(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void;
     selectByGeometry(geom: ol.geom.Geometry): void;
     zoomToExtent(extent: number[]): void;
+    isFeatureTooltipEnabled(): boolean;
+    setFeatureTooltipEnabled(enabled: boolean): void;
 }
 
 export enum ActiveMapTool {
@@ -77,6 +80,91 @@ class DigitizerMessages {
     public static get Circle(): string { return "Click to set this position as the center.<br/>Move out to the desired radius and click again to finish<br/><br/>Press ESC to cancel"; }
     public static get Rectangle(): string { return "Click to set this position as one corner.<br/>Click again to finish and set this position as the other corner<br/><br/>Press ESC to cancel"; }
     public static get Polygon(): string { return "Click to set this positon as the start.<br/>Click again to add a vertex at this position.<br/><br/>Double click to finish and close the polygon<br/>Press ESC to cancel"; }
+}
+
+class FeatureQueryTooltip {
+    private context: IApplicationContext;
+    private wktFormat: ol.format.WKT;
+    private map: ol.Map;
+    private onRequestSelectableLayers: () => string[];
+    private throttledMouseMove;
+    private featureTooltipElement: Element;
+    private featureTooltip: ol.Overlay;
+    private enabled: boolean;
+    constructor(map: ol.Map, context: IApplicationContext, onRequestSelectableLayers: () => string[] = null) {
+        this.context = context;
+        this.wktFormat = new ol.format.WKT();
+        this.featureTooltipElement = document.createElement("div");
+        this.featureTooltipElement.className = 'feature-tooltip';
+        this.featureTooltip = new ol.Overlay({
+            element: this.featureTooltipElement,
+            offset: [15, 0],
+            positioning: "center-left" /* ol.OverlayPositioning.CENTER_LEFT */
+        })
+        this.map = map;
+        this.map.addOverlay(this.featureTooltip);
+        this.onRequestSelectableLayers = onRequestSelectableLayers;
+        this.throttledMouseMove = debounce(this._onMouseMove.bind(this), 1000);
+        this.map.on("pointermove", this.throttledMouseMove);
+        this.enabled = true;
+    }
+    public isEnabled(): boolean {
+        return this.enabled;
+    }
+    public setEnabled(enabled: boolean): void {
+        this.enabled = enabled;
+        if (!this.enabled) {
+            this.featureTooltipElement.innerHTML = "";
+            this.featureTooltipElement.classList.add("tooltip-hidden");
+        }
+    }
+    private _onMouseMove(e) {
+        const coords: number[] = e.coordinate;
+        this.sendTooltipQuery(coords);
+    }
+    private sendTooltipQuery(coords: number[]): void {
+        if (!this.enabled) {
+            return;
+        }
+        const geom = new ol.geom.Point(coords);
+        const selectedLayerNames = this.onRequestSelectableLayers();
+        //if (selectedLayerNames != null && selectedLayerNames.length == 0) {
+        //    return;
+        //}
+        const reqQueryFeatures = 4 | 8; //Tooltips and hyperlinks
+        const wkt = this.wktFormat.writeGeometry(geom);
+        const client = this.context.getClient();
+
+        //This is probably a case of blink and you'll miss
+        //
+        //this.featureTooltipElement.innerHTML = "Querying tooltip data ...";
+        //this.featureTooltipElement.classList.remove("tooltip-hidden");
+        this.featureTooltip.setPosition(coords);
+        client.queryMapFeatures({
+            mapname: this.context.getMapName(),
+            session: this.context.getSession(),
+            //layernames: selectedLayerNames != null ? selectedLayerNames.join(",") : null,
+            geometry: wkt,
+            persist: 0,
+            selectionvariant: "INTERSECTS",
+            maxfeatures: 1,
+            requestdata: reqQueryFeatures
+        }).then(res => {
+            let html = "";
+            if (res.Tooltip) {
+                html += `<div class='feature-tooltip-body'>${res.Tooltip.replace(/\\n/g, "<br/>")}</div>`;
+            }
+            if (res.Hyperlink) {
+                html += `<div><a href='${res.Hyperlink}'>Click for more information</a></div>`;
+            }
+            this.featureTooltipElement.innerHTML = html;
+            if (html == "") {
+                this.featureTooltipElement.classList.add("tooltip-hidden");
+            } else {
+                this.featureTooltipElement.classList.remove("tooltip-hidden");
+            }
+        });
+    }
 }
 
 const HIDDEN_CLASS_NAME = "tooltip-hidden";
@@ -167,6 +255,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
     private _zoomSelectBox: ol.interaction.DragBox;
 
     private _mouseTooltip: MouseTrackingTooltip;
+    private _featureTooltip: FeatureQueryTooltip;
 
     private fnKeyPress: (e) => void;
 
@@ -178,6 +267,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
      * @private
      */
     private refreshOnStateChange: () => void;
+    private _selectionColor: string;
     constructor(props: IMapViewerProps) {
         super(props);
         this._map = null;
@@ -185,6 +275,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), props.stateChangeDebounceTimeout || 500);
         this._wktFormat = new ol.format.WKT();
         this.fnKeyPress = this.onKeyPress.bind(this);
+        this._selectionColor = props.selectionColor || "0xFF000000"; //default to blue if not specified
     }
     private buildInitialState(props: IMapViewerProps) {
         const layerMap: any = {};
@@ -264,6 +355,12 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
             this.selectByGeometry(geom);
         }
     }
+    private getSelectableLayers(): string[] {
+        //TODO: This needs to only consider layers in the current scale
+        return (this.props.onRequestSelectableLayers != null)
+            ? this.props.onRequestSelectableLayers()
+            : null;
+    }
     private onZoomSelectBox(e) {
         const extent = this._zoomSelectBox.getGeometry();
         switch (this.getActiveTool()) {
@@ -274,10 +371,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
                 break;
             case ActiveMapTool.Select:
                 {
-                    const selLayerNames = (this.props.onRequestSelectedLayers != null)
-                        ? this.props.onRequestSelectedLayers()
-                        : null;
-                    this.sendSelectionQuery(extent, selLayerNames);
+                    this.sendSelectionQuery(extent, this.getSelectableLayers());
                 }
                 break;
         }
@@ -293,6 +387,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
             mapname: this.context.getMapName(),
             session: this.context.getSession(),
             geometry: wkt,
+            layernames: selectedLayerNames != null ? selectedLayerNames.join(",") : null,
             persist: persist,
             selectionvariant: "INTERSECTS",
             selectioncolor: "0xFF000000",
@@ -390,6 +485,9 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         }
         if (nextProps.agentUri != props.agentUri) {
             console.warn(`Unsupported change of props: agentUri`);
+        }
+        if (nextProps.selectionColor && nextProps.selectionColor != props.selectionColor) {
+            this._selectionColor = nextProps.selectionColor;
         }
         if (nextProps.externalBaseLayers != null && 
             nextProps.externalBaseLayers.length > 0 &&
@@ -587,6 +685,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
             ]
         });
         this._mouseTooltip = new MouseTrackingTooltip(this._map);
+        this._featureTooltip = new FeatureQueryTooltip(this._map, this.context, this.getSelectableLayers.bind(this));
         document.addEventListener("keydown", this.fnKeyPress);
 
         view.fit(this._extent, this._map.getSize());
@@ -699,7 +798,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
             session: this.context.getSession(),
             persist: 1,
             featurefilter: xml,
-            selectioncolor: "0xFF000000",
+            selectioncolor: this._selectionColor,
             selectionformat: "PNG8",
             maxfeatures: -1,
             requestdata: reqQueryFeatures
@@ -799,10 +898,13 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         this.pushDrawInteraction(draw, handler, prompt || DigitizerMessages.Polygon);
     }
     public selectByGeometry(geom: ol.geom.Geometry): void {
-        const selLayerNames = (this.props.onRequestSelectedLayers != null)
-            ? this.props.onRequestSelectedLayers()
-            : null;
-        this.sendSelectionQuery(geom, selLayerNames);
+        this.sendSelectionQuery(geom, this.getSelectableLayers());
+    }
+    public isFeatureTooltipEnabled(): boolean {
+        return this._featureTooltip.isEnabled();
+    }
+    public setFeatureTooltipEnabled(enabled: boolean): void {
+        this._featureTooltip.setEnabled(enabled);
     }
     //------------------------------------//
 }

@@ -55,7 +55,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     private fnViewChanged: (view: IMapView) => void;
     private fnSelectionChange: (selectionSet: any) => void;
     private fnZoomToSelectedFeature: (feature: any) => void;
-    private fnRequestSelectedLayers: () => string[];
+    private fnRequestSelectableLayers: () => string[];
     private _viewer: any;
     private _legend: Legend;
     private _taskpane: TaskPane;
@@ -75,7 +75,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         this.fnSelectionChange = this.onSelectionChange.bind(this);
         this.fnZoomToSelectedFeature = this.onZoomToSelectedFeature.bind(this);
         this.fnBaseLayerChanged = this.onBaseLayerChanged.bind(this);
-        this.fnRequestSelectedLayers = this.onRequestSelectedLayers.bind(this);
+        this.fnRequestSelectableLayers = this.onRequestSelectableLayers.bind(this);
         this.state = {
             selection: null,
             runtimeMap: null,
@@ -84,7 +84,8 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         };
         this.commands = [
             { 
-                icon: "select.png", tooltip: "Select",
+                icon: "select.png",
+                tooltip: "Select",
                 selected: () => {
                     const viewer = this.getViewer();
                     if (viewer) {
@@ -100,7 +101,8 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                 }
             },
             { 
-                icon: "pan.png", tooltip: "Pan",
+                icon: "pan.png",
+                tooltip: "Pan",
                 selected: () => {
                     const viewer = this.getViewer();
                     if (viewer) {
@@ -116,7 +118,8 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                 }
             },
             { 
-                icon: "zoom-in.png", tooltip: "Zoom",
+                icon: "zoom-in.png",
+                tooltip: "Zoom",
                 selected: () => {
                     const viewer = this.getViewer();
                     if (viewer) {
@@ -160,9 +163,27 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                 ]
             },
             { isSeparator: true },
+            {
+                icon: "maptip.png",
+                label: "Feature Tooltips",
+                tooltip: "Feature Tooltips",
+                selected: () => {
+                    const viewer = this.getViewer();
+                    if (viewer) {
+                        return viewer.isFeatureTooltipEnabled();
+                    }
+                    return false;
+                },
+                invoke: () => {
+                    const viewer = this.getViewer();
+                    if (viewer) {
+                        return viewer.setFeatureTooltipEnabled(!viewer.isFeatureTooltipEnabled());
+                    }
+                }
+            },
             { 
                 icon: "select-radius.png",
-                label: "Select Radius",
+                //label: "Select Radius",
                 tooltip: "Select Radius",
                 invoke: () => {
                     const viewer = this.getViewer();
@@ -176,7 +197,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
             },
             { 
                 icon: "select-polygon.png",
-                label: "Select Polygon",
+                //label: "Select Polygon",
                 tooltip: "Select Polygon",
                 invoke: () => {
                     const viewer = this.getViewer();
@@ -189,7 +210,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
             },
             { 
                 icon: "zoom-full.png",
-                label: "Zoom Extents",
+                //label: "Zoom Extents",
                 tooltip: "Zoom Extents",
                 invoke: () => {
                     const viewer = this.getViewer();
@@ -200,7 +221,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
             },
             { 
                 icon: "select-clear.png",
-                label: "Clear Selection",
+                //label: "Clear Selection",
                 tooltip: "Clear Selection",
                 invoke: () => {
                     const viewer = this.getViewer();
@@ -284,7 +305,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                                agentUri={this.props.agent.uri}
                                onViewChanged={this.fnViewChanged}
                                onSelectionChange={this.fnSelectionChange}
-                               onRequestSelectedLayers={this.fnRequestSelectedLayers}
+                               onRequestSelectableLayers={this.fnRequestSelectableLayers}
                                externalBaseLayers={externalLayers}
                                imageFormat="PNG" />
                 </div>
@@ -347,9 +368,9 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         //Pass back to state
         this.setState({ externalBaseLayers: layers });
     }
-    private onRequestSelectedLayers(): string[] {
+    private onRequestSelectableLayers(): string[] {
         if (this._legend) {
-            return this._legend.getSelectedLayers();
+            return this._legend.getSelectableLayers();
         }
         return null;
     }

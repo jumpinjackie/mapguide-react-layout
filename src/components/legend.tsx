@@ -285,15 +285,15 @@ export class Legend extends React.Component<ILegendProps, any> {
             setLayerExpanded: this.setLayerExpanded.bind(this)
         };
     }
-    public getSelectedLayers(): string[] {
+    public getSelectableLayers(): string[] {
         const layers = [];
         for (const layerId in this.state.LayerMap) {
-            const layer = this.state.LayerMap[layerId];
+            const layer: MapLayer = this.state.LayerMap[layerId];
             if (layer.Selectable === true) {
                 if (this.state.OverrideSelectableLayers[layerId] === false) {
                     continue;
                 }
-                layers.push(layer.ObjectId);
+                layers.push(layer.Name);
             }
         }
         return layers;

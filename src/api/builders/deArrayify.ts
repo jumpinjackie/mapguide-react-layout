@@ -210,7 +210,7 @@ function deArrayifyFeatureSetLayers(json: any[]): Contracts.Query.FeatureSetLaye
 
 function deArrayifyFeatureSet(json: any): Contracts.Query.FeatureSet {
     const root = json;
-    if (root.length != 1) {
+    if (root == null || root.length != 1) {
         return null;
     }
     const fs = {
@@ -221,7 +221,7 @@ function deArrayifyFeatureSet(json: any): Contracts.Query.FeatureSet {
 
 function deArrayifyInlineSelectionImage(json: any): Contracts.Query.SelectionImage {
     const root = json;
-    if (root.length != 1) {
+    if (root == null || root.length != 1) {
         return null;
     }
     const img = {

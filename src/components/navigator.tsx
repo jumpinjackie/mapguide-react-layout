@@ -18,12 +18,12 @@ export class Navigator extends React.Component<INavigatorProps, any> {
                 <area shape="circle" alt="Zoom Out" title="Zoom Out" coords="25,142,8" />
                 <area shape="circle" alt="Zoom In" title="Zoom In" coords="25,34,8" />
             </map>
-            <img src="stdicons/sliderscale.png" class="png24" width="51" height="201" usemap="#Navigator_ImageMap" style={{ position: "absolute", left: 0, top: 0 }} />
+            <img src="stdicons/sliderscale.png" className="png24" width="51" height="201" useMap="#Navigator_ImageMap" style={{ position: "absolute", left: 0, top: 0 }} />
             <div style={{ position: "absolute", top: 6, left: 6, width: 39, height: 16 }}>
                 <img src="stdicons/spinner.gif" width="18" height="6" style={{ position: "absolute", top: 3, right: 4, visibility: "hidden" }} />
             </div>
             <div style={{ position: "absolute", top: 44, left: 0, width: 51, height: 85 }}>
-                <img src="stdicons/slider.png" class="png24" width="29" height="12" style={{ position: "relative", left: 11, top: 28 }} />
+                <img src="stdicons/slider.png" className="png24" width="29" height="12" style={{ position: "relative", left: 11, top: 28 }} />
             </div>
         </div>;
     }

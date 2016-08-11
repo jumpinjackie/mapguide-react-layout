@@ -22,7 +22,7 @@ export class ClientContext {
     }
 }
 
-class Client implements Request.IMapGuideClient {
+export class Client implements Request.IMapGuideClient {
     private builder: Request.RequestBuilder;
     constructor(agentUri: string, kind: ClientKind) {
         switch (kind) {

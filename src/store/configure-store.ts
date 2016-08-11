@@ -7,60 +7,61 @@ import rootReducer from '../reducers';
 const persistState = require('redux-localstorage');
 
 function configureStore(initialState) {
-  const store = compose(
-    _getMiddleware(),
-    ..._getEnhancers()
-  )(createStore)(rootReducer, initialState);
+    const store = compose(
+        _getMiddleware(),
+        ..._getEnhancers()
+    )(createStore)(rootReducer, initialState);
 
-  _enableHotLoader(store);
-  return store;
+    _enableHotLoader(store);
+    return store;
 }
 
 function _getMiddleware() {
-  let middleware = [
-    promiseMiddleware,
-    thunk,
-  ];
+    let middleware = [
+        promiseMiddleware,
+        thunk,
+    ];
 
-  if (__DEV__) {
-    middleware = [...middleware, logger];
-  }
+    if (__DEV__) {
+        middleware = [...middleware, logger];
+    }
 
-  return applyMiddleware(...middleware);
+    return applyMiddleware(...middleware);
 }
 
 function _getEnhancers() {
-  let enhancers = [
-    persistState('session', _getStorageConfig()),
-  ];
+    let enhancers = [
+        persistState('session', _getStorageConfig()),
+    ];
 
-  if (__DEV__ && window.devToolsExtension) {
-    enhancers = [...enhancers, window.devToolsExtension() ];
-  }
+    if (__DEV__ && window.devToolsExtension) {
+        enhancers = [...enhancers, window.devToolsExtension()];
+    }
 
-  return enhancers;
+    return enhancers;
 }
 
 function _enableHotLoader(store) {
-  if (__DEV__ && module.hot) {
-    module.hot.accept('../reducers', () => {
-      const nextRootReducer = require('../reducers');
-      store.replaceReducer(nextRootReducer);
-    });
-  }
+    if (__DEV__ && module.hot) {
+        module.hot.accept('../reducers', () => {
+            const nextRootReducer = require('../reducers');
+            store.replaceReducer(nextRootReducer);
+        });
+    }
 }
 
 function _getStorageConfig() {
-  return {
-    key: 'react-redux-seed',
-    serialize: (store) => {
-      return store && store.session ?
-        JSON.stringify(store.session.toJS()) : store;
-    },
-    deserialize: (state) => ({
-      session: state ? fromJS(JSON.parse(state)) : fromJS({}),
-    }),
-  };
+    return {
+        key: 'react-redux-seed',
+        serialize: (store) => {
+            return store && store.session 
+                ? JSON.stringify(store.session)
+                : store;
+        },
+        deserialize: (state) => ({
+            session: state ? JSON.parse(state) : {}
+        }),
+    };
 }
 
 export default configureStore;

@@ -91,6 +91,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
             selection: null,
             runtimeMap: null,
             error: null,
+            currentView: null,
             externalBaseLayers: (props.externalBaseLayers || []).map(l => { return { name: l.name, visible: l.visible === true }; }),
         };
         this.commands = [
@@ -297,12 +298,17 @@ export class Application extends React.Component<IApplicationProps, any> impleme
             return <div style={{ width: "100%", height: "100%" }}>
                 <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: SIDEBAR_WIDTH }}>
                     <div style={{ position: "absolute", left: 0, top: 0, right: 0, height: LEGEND_HEIGHT, overflow: "auto" }}>
-                        <Legend ref={this.fnLegendMounted}
-                                map={this.state.runtimeMap}
-                                externalBaseLayers={externalLayers}
-                                onBaseLayerChanged={this.fnBaseLayerChanged}
-                                onGroupVisibilityChanged={this.fnGroupVisibilityChanged}
-                                onLayerVisibilityChanged={this.fnLayerVisibilityChanged} />
+                        {(() => {
+                            if (this.state.currentView != null) {
+                                return <Legend ref={this.fnLegendMounted}
+                                               map={this.state.runtimeMap}
+                                               currentScale={this.state.currentView.scale}
+                                               externalBaseLayers={externalLayers}
+                                               onBaseLayerChanged={this.fnBaseLayerChanged}
+                                               onGroupVisibilityChanged={this.fnGroupVisibilityChanged}
+                                               onLayerVisibilityChanged={this.fnLayerVisibilityChanged} />;
+                            }
+                        })()}
                     </div>
                     <div style={{ position: "absolute", left: 0, bottom: 0, right: 0, top: LEGEND_HEIGHT }}>
                         <SelectionPanel selection={sel}
@@ -314,6 +320,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                     <MapViewer ref={this.fnMapViewerMounted}
                                map={this.state.runtimeMap} 
                                agentUri={this.props.agent.uri}
+                               agentKind={this.props.agent.kind || "mapagent"}
                                onViewChanged={this.fnViewChanged}
                                onSelectionChange={this.fnSelectionChange}
                                onRequestSelectableLayers={this.fnRequestSelectableLayers}
@@ -331,7 +338,11 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                 </div>
                 <div style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: SIDEBAR_WIDTH }}>
                 {/* <TaskPane ref={this.fnTaskPaneMounted} initialUrl="/mapguide/localized/help/en/mapguide_viewer_command_list.htm" /> */}
-                    <TaskPane ref={this.fnTaskPaneMounted} initialUrl="/mapguide/phpsamples/index.php" />
+                    <TaskPane ref={this.fnTaskPaneMounted} 
+                              initialUrl="/mapguide/phpsamples/index.php"
+                              mapName={this.state.runtimeMap.Name}
+                              session={this.state.runtimeMap.SessionId}
+                              locale="en" />
                 </div>
                 <FormFrameShim ref={this.fnFormFrameMounted} />
             </div>;
@@ -430,8 +441,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
             viewer.setLayerVisibility(layerId, visible);
     }
     private onViewChanged(view: IMapView) {
-        if (this._legend != null)
-            this._legend.setState({ currentScale: view.scale });
+        this.setState({ currentView: view });
     }
     private onMouseCoordinatesChanged(coords) {
         if (this._coords) {
@@ -443,7 +453,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
 /**
  * This is the entry point to the Application component
  */
-export class ApplicationViewModel {
+export class OldApplicationViewModel {
     fnAppMounted: (app) => void;
     constructor() {
         this.fnAppMounted = this.onAppMounted.bind(this);

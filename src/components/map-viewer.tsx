@@ -13,6 +13,7 @@ import debounce = require("lodash.debounce");
 import { areNumbersEqual } from '../utils/number';
 import * as logger from '../utils/logger';
 import { MgError } from '../api/error';
+import { Client, ClientKind } from '../api/client';
 
 export interface IExternalBaseLayer {
     name: string;
@@ -24,6 +25,7 @@ export interface IExternalBaseLayer {
 export interface IMapViewerProps {
     map: Contracts.RtMap.RuntimeMap;
     agentUri: string;
+    agentKind: ClientKind;
     imageFormat: "PNG" | "PNG8" | "JPG" | "GIF";
     selectionColor?: string;
     stateChangeDebounceTimeout?: number;
@@ -84,7 +86,6 @@ class DigitizerMessages {
 }
 
 class FeatureQueryTooltip {
-    private context: IApplicationContext;
     private wktFormat: ol.format.WKT;
     private map: ol.Map;
     private onRequestSelectableLayers: () => string[];
@@ -92,8 +93,9 @@ class FeatureQueryTooltip {
     private featureTooltipElement: Element;
     private featureTooltip: ol.Overlay;
     private enabled: boolean;
-    constructor(map: ol.Map, context: IApplicationContext, onRequestSelectableLayers: () => string[] = null) {
-        this.context = context;
+    private viewer: MapViewer;
+    constructor(map: ol.Map, viewer: MapViewer, onRequestSelectableLayers: () => string[] = null) {
+        this.viewer = viewer;
         this.wktFormat = new ol.format.WKT();
         this.featureTooltipElement = document.createElement("div");
         this.featureTooltipElement.className = 'feature-tooltip';
@@ -134,7 +136,7 @@ class FeatureQueryTooltip {
         //}
         const reqQueryFeatures = 4 | 8; //Tooltips and hyperlinks
         const wkt = this.wktFormat.writeGeometry(geom);
-        const client = this.context.getClient();
+        const client = new Client(this.viewer.props.agentUri, this.viewer.props.agentKind);
 
         //This is probably a case of blink and you'll miss
         //
@@ -142,8 +144,8 @@ class FeatureQueryTooltip {
         //this.featureTooltipElement.classList.remove("tooltip-hidden");
         this.featureTooltip.setPosition(coords);
         client.queryMapFeatures({
-            mapname: this.context.getMapName(),
-            session: this.context.getSession(),
+            mapname: this.viewer.props.map.Name,
+            session: this.viewer.props.map.SessionId,
             //layernames: selectedLayerNames != null ? selectedLayerNames.join(",") : null,
             geometry: wkt,
             persist: 0,
@@ -324,9 +326,6 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         changes.hideGroups = [];
         this.setState({ pendingStateChanges: changes });
     }
-    static childContextTypes = MAP_VIEWER_CONTEXT_VALIDATION_MAP;
-    static contextTypes = APPLICATION_CONTEXT_VALIDATION_MAP;
-
     private createExternalSource(layer: IExternalBaseLayer) {
         let sourceCtor = ol.source[layer.kind];
         if (typeof(sourceCtor) == 'undefined')
@@ -693,7 +692,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         });
         this._map.on("pointermove", this.onMouseMove.bind(this));
         this._mouseTooltip = new MouseTrackingTooltip(this._map);
-        this._featureTooltip = new FeatureQueryTooltip(this._map, this.context, this.getSelectableLayers.bind(this));
+        this._featureTooltip = new FeatureQueryTooltip(this._map, this, this.getSelectableLayers.bind(this));
         document.addEventListener("keydown", this.fnKeyPress);
 
         view.fit(this._extent, this._map.getSize());

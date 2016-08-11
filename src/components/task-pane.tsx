@@ -1,14 +1,13 @@
 import * as React from "react";
 import { Toolbar, IItem, IMenu, DEFAULT_TOOLBAR_HEIGHT, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
-import { 
-    IApplicationContext,
-    APPLICATION_CONTEXT_VALIDATION_MAP
-} from "./context";
 import queryString = require("query-string");
 const parse = require("url-parse");
 
 export interface ITaskPaneProps {
     initialUrl?: string;
+    mapName: string;
+    session: string;
+    locale: string;
 }
 
 function buildTaskMenu(taskPane: TaskPane): IItem[] {
@@ -93,8 +92,6 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             }
         }
     }
-    static contextTypes = APPLICATION_CONTEXT_VALIDATION_MAP;
-    context: IApplicationContext;
     private ensureParameters(url: string): string {
         if (url == null)
             return null;
@@ -118,13 +115,13 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             }
         }
         if (bNeedMapName) {
-            params.MAPNAME = this.context.getMapName();
+            params.MAPNAME = this.props.mapName;
         }
         if (bNeedSession) {
-            params.SESSION = this.context.getSession();
+            params.SESSION = this.props.session;
         }
         if (bNeedLocale) {
-            params.LOCALE = this.context.getLocale();
+            params.LOCALE = this.props.locale;
         }
         parsed.query = queryString.stringify(params);
         return parsed.toString();

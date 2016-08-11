@@ -1,0 +1,7 @@
+export const INIT_APP = 'MapGuide/INIT_APP';
+
+export const LEGEND_SET_BASE_LAYER = 'Legend/SET_BASE_LAYER';
+export const LEGEND_SET_GROUP_VISIBILITY = 'Legend/SET_GROUP_VISIBILITY';
+export const LEGEND_SET_LAYER_VISIBILITY = 'Legend/SET_LAYER_VISIBILITY';
+
+export const MAP_SET_VIEW = 'Map/SET_VIEW';

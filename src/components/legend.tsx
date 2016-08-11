@@ -26,6 +26,7 @@ export interface ILegendProps {
     onBaseLayerChanged?: (name: string) => void;
     onLayerVisibilityChanged?: MapElementChangeFunc;
     onGroupVisibilityChanged?: MapElementChangeFunc;
+    currentScale: number;
 }
 
 function getIconUri(iconMimeType: string, iconBase64: string): string {
@@ -273,7 +274,7 @@ export class Legend extends React.Component<ILegendProps, any> {
             getStdIcon: this.getStdIcon.bind(this),
             getIconMimeType: this.getIconMimeType.bind(this),
             getChildren: this.getChildren.bind(this),
-            getCurrentScale: () => this.state.currentScale,
+            getCurrentScale: () => this.props.currentScale,
             getTree: () => this.state.tree,
             setGroupVisibility: this.setGroupVisibility.bind(this),
             setLayerVisibility: this.setLayerVisibility.bind(this),
@@ -422,7 +423,8 @@ export class Legend extends React.Component<ILegendProps, any> {
         return state;
     }
     render(): JSX.Element {
-        const { tree, currentScale } = this.state;
+        const { tree } = this.state;
+        const { currentScale } = this.props;
         const { externalBaseLayers, onBaseLayerChanged } = this.props;
         return <div style={{ fontFamily: "Verdana, Sans-serif", fontSize: "10pt" }}>
             {(() => {

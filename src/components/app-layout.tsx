@@ -18,6 +18,8 @@ import { PoweredByMapGuide } from "./pbmg";
 import { SelectedFeatureCount } from "./selected-feature-count";
 import { Navigator } from "./navigator";
 import assign = require("object-assign");
+import { Provider } from 'react-redux';
+import configureStore from "../store/configure-store";
 
 export interface IApplicationProps {
     /**
@@ -442,12 +444,18 @@ export class Application extends React.Component<IApplicationProps, any> impleme
  * This is the entry point to the Application component
  */
 export class ApplicationViewModel {
+    fnAppMounted: (app) => void;
     constructor() {
-
+        this.fnAppMounted = this.onAppMounted.bind(this);
     }
-    public mount(node: Element, props: IApplicationProps) {
-        const app: Application = ReactDOM.render(<Application {...props}/>, node) as Application;
+    private onAppMounted(app) {
         const win: any = window;
         AjaxViewerShim.install(win, app);
+    }
+    public mount(node: Element, props: IApplicationProps) {
+        const store = configureStore({});
+        ReactDOM.render(<Provider store={store}>
+            <Application ref={this.fnAppMounted} {...props}/>
+        </Provider>, node);
     }
 }

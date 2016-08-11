@@ -56,3 +56,16 @@ declare module "lodash.uniq" {
     import * as _ from "lodash";
     export = _.uniq;
 }
+
+// Types for various development options.
+
+// A hack for the Redux DevTools Chrome extension.
+interface Window {
+    devToolsExtension?: () => void;
+}
+
+// webpack-hot-loader sets some extra attributes on node's `module`if that
+// module has been hot-loaded in the browser.
+interface NodeModule {
+    hot: { accept: Function };
+}

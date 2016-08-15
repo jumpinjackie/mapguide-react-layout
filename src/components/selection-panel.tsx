@@ -90,8 +90,10 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
     componentDidMount() {
         this.setDefaultSelection(this.props);
     }
-    componentWillReceiveProps(nextProps) {
-        this.setDefaultSelection(nextProps);
+    componentWillReceiveProps(nextProps: ISelectionPanelProps) {
+        if (this.props.selection != nextProps.selection) {
+            this.setDefaultSelection(nextProps);
+        }
     }
     onSelectedLayerChanged(e) {
         this.setState({ selectedLayerIndex: e.target.value, featureIndex: 0 });

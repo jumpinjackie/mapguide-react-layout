@@ -118,8 +118,12 @@ class FeatureQueryTooltip {
     private featureTooltip: ol.Overlay;
     private enabled: boolean;
     private viewer: MapViewerBase;
-    constructor(map: ol.Map, viewer: MapViewerBase, onRequestSelectableLayers: () => string[] = null) {
+    private incrementBusy: () => void;
+    private decrementBusy: () => void;
+    constructor(map: ol.Map, viewer: MapViewerBase, incrementBusy: () => void, decrementBusy: () => void, onRequestSelectableLayers: () => string[] = null) {
         this.viewer = viewer;
+        this.incrementBusy = incrementBusy;
+        this.decrementBusy = decrementBusy;
         this.wktFormat = new ol.format.WKT();
         this.featureTooltipElement = document.createElement("div");
         this.featureTooltipElement.className = 'feature-tooltip';
@@ -167,6 +171,7 @@ class FeatureQueryTooltip {
         //this.featureTooltipElement.innerHTML = "Querying tooltip data ...";
         //this.featureTooltipElement.classList.remove("tooltip-hidden");
         this.featureTooltip.setPosition(coords);
+        this.incrementBusy();
         client.queryMapFeatures({
             mapname: this.viewer.props.map.Name,
             session: this.viewer.props.map.SessionId,
@@ -190,6 +195,8 @@ class FeatureQueryTooltip {
             } else {
                 this.featureTooltipElement.classList.remove("tooltip-hidden");
             }
+        }).then(res => {
+            this.decrementBusy();
         });
     }
 }
@@ -382,6 +389,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
         const reqQueryFeatures = 1 | 2; //Attributes and inline selection
         const wkt = this._wktFormat.writeGeometry(geom);
+        this.incrementBusyWorker();
         this._client.queryMapFeatures({
             mapname: this.props.map.Name,
             session: this.props.map.SessionId,
@@ -399,6 +407,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             //so the current selection set is still the same
             if (persist === 1 && this.props.onSelectionChange != null)
                 this.props.onSelectionChange(res);
+        }).then(res => {
+            this.decrementBusyWorker();
         });
     }
     private zoomByDelta(delta) {
@@ -724,7 +734,11 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         });
         this._map.on("pointermove", this.onMouseMove.bind(this));
         this._mouseTooltip = new MouseTrackingTooltip(this._map);
-        this._featureTooltip = new FeatureQueryTooltip(this._map, this, this.getSelectableLayers.bind(this));
+        this._featureTooltip = new FeatureQueryTooltip(this._map, 
+                                                       this,
+                                                       this.incrementBusyWorker.bind(this),
+                                                       this.decrementBusyWorker.bind(this),
+                                                       this.getSelectableLayers.bind(this));
         this._featureTooltip.setEnabled(this.props.featureTooltipsEnabled);
         document.addEventListener("keydown", this.fnKeyPress);
 
@@ -788,6 +802,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     }
     public setSelectionXml(xml: string): void {
         const reqQueryFeatures = 1 | 2; //Attributes and inline selection
+        this.incrementBusyWorker();
         this._client.queryMapFeatures({
             mapname: this.props.map.Name,
             session: this.props.map.SessionId,
@@ -801,7 +816,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             this.refreshMap(RefreshMode.SelectionOnly);
             if (this.props.onSelectionChange != null)
                 this.props.onSelectionChange(res);
-        })
+        }).then(res => {
+            this.decrementBusyWorker();
+        });
     }
     public refreshMap(mode: RefreshMode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly): void {
         if ((mode & RefreshMode.LayersOnly) == RefreshMode.LayersOnly) {

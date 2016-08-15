@@ -59,7 +59,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
                               agentUri={this.props.agentUri}
                               agentKind={this.props.agentKind}
                               imageFormat={this.props.imageFormat}
-                              selectionColor={this.props.selectionColor}
+                              selectionColor={this.state.selectionColor}
                               stateChangeDebounceTimeout={this.props.stateChangeDebounceTimeout}
                               pointSelectionBuffer={this.props.pointSelectionBuffer}
                               externalBaseLayers={this.props.externalBaseLayers}
@@ -80,6 +80,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
                 props.map.Extents.UpperRightCoordinate.X,
                 props.map.Extents.UpperRightCoordinate.Y
             ],
+            selectionColor: props.selectionColor || "0xFF000000", //default to blue
             featureTooltipsEnabled: false,
             navigationStack: [],
             layerGroupVisibility: {

@@ -270,6 +270,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     private _mouseTooltip: MouseTrackingTooltip;
     private _featureTooltip: FeatureQueryTooltip;
 
+    private _dynamicOverlayParams: any;
+    private _selectionOverlayParams: any;
+
     private fnKeyPress: (e) => void;
 
     context: IApplicationContext;
@@ -281,14 +284,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
      * @private
      */
     private refreshOnStateChange: () => void;
-    private _selectionColor: string;
+    
     constructor(props: IMapViewerBaseProps) {
         super(props);
         this._map = null;
         this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), props.stateChangeDebounceTimeout || 500);
         this._wktFormat = new ol.format.WKT();
         this.fnKeyPress = this.onKeyPress.bind(this);
-        this._selectionColor = props.selectionColor || "0xFF000000"; //default to blue if not specified
     }
     /**
      * DO NOT CALL DIRECTLY, call this.refreshOnStateChange() instead, which is a throttled version
@@ -370,7 +372,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             layernames: selectedLayerNames != null ? selectedLayerNames.join(",") : null,
             persist: persist,
             selectionvariant: "INTERSECTS",
-            selectioncolor: "0xFF000000",
+            selectioncolor: this.props.selectionColor,
             selectionformat: "PNG8",
             maxfeatures: -1,
             requestdata: reqQueryFeatures
@@ -468,7 +470,10 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
         //selectionColor
         if (nextProps.selectionColor && nextProps.selectionColor != props.selectionColor) {
-            this._selectionColor = nextProps.selectionColor;
+            const source = this._selectionOverlay.getSource() as ol.source.ImageMapGuide;
+            source.updateParams({
+                SELECTIONCOLOR: nextProps.selectionColor
+            });
         }
         //featureTooltipsEnabled
         if (nextProps.featureTooltipsEnabled != props.featureTooltipsEnabled) {
@@ -574,6 +579,21 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
         */
 
+        this._dynamicOverlayParams = {
+            MAPNAME: map.Name,
+            FORMAT: this.props.imageFormat,
+            SESSION: map.SessionId,
+            BEHAVIOR: 2
+        };
+
+        this._selectionOverlayParams = {
+            MAPNAME: map.Name,
+            FORMAT: 'PNG', //Hard-coding for now instead of binding to props.imageFormat
+            SESSION: map.SessionId,
+            SELECTIONCOLOR: this.props.selectionColor,
+            BEHAVIOR: 1 | 4 //selected features + include outside current scale
+        };
+
         this._overlay = new ol.layer.Image({
             //name: "MapGuide Dynamic Overlay",
             extent: this._extent,
@@ -582,12 +602,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 url: agentUri,
                 useOverlay: true,
                 metersPerUnit: metersPerUnit,
-                params: {
-                    MAPNAME: map.Name,
-                    FORMAT: 'PNG',
-                    SESSION: map.SessionId,
-                    BEHAVIOR: 2
-                },
+                params: this._dynamicOverlayParams,
                 ratio: 2
             })
         });
@@ -599,12 +614,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 url: agentUri,
                 useOverlay: true,
                 metersPerUnit: metersPerUnit,
-                params: {
-                    MAPNAME: map.Name,
-                    FORMAT: 'PNG',
-                    SESSION: map.SessionId,
-                    BEHAVIOR: 1 | 4 //selected features + include outside current scale
-                },
+                params: this._selectionOverlayParams,
                 ratio: 2
             })
         });
@@ -734,7 +744,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             session: this.context.getSession(),
             persist: 1,
             featurefilter: xml,
-            selectioncolor: this._selectionColor,
+            selectioncolor: this.props.selectionColor,
             selectionformat: "PNG8",
             maxfeatures: -1,
             requestdata: reqQueryFeatures

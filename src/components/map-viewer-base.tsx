@@ -46,6 +46,7 @@ interface IMapViewerBaseProps {
     onRequestSelectableLayers?: () => string[];
     onSelectionChange?: (selectionSet: any) => void;
     onMouseCoordinateChanged?: (coords: number[]) => void;
+    onBusyLoading: (busyCount: number) => void;
 }
 
 export enum RefreshMode {
@@ -297,6 +298,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     private _client: Client;
 
     private _raiseViewChanged: boolean;
+
+    private _busyWorkers: number;
     
     constructor(props: IMapViewerBaseProps) {
         super(props);
@@ -305,6 +308,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this._wktFormat = new ol.format.WKT();
         this.fnKeyPress = this.onKeyPress.bind(this);
         this._raiseViewChanged = true;
+        this._busyWorkers = 0;
     }
     /**
      * DO NOT CALL DIRECTLY, call this.refreshOnStateChange() instead, which is a throttled version
@@ -465,6 +469,14 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         if (this.props.onMouseCoordinateChanged != null) {
             this.props.onMouseCoordinateChanged(e.coordinate);
         }
+    }
+    private incrementBusyWorker() {
+        this._busyWorkers++;
+        this.props.onBusyLoading(this._busyWorkers);
+    }
+    private decrementBusyWorker() {
+        this._busyWorkers--;
+        this.props.onBusyLoading(this._busyWorkers);
     }
     // ----------------- React Lifecycle ----------------- //
     componentWillReceiveProps(nextProps: IMapViewerBaseProps) {
@@ -725,8 +737,14 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             this.props.onViewChanged(this._initialView);
         }
         //Listen for scale changes
-
-        this._overlay.getSource().on("imageloadend", (e) => {
+        const selSource = this._selectionOverlay.getSource();
+        const ovSource = this._overlay.getSource();
+        selSource.on("imageloadstart", this.incrementBusyWorker.bind(this));
+        ovSource.on("imageloadstart", this.incrementBusyWorker.bind(this));
+        selSource.on("imageloaderror", this.decrementBusyWorker.bind(this));
+        ovSource.on("imageloaderror", this.decrementBusyWorker.bind(this));
+        selSource.on("imageloadend", this.decrementBusyWorker.bind(this));
+        ovSource.on("imageloadend", (e) => {
             const newScale = this.resolutionToScale(view.getResolution());
             const newCenter = view.getCenter();
             if (this._raiseViewChanged === true) {
@@ -734,6 +752,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             } else {
                 logger.info(`Skip raising view changed`);
             }
+            this.decrementBusyWorker();
         });
 
         this._map.on("click", this.onMapClick.bind(this));

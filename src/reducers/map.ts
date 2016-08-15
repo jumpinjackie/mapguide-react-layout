@@ -5,6 +5,7 @@ const assign = require("object-assign");
 const INITIAL_STATE = {
     state: null,
     viewer: {
+        busyCount: 0,
         tool: ActiveMapTool.None,
         featureTooltipsEnabled: false,
         layerGroupVisibility: {
@@ -27,6 +28,7 @@ export function runtimeMapReducer(state = INITIAL_STATE, action = { type: '', pa
             {
                 const newState = assign({}, state, {
                     viewer: {
+                        busyCount: state.viewer.busyCount,
                         tool: action.payload,
                         featureTooltipsEnabled: state.viewer.featureTooltipsEnabled,
                         layerGroupVisibility: state.viewer.layerGroupVisibility 
@@ -38,8 +40,21 @@ export function runtimeMapReducer(state = INITIAL_STATE, action = { type: '', pa
             {
                 const newState = assign({}, state, {
                     viewer: {
+                        busyCount: state.viewer.busyCount,
                         tool: state.viewer.tool,
                         featureTooltipsEnabled: action.payload,
+                        layerGroupVisibility: state.viewer.layerGroupVisibility 
+                    }
+                });
+                return newState;
+            }
+        case Constants.MAP_SET_BUSY_COUNT:
+            {
+                const newState = assign({}, state, {
+                    viewer: {
+                        busyCount: action.payload,
+                        tool: state.viewer.tool,
+                        featureTooltipsEnabled: state.viewer.featureTooltipsEnabled,
                         layerGroupVisibility: state.viewer.layerGroupVisibility 
                     }
                 });

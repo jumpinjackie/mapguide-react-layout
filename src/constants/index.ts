@@ -8,3 +8,4 @@ export const MAP_SET_VIEW = 'Map/SET_VIEW';
 export const MAP_SET_ACTIVE_TOOL = 'Map/SET_ACTIVE_TOOL';
 export const MAP_SET_MAPTIP = 'Map/SET_MAPTIP';
 export const MAP_SET_SELECTION = 'Map/SET_SELECTION';
+export const MAP_SET_BUSY_COUNT = 'Map/SET_BUSY_COUNT';

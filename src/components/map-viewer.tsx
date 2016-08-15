@@ -39,15 +39,19 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
     private inner: MapViewerBase;
     private fnMapViewerMounted: (component) => void;
     private fnViewChanged: (view: IMapView) => void;
-    context: IApplicationContext;
+    private fnBusyLoading: (busyCount) => void;
     constructor(props) {
         super(props);
         this.fnMapViewerMounted = this.onMapViewerMounted.bind(this);
         this.fnViewChanged = this.onViewChanged.bind(this);
+        this.fnBusyLoading = this.onBusyLoading.bind(this);
         this.state = this.buildInitialState(props);
     }
     private onMapViewerMounted(component) {
         this.inner = component;
+    }
+    private onBusyLoading(busyCount) {
+
     }
     render(): JSX.Element {
         return <MapViewerBase ref={this.fnMapViewerMounted}
@@ -63,6 +67,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
                               stateChangeDebounceTimeout={this.props.stateChangeDebounceTimeout}
                               pointSelectionBuffer={this.props.pointSelectionBuffer}
                               externalBaseLayers={this.props.externalBaseLayers}
+                              onBusyLoading={this.fnBusyLoading}
                               onViewChanged={this.fnViewChanged}
                               onRequestSelectableLayers={this.props.onRequestSelectableLayers}
                               onSelectionChange={this.props.onSelectionChange}

@@ -19,6 +19,7 @@ interface IMapViewerContainerState {
 interface IMapViewerContainerDispatch {
     setCurrentView?: (view) => void;
     setSelection?: (selectionSet) => void;
+    setBusyCount?: (count) => void;
 }
 
 function mapStateToProps(state): IMapViewerContainerState {
@@ -33,7 +34,8 @@ function mapStateToProps(state): IMapViewerContainerState {
 function mapDispatchToProps(dispatch): IMapViewerContainerDispatch {
     return {
         setCurrentView: (view) => dispatch(MapActions.setCurrentView(view)),
-        setSelection: (selectionSet) => dispatch(MapActions.setSelection(selectionSet))
+        setSelection: (selectionSet) => dispatch(MapActions.setSelection(selectionSet)),
+        setBusyCount: (count) => dispatch(MapActions.setBusyCount(count))
     };
 }
 
@@ -44,11 +46,13 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     private fnViewChanged: (view: IMapView) => void;
     private fnSelectionChanged: (selectionSet: any) => void;
     private fnRequestSelectableLayers: () => string[];
+    private fnBusyLoading: (busyCount) => void;
     constructor(props) {
         super(props);
         this.fnViewChanged = this.onViewChanged.bind(this);
         this.fnSelectionChanged = this.onSelectionChanged.bind(this);
         this.fnRequestSelectableLayers = this.onRequestSelectableLayers.bind(this);
+        this.fnBusyLoading = this.onBusyLoading.bind(this);
     }
     private onViewChanged(view: IMapView): void {
         this.props.setCurrentView(view);
@@ -60,6 +64,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         //TODO: Eventually this should combine with override selectable layers that should be in the redux store
         const { map } = this.props;
         return map.Layer.map(layer => layer.Name);
+    }
+    private onBusyLoading(busyCount) {
+        this.props.setBusyCount(busyCount);
     }
     render(): JSX.Element {
         const { map, config, viewer, view } = this.props;
@@ -74,6 +81,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                   featureTooltipsEnabled={viewer.featureTooltipsEnabled}
                                   layerGroupVisibility={viewer.layerGroupVisibility}
                                   view={view.current}
+                                  onBusyLoading={this.fnBusyLoading}
                                   onRequestSelectableLayers={this.fnRequestSelectableLayers}
                                   onSelectionChange={this.fnSelectionChanged}
                                   onViewChanged={this.fnViewChanged} />;

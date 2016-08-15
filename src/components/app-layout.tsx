@@ -17,7 +17,7 @@ import { FormFrameShim } from "./form-frame-shim";
 import { MouseCoordinates } from "./mouse-coordinates";
 import { PoweredByMapGuide } from "./pbmg";
 import { SelectedFeatureCount } from "./selected-feature-count";
-import { Navigator } from "./navigator";
+import { Navigator, PanDirection, ZoomDirection } from "./navigator";
 import assign = require("object-assign");
 import { Provider } from 'react-redux';
 import configureStore from "../store/configure-store";
@@ -65,6 +65,8 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     private fnZoomToSelectedFeature: (feature: any) => void;
     private fnRequestSelectableLayers: () => string[];
     private fnMouseCoordinatesChanged: (coords) => void;
+    private fnZoom: (direction) => void;
+    private fnPan: (direction) => void;
     private _viewer: any;
     private _legend: Legend;
     private _taskpane: TaskPane;
@@ -88,6 +90,8 @@ export class Application extends React.Component<IApplicationProps, any> impleme
         this.fnRequestSelectableLayers = this.onRequestSelectableLayers.bind(this);
         this.fnMouseCoordinatesChanged = this.onMouseCoordinatesChanged.bind(this);
         this.fnMouseCoordsMounted = this.onMouseCoordsMounted.bind(this);
+        this.fnZoom = this.onZoom.bind(this);
+        this.fnPan = this.onPan.bind(this);
         this.state = {
             selection: null,
             runtimeMap: null,
@@ -325,7 +329,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
                                externalBaseLayers={externalLayers}
                                onMouseCoordinateChanged={this.fnMouseCoordinatesChanged}
                                imageFormat="PNG" />
-                    <Navigator style={{ position: "absolute", zIndex: 1000, width: 51, height: 204, cursor: "pointer", right: 10, top: 10 }} />
+                    <Navigator busy={false} onPan={this.fnPan} onZoom={this.fnZoom} style={{ position: "absolute", zIndex: 1000, width: 51, height: 204, cursor: "pointer", right: 10, top: 10 }} />
                     <MouseCoordinates ref={this.fnMouseCoordsMounted} decimals={6} style={{ position: "absolute", bottom: 0, left: 0, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />
                     {(() => {
                         if (selection != null && selection.FeatureSet != null && selection.FeatureSet.Layer.length > 0) {
@@ -376,6 +380,12 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     }
     public getTaskPane(): TaskPane {
         return this._taskpane;
+    }
+    private onZoom(direction: ZoomDirection): void {
+
+    }
+    private onPan(direction: PanDirection): void {
+
     }
     private getActiveExternalBaseLayerState(): IExternalBaseLayer[] {
         const layers: IExternalBaseLayer[] = [];

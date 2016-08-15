@@ -21,3 +21,10 @@ export function invokeCommand(cmd: ICommand) {
         return cmd.invoke(dispatch, getState, null);
     }
 }
+
+export function setBusyCount(busyCount) {
+    return {
+        type: Constants.MAP_SET_BUSY_COUNT,
+        payload: busyCount
+    }
+}

@@ -33,7 +33,7 @@ interface IMapViewerBaseProps {
     map: Contracts.RtMap.RuntimeMap;
     layerGroupVisibility?: ILayerGroupVisibility;
     tool: ActiveMapTool;
-    view: IMapView | number;
+    view: IMapView;
     agentUri: string;
     agentKind: ClientKind;
     featureTooltipsEnabled: boolean;
@@ -51,6 +51,12 @@ interface IMapViewerBaseProps {
 export enum RefreshMode {
     LayersOnly = 1,
     SelectionOnly = 2
+}
+
+export function areViewsCloseToEqual(view: IMapView, otherView: IMapView): boolean {
+    return areNumbersEqual(view.x, otherView.x) &&
+           areNumbersEqual(view.y, otherView.y) &&
+           areNumbersEqual(view.scale, otherView.scale);
 }
 
 export type DigitizerCallback<T extends ol.geom.Geometry> = (geom: T) => void;
@@ -284,6 +290,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
      * @private
      */
     private refreshOnStateChange: () => void;
+
+    private _raiseViewChanged: boolean;
     
     constructor(props: IMapViewerBaseProps) {
         super(props);
@@ -291,6 +299,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), props.stateChangeDebounceTimeout || 500);
         this._wktFormat = new ol.format.WKT();
         this.fnKeyPress = this.onKeyPress.bind(this);
+        this._raiseViewChanged = true;
     }
     /**
      * DO NOT CALL DIRECTLY, call this.refreshOnStateChange() instead, which is a throttled version
@@ -454,11 +463,11 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
     }
     // ----------------- React Lifecycle ----------------- //
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps: IMapViewerBaseProps) {
         // 
         // React (no pun intended) to prop changes
         //
-        const props: any = this.props;
+        const props = this.props;
         if (nextProps.imageFormat != props.imageFormat) {
             console.warn(`Unsupported change of props: imageFormat`);
         }
@@ -496,6 +505,15 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         //layerGroupVisibility
         if (nextProps.layerGroupVisibility != props.layerGroupVisibility) {
             this.refreshOnStateChange();
+        }
+        //view
+        if (nextProps.view != props.view) {
+            const vw = nextProps.view;
+            if (!areViewsCloseToEqual(nextProps.view, props.view)) {
+                this.zoomToView(vw.x, vw.y, vw.scale);
+            } else {
+                logger.info(`Skipping zoomToView as next/current views are close enough`);
+            }
         }
     }
     componentDidMount() {
@@ -704,7 +722,11 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this._overlay.getSource().on("imageloadend", (e) => {
             const newScale = this.resolutionToScale(view.getResolution());
             const newCenter = view.getCenter();
-            this.props.onViewChanged({ x: newCenter[0], y: newCenter[1], scale: newScale });
+            if (this._raiseViewChanged === true) {
+                this.props.onViewChanged({ x: newCenter[0], y: newCenter[1], scale: newScale });
+            } else {
+                logger.info(`Skip raising view changed`);
+            }
         });
 
         this._map.on("click", this.onMapClick.bind(this));
@@ -728,12 +750,14 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     }
     public getOLView(): ol.View {
         return this._map.getView();
-    } 
+    }
     public zoomToView(x: number, y: number, scale: number): void {
         if (this._map) {
+            this._raiseViewChanged = false;
             const view = this._map.getView();
             view.setCenter([x, y]);
             view.setResolution(this.scaleToResolution(scale));
+            this._raiseViewChanged = true;
         }
     }
     public setSelectionXml(xml: string): void {
@@ -781,7 +805,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this.zoomByDelta(delta);
     }
     public zoomToExtent(extent: number[]): void {
+        this._raiseViewChanged = false;
         this._map.getView().fit(extent, this._map.getSize());
+        this._raiseViewChanged = true;
     }
     public isDigitizing(): boolean {
         return this._activeDrawInteraction != null;

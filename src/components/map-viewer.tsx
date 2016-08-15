@@ -93,7 +93,11 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
     }
     private onViewChanged(view: IMapView): void {
         const state = this._pushView(view);
-        state.view = view;
+        state.view = {
+            x: view.x,
+            y: view.y,
+            scale: view.scale
+        };
         this.setState(state);
         this.props.onViewChanged(view);
     }
@@ -113,12 +117,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
     }
     // ----------------- IMapViewer --------------------- //
     zoomToView(x: number, y: number, scale: number): void {        
-        const view = this.inner.getOLView();
-        this.pushView({
-            x: x,
-            y: y,
-            scale: scale
-        });
+        this.onViewChanged({ x: x, y: y, scale: scale });
     }
     setSelectionXml(xml: string): void {
         this.inner.setSelectionXml(xml);

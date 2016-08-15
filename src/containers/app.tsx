@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { ClientKind } from "../api/client";
-import { IExternalBaseLayer } from "../components/map-viewer";
+import { IExternalBaseLayer } from "../components/map-viewer-base";
 import { initApp } from "../actions/init";
 import { DEFAULT_TOOLBAR_HEIGHT, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
 

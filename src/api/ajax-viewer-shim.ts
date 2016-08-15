@@ -1,5 +1,5 @@
 import { Application } from "../components/app-layout";
-import { RefreshMode } from "../components/map-viewer";
+import { RefreshMode } from "../components/map-viewer-base";
 import { MgError } from "./error";
 import * as logger from "../utils/logger";
 import { RuntimeMap } from "./contracts/runtime-map";

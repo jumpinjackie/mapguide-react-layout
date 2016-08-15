@@ -1,5 +1,5 @@
 import * as React from "react";
-import { IExternalBaseLayer } from "./map-viewer";
+import { IExternalBaseLayer } from "./map-viewer-base";
 
 interface IBaseLayerSwitcherProps {
     externalBaseLayers: IExternalBaseLayer[];

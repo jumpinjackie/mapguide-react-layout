@@ -1,5 +1,5 @@
 import * as React from "react";
-import { IExternalBaseLayer } from "./map-viewer";
+import { IExternalBaseLayer } from "./map-viewer-base";
 import { RuntimeMap, MapLayer, MapGroup } from "../api/contracts/runtime-map";
 import { ILegendContext, LEGEND_CONTEXT_VALIDATION_MAP } from "./context";
 import { BaseLayerSwitcher } from "./base-layer-switcher";

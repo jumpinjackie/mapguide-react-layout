@@ -15,7 +15,7 @@
             MapGuide.Externals.proj4.defs("EPSG:28355","+proj=utm +zone=55 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
 
             var el = document.getElementById("map");
-            var viewer = new MapGuide.Application();
+            var viewer = new MapGuide.OldApplication();
             viewer.mount(el, {
                 agent: {
                     uri: "http://localhost/mapguide/mapagent/mapagent.fcgi"
@@ -25,9 +25,9 @@
                     { name: "Stamen - Toner", kind: "Stamen", visible: true, options: { layer: "toner" } },
                     { name: "Stamen - Watercolor", kind: "Stamen", options: { layer: "watercolor" } }
                 ],
-                resourceId: "Library://Samples/Melbourne/Maps/Melbourne.MapDefinition"
+                //resourceId: "Library://Samples/Melbourne/Maps/Melbourne.MapDefinition"
                 //resourceId: "Library://Samples/Melbourne/Maps/MelbourneWebMercator.MapDefinition"
-                //resourceId: "Library://Samples/Sheboygan/Maps/Sheboygan.MapDefinition"
+                resourceId: "Library://Samples/Sheboygan/Maps/Sheboygan.MapDefinition"
                 //resourceId: "Library://Samples/Sheboygan/Maps/SheboyganCommercial.MapDefinition"
             });
         </script>

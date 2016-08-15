@@ -15,6 +15,7 @@ import { SelectedFeatureCountContainer } from "./selected-feature-count";
 import { MouseCoordinatesContainer } from "./mouse-coordinates";
 import { TaskPaneContainer } from "./task-pane";
 import { FormFrameShimContainer } from "./form-frame-shim";
+import { ToolbarContainer } from "./toolbar";
 
 const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;
@@ -68,9 +69,9 @@ export class App extends React.Component<IAppProps & IAppState & IAppDispatch, a
         super(props);
     }
     componentDidMount() {
-        const { initApp, agent } = this.props;
+        const { initApp, agent, resourceId } = this.props;
         initApp({
-            resourceId: "Library://Samples/Sheboygan/Maps/Sheboygan.MapDefinition"
+            resourceId: resourceId
         });
     }
     render(): JSX.Element {
@@ -84,10 +85,11 @@ export class App extends React.Component<IAppProps & IAppState & IAppDispatch, a
                 </div>
             </div>
             <div style={{ position: "absolute", left: SIDEBAR_WIDTH, top: 0, bottom: 0, right: SIDEBAR_WIDTH }}>
+                <ToolbarContainer id="main" containerStyle={{ position: "absolute", left: 10, top: 10, height: DEFAULT_TOOLBAR_HEIGHT, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR, fontFamily: "Verdana, Sans-serif", fontSize: "10pt" }} />
                 <MapViewerContainer />
                 <NavigatorContainer style={{ position: "absolute", zIndex: 1000, width: 51, height: 204, cursor: "pointer", right: 10, top: 10 }} />
                 <MouseCoordinatesContainer style={{ position: "absolute", bottom: 0, left: 0, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />
-                <SelectedFeatureCountContainer />
+                <SelectedFeatureCountContainer style={{ position: "absolute", bottom: 0, right: 140, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />
                 <PoweredByMapGuide style={{ position: "absolute", bottom: 0, right: 0, zIndex: 100 }} />
             </div>
             <div style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: SIDEBAR_WIDTH }}>

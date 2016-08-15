@@ -9,7 +9,14 @@ const INITIAL_STATE = {
 
 export function selectionReducer(state = INITIAL_STATE, action = { type: '', payload: null }) {
     switch (action.type) {
-
+        case Constants.MAP_SET_SELECTION:
+            {
+                return assign({}, state, {
+                    selectionSet: action.payload,
+                    layerIndex: -1,
+                    featureIndex: -1
+                });
+            }
     }
     return state;
 }

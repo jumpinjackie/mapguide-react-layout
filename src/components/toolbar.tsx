@@ -22,6 +22,30 @@ function getIcon(relPath: string): string {
     return `stdicons/${relPath}`;
 }
 
+function getSelected(item: IItem): boolean {
+    const sel = item.selected;
+    if (sel != null) {
+        if (typeof sel === 'function') {
+            return sel();
+        } else {
+            return sel;
+        }
+    }
+    return false;
+}
+
+function getEnabled(item: IItem): boolean {
+    const en = item.enabled;
+    if (en != null) {
+        if (typeof en === 'function') {
+            return en();
+        } else {
+            return en;
+        }
+    }
+    return true;
+}
+
 function getIconStyle(enabled: boolean, height: number): React.CSSProperties {
     const imgStyle: React.CSSProperties = {
         verticalAlign: "middle",
@@ -191,8 +215,8 @@ class FlyoutMenuItem extends React.Component<IFlyoutMenuItemProps, any> {
     }
     render(): JSX.Element {
         const { height, menu } = this.props;
-        const selected = menu.selected != null ? menu.selected() : false;
-        const enabled = menu.enabled != null ? menu.enabled() : true;
+        const selected = getSelected(menu);
+        const enabled = getEnabled(menu);
         const imgStyle = getIconStyle(enabled, height);
         const style = getItemStyle(enabled, selected, height, this.state.isMouseOver);
         return <div className="has-flyout noselect" onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={menu.tooltip}>
@@ -249,7 +273,7 @@ class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
     onClick(e) {
         e.preventDefault();
         const { item } = this.props;
-        const enabled = item.enabled != null ? item.enabled() : true;
+        const enabled = getEnabled(item);
         if (enabled) {
             item.invoke();
         }
@@ -257,8 +281,8 @@ class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
     }
     render(): JSX.Element {
         const { height, item } = this.props;
-        const selected = item.selected != null ? item.selected() : false;
-        const enabled = item.enabled != null ? item.enabled() : true;
+        const selected = getSelected(item);
+        const enabled = getEnabled(item);
         const imgStyle = getIconStyle(enabled, height);
         const style = getItemStyle(enabled, selected, height, this.state.isMouseOver);
         return <div className="noselect" onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} style={style} title={item.tooltip} onClick={this.fnClick}>
@@ -272,8 +296,8 @@ export interface IItem {
     tooltip?: string;
     icon?: string;
     invoke?: () => void;
-    enabled?: () => boolean;
-    selected?: () => boolean;
+    enabled?: boolean | (() => boolean);
+    selected?: boolean | (() => boolean);
     isSeparator?: boolean;
 }
 

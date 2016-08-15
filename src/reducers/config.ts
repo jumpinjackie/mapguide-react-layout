@@ -6,6 +6,7 @@ export const INITIAL_STATE = {
     agentKind: null,
     locale: "en",
     imageFormat: "PNG",
+    selectionColor: "0x0000FFAA",
     taskpane: {
         initialUrl: "/mapguide/phpsamples/index.php" 
     },

@@ -4,6 +4,7 @@ import { SelectedFeatureCount } from "../components/selected-feature-count";
 import { QueryMapFeaturesResponse } from "../api/contracts/query";
 
 interface ISelectionPanelContainerState {
+    style?: React.CSSProperties;
     selection?: QueryMapFeaturesResponse;
 }
 
@@ -25,9 +26,9 @@ export class SelectedFeatureCountContainer extends React.Component<ISelectionPan
         super(props);
     }
     render(): JSX.Element {
-        const { selection } = this.props;
+        const { selection, style } = this.props;
         if (selection != null) {
-            return <SelectedFeatureCount selection={selection.FeatureSet} />;
+            return <SelectedFeatureCount style={style} selection={selection.FeatureSet} />;
         } else {
             return <div />;
         }

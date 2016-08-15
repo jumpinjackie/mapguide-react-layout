@@ -9,6 +9,7 @@ function getDefaultCommandSet() {
         { command: "Zoom" },
         { command: "ZoomIn" },
         { command: "ZoomOut" },
+        { isSeparator: true },
         { command: "MapTip" },
         { command: "SelectRadius" },
         { command: "SelectPolygon" },
@@ -33,7 +34,11 @@ export function initApp(options) {
                 type: Constants.INIT_APP,
                 payload: {
                     map: res,
-                    commands: getDefaultCommandSet()
+                    toolbars: {
+                        "main": {
+                            items: getDefaultCommandSet()
+                        }
+                    }
                 }
             });
         });

@@ -250,10 +250,7 @@ export class Application extends React.Component<IApplicationProps, any> impleme
     }
     getChildContext(): IApplicationContext {
         return {
-            getClient: this.getClient.bind(this),
-            getSession: this.getSession.bind(this),
-            getMapName: this.getMapName.bind(this),
-            getLocale: this.getLocale.bind(this)
+            getClient: this.getClient.bind(this)
         };
     }
     //-------- IApplicationContext --------//

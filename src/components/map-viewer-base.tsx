@@ -54,6 +54,12 @@ export enum RefreshMode {
 }
 
 export function areViewsCloseToEqual(view: IMapView, otherView: IMapView): boolean {
+    if (view == null && otherView != null) {
+        return false;
+    }
+    if (view != null && otherView == null) {
+        return false;
+    }
     return areNumbersEqual(view.x, otherView.x) &&
            areNumbersEqual(view.y, otherView.y) &&
            areNumbersEqual(view.scale, otherView.scale);
@@ -280,9 +286,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     private _selectionOverlayParams: any;
 
     private fnKeyPress: (e) => void;
-
-    context: IApplicationContext;
-    static contextTypes = APPLICATION_CONTEXT_VALIDATION_MAP;
     /**
      * This is a throttled version of _refreshOnStateChange(). Call this on any 
      * modifications to pendingStateChanges 
@@ -290,6 +293,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
      * @private
      */
     private refreshOnStateChange: () => void;
+
+    private _client: Client;
 
     private _raiseViewChanged: boolean;
     
@@ -373,10 +378,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
         const reqQueryFeatures = 1 | 2; //Attributes and inline selection
         const wkt = this._wktFormat.writeGeometry(geom);
-        const client = this.context.getClient();
-        client.queryMapFeatures({
-            mapname: this.context.getMapName(),
-            session: this.context.getSession(),
+        this._client.queryMapFeatures({
+            mapname: this.props.map.Name,
+            session: this.props.map.SessionId,
             geometry: wkt,
             layernames: selectedLayerNames != null ? selectedLayerNames.join(",") : null,
             persist: persist,
@@ -414,7 +418,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this.pushView({ x: view.x, y: view.y, scale: scale });
     }*/
     private getTileUrlFunctionForGroup(resourceId, groupName, zOrigin) {
-        const urlTemplate = this.context.getClient().getTileTemplateUrl(resourceId, groupName, '{x}', '{y}', '{z}');
+        const urlTemplate = this._client.getTileTemplateUrl(resourceId, groupName, '{x}', '{y}', '{z}');
         return function (tileCoord) {
             return urlTemplate
                 .replace('{z}', (zOrigin - tileCoord[0]).toString())
@@ -469,13 +473,15 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         //
         const props = this.props;
         if (nextProps.imageFormat != props.imageFormat) {
-            console.warn(`Unsupported change of props: imageFormat`);
+            logger.warn(`Unsupported change of props: imageFormat`);
         }
         if (nextProps.agentUri != props.agentUri) {
-            console.warn(`Unsupported change of props: agentUri`);
+            logger.warn(`Unsupported change of props: agentUri`);
+            this._client = new Client(nextProps.agentUri, nextProps.agentKind);
         }
         if (nextProps.agentKind != props.agentKind) {
-            console.warn(`Unsupported change of props: agentKind`);
+            logger.warn(`Unsupported change of props: agentKind`);
+            this._client = new Client(nextProps.agentUri, nextProps.agentKind);
         }
         //selectionColor
         if (nextProps.selectionColor && nextProps.selectionColor != props.selectionColor) {
@@ -509,10 +515,10 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         //view
         if (nextProps.view != props.view) {
             const vw = nextProps.view;
-            if (!areViewsCloseToEqual(nextProps.view, props.view)) {
+            if (vw != null && !areViewsCloseToEqual(nextProps.view, props.view)) {
                 this.zoomToView(vw.x, vw.y, vw.scale);
             } else {
-                logger.info(`Skipping zoomToView as next/current views are close enough`);
+                logger.info(`Skipping zoomToView as next/current views are close enough or target view is null`);
             }
         }
     }
@@ -532,6 +538,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 finiteScales.push(map.FiniteDisplayScale[i]);
             }
         }
+        this._client = new Client(this.props.agentUri, this.props.agentKind);
 
         //If a tile set definition is defined it takes precedence over the map definition, this enables
         //this example to work with older releases of MapGuide where no such resource type exists.
@@ -762,10 +769,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     }
     public setSelectionXml(xml: string): void {
         const reqQueryFeatures = 1 | 2; //Attributes and inline selection
-        const client = this.context.getClient();
-        client.queryMapFeatures({
-            mapname: this.context.getMapName(),
-            session: this.context.getSession(),
+        this._client.queryMapFeatures({
+            mapname: this.props.map.Name,
+            session: this.props.map.SessionId,
             persist: 1,
             featurefilter: xml,
             selectioncolor: this.props.selectionColor,

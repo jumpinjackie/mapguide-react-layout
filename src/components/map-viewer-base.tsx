@@ -22,18 +22,29 @@ export interface IExternalBaseLayer {
     options?: any;
 }
 
-export interface IMapViewerProps {
+interface ILayerGroupVisibility {
+    showLayers: string[];
+    showGroups: string[];
+    hideLayers: string[];
+    hideGroups: string[];
+}
+
+interface IMapViewerBaseProps {
     map: Contracts.RtMap.RuntimeMap;
+    layerGroupVisibility?: ILayerGroupVisibility;
+    tool: ActiveMapTool;
+    view: IMapView | number;
     agentUri: string;
     agentKind: ClientKind;
+    featureTooltipsEnabled: boolean;
     imageFormat: "PNG" | "PNG8" | "JPG" | "GIF";
     selectionColor?: string;
     stateChangeDebounceTimeout?: number;
+    pointSelectionBuffer?: number;
+    externalBaseLayers?: IExternalBaseLayer[];
     onViewChanged?: (view: IMapView) => void;
     onRequestSelectableLayers?: () => string[];
     onSelectionChange?: (selectionSet: any) => void;
-    pointSelectionBuffer?: number;
-    externalBaseLayers?: IExternalBaseLayer[];
     onMouseCoordinateChanged?: (coords: number[]) => void;
 }
 
@@ -217,8 +228,7 @@ class MouseTrackingTooltip {
     }
 }
 
-export class MapViewerBase extends React.Component<IMapViewerProps, any>
-    implements IMapViewerContext, IMapViewer {
+export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     /**
      * The internal OpenLayers map instance
      * 
@@ -272,37 +282,13 @@ export class MapViewerBase extends React.Component<IMapViewerProps, any>
      */
     private refreshOnStateChange: () => void;
     private _selectionColor: string;
-    constructor(props: IMapViewerProps) {
+    constructor(props: IMapViewerBaseProps) {
         super(props);
         this._map = null;
-        this.state = this.buildInitialState(props);
         this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), props.stateChangeDebounceTimeout || 500);
         this._wktFormat = new ol.format.WKT();
         this.fnKeyPress = this.onKeyPress.bind(this);
         this._selectionColor = props.selectionColor || "0xFF000000"; //default to blue if not specified
-    }
-    private buildInitialState(props: IMapViewerProps) {
-        const layerMap: any = {};
-        const groupMap: any = {};
-        for (const layer of props.map.Layer) {
-            layerMap[layer.ObjectId] = layer;
-        }
-        for (const group of props.map.Group) {
-            groupMap[group.ObjectId] = group;
-        }
-        return {
-            tool: ActiveMapTool.None,
-            map: props.map,
-            navigationStack: [],
-            pendingStateChanges: {
-                showLayers: [],
-                showGroups: [],
-                hideLayers: [],
-                hideGroups: []
-            },
-            layerMap: layerMap,
-            groupMap: groupMap
-        };
     }
     /**
      * DO NOT CALL DIRECTLY, call this.refreshOnStateChange() instead, which is a throttled version
@@ -310,7 +296,7 @@ export class MapViewerBase extends React.Component<IMapViewerProps, any>
      * @private
      */
     private _refreshOnStateChange() {
-        const changes = this.state.pendingStateChanges;
+        const changes = this.props.layerGroupVisibility;
         //Send the request
         const imgSource = this._overlay.getSource() as ol.source.ImageMapGuide;
         imgSource.updateParams({
@@ -319,13 +305,6 @@ export class MapViewerBase extends React.Component<IMapViewerProps, any>
             hidelayers: changes.hideLayers || [],
             hidegroups: changes.hideGroups || []
         });
-        //Reset the pending state changes
-        //FIXME: Should only do this on successful refresh. Can we hook in somewhere?
-        changes.showLayers = [];
-        changes.showGroups = [];
-        changes.hideLayers = [];
-        changes.hideGroups = [];
-        this.setState({ pendingStateChanges: changes });
     }
     private createExternalSource(layer: IExternalBaseLayer) {
         let sourceCtor = ol.source[layer.kind];
@@ -337,17 +316,17 @@ export class MapViewerBase extends React.Component<IMapViewerProps, any>
         else
             return new sourceCtor();
     }
-    private scaleToResolution(scale: number): number {
+    public scaleToResolution(scale: number): number {
         return scale / this._inPerUnit / this._dpi;
     }
-    private resolutionToScale(resolution: number): number {
+    public resolutionToScale(resolution: number): number {
         return resolution * this._dpi * this._inPerUnit;
     }
     private onMapClick(e) {
         if (this.isDigitizing()) {
             return;
         }
-        if (this.state.tool === ActiveMapTool.Select) {
+        if (this.props.tool === ActiveMapTool.Select) {
             const ptBuffer = this.props.pointSelectionBuffer || 2;
             const ll = this._map.getCoordinateFromPixel([e.pixel[0] - ptBuffer, e.pixel[1] - ptBuffer]);
             const ur = this._map.getCoordinateFromPixel([e.pixel[0] + ptBuffer, e.pixel[1] + ptBuffer]);
@@ -364,7 +343,7 @@ export class MapViewerBase extends React.Component<IMapViewerProps, any>
     }
     private onZoomSelectBox(e) {
         const extent = this._zoomSelectBox.getGeometry();
-        switch (this.getActiveTool()) {
+        switch (this.props.tool) {
             case ActiveMapTool.Zoom:
                 {
                     this.zoomToExtent(extent.getExtent());
@@ -418,11 +397,11 @@ export class MapViewerBase extends React.Component<IMapViewerProps, any>
             const newResolution = view.constrainResolution(currentResolution, delta);
             view.setResolution(newResolution);
         }
-    }
+    }/*
     private updateScale(scale) {
         const view = this.getView();
         this.pushView({ x: view.x, y: view.y, scale: scale });
-    }
+    }*/
     private getTileUrlFunctionForGroup(resourceId, groupName, zOrigin) {
         const urlTemplate = this.context.getClient().getTileTemplateUrl(resourceId, groupName, '{x}', '{y}', '{z}');
         return function (tileCoord) {
@@ -474,27 +453,28 @@ export class MapViewerBase extends React.Component<IMapViewerProps, any>
     }
     // ----------------- React Lifecycle ----------------- //
     componentWillReceiveProps(nextProps) {
-        /**
-         * React (no pun intended) to the following prop changes:
-         * 
-         * - Container size changes (call ol.Map.updateSize())
-         * - Visiblity change of external base layers
-         */
+        // 
+        // React (no pun intended) to prop changes
+        //
         const props: any = this.props;
-        if ((nextProps.containerWidth != props.containerWidth ||
-            nextProps.containerHeight != props.containerHeight) &&
-            this._map != null) {
-            setTimeout(() => this._map.updateSize(), 300);
-        }
         if (nextProps.imageFormat != props.imageFormat) {
             console.warn(`Unsupported change of props: imageFormat`);
         }
         if (nextProps.agentUri != props.agentUri) {
             console.warn(`Unsupported change of props: agentUri`);
         }
+        if (nextProps.agentKind != props.agentKind) {
+            console.warn(`Unsupported change of props: agentKind`);
+        }
+        //selectionColor
         if (nextProps.selectionColor && nextProps.selectionColor != props.selectionColor) {
             this._selectionColor = nextProps.selectionColor;
         }
+        //featureTooltipsEnabled
+        if (nextProps.featureTooltipsEnabled != props.featureTooltipsEnabled) {
+            this._featureTooltip.setEnabled(nextProps.featureTooltipsEnabled);
+        }
+        //externalBaseLayers
         if (nextProps.externalBaseLayers != null && 
             nextProps.externalBaseLayers.length > 0 &&
             this._baseLayerGroup != null) {
@@ -507,6 +487,10 @@ export class MapViewerBase extends React.Component<IMapViewerProps, any>
                     l.setVisible(false);
                 }
             })
+        }
+        //layerGroupVisibility
+        if (nextProps.layerGroupVisibility != props.layerGroupVisibility) {
+            this.refreshOnStateChange();
         }
     }
     componentDidMount() {
@@ -666,7 +650,7 @@ export class MapViewerBase extends React.Component<IMapViewerProps, any>
         }
 
         this._zoomSelectBox = new ol.interaction.DragBox({
-            condition: (e) => this.getActiveTool() === ActiveMapTool.Select || this.getActiveTool() === ActiveMapTool.Zoom
+            condition: (e) => this.props.tool === ActiveMapTool.Select || this.props.tool === ActiveMapTool.Zoom
         });
         this._zoomSelectBox.on("boxend", this.onZoomSelectBox.bind(this));
 
@@ -681,7 +665,7 @@ export class MapViewerBase extends React.Component<IMapViewerProps, any>
             interactions: [
                 new ol.interaction.DragRotate(),
                 new ol.interaction.DragPan({
-                    condition: (e) => this.getActiveTool() === ActiveMapTool.Pan
+                    condition: (e) => this.props.tool === ActiveMapTool.Pan
                 }),
                 new ol.interaction.PinchRotate(),
                 new ol.interaction.PinchZoom(),
@@ -694,13 +678,14 @@ export class MapViewerBase extends React.Component<IMapViewerProps, any>
         this._map.on("pointermove", this.onMouseMove.bind(this));
         this._mouseTooltip = new MouseTrackingTooltip(this._map);
         this._featureTooltip = new FeatureQueryTooltip(this._map, this, this.getSelectableLayers.bind(this));
+        this._featureTooltip.setEnabled(this.props.featureTooltipsEnabled);
         document.addEventListener("keydown", this.fnKeyPress);
 
         view.fit(this._extent, this._map.getSize());
         //Set initial view
         const center = view.getCenter();
         this._initialView = { x: center[0], y: center[1], scale: this.resolutionToScale(view.getResolution()) };
-        this.setState({ navigationStack: [this._initialView] });
+        
         if (this.props.onViewChanged != null) {
             this.props.onViewChanged(this._initialView);
         }
@@ -709,7 +694,7 @@ export class MapViewerBase extends React.Component<IMapViewerProps, any>
         this._overlay.getSource().on("imageloadend", (e) => {
             const newScale = this.resolutionToScale(view.getResolution());
             const newCenter = view.getCenter();
-            this.pushView({ x: newCenter[0], y: newCenter[1], scale: newScale });
+            this.props.onViewChanged({ x: newCenter[0], y: newCenter[1], scale: newScale });
         });
 
         this._map.on("click", this.onMapClick.bind(this));
@@ -731,66 +716,9 @@ export class MapViewerBase extends React.Component<IMapViewerProps, any>
     componentWillUnmount() {
 
     }
-    //-------- IMapViewerContext ---------//
-    public getView(): IMapView {
-        const stack = this.state.navigationStack;
-        if (stack && stack.length > 0) {
-            return stack[stack.length - 1];
-        } else {
-            return null;
-        }
-    }
-    public pushView(view: IMapView): void {
-        const currentView = this.getView();
-        //Short-circuit: Don't bother recording identical or insignificantly different views
-        if (currentView != null &&
-            areNumbersEqual(view.x, currentView.x) &&
-            areNumbersEqual(view.y, currentView.y) &&
-            areNumbersEqual(view.scale, currentView.scale)) {
-            logger.debug(`New view (${view.x}, ${view.y}, ${view.scale}) is same or near-identical to previous view (${currentView.x}, ${currentView.y}, ${currentView.scale}). Not pushing to nav stack`);
-            return;
-        }
-        const state = this.state;
-        state.navigationStack.push(view);
-        this.setState(state);
-        if (this.props.onViewChanged != null) {
-            this.props.onViewChanged(view);
-        }
-    }
-    public popView(): IMapView {
-        const state = this.state;
-        const view = state.navigationStack.pop();
-        this.setState(state);
-        return view;
-    }
-    public setLayerVisibility(layerId: string, visible: boolean): void {
-        const changes = this.state.pendingStateChanges;
-        if (visible) {
-            //Remove from hidelayers if previously set
-            changes.hideLayers = changes.hideLayers.filter(id => id != layerId);
-            changes.showLayers.push(layerId);
-        } else {
-            //Remove from showlayers if previously set
-            changes.showLayers = changes.showLayers.filter(id => id != layerId);
-            changes.hideLayers.push(layerId);
-        }
-        this.setState({ pendingStateChanges: changes });
-        this.refreshOnStateChange();
-    }
-    public setGroupVisibility(groupId: string, visible: boolean): void {
-        const changes = this.state.pendingStateChanges;
-        if (visible) {
-            //Remove from hideGroups if previously set
-            changes.hideGroups = changes.hideGroups.filter(id => id != groupId);
-            changes.showGroups.push(groupId);
-        } else {
-            //Remove from showGroups if previously set
-            changes.showGroups = changes.showGroups.filter(id => id != groupId);
-            changes.hideGroups.push(groupId);
-        }
-        this.setState({ pendingStateChanges: changes });
-        this.refreshOnStateChange();
-    }
+    public getOLView(): ol.View {
+        return this._map.getView();
+    } 
     public zoomToView(x: number, y: number, scale: number): void {
         if (this._map) {
             const view = this._map.getView();
@@ -832,12 +760,6 @@ export class MapViewerBase extends React.Component<IMapViewerProps, any>
     }
     public getMetersPerUnit(): number {
         return this._inPerUnit / 39.37;
-    }
-    public getActiveTool(): ActiveMapTool {
-        return this.state.tool;
-    }
-    public setActiveTool(tool: ActiveMapTool): void {
-        this.setState({ tool: tool });
     }
     public initialView(): void {
         this.zoomToExtent(this._extent);

@@ -104,10 +104,10 @@ const KC_ESCAPE = 27;
 class DigitizerMessages {
     public static get Point(): string { return "Click to finish and draw a point at this location<br/><br/>Press ESC to cancel"; }
     public static get Line(): string { return "Click to set this position as the start.<br/>Click again to finish the line at this position<br/><br/>Press ESC to cancel"; }
-    public static get LineString(): string { return "Click to set this position as the start.<br/>Click again to add a vertex at this position.<br/></br>Double click to finish<br/>Press ESC to cancel"; }
+    public static get LineString(): string { return "Click to set this position as the start.<br/>Click again to add a vertex at this position.<br/>Hold SHIFT and drag while digitizing to draw in freehand mode<br/></br>Double click to finish<br/>Press ESC to cancel"; }
     public static get Circle(): string { return "Click to set this position as the center.<br/>Move out to the desired radius and click again to finish<br/><br/>Press ESC to cancel"; }
     public static get Rectangle(): string { return "Click to set this position as one corner.<br/>Click again to finish and set this position as the other corner<br/><br/>Press ESC to cancel"; }
-    public static get Polygon(): string { return "Click to set this positon as the start.<br/>Click again to add a vertex at this position.<br/><br/>Double click to finish and close the polygon<br/>Press ESC to cancel"; }
+    public static get Polygon(): string { return "Click to set this positon as the start.<br/>Click again to add a vertex at this position.<br/>Hold SHIFT and drag while digitizing to draw in freehand mode<br/><br/>Double click to finish and close the polygon<br/>Press ESC to cancel"; }
 }
 
 class FeatureQueryTooltip {

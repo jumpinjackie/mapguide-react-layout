@@ -327,6 +327,7 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
     public Refresh(): void {
         const viewer = Runtime.getViewer();
         viewer.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
+        this.props.legendRefresh();
     }
     public ScreenToMapUnits(x: number, y: number): IAjaxViewerPoint {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.ScreenToMapUnits(x, y)`);
@@ -355,24 +356,7 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
     public Submit(url: string, params: string[], frameTarget: string) {
         this.formFrame.submit(url, params, frameTarget);
     }
-    public fullRefresh(): void {
-        this.Refresh();
-        this.props.legendRefresh();
-        /*
-        const client = this.app.getClient();
-        client.describeRuntimeMap({
-            mapname: this.app.getMapName(),
-            session: this.app.getSession(),
-            requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups
-        }).then(res => {
-            //TODO: Yeah yeah, shouldn't directly mess with other component's states
-            this.app.setState({ runtimeMap: res });
-        }).catch(err => {
-            //TODO: Yeah yeah, shouldn't directly mess with other component's states
-            this.app.setState({ runtimeMap: null, error: err });
-        });
-        */
-    }
+    
     public goHome(): void {
         this.props.goHome();
         //const taskPane = this.app.getTaskPane();
@@ -389,7 +373,7 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
         browserWindow.mapFrame = browserWindow.GetMapFrame();
         browserWindow.formFrame = browserWindow.mapFrame;
 
-        browserWindow.Refresh = browserWindow.Refresh || (() => this.fullRefresh());
+        browserWindow.Refresh = browserWindow.Refresh || (() => this.Refresh());
         browserWindow.SetSelectionXML = browserWindow.SetSelectionXML || ((xmlSet) => this.SetSelectionXML(xmlSet));
         browserWindow.ZoomToView = browserWindow.ZoomToView || ((x, y, scale, refresh) => this.ZoomToView(x, y, scale, refresh));
         browserWindow.GotoHomePage = browserWindow.GotoHomePage || (() => this.goHome());

@@ -20,6 +20,7 @@ const INITIAL_STATE = {
 
 export function runtimeMapReducer(state = INITIAL_STATE, action = { type: '', payload: null }) {
     switch (action.type) {
+        case Constants.LEGEND_REFRESH:
         case Constants.INIT_APP:
             {
                 const newState = assign({}, state, { "state": action.payload.map });

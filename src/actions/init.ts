@@ -77,6 +77,7 @@ export function initApp(options) {
                 type: Constants.INIT_APP,
                 payload: {
                     map: res,
+                    externalBaseLayers: options.externalBaseLayers,
                     toolbars: {
                         "main": {
                             items: getDefaultCommandSet()

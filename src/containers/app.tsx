@@ -69,9 +69,10 @@ export class App extends React.Component<IAppProps & IAppState & IAppDispatch, a
         super(props);
     }
     componentDidMount() {
-        const { initApp, agent, resourceId } = this.props;
+        const { initApp, agent, resourceId, externalBaseLayers } = this.props;
         initApp({
-            resourceId: resourceId
+            resourceId: resourceId,
+            externalBaseLayers: externalBaseLayers
         });
     }
     render(): JSX.Element {

@@ -4,23 +4,60 @@ import { RuntimeMapFeatureFlags } from "../api/request-builder";
 
 function getDefaultCommandSet() {
     return [
-        { command: "Select" },
-        { command: "Pan" },
-        { command: "Zoom" },
+        { 
+            command: "Select",
+            tooltip: "Select"
+        },
+        { 
+            command: "Pan",
+            tooltip: "Pan",
+        },
+        { 
+            command: "Zoom",
+            tooltip: "Zoom" 
+        },
         { isSeparator: true },
         {
             label: "Zoom",
             children: [
-                { command: "ZoomIn" },
-                { command: "ZoomOut" }
+                {
+                    command: "ZoomIn",
+                    label: "Zoom In",
+                    tooltip: "Zoom In"
+                },
+                {
+                    command: "ZoomOut",
+                    label: "Zoom Out",
+                    tooltip: "Zoom Out" 
+                }
             ]
         },
         { isSeparator: true },
-        { command: "MapTip" },
-        { command: "SelectRadius" },
-        { command: "SelectPolygon" },
-        { command: "ZoomExtents" },
-        { command: "ClearSelection" },
+        { 
+            command: "MapTip",
+            label: "Feature Tooltips",
+            tooltip: "Feature Tooltips" 
+        },
+        { 
+            command: "SelectRadius",
+            //label: "Select Radius",
+            tooltip: "Select Radius" 
+        },
+        {
+            command: "SelectPolygon",
+            //label: "Select Polygon",
+            tooltip: "Select Polygon" 
+        },
+        { 
+            command: "ZoomExtents",
+            //label: "Zoom Extents",
+            tooltip: "Zoom Extents" 
+        },
+        {
+            command: "ClearSelection",
+            //label: "Clear Selection",
+            tooltip: "Clear Selection"
+        },
         { command: "Buffer" },
         { command: "Measure" },
         { command: "QuickPlot" }

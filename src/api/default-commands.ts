@@ -9,7 +9,6 @@ export function initDefaultCommands() {
     //Select Tool
     registerCommand("Select", {
         icon: "select.png",
-        tooltip: "Select",
         selected: (state) => {
             return state.map.viewer.tool === ActiveMapTool.Select;
         },
@@ -24,7 +23,6 @@ export function initDefaultCommands() {
     //Pan Tool
     registerCommand("Pan", {
         icon: "pan.png",
-        tooltip: "Pan",
         selected: (state) => {
             return state.map.viewer.tool === ActiveMapTool.Pan;
         },
@@ -39,7 +37,6 @@ export function initDefaultCommands() {
     //Zoom Tool
     registerCommand("Zoom", {
         icon: "zoom-in.png",
-        tooltip: "Zoom",
         selected: (state) => {
             return state.map.viewer.tool === ActiveMapTool.Zoom;
         },
@@ -54,8 +51,6 @@ export function initDefaultCommands() {
     //Feature Tooltips
     registerCommand("MapTip", {
         icon: "maptip.png",
-        label: "Feature Tooltips",
-        tooltip: "Feature Tooltips",
         selected: (state) => {
             return state.map.viewer.featureTooltipsEnabled === true;
         },
@@ -71,8 +66,6 @@ export function initDefaultCommands() {
     //Zoom in
     registerCommand("ZoomIn", {
         icon: "zoom-in-fixed.png",
-        label: "Zoom In",
-        tooltip: "Zoom In",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
@@ -82,8 +75,6 @@ export function initDefaultCommands() {
     //Zoom Out
     registerCommand("ZoomOut", {
         icon: "zoom-out-fixed.png",
-        label: "Zoom Out",
-        tooltip: "Zoom Out",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
@@ -93,8 +84,6 @@ export function initDefaultCommands() {
     //Select Radius
     registerCommand("SelectRadius", {
         icon: "select-radius.png",
-        label: "Select Radius",
-        tooltip: "Select Radius",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
@@ -107,8 +96,6 @@ export function initDefaultCommands() {
     //Select Radius
     registerCommand("SelectPolygon", {
         icon: "select-polygon.png",
-        label: "Select Polygon",
-        tooltip: "Select Polygon",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
@@ -120,8 +107,6 @@ export function initDefaultCommands() {
     //Zoom Extents
     registerCommand("ZoomExtents", {
         icon: "zoom-full.png",
-        label: "Zoom Extents",
-        tooltip: "Zoom Extents",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
@@ -131,8 +116,6 @@ export function initDefaultCommands() {
     //Clear Selection
     registerCommand("ClearSelection", {
         icon: "select-clear.png",
-        label: "Clear Selection",
-        tooltip: "Clear Selection",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {

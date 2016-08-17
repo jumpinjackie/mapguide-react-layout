@@ -46,8 +46,8 @@ function mapToolbarReference(tb: any, store, props: ToolbarContainerProps): IIte
         if (cmd != null) {
             const cmdItem: IItem = {
                 icon: cmd.icon,
-                tooltip: cmd.tooltip,
-                label: cmd.label,
+                tooltip: tb.tooltip,
+                label: tb.label,
                 selected: () => cmd.selected(state),
                 enabled: () => cmd.enabled(state),
                 invoke: () => props.invokeCommand(cmd)

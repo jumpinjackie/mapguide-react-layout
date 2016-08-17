@@ -8,8 +8,8 @@ export type DispatcherFunc = (dispatch, getState, viewer: IMapViewer) => any;
 
 export interface ICommand {
     icon: string;
-    tooltip?: string;
-    label?: string;
+    //tooltip?: string;
+    //label?: string;
     enabled: (state) => boolean;
     selected: (state) => boolean;
     invoke: DispatcherFunc;

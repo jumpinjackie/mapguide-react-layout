@@ -7,8 +7,14 @@ function getDefaultCommandSet() {
         { command: "Select" },
         { command: "Pan" },
         { command: "Zoom" },
-        { command: "ZoomIn" },
-        { command: "ZoomOut" },
+        { isSeparator: true },
+        {
+            label: "Zoom",
+            children: [
+                { command: "ZoomIn" },
+                { command: "ZoomOut" }
+            ]
+        },
         { isSeparator: true },
         { command: "MapTip" },
         { command: "SelectRadius" },

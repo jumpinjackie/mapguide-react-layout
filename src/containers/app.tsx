@@ -14,8 +14,8 @@ import { NavigatorContainer } from "./navigator";
 import { SelectedFeatureCountContainer } from "./selected-feature-count";
 import { MouseCoordinatesContainer } from "./mouse-coordinates";
 import { TaskPaneContainer } from "./task-pane";
-import { FormFrameShimContainer } from "./form-frame-shim";
 import { ToolbarContainer } from "./toolbar";
+import { AjaxViewerShim } from "./ajax-viewer-shim";
 
 const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;
@@ -95,7 +95,7 @@ export class App extends React.Component<IAppProps & IAppState & IAppDispatch, a
             <div style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: SIDEBAR_WIDTH }}>
                 <TaskPaneContainer />
             </div>
-            <FormFrameShimContainer />
+            <AjaxViewerShim />
         </div>;
     }
 }

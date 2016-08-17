@@ -68,7 +68,8 @@ export function areViewsCloseToEqual(view: IMapView, otherView: IMapView): boole
 
 export type DigitizerCallback<T extends ol.geom.Geometry> = (geom: T) => void;
 
-export interface IMapViewer extends IMapViewerContext {
+export interface IMapViewer {
+    getView(): IMapView;
     zoomToView(x: number, y: number, scale: number): void;
     setSelectionXml(xml: string): void;
     refreshMap(mode?: RefreshMode): void;

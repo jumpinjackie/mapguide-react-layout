@@ -1,10 +1,17 @@
-import { Application } from "../components/app-layout";
-import { RefreshMode } from "../components/map-viewer-base";
-import { MgError } from "./error";
+import * as React from "react";
+import { connect } from "react-redux";
+import * as Runtime from "../api/runtime";
 import * as logger from "../utils/logger";
-import { RuntimeMap } from "./contracts/runtime-map";
-import { FeatureSet, SelectedFeatureSet } from "./contracts/query";
-import { RuntimeMapFeatureFlags } from "./request-builder";
+import { MgError } from "../api/error";
+import { RuntimeMap } from "../api/contracts/runtime-map";
+import { FeatureSet, SelectedFeatureSet } from "../api/contracts/query";
+import { RuntimeMapFeatureFlags } from "../api/request-builder";
+import { RefreshMode } from "../components/map-viewer-base";
+import * as MapActions from "../actions/map";
+import * as TaskPaneActions from "../actions/taskpane";
+import * as LegendActions from "../actions/legend";
+import { buildSelectionXml } from "../api/builders/deArrayify";
+import { FormFrameShim } from "../components/form-frame-shim";
 
 class AjaxViewerLineStringOrPolygon {
     private coordinates: IAjaxViewerPoint[];
@@ -48,13 +55,49 @@ interface IAjaxViewerBounds {
 
 type IAjaxViewerSelectionSet = any;
 
-export class MapShim {
+interface IAjaxViewerShimProps {
+
+}
+
+interface IAjaxViewerShimState {
+    map?: any;
+    selection?: any;
+}
+
+interface IAjaxViewerShimDispatch {
+    goHome?: () => void;
+    legendRefresh?: () => void;
+}
+
+function mapStateToProps(state): IAjaxViewerShimState {
+    return {
+        map: state.map.state,
+        selection: state.selection
+    };
+}
+
+function mapDispatchToProps(dispatch): IAjaxViewerShimDispatch {
+    return {
+        goHome: () => dispatch(TaskPaneActions.goHome()),
+        legendRefresh: () => dispatch(LegendActions.refresh())
+    };
+}
+
+@connect(mapStateToProps, mapDispatchToProps)
+export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjaxViewerShimState & IAjaxViewerShimDispatch, any> {
+    private fnFormFrameMounted: (component) => void;
     private us: boolean;
-    private app: Application;
-    constructor(app: Application) {
-        this.app = app;
+    private formFrame: FormFrameShim;
+    constructor(props) {
+        super(props);
         this.us = true;
+        this.fnFormFrameMounted = this.onFormFrameMounted.bind(this);
     }
+    private onFormFrameMounted(form) {
+        this.formFrame = form;
+    }
+    // ------------------------ Map Frame -------------------------------- //
+
     /**
      * Indicates if the map frame is ready
      * 
@@ -62,16 +105,16 @@ export class MapShim {
      * flag anyways, so we might as well emulate it here
      */
     public get mapInit(): boolean {
-        return this.app.getSession() != null;
+        return this.props.map != null && this.props.map.SessionId != null
     }
     public ClearSelection(): void {
-        const viewer = this.app.getViewer();
+        const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.clearSelection();
         }
     }
     public DigitizeCircle(handler: (circle: IAjaxViewerCircle) => void): void {
-        const viewer = this.app.getViewer();
+        const viewer = Runtime.getViewer();
         viewer.digitizeCircle(circle => {
             const center = circle.getCenter();
             const radius = circle.getRadius();
@@ -85,7 +128,7 @@ export class MapShim {
         });
     }
     public DigitizeLine(handler: (geom: AjaxViewerLineStringOrPolygon) => void): void {
-        const viewer = this.app.getViewer();
+        const viewer = Runtime.getViewer();
         viewer.digitizeLine(line => {
             const coords = line.getCoordinates().map<IAjaxViewerPoint>(coord => {
                 return {
@@ -97,14 +140,14 @@ export class MapShim {
         });
     }
     public DigitizePoint(handler: (geom: IAjaxViewerPoint) => void): void {
-        const viewer = this.app.getViewer();
+        const viewer = Runtime.getViewer();
         viewer.digitizePoint(pt => {
             const coords = pt.getCoordinates();
             handler({ X: coords[0], Y: coords[1] });
         });
     }
     public DigitizePolygon(handler: (geom: AjaxViewerLineStringOrPolygon) => void): void {
-        const viewer = this.app.getViewer();
+        const viewer = Runtime.getViewer();
         viewer.digitizePolygon(poly => {
             //Our API isn't expected to allow drawing polygons with holes, so the first (outer) ring
             //is what we're after
@@ -119,7 +162,7 @@ export class MapShim {
         });
     }
     public DigitizeLineString(handler: (geom: AjaxViewerLineStringOrPolygon) => void): void {
-        const viewer = this.app.getViewer();
+        const viewer = Runtime.getViewer();
         viewer.digitizeLineString(line => {
             const coords = line.getCoordinates().map<IAjaxViewerPoint>(coord => {
                 return {
@@ -131,7 +174,7 @@ export class MapShim {
         });
     }
     public DigitizeRectangle(handler: (geom: IAjaxViewerRect) => void): void {
-        const viewer = this.app.getViewer();
+        const viewer = Runtime.getViewer();
         viewer.digitizeRectangle(rect => {
             const extent = rect.getExtent();
             handler({
@@ -147,7 +190,7 @@ export class MapShim {
         });
     }
     public GetCenter(): IAjaxViewerPoint {
-        const viewer = this.app.getViewer();
+        const viewer = Runtime.getViewer();
         if (viewer) {
             const view = viewer.getView();
             return { X: view.x, Y: view.y };
@@ -156,8 +199,8 @@ export class MapShim {
     }
     public GetLayers(onlyVisible: boolean, onlySelectable: boolean): IAjaxViewerLayer[] {
         const selLayers: IAjaxViewerLayer[] = [];
-        const map: RuntimeMap = this.app.state.runtimeMap;
-        const selection = this.app.state.selection;
+        const map: RuntimeMap = this.props.map;
+        const selection = this.props.selection;
         if (map && selection && selection.FeatureSet) {
             const fset: FeatureSet = selection.FeatureSet;
             const ids = fset.Layer.map(l => l["@id"]);
@@ -175,7 +218,7 @@ export class MapShim {
         return selLayers;
     }
     public GetMetersPerUnit(): number {
-        const viewer = this.app.getViewer();
+        const viewer = Runtime.getViewer();
         if (viewer) {
             return viewer.getMetersPerUnit();
         }
@@ -185,7 +228,7 @@ export class MapShim {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetMapHeight()`);
     }
     public GetMapName(): string {
-        return this.app.getMapName();
+        return this.props.map.Name;
     }
     public GetMapUnitsType(): string {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetMapUnitsType()`);
@@ -194,7 +237,7 @@ export class MapShim {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetMapWidth()`);
     }
     public GetScale(): number {
-        const viewer = this.app.getViewer();
+        const viewer = Runtime.getViewer();
         if (viewer) {
             const view = viewer.getView();
             return view.scale;
@@ -203,8 +246,8 @@ export class MapShim {
     }
     public GetSelectedLayers(): IAjaxViewerLayer[] {
         const selLayers: IAjaxViewerLayer[] = [];
-        const map: RuntimeMap = this.app.state.runtimeMap;
-        const selection = this.app.state.selection;
+        const map: RuntimeMap = this.props.map;
+        const selection = this.props.selection;
         if (map && selection && selection.FeatureSet) {
             const fset: FeatureSet = selection.FeatureSet;
             const ids = fset.Layer.map(l => l["@id"]);
@@ -217,14 +260,19 @@ export class MapShim {
         return selLayers;
     }
     public GetSelectionXML(): string {
-        return this.app.getSelectionXml();
+        const { selection } = this.props;
+        if (!selection || !selection.FeatureSet) {
+            return "";
+        } else {
+            return buildSelectionXml(selection.FeatureSet);
+        }
     }
     public GetSessionId(): string {
-        return this.app.getSession();
+        return this.props.map.SessionId;
     }
     public GetSelectedBounds(): IAjaxViewerBounds {
         let bounds: IAjaxViewerBounds = null;
-        const selection = this.app.state.selection;
+        const selection = this.props.selection;
         if (selection && selection.SelectedFeatures) {
             const fset: SelectedFeatureSet = selection.SelectedFeatures;
             fset.SelectedLayer.forEach(layer => {
@@ -249,7 +297,7 @@ export class MapShim {
     }
     public GetSelectedCount(): number {
         let count = 0;
-        const selection = this.app.state.selection;
+        const selection = this.props.selection;
         if (selection && selection.FeatureSet) {
             const fset: FeatureSet = selection.FeatureSet;
             fset.Layer.forEach(layer => {
@@ -264,7 +312,7 @@ export class MapShim {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetSelectedFeatures()`);
     }
     public IsDigitizing(): boolean {
-        const viewer = this.app.getViewer();
+        const viewer = Runtime.getViewer();
         return viewer.isDigitizing();
     }
     public IsEnglishUnits(): boolean {
@@ -277,7 +325,7 @@ export class MapShim {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.MapUnitsToLatLon(x, y)`);
     }
     public Refresh(): void {
-        const viewer = this.app.getViewer();
+        const viewer = Runtime.getViewer();
         viewer.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
     }
     public ScreenToMapUnits(x: number, y: number): IAjaxViewerPoint {
@@ -290,43 +338,27 @@ export class MapShim {
         //This is what the AJAX viewer does
     }
     public SetSelectionXML(xmlSet): void {
-        const viewer = this.app.getViewer();
+        const viewer = Runtime.getViewer();
         viewer.setSelectionXml(xmlSet);
     }
     public ZoomToView(x: number, y: number, scale: number, refresh: boolean) {
-        const viewer = this.app.getViewer();
+        const viewer = Runtime.getViewer();
         viewer.zoomToView(x, y, scale);
     }
     //This isn't in the AJAX Viewer API reference, but there are samples referencing it!
     public ZoomToScale(scale: number): void {
-        const viewer = this.app.getViewer();
+        const viewer = Runtime.getViewer();
         const view = viewer.getView();
         viewer.zoomToView(view.x, view.y, scale);
     }
     //Form frame
     public Submit(url: string, params: string[], frameTarget: string) {
-        this.app.submitForm(url, params, frameTarget);
-    }
-}
-
-/**
- * This presents a shim API that mimics the viewer API provided by the AJAX viewer  
- * 
- * @export
- * @class AjaxViewerShim
- */
-export class AjaxViewerShim {
-    private app: Application;
-    private map: MapShim;
-    constructor(app: Application) {
-        this.map = new MapShim(app);
-        this.app = app;
-    }
-    public getMapShim(): MapShim {
-        return this.map;
+        this.formFrame.submit(url, params, frameTarget);
     }
     public fullRefresh(): void {
-        this.map.Refresh();
+        this.Refresh();
+        this.props.legendRefresh();
+        /*
         const client = this.app.getClient();
         client.describeRuntimeMap({
             mapname: this.app.getMapName(),
@@ -339,37 +371,33 @@ export class AjaxViewerShim {
             //TODO: Yeah yeah, shouldn't directly mess with other component's states
             this.app.setState({ runtimeMap: null, error: err });
         });
+        */
     }
     public goHome(): void {
-        const taskPane = this.app.getTaskPane();
-        if (taskPane) {
-            taskPane.goHome();
-        }
+        this.props.goHome();
+        //const taskPane = this.app.getTaskPane();
+        //if (taskPane) {
+        //    taskPane.goHome();
+        //}
     }
-    /**
-     * Installs the AJAX viewer shim APIs 
-     * 
-     * @static
-     * @param {*} browserWindow
-     * @param {Application} app
-     */
-    public static install(browserWindow: any, app: Application) {
-        const shim = new AjaxViewerShim(app);
-        const map = shim.getMapShim();
-        //NOTE: A top-level window's parent is itself, what this means is we just need to emulate all the accessible
-        //functions in the AJAX viewer API at the browser window. No matter how many parents the Task Pane JS walks
-        //up, as long as we emulate the functions it's expecting at that particular "frame" in the browser window, 
-        //things should still be fine
-        
-        browserWindow.GetMapFrame = browserWindow.GetMapFrame || (() => map);
+    componentDidMount() {
+        //Install shims into browser window
+        let browserWindow: any = window;
+        browserWindow.GetMapFrame = browserWindow.GetMapFrame || (() => this);
         //NOTE: mapFrame is technically not part of the "public" API for the AJAX viewer, but since most examples test
         //for this in place of GetMapFrame(), we might as well emulate it here
         browserWindow.mapFrame = browserWindow.GetMapFrame();
         browserWindow.formFrame = browserWindow.mapFrame;
 
-        browserWindow.Refresh = browserWindow.Refresh || (() => shim.fullRefresh());
-        browserWindow.SetSelectionXML = browserWindow.SetSelectionXML || ((xmlSet) => map.SetSelectionXML(xmlSet));
-        browserWindow.ZoomToView = browserWindow.ZoomToView || ((x, y, scale, refresh) => map.ZoomToView(x, y, scale, refresh));
-        browserWindow.GotoHomePage = browserWindow.GotoHomePage || (() => shim.goHome());
+        browserWindow.Refresh = browserWindow.Refresh || (() => this.fullRefresh());
+        browserWindow.SetSelectionXML = browserWindow.SetSelectionXML || ((xmlSet) => this.SetSelectionXML(xmlSet));
+        browserWindow.ZoomToView = browserWindow.ZoomToView || ((x, y, scale, refresh) => this.ZoomToView(x, y, scale, refresh));
+        browserWindow.GotoHomePage = browserWindow.GotoHomePage || (() => this.goHome());
+    }
+    render(): JSX.Element {
+        //This is for all intents and purposes, a "background" component. There is no real DOM representation
+        return <div>
+            <FormFrameShim ref={this.fnFormFrameMounted} />
+        </div>;
     }
 }

@@ -57,7 +57,7 @@ function mapToolbarReference(tb: any, store, props: ToolbarContainerProps): IIte
     } else if (tb.label && tb.children) {
         return {
             label: tb.label,
-            childItems: tb.children.map(mapToolbarReference)
+            childItems: tb.children.map(tb => mapToolbarReference(tb, store, props)).filter(tb => tb != null)
         };
     }
     return null;

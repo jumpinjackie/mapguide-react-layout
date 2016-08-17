@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Legend, MapElementChangeFunc } from "../components/legend";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import * as LegendActions from "../actions/legend";
+import * as MapActions from "../actions/map";
 import { IMapView } from "../components/context";
 
 interface ILegendContainerProps {
@@ -31,7 +32,7 @@ function mapStateToProps(state): ILegendContainerState {
 
 function mapDispatchToProps(dispatch): ILegendContainerDispatch {
     return {
-        setBaseLayer: (layerName: string) => dispatch(LegendActions.setBaseLayer(layerName)),
+        setBaseLayer: (layerName: string) => dispatch(MapActions.setBaseLayer(layerName)),
         setGroupVisibility: (options) => dispatch(LegendActions.setGroupVisibility(options)),
         setLayerVisibility: (options) => dispatch(LegendActions.setLayerVisibility(options))
     };

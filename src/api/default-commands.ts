@@ -1,13 +1,11 @@
-import { registerCommand } from "./command-registry";
+import { registerCommand, DefaultCommands } from "./command-registry";
 import { ActiveMapTool } from "../components/map-viewer-base";
 import * as Constants from "../constants";
 import * as ol from "openlayers";
 
-//TODO: Command label/tooltips should be part of the referencing toolbar element
-
 export function initDefaultCommands() {
     //Select Tool
-    registerCommand("Select", {
+    registerCommand(DefaultCommands.Select, {
         icon: "select.png",
         selected: (state) => {
             return state.map.viewer.tool === ActiveMapTool.Select;
@@ -21,7 +19,7 @@ export function initDefaultCommands() {
         }
     });
     //Pan Tool
-    registerCommand("Pan", {
+    registerCommand(DefaultCommands.Pan, {
         icon: "pan.png",
         selected: (state) => {
             return state.map.viewer.tool === ActiveMapTool.Pan;
@@ -35,7 +33,7 @@ export function initDefaultCommands() {
         }
     });
     //Zoom Tool
-    registerCommand("Zoom", {
+    registerCommand(DefaultCommands.Zoom, {
         icon: "zoom-in.png",
         selected: (state) => {
             return state.map.viewer.tool === ActiveMapTool.Zoom;
@@ -49,7 +47,7 @@ export function initDefaultCommands() {
         }
     });
     //Feature Tooltips
-    registerCommand("MapTip", {
+    registerCommand(DefaultCommands.MapTip, {
         icon: "maptip.png",
         selected: (state) => {
             return state.map.viewer.featureTooltipsEnabled === true;
@@ -64,7 +62,7 @@ export function initDefaultCommands() {
         }
     });
     //Zoom in
-    registerCommand("ZoomIn", {
+    registerCommand(DefaultCommands.ZoomIn, {
         icon: "zoom-in-fixed.png",
         selected: () => false,
         enabled: () => true,
@@ -73,7 +71,7 @@ export function initDefaultCommands() {
         } 
     });
     //Zoom Out
-    registerCommand("ZoomOut", {
+    registerCommand(DefaultCommands.ZoomOut, {
         icon: "zoom-out-fixed.png",
         selected: () => false,
         enabled: () => true,
@@ -82,7 +80,7 @@ export function initDefaultCommands() {
         } 
     });
     //Select Radius
-    registerCommand("SelectRadius", {
+    registerCommand(DefaultCommands.SelectRadius, {
         icon: "select-radius.png",
         selected: () => false,
         enabled: () => true,
@@ -94,7 +92,7 @@ export function initDefaultCommands() {
         }
     });
     //Select Radius
-    registerCommand("SelectPolygon", {
+    registerCommand(DefaultCommands.SelectPolygon, {
         icon: "select-polygon.png",
         selected: () => false,
         enabled: () => true,
@@ -105,7 +103,7 @@ export function initDefaultCommands() {
         }
     });
     //Zoom Extents
-    registerCommand("ZoomExtents", {
+    registerCommand(DefaultCommands.ZoomExtents, {
         icon: "zoom-full.png",
         selected: () => false,
         enabled: () => true,
@@ -114,7 +112,7 @@ export function initDefaultCommands() {
         }
     });
     //Clear Selection
-    registerCommand("ClearSelection", {
+    registerCommand(DefaultCommands.ClearSelection, {
         icon: "select-clear.png",
         selected: () => false,
         enabled: () => true,

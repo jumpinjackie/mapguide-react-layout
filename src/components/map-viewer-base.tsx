@@ -3,10 +3,8 @@ import * as ReactDOM from "react-dom";
 import * as ol from "openlayers";
 import {
     IApplicationContext,
-    IMapViewerContext,
     IMapView,
-    APPLICATION_CONTEXT_VALIDATION_MAP,
-    MAP_VIEWER_CONTEXT_VALIDATION_MAP
+    APPLICATION_CONTEXT_VALIDATION_MAP
 } from "./context";
 import * as Contracts from '../api/contracts';
 import debounce = require("lodash.debounce");
@@ -68,8 +66,11 @@ export function areViewsCloseToEqual(view: IMapView, otherView: IMapView): boole
 
 export type DigitizerCallback<T extends ol.geom.Geometry> = (geom: T) => void;
 
+export type Coordinate = [number, number];
+export type Bounds = [number, number, number, number];
+
 export interface IMapViewer {
-    getCurrentExtent(): number[];
+    getCurrentExtent(): Bounds;
     getView(): IMapView;
     zoomToView(x: number, y: number, scale: number): void;
     setSelectionXml(xml: string): void;
@@ -88,7 +89,7 @@ export interface IMapViewer {
     digitizeRectangle(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void;
     digitizePolygon(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void;
     selectByGeometry(geom: ol.geom.Geometry): void;
-    zoomToExtent(extent: number[]): void;
+    zoomToExtent(extent: Bounds): void;
     isFeatureTooltipEnabled(): boolean;
     setFeatureTooltipEnabled(enabled: boolean): void;
 }
@@ -152,10 +153,10 @@ class FeatureQueryTooltip {
         }
     }
     private _onMouseMove(e) {
-        const coords: number[] = e.coordinate;
+        const coords: Coordinate = e.coordinate;
         this.sendTooltipQuery(coords);
     }
-    private sendTooltipQuery(coords: number[]): void {
+    private sendTooltipQuery(coords: Coordinate): void {
         if (!this.enabled) {
             return;
         }
@@ -359,7 +360,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             const ptBuffer = this.props.pointSelectionBuffer || 2;
             const ll = this._map.getCoordinateFromPixel([e.pixel[0] - ptBuffer, e.pixel[1] - ptBuffer]);
             const ur = this._map.getCoordinateFromPixel([e.pixel[0] + ptBuffer, e.pixel[1] + ptBuffer]);
-            const box = [ll[0], ll[1], ur[0], ur[1]];
+            const box: Bounds = [ll[0], ll[1], ur[0], ur[1]];
             const geom = ol.geom.Polygon.fromExtent(box);
             this.selectByGeometry(geom);
         }
@@ -375,6 +376,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         switch (this.props.tool) {
             case ActiveMapTool.Zoom:
                 {
+                    //TODO: To conform to redux uni-directional data flow, this should
+                    //broadcast the new desired view back up and flow it back through to this
+                    //component as new props
                     this.zoomToExtent(extent.getExtent());
                 }
                 break;
@@ -790,7 +794,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     componentWillUnmount() {
 
     }
-    public getCurrentExtent(): number[] {
+    public getCurrentExtent(): Bounds {
         return this._map.getView().calculateExtent(this._map.getSize());
     }
     public getOLView(): ol.View {
@@ -843,15 +847,24 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         return this._inPerUnit / 39.37;
     }
     public initialView(): void {
+        //TODO: To conform to redux uni-directional data flow, this should
+        //broadcast the new desired view back up and flow it back through to this
+        //component as new props
         this.zoomToExtent(this._extent);
     }
     public clearSelection(): void {
         this.setSelectionXml("");
     }
     public zoomDelta(delta: number): void {
+        //TODO: To conform to redux uni-directional data flow, this should
+        //broadcast the new desired view back up and flow it back through to this
+        //component as new props
         this.zoomByDelta(delta);
     }
-    public zoomToExtent(extent: number[]): void {
+    public zoomToExtent(extent: Bounds): void {
+        //TODO: To conform to redux uni-directional data flow, this should
+        //broadcast the new desired view back up and flow it back through to this
+        //component as new props
         this._raiseViewChanged = false;
         this._map.getView().fit(extent, this._map.getSize());
         this._raiseViewChanged = true;

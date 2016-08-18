@@ -6,7 +6,9 @@ import {
     ActiveMapTool,
     MapViewerBase, 
     RefreshMode,
-    DigitizerCallback
+    DigitizerCallback,
+    Bounds,
+    Coordinate
 } from "../components/map-viewer-base";
 import * as Runtime from "../api/runtime";
 import { RuntimeMap } from "../api/contracts/runtime-map";
@@ -108,7 +110,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         }
     }
     // ----------------- IMapViewer --------------------- //
-    getCurrentExtent(): number[] {
+    getCurrentExtent(): Bounds {
         return this.inner.getCurrentExtent();
     }
     zoomToView(x: number, y: number, scale: number): void {
@@ -162,7 +164,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     selectByGeometry(geom: ol.geom.Geometry): void {
         this.inner.selectByGeometry(geom);
     }
-    zoomToExtent(extent: number[]): void {
+    zoomToExtent(extent: Bounds): void {
         this.inner.zoomToExtent(extent);
     }
     isFeatureTooltipEnabled(): boolean {

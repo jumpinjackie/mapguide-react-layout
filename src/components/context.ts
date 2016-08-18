@@ -18,23 +18,7 @@ export interface IApplicationContext {
 }
 
 export const APPLICATION_CONTEXT_VALIDATION_MAP: React.ValidationMap<any> = {
-    getClient: React.PropTypes.func.isRequired/*,
-    getSession: React.PropTypes.func.isRequired,
-    getMapName: React.PropTypes.func.isRequired,
-    getLocale: React.PropTypes.func.isRequired*/
-};
-
-export interface IMapViewerContext {
-    getView(): IMapView;
-    setLayerVisibility(layerId: string, visible: boolean): void;
-    setGroupVisibility(groupId: string, visible: boolean): void;
-    pushView(view: IMapView);
-    popView(): IMapView;
-}
-
-export const MAP_VIEWER_CONTEXT_VALIDATION_MAP: React.ValidationMap<any> = {
-    setLayerVisibility: React.PropTypes.func.isRequired,
-    setGroupVisibility: React.PropTypes.func.isRequired,
+    getClient: React.PropTypes.func.isRequired
 };
 
 export interface ILegendContext {

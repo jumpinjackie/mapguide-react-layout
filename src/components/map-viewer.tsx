@@ -5,7 +5,9 @@ import {
     RefreshMode,
     ActiveMapTool,
     DigitizerCallback,
-    MapViewerBase
+    MapViewerBase,
+    Bounds,
+    Coordinate
 } from "./map-viewer-base";
 import * as Contracts from '../api/contracts';
 import { ClientKind } from '../api/client';
@@ -14,7 +16,6 @@ import * as logger from '../utils/logger';
 import { MgError } from '../api/error';
 import {
     IMapView,
-    IMapViewerContext,
     IApplicationContext
 } from "./context";
 const assign = require("object-assign");
@@ -35,7 +36,7 @@ interface IMapViewerProps {
 }
 
 export class MapViewer extends React.Component<IMapViewerProps, any>
-    implements IMapViewer, IMapViewerContext {
+    implements IMapViewer {
     private inner: MapViewerBase;
     private fnMapViewerMounted: (component) => void;
     private fnViewChanged: (view: IMapView) => void;
@@ -121,7 +122,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         return state;
     }
     // ----------------- IMapViewer --------------------- //
-    getCurrentExtent(): number[] {
+    getCurrentExtent(): Bounds {
         return this.inner.getCurrentExtent();
     }
     zoomToView(x: number, y: number, scale: number): void {
@@ -175,7 +176,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
     selectByGeometry(geom: ol.geom.Geometry): void {
         this.inner.selectByGeometry(geom);
     }
-    zoomToExtent(extent: number[]): void {
+    zoomToExtent(extent: Bounds): void {
         this.inner.zoomToExtent(extent);
     }
     isFeatureTooltipEnabled(): boolean {

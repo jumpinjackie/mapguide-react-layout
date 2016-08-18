@@ -25,6 +25,46 @@ declare module goog {
         }
     }
 }
+
+// These types normally resolve to number[] by the plugin, which is fine, but TypeScript lets us define
+// "constrained" array types (I forget what the actual feature is called) which is much more expressive 
+// and clearer than what the plugin generates
+//
+// For example, instead of number[] for ol.Coordinate, we can express this as [number, number], ie. A
+// 2-item array of numbers, which is more clearer as it communicates the maximum number of allowed elements
+// that number[] does not
+
+declare module ol {
+    /**
+     * A color represented as a short array [red, green, blue, alpha].
+     * red, green, and blue should be integers in the range 0..255 inclusive.
+     * alpha should be a float in the range 0..1 inclusive. If no alpha value is
+     * given then `1` will be used.
+     */
+    type Color = [number, number, number, number];
+    /**
+     * An array of numbers representing an xy coordinate. Example: `[16, 48]`.
+     */
+    type Coordinate = [number, number];
+    /**
+     * An array of numbers representing an extent: `[minx, miny, maxx, maxy]`.
+     */
+    type Extent = [number, number, number, number];
+    /**
+     * An array with two elements, representing a pixel. The first element is the
+     * x-coordinate, the second the y-coordinate of the pixel.
+     */
+    type Pixel = [number, number];
+    /**
+     * An array of numbers representing a size: `[width, height]`.
+     */
+    type Size = [number, number];
+    /**
+     * An array of three numbers representing the location of a tile in a tile
+     * grid. The order is `z`, `x`, and `y`. `z` is the zoom level.
+     */
+    type TileCoord = [number, number, number];
+}
 declare type proj4 = any;
 declare type EsriJSONGeometry = any;
 declare type GeoJSONObject = any;
@@ -2202,23 +2242,10 @@ otherwise it will be negative.
     type AttributionLike = string|string[]|ol.Attribution|ol.Attribution[];
 
     /**
-     * A color represented as a short array [red, green, blue, alpha].
-     * red, green, and blue should be integers in the range 0..255 inclusive.
-     * alpha should be a float in the range 0..1 inclusive. If no alpha value is
-     * given then `1` will be used.
-     */
-    type Color = number[];
-
-    /**
      * A type accepted by CanvasRenderingContext2D.fillStyle.
      * Represents a color, pattern, or gradient.
      */
     type ColorLike = string|CanvasPattern|CanvasGradient;
-
-    /**
-     * An array of numbers representing an xy coordinate. Example: `[16, 48]`.
-     */
-    type Coordinate = number[];
 
     /**
      * Key to use with {@link ol.Observable#unByKey}.
@@ -2226,26 +2253,10 @@ otherwise it will be negative.
     type EventsKey = any;
 
     /**
-     * An array of numbers representing an extent: `[minx, miny, maxx, maxy]`.
-     */
-    type Extent = number[];
-
-    /**
-     * An array with two elements, representing a pixel. The first element is the
-     * x-coordinate, the second the y-coordinate of the pixel.
-     */
-    type Pixel = number[];
-
-    /**
      * A projection as {@link ol.proj.Projection}, SRS identifier string or
      * undefined.
      */
     type ProjectionLike = ol.proj.Projection|string;
-
-    /**
-     * An array of numbers representing a size: `[width, height]`.
-     */
-    type Size = number[];
 
     /**
      * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -2271,12 +2282,6 @@ otherwise it will be negative.
      * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
      */
     type StyleImageOptions = any;
-
-    /**
-     * An array of three numbers representing the location of a tile in a tile
-     * grid. The order is `z`, `x`, and `y`. `z` is the zoom level.
-     */
-    type TileCoord = number[];
 
     /**
      * Number of features; bounds/extent.

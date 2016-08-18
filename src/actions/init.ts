@@ -49,6 +49,11 @@ function getDefaultCommandSet() {
             tooltip: "Select Polygon" 
         },
         { 
+            command: "ZoomToSelection",
+            //label: "Zoom to Selection",
+            tooltip: "Zoom to Selection"
+        },
+        { 
             command: "ZoomExtents",
             //label: "Zoom Extents",
             tooltip: "Zoom Extents" 

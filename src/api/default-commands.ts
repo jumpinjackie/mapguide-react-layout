@@ -1,5 +1,6 @@
 import { registerCommand, DefaultCommands } from "./command-registry";
 import { IMapViewer, ActiveMapTool } from "../components/map-viewer-base";
+import { QueryMapFeaturesResponse } from "./contracts/query";
 import * as MapActions from "../actions/map";
 import * as Constants from "../constants";
 import * as ol from "openlayers";
@@ -187,5 +188,33 @@ export function initDefaultCommands() {
         invoke: (dispatch, getState, viewer) => {
             viewer.clearSelection();
         }
-    })
+    });
+    //Zoom to Selection
+    registerCommand(DefaultCommands.ZoomToSelection, {
+        icon: "icon_zoomselect.gif",
+        selected: () => false,
+        enabled: (state) => {
+            const selection: QueryMapFeaturesResponse = state.selection.selectionSet;
+            return (selection != null && selection.SelectedFeatures != null);
+        },
+        invoke: (dispatch, getState, viewer) => {
+            const selection: QueryMapFeaturesResponse = getState().selection.selectionSet;
+            let bounds: ol.Extent = null;
+            if (selection != null && selection.SelectedFeatures != null) {
+                selection.SelectedFeatures.SelectedLayer.forEach(layer => {
+                    layer.Feature.forEach(feat => {
+                        const b: any = feat.Bounds.split(" ").map(s => parseFloat(s));
+                        if (bounds == null) {
+                            bounds = b;
+                        } else {
+                            bounds = ol.extent.extend(bounds, b);
+                        }
+                    })
+                });
+            }
+            if (bounds != null) {
+                dispatch(MapActions.setCurrentView(bounds));
+            }
+        }
+    });
 }

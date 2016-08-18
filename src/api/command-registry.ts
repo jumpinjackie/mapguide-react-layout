@@ -11,6 +11,7 @@ export class DefaultCommands {
     public static get SelectRadius(): string { return "SelectRadius"; }
     public static get SelectPolygon(): string { return "SelectPolygon"; }
     public static get ClearSelection(): string { return "ClearSelection"; }
+    public static get ZoomToSelection(): string { return "ZoomToSelection"; }
     public static get PanLeft(): string { return "PanLeft"; }
     public static get PanRight(): string { return "PanRight"; }
     public static get PanUp(): string { return "PanUp"; }

@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { SelectionPanel } from "../components/selection-panel";
 import { QueryMapFeaturesResponse } from "../api/contracts/query";
-
+import * as MapActions from "../actions/map";
 
 interface ISelectionPanelContainerProps {
 
@@ -13,7 +13,7 @@ interface ISelectionPanelContainerState {
 }
 
 interface ISelectionPanelContainerDispatch {
-
+    setCurrentView?: (view) => void;
 }
 
 function mapStateToProps(state): ISelectionPanelContainerState {
@@ -24,23 +24,22 @@ function mapStateToProps(state): ISelectionPanelContainerState {
 
 function mapDispatchToProps(dispatch): ISelectionPanelContainerDispatch {
     return {
-        
+        setCurrentView: (view) => dispatch(MapActions.setCurrentView(view))
     };
 }
 
+type SelectionPanelContainerProps = ISelectionPanelContainerProps & ISelectionPanelContainerState & ISelectionPanelContainerDispatch;
+
 @connect(mapStateToProps, mapDispatchToProps)
-export class SelectionPanelContainer extends React.Component<any, any> {
+export class SelectionPanelContainer extends React.Component<SelectionPanelContainerProps, any> {
     private fnZoomToSelectedFeature: (feature: any) => void;
     constructor(props) {
         super(props);
         this.fnZoomToSelectedFeature = this.onZoomToSelectedFeature.bind(this);
     }
     private onZoomToSelectedFeature(feature: any) {
-        //const viewer = this.getViewer();
-        //if (viewer != null) {
-        //    const bbox: number[] = feature.Bounds.split(" ").map(s => parseFloat(s));
-        //    viewer.zoomToExtent(bbox);
-        //}
+        const bbox: any = feature.Bounds.split(" ").map(s => parseFloat(s));
+        this.props.setCurrentView(bbox);
     }
     render(): JSX.Element {
         const { selection } = this.props;

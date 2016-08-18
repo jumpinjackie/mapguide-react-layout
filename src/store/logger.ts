@@ -1,3 +1,4 @@
+import * as Constants from "../constants";
 const createLogger = require('redux-logger');
 
 const logger = createLogger({
@@ -9,7 +10,8 @@ const logger = createLogger({
         return type !== 'redux-form/BLUR' &&
             type !== 'redux-form/CHANGE' &&
             type !== 'redux-form/FOCUS' &&
-            type !== 'redux-form/TOUCH';
+            type !== 'redux-form/TOUCH' &&
+            type !== Constants.MAP_SET_BUSY_COUNT;
     },
 });
 

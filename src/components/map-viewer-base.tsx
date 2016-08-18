@@ -31,7 +31,7 @@ interface IMapViewerBaseProps {
     map: Contracts.RtMap.RuntimeMap;
     layerGroupVisibility?: ILayerGroupVisibility;
     tool: ActiveMapTool;
-    view: IMapView;
+    view: IMapView|Bounds;
     agentUri: string;
     agentKind: ClientKind;
     featureTooltipsEnabled: boolean;
@@ -40,7 +40,7 @@ interface IMapViewerBaseProps {
     stateChangeDebounceTimeout?: number;
     pointSelectionBuffer?: number;
     externalBaseLayers?: IExternalBaseLayer[];
-    onViewChanged?: (view: IMapView) => void;
+    onRequestZoomToView?: (view: IMapView|Bounds) => void;
     onRequestSelectableLayers?: () => string[];
     onSelectionChange?: (selectionSet: any) => void;
     onMouseCoordinateChanged?: (coords: number[]) => void;
@@ -50,6 +50,10 @@ interface IMapViewerBaseProps {
 export enum RefreshMode {
     LayersOnly = 1,
     SelectionOnly = 2
+}
+
+export function isBounds(arg: IMapView | Bounds): arg is Bounds {
+    return Array.isArray(arg);
 }
 
 export function areViewsCloseToEqual(view: IMapView, otherView: IMapView): boolean {
@@ -70,8 +74,10 @@ export type Coordinate = [number, number];
 export type Bounds = [number, number, number, number];
 
 export interface IMapViewer {
+    getScaleForExtent(bounds: Bounds): number;
     getCurrentExtent(): Bounds;
-    getView(): IMapView;
+    getView(): IMapView|Bounds;
+    getCurrentView(): IMapView;
     zoomToView(x: number, y: number, scale: number): void;
     setSelectionXml(xml: string): void;
     refreshMap(mode?: RefreshMode): void;
@@ -251,6 +257,15 @@ class MouseTrackingTooltip {
     }
 }
 
+function cloneExtent(bounds: Bounds): Bounds {
+    return [
+        bounds[0],
+        bounds[1],
+        bounds[2],
+        bounds[3]
+    ];
+}
+
 export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     /**
      * The internal OpenLayers map instance
@@ -273,13 +288,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
      * @type {ol.layer.Image}
      */
     private _selectionOverlay: ol.layer.Image;
-    /**
-     * The initial map view
-     * 
-     * @private
-     * @type {IMapView}
-     */
-    private _initialView: IMapView;
 
     private _wktFormat: ol.format.WKT;
 
@@ -307,9 +315,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
 
     private _client: Client;
 
-    private _raiseViewChanged: boolean;
-
     private _busyWorkers: number;
+
+    private _triggerZoomRequestOnMoveEnd: boolean;
     
     constructor(props: IMapViewerBaseProps) {
         super(props);
@@ -317,8 +325,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), props.stateChangeDebounceTimeout || 500);
         this._wktFormat = new ol.format.WKT();
         this.fnKeyPress = this.onKeyPress.bind(this);
-        this._raiseViewChanged = true;
         this._busyWorkers = 0;
+        this._triggerZoomRequestOnMoveEnd = true;
     }
     /**
      * DO NOT CALL DIRECTLY, call this.refreshOnStateChange() instead, which is a throttled version
@@ -376,10 +384,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         switch (this.props.tool) {
             case ActiveMapTool.Zoom:
                 {
-                    //TODO: To conform to redux uni-directional data flow, this should
-                    //broadcast the new desired view back up and flow it back through to this
-                    //component as new props
-                    this.zoomToExtent(extent.getExtent());
+                    this.onRequestZoomToView(extent.getExtent());
                 }
                 break;
             case ActiveMapTool.Select:
@@ -432,11 +437,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             const newResolution = view.constrainResolution(currentResolution, delta);
             view.setResolution(newResolution);
         }
-    }/*
-    private updateScale(scale) {
-        const view = this.getView();
-        this.pushView({ x: view.x, y: view.y, scale: scale });
-    }*/
+    }
     private getTileUrlFunctionForGroup(resourceId, groupName, zOrigin) {
         const urlTemplate = this._client.getTileTemplateUrl(resourceId, groupName, '{x}', '{y}', '{z}');
         return function (tileCoord) {
@@ -494,6 +495,21 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this._busyWorkers--;
         this.props.onBusyLoading(this._busyWorkers);
     }
+    private onRequestZoomToView(view: IMapView|Bounds): void {
+        if (this.props.onRequestZoomToView != null) {
+            let copy;
+            if (isBounds(view)) {
+                copy = cloneExtent(view);
+            } else {
+                copy = {
+                    x: view.x,
+                    y: view.y,
+                    scale: view.scale
+                };
+            }
+            this.props.onRequestZoomToView(copy);
+        }
+    }
     // ----------------- React Lifecycle ----------------- //
     componentWillReceiveProps(nextProps: IMapViewerBaseProps) {
         // 
@@ -543,8 +559,16 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         //view
         if (nextProps.view != props.view) {
             const vw = nextProps.view;
-            if (vw != null && !areViewsCloseToEqual(nextProps.view, props.view)) {
-                this.zoomToView(vw.x, vw.y, vw.scale);
+            if (vw != null) {
+                this._triggerZoomRequestOnMoveEnd = false;
+                if (isBounds(vw)) {
+                    this._map.getView().fit(vw, this._map.getSize());
+                } else {
+                    const view = this._map.getView();
+                    view.setCenter([vw.x, vw.y]);
+                    view.setResolution(this.scaleToResolution(vw.scale));
+                }
+                this._triggerZoomRequestOnMoveEnd = true;
             } else {
                 logger.info(`Skipping zoomToView as next/current views are close enough or target view is null`);
             }
@@ -747,15 +771,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                                                        this.getSelectableLayers.bind(this));
         this._featureTooltip.setEnabled(this.props.featureTooltipsEnabled);
         document.addEventListener("keydown", this.fnKeyPress);
-
-        view.fit(this._extent, this._map.getSize());
-        //Set initial view
-        const center = view.getCenter();
-        this._initialView = { x: center[0], y: center[1], scale: this.resolutionToScale(view.getResolution()) };
         
-        if (this.props.onViewChanged != null) {
-            this.props.onViewChanged(this._initialView);
-        }
         //Listen for scale changes
         const selSource = this._selectionOverlay.getSource();
         const ovSource = this._overlay.getSource();
@@ -764,35 +780,60 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         selSource.on("imageloaderror", this.decrementBusyWorker.bind(this));
         ovSource.on("imageloaderror", this.decrementBusyWorker.bind(this));
         selSource.on("imageloadend", this.decrementBusyWorker.bind(this));
-        ovSource.on("imageloadend", (e) => {
-            const newScale = this.resolutionToScale(view.getResolution());
-            const newCenter = view.getCenter();
-            if (this._raiseViewChanged === true) {
-                this.props.onViewChanged({ x: newCenter[0], y: newCenter[1], scale: newScale });
-            } else {
-                logger.info(`Skip raising view changed`);
-            }
-            this.decrementBusyWorker();
-        });
+        ovSource.on("imageloadend", this.decrementBusyWorker.bind(this));
 
         this._map.on("click", this.onMapClick.bind(this));
-        /*
-        view.on("change:resolution", (e) => {
-            const newScale = view.getResolution() * dpi * inPerUnit;
-            this.updateScale(newScale);
+        this._map.on("moveend", (e) => {
+            //HACK:
+            //
+            //What we're hoping here is that when the view has been broadcasted back up
+            //and flowed back in through new view props, that the resulting zoom/pan 
+            //operation in componentWillReceiveProps() is effectively a no-op as the intended
+            //zoom/pan location has already been reached by this event right here
+            //
+            //If we look at this through Redux DevTools, we see 2 entries for Map/SET_VIEW
+            //for the initial view (un-desirable), but we still only get one map image request
+            //for the initial view (good!). Everything is fine after that.
+            if (this._triggerZoomRequestOnMoveEnd) { 
+                this.onRequestZoomToView(this.getCurrentView());
+            } else {
+                logger.info("Triggering zoom request on moveend suppresseed");
+            }
         });
-        view.on("change:center", (e) => {
-            const newScale = view.getResolution() * dpi * inPerUnit;
-            const newCenter = view.getCenter();
-            this.pushView({ x: newCenter[0], y: newCenter[1], scale: newScale });
-        });
-        */
+
+        this.onRequestZoomToView(this._extent);
     }
     render(): JSX.Element {
         return <div style={{ width: "100%", height: "100%" }} />;
     }
     componentWillUnmount() {
 
+    }
+    public getScaleForExtent(bounds: Bounds): number {
+        const mcsW = ol.extent.getWidth(bounds);
+        const mcsH = ol.extent.getHeight(bounds);
+        const size = this._map.getSize();
+        const devW = size[0];
+        const devH = size[1];
+        const metersPerPixel = 0.0254 / this._dpi;
+        const metersPerUnit = this.getMetersPerUnit();
+        //Scale calculation code from AJAX viewer
+        let mapScale: number;
+        if (devH * mcsW > devW * mcsH)
+            mapScale = mcsW * metersPerUnit / (devW * metersPerPixel); // width-limited
+        else
+            mapScale = mcsH * metersPerUnit / (devH * metersPerPixel); // height-limited
+        return mapScale;
+    }
+    public getCurrentView(): IMapView {
+        const ov = this.getOLView();
+        const center = ov.getCenter();
+        const scale = this.resolutionToScale(ov.getResolution());
+        return {
+            x: center[0],
+            y: center[1],
+            scale: scale
+        };
     }
     public getCurrentExtent(): Bounds {
         return this._map.getView().calculateExtent(this._map.getSize());
@@ -802,11 +843,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     }
     public zoomToView(x: number, y: number, scale: number): void {
         if (this._map) {
-            this._raiseViewChanged = false;
             const view = this._map.getView();
             view.setCenter([x, y]);
             view.setResolution(this.scaleToResolution(scale));
-            this._raiseViewChanged = true;
         }
     }
     public setSelectionXml(xml: string): void {
@@ -847,10 +886,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         return this._inPerUnit / 39.37;
     }
     public initialView(): void {
-        //TODO: To conform to redux uni-directional data flow, this should
-        //broadcast the new desired view back up and flow it back through to this
-        //component as new props
-        this.zoomToExtent(this._extent);
+        this.onRequestZoomToView(this._extent);
     }
     public clearSelection(): void {
         this.setSelectionXml("");
@@ -862,12 +898,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this.zoomByDelta(delta);
     }
     public zoomToExtent(extent: Bounds): void {
-        //TODO: To conform to redux uni-directional data flow, this should
-        //broadcast the new desired view back up and flow it back through to this
-        //component as new props
-        this._raiseViewChanged = false;
-        this._map.getView().fit(extent, this._map.getSize());
-        this._raiseViewChanged = true;
+        this.onRequestZoomToView(extent);
     }
     public isDigitizing(): boolean {
         return this._activeDrawInteraction != null;

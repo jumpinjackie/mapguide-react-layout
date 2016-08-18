@@ -7,7 +7,8 @@ import {
     DigitizerCallback,
     MapViewerBase,
     Bounds,
-    Coordinate
+    Coordinate,
+    isBounds
 } from "./map-viewer-base";
 import * as Contracts from '../api/contracts';
 import { ClientKind } from '../api/client';
@@ -29,7 +30,7 @@ interface IMapViewerProps {
     stateChangeDebounceTimeout?: number;
     pointSelectionBuffer?: number;
     externalBaseLayers?: IExternalBaseLayer[];
-    onViewChanged?: (view: IMapView) => void;
+    onRequestZoomToView?: (view: IMapView|Bounds) => void;
     onRequestSelectableLayers?: () => string[];
     onSelectionChange?: (selectionSet: any) => void;
     onMouseCoordinateChanged?: (coords: number[]) => void;
@@ -39,12 +40,12 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
     implements IMapViewer {
     private inner: MapViewerBase;
     private fnMapViewerMounted: (component) => void;
-    private fnViewChanged: (view: IMapView) => void;
+    private fnRequestZoomToView: (view: IMapView|Bounds) => void;
     private fnBusyLoading: (busyCount) => void;
     constructor(props) {
         super(props);
         this.fnMapViewerMounted = this.onMapViewerMounted.bind(this);
-        this.fnViewChanged = this.onViewChanged.bind(this);
+        this.fnRequestZoomToView = this.onRequestZoomToView.bind(this);
         this.fnBusyLoading = this.onBusyLoading.bind(this);
         this.state = this.buildInitialState(props);
     }
@@ -69,7 +70,7 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
                               pointSelectionBuffer={this.props.pointSelectionBuffer}
                               externalBaseLayers={this.props.externalBaseLayers}
                               onBusyLoading={this.fnBusyLoading}
-                              onViewChanged={this.fnViewChanged}
+                              onRequestZoomToView={this.fnRequestZoomToView}
                               onRequestSelectableLayers={this.props.onRequestSelectableLayers}
                               onSelectionChange={this.props.onSelectionChange}
                               onMouseCoordinateChanged={this.props.onMouseCoordinateChanged} />;
@@ -97,36 +98,49 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
             }
         };
     }
-    private onViewChanged(view: IMapView): void {
+    private onRequestZoomToView(view: IMapView|Bounds): void {
         const state = this._pushView(view);
-        state.view = {
-            x: view.x,
-            y: view.y,
-            scale: view.scale
-        };
+        state.view = view;
         this.setState(state);
-        this.props.onViewChanged(view);
+        this.props.onRequestZoomToView(view);
     }
-    private _pushView(view: IMapView): any {
+    private _pushView(view: IMapView|Bounds): any {
         const currentView = this.getView();
         //Short-circuit: Don't bother recording identical or insignificantly different views
-        if (currentView != null &&
-            areNumbersEqual(view.x, currentView.x) &&
-            areNumbersEqual(view.y, currentView.y) &&
-            areNumbersEqual(view.scale, currentView.scale)) {
-            //logger.debug(`New view (${view.x}, ${view.y}, ${view.scale}) is same or near-identical to previous view (${currentView.x}, ${currentView.y}, ${currentView.scale}). Not pushing to nav stack`);
-            return this.state;
+        if (currentView != null) {
+            if (isBounds(currentView) && isBounds(view)) {
+                if (areNumbersEqual(view[0], currentView[0]) &&
+                    areNumbersEqual(view[1], currentView[1]) &&
+                    areNumbersEqual(view[2], currentView[2]) &&
+                    areNumbersEqual(view[3], currentView[3])) {
+                    //logger.debug(`New view (${view.x}, ${view.y}, ${view.scale}) is same or near-identical to previous view (${currentView.x}, ${currentView.y}, ${currentView.scale}). Not pushing to nav stack`);
+                    return this.state;
+                }
+            } else if (!isBounds(currentView) && !isBounds(view)) {
+                if (areNumbersEqual(view.x, currentView.x) &&
+                    areNumbersEqual(view.y, currentView.y) &&
+                    areNumbersEqual(view.scale, currentView.scale)) {
+                    //logger.debug(`New view (${view.x}, ${view.y}, ${view.scale}) is same or near-identical to previous view (${currentView.x}, ${currentView.y}, ${currentView.scale}). Not pushing to nav stack`);
+                    return this.state;
+                }
+            }
         }
         const state = this.state;
         state.navigationStack.push(view);
         return state;
     }
     // ----------------- IMapViewer --------------------- //
+    getScaleForExtent(bounds: Bounds): number {
+        return this.inner.getScaleForExtent(bounds);
+    }
     getCurrentExtent(): Bounds {
         return this.inner.getCurrentExtent();
     }
+    getCurrentView(): IMapView {
+        return this.inner.getCurrentView();
+    }
     zoomToView(x: number, y: number, scale: number): void {
-        this.onViewChanged({ x: x, y: y, scale: scale });
+        this.onRequestZoomToView({ x: x, y: y, scale: scale });
     }
     setSelectionXml(xml: string): void {
         this.inner.setSelectionXml(xml);
@@ -186,53 +200,12 @@ export class MapViewer extends React.Component<IMapViewerProps, any>
         this.setState({ featureTooltipsEnabled: enabled });
     }
     // ---------------------- IMapViewerContext --------------------- //
-    public getView(): IMapView {
+    public getView(): IMapView|Bounds {
         const stack = this.state.navigationStack;
         if (stack && stack.length > 0) {
             return stack[stack.length - 1];
         } else {
             return null;
         }
-    }
-    public pushView(view: IMapView): void {
-        const state = this._pushView(view);
-        this.setState(state);
-        if (this.props.onViewChanged != null) {
-            this.props.onViewChanged(view);
-        }
-    }
-    public popView(): IMapView {
-        const state = this.state;
-        const view = state.navigationStack.pop();
-        this.setState(state);
-        return view;
-    }
-    public setLayerVisibility(layerId: string, visible: boolean): void {
-        const changes = assign({}, this.state.layerGroupVisibility);
-        if (visible) {
-            //Remove from hidelayers if previously set
-            changes.hideLayers = changes.hideLayers.filter(id => id != layerId);
-            changes.showLayers.push(layerId);
-        } else {
-            //Remove from showlayers if previously set
-            changes.showLayers = changes.showLayers.filter(id => id != layerId);
-            changes.hideLayers.push(layerId);
-        }
-        this.setState({ layerGroupVisibility: changes });
-        //this.refreshOnStateChange();
-    }
-    public setGroupVisibility(groupId: string, visible: boolean): void {
-        const changes = assign({}, this.state.layerGroupVisibility);
-        if (visible) {
-            //Remove from hideGroups if previously set
-            changes.hideGroups = changes.hideGroups.filter(id => id != groupId);
-            changes.showGroups.push(groupId);
-        } else {
-            //Remove from showGroups if previously set
-            changes.showGroups = changes.showGroups.filter(id => id != groupId);
-            changes.hideGroups.push(groupId);
-        }
-        this.setState({ layerGroupVisibility: changes });
-        //this.refreshOnStateChange();
     }
 }

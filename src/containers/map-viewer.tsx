@@ -55,14 +55,14 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     implements IMapViewer {
     private fnMapViewerMounted: (component) => void;
     private inner: MapViewerBase;
-    private fnViewChanged: (view: IMapView) => void;
+    private fnRequestZoomToView: (view: IMapView|Bounds) => void;
     private fnSelectionChanged: (selectionSet: any) => void;
     private fnRequestSelectableLayers: () => string[];
     private fnBusyLoading: (busyCount) => void;
     constructor(props) {
         super(props);
         this.fnMapViewerMounted = this.onMapViewerMounted.bind(this);
-        this.fnViewChanged = this.onViewChanged.bind(this);
+        this.fnRequestZoomToView = this.onRequestZoomToView.bind(this);
         this.fnSelectionChanged = this.onSelectionChanged.bind(this);
         this.fnRequestSelectableLayers = this.onRequestSelectableLayers.bind(this);
         this.fnBusyLoading = this.onBusyLoading.bind(this);
@@ -70,7 +70,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     private onMapViewerMounted(component) {
         this.inner = component;
     }
-    private onViewChanged(view: IMapView): void {
+    private onRequestZoomToView(view: IMapView|Bounds): void {
         this.props.setCurrentView(view);
     }
     private onSelectionChanged(selectionSet: any): void {
@@ -104,17 +104,23 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                   onBusyLoading={this.fnBusyLoading}
                                   onRequestSelectableLayers={this.fnRequestSelectableLayers}
                                   onSelectionChange={this.fnSelectionChanged}
-                                  onViewChanged={this.fnViewChanged} />;
+                                  onRequestZoomToView={this.fnRequestZoomToView} />;
         } else {
             return <div>Loading Map ...</div>;
         }
     }
     // ----------------- IMapViewer --------------------- //
+    getScaleForExtent(bounds: Bounds): number {
+        return this.inner.getScaleForExtent(bounds);
+    }
     getCurrentExtent(): Bounds {
         return this.inner.getCurrentExtent();
     }
+    getCurrentView(): IMapView {
+        return this.inner.getCurrentView();
+    }
     zoomToView(x: number, y: number, scale: number): void {
-        this.onViewChanged({ x: x, y: y, scale: scale });
+        this.zoomToView(x, y, scale);
     }
     setSelectionXml(xml: string): void {
         this.inner.setSelectionXml(xml);
@@ -126,10 +132,10 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         return this.inner.getMetersPerUnit();
     }
     setActiveTool(tool: ActiveMapTool): void {
-        this.setState({ tool: tool });
+        this.setState({ tool: tool }); //TODO: This should dispatch
     }
     getActiveTool(): ActiveMapTool {
-        return this.state.tool;
+        return this.state.tool; //TODO: This should read from redux store
     }
     initialView(): void {
         this.inner.initialView();
@@ -173,7 +179,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     setFeatureTooltipEnabled(enabled: boolean): void {
         this.setState({ featureTooltipsEnabled: enabled });
     }
-    getView(): IMapView {
+    getView(): IMapView|Bounds {
         return this.props.view.current;
     }
 }

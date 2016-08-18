@@ -12,7 +12,7 @@ function panMap(dispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "
         "up": [0, 3]
     };
     
-    const view = viewer.getView();
+    const view = viewer.getCurrentView();
     const current_center = [ view.x, view.y ];
     const currentExtent = viewer.getCurrentExtent();
     let newPos: number[];

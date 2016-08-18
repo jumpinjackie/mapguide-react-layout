@@ -192,7 +192,7 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
     public GetCenter(): IAjaxViewerPoint {
         const viewer = Runtime.getViewer();
         if (viewer) {
-            const view = viewer.getView();
+            const view = viewer.getCurrentView();
             return { X: view.x, Y: view.y };
         }
         return null;
@@ -239,7 +239,7 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
     public GetScale(): number {
         const viewer = Runtime.getViewer();
         if (viewer) {
-            const view = viewer.getView();
+            const view = viewer.getCurrentView();
             return view.scale;
         }
         return null;
@@ -349,7 +349,7 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
     //This isn't in the AJAX Viewer API reference, but there are samples referencing it!
     public ZoomToScale(scale: number): void {
         const viewer = Runtime.getViewer();
-        const view = viewer.getView();
+        const view = viewer.getCurrentView();
         viewer.zoomToView(view.x, view.y, scale);
     }
     //Form frame

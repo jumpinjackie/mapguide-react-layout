@@ -5,13 +5,15 @@ import { RuntimeMap } from "../api/contracts/runtime-map";
 import * as LegendActions from "../actions/legend";
 import * as MapActions from "../actions/map";
 import { IMapView } from "../components/context";
+import { getViewer } from "../api/runtime";
+import { isBounds, Bounds } from "../components/map-viewer-base";
 
 interface ILegendContainerProps {
     
 }
 
 interface ILegendContainerState {
-    view?: IMapView;
+    view?: IMapView|Bounds;
     config?: any;
     map?: RuntimeMap;
 }
@@ -61,12 +63,25 @@ export class LegendContainer extends React.Component<ILegendContainerProps & ILe
     render(): JSX.Element {
         const { map, config, view } = this.props;
         if (map != null && config != null && view != null) {
-            return <Legend map={map}
-                           currentScale={view.scale}
-                           externalBaseLayers={config.externalBaseLayers} 
-                           onBaseLayerChanged={this.fnBaseLayerChanged}
-                           onGroupVisibilityChanged={this.fnGroupVisibilityChanged}
-                           onLayerVisibilityChanged={this.fnLayerVisibilityChanged} />;
+            let scale;
+            if (isBounds(view)) {
+                const viewer = getViewer();
+                if (viewer != null) {
+                    scale = viewer.getScaleForExtent(view);
+                }
+            } else {
+                scale = view.scale; 
+            }
+            if (scale) {
+                return <Legend map={map}
+                               currentScale={scale}
+                               externalBaseLayers={config.externalBaseLayers} 
+                               onBaseLayerChanged={this.fnBaseLayerChanged}
+                               onGroupVisibilityChanged={this.fnGroupVisibilityChanged}
+                               onLayerVisibilityChanged={this.fnLayerVisibilityChanged} />;
+            } else {
+                return <div>Loading ...</div>;
+            }
         } else {
             return <div>Loading ...</div>;
         }

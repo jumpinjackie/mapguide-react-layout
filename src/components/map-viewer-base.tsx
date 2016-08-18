@@ -69,6 +69,7 @@ export function areViewsCloseToEqual(view: IMapView, otherView: IMapView): boole
 export type DigitizerCallback<T extends ol.geom.Geometry> = (geom: T) => void;
 
 export interface IMapViewer {
+    getCurrentExtent(): number[];
     getView(): IMapView;
     zoomToView(x: number, y: number, scale: number): void;
     setSelectionXml(xml: string): void;
@@ -788,6 +789,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     }
     componentWillUnmount() {
 
+    }
+    public getCurrentExtent(): number[] {
+        return this._map.getView().calculateExtent(this._map.getSize());
     }
     public getOLView(): ol.View {
         return this._map.getView();

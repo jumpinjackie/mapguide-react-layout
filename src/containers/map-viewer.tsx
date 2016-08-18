@@ -108,7 +108,10 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         }
     }
     // ----------------- IMapViewer --------------------- //
-    zoomToView(x: number, y: number, scale: number): void {        
+    getCurrentExtent(): number[] {
+        return this.inner.getCurrentExtent();
+    }
+    zoomToView(x: number, y: number, scale: number): void {
         this.onViewChanged({ x: x, y: y, scale: scale });
     }
     setSelectionXml(xml: string): void {

@@ -53,7 +53,23 @@ export class NavigatorContainer extends React.Component<INavigatorContainerProps
             this.props.invokeCommand(cmd);
     }
     private onPan(direction) {
-
+        let cmd;
+        switch (direction) {
+            case PanDirection.East:
+                cmd = getCommand(DefaultCommands.PanRight);
+                break;
+            case PanDirection.West:
+                cmd = getCommand(DefaultCommands.PanLeft);
+                break;
+            case PanDirection.North:
+                cmd = getCommand(DefaultCommands.PanUp);
+                break;
+            case PanDirection.South:
+                cmd = getCommand(DefaultCommands.PanDown);
+                break;
+        }
+        if (cmd != null)
+            this.props.invokeCommand(cmd);
     }
     render(): JSX.Element {
         const { style, viewer } = this.props;

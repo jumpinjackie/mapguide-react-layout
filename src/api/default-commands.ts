@@ -1,7 +1,39 @@
 import { registerCommand, DefaultCommands } from "./command-registry";
-import { ActiveMapTool } from "../components/map-viewer-base";
+import { IMapViewer, ActiveMapTool } from "../components/map-viewer-base";
+import * as MapActions from "../actions/map";
 import * as Constants from "../constants";
 import * as ol from "openlayers";
+
+function panMap(dispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
+    const settings = {
+        "right": [2, 1],
+        "left": [0, 1],
+        "down": [0, 1],
+        "up": [0, 3]
+    };
+    
+    const view = viewer.getView();
+    const current_center = [ view.x, view.y ];
+    const currentExtent = viewer.getCurrentExtent();
+    let newPos: number[];
+
+    var direction = settings[value];
+    
+    if (value == "right" || value == "left") {
+        newPos = [
+            currentExtent[direction[0]],
+            current_center[direction[1]]
+        ];
+
+    } else {
+        newPos = [
+            current_center[direction[0]],
+            currentExtent[direction[1]]
+        ];
+    }
+    
+    dispatch(MapActions.setCurrentView({ x: newPos[0], y: newPos[1], scale: view.scale }));
+}
 
 export function initDefaultCommands() {
     //Select Tool
@@ -68,7 +100,7 @@ export function initDefaultCommands() {
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
             viewer.zoomDelta(1);
-        } 
+        }
     });
     //Zoom Out
     registerCommand(DefaultCommands.ZoomOut, {
@@ -77,7 +109,43 @@ export function initDefaultCommands() {
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
             viewer.zoomDelta(-1);
-        } 
+        }
+    });
+    //Pan Left
+    registerCommand(DefaultCommands.PanLeft, {
+        icon: "pan-west.png",
+        selected: () => false,
+        enabled: () => true,
+        invoke: (dispatch, getState, viewer) => {
+            panMap(dispatch, viewer, "left");
+        }
+    });
+    //Pan Right
+    registerCommand(DefaultCommands.PanRight, {
+        icon: "pan-east.png",
+        selected: () => false,
+        enabled: () => true,
+        invoke: (dispatch, getState, viewer) => {
+            panMap(dispatch, viewer, "right");
+        }
+    });
+    //Pan Up
+    registerCommand(DefaultCommands.PanUp, {
+        icon: "pan-north.png",
+        selected: () => false,
+        enabled: () => true,
+        invoke: (dispatch, getState, viewer) => {
+            panMap(dispatch, viewer, "up");
+        }
+    });
+    //Pan Down
+    registerCommand(DefaultCommands.PanDown, {
+        icon: "pan-south.png",
+        selected: () => false,
+        enabled: () => true,
+        invoke: (dispatch, getState, viewer) => {
+            panMap(dispatch, viewer, "down");
+        }
     });
     //Select Radius
     registerCommand(DefaultCommands.SelectRadius, {

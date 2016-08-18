@@ -11,6 +11,10 @@
  * redux aware and is responsible for flowing map state to the redux store (so any other interested
  * components will properly update) and flowing updated props back to this component to actually 
  * carry out the requested actions
+ * 
+ * NOTE: This component does not perfectly implement uni-directional data flow (sadly OpenLayers 3 is fighting
+ * against us in some parts, and is prone to out-of-band updates to map state that we are not properly flowing back), 
+ * thus it breaks certain debugging capabilities of redux such as "time travel"
  */
 
 import * as React from "react";

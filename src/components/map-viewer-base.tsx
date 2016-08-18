@@ -15,6 +15,10 @@
  * NOTE: This component does not perfectly implement uni-directional data flow (sadly OpenLayers 3 is fighting
  * against us in some parts, and is prone to out-of-band updates to map state that we are not properly flowing back), 
  * thus it breaks certain debugging capabilities of redux such as "time travel"
+ * 
+ * TODO/FIXME: One key violator of uni-directional data flow principle is map selection. This is definitely 
+ * an out-of-band action that does not properly flow back. The underlying QUERYMAPFEATURES request should 
+ * be encapsulated behind a redux action
  */
 
 import * as React from "react";

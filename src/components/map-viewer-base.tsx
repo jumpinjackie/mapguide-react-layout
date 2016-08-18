@@ -1,3 +1,18 @@
+/**
+ * map-viewer-base.tsx
+ * 
+ * This is the main map viewer component that wraps the OpenLayers 3 map viewer and its various APIs
+ * 
+ * This component is designed to be as "dumb" as possible, taking as much of its viewer directives from
+ * the props given to it. It carries no internal component state. Any relevant state is farmed off and 
+ * managed by a higher level parent component
+ * 
+ * This component is usually wrapped by its "smart" sibling (src/containers/map-viewer.tsx), which is
+ * redux aware and is responsible for flowing map state to the redux store (so any other interested
+ * components will properly update) and flowing updated props back to this component to actually 
+ * carry out the requested actions
+ */
+
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import * as ol from "openlayers";

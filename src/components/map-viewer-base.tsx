@@ -821,7 +821,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             }
         });
 
-        this.onRequestZoomToView(this._extent);
+        //this.onRequestZoomToView(this._extent);
+        this._map.getView().fit(this._extent, this._map.getSize());
     }
     render(): JSX.Element {
         return <div style={{ width: "100%", height: "100%" }} />;

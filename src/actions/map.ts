@@ -63,3 +63,10 @@ export function setBaseLayer(layerName: string) {
         payload: layerName
     };
 }
+
+export function setScale(scale: number) {
+    return {
+        type: Constants.MAP_SET_SCALE,
+        payload: scale
+    };
+}

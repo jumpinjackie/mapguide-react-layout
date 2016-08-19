@@ -63,6 +63,11 @@ function getDefaultCommandSet() {
             //label: "Clear Selection",
             tooltip: "Clear Selection"
         },
+        {
+            command: "RefreshMap",
+            //label: "Refresh Map",
+            tooltip: "Refresh Map"
+        },
         { command: "Buffer" },
         { command: "Measure" },
         { command: "QuickPlot" }

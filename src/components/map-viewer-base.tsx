@@ -64,7 +64,7 @@ interface IMapViewerBaseProps {
     pointSelectionBuffer?: number;
     externalBaseLayers?: IExternalBaseLayer[];
     onRequestZoomToView?: (view: IMapView|Bounds) => void;
-    onRequestSelectableLayers?: () => string[];
+    selectableLayerNames: string[];
     onSelectionChange?: (selectionSet: any) => void;
     onMouseCoordinateChanged?: (coords: number[]) => void;
     onBusyLoading: (busyCount: number) => void;
@@ -397,10 +397,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
     }
     private getSelectableLayers(): string[] {
-        //TODO: This needs to only consider layers in the current scale
-        return (this.props.onRequestSelectableLayers != null)
-            ? this.props.onRequestSelectableLayers()
-            : null;
+        return this.props.selectableLayerNames || [];
     }
     private onZoomSelectBox(e) {
         const extent = this._zoomSelectBox.getGeometry();

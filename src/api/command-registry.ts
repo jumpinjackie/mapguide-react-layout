@@ -16,6 +16,7 @@ export class DefaultCommands {
     public static get PanRight(): string { return "PanRight"; }
     public static get PanUp(): string { return "PanUp"; }
     public static get PanDown(): string { return "PanDown"; }
+    public static get RefreshMap(): string { return "RefreshMap"; }
 }
 
 export interface ICommandRef {

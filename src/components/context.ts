@@ -27,6 +27,8 @@ export interface ILegendContext {
     getChildren(objectId: string): (MapLayer | MapGroup)[];
     getCurrentScale(): number;
     getTree(): any;
+    getLayerVisibility(layer: MapLayer): boolean;
+    getGroupVisibility(group: MapGroup): boolean;
     setGroupVisibility(groupId: string, visible: boolean): void;
     setLayerVisibility(layerId: string, visible: boolean): void;
     getLayerSelectability(layerId: string): boolean;
@@ -43,6 +45,8 @@ export const LEGEND_CONTEXT_VALIDATION_MAP: React.ValidationMap<any> = {
     getChildren: React.PropTypes.func.isRequired,
     getCurrentScale: React.PropTypes.func.isRequired,
     getTree: React.PropTypes.func.isRequired,
+    getGroupVisibility: React.PropTypes.func.isRequired,
+    getLayerVisibility: React.PropTypes.func.isRequired,
     setGroupVisibility: React.PropTypes.func.isRequired,
     setLayerVisibility: React.PropTypes.func.isRequired,
     getLayerSelectability: React.PropTypes.func.isRequired,

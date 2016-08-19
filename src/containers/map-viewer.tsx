@@ -23,6 +23,7 @@ interface IMapViewerContainerState {
     map?: RuntimeMap;
     view?: any;
     viewer?: any;
+    legend?: any;
 }
 
 interface IMapViewerContainerDispatch {
@@ -36,7 +37,8 @@ function mapStateToProps(state): IMapViewerContainerState {
         config: state.config,
         view: state.view,
         map: state.map.state,
-        viewer: state.map.viewer
+        viewer: state.map.viewer,
+        legend: state.legend
     };
 }
 
@@ -57,14 +59,12 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     private inner: MapViewerBase;
     private fnRequestZoomToView: (view: IMapView|Bounds) => void;
     private fnSelectionChanged: (selectionSet: any) => void;
-    private fnRequestSelectableLayers: () => string[];
     private fnBusyLoading: (busyCount) => void;
     constructor(props) {
         super(props);
         this.fnMapViewerMounted = this.onMapViewerMounted.bind(this);
         this.fnRequestZoomToView = this.onRequestZoomToView.bind(this);
         this.fnSelectionChanged = this.onSelectionChanged.bind(this);
-        this.fnRequestSelectableLayers = this.onRequestSelectableLayers.bind(this);
         this.fnBusyLoading = this.onBusyLoading.bind(this);
     }
     private onMapViewerMounted(component) {
@@ -76,11 +76,6 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     private onSelectionChanged(selectionSet: any): void {
         this.props.setSelection(selectionSet);
     }
-    private onRequestSelectableLayers(): string[] {
-        //TODO: Eventually this should combine with override selectable layers that should be in the redux store
-        const { map } = this.props;
-        return map.Layer.map(layer => layer.Name);
-    }
     private onBusyLoading(busyCount) {
         this.props.setBusyCount(busyCount);
     }
@@ -88,8 +83,12 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         Runtime.setViewer(this);
     }
     render(): JSX.Element {
-        const { map, config, viewer, view } = this.props;
-        if (map != null && config != null && view != null && viewer != null) {
+        const { map, config, viewer, view, legend } = this.props;
+        if (map != null && config != null && view != null && viewer != null && legend != null) {
+            const { map } = this.props;
+            const selectableLayerNames = map.Layer
+                .filter(layer => layer.Selectable && legend.selectableLayers[layer.ObjectId] !== false)
+                .map(layer => layer.Name);
             return <MapViewerBase ref={this.fnMapViewerMounted}
                                   map={map} 
                                   agentUri={config.agentUri}
@@ -102,7 +101,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                   layerGroupVisibility={viewer.layerGroupVisibility}
                                   view={view.current}
                                   onBusyLoading={this.fnBusyLoading}
-                                  onRequestSelectableLayers={this.fnRequestSelectableLayers}
+                                  selectableLayerNames={selectableLayerNames}
                                   onSelectionChange={this.fnSelectionChanged}
                                   onRequestZoomToView={this.fnRequestZoomToView} />;
         } else {

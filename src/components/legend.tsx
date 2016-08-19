@@ -22,11 +22,19 @@ const LegendLabel = (props) => {
 
 export interface ILegendProps {
     map: RuntimeMap;
+    showLayers: string[];
+    showGroups: string[];
+    hideLayers: string[];
+    hideGroups: string[];
     externalBaseLayers?: IExternalBaseLayer[];
     onBaseLayerChanged?: (name: string) => void;
+    onLayerSelectabilityChanged?: (id: string, selectable: boolean) => void;
+    onGroupExpansionChanged?: (id: string, expanded: boolean) => void;
     onLayerVisibilityChanged?: MapElementChangeFunc;
     onGroupVisibilityChanged?: MapElementChangeFunc;
     currentScale: number;
+    overrideSelectableLayers?: any;
+    overrideExpandedItems?: any;
 }
 
 function getIconUri(iconMimeType: string, iconBase64: string): string {
@@ -60,9 +68,7 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
         this.fnVisibilityChanged = this.onVisibilityChanged.bind(this);
         this.fnToggleSelectability = this.onToggleSelectability.bind(this);
         this.fnToggleExpansion = this.onToggleExpansion.bind(this);
-        this.state = {
-            layerVisible: props.layer.Visible
-        };
+        this.state = {};
     }
     private onVisibilityChanged(e) {
         this.setState({ layerVisible: e.target.checked });
@@ -88,6 +94,16 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
             selectable = this.props.layer.Selectable;
         }
         return selectable;
+    }
+    componentDidMount() {
+        this.setState({
+            layerVisible: this.context.getLayerVisibility(this.props.layer)
+        });
+    }
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            layerVisible: this.context.getLayerVisibility(nextProps.layer)
+        });
     }
     render(): JSX.Element {
         const { layer } = this.props;
@@ -179,23 +195,31 @@ class GroupNode extends React.Component<IGroupNodeProps, any> {
         super(props);
         this.fnVisibilityChanged = this.onVisibilityChanged.bind(this);
         this.fnToggleExpansion = this.onToggleExpansion.bind(this);
-        this.state = {
-            groupVisible: props.group.Visible
-        };
+        this.state = {};
     }
-    onToggleExpansion(e) {
+    private onToggleExpansion(e) {
         const expanded = this.getExpanded();
         this.context.setGroupExpanded(this.props.group.ObjectId, !expanded);
     }
-    onVisibilityChanged(e) {
+    private onVisibilityChanged(e) {
         this.setState({ groupVisible: e.target.checked });
         this.context.setGroupVisibility(this.props.group.ObjectId, e.target.checked);
     }
-    getExpanded(): boolean {
+    private getExpanded(): boolean {
         let expanded = this.context.getGroupExpanded(this.props.group.ObjectId);
         if (expanded == null)
             expanded = this.props.group.ExpandInLegend;
         return expanded;
+    }
+    componentDidMount() {
+        this.setState({
+            groupVisible: this.context.getGroupVisibility(this.props.group)
+        });
+    }
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            groupVisible: this.context.getGroupVisibility(nextProps.group)
+        });
     }
     render(): JSX.Element {
         const { group } = this.props;
@@ -264,9 +288,6 @@ export class Legend extends React.Component<ILegendProps, any> {
     }
     componentWillReceiveProps(props) {
         const tree: any = this.setupTree(props.map);
-        //Preserve existing client-side changes
-        tree.OverrideSelectableLayers = this.state.OverrideSelectableLayers;
-        tree.OverrideExpandedItems = this.state.OverrideExpandedItems;
         this.setState(tree);
     }
     getChildContext(): ILegendContext {
@@ -276,6 +297,8 @@ export class Legend extends React.Component<ILegendProps, any> {
             getChildren: this.getChildren.bind(this),
             getCurrentScale: () => this.props.currentScale,
             getTree: () => this.state.tree,
+            getGroupVisibility: this.getGroupVisibility.bind(this),
+            getLayerVisibility: this.getLayerVisibility.bind(this),
             setGroupVisibility: this.setGroupVisibility.bind(this),
             setLayerVisibility: this.setLayerVisibility.bind(this),
             getLayerSelectability: this.getLayerSelectability.bind(this),
@@ -291,7 +314,7 @@ export class Legend extends React.Component<ILegendProps, any> {
         for (const layerId in this.state.LayerMap) {
             const layer: MapLayer = this.state.LayerMap[layerId];
             if (layer.Selectable === true) {
-                if (this.state.OverrideSelectableLayers[layerId] === false) {
+                if (this.props.overrideSelectableLayers[layerId] === false) {
                     continue;
                 }
                 layers.push(layer.Name);
@@ -300,31 +323,51 @@ export class Legend extends React.Component<ILegendProps, any> {
         return layers;
     }
     private getLayerSelectability(layerId: string): boolean {
-        const items: any = this.state.OverrideSelectableLayers;
+        const items: any = this.props.overrideSelectableLayers || {};
         return items[layerId];
     }
     private setLayerSelectability(layerId: string, selectable: boolean): void {
-        const items: any = this.state.OverrideSelectableLayers;
-        items[layerId] = selectable;
-        this.setState({ OverrideSelectableLayers: items });
+        if (this.props.onLayerSelectabilityChanged != null) {
+            this.props.onLayerSelectabilityChanged(layerId, selectable);
+        }
     }
-    private getGroupExpanded(layerId: string): boolean {
-        const items: any = this.state.OverrideExpandedItems;
-        return items[layerId];
+    private getGroupExpanded(groupId: string): boolean {
+        const items: any = this.props.overrideExpandedItems || {};
+        return items[groupId];
     }
-    private setGroupExpanded(layerId: string, expanded: boolean): void {
-        const items: any = this.state.OverrideExpandedItems;
-        items[layerId] = expanded;
-        this.setState({ OverrideExpandedItems: items });
+    private setGroupExpanded(groupId: string, expanded: boolean): void {
+        if (this.props.onGroupExpansionChanged != null) {
+            this.props.onGroupExpansionChanged(groupId, expanded);
+        }
     }
     private getLayerExpanded(layerId: string): boolean {
-        const items: any = this.state.OverrideExpandedItems;
+        const items: any = this.props.overrideExpandedItems || {};
         return items[layerId];
     }
     private setLayerExpanded(layerId: string, expanded: boolean): void {
-        const items: any = this.state.OverrideExpandedItems;
-        items[layerId] = expanded;
-        this.setState({ OverrideExpandedItems: items });
+        if (this.props.onGroupExpansionChanged != null) {
+            this.props.onGroupExpansionChanged(layerId, expanded);
+        }
+    }
+    private getGroupVisibility(group: MapGroup): boolean {
+        const { showGroups, hideGroups } = this.props;
+        let visible = group.Visible;
+        if (showGroups.indexOf(group.ObjectId) >= 0) {
+            visible = true;
+        } else if (hideGroups.indexOf(group.ObjectId) >= 0) {
+            visible = false;
+        }
+        return visible;
+    }
+    private getLayerVisibility(layer: MapLayer): boolean {
+        const { showLayers, hideLayers } = this.props;
+        let visible = layer.Visible;
+        if (showLayers.indexOf(layer.ObjectId) >= 0) {
+            visible = true;
+        } else if (hideLayers.indexOf(layer.ObjectId) >= 0) {
+            visible = false;
+        }
+        return visible;
     }
     private setGroupVisibility(groupId: string, visible: boolean) {
         if (this.props.onGroupVisibilityChanged != null) {
@@ -350,9 +393,7 @@ export class Legend extends React.Component<ILegendProps, any> {
             Layers: map.Layer,
             Groups: map.Group,
             LayerMap: {},
-            GroupMap: {},
-            OverrideSelectableLayers: {},
-            OverrideExpandedItems: {}
+            GroupMap: {}
         };
         for (const layer of map.Layer) {
             state.LayerMap[layer.ObjectId] = layer;

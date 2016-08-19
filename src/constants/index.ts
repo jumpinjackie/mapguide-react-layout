@@ -2,8 +2,10 @@ export const INIT_APP = 'MapGuide/INIT_APP';
 
 export const LEGEND_SET_GROUP_VISIBILITY = 'Legend/SET_GROUP_VISIBILITY';
 export const LEGEND_SET_LAYER_VISIBILITY = 'Legend/SET_LAYER_VISIBILITY';
-export const LEGEND_REFRESH = 'Map/REFRESH';
+export const LEGEND_SET_LAYER_SELECTABLE = 'Legend/SET_LAYER_SELECTABLE';
+export const LEGEND_SET_GROUP_EXPANDABLE = 'Legend/SET_GROUP_EXPANDABLE';
 
+export const MAP_REFRESH = 'Map/REFRESH';
 export const MAP_SET_VIEW = 'Map/SET_VIEW';
 export const MAP_SET_ACTIVE_TOOL = 'Map/SET_ACTIVE_TOOL';
 export const MAP_SET_MAPTIP = 'Map/SET_MAPTIP';

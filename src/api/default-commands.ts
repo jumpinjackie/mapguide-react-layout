@@ -1,6 +1,8 @@
 import { registerCommand, DefaultCommands } from "./command-registry";
 import { IMapViewer, ActiveMapTool } from "../components/map-viewer-base";
 import { QueryMapFeaturesResponse } from "./contracts/query";
+import { RefreshMode } from "../components/map-viewer-base";
+import * as LegendActions from "../actions/legend";
 import * as MapActions from "../actions/map";
 import * as Constants from "../constants";
 import * as ol from "openlayers";
@@ -215,6 +217,16 @@ export function initDefaultCommands() {
             if (bounds != null) {
                 dispatch(MapActions.setCurrentView(bounds));
             }
+        }
+    });
+    //Refresh Map
+    registerCommand(DefaultCommands.RefreshMap, {
+        icon: "icon_refreshmap.gif",
+        selected: () => false,
+        enabled: () => true,
+        invoke: (dispatch, getState, viewer) => {
+            viewer.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
+            dispatch(LegendActions.refresh());
         }
     });
 }

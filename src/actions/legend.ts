@@ -16,6 +16,20 @@ export function setLayerVisibility(options: { groupId: string, visible: boolean 
     };
 }
 
+export function setGroupExpanded(options: { id: string, value: boolean }) {
+    return {
+        type: Constants.LEGEND_SET_GROUP_EXPANDABLE,
+        payload: options
+    };
+}
+
+export function setLayerSelectable(options: { id: string, value: boolean }) {
+    return {
+        type: Constants.LEGEND_SET_LAYER_SELECTABLE,
+        payload: options
+    };
+}
+
 export function refresh() {
     return (dispatch, getState) => {
         const args = getState().config;
@@ -27,7 +41,7 @@ export function refresh() {
             requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups
         }).then(res => {
             dispatch({
-                type: Constants.LEGEND_REFRESH,
+                type: Constants.MAP_REFRESH,
                 payload: {
                     map: res
                 }

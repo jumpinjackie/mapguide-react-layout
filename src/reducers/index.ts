@@ -5,6 +5,7 @@ import { sessionReducer } from "./session";
 import { toolbarReducer } from "./toolbar";
 import { viewReducer } from "./view";
 import { selectionReducer } from "./selection";
+import { legendReducer } from "./legend";
 
 const rootReducer = combineReducers({
     config: configReducer,
@@ -12,7 +13,8 @@ const rootReducer = combineReducers({
     session: sessionReducer,
     toolbar: toolbarReducer,
     view: viewReducer,
-    selection: selectionReducer
+    selection: selectionReducer,
+    legend: legendReducer
 });
 
 export default rootReducer;

@@ -8,11 +8,13 @@ interface IMouseCoordinatesContainerStyle {
 
 interface IMouseCoordinatesContainerState {
     config?: any;
+    mouse?: [number, number];
 }
 
 function mapStateToProps(state): IMouseCoordinatesContainerState {
     return {
-        config: state.config.coordinates
+        config: state.config.coordinates,
+        mouse: state.view.mouse
     };
 }
 
@@ -28,9 +30,9 @@ export class MouseCoordinatesContainer extends React.Component<IMouseCoordinates
         super(props);
     }
     render(): JSX.Element {
-        const { config, style } = this.props;
-        if (config != null) {
-            return <MouseCoordinates style={style} decimals={config.decimals} />;
+        const { config, style, mouse } = this.props;
+        if (config != null && mouse != null) {
+            return <MouseCoordinates coords={mouse} style={style} decimals={config.decimals} />;
         } else {
             return <div />;
         }

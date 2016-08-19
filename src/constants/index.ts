@@ -18,3 +18,5 @@ export const MAP_ZOOM_OUT = 'Map/ZOOM_OUT';
 
 export const TASK_PANE_HOME = 'TaskPane/HOME';
 export const TASK_PANE_GOTO_URL = 'TaskPane/GOTO_URL';
+
+export const UPDATE_MOUSE_COORDINATES = 'Status/UPDATE_MOUSE_COORDINATES';

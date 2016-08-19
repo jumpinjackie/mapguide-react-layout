@@ -70,3 +70,10 @@ export function setScale(scale: number) {
         payload: scale
     };
 }
+
+export function setMouseCoordinates(coord) {
+    return {
+        type: Constants.UPDATE_MOUSE_COORDINATES,
+        payload: coord
+    }
+}

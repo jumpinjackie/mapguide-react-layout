@@ -30,6 +30,7 @@ interface IMapViewerContainerDispatch {
     setCurrentView?: (view) => void;
     setSelection?: (selectionSet) => void;
     setBusyCount?: (count) => void;
+    setMouseCoordinates?: (coord) => void;
 }
 
 function mapStateToProps(state): IMapViewerContainerState {
@@ -46,7 +47,8 @@ function mapDispatchToProps(dispatch): IMapViewerContainerDispatch {
     return {
         setCurrentView: (view) => dispatch(MapActions.setCurrentView(view)),
         setSelection: (selectionSet) => dispatch(MapActions.setSelection(selectionSet)),
-        setBusyCount: (count) => dispatch(MapActions.setBusyCount(count))
+        setBusyCount: (count) => dispatch(MapActions.setBusyCount(count)),
+        setMouseCoordinates: (coord) => dispatch(MapActions.setMouseCoordinates(coord))
     };
 }
 
@@ -60,12 +62,14 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     private fnRequestZoomToView: (view: IMapView|Bounds) => void;
     private fnSelectionChanged: (selectionSet: any) => void;
     private fnBusyLoading: (busyCount) => void;
+    private fnMouseCoordinateChanged: (coord) => void;
     constructor(props) {
         super(props);
         this.fnMapViewerMounted = this.onMapViewerMounted.bind(this);
         this.fnRequestZoomToView = this.onRequestZoomToView.bind(this);
         this.fnSelectionChanged = this.onSelectionChanged.bind(this);
         this.fnBusyLoading = this.onBusyLoading.bind(this);
+        this.fnMouseCoordinateChanged = this.onMouseCoordinateChanged.bind(this);
     }
     private onMapViewerMounted(component) {
         this.inner = component;
@@ -78,6 +82,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     }
     private onBusyLoading(busyCount) {
         this.props.setBusyCount(busyCount);
+    }
+    private onMouseCoordinateChanged(coord) {
+        this.props.setMouseCoordinates(coord);
     }
     componentDidMount() {
         Runtime.setViewer(this);
@@ -102,6 +109,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                   view={view.current}
                                   onBusyLoading={this.fnBusyLoading}
                                   selectableLayerNames={selectableLayerNames}
+                                  onMouseCoordinateChanged={this.fnMouseCoordinateChanged}
                                   onSelectionChange={this.fnSelectionChanged}
                                   onRequestZoomToView={this.fnRequestZoomToView} />;
         } else {

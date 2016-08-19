@@ -757,7 +757,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
 
         this._zoomSelectBox = new ol.interaction.DragBox({
-            condition: (e) => this.props.tool === ActiveMapTool.Select || this.props.tool === ActiveMapTool.Zoom
+            condition: (e) => !this.isDigitizing() && (this.props.tool === ActiveMapTool.Select || this.props.tool === ActiveMapTool.Zoom)
         });
         this._zoomSelectBox.on("boxend", this.onZoomSelectBox.bind(this));
 

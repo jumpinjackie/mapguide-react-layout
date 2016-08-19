@@ -5,7 +5,7 @@ import { RuntimeMap } from "../api/contracts/runtime-map";
 import * as LegendActions from "../actions/legend";
 import * as MapActions from "../actions/map";
 import { IMapView } from "../components/context";
-import { getViewer } from "../api/runtime";
+import { getCurrentScale } from "../api/runtime";
 import { isBounds, Bounds } from "../components/map-viewer-base";
 
 interface ILegendContainerProps {
@@ -84,15 +84,7 @@ export class LegendContainer extends React.Component<ILegendContainerProps & ILe
 
         const { map, config, view, viewer, legend } = this.props;
         if (map != null && config != null && view != null && legend != null) {
-            let scale;
-            if (isBounds(view)) {
-                const viewer = getViewer();
-                if (viewer != null) {
-                    scale = viewer.getScaleForExtent(view);
-                }
-            } else {
-                scale = view.scale; 
-            }
+            let scale = getCurrentScale(view);
             const showLayers = [];
             const showGroups = [];
             const hideLayers = [];

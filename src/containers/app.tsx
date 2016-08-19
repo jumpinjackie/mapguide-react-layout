@@ -91,7 +91,7 @@ export class App extends React.Component<IAppProps & IAppState & IAppDispatch, a
                 <MapViewerContainer />
                 <NavigatorContainer style={{ position: "absolute", zIndex: 1000, width: 51, height: 204, cursor: "pointer", right: 10, top: 10 }} />
                 <MouseCoordinatesContainer style={{ position: "absolute", bottom: 0, left: 0, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />
-                <ScaleDisplayContainer style={{ position: "absolute", bottom: 0, right: 300, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />
+                <ScaleDisplayContainer style={{ position: "absolute", bottom: 0, right: 340, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />
                 <SelectedFeatureCountContainer style={{ position: "absolute", bottom: 0, right: 140, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />
                 <PoweredByMapGuide style={{ position: "absolute", bottom: 0, right: 0, zIndex: 100 }} />
             </div>

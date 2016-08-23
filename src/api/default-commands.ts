@@ -38,6 +38,22 @@ function panMap(dispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "
     dispatch(MapActions.setCurrentView({ x: newPos[0], y: newPos[1], scale: view.scale }));
 }
 
+class Conditions {
+    public static isNotBusy(state: any): boolean {
+        return state.map.viewer.busyCount == 0;
+    }
+    public static hasSelection(state: any): boolean {
+        const selection: QueryMapFeaturesResponse = state.selection.selectionSet;
+        return (selection != null && selection.SelectedFeatures != null);
+    }
+    public static hasPreviousView(state: any): boolean {
+        return state.view.historyIndex > 0;
+    }
+    public static hasNextView(state: any): boolean {
+        return state.view.historyIndex < state.view.history.length - 1;
+    }
+}
+
 export function initDefaultCommands() {
     //Select Tool
     registerCommand(DefaultCommands.Select, {
@@ -186,7 +202,7 @@ export function initDefaultCommands() {
     registerCommand(DefaultCommands.ClearSelection, {
         icon: "select-clear.png",
         selected: () => false,
-        enabled: () => true,
+        enabled: Conditions.hasSelection,
         invoke: (dispatch, getState, viewer) => {
             viewer.clearSelection();
         }
@@ -195,10 +211,7 @@ export function initDefaultCommands() {
     registerCommand(DefaultCommands.ZoomToSelection, {
         icon: "icon_zoomselect.gif",
         selected: () => false,
-        enabled: (state) => {
-            const selection: QueryMapFeaturesResponse = state.selection.selectionSet;
-            return (selection != null && selection.SelectedFeatures != null);
-        },
+        enabled: Conditions.hasSelection,
         invoke: (dispatch, getState, viewer) => {
             const selection: QueryMapFeaturesResponse = getState().selection.selectionSet;
             let bounds: ol.Extent = null;
@@ -223,7 +236,7 @@ export function initDefaultCommands() {
     registerCommand(DefaultCommands.RefreshMap, {
         icon: "icon_refreshmap.gif",
         selected: () => false,
-        enabled: (state) => state.map.viewer.busyCount == 0,
+        enabled: Conditions.isNotBusy,
         invoke: (dispatch, getState, viewer) => {
             viewer.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
             dispatch(LegendActions.refresh());
@@ -233,7 +246,7 @@ export function initDefaultCommands() {
     registerCommand(DefaultCommands.PreviousView, {
         icon: "view-back.png",
         selected: () => false,
-        enabled: (state) => state.view.historyIndex > 0,
+        enabled: Conditions.hasPreviousView,
         invoke: (dispatch, getState, viewer) => {
             dispatch(MapActions.previousView());
         }
@@ -242,7 +255,7 @@ export function initDefaultCommands() {
     registerCommand(DefaultCommands.NextView, {
         icon: "view-forward.png",
         selected: () => false,
-        enabled: (state) => state.view.historyIndex < state.view.history.length - 1,
+        enabled: Conditions.hasNextView,
         invoke: (dispatch, getState, viewer) => {
             dispatch(MapActions.nextView());
         }

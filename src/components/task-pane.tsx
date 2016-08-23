@@ -2,27 +2,20 @@ import * as React from "react";
 import { Toolbar, IItem, IMenu, DEFAULT_TOOLBAR_HEIGHT, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
 import queryString = require("query-string");
 const parse = require("url-parse");
+import { ensureParameters } from "../actions/taskpane";
 
 export interface ITaskPaneProps {
-    initialUrl?: string;
+    currentUrl?: string;
     mapName: string;
     session: string;
     locale: string;
+    taskMenuItems: IItem[];
+    homeAction: IItem;
+    backAction: IItem;
+    forwardAction: IItem;
+    onUrlLoaded: (url: string) => void;
 }
-
-function buildTaskMenu(taskPane: TaskPane): IItem[] {
-    const taskMenu: IMenu = {
-        label: "Tasks",
-        flyoutAlign: "bottom left",
-        childItems: [
-            { icon: "buffer.png", label: "Buffer", invoke: () => taskPane.loadUrl("/mapguide/mapviewernet/bufferui.aspx") },
-            { icon: "measure.png", label: "Measure", invoke: () => taskPane.loadUrl("/mapguide/mapviewernet/measureui.aspx") },
-            { icon: "print.png", label: "Quick Plot", invoke: () => taskPane.loadUrl("/mapguide/mapviewernet/quickplotpanel.aspx") }
-        ]
-    };
-    return [ taskMenu ];
-}
-
+/*
 function buildTaskButtons(pane: TaskPane): IItem[] {
     return [
         {
@@ -46,7 +39,7 @@ function buildTaskButtons(pane: TaskPane): IItem[] {
         }
     ];
 }
-
+*/
 // FIXME:
 //
 // While the current iframe works the way we want and we have a nice navigation
@@ -62,20 +55,26 @@ function buildTaskButtons(pane: TaskPane): IItem[] {
 
 export class TaskPane extends React.Component<ITaskPaneProps, any> {
     _iframe: HTMLIFrameElement;
-    _pushLoadedUrl: boolean;
+    //_pushLoadedUrl: boolean;
     fnFrameMounted: (iframe) => void;
     fnFrameLoaded: (e) => void;
-    taskMenu: IItem[];
     taskButtons: IItem[];
-    constructor(props) {
+    constructor(props: ITaskPaneProps) {
         super(props);
+        /*
         this.state = {
             navIndex: -1,
             navigation: []
         };
-        this.taskMenu = buildTaskMenu(this);
-        this.taskButtons = buildTaskButtons(this);
-        this._pushLoadedUrl = true;
+        */
+        this.taskButtons = [
+            props.homeAction,
+            { isSeparator: true },
+            props.backAction,
+            props.forwardAction
+        ];
+        //this.taskButtons = buildTaskButtons(this);
+        //this._pushLoadedUrl = true;
         this.fnFrameLoaded = this.onFrameLoaded.bind(this);
         this.fnFrameMounted = this.onFrameMounted.bind(this);
     }
@@ -85,47 +84,17 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
     private onFrameLoaded(e) {
         const frame = e.currentTarget;
         if (frame.contentWindow) {
+            this.props.onUrlLoaded(frame.contentWindow.location.href);
+            /*
             if (this._pushLoadedUrl === true) {
-                this.pushUrl(frame.contentWindow.location.href);
+                this.props.onUrlLoaded(frame.contentWindow.location.href);
             } else { //Reset
                 this._pushLoadedUrl = true;
             }
+            */
         }
     }
-    private ensureParameters(url: string): string {
-        if (url == null)
-            return null;
-        const parsed = parse(url);
-        const params = queryString.parse(parsed.query);
-        let bNeedMapName = true;
-        let bNeedSession = true;
-        let bNeedLocale = true;
-        for (const key in params) {
-            const name = key.toLowerCase();
-            switch (name) {
-                case "session":
-                    bNeedSession = false;
-                    break;
-                case "mapname":
-                    bNeedMapName = false;
-                    break;
-                case "locale":
-                    bNeedLocale = false;
-                    break;
-            }
-        }
-        if (bNeedMapName) {
-            params.MAPNAME = this.props.mapName;
-        }
-        if (bNeedSession) {
-            params.SESSION = this.props.session;
-        }
-        if (bNeedLocale) {
-            params.LOCALE = this.props.locale;
-        }
-        parsed.query = queryString.stringify(params);
-        return parsed.toString();
-    }
+    /*
     private pushUrl(url: string) {
         let index = this.state.navIndex;
         const nav: string[] = this.state.navigation;
@@ -188,18 +157,42 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         const { navigation, navIndex } = this.state;
         return navIndex < navigation.length - 1;
     }
+    componentWillReceiveProps(nextProps: ITaskPaneProps) {
+        
+    }
     componentDidMount() {
         if (this.props.initialUrl) {
             this.loadUrl(this.props.initialUrl);
         }
     }
+    */
+    componentWillReceiveProps(nextProps: ITaskPaneProps) {
+        if (this.props.currentUrl != nextProps.currentUrl) {
+            this.loadUrl(nextProps.currentUrl);
+        }
+    }
+    componentDidMount() {
+        if (this.props.currentUrl) {
+            this.loadUrl(this.props.currentUrl);
+        }
+    }
+    loadUrl(url: string) {
+        if (this._iframe) {
+            this._iframe.src = ensureParameters(url, this.props.mapName, this.props.session, this.props.locale);
+        }
+    }
     render(): JSX.Element {
-        const { navigation, navIndex } = this.state;
+        //const { navigation, navIndex } = this.state;
+        const taskMenu: IMenu = {
+            label: "Tasks",
+            flyoutAlign: "bottom left",
+            childItems: this.props.taskMenuItems
+        };
         //const currentUrl = this.ensureParameters(navIndex >= 0 ? navigation[navIndex] : this.props.initialUrl);
         return <div style={{ width: "100%", height: "100%", fontFamily: "Verdana, Sans-serif", fontSize: "10pt" }}>
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: DEFAULT_TOOLBAR_HEIGHT, backgroundColor: TOOLBAR_BACKGROUND_COLOR }}>
                 <Toolbar childItems={this.taskButtons} containerStyle={{ position: "absolute", top: 0, left: 0, height: DEFAULT_TOOLBAR_HEIGHT }} />
-                <Toolbar childItems={this.taskMenu} containerStyle={{ position: "absolute", top: 0, right: 0, height: DEFAULT_TOOLBAR_HEIGHT }} />
+                <Toolbar childItems={[ taskMenu ]} containerStyle={{ position: "absolute", top: 0, right: 0, height: DEFAULT_TOOLBAR_HEIGHT }} />
             </div>
             <div style={{ position: "absolute", top: DEFAULT_TOOLBAR_HEIGHT, left: 0, right: 0, bottom: 0, overflow: "hidden" }}>
                 <iframe name="taskPaneFrame" ref={this.fnFrameMounted} onLoad={this.fnFrameLoaded} style={{ border: "none", width: "100%", height: "100%" }}>

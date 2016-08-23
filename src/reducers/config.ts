@@ -8,9 +8,6 @@ export const INITIAL_STATE = {
     imageFormat: "PNG",
     selectionColor: "0x0000FFAA",
     externalBaseLayers: [],
-    taskpane: {
-        initialUrl: "/mapguide/phpsamples/index.php" 
-    },
     coordinates: {
         decimals: 6
     }

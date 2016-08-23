@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { getCommand } from "../api/command-registry";
+import { getCommand, mapToolbarReference } from "../api/command-registry";
 import { IItem, IMenu, Toolbar } from "../components/toolbar";
 import { invokeCommand } from "../actions/map";
 
@@ -37,32 +37,6 @@ function mapDispatchToProps(dispatch): IToolbarContainerDispatch {
 
 type ToolbarContainerProps = IToolbarContainerProps & IToolbarContainerState & IToolbarContainerDispatch;
 
-function mapToolbarReference(tb: any, store, props: ToolbarContainerProps): IItem|IMenu {
-    const state = store.getState();
-    if (tb.isSeparator === true) {
-        return { isSeparator: true };
-    } else if (tb.command) {
-        const cmd = getCommand(tb.command);
-        if (cmd != null) {
-            const cmdItem: IItem = {
-                icon: cmd.icon,
-                tooltip: tb.tooltip,
-                label: tb.label,
-                selected: () => cmd.selected(state),
-                enabled: () => cmd.enabled(state),
-                invoke: () => props.invokeCommand(cmd)
-            };
-            return cmdItem;
-        }
-    } else if (tb.label && tb.children) {
-        return {
-            label: tb.label,
-            childItems: tb.children.map(tb => mapToolbarReference(tb, store, props)).filter(tb => tb != null)
-        };
-    }
-    return null;
-}
-
 @connect(mapStateToProps, mapDispatchToProps)
 export class ToolbarContainer extends React.Component<ToolbarContainerProps, any> {
     constructor(props) {
@@ -75,7 +49,7 @@ export class ToolbarContainer extends React.Component<ToolbarContainerProps, any
         const { toolbar, containerStyle } = this.props;
         const store = (this.context as any).store;
         if (toolbar != null && toolbar.items != null) {
-            const childItems = toolbar.items.map(tb => mapToolbarReference(tb, store, this.props)).filter(tb => tb != null);
+            const childItems = toolbar.items.map(tb => mapToolbarReference(tb, store, this.props.invokeCommand)).filter(tb => tb != null);
             return <Toolbar childItems={childItems} containerStyle={containerStyle} />;
         } else {
             return <div />;

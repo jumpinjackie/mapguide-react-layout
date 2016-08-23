@@ -1,4 +1,6 @@
 import * as Constants from "../constants";
+import queryString = require("query-string");
+const parse = require("url-parse");
 
 export function goHome() {
     return {
@@ -6,9 +8,66 @@ export function goHome() {
     };
 }
 
-export function gotoUrl(url: string, target?) {
+export function goBack() {
+    return {
+        type: Constants.TASK_PANE_BACK
+    };
+}
+
+export function goForward() {
+    return {
+        type: Constants.TASK_PANE_FORWARD
+    };
+}
+
+export function gotoUrl(url: string) {
     return {
         type: Constants.TASK_PANE_GOTO_URL,
         payload: url
     };
+}
+
+export function pushUrl(url: string, silent?: boolean) {
+    return {
+        type: Constants.TASK_PANE_PUSH_URL,
+        payload: { 
+            url: url,
+            silent: silent
+        }
+    };
+}
+
+export function ensureParameters(url: string, mapName: string, session: string, locale?: string): string {
+    if (url == null)
+        return null;
+    const parsed = parse(url);
+    const params = queryString.parse(parsed.query);
+    let bNeedMapName = true;
+    let bNeedSession = true;
+    let bNeedLocale = true;
+    for (const key in params) {
+        const name = key.toLowerCase();
+        switch (name) {
+            case "session":
+                bNeedSession = false;
+                break;
+            case "mapname":
+                bNeedMapName = false;
+                break;
+            case "locale":
+                bNeedLocale = false;
+                break;
+        }
+    }
+    if (bNeedMapName) {
+        params.MAPNAME = mapName;
+    }
+    if (bNeedSession) {
+        params.SESSION = session;
+    }
+    if (bNeedLocale) {
+        params.LOCALE = locale;
+    }
+    parsed.query = queryString.stringify(params);
+    return parsed.toString();
 }

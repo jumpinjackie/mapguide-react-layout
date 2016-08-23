@@ -225,7 +225,13 @@ class FlyoutMenuItem extends React.Component<IFlyoutMenuItemProps, any> {
             </div>
             <FlyoutWrapper id={`flyout-${this.flyoutId}`} open={this.state.isFlownOut} options={{ type: "dropdown", align: menu.flyoutAlign }}>
                 <ul className="mg-flyout-menu-content">
-                {this.props.menu.childItems.map((item, index) => <FlyoutMenuChildItem key={index} item={item} onInvoked={this.fnChildInvoked} />)}
+                {this.props.menu.childItems.map((item, index) => {
+                    if (item.isSeparator) {
+                        return <hr key={index} />;
+                    } else {
+                        return <FlyoutMenuChildItem key={index} item={item} onInvoked={this.fnChildInvoked} />;
+                    }
+                })}
                 </ul>
             </FlyoutWrapper>
         </div>;

@@ -127,7 +127,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         return this.inner.getCurrentView();
     }
     zoomToView(x: number, y: number, scale: number): void {
-        this.zoomToView(x, y, scale);
+        this.inner.zoomToView(x, y, scale);
     }
     setSelectionXml(xml: string): void {
         this.inner.setSelectionXml(xml);

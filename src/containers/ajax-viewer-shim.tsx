@@ -200,7 +200,7 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
     public GetLayers(onlyVisible: boolean, onlySelectable: boolean): IAjaxViewerLayer[] {
         const selLayers: IAjaxViewerLayer[] = [];
         const map: RuntimeMap = this.props.map;
-        const selection = this.props.selection;
+        const selection = this.props.selection.selectionSet;
         if (map && selection && selection.FeatureSet) {
             const fset: FeatureSet = selection.FeatureSet;
             const ids = fset.Layer.map(l => l["@id"]);
@@ -247,7 +247,7 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
     public GetSelectedLayers(): IAjaxViewerLayer[] {
         const selLayers: IAjaxViewerLayer[] = [];
         const map: RuntimeMap = this.props.map;
-        const selection = this.props.selection;
+        const selection = this.props.selection.selectionSet;
         if (map && selection && selection.FeatureSet) {
             const fset: FeatureSet = selection.FeatureSet;
             const ids = fset.Layer.map(l => l["@id"]);
@@ -261,10 +261,10 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
     }
     public GetSelectionXML(): string {
         const { selection } = this.props;
-        if (!selection || !selection.FeatureSet) {
+        if (!selection || !selection.selectionSet || !selection.selectionSet.FeatureSet) {
             return "";
         } else {
-            return buildSelectionXml(selection.FeatureSet);
+            return buildSelectionXml(selection.selectionSet.FeatureSet);
         }
     }
     public GetSessionId(): string {
@@ -272,7 +272,7 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
     }
     public GetSelectedBounds(): IAjaxViewerBounds {
         let bounds: IAjaxViewerBounds = null;
-        const selection = this.props.selection;
+        const selection = this.props.selection.selectionSet;
         if (selection && selection.SelectedFeatures) {
             const fset: SelectedFeatureSet = selection.SelectedFeatures;
             fset.SelectedLayer.forEach(layer => {
@@ -297,7 +297,7 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
     }
     public GetSelectedCount(): number {
         let count = 0;
-        const selection = this.props.selection;
+        const selection = this.props.selection.selectionSet;
         if (selection && selection.FeatureSet) {
             const fset: FeatureSet = selection.FeatureSet;
             fset.Layer.forEach(layer => {

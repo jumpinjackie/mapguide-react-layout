@@ -97,7 +97,7 @@ export function initApp(options) {
 
             const initUrl = "/mapguide/phpsamples/index.php"
 
-            registerCommand("Buffer", { url: "/mapguide/mapviewernet/buffer.aspx" });
+            registerCommand("Buffer", { icon: "buffer.png", url: "/mapguide/mapviewernet/bufferui.aspx" });
             registerCommand("Query", { url: "/mapguide/phpviewersample/query/querymain.php" });
             registerCommand("Overview", { url: "/mapguide/phpviewersample/overview/overviewmain.php" });
             registerCommand("Theme", { url: "/mapguide/phpviewersample/theme/thememain.php" });

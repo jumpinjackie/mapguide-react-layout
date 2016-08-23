@@ -2,6 +2,7 @@ import { IMapViewer } from "../components/map-viewer-base";
 import { QueryMapFeaturesResponse } from "./contracts/query";
 import { IItem, IMenu } from "../components/toolbar";
 import * as Constants from "../constants";
+import { ensureParameters } from "../actions/taskpane";
 
 export function mapToolbarReference(tb: any, store, commandInvoker: (cmd) => void): IItem|IMenu {
     const state = store.getState();
@@ -108,10 +109,11 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
             },
             selected: (state) => false,
             invoke: (dispatch, getState, viewer: IMapViewer) => {
+                const { map, config } = getState();
                 dispatch({
                     type: Constants.CMD_INVOKE_URL,
                     payload: {
-                        url: cmdDef.url
+                        url: ensureParameters(cmdDef.url, map.state.Name, map.state.SessionId, config.locale)
                     }
                 });
             }

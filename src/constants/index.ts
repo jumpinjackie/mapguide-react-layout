@@ -23,7 +23,6 @@ export const CMD_INVOKE_URL = 'Command/INVOKE_URL';
 export const TASK_PANE_HOME = 'TaskPane/HOME';
 export const TASK_PANE_FORWARD = 'TaskPane/FORWARD';
 export const TASK_PANE_BACK = 'TaskPane/BACK';
-export const TASK_PANE_GOTO_URL = 'TaskPane/GOTO_URL';
 export const TASK_PANE_PUSH_URL = 'TaskPane/PUSH_URL';
 
 export const UPDATE_MOUSE_COORDINATES = 'Status/UPDATE_MOUSE_COORDINATES';

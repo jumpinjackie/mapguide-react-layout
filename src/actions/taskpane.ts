@@ -20,13 +20,6 @@ export function goForward() {
     };
 }
 
-export function gotoUrl(url: string) {
-    return {
-        type: Constants.TASK_PANE_GOTO_URL,
-        payload: url
-    };
-}
-
 export function pushUrl(url: string, silent?: boolean) {
     return {
         type: Constants.TASK_PANE_PUSH_URL,

@@ -63,12 +63,14 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
     fnVisibilityChanged: (e) => void;
     fnToggleSelectability: (e) => void;
     fnToggleExpansion: (e) => void;
-    constructor(props) {
+    constructor(props: ILayerNodeProps) {
         super(props);
         this.fnVisibilityChanged = this.onVisibilityChanged.bind(this);
         this.fnToggleSelectability = this.onToggleSelectability.bind(this);
         this.fnToggleExpansion = this.onToggleExpansion.bind(this);
-        this.state = {};
+        this.state = {
+            layerVisible: props.layer.Visible
+        };
     }
     private onVisibilityChanged(e) {
         this.setState({ layerVisible: e.target.checked });
@@ -191,11 +193,13 @@ class GroupNode extends React.Component<IGroupNodeProps, any> {
     fnToggleExpansion: (e) => void;
     static contextTypes = LEGEND_CONTEXT_VALIDATION_MAP;
     context: ILegendContext;
-    constructor(props) {
+    constructor(props: IGroupNodeProps) {
         super(props);
         this.fnVisibilityChanged = this.onVisibilityChanged.bind(this);
         this.fnToggleExpansion = this.onToggleExpansion.bind(this);
-        this.state = {};
+        this.state = {
+            groupVisible: props.group.Visible
+        };
     }
     private onToggleExpansion(e) {
         const expanded = this.getExpanded();

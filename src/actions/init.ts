@@ -29,6 +29,11 @@ function getDefaultCommandSet() {
                     command: "ZoomOut",
                     label: "Zoom Out",
                     tooltip: "Zoom Out" 
+                },
+                { 
+                    command: "ZoomExtents",
+                    label: "Zoom Extents",
+                    tooltip: "Zoom Extents" 
                 }
             ]
         },
@@ -53,11 +58,18 @@ function getDefaultCommandSet() {
             //label: "Zoom to Selection",
             tooltip: "Zoom to Selection"
         },
-        { 
-            command: "ZoomExtents",
-            //label: "Zoom Extents",
-            tooltip: "Zoom Extents" 
+        { isSeparator: true },
+        {
+            command: "PreviousView",
+            //label: "Previous View",
+            tooltip: "Previous View" 
         },
+        {
+            command: "NextView",
+            //label: "Next View",
+            tooltip: "Next View" 
+        },
+        { isSeparator: true },
         {
             command: "ClearSelection",
             //label: "Clear Selection",

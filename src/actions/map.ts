@@ -75,5 +75,17 @@ export function setMouseCoordinates(coord) {
     return {
         type: Constants.UPDATE_MOUSE_COORDINATES,
         payload: coord
-    }
+    };
+}
+
+export function previousView() {
+    return {
+        type: Constants.MAP_PREVIOUS_VIEW
+    };
+}
+
+export function nextView() {
+    return {
+        type: Constants.MAP_NEXT_VIEW
+    };
 }

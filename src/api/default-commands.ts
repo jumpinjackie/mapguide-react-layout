@@ -223,10 +223,28 @@ export function initDefaultCommands() {
     registerCommand(DefaultCommands.RefreshMap, {
         icon: "icon_refreshmap.gif",
         selected: () => false,
-        enabled: () => true,
+        enabled: (state) => state.map.viewer.busyCount == 0,
         invoke: (dispatch, getState, viewer) => {
             viewer.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
             dispatch(LegendActions.refresh());
+        }
+    });
+    //Previous View
+    registerCommand(DefaultCommands.PreviousView, {
+        icon: "view-back.png",
+        selected: () => false,
+        enabled: (state) => state.view.historyIndex > 0,
+        invoke: (dispatch, getState, viewer) => {
+            dispatch(MapActions.previousView());
+        }
+    });
+    //Next View
+    registerCommand(DefaultCommands.NextView, {
+        icon: "view-forward.png",
+        selected: () => false,
+        enabled: (state) => state.view.historyIndex < state.view.history.length - 1,
+        invoke: (dispatch, getState, viewer) => {
+            dispatch(MapActions.nextView());
         }
     });
 }

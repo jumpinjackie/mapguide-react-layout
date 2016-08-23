@@ -4,11 +4,30 @@ const assign = require("object-assign");
 const INITIAL_STATE = {
     current: null,
     mouse: null,
-    history: []
+    history: [],
+    historyIndex: -1
 };
 
 export function viewReducer(state = INITIAL_STATE, action = { type: '', payload: null }) {
     switch (action.type) {
+        case Constants.MAP_PREVIOUS_VIEW:
+            {
+                const index = state.historyIndex - 1;
+                const newState = assign({}, state, {
+                    historyIndex: index,
+                    current: state.history[index]
+                });
+                return newState;
+            }
+        case Constants.MAP_NEXT_VIEW:
+            {
+                const index = state.historyIndex + 1;
+                const newState = assign({}, state, {
+                    historyIndex: index,
+                    current: state.history[index]
+                });
+                return newState;
+            }
         case Constants.UPDATE_MOUSE_COORDINATES:
             {
                 return assign({}, state, { mouse: action.payload });
@@ -34,7 +53,15 @@ export function viewReducer(state = INITIAL_STATE, action = { type: '', payload:
                 const newState = assign({}, state, {
                     current: action.payload
                 });
-                newState.history.push(action.payload);
+
+                if (newState.historyIndex == newState.history.length - 1) {
+                    newState.history.push(action.payload);
+                    newState.historyIndex = newState.history.length - 1;
+                } else { //Remove everything after current history position
+                    newState.history = newState.history.splice(newState.historyIndex);
+                    newState.history.push(action.payload);
+                    newState.historyIndex = newState.history.length - 1;
+                }
                 return newState;
             }
     }

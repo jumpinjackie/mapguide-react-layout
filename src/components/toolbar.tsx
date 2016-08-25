@@ -2,6 +2,7 @@ import * as React from "react";
 import { isMenu } from "../utils/type-guards";
 import FlyoutWrapper from "@aneves/react-flyout";
 import * as uuid from "node-uuid";
+import * as Constants from "../constants";
 
 export const TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";
 export const DEFAULT_TOOLBAR_HEIGHT = 29;
@@ -248,7 +249,7 @@ class ToolbarSeparator extends React.Component<IToolbarSeparatorProps, any> {
     }
     render(): JSX.Element {
         const style = getToolbarSeparatorItemStyle(this.props.height);
-        return <div className="noselect" style={style}>{'\u00a0'}</div>;
+        return <div className="noselect" style={style}>{Constants.NBSP}</div>;
     }
 }
 

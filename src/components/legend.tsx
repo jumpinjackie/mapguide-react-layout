@@ -5,6 +5,7 @@ import { ILegendContext, LEGEND_CONTEXT_VALIDATION_MAP } from "./context";
 import { BaseLayerSwitcher } from "./base-layer-switcher";
 import { isLayer } from "../utils/type-guards";
 import { betweenInclusive } from "../utils/number";
+import * as Constants from "../constants";
 
 const ICON_HEIGHT = 16;
 const ICON_WIDTH = 16;
@@ -42,7 +43,7 @@ function getIconUri(iconMimeType: string, iconBase64: string): string {
 }
 
 const EmptyNode = (props) => {
-    return <div style={EMPTY_STYLE}>{'\u00a0'}</div>;
+    return <div style={EMPTY_STYLE}>{Constants.NBSP}</div>;
 };
 
 const RuleNode = (props) => {

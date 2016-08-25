@@ -26,3 +26,8 @@ export const TASK_PANE_BACK = 'TaskPane/BACK';
 export const TASK_PANE_PUSH_URL = 'TaskPane/PUSH_URL';
 
 export const UPDATE_MOUSE_COORDINATES = 'Status/UPDATE_MOUSE_COORDINATES';
+
+/**
+ * Non-breaking space
+ */
+export const NBSP = String.fromCharCode(160);

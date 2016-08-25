@@ -5,6 +5,8 @@ import { ApplicationViewModel } from "./application";
 import { AjaxViewerLayout } from "../layouts/ajax-viewer";
 import { registerLayout } from "../api/registry/layout";
 import { registerCommand } from "../api/registry/command";
+import { registerComponentFactory } from "../api/registry/component";
+import { registerDefaultComponents } from "../api/default-components";
 import "../styles/index.css";
 import * as ol from "openlayers"; 
 const proj4 = require("proj4");
@@ -14,6 +16,7 @@ ol.proj.setProj4(proj4);
 
 registerLayout("ajax-viewer", () => <AjaxViewerLayout />);
 initDefaultCommands();
+registerDefaultComponents();
 
 export = {
     __DEV__: __DEV__,
@@ -22,6 +25,9 @@ export = {
     },
     Commands: {
         register: registerCommand
+    },
+    Components: {
+        register: registerComponentFactory
     },
     Application: ApplicationViewModel,
     Externals: {

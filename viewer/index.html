@@ -17,6 +17,7 @@
             var el = document.getElementById("map");
             var viewer = new MapGuide.Application();
             viewer.mount(el, {
+                layout: "ajax-viewer",
                 agent: {
                     uri: "http://localhost/mapguide/mapagent/mapagent.fcgi"
                 },

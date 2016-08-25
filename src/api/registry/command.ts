@@ -1,8 +1,8 @@
-import { IMapViewer } from "../components/map-viewer-base";
-import { QueryMapFeaturesResponse } from "./contracts/query";
-import { IItem, IMenu } from "../components/toolbar";
-import * as Constants from "../constants";
-import { ensureParameters } from "../actions/taskpane";
+import { IMapViewer } from "../../components/map-viewer-base";
+import { QueryMapFeaturesResponse } from "../contracts/query";
+import { IItem, IMenu } from "../../components/toolbar";
+import * as Constants from "../../constants";
+import { ensureParameters } from "../../actions/taskpane";
 
 export function mapToolbarReference(tb: any, store, commandInvoker: (cmd) => void): IItem|IMenu {
     const state = store.getState();

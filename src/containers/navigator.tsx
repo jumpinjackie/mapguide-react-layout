@@ -5,7 +5,7 @@ import { QueryMapFeaturesResponse } from "../api/contracts/query";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { getViewer, getCurrentScale } from "../api/runtime";
 import { invokeCommand, setScale } from "../actions/map";
-import { getCommand, DefaultCommands } from "../api/command-registry";
+import { getCommand, DefaultCommands } from "../api/registry/command";
 import { IMapView } from "../components/context";
 import { Bounds } from "../components/map-viewer-base";
 

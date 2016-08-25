@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { ClientKind } from "../api/client";
-import { getLayout } from "../api/layout-registry";
+import { getLayout } from "../api/registry/layout";
 import { IExternalBaseLayer } from "../components/map-viewer-base";
 import { initApp } from "../actions/init";
 

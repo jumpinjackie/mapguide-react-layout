@@ -1,7 +1,7 @@
 import * as Constants from "../constants";
 import { Client } from "../api/client";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
-import { registerCommand } from "../api/command-registry";
+import { registerCommand } from "../api/registry/command";
 import { ensureParameters } from "../actions/taskpane";
 
 function getDefaultCommandSet() {

@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { IItem } from "../components/toolbar";
 import { TaskPane } from "../components/task-pane";
 import { RuntimeMap } from "../api/contracts/runtime-map";
-import { mapToolbarReference } from "../api/command-registry";
+import { mapToolbarReference } from "../api/registry/command";
 import { invokeCommand } from "../actions/map";
 import * as TaskPaneActions from "../actions/taskpane";
 import { areUrlsSame } from "../utils/url";

@@ -1,4 +1,4 @@
-import { registerCommand, DefaultCommands, CommandConditions } from "./command-registry";
+import { registerCommand, DefaultCommands, CommandConditions } from "./registry/command";
 import { IMapViewer, ActiveMapTool } from "../components/map-viewer-base";
 import { QueryMapFeaturesResponse } from "./contracts/query";
 import { RefreshMode } from "../components/map-viewer-base";

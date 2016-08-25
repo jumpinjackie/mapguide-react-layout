@@ -27,15 +27,8 @@ const basePlugins = [
     }),
     new webpack.DefinePlugin({
         __DEV__: process.env.NODE_ENV !== 'production',
-        'process.env': {
-            'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
-        }
-    })/*,
-  new webpack.optimize.CommonsChunkPlugin('vendor', '[name].[hash].js'),
-  new HtmlWebpackPlugin({
-    template: './src/index.html',
-    inject: 'body'
-  })*/
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+    })
 ];
 
 const devPlugins = [
@@ -44,12 +37,12 @@ const devPlugins = [
 
 const prodPlugins = [
     new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.optimize.DedupePlugin(),
     new webpack.optimize.UglifyJsPlugin({
         compress: {
             warnings: false
         }
-    }),
-    new webpack.optimize.DedupePlugin()
+    })
 ];
 
 const plugins = basePlugins

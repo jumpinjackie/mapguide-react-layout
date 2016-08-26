@@ -86,31 +86,40 @@
 <html>
 <head>
     <title><?php echo $titleLocal ?></title>
-    <link rel="stylesheet" href="../../common/mgsamples.css" type="text/css">
-    <script language="javascript" src="../../common/browserdetect.js"></script>
-    <script language="javascript" src="../../common/json.js"></script>
-    <script language="javascript" src="../../'../Common/'/MapGuideViewerApi.js"></script>
+    <link rel="stylesheet" href="../assets/mgsamples.css" type="text/css">
+    <script type="text/javascript" src="../assets/browserdetect.js"></script>
+    <script type="text/javascript">
 
-    <script language="javascript">
-
+        var popup = false;
         var READY_STATE_UNINITIALIZED   = 0;
         var READY_STATE_LOADING         = 1;
         var READY_STATE_LOADED          = 2;
         var READY_STATE_INTERACTIVE     = 3;
         var READY_STATE_COMPLETE        = 4;
 
-        var NOT_BUSY_IMAGE = "../../common/images/loader_inactive.gif";
-        var BUSY_IMAGE = "../../common/images/loader_pulse.gif";
+        var NOT_BUSY_IMAGE = "../assets/loader_inactive.gif";
+        var BUSY_IMAGE = "../assets/loader_pulse.gif";
 
         var session = '<?= $args['SESSION'] ?>';
         var mapName = '<?= $args['MAPNAME'] ?>';
 
-        var strOps = '<?php $json = new Services_JSON(); echo $json->encode($query->strOperators) ?>'.parseJSON();
-        var numOps = '<?php $json = new Services_JSON(); echo $json->encode($query->numOperators) ?>'.parseJSON();
+        var strOps = JSON.parse('<?php $json = new Services_JSON(); echo $json->encode($query->strOperators) ?>');
+        var numOps = JSON.parse('<?php $json = new Services_JSON(); echo $json->encode($query->numOperators) ?>');
         var queryReqHandler = null;
         var spatialFilterGeomText = null;
         var properties = null;
         var results;
+
+        function GetMap() { return GetParent().GetMapFrame(); }
+
+        function GetParent()
+        {
+            if (popup) {
+                return opener;
+            } else {
+                return parent;
+            }
+        }
 
         function OnLayerChange()
         {
@@ -132,7 +141,7 @@
             reqHandler.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
             reqHandler.send(reqParams);
-            properties = reqHandler.responseText.parseJSON();
+            properties = JSON.parse(reqHandler.responseText);
 
             propertySelect.options.length = 0;
             outputSelect.options.length = 0;
@@ -172,28 +181,15 @@
             {
                 ToggleSpatialFilter(document.getElementById("spatialFilter").checked);
             }
-
-            if(document.getElementById("spatialFilter").checked == false)
-                ClearDigitization();
         }
 
         function OnDigitizeRectangle()
         {
-            ClearDigitization();
-            var map = Fusion.getMapByName(mapName).mapWidget;
-            map.message.info("<?= $rectangleHelpLocal ?>" + " <a id='digitizeDismiss' href='javascript:void(0)'>" + OpenLayers.i18n("stop") + "</a>");
-            var link = map.message.container.ownerDocument.getElementById("digitizeDismiss");
-            //Wire the anchor click
-            link.onclick = function() {
-                ClearMessage();
-                ClearDigitization(true);
-            };
-            DigitizeRectangle(OnRectangleDigitized);
+            GetMap().DigitizeRectangle(OnRectangleDigitized);
         }
 
         function OnRectangleDigitized(rectangle)
         {
-            ClearMessage();
             var geomText = "5,"
                 + rectangle.Point1.X + "," + rectangle.Point1.Y + ","
                 + rectangle.Point2.X + "," + rectangle.Point1.Y + ","
@@ -206,21 +202,11 @@
 
         function OnDigitizePolygon()
         {
-            ClearDigitization();
-            var map = Fusion.getMapByName(mapName).mapWidget;
-            map.message.info("<?= $polygonHelpLocal ?>" + " <a id='digitizeDismiss' href='javascript:void(0)'>" + OpenLayers.i18n("stop") + "</a>");
-            var link = map.message.container.ownerDocument.getElementById("digitizeDismiss");
-            //Wire the anchor click
-            link.onclick = function() {
-                ClearMessage();
-                ClearDigitization(true);
-            };
-            DigitizePolygon(OnPolyonDigitized);
+            GetMap().DigitizePolygon(OnPolyonDigitized);
         }
 
         function OnPolyonDigitized(polygon)
         {
-            ClearMessage();
             var geomText = polygon.Count;
             for (var i = 0; i < polygon.Count; i++)
             {
@@ -232,7 +218,6 @@
 
         function OnClearSpatialFilter()
         {
-            ClearDigitization();
             document.getElementById("spatialFilter").checked = false;
             //OnToggleSpatialFilter();
 
@@ -257,7 +242,7 @@
 
             spatialFilterGeomText = geomText;
             document.getElementById("spatialFilter").checked = true;
-            Refresh();
+            GetMap().Refresh();
         }
 
         function ToggleSpatialFilter(visible)
@@ -339,7 +324,7 @@
             reqParams += "&SESSION=" + encodeURIComponent(session);
             reqParams += "&MAPNAME=" + encodeURIComponent(mapName);
             reqParams += "&LAYERNAME=" + encodeURIComponent(layerSelect.value);
-            reqParams += "&IDLIST=" + results[resultSelect.value].idList.toJSONString();
+            reqParams += "&IDLIST=" + JSON.stringify(results[resultSelect.value].idList);
 
             if (msie)
                 reqHandler = new ActiveXObject("Microsoft.XMLHTTP");
@@ -351,7 +336,7 @@
             reqHandler.send(reqParams);
             selectionXml = reqHandler.responseText;
 
-            SetSelectionXML(TrimString(selectionXml));
+            GetMap().SetSelectionXML(TrimString(selectionXml));
         }
 
         function TrimString(responseString)
@@ -369,7 +354,7 @@
             scale = scale*1.0;
 
             feature = results[resultSelect.value];
-            ZoomToView(feature.centerX, feature.centerY, scale, true);
+            GetMap().ZoomToView(feature.centerX, feature.centerY, scale, true);
         }
 
         function OnReadyStateChange()
@@ -378,7 +363,7 @@
 
             if (ready == READY_STATE_COMPLETE)
             {
-                results = queryReqHandler.responseText.parseJSON();
+                results = JSON.parse(queryReqHandler.responseText);
 
                 var resultSelect = document.getElementById("resultSelect");
                 resultSelect.options.length = 0;
@@ -425,15 +410,7 @@
 
         function OnUnload()
         {
-            ClearMessage();
-            ClearDigitization(true);
             ToggleSpatialFilter(false);
-        }
-        
-        function ClearMessage() 
-        {
-            var map = GetFusionMapWidget();
-            map.message.clear();
         }
 
         function OnResize()
@@ -457,7 +434,7 @@
 <?php if ($errorMsg == null) { ?>
 
 <table class="RegText" border="0" cellspacing="0" width="100%">
-    <tr><td class="Title"><img id="busyImg" src="../../common/images/loader_inactive.gif" style="vertical-align:bottom">&nbsp;<?php echo $titleLocal ?><hr></td></tr>
+    <tr><td class="Title"><img id="busyImg" src="../assets/loader_inactive.gif" style="vertical-align:bottom">&nbsp;<?php echo $titleLocal ?><hr></td></tr>
     <tr><td class="SubTitle"><?php echo $selectLayerLocal ?></td></tr>
     <tr><td><?php echo $layerLocal ?></td></tr>
     <tr>

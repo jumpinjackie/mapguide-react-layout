@@ -17,7 +17,7 @@
 //  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 
-$fusionMGpath = '../../Common/';
+$fusionMGpath = dirname(__FILE__).'/../../Common/';
 require_once $fusionMGpath . 'Common.php';
 
 require_once('property.php');

@@ -139,10 +139,7 @@ export function initApp(options) {
 
             const initUrl = "/mapguide/phpsamples/index.php"
 
-            registerCommand("SelectWithin", { icon: "select-features.png", url: "/mapguide/mapviewernet/selectwithinui.aspx" });
-            registerCommand("Query", { url: "/mapguide/phpviewersample/query/querymain.php" });
             registerCommand("Overview", { url: "/mapguide/phpviewersample/overview/overviewmain.php" });
-            registerCommand("Theme", { url: "/mapguide/phpviewersample/theme/thememain.php" });
             registerCommand("Plot", { url: "/mapguide/phpviewersample/plot/plotmain.php" });
             registerCommand("FindAddress", { url: "/mapguide/phpviewersample/findaddress/findaddressmain.php" });
 

@@ -45,6 +45,43 @@ function getDefaultCommandSet() {
             label: "Feature Tooltips",
             tooltip: "Feature Tooltips" 
         },
+        { isSeparator: true },
+        {
+            label: "Tools",
+            children: [
+                {
+                    command: "Buffer",
+                    label: "Buffer",
+                    tooltip: "Buffer"
+                },
+                {
+                    command: "FeatureInfo",
+                    label: "Feature Information",
+                    tooltip: "Feature Information" 
+                },
+                { 
+                    command: "Query",
+                    label: "Query",
+                    tooltip: "Query" 
+                },
+                { 
+                    command: "Redline",
+                    label: "Redline",
+                    tooltip: "Redline" 
+                },
+                { 
+                    command: "SelectWithin",
+                    label: "Select Within",
+                    tooltip: "Select Within" 
+                },
+                { 
+                    command: "Theme",
+                    label: "Theme",
+                    tooltip: "Theme" 
+                }
+            ]
+        },
+        { isSeparator: true },
         { 
             command: "SelectRadius",
             //label: "Select Radius",
@@ -54,6 +91,11 @@ function getDefaultCommandSet() {
             command: "SelectPolygon",
             //label: "Select Polygon",
             tooltip: "Select Polygon" 
+        },
+        {
+            command: "SelectWithin",
+            //label: "Select Within",
+            tooltip: "Select Within" 
         },
         { 
             command: "ZoomToSelection",
@@ -97,7 +139,7 @@ export function initApp(options) {
 
             const initUrl = "/mapguide/phpsamples/index.php"
 
-            registerCommand("Buffer", { icon: "buffer.png", url: "/mapguide/mapviewernet/bufferui.aspx" });
+            registerCommand("SelectWithin", { icon: "select-features.png", url: "/mapguide/mapviewernet/selectwithinui.aspx" });
             registerCommand("Query", { url: "/mapguide/phpviewersample/query/querymain.php" });
             registerCommand("Overview", { url: "/mapguide/phpviewersample/overview/overviewmain.php" });
             registerCommand("Theme", { url: "/mapguide/phpviewersample/theme/thememain.php" });

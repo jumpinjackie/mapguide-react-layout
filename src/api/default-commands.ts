@@ -6,6 +6,7 @@ import * as LegendActions from "../actions/legend";
 import * as MapActions from "../actions/map";
 import * as Constants from "../constants";
 import * as ol from "openlayers";
+import { ensureParameters } from "../actions/taskpane";
 
 function panMap(dispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
     const settings = {
@@ -245,4 +246,28 @@ export function initDefaultCommands() {
             dispatch(MapActions.nextView());
         }
     });
+    //Buffer
+    registerCommand("Buffer", {
+        icon: "buffer.png",
+        selected: () => false,
+        enabled: CommandConditions.hasSelection,
+        invoke: (dispatch, getState, viewer) => {
+            const { map, config } = getState();
+            let url = ensureParameters("/mapguide/react/viewer/server/Buffer/BufferPanel.php", map.state.Name, map.state.SessionId, config.locale);
+            url += "&POPUP=false&US=0";
+            dispatch({
+                type: Constants.CMD_INVOKE_URL,
+                payload: {
+                    url: url
+                }
+            });
+        }
+    });
+
+    //registerCommand("Buffer", { icon: "buffer.png", url: "/mapguide/react/viewer/server/Buffer/BufferPanel.php" });
+    registerCommand("FeatureInfo", { icon: "feature-info.png", url: "/mapguide/react/viewer/server/FeatureInfo/featureinfomain.php" });
+    registerCommand("Query", { icon: "query.png", url: "/mapguide/react/viewer/server/Query/querymain.php" });
+    registerCommand("Redline", { icon: "redline.png", url: "/mapguide/react/viewer/server/Redline/markupmain.php" });
+    registerCommand("SelectWithin", { icon: "select-features.png", url: "/mapguide/react/viewer/server/SelectWithin/SelectWithinPanel.php" });
+    registerCommand("Theme", { icon: "theme.png", url: "/mapguide/react/viewer/server/Theme/thememain.php" });
 }

@@ -2,30 +2,21 @@ import * as Constants from "../constants";
 import { IMapView } from "../components/context";
 import { ICommand } from "../api/registry/command";
 import { getViewer } from "../api/runtime";
-import { Bounds, isBounds, areViewsCloseToEqual } from "../components/map-viewer-base";
+import { areViewsCloseToEqual } from "../components/map-viewer-base";
 import { areNumbersEqual } from '../utils/number';
 
-export function setCurrentView(view: IMapView|Bounds) {
+export function setCurrentView(view: IMapView) {
     return (dispatch, getState) => {
         // HACK-y:
         //
         // We don't want to dispatch SET_VIEW actions with redundant view
         // states if the one we're about to dispatch is the same as the
         // previous one
-        const currentView: IMapView|Bounds = getState().view.current;
+        const currentView: IMapView = getState().view.current;
         let dispatchThis = true;
         if (currentView != null && view != null) {
-            if (isBounds(currentView) && isBounds(view)) {
-                if (areNumbersEqual(currentView[0], view[0]) &&
-                    areNumbersEqual(currentView[1], view[1]) &&
-                    areNumbersEqual(currentView[2], view[2]) &&
-                    areNumbersEqual(currentView[3], view[3])) {
-                    dispatchThis = false;
-                }
-            } else if (!isBounds(currentView) && !isBounds(view)) {
-                if (areViewsCloseToEqual(currentView, view)) {
-                    dispatchThis = false;
-                }
+            if (areViewsCloseToEqual(currentView, view)) {
+                dispatchThis = false;
             }
         }
         if (dispatchThis) {

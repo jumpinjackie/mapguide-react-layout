@@ -54,13 +54,12 @@ export function viewReducer(state = INITIAL_STATE, action = { type: '', payload:
                     current: action.payload
                 });
 
-                if (newState.historyIndex == newState.history.length - 1) {
-                    newState.history.push(action.payload);
-                    newState.historyIndex = newState.history.length - 1;
-                } else { //Remove everything after current history position
-                    newState.history = newState.history.splice(newState.historyIndex);
-                    newState.history.push(action.payload);
-                    newState.historyIndex = newState.history.length - 1;
+                newState.historyIndex++;
+                newState.history[newState.historyIndex] = action.payload;
+                //If we slotted at a position that is not the end of the array
+                //remove everything after it
+                if (newState.history.length > newState.historyIndex + 1) {
+                    newState.history.splice(newState.historyIndex + 1);
                 }
                 return newState;
             }

@@ -54,7 +54,7 @@ interface IMapViewerBaseProps {
     map: Contracts.RtMap.RuntimeMap;
     layerGroupVisibility?: ILayerGroupVisibility;
     tool: ActiveMapTool;
-    view: IMapView|Bounds;
+    view: IMapView;
     agentUri: string;
     agentKind: ClientKind;
     featureTooltipsEnabled: boolean;
@@ -63,7 +63,7 @@ interface IMapViewerBaseProps {
     stateChangeDebounceTimeout?: number;
     pointSelectionBuffer?: number;
     externalBaseLayers?: IExternalBaseLayer[];
-    onRequestZoomToView?: (view: IMapView|Bounds) => void;
+    onRequestZoomToView?: (view: IMapView) => void;
     selectableLayerNames: string[];
     onSelectionChange?: (selectionSet: any) => void;
     onMouseCoordinateChanged?: (coords: number[]) => void;
@@ -73,10 +73,6 @@ interface IMapViewerBaseProps {
 export enum RefreshMode {
     LayersOnly = 1,
     SelectionOnly = 2
-}
-
-export function isBounds(arg: IMapView | Bounds): arg is Bounds {
-    return Array.isArray(arg);
 }
 
 export function areViewsCloseToEqual(view: IMapView, otherView: IMapView): boolean {
@@ -97,7 +93,7 @@ export type Coordinate = [number, number];
 export type Bounds = [number, number, number, number];
 
 export interface IMapViewer {
-    getScaleForExtent(bounds: Bounds): number;
+    getViewForExtent(extent: Bounds): IMapView;
     getCurrentExtent(): Bounds;
     getView(): IMapView|Bounds;
     getCurrentView(): IMapView;
@@ -404,7 +400,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         switch (this.props.tool) {
             case ActiveMapTool.Zoom:
                 {
-                    this.onRequestZoomToView(extent.getExtent());
+                    const ext = extent.getExtent();
+                    this.onRequestZoomToView(this.getViewForExtent(ext));
                 }
                 break;
             case ActiveMapTool.Select:
@@ -515,19 +512,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this._busyWorkers--;
         this.props.onBusyLoading(this._busyWorkers);
     }
-    private onRequestZoomToView(view: IMapView|Bounds): void {
+    private onRequestZoomToView(view: IMapView): void {
         if (this.props.onRequestZoomToView != null) {
-            let copy;
-            if (isBounds(view)) {
-                copy = cloneExtent(view);
-            } else {
-                copy = {
-                    x: view.x,
-                    y: view.y,
-                    scale: view.scale
-                };
-            }
-            this.props.onRequestZoomToView(copy);
+            this.props.onRequestZoomToView({
+                x: view.x,
+                y: view.y,
+                scale: view.scale
+            });
         }
     }
     // ----------------- React Lifecycle ----------------- //
@@ -581,13 +572,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             const vw = nextProps.view;
             if (vw != null) {
                 this._triggerZoomRequestOnMoveEnd = false;
-                if (isBounds(vw)) {
-                    this._map.getView().fit(vw, this._map.getSize());
-                } else {
-                    const view = this._map.getView();
-                    view.setCenter([vw.x, vw.y]);
-                    view.setResolution(this.scaleToResolution(vw.scale));
-                }
+                const view = this._map.getView();
+                view.setCenter([vw.x, vw.y]);
+                view.setResolution(this.scaleToResolution(vw.scale));
                 this._triggerZoomRequestOnMoveEnd = true;
             } else {
                 logger.info(`Skipping zoomToView as next/current views are close enough or target view is null`);
@@ -830,7 +817,16 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     componentWillUnmount() {
 
     }
-    public getScaleForExtent(bounds: Bounds): number {
+    public getViewForExtent(extent: Bounds): IMapView {
+        const scale = this.getScaleForExtent(extent);
+        const center = ol.extent.getCenter(extent);
+        return {
+            x: center[0],
+            y: center[1],
+            scale: scale
+        };
+    }
+    private getScaleForExtent(bounds: Bounds): number {
         const mcsW = ol.extent.getWidth(bounds);
         const mcsH = ol.extent.getHeight(bounds);
         const size = this._map.getSize();
@@ -907,7 +903,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         return this._inPerUnit / 39.37;
     }
     public initialView(): void {
-        this.onRequestZoomToView(this._extent);
+        this.onRequestZoomToView(this.getViewForExtent(this._extent));
     }
     public clearSelection(): void {
         this.setSelectionXml("");
@@ -919,7 +915,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this.zoomByDelta(delta);
     }
     public zoomToExtent(extent: Bounds): void {
-        this.onRequestZoomToView(extent);
+        this.onRequestZoomToView(this.getViewForExtent(extent));
     }
     public isDigitizing(): boolean {
         return this._activeDrawInteraction != null;

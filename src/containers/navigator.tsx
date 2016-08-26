@@ -3,11 +3,10 @@ import { connect } from "react-redux";
 import { Navigator, ZoomDirection, PanDirection } from "../components/navigator";
 import { QueryMapFeaturesResponse } from "../api/contracts/query";
 import { RuntimeMap } from "../api/contracts/runtime-map";
-import { getViewer, getCurrentScale } from "../api/runtime";
+import { getViewer } from "../api/runtime";
 import { invokeCommand, setScale } from "../actions/map";
 import { getCommand, DefaultCommands } from "../api/registry/command";
 import { IMapView } from "../components/context";
-import { Bounds } from "../components/map-viewer-base";
 
 interface INavigatorContainerProps {
     style?: React.CSSProperties;
@@ -15,7 +14,7 @@ interface INavigatorContainerProps {
 
 interface INavigatorContainerState {
     viewer?: any;
-    view?: IMapView|Bounds;
+    view?: IMapView;
 }
 
 interface INavigatorContainerDispatch {
@@ -86,9 +85,8 @@ export class NavigatorContainer extends React.Component<INavigatorContainerProps
     render(): JSX.Element {
         const { style, viewer, view } = this.props;
         if (viewer != null && view != null) {
-            const scale = getCurrentScale(view);
             return <Navigator style={style}
-                              scale={scale}
+                              scale={view.scale}
                               busy={viewer.busyCount > 0}
                               onRequestZoomToScale={this.fnRequestZoomToScale}
                               onPan={this.fnPan}

@@ -117,8 +117,8 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         }
     }
     // ----------------- IMapViewer --------------------- //
-    getScaleForExtent(bounds: Bounds): number {
-        return this.inner.getScaleForExtent(bounds);
+    getViewForExtent(extent: Bounds): IMapView {
+        return this.inner.getViewForExtent(extent);
     }
     getCurrentExtent(): Bounds {
         return this.inner.getCurrentExtent();

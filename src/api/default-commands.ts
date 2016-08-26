@@ -212,7 +212,8 @@ export function initDefaultCommands() {
                 });
             }
             if (bounds != null) {
-                dispatch(MapActions.setCurrentView(bounds));
+                const view = viewer.getViewForExtent(bounds);
+                dispatch(MapActions.setCurrentView(view));
             }
         }
     });

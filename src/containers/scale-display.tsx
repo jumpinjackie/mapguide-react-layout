@@ -3,12 +3,10 @@ import { connect } from "react-redux";
 import { SelectedFeatureCount } from "../components/selected-feature-count";
 import { QueryMapFeaturesResponse } from "../api/contracts/query";
 import { IMapView } from "../components/context";
-import { getCurrentScale } from "../api/runtime";
-import { Bounds } from "../components/map-viewer-base";
 
 interface IScaleDisplayContainerState {
     style?: React.CSSProperties;
-    view?: IMapView|Bounds;
+    view?: IMapView;
 }
 
 function mapStateToProps(state): IScaleDisplayContainerState {
@@ -31,9 +29,8 @@ export class ScaleDisplayContainer extends React.Component<IScaleDisplayContaine
     render(): JSX.Element {
         const { view, style } = this.props;
         if (view != null) {
-            let scale = getCurrentScale(view);
             return <div className="component-scale-display" style={style}>
-                Scale - 1:{scale.toFixed(2)}
+                Scale - 1:{view.scale.toFixed(2)}
             </div>;
         } else {
             return <div />;

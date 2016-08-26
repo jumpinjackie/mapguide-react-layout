@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__).'/../../../layers/MapGuide/php/Constants.php';
+require_once dirname(__FILE__).'/../../Common/Constants.php';
 require_once 'classes/markupschemafactory.php';
 
 class MarkupManager

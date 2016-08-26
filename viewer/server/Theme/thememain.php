@@ -16,7 +16,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
-    $fusionMGpath = '../../layers/MapGuide/php/';
+    $fusionMGpath = '../Common/';
     require_once $fusionMGpath . 'Common.php';
     if(InitializationErrorOccurred())
     {
@@ -268,7 +268,7 @@
                 return;
 
             height = allowTransparency? 470: 445;
-            w = window.open("../../layers/MapGuide/php/ColorPicker.php?LOCALE=<?=$locale?>&CLR=" + clr + "&ALLOWTRANS=" + (allowTransparency? "1":"0") + "&TRANS=" + (transparent?"1":"0"), "colorPicker", "toolbar=no,status=no,width=355,height=" + height);
+            w = window.open("../../'../Common/'/php/ColorPicker.php?LOCALE=<?=$locale?>&CLR=" + clr + "&ALLOWTRANS=" + (allowTransparency? "1":"0") + "&TRANS=" + (transparent?"1":"0"), "colorPicker", "toolbar=no,status=no,width=355,height=" + height);
             w.focus();
         }
 

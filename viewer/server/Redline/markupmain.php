@@ -1,5 +1,5 @@
 <?php
-    $fusionMGpath = '../../layers/MapGuide/php/';
+    $fusionMGpath = '../Common/';
     require_once $fusionMGpath . 'Common.php';
     if(InitializationErrorOccurred())
     {
@@ -151,7 +151,7 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 <?php if ($errorMsg == null) { ?>
     <link rel="stylesheet" href="Redline.css" type="text/css">
-    <script language="javascript" src="../../layers/MapGuide/MapGuideViewerApi.js"></script>
+    <script language="javascript" src="../../'../Common/'/MapGuideViewerApi.js"></script>
     <script language="javascript" src="../../common/browserdetect.js"></script>
     <script language="javascript">
         var session = '<?= $args['SESSION'] ?>';

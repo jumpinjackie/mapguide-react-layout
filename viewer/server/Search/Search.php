@@ -27,7 +27,7 @@
     // Start output buffering
     ob_start();
 
-    $fusionMGpath = '../../layers/MapGuide/php/';
+    $fusionMGpath = '../Common/';
     include $fusionMGpath . 'Common.php';
     if(InitializationErrorOccurred())
     {

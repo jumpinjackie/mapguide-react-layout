@@ -1,8 +1,8 @@
 <?php
 /**
- * SearchPrompt
+ * ColorPicker
  *
- * $Id: SearchPrompt.php 2940 2016-05-04 16:54:12Z jng $
+ * $Id: ColorPicker.php 1713 2008-12-12 19:53:36Z madair $
  *
  * Copyright (c) 2007, DM Solutions Group Inc.
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -24,8 +24,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-    $fusionMGpath = '../Common/';
+    $fusionMGpath = dirname(__FILE__).'/';
     include $fusionMGpath . 'Common.php';
+
     if(InitializationErrorOccurred())
     {
         DisplayInitializationErrorHTML();
@@ -33,47 +34,27 @@
     }
 
     $locale = GetDefaultLocale();
-    $popup = 0;
-    $mapName = "";
-    $sessionId = "";
-    $widgetName = "";
-    $pointZoomLevel = 500.0;
+    $clr = "000000";
+    $allowTransparency = 0;
+    $transparent = 0;
 
     GetRequestParameters();
 
-    $templ = file_get_contents("./SearchPrompt.templ");
+    $templ = file_get_contents("./ColorPicker.templ");
     SetLocalizedFilesPath(GetLocalizationPath());
     $templ = Localize($templ, $locale, GetClientOS());
-    $vpath = GetSurroundVirtualPath();
-    print sprintf($templ, $popup, $properties, $propNames, $title, $prompt, $target, $filter, $layer, $limit, $vpath."Search.php", $mapName, $sessionId, $locale, $pointZoomLevel);
-
+    print sprintf($templ, $clr, $allowTransparency? "true": "false", $transparent? "true": "false");
 
 
 function GetParameters($params)
 {
-    global $popup, $locale;
-    global $mapName, $sessionId;
-    global $title, $prompt, $target, $filter, $layer, $limit;
-    global $propNames, $properties;
-    global $pointZoomLevel;
+    global $clr, $allowTransparency, $transparent, $locale;
 
-    if(isset($params['locale'])) {
-        $locale = $params['locale'];
-    }
-    $popup = $params['popup'];
-    $mapName = $params['mapname'];
-    $sessionId = $params['session'];
-    $propNames = $params['propNames'];
-    $properties = $params['properties'];
-    $title = $params['title'];
-    $prompt = $params['prompt'];
-    $target = $params['target'];
-    $filter = $params['filter'];
-    $layer = $params['layer'];
-    $limit = $params['limit'];
-    if (isset($params['pointZoomLevel'])) {
-        $pointZoomLevel = $params['pointZoomLevel'];
-    }
+    if(isset($params['LOCALE']))
+        $locale = $params['LOCALE'];
+    $clr = $params['CLR'];
+    $allowTransparency = $params['ALLOWTRANS'];
+    $transparent = $params['TRANS'];
 }
 
 function GetRequestParameters()
@@ -83,5 +64,4 @@ function GetRequestParameters()
     else
         GetParameters($_GET);
 }
-
 ?>

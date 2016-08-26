@@ -24,7 +24,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-    $fusionMGpath = '../../layers/MapGuide/php/';
+    $fusionMGpath = '../Common/';
     include $fusionMGpath . 'Common.php';
     if(InitializationErrorOccurred())
     {
@@ -50,13 +50,13 @@ function GetParameters($params)
 {
     global $mapName, $sessionId, $locale, $popup, $bOmitInvisibleLayers;
 
-    if (isset($params['locale']))
-        $locale = $params['locale'];
-    $mapName = $params['mapname'];
-    $sessionId = $params['session'];
-    $popup = $params['popup'];
-    if (isset($params['omit_invisible_layers']))
-        $bOmitInvisibleLayers = ($params['omit_invisible_layers'] == "1");
+    if (isset($params['LOCALE']))
+        $locale = $params['LOCALE'];
+    $mapName = $params['MAPNAME'];
+    $sessionId = $params['SESSION'];
+    $popup = $params['POPUP'];
+    if (isset($params['OMIT_INVISIBLE_LAYERS']))
+        $bOmitInvisibleLayers = ($params['OMIT_INVISIBLE_LAYERS'] == "1");
 }
 
 function GetRequestParameters()

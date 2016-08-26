@@ -1,5 +1,5 @@
 <?php
-    $fusionMGpath = '../../layers/MapGuide/php/';
+    $fusionMGpath = '../Common/';
     require_once $fusionMGpath . 'Common.php';
     require_once 'classes/markupeditor.php';
 

@@ -1,6 +1,6 @@
 <?php
 
-    $fusionMGpath = '../../layers/MapGuide/php/';
+    $fusionMGpath = '../Common/';
     require_once $fusionMGpath . 'Common.php';
     
     header('Content-type: application/json');

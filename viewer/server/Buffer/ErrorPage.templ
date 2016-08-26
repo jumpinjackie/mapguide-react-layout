@@ -1,0 +1,74 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>__#REPORTTITLE#__</title>
+<link rel="stylesheet" href="./Viewer.css" type="text/css">
+<style type="text/css">
+    td.Title
+    {
+        font-family: __#@font#__;
+        font-weight: bold;
+        font-size: 13pt;
+    }
+    .ErrorText
+    {
+        font-family: __#@font#__;
+        font-weight: bold;
+        font-size: __#@fontsize#__;
+        color: #ff0000;
+        background-color: #FFFFCC;
+    }
+    .Ctrl
+    {
+        font-family: __#@font#__;
+        font-size: __#@fontsize#__;
+    }
+</style>
+
+<script language=javascript>
+
+var popup = %s;
+
+function InitDocument()
+{
+    var mapName = '%s';
+    var map = GetParent().Fusion.getMapByName(mapName);
+    if(map != null)
+    {
+        map.reloadMap();
+    }
+}
+
+function Back()
+{
+    if(popup)
+        self.close();
+    else
+        parent.goHome();  //opened in a TaskPane
+}
+
+function GetParent()
+{
+	if(popup)
+		return opener;
+	else
+	{
+		var node = parent;
+		while (!node.fusion && node.parent)
+			node = node.parent;
+		return node;
+	}
+}
+
+</script>
+
+</head>
+<body onload="InitDocument()" marginwidth=5 marginheight=5 leftmargin=5 topmargin=5 bottommargin=5 rightmargin=5>
+<table class="RegText" border="0" cellspacing="0" width="100%%">
+  <tr><td class="Title">%s<hr></td></tr>
+  <tr><td class="ErrorText">%s</td></tr>
+  <tr><td height="10"></td></tr>
+  <tr><td><input type="button" value="OK" style="width: 70px;" class="Ctrl" onclick="history.back()"><input type="button" value="Cancel" style="width: 70px;" class="Ctrl" onclick="Back()"></td></tr>
+</table>
+</body>
+</html>

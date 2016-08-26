@@ -1,0 +1,132 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>__#SEARCHDLGTITLE#__</title>
+<link rel="stylesheet" href="./viewer.css" type="text/css">
+<style type="text/css">
+    td.Title
+    {
+        font-family: __#@font#__;
+        font-weight: bold;
+        font-size: 13pt;
+    }
+    td.SubTitle
+    {
+        font-family: __#@font#__;
+        font-weight: bold;
+        font-size: __#@fontsize#__;
+        background-color: #DCDCDC;
+        color: black;
+        height: 20px;
+    }
+    td.InfoText
+    {
+        background-color: #FFFFCC;
+        color: #666666;
+        font-family: __#@font#__;
+        font-size: __#@fontsize#__;
+    }
+    .Ctrl
+    {
+        font-family: __#@font#__;
+        font-size: __#@fontsize#__;
+    }
+</style>
+
+<script language="javascript">
+var agent = navigator.userAgent.toLowerCase();
+var msie = agent.indexOf("msie") != -1;
+
+var popup = %s;
+var propsIn = "%s";
+var properties = [];
+var namesIn = "%s";
+var names = [];
+var title = "%s";
+var prompt = "%s";
+var target = "%s";
+var filter = "%s";
+var layer = "%s";
+var limit = "%s";
+
+function InitDocument()
+{
+    if(!msie) document.getElementById("lf").innerHTML = "<br>";
+    if(!popup) document.onmousedown = OnMouseDown;
+
+    if (propsIn != "") {
+      properties = propsIn.split(',');
+    }
+    if (namesIn != "") {
+      names = namesIn.split(',');
+    }
+
+    document.getElementById('title').innerHTML = title;  //TODO use a better property than this
+    document.getElementById('prompt').innerHTML = prompt;  //TODO use a better property than this
+    document.getElementById('target').value = target;  //TODO use a better property than this
+    document.getElementById('filter').value = filter;  //TODO use a better property than this
+    document.getElementById('layer').value = layer;  //TODO use a better property than this
+    document.getElementById('limit').value = limit;  //TODO use a better property than this
+    document.getElementById('popup').value = popup?"true":"false";  //TODO use a better property than this
+
+    var field = document.getElementById("Fld")
+    field.focus();
+}
+
+function OnMouseDown(e)
+{
+    //GetParent().ForwardMouseDown(document, e);
+}
+
+function GetParent()
+{
+	if(popup)
+		return opener;
+	else
+	{
+		var node = parent;
+		while (!node.Fusion && node.parent)
+			node = node.parent;
+		return node;
+	}
+}
+
+function SetMatchLabel()
+{
+    var colDef = "<input type=\"hidden\" name=\"cols\" value=\"" + properties.length + "\">";
+    for(var i = 0; i < properties.length; i++)
+    {
+        colDef += "<input type=\"hidden\" name=\"CN" + i + "\" value=\"" + names[i] + "\">";
+        colDef += "<input type=\"hidden\" name=\"CP" + i + "\" value=\"" + properties[i] + "\">";
+    }
+    document.getElementById("MatchLabel").innerHTML = colDef;
+}
+
+</script>
+
+</head>
+<body class="SearchPrompt" onload="InitDocument()" marginwidth="5" marginheight="5" leftmargin="5" topmargin="5" bottommargin="5" rightmargin="5">
+    <table class="RegText" border="0" cellspacing="0" width="100%%">
+        <tr><td class="Title"><span id="title"></span><hr></td></tr>
+        <tr><td class="InfoText" id="prompt"></td></tr>
+    </table>
+
+    <form name="SearchPrompt" action="%s" onsubmit="SetMatchLabel()" enctype="application/x-www-form-urlencoded">
+        <span id="lf"></span>
+        <input class="Ctrl" type="edit" name="userinput" id="Fld">
+        <input type="hidden" name="mapname" value="%s">
+        <input type="hidden" name="session" value="%s">
+        <input type="hidden" name="locale" value="%s">
+        <input type="hidden" name="target" id="target">
+        <input type="hidden" name="popup" id="popup">
+        <input type="hidden" name="layer" id="layer">
+        <input type="hidden" name="filter" id="filter">
+        <input type="hidden" name="limit" id="limit">
+        <input type="hidden" name="pointZoom" id="pointZoom" value="%s">
+        <div id="MatchLabel">
+        </div>
+        <br><br>
+        <input class="Ctrl" style="width: 70px;" type="submit" value="__#SEARCHPROMPTFIND#__">
+    </form>
+</body>
+</html>

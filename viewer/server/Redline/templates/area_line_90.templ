@@ -1,0 +1,97 @@
+<SymbolInstance>
+              <SimpleSymbolDefinition>
+                <Name>LINE</Name>
+                <Description>area_line_90.templ</Description>
+                <Graphics>
+                  <Path>
+                    <Geometry>M 0.0,0.0 h 10.0</Geometry>
+                    <ScaleX>%SCALEX%</ScaleX>
+                    <ScaleY>%SCALEY%</ScaleY>
+                    <LineColor>%HATCHCOLOR%</LineColor>
+                    <LineCap>%LINECAP%</LineCap>
+                    <LineJoin>%LINEJOIN%</LineJoin>
+                  </Path>
+                </Graphics>
+                <AreaUsage>
+                  <Angle>%HATCHANGLE%+90</Angle>
+                  <RepeatX>99.9998</RepeatX>
+                  <RepeatY>2.54</RepeatY>
+                </AreaUsage>
+                <ParameterDefinition>
+                  <Parameter>
+                    <Identifier>HATCHCOLOR</Identifier>
+                    <DefaultValue>0xff000000</DefaultValue>
+                    <DisplayName>&amp;Hatch Color</DisplayName>
+                    <Description>Color for the hatch style</Description>
+                    <DataType>LineColor</DataType>
+                  </Parameter>
+                  <Parameter>
+                    <Identifier>HATCHANGLE</Identifier>
+                    <DefaultValue>0.0</DefaultValue>
+                    <DisplayName>Hatch &amp;Angle</DisplayName>
+                    <Description>Rotation angle for the hatch style</Description>
+                    <DataType>Angle</DataType>
+                  </Parameter>
+                  <Parameter>
+                    <Identifier>SCALEX</Identifier>
+                    <DefaultValue>1.0</DefaultValue>
+                    <DisplayName>Path ScaleX</DisplayName>
+                    <Description>Path ScaleX</Description>
+                    <DataType>Real</DataType>
+                  </Parameter>
+                  <Parameter>
+                    <Identifier>SCALEY</Identifier>
+                    <DefaultValue>1.0</DefaultValue>
+                    <DisplayName>Path ScaleY</DisplayName>
+                    <Description>Path ScaleY</Description>
+                    <DataType>Real</DataType>
+                  </Parameter>
+                  <Parameter>
+                    <Identifier>LINECAP</Identifier>
+                    <DefaultValue>'Round'</DefaultValue>
+                    <DisplayName>Line Cap</DisplayName>
+                    <Description>The cap type to use at the ends of each segment in the path outline.  This must evaluate to one of: None, Round (default), Triangle, or Square.</Description>
+                  </Parameter>
+                  <Parameter>
+                    <Identifier>LINEJOIN</Identifier>
+                    <DefaultValue>'Round'</DefaultValue>
+                    <DisplayName>Line Join</DisplayName>
+                    <Description>The join type to use at each vertex in the path outline.  This must evaluate to one of: None, Bevel, Round (default), or Miter.</Description>
+                  </Parameter>
+                </ParameterDefinition>
+              </SimpleSymbolDefinition>
+              <ParameterOverrides>
+                <Override>
+                  <SymbolName>LINE</SymbolName>
+                  <ParameterIdentifier>HATCHCOLOR</ParameterIdentifier>
+                  <ParameterValue>0x#{FILL_FORE_COLOR}</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>LINE</SymbolName>
+                  <ParameterIdentifier>HATCHANGLE</ParameterIdentifier>
+                  <ParameterValue>0.0</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>LINE</SymbolName>
+                  <ParameterIdentifier>SCALEX</ParameterIdentifier>
+                  <ParameterValue>10</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>LINE</SymbolName>
+                  <ParameterIdentifier>SCALEY</ParameterIdentifier>
+                  <ParameterValue>10</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>LINE</SymbolName>
+                  <ParameterIdentifier>LINECAP</ParameterIdentifier>
+                  <ParameterValue>'Round'</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>LINE</SymbolName>
+                  <ParameterIdentifier>LINEJOIN</ParameterIdentifier>
+                  <ParameterValue>'Round'</ParameterValue>
+                </Override>
+              </ParameterOverrides>
+              <UsageContext>Area</UsageContext>
+              <GeometryContext>Polygon</GeometryContext>
+            </SymbolInstance>

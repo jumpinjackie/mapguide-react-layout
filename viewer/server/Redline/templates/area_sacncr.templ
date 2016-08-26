@@ -1,0 +1,192 @@
+<SymbolInstance>
+              <CompoundSymbolDefinition>
+                <Name>SACNCR</Name>
+                <Description>area_sacncr.templ</Description>
+                <SimpleSymbol>
+                  <SimpleSymbolDefinition>
+                    <Name>SACNCR</Name>
+                    <Description>area_sacncr.templ</Description>
+                    <Graphics>
+                      <Path>
+                        <Geometry>M 0.04688,-0.04688 h 0.0</Geometry>
+                        <ScaleX>%SCALEX0%</ScaleX>
+                        <ScaleY>%SCALEY0%</ScaleY>
+                        <LineColor>%HATCHCOLOR%</LineColor>
+                        <LineCap>%LINECAP0%</LineCap>
+                        <LineJoin>%LINEJOIN0%</LineJoin>
+                      </Path>
+                    </Graphics>
+                    <AreaUsage>
+                      <Angle>%HATCHANGLE%</Angle>
+                      <RepeatX>2.35727583605734</RepeatX>
+                      <RepeatY>2.35727583605734</RepeatY>
+                    </AreaUsage>
+                    <ParameterDefinition>
+                      <Parameter>
+                        <Identifier>HATCHCOLOR</Identifier>
+                        <DefaultValue>0xff000000</DefaultValue>
+                        <DisplayName>&amp;Hatch Color</DisplayName>
+                        <Description>Color for the hatch style</Description>
+                        <DataType>LineColor</DataType>
+                      </Parameter>
+                      <Parameter>
+                        <Identifier>HATCHANGLE</Identifier>
+                        <DefaultValue>45.0</DefaultValue>
+                        <DisplayName>Hatch &amp;Angle</DisplayName>
+                        <Description>Rotation angle for the hatch style</Description>
+                        <DataType>Angle</DataType>
+                      </Parameter>
+                      <Parameter>
+                        <Identifier>SCALEX0</Identifier>
+                        <DefaultValue>1.0</DefaultValue>
+                        <DisplayName>Path ScaleX</DisplayName>
+                        <Description>Path ScaleX</Description>
+                        <DataType>Real</DataType>
+                      </Parameter>
+                      <Parameter>
+                        <Identifier>SCALEY0</Identifier>
+                        <DefaultValue>1.0</DefaultValue>
+                        <DisplayName>Path ScaleY</DisplayName>
+                        <Description>Path ScaleY</Description>
+                        <DataType>Real</DataType>
+                      </Parameter>
+                      <Parameter>
+                        <Identifier>LINECAP0</Identifier>
+                        <DefaultValue>'Round'</DefaultValue>
+                        <DisplayName>Line Cap</DisplayName>
+                        <Description>The cap type to use at the ends of each segment in the path outline.  This must evaluate to one of: None, Round (default), Triangle, or Square.</Description>
+                        <DataType>String</DataType>
+                      </Parameter>
+                      <Parameter>
+                        <Identifier>LINEJOIN0</Identifier>
+                        <DefaultValue>'Round'</DefaultValue>
+                        <DisplayName>Line Join</DisplayName>
+                        <Description>The join type to use at each vertex in the path outline.  This must evaluate to one of: None, Bevel, Round (default), or Miter.</Description>
+                        <DataType>String</DataType>
+                      </Parameter>
+                    </ParameterDefinition>
+                  </SimpleSymbolDefinition>
+                  <RenderingPass>0</RenderingPass>
+                </SimpleSymbol>
+                <SimpleSymbol>
+                  <SimpleSymbolDefinition>
+                    <Name>SACNCR</Name>
+                    <Description>area_sacncr.templ</Description>
+                    <Graphics>
+                      <Path>
+                        <Geometry>M 0.0,0.0 h 10.0</Geometry>
+                        <ScaleX>%SCALEX1%</ScaleX>
+                        <ScaleY>%SCALEY1%</ScaleY>
+                        <LineColor>%HATCHCOLOR%</LineColor>
+                        <LineCap>%LINECAP1%</LineCap>
+                        <LineJoin>%LINEJOIN1%</LineJoin>
+                      </Path>
+                    </Graphics>
+                    <AreaUsage>
+                      <Angle>%HATCHANGLE%</Angle>
+                      <RepeatX>251.44531053558</RepeatX>
+                      <RepeatY>2.35727583605734</RepeatY>
+                    </AreaUsage>
+                    <ParameterDefinition>
+                      <Parameter>
+                        <Identifier>HATCHCOLOR</Identifier>
+                        <DefaultValue>0xff000000</DefaultValue>
+                        <DisplayName>&amp;Hatch Color</DisplayName>
+                        <Description>Color for the hatch style</Description>
+                        <DataType>LineColor</DataType>
+                      </Parameter>
+                      <Parameter>
+                        <Identifier>HATCHANGLE</Identifier>
+                        <DefaultValue>45.0</DefaultValue>
+                        <DisplayName>Hatch &amp;Angle</DisplayName>
+                        <Description>Rotation angle for the hatch style</Description>
+                        <DataType>Angle</DataType>
+                      </Parameter>
+                      <Parameter>
+                        <Identifier>SCALEX1</Identifier>
+                        <DefaultValue>1.0</DefaultValue>
+                        <DisplayName>Path ScaleX</DisplayName>
+                        <Description>Path ScaleX</Description>
+                        <DataType>Real</DataType>
+                      </Parameter>
+                      <Parameter>
+                        <Identifier>SCALEY1</Identifier>
+                        <DefaultValue>1.0</DefaultValue>
+                        <DisplayName>Path ScaleY</DisplayName>
+                        <Description>Path ScaleY</Description>
+                        <DataType>Real</DataType>
+                      </Parameter>
+                      <Parameter>
+                        <Identifier>LINECAP1</Identifier>
+                        <DefaultValue>'Round'</DefaultValue>
+                        <DisplayName>Line Cap</DisplayName>
+                        <Description>The cap type to use at the ends of each segment in the path outline.  This must evaluate to one of: None, Round (default), Triangle, or Square.</Description>
+                        <DataType>String</DataType>
+                      </Parameter>
+                      <Parameter>
+                        <Identifier>LINEJOIN1</Identifier>
+                        <DefaultValue>'Round'</DefaultValue>
+                        <DisplayName>Line Join</DisplayName>
+                        <Description>The join type to use at each vertex in the path outline.  This must evaluate to one of: None, Bevel, Round (default), or Miter.</Description>
+                        <DataType>String</DataType>
+                      </Parameter>
+                    </ParameterDefinition>
+                  </SimpleSymbolDefinition>
+                  <RenderingPass>0</RenderingPass>
+                </SimpleSymbol>
+              </CompoundSymbolDefinition>
+              <ParameterOverrides>
+                <Override>
+                  <SymbolName>SACNCR</SymbolName>
+                  <ParameterIdentifier>HATCHCOLOR</ParameterIdentifier>
+                  <ParameterValue>0x#{FILL_FORE_COLOR}</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>SACNCR</SymbolName>
+                  <ParameterIdentifier>HATCHANGLE</ParameterIdentifier>
+                  <ParameterValue>45.0</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>SACNCR</SymbolName>
+                  <ParameterIdentifier>SCALEX0</ParameterIdentifier>
+                  <ParameterValue>25.1445813427207</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>SACNCR</SymbolName>
+                  <ParameterIdentifier>SCALEY0</ParameterIdentifier>
+                  <ParameterValue>25.1445813427207</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>SACNCR</SymbolName>
+                  <ParameterIdentifier>LINECAP0</ParameterIdentifier>
+                  <ParameterValue>'Round'</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>SACNCR</SymbolName>
+                  <ParameterIdentifier>LINEJOIN0</ParameterIdentifier>
+                  <ParameterValue>'Round'</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>SACNCR</SymbolName>
+                  <ParameterIdentifier>SCALEX1</ParameterIdentifier>
+                  <ParameterValue>25.1445813427207</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>SACNCR</SymbolName>
+                  <ParameterIdentifier>SCALEY1</ParameterIdentifier>
+                  <ParameterValue>25.1445813427207</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>SACNCR</SymbolName>
+                  <ParameterIdentifier>LINECAP1</ParameterIdentifier>
+                  <ParameterValue>'Round'</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>SACNCR</SymbolName>
+                  <ParameterIdentifier>LINEJOIN1</ParameterIdentifier>
+                  <ParameterValue>'Round'</ParameterValue>
+                </Override>
+              </ParameterOverrides>
+              <UsageContext>Area</UsageContext>
+              <GeometryContext>Polygon</GeometryContext>
+            </SymbolInstance>

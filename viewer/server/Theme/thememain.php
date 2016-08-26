@@ -85,19 +85,19 @@
 <html>
 <head>
     <title><?php echo $titleLocal ?></title>
-    <link rel="stylesheet" href="../../common/mgsamples.css" type="text/css">
-    <script language="javascript" src="../../common/browserdetect.js"></script>
-    <script language="javascript" src="../../common/json.js"></script>
-
+    <link rel="stylesheet" href="../assets/mgsamples.css" type="text/css">
+    <script language="javascript" src="../assets/browserdetect.js"></script>
     <script language="javascript">
+        var popup = false;
+
         var READY_STATE_UNINITIALIZED     = 0;
         var READY_STATE_LOADING         = 1;
         var READY_STATE_LOADED             = 2;
         var READY_STATE_INTERACTIVE     = 3;
         var READY_STATE_COMPLETE         = 4;
 
-        var NOT_BUSY_IMAGE = "../../common/images/loader_inactive.gif";
-        var BUSY_IMAGE = "../../common/images/loader_pulse.gif";
+        var NOT_BUSY_IMAGE = "../assets/loader_inactive.gif";
+        var BUSY_IMAGE = "../assets/loader_pulse.gif";
 
         var SET_FILL_FROM_COLOR     = 1;
         var SET_FILL_TO_COLOR         = 2;
@@ -113,7 +113,7 @@
         var mapName = '<?= $args['MAPNAME'] ?>';
 
         var distNameArray = ['<?= $individualLocal ?>', '<?= $equalLocal ?>', '<?= $standardDeviationLocal ?>', '<?= $quantileLocal  ?>', '<?= $jenksLocal ?>'];
-        var distValueArray = '<?php $json = new Services_JSON(); echo $json->encode($theme->distValueArray) ?>'.parseJSON();
+        var distValueArray = JSON.parse('<?php $json = new Services_JSON(); echo $json->encode($theme->distValueArray) ?>');
 
         var themeReqHandler = null;
         var layerInfo = null;
@@ -146,7 +146,7 @@
             reqHandler.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
             reqHandler.send(reqParams);
-            layerInfo = reqHandler.responseText.parseJSON();
+            layerInfo = JSON.parse(reqHandler.responseText);
 
             propertySelect.options.length = 0;
             for (var i = 0; i < layerInfo.properties.length; i++)
@@ -229,7 +229,7 @@
 
             if (ready == READY_STATE_COMPLETE)
             {
-                minMaxCount = themeReqHandler.responseText.parseJSON();
+                minMaxCount = JSON.parse(themeReqHandler.responseText);
 
                 document.getElementById("minValue").value = minMaxCount[0];
                 document.getElementById("maxValue").value = minMaxCount[1];
@@ -348,6 +348,17 @@
             themeReqHandler.send(reqParams);
         }
 
+        function GetMap() { return GetParent().GetMapFrame(); }
+
+        function GetParent()
+        {
+            if (popup) {
+                return opener;
+            } else {
+                return parent;
+            }
+        }
+
         function OnApplyThemeReadyStateChange()
         {
             var ready = themeReqHandler.readyState;
@@ -357,11 +368,7 @@
                 DisableControls(['layerSelect', 'propertySelect'], false);
                 document.getElementById("busyImg").src = NOT_BUSY_IMAGE;
                 themeReqHandler = null;
-
-                var fWin = GetFusionWindow().Fusion;
-                var map = fWin.getWidgetById('Map');
-                map.reloadMap();
-
+                GetMap().Refresh();
             }
         }
 
@@ -414,7 +421,7 @@
 <?php if ($errorMsg == null) { ?>
 
 <table class="RegText" border="0" cellspacing="0" width="100%">
-    <tr><td colspan="2" class="Title"><img id="busyImg" src="../../common/images/loader_pulse.gif" style="vertical-align:bottom">&nbsp;<?php echo $titleLocal ?><hr></td></tr>
+    <tr><td colspan="2" class="Title"><img id="busyImg" src="../assets/loader_pulse.gif" style="vertical-align:bottom">&nbsp;<?php echo $titleLocal ?><hr></td></tr>
     <tr><td colspan="2" class="SubTitle"><?php echo $selectLayerLocal ?></td></tr>
     <tr><td colspan="2"><?php echo $layerLocal ?></td></tr>
     <tr>

@@ -475,6 +475,9 @@ class Theme
     private function GetFeaturePropertyValue($featureReader, $name)
     {
         $value = '';
+        if ($featureReader->IsNull($name))
+            return $value;
+
         $propertyType = $featureReader->GetPropertyType($name);
         switch($propertyType)
         {

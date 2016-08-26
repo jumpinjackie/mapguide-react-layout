@@ -263,11 +263,27 @@ export function initDefaultCommands() {
             });
         }
     });
+    //Select Within
+    registerCommand("SelectWithin", {
+        icon: "select-features.png",
+        selected: () => false,
+        enabled: CommandConditions.hasSelection,
+        invoke: (dispatch, getState, viewer) => {
+            const { map, config } = getState();
+            let url = ensureParameters("/mapguide/react/viewer/server/SelectWithin/SelectWithinPanel.php", map.state.Name, map.state.SessionId, config.locale);
+            url += "&POPUP=false";
+            dispatch({
+                type: Constants.CMD_INVOKE_URL,
+                payload: {
+                    url: url
+                }
+            });
+        }
+    });
 
-    //registerCommand("Buffer", { icon: "buffer.png", url: "/mapguide/react/viewer/server/Buffer/BufferPanel.php" });
     registerCommand("FeatureInfo", { icon: "feature-info.png", url: "/mapguide/react/viewer/server/FeatureInfo/featureinfomain.php" });
     registerCommand("Query", { icon: "query.png", url: "/mapguide/react/viewer/server/Query/querymain.php" });
     registerCommand("Redline", { icon: "redline.png", url: "/mapguide/react/viewer/server/Redline/markupmain.php" });
-    registerCommand("SelectWithin", { icon: "select-features.png", url: "/mapguide/react/viewer/server/SelectWithin/SelectWithinPanel.php" });
+    
     registerCommand("Theme", { icon: "theme.png", url: "/mapguide/react/viewer/server/Theme/thememain.php" });
 }

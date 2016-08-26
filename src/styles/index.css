@@ -12,6 +12,7 @@
 
 .flyout.flyout--dropdown .flyout__wrapper > ul > li {
     padding: 0;
+    border-bottom: none;
 }
 
 .noselect {

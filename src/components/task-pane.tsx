@@ -14,32 +14,18 @@ export interface ITaskPaneProps {
     backAction: IItem;
     forwardAction: IItem;
     onUrlLoaded: (url: string) => void;
+    lastUrlPushed?: boolean;
 }
-/*
-function buildTaskButtons(pane: TaskPane): IItem[] {
-    return [
-        {
-            icon: "icon_home.gif",
-            tooltip: "Go Home",
-            enabled: () => pane.canGoHome(),
-            invoke: () => pane.goHome()
-        },
-        { isSeparator: true },
-        {
-            icon: "back.png",
-            tooltip: "Go back",
-            enabled: () => pane.canGoBack(),
-            invoke: () => pane.goBack()
-        },
-        {
-            icon: "forward.png",
-            tooltip: "Go forward",
-            enabled: () => pane.canGoForward(),
-            invoke: () => pane.goForward()
-        }
-    ];
-}
-*/
+
+// HACK:
+//
+// Having the lastUrlPushed props sounds extremely hacky, but we need a way to signal that
+// the url its about to receive was pushed and should not be reloaded into the internal iframe
+//
+// This is because we want internal url transitions (eg. Clicking a link, submitting a form) to 
+// be recorded in the navigation stack so we can properly go back/forward just like a web browser.
+// But we don't want these recorded URLs to accidentally trigger a re-load of the same url.
+
 // FIXME:
 //
 // While the current iframe works the way we want and we have a nice navigation
@@ -55,26 +41,17 @@ function buildTaskButtons(pane: TaskPane): IItem[] {
 
 export class TaskPane extends React.Component<ITaskPaneProps, any> {
     _iframe: HTMLIFrameElement;
-    //_pushLoadedUrl: boolean;
     fnFrameMounted: (iframe) => void;
     fnFrameLoaded: (e) => void;
     taskButtons: IItem[];
     constructor(props: ITaskPaneProps) {
         super(props);
-        /*
-        this.state = {
-            navIndex: -1,
-            navigation: []
-        };
-        */
         this.taskButtons = [
             props.homeAction,
             { isSeparator: true },
             props.backAction,
             props.forwardAction
         ];
-        //this.taskButtons = buildTaskButtons(this);
-        //this._pushLoadedUrl = true;
         this.fnFrameLoaded = this.onFrameLoaded.bind(this);
         this.fnFrameMounted = this.onFrameMounted.bind(this);
     }
@@ -85,90 +62,13 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         const frame = e.currentTarget;
         if (frame.contentWindow) {
             this.props.onUrlLoaded(frame.contentWindow.location.href);
-            /*
-            if (this._pushLoadedUrl === true) {
-                this.props.onUrlLoaded(frame.contentWindow.location.href);
-            } else { //Reset
-                this._pushLoadedUrl = true;
-            }
-            */
         }
     }
-    /*
-    private pushUrl(url: string) {
-        let index = this.state.navIndex;
-        const nav: string[] = this.state.navigation;
-        index++;
-        nav[index] = url;
-        //If we slotted at a position that is not the end of the array
-        //remove everything after it
-        if (nav.length > index + 1) {
-            nav.splice(index + 1);
-        }
-        this.setState({ navigation: nav, navIndex: index });
-    }
-    loadUrl(url: string) {
-        if (this._iframe) {
-            this._iframe.src = this.ensureParameters(url);
-            //this._iframe.contentWindow.location.replace(url);
-        }
-    }
-    goHome() {
-        if (this.props.initialUrl && this.canGoHome()) {
-            this.loadUrl(this.props.initialUrl);
-        }
-    }
-    goForward() {
-        let index = this.state.navIndex;
-        const nav = this.state.navigation;
-        index++;
-        this.setState({ navigation: nav, navIndex: index }, () => {
-            const url = nav[index];
-            this._pushLoadedUrl = false;
-            this.loadUrl(url);
-        });
-    }
-    goBack() {
-        let index = this.state.navIndex;
-        const nav = this.state.navigation;
-        index--;
-        this.setState({ navigation: nav, navIndex: index }, () => {
-            const url = nav[index];
-            this._pushLoadedUrl = false;
-            this.loadUrl(url);
-        });
-    }
-    onBack(e) {
-        this.goBack();
-    }
-    onForward(e) {
-        this.goForward();
-    }
-    canGoHome() {
-        return this.props.initialUrl != null //An initial URL was set
-            && this.state.navigation.length > 0 //We have a navigation stack
-            && this.state.navigation[this.state.navIndex] != this.ensureParameters(this.props.initialUrl); //The current URL is not initial
-    }
-    canGoBack() {
-        const { navIndex } = this.state;
-        return navIndex > 0;
-    }
-    canGoForward() {
-        const { navigation, navIndex } = this.state;
-        return navIndex < navigation.length - 1;
-    }
-    componentWillReceiveProps(nextProps: ITaskPaneProps) {
-        
-    }
-    componentDidMount() {
-        if (this.props.initialUrl) {
-            this.loadUrl(this.props.initialUrl);
-        }
-    }
-    */
     componentWillReceiveProps(nextProps: ITaskPaneProps) {
         if (this.props.currentUrl != nextProps.currentUrl) {
-            this.loadUrl(nextProps.currentUrl);
+            if (nextProps.lastUrlPushed === false) {
+                this.loadUrl(nextProps.currentUrl);
+            }
         }
     }
     componentDidMount() {
@@ -182,13 +82,11 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         }
     }
     render(): JSX.Element {
-        //const { navigation, navIndex } = this.state;
         const taskMenu: IMenu = {
             label: "Tasks",
             flyoutAlign: "bottom left",
             childItems: this.props.taskMenuItems
         };
-        //const currentUrl = this.ensureParameters(navIndex >= 0 ? navigation[navIndex] : this.props.initialUrl);
         return <div style={{ width: "100%", height: "100%", fontFamily: "Verdana, Sans-serif", fontSize: "10pt" }}>
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: DEFAULT_TOOLBAR_HEIGHT, backgroundColor: TOOLBAR_BACKGROUND_COLOR }}>
                 <Toolbar childItems={this.taskButtons} containerStyle={{ position: "absolute", top: 0, left: 0, height: DEFAULT_TOOLBAR_HEIGHT }} />

@@ -5,7 +5,10 @@ import { areUrlsSame } from "../utils/url";
 const INITIAL_STATE = {
     navIndex: -1,
     navigation: [],
-    initialUrl: null
+    initialUrl: null,
+    //Having this state sounds extremely hacky, but we need a way to signal to the "dumb" task pane that
+    //the url its about to receive was pushed and should not be reloaded into the internal iframe
+    lastUrlPushed: false  
 };
 
 function mergeNavigatedUrl(state: any, url: string): any {
@@ -20,7 +23,8 @@ function mergeNavigatedUrl(state: any, url: string): any {
     }
     return assign({}, state, {
         navIndex: index,
-        navigation: nav
+        navigation: nav,
+        lastUrlPushed: false
     });
 }
 
@@ -45,7 +49,8 @@ export function taskPaneReducer(state = INITIAL_STATE, action = { type: '', payl
                 index--;
                 return assign({}, state, {
                     navIndex: index,
-                    navigation: nav
+                    navigation: nav,
+                    lastUrlPushed: false
                 });
             }
         case Constants.TASK_PANE_FORWARD:
@@ -55,7 +60,8 @@ export function taskPaneReducer(state = INITIAL_STATE, action = { type: '', payl
                 index++;
                 return assign({}, state, {
                     navIndex: index,
-                    navigation: nav
+                    navigation: nav,
+                    lastUrlPushed: false
                 });
             }
         case Constants.TASK_PANE_PUSH_URL:
@@ -78,7 +84,8 @@ export function taskPaneReducer(state = INITIAL_STATE, action = { type: '', payl
                 } else {
                     return assign({}, state, {
                         navIndex: index + 1,
-                        navigation: nav
+                        navigation: nav,
+                        lastUrlPushed: true
                     });
                 }
             }

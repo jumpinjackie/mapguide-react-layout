@@ -122,6 +122,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
             }
             if (taskpane.navigation[taskpane.navIndex]) {
                 return <TaskPane currentUrl={taskpane.navigation[taskpane.navIndex]}
+                                 lastUrlPushed={taskpane.lastUrlPushed}
                                  homeAction={this.homeAction}
                                  backAction={this.backAction}
                                  forwardAction={this.forwardAction}

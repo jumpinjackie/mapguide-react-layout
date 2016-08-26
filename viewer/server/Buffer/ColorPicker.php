@@ -24,7 +24,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-    $fusionMGpath = '../../layers/MapGuide/php/';
+    $fusionMGpath = '../Common/';
     include $fusionMGpath . 'Common.php';
     if(InitializationErrorOccurred())
     {

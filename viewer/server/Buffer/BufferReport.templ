@@ -29,10 +29,10 @@ var mapName = '%s';
 
 function InitDocument()
 {
-    var map = GetParent().Fusion.getMapByName(mapName);
-    map.reloadMap();
+    var map = GetParent().GetMapFrame();
+    map.Refresh();
     if (!warnings) {
-      Back();
+        Back();
     }
 }
 
@@ -42,21 +42,17 @@ function Back()
         history.back();
     } else {
         var TaskPaneId=this.frameElement.taskPaneId;
-        GetParent().Fusion.getWidgetById(TaskPaneId).goHome();
+        GetParent().GotoHomePage();
     }
 }
 
 function GetParent()
 {
-	if(popup)
-		return opener;
-	else
-	{
-		var node = parent;
-		while (!node.Fusion && node.parent)
-			node = node.parent;
-		return node;
-	}
+    if (popup) {
+        return opener;
+    } else {
+        return parent;
+    }
 }
 
 </script>

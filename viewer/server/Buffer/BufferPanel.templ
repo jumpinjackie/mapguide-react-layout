@@ -45,7 +45,7 @@
     }
 </style>
 
-<script language=javascript>
+<script type="text/javascript">
 
 var popup = %s;
 var lcolor = "000000";
@@ -73,17 +73,17 @@ function FillLayerList()
     var listNames = document.getElementById("layerNames");
     mapName = document.getElementById('Frm').mapname.value;
     list.options.length = 0;
-    var map = GetParent().Fusion.getMapByName(mapName);
-    var layers = map.getSelectedLayers();  
-    if(layers.length > 0) {
-      for(var i = 0; i < layers.length; i++) {
-        var layer = layers[i];
-        list.options[i] = new Option(layer.legendLabel != ""? layer.legendLabel: layer.layerName);
-        if (i == 0) list.options[0].selected = true;
-        listNames.options[i] = new Option(layer.layerName);
-      }
+    var map = GetParent().GetMapFrame();
+    var layers = map.GetSelectedLayers();  
+    if (layers.length > 0) {
+        for (var i = 0; i < layers.length; i++) {
+            var layer = layers[i];
+            list.options[i] = new Option(layer.legend != ""? layer.legend: layer.name);
+            if (i == 0) list.options[0].selected = true;
+            listNames.options[i] = new Option(layer.name);
+        }
     } else {
-      list.options[0] = new Option("__#BUFFERNOLAYER#__");
+        list.options[0] = new Option("__#BUFFERNOLAYER#__");
     }
     document.getElementById("Done").disabled = layers.length == 0;
 }
@@ -173,15 +173,11 @@ function GetInputLayers()
 
 function GetParent()
 {
-	if(popup)
-		return opener;
-	else
-	{
-		var node = parent;
-		while (!node.Fusion && node.parent && node != node.parent)
-			node = node.parent;
-		return node;
-	}
+    if (popup) {
+        return opener;
+    } else {
+        return parent;
+    }
 }
 
 function PickColor(what, allowTransparency, transparent)
@@ -193,7 +189,7 @@ function PickColor(what, allowTransparency, transparent)
         clr = ffcolor;
     else if(pickClr == 2)
         clr = fbcolor;
-   else
+    else
         return;
     height = allowTransparency? 470: 445;
     w = window.open("%s?LOCALE=%s&CLR=" + clr + "&ALLOWTRANS=" + (allowTransparency? "1":"0") + "&TRANS=" + (transparent?"1":"0"), "colorPicker", "toolbar=no,status=no,width=355,height=" + height);
@@ -238,26 +234,26 @@ function OnCancel()
         <tr><td class="Title">__#BUFFERTITLE#__<hr></td></tr>
         <tr><td class="SubTitle">__#BUFFERSUBTITLE#__</td></tr>
         <tr><td height="6">
-          <table border="0" cellspacing="0" cellpadding="3" width="100%%">
+        <table border="0" cellspacing="0" cellpadding="3" width="100%%">
             <tr><td height="6"></td></tr>
             <tr><td class="InfoText">__#BUFFERINFOTEXT#__</td></tr>
-          </table>
+        </table>
         </td></tr>
         <tr><td height="6"></td></tr>
         <tr><td >__#BUFFERDISTANCE#__</td></tr>
         <tr><td><input type="edit" name="DISTANCE" id="distance" value="1" size="5" class="Ctrl">
-          <select name="UNITS" class="Ctrl">
+        <select name="UNITS" class="Ctrl">
             <option value="mi" %s>__#DISTANCEMILES#__</option>
             <option value="ki" %s>__#DISTANCEKILOMETERS#__</option>
             <option value="fe">__#DISTANCEFEET#__</option>
             <option value="me">__#DISTANCEMETERS#__</option>
-          </select>
+        </select>
         </td></tr>
         <tr><td height="6"></td></tr>
         <tr><td>__#BUFFERLAYERS#__</td></tr>
         <tr><td valign="top">
-          <select size="4" name="D1" multiple id="layers" class="Ctrl">
-          </select>
+        <select size="4" name="D1" multiple id="layers" class="Ctrl">
+        </select>
         </td></tr>
         <tr><td><input type="button" value="__#BUTTONREFRESH#__" style="width: 70px;" class="Ctrl" onclick="RefreshLayers()"></td></tr>
         <tr><td height="6"></td></tr>
@@ -267,85 +263,85 @@ function OnCancel()
         <tr><td height="6"></td></tr>
 
         <tr><td>
-          <table cellspacing=0 cellpadding=0 border=0 width="100%%" class="RegText">
+        <table cellspacing=0 cellpadding=0 border=0 width="100%%" class="RegText">
             <tr><td valign=top>
             <table cellspacing=0 cellpadding=0 border=0 width="100%%" class="RegText">
-              <tr><td class="SubTitle">__#BUFFERFILLSTYLE#__</td></tr>
-              <tr><td height="6"></td></tr>
-              <tr><td>__#BUFFERFILLPATTERN#__</td></tr>
-              <tr><td>
+            <tr><td class="SubTitle">__#BUFFERFILLSTYLE#__</td></tr>
+            <tr><td height="6"></td></tr>
+            <tr><td>__#BUFFERFILLPATTERN#__</td></tr>
+            <tr><td>
                 <select name="FILLSTYLE" class="Ctrl" style="width: 85px;">
-                  <option value="Solid" selected>__#FILLSOLID#__</option>
-                  <option value="Net">__#FILLNET#__</option>
-                  <option value="Line">__#FILLLINE#__</option>
-                  <option value="Line_45">__#FILLLINE45#__</option>
-                  <option value="Line_90">__#FILLLINE90#__</option>
-                  <option value="Line_135">__#FILLLINE135#__</option>
-                  <option value="Square">__#FILLSQUARE#__</option>
-                  <option value="Box">__#FILLBOX#__</option>
-                  <option value="Cross">__#FILLCROSS#__</option>
-                  <option value="Dash">__#FILLDASH#__</option>
-                  <option value="Dolmit">__#FILLDOLMIT#__</option>
-                  <option value="Hex">__#FILLHEX#__</option>
-                  <option value="Sacncr">__#FILLSACNCR#__</option>
-                  <option value="Steel">__#FILLSTEEL#__</option>
+                <option value="Solid" selected>__#FILLSOLID#__</option>
+                <option value="Net">__#FILLNET#__</option>
+                <option value="Line">__#FILLLINE#__</option>
+                <option value="Line_45">__#FILLLINE45#__</option>
+                <option value="Line_90">__#FILLLINE90#__</option>
+                <option value="Line_135">__#FILLLINE135#__</option>
+                <option value="Square">__#FILLSQUARE#__</option>
+                <option value="Box">__#FILLBOX#__</option>
+                <option value="Cross">__#FILLCROSS#__</option>
+                <option value="Dash">__#FILLDASH#__</option>
+                <option value="Dolmit">__#FILLDOLMIT#__</option>
+                <option value="Hex">__#FILLHEX#__</option>
+                <option value="Sacncr">__#FILLSACNCR#__</option>
+                <option value="Steel">__#FILLSTEEL#__</option>
                 </select>
-              </td></tr>
-              <tr><td height="6"></td></tr>
-              <tr><td>__#BUFFERFOREGROUNDCOLOR#__</td></tr>
-              <tr><td><span class="BufferSwatch" id="ffcolorswtach" style="color: #ff0000; background-color: #ff0000">__#TRANSPARENT#__</span>&nbsp;&nbsp;
+            </td></tr>
+            <tr><td height="6"></td></tr>
+            <tr><td>__#BUFFERFOREGROUNDCOLOR#__</td></tr>
+            <tr><td><span class="BufferSwatch" id="ffcolorswtach" style="color: #ff0000; background-color: #ff0000">__#TRANSPARENT#__</span>&nbsp;&nbsp;
                 <input type="button" value="..." style="width: 22px;" onclick="PickColor(1,false,false)" class="Ctrl"></td></tr>
-              <tr><td height="6"></td></tr>
-              <tr><td>__#BUFFERTRANSPARENCY#__</td></tr>
-              <tr><td><input type="text" name="FORETRANS" size="4" value="50" class="Ctrl"> %%</td></tr>
-              <tr><td height="6"></td></tr>
-              <tr><td>__#BUFFERBACKGROUNDCOLOR#__</td></tr>
-              <tr><td><span class="BufferSwatch" id="fbcolorswtach" >&nbsp;__#TRANSPARENT#__&nbsp;</span>&nbsp;&nbsp;
+            <tr><td height="6"></td></tr>
+            <tr><td>__#BUFFERTRANSPARENCY#__</td></tr>
+            <tr><td><input type="text" name="FORETRANS" size="4" value="50" class="Ctrl"> %%</td></tr>
+            <tr><td height="6"></td></tr>
+            <tr><td>__#BUFFERBACKGROUNDCOLOR#__</td></tr>
+            <tr><td><span class="BufferSwatch" id="fbcolorswtach" >&nbsp;__#TRANSPARENT#__&nbsp;</span>&nbsp;&nbsp;
                 <input type="button" value="..." style="width: 22px;" onclick="PickColor(2,true,transparent)" class="Ctrl"></td></tr>
-              <tr><td height="6"></td></tr>
+            <tr><td height="6"></td></tr>
             </table>
-          </td><td width=1></td><td valign=top>
+        </td><td width=1></td><td valign=top>
             <table cellspacing=0 cellpadding=0 border=0 width="100%%" class="RegText">
-              <tr><td class="SubTitle">__#BUFFERBORDERSTYLE#__</td></tr>
-              <tr><td height="6"></td></tr>
-              <tr><td>__#BUFFERBORDERLINEPATTERN#__</td></tr>
-              <tr><td>
+            <tr><td class="SubTitle">__#BUFFERBORDERSTYLE#__</td></tr>
+            <tr><td height="6"></td></tr>
+            <tr><td>__#BUFFERBORDERLINEPATTERN#__</td></tr>
+            <tr><td>
                 <select name="LINESTYLE" class="Ctrl">
-                  <option value="Solid" selected>__#LINESOLID#__</option>
-                  <option value="Dash">__#LINEDASH#__</option>
-                  <option value="Dot">__#LINEDOT#__</option>
-                  <option value="DashDot">__#LINEDASHDOT#__</option>
-                  <option value="DashDotDot">__#LINEDASHDOTDOT#__</option>
-                  <option value="Rail">__#LINERAIL#__</option>
-                  <option value="BORDER">__#LINEBORDER#__</option>
-                  <option value="DIVIDE">__#LINEDIVIDE#__</option>
-                  <option value="FENCELINE1">__#LINEFENCELINE#__</option>
+                <option value="Solid" selected>__#LINESOLID#__</option>
+                <option value="Dash">__#LINEDASH#__</option>
+                <option value="Dot">__#LINEDOT#__</option>
+                <option value="DashDot">__#LINEDASHDOT#__</option>
+                <option value="DashDotDot">__#LINEDASHDOTDOT#__</option>
+                <option value="Rail">__#LINERAIL#__</option>
+                <option value="BORDER">__#LINEBORDER#__</option>
+                <option value="DIVIDE">__#LINEDIVIDE#__</option>
+                <option value="FENCELINE1">__#LINEFENCELINE#__</option>
                 </select>
-              </td></tr>
-              <tr><td height="6"></td></tr>
-              <tr><td>__#BUFFERBORDERLINECOLOR#__</td></tr>
-              <tr><td><span class="BufferSwatch" id="lcolorswtach" style="color: #000000; background-color: #000000">__#TRANSPARENT#__</span>&nbsp;&nbsp;
+            </td></tr>
+            <tr><td height="6"></td></tr>
+            <tr><td>__#BUFFERBORDERLINECOLOR#__</td></tr>
+            <tr><td><span class="BufferSwatch" id="lcolorswtach" style="color: #000000; background-color: #000000">__#TRANSPARENT#__</span>&nbsp;&nbsp;
                 <input type="button" value="..." style="width: 22px;" onclick="PickColor(0, false,false)" class="Ctrl"></td></tr>
-              <tr><td height="6"></td></tr>
-              <tr><td>__#BUFFERBORDERLINETHICKNESS#__</td></tr>
-              <tr><td><input type="edit" name="THICKNESS" id="thickness" value="1" size="10" class="Ctrl"></td></tr>
-              <tr><td> </td></tr>
+            <tr><td height="6"></td></tr>
+            <tr><td>__#BUFFERBORDERLINETHICKNESS#__</td></tr>
+            <tr><td><input type="edit" name="THICKNESS" id="thickness" value="1" size="10" class="Ctrl"></td></tr>
+            <tr><td> </td></tr>
             </table>
-          </td></tr>
-          </table>
+        </td></tr>
+        </table>
         </td></tr>
 
         <tr><td height="6"><hr></td></tr>
         <tr><td><input id="Done" type="submit" value="__#BUTTONDONE#__" style="width: 70px;" class="Ctrl">&nbsp;<input id="Cancel" type="button" value="__#BUTTONCANCEL#__" style="width: 70px;" class="Ctrl" onclick="OnCancel()"></td></tr>
         <tr><td height="6"></td></tr>
-      </table>
-      <table border="0" cellspacing="0" cellpadding="5" width="100%%" class="Regext">
+    </table>
+    <table border="0" cellspacing="0" cellpadding="5" width="100%%" class="Regext">
         <tr><td class="InfoText">
-          <div style="position: relative; left: -25px;">
+        <div style="position: relative; left: -25px;">
             <ul>
-              __#BUFFERHELP#__
+            __#BUFFERHELP#__
             </ul>
-          </div>
+        </div>
         </td></tr>
     </table>
 

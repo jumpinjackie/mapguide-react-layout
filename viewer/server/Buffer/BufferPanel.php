@@ -24,7 +24,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-    $fusionMGpath = '../../layers/MapGuide/php/';
+    $fusionMGpath = '../Common/';
     include $fusionMGpath . 'Common.php';
     if(InitializationErrorOccurred())
     {
@@ -59,11 +59,11 @@ function GetParameters($params)
 {
     global $target, $cmdIndex, $clientWidth, $mapName, $sessionId, $popup, $us, $locale;
 
-    $locale = $params['locale'];
-    $mapName = $params['mapname'];
-    $sessionId = $params['session'];
-    $popup = $params['popup'];
-    $us = $params['us'];
+    $locale = $params['LOCALE'];
+    $mapName = $params['MAPNAME'];
+    $sessionId = $params['SESSION'];
+    $popup = $params['POPUP'];
+    $us = $params['US'];
 }
 
 function GetRequestParameters()

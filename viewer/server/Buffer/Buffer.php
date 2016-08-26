@@ -24,7 +24,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-    $fusionMGpath = '../../layers/MapGuide/php/';
+    $fusionMGpath = '../Common/';
 
     include $fusionMGpath . 'Common.php';
     if(InitializationErrorOccurred())
@@ -32,7 +32,7 @@
         DisplayInitializationErrorHTML();
         exit;
     }
-
+    
     $locale = GetDefaultLocale();
     $mapName = "";
     $sessionId = "";
@@ -346,7 +346,7 @@
         }
 
         // return the report page
-        $templ = file_get_contents("./BufferReport.templ");
+        $templ = file_get_contents("BufferReport.templ");
         $templ = Localize($templ, $locale, GetClientOS());
         print sprintf($templ, $popup, $warnings, $mapName, $title, $msg);
     }

@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { SelectionPanel } from "../components/selection-panel";
 import { QueryMapFeaturesResponse } from "../api/contracts/query";
 import * as MapActions from "../actions/map";
+import { getViewer } from "../api/runtime";
 
 interface ISelectionPanelContainerProps {
 
@@ -39,7 +40,8 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
     }
     private onZoomToSelectedFeature(feature: any) {
         const bbox: any = feature.Bounds.split(" ").map(s => parseFloat(s));
-        this.props.setCurrentView(bbox);
+        const view = getViewer().getViewForExtent(bbox);
+        this.props.setCurrentView(view);
     }
     render(): JSX.Element {
         const { selection } = this.props;

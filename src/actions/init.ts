@@ -1,7 +1,7 @@
 import * as Constants from "../constants";
 import { Client } from "../api/client";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
-import { registerCommand } from "../api/registry/command";
+import { registerCommand, DefaultCommands } from "../api/registry/command";
 import { ensureParameters } from "../actions/taskpane";
 import {
     WebLayout,
@@ -146,7 +146,11 @@ function convertUIItems(items: UIItem[], cmdsByKey: any, noToolbarLabels = true,
                 logger.warn(`Invalid reference to command: ${item.Command}`);
             } else {
                 if (isBasicCommand(cmdDef)) {
-                    return { command: cmdDef.Action, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
+                    let action: string = cmdDef.Action;
+                    if (action == "FitToWindow") {
+                        action = DefaultCommands.ZoomExtents
+                    }
+                    return { command: action, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
                 } else {
                     return { command: cmdDef.Name, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
                 }

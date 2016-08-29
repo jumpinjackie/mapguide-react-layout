@@ -190,7 +190,4 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     setFeatureTooltipEnabled(enabled: boolean): void {
         this.setState({ featureTooltipsEnabled: enabled });
     }
-    getView(): IMapView|Bounds {
-        return this.props.view.current;
-    }
 }

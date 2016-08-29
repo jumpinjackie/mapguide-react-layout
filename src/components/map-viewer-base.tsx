@@ -97,7 +97,6 @@ export type Bounds = [number, number, number, number];
 export interface IMapViewer {
     getViewForExtent(extent: Bounds): IMapView;
     getCurrentExtent(): Bounds;
-    getView(): IMapView|Bounds;
     getCurrentView(): IMapView;
     zoomToView(x: number, y: number, scale: number): void;
     setSelectionXml(xml: string): void;

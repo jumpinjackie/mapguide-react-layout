@@ -17,7 +17,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         return !response.ok || response.status === MG_MAPAGENT_ERROR_CODE;
     }
 
-    private get<T>(url: string): Promise<T> {
+    public get<T>(url: string): Promise<T> {
         return new Promise<T>((resolve, reject) => {
             fetch(url, {
                 headers: {
@@ -46,7 +46,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         }).join('&');
     };
 
-    private post<T>(url: string, data: any): Promise<T> {
+    public post<T>(url: string, data: any): Promise<T> {
         if (!data.format) {
             data.format = "application/json";
         }

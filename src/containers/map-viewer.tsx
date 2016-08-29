@@ -13,6 +13,7 @@ import {
 import * as Runtime from "../api/runtime";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import * as MapActions from "../actions/map";
+import { Client } from "../api/client";
 
 interface IMapViewerContainerProps {
     
@@ -88,6 +89,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     }
     componentDidMount() {
         Runtime.setViewer(this);
+        const browserWindow: any = window;
+        browserWindow.getViewer = browserWindow.getViewer || Runtime.getViewer;
+        browserWindow.getClient = browserWindow.getClient || (() => new Client(this.props.config.agentUri, this.props.config.agentKind));
     }
     render(): JSX.Element {
         const { map, config, viewer, view, legend } = this.props;

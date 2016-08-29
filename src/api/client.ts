@@ -33,6 +33,22 @@ export class Client implements Request.IMapGuideClient {
                 throw new MgError(`Unknown or unsupported client kind: ${kind}`);
         }
     }
+
+    public get<T>(url: string): Promise<T> {
+        const builder = this.builder;
+        if (builder instanceof MapAgentRequestBuilder) {
+            return builder.get<T>(url);
+        }
+        throw new MgError("Not supported");
+    }
+
+    public post<T>(url: string, data: any): Promise<T> {
+        const builder = this.builder;
+        if (builder instanceof MapAgentRequestBuilder) {
+            return builder.post<T>(url, data);
+        }
+        throw new MgError("Not supported");
+    }
     
     public getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier): Request.IPromise<T> {
         return this.builder.getResource<T>(resourceId);

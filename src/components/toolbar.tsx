@@ -135,9 +135,11 @@ class FlyoutMenuChildItem extends React.Component<any, any> {
     }
     private onClick(e) {
         const { item, onInvoked } = this.props;
-        item.invoke();
-        if (onInvoked != null) {
-            onInvoked();
+        if (getEnabled(item)) {
+            item.invoke();
+            if (onInvoked != null) {
+                onInvoked();
+            }
         }
     }
     private onMouseLeave(e) {

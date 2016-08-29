@@ -35,7 +35,7 @@ import { areNumbersEqual } from '../utils/number';
 import * as logger from '../utils/logger';
 import { MgError } from '../api/error';
 import { Client, ClientKind } from '../api/client';
-import { QueryMapFeaturesResponse } from '../api/contracts/query';
+import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 const assign = require("object-assign");
 
@@ -100,7 +100,7 @@ export interface IMapViewer {
     getCurrentExtent(): Bounds;
     getCurrentView(): IMapView;
     zoomToView(x: number, y: number, scale: number): void;
-    setSelectionXml(xml: string): void;
+    setSelectionXml(xml: string, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void;
     refreshMap(mode?: RefreshMode): void;
     getMetersPerUnit(): number;
     setActiveTool(tool: ActiveMapTool): void;
@@ -121,6 +121,8 @@ export interface IMapViewer {
     isFeatureTooltipEnabled(): boolean;
     setFeatureTooltipEnabled(enabled: boolean): void;
     getPointSelectionBox(point: Coordinate, ptBuffer: number): Bounds;
+    getSelection(): QueryMapFeaturesResponse;
+    getSelectionXml(selection: FeatureSet, layerIds?: string[]): string;
 }
 
 export enum ActiveMapTool {
@@ -461,6 +463,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }).then(res => {
             this.decrementBusyWorker();
         }).catch(err => {
+            this.decrementBusyWorker();
             if (failure != null)
                 failure(err);
         });
@@ -891,7 +894,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             view.setResolution(this.scaleToResolution(scale));
         }
     }
-    public setSelectionXml(xml: string): void {
+    public setSelectionXml(xml: string, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void {
         const reqQueryFeatures = 1 | 2; //Attributes and inline selection
         this.incrementBusyWorker();
         this._client.queryMapFeatures({
@@ -907,8 +910,14 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             this.refreshMap(RefreshMode.SelectionOnly);
             if (this.props.onSelectionChange != null)
                 this.props.onSelectionChange(res);
+            if (success != null)
+                success(res);
         }).then(res => {
             this.decrementBusyWorker();
+        }).catch(err => {
+            this.decrementBusyWorker();
+            if (failure != null)
+                failure(err);
         });
     }
     public refreshMap(mode: RefreshMode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly): void {

@@ -14,8 +14,9 @@ import * as Runtime from "../api/runtime";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import * as MapActions from "../actions/map";
 import { Client } from "../api/client";
-import { QueryMapFeaturesResponse } from '../api/contracts/query';
+import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
+import { buildSelectionXml } from '../api/builders/deArrayify';
 
 interface IMapViewerContainerProps {
     
@@ -24,6 +25,7 @@ interface IMapViewerContainerProps {
 interface IMapViewerContainerState {
     config?: any;
     map?: RuntimeMap;
+    selection?: any;
     view?: any;
     viewer?: any;
     legend?: any;
@@ -42,7 +44,8 @@ function mapStateToProps(state): IMapViewerContainerState {
         view: state.view,
         map: state.map.state,
         viewer: state.map.viewer,
-        legend: state.legend
+        legend: state.legend,
+        selection: state.selection.selectionSet
     };
 }
 
@@ -135,8 +138,8 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     zoomToView(x: number, y: number, scale: number): void {
         this.inner.zoomToView(x, y, scale);
     }
-    setSelectionXml(xml: string): void {
-        this.inner.setSelectionXml(xml);
+    setSelectionXml(xml: string, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void {
+        this.inner.setSelectionXml(xml, success, failure);
     }
     refreshMap(mode?: RefreshMode): void {
         this.inner.refreshMap(mode);
@@ -197,5 +200,11 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     }
     getPointSelectionBox(point: Coordinate, ptBuffer: number): Bounds {
         return this.inner.getPointSelectionBox(point, ptBuffer);
+    }
+    getSelection(): QueryMapFeaturesResponse {
+        return this.props.selection;
+    }
+    getSelectionXml(selection: FeatureSet, layerIds?: string[]): string {
+        return buildSelectionXml(this.props.selection.FeatureSet, layerIds);
     }
 }

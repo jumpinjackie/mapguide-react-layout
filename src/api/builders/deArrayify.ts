@@ -323,11 +323,15 @@ export function deArrayify(json: any): any {
     throw new MgError(`Unsure how to process JSON response. Root elements are: (${keys.join(", ")})`);
 }
 
-export function buildSelectionXml(selection: Contracts.Query.FeatureSet): string {
+export function buildSelectionXml(selection: Contracts.Query.FeatureSet, layerIds?: string[]): string {
     let xml = '<?xml version="1.0" encoding="utf-8"?>';
     xml += '<FeatureSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FeatureSet-1.0.0.xsd">';
     for (const layer of selection.Layer) {
-        xml += `<Layer id="${layer["@id"]}">`;
+        const layerId = layer["@id"];
+        if (layerIds != null && layerIds.indexOf(layerId) < 0) {
+            continue;
+        }
+        xml += `<Layer id="${layerId}">`;
         const cls = layer.Class;
         xml += `<Class id="${cls["@id"]}">`;
         for (const id of cls.ID) {

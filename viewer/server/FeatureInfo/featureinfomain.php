@@ -58,9 +58,9 @@
     $noFeatureInLocal = GetLocalizedString('FEATUREINFONOFEATUREIN', $locale );
     $featureInfoExtraHelpLocal = GetLocalizedString('FEATUREINFOEXTRAHELP', $locale );
 
-    $drawPointLocal = GetLocalizedString("REDLINEEDITPOINTHELP", $locale );
-    $drawRectLocal = GetLocalizedString("REDLINEEDITRECTANGLEHELP", $locale );
-    $drawPolyLocal = GetLocalizedString("REDLINEEDITPOLYGONHELP", $locale );
+    //$drawPointLocal = GetLocalizedString("REDLINEEDITPOINTHELP", $locale );
+    //$drawRectLocal = GetLocalizedString("REDLINEEDITRECTANGLEHELP", $locale );
+    //$drawPolyLocal = GetLocalizedString("REDLINEEDITPOLYGONHELP", $locale );
     
     $refreshLocal = GetLocalizedString("FEATUREINFOREFRESH", $locale);
     try
@@ -82,94 +82,62 @@
 <html>
 <head>
     <title><?php echo $titleLocal ?></title>
-    <link rel="stylesheet" href="../../common/mgsamples.css" type="text/css">
-    <script language="javascript" src="../../common/browserdetect.js"></script>
-    <script language="javascript" src="../../common/json.js"></script>
-    <script language="javascript" src="../../'../Common/'/MapGuideViewerApi.js"></script>
+    <link rel="stylesheet" href="../assets/mgsamples.css" type="text/css">
+    <script type="text/javascript" src="../assets/browserdetect.js"></script>
+    <script type="text/javascript">
 
-    <script language="javascript">
-
+        var popup = false;
         var READY_STATE_UNINITIALIZED   = 0;
         var READY_STATE_LOADING         = 1;
         var READY_STATE_LOADED          = 2;
         var READY_STATE_INTERACTIVE     = 3;
         var READY_STATE_COMPLETE        = 4;
 
-        var NOT_BUSY_IMAGE = "../../common/images/loader_inactive.gif";
-        var BUSY_IMAGE = "../../common/images/loader_pulse.gif";
+        var NOT_BUSY_IMAGE = "../assets/loader_inactive.gif";
+        var BUSY_IMAGE = "../assets/loader_pulse.gif";
 
         var session = '<?= $args['SESSION'] ?>';
         var mapName = '<?= $args['MAPNAME'] ?>';
-
-        var DRAW_POINT_HELP = '<?= $drawPointLocal ?>';
-        var DRAW_RECT_HELP = '<?= $drawRectLocal ?>';
-        var DRAW_POLY_HELP = '<?= $drawPolyLocal ?>';
 
         var properties = null;
         var results;
 
         var reqHandler;
 
-        function OnLayerChange() {
-            var map = GetFusionMapWidget();
-            map.clearSelection();
-            var layerSelect = document.getElementById('layerSelect');
-            var layer = map.layerRoot.findLayerByAttribute('layerName', layerSelect.value);
-            map.setActiveLayer(layer);
-        }
-
-        function ActiveLayerChange(evt, layer) {
-            var layerSelect = document.getElementById('layerSelect');
-            for (var i=0; i<layerSelect.options.length; i++) {
-                if (layerSelect.options[i].value == layer.layerName) {
-                    layerSelect.options[i].selected = true;
-                }
-            }
-            var map = GetFusionMapWidget();
-            map.clearSelection();
-        }
-
-        function SetMessage(msg) {
-            var map = GetFusionMapWidget();
-            if (msg == DRAW_POINT_HELP || msg == DRAW_RECT_HELP || DRAW_POLY_HELP) {
-                map.message.info(msg + " <a id='measureMsgDismiss' href='javascript:void(0)'>" + OpenLayers.i18n("stop") + "</a>");
-                var link = map.message.container.ownerDocument.getElementById("measureMsgDismiss");
-                //Wire the anchor click
-                link.onclick = function() {
-                    ClearMessage();
-                    ClearDigitization(true);
-                };
+        function GetParent()
+        {
+            if (popup) {
+                return opener;
             } else {
-                map.message.info(msg);
+                return parent;
             }
         }
 
-        function ClearMessage() {
-            var map = GetFusionMapWidget();
-            map.message.clear();
+        function OnLayerChange() {
+            var map = GetParent().GetMapFrame();
+            map.ClearSelection();
         }
 
         function OnDigitizePoint() {
-            SetMessage(DRAW_POINT_HELP);
-            DigitizePoint(OnPointDigitized);
+            var map = GetParent().GetMapFrame();
+            map.DigitizePoint(OnPointDigitized);
         }
 
         function OnPointDigitized(point) {
-            ClearMessage();
-            var tolerance = GetFusionMapWidget().pixToGeoMeasure(3);
-            var min = {x:point.X-tolerance,y:point.Y-tolerance};
-            var max = {x:point.X+tolerance,y:point.Y+tolerance};
+            var viewer = GetParent().getViewer();
+            var box = viewer.getPointSelectionBox([point.X, point.Y], 3);
+            var min = {x:box[0],y:box[1]};
+            var max = {x:box[2],y:box[3]};
             var geom = 'POLYGON(('+ min.x + ' ' +  min.y + ', ' +  max.x + ' ' +  min.y + ', ' + max.x + ' ' +  max.y + ', ' + min.x + ' ' +  max.y + ', ' + min.x + ' ' +  min.y + '))';
 
             SetSpatialFilter(geom);
         }
         function OnDigitizeRectangle() {
-            SetMessage(DRAW_RECT_HELP);
-            DigitizeRectangle(OnRectangleDigitized);
+            var map = GetParent().GetMapFrame();
+            map.DigitizeRectangle(OnRectangleDigitized);
         }
 
         function OnRectangleDigitized(rectangle) {
-            ClearMessage();
             var min = rectangle.Point1;
             var max = rectangle.Point2;
             var geom = 'POLYGON(('+ min.X + ' ' +  min.Y + ', ' +  max.X + ' ' +  min.Y + ', ' + max.X + ' ' +  max.Y + ', ' + min.X + ' ' +  max.Y + ', ' + min.X + ' ' +  min.Y + '))';
@@ -178,12 +146,11 @@
         }
 
         function OnDigitizePolygon() {
-            SetMessage(DRAW_POLY_HELP);
-            DigitizePolygon(OnPolyonDigitized);
+            var map = GetParent().GetMapFrame();
+            map.DigitizePolygon(OnPolyonDigitized);
         }
 
         function OnPolyonDigitized(polygon) {
-            ClearMessage();
             var points = [];
             for (var i = 0; i < polygon.Count; i++) {
                 points.push(polygon.Point(i).X+' '+polygon.Point(i).Y);
@@ -201,15 +168,16 @@
         }
 
         function SetSpatialFilter(geomText) {
-            ClearDigitization();
             var options = {};
-            options.selectionType = 'INTERSECTS';
-            options.maxFeatures = 0;
+            options.selectionvariant = 'INTERSECTS';
+            options.maxfeatures = -1;
             options.geometry = geomText;
+            options.requestdata = 1; //Attributes
             var layerSelect = document.getElementById("layerSelect");
-            options.layers = layerSelect.value;
+            options.layernames = layerSelect.value;
 
-            GetFusionMapWidget().query(options);
+            var viewer = GetParent().getViewer();
+            viewer.queryMapFeatures(options, SelectionOn);
         }
 
         function SelectionOn() {
@@ -244,7 +212,7 @@
 
             if (ready == READY_STATE_COMPLETE)
             {
-                var results = reqHandler.responseText.parseJSON();
+                var results = JSON.parse(reqHandler.responseText);
                 if (results) {
                     var layerSelect = document.getElementById('layerSelect');
 
@@ -291,23 +259,11 @@
         }
 
         function OnLoad() {
-            var map = GetFusionMapWidget();
-            map.registerForEvent(Fusion.Event.MAP_SELECTION_ON, SelectionOn);
-            map.registerForEvent(Fusion.Event.MAP_SELECTION_OFF, SelectionOff);
-            map.registerForEvent(Fusion.Event.MAP_ACTIVE_LAYER_CHANGED, ActiveLayerChange);
-            var layer = map.getActiveLayer();
-            if (layer) {
-                ActiveLayerChange(null, layer);
-            }
             OnLayerChange();
         }
 
         function OnUnload() {
-            ClearDigitization(true);
-            var map = GetFusionMapWidget();
-            map.deregisterForEvent(Fusion.Event.MAP_SELECTION_ON, SelectionOn);
-            map.deregisterForEvent(Fusion.Event.MAP_SELECTION_OFF, SelectionOff);
-            map.deregisterForEvent(Fusion.Event.MAP_ACTIVE_LAYER_CHANGED, ActiveLayerChange);
+
         }
 
     </script>
@@ -319,7 +275,7 @@
 <?php if ($errorMsg == null) { ?>
 
 <table class="RegText" border="0" cellspacing="0" width="100%">
-    <tr><td class="Title"><img id="busyImg" src="../../common/images/loader_inactive.gif" style="vertical-align:bottom">&nbsp;<?php echo $titleLocal ?><hr></td></tr>
+    <tr><td class="Title"><img id="busyImg" src="../assets/loader_inactive.gif" style="vertical-align:bottom">&nbsp;<?php echo $titleLocal ?><hr></td></tr>
     <tr><td class="SubTitle"><?php echo $subtitleLocal ?> <a href="<?= $_SERVER['REQUEST_URI'] ?>">(<?= $refreshLocal ?>)</a></td></tr>
     <tr><td><?php echo $layerLocal ?></td></tr>
     <tr>

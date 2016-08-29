@@ -35,6 +35,8 @@ import { areNumbersEqual } from '../utils/number';
 import * as logger from '../utils/logger';
 import { MgError } from '../api/error';
 import { Client, ClientKind } from '../api/client';
+import { IQueryMapFeaturesOptions } from '../api/request-builder';
+const assign = require("object-assign");
 
 export interface IExternalBaseLayer {
     name: string;
@@ -379,21 +381,33 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     public resolutionToScale(resolution: number): number {
         return resolution * this._dpi * this._inPerUnit;
     }
+    public getPointSelectionBox(point: Coordinate, ptBuffer: number): Bounds {
+        const ll = this._map.getCoordinateFromPixel([point[0] - ptBuffer, point[1] - ptBuffer]);
+        const ur = this._map.getCoordinateFromPixel([point[0] + ptBuffer, point[1] + ptBuffer]);
+        return [ll[0], ll[1], ur[0], ur[1]];
+    } 
     private onMapClick(e) {
         if (this.isDigitizing()) {
             return;
         }
         if (this.props.tool === ActiveMapTool.Select) {
             const ptBuffer = this.props.pointSelectionBuffer || 2;
-            const ll = this._map.getCoordinateFromPixel([e.pixel[0] - ptBuffer, e.pixel[1] - ptBuffer]);
-            const ur = this._map.getCoordinateFromPixel([e.pixel[0] + ptBuffer, e.pixel[1] + ptBuffer]);
-            const box: Bounds = [ll[0], ll[1], ur[0], ur[1]];
+            const box: Bounds = this.getPointSelectionBox(e.pixel, ptBuffer);
             const geom = ol.geom.Polygon.fromExtent(box);
             this.selectByGeometry(geom);
         }
     }
     private getSelectableLayers(): string[] {
         return this.props.selectableLayerNames || [];
+    }
+    private buildDefaultQueryOptions(): IQueryMapFeaturesOptions {
+        const names = this.getSelectableLayers();
+        return {
+            mapname: this.props.map.Name,
+            session: this.props.map.SessionId,
+            layernames: names.length > 0 ? names.join(",") : null,
+            persist: 1
+        };
     }
     private onZoomSelectBox(e) {
         const extent = this._zoomSelectBox.getGeometry();
@@ -406,34 +420,39 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 break;
             case ActiveMapTool.Select:
                 {
-                    this.sendSelectionQuery(extent, this.getSelectableLayers());
+                    this.sendSelectionQuery(extent, this.buildDefaultQueryOptions());
                 }
                 break;
         }
     }
-    private sendSelectionQuery(geom, selectedLayerNames, persist = 1) {
-        if (selectedLayerNames != null && selectedLayerNames.length == 0) {
+    private sendSelectionQuery(geom: ol.geom.Geometry | string, queryOpts?: IQueryMapFeaturesOptions) {
+        if (queryOpts != null && queryOpts.layernames != null && queryOpts.layernames.length == 0) {
             return;
         }
         const reqQueryFeatures = 1 | 2; //Attributes and inline selection
-        const wkt = this._wktFormat.writeGeometry(geom);
+        let wkt;
+        if (typeof geom === 'string') {
+            wkt = geom;
+        } else {
+            wkt = this._wktFormat.writeGeometry(geom);
+        }
         this.incrementBusyWorker();
-        this._client.queryMapFeatures({
+        const queryOptions = assign({}, {
             mapname: this.props.map.Name,
             session: this.props.map.SessionId,
             geometry: wkt,
-            layernames: selectedLayerNames != null ? selectedLayerNames.join(",") : null,
-            persist: persist,
+            persist: 1,
             selectionvariant: "INTERSECTS",
             selectioncolor: this.props.selectionColor,
             selectionformat: "PNG8",
             maxfeatures: -1,
             requestdata: reqQueryFeatures
-        }).then(res => {
+        }, queryOpts);
+        this._client.queryMapFeatures(queryOptions).then(res => {
             this.refreshMap(RefreshMode.SelectionOnly);
             //Only broadcast if persistent change, otherwise it's transient
             //so the current selection set is still the same
-            if (persist === 1 && this.props.onSelectionChange != null)
+            if (queryOptions.persist === 1 && this.props.onSelectionChange != null)
                 this.props.onSelectionChange(res);
         }).then(res => {
             this.decrementBusyWorker();
@@ -972,7 +991,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this.pushDrawInteraction(draw, handler, prompt || DigitizerMessages.Polygon);
     }
     public selectByGeometry(geom: ol.geom.Geometry): void {
-        this.sendSelectionQuery(geom, this.getSelectableLayers());
+        this.sendSelectionQuery(geom, this.buildDefaultQueryOptions());
     }
     public isFeatureTooltipEnabled(): boolean {
         return this._featureTooltip.isEnabled();

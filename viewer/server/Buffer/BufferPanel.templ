@@ -220,8 +220,8 @@ function OnCancel()
     if(mapName == "undefined")
         return;
     
-    var map = GetParent().Fusion.getMapByName(mapName);
-    map.clearSelection();
+    var map = GetParent().GetMapFrame();
+    map.ClearSelection();
     //mf.GotoHomePage();
     document.getElementById("Done").disabled = true;
 }

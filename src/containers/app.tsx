@@ -3,7 +3,11 @@ import { connect } from "react-redux";
 import { ClientKind } from "../api/client";
 import { getLayout } from "../api/registry/layout";
 import { IExternalBaseLayer } from "../components/map-viewer-base";
-import { initApp } from "../actions/init";
+import { initApp, initWebLayout } from "../actions/init";
+
+function endsWith(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}
 
 export interface IAppProps {
     layout: string;
@@ -35,6 +39,7 @@ interface IAppState {
 
 interface IAppDispatch {
     initApp?: (args) => void;
+    initWebLayout?: (args) => void;
 }
 
 function mapStateToProps(state): IAppState {
@@ -45,7 +50,8 @@ function mapStateToProps(state): IAppState {
 
 function mapDispatchToProps(dispatch): IAppDispatch {
     return {
-        initApp: (args) => dispatch(initApp(args))
+        initApp: (args) => dispatch(initApp(args)),
+        initWebLayout: (args) => dispatch(initWebLayout(args))
     };
 }
 
@@ -55,11 +61,18 @@ export class App extends React.Component<IAppProps & IAppState & IAppDispatch, a
         super(props);
     }
     componentDidMount() {
-        const { initApp, agent, resourceId, externalBaseLayers } = this.props;
-        initApp({
-            resourceId: resourceId,
-            externalBaseLayers: externalBaseLayers
-        });
+        const { initApp, initWebLayout, agent, resourceId, externalBaseLayers } = this.props;
+        if (endsWith(resourceId, "WebLayout")) {
+            initWebLayout({
+                resourceId: resourceId,
+                externalBaseLayers: externalBaseLayers
+            });
+        } else {
+            initApp({
+                resourceId: resourceId,
+                externalBaseLayers: externalBaseLayers
+            });
+        }
     }
     render(): JSX.Element {
         const { layout } = this.props;

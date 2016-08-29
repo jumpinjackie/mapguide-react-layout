@@ -137,6 +137,15 @@ export interface IPromise<T> {
  */
 export interface IMapGuideClient {
     /**
+     * Creates a new MapGuide session 
+     * 
+     * @param {string} username
+     * @param {string} password
+     * @returns {IPromise<string>}
+     */
+    createSession(username: string, password: string): IPromise<string>;
+
+    /**
      * Retrieves the requested resource 
      * 
      * @abstract
@@ -144,7 +153,7 @@ export interface IMapGuideClient {
      * @param {string} resourceId
      * @returns {PromiseLike<T>}
      */
-    getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier): IPromise<T>;
+    getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier, args?: any): IPromise<T>;
 
     /**
      * Creates a runtime map from the specified map definition
@@ -192,7 +201,9 @@ export abstract class RequestBuilder implements IMapGuideClient {
         this.agentUri = agentUri;
     }
 
-    public abstract getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier): IPromise<T>;
+    public abstract createSession(username: string, password: string): IPromise<string>;
+
+    public abstract getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier, args?: any): IPromise<T>;
 
     public abstract createRuntimeMap(options: ICreateRuntimeMapOptions): IPromise<Contracts.RtMap.RuntimeMap>;
 

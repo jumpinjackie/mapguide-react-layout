@@ -309,12 +309,285 @@ function deArrayifyFeatureInformation(json: any): Contracts.Query.QueryMapFeatur
     return resp;
 }
 
+function deArrayifyWebLayoutControl<T extends Contracts.WebLayout.WebLayoutControl>(json: any): T {
+    const root = json;
+    if (root == null || root.length != 1) {
+        return null;
+    }
+    const control: any = {
+        Visible: tryGetAsProperty(root[0], "Visible", "boolean")
+    };
+    return control;
+} 
+
+function deArrayifyWebLayoutInfoPane(json: any): Contracts.WebLayout.WebLayoutInfoPane {
+    const root = json;
+    if (root == null || root.length != 1) {
+        return null;
+    }
+    const infoPane = {
+        Visible: tryGetAsProperty(root[0], "Visible", "boolean"),
+        Width: tryGetAsProperty(root[0], "Width", "int"),
+        LegendVisible: tryGetAsProperty(root[0], "LegendVisible", "boolean"),
+        PropertiesVisible: tryGetAsProperty(root[0], "PropertiesVisible", "boolean")
+    };
+    return infoPane;
+}
+
+function deArrayifyWebLayoutInitialView(json: any): Contracts.WebLayout.MapView {
+    const root = json;
+    if (root == null || root.length != 1) {
+        return null;
+    }
+    const view = {
+        CenterX: tryGetAsProperty(root[0], "CenterX", "float"),
+        CenterY: tryGetAsProperty(root[0], "CenterY", "float"),
+        Scale: tryGetAsProperty(root[0], "Scale", "float")
+    };
+    return view;
+}
+
+function deArrayifyWebLayoutMap(json: any): Contracts.WebLayout.WebLayoutMap {
+    const root = json;
+    if (root == null || root.length != 1) {
+        return null;
+    }
+    const map = {
+        ResourceId: tryGetAsProperty(root[0], "ResourceId"),
+        InitialView: deArrayifyWebLayoutInitialView(root[0].InitialView),
+        HyperlinkTarget: tryGetAsProperty(root[0], "HyperlinkTarget"),
+        HyperlinkTargetFrame: tryGetAsProperty(root[0], "HyperlinkTargetFrame")
+    };
+    return map;
+}
+
+function deArrayifyTaskButton(json: any): Contracts.WebLayout.TaskButton {
+    const root = json;
+    if (root == null || root.length != 1) {
+        return null;
+    }
+    const button = {
+        Name: tryGetAsProperty(root[0], "Name"),
+        Tooltip: tryGetAsProperty(root[0], "Tooltip"),
+        Description: tryGetAsProperty(root[0], "Description"),
+        ImageURL: tryGetAsProperty(root[0], "ImageURL"),
+        DisabledImageURL: tryGetAsProperty(root[0], "DisabledImageURL")
+    };
+    return button;
+}
+
+function deArrayifyWebLayoutTaskBar(json: any): Contracts.WebLayout.WebLayoutTaskBar {
+    const root = json;
+    if (root == null || root.length != 1) {
+        return null;
+    }
+    const taskbar = {
+        Visible: tryGetAsProperty(root[0], "Visible", "boolean"),
+        Home: deArrayifyTaskButton(root[0].Home),
+        Forward: deArrayifyTaskButton(root[0].Forward),
+        Back: deArrayifyTaskButton(root[0].Back),
+        Tasks: deArrayifyTaskButton(root[0].Tasks),
+        MenuButton: []
+    };
+    if (root[0].MenuButton) {
+        for (const mb of root[0].MenuButton) {
+            taskbar.MenuButton.push(deArrayifyUIItem(mb));
+        }
+    }
+    return taskbar;
+}
+
+function deArrayifyWebLayoutTaskPane(json: any): Contracts.WebLayout.WebLayoutTaskPane {
+    const root = json;
+    if (root == null || root.length != 1) {
+        return null;
+    }
+    const taskPane = {
+        Visible: tryGetAsProperty(root[0], "Visible", "boolean"),
+        InitialTask: tryGetAsProperty(root[0], "InitialTask"),
+        Width: tryGetAsProperty(root[0], "Width", "int"),
+        TaskBar: deArrayifyWebLayoutTaskBar(root[0].TaskBar)
+    };
+    return taskPane;
+}
+
+function deArrayifyUIItem(json: any): Contracts.WebLayout.UIItem {
+    const root = json;
+    const func: Contracts.WebLayout.UIItemFunction = tryGetAsProperty(root, "Function");
+    const item: any = {
+        Function: func
+    };
+    switch (func) {
+        case "Command":
+            item.Command = tryGetAsProperty(root, "Command");
+            break;
+        case "Flyout":
+            item.Label = tryGetAsProperty(root, "Label");
+            item.Tooltip = tryGetAsProperty(root, "Tooltip");
+            item.Description = tryGetAsProperty(root, "Description");
+            item.ImageURL = tryGetAsProperty(root, "ImageURL");
+            item.DisabledImageURL = tryGetAsProperty(root, "DisabledImageURL");
+            item.SubItem = [];
+            for (const si of root.SubItem) {
+                item.SubItem.push(deArrayifyUIItem(si));
+            }
+            break;
+    }
+    return item;
+}
+
+function deArrayifyItemContainer<T extends Contracts.WebLayout.WebLayoutControl>(json: any, name: string): T {
+    const root = json;
+    if (root == null || root.length != 1) {
+        return null;
+    }
+    const container: any = {};
+    container[name] = [];
+    for (const item of root[0][name]) {
+        container[name].push(deArrayifyUIItem(item));
+    }
+    if (typeof(root[0].Visible) != 'undefined') {
+        container.Visible = root[0].Visible;
+    }
+    return container;
+}
+
+function deArrayifyWebLayoutSearchResultColumnSet(json: any): Contracts.WebLayout.ResultColumnSet {
+    const root = json;
+    if (root == null || root.length != 1) {
+        return null;
+    }
+    const res = {
+        Column: []
+    };
+    for (const col of root[0].Column) {
+        res.Column.push({
+            Name: tryGetAsProperty(col, "Name"),
+            Property: tryGetAsProperty(col, "Property")
+        });
+    }
+    return res;
+}
+
+function deArrayifyWebLayoutInvokeURLLayerSet(json: any): Contracts.WebLayout.LayerSet {
+    const root = json;
+    if (root == null || root.length != 1) {
+        return null;
+    }
+    const layerset = {
+        Layer: root[0].Layer
+    };
+    return layerset;
+}
+
+function deArrayifyWebLayoutParameterPairs(json: any): Contracts.WebLayout.ParameterPair[] {
+    const root = json;
+    const pairs = [];
+    if (!root) {
+        return pairs;
+    }
+    for (const kvp of root) {
+        pairs.push({
+            Key: tryGetAsProperty(kvp, "Key"),
+            Value: tryGetAsProperty(kvp, "Value")
+        });
+    }
+    return pairs;
+}
+
+function deArrayifyCommand(json: any): Contracts.WebLayout.CommandDef {
+    const root = json;
+    const cmd: any = {
+        Name: tryGetAsProperty(root, "Name"),
+        Label: tryGetAsProperty(root, "Label"),
+        Tooltip: tryGetAsProperty(root, "Tooltip"),
+        Description: tryGetAsProperty(root, "Description"),
+        ImageURL: tryGetAsProperty(root, "ImageURL"),
+        DisabledImageURL: tryGetAsProperty(root, "DisabledImageURL"),
+        TargetViewer: tryGetAsProperty(root, "TargetViewer")
+    };
+    //Basic
+    if (typeof(root.Action) != 'undefined') {
+        cmd.Action = tryGetAsProperty(root, "Action");
+    }
+    //Targeted
+    if (typeof(root.Target) != 'undefined') {
+        cmd.Target = tryGetAsProperty(root, "Target");
+    }
+    if (typeof(root.TargetFrame) != 'undefined') {
+        cmd.Target = tryGetAsProperty(root, "TargetFrame");
+    }
+    //Search
+    if (typeof(root.Layer) != 'undefined') {
+        cmd.Layer = tryGetAsProperty(root, "Layer");
+        cmd.Prompt = tryGetAsProperty(root, "Prompt");
+        cmd.ResultColumns = deArrayifyWebLayoutSearchResultColumnSet(root.ResultColumns);
+        cmd.Filter = tryGetAsProperty(root, "Filter");
+        cmd.MatchLimit = tryGetAsProperty(root, "MatchLimit", "int");
+    }
+    //InvokeURL | Help
+    if (typeof(root.URL) != 'undefined') {
+        cmd.URL = tryGetAsProperty(root, "URL");
+    }
+    if (typeof(root.DisableIfSelectionEmpty) != 'undefined') {
+        cmd.LayerSet = deArrayifyWebLayoutInvokeURLLayerSet(root.LayerSet);
+        cmd.AdditionalParameter = deArrayifyWebLayoutParameterPairs(root.AdditionalParameter);
+        cmd.DisableIfSelectionEmpty = tryGetAsProperty(root, "DisableIfSelectionEmpty");
+    }
+    //InvokeScript
+    if (typeof(root.Script) != 'undefined') {
+        cmd.Script = tryGetAsProperty(root, "Script");
+    }
+    return cmd;
+}
+
+function deArrayifyWebLayoutCommandSet(json: any): Contracts.WebLayout.WebLayoutCommandSet {
+    const root = json;
+    if (root == null || root.length != 1) {
+        return null;
+    }
+    const set = {
+        Command: []
+    };
+    if (root[0].Command) {
+        for (const cmd of root[0].Command) {
+            set.Command.push(deArrayifyCommand(cmd));
+        }
+    }
+    return set;
+}
+
+function deArrayifyWebLayout(json: any): Contracts.WebLayout.WebLayout {
+    const root = json;
+    const resp = {
+        Title: tryGetAsProperty(root, "Title"),
+        Map: deArrayifyWebLayoutMap(root.Map),
+        EnablePingServer: tryGetAsProperty(root, "EnablePingServer", "boolean"),
+        SelectionColor: tryGetAsProperty(root, "SelectionColor"),
+        PointSelectionBuffer: tryGetAsProperty(root, "PointSelectionBuffer", "int"),
+        MapImageFormat: tryGetAsProperty(root, "MapImageFormat"),
+        SelectionImageFormat: tryGetAsProperty(root, "SelectionImageFormat"),
+        StartupScript: tryGetAsProperty(root, "StartupScript"),
+        ToolBar: deArrayifyItemContainer<Contracts.WebLayout.WebLayoutToolbar>(root.ToolBar, "Button"),
+        InformationPane: deArrayifyWebLayoutInfoPane(root.InformationPane),
+        ContextMenu: deArrayifyItemContainer<Contracts.WebLayout.WebLayoutContextMenu>(root.ContextMenu, "MenuItem"),
+        TaskPane: deArrayifyWebLayoutTaskPane(root.TaskPane),
+        StatusBar: deArrayifyWebLayoutControl<Contracts.WebLayout.WebLayoutStatusBar>(root.StatusBar),
+        ZoomControl: deArrayifyWebLayoutControl<Contracts.WebLayout.WebLayoutZoomControl>(root.ZoomControl),
+        CommandSet: deArrayifyWebLayoutCommandSet(root.CommandSet)
+    };
+    return resp;
+}
+
 export function deArrayify(json: any): any {
     if (json["RuntimeMap"]) {
         return deArrayifyRuntimeMap(json.RuntimeMap);
     }
     if (json["FeatureInformation"]) {
         return deArrayifyFeatureInformation(json.FeatureInformation);
+    }
+    if (json["WebLayout"]) {
+        return deArrayifyWebLayout(json.WebLayout);
     }
     const keys = [];
     for (const k in json) {

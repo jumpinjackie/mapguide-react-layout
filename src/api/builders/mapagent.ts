@@ -99,9 +99,36 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         return url;
     }
 
-    public getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier): Request.IPromise<T> {
-        const url = this.stringifyGetUrl({ operation: "GETRESOURCE", resourceId: resourceId });
-        return this.get<T>(url);
+    public createSession(username: string, password: string): Request.IPromise<string> {
+        const url = this.agentUri;
+        const data = { operation: "CREATESESSION", version: "1.0.0", USERNAME: username, PASSWORD: password };
+        return new Promise<string>((resolve, reject) => {
+            fetch(url, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+                method: "POST",
+                body: serialize(data) //form
+            })
+            .then(response => {
+                if (isErrorResponse(response)) {
+                    throw new MgError(response.statusText);
+                } else {
+                    resolve(response.text());
+                }
+            })
+            .catch(reject);
+        });
+    }
+
+    public getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier, args?: any): Request.IPromise<T> {
+        if (args != null) {
+            const url = this.stringifyGetUrl(assign(args, { operation: "GETRESOURCECONTENT", resourceId: resourceId }));
+            return this.get<T>(url);
+        } else {
+            const url = this.stringifyGetUrl({ operation: "GETRESOURCE", resourceId: resourceId });
+            return this.get<T>(url);
+        }
     }
     
     public createRuntimeMap(options: Request.ICreateRuntimeMapOptions): Request.IPromise<Contracts.RtMap.RuntimeMap> {

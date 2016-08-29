@@ -80,9 +80,13 @@ export class Client implements Request.IMapGuideClient {
             .catch(reject);
         });
     }
+
+    public createSession(username: string, password: string): Request.IPromise<string> {
+        return this.builder.createSession(username, password);
+    }
     
-    public getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier): Request.IPromise<T> {
-        return this.builder.getResource<T>(resourceId);
+    public getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier, args?: any): Request.IPromise<T> {
+        return this.builder.getResource<T>(resourceId, args);
     }
     
     public createRuntimeMap(options: Request.ICreateRuntimeMapOptions): Request.IPromise<Contracts.RtMap.RuntimeMap> {

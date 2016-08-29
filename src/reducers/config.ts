@@ -10,6 +10,11 @@ export const INITIAL_STATE = {
     externalBaseLayers: [],
     coordinates: {
         decimals: 6
+    },
+    capabilities: {
+        hasTaskPane: false,
+        hasLegend: false,
+        hasSelectionPanel: false
     }
 };
 

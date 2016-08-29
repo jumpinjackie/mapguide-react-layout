@@ -35,6 +35,7 @@ import { areNumbersEqual } from '../utils/number';
 import * as logger from '../utils/logger';
 import { MgError } from '../api/error';
 import { Client, ClientKind } from '../api/client';
+import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 const assign = require("object-assign");
 
@@ -115,10 +116,11 @@ export interface IMapViewer {
     digitizeRectangle(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void;
     digitizePolygon(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void;
     selectByGeometry(geom: ol.geom.Geometry): void;
-    queryMapFeatures(options: IQueryMapFeaturesOptions): void;
+    queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void;
     zoomToExtent(extent: Bounds): void;
     isFeatureTooltipEnabled(): boolean;
     setFeatureTooltipEnabled(enabled: boolean): void;
+    getPointSelectionBox(point: Coordinate, ptBuffer: number): Bounds;
 }
 
 export enum ActiveMapTool {
@@ -433,7 +435,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 break;
         }
     }
-    private sendSelectionQuery(queryOpts?: IQueryMapFeaturesOptions) {
+    private sendSelectionQuery(queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void) {
         if (queryOpts != null && queryOpts.layernames != null && queryOpts.layernames.length == 0) {
             return;
         }
@@ -453,8 +455,14 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             //so the current selection set is still the same
             if (queryOptions.persist === 1 && this.props.onSelectionChange != null)
                 this.props.onSelectionChange(res);
+
+            if (success != null)
+                success(res);
         }).then(res => {
             this.decrementBusyWorker();
+        }).catch(err => {
+            if (failure != null)
+                failure(err);
         });
     }
     private zoomByDelta(delta) {
@@ -992,8 +1000,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     public selectByGeometry(geom: ol.geom.Geometry): void {
         this.sendSelectionQuery(this.buildDefaultQueryOptions(geom));
     }
-    public queryMapFeatures(options: IQueryMapFeaturesOptions): void {
-        this.sendSelectionQuery(options);
+    public queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void {
+        this.sendSelectionQuery(options, success, failure);
     }
     public isFeatureTooltipEnabled(): boolean {
         return this._featureTooltip.isEnabled();

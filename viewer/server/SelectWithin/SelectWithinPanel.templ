@@ -62,87 +62,39 @@ function OnMouseDown(e)
 function ExecuteCommand()
 {
     //build the destination layer set
-    var layerSet = "";
+    var layerSet = [];
     var list = document.getElementById("layers");
     var layerNames = document.getElementById("layerNames");
     var count = list.options.length;
-    var selIndex = 0;
-    for(var i = 0; i < count; i++)
+    for (var i = 0; i < count; i++)
     {
         var opt = list.options[i];
-        if(opt.selected)
+        if (opt.selected)
         {
-            if(selIndex > 0) {
-                layerSet += ",";
-            }
-            layerSet += layerNames.options[i].text;
-            selIndex ++;
+            layerSet.push(layerNames.options[i].value);
         }
     }
-    if(layerSet == "") {
+    if (layerSet.length == 0) {
         return;
     }
-
-    var mapWidget = GetParent().Fusion.getMapByName(mapName);
-    var params = {
-      "mapname": mapName,
-      "session": sessionId,
-      "layers": layerSet
-    };
-    var options = {
-      onSuccess: selectedSuccess,
-      onFailure: selectedError,
-      parameters:params
-    };
-    GetParent().Fusion.ajaxRequest(webAgent, options);
-}
-
-function selectedSuccess(r) {
-    var mapWidget = GetParent().Fusion.getMapByName(mapName);
-    var callback = GetParent().OpenLayers.Function.bind(mapWidget.processFeatureInfo, mapWidget);
-    GetParent().Fusion.xml2json(callback, r);
-}
-
-function selectedError(r) {
-    alert(r.responseText);
+    var viewer = GetParent().getViewer();
+    var selectionSet = viewer.getSelection();
+    if (selectionSet != null && selectionSet.FeatureSet != null) {
+        var xml = viewer.getSelectionXml(selectionSet.FeatureSet, layerSet);
+        viewer.setSelectionXml(xml, FillLayerList);
+    }
 }
 
 function Clear()
 {
-    var map = GetParent().Fusion.getMapByName(mapName);
-    map.clearSelection();
+    var map = GetParent().GetMapFrame();
+    map.ClearSelection();
     list = document.getElementById("layers");
     for(var i = 0; i < list.options.length; i++)
     {
         opt = list.options[i];
-        if(opt.selected)
+        if (opt.selected)
             opt.selected = false;
-    }
-}
-
-function CheckVisibility(groupOrLayer)
-{
-    if (!groupOrLayer.isVisible())
-        return false;
-    if (groupOrLayer.parentGroup)
-        return CheckVisibility(groupOrLayer.parentGroup);
-    return true;
-}
-
-function GetSelectableLayers(layers)
-{
-    if (bOmitInvisibleLayers) {
-        var filtered = [];
-        for (var i = 0; i < layers.length; i++) {
-            var groupOrLayer = layers[i];
-            if (CheckVisibility(groupOrLayer))
-            {
-                filtered.push(groupOrLayer);
-            }
-        }
-        return filtered;
-    } else {
-        return layers;
     }
 }
 
@@ -151,17 +103,18 @@ function FillLayerList()
     var list = document.getElementById("layers");
     var listNames = document.getElementById("layerNames");
     list.options.length = 0;
-    var map = GetParent().Fusion.getMapByName(mapName);
-    var layers = GetSelectableLayers(map.getSelectableLayers());
-    if(layers.length > 0) {
-      for(var i = 0; i < layers.length; i++) {
-        var layer = layers[i];
-        list.options[i] = new Option(layer.legendLabel != ""? layer.legendLabel: layer.layerName);
-        if (i == 0) list.options[0].selected = true;
-        listNames.options[i] = new Option(layer.layerName);
-      }
+    var map = GetParent().GetMapFrame();
+    var layers = map.GetLayers(false, true);
+    if (layers.length > 0) {
+        for (var i = 0; i < layers.length; i++) {
+            var layer = layers[i];
+            list.options[i] = new Option((layer.legend != "" ? layer.legend : layer.name), layer.objectid);
+            if (i == 0) 
+                list.options[0].selected = true;
+            listNames.options[i] = new Option(layer.name, layer.objectid);
+        }
     } else {
-      list.options[0] = new Option("__#BUFFERNOLAYER#__");
+        list.options[0] = new Option("__#BUFFERNOLAYER#__");
     }
     document.getElementById("Done").disabled = layers.length == 0;
 }
@@ -173,15 +126,11 @@ function RefreshLayers()
 
 function GetParent()
 {
-	if(popup)
-		return opener;
-	else
-	{
-		var node = parent;
-		while (!node.Fusion && node.parent)
-			node = node.parent;
-		return node;
-	}
+    if (popup) {
+        return opener;
+    } else {
+        return parent;
+    }
 }
 
 </script>

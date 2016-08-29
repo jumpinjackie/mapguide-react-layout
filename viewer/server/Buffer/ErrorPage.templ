@@ -32,10 +32,10 @@ var popup = %s;
 function InitDocument()
 {
     var mapName = '%s';
-    var map = GetParent().Fusion.getMapByName(mapName);
-    if(map != null)
+    var map = GetParent().GetMapFrame();
+    if (map != null)
     {
-        map.reloadMap();
+        map.Refresh();
     }
 }
 
@@ -44,20 +44,16 @@ function Back()
     if(popup)
         self.close();
     else
-        parent.goHome();  //opened in a TaskPane
+        GetParent().GotoHomePage();  //opened in a TaskPane
 }
 
 function GetParent()
 {
-	if(popup)
-		return opener;
-	else
-	{
-		var node = parent;
-		while (!node.fusion && node.parent)
-			node = node.parent;
-		return node;
-	}
+    if (popup) {
+        return opener;
+    } else {
+        return parent;
+    }
 }
 
 </script>

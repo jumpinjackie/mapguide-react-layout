@@ -6,15 +6,21 @@ import { deArrayify } from './deArrayify';
 
 const MG_MAPAGENT_ERROR_CODE = 559;
 
+export function isErrorResponse(response: Response): boolean {
+    return !response.ok || response.status === MG_MAPAGENT_ERROR_CODE;
+}
+
+export function serialize(data): string {
+    return Object.keys(data).map((keyName) => {
+        return encodeURIComponent(keyName.toUpperCase()) + '=' + encodeURIComponent(data[keyName])
+    }).join('&');
+}
+
 export class MapAgentRequestBuilder extends Request.RequestBuilder {
     private locale: string;
     constructor(agentUri: string, locale: string = "en") {
         super(agentUri);
         this.locale = locale;
-    }
-
-    private isErrorResponse(response: Response): boolean {
-        return !response.ok || response.status === MG_MAPAGENT_ERROR_CODE;
     }
 
     public get<T>(url: string): Promise<T> {
@@ -27,7 +33,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
                 method: "GET"
             })
             .then(response => {
-                if (this.isErrorResponse(response)) {
+                if (isErrorResponse(response)) {
                     throw new MgError(response.statusText);
                 } else {
                     return response.json();
@@ -39,12 +45,6 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
             .catch(reject);
         });
     }
-
-    private serialize(data) {
-        return Object.keys(data).map((keyName) => {
-            return encodeURIComponent(keyName.toUpperCase()) + '=' + encodeURIComponent(data[keyName])
-        }).join('&');
-    };
 
     public post<T>(url: string, data: any): Promise<T> {
         if (!data.format) {
@@ -60,10 +60,10 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
                     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                 },
                 method: "POST",
-                body: this.serialize(data) //form
+                body: serialize(data) //form
             })
             .then(response => {
-                if (this.isErrorResponse(response)) {
+                if (isErrorResponse(response)) {
                     throw new MgError(response.statusText);
                 } else {
                     return response.json();

@@ -58,8 +58,7 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
     <title><?=$uploadTitleLocal?></title>
     <link rel="stylesheet" href="Redline.css" type="text/css">
-    <script language="javascript" src="../../'../Common/'/MapGuideViewerApi.js"></script>
-    <script language="javascript" src="../../common/browserdetect.js"></script>
+    <script language="javascript" src="../assets/browserdetect.js"></script>
     <script language="javascript">
         var session = '<?= $args['SESSION'] ?>';
         var mapName = '<?= $args['MAPNAME'] ?>';

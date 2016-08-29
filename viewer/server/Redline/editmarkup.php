@@ -96,6 +96,7 @@
         }
 
         $editLocal = GetLocalizedString('REDLINEEDIT', $locale );
+        /*
         $defaultHelpLocal = GetLocalizedString('REDLINEEDITDEFAULTHELP', $locale );
         $pointHelpLocal = GetLocalizedString('REDLINEEDITPOINTHELP', $locale );
         $lineHelpLocal = GetLocalizedString('REDLINEEDITLINEHELP', $locale );
@@ -103,6 +104,7 @@
         $rectangleHelpLocal = GetLocalizedString('REDLINEEDITRECTANGLEHELP', $locale );
         $polygonHelpLocal = GetLocalizedString('REDLINEEDITPOLYGONHELP', $locale );
         $circleHelpLocal = GetLocalizedString('REDLINEEDITCIRCLEHELP', $locale );
+        */
         $addLocal = GetLocalizedString('REDLINEADD', $locale );
         $digitizeLocal = GetLocalizedString('REDLINEDIGITIZE', $locale );
         $pointLocal = GetLocalizedString('REDLINEOBJECTPOINT', $locale );
@@ -142,9 +144,20 @@
 <?php if ($errorMsg == null) { ?>
     <title><?=$editLocal?></title>
     <link rel="stylesheet" href="Redline.css" type="text/css">
-    <script language="javascript" src="../../'../Common/'/MapGuideViewerApi.js"></script>
-    <script language="javascript" src="../../common/browserdetect.js"></script>
+    <script language="javascript" src="../assets/browserdetect.js"></script>
     <script language="javascript">
+
+        //Polygon circle approximation borrowed from the AJAX viewer
+        var simulateCirclePoints = [];
+        var simulateCircleHalfPointNumber = 40;
+        (function () {
+            for (var index = 0; index < 2 * simulateCircleHalfPointNumber + 1; index++) {
+                simulateCirclePoints[2 * index] = Math.cos(Math.PI * index / simulateCircleHalfPointNumber);
+                simulateCirclePoints[2 * index + 1] = Math.sin(Math.PI * index / simulateCircleHalfPointNumber);
+            }
+        })();
+
+        var popup = false;
         var session = '<?= $args['SESSION'] ?>';
         var mapName = '<?= $args['MAPNAME'] ?>';
 
@@ -157,34 +170,12 @@
         var CMD_DELETE 			= <?= EditCommand::Delete ?>;
         var CMD_UPDATE 			= <?= EditCommand::Update ?>;
 
-        var EDIT_DEFAULT_HELP = "<?=$defaultHelpLocal?>";
-        var EDIT_POINT_HELP = "<?=$pointHelpLocal?>";
-        var EDIT_LINE_HELP = "<?=$lineHelpLocal?>";
-        var EDIT_LINESTRING_HELP = "<?=$lineStringHelpLocal?>";
-        var EDIT_RECTANGLE_HELP = "<?=$rectangleHelpLocal?>";
-        var EDIT_POLYGON_HELP = "<?=$polygonHelpLocal?>";
-        var EDIT_CIRCLE_HELP = "<?=$circleHelpLocal?>";
-
-        function SetDigitizeInfo(text)
+        function GetParent()
         {
-            var digitizeInfo = document.getElementById("digitizeInfo");
-            digitizeInfo.innerHTML = text;
-            var widget = Fusion.getWidgetsByType("Redline")[0];
-            if (widget.mapMessagePrompt) {
-                var map = Fusion.getMapByName(mapName).mapWidget;
-                var msg = map.message;
-                //It's a digitization prompt
-                if (text != EDIT_DEFAULT_HELP) {
-                    msg.info(text + ' <a id="abortDigitizationLink" href="javascript:void(0)">' + OpenLayers.i18n("stop") + '</a>');
-                    var link = msg.container.ownerDocument.getElementById("abortDigitizationLink");
-                    //Wire the anchor click
-                    link.onclick = function() {
-                        msg.clear();
-                        PromptAndSetMarkupText();
-                    };
-                } else {
-                    msg.info(text);
-                }
+            if (popup) {
+                return opener;
+            } else {
+                return parent;
             }
         }
 
@@ -199,38 +190,38 @@
 
         function AddPoint()
         {
-            SetDigitizeInfo(EDIT_POINT_HELP);
-            DigitizePoint(OnPointDigitized);
+            var map = GetParent().GetMapFrame();
+            map.DigitizePoint(OnPointDigitized);
         }
         
         function AddCircle()
         {
-            SetDigitizeInfo(EDIT_CIRCLE_HELP);
-            DigitizeCircle(OnCircleDigitized);
+            var map = GetParent().GetMapFrame();
+            map.DigitizeCircle(OnCircleDigitized);
         }
 
         function AddLine()
         {
-            SetDigitizeInfo(EDIT_LINE_HELP);
-            DigitizeLine(OnLineStringDigitized);
+            var map = GetParent().GetMapFrame();
+            map.DigitizeLine(OnLineStringDigitized);
         }
 
         function AddLineString()
         {
-            SetDigitizeInfo(EDIT_LINESTRING_HELP);
-            DigitizeLineString(OnLineStringDigitized);
+            var map = GetParent().GetMapFrame();
+            map.DigitizeLineString(OnLineStringDigitized);
         }
 
         function AddRectangle()
         {
-            SetDigitizeInfo(EDIT_RECTANGLE_HELP);
-            DigitizeRectangle(OnRectangleDigitized);
+            var map = GetParent().GetMapFrame();
+            map.DigitizeRectangle(OnRectangleDigitized);
         }
 
         function AddPolygon()
         {
-            SetDigitizeInfo(EDIT_POLYGON_HELP);
-            DigitizePolygon(OnPolyonDigitized);
+            var map = GetParent().GetMapFrame();
+            map.DigitizePolygon(OnPolyonDigitized);
         }
         
         function PromptForRedlineLabels()
@@ -240,14 +231,11 @@
 
         function PromptAndSetMarkupText()
         {
-            var widget = Fusion.getWidgetsByType("Redline")[0];
             if (PromptForRedlineLabels()) {
                 var textInput = document.getElementById("textInput");
-
                 textLabel = window.prompt("<?=$promptLabelLocal?>", "");
                 textInput.value = (textLabel != null) ? textLabel : "";
             }
-            ClearDigitization(true);
         }
 
         function OnPointDigitized(point)
@@ -312,9 +300,6 @@
         {
             if(polygon.Count < 3)
             {
-                // invalid polygon
-                ClearDigitization(true);
-
                 return;
             }
 
@@ -371,7 +356,8 @@
             reqHandler.send(reqParams);
             if(reqHandler.responseXML)
             {
-                SetSelectionXML(reqHandler.responseText, true /*bDoNotZoom*/);
+                var map = GetParent().GetMapFrame();
+                map.SetSelectionXML(reqHandler.responseText, true /*bDoNotZoom*/);
             }
         }
 
@@ -387,10 +373,6 @@
 
         function CloseEditor()
         {
-            ClearDigitization(true);
-            var map = Fusion.getMapByName(mapName).mapWidget;
-            map.message.clear();
-
             var editForm = document.getElementById("editForm");
             editForm.action = "markupmain.php";
 
@@ -437,17 +419,14 @@
             OnMarkupFeatureChange();
 
         <?php if ($refreshMap) { ?>
-            var map = parent.Fusion.getMapByName(mapName);
-            map.drawMap();
+            var map = GetParent().GetMapFrame();
+            map.Refresh();
         <?php } ?>
-            SetDigitizeInfo(EDIT_DEFAULT_HELP);
         }
         
         function OnUnload()
         {
-            ClearDigitization(true);
-            var map = Fusion.getMapByName(mapName).mapWidget;
-            map.message.clear();
+
         }
     </script>
 </head>

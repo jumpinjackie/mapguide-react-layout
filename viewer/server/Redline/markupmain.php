@@ -151,9 +151,11 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 <?php if ($errorMsg == null) { ?>
     <link rel="stylesheet" href="Redline.css" type="text/css">
-    <script language="javascript" src="../../'../Common/'/MapGuideViewerApi.js"></script>
-    <script language="javascript" src="../../common/browserdetect.js"></script>
+    <script language="javascript" src="../assets/browserdetect.js"></script>
     <script language="javascript">
+
+        var popup = false;
+        var autogenerateLayerNames = true;
         var session = '<?= $args['SESSION'] ?>';
         var mapName = '<?= $args['MAPNAME'] ?>';
 
@@ -207,6 +209,15 @@
                 return "OSGeo.SDF";
         }
 
+        function GetParent()
+        {
+            if (popup) {
+                return opener;
+            } else {
+                return parent;
+            }
+        }
+
         function SubmitCreateCommand(cmd, geomTypes)
         {
             var commandInput = document.getElementById("commandInput");
@@ -217,33 +228,36 @@
             }
 
             var markupForm = document.getElementById("markupForm");
-            
-            var widget = Fusion.getWidgetsByType("Redline")[0];
-            if (widget.autogenerateLayerNames) {
-                Fusion.ajaxRequest("widgets/Redline/newmarkup.php", {
-                    onSuccess: OpenLayers.Function.bind(OnMarkupCreated, this),
-                    onFailure: OpenLayers.Function.bind(OnMarkupCreateFailure, this),
-                    parameters: {
-                        SESSION: session,
-                        MAPNAME: mapName,
-                        MARKUPFDOPROVIDER: GetFdoProvider(cmd),
-                        MARKUPGEOMTYPE: geomTypes,
-                        REDLINESTYLIZATION: "<?= $args['REDLINESTYLIZATION'] ?>"
-                    }
+            var client = GetParent().getClient();
+            if (autogenerateLayerNames) {
+                client.post("server/Redline/newmarkup.php", {
+                    SESSION: session,
+                    MAPNAME: mapName,
+                    MARKUPFDOPROVIDER: GetFdoProvider(cmd),
+                    MARKUPGEOMTYPE: geomTypes,
+                    REDLINESTYLIZATION: "<?= $args['REDLINESTYLIZATION'] ?>"
+                })
+                .then(res => {
+                    OnMarkupCreated(res);
+                })
+                .catch(err => {
+                    OnMarkupCreateFailure(err);
                 });
             } else {
                 var name = prompt("<?= $redlineLayerNameLocal ?>");
-                Fusion.ajaxRequest("widgets/Redline/newmarkup.php", {
-                    onSuccess: OpenLayers.Function.bind(OnMarkupCreated, this),
-                    onFailure: OpenLayers.Function.bind(OnMarkupCreateFailure, this),
-                    parameters: {
-                        SESSION: session,
-                        MAPNAME: mapName,
-                        NEWLAYERNAME: name,
-                        MARKUPFDOPROVIDER: GetFdoProvider(cmd),
-                        MARKUPGEOMTYPE: geomTypes,
-                        REDLINESTYLIZATION: "<?= $args['REDLINESTYLIZATION'] ?>"
-                    }
+                client.post("server/Redline/newmarkup.php", {
+                    SESSION: session,
+                    MAPNAME: mapName,
+                    NEWLAYERNAME: name,
+                    MARKUPFDOPROVIDER: GetFdoProvider(cmd),
+                    MARKUPGEOMTYPE: geomTypes,
+                    REDLINESTYLIZATION: "<?= $args['REDLINESTYLIZATION'] ?>"
+                })
+                .then(res => {
+                    OnMarkupCreated(res);
+                })
+                .catch(err => {
+                    OnMarkupCreateFailure(err);
                 });
             }
         }
@@ -268,12 +282,11 @@
 
         function OnMarkupCreated(response)
         {
-            eval("var o = " + response.responseText);
+            var o = response;
             if (!o.success) {
                 var msg = "Error \n" + o.message;
                 alert(msg);
-            }
-            else {
+            } else {
                 //Add to markup layers on map
                 var layers = document.getElementById("openMarkup");
                 var opt = new Option();
@@ -281,8 +294,8 @@
                 opt.text = o.layerName;
                 opt.value = o.layerDefinition;
                 layers.options[layers.options.length] = opt;
-                var map = parent.Fusion.getMapByName(mapName);
-                map.reloadMap();
+                var map = GetParent().GetMapFrame();
+                map.Refresh();
                 //Go straight to edit mode
                 SubmitCommand(CMD_EDIT);
             }
@@ -371,8 +384,8 @@
             CheckApplicableProviders();
 
         <?php if ($refreshMap) { ?>
-            var map = parent.Fusion.getMapByName(mapName);
-            map.reloadMap();
+            var map = GetParent().GetMapFrame();
+            map.Refresh();
         <?php } ?>
         
         <?php if ($defaultFormat != null && $defaultGeomType != null && $createOnStartup == true) { ?>

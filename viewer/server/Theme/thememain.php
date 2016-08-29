@@ -268,7 +268,7 @@
                 return;
 
             height = allowTransparency? 470: 445;
-            w = window.open("../../'../Common/'/php/ColorPicker.php?LOCALE=<?=$locale?>&CLR=" + clr + "&ALLOWTRANS=" + (allowTransparency? "1":"0") + "&TRANS=" + (transparent?"1":"0"), "colorPicker", "toolbar=no,status=no,width=355,height=" + height);
+            w = window.open("../Common/ColorPicker.php?LOCALE=<?=$locale?>&CLR=" + clr + "&ALLOWTRANS=" + (allowTransparency? "1":"0") + "&TRANS=" + (transparent?"1":"0"), "colorPicker", "toolbar=no,status=no,width=355,height=" + height);
             w.focus();
         }
 

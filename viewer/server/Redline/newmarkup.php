@@ -71,19 +71,19 @@
         $layerName = $resId->GetName();
         $markupManager->SetArgument("MARKUPLAYER", $layerDef);
         $markupManager->OpenMarkup();
-        $responseJson = "{ success: true, refreshMap: true, layerDefinition: '$layerDef', layerName: '$layerName' }";
+        $responseJson = '{ "success": true, "refreshMap": true, "layerDefinition": "'.$layerDef.'", "layerName": "'.$layerName.'" }';
     }
     catch (MgException $mge)
     {
         $errorMsg = $mge->GetExceptionMessage();
         $errorDetail = $mge->GetDetails();
         $stackTrace = $mge->GetStackTrace();
-        $responseJson = "{success: false, refreshMap: false, message:'$errorMsg\nDetail: $errorDetail\nStack Trace: $stackTrace'}";
+        $responseJson = '{ "success": false, "refreshMap": false, "message":"'.$errorMsg.'\nDetail: '.$errorDetail.'\nStack Trace: '.$stackTrace.'"}';
     }
     catch (Exception $e)
     {
         $errorMsg = $e->GetMessage();
-        $responseJson = "{success: false, refreshMap: false, message:'$errorMsg'}";
+        $responseJson = '{ "success": false, "refreshMap": false, "message":"'.$errorMsg.'"}';
     }
     
     $responseJson = str_replace("\n", "\\n", $responseJson);

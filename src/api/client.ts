@@ -1,6 +1,6 @@
 import * as Request from './request-builder';
 import { MgError } from './error';
-import { MapAgentRequestBuilder } from './builders/mapagent';
+import { MapAgentRequestBuilder, isErrorResponse, serialize } from './builders/mapagent';
 import * as Contracts from './contracts';
 
 /**
@@ -35,19 +35,50 @@ export class Client implements Request.IMapGuideClient {
     }
 
     public get<T>(url: string): Promise<T> {
-        const builder = this.builder;
-        if (builder instanceof MapAgentRequestBuilder) {
-            return builder.get<T>(url);
-        }
-        throw new MgError("Not supported");
+        return new Promise<T>((resolve, reject) => {
+            fetch(url, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }, 
+                method: "GET"
+            })
+            .then(response => {
+                if (isErrorResponse(response)) {
+                    throw new MgError(response.statusText);
+                } else {
+                    resolve(response.json());
+                }
+            })
+            .catch(reject);
+        });
     }
 
     public post<T>(url: string, data: any): Promise<T> {
-        const builder = this.builder;
-        if (builder instanceof MapAgentRequestBuilder) {
-            return builder.post<T>(url, data);
+        if (!data.format) {
+            data.format = "application/json";
         }
-        throw new MgError("Not supported");
+        //const form = new FormData();
+        //for (const key in data) {
+        //    form.append(key.toUpperCase(), data[key]);
+        //}
+        return new Promise<T>((resolve, reject) => {
+            fetch(url, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+                method: "POST",
+                body: serialize(data) //form
+            })
+            .then(response => {
+                if (isErrorResponse(response)) {
+                    throw new MgError(response.statusText);
+                } else {
+                    resolve(response.json());
+                }
+            })
+            .catch(reject);
+        });
     }
     
     public getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier): Request.IPromise<T> {

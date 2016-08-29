@@ -115,6 +115,7 @@ export interface IMapViewer {
     digitizeRectangle(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void;
     digitizePolygon(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void;
     selectByGeometry(geom: ol.geom.Geometry): void;
+    queryMapFeatures(options: IQueryMapFeaturesOptions): void;
     zoomToExtent(extent: Bounds): void;
     isFeatureTooltipEnabled(): boolean;
     setFeatureTooltipEnabled(enabled: boolean): void;
@@ -399,11 +400,19 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     private getSelectableLayers(): string[] {
         return this.props.selectableLayerNames || [];
     }
-    private buildDefaultQueryOptions(): IQueryMapFeaturesOptions {
+    private buildDefaultQueryOptions(geom: ol.geom.Geometry | string, reqQueryFeatures: number = 1 | 2 /* Attributes and inline selection */): IQueryMapFeaturesOptions {
         const names = this.getSelectableLayers();
+        let wkt;
+        if (typeof geom === 'string') {
+            wkt = geom;
+        } else {
+            wkt = this._wktFormat.writeGeometry(geom);
+        }
         return {
             mapname: this.props.map.Name,
             session: this.props.map.SessionId,
+            geometry: wkt,
+            requestdata: reqQueryFeatures,
             layernames: names.length > 0 ? names.join(",") : null,
             persist: 1
         };
@@ -419,33 +428,24 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 break;
             case ActiveMapTool.Select:
                 {
-                    this.sendSelectionQuery(extent, this.buildDefaultQueryOptions());
+                    this.sendSelectionQuery(this.buildDefaultQueryOptions(extent));
                 }
                 break;
         }
     }
-    private sendSelectionQuery(geom: ol.geom.Geometry | string, queryOpts?: IQueryMapFeaturesOptions) {
+    private sendSelectionQuery(queryOpts?: IQueryMapFeaturesOptions) {
         if (queryOpts != null && queryOpts.layernames != null && queryOpts.layernames.length == 0) {
             return;
-        }
-        const reqQueryFeatures = 1 | 2; //Attributes and inline selection
-        let wkt;
-        if (typeof geom === 'string') {
-            wkt = geom;
-        } else {
-            wkt = this._wktFormat.writeGeometry(geom);
         }
         this.incrementBusyWorker();
         const queryOptions = assign({}, {
             mapname: this.props.map.Name,
             session: this.props.map.SessionId,
-            geometry: wkt,
             persist: 1,
             selectionvariant: "INTERSECTS",
             selectioncolor: this.props.selectionColor,
             selectionformat: "PNG8",
-            maxfeatures: -1,
-            requestdata: reqQueryFeatures
+            maxfeatures: -1
         }, queryOpts);
         this._client.queryMapFeatures(queryOptions).then(res => {
             this.refreshMap(RefreshMode.SelectionOnly);
@@ -990,7 +990,10 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this.pushDrawInteraction(draw, handler, prompt || DigitizerMessages.Polygon);
     }
     public selectByGeometry(geom: ol.geom.Geometry): void {
-        this.sendSelectionQuery(geom, this.buildDefaultQueryOptions());
+        this.sendSelectionQuery(this.buildDefaultQueryOptions(geom));
+    }
+    public queryMapFeatures(options: IQueryMapFeaturesOptions): void {
+        this.sendSelectionQuery(options);
     }
     public isFeatureTooltipEnabled(): boolean {
         return this._featureTooltip.isEnabled();

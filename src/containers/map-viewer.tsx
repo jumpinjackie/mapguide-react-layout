@@ -14,6 +14,7 @@ import * as Runtime from "../api/runtime";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import * as MapActions from "../actions/map";
 import { Client } from "../api/client";
+import { IQueryMapFeaturesOptions } from '../api/request-builder';
 
 interface IMapViewerContainerProps {
     
@@ -189,5 +190,8 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     }
     setFeatureTooltipEnabled(enabled: boolean): void {
         this.setState({ featureTooltipsEnabled: enabled });
+    }
+    queryMapFeatures(options: IQueryMapFeaturesOptions): void {
+        this.inner.queryMapFeatures(options);
     }
 }

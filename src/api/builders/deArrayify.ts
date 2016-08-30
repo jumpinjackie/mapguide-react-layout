@@ -532,7 +532,7 @@ function deArrayifyCommand(json: any): Contracts.WebLayout.CommandDef {
     if (typeof(root.DisableIfSelectionEmpty) != 'undefined') {
         cmd.LayerSet = deArrayifyWebLayoutInvokeURLLayerSet(root.LayerSet);
         cmd.AdditionalParameter = deArrayifyWebLayoutParameterPairs(root.AdditionalParameter);
-        cmd.DisableIfSelectionEmpty = tryGetAsProperty(root, "DisableIfSelectionEmpty");
+        cmd.DisableIfSelectionEmpty = tryGetAsProperty(root, "DisableIfSelectionEmpty", "boolean");
     }
     //InvokeScript
     if (typeof(root.Script) != 'undefined') {

@@ -191,7 +191,7 @@ export function initWebLayout(options) {
                 //Register any InvokeURL commands
                 for (const cmd of webLayout.CommandSet.Command) {
                     if (isInvokeURLCommand(cmd)) {
-                        registerCommand(cmd.Name, { url: cmd.URL });
+                        registerCommand(cmd.Name, { url: cmd.URL, disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty });
                     }
                     cmdsByKey[cmd.Name] = cmd;
                 }

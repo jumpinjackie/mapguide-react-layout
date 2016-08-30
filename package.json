@@ -7,7 +7,7 @@
     "build": "cross-env NODE_ENV=production webpack",
     "build:dev": "cross-env NODE_ENV=development webpack",
     "watch:dev": "cross-env NODE_ENV=development webpack -w --progress",
-    "clean": "rimraf dist/",
+    "clean": "rimraf viewer/dist/",
     "dev": "cross-env NODE_ENV=development webpack-dev-server -d --inline --hot --progress --no-info",
     "lint": "tslint 'src/**/*.tsx' 'src/**/*.ts' 'test/**/*.tsx' 'test/**/*.ts'",
     "postinstall": "npm run typings && npm run build",

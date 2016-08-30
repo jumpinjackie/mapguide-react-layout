@@ -1,6 +1,41 @@
 @import "~openlayers/css/ol.css";
 @import '~@aneves/react-flyout/dist/flyout.css';
 
+/* https://gist.github.com/aiboy/7406727 */
+.rotated-text {
+    display: inline-block;
+    overflow: hidden;
+    width: 1.5em;
+}
+.rotated-text-cw {
+    -webkit-transform: translate(1.1em,0) rotate(90deg);
+       -moz-transform: translate(1.1em,0) rotate(90deg);
+         -o-transform: translate(1.1em,0) rotate(90deg);
+            transform: translate(1.1em,0) rotate(90deg);
+}
+.rotated-text-ccw {
+    -webkit-transform: translate(0,2.8em) rotate(270deg);
+       -moz-transform: translate(0,2.8em) rotate(270deg);
+         -o-transform: translate(0,2.8em) rotate(270deg);
+            transform: translate(0,2.8em) rotate(270deg);
+}
+.rotated-text__inner {
+    display: inline-block;
+    white-space: nowrap;
+    /* this is for "non IE" browsers
+       that dosn't support writing-mode */
+    
+    -webkit-transform-origin: 0 0;
+       -moz-transform-origin: 0 0;
+         -o-transform-origin: 0 0;
+            transform-origin: 0 0;
+}
+.rotated-text__inner:before {
+    content: "";
+    float: left;
+    margin-top: 100%;
+}
+
 .mg-flyout-menu-content {
     width: 200px;
     font-size: 10pt;

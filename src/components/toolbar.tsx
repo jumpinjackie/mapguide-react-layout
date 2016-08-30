@@ -232,11 +232,19 @@ class FlyoutMenuItem extends React.Component<IFlyoutMenuItemProps, any> {
         const enabled = getEnabled(menu);
         const imgStyle = getIconStyle(enabled, size);
         const style = getItemStyle(enabled, selected, size, this.state.isMouseOver, vertical);
+        let label: any = menu.label;
+        if (vertical === true) {
+            label = <div className="rotated-text"><span className="rotated-text__inner rotated-text-ccw">{menu.label}</span></div>;
+        }
+        let align = menu.flyoutAlign;
+        if (!align) {
+            align = (vertical === true) ? "right bottom" : null;
+        }
         return <div className="has-flyout noselect" onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={menu.tooltip}>
             <div data-flyout-id={`flyout-${this.flyoutId}`}>
-                {menu.label} <img style={imgStyle} src={getIcon(menu.icon || ((this.state.isFlownOut) ? "icon_menuarrowup.gif" : "icon_menuarrow.gif"))} />
+                {label} <img style={imgStyle} src={getIcon(menu.icon || ((this.state.isFlownOut) ? "icon_menuarrowup.gif" : "icon_menuarrow.gif"))} />
             </div>
-            <FlyoutWrapper id={`flyout-${this.flyoutId}`} open={this.state.isFlownOut} options={{ type: "dropdown", align: menu.flyoutAlign }}>
+            <FlyoutWrapper id={`flyout-${this.flyoutId}`} open={this.state.isFlownOut} options={{ type: "dropdown", align: align }}>
                 <ul className="mg-flyout-menu-content">
                 {this.props.menu.childItems.map((item, index) => {
                     if (item.isSeparator) {

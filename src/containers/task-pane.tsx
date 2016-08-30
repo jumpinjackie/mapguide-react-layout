@@ -17,6 +17,7 @@ interface ITaskPaneContainerState {
     taskpane?: any;
     toolbar?: any;
     config?: any;
+    selection?: any;
 }
 
 interface ITaskPaneDispatch {
@@ -28,10 +29,14 @@ interface ITaskPaneDispatch {
 }
 
 function mapStateToProps(state): ITaskPaneContainerState {
+    //Technically speaking, this should be listening to every branch of the redux
+    //store. But practically speaking, toolbar commands really only cares about 
+    //the branches below
     return {
         map: state.map.state,
         taskpane: state.taskpane,
         config: state.config,
+        selection: state.selection,
         toolbar: state.toolbar["taskpane"]
     };
 }

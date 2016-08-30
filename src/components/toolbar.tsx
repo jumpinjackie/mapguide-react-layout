@@ -238,7 +238,7 @@ class FlyoutMenuItem extends React.Component<IFlyoutMenuItemProps, any> {
         }
         let align = menu.flyoutAlign;
         if (!align) {
-            align = (vertical === true) ? "right bottom" : null;
+            align = (vertical === true) ? "right bottom" : "bottom right";
         }
         return <div className="has-flyout noselect" onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={menu.tooltip}>
             <div data-flyout-id={`flyout-${this.flyoutId}`}>

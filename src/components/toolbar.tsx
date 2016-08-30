@@ -5,7 +5,7 @@ import * as uuid from "node-uuid";
 import * as Constants from "../constants";
 
 export const TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";
-export const DEFAULT_TOOLBAR_HEIGHT = 29;
+export const DEFAULT_TOOLBAR_SIZE = 29;
 const TOOLBAR_STYLE = {
     backgroundColor: TOOLBAR_BACKGROUND_COLOR,
     border: "1px solid rgb(240, 240, 240)"
@@ -58,11 +58,11 @@ function getIconStyle(enabled: boolean, height: number): React.CSSProperties {
     return imgStyle;
 }
 
-function getItemStyle(enabled: boolean, selected: boolean, height: number, isMouseOver: boolean): React.CSSProperties {
-    const pad = ((height - 16) / 2);
+function getItemStyle(enabled: boolean, selected: boolean, size: number, isMouseOver: boolean, vertical?: boolean): React.CSSProperties {
+    const pad = ((size - 16) / 2);
     const vertPad = 6;
     const style: React.CSSProperties = {
-        display: "inline-block",
+        display: vertical === true ? "block" : "inline-block",
         //height: height,
         paddingLeft: pad,
         paddingRight: pad,
@@ -81,16 +81,24 @@ function getItemStyle(enabled: boolean, selected: boolean, height: number, isMou
     return style;
 }
 
-function getToolbarSeparatorItemStyle(height: number): React.CSSProperties {
+function getToolbarSeparatorItemStyle(height: number, vertical?: boolean): React.CSSProperties {
     const vertPad = 6;
     const style: React.CSSProperties = {
-        display: "inline-block",
-        borderLeft: "1px solid black",
-        paddingTop: 0,
-        paddingBottom: 0,
-        marginLeft: 2,
-        marginRight: -2
+        display: vertical === true ? "block" : "inline-block"
     };
+    if (vertical === true) {
+        style.paddingTop = 2;
+        style.paddingBottom = -2;
+        style.marginLeft = 0;
+        style.marginRight = 0;
+        style.borderBottom = "1px solid black";
+    } else {
+        style.paddingTop = 0;
+        style.paddingBottom = 0;
+        style.marginLeft = 2;
+        style.marginRight = -2;
+        style.borderLeft = "1px solid black";
+    }
     return style;
 }
 
@@ -150,7 +158,7 @@ class FlyoutMenuChildItem extends React.Component<any, any> {
     }
     render(): JSX.Element {
         const { item } = this.props;
-        const height = DEFAULT_TOOLBAR_HEIGHT;
+        const height = DEFAULT_TOOLBAR_SIZE;
         const selected = item.selected != null ? item.selected() : false;
         const enabled = item.enabled != null ? item.enabled() : true;
         const imgStyle = getIconStyle(enabled, height);
@@ -164,7 +172,8 @@ class FlyoutMenuChildItem extends React.Component<any, any> {
 }
 
 interface IToolbarContentContainerProps {
-    height: number;
+    size: number;
+    vertical?: boolean;
 }
 
 class ToolbarContentContainer extends React.Component<IToolbarContentContainerProps, any> {
@@ -172,16 +181,17 @@ class ToolbarContentContainer extends React.Component<IToolbarContentContainerPr
         super(props);
     }
     render(): JSX.Element {
-        const { height } = this.props;
-        const imgStyle = getIconStyle(true, height);
-        const style = getItemStyle(true, false, height, false);
+        const { size, vertical } = this.props;
+        const imgStyle = getIconStyle(true, size);
+        const style = getItemStyle(true, false, size, false, vertical);
         return <div className="noselect">{this.props.children}</div>;
     }
 }
 
 interface IFlyoutMenuItemProps {
-    height: number;
+    size: number;
     menu: IMenu;
+    vertical?: boolean;
 }
 
 class FlyoutMenuItem extends React.Component<IFlyoutMenuItemProps, any> {
@@ -217,11 +227,11 @@ class FlyoutMenuItem extends React.Component<IFlyoutMenuItemProps, any> {
         this.setState({ isFlownOut: false, isMouseOver: false });
     }
     render(): JSX.Element {
-        const { height, menu } = this.props;
+        const { size, menu, vertical } = this.props;
         const selected = getSelected(menu);
         const enabled = getEnabled(menu);
-        const imgStyle = getIconStyle(enabled, height);
-        const style = getItemStyle(enabled, selected, height, this.state.isMouseOver);
+        const imgStyle = getIconStyle(enabled, size);
+        const style = getItemStyle(enabled, selected, size, this.state.isMouseOver, vertical);
         return <div className="has-flyout noselect" onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={menu.tooltip}>
             <div data-flyout-id={`flyout-${this.flyoutId}`}>
                 {menu.label} <img style={imgStyle} src={getIcon(menu.icon || ((this.state.isFlownOut) ? "icon_menuarrowup.gif" : "icon_menuarrow.gif"))} />
@@ -242,7 +252,8 @@ class FlyoutMenuItem extends React.Component<IFlyoutMenuItemProps, any> {
 }
 
 interface IToolbarSeparatorProps {
-    height: number;
+    size: number;
+    vertical?: boolean;
 }
 
 class ToolbarSeparator extends React.Component<IToolbarSeparatorProps, any> {
@@ -250,14 +261,19 @@ class ToolbarSeparator extends React.Component<IToolbarSeparatorProps, any> {
         super(props);
     }
     render(): JSX.Element {
-        const style = getToolbarSeparatorItemStyle(this.props.height);
-        return <div className="noselect" style={style}>{Constants.NBSP}</div>;
+        const style = getToolbarSeparatorItemStyle(this.props.size, this.props.vertical);
+        if (this.props.vertical === true) {
+            return <div className="noselect" style={style} />;
+        } else {
+            return <div className="noselect" style={style}>{Constants.NBSP}</div>;
+        }
     }
 }
 
 interface IToolbarButtonProps {
     height: number;
     item: IItem;
+    vertical?: boolean;
 }
 
 class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
@@ -289,11 +305,11 @@ class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
         return false;
     }
     render(): JSX.Element {
-        const { height, item } = this.props;
+        const { height, item, vertical } = this.props;
         const selected = getSelected(item);
         const enabled = getEnabled(item);
         const imgStyle = getIconStyle(enabled, height);
-        const style = getItemStyle(enabled, selected, height, this.state.isMouseOver);
+        const style = getItemStyle(enabled, selected, height, this.state.isMouseOver, vertical);
         return <div className="noselect" onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} style={style} title={item.tooltip} onClick={this.fnClick}>
             <img style={imgStyle} src={getIcon(item.icon)} /> {item.label}
         </div>;
@@ -322,6 +338,7 @@ export interface IContainerItem extends IItem {
 export interface IToolbarProps {
     childItems: IItem[];
     containerStyle?: React.CSSProperties;
+    vertical?: boolean;
 }
 
 export class Toolbar extends React.Component<IToolbarProps, any> {
@@ -329,18 +346,18 @@ export class Toolbar extends React.Component<IToolbarProps, any> {
         super(props);
     }
     render(): JSX.Element {
-        const { containerStyle, childItems } = this.props;
+        const { containerStyle, childItems, vertical } = this.props;
         const height = containerStyle != null 
-            ? (containerStyle.height || DEFAULT_TOOLBAR_HEIGHT)
-            : DEFAULT_TOOLBAR_HEIGHT; 
+            ? (containerStyle.height || DEFAULT_TOOLBAR_SIZE)
+            : DEFAULT_TOOLBAR_SIZE; 
         return <div style={containerStyle} className="noselect">
             {childItems.map((item, index) => {
                 if (isMenu(item)) {
-                    return <FlyoutMenuItem key={index} height={height} menu={item} />;
+                    return <FlyoutMenuItem key={index} size={height} menu={item} vertical={vertical} />;
                 } else if (item.isSeparator === true) {
-                    return <ToolbarSeparator key={index} height={height} />;
+                    return <ToolbarSeparator key={index} size={height} vertical={vertical} />;
                 } else {
-                    return <ToolbarButton key={index} height={height} item={item} />;
+                    return <ToolbarButton key={index} height={height} item={item} vertical={vertical} />;
                 }
             })}
         </div>;

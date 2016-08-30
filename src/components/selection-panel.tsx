@@ -1,6 +1,6 @@
 import * as React from "react";
 import { SelectedFeatureSet, SelectedFeature, LayerMetadata } from "../api/contracts/query";
-import { Toolbar, IItem, IMenu, DEFAULT_TOOLBAR_HEIGHT, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
+import { Toolbar, IItem, IMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
 
 export interface ISelectionPanelProps {
     selection: SelectedFeatureSet;
@@ -110,17 +110,17 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
         return <div style={{ width: "100%", height: "100%", fontFamily: "Verdana, Sans-serif", fontSize: "10pt" }}>
             {(() => {
                 if (selection != null && selection.SelectedLayer != null && selection.SelectedLayer.length > 0) {
-                    return <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: DEFAULT_TOOLBAR_HEIGHT, backgroundColor: TOOLBAR_BACKGROUND_COLOR }}>
-                        <select value={this.state.selectedLayerIndex} style={{ position: "absolute", top: 0, left: 0, height: DEFAULT_TOOLBAR_HEIGHT, maxWidth: 120 }} onChange={this.fnSelectedLayerChanged}>
+                    return <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR }}>
+                        <select value={this.state.selectedLayerIndex} style={{ position: "absolute", top: 0, left: 0, height: DEFAULT_TOOLBAR_SIZE, maxWidth: 120 }} onChange={this.fnSelectedLayerChanged}>
                             {selection.SelectedLayer.map((layer: any, index) => {
                                 return <option key={`selected-layer-${layer["@id"]}`} value={index}>{layer["@name"]}</option>
                             })}
                         </select>
-                        <Toolbar childItems={this.selectionToolbarItems} containerStyle={{ position: "absolute", top: 0, right: 0, height: DEFAULT_TOOLBAR_HEIGHT }} />
+                        <Toolbar childItems={this.selectionToolbarItems} containerStyle={{ position: "absolute", top: 0, right: 0, height: DEFAULT_TOOLBAR_SIZE }} />
                     </div>;
                 }
             })()}
-            <div style={{ position: "absolute", top: DEFAULT_TOOLBAR_HEIGHT, left: 0, right: 0, bottom: 0, overflow: "hidden" }}>
+            <div style={{ position: "absolute", top: DEFAULT_TOOLBAR_SIZE, left: 0, right: 0, bottom: 0, overflow: "hidden" }}>
                 {(() => {
                     if (feat != null && meta != null) {
                         return <table>

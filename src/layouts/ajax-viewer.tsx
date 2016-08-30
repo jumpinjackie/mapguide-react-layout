@@ -1,6 +1,6 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
-import { DEFAULT_TOOLBAR_HEIGHT, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
+import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
 import { ToolbarContainer } from "../containers/toolbar";
 import { AjaxViewerShim } from "../containers/ajax-viewer-shim";
 
@@ -34,7 +34,7 @@ export const AjaxViewerLayout = (props) => {
             </div>
         </div>
         <div style={{ position: "absolute", left: SIDEBAR_WIDTH, top: 0, bottom: 0, right: SIDEBAR_WIDTH }}>
-            <ToolbarContainer id="main" containerStyle={{ position: "absolute", left: 10, top: 10, height: DEFAULT_TOOLBAR_HEIGHT, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR, fontFamily: "Verdana, Sans-serif", fontSize: "10pt" }} />
+            <ToolbarContainer id="main" containerStyle={{ position: "absolute", left: 10, top: 10, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR, fontFamily: "Verdana, Sans-serif", fontSize: "10pt" }} />
             <PlaceholderComponent id={DefaultComponentNames.Map} />
             <PlaceholderComponent id={DefaultComponentNames.Navigator} componentProps={NAVIGATOR_PROPS} />
             <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} componentProps={MOUSE_COORDINATE_PROPS} />

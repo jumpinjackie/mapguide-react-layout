@@ -13,8 +13,12 @@ export const INITIAL_STATE = {
     },
     capabilities: {
         hasTaskPane: false,
+        hasTaskBar: false,
+        hasStatusBar: false,
+        hasNavigator: false,
+        hasSelectionPanel: false,
         hasLegend: false,
-        hasSelectionPanel: false
+        hasToolbar: false
     }
 };
 
@@ -23,7 +27,8 @@ export function configReducer(state = INITIAL_STATE, action = { type: '', payloa
         case Constants.INIT_APP: 
             {
                 const newState = assign({}, state, {
-                    externalBaseLayers: action.payload.externalBaseLayers
+                    externalBaseLayers: action.payload.externalBaseLayers,
+                    capabilities: action.payload.capabilities
                 });
                 return newState;
             }

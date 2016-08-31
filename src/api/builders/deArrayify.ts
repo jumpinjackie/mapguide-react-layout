@@ -447,7 +447,7 @@ function deArrayifyItemContainer<T extends Contracts.WebLayout.WebLayoutControl>
         container[name].push(deArrayifyUIItem(item));
     }
     if (typeof(root[0].Visible) != 'undefined') {
-        container.Visible = root[0].Visible;
+        container.Visible = tryGetAsProperty(root[0], "Visible", "boolean");
     }
     return container;
 }

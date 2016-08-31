@@ -836,7 +836,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 logger.info("Triggering zoom request on moveend suppresseed");
             }
         });
-
         //this.onRequestZoomToView(this._extent);
         this._map.getView().fit(this._extent, this._map.getSize());
     }

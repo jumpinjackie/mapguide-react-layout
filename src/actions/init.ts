@@ -209,7 +209,12 @@ export function initWebLayout(options) {
                         externalBaseLayers: options.externalBaseLayers,
                         capabilities: {
                             hasTaskPane: webLayout.TaskPane.Visible,
-                            hasLegend: webLayout.InformationPane.Visible && webLayout.InformationPane.LegendVisible
+                            hasTaskBar: webLayout.TaskPane.TaskBar.Visible,
+                            hasStatusBar: webLayout.StatusBar.Visible,
+                            hasNavigator: webLayout.ZoomControl.Visible,
+                            hasSelectionPanel: webLayout.InformationPane.Visible && webLayout.InformationPane.PropertiesVisible,
+                            hasLegend: webLayout.InformationPane.Visible && webLayout.InformationPane.LegendVisible,
+                            hasToolbar: webLayout.ToolBar.Visible
                         },
                         toolbars: {
                             "main": {

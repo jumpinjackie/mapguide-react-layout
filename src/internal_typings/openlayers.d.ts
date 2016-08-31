@@ -1,4 +1,4 @@
-// Type definitions for OpenLayers v3.17.1
+// Type definitions for OpenLayers v3.18.1
 // Project: http://openlayers.org/
 // Definitions by: Jackie Ng <https://github.com/jumpinjackie>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -27,12 +27,14 @@ declare module goog {
 }
 
 // These types normally resolve to number[] by the plugin, which is fine, but TypeScript lets us define
-// "constrained" array types (I forget what the actual feature is called) which is much more expressive 
+// tuple types (ie. Arrays of specific size and item types) which is much more expressive 
 // and clearer than what the plugin generates
 //
 // For example, instead of number[] for ol.Coordinate, we can express this as [number, number], ie. A
 // 2-item array of numbers, which is more clearer as it communicates the maximum number of allowed elements
 // that number[] does not
+//
+// We have to define these types manually, as there is no JSDoc analogue for this plugin to translate from
 
 declare module ol {
     /**
@@ -180,7 +182,9 @@ declare module ol {
      */
     type ImageLoadFunctionType = (arg0: ol.Image, arg1: string) => void;
     /**
-     * One of `all`, `bbox`, `tile`.
+     * A function that takes an {@link ol.Extent} and a resolution as arguments, and
+     * returns an array of {@link ol.Extent} with the extents to load. Usually this
+     * is one of the standard {@link ol.loadingstrategy} strategies.
      */
     type LoadingStrategy = (arg0: ol.Extent, arg1: number) => ol.Extent[];
     /**
@@ -1177,9 +1181,10 @@ declare module ol {
          * detection can be configured through `opt_layerFilter`.
          * @param pixel  (Required) Pixel.
          * @param callback  (Required) Layer
-    callback. Will receive one argument, the {@link ol.layer.Layer layer}
-    that contains the color pixel. To stop detection, callback functions can
-    return a truthy value.
+    callback. This callback will recieve two arguments: first is the
+    {@link ol.layer.Layer layer}, second argument is {@link ol.Color}
+    and will be null for layer types that do not currently support this
+    argument. To stop detection callback functions can return a truthy value.
          * @param opt_this  (Optional) Value to use as `this` when executing `callback`.
          * @param opt_layerFilter  (Optional) Layer
     filter function. The filter function will receive one argument, the
@@ -1897,11 +1902,17 @@ otherwise it will be negative.
          * @param tileCoord  (Required) Tile coordinate.
          * @param state  (Required) State.
          */
-        constructor(tileCoord: ol.TileCoord, state: ol.TileState);
+        constructor(tileCoord: ol.TileCoord, state: ol.Tile.State);
         /**
          * Get the tile coordinate for this tile.
          */
         getTileCoord(): ol.TileCoord;
+        /**
+         * Load the image or retry if loading previously failed.
+         * Loading is taken care of by the tile queue, and calling this method is
+         * only needed for preloading or for reloading in case of an error.
+         */
+        load(): void;
     }
     /**
      * An ol.View object represents a simple 2D view of the map.
@@ -2017,7 +2028,7 @@ otherwise it will be negative.
         getRotation(): number;
         /**
          * Get the current zoom level. Return undefined if the current
-         * resolution is undefined or not a "constrained resolution".
+         * resolution is undefined or not within the "resolution constraints".
          */
         getZoom(): number;
         /**
@@ -2228,17 +2239,6 @@ otherwise it will be negative.
     /**
      * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
      */
-    enum TileState {
-        IDLE = 0,
-        LOADING = 1,
-        LOADED = 2,
-        ERROR = 3,
-        EMPTY = 4,
-        ABORT = 5
-    }
-    /**
-     * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
-     */
     type AttributionLike = string|string[]|ol.Attribution|ol.Attribution[];
 
     /**
@@ -2251,6 +2251,12 @@ otherwise it will be negative.
      * Key to use with {@link ol.Observable#unByKey}.
      */
     type EventsKey = any;
+
+    /**
+     * An array representing an affine 2d transformation for use with
+     * {@link ol.transform} functions. The array has 6 elements.
+     */
+    type Transform = number[];
 
     /**
      * A projection as {@link ol.proj.Projection}, SRS identifier string or
@@ -3146,10 +3152,11 @@ otherwise it will be negative.
             unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
         }
         /**
-         * A control displaying rough x-axis distances, calculated for the center of the
-         * viewport.
-         * No scale line will be shown when the x-axis distance cannot be calculated in
-         * the view projection (e.g. at or beyond the poles in EPSG:4326).
+         * A control displaying rough y-axis distances, calculated for the center of the
+         * viewport. For conformal projections (e.g. EPSG:3857, the default view
+         * projection in OpenLayers), the scale is valid for all directions.
+         * No scale line will be shown when the y-axis distance of a pixel at the
+         * viewport center cannot be calculated in the view projection.
          * By default the scale line will show in the bottom left portion of the map,
          * but this can be changed by using the css selector `.ol-scale-line`.
          */
@@ -3162,7 +3169,7 @@ otherwise it will be negative.
             /**
              * Return the units to use in the scale line.
              */
-            getUnits(): ol.control.ScaleLineUnits;
+            getUnits(): ol.control.ScaleLine.Units;
             /**
              * Update the scale line element.
              * @param mapEvent  (Required) Map event.
@@ -3172,7 +3179,7 @@ otherwise it will be negative.
              * Set the units to use in the scale line.
              * @param units  (Required) The units to use in the scale line.
              */
-            setUnits(units: ol.control.ScaleLineUnits): void;
+            setUnits(units: ol.control.ScaleLine.Units): void;
             /**
              * Get the map associated with this control.
              */
@@ -3612,31 +3619,42 @@ otherwise it will be negative.
              */
             unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
         }
-        /**
-         * Units for the scale line. Supported values are `'degrees'`, `'imperial'`,
-         * `'nautical'`, `'metric'`, `'us'`.
-         */
-        class ScaleLineUnits {
+        module ScaleLine {
             /**
-             * "degrees"
+             * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
              */
-            public static DEGREES: string;
+            class Property {
+                /**
+                 * "units"
+                 */
+                public static UNITS: string;
+            }
             /**
-             * "imperial"
+             * Units for the scale line. Supported values are `'degrees'`, `'imperial'`,
+             * `'nautical'`, `'metric'`, `'us'`.
              */
-            public static IMPERIAL: string;
-            /**
-             * "nautical"
-             */
-            public static NAUTICAL: string;
-            /**
-             * "metric"
-             */
-            public static METRIC: string;
-            /**
-             * "us"
-             */
-            public static US: string;
+            class Units {
+                /**
+                 * "degrees"
+                 */
+                public static DEGREES: string;
+                /**
+                 * "imperial"
+                 */
+                public static IMPERIAL: string;
+                /**
+                 * "nautical"
+                 */
+                public static NAUTICAL: string;
+                /**
+                 * "metric"
+                 */
+                public static METRIC: string;
+                /**
+                 * "us"
+                 */
+                public static US: string;
+            }
         }
     }
     module coordinate {
@@ -3790,9 +3808,8 @@ otherwise it will be negative.
             /**
              * TODO: This method has no documentation. Contact the library author if this method should be documented
              * @param type  (Required) Type.
-             * @param opt_target  (Optional) Target.
              */
-            constructor(type: string, opt_target?: any);
+            constructor(type: string);
             /**
              * The event type.
              */
@@ -4187,6 +4204,36 @@ otherwise it will be negative.
             writeGeometryObject(geometry: ol.geom.Geometry, opt_options?: olx.format.WriteOptions): GeoJSONGeometry|GeoJSONGeometryCollection;
         }
         /**
+         * Feature format for reading and writing data in the GML format
+         * version 3.1.1.
+         * Currently only supports GML 3.1.1 Simple Features profile.
+         */
+        class GML extends ol.format.GMLBase {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param opt_options  (Optional) Optional configuration object.
+             */
+            constructor(opt_options?: olx.format.GMLOptions);
+            /**
+             * Encode an array of features in GML 3.1.1 Simple Features.
+             * @param features  (Required) Features.
+             * @param opt_options  (Optional) Options.
+             */
+            writeFeatures(features: ol.Feature[], opt_options?: olx.format.WriteOptions): string;
+            /**
+             * Encode an array of features in the GML 3.1.1 format as an XML node.
+             * @param features  (Required) Features.
+             * @param opt_options  (Optional) Options.
+             */
+            writeFeaturesNode(features: ol.Feature[], opt_options?: olx.format.WriteOptions): Node;
+            /**
+             * Read all features from a GML FeatureCollection.
+             * @param source  (Required) Source.
+             * @param opt_options  (Optional) Options.
+             */
+            readFeatures(source: Document|Node|any|string, opt_options?: olx.format.ReadOptions): ol.Feature[];
+        }
+        /**
          * Feature format for reading and writing data in the GML format,
          * version 2.1.2.
          */
@@ -4220,36 +4267,6 @@ otherwise it will be negative.
              * @param opt_options  (Optional) Options.
              */
             writeGeometryNode(geometry: ol.geom.Geometry, opt_options?: olx.format.WriteOptions): Node;
-            /**
-             * Encode an array of features in GML 3.1.1 Simple Features.
-             * @param features  (Required) Features.
-             * @param opt_options  (Optional) Options.
-             */
-            writeFeatures(features: ol.Feature[], opt_options?: olx.format.WriteOptions): string;
-            /**
-             * Encode an array of features in the GML 3.1.1 format as an XML node.
-             * @param features  (Required) Features.
-             * @param opt_options  (Optional) Options.
-             */
-            writeFeaturesNode(features: ol.Feature[], opt_options?: olx.format.WriteOptions): Node;
-            /**
-             * Read all features from a GML FeatureCollection.
-             * @param source  (Required) Source.
-             * @param opt_options  (Optional) Options.
-             */
-            readFeatures(source: Document|Node|any|string, opt_options?: olx.format.ReadOptions): ol.Feature[];
-        }
-        /**
-         * Feature format for reading and writing data in the GML format
-         * version 3.1.1.
-         * Currently only supports GML 3.1.1 Simple Features profile.
-         */
-        class GML extends ol.format.GMLBase {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param opt_options  (Optional) Optional configuration object.
-             */
-            constructor(opt_options?: olx.format.GMLOptions);
             /**
              * Encode an array of features in GML 3.1.1 Simple Features.
              * @param features  (Required) Features.
@@ -4374,6 +4391,9 @@ otherwise it will be negative.
         }
         /**
          * Feature format for reading and writing data in the KML format.
+         * 
+         * Note that the KML format uses the URL() constructor. Older browsers such as IE
+         * which do not support this will need a URL polyfill to be loaded before use.
          */
         class KML extends ol.format.XMLFeature {
             /**
@@ -4436,6 +4456,17 @@ otherwise it will be negative.
              * @param opt_options  (Optional) Options.
              */
             constructor(opt_options?: olx.format.MVTOptions);
+            /**
+             * Read all features from a source.
+             * @param source  (Required) Source.
+             * @param opt_options  (Optional) Read options.
+             */
+            readFeatures(source: Document|Node|ArrayBuffer|any|string, opt_options?: olx.format.ReadOptions): ol.Feature[];
+            /**
+             * Read the projection from a source.
+             * @param source  (Required) Source.
+             */
+            readProjection(source: Document|Node|any|string): ol.proj.Projection;
             /**
              * Sets the layers that features will be read from.
              * @param layers  (Required) Layers.
@@ -4696,16 +4727,16 @@ otherwise it will be negative.
             read(source: Document|Node|string): any;
         }
         /**
+         * Generic format for reading non-feature XML data
+         */
+        class XML {
+        }
+        /**
          * Abstract base class; normally only used for creating subclasses and not
          * instantiated in apps.
          * Base class for XML feature formats.
          */
         class XMLFeature extends ol.format.Feature {
-        }
-        /**
-         * Generic format for reading non-feature XML data
-         */
-        class XML {
         }
         /**
          * IGC altitude/z. One of 'barometric', 'gps', 'none'.
@@ -4752,6 +4783,24 @@ otherwise it will be negative.
    set on geometries when this is not provided.
                  */
                 function bbox(geometryName: string, extent: ol.Extent, opt_srsName?: string): ol.format.ogc.filter.Bbox;
+                /**
+                 * Create a `<Intersects>` operator to test whether a geometry-valued property
+                 * intersects a given geometry.
+                 * @param geometryName  (Required) Geometry name to use.
+                 * @param geometry  (Required) Geometry.
+                 * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
+   set on geometries when this is not provided.
+                 */
+                function intersects(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string): ol.format.ogc.filter.Intersects;
+                /**
+                 * Create a `<Within>` operator to test whether a geometry-valued property
+                 * is within a given geometry.
+                 * @param geometryName  (Required) Geometry name to use.
+                 * @param geometry  (Required) Geometry.
+                 * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
+   set on geometries when this is not provided.
+                 */
+                function within(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string): ol.format.ogc.filter.Within;
                 /**
                  * Creates a `<PropertyIsEqualTo>` comparison operator.
                  * @param propertyName  (Required) Name of the context property to compare.
@@ -4819,41 +4868,6 @@ otherwise it will be negative.
                  */
                 function like(propertyName: string, pattern: string, opt_wildCard?: string, opt_singleChar?: string, opt_escapeChar?: string, opt_matchCase?: boolean): ol.format.ogc.filter.IsLike;
                 /**
-                 * Abstract class; normally only used for creating subclasses and not instantiated in apps.
-                 * Base class for WFS GetFeature filters.
-                 */
-                class Filter {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param tagName  (Required) The XML tag name for this filter.
-                     */
-                    constructor(tagName: string);
-                }
-                /**
-                 * Abstract class; normally only used for creating subclasses and not instantiated in apps.
-                 * Base class for WFS GetFeature logical filters.
-                 */
-                class Logical extends ol.format.ogc.filter.Filter {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param tagName  (Required) The XML tag name for this filter.
-                     */
-                    constructor(tagName: string);
-                }
-                /**
-                 * Abstract class; normally only used for creating subclasses and not instantiated in apps.
-                 * Base class for WFS GetFeature binary logical filters.
-                 */
-                class LogicalBinary extends ol.format.ogc.filter.Logical {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param tagName  (Required) The XML tag name for this filter.
-                     * @param conditionA  (Required) First filter condition.
-                     * @param conditionB  (Required) Second filter condition.
-                     */
-                    constructor(tagName: string, conditionA: ol.format.ogc.filter.Filter, conditionB: ol.format.ogc.filter.Filter);
-                }
-                /**
                  * Represents a logical `<And>` operator between two filter conditions.
                  */
                 class And extends ol.format.ogc.filter.LogicalBinary {
@@ -4863,27 +4877,6 @@ otherwise it will be negative.
                      * @param conditionB  (Required) Second filter condition.
                      */
                     constructor(conditionA: ol.format.ogc.filter.Filter, conditionB: ol.format.ogc.filter.Filter);
-                }
-                /**
-                 * Represents a logical `<Or>` operator between two filter conditions.
-                 */
-                class Or extends ol.format.ogc.filter.LogicalBinary {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param conditionA  (Required) First filter condition.
-                     * @param conditionB  (Required) Second filter condition.
-                     */
-                    constructor(conditionA: ol.format.ogc.filter.Filter, conditionB: ol.format.ogc.filter.Filter);
-                }
-                /**
-                 * Represents a logical `<Not>` operator for a filter condition.
-                 */
-                class Not extends ol.format.ogc.filter.Logical {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param condition  (Required) Filter condition.
-                     */
-                    constructor(condition: ol.format.ogc.filter.Filter);
                 }
                 /**
                  * Represents a `<BBOX>` operator to test whether a geometry-valued property
@@ -4938,38 +4931,15 @@ otherwise it will be negative.
                     constructor(propertyName: string, expression: string|number, opt_matchCase?: boolean);
                 }
                 /**
-                 * Represents a `<PropertyIsNotEqualTo>` comparison operator.
+                 * Abstract class; normally only used for creating subclasses and not instantiated in apps.
+                 * Base class for WFS GetFeature filters.
                  */
-                class NotEqualTo extends ol.format.ogc.filter.ComparisonBinary {
+                class Filter {
                     /**
                      * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param propertyName  (Required) Name of the context property to compare.
-                     * @param expression  (Required) The value to compare.
-                     * @param opt_matchCase  (Optional) Case-sensitive?
+                     * @param tagName  (Required) The XML tag name for this filter.
                      */
-                    constructor(propertyName: string, expression: string|number, opt_matchCase?: boolean);
-                }
-                /**
-                 * Represents a `<PropertyIsLessThan>` comparison operator.
-                 */
-                class LessThan extends ol.format.ogc.filter.ComparisonBinary {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param propertyName  (Required) Name of the context property to compare.
-                     * @param expression  (Required) The value to compare.
-                     */
-                    constructor(propertyName: string, expression: number);
-                }
-                /**
-                 * Represents a `<PropertyIsLessThanOrEqualTo>` comparison operator.
-                 */
-                class LessThanOrEqualTo extends ol.format.ogc.filter.ComparisonBinary {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param propertyName  (Required) Name of the context property to compare.
-                     * @param expression  (Required) The value to compare.
-                     */
-                    constructor(propertyName: string, expression: number);
+                    constructor(tagName: string);
                 }
                 /**
                  * Represents a `<PropertyIsGreaterThan>` comparison operator.
@@ -4994,14 +4964,18 @@ otherwise it will be negative.
                     constructor(propertyName: string, expression: number);
                 }
                 /**
-                 * Represents a `<PropertyIsNull>` comparison operator.
+                 * Represents a `<Intersects>` operator to test whether a geometry-valued property
+                 * intersects a given geometry.
                  */
-                class IsNull extends ol.format.ogc.filter.Comparison {
+                class Intersects extends ol.format.ogc.filter.Spatial {
                     /**
                      * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param propertyName  (Required) Name of the context property to compare.
+                     * @param geometryName  (Required) Geometry name to use.
+                     * @param geometry  (Required) Geometry.
+                     * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
+   set on geometries when this is not provided.
                      */
-                    constructor(propertyName: string);
+                    constructor(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string);
                 }
                 /**
                  * Represents a `<PropertyIsBetween>` comparison operator.
@@ -5032,6 +5006,124 @@ otherwise it will be negative.
                      * @param opt_matchCase  (Optional) Case-sensitive?
                      */
                     constructor(propertyName: string, pattern: string, opt_wildCard?: string, opt_singleChar?: string, opt_escapeChar?: string, opt_matchCase?: boolean);
+                }
+                /**
+                 * Represents a `<PropertyIsNull>` comparison operator.
+                 */
+                class IsNull extends ol.format.ogc.filter.Comparison {
+                    /**
+                     * TODO: This method has no documentation. Contact the library author if this method should be documented
+                     * @param propertyName  (Required) Name of the context property to compare.
+                     */
+                    constructor(propertyName: string);
+                }
+                /**
+                 * Represents a `<PropertyIsLessThan>` comparison operator.
+                 */
+                class LessThan extends ol.format.ogc.filter.ComparisonBinary {
+                    /**
+                     * TODO: This method has no documentation. Contact the library author if this method should be documented
+                     * @param propertyName  (Required) Name of the context property to compare.
+                     * @param expression  (Required) The value to compare.
+                     */
+                    constructor(propertyName: string, expression: number);
+                }
+                /**
+                 * Represents a `<PropertyIsLessThanOrEqualTo>` comparison operator.
+                 */
+                class LessThanOrEqualTo extends ol.format.ogc.filter.ComparisonBinary {
+                    /**
+                     * TODO: This method has no documentation. Contact the library author if this method should be documented
+                     * @param propertyName  (Required) Name of the context property to compare.
+                     * @param expression  (Required) The value to compare.
+                     */
+                    constructor(propertyName: string, expression: number);
+                }
+                /**
+                 * Abstract class; normally only used for creating subclasses and not instantiated in apps.
+                 * Base class for WFS GetFeature logical filters.
+                 */
+                class Logical extends ol.format.ogc.filter.Filter {
+                    /**
+                     * TODO: This method has no documentation. Contact the library author if this method should be documented
+                     * @param tagName  (Required) The XML tag name for this filter.
+                     */
+                    constructor(tagName: string);
+                }
+                /**
+                 * Abstract class; normally only used for creating subclasses and not instantiated in apps.
+                 * Base class for WFS GetFeature binary logical filters.
+                 */
+                class LogicalBinary extends ol.format.ogc.filter.Logical {
+                    /**
+                     * TODO: This method has no documentation. Contact the library author if this method should be documented
+                     * @param tagName  (Required) The XML tag name for this filter.
+                     * @param conditionA  (Required) First filter condition.
+                     * @param conditionB  (Required) Second filter condition.
+                     */
+                    constructor(tagName: string, conditionA: ol.format.ogc.filter.Filter, conditionB: ol.format.ogc.filter.Filter);
+                }
+                /**
+                 * Represents a logical `<Not>` operator for a filter condition.
+                 */
+                class Not extends ol.format.ogc.filter.Logical {
+                    /**
+                     * TODO: This method has no documentation. Contact the library author if this method should be documented
+                     * @param condition  (Required) Filter condition.
+                     */
+                    constructor(condition: ol.format.ogc.filter.Filter);
+                }
+                /**
+                 * Represents a `<PropertyIsNotEqualTo>` comparison operator.
+                 */
+                class NotEqualTo extends ol.format.ogc.filter.ComparisonBinary {
+                    /**
+                     * TODO: This method has no documentation. Contact the library author if this method should be documented
+                     * @param propertyName  (Required) Name of the context property to compare.
+                     * @param expression  (Required) The value to compare.
+                     * @param opt_matchCase  (Optional) Case-sensitive?
+                     */
+                    constructor(propertyName: string, expression: string|number, opt_matchCase?: boolean);
+                }
+                /**
+                 * Represents a logical `<Or>` operator between two filter conditions.
+                 */
+                class Or extends ol.format.ogc.filter.LogicalBinary {
+                    /**
+                     * TODO: This method has no documentation. Contact the library author if this method should be documented
+                     * @param conditionA  (Required) First filter condition.
+                     * @param conditionB  (Required) Second filter condition.
+                     */
+                    constructor(conditionA: ol.format.ogc.filter.Filter, conditionB: ol.format.ogc.filter.Filter);
+                }
+                /**
+                 * Represents a spatial operator to test whether a geometry-valued property
+                 * relates to a given geometry.
+                 */
+                class Spatial extends ol.format.ogc.filter.Filter {
+                    /**
+                     * TODO: This method has no documentation. Contact the library author if this method should be documented
+                     * @param tagName  (Required) The XML tag name for this filter.
+                     * @param geometryName  (Required) Geometry name to use.
+                     * @param geometry  (Required) Geometry.
+                     * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
+   set on geometries when this is not provided.
+                     */
+                    constructor(tagName: string, geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string);
+                }
+                /**
+                 * Represents a `<Within>` operator to test whether a geometry-valued property
+                 * is within a given geometry.
+                 */
+                class Within extends ol.format.ogc.filter.Spatial {
+                    /**
+                     * TODO: This method has no documentation. Contact the library author if this method should be documented
+                     * @param geometryName  (Required) Geometry name to use.
+                     * @param geometry  (Required) Geometry.
+                     * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
+   set on geometries when this is not provided.
+                     */
+                    constructor(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string);
                 }
             }
         }
@@ -5512,20 +5604,18 @@ otherwise it will be negative.
             unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
         }
         /**
-         * Allows the user to zoom and rotate the map by clicking and dragging
-         * on the map.  By default, this interaction is limited to when the shift
-         * key is held down.
+         * Allows the user to rotate the map by clicking and dragging on the map,
+         * normally combined with an {@link ol.events.condition} that limits
+         * it to when the alt and shift keys are held down.
          * 
          * This interaction is only supported for mouse devices.
-         * 
-         * And this interaction is not included in the default interactions.
          */
-        class DragRotateAndZoom extends ol.interaction.Pointer {
+        class DragRotate extends ol.interaction.Pointer {
             /**
              * TODO: This method has no documentation. Contact the library author if this method should be documented
              * @param opt_options  (Optional) Options.
              */
-            constructor(opt_options?: olx.interaction.DragRotateAndZoomOptions);
+            constructor(opt_options?: olx.interaction.DragRotateOptions);
             /**
              * Return whether the interaction is currently active.
              */
@@ -5620,18 +5710,20 @@ otherwise it will be negative.
             unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
         }
         /**
-         * Allows the user to rotate the map by clicking and dragging on the map,
-         * normally combined with an {@link ol.events.condition} that limits
-         * it to when the alt and shift keys are held down.
+         * Allows the user to zoom and rotate the map by clicking and dragging
+         * on the map.  By default, this interaction is limited to when the shift
+         * key is held down.
          * 
          * This interaction is only supported for mouse devices.
+         * 
+         * And this interaction is not included in the default interactions.
          */
-        class DragRotate extends ol.interaction.Pointer {
+        class DragRotateAndZoom extends ol.interaction.Pointer {
             /**
              * TODO: This method has no documentation. Contact the library author if this method should be documented
              * @param opt_options  (Optional) Options.
              */
-            constructor(opt_options?: olx.interaction.DragRotateOptions);
+            constructor(opt_options?: olx.interaction.DragRotateAndZoomOptions);
             /**
              * Return whether the interaction is currently active.
              */
@@ -7564,7 +7656,7 @@ to zoom to the center of the map
                  * @param transform  (Required) Transform.
                  * @param viewRotation  (Required) View rotation.
                  */
-                constructor(context: CanvasRenderingContext2D, pixelRatio: number, extent: ol.Extent, transform: goog.vec.Mat4.Number, viewRotation: number);
+                constructor(context: CanvasRenderingContext2D, pixelRatio: number, extent: ol.Extent, transform: ol.Transform, viewRotation: number);
                 /**
                  * Render a circle geometry into the canvas.  Rendering is immediate and uses
                  * the current fill and stroke styles.
@@ -7880,12 +7972,28 @@ breaks.
              */
             rotate(angle: number, anchor: ol.Coordinate): void;
             /**
+             * Scale the geometry (with an optional origin).  This modifies the geometry
+             * coordinates in place.
+             * @param sx  (Required) The scaling factor in the x-direction.
+             * @param opt_sy  (Optional) The scaling factor in the y-direction (defaults to
+    sx).
+             * @param opt_anchor  (Optional) The scale origin (defaults to the center
+    of the geometry extent).
+             */
+            scale(sx: number, opt_sy?: number, opt_anchor?: ol.Coordinate): void;
+            /**
              * Return the closest point of the geometry to the passed point as
              * {@link ol.Coordinate coordinate}.
              * @param point  (Required) Point.
              * @param opt_closestPoint  (Optional) Closest point.
              */
             getClosestPoint(point: ol.Coordinate, opt_closestPoint?: ol.Coordinate): ol.Coordinate;
+            /**
+             * Returns true if this geometry includes the specified coordinate. If the
+             * coordinate is on the boundary of the geometry, returns false.
+             * @param coordinate  (Required) Coordinate.
+             */
+            intersectsCoordinate(coordinate: ol.Coordinate): boolean;
             /**
              * Get the extent of the geometry.
              * @param opt_extent  (Optional) Extent.
@@ -7997,6 +8105,12 @@ breaks.
              */
             getClosestPoint(point: ol.Coordinate, opt_closestPoint?: ol.Coordinate): ol.Coordinate;
             /**
+             * Returns true if this geometry includes the specified coordinate. If the
+             * coordinate is on the boundary of the geometry, returns false.
+             * @param coordinate  (Required) Coordinate.
+             */
+            intersectsCoordinate(coordinate: ol.Coordinate): boolean;
+            /**
              * Get the extent of the geometry.
              * @param opt_extent  (Optional) Extent.
              */
@@ -8008,6 +8122,16 @@ breaks.
              * @param anchor  (Required) The rotation center.
              */
             rotate(angle: number, anchor: ol.Coordinate): void;
+            /**
+             * Scale the geometry (with an optional origin).  This modifies the geometry
+             * coordinates in place.
+             * @param sx  (Required) The scaling factor in the x-direction.
+             * @param opt_sy  (Optional) The scaling factor in the y-direction (defaults to
+    sx).
+             * @param opt_anchor  (Optional) The scale origin (defaults to the center
+    of the geometry extent).
+             */
+            scale(sx: number, opt_sy?: number, opt_anchor?: ol.Coordinate): void;
             /**
              * Create a simplified version of this geometry.  For linestrings, this uses
              * the the {@link
@@ -8143,6 +8267,16 @@ breaks.
              */
             rotate(angle: number, anchor: ol.Coordinate): void;
             /**
+             * Scale the geometry (with an optional origin).  This modifies the geometry
+             * coordinates in place.
+             * @param sx  (Required) The scaling factor in the x-direction.
+             * @param opt_sy  (Optional) The scaling factor in the y-direction (defaults to
+    sx).
+             * @param opt_anchor  (Optional) The scale origin (defaults to the center
+    of the geometry extent).
+             */
+            scale(sx: number, opt_sy?: number, opt_anchor?: ol.Coordinate): void;
+            /**
              * Set the geometries that make up this geometry collection.
              * @param geometries  (Required) Geometries.
              */
@@ -8169,6 +8303,12 @@ breaks.
              */
             getClosestPoint(point: ol.Coordinate, opt_closestPoint?: ol.Coordinate): ol.Coordinate;
             /**
+             * Returns true if this geometry includes the specified coordinate. If the
+             * coordinate is on the boundary of the geometry, returns false.
+             * @param coordinate  (Required) Coordinate.
+             */
+            intersectsCoordinate(coordinate: ol.Coordinate): boolean;
+            /**
              * Get the extent of the geometry.
              * @param opt_extent  (Optional) Extent.
              */
@@ -8180,6 +8320,16 @@ breaks.
              * @param anchor  (Required) The rotation center.
              */
             rotate(angle: number, anchor: ol.Coordinate): void;
+            /**
+             * Scale the geometry (with an optional origin).  This modifies the geometry
+             * coordinates in place.
+             * @param sx  (Required) The scaling factor in the x-direction.
+             * @param opt_sy  (Optional) The scaling factor in the y-direction (defaults to
+    sx).
+             * @param opt_anchor  (Optional) The scale origin (defaults to the center
+    of the geometry extent).
+             */
+            scale(sx: number, opt_sy?: number, opt_anchor?: ol.Coordinate): void;
             /**
              * Create a simplified version of this geometry.  For linestrings, this uses
              * the the {@link
@@ -8334,12 +8484,28 @@ breaks.
              */
             rotate(angle: number, anchor: ol.Coordinate): void;
             /**
+             * Scale the geometry (with an optional origin).  This modifies the geometry
+             * coordinates in place.
+             * @param sx  (Required) The scaling factor in the x-direction.
+             * @param opt_sy  (Optional) The scaling factor in the y-direction (defaults to
+    sx).
+             * @param opt_anchor  (Optional) The scale origin (defaults to the center
+    of the geometry extent).
+             */
+            scale(sx: number, opt_sy?: number, opt_anchor?: ol.Coordinate): void;
+            /**
              * Return the closest point of the geometry to the passed point as
              * {@link ol.Coordinate coordinate}.
              * @param point  (Required) Point.
              * @param opt_closestPoint  (Optional) Closest point.
              */
             getClosestPoint(point: ol.Coordinate, opt_closestPoint?: ol.Coordinate): ol.Coordinate;
+            /**
+             * Returns true if this geometry includes the specified coordinate. If the
+             * coordinate is on the boundary of the geometry, returns false.
+             * @param coordinate  (Required) Coordinate.
+             */
+            intersectsCoordinate(coordinate: ol.Coordinate): boolean;
             /**
              * Get the extent of the geometry.
              * @param opt_extent  (Optional) Extent.
@@ -8539,12 +8705,28 @@ breaks.
              */
             rotate(angle: number, anchor: ol.Coordinate): void;
             /**
+             * Scale the geometry (with an optional origin).  This modifies the geometry
+             * coordinates in place.
+             * @param sx  (Required) The scaling factor in the x-direction.
+             * @param opt_sy  (Optional) The scaling factor in the y-direction (defaults to
+    sx).
+             * @param opt_anchor  (Optional) The scale origin (defaults to the center
+    of the geometry extent).
+             */
+            scale(sx: number, opt_sy?: number, opt_anchor?: ol.Coordinate): void;
+            /**
              * Return the closest point of the geometry to the passed point as
              * {@link ol.Coordinate coordinate}.
              * @param point  (Required) Point.
              * @param opt_closestPoint  (Optional) Closest point.
              */
             getClosestPoint(point: ol.Coordinate, opt_closestPoint?: ol.Coordinate): ol.Coordinate;
+            /**
+             * Returns true if this geometry includes the specified coordinate. If the
+             * coordinate is on the boundary of the geometry, returns false.
+             * @param coordinate  (Required) Coordinate.
+             */
+            intersectsCoordinate(coordinate: ol.Coordinate): boolean;
             /**
              * Get the extent of the geometry.
              * @param opt_extent  (Optional) Extent.
@@ -8738,12 +8920,28 @@ breaks.
              */
             rotate(angle: number, anchor: ol.Coordinate): void;
             /**
+             * Scale the geometry (with an optional origin).  This modifies the geometry
+             * coordinates in place.
+             * @param sx  (Required) The scaling factor in the x-direction.
+             * @param opt_sy  (Optional) The scaling factor in the y-direction (defaults to
+    sx).
+             * @param opt_anchor  (Optional) The scale origin (defaults to the center
+    of the geometry extent).
+             */
+            scale(sx: number, opt_sy?: number, opt_anchor?: ol.Coordinate): void;
+            /**
              * Return the closest point of the geometry to the passed point as
              * {@link ol.Coordinate coordinate}.
              * @param point  (Required) Point.
              * @param opt_closestPoint  (Optional) Closest point.
              */
             getClosestPoint(point: ol.Coordinate, opt_closestPoint?: ol.Coordinate): ol.Coordinate;
+            /**
+             * Returns true if this geometry includes the specified coordinate. If the
+             * coordinate is on the boundary of the geometry, returns false.
+             * @param coordinate  (Required) Coordinate.
+             */
+            intersectsCoordinate(coordinate: ol.Coordinate): boolean;
             /**
              * Get the extent of the geometry.
              * @param opt_extent  (Optional) Extent.
@@ -8917,12 +9115,28 @@ breaks.
              */
             rotate(angle: number, anchor: ol.Coordinate): void;
             /**
+             * Scale the geometry (with an optional origin).  This modifies the geometry
+             * coordinates in place.
+             * @param sx  (Required) The scaling factor in the x-direction.
+             * @param opt_sy  (Optional) The scaling factor in the y-direction (defaults to
+    sx).
+             * @param opt_anchor  (Optional) The scale origin (defaults to the center
+    of the geometry extent).
+             */
+            scale(sx: number, opt_sy?: number, opt_anchor?: ol.Coordinate): void;
+            /**
              * Return the closest point of the geometry to the passed point as
              * {@link ol.Coordinate coordinate}.
              * @param point  (Required) Point.
              * @param opt_closestPoint  (Optional) Closest point.
              */
             getClosestPoint(point: ol.Coordinate, opt_closestPoint?: ol.Coordinate): ol.Coordinate;
+            /**
+             * Returns true if this geometry includes the specified coordinate. If the
+             * coordinate is on the boundary of the geometry, returns false.
+             * @param coordinate  (Required) Coordinate.
+             */
+            intersectsCoordinate(coordinate: ol.Coordinate): boolean;
             /**
              * Get the extent of the geometry.
              * @param opt_extent  (Optional) Extent.
@@ -9111,12 +9325,28 @@ breaks.
              */
             rotate(angle: number, anchor: ol.Coordinate): void;
             /**
+             * Scale the geometry (with an optional origin).  This modifies the geometry
+             * coordinates in place.
+             * @param sx  (Required) The scaling factor in the x-direction.
+             * @param opt_sy  (Optional) The scaling factor in the y-direction (defaults to
+    sx).
+             * @param opt_anchor  (Optional) The scale origin (defaults to the center
+    of the geometry extent).
+             */
+            scale(sx: number, opt_sy?: number, opt_anchor?: ol.Coordinate): void;
+            /**
              * Return the closest point of the geometry to the passed point as
              * {@link ol.Coordinate coordinate}.
              * @param point  (Required) Point.
              * @param opt_closestPoint  (Optional) Closest point.
              */
             getClosestPoint(point: ol.Coordinate, opt_closestPoint?: ol.Coordinate): ol.Coordinate;
+            /**
+             * Returns true if this geometry includes the specified coordinate. If the
+             * coordinate is on the boundary of the geometry, returns false.
+             * @param coordinate  (Required) Coordinate.
+             */
+            intersectsCoordinate(coordinate: ol.Coordinate): boolean;
             /**
              * Get the extent of the geometry.
              * @param opt_extent  (Optional) Extent.
@@ -9276,12 +9506,28 @@ breaks.
              */
             rotate(angle: number, anchor: ol.Coordinate): void;
             /**
+             * Scale the geometry (with an optional origin).  This modifies the geometry
+             * coordinates in place.
+             * @param sx  (Required) The scaling factor in the x-direction.
+             * @param opt_sy  (Optional) The scaling factor in the y-direction (defaults to
+    sx).
+             * @param opt_anchor  (Optional) The scale origin (defaults to the center
+    of the geometry extent).
+             */
+            scale(sx: number, opt_sy?: number, opt_anchor?: ol.Coordinate): void;
+            /**
              * Return the closest point of the geometry to the passed point as
              * {@link ol.Coordinate coordinate}.
              * @param point  (Required) Point.
              * @param opt_closestPoint  (Optional) Closest point.
              */
             getClosestPoint(point: ol.Coordinate, opt_closestPoint?: ol.Coordinate): ol.Coordinate;
+            /**
+             * Returns true if this geometry includes the specified coordinate. If the
+             * coordinate is on the boundary of the geometry, returns false.
+             * @param coordinate  (Required) Coordinate.
+             */
+            intersectsCoordinate(coordinate: ol.Coordinate): boolean;
             /**
              * Get the extent of the geometry.
              * @param opt_extent  (Optional) Extent.
@@ -9501,12 +9747,28 @@ breaks.
              */
             rotate(angle: number, anchor: ol.Coordinate): void;
             /**
+             * Scale the geometry (with an optional origin).  This modifies the geometry
+             * coordinates in place.
+             * @param sx  (Required) The scaling factor in the x-direction.
+             * @param opt_sy  (Optional) The scaling factor in the y-direction (defaults to
+    sx).
+             * @param opt_anchor  (Optional) The scale origin (defaults to the center
+    of the geometry extent).
+             */
+            scale(sx: number, opt_sy?: number, opt_anchor?: ol.Coordinate): void;
+            /**
              * Return the closest point of the geometry to the passed point as
              * {@link ol.Coordinate coordinate}.
              * @param point  (Required) Point.
              * @param opt_closestPoint  (Optional) Closest point.
              */
             getClosestPoint(point: ol.Coordinate, opt_closestPoint?: ol.Coordinate): ol.Coordinate;
+            /**
+             * Returns true if this geometry includes the specified coordinate. If the
+             * coordinate is on the boundary of the geometry, returns false.
+             * @param coordinate  (Required) Coordinate.
+             */
+            intersectsCoordinate(coordinate: ol.Coordinate): boolean;
             /**
              * Get the extent of the geometry.
              * @param opt_extent  (Optional) Extent.
@@ -9646,6 +9908,16 @@ breaks.
              */
             rotate(angle: number, anchor: ol.Coordinate): void;
             /**
+             * Scale the geometry (with an optional origin).  This modifies the geometry
+             * coordinates in place.
+             * @param sx  (Required) The scaling factor in the x-direction.
+             * @param opt_sy  (Optional) The scaling factor in the y-direction (defaults to
+    sx).
+             * @param opt_anchor  (Optional) The scale origin (defaults to the center
+    of the geometry extent).
+             */
+            scale(sx: number, opt_sy?: number, opt_anchor?: ol.Coordinate): void;
+            /**
              * Translate the geometry.  This modifies the geometry coordinates in place.  If
              * instead you want a new geometry, first `clone()` this geometry.
              * @param deltaX  (Required) Delta X.
@@ -9660,6 +9932,12 @@ breaks.
              */
             getClosestPoint(point: ol.Coordinate, opt_closestPoint?: ol.Coordinate): ol.Coordinate;
             /**
+             * Returns true if this geometry includes the specified coordinate. If the
+             * coordinate is on the boundary of the geometry, returns false.
+             * @param coordinate  (Required) Coordinate.
+             */
+            intersectsCoordinate(coordinate: ol.Coordinate): boolean;
+            /**
              * Get the extent of the geometry.
              * @param opt_extent  (Optional) Extent.
              */
@@ -9671,6 +9949,16 @@ breaks.
              * @param anchor  (Required) The rotation center.
              */
             rotate(angle: number, anchor: ol.Coordinate): void;
+            /**
+             * Scale the geometry (with an optional origin).  This modifies the geometry
+             * coordinates in place.
+             * @param sx  (Required) The scaling factor in the x-direction.
+             * @param opt_sy  (Optional) The scaling factor in the y-direction (defaults to
+    sx).
+             * @param opt_anchor  (Optional) The scale origin (defaults to the center
+    of the geometry extent).
+             */
+            scale(sx: number, opt_sy?: number, opt_anchor?: ol.Coordinate): void;
             /**
              * Create a simplified version of this geometry.  For linestrings, this uses
              * the the {@link
@@ -9840,6 +10128,318 @@ breaks.
         }
     }
     module layer {
+        /**
+         * Abstract base class; normally only used for creating subclasses and not
+         * instantiated in apps.
+         * Note that with `ol.layer.Base` and all its subclasses, any property set in
+         * the options is set as a {@link ol.Object} property on the layer object, so
+         * is observable, and has get/set accessors.
+         */
+        class Base extends ol.Object {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param options  (Required) Layer options.
+             */
+            constructor(options: olx.layer.BaseOptions);
+            /**
+             * Return the {@link ol.Extent extent} of the layer or `undefined` if it
+             * will be visible regardless of extent.
+             */
+            getExtent(): ol.Extent;
+            /**
+             * Return the maximum resolution of the layer.
+             */
+            getMaxResolution(): number;
+            /**
+             * Return the minimum resolution of the layer.
+             */
+            getMinResolution(): number;
+            /**
+             * Return the opacity of the layer (between 0 and 1).
+             */
+            getOpacity(): number;
+            /**
+             * Return the visibility of the layer (`true` or `false`).
+             */
+            getVisible(): boolean;
+            /**
+             * Return the Z-index of the layer, which is used to order layers before
+             * rendering. The default Z-index is 0.
+             */
+            getZIndex(): number;
+            /**
+             * Set the extent at which the layer is visible.  If `undefined`, the layer
+             * will be visible at all extents.
+             * @param extent  (Optional) The extent of the layer.
+             */
+            setExtent(extent?: ol.Extent): void;
+            /**
+             * Set the maximum resolution at which the layer is visible.
+             * @param maxResolution  (Required) The maximum resolution of the layer.
+             */
+            setMaxResolution(maxResolution: number): void;
+            /**
+             * Set the minimum resolution at which the layer is visible.
+             * @param minResolution  (Required) The minimum resolution of the layer.
+             */
+            setMinResolution(minResolution: number): void;
+            /**
+             * Set the opacity of the layer, allowed values range from 0 to 1.
+             * @param opacity  (Required) The opacity of the layer.
+             */
+            setOpacity(opacity: number): void;
+            /**
+             * Set the visibility of the layer (`true` or `false`).
+             * @param visible  (Required) The visibility of the layer.
+             */
+            setVisible(visible: boolean): void;
+            /**
+             * Set Z-index of the layer, which is used to order layers before rendering.
+             * The default Z-index is 0.
+             * @param zindex  (Required) The z-index of the layer.
+             */
+            setZIndex(zindex: number): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * A {@link ol.Collection} of layers that are handled together.
+         * 
+         * A generic `change` event is triggered when the group/Collection changes.
+         */
+        class Group extends ol.layer.Base {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param opt_options  (Optional) Layer options.
+             */
+            constructor(opt_options?: olx.layer.GroupOptions);
+            /**
+             * Returns the {@link ol.Collection collection} of {@link ol.layer.Layer layers}
+             * in this group.
+             */
+            getLayers(): ol.Collection<ol.layer.Base>;
+            /**
+             * Set the {@link ol.Collection collection} of {@link ol.layer.Layer layers}
+             * in this group.
+             * @param layers  (Required) Collection of
+  {@link ol.layer.Base layers} that are part of this group.
+             */
+            setLayers(layers: ol.Collection<ol.layer.Base>): void;
+            /**
+             * Return the {@link ol.Extent extent} of the layer or `undefined` if it
+             * will be visible regardless of extent.
+             */
+            getExtent(): ol.Extent;
+            /**
+             * Return the maximum resolution of the layer.
+             */
+            getMaxResolution(): number;
+            /**
+             * Return the minimum resolution of the layer.
+             */
+            getMinResolution(): number;
+            /**
+             * Return the opacity of the layer (between 0 and 1).
+             */
+            getOpacity(): number;
+            /**
+             * Return the visibility of the layer (`true` or `false`).
+             */
+            getVisible(): boolean;
+            /**
+             * Return the Z-index of the layer, which is used to order layers before
+             * rendering. The default Z-index is 0.
+             */
+            getZIndex(): number;
+            /**
+             * Set the extent at which the layer is visible.  If `undefined`, the layer
+             * will be visible at all extents.
+             * @param extent  (Optional) The extent of the layer.
+             */
+            setExtent(extent?: ol.Extent): void;
+            /**
+             * Set the maximum resolution at which the layer is visible.
+             * @param maxResolution  (Required) The maximum resolution of the layer.
+             */
+            setMaxResolution(maxResolution: number): void;
+            /**
+             * Set the minimum resolution at which the layer is visible.
+             * @param minResolution  (Required) The minimum resolution of the layer.
+             */
+            setMinResolution(minResolution: number): void;
+            /**
+             * Set the opacity of the layer, allowed values range from 0 to 1.
+             * @param opacity  (Required) The opacity of the layer.
+             */
+            setOpacity(opacity: number): void;
+            /**
+             * Set the visibility of the layer (`true` or `false`).
+             * @param visible  (Required) The visibility of the layer.
+             */
+            setVisible(visible: boolean): void;
+            /**
+             * Set Z-index of the layer, which is used to order layers before rendering.
+             * The default Z-index is 0.
+             * @param zindex  (Required) The z-index of the layer.
+             */
+            setZIndex(zindex: number): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
         /**
          * Layer for rendering vector data as a heatmap.
          * Note that any property set in the options is set as a {@link ol.Object}
@@ -10270,318 +10870,6 @@ breaks.
              * @param source  (Required) The layer source.
              */
             setSource(source: ol.source.Source): void;
-            /**
-             * Return the {@link ol.Extent extent} of the layer or `undefined` if it
-             * will be visible regardless of extent.
-             */
-            getExtent(): ol.Extent;
-            /**
-             * Return the maximum resolution of the layer.
-             */
-            getMaxResolution(): number;
-            /**
-             * Return the minimum resolution of the layer.
-             */
-            getMinResolution(): number;
-            /**
-             * Return the opacity of the layer (between 0 and 1).
-             */
-            getOpacity(): number;
-            /**
-             * Return the visibility of the layer (`true` or `false`).
-             */
-            getVisible(): boolean;
-            /**
-             * Return the Z-index of the layer, which is used to order layers before
-             * rendering. The default Z-index is 0.
-             */
-            getZIndex(): number;
-            /**
-             * Set the extent at which the layer is visible.  If `undefined`, the layer
-             * will be visible at all extents.
-             * @param extent  (Optional) The extent of the layer.
-             */
-            setExtent(extent?: ol.Extent): void;
-            /**
-             * Set the maximum resolution at which the layer is visible.
-             * @param maxResolution  (Required) The maximum resolution of the layer.
-             */
-            setMaxResolution(maxResolution: number): void;
-            /**
-             * Set the minimum resolution at which the layer is visible.
-             * @param minResolution  (Required) The minimum resolution of the layer.
-             */
-            setMinResolution(minResolution: number): void;
-            /**
-             * Set the opacity of the layer, allowed values range from 0 to 1.
-             * @param opacity  (Required) The opacity of the layer.
-             */
-            setOpacity(opacity: number): void;
-            /**
-             * Set the visibility of the layer (`true` or `false`).
-             * @param visible  (Required) The visibility of the layer.
-             */
-            setVisible(visible: boolean): void;
-            /**
-             * Set Z-index of the layer, which is used to order layers before rendering.
-             * The default Z-index is 0.
-             * @param zindex  (Required) The z-index of the layer.
-             */
-            setZIndex(zindex: number): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Abstract base class; normally only used for creating subclasses and not
-         * instantiated in apps.
-         * Note that with `ol.layer.Base` and all its subclasses, any property set in
-         * the options is set as a {@link ol.Object} property on the layer object, so
-         * is observable, and has get/set accessors.
-         */
-        class Base extends ol.Object {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param options  (Required) Layer options.
-             */
-            constructor(options: olx.layer.BaseOptions);
-            /**
-             * Return the {@link ol.Extent extent} of the layer or `undefined` if it
-             * will be visible regardless of extent.
-             */
-            getExtent(): ol.Extent;
-            /**
-             * Return the maximum resolution of the layer.
-             */
-            getMaxResolution(): number;
-            /**
-             * Return the minimum resolution of the layer.
-             */
-            getMinResolution(): number;
-            /**
-             * Return the opacity of the layer (between 0 and 1).
-             */
-            getOpacity(): number;
-            /**
-             * Return the visibility of the layer (`true` or `false`).
-             */
-            getVisible(): boolean;
-            /**
-             * Return the Z-index of the layer, which is used to order layers before
-             * rendering. The default Z-index is 0.
-             */
-            getZIndex(): number;
-            /**
-             * Set the extent at which the layer is visible.  If `undefined`, the layer
-             * will be visible at all extents.
-             * @param extent  (Optional) The extent of the layer.
-             */
-            setExtent(extent?: ol.Extent): void;
-            /**
-             * Set the maximum resolution at which the layer is visible.
-             * @param maxResolution  (Required) The maximum resolution of the layer.
-             */
-            setMaxResolution(maxResolution: number): void;
-            /**
-             * Set the minimum resolution at which the layer is visible.
-             * @param minResolution  (Required) The minimum resolution of the layer.
-             */
-            setMinResolution(minResolution: number): void;
-            /**
-             * Set the opacity of the layer, allowed values range from 0 to 1.
-             * @param opacity  (Required) The opacity of the layer.
-             */
-            setOpacity(opacity: number): void;
-            /**
-             * Set the visibility of the layer (`true` or `false`).
-             * @param visible  (Required) The visibility of the layer.
-             */
-            setVisible(visible: boolean): void;
-            /**
-             * Set Z-index of the layer, which is used to order layers before rendering.
-             * The default Z-index is 0.
-             * @param zindex  (Required) The z-index of the layer.
-             */
-            setZIndex(zindex: number): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * A {@link ol.Collection} of layers that are handled together.
-         * 
-         * A generic `change` event is triggered when the group/Collection changes.
-         */
-        class Group extends ol.layer.Base {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param opt_options  (Optional) Layer options.
-             */
-            constructor(opt_options?: olx.layer.GroupOptions);
-            /**
-             * Returns the {@link ol.Collection collection} of {@link ol.layer.Layer layers}
-             * in this group.
-             */
-            getLayers(): ol.Collection<ol.layer.Base>;
-            /**
-             * Set the {@link ol.Collection collection} of {@link ol.layer.Layer layers}
-             * in this group.
-             * @param layers  (Required) Collection of
-  {@link ol.layer.Base layers} that are part of this group.
-             */
-            setLayers(layers: ol.Collection<ol.layer.Base>): void;
             /**
              * Return the {@link ol.Extent extent} of the layer or `undefined` if it
              * will be visible regardless of extent.
@@ -11710,6 +11998,11 @@ If using named maps, a key-value lookup with the template parameters.
              */
             getSource(): ol.source.Vector;
             /**
+             * Set the distance in pixels between clusters.
+             * @param distance  (Required) The distance in pixels.
+             */
+            setDistance(distance: number): void;
+            /**
              * Add a single feature to the source.  If you want to add a batch of features
              * at once, call {@link ol.source.Vector#addFeatures source.addFeatures()}
              * instead.
@@ -11832,6 +12125,124 @@ If using named maps, a key-value lookup with the template parameters.
              * @param feature  (Required) Feature to remove.
              */
             removeFeature(feature: ol.Feature): void;
+            /**
+             * Get the attributions of the source.
+             */
+            getAttributions(): ol.Attribution[];
+            /**
+             * Get the logo of the source.
+             */
+            getLogo(): string|olx.LogoOptions;
+            /**
+             * Get the projection of the source.
+             */
+            getProjection(): ol.proj.Projection;
+            /**
+             * Get the state of the source, see {@link ol.source.State} for possible states.
+             */
+            getState(): string;
+            /**
+             * Refreshes the source and finally dispatches a 'change' event.
+             */
+            refresh(): void;
+            /**
+             * Set the attributions of the source.
+             * @param attributions  (Optional) Attributions.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
+    `Array<{@link ol.Attribution}>` or `undefined`.
+             */
+            setAttributions(attributions?: ol.AttributionLike): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Abstract base class; normally only used for creating subclasses and not
+         * instantiated in apps.
+         * Base class for sources providing a single image.
+         */
+        class Image extends ol.source.Source {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param options  (Required) Single image source options.
+             */
+            constructor(options: ol.SourceImageOptions);
             /**
              * Get the attributions of the source.
              */
@@ -12232,124 +12643,6 @@ If using named maps, a key-value lookup with the template parameters.
              * @param imageLoadFunction  (Required) Image load function.
              */
             setImageLoadFunction(imageLoadFunction: ol.ImageLoadFunctionType): void;
-            /**
-             * Get the attributions of the source.
-             */
-            getAttributions(): ol.Attribution[];
-            /**
-             * Get the logo of the source.
-             */
-            getLogo(): string|olx.LogoOptions;
-            /**
-             * Get the projection of the source.
-             */
-            getProjection(): ol.proj.Projection;
-            /**
-             * Get the state of the source, see {@link ol.source.State} for possible states.
-             */
-            getState(): string;
-            /**
-             * Refreshes the source and finally dispatches a 'change' event.
-             */
-            refresh(): void;
-            /**
-             * Set the attributions of the source.
-             * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
-             */
-            setAttributions(attributions?: ol.AttributionLike): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Abstract base class; normally only used for creating subclasses and not
-         * instantiated in apps.
-         * Base class for sources providing a single image.
-         */
-        class Image extends ol.source.Source {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param options  (Required) Single image source options.
-             */
-            constructor(options: ol.SourceImageOptions);
             /**
              * Get the attributions of the source.
              */
@@ -13465,6 +13758,128 @@ If using named maps, a key-value lookup with the template parameters.
             unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
         }
         /**
+         * Abstract base class; normally only used for creating subclasses and not
+         * instantiated in apps.
+         * Base class for sources providing images divided into a tile grid.
+         */
+        class Tile extends ol.source.Source {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param options  (Required) Tile source options.
+             */
+            constructor(options: ol.SourceTileOptions);
+            /**
+             * Return the tile grid of the tile source.
+             */
+            getTileGrid(): ol.tilegrid.TileGrid;
+            /**
+             * Get the attributions of the source.
+             */
+            getAttributions(): ol.Attribution[];
+            /**
+             * Get the logo of the source.
+             */
+            getLogo(): string|olx.LogoOptions;
+            /**
+             * Get the projection of the source.
+             */
+            getProjection(): ol.proj.Projection;
+            /**
+             * Get the state of the source, see {@link ol.source.State} for possible states.
+             */
+            getState(): string;
+            /**
+             * Refreshes the source and finally dispatches a 'change' event.
+             */
+            refresh(): void;
+            /**
+             * Set the attributions of the source.
+             * @param attributions  (Optional) Attributions.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
+    `Array<{@link ol.Attribution}>` or `undefined`.
+             */
+            setAttributions(attributions?: ol.AttributionLike): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
          * Layer source for tile data from ArcGIS Rest services. Map and Image
          * Services are supported.
          * 
@@ -14033,128 +14448,6 @@ If using named maps, a key-value lookup with the template parameters.
              * Get the state of the source, see {@link ol.source.State} for possible states.
              */
             getState(): string;
-            /**
-             * Set the attributions of the source.
-             * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
-             */
-            setAttributions(attributions?: ol.AttributionLike): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Abstract base class; normally only used for creating subclasses and not
-         * instantiated in apps.
-         * Base class for sources providing images divided into a tile grid.
-         */
-        class Tile extends ol.source.Source {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param options  (Required) Tile source options.
-             */
-            constructor(options: ol.SourceTileOptions);
-            /**
-             * Return the tile grid of the tile source.
-             */
-            getTileGrid(): ol.tilegrid.TileGrid;
-            /**
-             * Get the attributions of the source.
-             */
-            getAttributions(): ol.Attribution[];
-            /**
-             * Get the logo of the source.
-             */
-            getLogo(): string|olx.LogoOptions;
-            /**
-             * Get the projection of the source.
-             */
-            getProjection(): ol.proj.Projection;
-            /**
-             * Get the state of the source, see {@link ol.source.State} for possible states.
-             */
-            getState(): string;
-            /**
-             * Refreshes the source and finally dispatches a 'change' event.
-             */
-            refresh(): void;
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
@@ -15891,8 +16184,8 @@ Optional config properties:
              */
             constructor(opt_options?: olx.style.IconOptions);
             /**
-             * Get the anchor point.  The anchor determines the center point for the
-             * symbolizer.  Its units are determined by `anchorXUnits` and `anchorYUnits`.
+             * Get the anchor point in pixels. The anchor determines the center point for the
+             * symbolizer.
              */
             getAnchor(): number[];
             /**
@@ -16014,8 +16307,8 @@ Optional config properties:
              */
             constructor(options: olx.style.RegularShapeOptions);
             /**
-             * Get the anchor point.  The anchor determines the center point for the
-             * symbolizer.  Its units are determined by `anchorXUnits` and `anchorYUnits`.
+             * Get the anchor point in pixels. The anchor determines the center point for the
+             * symbolizer.
              */
             getAnchor(): number[];
             /**
@@ -16241,6 +16534,10 @@ Optional config properties:
              */
             getFill(): ol.style.Fill;
             /**
+             * Determine whether the text rotates with the map.
+             */
+            getRotateWithView(): boolean;
+            /**
              * Get the text rotation.
              */
             getRotation(): number;
@@ -16348,6 +16645,19 @@ Optional config properties:
              * "top-right"
              */
             public static TOP_RIGHT: string;
+        }
+    }
+    module Tile {
+        /**
+         * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
+         */
+        enum State {
+            IDLE = 0,
+            LOADING = 1,
+            LOADED = 2,
+            ERROR = 3,
+            EMPTY = 4,
+            ABORT = 5
         }
     }
 }
@@ -17601,7 +17911,7 @@ declare module olx {
             /**
              * Units. Default is `metric`.
              */
-            units?: ol.control.ScaleLineUnits|string;
+            units?: ol.control.ScaleLine.Units|string;
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -18045,6 +18355,11 @@ declare module olx {
              * OGC filter condition. See {@link ol.format.ogc.filter} for more information.
              */
             filter?: ol.format.ogc.filter.Filter;
+            /**
+             * Indicates what response should be returned, E.g. `hits` only includes the
+             * `numberOfFeatures` attribute in the response and no features.
+             */
+            resultType?: string;
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -18743,6 +19058,13 @@ declare module olx {
              */
             logo?: string|olx.LogoOptions;
             /**
+             * This source may have overlapping geometries. Default is `true`. Setting this
+             * to `false` (e.g. for sources with polygons that represent administrative
+             * boundaries or TopoJSON sources) allows the renderer to optimise fill and
+             * stroke operations.
+             */
+            overlaps?: boolean;
+            /**
              * Projection.
              */
             projection?: ol.ProjectionLike;
@@ -18911,7 +19233,7 @@ declare module olx {
             tileLoadFunction?: ol.TileLoadFunctionType;
             /**
              * URL template. Must include `{x}`, `{y}` or `{-y}`, and `{z}` placeholders.
-             * Default is `//{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png`.
+             * Default is `https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png`.
              */
             url?: string;
             /**
@@ -19037,6 +19359,13 @@ declare module olx {
              * Default is `1.5`.
              */
             ratio?: number;
+            /**
+             * The buffer around the viewport extent used by the renderer when getting
+             * features from the vector source for the rendering or hit-detection.
+             * Recommended value: the size of the largest symbol, line width or label.
+             * Default is 100 pixels.
+             */
+            renderBuffer?: number;
             /**
              * Resolutions. If specified, new canvases will be created for these resolutions
              * only.
@@ -19478,13 +19807,20 @@ declare module olx {
              */
             logo?: string|olx.LogoOptions;
             /**
+             * This source may have overlapping geometries. Default is `true`. Setting this
+             * to `false` (e.g. for sources with polygons that represent administrative
+             * boundaries or TopoJSON sources) allows the renderer to optimise fill and
+             * stroke operations.
+             */
+            overlaps?: boolean;
+            /**
              * The loading strategy to use. By default an {@link ol.loadingstrategy.all}
              * strategy is used, a one-off strategy which loads all features at once.
              */
             strategy?: ol.LoadingStrategy;
             /**
-             * Setting this option instructs the source to use an XHR loader (see
-             * {@link ol.featureloader.xhr}). Use a `string` and an
+             * Setting this option instructs the source to load features using an XHR loader
+             * (see {@link ol.featureloader.xhr}). Use a `string` and an
              * {@link ol.loadingstrategy.all} for a one-off download of all features from
              * the given URL. Use a {@link ol.FeatureUrlFunction} to generate the url with
              * other loading strategies.
@@ -19495,6 +19831,8 @@ declare module olx {
              * properly, this transformation will be incorrect. For some formats, the
              * default projection (usually EPSG:4326) can be overridden by setting the
              * defaultDataProjection constructor option on the format.
+             * Note that if a source contains non-feature data, such as a GeoJSON geometry
+             * or a KML NetworkLink, these will be ignored. Use a custom loader to load these.
              */
             url?: string|ol.FeatureUrlFunction;
             /**
@@ -20045,6 +20383,10 @@ declare module olx {
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
          */
         interface TextOptions {
+            /**
+             * Whether to rotate the text with the view. Default is `false`.
+             */
+            rotateWithView?: boolean;
             /**
              * Font style as CSS 'font' value, see:
              * {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/font}.

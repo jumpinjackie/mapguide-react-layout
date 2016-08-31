@@ -45,7 +45,7 @@
     "lodash.uniq": "^4.3.0",
     "node-uuid": "^1.4.7",
     "object-assign": "^4.1.0",
-    "openlayers": "^3.17.1",
+    "openlayers": "^3.18.1",
     "proj4": "^2.3.14",
     "raw-loader": "^0.5.1",
     "react": "^15.3.1",

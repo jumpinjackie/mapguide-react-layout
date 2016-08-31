@@ -3,6 +3,7 @@ import * as ReactDOM from "react-dom";
 import { initDefaultCommands } from "../api/default-commands";
 import { ApplicationViewModel } from "./application";
 import { AjaxViewerLayout } from "../layouts/ajax-viewer";
+import { SidebarLayout } from "../layouts/sidebar";
 import { registerLayout } from "../api/registry/layout";
 import { registerCommand } from "../api/registry/command";
 import { registerComponentFactory } from "../api/registry/component";
@@ -15,6 +16,7 @@ require('isomorphic-fetch');
 ol.proj.setProj4(proj4);
 
 registerLayout("ajax-viewer", () => <AjaxViewerLayout />);
+registerLayout("sidebar", () => <SidebarLayout />);
 initDefaultCommands();
 registerDefaultComponents();
 

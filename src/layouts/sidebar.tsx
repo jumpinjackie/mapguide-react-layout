@@ -24,10 +24,6 @@ const PBMG_PROPS = {
     style: { position: "absolute", bottom: 0, right: 0, zIndex: 100 }
 };
 
-interface ISidebarProps {
-    position: "left" | "right"
-}
-
 const SidebarHeader = (props) => {
     const sbHeaderStyle: React.CSSProperties = {
         position: "absolute",
@@ -44,7 +40,16 @@ const SidebarHeader = (props) => {
     </h1>;
 };
 
-class Sidebar extends React.Component<any, any> {
+interface ISidebarProps {
+    taskpane: boolean;
+    legend: boolean;
+    selection: boolean;
+    toolbar: boolean;
+    busy: boolean;
+    position: "left" | "right";
+}
+
+class Sidebar extends React.Component<ISidebarProps, any> {
     private fnClickExpand: (e) => void;
     private fnClickCollapse: (e) => void;
     private fnActivateTasks: (e) => void;
@@ -58,7 +63,7 @@ class Sidebar extends React.Component<any, any> {
         this.fnActivateLegend = this.onActivateLegend.bind(this);
         this.fnActivateSelection = this.onActivateSelection.bind(this);
         this.state = {
-            collapsed: false,
+            collapsed: true,
             activeTab: "tasks"
         };
     }
@@ -120,35 +125,78 @@ class Sidebar extends React.Component<any, any> {
                             }
                         })()}
                     </li>
-                    <li className="sidebar-separator"></li>
-                    <li className={collapsed == false && activeTab == "tasks" ? "active" : ""}><a onClick={this.fnActivateTasks} title="Open Task Pane" role="tab"><i className="icon-window"></i></a></li>
-                    <li className={collapsed == false && activeTab == "legend" ? "active" : ""}><a onClick={this.fnActivateLegend} title="Open Legend" role="tab"><i className="icon-buffer"></i></a></li>
-                    <li className={collapsed == false && activeTab == "selection" ? "active" : ""}><a onClick={this.fnActivateSelection} title="Open Selection Panel" role="tab"><i className="icon-list"></i></a></li>
+                    {(() => {
+                        if (this.props.taskpane) {
+                            return <li className={collapsed == false && activeTab == "tasks" ? "active" : ""}>
+                                <a onClick={this.fnActivateTasks} title="Open Task Pane" role="tab"><i className="icon-window"></i></a>
+                            </li>;
+                        }
+                    })()}
+                    {(() => {
+                        if (this.props.legend) {
+                            return <li className={collapsed == false && activeTab == "legend" ? "active" : ""}>
+                                <a onClick={this.fnActivateLegend} title="Open Legend" role="tab"><i className="icon-buffer"></i></a>
+                            </li>;
+                        }
+                    })()}
+                    {(() => {
+                        if (this.props.selection) {
+                            return <li className={collapsed == false && activeTab == "selection" ? "active" : ""}>
+                                <a onClick={this.fnActivateSelection} title="Open Selection Panel" role="tab"><i className="icon-list"></i></a>
+                            </li>;
+                        }
+                    })()}
                     <li className="sidebar-separator"></li>
                 </ul>
-                <div id="toolbar-region">
-                    <ToolbarContainer id="main" vertical={true} containerStyle={{ position: "absolute", left: 5, right: 6, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR, fontFamily: "Verdana, Sans-serif", fontSize: "10pt" }} />
-                </div>
+                {(() => {
+                    if (this.props.toolbar) {
+                        let top = 170;
+                        if (!this.props.selection) {
+                            top -= 40;
+                        }
+                        if (!this.props.legend) {
+                            top -= 40;
+                        }
+                        if (!this.props.taskpane) {
+                            top -= 40;
+                        }
+                        return <div id="toolbar-region" style={{ top: top }}>
+                            <ToolbarContainer id="main" vertical={true} containerStyle={{ position: "absolute", left: 5, right: 6, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR, fontFamily: "Verdana, Sans-serif", fontSize: "10pt" }} />
+                        </div>;
+                    }
+                })()}
             </div>
             <div className="sidebar-content">
-                <div className={`sidebar-pane ${activeTab == "tasks" ? "active" : ""}`}>
-                    <SidebarHeader text="Task Pane" onCloseClick={this.fnClickCollapse} />
-                    <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
-                        <PlaceholderComponent id={DefaultComponentNames.TaskPane} />
-                    </div>
-                </div>
-                <div className={`sidebar-pane ${activeTab == "legend" ? "active" : ""}`}>
-                    <SidebarHeader text="Legend" onCloseClick={this.fnClickCollapse} />
-                    <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
-                        <PlaceholderComponent id={DefaultComponentNames.Legend} />
-                    </div>
-                </div>
-                <div className={`sidebar-pane ${activeTab == "selection" ? "active" : ""}`}>
-                    <SidebarHeader text="Selection" onCloseClick={this.fnClickCollapse} />
-                    <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
-                        <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} />
-                    </div>
-                </div>
+                {(() => {
+                    if (this.props.taskpane) {
+                        return <div className={`sidebar-pane ${activeTab == "tasks" ? "active" : ""}`}>
+                            <SidebarHeader text="Task Pane" onCloseClick={this.fnClickCollapse} />
+                            <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
+                                <PlaceholderComponent id={DefaultComponentNames.TaskPane} />
+                            </div>
+                        </div>;
+                    }
+                })()}
+                {(() => {
+                    if (this.props.legend) {
+                        return <div className={`sidebar-pane ${activeTab == "legend" ? "active" : ""}`}>
+                            <SidebarHeader text="Legend" onCloseClick={this.fnClickCollapse} />
+                            <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
+                                <PlaceholderComponent id={DefaultComponentNames.Legend} />
+                            </div>
+                        </div>;
+                    }
+                })()}
+                {(() => {
+                    if (this.props.selection) {
+                        return <div className={`sidebar-pane ${activeTab == "selection" ? "active" : ""}`}>
+                            <SidebarHeader text="Selection" onCloseClick={this.fnClickCollapse} />
+                            <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
+                                <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} />
+                            </div>
+                        </div>;
+                    }
+                })()}
             </div>
         </div>;
     }
@@ -192,7 +240,32 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
         let sbWidth = SIDEBAR_WIDTH;
         let tpWidth = SIDEBAR_WIDTH;
         return <div style={{ width: "100%", height: "100%" }}>
-            <Sidebar position="left" busy={this.props.viewer.busyCount > 0} />
+            <Sidebar position="left" 
+                     busy={this.props.viewer.busyCount > 0}
+                     legend={hasLegend}
+                     selection={hasSelectionPanel}
+                     toolbar={hasToolbar}
+                     taskpane={hasTaskPane} />
+            {(() => {
+                if (hasNavigator) {
+                    return <PlaceholderComponent id={DefaultComponentNames.Navigator} componentProps={NAVIGATOR_PROPS} />;
+                }
+            })()}
+            {(() => {
+                if (hasStatusBar) {
+                    return <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} componentProps={MOUSE_COORDINATE_PROPS} />;
+                }
+            })()}
+            {(() => {
+                if (hasStatusBar) {
+                    return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} componentProps={SCALE_DISPLAY_PROPS} />;
+                }
+            })()}
+            {(() => {
+                if (hasStatusBar) {
+                    return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} componentProps={SELECTED_FEATURE_COUNT_PROPS} />;
+                }
+            })()}
             <PlaceholderComponent id={DefaultComponentNames.Map} />
             <AjaxViewerShim />
             <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} componentProps={PBMG_PROPS} />

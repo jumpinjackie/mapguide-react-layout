@@ -1,0 +1,52 @@
+{
+  "name": "",
+  "css_prefix_text": "icon-",
+  "css_use_suffix": false,
+  "hinting": true,
+  "units_per_em": 1000,
+  "ascent": 850,
+  "glyphs": [
+    {
+      "uid": "58b5f27abdf85c2b2b8db2770d61162d",
+      "css": "buffer",
+      "code": 59392,
+      "src": "zocial"
+    },
+    {
+      "uid": "744a71fe4b5ab7c4f4b7cd598e9bf75a",
+      "css": "window",
+      "code": 59393,
+      "src": "entypo"
+    },
+    {
+      "uid": "3626b3f3a0b284e7f4166b815719aece",
+      "css": "list",
+      "code": 59394,
+      "src": "entypo"
+    },
+    {
+      "uid": "c311c48d79488965b0fab7f9cd12b6b5",
+      "css": "left-open",
+      "code": 59395,
+      "src": "entypo"
+    },
+    {
+      "uid": "749e7d90a9182938180f1d2d8c33584e",
+      "css": "right-open",
+      "code": 59396,
+      "src": "entypo"
+    },
+    {
+      "uid": "2a6740fc2f9d0edea54205963f662594",
+      "css": "spin3",
+      "code": 59442,
+      "src": "fontelico"
+    },
+    {
+      "uid": "2cfb3f2b46b34a1790aec0aa846297b6",
+      "css": "menu",
+      "code": 59397,
+      "src": "entypo"
+    }
+  ]
+}

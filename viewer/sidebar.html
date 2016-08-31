@@ -4,7 +4,8 @@
 <head>
     <title>MapGuide React Viewer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/animation.css" rel="stylesheet" />
+    <link href="css/fontello.css" rel="stylesheet" />
     <style type="text/css">
         html,
         body,
@@ -207,7 +208,7 @@
                 min-width: 420px;
             }
         }
-        
+
         /*
         .sidebar-header {
             margin: -10px -20px 0;
@@ -370,13 +371,18 @@
             width: 40px;
             margin: 0;
             padding: 0;
-            top: 130px;
+            top: 170px;
         }
         
         html,
         body,
         #map {
             font: 10pt "Helvetica Neue", Arial, Helvetica, sans-serif;
+        }
+
+        li.sidebar-separator {
+            height: 2px !important;
+            border-bottom: 1px solid white;
         }
     </style>
     <script type="text/javascript" src="dist/viewer.js"></script>

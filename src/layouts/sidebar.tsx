@@ -40,11 +40,12 @@ const SidebarHeader = (props) => {
     sbHeaderStyle.paddingLeft = 10;
     return <h1 style={sbHeaderStyle} className="sidebar-header">
         {props.text}
-        <span className="sidebar-close" onClick={props.onCloseClick}><i className="fa fa-caret-left"></i></span>
+        <span className="sidebar-close" onClick={props.onCloseClick}><i className="icon-left-open"></i></span>
     </h1>;
 };
 
 class Sidebar extends React.Component<any, any> {
+    private fnClickExpand: (e) => void;
     private fnClickCollapse: (e) => void;
     private fnActivateTasks: (e) => void;
     private fnActivateLegend: (e) => void;
@@ -52,6 +53,7 @@ class Sidebar extends React.Component<any, any> {
     constructor(props) {
         super(props);
         this.fnClickCollapse = this.onClickCollapse.bind(this);
+        this.fnClickExpand = this.onClickExpand.bind(this);
         this.fnActivateTasks = this.onActivateTasks.bind(this);
         this.fnActivateLegend = this.onActivateLegend.bind(this);
         this.fnActivateSelection = this.onActivateSelection.bind(this);
@@ -85,20 +87,44 @@ class Sidebar extends React.Component<any, any> {
         return false;
     }
     onClickCollapse(e) {
+        e.preventDefault();
         this.setState({
             collapsed: true
         });
+        return false;
+    }
+    onClickExpand(e) {
+        e.preventDefault();
+        this.setState({
+            collapsed: false
+        });
+        return false;
     }
     render(): JSX.Element {
-        const { position } = this.props;
+        const { position, busy } = this.props;
         const { collapsed, activeTab } = this.state;
         
         return <div className={`sidebar ${collapsed ? "collapsed" : ""} sidebar-${position}`}>
             <div className="sidebar-tabs">
                 <ul role="tablist">
-                    <li><a onClick={this.fnActivateTasks} role="tab"><i className="fa fa-bars"></i></a></li>
-                    <li><a onClick={this.fnActivateLegend} role="tab"><i className="fa fa-user"></i></a></li>
-                    <li><a onClick={this.fnActivateSelection} role="tab"><i className="fa fa-envelope"></i></a></li>
+                    <li>
+                        {(() => {
+                            if (busy === true) {
+                                return <a><i className="icon-spin3 animate-spin" /></a>;
+                            } else {
+                                if (collapsed) {
+                                    return <a onClick={this.fnClickExpand}><i className="icon-menu" /></a>;
+                                } else {
+                                    return <a onClick={this.fnClickCollapse}><i className="icon-left-open" /></a>;
+                                }
+                            }
+                        })()}
+                    </li>
+                    <li className="sidebar-separator"></li>
+                    <li className={collapsed == false && activeTab == "tasks" ? "active" : ""}><a onClick={this.fnActivateTasks} title="Open Task Pane" role="tab"><i className="icon-window"></i></a></li>
+                    <li className={collapsed == false && activeTab == "legend" ? "active" : ""}><a onClick={this.fnActivateLegend} title="Open Legend" role="tab"><i className="icon-buffer"></i></a></li>
+                    <li className={collapsed == false && activeTab == "selection" ? "active" : ""}><a onClick={this.fnActivateSelection} title="Open Selection Panel" role="tab"><i className="icon-list"></i></a></li>
+                    <li className="sidebar-separator"></li>
                 </ul>
                 <div id="toolbar-region">
                     <ToolbarContainer id="main" vertical={true} containerStyle={{ position: "absolute", left: 5, right: 6, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR, fontFamily: "Verdana, Sans-serif", fontSize: "10pt" }} />
@@ -129,11 +155,13 @@ class Sidebar extends React.Component<any, any> {
 }
 
 interface ISidebarLayoutState {
+    viewer?: any;
     capabilities?: any;
 }
 
 function mapStateToProps(state): ISidebarLayoutState {
     return {
+        viewer: state.map.viewer,
         capabilities: state.config.capabilities
     };
 }
@@ -164,7 +192,7 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
         let sbWidth = SIDEBAR_WIDTH;
         let tpWidth = SIDEBAR_WIDTH;
         return <div style={{ width: "100%", height: "100%" }}>
-            <Sidebar position="left" />
+            <Sidebar position="left" busy={this.props.viewer.busyCount > 0} />
             <PlaceholderComponent id={DefaultComponentNames.Map} />
             <AjaxViewerShim />
             <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} componentProps={PBMG_PROPS} />

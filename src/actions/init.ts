@@ -204,7 +204,7 @@ export function initWebLayout(options) {
                 dispatch({
                     type: Constants.INIT_APP,
                     payload: {
-                        initialUrl: ensureParameters(webLayout.TaskPane.InitialTask, map.Name, map.SessionId, args.locale),
+                        initialUrl: ensureParameters(webLayout.TaskPane.InitialTask || "server/TaskPane.html", map.Name, map.SessionId, args.locale),
                         map: map,
                         externalBaseLayers: options.externalBaseLayers,
                         capabilities: {

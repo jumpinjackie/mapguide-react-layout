@@ -253,7 +253,7 @@ export function initDefaultCommands() {
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer) => {
             const { map, config } = getState();
-            let url = ensureParameters("/mapguide/react/viewer/server/Buffer/BufferPanel.php", map.state.Name, map.state.SessionId, config.locale);
+            let url = ensureParameters("server/Buffer/BufferPanel.php", map.state.Name, map.state.SessionId, config.locale);
             url += "&POPUP=false&US=0";
             dispatch({
                 type: Constants.CMD_INVOKE_URL,
@@ -270,7 +270,7 @@ export function initDefaultCommands() {
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer) => {
             const { map, config } = getState();
-            let url = ensureParameters("/mapguide/react/viewer/server/SelectWithin/SelectWithinPanel.php", map.state.Name, map.state.SessionId, config.locale);
+            let url = ensureParameters("server/SelectWithin/SelectWithinPanel.php", map.state.Name, map.state.SessionId, config.locale);
             url += "&POPUP=false";
             dispatch({
                 type: Constants.CMD_INVOKE_URL,
@@ -287,7 +287,7 @@ export function initDefaultCommands() {
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer) => {
             const { map, config } = getState();
-            let url = ensureParameters("/mapguide/react/viewer/server/Redline/markupmain.php", map.state.Name, map.state.SessionId, config.locale);
+            let url = ensureParameters("server/Redline/markupmain.php", map.state.Name, map.state.SessionId, config.locale);
             url += "&POPUP=false&REDLINESTYLIZATION=ADVANCED";
             dispatch({
                 type: Constants.CMD_INVOKE_URL,
@@ -298,7 +298,7 @@ export function initDefaultCommands() {
         }
     });
 
-    registerCommand("FeatureInfo", { icon: "feature-info.png", url: "/mapguide/react/viewer/server/FeatureInfo/featureinfomain.php" });
-    registerCommand("Query", { icon: "query.png", url: "/mapguide/react/viewer/server/Query/querymain.php" });
-    registerCommand("Theme", { icon: "theme.png", url: "/mapguide/react/viewer/server/Theme/thememain.php" });
+    registerCommand("FeatureInfo", { icon: "feature-info.png", url: "server/FeatureInfo/featureinfomain.php" });
+    registerCommand("Query", { icon: "query.png", url: "server/Query/querymain.php" });
+    registerCommand("Theme", { icon: "theme.png", url: "server/Theme/thememain.php" });
 }

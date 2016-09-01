@@ -64,7 +64,7 @@ export function ensureParameters(url: string, mapName: string, session: string, 
     parsed.query = queryString.stringify(params);
     const result = parsed.toString();
 
-    if (url.indexOf(parsed.protocol) >= 0) {
+    if (url.indexOf(parsed.protocol) >= 0 || url.indexOf("/") == 0) {
         return result;
     }
     //HACK: Workaround bug in url-parse that auto-appends http:// for relative urls

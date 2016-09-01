@@ -7,6 +7,7 @@ import { viewReducer } from "./view";
 import { selectionReducer } from "./selection";
 import { legendReducer } from "./legend";
 import { taskPaneReducer } from "./taskpane";
+import { lastAction } from "./last-action";
 
 const rootReducer = combineReducers({
     config: configReducer,
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
     view: viewReducer,
     selection: selectionReducer,
     legend: legendReducer,
-    taskpane: taskPaneReducer
+    taskpane: taskPaneReducer,
+    lastaction: lastAction
 });
 
 export default rootReducer;

@@ -4,6 +4,7 @@ import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/to
 import { ToolbarContainer } from "../containers/toolbar";
 import { AjaxViewerShim } from "../containers/ajax-viewer-shim";
 import { connect } from "react-redux";
+import * as Constants from "../constants";
 
 const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;
@@ -47,6 +48,7 @@ interface ISidebarProps {
     toolbar: boolean;
     busy: boolean;
     position: "left" | "right";
+    lastAction?: any;
 }
 
 class Sidebar extends React.Component<ISidebarProps, any> {
@@ -66,6 +68,23 @@ class Sidebar extends React.Component<ISidebarProps, any> {
             collapsed: true,
             activeTab: "tasks"
         };
+    }
+    componentWillReceiveProps(nextProps: ISidebarProps) {
+        const lastAction = nextProps.lastAction;
+        if (lastAction != this.props.lastAction) {
+            switch (lastAction.type) {
+                case Constants.CMD_INVOKE_URL:
+                    {
+                        this.setState({
+                            collapsed: false,
+                            activeTab: "tasks"
+                        });
+                    }
+                    break;
+                case Constants.MAP_SET_SELECTION:
+                    break;
+            }
+        }
     }
     onActivateTasks(e) {
         e.preventDefault();
@@ -205,12 +224,14 @@ class Sidebar extends React.Component<ISidebarProps, any> {
 interface ISidebarLayoutState {
     viewer?: any;
     capabilities?: any;
+    lastaction?: any;
 }
 
 function mapStateToProps(state): ISidebarLayoutState {
     return {
         viewer: state.map.viewer,
-        capabilities: state.config.capabilities
+        capabilities: state.config.capabilities,
+        lastaction: state.lastaction
     };
 }
 
@@ -245,7 +266,8 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
                      legend={hasLegend}
                      selection={hasSelectionPanel}
                      toolbar={hasToolbar}
-                     taskpane={hasTaskPane} />
+                     taskpane={hasTaskPane}
+                     lastAction={this.props.lastaction} />
             {(() => {
                 if (hasNavigator) {
                     return <PlaceholderComponent id={DefaultComponentNames.Navigator} componentProps={NAVIGATOR_PROPS} />;

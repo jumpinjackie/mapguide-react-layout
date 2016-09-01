@@ -111,7 +111,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
             {(() => {
                 if (selection != null && selection.SelectedLayer != null && selection.SelectedLayer.length > 0) {
                     return <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR }}>
-                        <select value={this.state.selectedLayerIndex} style={{ position: "absolute", top: 0, left: 0, height: DEFAULT_TOOLBAR_SIZE, maxWidth: 120 }} onChange={this.fnSelectedLayerChanged}>
+                        <select value={this.state.selectedLayerIndex} style={{ position: "absolute", top: 0, left: 0, height: DEFAULT_TOOLBAR_SIZE, maxWidth: 180 }} onChange={this.fnSelectedLayerChanged}>
                             {selection.SelectedLayer.map((layer: any, index) => {
                                 return <option key={`selected-layer-${layer["@id"]}`} value={index}>{layer["@name"]}</option>
                             })}

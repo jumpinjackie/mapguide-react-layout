@@ -556,6 +556,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             });
         }
     }
+    private onImageError(e) {
+        this.decrementBusyWorker();
+    }
     // ----------------- React Lifecycle ----------------- //
     componentWillReceiveProps(nextProps: IMapViewerBaseProps) {
         // 
@@ -819,8 +822,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         const ovSource = this._overlay.getSource();
         selSource.on("imageloadstart", this.incrementBusyWorker.bind(this));
         ovSource.on("imageloadstart", this.incrementBusyWorker.bind(this));
-        selSource.on("imageloaderror", this.decrementBusyWorker.bind(this));
-        ovSource.on("imageloaderror", this.decrementBusyWorker.bind(this));
+        selSource.on("imageloaderror", this.onImageError.bind(this));
+        ovSource.on("imageloaderror", this.onImageError.bind(this));
         selSource.on("imageloadend", this.decrementBusyWorker.bind(this));
         ovSource.on("imageloadend", this.decrementBusyWorker.bind(this));
 

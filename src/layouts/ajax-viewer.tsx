@@ -63,7 +63,7 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
         let tpWidth = SIDEBAR_WIDTH;
         return <div style={{ width: "100%", height: "100%" }}>
             {(() => {
-                const lgStyle: React.CSSProperties = { position: "absolute", left: 0, top: 0, bottom: 0, right: 0 };
+                const lgStyle: React.CSSProperties = { position: "absolute", left: 0, top: 0, bottom: 0, right: 0, overflowY: "auto" };
                 const selStyle: React.CSSProperties = { position: "absolute", left: 0, bottom: 0, right: 0 };
                 if (hasLegend) {
                     if (hasSelectionPanel) {

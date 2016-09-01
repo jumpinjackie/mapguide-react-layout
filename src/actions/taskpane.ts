@@ -1,10 +1,18 @@
 import * as Constants from "../constants";
+import { MgError } from "../api/error";
 import queryString = require("query-string");
 const parse = require("url-parse");
 
 export function goHome() {
-    return {
-        type: Constants.TASK_PANE_HOME
+    return (dispatch, getState) => {
+        const initUrl = getState().taskpane.initialUrl;
+        if (initUrl != null) {
+            dispatch({
+                type: Constants.TASK_PANE_HOME
+            });
+        } else {
+            throw new MgError("Case not handled yet: Home action when no initial task URL set");
+        }
     };
 }
 

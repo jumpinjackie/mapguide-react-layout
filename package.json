@@ -39,6 +39,7 @@
     "helmet": "^2.1.1",
     "html-webpack-plugin": "^2.22.0",
     "http-proxy": "^1.14.0",
+    "ismobilejs": "^0.4.0",
     "less": "^2.7.1",
     "less-loader": "^2.2.3",
     "lodash.debounce": "^4.0.6",

@@ -38,6 +38,7 @@ import { Client, ClientKind } from '../api/client';
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 const assign = require("object-assign");
+const isMobile = require("ismobilejs");
 
 export interface IExternalBaseLayer {
     name: string;
@@ -293,6 +294,10 @@ function cloneExtent(bounds: Bounds): Bounds {
 
 export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     /**
+     * Indicates if touch events are supported.
+     */
+    private _supportsTouch: boolean;
+    /**
      * The internal OpenLayers map instance
      * 
      * @private
@@ -352,6 +357,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this.fnKeyPress = this.onKeyPress.bind(this);
         this._busyWorkers = 0;
         this._triggerZoomRequestOnMoveEnd = true;
+        this._supportsTouch = isMobile.phone || isMobile.tablet;
     }
     /**
      * DO NOT CALL DIRECTLY, call this.refreshOnStateChange() instead, which is a throttled version
@@ -788,7 +794,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             interactions: [
                 new ol.interaction.DragRotate(),
                 new ol.interaction.DragPan({
-                    condition: (e) => this.props.tool === ActiveMapTool.Pan
+                    condition: (e) => (this._supportsTouch || this.props.tool === ActiveMapTool.Pan)
                 }),
                 new ol.interaction.PinchRotate(),
                 new ol.interaction.PinchZoom(),

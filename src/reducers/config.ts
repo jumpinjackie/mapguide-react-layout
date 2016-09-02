@@ -31,10 +31,13 @@ export function configReducer(state = INITIAL_STATE, action = { type: '', payloa
             {
                 const newState = assign({}, state, {
                     externalBaseLayers: action.payload.externalBaseLayers,
-                    viewer: action.payload.config,
                     capabilities: action.payload.capabilities
                 });
-                return newState;
+                if (action.payload.config != null && Object.keys(action.payload.config).length > 0) {
+                    return assign(newState, { viewer: action.payload.config });
+                } else {
+                    return newState;
+                }
             }
         case Constants.MAP_SET_BASE_LAYER:
             {

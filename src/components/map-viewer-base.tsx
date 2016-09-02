@@ -198,7 +198,7 @@ class FeatureQueryTooltip {
             return;
         }
         const geom = new ol.geom.Point(coords);
-        const selectedLayerNames = this.onRequestSelectableLayers();
+        //const selectedLayerNames = this.onRequestSelectableLayers();
         //if (selectedLayerNames != null && selectedLayerNames.length == 0) {
         //    return;
         //}
@@ -220,7 +220,8 @@ class FeatureQueryTooltip {
             persist: 0,
             selectionvariant: "INTERSECTS",
             maxfeatures: 1,
-            requestdata: reqQueryFeatures
+            requestdata: reqQueryFeatures,
+            layerattributefilter: 5
         }).then(res => {
             let html = "";
             if (res.Tooltip) {

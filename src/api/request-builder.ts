@@ -92,6 +92,7 @@ export interface IQueryMapFeaturesOptions extends IRuntimeMapRequest {
      * a selection initialized with this selection XML
      */
     featurefilter?: string;
+    layerattributefilter?: number;
 }
 
 export interface IDescribeRuntimeMapOptions extends IRuntimeMapRequest {

@@ -5,8 +5,11 @@ export const INITIAL_STATE = {
     agentUri: null,
     agentKind: null,
     locale: "en",
-    imageFormat: "PNG",
-    selectionColor: "0x0000FFAA",
+    viewer: {
+        imageFormat: "PNG",
+        selectionColor: "0x0000FFAA",
+        pointSelectionBuffer: 2
+    },
     externalBaseLayers: [],
     coordinates: {
         decimals: 6
@@ -28,6 +31,7 @@ export function configReducer(state = INITIAL_STATE, action = { type: '', payloa
             {
                 const newState = assign({}, state, {
                     externalBaseLayers: action.payload.externalBaseLayers,
+                    viewer: action.payload.config,
                     capabilities: action.payload.capabilities
                 });
                 return newState;

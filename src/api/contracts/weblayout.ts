@@ -223,7 +223,7 @@ export interface WebLayout {
     Title: string;
     Map: WebLayoutMap;
     EnablePingServer?: boolean;
-    SelectionColor?: boolean;
+    SelectionColor?: string;
     PointSelectionBuffer?: number;
     MapImageFormat?: string;
     SelectionImageFormat?: string;

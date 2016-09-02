@@ -121,9 +121,10 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                   map={map} 
                                   agentUri={config.agentUri}
                                   agentKind={config.agentKind}
-                                  imageFormat={config.imageFormat}
                                   externalBaseLayers={config.externalBaseLayers}
-                                  selectionColor={config.selectionColor}
+                                  imageFormat={config.viewer.imageFormat}
+                                  selectionColor={config.viewer.selectionColor}
+                                  pointSelectionBuffer={config.viewer.pointSelectionBuffer}
                                   tool={viewer.tool}
                                   featureTooltipsEnabled={viewer.featureTooltipsEnabled}
                                   layerGroupVisibility={viewer.layerGroupVisibility}

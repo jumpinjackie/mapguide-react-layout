@@ -81,12 +81,23 @@ export function initWebLayout(options) {
                 const contextMenu = (webLayout.ContextMenu.Visible
                                   ? convertUIItems(webLayout.ContextMenu.MenuItem, cmdsByKey, false)
                                   : []);
+                const config: any = {};
+                if (webLayout.SelectionColor != null) {
+                    config.selectionColor = webLayout.SelectionColor;
+                }
+                if (webLayout.MapImageFormat != null) {
+                    config.imageFormat = webLayout.MapImageFormat;
+                }
+                if (webLayout.PointSelectionBuffer != null) {
+                    config.pointSelectionBuffer = webLayout.PointSelectionBuffer;
+                }
                 dispatch({
                     type: Constants.INIT_APP,
                     payload: {
                         initialUrl: ensureParameters(webLayout.TaskPane.InitialTask || "server/TaskPane.html", map.Name, map.SessionId, args.locale),
                         map: map,
                         externalBaseLayers: options.externalBaseLayers,
+                        config: config,
                         capabilities: {
                             hasTaskPane: webLayout.TaskPane.Visible,
                             hasTaskBar: webLayout.TaskPane.TaskBar.Visible,

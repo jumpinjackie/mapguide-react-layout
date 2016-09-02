@@ -67,6 +67,7 @@ export class DefaultCommands {
     public static get PreviousView(): string { return "PreviousView"; }
     public static get NextView(): string { return "NextView"; }
     public static get About(): string { return "About"; }
+    public static get Help(): string { return "Help"; }
 }
 
 export interface ICommandRef {

@@ -9,8 +9,19 @@ export function modalReducer(state = INITIAL_STATE, action) {
             {
                 const newData: any = {};
                 newData[action.payload.name] = {
+                    modal: action.payload.modal,
                     component: action.payload.component,
                     componentProps: action.payload.props
+                };
+                const newState = assign({}, state, newData);
+                return newState;
+            }
+        case Constants.MODAL_SHOW_URL:
+            {
+                const newData: any = {};
+                newData[action.payload.name] = {
+                    modal: action.payload.modal,
+                    url: action.payload.url
                 };
                 const newState = assign({}, state, newData);
                 return newState;

@@ -47,6 +47,12 @@
       "css": "menu",
       "code": 59397,
       "src": "entypo"
+    },
+    {
+      "uid": "bf45c39702763f1803b550c36a0ceb12",
+      "css": "cancel-squared",
+      "code": 59398,
+      "src": "entypo"
     }
   ]
 }

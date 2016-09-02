@@ -28,6 +28,7 @@ export const TASK_PANE_PUSH_URL = 'TaskPane/PUSH_URL';
 export const UPDATE_MOUSE_COORDINATES = 'Status/UPDATE_MOUSE_COORDINATES';
 
 export const MODAL_SHOW_COMPONENT = 'Modal/SHOW_COMPONENT';
+export const MODAL_SHOW_URL = 'Modal/SHOW_URL';
 export const MODAL_CLOSE = 'Modal/CLOSE';
 
 /**

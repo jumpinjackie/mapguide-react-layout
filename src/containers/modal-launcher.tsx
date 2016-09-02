@@ -41,7 +41,12 @@ export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
                 const diag = modal[key];
                 if (diag.component != null) {
                     const componentRenderer = getComponentFactory(diag.component);
-                    return <ModalDialog isOpen={true} key={key} onClose={() => this.onCloseModal(key)}>
+                    return <ModalDialog size={diag.modal.size}
+                                        title={diag.modal.title}
+                                        backdrop={diag.modal.backdrop}
+                                        isOpen={true}
+                                        key={key}
+                                        onClose={() => this.onCloseModal(key)}>
                         {(() => {
                             if (componentRenderer != null) {
                                 return componentRenderer(diag.componentProps);
@@ -49,6 +54,15 @@ export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
                                 return <div>ERROR: No such registered component ({diag.component})</div>;
                             }
                         })()}
+                    </ModalDialog>;
+                } else if (diag.url != null) {
+                    return <ModalDialog size={diag.modal.size}
+                                        title={diag.modal.title}
+                                        backdrop={diag.modal.backdrop}
+                                        isOpen={true}
+                                        key={key}
+                                        onClose={() => this.onCloseModal(key)}>
+                        <iframe frameBorder={0} src={diag.url}  width={diag.modal.size[0] - 10} height={diag.modal.size[1] - 30} />
                     </ModalDialog>;
                 }
             })}

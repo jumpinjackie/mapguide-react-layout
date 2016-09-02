@@ -4,6 +4,7 @@ import { QueryMapFeaturesResponse } from "./contracts/query";
 import { RefreshMode } from "../components/map-viewer-base";
 import * as LegendActions from "../actions/legend";
 import * as MapActions from "../actions/map";
+import { tr } from "../api/i18n";
 import * as Constants from "../constants";
 import * as ol from "openlayers";
 import { ensureParameters } from "../actions/taskpane";
@@ -152,7 +153,7 @@ export function initDefaultCommands() {
             panMap(dispatch, viewer, "down");
         }
     });
-    //Redline
+    //About
     registerCommand(DefaultCommands.About, {
         icon: "about.png",
         selected: () => false,
@@ -161,8 +162,32 @@ export function initDefaultCommands() {
             dispatch({
                 type: Constants.MODAL_SHOW_COMPONENT,
                 payload: {
+                    modal: {
+                        title: tr("About"),
+                        backdrop: true
+                    },
                     name: DefaultComponentNames.About,
                     component: DefaultComponentNames.About
+                }
+            });
+        }
+    });
+    //About
+    registerCommand(DefaultCommands.Help, {
+        icon: "help.png",
+        selected: () => false,
+        enabled: () => true,
+        invoke: (dispatch, getState, viewer) => {
+            dispatch({
+                type: Constants.MODAL_SHOW_URL,
+                payload: {
+                    modal: {
+                        title: tr("Help"),
+                        backdrop: true,
+                        size: [ 300, 500 ]
+                    },
+                    name: DefaultCommands.Help,
+                    url: "help/index.html"
                 }
             });
         }

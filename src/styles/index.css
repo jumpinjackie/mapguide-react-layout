@@ -2,6 +2,17 @@
 @import '~@aneves/react-flyout/dist/flyout.css';
 @import "../externs/ol3-contextmenu.css";
 
+.modal-dialog-header {
+    font-weight: bold;
+    padding: 5px;
+    font-size: 1.1em;
+    background-color: #cdcdcd;
+    border-bottom: 1px solid black;
+}
+.modal-dialog-body {
+    padding: 5px;
+}
+
 .context-menu-item-disabled {
     opacity: 0.4;
     cursor: none;

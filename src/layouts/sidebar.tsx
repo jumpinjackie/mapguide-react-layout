@@ -180,7 +180,7 @@ class Sidebar extends React.Component<ISidebarProps, any> {
                             top -= 40;
                         }
                         return <div id="toolbar-region" style={{ top: top }}>
-                            <ToolbarContainer id="main" vertical={true} containerStyle={{ position: "absolute", left: 5, right: 6, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR, fontFamily: "Verdana, Sans-serif", fontSize: "10pt" }} />
+                            <ToolbarContainer id="main" vertical={true} containerStyle={{ position: "absolute", left: 5, right: 6, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />
                         </div>;
                     }
                 })()}

@@ -108,7 +108,7 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
                 return <div style={{ position: "absolute", left: left, top: 0, bottom: 0, right: right }}>
                     {(() => {
                         if (hasToolbar) {
-                            return <ToolbarContainer id="main" containerStyle={{ position: "absolute", left: 10, top: 10, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR, fontFamily: "Verdana, Sans-serif", fontSize: "10pt" }} />;
+                            return <ToolbarContainer id="main" containerStyle={{ position: "absolute", left: 10, top: 10, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />;
                         }
                     })()}
                     {(() => {

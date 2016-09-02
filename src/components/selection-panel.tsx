@@ -107,7 +107,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
             feat = selLayer.Feature[this.state.featureIndex];
             meta = selLayer.LayerMetadata;
         }
-        return <div style={{ width: "100%", height: "100%", fontFamily: "Verdana, Sans-serif", fontSize: "10pt" }}>
+        return <div style={{ width: "100%", height: "100%" }}>
             {(() => {
                 if (selection != null && selection.SelectedLayer != null && selection.SelectedLayer.length > 0) {
                     return <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR }}>

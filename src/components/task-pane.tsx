@@ -87,7 +87,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             flyoutAlign: "bottom left",
             childItems: this.props.taskMenuItems
         };
-        return <div style={{ width: "100%", height: "100%", fontFamily: "Verdana, Sans-serif", fontSize: "10pt" }}>
+        return <div style={{ width: "100%", height: "100%" }}>
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR }}>
                 <Toolbar childItems={this.taskButtons} containerStyle={{ position: "absolute", top: 0, left: 0, height: DEFAULT_TOOLBAR_SIZE }} />
                 <Toolbar childItems={[ taskMenu ]} containerStyle={{ position: "absolute", top: 0, right: 0, height: DEFAULT_TOOLBAR_SIZE }} />

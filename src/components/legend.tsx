@@ -472,7 +472,7 @@ export class Legend extends React.Component<ILegendProps, any> {
         const { tree } = this.state;
         const { currentScale } = this.props;
         const { externalBaseLayers, onBaseLayerChanged } = this.props;
-        return <div style={{ fontFamily: "Verdana, Sans-serif", fontSize: "10pt" }}>
+        return <div>
             {(() => {
                 if (externalBaseLayers != null &&
                     externalBaseLayers.length > 0) {

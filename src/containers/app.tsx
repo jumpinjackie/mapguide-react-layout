@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { ClientKind } from "../api/client";
 import { getLayout } from "../api/registry/layout";
 import { IExternalBaseLayer } from "../components/map-viewer-base";
-import { initApp, initWebLayout } from "../actions/init";
+import { initWebLayout } from "../actions/init";
 
 function endsWith(str, suffix) {
     return str.indexOf(suffix, str.length - suffix.length) !== -1;
@@ -50,7 +50,6 @@ function mapStateToProps(state): IAppState {
 
 function mapDispatchToProps(dispatch): IAppDispatch {
     return {
-        initApp: (args) => dispatch(initApp(args)),
         initWebLayout: (args) => dispatch(initWebLayout(args))
     };
 }
@@ -64,11 +63,6 @@ export class App extends React.Component<IAppProps & IAppState & IAppDispatch, a
         const { initApp, initWebLayout, agent, resourceId, externalBaseLayers } = this.props;
         if (endsWith(resourceId, "WebLayout")) {
             initWebLayout({
-                resourceId: resourceId,
-                externalBaseLayers: externalBaseLayers
-            });
-        } else {
-            initApp({
                 resourceId: resourceId,
                 externalBaseLayers: externalBaseLayers
             });

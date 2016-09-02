@@ -19,7 +19,7 @@ const TOOLBAR_ITEM_STYLE_HOVERED = {
     border: "1px solid rgb(153, 181, 202)"
 };
 
-function getIcon(relPath: string): string {
+export function getIcon(relPath: string): string {
     return `stdicons/${relPath}`;
 }
 
@@ -35,7 +35,7 @@ function getSelected(item: IItem): boolean {
     return false;
 }
 
-function getEnabled(item: IItem): boolean {
+export function getEnabled(item: IItem): boolean {
     const en = item.enabled;
     if (en != null) {
         if (typeof en === 'function') {

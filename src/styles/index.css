@@ -1,5 +1,11 @@
 @import "~openlayers/css/ol.css";
 @import '~@aneves/react-flyout/dist/flyout.css';
+@import "../externs/ol3-contextmenu.css";
+
+.context-menu-item-disabled {
+    opacity: 0.4;
+    cursor: none;
+}
 
 /* https://gist.github.com/aiboy/7406727 */
 .rotated-text {

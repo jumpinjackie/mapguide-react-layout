@@ -37,6 +37,9 @@ import { MgError } from '../api/error';
 import { Client, ClientKind } from '../api/client';
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
+import { IMenu, IItem, getEnabled, getIcon } from '../components/toolbar';
+import { isMenu } from '../utils/type-guards';
+import ContextMenu = require("ol3-contextmenu");
 const assign = require("object-assign");
 const isMobile = require("ismobilejs");
 
@@ -72,6 +75,7 @@ interface IMapViewerBaseProps {
     onSelectionChange?: (selectionSet: any) => void;
     onMouseCoordinateChanged?: (coords: number[]) => void;
     onBusyLoading: (busyCount: number) => void;
+    contextMenu?: IItem[];
 }
 
 export enum RefreshMode {
@@ -243,8 +247,10 @@ class MouseTrackingTooltip {
     private tooltipElement: Element;
     private map: ol.Map;
     private text: string;
-    constructor(map: ol.Map) {
+    private isContextMenuOpen: () => boolean;
+    constructor(map: ol.Map, contextMenuTest: () => boolean) {
         this.map = map;
+        this.isContextMenuOpen = contextMenuTest;
         this.map.on("pointermove", this.onMouseMove.bind(this));
         this.map.getViewport().addEventListener("mouseout", this.onMouseOut.bind(this));
         this.tooltipElement = document.createElement("div");
@@ -259,6 +265,8 @@ class MouseTrackingTooltip {
         this.tooltipElement.classList.add(HIDDEN_CLASS_NAME);
     }
     private onMouseMove(e) {
+        if (this.isContextMenuOpen())
+            return;
         this.tooltip.setPosition(e.coordinate);
         if (this.text)
             this.tooltipElement.classList.remove(HIDDEN_CLASS_NAME);
@@ -293,6 +301,14 @@ function cloneExtent(bounds: Bounds): Bounds {
 }
 
 export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
+    private _contextMenuOpen: boolean;
+    /**
+     * The context menu 
+     * 
+     * @private
+     * @type {ContextMenu}
+     */
+    private _contextMenu: ContextMenu;
     /**
      * Indicates if touch events are supported.
      */
@@ -358,6 +374,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this._busyWorkers = 0;
         this._triggerZoomRequestOnMoveEnd = true;
         this._supportsTouch = isMobile.phone || isMobile.tablet;
+        this._contextMenuOpen = false;
     }
     /**
      * DO NOT CALL DIRECTLY, call this.refreshOnStateChange() instead, which is a throttled version
@@ -535,6 +552,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
     }
     private onMouseMove(e) {
+        if (this._contextMenuOpen) {
+            return;
+        }
         if (this.props.onMouseCoordinateChanged != null) {
             this.props.onMouseCoordinateChanged(e.coordinate);
         }
@@ -617,6 +637,11 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             } else {
                 logger.info(`Skipping zoomToView as next/current views are close enough or target view is null`);
             }
+        }
+        //context menu
+        if (nextProps.contextMenu != props.contextMenu) {
+            this._contextMenu.clear();
+            this._contextMenu.extend(this.convertContextMenuItems(nextProps.contextMenu));
         }
     }
     componentDidMount() {
@@ -808,7 +833,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             ]
         });
         this._map.on("pointermove", this.onMouseMove.bind(this));
-        this._mouseTooltip = new MouseTrackingTooltip(this._map);
+        this._mouseTooltip = new MouseTrackingTooltip(this._map, () => this._contextMenuOpen);
         this._featureTooltip = new FeatureQueryTooltip(this._map, 
                                                        this,
                                                        this.incrementBusyWorker.bind(this),
@@ -847,6 +872,22 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         });
         //this.onRequestZoomToView(this._extent);
         this._map.getView().fit(this._extent, this._map.getSize());
+
+        this._contextMenu = new ContextMenu({
+            width: 190,
+            default_items: false,
+            items: this.convertContextMenuItems(this.props.contextMenu)
+        });
+        this._contextMenu.on("beforeopen", (e) => {
+            if (this.isDigitizing() || this.props.contextMenu == null || this.props.contextMenu.length == 0) {
+                this._contextMenu.disable();
+            } else {
+                this._contextMenu.enable();
+            }
+        });
+        this._contextMenu.on("open", e => this._contextMenuOpen = true);
+        this._contextMenu.on("close", e => this._contextMenuOpen = false);
+        this._map.addControl(this._contextMenu);
     }
     render(): JSX.Element {
         return <div style={{ width: "100%", height: "100%" }} />;
@@ -862,6 +903,32 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             y: center[1],
             scale: scale
         };
+    }
+    private convertContextMenuItems(items: IItem[]) {
+        return items.map(i => {
+            if (i.isSeparator === true) {
+                return '-';
+            } else {
+                let cb = null;
+                let items = null;
+                if (isMenu(i)) {
+                    items = this.convertContextMenuItems(i.childItems)
+                } else {
+                    cb = () => {
+                        if (getEnabled(i)) { //We have to do this because ol3-contextmenu current has no notion of disabled items
+                            i.invoke();
+                        }
+                    };
+                }
+                return {
+                    text: i.label,
+                    icon: i.icon != null ? getIcon(i.icon) : null,
+                    classname: getEnabled(i) === false ? "context-menu-item-disabled" : null,
+                    callback: cb,
+                    items: items
+                }
+            }
+        });
     }
     private getScaleForExtent(bounds: Bounds): number {
         const mcsW = ol.extent.getWidth(bounds);

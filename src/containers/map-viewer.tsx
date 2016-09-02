@@ -17,6 +17,8 @@ import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml } from '../api/builders/deArrayify';
+import { getCommand, mapToolbarReference } from "../api/registry/command";
+import { invokeCommand } from "../actions/map";
 
 interface IMapViewerContainerProps {
     
@@ -29,6 +31,7 @@ interface IMapViewerContainerState {
     view?: any;
     viewer?: any;
     legend?: any;
+    contextmenu?: any;
 }
 
 interface IMapViewerContainerDispatch {
@@ -36,6 +39,7 @@ interface IMapViewerContainerDispatch {
     setSelection?: (selectionSet) => void;
     setBusyCount?: (count) => void;
     setMouseCoordinates?: (coord) => void;
+    invokeCommand?: (cmd) => void;
 }
 
 function mapStateToProps(state): IMapViewerContainerState {
@@ -45,7 +49,8 @@ function mapStateToProps(state): IMapViewerContainerState {
         map: state.map.state,
         viewer: state.map.viewer,
         legend: state.legend,
-        selection: state.selection.selectionSet
+        selection: state.selection.selectionSet,
+        contextmenu: state.toolbar.contextmenu
     };
 }
 
@@ -54,7 +59,8 @@ function mapDispatchToProps(dispatch): IMapViewerContainerDispatch {
         setCurrentView: (view) => dispatch(MapActions.setCurrentView(view)),
         setSelection: (selectionSet) => dispatch(MapActions.setSelection(selectionSet)),
         setBusyCount: (count) => dispatch(MapActions.setBusyCount(count)),
-        setMouseCoordinates: (coord) => dispatch(MapActions.setMouseCoordinates(coord))
+        setMouseCoordinates: (coord) => dispatch(MapActions.setMouseCoordinates(coord)),
+        invokeCommand: (cmd) => dispatch(invokeCommand(cmd))
     };
 }
 
@@ -77,6 +83,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         this.fnBusyLoading = this.onBusyLoading.bind(this);
         this.fnMouseCoordinateChanged = this.onMouseCoordinateChanged.bind(this);
     }
+    static contextTypes: React.ValidationMap<any> = {
+        store: React.PropTypes.object
+    };
     private onMapViewerMounted(component) {
         this.inner = component;
     }
@@ -99,12 +108,15 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         browserWindow.getClient = browserWindow.getClient || (() => new Client(this.props.config.agentUri, this.props.config.agentKind));
     }
     render(): JSX.Element {
-        const { map, config, viewer, view, legend } = this.props;
+        const { map, config, viewer, view, legend, contextmenu } = this.props;
         if (map != null && config != null && view != null && viewer != null && legend != null) {
             const { map } = this.props;
             const selectableLayerNames = map.Layer
                 .filter(layer => layer.Selectable && legend.selectableLayers[layer.ObjectId] !== false)
                 .map(layer => layer.Name);
+            const store = (this.context as any).store;
+            const items = contextmenu != null ? contextmenu.items : [];
+            const cmitems = items.map(tb => mapToolbarReference(tb, store, this.props.invokeCommand)).filter(tb => tb != null);
             return <MapViewerBase ref={this.fnMapViewerMounted}
                                   map={map} 
                                   agentUri={config.agentUri}
@@ -116,8 +128,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                   featureTooltipsEnabled={viewer.featureTooltipsEnabled}
                                   layerGroupVisibility={viewer.layerGroupVisibility}
                                   view={view.current}
-                                  onBusyLoading={this.fnBusyLoading}
                                   selectableLayerNames={selectableLayerNames}
+                                  contextMenu={cmitems}
+                                  onBusyLoading={this.fnBusyLoading}
                                   onMouseCoordinateChanged={this.fnMouseCoordinateChanged}
                                   onSelectionChange={this.fnSelectionChanged}
                                   onRequestZoomToView={this.fnRequestZoomToView} />;

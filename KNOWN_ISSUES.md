@@ -12,11 +12,11 @@ Viewer
       * Example: `MapGuide.Externals.proj4.defs("EPSG:28355","+proj=utm +zone=55 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");`
       * You can find proj4js definitions at [epsg.io](http://epsg.io)
 
- * #29: When the active tool is select, it may interfere with digitization-based selection tools (eg. Select Radius/Polygon)
+ * [#29](https://github.com/jumpinjackie/mapguide-react-layout/issues/29): When the active tool is select, it may interfere with digitization-based selection tools (eg. Select Radius/Polygon)
    * Workaround: Do not have the active tool as select before digitizing
 
- * #34: Digitization tools have poor user experience on mobile/tablet devices
- * #34: Feature Tooltips does not work on mobile/tablet devices
+ * [#34](https://github.com/jumpinjackie/mapguide-react-layout/issues/34): Digitization tools have poor user experience on mobile/tablet devices
+ * [#34](https://github.com/jumpinjackie/mapguide-react-layout/issues/34): Feature Tooltips does not work on mobile/tablet devices
 
 Templates
 =========

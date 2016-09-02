@@ -1,10 +1,10 @@
-# mapguide-react-weblayout
+# mapguide-react-layout
 
-mapguide-react-weblayout is an experimental react-based map viewer for MapGuide.
+mapguide-react-layout is an experimental react-based map viewer for MapGuide.
 
-It is built from the ground up with modern web technologies (React, OpenLayers 3, TypeScript) to be **the definitive map viewer** for [MapGuide Open Source](http://mapguide.osgeo.org) or [Autodesk Infrastructure Map Server](http://www.autodesk.com/products/infrastructure-map-server/overview)
+It is built from the ground up with modern web technologies ([React](https://facebook.github.io/react/), [OpenLayers 3](http://openlayers.org/), [TypeScript](https://www.typescriptlang.org/)) to be **the definitive map viewer** for [MapGuide Open Source](http://mapguide.osgeo.org) or [Autodesk Infrastructure Map Server](http://www.autodesk.com/products/infrastructure-map-server/overview)
 
-It aims for reasonable compatibility with the existing Web Layout and Flexible Layout (TODO) configuration documents that drive the existing AJAX and Fusion map viewers.
+It aims for reasonable compatibility with the existing Web Layout and Flexible Layout (TODO) configuration documents that drive the existing AJAX and Fusion map viewers, ensuring an authoring and development experience similar to MapGuide's existing viewer offerings.
 
 # Requirements
 

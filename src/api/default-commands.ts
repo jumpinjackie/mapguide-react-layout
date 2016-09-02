@@ -174,6 +174,20 @@ export function initDefaultCommands() {
             });
         }
     });
+    //Initial Center and scale
+    registerCommand(DefaultCommands.RestoreView, {
+        icon: "initial-center.png",
+        selected: () => false,
+        enabled: () => true,
+        invoke: (dispatch, getState, viewer) => {
+            const view = getState().view.initial;
+            if (view != null) {
+                viewer.zoomToView(view.x, view.y, view.scale);
+            } else {
+                viewer.initialView();
+            }
+        }
+    })
     //Zoom Extents
     registerCommand(DefaultCommands.ZoomExtents, {
         icon: "zoom-full.png",

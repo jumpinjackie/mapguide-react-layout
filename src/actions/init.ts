@@ -91,6 +91,14 @@ export function initWebLayout(options) {
                 if (webLayout.PointSelectionBuffer != null) {
                     config.pointSelectionBuffer = webLayout.PointSelectionBuffer;
                 }
+                let initialView = null;
+                if (webLayout.Map.InitialView != null) {
+                    initialView = {
+                        x: webLayout.Map.InitialView.CenterX,
+                        y: webLayout.Map.InitialView.CenterY,
+                        scale: webLayout.Map.InitialView.Scale
+                    };
+                }
                 dispatch({
                     type: Constants.INIT_APP,
                     payload: {
@@ -98,6 +106,7 @@ export function initWebLayout(options) {
                         map: map,
                         externalBaseLayers: options.externalBaseLayers,
                         config: config,
+                        initialView: initialView,
                         capabilities: {
                             hasTaskPane: webLayout.TaskPane.Visible,
                             hasTaskBar: webLayout.TaskPane.TaskBar.Visible,

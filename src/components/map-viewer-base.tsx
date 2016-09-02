@@ -62,6 +62,7 @@ interface IMapViewerBaseProps {
     layerGroupVisibility?: ILayerGroupVisibility;
     tool: ActiveMapTool;
     view: IMapView;
+    initialView?: IMapView;
     agentUri: string;
     agentKind: ClientKind;
     featureTooltipsEnabled: boolean;
@@ -870,9 +871,12 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 logger.info("Triggering zoom request on moveend suppresseed");
             }
         });
-        //this.onRequestZoomToView(this._extent);
-        this._map.getView().fit(this._extent, this._map.getSize());
-
+        
+        if (this.props.initialView != null) {
+            this.zoomToView(this.props.initialView.x, this.props.initialView.y, this.props.initialView.scale);
+        } else {
+            this._map.getView().fit(this._extent, this._map.getSize());
+        }
         this._contextMenu = new ContextMenu({
             width: 190,
             default_items: false,

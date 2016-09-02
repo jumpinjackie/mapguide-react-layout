@@ -129,6 +129,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                   featureTooltipsEnabled={viewer.featureTooltipsEnabled}
                                   layerGroupVisibility={viewer.layerGroupVisibility}
                                   view={view.current}
+                                  initialView={view.initial}
                                   selectableLayerNames={selectableLayerNames}
                                   contextMenu={cmitems}
                                   onBusyLoading={this.fnBusyLoading}

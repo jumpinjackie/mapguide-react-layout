@@ -3,6 +3,7 @@ const assign = require("object-assign");
 
 const INITIAL_STATE = {
     current: null,
+    initial: null,
     mouse: null,
     history: [],
     historyIndex: -1
@@ -10,6 +11,13 @@ const INITIAL_STATE = {
 
 export function viewReducer(state = INITIAL_STATE, action = { type: '', payload: null }) {
     switch (action.type) {
+        case Constants.INIT_APP:
+            {
+                const newState = assign({}, state, {
+                    initial: action.payload.initialView
+                });
+                return newState;
+            }
         case Constants.MAP_PREVIOUS_VIEW:
             {
                 const index = state.historyIndex - 1;

@@ -53,6 +53,7 @@ export class DefaultCommands {
     public static get MapTip(): string { return "MapTip"; }
     public static get ZoomIn(): string { return "ZoomIn"; }
     public static get ZoomOut(): string { return "ZoomOut"; }
+    public static get RestoreView(): string { return "RestoreView"; }
     public static get ZoomExtents(): string { return "ZoomExtents"; }
     public static get SelectRadius(): string { return "SelectRadius"; }
     public static get SelectPolygon(): string { return "SelectPolygon"; }

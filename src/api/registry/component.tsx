@@ -10,6 +10,7 @@ export class DefaultComponentNames {
     public static get SelectedFeatureCount(): string { return "SelectedFeatureCount"; }
     public static get PoweredByMapGuide(): string { return "PoweredByMapGuide"; }
     public static get TaskPane(): string { return "TaskPane"; }
+    public static get About(): string { return "About"; }
 }
 
 export type ComponentFactory = (props) => JSX.Element; 

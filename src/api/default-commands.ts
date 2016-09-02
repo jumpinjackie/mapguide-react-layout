@@ -7,6 +7,7 @@ import * as MapActions from "../actions/map";
 import * as Constants from "../constants";
 import * as ol from "openlayers";
 import { ensureParameters } from "../actions/taskpane";
+import { DefaultComponentNames } from "../api/registry/component";
 
 function panMap(dispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
     const settings = {
@@ -149,6 +150,21 @@ export function initDefaultCommands() {
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
             panMap(dispatch, viewer, "down");
+        }
+    });
+    //Redline
+    registerCommand(DefaultCommands.About, {
+        icon: "about.png",
+        selected: () => false,
+        enabled: () => true,
+        invoke: (dispatch, getState, viewer) => {
+            dispatch({
+                type: Constants.MODAL_SHOW_COMPONENT,
+                payload: {
+                    name: DefaultComponentNames.About,
+                    component: DefaultComponentNames.About
+                }
+            });
         }
     });
     //Select Radius

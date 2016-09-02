@@ -8,6 +8,7 @@ import { selectionReducer } from "./selection";
 import { legendReducer } from "./legend";
 import { taskPaneReducer } from "./taskpane";
 import { lastAction } from "./last-action";
+import { modalReducer } from "./modal";
 
 const rootReducer = combineReducers({
     config: configReducer,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
     selection: selectionReducer,
     legend: legendReducer,
     taskpane: taskPaneReducer,
+    modal: modalReducer,
     lastaction: lastAction
 });
 

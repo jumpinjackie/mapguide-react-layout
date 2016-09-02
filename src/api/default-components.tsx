@@ -9,6 +9,7 @@ import { SelectedFeatureCountContainer } from "../containers/selected-feature-co
 import { SelectionPanelContainer } from "../containers/selection-panel";
 import { TaskPaneContainer } from "../containers/task-pane";
 import { PoweredByMapGuide } from "../components/pbmg";
+import { About } from "../components/about";
 
 import { registerComponentFactory, DefaultComponentNames } from "../api/registry/component";
 
@@ -22,4 +23,5 @@ export function registerDefaultComponents(): void {
     registerComponentFactory(DefaultComponentNames.SelectedFeatureCount, (props) => <SelectedFeatureCountContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.PoweredByMapGuide, (props) => <PoweredByMapGuide {...props} />);
     registerComponentFactory(DefaultComponentNames.TaskPane, (props) => <TaskPaneContainer {...props} />);
+    registerComponentFactory(DefaultComponentNames.About, (props) => <About {...props} />);
 }

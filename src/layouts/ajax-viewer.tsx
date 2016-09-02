@@ -3,6 +3,7 @@ import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/com
 import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
 import { ToolbarContainer } from "../containers/toolbar";
 import { AjaxViewerShim } from "../containers/ajax-viewer-shim";
+import { ModalLauncher } from "../containers/modal-launcher";
 import { connect } from "react-redux";
 
 const SIDEBAR_WIDTH = 250;
@@ -150,6 +151,7 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
                 }
             })()}
             <AjaxViewerShim />
+            <ModalLauncher />
         </div>;
     }
 }

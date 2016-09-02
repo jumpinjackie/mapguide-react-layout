@@ -3,6 +3,7 @@ import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/com
 import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
 import { ToolbarContainer } from "../containers/toolbar";
 import { AjaxViewerShim } from "../containers/ajax-viewer-shim";
+import { ModalLauncher } from "../containers/modal-launcher";
 import { connect } from "react-redux";
 import * as Constants from "../constants";
 
@@ -290,6 +291,7 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
             })()}
             <PlaceholderComponent id={DefaultComponentNames.Map} />
             <AjaxViewerShim />
+            <ModalLauncher />
             <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} componentProps={PBMG_PROPS} />
         </div>;
     }

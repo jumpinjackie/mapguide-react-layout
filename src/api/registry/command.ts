@@ -66,6 +66,7 @@ export class DefaultCommands {
     public static get RefreshMap(): string { return "RefreshMap"; }
     public static get PreviousView(): string { return "PreviousView"; }
     public static get NextView(): string { return "NextView"; }
+    public static get About(): string { return "About"; }
 }
 
 export interface ICommandRef {

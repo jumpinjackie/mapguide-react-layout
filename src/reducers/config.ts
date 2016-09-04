@@ -7,6 +7,7 @@ export const INITIAL_STATE = {
     locale: "en",
     viewer: {
         imageFormat: "PNG",
+        selectionImageFormat: "PNG",
         selectionColor: "0x0000FFAA",
         pointSelectionBuffer: 2
     },
@@ -34,7 +35,20 @@ export function configReducer(state = INITIAL_STATE, action = { type: '', payloa
                     capabilities: action.payload.capabilities
                 });
                 if (action.payload.config != null && Object.keys(action.payload.config).length > 0) {
-                    return assign(newState, { viewer: action.payload.config });
+                    const config: any = assign({}, state.viewer);
+                    if (action.payload.config.imageFormat != null) {
+                        config.imageFormat = action.payload.config.imageFormat;
+                    }
+                    if (action.payload.config.selectionImageFormat != null) {
+                        config.selectionImageFormat = action.payload.config.selectionImageFormat;
+                    }
+                    if (action.payload.config.selectionColor != null) {
+                        config.selectionColor = action.payload.config.selectionColor;
+                    }
+                    if (action.payload.config.pointSelectionBuffer != null) {
+                        config.pointSelectionBuffer = action.payload.config.pointSelectionBuffer;
+                    }
+                    return assign(newState, { viewer: config });
                 } else {
                     return newState;
                 }

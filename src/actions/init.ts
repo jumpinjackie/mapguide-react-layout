@@ -97,6 +97,9 @@ export function initWebLayout(options) {
                 if (webLayout.MapImageFormat != null) {
                     config.imageFormat = webLayout.MapImageFormat;
                 }
+                if (webLayout.SelectionImageFormat != null) {
+                    config.selectionImageFormat = webLayout.SelectionImageFormat;
+                }
                 if (webLayout.PointSelectionBuffer != null) {
                     config.pointSelectionBuffer = webLayout.PointSelectionBuffer;
                 }

@@ -67,6 +67,7 @@ interface IMapViewerBaseProps {
     agentKind: ClientKind;
     featureTooltipsEnabled: boolean;
     imageFormat: "PNG" | "PNG8" | "JPG" | "GIF";
+    selectionImageFormat?: "PNG" | "PNG8" | "JPG" | "GIF";
     selectionColor?: string;
     stateChangeDebounceTimeout?: number;
     pointSelectionBuffer?: number;
@@ -739,7 +740,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
 
         this._selectionOverlayParams = {
             MAPNAME: map.Name,
-            FORMAT: 'PNG', //Hard-coding for now instead of binding to props.imageFormat
+            FORMAT: this.props.selectionImageFormat || "PNG",
             SESSION: map.SessionId,
             SELECTIONCOLOR: this.props.selectionColor,
             BEHAVIOR: 1 | 4 //selected features + include outside current scale

@@ -4,6 +4,9 @@ Components
  * Task Pane
    * URLs loaded into the task pane push actual entries into the browser's navigation stack
 
+ * Toolbars
+   * Only one level of menu nesting is supported. Flyouts within Flyouts is not supported/implemented.
+
 Viewer
 ======
 

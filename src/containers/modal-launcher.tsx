@@ -62,7 +62,7 @@ export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
                                         isOpen={true}
                                         key={key}
                                         onClose={() => this.onCloseModal(key)}>
-                        <iframe frameBorder={0} src={diag.url}  width={diag.modal.size[0] - 10} height={diag.modal.size[1] - 30} />
+                        <iframe frameBorder={0} src={diag.url}  width={diag.modal.size[0]} height={diag.modal.size[1] - 30} />
                     </ModalDialog>;
                 }
             })}

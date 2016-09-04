@@ -3,6 +3,7 @@ import { QueryMapFeaturesResponse } from "../contracts/query";
 import { IItem, IMenu } from "../../components/toolbar";
 import * as Constants from "../../constants";
 import { ensureParameters } from "../../actions/taskpane";
+import { tr } from "../i18n";
 
 export function mapToolbarReference(tb: any, store, commandInvoker: (cmd) => void): IItem|IMenu {
     const state = store.getState();
@@ -89,6 +90,7 @@ export interface IInvokeUrlCommand {
     icon?: string;
     url: string;
     disableIfSelectionEmpty?: boolean;
+    target: "TaskPane" | "NewWindow";
 }
 
 type Dictionary<T> = { [key: string]: T };
@@ -113,12 +115,28 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
             selected: (state) => false,
             invoke: (dispatch, getState, viewer: IMapViewer) => {
                 const { map, config } = getState();
-                dispatch({
-                    type: Constants.CMD_INVOKE_URL,
-                    payload: {
-                        url: ensureParameters(cmdDef.url, map.state.Name, map.state.SessionId, config.locale)
-                    }
-                });
+                const target = cmdDef.target;
+                if (target == "TaskPane") {
+                    dispatch({
+                        type: Constants.TASK_INVOKE_URL,
+                        payload: {
+                            url: ensureParameters(cmdDef.url, map.state.Name, map.state.SessionId, config.locale)
+                        }
+                    });
+                } else {
+                    dispatch({
+                        type: Constants.MODAL_SHOW_URL,
+                        payload: {
+                            modal: {
+                                title: tr(name),
+                                backdrop: false,
+                                size: [ 300, 500 ]
+                            },
+                            name: name,
+                            url: ensureParameters(cmdDef.url, map.state.Name, map.state.SessionId, config.locale)
+                        }
+                    });
+                }
             }
         };
     } else {

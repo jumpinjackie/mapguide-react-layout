@@ -10,7 +10,7 @@
     border-bottom: 1px solid black;
 }
 .modal-dialog-body {
-    padding: 5px;
+    padding: 0px;
 }
 
 .context-menu-item-disabled {

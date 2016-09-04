@@ -46,6 +46,10 @@ function convertUIItems(items: UIItem[], cmdsByKey: any, noToolbarLabels = true,
     }).filter(item => item != null);
 }
 
+function isNotTargeted(target: "TaskPane" | "NewWindow" | "SpecifiedFrame"): target is "TaskPane" | "NewWindow" {
+    return target != "SpecifiedFrame";
+}
+
 export function initWebLayout(options) {
     return (dispatch, getState) => {
         const args = getState().config;
@@ -68,7 +72,12 @@ export function initWebLayout(options) {
                 //Register any InvokeURL commands
                 for (const cmd of webLayout.CommandSet.Command) {
                     if (isInvokeURLCommand(cmd)) {
-                        registerCommand(cmd.Name, { url: cmd.URL, disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty });
+                        let cmdTarget = cmd.Target;
+                        if (isNotTargeted(cmdTarget)) {
+                            registerCommand(cmd.Name, { url: cmd.URL, disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty, target: cmdTarget });
+                        } else {
+                            logger.warn(`Command ${cmd.Name} targets a specific frame which is not supported`);
+                        }
                     }
                     cmdsByKey[cmd.Name] = cmd;
                 }

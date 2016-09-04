@@ -74,7 +74,7 @@ class Sidebar extends React.Component<ISidebarProps, any> {
         const lastAction = nextProps.lastAction;
         if (lastAction != this.props.lastAction) {
             switch (lastAction.type) {
-                case Constants.CMD_INVOKE_URL:
+                case Constants.TASK_INVOKE_URL:
                     {
                         this.setState({
                             collapsed: false,

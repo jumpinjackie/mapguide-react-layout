@@ -89,10 +89,8 @@ export function taskPaneReducer(state = INITIAL_STATE, action = { type: '', payl
                     });
                 }
             }
-        case Constants.CMD_INVOKE_URL:
+        case Constants.TASK_INVOKE_URL:
             {
-                //TODO: If/When we support invoke URL targets, then obviously we only want
-                //to state transition if target is TaskPane
                 return mergeNavigatedUrl(state, action.payload.url);
             }
     }

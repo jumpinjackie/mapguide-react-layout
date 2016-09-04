@@ -15,6 +15,7 @@ export interface ITaskPaneProps {
     forwardAction: IItem;
     onUrlLoaded: (url: string) => void;
     lastUrlPushed?: boolean;
+    showTaskBar: boolean;
 }
 
 // HACK:
@@ -88,11 +89,15 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             childItems: this.props.taskMenuItems
         };
         return <div style={{ width: "100%", height: "100%" }}>
-            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR }}>
-                <Toolbar childItems={this.taskButtons} containerStyle={{ position: "absolute", top: 0, left: 0, height: DEFAULT_TOOLBAR_SIZE }} />
-                <Toolbar childItems={[ taskMenu ]} containerStyle={{ position: "absolute", top: 0, right: 0, height: DEFAULT_TOOLBAR_SIZE }} />
-            </div>
-            <div style={{ position: "absolute", top: DEFAULT_TOOLBAR_SIZE, left: 0, right: 0, bottom: 0, overflow: "hidden" }}>
+            {(() => {
+                if (this.props.showTaskBar === true) {
+                    return <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR }}>
+                        <Toolbar childItems={this.taskButtons} containerStyle={{ position: "absolute", top: 0, left: 0, height: DEFAULT_TOOLBAR_SIZE }} />
+                        <Toolbar childItems={[ taskMenu ]} containerStyle={{ position: "absolute", top: 0, right: 0, height: DEFAULT_TOOLBAR_SIZE }} />
+                    </div>;
+                }
+            })()}
+            <div style={{ position: "absolute", top: (this.props.showTaskBar === true ? DEFAULT_TOOLBAR_SIZE : 0), left: 0, right: 0, bottom: 0, overflow: "hidden" }}>
                 <iframe name="taskPaneFrame" ref={this.fnFrameMounted} onLoad={this.fnFrameLoaded} style={{ border: "none", width: "100%", height: "100%" }}>
                 
                 </iframe>

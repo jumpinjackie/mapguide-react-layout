@@ -3,6 +3,7 @@ import { Toolbar, IItem, IMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR }
 import queryString = require("query-string");
 const parse = require("url-parse");
 import { ensureParameters } from "../actions/taskpane";
+import { PlaceholderComponent } from "../api/registry/component";
 
 export interface ITaskPaneProps {
     currentUrl?: string;
@@ -55,6 +56,9 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         ];
         this.fnFrameLoaded = this.onFrameLoaded.bind(this);
         this.fnFrameMounted = this.onFrameMounted.bind(this);
+        this.state = {
+            activeComponent: null
+        };
     }
     private onFrameMounted(iframe) {
         this._iframe = iframe;
@@ -78,8 +82,14 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         }
     }
     loadUrl(url: string) {
-        if (this._iframe) {
-            this._iframe.src = ensureParameters(url, this.props.mapName, this.props.session, this.props.locale);
+        if (url.indexOf("component://") >= 0) {
+            this.setState({ activeComponent: url.substring(12) });
+        } else {
+            this.setState({ activeComponent: null}, () => {
+                if (this._iframe) {
+                    this._iframe.src = ensureParameters(url, this.props.mapName, this.props.session, this.props.locale);
+                }
+            });
         }
     }
     render(): JSX.Element {
@@ -98,9 +108,17 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                 }
             })()}
             <div style={{ position: "absolute", top: (this.props.showTaskBar === true ? DEFAULT_TOOLBAR_SIZE : 0), left: 0, right: 0, bottom: 0, overflow: "hidden" }}>
-                <iframe name="taskPaneFrame" ref={this.fnFrameMounted} onLoad={this.fnFrameLoaded} style={{ border: "none", width: "100%", height: "100%" }}>
+                {(() => {
+                    if (this.state.activeComponent != null) {
+                        return <div style={{ border: "none", width: "100%", height: "100%" }}>
+                            <PlaceholderComponent id={this.state.activeComponent} />
+                        </div>
+                    } else {
+                        return <iframe name="taskPaneFrame" ref={this.fnFrameMounted} onLoad={this.fnFrameLoaded} style={{ border: "none", width: "100%", height: "100%" }}>
                 
-                </iframe>
+                        </iframe>
+                    }
+                })()}
                 <iframe name="scriptFrame" style={{ width: 0, height: 0, visibility: "hidden" }}></iframe>
             </div>
         </div>;

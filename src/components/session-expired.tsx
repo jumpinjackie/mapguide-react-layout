@@ -2,7 +2,7 @@ import * as React from "react";
 
 function reload(e) {
     e.preventDefault();
-    //TODO: This is obviosly the nuclear solution.
+    //TODO: This is obviously the nuclear solution.
     //
     //The more graceful solution is to re-create the runtime map and interleave the response
     //into the current redux store and preserve the existing view and layer/group state and

@@ -172,7 +172,7 @@ export function initDefaultCommands() {
             });
         }
     });
-    //About
+    //Help
     registerCommand(DefaultCommands.Help, {
         icon: "help.png",
         selected: () => false,
@@ -190,6 +190,20 @@ export function initDefaultCommands() {
                     url: "help/index.html"
                 }
             });
+        }
+    });
+    //Measure
+    registerCommand(DefaultCommands.Measure, {
+        icon: "measure.png",
+        selected: () => false,
+        enabled: () => true,
+        invoke: (dispatch, getState, viewer) => {
+            dispatch({
+                type: Constants.TASK_INVOKE_URL,
+                payload: {
+                    url: "component://Measure"
+                }
+            })
         }
     });
     //Select Radius

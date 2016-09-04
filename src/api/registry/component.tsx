@@ -13,6 +13,7 @@ export class DefaultComponentNames {
     public static get TaskPane(): string { return "TaskPane"; }
     public static get About(): string { return "About"; }
     public static get SessionExpired(): string { return "SessionExpired"; }
+    public static get Measure(): string { return "Measure"; }
 }
 
 export type ComponentFactory = (props) => JSX.Element; 

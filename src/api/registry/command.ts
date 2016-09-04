@@ -69,6 +69,7 @@ export class DefaultCommands {
     public static get NextView(): string { return "NextView"; }
     public static get About(): string { return "About"; }
     public static get Help(): string { return "Help"; }
+    public static get Measure(): string { return "Measure"; }
 }
 
 export interface ICommandRef {

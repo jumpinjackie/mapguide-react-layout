@@ -431,7 +431,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     private getSelectableLayers(): string[] {
         return this.props.selectableLayerNames || [];
     }
-    private buildDefaultQueryOptions(geom: ol.geom.Geometry | string, reqQueryFeatures: number = 1 | 2 /* Attributes and inline selection */): IQueryMapFeaturesOptions {
+    private buildDefaultQueryOptions(geom: ol.geom.Geometry | string, reqQueryFeatures: number = 1 /* Attributes */): IQueryMapFeaturesOptions {
         const names = this.getSelectableLayers();
         let wkt;
         if (typeof geom === 'string') {

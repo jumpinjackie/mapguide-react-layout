@@ -1001,7 +1001,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
     }
     public setSelectionXml(xml: string, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void {
-        const reqQueryFeatures = 1 | 2; //Attributes and inline selection
+        const reqQueryFeatures = 1; //Attributes
         this.incrementBusyWorker();
         this._client.queryMapFeatures({
             mapname: this.props.map.Name,

@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { hideModal } from "../actions/modal";
 import { ModalDialog } from "../components/modal-dialog";
 import { getComponentFactory } from "../api/registry/component";
+import { Error } from "../components/error";
 
 interface IToolbarContainerState {
     modal?: any;
@@ -51,7 +52,7 @@ export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
                             if (componentRenderer != null) {
                                 return componentRenderer(diag.componentProps);
                             } else {
-                                return <div>ERROR: No such registered component ({diag.component})</div>;
+                                return <Error error={`ERROR: No such registered component (${diag.component}). Ensure the component has been registered in the component registry with an id of: ${diag.component}`} />;
                             }
                         })()}
                     </ModalDialog>;

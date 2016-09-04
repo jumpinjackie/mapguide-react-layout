@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Error } from "../../components/error";
 
 export class DefaultComponentNames {
     public static get Legend(): string { return "Legend"; }
@@ -41,7 +42,7 @@ export class PlaceholderComponent extends React.Component<IPlaceholderComponentP
         if (factory) {
             return factory(componentProps);
         } else {
-            return <div>ERROR: Component ({id}) not registered</div>;
+            return <Error error={`ERROR: Component (${id}) not registered. Ensure the component has been registered in the component registry with an id of: ${id}`} />;
         }
     }
 }

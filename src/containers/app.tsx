@@ -4,6 +4,7 @@ import { ClientKind } from "../api/client";
 import { getLayout } from "../api/registry/layout";
 import { IExternalBaseLayer } from "../components/map-viewer-base";
 import { initWebLayout } from "../actions/init";
+import { Error } from "../components/error";
 
 function endsWith(str, suffix) {
     return str.indexOf(suffix, str.length - suffix.length) !== -1;
@@ -74,7 +75,7 @@ export class App extends React.Component<IAppProps & IAppState & IAppDispatch, a
         if (layoutEl) {
             return layoutEl();
         } else {
-            return <div>ERROR: No layout named ({layout}) registered</div>;
+            return <Error error={`ERROR: No layout named (${layout}) registered`} />;
         }
     }
 }

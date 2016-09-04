@@ -16,14 +16,14 @@ import { registerComponentFactory, DefaultComponentNames } from "../api/registry
 
 export function registerDefaultComponents(): void {
     registerComponentFactory(DefaultComponentNames.Map, (props) => <MapViewerContainer {...props} />);
-    registerComponentFactory(DefaultComponentNames.Legend, (props) => <LegendContainer {...props} />);
+    //registerComponentFactory(DefaultComponentNames.Legend, (props) => <LegendContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.SelectionPanel, (props) => <SelectionPanelContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.Navigator, (props) => <NavigatorContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.MouseCoordinates, (props) => <MouseCoordinatesContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.ScaleDisplay, (props) => <ScaleDisplayContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.SelectedFeatureCount, (props) => <SelectedFeatureCountContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.PoweredByMapGuide, (props) => <PoweredByMapGuide {...props} />);
-    registerComponentFactory(DefaultComponentNames.TaskPane, (props) => <TaskPaneContainer {...props} />);
+    //registerComponentFactory(DefaultComponentNames.TaskPane, (props) => <TaskPaneContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.About, (props) => <About {...props} />);
     registerComponentFactory(DefaultComponentNames.SessionExpired, (props) => <SessionExpired {...props} />);
 }

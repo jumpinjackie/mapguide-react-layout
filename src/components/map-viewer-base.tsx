@@ -423,7 +423,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             const ptBuffer = this.props.pointSelectionBuffer || 2;
             const box: Bounds = this.getPointSelectionBox(e.pixel, ptBuffer);
             const geom = ol.geom.Polygon.fromExtent(box);
-            this.selectByGeometry(geom);
+            const options = this.buildDefaultQueryOptions(geom);
+            options.maxfeatures = 1;
+            this.sendSelectionQuery(options);
         }
     }
     private getSelectableLayers(): string[] {

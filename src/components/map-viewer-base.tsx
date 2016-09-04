@@ -150,6 +150,26 @@ class DigitizerMessages {
     public static get Polygon(): string { return "Click to set this positon as the start.<br/>Click again to add a vertex at this position.<br/>Hold SHIFT and drag while digitizing to draw in freehand mode<br/><br/>Double click to finish and close the polygon<br/>Press ESC to cancel"; }
 }
 
+class SessionKeepAlive {
+    private session: string;
+    private client: Client;
+    private interval: number;
+    private intervalID: number;
+    constructor(session: string, client: Client) {
+        this.session = session;
+        this.client = client;
+        this.client.getServerSessionTimeout(this.session).then(tm => {
+            this.interval = tm / 5 * 1000;  //Ping server 5 times each period. Timeout is returned in seconds.
+            this.intervalID = setInterval(this.tick.bind(this), this.interval);
+        }); 
+    }
+    private tick(): void {
+        this.client.getServerSessionTimeout(this.session).then(tm => {
+            this.intervalID = setInterval(this.tick.bind(this), this.interval);
+        });
+    }
+}
+
 class FeatureQueryTooltip {
     private wktFormat: ol.format.WKT;
     private map: ol.Map;
@@ -367,6 +387,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     private _busyWorkers: number;
 
     private _triggerZoomRequestOnMoveEnd: boolean;
+
+    private _keepAlive: SessionKeepAlive;
     
     constructor(props: IMapViewerBaseProps) {
         super(props);
@@ -666,6 +688,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             }
         }
         this._client = new Client(this.props.agentUri, this.props.agentKind);
+        this._keepAlive = new SessionKeepAlive(map.SessionId, this._client);
 
         //If a tile set definition is defined it takes precedence over the map definition, this enables
         //this example to work with older releases of MapGuide where no such resource type exists.

@@ -84,6 +84,10 @@ export class Client implements Request.IMapGuideClient {
     public createSession(username: string, password: string): Request.IPromise<string> {
         return this.builder.createSession(username, password);
     }
+
+    public getServerSessionTimeout(session: string): Request.IPromise<number> {
+        return this.builder.getServerSessionTimeout(session);
+    }
     
     public getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier, args?: any): Request.IPromise<T> {
         return this.builder.getResource<T>(resourceId, args);

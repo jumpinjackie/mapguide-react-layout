@@ -25,7 +25,7 @@ function convertUIItems(items: UIItem[], cmdsByKey: any, noToolbarLabels = true,
                 if (isBasicCommand(cmdDef)) {
                     let action: string = cmdDef.Action;
                     if (action == "FitToWindow") {
-                        action = DefaultCommands.ZoomExtents
+                        action = DefaultCommands.ZoomExtents;
                     }
                     return { command: action, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
                 } else {

@@ -121,6 +121,30 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         });
     }
 
+    public getServerSessionTimeout(session: string): Request.IPromise<number> {
+        const url = this.agentUri;
+        const data = { operation: "GETSESSIONTIMEOUT", version: "1.0.0", SESSION: session };
+        return new Promise<number>((resolve, reject) => {
+            fetch(url, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+                method: "POST",
+                body: serialize(data) //form
+            })
+            .then(response => {
+                if (isErrorResponse(response)) {
+                    throw new MgError(response.statusText);
+                } else {
+                    response.text().then(val => {
+                        resolve(parseInt(val, 10));
+                    });
+                }
+            })
+            .catch(reject);
+        });
+    }
+
     public getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier, args?: any): Request.IPromise<T> {
         if (args != null) {
             const url = this.stringifyGetUrl(assign(args, { operation: "GETRESOURCECONTENT", resourceId: resourceId }));

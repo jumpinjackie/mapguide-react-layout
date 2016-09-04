@@ -204,6 +204,8 @@ export abstract class RequestBuilder implements IMapGuideClient {
 
     public abstract createSession(username: string, password: string): IPromise<string>;
 
+    public abstract getServerSessionTimeout(session: string): IPromise<number>;
+
     public abstract getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier, args?: any): IPromise<T>;
 
     public abstract createRuntimeMap(options: ICreateRuntimeMapOptions): IPromise<Contracts.RtMap.RuntimeMap>;

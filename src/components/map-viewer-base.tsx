@@ -156,25 +156,25 @@ class DigitizerMessages {
 }
 
 class SessionKeepAlive {
-    private session: string;
+    private getSession: () => string;
     private client: Client;
     private interval: number;
     private timeoutID: number;
-    constructor(session: string, client: Client, onSessionExpired: () => void) {
-        this.session = session;
+    constructor(getSession: () => string, client: Client, onSessionExpired: () => void) {
+        this.getSession = getSession;
         this.client = client;
-        this.client.getServerSessionTimeout(this.session).then(tm => {
+        this.client.getServerSessionTimeout(this.getSession()).then(tm => {
             this.interval = tm / 5 * 1000;  //Ping server 5 times each period. Timeout is returned in seconds.
             this.timeoutID = setTimeout(this.tick.bind(this), this.interval);
         }); 
     }
     private tick(): void {
-        this.client.getServerSessionTimeout(this.session).then(tm => {
+        this.client.getServerSessionTimeout(this.getSession()).then(tm => {
             this.timeoutID = setTimeout(this.tick.bind(this), this.interval);
         });
     }
     public lastTry(): Promise<number> {
-        return this.client.getServerSessionTimeout(this.session);
+        return this.client.getServerSessionTimeout(this.getSession());
     }
 }
 
@@ -711,7 +711,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             }
         }
         this._client = new Client(this.props.agentUri, this.props.agentKind);
-        this._keepAlive = new SessionKeepAlive(map.SessionId, this._client, this.onSessionExpired.bind(this));
+        this._keepAlive = new SessionKeepAlive(() => this.props.map.SessionId, this._client, this.onSessionExpired.bind(this));
 
         //If a tile set definition is defined it takes precedence over the map definition, this enables
         //this example to work with older releases of MapGuide where no such resource type exists.

@@ -154,18 +154,18 @@ class SessionKeepAlive {
     private session: string;
     private client: Client;
     private interval: number;
-    private intervalID: number;
+    private timeoutID: number;
     constructor(session: string, client: Client) {
         this.session = session;
         this.client = client;
         this.client.getServerSessionTimeout(this.session).then(tm => {
             this.interval = tm / 5 * 1000;  //Ping server 5 times each period. Timeout is returned in seconds.
-            this.intervalID = setInterval(this.tick.bind(this), this.interval);
+            this.timeoutID = setTimeout(this.tick.bind(this), this.interval);
         }); 
     }
     private tick(): void {
         this.client.getServerSessionTimeout(this.session).then(tm => {
-            this.intervalID = setInterval(this.tick.bind(this), this.interval);
+            this.timeoutID = setTimeout(this.tick.bind(this), this.interval);
         });
     }
 }

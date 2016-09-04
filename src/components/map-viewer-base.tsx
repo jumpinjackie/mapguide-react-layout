@@ -43,6 +43,10 @@ import ContextMenu = require("ol3-contextmenu");
 const assign = require("object-assign");
 const isMobile = require("ismobilejs");
 
+function isSessionExpiredError(err: MgError): boolean {
+    return err.message.indexOf("MgSessionExpiredException") >= 0;
+}
+
 export interface IExternalBaseLayer {
     name: string;
     kind: string;
@@ -72,12 +76,13 @@ interface IMapViewerBaseProps {
     stateChangeDebounceTimeout?: number;
     pointSelectionBuffer?: number;
     externalBaseLayers?: IExternalBaseLayer[];
-    onRequestZoomToView?: (view: IMapView) => void;
     selectableLayerNames: string[];
+    contextMenu?: IItem[];
+    onRequestZoomToView?: (view: IMapView) => void;
     onSelectionChange?: (selectionSet: any) => void;
     onMouseCoordinateChanged?: (coords: number[]) => void;
     onBusyLoading: (busyCount: number) => void;
-    contextMenu?: IItem[];
+    onSessionExpired?: () => void;
 }
 
 export enum RefreshMode {
@@ -155,7 +160,7 @@ class SessionKeepAlive {
     private client: Client;
     private interval: number;
     private timeoutID: number;
-    constructor(session: string, client: Client) {
+    constructor(session: string, client: Client, onSessionExpired: () => void) {
         this.session = session;
         this.client = client;
         this.client.getServerSessionTimeout(this.session).then(tm => {
@@ -167,6 +172,9 @@ class SessionKeepAlive {
         this.client.getServerSessionTimeout(this.session).then(tm => {
             this.timeoutID = setTimeout(this.tick.bind(this), this.interval);
         });
+    }
+    public lastTry(): Promise<number> {
+        return this.client.getServerSessionTimeout(this.session);
     }
 }
 
@@ -181,10 +189,12 @@ class FeatureQueryTooltip {
     private viewer: MapViewerBase;
     private incrementBusy: () => void;
     private decrementBusy: () => void;
-    constructor(map: ol.Map, viewer: MapViewerBase, incrementBusy: () => void, decrementBusy: () => void, onRequestSelectableLayers: () => string[] = null) {
+    private onSessionExpired: () => void;
+    constructor(map: ol.Map, viewer: MapViewerBase, incrementBusy: () => void, decrementBusy: () => void, onSessionExpired: () => void, onRequestSelectableLayers: () => string[] = null) {
         this.viewer = viewer;
         this.incrementBusy = incrementBusy;
         this.decrementBusy = decrementBusy;
+        this.onSessionExpired = onSessionExpired;
         this.wktFormat = new ol.format.WKT();
         this.featureTooltipElement = document.createElement("div");
         this.featureTooltipElement.className = 'feature-tooltip';
@@ -259,6 +269,11 @@ class FeatureQueryTooltip {
             }
         }).then(res => {
             this.decrementBusy();
+        }).catch (err => {
+            this.decrementBusy();
+            if (isSessionExpiredError(err)) {
+                this.onSessionExpired();
+            }
         });
     }
 }
@@ -498,7 +513,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             persist: 1,
             selectionvariant: "INTERSECTS",
             selectioncolor: this.props.selectionColor,
-            selectionformat: "PNG8",
+            selectionformat: this.props.selectionImageFormat || "PNG8",
             maxfeatures: -1
         }, queryOpts);
         this._client.queryMapFeatures(queryOptions).then(res => {
@@ -514,6 +529,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             this.decrementBusyWorker();
         }).catch(err => {
             this.decrementBusyWorker();
+            if (isSessionExpiredError(err)) {
+                this.onSessionExpired();
+            }
             if (failure != null)
                 failure(err);
         });
@@ -605,6 +623,11 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     }
     private onImageError(e) {
         this.decrementBusyWorker();
+        this._keepAlive.lastTry().catch(err => {
+            if (isSessionExpiredError(err)) {
+                this.onSessionExpired();
+            }
+        });
     }
     // ----------------- React Lifecycle ----------------- //
     componentWillReceiveProps(nextProps: IMapViewerBaseProps) {
@@ -688,7 +711,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             }
         }
         this._client = new Client(this.props.agentUri, this.props.agentKind);
-        this._keepAlive = new SessionKeepAlive(map.SessionId, this._client);
+        this._keepAlive = new SessionKeepAlive(map.SessionId, this._client, this.onSessionExpired.bind(this));
 
         //If a tile set definition is defined it takes precedence over the map definition, this enables
         //this example to work with older releases of MapGuide where no such resource type exists.
@@ -763,7 +786,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
 
         this._selectionOverlayParams = {
             MAPNAME: map.Name,
-            FORMAT: this.props.selectionImageFormat || "PNG",
+            FORMAT: this.props.selectionImageFormat || "PNG8",
             SESSION: map.SessionId,
             SELECTIONCOLOR: this.props.selectionColor,
             BEHAVIOR: 1 | 4 //selected features + include outside current scale
@@ -866,6 +889,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                                                        this,
                                                        this.incrementBusyWorker.bind(this),
                                                        this.decrementBusyWorker.bind(this),
+                                                       this.onSessionExpired.bind(this),
                                                        this.getSelectableLayers.bind(this));
         this._featureTooltip.setEnabled(this.props.featureTooltipsEnabled);
         document.addEventListener("keydown", this.fnKeyPress);
@@ -934,6 +958,11 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             y: center[1],
             scale: scale
         };
+    }
+    private onSessionExpired() {
+        if (this.props.onSessionExpired != null) {
+            this.props.onSessionExpired();
+        }
     }
     private convertContextMenuItems(items: IItem[]) {
         return items.map(i => {
@@ -1022,6 +1051,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             this.decrementBusyWorker();
         }).catch(err => {
             this.decrementBusyWorker();
+            if (isSessionExpiredError(err)) {
+                this.onSessionExpired();
+            }
             if (failure != null)
                 failure(err);
         });

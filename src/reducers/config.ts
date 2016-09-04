@@ -7,7 +7,7 @@ export const INITIAL_STATE = {
     locale: "en",
     viewer: {
         imageFormat: "PNG",
-        selectionImageFormat: "PNG",
+        selectionImageFormat: "PNG8",
         selectionColor: "0x0000FFAA",
         pointSelectionBuffer: 2
     },

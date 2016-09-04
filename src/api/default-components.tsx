@@ -10,6 +10,7 @@ import { SelectionPanelContainer } from "../containers/selection-panel";
 import { TaskPaneContainer } from "../containers/task-pane";
 import { PoweredByMapGuide } from "../components/pbmg";
 import { About } from "../components/about";
+import { SessionExpired } from "../components/session-expired";
 
 import { registerComponentFactory, DefaultComponentNames } from "../api/registry/component";
 
@@ -24,4 +25,5 @@ export function registerDefaultComponents(): void {
     registerComponentFactory(DefaultComponentNames.PoweredByMapGuide, (props) => <PoweredByMapGuide {...props} />);
     registerComponentFactory(DefaultComponentNames.TaskPane, (props) => <TaskPaneContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.About, (props) => <About {...props} />);
+    registerComponentFactory(DefaultComponentNames.SessionExpired, (props) => <SessionExpired {...props} />);
 }

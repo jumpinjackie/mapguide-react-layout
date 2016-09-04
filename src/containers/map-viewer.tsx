@@ -19,6 +19,9 @@ import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml } from '../api/builders/deArrayify';
 import { getCommand, mapToolbarReference } from "../api/registry/command";
 import { invokeCommand } from "../actions/map";
+import { showModalComponent } from "../actions/modal";
+import { DefaultComponentNames } from "../api/registry/component";
+import { tr } from "../api/i18n";
 
 interface IMapViewerContainerProps {
     
@@ -40,6 +43,7 @@ interface IMapViewerContainerDispatch {
     setBusyCount?: (count) => void;
     setMouseCoordinates?: (coord) => void;
     invokeCommand?: (cmd) => void;
+    showModalComponent?: (options) => void;
 }
 
 function mapStateToProps(state): IMapViewerContainerState {
@@ -60,7 +64,8 @@ function mapDispatchToProps(dispatch): IMapViewerContainerDispatch {
         setSelection: (selectionSet) => dispatch(MapActions.setSelection(selectionSet)),
         setBusyCount: (count) => dispatch(MapActions.setBusyCount(count)),
         setMouseCoordinates: (coord) => dispatch(MapActions.setMouseCoordinates(coord)),
-        invokeCommand: (cmd) => dispatch(invokeCommand(cmd))
+        invokeCommand: (cmd) => dispatch(invokeCommand(cmd)),
+        showModalComponent: (options) => dispatch(showModalComponent(options))
     };
 }
 
@@ -75,6 +80,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     private fnSelectionChanged: (selectionSet: any) => void;
     private fnBusyLoading: (busyCount) => void;
     private fnMouseCoordinateChanged: (coord) => void;
+    private fnSessionExpired: () => void;
     constructor(props) {
         super(props);
         this.fnMapViewerMounted = this.onMapViewerMounted.bind(this);
@@ -82,6 +88,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         this.fnSelectionChanged = this.onSelectionChanged.bind(this);
         this.fnBusyLoading = this.onBusyLoading.bind(this);
         this.fnMouseCoordinateChanged = this.onMouseCoordinateChanged.bind(this);
+        this.fnSessionExpired = this.onSessionExpired.bind(this);
     }
     static contextTypes: React.ValidationMap<any> = {
         store: React.PropTypes.object
@@ -100,6 +107,16 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     }
     private onMouseCoordinateChanged(coord) {
         this.props.setMouseCoordinates(coord);
+    }
+    private onSessionExpired() {
+        this.props.showModalComponent({
+            modal: {
+                title: tr("Session Expired"),
+                backdrop: true
+            },
+            name: DefaultComponentNames.SessionExpired,
+            id: DefaultComponentNames.SessionExpired
+        });
     }
     componentDidMount() {
         Runtime.setViewer(this);
@@ -133,6 +150,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                   initialView={view.initial}
                                   selectableLayerNames={selectableLayerNames}
                                   contextMenu={cmitems}
+                                  onSessionExpired={this.fnSessionExpired}
                                   onBusyLoading={this.fnBusyLoading}
                                   onMouseCoordinateChanged={this.fnMouseCoordinateChanged}
                                   onSelectionChange={this.fnSelectionChanged}

@@ -20,6 +20,8 @@ const continuePolygonMsg = 'Click to continue drawing the polygon';
  */
 const continueLineMsg = 'Click to continue drawing the line';
 
+const measureOverlays: ol.Overlay[] = [];
+
 export class Measure extends React.Component<any, any> {
     private measureLayer: ol.layer.Vector;
     private viewer: IMapViewer;
@@ -36,10 +38,8 @@ export class Measure extends React.Component<any, any> {
     private helpTooltip: ol.Overlay;
     private measureTooltipElement: Element;
     private measureTooltip: ol.Overlay;
-    private prevMeasureTooltips: ol.Overlay[];
     constructor(props) {
         super(props);
-        this.prevMeasureTooltips = [];
         this.fnTypeChanged = this.onTypeChanged.bind(this);
         this.fnGeodesicChanged = this.onGeodesicChanged.bind(this);
         this.fnDrawStart = this.onDrawStart.bind(this);
@@ -228,7 +228,7 @@ export class Measure extends React.Component<any, any> {
         this.measureTooltipElement.className = 'tooltip tooltip-measure';
         //Stash the old overlay
         if (this.measureTooltip) {
-            this.prevMeasureTooltips.push(this.measureTooltip);
+            measureOverlays.push(this.measureTooltip);
         }
         this.measureTooltip = new ol.Overlay({
             element: this.measureTooltipElement,
@@ -258,10 +258,10 @@ export class Measure extends React.Component<any, any> {
     private onClearMeasurements(e) {
         e.preventDefault();
         this.measureLayer.getSource().clear();
-        for (const ov of this.prevMeasureTooltips) {
+        for (const ov of measureOverlays) {
             this.viewer.removeOverlay(ov);
         }
-        this.prevMeasureTooltips = [];
+        measureOverlays.length = 0; //Clear
         return false;
     }
     componentDidMount() {

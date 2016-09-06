@@ -498,6 +498,7 @@ function deArrayifyWebLayoutParameterPairs(json: any): Contracts.WebLayout.Param
 function deArrayifyCommand(json: any): Contracts.WebLayout.CommandDef {
     const root = json;
     const cmd: any = {
+        "@xsi:type": tryGetAsProperty(root, "@xsi:type"),
         Name: tryGetAsProperty(root, "Name"),
         Label: tryGetAsProperty(root, "Label"),
         Tooltip: tryGetAsProperty(root, "Tooltip"),

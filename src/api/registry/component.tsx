@@ -14,6 +14,7 @@ export class DefaultComponentNames {
     public static get About(): string { return "About"; }
     public static get SessionExpired(): string { return "SessionExpired"; }
     public static get Measure(): string { return "Measure"; }
+    public static get ViewerOptions(): string { return "ViewerOptions"; }
 }
 
 export type ComponentFactory = (props) => JSX.Element; 

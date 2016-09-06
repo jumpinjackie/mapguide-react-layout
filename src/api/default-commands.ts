@@ -222,6 +222,36 @@ export function initDefaultCommands() {
             }
         }
     });
+    //Viewer Options
+    registerCommand(DefaultCommands.ViewerOptions, {
+        icon: "options.png",
+        selected: () => false,
+        enabled: () => true,
+        invoke: (dispatch, getState, viewer) => {
+            const config = getState().config;
+            if (config.capabilities.hasTaskPane) {
+                dispatch({
+                    type: Constants.TASK_INVOKE_URL,
+                    payload: {
+                        url: "component://ViewerOptions"
+                    }
+                });
+            } else {
+                dispatch({
+                    type: Constants.MODAL_SHOW_URL,
+                    payload: {
+                        modal: {
+                            title: tr("Viewer options"),
+                            backdrop: false,
+                            size: [ 300, 500 ]
+                        },
+                        name: DefaultCommands.ViewerOptions,
+                        url: "component://ViewerOptions"
+                    }
+                });
+            }
+        }
+    });
     //Select Radius
     registerCommand(DefaultCommands.SelectRadius, {
         icon: "select-radius.png",
@@ -332,7 +362,7 @@ export function initDefaultCommands() {
         }
     });
     //Buffer
-    registerCommand("Buffer", {
+    registerCommand(DefaultCommands.Buffer, {
         icon: "buffer.png",
         selected: () => false,
         enabled: CommandConditions.hasSelection,
@@ -349,7 +379,7 @@ export function initDefaultCommands() {
         }
     });
     //Select Within
-    registerCommand("SelectWithin", {
+    registerCommand(DefaultCommands.SelectWithin, {
         icon: "select-features.png",
         selected: () => false,
         enabled: CommandConditions.hasSelection,

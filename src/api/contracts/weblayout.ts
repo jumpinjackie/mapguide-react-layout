@@ -106,6 +106,7 @@ export interface WebLayoutInfoPane extends WebLayoutResizableControl {
 export type TargetViewerType = "Dwf" | "Ajax" | "All";
 
 export interface CommandDef {
+    "@xsi:type": string;
     Name: string;
     Label: string;
     Tooltip?: string;

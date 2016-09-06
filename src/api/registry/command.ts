@@ -70,6 +70,9 @@ export class DefaultCommands {
     public static get About(): string { return "About"; }
     public static get Help(): string { return "Help"; }
     public static get Measure(): string { return "Measure"; }
+    public static get ViewerOptions(): string { return "ViewerOptions"; }
+    public static get Buffer(): string { return "Buffer"; }
+    public static get SelectWithin(): string { return "SelectWithin"; }
 }
 
 export interface ICommandRef {

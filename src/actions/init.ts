@@ -21,15 +21,30 @@ function convertUIItems(items: UIItem[], cmdsByKey: any, noToolbarLabels = true,
             const cmdDef: CommandDef = cmdsByKey[item.Command];
             if (!cmdDef) {
                 logger.warn(`Invalid reference to command: ${item.Command}`);
-            } else {
+            } else if (cmdDef.TargetViewer != "Dwf") {
                 if (isBasicCommand(cmdDef)) {
                     let action: string = cmdDef.Action;
                     if (action == "FitToWindow") {
                         action = DefaultCommands.ZoomExtents;
+                    } else if (action == "Refresh") {
+                        action = DefaultCommands.RefreshMap;
                     }
                     return { command: action, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
                 } else {
-                    return { command: cmdDef.Name, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
+                    switch (cmdDef["@xsi:type"]) {
+                        case "ViewOptionsCommandType":
+                            return { command: DefaultCommands.ViewerOptions, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
+                        case "MeasureCommandType":
+                            return { command: DefaultCommands.Measure, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
+                        case "HelpCommandType":
+                            return { command: DefaultCommands.Help, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
+                        case "BufferCommandType":
+                            return { command: DefaultCommands.Buffer, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
+                        case "SelectWithinCommandType":
+                            return { command: DefaultCommands.SelectWithin, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
+                        default:
+                            return { command: cmdDef.Name, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
+                    }
                 }
             }
         } else if (isSeparatorItem(item)) {

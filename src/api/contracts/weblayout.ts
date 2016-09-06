@@ -170,6 +170,10 @@ export function isInvokeURLCommand(cmd: any): cmd is InvokeURLCommandDef {
     return typeof(cmd.URL) != 'undefined' && typeof(cmd.DisableIfSelectionEmpty) != 'undefined';
 }
 
+export function isSearchCommand(cmd: CommandDef): cmd is SearchCommandDef {
+    return cmd["@xsi:type"] == "SearchCommandType";
+} 
+
 export interface InvokeURLCommandDef extends TargetedCommandDef {
     URL: string;
     LayerSet?: LayerSet;

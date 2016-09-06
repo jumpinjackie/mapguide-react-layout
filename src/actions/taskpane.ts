@@ -38,7 +38,7 @@ export function pushUrl(url: string, silent?: boolean) {
     };
 }
 
-export function ensureParameters(url: string, mapName: string, session: string, locale?: string): string {
+export function ensureParameters(url: string, mapName: string, session: string, locale?: string, uppercase = true): string {
     if (url == null)
         return null;
     //If this is a component URL, let it be
@@ -46,7 +46,7 @@ export function ensureParameters(url: string, mapName: string, session: string, 
         return url;
     }
     const parsed = parse(url);
-    const params = queryString.parse(parsed.query);
+    const params: any = parsed.query != null ? queryString.parse(parsed.query) : {};
     let bNeedMapName = true;
     let bNeedSession = true;
     let bNeedLocale = true;
@@ -65,13 +65,25 @@ export function ensureParameters(url: string, mapName: string, session: string, 
         }
     }
     if (bNeedMapName) {
-        params.MAPNAME = mapName;
+        if (uppercase) {
+            params.MAPNAME = mapName;
+        } else {
+            params.mapname = mapName;
+        }
     }
     if (bNeedSession) {
-        params.SESSION = session;
+        if (uppercase) {
+            params.SESSION = session;
+        } else {
+            params.session = session;
+        }
     }
     if (bNeedLocale) {
-        params.LOCALE = locale;
+        if (uppercase) {
+            params.LOCALE = locale;
+        } else {
+            params.locale = locale;
+        }
     }
     parsed.query = queryString.stringify(params);
     const result = parsed.toString();

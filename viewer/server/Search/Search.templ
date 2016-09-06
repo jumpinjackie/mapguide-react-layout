@@ -82,16 +82,33 @@ function SelectRow(index)
 
 function CellClicked(sel)
 {
-    var map = GetParent().Fusion.getMapByName(mapName);
-    map.setSelection(sel, true);
+    var MapGuide = GetParent().MapGuide;
+    var viewer = GetParent().getViewer();
+    viewer.setSelectionXml(sel, function(res) {
+        var bounds = null;
+        if (res != null && res.SelectedFeatures != null) {
+            res.SelectedFeatures.SelectedLayer.forEach(function(layer) {
+                layer.Feature.forEach(function(feat) {
+                    var b = feat.Bounds.split(" ").map(function(s) { return parseFloat(s); });
+                    if (bounds == null) {
+                        bounds = b;
+                    } else {
+                        bounds = MapGuide.Externals.ol.extent.extend(bounds, b);
+                    }
+                })
+            });
+        }
+        if (bounds != null) {
+            viewer.zoomToExtent(bounds);
+        }
+    });
 }
 
 function PointCellClicked(sel, x, y, zoom)
 {
-    var map = GetParent().Fusion.getMapByName(mapName);
-    map.setSelection(sel, true);
-    var extents = map.mapWidget.getExtentFromPoint(x, y, zoom);
-    map.mapWidget.setExtents(extents);
+    var map = GetParent().GetMapFrame();
+    map.SetSelectionXML(sel);
+    map.ZoomToView(x, y, zoom);
 }
 
 function highlightRow(index, mode)
@@ -114,15 +131,11 @@ function highlightRow(index, mode)
 
 function GetParent()
 {
-	if(popup)
-		return opener;
-	else
-	{
-		var node = parent;
-		while (!node.Fusion && node.parent)
-			node = node.parent;
-		return node;
-	}
+    if (popup) {
+        return opener;
+    } else {
+        return parent;
+    }
 }
 
 </script>

@@ -80,15 +80,11 @@ function OnMouseDown(e)
 
 function GetParent()
 {
-	if(popup)
-		return opener;
-	else
-	{
-		var node = parent;
-		while (!node.Fusion && node.parent)
-			node = node.parent;
-		return node;
-	}
+    if (popup) {
+        return opener;
+    } else {
+        return parent;
+    }
 }
 
 function SetMatchLabel()

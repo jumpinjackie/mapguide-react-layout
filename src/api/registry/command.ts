@@ -1,5 +1,6 @@
 import { IMapViewer } from "../../components/map-viewer-base";
 import { QueryMapFeaturesResponse } from "../contracts/query";
+import { ResultColumnSet } from "../contracts/weblayout";
 import { IItem, IMenu } from "../../components/toolbar";
 import * as Constants from "../../constants";
 import { ensureParameters } from "../../actions/taskpane";
@@ -97,6 +98,16 @@ export interface IInvokeUrlCommand {
     target: "TaskPane" | "NewWindow";
 }
 
+export interface ISearchCommand {
+    icon?: string;
+    layer: string;
+    prompt: string;
+    title: string;
+    resultColumns: ResultColumnSet;
+    filter?: string;
+    matchLimit: number;
+}
+
 type Dictionary<T> = { [key: string]: T };
 
 const commands: Dictionary<ICommand> = {};
@@ -105,7 +116,11 @@ function isInvokeUrlCommand(cmdDef: any): cmdDef is IInvokeUrlCommand {
     return typeof cmdDef.url !== 'undefined';
 }
 
-export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlCommand) {
+function isSearchCommand(cmdDef: any): cmdDef is ISearchCommand {
+    return typeof cmdDef.layer !== 'undefined';
+}
+
+export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlCommand | ISearchCommand) {
     let cmd: ICommand;
     if (isInvokeUrlCommand(cmdDef)) {
         cmd = {
@@ -141,6 +156,31 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                         }
                     });
                 }
+            }
+        };
+    } else if (isSearchCommand(cmdDef)) {
+        cmd = {
+            icon: cmdDef.icon || "search.png",
+            enabled: (state) => true,
+            selected: (state) => false,
+            invoke: (dispatch, getState, viewer: IMapViewer) => {
+                const { map, config } = getState();
+                let url = ensureParameters("server/Search/SearchPrompt.php", map.state.Name, map.state.SessionId, config.locale, false)
+                    + `&popup=0`
+                    + `&target=TaskPane`
+                    + `&title=${encodeURIComponent(cmdDef.title)}`
+                    + `&prompt=${encodeURIComponent(cmdDef.prompt)}`
+                    + `&layer=${encodeURIComponent(cmdDef.layer)}`
+                    + `&filter=${encodeURIComponent(cmdDef.filter)}`
+                    + `&limit=${cmdDef.matchLimit}`
+                    + `&properties=${cmdDef.resultColumns.Column.map(col => col.Property).join(",")}`
+                    + `&propNames=${cmdDef.resultColumns.Column.map(col => col.Name).join(",")}`;
+                dispatch({
+                    type: Constants.TASK_INVOKE_URL,
+                    payload: {
+                        url: url
+                    }
+                });
             }
         };
     } else {

@@ -11,6 +11,7 @@ import {
     isFlyoutItem,
     isCommandItem,
     isInvokeURLCommand,
+    isSearchCommand,
     UIItem 
 } from "../api/contracts/weblayout";
 import * as logger from "../utils/logger";
@@ -84,7 +85,7 @@ export function initWebLayout(options) {
                 const map = res[1];
 
                 const cmdsByKey: any = {};
-                //Register any InvokeURL commands
+                //Register any InvokeURL and Search commands
                 for (const cmd of webLayout.CommandSet.Command) {
                     if (isInvokeURLCommand(cmd)) {
                         let cmdTarget = cmd.Target;
@@ -93,6 +94,8 @@ export function initWebLayout(options) {
                         } else {
                             logger.warn(`Command ${cmd.Name} targets a specific frame which is not supported`);
                         }
+                    } else if (isSearchCommand(cmd)) {
+                        registerCommand(cmd.Name, { layer: cmd.Layer, prompt: cmd.Prompt, resultColumns: cmd.ResultColumns, filter: cmd.Filter, matchLimit: cmd.MatchLimit, title: cmd.Label });
                     }
                     cmdsByKey[cmd.Name] = cmd;
                 }

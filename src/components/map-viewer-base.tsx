@@ -1037,6 +1037,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
     }
     public setSelectionXml(xml: string, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void {
+        //NOTE: requestdata is not respected in update from selection XML mode
+        //This is a bug in MapGuide that needs to be fixed
         const reqQueryFeatures = 1; //Attributes
         this.incrementBusyWorker();
         this._client.queryMapFeatures({

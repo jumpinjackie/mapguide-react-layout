@@ -286,6 +286,9 @@ export class Measure extends React.Component<any, any> {
             this.viewer.removeInteraction(this.draw);
             this.draw = null;
         }
+        if (this.helpTooltipElement) {
+            this.helpTooltipElement.parentNode.removeChild(this.helpTooltipElement);
+        }
         this.viewer = null;
         this.measureLayer = null;
     }

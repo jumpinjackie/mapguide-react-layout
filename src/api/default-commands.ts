@@ -198,12 +198,28 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
-            dispatch({
-                type: Constants.TASK_INVOKE_URL,
-                payload: {
-                    url: "component://Measure"
-                }
-            })
+            const config = getState().config;
+            if (config.capabilities.hasTaskPane) {
+                dispatch({
+                    type: Constants.TASK_INVOKE_URL,
+                    payload: {
+                        url: "component://Measure"
+                    }
+                });
+            } else {
+                dispatch({
+                    type: Constants.MODAL_SHOW_URL,
+                    payload: {
+                        modal: {
+                            title: tr("Measure"),
+                            backdrop: false,
+                            size: [ 300, 500 ]
+                        },
+                        name: DefaultCommands.Measure,
+                        url: "component://Measure"
+                    }
+                });
+            }
         }
     });
     //Select Radius

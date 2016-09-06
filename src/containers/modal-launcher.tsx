@@ -40,8 +40,9 @@ export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
         return <div>
             {Object.keys(modal).map(key => {
                 const diag = modal[key];
-                if (diag.component != null) {
-                    const componentRenderer = getComponentFactory(diag.component);
+                if (diag.component != null || (diag.url != null && diag.url.indexOf("component://") >= 0)) {
+                    const componentId = diag.component || (diag.url.substring(12));
+                    const componentRenderer = getComponentFactory(componentId);
                     return <ModalDialog size={diag.modal.size}
                                         title={diag.modal.title}
                                         backdrop={diag.modal.backdrop}
@@ -52,7 +53,7 @@ export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
                             if (componentRenderer != null) {
                                 return componentRenderer(diag.componentProps);
                             } else {
-                                return <Error error={`ERROR: No such registered component (${diag.component}). Ensure the component has been registered in the component registry with an id of: ${diag.component}`} />;
+                                return <Error error={`ERROR: No such registered component (${componentId}). Ensure the component has been registered in the component registry with an id of: ${componentId}`} />;
                             }
                         })()}
                     </ModalDialog>;

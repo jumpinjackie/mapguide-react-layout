@@ -8,7 +8,7 @@ It aims for reasonable compatibility with the existing Web Layout and Flexible L
 
 # Requirements
 
- * MapGuide Open Source 3.0 or equivalent version of Autodesk Infrastructure Map Server
+ * MapGuide Open Source 3.0 or equivalent version of Autodesk Infrastructure Map Server (and newer versions)
  * A [**modern web browser**](http://browsehappy.com/). Practically speaking, this means any of the following:
     * Google Chrome (stable channel)
     * Mozilla Firefox (stable channel)
@@ -16,6 +16,7 @@ It aims for reasonable compatibility with the existing Web Layout and Flexible L
     * For mobile devices:
       * iOS: Mobile Safari
       * Android: Google Chrome or Mozilla Firefox
+* For development: node.js 4.x or newer
 
 # Installation
 
@@ -27,3 +28,18 @@ It aims for reasonable compatibility with the existing Web Layout and Flexible L
  4. You can launch the viewer as follows:
     * AJAX Viewer Template: `http://servername/mapguide/viewer/index.html`
     * Sidebar Template: `http://servername/mapguide/viewer/sidebar.html`
+
+# Credits
+
+mapguide-react-layout could not be possible without the following tools and libraries:
+
+ * [OpenLayers 3](http://openlayers.org/)
+ * [proj4js](http://proj4js.org/)
+ * [TypeScript](https://www.typescriptlang.org/)
+ * [React](https://facebook.github.io/react/)
+ * [ol3-contextmenu](https://github.com/jonataswalker/ol3-contextmenu)
+ * [react-flyout](https://github.com/alexandreneves/react-flyout)
+
+# License
+
+mapguide-react-layout is licensed under the MIT license.

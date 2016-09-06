@@ -10,6 +10,8 @@ Components
 Viewer
 ======
 
+ * Viewer will only accept Map Definitions in coordinate systems that have a corresponding EPSG code
+
  * Map will silently fail to load if projection is not known to proj4js
    * Solution: Register the projection before the viewer is mounted
       * Example: `MapGuide.Externals.proj4.defs("EPSG:28355","+proj=utm +zone=55 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");`

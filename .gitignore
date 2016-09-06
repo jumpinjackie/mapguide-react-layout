@@ -5,4 +5,5 @@ typings
 npm-debug.log
 src/**/*.js
 src/**/*.js.map
+!src/externs/*.js
 viewer/dist

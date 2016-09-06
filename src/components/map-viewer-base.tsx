@@ -108,6 +108,7 @@ export type Coordinate = [number, number];
 export type Bounds = [number, number, number, number];
 
 export interface IMapViewer {
+    getProjection(): ol.ProjectionLike;
     getViewForExtent(extent: Bounds): IMapView;
     getCurrentExtent(): Bounds;
     getCurrentView(): IMapView;
@@ -135,6 +136,17 @@ export interface IMapViewer {
     getPointSelectionBox(point: Coordinate, ptBuffer: number): Bounds;
     getSelection(): QueryMapFeaturesResponse;
     getSelectionXml(selection: FeatureSet, layerIds?: string[]): string;
+    
+    addLayer<T extends ol.layer.Base>(name: string, layer: T): T;
+    removeLayer(name: string): ol.layer.Base;
+    getLayer<T extends ol.layer.Base>(name: string, factory: () => T): T;
+    addInteraction<T extends ol.interaction.Interaction>(interaction: T): T;
+    removeInteraction<T extends ol.interaction.Interaction>(interaction: T): void;
+    addOverlay(overlay: ol.Overlay): void;
+    removeOverlay(overlay: ol.Overlay): void;
+
+    addHandler(eventName: string, handler: Function);
+    removeHandler(eventName: string, handler: Function);
 }
 
 export enum ActiveMapTool {
@@ -339,7 +351,6 @@ function cloneExtent(bounds: Bounds): Bounds {
 }
 
 export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
-    private _contextMenuOpen: boolean;
     /**
      * The context menu 
      * 
@@ -374,19 +385,22 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     private _selectionOverlay: ol.layer.Image;
 
     private _wktFormat: ol.format.WKT;
-
     private _inPerUnit: number;
     private _dpi: number;
     private _extent: ol.Extent;
-
     private _baseLayerGroup: ol.layer.Group;
     private _zoomSelectBox: ol.interaction.DragBox;
-
     private _mouseTooltip: MouseTrackingTooltip;
     private _featureTooltip: FeatureQueryTooltip;
-
     private _dynamicOverlayParams: any;
     private _selectionOverlayParams: any;
+    private _client: Client;
+    private _busyWorkers: number;
+    private _triggerZoomRequestOnMoveEnd: boolean;
+    private _keepAlive: SessionKeepAlive;
+    private _contextMenuOpen: boolean;
+
+    private _customLayers: { [name: string]: ol.layer.Base; };
 
     private fnKeyPress: (e) => void;
     /**
@@ -397,14 +411,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
      */
     private refreshOnStateChange: () => void;
 
-    private _client: Client;
-
-    private _busyWorkers: number;
-
-    private _triggerZoomRequestOnMoveEnd: boolean;
-
-    private _keepAlive: SessionKeepAlive;
-    
     constructor(props: IMapViewerBaseProps) {
         super(props);
         this._map = null;
@@ -415,6 +421,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this._triggerZoomRequestOnMoveEnd = true;
         this._supportsTouch = isMobile.phone || isMobile.tablet;
         this._contextMenuOpen = false;
+        this._customLayers = {};
     }
     /**
      * DO NOT CALL DIRECTLY, call this.refreshOnStateChange() instead, which is a throttled version
@@ -1155,6 +1162,58 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     }
     public setFeatureTooltipEnabled(enabled: boolean): void {
         this._featureTooltip.setEnabled(enabled);
+    }
+
+    public addLayer<T extends ol.layer.Base>(name: string, layer: T): T {
+        if (this._customLayers[name]) {
+            throw new MgError(`A layer named ${name} already exists`);
+        }
+        this._map.addLayer(layer);
+        this._customLayers[name] = layer;
+        return layer;
+    }
+    public removeLayer(name: string): ol.layer.Base {
+        let layer: ol.layer.Base = null;
+        if (this._customLayers[name]) {
+            layer = this._customLayers[name];
+            this._map.removeLayer(layer);
+            delete this._customLayers[name];
+            return layer;
+        }
+        return layer;
+    }
+    public getLayer<T extends ol.layer.Base>(name: string, factory: () => T): T {
+        let layer: T = null;
+        if (this._customLayers[name]) {
+            layer = this._customLayers[name] as T;
+        } else {
+            layer = factory();
+            this._customLayers[name] = layer;
+            this._map.addLayer(layer);
+        }
+        return layer;
+    }
+    public addInteraction<T extends ol.interaction.Interaction>(interaction: T): T {
+        this._map.addInteraction(interaction);
+        return interaction;
+    }
+    public removeInteraction<T extends ol.interaction.Interaction>(interaction: T): void {
+        this._map.removeInteraction(interaction);
+    }
+    public addOverlay(overlay: ol.Overlay): void {
+        this._map.addOverlay(overlay);
+    }
+    public removeOverlay(overlay: ol.Overlay): void {
+        this._map.removeOverlay(overlay);
+    }
+    public getProjection(): ol.ProjectionLike {
+        return this._map.getView().getProjection();
+    }
+    public addHandler(eventName: string, handler: Function) {
+        this._map.on(eventName, handler);
+    }
+    public removeHandler(eventName: string, handler: Function) {
+        this._map.un(eventName, handler);
     }
     //------------------------------------//
 }

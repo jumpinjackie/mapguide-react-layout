@@ -241,4 +241,34 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     getSelectionXml(selection: FeatureSet, layerIds?: string[]): string {
         return buildSelectionXml(this.props.selection.FeatureSet, layerIds);
     }
+    getProjection(): ol.ProjectionLike {
+        return this.inner.getProjection();
+    }
+    addLayer<T extends ol.layer.Base>(name: string, layer: T): T {
+        return this.inner.addLayer(name, layer);
+    }
+    removeLayer(name: string): ol.layer.Base {
+        return this.inner.removeLayer(name);
+    }
+    getLayer<T extends ol.layer.Base>(name: string, factory: () => T): T {
+        return this.inner.getLayer(name, factory);
+    }
+    addInteraction<T extends ol.interaction.Interaction>(interaction: T): T {
+        return this.inner.addInteraction(interaction);
+    }
+    removeInteraction<T extends ol.interaction.Interaction>(interaction: T): void {
+        this.inner.removeInteraction(interaction);
+    }
+    addOverlay(overlay: ol.Overlay): void {
+        this.inner.addOverlay(overlay);
+    }
+    removeOverlay(overlay: ol.Overlay): void {
+        this.inner.removeOverlay(overlay);
+    }
+    addHandler(eventName: string, handler: Function) {
+        this.inner.addHandler(eventName, handler);
+    }
+    removeHandler(eventName: string, handler: Function) {
+        this.inner.removeHandler(eventName, handler);
+    }
 }

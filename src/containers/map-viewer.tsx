@@ -172,8 +172,8 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     zoomToView(x: number, y: number, scale: number): void {
         this.inner.zoomToView(x, y, scale);
     }
-    setSelectionXml(xml: string, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void {
-        this.inner.setSelectionXml(xml, success, failure);
+    setSelectionXml(xml: string, queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void {
+        this.inner.setSelectionXml(xml, queryOpts, success, failure);
     }
     refreshMap(mode?: RefreshMode): void {
         this.inner.refreshMap(mode);

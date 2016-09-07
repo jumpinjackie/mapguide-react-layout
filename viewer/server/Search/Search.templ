@@ -84,7 +84,9 @@ function CellClicked(sel)
 {
     var MapGuide = GetParent().MapGuide;
     var viewer = GetParent().getViewer();
-    viewer.setSelectionXml(sel, function(res) {
+    viewer.setSelectionXml(sel, {
+        layerattributefilter: 0 //Need to set this in order for requestdata to be respected
+    }, function(res) {
         var bounds = null;
         if (res != null && res.SelectedFeatures != null) {
             res.SelectedFeatures.SelectedLayer.forEach(function(layer) {

@@ -113,7 +113,7 @@ export interface IMapViewer {
     getCurrentExtent(): Bounds;
     getCurrentView(): IMapView;
     zoomToView(x: number, y: number, scale: number): void;
-    setSelectionXml(xml: string, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void;
+    setSelectionXml(xml: string, queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void;
     refreshMap(mode?: RefreshMode): void;
     getMetersPerUnit(): number;
     setActiveTool(tool: ActiveMapTool): void;
@@ -1036,12 +1036,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             view.setResolution(this.scaleToResolution(scale));
         }
     }
-    public setSelectionXml(xml: string, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void {
-        //NOTE: requestdata is not respected in update from selection XML mode
-        //This is a bug in MapGuide that needs to be fixed
+    public setSelectionXml(xml: string, queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void {
+        //NOTE: A quirk of QUERYMAPFEATURES is that when passing in selection XML (instead of geometry), 
+        //you must set the layerattributefilter to the full bit mask otherwise certain features in the
+        //selection XML will not be rendered because they may not pass the layer attribute filter
         const reqQueryFeatures = 1; //Attributes
         this.incrementBusyWorker();
-        this._client.queryMapFeatures({
+        const queryOptions = assign({}, {
             mapname: this.props.map.Name,
             session: this.props.map.SessionId,
             persist: 1,
@@ -1050,7 +1051,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             selectionformat: "PNG8",
             maxfeatures: -1,
             requestdata: reqQueryFeatures
-        }).then(res => {
+        }, queryOpts);
+        this._client.queryMapFeatures(queryOptions).then(res => {
             this.refreshMap(RefreshMode.SelectionOnly);
             if (this.props.onSelectionChange != null)
                 this.props.onSelectionChange(res);

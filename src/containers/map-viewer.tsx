@@ -157,7 +157,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                   onSelectionChange={this.fnSelectionChanged}
                                   onRequestZoomToView={this.fnRequestZoomToView} />;
         } else {
-            return <div>Loading Map ...</div>;
+            return <div>{tr("LOADING_MSG", config.locale)}</div>;
         }
     }
     // ----------------- IMapViewer --------------------- //

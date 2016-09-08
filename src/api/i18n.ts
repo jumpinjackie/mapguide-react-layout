@@ -5,6 +5,7 @@ const STRINGS_EN: any = {
     "TT_GO_HOME": "Go home",
     "TT_GO_BACK": "Go back",
     "TT_GO_FORWARD": "Go forward",
+    "LOADING_MSG": "Loading ...",
     "MENU_TASKS": "Tasks",
     "NO_SELECTED_FEATURES": "No selected features",
     "FMT_SCALE_DISPLAY": "Scale - 1:{scale}",
@@ -29,7 +30,8 @@ const STRINGS_EN: any = {
     "NAVIGATOR_PAN_NORTH": "Pan North",
     "NAVIGATOR_ZOOM_OUT": "Zoom Out",
     "NAVIGATOR_ZOOM_IN": "Zoom In",
-    "FMT_NAVIGATOR_ZOOM_TO_SCALE": "Zoom to 1:{scale}"
+    "FMT_NAVIGATOR_ZOOM_TO_SCALE": "Zoom to 1:{scale}",
+    "EXTERNAL_BASE_LAYERS": "External Base Layers"
 };
 
 const STRINGS: any = {

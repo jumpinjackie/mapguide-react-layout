@@ -5,6 +5,7 @@ import { ILegendContext, LEGEND_CONTEXT_VALIDATION_MAP } from "./context";
 import { BaseLayerSwitcher } from "./base-layer-switcher";
 import { isLayer } from "../utils/type-guards";
 import { betweenInclusive } from "../utils/number";
+import { tr } from "../api/i18n";
 import * as Constants from "../constants";
 
 const ICON_HEIGHT = 16;
@@ -27,6 +28,7 @@ export interface ILegendProps {
     showGroups: string[];
     hideLayers: string[];
     hideGroups: string[];
+    locale?: string;
     externalBaseLayers?: IExternalBaseLayer[];
     onBaseLayerChanged?: (name: string) => void;
     onLayerSelectabilityChanged?: (id: string, selectable: boolean) => void;
@@ -477,7 +479,7 @@ export class Legend extends React.Component<ILegendProps, any> {
                 if (externalBaseLayers != null &&
                     externalBaseLayers.length > 0) {
                     return <div>
-                        <strong>External Base Layers</strong>
+                        <strong>{tr("EXTERNAL_BASE_LAYERS", this.props.locale)}</strong>
                         <BaseLayerSwitcher externalBaseLayers={externalBaseLayers} onBaseLayerChanged={onBaseLayerChanged} />
                     </div>;
                 }

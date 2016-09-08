@@ -5,6 +5,7 @@ import { RuntimeMap } from "../api/contracts/runtime-map";
 import * as LegendActions from "../actions/legend";
 import * as MapActions from "../actions/map";
 import { IMapView } from "../components/context";
+import { tr } from "../api/i18n";
 
 interface ILegendContainerProps {
     
@@ -100,6 +101,7 @@ export class LegendContainer extends React.Component<ILegendContainerProps & ILe
                                showGroups={showGroups}
                                hideLayers={hideLayers}
                                hideGroups={hideGroups}
+                               locale={config.locale}
                                externalBaseLayers={config.externalBaseLayers} 
                                onBaseLayerChanged={this.fnBaseLayerChanged}
                                overrideSelectableLayers={legend.selectableLayers}
@@ -109,10 +111,10 @@ export class LegendContainer extends React.Component<ILegendContainerProps & ILe
                                onGroupVisibilityChanged={this.fnGroupVisibilityChanged}
                                onLayerVisibilityChanged={this.fnLayerVisibilityChanged} />;
             } else {
-                return <div>Loading ...</div>;
+                return <div>{tr("LOADING_MSG", config.locale)}</div>;
             }
         } else {
-            return <div>Loading ...</div>;
+            return <div>{tr("LOADING_MSG", config.locale)}</div>;
         }
     }
 }

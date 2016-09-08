@@ -819,7 +819,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
 
         if (this.props.externalBaseLayers != null) {
             const groupOpts: any = {
-                title: "External Base Layers",
+                title: tr("EXTERNAL_BASE_LAYERS", this.props.locale),
                 layers: this.props.externalBaseLayers.map(ext => {
                     const options: any = {
                         title: ext.name,

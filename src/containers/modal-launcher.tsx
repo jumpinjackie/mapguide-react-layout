@@ -4,9 +4,11 @@ import { hideModal } from "../actions/modal";
 import { ModalDialog } from "../components/modal-dialog";
 import { getComponentFactory } from "../api/registry/component";
 import { Error } from "../components/error";
+import { tr } from "../api/i18n";
 
 interface IToolbarContainerState {
     modal?: any;
+    config?: any;
 }
 
 interface IToolbarContainerDispatch {
@@ -15,6 +17,7 @@ interface IToolbarContainerDispatch {
 
 function mapStateToProps(state, ownProps): IToolbarContainerState {
     return {
+        config: state.config,
         modal: state.modal
     };
 }
@@ -53,7 +56,7 @@ export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
                             if (componentRenderer != null) {
                                 return componentRenderer(diag.componentProps);
                             } else {
-                                return <Error error={`ERROR: No such registered component (${componentId}). Ensure the component has been registered in the component registry with an id of: ${componentId}`} />;
+                                return <Error error={tr("ERR_UNREGISTERED_COMPONENT", this.props.config.locale, { componentId: componentId })} />;
                             }
                         })()}
                     </ModalDialog>;

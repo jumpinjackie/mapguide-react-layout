@@ -111,7 +111,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     private onSessionExpired() {
         this.props.showModalComponent({
             modal: {
-                title: tr("Session Expired"),
+                title: tr("SESSION_EXPIRED", this.props.config.locale),
                 backdrop: true
             },
             name: DefaultComponentNames.SessionExpired,

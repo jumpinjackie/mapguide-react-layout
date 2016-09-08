@@ -2,9 +2,17 @@ import * as logger from "../utils/logger";
 
 //TODO: Move to separate module
 const STRINGS_EN: any = {
+    "TPL_SIDEBAR_OPEN_TASKPANE": "Open Task Pane",
+    "TPL_SIDEBAR_OPEN_LEGEND": "Open Legend",
+    "TPL_SIDEBAR_OPEN_SELECTION_PANEL": "Open Selection Panel",
     "TT_GO_HOME": "Go home",
     "TT_GO_BACK": "Go back",
     "TT_GO_FORWARD": "Go forward",
+    "SESSION_EXPIRED": "Session Expired",
+    "SESSION_EXPIRED_DETAILED": "Your current MapGuide session has expired",
+    "SESSION_EXPIRED_AVAILABLE_ACTIONS": "Available Actions:",
+    "SESSION_EXPIRED_RELOAD_VIEWER": "Reload the viewer",
+    "ERR_UNREGISTERED_COMPONENT": "ERROR: No such registered component ({componentId}). Ensure the component has been registered in the component registry with an id of: {componentId}",
     "LOADING_MSG": "Loading ...",
     "MENU_TASKS": "Tasks",
     "NO_SELECTED_FEATURES": "No selected features",

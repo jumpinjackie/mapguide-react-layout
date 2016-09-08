@@ -5,6 +5,7 @@ import { ToolbarContainer } from "../containers/toolbar";
 import { AjaxViewerShim } from "../containers/ajax-viewer-shim";
 import { ModalLauncher } from "../containers/modal-launcher";
 import { connect } from "react-redux";
+import { tr } from "../api/i18n";
 import * as Constants from "../constants";
 
 const SIDEBAR_WIDTH = 250;
@@ -48,6 +49,7 @@ interface ISidebarProps {
     selection: boolean;
     toolbar: boolean;
     busy: boolean;
+    locale: string;
     position: "left" | "right";
     lastAction?: any;
 }
@@ -148,21 +150,21 @@ class Sidebar extends React.Component<ISidebarProps, any> {
                     {(() => {
                         if (this.props.taskpane) {
                             return <li className={collapsed == false && activeTab == "tasks" ? "active" : ""}>
-                                <a onClick={this.fnActivateTasks} title="Open Task Pane" role="tab"><i className="icon-window"></i></a>
+                                <a onClick={this.fnActivateTasks} title={tr("TPL_SIDEBAR_OPEN_TASKPANE", this.props.locale)} role="tab"><i className="icon-window"></i></a>
                             </li>;
                         }
                     })()}
                     {(() => {
                         if (this.props.legend) {
                             return <li className={collapsed == false && activeTab == "legend" ? "active" : ""}>
-                                <a onClick={this.fnActivateLegend} title="Open Legend" role="tab"><i className="icon-buffer"></i></a>
+                                <a onClick={this.fnActivateLegend} title={tr("TPL_SIDEBAR_OPEN_LEGEND", this.props.locale)} role="tab"><i className="icon-buffer"></i></a>
                             </li>;
                         }
                     })()}
                     {(() => {
                         if (this.props.selection) {
                             return <li className={collapsed == false && activeTab == "selection" ? "active" : ""}>
-                                <a onClick={this.fnActivateSelection} title="Open Selection Panel" role="tab"><i className="icon-list"></i></a>
+                                <a onClick={this.fnActivateSelection} title={tr("TPL_SIDEBAR_OPEN_SELECTION_PANEL", this.props.locale)} role="tab"><i className="icon-list"></i></a>
                             </li>;
                         }
                     })()}
@@ -192,7 +194,7 @@ class Sidebar extends React.Component<ISidebarProps, any> {
                         return <div className={`sidebar-pane ${activeTab == "tasks" ? "active" : ""}`}>
                             <SidebarHeader text="Task Pane" onCloseClick={this.fnClickCollapse} />
                             <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
-                                <PlaceholderComponent id={DefaultComponentNames.TaskPane} />
+                                <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={this.props.locale} />
                             </div>
                         </div>;
                     }
@@ -202,7 +204,7 @@ class Sidebar extends React.Component<ISidebarProps, any> {
                         return <div className={`sidebar-pane ${activeTab == "legend" ? "active" : ""}`}>
                             <SidebarHeader text="Legend" onCloseClick={this.fnClickCollapse} />
                             <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
-                                <PlaceholderComponent id={DefaultComponentNames.Legend} />
+                                <PlaceholderComponent id={DefaultComponentNames.Legend} locale={this.props.locale} />
                             </div>
                         </div>;
                     }
@@ -212,7 +214,7 @@ class Sidebar extends React.Component<ISidebarProps, any> {
                         return <div className={`sidebar-pane ${activeTab == "selection" ? "active" : ""}`}>
                             <SidebarHeader text="Selection" onCloseClick={this.fnClickCollapse} />
                             <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
-                                <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} />
+                                <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={this.props.locale} />
                             </div>
                         </div>;
                     }
@@ -224,6 +226,7 @@ class Sidebar extends React.Component<ISidebarProps, any> {
 
 interface ISidebarLayoutState {
     viewer?: any;
+    config?: any;
     capabilities?: any;
     lastaction?: any;
 }
@@ -231,6 +234,7 @@ interface ISidebarLayoutState {
 function mapStateToProps(state): ISidebarLayoutState {
     return {
         viewer: state.map.viewer,
+        config: state.config,
         capabilities: state.config.capabilities,
         lastaction: state.lastaction
     };
@@ -268,31 +272,32 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
                      selection={hasSelectionPanel}
                      toolbar={hasToolbar}
                      taskpane={hasTaskPane}
+                     locale={this.props.config.locale}
                      lastAction={this.props.lastaction} />
             {(() => {
                 if (hasNavigator) {
-                    return <PlaceholderComponent id={DefaultComponentNames.Navigator} componentProps={NAVIGATOR_PROPS} />;
+                    return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={this.props.config.locale} componentProps={NAVIGATOR_PROPS} />;
                 }
             })()}
             {(() => {
                 if (hasStatusBar) {
-                    return <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} componentProps={MOUSE_COORDINATE_PROPS} />;
+                    return <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={this.props.config.locale} componentProps={MOUSE_COORDINATE_PROPS} />;
                 }
             })()}
             {(() => {
                 if (hasStatusBar) {
-                    return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} componentProps={SCALE_DISPLAY_PROPS} />;
+                    return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={this.props.config.locale} componentProps={SCALE_DISPLAY_PROPS} />;
                 }
             })()}
             {(() => {
                 if (hasStatusBar) {
-                    return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} componentProps={SELECTED_FEATURE_COUNT_PROPS} />;
+                    return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={this.props.config.locale} componentProps={SELECTED_FEATURE_COUNT_PROPS} />;
                 }
             })()}
-            <PlaceholderComponent id={DefaultComponentNames.Map} />
+            <PlaceholderComponent id={DefaultComponentNames.Map} locale={this.props.config.locale} />
             <AjaxViewerShim />
             <ModalLauncher />
-            <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} componentProps={PBMG_PROPS} />
+            <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={this.props.config.locale} componentProps={PBMG_PROPS} />
         </div>;
     }
 }

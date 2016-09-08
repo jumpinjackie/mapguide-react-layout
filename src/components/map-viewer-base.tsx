@@ -1041,7 +1041,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             persist: 1,
             featurefilter: xml,
             selectioncolor: this.props.selectionColor,
-            selectionformat: "PNG8",
+            selectionformat: this.props.selectionImageFormat || "PNG8",
             maxfeatures: -1,
             requestdata: reqQueryFeatures
         }, queryOpts);

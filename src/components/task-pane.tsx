@@ -112,7 +112,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                 {(() => {
                     if (this.state.activeComponent != null) {
                         return <div style={{ border: "none", width: "100%", height: "100%" }}>
-                            <PlaceholderComponent id={this.state.activeComponent} />
+                            <PlaceholderComponent id={this.state.activeComponent} locale={this.props.locale} />
                         </div>
                     } else {
                         return <iframe name="taskPaneFrame" ref={this.fnFrameMounted} onLoad={this.fnFrameLoaded} style={{ border: "none", width: "100%", height: "100%" }}>

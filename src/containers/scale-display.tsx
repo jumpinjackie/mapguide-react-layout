@@ -3,14 +3,17 @@ import { connect } from "react-redux";
 import { SelectedFeatureCount } from "../components/selected-feature-count";
 import { QueryMapFeaturesResponse } from "../api/contracts/query";
 import { IMapView } from "../components/context";
+import { tr } from "../api/i18n";
 
 interface IScaleDisplayContainerState {
     style?: React.CSSProperties;
     view?: IMapView;
+    config?: any;
 }
 
 function mapStateToProps(state): IScaleDisplayContainerState {
     return {
+        config: state.config,
         view: state.view.current
     };
 }
@@ -27,10 +30,13 @@ export class ScaleDisplayContainer extends React.Component<IScaleDisplayContaine
         super(props);
     }
     render(): JSX.Element {
-        const { view, style } = this.props;
+        const { view, style, config } = this.props;
         if (view != null) {
+            const label = tr("FMT_SCALE_DISPLAY", config.locale, {
+                scale: view.scale.toFixed(2)
+            });
             return <div className="component-scale-display" style={style}>
-                Scale - 1:{view.scale.toFixed(2)}
+                {label}
             </div>;
         } else {
             return <div />;

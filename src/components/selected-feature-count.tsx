@@ -1,8 +1,10 @@
 import * as React from "react";
 import { FeatureSet } from "../api/contracts/query";
+import { tr, fmt } from "../api/i18n";
 
 interface IMouseCoordinatesProps {
     selection: FeatureSet;
+    locale: string;
     format?: string;
     style?: React.CSSProperties;
 }
@@ -16,8 +18,13 @@ function countTotalSelected(featureSet: FeatureSet): number {
 }
 
 export const SelectedFeatureCount = (props: IMouseCoordinatesProps) => {
-    const fmt = props.format || "Selected {total} features in {layerCount} layers";
-    const label = fmt.replace(/\{total\}/g, `${countTotalSelected(props.selection)}`)
-                     .replace(/\{layerCount\}/g, `${props.selection.Layer.length}`);
+    const format = props.format || tr("FMT_SELECTON_COUNT", props.locale);
+    let label
+    if (props.selection.Layer.length > 0) {
+        label = fmt(format, {
+            total: countTotalSelected(props.selection),
+            layerCount: props.selection.Layer.length
+        });
+    }
     return <div className="component-selected-feature-count" style={props.style}>{label}</div>;
 };

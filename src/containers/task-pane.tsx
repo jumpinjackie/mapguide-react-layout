@@ -7,6 +7,7 @@ import { mapToolbarReference } from "../api/registry/command";
 import { invokeCommand } from "../actions/map";
 import * as TaskPaneActions from "../actions/taskpane";
 import { areUrlsSame } from "../utils/url";
+import { tr } from "../api/i18n";
 
 interface ITaskPaneContainerStyle {
     style?: React.CSSProperties;
@@ -64,7 +65,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         this.fnUrlLoaded = this.onUrlLoaded.bind(this);
         this.homeAction = {
             icon: "icon_home.gif",
-            tooltip: "Go Home",
+            tooltip: tr("TT_GO_HOME", this.props.config.locale),
             enabled: this.canGoHome.bind(this),
             invoke: () => {
                 const { goHome } = this.props;
@@ -73,7 +74,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         };
         this.backAction = {
             icon: "back.png",
-            tooltip: "Go back",
+            tooltip: tr("TT_GO_BACK", this.props.config.locale),
             enabled: this.canGoBack.bind(this),
             invoke: () => {
                 const { goBack } = this.props;
@@ -82,7 +83,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         };
         this.forwardAction = {
             icon: "forward.png",
-            tooltip: "Go forward",
+            tooltip: tr("TT_GO_FORWARD", this.props.config.locale),
             enabled: this.canGoForward.bind(this),
             invoke: () => {
                 const { goForward } = this.props;

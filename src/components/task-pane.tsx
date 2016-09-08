@@ -4,6 +4,7 @@ import queryString = require("query-string");
 const parse = require("url-parse");
 import { ensureParameters } from "../actions/taskpane";
 import { PlaceholderComponent } from "../api/registry/component";
+import { tr } from "../api/i18n";
 
 export interface ITaskPaneProps {
     currentUrl?: string;
@@ -94,7 +95,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
     }
     render(): JSX.Element {
         const taskMenu: IMenu = {
-            label: "Tasks",
+            label: tr("MENU_TASKS", this.props.locale),
             flyoutAlign: "bottom left",
             childItems: this.props.taskMenuItems
         };

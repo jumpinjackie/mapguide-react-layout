@@ -4,12 +4,14 @@ import { SelectionPanel } from "../components/selection-panel";
 import { QueryMapFeaturesResponse } from "../api/contracts/query";
 import * as MapActions from "../actions/map";
 import { getViewer } from "../api/runtime";
+import { tr } from "../api/i18n";
 
 interface ISelectionPanelContainerProps {
 
 }
 
 interface ISelectionPanelContainerState {
+    config?: any;
     selection?: QueryMapFeaturesResponse;
 }
 
@@ -19,6 +21,7 @@ interface ISelectionPanelContainerDispatch {
 
 function mapStateToProps(state): ISelectionPanelContainerState {
     return {
+        config: state.config,
         selection: state.selection.selectionSet
     };
 }
@@ -44,12 +47,12 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
         this.props.setCurrentView(view);
     }
     render(): JSX.Element {
-        const { selection } = this.props;
+        const { selection, config } = this.props;
         if (selection != null && 
             selection.SelectedFeatures != null) {
             return <SelectionPanel selection={selection.SelectedFeatures} onRequestZoomToFeature={this.fnZoomToSelectedFeature} />;
         } else {
-            return <div>No selected features</div>;
+            return <div>{tr("NO_SELECTED_FEATURES", config.locale)}</div>;
         }
     }
 }

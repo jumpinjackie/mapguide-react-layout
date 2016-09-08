@@ -138,6 +138,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                   map={map} 
                                   agentUri={config.agentUri}
                                   agentKind={config.agentKind}
+                                  locale={config.locale}
                                   externalBaseLayers={config.externalBaseLayers}
                                   imageFormat={config.viewer.imageFormat}
                                   selectionImageFormat={config.viewer.selectionImageFormat}

@@ -39,6 +39,7 @@ import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { IMenu, IItem, getEnabled, getIcon } from '../components/toolbar';
 import { isMenu } from '../utils/type-guards';
+import { tr } from "../api/i18n";
 import ContextMenu = require("ol3-contextmenu");
 const assign = require("object-assign");
 const isMobile = require("ismobilejs");
@@ -69,6 +70,7 @@ interface IMapViewerBaseProps {
     initialView?: IMapView;
     agentUri: string;
     agentKind: ClientKind;
+    locale?: string;
     featureTooltipsEnabled: boolean;
     imageFormat: "PNG" | "PNG8" | "JPG" | "GIF";
     selectionImageFormat?: "PNG" | "PNG8" | "JPG" | "GIF";
@@ -157,15 +159,6 @@ export enum ActiveMapTool {
 }
 
 const KC_ESCAPE = 27;
-
-class DigitizerMessages {
-    public static get Point(): string { return "Click to finish and draw a point at this location<br/><br/>Press ESC to cancel"; }
-    public static get Line(): string { return "Click to set this position as the start.<br/>Click again to finish the line at this position<br/><br/>Press ESC to cancel"; }
-    public static get LineString(): string { return "Click to set this position as the start.<br/>Click again to add a vertex at this position.<br/>Hold SHIFT and drag while digitizing to draw in freehand mode<br/></br>Double click to finish<br/>Press ESC to cancel"; }
-    public static get Circle(): string { return "Click to set this position as the center.<br/>Move out to the desired radius and click again to finish<br/><br/>Press ESC to cancel"; }
-    public static get Rectangle(): string { return "Click to set this position as one corner.<br/>Click again to finish and set this position as the other corner<br/><br/>Press ESC to cancel"; }
-    public static get Polygon(): string { return "Click to set this positon as the start.<br/>Click again to add a vertex at this position.<br/>Hold SHIFT and drag while digitizing to draw in freehand mode<br/><br/>Double click to finish and close the polygon<br/>Press ESC to cancel"; }
-}
 
 class SessionKeepAlive {
     private getSession: () => string;
@@ -1108,7 +1101,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         const draw = new ol.interaction.Draw({
             type: "Point"//ol.geom.GeometryType.POINT
         });
-        this.pushDrawInteraction(draw, handler, prompt || DigitizerMessages.Point);
+        this.pushDrawInteraction(draw, handler, prompt || tr("DIGITIZE_POINT_PROMPT", this.props.locale));
     }
     public digitizeLine(handler: DigitizerCallback<ol.geom.LineString>, prompt?: string): void {
         const draw = new ol.interaction.Draw({
@@ -1116,20 +1109,20 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             minPoints: 2,
             maxPoints: 2
         });
-        this.pushDrawInteraction(draw, handler, prompt || DigitizerMessages.Line);
+        this.pushDrawInteraction(draw, handler, prompt || tr("DIGITIZE_LINE_PROMPT", this.props.locale));
     }
     public digitizeLineString(handler: DigitizerCallback<ol.geom.LineString>, prompt?: string): void {
         const draw = new ol.interaction.Draw({
             type: "LineString", //ol.geom.GeometryType.LINE_STRING,
             minPoints: 2
         });
-        this.pushDrawInteraction(draw, handler, prompt || DigitizerMessages.LineString);
+        this.pushDrawInteraction(draw, handler, prompt || tr("DIGITIZE_LINESTRING_PROMPT", this.props.locale));
     }
     public digitizeCircle(handler: DigitizerCallback<ol.geom.Circle>, prompt?: string): void {
         const draw = new ol.interaction.Draw({
             type: "Circle" //ol.geom.GeometryType.CIRCLE
         });
-        this.pushDrawInteraction(draw, handler, prompt || DigitizerMessages.Circle);
+        this.pushDrawInteraction(draw, handler, prompt || tr("DIGITIZE_CIRCLE_PROMPT", this.props.locale));
     }
     public digitizeRectangle(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void {
         const draw = new ol.interaction.Draw({
@@ -1147,13 +1140,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 return geometry;
             }
         });
-        this.pushDrawInteraction(draw, handler, prompt || DigitizerMessages.Rectangle);
+        this.pushDrawInteraction(draw, handler, prompt || tr("DIGITIZE_RECT_PROMPT", this.props.locale));
     }
     public digitizePolygon(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void {
         const draw = new ol.interaction.Draw({
             type: "Polygon" //ol.geom.GeometryType.POLYGON
         });
-        this.pushDrawInteraction(draw, handler, prompt || DigitizerMessages.Polygon);
+        this.pushDrawInteraction(draw, handler, prompt || tr("DIGITIZE_POLYGON_PROMPT", this.props.locale));
     }
     public selectByGeometry(geom: ol.geom.Geometry): void {
         this.sendSelectionQuery(this.buildDefaultQueryOptions(geom));

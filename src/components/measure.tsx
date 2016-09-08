@@ -2,24 +2,11 @@ import * as React from "react";
 import * as ol from "openlayers";
 import { IMapViewer, ActiveMapTool } from "../components/map-viewer-base";
 import { getViewer } from "../api/runtime";
+import { tr } from "../api/i18n";
 import { NBSP } from "../constants";
 
 const LAYER_NAME = "measure-layer";
 const WGS84_SPHERE = new ol.Sphere(6378137);
-
-/**
- * Message to show when the user is drawing a polygon.
- * @type {string}
- */
-const continuePolygonMsg = 'Click to continue drawing the polygon';
-
-
-/**
- * Message to show when the user is drawing a line.
- * @type {string}
- */
-const continueLineMsg = 'Click to continue drawing the line';
-
 const measureOverlays: ol.Overlay[] = [];
 
 export class Measure extends React.Component<any, any> {
@@ -242,13 +229,13 @@ export class Measure extends React.Component<any, any> {
             return;
         }
         /** @type {string} */
-        let helpMsg = 'Click to start drawing';
+        let helpMsg = tr("MEASUREMENT_START_DRAWING", this.props.locale);
         if (this.sketch) {
             const geom = (this.sketch.getGeometry());
             if (geom instanceof ol.geom.Polygon) {
-                helpMsg = continuePolygonMsg;
+                helpMsg = tr("MEASUREMENT_CONTINUE_POLYGON", this.props.locale);
             } else if (geom instanceof ol.geom.LineString) {
-                helpMsg = continueLineMsg;
+                helpMsg = tr("MEASUREMENT_CONTINUE_LINE", this.props.locale);
             }
         }
         this.helpTooltipElement.innerHTML = helpMsg;
@@ -296,20 +283,20 @@ export class Measure extends React.Component<any, any> {
         return <div>
             <form className="form-inline">
                 <div>
-                    <label>Measurement type {NBSP}</label>
+                    <label>{tr("MEASUREMENT_TYPE", this.props.locale)} {NBSP}</label>
                     <select value={this.state.type} onChange={this.fnTypeChanged}>
-                        <option value="LineString">Length (LineString) </option>
-                        <option value="Polygon">Area (Polygon) </option>
+                        <option value="LineString">{tr("MEASUREMENT_TYPE_LENGTH", this.props.locale)}</option>
+                        <option value="Polygon">{tr("MEASUREMENT_TYPE_AREA", this.props.locale)}</option>
                     </select>
                 </div>
                 <div>
                     <label className="checkbox">
                         <input type="checkbox" checked={this.state.geodesic} onChange={this.fnGeodesicChanged} />
-                        use geodesic measures
+                        {tr("MEASUREMENT_USE_GEODESIC", this.props.locale)}
                     </label>
                 </div>
                 <div>
-                    <button type="button" onClick={this.fnClearMeasurements}>Clear Measurements</button>
+                    <button type="button" onClick={this.fnClearMeasurements}>{tr("MEASUREMENT_CLEAR", this.props.locale)}</button>
                 </div>
             </form>
         </div>;

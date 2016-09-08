@@ -14,6 +14,7 @@ interface INavigatorContainerProps {
 
 interface INavigatorContainerState {
     viewer?: any;
+    config?: any;
     view?: IMapView;
 }
 
@@ -24,6 +25,7 @@ interface INavigatorContainerDispatch {
 
 function mapStateToProps(state): INavigatorContainerState {
     return {
+        config: state.config,
         viewer: state.map.viewer,
         view: state.view.current
     };
@@ -83,10 +85,11 @@ export class NavigatorContainer extends React.Component<INavigatorContainerProps
         this.props.setScale(scale);
     }
     render(): JSX.Element {
-        const { style, viewer, view } = this.props;
+        const { style, viewer, view, config } = this.props;
         if (viewer != null && view != null) {
             return <Navigator style={style}
                               scale={view.scale}
+                              locale={config.locale}
                               busy={viewer.busyCount > 0}
                               onRequestZoomToScale={this.fnRequestZoomToScale}
                               onPan={this.fnPan}

@@ -17,6 +17,8 @@ Viewer
       * Example: `MapGuide.Externals.proj4.defs("EPSG:28355","+proj=utm +zone=55 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");`
       * You can find proj4js definitions at [epsg.io](http://epsg.io)
 
+ * OpenLayers will render "buffered" versions of map images (possibly to take rotation into account). As a result, if your Map has watermarks, they may not be shown due to being cut off by the map viewport.
+
  * [#29](https://github.com/jumpinjackie/mapguide-react-layout/issues/29): When the active tool is select, it may interfere with digitization-based selection tools (eg. Select Radius/Polygon)
    * Workaround: Do not have the active tool as select before digitizing
 

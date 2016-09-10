@@ -29,8 +29,8 @@ const STRINGS_EN: any = {
     "MEASUREMENT_TYPE_AREA": "Area (Polygon)",
     "MEASUREMENT_USE_GEODESIC": "Use geodesic measure",
     "MEASUREMENT_CLEAR": "Clear Measurements",
-    "MEASUREMENT_CONTINUE_POLYGON": "Click to continue drawing the polygon",
-    "MEASUREMENT_CONTINUE_LINE": "Click to continue drawing the line",
+    "MEASUREMENT_CONTINUE_POLYGON": "Click to continue drawing the polygon. Double-click to finish.",
+    "MEASUREMENT_CONTINUE_LINE": "Click to continue drawing the line. Double-click to finish.",
     "MEASUREMENT_START_DRAWING": "Click to start drawing",
     "NAVIGATOR_PAN_EAST": "Pan East",
     "NAVIGATOR_PAN_WEST": "Pan West",
@@ -50,7 +50,8 @@ export function fmt(format: string, args?: any): string {
     let str = format;
     if (args != null) {
         for (const p in args) {
-            str = str.replace(new RegExp(`\{${p}\}`, "g"), `${args[p]}`);
+            //str = str.replace(new RegExp(`\{${p}\}`, "g"), `${args[p]}`);
+            str = str.split(`{${p}}`).join(args[p]);
         }
         return str;
     };

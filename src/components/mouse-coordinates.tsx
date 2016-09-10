@@ -1,4 +1,5 @@
 import * as React from "react";
+import { fmt } from "../api/i18n";
 
 interface IMouseCoordinatesProps extends React.Props<any> {
     format?: string;
@@ -12,9 +13,11 @@ function formatCoordinates(props: IMouseCoordinatesProps) {
     if (coords == null) {
         return null;
     }
-    const fmt = format || "X: {x}, Y: {y}";
-    return fmt.replace(/\{x\}/g, `${decimals != null ? coords[0].toFixed(decimals) : coords[0]}`)
-              .replace(/\{y\}/g, `${decimals != null ? coords[1].toFixed(decimals) : coords[0]}`);
+    const sfmt = format || "X: {x}, Y: {y}";
+    return fmt(sfmt, {
+        x: `${decimals != null ? coords[0].toFixed(decimals) : coords[0]}`,
+        y: `${decimals != null ? coords[1].toFixed(decimals) : coords[0]}`
+    });
 }
 
 export const MouseCoordinates = (props: IMouseCoordinatesProps) => {

@@ -18,7 +18,7 @@ function countTotalSelected(featureSet: FeatureSet): number {
 }
 
 export const SelectedFeatureCount = (props: IMouseCoordinatesProps) => {
-    const format = props.format || tr("FMT_SELECTON_COUNT", props.locale);
+    const format = props.format || tr("FMT_SELECTION_COUNT", props.locale);
     let label
     if (props.selection.Layer.length > 0) {
         label = fmt(format, {

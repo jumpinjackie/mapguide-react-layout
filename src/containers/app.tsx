@@ -3,8 +3,9 @@ import { connect } from "react-redux";
 import { ClientKind } from "../api/client";
 import { getLayout } from "../api/registry/layout";
 import { IExternalBaseLayer } from "../components/map-viewer-base";
-import { initWebLayout } from "../actions/init";
+import { initLayout } from "../actions/init";
 import { Error } from "../components/error";
+import { tr } from "../api/i18n";
 
 function endsWith(str, suffix) {
     return str.indexOf(suffix, str.length - suffix.length) !== -1;
@@ -35,23 +36,23 @@ export interface IAppProps {
 } 
 
 interface IAppState {
-
+    config?: any;
 }
 
 interface IAppDispatch {
     initApp?: (args) => void;
-    initWebLayout?: (args) => void;
+    initLayout?: (args) => void;
 }
 
 function mapStateToProps(state): IAppState {
     return {
-
+        config: state.config
     };
 }
 
 function mapDispatchToProps(dispatch): IAppDispatch {
     return {
-        initWebLayout: (args) => dispatch(initWebLayout(args))
+        initLayout: (args) => dispatch(initLayout(args))
     };
 }
 
@@ -61,21 +62,21 @@ export class App extends React.Component<IAppProps & IAppState & IAppDispatch, a
         super(props);
     }
     componentDidMount() {
-        const { initApp, initWebLayout, agent, resourceId, externalBaseLayers } = this.props;
-        if (endsWith(resourceId, "WebLayout")) {
-            initWebLayout({
-                resourceId: resourceId,
-                externalBaseLayers: externalBaseLayers
-            });
-        }
+        const { initApp, initLayout, agent, resourceId, externalBaseLayers } = this.props;
+        initLayout({
+            resourceId: resourceId,
+            externalBaseLayers: externalBaseLayers
+        });
     }
     render(): JSX.Element {
-        const { layout } = this.props;
+        const { layout, config } = this.props;
         const layoutEl = getLayout(layout);
+        //NOTE: Locale may not have been set at this point, so use default
+        const locale = config.locale || "en";
         if (layoutEl) {
             return layoutEl();
         } else {
-            return <Error error={`ERROR: No layout named (${layout}) registered`} />;
+            return <Error error={tr("ERR_UNREGISTERED_LAYOUT", locale, { layout: layout })} />;
         }
     }
 }

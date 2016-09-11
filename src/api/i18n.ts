@@ -12,6 +12,7 @@ const STRINGS_EN: any = {
     "SESSION_EXPIRED_DETAILED": "Your current MapGuide session has expired",
     "SESSION_EXPIRED_AVAILABLE_ACTIONS": "Available Actions:",
     "SESSION_EXPIRED_RELOAD_VIEWER": "Reload the viewer",
+    "ERR_UNREGISTERED_LAYOUT": "ERROR: No layout named ({layout}) registered",
     "ERR_UNREGISTERED_COMPONENT": "ERROR: No such registered component ({componentId}). Ensure the component has been registered in the component registry with an id of: {componentId}",
     "LOADING_MSG": "Loading ...",
     "MENU_TASKS": "Tasks",

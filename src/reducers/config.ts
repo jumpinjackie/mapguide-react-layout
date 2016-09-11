@@ -31,6 +31,7 @@ export function configReducer(state = INITIAL_STATE, action = { type: '', payloa
         case Constants.INIT_APP: 
             {
                 const newState = assign({}, state, {
+                    locale: action.payload.locale || "en",
                     externalBaseLayers: action.payload.externalBaseLayers,
                     capabilities: action.payload.capabilities
                 });

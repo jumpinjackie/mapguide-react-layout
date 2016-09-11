@@ -33,7 +33,7 @@ import * as Contracts from '../api/contracts';
 import debounce = require("lodash.debounce");
 import { areNumbersEqual } from '../utils/number';
 import * as logger from '../utils/logger';
-import { MgError } from '../api/error';
+import { MgError, isSessionExpiredError } from '../api/error';
 import { Client, ClientKind } from '../api/client';
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
@@ -43,10 +43,6 @@ import { tr } from "../api/i18n";
 import ContextMenu = require("ol3-contextmenu");
 const assign = require("object-assign");
 const isMobile = require("ismobilejs");
-
-function isSessionExpiredError(err: MgError): boolean {
-    return err.message.indexOf("MgSessionExpiredException") >= 0;
-}
 
 export interface IExternalBaseLayer {
     name: string;
@@ -81,7 +77,7 @@ interface IMapViewerBaseProps {
     selectableLayerNames: string[];
     contextMenu?: IItem[];
     onRequestZoomToView?: (view: IMapView) => void;
-    onSelectionChange?: (selectionSet: any) => void;
+    onQueryMapFeatures?: (options: IQueryMapFeaturesOptions, callback?: (res: QueryMapFeaturesResponse) => void, errBack?: (err: any) => void) => void;
     onMouseCoordinateChanged?: (coords: number[]) => void;
     onBusyLoading: (busyCount: number) => void;
     onSessionExpired?: () => void;
@@ -211,9 +207,15 @@ class FeatureQueryTooltip {
         this.map = map;
         this.map.addOverlay(this.featureTooltip);
         this.onRequestSelectableLayers = onRequestSelectableLayers;
-        this.throttledMouseMove = debounce(this._onMouseMove.bind(this), 1000);
-        this.map.on("pointermove", this.throttledMouseMove);
+        this.throttledMouseMove = debounce(e => {
+            const coords: Coordinate = e.coordinate;
+            logger.debug(`[${new Date()}] FeatureTooltip - onMouseMove (${coords[0]}, ${coords[1]})`);
+            this.sendTooltipQuery(coords);
+        }, 1000);
         this.enabled = true;
+    }
+    public onMouseMove(e) {
+        this.throttledMouseMove(e);
     }
     public isEnabled(): boolean {
         return this.enabled;
@@ -224,10 +226,6 @@ class FeatureQueryTooltip {
             this.featureTooltipElement.innerHTML = "";
             this.featureTooltipElement.classList.add("tooltip-hidden");
         }
-    }
-    private _onMouseMove(e) {
-        const coords: Coordinate = e.coordinate;
-        this.sendTooltipQuery(coords);
     }
     private sendTooltipQuery(coords: Coordinate): void {
         if (!this.enabled) {
@@ -294,7 +292,6 @@ class MouseTrackingTooltip {
     constructor(map: ol.Map, contextMenuTest: () => boolean) {
         this.map = map;
         this.isContextMenuOpen = contextMenuTest;
-        this.map.on("pointermove", this.onMouseMove.bind(this));
         this.map.getViewport().addEventListener("mouseout", this.onMouseOut.bind(this));
         this.tooltipElement = document.createElement("div");
         this.tooltipElement.className = 'tooltip';
@@ -307,7 +304,7 @@ class MouseTrackingTooltip {
         this.text = null;
         this.tooltipElement.classList.add(HIDDEN_CLASS_NAME);
     }
-    private onMouseMove(e) {
+    public onMouseMove(e) {
         if (this.isContextMenuOpen())
             return;
         this.tooltip.setPosition(e.coordinate);
@@ -417,6 +414,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this._supportsTouch = isMobile.phone || isMobile.tablet;
         this._contextMenuOpen = false;
         this._customLayers = {};
+        this.state = {
+            shiftKey: false
+        };
     }
     /**
      * DO NOT CALL DIRECTLY, call this.refreshOnStateChange() instead, which is a throttled version
@@ -518,25 +518,19 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             selectionformat: this.props.selectionImageFormat || "PNG8",
             maxfeatures: -1
         }, queryOpts);
-        this._client.queryMapFeatures(queryOptions).then(res => {
-            this.refreshMap(RefreshMode.SelectionOnly);
-            //Only broadcast if persistent change, otherwise it's transient
-            //so the current selection set is still the same
-            if (queryOptions.persist === 1 && this.props.onSelectionChange != null)
-                this.props.onSelectionChange(res);
-
-            if (success != null)
-                success(res);
-        }).then(res => {
-            this.decrementBusyWorker();
-        }).catch(err => {
-            this.decrementBusyWorker();
-            if (isSessionExpiredError(err)) {
-                this.onSessionExpired();
-            }
-            if (failure != null)
-                failure(err);
-        });
+        if (this.props.onQueryMapFeatures) {
+            this.props.onQueryMapFeatures(queryOptions, res => {
+                this.decrementBusyWorker();
+                if (success) {
+                    success(res);
+                }
+            }, err => {
+                this.decrementBusyWorker();
+                if (failure) {
+                    failure(err);
+                }
+            });
+        }
     }
     private zoomByDelta(delta) {
         const view = this._map.getView();
@@ -603,8 +597,14 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this.setState({ shiftKey: e.shiftKey });
     }
     private onMouseMove(e) {
+        if (this._mouseTooltip) {
+            this._mouseTooltip.onMouseMove(e);
+        }
         if (this._contextMenuOpen) {
             return;
+        }
+        if (this._featureTooltip && this._featureTooltip.isEnabled()) {
+            this._featureTooltip.onMouseMove(e);
         }
         if (this.props.onMouseCoordinateChanged != null) {
             this.props.onMouseCoordinateChanged(e.coordinate);
@@ -1052,22 +1052,17 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             maxfeatures: -1,
             requestdata: reqQueryFeatures
         }, queryOpts);
-        this._client.queryMapFeatures(queryOptions).then(res => {
-            this.refreshMap(RefreshMode.SelectionOnly);
-            if (this.props.onSelectionChange != null)
-                this.props.onSelectionChange(res);
-            if (success != null)
-                success(res);
-        }).then(res => {
-            this.decrementBusyWorker();
-        }).catch(err => {
-            this.decrementBusyWorker();
-            if (isSessionExpiredError(err)) {
-                this.onSessionExpired();
-            }
-            if (failure != null)
-                failure(err);
-        });
+        if (this.props.onQueryMapFeatures) {
+            this.props.onQueryMapFeatures(queryOptions, res => {
+                this.decrementBusyWorker();
+                if (success)
+                    success(res);
+            }, err => {
+                this.decrementBusyWorker();
+                if (failure)
+                    failure(err);
+            });
+        }
     }
     public refreshMap(mode: RefreshMode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly): void {
         if ((mode & RefreshMode.LayersOnly) == RefreshMode.LayersOnly) {

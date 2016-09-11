@@ -18,7 +18,7 @@ import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml } from '../api/builders/deArrayify';
 import { getCommand, mapToolbarReference } from "../api/registry/command";
-import { invokeCommand } from "../actions/map";
+import { invokeCommand, queryMapFeatures } from "../actions/map";
 import { showModalComponent } from "../actions/modal";
 import { DefaultComponentNames } from "../api/registry/component";
 import { tr } from "../api/i18n";
@@ -39,11 +39,11 @@ interface IMapViewerContainerState {
 
 interface IMapViewerContainerDispatch {
     setCurrentView?: (view) => void;
-    setSelection?: (selectionSet) => void;
     setBusyCount?: (count) => void;
     setMouseCoordinates?: (coord) => void;
     invokeCommand?: (cmd) => void;
     showModalComponent?: (options) => void;
+    queryMapFeatures?: (options) => void;
 }
 
 function mapStateToProps(state): IMapViewerContainerState {
@@ -61,11 +61,11 @@ function mapStateToProps(state): IMapViewerContainerState {
 function mapDispatchToProps(dispatch): IMapViewerContainerDispatch {
     return {
         setCurrentView: (view) => dispatch(MapActions.setCurrentView(view)),
-        setSelection: (selectionSet) => dispatch(MapActions.setSelection(selectionSet)),
         setBusyCount: (count) => dispatch(MapActions.setBusyCount(count)),
         setMouseCoordinates: (coord) => dispatch(MapActions.setMouseCoordinates(coord)),
         invokeCommand: (cmd) => dispatch(invokeCommand(cmd)),
-        showModalComponent: (options) => dispatch(showModalComponent(options))
+        showModalComponent: (options) => dispatch(showModalComponent(options)),
+        queryMapFeatures: (options) => dispatch(queryMapFeatures(options))
     };
 }
 
@@ -77,7 +77,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     private fnMapViewerMounted: (component) => void;
     private inner: MapViewerBase;
     private fnRequestZoomToView: (view: IMapView|Bounds) => void;
-    private fnSelectionChanged: (selectionSet: any) => void;
+    private fnQueryMapFeatures: (options, success, errBack) => void;
     private fnBusyLoading: (busyCount) => void;
     private fnMouseCoordinateChanged: (coord) => void;
     private fnSessionExpired: () => void;
@@ -85,7 +85,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         super(props);
         this.fnMapViewerMounted = this.onMapViewerMounted.bind(this);
         this.fnRequestZoomToView = this.onRequestZoomToView.bind(this);
-        this.fnSelectionChanged = this.onSelectionChanged.bind(this);
+        this.fnQueryMapFeatures = this.onQueryMapFeatures.bind(this);
         this.fnBusyLoading = this.onBusyLoading.bind(this);
         this.fnMouseCoordinateChanged = this.onMouseCoordinateChanged.bind(this);
         this.fnSessionExpired = this.onSessionExpired.bind(this);
@@ -99,8 +99,13 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     private onRequestZoomToView(view: IMapView|Bounds): void {
         this.props.setCurrentView(view);
     }
-    private onSelectionChanged(selectionSet: any): void {
-        this.props.setSelection(selectionSet);
+    private onQueryMapFeatures(options, success, errBack) {
+        this.props.queryMapFeatures({
+            options: options,
+            append: this.inner.state.shiftKey === true,
+            callback: success,
+            errBack: errBack
+        });
     }
     private onBusyLoading(busyCount) {
         this.props.setBusyCount(busyCount);
@@ -117,6 +122,11 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             name: DefaultComponentNames.SessionExpired,
             id: DefaultComponentNames.SessionExpired
         });
+    }
+    componentWillReceiveProps(nextProps: MapViewerContainerProps) {
+        if (this.props.selection != nextProps.selection) {
+            this.inner.refreshMap(RefreshMode.SelectionOnly);
+        }
     }
     componentDidMount() {
         Runtime.setViewer(this);
@@ -154,7 +164,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                   onSessionExpired={this.fnSessionExpired}
                                   onBusyLoading={this.fnBusyLoading}
                                   onMouseCoordinateChanged={this.fnMouseCoordinateChanged}
-                                  onSelectionChange={this.fnSelectionChanged}
+                                  onQueryMapFeatures={this.fnQueryMapFeatures}
                                   onRequestZoomToView={this.fnRequestZoomToView} />;
         } else {
             return <div>{tr("LOADING_MSG", config.locale)}</div>;

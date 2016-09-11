@@ -6,3 +6,7 @@ export class MgError extends Error {
         this.stack = (<any>new Error()).stack;
     }
 }
+
+export function isSessionExpiredError(err: MgError): boolean {
+    return err.message.indexOf("MgSessionExpiredException") >= 0;
+}

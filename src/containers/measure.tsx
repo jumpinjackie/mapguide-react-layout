@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as ol from "openlayers";
+import { connect } from "react-redux";
 import { IMapViewer, ActiveMapTool } from "../components/map-viewer-base";
 import { getViewer } from "../api/runtime";
 import { tr } from "../api/i18n";
@@ -9,7 +10,34 @@ const LAYER_NAME = "measure-layer";
 const WGS84_SPHERE = new ol.Sphere(6378137);
 const measureOverlays: ol.Overlay[] = [];
 
-export class Measure extends React.Component<any, any> {
+interface IMeasureContainerProps {
+    
+}
+
+interface IMeasureContainerState {
+    config?: any;
+}
+
+interface IMeasureContainerDispatch {
+    
+}
+
+function mapStateToProps(state): IMeasureContainerState {
+    return {
+        config: state.config
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        
+    };
+}
+
+type MeasureProps = IMeasureContainerProps & IMeasureContainerState & IMeasureContainerDispatch;
+
+@connect(mapStateToProps, mapDispatchToProps)
+export class MeasureContainer extends React.Component<MeasureProps, any> {
     private measureLayer: ol.layer.Vector;
     private viewer: IMapViewer;
     private draw: ol.interaction.Draw;
@@ -228,14 +256,15 @@ export class Measure extends React.Component<any, any> {
         if (evt.dragging) {
             return;
         }
+        const { locale } = this.props.config;
         /** @type {string} */
-        let helpMsg = tr("MEASUREMENT_START_DRAWING", this.props.locale);
+        let helpMsg = tr("MEASUREMENT_START_DRAWING", locale);
         if (this.sketch) {
             const geom = (this.sketch.getGeometry());
             if (geom instanceof ol.geom.Polygon) {
-                helpMsg = tr("MEASUREMENT_CONTINUE_POLYGON", this.props.locale);
+                helpMsg = tr("MEASUREMENT_CONTINUE_POLYGON", locale);
             } else if (geom instanceof ol.geom.LineString) {
-                helpMsg = tr("MEASUREMENT_CONTINUE_LINE", this.props.locale);
+                helpMsg = tr("MEASUREMENT_CONTINUE_LINE", locale);
             }
         }
         this.helpTooltipElement.innerHTML = helpMsg;
@@ -280,23 +309,24 @@ export class Measure extends React.Component<any, any> {
         this.measureLayer = null;
     }
     render(): JSX.Element {
+        const { locale } = this.props.config;
         return <div>
             <form className="form-inline">
                 <div>
-                    <label>{tr("MEASUREMENT_TYPE", this.props.locale)} {NBSP}</label>
+                    <label>{tr("MEASUREMENT_TYPE", locale)} {NBSP}</label>
                     <select value={this.state.type} onChange={this.fnTypeChanged}>
-                        <option value="LineString">{tr("MEASUREMENT_TYPE_LENGTH", this.props.locale)}</option>
-                        <option value="Polygon">{tr("MEASUREMENT_TYPE_AREA", this.props.locale)}</option>
+                        <option value="LineString">{tr("MEASUREMENT_TYPE_LENGTH", locale)}</option>
+                        <option value="Polygon">{tr("MEASUREMENT_TYPE_AREA", locale)}</option>
                     </select>
                 </div>
                 <div>
                     <label className="checkbox">
                         <input type="checkbox" checked={this.state.geodesic} onChange={this.fnGeodesicChanged} />
-                        {tr("MEASUREMENT_USE_GEODESIC", this.props.locale)}
+                        {tr("MEASUREMENT_USE_GEODESIC", locale)}
                     </label>
                 </div>
                 <div>
-                    <button type="button" onClick={this.fnClearMeasurements}>{tr("MEASUREMENT_CLEAR", this.props.locale)}</button>
+                    <button type="button" onClick={this.fnClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</button>
                 </div>
             </form>
         </div>;

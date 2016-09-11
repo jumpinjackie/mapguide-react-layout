@@ -11,7 +11,7 @@ import { TaskPaneContainer } from "../containers/task-pane";
 import { PoweredByMapGuide } from "../components/pbmg";
 import { About } from "../components/about";
 import { SessionExpired } from "../components/session-expired";
-import { Measure } from "../components/measure";
+import { MeasureContainer } from "../containers/measure";
 import { ViewerOptions } from "../containers/viewer-options";
 
 import { registerComponentFactory, DefaultComponentNames } from "../api/registry/component";
@@ -28,6 +28,6 @@ export function registerDefaultComponents(): void {
     registerComponentFactory(DefaultComponentNames.TaskPane, (props) => <TaskPaneContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.About, (props) => <About {...props} />);
     registerComponentFactory(DefaultComponentNames.SessionExpired, (props) => <SessionExpired {...props} />);
-    registerComponentFactory(DefaultComponentNames.Measure, (props) => <Measure {...props} />);
+    registerComponentFactory(DefaultComponentNames.Measure, (props) => <MeasureContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.ViewerOptions, (props) => <ViewerOptions {...props} />);
 }

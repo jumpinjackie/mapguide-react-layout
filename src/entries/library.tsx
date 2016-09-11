@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import { registerStringBundle } from "../api/i18n";
 import { initDefaultCommands } from "../api/default-commands";
 import { ApplicationViewModel } from "./application";
 import { AjaxViewerLayout } from "../layouts/ajax-viewer";
@@ -22,14 +23,11 @@ registerDefaultComponents();
 
 export = {
     __DEV__: __DEV__,
-    Layouts: {
-        register: registerLayout
-    },
-    Commands: {
-        register: registerCommand
-    },
-    Components: {
-        register: registerComponentFactory
+    Registry: {
+        registerStringBundle: registerStringBundle, 
+        registerLayout: registerLayout,
+        registerCommand: registerCommand,
+        registerComponentFactory: registerComponentFactory
     },
     Application: ApplicationViewModel,
     Externals: {

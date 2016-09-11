@@ -53,7 +53,12 @@
                 "NAVIGATOR_ZOOM_OUT": "Rauszoomen",
                 "NAVIGATOR_ZOOM_IN": "Hineinzoomen",
                 "FMT_NAVIGATOR_ZOOM_TO_SCALE": "Zoom bis 1:{scale}",
-                "EXTERNAL_BASE_LAYERS": "Externe Base Layers"
+                "EXTERNAL_BASE_LAYERS": "Externe Base Layers",
+                "SELECTION_PROPERTY": "Eigentum",
+                "SELECTION_VALUE": "Wert",
+                "SELECTION_PREV_FEATURE": "Zurück Eigenschaft",
+                "SELECTION_NEXT_FEATURE": "Nächste Funktion",
+                "SELECTION_ZOOMTO_FEATURE": "Zoom auf ausgewählte Funktion"
             };
 
             MapGuide.Registry.registerStringBundle("de", STRINGS_DE);
@@ -63,14 +68,14 @@
             var viewer = new MapGuide.Application();
             viewer.mount(el, {
                 layout: "ajax-viewer",
-                agent: {
-                    uri: "../mapagent/mapagent.fcgi"
-                }/*
                 externalBaseLayers: [
                     { name: "OpenStreetMap", kind: "OSM" },
                     { name: "Stamen - Toner", kind: "Stamen", visible: true, options: { layer: "toner" } },
                     { name: "Stamen - Watercolor", kind: "Stamen", options: { layer: "watercolor" } }
-                ]*/
+                ],
+                agent: {
+                    uri: "../mapagent/mapagent.fcgi"
+                }
             });
         </script>
     </body>

@@ -1,8 +1,10 @@
 import * as React from "react";
 import { SelectedFeatureSet, SelectedFeature, LayerMetadata } from "../api/contracts/query";
 import { Toolbar, IItem, IMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
+import { tr as xlate } from "../api/i18n";
 
 export interface ISelectionPanelProps {
+    locale: string;
     selection: SelectedFeatureSet;
     onRequestZoomToFeature: (feat: SelectedFeature) => void;
 }
@@ -11,20 +13,20 @@ function buildToolbarItems(selPanel: SelectionPanel): IItem[] {
     return [
         {
             icon: "control-180.png",
-            tooltip: "Previous Feature",
+            tooltip: xlate("SELECTION_PREV_FEATURE", selPanel.props.locale),
             enabled: () => selPanel.canGoPrev(),
             invoke: () => selPanel.prevFeature()
         },
         {
             icon: "control.png",
-            tooltip: "Next Feature",
+            tooltip: xlate("SELECTION_NEXT_FEATURE", selPanel.props.locale),
             enabled: () => selPanel.canGoNext(),
             invoke: () => selPanel.nextFeature()
         },
         { isSeparator: true },
         {
             icon: "icon_zoomselect.gif",
-            tooltip: "Zoom to selected feature",
+            tooltip: xlate("SELECTION_ZOOMTO_FEATURE", selPanel.props.locale),
             enabled: () => selPanel.canZoomSelectedFeature(),
             invoke: () => selPanel.zoomSelectedFeature()
         }
@@ -126,8 +128,8 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
                         return <table>
                             <thead>
                                 <tr>
-                                    <th style={{ textAlign: "left" }}>Property</th>
-                                    <th style={{ textAlign: "left" }}>Value</th>
+                                    <th style={{ textAlign: "left" }}>{xlate("SELECTION_PROPERTY", this.props.locale)}</th>
+                                    <th style={{ textAlign: "left" }}>{xlate("SELECTION_VALUE", this.props.locale)}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -140,7 +142,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
                             </tbody>
                         </table>;
                     } else if (selection == null || (selection.SelectedLayer || []).length == 0) {
-                        return <p>No features selected</p>;
+                        return <p>{xlate("NO_SELECTED_FEATURES", this.props.locale)}</p>;
                     }
                 })()}
             </div>

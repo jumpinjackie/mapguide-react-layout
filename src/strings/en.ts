@@ -38,7 +38,12 @@ const STRINGS_EN: any = {
     "NAVIGATOR_ZOOM_OUT": "Zoom Out",
     "NAVIGATOR_ZOOM_IN": "Zoom In",
     "FMT_NAVIGATOR_ZOOM_TO_SCALE": "Zoom to 1:{scale}",
-    "EXTERNAL_BASE_LAYERS": "External Base Layers"
+    "EXTERNAL_BASE_LAYERS": "External Base Layers",
+    "SELECTION_PROPERTY": "Property",
+    "SELECTION_VALUE": "Value",
+    "SELECTION_PREV_FEATURE": "Previous Feature",
+    "SELECTION_NEXT_FEATURE": "Next Feature",
+    "SELECTION_ZOOMTO_FEATURE": "Zoom to selected feature"
 };
 
 export default STRINGS_EN;

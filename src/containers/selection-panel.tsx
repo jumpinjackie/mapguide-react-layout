@@ -50,7 +50,7 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
         const { selection, config } = this.props;
         if (selection != null && 
             selection.SelectedFeatures != null) {
-            return <SelectionPanel selection={selection.SelectedFeatures} onRequestZoomToFeature={this.fnZoomToSelectedFeature} />;
+            return <SelectionPanel locale={config.locale} selection={selection.SelectedFeatures} onRequestZoomToFeature={this.fnZoomToSelectedFeature} />;
         } else {
             return <div>{tr("NO_SELECTED_FEATURES", config.locale)}</div>;
         }

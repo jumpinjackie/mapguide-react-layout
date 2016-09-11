@@ -395,7 +395,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
 
     private _customLayers: { [name: string]: ol.layer.Base; };
 
-    private fnKeyPress: (e) => void;
+    private fnKeyUp: (e) => void;
+    private fnKeyDown: (e) => void;
     /**
      * This is a throttled version of _refreshOnStateChange(). Call this on any 
      * modifications to pendingStateChanges 
@@ -409,7 +410,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this._map = null;
         this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), props.stateChangeDebounceTimeout || 500);
         this._wktFormat = new ol.format.WKT();
-        this.fnKeyPress = this.onKeyPress.bind(this);
+        this.fnKeyDown = this.onKeyDown.bind(this);
+        this.fnKeyUp = this.onKeyUp.bind(this);
         this._busyWorkers = 0;
         this._triggerZoomRequestOnMoveEnd = true;
         this._supportsTouch = isMobile.phone || isMobile.tablet;
@@ -589,12 +591,16 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         })
         this._map.addInteraction(this._activeDrawInteraction);
     }
-    private onKeyPress(e) {
+    private onKeyDown(e) {
         switch (e.keyCode) {
             case KC_ESCAPE:
                 this.cancelDigitization();
                 break;
         }
+        this.setState({ shiftKey: e.shiftKey });
+    }
+    private onKeyUp(e) {
+        this.setState({ shiftKey: e.shiftKey });
     }
     private onMouseMove(e) {
         if (this._contextMenuOpen) {
@@ -892,7 +898,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                                                        this.onSessionExpired.bind(this),
                                                        this.getSelectableLayers.bind(this));
         this._featureTooltip.setEnabled(this.props.featureTooltipsEnabled);
-        document.addEventListener("keydown", this.fnKeyPress);
+        document.addEventListener("keydown", this.fnKeyDown);
+        document.addEventListener("keyup", this.fnKeyUp);
         
         //Listen for scale changes
         const selSource = this._selectionOverlay.getSource();

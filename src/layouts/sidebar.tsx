@@ -192,7 +192,7 @@ class Sidebar extends React.Component<ISidebarProps, any> {
                 {(() => {
                     if (this.props.taskpane) {
                         return <div className={`sidebar-pane ${activeTab == "tasks" ? "active" : ""}`}>
-                            <SidebarHeader text="Task Pane" onCloseClick={this.fnClickCollapse} />
+                            <SidebarHeader text={tr("TPL_SIDEBAR_TITLE_TASKPANE", this.props.locale)} onCloseClick={this.fnClickCollapse} />
                             <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
                                 <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={this.props.locale} />
                             </div>
@@ -202,7 +202,7 @@ class Sidebar extends React.Component<ISidebarProps, any> {
                 {(() => {
                     if (this.props.legend) {
                         return <div className={`sidebar-pane ${activeTab == "legend" ? "active" : ""}`}>
-                            <SidebarHeader text="Legend" onCloseClick={this.fnClickCollapse} />
+                            <SidebarHeader text={tr("TPL_SIDEBAR_TITLE_LEGEND", this.props.locale)} onCloseClick={this.fnClickCollapse} />
                             <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
                                 <PlaceholderComponent id={DefaultComponentNames.Legend} locale={this.props.locale} />
                             </div>
@@ -212,7 +212,7 @@ class Sidebar extends React.Component<ISidebarProps, any> {
                 {(() => {
                     if (this.props.selection) {
                         return <div className={`sidebar-pane ${activeTab == "selection" ? "active" : ""}`}>
-                            <SidebarHeader text="Selection" onCloseClick={this.fnClickCollapse} />
+                            <SidebarHeader text={tr("TPL_SIDEBAR_TITLE_SELECTION", this.props.locale)} onCloseClick={this.fnClickCollapse} />
                             <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
                                 <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={this.props.locale} />
                             </div>

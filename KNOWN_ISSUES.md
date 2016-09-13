@@ -6,6 +6,7 @@ Components
 
  * Toolbars
    * Only one level of menu nesting is supported. Flyouts within Flyouts is not supported/implemented.
+   * Toolbars currently make no attempts to gracefully handle overflow when the toolbar has more items than the physical screen/container space allows. 
 
 Viewer
 ======

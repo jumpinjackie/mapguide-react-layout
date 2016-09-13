@@ -331,6 +331,10 @@ class MouseTrackingTooltip {
     }
 }
 
+function isMiddleMouseDownEvent(e) {
+    return (e && (e.which == 2 || e.button == 4 ));
+}
+
 function cloneExtent(bounds: Bounds): Bounds {
     return [
         bounds[0],
@@ -394,6 +398,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
 
     private fnKeyUp: (e) => void;
     private fnKeyDown: (e) => void;
+    private fnMouseDown: (e) => void;
+    private fnMouseUp: (e) => void;
     /**
      * This is a throttled version of _refreshOnStateChange(). Call this on any 
      * modifications to pendingStateChanges 
@@ -409,13 +415,16 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this._wktFormat = new ol.format.WKT();
         this.fnKeyDown = this.onKeyDown.bind(this);
         this.fnKeyUp = this.onKeyUp.bind(this);
+        this.fnMouseDown = this.onMouseDown.bind(this);
+        this.fnMouseUp = this.onMouseUp.bind(this);
         this._busyWorkers = 0;
         this._triggerZoomRequestOnMoveEnd = true;
         this._supportsTouch = isMobile.phone || isMobile.tablet;
         this._contextMenuOpen = false;
         this._customLayers = {};
         this.state = {
-            shiftKey: false
+            shiftKey: false,
+            middleMouseDown: false
         };
     }
     /**
@@ -584,6 +593,12 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             handler(geom);
         })
         this._map.addInteraction(this._activeDrawInteraction);
+    }
+    private onMouseDown(e) {
+        this.setState({ middleMouseDown: (e && (e.which == 2 || e.button == 4 )) });
+    }
+    private onMouseUp(e) {
+        this.setState({ middleMouseDown: false });
     }
     private onKeyDown(e) {
         switch (e.keyCode) {
@@ -879,7 +894,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             interactions: [
                 new ol.interaction.DragRotate(),
                 new ol.interaction.DragPan({
-                    condition: (e) => (this._supportsTouch || this.props.tool === ActiveMapTool.Pan)
+                    condition: (e) => {
+                        const startingMiddleMouseDrag = e.type == "pointerdown" && isMiddleMouseDownEvent((e as any).originalEvent);
+                        const enabled = (startingMiddleMouseDrag || this._supportsTouch || this.props.tool === ActiveMapTool.Pan);
+                        //console.log(e);
+                        //console.log(`Allow Pan - ${enabled} (middle mouse: ${startingMiddleMouseDrag})`);
+                        return enabled;
+                    }
                 }),
                 new ol.interaction.PinchRotate(),
                 new ol.interaction.PinchZoom(),
@@ -900,7 +921,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this._featureTooltip.setEnabled(this.props.featureTooltipsEnabled);
         document.addEventListener("keydown", this.fnKeyDown);
         document.addEventListener("keyup", this.fnKeyUp);
-        
+        document.addEventListener("mousedown", this.fnMouseDown);
+        document.addEventListener("mouseup", this.fnMouseUp);
+
         //Listen for scale changes
         const selSource = this._selectionOverlay.getSource();
         const ovSource = this._overlay.getSource();

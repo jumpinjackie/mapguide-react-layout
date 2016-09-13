@@ -163,7 +163,7 @@ export function initDefaultCommands() {
                 type: Constants.MODAL_SHOW_COMPONENT,
                 payload: {
                     modal: {
-                        title: tr("About"),
+                        title: tr("ABOUT", getState().config.locale),
                         backdrop: true
                     },
                     name: DefaultComponentNames.About,
@@ -182,7 +182,7 @@ export function initDefaultCommands() {
                 type: Constants.MODAL_SHOW_URL,
                 payload: {
                     modal: {
-                        title: tr("Help"),
+                        title: tr("HELP", getState().config.locale),
                         backdrop: true,
                         size: [ 300, 500 ]
                     },
@@ -211,7 +211,7 @@ export function initDefaultCommands() {
                     type: Constants.MODAL_SHOW_URL,
                     payload: {
                         modal: {
-                            title: tr("Measure"),
+                            title: tr("MEASURE", config.locale),
                             backdrop: false,
                             size: [ 300, 500 ]
                         },
@@ -241,7 +241,7 @@ export function initDefaultCommands() {
                     type: Constants.MODAL_SHOW_URL,
                     payload: {
                         modal: {
-                            title: tr("Viewer options"),
+                            title: tr("VIEWER_OPTIONS", config.locale),
                             backdrop: false,
                             size: [ 300, 500 ]
                         },

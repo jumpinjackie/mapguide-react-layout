@@ -23,6 +23,7 @@ const STRINGS_EN: any = {
     "DIGITIZE_CIRCLE_PROMPT": "Click to set this position as the center.<br/>Move out to the desired radius and click again to finish<br/><br/>Press ESC to cancel",
     "DIGITIZE_RECT_PROMPT": "Click to set this position as one corner.<br/>Click again to finish and set this position as the other corner<br/><br/>Press ESC to cancel",
     "DIGITIZE_POLYGON_PROMPT": "Click to set this positon as the start.<br/>Click again to add a vertex at this position.<br/>Hold SHIFT and drag while digitizing to draw in freehand mode<br/><br/>Double click to finish and close the polygon<br/>Press ESC to cancel",
+    "MEASURE": "Measure",
     "MEASUREMENT_TYPE": "Measurement Type",
     "MEASUREMENT_TYPE_LENGTH": "Length (LineString)",
     "MEASUREMENT_TYPE_AREA": "Area (Polygon)",
@@ -43,7 +44,10 @@ const STRINGS_EN: any = {
     "SELECTION_VALUE": "Value",
     "SELECTION_PREV_FEATURE": "Previous Feature",
     "SELECTION_NEXT_FEATURE": "Next Feature",
-    "SELECTION_ZOOMTO_FEATURE": "Zoom to selected feature"
+    "SELECTION_ZOOMTO_FEATURE": "Zoom to selected feature",
+    "VIEWER_OPTIONS": "Viewer Options",
+    "ABOUT": "About",
+    "HELP": "Help"
 };
 
 export default STRINGS_EN;

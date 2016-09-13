@@ -21,6 +21,15 @@
             top: 0;
             bottom: 0;
         }
+
+        #toolbar-region {
+            z-index: 2040;
+            position: absolute;
+            left: 1px;
+            width: 40px;
+            margin: 0;
+            padding: 0;
+        }
         
         .sidebar {
             position: absolute;
@@ -40,6 +49,9 @@
                 top: 6px;
                 bottom: 6px;
                 transition: width 500ms;
+            }
+            #toolbar-region {
+                left: 10px;
             }
         }
         
@@ -365,14 +377,7 @@
                 margin-right: 52px;
             }
         }
-        
-        #toolbar-region {
-            position: absolute;
-            width: 40px;
-            margin: 0;
-            padding: 0;
-        }
-        
+         
         html,
         body,
         #map {

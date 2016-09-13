@@ -1,5 +1,7 @@
-//TODO: Move to separate module
 const STRINGS_EN: any = {
+    "TPL_SIDEBAR_TITLE_TASKPANE": "Task Pane",
+    "TPL_SIDEBAR_TITLE_LEGEND": "Legend",
+    "TPL_SIDEBAR_TITLE_SELECTION_PANEL": "Selection",
     "TPL_SIDEBAR_OPEN_TASKPANE": "Open Task Pane",
     "TPL_SIDEBAR_OPEN_LEGEND": "Open Legend",
     "TPL_SIDEBAR_OPEN_SELECTION_PANEL": "Open Selection Panel",

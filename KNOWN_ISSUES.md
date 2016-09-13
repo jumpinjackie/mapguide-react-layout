@@ -28,6 +28,4 @@ Viewer
 Templates
 =========
 
- * Template: Sidebar
-   * Flyout menus do not work on the main toolbar in this template
-     * Workaround: House such commands within the task pane menu or context menu, or fold the commands into the main toolbar
+ * No known issues

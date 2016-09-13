@@ -4,7 +4,7 @@
  * This is the main map viewer component that wraps the OpenLayers 3 map viewer and its various APIs
  * 
  * This component is designed to be as "dumb" as possible, taking as much of its viewer directives from
- * the props given to it. It carries no internal component state. Any relevant state is farmed off and 
+ * the props given to it. It carries minimal component state. Where possible, relevant state is farmed off and 
  * managed by a higher level parent component
  * 
  * This component is usually wrapped by its "smart" sibling (src/containers/map-viewer.tsx), which is
@@ -15,10 +15,6 @@
  * NOTE: This component does not perfectly implement uni-directional data flow (sadly OpenLayers 3 is fighting
  * against us in some parts, and is prone to out-of-band updates to map state that we are not properly flowing back), 
  * thus it breaks certain debugging capabilities of redux such as "time travel"
- * 
- * TODO/FIXME: One key violator of uni-directional data flow principle is map selection. This is definitely 
- * an out-of-band action that does not properly flow back. The underlying QUERYMAPFEATURES request should 
- * be encapsulated behind a redux action
  */
 
 import * as React from "react";
@@ -398,8 +394,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
 
     private fnKeyUp: (e) => void;
     private fnKeyDown: (e) => void;
-    private fnMouseDown: (e) => void;
-    private fnMouseUp: (e) => void;
     /**
      * This is a throttled version of _refreshOnStateChange(). Call this on any 
      * modifications to pendingStateChanges 
@@ -415,16 +409,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this._wktFormat = new ol.format.WKT();
         this.fnKeyDown = this.onKeyDown.bind(this);
         this.fnKeyUp = this.onKeyUp.bind(this);
-        this.fnMouseDown = this.onMouseDown.bind(this);
-        this.fnMouseUp = this.onMouseUp.bind(this);
         this._busyWorkers = 0;
         this._triggerZoomRequestOnMoveEnd = true;
         this._supportsTouch = isMobile.phone || isMobile.tablet;
         this._contextMenuOpen = false;
         this._customLayers = {};
         this.state = {
-            shiftKey: false,
-            middleMouseDown: false
+            shiftKey: false
         };
     }
     /**
@@ -593,12 +584,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             handler(geom);
         })
         this._map.addInteraction(this._activeDrawInteraction);
-    }
-    private onMouseDown(e) {
-        this.setState({ middleMouseDown: (e && (e.which == 2 || e.button == 4 )) });
-    }
-    private onMouseUp(e) {
-        this.setState({ middleMouseDown: false });
     }
     private onKeyDown(e) {
         switch (e.keyCode) {
@@ -921,8 +906,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this._featureTooltip.setEnabled(this.props.featureTooltipsEnabled);
         document.addEventListener("keydown", this.fnKeyDown);
         document.addEventListener("keyup", this.fnKeyUp);
-        document.addEventListener("mousedown", this.fnMouseDown);
-        document.addEventListener("mouseup", this.fnMouseUp);
 
         //Listen for scale changes
         const selSource = this._selectionOverlay.getSource();

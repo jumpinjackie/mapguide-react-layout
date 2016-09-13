@@ -62,7 +62,25 @@
                 "SELECTION_ZOOMTO_FEATURE": "Zoom auf ausgewählte Funktion",
                 "VIEWER_OPTIONS": "Viewer-Optionen",
                 "ABOUT": "Etwa",
-                "HELP": "Hilfe"
+                "HELP": "Hilfe",
+                "QUICKPLOT_HEADER": "Schnell-Plot",
+                "QUICKPLOT_TITLE": "Titel",
+                "QUICKPLOT_SUBTITLE": "Untertitel",
+                "QUICKPLOT_PAPER_SIZE": "Papier größe",
+                "QUICKPLOT_ORIENTATION": "Orientierung",
+                "QUICKPLOT_ORIENTATION_P": "Porträt",
+                "QUICKPLOT_ORIENTATION_L": "Landschaft",
+                "QUICKPLOT_SHOWELEMENTS": "Elemente zeigen",
+                "QUICKPLOT_SHOWLEGEND": "Legende anzeigen",
+                "QUICKPLOT_SHOWNORTHARROW": "Zeige Nordpfeil",
+                "QUICKPLOT_SHOWCOORDINTES": "Zeige Koordinaten",
+                "QUICKPLOT_SHOWSCALEBAR": "Skala anzeigen Bar",
+                "QUICKPLOT_SHOWDISCLAIMER": "anzeigen Haftungsausschluss",
+                "QUICKPLOT_ADVANCED_OPTIONS": "Erweiterte Optionen",
+                "QUICKPLOT_SCALING": "Skala",
+                "QUICKPLOT_DPI": "DPI",
+                "QUICKPLOT_GENERATE": "generieren Grundstück",
+                "QUICKPLOT_COMMERCIAL_LAYER_WARNING": "Schnell-Plot wird keine sichtbaren kommerzielle Kartenschichten umfassen"
             };
 
             MapGuide.Registry.registerStringBundle("de", STRINGS_DE);
@@ -71,12 +89,12 @@
             var el = document.getElementById("map");
             var viewer = new MapGuide.Application();
             viewer.mount(el, {
-                layout: "ajax-viewer",
+                layout: "ajax-viewer",/*
                 externalBaseLayers: [
                     { name: "OpenStreetMap", kind: "OSM" },
                     { name: "Stamen - Toner", kind: "Stamen", visible: true, options: { layer: "toner" } },
                     { name: "Stamen - Watercolor", kind: "Stamen", options: { layer: "watercolor" } }
-                ],
+                ],*/
                 agent: {
                     uri: "../mapagent/mapagent.fcgi"
                 }

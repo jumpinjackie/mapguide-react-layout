@@ -74,6 +74,7 @@ export class DefaultCommands {
     public static get ViewerOptions(): string { return "ViewerOptions"; }
     public static get Buffer(): string { return "Buffer"; }
     public static get SelectWithin(): string { return "SelectWithin"; }
+    public static get QuickPlot(): string { return "QuickPlot"; }
 }
 
 export interface ICommandRef {

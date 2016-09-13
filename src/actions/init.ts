@@ -47,6 +47,8 @@ function convertUIItems(items: UIItem[], cmdsByKey: any, noToolbarLabels = true,
                             return { command: DefaultCommands.Buffer, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
                         case "SelectWithinCommandType":
                             return { command: DefaultCommands.SelectWithin, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
+                        case "GetPrintablePageCommandType":
+                            return { command: DefaultCommands.QuickPlot, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
                         default:
                             return { command: cmdDef.Name, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
                     }

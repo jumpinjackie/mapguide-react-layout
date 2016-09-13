@@ -2,6 +2,55 @@
 @import '~@aneves/react-flyout/dist/flyout.css';
 @import "../externs/ol3-contextmenu.css";
 
+/* Begin QuickPlot */
+div.Label
+{
+    padding:5px 0px;
+}
+
+div.Ctrl
+{
+    padding:5px 0px;
+}
+
+div.Title
+{
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 0px;
+}
+
+div.HPlaceholder5px
+{
+    font-size:0px;
+    height:5px;
+}
+
+div.ButtonContainer
+{
+    padding: 5px 0px;
+    text-align: right;
+}
+
+.FixWidth
+{
+    width: 100%;
+}
+
+div.InfoText
+{
+    padding: 3px;
+    background-color: #FFFFCC;
+    color: #666666;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8pt;
+}
+/* End QuickPlot */
+
+.field, .field-label {
+    display: block;
+}
+
 .error-display {
     color: #ffffff;
     background-color: #ff0000;

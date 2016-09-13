@@ -222,6 +222,36 @@ export function initDefaultCommands() {
             }
         }
     });
+    //Quick Plot
+    registerCommand(DefaultCommands.QuickPlot, {
+        icon: "print.png",
+        selected: () => false,
+        enabled: () => true,
+        invoke: (dispatch, getState, viewer) => {
+            const config = getState().config;
+            if (config.capabilities.hasTaskPane) {
+                dispatch({
+                    type: Constants.TASK_INVOKE_URL,
+                    payload: {
+                        url: "component://QuickPlot"
+                    }
+                });
+            } else {
+                dispatch({
+                    type: Constants.MODAL_SHOW_URL,
+                    payload: {
+                        modal: {
+                            title: tr("VIEWER_OPTIONS", config.locale),
+                            backdrop: false,
+                            size: [ 300, 500 ]
+                        },
+                        name: DefaultCommands.QuickPlot,
+                        url: "component://QuickPlot"
+                    }
+                });
+            }
+        }
+    });
     //Viewer Options
     registerCommand(DefaultCommands.ViewerOptions, {
         icon: "options.png",

@@ -6,7 +6,7 @@ import rootReducer from '../reducers';
 const persistState = require('redux-localstorage');
 
 function configureStore(initialState) {
-    const store = compose(
+    const store = (<any>compose)( //HACK: Something bogus about the compose() declaration
         _getMiddleware(),
         ..._getEnhancers()
     )(createStore)(rootReducer, initialState);

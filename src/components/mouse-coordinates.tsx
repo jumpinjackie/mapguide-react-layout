@@ -16,7 +16,7 @@ function formatCoordinates(props: IMouseCoordinatesProps) {
     const sfmt = format || "X: {x}, Y: {y}";
     return fmt(sfmt, {
         x: `${decimals != null ? coords[0].toFixed(decimals) : coords[0]}`,
-        y: `${decimals != null ? coords[1].toFixed(decimals) : coords[0]}`
+        y: `${decimals != null ? coords[1].toFixed(decimals) : coords[1]}`
     });
 }
 

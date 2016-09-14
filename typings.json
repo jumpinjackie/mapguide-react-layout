@@ -12,6 +12,7 @@
     "whatwg-fetch": "registry:dt/whatwg-fetch#0.0.0+20160524142046"
   },
   "dependencies": {
+    "enzyme": "registry:npm/enzyme#2.2.0+20160322031343",
     "lodash": "registry:npm/lodash#4.0.0+20160701205107",
     "node-uuid": "registry:npm/node-uuid#1.4.7+20160723033700",
     "react-redux": "registry:npm/react-redux#4.4.0+20160614222153",

@@ -4,7 +4,7 @@ import { tr, fmt } from "../api/i18n";
 
 interface IMouseCoordinatesProps {
     selection: FeatureSet;
-    locale: string;
+    locale?: string;
     format?: string;
     style?: React.CSSProperties;
 }

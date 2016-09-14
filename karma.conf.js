@@ -13,6 +13,7 @@ module.exports = function (config) {
             'test/**/*.ts': ['webpack']
         },
         webpack: {
+            plugins: webpackConfig.plugins,
             module: webpackConfig.module,
             resolve: webpackConfig.resolve
         },

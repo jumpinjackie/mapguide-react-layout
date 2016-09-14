@@ -139,7 +139,7 @@ export class Navigator extends React.Component<INavigatorProps, any> {
             </map>
             <img src="stdicons/sliderscale.png" className="png24" width="51" height="201" useMap="#Navigator_ImageMap" style={{ position: "absolute", left: 0, top: 0 }} />
             <div style={{ position: "absolute", top: 6, left: 6, width: 39, height: 16 }}>
-                <img src="stdicons/spinner.gif" width="18" height="6" style={{ position: "absolute", top: 3, right: 4, visibility: busy ? "visible" : "hidden" }} />
+                <img src="stdicons/spinner.gif" className="navigator-spinner" width="18" height="6" style={{ position: "absolute", top: 3, right: 4, visibility: busy ? "visible" : "hidden" }} />
             </div>
             <Draggable axis="y"
                        handle="img.navigator-drag-handle"

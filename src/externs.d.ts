@@ -196,6 +196,20 @@ declare module "ol3-contextmenu" {
     export = ContextMenu;
 }
 
+declare module "testdouble" {
+    interface TestDoubleFunctionSetup {
+        thenReturn(result: any): void;
+    }
+    interface TestDoubleAPI {
+        function<TFunc>(name?: string): TFunc;
+        function(name?: string): Function;
+        verify(funcCallResult: any): void;
+        when(funcCallResult: any): TestDoubleFunctionSetup;
+    }
+    var td: TestDoubleAPI;
+    export = td;
+}
+
 // Types for various development options.
 
 // A hack for the Redux DevTools Chrome extension.

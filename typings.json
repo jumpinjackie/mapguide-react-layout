@@ -8,7 +8,6 @@
     "node": "registry:dt/node#6.0.0+20160709114037",
     "react": "registry:dt/react#0.14.0+20160630100702",
     "react-dom": "registry:dt/react-dom#0.14.0+20160412154040",
-    "sinon": "registry:dt/sinon#1.16.0+20160517064723",
     "whatwg-fetch": "registry:dt/whatwg-fetch#0.0.0+20160524142046"
   },
   "dependencies": {

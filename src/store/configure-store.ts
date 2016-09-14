@@ -1,5 +1,4 @@
 import { createStore, applyMiddleware, compose } from 'redux';
-import { fromJS } from 'immutable';
 import thunk from 'redux-thunk';
 import promiseMiddleware from './promise-middleware';
 import logger from './logger';

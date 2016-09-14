@@ -163,7 +163,7 @@ class FlyoutMenuChildItem extends React.Component<any, any> {
         const enabled = item.enabled != null ? item.enabled() : true;
         const imgStyle = getIconStyle(enabled, height);
         const style = getMenuItemStyle(enabled, selected, height, this.state.isMouseOver);
-        return <li className="noselect" title={item.tooltip} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick}>
+        return <li className="noselect flyout-menu-child-item" title={item.tooltip} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick}>
             <div style={style}>
                 <img style={imgStyle} src={getIcon(item.icon)} /> {item.label}
             </div>
@@ -184,7 +184,7 @@ class ToolbarContentContainer extends React.Component<IToolbarContentContainerPr
         const { size, vertical } = this.props;
         const imgStyle = getIconStyle(true, size);
         const style = getItemStyle(true, false, size, false, vertical);
-        return <div className="noselect">{this.props.children}</div>;
+        return <div className="noselect toolbar-content-container">{this.props.children}</div>;
     }
 }
 
@@ -240,7 +240,7 @@ class FlyoutMenuItem extends React.Component<IFlyoutMenuItemProps, any> {
         if (!align) {
             align = (vertical === true) ? "right bottom" : "bottom right";
         }
-        return <div className="has-flyout noselect" onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={menu.tooltip}>
+        return <div className="has-flyout noselect toolbar-flyout-btn" onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={menu.tooltip}>
             <div data-flyout-id={`flyout-${this.flyoutId}`}>
                 {label} <img style={imgStyle} src={getIcon(menu.icon || ((this.state.isFlownOut) ? "icon_menuarrowup.gif" : "icon_menuarrow.gif"))} />
             </div>
@@ -271,9 +271,9 @@ class ToolbarSeparator extends React.Component<IToolbarSeparatorProps, any> {
     render(): JSX.Element {
         const style = getToolbarSeparatorItemStyle(this.props.size, this.props.vertical);
         if (this.props.vertical === true) {
-            return <div className="noselect" style={style} />;
+            return <div className="noselect toolbar-separator" style={style} />;
         } else {
-            return <div className="noselect" style={style}>{Constants.NBSP}</div>;
+            return <div className="noselect toolbar-separator" style={style}>{Constants.NBSP}</div>;
         }
     }
 }
@@ -318,7 +318,7 @@ class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
         const enabled = getEnabled(item);
         const imgStyle = getIconStyle(enabled, height);
         const style = getItemStyle(enabled, selected, height, this.state.isMouseOver, vertical);
-        return <div className="noselect" onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} style={style} title={item.tooltip} onClick={this.fnClick}>
+        return <div className="noselect toolbar-btn" onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} style={style} title={item.tooltip} onClick={this.fnClick}>
             <img style={imgStyle} src={getIcon(item.icon)} /> {item.label}
         </div>;
     }

@@ -4,7 +4,7 @@ import { Toolbar, IItem, IMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR }
 import { tr as xlate } from "../api/i18n";
 
 export interface ISelectionPanelProps {
-    locale: string;
+    locale?: string;
     selection: SelectedFeatureSet;
     onRequestZoomToFeature: (feat: SelectedFeature) => void;
 }
@@ -112,8 +112,8 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
         return <div style={{ width: "100%", height: "100%" }}>
             {(() => {
                 if (selection != null && selection.SelectedLayer != null && selection.SelectedLayer.length > 0) {
-                    return <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR }}>
-                        <select value={this.state.selectedLayerIndex} style={{ position: "absolute", top: 0, left: 0, height: DEFAULT_TOOLBAR_SIZE, maxWidth: 180 }} onChange={this.fnSelectedLayerChanged}>
+                    return <div className="selection-panel-toolbar" style={{ position: "absolute", top: 0, left: 0, right: 0, height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR }}>
+                        <select className="selection-panel-layer-selector" value={this.state.selectedLayerIndex} style={{ position: "absolute", top: 0, left: 0, height: DEFAULT_TOOLBAR_SIZE, maxWidth: 180 }} onChange={this.fnSelectedLayerChanged}>
                             {selection.SelectedLayer.map((layer: any, index) => {
                                 return <option key={`selected-layer-${layer["@id"]}`} value={index}>{layer["@name"]}</option>
                             })}
@@ -125,7 +125,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
             <div style={{ position: "absolute", top: DEFAULT_TOOLBAR_SIZE, left: 0, right: 0, bottom: 0, overflow: "hidden" }}>
                 {(() => {
                     if (feat != null && meta != null) {
-                        return <table>
+                        return <table className="selection-panel-property-grid">
                             <thead>
                                 <tr>
                                     <th style={{ textAlign: "left" }}>{xlate("SELECTION_PROPERTY", this.props.locale)}</th>
@@ -142,7 +142,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
                             </tbody>
                         </table>;
                     } else if (selection == null || (selection.SelectedLayer || []).length == 0) {
-                        return <p>{xlate("NO_SELECTED_FEATURES", this.props.locale)}</p>;
+                        return <p className="selection-panel-no-selection">{xlate("NO_SELECTED_FEATURES", this.props.locale)}</p>;
                     }
                 })()}
             </div>

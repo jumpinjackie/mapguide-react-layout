@@ -11,7 +11,9 @@
     "dev": "cross-env NODE_ENV=development webpack-dev-server -d --inline --hot --progress --no-info",
     "lint": "tslint 'src/**/*.tsx' 'src/**/*.ts' 'test/**/*.tsx' 'test/**/*.ts'",
     "postinstall": "npm run typings && npm run build",
-    "typings": "rimraf typings/ && typings install"
+    "typings": "rimraf typings/ && typings install",
+    "test": "tslint src/**/*.ts",
+    "ci": "npm run test && npm run build"
   },
   "repository": {
     "type": "git",

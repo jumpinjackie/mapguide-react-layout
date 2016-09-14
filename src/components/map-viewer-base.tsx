@@ -4,7 +4,7 @@
  * This is the main map viewer component that wraps the OpenLayers 3 map viewer and its various APIs
  * 
  * This component is designed to be as "dumb" as possible, taking as much of its viewer directives from
- * the props given to it. It carries no internal component state. Any relevant state is farmed off and 
+ * the props given to it. It carries minimal component state. Where possible, relevant state is farmed off and 
  * managed by a higher level parent component
  * 
  * This component is usually wrapped by its "smart" sibling (src/containers/map-viewer.tsx), which is
@@ -15,10 +15,6 @@
  * NOTE: This component does not perfectly implement uni-directional data flow (sadly OpenLayers 3 is fighting
  * against us in some parts, and is prone to out-of-band updates to map state that we are not properly flowing back), 
  * thus it breaks certain debugging capabilities of redux such as "time travel"
- * 
- * TODO/FIXME: One key violator of uni-directional data flow principle is map selection. This is definitely 
- * an out-of-band action that does not properly flow back. The underlying QUERYMAPFEATURES request should 
- * be encapsulated behind a redux action
  */
 
 import * as React from "react";
@@ -329,6 +325,10 @@ class MouseTrackingTooltip {
             this.tooltipElement.parentNode.removeChild(this.tooltipElement);
         }
     }
+}
+
+function isMiddleMouseDownEvent(e) {
+    return (e && (e.which == 2 || e.button == 4 ));
 }
 
 function cloneExtent(bounds: Bounds): Bounds {
@@ -879,7 +879,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             interactions: [
                 new ol.interaction.DragRotate(),
                 new ol.interaction.DragPan({
-                    condition: (e) => (this._supportsTouch || this.props.tool === ActiveMapTool.Pan)
+                    condition: (e) => {
+                        const startingMiddleMouseDrag = e.type == "pointerdown" && isMiddleMouseDownEvent((e as any).originalEvent);
+                        const enabled = (startingMiddleMouseDrag || this._supportsTouch || this.props.tool === ActiveMapTool.Pan);
+                        //console.log(e);
+                        //console.log(`Allow Pan - ${enabled} (middle mouse: ${startingMiddleMouseDrag})`);
+                        return enabled;
+                    }
                 }),
                 new ol.interaction.PinchRotate(),
                 new ol.interaction.PinchZoom(),
@@ -900,7 +906,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this._featureTooltip.setEnabled(this.props.featureTooltipsEnabled);
         document.addEventListener("keydown", this.fnKeyDown);
         document.addEventListener("keyup", this.fnKeyUp);
-        
+
         //Listen for scale changes
         const selSource = this._selectionOverlay.getSource();
         const ovSource = this._overlay.getSource();

@@ -13,20 +13,20 @@
     </head>
     <body>
         <div id="map"></div>
+        <script type="text/javascript" src="strings-de.js"></script>
         <script type="text/javascript">
-
             MapGuide.Registry.registerStringBundle("de", STRINGS_DE);
             MapGuide.Externals.proj4.defs("EPSG:28355","+proj=utm +zone=55 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
 
             var el = document.getElementById("map");
             var viewer = new MapGuide.Application();
             viewer.mount(el, {
-                layout: "ajax-viewer",
+                layout: "ajax-viewer",/*
                 externalBaseLayers: [
                     { name: "OpenStreetMap", kind: "OSM" },
                     { name: "Stamen - Toner", kind: "Stamen", visible: true, options: { layer: "toner" } },
                     { name: "Stamen - Watercolor", kind: "Stamen", options: { layer: "watercolor" } }
-                ],
+                ],*/
                 agent: {
                     uri: "../mapagent/mapagent.fcgi"
                 }

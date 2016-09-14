@@ -6,6 +6,7 @@ Components
 
  * Toolbars
    * Only one level of menu nesting is supported. Flyouts within Flyouts is not supported/implemented.
+   * Toolbars currently make no attempts to gracefully handle overflow when the toolbar has more items than the physical screen/container space allows. 
 
 Viewer
 ======
@@ -28,6 +29,4 @@ Viewer
 Templates
 =========
 
- * Template: Sidebar
-   * Flyout menus do not work on the main toolbar in this template
-     * Workaround: House such commands within the task pane menu or context menu, or fold the commands into the main toolbar
+ * No known issues

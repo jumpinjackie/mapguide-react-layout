@@ -13,6 +13,7 @@ import { About } from "../components/about";
 import { SessionExpired } from "../components/session-expired";
 import { MeasureContainer } from "../containers/measure";
 import { ViewerOptions } from "../containers/viewer-options";
+import { QuickPlotContainer } from "../containers/quick-plot";
 
 import { registerComponentFactory, DefaultComponentNames } from "../api/registry/component";
 
@@ -30,4 +31,5 @@ export function registerDefaultComponents(): void {
     registerComponentFactory(DefaultComponentNames.SessionExpired, (props) => <SessionExpired {...props} />);
     registerComponentFactory(DefaultComponentNames.Measure, (props) => <MeasureContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.ViewerOptions, (props) => <ViewerOptions {...props} />);
+    registerComponentFactory(DefaultComponentNames.QuickPlot, (props) => <QuickPlotContainer {...props} />);
 }

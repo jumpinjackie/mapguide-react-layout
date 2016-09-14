@@ -47,7 +47,6 @@ interface ISidebarProps {
     taskpane: boolean;
     legend: boolean;
     selection: boolean;
-    toolbar: boolean;
     busy: boolean;
     locale: string;
     position: "left" | "right";
@@ -170,23 +169,6 @@ class Sidebar extends React.Component<ISidebarProps, any> {
                     })()}
                     <li className="sidebar-separator"></li>
                 </ul>
-                {(() => {
-                    if (this.props.toolbar) {
-                        let top = 170;
-                        if (!this.props.selection) {
-                            top -= 40;
-                        }
-                        if (!this.props.legend) {
-                            top -= 40;
-                        }
-                        if (!this.props.taskpane) {
-                            top -= 40;
-                        }
-                        return <div id="toolbar-region" style={{ top: top }}>
-                            <ToolbarContainer id="main" vertical={true} containerStyle={{ position: "absolute", left: 5, right: 6, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />
-                        </div>;
-                    }
-                })()}
             </div>
             <div className="sidebar-content">
                 {(() => {
@@ -212,7 +194,7 @@ class Sidebar extends React.Component<ISidebarProps, any> {
                 {(() => {
                     if (this.props.selection) {
                         return <div className={`sidebar-pane ${activeTab == "selection" ? "active" : ""}`}>
-                            <SidebarHeader text={tr("TPL_SIDEBAR_TITLE_SELECTION", this.props.locale)} onCloseClick={this.fnClickCollapse} />
+                            <SidebarHeader text={tr("TPL_SIDEBAR_TITLE_SELECTION_PANEL", this.props.locale)} onCloseClick={this.fnClickCollapse} />
                             <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
                                 <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={this.props.locale} />
                             </div>
@@ -270,10 +252,26 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
                      busy={this.props.viewer.busyCount > 0}
                      legend={hasLegend}
                      selection={hasSelectionPanel}
-                     toolbar={hasToolbar}
                      taskpane={hasTaskPane}
                      locale={this.props.config.locale}
                      lastAction={this.props.lastaction} />
+            {(() => {
+                if (hasToolbar) {
+                    let top = 180;
+                    if (!hasSelectionPanel) {
+                        top -= 40;
+                    }
+                    if (!hasLegend) {
+                        top -= 40;
+                    }
+                    if (!hasTaskPane) {
+                        top -= 40;
+                    }
+                    return <div id="toolbar-region" style={{ top: top }}>
+                        <ToolbarContainer id="main" vertical={true} containerStyle={{ position: "absolute", left: 4, right: 6, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />
+                    </div>;
+                }
+            })()}
             {(() => {
                 if (hasNavigator) {
                     return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={this.props.config.locale} componentProps={NAVIGATOR_PROPS} />;

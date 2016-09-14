@@ -20,6 +20,15 @@
                 top: 0;
                 bottom: 0;
             }
+
+            #toolbar-region {
+                z-index: 2040;
+                position: absolute;
+                left: 1px;
+                width: 40px;
+                margin: 0;
+                padding: 0;
+            }
             
             .sidebar {
                 position: absolute;
@@ -39,6 +48,9 @@
                     top: 6px;
                     bottom: 6px;
                     transition: width 500ms;
+                }
+                #toolbar-region {
+                    left: 10px;
                 }
             }
             
@@ -365,13 +377,6 @@
                 }
             }
             
-            #toolbar-region {
-                position: absolute;
-                width: 40px;
-                margin: 0;
-                padding: 0;
-            }
-            
             html,
             body,
             #map {
@@ -388,12 +393,12 @@
             }
         </style>
         <script type="text/javascript" src="dist/viewer.js"></script>
-        <script type="text/javascript" src="strings/de.js"></script>
+        <script type="text/javascript" src="strings-de.js"></script>
     </head>
+
     <body>
         <div id="map"></div>
         <script type="text/javascript">
-
             MapGuide.Registry.registerStringBundle("de", STRINGS_DE);
             MapGuide.Externals.proj4.defs("EPSG:28355","+proj=utm +zone=55 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
 

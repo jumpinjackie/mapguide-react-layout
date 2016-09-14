@@ -1,5 +1,7 @@
-//TODO: Move to separate module
 const STRINGS_EN: any = {
+    "TPL_SIDEBAR_TITLE_TASKPANE": "Task Pane",
+    "TPL_SIDEBAR_TITLE_LEGEND": "Legend",
+    "TPL_SIDEBAR_TITLE_SELECTION_PANEL": "Selection",
     "TPL_SIDEBAR_OPEN_TASKPANE": "Open Task Pane",
     "TPL_SIDEBAR_OPEN_LEGEND": "Open Legend",
     "TPL_SIDEBAR_OPEN_SELECTION_PANEL": "Open Selection Panel",
@@ -26,6 +28,7 @@ const STRINGS_EN: any = {
     "DIGITIZE_CIRCLE_PROMPT": "Click to set this position as the center.<br/>Move out to the desired radius and click again to finish<br/><br/>Press ESC to cancel",
     "DIGITIZE_RECT_PROMPT": "Click to set this position as one corner.<br/>Click again to finish and set this position as the other corner<br/><br/>Press ESC to cancel",
     "DIGITIZE_POLYGON_PROMPT": "Click to set this positon as the start.<br/>Click again to add a vertex at this position.<br/>Hold SHIFT and drag while digitizing to draw in freehand mode<br/><br/>Double click to finish and close the polygon<br/>Press ESC to cancel",
+    "MEASURE": "Measure",
     "MEASUREMENT_TYPE": "Measurement Type",
     "MEASUREMENT_TYPE_LENGTH": "Length (LineString)",
     "MEASUREMENT_TYPE_AREA": "Area (Polygon)",
@@ -46,7 +49,28 @@ const STRINGS_EN: any = {
     "SELECTION_VALUE": "Value",
     "SELECTION_PREV_FEATURE": "Previous Feature",
     "SELECTION_NEXT_FEATURE": "Next Feature",
-    "SELECTION_ZOOMTO_FEATURE": "Zoom to selected feature"
+    "SELECTION_ZOOMTO_FEATURE": "Zoom to selected feature",
+    "VIEWER_OPTIONS": "Viewer Options",
+    "ABOUT": "About",
+    "HELP": "Help",
+    "QUICKPLOT_HEADER": "Quick Plot",
+    "QUICKPLOT_TITLE": "Title",
+    "QUICKPLOT_SUBTITLE": "Sub-Title",
+    "QUICKPLOT_PAPER_SIZE": "Paper Size",
+    "QUICKPLOT_ORIENTATION": "Orientation",
+    "QUICKPLOT_ORIENTATION_P": "Portrait",
+    "QUICKPLOT_ORIENTATION_L": "Landscape",
+    "QUICKPLOT_SHOWELEMENTS": "Show Elements",
+    "QUICKPLOT_SHOWLEGEND": "Show Legend",
+    "QUICKPLOT_SHOWNORTHARROW": "Show North Arrow",
+    "QUICKPLOT_SHOWCOORDINTES": "Show Coordinates",
+    "QUICKPLOT_SHOWSCALEBAR": "Show Scalebar",
+    "QUICKPLOT_SHOWDISCLAIMER": "Show Disclaimer",
+    "QUICKPLOT_ADVANCED_OPTIONS": "Advanced Options",
+    "QUICKPLOT_SCALING": "Scale",
+    "QUICKPLOT_DPI": "DPI",
+    "QUICKPLOT_GENERATE": "Generate Plot",
+    "QUICKPLOT_COMMERCIAL_LAYER_WARNING": "Quick Plot will NOT include any visible commercial map layers"
 };
 
 export default STRINGS_EN;

@@ -13,7 +13,7 @@
     "postinstall": "npm run typings && npm run build",
     "typings": "rimraf typings/ && typings install",
     "test": "tslint src/**/*.ts",
-    "ci": "npm run test && npm run build"
+    "ci": "npm run typings && npm run build && npm run test"
   },
   "repository": {
     "type": "git",

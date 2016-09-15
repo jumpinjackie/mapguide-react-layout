@@ -12,7 +12,7 @@ const mergedExternals = assign({}, {
 module.exports = function (config) {
     config.set({
         basePath: '',
-        frameworks: ['mocha', 'chai', 'sinon'],
+        frameworks: ['mocha', 'chai'],
         files: [
             'test/**/*.spec.ts',
             'test/**/*.spec.tsx'

@@ -6,7 +6,7 @@ interface IBaseLayerSwitcherProps {
     onBaseLayerChanged: (name: string) => void;
 }
 
-export class BaseLayerSwitcher extends React.Component<any, any> {
+export class BaseLayerSwitcher extends React.Component<IBaseLayerSwitcherProps, any> {
     private fnBaseLayerChanged: (e) => void;
     constructor(props) {
         super(props);
@@ -25,9 +25,9 @@ export class BaseLayerSwitcher extends React.Component<any, any> {
     render(): JSX.Element {
         return <div>
             {this.props.externalBaseLayers.map(layer => {
-                return <div key={`base-layer-${layer.name}`}>
+                return <div className="base-layer-switcher-item-container" key={`base-layer-${layer.name}`}>
                     <label>
-                        <input type="radio" value={layer.name} checked={layer.name === this.state.selected} onChange={this.fnBaseLayerChanged} /> {layer.name}
+                        <input className="base-layer-switcher-option" type="radio" value={layer.name} checked={layer.name === this.state.selected} onChange={this.fnBaseLayerChanged} /> {layer.name}
                     </label>
                 </div>;
             })}

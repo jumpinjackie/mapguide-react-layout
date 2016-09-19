@@ -29,7 +29,9 @@ function convertUIItems(items: UIItem[], cmdsByKey: any, noToolbarLabels = true,
             } else if (cmdDef.TargetViewer != "Dwf") {
                 if (isBasicCommand(cmdDef)) {
                     let action: string = cmdDef.Action;
-                    if (action == "FitToWindow") {
+                    if (action == "ZoomRectangle") {
+                        action = DefaultCommands.Zoom;
+                    } else if (action == "FitToWindow") {
                         action = DefaultCommands.ZoomExtents;
                     } else if (action == "Refresh") {
                         action = DefaultCommands.RefreshMap;

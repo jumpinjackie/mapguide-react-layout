@@ -45,6 +45,10 @@ URL: `http://servername/mapguide/viewer/index.html?resource=Library://Path/To/Yo
 
 URL: `http://servername/mapguide/viewer/sidebar.html?resource=Library://Path/To/Your.WebLayout`
 
+# Known Issues
+
+See [KNOWN_ISSUES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/KNOWN_ISSUES.md)
+
 # Credits
 
 mapguide-react-layout could not be possible without the following tools and libraries:

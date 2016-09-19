@@ -27,9 +27,23 @@ It aims for reasonable compatibility with the existing Web Layout and Flexible L
  3. Either:
     * Copy the `viewer` directory to MapGuide's physical wwwroot directory
     * Map the `viewer` directory as a child virtual directory under the MapGuide's wwwroot in your web server of choice (IIS or Apache)
- 4. You can launch the viewer as follows:
-    * AJAX Viewer Template: `http://servername/mapguide/viewer/index.html`
-    * Sidebar Template: `http://servername/mapguide/viewer/sidebar.html`
+ 4. Launch the viewer using a pre-defined template (see `Templates` below)
+
+# Templates
+
+The following templates are included with this viewer
+
+## AJAX Viewer
+
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/doc/ajax-viewer.png)
+
+URL: `http://servername/mapguide/viewer/index.html?resource=Library://Path/To/Your.WebLayout`
+
+## Sidebar
+
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/doc/sidebar.png)
+
+URL: `http://servername/mapguide/viewer/sidebar.html?resource=Library://Path/To/Your.WebLayout`
 
 # Credits
 

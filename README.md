@@ -21,7 +21,7 @@ It aims for reasonable compatibility with the existing Web Layout and Flexible L
       * Android: Google Chrome or Mozilla Firefox
 * For development: node.js 4.x or newer
 
-# Installation
+# Installation - From Source
 
  1. Clone this repository
  2. Run from the command-line: `npm install`
@@ -29,6 +29,12 @@ It aims for reasonable compatibility with the existing Web Layout and Flexible L
     * Copy the `viewer` directory to MapGuide's physical wwwroot directory
     * Map the `viewer` directory as a child virtual directory under the MapGuide's wwwroot in your web server of choice (IIS or Apache)
  4. Launch the viewer using a pre-defined template (see `Templates` below)
+
+# Installation - From release package
+
+ 1. Download the `viewer.zip` from the `Releases` section
+ 2. Extract the archive to MapGuide's physical wwwroot directory
+ 3. Launch the viewer using a pre-defined template (see `Templates` below)
 
 # Templates
 

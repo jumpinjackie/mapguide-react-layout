@@ -4,7 +4,7 @@ var STRINGS_DE = {
     "TPL_SIDEBAR_OPEN_SELECTION_PANEL": "Öffnen Auswahljury",
     "TPL_SIDEBAR_TITLE_TASKPANE": "Task Pane",
     "TPL_SIDEBAR_TITLE_LEGEND": "Legend",
-    "TPL_SIDEBAR_TITLE_SELECTION": "Auswahljury",
+    "TPL_SIDEBAR_TITLE_SELECTION_PANEL": "Auswahljury",
     "TT_GO_HOME": "Nach Hause gehen",
     "TT_GO_BACK": "Geh zurück",
     "TT_GO_FORWARD": "Vorwärts gehen",

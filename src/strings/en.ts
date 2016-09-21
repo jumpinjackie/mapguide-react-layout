@@ -4,7 +4,7 @@ const STRINGS_EN: any = {
     "TPL_SIDEBAR_OPEN_SELECTION_PANEL": "Open Selection Panel",
     "TPL_SIDEBAR_TITLE_TASKPANE": "Task Pane",
     "TPL_SIDEBAR_TITLE_LEGEND": "Legend",
-    "TPL_SIDEBAR_TITLE_SELECTION": "Selection",
+    "TPL_SIDEBAR_TITLE_SELECTION_PANEL": "Selection",
     "TT_GO_HOME": "Go home",
     "TT_GO_BACK": "Go back",
     "TT_GO_FORWARD": "Go forward",

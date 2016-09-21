@@ -15,6 +15,7 @@ It aims for reasonable compatibility with the existing Web Layout and Flexible L
     * Google Chrome (stable channel)
     * Mozilla Firefox (stable channel)
     * Internet Explorer 11. Older versions (intentionally) not supported.
+    * Microsoft Edge
     * For mobile devices:
       * iOS: Mobile Safari
       * Android: Google Chrome or Mozilla Firefox

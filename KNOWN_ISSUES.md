@@ -7,6 +7,7 @@ Components
 
  * Task Pane
    * URLs loaded into the task pane push actual entries into the browser's navigation stack
+   * [#52](https://github.com/jumpinjackie/mapguide-react-layout/issues/52): On IE11, the `Tasks` flyout menu won't properly display over the Task Pane content if it is showing plugin content (eg. The Task Pane is showing a PDF document inline via a PDF viewer plugin)
 
  * Toolbars
    * Only one level of menu nesting is supported. Flyouts within Flyouts is not supported/implemented.

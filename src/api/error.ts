@@ -1,5 +1,5 @@
 export class MgError extends Error {
-    constructor(public message?: string) {
+    constructor(public message: string) {
         super(message);
         this.name = "MgError";
         this.message = message;

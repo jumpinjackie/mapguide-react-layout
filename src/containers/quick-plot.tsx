@@ -135,17 +135,17 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
         }
         return <div style={{ padding: 5 }}>
             <form id="Form1" name="Form1" target="_blank" method="post" action="server/QuickPlot/PlotAsPDF.php">
-                <input type="hidden" id="printId" name="printId" value={Math.random() * 1000} />
+                <input type="hidden" id="printId" name="printId" value={`${Math.random() * 1000}`} />
                 <div className="Title FixWidth">{xlate("QUICKPLOT_HEADER", config.locale) }</div>
                 <div className="Label ">{xlate("QUICKPLOT_TITLE", config.locale) }</div>
                 <div className="Ctrl">
-                    <input type="text" className="FixWidth" name="{field:title}" id="title" maxLength="100" value={this.state.title} onChange={this.fnTitleChanged} />
+                    <input type="text" className="FixWidth" name="{field:title}" id="title" maxLength={100} value={this.state.title} onChange={this.fnTitleChanged} />
                 </div>
                 <div className="HPlaceholder5px"></div>
                 <div className="HPlaceholder5px"></div>
                 <div className="Label" id="SubTitleLabel">{xlate("QUICKPLOT_SUBTITLE", config.locale) }</div>
                 <div className="Ctrl" id="SubTitleCtrl">
-                    <input type="text" className="FixWidth" name="{field:sub_title}" id="subtitle" maxLength="100" value={this.state.subTitle} onChange={this.fnSubTitleChanged} />
+                    <input type="text" className="FixWidth" name="{field:sub_title}" id="subtitle" maxLength={100} value={this.state.subTitle} onChange={this.fnSubTitleChanged} />
                 </div>
                 <div className="HPlaceholder5px"></div>
                 <div className="HPlaceholder5px"></div>

@@ -9,7 +9,7 @@
 import { IMapViewer } from "../components/map-viewer-base";
 import { IMapView } from "../components/context";
 
-let _viewer: IMapViewer = null;
+let _viewer: IMapViewer | undefined;
 
 /**
  * Sets the viewer instance. Called by the map viewer component when it has mounted.
@@ -37,6 +37,6 @@ export function isReady(): boolean {
  * @export
  * @returns {IMapViewer}
  */
-export function getViewer(): IMapViewer {
+export function getViewer(): IMapViewer | undefined {
     return _viewer;
 }

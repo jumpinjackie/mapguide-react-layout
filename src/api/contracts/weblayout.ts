@@ -13,9 +13,9 @@ export interface MapView {
 export type TargetType = "TaskPane" | "NewWindow" | "SpecifiedFrame";
 
 export interface WebLayoutMap extends ResourceReference {
-    InitialView?: MapView;
+    InitialView?: MapView | null | undefined;
     HyperlinkTarget: TargetType;
-    HyperlinkTargetFrame?: string;
+    HyperlinkTargetFrame?: string | null | undefined;
 }
 
 export interface WebLayoutControl {
@@ -34,11 +34,11 @@ export interface UIItem {
 
 export interface FlyoutItem extends UIItem {
     Label: string;
-    Tooltip?: string;
-    Description?: string;
-    ImageURL?: string;
-    DisabledImageURL?: string;
-    SubItem?: UIItem[];
+    Tooltip?: string | null | undefined;
+    Description?: string | null | undefined;
+    ImageURL?: string | null | undefined;
+    DisabledImageURL?: string | null | undefined;
+    SubItem?: UIItem[] | null | undefined;
 }
 
 export interface SeparatorItem extends UIItem {
@@ -109,10 +109,10 @@ export interface CommandDef {
     "@xsi:type": string;
     Name: string;
     Label: string;
-    Tooltip?: string;
-    Description?: string;
-    ImageURL?: string;
-    DisabledImageURL?: string;
+    Tooltip?: string | null | undefined;
+    Description?: string | null | undefined;
+    ImageURL?: string | null | undefined;
+    DisabledImageURL?: string | null | undefined;
     TargetViewer: TargetViewerType;
 }
 
@@ -154,7 +154,7 @@ export interface CustomCommandDef extends CommandDef {
 
 export interface TargetedCommandDef extends CustomCommandDef {
     Target: TargetType;
-    TargetFrame?: string;
+    TargetFrame?: string | null | undefined;
 }
 
 export interface ParameterPair {
@@ -163,7 +163,7 @@ export interface ParameterPair {
 }
 
 export interface LayerSet {
-    Layer?: string[];
+    Layer?: string[] | null | undefined;
 }
 
 export function isInvokeURLCommand(cmd: any): cmd is InvokeURLCommandDef {
@@ -176,8 +176,8 @@ export function isSearchCommand(cmd: CommandDef): cmd is SearchCommandDef {
 
 export interface InvokeURLCommandDef extends TargetedCommandDef {
     URL: string;
-    LayerSet?: LayerSet;
-    AdditionalParameter?: ParameterPair[];
+    LayerSet?: LayerSet | null | undefined;
+    AdditionalParameter?: ParameterPair[] | null | undefined;
     DisableIfSelectionEmpty: boolean;
 }
 
@@ -191,7 +191,7 @@ export interface ResultColumn {
 }
 
 export interface ResultColumnSet {
-    Column?: ResultColumn[];
+    Column?: ResultColumn[] | null | undefined;
 }
 
 export interface SearchCommandDef extends TargetedCommandDef {

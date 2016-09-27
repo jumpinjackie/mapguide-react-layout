@@ -178,7 +178,7 @@ class SessionKeepAlive {
 class FeatureQueryTooltip {
     private wktFormat: ol.format.WKT;
     private map: ol.Map;
-    private onRequestSelectableLayers: () => string[];
+    private onRequestSelectableLayers: (() => string[]) | undefined;
     private throttledMouseMove;
     private featureTooltipElement: Element;
     private featureTooltip: ol.Overlay;
@@ -187,7 +187,7 @@ class FeatureQueryTooltip {
     private incrementBusy: () => void;
     private decrementBusy: () => void;
     private onSessionExpired: () => void;
-    constructor(map: ol.Map, viewer: MapViewerBase, incrementBusy: () => void, decrementBusy: () => void, onSessionExpired: () => void, onRequestSelectableLayers: () => string[] = null) {
+    constructor(map: ol.Map, viewer: MapViewerBase, incrementBusy: () => void, decrementBusy: () => void, onSessionExpired: () => void, onRequestSelectableLayers?: () => string[]) {
         this.viewer = viewer;
         this.incrementBusy = incrementBusy;
         this.decrementBusy = decrementBusy;
@@ -283,7 +283,7 @@ class MouseTrackingTooltip {
     private tooltip: ol.Overlay;
     private tooltipElement: Element;
     private map: ol.Map;
-    private text: string;
+    private text: string | null;
     private isContextMenuOpen: () => boolean;
     constructor(map: ol.Map, contextMenuTest: () => boolean) {
         this.map = map;
@@ -318,7 +318,7 @@ class MouseTrackingTooltip {
     }
     public clear() {
         this.text = null;
-        this.tooltipElement.innerHTML = null;
+        this.tooltipElement.innerHTML = "";
     }
     public destroy() {
         if (this.tooltipElement) {
@@ -404,7 +404,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
 
     constructor(props: IMapViewerBaseProps) {
         super(props);
-        this._map = null;
         this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), props.stateChangeDebounceTimeout || 500);
         this._wktFormat = new ol.format.WKT();
         this.fnKeyDown = this.onKeyDown.bind(this);
@@ -425,14 +424,16 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
      */
     private _refreshOnStateChange() {
         const changes = this.props.layerGroupVisibility;
-        //Send the request
-        const imgSource = this._overlay.getSource() as ol.source.ImageMapGuide;
-        imgSource.updateParams({
-            showlayers: changes.showLayers || [],
-            showgroups: changes.showGroups || [],
-            hidelayers: changes.hideLayers || [],
-            hidegroups: changes.hideGroups || []
-        });
+        if (changes) {
+            //Send the request
+            const imgSource = this._overlay.getSource() as ol.source.ImageMapGuide;
+            imgSource.updateParams({
+                showlayers: changes.showLayers || [],
+                showgroups: changes.showGroups || [],
+                hidelayers: changes.hideLayers || [],
+                hidegroups: changes.hideGroups || []
+            });
+        }
     }
     private createExternalSource(layer: IExternalBaseLayer) {
         let sourceCtor = ol.source[layer.kind];
@@ -461,11 +462,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
         if (this.props.tool === ActiveMapTool.Select) {
             const ptBuffer = this.props.pointSelectionBuffer || 2;
-            const box: Bounds = this.getPointSelectionBox(e.pixel, ptBuffer);
-            const geom = ol.geom.Polygon.fromExtent(box);
-            const options = this.buildDefaultQueryOptions(geom);
-            options.maxfeatures = 1;
-            this.sendSelectionQuery(options);
+            const box: Bounds | null = this.getPointSelectionBox(e.pixel, ptBuffer);
+            if (box) {
+                const geom = ol.geom.Polygon.fromExtent(box);
+                const options = this.buildDefaultQueryOptions(geom);
+                options.maxfeatures = 1;
+                this.sendSelectionQuery(options);
+            }
         }
     }
     private getSelectableLayers(): string[] {
@@ -484,7 +487,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             session: this.props.map.SessionId,
             geometry: wkt,
             requestdata: reqQueryFeatures,
-            layernames: names.length > 0 ? names.join(",") : null,
+            layernames: names.length > 0 ? names.join(",") : undefined,
             persist: 1
         };
     }
@@ -557,9 +560,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 .replace('{y}', (-tileCoord[2] - 1).toString());
         };
     }
-    private _activeDrawInteraction: ol.interaction.Draw;
+    private _activeDrawInteraction: ol.interaction.Draw | null;
     private removeActiveDrawInteraction() {
-        if (this._activeDrawInteraction != null) {
+        if (this._activeDrawInteraction) {
             this._map.removeInteraction(this._activeDrawInteraction);
             this._activeDrawInteraction = null;
         }
@@ -669,9 +672,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             this._baseLayerGroup != null) {
             const layers = this._baseLayerGroup.getLayers();
             layers.forEach((l: ol.layer.Base) => {
-                const match = nextProps.externalBaseLayers.filter(el => el.name === l.get("title"));
+                const match = (nextProps.externalBaseLayers || []).filter(el => el.name === l.get("title"));
                 if (match.length == 1) {
-                    l.setVisible(match[0].visible);
+                    l.setVisible(!!match[0].visible);
                 } else {
                     l.setVisible(false);
                 }
@@ -703,14 +706,14 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     componentDidMount() {
         const { map, agentUri, imageFormat } = this.props;
         const mapNode = ReactDOM.findDOMNode(this);
-        const layers = [];
+        const layers = [] as ol.layer.Base[];
         this._extent = [
             map.Extents.LowerLeftCoordinate.X,
             map.Extents.LowerLeftCoordinate.Y,
             map.Extents.UpperRightCoordinate.X,
             map.Extents.UpperRightCoordinate.Y
         ];
-        const finiteScales = [];
+        const finiteScales = [] as number[];
         if (map.FiniteDisplayScale) {
             for (let i = map.FiniteDisplayScale.length - 1; i >= 0; i--) {
                 finiteScales.push(map.FiniteDisplayScale[i]);
@@ -727,7 +730,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         const tileHeight = map.TileHeight || 300;
         const metersPerUnit = map.CoordinateSystem.MetersPerUnit;
         this._dpi = map.DisplayDpi;
-        let projection = null;
+        let projection;
         const zOrigin = finiteScales.length - 1;
         this._inPerUnit = 39.37 * metersPerUnit;
         const resolutions = new Array(finiteScales.length);
@@ -745,25 +748,26 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             tileSize: [tileWidth, tileHeight]
         });
 
-        const groupLayers = [];
-        for (let i = 0; i < map.Group.length; i++) {
-            const group = map.Group[i];
-            if (group.Type != 2 && group.Type != 3) { //BaseMap or LinkedTileSet
-                continue;
-            }
-            groupLayers.push(
-                new ol.layer.Tile({
-                    //name: group.Name,
-                    source: new ol.source.TileImage({
-                        tileGrid: tileGrid,
-                        projection: projection,
-                        tileUrlFunction: this.getTileUrlFunctionForGroup(resourceId, group.Name, zOrigin),
-                        wrapX: false
+        const groupLayers = [] as ol.layer.Tile[];
+        if (map.Group) {
+            for (let i = 0; i < map.Group.length; i++) {
+                const group = map.Group[i];
+                if (group.Type != 2 && group.Type != 3) { //BaseMap or LinkedTileSet
+                    continue;
+                }
+                groupLayers.push(
+                    new ol.layer.Tile({
+                        //name: group.Name,
+                        source: new ol.source.TileImage({
+                            tileGrid: tileGrid,
+                            projection: projection,
+                            tileUrlFunction: this.getTileUrlFunctionForGroup(resourceId, group.Name, zOrigin),
+                            wrapX: false
+                        })
                     })
-                })
-            );
+                );
+            }
         }
-
         /*
         if (groupLayers.length > 0) {
             groupLayers.push( 
@@ -851,7 +855,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             console.log(" " + layers[i].get("name"));
         }
         */
-        let view: ol.View = null;
+        let view: ol.View;
         if (resolutions.length == 0) {
             view = new ol.View({
                 projection: projection
@@ -977,18 +981,18 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             this.props.onSessionExpired();
         }
     }
-    private convertContextMenuItems(items: IItem[]) {
-        return items.map(i => {
+    private convertContextMenuItems(items: IItem[] | null | undefined): any[] {
+        return (items || []).map(i => {
             if (i.isSeparator === true) {
                 return '-';
             } else {
-                let cb = null;
-                let items = null;
+                let cb;
+                let items;
                 if (isMenu(i)) {
                     items = this.convertContextMenuItems(i.childItems)
                 } else {
                     cb = () => {
-                        if (getEnabled(i)) { //We have to do this because ol3-contextmenu current has no notion of disabled items
+                        if (getEnabled(i) && i.invoke) { //We have to do this because ol3-contextmenu current has no notion of disabled items
                             i.invoke();
                         }
                     };
@@ -1036,11 +1040,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         return this._map.getView();
     }
     public zoomToView(x: number, y: number, scale: number): void {
-        if (this._map) {
-            const view = this._map.getView();
-            view.setCenter([x, y]);
-            view.setResolution(this.scaleToResolution(scale));
-        }
+        const view = this._map.getView();
+        view.setCenter([x, y]);
+        view.setResolution(this.scaleToResolution(scale));
     }
     public setSelectionXml(xml: string, queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void {
         //NOTE: A quirk of QUERYMAPFEATURES is that when passing in selection XML (instead of geometry), 
@@ -1177,18 +1179,17 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this._customLayers[name] = layer;
         return layer;
     }
-    public removeLayer(name: string): ol.layer.Base {
-        let layer: ol.layer.Base = null;
+    public removeLayer(name: string): ol.layer.Base | undefined {
+        let layer: ol.layer.Base;
         if (this._customLayers[name]) {
             layer = this._customLayers[name];
             this._map.removeLayer(layer);
             delete this._customLayers[name];
             return layer;
         }
-        return layer;
     }
     public getLayer<T extends ol.layer.Base>(name: string, factory: () => T): T {
-        let layer: T = null;
+        let layer: T;
         if (this._customLayers[name]) {
             layer = this._customLayers[name] as T;
         } else {

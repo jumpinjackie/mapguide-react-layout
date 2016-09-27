@@ -115,81 +115,93 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
     }
     public DigitizeCircle(handler: (circle: IAjaxViewerCircle) => void): void {
         const viewer = Runtime.getViewer();
-        viewer.digitizeCircle(circle => {
-            const center = circle.getCenter();
-            const radius = circle.getRadius();
-            handler({
-                Center: { 
-                    X: center[0],
-                    Y: center[1]
-                },
-                Radius: radius 
+        if (viewer) {
+            viewer.digitizeCircle(circle => {
+                const center = circle.getCenter();
+                const radius = circle.getRadius();
+                handler({
+                    Center: {
+                        X: center[0],
+                        Y: center[1]
+                    },
+                    Radius: radius
+                });
             });
-        });
+        }
     }
     public DigitizeLine(handler: (geom: AjaxViewerLineStringOrPolygon) => void): void {
         const viewer = Runtime.getViewer();
-        viewer.digitizeLine(line => {
-            const coords = line.getCoordinates().map<IAjaxViewerPoint>(coord => {
-                return {
-                    X: coord[0],
-                    Y: coord[1]
-                }
+        if (viewer) {
+            viewer.digitizeLine(line => {
+                const coords = line.getCoordinates().map<IAjaxViewerPoint>(coord => {
+                    return {
+                        X: coord[0],
+                        Y: coord[1]
+                    }
+                });
+                handler(new AjaxViewerLineStringOrPolygon(coords));
             });
-            handler(new AjaxViewerLineStringOrPolygon(coords));
-        });
+        }
     }
     public DigitizePoint(handler: (geom: IAjaxViewerPoint) => void): void {
         const viewer = Runtime.getViewer();
-        viewer.digitizePoint(pt => {
-            const coords = pt.getCoordinates();
-            handler({ X: coords[0], Y: coords[1] });
-        });
+        if (viewer) {
+            viewer.digitizePoint(pt => {
+                const coords = pt.getCoordinates();
+                handler({ X: coords[0], Y: coords[1] });
+            });
+        }
     }
     public DigitizePolygon(handler: (geom: AjaxViewerLineStringOrPolygon) => void): void {
         const viewer = Runtime.getViewer();
-        viewer.digitizePolygon(poly => {
-            //Our API isn't expected to allow drawing polygons with holes, so the first (outer) ring
-            //is what we're after
-            const ring = poly.getLinearRing(0);
-            const coords = ring.getCoordinates().map<IAjaxViewerPoint>(coord => {
-                return {
-                    X: coord[0],
-                    Y: coord[1]
-                }
+        if (viewer) {
+            viewer.digitizePolygon(poly => {
+                //Our API isn't expected to allow drawing polygons with holes, so the first (outer) ring
+                //is what we're after
+                const ring = poly.getLinearRing(0);
+                const coords = ring.getCoordinates().map<IAjaxViewerPoint>(coord => {
+                    return {
+                        X: coord[0],
+                        Y: coord[1]
+                    }
+                });
+                handler(new AjaxViewerLineStringOrPolygon(coords));
             });
-            handler(new AjaxViewerLineStringOrPolygon(coords));
-        });
+        }
     }
     public DigitizeLineString(handler: (geom: AjaxViewerLineStringOrPolygon) => void): void {
         const viewer = Runtime.getViewer();
-        viewer.digitizeLineString(line => {
-            const coords = line.getCoordinates().map<IAjaxViewerPoint>(coord => {
-                return {
-                    X: coord[0],
-                    Y: coord[1]
-                }
+        if (viewer) {
+            viewer.digitizeLineString(line => {
+                const coords = line.getCoordinates().map<IAjaxViewerPoint>(coord => {
+                    return {
+                        X: coord[0],
+                        Y: coord[1]
+                    }
+                });
+                handler(new AjaxViewerLineStringOrPolygon(coords));
             });
-            handler(new AjaxViewerLineStringOrPolygon(coords));
-        });
+        }
     }
     public DigitizeRectangle(handler: (geom: IAjaxViewerRect) => void): void {
         const viewer = Runtime.getViewer();
-        viewer.digitizeRectangle(rect => {
-            const extent = rect.getExtent();
-            handler({
-                Point1: {
-                    X: extent[0],
-                    Y: extent[1]
-                },
-                Point2: {
-                    X: extent[2],
-                    Y: extent[3]
-                }
-            })
-        });
+        if (viewer) {
+            viewer.digitizeRectangle(rect => {
+                const extent = rect.getExtent();
+                handler({
+                    Point1: {
+                        X: extent[0],
+                        Y: extent[1]
+                    },
+                    Point2: {
+                        X: extent[2],
+                        Y: extent[3]
+                    }
+                })
+            });
+        }
     }
-    public GetCenter(): IAjaxViewerPoint {
+    public GetCenter(): IAjaxViewerPoint | null {
         const viewer = Runtime.getViewer();
         if (viewer) {
             const view = viewer.getCurrentView();
@@ -204,20 +216,22 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
         if (map && selection && selection.FeatureSet) {
             const fset: FeatureSet = selection.FeatureSet;
             const ids = fset.Layer.map(l => l["@id"]);
-            for (const layer of map.Layer) {
-                if (ids.indexOf(layer.ObjectId) >= 0) {
-                    if (onlyVisible === true && layer.Visible === true) {
-                        selLayers.push({ legend: layer.LegendLabel, name: layer.Name, objectid: layer.ObjectId });
-                    }
-                    if (onlySelectable === true && layer.Selectable === true) {
-                        selLayers.push({ legend: layer.LegendLabel, name: layer.Name, objectid: layer.ObjectId });
+            if (map.Layer) {
+                for (const layer of map.Layer) {
+                    if (ids.indexOf(layer.ObjectId) >= 0) {
+                        if (onlyVisible === true && layer.Visible === true) {
+                            selLayers.push({ legend: layer.LegendLabel, name: layer.Name, objectid: layer.ObjectId });
+                        }
+                        if (onlySelectable === true && layer.Selectable === true) {
+                            selLayers.push({ legend: layer.LegendLabel, name: layer.Name, objectid: layer.ObjectId });
+                        }
                     }
                 }
             }
         }
         return selLayers;
     }
-    public GetMetersPerUnit(): number {
+    public GetMetersPerUnit(): number | null {
         const viewer = Runtime.getViewer();
         if (viewer) {
             return viewer.getMetersPerUnit();
@@ -236,7 +250,7 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
     public GetMapWidth(): string {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetMapWidth()`);
     }
-    public GetScale(): number {
+    public GetScale(): number | null {
         const viewer = Runtime.getViewer();
         if (viewer) {
             const view = viewer.getCurrentView();
@@ -251,9 +265,11 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
         if (map && selection && selection.FeatureSet) {
             const fset: FeatureSet = selection.FeatureSet;
             const ids = fset.Layer.map(l => l["@id"]);
-            for (const layer of map.Layer) {
-                if (ids.indexOf(layer.ObjectId) >= 0) {
-                    selLayers.push({ legend: layer.LegendLabel, name: layer.Name, objectid: layer.ObjectId });
+            if (map.Layer) {
+                for (const layer of map.Layer) {
+                    if (ids.indexOf(layer.ObjectId) >= 0) {
+                        selLayers.push({ legend: layer.LegendLabel, name: layer.Name, objectid: layer.ObjectId });
+                    }
                 }
             }
         }
@@ -270,8 +286,8 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
     public GetSessionId(): string {
         return this.props.map.SessionId;
     }
-    public GetSelectedBounds(): IAjaxViewerBounds {
-        let bounds: IAjaxViewerBounds = null;
+    public GetSelectedBounds(): IAjaxViewerBounds | null {
+        let bounds: IAjaxViewerBounds | null = null;
         const selection = this.props.selection.selectionSet;
         if (selection && selection.SelectedFeatures) {
             const fset: SelectedFeatureSet = selection.SelectedFeatures;
@@ -313,7 +329,11 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
     }
     public IsDigitizing(): boolean {
         const viewer = Runtime.getViewer();
-        return viewer.isDigitizing();
+        if (viewer) {
+            return viewer.isDigitizing();
+        } else {
+            return false;
+        }
     }
     public IsEnglishUnits(): boolean {
         return this.us;
@@ -326,8 +346,12 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
     }
     public Refresh(): void {
         const viewer = Runtime.getViewer();
-        viewer.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
-        this.props.legendRefresh();
+        if (viewer) {
+            viewer.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
+        }
+        if (this.props.legendRefresh) {
+            this.props.legendRefresh();
+        }
     }
     public ScreenToMapUnits(x: number, y: number): IAjaxViewerPoint {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.ScreenToMapUnits(x, y)`);
@@ -340,25 +364,33 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
     }
     public SetSelectionXML(xmlSet): void {
         const viewer = Runtime.getViewer();
-        viewer.setSelectionXml(xmlSet);
+        if (viewer) {
+            viewer.setSelectionXml(xmlSet);
+        }
     }
     public ZoomToView(x: number, y: number, scale: number, refresh: boolean) {
         const viewer = Runtime.getViewer();
-        viewer.zoomToView(x, y, scale);
+        if (viewer) {
+            viewer.zoomToView(x, y, scale);
+        }
     }
     //This isn't in the AJAX Viewer API reference, but there are samples referencing it!
     public ZoomToScale(scale: number): void {
         const viewer = Runtime.getViewer();
-        const view = viewer.getCurrentView();
-        viewer.zoomToView(view.x, view.y, scale);
+        if (viewer) {
+            const view = viewer.getCurrentView();
+            viewer.zoomToView(view.x, view.y, scale);
+        }
     }
     //Form frame
     public Submit(url: string, params: string[], frameTarget: string) {
         this.formFrame.submit(url, params, frameTarget);
     }
-    
+
     public goHome(): void {
-        this.props.goHome();
+        if (this.props.goHome) {
+            this.props.goHome();
+        }
         //const taskPane = this.app.getTaskPane();
         //if (taskPane) {
         //    taskPane.goHome();

@@ -14,14 +14,15 @@ import {
     isSearchCommand,
     UIItem 
 } from "../api/contracts/weblayout";
+import { IView } from "../api/contracts/common";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import * as logger from "../utils/logger";
 import queryString = require("query-string");
 const parse = require("url-parse");
 const assign = require("object-assign");
 
-function convertUIItems(items: UIItem[], cmdsByKey: any, noToolbarLabels = true, canSupportFlyouts = true): any[] {
-    return items.map(item => {
+function convertUIItems(items: UIItem[] | null | undefined, cmdsByKey: any, noToolbarLabels = true, canSupportFlyouts = true): any[] {
+    return (items || []).map(item => {
         if (isCommandItem(item)) {
             const cmdDef: CommandDef = cmdsByKey[item.Command];
             if (!cmdDef) {
@@ -126,7 +127,7 @@ export function initLayout(options) {
             if (webLayout.PointSelectionBuffer != null) {
                 config.pointSelectionBuffer = webLayout.PointSelectionBuffer;
             }
-            let initialView = null;
+            let initialView: IView | null = null;
             if (webLayout.Map.InitialView != null) {
                 initialView = {
                     x: webLayout.Map.InitialView.CenterX,

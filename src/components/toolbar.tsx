@@ -19,8 +19,12 @@ const TOOLBAR_ITEM_STYLE_HOVERED = {
     border: "1px solid rgb(153, 181, 202)"
 };
 
-export function getIcon(relPath: string): string {
-    return `stdicons/${relPath}`;
+export function getIcon(relPath: string | undefined): string | undefined {
+    if (relPath) {
+        return `stdicons/${relPath}`;
+    } else {
+        return undefined;
+    }
 }
 
 function getSelected(item: IItem): boolean {
@@ -307,7 +311,7 @@ class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
         e.preventDefault();
         const { item } = this.props;
         const enabled = getEnabled(item);
-        if (enabled) {
+        if (enabled && item.invoke) {
             item.invoke();
         }
         return false;

@@ -45,7 +45,7 @@ function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeat
     return merged;
 }
 
-function combineSelectedFeatureSets(oldRes: SelectedFeatureSet, newRes: SelectedFeatureSet): SelectedFeatureSet {
+function combineSelectedFeatureSets(oldRes: SelectedFeatureSet | null | undefined, newRes: SelectedFeatureSet | null | undefined): SelectedFeatureSet | null | undefined {
     if (oldRes == null) {
         return newRes;
     }
@@ -55,20 +55,22 @@ function combineSelectedFeatureSets(oldRes: SelectedFeatureSet, newRes: Selected
     for (const layer of oldRes.SelectedLayer) {
         merged.SelectedLayer.push(layer);
     }
-    for (const layer of newRes.SelectedLayer) {
-        const layerId = layer["@id"];
-        const layerName = layer["@name"];
-        const existing = merged.SelectedLayer.filter(l => l["@id"] == layerId && l["@name"] == layerName);
-        if (existing.length == 0) {
-            merged.SelectedLayer.push(layer);
-        } else {
-            existing[0].Feature = combineSelectedFeatures(existing[0].Feature, layer.Feature);
+    if (newRes) {
+        for (const layer of newRes.SelectedLayer) {
+            const layerId = layer["@id"];
+            const layerName = layer["@name"];
+            const existing = merged.SelectedLayer.filter(l => l["@id"] == layerId && l["@name"] == layerName);
+            if (existing.length == 0) {
+                merged.SelectedLayer.push(layer);
+            } else {
+                existing[0].Feature = combineSelectedFeatures(existing[0].Feature, layer.Feature);
+            }
         }
     }
     return merged;
 }
 
-function combineFeatureSets(oldRes: FeatureSet, newRes: FeatureSet): FeatureSet {
+function combineFeatureSets(oldRes: FeatureSet | null | undefined, newRes: FeatureSet | null | undefined): FeatureSet | null | undefined {
     if (oldRes == null) {
         return newRes;
     }
@@ -78,13 +80,15 @@ function combineFeatureSets(oldRes: FeatureSet, newRes: FeatureSet): FeatureSet 
     for (const layer of oldRes.Layer) {
         merged.Layer.push(layer);
     }
-    for (const layer of newRes.Layer) {
-        const layerId = layer["@id"];
-        const existing = merged.Layer.filter(l => l["@id"] == layerId);
-        if (existing.length == 0) {
-            merged.Layer.push(layer);
-        } else {
-            existing[0].Class.ID = uniq(existing[0].Class.ID.concat(layer.Class.ID));
+    if (newRes) {
+        for (const layer of newRes.Layer) {
+            const layerId = layer["@id"];
+            const existing = merged.Layer.filter(l => l["@id"] == layerId);
+            if (existing.length == 0) {
+                merged.Layer.push(layer);
+            } else {
+                existing[0].Class.ID = uniq(existing[0].Class.ID.concat(layer.Class.ID));
+            }
         }
     }
     return merged;

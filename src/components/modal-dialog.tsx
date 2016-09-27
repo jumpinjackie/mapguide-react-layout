@@ -15,9 +15,9 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
         super(props);
         this.fnClose = this.onClose.bind(this);
     }
-    render() {
+    render(): JSX.Element {
         if (this.props.isOpen === false)
-            return null
+            return <div />;
 
         const modalStyle: React.CSSProperties = {
             position: 'absolute',

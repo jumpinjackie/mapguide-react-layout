@@ -28,20 +28,24 @@ export interface ILegendProps {
     showGroups: string[];
     hideLayers: string[];
     hideGroups: string[];
-    locale?: string;
-    externalBaseLayers?: IExternalBaseLayer[];
-    onBaseLayerChanged?: (name: string) => void;
-    onLayerSelectabilityChanged?: (id: string, selectable: boolean) => void;
-    onGroupExpansionChanged?: (id: string, expanded: boolean) => void;
-    onLayerVisibilityChanged?: MapElementChangeFunc;
-    onGroupVisibilityChanged?: MapElementChangeFunc;
+    locale?: string | undefined;
+    externalBaseLayers?: IExternalBaseLayer[] | undefined;
+    onBaseLayerChanged?: (name: string) => void | undefined;
+    onLayerSelectabilityChanged?: (id: string, selectable: boolean) => void | undefined;
+    onGroupExpansionChanged?: (id: string, expanded: boolean) => void | undefined;
+    onLayerVisibilityChanged?: MapElementChangeFunc | undefined;
+    onGroupVisibilityChanged?: MapElementChangeFunc | undefined;
     currentScale: number;
-    overrideSelectableLayers?: any;
-    overrideExpandedItems?: any;
+    overrideSelectableLayers?: any | undefined;
+    overrideExpandedItems?: any | undefined;
 }
 
-function getIconUri(iconMimeType: string, iconBase64: string): string {
-    return `data:${iconMimeType};base64,${iconBase64}`;
+function getIconUri(iconMimeType: string, iconBase64: string | null | undefined): string | undefined {
+    if (iconBase64) {
+        return `data:${iconMimeType};base64,${iconBase64}`;
+    } else {
+        return undefined;
+    }
 }
 
 const EmptyNode = (props) => {
@@ -115,14 +119,14 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
         const label = layer.LegendLabel ? layer.LegendLabel : "";
         const iconMimeType = this.context.getIconMimeType();
         let text = label;
-        let icon = this.context.getStdIcon("legend-layer.png");
-        let selectable = null;
+        let icon: string | undefined = this.context.getStdIcon("legend-layer.png");
+        let selectable;
         if (layer.Selectable === true) {
             selectable = <img style={ROW_ITEM_ELEMENT_STYLE}
                               onClick={this.fnToggleSelectability}
                               src={this.context.getStdIcon(this.getLayerSelectability(layer.ObjectId) ? "icon_select.gif" : "lc_unselect.gif")} />;
         }
-        let chkbox = null;
+        let chkbox;
         if (layer.Type == 1) { //Dynamic
             chkbox = <input type='checkbox' 
                             className='layer-checkbox'
@@ -138,13 +142,13 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
                     //    text = label + " (" + scaleRange.MinScale + " - " + scaleRange.MaxScale + ")";
                     const fts = scaleRange.FeatureStyle[0];
                     const ruleCount = fts.Rule.length;
-                    let body = null;
+                    let body;
                     let isExpanded = this.getExpanded();
                     if (isExpanded && ruleCount > 1) {
                         icon = this.context.getStdIcon("legend-theme.png");
                         body = <ul style={UL_LIST_STYLE}>
                         {(() => {
-                            const items = [];
+                            const items = [] as JSX.Element[];
                             //Test compression
                             var bCompressed = false;
                             if (ruleCount > 3) {
@@ -171,7 +175,7 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
                         }
                     }
 
-                    let expanded = null;
+                    let expanded;
                     if (ruleCount > 1) {
                         expanded = <img style={ROW_ITEM_ELEMENT_STYLE} onClick={this.fnToggleExpansion} src={this.context.getStdIcon(isExpanded ? "toggle.png" : "toggle-expand.png")} />;;
                     } else {
@@ -180,9 +184,8 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
                     return <li style={LI_LIST_STYLE} className='layer-node'>{expanded} {chkbox} {selectable} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> <LegendLabel text={text} /> {body}</li>;
                 }
             }
-        } else {
-            return <li style={LI_LIST_STYLE} className='layer-node'><EmptyNode /> {chkbox} {selectable} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> {label}</li>;
         }
+        return <li style={LI_LIST_STYLE} className='layer-node'><EmptyNode /> {chkbox} {selectable} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> {label}</li>;
     }
 }
 
@@ -317,7 +320,7 @@ export class Legend extends React.Component<ILegendProps, any> {
         };
     }
     public getSelectableLayers(): string[] {
-        const layers = [];
+        const layers = [] as string[];
         for (const layerId in this.state.LayerMap) {
             const layer: MapLayer = this.state.LayerMap[layerId];
             if (layer.Selectable === true) {
@@ -389,7 +392,7 @@ export class Legend extends React.Component<ILegendProps, any> {
     private getStdIcon(relPath: string): string {
         return `stdicons/${relPath}`;
     }
-    private getIconMimeType(): string {
+    private getIconMimeType(): string | null | undefined {
         return this.props.map.IconMimeType;
     }
     private getChildren(objectId: string): (MapLayer | MapGroup)[] {
@@ -432,7 +435,7 @@ export class Legend extends React.Component<ILegendProps, any> {
             }
             //Whittle down
             while(itemCount > 0) {
-                var removeIds = [];
+                var removeIds = [] as string[];
                 for (const objId in remainingGroups) {
                     var group = remainingGroups[objId];
                     //Do we have a parent?

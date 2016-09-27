@@ -29,7 +29,7 @@ export class FormFrameShim extends React.Component<any, any> {
         const { target, action, params } = this.state;
         return <form style={{ visibility: "hidden", width: 0, height: 0 }} ref={this.fnFormMounted} method="post" id="Frm" target={target} action={action} encType="application/x-www-form-urlencoded">
             {(() => {
-                const fields = [];
+                const fields = [] as JSX.Element[];
                 for (let i = 0; i < params.length; i+=2) {
                     fields.push(<input id={`f${i}`} key={`f${i}`} type="hidden" name={params[i]} value={params[i+1]} />);
                 }

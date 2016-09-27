@@ -105,7 +105,9 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
-            viewer.zoomDelta(1);
+            if (viewer) {
+                viewer.zoomDelta(1);
+            }
         }
     });
     //Zoom Out
@@ -114,7 +116,9 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
-            viewer.zoomDelta(-1);
+            if (viewer) {
+                viewer.zoomDelta(-1);
+            }
         }
     });
     //Pan Left
@@ -123,7 +127,9 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
-            panMap(dispatch, viewer, "left");
+            if (viewer) {
+                panMap(dispatch, viewer, "left");
+            }
         }
     });
     //Pan Right
@@ -132,7 +138,9 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
-            panMap(dispatch, viewer, "right");
+            if (viewer) {
+                panMap(dispatch, viewer, "right");
+            }
         }
     });
     //Pan Up
@@ -141,7 +149,9 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
-            panMap(dispatch, viewer, "up");
+            if (viewer) {
+                panMap(dispatch, viewer, "up");
+            }
         }
     });
     //Pan Down
@@ -150,7 +160,9 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
-            panMap(dispatch, viewer, "down");
+            if (viewer) {
+                panMap(dispatch, viewer, "down");
+            }
         }
     });
     //About
@@ -288,10 +300,12 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
-            viewer.digitizeCircle(circle => {
-                const geom = ol.geom.Polygon.fromCircle(circle);
-                viewer.selectByGeometry(geom);
-            });
+            if (viewer) {
+                viewer.digitizeCircle(circle => {
+                    const geom = ol.geom.Polygon.fromCircle(circle);
+                    viewer.selectByGeometry(geom);
+                });
+            }
         }
     });
     //Select Radius
@@ -300,9 +314,11 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
-            viewer.digitizePolygon(geom => {
-                viewer.selectByGeometry(geom);
-            });
+            if (viewer) {
+                viewer.digitizePolygon(geom => {
+                    viewer.selectByGeometry(geom);
+                });
+            }
         }
     });
     //Initial Center and scale
@@ -311,11 +327,13 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
-            const view = getState().view.initial;
-            if (view != null) {
-                viewer.zoomToView(view.x, view.y, view.scale);
-            } else {
-                viewer.initialView();
+            if (viewer) {
+                const view = getState().view.initial;
+                if (view != null) {
+                    viewer.zoomToView(view.x, view.y, view.scale);
+                } else {
+                    viewer.initialView();
+                }
             }
         }
     })
@@ -325,7 +343,9 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
-            viewer.initialView();
+            if (viewer) {
+                viewer.initialView();
+            }
         }
     });
     //Clear Selection
@@ -334,7 +354,9 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer) => {
-            viewer.clearSelection();
+            if (viewer) {
+                viewer.clearSelection();
+            }
         }
     });
     //Zoom to Selection
@@ -343,23 +365,25 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer) => {
-            const selection: QueryMapFeaturesResponse = getState().selection.selectionSet;
-            let bounds: ol.Extent = null;
-            if (selection != null && selection.SelectedFeatures != null) {
-                selection.SelectedFeatures.SelectedLayer.forEach(layer => {
-                    layer.Feature.forEach(feat => {
-                        const b: any = feat.Bounds.split(" ").map(s => parseFloat(s));
-                        if (bounds == null) {
-                            bounds = b;
-                        } else {
-                            bounds = ol.extent.extend(bounds, b);
-                        }
-                    })
-                });
-            }
-            if (bounds != null) {
-                const view = viewer.getViewForExtent(bounds);
-                dispatch(MapActions.setCurrentView(view));
+            if (viewer) {
+                const selection: QueryMapFeaturesResponse = getState().selection.selectionSet;
+                let bounds: ol.Extent | null = null;
+                if (selection != null && selection.SelectedFeatures != null) {
+                    selection.SelectedFeatures.SelectedLayer.forEach(layer => {
+                        layer.Feature.forEach(feat => {
+                            const b: any = feat.Bounds.split(" ").map(s => parseFloat(s));
+                            if (bounds == null) {
+                                bounds = b;
+                            } else {
+                                bounds = ol.extent.extend(bounds, b);
+                            }
+                        })
+                    });
+                }
+                if (bounds) {
+                    const view = viewer.getViewForExtent(bounds);
+                    dispatch(MapActions.setCurrentView(view));
+                }
             }
         }
     });
@@ -369,8 +393,10 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer) => {
-            viewer.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
-            dispatch(LegendActions.refresh());
+            if (viewer) {
+                viewer.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
+                dispatch(LegendActions.refresh());
+            }
         }
     });
     //Previous View

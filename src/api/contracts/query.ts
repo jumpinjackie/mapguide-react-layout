@@ -51,7 +51,7 @@ export interface SelectedLayer {
     "@id": string;
     "@name": string;
     Feature: SelectedFeature[];
-    LayerMetadata: LayerMetadata;
+    LayerMetadata?: LayerMetadata | null | undefined;
 }
 
 export interface SelectedFeatureSet {
@@ -59,9 +59,9 @@ export interface SelectedFeatureSet {
 }
 
 export interface QueryMapFeaturesResponse {
-    FeatureSet?: FeatureSet;
-    Hyperlink?: string;
-    InlineSelectionImage?: SelectionImage;
-    SelectedFeatures?: SelectedFeatureSet;
-    Tooltip?: string;
+    FeatureSet?: FeatureSet | null | undefined;
+    Hyperlink?: string | null | undefined;
+    InlineSelectionImage?: SelectionImage | null | undefined;
+    SelectedFeatures?: SelectedFeatureSet | null | undefined;
+    Tooltip?: string | null | undefined;
 }

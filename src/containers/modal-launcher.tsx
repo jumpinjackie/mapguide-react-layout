@@ -36,7 +36,9 @@ export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
         super(props);
     }
     onCloseModal(name) {
-        this.props.hideModal({ name: name });
+        if (this.props.hideModal) {
+            this.props.hideModal({ name: name });
+        }
     }
     render(): JSX.Element {
         const { modal } = this.props;

@@ -6,7 +6,7 @@ import * as Constants from "../../constants";
 import { ensureParameters } from "../../actions/taskpane";
 import { tr } from "../i18n";
 
-export function mapToolbarReference(tb: any, store, commandInvoker: (cmd) => void): IItem|IMenu {
+export function mapToolbarReference(tb: any, store, commandInvoker: (cmd) => void): IItem|IMenu|null {
     const state = store.getState();
     if (tb.isSeparator === true) {
         return { isSeparator: true };
@@ -81,7 +81,7 @@ export interface ICommandRef {
     name: string;
 }
 
-export type DispatcherFunc = (dispatch, getState, viewer: IMapViewer) => any; 
+export type DispatcherFunc = (dispatch, getState, viewer?: IMapViewer) => any; 
 
 export interface ICommand {
     icon: string;

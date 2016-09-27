@@ -54,7 +54,7 @@ export interface MapElement {
      * 
      * @type {string}
      */
-    ParentId?: string;
+    ParentId?: string | null | undefined;
     /**
      * Indicates whether this element should be displayed in the legend 
      * 
@@ -101,8 +101,8 @@ export interface MapLayer extends MapElement {
      */
     Selectable: boolean;
     LayerDefinition: Common.ResourceIdentifier;
-    FeatureSource?: FeatureSourceInfo;
-    ScaleRange?: ScaleRangeInfo[];
+    FeatureSource?: FeatureSourceInfo | null | undefined;
+    ScaleRange?: ScaleRangeInfo[] | null | undefined;
 }
 
 /**
@@ -194,19 +194,19 @@ export interface RuntimeMap {
      * 
      * @type {Common.ResourceIdentifier}
      */
-    TileSetDefinition?: Common.ResourceIdentifier;
+    TileSetDefinition?: Common.ResourceIdentifier | null | undefined;
     /**
      * The tile width as defined by the settings in the Tile Set Definition. If this Map Definition does not link to a tile set, this element is omitted 
      * 
      * @type {number}
      */
-    TileWidth?: number;
+    TileWidth?: number | null | undefined;
     /**
      * The tile height as defined by the settings in the Tile Set Definition. If this Map Definition does not link to a tile set, this element is omitted 
      * 
      * @type {number}
      */
-    TileHeight?: number;
+    TileHeight?: number | null | undefined;
     /**
      * The map's background color in ARGB hex string format 
      * 
@@ -224,10 +224,10 @@ export interface RuntimeMap {
      * 
      * @type {Common.MimeType}
      */
-    IconMimeType?: Common.MimeType;
-    CoordinateSystem?: CoordinateSystemType;
+    IconMimeType?: Common.MimeType | null | undefined;
+    CoordinateSystem: CoordinateSystemType;
     Extents: Envelope;
-    Group?: MapGroup[];
-    Layer?: MapLayer[];
-    FiniteDisplayScale?: number[];
+    Group?: MapGroup[] | null | undefined;
+    Layer?: MapLayer[] | null | undefined;
+    FiniteDisplayScale?: number[] | null | undefined;
 }

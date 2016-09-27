@@ -39,8 +39,6 @@ export function pushUrl(url: string, silent?: boolean) {
 }
 
 export function ensureParameters(url: string, mapName: string, session: string, locale?: string, uppercase = true): string {
-    if (url == null)
-        return null;
     //If this is a component URL, let it be
     if (url.indexOf("component://") >= 0) {
         return url;

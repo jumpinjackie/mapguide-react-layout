@@ -15,3 +15,9 @@ export type MimeType = string;
 export type FdoFilter = string;
 
 export type Base64Content = string;
+
+export interface IView {
+    x: number;
+    y: number;
+    scale: number;
+}

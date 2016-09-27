@@ -3,7 +3,7 @@ import { IExternalBaseLayer } from "./map-viewer-base";
 
 interface IBaseLayerSwitcherProps {
     externalBaseLayers: IExternalBaseLayer[];
-    onBaseLayerChanged: (name: string) => void;
+    onBaseLayerChanged?: (name: string) => void;
 }
 
 export class BaseLayerSwitcher extends React.Component<IBaseLayerSwitcherProps, any> {
@@ -20,7 +20,9 @@ export class BaseLayerSwitcher extends React.Component<IBaseLayerSwitcherProps, 
         const { onBaseLayerChanged } = this.props;
         const value = e.currentTarget.value;
         this.setState({ selected: value });
-        onBaseLayerChanged(value);
+        if (onBaseLayerChanged) {
+            onBaseLayerChanged(value);
+        }
     }
     render(): JSX.Element {
         return <div>

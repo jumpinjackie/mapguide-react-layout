@@ -11,7 +11,7 @@ const WGS84_SPHERE = new ol.Sphere(6378137);
 const measureOverlays: ol.Overlay[] = [];
 
 interface IMeasureContainerProps {
-    
+
 }
 
 interface IMeasureContainerState {
@@ -19,7 +19,7 @@ interface IMeasureContainerState {
 }
 
 interface IMeasureContainerDispatch {
-    
+
 }
 
 function mapStateToProps(state): IMeasureContainerState {
@@ -30,7 +30,7 @@ function mapStateToProps(state): IMeasureContainerState {
 
 function mapDispatchToProps(dispatch) {
     return {
-        
+
     };
 }
 
@@ -38,20 +38,20 @@ type MeasureProps = IMeasureContainerProps & IMeasureContainerState & IMeasureCo
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class MeasureContainer extends React.Component<MeasureProps, any> {
-    private measureLayer: ol.layer.Vector;
-    private viewer: IMapViewer;
-    private draw: ol.interaction.Draw;
+    private measureLayer: ol.layer.Vector | null;
+    private viewer: IMapViewer | undefined;
+    private draw: ol.interaction.Draw | null;
     private fnTypeChanged: (e) => void;
     private fnGeodesicChanged: (e) => void;
     private fnDrawStart: (e) => void;
     private fnDrawEnd: (e) => void;
     private fnMouseMove: (e) => void;
     private fnClearMeasurements: (e) => void;
-    private sketch: ol.Feature;
+    private sketch: ol.Feature | null;
     private listener: any;
     private helpTooltipElement: Element;
     private helpTooltip: ol.Overlay;
-    private measureTooltipElement: Element;
+    private measureTooltipElement: Element | null;
     private measureTooltip: ol.Overlay;
     constructor(props) {
         super(props);
@@ -67,15 +67,17 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
         };
     }
     private setActiveInteraction(type) {
-        if (this.draw) {
-            this.draw.un("drawstart", this.fnDrawStart);
-            this.draw.un("drawend", this.fnDrawEnd);
-            this.viewer.removeInteraction(this.draw);
+        if (this.viewer) {
+            if (this.draw) {
+                this.draw.un("drawstart", this.fnDrawStart);
+                this.draw.un("drawend", this.fnDrawEnd);
+                this.viewer.removeInteraction(this.draw);
+            }
+            this.draw = this.createDrawInteraction(type);
+            this.draw.on("drawstart", this.fnDrawStart);
+            this.draw.on("drawend", this.fnDrawEnd);
+            this.viewer.addInteraction(this.draw);
         }
-        this.draw = this.createDrawInteraction(type);
-        this.draw.on("drawstart", this.fnDrawStart);
-        this.draw.on("drawend", this.fnDrawEnd);
-        this.viewer.addInteraction(this.draw);
     }
     private onTypeChanged(e) {
         const newType = e.target.value;
@@ -87,31 +89,34 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
         const newValue = e.target.checked;
         this.setState({ geodesic: newValue });
     }
-    private createDrawInteraction(type): ol.interaction.Draw {
-        const source = this.measureLayer.getSource();
-        return new ol.interaction.Draw({
-            source: source,
-            type: /** @type {ol.geom.GeometryType} */ (type),
-            style: new ol.style.Style({
-                fill: new ol.style.Fill({
-                    color: 'rgba(255, 255, 255, 0.2)'
-                }),
-                stroke: new ol.style.Stroke({
-                    color: 'rgba(0, 0, 0, 0.5)',
-                    lineDash: [10, 10],
-                    width: 2
-                }),
-                image: new ol.style.Circle({
-                    radius: 5,
-                    stroke: new ol.style.Stroke({
-                        color: 'rgba(0, 0, 0, 0.7)'
-                    }),
+    private createDrawInteraction(type): ol.interaction.Draw | undefined {
+        if (this.measureLayer) {
+            const source = this.measureLayer.getSource();
+            return new ol.interaction.Draw({
+                source: source,
+                type: /** @type {ol.geom.GeometryType} */ (type),
+                style: new ol.style.Style({
                     fill: new ol.style.Fill({
                         color: 'rgba(255, 255, 255, 0.2)'
+                    }),
+                    stroke: new ol.style.Stroke({
+                        color: 'rgba(0, 0, 0, 0.5)',
+                        lineDash: [10, 10],
+                        width: 2
+                    }),
+                    image: new ol.style.Circle({
+                        radius: 5,
+                        stroke: new ol.style.Stroke({
+                            color: 'rgba(0, 0, 0, 0.7)'
+                        }),
+                        fill: new ol.style.Fill({
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        })
                     })
                 })
-            })
-        });
+            });
+        }
+        return undefined;
     }
     private createMeasureStyle(): ol.style.Style {
         return new ol.style.Style({
@@ -137,7 +142,7 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
      */
     private formatLength(line) {
         let length;
-        if (this.state.geodesic) {
+        if (this.state.geodesic && this.viewer) {
             const coordinates = line.getCoordinates();
             length = 0;
             const sourceProj = this.viewer.getProjection();
@@ -166,7 +171,7 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
      */
     private formatArea(polygon) {
         let area;
-        if (this.state.geodesic) {
+        if (this.state.geodesic && this.viewer) {
             const sourceProj = this.viewer.getProjection();
             const geom = /** @type {ol.geom.Polygon} */(polygon.clone().transform(
                 sourceProj, 'EPSG:4326'));
@@ -192,22 +197,28 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
         /** @type {ol.Coordinate|undefined} */
         let tooltipCoord = evt.coordinate;
 
-        this.listener = this.sketch.getGeometry().on('change', (evt) => {
-            const geom = evt.target;
-            let output;
-            if (geom instanceof ol.geom.Polygon) {
-                output = this.formatArea(geom);
-                tooltipCoord = geom.getInteriorPoint().getCoordinates();
-            } else if (geom instanceof ol.geom.LineString) {
-                output = this.formatLength(geom);
-                tooltipCoord = geom.getLastCoordinate();
-            }
-            this.measureTooltipElement.innerHTML = output;
-            this.measureTooltip.setPosition(tooltipCoord);
-        });
+        if (this.sketch) {
+            this.listener = this.sketch.getGeometry().on('change', (evt) => {
+                const geom = evt.target;
+                let output;
+                if (geom instanceof ol.geom.Polygon) {
+                    output = this.formatArea(geom);
+                    tooltipCoord = geom.getInteriorPoint().getCoordinates();
+                } else if (geom instanceof ol.geom.LineString) {
+                    output = this.formatLength(geom);
+                    tooltipCoord = geom.getLastCoordinate();
+                }
+                if (this.measureTooltipElement) {
+                    this.measureTooltipElement.innerHTML = output;
+                }
+                this.measureTooltip.setPosition(tooltipCoord);
+            });
+        }
     }
     private onDrawEnd(evt) {
-        this.measureTooltipElement.className = 'tooltip tooltip-static';
+        if (this.measureTooltipElement) {
+            this.measureTooltipElement.className = 'tooltip tooltip-static';
+        }
         this.measureTooltip.setOffset([0, -7]);
         // unset sketch
         this.sketch = null;
@@ -230,7 +241,9 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
             offset: [15, 0],
             positioning: 'center-left'
         });
-        this.viewer.addOverlay(this.helpTooltip);
+        if (this.viewer) {
+            this.viewer.addOverlay(this.helpTooltip);
+        }
     }
     /**
      * Creates a new measure tooltip
@@ -250,7 +263,9 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
             offset: [0, -15],
             positioning: 'bottom-center'
         });
-        this.viewer.addOverlay(this.measureTooltip);
+        if (this.viewer) {
+            this.viewer.addOverlay(this.measureTooltip);
+        }
     }
     private onMouseMove(evt) {
         if (evt.dragging) {
@@ -273,40 +288,50 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
     }
     private onClearMeasurements(e) {
         e.preventDefault();
-        this.measureLayer.getSource().clear();
-        for (const ov of measureOverlays) {
-            this.viewer.removeOverlay(ov);
+        if (this.measureLayer) {
+            this.measureLayer.getSource().clear();
+        }
+        if (this.viewer) {
+            for (const ov of measureOverlays) {
+                this.viewer.removeOverlay(ov);
+            }
         }
         measureOverlays.length = 0; //Clear
         return false;
     }
     componentDidMount() {
         this.viewer = getViewer();
-        this.measureLayer = this.viewer.getLayer(LAYER_NAME, () => {
-            return new ol.layer.Vector({
-                source: new ol.source.Vector(),
-                renderOrder: null //This is probably a bug in OL API doc
+        if (this.viewer) {
+            this.measureLayer = this.viewer.getLayer(LAYER_NAME, () => {
+                return new ol.layer.Vector({
+                    source: new ol.source.Vector(),
+                    renderOrder: null //This is probably a bug in OL API doc
+                });
             });
-        });
-        this.measureLayer.setStyle(this.createMeasureStyle());
-        this.createMeasureTooltip();
-        this.createHelpTooltip();
-        this.setActiveInteraction(this.state.type);
-        this.viewer.addHandler('pointermove', this.fnMouseMove);
+            if (this.measureLayer) {
+                this.measureLayer.setStyle(this.createMeasureStyle());
+            }
+            this.createMeasureTooltip();
+            this.createHelpTooltip();
+            this.setActiveInteraction(this.state.type);
+            this.viewer.addHandler('pointermove', this.fnMouseMove);
+        }
     }
     componentWillUnmount() {
-        this.viewer.removeHandler('pointermove', this.fnMouseMove);
-        if (this.draw) {
-            this.draw.un("drawstart", this.fnDrawStart);
-            this.draw.un("drawend", this.fnDrawEnd);
-            this.viewer.removeInteraction(this.draw);
-            this.draw = null;
+        if (this.viewer) {
+            this.viewer.removeHandler('pointermove', this.fnMouseMove);
+            if (this.draw) {
+                this.draw.un("drawstart", this.fnDrawStart);
+                this.draw.un("drawend", this.fnDrawEnd);
+                this.viewer.removeInteraction(this.draw);
+                this.draw = null;
+            }
+            if (this.helpTooltipElement) {
+                this.helpTooltipElement.parentNode.removeChild(this.helpTooltipElement);
+            }
+            this.viewer = undefined;
+            this.measureLayer = null;
         }
-        if (this.helpTooltipElement) {
-            this.helpTooltipElement.parentNode.removeChild(this.helpTooltipElement);
-        }
-        this.viewer = null;
-        this.measureLayer = null;
     }
     render(): JSX.Element {
         const { locale } = this.props.config;

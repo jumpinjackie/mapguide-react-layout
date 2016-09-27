@@ -63,10 +63,12 @@ export class App extends React.Component<IAppProps & IAppState & IAppDispatch, a
     }
     componentDidMount() {
         const { initApp, initLayout, agent, resourceId, externalBaseLayers } = this.props;
-        initLayout({
-            resourceId: resourceId,
-            externalBaseLayers: externalBaseLayers
-        });
+        if (initLayout) {
+            initLayout({
+                resourceId: resourceId,
+                externalBaseLayers: externalBaseLayers
+            });
+        }
     }
     render(): JSX.Element {
         const { layout, config } = this.props;

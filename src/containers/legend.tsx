@@ -63,19 +63,29 @@ export class LegendContainer extends React.Component<ILegendContainerProps & ILe
         this.fnGroupExpansionChanged = this.onGroupExpansionChanged.bind(this);
     }
     private onLayerSelectabilityChanged(id: string, selectable: boolean) {
-        this.props.setLayerSelectable({ id: id, value: selectable });
+        if (this.props.setLayerSelectable) {
+            this.props.setLayerSelectable({ id: id, value: selectable });
+        }
     }
     private onGroupExpansionChanged(id: string, expanded: boolean) {
-        this.props.setGroupExpanded({ id: id, value: expanded });
+        if (this.props.setGroupExpanded) {
+            this.props.setGroupExpanded({ id: id, value: expanded });
+        }
     }
     private onGroupVisibilityChanged(groupId: string, visible: boolean) {
-        this.props.setGroupVisibility({ groupId: groupId, visible: visible });
+        if (this.props.setGroupVisibility) {
+            this.props.setGroupVisibility({ groupId: groupId, visible: visible });
+        }
     }
     private onLayerVisibilityChanged(layerId: string, visible: boolean) {
-        this.props.setLayerVisibility({ layerId: layerId, visible: visible });
+        if (this.props.setLayerVisibility) {
+            this.props.setLayerVisibility({ layerId: layerId, visible: visible });
+        }
     }
     private onBaseLayerChanged(layerName: string) {
-        this.props.setBaseLayer(layerName);
+        if (this.props.setBaseLayer) {
+            this.props.setBaseLayer(layerName);
+        }
     }
     render(): JSX.Element {
         //overrideSelectableLayers?: any;
@@ -84,10 +94,10 @@ export class LegendContainer extends React.Component<ILegendContainerProps & ILe
         const { map, config, view, viewer, legend } = this.props;
         if (map != null && config != null && view != null && legend != null) {
             let scale = view.scale;
-            const showLayers = [];
-            const showGroups = [];
-            const hideLayers = [];
-            const hideGroups = [];
+            const showLayers = [] as string[];
+            const showGroups = [] as string[];
+            const hideLayers = [] as string[];
+            const hideGroups = [] as string[];
             if (viewer != null && viewer.layerGroupVisibility != null) {
                 showLayers.push(...(viewer.layerGroupVisibility.showLayers || []));
                 showGroups.push(...(viewer.layerGroupVisibility.showGroups || []));

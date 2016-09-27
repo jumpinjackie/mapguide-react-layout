@@ -79,7 +79,9 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
     }
     zoomSelectedFeature() {
         const feat = this.getCurrentFeature();
-        this.props.onRequestZoomToFeature(feat);
+        if (feat) {
+            this.props.onRequestZoomToFeature(feat);
+        }
     }
     private setDefaultSelection(props: ISelectionPanelProps) {
         const { selection } = props;
@@ -102,8 +104,8 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
     }
     render(): JSX.Element {
         const { selection } = this.props;
-        let feat: SelectedFeature = null;
-        let meta: LayerMetadata = null;
+        let feat: SelectedFeature | null | undefined;
+        let meta: LayerMetadata | null | undefined = null;
         if (selection != null && this.state.selectedLayerIndex >= 0 && this.state.featureIndex >= 0) {
             const selLayer = selection.SelectedLayer[this.state.selectedLayerIndex];
             feat = selLayer.Feature[this.state.featureIndex];
@@ -124,7 +126,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
             })()}
             <div style={{ position: "absolute", top: DEFAULT_TOOLBAR_SIZE, left: 0, right: 0, bottom: 0, overflow: "hidden" }}>
                 {(() => {
-                    if (feat != null && meta != null) {
+                    if (feat && meta) {
                         return <table className="selection-panel-property-grid">
                             <thead>
                                 <tr>

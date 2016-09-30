@@ -65,214 +65,6 @@ interface GeolocationPositionOptions {
 }
 declare module ol {
     /**
-     * A function returning the canvas element (`{HTMLCanvasElement}`)
-     * used by the source as an image. The arguments passed to the function are:
-     * {@link ol.Extent} the image extent, `{number}` the image resolution,
-     * `{number}` the device pixel ratio, {@link ol.Size} the image size, and
-     * {@link ol.proj.Projection} the image projection. The canvas returned by
-     * this function is cached by the source. The this keyword inside the function
-     * references the {@link ol.source.ImageCanvas}.
-     */
-    type CanvasFunctionType = (arg0: ol.Extent, arg1: number, arg2: number, arg3: ol.Size, arg4: ol.proj.Projection) => HTMLCanvasElement;
-    /**
-     * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
-     */
-    type CenterConstraintType = (arg0?: ol.Coordinate) => ol.Coordinate;
-    /**
-     * A function that takes a {@link ol.Coordinate} and transforms it into a
-     * `{string}`.
-     */
-    type CoordinateFormatType = (arg0?: ol.Coordinate) => string;
-    /**
-     * A function that takes a {@link ol.MapBrowserEvent} and two
-     * {@link ol.Pixel}s and returns a `{boolean}`. If the condition is met,
-     * true should be returned.
-     */
-    type DragBoxEndConditionType = (arg0: ol.MapBrowserEvent, arg1: ol.Pixel, arg2: ol.Pixel) => boolean;
-    /**
-     * Function that takes coordinates and an optional existing geometry as
-     * arguments, and returns a geometry. The optional existing geometry is the
-     * geometry that is returned when the function is called without a second
-     * argument.
-     */
-    type DrawGeometryFunctionType = (arg0: ol.Coordinate|ol.Coordinate[]|ol.Coordinate[][], arg1?: ol.geom.SimpleGeometry) => ol.geom.SimpleGeometry;
-    /**
-     * A function that takes an {@link ol.MapBrowserEvent} and returns a
-     * `{boolean}`. If the condition is met, true should be returned.
-     */
-    type EventsConditionType = (arg0: ol.MapBrowserEvent) => boolean;
-    /**
-     * {@link ol.source.Vector} sources use a function of this type to load
-     * features.
-     * 
-     * This function takes an {@link ol.Extent} representing the area to be loaded,
-     * a `{number}` representing the resolution (map units per pixel) and an
-     * {@link ol.proj.Projection} for the projection  as arguments. `this` within
-     * the function is bound to the {@link ol.source.Vector} it's called from.
-     * 
-     * The function is responsible for loading the features and adding them to the
-     * source.
-     */
-    type FeatureLoader = (arg0: ol.Extent, arg1: number, arg2: ol.proj.Projection) => void;
-    /**
-     * A function that returns an array of {@link ol.style.Style styles} given a
-     * resolution. The `this` keyword inside the function references the
-     * {@link ol.Feature} to be styled.
-     */
-    type FeatureStyleFunction = (arg0: number) => ol.style.Style|ol.style.Style[];
-    /**
-     * {@link ol.source.Vector} sources use a function of this type to get the url
-     * to load features from.
-     * 
-     * This function takes an {@link ol.Extent} representing the area to be loaded,
-     * a `{number}` representing the resolution (map units per pixel) and an
-     * {@link ol.proj.Projection} for the projection  as arguments and returns a
-     * `{string}` representing the URL.
-     */
-    type FeatureUrlFunction = (arg0: ol.Extent, arg1: number, arg2: ol.proj.Projection) => string;
-    /**
-     * A function that is called to trigger asynchronous canvas drawing.  It is
-     * called with a "done" callback that should be called when drawing is done.
-     * If any error occurs during drawing, the "done" callback should be called with
-     * that error.
-     */
-    type ImageCanvasLoader = (arg0: (arg0: Error) => any) => void;
-    /**
-     * A function that takes an {@link ol.Image} for the image and a `{string}` for
-     * the src as arguments. It is supposed to make it so the underlying image
-     * {@link ol.Image#getImage} is assigned the content specified by the src. If
-     * not specified, the default is
-     * 
-     *     function(image, src) {
-     *       image.getImage().src = src;
-     *     }
-     * 
-     * Providing a custom `imageLoadFunction` can be useful to load images with
-     * post requests or - in general - through XHR requests, where the src of the
-     * image element would be set to a data URI when the content is loaded.
-     */
-    type ImageLoadFunctionType = (arg0: ol.Image, arg1: string) => void;
-    /**
-     * A function that takes an {@link ol.Extent} and a resolution as arguments, and
-     * returns an array of {@link ol.Extent} with the extents to load. Usually this
-     * is one of the standard {@link ol.loadingstrategy} strategies.
-     */
-    type LoadingStrategy = (arg0: ol.Extent, arg1: number) => ol.Extent[];
-    /**
-     * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
-     */
-    type PostRenderFunction = (arg0: ol.Map, arg1?: olx.FrameState) => boolean;
-    /**
-     * Function to perform manipulations before rendering. This function is called
-     * with the {@link ol.Map} as first and an optional {@link olx.FrameState} as
-     * second argument. Return `true` to keep this function for the next frame,
-     * `false` to remove it.
-     */
-    type PreRenderFunction = (arg0: ol.Map, arg1?: olx.FrameState) => boolean;
-    /**
-     * A function that takes an array of input data, performs some operation, and
-     * returns an array of ouput data.
-     * For `pixel` type operations, the function will be called with an array of
-     * pixels, where each pixel is an array of four numbers (`[r, g, b, a]`) in the
-     * range of 0 - 255. It should return a single pixel array.
-     * For `'image'` type operations, functions will be called with an array of
-     * {@link ImageData https://developer.mozilla.org/en-US/docs/Web/API/ImageData}
-     * and should return a single {@link ImageData
-     * https://developer.mozilla.org/en-US/docs/Web/API/ImageData}.  The operations
-     * are called with a second "data" argument, which can be used for storage.  The
-     * data object is accessible from raster events, where it can be initialized in
-     * "beforeoperations" and accessed again in "afteroperations".
-     */
-    type RasterOperation = (arg0: number[][]|ImageData[], arg1: any) => number[]|ImageData;
-    /**
-     * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
-     */
-    type ReprojImageFunctionType = (arg0: ol.Extent, arg1: number, arg2: number) => ol.ImageBase;
-    /**
-     * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
-     */
-    type ReprojTileFunctionType = (arg0: number, arg1: number, arg2: number, arg3: number) => ol.Tile;
-    /**
-     * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
-     */
-    type ResolutionConstraintType = (arg0?: number, arg1?: number, arg2?: number) => number;
-    /**
-     * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
-     */
-    type RotationConstraintType = (arg0?: number, arg1?: number) => number;
-    /**
-     * A function that takes an {@link ol.Feature} or {@link ol.render.Feature} and
-     * an {@link ol.layer.Layer} and returns `true` if the feature may be selected
-     * or `false` otherwise.
-     */
-    type SelectFilterFunction = (arg0: ol.Feature|ol.render.Feature, arg1: ol.layer.Layer) => boolean;
-    /**
-     * A function that takes an {@link ol.Feature} and a `{number}` representing
-     * the view's resolution. The function should return a {@link ol.style.Style}
-     * or an array of them. This way e.g. a vector layer can be styled.
-     */
-    type StyleFunction = (arg0: ol.Feature|ol.render.Feature, arg1: number) => ol.style.Style|ol.style.Style[];
-    /**
-     * A function that takes an {@link ol.Feature} as argument and returns an
-     * {@link ol.geom.Geometry} that will be rendered and styled for the feature.
-     */
-    type StyleGeometryFunction = (arg0: ol.Feature|ol.render.Feature) => ol.geom.Geometry|ol.render.Feature;
-    /**
-     * A function that takes an {@link ol.Tile} for the tile and a `{string}` for
-     * the url as arguments.
-     */
-    type TileLoadFunctionType = (arg0: ol.Tile, arg1: string) => void;
-    /**
-     * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
-     */
-    type TilePriorityFunction = (arg0: ol.Tile, arg1: string, arg2: ol.Coordinate, arg3: number) => number;
-    /**
-     * {@link ol.source.Tile} sources use a function of this type to get the url
-     * that provides a tile for a given tile coordinate.
-     * 
-     * This function takes an {@link ol.TileCoord} for the tile coordinate, a
-     * `{number}` representing the pixel ratio and an {@link ol.proj.Projection} for
-     * the projection  as arguments and returns a `{string}` representing the tile
-     * URL, or undefined if no tile should be requested for the passed tile
-     * coordinate.
-     */
-    type TileUrlFunctionType = (arg0: ol.TileCoord, arg1: number, arg2: ol.proj.Projection) => string;
-    /**
-     * A transform function accepts an array of input coordinate values, an optional
-     * output array, and an optional dimension (default should be 2).  The function
-     * transforms the input coordinate values, populates the output array, and
-     * returns the output array.
-     */
-    type TransformFunction = (arg0: number[], arg1?: number[], arg2?: number) => number[];
-    /**
-     * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
-     */
-    type XmlParser = (arg0: Node, arg1: any[]) => void;
-    /**
-     * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
-     */
-    type XmlSerializer = (arg0: Node, arg1: any, arg2: any[]) => void;
-    /**
-     * Inherit the prototype methods from one constructor into another.
-     * 
-     * Usage:
-     * 
-     *     function ParentClass(a, b) { }
-     *     ParentClass.prototype.foo = function(a) { }
-     * 
-     *     function ChildClass(a, b, c) {
-     *       // Call parent constructor
-     *       ParentClass.call(this, a, b);
-     *     }
-     *     ol.inherits(ChildClass, ParentClass);
-     * 
-     *     var child = new ChildClass('a', 'b', 'see');
-     *     child.foo(); // This works.
-     * @param childCtor  (Required) Child constructor.
-     * @param parentCtor  (Required) Parent constructor.
-     */
-    function inherits(childCtor: Function, parentCtor: Function): void;
-    /**
      * An attribution for a layer source.
      * 
      * Example:
@@ -2270,60 +2062,215 @@ otherwise it will be negative.
      */
     type WFSTransactionResponse = any;
 
-    module animation {
-        /**
-         * Generate an animated transition that will "bounce" the resolution as it
-         * approaches the final value.
-         * @param options  (Required) Bounce options.
-         */
-        function bounce(options: olx.animation.BounceOptions): ol.PreRenderFunction;
-        /**
-         * Generate an animated transition while updating the view center.
-         * @param options  (Required) Pan options.
-         */
-        function pan(options: olx.animation.PanOptions): ol.PreRenderFunction;
-        /**
-         * Generate an animated transition while updating the view rotation.
-         * @param options  (Required) Rotate options.
-         */
-        function rotate(options: olx.animation.RotateOptions): ol.PreRenderFunction;
-        /**
-         * Generate an animated transition while updating the view resolution.
-         * @param options  (Required) Zoom options.
-         */
-        function zoom(options: olx.animation.ZoomOptions): ol.PreRenderFunction;
-    }
-    module color {
-        /**
-         * Return the color as an array. This function maintains a cache of calculated
-         * arrays which means the result should not be modified.
-         * @param color  (Required) Color.
-         */
-        function asArray(color: ol.Color|string): ol.Color;
-        /**
-         * Return the color as an rgba string.
-         * @param color  (Required) Color.
-         */
-        function asString(color: ol.Color|string): string;
-    }
-    module colorlike {
-        /**
-         * TODO: This method has no documentation. Contact the library author if this method should be documented
-         * @param color  (Required) Color.
-         */
-        function asColorLike(color: ol.Color|ol.ColorLike): ol.ColorLike;
-    }
+    /**
+     * A function returning the canvas element (`{HTMLCanvasElement}`)
+     * used by the source as an image. The arguments passed to the function are:
+     * {@link ol.Extent} the image extent, `{number}` the image resolution,
+     * `{number}` the device pixel ratio, {@link ol.Size} the image size, and
+     * {@link ol.proj.Projection} the image projection. The canvas returned by
+     * this function is cached by the source. The this keyword inside the function
+     * references the {@link ol.source.ImageCanvas}.
+     */
+    type CanvasFunctionType = (arg0: ol.Extent, arg1: number, arg2: number, arg3: ol.Size, arg4: ol.proj.Projection) => HTMLCanvasElement;
+    /**
+     * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
+     */
+    type CenterConstraintType = (arg0?: ol.Coordinate) => ol.Coordinate;
+    /**
+     * A function that takes a {@link ol.Coordinate} and transforms it into a
+     * `{string}`.
+     */
+    type CoordinateFormatType = (arg0?: ol.Coordinate) => string;
+    /**
+     * A function that takes a {@link ol.MapBrowserEvent} and two
+     * {@link ol.Pixel}s and returns a `{boolean}`. If the condition is met,
+     * true should be returned.
+     */
+    type DragBoxEndConditionType = (arg0: ol.MapBrowserEvent, arg1: ol.Pixel, arg2: ol.Pixel) => boolean;
+    /**
+     * Function that takes coordinates and an optional existing geometry as
+     * arguments, and returns a geometry. The optional existing geometry is the
+     * geometry that is returned when the function is called without a second
+     * argument.
+     */
+    type DrawGeometryFunctionType = (arg0: ol.Coordinate|ol.Coordinate[]|ol.Coordinate[][], arg1?: ol.geom.SimpleGeometry) => ol.geom.SimpleGeometry;
+    /**
+     * A function that takes an {@link ol.MapBrowserEvent} and returns a
+     * `{boolean}`. If the condition is met, true should be returned.
+     */
+    type EventsConditionType = (arg0: ol.MapBrowserEvent) => boolean;
+    /**
+     * {@link ol.source.Vector} sources use a function of this type to load
+     * features.
+     * 
+     * This function takes an {@link ol.Extent} representing the area to be loaded,
+     * a `{number}` representing the resolution (map units per pixel) and an
+     * {@link ol.proj.Projection} for the projection  as arguments. `this` within
+     * the function is bound to the {@link ol.source.Vector} it's called from.
+     * 
+     * The function is responsible for loading the features and adding them to the
+     * source.
+     */
+    type FeatureLoader = (arg0: ol.Extent, arg1: number, arg2: ol.proj.Projection) => void;
+    /**
+     * A function that returns an array of {@link ol.style.Style styles} given a
+     * resolution. The `this` keyword inside the function references the
+     * {@link ol.Feature} to be styled.
+     */
+    type FeatureStyleFunction = (arg0: number) => ol.style.Style|ol.style.Style[];
+    /**
+     * {@link ol.source.Vector} sources use a function of this type to get the url
+     * to load features from.
+     * 
+     * This function takes an {@link ol.Extent} representing the area to be loaded,
+     * a `{number}` representing the resolution (map units per pixel) and an
+     * {@link ol.proj.Projection} for the projection  as arguments and returns a
+     * `{string}` representing the URL.
+     */
+    type FeatureUrlFunction = (arg0: ol.Extent, arg1: number, arg2: ol.proj.Projection) => string;
+    /**
+     * A function that is called to trigger asynchronous canvas drawing.  It is
+     * called with a "done" callback that should be called when drawing is done.
+     * If any error occurs during drawing, the "done" callback should be called with
+     * that error.
+     */
+    type ImageCanvasLoader = (arg0: (arg0: Error) => any) => void;
+    /**
+     * A function that takes an {@link ol.Image} for the image and a `{string}` for
+     * the src as arguments. It is supposed to make it so the underlying image
+     * {@link ol.Image#getImage} is assigned the content specified by the src. If
+     * not specified, the default is
+     * 
+     *     function(image, src) {
+     *       image.getImage().src = src;
+     *     }
+     * 
+     * Providing a custom `imageLoadFunction` can be useful to load images with
+     * post requests or - in general - through XHR requests, where the src of the
+     * image element would be set to a data URI when the content is loaded.
+     */
+    type ImageLoadFunctionType = (arg0: ol.Image, arg1: string) => void;
+    /**
+     * A function that takes an {@link ol.Extent} and a resolution as arguments, and
+     * returns an array of {@link ol.Extent} with the extents to load. Usually this
+     * is one of the standard {@link ol.loadingstrategy} strategies.
+     */
+    type LoadingStrategy = (arg0: ol.Extent, arg1: number) => ol.Extent[];
+    /**
+     * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
+     */
+    type PostRenderFunction = (arg0: ol.Map, arg1?: olx.FrameState) => boolean;
+    /**
+     * Function to perform manipulations before rendering. This function is called
+     * with the {@link ol.Map} as first and an optional {@link olx.FrameState} as
+     * second argument. Return `true` to keep this function for the next frame,
+     * `false` to remove it.
+     */
+    type PreRenderFunction = (arg0: ol.Map, arg1?: olx.FrameState) => boolean;
+    /**
+     * A function that takes an array of input data, performs some operation, and
+     * returns an array of ouput data.
+     * For `pixel` type operations, the function will be called with an array of
+     * pixels, where each pixel is an array of four numbers (`[r, g, b, a]`) in the
+     * range of 0 - 255. It should return a single pixel array.
+     * For `'image'` type operations, functions will be called with an array of
+     * {@link ImageData https://developer.mozilla.org/en-US/docs/Web/API/ImageData}
+     * and should return a single {@link ImageData
+     * https://developer.mozilla.org/en-US/docs/Web/API/ImageData}.  The operations
+     * are called with a second "data" argument, which can be used for storage.  The
+     * data object is accessible from raster events, where it can be initialized in
+     * "beforeoperations" and accessed again in "afteroperations".
+     */
+    type RasterOperation = (arg0: number[][]|ImageData[], arg1: any) => number[]|ImageData;
+    /**
+     * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
+     */
+    type ReprojImageFunctionType = (arg0: ol.Extent, arg1: number, arg2: number) => ol.ImageBase;
+    /**
+     * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
+     */
+    type ReprojTileFunctionType = (arg0: number, arg1: number, arg2: number, arg3: number) => ol.Tile;
+    /**
+     * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
+     */
+    type ResolutionConstraintType = (arg0?: number, arg1?: number, arg2?: number) => number;
+    /**
+     * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
+     */
+    type RotationConstraintType = (arg0?: number, arg1?: number) => number;
+    /**
+     * A function that takes an {@link ol.Feature} or {@link ol.render.Feature} and
+     * an {@link ol.layer.Layer} and returns `true` if the feature may be selected
+     * or `false` otherwise.
+     */
+    type SelectFilterFunction = (arg0: ol.Feature|ol.render.Feature, arg1: ol.layer.Layer) => boolean;
+    /**
+     * A function that takes an {@link ol.Feature} and a `{number}` representing
+     * the view's resolution. The function should return a {@link ol.style.Style}
+     * or an array of them. This way e.g. a vector layer can be styled.
+     */
+    type StyleFunction = (arg0: ol.Feature|ol.render.Feature, arg1: number) => ol.style.Style|ol.style.Style[];
+    /**
+     * A function that takes an {@link ol.Feature} as argument and returns an
+     * {@link ol.geom.Geometry} that will be rendered and styled for the feature.
+     */
+    type StyleGeometryFunction = (arg0: ol.Feature|ol.render.Feature) => ol.geom.Geometry|ol.render.Feature;
+    /**
+     * A function that takes an {@link ol.Tile} for the tile and a `{string}` for
+     * the url as arguments.
+     */
+    type TileLoadFunctionType = (arg0: ol.Tile, arg1: string) => void;
+    /**
+     * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
+     */
+    type TilePriorityFunction = (arg0: ol.Tile, arg1: string, arg2: ol.Coordinate, arg3: number) => number;
+    /**
+     * {@link ol.source.Tile} sources use a function of this type to get the url
+     * that provides a tile for a given tile coordinate.
+     * 
+     * This function takes an {@link ol.TileCoord} for the tile coordinate, a
+     * `{number}` representing the pixel ratio and an {@link ol.proj.Projection} for
+     * the projection  as arguments and returns a `{string}` representing the tile
+     * URL, or undefined if no tile should be requested for the passed tile
+     * coordinate.
+     */
+    type TileUrlFunctionType = (arg0: ol.TileCoord, arg1: number, arg2: ol.proj.Projection) => string;
+    /**
+     * A transform function accepts an array of input coordinate values, an optional
+     * output array, and an optional dimension (default should be 2).  The function
+     * transforms the input coordinate values, populates the output array, and
+     * returns the output array.
+     */
+    type TransformFunction = (arg0: number[], arg1?: number[], arg2?: number) => number[];
+    /**
+     * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
+     */
+    type XmlParser = (arg0: Node, arg1: any[]) => void;
+    /**
+     * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
+     */
+    type XmlSerializer = (arg0: Node, arg1: any, arg2: any[]) => void;
+    /**
+     * Inherit the prototype methods from one constructor into another.
+     * 
+     * Usage:
+     * 
+     *     function ParentClass(a, b) { }
+     *     ParentClass.prototype.foo = function(a) { }
+     * 
+     *     function ChildClass(a, b, c) {
+     *       // Call parent constructor
+     *       ParentClass.call(this, a, b);
+     *     }
+     *     ol.inherits(ChildClass, ParentClass);
+     * 
+     *     var child = new ChildClass('a', 'b', 'see');
+     *     child.foo(); // This works.
+     * @param childCtor  (Required) Child constructor.
+     * @param parentCtor  (Required) Parent constructor.
+     */
+    function inherits(childCtor: Function, parentCtor: Function): void;
     module control {
-        /**
-         * Set of controls included in maps by default. Unless configured otherwise,
-         * this returns a collection containing an instance of each of the following
-         * controls:
-         * * {@link ol.control.Zoom}
-         * * {@link ol.control.Rotate}
-         * * {@link ol.control.Attribution}
-         * @param opt_options  (Optional) Defaults options.
-         */
-        function defaults(opt_options?: olx.control.DefaultsOptions): ol.Collection<ol.control.Control>;
         /**
          * Control to show all the attributions associated with the layer sources
          * in the map. This control is one of the default controls included in maps.
@@ -3590,6 +3537,16 @@ otherwise it will be negative.
              */
             unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
         }
+        /**
+         * Set of controls included in maps by default. Unless configured otherwise,
+         * this returns a collection containing an instance of each of the following
+         * controls:
+         * * {@link ol.control.Zoom}
+         * * {@link ol.control.Rotate}
+         * * {@link ol.control.Attribution}
+         * @param opt_options  (Optional) Defaults options.
+         */
+        function defaults(opt_options?: olx.control.DefaultsOptions): ol.Collection<ol.control.Control>;
         module ScaleLine {
             /**
              * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -3627,149 +3584,6 @@ otherwise it will be negative.
                 public static US: string;
             }
         }
-    }
-    module coordinate {
-        /**
-         * Add `delta` to `coordinate`. `coordinate` is modified in place and returned
-         * by the function.
-         * 
-         * Example:
-         * 
-         *     var coord = [7.85, 47.983333];
-         *     ol.coordinate.add(coord, [-2, 4]);
-         *     // coord is now [5.85, 51.983333]
-         * @param coordinate  (Required) Coordinate.
-         * @param delta  (Required) Delta.
-         */
-        function add(coordinate: ol.Coordinate, delta: ol.Coordinate): ol.Coordinate;
-        /**
-         * Returns a {@link ol.CoordinateFormatType} function that can be used to format
-         * a {ol.Coordinate} to a string.
-         * 
-         * Example without specifying the fractional digits:
-         * 
-         *     var coord = [7.85, 47.983333];
-         *     var stringifyFunc = ol.coordinate.createStringXY();
-         *     var out = stringifyFunc(coord);
-         *     // out is now '8, 48'
-         * 
-         * Example with explicitly specifying 2 fractional digits:
-         * 
-         *     var coord = [7.85, 47.983333];
-         *     var stringifyFunc = ol.coordinate.createStringXY(2);
-         *     var out = stringifyFunc(coord);
-         *     // out is now '7.85, 47.98'
-         * @param opt_fractionDigits  (Optional) The number of digits to include
-   after the decimal point. Default is `0`.
-         */
-        function createStringXY(opt_fractionDigits?: number): ol.CoordinateFormatType;
-        /**
-         * Transforms the given {@link ol.Coordinate} to a string using the given string
-         * template. The strings `{x}` and `{y}` in the template will be replaced with
-         * the first and second coordinate values respectively.
-         * 
-         * Example without specifying the fractional digits:
-         * 
-         *     var coord = [7.85, 47.983333];
-         *     var template = 'Coordinate is ({x}|{y}).';
-         *     var out = ol.coordinate.format(coord, template);
-         *     // out is now 'Coordinate is (8|48).'
-         * 
-         * Example explicitly specifying the fractional digits:
-         * 
-         *     var coord = [7.85, 47.983333];
-         *     var template = 'Coordinate is ({x}|{y}).';
-         *     var out = ol.coordinate.format(coord, template, 2);
-         *     // out is now 'Coordinate is (7.85|47.98).'
-         * @param coordinate  (Optional) Coordinate.
-         * @param template  (Optional) A template string with `{x}` and `{y}` placeholders
-    that will be replaced by first and second coordinate values.
-         * @param opt_fractionDigits  (Optional) The number of digits to include
-   after the decimal point. Default is `0`.
-         */
-        function format(coordinate?: ol.Coordinate, template?: string, opt_fractionDigits?: number): string;
-        /**
-         * Rotate `coordinate` by `angle`. `coordinate` is modified in place and
-         * returned by the function.
-         * 
-         * Example:
-         * 
-         *     var coord = [7.85, 47.983333];
-         *     var rotateRadians = Math.PI / 2; // 90 degrees
-         *     ol.coordinate.rotate(coord, rotateRadians);
-         *     // coord is now [-47.983333, 7.85]
-         * @param coordinate  (Required) Coordinate.
-         * @param angle  (Required) Angle in radian.
-         */
-        function rotate(coordinate: ol.Coordinate, angle: number): ol.Coordinate;
-        /**
-         * Format a geographic coordinate with the hemisphere, degrees, minutes, and
-         * seconds.
-         * 
-         * Example without specifying fractional digits:
-         * 
-         *     var coord = [7.85, 47.983333];
-         *     var out = ol.coordinate.toStringHDMS(coord);
-         *     // out is now '47° 58′ 60″ N 7° 50′ 60″ E'
-         * 
-         * Example explicitly specifying 1 fractional digit:
-         * 
-         *     var coord = [7.85, 47.983333];
-         *     var out = ol.coordinate.toStringHDMS(coord, 1);
-         *     // out is now '47° 58′ 60.0″ N 7° 50′ 60.0″ E'
-         * @param coordinate  (Optional) Coordinate.
-         * @param opt_fractionDigits  (Optional) The number of digits to include
-   after the decimal point. Default is `0`.
-         */
-        function toStringHDMS(coordinate?: ol.Coordinate, opt_fractionDigits?: number): string;
-        /**
-         * Format a coordinate as a comma delimited string.
-         * 
-         * Example without specifying fractional digits:
-         * 
-         *     var coord = [7.85, 47.983333];
-         *     var out = ol.coordinate.toStringXY(coord);
-         *     // out is now '8, 48'
-         * 
-         * Example explicitly specifying 1 fractional digit:
-         * 
-         *     var coord = [7.85, 47.983333];
-         *     var out = ol.coordinate.toStringXY(coord, 1);
-         *     // out is now '7.8, 48.0'
-         * @param coordinate  (Optional) Coordinate.
-         * @param opt_fractionDigits  (Optional) The number of digits to include
-   after the decimal point. Default is `0`.
-         */
-        function toStringXY(coordinate?: ol.Coordinate, opt_fractionDigits?: number): string;
-    }
-    module easing {
-        /**
-         * Start slow and speed up.
-         * @param t  (Required) Input between 0 and 1.
-         */
-        function easeIn(t: number): number;
-        /**
-         * Start fast and slow down.
-         * @param t  (Required) Input between 0 and 1.
-         */
-        function easeOut(t: number): number;
-        /**
-         * Start slow, speed up, and then slow down again.
-         * @param t  (Required) Input between 0 and 1.
-         */
-        function inAndOut(t: number): number;
-        /**
-         * Maintain a constant speed over time.
-         * @param t  (Required) Input between 0 and 1.
-         */
-        function linear(t: number): number;
-        /**
-         * Start slow, speed up, and at the very end slow down again.  This has the
-         * same general behavior as {@link ol.easing.inAndOut}, but the final slowdown
-         * is delayed.
-         * @param t  (Required) Input between 0 and 1.
-         */
-        function upAndDown(t: number): number;
     }
     module events {
         /**
@@ -3884,142 +3698,6 @@ otherwise it will be negative.
              */
             function primaryAction(mapBrowserEvent: ol.MapBrowserEvent): boolean;
         }
-    }
-    module extent {
-        /**
-         * Build an extent that includes all given coordinates.
-         * @param coordinates  (Required) Coordinates.
-         */
-        function boundingExtent(coordinates: ol.Coordinate[]): ol.Extent;
-        /**
-         * Return extent increased by the provided value.
-         * @param extent  (Required) Extent.
-         * @param value  (Required) The amount by which the extent should be buffered.
-         * @param opt_extent  (Optional) Extent.
-         */
-        function buffer(extent: ol.Extent, value: number, opt_extent?: ol.Extent): ol.Extent;
-        /**
-         * Check if the passed coordinate is contained or on the edge of the extent.
-         * @param extent  (Required) Extent.
-         * @param coordinate  (Required) Coordinate.
-         */
-        function containsCoordinate(extent: ol.Extent, coordinate: ol.Coordinate): boolean;
-        /**
-         * Check if one extent contains another.
-         * 
-         * An extent is deemed contained if it lies completely within the other extent,
-         * including if they share one or more edges.
-         * @param extent1  (Required) Extent 1.
-         * @param extent2  (Required) Extent 2.
-         */
-        function containsExtent(extent1: ol.Extent, extent2: ol.Extent): boolean;
-        /**
-         * Check if the passed coordinate is contained or on the edge of the extent.
-         * @param extent  (Required) Extent.
-         * @param x  (Required) X coordinate.
-         * @param y  (Required) Y coordinate.
-         */
-        function containsXY(extent: ol.Extent, x: number, y: number): boolean;
-        /**
-         * Create an empty extent.
-         */
-        function createEmpty(): ol.Extent;
-        /**
-         * Determine if two extents are equivalent.
-         * @param extent1  (Required) Extent 1.
-         * @param extent2  (Required) Extent 2.
-         */
-        function equals(extent1: ol.Extent, extent2: ol.Extent): boolean;
-        /**
-         * Modify an extent to include another extent.
-         * @param extent1  (Required) The extent to be modified.
-         * @param extent2  (Required) The extent that will be included in the first.
-         */
-        function extend(extent1: ol.Extent, extent2: ol.Extent): ol.Extent;
-        /**
-         * Get the bottom left coordinate of an extent.
-         * @param extent  (Required) Extent.
-         */
-        function getBottomLeft(extent: ol.Extent): ol.Coordinate;
-        /**
-         * Get the bottom right coordinate of an extent.
-         * @param extent  (Required) Extent.
-         */
-        function getBottomRight(extent: ol.Extent): ol.Coordinate;
-        /**
-         * Get the center coordinate of an extent.
-         * @param extent  (Required) Extent.
-         */
-        function getCenter(extent: ol.Extent): ol.Coordinate;
-        /**
-         * Get the height of an extent.
-         * @param extent  (Required) Extent.
-         */
-        function getHeight(extent: ol.Extent): number;
-        /**
-         * Get the intersection of two extents.
-         * @param extent1  (Required) Extent 1.
-         * @param extent2  (Required) Extent 2.
-         * @param opt_extent  (Optional) Optional extent to populate with intersection.
-         */
-        function getIntersection(extent1: ol.Extent, extent2: ol.Extent, opt_extent?: ol.Extent): ol.Extent;
-        /**
-         * Get the size (width, height) of an extent.
-         * @param extent  (Required) The extent.
-         */
-        function getSize(extent: ol.Extent): ol.Size;
-        /**
-         * Get the top left coordinate of an extent.
-         * @param extent  (Required) Extent.
-         */
-        function getTopLeft(extent: ol.Extent): ol.Coordinate;
-        /**
-         * Get the top right coordinate of an extent.
-         * @param extent  (Required) Extent.
-         */
-        function getTopRight(extent: ol.Extent): ol.Coordinate;
-        /**
-         * Get the width of an extent.
-         * @param extent  (Required) Extent.
-         */
-        function getWidth(extent: ol.Extent): number;
-        /**
-         * Determine if one extent intersects another.
-         * @param extent1  (Required) Extent 1.
-         * @param extent2  (Required) Extent.
-         */
-        function intersects(extent1: ol.Extent, extent2: ol.Extent): boolean;
-        /**
-         * Determine if an extent is empty.
-         * @param extent  (Required) Extent.
-         */
-        function isEmpty(extent: ol.Extent): boolean;
-        /**
-         * Apply a transform function to the extent.
-         * @param extent  (Required) Extent.
-         * @param transformFn  (Required) Transform function.  Called with
-[minX, minY, maxX, maxY] extent coordinates.
-         * @param opt_extent  (Optional) Destination extent.
-         */
-        function applyTransform(extent: ol.Extent, transformFn: ol.TransformFunction, opt_extent?: ol.Extent): ol.Extent;
-    }
-    module featureloader {
-        /**
-         * Create an XHR feature loader for a `url` and `format`. The feature loader
-         * loads features (with XHR), parses the features, and adds them to the
-         * vector tile.
-         * @param url  (Required) Feature URL service.
-         * @param format  (Required) Feature format.
-         */
-        function tile(url: string|ol.FeatureUrlFunction, format: ol.format.Feature): ol.FeatureLoader;
-        /**
-         * Create an XHR feature loader for a `url` and `format`. The feature loader
-         * loads features (with XHR), parses the features, and adds them to the
-         * vector source.
-         * @param url  (Required) Feature URL service.
-         * @param format  (Required) Feature format.
-         */
-        function xhr(url: string|ol.FeatureUrlFunction, format: ol.format.Feature): ol.FeatureLoader;
     }
     module format {
         /**
@@ -4729,116 +4407,6 @@ otherwise it will be negative.
         module ogc {
             module filter {
                 /**
-                 * Create a logical `<And>` operator between two filter conditions.
-                 * @param conditionA  (Required) First filter condition.
-                 * @param conditionB  (Required) Second filter condition.
-                 */
-                function and(conditionA: ol.format.ogc.filter.Filter, conditionB: ol.format.ogc.filter.Filter): ol.format.ogc.filter.And;
-                /**
-                 * Create a logical `<Or>` operator between two filter conditions.
-                 * @param conditionA  (Required) First filter condition.
-                 * @param conditionB  (Required) Second filter condition.
-                 */
-                function or(conditionA: ol.format.ogc.filter.Filter, conditionB: ol.format.ogc.filter.Filter): ol.format.ogc.filter.Or;
-                /**
-                 * Represents a logical `<Not>` operator for a filter condition.
-                 * @param condition  (Required) Filter condition.
-                 */
-                function not(condition: ol.format.ogc.filter.Filter): ol.format.ogc.filter.Not;
-                /**
-                 * Create a `<BBOX>` operator to test whether a geometry-valued property
-                 * intersects a fixed bounding box
-                 * @param geometryName  (Required) Geometry name to use.
-                 * @param extent  (Required) Extent.
-                 * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
-   set on geometries when this is not provided.
-                 */
-                function bbox(geometryName: string, extent: ol.Extent, opt_srsName?: string): ol.format.ogc.filter.Bbox;
-                /**
-                 * Create a `<Intersects>` operator to test whether a geometry-valued property
-                 * intersects a given geometry.
-                 * @param geometryName  (Required) Geometry name to use.
-                 * @param geometry  (Required) Geometry.
-                 * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
-   set on geometries when this is not provided.
-                 */
-                function intersects(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string): ol.format.ogc.filter.Intersects;
-                /**
-                 * Create a `<Within>` operator to test whether a geometry-valued property
-                 * is within a given geometry.
-                 * @param geometryName  (Required) Geometry name to use.
-                 * @param geometry  (Required) Geometry.
-                 * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
-   set on geometries when this is not provided.
-                 */
-                function within(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string): ol.format.ogc.filter.Within;
-                /**
-                 * Creates a `<PropertyIsEqualTo>` comparison operator.
-                 * @param propertyName  (Required) Name of the context property to compare.
-                 * @param expression  (Required) The value to compare.
-                 * @param opt_matchCase  (Optional) Case-sensitive?
-                 */
-                function equalTo(propertyName: string, expression: string|number, opt_matchCase?: boolean): ol.format.ogc.filter.EqualTo;
-                /**
-                 * Creates a `<PropertyIsNotEqualTo>` comparison operator.
-                 * @param propertyName  (Required) Name of the context property to compare.
-                 * @param expression  (Required) The value to compare.
-                 * @param opt_matchCase  (Optional) Case-sensitive?
-                 */
-                function notEqualTo(propertyName: string, expression: string|number, opt_matchCase?: boolean): ol.format.ogc.filter.NotEqualTo;
-                /**
-                 * Creates a `<PropertyIsLessThan>` comparison operator.
-                 * @param propertyName  (Required) Name of the context property to compare.
-                 * @param expression  (Required) The value to compare.
-                 */
-                function lessThan(propertyName: string, expression: number): ol.format.ogc.filter.LessThan;
-                /**
-                 * Creates a `<PropertyIsLessThanOrEqualTo>` comparison operator.
-                 * @param propertyName  (Required) Name of the context property to compare.
-                 * @param expression  (Required) The value to compare.
-                 */
-                function lessThanOrEqualTo(propertyName: string, expression: number): ol.format.ogc.filter.LessThanOrEqualTo;
-                /**
-                 * Creates a `<PropertyIsGreaterThan>` comparison operator.
-                 * @param propertyName  (Required) Name of the context property to compare.
-                 * @param expression  (Required) The value to compare.
-                 */
-                function greaterThan(propertyName: string, expression: number): ol.format.ogc.filter.GreaterThan;
-                /**
-                 * Creates a `<PropertyIsGreaterThanOrEqualTo>` comparison operator.
-                 * @param propertyName  (Required) Name of the context property to compare.
-                 * @param expression  (Required) The value to compare.
-                 */
-                function greaterThanOrEqualTo(propertyName: string, expression: number): ol.format.ogc.filter.GreaterThanOrEqualTo;
-                /**
-                 * Creates a `<PropertyIsNull>` comparison operator to test whether a property value
-                 * is null.
-                 * @param propertyName  (Required) Name of the context property to compare.
-                 */
-                function isNull(propertyName: string): ol.format.ogc.filter.IsNull;
-                /**
-                 * Creates a `<PropertyIsBetween>` comparison operator to test whether an expression
-                 * value lies within a range given by a lower and upper bound (inclusive).
-                 * @param propertyName  (Required) Name of the context property to compare.
-                 * @param lowerBoundary  (Required) The lower bound of the range.
-                 * @param upperBoundary  (Required) The upper bound of the range.
-                 */
-                function between(propertyName: string, lowerBoundary: number, upperBoundary: number): ol.format.ogc.filter.IsBetween;
-                /**
-                 * Represents a `<PropertyIsLike>` comparison operator that matches a string property
-                 * value against a text pattern.
-                 * @param propertyName  (Required) Name of the context property to compare.
-                 * @param pattern  (Required) Text pattern.
-                 * @param opt_wildCard  (Optional) Pattern character which matches any sequence of
-   zero or more string characters. Default is '*'.
-                 * @param opt_singleChar  (Optional) pattern character which matches any single
-   string character. Default is '.'.
-                 * @param opt_escapeChar  (Optional) Escape character which can be used to escape
-   the pattern characters. Default is '!'.
-                 * @param opt_matchCase  (Optional) Case-sensitive?
-                 */
-                function like(propertyName: string, pattern: string, opt_wildCard?: string, opt_singleChar?: string, opt_escapeChar?: string, opt_matchCase?: boolean): ol.format.ogc.filter.IsLike;
-                /**
                  * Represents a logical `<And>` operator between two filter conditions.
                  */
                 class And extends ol.format.ogc.filter.LogicalBinary {
@@ -5096,2763 +4664,118 @@ otherwise it will be negative.
                      */
                     constructor(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string);
                 }
-            }
-        }
-    }
-    module has {
-        /**
-         * The ratio between physical pixels and device-independent pixels
-         * (dips) on the device (`window.devicePixelRatio`).
-         */
-        var DEVICE_PIXEL_RATIO: number;
-        /**
-         * True if both the library and browser support Canvas.  Always `false`
-         * if `ol.ENABLE_CANVAS` is set to `false` at compile time.
-         */
-        var CANVAS: boolean;
-        /**
-         * Indicates if DeviceOrientation is supported in the user's browser.
-         */
-        var DEVICE_ORIENTATION: boolean;
-        /**
-         * Is HTML5 geolocation supported in the current browser?
-         */
-        var GEOLOCATION: boolean;
-        /**
-         * True if browser supports touch events.
-         */
-        var TOUCH: boolean;
-        /**
-         * True if both OpenLayers and browser support WebGL.  Always `false`
-         * if `ol.ENABLE_WEBGL` is set to `false` at compile time.
-         */
-        var WEBGL: boolean;
-    }
-    module interaction {
-        /**
-         * Set of interactions included in maps by default. Specific interactions can be
-         * excluded by setting the appropriate option to false in the constructor
-         * options, but the order of the interactions is fixed.  If you want to specify
-         * a different order for interactions, you will need to create your own
-         * {@link ol.interaction.Interaction} instances and insert them into a
-         * {@link ol.Collection} in the order you want before creating your
-         * {@link ol.Map} instance. The default set of interactions, in sequence, is:
-         * * {@link ol.interaction.DragRotate}
-         * * {@link ol.interaction.DoubleClickZoom}
-         * * {@link ol.interaction.DragPan}
-         * * {@link ol.interaction.PinchRotate}
-         * * {@link ol.interaction.PinchZoom}
-         * * {@link ol.interaction.KeyboardPan}
-         * * {@link ol.interaction.KeyboardZoom}
-         * * {@link ol.interaction.MouseWheelZoom}
-         * * {@link ol.interaction.DragZoom}
-         * @param opt_options  (Optional) Defaults options.
-         */
-        function defaults(opt_options?: olx.interaction.DefaultsOptions): ol.Collection<ol.interaction.Interaction>;
-        /**
-         * Allows the user to zoom by double-clicking on the map.
-         */
-        class DoubleClickZoom extends ol.interaction.Interaction {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param opt_options  (Optional) Options.
-             */
-            constructor(opt_options?: olx.interaction.DoubleClickZoomOptions);
-            /**
-             * Handles the {@link ol.MapBrowserEvent map browser event} (if it was a
-             * doubleclick) and eventually zooms the map.
-             * @param mapBrowserEvent  (Required) Map browser event.
-             */
-            static handleEvent(mapBrowserEvent: ol.MapBrowserEvent): boolean;
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Handles input of vector data by drag and drop.
-         */
-        class DragAndDrop extends ol.interaction.Interaction {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param opt_options  (Optional) Options.
-             */
-            constructor(opt_options?: olx.interaction.DragAndDropOptions);
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Allows the user to draw a vector box by clicking and dragging on the map,
-         * normally combined with an {@link ol.events.condition} that limits
-         * it to when the shift or other key is held down. This is used, for example,
-         * for zooming to a specific area of the map
-         * (see {@link ol.interaction.DragZoom} and
-         * {@link ol.interaction.DragRotateAndZoom}).
-         * 
-         * This interaction is only supported for mouse devices.
-         */
-        class DragBox extends ol.interaction.Pointer {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param opt_options  (Optional) Options.
-             */
-            constructor(opt_options?: olx.interaction.DragBoxOptions);
-            /**
-             * Returns geometry of last drawn box.
-             */
-            getGeometry(): ol.geom.Polygon;
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Allows the user to pan the map by dragging the map.
-         */
-        class DragPan extends ol.interaction.Pointer {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param opt_options  (Optional) Options.
-             */
-            constructor(opt_options?: olx.interaction.DragPanOptions);
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Allows the user to rotate the map by clicking and dragging on the map,
-         * normally combined with an {@link ol.events.condition} that limits
-         * it to when the alt and shift keys are held down.
-         * 
-         * This interaction is only supported for mouse devices.
-         */
-        class DragRotate extends ol.interaction.Pointer {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param opt_options  (Optional) Options.
-             */
-            constructor(opt_options?: olx.interaction.DragRotateOptions);
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Allows the user to zoom and rotate the map by clicking and dragging
-         * on the map.  By default, this interaction is limited to when the shift
-         * key is held down.
-         * 
-         * This interaction is only supported for mouse devices.
-         * 
-         * And this interaction is not included in the default interactions.
-         */
-        class DragRotateAndZoom extends ol.interaction.Pointer {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param opt_options  (Optional) Options.
-             */
-            constructor(opt_options?: olx.interaction.DragRotateAndZoomOptions);
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Allows the user to zoom the map by clicking and dragging on the map,
-         * normally combined with an {@link ol.events.condition} that limits
-         * it to when a key, shift by default, is held down.
-         * 
-         * To change the style of the box, use CSS and the `.ol-dragzoom` selector, or
-         * your custom one configured with `className`.
-         */
-        class DragZoom extends ol.interaction.DragBox {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param opt_options  (Optional) Options.
-             */
-            constructor(opt_options?: olx.interaction.DragZoomOptions);
-            /**
-             * Returns geometry of last drawn box.
-             */
-            getGeometry(): ol.geom.Polygon;
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Interaction for drawing feature geometries.
-         */
-        class Draw extends ol.interaction.Pointer {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param options  (Required) Options.
-             */
-            constructor(options: olx.interaction.DrawOptions);
-            /**
-             * Handles the {@link ol.MapBrowserEvent map browser event} and may actually
-             * draw or finish the drawing.
-             * @param mapBrowserEvent  (Required) Map browser event.
-             */
-            static handleEvent(mapBrowserEvent: ol.MapBrowserEvent): boolean;
-            /**
-             * Remove last point of the feature currently being drawn.
-             */
-            removeLastPoint(): void;
-            /**
-             * Stop drawing and add the sketch feature to the target layer.
-             * The {@link ol.interaction.DrawEventType.DRAWEND} event is dispatched before
-             * inserting the feature.
-             */
-            finishDrawing(): void;
-            /**
-             * Extend an existing geometry by adding additional points. This only works
-             * on features with `LineString` geometries, where the interaction will
-             * extend lines by adding points to the end of the coordinates array.
-             * @param feature  (Required) Feature to be extended.
-             */
-            extend(feature: ol.Feature): void;
-            /**
-             * Create a `geometryFunction` for `mode: 'Circle'` that will create a regular
-             * polygon with a user specified number of sides and start angle instead of an
-             * `ol.geom.Circle` geometry.
-             * @param opt_sides  (Optional) Number of sides of the regular polygon. Default is
-    32.
-             * @param opt_angle  (Optional) Angle of the first point in radians. 0 means East.
-    Default is the angle defined by the heading from the center of the
-    regular polygon to the current pointer position.
-             */
-            static createRegularPolygon(opt_sides?: number, opt_angle?: number): ol.DrawGeometryFunctionType;
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Abstract base class; normally only used for creating subclasses and not
-         * instantiated in apps.
-         * User actions that change the state of the map. Some are similar to controls,
-         * but are not associated with a DOM element.
-         * For example, {@link ol.interaction.KeyboardZoom} is functionally the same as
-         * {@link ol.control.Zoom}, but triggered by a keyboard event not a button
-         * element event.
-         * Although interactions do not have a DOM element, some of them do render
-         * vectors and so are visible on the screen.
-         */
-        class Interaction extends ol.Object {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param options  (Required) Options.
-             */
-            constructor(options: olx.interaction.InteractionOptions);
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Allows the user to pan the map using keyboard arrows.
-         * Note that, although this interaction is by default included in maps,
-         * the keys can only be used when browser focus is on the element to which
-         * the keyboard events are attached. By default, this is the map div,
-         * though you can change this with the `keyboardEventTarget` in
-         * {@link ol.Map}. `document` never loses focus but, for any other element,
-         * focus will have to be on, and returned to, this element if the keys are to
-         * function.
-         * See also {@link ol.interaction.KeyboardZoom}.
-         */
-        class KeyboardPan extends ol.interaction.Interaction {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param opt_options  (Optional) Options.
-             */
-            constructor(opt_options?: olx.interaction.KeyboardPanOptions);
-            /**
-             * Handles the {@link ol.MapBrowserEvent map browser event} if it was a
-             * `KeyEvent`, and decides the direction to pan to (if an arrow key was
-             * pressed).
-             * @param mapBrowserEvent  (Required) Map browser event.
-             */
-            static handleEvent(mapBrowserEvent: ol.MapBrowserEvent): boolean;
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Allows the user to zoom the map using keyboard + and -.
-         * Note that, although this interaction is by default included in maps,
-         * the keys can only be used when browser focus is on the element to which
-         * the keyboard events are attached. By default, this is the map div,
-         * though you can change this with the `keyboardEventTarget` in
-         * {@link ol.Map}. `document` never loses focus but, for any other element,
-         * focus will have to be on, and returned to, this element if the keys are to
-         * function.
-         * See also {@link ol.interaction.KeyboardPan}.
-         */
-        class KeyboardZoom extends ol.interaction.Interaction {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param opt_options  (Optional) Options.
-             */
-            constructor(opt_options?: olx.interaction.KeyboardZoomOptions);
-            /**
-             * Handles the {@link ol.MapBrowserEvent map browser event} if it was a
-             * `KeyEvent`, and decides whether to zoom in or out (depending on whether the
-             * key pressed was '+' or '-').
-             * @param mapBrowserEvent  (Required) Map browser event.
-             */
-            static handleEvent(mapBrowserEvent: ol.MapBrowserEvent): boolean;
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Interaction for modifying feature geometries.
-         */
-        class Modify extends ol.interaction.Pointer {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param options  (Required) Options.
-             */
-            constructor(options: olx.interaction.ModifyOptions);
-            /**
-             * Handles the {@link ol.MapBrowserEvent map browser event} and may modify the
-             * geometry.
-             * @param mapBrowserEvent  (Required) Map browser event.
-             */
-            static handleEvent(mapBrowserEvent: ol.MapBrowserEvent): boolean;
-            /**
-             * Removes the vertex currently being pointed.
-             */
-            removePoint(): boolean;
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Allows the user to zoom the map by scrolling the mouse wheel.
-         */
-        class MouseWheelZoom extends ol.interaction.Interaction {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param opt_options  (Optional) Options.
-             */
-            constructor(opt_options?: olx.interaction.MouseWheelZoomOptions);
-            /**
-             * Handles the {@link ol.MapBrowserEvent map browser event} (if it was a
-             * mousewheel-event) and eventually zooms the map.
-             * @param mapBrowserEvent  (Required) Map browser event.
-             */
-            static handleEvent(mapBrowserEvent: ol.MapBrowserEvent): boolean;
-            /**
-             * Enable or disable using the mouse's location as an anchor when zooming
-             * @param useAnchor  (Required) true to zoom to the mouse's location, false
-to zoom to the center of the map
-             */
-            setMouseAnchor(useAnchor: boolean): void;
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Allows the user to rotate the map by twisting with two fingers
-         * on a touch screen.
-         */
-        class PinchRotate extends ol.interaction.Pointer {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param opt_options  (Optional) Options.
-             */
-            constructor(opt_options?: olx.interaction.PinchRotateOptions);
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Allows the user to zoom the map by pinching with two fingers
-         * on a touch screen.
-         */
-        class PinchZoom extends ol.interaction.Pointer {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param opt_options  (Optional) Options.
-             */
-            constructor(opt_options?: olx.interaction.PinchZoomOptions);
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Base class that calls user-defined functions on `down`, `move` and `up`
-         * events. This class also manages "drag sequences".
-         * 
-         * When the `handleDownEvent` user function returns `true` a drag sequence is
-         * started. During a drag sequence the `handleDragEvent` user function is
-         * called on `move` events. The drag sequence ends when the `handleUpEvent`
-         * user function is called and returns `false`.
-         */
-        class Pointer extends ol.interaction.Interaction {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param opt_options  (Optional) Options.
-             */
-            constructor(opt_options?: olx.interaction.PointerOptions);
-            /**
-             * Handles the {@link ol.MapBrowserEvent map browser event} and may call into
-             * other functions, if event sequences like e.g. 'drag' or 'down-up' etc. are
-             * detected.
-             * @param mapBrowserEvent  (Required) Map browser event.
-             */
-            static handleEvent(mapBrowserEvent: ol.MapBrowserEvent): boolean;
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Interaction for selecting vector features. By default, selected features are
-         * styled differently, so this interaction can be used for visual highlighting,
-         * as well as selecting features for other actions, such as modification or
-         * output. There are three ways of controlling which features are selected:
-         * using the browser event as defined by the `condition` and optionally the
-         * `toggle`, `add`/`remove`, and `multi` options; a `layers` filter; and a
-         * further feature filter using the `filter` option.
-         * 
-         * Selected features are added to an internal unmanaged layer.
-         */
-        class Select extends ol.interaction.Interaction {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param opt_options  (Optional) Options.
-             */
-            constructor(opt_options?: olx.interaction.SelectOptions);
-            /**
-             * Get the selected features.
-             */
-            getFeatures(): ol.Collection<ol.Feature>;
-            /**
-             * Returns the associated {@link ol.layer.Vector vectorlayer} of
-             * the (last) selected feature. Note that this will not work with any
-             * programmatic method like pushing features to
-             * {@link ol.interaction.Select#getFeatures collection}.
-             * @param feature  (Required) Feature
-             */
-            getLayer(feature: ol.Feature|ol.render.Feature): ol.layer.Vector;
-            /**
-             * Handles the {@link ol.MapBrowserEvent map browser event} and may change the
-             * selected state of features.
-             * @param mapBrowserEvent  (Required) Map browser event.
-             */
-            static handleEvent(mapBrowserEvent: ol.MapBrowserEvent): boolean;
-            /**
-             * Remove the interaction from its current map, if any,  and attach it to a new
-             * map, if any. Pass `null` to just remove the interaction from the current map.
-             * @param map  (Required) Map.
-             */
-            setMap(map: ol.Map): void;
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Handles snapping of vector features while modifying or drawing them.  The
-         * features can come from a {@link ol.source.Vector} or {@link ol.Collection}
-         * Any interaction object that allows the user to interact
-         * with the features using the mouse can benefit from the snapping, as long
-         * as it is added before.
-         * 
-         * The snap interaction modifies map browser event `coordinate` and `pixel`
-         * properties to force the snap to occur to any interaction that them.
-         * 
-         * Example:
-         * 
-         *     var snap = new ol.interaction.Snap({
-         *       source: source
-         *     });
-         */
-        class Snap extends ol.interaction.Pointer {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param opt_options  (Optional) Options.
-             */
-            constructor(opt_options?: olx.interaction.SnapOptions);
-            /**
-             * Add a feature to the collection of features that we may snap to.
-             * @param feature  (Required) Feature.
-             * @param opt_listen  (Optional) Whether to listen to the geometry change or not
-    Defaults to `true`.
-             */
-            addFeature(feature: ol.Feature, opt_listen?: boolean): void;
-            /**
-             * Remove a feature from the collection of features that we may snap to.
-             * @param feature  (Required) Feature
-             * @param opt_unlisten  (Optional) Whether to unlisten to the geometry change
-    or not. Defaults to `true`.
-             */
-            removeFeature(feature: ol.Feature, opt_unlisten?: boolean): void;
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-        /**
-         * Interaction for translating (moving) features.
-         */
-        class Translate extends ol.interaction.Pointer {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param options  (Required) Options.
-             */
-            constructor(options: olx.interaction.TranslateOptions);
-            /**
-             * Return whether the interaction is currently active.
-             */
-            getActive(): boolean;
-            /**
-             * Get the map associated with this interaction.
-             */
-            getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
-            /**
-             * Gets a value.
-             * @param key  (Required) Key name.
-             */
-            get(key: string): any;
-            /**
-             * Get a list of object property names.
-             */
-            getKeys(): string[];
-            /**
-             * Get an object of all property names and values.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Sets a value.
-             * @param key  (Required) Key name.
-             * @param value  (Required) Value.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            set(key: string, value: any, opt_silent?: boolean): void;
-            /**
-             * Sets a collection of key-value pairs.  Note that this changes any existing
-             * properties and adds new ones (it does not remove any existing properties).
-             * @param values  (Required) Values.
-             * @param opt_silent  (Optional) Update without triggering an event.
-             */
-            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
-            /**
-             * Unsets a property.
-             * @param key  (Required) Key name.
-             * @param opt_silent  (Optional) Unset without triggering an event.
-             */
-            unset(key: string, opt_silent?: boolean): void;
-            /**
-             * Increases the revision counter and dispatches a 'change' event.
-             */
-            changed(): void;
-            /**
-             * Dispatches an event and calls all listeners listening for events
-             * of this type. The event parameter can either be a string or an
-             * Object with a `type` property.
-             * @param event  (Required) Event object.
-             */
-            dispatchEvent(event: any|ol.events.Event|string): void;
-            /**
-             * Get the version number for this object.  Each time the object is modified,
-             * its version number will be incremented.
-             */
-            getRevision(): number;
-            /**
-             * Listen for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Listen once for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object to use as `this` in `listener`.
-             */
-            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
-            /**
-             * Unlisten for a certain type of event.
-             * @param type  (Required) The event type or array of event types.
-             * @param listener  (Required) The listener function.
-             * @param opt_this  (Optional) The object which was used as `this` by the
-`listener`.
-             */
-            un(type: string|string[], listener: Function, opt_this?: any): void;
-            /**
-             * Removes an event listener using the key returned by `on()` or `once()`.
-             * Note that using the {@link ol.Observable.unByKey} static function is to
-             * be preferred.
-             * @param key  (Required) The key returned by `on()`
-    or `once()` (or an array of keys).
-             */
-            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
-        }
-    }
-    module loadingstrategy {
-        /**
-         * Strategy function for loading all features with a single request.
-         * @param extent  (Required) Extent.
-         * @param resolution  (Required) Resolution.
-         */
-        function all(extent: ol.Extent, resolution: number): ol.Extent[];
-        /**
-         * Strategy function for loading features based on the view's extent and
-         * resolution.
-         * @param extent  (Required) Extent.
-         * @param resolution  (Required) Resolution.
-         */
-        function bbox(extent: ol.Extent, resolution: number): ol.Extent[];
-        /**
-         * Creates a strategy function for loading features based on a tile grid.
-         * @param tileGrid  (Required) Tile grid.
-         */
-        function tile(tileGrid: ol.tilegrid.TileGrid): (arg0: ol.Extent, arg1: number) => ol.Extent[];
-    }
-    module proj {
-        /**
-         * Meters per unit lookup table.
-         */
-        var METERS_PER_UNIT: { [key: string]: number; };
-        /**
-         * Register proj4. If not explicitly registered, it will be assumed that
-         * proj4js will be loaded in the global namespace. For example in a
-         * browserify ES6 environment you could use:
-         * 
-         *     import ol from 'openlayers';
-         *     import proj4 from 'proj4';
-         *     ol.proj.setProj4(proj4);
-         * @param proj4  (Required) Proj4.
-         */
-        function setProj4(proj4: proj4): void;
-        /**
-         * Registers transformation functions that don't alter coordinates. Those allow
-         * to transform between projections with equal meaning.
-         * @param projections  (Required) Projections.
-         */
-        function addEquivalentProjections(projections: ol.proj.Projection[]): void;
-        /**
-         * Add a Projection object to the list of supported projections that can be
-         * looked up by their code.
-         * @param projection  (Required) Projection instance.
-         */
-        function addProjection(projection: ol.proj.Projection): void;
-        /**
-         * Registers coordinate transform functions to convert coordinates between the
-         * source projection and the destination projection.
-         * The forward and inverse functions convert coordinate pairs; this function
-         * converts these into the functions used internally which also handle
-         * extents and coordinate arrays.
-         * @param source  (Optional) Source projection.
-         * @param destination  (Optional) Destination projection.
-         * @param forward  (Optional) The forward transform
-    function (that is, from the source projection to the destination
-    projection) that takes a {@link ol.Coordinate} as argument and returns
-    the transformed {@link ol.Coordinate}.
-         * @param inverse  (Optional) The inverse transform
-    function (that is, from the destination projection to the source
-    projection) that takes a {@link ol.Coordinate} as argument and returns
-    the transformed {@link ol.Coordinate}.
-         */
-        function addCoordinateTransforms(source?: ol.ProjectionLike, destination?: ol.ProjectionLike, forward?: Function, inverse?: Function): void;
-        /**
-         * Transforms a coordinate from longitude/latitude to a different projection.
-         * @param coordinate  (Required) Coordinate as longitude and latitude, i.e.
-    an array with longitude as 1st and latitude as 2nd element.
-         * @param opt_projection  (Optional) Target projection. The
-    default is Web Mercator, i.e. 'EPSG:3857'.
-         */
-        function fromLonLat(coordinate: ol.Coordinate, opt_projection?: ol.ProjectionLike): ol.Coordinate;
-        /**
-         * Transforms a coordinate to longitude/latitude.
-         * @param coordinate  (Required) Projected coordinate.
-         * @param opt_projection  (Optional) Projection of the coordinate.
-    The default is Web Mercator, i.e. 'EPSG:3857'.
-         */
-        function toLonLat(coordinate: ol.Coordinate, opt_projection?: ol.ProjectionLike): ol.Coordinate;
-        /**
-         * Fetches a Projection object for the code specified.
-         * @param projectionLike  (Optional) Either a code string which is
-    a combination of authority and identifier such as "EPSG:4326", or an
-    existing projection object, or undefined.
-         */
-        function get(projectionLike?: ol.ProjectionLike): ol.proj.Projection;
-        /**
-         * Checks if two projections are the same, that is every coordinate in one
-         * projection does represent the same geographic point as the same coordinate in
-         * the other projection.
-         * @param projection1  (Required) Projection 1.
-         * @param projection2  (Required) Projection 2.
-         */
-        function equivalent(projection1: ol.proj.Projection, projection2: ol.proj.Projection): boolean;
-        /**
-         * Given the projection-like objects, searches for a transformation
-         * function to convert a coordinates array from the source projection to the
-         * destination projection.
-         * @param source  (Optional) Source.
-         * @param destination  (Optional) Destination.
-         */
-        function getTransform(source?: ol.ProjectionLike, destination?: ol.ProjectionLike): ol.TransformFunction;
-        /**
-         * Transforms a coordinate from source projection to destination projection.
-         * This returns a new coordinate (and does not modify the original).
-         * 
-         * See {@link ol.proj.transformExtent} for extent transformation.
-         * See the transform method of {@link ol.geom.Geometry} and its subclasses for
-         * geometry transforms.
-         * @param coordinate  (Required) Coordinate.
-         * @param source  (Optional) Source projection-like.
-         * @param destination  (Optional) Destination projection-like.
-         */
-        function transform(coordinate: ol.Coordinate, source?: ol.ProjectionLike, destination?: ol.ProjectionLike): ol.Coordinate;
-        /**
-         * Transforms an extent from source projection to destination projection.  This
-         * returns a new extent (and does not modify the original).
-         * @param extent  (Required) The extent to transform.
-         * @param source  (Optional) Source projection-like.
-         * @param destination  (Optional) Destination projection-like.
-         */
-        function transformExtent(extent: ol.Extent, source?: ol.ProjectionLike, destination?: ol.ProjectionLike): ol.Extent;
-        /**
-         * Projection definition class. One of these is created for each projection
-         * supported in the application and stored in the {@link ol.proj} namespace.
-         * You can use these in applications, but this is not required, as API params
-         * and options use {@link ol.ProjectionLike} which means the simple string
-         * code will suffice.
-         * 
-         * You can use {@link ol.proj.get} to retrieve the object for a particular
-         * projection.
-         * 
-         * The library includes definitions for `EPSG:4326` and `EPSG:3857`, together
-         * with the following aliases:
-         * * `EPSG:4326`: CRS:84, urn:ogc:def:crs:EPSG:6.6:4326,
-         *     urn:ogc:def:crs:OGC:1.3:CRS84, urn:ogc:def:crs:OGC:2:84,
-         *     http://www.opengis.net/gml/srs/epsg.xml#4326,
-         *     urn:x-ogc:def:crs:EPSG:4326
-         * * `EPSG:3857`: EPSG:102100, EPSG:102113, EPSG:900913,
-         *     urn:ogc:def:crs:EPSG:6.18:3:3857,
-         *     http://www.opengis.net/gml/srs/epsg.xml#3857
-         * 
-         * If you use proj4js, aliases can be added using `proj4.defs()`; see
-         * [documentation](https://github.com/proj4js/proj4js). To set an alternative
-         * namespace for proj4, use {@link ol.proj.setProj4}.
-         */
-        class Projection {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param options  (Required) Projection options.
-             */
-            constructor(options: olx.ProjectionOptions);
-            /**
-             * Get the code for this projection, e.g. 'EPSG:4326'.
-             */
-            getCode(): string;
-            /**
-             * Get the validity extent for this projection.
-             */
-            getExtent(): ol.Extent;
-            /**
-             * Get the units of this projection.
-             */
-            getUnits(): string;
-            /**
-             * Get the amount of meters per unit of this projection.  If the projection is
-             * not configured with `metersPerUnit` or a units identifier, the return is
-             * `undefined`.
-             */
-            getMetersPerUnit(): number;
-            /**
-             * Get the world extent for this projection.
-             */
-            getWorldExtent(): ol.Extent;
-            /**
-             * Is this projection a global projection which spans the whole world?
-             */
-            isGlobal(): boolean;
-            /**
-             * Set if the projection is a global projection which spans the whole world
-             * @param global  (Required) Whether the projection is global.
-             */
-            setGlobal(global: boolean): void;
-            /**
-             * Set the validity extent for this projection.
-             * @param extent  (Required) Extent.
-             */
-            setExtent(extent: ol.Extent): void;
-            /**
-             * Set the world extent for this projection.
-             * @param worldExtent  (Required) World extent
-    [minlon, minlat, maxlon, maxlat].
-             */
-            setWorldExtent(worldExtent: ol.Extent): void;
-            /**
-             * Set the getPointResolution function for this projection.
-             * @param func  (Required) Function
-             */
-            setGetPointResolution(func: Function): void;
-            /**
-             * Get the resolution of the point in degrees or distance units.
-             * For projections with degrees as the unit this will simply return the
-             * provided resolution. The default for other projections is to estimate
-             * the point resolution by transforming the 'point' pixel to EPSG:4326,
-             * measuring its width and height on the normal sphere,
-             * and taking the average of the width and height.
-             * An alternative implementation may be given when constructing a
-             * projection. For many local projections,
-             * such a custom function will return the resolution unchanged.
-             * @param resolution  (Required) Resolution in projection units.
-             * @param point  (Required) Point.
-             */
-            getPointResolution(resolution: number, point: ol.Coordinate): number;
-        }
-        /**
-         * Projection units: `'degrees'`, `'ft'`, `'m'`, `'pixels'`, `'tile-pixels'` or
-         * `'us-ft'`.
-         */
-        class Units {
-            /**
-             * "degrees"
-             */
-            public static DEGREES: string;
-            /**
-             * "ft"
-             */
-            public static FEET: string;
-            /**
-             * "m"
-             */
-            public static METERS: string;
-            /**
-             * "pixels"
-             */
-            public static PIXELS: string;
-            /**
-             * "tile-pixels"
-             */
-            public static TILE_PIXELS: string;
-            /**
-             * "us-ft"
-             */
-            public static USFEET: string;
-        }
-        module common {
-            /**
-             * FIXME empty description for jsdoc
-             */
-            function add(): void;
-        }
-    }
-    module render {
-        /**
-         * Binds a Canvas Immediate API to a canvas context, to allow drawing geometries
-         * to the context's canvas.
-         * 
-         * The units for geometry coordinates are css pixels relative to the top left
-         * corner of the canvas element.
-         * ```js
-         * var canvas = document.createElement('canvas');
-         * var render = ol.render.toContext(canvas.getContext('2d'),
-         *     { size: [100, 100] });
-         * render.setFillStrokeStyle(new ol.style.Fill({ color: blue }));
-         * render.drawPolygon(
-         *     new ol.geom.Polygon([[[0, 0], [100, 100], [100, 0], [0, 0]]]));
-         * ```
-         * @param context  (Required) Canvas context.
-         * @param opt_options  (Optional) Options.
-         */
-        function toContext(context: CanvasRenderingContext2D, opt_options?: olx.render.ToContextOptions): ol.render.canvas.Immediate;
-        /**
-         * Lightweight, read-only, {@link ol.Feature} and {@link ol.geom.Geometry} like
-         * structure, optimized for rendering and styling. Geometry access through the
-         * API is limited to getting the type and extent of the geometry.
-         */
-        class Feature {
-            /**
-             * Lightweight, read-only, {@link ol.Feature} and {@link ol.geom.Geometry} like
-             * structure, optimized for rendering and styling. Geometry access through the
-             * API is limited to getting the type and extent of the geometry.
-             * @param type  (Required) Geometry type.
-             * @param flatCoordinates  (Required) Flat coordinates. These always need
-    to be right-handed for polygons.
-             * @param ends  (Required) Ends or Endss.
-             * @param properties  (Required) Properties.
-             */
-            constructor(type: ol.geom.GeometryType, flatCoordinates: number[], ends: number[]|number[][], properties: { [key: string]: any; });
-            /**
-             * Get a feature property by its key.
-             * @param key  (Required) Key
-             */
-            get(key: string): any;
-            /**
-             * Get the extent of this feature's geometry.
-             */
-            getExtent(): ol.Extent;
-            /**
-             * Get the feature for working with its geometry.
-             */
-            getGeometry(): ol.render.Feature;
-            /**
-             * Get the feature properties.
-             */
-            getProperties(): { [key: string]: any; };
-            /**
-             * Get the type of this feature's geometry.
-             */
-            getType(): ol.geom.GeometryType;
-        }
-        /**
-         * Context for drawing geometries.  A vector context is available on render
-         * events and does not need to be constructed directly.
-         */
-        class VectorContext {
-        }
-        module canvas {
-            /**
-             * A concrete subclass of {@link ol.render.VectorContext} that implements
-             * direct rendering of features and geometries to an HTML5 Canvas context.
-             * Instances of this class are created internally by the library and
-             * provided to application code as vectorContext member of the
-             * {@link ol.render.Event} object associated with postcompose, precompose and
-             * render events emitted by layers and maps.
-             */
-            class Immediate extends ol.render.VectorContext {
                 /**
-                 * TODO: This method has no documentation. Contact the library author if this method should be documented
-                 * @param context  (Required) Context.
-                 * @param pixelRatio  (Required) Pixel ratio.
+                 * Create a logical `<And>` operator between two filter conditions.
+                 * @param conditionA  (Required) First filter condition.
+                 * @param conditionB  (Required) Second filter condition.
+                 */
+                function and(conditionA: ol.format.ogc.filter.Filter, conditionB: ol.format.ogc.filter.Filter): ol.format.ogc.filter.And;
+                /**
+                 * Create a logical `<Or>` operator between two filter conditions.
+                 * @param conditionA  (Required) First filter condition.
+                 * @param conditionB  (Required) Second filter condition.
+                 */
+                function or(conditionA: ol.format.ogc.filter.Filter, conditionB: ol.format.ogc.filter.Filter): ol.format.ogc.filter.Or;
+                /**
+                 * Represents a logical `<Not>` operator for a filter condition.
+                 * @param condition  (Required) Filter condition.
+                 */
+                function not(condition: ol.format.ogc.filter.Filter): ol.format.ogc.filter.Not;
+                /**
+                 * Create a `<BBOX>` operator to test whether a geometry-valued property
+                 * intersects a fixed bounding box
+                 * @param geometryName  (Required) Geometry name to use.
                  * @param extent  (Required) Extent.
-                 * @param transform  (Required) Transform.
-                 * @param viewRotation  (Required) View rotation.
+                 * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
+   set on geometries when this is not provided.
                  */
-                constructor(context: CanvasRenderingContext2D, pixelRatio: number, extent: ol.Extent, transform: ol.Transform, viewRotation: number);
+                function bbox(geometryName: string, extent: ol.Extent, opt_srsName?: string): ol.format.ogc.filter.Bbox;
                 /**
-                 * Render a circle geometry into the canvas.  Rendering is immediate and uses
-                 * the current fill and stroke styles.
-                 * @param geometry  (Required) Circle geometry.
+                 * Create a `<Intersects>` operator to test whether a geometry-valued property
+                 * intersects a given geometry.
+                 * @param geometryName  (Required) Geometry name to use.
+                 * @param geometry  (Required) Geometry.
+                 * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
+   set on geometries when this is not provided.
                  */
-                drawCircle(geometry: ol.geom.Circle): void;
+                function intersects(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string): ol.format.ogc.filter.Intersects;
                 /**
-                 * Set the rendering style.  Note that since this is an immediate rendering API,
-                 * any `zIndex` on the provided style will be ignored.
-                 * @param style  (Required) The rendering style.
+                 * Create a `<Within>` operator to test whether a geometry-valued property
+                 * is within a given geometry.
+                 * @param geometryName  (Required) Geometry name to use.
+                 * @param geometry  (Required) Geometry.
+                 * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
+   set on geometries when this is not provided.
                  */
-                setStyle(style: ol.style.Style): void;
+                function within(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string): ol.format.ogc.filter.Within;
                 /**
-                 * Render a geometry into the canvas.  Call
-                 * {@link ol.render.canvas.Immediate#setStyle} first to set the rendering style.
-                 * @param geometry  (Required) The geometry to render.
+                 * Creates a `<PropertyIsEqualTo>` comparison operator.
+                 * @param propertyName  (Required) Name of the context property to compare.
+                 * @param expression  (Required) The value to compare.
+                 * @param opt_matchCase  (Optional) Case-sensitive?
                  */
-                drawGeometry(geometry: ol.geom.Geometry|ol.render.Feature): void;
+                function equalTo(propertyName: string, expression: string|number, opt_matchCase?: boolean): ol.format.ogc.filter.EqualTo;
                 /**
-                 * Render a feature into the canvas.  Note that any `zIndex` on the provided
-                 * style will be ignored - features are rendered immediately in the order that
-                 * this method is called.  If you need `zIndex` support, you should be using an
-                 * {@link ol.layer.Vector} instead.
-                 * @param feature  (Required) Feature.
-                 * @param style  (Required) Style.
+                 * Creates a `<PropertyIsNotEqualTo>` comparison operator.
+                 * @param propertyName  (Required) Name of the context property to compare.
+                 * @param expression  (Required) The value to compare.
+                 * @param opt_matchCase  (Optional) Case-sensitive?
                  */
-                drawFeature(feature: ol.Feature, style: ol.style.Style): void;
+                function notEqualTo(propertyName: string, expression: string|number, opt_matchCase?: boolean): ol.format.ogc.filter.NotEqualTo;
+                /**
+                 * Creates a `<PropertyIsLessThan>` comparison operator.
+                 * @param propertyName  (Required) Name of the context property to compare.
+                 * @param expression  (Required) The value to compare.
+                 */
+                function lessThan(propertyName: string, expression: number): ol.format.ogc.filter.LessThan;
+                /**
+                 * Creates a `<PropertyIsLessThanOrEqualTo>` comparison operator.
+                 * @param propertyName  (Required) Name of the context property to compare.
+                 * @param expression  (Required) The value to compare.
+                 */
+                function lessThanOrEqualTo(propertyName: string, expression: number): ol.format.ogc.filter.LessThanOrEqualTo;
+                /**
+                 * Creates a `<PropertyIsGreaterThan>` comparison operator.
+                 * @param propertyName  (Required) Name of the context property to compare.
+                 * @param expression  (Required) The value to compare.
+                 */
+                function greaterThan(propertyName: string, expression: number): ol.format.ogc.filter.GreaterThan;
+                /**
+                 * Creates a `<PropertyIsGreaterThanOrEqualTo>` comparison operator.
+                 * @param propertyName  (Required) Name of the context property to compare.
+                 * @param expression  (Required) The value to compare.
+                 */
+                function greaterThanOrEqualTo(propertyName: string, expression: number): ol.format.ogc.filter.GreaterThanOrEqualTo;
+                /**
+                 * Creates a `<PropertyIsNull>` comparison operator to test whether a property value
+                 * is null.
+                 * @param propertyName  (Required) Name of the context property to compare.
+                 */
+                function isNull(propertyName: string): ol.format.ogc.filter.IsNull;
+                /**
+                 * Creates a `<PropertyIsBetween>` comparison operator to test whether an expression
+                 * value lies within a range given by a lower and upper bound (inclusive).
+                 * @param propertyName  (Required) Name of the context property to compare.
+                 * @param lowerBoundary  (Required) The lower bound of the range.
+                 * @param upperBoundary  (Required) The upper bound of the range.
+                 */
+                function between(propertyName: string, lowerBoundary: number, upperBoundary: number): ol.format.ogc.filter.IsBetween;
+                /**
+                 * Represents a `<PropertyIsLike>` comparison operator that matches a string property
+                 * value against a text pattern.
+                 * @param propertyName  (Required) Name of the context property to compare.
+                 * @param pattern  (Required) Text pattern.
+                 * @param opt_wildCard  (Optional) Pattern character which matches any sequence of
+   zero or more string characters. Default is '*'.
+                 * @param opt_singleChar  (Optional) pattern character which matches any single
+   string character. Default is '.'.
+                 * @param opt_escapeChar  (Optional) Escape character which can be used to escape
+   the pattern characters. Default is '!'.
+                 * @param opt_matchCase  (Optional) Case-sensitive?
+                 */
+                function like(propertyName: string, pattern: string, opt_wildCard?: string, opt_singleChar?: string, opt_escapeChar?: string, opt_matchCase?: boolean): ol.format.ogc.filter.IsLike;
             }
         }
-    }
-    module size {
-        /**
-         * Returns an `ol.Size` array for the passed in number (meaning: square) or
-         * `ol.Size` array.
-         * (meaning: non-square),
-         * @param size  (Required) Width and height.
-         * @param opt_size  (Optional) Optional reusable size array.
-         */
-        function toSize(size: number|ol.Size, opt_size?: ol.Size): ol.Size;
-    }
-    module tilegrid {
-        /**
-         * Creates a tile grid with a standard XYZ tiling scheme.
-         * @param opt_options  (Optional) Tile grid options.
-         */
-        function createXYZ(opt_options?: olx.tilegrid.XYZOptions): ol.tilegrid.TileGrid;
-        /**
-         * Base class for setting the grid pattern for sources accessing tiled-image
-         * servers.
-         */
-        class TileGrid {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param options  (Required) Tile grid options.
-             */
-            constructor(options: olx.tilegrid.TileGridOptions);
-            /**
-             * Call a function with each tile coordinate for a given extent and zoom level.
-             * @param extent  (Required) Extent.
-             * @param zoom  (Required) Zoom level.
-             * @param callback  (Required) Function called with each tile coordinate.
-             */
-            forEachTileCoord(extent: ol.Extent, zoom: number, callback: Function): void;
-            /**
-             * Get the maximum zoom level for the grid.
-             */
-            getMaxZoom(): number;
-            /**
-             * Get the minimum zoom level for the grid.
-             */
-            getMinZoom(): number;
-            /**
-             * Get the origin for the grid at the given zoom level.
-             * @param z  (Required) Z.
-             */
-            getOrigin(z: number): ol.Coordinate;
-            /**
-             * Get the resolution for the given zoom level.
-             * @param z  (Required) Z.
-             */
-            getResolution(z: number): number;
-            /**
-             * Get the list of resolutions for the tile grid.
-             */
-            getResolutions(): number[];
-            /**
-             * Get the extent of a tile coordinate.
-             * @param tileCoord  (Required) Tile coordinate.
-             * @param opt_extent  (Optional) Temporary extent object.
-             */
-            getTileCoordExtent(tileCoord: ol.TileCoord, opt_extent?: ol.Extent): ol.Extent;
-            /**
-             * Get the tile coordinate for the given map coordinate and resolution.  This
-             * method considers that coordinates that intersect tile boundaries should be
-             * assigned the higher tile coordinate.
-             * @param coordinate  (Required) Coordinate.
-             * @param resolution  (Required) Resolution.
-             * @param opt_tileCoord  (Optional) Destination ol.TileCoord object.
-             */
-            getTileCoordForCoordAndResolution(coordinate: ol.Coordinate, resolution: number, opt_tileCoord?: ol.TileCoord): ol.TileCoord;
-            /**
-             * Get a tile coordinate given a map coordinate and zoom level.
-             * @param coordinate  (Required) Coordinate.
-             * @param z  (Required) Zoom level.
-             * @param opt_tileCoord  (Optional) Destination ol.TileCoord object.
-             */
-            getTileCoordForCoordAndZ(coordinate: ol.Coordinate, z: number, opt_tileCoord?: ol.TileCoord): ol.TileCoord;
-            /**
-             * Get the tile size for a zoom level. The type of the return value matches the
-             * `tileSize` or `tileSizes` that the tile grid was configured with. To always
-             * get an `ol.Size`, run the result through `ol.size.toSize()`.
-             * @param z  (Required) Z.
-             */
-            getTileSize(z: number): number|ol.Size;
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param resolution  (Required) Resolution.
-             * @param opt_direction  (Optional) If 0, the nearest resolution will be used.
-    If 1, the nearest lower resolution will be used. If -1, the nearest
-    higher resolution will be used. Default is 0.
-             */
-            getZForResolution(resolution: number, opt_direction?: number): number;
-        }
-        /**
-         * Set the grid pattern for sources accessing WMTS tiled-image servers.
-         */
-        class WMTS extends ol.tilegrid.TileGrid {
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param options  (Required) WMTS options.
-             */
-            constructor(options: olx.tilegrid.WMTSOptions);
-            /**
-             * Get the list of matrix identifiers.
-             */
-            getMatrixIds(): string[];
-            /**
-             * Create a tile grid from a WMTS capabilities matrix set.
-             * @param matrixSet  (Required) An object representing a matrixSet in the
-    capabilities document.
-             * @param opt_extent  (Optional) An optional extent to restrict the tile
-    ranges the server provides.
-             */
-            static createFromCapabilitiesMatrixSet(matrixSet: any, opt_extent?: ol.Extent): ol.tilegrid.WMTS;
-            /**
-             * Call a function with each tile coordinate for a given extent and zoom level.
-             * @param extent  (Required) Extent.
-             * @param zoom  (Required) Zoom level.
-             * @param callback  (Required) Function called with each tile coordinate.
-             */
-            forEachTileCoord(extent: ol.Extent, zoom: number, callback: Function): void;
-            /**
-             * Get the maximum zoom level for the grid.
-             */
-            getMaxZoom(): number;
-            /**
-             * Get the minimum zoom level for the grid.
-             */
-            getMinZoom(): number;
-            /**
-             * Get the origin for the grid at the given zoom level.
-             * @param z  (Required) Z.
-             */
-            getOrigin(z: number): ol.Coordinate;
-            /**
-             * Get the resolution for the given zoom level.
-             * @param z  (Required) Z.
-             */
-            getResolution(z: number): number;
-            /**
-             * Get the list of resolutions for the tile grid.
-             */
-            getResolutions(): number[];
-            /**
-             * Get the extent of a tile coordinate.
-             * @param tileCoord  (Required) Tile coordinate.
-             * @param opt_extent  (Optional) Temporary extent object.
-             */
-            getTileCoordExtent(tileCoord: ol.TileCoord, opt_extent?: ol.Extent): ol.Extent;
-            /**
-             * Get the tile coordinate for the given map coordinate and resolution.  This
-             * method considers that coordinates that intersect tile boundaries should be
-             * assigned the higher tile coordinate.
-             * @param coordinate  (Required) Coordinate.
-             * @param resolution  (Required) Resolution.
-             * @param opt_tileCoord  (Optional) Destination ol.TileCoord object.
-             */
-            getTileCoordForCoordAndResolution(coordinate: ol.Coordinate, resolution: number, opt_tileCoord?: ol.TileCoord): ol.TileCoord;
-            /**
-             * Get a tile coordinate given a map coordinate and zoom level.
-             * @param coordinate  (Required) Coordinate.
-             * @param z  (Required) Zoom level.
-             * @param opt_tileCoord  (Optional) Destination ol.TileCoord object.
-             */
-            getTileCoordForCoordAndZ(coordinate: ol.Coordinate, z: number, opt_tileCoord?: ol.TileCoord): ol.TileCoord;
-            /**
-             * Get the tile size for a zoom level. The type of the return value matches the
-             * `tileSize` or `tileSizes` that the tile grid was configured with. To always
-             * get an `ol.Size`, run the result through `ol.size.toSize()`.
-             * @param z  (Required) Z.
-             */
-            getTileSize(z: number): number|ol.Size;
-            /**
-             * TODO: This method has no documentation. Contact the library author if this method should be documented
-             * @param resolution  (Required) Resolution.
-             * @param opt_direction  (Optional) If 0, the nearest resolution will be used.
-    If 1, the nearest lower resolution will be used. If -1, the nearest
-    higher resolution will be used. Default is 0.
-             */
-            getZForResolution(resolution: number, opt_direction?: number): number;
-        }
-    }
-    module xml {
-        /**
-         * Recursively grab all text content of child nodes into a single string.
-         * @param node  (Required) Node.
-         * @param normalizeWhitespace  (Required) Normalize whitespace: remove all line
-breaks.
-         */
-        function getAllTextContent(node: Node, normalizeWhitespace: boolean): string;
-        /**
-         * Parse an XML string to an XML Document.
-         * @param xml  (Required) XML.
-         */
-        function parse(xml: string): Document;
     }
     module geom {
         /**
@@ -10098,6 +7021,2170 @@ breaks.
             public static XYZM: string;
         }
     }
+    module interaction {
+        /**
+         * Allows the user to zoom by double-clicking on the map.
+         */
+        class DoubleClickZoom extends ol.interaction.Interaction {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param opt_options  (Optional) Options.
+             */
+            constructor(opt_options?: olx.interaction.DoubleClickZoomOptions);
+            /**
+             * Handles the {@link ol.MapBrowserEvent map browser event} (if it was a
+             * doubleclick) and eventually zooms the map.
+             * @param mapBrowserEvent  (Required) Map browser event.
+             */
+            static handleEvent(mapBrowserEvent: ol.MapBrowserEvent): boolean;
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Handles input of vector data by drag and drop.
+         */
+        class DragAndDrop extends ol.interaction.Interaction {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param opt_options  (Optional) Options.
+             */
+            constructor(opt_options?: olx.interaction.DragAndDropOptions);
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Allows the user to draw a vector box by clicking and dragging on the map,
+         * normally combined with an {@link ol.events.condition} that limits
+         * it to when the shift or other key is held down. This is used, for example,
+         * for zooming to a specific area of the map
+         * (see {@link ol.interaction.DragZoom} and
+         * {@link ol.interaction.DragRotateAndZoom}).
+         * 
+         * This interaction is only supported for mouse devices.
+         */
+        class DragBox extends ol.interaction.Pointer {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param opt_options  (Optional) Options.
+             */
+            constructor(opt_options?: olx.interaction.DragBoxOptions);
+            /**
+             * Returns geometry of last drawn box.
+             */
+            getGeometry(): ol.geom.Polygon;
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Allows the user to pan the map by dragging the map.
+         */
+        class DragPan extends ol.interaction.Pointer {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param opt_options  (Optional) Options.
+             */
+            constructor(opt_options?: olx.interaction.DragPanOptions);
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Allows the user to rotate the map by clicking and dragging on the map,
+         * normally combined with an {@link ol.events.condition} that limits
+         * it to when the alt and shift keys are held down.
+         * 
+         * This interaction is only supported for mouse devices.
+         */
+        class DragRotate extends ol.interaction.Pointer {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param opt_options  (Optional) Options.
+             */
+            constructor(opt_options?: olx.interaction.DragRotateOptions);
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Allows the user to zoom and rotate the map by clicking and dragging
+         * on the map.  By default, this interaction is limited to when the shift
+         * key is held down.
+         * 
+         * This interaction is only supported for mouse devices.
+         * 
+         * And this interaction is not included in the default interactions.
+         */
+        class DragRotateAndZoom extends ol.interaction.Pointer {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param opt_options  (Optional) Options.
+             */
+            constructor(opt_options?: olx.interaction.DragRotateAndZoomOptions);
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Allows the user to zoom the map by clicking and dragging on the map,
+         * normally combined with an {@link ol.events.condition} that limits
+         * it to when a key, shift by default, is held down.
+         * 
+         * To change the style of the box, use CSS and the `.ol-dragzoom` selector, or
+         * your custom one configured with `className`.
+         */
+        class DragZoom extends ol.interaction.DragBox {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param opt_options  (Optional) Options.
+             */
+            constructor(opt_options?: olx.interaction.DragZoomOptions);
+            /**
+             * Returns geometry of last drawn box.
+             */
+            getGeometry(): ol.geom.Polygon;
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Interaction for drawing feature geometries.
+         */
+        class Draw extends ol.interaction.Pointer {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param options  (Required) Options.
+             */
+            constructor(options: olx.interaction.DrawOptions);
+            /**
+             * Handles the {@link ol.MapBrowserEvent map browser event} and may actually
+             * draw or finish the drawing.
+             * @param mapBrowserEvent  (Required) Map browser event.
+             */
+            static handleEvent(mapBrowserEvent: ol.MapBrowserEvent): boolean;
+            /**
+             * Remove last point of the feature currently being drawn.
+             */
+            removeLastPoint(): void;
+            /**
+             * Stop drawing and add the sketch feature to the target layer.
+             * The {@link ol.interaction.DrawEventType.DRAWEND} event is dispatched before
+             * inserting the feature.
+             */
+            finishDrawing(): void;
+            /**
+             * Extend an existing geometry by adding additional points. This only works
+             * on features with `LineString` geometries, where the interaction will
+             * extend lines by adding points to the end of the coordinates array.
+             * @param feature  (Required) Feature to be extended.
+             */
+            extend(feature: ol.Feature): void;
+            /**
+             * Create a `geometryFunction` for `mode: 'Circle'` that will create a regular
+             * polygon with a user specified number of sides and start angle instead of an
+             * `ol.geom.Circle` geometry.
+             * @param opt_sides  (Optional) Number of sides of the regular polygon. Default is
+    32.
+             * @param opt_angle  (Optional) Angle of the first point in radians. 0 means East.
+    Default is the angle defined by the heading from the center of the
+    regular polygon to the current pointer position.
+             */
+            static createRegularPolygon(opt_sides?: number, opt_angle?: number): ol.DrawGeometryFunctionType;
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Abstract base class; normally only used for creating subclasses and not
+         * instantiated in apps.
+         * User actions that change the state of the map. Some are similar to controls,
+         * but are not associated with a DOM element.
+         * For example, {@link ol.interaction.KeyboardZoom} is functionally the same as
+         * {@link ol.control.Zoom}, but triggered by a keyboard event not a button
+         * element event.
+         * Although interactions do not have a DOM element, some of them do render
+         * vectors and so are visible on the screen.
+         */
+        class Interaction extends ol.Object {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param options  (Required) Options.
+             */
+            constructor(options: olx.interaction.InteractionOptions);
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Allows the user to pan the map using keyboard arrows.
+         * Note that, although this interaction is by default included in maps,
+         * the keys can only be used when browser focus is on the element to which
+         * the keyboard events are attached. By default, this is the map div,
+         * though you can change this with the `keyboardEventTarget` in
+         * {@link ol.Map}. `document` never loses focus but, for any other element,
+         * focus will have to be on, and returned to, this element if the keys are to
+         * function.
+         * See also {@link ol.interaction.KeyboardZoom}.
+         */
+        class KeyboardPan extends ol.interaction.Interaction {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param opt_options  (Optional) Options.
+             */
+            constructor(opt_options?: olx.interaction.KeyboardPanOptions);
+            /**
+             * Handles the {@link ol.MapBrowserEvent map browser event} if it was a
+             * `KeyEvent`, and decides the direction to pan to (if an arrow key was
+             * pressed).
+             * @param mapBrowserEvent  (Required) Map browser event.
+             */
+            static handleEvent(mapBrowserEvent: ol.MapBrowserEvent): boolean;
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Allows the user to zoom the map using keyboard + and -.
+         * Note that, although this interaction is by default included in maps,
+         * the keys can only be used when browser focus is on the element to which
+         * the keyboard events are attached. By default, this is the map div,
+         * though you can change this with the `keyboardEventTarget` in
+         * {@link ol.Map}. `document` never loses focus but, for any other element,
+         * focus will have to be on, and returned to, this element if the keys are to
+         * function.
+         * See also {@link ol.interaction.KeyboardPan}.
+         */
+        class KeyboardZoom extends ol.interaction.Interaction {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param opt_options  (Optional) Options.
+             */
+            constructor(opt_options?: olx.interaction.KeyboardZoomOptions);
+            /**
+             * Handles the {@link ol.MapBrowserEvent map browser event} if it was a
+             * `KeyEvent`, and decides whether to zoom in or out (depending on whether the
+             * key pressed was '+' or '-').
+             * @param mapBrowserEvent  (Required) Map browser event.
+             */
+            static handleEvent(mapBrowserEvent: ol.MapBrowserEvent): boolean;
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Interaction for modifying feature geometries.
+         */
+        class Modify extends ol.interaction.Pointer {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param options  (Required) Options.
+             */
+            constructor(options: olx.interaction.ModifyOptions);
+            /**
+             * Handles the {@link ol.MapBrowserEvent map browser event} and may modify the
+             * geometry.
+             * @param mapBrowserEvent  (Required) Map browser event.
+             */
+            static handleEvent(mapBrowserEvent: ol.MapBrowserEvent): boolean;
+            /**
+             * Removes the vertex currently being pointed.
+             */
+            removePoint(): boolean;
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Allows the user to zoom the map by scrolling the mouse wheel.
+         */
+        class MouseWheelZoom extends ol.interaction.Interaction {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param opt_options  (Optional) Options.
+             */
+            constructor(opt_options?: olx.interaction.MouseWheelZoomOptions);
+            /**
+             * Handles the {@link ol.MapBrowserEvent map browser event} (if it was a
+             * mousewheel-event) and eventually zooms the map.
+             * @param mapBrowserEvent  (Required) Map browser event.
+             */
+            static handleEvent(mapBrowserEvent: ol.MapBrowserEvent): boolean;
+            /**
+             * Enable or disable using the mouse's location as an anchor when zooming
+             * @param useAnchor  (Required) true to zoom to the mouse's location, false
+to zoom to the center of the map
+             */
+            setMouseAnchor(useAnchor: boolean): void;
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Allows the user to rotate the map by twisting with two fingers
+         * on a touch screen.
+         */
+        class PinchRotate extends ol.interaction.Pointer {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param opt_options  (Optional) Options.
+             */
+            constructor(opt_options?: olx.interaction.PinchRotateOptions);
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Allows the user to zoom the map by pinching with two fingers
+         * on a touch screen.
+         */
+        class PinchZoom extends ol.interaction.Pointer {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param opt_options  (Optional) Options.
+             */
+            constructor(opt_options?: olx.interaction.PinchZoomOptions);
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Base class that calls user-defined functions on `down`, `move` and `up`
+         * events. This class also manages "drag sequences".
+         * 
+         * When the `handleDownEvent` user function returns `true` a drag sequence is
+         * started. During a drag sequence the `handleDragEvent` user function is
+         * called on `move` events. The drag sequence ends when the `handleUpEvent`
+         * user function is called and returns `false`.
+         */
+        class Pointer extends ol.interaction.Interaction {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param opt_options  (Optional) Options.
+             */
+            constructor(opt_options?: olx.interaction.PointerOptions);
+            /**
+             * Handles the {@link ol.MapBrowserEvent map browser event} and may call into
+             * other functions, if event sequences like e.g. 'drag' or 'down-up' etc. are
+             * detected.
+             * @param mapBrowserEvent  (Required) Map browser event.
+             */
+            static handleEvent(mapBrowserEvent: ol.MapBrowserEvent): boolean;
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Interaction for selecting vector features. By default, selected features are
+         * styled differently, so this interaction can be used for visual highlighting,
+         * as well as selecting features for other actions, such as modification or
+         * output. There are three ways of controlling which features are selected:
+         * using the browser event as defined by the `condition` and optionally the
+         * `toggle`, `add`/`remove`, and `multi` options; a `layers` filter; and a
+         * further feature filter using the `filter` option.
+         * 
+         * Selected features are added to an internal unmanaged layer.
+         */
+        class Select extends ol.interaction.Interaction {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param opt_options  (Optional) Options.
+             */
+            constructor(opt_options?: olx.interaction.SelectOptions);
+            /**
+             * Get the selected features.
+             */
+            getFeatures(): ol.Collection<ol.Feature>;
+            /**
+             * Returns the associated {@link ol.layer.Vector vectorlayer} of
+             * the (last) selected feature. Note that this will not work with any
+             * programmatic method like pushing features to
+             * {@link ol.interaction.Select#getFeatures collection}.
+             * @param feature  (Required) Feature
+             */
+            getLayer(feature: ol.Feature|ol.render.Feature): ol.layer.Vector;
+            /**
+             * Handles the {@link ol.MapBrowserEvent map browser event} and may change the
+             * selected state of features.
+             * @param mapBrowserEvent  (Required) Map browser event.
+             */
+            static handleEvent(mapBrowserEvent: ol.MapBrowserEvent): boolean;
+            /**
+             * Remove the interaction from its current map, if any,  and attach it to a new
+             * map, if any. Pass `null` to just remove the interaction from the current map.
+             * @param map  (Required) Map.
+             */
+            setMap(map: ol.Map): void;
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Handles snapping of vector features while modifying or drawing them.  The
+         * features can come from a {@link ol.source.Vector} or {@link ol.Collection}
+         * Any interaction object that allows the user to interact
+         * with the features using the mouse can benefit from the snapping, as long
+         * as it is added before.
+         * 
+         * The snap interaction modifies map browser event `coordinate` and `pixel`
+         * properties to force the snap to occur to any interaction that them.
+         * 
+         * Example:
+         * 
+         *     var snap = new ol.interaction.Snap({
+         *       source: source
+         *     });
+         */
+        class Snap extends ol.interaction.Pointer {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param opt_options  (Optional) Options.
+             */
+            constructor(opt_options?: olx.interaction.SnapOptions);
+            /**
+             * Add a feature to the collection of features that we may snap to.
+             * @param feature  (Required) Feature.
+             * @param opt_listen  (Optional) Whether to listen to the geometry change or not
+    Defaults to `true`.
+             */
+            addFeature(feature: ol.Feature, opt_listen?: boolean): void;
+            /**
+             * Remove a feature from the collection of features that we may snap to.
+             * @param feature  (Required) Feature
+             * @param opt_unlisten  (Optional) Whether to unlisten to the geometry change
+    or not. Defaults to `true`.
+             */
+            removeFeature(feature: ol.Feature, opt_unlisten?: boolean): void;
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Interaction for translating (moving) features.
+         */
+        class Translate extends ol.interaction.Pointer {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param options  (Required) Options.
+             */
+            constructor(options: olx.interaction.TranslateOptions);
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Set of interactions included in maps by default. Specific interactions can be
+         * excluded by setting the appropriate option to false in the constructor
+         * options, but the order of the interactions is fixed.  If you want to specify
+         * a different order for interactions, you will need to create your own
+         * {@link ol.interaction.Interaction} instances and insert them into a
+         * {@link ol.Collection} in the order you want before creating your
+         * {@link ol.Map} instance. The default set of interactions, in sequence, is:
+         * * {@link ol.interaction.DragRotate}
+         * * {@link ol.interaction.DoubleClickZoom}
+         * * {@link ol.interaction.DragPan}
+         * * {@link ol.interaction.PinchRotate}
+         * * {@link ol.interaction.PinchZoom}
+         * * {@link ol.interaction.KeyboardPan}
+         * * {@link ol.interaction.KeyboardZoom}
+         * * {@link ol.interaction.MouseWheelZoom}
+         * * {@link ol.interaction.DragZoom}
+         * @param opt_options  (Optional) Defaults options.
+         */
+        function defaults(opt_options?: olx.interaction.DefaultsOptions): ol.Collection<ol.interaction.Interaction>;
+    }
     module layer {
         /**
          * Abstract base class; normally only used for creating subclasses and not
@@ -11591,6 +10678,352 @@ breaks.
              * "vector"
              */
             public static VECTOR: string;
+        }
+    }
+    module proj {
+        /**
+         * Projection definition class. One of these is created for each projection
+         * supported in the application and stored in the {@link ol.proj} namespace.
+         * You can use these in applications, but this is not required, as API params
+         * and options use {@link ol.ProjectionLike} which means the simple string
+         * code will suffice.
+         * 
+         * You can use {@link ol.proj.get} to retrieve the object for a particular
+         * projection.
+         * 
+         * The library includes definitions for `EPSG:4326` and `EPSG:3857`, together
+         * with the following aliases:
+         * * `EPSG:4326`: CRS:84, urn:ogc:def:crs:EPSG:6.6:4326,
+         *     urn:ogc:def:crs:OGC:1.3:CRS84, urn:ogc:def:crs:OGC:2:84,
+         *     http://www.opengis.net/gml/srs/epsg.xml#4326,
+         *     urn:x-ogc:def:crs:EPSG:4326
+         * * `EPSG:3857`: EPSG:102100, EPSG:102113, EPSG:900913,
+         *     urn:ogc:def:crs:EPSG:6.18:3:3857,
+         *     http://www.opengis.net/gml/srs/epsg.xml#3857
+         * 
+         * If you use proj4js, aliases can be added using `proj4.defs()`; see
+         * [documentation](https://github.com/proj4js/proj4js). To set an alternative
+         * namespace for proj4, use {@link ol.proj.setProj4}.
+         */
+        class Projection {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param options  (Required) Projection options.
+             */
+            constructor(options: olx.ProjectionOptions);
+            /**
+             * Get the code for this projection, e.g. 'EPSG:4326'.
+             */
+            getCode(): string;
+            /**
+             * Get the validity extent for this projection.
+             */
+            getExtent(): ol.Extent;
+            /**
+             * Get the units of this projection.
+             */
+            getUnits(): string;
+            /**
+             * Get the amount of meters per unit of this projection.  If the projection is
+             * not configured with `metersPerUnit` or a units identifier, the return is
+             * `undefined`.
+             */
+            getMetersPerUnit(): number;
+            /**
+             * Get the world extent for this projection.
+             */
+            getWorldExtent(): ol.Extent;
+            /**
+             * Is this projection a global projection which spans the whole world?
+             */
+            isGlobal(): boolean;
+            /**
+             * Set if the projection is a global projection which spans the whole world
+             * @param global  (Required) Whether the projection is global.
+             */
+            setGlobal(global: boolean): void;
+            /**
+             * Set the validity extent for this projection.
+             * @param extent  (Required) Extent.
+             */
+            setExtent(extent: ol.Extent): void;
+            /**
+             * Set the world extent for this projection.
+             * @param worldExtent  (Required) World extent
+    [minlon, minlat, maxlon, maxlat].
+             */
+            setWorldExtent(worldExtent: ol.Extent): void;
+            /**
+             * Set the getPointResolution function for this projection.
+             * @param func  (Required) Function
+             */
+            setGetPointResolution(func: Function): void;
+            /**
+             * Get the resolution of the point in degrees or distance units.
+             * For projections with degrees as the unit this will simply return the
+             * provided resolution. The default for other projections is to estimate
+             * the point resolution by transforming the 'point' pixel to EPSG:4326,
+             * measuring its width and height on the normal sphere,
+             * and taking the average of the width and height.
+             * An alternative implementation may be given when constructing a
+             * projection. For many local projections,
+             * such a custom function will return the resolution unchanged.
+             * @param resolution  (Required) Resolution in projection units.
+             * @param point  (Required) Point.
+             */
+            getPointResolution(resolution: number, point: ol.Coordinate): number;
+        }
+        /**
+         * Projection units: `'degrees'`, `'ft'`, `'m'`, `'pixels'`, `'tile-pixels'` or
+         * `'us-ft'`.
+         */
+        class Units {
+            /**
+             * "degrees"
+             */
+            public static DEGREES: string;
+            /**
+             * "ft"
+             */
+            public static FEET: string;
+            /**
+             * "m"
+             */
+            public static METERS: string;
+            /**
+             * "pixels"
+             */
+            public static PIXELS: string;
+            /**
+             * "tile-pixels"
+             */
+            public static TILE_PIXELS: string;
+            /**
+             * "us-ft"
+             */
+            public static USFEET: string;
+        }
+        /**
+         * Meters per unit lookup table.
+         */
+        var METERS_PER_UNIT: { [key: string]: number; };
+        /**
+         * Register proj4. If not explicitly registered, it will be assumed that
+         * proj4js will be loaded in the global namespace. For example in a
+         * browserify ES6 environment you could use:
+         * 
+         *     import ol from 'openlayers';
+         *     import proj4 from 'proj4';
+         *     ol.proj.setProj4(proj4);
+         * @param proj4  (Required) Proj4.
+         */
+        function setProj4(proj4: proj4): void;
+        /**
+         * Registers transformation functions that don't alter coordinates. Those allow
+         * to transform between projections with equal meaning.
+         * @param projections  (Required) Projections.
+         */
+        function addEquivalentProjections(projections: ol.proj.Projection[]): void;
+        /**
+         * Add a Projection object to the list of supported projections that can be
+         * looked up by their code.
+         * @param projection  (Required) Projection instance.
+         */
+        function addProjection(projection: ol.proj.Projection): void;
+        /**
+         * Registers coordinate transform functions to convert coordinates between the
+         * source projection and the destination projection.
+         * The forward and inverse functions convert coordinate pairs; this function
+         * converts these into the functions used internally which also handle
+         * extents and coordinate arrays.
+         * @param source  (Optional) Source projection.
+         * @param destination  (Optional) Destination projection.
+         * @param forward  (Optional) The forward transform
+    function (that is, from the source projection to the destination
+    projection) that takes a {@link ol.Coordinate} as argument and returns
+    the transformed {@link ol.Coordinate}.
+         * @param inverse  (Optional) The inverse transform
+    function (that is, from the destination projection to the source
+    projection) that takes a {@link ol.Coordinate} as argument and returns
+    the transformed {@link ol.Coordinate}.
+         */
+        function addCoordinateTransforms(source?: ol.ProjectionLike, destination?: ol.ProjectionLike, forward?: Function, inverse?: Function): void;
+        /**
+         * Transforms a coordinate from longitude/latitude to a different projection.
+         * @param coordinate  (Required) Coordinate as longitude and latitude, i.e.
+    an array with longitude as 1st and latitude as 2nd element.
+         * @param opt_projection  (Optional) Target projection. The
+    default is Web Mercator, i.e. 'EPSG:3857'.
+         */
+        function fromLonLat(coordinate: ol.Coordinate, opt_projection?: ol.ProjectionLike): ol.Coordinate;
+        /**
+         * Transforms a coordinate to longitude/latitude.
+         * @param coordinate  (Required) Projected coordinate.
+         * @param opt_projection  (Optional) Projection of the coordinate.
+    The default is Web Mercator, i.e. 'EPSG:3857'.
+         */
+        function toLonLat(coordinate: ol.Coordinate, opt_projection?: ol.ProjectionLike): ol.Coordinate;
+        /**
+         * Fetches a Projection object for the code specified.
+         * @param projectionLike  (Optional) Either a code string which is
+    a combination of authority and identifier such as "EPSG:4326", or an
+    existing projection object, or undefined.
+         */
+        function get(projectionLike?: ol.ProjectionLike): ol.proj.Projection;
+        /**
+         * Checks if two projections are the same, that is every coordinate in one
+         * projection does represent the same geographic point as the same coordinate in
+         * the other projection.
+         * @param projection1  (Required) Projection 1.
+         * @param projection2  (Required) Projection 2.
+         */
+        function equivalent(projection1: ol.proj.Projection, projection2: ol.proj.Projection): boolean;
+        /**
+         * Given the projection-like objects, searches for a transformation
+         * function to convert a coordinates array from the source projection to the
+         * destination projection.
+         * @param source  (Optional) Source.
+         * @param destination  (Optional) Destination.
+         */
+        function getTransform(source?: ol.ProjectionLike, destination?: ol.ProjectionLike): ol.TransformFunction;
+        /**
+         * Transforms a coordinate from source projection to destination projection.
+         * This returns a new coordinate (and does not modify the original).
+         * 
+         * See {@link ol.proj.transformExtent} for extent transformation.
+         * See the transform method of {@link ol.geom.Geometry} and its subclasses for
+         * geometry transforms.
+         * @param coordinate  (Required) Coordinate.
+         * @param source  (Optional) Source projection-like.
+         * @param destination  (Optional) Destination projection-like.
+         */
+        function transform(coordinate: ol.Coordinate, source?: ol.ProjectionLike, destination?: ol.ProjectionLike): ol.Coordinate;
+        /**
+         * Transforms an extent from source projection to destination projection.  This
+         * returns a new extent (and does not modify the original).
+         * @param extent  (Required) The extent to transform.
+         * @param source  (Optional) Source projection-like.
+         * @param destination  (Optional) Destination projection-like.
+         */
+        function transformExtent(extent: ol.Extent, source?: ol.ProjectionLike, destination?: ol.ProjectionLike): ol.Extent;
+        module common {
+            /**
+             * FIXME empty description for jsdoc
+             */
+            function add(): void;
+        }
+    }
+    module render {
+        /**
+         * Lightweight, read-only, {@link ol.Feature} and {@link ol.geom.Geometry} like
+         * structure, optimized for rendering and styling. Geometry access through the
+         * API is limited to getting the type and extent of the geometry.
+         */
+        class Feature {
+            /**
+             * Lightweight, read-only, {@link ol.Feature} and {@link ol.geom.Geometry} like
+             * structure, optimized for rendering and styling. Geometry access through the
+             * API is limited to getting the type and extent of the geometry.
+             * @param type  (Required) Geometry type.
+             * @param flatCoordinates  (Required) Flat coordinates. These always need
+    to be right-handed for polygons.
+             * @param ends  (Required) Ends or Endss.
+             * @param properties  (Required) Properties.
+             */
+            constructor(type: ol.geom.GeometryType, flatCoordinates: number[], ends: number[]|number[][], properties: { [key: string]: any; });
+            /**
+             * Get a feature property by its key.
+             * @param key  (Required) Key
+             */
+            get(key: string): any;
+            /**
+             * Get the extent of this feature's geometry.
+             */
+            getExtent(): ol.Extent;
+            /**
+             * Get the feature for working with its geometry.
+             */
+            getGeometry(): ol.render.Feature;
+            /**
+             * Get the feature properties.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Get the type of this feature's geometry.
+             */
+            getType(): ol.geom.GeometryType;
+        }
+        /**
+         * Context for drawing geometries.  A vector context is available on render
+         * events and does not need to be constructed directly.
+         */
+        class VectorContext {
+        }
+        /**
+         * Binds a Canvas Immediate API to a canvas context, to allow drawing geometries
+         * to the context's canvas.
+         * 
+         * The units for geometry coordinates are css pixels relative to the top left
+         * corner of the canvas element.
+         * ```js
+         * var canvas = document.createElement('canvas');
+         * var render = ol.render.toContext(canvas.getContext('2d'),
+         *     { size: [100, 100] });
+         * render.setFillStrokeStyle(new ol.style.Fill({ color: blue }));
+         * render.drawPolygon(
+         *     new ol.geom.Polygon([[[0, 0], [100, 100], [100, 0], [0, 0]]]));
+         * ```
+         * @param context  (Required) Canvas context.
+         * @param opt_options  (Optional) Options.
+         */
+        function toContext(context: CanvasRenderingContext2D, opt_options?: olx.render.ToContextOptions): ol.render.canvas.Immediate;
+        module canvas {
+            /**
+             * A concrete subclass of {@link ol.render.VectorContext} that implements
+             * direct rendering of features and geometries to an HTML5 Canvas context.
+             * Instances of this class are created internally by the library and
+             * provided to application code as vectorContext member of the
+             * {@link ol.render.Event} object associated with postcompose, precompose and
+             * render events emitted by layers and maps.
+             */
+            class Immediate extends ol.render.VectorContext {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param context  (Required) Context.
+                 * @param pixelRatio  (Required) Pixel ratio.
+                 * @param extent  (Required) Extent.
+                 * @param transform  (Required) Transform.
+                 * @param viewRotation  (Required) View rotation.
+                 */
+                constructor(context: CanvasRenderingContext2D, pixelRatio: number, extent: ol.Extent, transform: ol.Transform, viewRotation: number);
+                /**
+                 * Render a circle geometry into the canvas.  Rendering is immediate and uses
+                 * the current fill and stroke styles.
+                 * @param geometry  (Required) Circle geometry.
+                 */
+                drawCircle(geometry: ol.geom.Circle): void;
+                /**
+                 * Set the rendering style.  Note that since this is an immediate rendering API,
+                 * any `zIndex` on the provided style will be ignored.
+                 * @param style  (Required) The rendering style.
+                 */
+                setStyle(style: ol.style.Style): void;
+                /**
+                 * Render a geometry into the canvas.  Call
+                 * {@link ol.render.canvas.Immediate#setStyle} first to set the rendering style.
+                 * @param geometry  (Required) The geometry to render.
+                 */
+                drawGeometry(geometry: ol.geom.Geometry|ol.render.Feature): void;
+                /**
+                 * Render a feature into the canvas.  Note that any `zIndex` on the provided
+                 * style will be ignored - features are rendered immediately in the order that
+                 * this method is called.  If you need `zIndex` support, you should be using an
+                 * {@link ol.layer.Vector} instead.
+                 * @param feature  (Required) Feature.
+                 * @param style  (Required) Style.
+                 */
+                drawFeature(feature: ol.Feature, style: ol.style.Style): void;
+            }
         }
     }
     module source {
@@ -16618,6 +16051,178 @@ Optional config properties:
             public static TOP_RIGHT: string;
         }
     }
+    module tilegrid {
+        /**
+         * Base class for setting the grid pattern for sources accessing tiled-image
+         * servers.
+         */
+        class TileGrid {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param options  (Required) Tile grid options.
+             */
+            constructor(options: olx.tilegrid.TileGridOptions);
+            /**
+             * Call a function with each tile coordinate for a given extent and zoom level.
+             * @param extent  (Required) Extent.
+             * @param zoom  (Required) Zoom level.
+             * @param callback  (Required) Function called with each tile coordinate.
+             */
+            forEachTileCoord(extent: ol.Extent, zoom: number, callback: Function): void;
+            /**
+             * Get the maximum zoom level for the grid.
+             */
+            getMaxZoom(): number;
+            /**
+             * Get the minimum zoom level for the grid.
+             */
+            getMinZoom(): number;
+            /**
+             * Get the origin for the grid at the given zoom level.
+             * @param z  (Required) Z.
+             */
+            getOrigin(z: number): ol.Coordinate;
+            /**
+             * Get the resolution for the given zoom level.
+             * @param z  (Required) Z.
+             */
+            getResolution(z: number): number;
+            /**
+             * Get the list of resolutions for the tile grid.
+             */
+            getResolutions(): number[];
+            /**
+             * Get the extent of a tile coordinate.
+             * @param tileCoord  (Required) Tile coordinate.
+             * @param opt_extent  (Optional) Temporary extent object.
+             */
+            getTileCoordExtent(tileCoord: ol.TileCoord, opt_extent?: ol.Extent): ol.Extent;
+            /**
+             * Get the tile coordinate for the given map coordinate and resolution.  This
+             * method considers that coordinates that intersect tile boundaries should be
+             * assigned the higher tile coordinate.
+             * @param coordinate  (Required) Coordinate.
+             * @param resolution  (Required) Resolution.
+             * @param opt_tileCoord  (Optional) Destination ol.TileCoord object.
+             */
+            getTileCoordForCoordAndResolution(coordinate: ol.Coordinate, resolution: number, opt_tileCoord?: ol.TileCoord): ol.TileCoord;
+            /**
+             * Get a tile coordinate given a map coordinate and zoom level.
+             * @param coordinate  (Required) Coordinate.
+             * @param z  (Required) Zoom level.
+             * @param opt_tileCoord  (Optional) Destination ol.TileCoord object.
+             */
+            getTileCoordForCoordAndZ(coordinate: ol.Coordinate, z: number, opt_tileCoord?: ol.TileCoord): ol.TileCoord;
+            /**
+             * Get the tile size for a zoom level. The type of the return value matches the
+             * `tileSize` or `tileSizes` that the tile grid was configured with. To always
+             * get an `ol.Size`, run the result through `ol.size.toSize()`.
+             * @param z  (Required) Z.
+             */
+            getTileSize(z: number): number|ol.Size;
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param resolution  (Required) Resolution.
+             * @param opt_direction  (Optional) If 0, the nearest resolution will be used.
+    If 1, the nearest lower resolution will be used. If -1, the nearest
+    higher resolution will be used. Default is 0.
+             */
+            getZForResolution(resolution: number, opt_direction?: number): number;
+        }
+        /**
+         * Set the grid pattern for sources accessing WMTS tiled-image servers.
+         */
+        class WMTS extends ol.tilegrid.TileGrid {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param options  (Required) WMTS options.
+             */
+            constructor(options: olx.tilegrid.WMTSOptions);
+            /**
+             * Get the list of matrix identifiers.
+             */
+            getMatrixIds(): string[];
+            /**
+             * Create a tile grid from a WMTS capabilities matrix set.
+             * @param matrixSet  (Required) An object representing a matrixSet in the
+    capabilities document.
+             * @param opt_extent  (Optional) An optional extent to restrict the tile
+    ranges the server provides.
+             */
+            static createFromCapabilitiesMatrixSet(matrixSet: any, opt_extent?: ol.Extent): ol.tilegrid.WMTS;
+            /**
+             * Call a function with each tile coordinate for a given extent and zoom level.
+             * @param extent  (Required) Extent.
+             * @param zoom  (Required) Zoom level.
+             * @param callback  (Required) Function called with each tile coordinate.
+             */
+            forEachTileCoord(extent: ol.Extent, zoom: number, callback: Function): void;
+            /**
+             * Get the maximum zoom level for the grid.
+             */
+            getMaxZoom(): number;
+            /**
+             * Get the minimum zoom level for the grid.
+             */
+            getMinZoom(): number;
+            /**
+             * Get the origin for the grid at the given zoom level.
+             * @param z  (Required) Z.
+             */
+            getOrigin(z: number): ol.Coordinate;
+            /**
+             * Get the resolution for the given zoom level.
+             * @param z  (Required) Z.
+             */
+            getResolution(z: number): number;
+            /**
+             * Get the list of resolutions for the tile grid.
+             */
+            getResolutions(): number[];
+            /**
+             * Get the extent of a tile coordinate.
+             * @param tileCoord  (Required) Tile coordinate.
+             * @param opt_extent  (Optional) Temporary extent object.
+             */
+            getTileCoordExtent(tileCoord: ol.TileCoord, opt_extent?: ol.Extent): ol.Extent;
+            /**
+             * Get the tile coordinate for the given map coordinate and resolution.  This
+             * method considers that coordinates that intersect tile boundaries should be
+             * assigned the higher tile coordinate.
+             * @param coordinate  (Required) Coordinate.
+             * @param resolution  (Required) Resolution.
+             * @param opt_tileCoord  (Optional) Destination ol.TileCoord object.
+             */
+            getTileCoordForCoordAndResolution(coordinate: ol.Coordinate, resolution: number, opt_tileCoord?: ol.TileCoord): ol.TileCoord;
+            /**
+             * Get a tile coordinate given a map coordinate and zoom level.
+             * @param coordinate  (Required) Coordinate.
+             * @param z  (Required) Zoom level.
+             * @param opt_tileCoord  (Optional) Destination ol.TileCoord object.
+             */
+            getTileCoordForCoordAndZ(coordinate: ol.Coordinate, z: number, opt_tileCoord?: ol.TileCoord): ol.TileCoord;
+            /**
+             * Get the tile size for a zoom level. The type of the return value matches the
+             * `tileSize` or `tileSizes` that the tile grid was configured with. To always
+             * get an `ol.Size`, run the result through `ol.size.toSize()`.
+             * @param z  (Required) Z.
+             */
+            getTileSize(z: number): number|ol.Size;
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param resolution  (Required) Resolution.
+             * @param opt_direction  (Optional) If 0, the nearest resolution will be used.
+    If 1, the nearest lower resolution will be used. If -1, the nearest
+    higher resolution will be used. Default is 0.
+             */
+            getZForResolution(resolution: number, opt_direction?: number): number;
+        }
+        /**
+         * Creates a tile grid with a standard XYZ tiling scheme.
+         * @param opt_options  (Optional) Tile grid options.
+         */
+        function createXYZ(opt_options?: olx.tilegrid.XYZOptions): ol.tilegrid.TileGrid;
+    }
     module Tile {
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -16630,6 +16235,401 @@ Optional config properties:
             EMPTY = 4,
             ABORT = 5
         }
+    }
+    module animation {
+        /**
+         * Generate an animated transition that will "bounce" the resolution as it
+         * approaches the final value.
+         * @param options  (Required) Bounce options.
+         */
+        function bounce(options: olx.animation.BounceOptions): ol.PreRenderFunction;
+        /**
+         * Generate an animated transition while updating the view center.
+         * @param options  (Required) Pan options.
+         */
+        function pan(options: olx.animation.PanOptions): ol.PreRenderFunction;
+        /**
+         * Generate an animated transition while updating the view rotation.
+         * @param options  (Required) Rotate options.
+         */
+        function rotate(options: olx.animation.RotateOptions): ol.PreRenderFunction;
+        /**
+         * Generate an animated transition while updating the view resolution.
+         * @param options  (Required) Zoom options.
+         */
+        function zoom(options: olx.animation.ZoomOptions): ol.PreRenderFunction;
+    }
+    module color {
+        /**
+         * Return the color as an array. This function maintains a cache of calculated
+         * arrays which means the result should not be modified.
+         * @param color  (Required) Color.
+         */
+        function asArray(color: ol.Color|string): ol.Color;
+        /**
+         * Return the color as an rgba string.
+         * @param color  (Required) Color.
+         */
+        function asString(color: ol.Color|string): string;
+    }
+    module colorlike {
+        /**
+         * TODO: This method has no documentation. Contact the library author if this method should be documented
+         * @param color  (Required) Color.
+         */
+        function asColorLike(color: ol.Color|ol.ColorLike): ol.ColorLike;
+    }
+    module coordinate {
+        /**
+         * Add `delta` to `coordinate`. `coordinate` is modified in place and returned
+         * by the function.
+         * 
+         * Example:
+         * 
+         *     var coord = [7.85, 47.983333];
+         *     ol.coordinate.add(coord, [-2, 4]);
+         *     // coord is now [5.85, 51.983333]
+         * @param coordinate  (Required) Coordinate.
+         * @param delta  (Required) Delta.
+         */
+        function add(coordinate: ol.Coordinate, delta: ol.Coordinate): ol.Coordinate;
+        /**
+         * Returns a {@link ol.CoordinateFormatType} function that can be used to format
+         * a {ol.Coordinate} to a string.
+         * 
+         * Example without specifying the fractional digits:
+         * 
+         *     var coord = [7.85, 47.983333];
+         *     var stringifyFunc = ol.coordinate.createStringXY();
+         *     var out = stringifyFunc(coord);
+         *     // out is now '8, 48'
+         * 
+         * Example with explicitly specifying 2 fractional digits:
+         * 
+         *     var coord = [7.85, 47.983333];
+         *     var stringifyFunc = ol.coordinate.createStringXY(2);
+         *     var out = stringifyFunc(coord);
+         *     // out is now '7.85, 47.98'
+         * @param opt_fractionDigits  (Optional) The number of digits to include
+   after the decimal point. Default is `0`.
+         */
+        function createStringXY(opt_fractionDigits?: number): ol.CoordinateFormatType;
+        /**
+         * Transforms the given {@link ol.Coordinate} to a string using the given string
+         * template. The strings `{x}` and `{y}` in the template will be replaced with
+         * the first and second coordinate values respectively.
+         * 
+         * Example without specifying the fractional digits:
+         * 
+         *     var coord = [7.85, 47.983333];
+         *     var template = 'Coordinate is ({x}|{y}).';
+         *     var out = ol.coordinate.format(coord, template);
+         *     // out is now 'Coordinate is (8|48).'
+         * 
+         * Example explicitly specifying the fractional digits:
+         * 
+         *     var coord = [7.85, 47.983333];
+         *     var template = 'Coordinate is ({x}|{y}).';
+         *     var out = ol.coordinate.format(coord, template, 2);
+         *     // out is now 'Coordinate is (7.85|47.98).'
+         * @param coordinate  (Optional) Coordinate.
+         * @param template  (Optional) A template string with `{x}` and `{y}` placeholders
+    that will be replaced by first and second coordinate values.
+         * @param opt_fractionDigits  (Optional) The number of digits to include
+   after the decimal point. Default is `0`.
+         */
+        function format(coordinate?: ol.Coordinate, template?: string, opt_fractionDigits?: number): string;
+        /**
+         * Rotate `coordinate` by `angle`. `coordinate` is modified in place and
+         * returned by the function.
+         * 
+         * Example:
+         * 
+         *     var coord = [7.85, 47.983333];
+         *     var rotateRadians = Math.PI / 2; // 90 degrees
+         *     ol.coordinate.rotate(coord, rotateRadians);
+         *     // coord is now [-47.983333, 7.85]
+         * @param coordinate  (Required) Coordinate.
+         * @param angle  (Required) Angle in radian.
+         */
+        function rotate(coordinate: ol.Coordinate, angle: number): ol.Coordinate;
+        /**
+         * Format a geographic coordinate with the hemisphere, degrees, minutes, and
+         * seconds.
+         * 
+         * Example without specifying fractional digits:
+         * 
+         *     var coord = [7.85, 47.983333];
+         *     var out = ol.coordinate.toStringHDMS(coord);
+         *     // out is now '47° 58′ 60″ N 7° 50′ 60″ E'
+         * 
+         * Example explicitly specifying 1 fractional digit:
+         * 
+         *     var coord = [7.85, 47.983333];
+         *     var out = ol.coordinate.toStringHDMS(coord, 1);
+         *     // out is now '47° 58′ 60.0″ N 7° 50′ 60.0″ E'
+         * @param coordinate  (Optional) Coordinate.
+         * @param opt_fractionDigits  (Optional) The number of digits to include
+   after the decimal point. Default is `0`.
+         */
+        function toStringHDMS(coordinate?: ol.Coordinate, opt_fractionDigits?: number): string;
+        /**
+         * Format a coordinate as a comma delimited string.
+         * 
+         * Example without specifying fractional digits:
+         * 
+         *     var coord = [7.85, 47.983333];
+         *     var out = ol.coordinate.toStringXY(coord);
+         *     // out is now '8, 48'
+         * 
+         * Example explicitly specifying 1 fractional digit:
+         * 
+         *     var coord = [7.85, 47.983333];
+         *     var out = ol.coordinate.toStringXY(coord, 1);
+         *     // out is now '7.8, 48.0'
+         * @param coordinate  (Optional) Coordinate.
+         * @param opt_fractionDigits  (Optional) The number of digits to include
+   after the decimal point. Default is `0`.
+         */
+        function toStringXY(coordinate?: ol.Coordinate, opt_fractionDigits?: number): string;
+    }
+    module easing {
+        /**
+         * Start slow and speed up.
+         * @param t  (Required) Input between 0 and 1.
+         */
+        function easeIn(t: number): number;
+        /**
+         * Start fast and slow down.
+         * @param t  (Required) Input between 0 and 1.
+         */
+        function easeOut(t: number): number;
+        /**
+         * Start slow, speed up, and then slow down again.
+         * @param t  (Required) Input between 0 and 1.
+         */
+        function inAndOut(t: number): number;
+        /**
+         * Maintain a constant speed over time.
+         * @param t  (Required) Input between 0 and 1.
+         */
+        function linear(t: number): number;
+        /**
+         * Start slow, speed up, and at the very end slow down again.  This has the
+         * same general behavior as {@link ol.easing.inAndOut}, but the final slowdown
+         * is delayed.
+         * @param t  (Required) Input between 0 and 1.
+         */
+        function upAndDown(t: number): number;
+    }
+    module extent {
+        /**
+         * Build an extent that includes all given coordinates.
+         * @param coordinates  (Required) Coordinates.
+         */
+        function boundingExtent(coordinates: ol.Coordinate[]): ol.Extent;
+        /**
+         * Return extent increased by the provided value.
+         * @param extent  (Required) Extent.
+         * @param value  (Required) The amount by which the extent should be buffered.
+         * @param opt_extent  (Optional) Extent.
+         */
+        function buffer(extent: ol.Extent, value: number, opt_extent?: ol.Extent): ol.Extent;
+        /**
+         * Check if the passed coordinate is contained or on the edge of the extent.
+         * @param extent  (Required) Extent.
+         * @param coordinate  (Required) Coordinate.
+         */
+        function containsCoordinate(extent: ol.Extent, coordinate: ol.Coordinate): boolean;
+        /**
+         * Check if one extent contains another.
+         * 
+         * An extent is deemed contained if it lies completely within the other extent,
+         * including if they share one or more edges.
+         * @param extent1  (Required) Extent 1.
+         * @param extent2  (Required) Extent 2.
+         */
+        function containsExtent(extent1: ol.Extent, extent2: ol.Extent): boolean;
+        /**
+         * Check if the passed coordinate is contained or on the edge of the extent.
+         * @param extent  (Required) Extent.
+         * @param x  (Required) X coordinate.
+         * @param y  (Required) Y coordinate.
+         */
+        function containsXY(extent: ol.Extent, x: number, y: number): boolean;
+        /**
+         * Create an empty extent.
+         */
+        function createEmpty(): ol.Extent;
+        /**
+         * Determine if two extents are equivalent.
+         * @param extent1  (Required) Extent 1.
+         * @param extent2  (Required) Extent 2.
+         */
+        function equals(extent1: ol.Extent, extent2: ol.Extent): boolean;
+        /**
+         * Modify an extent to include another extent.
+         * @param extent1  (Required) The extent to be modified.
+         * @param extent2  (Required) The extent that will be included in the first.
+         */
+        function extend(extent1: ol.Extent, extent2: ol.Extent): ol.Extent;
+        /**
+         * Get the bottom left coordinate of an extent.
+         * @param extent  (Required) Extent.
+         */
+        function getBottomLeft(extent: ol.Extent): ol.Coordinate;
+        /**
+         * Get the bottom right coordinate of an extent.
+         * @param extent  (Required) Extent.
+         */
+        function getBottomRight(extent: ol.Extent): ol.Coordinate;
+        /**
+         * Get the center coordinate of an extent.
+         * @param extent  (Required) Extent.
+         */
+        function getCenter(extent: ol.Extent): ol.Coordinate;
+        /**
+         * Get the height of an extent.
+         * @param extent  (Required) Extent.
+         */
+        function getHeight(extent: ol.Extent): number;
+        /**
+         * Get the intersection of two extents.
+         * @param extent1  (Required) Extent 1.
+         * @param extent2  (Required) Extent 2.
+         * @param opt_extent  (Optional) Optional extent to populate with intersection.
+         */
+        function getIntersection(extent1: ol.Extent, extent2: ol.Extent, opt_extent?: ol.Extent): ol.Extent;
+        /**
+         * Get the size (width, height) of an extent.
+         * @param extent  (Required) The extent.
+         */
+        function getSize(extent: ol.Extent): ol.Size;
+        /**
+         * Get the top left coordinate of an extent.
+         * @param extent  (Required) Extent.
+         */
+        function getTopLeft(extent: ol.Extent): ol.Coordinate;
+        /**
+         * Get the top right coordinate of an extent.
+         * @param extent  (Required) Extent.
+         */
+        function getTopRight(extent: ol.Extent): ol.Coordinate;
+        /**
+         * Get the width of an extent.
+         * @param extent  (Required) Extent.
+         */
+        function getWidth(extent: ol.Extent): number;
+        /**
+         * Determine if one extent intersects another.
+         * @param extent1  (Required) Extent 1.
+         * @param extent2  (Required) Extent.
+         */
+        function intersects(extent1: ol.Extent, extent2: ol.Extent): boolean;
+        /**
+         * Determine if an extent is empty.
+         * @param extent  (Required) Extent.
+         */
+        function isEmpty(extent: ol.Extent): boolean;
+        /**
+         * Apply a transform function to the extent.
+         * @param extent  (Required) Extent.
+         * @param transformFn  (Required) Transform function.  Called with
+[minX, minY, maxX, maxY] extent coordinates.
+         * @param opt_extent  (Optional) Destination extent.
+         */
+        function applyTransform(extent: ol.Extent, transformFn: ol.TransformFunction, opt_extent?: ol.Extent): ol.Extent;
+    }
+    module featureloader {
+        /**
+         * Create an XHR feature loader for a `url` and `format`. The feature loader
+         * loads features (with XHR), parses the features, and adds them to the
+         * vector tile.
+         * @param url  (Required) Feature URL service.
+         * @param format  (Required) Feature format.
+         */
+        function tile(url: string|ol.FeatureUrlFunction, format: ol.format.Feature): ol.FeatureLoader;
+        /**
+         * Create an XHR feature loader for a `url` and `format`. The feature loader
+         * loads features (with XHR), parses the features, and adds them to the
+         * vector source.
+         * @param url  (Required) Feature URL service.
+         * @param format  (Required) Feature format.
+         */
+        function xhr(url: string|ol.FeatureUrlFunction, format: ol.format.Feature): ol.FeatureLoader;
+    }
+    module has {
+        /**
+         * The ratio between physical pixels and device-independent pixels
+         * (dips) on the device (`window.devicePixelRatio`).
+         */
+        var DEVICE_PIXEL_RATIO: number;
+        /**
+         * True if both the library and browser support Canvas.  Always `false`
+         * if `ol.ENABLE_CANVAS` is set to `false` at compile time.
+         */
+        var CANVAS: boolean;
+        /**
+         * Indicates if DeviceOrientation is supported in the user's browser.
+         */
+        var DEVICE_ORIENTATION: boolean;
+        /**
+         * Is HTML5 geolocation supported in the current browser?
+         */
+        var GEOLOCATION: boolean;
+        /**
+         * True if browser supports touch events.
+         */
+        var TOUCH: boolean;
+        /**
+         * True if both OpenLayers and browser support WebGL.  Always `false`
+         * if `ol.ENABLE_WEBGL` is set to `false` at compile time.
+         */
+        var WEBGL: boolean;
+    }
+    module loadingstrategy {
+        /**
+         * Strategy function for loading all features with a single request.
+         * @param extent  (Required) Extent.
+         * @param resolution  (Required) Resolution.
+         */
+        function all(extent: ol.Extent, resolution: number): ol.Extent[];
+        /**
+         * Strategy function for loading features based on the view's extent and
+         * resolution.
+         * @param extent  (Required) Extent.
+         * @param resolution  (Required) Resolution.
+         */
+        function bbox(extent: ol.Extent, resolution: number): ol.Extent[];
+        /**
+         * Creates a strategy function for loading features based on a tile grid.
+         * @param tileGrid  (Required) Tile grid.
+         */
+        function tile(tileGrid: ol.tilegrid.TileGrid): (arg0: ol.Extent, arg1: number) => ol.Extent[];
+    }
+    module size {
+        /**
+         * Returns an `ol.Size` array for the passed in number (meaning: square) or
+         * `ol.Size` array.
+         * (meaning: non-square),
+         * @param size  (Required) Width and height.
+         * @param opt_size  (Optional) Optional reusable size array.
+         */
+        function toSize(size: number|ol.Size, opt_size?: ol.Size): ol.Size;
+    }
+    module xml {
+        /**
+         * Recursively grab all text content of child nodes into a single string.
+         * @param node  (Required) Node.
+         * @param normalizeWhitespace  (Required) Normalize whitespace: remove all line
+breaks.
+         */
+        function getAllTextContent(node: Node, normalizeWhitespace: boolean): string;
+        /**
+         * Parse an XML string to an XML Document.
+         * @param xml  (Required) XML.
+         */
+        function parse(xml: string): Document;
     }
 }
 declare module olx {

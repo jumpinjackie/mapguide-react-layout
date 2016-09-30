@@ -39,7 +39,7 @@ type MeasureProps = IMeasureContainerProps & IMeasureContainerState & IMeasureCo
 @connect(mapStateToProps, mapDispatchToProps)
 export class MeasureContainer extends React.Component<MeasureProps, any> {
     private measureLayer: ol.layer.Vector | null;
-    private viewer: IMapViewer | undefined;
+    private viewer: IMapViewer | null;
     private draw: ol.interaction.Draw | null;
     private fnTypeChanged: (e) => void;
     private fnGeodesicChanged: (e) => void;
@@ -74,9 +74,11 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
                 this.viewer.removeInteraction(this.draw);
             }
             this.draw = this.createDrawInteraction(type);
-            this.draw.on("drawstart", this.fnDrawStart);
-            this.draw.on("drawend", this.fnDrawEnd);
-            this.viewer.addInteraction(this.draw);
+            if (this.draw) {
+                this.draw.on("drawstart", this.fnDrawStart);
+                this.draw.on("drawend", this.fnDrawEnd);
+                this.viewer.addInteraction(this.draw);
+            }
         }
     }
     private onTypeChanged(e) {
@@ -89,7 +91,7 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
         const newValue = e.target.checked;
         this.setState({ geodesic: newValue });
     }
-    private createDrawInteraction(type): ol.interaction.Draw | undefined {
+    private createDrawInteraction(type): ol.interaction.Draw | null {
         if (this.measureLayer) {
             const source = this.measureLayer.getSource();
             return new ol.interaction.Draw({
@@ -116,7 +118,7 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
                 })
             });
         }
-        return undefined;
+        return null;
     }
     private createMeasureStyle(): ol.style.Style {
         return new ol.style.Style({
@@ -300,12 +302,13 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
         return false;
     }
     componentDidMount() {
-        this.viewer = getViewer();
-        if (this.viewer) {
+        const viewer = getViewer();
+        if (viewer) {
+            this.viewer = viewer;
             this.measureLayer = this.viewer.getLayer(LAYER_NAME, () => {
                 return new ol.layer.Vector({
                     source: new ol.source.Vector(),
-                    renderOrder: null //This is probably a bug in OL API doc
+                    renderOrder: null as any //This is probably a bug in OL API doc
                 });
             });
             if (this.measureLayer) {
@@ -329,7 +332,7 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
             if (this.helpTooltipElement) {
                 this.helpTooltipElement.parentNode.removeChild(this.helpTooltipElement);
             }
-            this.viewer = undefined;
+            this.viewer = null;
             this.measureLayer = null;
         }
     }

@@ -19,11 +19,12 @@ const INITIAL_STATE = {
 };
 
 export function runtimeMapReducer(state = INITIAL_STATE, action = { type: '', payload: null }) {
+    const payload: any = action.payload || {};
     switch (action.type) {
         case Constants.MAP_REFRESH:
         case Constants.INIT_APP:
             {
-                const newState = assign({}, state, { "state": action.payload.map });
+                const newState = assign({}, state, { "state": payload.map });
                 return newState;
             }
         case Constants.MAP_SET_ACTIVE_TOOL:
@@ -64,16 +65,16 @@ export function runtimeMapReducer(state = INITIAL_STATE, action = { type: '', pa
             }
         case Constants.LEGEND_SET_GROUP_VISIBILITY:
             {
-                let showGroups = state.viewer.layerGroupVisibility.showGroups;
-                let hideGroups = state.viewer.layerGroupVisibility.hideGroups;
-                if (action.payload.visible === true) { //Show it
-                    showGroups.push(action.payload.groupId);
+                let showGroups: string[] = state.viewer.layerGroupVisibility.showGroups;
+                let hideGroups: string[] = state.viewer.layerGroupVisibility.hideGroups;
+                if (payload.visible === true) { //Show it
+                    showGroups.push(payload.groupId);
                     showGroups = uniq(showGroups);
-                    hideGroups = hideGroups.filter(g => g != action.payload.groupId);
+                    hideGroups = hideGroups.filter(g => g != payload.groupId);
                 } else { //Hide it
-                    hideGroups.push(action.payload.groupId);
+                    hideGroups.push(payload.groupId);
                     hideGroups = uniq(hideGroups);
-                    showGroups = showGroups.filter(g => g != action.payload.groupId);
+                    showGroups = showGroups.filter(g => g != payload.groupId);
                 }
                 const newState = assign({}, state, {
                     viewer: {
@@ -92,16 +93,16 @@ export function runtimeMapReducer(state = INITIAL_STATE, action = { type: '', pa
             }
         case Constants.LEGEND_SET_LAYER_VISIBILITY:
             {
-                let showLayers = state.viewer.layerGroupVisibility.showLayers;
-                let hideLayers = state.viewer.layerGroupVisibility.hideLayers;
-                if (action.payload.visible === true) { //Show it
-                    showLayers.push(action.payload.layerId);
+                let showLayers: string[] = state.viewer.layerGroupVisibility.showLayers;
+                let hideLayers: string[] = state.viewer.layerGroupVisibility.hideLayers;
+                if (payload.visible === true) { //Show it
+                    showLayers.push(payload.layerId);
                     showLayers = uniq(showLayers);
-                    hideLayers = hideLayers.filter(g => g != action.payload.layerId);
+                    hideLayers = hideLayers.filter(g => g != payload.layerId);
                 } else { //Hide it
-                    hideLayers.push(action.payload.layerId);
+                    hideLayers.push(payload.layerId);
                     hideLayers = uniq(hideLayers);
-                    showLayers = showLayers.filter(g => g != action.payload.layerId);
+                    showLayers = showLayers.filter(g => g != payload.layerId);
                 }
                 const newState = assign({}, state, {
                     viewer: {

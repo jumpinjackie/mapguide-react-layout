@@ -122,9 +122,9 @@ function deArrayifyGroups(groups: any[]): Contracts.RtMap.MapGroup[] | null {
     });
 }
 
-function deArrayifyCoordinateSystem(cs: any[]): Contracts.RtMap.CoordinateSystemType | null {
+function deArrayifyCoordinateSystem(cs: any[]): Contracts.RtMap.CoordinateSystemType {
     if (!cs || cs.length !== 1) {
-        return null;
+        throw new MgError("Malformed input. Expected CoordinateSystem element");
     }
     const res: Contracts.RtMap.CoordinateSystemType = {
         Wkt: tryGetAsProperty(cs[0], "Wkt"),

@@ -47,15 +47,15 @@ export class ToolbarContainer extends React.Component<ToolbarContainerProps, any
         store: React.PropTypes.object
     };
     render(): JSX.Element {
-        const { toolbar, containerStyle, vertical } = this.props;
-        if (vertical === true) {
-            containerStyle.width = DEFAULT_TOOLBAR_SIZE;
-        } else {
-            containerStyle.height = DEFAULT_TOOLBAR_SIZE;
-        }
+        const { toolbar, containerStyle, vertical, invokeCommand } = this.props;
         const store = (this.context as any).store;
-        if (toolbar != null && toolbar.items != null) {
-            const childItems = toolbar.items.map(tb => mapToolbarReference(tb, store, this.props.invokeCommand)).filter(tb => tb != null);
+        if (toolbar && toolbar.items && invokeCommand && containerStyle) {
+            if (vertical === true) {
+                containerStyle.width = DEFAULT_TOOLBAR_SIZE;
+            } else {
+                containerStyle.height = DEFAULT_TOOLBAR_SIZE;
+            }
+            const childItems = toolbar.items.map(tb => mapToolbarReference(tb, store, invokeCommand)).filter(tb => tb != null);
             return <Toolbar vertical={vertical} childItems={childItems} containerStyle={containerStyle} />;
         } else {
             return <div />;

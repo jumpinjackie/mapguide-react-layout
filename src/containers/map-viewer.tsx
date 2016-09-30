@@ -97,31 +97,41 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         this.inner = component;
     }
     private onRequestZoomToView(view: IMapView|Bounds): void {
-        this.props.setCurrentView(view);
+        if (this.props.setCurrentView) {
+            this.props.setCurrentView(view);
+        }
     }
     private onQueryMapFeatures(options, success, errBack) {
-        this.props.queryMapFeatures({
-            options: options,
-            append: this.inner.state.shiftKey === true,
-            callback: success,
-            errBack: errBack
-        });
+        if (this.props.queryMapFeatures) {
+            this.props.queryMapFeatures({
+                options: options,
+                append: this.inner.state.shiftKey === true,
+                callback: success,
+                errBack: errBack
+            });
+        }
     }
     private onBusyLoading(busyCount) {
-        this.props.setBusyCount(busyCount);
+        if (this.props.setBusyCount) {
+            this.props.setBusyCount(busyCount);
+        }
     }
     private onMouseCoordinateChanged(coord) {
-        this.props.setMouseCoordinates(coord);
+        if (this.props.setMouseCoordinates) {
+            this.props.setMouseCoordinates(coord);
+        }
     }
     private onSessionExpired() {
-        this.props.showModalComponent({
-            modal: {
-                title: tr("SESSION_EXPIRED", this.props.config.locale),
-                backdrop: true
-            },
-            name: DefaultComponentNames.SessionExpired,
-            id: DefaultComponentNames.SessionExpired
-        });
+        if (this.props.showModalComponent) {
+            this.props.showModalComponent({
+                modal: {
+                    title: tr("SESSION_EXPIRED", this.props.config.locale),
+                    backdrop: true
+                },
+                name: DefaultComponentNames.SessionExpired,
+                id: DefaultComponentNames.SessionExpired
+            });
+        }
     }
     componentWillReceiveProps(nextProps: MapViewerContainerProps) {
         if (this.props.selection != nextProps.selection) {
@@ -135,15 +145,14 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         browserWindow.getClient = browserWindow.getClient || (() => new Client(this.props.config.agentUri, this.props.config.agentKind));
     }
     render(): JSX.Element {
-        const { map, config, viewer, view, legend, contextmenu } = this.props;
-        if (map != null && config != null && view != null && viewer != null && legend != null) {
-            const { map } = this.props;
-            const selectableLayerNames = map.Layer
+        const { map, config, viewer, view, legend, contextmenu, invokeCommand } = this.props;
+        if (map && config && view && viewer && legend && invokeCommand) {
+            const selectableLayerNames = (map.Layer || [])
                 .filter(layer => layer.Selectable && legend.selectableLayers[layer.ObjectId] !== false)
                 .map(layer => layer.Name);
             const store = (this.context as any).store;
             const items = contextmenu != null ? contextmenu.items : [];
-            const cmitems = items.map(tb => mapToolbarReference(tb, store, this.props.invokeCommand)).filter(tb => tb != null);
+            const cmitems = items.map(tb => mapToolbarReference(tb, store, invokeCommand)).filter(tb => tb != null);
             return <MapViewerBase ref={this.fnMapViewerMounted}
                                   map={map} 
                                   agentUri={config.agentUri}
@@ -258,7 +267,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     addLayer<T extends ol.layer.Base>(name: string, layer: T): T {
         return this.inner.addLayer(name, layer);
     }
-    removeLayer(name: string): ol.layer.Base {
+    removeLayer(name: string): ol.layer.Base | undefined {
         return this.inner.removeLayer(name);
     }
     getLayer<T extends ol.layer.Base>(name: string, factory: () => T): T {

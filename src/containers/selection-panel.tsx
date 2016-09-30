@@ -43,8 +43,11 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
     }
     private onZoomToSelectedFeature(feature: any) {
         const bbox: any = feature.Bounds.split(" ").map(s => parseFloat(s));
-        const view = getViewer().getViewForExtent(bbox);
-        this.props.setCurrentView(view);
+        const viewer = getViewer();
+        if (viewer && this.props.setCurrentView) {
+            const view = viewer.getViewForExtent(bbox);
+            this.props.setCurrentView(view);
+        }
     }
     render(): JSX.Element {
         const { selection, config } = this.props;

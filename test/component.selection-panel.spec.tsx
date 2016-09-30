@@ -73,7 +73,9 @@ function createSelectionSet(): SelectedFeatureSet {
 describe("components/selection-panel", () => {
     it("null selection results in empty results message", () => {
         const onZoomRequest = td.function<ZoomFeatureFunc>();
-        const set: SelectedFeatureSet = null;
+        const set: SelectedFeatureSet = {
+            SelectedLayer: []
+        };
         const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} />);
         expect(wrapper.find(".selection-panel-toolbar")).to.have.length(0);
         expect(wrapper.find(".selection-panel-property-grid")).to.have.length(0);

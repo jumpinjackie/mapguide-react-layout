@@ -59,8 +59,9 @@ export class NavigatorContainer extends React.Component<INavigatorContainerProps
                 cmd = getCommand(DefaultCommands.ZoomOut);
                 break;
         }
-        if (cmd != null)
+        if (cmd != null && this.props.invokeCommand) {
             this.props.invokeCommand(cmd);
+        }
     }
     private onPan(direction) {
         let cmd;
@@ -78,11 +79,14 @@ export class NavigatorContainer extends React.Component<INavigatorContainerProps
                 cmd = getCommand(DefaultCommands.PanDown);
                 break;
         }
-        if (cmd != null)
+        if (cmd != null && this.props.invokeCommand) {
             this.props.invokeCommand(cmd);
+        }
     }
     private onRequestZoomToScale(scale: number) {
-        this.props.setScale(scale);
+        if (this.props.setScale) {
+            this.props.setScale(scale);
+        }
     }
     render(): JSX.Element {
         const { style, viewer, view, config } = this.props;

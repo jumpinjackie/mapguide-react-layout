@@ -7,11 +7,12 @@ const INITIAL_STATE = {
 };
 
 export function legendReducer(state = INITIAL_STATE, action = { type: '', payload: null }) {
+    const payload: any = action.payload || {};
     switch (action.type) {
         case Constants.LEGEND_SET_LAYER_SELECTABLE:
             {
                 const layers = state.selectableLayers;
-                layers[action.payload.id] = action.payload.value;
+                layers[payload.id] = payload.value;
                 const newState = assign({}, state, {
                     selectableLayers: layers
                 });
@@ -20,7 +21,7 @@ export function legendReducer(state = INITIAL_STATE, action = { type: '', payloa
         case Constants.LEGEND_SET_GROUP_EXPANDABLE:
             {
                 const groups = state.expandedGroups;
-                groups[action.payload.id] = action.payload.value;
+                groups[payload.id] = payload.value;
                 const newState = assign({}, state, {
                     expandedGroups: groups
                 });

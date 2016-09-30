@@ -2,7 +2,14 @@ import * as Constants from "../constants";
 const assign = require("object-assign");
 import { areUrlsSame } from "../utils/url";
 
-const INITIAL_STATE = {
+interface ITaskPaneReducerState {
+    navIndex: number;
+    navigation: string[];
+    initialUrl: string | null;
+    lastUrlPushed: boolean;
+}
+
+const INITIAL_STATE: ITaskPaneReducerState = {
     navIndex: -1,
     navigation: [],
     initialUrl: null,
@@ -29,18 +36,21 @@ function mergeNavigatedUrl(state: any, url: string): any {
 }
 
 export function taskPaneReducer(state = INITIAL_STATE, action = { type: '', payload: null }) {
+    const payload: any = action.payload || {};
     switch (action.type) {
         case Constants.INIT_APP:
             {
                 return assign({}, state, {
-                    initialUrl: action.payload.initialUrl,
+                    initialUrl: payload.initialUrl,
                     navIndex: 0,
-                    navigation: [ action.payload.initialUrl ]
+                    navigation: [ payload.initialUrl ]
                 });
             }
         case Constants.TASK_PANE_HOME:
             {
-                return mergeNavigatedUrl(state, state.initialUrl);
+                if (state.initialUrl != null) {
+                    return mergeNavigatedUrl(state, state.initialUrl);
+                }
             }
         case Constants.TASK_PANE_BACK:
             {
@@ -71,13 +81,13 @@ export function taskPaneReducer(state = INITIAL_STATE, action = { type: '', payl
                 //if (areUrlsSame(nav[index], action.payload.url)) {
                 //    return state;
                 //}
-                nav[index + 1] = action.payload.url
+                nav[index + 1] = payload.url
                 //If we slotted at a position that is not the end of the array
                 //remove everything after it
                 if (nav.length > index + 2) {
                     nav.splice(index + 2);
                 }
-                if (action.payload.silent === true) {
+                if (payload.silent === true) {
                     return assign({}, state, {
                         navigation: nav
                     });
@@ -91,7 +101,7 @@ export function taskPaneReducer(state = INITIAL_STATE, action = { type: '', payl
             }
         case Constants.TASK_INVOKE_URL:
             {
-                return mergeNavigatedUrl(state, action.payload.url);
+                return mergeNavigatedUrl(state, payload.url);
             }
     }
     return state;

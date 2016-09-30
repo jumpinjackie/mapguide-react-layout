@@ -34,7 +34,7 @@ export class SelectedFeatureCountContainer extends React.Component<SelectedFeatu
     }
     render(): JSX.Element {
         const { selection, style, config } = this.props;
-        if (selection != null) {
+        if (selection && selection.FeatureSet) {
             return <SelectedFeatureCount locale={config.locale || "en"} style={style} selection={selection.FeatureSet} />;
         } else {
             return <div />;

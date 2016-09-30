@@ -1,7 +1,16 @@
 import * as Constants from "../constants";
+import { IMapView } from "../components/context";
 const assign = require("object-assign");
 
-const INITIAL_STATE = {
+interface IViewReducerState {
+    current: IMapView | null;
+    initial: IMapView | null;
+    history: IMapView[];
+    mouse: any;
+    historyIndex: number;
+}
+
+const INITIAL_STATE: IViewReducerState = {
     current: null,
     initial: null,
     mouse: null,
@@ -10,11 +19,12 @@ const INITIAL_STATE = {
 };
 
 export function viewReducer(state = INITIAL_STATE, action = { type: '', payload: null }) {
+    const payload: any = action.payload || {};
     switch (action.type) {
         case Constants.INIT_APP:
             {
                 const newState = assign({}, state, {
-                    initial: action.payload.initialView
+                    initial: payload.initialView
                 });
                 return newState;
             }
@@ -49,12 +59,14 @@ export function viewReducer(state = INITIAL_STATE, action = { type: '', payload:
                 const newState = assign({}, state, {
                     current: view
                 });
-                newState.history.push({
-                    x: view.x,
-                    y: view.y,
-                    scale: view.scale
-                });
-                return newState;
+                if (view) {
+                    newState.history.push({
+                        x: view.x,
+                        y: view.y,
+                        scale: view.scale
+                    });
+                    return newState;
+                }
             }
         case Constants.MAP_SET_VIEW:
             {

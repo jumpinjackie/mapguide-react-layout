@@ -1,4 +1,5 @@
 import * as Constants from "../constants";
+import { IExternalBaseLayer } from "../components/map-viewer-base";
 const assign = require("object-assign");
 
 export const INITIAL_STATE = {
@@ -30,24 +31,25 @@ export function configReducer(state = INITIAL_STATE, action = { type: '', payloa
     switch (action.type) {
         case Constants.INIT_APP: 
             {
+                const payload: any = action.payload || {};
                 const newState = assign({}, state, {
-                    locale: action.payload.locale || "en",
-                    externalBaseLayers: action.payload.externalBaseLayers,
-                    capabilities: action.payload.capabilities
+                    locale: payload.locale || "en",
+                    externalBaseLayers: payload.externalBaseLayers,
+                    capabilities: payload.capabilities
                 });
-                if (action.payload.config != null && Object.keys(action.payload.config).length > 0) {
+                if (payload.config != null && Object.keys(payload.config).length > 0) {
                     const config: any = assign({}, state.viewer);
-                    if (action.payload.config.imageFormat != null) {
-                        config.imageFormat = action.payload.config.imageFormat;
+                    if (payload.config.imageFormat != null) {
+                        config.imageFormat = payload.config.imageFormat;
                     }
-                    if (action.payload.config.selectionImageFormat != null) {
-                        config.selectionImageFormat = action.payload.config.selectionImageFormat;
+                    if (payload.config.selectionImageFormat != null) {
+                        config.selectionImageFormat = payload.config.selectionImageFormat;
                     }
-                    if (action.payload.config.selectionColor != null) {
-                        config.selectionColor = action.payload.config.selectionColor;
+                    if (payload.config.selectionColor != null) {
+                        config.selectionColor = payload.config.selectionColor;
                     }
-                    if (action.payload.config.pointSelectionBuffer != null) {
-                        config.pointSelectionBuffer = action.payload.config.pointSelectionBuffer;
+                    if (payload.config.pointSelectionBuffer != null) {
+                        config.pointSelectionBuffer = payload.config.pointSelectionBuffer;
                     }
                     return assign(newState, { viewer: config });
                 } else {
@@ -56,7 +58,8 @@ export function configReducer(state = INITIAL_STATE, action = { type: '', payloa
             }
         case Constants.MAP_SET_BASE_LAYER:
             {
-                const baseLayers = state.externalBaseLayers.map(layer => {
+                const layers: IExternalBaseLayer[] = (state.externalBaseLayers || []);
+                const baseLayers = layers.map(layer => {
                     layer.visible = false;
                     if (layer.name == action.payload) {
                         layer.visible = true;

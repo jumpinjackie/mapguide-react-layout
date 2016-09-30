@@ -120,6 +120,9 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
     }
     render(): JSX.Element {
         const viewer = getViewer();
+        if (!viewer) {
+            return <div />;
+        }
         const extent = viewer.getCurrentExtent();
         const box = `${extent[0]}, ${extent[1]}, ${extent[2]}, ${extent[1]}, ${extent[2]}, ${extent[3]}, ${extent[0]}, ${extent[3]}, ${extent[0]}, ${extent[1]}`;
         const { config } = this.props;

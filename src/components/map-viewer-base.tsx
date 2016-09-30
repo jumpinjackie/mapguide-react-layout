@@ -132,7 +132,7 @@ export interface IMapViewer {
     getSelectionXml(selection: FeatureSet, layerIds?: string[]): string;
     
     addLayer<T extends ol.layer.Base>(name: string, layer: T): T;
-    removeLayer(name: string): ol.layer.Base;
+    removeLayer(name: string): ol.layer.Base | undefined;
     getLayer<T extends ol.layer.Base>(name: string, factory: () => T): T;
     addInteraction<T extends ol.interaction.Interaction>(interaction: T): T;
     removeInteraction<T extends ol.interaction.Interaction>(interaction: T): void;
@@ -1135,20 +1135,21 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this.pushDrawInteraction(draw, handler, prompt || tr("DIGITIZE_CIRCLE_PROMPT", this.props.locale));
     }
     public digitizeRectangle(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void {
+        const geomFunc: ol.DrawGeometryFunctionType = (coordinates, geometry) => {
+            if (!geometry) {
+                geometry = new ol.geom.Polygon([]);
+            }
+            const start = coordinates[0];
+            const end = coordinates[1];
+            (geometry as any).setCoordinates([
+                [start, [start[0], end[1]], end, [end[0], start[1]], start]
+            ]);
+            return geometry;
+        }; 
         const draw = new ol.interaction.Draw({
             type: "LineString", //ol.geom.GeometryType.LINE_STRING,
             maxPoints: 2,
-            geometryFunction: (coordinates, geometry) => {
-                if (!geometry) {
-                    geometry = new ol.geom.Polygon(null);
-                }
-                const start = coordinates[0];
-                const end = coordinates[1];
-                (geometry as any).setCoordinates([
-                    [start, [start[0], end[1]], end, [end[0], start[1]], start]
-                ]);
-                return geometry;
-            }
+            geometryFunction: geomFunc
         });
         this.pushDrawInteraction(draw, handler, prompt || tr("DIGITIZE_RECT_PROMPT", this.props.locale));
     }

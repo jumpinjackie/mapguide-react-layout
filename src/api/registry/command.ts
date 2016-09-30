@@ -172,10 +172,10 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                     + `&title=${encodeURIComponent(cmdDef.title)}`
                     + `&prompt=${encodeURIComponent(cmdDef.prompt)}`
                     + `&layer=${encodeURIComponent(cmdDef.layer)}`
-                    + `&filter=${encodeURIComponent(cmdDef.filter)}`
+                    + (cmdDef.filter ? `&filter=${encodeURIComponent(cmdDef.filter)}` : '')
                     + `&limit=${cmdDef.matchLimit}`
-                    + `&properties=${cmdDef.resultColumns.Column.map(col => col.Property).join(",")}`
-                    + `&propNames=${cmdDef.resultColumns.Column.map(col => col.Name).join(",")}`;
+                    + `&properties=${(cmdDef.resultColumns.Column || []).map(col => col.Property).join(",")}`
+                    + `&propNames=${(cmdDef.resultColumns.Column || []).map(col => col.Name).join(",")}`;
                 dispatch({
                     type: Constants.TASK_INVOKE_URL,
                     payload: {

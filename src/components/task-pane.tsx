@@ -72,7 +72,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
     }
     componentWillReceiveProps(nextProps: ITaskPaneProps) {
         if (this.props.currentUrl != nextProps.currentUrl) {
-            if (nextProps.lastUrlPushed === false) {
+            if (nextProps.currentUrl && nextProps.lastUrlPushed === false) {
                 this.loadUrl(nextProps.currentUrl);
             }
         }

@@ -13,20 +13,20 @@ import { getCommand, mapToolbarReference } from "../api/registry/command";
 import { IItem, IMenu, Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import { invokeCommand } from "../actions/map";
 
-interface IToolbarContainerProps {
+export interface IToolbarContainerProps {
     id: string;
     vertical?: boolean;
     containerStyle?: React.CSSProperties;
 }
 
-interface IToolbarContainerState {
+export interface IToolbarContainerState {
     map?: IMapReducerState;
     toolbar?: IToolbarReducerState;
     view?: IViewReducerState;
     selection?: ISelectionReducerState;
 }
 
-interface IToolbarContainerDispatch {
+export interface IToolbarContainerDispatch {
     invokeCommand?: (cmd: ICommand) => void;
 }
 
@@ -45,7 +45,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IToolbarContainerDispatch 
     };
 }
 
-type ToolbarContainerProps = IToolbarContainerProps & IToolbarContainerState & IToolbarContainerDispatch;
+export type ToolbarContainerProps = IToolbarContainerProps & IToolbarContainerState & IToolbarContainerDispatch;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class ToolbarContainer extends React.Component<ToolbarContainerProps, any> {

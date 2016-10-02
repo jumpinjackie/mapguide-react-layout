@@ -5,15 +5,15 @@ import {
     IApplicationState
 } from "../api/common";
 
-interface IViewerOptionsProps {
+export interface IViewerOptionsProps {
     
 }
 
-interface IViewerOptionsState {
+export interface IViewerOptionsState {
     
 }
 
-interface IViewerOptionsDispatch {
+export interface IViewerOptionsDispatch {
     
 }
 
@@ -29,7 +29,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IViewerOptionsDispatch {
     };
 }
 
-type ViewerOptionsProps = IViewerOptionsProps & IViewerOptionsState & IViewerOptionsDispatch;
+export type ViewerOptionsProps = IViewerOptionsProps & IViewerOptionsState & IViewerOptionsDispatch;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {

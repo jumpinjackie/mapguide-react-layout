@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IExternalBaseLayer } from "../api/common";
 
-interface IBaseLayerSwitcherProps {
+export interface IBaseLayerSwitcherProps {
     externalBaseLayers: IExternalBaseLayer[];
     onBaseLayerChanged?: (name: string) => void;
 }

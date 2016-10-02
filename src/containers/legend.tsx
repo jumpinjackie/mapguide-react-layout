@@ -14,11 +14,11 @@ import {
 } from "../api/common";
 import { tr } from "../api/i18n";
 
-interface ILegendContainerProps {
+export interface ILegendContainerProps {
     
 }
 
-interface ILegendContainerState {
+export interface ILegendContainerState {
     view: IMapView | null;
     config?: IConfigurationReducerState;
     map: RuntimeMap | null;
@@ -26,7 +26,7 @@ interface ILegendContainerState {
     viewer?: IMapViewerReducerState;
 }
 
-interface ILegendContainerDispatch {
+export interface ILegendContainerDispatch {
     setBaseLayer?: (layerName: string) => void;
     setGroupVisibility?: (options: { id: string, value: boolean }) => void;
     setLayerVisibility?: (options: { id: string, value: boolean }) => void;
@@ -54,7 +54,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): ILegendContainerDispatch {
     };
 }
 
-type LegendContainerProps = ILegendContainerProps & ILegendContainerState & ILegendContainerDispatch;
+export type LegendContainerProps = ILegendContainerProps & ILegendContainerState & ILegendContainerDispatch;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class LegendContainer extends React.Component<LegendContainerProps, any> {

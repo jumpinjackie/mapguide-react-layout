@@ -1,9 +1,13 @@
 .vscode
 dist
+build
 node_modules
 typings
 npm-debug.log
+test/**/*.js
+test/**/*.js.map
 src/**/*.js
 src/**/*.js.map
 !src/externs/*.js
 viewer/dist
+declarations

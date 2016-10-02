@@ -8,7 +8,11 @@ import { connect } from "react-redux";
 import { tr } from "../api/i18n";
 import * as Constants from "../constants";
 import {
-    ReduxDispatch
+    ReduxDispatch,
+    IApplicationState,
+    IMapViewerReducerState,
+    IConfigurationReducerState,
+    IViewerCapabilities
 } from "../api/common";
 
 const SIDEBAR_WIDTH = 250;
@@ -209,14 +213,14 @@ class Sidebar extends React.Component<ISidebarProps, any> {
     }
 }
 
-interface ISidebarLayoutState {
-    viewer?: any;
-    config?: any;
-    capabilities?: any;
+export interface ISidebarLayoutState {
+    viewer?: IMapViewerReducerState;
+    config?: IConfigurationReducerState;
+    capabilities?: IViewerCapabilities;
     lastaction?: any;
 }
 
-function mapStateToProps(state: any): ISidebarLayoutState {
+function mapStateToProps(state: IApplicationState): ISidebarLayoutState {
     return {
         viewer: state.map.viewer,
         config: state.config,
@@ -231,7 +235,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
     };
 }
 
-type SidebarLayoutProps = ISidebarLayoutState;
+export type SidebarLayoutProps = ISidebarLayoutState;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
@@ -239,6 +243,10 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
         super(props);
     }
     render(): JSX.Element {
+        const { viewer, capabilities, config } = this.props;
+        if (!viewer || !capabilities || !config) {
+            return <div />;
+        }
         const {
             hasTaskPane,
             hasTaskBar,
@@ -247,16 +255,16 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
             hasSelectionPanel,
             hasLegend,
             hasToolbar
-        } = this.props.capabilities;
+        } = capabilities;
         let sbWidth = SIDEBAR_WIDTH;
         let tpWidth = SIDEBAR_WIDTH;
         return <div style={{ width: "100%", height: "100%" }}>
             <Sidebar position="left" 
-                     busy={this.props.viewer.busyCount > 0}
+                     busy={viewer.busyCount > 0}
                      legend={hasLegend}
                      selection={hasSelectionPanel}
                      taskpane={hasTaskPane}
-                     locale={this.props.config.locale}
+                     locale={config.locale}
                      lastAction={this.props.lastaction} />
             {(() => {
                 if (hasToolbar) {
@@ -277,28 +285,28 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
             })()}
             {(() => {
                 if (hasNavigator) {
-                    return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={this.props.config.locale} componentProps={NAVIGATOR_PROPS} />;
+                    return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={config.locale} componentProps={NAVIGATOR_PROPS} />;
                 }
             })()}
             {(() => {
                 if (hasStatusBar) {
-                    return <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={this.props.config.locale} componentProps={MOUSE_COORDINATE_PROPS} />;
+                    return <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={config.locale} componentProps={MOUSE_COORDINATE_PROPS} />;
                 }
             })()}
             {(() => {
                 if (hasStatusBar) {
-                    return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={this.props.config.locale} componentProps={SCALE_DISPLAY_PROPS} />;
+                    return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={config.locale} componentProps={SCALE_DISPLAY_PROPS} />;
                 }
             })()}
             {(() => {
                 if (hasStatusBar) {
-                    return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={this.props.config.locale} componentProps={SELECTED_FEATURE_COUNT_PROPS} />;
+                    return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={config.locale} componentProps={SELECTED_FEATURE_COUNT_PROPS} />;
                 }
             })()}
-            <PlaceholderComponent id={DefaultComponentNames.Map} locale={this.props.config.locale} />
+            <PlaceholderComponent id={DefaultComponentNames.Map} locale={config.locale} />
             <AjaxViewerShim />
             <ModalLauncher />
-            <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={this.props.config.locale} componentProps={PBMG_PROPS} />
+            <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={config.locale} componentProps={PBMG_PROPS} />
         </div>;
     }
 }

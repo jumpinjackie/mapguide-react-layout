@@ -13,7 +13,7 @@ import * as LegendActions from "../actions/legend";
 import { buildSelectionXml } from "../api/builders/deArrayify";
 import { FormFrameShim } from "../components/form-frame-shim";
 
-class AjaxViewerLineStringOrPolygon {
+export class AjaxViewerLineStringOrPolygon {
     private coordinates: IAjaxViewerPoint[];
     constructor(coordinates: IAjaxViewerPoint[]) {
         this.coordinates = coordinates;
@@ -25,46 +25,46 @@ class AjaxViewerLineStringOrPolygon {
     }
 }
 
-interface IAjaxViewerRect {
+export interface IAjaxViewerRect {
     Point1: IAjaxViewerPoint;
     Point2: IAjaxViewerPoint;
 }
 
-interface IAjaxViewerCircle {
+export interface IAjaxViewerCircle {
     Center: IAjaxViewerPoint;
     Radius: number;
 }
 
-interface IAjaxViewerPoint {
+export interface IAjaxViewerPoint {
     X: number;
     Y: number;
 }
 
-interface IAjaxViewerLayer {
+export interface IAjaxViewerLayer {
     legend: string;
     name: string;
     objectid: string;
 }
 
-interface IAjaxViewerBounds {
+export interface IAjaxViewerBounds {
     minx: number;
     miny: number;
     maxx: number;
     maxy: number;
 }
 
-type IAjaxViewerSelectionSet = any;
+export type IAjaxViewerSelectionSet = any;
 
-interface IAjaxViewerShimProps {
+export interface IAjaxViewerShimProps {
 
 }
 
-interface IAjaxViewerShimState {
+export interface IAjaxViewerShimState {
     map?: any;
     selection?: any;
 }
 
-interface IAjaxViewerShimDispatch {
+export interface IAjaxViewerShimDispatch {
     goHome?: () => void;
     legendRefresh?: () => void;
 }
@@ -83,7 +83,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IAjaxViewerShimDispatch {
     };
 }
 
-type AjaxViewerShimProps = IAjaxViewerShimProps & IAjaxViewerShimState & IAjaxViewerShimDispatch;
+export type AjaxViewerShimProps = IAjaxViewerShimProps & IAjaxViewerShimState & IAjaxViewerShimDispatch;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {

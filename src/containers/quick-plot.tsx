@@ -10,17 +10,17 @@ import {
     IConfigurationReducerState
 } from "../api/common";
 
-interface IQuickPlotContainerProps {
+export interface IQuickPlotContainerProps {
 
 }
 
-interface IQuickPlotContainerState {
+export interface IQuickPlotContainerState {
     config: IConfigurationReducerState;
     map: RuntimeMap | null;
     view: IMapView | null;
 }
 
-interface IQuickPlotContainerDispatch {
+export interface IQuickPlotContainerDispatch {
 
 }
 
@@ -38,7 +38,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IQuickPlotContainerDispatc
     };
 }
 
-type QuickPlotProps = IQuickPlotContainerProps & IQuickPlotContainerState & IQuickPlotContainerDispatch;
+export type QuickPlotProps = IQuickPlotContainerProps & IQuickPlotContainerState & IQuickPlotContainerDispatch;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {

@@ -10,7 +10,7 @@ import {
 } from "../api/common";
 import { tr } from "../api/i18n";
 
-interface IScaleDisplayContainerState {
+export interface IScaleDisplayContainerState {
     style?: React.CSSProperties;
     view: IMapView | null;
     config: IConfigurationReducerState;
@@ -29,7 +29,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
     };
 }
 
-type ScaleDisplayContainerProps = IScaleDisplayContainerState;
+export type ScaleDisplayContainerProps = IScaleDisplayContainerState;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainerProps, any> {

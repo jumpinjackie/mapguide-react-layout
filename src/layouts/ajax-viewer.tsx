@@ -28,7 +28,7 @@ const PBMG_PROPS = {
     style: { position: "absolute", bottom: 0, right: 0, zIndex: 100 }
 };
 
-interface IAjaxViewerLayoutState {
+export interface IAjaxViewerLayoutState {
     map?: any;
     config?: any;
     capabilities?: any;
@@ -48,7 +48,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
     };
 }
 
-type AjaxViewerLayoutProps = IAjaxViewerLayoutState;
+export type AjaxViewerLayoutProps = IAjaxViewerLayoutState;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any> {

@@ -52,14 +52,14 @@ const isMobile = require("ismobilejs");
 
 
 
-interface ILayerGroupVisibility {
+export interface ILayerGroupVisibility {
     showLayers: string[];
     showGroups: string[];
     hideLayers: string[];
     hideGroups: string[];
 }
 
-interface IMapViewerBaseProps {
+export interface IMapViewerBaseProps {
     map: Contracts.RtMap.RuntimeMap;
     layerGroupVisibility?: ILayerGroupVisibility;
     tool: ActiveMapTool;

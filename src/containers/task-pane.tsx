@@ -18,11 +18,11 @@ import * as TaskPaneActions from "../actions/taskpane";
 import { areUrlsSame } from "../utils/url";
 import { tr } from "../api/i18n";
 
-interface ITaskPaneContainerStyle {
+export interface ITaskPaneContainerStyle {
     style?: React.CSSProperties;
 }
 
-interface ITaskPaneContainerState {
+export interface ITaskPaneContainerState {
     map: RuntimeMap | null;
     taskpane: ITaskPaneReducerState;
     toolbar: IToolbarReducerState;
@@ -30,7 +30,7 @@ interface ITaskPaneContainerState {
     selection: ISelectionReducerState;
 }
 
-interface ITaskPaneDispatch {
+export interface ITaskPaneDispatch {
     invokeCommand?: (cmd: ICommand) => void;
     goHome?: () => void;
     goForward?: () => void;
@@ -61,7 +61,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): ITaskPaneDispatch {
     };
 }
 
-type TaskPaneProps = ITaskPaneContainerStyle & ITaskPaneContainerState & ITaskPaneDispatch;
+export type TaskPaneProps = ITaskPaneContainerStyle & ITaskPaneContainerState & ITaskPaneDispatch;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {

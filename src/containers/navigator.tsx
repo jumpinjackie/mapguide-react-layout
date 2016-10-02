@@ -15,17 +15,17 @@ import {
     IApplicationState
 } from "../api/common";
 
-interface INavigatorContainerProps {
+export interface INavigatorContainerProps {
     style?: React.CSSProperties;
 }
 
-interface INavigatorContainerState {
+export interface INavigatorContainerState {
     viewer: IMapViewerReducerState;
     config: IConfigurationReducerState;
     view: IMapView | null;
 }
 
-interface INavigatorContainerDispatch {
+export interface INavigatorContainerDispatch {
     invokeCommand?: (cmd: ICommand) => void;
     setScale?: (scale: number) => void;
 }
@@ -45,7 +45,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): INavigatorContainerDispatc
     };
 }
 
-type NavigatorContainerProps = INavigatorContainerProps & INavigatorContainerState & INavigatorContainerDispatch;
+export type NavigatorContainerProps = INavigatorContainerProps & INavigatorContainerState & INavigatorContainerDispatch;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class NavigatorContainer extends React.Component<NavigatorContainerProps, any> {

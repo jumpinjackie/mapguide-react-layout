@@ -12,12 +12,12 @@ import {
     IConfigurationReducerState
 } from "../api/common";
 
-interface IToolbarContainerState {
+export interface IToolbarContainerState {
     modal?: IModalReducerState;
     config?: IConfigurationReducerState;
 }
 
-interface IToolbarContainerDispatch {
+export interface IToolbarContainerDispatch {
     hideModal?: (options: any) => void;
 }
 
@@ -34,7 +34,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IToolbarContainerDispatch 
     };
 }
 
-type ToolbarContainerProps = IToolbarContainerState & IToolbarContainerDispatch;
+export type ToolbarContainerProps = IToolbarContainerState & IToolbarContainerDispatch;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {

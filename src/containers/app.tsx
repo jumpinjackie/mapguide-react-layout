@@ -34,16 +34,16 @@ export interface IAppProps {
     externalBaseLayers?: IExternalBaseLayer[];
 }
 
-interface IAppState {
+export interface IAppState {
     config?: any;
 }
 
-interface IInitAppLayout {
+export interface IInitAppLayout {
     resourceId: string;
     externalBaseLayers?: IExternalBaseLayer[];
 }
 
-interface IAppDispatch {
+export interface IAppDispatch {
     initApp?: (args: any) => void;
     initLayout?: (args: IInitAppLayout) => void;
 }
@@ -60,7 +60,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IAppDispatch {
     };
 }
 
-type AppProps = IAppProps & IAppState & IAppDispatch;
+export type AppProps = IAppProps & IAppState & IAppDispatch;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class App extends React.Component<AppProps, any> {

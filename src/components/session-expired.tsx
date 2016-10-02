@@ -12,7 +12,7 @@ function reload(e: GenericEvent) {
     return false;
 }
 
-interface ISessionExpiredProps {
+export interface ISessionExpiredProps {
     locale: string;
 }
 

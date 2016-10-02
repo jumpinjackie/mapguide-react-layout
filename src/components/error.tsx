@@ -4,7 +4,7 @@ function isError(err: Error|string): err is Error {
     return typeof(err) != 'string';
 }
 
-interface IErrorProps {
+export interface IErrorProps {
     error: Error|string;
 }
 

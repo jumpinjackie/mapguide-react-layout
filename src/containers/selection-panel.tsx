@@ -12,16 +12,16 @@ import {
     IConfigurationReducerState
 } from "../api/common";
 
-interface ISelectionPanelContainerProps {
+export interface ISelectionPanelContainerProps {
 
 }
 
-interface ISelectionPanelContainerState {
+export interface ISelectionPanelContainerState {
     config: IConfigurationReducerState,
     selection: QueryMapFeaturesResponse | null;
 }
 
-interface ISelectionPanelContainerDispatch {
+export interface ISelectionPanelContainerDispatch {
     setCurrentView?: (view: IMapView) => void;
 }
 
@@ -38,7 +38,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): ISelectionPanelContainerDi
     };
 }
 
-type SelectionPanelContainerProps = ISelectionPanelContainerProps & ISelectionPanelContainerState & ISelectionPanelContainerDispatch;
+export type SelectionPanelContainerProps = ISelectionPanelContainerProps & ISelectionPanelContainerState & ISelectionPanelContainerDispatch;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class SelectionPanelContainer extends React.Component<SelectionPanelContainerProps, any> {

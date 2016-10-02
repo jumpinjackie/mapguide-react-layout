@@ -1,7 +1,7 @@
 import * as React from "react";
 import Draggable = require('react-draggable');
 
-interface IModalDialogProps {
+export interface IModalDialogProps {
     isOpen: boolean;
     backdrop?: boolean;
     size?: [number, number];

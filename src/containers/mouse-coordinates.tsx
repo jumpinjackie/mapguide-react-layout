@@ -8,16 +8,16 @@ import {
 } from "../api/common";
 import { MouseCoordinates } from "../components/mouse-coordinates";
 
-interface IMouseCoordinatesContainerProps {
+export interface IMouseCoordinatesContainerProps {
     style?: React.CSSProperties;
 }
 
-interface IMouseCoordinatesContainerState {
+export interface IMouseCoordinatesContainerState {
     config: ICoordinateConfiguration;
     mouse: Coordinate | null;
 }
 
-interface IMouseCoordinatesDispatch { }
+export interface IMouseCoordinatesDispatch { }
 
 function mapStateToProps(state: IApplicationState): IMouseCoordinatesContainerState {
     return {
@@ -32,7 +32,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IMouseCoordinatesDispatch 
     };
 }
 
-type MouseCoordinatesContainerProps = IMouseCoordinatesContainerProps & IMouseCoordinatesContainerState & IMouseCoordinatesDispatch;
+export type MouseCoordinatesContainerProps = IMouseCoordinatesContainerProps & IMouseCoordinatesContainerState & IMouseCoordinatesDispatch;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class MouseCoordinatesContainer extends React.Component<MouseCoordinatesContainerProps, any> {

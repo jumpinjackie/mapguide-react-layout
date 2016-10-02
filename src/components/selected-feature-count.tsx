@@ -2,7 +2,7 @@ import * as React from "react";
 import { FeatureSet } from "../api/contracts/query";
 import { tr, fmt } from "../api/i18n";
 
-interface IMouseCoordinatesProps {
+export interface IMouseCoordinatesProps {
     selection: FeatureSet;
     locale?: string;
     format?: string;

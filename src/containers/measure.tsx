@@ -16,15 +16,15 @@ const LAYER_NAME = "measure-layer";
 const WGS84_SPHERE = new ol.Sphere(6378137);
 const measureOverlays: ol.Overlay[] = [];
 
-interface IMeasureContainerProps {
+export interface IMeasureContainerProps {
 
 }
 
-interface IMeasureContainerState {
+export interface IMeasureContainerState {
     config: IConfigurationReducerState;
 }
 
-interface IMeasureContainerDispatch {
+export interface IMeasureContainerDispatch {
 
 }
 
@@ -40,7 +40,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
     };
 }
 
-type MeasureProps = IMeasureContainerProps & IMeasureContainerState & IMeasureContainerDispatch;
+export type MeasureProps = IMeasureContainerProps & IMeasureContainerState & IMeasureContainerDispatch;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class MeasureContainer extends React.Component<MeasureProps, any> {

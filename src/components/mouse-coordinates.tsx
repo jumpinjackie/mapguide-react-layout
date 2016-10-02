@@ -1,7 +1,7 @@
 import * as React from "react";
 import { fmt } from "../api/i18n";
 
-interface IMouseCoordinatesProps extends React.Props<any> {
+export interface IMouseCoordinatesProps extends React.Props<any> {
     format?: string;
     coords?: [number, number];
     style?: React.CSSProperties;

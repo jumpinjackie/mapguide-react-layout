@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-type FormFrameShimProps = any;
+export type FormFrameShimProps = any;
 
 export class FormFrameShim extends React.Component<FormFrameShimProps, any> {
     private _form: HTMLFormElement;

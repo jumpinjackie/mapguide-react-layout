@@ -30,11 +30,11 @@ import { showModalComponent } from "../actions/modal";
 import { DefaultComponentNames } from "../api/registry/component";
 import { tr } from "../api/i18n";
 
-interface IMapViewerContainerProps {
+export interface IMapViewerContainerProps {
     
 }
 
-interface IMapViewerContainerState {
+export interface IMapViewerContainerState {
     config?: any;
     map: RuntimeMap | null;
     selection: QueryMapFeaturesResponse | null;
@@ -44,7 +44,7 @@ interface IMapViewerContainerState {
     contextmenu?: any;
 }
 
-interface IMapViewerContainerDispatch {
+export interface IMapViewerContainerDispatch {
     setCurrentView?: (view: IMapView) => void;
     setBusyCount?: (count: number) => void;
     setMouseCoordinates?: (coord: Coordinate) => void;
@@ -76,7 +76,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IMapViewerContainerDispatc
     };
 }
 
-type MapViewerContainerProps = IMapViewerContainerProps & IMapViewerContainerState & IMapViewerContainerDispatch;
+export type MapViewerContainerProps = IMapViewerContainerProps & IMapViewerContainerState & IMapViewerContainerDispatch;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class MapViewerContainer extends React.Component<MapViewerContainerProps, any>

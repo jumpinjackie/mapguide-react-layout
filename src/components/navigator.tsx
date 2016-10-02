@@ -31,7 +31,7 @@ const VERT_BEGIN = 60; //This position represents the starting scale (ie. initia
 
 const LN9 = Math.log(9);
 
-interface INavigatorProps extends React.Props<any> {
+export interface INavigatorProps extends React.Props<any> {
     style?: React.CSSProperties;
     busy: boolean;
     scale: number;

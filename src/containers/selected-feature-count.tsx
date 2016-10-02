@@ -8,11 +8,11 @@ import {
 import { SelectedFeatureCount } from "../components/selected-feature-count";
 import { QueryMapFeaturesResponse } from "../api/contracts/query";
 
-interface ISelectionPanelContainerProps {
+export interface ISelectionPanelContainerProps {
     style?: React.CSSProperties;
 }
 
-interface ISelectionPanelContainerState {
+export interface ISelectionPanelContainerState {
     config: IConfigurationReducerState;
     selection: QueryMapFeaturesResponse | null;
 }
@@ -30,7 +30,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
     };
 }
 
-type SelectedFeatureContainerProps = ISelectionPanelContainerState & ISelectionPanelContainerProps;
+export type SelectedFeatureContainerProps = ISelectionPanelContainerState & ISelectionPanelContainerProps;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class SelectedFeatureCountContainer extends React.Component<SelectedFeatureContainerProps, any> {

@@ -5,7 +5,7 @@ import logger from './logger';
 import rootReducer from '../reducers';
 const persistState = require('redux-localstorage');
 
-function configureStore(initialState) {
+function configureStore(initialState: any) {
     const store = (<any>compose)( //HACK: Something bogus about the compose() declaration
         _getMiddleware(),
         ..._getEnhancers()
@@ -40,7 +40,7 @@ function _getEnhancers() {
     return enhancers;
 }
 
-function _enableHotLoader(store) {
+function _enableHotLoader(store: any) {
     if (__DEV__ && module.hot) {
         module.hot.accept('../reducers', () => {
             const nextRootReducer = require('../reducers');
@@ -52,12 +52,12 @@ function _enableHotLoader(store) {
 function _getStorageConfig() {
     return {
         key: 'react-redux-seed',
-        serialize: (store) => {
+        serialize: (store: any) => {
             return store && store.session 
                 ? JSON.stringify(store.session)
                 : store;
         },
-        deserialize: (state) => ({
+        deserialize: (state: any) => ({
             session: state ? JSON.parse(state) : {}
         }),
     };

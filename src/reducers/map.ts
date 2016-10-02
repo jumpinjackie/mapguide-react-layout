@@ -67,14 +67,14 @@ export function runtimeMapReducer(state = INITIAL_STATE, action = { type: '', pa
             {
                 let showGroups: string[] = state.viewer.layerGroupVisibility.showGroups;
                 let hideGroups: string[] = state.viewer.layerGroupVisibility.hideGroups;
-                if (payload.visible === true) { //Show it
-                    showGroups.push(payload.groupId);
+                if (payload.value === true) { //Show it
+                    showGroups.push(payload.id);
                     showGroups = uniq(showGroups);
-                    hideGroups = hideGroups.filter(g => g != payload.groupId);
+                    hideGroups = hideGroups.filter(g => g != payload.id);
                 } else { //Hide it
-                    hideGroups.push(payload.groupId);
+                    hideGroups.push(payload.id);
                     hideGroups = uniq(hideGroups);
-                    showGroups = showGroups.filter(g => g != payload.groupId);
+                    showGroups = showGroups.filter(g => g != payload.id);
                 }
                 const newState = assign({}, state, {
                     viewer: {
@@ -95,14 +95,14 @@ export function runtimeMapReducer(state = INITIAL_STATE, action = { type: '', pa
             {
                 let showLayers: string[] = state.viewer.layerGroupVisibility.showLayers;
                 let hideLayers: string[] = state.viewer.layerGroupVisibility.hideLayers;
-                if (payload.visible === true) { //Show it
-                    showLayers.push(payload.layerId);
+                if (payload.value === true) { //Show it
+                    showLayers.push(payload.id);
                     showLayers = uniq(showLayers);
-                    hideLayers = hideLayers.filter(g => g != payload.layerId);
+                    hideLayers = hideLayers.filter(g => g != payload.id);
                 } else { //Hide it
-                    hideLayers.push(payload.layerId);
+                    hideLayers.push(payload.id);
                     hideLayers = uniq(hideLayers);
-                    showLayers = showLayers.filter(g => g != payload.layerId);
+                    showLayers = showLayers.filter(g => g != payload.id);
                 }
                 const newState = assign({}, state, {
                     viewer: {

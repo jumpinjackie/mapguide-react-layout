@@ -1,7 +1,7 @@
 import * as React from "react";
 import { tr } from "../api/i18n";
 
-function reload(e) {
+function reload(e: GenericEvent) {
     e.preventDefault();
     //TODO: This is obviously the nuclear solution.
     //
@@ -12,7 +12,11 @@ function reload(e) {
     return false;
 }
 
-export const SessionExpired = (props) => {
+interface ISessionExpiredProps {
+    locale: string;
+}
+
+export const SessionExpired = (props: ISessionExpiredProps) => {
     return <div style={{ padding: 5 }}>
         <p>{tr("SESSION_EXPIRED_DETAILED", props.locale)}</p>
         <p><strong>{tr("SESSION_EXPIRED_AVAILABLE_ACTIONS", props.locale)}</strong></p>

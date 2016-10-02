@@ -11,22 +11,24 @@ interface IScaleDisplayContainerState {
     config?: any;
 }
 
-function mapStateToProps(state): IScaleDisplayContainerState {
+function mapStateToProps(state: any): IScaleDisplayContainerState {
     return {
         config: state.config,
         view: state.view.current
     };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch: ReduxDispatch) {
     return {
         
     };
 }
 
+type ScaleDisplayContainerProps = IScaleDisplayContainerState;
+
 @connect(mapStateToProps, mapDispatchToProps)
-export class ScaleDisplayContainer extends React.Component<IScaleDisplayContainerState, any> {
-    constructor(props) {
+export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainerProps, any> {
+    constructor(props: ScaleDisplayContainerProps) {
         super(props);
     }
     render(): JSX.Element {

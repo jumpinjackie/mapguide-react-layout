@@ -132,11 +132,13 @@ interface IFlyoutMenuChildItemProps {
     onInvoked?: () => void;
 }
 
-class FlyoutMenuChildItem extends React.Component<any, any> {
-    private fnMouseLeave: (e) => void;
-    private fnMouseEnter: (e) => void;
-    private fnClick: (e) => void;
-    constructor(props) {
+type FlyoutMenuChildItemProps = any;
+
+class FlyoutMenuChildItem extends React.Component<FlyoutMenuChildItemProps, any> {
+    private fnMouseLeave: GenericEventHandler;
+    private fnMouseEnter: GenericEventHandler;
+    private fnClick: GenericEventHandler;
+    constructor(props: FlyoutMenuChildItemProps) {
         super(props);
         this.fnClick = this.onClick.bind(this);
         this.fnMouseEnter = this.onMouseEnter.bind(this);
@@ -145,7 +147,7 @@ class FlyoutMenuChildItem extends React.Component<any, any> {
             isMouseOver: false
         };
     }
-    private onClick(e) {
+    private onClick(e: GenericEvent) {
         const { item, onInvoked } = this.props;
         if (getEnabled(item)) {
             item.invoke();
@@ -154,10 +156,10 @@ class FlyoutMenuChildItem extends React.Component<any, any> {
             }
         }
     }
-    private onMouseLeave(e) {
+    private onMouseLeave(e: GenericEvent) {
         this.setState({ isMouseOver: false });
     }
-    private onMouseEnter(e) {
+    private onMouseEnter(e: GenericEvent) {
         this.setState({ isMouseOver: true });
     }
     render(): JSX.Element {
@@ -181,7 +183,7 @@ interface IToolbarContentContainerProps {
 }
 
 class ToolbarContentContainer extends React.Component<IToolbarContentContainerProps, any> {
-    constructor(props) {
+    constructor(props: IToolbarContentContainerProps) {
         super(props);
     }
     render(): JSX.Element {
@@ -199,12 +201,12 @@ interface IFlyoutMenuItemProps {
 }
 
 class FlyoutMenuItem extends React.Component<IFlyoutMenuItemProps, any> {
-    private fnMouseLeave: (e) => void;
-    private fnMouseEnter: (e) => void;
-    private fnClick: (e) => void;
+    private fnMouseLeave: GenericEventHandler;
+    private fnMouseEnter: GenericEventHandler;
+    private fnClick: GenericEventHandler;
     private fnChildInvoked: () => void;
     private flyoutId: string;
-    constructor(props) {
+    constructor(props: IFlyoutMenuItemProps) {
         super(props);
         this.fnClick = this.onClick.bind(this);
         this.fnMouseEnter = this.onMouseEnter.bind(this);
@@ -216,15 +218,15 @@ class FlyoutMenuItem extends React.Component<IFlyoutMenuItemProps, any> {
         };
         this.flyoutId = uuid.v4();
     }
-    private onClick(e) {
+    private onClick(e: GenericEvent) {
         e.preventDefault();
         this.setState({ isFlownOut: !this.state.isFlownOut });
         return false;
     }
-    private onMouseLeave(e) {
+    private onMouseLeave(e: GenericEvent) {
         this.setState({ isMouseOver: false });
     }
-    private onMouseEnter(e) {
+    private onMouseEnter(e: GenericEvent) {
         this.setState({ isMouseOver: true });
     }
     private onChildInvoked() {
@@ -269,7 +271,7 @@ interface IToolbarSeparatorProps {
 }
 
 class ToolbarSeparator extends React.Component<IToolbarSeparatorProps, any> {
-    constructor(props) {
+    constructor(props: IToolbarSeparatorProps) {
         super(props);
     }
     render(): JSX.Element {
@@ -289,10 +291,10 @@ interface IToolbarButtonProps {
 }
 
 class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
-    fnMouseLeave: (e) => void;
-    fnMouseEnter: (e) => void;
-    fnClick: (e) => void;
-    constructor(props) {
+    fnMouseLeave: GenericEventHandler;
+    fnMouseEnter: GenericEventHandler;
+    fnClick: GenericEventHandler;
+    constructor(props: IToolbarButtonProps) {
         super(props);
         this.fnMouseEnter = this.onMouseEnter.bind(this);
         this.fnMouseLeave = this.onMouseLeave.bind(this);
@@ -301,13 +303,13 @@ class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
             isMouseOver: false
         };
     }
-    onMouseLeave(e) {
+    onMouseLeave(e: any) {
         this.setState({ isMouseOver: false });
     }
-    onMouseEnter(e) {
+    onMouseEnter(e: any) {
         this.setState({ isMouseOver: true });
     }
-    onClick(e) {
+    onClick(e: any) {
         e.preventDefault();
         const { item } = this.props;
         const enabled = getEnabled(item);
@@ -354,7 +356,7 @@ export interface IToolbarProps {
 }
 
 export class Toolbar extends React.Component<IToolbarProps, any> {
-    constructor(props) {
+    constructor(props: IToolbarProps) {
         super(props);
     }
     render(): JSX.Element {

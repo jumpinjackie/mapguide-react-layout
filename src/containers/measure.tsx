@@ -22,13 +22,13 @@ interface IMeasureContainerDispatch {
 
 }
 
-function mapStateToProps(state): IMeasureContainerState {
+function mapStateToProps(state: any): IMeasureContainerState {
     return {
         config: state.config
     };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch: ReduxDispatch) {
     return {
 
     };
@@ -41,19 +41,19 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
     private measureLayer: ol.layer.Vector | null;
     private viewer: IMapViewer | null;
     private draw: ol.interaction.Draw | null;
-    private fnTypeChanged: (e) => void;
-    private fnGeodesicChanged: (e) => void;
-    private fnDrawStart: (e) => void;
-    private fnDrawEnd: (e) => void;
-    private fnMouseMove: (e) => void;
-    private fnClearMeasurements: (e) => void;
+    private fnTypeChanged: GenericEventHandler;
+    private fnGeodesicChanged: GenericEventHandler;
+    private fnDrawStart: GenericEventHandler;
+    private fnDrawEnd: GenericEventHandler;
+    private fnMouseMove: GenericEventHandler;
+    private fnClearMeasurements: GenericEventHandler;
     private sketch: ol.Feature | null;
     private listener: any;
     private helpTooltipElement: Element;
     private helpTooltip: ol.Overlay;
     private measureTooltipElement: Element | null;
     private measureTooltip: ol.Overlay;
-    constructor(props) {
+    constructor(props: MeasureProps) {
         super(props);
         this.fnTypeChanged = this.onTypeChanged.bind(this);
         this.fnGeodesicChanged = this.onGeodesicChanged.bind(this);
@@ -66,7 +66,7 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
             type: "LineString"
         };
     }
-    private setActiveInteraction(type) {
+    private setActiveInteraction(type: string) {
         if (this.viewer) {
             if (this.draw) {
                 this.draw.un("drawstart", this.fnDrawStart);
@@ -81,17 +81,17 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
             }
         }
     }
-    private onTypeChanged(e) {
+    private onTypeChanged(e: GenericEvent) {
         const newType = e.target.value;
         this.setState({ type: newType }, () => {
             this.setActiveInteraction(newType);
         });
     }
-    private onGeodesicChanged(e) {
+    private onGeodesicChanged(e: GenericEvent) {
         const newValue = e.target.checked;
         this.setState({ geodesic: newValue });
     }
-    private createDrawInteraction(type): ol.interaction.Draw | null {
+    private createDrawInteraction(type: string): ol.interaction.Draw | null {
         if (this.measureLayer) {
             const source = this.measureLayer.getSource();
             return new ol.interaction.Draw({
@@ -142,8 +142,8 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
      * @param {ol.geom.LineString} line The line.
      * @return {string} The formatted length.
      */
-    private formatLength(line) {
-        let length;
+    private formatLength(line: ol.geom.LineString) {
+        let length: number;
         if (this.state.geodesic && this.viewer) {
             const coordinates = line.getCoordinates();
             length = 0;
@@ -156,7 +156,7 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
         } else {
             length = Math.round(line.getLength() * 100) / 100;
         }
-        let output;
+        let output: string;
         if (length > 100) {
             output = (Math.round(length / 1000 * 100) / 100) +
                 ' ' + 'km';
@@ -171,18 +171,17 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
      * @param {ol.geom.Polygon} polygon The polygon.
      * @return {string} Formatted area.
      */
-    private formatArea(polygon) {
-        let area;
+    private formatArea(polygon: ol.geom.Polygon) {
+        let area: number;
         if (this.state.geodesic && this.viewer) {
             const sourceProj = this.viewer.getProjection();
-            const geom = /** @type {ol.geom.Polygon} */(polygon.clone().transform(
-                sourceProj, 'EPSG:4326'));
+            const geom = (polygon.clone().transform(sourceProj, 'EPSG:4326') as ol.geom.Polygon);
             const coordinates = geom.getLinearRing(0).getCoordinates();
             area = Math.abs(WGS84_SPHERE.geodesicArea(coordinates));
         } else {
             area = polygon.getArea();
         }
-        let output;
+        let output: string;
         if (area > 10000) {
             output = (Math.round(area / 1000000 * 100) / 100) +
                 ' ' + 'km<sup>2</sup>';
@@ -192,7 +191,7 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
         }
         return output;
     }
-    private onDrawStart(evt) {
+    private onDrawStart(evt: GenericEvent) {
         // set sketch
         this.sketch = evt.feature;
 
@@ -200,15 +199,17 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
         let tooltipCoord = evt.coordinate;
 
         if (this.sketch) {
-            this.listener = this.sketch.getGeometry().on('change', (evt) => {
-                const geom = evt.target;
-                let output;
+            this.listener = this.sketch.getGeometry().on('change', (e: GenericEvent) => {
+                const geom = e.target;
+                let output: string;
                 if (geom instanceof ol.geom.Polygon) {
                     output = this.formatArea(geom);
                     tooltipCoord = geom.getInteriorPoint().getCoordinates();
                 } else if (geom instanceof ol.geom.LineString) {
                     output = this.formatLength(geom);
                     tooltipCoord = geom.getLastCoordinate();
+                } else {
+                    output = "";
                 }
                 if (this.measureTooltipElement) {
                     this.measureTooltipElement.innerHTML = output;
@@ -217,7 +218,7 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
             });
         }
     }
-    private onDrawEnd(evt) {
+    private onDrawEnd(evt: GenericEvent) {
         if (this.measureTooltipElement) {
             this.measureTooltipElement.className = 'tooltip tooltip-static';
         }
@@ -269,7 +270,7 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
             this.viewer.addOverlay(this.measureTooltip);
         }
     }
-    private onMouseMove(evt) {
+    private onMouseMove(evt: GenericEvent) {
         if (evt.dragging) {
             return;
         }
@@ -288,7 +289,7 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
         this.helpTooltip.setPosition(evt.coordinate);
         this.helpTooltipElement.classList.remove('hidden');
     }
-    private onClearMeasurements(e) {
+    private onClearMeasurements(e: GenericEvent) {
         e.preventDefault();
         if (this.measureLayer) {
             this.measureLayer.getSource().clear();

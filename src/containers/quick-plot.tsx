@@ -17,7 +17,7 @@ interface IQuickPlotContainerDispatch {
 
 }
 
-function mapStateToProps(state): IQuickPlotContainerState {
+function mapStateToProps(state: any): IQuickPlotContainerState {
     return {
         config: state.config,
         map: state.map.state,
@@ -25,7 +25,7 @@ function mapStateToProps(state): IQuickPlotContainerState {
     };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch: ReduxDispatch): IQuickPlotContainerDispatch {
     return {
 
     };
@@ -35,20 +35,20 @@ type QuickPlotProps = IQuickPlotContainerProps & IQuickPlotContainerState & IQui
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
-    private fnTitleChanged: (e) => void;
-    private fnSubTitleChanged: (e) => void;
-    private fnShowLegendChanged: (e) => void;
-    private fnShowNorthArrowChanged: (e) => void;
-    private fnShowCoordinatesChanged: (e) => void;
-    private fnShowScaleBarChanged: (e) => void;
-    private fnShowDisclaimerChanged: (e) => void;
-    private fnDpiChanged: (e) => void;
-    private fnAdvancedOptionsChanged: (e) => void;
-    private fnScaleChanged: (e) => void;
-    private fnPaperSizeChanged: (e) => void;
-    private fnOrientationChanged: (e) => void;
-    private fnGeneratePlot: (e) => void;
-    constructor(props) {
+    private fnTitleChanged: GenericEventHandler;
+    private fnSubTitleChanged: GenericEventHandler;
+    private fnShowLegendChanged: GenericEventHandler;
+    private fnShowNorthArrowChanged: GenericEventHandler;
+    private fnShowCoordinatesChanged: GenericEventHandler;
+    private fnShowScaleBarChanged: GenericEventHandler;
+    private fnShowDisclaimerChanged: GenericEventHandler;
+    private fnDpiChanged: GenericEventHandler;
+    private fnAdvancedOptionsChanged: GenericEventHandler;
+    private fnScaleChanged: GenericEventHandler;
+    private fnPaperSizeChanged: GenericEventHandler;
+    private fnOrientationChanged: GenericEventHandler;
+    private fnGeneratePlot: GenericEventHandler;
+    constructor(props: QuickPlotProps) {
         super(props);
         this.fnTitleChanged = this.onTitleChanged.bind(this);
         this.fnSubTitleChanged = this.onSubTitleChanged.bind(this);
@@ -79,43 +79,43 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
             rotation: 0
         };
     }
-    private onTitleChanged(e) {
+    private onTitleChanged(e: GenericEvent) {
         this.setState({ title: e.target.value });
     }
-    private onSubTitleChanged(e) {
+    private onSubTitleChanged(e: GenericEvent) {
         this.setState({ subTitle: e.target.value });
     }
-    private onShowLegendChanged(e) {
+    private onShowLegendChanged(e: GenericEvent) {
         this.setState({ showLegend: !this.state.showLegend });
     }
-    private onShowNorthArrowChanged(e) {
+    private onShowNorthArrowChanged(e: GenericEvent) {
         this.setState({ showNorthBar: !this.state.showNorthBar });
     }
-    private onShowCoordinatesChanged(e) {
+    private onShowCoordinatesChanged(e: GenericEvent) {
         this.setState({ showCoordinates: !this.state.showCoordinates });
     }
-    private onShowScaleBarChanged(e) {
+    private onShowScaleBarChanged(e: GenericEvent) {
         this.setState({ showScaleBar: !this.state.showScaleBar });
     }
-    private onShowDisclaimerChanged(e) {
+    private onShowDisclaimerChanged(e: GenericEvent) {
         this.setState({ showDisclaimer: !this.state.showDisclaimer });
     }
-    private onDpiChanged(e) {
+    private onDpiChanged(e: GenericEvent) {
         this.setState({ dpi: e.target.value });
     }
-    private onAdvancedOptionsChanged(e) {
+    private onAdvancedOptionsChanged(e: GenericEvent) {
         this.setState({ showAdvanced: !this.state.showAdvanced });
     }
-    private onScaleChanged(e) {
+    private onScaleChanged(e: GenericEvent) {
         this.setState({ scale: e.target.value });
     }
-    private onPaperSizeChanged(e) {
+    private onPaperSizeChanged(e: GenericEvent) {
         this.setState({ paperSize: e.target.value });
     }
-    private onOrientationChanged(e) {
+    private onOrientationChanged(e: GenericEvent) {
         this.setState({ orientation: e.target.value });
     }
-    private onGeneratePlot(e) {
+    private onGeneratePlot(e: GenericEvent) {
 
     }
     render(): JSX.Element {

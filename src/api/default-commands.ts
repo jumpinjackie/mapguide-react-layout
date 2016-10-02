@@ -10,8 +10,8 @@ import * as ol from "openlayers";
 import { ensureParameters } from "../actions/taskpane";
 import { DefaultComponentNames } from "../api/registry/component";
 
-function panMap(dispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
-    const settings = {
+function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
+    const settings: any = {
         "right": [2, 1],
         "left": [0, 1],
         "down": [0, 1],
@@ -23,7 +23,7 @@ function panMap(dispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "
     const currentExtent = viewer.getCurrentExtent();
     let newPos: number[];
 
-    var direction = settings[value];
+    const direction = settings[value];
     
     if (value == "right" || value == "left") {
         newPos = [

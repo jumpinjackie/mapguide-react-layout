@@ -6,7 +6,7 @@ import * as Constants from "../../constants";
 import { ensureParameters } from "../../actions/taskpane";
 import { tr } from "../i18n";
 
-export function mapToolbarReference(tb: any, store, commandInvoker: (cmd) => void): IItem|IMenu|null {
+export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: (cmd: ICommand) => void): IItem|IMenu|null {
     const state = store.getState();
     if (tb.isSeparator === true) {
         return { isSeparator: true };
@@ -24,9 +24,10 @@ export function mapToolbarReference(tb: any, store, commandInvoker: (cmd) => voi
             return cmdItem;
         }
     } else if (tb.label && tb.children) {
+        const childItems: any[] = tb.children;
         return {
             label: tb.label,
-            childItems: tb.children.map(tb => mapToolbarReference(tb, store, commandInvoker)).filter(tb => tb != null)
+            childItems: childItems.map(tb => mapToolbarReference(tb, store, commandInvoker)).filter(tb => tb != null)
         };
     }
     return null;
@@ -81,14 +82,14 @@ export interface ICommandRef {
     name: string;
 }
 
-export type DispatcherFunc = (dispatch, getState, viewer?: IMapViewer) => any; 
+export type DispatcherFunc = (dispatch: ReduxDispatch, getState: () => any, viewer?: IMapViewer) => any; 
 
 export interface ICommand {
     icon: string;
     //tooltip?: string;
     //label?: string;
-    enabled: (state) => boolean;
-    selected: (state) => boolean;
+    enabled: (state: any) => boolean;
+    selected: (state: any) => boolean;
     invoke: DispatcherFunc;
 }
 
@@ -133,7 +134,7 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                 return true;
             },
             selected: (state) => false,
-            invoke: (dispatch, getState, viewer: IMapViewer) => {
+            invoke: (dispatch: ReduxDispatch, getState: () => any, viewer: IMapViewer) => {
                 const { map, config } = getState();
                 const target = cmdDef.target;
                 if (target == "TaskPane") {
@@ -164,7 +165,7 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
             icon: cmdDef.icon || "search.png",
             enabled: (state) => true,
             selected: (state) => false,
-            invoke: (dispatch, getState, viewer: IMapViewer) => {
+            invoke: (dispatch: ReduxDispatch, getState: () => any, viewer: IMapViewer) => {
                 const { map, config } = getState();
                 let url = ensureParameters("server/Search/SearchPrompt.php", map.state.Name, map.state.SessionId, config.locale, false)
                     + `&popup=0`

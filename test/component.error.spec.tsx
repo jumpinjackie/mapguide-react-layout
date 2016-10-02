@@ -9,7 +9,7 @@ function throwme() {
 }
 
 function captureError() {
-    let err;
+    let err: any;
     try {
         throwme();
     } catch (e) {

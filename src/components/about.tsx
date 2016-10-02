@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export const About = (props) => {
+export const About: React.StatelessComponent<any> = (props) => {
     return <div style={{ padding: 5 }}>
         <h4>mapguide-react-layout</h4>
         <hr />

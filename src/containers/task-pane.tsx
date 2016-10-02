@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { IItem } from "../components/toolbar";
 import { TaskPane } from "../components/task-pane";
 import { RuntimeMap } from "../api/contracts/runtime-map";
-import { mapToolbarReference } from "../api/registry/command";
+import { ICommand, mapToolbarReference } from "../api/registry/command";
 import { invokeCommand } from "../actions/map";
 import * as TaskPaneActions from "../actions/taskpane";
 import { areUrlsSame } from "../utils/url";
@@ -22,14 +22,14 @@ interface ITaskPaneContainerState {
 }
 
 interface ITaskPaneDispatch {
-    invokeCommand?: (cmd) => void;
+    invokeCommand?: (cmd: ICommand) => void;
     goHome?: () => void;
     goForward?: () => void;
     goBack?: () => void;
-    pushUrl?: (url, silent?) => void;
+    pushUrl?: (url: string, silent?: boolean) => void;
 }
 
-function mapStateToProps(state): ITaskPaneContainerState {
+function mapStateToProps(state: any): ITaskPaneContainerState {
     //Technically speaking, this should be listening to every branch of the redux
     //store. But practically speaking, toolbar commands really only cares about 
     //the branches below
@@ -42,7 +42,7 @@ function mapStateToProps(state): ITaskPaneContainerState {
     };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch: ReduxDispatch): ITaskPaneDispatch {
     return {
         invokeCommand: (cmd) => dispatch(invokeCommand(cmd)),
         goHome: () => dispatch(TaskPaneActions.goHome()),
@@ -60,7 +60,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
     backAction: IItem;
     forwardAction: IItem;
     fnUrlLoaded: (url: string) => void;
-    constructor(props) {
+    constructor(props: TaskPaneProps) {
         super(props);
         this.fnUrlLoaded = this.onUrlLoaded.bind(this);
         this.homeAction = {
@@ -127,10 +127,12 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
     render(): JSX.Element {
         const { taskpane, config, map, style, toolbar, invokeCommand } = this.props;
         if (taskpane && config && map) {
-            let childItems;
+            let childItems: IItem[];
             if (toolbar && toolbar.items && invokeCommand) {
                 const store = (this.context as any).store;
-                childItems = toolbar.items.map(tb => mapToolbarReference(tb, store, invokeCommand)).filter(tb => tb != null);
+                childItems = (toolbar.items as any[])
+                    .map(tb => mapToolbarReference(tb, store, invokeCommand))
+                    .filter((tb): tb is IItem => tb != null);
             } else {
                 childItems = [];
             }

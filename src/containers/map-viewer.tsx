@@ -13,11 +13,12 @@ import {
 import * as Runtime from "../api/runtime";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import * as MapActions from "../actions/map";
+import { IItem, IMenu } from "../components/toolbar";
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml } from '../api/builders/deArrayify';
-import { getCommand, mapToolbarReference } from "../api/registry/command";
+import { getCommand, mapToolbarReference, ICommand } from "../api/registry/command";
 import { invokeCommand, queryMapFeatures } from "../actions/map";
 import { showModalComponent } from "../actions/modal";
 import { DefaultComponentNames } from "../api/registry/component";
@@ -38,15 +39,15 @@ interface IMapViewerContainerState {
 }
 
 interface IMapViewerContainerDispatch {
-    setCurrentView?: (view) => void;
-    setBusyCount?: (count) => void;
-    setMouseCoordinates?: (coord) => void;
-    invokeCommand?: (cmd) => void;
-    showModalComponent?: (options) => void;
-    queryMapFeatures?: (options) => void;
+    setCurrentView?: (view: IMapView) => void;
+    setBusyCount?: (count: number) => void;
+    setMouseCoordinates?: (coord: Coordinate) => void;
+    invokeCommand?: (cmd: ICommand) => void;
+    showModalComponent?: (options: any) => void;
+    queryMapFeatures?: (options: MapActions.QueryMapFeatureActionOptions) => void;
 }
 
-function mapStateToProps(state): IMapViewerContainerState {
+function mapStateToProps(state: any): IMapViewerContainerState {
     return {
         config: state.config,
         view: state.view,
@@ -58,7 +59,7 @@ function mapStateToProps(state): IMapViewerContainerState {
     };
 }
 
-function mapDispatchToProps(dispatch): IMapViewerContainerDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): IMapViewerContainerDispatch {
     return {
         setCurrentView: (view) => dispatch(MapActions.setCurrentView(view)),
         setBusyCount: (count) => dispatch(MapActions.setBusyCount(count)),
@@ -74,14 +75,14 @@ type MapViewerContainerProps = IMapViewerContainerProps & IMapViewerContainerSta
 @connect(mapStateToProps, mapDispatchToProps)
 export class MapViewerContainer extends React.Component<MapViewerContainerProps, any>
     implements IMapViewer {
-    private fnMapViewerMounted: (component) => void;
+    private fnMapViewerMounted: (component: MapViewerBase) => void;
     private inner: MapViewerBase;
-    private fnRequestZoomToView: (view: IMapView|Bounds) => void;
-    private fnQueryMapFeatures: (options, success, errBack) => void;
-    private fnBusyLoading: (busyCount) => void;
-    private fnMouseCoordinateChanged: (coord) => void;
+    private fnRequestZoomToView: (view: IMapView) => void;
+    private fnQueryMapFeatures: (options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) => void;
+    private fnBusyLoading: (busyCount: number) => void;
+    private fnMouseCoordinateChanged: (coord: Coordinate) => void;
     private fnSessionExpired: () => void;
-    constructor(props) {
+    constructor(props: MapViewerContainerProps) {
         super(props);
         this.fnMapViewerMounted = this.onMapViewerMounted.bind(this);
         this.fnRequestZoomToView = this.onRequestZoomToView.bind(this);
@@ -93,30 +94,30 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     static contextTypes: React.ValidationMap<any> = {
         store: React.PropTypes.object
     };
-    private onMapViewerMounted(component) {
+    private onMapViewerMounted(component: MapViewerBase) {
         this.inner = component;
     }
-    private onRequestZoomToView(view: IMapView|Bounds): void {
+    private onRequestZoomToView(view: IMapView): void {
         if (this.props.setCurrentView) {
             this.props.setCurrentView(view);
         }
     }
-    private onQueryMapFeatures(options, success, errBack) {
+    private onQueryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) {
         if (this.props.queryMapFeatures) {
             this.props.queryMapFeatures({
                 options: options,
                 append: this.inner.state.shiftKey === true,
                 callback: success,
-                errBack: errBack
+                errBack: failure
             });
         }
     }
-    private onBusyLoading(busyCount) {
+    private onBusyLoading(busyCount: number) {
         if (this.props.setBusyCount) {
             this.props.setBusyCount(busyCount);
         }
     }
-    private onMouseCoordinateChanged(coord) {
+    private onMouseCoordinateChanged(coord: Coordinate) {
         if (this.props.setMouseCoordinates) {
             this.props.setMouseCoordinates(coord);
         }
@@ -151,8 +152,10 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                 .filter(layer => layer.Selectable && legend.selectableLayers[layer.ObjectId] !== false)
                 .map(layer => layer.Name);
             const store = (this.context as any).store;
-            const items = contextmenu != null ? contextmenu.items : [];
-            const cmitems = items.map(tb => mapToolbarReference(tb, store, invokeCommand)).filter(tb => tb != null);
+            const items: any[] = contextmenu != null ? contextmenu.items : [];
+            const cmitems = items
+                .map(tb => mapToolbarReference(tb, store, invokeCommand))
+                .filter((tb): tb is IItem => tb != null);
             return <MapViewerBase ref={this.fnMapViewerMounted}
                                   map={map} 
                                   agentUri={config.agentUri}
@@ -192,7 +195,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     zoomToView(x: number, y: number, scale: number): void {
         this.inner.zoomToView(x, y, scale);
     }
-    setSelectionXml(xml: string, queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void {
+    setSelectionXml(xml: string, queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void {
         this.inner.setSelectionXml(xml, queryOpts, success, failure);
     }
     refreshMap(mode?: RefreshMode): void {
@@ -249,7 +252,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     setFeatureTooltipEnabled(enabled: boolean): void {
         this.setState({ featureTooltipsEnabled: enabled });
     }
-    queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void {
+    queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void {
         this.inner.queryMapFeatures(options, success, failure);
     }
     getPointSelectionBox(point: Coordinate, ptBuffer: number): Bounds {

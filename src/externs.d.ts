@@ -152,7 +152,7 @@ declare module "query-string" {
 }
 
 declare module "object-assign" {
-    function assign(target: any, ...objectsToMerge: any[]);
+    function assign(target: any, ...objectsToMerge: any[]): any;
     export = assign;
 }
 
@@ -282,6 +282,33 @@ declare module "testdouble" {
     var td: TestDoubleAPI;
     export = td;
 }
+
+// Monkey patching Array.filter to support type narrowing
+// https://github.com/Microsoft/TypeScript/issues/7657
+interface Array<T> {
+    filter<U extends T>(pred: (a: T) => a is U): U[];
+}
+
+// Event boilerplate
+type GenericEvent = any;
+
+type GenericEventHandler = (e: GenericEvent) => void;
+
+// Redux typedefs to tighten up our redux code
+interface ReduxAction {
+    type: string;
+    payload?: any;
+}
+
+interface ReduxStore {
+    getState(): any;
+}
+
+type ReduxThunkedAction = (dispatch: ReduxDispatch, getState: () => any) => any;
+
+type ReduxActionCreator = ReduxAction | ReduxThunkedAction;
+
+type ReduxDispatch = (action: ReduxActionCreator) => void;
 
 // Types for various development options.
 

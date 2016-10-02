@@ -3,7 +3,7 @@ const assign = require("object-assign");
 
 const INITIAL_STATE = { };
 
-export function modalReducer(state = INITIAL_STATE, action) {
+export function modalReducer(state = INITIAL_STATE, action: ReduxAction) {
     switch (action.type) {
         case Constants.MODAL_SHOW_COMPONENT:
             {

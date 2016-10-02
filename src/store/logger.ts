@@ -3,10 +3,11 @@ const createLogger = require('redux-logger');
 
 const logger = createLogger({
     collapsed: true,
-    stateTransformer: (state) => {
+    stateTransformer: (state: any) => {
         return state;
     },
-    predicate: (getState, { type }) => {
+    //Note the { type } syntax: https://github.com/Microsoft/TypeScript/issues/9657
+    predicate: (getState: any, { type }: { type: string }) => {
         return type !== 'redux-form/BLUR' &&
             type !== 'redux-form/CHANGE' &&
             type !== 'redux-form/FOCUS' &&

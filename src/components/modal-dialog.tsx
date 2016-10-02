@@ -10,8 +10,8 @@ interface IModalDialogProps {
 }
 
 export class ModalDialog extends React.Component<IModalDialogProps, any> {
-    fnClose: (e) => void;
-    constructor(props) {
+    fnClose: GenericEventHandler;
+    constructor(props: IModalDialogProps) {
         super(props);
         this.fnClose = this.onClose.bind(this);
     }
@@ -59,7 +59,7 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
             })()}
         </div>;
     }
-    private onClose(e) {
+    private onClose(e: GenericEvent) {
         e.preventDefault()
         if (this.props.onClose) {
             this.props.onClose()

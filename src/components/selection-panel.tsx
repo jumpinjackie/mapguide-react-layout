@@ -1,5 +1,5 @@
 import * as React from "react";
-import { SelectedFeatureSet, SelectedFeature, LayerMetadata } from "../api/contracts/query";
+import { SelectedFeatureSet, SelectedFeature, LayerMetadata, SelectedLayer } from "../api/contracts/query";
 import { Toolbar, IItem, IMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
 import { tr as xlate } from "../api/i18n";
 
@@ -35,8 +35,8 @@ function buildToolbarItems(selPanel: SelectionPanel): IItem[] {
 
 export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
     selectionToolbarItems: IItem[];
-    fnSelectedLayerChanged: (e) => void;
-    constructor(props) {
+    fnSelectedLayerChanged: GenericEventHandler;
+    constructor(props: ISelectionPanelProps) {
         super(props);
         this.fnSelectedLayerChanged = this.onSelectedLayerChanged.bind(this);
         this.state = {
@@ -99,7 +99,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
             this.setDefaultSelection(nextProps);
         }
     }
-    onSelectedLayerChanged(e) {
+    onSelectedLayerChanged(e: GenericEvent) {
         this.setState({ selectedLayerIndex: e.target.value, featureIndex: 0 });
     }
     render(): JSX.Element {
@@ -116,8 +116,8 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
                 if (selection != null && selection.SelectedLayer != null && selection.SelectedLayer.length > 0) {
                     return <div className="selection-panel-toolbar" style={{ position: "absolute", top: 0, left: 0, right: 0, height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR }}>
                         <select className="selection-panel-layer-selector" value={this.state.selectedLayerIndex} style={{ position: "absolute", top: 0, left: 0, height: DEFAULT_TOOLBAR_SIZE, maxWidth: 180 }} onChange={this.fnSelectedLayerChanged}>
-                            {selection.SelectedLayer.map((layer: any, index) => {
-                                return <option key={`selected-layer-${layer["@id"]}`} value={index}>{layer["@name"]}</option>
+                            {selection.SelectedLayer.map((layer: SelectedLayer, index: number) => {
+                                return <option key={`selected-layer-${layer["@id"]}`} value={`${index}`}>{layer["@name"]}</option>
                             })}
                         </select>
                         <Toolbar childItems={this.selectionToolbarItems} containerStyle={{ position: "absolute", top: 0, right: 0, height: DEFAULT_TOOLBAR_SIZE }} />

@@ -12,14 +12,14 @@ interface ISelectionPanelContainerState {
     selection?: QueryMapFeaturesResponse;
 }
 
-function mapStateToProps(state): ISelectionPanelContainerState {
+function mapStateToProps(state: any): ISelectionPanelContainerState {
     return {
         config: state.config,
         selection: state.selection.selectionSet
     };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch: ReduxDispatch) {
     return {
         
     };
@@ -29,7 +29,7 @@ type SelectedFeatureContainerProps = ISelectionPanelContainerState & ISelectionP
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class SelectedFeatureCountContainer extends React.Component<SelectedFeatureContainerProps, any> {
-    constructor(props) {
+    constructor(props: SelectedFeatureContainerProps) {
         super(props);
     }
     render(): JSX.Element {

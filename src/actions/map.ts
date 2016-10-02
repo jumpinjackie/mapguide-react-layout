@@ -11,7 +11,7 @@ import { buildSelectionXml } from '../api/builders/deArrayify';
 import uniq = require("lodash.uniq");
 const assign = require("object-assign");
 
-interface QueryMapFeatureActionOptions {
+export interface QueryMapFeatureActionOptions {
     options: IQueryMapFeaturesOptions;
     append?: boolean;
     callback?: (res: QueryMapFeaturesResponse) => void;
@@ -104,17 +104,17 @@ function combineSelections(oldRes: QueryMapFeaturesResponse, newRes: QueryMapFea
     return merged;
 }
 
-export function queryMapFeatures(opts: QueryMapFeatureActionOptions) {
+export function queryMapFeatures(opts: QueryMapFeatureActionOptions): ReduxThunkedAction {
     return (dispatch, getState) => {
         const args = getState().config;
         const map = getState().map.state;
         const client = new Client(args.agentUri, args.agentKind);
-        const success = res => {
+        const success = (res: QueryMapFeaturesResponse) => {
             if (opts.callback != null) {
                 opts.callback(res);
             }
         };
-        const failure = err => {
+        const failure = (err: Error) => {
             if (opts.errBack != null) {
                 opts.errBack(err);
             }
@@ -145,7 +145,7 @@ export function queryMapFeatures(opts: QueryMapFeatureActionOptions) {
     };
 }
 
-export function setCurrentView(view: IMapView) {
+export function setCurrentView(view: IMapView): ReduxThunkedAction {
     return (dispatch, getState) => {
         // HACK-y:
         //
@@ -168,20 +168,20 @@ export function setCurrentView(view: IMapView) {
     };
 }
 
-export function setSelection(selectionSet) {
+export function setSelection(selectionSet: any): ReduxAction {
     return {
         type: Constants.MAP_SET_SELECTION,
         payload: selectionSet
     };
 }
 
-export function invokeCommand(cmd: ICommand) {
+export function invokeCommand(cmd: ICommand): ReduxThunkedAction {
     return (dispatch, getState) => {
         return cmd.invoke(dispatch, getState, getViewer());
     };
 }
 
-export function setBusyCount(busyCount) {
+export function setBusyCount(busyCount: number): ReduxAction {
     return {
         type: Constants.MAP_SET_BUSY_COUNT,
         payload: busyCount
@@ -202,7 +202,7 @@ export function setScale(scale: number) {
     };
 }
 
-export function setMouseCoordinates(coord) {
+export function setMouseCoordinates(coord: any) {
     return {
         type: Constants.UPDATE_MOUSE_COORDINATES,
         payload: coord

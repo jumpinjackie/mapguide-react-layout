@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { getCommand, mapToolbarReference } from "../api/registry/command";
+import { ICommand, getCommand, mapToolbarReference } from "../api/registry/command";
 import { IItem, IMenu, Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import { invokeCommand } from "../actions/map";
 
@@ -18,10 +18,10 @@ interface IToolbarContainerState {
 }
 
 interface IToolbarContainerDispatch {
-    invokeCommand?: (cmd) => void;
+    invokeCommand?: (cmd: ICommand) => void;
 }
 
-function mapStateToProps(state, ownProps): IToolbarContainerState {
+function mapStateToProps(state: any, ownProps: IToolbarContainerProps): IToolbarContainerState {
     return {
         map: state.map,
         view: state.view,
@@ -30,7 +30,7 @@ function mapStateToProps(state, ownProps): IToolbarContainerState {
     };
 }
 
-function mapDispatchToProps(dispatch): IToolbarContainerDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): IToolbarContainerDispatch {
     return {
         invokeCommand: (cmd) => dispatch(invokeCommand(cmd))
     };
@@ -40,7 +40,7 @@ type ToolbarContainerProps = IToolbarContainerProps & IToolbarContainerState & I
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class ToolbarContainer extends React.Component<ToolbarContainerProps, any> {
-    constructor(props) {
+    constructor(props: ToolbarContainerProps) {
         super(props);
     }
     static contextTypes: React.ValidationMap<any> = {
@@ -55,7 +55,9 @@ export class ToolbarContainer extends React.Component<ToolbarContainerProps, any
             } else {
                 containerStyle.height = DEFAULT_TOOLBAR_SIZE;
             }
-            const childItems = toolbar.items.map(tb => mapToolbarReference(tb, store, invokeCommand)).filter(tb => tb != null);
+            const childItems = (toolbar.items as any[])
+                .map(tb => mapToolbarReference(tb, store, invokeCommand))
+                .filter((tb): tb is IItem => tb != null);
             return <Toolbar vertical={vertical} childItems={childItems} containerStyle={containerStyle} />;
         } else {
             return <div />;

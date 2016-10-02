@@ -42,17 +42,17 @@ interface INavigatorProps extends React.Props<any> {
 }
 
 export class Navigator extends React.Component<INavigatorProps, any> {
-    fnPanEast: (e) => void;
-    fnPanWest: (e) => void;
-    fnPanSouth: (e) => void;
-    fnPanNorth: (e) => void;
-    fnZoomOut: (e) => void;
-    fnZoomIn: (e) => void;
-    fnStart: (e, data) => void | boolean;
-    fnDrag: (e, data) => void | boolean;
-    fnStop: (e, data) => void | boolean;
+    fnPanEast: GenericEventHandler;
+    fnPanWest: GenericEventHandler;
+    fnPanSouth: GenericEventHandler;
+    fnPanNorth: GenericEventHandler;
+    fnZoomOut: GenericEventHandler;
+    fnZoomIn: GenericEventHandler;
+    fnStart: (e: any, data: any) => void | boolean;
+    fnDrag: (e: any, data: any) => void | boolean;
+    fnStop: (e: any, data: any) => void | boolean;
     initialScale: number;
-    constructor(props) {
+    constructor(props: INavigatorProps) {
         super(props);
         this.fnPanEast = this.onPanEast.bind(this);
         this.fnPanWest = this.onPanWest.bind(this);
@@ -70,22 +70,22 @@ export class Navigator extends React.Component<INavigatorProps, any> {
             isDragging: false
         };
     }
-    private onPanEast(e) {
+    private onPanEast(e: GenericEvent) {
         this.props.onPan(PanDirection.East);
     }
-    private onPanWest(e) {
+    private onPanWest(e: GenericEvent) {
         this.props.onPan(PanDirection.West);
     }
-    private onPanSouth(e) {
+    private onPanSouth(e: GenericEvent) {
         this.props.onPan(PanDirection.South);
     }
-    private onPanNorth(e) {
+    private onPanNorth(e: GenericEvent) {
         this.props.onPan(PanDirection.North);
     }
-    private onZoomOut(e) {
+    private onZoomOut(e: GenericEvent) {
         this.props.onZoom(ZoomDirection.Out);
     }
-    private onZoomIn(e) {
+    private onZoomIn(e: GenericEvent) {
         this.props.onZoom(ZoomDirection.In);
     }
     private onStart(e: Event, data: DraggableData): void | boolean {

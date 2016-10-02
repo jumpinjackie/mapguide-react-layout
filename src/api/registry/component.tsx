@@ -19,7 +19,7 @@ export class DefaultComponentNames {
     public static get QuickPlot(): string { return "QuickPlot"; }
 }
 
-export type ComponentFactory = (props) => JSX.Element; 
+export type ComponentFactory = (props: any) => JSX.Element; 
 
 const components: { [id: string]: ComponentFactory } = {};
 

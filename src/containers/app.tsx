@@ -7,7 +7,7 @@ import { initLayout } from "../actions/init";
 import { Error } from "../components/error";
 import { tr } from "../api/i18n";
 
-function endsWith(str, suffix) {
+function endsWith(str: string, suffix: string): boolean {
     return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
 
@@ -33,32 +33,39 @@ export interface IAppProps {
      */
     resourceId: string;
     externalBaseLayers?: IExternalBaseLayer[];
-} 
+}
 
 interface IAppState {
     config?: any;
 }
 
-interface IAppDispatch {
-    initApp?: (args) => void;
-    initLayout?: (args) => void;
+interface IInitAppLayout {
+    resourceId: string;
+    externalBaseLayers?: IExternalBaseLayer[];
 }
 
-function mapStateToProps(state): IAppState {
+interface IAppDispatch {
+    initApp?: (args: any) => void;
+    initLayout?: (args: IInitAppLayout) => void;
+}
+
+function mapStateToProps(state: any): IAppState {
     return {
         config: state.config
     };
 }
 
-function mapDispatchToProps(dispatch): IAppDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): IAppDispatch {
     return {
         initLayout: (args) => dispatch(initLayout(args))
     };
 }
 
+type AppProps = IAppProps & IAppState & IAppDispatch;
+
 @connect(mapStateToProps, mapDispatchToProps)
-export class App extends React.Component<IAppProps & IAppState & IAppDispatch, any> {
-    constructor(props) {
+export class App extends React.Component<AppProps, any> {
+    constructor(props: AppProps) {
         super(props);
     }
     componentDidMount() {

@@ -69,31 +69,33 @@ interface IAjaxViewerShimDispatch {
     legendRefresh?: () => void;
 }
 
-function mapStateToProps(state): IAjaxViewerShimState {
+function mapStateToProps(state: any): IAjaxViewerShimState {
     return {
         map: state.map.state,
         selection: state.selection
     };
 }
 
-function mapDispatchToProps(dispatch): IAjaxViewerShimDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): IAjaxViewerShimDispatch {
     return {
         goHome: () => dispatch(TaskPaneActions.goHome()),
         legendRefresh: () => dispatch(LegendActions.refresh())
     };
 }
 
+type AjaxViewerShimProps = IAjaxViewerShimProps & IAjaxViewerShimState & IAjaxViewerShimDispatch;
+
 @connect(mapStateToProps, mapDispatchToProps)
-export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjaxViewerShimState & IAjaxViewerShimDispatch, any> {
-    private fnFormFrameMounted: (component) => void;
+export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {
+    private fnFormFrameMounted: (component: FormFrameShim) => void;
     private us: boolean;
     private formFrame: FormFrameShim;
-    constructor(props) {
+    constructor(props: AjaxViewerShimProps) {
         super(props);
         this.us = true;
         this.fnFormFrameMounted = this.onFormFrameMounted.bind(this);
     }
-    private onFormFrameMounted(form) {
+    private onFormFrameMounted(form: FormFrameShim) {
         this.formFrame = form;
     }
     // ------------------------ Map Frame -------------------------------- //
@@ -105,7 +107,7 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
      * flag anyways, so we might as well emulate it here
      */
     public get mapInit(): boolean {
-        return this.props.map != null && this.props.map.SessionId != null
+        return this.props.map != null && this.props.map.SessionId != null;
     }
     public ClearSelection(): void {
         const viewer = Runtime.getViewer();
@@ -137,7 +139,7 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
                     return {
                         X: coord[0],
                         Y: coord[1]
-                    }
+                    };
                 });
                 handler(new AjaxViewerLineStringOrPolygon(coords));
             });
@@ -163,7 +165,7 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
                     return {
                         X: coord[0],
                         Y: coord[1]
-                    }
+                    };
                 });
                 handler(new AjaxViewerLineStringOrPolygon(coords));
             });
@@ -177,7 +179,7 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
                     return {
                         X: coord[0],
                         Y: coord[1]
-                    }
+                    };
                 });
                 handler(new AjaxViewerLineStringOrPolygon(coords));
             });
@@ -197,7 +199,7 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
                         X: extent[2],
                         Y: extent[3]
                     }
-                })
+                });
             });
         }
     }
@@ -362,7 +364,7 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
     public SetLatLongDisplayUnits(latLon: boolean): void {
         //This is what the AJAX viewer does
     }
-    public SetSelectionXML(xmlSet): void {
+    public SetSelectionXML(xmlSet: string): void {
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.setSelectionXml(xmlSet);
@@ -406,8 +408,8 @@ export class AjaxViewerShim extends React.Component<IAjaxViewerShimProps & IAjax
         browserWindow.formFrame = browserWindow.mapFrame;
 
         browserWindow.Refresh = browserWindow.Refresh || (() => this.Refresh());
-        browserWindow.SetSelectionXML = browserWindow.SetSelectionXML || ((xmlSet) => this.SetSelectionXML(xmlSet));
-        browserWindow.ZoomToView = browserWindow.ZoomToView || ((x, y, scale, refresh) => this.ZoomToView(x, y, scale, refresh));
+        browserWindow.SetSelectionXML = browserWindow.SetSelectionXML || ((xmlSet: string) => this.SetSelectionXML(xmlSet));
+        browserWindow.ZoomToView = browserWindow.ZoomToView || ((x: number, y: number, scale: number, refresh: boolean) => this.ZoomToView(x, y, scale, refresh));
         browserWindow.GotoHomePage = browserWindow.GotoHomePage || (() => this.goHome());
     }
     render(): JSX.Element {

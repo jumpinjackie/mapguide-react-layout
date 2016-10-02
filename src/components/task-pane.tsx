@@ -44,8 +44,8 @@ export interface ITaskPaneProps {
 
 export class TaskPane extends React.Component<ITaskPaneProps, any> {
     _iframe: HTMLIFrameElement;
-    fnFrameMounted: (iframe) => void;
-    fnFrameLoaded: (e) => void;
+    fnFrameMounted: (iframe: HTMLIFrameElement) => void;
+    fnFrameLoaded: GenericEventHandler;
     taskButtons: IItem[];
     constructor(props: ITaskPaneProps) {
         super(props);
@@ -61,10 +61,10 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             activeComponent: null
         };
     }
-    private onFrameMounted(iframe) {
+    private onFrameMounted(iframe: HTMLIFrameElement) {
         this._iframe = iframe;
     }
-    private onFrameLoaded(e) {
+    private onFrameLoaded(e: GenericEvent) {
         const frame = e.currentTarget;
         if (frame.contentWindow) {
             this.props.onUrlLoaded(frame.contentWindow.location.href);

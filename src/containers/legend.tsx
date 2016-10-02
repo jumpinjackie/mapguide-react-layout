@@ -21,13 +21,13 @@ interface ILegendContainerState {
 
 interface ILegendContainerDispatch {
     setBaseLayer?: (layerName: string) => void;
-    setGroupVisibility?: (options) => void;
-    setLayerVisibility?: (options) => void;
-    setLayerSelectable?: (options) => void;
-    setGroupExpanded?: (options) => void;
+    setGroupVisibility?: (options: { id: string, value: boolean }) => void;
+    setLayerVisibility?: (options: { id: string, value: boolean }) => void;
+    setLayerSelectable?: (options: { id: string, value: boolean }) => void;
+    setGroupExpanded?: (options: { id: string, value: boolean }) => void;
 }
 
-function mapStateToProps(state): ILegendContainerState {
+function mapStateToProps(state: any): ILegendContainerState {
     return {
         view: state.view.current,
         viewer: state.map.viewer,
@@ -37,7 +37,7 @@ function mapStateToProps(state): ILegendContainerState {
     };
 }
 
-function mapDispatchToProps(dispatch): ILegendContainerDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): ILegendContainerDispatch {
     return {
         setBaseLayer: (layerName: string) => dispatch(MapActions.setBaseLayer(layerName)),
         setGroupVisibility: (options) => dispatch(LegendActions.setGroupVisibility(options)),
@@ -47,14 +47,16 @@ function mapDispatchToProps(dispatch): ILegendContainerDispatch {
     };
 }
 
+type LegendContainerProps = ILegendContainerProps & ILegendContainerState & ILegendContainerDispatch;
+
 @connect(mapStateToProps, mapDispatchToProps)
-export class LegendContainer extends React.Component<ILegendContainerProps & ILegendContainerState & ILegendContainerDispatch, any> {
-    private fnBaseLayerChanged: (baseLayerName) => void;
+export class LegendContainer extends React.Component<LegendContainerProps, any> {
+    private fnBaseLayerChanged: (baseLayerName: string) => void;
     private fnGroupVisibilityChanged: MapElementChangeFunc;
     private fnLayerVisibilityChanged: MapElementChangeFunc;
-    private fnLayerSelectabilityChanged: (id, selectable) => void;
-    private fnGroupExpansionChanged: (id, selectable) => void;
-    constructor(props) {
+    private fnLayerSelectabilityChanged: (id: string, selectable: boolean) => void;
+    private fnGroupExpansionChanged: (id: string, selectable: boolean) => void;
+    constructor(props: LegendContainerProps) {
         super(props);
         this.fnGroupVisibilityChanged = this.onGroupVisibilityChanged.bind(this);
         this.fnLayerVisibilityChanged = this.onLayerVisibilityChanged.bind(this);
@@ -74,12 +76,12 @@ export class LegendContainer extends React.Component<ILegendContainerProps & ILe
     }
     private onGroupVisibilityChanged(groupId: string, visible: boolean) {
         if (this.props.setGroupVisibility) {
-            this.props.setGroupVisibility({ groupId: groupId, visible: visible });
+            this.props.setGroupVisibility({ id: groupId, value: visible });
         }
     }
     private onLayerVisibilityChanged(layerId: string, visible: boolean) {
         if (this.props.setLayerVisibility) {
-            this.props.setLayerVisibility({ layerId: layerId, visible: visible });
+            this.props.setLayerVisibility({ id: layerId, value: visible });
         }
     }
     private onBaseLayerChanged(layerName: string) {

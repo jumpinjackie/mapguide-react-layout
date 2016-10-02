@@ -27,7 +27,7 @@ const PBMG_PROPS = {
     style: { position: "absolute", bottom: 0, right: 0, zIndex: 100 }
 };
 
-const SidebarHeader = (props) => {
+const SidebarHeader = (props: any) => {
     const sbHeaderStyle: React.CSSProperties = {
         position: "absolute",
         top: 0,
@@ -54,12 +54,12 @@ interface ISidebarProps {
 }
 
 class Sidebar extends React.Component<ISidebarProps, any> {
-    private fnClickExpand: (e) => void;
-    private fnClickCollapse: (e) => void;
-    private fnActivateTasks: (e) => void;
-    private fnActivateLegend: (e) => void;
-    private fnActivateSelection: (e) => void;
-    constructor(props) {
+    private fnClickExpand: GenericEventHandler;
+    private fnClickCollapse: GenericEventHandler;
+    private fnActivateTasks: GenericEventHandler;
+    private fnActivateLegend: GenericEventHandler;
+    private fnActivateSelection: GenericEventHandler;
+    constructor(props: ISidebarProps) {
         super(props);
         this.fnClickCollapse = this.onClickCollapse.bind(this);
         this.fnClickExpand = this.onClickExpand.bind(this);
@@ -88,7 +88,7 @@ class Sidebar extends React.Component<ISidebarProps, any> {
             }
         }
     }
-    onActivateTasks(e) {
+    onActivateTasks(e: GenericEvent) {
         e.preventDefault();
         this.setState({
             collapsed: false,
@@ -96,7 +96,7 @@ class Sidebar extends React.Component<ISidebarProps, any> {
         });
         return false;
     }
-    onActivateLegend(e) {
+    onActivateLegend(e: GenericEvent) {
         e.preventDefault();
         this.setState({
             collapsed: false,
@@ -104,7 +104,7 @@ class Sidebar extends React.Component<ISidebarProps, any> {
         });
         return false;
     }
-    onActivateSelection(e) {
+    onActivateSelection(e: GenericEvent) {
         e.preventDefault();
         this.setState({
             collapsed: false,
@@ -112,14 +112,14 @@ class Sidebar extends React.Component<ISidebarProps, any> {
         });
         return false;
     }
-    onClickCollapse(e) {
+    onClickCollapse(e: GenericEvent) {
         e.preventDefault();
         this.setState({
             collapsed: true
         });
         return false;
     }
-    onClickExpand(e) {
+    onClickExpand(e: GenericEvent) {
         e.preventDefault();
         this.setState({
             collapsed: false
@@ -213,7 +213,7 @@ interface ISidebarLayoutState {
     lastaction?: any;
 }
 
-function mapStateToProps(state): ISidebarLayoutState {
+function mapStateToProps(state: any): ISidebarLayoutState {
     return {
         viewer: state.map.viewer,
         config: state.config,
@@ -222,7 +222,7 @@ function mapStateToProps(state): ISidebarLayoutState {
     };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch: ReduxDispatch) {
     return {
         
     };
@@ -232,7 +232,7 @@ type SidebarLayoutProps = ISidebarLayoutState;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
-    constructor(props) {
+    constructor(props: SidebarLayoutProps) {
         super(props);
     }
     render(): JSX.Element {

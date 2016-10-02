@@ -13,14 +13,14 @@ interface IViewerOptionsDispatch {
     
 }
 
-function mapStateToProps(state): IViewerOptionsState {
+function mapStateToProps(state: any): IViewerOptionsState {
     return {
         viewer: state.map.viewer,
         view: state.view.current
     };
 }
 
-function mapDispatchToProps(dispatch): IViewerOptionsDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): IViewerOptionsDispatch {
     return {
         
     };
@@ -30,7 +30,7 @@ type ViewerOptionsProps = IViewerOptionsProps & IViewerOptionsState & IViewerOpt
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
-    constructor(props) {
+    constructor(props: ViewerOptionsProps) {
         super(props);
     }
     render(): JSX.Element {

@@ -5,7 +5,7 @@ import { QueryMapFeaturesResponse } from "../api/contracts/query";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { getViewer } from "../api/runtime";
 import { invokeCommand, setScale } from "../actions/map";
-import { getCommand, DefaultCommands } from "../api/registry/command";
+import { ICommand, getCommand, DefaultCommands } from "../api/registry/command";
 import { IMapView } from "../components/context";
 
 interface INavigatorContainerProps {
@@ -19,11 +19,11 @@ interface INavigatorContainerState {
 }
 
 interface INavigatorContainerDispatch {
-    invokeCommand?: (cmd) => void;
-    setScale?: (scale) => void;
+    invokeCommand?: (cmd: ICommand) => void;
+    setScale?: (scale: number) => void;
 }
 
-function mapStateToProps(state): INavigatorContainerState {
+function mapStateToProps(state: any): INavigatorContainerState {
     return {
         config: state.config,
         viewer: state.map.viewer,
@@ -31,26 +31,28 @@ function mapStateToProps(state): INavigatorContainerState {
     };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch: ReduxDispatch): INavigatorContainerDispatch {
     return {
         setScale: (scale) => dispatch(setScale(scale)),
         invokeCommand: (cmd) => dispatch(invokeCommand(cmd))
     };
 }
 
+type NavigatorContainerProps = INavigatorContainerProps & INavigatorContainerState & INavigatorContainerDispatch;
+
 @connect(mapStateToProps, mapDispatchToProps)
-export class NavigatorContainer extends React.Component<INavigatorContainerProps & INavigatorContainerState & INavigatorContainerDispatch, any> {
-    private fnZoom: (direction) => void;
-    private fnPan: (direction) => void;
-    private fnRequestZoomToScale: (scale) => void;
-    constructor(props) {
+export class NavigatorContainer extends React.Component<NavigatorContainerProps, any> {
+    private fnZoom: (direction: ZoomDirection) => void;
+    private fnPan: (direction: PanDirection) => void;
+    private fnRequestZoomToScale: (scale: number) => void;
+    constructor(props: NavigatorContainerProps) {
         super(props);
         this.fnZoom = this.onZoom.bind(this);
         this.fnPan = this.onPan.bind(this);
         this.fnRequestZoomToScale = this.onRequestZoomToScale.bind(this);
     }
-    private onZoom(direction) {
-        let cmd;
+    private onZoom(direction: ZoomDirection) {
+        let cmd: ICommand | undefined;
         switch (direction) {
             case ZoomDirection.In:
                 cmd = getCommand(DefaultCommands.ZoomIn);
@@ -59,12 +61,12 @@ export class NavigatorContainer extends React.Component<INavigatorContainerProps
                 cmd = getCommand(DefaultCommands.ZoomOut);
                 break;
         }
-        if (cmd != null && this.props.invokeCommand) {
+        if (cmd && this.props.invokeCommand) {
             this.props.invokeCommand(cmd);
         }
     }
-    private onPan(direction) {
-        let cmd;
+    private onPan(direction: PanDirection) {
+        let cmd: ICommand | undefined;
         switch (direction) {
             case PanDirection.East:
                 cmd = getCommand(DefaultCommands.PanRight);
@@ -79,7 +81,7 @@ export class NavigatorContainer extends React.Component<INavigatorContainerProps
                 cmd = getCommand(DefaultCommands.PanDown);
                 break;
         }
-        if (cmd != null && this.props.invokeCommand) {
+        if (cmd && this.props.invokeCommand) {
             this.props.invokeCommand(cmd);
         }
     }

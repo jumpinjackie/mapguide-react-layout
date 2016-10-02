@@ -7,8 +7,8 @@ interface IBaseLayerSwitcherProps {
 }
 
 export class BaseLayerSwitcher extends React.Component<IBaseLayerSwitcherProps, any> {
-    private fnBaseLayerChanged: (e) => void;
-    constructor(props) {
+    private fnBaseLayerChanged: (e: any) => void;
+    constructor(props: IBaseLayerSwitcherProps) {
         super(props);
         this.fnBaseLayerChanged = this.onBaseLayerChanged.bind(this);
         const selected = props.externalBaseLayers.filter(layer => layer.visible === true);
@@ -16,7 +16,7 @@ export class BaseLayerSwitcher extends React.Component<IBaseLayerSwitcherProps, 
             selected: (selected.length == 1 ? selected[0].name : null)
         };
     }
-    onBaseLayerChanged(e) {
+    onBaseLayerChanged(e: any): void {
         const { onBaseLayerChanged } = this.props;
         const value = e.currentTarget.value;
         this.setState({ selected: value });

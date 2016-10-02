@@ -31,7 +31,7 @@ interface IAjaxViewerLayoutState {
     capabilities?: any;
 }
 
-function mapStateToProps(state): IAjaxViewerLayoutState {
+function mapStateToProps(state: any): IAjaxViewerLayoutState {
     return {
         config: state.config,
         map: state.map.state,
@@ -39,7 +39,7 @@ function mapStateToProps(state): IAjaxViewerLayoutState {
     };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch: ReduxDispatch) {
     return {
         
     };
@@ -49,7 +49,7 @@ type AjaxViewerLayoutProps = IAjaxViewerLayoutState;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any> {
-    constructor(props) {
+    constructor(props: AjaxViewerLayoutProps) {
         super(props);
     }
     render(): JSX.Element {

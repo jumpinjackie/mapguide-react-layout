@@ -10,7 +10,7 @@ export function isErrorResponse(response: Response): boolean {
     return !response.ok || response.status === MG_MAPAGENT_ERROR_CODE;
 }
 
-export function serialize(data): string {
+export function serialize(data: any): string {
     return Object.keys(data).map((keyName) => {
         return encodeURIComponent(keyName.toUpperCase()) + '=' + encodeURIComponent(data[keyName])
     }).join('&');

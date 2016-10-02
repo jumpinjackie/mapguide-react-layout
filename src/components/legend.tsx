@@ -1,6 +1,6 @@
 import * as React from "react";
 import { IExternalBaseLayer } from "./map-viewer-base";
-import { RuntimeMap, MapLayer, MapGroup } from "../api/contracts/runtime-map";
+import { RuntimeMap, MapLayer, MapGroup, RuleInfo } from "../api/contracts/runtime-map";
 import { ILegendContext, LEGEND_CONTEXT_VALIDATION_MAP } from "./context";
 import { BaseLayerSwitcher } from "./base-layer-switcher";
 import { isLayer } from "../utils/type-guards";
@@ -18,7 +18,11 @@ const EMPTY_STYLE = { display: "inline-block", margin: 0, width: `${ICON_WIDTH}p
 
 export type MapElementChangeFunc = (objectId: string, visible: boolean) => void;
 
-const LegendLabel = (props) => {
+interface ILegendLabelProps {
+    text: string;
+}
+
+const LegendLabel = (props: ILegendLabelProps) => {
     return <span style={{ lineHeight: `${ICON_HEIGHT}px`, verticalAlign: "middle" }}>{props.text}</span>;
 };
 
@@ -48,11 +52,16 @@ function getIconUri(iconMimeType: string, iconBase64: string | null | undefined)
     }
 }
 
-const EmptyNode = (props) => {
+const EmptyNode: React.StatelessComponent<any> = (props) => {
     return <div style={EMPTY_STYLE}>{Constants.NBSP}</div>;
 };
 
-const RuleNode = (props) => {
+interface IRuleNodeProps {
+    iconMimeType: string;
+    rule: RuleInfo;
+}
+
+const RuleNode = (props: IRuleNodeProps) => {
     const icon = getIconUri(props.iconMimeType, props.rule.Icon);
     const label = (props.rule.LegendLabel ? props.rule.LegendLabel : "");
     return <li style={LI_LIST_STYLE}>
@@ -67,9 +76,9 @@ interface ILayerNodeProps {
 class LayerNode extends React.Component<ILayerNodeProps, any> {
     static contextTypes = LEGEND_CONTEXT_VALIDATION_MAP;
     context: ILegendContext;
-    fnVisibilityChanged: (e) => void;
-    fnToggleSelectability: (e) => void;
-    fnToggleExpansion: (e) => void;
+    fnVisibilityChanged: GenericEventHandler;
+    fnToggleSelectability: GenericEventHandler;
+    fnToggleExpansion: GenericEventHandler;
     constructor(props: ILayerNodeProps) {
         super(props);
         this.fnVisibilityChanged = this.onVisibilityChanged.bind(this);
@@ -79,11 +88,11 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
             layerVisible: props.layer.Visible
         };
     }
-    private onVisibilityChanged(e) {
+    private onVisibilityChanged(e: GenericEvent) {
         this.setState({ layerVisible: e.target.checked });
         this.context.setLayerVisibility(this.props.layer.ObjectId, e.target.checked);
     }
-    private onToggleSelectability(e) {
+    private onToggleSelectability(e: GenericEvent) {
         const selectable = this.getLayerSelectability(this.props.layer.ObjectId);
         this.context.setLayerSelectability(this.props.layer.ObjectId, !selectable);
     }
@@ -93,7 +102,7 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
             expanded = this.props.layer.ExpandInLegend;
         return expanded;
     }
-    private onToggleExpansion(e) {
+    private onToggleExpansion(e: GenericEvent) {
         const expanded = this.getExpanded();
         this.context.setLayerExpanded(this.props.layer.ObjectId, !expanded);
     }
@@ -109,7 +118,7 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
             layerVisible: this.context.getLayerVisibility(this.props.layer)
         });
     }
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps: ILayerNodeProps) {
         this.setState({
             layerVisible: this.context.getLayerVisibility(nextProps.layer)
         });
@@ -120,13 +129,13 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
         const iconMimeType = this.context.getIconMimeType();
         let text = label;
         let icon: string | undefined = this.context.getStdIcon("legend-layer.png");
-        let selectable;
+        let selectable: JSX.Element | undefined;
         if (layer.Selectable === true) {
             selectable = <img style={ROW_ITEM_ELEMENT_STYLE}
                               onClick={this.fnToggleSelectability}
                               src={this.context.getStdIcon(this.getLayerSelectability(layer.ObjectId) ? "icon_select.gif" : "lc_unselect.gif")} />;
         }
-        let chkbox;
+        let chkbox: JSX.Element | undefined;
         if (layer.Type == 1) { //Dynamic
             chkbox = <input type='checkbox' 
                             className='layer-checkbox'
@@ -142,7 +151,7 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
                     //    text = label + " (" + scaleRange.MinScale + " - " + scaleRange.MaxScale + ")";
                     const fts = scaleRange.FeatureStyle[0];
                     const ruleCount = fts.Rule.length;
-                    let body;
+                    let body: JSX.Element | undefined;
                     let isExpanded = this.getExpanded();
                     if (isExpanded && ruleCount > 1) {
                         icon = this.context.getStdIcon("legend-theme.png");
@@ -175,7 +184,7 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
                         }
                     }
 
-                    let expanded;
+                    let expanded: JSX.Element;
                     if (ruleCount > 1) {
                         expanded = <img style={ROW_ITEM_ELEMENT_STYLE} onClick={this.fnToggleExpansion} src={this.context.getStdIcon(isExpanded ? "toggle.png" : "toggle-expand.png")} />;;
                     } else {
@@ -195,8 +204,8 @@ interface IGroupNodeProps {
 }
 
 class GroupNode extends React.Component<IGroupNodeProps, any> {
-    fnVisibilityChanged: (e) => void;
-    fnToggleExpansion: (e) => void;
+    fnVisibilityChanged: GenericEventHandler;
+    fnToggleExpansion: GenericEventHandler;
     static contextTypes = LEGEND_CONTEXT_VALIDATION_MAP;
     context: ILegendContext;
     constructor(props: IGroupNodeProps) {
@@ -207,11 +216,11 @@ class GroupNode extends React.Component<IGroupNodeProps, any> {
             groupVisible: props.group.Visible
         };
     }
-    private onToggleExpansion(e) {
+    private onToggleExpansion(e: GenericEvent) {
         const expanded = this.getExpanded();
         this.context.setGroupExpanded(this.props.group.ObjectId, !expanded);
     }
-    private onVisibilityChanged(e) {
+    private onVisibilityChanged(e: GenericEvent) {
         this.setState({ groupVisible: e.target.checked });
         this.context.setGroupVisibility(this.props.group.ObjectId, e.target.checked);
     }
@@ -226,7 +235,7 @@ class GroupNode extends React.Component<IGroupNodeProps, any> {
             groupVisible: this.context.getGroupVisibility(this.props.group)
         });
     }
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps: IGroupNodeProps) {
         this.setState({
             groupVisible: this.context.getGroupVisibility(nextProps.group)
         });
@@ -296,7 +305,7 @@ export class Legend extends React.Component<ILegendProps, any> {
         super(props);
         this.state = this.setupTree(props.map);
     }
-    componentWillReceiveProps(props) {
+    componentWillReceiveProps(props: ILegendProps) {
         const tree: any = this.setupTree(props.map);
         this.setState(tree);
     }
@@ -398,18 +407,22 @@ export class Legend extends React.Component<ILegendProps, any> {
     private getChildren(objectId: string): (MapLayer | MapGroup)[] {
         return this.state.tree.groupChildren[objectId] || [];
     }
-    private setupTree(map) {
+    private setupTree(map: RuntimeMap) {
         const state: any = {
             Layers: map.Layer,
             Groups: map.Group,
             LayerMap: {},
             GroupMap: {}
         };
-        for (const layer of map.Layer) {
-            state.LayerMap[layer.ObjectId] = layer;
+        if (map.Layer) {
+            for (const layer of map.Layer) {
+                state.LayerMap[layer.ObjectId] = layer;
+            }
         }
-        for (const group of map.Group) {
-            state.GroupMap[group.ObjectId] = group;
+        if (map.Group) {
+            for (const group of map.Group) {
+                state.GroupMap[group.ObjectId] = group;
+            }
         }
         const { Layers, Groups, LayerMap, GroupMap } = state;
         const tree: any = {
@@ -418,7 +431,7 @@ export class Legend extends React.Component<ILegendProps, any> {
         };
         const { root, groupChildren } = tree;
         if (Groups) {
-            var remainingGroups = {};
+            const remainingGroups: any = {};
             //1st pass, un-parented groups
             for (const group of Groups) {
                 if (group.ParentId) {
@@ -477,6 +490,7 @@ export class Legend extends React.Component<ILegendProps, any> {
         const { tree } = this.state;
         const { currentScale } = this.props;
         const { externalBaseLayers, onBaseLayerChanged } = this.props;
+        const rootItems: any[] = tree.root;
         return <div>
             {(() => {
                 if (externalBaseLayers != null &&
@@ -488,7 +502,7 @@ export class Legend extends React.Component<ILegendProps, any> {
                 }
             })()}
             <ul style={UL_LIST_STYLE}>
-            {tree.root.map(item => {
+            {rootItems.map(item => {
                 if (isLayer(item) && isLayerVisibleAtScale(item, currentScale)) {
                     return <LayerNode key={item.ObjectId} layer={item} />;
                 } else {

@@ -3,6 +3,6 @@
 // As suggested by the creator of redux:
 // https://github.com/reactjs/redux/issues/580
 
-export function lastAction(state = null, action) {
+export function lastAction(state = null, action: ReduxAction|ReduxThunkedAction): ReduxAction|ReduxThunkedAction {
     return action;
 }

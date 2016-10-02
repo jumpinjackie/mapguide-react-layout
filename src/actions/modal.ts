@@ -1,6 +1,6 @@
 import * as Constants from "../constants";
 
-export function showModalComponent(options) {
+export function showModalComponent(options: any): ReduxAction {
     return {
         type: Constants.MODAL_SHOW_COMPONENT,
         payload: {
@@ -11,7 +11,7 @@ export function showModalComponent(options) {
     };
 }
 
-export function showModalUrl(options) {
+export function showModalUrl(options: any): ReduxAction {
     return {
         type: Constants.MODAL_SHOW_URL,
         payload: {
@@ -22,7 +22,7 @@ export function showModalUrl(options) {
     };
 }
 
-export function hideModal(options) {
+export function hideModal(options: any): ReduxAction {
     return {
         type: Constants.MODAL_CLOSE,
         payload: options.name

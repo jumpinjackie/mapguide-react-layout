@@ -1,7 +1,7 @@
 import queryString = require("query-string");
 const parse = require("url-parse");
 
-function arraysEqual(a, b) {
+function arraysEqual(a: string[]|null, b: string[]|null): boolean {
     if (a === b) return true;
     if (a == null || b == null) return false;
     if (a.length != b.length) return false;

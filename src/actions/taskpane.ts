@@ -3,7 +3,7 @@ import { MgError } from "../api/error";
 import queryString = require("query-string");
 const parse = require("url-parse");
 
-export function goHome() {
+export function goHome(): ReduxThunkedAction {
     return (dispatch, getState) => {
         const initUrl = getState().taskpane.initialUrl;
         if (initUrl != null) {

@@ -1,10 +1,11 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { SelectionPanel } from "../components/selection-panel";
-import { QueryMapFeaturesResponse } from "../api/contracts/query";
+import { QueryMapFeaturesResponse, SelectedFeature } from "../api/contracts/query";
 import * as MapActions from "../actions/map";
 import { getViewer } from "../api/runtime";
 import { tr } from "../api/i18n";
+import { IMapView } from "../components/context";
 
 interface ISelectionPanelContainerProps {
 
@@ -16,17 +17,17 @@ interface ISelectionPanelContainerState {
 }
 
 interface ISelectionPanelContainerDispatch {
-    setCurrentView?: (view) => void;
+    setCurrentView?: (view: IMapView) => void;
 }
 
-function mapStateToProps(state): ISelectionPanelContainerState {
+function mapStateToProps(state: any): ISelectionPanelContainerState {
     return {
         config: state.config,
         selection: state.selection.selectionSet
     };
 }
 
-function mapDispatchToProps(dispatch): ISelectionPanelContainerDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): ISelectionPanelContainerDispatch {
     return {
         setCurrentView: (view) => dispatch(MapActions.setCurrentView(view))
     };
@@ -36,12 +37,12 @@ type SelectionPanelContainerProps = ISelectionPanelContainerProps & ISelectionPa
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class SelectionPanelContainer extends React.Component<SelectionPanelContainerProps, any> {
-    private fnZoomToSelectedFeature: (feature: any) => void;
-    constructor(props) {
+    private fnZoomToSelectedFeature: (feature: SelectedFeature) => void;
+    constructor(props: SelectionPanelContainerProps) {
         super(props);
         this.fnZoomToSelectedFeature = this.onZoomToSelectedFeature.bind(this);
     }
-    private onZoomToSelectedFeature(feature: any) {
+    private onZoomToSelectedFeature(feature: SelectedFeature) {
         const bbox: any = feature.Bounds.split(" ").map(s => parseFloat(s));
         const viewer = getViewer();
         if (viewer && this.props.setCurrentView) {

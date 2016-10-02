@@ -107,7 +107,7 @@ export interface IMapViewer {
     getCurrentExtent(): Bounds;
     getCurrentView(): IMapView;
     zoomToView(x: number, y: number, scale: number): void;
-    setSelectionXml(xml: string, queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void;
+    setSelectionXml(xml: string, queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void;
     refreshMap(mode?: RefreshMode): void;
     getMetersPerUnit(): number;
     setActiveTool(tool: ActiveMapTool): void;
@@ -123,7 +123,7 @@ export interface IMapViewer {
     digitizeRectangle(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void;
     digitizePolygon(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void;
     selectByGeometry(geom: ol.geom.Geometry): void;
-    queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void;
+    queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void;
     zoomToExtent(extent: Bounds): void;
     isFeatureTooltipEnabled(): boolean;
     setFeatureTooltipEnabled(enabled: boolean): void;
@@ -139,8 +139,8 @@ export interface IMapViewer {
     addOverlay(overlay: ol.Overlay): void;
     removeOverlay(overlay: ol.Overlay): void;
 
-    addHandler(eventName: string, handler: Function);
-    removeHandler(eventName: string, handler: Function);
+    addHandler(eventName: string, handler: Function): void;
+    removeHandler(eventName: string, handler: Function): void;
 }
 
 export enum ActiveMapTool {
@@ -179,7 +179,7 @@ class FeatureQueryTooltip {
     private wktFormat: ol.format.WKT;
     private map: ol.Map;
     private onRequestSelectableLayers: (() => string[]) | undefined;
-    private throttledMouseMove;
+    private throttledMouseMove: GenericEventHandler;
     private featureTooltipElement: Element;
     private featureTooltip: ol.Overlay;
     private enabled: boolean;
@@ -203,14 +203,14 @@ class FeatureQueryTooltip {
         this.map = map;
         this.map.addOverlay(this.featureTooltip);
         this.onRequestSelectableLayers = onRequestSelectableLayers;
-        this.throttledMouseMove = debounce(e => {
+        this.throttledMouseMove = debounce((e: GenericEvent) => {
             const coords: Coordinate = e.coordinate;
             logger.debug(`[${new Date()}] FeatureTooltip - onMouseMove (${coords[0]}, ${coords[1]})`);
             this.sendTooltipQuery(coords);
         }, 1000);
         this.enabled = true;
     }
-    public onMouseMove(e) {
+    public onMouseMove(e: GenericEvent) {
         this.throttledMouseMove(e);
     }
     public isEnabled(): boolean {
@@ -300,7 +300,7 @@ class MouseTrackingTooltip {
         this.text = null;
         this.tooltipElement.classList.add(HIDDEN_CLASS_NAME);
     }
-    public onMouseMove(e) {
+    public onMouseMove(e: GenericEvent) {
         if (this.isContextMenuOpen())
             return;
         this.tooltip.setPosition(e.coordinate);
@@ -309,7 +309,7 @@ class MouseTrackingTooltip {
         else
             this.tooltipElement.classList.add(HIDDEN_CLASS_NAME);
     }
-    private onMouseOut(e) {
+    private onMouseOut(e: GenericEvent) {
         this.tooltipElement.classList.add(HIDDEN_CLASS_NAME);
     }
     public setText(prompt: string) {
@@ -327,7 +327,7 @@ class MouseTrackingTooltip {
     }
 }
 
-function isMiddleMouseDownEvent(e) {
+function isMiddleMouseDownEvent(e: MouseEvent) {
     return (e && (e.which == 2 || e.button == 4 ));
 }
 
@@ -392,8 +392,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
 
     private _customLayers: { [name: string]: ol.layer.Base; };
 
-    private fnKeyUp: (e) => void;
-    private fnKeyDown: (e) => void;
+    private fnKeyUp: GenericEventHandler;
+    private fnKeyDown: GenericEventHandler;
     /**
      * This is a throttled version of _refreshOnStateChange(). Call this on any 
      * modifications to pendingStateChanges 
@@ -436,7 +436,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
     }
     private createExternalSource(layer: IExternalBaseLayer) {
-        let sourceCtor = ol.source[layer.kind];
+        let sourceCtor = (ol.source as any)[layer.kind];
         if (typeof(sourceCtor) == 'undefined')
             throw new MgError(`Unknown external base layer provider: ${layer.kind}`);
 
@@ -456,7 +456,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         const ur = this._map.getCoordinateFromPixel([point[0] + ptBuffer, point[1] + ptBuffer]);
         return [ll[0], ll[1], ur[0], ur[1]];
     } 
-    private onMapClick(e) {
+    private onMapClick(e: GenericEvent) {
         if (this.isDigitizing()) {
             return;
         }
@@ -476,7 +476,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     }
     private buildDefaultQueryOptions(geom: ol.geom.Geometry | string, reqQueryFeatures: number = 1 /* Attributes */): IQueryMapFeaturesOptions {
         const names = this.getSelectableLayers();
-        let wkt;
+        let wkt: string;
         if (typeof geom === 'string') {
             wkt = geom;
         } else {
@@ -491,7 +491,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             persist: 1
         };
     }
-    private onZoomSelectBox(e) {
+    private onZoomSelectBox(e: GenericEvent) {
         const extent = this._zoomSelectBox.getGeometry();
         switch (this.props.tool) {
             case ActiveMapTool.Zoom:
@@ -507,7 +507,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 break;
         }
     }
-    private sendSelectionQuery(queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void) {
+    private sendSelectionQuery(queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) {
         if (queryOpts != null && queryOpts.layernames != null && queryOpts.layernames.length == 0) {
             return;
         }
@@ -535,7 +535,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             });
         }
     }
-    private zoomByDelta(delta) {
+    private zoomByDelta(delta: number) {
         const view = this._map.getView();
         if (!view) {
             return;
@@ -551,9 +551,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             view.setResolution(newResolution);
         }
     }
-    private getTileUrlFunctionForGroup(resourceId, groupName, zOrigin) {
+    private getTileUrlFunctionForGroup(resourceId: string, groupName: string, zOrigin: number) {
         const urlTemplate = this._client.getTileTemplateUrl(resourceId, groupName, '{x}', '{y}', '{z}');
-        return function (tileCoord) {
+        return function (tileCoord: [number, number, number]) {
             return urlTemplate
                 .replace('{z}', (zOrigin - tileCoord[0]).toString())
                 .replace('{x}', tileCoord[1].toString())
@@ -580,7 +580,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             this._mouseTooltip.setText(prompt);
         }
         this._activeDrawInteraction = draw;
-        this._activeDrawInteraction.once("drawend", (e) => {
+        this._activeDrawInteraction.once("drawend", (e: GenericEvent) => {
             const drawnFeature: ol.Feature = e.feature;
             const geom: T = drawnFeature.getGeometry() as T;
             this.cancelDigitization();
@@ -588,7 +588,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         })
         this._map.addInteraction(this._activeDrawInteraction);
     }
-    private onKeyDown(e) {
+    private onKeyDown(e: GenericEvent) {
         switch (e.keyCode) {
             case KC_ESCAPE:
                 this.cancelDigitization();
@@ -596,10 +596,10 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
         this.setState({ shiftKey: e.shiftKey });
     }
-    private onKeyUp(e) {
+    private onKeyUp(e: GenericEvent) {
         this.setState({ shiftKey: e.shiftKey });
     }
-    private onMouseMove(e) {
+    private onMouseMove(e: GenericEvent) {
         if (this._mouseTooltip) {
             this._mouseTooltip.onMouseMove(e);
         }
@@ -630,7 +630,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             });
         }
     }
-    private onImageError(e) {
+    private onImageError(e: GenericEvent) {
         this.decrementBusyWorker();
         this._keepAlive.lastTry().catch(err => {
             if (isSessionExpiredError(err)) {
@@ -730,7 +730,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         const tileHeight = map.TileHeight || 300;
         const metersPerUnit = map.CoordinateSystem.MetersPerUnit;
         this._dpi = map.DisplayDpi;
-        let projection;
+        let projection: string | undefined;
         const zOrigin = finiteScales.length - 1;
         this._inPerUnit = 39.37 * metersPerUnit;
         const resolutions = new Array(finiteScales.length);
@@ -922,7 +922,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         ovSource.on("imageloadend", this.decrementBusyWorker.bind(this));
 
         this._map.on("click", this.onMapClick.bind(this));
-        this._map.on("moveend", (e) => {
+        this._map.on("moveend", (e: GenericEvent) => {
             //HACK:
             //
             //What we're hoping here is that when the view has been broadcasted back up
@@ -950,15 +950,15 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             default_items: false,
             items: this.convertContextMenuItems(this.props.contextMenu)
         });
-        this._contextMenu.on("beforeopen", (e) => {
+        this._contextMenu.on("beforeopen", (e: GenericEvent) => {
             if (this.isDigitizing() || this.props.contextMenu == null || this.props.contextMenu.length == 0) {
                 this._contextMenu.disable();
             } else {
                 this._contextMenu.enable();
             }
         });
-        this._contextMenu.on("open", e => this._contextMenuOpen = true);
-        this._contextMenu.on("close", e => this._contextMenuOpen = false);
+        this._contextMenu.on("open", (e: GenericEvent) => this._contextMenuOpen = true);
+        this._contextMenu.on("close", (e: GenericEvent) => this._contextMenuOpen = false);
         this._map.addControl(this._contextMenu);
     }
     render(): JSX.Element {
@@ -986,8 +986,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             if (i.isSeparator === true) {
                 return '-';
             } else {
-                let cb;
-                let items;
+                let cb: (() => void) | undefined;
+                let items: any[] | undefined;
                 if (isMenu(i)) {
                     items = this.convertContextMenuItems(i.childItems)
                 } else {
@@ -1044,7 +1044,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         view.setCenter([x, y]);
         view.setResolution(this.scaleToResolution(scale));
     }
-    public setSelectionXml(xml: string, queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void {
+    public setSelectionXml(xml: string, queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void {
         //NOTE: A quirk of QUERYMAPFEATURES is that when passing in selection XML (instead of geometry), 
         //you must set the layerattributefilter to the full bit mask otherwise certain features in the
         //selection XML will not be rendered because they may not pass the layer attribute filter
@@ -1139,8 +1139,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             if (!geometry) {
                 geometry = new ol.geom.Polygon([]);
             }
-            const start = coordinates[0];
-            const end = coordinates[1];
+            const start: any = coordinates[0];
+            const end: any = coordinates[1];
             (geometry as any).setCoordinates([
                 [start, [start[0], end[1]], end, [end[0], start[1]], start]
             ]);
@@ -1162,7 +1162,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     public selectByGeometry(geom: ol.geom.Geometry): void {
         this.sendSelectionQuery(this.buildDefaultQueryOptions(geom));
     }
-    public queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err) => void): void {
+    public queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void {
         this.sendSelectionQuery(options, success, failure);
     }
     public isFeatureTooltipEnabled(): boolean {

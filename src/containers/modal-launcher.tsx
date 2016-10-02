@@ -12,17 +12,17 @@ interface IToolbarContainerState {
 }
 
 interface IToolbarContainerDispatch {
-    hideModal?: (options) => void;
+    hideModal?: (options: any) => void;
 }
 
-function mapStateToProps(state, ownProps): IToolbarContainerState {
+function mapStateToProps(state: any): IToolbarContainerState {
     return {
         config: state.config,
         modal: state.modal
     };
 }
 
-function mapDispatchToProps(dispatch): IToolbarContainerDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): IToolbarContainerDispatch {
     return {
         hideModal: (options) => dispatch(hideModal(options))
     };
@@ -32,10 +32,10 @@ type ToolbarContainerProps = IToolbarContainerState & IToolbarContainerDispatch;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
-    constructor(props) {
+    constructor(props: ToolbarContainerProps) {
         super(props);
     }
-    onCloseModal(name) {
+    onCloseModal(name: string) {
         if (this.props.hideModal) {
             this.props.hideModal({ name: name });
         }

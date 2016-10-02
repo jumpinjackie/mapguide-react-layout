@@ -1,9 +1,11 @@
 import * as React from 'react';
 
-export class FormFrameShim extends React.Component<any, any> {
+type FormFrameShimProps = any;
+
+export class FormFrameShim extends React.Component<FormFrameShimProps, any> {
     private _form: HTMLFormElement;
-    private fnFormMounted: (form) => void;
-    constructor(props) {
+    private fnFormMounted: (form: HTMLFormElement) => void;
+    constructor(props: FormFrameShimProps) {
         super(props);
         this.state = {
             target: "",
@@ -12,7 +14,7 @@ export class FormFrameShim extends React.Component<any, any> {
         };
         this.fnFormMounted = this.onFormMounted.bind(this);
     }
-    private onFormMounted(form) {
+    private onFormMounted(form: HTMLFormElement) {
         this._form = form;
     }
     submit(url: string, params: string[], target: string): void {

@@ -75,7 +75,7 @@ function isNotTargeted(target: "TaskPane" | "NewWindow" | "SpecifiedFrame"): tar
     return target != "SpecifiedFrame";
 }
 
-export function initLayout(options) {
+export function initLayout(options: any): ReduxThunkedAction {
     const parsed = parse(window.location.href);
     const query = queryString.parse(parsed.query);
     const opts = assign({}, options, {

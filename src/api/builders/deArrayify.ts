@@ -17,7 +17,7 @@ import { MgError } from "../error";
 
 type ElementType = "string" | "boolean" | "int" | "float";
 
-function tryGetAsProperty(el, name, type: ElementType = "string"): any {
+function tryGetAsProperty(el: any, name: string, type: ElementType = "string"): any {
     if (!el[name]) {
         return null;
     } else if (el[name].length === 1) {

@@ -14,7 +14,7 @@
     "typings": "rimraf typings/ && typings install",
     "test": "karma start",
     "test:ci": "karma start --single-run --browsers PhantomJS --reporters=verbose",
-    "ci": "npm run typings && npm run lint && npm run build && npm run test:ci"
+    "ci": "npm run typings && npm run lint && npm run test:ci"
   },
   "repository": {
     "type": "git",

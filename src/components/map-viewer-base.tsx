@@ -20,9 +20,18 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import * as ol from "openlayers";
+import { 
+    IMapView,
+    IExternalBaseLayer,
+    DigitizerCallback,
+    ActiveMapTool,
+    Bounds,
+    Coordinate,
+    ImageFormat,
+    RefreshMode
+} from "../api/common";
 import {
     IApplicationContext,
-    IMapView,
     APPLICATION_CONTEXT_VALIDATION_MAP
 } from "./context";
 import * as Contracts from '../api/contracts';
@@ -40,12 +49,7 @@ import ContextMenu = require("ol3-contextmenu");
 const assign = require("object-assign");
 const isMobile = require("ismobilejs");
 
-export interface IExternalBaseLayer {
-    name: string;
-    kind: string;
-    visible?: boolean;
-    options?: any;
-}
+
 
 interface ILayerGroupVisibility {
     showLayers: string[];
@@ -64,8 +68,8 @@ interface IMapViewerBaseProps {
     agentKind: ClientKind;
     locale?: string;
     featureTooltipsEnabled: boolean;
-    imageFormat: "PNG" | "PNG8" | "JPG" | "GIF";
-    selectionImageFormat?: "PNG" | "PNG8" | "JPG" | "GIF";
+    imageFormat: ImageFormat;
+    selectionImageFormat?: ImageFormat;
     selectionColor?: string;
     stateChangeDebounceTimeout?: number;
     pointSelectionBuffer?: number;
@@ -79,11 +83,6 @@ interface IMapViewerBaseProps {
     onSessionExpired?: () => void;
 }
 
-export enum RefreshMode {
-    LayersOnly = 1,
-    SelectionOnly = 2
-}
-
 export function areViewsCloseToEqual(view: IMapView, otherView: IMapView): boolean {
     if (view == null && otherView != null) {
         return false;
@@ -94,60 +93,6 @@ export function areViewsCloseToEqual(view: IMapView, otherView: IMapView): boole
     return areNumbersEqual(view.x, otherView.x) &&
            areNumbersEqual(view.y, otherView.y) &&
            areNumbersEqual(view.scale, otherView.scale);
-}
-
-export type DigitizerCallback<T extends ol.geom.Geometry> = (geom: T) => void;
-
-export type Coordinate = [number, number];
-export type Bounds = [number, number, number, number];
-
-export interface IMapViewer {
-    getProjection(): ol.ProjectionLike;
-    getViewForExtent(extent: Bounds): IMapView;
-    getCurrentExtent(): Bounds;
-    getCurrentView(): IMapView;
-    zoomToView(x: number, y: number, scale: number): void;
-    setSelectionXml(xml: string, queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void;
-    refreshMap(mode?: RefreshMode): void;
-    getMetersPerUnit(): number;
-    setActiveTool(tool: ActiveMapTool): void;
-    getActiveTool(): ActiveMapTool;
-    initialView(): void;
-    clearSelection(): void;
-    zoomDelta(delta: number): void;
-    isDigitizing(): boolean;
-    digitizePoint(handler: DigitizerCallback<ol.geom.Point>, prompt?: string): void;
-    digitizeLine(handler: DigitizerCallback<ol.geom.LineString>, prompt?: string): void;
-    digitizeLineString(handler: DigitizerCallback<ol.geom.LineString>, prompt?: string): void;
-    digitizeCircle(handler: DigitizerCallback<ol.geom.Circle>, prompt?: string): void;
-    digitizeRectangle(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void;
-    digitizePolygon(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void;
-    selectByGeometry(geom: ol.geom.Geometry): void;
-    queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void;
-    zoomToExtent(extent: Bounds): void;
-    isFeatureTooltipEnabled(): boolean;
-    setFeatureTooltipEnabled(enabled: boolean): void;
-    getPointSelectionBox(point: Coordinate, ptBuffer: number): Bounds;
-    getSelection(): QueryMapFeaturesResponse;
-    getSelectionXml(selection: FeatureSet, layerIds?: string[]): string;
-    
-    addLayer<T extends ol.layer.Base>(name: string, layer: T): T;
-    removeLayer(name: string): ol.layer.Base | undefined;
-    getLayer<T extends ol.layer.Base>(name: string, factory: () => T): T;
-    addInteraction<T extends ol.interaction.Interaction>(interaction: T): T;
-    removeInteraction<T extends ol.interaction.Interaction>(interaction: T): void;
-    addOverlay(overlay: ol.Overlay): void;
-    removeOverlay(overlay: ol.Overlay): void;
-
-    addHandler(eventName: string, handler: Function): void;
-    removeHandler(eventName: string, handler: Function): void;
-}
-
-export enum ActiveMapTool {
-    Zoom,
-    Select,
-    Pan,
-    None
 }
 
 const KC_ESCAPE = 27;

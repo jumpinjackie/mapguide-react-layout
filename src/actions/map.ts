@@ -1,6 +1,5 @@
 import * as Constants from "../constants";
-import { IMapView } from "../components/context";
-import { ICommand } from "../api/registry/command";
+import { ICommand, IMapView } from "../api/common";
 import { getViewer } from "../api/runtime";
 import { areViewsCloseToEqual } from "../components/map-viewer-base";
 import { areNumbersEqual } from '../utils/number';

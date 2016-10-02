@@ -6,7 +6,7 @@ import { MgError } from "../api/error";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { FeatureSet, SelectedFeatureSet } from "../api/contracts/query";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
-import { RefreshMode } from "../components/map-viewer-base";
+import { RefreshMode } from "../api/common";
 import * as MapActions from "../actions/map";
 import * as TaskPaneActions from "../actions/taskpane";
 import * as LegendActions from "../actions/legend";

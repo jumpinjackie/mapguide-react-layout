@@ -1,9 +1,10 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { ICommand } from "../api/common";
 import { IItem } from "../components/toolbar";
 import { TaskPane } from "../components/task-pane";
 import { RuntimeMap } from "../api/contracts/runtime-map";
-import { ICommand, mapToolbarReference } from "../api/registry/command";
+import { mapToolbarReference } from "../api/registry/command";
 import { invokeCommand } from "../actions/map";
 import * as TaskPaneActions from "../actions/taskpane";
 import { areUrlsSame } from "../utils/url";

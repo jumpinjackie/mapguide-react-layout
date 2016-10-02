@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { SelectedFeatureCount } from "../components/selected-feature-count";
 import { QueryMapFeaturesResponse } from "../api/contracts/query";
-import { IMapView } from "../components/context";
+import { IMapView } from "../api/common";
 import { tr } from "../api/i18n";
 
 interface IScaleDisplayContainerState {

@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { ClientKind } from "../api/client";
 import { getLayout } from "../api/registry/layout";
-import { IExternalBaseLayer } from "../components/map-viewer-base";
+import { IExternalBaseLayer } from "../api/common";
 import { initLayout } from "../actions/init";
 import { Error } from "../components/error";
 import { tr } from "../api/i18n";

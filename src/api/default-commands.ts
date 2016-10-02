@@ -1,7 +1,10 @@
 import { registerCommand, DefaultCommands, CommandConditions } from "./registry/command";
-import { IMapViewer, ActiveMapTool } from "../components/map-viewer-base";
+import {
+    IMapViewer,
+    ActiveMapTool,
+    RefreshMode
+} from "./common";
 import { QueryMapFeaturesResponse } from "./contracts/query";
-import { RefreshMode } from "../components/map-viewer-base";
 import * as LegendActions from "../actions/legend";
 import * as MapActions from "../actions/map";
 import { tr } from "../api/i18n";

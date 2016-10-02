@@ -5,7 +5,7 @@ import { QueryMapFeaturesResponse, SelectedFeature } from "../api/contracts/quer
 import * as MapActions from "../actions/map";
 import { getViewer } from "../api/runtime";
 import { tr } from "../api/i18n";
-import { IMapView } from "../components/context";
+import { IMapView } from "../api/common";
 
 interface ISelectionPanelContainerProps {
 

@@ -1,5 +1,5 @@
 import * as Constants from "../constants";
-import { IExternalBaseLayer } from "../components/map-viewer-base";
+import { IExternalBaseLayer } from "../api/common";
 const assign = require("object-assign");
 
 export const INITIAL_STATE = {

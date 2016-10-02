@@ -1,6 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { ICommand, getCommand, mapToolbarReference } from "../api/registry/command";
+import { ICommand } from "../api/common";
+import { getCommand, mapToolbarReference } from "../api/registry/command";
 import { IItem, IMenu, Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import { invokeCommand } from "../actions/map";
 

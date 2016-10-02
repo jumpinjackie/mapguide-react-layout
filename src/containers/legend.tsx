@@ -4,7 +4,7 @@ import { Legend, MapElementChangeFunc } from "../components/legend";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import * as LegendActions from "../actions/legend";
 import * as MapActions from "../actions/map";
-import { IMapView } from "../components/context";
+import { IMapView } from "../api/common";
 import { tr } from "../api/i18n";
 
 interface ILegendContainerProps {

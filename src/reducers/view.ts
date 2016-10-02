@@ -1,5 +1,5 @@
 import * as Constants from "../constants";
-import { IMapView } from "../components/context";
+import { IMapView } from "../api/common";
 const assign = require("object-assign");
 
 interface IViewReducerState {

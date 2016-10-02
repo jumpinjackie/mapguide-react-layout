@@ -7,12 +7,6 @@ import * as React from "react";
 import { MapLayer, MapGroup } from "../api/contracts/runtime-map";
 import { IMapGuideClient } from "../api/request-builder";
 
-export interface IMapView {
-    x: number;
-    y: number;
-    scale: number;
-}
-
 export interface IApplicationContext {
     getClient(): IMapGuideClient;
 }

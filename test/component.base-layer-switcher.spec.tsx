@@ -2,7 +2,7 @@ import * as React from "react";
 import { expect } from "chai";
 import { shallow, mount, render } from "enzyme";
 import td = require("testdouble");
-import { IExternalBaseLayer } from "../src/components/map-viewer-base";
+import { IExternalBaseLayer } from "../src/api/common";
 import { BaseLayerSwitcher } from "../src/components/base-layer-switcher";
 
 type LayerSwitchFunc = (name: string) => void;

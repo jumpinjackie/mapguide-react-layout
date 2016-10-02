@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ol from "openlayers";
 import { connect } from "react-redux";
-import { IMapViewer, ActiveMapTool } from "../components/map-viewer-base";
+import { IMapViewer, ActiveMapTool } from "../api/common";
 import { getViewer } from "../api/runtime";
 import { tr } from "../api/i18n";
 import { NBSP } from "../constants";

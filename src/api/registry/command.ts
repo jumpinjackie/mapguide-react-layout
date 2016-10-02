@@ -1,4 +1,11 @@
-import { IMapViewer } from "../../components/map-viewer-base";
+import {
+    IMapView,
+    IMapViewer,
+    ICommand,
+    Dictionary,
+    IInvokeUrlCommand,
+    ISearchCommand
+} from "../../api/common";
 import { QueryMapFeaturesResponse } from "../contracts/query";
 import { ResultColumnSet } from "../contracts/weblayout";
 import { IItem, IMenu } from "../../components/toolbar";
@@ -77,40 +84,6 @@ export class DefaultCommands {
     public static get SelectWithin(): string { return "SelectWithin"; }
     public static get QuickPlot(): string { return "QuickPlot"; }
 }
-
-export interface ICommandRef {
-    name: string;
-}
-
-export type DispatcherFunc = (dispatch: ReduxDispatch, getState: () => any, viewer?: IMapViewer) => any; 
-
-export interface ICommand {
-    icon: string;
-    //tooltip?: string;
-    //label?: string;
-    enabled: (state: any) => boolean;
-    selected: (state: any) => boolean;
-    invoke: DispatcherFunc;
-}
-
-export interface IInvokeUrlCommand {
-    icon?: string;
-    url: string;
-    disableIfSelectionEmpty?: boolean;
-    target: "TaskPane" | "NewWindow";
-}
-
-export interface ISearchCommand {
-    icon?: string;
-    layer: string;
-    prompt: string;
-    title: string;
-    resultColumns: ResultColumnSet;
-    filter?: string;
-    matchLimit: number;
-}
-
-type Dictionary<T> = { [key: string]: T };
 
 const commands: Dictionary<ICommand> = {};
 

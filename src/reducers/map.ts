@@ -1,5 +1,5 @@
 import * as Constants from "../constants";
-import { ActiveMapTool } from "../components/map-viewer-base";
+import { ActiveMapTool } from "../api/common";
 import uniq = require("lodash.uniq");
 const assign = require("object-assign");
 

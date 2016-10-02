@@ -6,8 +6,7 @@
  *
  * Where possible, use actions instead of this module
  */
-import { IMapViewer } from "../components/map-viewer-base";
-import { IMapView } from "../components/context";
+import { IMapViewer, IMapView } from "../api/common";
 
 let _viewer: IMapViewer | undefined;
 

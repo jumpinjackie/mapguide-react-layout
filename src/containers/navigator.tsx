@@ -1,12 +1,13 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { ICommand } from "../api/common";
 import { Navigator, ZoomDirection, PanDirection } from "../components/navigator";
 import { QueryMapFeaturesResponse } from "../api/contracts/query";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { getViewer } from "../api/runtime";
 import { invokeCommand, setScale } from "../actions/map";
-import { ICommand, getCommand, DefaultCommands } from "../api/registry/command";
-import { IMapView } from "../components/context";
+import { getCommand, DefaultCommands } from "../api/registry/command";
+import { IMapView } from "../api/common";
 
 interface INavigatorContainerProps {
     style?: React.CSSProperties;

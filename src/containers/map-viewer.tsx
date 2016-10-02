@@ -1,15 +1,16 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { IMapView } from "../components/context";
 import {
+    ICommand,
+    IMapView,
     IMapViewer,
     ActiveMapTool,
-    MapViewerBase, 
     RefreshMode,
     DigitizerCallback,
     Bounds,
     Coordinate
-} from "../components/map-viewer-base";
+} from "../api/common";
+import { MapViewerBase } from "../components/map-viewer-base";
 import * as Runtime from "../api/runtime";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import * as MapActions from "../actions/map";
@@ -18,7 +19,7 @@ import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml } from '../api/builders/deArrayify';
-import { getCommand, mapToolbarReference, ICommand } from "../api/registry/command";
+import { getCommand, mapToolbarReference,  } from "../api/registry/command";
 import { invokeCommand, queryMapFeatures } from "../actions/map";
 import { showModalComponent } from "../actions/modal";
 import { DefaultComponentNames } from "../api/registry/component";
@@ -254,9 +255,6 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     }
     queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void {
         this.inner.queryMapFeatures(options, success, failure);
-    }
-    getPointSelectionBox(point: Coordinate, ptBuffer: number): Bounds {
-        return this.inner.getPointSelectionBox(point, ptBuffer);
     }
     getSelection(): QueryMapFeaturesResponse {
         return this.props.selection;

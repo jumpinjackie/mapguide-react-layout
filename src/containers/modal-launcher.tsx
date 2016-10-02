@@ -5,17 +5,23 @@ import { ModalDialog } from "../components/modal-dialog";
 import { getComponentFactory } from "../api/registry/component";
 import { Error } from "../components/error";
 import { tr } from "../api/i18n";
+import {
+    ReduxDispatch,
+    IApplicationState,
+    IModalReducerState,
+    IConfigurationReducerState
+} from "../api/common";
 
 interface IToolbarContainerState {
-    modal?: any;
-    config?: any;
+    modal?: IModalReducerState;
+    config?: IConfigurationReducerState;
 }
 
 interface IToolbarContainerDispatch {
     hideModal?: (options: any) => void;
 }
 
-function mapStateToProps(state: any): IToolbarContainerState {
+function mapStateToProps(state: IApplicationState): IToolbarContainerState {
     return {
         config: state.config,
         modal: state.modal
@@ -41,7 +47,11 @@ export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
         }
     }
     render(): JSX.Element {
-        const { modal } = this.props;
+        const { modal, config } = this.props;
+        let locale: string | undefined;
+        if (config) {
+            locale = config.locale;
+        }
         return <div>
             {Object.keys(modal).map(key => {
                 const diag = modal[key];
@@ -58,7 +68,7 @@ export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
                             if (componentRenderer != null) {
                                 return componentRenderer(diag.componentProps);
                             } else {
-                                return <Error error={tr("ERR_UNREGISTERED_COMPONENT", this.props.config.locale, { componentId: componentId })} />;
+                                return <Error error={tr("ERR_UNREGISTERED_COMPONENT", locale, { componentId: componentId })} />;
                             }
                         })()}
                     </ModalDialog>;

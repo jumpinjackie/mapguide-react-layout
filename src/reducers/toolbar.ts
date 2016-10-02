@@ -1,7 +1,8 @@
 import * as Constants from "../constants";
+import { IToolbarReducerState } from "../api/common";
 const assign = require("object-assign");
 
-const INITIAL_STATE = {
+const INITIAL_STATE: IToolbarReducerState = {
 
 };
 

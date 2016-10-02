@@ -1,5 +1,10 @@
 import * as Constants from "../constants";
-import { ICommand, IMapView } from "../api/common";
+import {
+    ICommand,
+    IMapView,
+    ReduxAction,
+    ReduxThunkedAction
+} from "../api/common";
 import { getViewer } from "../api/runtime";
 import { areViewsCloseToEqual } from "../components/map-viewer-base";
 import { areNumbersEqual } from '../utils/number';
@@ -93,54 +98,61 @@ function combineFeatureSets(oldRes: FeatureSet | null | undefined, newRes: Featu
     return merged;
 }
 
-function combineSelections(oldRes: QueryMapFeaturesResponse, newRes: QueryMapFeaturesResponse): QueryMapFeaturesResponse {
-    const merged: QueryMapFeaturesResponse = {
-        SelectedFeatures: combineSelectedFeatureSets(oldRes.SelectedFeatures, newRes.SelectedFeatures),
-        FeatureSet: combineFeatureSets(oldRes.FeatureSet, newRes.FeatureSet),
-        Hyperlink: null,
-        InlineSelectionImage: null
-    };
-    return merged;
+function combineSelections(oldRes: QueryMapFeaturesResponse | null, newRes: QueryMapFeaturesResponse): QueryMapFeaturesResponse {
+    if (oldRes) {
+        const merged: QueryMapFeaturesResponse = {
+            SelectedFeatures: combineSelectedFeatureSets(oldRes.SelectedFeatures, newRes.SelectedFeatures),
+            FeatureSet: combineFeatureSets(oldRes.FeatureSet, newRes.FeatureSet),
+            Hyperlink: null,
+            InlineSelectionImage: null
+        };
+        return merged;
+    } else {
+        return newRes;
+    }
 }
 
 export function queryMapFeatures(opts: QueryMapFeatureActionOptions): ReduxThunkedAction {
     return (dispatch, getState) => {
         const args = getState().config;
         const map = getState().map.state;
-        const client = new Client(args.agentUri, args.agentKind);
-        const success = (res: QueryMapFeaturesResponse) => {
-            if (opts.callback != null) {
-                opts.callback(res);
-            }
-        };
-        const failure = (err: Error) => {
-            if (opts.errBack != null) {
-                opts.errBack(err);
-            }
-        };
-        client.queryMapFeatures(opts.options).then(res => {
-            if (opts.options.persist === 1) {
-                if (opts.append === true) {
-                    const combined = combineSelections(getState().selection.selectionSet, res);
-                    const mergedXml = buildSelectionXml(combined.FeatureSet);
-                    //Need to update the server-side selection with the merged result
-                    client.queryMapFeatures({
-                        session: map.SessionId,
-                        mapname: map.Name,
-                        persist: 1,
-                        featurefilter: mergedXml
-                    }).then(r => {
-                        dispatch(setSelection(combined));
-                        success(combined);
-                    });
+        const selectionSet = getState().selection.selectionSet;
+        if (map && args.agentKind && args.agentUri) {
+            const client = new Client(args.agentUri, args.agentKind);
+            const success = (res: QueryMapFeaturesResponse) => {
+                if (opts.callback != null) {
+                    opts.callback(res);
+                }
+            };
+            const failure = (err: Error) => {
+                if (opts.errBack != null) {
+                    opts.errBack(err);
+                }
+            };
+            client.queryMapFeatures(opts.options).then(res => {
+                if (opts.options.persist === 1) {
+                    if (opts.append === true) {
+                        const combined = combineSelections(selectionSet, res);
+                        const mergedXml = buildSelectionXml(combined.FeatureSet);
+                        //Need to update the server-side selection with the merged result
+                        client.queryMapFeatures({
+                            session: map.SessionId,
+                            mapname: map.Name,
+                            persist: 1,
+                            featurefilter: mergedXml
+                        }).then(r => {
+                            dispatch(setSelection(combined));
+                            success(combined);
+                        });
+                    } else {
+                        dispatch(setSelection(res));
+                        success(res);
+                    }
                 } else {
-                    dispatch(setSelection(res));
                     success(res);
                 }
-            } else {
-                success(res);
-            }
-        }).catch(failure);
+            }).catch(failure);
+        }
     };
 }
 
@@ -151,7 +163,7 @@ export function setCurrentView(view: IMapView): ReduxThunkedAction {
         // We don't want to dispatch SET_VIEW actions with redundant view
         // states if the one we're about to dispatch is the same as the
         // previous one
-        const currentView: IMapView = getState().view.current;
+        const currentView = getState().view.current;
         let dispatchThis = true;
         if (currentView != null && view != null) {
             if (areViewsCloseToEqual(currentView, view)) {

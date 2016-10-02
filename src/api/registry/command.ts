@@ -4,7 +4,9 @@ import {
     ICommand,
     Dictionary,
     IInvokeUrlCommand,
-    ISearchCommand
+    ISearchCommand,
+    ReduxDispatch,
+    ReduxStore
 } from "../../api/common";
 import { QueryMapFeaturesResponse } from "../contracts/query";
 import { ResultColumnSet } from "../contracts/weblayout";

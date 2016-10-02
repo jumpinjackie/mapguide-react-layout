@@ -2,22 +2,29 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { getViewer } from "../api/runtime";
 import { tr as xlate } from "../api/i18n";
+import { RuntimeMap } from "../api/contracts/runtime-map";
+import {
+    IMapView,
+    ReduxDispatch,
+    IApplicationState,
+    IConfigurationReducerState
+} from "../api/common";
 
 interface IQuickPlotContainerProps {
 
 }
 
 interface IQuickPlotContainerState {
-    config?: any;
-    map?: any;
-    view?: any;
+    config: IConfigurationReducerState;
+    map: RuntimeMap | null;
+    view: IMapView | null;
 }
 
 interface IQuickPlotContainerDispatch {
 
 }
 
-function mapStateToProps(state: any): IQuickPlotContainerState {
+function mapStateToProps(state: IApplicationState): IQuickPlotContainerState {
     return {
         config: state.config,
         map: state.map.state,
@@ -119,8 +126,9 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
 
     }
     render(): JSX.Element {
+        const { map, view } = this.props;
         const viewer = getViewer();
-        if (!viewer) {
+        if (!viewer || !map || !view) {
             return <div />;
         }
         const extent = viewer.getCurrentExtent();
@@ -282,7 +290,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
                         </div>;
                     } else {
                         return <div>
-                            <input type="hidden" id="scaleDenominator" name="scaleDenominator" value={this.props.view.scale} />
+                            <input type="hidden" id="scaleDenominator" name="scaleDenominator" value={`${view.scale}`} />
                             <input type="hidden" id="dpi" name="dpi" value={this.state.dpi} />
                         </div>;
                     }
@@ -303,8 +311,8 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
                 <input type="hidden" id="margin" name="margin" />
                 <input type="hidden" id="normalizedBox" name="normalizedBox" value={box} />
                 <input type="hidden" id="rotation" name="rotation" value={this.state.rotation} />
-                <input type="hidden" id="sessionId" name="sessionId" value={this.props.map.SessionId} />
-                <input type="hidden" id="mapName" name="mapName" value={this.props.map.Name} />
+                <input type="hidden" id="sessionId" name="sessionId" value={map.SessionId} />
+                <input type="hidden" id="mapName" name="mapName" value={map.Name} />
                 <input type="hidden" id="box" name="box" value={box} />
                 <input type="hidden" id="legalNotice" name="legalNotice"/>
             </form>

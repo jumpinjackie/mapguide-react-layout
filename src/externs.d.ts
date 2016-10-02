@@ -294,22 +294,6 @@ type GenericEvent = any;
 
 type GenericEventHandler = (e: GenericEvent) => void;
 
-// Redux typedefs to tighten up our redux code
-interface ReduxAction {
-    type: string;
-    payload?: any;
-}
-
-interface ReduxStore {
-    getState(): any;
-}
-
-type ReduxThunkedAction = (dispatch: ReduxDispatch, getState: () => any) => any;
-
-type ReduxActionCreator = ReduxAction | ReduxThunkedAction;
-
-type ReduxDispatch = (action: ReduxActionCreator) => void;
-
 // Types for various development options.
 
 // A hack for the Redux DevTools Chrome extension.

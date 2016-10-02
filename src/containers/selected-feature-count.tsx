@@ -1,5 +1,10 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import {
+    ReduxDispatch,
+    IApplicationState,
+    IConfigurationReducerState
+} from "../api/common";
 import { SelectedFeatureCount } from "../components/selected-feature-count";
 import { QueryMapFeaturesResponse } from "../api/contracts/query";
 
@@ -8,11 +13,11 @@ interface ISelectionPanelContainerProps {
 }
 
 interface ISelectionPanelContainerState {
-    config?: any;
-    selection?: QueryMapFeaturesResponse;
+    config: IConfigurationReducerState;
+    selection: QueryMapFeaturesResponse | null;
 }
 
-function mapStateToProps(state: any): ISelectionPanelContainerState {
+function mapStateToProps(state: IApplicationState): ISelectionPanelContainerState {
     return {
         config: state.config,
         selection: state.selection.selectionSet

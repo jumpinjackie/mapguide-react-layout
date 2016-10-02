@@ -1,7 +1,13 @@
 import * as React from "react";
 import * as ol from "openlayers";
 import { connect } from "react-redux";
-import { IMapViewer, ActiveMapTool } from "../api/common";
+import {
+    IMapViewer,
+    ActiveMapTool,
+    ReduxDispatch,
+    IApplicationState,
+    IConfigurationReducerState
+} from "../api/common";
 import { getViewer } from "../api/runtime";
 import { tr } from "../api/i18n";
 import { NBSP } from "../constants";
@@ -15,14 +21,14 @@ interface IMeasureContainerProps {
 }
 
 interface IMeasureContainerState {
-    config?: any;
+    config: IConfigurationReducerState;
 }
 
 interface IMeasureContainerDispatch {
 
 }
 
-function mapStateToProps(state: any): IMeasureContainerState {
+function mapStateToProps(state: IApplicationState): IMeasureContainerState {
     return {
         config: state.config
     };

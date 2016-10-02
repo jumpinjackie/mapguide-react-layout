@@ -28,7 +28,8 @@ import {
     Bounds,
     Coordinate,
     ImageFormat,
-    RefreshMode
+    RefreshMode,
+    ClientKind
 } from "../api/common";
 import {
     IApplicationContext,
@@ -39,7 +40,7 @@ import debounce = require("lodash.debounce");
 import { areNumbersEqual } from '../utils/number';
 import * as logger from '../utils/logger';
 import { MgError, isSessionExpiredError } from '../api/error';
-import { Client, ClientKind } from '../api/client';
+import { Client } from '../api/client';
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { IMenu, IItem, getEnabled, getIcon } from '../components/toolbar';

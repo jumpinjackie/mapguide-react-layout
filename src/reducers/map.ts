@@ -1,9 +1,9 @@
 import * as Constants from "../constants";
-import { ActiveMapTool } from "../api/common";
+import { IMapReducerState, ActiveMapTool } from "../api/common";
 import uniq = require("lodash.uniq");
 const assign = require("object-assign");
 
-const INITIAL_STATE = {
+const INITIAL_STATE: IMapReducerState = {
     state: null,
     viewer: {
         busyCount: 0,

@@ -1,7 +1,8 @@
 import * as Constants from "../constants";
+import { ISelectionReducerState } from "../api/common";
 const assign = require("object-assign");
 
-const INITIAL_STATE = {
+const INITIAL_STATE: ISelectionReducerState = {
     selectionSet: null,
     layerIndex: -1,
     featureIndex: -1

@@ -7,6 +7,9 @@ import { ModalLauncher } from "../containers/modal-launcher";
 import { connect } from "react-redux";
 import { tr } from "../api/i18n";
 import * as Constants from "../constants";
+import {
+    ReduxDispatch
+} from "../api/common";
 
 const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;

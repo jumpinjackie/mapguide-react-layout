@@ -1,13 +1,7 @@
 import * as Constants from "../constants";
+import { ITaskPaneReducerState } from "../api/common";
 const assign = require("object-assign");
 import { areUrlsSame } from "../utils/url";
-
-interface ITaskPaneReducerState {
-    navIndex: number;
-    navigation: string[];
-    initialUrl: string | null;
-    lastUrlPushed: boolean;
-}
 
 const INITIAL_STATE: ITaskPaneReducerState = {
     navIndex: -1,

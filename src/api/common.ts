@@ -1,4 +1,5 @@
 import { ResultColumnSet } from "./contracts/weblayout";
+import { RuntimeMap } from "./contracts/runtime-map";
 import { FeatureSet, QueryMapFeaturesResponse } from "./contracts/query";
 import { IQueryMapFeaturesOptions } from './request-builder';
 
@@ -31,7 +32,7 @@ export interface IMapView {
     scale: number;
 }
 
-export type DispatcherFunc = (dispatch: ReduxDispatch, getState: () => any, viewer?: IMapViewer) => any; 
+export type DispatcherFunc = (dispatch: ReduxDispatch, getState: () => IApplicationState, viewer?: IMapViewer) => any; 
 
 /**
  * Describes a viewer command
@@ -49,8 +50,8 @@ export interface ICommand {
     icon: string;
     //tooltip?: string;
     //label?: string;
-    enabled: (state: any) => boolean;
-    selected: (state: any) => boolean;
+    enabled: (state: IApplicationState) => boolean;
+    selected: (state: IApplicationState) => boolean;
     invoke: DispatcherFunc;
 }
 
@@ -453,7 +454,7 @@ export interface IMapViewer {
      * 
      * @memberOf IMapViewer
      */
-    getSelection(): QueryMapFeaturesResponse;
+    getSelection(): QueryMapFeaturesResponse | null;
     /**
      * Gets the current selection model as a selection XML string
      * 
@@ -553,3 +554,126 @@ export interface IMapViewer {
 export type DigitizerCallback<T extends ol.geom.Geometry> = (geom: T) => void;
 
 export type ImageFormat = "PNG" | "PNG8" | "JPG" | "GIF";
+
+/**
+ * The type of client
+ */
+export type ClientKind = "mapagent" | "mapguide-rest";
+
+export interface IViewReducerState {
+    current: IMapView | null;
+    initial: IMapView | null;
+    history: IMapView[];
+    mouse: Coordinate | null;
+    historyIndex: number;
+}
+
+export type IToolbarReducerState = any;
+
+/*
+export interface IToolbarReducerState {
+
+}
+*/
+
+export interface ITaskPaneReducerState {
+    navIndex: number;
+    navigation: string[];
+    initialUrl: string | null;
+    lastUrlPushed: boolean;
+}
+
+export interface ISelectionReducerState {
+    selectionSet: QueryMapFeaturesResponse | null,
+    layerIndex: number,
+    featureIndex: number
+}
+
+export type IModalReducerState = any;
+
+/*
+export interface IModalReducerState {
+
+}
+*/
+
+export interface IMapViewerReducerState {
+    busyCount: number,
+    tool: ActiveMapTool,
+    featureTooltipsEnabled: boolean,
+    layerGroupVisibility: {
+        showLayers: string[],
+        showGroups: string[],
+        hideLayers: string[],
+        hideGroups: string[]
+    }
+}
+
+export interface IMapReducerState {
+    state: RuntimeMap | null;
+    viewer: IMapViewerReducerState;
+}
+
+export interface ILegendReducerState {
+    selectableLayers: any;
+    expandedGroups: any;
+}
+
+export interface ICoordinateConfiguration {
+    decimals: number;
+}
+
+export interface IViewerCapabilities {
+    hasTaskPane: boolean;
+    hasTaskBar: boolean;
+    hasStatusBar: boolean;
+    hasNavigator: boolean;
+    hasSelectionPanel: boolean;
+    hasLegend: boolean;
+    hasToolbar: boolean;
+}
+
+export interface IMapViewerConfiguration {
+    imageFormat: ImageFormat;
+    selectionImageFormat: ImageFormat;
+    selectionColor: string;
+    pointSelectionBuffer: number;
+}
+
+export interface IConfigurationReducerState {
+    agentUri: string|null,
+    agentKind: ClientKind|null,
+    locale: string,
+    viewer: IMapViewerConfiguration;
+    externalBaseLayers: IExternalBaseLayer[],
+    coordinates: ICoordinateConfiguration;
+    capabilities: IViewerCapabilities;
+}
+
+export interface IApplicationState {
+    config: IConfigurationReducerState;
+    map: IMapReducerState;
+    legend: ILegendReducerState;
+    toolbar: IToolbarReducerState;
+    view: IViewReducerState;
+    selection: ISelectionReducerState;
+    taskpane: ITaskPaneReducerState;
+    modal: IModalReducerState;
+    lastaction: any;
+}
+
+// Redux typedefs to tighten up our redux code
+export interface ReduxAction {
+    type: string;
+    payload?: any;
+}
+
+export interface ReduxStore {
+    getState(): IApplicationState;
+}
+
+export type ReduxThunkedAction = (dispatch: ReduxDispatch, getState: () => IApplicationState) => any;
+
+export type ReduxActionCreator = ReduxAction | ReduxThunkedAction;
+
+export type ReduxDispatch = (action: ReduxActionCreator) => void;

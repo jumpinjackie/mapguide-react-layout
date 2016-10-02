@@ -1,8 +1,8 @@
 import * as Constants from "../constants";
-import { IExternalBaseLayer } from "../api/common";
+import { IConfigurationReducerState, IExternalBaseLayer } from "../api/common";
 const assign = require("object-assign");
 
-export const INITIAL_STATE = {
+export const INITIAL_STATE: IConfigurationReducerState = {
     agentUri: null,
     agentKind: null,
     locale: "en",

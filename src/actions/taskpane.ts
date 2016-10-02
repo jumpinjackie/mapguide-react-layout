@@ -1,5 +1,8 @@
 import * as Constants from "../constants";
 import { MgError } from "../api/error";
+import {
+    ReduxThunkedAction
+} from "../api/common";
 import queryString = require("query-string");
 const parse = require("url-parse");
 

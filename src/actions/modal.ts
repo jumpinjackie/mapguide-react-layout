@@ -1,4 +1,5 @@
 import * as Constants from "../constants";
+import { ReduxAction } from "../api/common";
 
 export function showModalComponent(options: any): ReduxAction {
     return {

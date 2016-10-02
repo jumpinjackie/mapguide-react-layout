@@ -5,22 +5,27 @@ import { QueryMapFeaturesResponse, SelectedFeature } from "../api/contracts/quer
 import * as MapActions from "../actions/map";
 import { getViewer } from "../api/runtime";
 import { tr } from "../api/i18n";
-import { IMapView } from "../api/common";
+import {
+    IMapView,
+    ReduxDispatch,
+    IApplicationState,
+    IConfigurationReducerState
+} from "../api/common";
 
 interface ISelectionPanelContainerProps {
 
 }
 
 interface ISelectionPanelContainerState {
-    config?: any;
-    selection?: QueryMapFeaturesResponse;
+    config: IConfigurationReducerState,
+    selection: QueryMapFeaturesResponse | null;
 }
 
 interface ISelectionPanelContainerDispatch {
     setCurrentView?: (view: IMapView) => void;
 }
 
-function mapStateToProps(state: any): ISelectionPanelContainerState {
+function mapStateToProps(state: IApplicationState): ISelectionPanelContainerState {
     return {
         config: state.config,
         selection: state.selection.selectionSet

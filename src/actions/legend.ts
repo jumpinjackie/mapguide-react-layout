@@ -1,6 +1,9 @@
 import * as Constants from "../constants";
 import { Client } from "../api/client";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
+import {
+    ReduxThunkedAction
+} from "../api/common";
 
 export function setGroupVisibility(options: { id: string, value: boolean }) {
     return {
@@ -34,18 +37,20 @@ export function refresh(): ReduxThunkedAction {
     return (dispatch, getState) => {
         const args = getState().config;
         const map = getState().map.state;
-        const client = new Client(args.agentUri, args.agentKind);
-        client.describeRuntimeMap({
-            mapname: map.Name,
-            session: map.SessionId,
-            requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups
-        }).then(res => {
-            dispatch({
-                type: Constants.MAP_REFRESH,
-                payload: {
-                    map: res
-                }
+        if (map && args.agentUri && args.agentKind) {
+            const client = new Client(args.agentUri, args.agentKind);
+            client.describeRuntimeMap({
+                mapname: map.Name,
+                session: map.SessionId,
+                requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups
+            }).then(res => {
+                dispatch({
+                    type: Constants.MAP_REFRESH,
+                    payload: {
+                        map: res
+                    }
+                });
             });
-        });
+        }
     };
 }

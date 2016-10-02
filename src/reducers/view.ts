@@ -1,14 +1,6 @@
 import * as Constants from "../constants";
-import { IMapView } from "../api/common";
+import { IMapView, IViewReducerState } from "../api/common";
 const assign = require("object-assign");
-
-interface IViewReducerState {
-    current: IMapView | null;
-    initial: IMapView | null;
-    history: IMapView[];
-    mouse: any;
-    historyIndex: number;
-}
 
 const INITIAL_STATE: IViewReducerState = {
     current: null,

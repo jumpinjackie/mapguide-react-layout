@@ -1,4 +1,5 @@
 import * as Constants from "../constants";
+import { IModalReducerState, ReduxAction } from "../api/common";
 const assign = require("object-assign");
 
 const INITIAL_STATE = { };

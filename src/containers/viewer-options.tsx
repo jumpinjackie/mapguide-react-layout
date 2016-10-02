@@ -1,5 +1,9 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import {
+    ReduxDispatch,
+    IApplicationState
+} from "../api/common";
 
 interface IViewerOptionsProps {
     
@@ -13,10 +17,9 @@ interface IViewerOptionsDispatch {
     
 }
 
-function mapStateToProps(state: any): IViewerOptionsState {
+function mapStateToProps(state: IApplicationState): IViewerOptionsState {
     return {
-        viewer: state.map.viewer,
-        view: state.view.current
+        
     };
 }
 

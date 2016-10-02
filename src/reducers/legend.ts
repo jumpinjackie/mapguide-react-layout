@@ -1,10 +1,6 @@
 import * as Constants from "../constants";
+import { ILegendReducerState } from "../api/common";
 const assign = require("object-assign");
-
-interface ILegendReducerState {
-    selectableLayers: any;
-    expandedGroups: any;
-}
 
 const INITIAL_STATE: ILegendReducerState = {
     selectableLayers: {},

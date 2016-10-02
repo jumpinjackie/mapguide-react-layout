@@ -2,7 +2,8 @@ import { registerCommand, DefaultCommands, CommandConditions } from "./registry/
 import {
     IMapViewer,
     ActiveMapTool,
-    RefreshMode
+    RefreshMode,
+    ReduxDispatch
 } from "./common";
 import { QueryMapFeaturesResponse } from "./contracts/query";
 import * as LegendActions from "../actions/legend";
@@ -369,7 +370,7 @@ export function initDefaultCommands() {
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer) => {
             if (viewer) {
-                const selection: QueryMapFeaturesResponse = getState().selection.selectionSet;
+                const selection = getState().selection.selectionSet;
                 let bounds: ol.Extent | null = null;
                 if (selection != null && selection.SelectedFeatures != null) {
                     selection.SelectedFeatures.SelectedLayer.forEach(layer => {
@@ -427,14 +428,16 @@ export function initDefaultCommands() {
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer) => {
             const { map, config } = getState();
-            let url = ensureParameters("server/Buffer/BufferPanel.php", map.state.Name, map.state.SessionId, config.locale);
-            url += "&POPUP=false&US=0";
-            dispatch({
-                type: Constants.TASK_INVOKE_URL,
-                payload: {
-                    url: url
-                }
-            });
+            if (map.state) {
+                let url = ensureParameters("server/Buffer/BufferPanel.php", map.state.Name, map.state.SessionId, config.locale);
+                url += "&POPUP=false&US=0";
+                dispatch({
+                    type: Constants.TASK_INVOKE_URL,
+                    payload: {
+                        url: url
+                    }
+                });
+            }
         }
     });
     //Select Within
@@ -444,14 +447,16 @@ export function initDefaultCommands() {
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer) => {
             const { map, config } = getState();
-            let url = ensureParameters("server/SelectWithin/SelectWithinPanel.php", map.state.Name, map.state.SessionId, config.locale);
-            url += "&POPUP=false";
-            dispatch({
-                type: Constants.TASK_INVOKE_URL,
-                payload: {
-                    url: url
-                }
-            });
+            if (map.state) {
+                let url = ensureParameters("server/SelectWithin/SelectWithinPanel.php", map.state.Name, map.state.SessionId, config.locale);
+                url += "&POPUP=false";
+                dispatch({
+                    type: Constants.TASK_INVOKE_URL,
+                    payload: {
+                        url: url
+                    }
+                });
+            }
         }
     });
     //Redline
@@ -461,14 +466,16 @@ export function initDefaultCommands() {
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer) => {
             const { map, config } = getState();
-            let url = ensureParameters("server/Redline/markupmain.php", map.state.Name, map.state.SessionId, config.locale);
-            url += "&POPUP=false&REDLINESTYLIZATION=ADVANCED";
-            dispatch({
-                type: Constants.TASK_INVOKE_URL,
-                payload: {
-                    url: url
-                }
-            });
+            if (map.state) {
+                let url = ensureParameters("server/Redline/markupmain.php", map.state.Name, map.state.SessionId, config.locale);
+                url += "&POPUP=false&REDLINESTYLIZATION=ADVANCED";
+                dispatch({
+                    type: Constants.TASK_INVOKE_URL,
+                    payload: {
+                        url: url
+                    }
+                });
+            }
         }
     });
 

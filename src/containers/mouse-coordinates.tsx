@@ -1,5 +1,11 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import {
+    Coordinate,
+    ReduxDispatch,
+    IApplicationState,
+    ICoordinateConfiguration
+} from "../api/common";
 import { MouseCoordinates } from "../components/mouse-coordinates";
 
 interface IMouseCoordinatesContainerProps {
@@ -7,13 +13,13 @@ interface IMouseCoordinatesContainerProps {
 }
 
 interface IMouseCoordinatesContainerState {
-    config?: any;
-    mouse?: [number, number];
+    config: ICoordinateConfiguration;
+    mouse: Coordinate | null;
 }
 
 interface IMouseCoordinatesDispatch { }
 
-function mapStateToProps(state: any): IMouseCoordinatesContainerState {
+function mapStateToProps(state: IApplicationState): IMouseCoordinatesContainerState {
     return {
         config: state.config.coordinates,
         mouse: state.view.mouse

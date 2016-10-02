@@ -4,7 +4,14 @@ import { Legend, MapElementChangeFunc } from "../components/legend";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import * as LegendActions from "../actions/legend";
 import * as MapActions from "../actions/map";
-import { IMapView } from "../api/common";
+import {
+    IMapView,
+    IApplicationState,
+    ReduxDispatch,
+    IConfigurationReducerState,
+    ILegendReducerState,
+    IMapViewerReducerState
+} from "../api/common";
 import { tr } from "../api/i18n";
 
 interface ILegendContainerProps {
@@ -12,11 +19,11 @@ interface ILegendContainerProps {
 }
 
 interface ILegendContainerState {
-    view?: IMapView;
-    config?: any;
-    map?: RuntimeMap;
-    legend?: any;
-    viewer?: any;
+    view: IMapView | null;
+    config?: IConfigurationReducerState;
+    map: RuntimeMap | null;
+    legend?: ILegendReducerState;
+    viewer?: IMapViewerReducerState;
 }
 
 interface ILegendContainerDispatch {
@@ -27,7 +34,7 @@ interface ILegendContainerDispatch {
     setGroupExpanded?: (options: { id: string, value: boolean }) => void;
 }
 
-function mapStateToProps(state: any): ILegendContainerState {
+function mapStateToProps(state: IApplicationState): ILegendContainerState {
     return {
         view: state.view.current,
         viewer: state.map.viewer,
@@ -92,9 +99,10 @@ export class LegendContainer extends React.Component<LegendContainerProps, any> 
     render(): JSX.Element {
         //overrideSelectableLayers?: any;
         //overrideExpandedItems?: any;
-
         const { map, config, view, viewer, legend } = this.props;
+        let locale: string | undefined;
         if (map != null && config != null && view != null && legend != null) {
+            locale = config.locale;
             let scale = view.scale;
             const showLayers = [] as string[];
             const showGroups = [] as string[];
@@ -123,10 +131,10 @@ export class LegendContainer extends React.Component<LegendContainerProps, any> 
                                onGroupVisibilityChanged={this.fnGroupVisibilityChanged}
                                onLayerVisibilityChanged={this.fnLayerVisibilityChanged} />;
             } else {
-                return <div>{tr("LOADING_MSG", config.locale)}</div>;
+                return <div>{tr("LOADING_MSG", locale)}</div>;
             }
         } else {
-            return <div>{tr("LOADING_MSG", config.locale)}</div>;
+            return <div>{tr("LOADING_MSG", locale)}</div>;
         }
     }
 }

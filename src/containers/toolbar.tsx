@@ -1,6 +1,14 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { ICommand } from "../api/common";
+import {
+    ICommand,
+    ReduxDispatch,
+    IApplicationState,
+    IToolbarReducerState,
+    IViewReducerState,
+    ISelectionReducerState,
+    IMapReducerState
+} from "../api/common";
 import { getCommand, mapToolbarReference } from "../api/registry/command";
 import { IItem, IMenu, Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import { invokeCommand } from "../actions/map";
@@ -12,17 +20,17 @@ interface IToolbarContainerProps {
 }
 
 interface IToolbarContainerState {
-    map?: any;
-    toolbar?: any;
-    view?: any;
-    selection?: any;
+    map?: IMapReducerState;
+    toolbar?: IToolbarReducerState;
+    view?: IViewReducerState;
+    selection?: ISelectionReducerState;
 }
 
 interface IToolbarContainerDispatch {
     invokeCommand?: (cmd: ICommand) => void;
 }
 
-function mapStateToProps(state: any, ownProps: IToolbarContainerProps): IToolbarContainerState {
+function mapStateToProps(state: IApplicationState, ownProps: IToolbarContainerProps): IToolbarContainerState {
     return {
         map: state.map,
         view: state.view,

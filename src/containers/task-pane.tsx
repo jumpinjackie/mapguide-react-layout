@@ -1,6 +1,14 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { ICommand } from "../api/common";
+import {
+    ICommand,
+    ReduxDispatch,
+    IApplicationState,
+    ITaskPaneReducerState,
+    IToolbarReducerState,
+    IConfigurationReducerState,
+    ISelectionReducerState
+} from "../api/common";
 import { IItem } from "../components/toolbar";
 import { TaskPane } from "../components/task-pane";
 import { RuntimeMap } from "../api/contracts/runtime-map";
@@ -15,11 +23,11 @@ interface ITaskPaneContainerStyle {
 }
 
 interface ITaskPaneContainerState {
-    map?: RuntimeMap;
-    taskpane?: any;
-    toolbar?: any;
-    config?: any;
-    selection?: any;
+    map: RuntimeMap | null;
+    taskpane: ITaskPaneReducerState;
+    toolbar: IToolbarReducerState;
+    config: IConfigurationReducerState;
+    selection: ISelectionReducerState;
 }
 
 interface ITaskPaneDispatch {
@@ -30,7 +38,7 @@ interface ITaskPaneDispatch {
     pushUrl?: (url: string, silent?: boolean) => void;
 }
 
-function mapStateToProps(state: any): ITaskPaneContainerState {
+function mapStateToProps(state: IApplicationState): ITaskPaneContainerState {
     //Technically speaking, this should be listening to every branch of the redux
     //store. But practically speaking, toolbar commands really only cares about 
     //the branches below
@@ -107,12 +115,14 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
     }
     private canGoHome(): boolean {
         const { taskpane, map, config } = this.props;
-        const initUrl = map 
-            ? TaskPaneActions.ensureParameters(taskpane.initialUrl, map.Name, map.SessionId, config.locale)
-            : taskpane.initialUrl;
-        return taskpane.initialUrl != null //An initial URL was set
-            && taskpane.navigation.length > 0 //We have a navigation stack
-            && !areUrlsSame(taskpane.navigation[taskpane.navIndex], initUrl); //The current URL is not initial. 
+        if (taskpane.initialUrl) { //An initial URL was set
+            const initUrl = map && taskpane.initialUrl
+                ? TaskPaneActions.ensureParameters(taskpane.initialUrl, map.Name, map.SessionId, config.locale)
+                : taskpane.initialUrl;
+            return taskpane.navigation.length > 0 //We have a navigation stack
+                && !areUrlsSame(taskpane.navigation[taskpane.navIndex], initUrl); //The current URL is not initial.
+        }
+        return false;
     }
     private canGoBack(): boolean {
         const { taskpane } = this.props;

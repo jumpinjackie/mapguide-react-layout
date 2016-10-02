@@ -1,8 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { ClientKind } from "../api/client";
 import { getLayout } from "../api/registry/layout";
-import { IExternalBaseLayer } from "../api/common";
+import { IExternalBaseLayer, ReduxDispatch, IApplicationState, ClientKind } from "../api/common";
 import { initLayout } from "../actions/init";
 import { Error } from "../components/error";
 import { tr } from "../api/i18n";
@@ -49,7 +48,7 @@ interface IAppDispatch {
     initLayout?: (args: IInitAppLayout) => void;
 }
 
-function mapStateToProps(state: any): IAppState {
+function mapStateToProps(state: IApplicationState): IAppState {
     return {
         config: state.config
     };

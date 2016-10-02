@@ -7,16 +7,22 @@ import { RuntimeMap } from "../api/contracts/runtime-map";
 import { getViewer } from "../api/runtime";
 import { invokeCommand, setScale } from "../actions/map";
 import { getCommand, DefaultCommands } from "../api/registry/command";
-import { IMapView } from "../api/common";
+import {
+    IMapView,
+    IConfigurationReducerState,
+    IMapViewerReducerState,
+    ReduxDispatch,
+    IApplicationState
+} from "../api/common";
 
 interface INavigatorContainerProps {
     style?: React.CSSProperties;
 }
 
 interface INavigatorContainerState {
-    viewer?: any;
-    config?: any;
-    view?: IMapView;
+    viewer: IMapViewerReducerState;
+    config: IConfigurationReducerState;
+    view: IMapView | null;
 }
 
 interface INavigatorContainerDispatch {
@@ -24,7 +30,7 @@ interface INavigatorContainerDispatch {
     setScale?: (scale: number) => void;
 }
 
-function mapStateToProps(state: any): INavigatorContainerState {
+function mapStateToProps(state: IApplicationState): INavigatorContainerState {
     return {
         config: state.config,
         viewer: state.map.viewer,

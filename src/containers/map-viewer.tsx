@@ -8,7 +8,12 @@ import {
     RefreshMode,
     DigitizerCallback,
     Bounds,
-    Coordinate
+    Coordinate,
+    ReduxDispatch,
+    IApplicationState,
+    IViewReducerState,
+    ILegendReducerState,
+    IMapViewerReducerState
 } from "../api/common";
 import { MapViewerBase } from "../components/map-viewer-base";
 import * as Runtime from "../api/runtime";
@@ -31,11 +36,11 @@ interface IMapViewerContainerProps {
 
 interface IMapViewerContainerState {
     config?: any;
-    map?: RuntimeMap;
-    selection?: any;
+    map: RuntimeMap | null;
+    selection: QueryMapFeaturesResponse | null;
     view?: any;
-    viewer?: any;
-    legend?: any;
+    viewer?: IMapViewerReducerState;
+    legend?: ILegendReducerState;
     contextmenu?: any;
 }
 
@@ -48,7 +53,7 @@ interface IMapViewerContainerDispatch {
     queryMapFeatures?: (options: MapActions.QueryMapFeatureActionOptions) => void;
 }
 
-function mapStateToProps(state: any): IMapViewerContainerState {
+function mapStateToProps(state: IApplicationState): IMapViewerContainerState {
     return {
         config: state.config,
         view: state.view,
@@ -256,11 +261,14 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void {
         this.inner.queryMapFeatures(options, success, failure);
     }
-    getSelection(): QueryMapFeaturesResponse {
+    getSelection(): QueryMapFeaturesResponse | null {
         return this.props.selection;
     }
     getSelectionXml(selection: FeatureSet, layerIds?: string[]): string {
-        return buildSelectionXml(this.props.selection.FeatureSet, layerIds);
+        if (this.props.selection) {
+            return buildSelectionXml(this.props.selection.FeatureSet, layerIds);
+        }
+        return "";
     }
     getProjection(): ol.ProjectionLike {
         return this.inner.getProjection();

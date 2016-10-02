@@ -2,11 +2,7 @@ import * as Request from './request-builder';
 import { MgError } from './error';
 import { MapAgentRequestBuilder, isErrorResponse, serialize } from './builders/mapagent';
 import * as Contracts from './contracts';
-
-/**
- * The type of client
- */
-export type ClientKind = "mapagent" | "mapguide-rest";
+import { ClientKind } from './common';
 
 export class ClientContext {
     private agentUri: string;

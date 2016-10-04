@@ -125,7 +125,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                 }
             })()}
             {(() => {
-                let left = 0;
+                let left = DEFAULT_TOOLBAR_SIZE;
                 let right = 0;
                 /*
                 if (hasLegend || hasSelectionPanel) {
@@ -134,7 +134,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                 if (hasTaskPane) {
                     right = tpWidth;
                 }*/
-                return <div style={{ position: "absolute", left: left, top: 0, bottom: 0, right: right }}>
+                return <div style={{ position: "absolute", left: left, top: (DEFAULT_TOOLBAR_SIZE * 2), bottom: 0, right: right }}>
                     {(() => {
                         //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
                         //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()

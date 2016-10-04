@@ -8,7 +8,7 @@ const INITIAL_STATE: IMapReducerState = {
     viewer: {
         busyCount: 0,
         tool: ActiveMapTool.None,
-        featureTooltipsEnabled: false,
+        featureTooltipsEnabled: true,
         layerGroupVisibility: {
             showLayers: [],
             showGroups: [],

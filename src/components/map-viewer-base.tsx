@@ -584,6 +584,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             }
         });
     }
+    protected createOLMap(options: olx.MapOptions): any {
+        return new ol.Map(options);
+    }
     // ----------------- React Lifecycle ----------------- //
     componentWillReceiveProps(nextProps: IMapViewerBaseProps) {
         // 
@@ -818,7 +821,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         });
         this._zoomSelectBox.on("boxend", this.onZoomSelectBox.bind(this));
 
-        this._map = new ol.Map({
+        const mapOptions: olx.MapOptions = {
             logo: false,
             target: mapNode,
             layers: layers,
@@ -844,7 +847,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 new ol.interaction.MouseWheelZoom(),
                 this._zoomSelectBox
             ]
-        });
+        };
+        this._map = this.createOLMap(mapOptions);
         this._map.on("pointermove", this.onMouseMove.bind(this));
         this._mouseTooltip = new MouseTrackingTooltip(this._map, () => this._contextMenuOpen);
         this._featureTooltip = new FeatureQueryTooltip(this._map, 

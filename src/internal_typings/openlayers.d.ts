@@ -1213,11 +1213,11 @@ declare module ol {
          */
         dragging: boolean;
         /**
-         * Stop event propagation.
+         * Prevents the default browser action.
          */
         preventDefault(): void;
         /**
-         * Stop event propagation.
+         * Prevents further propagation of the current event.
          */
         stopPropagation(): void;
         /**
@@ -1236,14 +1236,6 @@ declare module ol {
          * The event target.
          */
         target: any;
-        /**
-         * Stop event propagation.
-         */
-        preventDefault(): void;
-        /**
-         * Stop event propagation.
-         */
-        stopPropagation(): void;
     }
     /**
      * Events emitted as map events are instances of this type.
@@ -2565,13 +2557,6 @@ otherwise it will be negative.
              */
             getMap(): ol.Map;
             /**
-             * Remove the control from its current map and attach it to the new map.
-             * Subclasses may set up event handlers to get notified about changes to
-             * the map here.
-             * @param map  (Required) Map.
-             */
-            setMap(map: ol.Map): void;
-            /**
              * This function is used to set a target element for the control. It has no
              * effect if it is called after the control has been added to the map (i.e.
              * after `setMap` is called on the control). If no `target` is set in the
@@ -2710,13 +2695,6 @@ otherwise it will be negative.
              * Get the map associated with this control.
              */
             getMap(): ol.Map;
-            /**
-             * Remove the control from its current map and attach it to the new map.
-             * Subclasses may set up event handlers to get notified about changes to
-             * the map here.
-             * @param map  (Required) Map.
-             */
-            setMap(map: ol.Map): void;
             /**
              * This function is used to set a target element for the control. It has no
              * effect if it is called after the control has been added to the map (i.e.
@@ -2857,13 +2835,6 @@ otherwise it will be negative.
              * Get the map associated with this control.
              */
             getMap(): ol.Map;
-            /**
-             * Remove the control from its current map and attach it to the new map.
-             * Subclasses may set up event handlers to get notified about changes to
-             * the map here.
-             * @param map  (Required) Map.
-             */
-            setMap(map: ol.Map): void;
             /**
              * This function is used to set a target element for the control. It has no
              * effect if it is called after the control has been added to the map (i.e.
@@ -3331,13 +3302,6 @@ otherwise it will be negative.
              * Get the map associated with this control.
              */
             getMap(): ol.Map;
-            /**
-             * Remove the control from its current map and attach it to the new map.
-             * Subclasses may set up event handlers to get notified about changes to
-             * the map here.
-             * @param map  (Required) Map.
-             */
-            setMap(map: ol.Map): void;
             /**
              * This function is used to set a target element for the control. It has no
              * effect if it is called after the control has been added to the map (i.e.
@@ -5208,23 +5172,6 @@ otherwise it will be negative.
              */
             getExtent(opt_extent?: ol.Extent): ol.Extent;
             /**
-             * Rotate the geometry around a given coordinate. This modifies the geometry
-             * coordinates in place.
-             * @param angle  (Required) Rotation angle in radians.
-             * @param anchor  (Required) The rotation center.
-             */
-            rotate(angle: number, anchor: ol.Coordinate): void;
-            /**
-             * Scale the geometry (with an optional origin).  This modifies the geometry
-             * coordinates in place.
-             * @param sx  (Required) The scaling factor in the x-direction.
-             * @param opt_sy  (Optional) The scaling factor in the y-direction (defaults to
-    sx).
-             * @param opt_anchor  (Optional) The scale origin (defaults to the center
-    of the geometry extent).
-             */
-            scale(sx: number, opt_sy?: number, opt_anchor?: ol.Coordinate): void;
-            /**
              * Create a simplified version of this geometry.  For linestrings, this uses
              * the the {@link
              * https://en.wikipedia.org/wiki/Ramer-Douglas-Peucker_algorithm
@@ -6836,23 +6783,6 @@ otherwise it will be negative.
              * @param opt_extent  (Optional) Extent.
              */
             getExtent(opt_extent?: ol.Extent): ol.Extent;
-            /**
-             * Rotate the geometry around a given coordinate. This modifies the geometry
-             * coordinates in place.
-             * @param angle  (Required) Rotation angle in radians.
-             * @param anchor  (Required) The rotation center.
-             */
-            rotate(angle: number, anchor: ol.Coordinate): void;
-            /**
-             * Scale the geometry (with an optional origin).  This modifies the geometry
-             * coordinates in place.
-             * @param sx  (Required) The scaling factor in the x-direction.
-             * @param opt_sy  (Optional) The scaling factor in the y-direction (defaults to
-    sx).
-             * @param opt_anchor  (Optional) The scale origin (defaults to the center
-    of the geometry extent).
-             */
-            scale(sx: number, opt_sy?: number, opt_anchor?: ol.Coordinate): void;
             /**
              * Create a simplified version of this geometry.  For linestrings, this uses
              * the the {@link
@@ -13193,10 +13123,6 @@ If using named maps, a key-value lookup with the template parameters.
              */
             getState(): string;
             /**
-             * Refreshes the source and finally dispatches a 'change' event.
-             */
-            refresh(): void;
-            /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
     Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
@@ -14153,11 +14079,6 @@ If using named maps, a key-value lookup with the template parameters.
              * @param url  (Required) URL.
              */
             setUrl(url: string): void;
-            /**
-             * Set the URLs to use for requests.
-             * @param urls  (Required) URLs.
-             */
-            setUrls(urls: string[]): void;
             /**
              * Return the tile grid of the tile source.
              */

@@ -9,8 +9,10 @@ import { legendReducer } from "./legend";
 import { taskPaneReducer } from "./taskpane";
 import { lastAction } from "./last-action";
 import { modalReducer } from "./modal";
+import { initErrorReducer } from "./initError";
 
 const rootReducer = combineReducers({
+    initError: initErrorReducer,
     config: configReducer,
     map: runtimeMapReducer,
     session: sessionReducer,

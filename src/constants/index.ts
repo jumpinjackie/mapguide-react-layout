@@ -1,4 +1,5 @@
 export const INIT_APP = 'MapGuide/INIT_APP';
+export const INIT_ERROR = 'MapGuide/INIT_ERROR';
 
 export const LEGEND_SET_GROUP_VISIBILITY = 'Legend/SET_GROUP_VISIBILITY';
 export const LEGEND_SET_LAYER_VISIBILITY = 'Legend/SET_LAYER_VISIBILITY';

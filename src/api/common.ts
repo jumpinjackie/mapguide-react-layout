@@ -650,7 +650,13 @@ export interface IConfigurationReducerState {
     capabilities: IViewerCapabilities;
 }
 
+export interface IInitErrorReducerState {
+    error: Error | undefined;
+    options: any;
+}
+
 export interface IApplicationState {
+    initError: IInitErrorReducerState;
     config: IConfigurationReducerState;
     map: IMapReducerState;
     legend: ILegendReducerState;

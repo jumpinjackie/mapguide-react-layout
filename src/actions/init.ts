@@ -19,10 +19,13 @@ import {
 } from "../api/common";
 import { IView } from "../api/contracts/common";
 import { RuntimeMap } from "../api/contracts/runtime-map";
+import { tr } from "../api/i18n";
+import { MgError } from "../api/error";
 import * as logger from "../utils/logger";
 import queryString = require("query-string");
 const parse = require("url-parse");
 const assign = require("object-assign");
+const proj4 = require("proj4");
 
 function convertUIItems(items: UIItem[] | null | undefined, cmdsByKey: any, noToolbarLabels = true, canSupportFlyouts = true): any[] {
     return (items || []).map(item => {
@@ -173,20 +176,53 @@ export function initLayout(options: any): ReduxThunkedAction {
             };
             const onSessionAcquired = (session: string) => {
                 client.getResource<WebLayout>(opts.resourceId, { SESSION: session }).then(wl => {
-                    return Promise.all([
-                        wl, 
-                        client.createRuntimeMap({
-                            mapDefinition: wl.Map.ResourceId,
-                            requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-                            session: session
-                        })
-                    ]);
-                }).then(onWebLayoutAndRuntimeMapReceived);
+                    return client.createRuntimeMap({
+                        mapDefinition: wl.Map.ResourceId,
+                        requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+                        session: session
+                    }).then(map => {
+                        //Check the EPSG code here
+                        const epsg = map.CoordinateSystem.EpsgCode;
+
+                        //Must be non-zero
+                        if (epsg == "0") {
+                            throw new MgError(tr("INIT_ERROR_UNSUPPORTED_COORD_SYS", opts.locale || "en", { mapDefinition: wl.Map.ResourceId }));
+                        }
+                        //Must be registered to proj4js if not 4326 or 3857
+                        //TODO: We should allow for online fallback (eg. Hit epsg.io for the proj4js definition)
+                        if (!proj4.defs[`EPSG:${epsg}`]) {
+                            throw new MgError(tr("INIT_ERROR_UNREGISTERED_EPSG_CODE", opts.locale || "en", { epsg: epsg, mapDefinition: wl.Map.ResourceId }));
+                        }
+
+                        return Promise.all([
+                            wl, 
+                            map
+                        ]);
+                    });
+                }).then(onWebLayoutAndRuntimeMapReceived).catch(err => {
+                    dispatch({
+                        type: Constants.INIT_ERROR,
+                        payload: {
+                            error: err,
+                            options: opts
+                        }
+                    });
+                })
             }
             if (opts.session) {
                 onSessionAcquired(opts.session);
             } else {
-                client.createSession("Anonymous", "").then(onSessionAcquired);
+                client.createSession("Anonymous", "")
+                    .then(onSessionAcquired)
+                    .catch(err => {
+                        dispatch({
+                            type: Constants.INIT_ERROR,
+                            payload: {
+                                error: err,
+                                options: opts
+                            }
+                        });
+                    });
             }
         }
     };

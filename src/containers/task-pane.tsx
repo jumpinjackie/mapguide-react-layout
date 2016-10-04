@@ -16,6 +16,7 @@ import { mapToolbarReference } from "../api/registry/command";
 import { invokeCommand } from "../actions/map";
 import * as TaskPaneActions from "../actions/taskpane";
 import { areUrlsSame } from "../utils/url";
+import { processMenuItems } from "../utils/menu";
 import { tr } from "../api/i18n";
 
 export interface ITaskPaneContainerStyle {
@@ -141,9 +142,8 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
             let childItems: IItem[];
             if (toolbar && toolbar.items && invokeCommand) {
                 const store = (this.context as any).store;
-                childItems = (toolbar.items as any[])
-                    .map(tb => mapToolbarReference(tb, store, invokeCommand))
-                    .filter((tb): tb is IItem => tb != null);
+                const items = (toolbar.items as any[]).map(tb => mapToolbarReference(tb, store, invokeCommand));
+                childItems = processMenuItems(items);
             } else {
                 childItems = [];
             }

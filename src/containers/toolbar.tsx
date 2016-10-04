@@ -12,6 +12,7 @@ import {
 import { getCommand, mapToolbarReference } from "../api/registry/command";
 import { IItem, IMenu, Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import { invokeCommand } from "../actions/map";
+import { processMenuItems } from "../utils/menu";
 
 export interface IToolbarContainerProps {
     id: string;
@@ -64,9 +65,8 @@ export class ToolbarContainer extends React.Component<ToolbarContainerProps, any
             } else {
                 containerStyle.height = DEFAULT_TOOLBAR_SIZE;
             }
-            const childItems = (toolbar.items as any[])
-                .map(tb => mapToolbarReference(tb, store, invokeCommand))
-                .filter((tb): tb is IItem => tb != null);
+            const items = (toolbar.items as any[]).map(tb => mapToolbarReference(tb, store, invokeCommand));
+            const childItems = processMenuItems(items);
             return <Toolbar vertical={vertical} childItems={childItems} containerStyle={containerStyle} />;
         } else {
             return <div />;

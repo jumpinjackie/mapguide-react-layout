@@ -28,6 +28,7 @@ import { getCommand, mapToolbarReference,  } from "../api/registry/command";
 import { invokeCommand, queryMapFeatures } from "../actions/map";
 import { showModalComponent } from "../actions/modal";
 import { DefaultComponentNames } from "../api/registry/component";
+import { processMenuItems } from "../utils/menu";
 import { tr } from "../api/i18n";
 
 export interface IMapViewerContainerProps {
@@ -159,9 +160,8 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                 .map(layer => layer.Name);
             const store = (this.context as any).store;
             const items: any[] = contextmenu != null ? contextmenu.items : [];
-            const cmitems = items
-                .map(tb => mapToolbarReference(tb, store, invokeCommand))
-                .filter((tb): tb is IItem => tb != null);
+            const cmitems = items.map(tb => mapToolbarReference(tb, store, invokeCommand));
+            const childItems = processMenuItems(cmitems);
             return <MapViewerBase ref={this.fnMapViewerMounted}
                                   map={map} 
                                   agentUri={config.agentUri}
@@ -178,7 +178,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                   view={view.current}
                                   initialView={view.initial}
                                   selectableLayerNames={selectableLayerNames}
-                                  contextMenu={cmitems}
+                                  contextMenu={childItems}
                                   onSessionExpired={this.fnSessionExpired}
                                   onBusyLoading={this.fnBusyLoading}
                                   onMouseCoordinateChanged={this.fnMouseCoordinateChanged}

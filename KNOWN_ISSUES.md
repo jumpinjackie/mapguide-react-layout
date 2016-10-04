@@ -2,6 +2,11 @@ Known viewer issues are documented here.
 
 Where applicable, an issue number is attached to indicate that such issues are actioned to be resolved.
 
+Localization
+============
+
+ * If including a localized string bundle via a script tag, be sure to specify `charset="UTF-8"` in the script tag, otherwise diacritics (eg. umlauts) in any string literals will most likely be garbled.
+
 Components
 ==========
 

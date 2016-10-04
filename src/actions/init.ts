@@ -222,6 +222,9 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
                     case "SelectionInfo":
                         hasStatus = true;
                         break;
+                    case "Navigator":
+                        hasNavigator = true;
+                        break;
                     case "Search":
                         registerCommand(widget.Name, { 
                             layer: cmd.Layer,

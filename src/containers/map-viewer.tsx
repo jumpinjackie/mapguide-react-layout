@@ -160,7 +160,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                 .map(layer => layer.Name);
             const store = (this.context as any).store;
             const items: any[] = contextmenu != null ? contextmenu.items : [];
-            const cmitems = items.map(tb => mapToolbarReference(tb, store, invokeCommand));
+            const cmitems = (items || []).map(tb => mapToolbarReference(tb, store, invokeCommand));
             const childItems = processMenuItems(cmitems);
             return <MapViewerBase ref={this.fnMapViewerMounted}
                                   map={map} 

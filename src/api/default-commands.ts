@@ -460,7 +460,7 @@ export function initDefaultCommands() {
         }
     });
     //Redline
-    registerCommand("Redline", {
+    registerCommand(DefaultCommands.Redline, {
         icon: "redline.png",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
@@ -479,7 +479,7 @@ export function initDefaultCommands() {
         }
     });
 
-    registerCommand("FeatureInfo", { icon: "feature-info.png", url: "server/FeatureInfo/featureinfomain.php", target: "TaskPane" });
-    registerCommand("Query", { icon: "query.png", url: "server/Query/querymain.php", target: "TaskPane" });
-    registerCommand("Theme", { icon: "theme.png", url: "server/Theme/thememain.php", target: "TaskPane" });
+    registerCommand(DefaultCommands.FeatureInfo, { icon: "feature-info.png", url: "server/FeatureInfo/featureinfomain.php", target: "TaskPane" });
+    registerCommand(DefaultCommands.Query, { icon: "query.png", url: "server/Query/querymain.php", target: "TaskPane" });
+    registerCommand(DefaultCommands.Theme, { icon: "theme.png", url: "server/Theme/thememain.php", target: "TaskPane" });
 }

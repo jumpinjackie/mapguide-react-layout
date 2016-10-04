@@ -1,6 +1,6 @@
 import * as Constants from "../constants";
 import { Client } from "../api/client";
-import { ReduxDispatch } from "../api/common";
+import { ReduxDispatch, Dictionary, ICommand } from "../api/common";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
 import { registerCommand, DefaultCommands } from "../api/registry/command";
 import { ensureParameters } from "../actions/taskpane";
@@ -17,7 +17,11 @@ import {
 } from "../api/contracts/weblayout";
 import {
     ApplicationDefinition,
-    MapConfiguration
+    Widget,
+    UIWidget,
+    MapGroup,
+    MapConfiguration,
+    ContainerItem
 } from "../api/contracts/fusion";
 import {
     ReduxThunkedAction
@@ -32,7 +36,106 @@ const parse = require("url-parse");
 const assign = require("object-assign");
 const proj4 = require("proj4");
 
-function convertWebLayoutUIItems(items: UIItem[] | null | undefined, cmdsByKey: any, noToolbarLabels = true, canSupportFlyouts = true): any[] {
+function isUIWidget(widget: any): widget is UIWidget {
+    return widget.WidgetType === "UiWidgetType";
+}
+
+function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictionary<Widget>, noToolbarLabels = false, canSupportFlyouts = true): any[] {
+    return items.map(item => {
+        switch (item.Function) {
+            case "Widget":
+                {
+                    const widget = widgetsByKey[item.Widget];
+                    if (widget && isUIWidget(widget)) {
+                        switch (widget.Type) {
+                            case "Select":
+                                return { command: DefaultCommands.Select, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            case "Pan":
+                                return { command: DefaultCommands.Pan, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            //case "PanQuery":
+                            //case "PanOnClick":
+                            case "Zoom":
+                                return { command: DefaultCommands.Zoom, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            case "ZoomOnClick": //Covers in and out. Look at Factor parameter
+                                {
+                                    const factor = parseFloat(widget.Extension.Factor);
+                                    if (factor >= 1.0) {
+                                        return { command: DefaultCommands.ZoomIn, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                                    } else {
+                                        return { command: DefaultCommands.ZoomOut, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                                    }
+                                }
+                            case "InitialMapView":
+                                return { command: DefaultCommands.ZoomExtents, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            case "ZoomToSelection":
+                                return { command: DefaultCommands.ZoomToSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            case "ExtentHistory": //Covers prev and next. Look at Direction parameter
+                                {
+                                    if (widget.Extension.Direction == "previous") {
+                                        return { command: DefaultCommands.PreviousView, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                                    } else {
+                                        return { command: DefaultCommands.NextView, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                                    }
+                                }
+                            //case "CenterSelection":
+                            case "About":
+                                return { command: DefaultCommands.About, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            case "BufferPanel":
+                                return { command: DefaultCommands.Buffer, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            case "ClearSelection":
+                                return { command: DefaultCommands.ClearSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            //case "ColorPicker":
+                            //case "CoordinateTracker":
+                            case "FeatureInfo":
+                                return { command: DefaultCommands.FeatureInfo, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            //case "Geolocation":
+                            //case "GoogleStreetViewer":
+                            case "Help":
+                                return { command: DefaultCommands.Help, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            case "Maptip":
+                                return { command: DefaultCommands.MapTip, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            //case "MapMenu":
+                            case "Query":
+                                return { command: DefaultCommands.Query, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            case "QuickPlot":
+                                return { command: DefaultCommands.QuickPlot, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            case "Redline":
+                                return { command: DefaultCommands.Redline, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            case "RefreshMap":
+                                return { command: DefaultCommands.RefreshMap, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            //case "SaveMap":
+                            case "SelectPolygon":
+                                return { command: DefaultCommands.SelectPolygon, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            case "SelectRadius":
+                                return { command: DefaultCommands.SelectRadius, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            //case "SelectRadiusValue":
+                            case "SelectWithin":
+                                return { command: DefaultCommands.SelectWithin, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            case "Theme":
+                                return { command: DefaultCommands.Theme, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            case "ViewOptions":
+                                return { command: DefaultCommands.ViewerOptions, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            case "ZoomToSelection":
+                                return { command: DefaultCommands.ZoomToSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            case "Measure":
+                                return { command: DefaultCommands.Measure, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                        }
+                    }
+                }
+            case "Separator":
+                return { isSeparator: true };
+            case "Flyout":
+                return {
+                    label: item.Label,
+                    tooltip: item.Tooltip,
+                    children: convertFlexLayoutUIItems(item.Item, widgetsByKey) 
+                };
+        }
+        return null;
+    });
+}
+
+function convertWebLayoutUIItems(items: UIItem[] | null | undefined, cmdsByKey: Dictionary<CommandDef>, noToolbarLabels = true, canSupportFlyouts = true): any[] {
     return (items || []).map(item => {
         if (isCommandItem(item)) {
             const cmdDef: CommandDef = cmdsByKey[item.Command];
@@ -91,7 +194,128 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
         const appDef = res[0];
         const map = res[1];
 
-        const cmdsByKey: any = {};
+        let initialTask: string;
+        let taskPane: Widget|undefined;
+        let hasLegend = false;
+        let hasStatus = false;
+        let hasNavigator = false;
+        let hasSelectionPanel = false;
+        let hasTaskBar = false;
+        const config: any = {};
+        const tbConf: any = {};
+        const widgetsByKey: any = {};
+        //Register any InvokeURL and Search commands. Also set capabilities along the way
+        for (const widgetSet of appDef.WidgetSet) {
+            for (const widget of widgetSet.Widget) {
+                const cmd = widget.Extension;
+                switch (widget.Type) {
+                    case "TaskPane":
+                        taskPane = widget;
+                        break;
+                    case "Legend":
+                        hasLegend = true;
+                        break;
+                    case "SelectionPanel":
+                        hasSelectionPanel = true;
+                        break;
+                    case "CursorPosition":
+                    case "SelectionInfo":
+                        hasStatus = true;
+                        break;
+                    case "Search":
+                        registerCommand(widget.Name, { 
+                            layer: cmd.Layer,
+                            prompt: cmd.Prompt,
+                            resultColumns: cmd.ResultColumns,
+                            filter: cmd.Filter,
+                            matchLimit: cmd.MatchLimit,
+                            title: cmd.Title
+                        });
+                        break;
+                    case "InvokeURL":
+                        registerCommand(widget.Name, {
+                            url: cmd.Url,
+                            disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
+                            target: cmd.Target
+                        });
+                        break;
+                }
+                widgetsByKey[widget.Name] = widget;
+            }
+        }
+        //Now build toolbar layouts
+        for (const widgetSet of appDef.WidgetSet) {
+            for (const cont of widgetSet.Container) {
+                let tbName = cont.Name;
+                //Map known fusion containers
+                switch (tbName) {
+                    case "MapContextMenu":
+                        tbName = "contextmenu";
+                        break;
+                    case "TaskMenu":
+                        tbName = "taskpane";
+                        break;
+                }
+                tbConf[tbName] = { items: convertFlexLayoutUIItems(cont.Item, widgetsByKey) };
+            }
+        }
+        
+        //Now build config from primary MapGuide configuration
+        //TODO: This is not multi-map aware, so it's the first one we find
+        const mgGroups = getMapGuideMapGroup(appDef);
+        const mgConfs = getMapGuideConfiguration(appDef);
+        const mgConf = mgConfs[0]; //Should have at least one, otherwise it would've thrown earlier
+        const mgGroup = mgGroups[0];
+
+        if (mgConf.Extension.SelectionColor != null) {
+            config.selectionColor = mgConf.Extension.SelectionColor;
+        }
+        if (mgConf.Extension.ImageFormat != null) {
+            config.imageFormat = mgConf.Extension.ImageFormat;
+        }
+        if (mgConf.Extension.SelectionFormat != null) {
+            config.selectionImageFormat = mgConf.Extension.SelectionFormat;
+        }
+
+        //Setup initial view
+        let initialView: IView | null = null;
+        if (mgGroup.InitialView) {
+            initialView = {
+                x: mgGroup.InitialView.CenterX,
+                y: mgGroup.InitialView.CenterY,
+                scale: mgGroup.InitialView.Scale
+            };
+        }
+
+        if (taskPane) {
+            hasTaskBar = true; //Fusion flex layouts can't control the visiblity of this
+            initialTask = taskPane.Extension.InitialTask || "server/TaskPane.html";
+        } else {
+            initialTask = "server/TaskPane.html";
+        }
+        //Setup capabilities
+
+        dispatch({
+            type: Constants.INIT_APP,
+            payload: {
+                initialUrl: ensureParameters(initialTask, map.Name, map.SessionId, opts.locale),
+                map: map,
+                locale: opts.locale,
+                externalBaseLayers: opts.externalBaseLayers,
+                config: config,
+                initialView: initialView,
+                capabilities: {
+                    hasTaskPane: (taskPane != null),
+                    hasTaskBar: hasTaskBar,
+                    hasStatusBar: hasStatus,
+                    hasNavigator: hasNavigator,
+                    hasSelectionPanel: hasSelectionPanel,
+                    hasLegend: hasLegend,
+                    hasToolbar: (Object.keys(tbConf).length > 0)
+                },
+                toolbars: tbConf
+            }
+        });
     };
 }
 
@@ -106,12 +330,23 @@ function makeWebLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any):
             if (isInvokeURLCommand(cmd)) {
                 let cmdTarget = cmd.Target;
                 if (isNotTargeted(cmdTarget)) {
-                    registerCommand(cmd.Name, { url: cmd.URL, disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty, target: cmdTarget });
+                    registerCommand(cmd.Name, {
+                        url: cmd.URL,
+                        disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
+                        target: cmdTarget
+                    });
                 } else {
                     logger.warn(`Command ${cmd.Name} targets a specific frame which is not supported`);
                 }
             } else if (isSearchCommand(cmd)) {
-                registerCommand(cmd.Name, { layer: cmd.Layer, prompt: cmd.Prompt, resultColumns: cmd.ResultColumns, filter: cmd.Filter, matchLimit: cmd.MatchLimit, title: cmd.Label });
+                registerCommand(cmd.Name, { 
+                    layer: cmd.Layer,
+                    prompt: cmd.Prompt,
+                    resultColumns: cmd.ResultColumns,
+                    filter: cmd.Filter,
+                    matchLimit: cmd.MatchLimit,
+                    title: cmd.Label
+                });
             }
             cmdsByKey[cmd.Name] = cmd;
         }
@@ -206,6 +441,20 @@ function makeRuntimeMapSuccessHandler<T>(client: Client, session: string, opts: 
             ]);
         });
     };
+}
+
+function getMapGuideMapGroup(appDef: ApplicationDefinition): MapGroup[] {
+    const configs = [] as MapGroup[];
+    if (appDef.MapSet) {
+        for (const mg of appDef.MapSet.MapGroup) {
+            for (const map of mg.Map) {
+                if (map.Type == "MapGuide") {
+                    configs.push(mg);
+                }
+            }
+        }
+    }
+    return configs; 
 }
 
 function getMapGuideConfiguration(appDef: ApplicationDefinition): MapConfiguration[] {

@@ -85,6 +85,10 @@ export class DefaultCommands {
     public static get Buffer(): string { return "Buffer"; }
     public static get SelectWithin(): string { return "SelectWithin"; }
     public static get QuickPlot(): string { return "QuickPlot"; }
+    public static get Redline(): string { return "Redline"; }
+    public static get FeatureInfo(): string { return "FeatureInfo"; }
+    public static get Theme(): string { return "Theme"; }
+    public static get Query(): string { return "Query"; }
 }
 
 const commands: Dictionary<ICommand> = {};

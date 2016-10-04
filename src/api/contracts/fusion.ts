@@ -69,6 +69,7 @@ export interface MapWidget extends Widget {
 }
 
 export interface Widget {
+    WidgetType: string | undefined;
     Name: string;
     Type: string;
     Location: string | null | undefined;

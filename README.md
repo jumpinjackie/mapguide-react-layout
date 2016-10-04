@@ -56,6 +56,10 @@ URL: `http://servername/mapguide/viewer/sidebar.html?resource=Library://Path/To/
 
 See [KNOWN_ISSUES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/KNOWN_ISSUES.md)
 
+# Release Notes
+
+See [RELEASE_NOTES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/RELEASE_NOTES.md)
+
 # Credits
 
 mapguide-react-layout could not be possible without the following tools and libraries:

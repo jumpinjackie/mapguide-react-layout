@@ -481,9 +481,13 @@ function getMapDefinitionFromFlexLayout(appDef: ApplicationDefinition): string {
     throw new MgError("No Map Definition found in Application Definition");
 }
 
+function strEndsWith(str: string, suffix: string): boolean {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}
+
 function makeSessionAcquired(client: Client, dispatch: ReduxDispatch, opts: any): (session: string) => void {
     return (session: string) => {
-        if (opts.resourceId.endsWith("WebLayout")) {
+        if (strEndsWith(opts.resourceId, "WebLayout")) {
             const onWebLayoutAndRuntimeMapReceived = makeWebLayoutAndRuntimeMapReceived(dispatch, opts);
             const handler = makeRuntimeMapSuccessHandler<WebLayout>(client, session, opts, wl => wl.Map.ResourceId);
             client.getResource<WebLayout>(opts.resourceId, { SESSION: session })
@@ -498,7 +502,7 @@ function makeSessionAcquired(client: Client, dispatch: ReduxDispatch, opts: any)
                     }
                 });
             });
-        } else if (opts.resourceId.endsWith("ApplicationDefinition")) {
+        } else if (strEndsWith(opts.resourceId, "ApplicationDefinition")) {
             const onFlexLayoutAndRuntimeMapReceived = makeFlexLayoutAndRuntimeMapReceived(dispatch, opts);
             const handler = makeRuntimeMapSuccessHandler<ApplicationDefinition>(client, session, opts, fl => getMapDefinitionFromFlexLayout(fl));
             client.getResource<ApplicationDefinition>(opts.resourceId, { SESSION: session })

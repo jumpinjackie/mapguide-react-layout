@@ -246,7 +246,7 @@ class FlyoutMenuItem extends React.Component<IFlyoutMenuItemProps, any> {
         if (!align) {
             align = (vertical === true) ? "right bottom" : "bottom right";
         }
-        return <div className="has-flyout noselect toolbar-flyout-btn" onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={menu.tooltip}>
+        return <div className={`has-flyout noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={menu.tooltip}>
             <div data-flyout-id={`flyout-${this.flyoutId}`}>
                 {label} <img style={imgStyle} src={getIcon(menu.icon || ((this.state.isFlownOut) ? "icon_menuarrowup.gif" : "icon_menuarrow.gif"))} />
             </div>
@@ -324,7 +324,7 @@ class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
         const enabled = getEnabled(item);
         const imgStyle = getIconStyle(enabled, height);
         const style = getItemStyle(enabled, selected, height, this.state.isMouseOver, vertical);
-        return <div className="noselect toolbar-btn" onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} style={style} title={item.tooltip} onClick={this.fnClick}>
+        return <div className={`noselect toolbar-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} style={style} title={item.tooltip} onClick={this.fnClick}>
             <img style={imgStyle} src={getIcon(item.icon)} /> {item.label}
         </div>;
     }

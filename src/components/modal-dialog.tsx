@@ -4,6 +4,7 @@ import Draggable = require('react-draggable');
 export interface IModalDialogProps {
     isOpen: boolean;
     backdrop?: boolean;
+    position?: [number, number] | [string, string];
     size?: [number, number];
     title?: string;
     onClose?: () => void;
@@ -35,6 +36,10 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
         } else {
             modalStyle.top = "50%";
             modalStyle.left = "50%";
+        }
+        if (this.props.position != null) {
+            modalStyle.left = this.props.position[0];
+            modalStyle.top = this.props.position[1];
         }
         const backdropStyle: React.CSSProperties = {
             position: 'absolute',

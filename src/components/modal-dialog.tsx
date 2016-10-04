@@ -41,6 +41,12 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
             modalStyle.left = this.props.position[0];
             modalStyle.top = this.props.position[1];
         }
+        const BORDER_RADIUS = 3;
+        modalStyle.border = "1px solid black";
+        modalStyle.borderBottomLeftRadius = BORDER_RADIUS;
+        modalStyle.borderBottomRightRadius = BORDER_RADIUS;
+        modalStyle.borderTopLeftRadius = BORDER_RADIUS;
+        modalStyle.borderTopRightRadius = BORDER_RADIUS;
         const backdropStyle: React.CSSProperties = {
             position: 'absolute',
             width: '100%',
@@ -50,10 +56,14 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
             zIndex: 9998,
             background: 'rgba(0, 0, 0, 0.3)'
         };
+        const headerStyle: React.CSSProperties = {
+            borderTopLeftRadius: BORDER_RADIUS,
+            borderTopRightRadius: BORDER_RADIUS,
+        };
         return <div>
             <Draggable handle=".modal-dialog-header">
-                <div style={modalStyle}>
-                    <div className="modal-dialog-header">{this.props.title}<span onClick={this.fnClose} style={{ float: "right" }}><i className="icon-cancel-squared" /></span></div>
+                <div className="modal-dialog" style={modalStyle}>
+                    <div className="modal-dialog-header" style={headerStyle}>{this.props.title}<span onClick={this.fnClose} style={{ float: "right" }}><i className="icon-cancel-squared" /></span></div>
                     <div className="modal-dialog-body" style={{ clear: "both" }}>{this.props.children}</div>
                 </div>
             </Draggable>

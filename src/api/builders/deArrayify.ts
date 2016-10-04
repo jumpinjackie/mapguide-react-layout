@@ -580,6 +580,182 @@ function deArrayifyWebLayout(json: any): Contracts.WebLayout.WebLayout {
     return resp;
 }
 
+function deArrayifyMapGroup(json: any): Contracts.Fusion.MapGroup {
+    const root = json;
+    if (root == null || root.length != 1) {
+        throw new MgError("Malformed input. Expected MapGroup element");
+    }
+    const mapGroup: Contracts.Fusion.MapGroup = {
+        "@id": tryGetAsProperty(root, "@id", "string"),
+        InitialView: undefined,
+        Map: [] as Contracts.Fusion.MapConfiguration[]
+    };
+    if (root[0].InitialView) {
+        const iview = root[0].InitialView;
+        mapGroup.InitialView = {
+            CenterX: tryGetAsProperty(iview, "CenterX", "float"),
+            CenterY: tryGetAsProperty(iview, "CenterY", "float"),
+            Scale: tryGetAsProperty(iview, "Scale", "float")
+        };
+    }
+    if (root[0].Map) {
+        for (const m of root[0].Map) {
+            mapGroup.Map.push({
+                Type: tryGetAsProperty(m, "Type", "string"),
+                SingleTile: tryGetAsProperty(m, "SingleTile", "boolean"),
+                Extension: m.Extension
+            });
+        }
+    }
+    return mapGroup;
+}
+
+function deArrayifyMapSet(json: any): Contracts.Fusion.MapSet | null {
+    const root = json;
+    if (root == null || root.length != 1) {
+        throw new MgError("Malformed input. Expected CommandSet element");
+    }
+    const set = {
+        MapGroup: [] as Contracts.Fusion.MapGroup[]
+    };
+    if (root[0].MapGroup) {
+        for (const map of root[0].MapGroup) {
+            set.MapGroup.push(deArrayifyMapGroup(map));
+        }
+    }
+    return set;
+}
+
+function deArrayifyContainerItems(json: any[]): Contracts.Fusion.ContainerItem[] {
+    const items = [] as Contracts.Fusion.ContainerItem[];
+    for (const i of json) {
+        const func = tryGetAsProperty(i, "Function", "string");
+        switch (func) {
+            case "Separator":
+                items.push({
+                    Function: "Separator"
+                });
+                break;
+            case "Widget":
+                items.push({
+                    Function: "Widget",
+                    Widget: tryGetAsProperty(i, "Widget", "string")
+                })
+                break;
+            case "Flyout":
+                items.push({
+                    Function: "Flyout",
+                    Label: tryGetAsProperty(i, "Label", "string"),
+                    Tooltip: tryGetAsProperty(i, "Tooltip", "string"),
+                    ImageUrl: tryGetAsProperty(i, "ImageUrl", "string"),
+                    ImageClass: tryGetAsProperty(i, "ImageClass", "string"),
+                    Item: deArrayifyContainerItems(i.Item)
+                })
+                break;
+        }
+    }
+    return items;
+}
+
+function deArrayifyContainer(json: any[]): Contracts.Fusion.ContainerDefinition[] {
+    const containers = [] as Contracts.Fusion.ContainerDefinition[];
+    for (const c of json) {
+        containers.push({
+            Name: tryGetAsProperty(c, "Name", "string"),
+            Type: tryGetAsProperty(c, "Type", "string"),
+            Position: tryGetAsProperty(c, "Position", "string"),
+            Extension: c.Extension,
+            Item: deArrayifyContainerItems(c.Item)
+        });
+    }
+    return containers;
+}
+
+function deArrayifyWidgets(json: any[]): Contracts.Fusion.Widget[] {
+    const widgets = [] as Contracts.Fusion.Widget[];
+    for (const w of json) {
+        if (w["@type"] == "UiWidgetType") {
+            widgets.push(deArrayifyUiWidget(w));
+        } else {
+            widgets.push(deArrayifyWidget(w));
+        }
+    }
+    return widgets;
+}
+
+function deArrayifyWidget(json: any): Contracts.Fusion.Widget {
+    const root = json;
+    if (root == null || root.length != 1) {
+        throw new MgError("Malformed input. Expected Widget element");
+    }
+    const w = {
+        Name: tryGetAsProperty(root, "Name", "string"),
+        Type: tryGetAsProperty(root, "Type", "string"),
+        Location: tryGetAsProperty(root, "Location", "string"),
+        Extension: root.Extension
+    };
+    return w;
+}
+
+function deArrayifyUiWidget(json: any): Contracts.Fusion.UIWidget {
+    const root = json;
+    if (root == null || root.length != 1) {
+        throw new MgError("Malformed input. Expected Widget element");
+    }
+    const w = {
+        ImageUrl: tryGetAsProperty(root, "ImageUrl", "string"),
+        ImageClass: tryGetAsProperty(root, "ImageClass", "string"),
+        Label: tryGetAsProperty(root, "Label", "string"),
+        Tooltip: tryGetAsProperty(root, "Tooltip", "string"),
+        StatusText: tryGetAsProperty(root, "StatusText", "string"),
+        Disabled: tryGetAsProperty(root, "Disabled", "boolean"),
+        Name: tryGetAsProperty(root, "Name", "string"),
+        Type: tryGetAsProperty(root, "Type", "string"),
+        Location: tryGetAsProperty(root, "Location", "string"),
+        Extension: root.Extension
+    };
+    return w;
+}
+
+function deArrayifyMapWidget(json: any): Contracts.Fusion.MapWidget {
+    const root = json;
+    if (root == null || root.length != 1) {
+        throw new MgError("Malformed input. Expected MapWidget element");
+    }
+    const mw = {
+        MapId: tryGetAsProperty(root, "MapId", "string"),
+        Name: tryGetAsProperty(root, "Name", "string"),
+        Type: tryGetAsProperty(root, "Type", "string"),
+        Location: tryGetAsProperty(root, "Location", "string"),
+        Extension: root.Extension
+    };
+    return mw;
+}
+
+function deArrayifyWidgetSet(json: any): Contracts.Fusion.WidgetSet[] {
+    const widgetSet = [] as Contracts.Fusion.WidgetSet[];
+    for (const ws of json) {
+        widgetSet.push({
+            Container: deArrayifyContainer(ws.Container),
+            MapWidget: deArrayifyMapWidget(ws.MapWidget),
+            Widget: deArrayifyWidgets(ws.Widget)
+        })
+    }
+    return widgetSet;
+}
+
+function deArrayifyFlexibleLayout(json: any): Contracts.Fusion.ApplicationDefinition {
+    const root = json;
+    const resp = {
+        Title: tryGetAsProperty(root, "Title"),
+        TemplateUrl: tryGetAsProperty(root, "TemplateUrl"),
+        MapSet: deArrayifyMapSet(root.MapSet),
+        WidgetSet: deArrayifyWidgetSet(root.WidgetSet),
+        Extension: root.Extension
+    };
+    return resp;
+}
+
 export function deArrayify(json: any): any {
     if (json["RuntimeMap"]) {
         return deArrayifyRuntimeMap(json.RuntimeMap);
@@ -589,6 +765,9 @@ export function deArrayify(json: any): any {
     }
     if (json["WebLayout"]) {
         return deArrayifyWebLayout(json.WebLayout);
+    }
+    if (json["ApplicationDefinition"]) {
+        return deArrayifyFlexibleLayout(json.ApplicationDefinition);
     }
     const keys = [] as string[];
     for (const k in json) {

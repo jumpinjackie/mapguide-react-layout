@@ -1,82 +1,81 @@
 export type IExtension = any;
 
-export interface IApplicationDefinition {
+export interface ApplicationDefinition {
     Title: string | null | undefined;
     TemplateUrl: string | null | undefined;
-    MapSet: IMapSet | null | undefined;
-    WidgetSet: IWidgetSet[];
+    MapSet: MapSet | null | undefined;
+    WidgetSet: WidgetSet[];
     Extension: IExtension | null | undefined;
 }
 
-export interface IMapSet {
-    MapGroup: IMapGroup[];
+export interface MapSet {
+    MapGroup: MapGroup[];
 }
 
-export interface IMapGroup {
+export interface MapGroup {
     "@id": string;
-    InitialView: IMapInitialView | undefined;
-    Map: IMapConfiguration[];
+    InitialView: MapInitialView | undefined;
+    Map: MapConfiguration[];
 }
 
-export interface IMapInitialView {
+export interface MapInitialView {
     CenterX: number;
     CenterY: number;
     Scale: number;
 }
 
-export interface IMapConfiguration {
+export interface MapConfiguration {
     Type: string;
-    SingleTile: string | null | undefined;
+    SingleTile: boolean | null | undefined;
     Extension: IExtension | null | undefined;
 }
 
-export interface IWidgetSet {
-    Container: IContainerDefinition[];
-    MapWidget: IMapWidget;
-    Widget: IWidget[];
+export interface WidgetSet {
+    Container: ContainerDefinition[];
+    MapWidget: MapWidget;
+    Widget: Widget[];
 }
 
-export interface IContainerDefinition {
-    "@type": string;
+export interface ContainerDefinition {
     Name: string;
     Type: string;
     Position: string;
     Extension: IExtension | null;
-    Item: IContainerItem[];
+    Item: ContainerItem[];
 }
 
-export interface ISeparatorItem {
+export interface SeparatorItem {
     Function: "Separator";
 }
 
-export interface IFlyoutItem {
+export interface FlyoutItem {
     Function: "Flyout";
     Label: string;
     Tooltip: string | null | undefined;
     ImageUrl: string | null | undefined;
     ImageClass: string | null | undefined;
-    Item: IContainerItem[];
+    Item: ContainerItem[];
 }
 
-export interface IWidgetItem {
+export interface WidgetItem {
     Function: "Widget";
     Widget: string;
 }
 
-export type IContainerItem = IFlyoutItem | IWidgetItem | ISeparatorItem;
+export type ContainerItem = FlyoutItem | WidgetItem | SeparatorItem;
 
-export interface IMapWidget extends IWidget {
+export interface MapWidget extends Widget {
     MapId: string;
 }
 
-export interface IWidget {
+export interface Widget {
     Name: string;
     Type: string;
     Location: string | null | undefined;
     Extension: IExtension | null | undefined;
 }
 
-export interface IUIWidget extends IWidget {
+export interface UIWidget extends Widget {
     ImageUrl: string;
     ImageClass: string;
     Label: string;

@@ -351,6 +351,7 @@ export interface IContainerItem extends IItem {
 
 export interface IToolbarProps {
     childItems: IItem[];
+    containerClass?: string;
     containerStyle?: React.CSSProperties;
     vertical?: boolean;
 }
@@ -360,11 +361,11 @@ export class Toolbar extends React.Component<IToolbarProps, any> {
         super(props);
     }
     render(): JSX.Element {
-        const { containerStyle, childItems, vertical } = this.props;
+        const { containerStyle, containerClass, childItems, vertical } = this.props;
         const height = containerStyle != null 
             ? (containerStyle.height || DEFAULT_TOOLBAR_SIZE)
             : DEFAULT_TOOLBAR_SIZE; 
-        return <div style={containerStyle} className="noselect">
+        return <div style={containerStyle} className={`noselect ${containerClass}`}>
             {childItems.map((item, index) => {
                 if (isMenu(item)) {
                     return <FlyoutMenuItem key={index} size={height} menu={item} vertical={vertical} />;

@@ -17,6 +17,7 @@ import { processMenuItems } from "../utils/menu";
 export interface IToolbarContainerProps {
     id: string;
     vertical?: boolean;
+    containerClass?: string;
     containerStyle?: React.CSSProperties;
 }
 
@@ -57,17 +58,18 @@ export class ToolbarContainer extends React.Component<ToolbarContainerProps, any
         store: React.PropTypes.object
     };
     render(): JSX.Element {
-        const { toolbar, containerStyle, vertical, invokeCommand } = this.props;
+        const { toolbar, containerClass, containerStyle, vertical, invokeCommand } = this.props;
         const store = (this.context as any).store;
         if (toolbar && toolbar.items && invokeCommand && containerStyle) {
             if (vertical === true) {
                 containerStyle.width = DEFAULT_TOOLBAR_SIZE;
             } else {
                 containerStyle.height = DEFAULT_TOOLBAR_SIZE;
+                containerStyle.overflow = "auto";
             }
             const items = (toolbar.items as any[]).map(tb => mapToolbarReference(tb, store, invokeCommand));
             const childItems = processMenuItems(items);
-            return <Toolbar vertical={vertical} childItems={childItems} containerStyle={containerStyle} />;
+            return <Toolbar vertical={vertical} childItems={childItems} containerClass={containerClass} containerStyle={containerStyle} />;
         } else {
             return <div />;
         }

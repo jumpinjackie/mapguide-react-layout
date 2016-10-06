@@ -38,8 +38,9 @@ It aims for reasonable compatibility with the existing Web Layout and Flexible L
 
 # Templates
 
-The following templates are included with this viewer (see [TEMPLATES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/TEMPLATES.md)) for
-how to launch a viewer with the desired template
+The following templates are included with this viewer.
+
+See [TEMPLATES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/TEMPLATES.md) for how to launch a viewer with the desired template
 
 ## AJAX Viewer
 

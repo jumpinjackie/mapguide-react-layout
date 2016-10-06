@@ -12,6 +12,10 @@ import {
 
 const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;
+const SELECTION_DIALOG_HEIGHT = 300;
+const LEGEND_DIALOG_HEIGHT = 400;
+const TASK_DIALOG_HEIGHT = 400;
+const DIALOG_HEADER_HEIGHT = 28 + 3;
 
 const NAVIGATOR_PROPS = {
     style: { position: "absolute", zIndex: 1000, width: 51, height: 204, cursor: "pointer", right: 10, top: 10 }
@@ -64,9 +68,9 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
         this.fnHideSelection = this.onHideSelection.bind(this);
         this.fnHideTaskPane = this.onHideTaskPane.bind(this);
         this.state = {
-            isTaskPaneOpen: false,
+            isTaskPaneOpen: true,
             isLegendOpen: true,
-            isSelectionOpen: false,
+            isSelectionOpen: true,
             isOverviewMapOpen: false
         };
     }
@@ -101,26 +105,39 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
             {(() => {
                 if (hasSelectionPanel) {
                     return <ModalDialog 
-                                size={[SIDEBAR_WIDTH, 300]}
-                                position={[ 40, 500 ]}
+                                size={[SIDEBAR_WIDTH, SELECTION_DIALOG_HEIGHT]}
+                                position={[ 40, 500, null, null ]}
                                 title="Selection"
                                 backdrop={false}
                                 isOpen={this.state.isSelectionOpen}
                                 onClose={this.fnHideSelection}>
-                        <PlaceholderComponent locale={this.props.config.locale} id={DefaultComponentNames.SelectionPanel} />
+                        <PlaceholderComponent locale={this.props.config.locale} id={DefaultComponentNames.SelectionPanel} componentProps={{ maxHeight: SELECTION_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
                     </ModalDialog>;
                 }
             })()}
             {(() => {
                 if (hasLegend) {
                     return <ModalDialog 
-                                size={[SIDEBAR_WIDTH, 400]}
-                                position={[ 40, 70 ]}
+                                size={[SIDEBAR_WIDTH, LEGEND_DIALOG_HEIGHT]}
+                                position={[ 40, 70, null, null ]}
                                 title="Legend"
                                 backdrop={false}
                                 isOpen={this.state.isLegendOpen}
                                 onClose={this.fnHideLegend}>
-                        <PlaceholderComponent locale={this.props.config.locale} id={DefaultComponentNames.Legend} />
+                        <PlaceholderComponent locale={this.props.config.locale} id={DefaultComponentNames.Legend} componentProps={{ maxHeight: LEGEND_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
+                    </ModalDialog>;
+                }
+            })()}
+            {(() => {
+                if (hasTaskPane) {
+                    return <ModalDialog 
+                                size={[SIDEBAR_WIDTH, TASK_DIALOG_HEIGHT]}
+                                position={[ null, null, 10, 50 ]}
+                                title="Task Pane"
+                                backdrop={false}
+                                isOpen={this.state.isTaskPaneOpen}
+                                onClose={this.fnHideTaskPane}>
+                        <PlaceholderComponent locale={this.props.config.locale} id={DefaultComponentNames.TaskPane} componentProps={{ maxHeight: TASK_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
                     </ModalDialog>;
                 }
             })()}

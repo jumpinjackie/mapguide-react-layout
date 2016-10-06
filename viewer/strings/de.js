@@ -1,5 +1,7 @@
 //NOTE: This is a quick-and-dirty Google Translation (for verifying the localization system is working)
 var STRINGS_DE = {
+    "UNKNOWN_WIDGET": "Diese Schaltfläche verweist auf einen unbekannten oder nicht unterstützten Widget: {widget}",
+    "UNKNOWN_COMMAND_REFERENCE": "Diese Schaltfläche verweist auf einen unbekannten Befehl oder nicht unterstützt: {command}",
     "INIT_ERROR_TITLE": "Ein Fehler ist aufgetreten während des Starts",
     "INIT_ERROR_UNSUPPORTED_COORD_SYS": "<p>Die Karte Definition <strong>{mapDefinition}</strong>, verwendet ein Koordinatensystem, das auf einen gültigen EPSG-Code löst nicht und nicht in diesem Viewer geladen werden kann</p><p>Lösung:</p><ul><li>ändern Sie das System dieser Karte Definition auf eine Koordinate, die</li><li>zu einem EPSG Code löst Bitte beachten Sie: Es wird eine kleine Performance-Overhead für die serverseitige Rückprojektion sein als Ergebnis dies zu tun</li></ul>",
     "INIT_ERROR_UNREGISTERED_EPSG_CODE": "<p>Die Karte Definition <strong>{mapDefinition}</strong>, verwendet ein Koordinatensystem, das auf einen gültigen EPSG-Code löst (<strong>EPSG:{epsg}</strong>), aber keine Projektion für dieses EPSG-Code registriert</p><p>Solution wurde:</p><ol><li>Suche nach dem passenden proj4js Definition unter <a href='http://epsg.io/'>http://epsg.io/</a></li><li>diese Projektion für den Betrachter Registrieren sie vor der Montage</li></ol>",
@@ -9,9 +11,9 @@ var STRINGS_DE = {
     "TPL_SIDEBAR_OPEN_TASKPANE": "Öffnen Sie den Task Pane",
     "TPL_SIDEBAR_OPEN_LEGEND": "Öffnen Legend",
     "TPL_SIDEBAR_OPEN_SELECTION_PANEL": "Öffnen Auswahljury",
-    "TPL_SIDEBAR_TITLE_TASKPANE": "Task Pane",
-    "TPL_SIDEBAR_TITLE_LEGEND": "Legend",
-    "TPL_SIDEBAR_TITLE_SELECTION_PANEL": "Auswahljury",
+    "TPL_TITLE_TASKPANE": "Task Pane",
+    "TPL_TITLE_LEGEND": "Legend",
+    "TPL_TITLE_SELECTION_PANEL": "Auswahljury",
     "TT_GO_HOME": "Nach Hause gehen",
     "TT_GO_BACK": "Geh zurück",
     "TT_GO_FORWARD": "Vorwärts gehen",

@@ -6,6 +6,7 @@ import { AjaxViewerShim } from "../containers/ajax-viewer-shim";
 import { ModalLauncher } from "../containers/modal-launcher";
 import { ModalDialog } from "../components/modal-dialog";
 import { connect } from "react-redux";
+import { tr } from "../api/i18n";
 import {
     ReduxDispatch
 } from "../api/common";
@@ -96,6 +97,10 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
             hasLegend,
             hasToolbar
         } = this.props.capabilities;
+        let locale = "en";
+        if (this.props.config) {
+            locale = this.props.config.locale;
+        }
         let sbWidth = SIDEBAR_WIDTH;
         let tpWidth = SIDEBAR_WIDTH;
         return <div style={{ width: "100%", height: "100%" }}>
@@ -107,11 +112,11 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                     return <ModalDialog 
                                 size={[SIDEBAR_WIDTH, SELECTION_DIALOG_HEIGHT]}
                                 position={[ 40, 500, null, null ]}
-                                title="Selection"
+                                title={tr("TPL_TITLE_SELECTION_PANEL", locale)}
                                 backdrop={false}
                                 isOpen={this.state.isSelectionOpen}
                                 onClose={this.fnHideSelection}>
-                        <PlaceholderComponent locale={this.props.config.locale} id={DefaultComponentNames.SelectionPanel} componentProps={{ maxHeight: SELECTION_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
+                        <PlaceholderComponent locale={locale} id={DefaultComponentNames.SelectionPanel} componentProps={{ maxHeight: SELECTION_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
                     </ModalDialog>;
                 }
             })()}
@@ -120,11 +125,11 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                     return <ModalDialog 
                                 size={[SIDEBAR_WIDTH, LEGEND_DIALOG_HEIGHT]}
                                 position={[ 40, 70, null, null ]}
-                                title="Legend"
+                                title={tr("TPL_TITLE_LEGEND", locale)}
                                 backdrop={false}
                                 isOpen={this.state.isLegendOpen}
                                 onClose={this.fnHideLegend}>
-                        <PlaceholderComponent locale={this.props.config.locale} id={DefaultComponentNames.Legend} componentProps={{ maxHeight: LEGEND_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
+                        <PlaceholderComponent locale={locale} id={DefaultComponentNames.Legend} componentProps={{ maxHeight: LEGEND_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
                     </ModalDialog>;
                 }
             })()}
@@ -133,11 +138,11 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                     return <ModalDialog 
                                 size={[SIDEBAR_WIDTH, TASK_DIALOG_HEIGHT]}
                                 position={[ null, null, 10, 50 ]}
-                                title="Task Pane"
+                                title={tr("TPL_TITLE_TASKPANE", locale)}
                                 backdrop={false}
                                 isOpen={this.state.isTaskPaneOpen}
                                 onClose={this.fnHideTaskPane}>
-                        <PlaceholderComponent locale={this.props.config.locale} id={DefaultComponentNames.TaskPane} componentProps={{ maxHeight: TASK_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
+                        <PlaceholderComponent locale={locale} id={DefaultComponentNames.TaskPane} componentProps={{ maxHeight: TASK_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
                     </ModalDialog>;
                 }
             })()}
@@ -157,30 +162,30 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                         //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()
                         //call to fix
                         if (this.props.map != null) {
-                            return <PlaceholderComponent id={DefaultComponentNames.Map} locale={this.props.config.locale} />;
+                            return <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />;
                         }
                     })()}
                     {(() => {
                         if (hasNavigator) {
-                            return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={this.props.config.locale} componentProps={NAVIGATOR_PROPS} />;
+                            return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} componentProps={NAVIGATOR_PROPS} />;
                         }
                     })()}
                     {(() => {
                         if (hasStatusBar) {
-                            return <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={this.props.config.locale} componentProps={MOUSE_COORDINATE_PROPS} />;
+                            return <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={locale} componentProps={MOUSE_COORDINATE_PROPS} />;
                         }
                     })()}
                     {(() => {
                         if (hasStatusBar) {
-                            return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={this.props.config.locale} componentProps={SCALE_DISPLAY_PROPS} />;
+                            return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={locale} componentProps={SCALE_DISPLAY_PROPS} />;
                         }
                     })()}
                     {(() => {
                         if (hasStatusBar) {
-                            return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={this.props.config.locale} componentProps={SELECTED_FEATURE_COUNT_PROPS} />;
+                            return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={locale} componentProps={SELECTED_FEATURE_COUNT_PROPS} />;
                         }
                     })()}
-                    <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={this.props.config.locale} componentProps={PBMG_PROPS} />
+                    <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={locale} componentProps={PBMG_PROPS} />
                 </div>
             })()}
             <AjaxViewerShim />

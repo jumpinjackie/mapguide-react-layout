@@ -95,13 +95,11 @@ function getToolbarSeparatorItemStyle(height: number, vertical?: boolean): React
         style.paddingBottom = -2;
         style.marginLeft = 0;
         style.marginRight = 0;
-        style.borderBottom = "1px solid black";
     } else {
         style.paddingTop = 0;
         style.paddingBottom = 0;
         style.marginLeft = 2;
         style.marginRight = -2;
-        style.borderLeft = "1px solid black";
     }
     return style;
 }
@@ -277,9 +275,9 @@ class ToolbarSeparator extends React.Component<IToolbarSeparatorProps, any> {
     render(): JSX.Element {
         const style = getToolbarSeparatorItemStyle(this.props.size, this.props.vertical);
         if (this.props.vertical === true) {
-            return <div className="noselect toolbar-separator" style={style} />;
+            return <div className="noselect toolbar-separator-vertical" style={style} />;
         } else {
-            return <div className="noselect toolbar-separator" style={style}>{Constants.NBSP}</div>;
+            return <div className="noselect toolbar-separator-horizontal" style={style}>{Constants.NBSP}</div>;
         }
     }
 }

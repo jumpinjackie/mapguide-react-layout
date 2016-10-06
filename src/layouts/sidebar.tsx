@@ -279,7 +279,7 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
                         top -= 40;
                     }
                     return <div id="toolbar-region" style={{ top: top }}>
-                        <ToolbarContainer id="main" vertical={true} containerStyle={{ position: "absolute", left: 4, right: 6, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />
+                        <ToolbarContainer id="main" containerClass="sidebar-toolbar" vertical={true} containerStyle={{ position: "absolute", left: 4, right: 6, zIndex: 100 }} />
                     </div>;
                 }
             })()}

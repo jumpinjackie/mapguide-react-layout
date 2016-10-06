@@ -2,6 +2,14 @@
 @import '~@aneves/react-flyout/dist/flyout.css';
 @import "../externs/ol3-contextmenu.css";
 
+.toolbar-separator-vertical {
+    border-bottom: 1px solid black;
+}
+
+.toolbar-separator-horizontal {
+    border-left: 1px solid black;
+}
+
 /* Begin QuickPlot */
 div.Label
 {

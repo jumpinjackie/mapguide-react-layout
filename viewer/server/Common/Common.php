@@ -36,7 +36,7 @@
  * this file to configure Fusion.
  */
 
-$defaultExtensionDir = dirname(__FILE__)."/../../../../";
+$defaultExtensionDir = dirname(__FILE__)."/../../../";
 $defaultInstallDir = realpath($defaultExtensionDir)."/../../";
 $initializationErrorOccurred = false;
 $initializationErrorMessage = null;

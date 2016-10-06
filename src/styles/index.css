@@ -2,6 +2,12 @@
 @import '~@aneves/react-flyout/dist/flyout.css';
 @import "../externs/ol3-contextmenu.css";
 
+/* Selection Panel */
+
+.selection-panel-layer-selector {
+    max-width: 180px;
+}
+
 /* Modal Dialogs */
 
 .modal-dialog {
@@ -16,7 +22,6 @@
 }
 
 .modal-dialog-body {
-    position: relative;
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
 }

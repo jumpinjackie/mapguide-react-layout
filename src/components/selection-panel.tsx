@@ -7,6 +7,7 @@ export interface ISelectionPanelProps {
     locale?: string;
     selection: SelectedFeatureSet;
     onRequestZoomToFeature: (feat: SelectedFeature) => void;
+    maxHeight?: number;
 }
 
 function buildToolbarItems(selPanel: SelectionPanel): IItem[] {
@@ -111,20 +112,28 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
             feat = selLayer.Feature[this.state.featureIndex];
             meta = selLayer.LayerMetadata;
         }
-        return <div style={{ width: "100%", height: "100%" }}>
+        let selBodyStyle: React.CSSProperties | undefined;
+        if (this.props.maxHeight) {
+            selBodyStyle = {
+                overflowY: "auto",
+                maxHeight: this.props.maxHeight - DEFAULT_TOOLBAR_SIZE
+            };
+        }
+        return <div>
             {(() => {
                 if (selection != null && selection.SelectedLayer != null && selection.SelectedLayer.length > 0) {
-                    return <div className="selection-panel-toolbar" style={{ position: "absolute", top: 0, left: 0, right: 0, height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR }}>
-                        <select className="selection-panel-layer-selector" value={this.state.selectedLayerIndex} style={{ position: "absolute", top: 0, left: 0, height: DEFAULT_TOOLBAR_SIZE, maxWidth: 180 }} onChange={this.fnSelectedLayerChanged}>
+                    return <div className="selection-panel-toolbar" style={{ height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR }}>
+                        <select className="selection-panel-layer-selector" value={this.state.selectedLayerIndex} style={{ float: "left", height: DEFAULT_TOOLBAR_SIZE,  }} onChange={this.fnSelectedLayerChanged}>
                             {selection.SelectedLayer.map((layer: SelectedLayer, index: number) => {
                                 return <option key={`selected-layer-${layer["@id"]}`} value={`${index}`}>{layer["@name"]}</option>
                             })}
                         </select>
-                        <Toolbar childItems={this.selectionToolbarItems} containerStyle={{ position: "absolute", top: 0, right: 0, height: DEFAULT_TOOLBAR_SIZE }} />
+                        <Toolbar childItems={this.selectionToolbarItems} containerStyle={{ float: "right", height: DEFAULT_TOOLBAR_SIZE }} />
+                        <div style={{ clear: "both" }} />
                     </div>;
                 }
             })()}
-            <div style={{ position: "absolute", top: DEFAULT_TOOLBAR_SIZE, left: 0, right: 0, bottom: 0, overflow: "hidden" }}>
+            <div className="selection-panel-body" style={selBodyStyle}>
                 {(() => {
                     if (feat && meta) {
                         return <table className="selection-panel-property-grid">
@@ -139,7 +148,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
                                 return <tr key={prop.Name}>
                                     <td>{prop.Name}</td>
                                     <td>{prop.Value}</td>
-                                </tr>
+                                </tr>;
                             })}
                             </tbody>
                         </table>;

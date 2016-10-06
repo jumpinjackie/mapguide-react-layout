@@ -304,7 +304,7 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
         }
 
         if (appDef.Title) {
-            document.title = appDef.Title;
+            document.title = appDef.Title || document.title;
         }
 
         dispatch({
@@ -394,7 +394,7 @@ function makeWebLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any):
         }
 
         if (webLayout.Title != "") {
-            document.title = webLayout.Title;
+            document.title = webLayout.Title || document.title;
         }
 
         dispatch({

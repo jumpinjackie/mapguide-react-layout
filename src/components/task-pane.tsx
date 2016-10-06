@@ -18,6 +18,7 @@ export interface ITaskPaneProps {
     onUrlLoaded: (url: string) => void;
     lastUrlPushed?: boolean;
     showTaskBar: boolean;
+    maxHeight?: number;
 }
 
 // HACK:
@@ -99,23 +100,66 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             flyoutAlign: "bottom left",
             childItems: this.props.taskMenuItems
         };
-        return <div style={{ width: "100%", height: "100%" }}>
+
+        const rootStyle: React.CSSProperties = {};
+        const taskBarStyle: React.CSSProperties = {
+            height: DEFAULT_TOOLBAR_SIZE,
+            backgroundColor: TOOLBAR_BACKGROUND_COLOR
+        };
+        const taskBodyStyle: React.CSSProperties = {};
+        const taskFrameStyle: React.CSSProperties = {
+            border: "none"
+        };
+        const taskComponentContainerStyle: React.CSSProperties = {
+            border: "none"
+        };
+        if (!this.props.maxHeight) {
+            rootStyle.width = "100%";
+            rootStyle.height = "100%";
+
+            taskBarStyle.position = "absolute";
+            taskBarStyle.top = 0;
+            taskBarStyle.left = 0;
+            taskBarStyle.right = 0;
+
+            taskBodyStyle.position = "absolute";
+            taskBodyStyle.top = (this.props.showTaskBar === true ? DEFAULT_TOOLBAR_SIZE : 0);
+            taskBodyStyle.left = 0;
+            taskBodyStyle.right = 0;
+            taskBodyStyle.bottom = 0;
+            taskBodyStyle.overflow = "hidden";
+            
+            taskFrameStyle.width = "100%"; 
+            taskFrameStyle.height = "100%";
+
+            taskComponentContainerStyle.width = "100%";
+            taskComponentContainerStyle.height = "100%";
+        } else {
+            taskFrameStyle.width = "100%"; 
+            taskFrameStyle.height = (this.props.showTaskBar === true ? (this.props.maxHeight - DEFAULT_TOOLBAR_SIZE) : this.props.maxHeight);
+
+            taskComponentContainerStyle.width = "100%"; 
+            taskComponentContainerStyle.maxHeight = (this.props.showTaskBar === true ? (this.props.maxHeight - DEFAULT_TOOLBAR_SIZE) : this.props.maxHeight);
+            taskComponentContainerStyle.overflowY = "auto";
+        }
+        return <div style={rootStyle}>
             {(() => {
                 if (this.props.showTaskBar === true) {
-                    return <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR }}>
-                        <Toolbar childItems={this.taskButtons} containerStyle={{ position: "absolute", top: 0, left: 0, height: DEFAULT_TOOLBAR_SIZE }} />
-                        <Toolbar childItems={[ taskMenu ]} containerStyle={{ position: "absolute", top: 0, right: 0, height: DEFAULT_TOOLBAR_SIZE }} />
+                    return <div style={taskBarStyle}>
+                        <Toolbar childItems={this.taskButtons} containerStyle={{ float: "left", height: DEFAULT_TOOLBAR_SIZE }} />
+                        <Toolbar childItems={[ taskMenu ]} containerStyle={{ float: "right", height: DEFAULT_TOOLBAR_SIZE }} />
+                        <div style={{ clear: "both" }} />
                     </div>;
                 }
             })()}
-            <div style={{ position: "absolute", top: (this.props.showTaskBar === true ? DEFAULT_TOOLBAR_SIZE : 0), left: 0, right: 0, bottom: 0, overflow: "hidden" }}>
+            <div style={taskBodyStyle}>
                 {(() => {
                     if (this.state.activeComponent != null) {
-                        return <div style={{ border: "none", width: "100%", height: "100%" }}>
+                        return <div style={taskComponentContainerStyle}>
                             <PlaceholderComponent id={this.state.activeComponent} locale={this.props.locale} />
                         </div>
                     } else {
-                        return <iframe name="taskPaneFrame" ref={this.fnFrameMounted} onLoad={this.fnFrameLoaded} style={{ border: "none", width: "100%", height: "100%" }}>
+                        return <iframe name="taskPaneFrame" ref={this.fnFrameMounted} onLoad={this.fnFrameLoaded} style={taskFrameStyle}>
                 
                         </iframe>
                     }

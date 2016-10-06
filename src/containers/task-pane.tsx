@@ -20,7 +20,7 @@ import { processMenuItems } from "../utils/menu";
 import { tr } from "../api/i18n";
 
 export interface ITaskPaneContainerStyle {
-    style?: React.CSSProperties;
+    maxHeight?: number;
 }
 
 export interface ITaskPaneContainerState {
@@ -137,7 +137,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         store: React.PropTypes.object
     };
     render(): JSX.Element {
-        const { taskpane, config, map, style, toolbar, invokeCommand } = this.props;
+        const { taskpane, config, map, toolbar, invokeCommand, maxHeight } = this.props;
         if (taskpane && config && map) {
             let childItems: IItem[];
             if (toolbar && toolbar.items && invokeCommand) {
@@ -158,6 +158,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
                                  mapName={map.Name}
                                  taskMenuItems={childItems}
                                  onUrlLoaded={this.fnUrlLoaded}
+                                 maxHeight={maxHeight}
                                  locale={config.locale} />;
             }
         }

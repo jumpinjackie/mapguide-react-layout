@@ -43,9 +43,9 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
         return <div>
             <Draggable handle=".modal-dialog-header">
                 <div className="modal-dialog" style={modalStyle}>
-                    <div className="modal-dialog-header">
-                        <span style={{ float: "left" }}>{this.props.title}</span>
-                        <span onClick={this.fnClose} style={{ float: "right" }}><i className="icon-cancel-squared" /></span>
+                    <div className="modal-dialog-header noselect">
+                        <div className="modal-dialog-header-title" style={{ float: "left" }}>{this.props.title}</div>
+                        <div onClick={this.fnClose} style={{ float: "right" }}><i className="icon-cancel-squared" /></div>
                         <div style={{ clear: "both" }} />
                     </div>
                     <div className="modal-dialog-body">{this.props.children}</div>

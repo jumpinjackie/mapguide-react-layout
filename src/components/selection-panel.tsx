@@ -1,5 +1,5 @@
 import * as React from "react";
-import { SelectedFeatureSet, SelectedFeature, LayerMetadata, SelectedLayer } from "../api/contracts/query";
+import { SelectedFeatureSet, SelectedFeature, LayerMetadata, SelectedLayer, FeatureProperty } from "../api/contracts/query";
 import { Toolbar, IItem, IMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
 import { tr as xlate } from "../api/i18n";
 
@@ -136,6 +136,14 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
             <div className="selection-panel-body" style={selBodyStyle}>
                 {(() => {
                     if (feat && meta) {
+                        //Ensure properties are presented in the order specified by its layer metadata
+                        const props = [] as FeatureProperty[];
+                        for (const lp of meta.Property) {
+                            const matches = feat.Property.filter(fp => fp.Name === lp.DisplayName);
+                            if (matches.length === 1) {
+                                props.push(matches[0]);
+                            }
+                        }
                         return <table className="selection-panel-property-grid">
                             <thead>
                                 <tr>
@@ -144,7 +152,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
                                 </tr>
                             </thead>
                             <tbody>
-                            {feat.Property.map(prop => {
+                            {props.map(prop => {
                                 return <tr key={prop.Name}>
                                     <td>{prop.Name}</td>
                                     <td>{prop.Value}</td>

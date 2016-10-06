@@ -42,6 +42,7 @@ export interface ILegendProps {
     currentScale: number;
     overrideSelectableLayers?: any | undefined;
     overrideExpandedItems?: any | undefined;
+    maxHeight?: number;
 }
 
 function getIconUri(iconMimeType: string, iconBase64: string | null | undefined): string | undefined {
@@ -488,10 +489,17 @@ export class Legend extends React.Component<ILegendProps, any> {
     }
     render(): JSX.Element {
         const { tree } = this.state;
-        const { currentScale } = this.props;
-        const { externalBaseLayers, onBaseLayerChanged } = this.props;
+        const { currentScale, externalBaseLayers, onBaseLayerChanged, maxHeight } = this.props;
         const rootItems: any[] = tree.root;
-        return <div>
+
+        const rootStyle: React.CSSProperties = {
+            overflow: "auto"
+        }
+        if (maxHeight) {
+            rootStyle.maxHeight = maxHeight;
+        }
+
+        return <div style={rootStyle}>
             {(() => {
                 if (externalBaseLayers != null &&
                     externalBaseLayers.length > 0) {

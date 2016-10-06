@@ -24,6 +24,7 @@
 .modal-dialog-body {
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
+    padding-bottom: 3px;
 }
 
 .modal-dialog-backdrop {

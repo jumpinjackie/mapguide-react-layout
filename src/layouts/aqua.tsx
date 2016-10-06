@@ -137,7 +137,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                 if (hasTaskPane) {
                     return <ModalDialog 
                                 size={[SIDEBAR_WIDTH, TASK_DIALOG_HEIGHT]}
-                                position={[ null, null, 10, 50 ]}
+                                position={[ null, 70, 80, null ]}
                                 title={tr("TPL_TITLE_TASKPANE", locale)}
                                 backdrop={false}
                                 isOpen={this.state.isTaskPaneOpen}

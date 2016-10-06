@@ -11,3 +11,4 @@ src/**/*.js.map
 !src/externs/*.js
 viewer/dist
 declarations
+webconfig.ini

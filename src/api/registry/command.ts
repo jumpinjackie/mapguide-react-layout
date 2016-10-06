@@ -10,14 +10,28 @@ import {
 } from "../../api/common";
 import { QueryMapFeaturesResponse } from "../contracts/query";
 import { ResultColumnSet } from "../contracts/weblayout";
-import { IItem, IMenu } from "../../components/toolbar";
+import { IItem, IMenu, getIcon } from "../../components/toolbar";
 import * as Constants from "../../constants";
 import { ensureParameters } from "../../actions/taskpane";
 import { tr } from "../i18n";
 
+function NOOP() { }
+function ALWAYS_FALSE() { return false; }
+function ALWAYS_TRUE() { return true; }
+
 export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: (cmd: ICommand) => void): IItem|IMenu|null {
     const state = store.getState();
-    if (tb.isSeparator === true) {
+    if (tb.error) {
+        const cmdItem: IItem = {
+            icon: "error.png",
+            tooltip: tb.error,
+            label: "Error",
+            selected: ALWAYS_FALSE,
+            enabled: ALWAYS_FALSE,
+            invoke: NOOP
+        };
+        return cmdItem;
+    } else if (tb.isSeparator === true) {
         return { isSeparator: true };
     } else if (tb.command) {
         const cmd = getCommand(tb.command);

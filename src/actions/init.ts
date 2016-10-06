@@ -40,7 +40,7 @@ function isUIWidget(widget: any): widget is UIWidget {
     return widget.WidgetType === "UiWidgetType";
 }
 
-function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictionary<Widget>, noToolbarLabels = false, canSupportFlyouts = true): any[] {
+function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictionary<Widget>, locale: string, noToolbarLabels = false, canSupportFlyouts = true): any[] {
     return items.map(item => {
         switch (item.Function) {
             case "Widget":
@@ -119,6 +119,8 @@ function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictiona
                                 return { command: DefaultCommands.ZoomToSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
                             case "Measure":
                                 return { command: DefaultCommands.Measure, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            default:
+                                return { error: tr("UNKNOWN_WIDGET", locale, { widget: widget.Type }) }
                         }
                     }
                 }
@@ -128,19 +130,20 @@ function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictiona
                 return {
                     label: item.Label,
                     tooltip: item.Tooltip,
-                    children: convertFlexLayoutUIItems(item.Item, widgetsByKey) 
+                    children: convertFlexLayoutUIItems(item.Item, widgetsByKey, locale) 
                 };
         }
         return null;
     });
 }
 
-function convertWebLayoutUIItems(items: UIItem[] | null | undefined, cmdsByKey: Dictionary<CommandDef>, noToolbarLabels = true, canSupportFlyouts = true): any[] {
+function convertWebLayoutUIItems(items: UIItem[] | null | undefined, cmdsByKey: Dictionary<CommandDef>, locale: string, noToolbarLabels = true, canSupportFlyouts = true): any[] {
     return (items || []).map(item => {
         if (isCommandItem(item)) {
             const cmdDef: CommandDef = cmdsByKey[item.Command];
             if (!cmdDef) {
                 logger.warn(`Invalid reference to command: ${item.Command}`);
+                return { error: tr("UNKNOWN_COMMAND_REFERENCE", locale, { command: item.Command }) };
             } else if (cmdDef.TargetViewer != "Dwf") {
                 if (isBasicCommand(cmdDef)) {
                     let action: string = cmdDef.Action;
@@ -177,7 +180,7 @@ function convertWebLayoutUIItems(items: UIItem[] | null | undefined, cmdsByKey: 
             return { 
                 label: item.Label,
                 tooltip: item.Tooltip,
-                children: convertWebLayoutUIItems(item.SubItem, cmdsByKey, false, false) 
+                children: convertWebLayoutUIItems(item.SubItem, cmdsByKey, locale, false, false) 
             };
         }
 
@@ -259,7 +262,7 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
                         tbName = "taskpane";
                         break;
                 }
-                tbConf[tbName] = { items: convertFlexLayoutUIItems(cont.Item, widgetsByKey) };
+                tbConf[tbName] = { items: convertFlexLayoutUIItems(cont.Item, widgetsByKey, opts.locale) };
             }
         }
         
@@ -357,13 +360,13 @@ function makeWebLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any):
             cmdsByKey[cmd.Name] = cmd;
         }
         const mainToolbar = (webLayout.ToolBar.Visible
-                            ? convertWebLayoutUIItems(webLayout.ToolBar.Button, cmdsByKey)
+                            ? convertWebLayoutUIItems(webLayout.ToolBar.Button, cmdsByKey, opts.locale)
                             : []);
         const taskBar = (webLayout.TaskPane.TaskBar.Visible
-                        ? convertWebLayoutUIItems(webLayout.TaskPane.TaskBar.MenuButton, cmdsByKey, false)
+                        ? convertWebLayoutUIItems(webLayout.TaskPane.TaskBar.MenuButton, cmdsByKey, opts.locale, false)
                         : []);
         const contextMenu = (webLayout.ContextMenu.Visible
-                            ? convertWebLayoutUIItems(webLayout.ContextMenu.MenuItem, cmdsByKey, false)
+                            ? convertWebLayoutUIItems(webLayout.ContextMenu.MenuItem, cmdsByKey, opts.locale, false)
                             : []);
         const config: any = {};
         if (webLayout.SelectionColor != null) {

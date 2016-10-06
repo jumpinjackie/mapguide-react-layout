@@ -2,6 +2,46 @@
 @import '~@aneves/react-flyout/dist/flyout.css';
 @import "../externs/ol3-contextmenu.css";
 
+.ol-rotate {
+    top: auto;
+    right: 10px;
+    bottom: 30px;
+}
+
+.ol-rotate button {
+    bottom: 1px;
+    left: auto;
+    right: 1px;
+    top: auto;
+}
+
+.ol-custom-overviewmap,
+.ol-custom-overviewmap.ol-uncollapsible {
+    bottom: 30px;
+    left: auto;
+    right: 40px;
+    top: auto;
+}
+
+.ol-custom-overviewmap:not(.ol-collapsed)  {
+    border: 1px solid black;
+}
+
+.ol-custom-overviewmap .ol-overviewmap-map {
+    border: none;
+}
+
+.ol-custom-overviewmap .ol-overviewmap-box {
+    border: 2px solid red;
+}
+
+.ol-custom-overviewmap:not(.ol-collapsed) button{
+    bottom: 1px;
+    left: auto;
+    right: 1px;
+    top: auto;
+}
+
 /* Selection Panel */
 
 .selection-panel-layer-selector {

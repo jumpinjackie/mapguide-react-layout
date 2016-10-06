@@ -821,13 +821,25 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         });
         this._zoomSelectBox.on("boxend", this.onZoomSelectBox.bind(this));
 
+        // HACK: Workaround until (https://github.com/jumpinjackie/jsdoc-typescript-plugin/issues/72) is fixed
+        const overviewMapOpts: any = {
+            className: 'ol-overviewmap ol-custom-overviewmap',
+            view: new ol.View({
+                projection: projection
+            }),
+            collapseLabel: '\u00BB',
+            label: '\u00AB'
+        };
+
         const mapOptions: olx.MapOptions = {
             logo: false,
             target: mapNode,
             layers: layers,
             view: view,
             controls: [
-                new ol.control.Attribution()
+                new ol.control.Attribution(),
+                new ol.control.Rotate(),
+                new ol.control.OverviewMap(overviewMapOpts)
             ],
             interactions: [
                 new ol.interaction.DragRotate(),

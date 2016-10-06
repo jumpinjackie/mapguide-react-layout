@@ -104,6 +104,9 @@ function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictiona
                             case "RefreshMap":
                                 return { command: DefaultCommands.RefreshMap, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
                             //case "SaveMap":
+                            case "InvokeURL": //Commands with this name would've been registered beforehand
+                            case "Search": 
+                                return { command: widget.Name, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
                             case "SelectPolygon":
                                 return { command: DefaultCommands.SelectPolygon, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
                             case "SelectRadius":

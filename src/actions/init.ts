@@ -296,7 +296,10 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
         } else {
             initialTask = "server/TaskPane.html";
         }
-        //Setup capabilities
+
+        if (appDef.Title) {
+            document.title = appDef.Title;
+        }
 
         dispatch({
             type: Constants.INIT_APP,
@@ -383,6 +386,11 @@ function makeWebLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any):
                 scale: webLayout.Map.InitialView.Scale
             };
         }
+
+        if (webLayout.Title != "") {
+            document.title = webLayout.Title;
+        }
+
         dispatch({
             type: Constants.INIT_APP,
             payload: {

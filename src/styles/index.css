@@ -2,6 +2,35 @@
 @import '~@aneves/react-flyout/dist/flyout.css';
 @import "../externs/ol3-contextmenu.css";
 
+/* Modal Dialogs */
+
+.modal-dialog {
+    background: #fff;
+    border: 1px solid black;
+    border-radius: 3px;
+}
+
+.modal-dialog-header {
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+.modal-dialog-body {
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+.modal-dialog-backdrop {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    z-index: 9998;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* Toolbar */
 .toolbar-separator-vertical {
     border-bottom: 1px solid black;
 }

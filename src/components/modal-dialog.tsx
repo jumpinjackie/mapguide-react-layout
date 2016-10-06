@@ -26,7 +26,6 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
             //left: '50%',
             transform: 'translate(-50%, -50%)',
             zIndex: 9999,
-            background: '#fff'
         };
         if (this.props.size != null) {
             modalStyle.top = 20;
@@ -41,35 +40,20 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
             modalStyle.left = this.props.position[0];
             modalStyle.top = this.props.position[1];
         }
-        const BORDER_RADIUS = 3;
-        modalStyle.border = "1px solid black";
-        modalStyle.borderBottomLeftRadius = BORDER_RADIUS;
-        modalStyle.borderBottomRightRadius = BORDER_RADIUS;
-        modalStyle.borderTopLeftRadius = BORDER_RADIUS;
-        modalStyle.borderTopRightRadius = BORDER_RADIUS;
-        const backdropStyle: React.CSSProperties = {
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            top: '0px',
-            left: '0px',
-            zIndex: 9998,
-            background: 'rgba(0, 0, 0, 0.3)'
-        };
-        const headerStyle: React.CSSProperties = {
-            borderTopLeftRadius: BORDER_RADIUS,
-            borderTopRightRadius: BORDER_RADIUS,
-        };
         return <div>
             <Draggable handle=".modal-dialog-header">
                 <div className="modal-dialog" style={modalStyle}>
-                    <div className="modal-dialog-header" style={headerStyle}>{this.props.title}<span onClick={this.fnClose} style={{ float: "right" }}><i className="icon-cancel-squared" /></span></div>
-                    <div className="modal-dialog-body" style={{ clear: "both" }}>{this.props.children}</div>
+                    <div className="modal-dialog-header">
+                        <span style={{ float: "left" }}>{this.props.title}</span>
+                        <span onClick={this.fnClose} style={{ float: "right" }}><i className="icon-cancel-squared" /></span>
+                        <div style={{ clear: "both" }} />
+                    </div>
+                    <div className="modal-dialog-body">{this.props.children}</div>
                 </div>
             </Draggable>
             {(() => {
                 if (this.props.backdrop === true) {
-                    return <div style={backdropStyle} onClick={this.fnClose} />;
+                    return <div className="modal-dialog-backdrop" onClick={this.fnClose} />;
                 }
             })()}
         </div>;

@@ -431,6 +431,20 @@ function makeWebLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any):
     };
 }
 
+function resolveProjection(epsg: string, opts: any, mapDef: string): Promise<any> {
+    return fetch(`//epsg.io?format=json&q=${epsg}`).then(resp => {
+        return resp.json();
+    }).then(resp => {
+        if (resp.results && resp.results.length > 0) {
+            proj4.defs(`EPSG:${epsg}`, resp.results[0].proj4);
+            logger.debug(`Registered projection EPSG:${epsg} from epsg.io`);
+            return proj4.defs[`EPSG:${epsg}`];
+        } else {
+            throw new MgError(tr("INIT_ERROR_UNREGISTERED_EPSG_CODE", opts.locale || "en", { epsg: epsg, mapDefinition: mapDef }));
+        }
+    });
+}
+
 function makeRuntimeMapSuccessHandler<T>(client: Client, session: string, opts: any, mapDefSelector: (res: T) => string): (res: T) => [T, RuntimeMap] | Thenable<[T, RuntimeMap]> {
     return (res) => {
         const mapDef = mapDefSelector(res);
@@ -447,15 +461,21 @@ function makeRuntimeMapSuccessHandler<T>(client: Client, session: string, opts: 
                 throw new MgError(tr("INIT_ERROR_UNSUPPORTED_COORD_SYS", opts.locale || "en", { mapDefinition: mapDef }));
             }
             //Must be registered to proj4js if not 4326 or 3857
-            //TODO: We should allow for online fallback (eg. Hit epsg.io for the proj4js definition)
             if (!proj4.defs[`EPSG:${epsg}`]) {
-                throw new MgError(tr("INIT_ERROR_UNREGISTERED_EPSG_CODE", opts.locale || "en", { epsg: epsg, mapDefinition: mapDef }));
+                return Promise.all([
+                    res, 
+                    map,
+                    resolveProjection(epsg, opts, mapDef)
+                ]);
+            } else {
+                return Promise.all([
+                    res, 
+                    map,
+                    proj4.defs[`EPSG:${epsg}`]
+                ]);
             }
-
-            return Promise.all([
-                res, 
-                map
-            ]);
+        }).then(res => {
+            return Promise.all([res[0], res[1]]);
         });
     };
 }

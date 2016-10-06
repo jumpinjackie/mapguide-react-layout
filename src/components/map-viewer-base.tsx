@@ -827,8 +827,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             view: new ol.View({
                 projection: projection
             }),
-            collapseLabel: '\u00BB',
-            label: '\u00AB'
+            collapseLabel: String.fromCharCode(187), //'\u00BB',
+            label: String.fromCharCode(171) //'\u00AB'
         };
 
         const mapOptions: olx.MapOptions = {

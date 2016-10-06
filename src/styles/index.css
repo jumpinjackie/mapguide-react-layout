@@ -2,10 +2,18 @@
 @import '~@aneves/react-flyout/dist/flyout.css';
 @import "../externs/ol3-contextmenu.css";
 
+/* OpenLayers overrides */
+
+.ol-attribution {
+    right: 10px;
+    bottom: 52px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
 .ol-rotate {
     top: auto;
     right: 10px;
-    bottom: 30px;
+    bottom: 25px;
 }
 
 .ol-rotate button {
@@ -17,9 +25,9 @@
 
 .ol-custom-overviewmap,
 .ol-custom-overviewmap.ol-uncollapsible {
-    bottom: 30px;
+    bottom: 79px;
     left: auto;
-    right: 40px;
+    right: 10px;
     top: auto;
 }
 
@@ -222,11 +230,6 @@ div.InfoText
     -ms-user-select: none;       /* Internet Explorer/Edge */
     user-select: none;           /* Non-prefixed version, currently
                                     not supported by any browser */
-}
-
-.ol-attribution {
-    bottom: 25px;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .component-mouse-coordinates, .component-selected-feature-count, .component-scale-display {

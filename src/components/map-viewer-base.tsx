@@ -760,7 +760,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 useOverlay: true,
                 metersPerUnit: metersPerUnit,
                 params: this._dynamicOverlayParams,
-                ratio: 2
+                ratio: 1
             })
         });
         this._selectionOverlay = new ol.layer.Image({
@@ -772,7 +772,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 useOverlay: true,
                 metersPerUnit: metersPerUnit,
                 params: this._selectionOverlayParams,
-                ratio: 2
+                ratio: 1
             })
         });
 

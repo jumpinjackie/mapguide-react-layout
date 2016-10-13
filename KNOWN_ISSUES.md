@@ -54,9 +54,6 @@ Viewer
       * You can find proj4js definitions at [epsg.io](http://epsg.io)
       * You will currently need to modify the respective template HTML file to include the projection
 
- * [#29](https://github.com/jumpinjackie/mapguide-react-layout/issues/29): When the active tool is select, it may interfere with digitization-based selection tools (eg. Select Radius/Polygon)
-   * Workaround: Do not have the active tool as select before digitizing
-
  * [#34](https://github.com/jumpinjackie/mapguide-react-layout/issues/34): Digitization tools have poor user experience on mobile/tablet devices
  * [#34](https://github.com/jumpinjackie/mapguide-react-layout/issues/34): Feature Tooltips does not work on mobile/tablet devices
 

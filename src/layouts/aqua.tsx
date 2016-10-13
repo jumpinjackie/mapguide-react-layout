@@ -18,22 +18,6 @@ const LEGEND_DIALOG_HEIGHT = 400;
 const TASK_DIALOG_HEIGHT = 400;
 const DIALOG_HEADER_HEIGHT = 28 + 3;
 
-const NAVIGATOR_PROPS = {
-    style: { position: "absolute", zIndex: 1000, width: 51, height: 204, cursor: "pointer", right: 10, top: 10 }
-};
-const MOUSE_COORDINATE_PROPS = {
-    style: { position: "absolute", bottom: 0, left: 0, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }
-};
-const SCALE_DISPLAY_PROPS = {
-    style: { position: "absolute", bottom: 0, right: 340, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }
-};
-const SELECTED_FEATURE_COUNT_PROPS = {
-    style: { position: "absolute", bottom: 0, right: 140, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }
-};
-const PBMG_PROPS = {
-    style: { position: "absolute", bottom: 0, right: 0, zIndex: 100 }
-};
-
 export interface IAquaTemplateLayoutState {
     map?: any;
     config?: any;
@@ -167,25 +151,25 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                     })()}
                     {(() => {
                         if (hasNavigator) {
-                            return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} componentProps={NAVIGATOR_PROPS} />;
+                            return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
                         }
                     })()}
                     {(() => {
                         if (hasStatusBar) {
-                            return <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={locale} componentProps={MOUSE_COORDINATE_PROPS} />;
+                            return <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={locale} />;
                         }
                     })()}
                     {(() => {
                         if (hasStatusBar) {
-                            return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={locale} componentProps={SCALE_DISPLAY_PROPS} />;
+                            return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={locale} />;
                         }
                     })()}
                     {(() => {
                         if (hasStatusBar) {
-                            return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={locale} componentProps={SELECTED_FEATURE_COUNT_PROPS} />;
+                            return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={locale} />;
                         }
                     })()}
-                    <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={locale} componentProps={PBMG_PROPS} />
+                    <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={locale} />
                 </div>
             })()}
             <AjaxViewerShim />

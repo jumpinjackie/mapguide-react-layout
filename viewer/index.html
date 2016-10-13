@@ -4,12 +4,15 @@
         <title>MapGuide React Viewer</title>
         <link href="css/animation.css" rel="stylesheet" />
         <link href="css/fontello.css" rel="stylesheet" />
+        <script type="text/javascript" src="dist/viewer.js"></script>
+        <script type="text/javascript" src="strings/de.js" charset="UTF-8"></script>
         <style type="text/css">
             html, body, #map { padding: 0; margin: 0; font: 10pt Verdana, sans-serif; }
             #map { position: absolute; left: 0; right: 0; top: 0; bottom: 0; }
+            .component-mouse-coordinates, .component-scale-display, .component-selected-feature-count {
+                background-color: #f0f0f0;
+            }
         </style>
-        <script type="text/javascript" src="dist/viewer.js"></script>
-        <script type="text/javascript" src="strings/de.js" charset="UTF-8"></script>
     </head>
     <body>
         <div id="map"></div>

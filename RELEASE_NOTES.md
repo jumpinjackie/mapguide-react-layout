@@ -5,6 +5,7 @@ next
     * See [KNOWN_ISSUES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/KNOWN_ISSUES.md) for features not yet supported
  * [#64](https://github.com/jumpinjackie/mapguide-react-layout/issues/64): New layout template: Aqua
     * This is a port of the equivalent Fusion template
+ * [#33](https://github.com/jumpinjackie/mapguide-react-layout/issues/33): Update toolbar CSS in Sidebar layout template so that it better blends in.
  * [#65](https://github.com/jumpinjackie/mapguide-react-layout/issues/65): Page document title will now be set to the title of the Web Layout / Application Definition if specified
  * [#60](https://github.com/jumpinjackie/mapguide-react-layout/issues/60): Fix bad relative path to webconfig.ini that causes most server-side tools to fail
  * [#55](https://github.com/jumpinjackie/mapguide-react-layout/issues/55): Handle and show startup errors

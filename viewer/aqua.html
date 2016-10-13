@@ -4,6 +4,8 @@
         <title>MapGuide React Viewer</title>
         <link href="css/animation.css" rel="stylesheet" />
         <link href="css/fontello.css" rel="stylesheet" />
+        <script type="text/javascript" src="dist/viewer.js"></script>
+        <script type="text/javascript" src="strings/de.js" charset="UTF-8"></script>
         <style type="text/css">
             /* Prevent scrollbars due to floating modal dialogs going past the bounds of the root element */
             html { overflow: hidden; }
@@ -43,9 +45,16 @@
             .aqua-toolbar .mouse-over {
                 color: black;
             }
+            .component-mouse-coordinates, .component-scale-display, .component-selected-feature-count {
+                background-color: #B2DFEA;
+                border-left: 1px solid black;
+                border-right: 1px solid black;
+                border-top: 1px solid black;
+            }
+            .component-mouse-coordinates {
+                left: 1px;
+            }
         </style>
-        <script type="text/javascript" src="dist/viewer.js"></script>
-        <script type="text/javascript" src="strings/de.js" charset="UTF-8"></script>
     </head>
     <body>
         <div id="map"></div>

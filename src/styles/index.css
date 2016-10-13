@@ -291,3 +291,41 @@ div.InfoText
 .tooltip-static:before {
     border-top-color: #ffcc33;
 }
+
+.component-mouse-coordinates {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+}
+
+.component-scale-display {
+    position: absolute;
+    bottom: 0px;
+    right: 340px;
+    z-index: 100;
+}
+
+.component-selected-feature-count {
+    position: absolute;
+    bottom: 0px;
+    right: 140px;
+    z-index: 100;
+}
+
+.component-navigator {
+    position: absolute;
+    width: 51px;
+    height: 204px;
+    z-index: 1000;
+    cursor: pointer;
+    right: 10px;
+    top: 10px;
+}
+
+.component-pbmg {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    z-index: 100;
+}

@@ -128,7 +128,7 @@ export class Navigator extends React.Component<INavigatorProps, any> {
     }
     render(): JSX.Element {
         const { busy } = this.props;
-        return <div id="Navigator" style={this.props.style} className="noselect">
+        return <div id="Navigator" style={this.props.style} className="component-navigator noselect">
             <map name="Navigator_ImageMap" id="Navigator_ImageMap">
                 <area onClick={this.fnPanEast} shape="poly" alt={tr("NAVIGATOR_PAN_EAST", this.props.locale)} title={tr("NAVIGATOR_PAN_EAST", this.props.locale)} coords="27,176, 27,177, 40,190, 44,182, 44,159" />
                 <area onClick={this.fnPanWest} shape="poly" alt={tr("NAVIGATOR_PAN_WEST", this.props.locale)} title={tr("NAVIGATOR_PAN_WEST", this.props.locale)} coords="24,177, 24,176, 7,159, 7,182, 11,190" />

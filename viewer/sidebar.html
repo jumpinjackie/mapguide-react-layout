@@ -5,6 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <link href="css/animation.css" rel="stylesheet" />
         <link href="css/fontello.css" rel="stylesheet" />
+        <script type="text/javascript" src="dist/viewer.js"></script>
+        <script type="text/javascript" src="strings/de.js"></script>
         <style type="text/css">
             html,
             body,
@@ -388,10 +390,6 @@
                 border-bottom: 1px solid white;
             }
 
-            .component-mouse-coordinates {
-                left: 60px !important;
-            }
-
             .sidebar-toolbar {
                 color: white;
             }
@@ -407,9 +405,44 @@
             .sidebar-toolbar .mouse-over {
                 color: black;
             }
+
+            .component-navigator {
+                top: 25px;
+                right: 10px;
+            }
+
+            .component-scale-display {
+                background-color: rgba(0, 60, 136, 0.5);
+                color: white;
+            }
+
+            .component-selected-feature-count {
+                background-color: rgba(0, 60, 136, 0.5);
+                color: white;
+            }
+
+            .component-mouse-coordinates {
+                position: absolute;
+                bottom: auto;
+                left: auto;
+                right: 5px;
+                top: 5px;
+                background-color: rgba(0, 60, 136, 0.5);
+                color: white;
+            }
+
+            @media (max-width: 768px) {
+                .component-mouse-coordinates {
+                    display: none;
+                }
+                .component-scale-display {
+                    display: none;
+                }
+                .component-selected-feature-count {
+                    display: none;
+                }
+            }
         </style>
-        <script type="text/javascript" src="dist/viewer.js"></script>
-        <script type="text/javascript" src="strings/de.js"></script>
     </head>
 
     <body>

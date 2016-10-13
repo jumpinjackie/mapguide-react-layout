@@ -18,22 +18,6 @@ import {
 const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;
 
-const NAVIGATOR_PROPS = {
-    style: { position: "absolute", zIndex: 1000, width: 51, height: 204, cursor: "pointer", right: 10, top: 10 }
-};
-const MOUSE_COORDINATE_PROPS = {
-    style: { position: "absolute", bottom: 0, left: 0, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }
-};
-const SCALE_DISPLAY_PROPS = {
-    style: { position: "absolute", bottom: 0, right: 340, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }
-};
-const SELECTED_FEATURE_COUNT_PROPS = {
-    style: { position: "absolute", bottom: 0, right: 140, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }
-};
-const PBMG_PROPS = {
-    style: { position: "absolute", bottom: 0, right: 0, zIndex: 100 }
-};
-
 const SidebarHeader = (props: any) => {
     const sbHeaderStyle: React.CSSProperties = {
         position: "absolute",
@@ -285,28 +269,28 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
             })()}
             {(() => {
                 if (hasNavigator) {
-                    return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={config.locale} componentProps={NAVIGATOR_PROPS} />;
+                    return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={config.locale} />;
                 }
             })()}
             {(() => {
                 if (hasStatusBar) {
-                    return <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={config.locale} componentProps={MOUSE_COORDINATE_PROPS} />;
+                    return <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={config.locale} />;
                 }
             })()}
             {(() => {
                 if (hasStatusBar) {
-                    return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={config.locale} componentProps={SCALE_DISPLAY_PROPS} />;
+                    return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={config.locale} />;
                 }
             })()}
             {(() => {
                 if (hasStatusBar) {
-                    return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={config.locale} componentProps={SELECTED_FEATURE_COUNT_PROPS} />;
+                    return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={config.locale} />;
                 }
             })()}
             <PlaceholderComponent id={DefaultComponentNames.Map} locale={config.locale} />
             <AjaxViewerShim />
             <ModalLauncher />
-            <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={config.locale} componentProps={PBMG_PROPS} />
+            <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={config.locale} />
         </div>;
     }
 }

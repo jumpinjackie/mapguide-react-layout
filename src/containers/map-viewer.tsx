@@ -46,6 +46,7 @@ export interface IMapViewerContainerState {
 }
 
 export interface IMapViewerContainerDispatch {
+    setActiveTool?: (tool: ActiveMapTool) => void;
     setCurrentView?: (view: IMapView) => void;
     setBusyCount?: (count: number) => void;
     setMouseCoordinates?: (coord: Coordinate) => void;
@@ -68,6 +69,7 @@ function mapStateToProps(state: IApplicationState): IMapViewerContainerState {
 
 function mapDispatchToProps(dispatch: ReduxDispatch): IMapViewerContainerDispatch {
     return {
+        setActiveTool: (tool) => dispatch(MapActions.setActiveTool(tool)),
         setCurrentView: (view) => dispatch(MapActions.setCurrentView(view)),
         setBusyCount: (count) => dispatch(MapActions.setBusyCount(count)),
         setMouseCoordinates: (coord) => dispatch(MapActions.setMouseCoordinates(coord)),
@@ -89,6 +91,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     private fnBusyLoading: (busyCount: number) => void;
     private fnMouseCoordinateChanged: (coord: Coordinate) => void;
     private fnSessionExpired: () => void;
+    private fnBeginDigitization: (callback: (cancelled: boolean) => void) => void;
     constructor(props: MapViewerContainerProps) {
         super(props);
         this.fnMapViewerMounted = this.onMapViewerMounted.bind(this);
@@ -97,11 +100,20 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         this.fnBusyLoading = this.onBusyLoading.bind(this);
         this.fnMouseCoordinateChanged = this.onMouseCoordinateChanged.bind(this);
         this.fnSessionExpired = this.onSessionExpired.bind(this);
+        this.fnBeginDigitization = this.onBeginDigitization.bind(this);
     }
     static contextTypes: React.ValidationMap<any> = {
         store: React.PropTypes.object
     };
-    private onMapViewerMounted(component: MapViewerBase) {
+    private onBeginDigitization(callback: (cancelled: boolean) => void): void {
+        if (this.props.setActiveTool) {
+            this.props.setActiveTool(ActiveMapTool.None);
+        }
+        //Could be a small timing issue here, but the active tool should generally
+        //be "None" before the user clicks their first digitizing vertex/point
+        callback(false);
+    }
+    private onMapViewerMounted(component: MapViewerBase): void {
         this.inner = component;
     }
     private onRequestZoomToView(view: IMapView): void {
@@ -179,6 +191,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                   initialView={view.initial}
                                   selectableLayerNames={selectableLayerNames}
                                   contextMenu={childItems}
+                                  onBeginDigitization={this.fnBeginDigitization}
                                   onSessionExpired={this.fnSessionExpired}
                                   onBusyLoading={this.fnBusyLoading}
                                   onMouseCoordinateChanged={this.fnMouseCoordinateChanged}

@@ -82,6 +82,7 @@ export interface IMapViewerBaseProps {
     onMouseCoordinateChanged?: (coords: number[]) => void;
     onBusyLoading: (busyCount: number) => void;
     onSessionExpired?: () => void;
+    onBeginDigitization: (callback: (cancelled: boolean) => void) => void;
 }
 
 export function areViewsCloseToEqual(view: IMapView, otherView: IMapView): boolean {
@@ -520,19 +521,23 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
     }
     private pushDrawInteraction<T extends ol.geom.Geometry>(draw: ol.interaction.Draw, handler: DigitizerCallback<T>, prompt?: string): void {
-        this.removeActiveDrawInteraction();
-        this._mouseTooltip.clear();
-        if (prompt) {
-            this._mouseTooltip.setText(prompt);
-        }
-        this._activeDrawInteraction = draw;
-        this._activeDrawInteraction.once("drawend", (e: GenericEvent) => {
-            const drawnFeature: ol.Feature = e.feature;
-            const geom: T = drawnFeature.getGeometry() as T;
-            this.cancelDigitization();
-            handler(geom);
-        })
-        this._map.addInteraction(this._activeDrawInteraction);
+        this.props.onBeginDigitization(cancel => {
+            if (!cancel) {
+                this.removeActiveDrawInteraction();
+                this._mouseTooltip.clear();
+                if (prompt) {
+                    this._mouseTooltip.setText(prompt);
+                }
+                this._activeDrawInteraction = draw;
+                this._activeDrawInteraction.once("drawend", (e: GenericEvent) => {
+                    const drawnFeature: ol.Feature = e.feature;
+                    const geom: T = drawnFeature.getGeometry() as T;
+                    this.cancelDigitization();
+                    handler(geom);
+                })
+                this._map.addInteraction(this._activeDrawInteraction);
+            }
+        });
     }
     private onKeyDown(e: GenericEvent) {
         switch (e.keyCode) {

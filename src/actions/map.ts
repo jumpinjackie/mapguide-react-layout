@@ -1,5 +1,6 @@
 import * as Constants from "../constants";
 import {
+    ActiveMapTool,
     ICommand,
     IMapView,
     ReduxAction,
@@ -229,5 +230,12 @@ export function previousView() {
 export function nextView() {
     return {
         type: Constants.MAP_NEXT_VIEW
+    };
+}
+
+export function setActiveTool(tool: ActiveMapTool) {
+    return {
+        type: Constants.MAP_SET_ACTIVE_TOOL,
+        payload: tool
     };
 }

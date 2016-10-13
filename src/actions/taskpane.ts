@@ -92,6 +92,6 @@ export function ensureParameters(url: string, mapName: string, session: string, 
     if (url.indexOf(parsed.protocol) >= 0 || url.indexOf("/") == 0) {
         return result;
     }
-    //HACK: Workaround bug in url-parse that auto-appends http:// for relative urls
-    return result.substring(parsed.protocol.length + 2);
+    
+    return result;
 }

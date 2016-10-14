@@ -6,12 +6,13 @@ import { MgError } from "../api/error";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { FeatureSet, SelectedFeatureSet } from "../api/contracts/query";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
-import { RefreshMode, ReduxDispatch, IApplicationState } from "../api/common";
+import { RefreshMode, ReduxDispatch, IApplicationState, ICommand } from "../api/common";
 import * as MapActions from "../actions/map";
 import * as TaskPaneActions from "../actions/taskpane";
 import * as LegendActions from "../actions/legend";
 import { buildSelectionXml } from "../api/builders/deArrayify";
 import { FormFrameShim } from "../components/form-frame-shim";
+import { getCommand, DefaultCommands, CommandConditions } from "../api/registry/command";
 
 export class AjaxViewerLineStringOrPolygon {
     private coordinates: IAjaxViewerPoint[];
@@ -53,6 +54,30 @@ export interface IAjaxViewerBounds {
     maxy: number;
 }
 
+export enum AjaxViewerMapActionCode {
+    PanMode = 1,
+    PanUp = 2,
+    PanDown = 3,
+    PanRight = 4,
+    PanLeft = 5,
+    ZoomMode = 6,
+    ZoomIn = 7,
+    ZoomOut = 8,
+    ZoomRect = 9,
+    ZoomSelection = 10,
+    ZoomExtents = 11,
+    PrevView = 12,
+    NextView = 13,
+    InitialView = 14,
+    SelectionMode = 15,
+    SelectRadius = 16,
+    SelectPolygon = 17,
+    ClearSelection = 19,
+    RefreshMap = 20,
+    CopyMap = 21,
+    About = 22
+}
+
 export type IAjaxViewerSelectionSet = any;
 
 export interface IAjaxViewerShimProps {
@@ -67,6 +92,7 @@ export interface IAjaxViewerShimState {
 export interface IAjaxViewerShimDispatch {
     goHome?: () => void;
     legendRefresh?: () => void;
+    invokeCommand?: (cmd: ICommand) => void;
 }
 
 function mapStateToProps(state: IApplicationState): IAjaxViewerShimState {
@@ -79,7 +105,8 @@ function mapStateToProps(state: IApplicationState): IAjaxViewerShimState {
 function mapDispatchToProps(dispatch: ReduxDispatch): IAjaxViewerShimDispatch {
     return {
         goHome: () => dispatch(TaskPaneActions.goHome()),
-        legendRefresh: () => dispatch(LegendActions.refresh())
+        legendRefresh: () => dispatch(LegendActions.refresh()),
+        invokeCommand: (cmd) => dispatch(MapActions.invokeCommand(cmd))
     };
 }
 
@@ -108,6 +135,78 @@ export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {
      */
     public get mapInit(): boolean {
         return this.props.map != null && this.props.map.SessionId != null;
+    }
+    public ExecuteMapAction(code: AjaxViewerMapActionCode) {
+        let cmdName: string;
+        switch (code) {
+            case AjaxViewerMapActionCode.About:
+                cmdName = DefaultCommands.About;
+                break;
+            case AjaxViewerMapActionCode.ClearSelection:
+                cmdName = DefaultCommands.ClearSelection;
+                break;
+            case AjaxViewerMapActionCode.InitialView:
+                cmdName = DefaultCommands.ZoomExtents;
+                break;
+            case AjaxViewerMapActionCode.NextView:
+                cmdName = DefaultCommands.NextView;
+                break;
+            case AjaxViewerMapActionCode.PanDown:
+                cmdName = DefaultCommands.PanDown;
+                break;
+            case AjaxViewerMapActionCode.PanLeft:
+                cmdName = DefaultCommands.PanLeft;
+                break;
+            case AjaxViewerMapActionCode.PanMode:
+                cmdName = DefaultCommands.Pan;
+                break;
+            case AjaxViewerMapActionCode.PanRight:
+                cmdName = DefaultCommands.PanRight;
+                break;
+            case AjaxViewerMapActionCode.PanUp:
+                cmdName = DefaultCommands.PanUp;
+                break;
+            case AjaxViewerMapActionCode.PrevView:
+                cmdName = DefaultCommands.PreviousView;
+                break;
+            case AjaxViewerMapActionCode.RefreshMap:
+                cmdName = DefaultCommands.RefreshMap;
+                break;
+            case AjaxViewerMapActionCode.SelectionMode:
+                cmdName = DefaultCommands.Select;
+                break;
+            case AjaxViewerMapActionCode.SelectPolygon:
+                cmdName = DefaultCommands.SelectPolygon;
+                break;
+            case AjaxViewerMapActionCode.SelectRadius:
+                cmdName = DefaultCommands.SelectRadius;
+                break;
+            case AjaxViewerMapActionCode.ZoomExtents:
+                cmdName = DefaultCommands.ZoomExtents;
+                break;
+            case AjaxViewerMapActionCode.ZoomIn:
+                cmdName = DefaultCommands.ZoomIn;
+                break;
+            case AjaxViewerMapActionCode.ZoomMode:
+                cmdName = DefaultCommands.Zoom;
+                break;
+            case AjaxViewerMapActionCode.ZoomOut:
+                cmdName = DefaultCommands.ZoomOut;
+                break;
+            case AjaxViewerMapActionCode.ZoomRect:
+                cmdName = DefaultCommands.Zoom;
+                break;
+            case AjaxViewerMapActionCode.ZoomSelection:
+                cmdName = DefaultCommands.ZoomToSelection;
+                break;
+            default:
+                logger.warn(`Unknown command code: ${code}`);
+                return;
+        }
+        const cmd = getCommand(cmdName);
+        if (cmd && this.props.invokeCommand) {
+            this.props.invokeCommand(cmd);
+        }
     }
     public ClearSelection(): void {
         const viewer = Runtime.getViewer();
@@ -407,6 +506,7 @@ export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {
         browserWindow.mapFrame = browserWindow.GetMapFrame();
         browserWindow.formFrame = browserWindow.mapFrame;
 
+        browserWindow.ExecuteMapAction = browserWindow.ExecuteMapAction || ((code: any) => this.ExecuteMapAction(code));
         browserWindow.Refresh = browserWindow.Refresh || (() => this.Refresh());
         browserWindow.SetSelectionXML = browserWindow.SetSelectionXML || ((xmlSet: string) => this.SetSelectionXML(xmlSet));
         browserWindow.ZoomToView = browserWindow.ZoomToView || ((x: number, y: number, scale: number, refresh: boolean) => this.ZoomToView(x, y, scale, refresh));

@@ -184,6 +184,6 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
     commands[name] = cmd;
 }
 
-export function getCommand(name: string): ICommand {
+export function getCommand(name: string): ICommand | undefined {
     return commands[name];
 }

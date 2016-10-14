@@ -89,7 +89,8 @@ export class App extends React.Component<AppProps, any> {
             });
         }
     }
-    private renderErrorMessage(msg: string, locale: string, args: any): JSX.Element {
+    private renderErrorMessage(err: Error, locale: string, args: any): JSX.Element {
+        const msg = err.message;
         switch (msg) {
             case "MgConnectionFailedException":
                 {
@@ -109,7 +110,19 @@ export class App extends React.Component<AppProps, any> {
             default:
                 {
                     const arg = { __html: msg };
-                    return <div dangerouslySetInnerHTML={arg} />;
+                    return <div>
+                        <div dangerouslySetInnerHTML={arg} />
+                        {(() => {
+                            if (err.stack) {
+                                return <div>
+                                    <p>Stack Trace</p>
+                                    <ul>
+                                        {err.stack.split("\n").map((ln, i) => <li key={`stack-line-${i}`}>{ln}</li>)}
+                                    </ul>
+                                </div>;
+                            }
+                        })()}
+                    </div>;
                 }
         }
     }
@@ -123,7 +136,7 @@ export class App extends React.Component<AppProps, any> {
         //originate from
         return <div>
             <h1>{tr("INIT_ERROR_TITLE", locale)}</h1>
-            {this.renderErrorMessage(err.message, locale, initOptions || {})}
+            {this.renderErrorMessage(err, locale, initOptions || {})}
         </div>;
     }
     render(): JSX.Element {

@@ -1,7 +1,11 @@
 import { MapLayer } from "../api/contracts/runtime-map";
-import { IMenu } from "../components/toolbar";
+import { IInlineMenu, IFlyoutMenu } from "../components/toolbar";
 
-export function isMenu(item: any): item is IMenu {
+export function isMenuRef(item: any): item is IFlyoutMenu {
+    return typeof(item.flyoutId) != 'undefined';
+}
+
+export function isMenu(item: any): item is IInlineMenu {
     return typeof(item.childItems) != 'undefined'; 
 }
 

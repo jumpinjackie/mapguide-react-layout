@@ -4,6 +4,7 @@ import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/to
 import { ToolbarContainer } from "../containers/toolbar";
 import { AjaxViewerShim } from "../containers/ajax-viewer-shim";
 import { ModalLauncher } from "../containers/modal-launcher";
+import { FlyoutRegionContainer } from "../containers/flyout-region";
 import { connect } from "react-redux";
 import { tr } from "../api/i18n";
 import * as Constants from "../constants";
@@ -290,6 +291,7 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
             <PlaceholderComponent id={DefaultComponentNames.Map} locale={config.locale} />
             <AjaxViewerShim />
             <ModalLauncher />
+            <FlyoutRegionContainer />
             <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={config.locale} />
         </div>;
     }

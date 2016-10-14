@@ -31,6 +31,9 @@ export const MODAL_SHOW_COMPONENT = 'Modal/SHOW_COMPONENT';
 export const MODAL_SHOW_URL = 'Modal/SHOW_URL';
 export const MODAL_CLOSE = 'Modal/CLOSE';
 
+export const FLYOUT_OPEN = 'Flyout/OPEN';
+export const FLYOUT_CLOSE = 'Flyout/CLOSE';
+
 /**
  * Non-breaking space
  */

@@ -1,7 +1,8 @@
 import * as React from "react";
 import { SelectedFeatureSet, SelectedFeature, LayerMetadata, SelectedLayer, FeatureProperty } from "../api/contracts/query";
-import { Toolbar, IItem, IMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
+import { Toolbar, IItem, IInlineMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
 import { tr as xlate } from "../api/i18n";
+import { NOOP } from "../api/common";
 
 export interface ISelectionPanelProps {
     locale?: string;
@@ -128,7 +129,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
                                 return <option key={`selected-layer-${layer["@id"]}`} value={`${index}`}>{layer["@name"]}</option>
                             })}
                         </select>
-                        <Toolbar childItems={this.selectionToolbarItems} containerStyle={{ float: "right", height: DEFAULT_TOOLBAR_SIZE }} />
+                        <Toolbar childItems={this.selectionToolbarItems} containerStyle={{ float: "right", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={NOOP} onOpenFlyout={NOOP} />
                         <div style={{ clear: "both" }} />
                     </div>;
                 }

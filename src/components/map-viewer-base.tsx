@@ -43,7 +43,7 @@ import { MgError, isSessionExpiredError } from '../api/error';
 import { Client } from '../api/client';
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
-import { IMenu, IItem, getEnabled, getIcon } from '../components/toolbar';
+import { IInlineMenu, IItem, getEnabled, getIcon } from '../components/toolbar';
 import { isMenu } from '../utils/type-guards';
 import { tr } from "../api/i18n";
 import ContextMenu = require("ol3-contextmenu");

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Toolbar, IItem, IMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
+import { Toolbar, IItem, IInlineMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
 import queryString = require("query-string");
 const parse = require("url-parse");
 import { ensureParameters } from "../actions/taskpane";
@@ -19,6 +19,8 @@ export interface ITaskPaneProps {
     lastUrlPushed?: boolean;
     showTaskBar: boolean;
     maxHeight?: number;
+    onOpenFlyout?: (id: string) => void;
+    onCloseFlyout?: (id: string) => void;
 }
 
 // HACK:
@@ -44,10 +46,12 @@ export interface ITaskPaneProps {
 // the old iframe element. How can we get React to make a new iframe for each URL? 
 
 export class TaskPane extends React.Component<ITaskPaneProps, any> {
-    _iframe: HTMLIFrameElement;
-    fnFrameMounted: (iframe: HTMLIFrameElement) => void;
-    fnFrameLoaded: GenericEventHandler;
-    taskButtons: IItem[];
+    private _iframe: HTMLIFrameElement;
+    private fnFrameMounted: (iframe: HTMLIFrameElement) => void;
+    private fnFrameLoaded: GenericEventHandler;
+    private taskButtons: IItem[];
+    private fnOpenFlyout: (id: string) => void;
+    private fnCloseFlyout: (id: string) => void;
     constructor(props: ITaskPaneProps) {
         super(props);
         this.taskButtons = [
@@ -58,9 +62,21 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         ];
         this.fnFrameLoaded = this.onFrameLoaded.bind(this);
         this.fnFrameMounted = this.onFrameMounted.bind(this);
+        this.fnCloseFlyout = this.onCloseFlyout.bind(this);
+        this.fnOpenFlyout = this.onOpenFlyout.bind(this);
         this.state = {
             activeComponent: null
         };
+    }
+    private onCloseFlyout(id: string): void {
+        if (this.props.onCloseFlyout) {
+            this.props.onCloseFlyout(id);
+        }
+    }
+    private onOpenFlyout(id: string): void {
+        if (this.props.onOpenFlyout) {
+            this.props.onOpenFlyout(id);
+        }
     }
     private onFrameMounted(iframe: HTMLIFrameElement) {
         this._iframe = iframe;
@@ -95,7 +111,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         }
     }
     render(): JSX.Element {
-        const taskMenu: IMenu = {
+        const taskMenu: IInlineMenu = {
             label: tr("MENU_TASKS", this.props.locale),
             flyoutAlign: "bottom left",
             childItems: this.props.taskMenuItems
@@ -146,8 +162,8 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             {(() => {
                 if (this.props.showTaskBar === true) {
                     return <div style={taskBarStyle}>
-                        <Toolbar childItems={this.taskButtons} containerStyle={{ float: "left", height: DEFAULT_TOOLBAR_SIZE }} />
-                        <Toolbar childItems={[ taskMenu ]} containerStyle={{ float: "right", height: DEFAULT_TOOLBAR_SIZE }} />
+                        <Toolbar childItems={this.taskButtons} containerStyle={{ float: "left", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={this.fnCloseFlyout} onOpenFlyout={this.fnOpenFlyout} />
+                        <Toolbar childItems={[ taskMenu ]} containerStyle={{ float: "right", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={this.fnCloseFlyout} onOpenFlyout={this.fnOpenFlyout} />
                         <div style={{ clear: "both" }} />
                     </div>;
                 }

@@ -2,6 +2,7 @@ import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
 import { ToolbarContainer } from "../containers/toolbar";
+import { FlyoutRegionContainer } from "../containers/flyout-region";
 import { AjaxViewerShim } from "../containers/ajax-viewer-shim";
 import { ModalLauncher } from "../containers/modal-launcher";
 import { connect } from "react-redux";
@@ -141,6 +142,7 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
             })()}
             <AjaxViewerShim />
             <ModalLauncher />
+            <FlyoutRegionContainer />
         </div>;
     }
 }

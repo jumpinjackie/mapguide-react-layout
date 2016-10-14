@@ -4,6 +4,7 @@
  * This module holds various React component contexts and validation maps
  */
 import * as React from "react";
+import { IDOMElementMetrics } from "../api/common";
 import { MapLayer, MapGroup } from "../api/contracts/runtime-map";
 import { IMapGuideClient } from "../api/request-builder";
 
@@ -50,3 +51,13 @@ export const LEGEND_CONTEXT_VALIDATION_MAP: React.ValidationMap<any> = {
     getLayerExpanded: React.PropTypes.func.isRequired,
     setLayerExpanded: React.PropTypes.func.isRequired
 };
+
+export interface IToolbarContext {
+    openFlyout(id: string, metrics: IDOMElementMetrics): void;
+    closeFlyout(id: string): void;
+}
+
+export const TOOLBAR_CONTEXT_VALIDATION_MAP: React.ValidationMap<any> = {
+    openFlyout: React.PropTypes.func.isRequired,
+    closeFlyout: React.PropTypes.func.isRequired
+}

@@ -6,20 +6,19 @@ import {
     IInvokeUrlCommand,
     ISearchCommand,
     ReduxDispatch,
-    ReduxStore
+    ReduxStore,
+    NOOP,
+    ALWAYS_FALSE,
+    ALWAYS_TRUE
 } from "../../api/common";
 import { QueryMapFeaturesResponse } from "../contracts/query";
 import { ResultColumnSet } from "../contracts/weblayout";
-import { IItem, IMenu, getIcon } from "../../components/toolbar";
+import { IItem, IInlineMenu, IFlyoutMenu, getIcon } from "../../components/toolbar";
 import * as Constants from "../../constants";
 import { ensureParameters } from "../../actions/taskpane";
 import { tr } from "../i18n";
 
-function NOOP() { }
-function ALWAYS_FALSE() { return false; }
-function ALWAYS_TRUE() { return true; }
-
-export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: (cmd: ICommand) => void): IItem|IMenu|null {
+export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: (cmd: ICommand) => void): IItem|IInlineMenu|IFlyoutMenu|null {
     const state = store.getState();
     if (tb.error) {
         const cmdItem: IItem = {
@@ -46,12 +45,19 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
             };
             return cmdItem;
         }
-    } else if (tb.label && tb.children) {
+    } else if (tb.children) {
         const childItems: any[] = tb.children;
         return {
             label: tb.label,
+            tooltip: tb.tooltip,
             childItems: childItems.map(tb => mapToolbarReference(tb, store, commandInvoker)).filter(tb => tb != null)
         };
+    } else if (tb.label && tb.flyoutId) {
+        return {
+            label: tb.label,
+            tooltip: tb.tooltip,
+            flyoutId: tb.flyoutId
+        }
     }
     return null;
 }

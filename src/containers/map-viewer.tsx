@@ -19,7 +19,7 @@ import { MapViewerBase } from "../components/map-viewer-base";
 import * as Runtime from "../api/runtime";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import * as MapActions from "../actions/map";
-import { IItem, IMenu } from "../components/toolbar";
+import { IItem, IInlineMenu } from "../components/toolbar";
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
@@ -63,7 +63,7 @@ function mapStateToProps(state: IApplicationState): IMapViewerContainerState {
         viewer: state.map.viewer,
         legend: state.legend,
         selection: state.selection.selectionSet,
-        contextmenu: state.toolbar.contextmenu
+        contextmenu: state.toolbar.toolbars.contextmenu
     };
 }
 

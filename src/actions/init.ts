@@ -32,6 +32,7 @@ import { tr } from "../api/i18n";
 import { MgError } from "../api/error";
 import * as logger from "../utils/logger";
 import queryString = require("query-string");
+import * as uuid from "node-uuid";
 const parse = require("url-parse");
 const assign = require("object-assign");
 const proj4 = require("proj4");
@@ -195,6 +196,35 @@ function isNotTargeted(target: "TaskPane" | "NewWindow" | "SpecifiedFrame"): tar
     return target != "SpecifiedFrame";
 }
 
+function prepareSubMenus(tbConf: any): any {
+    const prepared: any = {
+        toolbars: {},
+        flyouts: {}
+    };
+    for (const key in tbConf) {
+        prepared.toolbars[key] = {
+            items: []
+        };
+        for (const item of tbConf[key].items) {
+            //Special case: contextmenu is all inline
+            if (item.children && key != 'contextmenu') {
+                const flyoutId = `${item.label}_${uuid.v4()}`;
+                prepared.toolbars[key].items.push({
+                    label: item.label,
+                    tooltip: item.tooltip,
+                    flyoutId: flyoutId
+                });
+                prepared.flyouts[flyoutId] = { 
+                    children: item.children
+                }
+            } else {
+                prepared.toolbars[key].items.push(item);
+            }
+        }
+    }
+    return prepared;
+}
+
 function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any): (res: [ApplicationDefinition, RuntimeMap]) => void {
     return (res: [ApplicationDefinition, RuntimeMap]) => {
         const appDef = res[0];
@@ -325,7 +355,7 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
                     hasLegend: hasLegend,
                     hasToolbar: (Object.keys(tbConf).length > 0)
                 },
-                toolbars: tbConf
+                toolbars: prepareSubMenus(tbConf)
             }
         });
     };
@@ -415,7 +445,7 @@ function makeWebLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any):
                     hasLegend: webLayout.InformationPane.Visible && webLayout.InformationPane.LegendVisible,
                     hasToolbar: webLayout.ToolBar.Visible
                 },
-                toolbars: {
+                toolbars: prepareSubMenus({
                     "main": {
                         items: mainToolbar
                     },
@@ -425,7 +455,7 @@ function makeWebLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any):
                     "contextmenu": {
                         items: contextMenu
                     }
-                }
+                })
             }
         });
     };

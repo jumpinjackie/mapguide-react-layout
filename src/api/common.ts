@@ -683,3 +683,14 @@ export type ReduxThunkedAction = (dispatch: ReduxDispatch, getState: () => IAppl
 export type ReduxActionCreator = ReduxAction | ReduxThunkedAction;
 
 export type ReduxDispatch = (action: ReduxActionCreator) => void;
+
+export function NOOP() { }
+export function ALWAYS_FALSE() { return false; }
+export function ALWAYS_TRUE() { return true; }
+
+export interface IDOMElementMetrics {
+    posX: number;
+    posY: number;
+    width: number;
+    height: number;
+}

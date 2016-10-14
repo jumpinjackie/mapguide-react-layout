@@ -4,6 +4,7 @@ import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/to
 import { ToolbarContainer } from "../containers/toolbar";
 import { AjaxViewerShim } from "../containers/ajax-viewer-shim";
 import { ModalLauncher } from "../containers/modal-launcher";
+import { FlyoutRegionContainer } from "../containers/flyout-region";
 import { ModalDialog } from "../components/modal-dialog";
 import { connect } from "react-redux";
 import { tr } from "../api/i18n";
@@ -174,6 +175,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
             })()}
             <AjaxViewerShim />
             <ModalLauncher />
+            <FlyoutRegionContainer />
         </div>;
     }
 }

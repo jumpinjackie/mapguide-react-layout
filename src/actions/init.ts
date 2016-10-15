@@ -202,23 +202,31 @@ function prepareSubMenus(tbConf: any): any {
         flyouts: {}
     };
     for (const key in tbConf) {
-        prepared.toolbars[key] = {
-            items: []
-        };
-        for (const item of tbConf[key].items) {
-            //Special case: contextmenu is all inline
-            if (item.children && key != 'contextmenu') {
-                const flyoutId = `${item.label}_${uuid.v4()}`;
-                prepared.toolbars[key].items.push({
-                    label: item.label,
-                    tooltip: item.tooltip,
-                    flyoutId: flyoutId
-                });
-                prepared.flyouts[flyoutId] = { 
-                    children: item.children
+        //Special case: Task pane. Transfer all to flyout
+        if (key == "taskpane") {
+            const flyoutId = key;
+            prepared.flyouts[flyoutId] = { 
+                children: tbConf[key].items
+            }
+        } else {
+            prepared.toolbars[key] = {
+                items: []
+            };
+            for (const item of tbConf[key].items) {
+                //Special case: contextmenu is all inline
+                if (item.children && key != 'contextmenu') {
+                    const flyoutId = `${item.label}_${uuid.v4()}`;
+                    prepared.toolbars[key].items.push({
+                        label: item.label,
+                        tooltip: item.tooltip,
+                        flyoutId: flyoutId
+                    });
+                    prepared.flyouts[flyoutId] = { 
+                        children: item.children
+                    }
+                } else {
+                    prepared.toolbars[key].items.push(item);
                 }
-            } else {
-                prepared.toolbars[key].items.push(item);
             }
         }
     }

@@ -1,17 +1,17 @@
 import * as React from "react";
-import { Toolbar, IItem, IInlineMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
+import { Toolbar, IItem, IFlyoutMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
 import queryString = require("query-string");
 const parse = require("url-parse");
 import { ensureParameters } from "../actions/taskpane";
 import { PlaceholderComponent } from "../api/registry/component";
 import { tr } from "../api/i18n";
+import { IDOMElementMetrics } from "../api/common";
 
 export interface ITaskPaneProps {
     currentUrl?: string;
     mapName: string;
     session: string;
     locale: string;
-    taskMenuItems: IItem[];
     homeAction: IItem;
     backAction: IItem;
     forwardAction: IItem;
@@ -19,8 +19,8 @@ export interface ITaskPaneProps {
     lastUrlPushed?: boolean;
     showTaskBar: boolean;
     maxHeight?: number;
-    onOpenFlyout?: (id: string) => void;
-    onCloseFlyout?: (id: string) => void;
+    onOpenFlyout: (id: string, metrics: IDOMElementMetrics) => void;
+    onCloseFlyout: (id: string) => void;
 }
 
 // HACK:
@@ -50,7 +50,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
     private fnFrameMounted: (iframe: HTMLIFrameElement) => void;
     private fnFrameLoaded: GenericEventHandler;
     private taskButtons: IItem[];
-    private fnOpenFlyout: (id: string) => void;
+    private fnOpenFlyout: (id: string, metrics: IDOMElementMetrics) => void;
     private fnCloseFlyout: (id: string) => void;
     constructor(props: ITaskPaneProps) {
         super(props);
@@ -73,9 +73,9 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             this.props.onCloseFlyout(id);
         }
     }
-    private onOpenFlyout(id: string): void {
+    private onOpenFlyout(id: string, metrics: IDOMElementMetrics): void {
         if (this.props.onOpenFlyout) {
-            this.props.onOpenFlyout(id);
+            this.props.onOpenFlyout(id, metrics);
         }
     }
     private onFrameMounted(iframe: HTMLIFrameElement) {
@@ -111,10 +111,10 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         }
     }
     render(): JSX.Element {
-        const taskMenu: IInlineMenu = {
+        const taskMenu: IFlyoutMenu = {
             label: tr("MENU_TASKS", this.props.locale),
             flyoutAlign: "bottom left",
-            childItems: this.props.taskMenuItems
+            flyoutId: "taskpane"
         };
 
         const rootStyle: React.CSSProperties = {};

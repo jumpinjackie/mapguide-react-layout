@@ -28,7 +28,6 @@ export interface ITaskPaneContainerStyle {
 export interface ITaskPaneContainerState {
     map: RuntimeMap | null;
     taskpane: ITaskPaneReducerState;
-    toolbar: IToolbarReducerState;
     config: IConfigurationReducerState;
     selection: ISelectionReducerState;
 }
@@ -51,8 +50,7 @@ function mapStateToProps(state: IApplicationState): ITaskPaneContainerState {
         map: state.map.state,
         taskpane: state.taskpane,
         config: state.config,
-        selection: state.selection,
-        toolbar: state.toolbar.toolbars["taskpane"]
+        selection: state.selection
     };
 }
 
@@ -157,26 +155,19 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         store: React.PropTypes.object
     };
     render(): JSX.Element {
-        const { taskpane, config, map, toolbar, invokeCommand, maxHeight } = this.props;
+        const { taskpane, config, map, invokeCommand, maxHeight } = this.props;
         if (taskpane && config && map) {
-            let childItems: IItem[];
-            if (toolbar && toolbar.items && invokeCommand) {
-                const store = (this.context as any).store;
-                const items = (toolbar.items as any[]).map(tb => mapToolbarReference(tb, store, invokeCommand));
-                childItems = processMenuItems(items);
-            } else {
-                childItems = [];
-            }
             if (taskpane.navigation[taskpane.navIndex]) {
                 return <TaskPane currentUrl={taskpane.navigation[taskpane.navIndex]}
                                  showTaskBar={config.capabilities.hasTaskBar}
                                  lastUrlPushed={taskpane.lastUrlPushed}
                                  homeAction={this.homeAction}
                                  backAction={this.backAction}
+                                 onOpenFlyout={this.fnOpenFlyout}
+                                 onCloseFlyout={this.fnCloseFlyout}
                                  forwardAction={this.forwardAction}
                                  session={map.SessionId}
                                  mapName={map.Name}
-                                 taskMenuItems={childItems}
                                  onUrlLoaded={this.fnUrlLoaded}
                                  maxHeight={maxHeight}
                                  locale={config.locale} />;

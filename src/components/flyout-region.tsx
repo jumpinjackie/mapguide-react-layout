@@ -32,8 +32,8 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                         containerStyle.left = met.posX;
                         containerStyle.top = met.posY;
                     }
-                    children.push(<div className="mg-flyout-menu-container" style={containerStyle}>
-                        <FlyoutWrapper key={flyoutId} id={`flyout-${flyoutId}`} open={open} options={{ type: "dropdown", align: align }}>
+                    children.push(<div key={flyoutId} className="mg-flyout-menu-container" style={containerStyle}>
+                        <FlyoutWrapper id={`flyout-${flyoutId}`} open={open} options={{ type: "dropdown", align: align }}>
                             <ul className="mg-flyout-menu-content">
                             {items.map((item, index) => {
                                 if (item.isSeparator) {
@@ -45,6 +45,11 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                                     return <FlyoutMenuChildItem key={index} item={item} onInvoked={invoked} />;
                                 }
                             })}
+                            {(() => {
+                                if (flyoutId === "taskpane") {
+                                    return <li><iframe src="about:blank" className="iframe-iehack-zindex" /></li>;
+                                }
+                            })()}
                             </ul>
                         </FlyoutWrapper>
                     </div>);

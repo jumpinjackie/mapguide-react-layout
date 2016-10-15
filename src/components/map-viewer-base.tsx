@@ -826,7 +826,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         });
         this._zoomSelectBox.on("boxend", this.onZoomSelectBox.bind(this));
 
-        // HACK: Workaround until (https://github.com/jumpinjackie/jsdoc-typescript-plugin/issues/72) is fixed
+        // HACK: className property not documented. This needs to be fixed in OL api doc.
         const overviewMapOpts: any = {
             className: 'ol-overviewmap ol-custom-overviewmap',
             view: new ol.View({

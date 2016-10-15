@@ -10,6 +10,11 @@
 // augment and customize the content of this generated file
 //
 
+/**
+ * This is an alias for the HTML5 geolocation position options
+ */
+type GeolocationPositionOptions = PositionOptions;
+
 // These types normally resolve to number[] by the plugin, which is fine, but TypeScript lets us define
 // tuple types (ie. Arrays of specific size and item types) which is much more expressive 
 // and clearer than what the plugin generates
@@ -58,11 +63,6 @@ declare type GeoJSONFeatureCollection = any;
 declare type GeoJSONGeometry = any;
 declare type GeoJSONGeometryCollection = any;
 declare type TileJSON = any;
-interface GeolocationPositionOptions {
-    enableHighAccuracy: boolean;
-    maximumAge: number;
-    timeout: number;
-}
 declare module ol {
     /**
      * An attribution for a layer source.
@@ -17756,9 +17756,10 @@ declare module olx {
              */
             label?: string|Node;
             /**
-             * Layers for the overview map. If not set, then all maps layers are used instead
+             * Layers for the overview map. If not set, then all main map layers are used
+             * instead.
              */
-            layers: ol.layer.Layer[]|ol.Collection<ol.layer.Layer>
+            layers?: ol.layer.Layer[]|ol.Collection<ol.layer.Layer>;
             /**
              * Function called when the control should be re-rendered. This is called
              * in a requestAnimationFrame callback.

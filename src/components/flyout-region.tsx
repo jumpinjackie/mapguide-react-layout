@@ -33,7 +33,10 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                     if (flyout.metrics) {
                         const met: IDOMElementMetrics = flyout.metrics;
                         containerStyle.left = met.posX;
-                        containerStyle.top = met.posY;
+                        containerStyle.top = met.posY + met.height;
+                        if (flyoutId == "taskpane") {
+                            containerStyle.left += met.width;
+                        }
                     }
                     children.push(<div key={flyoutId} className="mg-flyout-menu-container" style={containerStyle}>
                         <FlyoutWrapper id={`flyout-${flyoutId}`} open={open} options={{ type: "dropdown", align: align }}>

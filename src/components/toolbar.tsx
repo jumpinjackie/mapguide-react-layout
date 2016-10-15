@@ -294,11 +294,12 @@ class FlyoutMenuReferenceItem extends React.Component<IFlyoutMenuReferenceItemPr
         const newState = !this.state.isFlownOut;
         this.setState({ isFlownOut: newState });
         if (newState) {
+            const rect = e.currentTarget.getBoundingClientRect();
             const metrics: IDOMElementMetrics = {
-                posX: e.clientX,
-                posY: e.clientY,
-                width: e.currentTarget.offsetWidth,
-                height: e.currentTarget.offsetHeight
+                posX: rect.left, // e.clientX,
+                posY: rect.top, // e.clientY,
+                width: rect.width, // e.currentTarget.offsetWidth,
+                height: rect.height // e.currentTarget.offsetHeight
             };
             this.context.openFlyout(this.props.menu.flyoutId, metrics);
         } else {

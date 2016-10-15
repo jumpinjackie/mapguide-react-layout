@@ -1,6 +1,7 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
+import { Toolbar, IItem } from "../components/toolbar";
 import { ToolbarContainer } from "../containers/toolbar";
 import { AjaxViewerShim } from "../containers/ajax-viewer-shim";
 import { ModalLauncher } from "../containers/modal-launcher";
@@ -9,6 +10,7 @@ import { ModalDialog } from "../components/modal-dialog";
 import { connect } from "react-redux";
 import { tr } from "../api/i18n";
 import {
+    NOOP,
     ReduxDispatch
 } from "../api/common";
 
@@ -16,7 +18,7 @@ const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;
 const SELECTION_DIALOG_HEIGHT = 300;
 const LEGEND_DIALOG_HEIGHT = 400;
-const TASK_DIALOG_HEIGHT = 400;
+const TASK_DIALOG_HEIGHT = 500;
 const DIALOG_HEADER_HEIGHT = 28 + 3;
 
 export interface IAquaTemplateLayoutState {
@@ -47,6 +49,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
     private fnHideLegend: () => void;
     private fnHideSelection: () => void;
     private fnHideOverviewMap: () => void;
+    private viewItems: IItem[];
     constructor(props: AquaTemplateLayout) {
         super(props);
         this.fnHideLegend = this.onHideLegend.bind(this);
@@ -59,6 +62,38 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
             isSelectionOpen: true,
             isOverviewMapOpen: false
         };
+        this.viewItems = [
+            {
+                icon: "application-browser.png",
+                label: tr("TPL_TITLE_TASKPANE", this.props.config.locale),
+                invoke: () => {
+                    this.setState({
+                        isTaskPaneOpen: true
+                    });
+                },
+                enabled: () => !this.state.isTaskPaneOpen
+            },
+            {
+                icon: "legend-map.png",
+                label: tr("TPL_TITLE_LEGEND", this.props.config.locale),
+                invoke: () => {
+                    this.setState({
+                        isLegendOpen: true
+                    });
+                },
+                enabled: () => !this.state.isLegendOpen
+            },
+            {
+                icon: "property.png",
+                label: tr("TPL_TITLE_SELECTION_PANEL", this.props.config.locale),
+                invoke: () => {
+                    this.setState({
+                        isSelectionOpen: true
+                    });
+                },
+                enabled: () => !this.state.isSelectionOpen
+            }
+        ]
     }
     private onHideTaskPane() {
         this.setState({ isTaskPaneOpen: false });
@@ -90,6 +125,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
         let tpWidth = SIDEBAR_WIDTH;
         return <div style={{ width: "100%", height: "100%" }}>
             <ToolbarContainer id="FileMenu" containerClass="aqua-file-menu" containerStyle={{ position: "absolute", left: 0, top: 0, zIndex: 100, right: 0 }} />
+            <Toolbar childItems={this.viewItems} containerStyle={{ position: "absolute", right: 0, top: 0, height: DEFAULT_TOOLBAR_SIZE, zIndex: 101, color: "white" }} onCloseFlyout={NOOP} onOpenFlyout={NOOP} />
             <ToolbarContainer id="Toolbar" containerClass="aqua-toolbar" containerStyle={{ position: "absolute", left: 0, top: (DEFAULT_TOOLBAR_SIZE - 2), zIndex: 100, right: 0 }} />
             <ToolbarContainer id="ToolbarVertical" containerClass="aqua-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: 0, top: ((DEFAULT_TOOLBAR_SIZE * 2) - 1), zIndex: 100, bottom: 0 }} />
             {(() => {

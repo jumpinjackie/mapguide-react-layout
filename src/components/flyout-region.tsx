@@ -50,6 +50,9 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                             })}
                             {(() => {
                                 if (flyoutId === "taskpane") {
+                                    //HACK: In order for this flyout to show properly over the task pane iframe
+                                    //when it contains embedded content (eg. An ActiveX/Flash/etc control) in IE
+                                    //we have to stick an iframe into this flyout
                                     return <li><iframe src="about:blank" className="iframe-iehack-zindex" /></li>;
                                 }
                             })()}

@@ -24,7 +24,10 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                 for (const flyoutId in this.props.flyoutConf) {
                     const flyout = this.props.flyoutConf[flyoutId];
                     const items: any[] = flyout.childItems || [];
-                    const align = "bottom right";
+                    let align = "bottom right";
+                    if (flyoutId === "taskpane") {
+                        align = "bottom left";
+                    }
                     const open = !!flyout.open;
                     const containerStyle: React.CSSProperties = {};
                     if (flyout.metrics) {

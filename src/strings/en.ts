@@ -42,6 +42,8 @@ const STRINGS_EN: any = {
     "MEASUREMENT_CONTINUE_POLYGON": "Click to continue drawing the polygon. Double-click to finish.",
     "MEASUREMENT_CONTINUE_LINE": "Click to continue drawing the line. Double-click to finish.",
     "MEASUREMENT_START_DRAWING": "Click to start drawing",
+    "MEASUREMENT_START": "Start Measurement",
+    "MEASUREMENT_END": "End Measurement",
     "NAVIGATOR_PAN_EAST": "Pan East",
     "NAVIGATOR_PAN_WEST": "Pan West",
     "NAVIGATOR_PAN_SOUTH": "Pan South",

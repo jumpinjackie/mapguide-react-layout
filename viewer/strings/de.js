@@ -42,6 +42,8 @@ var STRINGS_DE = {
     "MEASUREMENT_CONTINUE_POLYGON": "Klicken Sie, um weiterhin ein Polygon zeichnen. Doppelklicken Sie auf zu beenden.",
     "MEASUREMENT_CONTINUE_LINE": "Klicken Sie, um auch weiterhin die Linie zu zeichnen. Doppelklicken Sie auf zu beenden.",
     "MEASUREMENT_START_DRAWING": "Klicken Sie auf Zeichnung zu starten",
+    "MEASUREMENT_START": "Messung starten",
+    "MEASUREMENT_END": "Messung",
     "NAVIGATOR_PAN_EAST": "Pan East",
     "NAVIGATOR_PAN_WEST": "Pan Westen",
     "NAVIGATOR_PAN_SOUTH": "Pan Süd",

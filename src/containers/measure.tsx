@@ -53,6 +53,8 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
     private fnDrawEnd: GenericEventHandler;
     private fnMouseMove: GenericEventHandler;
     private fnClearMeasurements: GenericEventHandler;
+    private fnStartMeasure: GenericEventHandler;
+    private fnEndMeasure: GenericEventHandler;
     private sketch: ol.Feature | null;
     private listener: any;
     private helpTooltipElement: Element;
@@ -67,7 +69,10 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
         this.fnDrawEnd = this.onDrawEnd.bind(this);
         this.fnMouseMove = this.onMouseMove.bind(this);
         this.fnClearMeasurements = this.onClearMeasurements.bind(this);
+        this.fnStartMeasure = this.onStartMeasure.bind(this);
+        this.fnEndMeasure = this.onEndMeasure.bind(this);
         this.state = {
+            measuring: false,
             geodesic: false,
             type: "LineString"
         };
@@ -240,7 +245,7 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
      * Creates a new help tooltip
      */
     private createHelpTooltip() {
-        if (this.helpTooltipElement) {
+        if (this.helpTooltipElement && this.helpTooltipElement.parentNode) {
             this.helpTooltipElement.parentNode.removeChild(this.helpTooltipElement);
         }
         this.helpTooltipElement = document.createElement('div');
@@ -258,7 +263,7 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
      * Creates a new measure tooltip
      */
     private createMeasureTooltip() {
-        if (this.measureTooltipElement) {
+        if (this.measureTooltipElement && this.measureTooltipElement.parentNode) {
             this.measureTooltipElement.parentNode.removeChild(this.measureTooltipElement);
         }
         this.measureTooltipElement = document.createElement('div');
@@ -308,6 +313,36 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
         measureOverlays.length = 0; //Clear
         return false;
     }
+    private onStartMeasure(e: GenericEvent) {
+        this.startMeasure();
+    }
+    private onEndMeasure(e: GenericEvent) {
+        this.endMeasure();
+    }
+    private startMeasure() {
+        if (this.viewer && !this.state.measuring) {
+            this.createMeasureTooltip();
+            this.createHelpTooltip();
+            this.setActiveInteraction(this.state.type);
+            this.viewer.addHandler('pointermove', this.fnMouseMove);
+            this.setState({ measuring: true });
+        }
+    }
+    private endMeasure() {
+        if (this.state.measuring && this.viewer) {
+            this.viewer.removeHandler('pointermove', this.fnMouseMove);
+            if (this.draw) {
+                this.draw.un("drawstart", this.fnDrawStart);
+                this.draw.un("drawend", this.fnDrawEnd);
+                this.viewer.removeInteraction(this.draw);
+                this.draw = null;
+            }
+            if (this.helpTooltipElement && this.helpTooltipElement.parentNode) {
+                this.helpTooltipElement.parentNode.removeChild(this.helpTooltipElement);
+            }
+            this.setState({ measuring: false });
+        }
+    }
     componentDidMount() {
         const viewer = getViewer();
         if (viewer) {
@@ -321,46 +356,34 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
             if (this.measureLayer) {
                 this.measureLayer.setStyle(this.createMeasureStyle());
             }
-            this.createMeasureTooltip();
-            this.createHelpTooltip();
-            this.setActiveInteraction(this.state.type);
-            this.viewer.addHandler('pointermove', this.fnMouseMove);
         }
     }
     componentWillUnmount() {
-        if (this.viewer) {
-            this.viewer.removeHandler('pointermove', this.fnMouseMove);
-            if (this.draw) {
-                this.draw.un("drawstart", this.fnDrawStart);
-                this.draw.un("drawend", this.fnDrawEnd);
-                this.viewer.removeInteraction(this.draw);
-                this.draw = null;
-            }
-            if (this.helpTooltipElement) {
-                this.helpTooltipElement.parentNode.removeChild(this.helpTooltipElement);
-            }
-            this.viewer = null;
-            this.measureLayer = null;
-        }
+        this.endMeasure();
+        this.viewer = null;
+        this.measureLayer = null;
     }
     render(): JSX.Element {
+        const { measuring, geodesic, type } = this.state;
         const { locale } = this.props.config;
         return <div>
             <form className="form-inline">
                 <div>
                     <label>{tr("MEASUREMENT_TYPE", locale)} {NBSP}</label>
-                    <select value={this.state.type} onChange={this.fnTypeChanged}>
+                    <select value={type} onChange={this.fnTypeChanged}>
                         <option value="LineString">{tr("MEASUREMENT_TYPE_LENGTH", locale)}</option>
                         <option value="Polygon">{tr("MEASUREMENT_TYPE_AREA", locale)}</option>
                     </select>
                 </div>
                 <div>
                     <label className="checkbox">
-                        <input type="checkbox" checked={this.state.geodesic} onChange={this.fnGeodesicChanged} />
+                        <input type="checkbox" checked={geodesic} onChange={this.fnGeodesicChanged} />
                         {tr("MEASUREMENT_USE_GEODESIC", locale)}
                     </label>
                 </div>
                 <div>
+                    <button type="button" disabled={measuring} onClick={this.fnStartMeasure}>{tr("MEASUREMENT_START", locale)}</button>
+                    <button type="button" disabled={!measuring} onClick={this.fnEndMeasure}>{tr("MEASUREMENT_END", locale)}</button>
                     <button type="button" onClick={this.fnClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</button>
                 </div>
             </form>

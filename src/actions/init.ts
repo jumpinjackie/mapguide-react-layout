@@ -24,6 +24,7 @@ import {
     ContainerItem
 } from "../api/contracts/fusion";
 import {
+    IExternalBaseLayer,
     ReduxThunkedAction
 } from "../api/common";
 import { IView } from "../api/contracts/common";
@@ -324,6 +325,57 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
             config.selectionImageFormat = mgConf.Extension.SelectionFormat;
         }
 
+        //Setup external layers
+        const externalBaseLayers = [] as IExternalBaseLayer[];
+        for (const map of mgGroup.Map) {
+            if (map.Type === "MapGuide") {
+                continue;
+            }
+            switch (map.Type) {
+                case "OpenStreetMap":
+                    {
+                        //HACK: De-arrayification of arbitrary extension elements
+                        //is shallow (hence name/type is string[]). Do we bother to fix this? 
+                        const name = map.Extension.Options.name[0];
+                        const type = map.Extension.Options.type[0];
+                        const options: any = {};
+                        switch (type) {
+                            case "CycleMap":
+                                options.url = "http://{a-c}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png";
+                                break;
+                            case "TransportMap":
+                                options.url = "http://tile2.opencyclemap.org/transport/{z}/{x}/{y}.png";
+                                break;
+                        }
+                        externalBaseLayers.push({
+                            name: name,
+                            kind: "OSM",
+                            options: options
+                        })
+                    }
+                    break;
+                case "Stamen":
+                    {
+                        //HACK: De-arrayification of arbitrary extension elements
+                        //is shallow (hence name/type is string[]). Do we bother to fix this? 
+                        const name = map.Extension.Options.name[0];
+                        const type = map.Extension.Options.type[0];
+                        externalBaseLayers.push({
+                            name: name,
+                            kind: "Stamen",
+                            options: {
+                                layer: type
+                            }
+                        })
+                    }
+                    break;
+            }
+        }
+        //First come, first served
+        if (externalBaseLayers.length > 0) {
+            externalBaseLayers[0].visible = true;
+        }
+
         //Setup initial view
         let initialView: IView | null = null;
         if (mgGroup.InitialView) {
@@ -351,7 +403,7 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
                 initialUrl: ensureParameters(initialTask, map.Name, map.SessionId, opts.locale),
                 map: map,
                 locale: opts.locale,
-                externalBaseLayers: opts.externalBaseLayers,
+                externalBaseLayers: externalBaseLayers,
                 config: config,
                 initialView: initialView,
                 capabilities: {

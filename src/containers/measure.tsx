@@ -11,6 +11,7 @@ import {
 import { getViewer } from "../api/runtime";
 import { tr } from "../api/i18n";
 import { NBSP } from "../constants";
+import { setActiveTool } from "../actions/map";
 
 const LAYER_NAME = "measure-layer";
 const WGS84_SPHERE = new ol.Sphere(6378137);
@@ -25,7 +26,7 @@ export interface IMeasureContainerState {
 }
 
 export interface IMeasureContainerDispatch {
-
+    setActiveTool?: (tool: ActiveMapTool) => void;
 }
 
 function mapStateToProps(state: IApplicationState): IMeasureContainerState {
@@ -36,7 +37,7 @@ function mapStateToProps(state: IApplicationState): IMeasureContainerState {
 
 function mapDispatchToProps(dispatch: ReduxDispatch) {
     return {
-
+        setActiveTool: (tool: ActiveMapTool) => dispatch(setActiveTool(tool))
     };
 }
 
@@ -321,6 +322,10 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
     }
     private startMeasure() {
         if (this.viewer && !this.state.measuring) {
+            //Set to none to prevent select tool interference when measuring
+            if (this.props.setActiveTool) {
+                this.props.setActiveTool(ActiveMapTool.None);
+            }
             this.createMeasureTooltip();
             this.createHelpTooltip();
             this.setActiveInteraction(this.state.type);

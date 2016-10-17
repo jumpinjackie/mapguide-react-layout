@@ -77,7 +77,7 @@
     "rimraf": "^2.5.4",
     "style-loader": "^0.13.1",
     "testdouble": "^1.8.0",
-    "ts-loader": "^0.9.1",
+    "ts-loader": "^0.9.3",
     "tslint": "^3.15.1",
     "tslint-loader": "^2.1.5",
     "typescript": "^2.0.3",

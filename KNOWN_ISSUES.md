@@ -12,11 +12,10 @@ Components
 
  * Task Pane
    * URLs loaded into the task pane push actual entries into the browser's navigation stack
-   * [#52](https://github.com/jumpinjackie/mapguide-react-layout/issues/52): On IE11, the `Tasks` flyout menu won't properly display over the Task Pane content if it is showing plugin content (eg. The Task Pane is showing a PDF document inline via a PDF viewer plugin)
 
  * Toolbars
    * Only one level of menu nesting is supported. Flyouts within Flyouts is not supported/implemented.
-   * Toolbars currently make no attempts to gracefully handle overflow when the toolbar has more items than the physical screen/container space allows. 
+   * Toolbars in vertical orientation currently make no attempts to gracefully handle overflow when the toolbar has more items than the physical screen/container space allows. 
 
 Commands
 ========
@@ -40,18 +39,15 @@ Commands
  * InvokeScript commands
    * [#14](https://github.com/jumpinjackie/mapguide-react-layout/issues/14): InvokeScript commands are not supported. Once we implement a server-side wrapper, such commands will be supported.
 
- * Measure:
-   * [#40](https://github.com/jumpinjackie/mapguide-react-layout/issues/40): While the UI is present, the viewer will be in "measure mode" 
-
 Viewer
 ======
 
  * Viewer will only accept Map Definitions in coordinate systems that have a corresponding EPSG code
 
- * Map will silently fail to load if projection is not known to proj4js
-   * Solution: Register the projection before the viewer is mounted
+ * For maps with a projection that is not known to proj4js, the viewer will automatically attempt to find a matching definition from https://epsg.io
+   * If you want to avoid this automatic external request, register the projection with proj4js before the viewer is mounted
       * Example: `MapGuide.Externals.proj4.defs("EPSG:28355","+proj=utm +zone=55 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");`
-      * You can find proj4js definitions at [epsg.io](http://epsg.io)
+      * You can find proj4js definitions at [epsg.io](https://epsg.io)
       * You will currently need to modify the respective template HTML file to include the projection
 
  * [#34](https://github.com/jumpinjackie/mapguide-react-layout/issues/34): Digitization tools have poor user experience on mobile/tablet devices
@@ -60,4 +56,6 @@ Viewer
 Templates
 =========
 
- * No known issues
+ * Aqua:
+   * Floating windows for Legend / Selection / Task Pane have fixed width and height
+   * Legend / Selection / Task Pane toggle actions are hard-coded into the template, as a result the existing InvokeScript widgets that would've performed this action are redundant

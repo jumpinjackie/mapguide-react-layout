@@ -1,3 +1,8 @@
+0.6.1
+=====
+
+ * [#76](https://github.com/jumpinjackie/mapguide-react-layout/issues/76): Fix init error when loading map containing raster layers
+
 0.6
 ===
 

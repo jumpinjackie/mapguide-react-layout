@@ -13,6 +13,7 @@
  * These functions help "clean" those responses to be of the form we expect (and prefer)
  */
 import * as Contracts from "../contracts";
+import * as Constants from "../../constants";
 import { MgError } from "../error";
 
 type ElementType = "string" | "boolean" | "int" | "float";
@@ -57,6 +58,14 @@ function deArrayifyFeatureStyles(fts: any[]): Contracts.RtMap.FeatureStyleInfo[]
 }
 
 function deArrayifyScaleRanges(scales: any[]): Contracts.RtMap.ScaleRangeInfo[] {
+    if (!scales) { //Happens with raster layers (this is probably a bug in CREATERUNTIMEMAP)
+        const defaultRange: Contracts.RtMap.ScaleRangeInfo = { 
+            MinScale: 0,
+            MaxScale: Constants.MDF_INFINITY,
+            FeatureStyle: []
+        };
+        return [defaultRange];
+    }
     return scales.map(sc => {
         const scale: Contracts.RtMap.ScaleRangeInfo = {
             MinScale: tryGetAsProperty(sc, "MinScale", "float"),
@@ -98,6 +107,12 @@ function deArrayifyLayers(layers: any[]): Contracts.RtMap.MapLayer[] {
             FeatureSource: deArrayifyFeatureSourceInfo(lyr.FeatureSource),
             ScaleRange: deArrayifyScaleRanges(lyr.ScaleRange)
         };
+        //This is either a raster or drawing layer, in this case disregard the
+        //selectability flag (and set it to false). This is to prevent false positive
+        //errors trying to do tooltip/selections against raster/drawing layers
+        if (!lyr.ScaleRange) {
+            layer.Selectable = false;
+        }
         return layer;
     });
 }

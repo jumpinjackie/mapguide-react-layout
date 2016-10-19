@@ -38,3 +38,5 @@ export const FLYOUT_CLOSE = 'Flyout/CLOSE';
  * Non-breaking space
  */
 export const NBSP = String.fromCharCode(160);
+
+export const MDF_INFINITY = 1000000000000.0;

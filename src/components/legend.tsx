@@ -147,7 +147,7 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
         }
         if (layer.ScaleRange) {
             for (const scaleRange of layer.ScaleRange) {
-                if (scaleRange.FeatureStyle) {
+                if (scaleRange.FeatureStyle && scaleRange.FeatureStyle.length > 0) {
                     //if (this.debug)
                     //    text = label + " (" + scaleRange.MinScale + " - " + scaleRange.MaxScale + ")";
                     const fts = scaleRange.FeatureStyle[0];
@@ -192,6 +192,8 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
                         expanded = <EmptyNode />;
                     }
                     return <li style={LI_LIST_STYLE} className='layer-node'>{expanded} {chkbox} {selectable} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> <LegendLabel text={text} /> {body}</li>;
+                } else { //This is generally a raster
+                    icon = this.context.getStdIcon("legend-raster.png");
                 }
             }
         }

@@ -611,7 +611,16 @@ function getMapDefinitionFromFlexLayout(appDef: ApplicationDefinition): string {
 
 function makeSessionAcquired(client: Client, dispatch: ReduxDispatch, opts: any): (session: string) => void {
     return (session: string) => {
-        if (strEndsWith(opts.resourceId, "WebLayout")) {
+        if (!opts.resourceId) {
+            dispatch({
+                type: Constants.INIT_ERROR,
+                payload: {
+                    error: new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", opts.locale || "en")),
+                    includeStack: false,
+                    options: opts
+                }
+            });
+        } else if (strEndsWith(opts.resourceId, "WebLayout")) {
             const onWebLayoutAndRuntimeMapReceived = makeWebLayoutAndRuntimeMapReceived(dispatch, opts);
             const handler = makeRuntimeMapSuccessHandler<WebLayout>(client, session, opts, wl => wl.Map.ResourceId);
             client.getResource<WebLayout>(opts.resourceId, { SESSION: session })

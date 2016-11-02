@@ -653,6 +653,7 @@ export interface IConfigurationReducerState {
 export interface IInitErrorReducerState {
     error: Error | undefined;
     options: any;
+    includeStack: boolean;
 }
 
 export interface IApplicationState {

@@ -4,7 +4,8 @@ const assign = require("object-assign");
 
 const INITIAL_STATE: IInitErrorReducerState = {
     options: {},
-    error: undefined
+    error: undefined,
+    includeStack: true
 };
 
 export function initErrorReducer(state = INITIAL_STATE, action = { type: '', payload: null }) {
@@ -15,8 +16,12 @@ export function initErrorReducer(state = INITIAL_STATE, action = { type: '', pay
                 if (payload) {
                     const error = payload.error;
                     const options = payload.options;
+                    let includeStack: boolean | undefined = payload.includeStack;
+                    if (typeof(includeStack) == 'undefined') {
+                        includeStack = true;
+                    }
                     if (error instanceof Error) {
-                        return { error: error, options: options };
+                        return { error: error, options: options, includeStack: includeStack };
                     }
                 }
             }

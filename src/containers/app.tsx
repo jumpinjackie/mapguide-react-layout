@@ -43,6 +43,7 @@ export interface IAppProps {
 
 export interface IAppState {
     error?: Error;
+    includeStack?: boolean;
     initOptions?: any;
     config?: IConfigurationReducerState;
 }
@@ -60,6 +61,7 @@ export interface IAppDispatch {
 function mapStateToProps(state: IApplicationState): IAppState {
     return {
         error: state.initError.error,
+        includeStack: state.initError.includeStack,
         initOptions: state.initError.options,
         config: state.config
     };
@@ -113,7 +115,7 @@ export class App extends React.Component<AppProps, any> {
                     return <div>
                         <div dangerouslySetInnerHTML={arg} />
                         {(() => {
-                            if (err.stack) {
+                            if (err.stack && this.props.includeStack === true) {
                                 return <div>
                                     <p>Stack Trace</p>
                                     <ul>

@@ -27,6 +27,7 @@ import {
     IExternalBaseLayer,
     ReduxThunkedAction
 } from "../api/common";
+import { strEndsWith } from "../utils/string";
 import { IView } from "../api/contracts/common";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { tr } from "../api/i18n";
@@ -606,10 +607,6 @@ function getMapDefinitionFromFlexLayout(appDef: ApplicationDefinition): string {
         return configs[0].Extension.ResourceId;
     }
     throw new MgError("No Map Definition found in Application Definition");
-}
-
-function strEndsWith(str: string, suffix: string): boolean {
-    return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
 
 function makeSessionAcquired(client: Client, dispatch: ReduxDispatch, opts: any): (session: string) => void {

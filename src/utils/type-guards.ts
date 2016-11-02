@@ -1,5 +1,14 @@
+import { InitError } from "../api/common";
 import { MapLayer } from "../api/contracts/runtime-map";
 import { IInlineMenu, IFlyoutMenu } from "../components/toolbar";
+
+export function isError(err: any): err is Error {
+    return err instanceof Error;
+}
+
+export function isInitError(item: any): item is InitError {
+    return typeof(item.message) != 'undefined' && typeof(item.stack) != undefined;
+}
 
 export function isMenuRef(item: any): item is IFlyoutMenu {
     return typeof(item.flyoutId) != 'undefined';

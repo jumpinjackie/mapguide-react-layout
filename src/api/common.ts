@@ -650,8 +650,13 @@ export interface IConfigurationReducerState {
     capabilities: IViewerCapabilities;
 }
 
+export interface InitError {
+    message: string;
+    stack: string[];
+}
+
 export interface IInitErrorReducerState {
-    error: Error | undefined;
+    error: InitError | undefined;
     options: any;
     includeStack: boolean;
 }

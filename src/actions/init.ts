@@ -609,17 +609,38 @@ function getMapDefinitionFromFlexLayout(appDef: ApplicationDefinition): string {
     throw new MgError("No Map Definition found in Application Definition");
 }
 
+function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: any): void {
+    if (error.stack) {
+        dispatch({
+            type: Constants.INIT_ERROR,
+            payload: {
+                error: {
+                    message: error.message,
+                    stack: (error.stack || "").split("\n")
+                },
+                includeStack: includeStack,
+                options: opts
+            }
+        });
+    } else {
+        dispatch({
+            type: Constants.INIT_ERROR,
+            payload: {
+                error: {
+                    message: error.message,
+                    stack: []
+                },
+                includeStack: includeStack,
+                options: opts
+            }
+        });
+    }
+}
+
 function makeSessionAcquired(client: Client, dispatch: ReduxDispatch, opts: any): (session: string) => void {
     return (session: string) => {
         if (!opts.resourceId) {
-            dispatch({
-                type: Constants.INIT_ERROR,
-                payload: {
-                    error: new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", opts.locale || "en")),
-                    includeStack: false,
-                    options: opts
-                }
-            });
+            processAndDispatchInitError(new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", opts.locale || "en")), false, dispatch, opts);
         } else if (strEndsWith(opts.resourceId, "WebLayout")) {
             const onWebLayoutAndRuntimeMapReceived = makeWebLayoutAndRuntimeMapReceived(dispatch, opts);
             const handler = makeRuntimeMapSuccessHandler<WebLayout>(client, session, opts, wl => wl.Map.ResourceId);
@@ -627,14 +648,8 @@ function makeSessionAcquired(client: Client, dispatch: ReduxDispatch, opts: any)
                 .then(handler)
                 .then(onWebLayoutAndRuntimeMapReceived)
                 .catch(err => {
-                dispatch({
-                    type: Constants.INIT_ERROR,
-                    payload: {
-                        error: err,
-                        options: opts
-                    }
+                    processAndDispatchInitError(err, true, dispatch, opts);
                 });
-            });
         } else if (strEndsWith(opts.resourceId, "ApplicationDefinition")) {
             const onFlexLayoutAndRuntimeMapReceived = makeFlexLayoutAndRuntimeMapReceived(dispatch, opts);
             const handler = makeRuntimeMapSuccessHandler<ApplicationDefinition>(client, session, opts, fl => getMapDefinitionFromFlexLayout(fl));
@@ -642,16 +657,10 @@ function makeSessionAcquired(client: Client, dispatch: ReduxDispatch, opts: any)
                 .then(handler)
                 .then(onFlexLayoutAndRuntimeMapReceived)
                 .catch(err => {
-                dispatch({
-                    type: Constants.INIT_ERROR,
-                    payload: {
-                        error: err,
-                        options: opts
-                    }
+                    processAndDispatchInitError(err, true, dispatch, opts);
                 });
-            });
         } else {
-            throw new MgError(`Unsupported resource type for resource: ${opts.resourceId}`);
+            processAndDispatchInitError(new MgError(tr("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", opts.locale || "en", { resourceId: opts.resourceId })), false, dispatch, opts);
         }
     }
 }
@@ -675,13 +684,7 @@ export function initLayout(options: any): ReduxThunkedAction {
                 client.createSession("Anonymous", "")
                     .then(onSessionAcquired)
                     .catch(err => {
-                        dispatch({
-                            type: Constants.INIT_ERROR,
-                            payload: {
-                                error: err,
-                                options: opts
-                            }
-                        });
+                        processAndDispatchInitError(err, true, dispatch, opts);
                     });
             }
         }

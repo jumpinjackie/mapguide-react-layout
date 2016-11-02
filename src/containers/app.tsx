@@ -7,15 +7,12 @@ import {
     IApplicationState,
     IConfigurationReducerState,
     IInitErrorReducerState,
-    ClientKind
+    ClientKind,
+    InitError
 } from "../api/common";
 import { initLayout } from "../actions/init";
-import { Error } from "../components/error";
+import { Error, normalizeStack } from "../components/error";
 import { tr } from "../api/i18n";
-
-function endsWith(str: string, suffix: string): boolean {
-    return str.indexOf(suffix, str.length - suffix.length) !== -1;
-}
 
 export interface IAppProps {
     layout: string;
@@ -42,7 +39,7 @@ export interface IAppProps {
 }
 
 export interface IAppState {
-    error?: Error;
+    error?: InitError;
     includeStack?: boolean;
     initOptions?: any;
     config?: IConfigurationReducerState;
@@ -91,7 +88,7 @@ export class App extends React.Component<AppProps, any> {
             });
         }
     }
-    private renderErrorMessage(err: Error, locale: string, args: any): JSX.Element {
+    private renderErrorMessage(err: Error|InitError, locale: string, args: any): JSX.Element {
         const msg = err.message;
         switch (msg) {
             case "MgConnectionFailedException":
@@ -112,14 +109,15 @@ export class App extends React.Component<AppProps, any> {
             default:
                 {
                     const arg = { __html: msg };
+                    const stack = normalizeStack(err);
                     return <div>
                         <div dangerouslySetInnerHTML={arg} />
                         {(() => {
-                            if (err.stack && this.props.includeStack === true) {
+                            if (this.props.includeStack === true && stack.length > 0) {
                                 return <div>
                                     <p>Stack Trace</p>
                                     <ul>
-                                        {err.stack.split("\n").map((ln, i) => <li key={`stack-line-${i}`}>{ln}</li>)}
+                                        {stack.map((ln, i) => <li key={`stack-line-${i}`}>{ln}</li>)}
                                     </ul>
                                 </div>;
                             }
@@ -128,7 +126,7 @@ export class App extends React.Component<AppProps, any> {
                 }
         }
     }
-    private initErrorRenderer(err: Error): JSX.Element {
+    private initErrorRenderer(err: Error|InitError): JSX.Element {
         const { config, initOptions } = this.props;
         let locale = config ? (config.locale || "en") : "en";
         if (initOptions && initOptions.locale) {

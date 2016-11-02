@@ -20,7 +20,7 @@ export function initErrorReducer(state = INITIAL_STATE, action = { type: '', pay
                     if (typeof(includeStack) == 'undefined') {
                         includeStack = true;
                     }
-                    if (error instanceof Error) {
+                    if (error) {
                         return { error: error, options: options, includeStack: includeStack };
                     }
                 }

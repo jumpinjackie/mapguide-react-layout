@@ -1,4 +1,4 @@
-// Type definitions for OpenLayers v3.18.2
+// Type definitions for OpenLayers v3.19.1
 // Project: http://openlayers.org/
 // Definitions by: Jackie Ng <https://github.com/jumpinjackie>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -73,7 +73,7 @@ declare module ol {
      *       attributions: [
      *         new ol.Attribution({
      *           html: 'All maps &copy; ' +
-     *               '<a href="http://www.opencyclemap.org/">OpenCycleMap</a>'
+     *               '<a href="https://www.opencyclemap.org/">OpenCycleMap</a>'
      *         }),
      *         ol.source.OSM.ATTRIBUTION
      *       ],
@@ -481,8 +481,8 @@ declare module ol {
          */
         getGeometryName(): string;
         /**
-         * Get the feature's style.  This return for this method depends on what was
-         * provided to the {@link ol.Feature#setStyle} method.
+         * Get the feature's style. Will return what was provided to the
+         * {@link ol.Feature#setStyle} method.
          */
         getStyle(): ol.style.Style|ol.style.Style[]|ol.FeatureStyleFunction;
         /**
@@ -827,7 +827,7 @@ declare module ol {
          * @param state  (Optional) State.
          * @param attributions  (Optional) Attributions.
          */
-        constructor(extent: ol.Extent, resolution?: number, pixelRatio?: number, state?: ol.ImageState, attributions?: ol.Attribution[]);
+        constructor(extent: ol.Extent, resolution?: number, pixelRatio?: number, state?: ol.Image.State, attributions?: ol.Attribution[]);
     }
     /**
      * Implementation of inertial deceleration for map movement.
@@ -869,8 +869,7 @@ declare module ol {
      * `ol-overlaycontainer-stopevent` for controls and some overlays, and one with
      * CSS class name `ol-overlaycontainer` for other overlays (see the `stopEvent`
      * option of {@link ol.Overlay} for the difference). The map itself is placed in
-     * a further element within the viewport, either DOM or Canvas, depending on the
-     * renderer.
+     * a further element within the viewport.
      * 
      * Layers are stored as a `ol.Collection` in layerGroups. A top-level group is
      * provided by the library. This is what is accessed by `getLayerGroup` and
@@ -943,11 +942,11 @@ declare module ol {
          * execute a callback with each matching layer. Layers included in the
          * detection can be configured through `opt_layerFilter`.
          * @param pixel  (Required) Pixel.
-         * @param callback  (Required) Layer
-    callback. This callback will recieve two arguments: first is the
-    {@link ol.layer.Layer layer}, second argument is {@link ol.Color}
-    and will be null for layer types that do not currently support this
-    argument. To stop detection callback functions can return a truthy value.
+         * @param callback  (Required) Layer callback. This callback will recieve two arguments: first is the
+    {@link ol.layer.Layer layer}, second argument is an array representing
+    [R, G, B, A] pixel values (0 - 255) and will be `null` for layer types
+    that do not currently support this argument. To stop detection, callback
+    functions can return a truthy value.
          * @param opt_this  (Optional) Value to use as `this` when executing `callback`.
          * @param opt_layerFilter  (Optional) Layer
     filter function. The filter function will receive one argument, the
@@ -1503,7 +1502,7 @@ declare module ol {
         /**
          * Get the current positioning of this overlay.
          */
-        getPositioning(): ol.OverlayPositioning;
+        getPositioning(): ol.Overlay.Positioning;
         /**
          * Set the DOM element to be associated with this overlay.
          * @param element  (Optional) The Element containing the overlay.
@@ -1531,7 +1530,7 @@ declare module ol {
          * @param positioning  (Required) how the overlay is
     positioned relative to its point on the map.
          */
-        setPositioning(positioning: ol.OverlayPositioning): void;
+        setPositioning(positioning: ol.Overlay.Positioning): void;
         /**
          * Gets a value.
          * @param key  (Required) Key name.
@@ -1910,75 +1909,6 @@ otherwise it will be negative.
         unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
     }
     /**
-     * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
-     */
-    enum ImageState {
-        IDLE = 0,
-        LOADING = 1,
-        LOADED = 2,
-        ERROR = 3
-    }
-    /**
-     * Overlay position: `'bottom-left'`, `'bottom-center'`,  `'bottom-right'`,
-     * `'center-left'`, `'center-center'`, `'center-right'`, `'top-left'`,
-     * `'top-center'`, `'top-right'`
-     */
-    class OverlayPositioning {
-        /**
-         * "bottom-left"
-         */
-        public static BOTTOM_LEFT: string;
-        /**
-         * "bottom-center"
-         */
-        public static BOTTOM_CENTER: string;
-        /**
-         * "bottom-right"
-         */
-        public static BOTTOM_RIGHT: string;
-        /**
-         * "center-left"
-         */
-        public static CENTER_LEFT: string;
-        /**
-         * "center-center"
-         */
-        public static CENTER_CENTER: string;
-        /**
-         * "center-right"
-         */
-        public static CENTER_RIGHT: string;
-        /**
-         * "top-left"
-         */
-        public static TOP_LEFT: string;
-        /**
-         * "top-center"
-         */
-        public static TOP_CENTER: string;
-        /**
-         * "top-right"
-         */
-        public static TOP_RIGHT: string;
-    }
-    /**
-     * Available renderers: `'canvas'`, `'dom'` or `'webgl'`.
-     */
-    class RendererType {
-        /**
-         * "canvas"
-         */
-        public static CANVAS: string;
-        /**
-         * "dom"
-         */
-        public static DOM: string;
-        /**
-         * "webgl"
-         */
-        public static WEBGL: string;
-    }
-    /**
      * Raster operation type. Supported values are `'pixel'` and `'image'`.
      */
     class RasterOperationType {
@@ -1992,13 +1922,22 @@ otherwise it will be negative.
         public static IMAGE: string;
     }
     /**
-     * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
+     * A type that can be used to provide attribution information for data sources.
+     * 
+     * It represents either
+     * * a simple string (e.g. `'© Acme Inc.'`),
+     * * an array of simple strings (e.g. `['© Acme Inc.', '© Bacme Inc.']`),
+     * * an instance of `{@link ol.Attribution}`,
+     * * or an array with multiple `{@link ol.Attribution}` instances.
      */
     type AttributionLike = string|string[]|ol.Attribution|ol.Attribution[];
 
     /**
-     * A type accepted by CanvasRenderingContext2D.fillStyle.
-     * Represents a color, pattern, or gradient.
+     * A type accepted by CanvasRenderingContext2D.fillStyle
+     * or CanvasRenderingContext2D.strokeStyle.
+     * Represents a color, pattern, or gradient. The origin for patterns and
+     * gradients as fill style is the top-left corner of the extent of the geometry
+     * being filled.
      */
     type ColorLike = string|CanvasPattern|CanvasGradient;
 
@@ -3755,15 +3694,17 @@ otherwise it will be negative.
              */
             constructor(opt_options?: olx.format.GeoJSONOptions);
             /**
-             * Read a feature from a GeoJSON Feature source.  Only works for Feature,
-             * use `readFeatures` to read FeatureCollection source.
+             * Read a feature from a GeoJSON Feature source.  Only works for Feature or
+             * geometry types.  Use {@link ol.format.GeoJSON#readFeatures} to read
+             * FeatureCollection source.
              * @param source  (Required) Source.
              * @param opt_options  (Optional) Read options.
              */
             readFeature(source: Document|Node|any|string, opt_options?: olx.format.ReadOptions): ol.Feature;
             /**
-             * Read all features from a GeoJSON source.  Works with both Feature and
-             * FeatureCollection sources.
+             * Read all features from a GeoJSON source.  Works for all GeoJSON types.
+             * If the source includes only geometries, features will be created with those
+             * geometries.
              * @param source  (Required) Source.
              * @param opt_options  (Optional) Read options.
              */
@@ -4351,382 +4292,135 @@ otherwise it will be negative.
          */
         class XMLFeature extends ol.format.Feature {
         }
-        /**
-         * IGC altitude/z. One of 'barometric', 'gps', 'none'.
-         */
-        class IGCZ {
+        module filter {
             /**
-             * "barometric"
+             * Represents a logical `<And>` operator between two filter conditions.
              */
-            public static BAROMETRIC: string;
-            /**
-             * "gps"
-             */
-            public static GPS: string;
-            /**
-             * "none"
-             */
-            public static NONE: string;
-        }
-        module ogc {
-            module filter {
+            class And extends ol.format.filter.LogicalBinary {
                 /**
-                 * Represents a logical `<And>` operator between two filter conditions.
-                 */
-                class And extends ol.format.ogc.filter.LogicalBinary {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param conditionA  (Required) First filter condition.
-                     * @param conditionB  (Required) Second filter condition.
-                     */
-                    constructor(conditionA: ol.format.ogc.filter.Filter, conditionB: ol.format.ogc.filter.Filter);
-                }
-                /**
-                 * Represents a `<BBOX>` operator to test whether a geometry-valued property
-                 * intersects a fixed bounding box
-                 */
-                class Bbox extends ol.format.ogc.filter.Filter {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param geometryName  (Required) Geometry name to use.
-                     * @param extent  (Required) Extent.
-                     * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
-   set on geometries when this is not provided.
-                     */
-                    constructor(geometryName: string, extent: ol.Extent, opt_srsName?: string);
-                }
-                /**
-                 * Abstract class; normally only used for creating subclasses and not instantiated in apps.
-                 * Base class for WFS GetFeature property comparison filters.
-                 */
-                class Comparison extends ol.format.ogc.filter.Filter {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param tagName  (Required) The XML tag name for this filter.
-                     * @param propertyName  (Required) Name of the context property to compare.
-                     */
-                    constructor(tagName: string, propertyName: string);
-                }
-                /**
-                 * Abstract class; normally only used for creating subclasses and not instantiated in apps.
-                 * Base class for WFS GetFeature property binary comparison filters.
-                 */
-                class ComparisonBinary extends ol.format.ogc.filter.Comparison {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param tagName  (Required) The XML tag name for this filter.
-                     * @param propertyName  (Required) Name of the context property to compare.
-                     * @param expression  (Required) The value to compare.
-                     * @param opt_matchCase  (Optional) Case-sensitive?
-                     */
-                    constructor(tagName: string, propertyName: string, expression: string|number, opt_matchCase?: boolean);
-                }
-                /**
-                 * Represents a `<PropertyIsEqualTo>` comparison operator.
-                 */
-                class EqualTo extends ol.format.ogc.filter.ComparisonBinary {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param propertyName  (Required) Name of the context property to compare.
-                     * @param expression  (Required) The value to compare.
-                     * @param opt_matchCase  (Optional) Case-sensitive?
-                     */
-                    constructor(propertyName: string, expression: string|number, opt_matchCase?: boolean);
-                }
-                /**
-                 * Abstract class; normally only used for creating subclasses and not instantiated in apps.
-                 * Base class for WFS GetFeature filters.
-                 */
-                class Filter {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param tagName  (Required) The XML tag name for this filter.
-                     */
-                    constructor(tagName: string);
-                }
-                /**
-                 * Represents a `<PropertyIsGreaterThan>` comparison operator.
-                 */
-                class GreaterThan extends ol.format.ogc.filter.ComparisonBinary {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param propertyName  (Required) Name of the context property to compare.
-                     * @param expression  (Required) The value to compare.
-                     */
-                    constructor(propertyName: string, expression: number);
-                }
-                /**
-                 * Represents a `<PropertyIsGreaterThanOrEqualTo>` comparison operator.
-                 */
-                class GreaterThanOrEqualTo extends ol.format.ogc.filter.ComparisonBinary {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param propertyName  (Required) Name of the context property to compare.
-                     * @param expression  (Required) The value to compare.
-                     */
-                    constructor(propertyName: string, expression: number);
-                }
-                /**
-                 * Represents a `<Intersects>` operator to test whether a geometry-valued property
-                 * intersects a given geometry.
-                 */
-                class Intersects extends ol.format.ogc.filter.Spatial {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param geometryName  (Required) Geometry name to use.
-                     * @param geometry  (Required) Geometry.
-                     * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
-   set on geometries when this is not provided.
-                     */
-                    constructor(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string);
-                }
-                /**
-                 * Represents a `<PropertyIsBetween>` comparison operator.
-                 */
-                class IsBetween extends ol.format.ogc.filter.Comparison {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param propertyName  (Required) Name of the context property to compare.
-                     * @param lowerBoundary  (Required) The lower bound of the range.
-                     * @param upperBoundary  (Required) The upper bound of the range.
-                     */
-                    constructor(propertyName: string, lowerBoundary: number, upperBoundary: number);
-                }
-                /**
-                 * Represents a `<PropertyIsLike>` comparison operator.
-                 */
-                class IsLike extends ol.format.ogc.filter.Comparison {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param propertyName  (Required) Name of the context property to compare.
-                     * @param pattern  (Required) Text pattern.
-                     * @param opt_wildCard  (Optional) Pattern character which matches any sequence of
-   zero or more string characters. Default is '*'.
-                     * @param opt_singleChar  (Optional) pattern character which matches any single
-   string character. Default is '.'.
-                     * @param opt_escapeChar  (Optional) Escape character which can be used to escape
-   the pattern characters. Default is '!'.
-                     * @param opt_matchCase  (Optional) Case-sensitive?
-                     */
-                    constructor(propertyName: string, pattern: string, opt_wildCard?: string, opt_singleChar?: string, opt_escapeChar?: string, opt_matchCase?: boolean);
-                }
-                /**
-                 * Represents a `<PropertyIsNull>` comparison operator.
-                 */
-                class IsNull extends ol.format.ogc.filter.Comparison {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param propertyName  (Required) Name of the context property to compare.
-                     */
-                    constructor(propertyName: string);
-                }
-                /**
-                 * Represents a `<PropertyIsLessThan>` comparison operator.
-                 */
-                class LessThan extends ol.format.ogc.filter.ComparisonBinary {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param propertyName  (Required) Name of the context property to compare.
-                     * @param expression  (Required) The value to compare.
-                     */
-                    constructor(propertyName: string, expression: number);
-                }
-                /**
-                 * Represents a `<PropertyIsLessThanOrEqualTo>` comparison operator.
-                 */
-                class LessThanOrEqualTo extends ol.format.ogc.filter.ComparisonBinary {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param propertyName  (Required) Name of the context property to compare.
-                     * @param expression  (Required) The value to compare.
-                     */
-                    constructor(propertyName: string, expression: number);
-                }
-                /**
-                 * Abstract class; normally only used for creating subclasses and not instantiated in apps.
-                 * Base class for WFS GetFeature logical filters.
-                 */
-                class Logical extends ol.format.ogc.filter.Filter {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param tagName  (Required) The XML tag name for this filter.
-                     */
-                    constructor(tagName: string);
-                }
-                /**
-                 * Abstract class; normally only used for creating subclasses and not instantiated in apps.
-                 * Base class for WFS GetFeature binary logical filters.
-                 */
-                class LogicalBinary extends ol.format.ogc.filter.Logical {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param tagName  (Required) The XML tag name for this filter.
-                     * @param conditionA  (Required) First filter condition.
-                     * @param conditionB  (Required) Second filter condition.
-                     */
-                    constructor(tagName: string, conditionA: ol.format.ogc.filter.Filter, conditionB: ol.format.ogc.filter.Filter);
-                }
-                /**
-                 * Represents a logical `<Not>` operator for a filter condition.
-                 */
-                class Not extends ol.format.ogc.filter.Logical {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param condition  (Required) Filter condition.
-                     */
-                    constructor(condition: ol.format.ogc.filter.Filter);
-                }
-                /**
-                 * Represents a `<PropertyIsNotEqualTo>` comparison operator.
-                 */
-                class NotEqualTo extends ol.format.ogc.filter.ComparisonBinary {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param propertyName  (Required) Name of the context property to compare.
-                     * @param expression  (Required) The value to compare.
-                     * @param opt_matchCase  (Optional) Case-sensitive?
-                     */
-                    constructor(propertyName: string, expression: string|number, opt_matchCase?: boolean);
-                }
-                /**
-                 * Represents a logical `<Or>` operator between two filter conditions.
-                 */
-                class Or extends ol.format.ogc.filter.LogicalBinary {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param conditionA  (Required) First filter condition.
-                     * @param conditionB  (Required) Second filter condition.
-                     */
-                    constructor(conditionA: ol.format.ogc.filter.Filter, conditionB: ol.format.ogc.filter.Filter);
-                }
-                /**
-                 * Represents a spatial operator to test whether a geometry-valued property
-                 * relates to a given geometry.
-                 */
-                class Spatial extends ol.format.ogc.filter.Filter {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param tagName  (Required) The XML tag name for this filter.
-                     * @param geometryName  (Required) Geometry name to use.
-                     * @param geometry  (Required) Geometry.
-                     * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
-   set on geometries when this is not provided.
-                     */
-                    constructor(tagName: string, geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string);
-                }
-                /**
-                 * Represents a `<Within>` operator to test whether a geometry-valued property
-                 * is within a given geometry.
-                 */
-                class Within extends ol.format.ogc.filter.Spatial {
-                    /**
-                     * TODO: This method has no documentation. Contact the library author if this method should be documented
-                     * @param geometryName  (Required) Geometry name to use.
-                     * @param geometry  (Required) Geometry.
-                     * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
-   set on geometries when this is not provided.
-                     */
-                    constructor(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string);
-                }
-                /**
-                 * Create a logical `<And>` operator between two filter conditions.
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
                  * @param conditionA  (Required) First filter condition.
                  * @param conditionB  (Required) Second filter condition.
                  */
-                function and(conditionA: ol.format.ogc.filter.Filter, conditionB: ol.format.ogc.filter.Filter): ol.format.ogc.filter.And;
+                constructor(conditionA: ol.format.filter.Filter, conditionB: ol.format.filter.Filter);
+            }
+            /**
+             * Represents a `<BBOX>` operator to test whether a geometry-valued property
+             * intersects a fixed bounding box
+             */
+            class Bbox extends ol.format.filter.Filter {
                 /**
-                 * Create a logical `<Or>` operator between two filter conditions.
-                 * @param conditionA  (Required) First filter condition.
-                 * @param conditionB  (Required) Second filter condition.
-                 */
-                function or(conditionA: ol.format.ogc.filter.Filter, conditionB: ol.format.ogc.filter.Filter): ol.format.ogc.filter.Or;
-                /**
-                 * Represents a logical `<Not>` operator for a filter condition.
-                 * @param condition  (Required) Filter condition.
-                 */
-                function not(condition: ol.format.ogc.filter.Filter): ol.format.ogc.filter.Not;
-                /**
-                 * Create a `<BBOX>` operator to test whether a geometry-valued property
-                 * intersects a fixed bounding box
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
                  * @param geometryName  (Required) Geometry name to use.
                  * @param extent  (Required) Extent.
                  * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
    set on geometries when this is not provided.
                  */
-                function bbox(geometryName: string, extent: ol.Extent, opt_srsName?: string): ol.format.ogc.filter.Bbox;
+                constructor(geometryName: string, extent: ol.Extent, opt_srsName?: string);
+            }
+            /**
+             * Abstract class; normally only used for creating subclasses and not instantiated in apps.
+             * Base class for WFS GetFeature property comparison filters.
+             */
+            class Comparison extends ol.format.filter.Filter {
                 /**
-                 * Create a `<Intersects>` operator to test whether a geometry-valued property
-                 * intersects a given geometry.
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param tagName  (Required) The XML tag name for this filter.
+                 * @param propertyName  (Required) Name of the context property to compare.
+                 */
+                constructor(tagName: string, propertyName: string);
+            }
+            /**
+             * Abstract class; normally only used for creating subclasses and not instantiated in apps.
+             * Base class for WFS GetFeature property binary comparison filters.
+             */
+            class ComparisonBinary extends ol.format.filter.Comparison {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param tagName  (Required) The XML tag name for this filter.
+                 * @param propertyName  (Required) Name of the context property to compare.
+                 * @param expression  (Required) The value to compare.
+                 * @param opt_matchCase  (Optional) Case-sensitive?
+                 */
+                constructor(tagName: string, propertyName: string, expression: string|number, opt_matchCase?: boolean);
+            }
+            /**
+             * Represents a `<PropertyIsEqualTo>` comparison operator.
+             */
+            class EqualTo extends ol.format.filter.ComparisonBinary {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param propertyName  (Required) Name of the context property to compare.
+                 * @param expression  (Required) The value to compare.
+                 * @param opt_matchCase  (Optional) Case-sensitive?
+                 */
+                constructor(propertyName: string, expression: string|number, opt_matchCase?: boolean);
+            }
+            /**
+             * Abstract class; normally only used for creating subclasses and not instantiated in apps.
+             * Base class for WFS GetFeature filters.
+             */
+            class Filter {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param tagName  (Required) The XML tag name for this filter.
+                 */
+                constructor(tagName: string);
+            }
+            /**
+             * Represents a `<PropertyIsGreaterThan>` comparison operator.
+             */
+            class GreaterThan extends ol.format.filter.ComparisonBinary {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param propertyName  (Required) Name of the context property to compare.
+                 * @param expression  (Required) The value to compare.
+                 */
+                constructor(propertyName: string, expression: number);
+            }
+            /**
+             * Represents a `<PropertyIsGreaterThanOrEqualTo>` comparison operator.
+             */
+            class GreaterThanOrEqualTo extends ol.format.filter.ComparisonBinary {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param propertyName  (Required) Name of the context property to compare.
+                 * @param expression  (Required) The value to compare.
+                 */
+                constructor(propertyName: string, expression: number);
+            }
+            /**
+             * Represents a `<Intersects>` operator to test whether a geometry-valued property
+             * intersects a given geometry.
+             */
+            class Intersects extends ol.format.filter.Spatial {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
                  * @param geometryName  (Required) Geometry name to use.
                  * @param geometry  (Required) Geometry.
                  * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
    set on geometries when this is not provided.
                  */
-                function intersects(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string): ol.format.ogc.filter.Intersects;
+                constructor(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string);
+            }
+            /**
+             * Represents a `<PropertyIsBetween>` comparison operator.
+             */
+            class IsBetween extends ol.format.filter.Comparison {
                 /**
-                 * Create a `<Within>` operator to test whether a geometry-valued property
-                 * is within a given geometry.
-                 * @param geometryName  (Required) Geometry name to use.
-                 * @param geometry  (Required) Geometry.
-                 * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
-   set on geometries when this is not provided.
-                 */
-                function within(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string): ol.format.ogc.filter.Within;
-                /**
-                 * Creates a `<PropertyIsEqualTo>` comparison operator.
-                 * @param propertyName  (Required) Name of the context property to compare.
-                 * @param expression  (Required) The value to compare.
-                 * @param opt_matchCase  (Optional) Case-sensitive?
-                 */
-                function equalTo(propertyName: string, expression: string|number, opt_matchCase?: boolean): ol.format.ogc.filter.EqualTo;
-                /**
-                 * Creates a `<PropertyIsNotEqualTo>` comparison operator.
-                 * @param propertyName  (Required) Name of the context property to compare.
-                 * @param expression  (Required) The value to compare.
-                 * @param opt_matchCase  (Optional) Case-sensitive?
-                 */
-                function notEqualTo(propertyName: string, expression: string|number, opt_matchCase?: boolean): ol.format.ogc.filter.NotEqualTo;
-                /**
-                 * Creates a `<PropertyIsLessThan>` comparison operator.
-                 * @param propertyName  (Required) Name of the context property to compare.
-                 * @param expression  (Required) The value to compare.
-                 */
-                function lessThan(propertyName: string, expression: number): ol.format.ogc.filter.LessThan;
-                /**
-                 * Creates a `<PropertyIsLessThanOrEqualTo>` comparison operator.
-                 * @param propertyName  (Required) Name of the context property to compare.
-                 * @param expression  (Required) The value to compare.
-                 */
-                function lessThanOrEqualTo(propertyName: string, expression: number): ol.format.ogc.filter.LessThanOrEqualTo;
-                /**
-                 * Creates a `<PropertyIsGreaterThan>` comparison operator.
-                 * @param propertyName  (Required) Name of the context property to compare.
-                 * @param expression  (Required) The value to compare.
-                 */
-                function greaterThan(propertyName: string, expression: number): ol.format.ogc.filter.GreaterThan;
-                /**
-                 * Creates a `<PropertyIsGreaterThanOrEqualTo>` comparison operator.
-                 * @param propertyName  (Required) Name of the context property to compare.
-                 * @param expression  (Required) The value to compare.
-                 */
-                function greaterThanOrEqualTo(propertyName: string, expression: number): ol.format.ogc.filter.GreaterThanOrEqualTo;
-                /**
-                 * Creates a `<PropertyIsNull>` comparison operator to test whether a property value
-                 * is null.
-                 * @param propertyName  (Required) Name of the context property to compare.
-                 */
-                function isNull(propertyName: string): ol.format.ogc.filter.IsNull;
-                /**
-                 * Creates a `<PropertyIsBetween>` comparison operator to test whether an expression
-                 * value lies within a range given by a lower and upper bound (inclusive).
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
                  * @param propertyName  (Required) Name of the context property to compare.
                  * @param lowerBoundary  (Required) The lower bound of the range.
                  * @param upperBoundary  (Required) The upper bound of the range.
                  */
-                function between(propertyName: string, lowerBoundary: number, upperBoundary: number): ol.format.ogc.filter.IsBetween;
+                constructor(propertyName: string, lowerBoundary: number, upperBoundary: number);
+            }
+            /**
+             * Represents a `<PropertyIsLike>` comparison operator.
+             */
+            class IsLike extends ol.format.filter.Comparison {
                 /**
-                 * Represents a `<PropertyIsLike>` comparison operator that matches a string property
-                 * value against a text pattern.
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
                  * @param propertyName  (Required) Name of the context property to compare.
                  * @param pattern  (Required) Text pattern.
                  * @param opt_wildCard  (Optional) Pattern character which matches any sequence of
@@ -4737,7 +4431,254 @@ otherwise it will be negative.
    the pattern characters. Default is '!'.
                  * @param opt_matchCase  (Optional) Case-sensitive?
                  */
-                function like(propertyName: string, pattern: string, opt_wildCard?: string, opt_singleChar?: string, opt_escapeChar?: string, opt_matchCase?: boolean): ol.format.ogc.filter.IsLike;
+                constructor(propertyName: string, pattern: string, opt_wildCard?: string, opt_singleChar?: string, opt_escapeChar?: string, opt_matchCase?: boolean);
+            }
+            /**
+             * Represents a `<PropertyIsNull>` comparison operator.
+             */
+            class IsNull extends ol.format.filter.Comparison {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param propertyName  (Required) Name of the context property to compare.
+                 */
+                constructor(propertyName: string);
+            }
+            /**
+             * Represents a `<PropertyIsLessThan>` comparison operator.
+             */
+            class LessThan extends ol.format.filter.ComparisonBinary {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param propertyName  (Required) Name of the context property to compare.
+                 * @param expression  (Required) The value to compare.
+                 */
+                constructor(propertyName: string, expression: number);
+            }
+            /**
+             * Represents a `<PropertyIsLessThanOrEqualTo>` comparison operator.
+             */
+            class LessThanOrEqualTo extends ol.format.filter.ComparisonBinary {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param propertyName  (Required) Name of the context property to compare.
+                 * @param expression  (Required) The value to compare.
+                 */
+                constructor(propertyName: string, expression: number);
+            }
+            /**
+             * Abstract class; normally only used for creating subclasses and not instantiated in apps.
+             * Base class for WFS GetFeature logical filters.
+             */
+            class Logical extends ol.format.filter.Filter {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param tagName  (Required) The XML tag name for this filter.
+                 */
+                constructor(tagName: string);
+            }
+            /**
+             * Abstract class; normally only used for creating subclasses and not instantiated in apps.
+             * Base class for WFS GetFeature binary logical filters.
+             */
+            class LogicalBinary extends ol.format.filter.Logical {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param tagName  (Required) The XML tag name for this filter.
+                 * @param conditionA  (Required) First filter condition.
+                 * @param conditionB  (Required) Second filter condition.
+                 */
+                constructor(tagName: string, conditionA: ol.format.filter.Filter, conditionB: ol.format.filter.Filter);
+            }
+            /**
+             * Represents a logical `<Not>` operator for a filter condition.
+             */
+            class Not extends ol.format.filter.Logical {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param condition  (Required) Filter condition.
+                 */
+                constructor(condition: ol.format.filter.Filter);
+            }
+            /**
+             * Represents a `<PropertyIsNotEqualTo>` comparison operator.
+             */
+            class NotEqualTo extends ol.format.filter.ComparisonBinary {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param propertyName  (Required) Name of the context property to compare.
+                 * @param expression  (Required) The value to compare.
+                 * @param opt_matchCase  (Optional) Case-sensitive?
+                 */
+                constructor(propertyName: string, expression: string|number, opt_matchCase?: boolean);
+            }
+            /**
+             * Represents a logical `<Or>` operator between two filter conditions.
+             */
+            class Or extends ol.format.filter.LogicalBinary {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param conditionA  (Required) First filter condition.
+                 * @param conditionB  (Required) Second filter condition.
+                 */
+                constructor(conditionA: ol.format.filter.Filter, conditionB: ol.format.filter.Filter);
+            }
+            /**
+             * Represents a spatial operator to test whether a geometry-valued property
+             * relates to a given geometry.
+             */
+            class Spatial extends ol.format.filter.Filter {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param tagName  (Required) The XML tag name for this filter.
+                 * @param geometryName  (Required) Geometry name to use.
+                 * @param geometry  (Required) Geometry.
+                 * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
+   set on geometries when this is not provided.
+                 */
+                constructor(tagName: string, geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string);
+            }
+            /**
+             * Represents a `<Within>` operator to test whether a geometry-valued property
+             * is within a given geometry.
+             */
+            class Within extends ol.format.filter.Spatial {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param geometryName  (Required) Geometry name to use.
+                 * @param geometry  (Required) Geometry.
+                 * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
+   set on geometries when this is not provided.
+                 */
+                constructor(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string);
+            }
+            /**
+             * Create a logical `<And>` operator between two filter conditions.
+             * @param conditionA  (Required) First filter condition.
+             * @param conditionB  (Required) Second filter condition.
+             */
+            function and(conditionA: ol.format.filter.Filter, conditionB: ol.format.filter.Filter): ol.format.filter.And;
+            /**
+             * Create a logical `<Or>` operator between two filter conditions.
+             * @param conditionA  (Required) First filter condition.
+             * @param conditionB  (Required) Second filter condition.
+             */
+            function or(conditionA: ol.format.filter.Filter, conditionB: ol.format.filter.Filter): ol.format.filter.Or;
+            /**
+             * Represents a logical `<Not>` operator for a filter condition.
+             * @param condition  (Required) Filter condition.
+             */
+            function not(condition: ol.format.filter.Filter): ol.format.filter.Not;
+            /**
+             * Create a `<BBOX>` operator to test whether a geometry-valued property
+             * intersects a fixed bounding box
+             * @param geometryName  (Required) Geometry name to use.
+             * @param extent  (Required) Extent.
+             * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
+   set on geometries when this is not provided.
+             */
+            function bbox(geometryName: string, extent: ol.Extent, opt_srsName?: string): ol.format.filter.Bbox;
+            /**
+             * Create a `<Intersects>` operator to test whether a geometry-valued property
+             * intersects a given geometry.
+             * @param geometryName  (Required) Geometry name to use.
+             * @param geometry  (Required) Geometry.
+             * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
+   set on geometries when this is not provided.
+             */
+            function intersects(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string): ol.format.filter.Intersects;
+            /**
+             * Create a `<Within>` operator to test whether a geometry-valued property
+             * is within a given geometry.
+             * @param geometryName  (Required) Geometry name to use.
+             * @param geometry  (Required) Geometry.
+             * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
+   set on geometries when this is not provided.
+             */
+            function within(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string): ol.format.filter.Within;
+            /**
+             * Creates a `<PropertyIsEqualTo>` comparison operator.
+             * @param propertyName  (Required) Name of the context property to compare.
+             * @param expression  (Required) The value to compare.
+             * @param opt_matchCase  (Optional) Case-sensitive?
+             */
+            function equalTo(propertyName: string, expression: string|number, opt_matchCase?: boolean): ol.format.filter.EqualTo;
+            /**
+             * Creates a `<PropertyIsNotEqualTo>` comparison operator.
+             * @param propertyName  (Required) Name of the context property to compare.
+             * @param expression  (Required) The value to compare.
+             * @param opt_matchCase  (Optional) Case-sensitive?
+             */
+            function notEqualTo(propertyName: string, expression: string|number, opt_matchCase?: boolean): ol.format.filter.NotEqualTo;
+            /**
+             * Creates a `<PropertyIsLessThan>` comparison operator.
+             * @param propertyName  (Required) Name of the context property to compare.
+             * @param expression  (Required) The value to compare.
+             */
+            function lessThan(propertyName: string, expression: number): ol.format.filter.LessThan;
+            /**
+             * Creates a `<PropertyIsLessThanOrEqualTo>` comparison operator.
+             * @param propertyName  (Required) Name of the context property to compare.
+             * @param expression  (Required) The value to compare.
+             */
+            function lessThanOrEqualTo(propertyName: string, expression: number): ol.format.filter.LessThanOrEqualTo;
+            /**
+             * Creates a `<PropertyIsGreaterThan>` comparison operator.
+             * @param propertyName  (Required) Name of the context property to compare.
+             * @param expression  (Required) The value to compare.
+             */
+            function greaterThan(propertyName: string, expression: number): ol.format.filter.GreaterThan;
+            /**
+             * Creates a `<PropertyIsGreaterThanOrEqualTo>` comparison operator.
+             * @param propertyName  (Required) Name of the context property to compare.
+             * @param expression  (Required) The value to compare.
+             */
+            function greaterThanOrEqualTo(propertyName: string, expression: number): ol.format.filter.GreaterThanOrEqualTo;
+            /**
+             * Creates a `<PropertyIsNull>` comparison operator to test whether a property value
+             * is null.
+             * @param propertyName  (Required) Name of the context property to compare.
+             */
+            function isNull(propertyName: string): ol.format.filter.IsNull;
+            /**
+             * Creates a `<PropertyIsBetween>` comparison operator to test whether an expression
+             * value lies within a range given by a lower and upper bound (inclusive).
+             * @param propertyName  (Required) Name of the context property to compare.
+             * @param lowerBoundary  (Required) The lower bound of the range.
+             * @param upperBoundary  (Required) The upper bound of the range.
+             */
+            function between(propertyName: string, lowerBoundary: number, upperBoundary: number): ol.format.filter.IsBetween;
+            /**
+             * Represents a `<PropertyIsLike>` comparison operator that matches a string property
+             * value against a text pattern.
+             * @param propertyName  (Required) Name of the context property to compare.
+             * @param pattern  (Required) Text pattern.
+             * @param opt_wildCard  (Optional) Pattern character which matches any sequence of
+   zero or more string characters. Default is '*'.
+             * @param opt_singleChar  (Optional) pattern character which matches any single
+   string character. Default is '.'.
+             * @param opt_escapeChar  (Optional) Escape character which can be used to escape
+   the pattern characters. Default is '!'.
+             * @param opt_matchCase  (Optional) Case-sensitive?
+             */
+            function like(propertyName: string, pattern: string, opt_wildCard?: string, opt_singleChar?: string, opt_escapeChar?: string, opt_matchCase?: boolean): ol.format.filter.IsLike;
+        }
+        module IGC {
+            /**
+             * IGC altitude/z. One of 'barometric', 'gps', 'none'.
+             */
+            class Z {
+                /**
+                 * "barometric"
+                 */
+                public static BAROMETRIC: string;
+                /**
+                 * "gps"
+                 */
+                public static GPS: string;
+                /**
+                 * "none"
+                 */
+                public static NONE: string;
             }
         }
     }
@@ -7714,16 +7655,16 @@ otherwise it will be negative.
             /**
              * Handles the {@link ol.MapBrowserEvent map browser event} and may actually
              * draw or finish the drawing.
-             * @param mapBrowserEvent  (Required) Map browser event.
+             * @param event  (Required) Map browser event.
              */
-            static handleEvent(mapBrowserEvent: ol.MapBrowserEvent): boolean;
+            static handleEvent(event: ol.MapBrowserEvent): boolean;
             /**
              * Remove last point of the feature currently being drawn.
              */
             removeLastPoint(): void;
             /**
              * Stop drawing and add the sketch feature to the target layer.
-             * The {@link ol.interaction.DrawEventType.DRAWEND} event is dispatched before
+             * The {@link ol.interaction.Draw.EventType.DRAWEND} event is dispatched before
              * inserting the feature.
              */
             finishDrawing(): void;
@@ -7735,7 +7676,7 @@ otherwise it will be negative.
              */
             extend(feature: ol.Feature): void;
             /**
-             * Create a `geometryFunction` for `mode: 'Circle'` that will create a regular
+             * Create a `geometryFunction` for `type: 'Circle'` that will create a regular
              * polygon with a user specified number of sides and start angle instead of an
              * `ol.geom.Circle` geometry.
              * @param opt_sides  (Optional) Number of sides of the regular polygon. Default is
@@ -7745,6 +7686,125 @@ otherwise it will be negative.
     regular polygon to the current pointer position.
              */
             static createRegularPolygon(opt_sides?: number, opt_angle?: number): ol.DrawGeometryFunctionType;
+            /**
+             * Create a `geometryFunction` that will create a box-shaped polygon (aligned
+             * with the coordinate system axes).  Use this with the draw interaction and
+             * `type: 'Circle'` to return a box instead of a circle geometry.
+             */
+            static createBox(): ol.DrawGeometryFunctionType;
+            /**
+             * Return whether the interaction is currently active.
+             */
+            getActive(): boolean;
+            /**
+             * Get the map associated with this interaction.
+             */
+            getMap(): ol.Map;
+            /**
+             * Activate or deactivate the interaction.
+             * @param active  (Required) Active.
+             */
+            setActive(active: boolean): void;
+            /**
+             * Gets a value.
+             * @param key  (Required) Key name.
+             */
+            get(key: string): any;
+            /**
+             * Get a list of object property names.
+             */
+            getKeys(): string[];
+            /**
+             * Get an object of all property names and values.
+             */
+            getProperties(): { [key: string]: any; };
+            /**
+             * Sets a value.
+             * @param key  (Required) Key name.
+             * @param value  (Required) Value.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            set(key: string, value: any, opt_silent?: boolean): void;
+            /**
+             * Sets a collection of key-value pairs.  Note that this changes any existing
+             * properties and adds new ones (it does not remove any existing properties).
+             * @param values  (Required) Values.
+             * @param opt_silent  (Optional) Update without triggering an event.
+             */
+            setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+            /**
+             * Unsets a property.
+             * @param key  (Required) Key name.
+             * @param opt_silent  (Optional) Unset without triggering an event.
+             */
+            unset(key: string, opt_silent?: boolean): void;
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+            /**
+             * Removes an event listener using the key returned by `on()` or `once()`.
+             * Note that using the {@link ol.Observable.unByKey} static function is to
+             * be preferred.
+             * @param key  (Required) The key returned by `on()`
+    or `once()` (or an array of keys).
+             */
+            unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
+        }
+        /**
+         * Allows the user to draw a vector box by clicking and dragging on the map.
+         * Once drawn, the vector box can be modified by dragging its vertices or edges.
+         * This interaction is only supported for mouse devices.
+         */
+        class Extent extends ol.interaction.Pointer {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param opt_options  (Optional) Options.
+             */
+            constructor(opt_options?: olx.interaction.ExtentOptions);
+            /**
+             * Returns the current drawn extent in the view projection
+             */
+            getExtent(): ol.Extent;
+            /**
+             * Manually sets the drawn extent, using the view projection.
+             * @param extent  (Required) Extent
+             */
+            setExtent(extent: ol.Extent): void;
             /**
              * Return whether the interaction is currently active.
              */
@@ -8209,11 +8269,6 @@ otherwise it will be negative.
              * Get the map associated with this interaction.
              */
             getMap(): ol.Map;
-            /**
-             * Activate or deactivate the interaction.
-             * @param active  (Required) Active.
-             */
-            setActive(active: boolean): void;
             /**
              * Gets a value.
              * @param key  (Required) Key name.
@@ -10584,30 +10639,32 @@ to zoom to the center of the map
              */
             unByKey(key: ol.EventsKey|ol.EventsKey[]): void;
         }
-        /**
-         * Render mode for vector tiles:
-         *  * `'image'`: Vector tiles are rendered as images. Great performance, but
-         *    point symbols and texts are always rotated with the view and pixels are
-         *    scaled during zoom animations.
-         *  * `'hybrid'`: Polygon and line elements are rendered as images, so pixels
-         *    are scaled during zoom animations. Point symbols and texts are accurately
-         *    rendered as vectors and can stay upright on rotated views.
-         *  * `'vector'`: Vector tiles are rendered as vectors. Most accurate rendering
-         *    even during animations, but slower performance than the other options.
-         */
-        class VectorTileRenderType {
+        module VectorTile {
             /**
-             * "image"
+             * Render mode for vector tiles:
+             *  * `'image'`: Vector tiles are rendered as images. Great performance, but
+             *    point symbols and texts are always rotated with the view and pixels are
+             *    scaled during zoom animations.
+             *  * `'hybrid'`: Polygon and line elements are rendered as images, so pixels
+             *    are scaled during zoom animations. Point symbols and texts are accurately
+             *    rendered as vectors and can stay upright on rotated views.
+             *  * `'vector'`: Vector tiles are rendered as vectors. Most accurate rendering
+             *    even during animations, but slower performance than the other options.
              */
-            public static IMAGE: string;
-            /**
-             * "hybrid"
-             */
-            public static HYBRID: string;
-            /**
-             * "vector"
-             */
-            public static VECTOR: string;
+            class RenderType {
+                /**
+                 * "image"
+                 */
+                public static IMAGE: string;
+                /**
+                 * "hybrid"
+                 */
+                public static HYBRID: string;
+                /**
+                 * "vector"
+                 */
+                public static VECTOR: string;
+            }
         }
     }
     module proj {
@@ -10966,6 +11023,14 @@ to zoom to the center of the map
              * @param options  (Required) Bing Maps options.
              */
             constructor(options: olx.source.BingMapsOptions);
+            /**
+             * Get the api key used for this source.
+             */
+            getApiKey(): string;
+            /**
+             * Get the imagery set associated with this source.
+             */
+            getImagerySet(): string;
             /**
              * Sets whether to render reprojection edges or not (usually for debugging).
              * @param render  (Required) Render the edges.
@@ -11401,7 +11466,7 @@ If using named maps, a key-value lookup with the template parameters.
              */
             getFeaturesCollection(): ol.Collection<ol.Feature>;
             /**
-             * Get all features on the source.
+             * Get all features on the source in random order.
              */
             getFeatures(): ol.Feature[];
             /**
@@ -11410,9 +11475,9 @@ If using named maps, a key-value lookup with the template parameters.
              */
             getFeaturesAtCoordinate(coordinate: ol.Coordinate): ol.Feature[];
             /**
-             * Get all features in the provided extent.  Note that this returns all features
-             * whose bounding boxes intersect the given extent (so it may include features
-             * whose geometries do not intersect the extent).
+             * Get all features in the provided extent.  Note that this returns an array of
+             * all features intersecting the given extent in random order (so it may include
+             * features whose geometries do not intersect the extent).
              * 
              * This method is not available when the source is configured with
              * `useSpatialIndex` set to `false`.
@@ -14421,7 +14486,7 @@ If using named maps, a key-value lookup with the template parameters.
              */
             getFeaturesCollection(): ol.Collection<ol.Feature>;
             /**
-             * Get all features on the source.
+             * Get all features on the source in random order.
              */
             getFeatures(): ol.Feature[];
             /**
@@ -14430,9 +14495,9 @@ If using named maps, a key-value lookup with the template parameters.
              */
             getFeaturesAtCoordinate(coordinate: ol.Coordinate): ol.Feature[];
             /**
-             * Get all features in the provided extent.  Note that this returns all features
-             * whose bounding boxes intersect the given extent (so it may include features
-             * whose geometries do not intersect the extent).
+             * Get all features in the provided extent.  Note that this returns an array of
+             * all features intersecting the given extent in random order (so it may include
+             * features whose geometries do not intersect the extent).
              * 
              * This method is not available when the source is configured with
              * `useSpatialIndex` set to `false`.
@@ -14777,7 +14842,7 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Return the request encoding, either "KVP" or "REST".
              */
-            getRequestEncoding(): ol.source.WMTSRequestEncoding;
+            getRequestEncoding(): ol.source.WMTS.RequestEncoding;
             /**
              * Return the style of the WMTS source.
              */
@@ -15351,41 +15416,41 @@ Optional config properties:
             public static ERROR: string;
         }
         /**
-         * Request encoding. One of 'KVP', 'REST'.
+         * Available server types: `'carmentaserver'`, `'geoserver'`, `'mapserver'`,
+         *     `'qgis'`. These are servers that have vendor parameters beyond the WMS
+         *     specification that OpenLayers can make use of.
          */
-        class WMTSRequestEncoding {
+        class WMSServerType {
             /**
-             * "KVP"
+             * "carmentaserver"
              */
-            public static KVP: string;
+            public static CARMENTA_SERVER: string;
             /**
-             * "REST"
+             * "geoserver"
              */
-            public static REST: string;
+            public static GEOSERVER: string;
+            /**
+             * "mapserver"
+             */
+            public static MAPSERVER: string;
+            /**
+             * "qgis"
+             */
+            public static QGIS: string;
         }
-        module wms {
+        module WMTS {
             /**
-             * Available server types: `'carmentaserver'`, `'geoserver'`, `'mapserver'`,
-             *     `'qgis'`. These are servers that have vendor parameters beyond the WMS
-             *     specification that OpenLayers can make use of.
+             * Request encoding. One of 'KVP', 'REST'.
              */
-            class ServerType {
+            class RequestEncoding {
                 /**
-                 * "carmentaserver"
+                 * "KVP"
                  */
-                public static CARMENTA_SERVER: string;
+                public static KVP: string;
                 /**
-                 * "geoserver"
+                 * "REST"
                  */
-                public static GEOSERVER: string;
-                /**
-                 * "mapserver"
-                 */
-                public static MAPSERVER: string;
-                /**
-                 * "qgis"
-                 */
-                public static QGIS: string;
+                public static REST: string;
             }
         }
     }
@@ -15428,6 +15493,10 @@ Optional config properties:
              */
             constructor(opt_options?: olx.style.CircleOptions);
             /**
+             * Clones the style.  If an atlasmanger was provided to the original style it will be used in the cloned style, too.
+             */
+            clone(): ol.style.Image;
+            /**
              * Get the fill style for the circle.
              */
             getFill(): ol.style.Fill;
@@ -15444,6 +15513,11 @@ Optional config properties:
              * Get the stroke style for the circle.
              */
             getStroke(): ol.style.Stroke;
+            /**
+             * Set the circle radius.
+             * @param radius  (Required) Circle radius.
+             */
+            setRadius(radius: number): void;
             /**
              * Get the symbolizer opacity.
              */
@@ -15490,6 +15564,10 @@ Optional config properties:
              */
             constructor(opt_options?: olx.style.FillOptions);
             /**
+             * Clones the style. The color is not cloned if it is an {@link ol.ColorLike}.
+             */
+            clone(): ol.style.Fill;
+            /**
              * Get the fill color.
              */
             getColor(): ol.Color|ol.ColorLike;
@@ -15508,6 +15586,10 @@ Optional config properties:
              * @param opt_options  (Optional) Options.
              */
             constructor(opt_options?: olx.style.IconOptions);
+            /**
+             * Clones the style.
+             */
+            clone(): ol.style.Icon;
             /**
              * Get the anchor point in pixels. The anchor determines the center point for the
              * symbolizer.
@@ -15632,6 +15714,10 @@ Optional config properties:
              */
             constructor(options: olx.style.RegularShapeOptions);
             /**
+             * Clones the style. If an atlasmanger was provided to the original style it will be used in the cloned style, too.
+             */
+            clone(): ol.style.RegularShape;
+            /**
              * Get the anchor point in pixels. The anchor determines the center point for the
              * symbolizer.
              */
@@ -15722,9 +15808,13 @@ Optional config properties:
              */
             constructor(opt_options?: olx.style.StrokeOptions);
             /**
+             * Clones the style.
+             */
+            clone(): ol.style.Stroke;
+            /**
              * Get the stroke color.
              */
-            getColor(): ol.Color|string;
+            getColor(): ol.Color|ol.ColorLike;
             /**
              * Get the line cap type for the stroke.
              */
@@ -15749,7 +15839,7 @@ Optional config properties:
              * Set the color.
              * @param color  (Required) Color.
              */
-            setColor(color: ol.Color|string): void;
+            setColor(color: ol.Color|ol.ColorLike): void;
             /**
              * Set the line cap.
              * @param lineCap  (Optional) Line cap.
@@ -15793,6 +15883,10 @@ Optional config properties:
              * @param opt_options  (Optional) Style options.
              */
             constructor(opt_options?: olx.style.StyleOptions);
+            /**
+             * Clones the style.
+             */
+            clone(): ol.style.Style;
             /**
              * Get the geometry to be rendered.
              */
@@ -15842,6 +15936,10 @@ Optional config properties:
              * @param opt_options  (Optional) Options.
              */
             constructor(opt_options?: olx.style.TextOptions);
+            /**
+             * Clones the style.
+             */
+            clone(): ol.style.Text;
             /**
              * Get the font name.
              */
@@ -15937,39 +16035,41 @@ Optional config properties:
              */
             setTextBaseline(textBaseline?: string): void;
         }
-        /**
-         * Icon anchor units. One of 'fraction', 'pixels'.
-         */
-        class IconAnchorUnits {
+        module Icon {
             /**
-             * "fraction"
+             * Icon anchor units. One of 'fraction', 'pixels'.
              */
-            public static FRACTION: string;
+            class AnchorUnits {
+                /**
+                 * "fraction"
+                 */
+                public static FRACTION: string;
+                /**
+                 * "pixels"
+                 */
+                public static PIXELS: string;
+            }
             /**
-             * "pixels"
+             * Icon origin. One of 'bottom-left', 'bottom-right', 'top-left', 'top-right'.
              */
-            public static PIXELS: string;
-        }
-        /**
-         * Icon origin. One of 'bottom-left', 'bottom-right', 'top-left', 'top-right'.
-         */
-        class IconOrigin {
-            /**
-             * "bottom-left"
-             */
-            public static BOTTOM_LEFT: string;
-            /**
-             * "bottom-right"
-             */
-            public static BOTTOM_RIGHT: string;
-            /**
-             * "top-left"
-             */
-            public static TOP_LEFT: string;
-            /**
-             * "top-right"
-             */
-            public static TOP_RIGHT: string;
+            class Origin {
+                /**
+                 * "bottom-left"
+                 */
+                public static BOTTOM_LEFT: string;
+                /**
+                 * "bottom-right"
+                 */
+                public static BOTTOM_RIGHT: string;
+                /**
+                 * "top-left"
+                 */
+                public static TOP_LEFT: string;
+                /**
+                 * "top-right"
+                 */
+                public static TOP_RIGHT: string;
+            }
         }
     }
     module tilegrid {
@@ -16143,6 +16243,77 @@ Optional config properties:
          * @param opt_options  (Optional) Tile grid options.
          */
         function createXYZ(opt_options?: olx.tilegrid.XYZOptions): ol.tilegrid.TileGrid;
+    }
+    module Image {
+        /**
+         * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
+         */
+        enum State {
+            IDLE = 0,
+            LOADING = 1,
+            LOADED = 2,
+            ERROR = 3
+        }
+    }
+    module Overlay {
+        /**
+         * Overlay position: `'bottom-left'`, `'bottom-center'`,  `'bottom-right'`,
+         * `'center-left'`, `'center-center'`, `'center-right'`, `'top-left'`,
+         * `'top-center'`, `'top-right'`
+         */
+        class Positioning {
+            /**
+             * "bottom-left"
+             */
+            public static BOTTOM_LEFT: string;
+            /**
+             * "bottom-center"
+             */
+            public static BOTTOM_CENTER: string;
+            /**
+             * "bottom-right"
+             */
+            public static BOTTOM_RIGHT: string;
+            /**
+             * "center-left"
+             */
+            public static CENTER_LEFT: string;
+            /**
+             * "center-center"
+             */
+            public static CENTER_CENTER: string;
+            /**
+             * "center-right"
+             */
+            public static CENTER_RIGHT: string;
+            /**
+             * "top-left"
+             */
+            public static TOP_LEFT: string;
+            /**
+             * "top-center"
+             */
+            public static TOP_CENTER: string;
+            /**
+             * "top-right"
+             */
+            public static TOP_RIGHT: string;
+        }
+    }
+    module renderer {
+        /**
+         * Available renderers: `'canvas'` or `'webgl'`.
+         */
+        class Type {
+            /**
+             * "canvas"
+             */
+            public static CANVAS: string;
+            /**
+             * "webgl"
+             */
+            public static WEBGL: string;
+        }
     }
     module Tile {
         /**
@@ -16693,13 +16864,13 @@ declare module olx {
          */
         overlays?: ol.Collection<ol.Overlay>|ol.Overlay[];
         /**
-         * Renderer. By default, Canvas, DOM and WebGL renderers are tested for support
+         * Renderer. By default, Canvas and WebGL renderers are tested for support
          * in that order, and the first supported used. Specify a
-         * {@link ol.RendererType} here to use a specific renderer.
-         * Note that at present the Canvas and DOM renderers fully support vector data,
-         * but WebGL can only render Point geometries.
+         * {@link ol.renderer.Type} here to use a specific renderer.
+         * Note that the Canvas renderer fully supports vector data, but WebGL can only
+         * render Point geometries.
          */
-        renderer?: ol.RendererType|(ol.RendererType|string)[]|string;
+        renderer?: ol.renderer.Type|ol.renderer.Type[];
         /**
          * The container for the map, either the element itself or the `id` of the
          * element. If not specified at construction time, {@link ol.Map#setTarget}
@@ -16742,7 +16913,7 @@ declare module olx {
          * `'bottom-right'`, `'center-left'`, `'center-center'`, `'center-right'`,
          * `'top-left'`, `'top-center'`, and `'top-right'`. Default is `'top-left'`.
          */
-        positioning?: ol.OverlayPositioning|string;
+        positioning?: ol.Overlay.Positioning|string;
         /**
          * Whether event propagation to the map viewport should be stopped. Default is
          * `true`. If `true` the overlay is placed in the same container as that of the
@@ -17196,6 +17367,12 @@ declare module olx {
              */
             condition?: ol.EventsConditionType;
             /**
+             * Operate in freehand mode for lines, polygons, and circles.  This makes the
+             * interaction always operate in freehand mode and takes precedence over any
+             * `freehandCondition` option.
+             */
+            freehand?: boolean;
+            /**
              * Condition that activates freehand drawing for lines and polygons. This
              * function takes an {@link ol.MapBrowserEvent} and returns a boolean to
              * indicate whether that event should be handled. The default is
@@ -17205,6 +17382,30 @@ declare module olx {
             freehandCondition?: ol.EventsConditionType;
             /**
              * Wrap the world horizontally on the sketch overlay. Default is `false`.
+             */
+            wrapX?: boolean;
+        }
+        /**
+         * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
+         */
+        interface ExtentOptions {
+            /**
+             * Initial extent. Defaults to no inital extent
+             */
+            extent?: ol.Extent;
+            /**
+             * Style for the drawn extent box.
+             * Defaults to ol.style.Style.createDefaultEditing()[ol.geom.GeometryType.POLYGON]
+             */
+            boxStyle?: ol.style.Style|ol.style.Style[]|ol.StyleFunction;
+            /**
+             * Style for the cursor used to draw the extent.
+             * Defaults to ol.style.Style.createDefaultEditing()[ol.geom.GeometryType.POINT]
+             */
+            pointerStyle?: ol.style.Style|ol.style.Style[]|ol.StyleFunction;
+            /**
+             * Wrap the drawn extent across multiple maps in the X direction?
+             * Only affects visuals, not functionality. Defaults to false.
              */
             wrapX?: boolean;
         }
@@ -17310,6 +17511,10 @@ declare module olx {
              * Animation duration in milliseconds. Default is `250`.
              */
             duration?: number;
+            /**
+             * Mouse wheel timeout duration in milliseconds. Default is `80`.
+             */
+            timeout?: number;
             /**
              * Enable zooming using the mouse's location as the anchor. Default is `true`.
              * When set to false, zooming in and out will zoom to the center of the screen
@@ -17589,7 +17794,7 @@ declare module olx {
             /**
              * Specify if attributions can be collapsed. If you use an OSM source,
              * should be set to `false` — see
-             * {@link http://www.openstreetmap.org/copyright OSM Copyright} —
+             * {@link https://www.openstreetmap.org/copyright OSM Copyright} —
              * Default is `true`.
              */
             collapsible?: boolean;
@@ -18005,6 +18210,11 @@ declare module olx {
              */
             defaultDataProjection?: ol.ProjectionLike;
             /**
+             * Projection for features read or written by the format.  Options passed to
+             * read or write methods will take precedence.
+             */
+            featureProjection?: ol.ProjectionLike;
+            /**
              * Geometry name to use when creating features.
              */
             geometryName?: string;
@@ -18075,7 +18285,7 @@ declare module olx {
              * Altitude mode. Possible values are `barometric`, `gps`, and `none`. Default
              * is `none`.
              */
-            altitudeMode?: ol.format.IGCZ;
+            altitudeMode?: ol.format.IGC.Z;
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -18245,9 +18455,9 @@ declare module olx {
              */
             bbox?: ol.Extent;
             /**
-             * OGC filter condition. See {@link ol.format.ogc.filter} for more information.
+             * Filter condition. See {@link ol.format.filter} for more information.
              */
-            filter?: ol.format.ogc.filter.Filter;
+            filter?: ol.format.filter.Filter;
             /**
              * Indicates what response should be returned, E.g. `hits` only includes the
              * `numberOfFeatures` attribute in the response and no features.
@@ -19332,7 +19542,7 @@ declare module olx {
              * The type of the remote WMS server: `mapserver`, `geoserver` or `qgis`. Only
              * needed if `hidpi` is `true`. Default is `undefined`.
              */
-            serverType?: ol.source.wms.ServerType|string;
+            serverType?: ol.source.WMSServerType|string;
             /**
              * Optional function to load an image given a URL.
              */
@@ -19644,7 +19854,7 @@ declare module olx {
              * The type of the remote WMS server. Currently only used when `hidpi` is
              * `true`. Default is `undefined`.
              */
-            serverType?: ol.source.wms.ServerType|string;
+            serverType?: ol.source.WMSServerType|string;
             /**
              * Optional function to load a tile given a URL. The default is
              * ```js
@@ -19794,7 +20004,7 @@ declare module olx {
             /**
              * Request encoding. Default is `KVP`.
              */
-            requestEncoding?: ol.source.WMTSRequestEncoding|string;
+            requestEncoding?: ol.source.WMTS.RequestEncoding|string;
             /**
              * Layer name as advertised in the WMTS capabilities.
              */
@@ -20099,19 +20309,19 @@ declare module olx {
              * Origin of the anchor: `bottom-left`, `bottom-right`, `top-left` or
              * `top-right`. Default is `top-left`.
              */
-            anchorOrigin?: ol.style.IconOrigin;
+            anchorOrigin?: ol.style.Icon.Origin;
             /**
              * Units in which the anchor x value is specified. A value of `'fraction'`
              * indicates the x value is a fraction of the icon. A value of `'pixels'`
              * indicates the x value in pixels. Default is `'fraction'`.
              */
-            anchorXUnits?: ol.style.IconAnchorUnits;
+            anchorXUnits?: ol.style.Icon.AnchorUnits;
             /**
              * Units in which the anchor y value is specified. A value of `'fraction'`
              * indicates the y value is a fraction of the icon. A value of `'pixels'`
              * indicates the y value in pixels. Default is `'fraction'`.
              */
-            anchorYUnits?: ol.style.IconAnchorUnits;
+            anchorYUnits?: ol.style.Icon.AnchorUnits;
             /**
              * Color to tint the icon. If not specified, the icon will be left as is.
              */
@@ -20140,7 +20350,7 @@ declare module olx {
              * Origin of the offset: `bottom-left`, `bottom-right`, `top-left` or
              * `top-right`. Default is `top-left`.
              */
-            offsetOrigin?: ol.style.IconOrigin;
+            offsetOrigin?: ol.style.Icon.Origin;
             /**
              * Opacity of the icon. Default is `1`.
              */
@@ -20242,10 +20452,11 @@ declare module olx {
          */
         interface StrokeOptions {
             /**
-             * Color. See {@link ol.color} for possible formats. Default null; if null,
-             * the Canvas/renderer default black will be used.
+             * A color, gradient or pattern. See {@link ol.color}
+             * and {@link ol.colorlike} for possible formats. Default null;
+             * if null, the Canvas/renderer default black will be used.
              */
-            color?: ol.Color|string;
+            color?: ol.Color|ol.ColorLike;
             /**
              * Line cap style: `butt`, `round`, or `square`. Default is `round`.
              */
@@ -20277,10 +20488,6 @@ declare module olx {
          */
         interface TextOptions {
             /**
-             * Whether to rotate the text with the view. Default is `false`.
-             */
-            rotateWithView?: boolean;
-            /**
              * Font style as CSS 'font' value, see:
              * {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/font}.
              * Default is '10px sans-serif'
@@ -20300,6 +20507,10 @@ declare module olx {
              * Scale.
              */
             scale?: number;
+            /**
+             * Whether to rotate the text with the view. Default is `false`.
+             */
+            rotateWithView?: boolean;
             /**
              * Rotation in radians (positive rotation clockwise). Default is `0`.
              */

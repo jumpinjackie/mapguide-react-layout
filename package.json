@@ -1,6 +1,6 @@
 {
   "name": "mapguide-react-layout",
-  "version": "0.4.0",
+  "version": "0.6.2",
   "description": "An experimental react-based layout for MapGuide",
   "scripts": {
     "prebuild": "npm run clean",

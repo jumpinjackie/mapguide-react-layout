@@ -1,3 +1,9 @@
+0.6.2
+=====
+
+ * [#79](https://github.com/jumpinjackie/mapguide-react-layout/issues/79): Update OpenLayers to 3.19.1
+ * [#81](https://github.com/jumpinjackie/mapguide-react-layout/issues/81): Check that the `resource` parameter is specified
+
 0.6.1
 =====
 

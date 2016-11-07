@@ -35,6 +35,14 @@ export interface INavigatorProps extends React.Props<any> {
     style?: React.CSSProperties;
     busy: boolean;
     scale: number;
+    /**
+     * A list of finite scales. Set when the map contains base (tiled) layers. When set, slider drags will snap to the values
+     * in this list. Zooming in and out will move to the next/previous finite scale instead of the default logarithmic calculation
+     * 
+     * @type {number[]}
+     * @memberOf INavigatorProps
+     */
+    finiteScaleList?: number[] | null;
     locale?: string;
     onZoom: (direction: ZoomDirection) => void;
     onPan: (direction: PanDirection) => void;
@@ -42,16 +50,17 @@ export interface INavigatorProps extends React.Props<any> {
 }
 
 export class Navigator extends React.Component<INavigatorProps, any> {
-    fnPanEast: GenericEventHandler;
-    fnPanWest: GenericEventHandler;
-    fnPanSouth: GenericEventHandler;
-    fnPanNorth: GenericEventHandler;
-    fnZoomOut: GenericEventHandler;
-    fnZoomIn: GenericEventHandler;
-    fnStart: (e: any, data: any) => void | boolean;
-    fnDrag: (e: any, data: any) => void | boolean;
-    fnStop: (e: any, data: any) => void | boolean;
-    initialScale: number;
+    private fnPanEast: GenericEventHandler;
+    private fnPanWest: GenericEventHandler;
+    private fnPanSouth: GenericEventHandler;
+    private fnPanNorth: GenericEventHandler;
+    private fnZoomOut: GenericEventHandler;
+    private fnZoomIn: GenericEventHandler;
+    private fnStart: (e: any, data: any) => void | boolean;
+    private fnDrag: (e: any, data: any) => void | boolean;
+    private fnStop: (e: any, data: any) => void | boolean;
+    private initialScale: number;
+    private finiteScaleList: number[] | null | undefined;
     constructor(props: INavigatorProps) {
         super(props);
         this.fnPanEast = this.onPanEast.bind(this);
@@ -64,6 +73,7 @@ export class Navigator extends React.Component<INavigatorProps, any> {
         this.fnDrag = this.onDrag.bind(this);
         this.fnStop = this.onStop.bind(this);
         this.initialScale = props.scale;
+        this.finiteScaleList = props.finiteScaleList;
         this.state = {
             previewPos: VERT_BEGIN, //Used to specify the preview destination scale "position"
             pos: VERT_BEGIN, //Used to specify the current scale "position"
@@ -114,13 +124,36 @@ export class Navigator extends React.Component<INavigatorProps, any> {
     }
     private calculateScaleForPos(pos: number): number {
         const scale = Math.pow(9,pos/9);
-        return scale;
+        if (this.finiteScaleList) {
+            for (let i = 0; i < this.finiteScaleList.length; i++) {
+                if (scale >= this.finiteScaleList[i]) { //Found the lower bound
+                    if ((i + 1) < this.finiteScaleList.length) { //There is a possible upper bound
+                        if (scale <= this.finiteScaleList[i+1]) { //It is the upper bound
+                            const lower = this.finiteScaleList[i];
+                            const upper = this.finiteScaleList[i+1];
+                            //Snap to the scale with lowest difference
+                            if (Math.abs(scale - lower) > Math.abs(scale - upper)) {
+                                return upper;
+                            } else {
+                                return lower;
+                            }
+                        }
+                    } else { //There is no upper bound, snap to lower bound
+                        return this.finiteScaleList[i];
+                    }
+                }
+            }
+            return this.finiteScaleList[0];
+        } else {
+            return scale;
+        }
     }
     componentDidMount() {
         const pos = this.calculatePosForScale(this.props.scale);
         this.setState({ pos: pos, previewPos: pos });
     }
     componentWillReceiveProps(nextProps: INavigatorProps) {
+        this.finiteScaleList = nextProps.finiteScaleList;
         if (this.props.scale != nextProps.scale) {
             const pos = this.calculatePosForScale(nextProps.scale);
             this.setState({ pos: pos, previewPos: pos });

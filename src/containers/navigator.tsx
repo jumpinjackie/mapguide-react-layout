@@ -23,6 +23,7 @@ export interface INavigatorContainerState {
     viewer: IMapViewerReducerState;
     config: IConfigurationReducerState;
     view: IMapView | null;
+    finiteScales: number[] | null | undefined;
 }
 
 export interface INavigatorContainerDispatch {
@@ -34,7 +35,8 @@ function mapStateToProps(state: IApplicationState): INavigatorContainerState {
     return {
         config: state.config,
         viewer: state.map.viewer,
-        view: state.view.current
+        view: state.view.current,
+        finiteScales: state.map.state != null ? state.map.state.FiniteDisplayScale : undefined
     };
 }
 
@@ -98,10 +100,11 @@ export class NavigatorContainer extends React.Component<NavigatorContainerProps,
         }
     }
     render(): JSX.Element {
-        const { style, viewer, view, config } = this.props;
+        const { style, viewer, view, config, finiteScales } = this.props;
         if (viewer != null && view != null) {
             return <Navigator style={style}
                               scale={view.scale}
+                              finiteScaleList={finiteScales}
                               locale={config.locale}
                               busy={viewer.busyCount > 0}
                               onRequestZoomToScale={this.fnRequestZoomToScale}

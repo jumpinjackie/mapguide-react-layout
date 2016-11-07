@@ -258,14 +258,16 @@ class GroupNode extends React.Component<IGroupNodeProps, any> {
             {(() => {
                 if (isExpanded && this.props.childItems.length > 0) {
                     return <ul style={UL_LIST_STYLE}>{this.props.childItems.map(item => {
-                        if (isLayer(item)) {
-                            if (isLayerVisibleAtScale(item, currentScale)) {
-                                return <LayerNode key={item.ObjectId} layer={item} />;
-                            }
-                        } else {
-                            if (isGroupVisibleAtScale(item, tree, currentScale)) {
-                                const children = tree.groupChildren[item.ObjectId] || [];
-                                return <GroupNode key={item.ObjectId} group={item} childItems={children} />;
+                        if (item.DisplayInLegend === true) {
+                            if (isLayer(item)) {
+                                if (isLayerVisibleAtScale(item, currentScale)) {
+                                    return <LayerNode key={item.ObjectId} layer={item} />;
+                                }
+                            } else {
+                                if (isGroupVisibleAtScale(item, tree, currentScale)) {
+                                    const children = tree.groupChildren[item.ObjectId] || [];
+                                    return <GroupNode key={item.ObjectId} group={item} childItems={children} />;
+                                }
                             }
                         }
                     })}</ul>;
@@ -492,7 +494,7 @@ export class Legend extends React.Component<ILegendProps, any> {
     render(): JSX.Element {
         const { tree } = this.state;
         const { currentScale, externalBaseLayers, onBaseLayerChanged, maxHeight } = this.props;
-        const rootItems: any[] = tree.root;
+        const rootItems: (MapLayer|MapGroup)[] = tree.root;
 
         const rootStyle: React.CSSProperties = {
             overflow: "auto"
@@ -513,12 +515,16 @@ export class Legend extends React.Component<ILegendProps, any> {
             })()}
             <ul style={UL_LIST_STYLE}>
             {rootItems.map(item => {
-                if (isLayer(item) && isLayerVisibleAtScale(item, currentScale)) {
-                    return <LayerNode key={item.ObjectId} layer={item} />;
-                } else {
-                    if (isGroupVisibleAtScale(item, tree, currentScale)) {
-                        const children = tree.groupChildren[item.ObjectId] || [];
-                        return <GroupNode key={item.ObjectId} group={item} childItems={children} />;
+                if (item.DisplayInLegend === true) {
+                    if (isLayer(item)) {
+                        if (isLayerVisibleAtScale(item, currentScale)) {
+                            return <LayerNode key={item.ObjectId} layer={item} />;
+                        }
+                    } else {
+                        if (isGroupVisibleAtScale(item, tree, currentScale)) {
+                            const children = tree.groupChildren[item.ObjectId] || [];
+                            return <GroupNode key={item.ObjectId} group={item} childItems={children} />;
+                        }
                     }
                 }
             })}

@@ -1,22 +1,22 @@
 import { expect } from 'chai';
-import { betweenInclusive } from "../src/utils/number";
+import { scaleRangeBetween } from "../src/utils/number";
 
 describe("utils/number", () => {
-    describe("betweenInclusive", () => {
+    describe("scaleRangeBetween", () => {
         it("between should be inclusive", () => {
-            expect(betweenInclusive(1.5, 1, 2)).to.be.true;
+            expect(scaleRangeBetween(1.5, 1, 2)).to.be.true;
         });
         it("boundary min should be inclusive", () => {
-            expect(betweenInclusive(1, 1, 2)).to.be.true;
+            expect(scaleRangeBetween(1, 1, 2)).to.be.true;
         });
-        it("boundary max should be inclusive", () => {
-            expect(betweenInclusive(1, 1, 2)).to.be.true;
+        it("boundary max should not be inclusive", () => {
+            expect(scaleRangeBetween(2, 1, 2)).to.be.false;
         });
         it("below min should not be inclusive", () => {
-            expect(betweenInclusive(0, 1, 2)).to.be.false;
+            expect(scaleRangeBetween(0, 1, 2)).to.be.false;
         });
         it("above max should not be inclusive", () => {
-            expect(betweenInclusive(3, 1, 2)).to.be.false;
+            expect(scaleRangeBetween(3, 1, 2)).to.be.false;
         });
     });
 });

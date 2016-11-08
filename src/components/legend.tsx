@@ -4,7 +4,7 @@ import { RuntimeMap, MapLayer, MapGroup, RuleInfo } from "../api/contracts/runti
 import { ILegendContext, LEGEND_CONTEXT_VALIDATION_MAP } from "./context";
 import { BaseLayerSwitcher } from "./base-layer-switcher";
 import { isLayer } from "../utils/type-guards";
-import { betweenInclusive } from "../utils/number";
+import { scaleRangeBetween } from "../utils/number";
 import { tr } from "../api/i18n";
 import * as Constants from "../constants";
 
@@ -261,10 +261,12 @@ class GroupNode extends React.Component<IGroupNodeProps, any> {
                         if (item.DisplayInLegend === true) {
                             if (isLayer(item)) {
                                 if (isLayerVisibleAtScale(item, currentScale)) {
+                                    //console.debug(`isLayerVisibleAtScale(${item.Name}, ${currentScale}) = true`);
                                     return <LayerNode key={item.ObjectId} layer={item} />;
                                 }
                             } else {
                                 if (isGroupVisibleAtScale(item, tree, currentScale)) {
+                                    //console.debug(`isGroupVisibleAtScale(${item.Name}, ${currentScale}) = true`);
                                     const children = tree.groupChildren[item.ObjectId] || [];
                                     return <GroupNode key={item.ObjectId} group={item} childItems={children} />;
                                 }
@@ -280,7 +282,7 @@ class GroupNode extends React.Component<IGroupNodeProps, any> {
 function isLayerVisibleAtScale(layer: MapLayer, scale: number): boolean {
     if (layer.ScaleRange) {
         for (const sr of layer.ScaleRange) {
-            if (betweenInclusive(scale, sr.MinScale, sr.MaxScale)) {
+            if (scaleRangeBetween(scale, sr.MinScale, sr.MaxScale)) {
                 return true;
             }
         }
@@ -518,10 +520,12 @@ export class Legend extends React.Component<ILegendProps, any> {
                 if (item.DisplayInLegend === true) {
                     if (isLayer(item)) {
                         if (isLayerVisibleAtScale(item, currentScale)) {
+                            //console.debug(`isLayerVisibleAtScale(${item.Name}, ${currentScale}) = true`);
                             return <LayerNode key={item.ObjectId} layer={item} />;
                         }
                     } else {
                         if (isGroupVisibleAtScale(item, tree, currentScale)) {
+                            //console.debug(`isGroupVisibleAtScale(${item.Name}, ${currentScale}) = true`);
                             const children = tree.groupChildren[item.ObjectId] || [];
                             return <GroupNode key={item.ObjectId} group={item} childItems={children} />;
                         }

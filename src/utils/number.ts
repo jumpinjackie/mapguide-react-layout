@@ -9,6 +9,7 @@ export function areNumbersEqual(a: number, b: number): boolean {
     return Math.abs(a - b) < epsilon();
 }
 
-export function betweenInclusive(num: number, min: number, max: number): boolean {
-    return num >= min && num <= max;
+export function scaleRangeBetween(scale: number, minScale: number, maxScale: number): boolean {
+    //Note the '<'. This is the same range check used in MapGuide Server
+    return scale >= minScale && scale < maxScale;
 }

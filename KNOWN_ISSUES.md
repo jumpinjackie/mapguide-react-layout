@@ -10,6 +10,9 @@ Localization
 Components
 ==========
 
+ * Navigator (aka. The zoom slider)
+   * [#86](https://github.com/jumpinjackie/mapguide-react-layout/issues/86) While the zoom buttons and slider drags work, the component is initialized with an unrealistically high upper-bound view scale 
+
  * Task Pane
    * URLs loaded into the task pane push actual entries into the browser's navigation stack
 

@@ -92,7 +92,7 @@ module.exports = {
 
     module: {
         preLoaders: [
-            loaders.tslint,
+            //loaders.tslint,
         ],
         loaders: [
             loaders.tsx,

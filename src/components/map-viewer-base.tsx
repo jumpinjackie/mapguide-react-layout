@@ -326,6 +326,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     private _dpi: number;
     private _extent: ol.Extent;
     private _baseLayerGroup: ol.layer.Group;
+    private _mgBaseLayerGroups: ol.layer.Tile[];
     private _zoomSelectBox: ol.interaction.DragBox;
     private _mouseTooltip: MouseTrackingTooltip;
     private _featureTooltip: FeatureQueryTooltip;
@@ -356,6 +357,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this.fnKeyDown = this.onKeyDown.bind(this);
         this.fnKeyUp = this.onKeyUp.bind(this);
         this._busyWorkers = 0;
+        this._mgBaseLayerGroups = [];
         this._triggerZoomRequestOnMoveEnd = true;
         this._supportsTouch = isMobile.phone || isMobile.tablet;
         this._contextMenuOpen = false;
@@ -374,12 +376,35 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         if (changes) {
             //Send the request
             const imgSource = this._overlay.getSource() as ol.source.ImageMapGuide;
+            //NOTE: Even if these group ids being shown/hidden are MG base layer groups, it still has to be
+            //done as the server-side snapshot of the runtime map needs to be aware as well. This will be
+            //apparent if you were to plot a runtime-map server-side that has base layer groups.
+            const showGroups = changes.showGroups || [];
+            const hideGroups = changes.hideGroups || [];
             imgSource.updateParams({
                 showlayers: changes.showLayers || [],
-                showgroups: changes.showGroups || [],
+                showgroups: showGroups,
                 hidelayers: changes.hideLayers || [],
-                hidegroups: changes.hideGroups || []
+                hidegroups: hideGroups
             });
+            //As MG base layer groups are separate ol layer instances, we have to toggle them on the clien-side as well
+            const { map } = this.props;
+            if (showGroups.length > 0) {
+                for (const groupId of showGroups) {
+                    const match = this._mgBaseLayerGroups.filter(l => l.get("name") === groupId);
+                    if (match.length == 1) {
+                        match[0].setVisible(true);
+                    }
+                }
+            }
+            if (hideGroups.length > 0) {
+                for (const groupId of hideGroups) {
+                    const match = this._mgBaseLayerGroups.filter(l => l.get("name") === groupId);
+                    if (match.length == 1) {
+                        match[0].setVisible(false);
+                    }
+                }
+            }
         }
     }
     private createExternalSource(layer: IExternalBaseLayer) {
@@ -709,17 +734,18 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 if (group.Type != 2 && group.Type != 3) { //BaseMap or LinkedTileSet
                     continue;
                 }
-                groupLayers.push(
-                    new ol.layer.Tile({
-                        //name: group.Name,
-                        source: new ol.source.TileImage({
-                            tileGrid: tileGrid,
-                            projection: projection,
-                            tileUrlFunction: this.getTileUrlFunctionForGroup(resourceId, group.Name, zOrigin),
-                            wrapX: false
-                        })
+                const tileLayer = new ol.layer.Tile({
+                    //name: group.Name,
+                    source: new ol.source.TileImage({
+                        tileGrid: tileGrid,
+                        projection: projection,
+                        tileUrlFunction: this.getTileUrlFunctionForGroup(resourceId, group.Name, zOrigin),
+                        wrapX: false
                     })
-                );
+                });
+                tileLayer.set("name", group.ObjectId);
+                groupLayers.push(tileLayer);
+                this._mgBaseLayerGroups.push(tileLayer);
             }
         }
         /*

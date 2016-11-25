@@ -119,6 +119,15 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
                 overflowY: "auto",
                 maxHeight: this.props.maxHeight - DEFAULT_TOOLBAR_SIZE
             };
+        } else {
+            selBodyStyle = {
+                overflow: "auto",
+                position: "absolute",
+                top: DEFAULT_TOOLBAR_SIZE,
+                bottom: 0,
+                right: 0,
+                left: 0
+            }
         }
         return <div>
             {(() => {

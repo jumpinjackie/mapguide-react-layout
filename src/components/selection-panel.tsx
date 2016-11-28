@@ -173,7 +173,9 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
                             </tbody>
                         </table>;
                     } else if (selection == null || (selection.SelectedLayer || []).length == 0) {
-                        return <p className="selection-panel-no-selection">{xlate("NO_SELECTED_FEATURES", this.props.locale)}</p>;
+                        return <div className="pt-callout pt-intent-primary pt-icon-info-sign">
+                            <p className="selection-panel-no-selection">{xlate("NO_SELECTED_FEATURES", this.props.locale)}</p>
+                        </div>;
                     }
                 })()}
             </div>

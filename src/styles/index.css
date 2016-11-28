@@ -165,6 +165,7 @@ div.InfoText
     display: block;
 }
 
+/*
 .error-display {
     color: #ffffff;
     background-color: #ff0000;
@@ -174,7 +175,7 @@ div.InfoText
 .error-header {
     font-weight: bold;
 }
-
+*/
 .error-stack {
     text-decoration: none;
 }

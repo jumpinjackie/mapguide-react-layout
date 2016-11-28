@@ -148,145 +148,113 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
             <form id="Form1" name="Form1" target="_blank" method="post" action="server/QuickPlot/PlotAsPDF.php">
                 <input type="hidden" id="printId" name="printId" value={`${Math.random() * 1000}`} />
                 <div className="Title FixWidth">{xlate("QUICKPLOT_HEADER", config.locale) }</div>
-                <div className="Label ">{xlate("QUICKPLOT_TITLE", config.locale) }</div>
-                <div className="Ctrl">
-                    <input type="text" className="FixWidth" name="{field:title}" id="title" maxLength={100} value={this.state.title} onChange={this.fnTitleChanged} />
-                </div>
-                <div className="HPlaceholder5px"></div>
-                <div className="HPlaceholder5px"></div>
-                <div className="Label" id="SubTitleLabel">{xlate("QUICKPLOT_SUBTITLE", config.locale) }</div>
-                <div className="Ctrl" id="SubTitleCtrl">
-                    <input type="text" className="FixWidth" name="{field:sub_title}" id="subtitle" maxLength={100} value={this.state.subTitle} onChange={this.fnSubTitleChanged} />
-                </div>
-                <div className="HPlaceholder5px"></div>
-                <div className="HPlaceholder5px"></div>
-                <div className="Label">{xlate("QUICKPLOT_PAPER_SIZE", config.locale) }</div>
-                <div className="Ctrl">
+                <label className="pt-label">
+                    {xlate("QUICKPLOT_TITLE", config.locale)}
+                    <input type="text" className="pt-input pt-fill" dir="auto" name="{field:title}" id="title" maxLength={100} value={this.state.title} onChange={this.fnTitleChanged} />
+                </label>
+                <label className="pt-label">
+                    {xlate("QUICKPLOT_SUBTITLE", config.locale)}
+                    <input type="text" className="pt-input pt-fill" dir="auto" name="{field:sub_title}" id="subtitle" maxLength={100} value={this.state.subTitle} onChange={this.fnSubTitleChanged} />
+                </label>
+                <label className="pt-label">
+                    {xlate("QUICKPLOT_PAPER_SIZE", config.locale)}
+                    <div className="pt-select pt-fill">
+                        {/*
+                            The pre-defined paper size list. The value for each "option" item is in this format: [width,height]. The unit is in millimeter.
+                            We can change the html code to add more paper size or remove some ones.
+                        */}
+                        <select className="FixWidth" id="paperSizeSelect" name="paperSizeSelect" value={this.state.paperSize} onChange={this.fnPaperSizeChanged}>
+                            <option value="210.0,297.0,A4">A4 (210x297 mm; 8.27x11.69 In) </option>
+                            <option value="297.0,420.0,A3">A3 (297x420 mm; 11.69x16.54 In) </option>
+                            <option value="148.0,210.0,A5">A5 (148x210 mm; 5.83x8.27 in) </option>
+                            <option value="216.0,279.0,Letter">Letter (216x279 mm; 8.50x11.00 In) </option>
+                            <option value="216.0,356.0,Legal">Legal (216x356 mm; 8.50x14.00 In) </option>
+                        </select>
+                    </div>
+                </label>
+                <label className="pt-label">
+                    {xlate("QUICKPLOT_ORIENTATION", config.locale)}
                     {/*
-                        The pre-defined paper size list. The value for each "option" item is in this format: [width,height]. The unit is in millimeter.
-                        We can change the html code to add more paper size or remove some ones.
+                        The pre-defined paper orientations
                     */}
-                    <select className="FixWidth" id="paperSizeSelect" name="paperSizeSelect" value={this.state.paperSize} onChange={this.fnPaperSizeChanged}>
-                        <option value="210.0,297.0,A4">A4 (210x297 mm; 8.27x11.69 In) </option>
-                        <option value="297.0,420.0,A3">A3 (297x420 mm; 11.69x16.54 In) </option>
-                        <option value="148.0,210.0,A5">A5 (148x210 mm; 5.83x8.27 in) </option>
-                        <option value="216.0,279.0,Letter">Letter (216x279 mm; 8.50x11.00 In) </option>
-                        <option value="216.0,356.0,Legal">Legal (216x356 mm; 8.50x14.00 In) </option>
-                    </select>
-                </div>
+                    <div className="pt-select pt-fill">
+                        <select className="FixWidth" id="orientation" name="orientation" value={this.state.orientation} onChange={this.fnOrientationChanged}>
+                            <option value="P">{xlate("QUICKPLOT_ORIENTATION_P", config.locale) }</option>
+                            <option value="L">{xlate("QUICKPLOT_ORIENTATION_L", config.locale) }</option>
+                        </select>
+                    </div>
+                </label>
                 <input type="hidden" id="paperSize" name="paperSize" value={paperSize} />
                 <input type="hidden" id="printSize" name="printSize" value={printSize} />
-                <div className="HPlaceholder5px"></div>
-                <div className="HPlaceholder5px"></div>
-                <div className="Label">{xlate("QUICKPLOT_ORIENTATION", config.locale) }</div>
-                <div className="Ctrl">
-                    {/*
-                        The pre-defined scales. The value for each "option" item is the scale denominator.
-                        We can change the html code to extend the pre-defined scales
-                    */}
-                    <select className="FixWidth" id="orientation" name="orientation" value={this.state.orientation} onChange={this.fnOrientationChanged}>
-                        <option value="P">{xlate("QUICKPLOT_ORIENTATION_P", config.locale) }</option>
-                        <option value="L">{xlate("QUICKPLOT_ORIENTATION_L", config.locale) }</option>
-                    </select>
-                </div>
-                <div className="HPlaceholder5px"></div>
-                <div className="HPlaceholder5px"></div>
-                <div className="HPlaceholder5px"></div>
                 <fieldset>
                     <legend>{xlate("QUICKPLOT_SHOWELEMENTS", config.locale) }</legend>
-                    <div className="Label" id="LegendCtrl">
-                        <table cellSpacing="0" cellPadding="0">
-                            <tbody>
-                                <tr>
-                                    <td><input type="checkbox" id="ShowLegendCheckBox" name="ShowLegend" checked={this.state.showLegend} onChange={this.fnShowLegendChanged} /></td>
-                                    <td><label htmlFor="ShowLegendCheckBox">{xlate("QUICKPLOT_SHOWLEGEND", config.locale) }</label></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="Label" id="NorthArrowCtrl">
-                        <table cellSpacing="0" cellPadding="0">
-                            <tbody>
-                                <tr>
-                                    <td><input type="checkbox" id="ShowNorthArrowCheckBox" name="ShowNorthArrow" checked={this.state.showNorthBar} onChange={this.fnShowNorthArrowChanged} /></td>
-                                    <td><label htmlFor="ShowNorthArrowCheckBox">{xlate("QUICKPLOT_SHOWNORTHARROW", config.locale) }</label></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="Label" id="CoordinatesCtrl">
-                        <table cellSpacing="0" cellPadding="0">
-                            <tbody>
-                                <tr>
-                                    <td><input type="checkbox" id="ShowCoordinatesCheckBox" name="ShowCoordinates" checked={this.state.showCoordinates} onChange={this.fnShowCoordinatesChanged} /></td>
-                                    <td><label htmlFor="ShowCoordinatesCheckBox">{xlate("QUICKPLOT_SHOWCOORDINTES", config.locale) }</label></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="Label" id="ScaleBarCtrl">
-                        <table cellSpacing="0" cellPadding="0">
-                            <tbody>
-                                <tr>
-                                    <td><input type="checkbox" id="ShowScaleBarCheckBox" name="ShowScaleBar" checked={this.state.showScaleBar} onChange={this.fnShowScaleBarChanged} /></td>
-                                    <td><label htmlFor="ShowScaleBarCheckBox">{xlate("QUICKPLOT_SHOWSCALEBAR", config.locale) }</label></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="Label" id="DisclaimerCtrl">
-                        <table cellSpacing="0" cellPadding="0">
-                            <tbody>
-                                <tr>
-                                    <td><input type="checkbox" id="ShowDisclaimerCheckBox" name="ShowDisclaimer" checked={this.state.showDisclaimer} onChange={this.fnShowDisclaimerChanged} /></td>
-                                    <td><label htmlFor="ShowDisclaimerCheckBox">{xlate("QUICKPLOT_SHOWDISCLAIMER", config.locale) }</label></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <label className="pt-control pt-checkbox">
+                        <input type="checkbox" id="ShowLegendCheckBox" name="ShowLegend" checked={this.state.showLegend} onChange={this.fnShowLegendChanged} />
+                        <span className="pt-control-indicator" />
+                        {xlate("QUICKPLOT_SHOWLEGEND", config.locale)}
+                    </label>
+                    <label className="pt-control pt-checkbox">
+                        <input type="checkbox" id="ShowNorthArrowCheckBox" name="ShowNorthArrow" checked={this.state.showNorthBar} onChange={this.fnShowNorthArrowChanged} />
+                        <span className="pt-control-indicator" />
+                        {xlate("QUICKPLOT_SHOWNORTHARROW", config.locale)}
+                    </label>
+                    <label className="pt-control pt-checkbox">
+                        <input type="checkbox" id="ShowCoordinatesCheckBox" name="ShowCoordinates" checked={this.state.showCoordinates} onChange={this.fnShowCoordinatesChanged} />
+                        <span className="pt-control-indicator" />
+                        {xlate("QUICKPLOT_SHOWCOORDINTES", config.locale)}
+                    </label>
+                    <label className="pt-control pt-checkbox">
+                        <input type="checkbox" id="ShowScaleBarCheckBox" name="ShowScaleBar" checked={this.state.showScaleBar} onChange={this.fnShowScaleBarChanged} />
+                        <span className="pt-control-indicator" />
+                        {xlate("QUICKPLOT_SHOWSCALEBAR", config.locale)}
+                    </label>
+                    <label className="pt-control pt-checkbox">
+                        <input type="checkbox" id="ShowDisclaimerCheckBox" name="ShowDisclaimer" checked={this.state.showDisclaimer} onChange={this.fnShowDisclaimerChanged} />
+                        <span className="pt-control-indicator" />
+                        {xlate("QUICKPLOT_SHOWDISCLAIMER", config.locale)}
+                    </label>
                 </fieldset>
                 <div className="HPlaceholder5px"></div>
-                <div className="HPlaceholder5px"></div>
-                <div className="HPlaceholder5px"></div>
-                <div className="Label">
-                    <table cellSpacing="0" cellPadding="0">
-                        <tbody>
-                            <tr>
-                                <td><input type="checkbox" id="AdvancedOptionsCheckBox" onChange={this.fnAdvancedOptionsChanged} /></td>
-                                <td><label htmlFor="AdvancedOptionsCheckBox">{xlate("QUICKPLOT_ADVANCED_OPTIONS", config.locale) }</label></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div>
+                    <label className="pt-control pt-checkbox">
+                        <input type="checkbox" id="AdvancedOptionsCheckBox" onChange={this.fnAdvancedOptionsChanged} />
+                        <span className="pt-control-indicator" />
+                        {xlate("QUICKPLOT_ADVANCED_OPTIONS", config.locale)}
+                    </label>
                 </div>
                 {(() => {
                     if (this.state.showAdvanced) {
                         return <div>
-                            <div className="Label">{xlate("QUICKPLOT_SCALING", config.locale) }</div>
-                            <div className="Ctrl">
+                            <label className="pt-label">
+                                {xlate("QUICKPLOT_SCALING", config.locale)}
                                 {/*
                                     The pre-defined scales. The value for each "option" item is the scale denominator.
                                     We can change the html code to extend the pre-defined scales
                                 */}
-                                <select className="FixWidth" id="scaleDenominator" name="scaleDenominator" value={this.state.scale} onChange={this.fnScaleChanged}>
-                                    <option value="500">1: 500</option>
-                                    <option value="1000">1: 1000</option>
-                                    <option value="2500">1: 2500</option>
-                                    <option value="5000">1: 5000</option>
-                                </select>
-                            </div>
-                            <div className="Label" id="DPILabel">{xlate("QUICKPLOT_DPI", config.locale) }</div>
-                            <div className="Ctrl" id="DPICtrl">
+                                <div className="pt-select pt-fill">
+                                    <select className="FixWidth" id="scaleDenominator" name="scaleDenominator" value={this.state.scale} onChange={this.fnScaleChanged}>
+                                        <option value="500">1: 500</option>
+                                        <option value="1000">1: 1000</option>
+                                        <option value="2500">1: 2500</option>
+                                        <option value="5000">1: 5000</option>
+                                    </select>
+                                </div>
+                            </label>
+                            <label className="pt-label">
+                                {xlate("QUICKPLOT_DPI", config.locale)}
                                 {/*
                                     The pre-defined print DPI. 
                                     We can change the html code to extend the pre-defined values
                                 */}
-                                <select className="FixWidth" id="dpi" name="dpi" value={this.state.dpi} onChange={this.fnDpiChanged}>
-                                    <option value="96">96</option>
-                                    <option value="150">150</option>
-                                    <option value="300">300</option>
-                                    <option value="600">600</option>
-                                </select>
-                            </div>
+                                <div className="pt-select pt-fill">
+                                    <select className="FixWidth" id="dpi" name="dpi" value={this.state.dpi} onChange={this.fnDpiChanged}>
+                                        <option value="96">96</option>
+                                        <option value="150">150</option>
+                                        <option value="300">300</option>
+                                        <option value="600">600</option>
+                                    </select>
+                                </div>
+                            </label>
                         </div>;
                     } else {
                         return <div>
@@ -294,19 +262,17 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
                             <input type="hidden" id="dpi" name="dpi" value={this.state.dpi} />
                         </div>;
                     }
-                })() }
-                <div className="HPlaceholder5px"></div>
-                <div className="HPlaceholder5px"></div>
+                })()}
                 <div className="HPlaceholder5px"></div>
                 {(() => {
                     if (config.externalBaseLayers && config.externalBaseLayers.length > 0) {
-                        return <div id="commercialLayerWarning" className="InfoText">
+                        return <div id="commercialLayerWarning" className="pt-callout pt-intent-primary pt-icon-info-sign">
                             {xlate("QUICKPLOT_COMMERCIAL_LAYER_WARNING", config.locale) }
                         </div>;
                     }
                 })()}
                 <div className="ButtonContainer FixWidth">
-                    <input type="submit" className="Button" value={xlate("QUICKPLOT_GENERATE", config.locale) } onClick={this.fnGeneratePlot} />
+                    <button type="submit" className="pt-button pt-icon-print pt-intent-primary" onClick={this.fnGeneratePlot}>{xlate("QUICKPLOT_GENERATE", config.locale)}</button>
                 </div>
                 <input type="hidden" id="margin" name="margin" />
                 <input type="hidden" id="normalizedBox" name="normalizedBox" value={box} />

@@ -371,7 +371,7 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
     render(): JSX.Element {
         const { measuring, geodesic, type } = this.state;
         const { locale } = this.props.config;
-        return <div>
+        return <div style={{ padding: 5 }}>
             <form className="form-inline">
                 <label className="pt-label">
                     {tr("MEASUREMENT_TYPE", locale)}

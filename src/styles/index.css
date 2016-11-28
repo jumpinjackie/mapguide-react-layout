@@ -67,6 +67,10 @@
     max-width: 180px;
 }
 
+.selection-panel-layer-selector select {
+    max-width: 143px;
+}
+
 /* Modal Dialogs */
 
 .modal-dialog {

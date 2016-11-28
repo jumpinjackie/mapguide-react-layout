@@ -32,19 +32,10 @@ exports.css = {
 
 exports.image = {
   test: /\.(png|jpg)$/,
-  loader: "file-loader"
+  loader: "file-loader?name=images/[name].[ext]&publicPath=./dist/"
 };
 
-exports.svg = makeUrlLoader(/\.svg$/);
-exports.eot = makeUrlLoader(/\.eot$/);
-exports.woff = makeUrlLoader(/\.woff$/);
-exports.woff2 = makeUrlLoader(/\.woff2$/);
-exports.ttf = makeUrlLoader(/\.ttf$/);
-
-function makeUrlLoader (pattern) {
-  return {
-    test: pattern,
-    loader: 'url',
-    exclude: /node_modules/
-  };
-}
+exports.fonts = {
+    test: /\.(woff|woff2|ttf|eot|svg)$/,
+    loader: 'file-loader?name=fonts/[name].[ext]&publicPath=./dist/'
+};

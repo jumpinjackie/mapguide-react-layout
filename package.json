@@ -33,6 +33,7 @@
   "homepage": "https://github.com/jumpinjackie/mapguide-react-layout#readme",
   "devDependencies": {
     "@aneves/react-flyout": "^0.1.15",
+    "@blueprintjs/core": "^1.1.0",
     "chai": "^3.5.0",
     "cross-env": "^3.1.3",
     "css-loader": "^0.26.0",

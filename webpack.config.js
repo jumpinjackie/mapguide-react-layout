@@ -99,11 +99,14 @@ module.exports = {
             loaders.html,
             loaders.css,
             loaders.less,
+            loaders.fonts,
+            /*
             loaders.svg,
             loaders.eot,
             loaders.woff,
             loaders.woff2,
             loaders.ttf,
+            */
             loaders.image
         ]
     }

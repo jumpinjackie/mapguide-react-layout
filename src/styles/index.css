@@ -1,6 +1,7 @@
 @import "~openlayers/css/ol.css";
 @import '~@aneves/react-flyout/dist/flyout.css';
 @import "../externs/ol3-contextmenu.css";
+@import "~@blueprintjs/core/dist/blueprint.css";
 
 .iframe-iehack-zindex {
     position: absolute;

@@ -63,6 +63,10 @@
 
 /* Selection Panel */
 
+.selection-panel-property-grid {
+    width: 100%;
+}
+
 .selection-panel-layer-selector {
     max-width: 180px;
 }

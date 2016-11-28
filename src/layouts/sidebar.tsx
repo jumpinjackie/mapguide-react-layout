@@ -128,12 +128,21 @@ class Sidebar extends React.Component<ISidebarProps, any> {
                     <li>
                         {(() => {
                             if (busy === true) {
-                                return <a><i className="icon-spin3 animate-spin" /></a>;
+                                return <a>
+                                    <div className="pt-spinner pt-small pt-intent-warning">
+                                        <div className="pt-spinner-svg-container">
+                                            <svg viewBox="0 0 100 100">
+                                                <path className="pt-spinner-track" d="M 50,50 m 0,-44.5 a 44.5,44.5 0 1 1 0,89 a 44.5,44.5 0 1 1 0,-89"></path>
+                                                <path className="pt-spinner-head" d="M 94.5 50 A 44.5 44.5 0 0 0 50 5.5"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </a>;
                             } else {
                                 if (collapsed) {
-                                    return <a onClick={this.fnClickExpand}><i className="icon-menu" /></a>;
+                                    return <a onClick={this.fnClickExpand}><span className="pt-icon-standard pt-icon-menu-open" /></a>;
                                 } else {
-                                    return <a onClick={this.fnClickCollapse}><i className="icon-left-open" /></a>;
+                                    return <a onClick={this.fnClickCollapse}><span className="pt-icon-standard pt-icon-menu-closed" /></a>;
                                 }
                             }
                         })()}
@@ -141,21 +150,21 @@ class Sidebar extends React.Component<ISidebarProps, any> {
                     {(() => {
                         if (this.props.taskpane) {
                             return <li className={collapsed == false && activeTab == "tasks" ? "active" : ""}>
-                                <a onClick={this.fnActivateTasks} title={tr("TPL_SIDEBAR_OPEN_TASKPANE", this.props.locale)} role="tab"><i className="icon-window"></i></a>
+                                <a onClick={this.fnActivateTasks} title={tr("TPL_SIDEBAR_OPEN_TASKPANE", this.props.locale)} role="tab"><span className="pt-icon-standard pt-icon-application" /></a>
                             </li>;
                         }
                     })()}
                     {(() => {
                         if (this.props.legend) {
                             return <li className={collapsed == false && activeTab == "legend" ? "active" : ""}>
-                                <a onClick={this.fnActivateLegend} title={tr("TPL_SIDEBAR_OPEN_LEGEND", this.props.locale)} role="tab"><i className="icon-buffer"></i></a>
+                                <a onClick={this.fnActivateLegend} title={tr("TPL_SIDEBAR_OPEN_LEGEND", this.props.locale)} role="tab"><span className="pt-icon-standard pt-icon-layers" /></a>
                             </li>;
                         }
                     })()}
                     {(() => {
                         if (this.props.selection) {
                             return <li className={collapsed == false && activeTab == "selection" ? "active" : ""}>
-                                <a onClick={this.fnActivateSelection} title={tr("TPL_SIDEBAR_OPEN_SELECTION_PANEL", this.props.locale)} role="tab"><i className="icon-list"></i></a>
+                                <a onClick={this.fnActivateSelection} title={tr("TPL_SIDEBAR_OPEN_SELECTION_PANEL", this.props.locale)} role="tab"><span className="pt-icon-standard pt-icon-th" /></a>
                             </li>;
                         }
                     })()}

@@ -18,7 +18,7 @@ describe("api/i18n", () => {
     });
     describe("tr", () => {
         it("locale should default to en if not specified", () => {
-            expect(tr("MEASURE", "en")).to.be.equal("Measure");
+            expect(tr("MEASUREMENT", "en")).to.be.equal("Measurement");
             expect(tr("SESSION_EXPIRED", "en")).to.be.equal("Session Expired");
             expect(tr("SELECTION_PROPERTY", "en")).to.be.equal("Property");
             expect(tr("ABOUT", "en")).to.be.equal("About");

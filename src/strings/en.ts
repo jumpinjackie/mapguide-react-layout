@@ -1,6 +1,8 @@
 const STRINGS_EN: any = {
     "UNKNOWN_WIDGET": "This button references an unknown or unsupported widget: {widget}",
     "UNKNOWN_COMMAND_REFERENCE": "This button references an unknown command or unsupported: {command}",
+    "INIT": "Initializing",
+    "INIT_DESC": "Please wait while the viewer is loading required assets ...",
     "INIT_ERROR_TITLE": "An error occurred during startup",
     "INIT_ERROR_UNKNOWN_RESOURCE_TYPE": "<p>Unknown or unsupported resource type for resource: <strong>{resourceId}</strong></p>",
     "INIT_ERROR_MISSING_RESOURCE_PARAM": "<p>No <strong>resource</strong> parameter found. This viewer requires this parameter to be set in the query string and must refer to a valid Web Layout or Application Definition</p>",

@@ -7,6 +7,7 @@ import {
     IApplicationState,
     IConfigurationReducerState,
     IInitErrorReducerState,
+    IMapReducerState,
     ClientKind,
     InitError
 } from "../api/common";
@@ -43,6 +44,7 @@ export interface IAppState {
     includeStack?: boolean;
     initOptions?: any;
     config?: IConfigurationReducerState;
+    map?: IMapReducerState;
 }
 
 export interface IInitAppLayout {
@@ -60,7 +62,8 @@ function mapStateToProps(state: IApplicationState): IAppState {
         error: state.initError.error,
         includeStack: state.initError.includeStack,
         initOptions: state.initError.options,
-        config: state.config
+        config: state.config,
+        map: state.map
     };
 }
 
@@ -78,6 +81,9 @@ export class App extends React.Component<AppProps, any> {
     constructor(props: AppProps) {
         super(props);
         this.fnErrorRenderer = this.initErrorRenderer.bind(this);
+        this.state = {
+            isLoading: true
+        };
     }
     componentDidMount() {
         const { initApp, initLayout, agent, resourceId, externalBaseLayers } = this.props;
@@ -88,7 +94,12 @@ export class App extends React.Component<AppProps, any> {
             });
         }
     }
-    private renderErrorMessage(err: Error|InitError, locale: string, args: any): JSX.Element {
+    componentWillReceiveProps(nextProps: AppProps) {
+        if (nextProps.map != null && this.props.map != nextProps.map) {
+            this.setState({ isLoading: false });
+        }
+    }
+    private renderErrorMessage(err: Error | InitError, locale: string, args: any): JSX.Element {
         const msg = err.message;
         switch (msg) {
             case "MgConnectionFailedException":
@@ -126,7 +137,7 @@ export class App extends React.Component<AppProps, any> {
                 }
         }
     }
-    private initErrorRenderer(err: Error|InitError): JSX.Element {
+    private initErrorRenderer(err: Error | InitError): JSX.Element {
         const { config, initOptions } = this.props;
         let locale = config ? (config.locale || "en") : "en";
         if (initOptions && initOptions.locale) {
@@ -140,17 +151,35 @@ export class App extends React.Component<AppProps, any> {
         </div>;
     }
     render(): JSX.Element {
-        const { layout, config, error } = this.props;
-        const layoutEl = getLayout(layout);
+        const { layout, config, error, map } = this.props;
+        const { isLoading } = this.state;
         if (error) {
             return <Error error={error} errorRenderer={this.fnErrorRenderer} />
         } else {
             //NOTE: Locale may not have been set at this point, so use default
             const locale = config ? (config.locale || "en") : "en";
-            if (layoutEl) {
-                return layoutEl();
+            if (isLoading) {
+                return <div className="pt-non-ideal-state">
+                    <div className="pt-non-ideal-state-visual pt-non-ideal-state-icon">
+                        <div className="pt-spinner pt-large">
+                            <div className="pt-spinner-svg-container">
+                                <svg viewBox="0 0 100 100">
+                                    <path className="pt-spinner-track" d="M 50,50 m 0,-44.5 a 44.5,44.5 0 1 1 0,89 a 44.5,44.5 0 1 1 0,-89"></path>
+                                    <path className="pt-spinner-head" d="M 94.5 50 A 44.5 44.5 0 0 0 50 5.5"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 className="pt-non-ideal-state-title">{tr("INIT", locale)}</h4>
+                    <div className="pt-non-ideal-state-description">{tr("INIT_DESC", locale)}</div>
+                </div>;
             } else {
-                return <Error error={tr("ERR_UNREGISTERED_LAYOUT", locale, { layout: layout })} />;
+                const layoutEl = getLayout(layout);
+                if (layoutEl) {
+                    return layoutEl();
+                } else {
+                    return <Error error={tr("ERR_UNREGISTERED_LAYOUT", locale, { layout: layout })} />;
+                }
             }
         }
     }

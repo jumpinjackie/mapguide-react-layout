@@ -2,6 +2,8 @@
 var STRINGS_DE = {
     "UNKNOWN_WIDGET": "Diese Schaltfläche verweist auf einen unbekannten oder nicht unterstützten Widget: {widget}",
     "UNKNOWN_COMMAND_REFERENCE": "Diese Schaltfläche verweist auf einen unbekannten Befehl oder nicht unterstützt: {command}",
+    "INIT": "Initialisierung",
+    "INIT_DESC": "Bitte warten Sie, während der Betrachter die benötigten ...",
     "INIT_ERROR_TITLE": "Ein Fehler ist aufgetreten während des Starts",
     "INIT_ERROR_UNKNOWN_RESOURCE_TYPE": "<p>Unbekannter oder nicht unterstützter Ressourcentyp für Ressource: <strong>{resourceId}</strong></p>",
     "INIT_ERROR_MISSING_RESOURCE_PARAM": "<p>Kein <strong>resource</strong> Parameter gefunden. Diese Ansicht erfordert diesen Parametersatz in der Abfragezeichenfolge und muss sich auf ein gültiges Weblayout oder eine Anwendungsdefinition beziehen</p>",

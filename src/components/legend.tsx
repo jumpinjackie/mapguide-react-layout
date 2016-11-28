@@ -10,7 +10,7 @@ import * as Constants from "../constants";
 
 const ICON_HEIGHT = 16;
 const ICON_WIDTH = 16;
-const UL_LIST_STYLE = { listStyle: "none", paddingLeft: 20 };
+const UL_LIST_STYLE = { listStyle: "none", paddingLeft: 20, marginTop: 2, marginBottom: 2 };
 const LI_LIST_STYLE = { listStyle: "none", marginTop: 2, marginBottom: 2 };
 const ROW_ITEM_ELEMENT_STYLE = { verticalAlign: "middle" };
 const CHK_STYLE = { margin: 0, width: `${ICON_WIDTH - 2}px`, height: `${ICON_HEIGHT - 2}px`, padding: 1, verticalAlign: "middle" };

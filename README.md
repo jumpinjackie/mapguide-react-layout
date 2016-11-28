@@ -19,12 +19,13 @@ It aims for reasonable compatibility with the existing Web Layout and Flexible L
     * For mobile devices:
       * iOS: Mobile Safari
       * Android: Google Chrome or Mozilla Firefox
-* For development: node.js 4.x or newer
+ * For development: node.js 4.x or newer
+    * Make sure yarn is installed `npm install -g yarn`
 
 # Installation - From Source
 
  1. Clone this repository
- 2. Run from the command-line: `npm install`
+ 2. Run from the command-line: `yarn install`
  3. Either:
     * Copy the `viewer` directory to MapGuide's physical wwwroot directory
     * Map the `viewer` directory as a child virtual directory under the MapGuide's wwwroot in your web server of choice (IIS or Apache)

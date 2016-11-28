@@ -3,18 +3,18 @@
   "version": "0.6.2",
   "description": "An experimental react-based layout for MapGuide",
   "scripts": {
-    "prebuild": "npm run clean",
+    "prebuild": "yarn run clean",
     "build": "cross-env NODE_ENV=production webpack",
     "build:dev": "cross-env NODE_ENV=development webpack",
     "watch:dev": "cross-env NODE_ENV=development webpack -w --progress",
     "clean": "rimraf viewer/dist/",
     "dev": "cross-env NODE_ENV=development webpack-dev-server -d --inline --hot --progress --no-info",
     "lint": "tslint 'src/**/*.tsx' 'src/**/*.ts' 'test/**/*.tsx' 'test/**/*.ts'",
-    "postinstall": "npm run typings && npm run build",
+    "postinstall": "yarn run typings && yarn run build",
     "typings": "rimraf typings/ && typings install",
     "test": "karma start",
     "test:ci": "karma start --single-run --browsers PhantomJS --reporters=verbose",
-    "ci": "npm run typings && npm run lint && npm run test:ci"
+    "ci": "yarn run typings && yarn run lint && yarn run test:ci"
   },
   "repository": {
     "type": "git",
@@ -79,7 +79,7 @@
     "testdouble": "^1.9.0",
     "ts-loader": "^1.2.2",
     "tslint": "^4.0.2",
-    "typescript": "^2.0.10",
+    "typescript": "2.0.10",
     "typings": "^2.0.0",
     "url-loader": "^0.5.7",
     "url-parse": "^1.1.7",

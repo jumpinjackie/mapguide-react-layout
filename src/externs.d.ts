@@ -127,20 +127,6 @@ declare module "react-draggable" {
     export = Draggable;
 }
 
-declare module "@aneves/react-flyout" {
-    import * as React from "react";
-
-    interface IFlyoutWrapperProps {
-        id: string;
-        open: boolean;
-        options?: any;
-    }
-
-    export default class FlyoutWrapper extends React.Component<IFlyoutWrapperProps, any> {
-
-    }
-}
-
 declare module "query-string" {
     function parse(queryStringOrHash: string): any;
     function stringify(params: any): string;

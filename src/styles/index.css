@@ -1,5 +1,4 @@
 @import "~openlayers/css/ol.css";
-@import '~@aneves/react-flyout/dist/flyout.css';
 @import "../externs/ol3-contextmenu.css";
 @import "~@blueprintjs/core/dist/blueprint.css";
 
@@ -235,6 +234,7 @@ div.InfoText
     margin-top: 100%;
 }
 
+/*
 .mg-flyout-menu-content {
     width: 200px;
     font-size: 10pt;
@@ -248,6 +248,7 @@ div.InfoText
     padding: 0;
     border-bottom: none;
 }
+*/
 
 .noselect {
     -webkit-touch-callout: none; /* iOS Safari */

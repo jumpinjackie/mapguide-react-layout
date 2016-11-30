@@ -47,7 +47,7 @@ export class MenuComponent extends React.Component<IMenuComponentProps, any> {
                     const imgStyle = getIconStyle(enabled, height);
                     const text = item.label || "";
                     //NOTE: Not using MenuItem here as we want fine control over the item content
-                    return <li>
+                    return <li key={index}>
                         <a className="pt-menu-item" onClick={invoke}><img style={imgStyle} src={getIcon(item.icon)} /> {text}</a>
                     </li>;
                 }

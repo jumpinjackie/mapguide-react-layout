@@ -250,6 +250,11 @@ div.InfoText
 }
 */
 
+.ol-ctx-menu-separator hr {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
 .noselect {
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none;   /* Chrome/Safari/Opera */

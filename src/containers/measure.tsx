@@ -387,14 +387,11 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
                     <span className="pt-control-indicator" />
                     {tr("MEASUREMENT_USE_GEODESIC", locale)}
                 </label>
-                <fieldset>
-                    <legend>{tr("MEASUREMENT", locale)}</legend>
-                    <div className="pt-button-group">
-                        <button type="button" className="pt-button pt-icon-play" disabled={measuring} onClick={this.fnStartMeasure}>{tr("MEASUREMENT_START", locale)}</button>
-                        <button type="button" className="pt-button pt-icon-stop" disabled={!measuring} onClick={this.fnEndMeasure}>{tr("MEASUREMENT_END", locale)}</button>
-                        <button type="button" className="pt-button pt-icon-cross" onClick={this.fnClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</button>
-                    </div>
-                </fieldset>
+                <div className="pt-button-group">
+                    <button type="button" className="pt-button pt-icon-play" disabled={measuring} onClick={this.fnStartMeasure}>{tr("MEASUREMENT_START", locale)}</button>
+                    <button type="button" className="pt-button pt-icon-stop" disabled={!measuring} onClick={this.fnEndMeasure}>{tr("MEASUREMENT_END", locale)}</button>
+                    <button type="button" className="pt-button pt-icon-cross" onClick={this.fnClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</button>
+                </div>
                 {(() => {
                     if (this.state.measuring === true) {
                         return <div className="pt-callout pt-intent-primary">

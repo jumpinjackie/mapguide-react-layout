@@ -229,7 +229,8 @@ class FlyoutMenuReferenceItem extends React.Component<IFlyoutMenuReferenceItemPr
                 posX: rect.left, // e.clientX,
                 posY: rect.top, // e.clientY,
                 width: rect.width, // e.currentTarget.offsetWidth,
-                height: rect.height // e.currentTarget.offsetHeight
+                height: rect.height, // e.currentTarget.offsetHeight
+                vertical: this.props.vertical
             };
             this.context.openFlyout(this.props.menu.flyoutId, metrics);
         } else {

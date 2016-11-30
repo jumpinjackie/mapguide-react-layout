@@ -699,4 +699,5 @@ export interface IDOMElementMetrics {
     posY: number;
     width: number;
     height: number;
+    vertical?: boolean;
 }

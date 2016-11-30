@@ -33,13 +33,19 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                         const containerStyle: React.CSSProperties = {};
                         if (flyout.metrics) {
                             const met: IDOMElementMetrics = flyout.metrics;
-                            containerStyle.top = met.posY + met.height;
+                            if (flyout.metrics.vertical === true) {
+                                containerStyle.top = met.posY;
+                            } else {
+                                containerStyle.top = met.posY + met.height;
+                            }
                             if (flyoutId == "taskpane") {
-                                //containerStyle.left += met.width;
                                 containerStyle.right = window.innerWidth - (met.posX + met.width);
-                                containerStyle.zIndex = 150;
+                                containerStyle.zIndex = 2000; //This should be big enough to be above all possible UI elements
                             } else {
                                 containerStyle.left = met.posX;
+                                if (flyout.metrics.vertical === true) {
+                                    containerStyle.left += met.width;
+                                }
                             }
                         }
                         const invoked = () => {

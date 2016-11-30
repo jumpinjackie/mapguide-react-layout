@@ -31,6 +31,7 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                             align = "bottom left";
                         }
                         const containerStyle: React.CSSProperties = {};
+                        containerStyle.zIndex = 2000; //This should be big enough to be above all possible UI elements
                         if (flyout.metrics) {
                             const met: IDOMElementMetrics = flyout.metrics;
                             if (flyout.metrics.vertical === true) {
@@ -40,7 +41,6 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                             }
                             if (flyoutId == "taskpane") {
                                 containerStyle.right = window.innerWidth - (met.posX + met.width);
-                                containerStyle.zIndex = 2000; //This should be big enough to be above all possible UI elements
                             } else {
                                 containerStyle.left = met.posX;
                                 if (flyout.metrics.vertical === true) {

@@ -63,5 +63,6 @@ var STRINGS_DE = {
     "SELECTION_VALUE": "Wert",
     "SELECTION_PREV_FEATURE": "Zurück Eigenschaft",
     "SELECTION_NEXT_FEATURE": "Nächste Funktion",
-    "SELECTION_ZOOMTO_FEATURE": "Zoom auf ausgewählte Funktion"
+    "SELECTION_ZOOMTO_FEATURE": "Zoom auf ausgewählte Funktion",
+    "FEATURE_TOOLTIPS": "Funktions-Tooltips"
 };

@@ -83,7 +83,8 @@ const STRINGS_EN: any = {
     "QUICKPLOT_SCALING": "Scale",
     "QUICKPLOT_DPI": "DPI",
     "QUICKPLOT_GENERATE": "Generate Plot",
-    "QUICKPLOT_COMMERCIAL_LAYER_WARNING": "Quick Plot will NOT include any visible commercial map layers"
+    "QUICKPLOT_COMMERCIAL_LAYER_WARNING": "Quick Plot will NOT include any visible commercial map layers",
+    "FEATURE_TOOLTIPS": "Feature Tooltips"
 };
 
 export default STRINGS_EN;

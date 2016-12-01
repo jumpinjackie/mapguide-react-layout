@@ -30,8 +30,8 @@ export class MenuComponent extends React.Component<IMenuComponentProps, any> {
                     return <MenuDivider key={index} />;
                 } else if (isMenu(item)) {
                     const text = item.label || "";
-                    return <MenuItem key={index} text={text}>
-                        <MenuComponent items={item.childItems} />
+                    return <MenuItem key={index} text={text} iconName="pt-icon-menu-open">
+                        <MenuComponent items={item.childItems} onInvoked={this.props.onInvoked} />
                     </MenuItem>;
                 } else {
                     const height = MENU_ITEM_HEIGHT;

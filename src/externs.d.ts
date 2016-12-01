@@ -227,34 +227,6 @@ declare module "lodash.uniq" {
     export = uniq;
 }
 
-declare module "ol3-contextmenu" {
-    import * as ol from "openlayers";
-
-    interface IContextMenuItem {
-        text: string;
-        callback: Function;
-        icon?: string;
-        classname?: string;
-        items?: (IContextMenuItem | string)[];
-    }
-
-    interface IContextMenuOptions {
-        default_items: boolean;
-        width: number;
-        items: (IContextMenuItem | string)[];
-    }
-
-    class ContextMenu extends ol.control.Control {
-        constructor(options: IContextMenuOptions);
-        public clear(): void;
-        public close(): void;
-        public enable(): void;
-        public disable(): void;
-        public extend(items: (IContextMenuItem | string)[]): void;
-    }
-    export = ContextMenu;
-}
-
 declare module "testdouble" {
     interface TestDoubleFunctionSetup {
         thenReturn(result: any): void;

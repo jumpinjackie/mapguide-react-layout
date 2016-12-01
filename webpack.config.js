@@ -24,7 +24,7 @@ const vendorEntries = [
 const basePlugins = [
     new webpack.ProvidePlugin({
         "proj4": "proj4",
-        "ol": "openlayers" //Needed for ol3-contextmenu
+        "ol": "openlayers"
     }),
     new webpack.DefinePlugin({
         __DEV__: process.env.NODE_ENV !== 'production',
@@ -74,9 +74,7 @@ module.exports = {
     devtool: 'source-map',
 
     resolve: {
-        alias: {
-            "ol3-contextmenu$": path.resolve("./src/externs/ol3-contextmenu.js")
-        },
+        alias: {},
         modulesDirectories: [
             'node_modules'
         ],

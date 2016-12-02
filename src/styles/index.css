@@ -1,6 +1,5 @@
 @import "~openlayers/css/ol.css";
-@import '~@aneves/react-flyout/dist/flyout.css';
-@import "../externs/ol3-contextmenu.css";
+@import "~@blueprintjs/core/dist/blueprint.css";
 
 .iframe-iehack-zindex {
     position: absolute;
@@ -62,8 +61,16 @@
 
 /* Selection Panel */
 
+.selection-panel-property-grid {
+    width: 100%;
+}
+
 .selection-panel-layer-selector {
     max-width: 180px;
+}
+
+.selection-panel-layer-selector select {
+    max-width: 143px;
 }
 
 /* Modal Dialogs */
@@ -160,6 +167,7 @@ div.InfoText
     display: block;
 }
 
+/*
 .error-display {
     color: #ffffff;
     background-color: #ff0000;
@@ -169,7 +177,7 @@ div.InfoText
 .error-header {
     font-weight: bold;
 }
-
+*/
 .error-stack {
     text-decoration: none;
 }
@@ -223,20 +231,6 @@ div.InfoText
     content: "";
     float: left;
     margin-top: 100%;
-}
-
-.mg-flyout-menu-content {
-    width: 200px;
-    font-size: 10pt;
-}
-
-.flyout .flyout__wrapper {
-    padding: 5px;
-}
-
-.flyout.flyout--dropdown .flyout__wrapper > ul > li {
-    padding: 0;
-    border-bottom: none;
 }
 
 .noselect {

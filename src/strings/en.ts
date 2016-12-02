@@ -1,6 +1,8 @@
 const STRINGS_EN: any = {
     "UNKNOWN_WIDGET": "This button references an unknown or unsupported widget: {widget}",
     "UNKNOWN_COMMAND_REFERENCE": "This button references an unknown command or unsupported: {command}",
+    "INIT": "Initializing",
+    "INIT_DESC": "Please wait while the viewer is loading required assets ...",
     "INIT_ERROR_TITLE": "An error occurred during startup",
     "INIT_ERROR_UNKNOWN_RESOURCE_TYPE": "<p>Unknown or unsupported resource type for resource: <strong>{resourceId}</strong></p>",
     "INIT_ERROR_MISSING_RESOURCE_PARAM": "<p>No <strong>resource</strong> parameter found. This viewer requires this parameter to be set in the query string and must refer to a valid Web Layout or Application Definition</p>",
@@ -35,17 +37,19 @@ const STRINGS_EN: any = {
     "DIGITIZE_CIRCLE_PROMPT": "Click to set this position as the center.<br/>Move out to the desired radius and click again to finish<br/><br/>Press ESC to cancel",
     "DIGITIZE_RECT_PROMPT": "Click to set this position as one corner.<br/>Click again to finish and set this position as the other corner<br/><br/>Press ESC to cancel",
     "DIGITIZE_POLYGON_PROMPT": "Click to set this positon as the start.<br/>Click again to add a vertex at this position.<br/>Hold SHIFT and drag while digitizing to draw in freehand mode<br/><br/>Double click to finish and close the polygon<br/>Press ESC to cancel",
-    "MEASURE": "Measure",
+    "MEASURING": "Measuring",
+    "MEASURING_MESSAGE": "You are currently measuring",
+    "MEASUREMENT": "Measurement",
     "MEASUREMENT_TYPE": "Measurement Type",
     "MEASUREMENT_TYPE_LENGTH": "Length (LineString)",
     "MEASUREMENT_TYPE_AREA": "Area (Polygon)",
     "MEASUREMENT_USE_GEODESIC": "Use geodesic measure",
-    "MEASUREMENT_CLEAR": "Clear Measurements",
+    "MEASUREMENT_CLEAR": "Clear",
     "MEASUREMENT_CONTINUE_POLYGON": "Click to continue drawing the polygon. Double-click to finish.",
     "MEASUREMENT_CONTINUE_LINE": "Click to continue drawing the line. Double-click to finish.",
     "MEASUREMENT_START_DRAWING": "Click to start drawing",
-    "MEASUREMENT_START": "Start Measurement",
-    "MEASUREMENT_END": "End Measurement",
+    "MEASUREMENT_START": "Start",
+    "MEASUREMENT_END": "End",
     "NAVIGATOR_PAN_EAST": "Pan East",
     "NAVIGATOR_PAN_WEST": "Pan West",
     "NAVIGATOR_PAN_SOUTH": "Pan South",
@@ -79,7 +83,8 @@ const STRINGS_EN: any = {
     "QUICKPLOT_SCALING": "Scale",
     "QUICKPLOT_DPI": "DPI",
     "QUICKPLOT_GENERATE": "Generate Plot",
-    "QUICKPLOT_COMMERCIAL_LAYER_WARNING": "Quick Plot will NOT include any visible commercial map layers"
+    "QUICKPLOT_COMMERCIAL_LAYER_WARNING": "Quick Plot will NOT include any visible commercial map layers",
+    "FEATURE_TOOLTIPS": "Feature Tooltips"
 };
 
 export default STRINGS_EN;

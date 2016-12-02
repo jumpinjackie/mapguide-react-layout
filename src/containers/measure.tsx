@@ -371,26 +371,35 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
     render(): JSX.Element {
         const { measuring, geodesic, type } = this.state;
         const { locale } = this.props.config;
-        return <div>
+        return <div style={{ padding: 5 }}>
             <form className="form-inline">
-                <div>
-                    <label>{tr("MEASUREMENT_TYPE", locale)} {NBSP}</label>
-                    <select value={type} onChange={this.fnTypeChanged}>
-                        <option value="LineString">{tr("MEASUREMENT_TYPE_LENGTH", locale)}</option>
-                        <option value="Polygon">{tr("MEASUREMENT_TYPE_AREA", locale)}</option>
-                    </select>
+                <label className="pt-label">
+                    {tr("MEASUREMENT_TYPE", locale)}
+                    <div className="pt-select">
+                        <select value={type} onChange={this.fnTypeChanged}>
+                            <option value="LineString">{tr("MEASUREMENT_TYPE_LENGTH", locale)}</option>
+                            <option value="Polygon">{tr("MEASUREMENT_TYPE_AREA", locale)}</option>
+                        </select>
+                    </div>
+                </label>
+                <label className="pt-control pt-checkbox">
+                    <input type="checkbox" checked={geodesic} onChange={this.fnGeodesicChanged} />
+                    <span className="pt-control-indicator" />
+                    {tr("MEASUREMENT_USE_GEODESIC", locale)}
+                </label>
+                <div className="pt-button-group">
+                    <button type="button" className="pt-button pt-icon-play" disabled={measuring} onClick={this.fnStartMeasure}>{tr("MEASUREMENT_START", locale)}</button>
+                    <button type="button" className="pt-button pt-icon-stop" disabled={!measuring} onClick={this.fnEndMeasure}>{tr("MEASUREMENT_END", locale)}</button>
+                    <button type="button" className="pt-button pt-icon-cross" onClick={this.fnClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</button>
                 </div>
-                <div>
-                    <label className="checkbox">
-                        <input type="checkbox" checked={geodesic} onChange={this.fnGeodesicChanged} />
-                        {tr("MEASUREMENT_USE_GEODESIC", locale)}
-                    </label>
-                </div>
-                <div>
-                    <button type="button" disabled={measuring} onClick={this.fnStartMeasure}>{tr("MEASUREMENT_START", locale)}</button>
-                    <button type="button" disabled={!measuring} onClick={this.fnEndMeasure}>{tr("MEASUREMENT_END", locale)}</button>
-                    <button type="button" onClick={this.fnClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</button>
-                </div>
+                {(() => {
+                    if (this.state.measuring === true) {
+                        return <div className="pt-callout pt-intent-primary">
+                            <h5>{tr("MEASURING", locale)}</h5>
+                            {tr("MEASURING_MESSAGE", locale)}
+                        </div>
+                    }
+                })()}
             </form>
         </div>;
     }

@@ -127,20 +127,6 @@ declare module "react-draggable" {
     export = Draggable;
 }
 
-declare module "@aneves/react-flyout" {
-    import * as React from "react";
-
-    interface IFlyoutWrapperProps {
-        id: string;
-        open: boolean;
-        options?: any;
-    }
-
-    export default class FlyoutWrapper extends React.Component<IFlyoutWrapperProps, any> {
-
-    }
-}
-
 declare module "query-string" {
     function parse(queryStringOrHash: string): any;
     function stringify(params: any): string;
@@ -239,34 +225,6 @@ declare module "lodash.uniq" {
         array: List<T>
     ): T[];
     export = uniq;
-}
-
-declare module "ol3-contextmenu" {
-    import * as ol from "openlayers";
-
-    interface IContextMenuItem {
-        text: string;
-        callback: Function;
-        icon?: string;
-        classname?: string;
-        items?: (IContextMenuItem | string)[];
-    }
-
-    interface IContextMenuOptions {
-        default_items: boolean;
-        width: number;
-        items: (IContextMenuItem | string)[];
-    }
-
-    class ContextMenu extends ol.control.Control {
-        constructor(options: IContextMenuOptions);
-        public clear(): void;
-        public close(): void;
-        public enable(): void;
-        public disable(): void;
-        public extend(items: (IContextMenuItem | string)[]): void;
-    }
-    export = ContextMenu;
 }
 
 declare module "testdouble" {

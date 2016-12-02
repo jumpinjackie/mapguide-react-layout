@@ -1,7 +1,8 @@
 import * as React from "react";
 import { isMenu, isMenuRef } from "../utils/type-guards";
 import { IDOMElementMetrics } from "../api/common";
-import FlyoutWrapper from "@aneves/react-flyout";
+import { Popover, Position } from "@blueprintjs/core";
+import { MenuComponent } from "./menu";
 import { IToolbarContext, TOOLBAR_CONTEXT_VALIDATION_MAP } from "./context";
 import * as uuid from "node-uuid";
 import * as Constants from "../constants";
@@ -53,7 +54,7 @@ export function getEnabled(item: IItem): boolean {
     return true;
 }
 
-function getIconStyle(enabled: boolean, height: number): React.CSSProperties {
+export function getIconStyle(enabled: boolean, height: number): React.CSSProperties {
     const imgStyle: React.CSSProperties = {
         verticalAlign: "middle",
         lineHeight: height 
@@ -194,77 +195,6 @@ class ToolbarContentContainer extends React.Component<IToolbarContentContainerPr
     }
 }
 
-interface IFlyoutMenuItemProps {
-    size: number;
-    menu: IInlineMenu;
-    vertical?: boolean;
-}
-
-class FlyoutMenuItem extends React.Component<IFlyoutMenuItemProps, any> {
-    private fnMouseLeave: GenericEventHandler;
-    private fnMouseEnter: GenericEventHandler;
-    private fnClick: GenericEventHandler;
-    private fnChildInvoked: () => void;
-    private flyoutId: string;
-    constructor(props: IFlyoutMenuItemProps) {
-        super(props);
-        this.fnClick = this.onClick.bind(this);
-        this.fnMouseEnter = this.onMouseEnter.bind(this);
-        this.fnMouseLeave = this.onMouseLeave.bind(this);
-        this.fnChildInvoked = this.onChildInvoked.bind(this);
-        this.state = {
-            isMouseOver: false,
-            isFlownOut: false
-        };
-        this.flyoutId = uuid.v4();
-    }
-    private onClick(e: GenericEvent) {
-        e.preventDefault();
-        this.setState({ isFlownOut: !this.state.isFlownOut });
-        return false;
-    }
-    private onMouseLeave(e: GenericEvent) {
-        this.setState({ isMouseOver: false });
-    }
-    private onMouseEnter(e: GenericEvent) {
-        this.setState({ isMouseOver: true });
-    }
-    private onChildInvoked() {
-        this.setState({ isFlownOut: false, isMouseOver: false });
-    }
-    render(): JSX.Element {
-        const { size, menu, vertical } = this.props;
-        const selected = getSelected(menu);
-        const enabled = getEnabled(menu);
-        const imgStyle = getIconStyle(enabled, size);
-        const style = getItemStyle(enabled, selected, size, this.state.isMouseOver, vertical);
-        let label: any = menu.label;
-        if (vertical === true) {
-            label = <div className="rotated-text"><span className="rotated-text__inner rotated-text-ccw">{menu.label}</span></div>;
-        }
-        let align = menu.flyoutAlign;
-        if (!align) {
-            align = (vertical === true) ? "right bottom" : "bottom right";
-        }
-        return <div className={`has-flyout noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={menu.tooltip}>
-            <div data-flyout-id={`flyout-${this.flyoutId}`}>
-                {label} <img style={imgStyle} src={getIcon(menu.icon || ((this.state.isFlownOut) ? "icon_menuarrowup.gif" : "icon_menuarrow.gif"))} />
-            </div>
-            <FlyoutWrapper id={`flyout-${this.flyoutId}`} open={this.state.isFlownOut} options={{ type: "dropdown", align: align }}>
-                <ul className="mg-flyout-menu-content">
-                {this.props.menu.childItems.map((item, index) => {
-                    if (item.isSeparator) {
-                        return <hr key={index} />;
-                    } else {
-                        return <FlyoutMenuChildItem key={index} item={item} onInvoked={this.fnChildInvoked} />;
-                    }
-                })}
-                </ul>
-            </FlyoutWrapper>
-        </div>;
-    }
-}
-
 interface IFlyoutMenuReferenceItemProps {
     size: number;
     menu: IFlyoutMenu;
@@ -299,7 +229,8 @@ class FlyoutMenuReferenceItem extends React.Component<IFlyoutMenuReferenceItemPr
                 posX: rect.left, // e.clientX,
                 posY: rect.top, // e.clientY,
                 width: rect.width, // e.currentTarget.offsetWidth,
-                height: rect.height // e.currentTarget.offsetHeight
+                height: rect.height, // e.currentTarget.offsetHeight
+                vertical: this.props.vertical
             };
             this.context.openFlyout(this.props.menu.flyoutId, metrics);
         } else {
@@ -461,9 +392,7 @@ export class Toolbar extends React.Component<IToolbarProps, any> {
             : DEFAULT_TOOLBAR_SIZE; 
         return <div style={containerStyle} className={`has-flyout noselect ${containerClass}`}>
             {childItems.map((item, index) => {
-                if (isMenu(item)) {
-                    return <FlyoutMenuItem key={index} size={height} menu={item} vertical={vertical} />;
-                } if (isMenuRef(item)) {
+                if (isMenuRef(item)) {
                     return <FlyoutMenuReferenceItem key={index} size={height} menu={item} vertical={vertical} />;
                 } else if (item.isSeparator === true) {
                     return <ToolbarSeparator key={index} size={height} vertical={vertical} />;

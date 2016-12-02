@@ -29,7 +29,8 @@ import {
     Coordinate,
     ImageFormat,
     RefreshMode,
-    ClientKind
+    ClientKind,
+    NOOP
 } from "../api/common";
 import {
     IApplicationContext,
@@ -46,11 +47,10 @@ import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { IInlineMenu, IItem, getEnabled, getIcon } from '../components/toolbar';
 import { isMenu } from '../utils/type-guards';
 import { tr } from "../api/i18n";
-import ContextMenu = require("ol3-contextmenu");
 const assign = require("object-assign");
 const isMobile = require("ismobilejs");
-
-
+import { MenuComponent } from "./menu";
+import { ContextMenuTarget, ContextMenu } from "@blueprintjs/core";
 
 export interface ILayerGroupVisibility {
     showLayers: string[];
@@ -287,14 +287,8 @@ function cloneExtent(bounds: Bounds): Bounds {
     ];
 }
 
+@ContextMenuTarget
 export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
-    /**
-     * The context menu 
-     * 
-     * @private
-     * @type {ContextMenu}
-     */
-    private _contextMenu: ContextMenu;
     /**
      * Indicates if touch events are supported.
      */
@@ -427,7 +421,16 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         const ll = this._map.getCoordinateFromPixel([point[0] - ptBuffer, point[1] - ptBuffer]);
         const ur = this._map.getCoordinateFromPixel([point[0] + ptBuffer, point[1] + ptBuffer]);
         return [ll[0], ll[1], ur[0], ur[1]];
-    } 
+    }
+    private onContextMenuItemInvoked() {
+        ContextMenu.hide();
+    }
+    public renderContextMenu(): JSX.Element {
+        if (this.props.contextMenu) {
+            return <MenuComponent items={this.props.contextMenu} onInvoked={this.onContextMenuItemInvoked.bind(this)} />;
+        }
+        return <noscript />;
+    }
     private onMapClick(e: GenericEvent) {
         if (this.isDigitizing()) {
             return;
@@ -675,11 +678,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             } else {
                 logger.info(`Skipping zoomToView as next/current views are close enough or target view is null`);
             }
-        }
-        //context menu
-        if (nextProps.contextMenu != props.contextMenu) {
-            this._contextMenu.clear();
-            this._contextMenu.extend(this.convertContextMenuItems(nextProps.contextMenu));
         }
     }
     componentDidMount() {
@@ -938,21 +936,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         } else {
             this._map.getView().fit(this._extent, this._map.getSize());
         }
-        this._contextMenu = new ContextMenu({
-            width: 190,
-            default_items: false,
-            items: this.convertContextMenuItems(this.props.contextMenu)
-        });
-        this._contextMenu.on("beforeopen", (e: GenericEvent) => {
-            if (this.isDigitizing() || this.props.contextMenu == null || this.props.contextMenu.length == 0) {
-                this._contextMenu.disable();
-            } else {
-                this._contextMenu.enable();
-            }
-        });
-        this._contextMenu.on("open", (e: GenericEvent) => this._contextMenuOpen = true);
-        this._contextMenu.on("close", (e: GenericEvent) => this._contextMenuOpen = false);
-        this._map.addControl(this._contextMenu);
     }
     render(): JSX.Element {
         return <div style={{ width: "100%", height: "100%" }} />;

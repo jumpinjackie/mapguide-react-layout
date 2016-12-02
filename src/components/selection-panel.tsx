@@ -133,11 +133,13 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
             {(() => {
                 if (selection != null && selection.SelectedLayer != null && selection.SelectedLayer.length > 0) {
                     return <div className="selection-panel-toolbar" style={{ height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR }}>
-                        <select className="selection-panel-layer-selector" value={this.state.selectedLayerIndex} style={{ float: "left", height: DEFAULT_TOOLBAR_SIZE,  }} onChange={this.fnSelectedLayerChanged}>
-                            {selection.SelectedLayer.map((layer: SelectedLayer, index: number) => {
-                                return <option key={`selected-layer-${layer["@id"]}`} value={`${index}`}>{layer["@name"]}</option>
-                            })}
-                        </select>
+                        <div className="pt-select selection-panel-layer-selector">
+                            <select value={this.state.selectedLayerIndex} style={{ float: "left", height: DEFAULT_TOOLBAR_SIZE }} onChange={this.fnSelectedLayerChanged}>
+                                {selection.SelectedLayer.map((layer: SelectedLayer, index: number) => {
+                                    return <option key={`selected-layer-${layer["@id"]}`} value={`${index}`}>{layer["@name"]}</option>
+                                })}
+                            </select>
+                        </div>
                         <Toolbar childItems={this.selectionToolbarItems} containerStyle={{ float: "right", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={NOOP} onOpenFlyout={NOOP} />
                         <div style={{ clear: "both" }} />
                     </div>;
@@ -154,11 +156,11 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
                                 props.push(matches[0]);
                             }
                         }
-                        return <table className="selection-panel-property-grid">
+                        return <table className="selection-panel-property-grid pt-table pt-condensed pt-bordered">
                             <thead>
                                 <tr>
-                                    <th style={{ textAlign: "left" }}>{xlate("SELECTION_PROPERTY", this.props.locale)}</th>
-                                    <th style={{ textAlign: "left" }}>{xlate("SELECTION_VALUE", this.props.locale)}</th>
+                                    <th>{xlate("SELECTION_PROPERTY", this.props.locale)}</th>
+                                    <th>{xlate("SELECTION_VALUE", this.props.locale)}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -171,7 +173,9 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
                             </tbody>
                         </table>;
                     } else if (selection == null || (selection.SelectedLayer || []).length == 0) {
-                        return <p className="selection-panel-no-selection">{xlate("NO_SELECTED_FEATURES", this.props.locale)}</p>;
+                        return <div className="pt-callout pt-intent-primary pt-icon-info-sign">
+                            <p className="selection-panel-no-selection">{xlate("NO_SELECTED_FEATURES", this.props.locale)}</p>
+                        </div>;
                     }
                 })()}
             </div>

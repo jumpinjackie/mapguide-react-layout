@@ -61,7 +61,9 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
             selection.SelectedFeatures != null) {
             return <SelectionPanel locale={config.locale} selection={selection.SelectedFeatures} onRequestZoomToFeature={this.fnZoomToSelectedFeature} maxHeight={maxHeight} />;
         } else {
-            return <div>{tr("NO_SELECTED_FEATURES", config.locale)}</div>;
+            return <div className="pt-callout pt-intent-primary pt-icon-info-sign">
+                <p className="selection-panel-no-selection">{tr("NO_SELECTED_FEATURES", config.locale)}</p>
+            </div>;
         }
     }
 }

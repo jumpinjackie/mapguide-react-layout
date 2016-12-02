@@ -133,7 +133,7 @@ describe("components/selection-panel", () => {
         expect(wrapper.find(".selection-panel-toolbar")).to.have.length(1, "Has Toolbar");
         expect(wrapper.find(".toolbar-btn")).to.have.length(3, "Has Toolbar Buttons");
         const fwd = wrapper.find(".toolbar-btn").at(1);
-        const select = wrapper.find(".selection-panel-layer-selector");
+        const select = wrapper.find("select");
         expect(select).to.have.length(1, "Has Layer Select");
         expect(select.find("option")).to.have.length(2);
         fwd.simulate("click");

@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import FlyoutWrapper from "@aneves/react-flyout";
+import { MenuComponent } from "./menu";
 import { FlyoutMenuChildItem } from "./toolbar";
 import { IDOMElementMetrics } from "../api/common";
 
@@ -23,45 +23,46 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                 const children = [] as JSX.Element[];
                 for (const flyoutId in this.props.flyoutConf) {
                     const flyout = this.props.flyoutConf[flyoutId];
-                    const items: any[] = flyout.childItems || [];
-                    let align = "bottom right";
-                    if (flyoutId === "taskpane") {
-                        align = "bottom left";
-                    }
                     const open = !!flyout.open;
-                    const containerStyle: React.CSSProperties = {};
-                    if (flyout.metrics) {
-                        const met: IDOMElementMetrics = flyout.metrics;
-                        containerStyle.left = met.posX;
-                        containerStyle.top = met.posY + met.height;
-                        if (flyoutId == "taskpane") {
-                            containerStyle.left += met.width;
+                    if (open) {
+                        const items: any[] = flyout.childItems || [];
+                        let align = "bottom right";
+                        if (flyoutId === "taskpane") {
+                            align = "bottom left";
                         }
-                    }
-                    children.push(<div key={flyoutId} className="mg-flyout-menu-container" style={containerStyle}>
-                        <FlyoutWrapper id={`flyout-${flyoutId}`} open={open} options={{ type: "dropdown", align: align }}>
-                            <ul className="mg-flyout-menu-content">
-                            {items.map((item, index) => {
-                                if (item.isSeparator) {
-                                    return <hr key={index} />;
-                                } else {
-                                    const invoked = () => {
-                                        this.onChildInvoked(flyoutId);
-                                    };
-                                    return <FlyoutMenuChildItem key={index} item={item} onInvoked={invoked} />;
+                        const containerStyle: React.CSSProperties = {};
+                        containerStyle.zIndex = 2000; //This should be big enough to be above all possible UI elements
+                        if (flyout.metrics) {
+                            const met: IDOMElementMetrics = flyout.metrics;
+                            if (flyout.metrics.vertical === true) {
+                                containerStyle.top = met.posY;
+                            } else {
+                                containerStyle.top = met.posY + met.height;
+                            }
+                            if (flyoutId == "taskpane") {
+                                containerStyle.right = window.innerWidth - (met.posX + met.width);
+                            } else {
+                                containerStyle.left = met.posX;
+                                if (flyout.metrics.vertical === true) {
+                                    containerStyle.left += met.width;
                                 }
-                            })}
+                            }
+                        }
+                        const invoked = () => {
+                            this.onChildInvoked(flyoutId);
+                        };
+                        children.push(<div key={flyoutId} className="mg-flyout-menu-container" style={containerStyle}>
+                            <MenuComponent items={items} onInvoked={invoked} />
                             {(() => {
                                 if (flyoutId === "taskpane") {
                                     //HACK: In order for this flyout to show properly over the task pane iframe
                                     //when it contains embedded content (eg. An ActiveX/Flash/etc control) in IE
                                     //we have to stick an iframe into this flyout
-                                    return <li><iframe src="about:blank" className="iframe-iehack-zindex" /></li>;
+                                    return <iframe src="about:blank" className="iframe-iehack-zindex" />;
                                 }
                             })()}
-                            </ul>
-                        </FlyoutWrapper>
-                    </div>);
+                        </div>);
+                    }
                 }
                 return children;
             })()}

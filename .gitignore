@@ -3,6 +3,7 @@ dist
 build
 node_modules
 typings
+yarn-error.log
 npm-debug.log
 test/**/*.js
 test/**/*.js.map

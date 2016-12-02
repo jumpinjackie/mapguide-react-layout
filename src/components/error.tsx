@@ -27,16 +27,16 @@ export const Error = (props: IErrorProps) => {
         } else {
             const message = err.message;
             const stack = normalizeStack(err);
-            return <div className="error-display">
-                <div className="error-header">{err.message}</div>
+            return <div className="pt-callout pt-intent-danger">
+                <h5 className="error-header">{err.message}</h5>
                 <ul className="error-stack">
                     {stack.map((ln, i) => <li key={`stack-line-${i}`}>{ln}</li>)}
                 </ul>
             </div>;
         }
     } else {
-        return <div className="error-display">
-            <div className="error-header">{err}</div>
+        return <div className="pt-callout pt-intent-danger">
+            <h5 className="error-header">{err}</h5>
         </div>;
     }
 };

@@ -22,17 +22,17 @@ describe("components/error", () => {
     it("renders a MgError with stack", () => {
         const err = captureError();
         const wrapper = shallow(<Error error={err} />);
-        expect(wrapper.find(".error-display")).to.have.length(1);
-        expect(wrapper.find(".error-display .error-header")).to.have.length(1);
-        expect(wrapper.find(".error-display .error-header").text()).to.be.equal(err.message);
-        expect(wrapper.find(".error-display .error-stack")).to.have.length(1);
+        expect(wrapper.find(".pt-callout")).to.have.length(1);
+        expect(wrapper.find(".pt-callout .error-header")).to.have.length(1);
+        expect(wrapper.find(".pt-callout .error-header").text()).to.be.equal(err.message);
+        expect(wrapper.find(".pt-callout .error-stack")).to.have.length(1);
     });
     it("renders a string without a stack", () => {
         const err = "Uh oh!";
         const wrapper = shallow(<Error error={err} />);
-        expect(wrapper.find(".error-display")).to.have.length(1);
-        expect(wrapper.find(".error-display .error-header")).to.have.length(1);
-        expect(wrapper.find(".error-display .error-header").text()).to.be.equal(err);
-        expect(wrapper.find(".error-display .error-stack")).to.have.length(0);
+        expect(wrapper.find(".pt-callout")).to.have.length(1);
+        expect(wrapper.find(".pt-callout .error-header")).to.have.length(1);
+        expect(wrapper.find(".pt-callout .error-header").text()).to.be.equal(err);
+        expect(wrapper.find(".pt-callout .error-stack")).to.have.length(0);
     });
 });

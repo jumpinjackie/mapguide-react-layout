@@ -19,7 +19,7 @@ const LEGEND_HEIGHT = 350;
 const SELECTION_DIALOG_HEIGHT = 300;
 const LEGEND_DIALOG_HEIGHT = 400;
 const TASK_DIALOG_HEIGHT = 500;
-const DIALOG_HEADER_HEIGHT = 28 + 3;
+const DIALOG_HEADER_HEIGHT = 40 + 3;//28 + 3;
 
 export interface IAquaTemplateLayoutState {
     map?: any;
@@ -177,7 +177,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                 if (hasTaskPane) {
                     right = tpWidth;
                 }*/
-                return <div style={{ position: "absolute", left: left, top: (DEFAULT_TOOLBAR_SIZE * 2), bottom: 0, right: right }}>
+                return <div style={{ position: "absolute", left: left, top: (DEFAULT_TOOLBAR_SIZE * 2) - 2, bottom: 0, right: right }}>
                     {(() => {
                         //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
                         //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()

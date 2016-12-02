@@ -1,3 +1,11 @@
+Next
+====
+ * [#91](https://github.com/jumpinjackie/mapguide-react-layout/issues/91): Use [Blueprint](http://blueprintjs.com/) as UI foundation
+   * Many UI elements updated/replaced/re-styled with blueprint equivalents
+   * Menus (flyout and context) can now support multiple levels of nesting
+ * Now shows busy indicator on viewer startup instead of a "white screen of nothingness"
+ * [#90](https://github.com/jumpinjackie/mapguide-react-layout/issues/90): Replaced `npm` with `yarn`
+
 0.6.2
 =====
 

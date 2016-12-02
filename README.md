@@ -71,8 +71,7 @@ mapguide-react-layout could not be possible without the following tools and libr
  * [proj4js](http://proj4js.org/)
  * [TypeScript](https://www.typescriptlang.org/)
  * [React](https://facebook.github.io/react/)
- * [ol3-contextmenu](https://github.com/jonataswalker/ol3-contextmenu)
- * [react-flyout](https://github.com/alexandreneves/react-flyout)
+ * [Blueprint](http://blueprintjs.com/)
  * [sidebar-v2](https://github.com/Turbo87/sidebar-v2)
 
 # License

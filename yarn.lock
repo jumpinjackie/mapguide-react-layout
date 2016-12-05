@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@blueprintjs/core@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-1.1.0.tgz#b65588b6dc1b60da4c8f96f2b1f235b3fa03672b"
+"@blueprintjs/core@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-1.2.0.tgz#3441d7af7d1c1c5cd4837b5ed26ccff0f1505f91"
   dependencies:
     classnames "^2.2"
     dom4 "^1.8"
@@ -1058,7 +1058,7 @@ concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
 
-concat-stream@1.5.0, concat-stream@^1.4.6:
+concat-stream@1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/concat-stream/-/concat-stream-1.5.0.tgz#53f7d43c51c5e43f81c8fdd03321c631be68d611"
   dependencies:
@@ -1066,7 +1066,7 @@ concat-stream@1.5.0, concat-stream@^1.4.6:
     readable-stream "~2.0.0"
     typedarray "~0.0.5"
 
-concat-stream@^1.4.7, concat-stream@~1.5.0, concat-stream@~1.5.1:
+concat-stream@^1.4.6, concat-stream@^1.4.7, concat-stream@~1.5.0, concat-stream@~1.5.1:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/concat-stream/-/concat-stream-1.5.2.tgz#708978624d856af41a5a741defdd261da752c266"
   dependencies:
@@ -1242,9 +1242,9 @@ css-color-names@0.0.4:
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/css-color-names/-/css-color-names-0.0.4.tgz#808adc2e79cf84738069b646cb20ec27beb629e0"
 
-css-loader@^0.26.0:
-  version "0.26.0"
-  resolved "https://registry.yarnpkg.com/css-loader/-/css-loader-0.26.0.tgz#160d378f5b8e0fd4ff6daf4f3580e2219b33025f"
+css-loader@^0.26.1:
+  version "0.26.1"
+  resolved "https://registry.yarnpkg.com/css-loader/-/css-loader-0.26.1.tgz#2ba7f20131b93597496b3e9bb500785a49cd29ea"
   dependencies:
     babel-code-frame "^6.11.0"
     css-selector-tokenizer "^0.7.0"
@@ -3651,11 +3651,11 @@ lodash@4.15.0:
   version "4.15.0"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.15.0.tgz#3162391d8f0140aa22cf8f6b3c34d6b7f63d3aa9"
 
-lodash@^3.10.1, lodash@^3.8.0:
+lodash@^3.8.0:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
-lodash@^4.0.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.16.2, lodash@^4.16.4, lodash@^4.2.0, lodash@^4.2.1, lodash@^4.5.0, lodash@^4.8.0:
+lodash@^4.0.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.16.2, lodash@^4.16.4, lodash@^4.17.2, lodash@^4.2.0, lodash@^4.2.1, lodash@^4.5.0, lodash@^4.8.0:
   version "4.17.2"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.2.tgz#34a3055babe04ce42467b607d700072c7ff6bf42"
 
@@ -3916,7 +3916,7 @@ mkpath@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/mkpath/-/mkpath-0.1.0.tgz#7554a6f8d871834cc97b5462b122c4c124d6de91"
 
-mocha@^3.1.2:
+mocha@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/mocha/-/mocha-3.2.0.tgz#7dc4f45e5088075171a68896814e6ae9eb7a85e3"
   dependencies:
@@ -4874,11 +4874,11 @@ querystringify@0.0.x:
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/querystringify/-/querystringify-0.0.4.tgz#0cf7f84f9463ff0ae51c4c4b142d95be37724d9c"
 
-quibble@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/quibble/-/quibble-0.3.0.tgz#d9602ba5ea644d1f010def107862b2a91a887ab4"
+quibble@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/quibble/-/quibble-0.4.0.tgz#a1535c4a80b3d3617d23c5d770f1ec2c7b5523a1"
   dependencies:
-    lodash "^3.10.1"
+    lodash "^4.17.2"
 
 quickselect@^1.0.0:
   version "1.0.0"
@@ -5846,12 +5846,12 @@ temp@0.8.3:
     os-tmpdir "^1.0.0"
     rimraf "~2.2.6"
 
-testdouble@^1.9.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/testdouble/-/testdouble-1.9.0.tgz#7e447c94813f498bfe18ebdba78be20194ccbb2f"
+testdouble@^1.9.1:
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/testdouble/-/testdouble-1.9.1.tgz#f6b46c15798175ecb2f4df1367c2604f8760a385"
   dependencies:
     lodash "^4.15.0"
-    quibble "^0.3.0"
+    quibble "^0.4.0"
     stringify-object "^2.4.0"
 
 tether@^1.2:

@@ -1,6 +1,10 @@
 @import "~openlayers/css/ol.css";
 @import "~@blueprintjs/core/dist/blueprint.css";
 
+.map-viewer-component {
+    background-color: white;
+}
+
 .iframe-iehack-zindex {
     position: absolute;
     border: none;

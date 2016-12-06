@@ -19,7 +19,9 @@ import {
 import { Tabs, TabList, Tab, TabPanel } from "@blueprintjs/core";
 
 const SIDEBAR_WIDTH = 250;
+const SIDEBAR_PADDING = 3;
 const TOP_BAR_HEIGHT = 35;
+const TAB_BAR_HEIGHT = 30;
 
 export interface ITurquoiseYellowTemplateLayoutState {
     map?: RuntimeMap | null;
@@ -57,13 +59,13 @@ export class TurquoiseYellowLayoutTemplate extends React.Component<TurquoiseYell
         const sbWidth = SIDEBAR_WIDTH;
         const tabPanelStyle: React.CSSProperties = {
             position: "absolute",
-            top: TOP_BAR_HEIGHT,
+            top: TAB_BAR_HEIGHT,
             left: 0,
             right: 0,
             bottom: 0
         };
         return <div style={{ width: "100%", height: "100%" }}>
-            <div style={{ position: "absolute", left: 0, top: TOP_BAR_HEIGHT, bottom: 0, width: sbWidth }}>
+            <div className="turquoise-yellow-sidebar" style={{ position: "absolute", left: SIDEBAR_PADDING, top: TOP_BAR_HEIGHT, bottom: SIDEBAR_PADDING, width: (sbWidth - (SIDEBAR_PADDING * 2)) }}>
                 <Tabs>
                     <TabList>
                         <Tab>Tasks</Tab>
@@ -87,7 +89,7 @@ export class TurquoiseYellowLayoutTemplate extends React.Component<TurquoiseYell
                     </TabPanel>
                 </Tabs>
             </div>
-            <ToolbarContainer id="FileMenu" containerClass="turquoise-yellow-file-menu" containerStyle={{ position: "absolute", left: sbWidth, top: 0, zIndex: 100, right: 0 }} />
+            <ToolbarContainer id="FileMenu" containerClass="turquoise-yellow-file-menu" containerStyle={{ position: "absolute", left: sbWidth, top: (TOP_BAR_HEIGHT - DEFAULT_TOOLBAR_SIZE), zIndex: 100, right: 0 }} />
             <ToolbarContainer id="Toolbar" containerClass="turquoise-yellow-toolbar" containerStyle={{ position: "absolute", left: sbWidth, top: TOP_BAR_HEIGHT, zIndex: 100, right: 0 }} />
             <ToolbarContainer id="ToolbarVertical" containerClass="turquoise-yellow-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: sbWidth, top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), zIndex: 100, bottom: 0 }} />
             <div style={{ position: "absolute", left: (sbWidth + DEFAULT_TOOLBAR_SIZE), top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), bottom: 0, right: 0 }}>

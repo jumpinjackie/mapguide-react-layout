@@ -32,7 +32,7 @@ import { processMenuItems } from "../utils/menu";
 import { tr } from "../api/i18n";
 
 export interface IMapViewerContainerProps {
-    
+    overviewMapElementSelector?: () => (Element | null);
 }
 
 export interface IMapViewerContainerState {
@@ -165,7 +165,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         browserWindow.getClient = browserWindow.getClient || (() => new Client(this.props.config.agentUri, this.props.config.agentKind));
     }
     render(): JSX.Element {
-        const { map, config, viewer, view, legend, contextmenu, invokeCommand } = this.props;
+        const { map, config, viewer, view, legend, contextmenu, invokeCommand, overviewMapElementSelector } = this.props;
         if (map && config && view && viewer && legend && invokeCommand) {
             const selectableLayerNames = (map.Layer || [])
                 .filter(layer => layer.Selectable && legend.selectableLayers[layer.ObjectId] !== false)
@@ -191,6 +191,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                   initialView={view.initial}
                                   selectableLayerNames={selectableLayerNames}
                                   contextMenu={childItems}
+                                  overviewMapElementSelector={overviewMapElementSelector}
                                   onBeginDigitization={this.fnBeginDigitization}
                                   onSessionExpired={this.fnSessionExpired}
                                   onBusyLoading={this.fnBusyLoading}

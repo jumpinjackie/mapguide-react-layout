@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as uuid from "node-uuid";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
 import { Toolbar, IItem } from "../components/toolbar";
@@ -49,18 +50,23 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
     private fnHideLegend: () => void;
     private fnHideSelection: () => void;
     private fnHideOverviewMap: () => void;
+    private fnOverviewMapTargetMounted: (el: Element) => void;
     private viewItems: IItem[];
+    private fnGetOverviewMapTarget: () => (Element | null);
+    private ovMapTarget: Element | null;
     constructor(props: AquaTemplateLayout) {
         super(props);
+        this.ovMapTarget = null;
         this.fnHideLegend = this.onHideLegend.bind(this);
         this.fnHideOverviewMap = this.onHideOverviewMap.bind(this);
         this.fnHideSelection = this.onHideSelection.bind(this);
         this.fnHideTaskPane = this.onHideTaskPane.bind(this);
+        this.fnOverviewMapTargetMounted = this.onOverviewMapTargetMounted.bind(this);
+        this.fnGetOverviewMapTarget = this.getOverviewMapTarget.bind(this);
         this.state = {
             isTaskPaneOpen: true,
             isLegendOpen: true,
-            isSelectionOpen: true,
-            isOverviewMapOpen: false
+            isSelectionOpen: true
         };
         this.viewItems = [
             {
@@ -94,6 +100,12 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                 enabled: () => !this.state.isSelectionOpen
             }
         ]
+    }
+    private getOverviewMapTarget() {
+        return this.ovMapTarget;
+    }
+    private onOverviewMapTargetMounted(el: Element) {
+        this.ovMapTarget = el;
     }
     private onHideTaskPane() {
         this.setState({ isTaskPaneOpen: false });

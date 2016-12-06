@@ -83,6 +83,7 @@ export interface IMapViewerBaseProps {
     onBusyLoading: (busyCount: number) => void;
     onSessionExpired?: () => void;
     onBeginDigitization: (callback: (cancelled: boolean) => void) => void;
+    overviewMapElementSelector?: () => (Element | null);
 }
 
 export function areViewsCloseToEqual(view: IMapView, otherView: IMapView): boolean {
@@ -314,7 +315,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
      * @type {ol.layer.Image}
      */
     private _selectionOverlay: ol.layer.Image;
-
+    private _ovMap: ol.control.OverviewMap;
     private _wktFormat: ol.format.WKT;
     private _inPerUnit: number;
     private _dpi: number;
@@ -679,6 +680,19 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 logger.info(`Skipping zoomToView as next/current views are close enough or target view is null`);
             }
         }
+        //overviewMapElement
+        if (nextProps.overviewMapElementSelector) {
+            const el = nextProps.overviewMapElementSelector();
+            if (el) {
+                this._ovMap.setCollapsed(false);
+                this._ovMap.setCollapsible(false);
+                this._ovMap.setTarget(ReactDOM.findDOMNode(el));
+            } else {
+                this._ovMap.setCollapsed(true);
+                this._ovMap.setCollapsible(true);
+                this._ovMap.setTarget(null as any);
+            }
+        }
     }
     componentDidMount() {
         const { map, agentUri, imageFormat } = this.props;
@@ -860,6 +874,17 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             label: String.fromCharCode(171) //'\u00AB'
         };
 
+        if (this.props.overviewMapElementSelector) {
+            const el = this.props.overviewMapElementSelector();
+            if (el) {
+                overviewMapOpts.target = ReactDOM.findDOMNode(el);
+                overviewMapOpts.collapsed = false;
+                overviewMapOpts.collapsible = false;
+            }
+        }
+
+        this._ovMap = new ol.control.OverviewMap(overviewMapOpts);
+
         const mapOptions: olx.MapOptions = {
             logo: false,
             target: mapNode,
@@ -868,7 +893,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             controls: [
                 new ol.control.Attribution(),
                 new ol.control.Rotate(),
-                new ol.control.OverviewMap(overviewMapOpts)
+                this._ovMap
             ],
             interactions: [
                 new ol.interaction.DragRotate(),

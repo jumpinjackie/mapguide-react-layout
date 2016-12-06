@@ -963,7 +963,14 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
     }
     render(): JSX.Element {
-        return <div style={{ width: "100%", height: "100%" }} />;
+        const style: React.CSSProperties = { 
+            width: "100%",
+            height: "100%" 
+        };
+        if (this.props.map) {
+            style.backgroundColor = `#${this.props.map.BackgroundColor.substring(2)}`;
+        }
+        return <div className="map-viewer-component" style={style} />;
     }
     componentWillUnmount() {
 

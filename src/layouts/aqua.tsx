@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as uuid from "node-uuid";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
 import { Toolbar, IItem } from "../components/toolbar";
@@ -10,9 +9,14 @@ import { FlyoutRegionContainer } from "../containers/flyout-region";
 import { ModalDialog } from "../components/modal-dialog";
 import { connect } from "react-redux";
 import { tr } from "../api/i18n";
+import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
     NOOP,
-    ReduxDispatch
+    ReduxDispatch,
+    IApplicationState,
+    IMapViewerReducerState,
+    IConfigurationReducerState,
+    IViewerCapabilities
 } from "../api/common";
 
 const SIDEBAR_WIDTH = 250;
@@ -23,12 +27,12 @@ const TASK_DIALOG_HEIGHT = 500;
 const DIALOG_HEADER_HEIGHT = 40 + 3;//28 + 3;
 
 export interface IAquaTemplateLayoutState {
-    map?: any;
-    config?: any;
-    capabilities?: any;
+    map?: RuntimeMap | null;
+    config?: IConfigurationReducerState;
+    capabilities?: IViewerCapabilities;
 }
 
-function mapStateToProps(state: any): IAquaTemplateLayoutState {
+function mapStateToProps(state: IApplicationState): IAquaTemplateLayoutState {
     return {
         config: state.config,
         map: state.map.state,
@@ -54,7 +58,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
     private viewItems: IItem[];
     private fnGetOverviewMapTarget: () => (Element | null);
     private ovMapTarget: Element | null;
-    constructor(props: AquaTemplateLayout) {
+    constructor(props: AquaTemplateLayoutProps) {
         super(props);
         this.ovMapTarget = null;
         this.fnHideLegend = this.onHideLegend.bind(this);
@@ -68,38 +72,6 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
             isLegendOpen: true,
             isSelectionOpen: true
         };
-        this.viewItems = [
-            {
-                icon: "application-browser.png",
-                label: tr("TPL_TITLE_TASKPANE", this.props.config.locale),
-                invoke: () => {
-                    this.setState({
-                        isTaskPaneOpen: true
-                    });
-                },
-                enabled: () => !this.state.isTaskPaneOpen
-            },
-            {
-                icon: "legend-map.png",
-                label: tr("TPL_TITLE_LEGEND", this.props.config.locale),
-                invoke: () => {
-                    this.setState({
-                        isLegendOpen: true
-                    });
-                },
-                enabled: () => !this.state.isLegendOpen
-            },
-            {
-                icon: "property.png",
-                label: tr("TPL_TITLE_SELECTION_PANEL", this.props.config.locale),
-                invoke: () => {
-                    this.setState({
-                        isSelectionOpen: true
-                    });
-                },
-                enabled: () => !this.state.isSelectionOpen
-            }
-        ]
     }
     private getOverviewMapTarget() {
         return this.ovMapTarget;
@@ -119,25 +91,72 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
     private onHideOverviewMap() {
         this.setState({ isOverviewMapOpen: false });
     }
+    private getLocale(): string {
+        return this.props.config ? this.props.config.locale : "en";
+    }
+    componentDidMount() {
+        const locale = this.getLocale();
+        this.viewItems = [
+            {
+                icon: "application-browser.png",
+                label: tr("TPL_TITLE_TASKPANE", locale),
+                invoke: () => {
+                    this.setState({
+                        isTaskPaneOpen: true
+                    });
+                },
+                enabled: () => !this.state.isTaskPaneOpen
+            },
+            {
+                icon: "legend-map.png",
+                label: tr("TPL_TITLE_LEGEND", locale),
+                invoke: () => {
+                    this.setState({
+                        isLegendOpen: true
+                    });
+                },
+                enabled: () => !this.state.isLegendOpen
+            },
+            {
+                icon: "property.png",
+                label: tr("TPL_TITLE_SELECTION_PANEL", locale),
+                invoke: () => {
+                    this.setState({
+                        isSelectionOpen: true
+                    });
+                },
+                enabled: () => !this.state.isSelectionOpen
+            }
+        ];
+    }
     render(): JSX.Element {
-        const {
-            hasTaskPane,
-            hasTaskBar,
-            hasStatusBar,
-            hasNavigator,
-            hasSelectionPanel,
-            hasLegend,
-            hasToolbar
-        } = this.props.capabilities;
-        let locale = "en";
-        if (this.props.config) {
-            locale = this.props.config.locale;
+        const { capabilities, config } = this.props;
+        let hasTaskPane = false;
+        let hasTaskBar = false;
+        let hasStatusBar = false;
+        let hasNavigator = false;
+        let hasSelectionPanel = false;
+        let hasLegend = false;
+        let hasToolbar = false;
+        if (capabilities) {
+            hasTaskPane = capabilities.hasTaskPane;
+            hasTaskBar = capabilities.hasTaskBar;
+            hasStatusBar = capabilities.hasStatusBar;
+            hasNavigator = capabilities.hasNavigator;
+            hasSelectionPanel = capabilities.hasSelectionPanel;
+            hasLegend = capabilities.hasLegend;
+            hasToolbar = capabilities.hasToolbar;
         }
+        const locale = this.getLocale();
         let sbWidth = SIDEBAR_WIDTH;
         let tpWidth = SIDEBAR_WIDTH;
         return <div style={{ width: "100%", height: "100%" }}>
             <ToolbarContainer id="FileMenu" containerClass="aqua-file-menu" containerStyle={{ position: "absolute", left: 0, top: 0, zIndex: 100, right: 0 }} />
-            <Toolbar childItems={this.viewItems} containerStyle={{ position: "absolute", right: 0, top: 0, height: DEFAULT_TOOLBAR_SIZE, zIndex: 101, color: "white" }} onCloseFlyout={NOOP} onOpenFlyout={NOOP} />
+            {(() => {
+                if (this.viewItems) {
+                    return <Toolbar childItems={this.viewItems} containerStyle={{ position: "absolute", right: 0, top: 0, height: DEFAULT_TOOLBAR_SIZE, zIndex: 101, color: "white" }} onCloseFlyout={NOOP} onOpenFlyout={NOOP} />;
+                }
+            })()}
             <ToolbarContainer id="Toolbar" containerClass="aqua-toolbar" containerStyle={{ position: "absolute", left: 0, top: (DEFAULT_TOOLBAR_SIZE - 2), zIndex: 100, right: 0 }} />
             <ToolbarContainer id="ToolbarVertical" containerClass="aqua-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: 0, top: ((DEFAULT_TOOLBAR_SIZE * 2) - 1), zIndex: 100, bottom: 0 }} />
             {(() => {

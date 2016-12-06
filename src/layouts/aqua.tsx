@@ -137,7 +137,6 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
         let hasNavigator = false;
         let hasSelectionPanel = false;
         let hasLegend = false;
-        let hasToolbar = false;
         if (capabilities) {
             hasTaskPane = capabilities.hasTaskPane;
             hasTaskBar = capabilities.hasTaskBar;
@@ -145,7 +144,6 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
             hasNavigator = capabilities.hasNavigator;
             hasSelectionPanel = capabilities.hasSelectionPanel;
             hasLegend = capabilities.hasLegend;
-            hasToolbar = capabilities.hasToolbar;
         }
         const locale = this.getLocale();
         let sbWidth = SIDEBAR_WIDTH;

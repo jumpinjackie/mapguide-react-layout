@@ -3,6 +3,19 @@ Next
  * [#91](https://github.com/jumpinjackie/mapguide-react-layout/issues/91): Use [Blueprint](http://blueprintjs.com/) as UI foundation
    * Many UI elements updated/replaced/re-styled with blueprint equivalents
    * Menus (flyout and context) can now support multiple levels of nesting
+   * Replaces the following components/libraries which have been removed
+     * ol3-contextmenu
+     * react-flyout
+     * Our custom fontello icon set
+ * [#64](https://github.com/jumpinjackie/mapguide-react-layout/issues/64): Fusion template changes
+   * Ported across TurquoiseYellow template
+   * Ported across LimeGold template
+   * Aqua template changes:
+     * Added status bar
+     * Changed to use Blueprint-styled modal dialogs
+ * More Fusion widgets ported over
+   * [#96](https://github.com/jumpinjackie/mapguide-react-layout/issues/96): Geolocation
+   * [#95](https://github.com/jumpinjackie/mapguide-react-layout/issues/95): Base map switcher
  * Now shows busy indicator on viewer startup instead of a "white screen of nothingness"
  * [#90](https://github.com/jumpinjackie/mapguide-react-layout/issues/90): Replaced `npm` with `yarn`
 

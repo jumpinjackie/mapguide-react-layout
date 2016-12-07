@@ -7,12 +7,14 @@ Next
      * ol3-contextmenu
      * react-flyout
      * Our custom fontello icon set
- * [#64](https://github.com/jumpinjackie/mapguide-react-layout/issues/64): Fusion template changes
-   * Ported across TurquoiseYellow template
-   * Ported across LimeGold template
-   * Aqua template changes:
-     * Added status bar
-     * Changed to use Blueprint-styled modal dialogs
+ * [#64](https://github.com/jumpinjackie/mapguide-react-layout/issues/64): Additional Fusion templates ported across
+   * TurquoiseYellow
+   * LimeGold
+ * Aqua template changes:
+   * Added status bar
+   * Changed to use Blueprint-styled modal dialogs
+ * Sidebar template changes:
+   * Updated to use Blueprint icons and load spinner
  * More Fusion widgets ported over
    * [#96](https://github.com/jumpinjackie/mapguide-react-layout/issues/96): Geolocation
    * [#95](https://github.com/jumpinjackie/mapguide-react-layout/issues/95): Base map switcher

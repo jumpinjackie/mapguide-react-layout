@@ -115,6 +115,9 @@
 .mg-flyout-component-container {
     position: absolute;
     background-color: white;
+    padding: 15px;
+    border-radius: 3px;
+    border: 1px solid black;
 }
 
 /* Toolbar */

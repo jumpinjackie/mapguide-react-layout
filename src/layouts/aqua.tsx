@@ -181,7 +181,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                                 backdrop={false}
                                 isOpen={this.state.isLegendOpen}
                                 onClose={this.fnHideLegend}>
-                        <PlaceholderComponent locale={locale} id={DefaultComponentNames.Legend} componentProps={{ inlineBaseLayerSwitcher: true, maxHeight: LEGEND_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
+                        <PlaceholderComponent locale={locale} id={DefaultComponentNames.Legend} componentProps={{ inlineBaseLayerSwitcher: false, maxHeight: LEGEND_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
                     </ModalDialog>;
                 }
             })()}

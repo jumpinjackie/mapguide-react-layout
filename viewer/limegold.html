@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MapGuide React Viewer</title>
+        <script type="text/javascript" src="dist/viewer.js"></script>
+        <script type="text/javascript" src="strings/de.js" charset="UTF-8"></script>
+        <style type="text/css">
+            /* Prevent scrollbars due to floating modal dialogs going past the bounds of the root element */
+            html { overflow: hidden; }
+            html, body, #map { padding: 0; margin: 0; font: 10pt Verdana, sans-serif; }
+            #map { overflow: hidden; position: absolute; left: 0; right: 0; top: 0; bottom: 0; }
+            .limegold-toolbar {
+                /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#9ddb56+0,dcf5bf+100 */
+                background: #9ddb56; /* Old browsers */
+                background: -moz-linear-gradient(top,  #9ddb56 0%, #dcf5bf 100%); /* FF3.6-15 */
+                background: -webkit-linear-gradient(top,  #9ddb56 0%,#dcf5bf 100%); /* Chrome10-25,Safari5.1-6 */
+                background: linear-gradient(to bottom,  #9ddb56 0%,#dcf5bf 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9ddb56', endColorstr='#dcf5bf',GradientType=0 ); /* IE6-9 */
+            }
+            .limegold-toolbar-secondary {
+                background: #FCFFBF;
+            }
+            .limegold-status-bar {
+                background: #FFFEBE;
+            }
+            .pt-tab[aria-selected="true"], .pt-tab:not([aria-disabled="true"]):hover {
+                color: black;
+            }
+            .pt-tab-indicator-wrapper .pt-tab-indicator {
+                background-color: black;
+            }
+            ul.pt-tab-list {
+                padding-left: 8px;
+                /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f48000+0,fabb00+100 */
+                background: #f48000; /* Old browsers */
+                background: -moz-linear-gradient(top,  #f48000 0%, #fabb00 100%); /* FF3.6-15 */
+                background: -webkit-linear-gradient(top,  #f48000 0%,#fabb00 100%); /* Chrome10-25,Safari5.1-6 */
+                background: linear-gradient(to bottom,  #f48000 0%,#fabb00 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f48000', endColorstr='#fabb00',GradientType=0 ); /* IE6-9 */
+            }
+            li.pt-tab {
+                font-weight: bold;
+                font-size: 12px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script type="text/javascript">
+            MapGuide.Registry.registerStringBundle("de", STRINGS_DE);
+
+            var el = document.getElementById("map");
+            var viewer = new MapGuide.Application();
+            viewer.mount(el, {
+                layout: "limegold",/*
+                externalBaseLayers: [
+                    { name: "OpenStreetMap", kind: "OSM" },
+                    { name: "Stamen - Toner", kind: "Stamen", visible: true, options: { layer: "toner" } },
+                    { name: "Stamen - Watercolor", kind: "Stamen", options: { layer: "watercolor" } }
+                ],*/
+                agent: {
+                    uri: "../mapagent/mapagent.fcgi"
+                }
+            });
+        </script>
+    </body>
+</html>

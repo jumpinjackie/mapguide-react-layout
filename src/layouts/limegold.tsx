@@ -20,18 +20,18 @@ import { Tabs, TabList, Tab, TabPanel } from "@blueprintjs/core";
 import assign = require("object-assign");
 
 const SIDEBAR_WIDTH = 250;
-const SIDEBAR_PADDING = 3;
+const SIDEBAR_PADDING = 0;
 const TOP_BAR_HEIGHT = 35;
 const TAB_BAR_HEIGHT = 30;
 const STATUS_BAR_HEIGHT = 18;
 
-export interface ITurquoiseYellowTemplateLayoutState {
+export interface ILimeGoldTemplateLayoutState {
     map?: RuntimeMap | null;
     config?: IConfigurationReducerState;
     capabilities?: IViewerCapabilities;
 }
 
-function mapStateToProps(state: IApplicationState): ITurquoiseYellowTemplateLayoutState {
+function mapStateToProps(state: IApplicationState): ILimeGoldTemplateLayoutState {
     return {
         config: state.config,
         map: state.map.state,
@@ -45,11 +45,11 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
     };
 }
 
-export type TurquoiseYellowLayoutTemplateProps = ITurquoiseYellowTemplateLayoutState;
+export type LimeGoldLayoutTemplateProps = ILimeGoldTemplateLayoutState;
 
 @connect(mapStateToProps, mapDispatchToProps)
-export class TurquoiseYellowLayoutTemplate extends React.Component<TurquoiseYellowLayoutTemplateProps, any> {
-    constructor(props: TurquoiseYellowLayoutTemplateProps) {
+export class LimeGoldLayoutTemplate extends React.Component<LimeGoldLayoutTemplateProps, any> {
+    constructor(props: LimeGoldLayoutTemplateProps) {
         super(props);
     }
     private getLocale(): string {
@@ -72,6 +72,7 @@ export class TurquoiseYellowLayoutTemplate extends React.Component<TurquoiseYell
             hasLegend = capabilities.hasLegend;
         }
         const bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;
+        const topOffset = (TOP_BAR_HEIGHT + (DEFAULT_TOOLBAR_SIZE * 2));
         const locale = this.getLocale();
         const sbWidth = SIDEBAR_WIDTH;
         const tabPanelStyle: React.CSSProperties = {
@@ -82,7 +83,25 @@ export class TurquoiseYellowLayoutTemplate extends React.Component<TurquoiseYell
             bottom: 0
         };
         return <div style={{ width: "100%", height: "100%" }}>
-            <div className="turquoise-yellow-sidebar" style={{ position: "absolute", left: SIDEBAR_PADDING, top: TOP_BAR_HEIGHT, bottom: (bottomOffset + SIDEBAR_PADDING), width: (sbWidth - (SIDEBAR_PADDING * 2)) }}>
+            <ToolbarContainer id="FileMenu" containerClass="limegold-file-menu" containerStyle={{ position: "absolute", left: 0, top: ((TOP_BAR_HEIGHT - DEFAULT_TOOLBAR_SIZE) / 2), zIndex: 100, right: 0 }} />
+            <ToolbarContainer id="Toolbar" containerClass="limegold-toolbar" containerStyle={{ position: "absolute", left: 0, top: TOP_BAR_HEIGHT, zIndex: 100, right: 0 }} />
+            <ToolbarContainer id="ToolbarSecondary" containerClass="limegold-toolbar-secondary" containerStyle={{ position: "absolute", left: 0, top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), zIndex: 100, right: 0 }} />
+            <div style={{ position: "absolute", left: 0, top: topOffset, bottom: (bottomOffset + SIDEBAR_PADDING), right: sbWidth }}>
+                {(() => {
+                    //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
+                    //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()
+                    //call to fix
+                    if (this.props.map != null) {
+                        return <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />;
+                    }
+                })()}
+                {(() => {
+                    if (hasNavigator) {
+                        return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
+                    }
+                })()}
+            </div>
+            <div className="limegold-sidebar" style={{ position: "absolute", right: SIDEBAR_PADDING, top: topOffset, bottom: (bottomOffset + SIDEBAR_PADDING), width: (sbWidth - (SIDEBAR_PADDING * 2)) }}>
                 <Tabs>
                     <TabList>
                         {(() => {
@@ -130,27 +149,9 @@ export class TurquoiseYellowLayoutTemplate extends React.Component<TurquoiseYell
                     })()}
                 </Tabs>
             </div>
-            <ToolbarContainer id="FileMenu" containerClass="turquoise-yellow-file-menu" containerStyle={{ position: "absolute", left: sbWidth, top: (TOP_BAR_HEIGHT - DEFAULT_TOOLBAR_SIZE), zIndex: 100, right: 0 }} />
-            <ToolbarContainer id="Toolbar" containerClass="turquoise-yellow-toolbar" containerStyle={{ position: "absolute", left: sbWidth, top: TOP_BAR_HEIGHT, zIndex: 100, right: 0 }} />
-            <ToolbarContainer id="ToolbarVertical" containerClass="turquoise-yellow-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: sbWidth, top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), zIndex: 100, bottom: (bottomOffset + SIDEBAR_PADDING) }} />
-            <div style={{ position: "absolute", left: (sbWidth + DEFAULT_TOOLBAR_SIZE), top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), bottom: (bottomOffset + SIDEBAR_PADDING), right: 0 }}>
-                {(() => {
-                    //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
-                    //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()
-                    //call to fix
-                    if (this.props.map != null) {
-                        return <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />;
-                    }
-                })()}
-                {(() => {
-                    if (hasNavigator) {
-                        return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
-                    }
-                })()}
-            </div>
             {(() => {
                 if (hasStatusBar) {
-                    return <div className="turquoise-yellow-status-bar" style={{ position: "absolute", left: 0, bottom: 0, right: 0, height: bottomOffset }}>
+                    return <div className="limegold-status-bar" style={{ position: "absolute", left: 0, bottom: 0, right: 0, height: bottomOffset }}>
                         <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={locale} />
                         <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={locale} />
                         <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={locale} />

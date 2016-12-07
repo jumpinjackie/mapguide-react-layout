@@ -7,6 +7,7 @@ import { AjaxViewerLayout } from "../layouts/ajax-viewer";
 import { SidebarLayout } from "../layouts/sidebar";
 import { AquaTemplateLayout } from "../layouts/aqua";
 import { TurquoiseYellowLayoutTemplate } from "../layouts/turquoise-yellow";
+import { LimeGoldLayoutTemplate } from "../layouts/limegold";
 import { registerLayout } from "../api/registry/layout";
 import { registerCommand } from "../api/registry/command";
 import { registerComponentFactory } from "../api/registry/component";
@@ -22,6 +23,7 @@ registerLayout("ajax-viewer", () => <AjaxViewerLayout />);
 registerLayout("sidebar", () => <SidebarLayout />);
 registerLayout("aqua", () => <AquaTemplateLayout />);
 registerLayout("turquoise-yellow", () => <TurquoiseYellowLayoutTemplate />);
+registerLayout("limegold", () => <LimeGoldLayoutTemplate />);
 initDefaultCommands();
 registerDefaultComponents();
 

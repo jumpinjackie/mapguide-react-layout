@@ -17,6 +17,7 @@ export class DefaultComponentNames {
     public static get Measure(): string { return "Measure"; }
     public static get ViewerOptions(): string { return "ViewerOptions"; }
     public static get QuickPlot(): string { return "QuickPlot"; }
+    public static get BaseMapSwitcher(): string { return "BaseMapSwitcher"; }
 }
 
 export type ComponentFactory = (props: any) => JSX.Element; 

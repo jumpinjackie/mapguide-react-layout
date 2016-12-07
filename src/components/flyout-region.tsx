@@ -3,9 +3,11 @@ import * as ReactDOM from "react-dom";
 import { MenuComponent } from "./menu";
 import { FlyoutMenuChildItem } from "./toolbar";
 import { IDOMElementMetrics } from "../api/common";
+import { PlaceholderComponent } from "../api/registry/component";
 
 export interface IFlyoutRegionProps {
     flyoutConf: any;
+    locale: string;
     onCloseFlyout: (id: string) => void;
 }
 
@@ -51,8 +53,19 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                         const invoked = () => {
                             this.onChildInvoked(flyoutId);
                         };
-                        children.push(<div key={flyoutId} className="mg-flyout-menu-container" style={containerStyle}>
-                            <MenuComponent items={items} onInvoked={invoked} />
+                        let className = "mg-flyout-menu-container";
+                        if (flyout.componentName) {
+                            className = "mg-flyout-component-container";
+                        } 
+
+                        children.push(<div key={flyoutId} className={className} style={containerStyle}>
+                            {(() => {
+                                if (flyout.componentName) {
+                                    return <PlaceholderComponent id={flyout.componentName} componentProps={flyout.componentProps} locale={this.props.locale} />;
+                                } else {
+                                    return <MenuComponent items={items} onInvoked={invoked} />;
+                                }
+                            })()}
                             {(() => {
                                 if (flyoutId === "taskpane") {
                                     //HACK: In order for this flyout to show properly over the task pane iframe

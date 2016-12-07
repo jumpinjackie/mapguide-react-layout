@@ -112,6 +112,10 @@
 .mg-flyout-menu-container {
     position: absolute;
 }
+.mg-flyout-component-container {
+    position: absolute;
+    background-color: white;
+}
 
 /* Toolbar */
 .toolbar-separator-vertical {

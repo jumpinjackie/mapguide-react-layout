@@ -140,7 +140,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
                                 })}
                             </select>
                         </div>
-                        <Toolbar childItems={this.selectionToolbarItems} containerStyle={{ float: "right", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={NOOP} onOpenFlyout={NOOP} />
+                        <Toolbar childItems={this.selectionToolbarItems} containerStyle={{ float: "right", height: DEFAULT_TOOLBAR_SIZE }} />
                         <div style={{ clear: "both" }} />
                     </div>;
                 }

@@ -13,12 +13,12 @@ import {
 } from "../../api/common";
 import { QueryMapFeaturesResponse } from "../contracts/query";
 import { ResultColumnSet } from "../contracts/weblayout";
-import { IItem, IInlineMenu, IFlyoutMenu, getIcon } from "../../components/toolbar";
+import { IItem, IInlineMenu, IFlyoutMenu, IComponentFlyoutItem, getIcon } from "../../components/toolbar";
 import * as Constants from "../../constants";
 import { ensureParameters } from "../../actions/taskpane";
 import { tr } from "../i18n";
 
-export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: (cmd: ICommand) => void): IItem|IInlineMenu|IFlyoutMenu|null {
+export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: (cmd: ICommand) => void): IItem|IInlineMenu|IFlyoutMenu|IComponentFlyoutItem|null {
     const state = store.getState();
     if (tb.error) {
         const cmdItem: IItem = {
@@ -30,6 +30,14 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
             invoke: NOOP
         };
         return cmdItem;
+    } else if (tb.componentName) {
+        return {
+            flyoutId: tb.flyoutId,
+            tooltip: tb.tooltip,
+            label: tb.label,
+            componentName: tb.componentName,
+            componentProps: tb.componentProps
+        };
     } else if (tb.isSeparator === true) {
         return { isSeparator: true };
     } else if (tb.command) {

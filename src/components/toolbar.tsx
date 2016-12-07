@@ -1,5 +1,5 @@
 import * as React from "react";
-import { isMenu, isMenuRef } from "../utils/type-guards";
+import { isMenu, isMenuRef, isComponentFlyout } from "../utils/type-guards";
 import { IDOMElementMetrics } from "../api/common";
 import { Popover, Position } from "@blueprintjs/core";
 import { MenuComponent } from "./menu";
@@ -195,6 +195,78 @@ class ToolbarContentContainer extends React.Component<IToolbarContentContainerPr
     }
 }
 
+interface IComponentFlyoutItemProps {
+    size: number;
+    item: IComponentFlyoutItem;
+    vertical?: boolean;
+}
+
+class ComponentFlyoutItem extends React.Component<IComponentFlyoutItemProps, any> {
+    private fnMouseLeave: GenericEventHandler;
+    private fnMouseEnter: GenericEventHandler;
+    private fnClick: GenericEventHandler;
+    private fnChildInvoked: () => void;
+    static contextTypes = TOOLBAR_CONTEXT_VALIDATION_MAP;
+    context: IToolbarContext;
+    constructor(props: IComponentFlyoutItemProps) {
+        super(props);
+        this.fnClick = this.onClick.bind(this);
+        this.fnMouseEnter = this.onMouseEnter.bind(this);
+        this.fnMouseLeave = this.onMouseLeave.bind(this);
+        this.fnChildInvoked = this.onChildInvoked.bind(this);
+        this.state = {
+            isMouseOver: false,
+            isFlownOut: false
+        };
+    }
+    private onClick(e: GenericEvent) {
+        e.preventDefault();
+        const { flyoutId, componentName, componentProps } = this.props.item;
+        const newState = !this.state.isFlownOut;
+        this.setState({ isFlownOut: newState });
+        if (newState) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const metrics: IDOMElementMetrics = {
+                posX: rect.left, // e.clientX,
+                posY: rect.top, // e.clientY,
+                width: rect.width, // e.currentTarget.offsetWidth,
+                height: rect.height, // e.currentTarget.offsetHeight
+                vertical: this.props.vertical
+            };
+            this.context.openComponent(flyoutId, metrics, componentName, componentProps);
+        } else {
+            this.context.closeComponent(flyoutId);
+        }
+        return false;
+    }
+    private onMouseLeave(e: GenericEvent) {
+        this.setState({ isMouseOver: false });
+    }
+    private onMouseEnter(e: GenericEvent) {
+        this.setState({ isMouseOver: true });
+    }
+    private onChildInvoked() {
+        this.setState({ isFlownOut: false, isMouseOver: false });
+        this.context.closeFlyout(this.props.item.flyoutId);
+    }
+    render(): JSX.Element {
+        const { size, item, vertical } = this.props;
+        const selected = getSelected(item);
+        const enabled = getEnabled(item);
+        const imgStyle = getIconStyle(enabled, size);
+        const style = getItemStyle(enabled, selected, size, this.state.isMouseOver, vertical);
+        let label: any = item.label;
+        if (vertical === true) {
+            label = <div className="rotated-text"><span className="rotated-text__inner rotated-text-ccw">{item.label}</span></div>;
+        }
+        return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={item.tooltip}>
+            <div data-flyout-id={`flyout-${item.flyoutId}`}>
+                {label} <img style={imgStyle} src={getIcon(item.icon || ((this.state.isFlownOut) ? "icon_menuarrowup.gif" : "icon_menuarrow.gif"))} />
+            </div>
+        </div>;
+    }
+}
+
 interface IFlyoutMenuReferenceItemProps {
     size: number;
     menu: IFlyoutMenu;
@@ -355,6 +427,12 @@ export interface IFlyoutMenu extends IItem {
     flyoutAlign?: string;
 }
 
+export interface IComponentFlyoutItem extends IItem {
+    flyoutId: string;
+    componentName: string;
+    componentProps?: any;
+}
+
 export interface IContainerItem extends IItem {
     renderContainerContent: () => JSX.Element;
 }
@@ -364,8 +442,10 @@ export interface IToolbarProps {
     containerClass?: string;
     containerStyle?: React.CSSProperties;
     vertical?: boolean;
-    onOpenFlyout: (id: string, metrics: IDOMElementMetrics) => void;
-    onCloseFlyout: (id: string) => void;
+    onOpenFlyout?: (id: string, metrics: IDOMElementMetrics) => void;
+    onCloseFlyout?: (id: string) => void;
+    onOpenComponent?: (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => void;
+    onCloseComponent?: (id: string) => void;
 }
 
 export class Toolbar extends React.Component<IToolbarProps, any> {
@@ -376,14 +456,30 @@ export class Toolbar extends React.Component<IToolbarProps, any> {
     getChildContext(): IToolbarContext {
         return {
             openFlyout: this.openFlyout.bind(this),
-            closeFlyout: this.closeFlyout.bind(this)
+            closeFlyout: this.closeFlyout.bind(this),
+            openComponent: this.openComponent.bind(this),
+            closeComponent: this.closeComponent.bind(this)
         }
     }
     private openFlyout(id: string, metrics: IDOMElementMetrics): void {
-        this.props.onOpenFlyout(id, metrics);
+        if (this.props.onOpenFlyout) {
+            this.props.onOpenFlyout(id, metrics);
+        }
     }
     private closeFlyout(id: string): void {
-        this.props.onCloseFlyout(id);
+        if (this.props.onCloseFlyout) {
+            this.props.onCloseFlyout(id);
+        }
+    }
+    private openComponent(id: string, metrics: IDOMElementMetrics, name: string, props?: any): void {
+        if (this.props.onOpenComponent) {
+            this.props.onOpenComponent(id, metrics, name, props);
+        }
+    }
+    private closeComponent(id: string): void {
+        if (this.props.onCloseComponent) {
+            this.props.onCloseComponent(id);
+        }
     }
     render(): JSX.Element {
         const { containerStyle, containerClass, childItems, vertical } = this.props;
@@ -392,7 +488,9 @@ export class Toolbar extends React.Component<IToolbarProps, any> {
             : DEFAULT_TOOLBAR_SIZE; 
         return <div style={containerStyle} className={`has-flyout noselect ${containerClass}`}>
             {childItems.map((item, index) => {
-                if (isMenuRef(item)) {
+                if (isComponentFlyout(item)) {
+                    return <ComponentFlyoutItem key={index} size={height} item={item} vertical={vertical} />;
+                } else if (isMenuRef(item)) {
                     return <FlyoutMenuReferenceItem key={index} size={height} menu={item} vertical={vertical} />;
                 } else if (item.isSeparator === true) {
                     return <ToolbarSeparator key={index} size={height} vertical={vertical} />;

@@ -35,6 +35,8 @@ export interface IToolbarContainerDispatch {
     invokeCommand?: (cmd: ICommand) => void;
     openFlyout?: (id: string, metrics: IDOMElementMetrics) => void;
     closeFlyout?: (id: string) => void;
+    openComponent?: (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => void;
+    closeComponent?: (id: string) => void;
 }
 
 function mapStateToProps(state: IApplicationState, ownProps: IToolbarContainerProps): IToolbarContainerState {
@@ -51,7 +53,9 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IToolbarContainerDispatch 
     return {
         invokeCommand: (cmd) => dispatch(invokeCommand(cmd)),
         openFlyout: (id, metrics) => dispatch(FlyoutActions.openFlyout(id, metrics)),
-        closeFlyout: (id) => dispatch(FlyoutActions.closeFlyout(id))
+        closeFlyout: (id) => dispatch(FlyoutActions.closeFlyout(id)),
+        openComponent: (id, metrics, name, props) => dispatch(FlyoutActions.openComponent(id, metrics, name, props)),
+        closeComponent: (id) => dispatch(FlyoutActions.closeComponent(id))
     };
 }
 
@@ -59,12 +63,16 @@ export type ToolbarContainerProps = IToolbarContainerProps & IToolbarContainerSt
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class ToolbarContainer extends React.Component<ToolbarContainerProps, any> {
-    private fnOpenFlyout: (id: string) => void;
+    private fnOpenFlyout: (id: string, metrics: IDOMElementMetrics) => void;
     private fnCloseFlyout: (id: string) => void;
+    private fnOpenComponent: (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => void;
+    private fnCloseComponent: (id: string) => void;
     constructor(props: ToolbarContainerProps) {
         super(props);
         this.fnCloseFlyout = this.onCloseFlyout.bind(this);
         this.fnOpenFlyout = this.onOpenFlyout.bind(this);
+        this.fnOpenComponent = this.onOpenComponent.bind(this);
+        this.fnCloseComponent = this.onCloseComponent.bind(this);
     }
     private onCloseFlyout(id: string): void {
         if (this.props.closeFlyout) {
@@ -74,6 +82,16 @@ export class ToolbarContainer extends React.Component<ToolbarContainerProps, any
     private onOpenFlyout(id: string, metrics: IDOMElementMetrics): void {
         if (this.props.openFlyout) {
             this.props.openFlyout(id, metrics);
+        }
+    }
+    private onOpenComponent(id: string, metrics: IDOMElementMetrics, name: string, props?: any): void {
+        if (this.props.openComponent) {
+            this.props.openComponent(id, metrics, name, props);
+        }
+    }
+    private onCloseComponent(id: string): void {
+        if (this.props.closeComponent) {
+            this.props.closeComponent(id);
         }
     }
     static contextTypes: React.ValidationMap<any> = {
@@ -95,6 +113,8 @@ export class ToolbarContainer extends React.Component<ToolbarContainerProps, any
                             childItems={childItems}
                             containerClass={containerClass}
                             containerStyle={containerStyle}
+                            onOpenComponent={this.fnOpenComponent}
+                            onCloseComponent={this.fnCloseComponent}
                             onOpenFlyout={this.fnOpenFlyout}
                             onCloseFlyout={this.fnCloseFlyout} />;
         } else {

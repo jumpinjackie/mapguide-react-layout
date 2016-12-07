@@ -19,3 +19,24 @@ export function closeFlyout(id: string): ReduxAction {
         }
     };
 }
+
+export function openComponent(id: string, metrics: IDOMElementMetrics, name: string, props: string): ReduxAction {
+    return {
+        type: Constants.COMPONENT_OPEN,
+        payload: {
+            flyoutId: id,
+            metrics: metrics,
+            name: name,
+            props: props
+        }
+    };
+}
+
+export function closeComponent(id: string): ReduxAction {
+    return {
+        type: Constants.COMPONENT_CLOSE,
+        payload: {
+            flyoutId: id
+        }
+    };
+}

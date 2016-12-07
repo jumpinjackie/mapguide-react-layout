@@ -17,6 +17,7 @@ export interface IFlyoutRegionContainerProps {
 
 export interface IFlyoutRegionContainerState {
     flyouts?: any;
+    locale?: string;
 }
 
 export interface IFlyoutRegionContainerDispatch {
@@ -26,7 +27,8 @@ export interface IFlyoutRegionContainerDispatch {
 
 function mapStateToProps(state: IApplicationState, ownProps: IFlyoutRegionContainerProps): IFlyoutRegionContainerState {
     return {
-        flyouts: state.toolbar.flyouts
+        flyouts: state.toolbar.flyouts,
+        locale: state.config.locale
     };
 }
 
@@ -61,15 +63,20 @@ export class FlyoutRegionContainer extends React.Component<FlyoutRegionContainer
         if (invokeCommand) {
             for (const flyoutId in flyouts) {
                 const tb = flyouts[flyoutId];
-                prepared[flyoutId] = mapToolbarReference(tb, store, invokeCommand);
-                prepared[flyoutId].open = !!flyouts[flyoutId].open;
-                prepared[flyoutId].metrics = flyouts[flyoutId].metrics;
+                if (typeof(tb.componentName) == 'undefined') {
+                    prepared[flyoutId] = mapToolbarReference(tb, store, invokeCommand);
+                    prepared[flyoutId].open = !!flyouts[flyoutId].open;
+                    prepared[flyoutId].metrics = flyouts[flyoutId].metrics;
+                } else {
+                    prepared[flyoutId] = flyouts[flyoutId];
+                }
             }
         }
         return prepared;
     }
     render(): JSX.Element {
+        const locale = this.props.locale ? this.props.locale : "en";
         const flyouts = this.prepareFlyouts();
-        return <FlyoutRegion flyoutConf={flyouts} onCloseFlyout={this.fnCloseFlyout} />;
+        return <FlyoutRegion flyoutConf={flyouts} onCloseFlyout={this.fnCloseFlyout} locale={locale} />;
     }
 }

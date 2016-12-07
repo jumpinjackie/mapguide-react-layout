@@ -34,6 +34,9 @@ export const MODAL_CLOSE = 'Modal/CLOSE';
 export const FLYOUT_OPEN = 'Flyout/OPEN';
 export const FLYOUT_CLOSE = 'Flyout/CLOSE';
 
+export const COMPONENT_OPEN = 'Flyout/COMPONENT_OPEN';
+export const COMPONENT_CLOSE = 'Flyout/COMPONENT_CLOSE';
+
 /**
  * Non-breaking space
  */

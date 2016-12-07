@@ -3,6 +3,7 @@ import { Client } from "../api/client";
 import { ReduxDispatch, Dictionary, ICommand } from "../api/common";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
 import { registerCommand, DefaultCommands } from "../api/registry/command";
+import { DefaultComponentNames } from "../api/registry/component";
 import { ensureParameters } from "../actions/taskpane";
 import {
     WebLayout,
@@ -125,6 +126,8 @@ function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictiona
                                 return { command: DefaultCommands.ZoomToSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
                             case "Measure":
                                 return { command: DefaultCommands.Measure, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
+                            case "BasemapSwitcher":
+                                return { label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: DefaultComponentNames.BaseMapSwitcher, flyoutId: `${DefaultComponentNames.BaseMapSwitcher}_${uuid.v4()}` };
                             default:
                                 return { error: tr("UNKNOWN_WIDGET", locale, { widget: widget.Type }) }
                         }

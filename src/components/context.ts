@@ -55,9 +55,13 @@ export const LEGEND_CONTEXT_VALIDATION_MAP: React.ValidationMap<any> = {
 export interface IToolbarContext {
     openFlyout(id: string, metrics: IDOMElementMetrics): void;
     closeFlyout(id: string): void;
+    openComponent(id: string, metrics: IDOMElementMetrics, name: string, props?: any): void;
+    closeComponent(id: string): void;
 }
 
 export const TOOLBAR_CONTEXT_VALIDATION_MAP: React.ValidationMap<any> = {
     openFlyout: React.PropTypes.func.isRequired,
-    closeFlyout: React.PropTypes.func.isRequired
+    closeFlyout: React.PropTypes.func.isRequired,
+    openComponent: React.PropTypes.func.isRequired,
+    closeComponent: React.PropTypes.func.isRequired
 }

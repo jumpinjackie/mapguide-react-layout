@@ -15,6 +15,44 @@ export function toolbarReducer(state = INITIAL_STATE, action = { type: '', paylo
             {
                 return assign({}, state, payload.toolbars);
             }
+        case Constants.COMPONENT_OPEN:
+            {
+                let flyoutId = payload.flyoutId;
+                if (flyoutId) {
+                    const updateSpec: any = {
+                        flyouts: {}
+                    };
+                    updateSpec.flyouts[flyoutId] = {
+                        "$set": { //Need to use $set instead of $merge as the tree won't have component flyout info initially
+                            open: true,
+                            metrics: payload.metrics,
+                            componentName: payload.name,
+                            componentProps: payload.props
+                        }
+                    };
+                    const newState = update(state, updateSpec);
+                    return newState;
+                }
+            }
+        case Constants.COMPONENT_CLOSE:
+            {
+                let flyoutId = payload.flyoutId;
+                if (flyoutId) {
+                    const updateSpec: any = {
+                        flyouts: {}
+                    };
+                    updateSpec.flyouts[flyoutId] = {
+                        "$set": { //Need to use $set instead of $merge as the tree won't have component flyout info initially
+                            open: false,
+                            metrics: null,
+                            componentName: null,
+                            componentProps: null
+                        }
+                    };
+                    const newState = update(state, updateSpec);
+                    return newState;
+                }
+            }
         case Constants.FLYOUT_OPEN:
             {
                 let flyoutId = payload.flyoutId;

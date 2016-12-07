@@ -43,6 +43,7 @@ export interface ILegendProps {
     overrideSelectableLayers?: any | undefined;
     overrideExpandedItems?: any | undefined;
     maxHeight?: number;
+    inlineBaseLayerSwitcher?: boolean;
 }
 
 function getIconUri(iconMimeType: string, iconBase64: string | null | undefined): string | undefined {
@@ -508,7 +509,8 @@ export class Legend extends React.Component<ILegendProps, any> {
         return <div style={rootStyle}>
             {(() => {
                 if (externalBaseLayers != null &&
-                    externalBaseLayers.length > 0) {
+                    externalBaseLayers.length > 0 &&
+                    this.props.inlineBaseLayerSwitcher === true) {
                     return <div>
                         <strong>{tr("EXTERNAL_BASE_LAYERS", this.props.locale)}</strong>
                         <BaseLayerSwitcher externalBaseLayers={externalBaseLayers} onBaseLayerChanged={onBaseLayerChanged} />

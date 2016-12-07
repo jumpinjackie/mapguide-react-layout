@@ -41,6 +41,8 @@ Commands
  * InvokeScript commands
    * [#14](https://github.com/jumpinjackie/mapguide-react-layout/issues/14): InvokeScript commands are not supported. Once we implement a server-side wrapper, such commands will be supported.
 
+ * Due to lack of Google Maps integration, the Google Street View widget is not supported if reference in an Application Definition (and will not be ported across due to current technical and legal constraints) 
+
 Viewer
 ======
 
@@ -54,6 +56,7 @@ Viewer
 
  * [#34](https://github.com/jumpinjackie/mapguide-react-layout/issues/34): Digitization tools have poor user experience on mobile/tablet devices
  * [#34](https://github.com/jumpinjackie/mapguide-react-layout/issues/34): Feature Tooltips does not work on mobile/tablet devices
+ * Due to lack of Google Maps integration, if an Application Definition references Google Maps layers, they will be ignored
 
 Templates
 =========

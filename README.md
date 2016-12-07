@@ -55,6 +55,14 @@ See [TEMPLATES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/ma
 
 ![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/doc/aqua.png)
 
+## LimeGold
+
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/doc/limegold.png)
+
+## TurquoiseYellow
+
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/doc/turquoise-yellow.png)
+
 # Known Issues
 
 See [KNOWN_ISSUES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/KNOWN_ISSUES.md)

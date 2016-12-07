@@ -25,6 +25,7 @@ const SELECTION_DIALOG_HEIGHT = 300;
 const LEGEND_DIALOG_HEIGHT = 400;
 const TASK_DIALOG_HEIGHT = 500;
 const DIALOG_HEADER_HEIGHT = 40 + 3;//28 + 3;
+const STATUS_BAR_HEIGHT = 18;
 
 export interface IAquaTemplateLayoutState {
     map?: RuntimeMap | null;
@@ -146,6 +147,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
             hasLegend = capabilities.hasLegend;
         }
         const locale = this.getLocale();
+        const bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;
         let sbWidth = SIDEBAR_WIDTH;
         let tpWidth = SIDEBAR_WIDTH;
         return <div style={{ width: "100%", height: "100%" }}>
@@ -156,7 +158,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                 }
             })()}
             <ToolbarContainer id="Toolbar" containerClass="aqua-toolbar" containerStyle={{ position: "absolute", left: 0, top: (DEFAULT_TOOLBAR_SIZE - 2), zIndex: 100, right: 0 }} />
-            <ToolbarContainer id="ToolbarVertical" containerClass="aqua-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: 0, top: ((DEFAULT_TOOLBAR_SIZE * 2) - 1), zIndex: 100, bottom: 0 }} />
+            <ToolbarContainer id="ToolbarVertical" containerClass="aqua-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: 0, top: ((DEFAULT_TOOLBAR_SIZE * 2) - 1), zIndex: 100, bottom: bottomOffset }} />
             {(() => {
                 if (hasSelectionPanel) {
                     return <ModalDialog 
@@ -206,7 +208,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                 if (hasTaskPane) {
                     right = tpWidth;
                 }*/
-                return <div style={{ position: "absolute", left: left, top: (DEFAULT_TOOLBAR_SIZE * 2) - 2, bottom: 0, right: right }}>
+                return <div style={{ position: "absolute", left: left, top: (DEFAULT_TOOLBAR_SIZE * 2) - 2, bottom: bottomOffset, right: right }}>
                     {(() => {
                         //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
                         //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()
@@ -220,23 +222,17 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                             return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
                         }
                     })()}
-                    {(() => {
-                        if (hasStatusBar) {
-                            return <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={locale} />;
-                        }
-                    })()}
-                    {(() => {
-                        if (hasStatusBar) {
-                            return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={locale} />;
-                        }
-                    })()}
-                    {(() => {
-                        if (hasStatusBar) {
-                            return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={locale} />;
-                        }
-                    })()}
-                    <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={locale} />
                 </div>
+            })()}
+            {(() => {
+                if (hasStatusBar) {
+                    return <div className="aqua-status-bar" style={{ position: "absolute", left: 0, bottom: 0, right: 0, height: bottomOffset }}>
+                        <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={locale} />
+                        <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={locale} />
+                        <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={locale} />
+                        <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={locale} />
+                    </div>;
+                }
             })()}
             <AjaxViewerShim />
             <ModalLauncher />

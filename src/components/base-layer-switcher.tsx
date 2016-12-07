@@ -35,7 +35,6 @@ export class BaseLayerSwitcher extends React.Component<IBaseLayerSwitcherProps, 
                     </label>
                 </div>;
             })}
-            <hr />
         </div>;
     }
 }

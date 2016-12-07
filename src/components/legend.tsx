@@ -511,8 +511,8 @@ export class Legend extends React.Component<ILegendProps, any> {
                 if (externalBaseLayers != null &&
                     externalBaseLayers.length > 0 &&
                     this.props.inlineBaseLayerSwitcher) {
-                    return <div>
-                        <p><strong>{tr("EXTERNAL_BASE_LAYERS", this.props.locale)}</strong></p>
+                    return <div className="pt-card pt-interactive">
+                        <h5>{tr("EXTERNAL_BASE_LAYERS", this.props.locale)}</h5>
                         <BaseLayerSwitcher externalBaseLayers={externalBaseLayers} onBaseLayerChanged={onBaseLayerChanged} />
                     </div>;
                 }

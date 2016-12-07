@@ -13,6 +13,7 @@ import * as Constants from "../constants";
 import * as ol from "openlayers";
 import { ensureParameters } from "../actions/taskpane";
 import { DefaultComponentNames } from "../api/registry/component";
+import { Toaster, Position, Intent } from "@blueprintjs/core";
 
 function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
     const settings: any = {
@@ -419,6 +420,38 @@ export function initDefaultCommands() {
         enabled: CommandConditions.hasNextView,
         invoke: (dispatch, getState, viewer) => {
             dispatch(MapActions.nextView());
+        }
+    });
+    //Geolocation
+    registerCommand(DefaultCommands.Geolocation, {
+        icon: "geolocation.png",
+        selected: () => false,
+        enabled: CommandConditions.isNotBusy,
+        invoke: (dispatch, getState, viewer) => {
+            const view = getState().view.current;
+            const rtMap = getState().map.state;
+            const locale = getState().config.locale;
+            if (viewer && view && rtMap) {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    const proj = viewer.getProjection();
+                    const txCoord = ol.proj.fromLonLat([ pos.coords.longitude, pos.coords.latitude ], proj);
+                    const testCoord = ol.proj.fromLonLat([ pos.coords.longitude, pos.coords.latitude ], `EPSG:${rtMap.CoordinateSystem.EpsgCode}`);
+                    viewer.zoomToView(txCoord[0], txCoord[1], view.scale);
+                    const extents: [number, number, number, number] = [ 
+                        rtMap.Extents.LowerLeftCoordinate.X,
+                        rtMap.Extents.LowerLeftCoordinate.Y,
+                        rtMap.Extents.UpperRightCoordinate.X,
+                        rtMap.Extents.UpperRightCoordinate.Y
+                    ];
+                    if (ol.extent.containsXY(extents, testCoord[0], testCoord[1])) {
+                        Toaster.create({ position: Position.TOP, className: "mg-toast" }).show({ message: tr("GEOLOCATION_SUCCESS", locale), intent: Intent.SUCCESS });
+                    } else {
+                        Toaster.create({ position: Position.TOP, className: "mg-toast" }).show({ message: tr("GEOLOCATION_WARN_OUTSIDE_MAP", locale), intent: Intent.WARNING });
+                    }
+                }, err => {
+                    Toaster.create({ position: Position.TOP, className: "mg-toast" }).show({ message: tr("GEOLOCATION_ERROR", locale, { message: err.message, code: err.code }), intent: Intent.DANGER });
+                });
+            }
         }
     });
     //Buffer

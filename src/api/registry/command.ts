@@ -117,6 +117,7 @@ export class DefaultCommands {
     public static get FeatureInfo(): string { return "FeatureInfo"; }
     public static get Theme(): string { return "Theme"; }
     public static get Query(): string { return "Query"; }
+    public static get Geolocation(): string { return "Geolocation"; }
 }
 
 const commands: Dictionary<ICommand> = {};

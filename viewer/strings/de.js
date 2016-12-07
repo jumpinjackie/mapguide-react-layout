@@ -64,5 +64,8 @@ var STRINGS_DE = {
     "SELECTION_PREV_FEATURE": "Zurück Eigenschaft",
     "SELECTION_NEXT_FEATURE": "Nächste Funktion",
     "SELECTION_ZOOMTO_FEATURE": "Zoom auf ausgewählte Funktion",
-    "FEATURE_TOOLTIPS": "Funktions-Tooltips"
+    "FEATURE_TOOLTIPS": "Funktions-Tooltips",
+    "GEOLOCATION_SUCCESS": "Vergrößert auf Ihre Position",
+    "GEOLOCATION_WARN_OUTSIDE_MAP": "Vergrößert auf Ihre Position. Es ist außerhalb der Erweiterungen Ihrer Karte",
+    "GEOLOCATION_ERROR": "Geolocation Fehler: {message} ({code})"
 };

@@ -1,6 +1,10 @@
 @import "~openlayers/css/ol.css";
 @import "~@blueprintjs/core/dist/blueprint.css";
 
+.mg-toast {
+    z-index: 120;
+}
+
 .map-viewer-component {
     background-color: white;
 }

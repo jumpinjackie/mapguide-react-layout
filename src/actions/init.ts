@@ -92,7 +92,8 @@ function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictiona
                             //case "CoordinateTracker":
                             case "FeatureInfo":
                                 return { command: DefaultCommands.FeatureInfo, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
-                            //case "Geolocation":
+                            case "Geolocation":
+                                return { command: DefaultCommands.Geolocation, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
                             //case "GoogleStreetViewer":
                             case "Help":
                                 return { command: DefaultCommands.Help, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };

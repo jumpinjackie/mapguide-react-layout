@@ -16,6 +16,7 @@ import { tr } from "../api/i18n";
 
 export interface ILegendContainerProps {
     maxHeight?: number;
+    inlineBaseLayerSwitcher?: boolean;
 }
 
 export interface ILegendContainerState {
@@ -99,7 +100,7 @@ export class LegendContainer extends React.Component<LegendContainerProps, any> 
     render(): JSX.Element {
         //overrideSelectableLayers?: any;
         //overrideExpandedItems?: any;
-        const { map, config, view, viewer, legend, maxHeight } = this.props;
+        const { map, config, view, viewer, legend, maxHeight, inlineBaseLayerSwitcher } = this.props;
         let locale: string | undefined;
         if (map != null && config != null && view != null && legend != null) {
             locale = config.locale;
@@ -123,6 +124,7 @@ export class LegendContainer extends React.Component<LegendContainerProps, any> 
                                hideLayers={hideLayers}
                                hideGroups={hideGroups}
                                locale={config.locale}
+                               inlineBaseLayerSwitcher={!!inlineBaseLayerSwitcher}
                                externalBaseLayers={config.externalBaseLayers} 
                                onBaseLayerChanged={this.fnBaseLayerChanged}
                                overrideSelectableLayers={legend.selectableLayers}

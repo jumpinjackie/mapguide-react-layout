@@ -187,7 +187,7 @@ class Sidebar extends React.Component<ISidebarProps, any> {
                         return <div className={`sidebar-pane ${activeTab == "legend" ? "active" : ""}`}>
                             <SidebarHeader text={tr("TPL_TITLE_LEGEND", this.props.locale)} onCloseClick={this.fnClickCollapse} />
                             <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0, overflow: "auto" }}>
-                                <PlaceholderComponent id={DefaultComponentNames.Legend} locale={this.props.locale} />
+                                <PlaceholderComponent id={DefaultComponentNames.Legend} locale={this.props.locale} componentProps={{ inlineBaseLayerSwitcher: true }} />
                             </div>
                         </div>;
                     }

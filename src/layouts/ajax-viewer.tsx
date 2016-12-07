@@ -73,7 +73,7 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
                         {(() => {
                             if (hasLegend) {
                                 return <div style={lgStyle}>
-                                    <PlaceholderComponent id={DefaultComponentNames.Legend} locale={this.props.config.locale} />
+                                    <PlaceholderComponent id={DefaultComponentNames.Legend} locale={this.props.config.locale} componentProps={{ inlineBaseLayerSwitcher: true }} />
                                 </div>;
                             }
                         })()}

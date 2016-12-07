@@ -133,7 +133,7 @@ export class LimeGoldLayoutTemplate extends React.Component<LimeGoldLayoutTempla
                         if (hasLegend) {
                             return <TabPanel>
                                 <div style={assign(tabPanelStyle, { overflow: "auto" })}>
-                                    <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} />
+                                    <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: true }} />
                                 </div>
                             </TabPanel>;
                         }

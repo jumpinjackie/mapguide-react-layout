@@ -28,8 +28,10 @@ export class BaseLayerSwitcher extends React.Component<IBaseLayerSwitcherProps, 
         return <div>
             {this.props.externalBaseLayers.map(layer => {
                 return <div className="base-layer-switcher-item-container" key={`base-layer-${layer.name}`}>
-                    <label>
-                        <input className="base-layer-switcher-option" type="radio" value={layer.name} checked={layer.name === this.state.selected} onChange={this.fnBaseLayerChanged} /> {layer.name}
+                    <label className="pt-control pt-radio">
+                        <input className="base-layer-switcher-option" type="radio" value={layer.name} checked={layer.name === this.state.selected} onChange={this.fnBaseLayerChanged} />
+                        <span className="pt-control-indicator" />
+                        {layer.name}
                     </label>
                 </div>;
             })}

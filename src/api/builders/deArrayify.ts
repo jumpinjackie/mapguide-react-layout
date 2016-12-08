@@ -428,7 +428,7 @@ function deArrayifyWebLayoutTaskPane(json: any): Contracts.WebLayout.WebLayoutTa
 
 function deArrayifyUIItem(json: any): Contracts.WebLayout.UIItem {
     const root = json;
-    const func: Contracts.WebLayout.UIItemFunction = tryGetAsProperty(root, "Function");
+    const func: string = tryGetAsProperty(root, "Function");
     const item: any = {
         Function: func
     };

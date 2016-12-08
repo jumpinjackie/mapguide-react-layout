@@ -193,7 +193,6 @@ function convertWebLayoutUIItems(items: UIItem[] | null | undefined, cmdsByKey: 
                 children: convertWebLayoutUIItems(item.SubItem, cmdsByKey, locale, false, false) 
             };
         }
-
         return null;
     }).filter(item => item != null);
 }

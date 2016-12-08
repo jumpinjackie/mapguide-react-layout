@@ -269,7 +269,7 @@ class MouseTrackingTooltip {
         this.tooltipElement.innerHTML = "";
     }
     public destroy() {
-        if (this.tooltipElement) {
+        if (this.tooltipElement && this.tooltipElement.parentNode) {
             this.tooltipElement.parentNode.removeChild(this.tooltipElement);
         }
     }

@@ -26,13 +26,8 @@ export interface WebLayoutResizableControl extends WebLayoutControl {
     Width: number;
 }
 
-export type UIItemFunction = "Separator" | "Command" | "Flyout";
-
-export interface UIItem {
-    Function: UIItemFunction;
-}
-
-export interface FlyoutItem extends UIItem {
+export interface FlyoutItem {
+    Function: "Flyout";
     Label: string;
     Tooltip?: string | null | undefined;
     Description?: string | null | undefined;
@@ -41,13 +36,16 @@ export interface FlyoutItem extends UIItem {
     SubItem?: UIItem[] | null | undefined;
 }
 
-export interface SeparatorItem extends UIItem {
-
+export interface SeparatorItem {
+    Function: "Separator";
 }
 
-export interface CommandItem extends UIItem {
+export interface CommandItem {
+    Function: "Command";
     Command: string;
 }
+
+export type UIItem = FlyoutItem | SeparatorItem | CommandItem;
 
 export function isCommandItem(item: UIItem): item is CommandItem {
     return item.Function === "Command";

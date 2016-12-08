@@ -1,5 +1,3 @@
-const objectAssign = require('object-assign');
-
 /**
  * Returns whether the provided value is a promise
  *
@@ -23,14 +21,14 @@ export default function promiseMiddleware({ dispatch }: { dispatch: any }) {
         const { promise, data } = payload;
         const [PENDING, FULFILLED, REJECTED] = types;
 
+        const p1 = { type: PENDING };
+        const p2 = data ? { payload: data } : {};
+        const p3 = meta ? { meta } : {};
+
         /**
          * Dispatch the pending action
          */
-        dispatch(objectAssign({},
-            { type: PENDING },
-            data ? { payload: data } : {},
-            meta ? { meta } : {}
-        ));
+        dispatch({ ...p1, ...p2, ...p3 });
 
         /**
          * If successful, dispatch the fulfilled action, otherwise dispatch

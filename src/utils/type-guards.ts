@@ -1,4 +1,4 @@
-import { InitError } from "../api/common";
+import { InitError, IMapView } from "../api/common";
 import { MapLayer } from "../api/contracts/runtime-map";
 import { IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../components/toolbar";
 
@@ -24,4 +24,10 @@ export function isMenu(item: any): item is IInlineMenu {
 
 export function isLayer(layer: any): layer is MapLayer {
     return layer.LayerDefinition !== undefined;
+}
+
+export function isMapView(view: any): view is IMapView {
+    return typeof(view.x) == 'number'
+        && typeof(view.y) == 'number'
+        && typeof(view.scale) == 'number';
 }

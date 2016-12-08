@@ -137,11 +137,6 @@ declare module "query-string" {
     };
 }
 
-declare module "object-assign" {
-    function assign(target: any, ...objectsToMerge: any[]): any;
-    export = assign;
-}
-
 // NOTE: Something changed/regressed in TS 2.0 as we can no longer re-export
 // _.debounce from the full lodash.d.ts
 //

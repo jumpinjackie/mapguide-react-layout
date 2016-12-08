@@ -1,7 +1,6 @@
 import * as Request from '../request-builder';
 import * as Contracts from '../contracts';
 import { MgError } from '../error';
-import assign = require("object-assign");
 import { deArrayify } from './deArrayify';
 
 const MG_MAPAGENT_ERROR_CODE = 559;
@@ -147,7 +146,8 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
 
     public getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier, args?: any): Request.IPromise<T> {
         if (args != null) {
-            const url = this.stringifyGetUrl(assign(args, { operation: "GETRESOURCECONTENT", resourceId: resourceId }));
+            const p1 = { operation: "GETRESOURCECONTENT", resourceId: resourceId };
+            const url = this.stringifyGetUrl({ ...args, ...p1 });
             return this.get<T>(url);
         } else {
             const url = this.stringifyGetUrl({ operation: "GETRESOURCE", resourceId: resourceId });
@@ -156,16 +156,19 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
     }
     
     public createRuntimeMap(options: Request.ICreateRuntimeMapOptions): Request.IPromise<Contracts.RtMap.RuntimeMap> {
-        const url = this.stringifyGetUrl(assign(options, { operation: "CREATERUNTIMEMAP", version: "3.0.0" }));
+        const p1 = { operation: "CREATERUNTIMEMAP", version: "3.0.0" };
+        const url = this.stringifyGetUrl({ ...options, ...p1 });
         return this.get<Contracts.RtMap.RuntimeMap>(url);
     }
     
     public queryMapFeatures(options: Request.IQueryMapFeaturesOptions): Request.IPromise<Contracts.Query.QueryMapFeaturesResponse> {
-        return this.post<Contracts.Query.QueryMapFeaturesResponse>(this.agentUri, assign(options, { operation: "QUERYMAPFEATURES", version: "2.6.0" }));
+        const p1 = { operation: "QUERYMAPFEATURES", version: "2.6.0" };
+        return this.post<Contracts.Query.QueryMapFeaturesResponse>(this.agentUri, { ...options, ...p1 });
     }
 
     public describeRuntimeMap(options: Request.IDescribeRuntimeMapOptions): Request.IPromise<Contracts.RtMap.RuntimeMap> {
-        const url = this.stringifyGetUrl(assign(options, { operation: "DESCRIBERUNTIMEMAP", version: "3.0.0" }));
+        const p1 = { operation: "DESCRIBERUNTIMEMAP", version: "3.0.0" };
+        const url = this.stringifyGetUrl({ ...options, ...p1 });
         return this.get<Contracts.RtMap.RuntimeMap>(url);
     }
 

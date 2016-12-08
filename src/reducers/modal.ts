@@ -1,6 +1,5 @@
 import * as Constants from "../constants";
 import { IModalReducerState, ReduxAction } from "../api/common";
-const assign = require("object-assign");
 
 const INITIAL_STATE = { };
 
@@ -14,8 +13,7 @@ export function modalReducer(state = INITIAL_STATE, action: ReduxAction) {
                     component: action.payload.component,
                     componentProps: action.payload.props
                 };
-                const newState = assign({}, state, newData);
-                return newState;
+                return { ...state, ...newData };
             }
         case Constants.MODAL_SHOW_URL:
             {
@@ -24,12 +22,11 @@ export function modalReducer(state = INITIAL_STATE, action: ReduxAction) {
                     modal: action.payload.modal,
                     url: action.payload.url
                 };
-                const newState = assign({}, state, newData);
-                return newState;
+                return { ...state, ...newData };
             }
         case Constants.MODAL_CLOSE:
             {
-                let newState = assign({}, state);
+                let newState: any = { ...state };
                 delete newState[action.payload];
                 return newState;
             }

@@ -1,6 +1,5 @@
 import * as Constants from "../constants";
 import { IConfigurationReducerState, IExternalBaseLayer } from "../api/common";
-const assign = require("object-assign");
 
 export const INITIAL_STATE: IConfigurationReducerState = {
     agentUri: null,
@@ -32,13 +31,14 @@ export function configReducer(state = INITIAL_STATE, action = { type: '', payloa
         case Constants.INIT_APP: 
             {
                 const payload: any = action.payload || {};
-                const newState = assign({}, state, {
+                const state1 = {
                     locale: payload.locale || "en",
                     externalBaseLayers: payload.externalBaseLayers,
                     capabilities: payload.capabilities
-                });
+                };
+                const newState = { ...state, ...state1 };
                 if (payload.config != null && Object.keys(payload.config).length > 0) {
-                    const config: any = assign({}, state.viewer);
+                    const config: any = { ...state.viewer };
                     if (payload.config.imageFormat != null) {
                         config.imageFormat = payload.config.imageFormat;
                     }
@@ -51,7 +51,8 @@ export function configReducer(state = INITIAL_STATE, action = { type: '', payloa
                     if (payload.config.pointSelectionBuffer != null) {
                         config.pointSelectionBuffer = payload.config.pointSelectionBuffer;
                     }
-                    return assign(newState, { viewer: config });
+                    const state2 = { viewer: config };
+                    return { ...newState, ...state2 };
                 } else {
                     return newState;
                 }
@@ -66,10 +67,10 @@ export function configReducer(state = INITIAL_STATE, action = { type: '', payloa
                     }
                     return layer;
                 });
-                const newState = assign({}, state, {
+                const state1 = {
                     externalBaseLayers: baseLayers
-                });
-                return newState;
+                };
+                return { ...state, ...state1 };
             }
     }
     return state;

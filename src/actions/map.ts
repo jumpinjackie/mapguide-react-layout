@@ -14,7 +14,6 @@ import { QueryMapFeaturesResponse, FeatureSet, SelectedFeature, SelectedFeatureS
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml } from '../api/builders/deArrayify';
 import uniq = require("lodash.uniq");
-const assign = require("object-assign");
 
 export interface QueryMapFeatureActionOptions {
     options: IQueryMapFeaturesOptions;

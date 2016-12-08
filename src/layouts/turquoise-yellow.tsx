@@ -17,7 +17,6 @@ import {
     IViewerCapabilities
 } from "../api/common";
 import { Tabs, TabList, Tab, TabPanel } from "@blueprintjs/core";
-import assign = require("object-assign");
 
 const SIDEBAR_WIDTH = 250;
 const SIDEBAR_PADDING = 3;
@@ -112,8 +111,9 @@ export class TurquoiseYellowLayoutTemplate extends React.Component<TurquoiseYell
                     })()}
                     {(() => {
                         if (hasLegend) {
+                            const p1 = { overflow: "auto" };
                             return <TabPanel>
-                                <div style={assign(tabPanelStyle, { overflow: "auto" })}>
+                                <div style={{ ...tabPanelStyle, ...p1 }}>
                                     <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: false }} />
                                 </div>
                             </TabPanel>;

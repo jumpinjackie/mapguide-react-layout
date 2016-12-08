@@ -6,7 +6,6 @@ import { ClientKind } from "../api/common";
 import { ClientContext } from "../api/client";
 import configureStore from "../store/configure-store";
 import { INITIAL_STATE } from "../reducers/config";
-const assign = require("object-assign");
 
 /**
  * This is the entry point to the Application component
@@ -20,7 +19,7 @@ export class ApplicationViewModel {
             agentUri: props.agent.uri,
             agentKind: props.agent.kind || "mapagent"
         };
-        const store = configureStore({ config: assign({}, INITIAL_STATE, agentConf) });
+        const store = configureStore({ config: { ...INITIAL_STATE, ...agentConf } });
         ReactDOM.render(<Provider store={store}>
             <App {...props} />
         </Provider>, node);

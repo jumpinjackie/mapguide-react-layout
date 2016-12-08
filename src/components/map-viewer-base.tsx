@@ -30,6 +30,7 @@ import {
     ImageFormat,
     RefreshMode,
     ClientKind,
+    Partial,
     NOOP
 } from "../api/common";
 import {
@@ -47,7 +48,6 @@ import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { IInlineMenu, IItem, getEnabled, getIcon } from '../components/toolbar';
 import { isMenu } from '../utils/type-guards';
 import { tr } from "../api/i18n";
-const assign = require("object-assign");
 const isMobile = require("ismobilejs");
 import { MenuComponent } from "./menu";
 import { ContextMenuTarget, ContextMenu } from "@blueprintjs/core";
@@ -78,7 +78,7 @@ export interface IMapViewerBaseProps {
     selectableLayerNames: string[];
     contextMenu?: IItem[];
     onRequestZoomToView?: (view: IMapView) => void;
-    onQueryMapFeatures?: (options: IQueryMapFeaturesOptions, callback?: (res: QueryMapFeaturesResponse) => void, errBack?: (err: any) => void) => void;
+    onQueryMapFeatures?: (options: Partial<IQueryMapFeaturesOptions>, callback?: (res: QueryMapFeaturesResponse) => void, errBack?: (err: any) => void) => void;
     onMouseCoordinateChanged?: (coords: number[]) => void;
     onBusyLoading: (busyCount: number) => void;
     onSessionExpired?: () => void;
@@ -488,7 +488,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             return;
         }
         this.incrementBusyWorker();
-        const queryOptions = assign({}, {
+        const qOrig: Partial<IQueryMapFeaturesOptions> = {
             mapname: this.props.map.Name,
             session: this.props.map.SessionId,
             persist: 1,
@@ -496,7 +496,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             selectioncolor: this.props.selectionColor,
             selectionformat: this.props.selectionImageFormat || "PNG8",
             maxfeatures: -1
-        }, queryOpts);
+        };
+        const queryOptions: Partial<IQueryMapFeaturesOptions> = { ...qOrig, ...queryOpts };
         if (this.props.onQueryMapFeatures) {
             this.props.onQueryMapFeatures(queryOptions, res => {
                 this.decrementBusyWorker();
@@ -1058,7 +1059,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         //selection XML will not be rendered because they may not pass the layer attribute filter
         const reqQueryFeatures = 1; //Attributes
         this.incrementBusyWorker();
-        const queryOptions = assign({}, {
+        const qOrig = {
             mapname: this.props.map.Name,
             session: this.props.map.SessionId,
             persist: 1,
@@ -1067,7 +1068,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             selectionformat: this.props.selectionImageFormat || "PNG8",
             maxfeatures: -1,
             requestdata: reqQueryFeatures
-        }, queryOpts);
+        };
+        const queryOptions = { ...qOrig, ...queryOpts };
         if (this.props.onQueryMapFeatures) {
             this.props.onQueryMapFeatures(queryOptions, res => {
                 this.decrementBusyWorker();

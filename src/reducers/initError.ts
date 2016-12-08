@@ -1,6 +1,5 @@
 import * as Constants from "../constants";
 import { IInitErrorReducerState } from "../api/common";
-const assign = require("object-assign");
 
 const INITIAL_STATE: IInitErrorReducerState = {
     options: {},

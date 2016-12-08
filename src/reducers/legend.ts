@@ -1,6 +1,5 @@
 import * as Constants from "../constants";
 import { ILegendReducerState } from "../api/common";
-const assign = require("object-assign");
 
 const INITIAL_STATE: ILegendReducerState = {
     selectableLayers: {},
@@ -14,19 +13,19 @@ export function legendReducer(state = INITIAL_STATE, action = { type: '', payloa
             {
                 const layers = state.selectableLayers;
                 layers[payload.id] = payload.value;
-                const newState = assign({}, state, {
+                const state1 = {
                     selectableLayers: layers
-                });
-                return newState;
+                };
+                return { ...state, ...state1 };
             }
         case Constants.LEGEND_SET_GROUP_EXPANDABLE:
             {
                 const groups = state.expandedGroups;
                 groups[payload.id] = payload.value;
-                const newState = assign({}, state, {
+                const state1 = {
                     expandedGroups: groups
-                });
-                return newState;
+                };
+                return { ...state, ...state1 };
             }
     }
     return state;

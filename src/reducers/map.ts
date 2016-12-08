@@ -1,7 +1,6 @@
 import * as Constants from "../constants";
 import { IMapReducerState, ActiveMapTool } from "../api/common";
 import uniq = require("lodash.uniq");
-const assign = require("object-assign");
 
 const INITIAL_STATE: IMapReducerState = {
     state: null,
@@ -24,44 +23,44 @@ export function runtimeMapReducer(state = INITIAL_STATE, action = { type: '', pa
         case Constants.MAP_REFRESH:
         case Constants.INIT_APP:
             {
-                const newState = assign({}, state, { "state": payload.map });
-                return newState;
+                const state1 = { "state": payload.map };
+                return { ...state, ...state1 };
             }
         case Constants.MAP_SET_ACTIVE_TOOL:
             {
-                const newState = assign({}, state, {
+                const state1 = {
                     viewer: {
                         busyCount: state.viewer.busyCount,
                         tool: action.payload,
                         featureTooltipsEnabled: state.viewer.featureTooltipsEnabled,
                         layerGroupVisibility: state.viewer.layerGroupVisibility 
                     }
-                });
-                return newState;
+                };
+                return { ...state, ...state1 };
             }
         case Constants.MAP_SET_MAPTIP:
             {
-                const newState = assign({}, state, {
+                const state1 = {
                     viewer: {
                         busyCount: state.viewer.busyCount,
                         tool: state.viewer.tool,
                         featureTooltipsEnabled: action.payload,
                         layerGroupVisibility: state.viewer.layerGroupVisibility 
                     }
-                });
-                return newState;
+                };
+                return { ...state, ...state1 };
             }
         case Constants.MAP_SET_BUSY_COUNT:
             {
-                const newState = assign({}, state, {
+                const state1 = {
                     viewer: {
                         busyCount: action.payload,
                         tool: state.viewer.tool,
                         featureTooltipsEnabled: state.viewer.featureTooltipsEnabled,
                         layerGroupVisibility: state.viewer.layerGroupVisibility
                     }
-                });
-                return newState;
+                };
+                return { ...state, ...state1 };
             }
         case Constants.LEGEND_SET_GROUP_VISIBILITY:
             {
@@ -76,7 +75,7 @@ export function runtimeMapReducer(state = INITIAL_STATE, action = { type: '', pa
                     hideGroups = uniq(hideGroups);
                     showGroups = showGroups.filter(g => g != payload.id);
                 }
-                const newState = assign({}, state, {
+                const state1 = {
                     viewer: {
                         busyCount: state.viewer.busyCount,
                         tool: state.viewer.tool,
@@ -88,8 +87,8 @@ export function runtimeMapReducer(state = INITIAL_STATE, action = { type: '', pa
                             hideGroups: hideGroups
                         }
                     }
-                });
-                return newState;
+                };
+                return { ...state, ...state1 };
             }
         case Constants.LEGEND_SET_LAYER_VISIBILITY:
             {
@@ -104,7 +103,7 @@ export function runtimeMapReducer(state = INITIAL_STATE, action = { type: '', pa
                     hideLayers = uniq(hideLayers);
                     showLayers = showLayers.filter(g => g != payload.id);
                 }
-                const newState = assign({}, state, {
+                const state1 = {
                     viewer: {
                         busyCount: state.viewer.busyCount,
                         tool: state.viewer.tool,
@@ -116,8 +115,8 @@ export function runtimeMapReducer(state = INITIAL_STATE, action = { type: '', pa
                             hideGroups: state.viewer.layerGroupVisibility.hideGroups
                         }
                     }
-                });
-                return newState;
+                };
+                return { ...state, ...state1 };
             }
     }
     return state;

@@ -1,6 +1,5 @@
 import * as Constants from "../constants";
 import { ISelectionReducerState } from "../api/common";
-const assign = require("object-assign");
 
 const INITIAL_STATE: ISelectionReducerState = {
     selectionSet: null,
@@ -12,11 +11,12 @@ export function selectionReducer(state = INITIAL_STATE, action = { type: '', pay
     switch (action.type) {
         case Constants.MAP_SET_SELECTION:
             {
-                return assign({}, state, {
+                const state1 = {
                     selectionSet: action.payload,
                     layerIndex: -1,
                     featureIndex: -1
-                });
+                };
+                return { ...state, ...state1 };
             }
     }
     return state;

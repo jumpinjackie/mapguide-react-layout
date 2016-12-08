@@ -1,6 +1,5 @@
 import * as Constants from "../constants";
 import { IToolbarReducerState } from "../api/common";
-const assign = require("object-assign");
 import update = require("react-addons-update");
 
 const INITIAL_STATE: IToolbarReducerState = {
@@ -13,7 +12,7 @@ export function toolbarReducer(state = INITIAL_STATE, action = { type: '', paylo
     switch (action.type) {
         case Constants.INIT_APP:
             {
-                return assign({}, state, payload.toolbars);
+                return { ...state, ...payload.toolbars };
             }
         case Constants.COMPONENT_OPEN:
             {

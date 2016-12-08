@@ -1,5 +1,4 @@
 import * as Constants from "../constants";
-const assign = require("object-assign");
 
 const INITIAL_STATE = { };
 

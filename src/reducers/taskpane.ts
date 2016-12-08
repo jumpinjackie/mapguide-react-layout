@@ -1,6 +1,5 @@
 import * as Constants from "../constants";
 import { ITaskPaneReducerState } from "../api/common";
-const assign = require("object-assign");
 import { areUrlsSame } from "../utils/url";
 
 const INITIAL_STATE: ITaskPaneReducerState = {
@@ -22,11 +21,12 @@ function mergeNavigatedUrl(state: any, url: string): any {
     if (nav.length > index + 1) {
         nav.splice(index + 1);
     }
-    return assign({}, state, {
+    const newState = {
         navIndex: index,
         navigation: nav,
         lastUrlPushed: false
-    });
+    };
+    return { ...state, ...newState };
 }
 
 export function taskPaneReducer(state = INITIAL_STATE, action = { type: '', payload: null }) {
@@ -34,11 +34,12 @@ export function taskPaneReducer(state = INITIAL_STATE, action = { type: '', payl
     switch (action.type) {
         case Constants.INIT_APP:
             {
-                return assign({}, state, {
+                const newState = {
                     initialUrl: payload.initialUrl,
                     navIndex: 0,
                     navigation: [ payload.initialUrl ]
-                });
+                };
+                return { ...state, ...newState };
             }
         case Constants.TASK_PANE_HOME:
             {
@@ -51,22 +52,24 @@ export function taskPaneReducer(state = INITIAL_STATE, action = { type: '', payl
                 let index = state.navIndex;
                 const nav = state.navigation;
                 index--;
-                return assign({}, state, {
+                const newState = {
                     navIndex: index,
                     navigation: nav,
                     lastUrlPushed: false
-                });
+                };
+                return { ...state, ...newState };
             }
         case Constants.TASK_PANE_FORWARD:
             {
                 let index = state.navIndex;
                 const nav = state.navigation;
                 index++;
-                return assign({}, state, {
+                const newState = {
                     navIndex: index,
                     navigation: nav,
                     lastUrlPushed: false
-                });
+                };
+                return { ...state, ...newState };
             }
         case Constants.TASK_PANE_PUSH_URL:
             {
@@ -82,15 +85,17 @@ export function taskPaneReducer(state = INITIAL_STATE, action = { type: '', payl
                     nav.splice(index + 2);
                 }
                 if (payload.silent === true) {
-                    return assign({}, state, {
+                    const newState = {
                         navigation: nav
-                    });
+                    };
+                    return { ...state, ...newState };
                 } else {
-                    return assign({}, state, {
+                    const newState = {
                         navIndex: index + 1,
                         navigation: nav,
                         lastUrlPushed: true
-                    });
+                    };
+                    return { ...state, ...newState };
                 }
             }
         case Constants.TASK_INVOKE_URL:

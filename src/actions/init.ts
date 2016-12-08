@@ -37,7 +37,6 @@ import * as logger from "../utils/logger";
 import queryString = require("query-string");
 import * as uuid from "node-uuid";
 const parse = require("url-parse");
-const assign = require("object-assign");
 const proj4 = require("proj4");
 
 function isUIWidget(widget: any): widget is UIWidget {
@@ -671,11 +670,12 @@ function makeSessionAcquired(client: Client, dispatch: ReduxDispatch, opts: any)
 export function initLayout(options: any): ReduxThunkedAction {
     const parsed = parse(window.location.href);
     const query = queryString.parse(parsed.query);
-    const opts = assign({}, options, {
+    const options1 = {
         resourceId: query.resource,
         locale: query.locale || "en",
         session: query.session
-    });
+    };
+    const opts = { ...options, ...options1 };
     return (dispatch, getState) => {
         const args = getState().config;
         if (args.agentUri && args.agentKind) {

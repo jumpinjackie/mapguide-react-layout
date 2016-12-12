@@ -25,7 +25,7 @@ It aims for reasonable compatibility with the existing Web Layout and Flexible L
 # Installation - From Source
 
  1. Clone this repository
- 2. Run from the command-line: `yarn install`
+ 2. Run from the command-line: `yarn install` (note: If this fails for you on Windows, just run it again - [Related issue](https://github.com/yarnpkg/yarn/issues/919))
  3. Either:
     * Copy the `viewer` directory to MapGuide's physical wwwroot directory
     * Map the `viewer` directory as a child virtual directory under the MapGuide's wwwroot in your web server of choice (IIS or Apache)

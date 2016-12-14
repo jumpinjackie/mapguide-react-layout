@@ -63,12 +63,6 @@ declare type GeoJSONFeatureCollection = any;
 declare type GeoJSONGeometry = any;
 declare type GeoJSONGeometryCollection = any;
 declare type TileJSON = any;
-/**
- * Handles the {@link ol.MapBrowserEvent map browser event} unconditionally and
- * neither prevents the browser default nor stops event propagation.
- * @param mapBrowserEvent  (Required) Map browser event.
- */
-declare function handleEvent(mapBrowserEvent: ol.MapBrowserEvent): boolean;
 declare module ol {
     /**
      * An attribution for a layer source.

@@ -5,6 +5,7 @@
         "module": "commonjs",
         "target": "es5",
         "outDir": "build",
+        "importHelpers": true,
         "strictNullChecks": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,

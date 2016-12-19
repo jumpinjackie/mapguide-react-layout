@@ -2,15 +2,21 @@
 # yarn lockfile v1
 
 
-"@blueprintjs/core@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-1.2.0.tgz#3441d7af7d1c1c5cd4837b5ed26ccff0f1505f91"
+"@blueprintjs/core@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-1.4.0.tgz#c9da1a23bb9041dad124cabf5f99015775063d22"
   dependencies:
+    "@types/dom4" "^1.5.20"
+    "@types/tether" "^1.1.27"
     classnames "^2.2"
     dom4 "^1.8"
     normalize.css "4.1.1"
     pure-render-decorator "^1.1"
-    tether "^1.2"
+    tether "^1.4"
+
+"@types/dom4@^1.5.20":
+  version "1.5.20"
+  resolved "https://registry.yarnpkg.com/@types/dom4/-/dom4-1.5.20.tgz#ccf636d3b794fe65a4191ebc7ff979a78efea6c2"
 
 "@types/react-addons-css-transition-group@0.14.18":
   version "0.14.18"
@@ -37,9 +43,17 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@0.14.51":
+"@types/react@*":
   version "0.14.51"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-0.14.51.tgz#7bb70a087632a91cc2121dd5aecc2da268b74afe"
+
+"@types/react@0.14.55":
+  version "0.14.55"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-0.14.55.tgz#f7f7a6ad0c94780531e95632435b2798c5dad11b"
+
+"@types/tether@^1.1.27":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@types/tether/-/tether-1.4.0.tgz#163da2117430b3a1b89550cc0b82255c036a87d2"
 
 JSONStream@^1.0.3:
   version "1.2.1"
@@ -5634,7 +5648,7 @@ testdouble@^1.10.0:
     quibble "^0.4.0"
     stringify-object "^2.4.0"
 
-tether@^1.2:
+tether@^1.4:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/tether/-/tether-1.4.0.tgz#0f9fa171f75bf58485d8149e94799d7ae74d1c1a"
 

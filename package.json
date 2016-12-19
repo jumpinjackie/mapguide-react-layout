@@ -32,8 +32,8 @@
   },
   "homepage": "https://github.com/jumpinjackie/mapguide-react-layout#readme",
   "devDependencies": {
-    "@blueprintjs/core": "^1.2.0",
-    "@types/react": "0.14.51",
+    "@blueprintjs/core": "^1.4.0",
+    "@types/react": "0.14.55",
     "@types/react-addons-css-transition-group": "0.14.18",
     "@types/react-addons-update": "0.14.14",
     "@types/react-dom": "0.14.19",

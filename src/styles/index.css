@@ -67,6 +67,13 @@
     top: auto;
 }
 
+/* Accordion */
+.component-accordion-panel-header {
+    border: 1px solid black;
+    border-radius: 3px;
+    padding: 3px;
+}
+
 /* Selection Panel */
 
 .selection-panel-property-grid {

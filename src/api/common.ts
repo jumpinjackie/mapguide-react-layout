@@ -701,13 +701,3 @@ export interface IDOMElementMetrics {
     height: number;
     vertical?: boolean;
 }
-
-// Keep types the same, but make every property optional.
-export type Partial<T> = {
-    [P in keyof T]?: T[P];
-};
-
-// Keep types the same, but make each property to be read-only.
-export type Readonly<T> = {
-    readonly [P in keyof T]: T[P];
-};

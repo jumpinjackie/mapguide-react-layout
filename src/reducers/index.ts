@@ -11,7 +11,7 @@ import { lastAction } from "./last-action";
 import { modalReducer } from "./modal";
 import { initErrorReducer } from "./initError";
 
-const rootReducer = combineReducers({
+const rootReducer: any = combineReducers({
     initError: initErrorReducer,
     config: configReducer,
     map: runtimeMapReducer,

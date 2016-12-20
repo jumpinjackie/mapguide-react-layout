@@ -12,6 +12,8 @@ import { registerLayout } from "../api/registry/layout";
 import { registerCommand } from "../api/registry/command";
 import { registerComponentFactory } from "../api/registry/component";
 import { registerDefaultComponents } from "../api/default-components";
+import * as Common from "../api/common";
+import * as Contracts from "../api/contracts";
 import "../styles/index.css";
 import * as ol from "openlayers"; 
 const proj4 = require("proj4");
@@ -27,19 +29,27 @@ registerLayout("limegold", () => <LimeGoldLayoutTemplate />);
 initDefaultCommands();
 registerDefaultComponents();
 
-export = {
-    __DEV__: __DEV__,
-    Registry: {
-        registerStringBundle: registerStringBundle, 
-        registerLayout: registerLayout,
-        registerCommand: registerCommand,
-        registerComponentFactory: registerComponentFactory
-    },
-    Application: ApplicationViewModel,
-    Externals: {
-        ol: ol,
-        proj4: proj4,
-        React: React,
-        ReactDOM: ReactDOM
+export var __DEV__: boolean;
+export class Registry {
+    public static registerStringBundle(locale: string, bundle: any) {
+        registerStringBundle(locale, bundle);
     }
+    public static registerLayout(name: string, factory: () => JSX.Element) {
+        registerLayout(name, factory);
+    }
+    public static registerCommand(name: string, cmdDef: Common.ICommand | Common.IInvokeUrlCommand | Common.ISearchCommand) {
+        registerCommand(name, cmdDef);
+    }
+    public static registerComponentFactory(id: string, factory: (props: any) => JSX.Element) {
+        registerComponentFactory(id, factory);
+    }
+}
+export { Common };
+export { Contracts };
+export const Externals = {
+    ol: ol,
+    proj4: proj4,
+    React: React,
+    ReactDOM: ReactDOM
 };
+export { ApplicationViewModel as Application } from "./application";

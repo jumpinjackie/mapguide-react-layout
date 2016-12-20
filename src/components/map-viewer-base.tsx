@@ -30,7 +30,6 @@ import {
     ImageFormat,
     RefreshMode,
     ClientKind,
-    Partial,
     NOOP
 } from "../api/common";
 import {

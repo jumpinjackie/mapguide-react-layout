@@ -17,8 +17,8 @@ const INITIAL_STATE: IMapReducerState = {
     }
 };
 
-export function runtimeMapReducer(state = INITIAL_STATE, action = { type: '', payload: null }) {
-    const payload: any = action.payload || {};
+export function runtimeMapReducer(state = INITIAL_STATE, action = { type: '', payload: null }): IMapReducerState {
+    const payload: any = typeof(action.payload) != 'undefined' ? action.payload : {};
     switch (action.type) {
         case Constants.MAP_REFRESH:
         case Constants.INIT_APP:
@@ -31,7 +31,7 @@ export function runtimeMapReducer(state = INITIAL_STATE, action = { type: '', pa
                 const state1 = {
                     viewer: {
                         busyCount: state.viewer.busyCount,
-                        tool: action.payload,
+                        tool: payload,
                         featureTooltipsEnabled: state.viewer.featureTooltipsEnabled,
                         layerGroupVisibility: state.viewer.layerGroupVisibility 
                     }
@@ -44,7 +44,7 @@ export function runtimeMapReducer(state = INITIAL_STATE, action = { type: '', pa
                     viewer: {
                         busyCount: state.viewer.busyCount,
                         tool: state.viewer.tool,
-                        featureTooltipsEnabled: action.payload,
+                        featureTooltipsEnabled: payload,
                         layerGroupVisibility: state.viewer.layerGroupVisibility 
                     }
                 };
@@ -54,7 +54,7 @@ export function runtimeMapReducer(state = INITIAL_STATE, action = { type: '', pa
             {
                 const state1 = {
                     viewer: {
-                        busyCount: action.payload,
+                        busyCount: payload,
                         tool: state.viewer.tool,
                         featureTooltipsEnabled: state.viewer.featureTooltipsEnabled,
                         layerGroupVisibility: state.viewer.layerGroupVisibility

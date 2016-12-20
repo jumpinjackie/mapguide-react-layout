@@ -26,7 +26,7 @@ export const INITIAL_STATE: IConfigurationReducerState = {
     }
 };
 
-export function configReducer(state = INITIAL_STATE, action = { type: '', payload: null }) {
+export function configReducer(state = INITIAL_STATE, action = { type: '', payload: null }): IConfigurationReducerState {
     switch (action.type) {
         case Constants.INIT_APP: 
             {

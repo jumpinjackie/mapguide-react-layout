@@ -16,7 +16,7 @@ import {
     IConfigurationReducerState,
     IViewerCapabilities
 } from "../api/common";
-import { Accordion, IAccordionPanelSpec } from "../components/accordion";
+import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../components/accordion";
 
 export interface ISlateTemplateLayoutState {
     map?: RuntimeMap | null;
@@ -76,25 +76,29 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
             { 
                 id: "Legend",
                 title: "Legend",
-                contentRenderer: () => {
-                    return <PlaceholderComponent id={DefaultComponentNames.Legend} 
-                                                 locale={locale} 
-                                                 componentProps={{ inlineBaseLayerSwitcher: false }} />;
+                contentRenderer: (dim: IAccordionPanelContentDimensions) => {
+                    return <div style={{ width: dim.width, height: dim.height, overflowY: "auto" }}>
+                        <PlaceholderComponent id={DefaultComponentNames.Legend} 
+                                              locale={locale} 
+                                              componentProps={{ inlineBaseLayerSwitcher: false }} />
+                    </div>;
                 } 
             },
             { 
                 id: "Selection",
                 title: "Selection",
-                contentRenderer: () => {
-                    return <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} 
-                                                 locale={locale} />;
+                contentRenderer: (dim: IAccordionPanelContentDimensions) => {
+                    return <div style={{ width: dim.width, height: dim.height, overflowY: "auto" }}>
+                        <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} 
+                                              locale={locale} />
+                    </div>;
                 }
             },
             { 
                 id: "TaskPane",
                 title: "Task Pane",
-                contentRenderer: () => {
-                    return <div style={{ position: "absolute", left: 0, right: 0, height: 800 }}>
+                contentRenderer: (dim: IAccordionPanelContentDimensions) => {
+                    return <div style={{ width: dim.width, height: dim.height, overflowY: "auto" }}>
                         <PlaceholderComponent id={DefaultComponentNames.TaskPane} 
                                                  locale={locale} />
                     </div>;

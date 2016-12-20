@@ -43,7 +43,7 @@ export type SlateLayoutTemplateProps = ISlateTemplateLayoutState;
 const SIDEBAR_WIDTH = 250;
 const TOP_BAR_HEIGHT = 35;
 const STATUS_BAR_HEIGHT = 18;
-const SIDEBAR_PADDING = 3;
+const SIDEBAR_PADDING = 0;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProps, any> {
@@ -71,11 +71,11 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
         }
         const locale = this.getLocale();
         const bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;
-        const topOffset = (TOP_BAR_HEIGHT + (DEFAULT_TOOLBAR_SIZE * 2));
+        const topOffset = (DEFAULT_TOOLBAR_SIZE * 3);
         const panels: IAccordionPanelSpec[] = [
             { 
                 id: "Legend",
-                title: "Legend",
+                title: tr("TPL_TITLE_LEGEND", locale),
                 contentRenderer: (dim: IAccordionPanelContentDimensions) => {
                     return <div style={{ width: dim.width, height: dim.height, overflowY: "auto" }}>
                         <PlaceholderComponent id={DefaultComponentNames.Legend} 
@@ -86,7 +86,7 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
             },
             { 
                 id: "Selection",
-                title: "Selection",
+                title: tr("TPL_TITLE_SELECTION_PANEL", locale),
                 contentRenderer: (dim: IAccordionPanelContentDimensions) => {
                     return <div style={{ width: dim.width, height: dim.height, overflowY: "auto" }}>
                         <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} 
@@ -96,7 +96,7 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
             },
             { 
                 id: "TaskPane",
-                title: "Task Pane",
+                title: tr("TPL_TITLE_TASKPANE", locale),
                 contentRenderer: (dim: IAccordionPanelContentDimensions) => {
                     return <div style={{ width: dim.width, height: dim.height, overflowY: "auto" }}>
                         <PlaceholderComponent id={DefaultComponentNames.TaskPane} 
@@ -106,10 +106,10 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
             }
         ];
         return <div style={{ width: "100%", height: "100%" }}>
-            <Accordion style={{ position: "absolute", top: 0, bottom: bottomOffset, left: 0, width: SIDEBAR_WIDTH }} panels={panels} />
-            <ToolbarContainer id="FileMenu" containerClass="slate-file-menu" containerStyle={{ position: "absolute", left: SIDEBAR_WIDTH, top: ((TOP_BAR_HEIGHT - DEFAULT_TOOLBAR_SIZE) / 2), zIndex: 100, right: 0 }} />
-            <ToolbarContainer id="Toolbar" containerClass="slate-toolbar" containerStyle={{ position: "absolute", left: SIDEBAR_WIDTH, top: TOP_BAR_HEIGHT, zIndex: 100, right: 0 }} />
-            <ToolbarContainer id="ToolbarSecondary" containerClass="slate-toolbar-secondary" containerStyle={{ position: "absolute", left: SIDEBAR_WIDTH, top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), zIndex: 100, right: 0 }} />
+            <Accordion style={{ position: "absolute", top: 0, bottom: bottomOffset, left: 0, width: SIDEBAR_WIDTH }}  panels={panels} />
+            <ToolbarContainer id="FileMenu" containerClass="slate-file-menu" containerStyle={{ position: "absolute", left: SIDEBAR_WIDTH, top: 0, zIndex: 100, right: 0 }} />
+            <ToolbarContainer id="Toolbar" containerClass="slate-toolbar" containerStyle={{ position: "absolute", left: SIDEBAR_WIDTH, top: DEFAULT_TOOLBAR_SIZE, zIndex: 100, right: 0 }} />
+            <ToolbarContainer id="ToolbarSecondary" containerClass="slate-toolbar-secondary" containerStyle={{ position: "absolute", left: SIDEBAR_WIDTH, top: (DEFAULT_TOOLBAR_SIZE * 2), zIndex: 100, right: 0 }} />
             <div style={{ position: "absolute", left: SIDEBAR_WIDTH, right: 0, top: topOffset, bottom: bottomOffset }}>
                 {(() => {
                     //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with

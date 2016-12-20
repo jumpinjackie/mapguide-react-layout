@@ -51,6 +51,14 @@ See [TEMPLATES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/ma
 
 ![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/doc/sidebar.png)
 
+## Slate
+
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/doc/slate.png)
+
+## Maroon
+
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/doc/maroon.png)
+
 ## Aqua
 
 ![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/doc/aqua.png)

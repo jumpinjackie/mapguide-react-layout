@@ -8,9 +8,11 @@ Next
      * ol3-contextmenu
      * react-flyout
      * Our custom fontello icon set
- * [#64](https://github.com/jumpinjackie/mapguide-react-layout/issues/64): Additional Fusion templates ported across
+ * [#64](https://github.com/jumpinjackie/mapguide-react-layout/issues/64): All Fusion templates ported across
    * TurquoiseYellow
    * LimeGold
+   * Slate
+   * Maroon
  * Aqua template changes:
    * Added status bar
    * Changed to use Blueprint-styled modal dialogs

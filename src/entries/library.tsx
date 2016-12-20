@@ -9,6 +9,7 @@ import { AquaTemplateLayout } from "../layouts/aqua";
 import { TurquoiseYellowLayoutTemplate } from "../layouts/turquoise-yellow";
 import { LimeGoldLayoutTemplate } from "../layouts/limegold";
 import { SlateTemplateLayout } from "../layouts/slate";
+import { MaroonTemplateLayout } from "../layouts/maroon";
 import { registerLayout } from "../api/registry/layout";
 import { registerCommand } from "../api/registry/command";
 import { registerComponentFactory } from "../api/registry/component";
@@ -28,6 +29,7 @@ registerLayout("aqua", () => <AquaTemplateLayout />);
 registerLayout("turquoise-yellow", () => <TurquoiseYellowLayoutTemplate />);
 registerLayout("limegold", () => <LimeGoldLayoutTemplate />);
 registerLayout("slate", () => <SlateTemplateLayout />);
+registerLayout("maroon", () => <MaroonTemplateLayout />);
 initDefaultCommands();
 registerDefaultComponents();
 

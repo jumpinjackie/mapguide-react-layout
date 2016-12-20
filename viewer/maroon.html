@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MapGuide React Viewer</title>
+        <script type="text/javascript" src="dist/viewer.js"></script>
+        <script type="text/javascript" src="strings/de.js" charset="UTF-8"></script>
+        <style type="text/css">
+            /* Prevent scrollbars due to floating modal dialogs going past the bounds of the root element */
+            html { overflow: hidden; }
+            html, body, #map { padding: 0; margin: 0; font: 10pt Verdana, sans-serif; }
+            #map { overflow: hidden; position: absolute; left: 0; right: 0; top: 0; bottom: 0; }
+            #map { background-color: #3E5C5F; }
+            .maroon-file-menu, .component-accordion-panel-header {
+                color: white;
+                /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#7f0019+0,a5132e+50,a5132e+100 */
+                background: #7f0019; /* Old browsers */
+                background: -moz-linear-gradient(top,  #7f0019 0%, #a5132e 50%, #a5132e 100%); /* FF3.6-15 */
+                background: -webkit-linear-gradient(top,  #7f0019 0%,#a5132e 50%,#a5132e 100%); /* Chrome10-25,Safari5.1-6 */
+                background: linear-gradient(to bottom,  #7f0019 0%,#a5132e 50%,#a5132e 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7f0019', endColorstr='#a5132e',GradientType=0 ); /* IE6-9 */
+            }
+            .maroon-toolbar {
+                background-color: #500000;
+                color: white;
+            }
+            .maroon-toolbar-vertical {
+                background-color: #500000;
+                color: white;
+            }
+            .maroon-status-bar {
+                background-color: #A5132E;
+                color: white;
+            }
+            .component-accordion {
+                background-color: #E4E3E3;
+            }
+            .component-accordion-panel-header {
+                border: 1px solid black;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script type="text/javascript">
+            MapGuide.Registry.registerStringBundle("de", STRINGS_DE);
+
+            var el = document.getElementById("map");
+            var viewer = new MapGuide.Application();
+            viewer.mount(el, {
+                layout: "maroon",/*
+                externalBaseLayers: [
+                    { name: "OpenStreetMap", kind: "OSM" },
+                    { name: "Stamen - Toner", kind: "Stamen", visible: true, options: { layer: "toner" } },
+                    { name: "Stamen - Watercolor", kind: "Stamen", options: { layer: "watercolor" } }
+                ],*/
+                agent: {
+                    uri: "../mapagent/mapagent.fcgi"
+                }
+            });
+        </script>
+    </body>
+</html>

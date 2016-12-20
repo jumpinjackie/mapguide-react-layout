@@ -43,7 +43,8 @@ const prodPlugins = [
         compress: {
             warnings: false,
             screw_ie8: true
-        }
+        },
+        comments: false
     })
 ];
 

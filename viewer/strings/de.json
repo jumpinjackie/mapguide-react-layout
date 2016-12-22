@@ -1,5 +1,4 @@
-//NOTE: This is a quick-and-dirty Google Translation (for verifying the localization system is working)
-var STRINGS_DE = {
+{
     "UNKNOWN_WIDGET": "Diese Schaltfläche verweist auf einen unbekannten oder nicht unterstützten Widget: {widget}",
     "UNKNOWN_COMMAND_REFERENCE": "Diese Schaltfläche verweist auf einen unbekannten Befehl oder nicht unterstützt: {command}",
     "INIT": "Initialisierung",
@@ -68,4 +67,4 @@ var STRINGS_DE = {
     "GEOLOCATION_SUCCESS": "Vergrößert auf Ihre Position",
     "GEOLOCATION_WARN_OUTSIDE_MAP": "Vergrößert auf Ihre Position. Es ist außerhalb der Erweiterungen Ihrer Karte",
     "GEOLOCATION_ERROR": "Geolocation Fehler: {message} ({code})"
-};
+}

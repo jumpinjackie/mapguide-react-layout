@@ -36,6 +36,7 @@ import { MgError } from "../api/error";
 import * as logger from "../utils/logger";
 import queryString = require("query-string");
 import * as uuid from "node-uuid";
+import { registerStringBundle } from "../api/i18n";
 const parse = require("url-parse");
 const proj4 = require("proj4");
 
@@ -681,11 +682,35 @@ export function initLayout(options: any): ReduxThunkedAction {
         if (args.agentUri && args.agentKind) {
             const client = new Client(args.agentUri, args.agentKind);
             const onSessionAcquired = makeSessionAcquired(client, dispatch, opts);
+            let postInit;
+            if (opts.locale && opts.locale != "en") {
+                postInit = (session: string) => {
+                    fetch(`strings/${opts.locale}.json`).then(r => {
+                        if (r.ok) {
+                            return r.json();
+                        }
+                        return null;
+                    }).then(res => {
+                        if (res) {
+                            registerStringBundle(opts.locale, res);
+                            logger.info(`Registered string bundle for locale: ${opts.locale}`);
+                        } else {
+                            //TODO: Push warning to init error/warning reducer when we implement it
+                            logger.warn(`Failed to register string bundle for locale: ${opts.locale}`);
+                        }
+                        onSessionAcquired(session);
+                    })
+                };
+            } else {
+                postInit = (session: string) => {
+                    onSessionAcquired(session);
+                };
+            }
             if (opts.session) {
-                onSessionAcquired(opts.session);
+                postInit(opts.session);
             } else {
                 client.createSession("Anonymous", "")
-                    .then(onSessionAcquired)
+                    .then(postInit)
                     .catch(err => {
                         processAndDispatchInitError(err, true, dispatch, opts);
                     });

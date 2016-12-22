@@ -23,6 +23,7 @@ Next
    * [#95](https://github.com/jumpinjackie/mapguide-react-layout/issues/95): Base map switcher
  * Now shows busy indicator on viewer startup instead of a "white screen of nothingness"
  * [#90](https://github.com/jumpinjackie/mapguide-react-layout/issues/90): Replaced `npm` with `yarn`
+ * [#103](https://github.com/jumpinjackie/mapguide-react-layout/issues/103): non-`en` string bundles are now loaded on demand if the passed in `locale` parameter is not `en`
 
 0.6.2
 =====

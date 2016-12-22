@@ -3,7 +3,6 @@
     <head>
         <title>MapGuide React Viewer</title>
         <script type="text/javascript" src="dist/viewer.js"></script>
-        <script type="text/javascript" src="strings/de.js" charset="UTF-8"></script>
         <style type="text/css">
             /* Prevent scrollbars due to floating modal dialogs going past the bounds of the root element */
             html { overflow: hidden; }
@@ -55,8 +54,6 @@
     <body>
         <div id="map"></div>
         <script type="text/javascript">
-            MapGuide.Registry.registerStringBundle("de", STRINGS_DE);
-
             var el = document.getElementById("map");
             var viewer = new MapGuide.Application();
             viewer.mount(el, {

@@ -289,6 +289,8 @@ function cloneExtent(bounds: Bounds): Bounds {
 
 @ContextMenuTarget
 export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
+    private fnMouseUp: GenericEventHandler;
+    private fnMouseDown: GenericEventHandler;
     /**
      * Indicates if touch events are supported.
      */
@@ -350,6 +352,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this._wktFormat = new ol.format.WKT();
         this.fnKeyDown = this.onKeyDown.bind(this);
         this.fnKeyUp = this.onKeyUp.bind(this);
+        this.fnMouseDown = this.onMouseDown.bind(this);
+        this.fnMouseUp = this.onMouseUp.bind(this);
         this._busyWorkers = 0;
         this._mgBaseLayerGroups = [];
         this._triggerZoomRequestOnMoveEnd = true;
@@ -357,7 +361,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this._contextMenuOpen = false;
         this._customLayers = {};
         this.state = {
-            shiftKey: false
+            shiftKey: false,
+            isMouseDown: false,
+            digitizingType: null
         };
     }
     /**
@@ -541,6 +547,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         if (this._activeDrawInteraction) {
             this._map.removeInteraction(this._activeDrawInteraction);
             this._activeDrawInteraction = null;
+            this.setState({ digitizingType: null });
         }
     }
     private cancelDigitization() {
@@ -549,7 +556,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             this._mouseTooltip.clear();
         }
     }
-    private pushDrawInteraction<T extends ol.geom.Geometry>(draw: ol.interaction.Draw, handler: DigitizerCallback<T>, prompt?: string): void {
+    private pushDrawInteraction<T extends ol.geom.Geometry>(digitizingType: string, draw: ol.interaction.Draw, handler: DigitizerCallback<T>, prompt?: string): void {
         this.props.onBeginDigitization(cancel => {
             if (!cancel) {
                 this.removeActiveDrawInteraction();
@@ -565,6 +572,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                     handler(geom);
                 })
                 this._map.addInteraction(this._activeDrawInteraction);
+                this.setState({ digitizingType: digitizingType });
             }
         });
     }
@@ -578,6 +586,20 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     }
     private onKeyUp(e: GenericEvent) {
         this.setState({ shiftKey: e.shiftKey });
+    }
+    private onMouseDown(e: GenericEvent) {
+        if (!this.state.isMouseDown) {
+            this.setState({
+                isMouseDown: true
+            });
+        }
+    }
+    private onMouseUp(e: GenericEvent) {
+        if (this.state.isMouseDown) {
+            this.setState({
+                isMouseDown: false
+            });
+        }
     }
     private onMouseMove(e: GenericEvent) {
         if (this._mouseTooltip) {
@@ -963,14 +985,63 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
     }
     render(): JSX.Element {
+        const { map, tool } = this.props;
+        const { isMouseDown } = this.state;
         const style: React.CSSProperties = { 
             width: "100%",
             height: "100%" 
         };
-        if (this.props.map) {
-            style.backgroundColor = `#${this.props.map.BackgroundColor.substring(2)}`;
+        if (this.isDigitizing()) {
+            const dtype = this.state.digitizingType;
+            switch (dtype) {
+                case "Point":
+                    style.cursor = `url(${getIcon("digitizePoint.cur")}), auto`;
+                    console.log(`cursor: ${style.cursor}`);
+                    break;
+                case "Line":
+                    style.cursor = `url(${getIcon("digitizeLine.cur")}), auto`;
+                    console.log(`cursor: ${style.cursor}`);
+                    break;
+                case "LineString":
+                    style.cursor = `url(${getIcon("digitizeLineString.cur")}), auto`;
+                    console.log(`cursor: ${style.cursor}`);
+                    break;
+                case "Rectangle":
+                    style.cursor = `url(${getIcon("digitizeRectangle.cur")}), auto`;
+                    console.log(`cursor: ${style.cursor}`);
+                    break;
+                case "Polygon":
+                    style.cursor = `url(${getIcon("digitizePolygon.cur")}), auto`;
+                    console.log(`cursor: ${style.cursor}`);
+                    break;
+                case "Circle":
+                    style.cursor = `url(${getIcon("digitizeCircle.cur")}), auto`;
+                    console.log(`cursor: ${style.cursor}`);
+                    break;
+            }
+        } else {
+            switch (tool) {
+                case ActiveMapTool.Pan:
+                    //FIXME: Despite the proper state being reflected, the cursor doesn't actually update in the
+                    //"grabbing" state, most likely due to this method being spammed while in the process of panning
+                    if (isMouseDown) {
+                        style.cursor = `url(${getIcon("grabbing.cur")}), auto`;
+                        console.log(`cursor: ${style.cursor}`);
+                    } else {
+                        style.cursor = `url(${getIcon("grab.cur")}), auto`;
+                        console.log(`cursor: ${style.cursor}`);
+                    }
+                    break;
+                case ActiveMapTool.Zoom:
+                    style.cursor = `url(${getIcon("zoomin.cur")}), auto`;
+                    console.log(`cursor: ${style.cursor}`);
+                    break;
+            }
         }
-        return <div className="map-viewer-component" style={style} />;
+        if (map) {
+            style.backgroundColor = `#${map.BackgroundColor.substring(2)}`;
+        }
+        return <div className="map-viewer-component" style={style} onMouseDown={this.fnMouseDown} onMouseUp={this.fnMouseUp} />;
     }
     componentWillUnmount() {
 
@@ -1120,7 +1191,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         const draw = new ol.interaction.Draw({
             type: "Point"//ol.geom.GeometryType.POINT
         });
-        this.pushDrawInteraction(draw, handler, prompt || tr("DIGITIZE_POINT_PROMPT", this.props.locale));
+        this.pushDrawInteraction("Point", draw, handler, prompt || tr("DIGITIZE_POINT_PROMPT", this.props.locale));
     }
     public digitizeLine(handler: DigitizerCallback<ol.geom.LineString>, prompt?: string): void {
         const draw = new ol.interaction.Draw({
@@ -1128,20 +1199,20 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             minPoints: 2,
             maxPoints: 2
         });
-        this.pushDrawInteraction(draw, handler, prompt || tr("DIGITIZE_LINE_PROMPT", this.props.locale));
+        this.pushDrawInteraction("Line", draw, handler, prompt || tr("DIGITIZE_LINE_PROMPT", this.props.locale));
     }
     public digitizeLineString(handler: DigitizerCallback<ol.geom.LineString>, prompt?: string): void {
         const draw = new ol.interaction.Draw({
             type: "LineString", //ol.geom.GeometryType.LINE_STRING,
             minPoints: 2
         });
-        this.pushDrawInteraction(draw, handler, prompt || tr("DIGITIZE_LINESTRING_PROMPT", this.props.locale));
+        this.pushDrawInteraction("LineString", draw, handler, prompt || tr("DIGITIZE_LINESTRING_PROMPT", this.props.locale));
     }
     public digitizeCircle(handler: DigitizerCallback<ol.geom.Circle>, prompt?: string): void {
         const draw = new ol.interaction.Draw({
             type: "Circle" //ol.geom.GeometryType.CIRCLE
         });
-        this.pushDrawInteraction(draw, handler, prompt || tr("DIGITIZE_CIRCLE_PROMPT", this.props.locale));
+        this.pushDrawInteraction("Circle", draw, handler, prompt || tr("DIGITIZE_CIRCLE_PROMPT", this.props.locale));
     }
     public digitizeRectangle(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void {
         const geomFunc: ol.DrawGeometryFunctionType = (coordinates, geometry) => {
@@ -1160,13 +1231,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             maxPoints: 2,
             geometryFunction: geomFunc
         });
-        this.pushDrawInteraction(draw, handler, prompt || tr("DIGITIZE_RECT_PROMPT", this.props.locale));
+        this.pushDrawInteraction("Rectangle", draw, handler, prompt || tr("DIGITIZE_RECT_PROMPT", this.props.locale));
     }
     public digitizePolygon(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string): void {
         const draw = new ol.interaction.Draw({
             type: "Polygon" //ol.geom.GeometryType.POLYGON
         });
-        this.pushDrawInteraction(draw, handler, prompt || tr("DIGITIZE_POLYGON_PROMPT", this.props.locale));
+        this.pushDrawInteraction("Polygon", draw, handler, prompt || tr("DIGITIZE_POLYGON_PROMPT", this.props.locale));
     }
     public selectByGeometry(geom: ol.geom.Geometry): void {
         this.sendSelectionQuery(this.buildDefaultQueryOptions(geom));

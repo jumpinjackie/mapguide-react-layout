@@ -95,14 +95,14 @@ export interface IAjaxViewerShimDispatch {
     invokeCommand: (cmd: ICommand) => void;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<IAjaxViewerShimState> {
+function mapStateToProps(state: IApplicationState): IAjaxViewerShimState {
     return {
         map: state.map.state,
         selection: state.selection
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAjaxViewerShimDispatch> {
+function mapDispatchToProps(dispatch: ReduxDispatch): IAjaxViewerShimDispatch {
     return {
         goHome: () => dispatch(TaskPaneActions.goHome()),
         legendRefresh: () => dispatch(LegendActions.refresh()),

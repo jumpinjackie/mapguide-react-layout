@@ -139,6 +139,13 @@
     border-left: 1px solid black;
 }
 
+.mouse-over {
+    cursor: pointer;
+    background: rgb(220, 220, 220);
+    border-style: solid;
+    border-color: rgb(160, 160, 160);
+}
+
 /* Begin QuickPlot */
 div.Label
 {

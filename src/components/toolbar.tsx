@@ -76,10 +76,8 @@ function getItemStyle(enabled: boolean, selected: boolean, size: number, isMouse
         paddingTop: vertPad,
         paddingBottom: vertPad
     };
-    if (enabled && (isMouseOver === true || selected)) {
-        style.cursor = "pointer";
-        style.background = "rgb(220, 220, 220)";
-        style.border = "1px solid rgb(160, 160, 160)";
+    if (isMouseOver === true || selected) {
+        style.borderWidth = 1;
         style.paddingLeft = pad - 1; //To compensate for border
         style.paddingRight = pad - 1; //To compensate for border
         style.paddingTop = vertPad - 1; //To compensate for border
@@ -189,8 +187,6 @@ class ToolbarContentContainer extends React.Component<IToolbarContentContainerPr
     }
     render(): JSX.Element {
         const { size, vertical } = this.props;
-        const imgStyle = getIconStyle(true, size);
-        const style = getItemStyle(true, false, size, false, vertical);
         return <div className="noselect toolbar-content-container">{this.props.children}</div>;
     }
 }

@@ -139,6 +139,10 @@
     border-left: 1px solid black;
 }
 
+.selected-item {
+    border-style: solid;
+}
+
 .mouse-over {
     cursor: pointer;
     background: rgb(220, 220, 220);

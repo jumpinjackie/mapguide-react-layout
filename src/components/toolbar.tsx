@@ -76,7 +76,7 @@ function getItemStyle(enabled: boolean, selected: boolean, size: number, isMouse
         paddingTop: vertPad,
         paddingBottom: vertPad
     };
-    if (isMouseOver === true) {
+    if (isMouseOver === true || selected) {
         style.borderWidth = 1;
         style.paddingLeft = pad - 1; //To compensate for border
         style.paddingRight = pad - 1; //To compensate for border

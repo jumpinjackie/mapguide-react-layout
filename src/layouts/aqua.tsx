@@ -18,6 +18,7 @@ import {
     IConfigurationReducerState,
     IViewerCapabilities
 } from "../api/common";
+import * as Constants from "../constants";
 
 const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;
@@ -31,13 +32,15 @@ export interface IAquaTemplateLayoutState {
     map?: RuntimeMap | null;
     config?: IConfigurationReducerState;
     capabilities?: IViewerCapabilities;
+    lastAction?: any;
 }
 
 function mapStateToProps(state: IApplicationState): IAquaTemplateLayoutState {
     return {
         config: state.config,
         map: state.map.state,
-        capabilities: state.config.capabilities
+        capabilities: state.config.capabilities,
+        lastAction: state.lastaction
     };
 }
 
@@ -95,6 +98,22 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
     }
     private getLocale(): string {
         return this.props.config ? this.props.config.locale : "en";
+    }
+    componentWillReceiveProps(nextProps: AquaTemplateLayoutProps) {
+        const lastAction = nextProps.lastAction;
+        if (lastAction != this.props.lastAction) {
+            switch (lastAction.type) {
+                case Constants.TASK_INVOKE_URL:
+                    {
+                        this.setState({
+                            isTaskPaneOpen: true
+                        });
+                    }
+                    break;
+                case Constants.MAP_SET_SELECTION:
+                    break;
+            }
+        }
     }
     componentDidMount() {
         const locale = this.getLocale();

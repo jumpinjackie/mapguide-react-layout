@@ -106,7 +106,7 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
             }
         ];
         return <div style={{ width: "100%", height: "100%" }}>
-            <Accordion style={{ position: "absolute", top: 0, bottom: bottomOffset, left: 0, width: SIDEBAR_WIDTH }}  panels={panels} />
+            <Accordion style={{ position: "absolute", top: 0, bottom: bottomOffset, left: 0, width: SIDEBAR_WIDTH }} panels={panels} />
             <ToolbarContainer id="FileMenu" containerClass="slate-file-menu" containerStyle={{ position: "absolute", left: SIDEBAR_WIDTH, top: 0, zIndex: 100, right: 0 }} />
             <ToolbarContainer id="Toolbar" containerClass="slate-toolbar" containerStyle={{ position: "absolute", left: SIDEBAR_WIDTH, top: DEFAULT_TOOLBAR_SIZE, zIndex: 100, right: 0 }} />
             <ToolbarContainer id="ToolbarSecondary" containerClass="slate-toolbar-secondary" containerStyle={{ position: "absolute", left: SIDEBAR_WIDTH, top: (DEFAULT_TOOLBAR_SIZE * 2), zIndex: 100, right: 0 }} />

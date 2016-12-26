@@ -16,6 +16,7 @@ Next
  * Aqua template changes:
    * Added status bar
    * Changed to use Blueprint-styled modal dialogs
+   * Task Pane window opens (if hidden) when an InvokeURL command is executed
  * Sidebar template changes:
    * Updated to use Blueprint icons and load spinner
  * More Fusion widgets ported over

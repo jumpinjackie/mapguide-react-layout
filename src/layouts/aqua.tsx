@@ -69,6 +69,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
         this.fnOverviewMapTargetMounted = this.onOverviewMapTargetMounted.bind(this);
         this.fnGetOverviewMapTarget = this.getOverviewMapTarget.bind(this);
         this.state = {
+            showToggler: false,
             isTaskPaneOpen: true,
             isLegendOpen: true,
             isSelectionOpen: true
@@ -129,6 +130,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                 enabled: () => !this.state.isSelectionOpen
             }
         ];
+        this.setState({ showToggler: true });
     }
     render(): JSX.Element {
         const { capabilities, config } = this.props;
@@ -153,11 +155,11 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
         return <div style={{ width: "100%", height: "100%" }}>
             <ToolbarContainer id="FileMenu" containerClass="aqua-file-menu" containerStyle={{ position: "absolute", left: 0, top: 0, zIndex: 100, right: 0 }} />
             {(() => {
-                if (this.viewItems) {
-                    return <Toolbar childItems={this.viewItems} containerStyle={{ position: "absolute", right: 0, top: 0, height: DEFAULT_TOOLBAR_SIZE, zIndex: 101, color: "white" }} onCloseFlyout={NOOP} onOpenFlyout={NOOP} />;
+                if (this.state.showToggler) {
+                    return <Toolbar containerClass="aqua-toggler-menu" childItems={this.viewItems} containerStyle={{ position: "absolute", right: 0, top: 0, height: DEFAULT_TOOLBAR_SIZE, zIndex: 101, color: "white" }} onCloseFlyout={NOOP} onOpenFlyout={NOOP} />
                 }
             })()}
-            <ToolbarContainer id="Toolbar" containerClass="aqua-toolbar" containerStyle={{ position: "absolute", left: 0, top: (DEFAULT_TOOLBAR_SIZE - 2), zIndex: 100, right: 0 }} />
+            <ToolbarContainer id="Toolbar" containerClass="aqua-toolbar" containerStyle={{ position: "absolute", left: 0, top: DEFAULT_TOOLBAR_SIZE, height: DEFAULT_TOOLBAR_SIZE, zIndex: 100, right: 0 }} />
             <ToolbarContainer id="ToolbarVertical" containerClass="aqua-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: 0, top: ((DEFAULT_TOOLBAR_SIZE * 2) - 1), zIndex: 100, bottom: bottomOffset }} />
             {(() => {
                 if (hasSelectionPanel) {

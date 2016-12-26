@@ -2,7 +2,7 @@ import * as Constants from "../constants";
 import { IToolbarReducerState } from "../api/common";
 import update = require("react-addons-update");
 
-const INITIAL_STATE: IToolbarReducerState = {
+export const INITIAL_STATE: IToolbarReducerState = {
     toolbars: {},
     flyouts: {}
 };

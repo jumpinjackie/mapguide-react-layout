@@ -1,7 +1,7 @@
 import * as Constants from "../constants";
 import { IInitErrorReducerState } from "../api/common";
 
-const INITIAL_STATE: IInitErrorReducerState = {
+export const INITIAL_STATE: IInitErrorReducerState = {
     options: {},
     error: undefined,
     includeStack: true

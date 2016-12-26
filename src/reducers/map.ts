@@ -2,7 +2,7 @@ import * as Constants from "../constants";
 import { IMapReducerState, ActiveMapTool } from "../api/common";
 import uniq = require("lodash.uniq");
 
-const INITIAL_STATE: IMapReducerState = {
+export const INITIAL_STATE: IMapReducerState = {
     state: null,
     viewer: {
         busyCount: 0,

@@ -2,7 +2,7 @@ import * as Constants from "../constants";
 import { ITaskPaneReducerState } from "../api/common";
 import { areUrlsSame } from "../utils/url";
 
-const INITIAL_STATE: ITaskPaneReducerState = {
+export const INITIAL_STATE: ITaskPaneReducerState = {
     navIndex: -1,
     navigation: [],
     initialUrl: null,

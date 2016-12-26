@@ -1,7 +1,7 @@
 import * as Constants from "../constants";
 import { ISelectionReducerState } from "../api/common";
 
-const INITIAL_STATE: ISelectionReducerState = {
+export const INITIAL_STATE: ISelectionReducerState = {
     selectionSet: null,
     layerIndex: -1,
     featureIndex: -1

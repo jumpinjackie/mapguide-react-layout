@@ -2,7 +2,7 @@ import * as Constants from "../constants";
 import { IMapView, IViewReducerState } from "../api/common";
 import { isMapView } from "../utils/type-guards";
 
-const INITIAL_STATE: IViewReducerState = {
+export const INITIAL_STATE: IViewReducerState = {
     current: null,
     initial: null,
     mouse: null,

@@ -1,7 +1,7 @@
 import * as Constants from "../constants";
 import { ILegendReducerState } from "../api/common";
 
-const INITIAL_STATE: ILegendReducerState = {
+export const INITIAL_STATE: ILegendReducerState = {
     selectableLayers: {},
     expandedGroups: {}
 };

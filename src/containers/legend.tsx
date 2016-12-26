@@ -21,18 +21,18 @@ export interface ILegendContainerProps {
 
 export interface ILegendContainerState {
     view: IMapView | null;
-    config?: IConfigurationReducerState;
+    config: IConfigurationReducerState;
     map: RuntimeMap | null;
-    legend?: ILegendReducerState;
-    viewer?: IMapViewerReducerState;
+    legend: ILegendReducerState;
+    viewer: IMapViewerReducerState;
 }
 
 export interface ILegendContainerDispatch {
-    setBaseLayer?: (layerName: string) => void;
-    setGroupVisibility?: (options: { id: string, value: boolean }) => void;
-    setLayerVisibility?: (options: { id: string, value: boolean }) => void;
-    setLayerSelectable?: (options: { id: string, value: boolean }) => void;
-    setGroupExpanded?: (options: { id: string, value: boolean }) => void;
+    setBaseLayer: (layerName: string) => void;
+    setGroupVisibility: (options: { id: string, value: boolean }) => void;
+    setLayerVisibility: (options: { id: string, value: boolean }) => void;
+    setLayerSelectable: (options: { id: string, value: boolean }) => void;
+    setGroupExpanded: (options: { id: string, value: boolean }) => void;
 }
 
 function mapStateToProps(state: IApplicationState): ILegendContainerState {
@@ -55,7 +55,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): ILegendContainerDispatch {
     };
 }
 
-export type LegendContainerProps = ILegendContainerProps & ILegendContainerState & ILegendContainerDispatch;
+export type LegendContainerProps = ILegendContainerProps & Partial<ILegendContainerState> & Partial<ILegendContainerDispatch>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class LegendContainer extends React.Component<LegendContainerProps, any> {

@@ -14,8 +14,8 @@ export interface IViewerOptionsProps {
 }
 
 export interface IViewerOptionsState {
-    viewer?: IMapViewerReducerState;
-    config?: IConfigurationReducerState;
+    viewer: IMapViewerReducerState;
+    config: IConfigurationReducerState;
 }
 
 export interface IViewerOptionsDispatch {
@@ -40,7 +40,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IViewerOptionsDispatch {
     };
 }
 
-export type ViewerOptionsProps = IViewerOptionsProps & IViewerOptionsState & IViewerOptionsDispatch;
+export type ViewerOptionsProps = IViewerOptionsProps & Partial<IViewerOptionsState> & Partial<IViewerOptionsDispatch>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
@@ -51,7 +51,9 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
     }
     private onFeatureTooltipsChanged(e: GenericEvent) {
         const { toggleMapTips } = this.props;
-        toggleMapTips(e.target.checked);
+        if (toggleMapTips) {
+            toggleMapTips(e.target.checked);
+        }
     }
     render(): JSX.Element {
         const { viewer, config } = this.props;

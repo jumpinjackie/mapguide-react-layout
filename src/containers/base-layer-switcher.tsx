@@ -15,11 +15,11 @@ export interface IBaseLayerSwitcherContainerProps {
 }
 
 export interface IBaseLayerSwitcherContainerState {
-    config?: IConfigurationReducerState;
+    config: IConfigurationReducerState;
 }
 
 export interface IBaseLayerSwitcherContainerDispatch {
-    setBaseLayer?: (layerName: string) => void;
+    setBaseLayer: (layerName: string) => void;
 }
 
 function mapStateToProps(state: IApplicationState): IBaseLayerSwitcherContainerState {
@@ -34,7 +34,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IBaseLayerSwitcherContaine
     };
 }
 
-export type BaseLayerSwitcherContainerProps = IBaseLayerSwitcherContainerProps & IBaseLayerSwitcherContainerState & IBaseLayerSwitcherContainerDispatch;
+export type BaseLayerSwitcherContainerProps = IBaseLayerSwitcherContainerProps & Partial<IBaseLayerSwitcherContainerState> & Partial<IBaseLayerSwitcherContainerDispatch>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class BaseLayerSwitcherContainer extends React.Component<BaseLayerSwitcherContainerProps, any> {

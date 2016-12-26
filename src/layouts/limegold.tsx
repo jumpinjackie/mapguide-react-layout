@@ -25,9 +25,9 @@ const TAB_BAR_HEIGHT = 30;
 const STATUS_BAR_HEIGHT = 18;
 
 export interface ILimeGoldTemplateLayoutState {
-    map?: RuntimeMap | null;
-    config?: IConfigurationReducerState;
-    capabilities?: IViewerCapabilities;
+    map: RuntimeMap | null;
+    config: IConfigurationReducerState;
+    capabilities: IViewerCapabilities;
 }
 
 function mapStateToProps(state: IApplicationState): ILimeGoldTemplateLayoutState {
@@ -44,7 +44,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
     };
 }
 
-export type LimeGoldLayoutTemplateProps = ILimeGoldTemplateLayoutState;
+export type LimeGoldLayoutTemplateProps = Partial<ILimeGoldTemplateLayoutState>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class LimeGoldLayoutTemplate extends React.Component<LimeGoldLayoutTemplateProps, any> {

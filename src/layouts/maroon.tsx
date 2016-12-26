@@ -19,9 +19,9 @@ import {
 import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../components/accordion";
 
 export interface IMaroonTemplateLayoutState {
-    map?: RuntimeMap | null;
-    config?: IConfigurationReducerState;
-    capabilities?: IViewerCapabilities;
+    map: RuntimeMap | null;
+    config: IConfigurationReducerState;
+    capabilities: IViewerCapabilities;
 }
 
 function mapStateToProps(state: IApplicationState): IMaroonTemplateLayoutState {
@@ -38,7 +38,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
     };
 }
 
-export type MaroonLayoutTemplateProps = IMaroonTemplateLayoutState;
+export type MaroonLayoutTemplateProps = Partial<IMaroonTemplateLayoutState>;
 
 const SIDEBAR_WIDTH = 250;
 const TOP_BAR_HEIGHT = 35;

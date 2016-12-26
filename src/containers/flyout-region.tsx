@@ -16,13 +16,13 @@ export interface IFlyoutRegionContainerProps {
 }
 
 export interface IFlyoutRegionContainerState {
-    flyouts?: any;
-    locale?: string;
+    flyouts: any;
+    locale: string;
 }
 
 export interface IFlyoutRegionContainerDispatch {
-    closeFlyout?: (id: string) => void;
-    invokeCommand?: (cmd: ICommand) => void;
+    closeFlyout: (id: string) => void;
+    invokeCommand: (cmd: ICommand) => void;
 }
 
 function mapStateToProps(state: IApplicationState, ownProps: IFlyoutRegionContainerProps): IFlyoutRegionContainerState {
@@ -39,7 +39,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IFlyoutRegionContainerDisp
     };
 }
 
-export type FlyoutRegionContainerProps = IFlyoutRegionContainerProps & IFlyoutRegionContainerState & IFlyoutRegionContainerDispatch;
+export type FlyoutRegionContainerProps = IFlyoutRegionContainerProps & Partial<IFlyoutRegionContainerState> & Partial<IFlyoutRegionContainerDispatch>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class FlyoutRegionContainer extends React.Component<FlyoutRegionContainerProps, any> {

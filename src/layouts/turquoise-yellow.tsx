@@ -25,9 +25,9 @@ const TAB_BAR_HEIGHT = 30;
 const STATUS_BAR_HEIGHT = 18;
 
 export interface ITurquoiseYellowTemplateLayoutState {
-    map?: RuntimeMap | null;
-    config?: IConfigurationReducerState;
-    capabilities?: IViewerCapabilities;
+    map: RuntimeMap | null;
+    config: IConfigurationReducerState;
+    capabilities: IViewerCapabilities;
 }
 
 function mapStateToProps(state: IApplicationState): ITurquoiseYellowTemplateLayoutState {
@@ -44,7 +44,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
     };
 }
 
-export type TurquoiseYellowLayoutTemplateProps = ITurquoiseYellowTemplateLayoutState;
+export type TurquoiseYellowLayoutTemplateProps = Partial<ITurquoiseYellowTemplateLayoutState>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class TurquoiseYellowLayoutTemplate extends React.Component<TurquoiseYellowLayoutTemplateProps, any> {

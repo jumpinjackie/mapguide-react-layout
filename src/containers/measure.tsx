@@ -26,7 +26,7 @@ export interface IMeasureContainerState {
 }
 
 export interface IMeasureContainerDispatch {
-    setActiveTool?: (tool: ActiveMapTool) => void;
+    setActiveTool: (tool: ActiveMapTool) => void;
 }
 
 function mapStateToProps(state: IApplicationState): IMeasureContainerState {
@@ -41,7 +41,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
     };
 }
 
-export type MeasureProps = IMeasureContainerProps & IMeasureContainerState & IMeasureContainerDispatch;
+export type MeasureProps = IMeasureContainerProps & Partial<IMeasureContainerState> & Partial<IMeasureContainerDispatch>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class MeasureContainer extends React.Component<MeasureProps, any> {
@@ -282,11 +282,14 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
             this.viewer.addOverlay(this.measureTooltip);
         }
     }
+    private getLocale(): string {
+        return this.props.config ? this.props.config.locale : "en";
+    }
     private onMouseMove(evt: GenericEvent) {
         if (evt.dragging) {
             return;
         }
-        const { locale } = this.props.config;
+        const locale = this.getLocale();
         /** @type {string} */
         let helpMsg = tr("MEASUREMENT_START_DRAWING", locale);
         if (this.sketch) {
@@ -370,7 +373,7 @@ export class MeasureContainer extends React.Component<MeasureProps, any> {
     }
     render(): JSX.Element {
         const { measuring, geodesic, type } = this.state;
-        const { locale } = this.props.config;
+        const locale = this.getLocale();
         return <div style={{ padding: 5 }}>
             <form className="form-inline">
                 <label className="pt-label">

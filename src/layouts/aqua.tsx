@@ -29,10 +29,10 @@ const DIALOG_HEADER_HEIGHT = 40 + 3;//28 + 3;
 const STATUS_BAR_HEIGHT = 18;
 
 export interface IAquaTemplateLayoutState {
-    map?: RuntimeMap | null;
-    config?: IConfigurationReducerState;
-    capabilities?: IViewerCapabilities;
-    lastAction?: any;
+    map: RuntimeMap | null;
+    config: IConfigurationReducerState;
+    capabilities: IViewerCapabilities;
+    lastAction: any;
 }
 
 function mapStateToProps(state: IApplicationState): IAquaTemplateLayoutState {
@@ -50,7 +50,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
     };
 }
 
-export type AquaTemplateLayoutProps = IAquaTemplateLayoutState;
+export type AquaTemplateLayoutProps = Partial<IAquaTemplateLayoutState>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps, any> {

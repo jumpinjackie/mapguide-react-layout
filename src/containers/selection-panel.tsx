@@ -22,7 +22,7 @@ export interface ISelectionPanelContainerState {
 }
 
 export interface ISelectionPanelContainerDispatch {
-    setCurrentView?: (view: IMapView) => void;
+    setCurrentView: (view: IMapView) => void;
 }
 
 function mapStateToProps(state: IApplicationState): ISelectionPanelContainerState {
@@ -38,7 +38,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): ISelectionPanelContainerDi
     };
 }
 
-export type SelectionPanelContainerProps = ISelectionPanelContainerProps & ISelectionPanelContainerState & ISelectionPanelContainerDispatch;
+export type SelectionPanelContainerProps = ISelectionPanelContainerProps & Partial<ISelectionPanelContainerState> & Partial<ISelectionPanelContainerDispatch>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class SelectionPanelContainer extends React.Component<SelectionPanelContainerProps, any> {
@@ -55,14 +55,18 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
             this.props.setCurrentView(view);
         }
     }
+    private getLocale(): string {
+        return this.props.config ? this.props.config.locale : "en";
+    }
     render(): JSX.Element {
         const { selection, config, maxHeight } = this.props;
+        const locale = this.getLocale();
         if (selection != null && 
             selection.SelectedFeatures != null) {
-            return <SelectionPanel locale={config.locale} selection={selection.SelectedFeatures} onRequestZoomToFeature={this.fnZoomToSelectedFeature} maxHeight={maxHeight} />;
+            return <SelectionPanel locale={locale} selection={selection.SelectedFeatures} onRequestZoomToFeature={this.fnZoomToSelectedFeature} maxHeight={maxHeight} />;
         } else {
             return <div className="pt-callout pt-intent-primary pt-icon-info-sign">
-                <p className="selection-panel-no-selection">{tr("NO_SELECTED_FEATURES", config.locale)}</p>
+                <p className="selection-panel-no-selection">{tr("NO_SELECTED_FEATURES", locale)}</p>
             </div>;
         }
     }

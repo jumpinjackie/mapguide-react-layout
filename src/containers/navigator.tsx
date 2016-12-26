@@ -27,8 +27,8 @@ export interface INavigatorContainerState {
 }
 
 export interface INavigatorContainerDispatch {
-    invokeCommand?: (cmd: ICommand) => void;
-    setScale?: (scale: number) => void;
+    invokeCommand: (cmd: ICommand) => void;
+    setScale: (scale: number) => void;
 }
 
 function mapStateToProps(state: IApplicationState): INavigatorContainerState {
@@ -47,7 +47,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): INavigatorContainerDispatc
     };
 }
 
-export type NavigatorContainerProps = INavigatorContainerProps & INavigatorContainerState & INavigatorContainerDispatch;
+export type NavigatorContainerProps = INavigatorContainerProps & Partial<INavigatorContainerState> & Partial<INavigatorContainerDispatch>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class NavigatorContainer extends React.Component<NavigatorContainerProps, any> {
@@ -99,13 +99,17 @@ export class NavigatorContainer extends React.Component<NavigatorContainerProps,
             this.props.setScale(scale);
         }
     }
+    private getLocale(): string {
+        return this.props.config ? this.props.config.locale : "en";
+    }
     render(): JSX.Element {
         const { style, viewer, view, config, finiteScales } = this.props;
+        const locale = this.getLocale();
         if (viewer != null && view != null) {
             return <Navigator style={style}
                               scale={view.scale}
                               finiteScaleList={finiteScales}
-                              locale={config.locale}
+                              locale={locale}
                               busy={viewer.busyCount > 0}
                               onRequestZoomToScale={this.fnRequestZoomToScale}
                               onPan={this.fnPan}

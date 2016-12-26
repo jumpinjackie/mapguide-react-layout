@@ -14,9 +14,9 @@ const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;
 
 export interface IAjaxViewerLayoutState {
-    map?: any;
-    config?: any;
-    capabilities?: any;
+    map: any;
+    config: any;
+    capabilities: any;
 }
 
 function mapStateToProps(state: any): IAjaxViewerLayoutState {
@@ -33,7 +33,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
     };
 }
 
-export type AjaxViewerLayoutProps = IAjaxViewerLayoutState;
+export type AjaxViewerLayoutProps = Partial<IAjaxViewerLayoutState>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any> {

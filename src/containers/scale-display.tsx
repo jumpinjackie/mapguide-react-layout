@@ -29,17 +29,21 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
     };
 }
 
-export type ScaleDisplayContainerProps = IScaleDisplayContainerState;
+export type ScaleDisplayContainerProps = Partial<IScaleDisplayContainerState>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainerProps, any> {
     constructor(props: ScaleDisplayContainerProps) {
         super(props);
     }
+    private getLocale(): string {
+        return this.props.config ? this.props.config.locale : "en";
+    }
     render(): JSX.Element {
         const { view, style, config } = this.props;
+        const locale = this.getLocale();
         if (view != null) {
-            const label = tr("FMT_SCALE_DISPLAY", config.locale, {
+            const label = tr("FMT_SCALE_DISPLAY", locale, {
                 scale: view.scale.toFixed(2)
             });
             return <div className="component-scale-display" style={style}>

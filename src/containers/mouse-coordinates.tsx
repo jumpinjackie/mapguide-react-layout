@@ -9,7 +9,7 @@ import {
 import { MouseCoordinates } from "../components/mouse-coordinates";
 
 export interface IMouseCoordinatesContainerProps {
-    style?: React.CSSProperties;
+    style: React.CSSProperties;
 }
 
 export interface IMouseCoordinatesContainerState {
@@ -32,7 +32,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IMouseCoordinatesDispatch 
     };
 }
 
-export type MouseCoordinatesContainerProps = IMouseCoordinatesContainerProps & IMouseCoordinatesContainerState & IMouseCoordinatesDispatch;
+export type MouseCoordinatesContainerProps = IMouseCoordinatesContainerProps & Partial<IMouseCoordinatesContainerState> & Partial<IMouseCoordinatesDispatch>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class MouseCoordinatesContainer extends React.Component<MouseCoordinatesContainerProps, any> {

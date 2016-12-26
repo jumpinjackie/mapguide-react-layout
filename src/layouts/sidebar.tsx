@@ -208,10 +208,10 @@ class Sidebar extends React.Component<ISidebarProps, any> {
 }
 
 export interface ISidebarLayoutState {
-    viewer?: IMapViewerReducerState;
-    config?: IConfigurationReducerState;
-    capabilities?: IViewerCapabilities;
-    lastaction?: any;
+    viewer: IMapViewerReducerState;
+    config: IConfigurationReducerState;
+    capabilities: IViewerCapabilities;
+    lastaction: any;
 }
 
 function mapStateToProps(state: IApplicationState): ISidebarLayoutState {
@@ -229,7 +229,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
     };
 }
 
-export type SidebarLayoutProps = ISidebarLayoutState;
+export type SidebarLayoutProps = Partial<ISidebarLayoutState>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {

@@ -85,24 +85,24 @@ export interface IAjaxViewerShimProps {
 }
 
 export interface IAjaxViewerShimState {
-    map?: any;
-    selection?: any;
+    map: any;
+    selection: any;
 }
 
 export interface IAjaxViewerShimDispatch {
-    goHome?: () => void;
-    legendRefresh?: () => void;
-    invokeCommand?: (cmd: ICommand) => void;
+    goHome: () => void;
+    legendRefresh: () => void;
+    invokeCommand: (cmd: ICommand) => void;
 }
 
-function mapStateToProps(state: IApplicationState): IAjaxViewerShimState {
+function mapStateToProps(state: IApplicationState): Partial<IAjaxViewerShimState> {
     return {
         map: state.map.state,
         selection: state.selection
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): IAjaxViewerShimDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAjaxViewerShimDispatch> {
     return {
         goHome: () => dispatch(TaskPaneActions.goHome()),
         legendRefresh: () => dispatch(LegendActions.refresh()),
@@ -110,7 +110,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IAjaxViewerShimDispatch {
     };
 }
 
-export type AjaxViewerShimProps = IAjaxViewerShimProps & IAjaxViewerShimState & IAjaxViewerShimDispatch;
+export type AjaxViewerShimProps = IAjaxViewerShimProps & Partial<IAjaxViewerShimState> & Partial<IAjaxViewerShimDispatch>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {

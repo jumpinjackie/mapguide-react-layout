@@ -40,11 +40,11 @@ export interface IAppProps {
 }
 
 export interface IAppState {
-    error?: InitError;
-    includeStack?: boolean;
-    initOptions?: any;
-    config?: IConfigurationReducerState;
-    map?: IMapReducerState;
+    error: InitError;
+    includeStack: boolean;
+    initOptions: any;
+    config: IConfigurationReducerState;
+    map: IMapReducerState;
 }
 
 export interface IInitAppLayout {
@@ -53,11 +53,11 @@ export interface IInitAppLayout {
 }
 
 export interface IAppDispatch {
-    initApp?: (args: any) => void;
-    initLayout?: (args: IInitAppLayout) => void;
+    initApp: (args: any) => void;
+    initLayout: (args: IInitAppLayout) => void;
 }
 
-function mapStateToProps(state: IApplicationState): IAppState {
+function mapStateToProps(state: IApplicationState): Partial<IAppState> {
     return {
         error: state.initError.error,
         includeStack: state.initError.includeStack,
@@ -67,13 +67,13 @@ function mapStateToProps(state: IApplicationState): IAppState {
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): IAppDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAppDispatch> {
     return {
         initLayout: (args) => dispatch(initLayout(args))
     };
 }
 
-export type AppProps = IAppProps & IAppState & IAppDispatch;
+export type AppProps = IAppProps & Partial<IAppState> & Partial<IAppDispatch>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class App extends React.Component<AppProps, any> {

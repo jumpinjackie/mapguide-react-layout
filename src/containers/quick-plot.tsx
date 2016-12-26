@@ -38,7 +38,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IQuickPlotContainerDispatc
     };
 }
 
-export type QuickPlotProps = IQuickPlotContainerProps & IQuickPlotContainerState & IQuickPlotContainerDispatch;
+export type QuickPlotProps = IQuickPlotContainerProps & Partial<IQuickPlotContainerState> & Partial<IQuickPlotContainerDispatch>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
@@ -125,15 +125,21 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
     private onGeneratePlot(e: GenericEvent) {
 
     }
+    private getLocale(): string {
+        return this.props.config ? this.props.config.locale : "en";
+    }
     render(): JSX.Element {
-        const { map, view } = this.props;
+        const { map, view, config } = this.props;
         const viewer = getViewer();
         if (!viewer || !map || !view) {
             return <div />;
         }
+        let hasExternalBaseLayers = false;
+        if (config) {
+            hasExternalBaseLayers = config.externalBaseLayers && config.externalBaseLayers.length > 0;
+        }
         const extent = viewer.getCurrentExtent();
         const box = `${extent[0]}, ${extent[1]}, ${extent[2]}, ${extent[1]}, ${extent[2]}, ${extent[3]}, ${extent[0]}, ${extent[3]}, ${extent[0]}, ${extent[1]}`;
-        const { config } = this.props;
         let paperSize: string;
         let printSize: string;
         const tokens = this.state.paperSize.split(",");
@@ -144,20 +150,21 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
             printSize = `${tokens[0]},${tokens[1]}`;
             paperSize = `${printSize},${tokens[2]}`;
         }
+        const locale = this.getLocale();
         return <div style={{ padding: 5 }}>
             <form id="Form1" name="Form1" target="_blank" method="post" action="server/QuickPlot/PlotAsPDF.php">
                 <input type="hidden" id="printId" name="printId" value={`${Math.random() * 1000}`} />
-                <div className="Title FixWidth">{xlate("QUICKPLOT_HEADER", config.locale) }</div>
+                <div className="Title FixWidth">{xlate("QUICKPLOT_HEADER", locale) }</div>
                 <label className="pt-label">
-                    {xlate("QUICKPLOT_TITLE", config.locale)}
+                    {xlate("QUICKPLOT_TITLE", locale)}
                     <input type="text" className="pt-input pt-fill" dir="auto" name="{field:title}" id="title" maxLength={100} value={this.state.title} onChange={this.fnTitleChanged} />
                 </label>
                 <label className="pt-label">
-                    {xlate("QUICKPLOT_SUBTITLE", config.locale)}
+                    {xlate("QUICKPLOT_SUBTITLE", locale)}
                     <input type="text" className="pt-input pt-fill" dir="auto" name="{field:sub_title}" id="subtitle" maxLength={100} value={this.state.subTitle} onChange={this.fnSubTitleChanged} />
                 </label>
                 <label className="pt-label">
-                    {xlate("QUICKPLOT_PAPER_SIZE", config.locale)}
+                    {xlate("QUICKPLOT_PAPER_SIZE", locale)}
                     <div className="pt-select pt-fill">
                         {/*
                             The pre-defined paper size list. The value for each "option" item is in this format: [width,height]. The unit is in millimeter.
@@ -173,45 +180,45 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
                     </div>
                 </label>
                 <label className="pt-label">
-                    {xlate("QUICKPLOT_ORIENTATION", config.locale)}
+                    {xlate("QUICKPLOT_ORIENTATION", locale)}
                     {/*
                         The pre-defined paper orientations
                     */}
                     <div className="pt-select pt-fill">
                         <select className="FixWidth" id="orientation" name="orientation" value={this.state.orientation} onChange={this.fnOrientationChanged}>
-                            <option value="P">{xlate("QUICKPLOT_ORIENTATION_P", config.locale) }</option>
-                            <option value="L">{xlate("QUICKPLOT_ORIENTATION_L", config.locale) }</option>
+                            <option value="P">{xlate("QUICKPLOT_ORIENTATION_P", locale) }</option>
+                            <option value="L">{xlate("QUICKPLOT_ORIENTATION_L", locale) }</option>
                         </select>
                     </div>
                 </label>
                 <input type="hidden" id="paperSize" name="paperSize" value={paperSize} />
                 <input type="hidden" id="printSize" name="printSize" value={printSize} />
                 <fieldset>
-                    <legend>{xlate("QUICKPLOT_SHOWELEMENTS", config.locale) }</legend>
+                    <legend>{xlate("QUICKPLOT_SHOWELEMENTS", locale) }</legend>
                     <label className="pt-control pt-checkbox">
                         <input type="checkbox" id="ShowLegendCheckBox" name="ShowLegend" checked={this.state.showLegend} onChange={this.fnShowLegendChanged} />
                         <span className="pt-control-indicator" />
-                        {xlate("QUICKPLOT_SHOWLEGEND", config.locale)}
+                        {xlate("QUICKPLOT_SHOWLEGEND", locale)}
                     </label>
                     <label className="pt-control pt-checkbox">
                         <input type="checkbox" id="ShowNorthArrowCheckBox" name="ShowNorthArrow" checked={this.state.showNorthBar} onChange={this.fnShowNorthArrowChanged} />
                         <span className="pt-control-indicator" />
-                        {xlate("QUICKPLOT_SHOWNORTHARROW", config.locale)}
+                        {xlate("QUICKPLOT_SHOWNORTHARROW", locale)}
                     </label>
                     <label className="pt-control pt-checkbox">
                         <input type="checkbox" id="ShowCoordinatesCheckBox" name="ShowCoordinates" checked={this.state.showCoordinates} onChange={this.fnShowCoordinatesChanged} />
                         <span className="pt-control-indicator" />
-                        {xlate("QUICKPLOT_SHOWCOORDINTES", config.locale)}
+                        {xlate("QUICKPLOT_SHOWCOORDINTES", locale)}
                     </label>
                     <label className="pt-control pt-checkbox">
                         <input type="checkbox" id="ShowScaleBarCheckBox" name="ShowScaleBar" checked={this.state.showScaleBar} onChange={this.fnShowScaleBarChanged} />
                         <span className="pt-control-indicator" />
-                        {xlate("QUICKPLOT_SHOWSCALEBAR", config.locale)}
+                        {xlate("QUICKPLOT_SHOWSCALEBAR", locale)}
                     </label>
                     <label className="pt-control pt-checkbox">
                         <input type="checkbox" id="ShowDisclaimerCheckBox" name="ShowDisclaimer" checked={this.state.showDisclaimer} onChange={this.fnShowDisclaimerChanged} />
                         <span className="pt-control-indicator" />
-                        {xlate("QUICKPLOT_SHOWDISCLAIMER", config.locale)}
+                        {xlate("QUICKPLOT_SHOWDISCLAIMER", locale)}
                     </label>
                 </fieldset>
                 <div className="HPlaceholder5px"></div>
@@ -219,14 +226,14 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
                     <label className="pt-control pt-checkbox">
                         <input type="checkbox" id="AdvancedOptionsCheckBox" onChange={this.fnAdvancedOptionsChanged} />
                         <span className="pt-control-indicator" />
-                        {xlate("QUICKPLOT_ADVANCED_OPTIONS", config.locale)}
+                        {xlate("QUICKPLOT_ADVANCED_OPTIONS", locale)}
                     </label>
                 </div>
                 {(() => {
                     if (this.state.showAdvanced) {
                         return <div>
                             <label className="pt-label">
-                                {xlate("QUICKPLOT_SCALING", config.locale)}
+                                {xlate("QUICKPLOT_SCALING", locale)}
                                 {/*
                                     The pre-defined scales. The value for each "option" item is the scale denominator.
                                     We can change the html code to extend the pre-defined scales
@@ -241,7 +248,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
                                 </div>
                             </label>
                             <label className="pt-label">
-                                {xlate("QUICKPLOT_DPI", config.locale)}
+                                {xlate("QUICKPLOT_DPI", locale)}
                                 {/*
                                     The pre-defined print DPI. 
                                     We can change the html code to extend the pre-defined values
@@ -265,14 +272,14 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
                 })()}
                 <div className="HPlaceholder5px"></div>
                 {(() => {
-                    if (config.externalBaseLayers && config.externalBaseLayers.length > 0) {
+                    if (hasExternalBaseLayers) {
                         return <div id="commercialLayerWarning" className="pt-callout pt-intent-primary pt-icon-info-sign">
-                            {xlate("QUICKPLOT_COMMERCIAL_LAYER_WARNING", config.locale) }
+                            {xlate("QUICKPLOT_COMMERCIAL_LAYER_WARNING", locale) }
                         </div>;
                     }
                 })()}
                 <div className="ButtonContainer FixWidth">
-                    <button type="submit" className="pt-button pt-icon-print pt-intent-primary" onClick={this.fnGeneratePlot}>{xlate("QUICKPLOT_GENERATE", config.locale)}</button>
+                    <button type="submit" className="pt-button pt-icon-print pt-intent-primary" onClick={this.fnGeneratePlot}>{xlate("QUICKPLOT_GENERATE", locale)}</button>
                 </div>
                 <input type="hidden" id="margin" name="margin" />
                 <input type="hidden" id="normalizedBox" name="normalizedBox" value={box} />

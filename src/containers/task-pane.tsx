@@ -33,13 +33,13 @@ export interface ITaskPaneContainerState {
 }
 
 export interface ITaskPaneDispatch {
-    invokeCommand?: (cmd: ICommand) => void;
-    goHome?: () => void;
-    goForward?: () => void;
-    goBack?: () => void;
-    pushUrl?: (url: string, silent?: boolean) => void;
-    openFlyout?: (id: string, metrics: IDOMElementMetrics) => void;
-    closeFlyout?: (id: string) => void;
+    invokeCommand: (cmd: ICommand) => void;
+    goHome: () => void;
+    goForward: () => void;
+    goBack: () => void;
+    pushUrl: (url: string, silent?: boolean) => void;
+    openFlyout: (id: string, metrics: IDOMElementMetrics) => void;
+    closeFlyout: (id: string) => void;
 }
 
 function mapStateToProps(state: IApplicationState): ITaskPaneContainerState {
@@ -66,7 +66,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): ITaskPaneDispatch {
     };
 }
 
-export type TaskPaneProps = ITaskPaneContainerStyle & ITaskPaneContainerState & ITaskPaneDispatch;
+export type TaskPaneProps = ITaskPaneContainerStyle & Partial<ITaskPaneContainerState> & Partial<ITaskPaneDispatch>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
@@ -81,9 +81,10 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         this.fnUrlLoaded = this.onUrlLoaded.bind(this);
         this.fnCloseFlyout = this.onCloseFlyout.bind(this);
         this.fnOpenFlyout = this.onOpenFlyout.bind(this);
+        const locale = this.getLocale();
         this.homeAction = {
             icon: "icon_home.gif",
-            tooltip: tr("TT_GO_HOME", this.props.config.locale),
+            tooltip: tr("TT_GO_HOME", locale),
             enabled: this.canGoHome.bind(this),
             invoke: () => {
                 const { goHome } = this.props;
@@ -94,7 +95,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         };
         this.backAction = {
             icon: "back.png",
-            tooltip: tr("TT_GO_BACK", this.props.config.locale),
+            tooltip: tr("TT_GO_BACK", locale),
             enabled: this.canGoBack.bind(this),
             invoke: () => {
                 const { goBack } = this.props;
@@ -105,7 +106,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         };
         this.forwardAction = {
             icon: "forward.png",
-            tooltip: tr("TT_GO_FORWARD", this.props.config.locale),
+            tooltip: tr("TT_GO_FORWARD", locale),
             enabled: this.canGoForward.bind(this),
             invoke: () => {
                 const { goForward } = this.props;
@@ -114,6 +115,9 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
                 }
             }
         };
+    }
+    private getLocale(): string {
+        return this.props.config ? this.props.config.locale : "en";
     }
     private onCloseFlyout(id: string): void {
         if (this.props.closeFlyout) {
@@ -127,16 +131,18 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
     }
     private onUrlLoaded(url: string): void {
         const { taskpane, pushUrl } = this.props;
-        const currentUrl = taskpane.navigation[taskpane.navIndex];
-        if (pushUrl && !areUrlsSame(currentUrl, url)) {
-            pushUrl(url);
+        if (taskpane) {
+            const currentUrl = taskpane.navigation[taskpane.navIndex];
+            if (pushUrl && !areUrlsSame(currentUrl, url)) {
+                pushUrl(url);
+            }
         }
     }
     private canGoHome(): boolean {
         const { taskpane, map, config } = this.props;
-        if (taskpane.initialUrl) { //An initial URL was set
+        if (taskpane && taskpane.initialUrl) { //An initial URL was set
             const initUrl = map && taskpane.initialUrl
-                ? TaskPaneActions.ensureParameters(taskpane.initialUrl, map.Name, map.SessionId, config.locale)
+                ? TaskPaneActions.ensureParameters(taskpane.initialUrl, map.Name, map.SessionId, this.getLocale())
                 : taskpane.initialUrl;
             return taskpane.navigation.length > 0 //We have a navigation stack
                 && !areUrlsSame(taskpane.navigation[taskpane.navIndex], initUrl); //The current URL is not initial.
@@ -145,11 +151,17 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
     }
     private canGoBack(): boolean {
         const { taskpane } = this.props;
-        return taskpane.navIndex > 0;
+        if (taskpane) {
+            return taskpane.navIndex > 0;
+        }
+        return false;
     }
     private canGoForward(): boolean {
         const { taskpane } = this.props;
-        return taskpane.navIndex < taskpane.navigation.length - 1;
+        if (taskpane) {
+            return taskpane.navIndex < taskpane.navigation.length - 1;
+        }
+        return false;
     }
     static contextTypes: React.ValidationMap<any> = {
         store: React.PropTypes.object
@@ -170,7 +182,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
                                  mapName={map.Name}
                                  onUrlLoaded={this.fnUrlLoaded}
                                  maxHeight={maxHeight}
-                                 locale={config.locale} />;
+                                 locale={this.getLocale()} />;
             }
         }
         return <div />;

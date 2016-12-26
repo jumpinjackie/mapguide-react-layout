@@ -36,23 +36,23 @@ export interface IMapViewerContainerProps {
 }
 
 export interface IMapViewerContainerState {
-    config?: any;
+    config: any;
     map: RuntimeMap | null;
     selection: QueryMapFeaturesResponse | null;
-    view?: any;
-    viewer?: IMapViewerReducerState;
-    legend?: ILegendReducerState;
-    contextmenu?: any;
+    view: any;
+    viewer: IMapViewerReducerState;
+    legend: ILegendReducerState;
+    contextmenu: any;
 }
 
 export interface IMapViewerContainerDispatch {
-    setActiveTool?: (tool: ActiveMapTool) => void;
-    setCurrentView?: (view: IMapView) => void;
-    setBusyCount?: (count: number) => void;
-    setMouseCoordinates?: (coord: Coordinate) => void;
-    invokeCommand?: (cmd: ICommand) => void;
-    showModalComponent?: (options: any) => void;
-    queryMapFeatures?: (options: MapActions.QueryMapFeatureActionOptions) => void;
+    setActiveTool: (tool: ActiveMapTool) => void;
+    setCurrentView: (view: IMapView) => void;
+    setBusyCount: (count: number) => void;
+    setMouseCoordinates: (coord: Coordinate) => void;
+    invokeCommand: (cmd: ICommand) => void;
+    showModalComponent: (options: any) => void;
+    queryMapFeatures: (options: MapActions.QueryMapFeatureActionOptions) => void;
 }
 
 function mapStateToProps(state: IApplicationState): IMapViewerContainerState {
@@ -79,7 +79,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IMapViewerContainerDispatc
     };
 }
 
-export type MapViewerContainerProps = IMapViewerContainerProps & IMapViewerContainerState & IMapViewerContainerDispatch;
+export type MapViewerContainerProps = IMapViewerContainerProps & Partial<IMapViewerContainerState> & Partial<IMapViewerContainerDispatch>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class MapViewerContainer extends React.Component<MapViewerContainerProps, any>
@@ -276,7 +276,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         this.inner.queryMapFeatures(options, success, failure);
     }
     getSelection(): QueryMapFeaturesResponse | null {
-        return this.props.selection;
+        if (this.props.selection)
+            return this.props.selection;
+        return null;
     }
     getSelectionXml(selection: FeatureSet, layerIds?: string[]): string {
         if (this.props.selection) {

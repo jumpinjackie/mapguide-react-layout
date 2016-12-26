@@ -30,17 +30,21 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
     };
 }
 
-export type SelectedFeatureContainerProps = ISelectionPanelContainerState & ISelectionPanelContainerProps;
+export type SelectedFeatureContainerProps = ISelectionPanelContainerProps & Partial<ISelectionPanelContainerState>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class SelectedFeatureCountContainer extends React.Component<SelectedFeatureContainerProps, any> {
     constructor(props: SelectedFeatureContainerProps) {
         super(props);
     }
+    private getLocale(): string {
+        return this.props.config ? this.props.config.locale : "en";
+    }
     render(): JSX.Element {
         const { selection, style, config } = this.props;
+        const locale = this.getLocale();
         if (selection && selection.FeatureSet) {
-            return <SelectedFeatureCount locale={config.locale || "en"} style={style} selection={selection.FeatureSet} />;
+            return <SelectedFeatureCount locale={locale} style={style} selection={selection.FeatureSet} />;
         } else {
             return <div />;
         }

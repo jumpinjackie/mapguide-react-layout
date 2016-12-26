@@ -24,19 +24,19 @@ export interface IToolbarContainerProps {
 }
 
 export interface IToolbarContainerState {
-    map?: IMapReducerState;
-    toolbar?: IToolbarReducerState;
-    flyouts?: any;
-    view?: IViewReducerState;
-    selection?: ISelectionReducerState;
+    map: IMapReducerState;
+    toolbar: IToolbarReducerState;
+    flyouts: any;
+    view: IViewReducerState;
+    selection: ISelectionReducerState;
 }
 
 export interface IToolbarContainerDispatch {
-    invokeCommand?: (cmd: ICommand) => void;
-    openFlyout?: (id: string, metrics: IDOMElementMetrics) => void;
-    closeFlyout?: (id: string) => void;
-    openComponent?: (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => void;
-    closeComponent?: (id: string) => void;
+    invokeCommand: (cmd: ICommand) => void;
+    openFlyout: (id: string, metrics: IDOMElementMetrics) => void;
+    closeFlyout: (id: string) => void;
+    openComponent: (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => void;
+    closeComponent: (id: string) => void;
 }
 
 function mapStateToProps(state: IApplicationState, ownProps: IToolbarContainerProps): IToolbarContainerState {
@@ -59,7 +59,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IToolbarContainerDispatch 
     };
 }
 
-export type ToolbarContainerProps = IToolbarContainerProps & IToolbarContainerState & IToolbarContainerDispatch;
+export type ToolbarContainerProps = IToolbarContainerProps & Partial<IToolbarContainerState> & Partial<IToolbarContainerDispatch>;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class ToolbarContainer extends React.Component<ToolbarContainerProps, any> {

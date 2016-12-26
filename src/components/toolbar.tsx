@@ -4,7 +4,6 @@ import { IDOMElementMetrics } from "../api/common";
 import { Popover, Position } from "@blueprintjs/core";
 import { MenuComponent } from "./menu";
 import { IToolbarContext, TOOLBAR_CONTEXT_VALIDATION_MAP } from "./context";
-import * as uuid from "node-uuid";
 import * as Constants from "../constants";
 
 export const TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";

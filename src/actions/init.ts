@@ -35,7 +35,7 @@ import { tr } from "../api/i18n";
 import { MgError } from "../api/error";
 import * as logger from "../utils/logger";
 import queryString = require("query-string");
-import * as uuid from "node-uuid";
+import * as shortid from "shortid";
 import { registerStringBundle } from "../api/i18n";
 const parse = require("url-parse");
 const proj4 = require("proj4");
@@ -128,7 +128,7 @@ function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictiona
                             case "Measure":
                                 return { command: DefaultCommands.Measure, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
                             case "BasemapSwitcher":
-                                return { label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: DefaultComponentNames.BaseMapSwitcher, flyoutId: `${DefaultComponentNames.BaseMapSwitcher}_${uuid.v4()}` };
+                                return { label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: DefaultComponentNames.BaseMapSwitcher, flyoutId: `${DefaultComponentNames.BaseMapSwitcher}_${shortid.generate()}` };
                             default:
                                 return { error: tr("UNKNOWN_WIDGET", locale, { widget: widget.Type }) }
                         }
@@ -220,7 +220,7 @@ function prepareSubMenus(tbConf: any): any {
             for (const item of tbConf[key].items) {
                 //Special case: contextmenu is all inline
                 if (item.children && key != 'contextmenu') {
-                    const flyoutId = `${item.label}_${uuid.v4()}`;
+                    const flyoutId = `${item.label}_${shortid.generate()}`;
                     prepared.toolbars[key].items.push({
                         label: item.label,
                         tooltip: item.tooltip,

@@ -35,5 +35,26 @@ describe("reducers/config", () => {
             expect(state.capabilities.hasLegend).to.be.true;
             expect(state.capabilities.hasToolbar).to.be.false;
         });
-    })
+    });
+    describe("MAP_SET_BASE_LAYER", () => {
+        it("updates", () => {
+            const initialState = createInitialState();
+            initialState.config.externalBaseLayers = [
+                { name: "Foo", kind: "Foo", visible: false },
+                { name: "Bar", kind: "Bar", visible: false },
+                { name: "OSM", kind: "OSM", visible: false },
+                { name: "Bing", kind: "Bing", visible: false }
+            ];
+            const action = {
+                type: Constants.MAP_SET_BASE_LAYER,
+                payload: "OSM"
+            };
+            const state = configReducer(initialState.config, action as any);
+            expect(state).to.not.be.null;
+            expect(state.externalBaseLayers).to.have.length(4);
+            const visible = state.externalBaseLayers.filter(l => l.visible);
+            expect(visible).to.have.length(1);
+            expect(visible[0].name).to.be.equal("OSM");
+        });
+    });
 });

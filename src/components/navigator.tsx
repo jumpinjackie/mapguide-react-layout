@@ -1,6 +1,7 @@
 import * as React from "react";
 import { tr } from "../api/i18n";
 import Draggable = require('react-draggable');
+import { getFiniteScaleIndexForScale } from "../utils/number";
 
 export enum ZoomDirection {
     In,
@@ -26,7 +27,7 @@ interface DraggableData {
 };
 
 const VERT_START = 10;
-const VERT_SPAN = 81;
+const VERT_SPAN = 81;  //This is the pixel height of the maximum draggable scale range
 const VERT_BEGIN = 60; //This position represents the starting scale (ie. initial view)
 
 const LN9 = Math.log(9);
@@ -59,8 +60,6 @@ export class Navigator extends React.Component<INavigatorProps, any> {
     private fnStart: (e: any, data: any) => void | boolean;
     private fnDrag: (e: any, data: any) => void | boolean;
     private fnStop: (e: any, data: any) => void | boolean;
-    private initialScale: number;
-    private finiteScaleList: number[] | null | undefined;
     constructor(props: INavigatorProps) {
         super(props);
         this.fnPanEast = this.onPanEast.bind(this);
@@ -72,11 +71,9 @@ export class Navigator extends React.Component<INavigatorProps, any> {
         this.fnStart = this.onStart.bind(this);
         this.fnDrag = this.onDrag.bind(this);
         this.fnStop = this.onStop.bind(this);
-        this.initialScale = props.scale;
-        this.finiteScaleList = props.finiteScaleList;
         this.state = {
-            previewPos: VERT_BEGIN, //Used to specify the preview destination scale "position"
-            pos: VERT_BEGIN, //Used to specify the current scale "position"
+            previewPos: this.calculatePosForScale(props.scale), //Used to specify the preview destination scale "position"
+            pos: this.calculatePosForScale(props.scale), //Used to specify the current scale "position"
             isDragging: false
         };
     }
@@ -119,31 +116,23 @@ export class Navigator extends React.Component<INavigatorProps, any> {
         this.props.onRequestZoomToScale(newScale);
     }
     private calculatePosForScale(scale: number): number {
-        const pos = 9 * Math.log(scale) / LN9;
-        return Math.floor(pos);
+        const { finiteScaleList } = this.props;
+        if (finiteScaleList) {
+            const index = getFiniteScaleIndexForScale(finiteScaleList, scale);
+            const pos = (VERT_SPAN / finiteScaleList.length) * (index + 1);
+            console.log(`Scale: ${scale} @ ${index} / ${finiteScaleList.length} -> ${Math.floor(pos)}`);
+            return Math.floor(pos);
+        } else {
+            const pos = 9 * Math.log(scale) / LN9;
+            return Math.floor(pos);
+        }
     }
     private calculateScaleForPos(pos: number): number {
         const scale = Math.pow(9,pos/9);
-        if (this.finiteScaleList) {
-            for (let i = 0; i < this.finiteScaleList.length; i++) {
-                if (scale >= this.finiteScaleList[i]) { //Found the lower bound
-                    if ((i + 1) < this.finiteScaleList.length) { //There is a possible upper bound
-                        if (scale <= this.finiteScaleList[i+1]) { //It is the upper bound
-                            const lower = this.finiteScaleList[i];
-                            const upper = this.finiteScaleList[i+1];
-                            //Snap to the scale with lowest difference
-                            if (Math.abs(scale - lower) > Math.abs(scale - upper)) {
-                                return upper;
-                            } else {
-                                return lower;
-                            }
-                        }
-                    } else { //There is no upper bound, snap to lower bound
-                        return this.finiteScaleList[i];
-                    }
-                }
-            }
-            return this.finiteScaleList[0];
+        const { finiteScaleList } = this.props;
+        if (finiteScaleList) {
+            const index = getFiniteScaleIndexForScale(finiteScaleList, scale);
+            return finiteScaleList[index];
         } else {
             return scale;
         }
@@ -153,7 +142,6 @@ export class Navigator extends React.Component<INavigatorProps, any> {
         this.setState({ pos: pos, previewPos: pos });
     }
     componentWillReceiveProps(nextProps: INavigatorProps) {
-        this.finiteScaleList = nextProps.finiteScaleList;
         if (this.props.scale != nextProps.scale) {
             const pos = this.calculatePosForScale(nextProps.scale);
             this.setState({ pos: pos, previewPos: pos });
@@ -174,9 +162,13 @@ export class Navigator extends React.Component<INavigatorProps, any> {
             <div style={{ position: "absolute", top: 6, left: 6, width: 39, height: 16 }}>
                 <img src="stdicons/spinner.gif" className="navigator-spinner" width="18" height="6" style={{ position: "absolute", top: 3, right: 4, visibility: busy ? "visible" : "hidden" }} />
             </div>
+            {/* 
+                NOTE: this.state.pos is the displacement from VERT_START instead of 0. This ensures
+                at the lowest possible scale, the slider doesn't "cross over" the (+) button
+            */}
             <Draggable axis="y"
                        handle="img.navigator-drag-handle"
-                       position={{ x: 0, y: this.state.pos }}
+                       position={{ x: 0, y: (VERT_START + this.state.pos) }}
                        bounds={{ top: VERT_START, bottom: (VERT_START + VERT_SPAN), left: 0, right: 0 }}
                        onStart={this.fnStart}
                        onDrag={this.fnDrag}

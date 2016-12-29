@@ -120,7 +120,7 @@ export class Navigator extends React.Component<INavigatorProps, any> {
         if (finiteScaleList) {
             const index = getFiniteScaleIndexForScale(finiteScaleList, scale);
             const pos = (VERT_SPAN / finiteScaleList.length) * (index + 1);
-            console.log(`Scale: ${scale} @ ${index} / ${finiteScaleList.length} -> ${Math.floor(pos)}`);
+            //console.log(`Scale: ${scale} @ ${index} / ${finiteScaleList.length} -> ${Math.floor(pos)}`);
             return Math.floor(pos);
         } else {
             const pos = 9 * Math.log(scale) / LN9;

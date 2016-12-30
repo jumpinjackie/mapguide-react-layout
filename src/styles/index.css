@@ -275,6 +275,26 @@ div.InfoText
                                     not supported by any browser */
 }
 
+.component-about-dialog-content {
+    padding: 5px;
+}
+
+.component-session-expired {
+    padding: 5px;
+}
+
+.component-measure {
+    padding: 5px;
+}
+
+.component-quick-plot {
+    padding: 5px;
+}
+
+.component-viewer-options {
+    padding: 5px;
+}
+
 .component-mouse-coordinates, .component-selected-feature-count {
     padding: 3px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;

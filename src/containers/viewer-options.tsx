@@ -58,7 +58,7 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
     render(): JSX.Element {
         const { viewer, config } = this.props;
         const locale = config ? config.locale : "en";
-        return <div style={{ padding: 5 }}>
+        return <div className="component-viewer-options">
             <h5>{tr("VIEWER_OPTIONS", locale)}</h5>
             <hr />
             {(() => {

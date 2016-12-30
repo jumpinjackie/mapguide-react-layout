@@ -17,7 +17,7 @@ export interface ISessionExpiredProps {
 }
 
 export const SessionExpired = (props: ISessionExpiredProps) => {
-    return <div style={{ padding: 5 }}>
+    return <div className="component-session-expired">
         <p>{tr("SESSION_EXPIRED_DETAILED", props.locale)}</p>
         <p><strong>{tr("SESSION_EXPIRED_AVAILABLE_ACTIONS", props.locale)}</strong></p>
         <ul>

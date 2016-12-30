@@ -151,7 +151,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
             paperSize = `${printSize},${tokens[2]}`;
         }
         const locale = this.getLocale();
-        return <div style={{ padding: 5 }}>
+        return <div className="component-quick-plot">
             <form id="Form1" name="Form1" target="_blank" method="post" action="server/QuickPlot/PlotAsPDF.php">
                 <input type="hidden" id="printId" name="printId" value={`${Math.random() * 1000}`} />
                 <div className="Title FixWidth">{xlate("QUICKPLOT_HEADER", locale) }</div>

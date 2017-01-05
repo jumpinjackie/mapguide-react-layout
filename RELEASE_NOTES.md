@@ -1,5 +1,5 @@
-Next
-====
+0.7
+===
  * [#98](https://github.com/jumpinjackie/mapguide-react-layout/issues/98): Updated to TypeScript 2.1
  * [#91](https://github.com/jumpinjackie/mapguide-react-layout/issues/91): Use [Blueprint](http://blueprintjs.com/) as UI foundation
    * Many UI elements updated/replaced/re-styled with blueprint equivalents

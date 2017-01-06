@@ -10,6 +10,7 @@ import {
     IConfigurationReducerState
 } from "../api/common";
 import { tr } from "../api/i18n";
+import { ScaleDisplay } from "../components/scale-display";
 
 export interface IScaleDisplayContainerState {
     style?: React.CSSProperties;
@@ -40,27 +41,15 @@ export type ScaleDisplayContainerProps = Partial<IScaleDisplayContainerState> & 
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainerProps, any> {
-    private fnFiniteScaleChanged: GenericEventHandler;
-    private fnScaleKeyPressed: GenericEventHandler;
-    private fnScaleInputChanged: GenericEventHandler;
+    private fnScaleChanged: (scale: number) => void;
     constructor(props: ScaleDisplayContainerProps) {
         super(props);
-        this.fnFiniteScaleChanged = this.onFiniteScaleChanged.bind(this);
-        this.fnScaleKeyPressed = this.onScaleKeyPressed.bind(this);
-        this.fnScaleInputChanged = this.onScaleInputChanged.bind(this);
+        this.fnScaleChanged = this.onScaleChanged.bind(this);
     }
-    private onFiniteScaleChanged(e: GenericEvent) {
+    private onScaleChanged(scale: number) {
         if (this.props.setScale) {
-            this.props.setScale(parseInt(e.target.value, 10));
+            this.props.setScale(scale);
         }
-    }
-    private onScaleKeyPressed(e: GenericEvent) {
-        if (e.key == 'Enter' && this.props.setScale) {
-            this.props.setScale(this.state.localScale);
-        }
-    }
-    private onScaleInputChanged(e: GenericEvent) {
-        this.setState({ localScale: parseFloat(e.target.value) });
     }
     private getLocale(): string {
         return this.props.config ? this.props.config.locale : "en";
@@ -74,26 +63,14 @@ export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainer
     render(): JSX.Element {
         const { view, style, config, finiteScales } = this.props;
         const locale = this.getLocale();
-        if (view != null) {
-            const label = tr("FMT_SCALE_DISPLAY", locale, {
-                scale: ""
-            });
-
-            if (finiteScales) {
-                return <div className="component-scale-display" style={style}>
-                    {label} <select className="scale-input" value={view.scale} onChange={this.fnFiniteScaleChanged}>
-                        {finiteScales.map(s => {
-                            return <option key={s} value={s}>{s}</option>;
-                        })}
-                    </select>
-                </div>;
-            } else {
-                return <div className="component-scale-display" style={style}>
-                    {label} <input className="scale-input" type="number" value={this.state.localScale} onChange={this.fnScaleInputChanged} onKeyPress={this.fnScaleKeyPressed} />
-                </div>;
-            }
+        if (view) {
+            return <ScaleDisplay onScaleChanged={this.fnScaleChanged}
+                                 view={view} 
+                                 style={style} 
+                                 finiteScales={finiteScales} 
+                                 locale={locale} />;
         } else {
-            return <div />;
+            return <noscript />;
         }
     }
 }

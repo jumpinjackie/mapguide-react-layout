@@ -1,7 +1,10 @@
 import * as React from "react";
 import { IExternalBaseLayer } from "../api/common";
+import { STR_EMPTY, strIsNullOrEmpty } from "../utils/string";
+import { tr } from "../api/i18n";
 
 export interface IBaseLayerSwitcherProps {
+    locale: string | undefined;
     externalBaseLayers: IExternalBaseLayer[];
     onBaseLayerChanged?: (name: string) => void;
 }
@@ -25,7 +28,14 @@ export class BaseLayerSwitcher extends React.Component<IBaseLayerSwitcherProps, 
         }
     }
     render(): JSX.Element {
+        const { locale } = this.props;
         return <div>
+            <div className="base-layer-switcher-item-container">
+                <label className="pt-control pt-radio">
+                    <input className="base-layer-switcher-option" type="radio" value={STR_EMPTY} checked={strIsNullOrEmpty(this.state.selected)} onChange={this.fnBaseLayerChanged} />
+                    <span className="pt-control-indicator" /> {tr("NONE", locale)}
+                </label>
+            </div>
             {this.props.externalBaseLayers.map(layer => {
                 return <div className="base-layer-switcher-item-container" key={`base-layer-${layer.name}`}>
                     <label className="pt-control pt-radio">

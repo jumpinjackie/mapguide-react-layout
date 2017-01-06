@@ -51,7 +51,7 @@ export class BaseLayerSwitcherContainer extends React.Component<BaseLayerSwitche
     render(): JSX.Element {
         const { config } = this.props;
         if (config) {
-            return <BaseLayerSwitcher onBaseLayerChanged={this.fnBaseLayerChanged} externalBaseLayers={config.externalBaseLayers} />;
+            return <BaseLayerSwitcher onBaseLayerChanged={this.fnBaseLayerChanged} externalBaseLayers={config.externalBaseLayers} locale={config.locale} />;
         } else {
             return <noscript />;
         }

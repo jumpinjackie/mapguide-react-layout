@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@blueprintjs/core@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-1.4.0.tgz#c9da1a23bb9041dad124cabf5f99015775063d22"
+"@blueprintjs/core@^1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-1.5.0.tgz#229a55b1a4f4b911c956532b62439fa494432260"
   dependencies:
     "@types/dom4" "^1.5.20"
     "@types/tether" "^1.1.27"
@@ -44,13 +44,15 @@
   version "4.14.43"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.43.tgz#0373de422e70f5bce12c15340103a3c126c81086"
 
-"@types/mocha@2.2.35":
-  version "2.2.35"
-  resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-2.2.35.tgz#dd3150b62a6de73368109308515c3aa86f81f1ec"
+"@types/mocha@2.2.36":
+  version "2.2.36"
+  resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-2.2.36.tgz#84e58982fc5f9ebe47d6fc0b1626dd1133db5c0d"
+  dependencies:
+    "@types/node" "*"
 
-"@types/node@6.0.57":
-  version "6.0.57"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-6.0.57.tgz#100f9d4390331297bc3b6160ac4805b46de6e752"
+"@types/node@*", "@types/node@6.0.58":
+  version "6.0.58"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-6.0.58.tgz#7b3b7065f3cdf24e2349d35b68d2795cfa874553"
 
 "@types/query-string@3.0.31":
   version "3.0.31"
@@ -4783,21 +4785,30 @@ rc@^1.0.1, rc@^1.1.5, rc@^1.1.6, rc@~1.1.6:
     minimist "^1.2.0"
     strip-json-comments "~1.0.4"
 
-react-addons-css-transition-group@^15.4.1:
-  version "15.4.1"
-  resolved "https://registry.yarnpkg.com/react-addons-css-transition-group/-/react-addons-css-transition-group-15.4.1.tgz#60b133fac5116e4009e56ab0674dc2ddcc1a18f6"
+react-addons-css-transition-group@^15.4.2:
+  version "15.4.2"
+  resolved "https://registry.yarnpkg.com/react-addons-css-transition-group/-/react-addons-css-transition-group-15.4.2.tgz#b7828834dfa14229fe07750e331e8a8cb6fb7745"
+  dependencies:
+    fbjs "^0.8.4"
+    object-assign "^4.1.0"
 
-react-addons-test-utils@^15.4.1:
-  version "15.4.1"
-  resolved "https://registry.yarnpkg.com/react-addons-test-utils/-/react-addons-test-utils-15.4.1.tgz#1e4caab151bf27cce26df5f9cb714f4fd8359ae1"
+react-addons-test-utils@^15.4.2:
+  version "15.4.2"
+  resolved "https://registry.yarnpkg.com/react-addons-test-utils/-/react-addons-test-utils-15.4.2.tgz#93bcaa718fcae7360d42e8fb1c09756cc36302a2"
+  dependencies:
+    fbjs "^0.8.4"
+    object-assign "^4.1.0"
 
-react-addons-update@^15.4.1:
-  version "15.4.1"
-  resolved "https://registry.yarnpkg.com/react-addons-update/-/react-addons-update-15.4.1.tgz#00c07f45243aa9715e1706bbfd1f23d3d8d80bd1"
+react-addons-update@^15.4.2:
+  version "15.4.2"
+  resolved "https://registry.yarnpkg.com/react-addons-update/-/react-addons-update-15.4.2.tgz#43a9578e3b46bc5f7eed2ba52560dd57a8aff918"
+  dependencies:
+    fbjs "^0.8.4"
+    object-assign "^4.1.0"
 
-react-dom@^15.4.1:
-  version "15.4.1"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-15.4.1.tgz#d54c913261aaedb17adc20410d029dcc18a1344a"
+react-dom@^15.4.2:
+  version "15.4.2"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-15.4.2.tgz#015363f05b0a1fd52ae9efdd3a0060d90695208f"
   dependencies:
     fbjs "^0.8.1"
     loose-envify "^1.1.0"
@@ -4826,9 +4837,9 @@ react-redux@^5.0.1:
     lodash-es "^4.2.0"
     loose-envify "^1.1.0"
 
-react@^15.4.1:
-  version "15.4.1"
-  resolved "https://registry.yarnpkg.com/react/-/react-15.4.1.tgz#498e918602677a3983cd0fd206dfe700389a0dd6"
+react@^15.4.2:
+  version "15.4.2"
+  resolved "https://registry.yarnpkg.com/react/-/react-15.4.2.tgz#41f7991b26185392ba9bae96c8889e7e018397ef"
   dependencies:
     fbjs "^0.8.4"
     loose-envify "^1.1.0"

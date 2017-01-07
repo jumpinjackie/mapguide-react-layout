@@ -1,3 +1,8 @@
+Next
+====
+ * Update Blueprint to 1.5.0
+ * Update React to 15.4.2
+
 0.7.1
 =====
  * [#64](https://github.com/jumpinjackie/mapguide-react-layout/issues/64): Fix accordion not showing last panel as initially expanded in Slate and Maroon templates

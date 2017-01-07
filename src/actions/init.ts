@@ -50,6 +50,7 @@ function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictiona
             case "Widget":
                 {
                     const widget = widgetsByKey[item.Widget];
+                    //TODO: Offload to registry, just like commands and components
                     if (widget && isUIWidget(widget)) {
                         switch (widget.Type) {
                             case "Select":

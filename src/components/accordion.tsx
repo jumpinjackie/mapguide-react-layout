@@ -26,7 +26,7 @@ export class Accordion extends React.Component<IAccordionProps, any> {
         super(props);
         this.fnTogglePanel = this.onTogglePanel.bind(this);
         this.state = {
-            openPanel: null
+            openPanel: props.panels[props.panels.length - 1].id
         };
     }
     private onTogglePanel(e: GenericEvent) {
@@ -36,11 +36,6 @@ export class Accordion extends React.Component<IAccordionProps, any> {
         } else {
             this.setState({ openPanel: null });
         }
-    }
-    componentDidMount() {
-        this.setState({
-            openPanel: this.props.panels[this.props.panels.length - 1].id
-        });
     }
     render(): JSX.Element {
         const { openPanel } = this.state;

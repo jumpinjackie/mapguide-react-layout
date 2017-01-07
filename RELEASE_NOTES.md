@@ -14,6 +14,7 @@
      * ol3-contextmenu
      * react-flyout
      * Our custom fontello icon set
+ * Feature Tooltips are now toggle-able from Viewer Options
  * [#64](https://github.com/jumpinjackie/mapguide-react-layout/issues/64): All Fusion templates ported across
    * TurquoiseYellow
    * LimeGold

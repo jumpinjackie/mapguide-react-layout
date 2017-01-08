@@ -402,15 +402,21 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
             document.title = appDef.Title || document.title;
         }
 
+        const maps: any = {};
+        maps[map.Name] = {
+            map: map,
+            externalBaseLayers: externalBaseLayers,
+            initialView: initialView
+        };
+
         dispatch({
             type: Constants.INIT_APP,
             payload: {
+                activeMapName: map.Name,
                 initialUrl: ensureParameters(initialTask, map.Name, map.SessionId, opts.locale),
-                map: map,
                 locale: opts.locale,
-                externalBaseLayers: externalBaseLayers,
+                maps: maps,
                 config: config,
-                initialView: initialView,
                 capabilities: {
                     hasTaskPane: (taskPane != null),
                     hasTaskBar: hasTaskBar,
@@ -492,15 +498,21 @@ function makeWebLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any):
             document.title = webLayout.Title || document.title;
         }
 
+        const maps: any = {};
+        maps[map.Name] = {
+            map: map,
+            externalBaseLayers: opts.externalBaseLayers,
+            initialView: initialView
+        };
+
         dispatch({
             type: Constants.INIT_APP,
             payload: {
+                activeMapName: map.Name,
                 initialUrl: ensureParameters(webLayout.TaskPane.InitialTask || "server/TaskPane.html", map.Name, map.SessionId, opts.locale),
-                map: map,
+                maps: maps,
                 locale: opts.locale,
-                externalBaseLayers: opts.externalBaseLayers,
                 config: config,
-                initialView: initialView,
                 capabilities: {
                     hasTaskPane: webLayout.TaskPane.Visible,
                     hasTaskBar: webLayout.TaskPane.TaskBar.Visible,

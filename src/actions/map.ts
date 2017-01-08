@@ -4,7 +4,10 @@ import {
     ICommand,
     IMapView,
     ReduxAction,
-    ReduxThunkedAction
+    ReduxThunkedAction,
+    getCurrentView,
+    getRuntimeMap,
+    getSelectionSet
 } from "../api/common";
 import { getViewer } from "../api/runtime";
 import { areViewsCloseToEqual } from "../components/map-viewer-base";
@@ -98,7 +101,7 @@ function combineFeatureSets(oldRes: FeatureSet | null | undefined, newRes: Featu
     return merged;
 }
 
-function combineSelections(oldRes: QueryMapFeaturesResponse | null, newRes: QueryMapFeaturesResponse): QueryMapFeaturesResponse {
+function combineSelections(oldRes: QueryMapFeaturesResponse | undefined, newRes: QueryMapFeaturesResponse): QueryMapFeaturesResponse {
     if (oldRes) {
         const merged: QueryMapFeaturesResponse = {
             SelectedFeatures: combineSelectedFeatureSets(oldRes.SelectedFeatures, newRes.SelectedFeatures),
@@ -112,11 +115,12 @@ function combineSelections(oldRes: QueryMapFeaturesResponse | null, newRes: Quer
     }
 }
 
-export function queryMapFeatures(opts: QueryMapFeatureActionOptions): ReduxThunkedAction {
+export function queryMapFeatures(mapName: string, opts: QueryMapFeatureActionOptions): ReduxThunkedAction {
     return (dispatch, getState) => {
-        const args = getState().config;
-        const map = getState().map.state;
-        const selectionSet = getState().selection.selectionSet;
+        const state = getState();
+        const args = state.config;
+        const map = getRuntimeMap(state);
+        const selectionSet = getSelectionSet(state);
         if (map && args.agentKind && args.agentUri) {
             const client = new Client(args.agentUri, args.agentKind);
             const success = (res: QueryMapFeaturesResponse) => {
@@ -141,11 +145,11 @@ export function queryMapFeatures(opts: QueryMapFeatureActionOptions): ReduxThunk
                             persist: 1,
                             featurefilter: mergedXml
                         }).then(r => {
-                            dispatch(setSelection(combined));
+                            dispatch(setSelection(mapName, combined));
                             success(combined);
                         });
                     } else {
-                        dispatch(setSelection(res));
+                        dispatch(setSelection(mapName, res));
                         success(res);
                     }
                 } else {
@@ -163,7 +167,9 @@ export function setCurrentView(view: IMapView): ReduxThunkedAction {
         // We don't want to dispatch SET_VIEW actions with redundant view
         // states if the one we're about to dispatch is the same as the
         // previous one
-        const currentView = getState().view.current;
+        const state = getState();
+        const currentView = getCurrentView(state);
+        const mapName = state.config.activeMapName;
         let dispatchThis = true;
         if (currentView != null && view != null) {
             if (areViewsCloseToEqual(currentView, view)) {
@@ -173,16 +179,22 @@ export function setCurrentView(view: IMapView): ReduxThunkedAction {
         if (dispatchThis) {
             dispatch({
                 type: Constants.MAP_SET_VIEW,
-                payload: view
+                payload: {
+                    mapName,
+                    view
+                }
             });
         }
     };
 }
 
-export function setSelection(selectionSet: any): ReduxAction {
+export function setSelection(mapName: string, selectionSet: any): ReduxAction {
     return {
         type: Constants.MAP_SET_SELECTION,
-        payload: selectionSet
+        payload: {
+            mapName,
+            selection: selectionSet
+        }
     };
 }
 
@@ -199,36 +211,51 @@ export function setBusyCount(busyCount: number): ReduxAction {
     };
 }
 
-export function setBaseLayer(layerName: string) {
+export function setBaseLayer(mapName: string, layerName: string) {
     return {
         type: Constants.MAP_SET_BASE_LAYER,
-        payload: layerName
+        payload: {
+            mapName,
+            layerName
+        }
     };
 }
 
-export function setScale(scale: number) {
+export function setScale(mapName: string, scale: number) {
     return {
         type: Constants.MAP_SET_SCALE,
-        payload: scale
+        payload: {
+            mapName,
+            scale
+        }
     };
 }
 
-export function setMouseCoordinates(coord: any) {
+export function setMouseCoordinates(mapName: string, coord: any) {
     return {
         type: Constants.UPDATE_MOUSE_COORDINATES,
-        payload: coord
+        payload: {
+            mapName,
+            coord
+        }
     };
 }
 
-export function previousView() {
+export function previousView(mapName: string) {
     return {
-        type: Constants.MAP_PREVIOUS_VIEW
+        type: Constants.MAP_PREVIOUS_VIEW,
+        payload: {
+            mapName
+        }
     };
 }
 
-export function nextView() {
+export function nextView(mapName: string) {
     return {
-        type: Constants.MAP_NEXT_VIEW
+        type: Constants.MAP_NEXT_VIEW,
+        payload: {
+            mapName
+        }
     };
 }
 

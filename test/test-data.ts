@@ -1,17 +1,22 @@
 import { IView } from "../src/api/contracts/common";
 import { RuntimeMap } from "../src/api/contracts/runtime-map";
-import { IApplicationState } from "../src/api/common";
+import { 
+    IApplicationState,
+    IInitErrorReducerState,
+    IConfigurationReducerState,
+    IToolbarReducerState,
+    ITaskPaneReducerState,
+    IModalReducerState,
+    IViewerReducerState,
+    IBranchedMapState
+} from "../src/api/common";
 import * as Constants from "../src/constants";
 import { INITIAL_STATE as CONFIG_INITIAL_STATE } from "../src/reducers/config";
-import { INITIAL_STATE as ERROR_INITIAL_STATE } from "../src/reducers/initError";
-import { INITIAL_STATE as LEGEND_INITIAL_STATE } from "../src/reducers/legend";
-import { INITIAL_STATE as MAP_INITIAL_STATE } from "../src/reducers/map";
+import { INITIAL_STATE as ERROR_INITIAL_STATE } from "../src/reducers/init-error";
 import { INITIAL_STATE as MODAL_INITIAL_STATE } from "../src/reducers/modal";
-import { INITIAL_STATE as SELECTION_INITIAL_STATE } from "../src/reducers/selection";
-import { INITIAL_STATE as SESSION_INITIAL_STATE } from "../src/reducers/session";
 import { INITIAL_STATE as TASKPANE_INITIAL_STATE } from "../src/reducers/taskpane";
 import { INITIAL_STATE as TOOLBAR_INITIAL_STATE } from "../src/reducers/toolbar";
-import { INITIAL_STATE as VIEW_INITIAL_STATE } from "../src/reducers/view";
+import { INITIAL_STATE as VIEWER_INITIAL_STATE } from "../src/reducers/viewer";
 
 export function createMap(): any {
     return {
@@ -503,18 +508,14 @@ export function createMap(): any {
 }
 
 export function createInitAction(map: RuntimeMap, initialView: IView, locale = "en") {
+    const maps: any = {};
+    maps[map.Name] = map;
     return {
         type: Constants.INIT_APP,
         payload: {
             initialUrl: "server/TaskPane.html",
-            map: map,
+            maps: maps,
             locale: locale,
-            externalBaseLayers: [],
-            config: {
-                selectionColor: "FF0000FF",
-                imageFormat: "PNG",
-                selectionImageFormat: "PNG"
-            },
             initialView: initialView,
             capabilities: {
                 hasTaskPane: true,
@@ -531,17 +532,21 @@ export function createInitAction(map: RuntimeMap, initialView: IView, locale = "
 }
 
 export function createInitialState(): IApplicationState {
+    const initError: IInitErrorReducerState = { ...ERROR_INITIAL_STATE };
+    const config: IConfigurationReducerState = { ...CONFIG_INITIAL_STATE };
+    const toolbar: IToolbarReducerState = { ...TOOLBAR_INITIAL_STATE };
+    const taskpane: ITaskPaneReducerState = { ...TASKPANE_INITIAL_STATE };
+    const modal: IModalReducerState = { ...MODAL_INITIAL_STATE };
+    const viewer: IViewerReducerState =  { ...VIEWER_INITIAL_STATE };
+    const lastaction: any = null;
     return {
-        initError: { ...ERROR_INITIAL_STATE },
-        config: { ...CONFIG_INITIAL_STATE },
-        map: { ...MAP_INITIAL_STATE },
-        //session: { ...SESSION_INITIAL_STATE },
-        legend: { ...LEGEND_INITIAL_STATE },
-        toolbar: { ...TOOLBAR_INITIAL_STATE },
-        view: { ...VIEW_INITIAL_STATE },
-        selection: { ...SELECTION_INITIAL_STATE },
-        taskpane: { ...TASKPANE_INITIAL_STATE },
-        modal: { ...MODAL_INITIAL_STATE },
-        lastaction: null
+        initError,
+        config,
+        mapState: {},
+        toolbar,
+        taskpane,
+        modal,
+        viewer,
+        lastaction
     };
 }

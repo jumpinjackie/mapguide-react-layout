@@ -31,3 +31,10 @@ export function isMapView(view: any): view is IMapView {
         && typeof(view.y) == 'number'
         && typeof(view.scale) == 'number';
 }
+
+export function isCoordinate(coord: any): coord is [number, number] {
+    return coord instanceof Array
+        && coord.length == 2
+        && typeof(coord[0]) == 'number'
+        && typeof(coord[1]) == 'number';
+}

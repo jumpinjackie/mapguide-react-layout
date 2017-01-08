@@ -32,7 +32,7 @@ export interface IMapView {
     scale: number;
 }
 
-export type DispatcherFunc = (dispatch: ReduxDispatch, getState: () => IApplicationState, viewer?: IMapViewer) => any; 
+export type DispatcherFunc = (dispatch: ReduxDispatch, getState: () => IApplicationState, viewer?: IMapViewer) => any;
 
 /**
  * Describes a viewer command
@@ -474,7 +474,7 @@ export interface IMapViewer {
      * @returns {T}
      * 
      * @memberOf IMapViewer
-     */    
+     */
     addLayer<T extends ol.layer.Base>(name: string, layer: T): T;
     /**
      * Removes a layer by the given name
@@ -560,14 +560,6 @@ export type ImageFormat = "PNG" | "PNG8" | "JPG" | "GIF";
  */
 export type ClientKind = "mapagent" | "mapguide-rest";
 
-export interface IViewReducerState {
-    current: IMapView | null;
-    initial: IMapView | null;
-    history: IMapView[];
-    mouse: Coordinate | null;
-    historyIndex: number;
-}
-
 export type IToolbarReducerState = any;
 
 /*
@@ -579,14 +571,8 @@ export interface IToolbarReducerState {
 export interface ITaskPaneReducerState {
     navIndex: number;
     navigation: string[];
-    initialUrl: string | null;
+    initialUrl: string | undefined;
     lastUrlPushed: boolean;
-}
-
-export interface ISelectionReducerState {
-    selectionSet: QueryMapFeaturesResponse | null,
-    layerIndex: number,
-    featureIndex: number
 }
 
 export type IModalReducerState = any;
@@ -597,26 +583,30 @@ export interface IModalReducerState {
 }
 */
 
-export interface IMapViewerReducerState {
-    busyCount: number,
-    tool: ActiveMapTool,
-    featureTooltipsEnabled: boolean,
-    layerGroupVisibility: {
-        showLayers: string[],
-        showGroups: string[],
-        hideLayers: string[],
-        hideGroups: string[]
-    }
+export interface ILayerGroupVisibility {
+    showLayers: string[];
+    showGroups: string[];
+    hideLayers: string[];
+    hideGroups: string[];
 }
 
-export interface IMapReducerState {
-    state: RuntimeMap | null;
-    viewer: IMapViewerReducerState;
-}
-
-export interface ILegendReducerState {
+export interface IBranchedMapSubState extends ILayerGroupVisibility {
+    externalBaseLayers: IExternalBaseLayer[];
+    currentView: IMapView | undefined;
+    initialView: IMapView | undefined;
+    history: IMapView[];
+    mouse: Coordinate | undefined;
+    historyIndex: number;
+    runtimeMap: RuntimeMap | undefined;
     selectableLayers: any;
     expandedGroups: any;
+    selectionSet: QueryMapFeaturesResponse | undefined;
+    layerIndex: number;
+    featureIndex: number;
+}
+
+export interface IBranchedMapState {
+    [mapName: string]: IBranchedMapSubState;
 }
 
 export interface ICoordinateConfiguration {
@@ -633,21 +623,19 @@ export interface IViewerCapabilities {
     hasToolbar: boolean;
 }
 
-export interface IMapViewerConfiguration {
-    imageFormat: ImageFormat;
-    selectionImageFormat: ImageFormat;
-    selectionColor: string;
-    pointSelectionBuffer: number;
-}
-
 export interface IConfigurationReducerState {
-    agentUri: string|null,
-    agentKind: ClientKind|null,
+    agentUri: string | undefined,
+    agentKind: ClientKind,
     locale: string,
-    viewer: IMapViewerConfiguration;
-    externalBaseLayers: IExternalBaseLayer[],
+    activeMapName: string | undefined,
     coordinates: ICoordinateConfiguration;
     capabilities: IViewerCapabilities;
+    viewer: {
+        imageFormat: ImageFormat;
+        selectionImageFormat: ImageFormat;
+        selectionColor: string;
+        pointSelectionBuffer: number;
+    }
 }
 
 export interface InitError {
@@ -661,14 +649,18 @@ export interface IInitErrorReducerState {
     includeStack: boolean;
 }
 
+export interface IViewerReducerState {
+    busyCount: number,
+    tool: ActiveMapTool,
+    featureTooltipsEnabled: boolean,
+}
+
 export interface IApplicationState {
     initError: IInitErrorReducerState;
     config: IConfigurationReducerState;
-    map: IMapReducerState;
-    legend: ILegendReducerState;
+    viewer: IViewerReducerState;
+    mapState: IBranchedMapState;
     toolbar: IToolbarReducerState;
-    view: IViewReducerState;
-    selection: ISelectionReducerState;
     taskpane: ITaskPaneReducerState;
     modal: IModalReducerState;
     lastaction: any;
@@ -700,4 +692,39 @@ export interface IDOMElementMetrics {
     width: number;
     height: number;
     vertical?: boolean;
+}
+
+export function getInitialView(state: IApplicationState): IMapView | undefined {
+    if (state.config.activeMapName) {
+        return state.mapState[state.config.activeMapName].initialView;
+    }
+    return undefined;
+}
+
+export function getSelectionSet(state: IApplicationState): QueryMapFeaturesResponse | undefined {
+    if (state.config.activeMapName) {
+        return state.mapState[state.config.activeMapName].selectionSet;
+    }
+    return undefined;
+}
+
+export function getRuntimeMap(state: IApplicationState): RuntimeMap | undefined {
+    if (state.config.activeMapName) {
+        return state.mapState[state.config.activeMapName].runtimeMap;
+    }
+    return undefined;
+}
+
+export function getCurrentView(state: IApplicationState): IMapView | undefined {
+    if (state.config.activeMapName) {
+        return state.mapState[state.config.activeMapName].currentView;
+    }
+    return undefined;
+}
+
+export function getExternalBaseLayers(state: IApplicationState): IExternalBaseLayer[] | undefined {
+    if (state.config.activeMapName) {
+        return state.mapState[state.config.activeMapName].externalBaseLayers;
+    }
+    return undefined;
 }

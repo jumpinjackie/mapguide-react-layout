@@ -1,11 +1,18 @@
 import { registerCommand, DefaultCommands, CommandConditions } from "./registry/command";
 import {
+    IMapView,
     IMapViewer,
+    IApplicationState,
     ActiveMapTool,
     RefreshMode,
-    ReduxDispatch
+    ReduxDispatch,
+    getInitialView,
+    getSelectionSet,
+    getRuntimeMap,
+    getCurrentView
 } from "./common";
 import { QueryMapFeaturesResponse } from "./contracts/query";
+import { RuntimeMap } from "./contracts/runtime-map";
 import * as LegendActions from "../actions/legend";
 import * as MapActions from "../actions/map";
 import { tr } from "../api/i18n";
@@ -51,7 +58,7 @@ export function initDefaultCommands() {
     registerCommand(DefaultCommands.Select, {
         icon: "select.png",
         selected: (state) => {
-            return state.map.viewer.tool === ActiveMapTool.Select;
+            return state.viewer.tool === ActiveMapTool.Select;
         },
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
@@ -65,7 +72,7 @@ export function initDefaultCommands() {
     registerCommand(DefaultCommands.Pan, {
         icon: "pan.png",
         selected: (state) => {
-            return state.map.viewer.tool === ActiveMapTool.Pan;
+            return state.viewer.tool === ActiveMapTool.Pan;
         },
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
@@ -79,7 +86,7 @@ export function initDefaultCommands() {
     registerCommand(DefaultCommands.Zoom, {
         icon: "zoom-in.png",
         selected: (state) => {
-            return state.map.viewer.tool === ActiveMapTool.Zoom;
+            return state.viewer.tool === ActiveMapTool.Zoom;
         },
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
@@ -93,11 +100,11 @@ export function initDefaultCommands() {
     registerCommand(DefaultCommands.MapTip, {
         icon: "maptip.png",
         selected: (state) => {
-            return state.map.viewer.featureTooltipsEnabled === true;
+            return state.viewer.featureTooltipsEnabled === true;
         },
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
-            const enabled = getState().map.viewer.featureTooltipsEnabled;
+            const enabled = getState().viewer.featureTooltipsEnabled;
             return dispatch({
                 type: Constants.MAP_SET_MAPTIP,
                 payload: !enabled
@@ -333,7 +340,7 @@ export function initDefaultCommands() {
         enabled: () => true,
         invoke: (dispatch, getState, viewer) => {
             if (viewer) {
-                const view = getState().view.initial;
+                const view = getInitialView(getState());
                 if (view != null) {
                     viewer.zoomToView(view.x, view.y, view.scale);
                 } else {
@@ -371,7 +378,7 @@ export function initDefaultCommands() {
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer) => {
             if (viewer) {
-                const selection = getState().selection.selectionSet;
+                const selection = getSelectionSet(getState());
                 let bounds: ol.Extent | null = null;
                 if (selection != null && selection.SelectedFeatures != null) {
                     selection.SelectedFeatures.SelectedLayer.forEach(layer => {
@@ -410,7 +417,10 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: CommandConditions.hasPreviousView,
         invoke: (dispatch, getState, viewer) => {
-            dispatch(MapActions.previousView());
+            const mapName = getState().config.activeMapName;
+            if (mapName) {
+                dispatch(MapActions.previousView(mapName));
+            }
         }
     });
     //Next View
@@ -419,7 +429,10 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: CommandConditions.hasNextView,
         invoke: (dispatch, getState, viewer) => {
-            dispatch(MapActions.nextView());
+            const mapName = getState().config.activeMapName;
+            if (mapName) {
+                dispatch(MapActions.nextView(mapName));
+            }
         }
     });
     //Geolocation
@@ -428,9 +441,10 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer) => {
-            const view = getState().view.current;
-            const rtMap = getState().map.state;
-            const locale = getState().config.locale;
+            const state = getState();
+            const view = getCurrentView(state);
+            const rtMap = getRuntimeMap(state);
+            const locale = state.config.locale;
             if (viewer && view && rtMap) {
                 navigator.geolocation.getCurrentPosition(pos => {
                     const proj = viewer.getProjection();
@@ -460,9 +474,11 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer) => {
-            const { map, config } = getState();
-            if (map.state) {
-                let url = ensureParameters("server/Buffer/BufferPanel.php", map.state.Name, map.state.SessionId, config.locale);
+            const state = getState();
+            const map = getRuntimeMap(state);
+            const config = state.config;
+            if (map) {
+                let url = ensureParameters("server/Buffer/BufferPanel.php", map.Name, map.SessionId, config.locale);
                 url += "&POPUP=false&US=0";
                 dispatch({
                     type: Constants.TASK_INVOKE_URL,
@@ -479,9 +495,11 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer) => {
-            const { map, config } = getState();
-            if (map.state) {
-                let url = ensureParameters("server/SelectWithin/SelectWithinPanel.php", map.state.Name, map.state.SessionId, config.locale);
+            const state = getState();
+            const map = getRuntimeMap(state);
+            const config = state.config;
+            if (map) {
+                let url = ensureParameters("server/SelectWithin/SelectWithinPanel.php", map.Name, map.SessionId, config.locale);
                 url += "&POPUP=false";
                 dispatch({
                     type: Constants.TASK_INVOKE_URL,
@@ -498,9 +516,11 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer) => {
-            const { map, config } = getState();
-            if (map.state) {
-                let url = ensureParameters("server/Redline/markupmain.php", map.state.Name, map.state.SessionId, config.locale);
+            const state = getState();
+            const map = getRuntimeMap(state);
+            const config = state.config;
+            if (map) {
+                let url = ensureParameters("server/Redline/markupmain.php", map.Name, map.SessionId, config.locale);
                 url += "&POPUP=false&REDLINESTYLIZATION=ADVANCED";
                 dispatch({
                     type: Constants.TASK_INVOKE_URL,

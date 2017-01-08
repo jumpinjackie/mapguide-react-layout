@@ -11,7 +11,7 @@ import * as Constants from "../constants";
 import {
     ReduxDispatch,
     IApplicationState,
-    IMapViewerReducerState,
+    IViewerReducerState,
     IConfigurationReducerState,
     IViewerCapabilities
 } from "../api/common";
@@ -208,15 +208,15 @@ class Sidebar extends React.Component<ISidebarProps, any> {
 }
 
 export interface ISidebarLayoutState {
-    viewer: IMapViewerReducerState;
+    viewer: IViewerReducerState;
     config: IConfigurationReducerState;
     capabilities: IViewerCapabilities;
     lastaction: any;
 }
 
-function mapStateToProps(state: IApplicationState): ISidebarLayoutState {
+function mapStateToProps(state: IApplicationState): Partial<ISidebarLayoutState> {
     return {
-        viewer: state.map.viewer,
+        viewer: state.viewer,
         config: state.config,
         capabilities: state.config.capabilities,
         lastaction: state.lastaction

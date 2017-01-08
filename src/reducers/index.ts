@@ -1,25 +1,19 @@
 import { combineReducers } from "redux";
 import { configReducer} from "./config";
-import { runtimeMapReducer } from "./map";
-import { sessionReducer } from "./session";
 import { toolbarReducer } from "./toolbar";
-import { viewReducer } from "./view";
-import { selectionReducer } from "./selection";
-import { legendReducer } from "./legend";
 import { taskPaneReducer } from "./taskpane";
 import { lastAction } from "./last-action";
 import { modalReducer } from "./modal";
-import { initErrorReducer } from "./initError";
+import { initErrorReducer } from "./init-error";
+import { mapStateReducer } from "./map-state";
+import { viewerReducer } from "./viewer";
 
 const rootReducer: any = combineReducers({
     initError: initErrorReducer,
     config: configReducer,
-    map: runtimeMapReducer,
-    session: sessionReducer,
+    mapState: mapStateReducer,
+    viewer: viewerReducer,
     toolbar: toolbarReducer,
-    view: viewReducer,
-    selection: selectionReducer,
-    legend: legendReducer,
     taskpane: taskPaneReducer,
     modal: modalReducer,
     lastaction: lastAction

@@ -10,9 +10,10 @@ import { getCommand, DefaultCommands } from "../api/registry/command";
 import {
     IMapView,
     IConfigurationReducerState,
-    IMapViewerReducerState,
+    IViewerReducerState,
     ReduxDispatch,
-    IApplicationState
+    IApplicationState,
+    getRuntimeMap
 } from "../api/common";
 
 export interface INavigatorContainerProps {
@@ -20,7 +21,7 @@ export interface INavigatorContainerProps {
 }
 
 export interface INavigatorContainerState {
-    viewer: IMapViewerReducerState;
+    viewer: IViewerReducerState;
     config: IConfigurationReducerState;
     view: IMapView | null;
     finiteScales: number[] | null | undefined;
@@ -28,21 +29,26 @@ export interface INavigatorContainerState {
 
 export interface INavigatorContainerDispatch {
     invokeCommand: (cmd: ICommand) => void;
-    setScale: (scale: number) => void;
+    setScale: (mapName: string, scale: number) => void;
 }
 
-function mapStateToProps(state: IApplicationState): INavigatorContainerState {
+function mapStateToProps(state: IApplicationState): Partial<INavigatorContainerState> {
+    let view;
+    const map = getRuntimeMap(state);
+    if (state.config.activeMapName) {
+        view = state.mapState[state.config.activeMapName].currentView;
+    }
     return {
         config: state.config,
-        viewer: state.map.viewer,
-        view: state.view.current,
-        finiteScales: state.map.state != null ? state.map.state.FiniteDisplayScale : undefined
+        viewer: state.viewer,
+        view: view,
+        finiteScales: map != null ? map.FiniteDisplayScale : undefined
     };
 }
 
 function mapDispatchToProps(dispatch: ReduxDispatch): INavigatorContainerDispatch {
     return {
-        setScale: (scale) => dispatch(setScale(scale)),
+        setScale: (mapName, scale) => dispatch(setScale(mapName, scale)),
         invokeCommand: (cmd) => dispatch(invokeCommand(cmd))
     };
 }
@@ -95,8 +101,9 @@ export class NavigatorContainer extends React.Component<NavigatorContainerProps,
         }
     }
     private onRequestZoomToScale(scale: number) {
-        if (this.props.setScale) {
-            this.props.setScale(scale);
+        const { setScale, config } = this.props;
+        if (setScale && config && config.activeMapName) {
+            setScale(config.activeMapName, scale);
         }
     }
     private getLocale(): string {

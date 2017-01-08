@@ -7,33 +7,36 @@ import {
     IMapView,
     ReduxDispatch,
     IApplicationState,
-    IConfigurationReducerState
+    IConfigurationReducerState,
+    getCurrentView,
+    getRuntimeMap
 } from "../api/common";
 import { tr } from "../api/i18n";
 import { ScaleDisplay } from "../components/scale-display";
 
 export interface IScaleDisplayContainerState {
     style?: React.CSSProperties;
-    view: IMapView | null;
+    view: IMapView;
     config: IConfigurationReducerState;
     finiteScales: number[] | null | undefined;
 }
 
 export interface IScaleDisplayContainerDispatch {
-    setScale: (scale: number) => void;
+    setScale: (mapName: string, scale: number) => void;
 }
 
-function mapStateToProps(state: IApplicationState): IScaleDisplayContainerState {
+function mapStateToProps(state: IApplicationState): Partial<IScaleDisplayContainerState> {
+    const map = getRuntimeMap(state);
     return {
         config: state.config,
-        view: state.view.current,
-        finiteScales: state.map.state != null ? state.map.state.FiniteDisplayScale : undefined
+        view: getCurrentView(state),
+        finiteScales: map != null ? map.FiniteDisplayScale : undefined
     };
 }
 
 function mapDispatchToProps(dispatch: ReduxDispatch): IScaleDisplayContainerDispatch {
     return {
-        setScale: (scale) => dispatch(setScale(scale))
+        setScale: (mapName, scale) => dispatch(setScale(mapName, scale))
     };
 }
 
@@ -47,8 +50,9 @@ export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainer
         this.fnScaleChanged = this.onScaleChanged.bind(this);
     }
     private onScaleChanged(scale: number) {
-        if (this.props.setScale) {
-            this.props.setScale(scale);
+        const { setScale, config } = this.props;
+        if (setScale && config && config.activeMapName) {
+            setScale(config.activeMapName, scale);
         }
     }
     private getLocale(): string {

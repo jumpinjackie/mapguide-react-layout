@@ -5,7 +5,7 @@ import { areUrlsSame } from "../utils/url";
 export const INITIAL_STATE: ITaskPaneReducerState = {
     navIndex: -1,
     navigation: [],
-    initialUrl: null,
+    initialUrl: undefined,
     //Having this state sounds extremely hacky, but we need a way to signal to the "dumb" task pane that
     //the url its about to receive was pushed and should not be reloaded into the internal iframe
     lastUrlPushed: false  

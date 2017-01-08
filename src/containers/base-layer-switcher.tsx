@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import {
     IMapView,
     IConfigurationReducerState,
-    IMapViewerReducerState,
+    IExternalBaseLayer,
     ReduxDispatch,
     IApplicationState
 } from "../api/common";
@@ -15,22 +15,30 @@ export interface IBaseLayerSwitcherContainerProps {
 }
 
 export interface IBaseLayerSwitcherContainerState {
-    config: IConfigurationReducerState;
+    mapName: string;
+    locale: string;
+    externalBaseLayers: IExternalBaseLayer[];
 }
 
 export interface IBaseLayerSwitcherContainerDispatch {
-    setBaseLayer: (layerName: string) => void;
+    setBaseLayer: (mapName: string, layerName: string) => void;
 }
 
-function mapStateToProps(state: IApplicationState): IBaseLayerSwitcherContainerState {
+function mapStateToProps(state: IApplicationState): Partial<IBaseLayerSwitcherContainerState> {
+    let externalBaseLayers;
+    if (state.config.activeMapName) {
+        externalBaseLayers = state.mapState[state.config.activeMapName].externalBaseLayers;
+    }
     return {
-        config: state.config
+        mapName: state.config.activeMapName,
+        locale: state.config.locale,
+        externalBaseLayers: externalBaseLayers
     };
 }
 
 function mapDispatchToProps(dispatch: ReduxDispatch): IBaseLayerSwitcherContainerDispatch {
     return {
-        setBaseLayer: (layerName: string) => dispatch(MapActions.setBaseLayer(layerName)),
+        setBaseLayer: (mapName: string, layerName: string) => dispatch(MapActions.setBaseLayer(mapName, layerName)),
     };
 }
 
@@ -44,14 +52,15 @@ export class BaseLayerSwitcherContainer extends React.Component<BaseLayerSwitche
         this.fnBaseLayerChanged = this.onBaseLayerChanged.bind(this);
     }
     private onBaseLayerChanged(layerName: string) {
-        if (this.props.setBaseLayer) {
-            this.props.setBaseLayer(layerName);
+        const { mapName, setBaseLayer } = this.props;
+        if (setBaseLayer && mapName) {
+            setBaseLayer(mapName, layerName);
         }
     }
     render(): JSX.Element {
-        const { config } = this.props;
-        if (config) {
-            return <BaseLayerSwitcher onBaseLayerChanged={this.fnBaseLayerChanged} externalBaseLayers={config.externalBaseLayers} locale={config.locale} />;
+        const { locale, externalBaseLayers } = this.props;
+        if (locale && externalBaseLayers) {
+            return <BaseLayerSwitcher onBaseLayerChanged={this.fnBaseLayerChanged} externalBaseLayers={externalBaseLayers} locale={locale} />;
         } else {
             return <noscript />;
         }

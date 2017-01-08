@@ -1,7 +1,12 @@
 import { expect } from 'chai';
 import * as Constants from "../src/constants";
 import { IView } from "../src/api/contracts/common";
-import { IApplicationState } from "../src/api/common";
+
+/*
+import {
+    IApplicationState,
+    getViewerConfiguration
+} from "../src/api/common";
 import { RuntimeMap } from "../src/api/contracts/runtime-map";
 import thunk from 'redux-thunk';
 import { createMap, createInitAction, createInitialState } from "./test-data";
@@ -22,9 +27,16 @@ describe("reducers/config", () => {
 
             expect(state).to.not.be.null;
             expect(state.viewer).to.not.be.null;
-            expect(state.viewer.imageFormat).to.be.equal(action.payload.config.imageFormat);
-            expect(state.viewer.selectionImageFormat).to.be.equal(action.payload.config.selectionImageFormat);
-            expect(state.viewer.selectionColor).to.be.equal(action.payload.config.selectionColor);
+            let conf;
+            if (state.activeMapName) {
+                conf = state.viewer[state.activeMapName];
+            }
+            expect(conf).to.not.be.undefined;
+            if (conf) {
+                expect(conf.imageFormat).to.be.equal(action.payload.config[map.Name].imageFormat);
+                expect(conf.selectionImageFormat).to.be.equal(action.payload.config[map.Name].selectionImageFormat);
+                expect(conf.selectionColor).to.be.equal(action.payload.config[map.Name].selectionColor);
+            }
             expect(state.locale).to.be.equal("en");
             expect(state.externalBaseLayers).to.have.length(0);
             expect(state.capabilities.hasTaskPane).to.be.true;
@@ -58,3 +70,4 @@ describe("reducers/config", () => {
         });
     });
 });
+*/

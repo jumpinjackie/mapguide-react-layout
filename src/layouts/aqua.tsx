@@ -14,9 +14,9 @@ import {
     NOOP,
     ReduxDispatch,
     IApplicationState,
-    IMapViewerReducerState,
     IConfigurationReducerState,
-    IViewerCapabilities
+    IViewerCapabilities,
+    getRuntimeMap
 } from "../api/common";
 import * as Constants from "../constants";
 
@@ -29,16 +29,16 @@ const DIALOG_HEADER_HEIGHT = 40 + 3;//28 + 3;
 const STATUS_BAR_HEIGHT = 18;
 
 export interface IAquaTemplateLayoutState {
-    map: RuntimeMap | null;
+    map: RuntimeMap;
     config: IConfigurationReducerState;
     capabilities: IViewerCapabilities;
     lastAction: any;
 }
 
-function mapStateToProps(state: IApplicationState): IAquaTemplateLayoutState {
+function mapStateToProps(state: IApplicationState): Partial<IAquaTemplateLayoutState> {
     return {
         config: state.config,
-        map: state.map.state,
+        map: getRuntimeMap(state),
         capabilities: state.config.capabilities,
         lastAction: state.lastaction
     };

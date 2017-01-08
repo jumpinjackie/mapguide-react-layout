@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import {
     ReduxDispatch,
     IApplicationState,
-    IMapViewerReducerState,
+    IViewerReducerState,
     IConfigurationReducerState
 } from "../api/common";
 import { MAP_SET_MAPTIP } from "../constants";
@@ -14,7 +14,7 @@ export interface IViewerOptionsProps {
 }
 
 export interface IViewerOptionsState {
-    viewer: IMapViewerReducerState;
+    viewer: IViewerReducerState;
     config: IConfigurationReducerState;
 }
 
@@ -22,9 +22,9 @@ export interface IViewerOptionsDispatch {
     toggleMapTips: (enabled: boolean) => void;
 }
 
-function mapStateToProps(state: IApplicationState): IViewerOptionsState {
+function mapStateToProps(state: IApplicationState): Partial<IViewerOptionsState> {
     return {
-        viewer: state.map.viewer,
+        viewer: state.viewer,
         config: state.config
     };
 }

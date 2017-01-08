@@ -3,7 +3,8 @@ import { connect } from "react-redux";
 import {
     ReduxDispatch,
     IApplicationState,
-    IConfigurationReducerState
+    IConfigurationReducerState,
+    getSelectionSet
 } from "../api/common";
 import { SelectedFeatureCount } from "../components/selected-feature-count";
 import { QueryMapFeaturesResponse } from "../api/contracts/query";
@@ -14,13 +15,13 @@ export interface ISelectionPanelContainerProps {
 
 export interface ISelectionPanelContainerState {
     config: IConfigurationReducerState;
-    selection: QueryMapFeaturesResponse | null;
+    selection: QueryMapFeaturesResponse;
 }
 
-function mapStateToProps(state: IApplicationState): ISelectionPanelContainerState {
+function mapStateToProps(state: IApplicationState): Partial<ISelectionPanelContainerState> {
     return {
         config: state.config,
-        selection: state.selection.selectionSet
+        selection: getSelectionSet(state)
     };
 }
 

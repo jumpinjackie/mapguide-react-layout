@@ -23,6 +23,7 @@ import * as ol from "openlayers";
 import { 
     IMapView,
     IExternalBaseLayer,
+    ILayerGroupVisibility,
     DigitizerCallback,
     ActiveMapTool,
     Bounds,
@@ -51,18 +52,11 @@ const isMobile = require("ismobilejs");
 import { MenuComponent } from "./menu";
 import { ContextMenuTarget, ContextMenu } from "@blueprintjs/core";
 
-export interface ILayerGroupVisibility {
-    showLayers: string[];
-    showGroups: string[];
-    hideLayers: string[];
-    hideGroups: string[];
-}
-
 export interface IMapViewerBaseProps {
     map: Contracts.RtMap.RuntimeMap;
     layerGroupVisibility?: ILayerGroupVisibility;
     tool: ActiveMapTool;
-    view: IMapView;
+    view?: IMapView;
     initialView?: IMapView;
     agentUri: string;
     agentKind: ClientKind;

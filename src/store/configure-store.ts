@@ -29,14 +29,10 @@ function _getMiddleware() {
 }
 
 function _getEnhancers() {
-    let enhancers = [
-        persistState('session', _getStorageConfig()),
-    ];
-
+    let enhancers = [] as any[];
     if (__DEV__ && window.devToolsExtension) {
         enhancers = [...enhancers, window.devToolsExtension()];
     }
-
     return enhancers;
 }
 
@@ -50,17 +46,18 @@ function _enableHotLoader(store: any) {
 }
 
 function _getStorageConfig() {
+    /*
     return {
         key: 'react-redux-seed',
         serialize: (store: any) => {
-            return store && store.session 
-                ? JSON.stringify(store.session)
-                : store;
+            return store;
         },
         deserialize: (state: any) => ({
             session: state ? JSON.parse(state) : {}
         }),
     };
+    */
+    return {};
 }
 
 export default configureStore;

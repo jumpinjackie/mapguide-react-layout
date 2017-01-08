@@ -6,9 +6,7 @@ import {
     ReduxDispatch,
     IApplicationState,
     IToolbarReducerState,
-    IViewReducerState,
-    ISelectionReducerState,
-    IMapReducerState
+    IBranchedMapSubState
 } from "../api/common";
 import { getCommand, mapToolbarReference } from "../api/registry/command";
 import { IItem, IInlineMenu, Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
@@ -24,11 +22,9 @@ export interface IToolbarContainerProps {
 }
 
 export interface IToolbarContainerState {
-    map: IMapReducerState;
+    map: IBranchedMapSubState;
     toolbar: IToolbarReducerState;
     flyouts: any;
-    view: IViewReducerState;
-    selection: ISelectionReducerState;
 }
 
 export interface IToolbarContainerDispatch {
@@ -39,11 +35,13 @@ export interface IToolbarContainerDispatch {
     closeComponent: (id: string) => void;
 }
 
-function mapStateToProps(state: IApplicationState, ownProps: IToolbarContainerProps): IToolbarContainerState {
+function mapStateToProps(state: IApplicationState, ownProps: IToolbarContainerProps): Partial<IToolbarContainerState> {
+    let map;
+    if (state.config.activeMapName) {
+        map = state.mapState[state.config.activeMapName];
+    }
     return {
-        map: state.map,
-        view: state.view,
-        selection: state.selection,
+        map: map,
         flyouts: state.toolbar.flyouts,
         toolbar: state.toolbar.toolbars[ownProps.id]
     };

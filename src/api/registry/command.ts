@@ -5,8 +5,10 @@ import {
     Dictionary,
     IInvokeUrlCommand,
     ISearchCommand,
+    IApplicationState,
     ReduxDispatch,
     ReduxStore,
+    getSelectionSet,
     NOOP,
     ALWAYS_FALSE,
     ALWAYS_TRUE
@@ -71,18 +73,24 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
 }
 
 export class CommandConditions {
-    public static isNotBusy(state: any): boolean {
-        return state.map.viewer.busyCount == 0;
+    public static isNotBusy(state: IApplicationState): boolean {
+        return state.viewer.busyCount == 0;
     }
-    public static hasSelection(state: any): boolean {
-        const selection: QueryMapFeaturesResponse = state.selection.selectionSet;
+    public static hasSelection(state: IApplicationState): boolean {
+        const selection = getSelectionSet(state);
         return (selection != null && selection.SelectedFeatures != null);
     }
-    public static hasPreviousView(state: any): boolean {
-        return state.view.historyIndex > 0;
+    public static hasPreviousView(state: IApplicationState): boolean {
+        if (state.config.activeMapName) {
+            return state.mapState[state.config.activeMapName].historyIndex > 0;
+        }
+        return false;
     }
-    public static hasNextView(state: any): boolean {
-        return state.view.historyIndex < state.view.history.length - 1;
+    public static hasNextView(state: IApplicationState): boolean {
+        if (state.config.activeMapName) {
+            return state.mapState[state.config.activeMapName].historyIndex < state.mapState[state.config.activeMapName].history.length - 1;
+        }
+        return false;
     }
 }
 

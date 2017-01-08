@@ -5,24 +5,29 @@ import { ToolbarContainer } from "../containers/toolbar";
 import { FlyoutRegionContainer } from "../containers/flyout-region";
 import { AjaxViewerShim } from "../containers/ajax-viewer-shim";
 import { ModalLauncher } from "../containers/modal-launcher";
+import { RuntimeMap } from "../api/contracts/runtime-map";
 import { connect } from "react-redux";
 import {
-    ReduxDispatch
+    getRuntimeMap,
+    ReduxDispatch,
+    IApplicationState,
+    IConfigurationReducerState,
+    IViewerCapabilities
 } from "../api/common";
 
 const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;
 
 export interface IAjaxViewerLayoutState {
-    map: any;
-    config: any;
-    capabilities: any;
+    map: RuntimeMap;
+    config: IConfigurationReducerState;
+    capabilities: IViewerCapabilities;
 }
 
-function mapStateToProps(state: any): IAjaxViewerLayoutState {
+function mapStateToProps(state: IApplicationState): Partial<IAjaxViewerLayoutState> {
     return {
         config: state.config,
-        map: state.map.state,
+        map: getRuntimeMap(state),
         capabilities: state.config.capabilities
     };
 }
@@ -40,16 +45,28 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
     constructor(props: AjaxViewerLayoutProps) {
         super(props);
     }
+    private getLocale(): string {
+        return this.props.config ? this.props.config.locale : "en";
+    }
     render(): JSX.Element {
-        const {
-            hasTaskPane,
-            hasTaskBar,
-            hasStatusBar,
-            hasNavigator,
-            hasSelectionPanel,
-            hasLegend,
-            hasToolbar
-        } = this.props.capabilities;
+        const { capabilities } = this.props;
+        let hasToolbar = false;
+        let hasTaskPane = false;
+        let hasTaskBar = false;
+        let hasStatusBar = false;
+        let hasNavigator = false;
+        let hasSelectionPanel = false;
+        let hasLegend = false;
+        if (capabilities) {
+            hasToolbar = capabilities.hasToolbar;
+            hasTaskPane = capabilities.hasTaskPane;
+            hasTaskBar = capabilities.hasTaskBar;
+            hasStatusBar = capabilities.hasStatusBar;
+            hasNavigator = capabilities.hasNavigator;
+            hasSelectionPanel = capabilities.hasSelectionPanel;
+            hasLegend = capabilities.hasLegend;
+        }
+        const locale = this.getLocale();
         let sbWidth = SIDEBAR_WIDTH;
         let tpWidth = SIDEBAR_WIDTH;
         return <div style={{ width: "100%", height: "100%" }}>
@@ -73,14 +90,14 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
                         {(() => {
                             if (hasLegend) {
                                 return <div style={lgStyle}>
-                                    <PlaceholderComponent id={DefaultComponentNames.Legend} locale={this.props.config.locale} componentProps={{ inlineBaseLayerSwitcher: true }} />
+                                    <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: true }} />
                                 </div>;
                             }
                         })()}
                         {(() => {
                             if (hasSelectionPanel) {
                                 return <div style={selStyle}>
-                                    <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={this.props.config.locale} />
+                                    <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
                                 </div>;
                             }
                         })()}
@@ -107,36 +124,36 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
                         //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()
                         //call to fix
                         if (this.props.map != null) {
-                            return <PlaceholderComponent id={DefaultComponentNames.Map} locale={this.props.config.locale} />;
+                            return <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />;
                         }
                     })()}
                     {(() => {
                         if (hasNavigator) {
-                            return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={this.props.config.locale} />;
+                            return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
                         }
                     })()}
                     {(() => {
                         if (hasStatusBar) {
-                            return <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={this.props.config.locale} />;
+                            return <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={locale} />;
                         }
                     })()}
                     {(() => {
                         if (hasStatusBar) {
-                            return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={this.props.config.locale} />;
+                            return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={locale} />;
                         }
                     })()}
                     {(() => {
                         if (hasStatusBar) {
-                            return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={this.props.config.locale} />;
+                            return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={locale} />;
                         }
                     })()}
-                    <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={this.props.config.locale} />
+                    <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={locale} />
                 </div>
             })()}
             {(() => {
                 if (hasTaskPane) {
                     return <div style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: tpWidth }}>
-                        <PlaceholderComponent locale={this.props.config.locale} id={DefaultComponentNames.TaskPane} />
+                        <PlaceholderComponent locale={locale} id={DefaultComponentNames.TaskPane} />
                     </div>;
                 }
             })()}

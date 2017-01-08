@@ -19,10 +19,14 @@ export interface IMouseCoordinatesContainerState {
 
 export interface IMouseCoordinatesDispatch { }
 
-function mapStateToProps(state: IApplicationState): IMouseCoordinatesContainerState {
+function mapStateToProps(state: IApplicationState): Partial<IMouseCoordinatesContainerState> {
+    let mouse;
+    if (state.config.activeMapName) {
+        mouse = state.mapState[state.config.activeMapName].mouse;
+    }
     return {
         config: state.config.coordinates,
-        mouse: state.view.mouse
+        mouse: mouse
     };
 }
 

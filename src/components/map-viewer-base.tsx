@@ -51,6 +51,7 @@ import { tr } from "../api/i18n";
 const isMobile = require("ismobilejs");
 import { MenuComponent } from "./menu";
 import { ContextMenuTarget, ContextMenu } from "@blueprintjs/core";
+import xor = require("lodash.xor");
 
 export interface IMapViewerBaseProps {
     map: Contracts.RtMap.RuntimeMap;
@@ -79,16 +80,25 @@ export interface IMapViewerBaseProps {
     overviewMapElementSelector?: () => (Element | null);
 }
 
-export function areViewsCloseToEqual(view: IMapView, otherView: IMapView): boolean {
-    if (view == null && otherView != null) {
+export function hasVisibilityChanged(nextVis: ILayerGroupVisibility | undefined, curVis: ILayerGroupVisibility | undefined): boolean {
+    if (nextVis && curVis) {
+        return (nextVis.hideGroups != curVis.hideGroups && xor(nextVis.hideGroups, curVis.hideGroups).length > 0)
+            || (nextVis.hideLayers != curVis.hideLayers && xor(nextVis.hideLayers, curVis.hideLayers).length > 0)
+            || (nextVis.showGroups != curVis.showGroups && xor(nextVis.showGroups, curVis.showGroups).length > 0)
+            || (nextVis.showLayers != curVis.showLayers && xor(nextVis.showLayers, curVis.showLayers).length > 0)
+    } else {
+        return true;
+    }
+}
+
+export function areViewsCloseToEqual(view: IMapView | undefined, otherView: IMapView | undefined): boolean {
+    if (view && otherView) {
+        return areNumbersEqual(view.x, otherView.x) &&
+               areNumbersEqual(view.y, otherView.y) &&
+               areNumbersEqual(view.scale, otherView.scale);
+    } else {
         return false;
     }
-    if (view != null && otherView == null) {
-        return false;
-    }
-    return areNumbersEqual(view.x, otherView.x) &&
-           areNumbersEqual(view.y, otherView.y) &&
-           areNumbersEqual(view.scale, otherView.scale);
 }
 
 const KC_ESCAPE = 27;
@@ -680,11 +690,11 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             })
         }
         //layerGroupVisibility
-        if (nextProps.layerGroupVisibility != props.layerGroupVisibility) {
+        if (hasVisibilityChanged(nextProps.layerGroupVisibility, props.layerGroupVisibility)) {
             this.refreshOnStateChange();
         }
         //view
-        if (nextProps.view != props.view) {
+        if (!areViewsCloseToEqual(nextProps.view, props.view)) {
             const vw = nextProps.view;
             if (vw != null) {
                 this._triggerZoomRequestOnMoveEnd = false;

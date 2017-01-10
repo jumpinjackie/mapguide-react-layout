@@ -40,6 +40,12 @@
   dependencies:
     "@types/lodash" "*"
 
+"@types/lodash.xor@^4.5.0":
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/@types/lodash.xor/-/lodash.xor-4.5.0.tgz#2dcf89ce2019f608e448c535cca66bd40f6a364c"
+  dependencies:
+    "@types/lodash" "*"
+
 "@types/lodash@*":
   version "4.14.43"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.43.tgz#0373de422e70f5bce12c15340103a3c126c81086"
@@ -3533,6 +3539,10 @@ lodash.templatesettings@^3.0.0:
 lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
+
+lodash.xor@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.xor/-/lodash.xor-4.5.0.tgz#4d48ed7e98095b0632582ba714d3ff8ae8fb1db6"
 
 lodash@4.15.0:
   version "4.15.0"

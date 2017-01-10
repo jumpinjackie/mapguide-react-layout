@@ -28,10 +28,10 @@ const LegendLabel = (props: ILegendLabelProps) => {
 
 export interface ILegendProps {
     map: RuntimeMap;
-    showLayers: string[];
-    showGroups: string[];
-    hideLayers: string[];
-    hideGroups: string[];
+    showLayers: string[] | undefined;
+    showGroups: string[] | undefined;
+    hideLayers: string[] | undefined;
+    hideGroups: string[] | undefined;
     locale?: string | undefined;
     externalBaseLayers?: IExternalBaseLayer[] | undefined;
     onBaseLayerChanged?: (name: string) => void | undefined;
@@ -379,9 +379,9 @@ export class Legend extends React.Component<ILegendProps, any> {
     private getGroupVisibility(group: MapGroup): boolean {
         const { showGroups, hideGroups } = this.props;
         let visible = group.Visible;
-        if (showGroups.indexOf(group.ObjectId) >= 0) {
+        if (showGroups && showGroups.indexOf(group.ObjectId) >= 0) {
             visible = true;
-        } else if (hideGroups.indexOf(group.ObjectId) >= 0) {
+        } else if (hideGroups && hideGroups.indexOf(group.ObjectId) >= 0) {
             visible = false;
         }
         return visible;
@@ -389,9 +389,9 @@ export class Legend extends React.Component<ILegendProps, any> {
     private getLayerVisibility(layer: MapLayer): boolean {
         const { showLayers, hideLayers } = this.props;
         let visible = layer.Visible;
-        if (showLayers.indexOf(layer.ObjectId) >= 0) {
+        if (showLayers && showLayers.indexOf(layer.ObjectId) >= 0) {
             visible = true;
-        } else if (hideLayers.indexOf(layer.ObjectId) >= 0) {
+        } else if (hideLayers && hideLayers.indexOf(layer.ObjectId) >= 0) {
             visible = false;
         }
         return visible;

@@ -23,7 +23,6 @@ import * as ol from "openlayers";
 import { 
     IMapView,
     IExternalBaseLayer,
-    ILayerGroupVisibility,
     DigitizerCallback,
     ActiveMapTool,
     Bounds,
@@ -55,7 +54,6 @@ import xor = require("lodash.xor");
 
 export interface IMapViewerBaseProps {
     map: Contracts.RtMap.RuntimeMap;
-    layerGroupVisibility?: ILayerGroupVisibility;
     tool: ActiveMapTool;
     view?: IMapView;
     initialView?: IMapView;
@@ -78,14 +76,16 @@ export interface IMapViewerBaseProps {
     onSessionExpired?: () => void;
     onBeginDigitization: (callback: (cancelled: boolean) => void) => void;
     overviewMapElementSelector?: () => (Element | null);
+    showGroups: string[] | undefined;
+    showLayers: string[] | undefined;
+    hideGroups: string[] | undefined;
+    hideLayers: string[] | undefined;
 }
 
-export function hasVisibilityChanged(nextVis: ILayerGroupVisibility | undefined, curVis: ILayerGroupVisibility | undefined): boolean {
-    if (nextVis && curVis) {
-        return (nextVis.hideGroups != curVis.hideGroups && xor(nextVis.hideGroups, curVis.hideGroups).length > 0)
-            || (nextVis.hideLayers != curVis.hideLayers && xor(nextVis.hideLayers, curVis.hideLayers).length > 0)
-            || (nextVis.showGroups != curVis.showGroups && xor(nextVis.showGroups, curVis.showGroups).length > 0)
-            || (nextVis.showLayers != curVis.showLayers && xor(nextVis.showLayers, curVis.showLayers).length > 0)
+export function arrayChanged<T>(arr: T[] | undefined, other: T[] | undefined): boolean {
+    if (arr && other) {
+        return arr.length != other.length
+            || xor(arr, other).length > 0;
     } else {
         return true;
     }
@@ -376,24 +376,22 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
      * @private
      */
     private _refreshOnStateChange() {
-        const changes = this.props.layerGroupVisibility;
-        if (changes) {
+        const { showGroups, showLayers, hideGroups, hideLayers } = this.props;
+        if (showGroups || showLayers || hideGroups || hideLayers) {
             //Send the request
             const imgSource = this._overlay.getSource() as ol.source.ImageMapGuide;
             //NOTE: Even if these group ids being shown/hidden are MG base layer groups, it still has to be
             //done as the server-side snapshot of the runtime map needs to be aware as well. This will be
             //apparent if you were to plot a runtime-map server-side that has base layer groups.
-            const showGroups = changes.showGroups || [];
-            const hideGroups = changes.hideGroups || [];
             imgSource.updateParams({
-                showlayers: changes.showLayers || [],
+                showlayers: showLayers,
                 showgroups: showGroups,
-                hidelayers: changes.hideLayers || [],
+                hidelayers: hideLayers,
                 hidegroups: hideGroups
             });
-            //As MG base layer groups are separate ol layer instances, we have to toggle them on the clien-side as well
+            //As MG base layer groups are separate ol layer instances, we have to toggle them on the client-side as well
             const { map } = this.props;
-            if (showGroups.length > 0) {
+            if (showGroups && showGroups.length > 0) {
                 for (const groupId of showGroups) {
                     const match = this._mgBaseLayerGroups.filter(l => l.get("name") === groupId);
                     if (match.length == 1) {
@@ -401,7 +399,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                     }
                 }
             }
-            if (hideGroups.length > 0) {
+            if (hideGroups && hideGroups.length > 0) {
                 for (const groupId of hideGroups) {
                     const match = this._mgBaseLayerGroups.filter(l => l.get("name") === groupId);
                     if (match.length == 1) {
@@ -689,10 +687,14 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 }
             })
         }
-        //layerGroupVisibility
-        if (hasVisibilityChanged(nextProps.layerGroupVisibility, props.layerGroupVisibility)) {
+        //Layer/Group visibility
+        if (arrayChanged(nextProps.showGroups, props.showGroups) ||
+            arrayChanged(nextProps.hideGroups, props.hideGroups) ||
+            arrayChanged(nextProps.showLayers, props.showLayers) ||
+            arrayChanged(nextProps.hideLayers, props.hideLayers)) {
             this.refreshOnStateChange();
         }
+
         //view
         if (!areViewsCloseToEqual(nextProps.view, props.view)) {
             const vw = nextProps.view;

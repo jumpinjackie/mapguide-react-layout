@@ -10,7 +10,6 @@ import {
     ReduxDispatch,
     IConfigurationReducerState,
     IBranchedMapSubState,
-    ILayerGroupVisibility,
     IExternalBaseLayer,
     getExternalBaseLayers
 } from "../api/common";
@@ -27,8 +26,11 @@ export interface ILegendContainerState {
     map: RuntimeMap | null;
     selectableLayers: any;
     expandedGroups: any;
-    viewer: ILayerGroupVisibility;
     externalBaseLayers: IExternalBaseLayer[];
+    showGroups: string[];
+    showLayers: string[];
+    hideGroups: string[];
+    hideLayers: string[];
 }
 
 export interface ILegendContainerDispatch {
@@ -46,6 +48,10 @@ function mapStateToProps(state: IApplicationState): Partial<ILegendContainerStat
     let expandedGroups;
     let externalBaseLayers;
     let viewer;
+    let showGroups;
+    let showLayers;
+    let hideGroups;
+    let hideLayers;
     if (state.config.activeMapName) {
         const branch = state.mapState[state.config.activeMapName];
         view = branch.currentView;
@@ -53,16 +59,17 @@ function mapStateToProps(state: IApplicationState): Partial<ILegendContainerStat
         runtimeMap = branch.runtimeMap;
         expandedGroups = branch.expandedGroups;
         selectableLayers = branch.selectableLayers;
-        viewer = {
-            showGroups: branch.showGroups,
-            showLayers: branch.showLayers,
-            hideGroups: branch.hideGroups,
-            hideLayers: branch.hideLayers
-        };
+        showGroups = branch.showGroups;
+        showLayers = branch.showLayers;
+        hideGroups = branch.hideGroups;
+        hideLayers = branch.hideLayers;
     }
     return {
         view: view,
-        viewer: viewer,
+        showGroups: showGroups,
+        showLayers: showLayers,
+        hideGroups: hideGroups,
+        hideLayers: hideLayers,
         config: state.config,
         map: runtimeMap,
         selectableLayers: selectableLayers,
@@ -131,39 +138,42 @@ export class LegendContainer extends React.Component<LegendContainerProps, any> 
     render(): JSX.Element {
         //overrideSelectableLayers?: any;
         //overrideExpandedItems?: any;
-        const { map, config, view, viewer, expandedGroups, selectableLayers, maxHeight, inlineBaseLayerSwitcher, externalBaseLayers } = this.props;
+        const {
+            map,
+            config,
+            view,
+            showGroups,
+            showLayers,
+            hideGroups,
+            hideLayers,
+            expandedGroups,
+            selectableLayers,
+            maxHeight,
+            inlineBaseLayerSwitcher,
+            externalBaseLayers
+        } = this.props;
         let locale: string | undefined;
         if (map && config && view) {
             locale = config.locale;
             let scale = view.scale;
-            const showLayers = [] as string[];
-            const showGroups = [] as string[];
-            const hideLayers = [] as string[];
-            const hideGroups = [] as string[];
-            if (viewer) {
-                showLayers.push(...(viewer.showLayers || []));
-                showGroups.push(...(viewer.showGroups || []));
-                hideLayers.push(...(viewer.hideLayers || []));
-                hideGroups.push(...(viewer.hideGroups || []));
-            }
             if (scale) {
                 return <Legend map={map}
-                               maxHeight={maxHeight}
-                               currentScale={scale}
-                               showLayers={showLayers}
-                               showGroups={showGroups}
-                               hideLayers={hideLayers}
-                               hideGroups={hideGroups}
-                               locale={config.locale}
-                               inlineBaseLayerSwitcher={!!inlineBaseLayerSwitcher}
-                               externalBaseLayers={externalBaseLayers} 
-                               onBaseLayerChanged={this.fnBaseLayerChanged}
-                               overrideSelectableLayers={selectableLayers}
-                               overrideExpandedItems={expandedGroups}
-                               onLayerSelectabilityChanged={this.fnLayerSelectabilityChanged}
-                               onGroupExpansionChanged={this.fnGroupExpansionChanged}
-                               onGroupVisibilityChanged={this.fnGroupVisibilityChanged}
-                               onLayerVisibilityChanged={this.fnLayerVisibilityChanged} />;
+                    maxHeight={maxHeight}
+                    currentScale={scale}
+                    showLayers={showLayers}
+                    showGroups={showGroups}
+                    hideLayers={hideLayers}
+                    hideGroups={hideGroups}
+                    locale={config.locale}
+                    inlineBaseLayerSwitcher={!!inlineBaseLayerSwitcher}
+                    externalBaseLayers={externalBaseLayers}
+                    onBaseLayerChanged={this.fnBaseLayerChanged}
+                    overrideSelectableLayers={selectableLayers}
+                    overrideExpandedItems={expandedGroups}
+                    onLayerSelectabilityChanged={this.fnLayerSelectabilityChanged}
+                    onGroupExpansionChanged={this.fnGroupExpansionChanged}
+                    onGroupVisibilityChanged={this.fnGroupVisibilityChanged}
+                    onLayerVisibilityChanged={this.fnLayerVisibilityChanged} />;
             } else {
                 return <div>{tr("LOADING_MSG", locale)}</div>;
             }

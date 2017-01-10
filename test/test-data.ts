@@ -8,7 +8,8 @@ import {
     ITaskPaneReducerState,
     IModalReducerState,
     IViewerReducerState,
-    IBranchedMapState
+    IBranchedMapState,
+    IMouseReducerState
 } from "../src/api/common";
 import * as Constants from "../src/constants";
 import { INITIAL_STATE as CONFIG_INITIAL_STATE } from "../src/reducers/config";
@@ -17,6 +18,7 @@ import { INITIAL_STATE as MODAL_INITIAL_STATE } from "../src/reducers/modal";
 import { INITIAL_STATE as TASKPANE_INITIAL_STATE } from "../src/reducers/taskpane";
 import { INITIAL_STATE as TOOLBAR_INITIAL_STATE } from "../src/reducers/toolbar";
 import { INITIAL_STATE as VIEWER_INITIAL_STATE } from "../src/reducers/viewer";
+import { INITIAL_STATE as MOUSE_INITIAL_STATE } from "../src/reducers/mouse";
 
 export function createMap(): any {
     return {
@@ -538,6 +540,7 @@ export function createInitialState(): IApplicationState {
     const taskpane: ITaskPaneReducerState = { ...TASKPANE_INITIAL_STATE };
     const modal: IModalReducerState = { ...MODAL_INITIAL_STATE };
     const viewer: IViewerReducerState =  { ...VIEWER_INITIAL_STATE };
+    const mouse: IMouseReducerState = { ...MOUSE_INITIAL_STATE };
     const lastaction: any = null;
     return {
         initError,
@@ -547,6 +550,7 @@ export function createInitialState(): IApplicationState {
         taskpane,
         modal,
         viewer,
+        mouse,
         lastaction
     };
 }

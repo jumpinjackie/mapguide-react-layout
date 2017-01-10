@@ -7,6 +7,7 @@ import { modalReducer } from "./modal";
 import { initErrorReducer } from "./init-error";
 import { mapStateReducer } from "./map-state";
 import { viewerReducer } from "./viewer";
+import { mouseReducer } from "./mouse";
 
 const rootReducer: any = combineReducers({
     initError: initErrorReducer,
@@ -16,6 +17,7 @@ const rootReducer: any = combineReducers({
     toolbar: toolbarReducer,
     taskpane: taskPaneReducer,
     modal: modalReducer,
+    mouse: mouseReducer,
     lastaction: lastAction
 });
 

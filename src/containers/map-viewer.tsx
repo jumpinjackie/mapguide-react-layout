@@ -13,8 +13,7 @@ import {
     IExternalBaseLayer,
     IApplicationState,
     IViewerReducerState,
-    IConfigurationReducerState,
-    ILayerGroupVisibility
+    IConfigurationReducerState
 } from "../api/common";
 import { MapViewerBase } from "../components/map-viewer-base";
 import * as Runtime from "../api/runtime";
@@ -25,7 +24,7 @@ import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml } from '../api/builders/deArrayify';
-import { getCommand, mapToolbarReference,  } from "../api/registry/command";
+import { getCommand, mapToolbarReference, } from "../api/registry/command";
 import { invokeCommand, queryMapFeatures } from "../actions/map";
 import { showModalComponent } from "../actions/modal";
 import { DefaultComponentNames } from "../api/registry/component";
@@ -41,11 +40,14 @@ export interface IMapViewerContainerState {
     map: RuntimeMap;
     selection: QueryMapFeaturesResponse;
     viewer: IViewerReducerState;
-    elementVisibility: ILayerGroupVisibility;
     currentView: IMapView;
     initialView: IMapView;
     selectableLayers: any;
     contextmenu: any;
+    showGroups: string[];
+    showLayers: string[];
+    hideGroups: string[];
+    hideLayers: string[];
     externalBaseLayers: IExternalBaseLayer[];
 }
 
@@ -65,21 +67,22 @@ function mapStateToProps(state: IApplicationState): Partial<IMapViewerContainerS
     let selection;
     let currentView;
     let initialView;
-    let elementVisibility;
     let selectableLayers;
     let externalBaseLayers;
+    let showGroups;
+    let showLayers;
+    let hideGroups;
+    let hideLayers;
     if (state.config.activeMapName) {
         const branch = state.mapState[state.config.activeMapName];
         map = branch.runtimeMap;
         selection = branch.selectionSet;
         currentView = branch.currentView;
         initialView = branch.initialView;
-        elementVisibility = {
-            showGroups: branch.showGroups,
-            showLayers: branch.showLayers,
-            hideGroups: branch.hideGroups,
-            hideLayers: branch.hideLayers
-        };
+        showGroups = branch.showGroups;
+        showLayers = branch.showLayers;
+        hideGroups = branch.hideGroups;
+        hideLayers = branch.hideLayers;
         selectableLayers = branch.selectableLayers;
         externalBaseLayers = branch.externalBaseLayers;
     }
@@ -92,7 +95,10 @@ function mapStateToProps(state: IApplicationState): Partial<IMapViewerContainerS
         selection: selection,
         selectableLayers: selectableLayers,
         contextmenu: state.toolbar.toolbars.contextmenu,
-        elementVisibility: elementVisibility,
+        showGroups: showGroups,
+        showLayers: showLayers,
+        hideGroups: hideGroups,
+        hideLayers: hideLayers,
         externalBaseLayers: externalBaseLayers
     };
 }
@@ -197,8 +203,23 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         browserWindow.getClient = browserWindow.getClient || (() => new Client(this.props.config.agentUri, this.props.config.agentKind));
     }
     render(): JSX.Element {
-        const { map, config, viewer, currentView, externalBaseLayers, initialView, contextmenu, selectableLayers, invokeCommand, overviewMapElementSelector, elementVisibility } = this.props;
-        if (map && config && viewer && invokeCommand && elementVisibility) {
+        const {
+            map,
+            config,
+            viewer,
+            currentView,
+            externalBaseLayers,
+            initialView,
+            contextmenu,
+            selectableLayers,
+            invokeCommand,
+            overviewMapElementSelector,
+            showGroups,
+            hideGroups,
+            showLayers,
+            hideLayers
+        } = this.props;
+        if (map && config && viewer && invokeCommand) {
             const selectableLayerNames = (map.Layer || [])
                 .filter(layer => layer.Selectable && selectableLayers[layer.ObjectId] !== false)
                 .map(layer => layer.Name);
@@ -207,7 +228,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             const cmitems = (items || []).map(tb => mapToolbarReference(tb, store, invokeCommand));
             const childItems = processMenuItems(cmitems);
             return <MapViewerBase ref={this.fnMapViewerMounted}
-                                  map={map} 
+                                  map={map}
                                   agentUri={config.agentUri}
                                   agentKind={config.agentKind}
                                   locale={config.locale}
@@ -218,7 +239,10 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                   pointSelectionBuffer={config.viewer.pointSelectionBuffer}
                                   tool={viewer.tool}
                                   featureTooltipsEnabled={viewer.featureTooltipsEnabled}
-                                  layerGroupVisibility={elementVisibility}
+                                  showGroups={showGroups}
+                                  hideGroups={hideGroups}
+                                  showLayers={showLayers}
+                                  hideLayers={hideLayers}
                                   view={currentView}
                                   initialView={initialView}
                                   selectableLayerNames={selectableLayerNames}

@@ -583,19 +583,11 @@ export interface IModalReducerState {
 }
 */
 
-export interface ILayerGroupVisibility {
-    showLayers: string[];
-    showGroups: string[];
-    hideLayers: string[];
-    hideGroups: string[];
-}
-
-export interface IBranchedMapSubState extends ILayerGroupVisibility {
+export interface IBranchedMapSubState {
     externalBaseLayers: IExternalBaseLayer[];
     currentView: IMapView | undefined;
     initialView: IMapView | undefined;
     history: IMapView[];
-    mouse: Coordinate | undefined;
     historyIndex: number;
     runtimeMap: RuntimeMap | undefined;
     selectableLayers: any;
@@ -603,6 +595,10 @@ export interface IBranchedMapSubState extends ILayerGroupVisibility {
     selectionSet: QueryMapFeaturesResponse | undefined;
     layerIndex: number;
     featureIndex: number;
+    showLayers: string[];
+    showGroups: string[];
+    hideLayers: string[];
+    hideGroups: string[];
 }
 
 export interface IBranchedMapState {
@@ -655,6 +651,10 @@ export interface IViewerReducerState {
     featureTooltipsEnabled: boolean,
 }
 
+export interface IMouseReducerState {
+    coords: Coordinate | undefined;
+}
+
 export interface IApplicationState {
     initError: IInitErrorReducerState;
     config: IConfigurationReducerState;
@@ -663,6 +663,7 @@ export interface IApplicationState {
     toolbar: IToolbarReducerState;
     taskpane: ITaskPaneReducerState;
     modal: IModalReducerState;
+    mouse: IMouseReducerState;
     lastaction: any;
 }
 

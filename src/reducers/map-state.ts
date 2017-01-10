@@ -15,7 +15,6 @@ export const INITIAL_STATE: IBranchedMapState = {
 export const INITIAL_SUB_STATE: IBranchedMapSubState = {
     currentView: undefined,
     initialView: undefined,
-    mouse: undefined,
     history: [],
     historyIndex: -1,
     selectionSet: undefined,
@@ -85,15 +84,6 @@ export function mapStateReducer(state = INITIAL_STATE, action = { type: '', payl
                         historyIndex: index,
                         current: subState.history[index]
                     };
-                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
-                }
-            }
-        case Constants.UPDATE_MOUSE_COORDINATES:
-            {
-                const subState = state[payload.mapName];
-                const data = payload.coord;
-                if (subState && isCoordinate(data)) {
-                    const state1: Partial<IBranchedMapSubState> = { mouse: data };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
             }

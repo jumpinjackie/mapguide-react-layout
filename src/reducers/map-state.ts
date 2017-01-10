@@ -235,7 +235,7 @@ export function mapStateReducer(state = INITIAL_STATE, action = { type: '', payl
                     const layers: IExternalBaseLayer[] = (subState.externalBaseLayers || []);
                     const baseLayers = layers.map(layer => {
                         layer.visible = false;
-                        if (layer.name == payload) {
+                        if (layer.name == payload.layerName) {
                             layer.visible = true;
                         }
                         return layer;

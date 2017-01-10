@@ -10,6 +10,7 @@ import {
     Bounds,
     Coordinate,
     ReduxDispatch,
+    IExternalBaseLayer,
     IApplicationState,
     IViewerReducerState,
     IConfigurationReducerState,
@@ -37,14 +38,15 @@ export interface IMapViewerContainerProps {
 
 export interface IMapViewerContainerState {
     config: any;
-    map: RuntimeMap | null;
-    selection: QueryMapFeaturesResponse | null;
+    map: RuntimeMap;
+    selection: QueryMapFeaturesResponse;
     viewer: IViewerReducerState;
     elementVisibility: ILayerGroupVisibility;
     currentView: IMapView;
     initialView: IMapView;
     selectableLayers: any;
     contextmenu: any;
+    externalBaseLayers: IExternalBaseLayer[];
 }
 
 export interface IMapViewerContainerDispatch {
@@ -65,6 +67,7 @@ function mapStateToProps(state: IApplicationState): Partial<IMapViewerContainerS
     let initialView;
     let elementVisibility;
     let selectableLayers;
+    let externalBaseLayers;
     if (state.config.activeMapName) {
         const branch = state.mapState[state.config.activeMapName];
         map = branch.runtimeMap;
@@ -78,6 +81,7 @@ function mapStateToProps(state: IApplicationState): Partial<IMapViewerContainerS
             hideLayers: branch.hideLayers
         };
         selectableLayers = branch.selectableLayers;
+        externalBaseLayers = branch.externalBaseLayers;
     }
     return {
         config: state.config,
@@ -88,7 +92,8 @@ function mapStateToProps(state: IApplicationState): Partial<IMapViewerContainerS
         selection: selection,
         selectableLayers: selectableLayers,
         contextmenu: state.toolbar.toolbars.contextmenu,
-        elementVisibility: elementVisibility
+        elementVisibility: elementVisibility,
+        externalBaseLayers: externalBaseLayers
     };
 }
 
@@ -192,7 +197,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         browserWindow.getClient = browserWindow.getClient || (() => new Client(this.props.config.agentUri, this.props.config.agentKind));
     }
     render(): JSX.Element {
-        const { map, config, viewer, currentView, initialView, contextmenu, selectableLayers, invokeCommand, overviewMapElementSelector, elementVisibility } = this.props;
+        const { map, config, viewer, currentView, externalBaseLayers, initialView, contextmenu, selectableLayers, invokeCommand, overviewMapElementSelector, elementVisibility } = this.props;
         if (map && config && viewer && invokeCommand && elementVisibility) {
             const selectableLayerNames = (map.Layer || [])
                 .filter(layer => layer.Selectable && selectableLayers[layer.ObjectId] !== false)
@@ -206,7 +211,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                   agentUri={config.agentUri}
                                   agentKind={config.agentKind}
                                   locale={config.locale}
-                                  externalBaseLayers={config.externalBaseLayers}
+                                  externalBaseLayers={externalBaseLayers}
                                   imageFormat={config.viewer.imageFormat}
                                   selectionImageFormat={config.viewer.selectionImageFormat}
                                   selectionColor={config.viewer.selectionColor}

@@ -84,7 +84,7 @@
     "react-dom": "^15.4.2",
     "react-draggable": "^2.2.3",
     "react-measure": "^1.4.5",
-    "react-redux": "^5.0.1",
+    "react-redux": "^5.0.2",
     "redux": "^3.6.0",
     "redux-localstorage": "^0.4.1",
     "redux-logger": "^2.7.4",

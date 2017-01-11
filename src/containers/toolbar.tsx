@@ -13,6 +13,8 @@ import { IItem, IInlineMenu, Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components
 import { invokeCommand } from "../actions/map";
 import { processMenuItems } from "../utils/menu";
 import * as FlyoutActions from "../actions/flyout";
+import * as Constants from "../constants";
+import { NULL_ACTION } from "../reducers/last-action";
 
 export interface IToolbarContainerProps {
     id: string;
@@ -25,6 +27,7 @@ export interface IToolbarContainerState {
     map: IBranchedMapSubState;
     toolbar: IToolbarReducerState;
     flyouts: any;
+    lastaction: any;
 }
 
 export interface IToolbarContainerDispatch {
@@ -37,13 +40,22 @@ export interface IToolbarContainerDispatch {
 
 function mapStateToProps(state: IApplicationState, ownProps: IToolbarContainerProps): Partial<IToolbarContainerState> {
     let map;
+    let action = NULL_ACTION;
     if (state.config.activeMapName) {
         map = state.mapState[state.config.activeMapName];
+    }
+    //We only care to pass on the dispatched action if the action is any of the
+    //following
+    if (state.lastaction.type == Constants.MAP_SET_MAPTIP ||
+        state.lastaction.type == Constants.MAP_SET_SELECTION ||
+        state.lastaction.type == Constants.MAP_SET_ACTIVE_TOOL) {
+        action = state.lastaction;
     }
     return {
         map: map,
         flyouts: state.toolbar.flyouts,
-        toolbar: state.toolbar.toolbars[ownProps.id]
+        toolbar: state.toolbar.toolbars[ownProps.id],
+        lastaction: action
     };
 }
 

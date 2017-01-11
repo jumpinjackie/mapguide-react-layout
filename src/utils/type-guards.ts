@@ -1,4 +1,4 @@
-import { InitError, IMapView } from "../api/common";
+import { InitError, IMapView, ReduxAction } from "../api/common";
 import { MapLayer } from "../api/contracts/runtime-map";
 import { IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../components/toolbar";
 
@@ -37,4 +37,9 @@ export function isCoordinate(coord: any): coord is [number, number] {
         && coord.length == 2
         && typeof(coord[0]) == 'number'
         && typeof(coord[1]) == 'number';
+}
+
+export function isAction(action: any): action is ReduxAction {
+    return typeof(action.type) != 'undefined'
+        && typeof(action.payload) != 'undefined';
 }

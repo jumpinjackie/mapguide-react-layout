@@ -211,6 +211,11 @@ export interface IExternalBaseLayer {
     options?: any;
 }
 
+export interface IMapMenuEntry {
+    mapName: string;
+    label: string;
+}
+
 /**
  * A bit mask indicating how a map viewer should refresh
  * 
@@ -620,10 +625,11 @@ export interface IViewerCapabilities {
 }
 
 export interface IConfigurationReducerState {
-    agentUri: string | undefined,
-    agentKind: ClientKind,
-    locale: string,
-    activeMapName: string | undefined,
+    agentUri: string | undefined;
+    agentKind: ClientKind;
+    locale: string;
+    activeMapName: string | undefined;
+    availableMaps: string[] | undefined;
     coordinates: ICoordinateConfiguration;
     capabilities: IViewerCapabilities;
     viewer: {

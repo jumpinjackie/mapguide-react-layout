@@ -18,6 +18,7 @@ export class DefaultComponentNames {
     public static get ViewerOptions(): string { return "ViewerOptions"; }
     public static get QuickPlot(): string { return "QuickPlot"; }
     public static get BaseMapSwitcher(): string { return "BaseMapSwitcher"; }
+    public static get MapMenu(): string { return "MapMenu"; }
 }
 
 export type ComponentFactory = (props: any) => JSX.Element; 

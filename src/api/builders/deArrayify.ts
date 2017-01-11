@@ -48,6 +48,9 @@ function deArrayifyRules(rules: any[]): Contracts.RtMap.RuleInfo[] {
 }
 
 function deArrayifyFeatureStyles(fts: any[]): Contracts.RtMap.FeatureStyleInfo[] {
+    if (!fts) {
+        return [];
+    }
     return fts.map(ft => {
         const featureStyle: Contracts.RtMap.FeatureStyleInfo = {
             Type: tryGetAsProperty(ft, "Type", "int"),

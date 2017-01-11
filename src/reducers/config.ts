@@ -6,6 +6,7 @@ export const INITIAL_STATE: IConfigurationReducerState = {
     agentKind: "mapagent",
     locale: "en",
     activeMapName: undefined,
+    availableMaps: undefined,
     coordinates: {
         decimals: 6
     },
@@ -31,10 +32,16 @@ export function configReducer(state = INITIAL_STATE, action = { type: '', payloa
         case Constants.INIT_APP: 
             {
                 const payload: any = action.payload || {};
+                const maps = payload.maps;
+                const mapNames = [];
+                for (const mapName in maps) {
+                    mapNames.push(mapName);
+                }
                 const state1: Partial<IConfigurationReducerState> = {
                     locale: payload.locale || "en",
                     capabilities: payload.capabilities,
-                    activeMapName: payload.activeMapName
+                    activeMapName: payload.activeMapName,
+                    availableMaps: mapNames
                 };
                 const newState: Partial<IConfigurationReducerState> = { ...state, ...state1 };
                 if (payload.config != null && Object.keys(payload.config).length > 0) {
@@ -55,6 +62,16 @@ export function configReducer(state = INITIAL_STATE, action = { type: '', payloa
                     return { ...newState, ...state2 };
                 } else {
                     return newState;
+                }
+            }
+        case Constants.MAP_SET_ACTIVE_MAP:
+            {
+                const data: any = action.payload;
+                if (data) {
+                    const state1: Partial<IConfigurationReducerState> = {
+                        activeMapName: data
+                    };
+                    return { ...state, ...state1 };
                 }
             }
     }

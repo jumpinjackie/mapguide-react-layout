@@ -265,3 +265,10 @@ export function setActiveTool(tool: ActiveMapTool) {
         payload: tool
     };
 }
+
+export function setActiveMap(mapName: string) {
+    return {
+        type: Constants.MAP_SET_ACTIVE_MAP,
+        payload: mapName
+    };
+}

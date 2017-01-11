@@ -1,6 +1,6 @@
 import * as Constants from "../constants";
 import { Client } from "../api/client";
-import { ReduxDispatch, Dictionary, ICommand } from "../api/common";
+import { ReduxDispatch, Dictionary, ICommand, IMapView } from "../api/common";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
 import { registerCommand, DefaultCommands } from "../api/registry/command";
 import { DefaultComponentNames } from "../api/registry/component";
@@ -239,10 +239,10 @@ function prepareSubMenus(tbConf: any): any {
     return prepared;
 }
 
-function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any): (res: [ApplicationDefinition, RuntimeMap]) => void {
-    return (res: [ApplicationDefinition, RuntimeMap]) => {
+function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any): (res: [ApplicationDefinition, Dictionary<RuntimeMap>]) => void {
+    return (res: [ApplicationDefinition, Dictionary<RuntimeMap>]) => {
         const appDef = res[0];
-        const map = res[1];
+        const mapsByName = res[1];
 
         let initialTask: string;
         let taskPane: Widget|undefined;
@@ -312,84 +312,8 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
                 tbConf[tbName] = { items: convertFlexLayoutUIItems(cont.Item, widgetsByKey, opts.locale) };
             }
         }
-        
-        //Now build config from primary MapGuide configuration
-        //TODO: This is not multi-map aware, so it's the first one we find
-        const mgGroups = getMapGuideMapGroup(appDef);
-        const mgConfs = getMapGuideConfiguration(appDef);
-        const mgConf = mgConfs[0]; //Should have at least one, otherwise it would've thrown earlier
-        const mgGroup = mgGroups[0];
 
-        if (mgConf.Extension.SelectionColor != null) {
-            config.selectionColor = mgConf.Extension.SelectionColor;
-        }
-        if (mgConf.Extension.ImageFormat != null) {
-            config.imageFormat = mgConf.Extension.ImageFormat;
-        }
-        if (mgConf.Extension.SelectionFormat != null) {
-            config.selectionImageFormat = mgConf.Extension.SelectionFormat;
-        }
-
-        //Setup external layers
-        const externalBaseLayers = [] as IExternalBaseLayer[];
-        for (const map of mgGroup.Map) {
-            if (map.Type === "MapGuide") {
-                continue;
-            }
-            switch (map.Type) {
-                case "OpenStreetMap":
-                    {
-                        //HACK: De-arrayification of arbitrary extension elements
-                        //is shallow (hence name/type is string[]). Do we bother to fix this? 
-                        const name = map.Extension.Options.name[0];
-                        const type = map.Extension.Options.type[0];
-                        const options: any = {};
-                        switch (type) {
-                            case "CycleMap":
-                                options.url = "http://{a-c}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png";
-                                break;
-                            case "TransportMap":
-                                options.url = "http://tile2.opencyclemap.org/transport/{z}/{x}/{y}.png";
-                                break;
-                        }
-                        externalBaseLayers.push({
-                            name: name,
-                            kind: "OSM",
-                            options: options
-                        })
-                    }
-                    break;
-                case "Stamen":
-                    {
-                        //HACK: De-arrayification of arbitrary extension elements
-                        //is shallow (hence name/type is string[]). Do we bother to fix this? 
-                        const name = map.Extension.Options.name[0];
-                        const type = map.Extension.Options.type[0];
-                        externalBaseLayers.push({
-                            name: name,
-                            kind: "Stamen",
-                            options: {
-                                layer: type
-                            }
-                        })
-                    }
-                    break;
-            }
-        }
-        //First come, first served
-        if (externalBaseLayers.length > 0) {
-            externalBaseLayers[0].visible = true;
-        }
-
-        //Setup initial view
-        let initialView: IView | null = null;
-        if (mgGroup.InitialView) {
-            initialView = {
-                x: mgGroup.InitialView.CenterX,
-                y: mgGroup.InitialView.CenterY,
-                scale: mgGroup.InitialView.Scale
-            };
-        }
+        const maps = setupMaps(appDef, mapsByName, config);
 
         if (taskPane) {
             hasTaskBar = true; //Fusion flex layouts can't control the visiblity of this
@@ -402,18 +326,22 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
             document.title = appDef.Title || document.title;
         }
 
-        const maps: any = {};
-        maps[map.Name] = {
-            map: map,
-            externalBaseLayers: externalBaseLayers,
-            initialView: initialView
-        };
+        let firstMapName = "";
+        let firstSessionId = "";
+        for (const mapName in mapsByName) {
+            if (!firstMapName && !firstSessionId) {
+                const map = mapsByName[mapName];
+                firstMapName = map.Name;
+                firstSessionId = map.SessionId;
+                break;
+            }
+        }
 
         dispatch({
             type: Constants.INIT_APP,
             payload: {
-                activeMapName: map.Name,
-                initialUrl: ensureParameters(initialTask, map.Name, map.SessionId, opts.locale),
+                activeMapName: firstMapName,
+                initialUrl: ensureParameters(initialTask, firstMapName, firstSessionId, opts.locale),
                 locale: opts.locale,
                 maps: maps,
                 config: config,
@@ -432,10 +360,10 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
     };
 }
 
-function makeWebLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any): (res: [WebLayout, RuntimeMap]) => void {
-    return (res: [WebLayout, RuntimeMap]) => {
+function makeWebLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any): (res: [WebLayout, Dictionary<RuntimeMap>]) => void {
+    return (res: [WebLayout, Dictionary<RuntimeMap>]) => {
         const webLayout = res[0];
-        const map = res[1];
+        const mapsByName = res[1];
 
         const cmdsByKey: any = {};
         //Register any InvokeURL and Search commands
@@ -499,17 +427,27 @@ function makeWebLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any):
         }
 
         const maps: any = {};
-        maps[map.Name] = {
-            map: map,
-            externalBaseLayers: opts.externalBaseLayers,
-            initialView: initialView
-        };
+        let firstMapName = "";
+        let firstSessionId = "";
+        for (const mapName in mapsByName) {
+            if (!firstMapName && !firstSessionId) {
+                const map = mapsByName[mapName];
+                firstMapName = map.Name;
+                firstSessionId = map.SessionId;
+                maps[firstMapName] = {
+                    map: map,
+                    externalBaseLayers: opts.externalBaseLayers,
+                    initialView: initialView
+                };
+                break;
+            }
+        }
 
         dispatch({
             type: Constants.INIT_APP,
             payload: {
-                activeMapName: map.Name,
-                initialUrl: ensureParameters(webLayout.TaskPane.InitialTask || "server/TaskPane.html", map.Name, map.SessionId, opts.locale),
+                activeMapName: firstMapName,
+                initialUrl: ensureParameters(webLayout.TaskPane.InitialTask || "server/TaskPane.html", firstMapName, firstSessionId, opts.locale),
                 maps: maps,
                 locale: opts.locale,
                 config: config,
@@ -552,39 +490,154 @@ function resolveProjection(epsg: string, opts: any, mapDef: string): Promise<any
     });
 }
 
-function makeRuntimeMapSuccessHandler<T>(client: Client, session: string, opts: any, mapDefSelector: (res: T) => string): (res: T) => [T, RuntimeMap] | Thenable<[T, RuntimeMap]> {
+function makeRuntimeMapSuccessHandler<T>(client: Client, session: string, opts: any, mapDefSelector: (res: T) => string[]): (res: T) => [T, Dictionary<RuntimeMap>] | Thenable<[T, Dictionary<RuntimeMap>]> {
     return (res) => {
-        const mapDef = mapDefSelector(res);
-        return client.createRuntimeMap({
-            mapDefinition: mapDef,
-            requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-            session: session
-        }).then(map => {
-            //Check the EPSG code here
-            const epsg = map.CoordinateSystem.EpsgCode;
-
-            //Must be non-zero
-            if (epsg == "0") {
-                throw new MgError(tr("INIT_ERROR_UNSUPPORTED_COORD_SYS", opts.locale || "en", { mapDefinition: mapDef }));
-            }
-            //Must be registered to proj4js if not 4326 or 3857
-            if (!proj4.defs[`EPSG:${epsg}`]) {
-                return Promise.all([
-                    res, 
-                    map,
-                    resolveProjection(epsg, opts, mapDef)
-                ]);
-            } else {
-                return Promise.all([
-                    res, 
-                    map,
-                    proj4.defs[`EPSG:${epsg}`]
-                ]);
-            }
-        }).then(res => {
-            return Promise.all([res[0], res[1]]);
-        });
+        const mapDefs = mapDefSelector(res);
+        const mapPromises = [];
+        
+        for (const mapDef of mapDefs) {
+            const promise = client.createRuntimeMap({
+                mapDefinition: mapDef,
+                requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+                session: session
+            });
+            mapPromises.push(promise);
+        }
+        return Promise.all(mapPromises)
+            .then(maps => {
+                const epsgs = maps.map(m => m.CoordinateSystem.EpsgCode);
+                const fetchEpsgs = [];
+                //All must be non-zero
+                for (const m of maps) {
+                    const epsg = m.CoordinateSystem.EpsgCode;
+                    const mapDef = m.MapDefinition;
+                    if (epsg == "0") {
+                        throw new MgError(tr("INIT_ERROR_UNSUPPORTED_COORD_SYS", opts.locale || "en", { mapDefinition: mapDef }));
+                    }
+                    //Must be registered to proj4js if not 4326 or 3857
+                    if (!proj4.defs[`EPSG:${epsg}`]) {
+                        fetchEpsgs.push({ epsg: epsg, mapDef: mapDef });
+                    }
+                }
+                //Fetch requested EPSG codes
+                return Promise.all(fetchEpsgs.map(f => resolveProjection(f.epsg, opts, f.mapDef)))
+                    .then(epsgs => {
+                        //Build the Dictionary<RuntimeMap> from loaded maps
+                        const mapsByName: Dictionary<RuntimeMap> = {};
+                        for (const map of maps) {
+                            mapsByName[map.Name] = map;
+                        }
+                        //Return our promised result
+                        return Promise.resolve([ res, mapsByName ]);
+                    });
+            });
     };
+}
+
+type MapInfo = {
+    map: RuntimeMap;
+    initialView: IMapView | null;
+    externalBaseLayers: IExternalBaseLayer[];
+}
+
+function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<RuntimeMap>, config: any): Dictionary<MapInfo> {
+    const dict: Dictionary<MapInfo> = {};
+    const mgGroups: Dictionary<MapGroup> = {};
+    if (appDef.MapSet) {
+        for (const mgGroup of appDef.MapSet.MapGroup) {
+            let mapName: string | undefined;
+            //Setup external layers
+            const externalBaseLayers = [] as IExternalBaseLayer[];
+            for (const map of mgGroup.Map) {
+                if (map.Type === "MapGuide") {
+                    //TODO: Based on the schema, different MG map groups could have different
+                    //settings here and our redux tree should reflect that. Currently the first one "wins"
+                    if (!config.selectionColor && map.Extension.SelectionColor != null) {
+                        config.selectionColor = map.Extension.SelectionColor;
+                    }
+                    if (!config.imageFormat && map.Extension.ImageFormat != null) {
+                        config.imageFormat = map.Extension.ImageFormat;
+                    }
+                    if (!config.selectionImageFormat && map.Extension.SelectionFormat != null) {
+                        config.selectionImageFormat = map.Extension.SelectionFormat;
+                    }
+
+                    //NOTE: Although non-sensical, if the same map definition exists across multiple
+                    //MapGroups, we might be matching the wrong one. We just assume such non-sensical
+                    //AppDefs won't exist
+                    for (const name in mapsByName) {
+                        if (mapsByName[name].MapDefinition == map.Extension.ResourceId) {
+                            mapName = name;
+                            break;
+                        }
+                    }
+                } else {
+                    switch (map.Type) {
+                        case "OpenStreetMap":
+                            {
+                                //HACK: De-arrayification of arbitrary extension elements
+                                //is shallow (hence name/type is string[]). Do we bother to fix this? 
+                                const name = map.Extension.Options.name[0];
+                                const type = map.Extension.Options.type[0];
+                                const options: any = {};
+                                switch (type) {
+                                    case "CycleMap":
+                                        options.url = "http://{a-c}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png";
+                                        break;
+                                    case "TransportMap":
+                                        options.url = "http://tile2.opencyclemap.org/transport/{z}/{x}/{y}.png";
+                                        break;
+                                }
+                                externalBaseLayers.push({
+                                    name: name,
+                                    kind: "OSM",
+                                    options: options
+                                })
+                            }
+                            break;
+                        case "Stamen":
+                            {
+                                //HACK: De-arrayification of arbitrary extension elements
+                                //is shallow (hence name/type is string[]). Do we bother to fix this? 
+                                const name = map.Extension.Options.name[0];
+                                const type = map.Extension.Options.type[0];
+                                externalBaseLayers.push({
+                                    name: name,
+                                    kind: "Stamen",
+                                    options: {
+                                        layer: type
+                                    }
+                                })
+                            }
+                            break;
+                    }
+                }
+            }
+            //First come, first served
+            if (externalBaseLayers.length > 0) {
+                externalBaseLayers[0].visible = true;
+            }
+
+            //Setup initial view
+            let initialView: IView | null = null;
+            if (mgGroup.InitialView) {
+                initialView = {
+                    x: mgGroup.InitialView.CenterX,
+                    y: mgGroup.InitialView.CenterY,
+                    scale: mgGroup.InitialView.Scale
+                };
+            }
+
+            if (mapName) {
+                dict[mapName] = {
+                    map: mapsByName[mapName],
+                    initialView: initialView,
+                    externalBaseLayers: externalBaseLayers
+                };
+            }
+        }
+    }
+    return dict;
 }
 
 function getMapGuideMapGroup(appDef: ApplicationDefinition): MapGroup[] {
@@ -615,12 +668,10 @@ function getMapGuideConfiguration(appDef: ApplicationDefinition): MapConfigurati
     return configs; 
 }
 
-function getMapDefinitionFromFlexLayout(appDef: ApplicationDefinition): string {
+function getMapDefinitionsFromFlexLayout(appDef: ApplicationDefinition): string[] {
     const configs = getMapGuideConfiguration(appDef);
     if (configs.length > 0) {
-        //TODO: As this is not multi-map capable at the moment, pray the first one is
-        //the one we're interested in.
-        return configs[0].Extension.ResourceId;
+        return configs.map(c => c.Extension.ResourceId);
     }
     throw new MgError("No Map Definition found in Application Definition");
 }
@@ -659,7 +710,7 @@ function makeSessionAcquired(client: Client, dispatch: ReduxDispatch, opts: any)
             processAndDispatchInitError(new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", opts.locale || "en")), false, dispatch, opts);
         } else if (strEndsWith(opts.resourceId, "WebLayout")) {
             const onWebLayoutAndRuntimeMapReceived = makeWebLayoutAndRuntimeMapReceived(dispatch, opts);
-            const handler = makeRuntimeMapSuccessHandler<WebLayout>(client, session, opts, wl => wl.Map.ResourceId);
+            const handler = makeRuntimeMapSuccessHandler<WebLayout>(client, session, opts, wl => [ wl.Map.ResourceId ]);
             client.getResource<WebLayout>(opts.resourceId, { SESSION: session })
                 .then(handler)
                 .then(onWebLayoutAndRuntimeMapReceived)
@@ -668,7 +719,7 @@ function makeSessionAcquired(client: Client, dispatch: ReduxDispatch, opts: any)
                 });
         } else if (strEndsWith(opts.resourceId, "ApplicationDefinition")) {
             const onFlexLayoutAndRuntimeMapReceived = makeFlexLayoutAndRuntimeMapReceived(dispatch, opts);
-            const handler = makeRuntimeMapSuccessHandler<ApplicationDefinition>(client, session, opts, fl => getMapDefinitionFromFlexLayout(fl));
+            const handler = makeRuntimeMapSuccessHandler<ApplicationDefinition>(client, session, opts, fl => getMapDefinitionsFromFlexLayout(fl));
             client.getResource<ApplicationDefinition>(opts.resourceId, { SESSION: session })
                 .then(handler)
                 .then(onFlexLayoutAndRuntimeMapReceived)

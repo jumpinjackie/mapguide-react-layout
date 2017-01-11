@@ -12,6 +12,7 @@ export const NULL_ACTION = {};
 export function lastAction(state = null, action: ReduxAction|ReduxThunkedAction) {
     if (isAction(action)) {
         switch (action.type) {
+            case Constants.MAP_SET_BUSY_COUNT:
             case Constants.TASK_INVOKE_URL:
             case Constants.MAP_SET_SELECTION:
             case Constants.MAP_SET_MAPTIP:

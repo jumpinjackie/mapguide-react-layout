@@ -46,7 +46,8 @@ function mapStateToProps(state: IApplicationState, ownProps: IToolbarContainerPr
     }
     //We only care to pass on the dispatched action if the action is any of the
     //following
-    if (state.lastaction.type == Constants.MAP_SET_MAPTIP ||
+    if (state.lastaction.type == Constants.MAP_SET_BUSY_COUNT ||
+        state.lastaction.type == Constants.MAP_SET_MAPTIP ||
         state.lastaction.type == Constants.MAP_SET_SELECTION ||
         state.lastaction.type == Constants.MAP_SET_ACTIVE_TOOL) {
         action = state.lastaction;

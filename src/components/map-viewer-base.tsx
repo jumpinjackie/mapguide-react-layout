@@ -95,6 +95,13 @@ export function areViewsCloseToEqual(view: IMapView | undefined, otherView: IMap
     }
 }
 
+export function areMapsSame(map: Contracts.RtMap.RuntimeMap, other: Contracts.RtMap.RuntimeMap): boolean {
+    if (map != other) {
+        return map.Name == other.Name;
+    }
+    return true;
+}
+
 const KC_ESCAPE = 27;
 
 class SessionKeepAlive {
@@ -456,6 +463,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             logger.warn(`Unsupported change of props: agentKind`);
             this._client = new Client(nextProps.agentUri, nextProps.agentKind);
         }
+        //map
+        if (!areMapsSame(nextProps.map, props.map)) {
+            const oldLayerSet = this._mapContext.getLayerSet(props.map.Name);
+            const newLayerSet = this._mapContext.getLayerSet(nextProps.map.Name, true, nextProps);
+            oldLayerSet.detach(this._map);
+            newLayerSet.attach(this._map);
+        }
         //selectionColor
         if (nextProps.selectionColor && nextProps.selectionColor != props.selectionColor) {
             const layerSet = this._mapContext.getLayerSet(nextProps.map.Name);
@@ -478,7 +492,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             arrayChanged(nextProps.hideLayers, props.hideLayers)) {
             this.refreshOnStateChange();
         }
-
         //view
         if (!areViewsCloseToEqual(nextProps.view, props.view)) {
             const vw = nextProps.view;
@@ -829,7 +842,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         //this._featureTooltip.setEnabled(enabled);
         this._mapContext.enableFeatureTooltips(enabled);
     }
-
     public addLayer<T extends ol.layer.Base>(name: string, layer: T): T {
         if (this._customLayers[name]) {
             throw new MgError(`A layer named ${name} already exists`);

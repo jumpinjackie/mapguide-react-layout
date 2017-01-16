@@ -536,8 +536,14 @@ export class MapViewerContext {
             this._ovMap.setTarget(null as any);
         }
     }
-    public getLayerSet(name: string): MgLayerSet {
-        return this._layerSets[name];
+    public getLayerSet(name: string, bCreate: boolean = false, props?: IMapViewerContextProps): MgLayerSet {
+        let layerSet = this._layerSets[name];
+        if (!layerSet && props && bCreate) {
+            layerSet = this.initLayerSet(props);
+            this._layerSets[props.map.Name] = layerSet;
+            this._activeMapName = props.map.Name;
+        }
+        return layerSet;
     }
     public clearMouseTooltip(): void {
         this._mouseTooltip.clear();

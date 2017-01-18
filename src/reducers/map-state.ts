@@ -162,8 +162,8 @@ export function mapStateReducer(state = INITIAL_STATE, action = { type: '', payl
             {
                 const subState = state[payload.mapName];
                 if (subState) {
-                    let showGroups: string[] = subState.showGroups;
-                    let hideGroups: string[] = subState.hideGroups;
+                    let showGroups: string[] = [...subState.showGroups];
+                    let hideGroups: string[] = [...subState.hideGroups];
                     if (payload.value === true) { //Show it
                         showGroups.push(payload.id);
                         showGroups = uniq(showGroups);
@@ -186,8 +186,8 @@ export function mapStateReducer(state = INITIAL_STATE, action = { type: '', payl
             {
                 const subState = state[payload.mapName];
                 if (subState) {
-                    let showLayers: string[] = subState.showLayers;
-                    let hideLayers: string[] = subState.hideLayers;
+                    let showLayers: string[] = [...subState.showLayers];
+                    let hideLayers: string[] = [...subState.hideLayers];
                     if (payload.value === true) { //Show it
                         showLayers.push(payload.id);
                         showLayers = uniq(showLayers);

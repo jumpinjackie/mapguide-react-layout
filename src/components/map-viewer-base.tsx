@@ -174,7 +174,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
      * 
      * @private
      */
-    private refreshOnStateChange: () => void;
+    private refreshOnStateChange: (props: IMapViewerBaseProps) => void;
 
     constructor(props: IMapViewerBaseProps) {
         super(props);
@@ -200,8 +200,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
      * of this method
      * @private
      */
-    private _refreshOnStateChange() {
-        const { map, showGroups, showLayers, hideGroups, hideLayers } = this.props;
+    private _refreshOnStateChange(props: IMapViewerBaseProps) {
+        const { map, showGroups, showLayers, hideGroups, hideLayers } = props;
         if (showGroups || showLayers || hideGroups || hideLayers) {
             this._mapContext.refreshOnStateChange(map, showGroups, showLayers, hideGroups, hideLayers);
         }
@@ -507,7 +507,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             arrayChanged(nextProps.hideGroups, props.hideGroups) ||
             arrayChanged(nextProps.showLayers, props.showLayers) ||
             arrayChanged(nextProps.hideLayers, props.hideLayers)) {
-            this.refreshOnStateChange();
+            this.refreshOnStateChange(nextProps);
         }
         //view
         if (!areViewsCloseToEqual(nextProps.view, props.view)) {

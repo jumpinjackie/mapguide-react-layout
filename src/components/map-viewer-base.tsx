@@ -50,7 +50,7 @@ import { tr } from "../api/i18n";
 const isMobile = require("ismobilejs");
 import { MenuComponent } from "./menu";
 import { ContextMenuTarget, ContextMenu } from "@blueprintjs/core";
-import { IMapViewerContextCallback, IMapViewerContextProps, MapViewerContext } from "./map-viewer-context";
+import { IMapViewerContextCallback, IMapViewerContextProps, MapViewerContext, MgLayerSet } from "./map-viewer-context";
 import xor = require("lodash.xor");
 
 export interface IMapViewerBaseProps extends IMapViewerContextProps {
@@ -446,6 +446,14 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             isFeatureTooltipEnabled: this.isFeatureTooltipEnabled.bind(this)
         };
     }
+    private applyView(layerSet: MgLayerSet, vw: IMapView) {
+        this._triggerZoomRequestOnMoveEnd = false;
+        layerSet.view.setCenter([vw.x, vw.y]);
+        //Don't use this.scaleToResolution() as that uses this.props to determine
+        //applicable layer set, but we already have that here
+        layerSet.view.setResolution(layerSet.scaleToResolution(vw.scale));
+        this._triggerZoomRequestOnMoveEnd = true;
+    }
     // ----------------- React Lifecycle ----------------- //
     componentWillReceiveProps(nextProps: IMapViewerBaseProps) {
         // 
@@ -463,12 +471,21 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             logger.warn(`Unsupported change of props: agentKind`);
             this._client = new Client(nextProps.agentUri, nextProps.agentKind);
         }
+        let bChangedView = false;
         //map
         if (!areMapsSame(nextProps.map, props.map)) {
             const oldLayerSet = this._mapContext.getLayerSet(props.map.Name);
             const newLayerSet = this._mapContext.getLayerSet(nextProps.map.Name, true, nextProps);
             oldLayerSet.detach(this._map);
             newLayerSet.attach(this._map);
+            //This would happen if we switch to a map we haven't visited yet
+            if (!nextProps.view) {
+                newLayerSet.view.fit(newLayerSet.extent, this._map.getSize());
+                bChangedView = true;
+            } else {
+                const layerSet = this._mapContext.getLayerSet(nextProps.map.Name);
+                this.applyView(layerSet, nextProps.view);
+            }
         }
         //selectionColor
         if (nextProps.selectionColor && nextProps.selectionColor != props.selectionColor) {
@@ -495,12 +512,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         //view
         if (!areViewsCloseToEqual(nextProps.view, props.view)) {
             const vw = nextProps.view;
-            if (vw != null) {
-                this._triggerZoomRequestOnMoveEnd = false;
-                const view = this._map.getView();
-                view.setCenter([vw.x, vw.y]);
-                view.setResolution(this.scaleToResolution(vw.scale));
-                this._triggerZoomRequestOnMoveEnd = true;
+            if (vw != null && !bChangedView) {
+                const layerSet = this._mapContext.getLayerSet(nextProps.map.Name);
+                this.applyView(layerSet, vw);
             } else {
                 logger.info(`Skipping zoomToView as next/current views are close enough or target view is null`);
             }

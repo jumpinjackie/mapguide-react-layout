@@ -436,6 +436,7 @@ function makeWebLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any):
                 firstMapName = map.Name;
                 firstSessionId = map.SessionId;
                 maps[firstMapName] = {
+                    mapGroupId: map.Name,
                     map: map,
                     externalBaseLayers: opts.externalBaseLayers,
                     initialView: initialView
@@ -536,6 +537,7 @@ function makeRuntimeMapSuccessHandler<T>(client: Client, session: string, opts: 
 }
 
 type MapInfo = {
+    mapGroupId: string;
     map: RuntimeMap;
     initialView: IMapView | null;
     externalBaseLayers: IExternalBaseLayer[];
@@ -631,6 +633,7 @@ function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<Runtime
 
             if (mapName) {
                 dict[mapName] = {
+                    mapGroupId: mgGroup["@id"],
                     map: mapsByName[mapName],
                     initialView: initialView,
                     externalBaseLayers: externalBaseLayers

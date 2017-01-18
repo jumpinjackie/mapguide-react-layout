@@ -33,15 +33,15 @@ export function configReducer(state = INITIAL_STATE, action = { type: '', payloa
             {
                 const payload: any = action.payload || {};
                 const maps = payload.maps;
-                const mapNames = [];
+                const availableMaps = [];
                 for (const mapName in maps) {
-                    mapNames.push(mapName);
+                    availableMaps.push({ name: maps[mapName].mapGroupId, value: mapName });
                 }
                 const state1: Partial<IConfigurationReducerState> = {
                     locale: payload.locale || "en",
                     capabilities: payload.capabilities,
                     activeMapName: payload.activeMapName,
-                    availableMaps: mapNames
+                    availableMaps: availableMaps
                 };
                 const newState: Partial<IConfigurationReducerState> = { ...state, ...state1 };
                 if (payload.config != null && Object.keys(payload.config).length > 0) {

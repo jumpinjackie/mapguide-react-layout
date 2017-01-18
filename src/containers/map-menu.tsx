@@ -2,6 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import {
     IMapView,
+    INameValuePair,
     IConfigurationReducerState,
     IExternalBaseLayer,
     ReduxDispatch,
@@ -13,7 +14,7 @@ import * as MapActions from "../actions/map";
 export interface IMapMenuContainerState {
     locale: string;
     activeMapName: string;
-    availableMaps: string[];
+    availableMaps: INameValuePair[];
 }
 
 export interface IMapMenuContainerDispatch {
@@ -54,7 +55,7 @@ export class MapMenuContainer extends React.Component<MapMenuContainerProps, any
         if (locale && activeMapName && availableMaps) {
             //TODO: Should use MapGroup id has label. For now, use map name for both
             const entries = availableMaps.map(m => {
-                return { label: m, mapName: m };
+                return { label: m.name, mapName: m.value };
             });
             return <MapMenu onActiveMapChanged={this.fnActiveMapChanged} selectedMap={activeMapName} maps={entries} locale={locale} />;
         } else {

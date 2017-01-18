@@ -624,12 +624,17 @@ export interface IViewerCapabilities {
     hasToolbar: boolean;
 }
 
+export interface INameValuePair { 
+    name: string;
+    value: string;
+}
+
 export interface IConfigurationReducerState {
     agentUri: string | undefined;
     agentKind: ClientKind;
     locale: string;
     activeMapName: string | undefined;
-    availableMaps: string[] | undefined;
+    availableMaps: INameValuePair[] | undefined;
     coordinates: ICoordinateConfiguration;
     capabilities: IViewerCapabilities;
     viewer: {

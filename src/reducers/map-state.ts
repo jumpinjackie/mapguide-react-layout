@@ -138,7 +138,7 @@ export function mapStateReducer(state = INITIAL_STATE, action = { type: '', payl
             {
                 const subState = state[payload.mapName];
                 if (subState) {
-                    const layers = subState.selectableLayers;
+                    const layers = { ...subState.selectableLayers };
                     layers[payload.id] = payload.value;
                     const state1: Partial<IBranchedMapSubState> = {
                         selectableLayers: layers
@@ -150,7 +150,7 @@ export function mapStateReducer(state = INITIAL_STATE, action = { type: '', payl
             {
                 const subState = state[payload.mapName];
                 if (subState) {
-                    const groups = subState.expandedGroups;
+                    const groups = { ...subState.expandedGroups };
                     groups[payload.id] = payload.value;
                     const state1: Partial<IBranchedMapSubState> = {
                         expandedGroups: groups

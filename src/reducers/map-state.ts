@@ -68,9 +68,9 @@ export function mapStateReducer(state = INITIAL_STATE, action = { type: '', payl
                 const subState = state[payload.mapName];
                 if (subState) {
                     const index = subState.historyIndex - 1;
-                    const state1 = {
+                    const state1: Partial<IBranchedMapSubState> = {
                         historyIndex: index,
-                        current: subState.history[index]
+                        currentView: subState.history[index]
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
@@ -80,9 +80,9 @@ export function mapStateReducer(state = INITIAL_STATE, action = { type: '', payl
                 const subState = state[payload.mapName];
                 if (subState) {
                     const index = subState.historyIndex + 1;
-                    const state1 = {
+                    const state1: Partial<IBranchedMapSubState> = {
                         historyIndex: index,
-                        current: subState.history[index]
+                        currentView: subState.history[index]
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
@@ -97,18 +97,21 @@ export function mapStateReducer(state = INITIAL_STATE, action = { type: '', payl
                         const view1 = { scale: scale };
                         view = { ...view, ...view1 };
                     }
-                    const state2: Partial<IBranchedMapSubState> = {
+                    const state1: Partial<IBranchedMapSubState> = {
                         currentView: view
                     };
-                    const newSubState: Partial<IBranchedMapSubState> = { ...subState, ...state2 };
-                    if (view && newSubState.history) {
-                        newSubState.history.push({
-                            x: view.x,
-                            y: view.y,
-                            scale: view.scale
-                        });
-                        return mergeSubState(state, payload.mapName, newSubState);
+                    const newSubState: Partial<IBranchedMapSubState> = { ...state1, ...{ historyIndex: subState.historyIndex } };
+                    newSubState.history = [...subState.history];
+                    if (view && newSubState.history && newSubState.historyIndex != null) {
+                        newSubState.historyIndex++;
+                        newSubState.history[newSubState.historyIndex] = view;
+                        //If we slotted at a position that is not the end of the array
+                        //remove everything after it
+                        if (newSubState.history.length > newSubState.historyIndex + 1) {
+                            newSubState.history.splice(newSubState.historyIndex + 1);
+                        }
                     }
+                    return mergeSubState(state, payload.mapName, newSubState);
                 }
             }
         case Constants.MAP_SET_VIEW:
@@ -120,8 +123,9 @@ export function mapStateReducer(state = INITIAL_STATE, action = { type: '', payl
                         const state1: Partial<IBranchedMapSubState> = {
                             currentView: data
                         };
-                        const newSubState: Partial<IBranchedMapSubState> = { ...subState, ...state1 };
-                        if (newSubState.history && newSubState.historyIndex) {
+                        const newSubState: Partial<IBranchedMapSubState> = { ...state1, ...{ historyIndex: subState.historyIndex } };
+                        newSubState.history = [...subState.history];
+                        if (newSubState.history && newSubState.historyIndex != null) {
                             newSubState.historyIndex++;
                             newSubState.history[newSubState.historyIndex] = data;
                             //If we slotted at a position that is not the end of the array

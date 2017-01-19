@@ -19,6 +19,7 @@ export interface ICreateRuntimeMapOptions extends IAuthenticatedRequest {
     iconFormat?: "PNG" | "PNG8" | "GIF" | "JPG";
     iconWidth?: number;
     iconHeight?: number;
+    targetMapName?: string;
 }
 
 export interface ISessionBasedRequest {

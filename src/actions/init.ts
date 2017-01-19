@@ -492,6 +492,16 @@ function resolveProjection(epsg: string, opts: any, mapDef: string): Promise<any
     });
 }
 
+function getDesiredTargetMapName(mapDef: string) {
+    const lastSlash = mapDef.lastIndexOf("/");
+    const lastDot = mapDef.lastIndexOf(".");
+    if (lastSlash >= 0 && lastDot >= 0 && lastDot > lastSlash) {
+        return `${mapDef.substring(lastSlash + 1, lastDot)}_${shortid.generate()}`;
+    } else {
+        return `Map_${shortid.generate()}`;
+    }
+}
+
 function makeRuntimeMapSuccessHandler<T>(client: Client, session: string, opts: any, mapDefSelector: (res: T) => string[]): (res: T) => [T, Dictionary<RuntimeMap>] | Thenable<[T, Dictionary<RuntimeMap>]> {
     return (res) => {
         const mapDefs = mapDefSelector(res);
@@ -501,7 +511,8 @@ function makeRuntimeMapSuccessHandler<T>(client: Client, session: string, opts: 
             const promise = client.createRuntimeMap({
                 mapDefinition: mapDef,
                 requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-                session: session
+                session: session,
+                targetMapName: `${getDesiredTargetMapName(mapDef)}`
             });
             mapPromises.push(promise);
         }

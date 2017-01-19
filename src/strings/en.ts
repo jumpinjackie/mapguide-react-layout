@@ -89,6 +89,7 @@ const STRINGS_EN: any = {
     "GEOLOCATION_SUCCESS": "Zoomed to your position",
     "GEOLOCATION_WARN_OUTSIDE_MAP": "Zoomed to your position. It is outside the extents of your map",
     "GEOLOCATION_ERROR": "Geolocation error: {message} ({code})",
+    "TASK_PANE_CONTENT_FOR_INACTIVE_MAP_TITLE": "Invalid Task Pane Content",
     "TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING": "The current task pane content is not applicable for the current active map. If the content was loaded from a command, re-run that command"
 };
 

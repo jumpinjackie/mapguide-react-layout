@@ -68,5 +68,6 @@
     "GEOLOCATION_SUCCESS": "Vergrößert auf Ihre Position",
     "GEOLOCATION_WARN_OUTSIDE_MAP": "Vergrößert auf Ihre Position. Es ist außerhalb der Erweiterungen Ihrer Karte",
     "GEOLOCATION_ERROR": "Geolocation Fehler: {message} ({code})",
+    "TASK_PANE_CONTENT_FOR_INACTIVE_MAP_TITLE": "Ungültiger Aufgabenbereich",
     "TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING": "Der aktuelle Aufgabenbereichsinhalt ist für die aktuelle aktive Karte nicht gültig. Wenn der Inhalt von einem Befehl geladen wurde, führen Sie diesen Befehl erneut aus"
 }

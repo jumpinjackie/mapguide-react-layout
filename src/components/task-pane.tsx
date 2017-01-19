@@ -6,7 +6,6 @@ import { ensureParameters } from "../actions/taskpane";
 import { PlaceholderComponent } from "../api/registry/component";
 import { tr } from "../api/i18n";
 import { IDOMElementMetrics } from "../api/common";
-import { Toaster, Position, Intent } from "@blueprintjs/core";
 
 function currentUrlDoesNotMatchMapName(currentUrl: string, mapName: string): boolean {
     return currentUrl.toLowerCase().indexOf(`mapname=${mapName.toLowerCase()}`) < 0;
@@ -70,7 +69,8 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         this.fnCloseFlyout = this.onCloseFlyout.bind(this);
         this.fnOpenFlyout = this.onOpenFlyout.bind(this);
         this.state = {
-            activeComponent: null
+            activeComponent: null,
+            invalidated: false
         };
     }
     private onCloseFlyout(id: string): void {
@@ -98,12 +98,11 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                 this.loadUrl(nextProps.currentUrl);
             }
         }
-        if (nextProps.currentUrl && currentUrlDoesNotMatchMapName(nextProps.currentUrl, nextProps.mapName)) {
-            //TODO: We probably want some persistent sticky (but dismissable) warning in the Task Pane region instead of a toast
+        if (!this.state.invalidated && nextProps.currentUrl && currentUrlDoesNotMatchMapName(nextProps.currentUrl, nextProps.mapName)) {
             //TODO: If we want to be smart, we could have the TaskPane amend the currentUrl with the new map name
-            Toaster
-                .create({ position: Position.TOP, className: "mg-toast" })
-                .show({ iconName: "warning-sign", message: tr("TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING", this.props.locale), intent: Intent.WARNING });
+            this.setState({ invalidated: true });
+        } else if (nextProps.currentUrl && !currentUrlDoesNotMatchMapName(nextProps.currentUrl, nextProps.mapName)) {
+            this.setState({ invalidated: false });
         }
     }
     componentDidMount() {
@@ -123,12 +122,12 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         }
     }
     render(): JSX.Element {
+        const { invalidated } = this.state;
         const taskMenu: IFlyoutMenu = {
             label: tr("MENU_TASKS", this.props.locale),
             flyoutAlign: "bottom left",
             flyoutId: "taskpane"
         };
-
         const rootStyle: React.CSSProperties = {};
         const taskBarStyle: React.CSSProperties = {
             height: DEFAULT_TOOLBAR_SIZE,
@@ -182,12 +181,20 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             })()}
             <div style={taskBodyStyle}>
                 {(() => {
+                    if (invalidated === true) {
+                        return <div className="pt-callout pt-intent-warning">
+                            <h5>{tr("TASK_PANE_CONTENT_FOR_INACTIVE_MAP_TITLE", this.props.locale)}</h5>
+                            {tr("TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING", this.props.locale)}
+                        </div>;
+                    }
+                })()}
+                {(() => {
                     if (this.state.activeComponent != null) {
-                        return <div style={taskComponentContainerStyle}>
+                        return <div className={(invalidated === true ? "invalidated-task-pane" : undefined)} style={taskComponentContainerStyle}>
                             <PlaceholderComponent id={this.state.activeComponent} locale={this.props.locale} />
                         </div>
                     } else {
-                        return <iframe name="taskPaneFrame" ref={this.fnFrameMounted} onLoad={this.fnFrameLoaded} style={taskFrameStyle}>
+                        return <iframe className={(invalidated === true ? "invalidated-task-pane" : undefined)} name="taskPaneFrame" ref={this.fnFrameMounted} onLoad={this.fnFrameLoaded} style={taskFrameStyle}>
                 
                         </iframe>
                     }

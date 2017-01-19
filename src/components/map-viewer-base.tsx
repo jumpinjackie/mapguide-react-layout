@@ -476,8 +476,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         if (!areMapsSame(nextProps.map, props.map)) {
             const oldLayerSet = this._mapContext.getLayerSet(props.map.Name);
             const newLayerSet = this._mapContext.getLayerSet(nextProps.map.Name, true, nextProps);
-            oldLayerSet.detach(this._map);
-            newLayerSet.attach(this._map);
+            const ovMap = this._mapContext.getOverviewMap();
+            oldLayerSet.detach(this._map, ovMap);
+            newLayerSet.attach(this._map, ovMap);
             //This would happen if we switch to a map we haven't visited yet
             if (!nextProps.view) {
                 newLayerSet.view.fit(newLayerSet.extent, this._map.getSize());
@@ -521,7 +522,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
         //overviewMapElement
         if (nextProps.overviewMapElementSelector) {
-            this._mapContext.updateOverviewMap(nextProps.overviewMapElementSelector);
+            this._mapContext.updateOverviewMapElement(nextProps.overviewMapElementSelector);
         }
     }
     componentDidMount() {
@@ -567,8 +568,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         const callback = this.getCallback();
         this._mapContext = new MapViewerContext(this._map, callback);
         const activeLayerSet = this._mapContext.initLayerSet(this.props);
-        activeLayerSet.attach(this._map);
-        this._mapContext.initOverviewMap(activeLayerSet.projection, this.props.overviewMapElementSelector);
+        this._mapContext.initContext(activeLayerSet, this.props.overviewMapElementSelector);
         document.addEventListener("keydown", this.fnKeyDown);
         document.addEventListener("keyup", this.fnKeyUp);
 

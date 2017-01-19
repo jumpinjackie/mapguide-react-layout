@@ -173,9 +173,11 @@ export interface IMapViewerContextProps {
 export class MgLayerSet {
     baseLayerGroups: ol.layer.Tile[];
     overlay: ol.layer.Image;
+    overviewOverlay: ol.layer.Image;
     selectionOverlay: ol.layer.Image;
     baseLayerGroup: ol.layer.Group;
     dynamicOverlayParams: any;
+    staticOverlayParams: any;
     selectionOverlayParams: any;
     projection: string;
     dpi: number;
@@ -202,6 +204,13 @@ export class MgLayerSet {
             FORMAT: props.imageFormat,
             SESSION: map.SessionId,
             BEHAVIOR: 2
+        };
+        this.staticOverlayParams = {
+            MAPDEFINITION: map.MapDefinition,
+            FORMAT: props.imageFormat,
+            CLIENTAGENT: "ol.source.ImageMapGuide for OverviewMap",
+            USERNAME: "Anonymous",
+            VERSION: "3.0.0"
         };
         this.selectionOverlayParams = {
             MAPNAME: map.Name,
@@ -295,6 +304,18 @@ export class MgLayerSet {
                 ratio: 1
             })
         });
+        this.overviewOverlay = new ol.layer.Image({
+            //name: "MapGuide Dynamic Overlay",
+            extent: this.extent,
+            source: new ol.source.ImageMapGuide({
+                projection: this.projection,
+                url: props.agentUri,
+                useOverlay: false,
+                metersPerUnit: metersPerUnit,
+                params: this.staticOverlayParams,
+                ratio: 1
+            })
+        });
         this.selectionOverlay = new ol.layer.Image({
             //name: "MapGuide Dynamic Overlay",
             extent: this.extent,
@@ -307,7 +328,6 @@ export class MgLayerSet {
                 ratio: 1
             })
         });
-
         if (props.externalBaseLayers != null) {
             const groupOpts: any = {
                 title: tr("EXTERNAL_BASE_LAYERS", props.locale),
@@ -356,7 +376,31 @@ export class MgLayerSet {
         ovSource.on("imageloaderror", this.callback.onImageError);
         selSource.on("imageloadend", this.callback.decrementBusyWorker);
         ovSource.on("imageloadend", this.callback.decrementBusyWorker);
-
+    }
+    public getLayersForOverviewMap(): ol.layer.Base[] {
+        //NOTE: MapGuide does not like concurrent map rendering operations of the same mapname/session pair, which
+        //this will do when the MG overlay is shared between the main viewer and the overview map. This is probably
+        //because the concurrent requests both have SET[X/Y/SCALE/DPI/etc] parameters attached, so there is concurrent 
+        //requests to modify and persist the runtime map state (in addition to the rendering) and there is most likely
+        //server-side lock contention to safely update the map state. Long story short: re-using the main overlay for the
+        //OverviewMap control IS A BAD THING. Same thing happens with selection overlays.
+        //
+        //So as a workaround, we setup a secondary ol.layer.Image that uses the stateless version of the rendering
+        //operation (GETMAPIMAGE), and when setting up the OverviewMap control (ie. This method is called), we give them
+        //back the full layer set, with the selection overlay omitted (I doubt anyone really cares that selections don't render
+        //on the tiny overview map) and the main overlay substituted with the stateless version.
+        const layers = [];
+        for (const layer of this.allLayers) {
+            if (layer == this.selectionOverlay) {
+                continue;
+            }
+            if (layer == this.overlay) {
+                layers.push(this.overviewOverlay);
+            } else {
+                layers.push(layer);
+            }
+        }
+        return layers;
     }
     private getTileUrlFunctionForGroup(resourceId: string, groupName: string, zOrigin: number) {
         const urlTemplate = this.callback.getClient().getTileTemplateUrl(resourceId, groupName, '{x}', '{y}', '{z}');
@@ -447,15 +491,43 @@ export class MgLayerSet {
             });
         }
     }
-    public attach(map: ol.Map): void {
+    public attach(map: ol.Map, ovMapControl: ol.control.OverviewMap, bSetLayers = true): void {
+        const ovLayers = this.getLayersForOverviewMap();
         for (const layer of this.allLayers) {
             map.addLayer(layer);
         }
         map.setView(this.view);
+        if (bSetLayers) {
+            const ovMap = ovMapControl.getOverviewMap();
+            for (const layer of ovLayers) {
+                ovMap.addLayer(layer);
+            }
+            //ol.View has immutable projection, so we have to replace the whole view on the OverviewMap
+            const center = this.view.getCenter();
+            const resolution = this.view.getResolution();
+            if (center) {
+                ovMap.setView(new ol.View({
+                    center: [ center[0], center[1] ],
+                    resolution: this.view.getResolution(),
+                    projection: this.view.getProjection()
+                }));
+            } else {
+                const view = new ol.View({
+                    projection: this.view.getProjection()
+                });
+                ovMap.setView(view);
+                view.fit(this.extent, ovMap.getSize());
+            }
+        }
     }
-    public detach(map: ol.Map): void {
+    public detach(map: ol.Map, ovMapControl: ol.control.OverviewMap): void {
+        const ovLayers = this.getLayersForOverviewMap();
         for (const layer of this.allLayers) {
             map.removeLayer(layer);
+        }
+        const ovMap = ovMapControl.getOverviewMap();
+        for (const layer of ovLayers) {
+            ovMap.removeLayer(layer);
         }
     }
 }
@@ -502,12 +574,13 @@ export class MapViewerContext {
         }
         return layerSet;
     }
-    public initOverviewMap(projection: string | undefined, overviewMapElementSelector?: () => (Element | null)) {
+    public initContext(layerSet: MgLayerSet, overviewMapElementSelector?: () => (Element | null)) {
         // HACK: className property not documented. This needs to be fixed in OL api doc.
         const overviewMapOpts: any = {
             className: 'ol-overviewmap ol-custom-overviewmap',
+            layers: layerSet.getLayersForOverviewMap(),
             view: new ol.View({
-                projection: projection
+                projection: layerSet.projection
             }),
             collapseLabel: String.fromCharCode(187), //'\u00BB',
             label: String.fromCharCode(171) //'\u00AB'
@@ -523,8 +596,9 @@ export class MapViewerContext {
         }
         this._ovMap = new ol.control.OverviewMap(overviewMapOpts);
         this._map.addControl(this._ovMap);
+        layerSet.attach(this._map, this._ovMap, false);
     }
-    public updateOverviewMap(overviewMapElementSelector: () => (Element | null)) {
+    public updateOverviewMapElement(overviewMapElementSelector: () => (Element | null)) {
         const el = overviewMapElementSelector();
         if (el) {
             this._ovMap.setCollapsed(false);
@@ -535,6 +609,9 @@ export class MapViewerContext {
             this._ovMap.setCollapsible(true);
             this._ovMap.setTarget(null as any);
         }
+    }
+    public getOverviewMap(): ol.control.OverviewMap {
+        return this._ovMap;
     }
     public getLayerSet(name: string, bCreate: boolean = false, props?: IMapViewerContextProps): MgLayerSet {
         let layerSet = this._layerSets[name];

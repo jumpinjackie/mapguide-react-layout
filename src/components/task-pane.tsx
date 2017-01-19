@@ -6,6 +6,11 @@ import { ensureParameters } from "../actions/taskpane";
 import { PlaceholderComponent } from "../api/registry/component";
 import { tr } from "../api/i18n";
 import { IDOMElementMetrics } from "../api/common";
+import { Toaster, Position, Intent } from "@blueprintjs/core";
+
+function currentUrlDoesNotMatchMapName(currentUrl: string, mapName: string): boolean {
+    return currentUrl.toLowerCase().indexOf(`mapname=${mapName.toLowerCase()}`) < 0;
+}
 
 export interface ITaskPaneProps {
     currentUrl?: string;
@@ -92,6 +97,13 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             if (nextProps.currentUrl && nextProps.lastUrlPushed === false) {
                 this.loadUrl(nextProps.currentUrl);
             }
+        }
+        if (nextProps.currentUrl && currentUrlDoesNotMatchMapName(nextProps.currentUrl, nextProps.mapName)) {
+            //TODO: We probably want some persistent sticky (but dismissable) warning in the Task Pane region instead of a toast
+            //TODO: If we want to be smart, we could have the TaskPane amend the currentUrl with the new map name
+            Toaster
+                .create({ position: Position.TOP, className: "mg-toast" })
+                .show({ iconName: "warning-sign", message: tr("TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING", this.props.locale), intent: Intent.WARNING });
         }
     }
     componentDidMount() {

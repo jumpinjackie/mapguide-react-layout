@@ -187,6 +187,6 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
                                  locale={this.getLocale()} />;
             }
         }
-        return <div />;
+        return <noscript />;
     }
 }

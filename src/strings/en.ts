@@ -88,7 +88,8 @@ const STRINGS_EN: any = {
     "FEATURE_TOOLTIPS": "Feature Tooltips",
     "GEOLOCATION_SUCCESS": "Zoomed to your position",
     "GEOLOCATION_WARN_OUTSIDE_MAP": "Zoomed to your position. It is outside the extents of your map",
-    "GEOLOCATION_ERROR": "Geolocation error: {message} ({code})"
+    "GEOLOCATION_ERROR": "Geolocation error: {message} ({code})",
+    "TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING": "The current task pane content is not applicable for the current active map. If the content was loaded from a command, re-run that command"
 };
 
 export default STRINGS_EN;

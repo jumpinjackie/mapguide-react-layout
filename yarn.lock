@@ -22,9 +22,9 @@
   version "1.5.20"
   resolved "https://registry.yarnpkg.com/@types/dom4/-/dom4-1.5.20.tgz#ccf636d3b794fe65a4191ebc7ff979a78efea6c2"
 
-"@types/enzyme@2.7.1":
-  version "2.7.1"
-  resolved "https://registry.yarnpkg.com/@types/enzyme/-/enzyme-2.7.1.tgz#c49059fa84dd127dc61660fde90b3e5be3985a09"
+"@types/enzyme@2.7.2":
+  version "2.7.2"
+  resolved "https://registry.yarnpkg.com/@types/enzyme/-/enzyme-2.7.2.tgz#b19a457f29d2d1a054a880feb86666b993ed6cdc"
   dependencies:
     "@types/react" "*"
 
@@ -4700,9 +4700,9 @@ progress@~1.1.8:
   version "1.1.8"
   resolved "https://registry.yarnpkg.com/progress/-/progress-1.1.8.tgz#e260c78f6161cdd9b0e56cc3e0a85de17c7a57be"
 
-proj4@^2.3.15:
-  version "2.3.15"
-  resolved "https://registry.yarnpkg.com/proj4/-/proj4-2.3.15.tgz#5ad06e8bca30be0ffa389a49e4565f51f06d089e"
+proj4@^2.3.17:
+  version "2.3.17"
+  resolved "https://registry.yarnpkg.com/proj4/-/proj4-2.3.17.tgz#c0beb4960fb9d76a7d889eb3b0d4cd1ba8aa420a"
   dependencies:
     mgrs "~0.0.2"
 
@@ -6425,11 +6425,7 @@ websocket-extensions@>=0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.1.tgz#76899499c184b6ef754377c2dbb0cd6cb55d29e7"
 
-whatwg-fetch@>=0.10.0:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-2.0.1.tgz#078b9461bbe91cea73cbce8bb122a05f9e92b772"
-
-whatwg-fetch@^2.0.2:
+whatwg-fetch@>=0.10.0, whatwg-fetch@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-2.0.2.tgz#fe294d1d89e36c5be8b3195057f2e4bc74fc980e"
 

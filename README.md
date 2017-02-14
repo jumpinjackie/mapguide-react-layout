@@ -1,6 +1,7 @@
 # mapguide-react-layout
 
-[![Build Status](https://travis-ci.org/jumpinjackie/mapguide-react-layout.svg)](https://travis-ci.org/jumpinjackie/mapguide-react-layout)
+[![Build status](https://travis-ci.org/jumpinjackie/mapguide-react-layout.svg)](https://travis-ci.org/jumpinjackie/mapguide-react-layout)
+[![Build status](https://ci.appveyor.com/api/projects/status/urdvk8788w6h26ae?svg=true)](https://ci.appveyor.com/project/jumpinjackie/mapguide-react-layout)
 
 mapguide-react-layout is an experimental react-based map viewer for MapGuide.
 

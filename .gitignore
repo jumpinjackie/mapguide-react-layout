@@ -13,3 +13,4 @@ src/**/*.js.map
 viewer/dist
 declarations
 webconfig.ini
+viewer.zip

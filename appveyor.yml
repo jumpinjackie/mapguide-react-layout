@@ -1,0 +1,53 @@
+version: 0.8.0.{build}
+shallow_clone: true
+# Don't actually build. This is not a .net project
+build: off
+# Cache yarn packages to speed up builds
+cache:
+ - "%LOCALAPPDATA%\\Yarn"
+
+# restore NuGet packages before running MSBuild
+before_build:
+  - echo APPVEYOR_PROJECT_NAME          %APPVEYOR_PROJECT_NAME%
+  - echo APPVEYOR_PROJECT_SLUG          %APPVEYOR_PROJECT_SLUG%
+  - echo APPVEYOR_BUILD_FOLDER          %APPVEYOR_BUILD_FOLDER%
+  - echo APPVEYOR_BUILD_ID              %APPVEYOR_BUILD_ID%
+  - echo APPVEYOR_BUILD_NUMBER          %APPVEYOR_BUILD_NUMBER%
+  - echo APPVEYOR_BUILD_VERSION         %APPVEYOR_BUILD_VERSION%
+  - echo APPVEYOR_REPO_NAME             %APPVEYOR_REPO_NAME%
+  - echo APPVEYOR_REPO_BRANCH           %APPVEYOR_REPO_BRANCH%
+  - echo APPVEYOR_REPO_TAG              %APPVEYOR_REPO_TAG%
+  - echo APPVEYOR_REPO_TAG_NAME         %APPVEYOR_REPO_TAG_NAME%
+  - echo APPVEYOR_REPO_COMMIT           %APPVEYOR_REPO_COMMIT%
+  - echo APPVEYOR_REPO_COMMIT_TIMESTAMP %APPVEYOR_REPO_COMMIT_TIMESTAMP%
+
+environment:
+  nodejs_version: "6"
+
+install:
+  # Get the latest stable version of Node.js or io.js
+  - ps: Install-Product node $env:nodejs_version
+  # install packages, this will also do a production build as a postinstall
+  - yarn install
+
+test_script:
+  - yarn --version
+  - yarn run test:ci
+
+artifacts:
+  - path: .\viewer.zip
+    name: dist
+    type: zip
+
+deploy:
+  release: $(appveyor_repo_tag_name)
+  description: 'Release $(appveyor_repo_tag_name) ($(appveyor_build_version))'
+  provider: GitHub
+  auth_token:
+    secure: d+aY+YJPCp6KzWE2XcGKdp5XFXoh66H7le3SJiqxtAHDZ1P2+kw/PgIF5Unj3kxG
+  artifact: dist
+  draft: true
+  prerelease: true
+  on:
+    branch: master                 # release from master branch only
+    appveyor_repo_tag: true        # deploy on tag push only

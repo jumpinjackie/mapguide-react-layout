@@ -1,5 +1,5 @@
-Next
-====
+0.8
+===
  * Update Blueprint to 1.9.0
  * Update React to 15.4.2
  * Improved performance due to restructured and optimized redux state tree and updates to minimize unnecessary re-rendering

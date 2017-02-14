@@ -74,7 +74,15 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
     }
     private onTypeChanged(e: GenericEvent) {
         const newType = e.target.value;
-        this.setState({ type: newType });
+        this.setState({ type: newType }, () => {
+            const { activeMapName } = this.props;
+            if (activeMapName) {
+                const activeMeasure = this.measurements.filter(m => m.getMapName() === activeMapName)[0];
+                if (activeMeasure) {
+                    activeMeasure.handleDrawTypeChange();
+                }
+            }
+        });
     }
     private onGeodesicChanged(e: GenericEvent) {
         const newValue = e.target.checked;
@@ -107,7 +115,7 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
             }
             const activeMeasure = this.measurements.filter(m => m.getMapName() === activeMapName)[0];
             if (activeMeasure) {
-                activeMeasure.startMeasure(type);
+                activeMeasure.startMeasure();
                 this.setState({ measuring: true });
             }
         }
@@ -123,6 +131,7 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
             }
         }
     }
+    getCurrentDrawType(): string | undefined { return this.state.type; }
     getLocale(): string {
         return this.props.locale || "en";
     }

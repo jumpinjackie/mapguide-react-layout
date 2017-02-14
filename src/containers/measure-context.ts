@@ -13,6 +13,7 @@ const LAYER_NAME = "measure-layer";
 const WGS84_SPHERE = new ol.Sphere(6378137);
 
 export interface IMeasureComponent {
+    getCurrentDrawType(): string | undefined;
     getLocale(): string;
     isGeodesic(): boolean;
 }
@@ -222,9 +223,7 @@ export class MeasureContext {
             offset: [15, 0],
             positioning: 'center-left'
         });
-        if (this.viewer) {
-            this.viewer.addOverlay(this.helpTooltip);
-        }
+        this.viewer.addOverlay(this.helpTooltip);
     }
     /**
      * Creates a new measure tooltip
@@ -242,30 +241,29 @@ export class MeasureContext {
             offset: [0, -15],
             positioning: 'bottom-center'
         });
-        if (this.viewer) {
-            this.viewer.addOverlay(this.measureTooltip);
-        }
+        this.viewer.addOverlay(this.measureTooltip);
     }
     private setActiveInteraction(type: string) {
-        if (this.viewer) {
-            if (this.draw) {
-                this.draw.un("drawstart", this.fnDrawStart);
-                this.draw.un("drawend", this.fnDrawEnd);
-                this.viewer.removeInteraction(this.draw);
-            }
-            this.draw = this.createDrawInteraction(type);
-            if (this.draw) {
-                this.draw.on("drawstart", this.fnDrawStart);
-                this.draw.on("drawend", this.fnDrawEnd);
-                this.viewer.addInteraction(this.draw);
-            }
+        if (this.draw) {
+            this.draw.un("drawstart", this.fnDrawStart);
+            this.draw.un("drawend", this.fnDrawEnd);
+            this.viewer.removeInteraction(this.draw);
+        }
+        this.draw = this.createDrawInteraction(type);
+        if (this.draw) {
+            this.draw.on("drawstart", this.fnDrawStart);
+            this.draw.on("drawend", this.fnDrawEnd);
+            this.viewer.addInteraction(this.draw);
         }
     }
-    public startMeasure(type: string) {
-        this.createMeasureTooltip();
-        this.createHelpTooltip();
-        this.setActiveInteraction(type);
-        this.viewer.addHandler('pointermove', this.fnMouseMove);
+    public startMeasure() {
+        const type = this.parent.getCurrentDrawType();
+        if (type) {
+            this.createMeasureTooltip();
+            this.createHelpTooltip();
+            this.setActiveInteraction(type);
+            this.viewer.addHandler('pointermove', this.fnMouseMove);
+        }
     }
     public endMeasure() {
         this.viewer.removeHandler('pointermove', this.fnMouseMove);
@@ -283,6 +281,12 @@ export class MeasureContext {
             this.viewer.removeOverlay(ov);
         }
         this.measureOverlays.length = 0; //Clear
+    }
+    public handleDrawTypeChange() {
+        const type = this.parent.getCurrentDrawType();
+        if (type) {
+            this.setActiveInteraction(type);
+        }
     }
     public activate() {
         logger.debug(`Activating measure context for ${this.mapName}`);

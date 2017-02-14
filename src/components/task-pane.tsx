@@ -32,7 +32,7 @@ export interface ITaskPaneProps {
 // Having the lastUrlPushed props sounds extremely hacky, but we need a way to signal that
 // the url its about to receive was pushed and should not be reloaded into the internal iframe
 //
-// This is because we want internal url transitions (eg. Clicking a link, submitting a form) to 
+// This is because we want internal url transitions (eg. Clicking a link, submitting a form) to
 // be recorded in the navigation stack so we can properly go back/forward just like a web browser.
 // But we don't want these recorded URLs to accidentally trigger a re-load of the same url.
 
@@ -47,7 +47,7 @@ export interface ITaskPaneProps {
 // the new URL (http://stackoverflow.com/questions/821359/reload-an-iframe-without-adding-to-the-history)
 //
 // However, I suspect this doesn't work in React because of the virtual DOM retaining
-// the old iframe element. How can we get React to make a new iframe for each URL? 
+// the old iframe element. How can we get React to make a new iframe for each URL?
 
 export class TaskPane extends React.Component<ITaskPaneProps, any> {
     private _iframe: HTMLIFrameElement;
@@ -98,10 +98,10 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                 this.loadUrl(nextProps.currentUrl);
             }
         }
-        if (!this.state.invalidated && nextProps.currentUrl && currentUrlDoesNotMatchMapName(nextProps.currentUrl, nextProps.mapName)) {
+        if (!this.state.invalidated && nextProps.currentUrl && nextProps.currentUrl.indexOf("component://") != 0 && currentUrlDoesNotMatchMapName(nextProps.currentUrl, nextProps.mapName)) {
             //TODO: If we want to be smart, we could have the TaskPane amend the currentUrl with the new map name
             this.setState({ invalidated: true });
-        } else if (nextProps.currentUrl && !currentUrlDoesNotMatchMapName(nextProps.currentUrl, nextProps.mapName)) {
+        } else if (nextProps.currentUrl && (nextProps.currentUrl.indexOf("component://") == 0 || !currentUrlDoesNotMatchMapName(nextProps.currentUrl, nextProps.mapName))) {
             this.setState({ invalidated: false });
         }
     }
@@ -155,17 +155,17 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             taskBodyStyle.right = 0;
             taskBodyStyle.bottom = 0;
             taskBodyStyle.overflow = "hidden";
-            
-            taskFrameStyle.width = "100%"; 
+
+            taskFrameStyle.width = "100%";
             taskFrameStyle.height = "100%";
 
             taskComponentContainerStyle.width = "100%";
             taskComponentContainerStyle.height = "100%";
         } else {
-            taskFrameStyle.width = "100%"; 
+            taskFrameStyle.width = "100%";
             taskFrameStyle.height = (this.props.showTaskBar === true ? (this.props.maxHeight - DEFAULT_TOOLBAR_SIZE) : this.props.maxHeight);
 
-            taskComponentContainerStyle.width = "100%"; 
+            taskComponentContainerStyle.width = "100%";
             taskComponentContainerStyle.maxHeight = (this.props.showTaskBar === true ? (this.props.maxHeight - DEFAULT_TOOLBAR_SIZE) : this.props.maxHeight);
             taskComponentContainerStyle.overflowY = "auto";
         }
@@ -195,7 +195,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                         </div>
                     } else {
                         return <iframe className={(invalidated === true ? "invalidated-task-pane" : undefined)} name="taskPaneFrame" ref={this.fnFrameMounted} onLoad={this.fnFrameLoaded} style={taskFrameStyle}>
-                
+
                         </iframe>
                     }
                 })()}

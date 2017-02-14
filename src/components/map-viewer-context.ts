@@ -275,7 +275,7 @@ export class MgLayerSet {
         }
         /*
         if (groupLayers.length > 0) {
-            groupLayers.push( 
+            groupLayers.push(
                 new ol.layer.Tile({
                     source: new ol.source.TileDebug({
                         tileGrid: tileGrid,
@@ -380,7 +380,7 @@ export class MgLayerSet {
     public getLayersForOverviewMap(): ol.layer.Base[] {
         //NOTE: MapGuide does not like concurrent map rendering operations of the same mapname/session pair, which
         //this will do when the MG overlay is shared between the main viewer and the overview map. This is probably
-        //because the concurrent requests both have SET[X/Y/SCALE/DPI/etc] parameters attached, so there is concurrent 
+        //because the concurrent requests both have SET[X/Y/SCALE/DPI/etc] parameters attached, so there is concurrent
         //requests to modify and persist the runtime map state (in addition to the rendering) and there is most likely
         //server-side lock contention to safely update the map state. Long story short: re-using the main overlay for the
         //OverviewMap control IS A BAD THING. Same thing happens with selection overlays.
@@ -492,13 +492,19 @@ export class MgLayerSet {
         }
     }
     public attach(map: ol.Map, ovMapControl: ol.control.OverviewMap, bSetLayers = true): void {
-        const ovLayers = this.getLayersForOverviewMap();
+        /*
         for (const layer of this.allLayers) {
             map.addLayer(layer);
+        }
+        */
+        const layers = map.getLayers();
+        for (let i = this.allLayers.length - 1; i >= 0; i--) {
+            layers.insertAt(0, this.allLayers[i]);
         }
         map.setView(this.view);
         if (bSetLayers) {
             const ovMap = ovMapControl.getOverviewMap();
+            const ovLayers = this.getLayersForOverviewMap();
             for (const layer of ovLayers) {
                 ovMap.addLayer(layer);
             }
@@ -561,7 +567,7 @@ export class MapViewerContext {
         this._layerSets = {};
         this._mouseTooltip = new MouseTrackingTooltip(this._map, this.callback.isContextMenuOpen);
         this._featureTooltip = new FeatureQueryTooltip(this._map, callback);
-        //HACK: To avoid chicken-egg problem, we call this.isFeatureTooltipEnabled() instead 
+        //HACK: To avoid chicken-egg problem, we call this.isFeatureTooltipEnabled() instead
         //of callback.isFeatureTooltipEnabled() even though its impl merely forwards to this
         this._featureTooltip.setEnabled(this.isFeatureTooltipEnabled());
     }

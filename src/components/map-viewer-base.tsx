@@ -1,26 +1,26 @@
 /**
  * map-viewer-base.tsx
- * 
+ *
  * This is the main map viewer component that wraps the OpenLayers 3 map viewer and its various APIs
- * 
+ *
  * This component is designed to be as "dumb" as possible, taking as much of its viewer directives from
- * the props given to it. It carries minimal component state. Where possible, relevant state is farmed off and 
+ * the props given to it. It carries minimal component state. Where possible, relevant state is farmed off and
  * managed by a higher level parent component
- * 
+ *
  * This component is usually wrapped by its "smart" sibling (src/containers/map-viewer.tsx), which is
  * redux aware and is responsible for flowing map state to the redux store (so any other interested
- * components will properly update) and flowing updated props back to this component to actually 
+ * components will properly update) and flowing updated props back to this component to actually
  * carry out the requested actions
- * 
+ *
  * NOTE: This component does not perfectly implement uni-directional data flow (sadly OpenLayers 3 is fighting
- * against us in some parts, and is prone to out-of-band updates to map state that we are not properly flowing back), 
+ * against us in some parts, and is prone to out-of-band updates to map state that we are not properly flowing back),
  * thus it breaks certain debugging capabilities of redux such as "time travel"
  */
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import * as ol from "openlayers";
-import { 
+import {
     IMapView,
     IExternalBaseLayer,
     DigitizerCallback,
@@ -115,7 +115,7 @@ class SessionKeepAlive {
         this.client.getServerSessionTimeout(this.getSession()).then(tm => {
             this.interval = tm / 5 * 1000;  //Ping server 5 times each period. Timeout is returned in seconds.
             this.timeoutID = setTimeout(this.tick.bind(this), this.interval);
-        }); 
+        });
     }
     private tick(): void {
         this.client.getServerSessionTimeout(this.getSession()).then(tm => {
@@ -150,7 +150,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     private _supportsTouch: boolean;
     /**
      * The internal OpenLayers map instance
-     * 
+     *
      * @private
      * @type {ol.Map}
      */
@@ -169,9 +169,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     private fnKeyUp: GenericEventHandler;
     private fnKeyDown: GenericEventHandler;
     /**
-     * This is a throttled version of _refreshOnStateChange(). Call this on any 
-     * modifications to pendingStateChanges 
-     * 
+     * This is a throttled version of _refreshOnStateChange(). Call this on any
+     * modifications to pendingStateChanges
+     *
      * @private
      */
     private refreshOnStateChange: (props: IMapViewerBaseProps) => void;
@@ -456,7 +456,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     }
     // ----------------- React Lifecycle ----------------- //
     componentWillReceiveProps(nextProps: IMapViewerBaseProps) {
-        // 
+        //
         // React (no pun intended) to prop changes
         //
         const props = this.props;
@@ -498,7 +498,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             this._mapContext.enableFeatureTooltips(nextProps.featureTooltipsEnabled);
         }
         //externalBaseLayers
-        if (nextProps.externalBaseLayers != null && 
+        if (nextProps.externalBaseLayers != null &&
             nextProps.externalBaseLayers.length > 0) {
             const layerSet = this._mapContext.getLayerSet(nextProps.map.Name);
             layerSet.updateExternalBaseLayers(nextProps.externalBaseLayers);
@@ -517,7 +517,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 const layerSet = this._mapContext.getLayerSet(nextProps.map.Name);
                 this.applyView(layerSet, vw);
             } else {
-                logger.info(`Skipping zoomToView as next/current views are close enough or target view is null`);
+                logger.debug(`Skipping zoomToView as next/current views are close enough or target view is null`);
             }
         }
         //overviewMapElement
@@ -577,20 +577,20 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             //HACK:
             //
             //What we're hoping here is that when the view has been broadcasted back up
-            //and flowed back in through new view props, that the resulting zoom/pan 
+            //and flowed back in through new view props, that the resulting zoom/pan
             //operation in componentWillReceiveProps() is effectively a no-op as the intended
             //zoom/pan location has already been reached by this event right here
             //
             //If we look at this through Redux DevTools, we see 2 entries for Map/SET_VIEW
             //for the initial view (un-desirable), but we still only get one map image request
             //for the initial view (good!). Everything is fine after that.
-            if (this._triggerZoomRequestOnMoveEnd) { 
+            if (this._triggerZoomRequestOnMoveEnd) {
                 this.onRequestZoomToView(this.getCurrentView());
             } else {
                 logger.info("Triggering zoom request on moveend suppresseed");
             }
         });
-        
+
         if (this.props.initialView != null) {
             this.zoomToView(this.props.initialView.x, this.props.initialView.y, this.props.initialView.scale);
         } else {
@@ -600,9 +600,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     render(): JSX.Element {
         const { map, tool } = this.props;
         const { isMouseDown } = this.state;
-        const style: React.CSSProperties = { 
+        const style: React.CSSProperties = {
             width: "100%",
-            height: "100%" 
+            height: "100%"
         };
         if (this.isDigitizing()) {
             const dtype = this.state.digitizingType;
@@ -736,7 +736,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         view.setResolution(this.scaleToResolution(scale));
     }
     public setSelectionXml(xml: string, queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void {
-        //NOTE: A quirk of QUERYMAPFEATURES is that when passing in selection XML (instead of geometry), 
+        //NOTE: A quirk of QUERYMAPFEATURES is that when passing in selection XML (instead of geometry),
         //you must set the layerattributefilter to the full bit mask otherwise certain features in the
         //selection XML will not be rendered because they may not pass the layer attribute filter
         const reqQueryFeatures = 1; //Attributes
@@ -828,7 +828,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 [start, [start[0], end[1]], end, [end[0], start[1]], start]
             ]);
             return geometry;
-        }; 
+        };
         const draw = new ol.interaction.Draw({
             type: "LineString", //ol.geom.GeometryType.LINE_STRING,
             maxPoints: 2,
@@ -860,8 +860,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         if (this._customLayers[name]) {
             throw new MgError(`A layer named ${name} already exists`);
         }
-        this._map.addLayer(layer);
         this._customLayers[name] = layer;
+        this._map.addLayer(layer);
         return layer;
     }
     public removeLayer(name: string): ol.layer.Base | undefined {

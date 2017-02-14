@@ -4,7 +4,7 @@ import * as Runtime from "../api/runtime";
 import * as logger from "../utils/logger";
 import { MgError } from "../api/error";
 import { RuntimeMap } from "../api/contracts/runtime-map";
-import { FeatureSet, SelectedFeatureSet } from "../api/contracts/query";
+import { FeatureSet, SelectedFeatureSet, QueryMapFeaturesResponse } from "../api/contracts/query";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
 import { RefreshMode, ReduxDispatch, IApplicationState, ICommand } from "../api/common";
 import * as MapActions from "../actions/map";
@@ -85,8 +85,8 @@ export interface IAjaxViewerShimProps {
 }
 
 export interface IAjaxViewerShimState {
-    map: any;
-    selection: any;
+    map: RuntimeMap;
+    selectionSet: QueryMapFeaturesResponse;
 }
 
 export interface IAjaxViewerShimDispatch {
@@ -95,10 +95,16 @@ export interface IAjaxViewerShimDispatch {
     invokeCommand: (cmd: ICommand) => void;
 }
 
-function mapStateToProps(state: IApplicationState): IAjaxViewerShimState {
+function mapStateToProps(state: IApplicationState): Partial<IAjaxViewerShimState> {
+    let map;
+    let selectionSet;
+    if (state.config.activeMapName) {
+        map = state.mapState[state.config.activeMapName].runtimeMap;
+        selectionSet = state.mapState[state.config.activeMapName].selectionSet;
+    }
     return {
-        map: state.map.state,
-        selection: state.selection
+        map: map,
+        selectionSet: selectionSet
     };
 }
 
@@ -134,7 +140,10 @@ export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {
      * flag anyways, so we might as well emulate it here
      */
     public get mapInit(): boolean {
-        return this.props.map != null && this.props.map.SessionId != null;
+        if (this.props.map) {
+            return this.props.map.SessionId != null;
+        }
+        return false;
     }
     public ExecuteMapAction(code: AjaxViewerMapActionCode) {
         let cmdName: string;
@@ -312,10 +321,9 @@ export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {
     }
     public GetLayers(onlyVisible: boolean, onlySelectable: boolean): IAjaxViewerLayer[] {
         const selLayers: IAjaxViewerLayer[] = [];
-        const map: RuntimeMap = this.props.map;
-        const selection = this.props.selection.selectionSet;
-        if (map && selection && selection.FeatureSet) {
-            const fset: FeatureSet = selection.FeatureSet;
+        const { map, selectionSet } = this.props;
+        if (map && selectionSet && selectionSet.FeatureSet) {
+            const fset: FeatureSet = selectionSet.FeatureSet;
             const ids = fset.Layer.map(l => l["@id"]);
             if (map.Layer) {
                 for (const layer of map.Layer) {
@@ -342,8 +350,11 @@ export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {
     public GetMapHeight(): number {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetMapHeight()`);
     }
-    public GetMapName(): string {
-        return this.props.map.Name;
+    public GetMapName(): string | undefined {
+        if (this.props.map) {
+            return this.props.map.Name;
+        }
+        return undefined;
     }
     public GetMapUnitsType(): string {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetMapUnitsType()`);
@@ -361,10 +372,9 @@ export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {
     }
     public GetSelectedLayers(): IAjaxViewerLayer[] {
         const selLayers: IAjaxViewerLayer[] = [];
-        const map: RuntimeMap = this.props.map;
-        const selection = this.props.selection.selectionSet;
-        if (map && selection && selection.FeatureSet) {
-            const fset: FeatureSet = selection.FeatureSet;
+        const { map, selectionSet } = this.props;
+        if (map && selectionSet && selectionSet.FeatureSet) {
+            const fset: FeatureSet = selectionSet.FeatureSet;
             const ids = fset.Layer.map(l => l["@id"]);
             if (map.Layer) {
                 for (const layer of map.Layer) {
@@ -377,21 +387,24 @@ export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {
         return selLayers;
     }
     public GetSelectionXML(): string {
-        const { selection } = this.props;
-        if (!selection || !selection.selectionSet || !selection.selectionSet.FeatureSet) {
+        const { selectionSet } = this.props;
+        if (!selectionSet || !selectionSet.FeatureSet) {
             return "";
         } else {
-            return buildSelectionXml(selection.selectionSet.FeatureSet);
+            return buildSelectionXml(selectionSet.FeatureSet);
         }
     }
-    public GetSessionId(): string {
-        return this.props.map.SessionId;
+    public GetSessionId(): string | undefined {
+        if (this.props.map) {
+            return this.props.map.SessionId;
+        }
+        return undefined;
     }
     public GetSelectedBounds(): IAjaxViewerBounds | null {
         let bounds: IAjaxViewerBounds | null = null;
-        const selection = this.props.selection.selectionSet;
-        if (selection && selection.SelectedFeatures) {
-            const fset: SelectedFeatureSet = selection.SelectedFeatures;
+        const { selectionSet } = this.props;
+        if (selectionSet && selectionSet.SelectedFeatures) {
+            const fset: SelectedFeatureSet = selectionSet.SelectedFeatures;
             fset.SelectedLayer.forEach(layer => {
                 layer.Feature.forEach(feature => {
                     const bbox = feature.Bounds.split(" ").map(s => parseFloat(s));
@@ -414,9 +427,9 @@ export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {
     }
     public GetSelectedCount(): number {
         let count = 0;
-        const selection = this.props.selection.selectionSet;
-        if (selection && selection.FeatureSet) {
-            const fset: FeatureSet = selection.FeatureSet;
+        const { selectionSet } = this.props;
+        if (selectionSet && selectionSet.FeatureSet) {
+            const fset: FeatureSet = selectionSet.FeatureSet;
             fset.Layer.forEach(layer => {
                 layer.Class.ID.forEach(element => {
                     count++;

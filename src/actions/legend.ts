@@ -2,41 +2,43 @@ import * as Constants from "../constants";
 import { Client } from "../api/client";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
 import {
-    ReduxThunkedAction
+    ReduxThunkedAction,
+    getRuntimeMap
 } from "../api/common";
 
-export function setGroupVisibility(options: { id: string, value: boolean }) {
+export function setGroupVisibility(mapName: string, options: { id: string, value: boolean }) {
     return {
         type: Constants.LEGEND_SET_GROUP_VISIBILITY,
-        payload: options
+        payload: { ...options, ...{ mapName: mapName } }
     };
 }
 
-export function setLayerVisibility(options: { id: string, value: boolean }) {
+export function setLayerVisibility(mapName: string, options: { id: string, value: boolean }) {
     return {
         type: Constants.LEGEND_SET_LAYER_VISIBILITY,
-        payload: options
+        payload: { ...options, ...{ mapName: mapName } }
     };
 }
 
-export function setGroupExpanded(options: { id: string, value: boolean }) {
+export function setGroupExpanded(mapName: string, options: { id: string, value: boolean }) {
     return {
         type: Constants.LEGEND_SET_GROUP_EXPANDABLE,
-        payload: options
+        payload: { ...options, ...{ mapName: mapName } }
     };
 }
 
-export function setLayerSelectable(options: { id: string, value: boolean }) {
+export function setLayerSelectable(mapName: string, options: { id: string, value: boolean }) {
     return {
         type: Constants.LEGEND_SET_LAYER_SELECTABLE,
-        payload: options
+        payload: { ...options, ...{ mapName: mapName } }
     };
 }
 
 export function refresh(): ReduxThunkedAction {
     return (dispatch, getState) => {
-        const args = getState().config;
-        const map = getState().map.state;
+        const state = getState();
+        const args = state.config;
+        const map = getRuntimeMap(state);
         if (map && args.agentUri && args.agentKind) {
             const client = new Client(args.agentUri, args.agentKind);
             client.describeRuntimeMap({
@@ -47,6 +49,7 @@ export function refresh(): ReduxThunkedAction {
                 dispatch({
                     type: Constants.MAP_REFRESH,
                     payload: {
+                        mapName: args.activeMapName,
                         map: res
                     }
                 });

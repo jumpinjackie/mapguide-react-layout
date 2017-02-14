@@ -7,7 +7,7 @@ import {
     IApplicationState,
     IConfigurationReducerState,
     IInitErrorReducerState,
-    IMapReducerState,
+    IBranchedMapSubState,
     ClientKind,
     InitError
 } from "../api/common";
@@ -44,7 +44,7 @@ export interface IAppState {
     includeStack: boolean;
     initOptions: any;
     config: IConfigurationReducerState;
-    map: IMapReducerState;
+    map: IBranchedMapSubState;
 }
 
 export interface IInitAppLayout {
@@ -58,12 +58,16 @@ export interface IAppDispatch {
 }
 
 function mapStateToProps(state: IApplicationState): Partial<IAppState> {
+    let map;
+    if (state.config.activeMapName) {
+        map = state.mapState[state.config.activeMapName];
+    }
     return {
         error: state.initError.error,
         includeStack: state.initError.includeStack,
         initOptions: state.initError.options,
         config: state.config,
-        map: state.map
+        map: map
     };
 }
 

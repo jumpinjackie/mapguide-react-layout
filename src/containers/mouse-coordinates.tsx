@@ -19,10 +19,10 @@ export interface IMouseCoordinatesContainerState {
 
 export interface IMouseCoordinatesDispatch { }
 
-function mapStateToProps(state: IApplicationState): IMouseCoordinatesContainerState {
+function mapStateToProps(state: IApplicationState): Partial<IMouseCoordinatesContainerState> {
     return {
         config: state.config.coordinates,
-        mouse: state.view.mouse
+        mouse: state.mouse.coords
     };
 }
 

@@ -8,7 +8,7 @@ import {
     ITaskPaneReducerState,
     IToolbarReducerState,
     IConfigurationReducerState,
-    ISelectionReducerState
+    IBranchedMapSubState
 } from "../api/common";
 import { IItem } from "../components/toolbar";
 import { TaskPane } from "../components/task-pane";
@@ -26,10 +26,9 @@ export interface ITaskPaneContainerStyle {
 }
 
 export interface ITaskPaneContainerState {
-    map: RuntimeMap | null;
+    map: IBranchedMapSubState;
     taskpane: ITaskPaneReducerState;
     config: IConfigurationReducerState;
-    selection: ISelectionReducerState;
 }
 
 export interface ITaskPaneDispatch {
@@ -42,15 +41,18 @@ export interface ITaskPaneDispatch {
     closeFlyout: (id: string) => void;
 }
 
-function mapStateToProps(state: IApplicationState): ITaskPaneContainerState {
+function mapStateToProps(state: IApplicationState): Partial<ITaskPaneContainerState> {
     //Technically speaking, this should be listening to every branch of the redux
     //store. But practically speaking, toolbar commands really only cares about 
     //the branches below
+    let branch;
+    if (state.config.activeMapName) {
+        branch = state.mapState[state.config.activeMapName];
+    }
     return {
-        map: state.map.state,
+        map: branch,
         taskpane: state.taskpane,
-        config: state.config,
-        selection: state.selection
+        config: state.config
     };
 }
 
@@ -141,8 +143,8 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
     private canGoHome(): boolean {
         const { taskpane, map, config } = this.props;
         if (taskpane && taskpane.initialUrl) { //An initial URL was set
-            const initUrl = map && taskpane.initialUrl
-                ? TaskPaneActions.ensureParameters(taskpane.initialUrl, map.Name, map.SessionId, this.getLocale())
+            const initUrl = map && map.runtimeMap && taskpane.initialUrl
+                ? TaskPaneActions.ensureParameters(taskpane.initialUrl, map.runtimeMap.Name, map.runtimeMap.SessionId, this.getLocale())
                 : taskpane.initialUrl;
             return taskpane.navigation.length > 0 //We have a navigation stack
                 && !areUrlsSame(taskpane.navigation[taskpane.navIndex], initUrl); //The current URL is not initial.
@@ -168,7 +170,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
     };
     render(): JSX.Element {
         const { taskpane, config, map, invokeCommand, maxHeight } = this.props;
-        if (taskpane && config && map) {
+        if (taskpane && config && map && map.runtimeMap) {
             if (taskpane.navigation[taskpane.navIndex]) {
                 return <TaskPane currentUrl={taskpane.navigation[taskpane.navIndex]}
                                  showTaskBar={config.capabilities.hasTaskBar}
@@ -178,13 +180,13 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
                                  onOpenFlyout={this.fnOpenFlyout}
                                  onCloseFlyout={this.fnCloseFlyout}
                                  forwardAction={this.forwardAction}
-                                 session={map.SessionId}
-                                 mapName={map.Name}
+                                 session={map.runtimeMap.SessionId}
+                                 mapName={map.runtimeMap.Name}
                                  onUrlLoaded={this.fnUrlLoaded}
                                  maxHeight={maxHeight}
                                  locale={this.getLocale()} />;
             }
         }
-        return <div />;
+        return <noscript />;
     }
 }

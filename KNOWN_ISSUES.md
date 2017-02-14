@@ -5,19 +5,20 @@ Where applicable, an issue number is attached to indicate that such issues are a
 Localization
 ============
 
- * If including a localized string bundle via a script tag, be sure to specify `charset="UTF-8"` in the script tag, otherwise diacritics (eg. umlauts) in any string literals will most likely be garbled.
+ * No known issues
 
 Components
 ==========
 
- * Navigator (aka. The zoom slider)
-   * [#86](https://github.com/jumpinjackie/mapguide-react-layout/issues/86) While the zoom buttons and slider drags work, the component is initialized with an unrealistically high upper-bound view scale 
-
  * Task Pane
    * URLs loaded into the task pane push actual entries into the browser's navigation stack
+   * The internal navigation stack does not gracefully handle multi-map configurations. In a multi-map configuration, it is possible to go back/forward to a page that is not applicable to the current map, especially if it was visited while on a different map.
 
  * Toolbars
    * Toolbars in vertical orientation currently make no attempts to gracefully handle overflow when the toolbar has more items than the physical screen/container space allows. 
+
+ * Measure
+   * This component does not work properly in a multi-map configuration
 
 Commands
 ========

@@ -1,7 +1,10 @@
 Next
 ====
- * Update Blueprint to 1.5.0
+ * Update Blueprint to 1.6.0
  * Update React to 15.4.2
+ * Improved performance due to restructured and optimized redux state tree and updates to minimize unnecessary re-rendering
+ * [#108](https://github.com/jumpinjackie/mapguide-react-layout/issues/108): Added multi-map support
+    * [#64](https://github.com/jumpinjackie/mapguide-react-layout/issues/64): Ported across MapMenu fusion widget
 
 0.7.1
 =====

@@ -19,7 +19,7 @@ export class BaseLayerSwitcher extends React.Component<IBaseLayerSwitcherProps, 
             selected: (selected.length == 1 ? selected[0].name : null)
         };
     }
-    onBaseLayerChanged(e: any): void {
+    private onBaseLayerChanged(e: any): void {
         const { onBaseLayerChanged } = this.props;
         const value = e.currentTarget.value;
         this.setState({ selected: value });

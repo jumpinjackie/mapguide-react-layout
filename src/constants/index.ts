@@ -6,6 +6,7 @@ export const LEGEND_SET_LAYER_VISIBILITY = 'Legend/SET_LAYER_VISIBILITY';
 export const LEGEND_SET_LAYER_SELECTABLE = 'Legend/SET_LAYER_SELECTABLE';
 export const LEGEND_SET_GROUP_EXPANDABLE = 'Legend/SET_GROUP_EXPANDABLE';
 
+export const MAP_SET_ACTIVE_MAP = 'Map/SET_ACTIVE_MAP';
 export const MAP_REFRESH = 'Map/REFRESH';
 export const MAP_SET_VIEW = 'Map/SET_VIEW';
 export const MAP_SET_SCALE = 'Map/SET_SCALE';

@@ -7,7 +7,11 @@ import {
     IMapView,
     ReduxDispatch,
     IApplicationState,
-    IConfigurationReducerState
+    IConfigurationReducerState,
+    IExternalBaseLayer,
+    getRuntimeMap,
+    getCurrentView,
+    getExternalBaseLayers
 } from "../api/common";
 
 export interface IQuickPlotContainerProps {
@@ -16,19 +20,21 @@ export interface IQuickPlotContainerProps {
 
 export interface IQuickPlotContainerState {
     config: IConfigurationReducerState;
-    map: RuntimeMap | null;
-    view: IMapView | null;
+    map: RuntimeMap;
+    view: IMapView;
+    externalBaseLayers: IExternalBaseLayer[];
 }
 
 export interface IQuickPlotContainerDispatch {
 
 }
 
-function mapStateToProps(state: IApplicationState): IQuickPlotContainerState {
+function mapStateToProps(state: IApplicationState): Partial<IQuickPlotContainerState> {
     return {
         config: state.config,
-        map: state.map.state,
-        view: state.view.current
+        map: getRuntimeMap(state),
+        view: getCurrentView(state),
+        externalBaseLayers: getExternalBaseLayers(state)
     };
 }
 
@@ -129,14 +135,14 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
         return this.props.config ? this.props.config.locale : "en";
     }
     render(): JSX.Element {
-        const { map, view, config } = this.props;
+        const { map, view, externalBaseLayers } = this.props;
         const viewer = getViewer();
         if (!viewer || !map || !view) {
             return <div />;
         }
         let hasExternalBaseLayers = false;
-        if (config) {
-            hasExternalBaseLayers = config.externalBaseLayers && config.externalBaseLayers.length > 0;
+        if (externalBaseLayers) {
+            hasExternalBaseLayers = externalBaseLayers.length > 0;
         }
         const extent = viewer.getCurrentExtent();
         const box = `${extent[0]}, ${extent[1]}, ${extent[2]}, ${extent[1]}, ${extent[2]}, ${extent[3]}, ${extent[0]}, ${extent[3]}, ${extent[0]}, ${extent[1]}`;

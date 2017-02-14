@@ -5,8 +5,11 @@ import {
     Dictionary,
     IInvokeUrlCommand,
     ISearchCommand,
+    IApplicationState,
     ReduxDispatch,
     ReduxStore,
+    getSelectionSet,
+    getRuntimeMap,
     NOOP,
     ALWAYS_FALSE,
     ALWAYS_TRUE
@@ -71,18 +74,24 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
 }
 
 export class CommandConditions {
-    public static isNotBusy(state: any): boolean {
-        return state.map.viewer.busyCount == 0;
+    public static isNotBusy(state: IApplicationState): boolean {
+        return state.viewer.busyCount == 0;
     }
-    public static hasSelection(state: any): boolean {
-        const selection: QueryMapFeaturesResponse = state.selection.selectionSet;
+    public static hasSelection(state: IApplicationState): boolean {
+        const selection = getSelectionSet(state);
         return (selection != null && selection.SelectedFeatures != null);
     }
-    public static hasPreviousView(state: any): boolean {
-        return state.view.historyIndex > 0;
+    public static hasPreviousView(state: IApplicationState): boolean {
+        if (state.config.activeMapName) {
+            return state.mapState[state.config.activeMapName].historyIndex > 0;
+        }
+        return false;
     }
-    public static hasNextView(state: any): boolean {
-        return state.view.historyIndex < state.view.history.length - 1;
+    public static hasNextView(state: IApplicationState): boolean {
+        if (state.config.activeMapName) {
+            return state.mapState[state.config.activeMapName].historyIndex < state.mapState[state.config.activeMapName].history.length - 1;
+        }
+        return false;
     }
 }
 
@@ -142,29 +151,33 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                 return true;
             },
             selected: (state) => false,
-            invoke: (dispatch: ReduxDispatch, getState: () => any, viewer: IMapViewer) => {
-                const { map, config } = getState();
+            invoke: (dispatch: ReduxDispatch, getState: () => IApplicationState, viewer: IMapViewer) => {
+                const state = getState();
+                const config = state.config;
+                const map = getRuntimeMap(state);
                 const target = cmdDef.target;
-                if (target == "TaskPane") {
-                    dispatch({
-                        type: Constants.TASK_INVOKE_URL,
-                        payload: {
-                            url: ensureParameters(cmdDef.url, map.state.Name, map.state.SessionId, config.locale)
-                        }
-                    });
-                } else {
-                    dispatch({
-                        type: Constants.MODAL_SHOW_URL,
-                        payload: {
-                            modal: {
-                                title: tr(name),
-                                backdrop: false,
-                                size: [ 300, 500 ]
-                            },
-                            name: name,
-                            url: ensureParameters(cmdDef.url, map.state.Name, map.state.SessionId, config.locale)
-                        }
-                    });
+                if (map) {
+                    if (target == "TaskPane") {
+                        dispatch({
+                            type: Constants.TASK_INVOKE_URL,
+                            payload: {
+                                url: ensureParameters(cmdDef.url, map.Name, map.SessionId, config.locale)
+                            }
+                        });
+                    } else {
+                        dispatch({
+                            type: Constants.MODAL_SHOW_URL,
+                            payload: {
+                                modal: {
+                                    title: tr(name),
+                                    backdrop: false,
+                                    size: [ 300, 500 ]
+                                },
+                                name: name,
+                                url: ensureParameters(cmdDef.url, map.Name, map.SessionId, config.locale)
+                            }
+                        });
+                    }
                 }
             }
         };
@@ -173,24 +186,28 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
             icon: cmdDef.icon || "search.png",
             enabled: (state) => true,
             selected: (state) => false,
-            invoke: (dispatch: ReduxDispatch, getState: () => any, viewer: IMapViewer) => {
-                const { map, config } = getState();
-                let url = ensureParameters("server/Search/SearchPrompt.php", map.state.Name, map.state.SessionId, config.locale, false)
-                    + `&popup=0`
-                    + `&target=TaskPane`
-                    + `&title=${encodeURIComponent(cmdDef.title)}`
-                    + `&prompt=${encodeURIComponent(cmdDef.prompt)}`
-                    + `&layer=${encodeURIComponent(cmdDef.layer)}`
-                    + (cmdDef.filter ? `&filter=${encodeURIComponent(cmdDef.filter)}` : '')
-                    + `&limit=${cmdDef.matchLimit}`
-                    + `&properties=${(cmdDef.resultColumns.Column || []).map(col => col.Property).join(",")}`
-                    + `&propNames=${(cmdDef.resultColumns.Column || []).map(col => col.Name).join(",")}`;
-                dispatch({
-                    type: Constants.TASK_INVOKE_URL,
-                    payload: {
-                        url: url
-                    }
-                });
+            invoke: (dispatch: ReduxDispatch, getState: () => IApplicationState, viewer: IMapViewer) => {
+                const state = getState();
+                const config = state.config;
+                const map = getRuntimeMap(state);
+                if (map) {
+                    const url = ensureParameters("server/Search/SearchPrompt.php", map.Name, map.SessionId, config.locale, false)
+                        + `&popup=0`
+                        + `&target=TaskPane`
+                        + `&title=${encodeURIComponent(cmdDef.title)}`
+                        + `&prompt=${encodeURIComponent(cmdDef.prompt)}`
+                        + `&layer=${encodeURIComponent(cmdDef.layer)}`
+                        + (cmdDef.filter ? `&filter=${encodeURIComponent(cmdDef.filter)}` : '')
+                        + `&limit=${cmdDef.matchLimit}`
+                        + `&properties=${(cmdDef.resultColumns.Column || []).map(col => col.Property).join(",")}`
+                        + `&propNames=${(cmdDef.resultColumns.Column || []).map(col => col.Name).join(",")}`;
+                    dispatch({
+                        type: Constants.TASK_INVOKE_URL,
+                        payload: {
+                            url: url
+                        }
+                    });
+                }
             }
         };
     } else {

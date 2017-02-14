@@ -12,22 +12,22 @@ import {
     NOOP,
     ReduxDispatch,
     IApplicationState,
-    IMapViewerReducerState,
     IConfigurationReducerState,
-    IViewerCapabilities
+    IViewerCapabilities,
+    getRuntimeMap
 } from "../api/common";
 import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../components/accordion";
 
 export interface IMaroonTemplateLayoutState {
-    map: RuntimeMap | null;
+    map: RuntimeMap;
     config: IConfigurationReducerState;
     capabilities: IViewerCapabilities;
 }
 
-function mapStateToProps(state: IApplicationState): IMaroonTemplateLayoutState {
+function mapStateToProps(state: IApplicationState): Partial<IMaroonTemplateLayoutState> {
     return {
         config: state.config,
-        map: state.map.state,
+        map: getRuntimeMap(state),
         capabilities: state.config.capabilities
     };
 }

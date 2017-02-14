@@ -12,9 +12,9 @@ import {
     NOOP,
     ReduxDispatch,
     IApplicationState,
-    IMapViewerReducerState,
     IConfigurationReducerState,
-    IViewerCapabilities
+    IViewerCapabilities,
+    getRuntimeMap
 } from "../api/common";
 import { Tabs, TabList, Tab, TabPanel } from "@blueprintjs/core";
 
@@ -25,15 +25,15 @@ const TAB_BAR_HEIGHT = 30;
 const STATUS_BAR_HEIGHT = 18;
 
 export interface ITurquoiseYellowTemplateLayoutState {
-    map: RuntimeMap | null;
+    map: RuntimeMap;
     config: IConfigurationReducerState;
     capabilities: IViewerCapabilities;
 }
 
-function mapStateToProps(state: IApplicationState): ITurquoiseYellowTemplateLayoutState {
+function mapStateToProps(state: IApplicationState): Partial<ITurquoiseYellowTemplateLayoutState> {
     return {
         config: state.config,
-        map: state.map.state,
+        map: getRuntimeMap(state),
         capabilities: state.config.capabilities
     };
 }

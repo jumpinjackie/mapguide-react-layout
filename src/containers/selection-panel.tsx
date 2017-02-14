@@ -9,7 +9,8 @@ import {
     IMapView,
     ReduxDispatch,
     IApplicationState,
-    IConfigurationReducerState
+    IConfigurationReducerState,
+    getSelectionSet
 } from "../api/common";
 
 export interface ISelectionPanelContainerProps {
@@ -18,17 +19,17 @@ export interface ISelectionPanelContainerProps {
 
 export interface ISelectionPanelContainerState {
     config: IConfigurationReducerState,
-    selection: QueryMapFeaturesResponse | null;
+    selection: QueryMapFeaturesResponse;
 }
 
 export interface ISelectionPanelContainerDispatch {
     setCurrentView: (view: IMapView) => void;
 }
 
-function mapStateToProps(state: IApplicationState): ISelectionPanelContainerState {
+function mapStateToProps(state: IApplicationState): Partial<ISelectionPanelContainerState> {
     return {
         config: state.config,
-        selection: state.selection.selectionSet
+        selection: getSelectionSet(state)
     };
 }
 

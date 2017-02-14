@@ -10,10 +10,10 @@ import {
     Bounds,
     Coordinate,
     ReduxDispatch,
+    IExternalBaseLayer,
     IApplicationState,
-    IViewReducerState,
-    ILegendReducerState,
-    IMapViewerReducerState
+    IViewerReducerState,
+    IConfigurationReducerState
 } from "../api/common";
 import { MapViewerBase } from "../components/map-viewer-base";
 import * as Runtime from "../api/runtime";
@@ -24,7 +24,7 @@ import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml } from '../api/builders/deArrayify';
-import { getCommand, mapToolbarReference,  } from "../api/registry/command";
+import { getCommand, mapToolbarReference, } from "../api/registry/command";
 import { invokeCommand, queryMapFeatures } from "../actions/map";
 import { showModalComponent } from "../actions/modal";
 import { DefaultComponentNames } from "../api/registry/component";
@@ -37,33 +37,69 @@ export interface IMapViewerContainerProps {
 
 export interface IMapViewerContainerState {
     config: any;
-    map: RuntimeMap | null;
-    selection: QueryMapFeaturesResponse | null;
-    view: any;
-    viewer: IMapViewerReducerState;
-    legend: ILegendReducerState;
+    map: RuntimeMap;
+    selection: QueryMapFeaturesResponse;
+    viewer: IViewerReducerState;
+    currentView: IMapView;
+    initialView: IMapView;
+    selectableLayers: any;
     contextmenu: any;
+    showGroups: string[];
+    showLayers: string[];
+    hideGroups: string[];
+    hideLayers: string[];
+    externalBaseLayers: IExternalBaseLayer[];
 }
 
 export interface IMapViewerContainerDispatch {
     setActiveTool: (tool: ActiveMapTool) => void;
     setCurrentView: (view: IMapView) => void;
     setBusyCount: (count: number) => void;
-    setMouseCoordinates: (coord: Coordinate) => void;
+    setMouseCoordinates: (mapName: string, coord: Coordinate) => void;
     invokeCommand: (cmd: ICommand) => void;
     showModalComponent: (options: any) => void;
-    queryMapFeatures: (options: MapActions.QueryMapFeatureActionOptions) => void;
+    queryMapFeatures: (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => void;
 }
 
-function mapStateToProps(state: IApplicationState): IMapViewerContainerState {
+function mapStateToProps(state: IApplicationState): Partial<IMapViewerContainerState> {
+    let map;
+    let legend;
+    let selection;
+    let currentView;
+    let initialView;
+    let selectableLayers;
+    let externalBaseLayers;
+    let showGroups;
+    let showLayers;
+    let hideGroups;
+    let hideLayers;
+    if (state.config.activeMapName) {
+        const branch = state.mapState[state.config.activeMapName];
+        map = branch.runtimeMap;
+        selection = branch.selectionSet;
+        currentView = branch.currentView;
+        initialView = branch.initialView;
+        showGroups = branch.showGroups;
+        showLayers = branch.showLayers;
+        hideGroups = branch.hideGroups;
+        hideLayers = branch.hideLayers;
+        selectableLayers = branch.selectableLayers;
+        externalBaseLayers = branch.externalBaseLayers;
+    }
     return {
         config: state.config,
-        view: state.view,
-        map: state.map.state,
-        viewer: state.map.viewer,
-        legend: state.legend,
-        selection: state.selection.selectionSet,
-        contextmenu: state.toolbar.toolbars.contextmenu
+        map: map,
+        currentView: currentView,
+        initialView: initialView,
+        viewer: state.viewer,
+        selection: selection,
+        selectableLayers: selectableLayers,
+        contextmenu: state.toolbar.toolbars.contextmenu,
+        showGroups: showGroups,
+        showLayers: showLayers,
+        hideGroups: hideGroups,
+        hideLayers: hideLayers,
+        externalBaseLayers: externalBaseLayers
     };
 }
 
@@ -72,10 +108,10 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IMapViewerContainerDispatc
         setActiveTool: (tool) => dispatch(MapActions.setActiveTool(tool)),
         setCurrentView: (view) => dispatch(MapActions.setCurrentView(view)),
         setBusyCount: (count) => dispatch(MapActions.setBusyCount(count)),
-        setMouseCoordinates: (coord) => dispatch(MapActions.setMouseCoordinates(coord)),
+        setMouseCoordinates: (mapName, coord) => dispatch(MapActions.setMouseCoordinates(mapName, coord)),
         invokeCommand: (cmd) => dispatch(invokeCommand(cmd)),
         showModalComponent: (options) => dispatch(showModalComponent(options)),
-        queryMapFeatures: (options) => dispatch(queryMapFeatures(options))
+        queryMapFeatures: (mapName, options) => dispatch(queryMapFeatures(mapName, options))
     };
 }
 
@@ -122,8 +158,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         }
     }
     private onQueryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) {
-        if (this.props.queryMapFeatures) {
-            this.props.queryMapFeatures({
+        const { config, queryMapFeatures } = this.props;
+        if (queryMapFeatures && config && config.activeMapName) {
+            queryMapFeatures(config.activeMapName, {
                 options: options,
                 append: this.inner.state.shiftKey === true,
                 callback: success,
@@ -137,8 +174,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         }
     }
     private onMouseCoordinateChanged(coord: Coordinate) {
-        if (this.props.setMouseCoordinates) {
-            this.props.setMouseCoordinates(coord);
+        const { config, setMouseCoordinates } = this.props;
+        if (setMouseCoordinates && config && config.activeMapName) {
+            setMouseCoordinates(config.activeMapName, coord);
         }
     }
     private onSessionExpired() {
@@ -165,30 +203,48 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         browserWindow.getClient = browserWindow.getClient || (() => new Client(this.props.config.agentUri, this.props.config.agentKind));
     }
     render(): JSX.Element {
-        const { map, config, viewer, view, legend, contextmenu, invokeCommand, overviewMapElementSelector } = this.props;
-        if (map && config && view && viewer && legend && invokeCommand) {
+        const {
+            map,
+            config,
+            viewer,
+            currentView,
+            externalBaseLayers,
+            initialView,
+            contextmenu,
+            selectableLayers,
+            invokeCommand,
+            overviewMapElementSelector,
+            showGroups,
+            hideGroups,
+            showLayers,
+            hideLayers
+        } = this.props;
+        if (map && config && viewer && invokeCommand) {
             const selectableLayerNames = (map.Layer || [])
-                .filter(layer => layer.Selectable && legend.selectableLayers[layer.ObjectId] !== false)
+                .filter(layer => layer.Selectable && selectableLayers[layer.ObjectId] !== false)
                 .map(layer => layer.Name);
             const store = (this.context as any).store;
             const items: any[] = contextmenu != null ? contextmenu.items : [];
             const cmitems = (items || []).map(tb => mapToolbarReference(tb, store, invokeCommand));
             const childItems = processMenuItems(cmitems);
             return <MapViewerBase ref={this.fnMapViewerMounted}
-                                  map={map} 
+                                  map={map}
                                   agentUri={config.agentUri}
                                   agentKind={config.agentKind}
                                   locale={config.locale}
-                                  externalBaseLayers={config.externalBaseLayers}
+                                  externalBaseLayers={externalBaseLayers}
                                   imageFormat={config.viewer.imageFormat}
                                   selectionImageFormat={config.viewer.selectionImageFormat}
                                   selectionColor={config.viewer.selectionColor}
                                   pointSelectionBuffer={config.viewer.pointSelectionBuffer}
                                   tool={viewer.tool}
                                   featureTooltipsEnabled={viewer.featureTooltipsEnabled}
-                                  layerGroupVisibility={viewer.layerGroupVisibility}
-                                  view={view.current}
-                                  initialView={view.initial}
+                                  showGroups={showGroups}
+                                  hideGroups={hideGroups}
+                                  showLayers={showLayers}
+                                  hideLayers={hideLayers}
+                                  view={currentView}
+                                  initialView={initialView}
                                   selectableLayerNames={selectableLayerNames}
                                   contextMenu={childItems}
                                   overviewMapElementSelector={overviewMapElementSelector}

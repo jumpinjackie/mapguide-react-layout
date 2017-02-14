@@ -5,9 +5,9 @@ import { IApplicationState } from "../src/api/common";
 import { RuntimeMap } from "../src/api/contracts/runtime-map";
 import thunk from 'redux-thunk';
 import { createMap, createInitAction, createInitialState } from "./test-data";
-import { initErrorReducer } from "../src/reducers/initError";
+import { initErrorReducer } from "../src/reducers/init-error";
 
-describe("reducers/initError", () => {
+describe("reducers/init-error", () => {
     it("INIT_ERROR", () => {
         const initialState = createInitialState();
         const action = {

@@ -7,6 +7,10 @@ import { PlaceholderComponent } from "../api/registry/component";
 import { tr } from "../api/i18n";
 import { IDOMElementMetrics } from "../api/common";
 
+function currentUrlDoesNotMatchMapName(currentUrl: string, mapName: string): boolean {
+    return currentUrl.toLowerCase().indexOf(`mapname=${mapName.toLowerCase()}`) < 0;
+}
+
 export interface ITaskPaneProps {
     currentUrl?: string;
     mapName: string;
@@ -28,7 +32,7 @@ export interface ITaskPaneProps {
 // Having the lastUrlPushed props sounds extremely hacky, but we need a way to signal that
 // the url its about to receive was pushed and should not be reloaded into the internal iframe
 //
-// This is because we want internal url transitions (eg. Clicking a link, submitting a form) to 
+// This is because we want internal url transitions (eg. Clicking a link, submitting a form) to
 // be recorded in the navigation stack so we can properly go back/forward just like a web browser.
 // But we don't want these recorded URLs to accidentally trigger a re-load of the same url.
 
@@ -43,7 +47,7 @@ export interface ITaskPaneProps {
 // the new URL (http://stackoverflow.com/questions/821359/reload-an-iframe-without-adding-to-the-history)
 //
 // However, I suspect this doesn't work in React because of the virtual DOM retaining
-// the old iframe element. How can we get React to make a new iframe for each URL? 
+// the old iframe element. How can we get React to make a new iframe for each URL?
 
 export class TaskPane extends React.Component<ITaskPaneProps, any> {
     private _iframe: HTMLIFrameElement;
@@ -65,7 +69,8 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         this.fnCloseFlyout = this.onCloseFlyout.bind(this);
         this.fnOpenFlyout = this.onOpenFlyout.bind(this);
         this.state = {
-            activeComponent: null
+            activeComponent: null,
+            invalidated: false
         };
     }
     private onCloseFlyout(id: string): void {
@@ -93,6 +98,12 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                 this.loadUrl(nextProps.currentUrl);
             }
         }
+        if (!this.state.invalidated && nextProps.currentUrl && nextProps.currentUrl.indexOf("component://") != 0 && currentUrlDoesNotMatchMapName(nextProps.currentUrl, nextProps.mapName)) {
+            //TODO: If we want to be smart, we could have the TaskPane amend the currentUrl with the new map name
+            this.setState({ invalidated: true });
+        } else if (nextProps.currentUrl && (nextProps.currentUrl.indexOf("component://") == 0 || !currentUrlDoesNotMatchMapName(nextProps.currentUrl, nextProps.mapName))) {
+            this.setState({ invalidated: false });
+        }
     }
     componentDidMount() {
         if (this.props.currentUrl) {
@@ -111,12 +122,12 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         }
     }
     render(): JSX.Element {
+        const { invalidated } = this.state;
         const taskMenu: IFlyoutMenu = {
             label: tr("MENU_TASKS", this.props.locale),
             flyoutAlign: "bottom left",
             flyoutId: "taskpane"
         };
-
         const rootStyle: React.CSSProperties = {};
         const taskBarStyle: React.CSSProperties = {
             height: DEFAULT_TOOLBAR_SIZE,
@@ -144,17 +155,17 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             taskBodyStyle.right = 0;
             taskBodyStyle.bottom = 0;
             taskBodyStyle.overflow = "hidden";
-            
-            taskFrameStyle.width = "100%"; 
+
+            taskFrameStyle.width = "100%";
             taskFrameStyle.height = "100%";
 
             taskComponentContainerStyle.width = "100%";
             taskComponentContainerStyle.height = "100%";
         } else {
-            taskFrameStyle.width = "100%"; 
+            taskFrameStyle.width = "100%";
             taskFrameStyle.height = (this.props.showTaskBar === true ? (this.props.maxHeight - DEFAULT_TOOLBAR_SIZE) : this.props.maxHeight);
 
-            taskComponentContainerStyle.width = "100%"; 
+            taskComponentContainerStyle.width = "100%";
             taskComponentContainerStyle.maxHeight = (this.props.showTaskBar === true ? (this.props.maxHeight - DEFAULT_TOOLBAR_SIZE) : this.props.maxHeight);
             taskComponentContainerStyle.overflowY = "auto";
         }
@@ -170,13 +181,21 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             })()}
             <div style={taskBodyStyle}>
                 {(() => {
+                    if (invalidated === true) {
+                        return <div className="pt-callout pt-intent-warning">
+                            <h5>{tr("TASK_PANE_CONTENT_FOR_INACTIVE_MAP_TITLE", this.props.locale)}</h5>
+                            {tr("TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING", this.props.locale)}
+                        </div>;
+                    }
+                })()}
+                {(() => {
                     if (this.state.activeComponent != null) {
-                        return <div style={taskComponentContainerStyle}>
+                        return <div className={(invalidated === true ? "invalidated-task-pane" : undefined)} style={taskComponentContainerStyle}>
                             <PlaceholderComponent id={this.state.activeComponent} locale={this.props.locale} />
                         </div>
                     } else {
-                        return <iframe name="taskPaneFrame" ref={this.fnFrameMounted} onLoad={this.fnFrameLoaded} style={taskFrameStyle}>
-                
+                        return <iframe className={(invalidated === true ? "invalidated-task-pane" : undefined)} name="taskPaneFrame" ref={this.fnFrameMounted} onLoad={this.fnFrameLoaded} style={taskFrameStyle}>
+
                         </iframe>
                     }
                 })()}

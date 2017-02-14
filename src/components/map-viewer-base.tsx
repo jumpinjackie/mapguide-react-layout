@@ -856,6 +856,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         //this._featureTooltip.setEnabled(enabled);
         this._mapContext.enableFeatureTooltips(enabled);
     }
+    public hasLayer(name: string): boolean {
+        return this._customLayers[name] != null;
+    }
     public addLayer<T extends ol.layer.Base>(name: string, layer: T): T {
         if (this._customLayers[name]) {
             throw new MgError(`A layer named ${name} already exists`);

@@ -50,6 +50,8 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
 
 export type MeasureProps = IMeasureContainerProps & Partial<IMeasureContainerReducerState> & Partial<IMeasureContainerDispatch>;
 
+const _measurements: MeasureContext[] = [];
+
 @connect(mapStateToProps, mapDispatchToProps)
 export class MeasureContainer extends React.Component<MeasureProps, Partial<IMeasureContainerState>> implements IMeasureComponent {
     private fnTypeChanged: GenericEventHandler;
@@ -57,10 +59,9 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
     private fnClearMeasurements: GenericEventHandler;
     private fnStartMeasure: GenericEventHandler;
     private fnEndMeasure: GenericEventHandler;
-    private measurements: MeasureContext[];
+
     constructor(props: MeasureProps) {
         super(props);
-        this.measurements = [];
         this.fnTypeChanged = this.onTypeChanged.bind(this);
         this.fnGeodesicChanged = this.onGeodesicChanged.bind(this);
         this.fnClearMeasurements = this.onClearMeasurements.bind(this);
@@ -77,7 +78,7 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
         this.setState({ type: newType }, () => {
             const { activeMapName } = this.props;
             if (activeMapName) {
-                const activeMeasure = this.measurements.filter(m => m.getMapName() === activeMapName)[0];
+                const activeMeasure = _measurements.filter(m => m.getMapName() === activeMapName)[0];
                 if (activeMeasure) {
                     activeMeasure.handleDrawTypeChange();
                 }
@@ -92,7 +93,7 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
         e.preventDefault();
         const { activeMapName } = this.props;
         if (activeMapName) {
-            const activeMeasure = this.measurements.filter(m => m.getMapName() === activeMapName)[0];
+            const activeMeasure = _measurements.filter(m => m.getMapName() === activeMapName)[0];
             if (activeMeasure) {
                 activeMeasure.clearMeasurements();
             }
@@ -113,7 +114,7 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
             if (this.props.setActiveTool) {
                 this.props.setActiveTool(ActiveMapTool.None);
             }
-            const activeMeasure = this.measurements.filter(m => m.getMapName() === activeMapName)[0];
+            const activeMeasure = _measurements.filter(m => m.getMapName() === activeMapName)[0];
             if (activeMeasure) {
                 activeMeasure.startMeasure();
                 this.setState({ measuring: true });
@@ -124,7 +125,7 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
         const { activeMapName } = this.props;
         const { measuring } = this.state;
         if (activeMapName && measuring) {
-            const activeMeasure = this.measurements.filter(m => m.getMapName() === activeMapName)[0];
+            const activeMeasure = _measurements.filter(m => m.getMapName() === activeMapName)[0];
             if (activeMeasure) {
                 activeMeasure.endMeasure();
                 this.setState({ measuring: false });
@@ -137,23 +138,37 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
     }
     isGeodesic(): boolean { return !!this.state.geodesic; }
     componentDidMount() {
-        const { mapNames, activeMapName } = this.props;
-        const viewer = getViewer();
-        if (viewer && mapNames && mapNames.length) {
-            for (const mapName of mapNames) {
-                const context = new MeasureContext(viewer, mapName, this);
-                this.measurements.push(context);
-                if (activeMapName == mapName) {
-                    context.activate();
+        let activeMeasure: MeasureContext | undefined;
+        if (_measurements.length == 0) {
+            const { mapNames, activeMapName } = this.props;
+            const viewer = getViewer();
+            if (viewer && mapNames && mapNames.length) {
+                for (const mapName of mapNames) {
+                    const context = new MeasureContext(viewer, mapName, this);
+                    _measurements.push(context);
+                    if (activeMapName == mapName) {
+                        activeMeasure = context;
+                    }
                 }
             }
+        } else {
+            activeMeasure = _measurements.filter(m => m.getMapName() === this.props.activeMapName)[0];
+        }
+
+        if (activeMeasure) {
+            activeMeasure.activate();
+        }
+    }
+    componentWillUnmount() {
+        for (const measure of _measurements) {
+            measure.deactivate();
         }
     }
     componentWillReceiveProps(nextProps: MeasureProps) {
         //Active map changed
         if (this.props.activeMapName != nextProps.activeMapName) {
-            const oldMeasure = this.measurements.filter(m => m.getMapName() === this.props.activeMapName)[0];
-            const newMeasure = this.measurements.filter(m => m.getMapName() === nextProps.activeMapName)[0];
+            const oldMeasure = _measurements.filter(m => m.getMapName() === this.props.activeMapName)[0];
+            const newMeasure = _measurements.filter(m => m.getMapName() === nextProps.activeMapName)[0];
             if (oldMeasure) {
                 oldMeasure.deactivate();
             }

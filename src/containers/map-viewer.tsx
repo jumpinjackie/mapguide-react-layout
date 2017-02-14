@@ -345,6 +345,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     getProjection(): ol.ProjectionLike {
         return this.inner.getProjection();
     }
+    hasLayer(name: string): boolean {
+        return this.inner.hasLayer(name);
+    }
     addLayer<T extends ol.layer.Base>(name: string, layer: T): T {
         return this.inner.addLayer(name, layer);
     }

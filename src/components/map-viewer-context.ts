@@ -492,11 +492,10 @@ export class MgLayerSet {
         }
     }
     public attach(map: ol.Map, ovMapControl: ol.control.OverviewMap, bSetLayers = true): void {
-        /*
-        for (const layer of this.allLayers) {
-            map.addLayer(layer);
-        }
-        */
+        // To guard against the possibility that we may be attaching layers to a map that
+        // already has layers (eg. Measurements), we reverse iterate all the layers we need to
+        // add and insert them to the front one-by-one, ensuring all the layers we add will be
+        // at the bottom of the draw order
         const layers = map.getLayers();
         for (let i = this.allLayers.length - 1; i >= 0; i--) {
             layers.insertAt(0, this.allLayers[i]);

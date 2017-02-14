@@ -1,6 +1,6 @@
 Next
 ====
- * Update Blueprint to 1.6.0
+ * Update Blueprint to 1.9.0
  * Update React to 15.4.2
  * Improved performance due to restructured and optimized redux state tree and updates to minimize unnecessary re-rendering
  * [#108](https://github.com/jumpinjackie/mapguide-react-layout/issues/108): Added multi-map support
@@ -85,7 +85,7 @@ Next
  * [#70](https://github.com/jumpinjackie/mapguide-react-layout/issues/70): Projections for unknown EPSG codes will now be requested from https://epsg.io
  * Added OL controls to base map viewer component
     * Overview Map
-    * [#62](https://github.com/jumpinjackie/mapguide-react-layout/issues/62) Rotation reset 
+    * [#62](https://github.com/jumpinjackie/mapguide-react-layout/issues/62) Rotation reset
  * [#53](https://github.com/jumpinjackie/mapguide-react-layout/issues/53) Code base migrated to TypeScript 2.0
     * [#54](https://github.com/jumpinjackie/mapguide-react-layout/issues/54) Null-safety compiler options enabled
     * [#56](https://github.com/jumpinjackie/mapguide-react-layout/issues/56) `noImplicitAny` compiler option enabled

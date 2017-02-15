@@ -33,8 +33,6 @@ export class Accordion extends React.Component<IAccordionProps, any> {
         const id = e.currentTarget.attributes["data-accordion-panel-id"].value;
         if (this.state.openPanel != id) {
             this.setState({ openPanel: id });
-        } else {
-            this.setState({ openPanel: null });
         }
     }
     render(): JSX.Element {

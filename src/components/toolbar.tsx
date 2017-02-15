@@ -6,20 +6,8 @@ import { MenuComponent } from "./menu";
 import { IToolbarContext, TOOLBAR_CONTEXT_VALIDATION_MAP } from "./context";
 import * as Constants from "../constants";
 
-export const TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";
 export const DEFAULT_TOOLBAR_SIZE = 29;
-const TOOLBAR_STYLE = {
-    backgroundColor: TOOLBAR_BACKGROUND_COLOR,
-    border: "1px solid rgb(240, 240, 240)"
-};
-const TOOLBAR_ITEM_STYLE = {
-    display: "inline-block",
-    border: `1px solid ${TOOLBAR_BACKGROUND_COLOR}`
-};
-const TOOLBAR_ITEM_STYLE_HOVERED = {
-    display: "inline-block",
-    border: "1px solid rgb(153, 181, 202)"
-};
+export const TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";
 
 export function getIcon(relPath: string | undefined): string | undefined {
     if (relPath) {
@@ -56,7 +44,7 @@ export function getEnabled(item: IItem): boolean {
 export function getIconStyle(enabled: boolean, height: number): React.CSSProperties {
     const imgStyle: React.CSSProperties = {
         verticalAlign: "middle",
-        lineHeight: height 
+        lineHeight: height
     };
     if (!enabled) {
         imgStyle.opacity = 0.4;
@@ -75,7 +63,7 @@ function getItemStyle(enabled: boolean, selected: boolean, size: number, isMouse
         paddingTop: vertPad,
         paddingBottom: vertPad
     };
-    if (isMouseOver === true || selected) {
+    if ((isMouseOver === true && enabled === true) || selected) {
         style.borderWidth = 1;
         style.paddingLeft = pad - 1; //To compensate for border
         style.paddingRight = pad - 1; //To compensate for border
@@ -396,7 +384,7 @@ class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
         const enabled = getEnabled(item);
         const imgStyle = getIconStyle(enabled, height);
         const style = getItemStyle(enabled, selected, height, this.state.isMouseOver, vertical);
-        return <div className={`noselect toolbar-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} style={style} title={item.tooltip} onClick={this.fnClick}>
+        return <div className={`noselect toolbar-btn ${selected ? "selected-item" : ""} ${(this.state.isMouseOver && enabled) ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} style={style} title={item.tooltip} onClick={this.fnClick}>
             <img style={imgStyle} src={getIcon(item.icon)} /> {item.label}
         </div>;
     }
@@ -478,9 +466,9 @@ export class Toolbar extends React.Component<IToolbarProps, any> {
     }
     render(): JSX.Element {
         const { containerStyle, containerClass, childItems, vertical } = this.props;
-        const height = containerStyle != null 
+        const height = containerStyle != null
             ? (containerStyle.height || DEFAULT_TOOLBAR_SIZE)
-            : DEFAULT_TOOLBAR_SIZE; 
+            : DEFAULT_TOOLBAR_SIZE;
         return <div style={containerStyle} className={`has-flyout noselect ${containerClass}`}>
             {childItems.map((item, index) => {
                 if (isComponentFlyout(item)) {

@@ -1,5 +1,6 @@
 const STRINGS_EN: any = {
     "NONE": "NONE",
+    "ERROR": "Error",
     "UNKNOWN_WIDGET": "This button references an unknown or unsupported widget: {widget}",
     "UNKNOWN_COMMAND_REFERENCE": "This button references an unknown command or unsupported: {command}",
     "INIT": "Initializing",

@@ -27,7 +27,7 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
         const cmdItem: IItem = {
             icon: "error.png",
             tooltip: tb.error,
-            label: "Error",
+            label: tr("ERROR"),
             selected: ALWAYS_FALSE,
             enabled: ALWAYS_FALSE,
             invoke: NOOP

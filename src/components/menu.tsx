@@ -29,7 +29,12 @@ export class MenuComponent extends React.Component<IMenuComponentProps, any> {
                 if (item.isSeparator) {
                     return <MenuDivider key={index} />;
                 } else if (isMenu(item)) {
-                    const text = item.label || "";
+                    let text = "";
+                    if (typeof(item.label) == 'function') {
+                        text = item.label();
+                    } else {
+                        text = item.label || "";
+                    }
                     return <MenuItem key={index} text={text} iconName="pt-icon-menu-open">
                         <MenuComponent items={item.childItems} onInvoked={this.props.onInvoked} />
                     </MenuItem>;

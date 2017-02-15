@@ -1,5 +1,6 @@
 {
     "NONE": "KEINER",
+    "ERROR": "Fehler",
     "UNKNOWN_WIDGET": "Diese Schaltfläche verweist auf einen unbekannten oder nicht unterstützten Widget: {widget}",
     "UNKNOWN_COMMAND_REFERENCE": "Diese Schaltfläche verweist auf einen unbekannten Befehl oder nicht unterstützt: {command}",
     "INIT": "Initialisierung",

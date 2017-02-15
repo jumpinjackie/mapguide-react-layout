@@ -15,10 +15,10 @@ Components
    * The internal navigation stack does not gracefully handle multi-map configurations. In a multi-map configuration, it is possible to go back/forward to a page that is not applicable to the current map, especially if it was visited while on a different map.
 
  * Toolbars
-   * Toolbars in vertical orientation currently make no attempts to gracefully handle overflow when the toolbar has more items than the physical screen/container space allows. 
+   * Toolbars in vertical orientation currently make no attempts to gracefully handle overflow when the toolbar has more items than the physical screen/container space allows.
 
  * Measure
-   * This component does not work properly in a multi-map configuration
+   * Recorded measurements will temporarily disappear on templates with a collapsible Task Pane (eg. Slate) when the Task Pane panel is collapsed.
 
 Commands
 ========
@@ -42,7 +42,7 @@ Commands
  * InvokeScript commands
    * [#14](https://github.com/jumpinjackie/mapguide-react-layout/issues/14): InvokeScript commands are not supported. Once we implement a server-side wrapper, such commands will be supported.
 
- * Due to lack of Google Maps integration, the Google Street View widget is not supported if reference in an Application Definition (and will not be ported across due to current technical and legal constraints) 
+ * Due to lack of Google Maps integration, the Google Street View widget is not supported if reference in an Application Definition (and will not be ported across due to current technical and legal constraints)
 
 Viewer
 ======

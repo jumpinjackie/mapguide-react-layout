@@ -139,7 +139,7 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
         }
         let chkbox: JSX.Element | undefined;
         if (layer.Type == 1) { //Dynamic
-            chkbox = <input type='checkbox' 
+            chkbox = <input type='checkbox'
                             className='layer-checkbox'
                             style={CHK_STYLE}
                             value={layer.ObjectId}
@@ -442,12 +442,12 @@ export class Legend extends React.Component<ILegendProps, any> {
             const remainingGroups: any = {};
             //1st pass, un-parented groups
             for (const group of Groups) {
+                groupChildren[group.ObjectId] = [];
                 if (group.ParentId) {
                     remainingGroups[group.ObjectId] = group;
                     continue;
                 }
                 root.push(group);
-                groupChildren[group.ObjectId] = [];
             }
             //2nd pass, parented groups
             var itemCount = 0;
@@ -471,7 +471,7 @@ export class Legend extends React.Component<ILegendProps, any> {
                 for (const id of removeIds) {
                     delete remainingGroups[id];
                 }
-            
+
                 itemCount = 0;
                 for (const objId in remainingGroups) {
                     itemCount++;

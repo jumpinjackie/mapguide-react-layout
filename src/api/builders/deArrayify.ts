@@ -1,15 +1,15 @@
 /**
  * deArrayify.ts
- * 
+ *
  * This module provides JSON sanitization of JSON responses from the mapagent
- * 
+ *
  * Being a transformation of the XML form, and taking a lowest-common-denominator
- * approach to JSON conversion, the JSON responses from MapGuide are un-wieldy to 
+ * approach to JSON conversion, the JSON responses from MapGuide are un-wieldy to
  * use from the client-side due to:
- * 
+ *
  *  a) All properties being arrays
  *  b) All property values being strings
- * 
+ *
  * These functions help "clean" those responses to be of the form we expect (and prefer)
  */
 import * as Contracts from "../contracts";
@@ -62,7 +62,7 @@ function deArrayifyFeatureStyles(fts: any[]): Contracts.RtMap.FeatureStyleInfo[]
 
 function deArrayifyScaleRanges(scales: any[]): Contracts.RtMap.ScaleRangeInfo[] {
     if (!scales) { //Happens with raster layers (this is probably a bug in CREATERUNTIMEMAP)
-        const defaultRange: Contracts.RtMap.ScaleRangeInfo = { 
+        const defaultRange: Contracts.RtMap.ScaleRangeInfo = {
             MinScale: 0,
             MaxScale: Constants.MDF_INFINITY,
             FeatureStyle: []
@@ -728,7 +728,24 @@ function deArrayifyExtension(json: any, arrayCheck: boolean = true): any {
     const ext: any = {};
     for (const key in root[0]) {
         if (Array.isArray(root[0][key])) {
-            ext[key] = tryGetAsProperty(root[0], key, "string");
+            //Special case handling
+            switch (key) {
+                case "AdditionalParameter":
+                    {
+                        const params = [];
+                        for (const p of root[0][key]) {
+                            params.push({
+                                Key: tryGetAsProperty(p, "Key", "string"),
+                                Value: tryGetAsProperty(p, "Value", "string")
+                            });
+                        }
+                        ext[key] = params;
+                    }
+                    break;
+                default:
+                    ext[key] = tryGetAsProperty(root[0], key, "string");
+                    break;
+            }
         } else {
             ext[key] = deArrayifyExtension(root[0][key], false);
         }

@@ -4,14 +4,14 @@ import Draggable = require('react-draggable');
 /**
  * [left, top, right, bottom]
  */
-export type ModalDialogPositioning = [number|null, number|null, number|null, number|null] | [string|null, string|null, string|null, string|null]; 
+export type ModalDialogPositioning = [number|null, number|null, number|null, number|null] | [string|null, string|null, string|null, string|null];
 
 export interface IModalDialogProps {
     isOpen: boolean;
     backdrop?: boolean;
     /**
      * [left, top, right, bottom]
-     * 
+     *
      * @type {ModalDialogPositioning}
      * @memberOf IModalDialogProps
      */
@@ -40,7 +40,7 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
             //zIndex: 9999,
         };
         if (size != null) {
-            modalStyle.top = 20;
+            modalStyle.top = 120;
             modalStyle.left = "50%";
             modalStyle.width = size[0];
             modalStyle.height = size[1];

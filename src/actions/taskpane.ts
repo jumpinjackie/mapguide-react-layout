@@ -1,5 +1,6 @@
 import * as Constants from "../constants";
 import { MgError } from "../api/error";
+import { IInvokeUrlCommandParameter } from "../api/common";
 import {
     ReduxThunkedAction
 } from "../api/common";
@@ -34,14 +35,14 @@ export function goForward() {
 export function pushUrl(url: string, silent?: boolean) {
     return {
         type: Constants.TASK_PANE_PUSH_URL,
-        payload: { 
+        payload: {
             url: url,
             silent: silent
         }
     };
 }
 
-export function ensureParameters(url: string, mapName: string, session: string, locale?: string, uppercase = true): string {
+export function ensureParameters(url: string, mapName: string, session: string, locale?: string, uppercase = true, extraParameters: IInvokeUrlCommandParameter[] = []): string {
     //If this is a component URL, let it be
     if (url.indexOf("component://") >= 0) {
         return url;
@@ -86,12 +87,17 @@ export function ensureParameters(url: string, mapName: string, session: string, 
             params.locale = locale;
         }
     }
+
+    for (const p of extraParameters) {
+        params[p.name] = p.value;
+    }
+
     parsed.query = queryString.stringify(params);
     const result = parsed.toString();
 
     if (url.indexOf(parsed.protocol) >= 0 || url.indexOf("/") == 0) {
         return result;
     }
-    
+
     return result;
 }

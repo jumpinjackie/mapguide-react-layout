@@ -14,7 +14,7 @@ import {
     isCommandItem,
     isInvokeURLCommand,
     isSearchCommand,
-    UIItem 
+    UIItem
 } from "../api/contracts/weblayout";
 import {
     ApplicationDefinition,
@@ -112,7 +112,7 @@ function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictiona
                                 return { command: DefaultCommands.RefreshMap, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
                             //case "SaveMap":
                             case "InvokeURL": //Commands with this name would've been registered beforehand
-                            case "Search": 
+                            case "Search":
                                 return { command: widget.Name, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
                             case "SelectPolygon":
                                 return { command: DefaultCommands.SelectPolygon, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
@@ -142,7 +142,7 @@ function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictiona
                 return {
                     label: item.Label,
                     tooltip: item.Tooltip,
-                    children: convertFlexLayoutUIItems(item.Item, widgetsByKey, locale) 
+                    children: convertFlexLayoutUIItems(item.Item, widgetsByKey, locale)
                 };
         }
         return null;
@@ -189,10 +189,10 @@ function convertWebLayoutUIItems(items: UIItem[] | null | undefined, cmdsByKey: 
         } else if (isSeparatorItem(item)) {
             return { isSeparator: true };
         } else if (isFlyoutItem(item)) {
-            return { 
+            return {
                 label: item.Label,
                 tooltip: item.Tooltip,
-                children: convertWebLayoutUIItems(item.SubItem, cmdsByKey, locale, false, false) 
+                children: convertWebLayoutUIItems(item.SubItem, cmdsByKey, locale, false, false)
             };
         }
         return null;
@@ -212,7 +212,7 @@ function prepareSubMenus(tbConf: any): any {
         //Special case: Task pane. Transfer all to flyout
         if (key == "taskpane") {
             const flyoutId = key;
-            prepared.flyouts[flyoutId] = { 
+            prepared.flyouts[flyoutId] = {
                 children: tbConf[key].items
             }
         } else {
@@ -228,7 +228,7 @@ function prepareSubMenus(tbConf: any): any {
                         tooltip: item.tooltip,
                         flyoutId: flyoutId
                     });
-                    prepared.flyouts[flyoutId] = { 
+                    prepared.flyouts[flyoutId] = {
                         children: item.children
                     }
                 } else {
@@ -277,7 +277,7 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
                         hasNavigator = true;
                         break;
                     case "Search":
-                        registerCommand(widget.Name, { 
+                        registerCommand(widget.Name, {
                             layer: cmd.Layer,
                             prompt: cmd.Prompt,
                             resultColumns: cmd.ResultColumns,
@@ -290,7 +290,10 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
                         registerCommand(widget.Name, {
                             url: cmd.Url,
                             disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
-                            target: cmd.Target
+                            target: cmd.Target,
+                            parameters: (cmd.AdditionalParameter || []).map((p: any) => {
+                                return { name: p.Key, value: p.Value };
+                            })
                         });
                         break;
                 }
@@ -375,13 +378,16 @@ function makeWebLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any):
                     registerCommand(cmd.Name, {
                         url: cmd.URL,
                         disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
-                        target: cmdTarget
+                        target: cmdTarget,
+                        parameters: (cmd.AdditionalParameter || []).map(p => {
+                            return { name: p.Key, value: p.Value };
+                        })
                     });
                 } else {
                     logger.warn(`Command ${cmd.Name} targets a specific frame which is not supported`);
                 }
             } else if (isSearchCommand(cmd)) {
-                registerCommand(cmd.Name, { 
+                registerCommand(cmd.Name, {
                     layer: cmd.Layer,
                     prompt: cmd.Prompt,
                     resultColumns: cmd.ResultColumns,
@@ -506,7 +512,7 @@ function makeRuntimeMapSuccessHandler<T>(client: Client, session: string, opts: 
     return (res) => {
         const mapDefs = mapDefSelector(res);
         const mapPromises = [];
-        
+
         for (const mapDef of mapDefs) {
             const promise = client.createRuntimeMap({
                 mapDefinition: mapDef,
@@ -590,7 +596,7 @@ function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<Runtime
                         case "OpenStreetMap":
                             {
                                 //HACK: De-arrayification of arbitrary extension elements
-                                //is shallow (hence name/type is string[]). Do we bother to fix this? 
+                                //is shallow (hence name/type is string[]). Do we bother to fix this?
                                 const name = map.Extension.Options.name[0];
                                 const type = map.Extension.Options.type[0];
                                 const options: any = {};
@@ -612,7 +618,7 @@ function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<Runtime
                         case "Stamen":
                             {
                                 //HACK: De-arrayification of arbitrary extension elements
-                                //is shallow (hence name/type is string[]). Do we bother to fix this? 
+                                //is shallow (hence name/type is string[]). Do we bother to fix this?
                                 const name = map.Extension.Options.name[0];
                                 const type = map.Extension.Options.type[0];
                                 externalBaseLayers.push({
@@ -666,7 +672,7 @@ function getMapGuideMapGroup(appDef: ApplicationDefinition): MapGroup[] {
             }
         }
     }
-    return configs; 
+    return configs;
 }
 
 function getMapGuideConfiguration(appDef: ApplicationDefinition): MapConfiguration[] {
@@ -680,7 +686,7 @@ function getMapGuideConfiguration(appDef: ApplicationDefinition): MapConfigurati
             }
         }
     }
-    return configs; 
+    return configs;
 }
 
 function getMapDefinitionsFromFlexLayout(appDef: ApplicationDefinition): string[] {

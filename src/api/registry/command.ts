@@ -161,7 +161,7 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                         dispatch({
                             type: Constants.TASK_INVOKE_URL,
                             payload: {
-                                url: ensureParameters(cmdDef.url, map.Name, map.SessionId, config.locale)
+                                url: ensureParameters(cmdDef.url, map.Name, map.SessionId, config.locale, true, cmdDef.parameters)
                             }
                         });
                     } else {
@@ -174,7 +174,7 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                                     size: [ 300, 500 ]
                                 },
                                 name: name,
-                                url: ensureParameters(cmdDef.url, map.Name, map.SessionId, config.locale)
+                                url: ensureParameters(cmdDef.url, map.Name, map.SessionId, config.locale, true, cmdDef.parameters)
                             }
                         });
                     }

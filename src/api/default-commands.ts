@@ -29,14 +29,14 @@ function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "l
         "down": [0, 1],
         "up": [0, 3]
     };
-    
+
     const view = viewer.getCurrentView();
     const current_center = [ view.x, view.y ];
     const currentExtent = viewer.getCurrentExtent();
     let newPos: number[];
 
     const direction = settings[value];
-    
+
     if (value == "right" || value == "left") {
         newPos = [
             currentExtent[direction[0]],
@@ -49,7 +49,7 @@ function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "l
             currentExtent[direction[1]]
         ];
     }
-    
+
     dispatch(MapActions.setCurrentView({ x: newPos[0], y: newPos[1], scale: view.scale }));
 }
 
@@ -451,7 +451,7 @@ export function initDefaultCommands() {
                     const txCoord = ol.proj.fromLonLat([ pos.coords.longitude, pos.coords.latitude ], proj);
                     const testCoord = ol.proj.fromLonLat([ pos.coords.longitude, pos.coords.latitude ], `EPSG:${rtMap.CoordinateSystem.EpsgCode}`);
                     viewer.zoomToView(txCoord[0], txCoord[1], view.scale);
-                    const extents: [number, number, number, number] = [ 
+                    const extents: [number, number, number, number] = [
                         rtMap.Extents.LowerLeftCoordinate.X,
                         rtMap.Extents.LowerLeftCoordinate.Y,
                         rtMap.Extents.UpperRightCoordinate.X,
@@ -532,7 +532,7 @@ export function initDefaultCommands() {
         }
     });
 
-    registerCommand(DefaultCommands.FeatureInfo, { icon: "feature-info.png", url: "server/FeatureInfo/featureinfomain.php", target: "TaskPane" });
-    registerCommand(DefaultCommands.Query, { icon: "query.png", url: "server/Query/querymain.php", target: "TaskPane" });
-    registerCommand(DefaultCommands.Theme, { icon: "theme.png", url: "server/Theme/thememain.php", target: "TaskPane" });
+    registerCommand(DefaultCommands.FeatureInfo, { icon: "feature-info.png", url: "server/FeatureInfo/featureinfomain.php", target: "TaskPane", parameters: [] });
+    registerCommand(DefaultCommands.Query, { icon: "query.png", url: "server/Query/querymain.php", target: "TaskPane", parameters: [] });
+    registerCommand(DefaultCommands.Theme, { icon: "theme.png", url: "server/Theme/thememain.php", target: "TaskPane", parameters: [] });
 }

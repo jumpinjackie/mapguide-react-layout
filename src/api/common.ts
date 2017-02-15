@@ -57,6 +57,11 @@ export interface ICommand {
 
 export type InvokeUrlCommandTarget = "TaskPane" | "NewWindow";
 
+export interface IInvokeUrlCommandParameter {
+    name: string;
+    value: string;
+}
+
 /**
  * Describes a command that invokes a URL into a specified target
  *
@@ -92,6 +97,11 @@ export interface IInvokeUrlCommand {
      * @memberOf IInvokeUrlCommand
      */
     target: InvokeUrlCommandTarget;
+    /**
+     * Additional command parameters
+     * @memberOf IInvokeUrlCommand
+     */
+    parameters: IInvokeUrlCommandParameter[];
 }
 
 /**

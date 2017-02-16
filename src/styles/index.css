@@ -1,4 +1,4 @@
-@import "~openlayers/css/ol.css";
+@import "ol.css";
 @import "~@blueprintjs/core/dist/blueprint.css";
 
 .invalidated-task-pane {
@@ -258,7 +258,7 @@ div.InfoText
     white-space: nowrap;
     /* this is for "non IE" browsers
        that dosn't support writing-mode */
-    
+
     -webkit-transform-origin: 0 0;
        -moz-transform-origin: 0 0;
          -o-transform-origin: 0 0;

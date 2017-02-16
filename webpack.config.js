@@ -17,14 +17,12 @@ const devAppEntries = [
 const appEntries = baseAppEntries.concat(process.env.NODE_ENV === 'development' ? devAppEntries : []);
 const vendorEntries = [
     'react',
-    'react-dom',
-    'openlayers'
+    'react-dom'
 ];
 
 const basePlugins = [
     new webpack.ProvidePlugin({
-        "proj4": "proj4",
-        "ol": "openlayers"
+        "proj4": "proj4"
     }),
     new webpack.DefinePlugin({
         __DEV__: process.env.NODE_ENV !== 'production',

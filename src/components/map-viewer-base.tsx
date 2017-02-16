@@ -315,11 +315,11 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
         const currentResolution = view.getResolution();
         if (currentResolution) {
-            this._map.beforeRender(ol.animation.zoom({
+            view.animate({
                 resolution: currentResolution,
                 duration: 250,
                 easing: ol.easing.easeOut
-            }));
+            });
             const newResolution = view.constrainResolution(currentResolution, delta);
             view.setResolution(newResolution);
         }
@@ -481,7 +481,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             newLayerSet.attach(this._map, ovMap);
             //This would happen if we switch to a map we haven't visited yet
             if (!nextProps.view) {
-                newLayerSet.view.fit(newLayerSet.extent, this._map.getSize());
+                newLayerSet.view.fit(newLayerSet.extent);
                 bChangedView = true;
             } else {
                 const layerSet = this._mapContext.getLayerSet(nextProps.map.Name);
@@ -594,7 +594,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         if (this.props.initialView != null) {
             this.zoomToView(this.props.initialView.x, this.props.initialView.y, this.props.initialView.scale);
         } else {
-            this._map.getView().fit(activeLayerSet.extent, this._map.getSize());
+            this._map.getView().fit(activeLayerSet.extent);
         }
     }
     render(): JSX.Element {

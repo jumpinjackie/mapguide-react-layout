@@ -1,3 +1,7 @@
+0.9
+===
+ * Update OpenLayers to 4.0.1
+
 0.8
 ===
  * Update Blueprint to 1.9.0

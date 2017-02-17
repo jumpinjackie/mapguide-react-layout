@@ -12,7 +12,8 @@
     "__postinstall": "yarn run typings && yarn run build",
     "typings": "rimraf typings/ && typings install",
     "test": "jest",
-    "ci": "yarn run typings && yarn run lint && yarn run test"
+    "test:ci": "jest --coverage",
+    "ci": "yarn run typings && yarn run lint && yarn run test:ci"
   },
   "repository": {
     "type": "git",

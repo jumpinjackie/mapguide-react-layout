@@ -1,6 +1,7 @@
 .vscode
 dist
 build
+coverage
 node_modules
 typings
 yarn-error.log

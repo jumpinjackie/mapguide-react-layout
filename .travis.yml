@@ -3,4 +3,4 @@ cache: yarn
 node_js:
   - "4.2"
 script:
-  - yarn run ci
+  - yarn run ci:travis

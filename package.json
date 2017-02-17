@@ -12,8 +12,10 @@
     "__postinstall": "yarn run typings && yarn run build",
     "typings": "rimraf typings/ && typings install",
     "test": "jest",
-    "test:ci": "jest --coverage",
-    "ci": "yarn run typings && yarn run lint && yarn run test:ci"
+    "test:appveyor": "jest --coverage --colors",
+    "test:travis": "jest --coverage --colors && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "ci:appveyor": "yarn run typings && yarn run lint && yarn run test:appveyor",
+    "ci:travis": "yarn run typings && yarn run lint && yarn run test:travis"
   },
   "repository": {
     "type": "git",
@@ -32,8 +34,8 @@
   "homepage": "https://github.com/jumpinjackie/mapguide-react-layout#readme",
   "devDependencies": {
     "@blueprintjs/core": "1.9.0",
-    "@types/jest": "18.1.1",
     "@types/enzyme": "2.7.4",
+    "@types/jest": "18.1.1",
     "@types/lodash.debounce": "4.0.1",
     "@types/lodash.uniq": "4.5.1",
     "@types/lodash.xor": "^4.5.1",
@@ -46,6 +48,7 @@
     "@types/react-measure": "0.4.5",
     "@types/shortid": "0.0.28",
     "bestzip": "^1.1.3",
+    "coveralls": "^2.11.16",
     "cross-env": "^3.1.4",
     "css-loader": "^0.26.1",
     "enzyme": "^2.7.1",

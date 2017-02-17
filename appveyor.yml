@@ -32,7 +32,7 @@ install:
 
 test_script:
   - yarn --version
-  - yarn run ci:appveyro
+  - yarn run ci:appveyor
 
 artifacts:
   - path: .\viewer.zip

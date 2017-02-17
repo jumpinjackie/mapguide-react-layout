@@ -1,5 +1,4 @@
 import * as React from "react";
-import { expect } from "chai";
 import { shallow, mount, render } from "enzyme";
 import { SelectionPanel } from "../src/components/selection-panel";
 import { SelectedFeatureSet, SelectedFeature } from "../src/api/contracts/query";
@@ -77,10 +76,10 @@ describe("components/selection-panel", () => {
             SelectedLayer: []
         };
         const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} />);
-        expect(wrapper.find(".selection-panel-toolbar")).to.have.length(0);
-        expect(wrapper.find(".selection-panel-property-grid")).to.have.length(0);
-        expect(wrapper.find(".selection-panel-no-selection")).to.have.length(1);
-        expect(wrapper.find(".selection-panel-no-selection").text()).to.be.equal(tr("NO_SELECTED_FEATURES"));
+        expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(0);
+        expect(wrapper.find(".selection-panel-property-grid")).toHaveLength(0);
+        expect(wrapper.find(".selection-panel-no-selection")).toHaveLength(1);
+        expect(wrapper.find(".selection-panel-no-selection").text()).toBe(tr("NO_SELECTED_FEATURES"));
     });
     it("Empty selection results in empty results message", () => {
         const onZoomRequest = td.function<ZoomFeatureFunc>();
@@ -88,40 +87,40 @@ describe("components/selection-panel", () => {
             SelectedLayer: []
         };
         const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} />);
-        expect(wrapper.find(".selection-panel-toolbar")).to.have.length(0);
-        expect(wrapper.find(".selection-panel-property-grid")).to.have.length(0);
-        expect(wrapper.find(".selection-panel-no-selection")).to.have.length(1);
-        expect(wrapper.find(".selection-panel-no-selection").text()).to.be.equal(tr("NO_SELECTED_FEATURES"));
+        expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(0);
+        expect(wrapper.find(".selection-panel-property-grid")).toHaveLength(0);
+        expect(wrapper.find(".selection-panel-no-selection")).toHaveLength(1);
+        expect(wrapper.find(".selection-panel-no-selection").text()).toBe(tr("NO_SELECTED_FEATURES"));
     });
     it("Selection should show first feature of first layer when set", () => {
         const onZoomRequest = td.function<ZoomFeatureFunc>();
         const set: SelectedFeatureSet = createSelectionSet();
         const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} />);
-        expect(wrapper.find(".selection-panel-toolbar")).to.have.length(1);
-        expect(wrapper.find(".selection-panel-property-grid")).to.have.length(1);
-        expect(wrapper.state("selectedLayerIndex")).to.be.equal(0);
-        expect(wrapper.state("featureIndex")).to.be.equal(0);
-        expect(wrapper.find("tr")).to.have.length(3);
+        expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(1);
+        expect(wrapper.find(".selection-panel-property-grid")).toHaveLength(1);
+        expect(wrapper.state("selectedLayerIndex")).toBe(0);
+        expect(wrapper.state("featureIndex")).toBe(0);
+        expect(wrapper.find("tr")).toHaveLength(3);
     });
     it("Can scroll forwards/backwards on first selected layer", () => {
         const onZoomRequest = td.function<ZoomFeatureFunc>();
         const set: SelectedFeatureSet = createSelectionSet();
         const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} />);
-        expect(wrapper.find(".selection-panel-toolbar")).to.have.length(1);
-        expect(wrapper.find(".toolbar-btn")).to.have.length(3);
+        expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(1);
+        expect(wrapper.find(".toolbar-btn")).toHaveLength(3);
         const back = wrapper.find(".toolbar-btn").at(0);
         const fwd = wrapper.find(".toolbar-btn").at(1);
         fwd.simulate("click");
-        expect(wrapper.state("featureIndex")).to.be.equal(1);
+        expect(wrapper.state("featureIndex")).toBe(1);
         back.simulate("click");
-        expect(wrapper.state("featureIndex")).to.be.equal(0);
+        expect(wrapper.state("featureIndex")).toBe(0);
     });
     it("Zoom to current feature raises handler", () => {
         const onZoomRequest = td.function<ZoomFeatureFunc>();
         const set: SelectedFeatureSet = createSelectionSet();
         const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} />);
-        expect(wrapper.find(".selection-panel-toolbar")).to.have.length(1);
-        expect(wrapper.find(".toolbar-btn")).to.have.length(3);
+        expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(1);
+        expect(wrapper.find(".toolbar-btn")).toHaveLength(3);
         const zoom = wrapper.find(".toolbar-btn").at(2);
         zoom.simulate("click");
         td.verify(onZoomRequest(set.SelectedLayer[0].Feature[0]));
@@ -130,16 +129,16 @@ describe("components/selection-panel", () => {
         const onZoomRequest = td.function<ZoomFeatureFunc>();
         const set: SelectedFeatureSet = createSelectionSet();
         const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} />);
-        expect(wrapper.find(".selection-panel-toolbar")).to.have.length(1, "Has Toolbar");
-        expect(wrapper.find(".toolbar-btn")).to.have.length(3, "Has Toolbar Buttons");
+        expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(1); //, "Has Toolbar");
+        expect(wrapper.find(".toolbar-btn")).toHaveLength(3); //, "Has Toolbar Buttons");
         const fwd = wrapper.find(".toolbar-btn").at(1);
         const select = wrapper.find("select");
-        expect(select).to.have.length(1, "Has Layer Select");
-        expect(select.find("option")).to.have.length(2);
+        expect(select).toHaveLength(1); //, "Has Layer Select");
+        expect(select.find("option")).toHaveLength(2);
         fwd.simulate("click");
-        expect(wrapper.state("featureIndex")).to.be.equal(1);
+        expect(wrapper.state("featureIndex")).toBe(1);
         select.simulate('change', { target: { value : 1 } });
-        expect(wrapper.state("selectedLayerIndex")).to.be.equal(1);
-        expect(wrapper.state("featureIndex")).to.be.equal(0);
+        expect(wrapper.state("selectedLayerIndex")).toBe(1);
+        expect(wrapper.state("featureIndex")).toBe(0);
     });
 });

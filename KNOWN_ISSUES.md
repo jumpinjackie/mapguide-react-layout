@@ -12,7 +12,7 @@ Components
 
  * Task Pane
    * URLs loaded into the task pane push actual entries into the browser's navigation stack
-   * The internal navigation stack does not gracefully handle multi-map configurations. In a multi-map configuration, it is possible to go back/forward to a page that is not applicable to the current map, especially if it was visited while on a different map.
+   * ~~The internal navigation stack does not gracefully handle multi-map configurations. In a multi-map configuration, it is possible to go back/forward to a page that is not applicable to the current map, especially if it was visited while on a different map.~~ In a multi-map configuration, task pane content will be invalidated (with a UI warning) if it is not applicable for the current active map. In such cases, you need to re-run the applicable command again.
 
  * Toolbars
    * Toolbars in vertical orientation currently make no attempts to gracefully handle overflow when the toolbar has more items than the physical screen/container space allows.
@@ -35,9 +35,6 @@ Commands
      * Query: `server/Query/querymain.php`
      * Redline: `server/Redline/markupmain.php`
      * Theme: `server/Theme/thememain.php`
-
- * InvokeURL commands
-   * [#25](https://github.com/jumpinjackie/mapguide-react-layout/issues/25): Additional parameters not supported yet
 
  * InvokeScript commands
    * [#14](https://github.com/jumpinjackie/mapguide-react-layout/issues/14): InvokeScript commands are not supported. Once we implement a server-side wrapper, such commands will be supported.

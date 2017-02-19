@@ -21,18 +21,6 @@ declare module "proj4" {
     export = Proj4;
 }
 
-declare module "ol/proj" {
-    export default ol.proj;
-}
-
-declare module "ol/extent" {
-    export default ol.extent;
-}
-
-declare module "ol/easing" {
-    export default ol.easing;
-}
-
 declare module "react-draggable" {
     import * as React from "react";
 

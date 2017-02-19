@@ -20104,156 +20104,6 @@ declare module "openlayers" {
     export = ol;
 }
 /*
- * ES2015 module declaration for ol.proj.Projection
- */
-declare module "ol/proj/projection" {
-    export default ol.proj.Projection;
-}
-/*
- * ES2015 module declaration for ol.geom.SimpleGeometry
- */
-declare module "ol/geom/simplegeometry" {
-    export default ol.geom.SimpleGeometry;
-}
-/*
- * ES2015 module declaration for ol.style.Style
- */
-declare module "ol/style/style" {
-    export default ol.style.Style;
-}
-/*
- * ES2015 module declaration for ol.Map
- */
-declare module "ol/map" {
-    export default ol.Map;
-}
-/*
- * ES2015 module declaration for ol.Feature
- */
-declare module "ol/feature" {
-    export default ol.Feature;
-}
-/*
- * ES2015 module declaration for ol.layer.Layer
- */
-declare module "ol/layer/layer" {
-    export default ol.layer.Layer;
-}
-/*
- * ES2015 module declaration for ol.geom.Geometry
- */
-declare module "ol/geom/geometry" {
-    export default ol.geom.Geometry;
-}
-/*
- * ES2015 module declaration for ol.format.Feature
- */
-declare module "ol/format/feature" {
-    export default ol.format.Feature;
-}
-/*
- * ES2015 module declaration for ol.format.filter.Filter
- */
-declare module "ol/format/filter/filter" {
-    export default ol.format.filter.Filter;
-}
-/*
- * ES2015 module declaration for ol.format.filter.And
- */
-declare module "ol/format/filter/and" {
-    export default ol.format.filter.And;
-}
-/*
- * ES2015 module declaration for ol.format.filter.Or
- */
-declare module "ol/format/filter/or" {
-    export default ol.format.filter.Or;
-}
-/*
- * ES2015 module declaration for ol.format.filter.Not
- */
-declare module "ol/format/filter/not" {
-    export default ol.format.filter.Not;
-}
-/*
- * ES2015 module declaration for ol.format.filter.Bbox
- */
-declare module "ol/format/filter/bbox" {
-    export default ol.format.filter.Bbox;
-}
-/*
- * ES2015 module declaration for ol.format.filter.Intersects
- */
-declare module "ol/format/filter/intersects" {
-    export default ol.format.filter.Intersects;
-}
-/*
- * ES2015 module declaration for ol.format.filter.Within
- */
-declare module "ol/format/filter/within" {
-    export default ol.format.filter.Within;
-}
-/*
- * ES2015 module declaration for ol.format.filter.EqualTo
- */
-declare module "ol/format/filter/equalto" {
-    export default ol.format.filter.EqualTo;
-}
-/*
- * ES2015 module declaration for ol.format.filter.NotEqualTo
- */
-declare module "ol/format/filter/notequalto" {
-    export default ol.format.filter.NotEqualTo;
-}
-/*
- * ES2015 module declaration for ol.format.filter.LessThan
- */
-declare module "ol/format/filter/lessthan" {
-    export default ol.format.filter.LessThan;
-}
-/*
- * ES2015 module declaration for ol.format.filter.LessThanOrEqualTo
- */
-declare module "ol/format/filter/lessthanorequalto" {
-    export default ol.format.filter.LessThanOrEqualTo;
-}
-/*
- * ES2015 module declaration for ol.format.filter.GreaterThan
- */
-declare module "ol/format/filter/greaterthan" {
-    export default ol.format.filter.GreaterThan;
-}
-/*
- * ES2015 module declaration for ol.format.filter.GreaterThanOrEqualTo
- */
-declare module "ol/format/filter/greaterthanorequalto" {
-    export default ol.format.filter.GreaterThanOrEqualTo;
-}
-/*
- * ES2015 module declaration for ol.format.filter.IsNull
- */
-declare module "ol/format/filter/isnull" {
-    export default ol.format.filter.IsNull;
-}
-/*
- * ES2015 module declaration for ol.format.filter.IsBetween
- */
-declare module "ol/format/filter/isbetween" {
-    export default ol.format.filter.IsBetween;
-}
-/*
- * ES2015 module declaration for ol.format.filter.IsLike
- */
-declare module "ol/format/filter/islike" {
-    export default ol.format.filter.IsLike;
-}
-/*
- * ES2015 module declaration for ol.tilegrid.TileGrid
- */
-declare module "ol/tilegrid/tilegrid" {
-    export default ol.tilegrid.TileGrid;
-}
-/*
  * ES2015 module declaration for ol.Attribution
  */
 declare module "ol/attribution" {
@@ -20266,10 +20116,106 @@ declare module "ol/collection" {
     export default ol.Collection;
 }
 /*
+ * ES2015 module declaration for ol.DeviceOrientation
+ */
+declare module "ol/deviceorientation" {
+    export default ol.DeviceOrientation;
+}
+/*
+ * ES2015 module declaration for ol.Disposable
+ */
+declare module "ol/disposable" {
+    export default ol.Disposable;
+}
+/*
+ * ES2015 module declaration for ol.Feature
+ */
+declare module "ol/feature" {
+    export default ol.Feature;
+}
+/*
+ * ES2015 module declaration for ol.Geolocation
+ */
+declare module "ol/geolocation" {
+    export default ol.Geolocation;
+}
+/*
+ * ES2015 module declaration for ol.Graticule
+ */
+declare module "ol/graticule" {
+    export default ol.Graticule;
+}
+/*
+ * ES2015 module declaration for ol.Image
+ */
+declare module "ol/image" {
+    export default ol.Image;
+}
+/*
+ * ES2015 module declaration for ol.ImageBase
+ */
+declare module "ol/imagebase" {
+    export default ol.ImageBase;
+}
+/*
+ * ES2015 module declaration for ol.Kinetic
+ */
+declare module "ol/kinetic" {
+    export default ol.Kinetic;
+}
+/*
+ * ES2015 module declaration for ol.Map
+ */
+declare module "ol/map" {
+    export default ol.Map;
+}
+/*
+ * ES2015 module declaration for ol.MapBrowserEvent
+ */
+declare module "ol/mapbrowserevent" {
+    export default ol.MapBrowserEvent;
+}
+/*
+ * ES2015 module declaration for ol.MapEvent
+ */
+declare module "ol/mapevent" {
+    export default ol.MapEvent;
+}
+/*
  * ES2015 module declaration for ol.Object
  */
 declare module "ol/object" {
     export default ol.Object;
+}
+/*
+ * ES2015 module declaration for ol.Observable
+ */
+declare module "ol/observable" {
+    export default ol.Observable;
+}
+/*
+ * ES2015 module declaration for ol.Overlay
+ */
+declare module "ol/overlay" {
+    export default ol.Overlay;
+}
+/*
+ * ES2015 module declaration for ol.Sphere
+ */
+declare module "ol/sphere" {
+    export default ol.Sphere;
+}
+/*
+ * ES2015 module declaration for ol.Tile
+ */
+declare module "ol/tile" {
+    export default ol.Tile;
+}
+/*
+ * ES2015 module declaration for ol.View
+ */
+declare module "ol/view" {
+    export default ol.View;
 }
 /*
  * ES2015 module declaration for ol.control.Attribution
@@ -20332,10 +20278,16 @@ declare module "ol/control/zoomtoextent" {
     export default ol.control.ZoomToExtent;
 }
 /*
- * ES2015 module declaration for ol.DeviceOrientation
+ * ES2015 module declaration for ol.events.Event
  */
-declare module "ol/deviceorientation" {
-    export default ol.DeviceOrientation;
+declare module "ol/events/event" {
+    export default ol.events.Event;
+}
+/*
+ * ES2015 module declaration for ol.events.EventTarget
+ */
+declare module "ol/events/eventtarget" {
+    export default ol.events.EventTarget;
 }
 /*
  * ES2015 module declaration for ol.format.EsriJSON
@@ -20344,22 +20296,10 @@ declare module "ol/format/esrijson" {
     export default ol.format.EsriJSON;
 }
 /*
- * ES2015 module declaration for ol.format.filter.Comparison
+ * ES2015 module declaration for ol.format.Feature
  */
-declare module "ol/format/filter/comparison" {
-    export default ol.format.filter.Comparison;
-}
-/*
- * ES2015 module declaration for ol.format.filter.ComparisonBinary
- */
-declare module "ol/format/filter/comparisonbinary" {
-    export default ol.format.filter.ComparisonBinary;
-}
-/*
- * ES2015 module declaration for ol.format.filter.Spatial
- */
-declare module "ol/format/filter/spatial" {
-    export default ol.format.filter.Spatial;
+declare module "ol/format/feature" {
+    export default ol.format.Feature;
 }
 /*
  * ES2015 module declaration for ol.format.GeoJSON
@@ -20386,6 +20326,12 @@ declare module "ol/format/gml3" {
     export default ol.format.GML3;
 }
 /*
+ * ES2015 module declaration for ol.format.GMLBase
+ */
+declare module "ol/format/gmlbase" {
+    export default ol.format.GMLBase;
+}
+/*
  * ES2015 module declaration for ol.format.GPX
  */
 declare module "ol/format/gpx" {
@@ -20396,6 +20342,12 @@ declare module "ol/format/gpx" {
  */
 declare module "ol/format/igc" {
     export default ol.format.IGC;
+}
+/*
+ * ES2015 module declaration for ol.format.JSONFeature
+ */
+declare module "ol/format/jsonfeature" {
+    export default ol.format.JSONFeature;
 }
 /*
  * ES2015 module declaration for ol.format.KML
@@ -20420,6 +20372,12 @@ declare module "ol/format/osmxml" {
  */
 declare module "ol/format/polyline" {
     export default ol.format.Polyline;
+}
+/*
+ * ES2015 module declaration for ol.format.TextFeature
+ */
+declare module "ol/format/textfeature" {
+    export default ol.format.TextFeature;
 }
 /*
  * ES2015 module declaration for ol.format.TopoJSON
@@ -20458,16 +20416,148 @@ declare module "ol/format/wmtscapabilities" {
     export default ol.format.WMTSCapabilities;
 }
 /*
- * ES2015 module declaration for ol.Geolocation
+ * ES2015 module declaration for ol.format.XML
  */
-declare module "ol/geolocation" {
-    export default ol.Geolocation;
+declare module "ol/format/xml" {
+    export default ol.format.XML;
+}
+/*
+ * ES2015 module declaration for ol.format.XMLFeature
+ */
+declare module "ol/format/xmlfeature" {
+    export default ol.format.XMLFeature;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.And
+ */
+declare module "ol/format/filter/and" {
+    export default ol.format.filter.And;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.Bbox
+ */
+declare module "ol/format/filter/bbox" {
+    export default ol.format.filter.Bbox;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.Comparison
+ */
+declare module "ol/format/filter/comparison" {
+    export default ol.format.filter.Comparison;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.ComparisonBinary
+ */
+declare module "ol/format/filter/comparisonbinary" {
+    export default ol.format.filter.ComparisonBinary;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.EqualTo
+ */
+declare module "ol/format/filter/equalto" {
+    export default ol.format.filter.EqualTo;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.Filter
+ */
+declare module "ol/format/filter/filter" {
+    export default ol.format.filter.Filter;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.GreaterThan
+ */
+declare module "ol/format/filter/greaterthan" {
+    export default ol.format.filter.GreaterThan;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.GreaterThanOrEqualTo
+ */
+declare module "ol/format/filter/greaterthanorequalto" {
+    export default ol.format.filter.GreaterThanOrEqualTo;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.Intersects
+ */
+declare module "ol/format/filter/intersects" {
+    export default ol.format.filter.Intersects;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.IsBetween
+ */
+declare module "ol/format/filter/isbetween" {
+    export default ol.format.filter.IsBetween;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.IsLike
+ */
+declare module "ol/format/filter/islike" {
+    export default ol.format.filter.IsLike;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.IsNull
+ */
+declare module "ol/format/filter/isnull" {
+    export default ol.format.filter.IsNull;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.LessThan
+ */
+declare module "ol/format/filter/lessthan" {
+    export default ol.format.filter.LessThan;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.LessThanOrEqualTo
+ */
+declare module "ol/format/filter/lessthanorequalto" {
+    export default ol.format.filter.LessThanOrEqualTo;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.LogicalNary
+ */
+declare module "ol/format/filter/logicalnary" {
+    export default ol.format.filter.LogicalNary;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.Not
+ */
+declare module "ol/format/filter/not" {
+    export default ol.format.filter.Not;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.NotEqualTo
+ */
+declare module "ol/format/filter/notequalto" {
+    export default ol.format.filter.NotEqualTo;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.Or
+ */
+declare module "ol/format/filter/or" {
+    export default ol.format.filter.Or;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.Spatial
+ */
+declare module "ol/format/filter/spatial" {
+    export default ol.format.filter.Spatial;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.Within
+ */
+declare module "ol/format/filter/within" {
+    export default ol.format.filter.Within;
 }
 /*
  * ES2015 module declaration for ol.geom.Circle
  */
 declare module "ol/geom/circle" {
     export default ol.geom.Circle;
+}
+/*
+ * ES2015 module declaration for ol.geom.Geometry
+ */
+declare module "ol/geom/geometry" {
+    export default ol.geom.Geometry;
 }
 /*
  * ES2015 module declaration for ol.geom.GeometryCollection
@@ -20500,16 +20590,16 @@ declare module "ol/geom/multipoint" {
     export default ol.geom.MultiPoint;
 }
 /*
- * ES2015 module declaration for ol.geom.Point
- */
-declare module "ol/geom/point" {
-    export default ol.geom.Point;
-}
-/*
  * ES2015 module declaration for ol.geom.MultiPolygon
  */
 declare module "ol/geom/multipolygon" {
     export default ol.geom.MultiPolygon;
+}
+/*
+ * ES2015 module declaration for ol.geom.Point
+ */
+declare module "ol/geom/point" {
+    export default ol.geom.Point;
 }
 /*
  * ES2015 module declaration for ol.geom.Polygon
@@ -20518,28 +20608,16 @@ declare module "ol/geom/polygon" {
     export default ol.geom.Polygon;
 }
 /*
- * ES2015 module declaration for ol.Sphere
+ * ES2015 module declaration for ol.geom.SimpleGeometry
  */
-declare module "ol/sphere" {
-    export default ol.Sphere;
-}
-/*
- * ES2015 module declaration for ol.Graticule
- */
-declare module "ol/graticule" {
-    export default ol.Graticule;
+declare module "ol/geom/simplegeometry" {
+    export default ol.geom.SimpleGeometry;
 }
 /*
  * ES2015 module declaration for ol.interaction.DoubleClickZoom
  */
 declare module "ol/interaction/doubleclickzoom" {
     export default ol.interaction.DoubleClickZoom;
-}
-/*
- * ES2015 module declaration for ol.interaction.Interaction
- */
-declare module "ol/interaction/interaction" {
-    export default ol.interaction.Interaction;
 }
 /*
  * ES2015 module declaration for ol.interaction.DragAndDrop
@@ -20552,12 +20630,6 @@ declare module "ol/interaction/draganddrop" {
  */
 declare module "ol/interaction/dragbox" {
     export default ol.interaction.DragBox;
-}
-/*
- * ES2015 module declaration for ol.interaction.Pointer
- */
-declare module "ol/interaction/pointer" {
-    export default ol.interaction.Pointer;
 }
 /*
  * ES2015 module declaration for ol.interaction.DragPan
@@ -20596,6 +20668,12 @@ declare module "ol/interaction/extent" {
     export default ol.interaction.Extent;
 }
 /*
+ * ES2015 module declaration for ol.interaction.Interaction
+ */
+declare module "ol/interaction/interaction" {
+    export default ol.interaction.Interaction;
+}
+/*
  * ES2015 module declaration for ol.interaction.KeyboardPan
  */
 declare module "ol/interaction/keyboardpan" {
@@ -20632,16 +20710,16 @@ declare module "ol/interaction/pinchzoom" {
     export default ol.interaction.PinchZoom;
 }
 /*
+ * ES2015 module declaration for ol.interaction.Pointer
+ */
+declare module "ol/interaction/pointer" {
+    export default ol.interaction.Pointer;
+}
+/*
  * ES2015 module declaration for ol.interaction.Select
  */
 declare module "ol/interaction/select" {
     export default ol.interaction.Select;
-}
-/*
- * ES2015 module declaration for ol.layer.Vector
- */
-declare module "ol/layer/vector" {
-    export default ol.layer.Vector;
 }
 /*
  * ES2015 module declaration for ol.interaction.Snap
@@ -20654,12 +20732,6 @@ declare module "ol/interaction/snap" {
  */
 declare module "ol/interaction/translate" {
     export default ol.interaction.Translate;
-}
-/*
- * ES2015 module declaration for ol.Kinetic
- */
-declare module "ol/kinetic" {
-    export default ol.Kinetic;
 }
 /*
  * ES2015 module declaration for ol.layer.Base
@@ -20680,28 +20752,16 @@ declare module "ol/layer/heatmap" {
     export default ol.layer.Heatmap;
 }
 /*
- * ES2015 module declaration for ol.source.Vector
- */
-declare module "ol/source/vector" {
-    export default ol.source.Vector;
-}
-/*
- * ES2015 module declaration for ol.source.Source
- */
-declare module "ol/source/source" {
-    export default ol.source.Source;
-}
-/*
  * ES2015 module declaration for ol.layer.Image
  */
 declare module "ol/layer/image" {
     export default ol.layer.Image;
 }
 /*
- * ES2015 module declaration for ol.source.Image
+ * ES2015 module declaration for ol.layer.Layer
  */
-declare module "ol/source/image" {
-    export default ol.source.Image;
+declare module "ol/layer/layer" {
+    export default ol.layer.Layer;
 }
 /*
  * ES2015 module declaration for ol.layer.Tile
@@ -20710,10 +20770,10 @@ declare module "ol/layer/tile" {
     export default ol.layer.Tile;
 }
 /*
- * ES2015 module declaration for ol.source.Tile
+ * ES2015 module declaration for ol.layer.Vector
  */
-declare module "ol/source/tile" {
-    export default ol.source.Tile;
+declare module "ol/layer/vector" {
+    export default ol.layer.Vector;
 }
 /*
  * ES2015 module declaration for ol.layer.VectorTile
@@ -20722,22 +20782,16 @@ declare module "ol/layer/vectortile" {
     export default ol.layer.VectorTile;
 }
 /*
- * ES2015 module declaration for ol.Overlay
+ * ES2015 module declaration for ol.proj.Projection
  */
-declare module "ol/overlay" {
-    export default ol.Overlay;
+declare module "ol/proj/projection" {
+    export default ol.proj.Projection;
 }
 /*
- * ES2015 module declaration for ol.View
+ * ES2015 module declaration for ol.render.Feature
  */
-declare module "ol/view" {
-    export default ol.View;
-}
-/*
- * ES2015 module declaration for ol.Observable
- */
-declare module "ol/observable" {
-    export default ol.Observable;
+declare module "ol/render/feature" {
+    export default ol.render.Feature;
 }
 /*
  * ES2015 module declaration for ol.render.VectorContext
@@ -20746,16 +20800,16 @@ declare module "ol/render/vectorcontext" {
     export default ol.render.VectorContext;
 }
 /*
+ * ES2015 module declaration for ol.render.canvas.Immediate
+ */
+declare module "ol/render/canvas/immediate" {
+    export default ol.render.canvas.Immediate;
+}
+/*
  * ES2015 module declaration for ol.source.BingMaps
  */
 declare module "ol/source/bingmaps" {
     export default ol.source.BingMaps;
-}
-/*
- * ES2015 module declaration for ol.source.TileImage
- */
-declare module "ol/source/tileimage" {
-    export default ol.source.TileImage;
 }
 /*
  * ES2015 module declaration for ol.source.CartoDB
@@ -20764,16 +20818,16 @@ declare module "ol/source/cartodb" {
     export default ol.source.CartoDB;
 }
 /*
- * ES2015 module declaration for ol.source.XYZ
- */
-declare module "ol/source/xyz" {
-    export default ol.source.XYZ;
-}
-/*
  * ES2015 module declaration for ol.source.Cluster
  */
 declare module "ol/source/cluster" {
     export default ol.source.Cluster;
+}
+/*
+ * ES2015 module declaration for ol.source.Image
+ */
+declare module "ol/source/image" {
+    export default ol.source.Image;
 }
 /*
  * ES2015 module declaration for ol.source.ImageArcGISRest
@@ -20824,10 +20878,22 @@ declare module "ol/source/raster" {
     export default ol.source.Raster;
 }
 /*
+ * ES2015 module declaration for ol.source.Source
+ */
+declare module "ol/source/source" {
+    export default ol.source.Source;
+}
+/*
  * ES2015 module declaration for ol.source.Stamen
  */
 declare module "ol/source/stamen" {
     export default ol.source.Stamen;
+}
+/*
+ * ES2015 module declaration for ol.source.Tile
+ */
+declare module "ol/source/tile" {
+    export default ol.source.Tile;
 }
 /*
  * ES2015 module declaration for ol.source.TileArcGISRest
@@ -20840,6 +20906,12 @@ declare module "ol/source/tilearcgisrest" {
  */
 declare module "ol/source/tiledebug" {
     export default ol.source.TileDebug;
+}
+/*
+ * ES2015 module declaration for ol.source.TileImage
+ */
+declare module "ol/source/tileimage" {
+    export default ol.source.TileImage;
 }
 /*
  * ES2015 module declaration for ol.source.TileJSON
@@ -20860,6 +20932,18 @@ declare module "ol/source/tilewms" {
     export default ol.source.TileWMS;
 }
 /*
+ * ES2015 module declaration for ol.source.UrlTile
+ */
+declare module "ol/source/urltile" {
+    export default ol.source.UrlTile;
+}
+/*
+ * ES2015 module declaration for ol.source.Vector
+ */
+declare module "ol/source/vector" {
+    export default ol.source.Vector;
+}
+/*
  * ES2015 module declaration for ol.source.VectorTile
  */
 declare module "ol/source/vectortile" {
@@ -20870,6 +20954,12 @@ declare module "ol/source/vectortile" {
  */
 declare module "ol/source/wmts" {
     export default ol.source.WMTS;
+}
+/*
+ * ES2015 module declaration for ol.source.XYZ
+ */
+declare module "ol/source/xyz" {
+    export default ol.source.XYZ;
 }
 /*
  * ES2015 module declaration for ol.source.Zoomify
@@ -20890,22 +20980,10 @@ declare module "ol/style/circle" {
     export default ol.style.Circle;
 }
 /*
- * ES2015 module declaration for ol.style.RegularShape
- */
-declare module "ol/style/regularshape" {
-    export default ol.style.RegularShape;
-}
-/*
  * ES2015 module declaration for ol.style.Fill
  */
 declare module "ol/style/fill" {
     export default ol.style.Fill;
-}
-/*
- * ES2015 module declaration for ol.style.Stroke
- */
-declare module "ol/style/stroke" {
-    export default ol.style.Stroke;
 }
 /*
  * ES2015 module declaration for ol.style.Icon
@@ -20920,10 +20998,34 @@ declare module "ol/style/image" {
     export default ol.style.Image;
 }
 /*
+ * ES2015 module declaration for ol.style.RegularShape
+ */
+declare module "ol/style/regularshape" {
+    export default ol.style.RegularShape;
+}
+/*
+ * ES2015 module declaration for ol.style.Stroke
+ */
+declare module "ol/style/stroke" {
+    export default ol.style.Stroke;
+}
+/*
+ * ES2015 module declaration for ol.style.Style
+ */
+declare module "ol/style/style" {
+    export default ol.style.Style;
+}
+/*
  * ES2015 module declaration for ol.style.Text
  */
 declare module "ol/style/text" {
     export default ol.style.Text;
+}
+/*
+ * ES2015 module declaration for ol.tilegrid.TileGrid
+ */
+declare module "ol/tilegrid/tilegrid" {
+    export default ol.tilegrid.TileGrid;
 }
 /*
  * ES2015 module declaration for ol.tilegrid.WMTS
@@ -20932,20 +21034,208 @@ declare module "ol/tilegrid/wmts" {
     export default ol.tilegrid.WMTS;
 }
 /*
- * ES2015 module declaration for ol.render.Feature
+ * ES2015 module declaration for ol.control
  */
-declare module "ol/render/feature" {
-    export default ol.render.Feature;
+declare module "ol/control" {
+    export default {
+        defaults: ol.control.defaults
+    };
 }
 /*
- * ES2015 module declaration for ol.events.Event
+ * ES2015 module declaration for ol.events.condition
  */
-declare module "ol/events/event" {
-    export default ol.events.Event;
+declare module "ol/events/condition" {
+    export default {
+        altKeyOnly: ol.events.condition.altKeyOnly,
+        altShiftKeysOnly: ol.events.condition.altShiftKeysOnly,
+        always: ol.events.condition.always,
+        click: ol.events.condition.click,
+        never: ol.events.condition.never,
+        pointerMove: ol.events.condition.pointerMove,
+        singleClick: ol.events.condition.singleClick,
+        doubleClick: ol.events.condition.doubleClick,
+        noModifierKeys: ol.events.condition.noModifierKeys,
+        platformModifierKeyOnly: ol.events.condition.platformModifierKeyOnly,
+        shiftKeyOnly: ol.events.condition.shiftKeyOnly,
+        targetNotEditable: ol.events.condition.targetNotEditable,
+        mouseOnly: ol.events.condition.mouseOnly,
+        primaryAction: ol.events.condition.primaryAction
+    };
 }
 /*
- * ES2015 module declaration for ol.format.GMLBase
+ * ES2015 module declaration for ol.format.filter
  */
-declare module "ol/format/gmlbase" {
-    export default ol.format.GMLBase;
+declare module "ol/format/filter" {
+    export default {
+        and: ol.format.filter.and,
+        or: ol.format.filter.or,
+        not: ol.format.filter.not,
+        bbox: ol.format.filter.bbox,
+        intersects: ol.format.filter.intersects,
+        within: ol.format.filter.within,
+        equalTo: ol.format.filter.equalTo,
+        notEqualTo: ol.format.filter.notEqualTo,
+        lessThan: ol.format.filter.lessThan,
+        lessThanOrEqualTo: ol.format.filter.lessThanOrEqualTo,
+        greaterThan: ol.format.filter.greaterThan,
+        greaterThanOrEqualTo: ol.format.filter.greaterThanOrEqualTo,
+        isNull: ol.format.filter.isNull,
+        between: ol.format.filter.between,
+        like: ol.format.filter.like
+    };
+}
+/*
+ * ES2015 module declaration for ol.interaction
+ */
+declare module "ol/interaction" {
+    export default {
+        defaults: ol.interaction.defaults
+    };
+}
+/*
+ * ES2015 module declaration for ol.proj
+ */
+declare module "ol/proj" {
+    export default {
+        setProj4: ol.proj.setProj4,
+        getPointResolution: ol.proj.getPointResolution,
+        addEquivalentProjections: ol.proj.addEquivalentProjections,
+        addProjection: ol.proj.addProjection,
+        addCoordinateTransforms: ol.proj.addCoordinateTransforms,
+        fromLonLat: ol.proj.fromLonLat,
+        toLonLat: ol.proj.toLonLat,
+        get: ol.proj.get,
+        equivalent: ol.proj.equivalent,
+        getTransform: ol.proj.getTransform,
+        transform: ol.proj.transform,
+        transformExtent: ol.proj.transformExtent
+    };
+}
+/*
+ * ES2015 module declaration for ol.proj.common
+ */
+declare module "ol/proj/common" {
+    export default {
+        add: ol.proj.common.add
+    };
+}
+/*
+ * ES2015 module declaration for ol.render
+ */
+declare module "ol/render" {
+    export default {
+        toContext: ol.render.toContext
+    };
+}
+/*
+ * ES2015 module declaration for ol.tilegrid
+ */
+declare module "ol/tilegrid" {
+    export default {
+        createXYZ: ol.tilegrid.createXYZ
+    };
+}
+/*
+ * ES2015 module declaration for ol.color
+ */
+declare module "ol/color" {
+    export default {
+        asArray: ol.color.asArray,
+        asString: ol.color.asString
+    };
+}
+/*
+ * ES2015 module declaration for ol.colorlike
+ */
+declare module "ol/colorlike" {
+    export default {
+        asColorLike: ol.colorlike.asColorLike
+    };
+}
+/*
+ * ES2015 module declaration for ol.coordinate
+ */
+declare module "ol/coordinate" {
+    export default {
+        add: ol.coordinate.add,
+        createStringXY: ol.coordinate.createStringXY,
+        format: ol.coordinate.format,
+        rotate: ol.coordinate.rotate,
+        toStringHDMS: ol.coordinate.toStringHDMS,
+        toStringXY: ol.coordinate.toStringXY
+    };
+}
+/*
+ * ES2015 module declaration for ol.easing
+ */
+declare module "ol/easing" {
+    export default {
+        easeIn: ol.easing.easeIn,
+        easeOut: ol.easing.easeOut,
+        inAndOut: ol.easing.inAndOut,
+        linear: ol.easing.linear,
+        upAndDown: ol.easing.upAndDown
+    };
+}
+/*
+ * ES2015 module declaration for ol.extent
+ */
+declare module "ol/extent" {
+    export default {
+        boundingExtent: ol.extent.boundingExtent,
+        buffer: ol.extent.buffer,
+        containsCoordinate: ol.extent.containsCoordinate,
+        containsExtent: ol.extent.containsExtent,
+        containsXY: ol.extent.containsXY,
+        createEmpty: ol.extent.createEmpty,
+        equals: ol.extent.equals,
+        extend: ol.extent.extend,
+        getBottomLeft: ol.extent.getBottomLeft,
+        getBottomRight: ol.extent.getBottomRight,
+        getCenter: ol.extent.getCenter,
+        getHeight: ol.extent.getHeight,
+        getIntersection: ol.extent.getIntersection,
+        getSize: ol.extent.getSize,
+        getTopLeft: ol.extent.getTopLeft,
+        getTopRight: ol.extent.getTopRight,
+        getWidth: ol.extent.getWidth,
+        intersects: ol.extent.intersects,
+        isEmpty: ol.extent.isEmpty,
+        applyTransform: ol.extent.applyTransform
+    };
+}
+/*
+ * ES2015 module declaration for ol.featureloader
+ */
+declare module "ol/featureloader" {
+    export default {
+        xhr: ol.featureloader.xhr
+    };
+}
+/*
+ * ES2015 module declaration for ol.loadingstrategy
+ */
+declare module "ol/loadingstrategy" {
+    export default {
+        all: ol.loadingstrategy.all,
+        bbox: ol.loadingstrategy.bbox,
+        tile: ol.loadingstrategy.tile
+    };
+}
+/*
+ * ES2015 module declaration for ol.size
+ */
+declare module "ol/size" {
+    export default {
+        toSize: ol.size.toSize
+    };
+}
+/*
+ * ES2015 module declaration for ol.xml
+ */
+declare module "ol/xml" {
+    export default {
+        getAllTextContent: ol.xml.getAllTextContent,
+        parse: ol.xml.parse
+    };
 }

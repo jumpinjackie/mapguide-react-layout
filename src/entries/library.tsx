@@ -52,7 +52,6 @@ export class Registry {
 export { Common };
 export { Contracts };
 export const Externals = {
-    ol: ol,
     proj4: proj4,
     React: React,
     ReactDOM: ReactDOM

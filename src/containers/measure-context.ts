@@ -8,6 +8,7 @@ import {
 import { tr } from "../api/i18n";
 import * as logger from "../utils/logger";
 
+import olSphere from "ol/sphere";
 import proj from "ol/proj";
 import Observable from "ol/observable";
 
@@ -28,7 +29,7 @@ import LineString from "ol/geom/linestring";
 import Polygon from "ol/geom/polygon";
 
 const LAYER_NAME = "measure-layer";
-const WGS84_SPHERE = new ol.Sphere(6378137);
+const WGS84_SPHERE = new olSphere(6378137);
 
 export interface IMeasureComponent {
     getCurrentDrawType(): string | undefined;

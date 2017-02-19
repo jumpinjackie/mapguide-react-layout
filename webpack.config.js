@@ -11,7 +11,7 @@ const baseAppEntries = [
 ];
 
 const devAppEntries = [
-//   'webpack-hot-middleware/client?reload=true',
+    //   'webpack-hot-middleware/client?reload=true',
 ];
 
 const appEntries = baseAppEntries.concat(process.env.NODE_ENV === 'development' ? devAppEntries : []);
@@ -37,6 +37,13 @@ const devPlugins = [
 ];
 
 const prodPlugins = [
+    new webpack.LoaderOptionsPlugin({
+        minimize: true,
+        debug: false,
+        options: {
+            context: __dirname
+        }
+    }),
     new webpack.optimize.UglifyJsPlugin({
         sourceMap: true,
         compress: {

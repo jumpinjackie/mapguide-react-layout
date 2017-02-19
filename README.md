@@ -5,7 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/jumpinjackie/mapguide-react-layout/badge.svg?branch=master)](https://coveralls.io/github/jumpinjackie/mapguide-react-layout?branch=master)
 [![Greenkeeper badge](https://badges.greenkeeper.io/jumpinjackie/mapguide-react-layout.svg)](https://greenkeeper.io/)
 
-mapguide-react-layout is an experimental react-based map viewer for MapGuide.
+mapguide-react-layout is a modern map viewer for MapGuide.
 
 It is built from the ground up with modern web technologies ([React](https://facebook.github.io/react/), [OpenLayers 3](http://openlayers.org/), [TypeScript](https://www.typescriptlang.org/)) to be **the definitive map viewer** for [MapGuide Open Source](http://mapguide.osgeo.org) or [Autodesk Infrastructure Map Server](http://www.autodesk.com/products/infrastructure-map-server/overview)
 
@@ -22,7 +22,7 @@ It aims for reasonable compatibility with the existing Web Layout and Flexible L
     * For mobile devices:
       * iOS: Mobile Safari
       * Android: Google Chrome or Mozilla Firefox
- * For development: node.js 4.x or newer
+ * For development: node.js 6.x or newer
     * Make sure yarn is installed `npm install -g yarn`
 
 # Installation - From Source

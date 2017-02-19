@@ -33,13 +33,12 @@ const basePlugins = [
 ];
 
 const devPlugins = [
-    new webpack.NoErrorsPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
 ];
 
 const prodPlugins = [
-    new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.optimize.DedupePlugin(),
     new webpack.optimize.UglifyJsPlugin({
+        sourceMap: true,
         compress: {
             warnings: false,
             screw_ie8: true
@@ -76,10 +75,10 @@ module.exports = {
 
     resolve: {
         alias: {},
-        modulesDirectories: [
+        modules: [
             'node_modules'
         ],
-        extensions: ['', '.webpack.js', '.web.js', '.tsx', '.ts', '.js']
+        extensions: ['.webpack.js', '.web.js', '.tsx', '.ts', '.js']
     },
 
     plugins: plugins,
@@ -90,10 +89,7 @@ module.exports = {
     },
 
     module: {
-        preLoaders: [
-            //loaders.tslint,
-        ],
-        loaders: [
+        rules: [
             loaders.tsx,
             loaders.html,
             loaders.css,

@@ -8,13 +8,13 @@ exports.tslint = {
 */
 exports.tsx = {
   test: /\.tsx?$/,
-  loader: 'ts',
+  loader: 'ts-loader',
   exclude: /(node_modules|test-utils|\.test\.ts$)/
 };
 
 exports.html = {
   test: /\.html$/,
-  loader: 'raw',
+  loader: 'raw-loader',
   exclude: /node_modules/
 };
 
@@ -32,10 +32,18 @@ exports.css = {
 
 exports.image = {
   test: /\.(png|jpg)$/,
-  loader: "file-loader?name=images/[name].[ext]&publicPath=./dist/"
+  loader: "file-loader",
+  options: {
+    name: "images/[name].[ext]",
+    publicPath: "./dist/"
+  }
 };
 
 exports.fonts = {
-    test: /\.(woff|woff2|ttf|eot|svg)$/,
-    loader: 'file-loader?name=fonts/[name].[ext]&publicPath=./dist/'
+  test: /\.(woff|woff2|ttf|eot|svg)$/,
+  loader: "file-loader",
+  options: {
+    name: "fonts/[name].[ext]",
+    publicPath: "./dist/"
+  }
 };

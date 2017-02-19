@@ -1,8 +1,8 @@
 /**
  * logger.ts
- * 
- * Console wrappers that are only active in development mode 
- * 
+ *
+ * Console wrappers that are only active in development mode
+ *
  * @export
  * @param {*} [message]
  * @param {...any[]} optionalParams

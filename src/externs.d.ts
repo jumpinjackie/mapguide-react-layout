@@ -1,8 +1,8 @@
 /**
  * externs.d.ts
- * 
+ *
  * This file contains type definitions for external libraries where:
- * 
+ *
  *  a. No such typings exist
  *  b. The typings are for a version of a library that is out of date
  *  c. The typings are poor quality or unusable
@@ -19,6 +19,18 @@ declare module "ismobilejs" {
 declare module "proj4" {
     type Proj4 = any;
     export = Proj4;
+}
+
+declare module "ol/proj" {
+    export default ol.proj;
+}
+
+declare module "ol/extent" {
+    export default ol.extent;
+}
+
+declare module "ol/easing" {
+    export default ol.easing;
 }
 
 declare module "react-draggable" {

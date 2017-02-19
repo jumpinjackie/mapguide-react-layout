@@ -13,6 +13,7 @@ import { tr } from "../api/i18n";
 import * as ReactDOM from "react-dom";
 import * as logger from '../utils/logger';
 import debounce = require("lodash.debounce");
+import { createExternalSource } from "./external-layer-factory";
 
 import olExtent from "ol/extent";
 import Map from "ol/map";
@@ -350,7 +351,7 @@ export class MgLayerSet {
                         title: ext.name,
                         type: "base",
                         visible: ext.visible === true,
-                        source: this.createExternalSource(ext)
+                        source: createExternalSource(ext)
                     };
                     return new TileLayer(options)
                 })
@@ -424,16 +425,6 @@ export class MgLayerSet {
                 .replace('{x}', tileCoord[1].toString())
                 .replace('{y}', (-tileCoord[2] - 1).toString());
         };
-    }
-    private createExternalSource(layer: IExternalBaseLayer) {
-        let sourceCtor = (ol.source as any)[layer.kind];
-        if (typeof(sourceCtor) == 'undefined')
-            throw new MgError(`Unknown external base layer provider: ${layer.kind}`);
-
-        if (typeof(layer.options) != 'undefined')
-            return new sourceCtor(layer.options);
-        else
-            return new sourceCtor();
     }
     public getMetersPerUnit(): number {
         return this.inPerUnit / 39.37

@@ -1,10 +1,9 @@
-import { expect } from 'chai';
 import * as Constants from "../src/constants";
 import { IView } from "../src/api/contracts/common";
 import { IApplicationState } from "../src/api/common";
 import { RuntimeMap } from "../src/api/contracts/runtime-map";
 import thunk from 'redux-thunk';
-import { createMap, createInitAction, createInitialState } from "./test-data";
+import { createMap, createInitAction, createInitialState } from "../test-data";
 import { initErrorReducer } from "../src/reducers/init-error";
 
 describe("reducers/init-error", () => {
@@ -27,12 +26,12 @@ describe("reducers/init-error", () => {
             }
         };
         const state = initErrorReducer(initialState.initError, action as any);
-        expect(state).to.not.be.null;
-        expect(state.includeStack).to.be.true;
-        expect(state.options).to.not.be.null;
-        expect(state.options.foo).to.be.equal("bar");
-        expect(state.error).to.not.be.null;
-        expect(state.error.message).to.be.equal("Uh-oh");
-        expect(state.error.stack).to.have.length(2);
+        expect(state).not.toBeNull();
+        expect(state.includeStack).toBe(true);
+        expect(state.options).not.toBeNull();
+        expect(state.options.foo).toBe("bar");
+        expect(state.error).not.toBeNull();
+        expect(state.error.message).toBe("Uh-oh");
+        expect(state.error.stack).toHaveLength(2);
     });
 });

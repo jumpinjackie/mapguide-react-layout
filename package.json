@@ -1,20 +1,21 @@
 {
   "name": "mapguide-react-layout",
-  "version": "0.8.0",
-  "description": "An experimental react-based layout for MapGuide",
+  "version": "0.9.0",
+  "description": "A modern react-based map viewer for MapGuide",
   "scripts": {
     "prebuild": "yarn run clean",
     "build": "cross-env NODE_ENV=production webpack && bestzip viewer.zip viewer/",
     "build:dev": "cross-env NODE_ENV=development webpack",
     "watch:dev": "cross-env NODE_ENV=development webpack -w --progress",
     "clean": "rimraf viewer/dist/",
-    "dev": "cross-env NODE_ENV=development webpack-dev-server -d --inline --hot --progress --no-info",
     "lint": "tslint 'src/**/*.tsx' 'src/**/*.ts' 'test/**/*.tsx' 'test/**/*.ts'",
     "postinstall": "yarn run typings && yarn run build",
     "typings": "rimraf typings/ && typings install",
-    "test": "karma start",
-    "test:ci": "karma start --single-run --browsers PhantomJS --reporters=verbose",
-    "ci": "yarn run typings && yarn run lint && yarn run test:ci"
+    "test": "jest",
+    "test:appveyor": "jest --coverage --colors",
+    "test:travis": "jest --coverage --colors && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "ci:appveyor": "yarn run typings && yarn run lint && yarn run test:appveyor",
+    "ci:travis": "yarn run typings && yarn run lint && yarn run test:travis"
   },
   "repository": {
     "type": "git",
@@ -33,13 +34,12 @@
   "homepage": "https://github.com/jumpinjackie/mapguide-react-layout#readme",
   "devDependencies": {
     "@blueprintjs/core": "1.9.0",
-    "@types/chai": "3.4.34",
     "@types/enzyme": "2.7.4",
+    "@types/jest": "18.1.1",
     "@types/lodash.debounce": "4.0.1",
     "@types/lodash.uniq": "4.5.1",
     "@types/lodash.xor": "^4.5.1",
-    "@types/mocha": "2.2.39",
-    "@types/node": "6.0.58",
+    "@types/node": "7.0.5",
     "@types/query-string": "3.0.31",
     "@types/react": "0.14.55",
     "@types/react-addons-css-transition-group": "0.14.19",
@@ -48,33 +48,21 @@
     "@types/react-measure": "0.4.5",
     "@types/shortid": "0.0.28",
     "bestzip": "^1.1.3",
-    "chai": "^3.5.0",
+    "coveralls": "^2.11.16",
     "cross-env": "^3.1.4",
     "css-loader": "^0.26.1",
     "enzyme": "^2.7.1",
     "es6-promise": "^4.0.5",
-    "express": "^4.14.0",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.10.0",
-    "helmet": "^3.4.0",
-    "html-webpack-plugin": "^2.28.0",
-    "http-proxy": "^1.16.2",
     "ismobilejs": "^0.4.0",
-    "karma": "^1.4.1",
-    "karma-chai": "^0.1.0",
-    "karma-mocha": "^1.3.0",
-    "karma-phantomjs-launcher": "^1.0.2",
-    "karma-typescript-preprocessor2": "^1.2.1",
-    "karma-verbose-reporter": "0.0.5",
-    "karma-webpack": "^2.0.2",
+    "jest": "^18.1.0",
     "less": "^2.7.2",
     "less-loader": "^2.2.3",
     "lodash.debounce": "^4.0.8",
     "lodash.uniq": "^4.5.0",
     "lodash.xor": "^4.5.0",
-    "mocha": "^3.2.0",
-    "ol": "4.0.1-beta.1",
-    "phantomjs-prebuilt": "^2.1.14",
+    "ol": "4.0.1-beta.2",
     "proj4": "^2.3.17",
     "query-string": "^4.3.2",
     "raw-loader": "^0.5.1",
@@ -90,21 +78,42 @@
     "redux-localstorage": "^0.4.1",
     "redux-logger": "^2.8.1",
     "redux-thunk": "^2.2.0",
-    "rimraf": "^2.5.4",
+    "rimraf": "^2.6.0",
     "shortid": "2.2.6",
     "style-loader": "^0.13.1",
     "testdouble": "^1.11.1",
-    "ts-loader": "^1.3.3",
+    "ts-jest": "^18.0.3",
+    "ts-loader": "^2.0.0",
     "tslib": "1.5.0",
     "tslint": "^4.4.2",
     "typescript": "2.1.6",
     "typings": "^2.1.0",
     "url-loader": "^0.5.7",
-    "url-parse": "^1.1.7",
-    "webpack": "^1.14.0",
-    "webpack-dev-server": "^1.16.2",
-    "webpack-hot-middleware": "^2.15.0",
-    "whatwg-fetch": "^2.0.2",
-    "winston": "^2.3.1"
+    "url-parse": "^1.1.8",
+    "webpack": "^2.2.1",
+    "whatwg-fetch": "^2.0.2"
+  },
+  "greenkeeper": {
+    "ignore": [
+      "@types/react",
+      "@types/react-addons-css-transition-group",
+      "@types/react-addons-update",
+      "@types/react-dom",
+      "@types/react-measure"
+    ]
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/test/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "globals": {
+      "__DEV__": true
+    }
   }
 }

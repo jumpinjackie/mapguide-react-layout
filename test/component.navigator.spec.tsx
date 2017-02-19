@@ -1,5 +1,4 @@
 import * as React from "react";
-import { expect } from "chai";
 import { shallow, mount, render } from "enzyme";
 import { Navigator, PanDirection, ZoomDirection } from "../src/components/navigator";
 import td = require("testdouble");
@@ -13,16 +12,16 @@ describe("components/navigator", () => {
         const onRequestZoomToScale = td.function<any>();
         const onZoom = td.function<ZoomFunc>();
         const wrapper = shallow(<Navigator onPan={onPan} onRequestZoomToScale={onRequestZoomToScale} onZoom={onZoom} busy={true} scale={5000} />);
-        expect(wrapper.find("img.navigator-spinner")).to.have.length(1);
-        expect((wrapper.find("img.navigator-spinner").props() as any).style.visibility).to.be.equal("visible");
+        expect(wrapper.find("img.navigator-spinner")).toHaveLength(1);
+        expect((wrapper.find("img.navigator-spinner").props() as any).style.visibility).toBe("visible");
     });
     it("renders spinner hidden when not busy", () => {
         const onPan = td.function<PanFunc>();
         const onRequestZoomToScale = td.function<any>();
         const onZoom = td.function<ZoomFunc>();
         const wrapper = shallow(<Navigator onPan={onPan} onRequestZoomToScale={onRequestZoomToScale} onZoom={onZoom} busy={false} scale={5000} />);
-        expect(wrapper.find("img.navigator-spinner")).to.have.length(1);
-        expect((wrapper.find("img.navigator-spinner").props() as any).style.visibility).to.be.equal("hidden");
+        expect(wrapper.find("img.navigator-spinner")).toHaveLength(1);
+        expect((wrapper.find("img.navigator-spinner").props() as any).style.visibility).toBe("hidden");
     });
     it("clicking right raises pan east", () => {
         const onPan = td.function<PanFunc>();

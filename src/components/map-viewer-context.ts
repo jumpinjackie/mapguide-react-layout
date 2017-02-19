@@ -11,25 +11,40 @@ import { MgError, isSessionExpiredError } from '../api/error';
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { tr } from "../api/i18n";
 import * as ReactDOM from "react-dom";
-import * as ol from "openlayers";
 import * as logger from '../utils/logger';
 import debounce = require("lodash.debounce");
+import { createExternalSource } from "./external-layer-factory";
+
+import olExtent from "ol/extent";
+import Map from "ol/map";
+import View from "ol/view";
+import Overlay from "ol/overlay";
+import WKTFormat from "ol/format/wkt";
+import Point from "ol/geom/point";
+import LayerBase from "ol/layer/base";
+import TileLayer from "ol/layer/tile";
+import ImageLayer from "ol/layer/image";
+import LayerGroup from "ol/layer/group";
+import TileGrid from "ol/tilegrid/tilegrid";
+import TileImageSource from "ol/source/tileimage";
+import MapGuideSource from "ol/source/imagemapguide";
+import OverviewMap from "ol/control/overviewmap";
 
 const HIDDEN_CLASS_NAME = "tooltip-hidden";
 
 class MouseTrackingTooltip {
-    private tooltip: ol.Overlay;
+    private tooltip: Overlay;
     private tooltipElement: Element;
-    private map: ol.Map;
+    private map: Map;
     private text: string | null;
     private isContextMenuOpen: () => boolean;
-    constructor(map: ol.Map, contextMenuTest: () => boolean) {
+    constructor(map: Map, contextMenuTest: () => boolean) {
         this.map = map;
         this.isContextMenuOpen = contextMenuTest;
         this.map.getViewport().addEventListener("mouseout", this.onMouseOut.bind(this));
         this.tooltipElement = document.createElement("div");
         this.tooltipElement.className = 'tooltip';
-        this.tooltip = new ol.Overlay({
+        this.tooltip = new Overlay({
             element: this.tooltipElement,
             offset: [15, 0],
             positioning: "center-left" /*ol.OverlayPositioning.CENTER_LEFT*/
@@ -66,20 +81,20 @@ class MouseTrackingTooltip {
 }
 
 class FeatureQueryTooltip {
-    private wktFormat: ol.format.WKT;
-    private map: ol.Map;
+    private wktFormat: WKTFormat;
+    private map: Map;
     private onRequestSelectableLayers: (() => string[]) | undefined;
     private throttledMouseMove: GenericEventHandler;
     private featureTooltipElement: Element;
-    private featureTooltip: ol.Overlay;
+    private featureTooltip: Overlay;
     private enabled: boolean;
     private callback: IMapViewerContextCallback;
-    constructor(map: ol.Map, callback: IMapViewerContextCallback) {
+    constructor(map: Map, callback: IMapViewerContextCallback) {
         this.callback = callback;
-        this.wktFormat = new ol.format.WKT();
+        this.wktFormat = new WKTFormat();
         this.featureTooltipElement = document.createElement("div");
         this.featureTooltipElement.className = 'feature-tooltip';
-        this.featureTooltip = new ol.Overlay({
+        this.featureTooltip = new Overlay({
             element: this.featureTooltipElement,
             offset: [15, 0],
             positioning: "center-left" /* ol.OverlayPositioning.CENTER_LEFT */
@@ -110,7 +125,7 @@ class FeatureQueryTooltip {
         if (!this.enabled) {
             return;
         }
-        const geom = new ol.geom.Point(coords);
+        const geom = new Point(coords);
         //const selectedLayerNames = this.onRequestSelectableLayers();
         //if (selectedLayerNames != null && selectedLayerNames.length == 0) {
         //    return;
@@ -171,21 +186,21 @@ export interface IMapViewerContextProps {
 }
 
 export class MgLayerSet {
-    baseLayerGroups: ol.layer.Tile[];
-    overlay: ol.layer.Image;
-    overviewOverlay: ol.layer.Image;
-    selectionOverlay: ol.layer.Image;
-    baseLayerGroup: ol.layer.Group;
+    baseLayerGroups: TileLayer[];
+    overlay: ImageLayer;
+    overviewOverlay: ImageLayer;
+    selectionOverlay: ImageLayer;
+    baseLayerGroup: LayerGroup;
     dynamicOverlayParams: any;
     staticOverlayParams: any;
     selectionOverlayParams: any;
     projection: string;
     dpi: number;
     extent: ol.Extent;
-    allLayers: ol.layer.Base[];
+    allLayers: LayerBase[];
     inPerUnit: number;
     resourceId: string;
-    view: ol.View;
+    view: View;
     private callback: IMapViewerContextCallback;
     constructor(props: IMapViewerContextProps, callback: IMapViewerContextCallback) {
         this.callback = callback;
@@ -246,22 +261,22 @@ export class MgLayerSet {
             this.projection = `EPSG:${map.CoordinateSystem.EpsgCode}`;
         }
 
-        const tileGrid = new ol.tilegrid.TileGrid({
-            origin: ol.extent.getTopLeft(this.extent),
+        const tileGrid = new TileGrid({
+            origin: olExtent.getTopLeft(this.extent),
             resolutions: resolutions,
             tileSize: [tileWidth, tileHeight]
         });
 
-        const groupLayers = [] as ol.layer.Tile[];
+        const groupLayers = [] as TileLayer[];
         if (map.Group) {
             for (let i = 0; i < map.Group.length; i++) {
                 const group = map.Group[i];
                 if (group.Type != 2 && group.Type != 3) { //BaseMap or LinkedTileSet
                     continue;
                 }
-                const tileLayer = new ol.layer.Tile({
+                const tileLayer = new TileLayer({
                     //name: group.Name,
-                    source: new ol.source.TileImage({
+                    source: new TileImageSource({
                         tileGrid: tileGrid,
                         projection: this.projection,
                         tileUrlFunction: this.getTileUrlFunctionForGroup(resourceId, group.Name, zOrigin),
@@ -292,10 +307,10 @@ export class MgLayerSet {
         }
         */
 
-        this.overlay = new ol.layer.Image({
+        this.overlay = new ImageLayer({
             //name: "MapGuide Dynamic Overlay",
             extent: this.extent,
-            source: new ol.source.ImageMapGuide({
+            source: new MapGuideSource({
                 projection: this.projection,
                 url: props.agentUri,
                 useOverlay: true,
@@ -304,10 +319,10 @@ export class MgLayerSet {
                 ratio: 1
             })
         });
-        this.overviewOverlay = new ol.layer.Image({
+        this.overviewOverlay = new ImageLayer({
             //name: "MapGuide Dynamic Overlay",
             extent: this.extent,
-            source: new ol.source.ImageMapGuide({
+            source: new MapGuideSource({
                 projection: this.projection,
                 url: props.agentUri,
                 useOverlay: false,
@@ -316,10 +331,10 @@ export class MgLayerSet {
                 ratio: 1
             })
         });
-        this.selectionOverlay = new ol.layer.Image({
+        this.selectionOverlay = new ImageLayer({
             //name: "MapGuide Dynamic Overlay",
             extent: this.extent,
-            source: new ol.source.ImageMapGuide({
+            source: new MapGuideSource({
                 projection: this.projection,
                 url: props.agentUri,
                 useOverlay: true,
@@ -336,12 +351,12 @@ export class MgLayerSet {
                         title: ext.name,
                         type: "base",
                         visible: ext.visible === true,
-                        source: this.createExternalSource(ext)
+                        source: createExternalSource(ext)
                     };
-                    return new ol.layer.Tile(options)
+                    return new TileLayer(options)
                 })
             };
-            this.baseLayerGroup = new ol.layer.Group(groupOpts);
+            this.baseLayerGroup = new LayerGroup(groupOpts);
             this.allLayers.push(this.baseLayerGroup);
         }
 
@@ -357,11 +372,11 @@ export class MgLayerSet {
         }
         */
         if (resolutions.length == 0) {
-            this.view = new ol.View({
+            this.view = new View({
                 projection: this.projection
             });
         } else {
-            this.view = new ol.View({
+            this.view = new View({
                 projection: this.projection,
                 resolutions: resolutions
             });
@@ -377,7 +392,7 @@ export class MgLayerSet {
         selSource.on("imageloadend", this.callback.decrementBusyWorker);
         ovSource.on("imageloadend", this.callback.decrementBusyWorker);
     }
-    public getLayersForOverviewMap(): ol.layer.Base[] {
+    public getLayersForOverviewMap(): LayerBase[] {
         //NOTE: MapGuide does not like concurrent map rendering operations of the same mapname/session pair, which
         //this will do when the MG overlay is shared between the main viewer and the overview map. This is probably
         //because the concurrent requests both have SET[X/Y/SCALE/DPI/etc] parameters attached, so there is concurrent
@@ -411,16 +426,6 @@ export class MgLayerSet {
                 .replace('{y}', (-tileCoord[2] - 1).toString());
         };
     }
-    private createExternalSource(layer: IExternalBaseLayer) {
-        let sourceCtor = (ol.source as any)[layer.kind];
-        if (typeof(sourceCtor) == 'undefined')
-            throw new MgError(`Unknown external base layer provider: ${layer.kind}`);
-
-        if (typeof(layer.options) != 'undefined')
-            return new sourceCtor(layer.options);
-        else
-            return new sourceCtor();
-    }
     public getMetersPerUnit(): number {
         return this.inPerUnit / 39.37
     }
@@ -432,7 +437,7 @@ export class MgLayerSet {
     }
     public update(showGroups: string[] | undefined, showLayers: string[] | undefined, hideGroups: string[] | undefined, hideLayers: string[] | undefined) {
         //Send the request
-        const imgSource = this.overlay.getSource() as ol.source.ImageMapGuide;
+        const imgSource = this.overlay.getSource() as MapGuideSource;
         //NOTE: Even if these group ids being shown/hidden are MG base layer groups, it still has to be
         //done as the server-side snapshot of the runtime map needs to be aware as well. This will be
         //apparent if you were to plot a runtime-map server-side that has base layer groups.
@@ -461,14 +466,14 @@ export class MgLayerSet {
         }
     }
     public updateSelectionColor(color: string) {
-        const source = this.selectionOverlay.getSource() as ol.source.ImageMapGuide;
+        const source = this.selectionOverlay.getSource() as MapGuideSource;
         source.updateParams({
             SELECTIONCOLOR: color
         });
     }
     public updateExternalBaseLayers(externalBaseLayers: IExternalBaseLayer[]) {
         const layers = this.baseLayerGroup.getLayers();
-        layers.forEach((l: ol.layer.Base) => {
+        layers.forEach((l: LayerBase) => {
             const match = (externalBaseLayers || []).filter(el => el.name === l.get("title"));
             if (match.length == 1) {
                 l.setVisible(!!match[0].visible);
@@ -479,19 +484,19 @@ export class MgLayerSet {
     }
     public refreshMap(mode: RefreshMode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly): void {
         if ((mode & RefreshMode.LayersOnly) == RefreshMode.LayersOnly) {
-            const imgSource = this.overlay.getSource() as ol.source.ImageMapGuide;
+            const imgSource = this.overlay.getSource() as MapGuideSource;
             imgSource.updateParams({
                 seq: (new Date()).getTime()
             });
         }
         if ((mode & RefreshMode.SelectionOnly) == RefreshMode.SelectionOnly) {
-            const imgSource = this.selectionOverlay.getSource() as ol.source.ImageMapGuide;
+            const imgSource = this.selectionOverlay.getSource() as MapGuideSource;
             imgSource.updateParams({
                 seq: (new Date()).getTime()
             });
         }
     }
-    public attach(map: ol.Map, ovMapControl: ol.control.OverviewMap, bSetLayers = true): void {
+    public attach(map: Map, ovMapControl: OverviewMap, bSetLayers = true): void {
         // To guard against the possibility that we may be attaching layers to a map that
         // already has layers (eg. Measurements), we reverse iterate all the layers we need to
         // add and insert them to the front one-by-one, ensuring all the layers we add will be
@@ -511,13 +516,13 @@ export class MgLayerSet {
             const center = this.view.getCenter();
             const resolution = this.view.getResolution();
             if (center) {
-                ovMap.setView(new ol.View({
+                ovMap.setView(new View({
                     center: [ center[0], center[1] ],
                     resolution: this.view.getResolution(),
                     projection: this.view.getProjection()
                 }));
             } else {
-                const view = new ol.View({
+                const view = new View({
                     projection: this.view.getProjection()
                 });
                 ovMap.setView(view);
@@ -525,7 +530,7 @@ export class MgLayerSet {
             }
         }
     }
-    public detach(map: ol.Map, ovMapControl: ol.control.OverviewMap): void {
+    public detach(map: Map, ovMapControl: OverviewMap): void {
         const ovLayers = this.getLayersForOverviewMap();
         for (const layer of this.allLayers) {
             map.removeLayer(layer);
@@ -557,10 +562,10 @@ export class MapViewerContext {
     private _layerSets: Dictionary<MgLayerSet>;
     private _mouseTooltip: MouseTrackingTooltip;
     private _featureTooltip: FeatureQueryTooltip;
-    private _map: ol.Map;
-    private _ovMap: ol.control.OverviewMap;
+    private _map: Map;
+    private _ovMap: OverviewMap;
     private callback: IMapViewerContextCallback;
-    constructor(map: ol.Map, callback: IMapViewerContextCallback) {
+    constructor(map: Map, callback: IMapViewerContextCallback) {
         this.callback = callback;
         this._map = map;
         this._layerSets = {};
@@ -584,7 +589,7 @@ export class MapViewerContext {
         const overviewMapOpts: any = {
             className: 'ol-overviewmap ol-custom-overviewmap',
             layers: layerSet.getLayersForOverviewMap(),
-            view: new ol.View({
+            view: new View({
                 projection: layerSet.projection
             }),
             collapseLabel: String.fromCharCode(187), //'\u00BB',
@@ -599,7 +604,7 @@ export class MapViewerContext {
                 overviewMapOpts.collapsible = false;
             }
         }
-        this._ovMap = new ol.control.OverviewMap(overviewMapOpts);
+        this._ovMap = new OverviewMap(overviewMapOpts);
         this._map.addControl(this._ovMap);
         layerSet.attach(this._map, this._ovMap, false);
     }
@@ -615,7 +620,7 @@ export class MapViewerContext {
             this._ovMap.setTarget(null as any);
         }
     }
-    public getOverviewMap(): ol.control.OverviewMap {
+    public getOverviewMap(): OverviewMap {
         return this._ovMap;
     }
     public getLayerSet(name: string, bCreate: boolean = false, props?: IMapViewerContextProps): MgLayerSet {

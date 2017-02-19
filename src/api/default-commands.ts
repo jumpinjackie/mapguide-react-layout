@@ -17,10 +17,10 @@ import * as LegendActions from "../actions/legend";
 import * as MapActions from "../actions/map";
 import { tr } from "../api/i18n";
 import * as Constants from "../constants";
-import * as ol from "openlayers";
 import { ensureParameters } from "../actions/taskpane";
 import { DefaultComponentNames } from "../api/registry/component";
 import { Toaster, Position, Intent } from "@blueprintjs/core";
+import olExtent from "ol/extent";
 
 function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
     const settings: any = {
@@ -387,7 +387,7 @@ export function initDefaultCommands() {
                             if (bounds == null) {
                                 bounds = b;
                             } else {
-                                bounds = ol.extent.extend(bounds, b);
+                                bounds = olExtent.extend(bounds, b);
                             }
                         })
                     });
@@ -457,7 +457,7 @@ export function initDefaultCommands() {
                         rtMap.Extents.UpperRightCoordinate.X,
                         rtMap.Extents.UpperRightCoordinate.Y
                     ];
-                    if (ol.extent.containsXY(extents, testCoord[0], testCoord[1])) {
+                    if (olExtent.containsXY(extents, testCoord[0], testCoord[1])) {
                         Toaster.create({ position: Position.TOP, className: "mg-toast" }).show({ iconName: "geolocation", message: tr("GEOLOCATION_SUCCESS", locale), intent: Intent.SUCCESS });
                     } else {
                         Toaster.create({ position: Position.TOP, className: "mg-toast" }).show({ iconName: "warning-sign", message: tr("GEOLOCATION_WARN_OUTSIDE_MAP", locale), intent: Intent.WARNING });

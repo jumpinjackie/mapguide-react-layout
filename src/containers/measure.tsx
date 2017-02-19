@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as ol from "openlayers";
 import { connect } from "react-redux";
 import {
     IMapViewer,

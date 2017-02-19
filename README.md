@@ -1,5 +1,7 @@
 # mapguide-react-layout
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/jumpinjackie/mapguide-react-layout.svg)](https://greenkeeper.io/)
+
 [![Build status](https://travis-ci.org/jumpinjackie/mapguide-react-layout.svg)](https://travis-ci.org/jumpinjackie/mapguide-react-layout)
 [![Build status](https://ci.appveyor.com/api/projects/status/urdvk8788w6h26ae?svg=true)](https://ci.appveyor.com/project/jumpinjackie/mapguide-react-layout)
 [![Coverage Status](https://coveralls.io/repos/github/jumpinjackie/mapguide-react-layout/badge.svg?branch=master)](https://coveralls.io/github/jumpinjackie/mapguide-react-layout?branch=master)

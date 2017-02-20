@@ -112,6 +112,10 @@
       "tsx",
       "js"
     ],
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/test-data/",
+      "<rootDir>/node_modules/"
+    ],
     "globals": {
       "__DEV__": true
     }

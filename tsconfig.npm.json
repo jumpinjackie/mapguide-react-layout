@@ -1,8 +1,14 @@
 {
     "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "declaration": true,
+        "outDir": "./package/lib"
+    },
     "exclude": [
         "package",
         "node_modules",
+        "test",
+        "test-data",
         "typings/main",
         "typings/main.d.ts"
     ]

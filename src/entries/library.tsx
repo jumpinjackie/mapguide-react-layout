@@ -17,13 +17,10 @@ import { registerDefaultComponents } from "../api/default-components";
 import * as Common from "../api/common";
 import * as Contracts from "../api/contracts";
 import "../styles/index.css";
-import proj from "ol/proj";
+import { bootstrap } from "../api/bootstrap";
 const proj4 = require("proj4");
-require("es6-promise").polyfill();
-require('whatwg-fetch');
 
-proj.setProj4(proj4);
-
+bootstrap();
 registerLayout("ajax-viewer", () => <AjaxViewerLayout />);
 registerLayout("sidebar", () => <SidebarLayout />);
 registerLayout("aqua", () => <AquaTemplateLayout />);

@@ -7,6 +7,7 @@
     "build": "cross-env NODE_ENV=production webpack && bestzip viewer.zip viewer/",
     "build:dev": "cross-env NODE_ENV=development webpack",
     "watch:dev": "cross-env NODE_ENV=development webpack -w --progress",
+    "watch:test": "jest --watchAll",
     "clean": "rimraf viewer/dist/",
     "lint": "tslint 'src/**/*.tsx' 'src/**/*.ts' 'test/**/*.tsx' 'test/**/*.ts'",
     "postinstall": "yarn run typings && yarn run build",

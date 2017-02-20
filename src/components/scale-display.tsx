@@ -63,7 +63,7 @@ export class ScaleDisplay extends React.Component<IScaleDisplayProps, any> {
             </div>;
         } else {
             return <div className="component-scale-display" style={style}>
-                {label} <input className="scale-input" type="number" value={this.state.localScale} onChange={this.fnScaleInputChanged} onKeyPress={this.fnScaleKeyPressed} />
+                {label} <input className="scale-input" type="number" value={this.state.localScale || ""} onChange={this.fnScaleInputChanged} onKeyPress={this.fnScaleKeyPressed} />
             </div>;
         }
     }

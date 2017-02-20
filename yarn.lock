@@ -77,21 +77,21 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-addons-update@0.14.15":
-  version "0.14.15"
-  resolved "https://registry.yarnpkg.com/@types/react-addons-update/-/react-addons-update-0.14.15.tgz#6f7be3358b45833cd5edb09d213c012fb4ef4565"
+"@types/react-addons-update@0.14.16":
+  version "0.14.16"
+  resolved "https://registry.yarnpkg.com/@types/react-addons-update/-/react-addons-update-0.14.16.tgz#b675d247c0166bbaf02361dc10d594f1646843b0"
   dependencies:
     "@types/react" "*"
 
-"@types/react-dom@0.14.20":
-  version "0.14.20"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-0.14.20.tgz#6e30d66148e78b29ef593fa91ba30d0175190604"
+"@types/react-dom@0.14.23":
+  version "0.14.23"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-0.14.23.tgz#cecfcfad754b4c2765fe5d29b81b301889ad6c2e"
   dependencies:
     "@types/react" "*"
 
-"@types/react-measure@0.4.5":
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/@types/react-measure/-/react-measure-0.4.5.tgz#3d90c0dfc46e8dc5ae6739b493036e84ffb2c41e"
+"@types/react-measure@0.4.6":
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/@types/react-measure/-/react-measure-0.4.6.tgz#8af962837ec078c3a3e5f37c9479355c0f228cf9"
   dependencies:
     "@types/react" "*"
 
@@ -1994,13 +1994,9 @@ https-proxy-agent@^1.0.0:
     debug "2"
     extend "3"
 
-iconv-lite@0.4.13:
+iconv-lite@0.4.13, iconv-lite@~0.4.13:
   version "0.4.13"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.13.tgz#1f88aba4ab0b1508e8312acc39345f36e992e2f2"
-
-iconv-lite@~0.4.13:
-  version "0.4.15"
-  resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.15.tgz#fe265a218ac6a57cfe854927e9d04c19825eddeb"
 
 icss-replace-symbols@^1.0.2:
   version "1.0.2"

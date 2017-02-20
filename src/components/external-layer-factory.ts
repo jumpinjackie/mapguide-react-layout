@@ -1,11 +1,12 @@
 import { MgError } from "../api/error";
 import { IExternalBaseLayer } from "../api/common";
+import Source from "ol/source/source";
 import XYZ from "ol/source/xyz";
 import OSM from "ol/source/osm";
 import Stamen from "ol/source/stamen";
 
 interface OLSourceCtor {
-    new (options?: any): ol.source.Source;
+    new (options?: any): Source;
 }
 
 export function createExternalSource(layer: IExternalBaseLayer) {

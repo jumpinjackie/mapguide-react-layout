@@ -82,7 +82,7 @@
     "css-loader": "^0.26.1",
     "enzyme": "^2.7.1",
     "file-loader": "^0.10.0",
-    "jest": "^18.1.0",
+    "jest": "^19.0.0",
     "jsonfile": "^2.4.0",
     "less": "^2.7.2",
     "less-loader": "^2.2.3",

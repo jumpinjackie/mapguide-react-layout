@@ -510,9 +510,7 @@ export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {
         //    taskPane.goHome();
         //}
     }
-    componentDidMount() {
-        //Install shims into browser window
-        let browserWindow: any = window;
+    private installShims(browserWindow: any) {
         browserWindow.GetMapFrame = browserWindow.GetMapFrame || (() => this);
         //NOTE: mapFrame is technically not part of the "public" API for the AJAX viewer, but since most examples test
         //for this in place of GetMapFrame(), we might as well emulate it here
@@ -524,6 +522,12 @@ export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {
         browserWindow.SetSelectionXML = browserWindow.SetSelectionXML || ((xmlSet: string) => this.SetSelectionXML(xmlSet));
         browserWindow.ZoomToView = browserWindow.ZoomToView || ((x: number, y: number, scale: number, refresh: boolean) => this.ZoomToView(x, y, scale, refresh));
         browserWindow.GotoHomePage = browserWindow.GotoHomePage || (() => this.goHome());
+    }
+    componentDidMount() {
+        //Install shims into browser window
+        let browserWindow: any = window;
+        this.installShims(browserWindow);
+        this.installShims(window.parent);
     }
     render(): JSX.Element {
         //This is for all intents and purposes, a "background" component. There is no real DOM representation

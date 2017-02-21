@@ -90,7 +90,7 @@
     "rimraf": "^2.6.0",
     "style-loader": "^0.13.1",
     "testdouble": "^1.11.1",
-    "ts-jest": "^18.0.3",
+    "ts-jest": "^19.0.0",
     "ts-loader": "^2.0.0",
     "tslint": "^4.4.2",
     "typescript": "2.1.6",

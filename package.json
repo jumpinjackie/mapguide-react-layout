@@ -13,9 +13,9 @@
     "lint": "tslint 'src/**/*.tsx' 'src/**/*.ts' 'test/**/*.tsx' 'test/**/*.ts'",
     "postinstall": "yarn run typings && yarn run build",
     "typings": "rimraf typings/ && typings install",
-    "test": "jest",
-    "test:appveyor": "jest --coverage --colors",
-    "test:travis": "jest --coverage --colors && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "test": "jest --verbose",
+    "test:appveyor": "jest --verbose --coverage --colors",
+    "test:travis": "jest --verbose --coverage --colors && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "ci:appveyor": "yarn run typings && yarn run lint && yarn run test:appveyor",
     "ci:travis": "yarn run typings && yarn run lint && yarn run test:travis"
   },

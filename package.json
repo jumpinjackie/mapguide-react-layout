@@ -5,10 +5,11 @@
   "scripts": {
     "prebuild": "yarn run clean",
     "build": "yarn run build:npm && cross-env NODE_ENV=production webpack && bestzip viewer.zip viewer/",
-    "build:npm": "node tools/prepare-package.js && copyfiles *.md viewer/** package && tsc --p tsconfig.npm.json",
+    "build:npm": "node tools/prepare-package.js && copyfiles *.md src/styles/** viewer/** package && tsc --p tsconfig.npm.json && cd package && yarn pack",
     "build:dev": "cross-env NODE_ENV=development webpack",
     "watch:dev": "cross-env NODE_ENV=development webpack -w --progress",
     "watch:test": "jest --watchAll",
+    "stats": "cross-env NODE_ENV=production webpack --json > webpack.json",
     "clean": "rimraf viewer/dist/ && rimraf package/",
     "lint": "tslint 'src/**/*.tsx' 'src/**/*.ts' 'test/**/*.tsx' 'test/**/*.ts'",
     "postinstall": "yarn run typings && yarn run build",

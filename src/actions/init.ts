@@ -487,7 +487,7 @@ function makeWebLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any):
 function resolveProjection(epsg: string, opts: any, mapDef: string): Promise<any> {
     return fetch(`//epsg.io?format=json&q=${epsg}`).then(resp => {
         return resp.json();
-    }).then(resp => {
+    }).then((resp: any) => {
         if (resp.results && resp.results.length > 0) {
             proj4.defs(`EPSG:${epsg}`, resp.results[0].proj4);
             logger.debug(`Registered projection EPSG:${epsg} from epsg.io`);
@@ -508,7 +508,7 @@ function getDesiredTargetMapName(mapDef: string) {
     }
 }
 
-function makeRuntimeMapSuccessHandler<T>(client: Client, session: string, opts: any, mapDefSelector: (res: T) => string[]): (res: T) => [T, Dictionary<RuntimeMap>] | Thenable<[T, Dictionary<RuntimeMap>]> {
+function makeRuntimeMapSuccessHandler<TLayout>(client: Client, session: string, opts: any, mapDefSelector: (res: TLayout) => string[]): (res: TLayout) => [TLayout, Dictionary<RuntimeMap>] | Thenable<[TLayout, Dictionary<RuntimeMap>]> {
     return (res) => {
         const mapDefs = mapDefSelector(res);
         const mapPromises = [];
@@ -538,17 +538,21 @@ function makeRuntimeMapSuccessHandler<T>(client: Client, session: string, opts: 
                         fetchEpsgs.push({ epsg: epsg, mapDef: mapDef });
                     }
                 }
-                //Fetch requested EPSG codes
-                return Promise.all(fetchEpsgs.map(f => resolveProjection(f.epsg, opts, f.mapDef)))
-                    .then(epsgs => {
-                        //Build the Dictionary<RuntimeMap> from loaded maps
-                        const mapsByName: Dictionary<RuntimeMap> = {};
-                        for (const map of maps) {
-                            mapsByName[map.Name] = map;
-                        }
-                        //Return our promised result
-                        return Promise.resolve([ res, mapsByName ]);
-                    });
+                return Promise.all([maps, fetchEpsgs]);
+            })
+            .then(args => {
+                return Promise.all([args[0], args[1].map(f => resolveProjection(f.epsg, opts, f.mapDef))]);
+            })
+            .then(args => {
+                const maps = args[0];
+                const epsgs = args[1];
+                //Build the Dictionary<RuntimeMap> from loaded maps
+                const mapsByName: Dictionary<RuntimeMap> = {};
+                for (const map of maps) {
+                    mapsByName[map.Name] = map;
+                }
+                //Return our promised result
+                return Promise.resolve([ res, mapsByName ]);
             });
     };
 }

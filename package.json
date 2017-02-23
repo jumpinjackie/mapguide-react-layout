@@ -100,13 +100,7 @@
     "webpack": "^2.2.1"
   },
   "greenkeeper": {
-    "ignore": [
-      "@types/react",
-      "@types/react-addons-css-transition-group",
-      "@types/react-addons-update",
-      "@types/react-dom",
-      "@types/react-measure"
-    ]
+    "ignore": []
   },
   "jest": {
     "transform": {

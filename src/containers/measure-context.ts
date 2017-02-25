@@ -107,7 +107,7 @@ export class MeasureContext {
         let area: number;
         if (this.parent.isGeodesic()) {
             const sourceProj = this.viewer.getProjection();
-            const geom = (polygon.clone().transform(sourceProj, 'EPSG:4326') as ol.geom.Polygon);
+            const geom = (polygon.clone().transform(sourceProj, 'EPSG:4326') as Polygon);
             const coordinates = geom.getLinearRing(0).getCoordinates();
             area = Math.abs(WGS84_SPHERE.geodesicArea(coordinates));
         } else {
@@ -171,9 +171,9 @@ export class MeasureContext {
         let helpMsg = tr("MEASUREMENT_START_DRAWING", locale);
         if (this.sketch) {
             const geom = (this.sketch.getGeometry());
-            if (geom instanceof ol.geom.Polygon) {
+            if (geom instanceof Polygon) {
                 helpMsg = tr("MEASUREMENT_CONTINUE_POLYGON", locale);
-            } else if (geom instanceof ol.geom.LineString) {
+            } else if (geom instanceof LineString) {
                 helpMsg = tr("MEASUREMENT_CONTINUE_LINE", locale);
             }
         }

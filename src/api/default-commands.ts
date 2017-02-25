@@ -21,6 +21,8 @@ import { ensureParameters } from "../actions/taskpane";
 import { DefaultComponentNames } from "../api/registry/component";
 import { Toaster, Position, Intent } from "@blueprintjs/core";
 import olExtent from "ol/extent";
+import olProj from "ol/proj";
+import Polygon from "ol/geom/polygon";
 
 function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
     const settings: any = {
@@ -314,7 +316,7 @@ export function initDefaultCommands() {
         invoke: (dispatch, getState, viewer) => {
             if (viewer) {
                 viewer.digitizeCircle(circle => {
-                    const geom = ol.geom.Polygon.fromCircle(circle);
+                    const geom = Polygon.fromCircle(circle);
                     viewer.selectByGeometry(geom);
                 });
             }
@@ -448,8 +450,8 @@ export function initDefaultCommands() {
             if (viewer && view && rtMap) {
                 navigator.geolocation.getCurrentPosition(pos => {
                     const proj = viewer.getProjection();
-                    const txCoord = ol.proj.fromLonLat([ pos.coords.longitude, pos.coords.latitude ], proj);
-                    const testCoord = ol.proj.fromLonLat([ pos.coords.longitude, pos.coords.latitude ], `EPSG:${rtMap.CoordinateSystem.EpsgCode}`);
+                    const txCoord = olProj.fromLonLat([ pos.coords.longitude, pos.coords.latitude ], proj);
+                    const testCoord = olProj.fromLonLat([ pos.coords.longitude, pos.coords.latitude ], `EPSG:${rtMap.CoordinateSystem.EpsgCode}`);
                     viewer.zoomToView(txCoord[0], txCoord[1], view.scale);
                     const extents: [number, number, number, number] = [
                         rtMap.Extents.LowerLeftCoordinate.X,

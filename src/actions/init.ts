@@ -761,7 +761,7 @@ export function initLayout(options: any): ReduxThunkedAction {
     const parsed = parse(window.location.href);
     const query = queryString.parse(parsed.query);
     const options1 = {
-        resourceId: query["resource"],
+        resourceId: query["resource"] || options.resourceId,
         locale: query["locale"] || "en",
         session: query["session"]
     };

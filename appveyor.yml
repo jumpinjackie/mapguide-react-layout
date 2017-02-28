@@ -4,7 +4,7 @@ shallow_clone: true
 build: off
 # Cache yarn packages to speed up builds
 cache:
- #- "%LOCALAPPDATA%\\Yarn"
+  - "%LOCALAPPDATA%\\Yarn"
 
 # restore NuGet packages before running MSBuild
 before_build:
@@ -27,6 +27,15 @@ environment:
 install:
   # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node $env:nodejs_version
+  # A pre-existing yarn.lock appears to confuse yarn with regards to @types packages, namely a * version
+  # does not go for the latest available version of said package when doing a "yarn install" with the
+  # new package version with a pre-existing yarn.lock. This causes a whole load of bogus duplicate identifer
+  # errors as dependent @types packages will now pull down a private copy of this * version dependency (that is
+  # not the latest one)
+  #
+  # Nuking the yarn.lock file before installing with the latest version of said package does not have this problem
+  # as the generated yarn.lock file will correctly show a * version package as the latest version
+  - del yarn.lock
   # install packages, this will also do a production build as a postinstall
   - yarn install
 

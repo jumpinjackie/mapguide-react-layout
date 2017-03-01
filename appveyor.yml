@@ -35,7 +35,10 @@ install:
   #
   # Nuking the yarn.lock file before installing with the latest version of said package does not have this problem
   # as the generated yarn.lock file will correctly show a * version package as the latest version
-  - del yarn.lock
+  #
+  # UPDATE 01 Mar 2017: Unconditionally nuking yarn.lock does not play nice with in-range updates done by greenkeeper
+  # so I'll fall back to putting @types/react to the greenkeeper ignore list and manually updating this one package
+  # - del yarn.lock
   # install packages, this will also do a production build as a postinstall
   - yarn install
 

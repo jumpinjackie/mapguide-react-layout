@@ -101,7 +101,9 @@
     "webpack": "^2.2.1"
   },
   "greenkeeper": {
-    "ignore": []
+    "ignore": [
+      "@types/react"
+    ]
   },
   "jest": {
     "transform": {

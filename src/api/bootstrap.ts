@@ -1,5 +1,5 @@
 import proj from "ol/proj";
-const proj4 = require("proj4");
+import proj4 from "proj4";
 
 export function bootstrap() {
     require("es6-promise").polyfill();

@@ -16,10 +16,7 @@ declare module "ismobilejs" {
     export = isMobile;
 }
 
-declare module "proj4" {
-    type Proj4 = any;
-    export = Proj4;
-}
+declare module "proj4";
 
 declare module "react-draggable" {
     import * as React from "react";

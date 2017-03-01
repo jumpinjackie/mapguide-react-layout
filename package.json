@@ -55,7 +55,7 @@
     "lodash.uniq": "^4.5.0",
     "lodash.xor": "^4.5.0",
     "ol": "4.0.1-beta.2",
-    "proj4": "2.3.17",
+    "proj4": "^2.4.1",
     "query-string": "^4.3.2",
     "react": "^15.4.2",
     "react-addons-css-transition-group": "^15.4.2",

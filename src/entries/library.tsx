@@ -18,7 +18,7 @@ import * as Common from "../api/common";
 import * as Contracts from "../api/contracts";
 import "../styles/index.css";
 import { bootstrap } from "../api/bootstrap";
-const proj4 = require("proj4");
+import proj4 from "proj4";
 
 bootstrap();
 registerLayout("ajax-viewer", () => <AjaxViewerLayout />);

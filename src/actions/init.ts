@@ -38,7 +38,7 @@ import queryString = require("query-string");
 import * as shortid from "shortid";
 import { registerStringBundle } from "../api/i18n";
 const parse = require("url-parse");
-const proj4 = require("proj4");
+import proj4 from "proj4";
 
 function isUIWidget(widget: any): widget is UIWidget {
     return widget.WidgetType === "UiWidgetType";

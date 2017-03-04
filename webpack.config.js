@@ -78,6 +78,7 @@ module.exports = {
 
     resolve: {
         alias: {},
+        mainFields: ["webpack", "module", "main", "browser"],
         modules: [
             'node_modules'
         ],

@@ -1040,9 +1040,9 @@ core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
 
-coveralls@^2.11.16:
-  version "2.11.16"
-  resolved "https://registry.yarnpkg.com/coveralls/-/coveralls-2.11.16.tgz#da9061265142ddee954f68379122be97be8ab4b1"
+coveralls@^2.12.0:
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/coveralls/-/coveralls-2.12.0.tgz#b3d064108e29728385b56e42fc2d119f43e0e517"
   dependencies:
     js-yaml "3.6.1"
     lcov-parse "0.0.10"
@@ -1086,11 +1086,12 @@ create-hmac@^1.1.0, create-hmac@^1.1.2:
     create-hash "^1.1.0"
     inherits "^2.0.1"
 
-cross-env@^3.1.4:
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/cross-env/-/cross-env-3.1.4.tgz#56e8bca96f17908a6eb1bc2012ca126f92842130"
+cross-env@^3.2.3:
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/cross-env/-/cross-env-3.2.3.tgz#a43a0799b8ec422d0279b829ce8d7cf2da6b17ac"
   dependencies:
-    cross-spawn "^3.0.1"
+    cross-spawn "^5.1.0"
+    is-windows "^1.0.0"
 
 cross-spawn-async@^2.1.1:
   version "2.2.5"
@@ -1099,11 +1100,12 @@ cross-spawn-async@^2.1.1:
     lru-cache "^4.0.0"
     which "^1.2.8"
 
-cross-spawn@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-3.0.1.tgz#1256037ecb9f0c5f79e3d6ef135e30770184b982"
+cross-spawn@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-5.1.0.tgz#e8bd0efee58fcff6f8f94510a0a554bbfa235449"
   dependencies:
     lru-cache "^4.0.1"
+    shebang-command "^1.2.0"
     which "^1.2.9"
 
 cryptiles@2.x.x:
@@ -2336,6 +2338,10 @@ is-utf8@^0.2.0:
 is-windows@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/is-windows/-/is-windows-0.2.0.tgz#de1aa6d63ea29dd248737b69f1ff8b8002d2108c"
+
+is-windows@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/is-windows/-/is-windows-1.0.0.tgz#c61d61020c3ebe99261b781bd3d1622395f547f8"
 
 isarray@0.0.1:
   version "0.0.1"
@@ -4502,13 +4508,23 @@ sha.js@^2.3.6:
   dependencies:
     inherits "^2.0.1"
 
+shebang-command@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/shebang-command/-/shebang-command-1.2.0.tgz#44aac65b695b03398968c39f363fee5deafdf1ea"
+  dependencies:
+    shebang-regex "^1.0.0"
+
+shebang-regex@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/shebang-regex/-/shebang-regex-1.0.0.tgz#da42f49740c0b42db2ca9728571cb190c98efea3"
+
 shellwords@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/shellwords/-/shellwords-0.1.0.tgz#66afd47b6a12932d9071cbfd98a52e785cd0ba14"
 
-shortid@^2.2.6:
-  version "2.2.6"
-  resolved "https://registry.yarnpkg.com/shortid/-/shortid-2.2.6.tgz#3abbefc6c51074cf2c1f1e72f6216a1b45876d72"
+shortid@^2.2.7:
+  version "2.2.7"
+  resolved "https://registry.yarnpkg.com/shortid/-/shortid-2.2.7.tgz#7d6645ae94f173718f717575381d3cc56db65456"
 
 signal-exit@^3.0.0:
   version "3.0.2"

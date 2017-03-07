@@ -44,6 +44,8 @@ Commands
 Viewer
 ======
 
+ * Initial view does not span the full dimensions of the map viewport.
+
  * Viewer will only accept Map Definitions in coordinate systems that have a corresponding EPSG code
 
  * For maps with a projection that is not known to proj4js, the viewer will automatically attempt to find a matching definition from https://epsg.io

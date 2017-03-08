@@ -87,7 +87,7 @@
     "jest": "^19.0.2",
     "jsonfile": "^2.4.0",
     "less": "^2.7.2",
-    "less-loader": "^2.2.3",
+    "less-loader": "^3.0.0",
     "raw-loader": "^0.5.1",
     "rimraf": "^2.6.1",
     "style-loader": "^0.13.2",

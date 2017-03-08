@@ -22,7 +22,7 @@ import { DefaultComponentNames } from "../api/registry/component";
 import { Toaster, Position, Intent } from "@blueprintjs/core";
 import olExtent from "ol/extent";
 import olProj from "ol/proj";
-import Polygon from "ol/geom/polygon";
+import olPolygon from "ol/geom/polygon";
 
 function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
     const settings: any = {
@@ -316,7 +316,7 @@ export function initDefaultCommands() {
         invoke: (dispatch, getState, viewer) => {
             if (viewer) {
                 viewer.digitizeCircle(circle => {
-                    const geom = Polygon.fromCircle(circle);
+                    const geom = olPolygon.fromCircle(circle);
                     viewer.selectByGeometry(geom);
                 });
             }

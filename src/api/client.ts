@@ -4,20 +4,13 @@ import { MapAgentRequestBuilder, isErrorResponse, serialize } from './builders/m
 import * as Contracts from './contracts';
 import { ClientKind } from './common';
 
-export class ClientContext {
-    private agentUri: string;
-    private kind: ClientKind;
-    private client: Request.IMapGuideClient;
-    constructor(agentUri: string, kind: ClientKind = "mapagent") {
-        this.agentUri = agentUri;
-        this.kind = kind;
-        this.client = new Client(this.agentUri, kind);
-    }
-    public get agent(): Request.IMapGuideClient {
-        return this.client;
-    }
-}
-
+/**
+ * The MapGuide HTTP client
+ *
+ * @export
+ * @class Client
+ * @implements {Request.IMapGuideClient}
+ */
 export class Client implements Request.IMapGuideClient {
     private builder: Request.RequestBuilder;
     constructor(agentUri: string, kind: ClientKind) {
@@ -30,13 +23,22 @@ export class Client implements Request.IMapGuideClient {
         }
     }
 
+    /**
+     * Performs a generic GET request at the specified URL
+     *
+     * @template T The type of the object you are expecting to receive
+     * @param {string} url The url to make the request to
+     * @returns {Promise<T>} A promise for the value of the requested type
+     *
+     * @memberOf Client
+     */
     public get<T>(url: string): Promise<T> {
         return new Promise<T>((resolve, reject) => {
             fetch(url, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
-                }, 
+                },
                 method: "GET"
             })
             .then(response => {
@@ -50,6 +52,16 @@ export class Client implements Request.IMapGuideClient {
         });
     }
 
+    /**
+     * Performs a generic POST request at the specified URL
+     *
+     * @template T The type of the object you are expecting to receive
+     * @param {string} url The url to make the request to
+     * @param {*} data The POST form data
+     * @returns {Promise<T>} A promise for the value of the requested type
+     *
+     * @memberOf Client
+     */
     public post<T>(url: string, data: any): Promise<T> {
         if (!data.format) {
             data.format = "application/json";
@@ -77,30 +89,93 @@ export class Client implements Request.IMapGuideClient {
         });
     }
 
+    /**
+     * Creates a new MapGuide session
+     *
+     * @param {string} username
+     * @param {string} password
+     * @returns {Request.IPromise<string>}
+     *
+     * @memberOf Client
+     */
     public createSession(username: string, password: string): Request.IPromise<string> {
         return this.builder.createSession(username, password);
     }
 
+    /**
+     * Gets the server session timeout for the given session id
+     *
+     * @param {string} session
+     * @returns {Request.IPromise<number>}
+     *
+     * @memberOf Client
+     */
     public getServerSessionTimeout(session: string): Request.IPromise<number> {
         return this.builder.getServerSessionTimeout(session);
     }
-    
+
+    /**
+     * Retrieves the requested resource
+     *
+     * @template T
+     * @param {Contracts.Common.ResourceIdentifier} resourceId
+     * @param {*} [args]
+     * @returns {Request.IPromise<T>}
+     *
+     * @memberOf Client
+     */
     public getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier, args?: any): Request.IPromise<T> {
         return this.builder.getResource<T>(resourceId, args);
     }
-    
+
+    /**
+     * Creates a runtime map from the specified map definition
+     *
+     * @param {Request.ICreateRuntimeMapOptions} options
+     * @returns {Request.IPromise<Contracts.RtMap.RuntimeMap>}
+     *
+     * @memberOf Client
+     */
     public createRuntimeMap(options: Request.ICreateRuntimeMapOptions): Request.IPromise<Contracts.RtMap.RuntimeMap> {
         return this.builder.createRuntimeMap(options);
     }
 
+    /**
+     * Describes a runtime map
+     *
+     * @param {Request.IDescribeRuntimeMapOptions} options
+     * @returns {Request.IPromise<Contracts.RtMap.RuntimeMap>}
+     *
+     * @memberOf Client
+     */
     public describeRuntimeMap(options: Request.IDescribeRuntimeMapOptions): Request.IPromise<Contracts.RtMap.RuntimeMap> {
         return this.builder.describeRuntimeMap(options);
     }
-    
+
+    /**
+     * Performs a map selection query on the current map
+     *
+     * @param {Request.IQueryMapFeaturesOptions} options
+     * @returns {Request.IPromise<Contracts.Query.QueryMapFeaturesResponse>}
+     *
+     * @memberOf Client
+     */
     public queryMapFeatures(options: Request.IQueryMapFeaturesOptions): Request.IPromise<Contracts.Query.QueryMapFeaturesResponse> {
         return this.builder.queryMapFeatures(options);
     }
 
+    /**
+     * Gets the tile template URL used by the viewer to send tile requests
+     *
+     * @param {string} resourceId
+     * @param {string} groupName
+     * @param {string} xPlaceholder
+     * @param {string} yPlaceholder
+     * @param {string} zPlaceholder
+     * @returns {string}
+     *
+     * @memberOf Client
+     */
     public getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string): string {
         return this.builder.getTileTemplateUrl(resourceId, groupName, xPlaceholder, yPlaceholder, zPlaceholder);
     }

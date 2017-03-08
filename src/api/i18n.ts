@@ -5,10 +5,26 @@ const STRINGS: any = {
     "en": STRINGS_EN
 };
 
+/**
+ * Registers a string bundle for the given locale
+ *
+ * @export
+ * @param {string} locale
+ * @param {*} bundle
+ */
 export function registerStringBundle(locale: string, bundle: any) {
     STRINGS[locale] = bundle;
 }
 
+/**
+ * Formats the specified string and substitutes any placeholders (enclosed in {})
+ * with the specified arguments
+ *
+ * @export
+ * @param {string} format
+ * @param {*} [args]
+ * @returns {string}
+ */
 export function fmt(format: string, args?: any): string {
     let str = format;
     if (args != null) {
@@ -21,8 +37,15 @@ export function fmt(format: string, args?: any): string {
     return str;
 }
 
+
 /**
  * Returns the localized string for the given key
+ *
+ * @export
+ * @param {string} key
+ * @param {string} [locale="en"]
+ * @param {*} [args]
+ * @returns {string}
  */
 export function tr(key: string, locale = "en", args?: any): string {
     const bundle = STRINGS[locale];

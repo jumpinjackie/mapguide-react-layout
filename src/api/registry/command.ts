@@ -73,20 +73,62 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
     return null;
 }
 
+/**
+ * Common command condition evaluators
+ *
+ * @export
+ * @class CommandConditions
+ */
 export class CommandConditions {
+    /**
+     * The viewer is not busy
+     *
+     * @static
+     * @param {IApplicationState} state
+     * @returns {boolean}
+     *
+     * @memberOf CommandConditions
+     */
     public static isNotBusy(state: IApplicationState): boolean {
         return state.viewer.busyCount == 0;
     }
+    /**
+     * The viewer has a selection set
+     *
+     * @static
+     * @param {IApplicationState} state
+     * @returns {boolean}
+     *
+     * @memberOf CommandConditions
+     */
     public static hasSelection(state: IApplicationState): boolean {
         const selection = getSelectionSet(state);
         return (selection != null && selection.SelectedFeatures != null);
     }
+    /**
+     * The viewer has a previous view in the view navigation stack
+     *
+     * @static
+     * @param {IApplicationState} state
+     * @returns {boolean}
+     *
+     * @memberOf CommandConditions
+     */
     public static hasPreviousView(state: IApplicationState): boolean {
         if (state.config.activeMapName) {
             return state.mapState[state.config.activeMapName].historyIndex > 0;
         }
         return false;
     }
+    /**
+     * The viewer has a next view in the view navigation stack
+     *
+     * @static
+     * @param {IApplicationState} state
+     * @returns {boolean}
+     *
+     * @memberOf CommandConditions
+     */
     public static hasNextView(state: IApplicationState): boolean {
         if (state.config.activeMapName) {
             return state.mapState[state.config.activeMapName].historyIndex < state.mapState[state.config.activeMapName].history.length - 1;
@@ -95,6 +137,12 @@ export class CommandConditions {
     }
 }
 
+/**
+ * The set of default command names
+ *
+ * @export
+ * @class DefaultCommands
+ */
 export class DefaultCommands {
     public static get Select(): string { return "Select"; }
     public static get Pan(): string { return "Pan"; }
@@ -139,6 +187,13 @@ function isSearchCommand(cmdDef: any): cmdDef is ISearchCommand {
     return typeof cmdDef.layer !== 'undefined';
 }
 
+/**
+ * Registers a viewer command
+ *
+ * @export
+ * @param {string} name
+ * @param {(ICommand | IInvokeUrlCommand | ISearchCommand)} cmdDef
+ */
 export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlCommand | ISearchCommand) {
     let cmd: ICommand;
     if (isInvokeUrlCommand(cmdDef)) {
@@ -216,6 +271,13 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
     commands[name] = cmd;
 }
 
+/**
+ * Gets a registered viewer command by its name
+ *
+ * @export
+ * @param {string} name
+ * @returns {(ICommand | undefined)}
+ */
 export function getCommand(name: string): ICommand | undefined {
     return commands[name];
 }

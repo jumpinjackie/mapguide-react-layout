@@ -18,13 +18,6 @@ import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml } from '../api/builders/deArrayify';
 import uniq = require("lodash.uniq");
 
-export interface QueryMapFeatureActionOptions {
-    options: IQueryMapFeaturesOptions;
-    append?: boolean;
-    callback?: (res: QueryMapFeaturesResponse) => void;
-    errBack?: (err: any) => void;
-}
-
 function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeature[]): SelectedFeature[] {
     const merged: SelectedFeature[] = [];
     for (const feat of oldRes) {
@@ -115,6 +108,21 @@ function combineSelections(oldRes: QueryMapFeaturesResponse | undefined, newRes:
     }
 }
 
+export interface QueryMapFeatureActionOptions {
+    options: IQueryMapFeaturesOptions;
+    append?: boolean;
+    callback?: (res: QueryMapFeaturesResponse) => void;
+    errBack?: (err: any) => void;
+}
+
+/**
+ * Queries map features
+ *
+ * @export
+ * @param {string} mapName
+ * @param {QueryMapFeatureActionOptions} opts
+ * @returns {ReduxThunkedAction}
+ */
 export function queryMapFeatures(mapName: string, opts: QueryMapFeatureActionOptions): ReduxThunkedAction {
     return (dispatch, getState) => {
         const state = getState();
@@ -160,6 +168,13 @@ export function queryMapFeatures(mapName: string, opts: QueryMapFeatureActionOpt
     };
 }
 
+/**
+ * Sets the current view
+ *
+ * @export
+ * @param {IMapView} view
+ * @returns {ReduxThunkedAction}
+ */
 export function setCurrentView(view: IMapView): ReduxThunkedAction {
     return (dispatch, getState) => {
         // HACK-y:
@@ -188,6 +203,14 @@ export function setCurrentView(view: IMapView): ReduxThunkedAction {
     };
 }
 
+/**
+ * Sets the selection set for the given map
+ *
+ * @export
+ * @param {string} mapName
+ * @param {*} selectionSet
+ * @returns {ReduxAction}
+ */
 export function setSelection(mapName: string, selectionSet: any): ReduxAction {
     return {
         type: Constants.MAP_SET_SELECTION,
@@ -198,12 +221,26 @@ export function setSelection(mapName: string, selectionSet: any): ReduxAction {
     };
 }
 
+/**
+ * Invokes the specified command
+ *
+ * @export
+ * @param {ICommand} cmd
+ * @returns {ReduxThunkedAction}
+ */
 export function invokeCommand(cmd: ICommand): ReduxThunkedAction {
     return (dispatch, getState) => {
         return cmd.invoke(dispatch, getState, getViewer());
     };
 }
 
+/**
+ * Sets the busy count of the viewer
+ *
+ * @export
+ * @param {number} busyCount
+ * @returns {ReduxAction}
+ */
 export function setBusyCount(busyCount: number): ReduxAction {
     return {
         type: Constants.MAP_SET_BUSY_COUNT,
@@ -211,6 +248,14 @@ export function setBusyCount(busyCount: number): ReduxAction {
     };
 }
 
+/**
+ * Set the given external base layer as the active base layer
+ *
+ * @export
+ * @param {string} mapName
+ * @param {string} layerName
+ * @returns
+ */
 export function setBaseLayer(mapName: string, layerName: string) {
     return {
         type: Constants.MAP_SET_BASE_LAYER,
@@ -221,6 +266,14 @@ export function setBaseLayer(mapName: string, layerName: string) {
     };
 }
 
+/**
+ * Sets the view scale
+ *
+ * @export
+ * @param {string} mapName
+ * @param {number} scale
+ * @returns
+ */
 export function setScale(mapName: string, scale: number) {
     return {
         type: Constants.MAP_SET_SCALE,

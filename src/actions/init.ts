@@ -757,6 +757,13 @@ function makeSessionAcquired(client: Client, dispatch: ReduxDispatch, opts: any)
     }
 }
 
+/**
+ * Initializes the viewer
+ *
+ * @export
+ * @param {*} options
+ * @returns {ReduxThunkedAction}
+ */
 export function initLayout(options: any): ReduxThunkedAction {
     const parsed = parse(window.location.href);
     const query = queryString.parse(parsed.query);

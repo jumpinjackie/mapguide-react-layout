@@ -6,6 +6,14 @@ import {
     getRuntimeMap
 } from "../api/common";
 
+/**
+ * Sets the visibility for the given map group
+ *
+ * @export
+ * @param {string} mapName
+ * @param {{ id: string, value: boolean }} options
+ * @returns
+ */
 export function setGroupVisibility(mapName: string, options: { id: string, value: boolean }) {
     return {
         type: Constants.LEGEND_SET_GROUP_VISIBILITY,
@@ -13,6 +21,14 @@ export function setGroupVisibility(mapName: string, options: { id: string, value
     };
 }
 
+/**
+ * Sets the visibility for the given map layer
+ *
+ * @export
+ * @param {string} mapName
+ * @param {{ id: string, value: boolean }} options
+ * @returns
+ */
 export function setLayerVisibility(mapName: string, options: { id: string, value: boolean }) {
     return {
         type: Constants.LEGEND_SET_LAYER_VISIBILITY,
@@ -20,6 +36,14 @@ export function setLayerVisibility(mapName: string, options: { id: string, value
     };
 }
 
+/**
+ * Sets the expanded/collapsed state of the given group
+ *
+ * @export
+ * @param {string} mapName
+ * @param {{ id: string, value: boolean }} options
+ * @returns
+ */
 export function setGroupExpanded(mapName: string, options: { id: string, value: boolean }) {
     return {
         type: Constants.LEGEND_SET_GROUP_EXPANDABLE,
@@ -27,6 +51,14 @@ export function setGroupExpanded(mapName: string, options: { id: string, value: 
     };
 }
 
+/**
+ * Sets the selectability state for the given map layer
+ *
+ * @export
+ * @param {string} mapName
+ * @param {{ id: string, value: boolean }} options
+ * @returns
+ */
 export function setLayerSelectable(mapName: string, options: { id: string, value: boolean }) {
     return {
         type: Constants.LEGEND_SET_LAYER_SELECTABLE,
@@ -34,6 +66,12 @@ export function setLayerSelectable(mapName: string, options: { id: string, value
     };
 }
 
+/**
+ * Perform a full refresh with a requery of the layer/group structure
+ *
+ * @export
+ * @returns {ReduxThunkedAction}
+ */
 export function refresh(): ReduxThunkedAction {
     return (dispatch, getState) => {
         const state = getState();

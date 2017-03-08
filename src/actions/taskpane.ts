@@ -7,6 +7,12 @@ import {
 import queryString = require("query-string");
 const parse = require("url-parse");
 
+/**
+ * Go back to the initial task URL
+ *
+ * @export
+ * @returns {ReduxThunkedAction}
+ */
 export function goHome(): ReduxThunkedAction {
     return (dispatch, getState) => {
         const initUrl = getState().taskpane.initialUrl;
@@ -20,18 +26,38 @@ export function goHome(): ReduxThunkedAction {
     };
 }
 
+/**
+ * Go back one entry in the task pane navigation history
+ *
+ * @export
+ * @returns
+ */
 export function goBack() {
     return {
         type: Constants.TASK_PANE_BACK
     };
 }
 
+/**
+ * Go forward one entry in the task pane navigation history
+ *
+ * @export
+ * @returns
+ */
 export function goForward() {
     return {
         type: Constants.TASK_PANE_FORWARD
     };
 }
 
+/**
+ * Pushes the given URL to the task pane navigation history stack
+ *
+ * @export
+ * @param {string} url
+ * @param {boolean} [silent]
+ * @returns
+ */
 export function pushUrl(url: string, silent?: boolean) {
     return {
         type: Constants.TASK_PANE_PUSH_URL,

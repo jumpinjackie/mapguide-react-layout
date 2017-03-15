@@ -1,7 +1,6 @@
 import * as React from "react";
 import { shallow, mount, render } from "enzyme";
 import { ScaleDisplay } from "../src/components/scale-display";
-import td = require("testdouble");
 import {
     IMapView
 } from "../src/api/common";
@@ -20,7 +19,7 @@ type SetScaleFunc = (scale: number) => void;
 
 describe("containers/scale-display", () => {
     it("Renders a select with finite scale list if found on map", () => {
-        const func = td.function<SetScaleFunc>();
+        const func = jest.fn();
         const view: IMapView = {
             x: 0,
             y: 0,
@@ -40,7 +39,7 @@ describe("containers/scale-display", () => {
             y: 0,
             scale: 2000
         };
-        const func = td.function<SetScaleFunc>();
+        const func = jest.fn();
         const wrapper = mount(<ScaleDisplay locale="en" view={view} onScaleChanged={func} />);
         const sel = wrapper.find("select");
         const num = wrapper.find("input");
@@ -53,12 +52,14 @@ describe("containers/scale-display", () => {
             y: 0,
             scale: 2000
         };
-        const func = td.function<SetScaleFunc>();
+        const func = jest.fn();
         const wrapper = mount(<ScaleDisplay locale="en" view={view} finiteScales={FINITE_SCALES} onScaleChanged={func} />);
         const sel = wrapper.find("select");
         expect(sel).toHaveLength(1);
         sel.simulate("change", { target: { value: "180.375" } });
-        td.verify(func(180.375));
+        expect(func.mock.calls).toHaveLength(1);
+        expect(func.mock.calls[0]).toHaveLength(1);
+        expect(func.mock.calls[0][0]).toBe(180.375);
     });
     it("dispatches set scale on whole scale with no decimals", () => {
         const view: IMapView = {
@@ -66,11 +67,13 @@ describe("containers/scale-display", () => {
             y: 0,
             scale: 2000
         };
-        const func = td.function<SetScaleFunc>();
+        const func = jest.fn();
         const wrapper = mount(<ScaleDisplay locale="en" view={view} finiteScales={FINITE_SCALES} onScaleChanged={func} />);
         const sel = wrapper.find("select");
         expect(sel).toHaveLength(1);
         sel.simulate("change", { target: { value: "900" } });
-        td.verify(func(900));
+        expect(func.mock.calls).toHaveLength(1);
+        expect(func.mock.calls[0]).toHaveLength(1);
+        expect(func.mock.calls[0][0]).toBe(900);
     });
 });

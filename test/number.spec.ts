@@ -1,8 +1,16 @@
-import { scaleRangeBetween, getFiniteScaleIndexForScale, getClosestScaleIndex } from "../src/utils/number";
+import { areNumbersEqual, scaleRangeBetween, getFiniteScaleIndexForScale, getClosestScaleIndex } from "../src/utils/number";
 
 const SCALES = [390.625, 781.25, 1562.5, 3125, 6250, 12500, 25000, 50000, 100000, 200000];
 
 describe("utils/number", () => {
+    describe("areNumbersEqual", () => {
+        it("is true for exact and epsilon differences", () => {
+            const SHIM_EPSILON = Math.pow(2, -53);
+            expect(areNumbersEqual(0, 0)).toBe(true);
+            expect(areNumbersEqual(0, 0 + SHIM_EPSILON)).toBe(true);
+            expect(areNumbersEqual(0 + SHIM_EPSILON, 0)).toBe(true);
+        });
+    });
     describe("scaleRangeBetween", () => {
         it("between should be inclusive", () => {
             expect(scaleRangeBetween(1.5, 1, 2)).toBe(true);

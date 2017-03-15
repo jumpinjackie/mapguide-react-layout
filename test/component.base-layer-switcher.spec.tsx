@@ -1,6 +1,5 @@
 import * as React from "react";
 import { shallow, mount, render } from "enzyme";
-import td = require("testdouble");
 import { IExternalBaseLayer } from "../src/api/common";
 import { BaseLayerSwitcher } from "../src/components/base-layer-switcher";
 import { STR_EMPTY } from "../src/utils/string";
@@ -9,7 +8,7 @@ type LayerSwitchFunc = (name: string) => void;
 
 describe("components/base-layer-switcher", () => {
     it("Renders only NONE on empty base layer array", () => {
-        const onBaseLayerChanged = td.function<LayerSwitchFunc>();
+        const onBaseLayerChanged = jest.fn();
         const layers: IExternalBaseLayer[] = [];
         const wrapper = mount(<BaseLayerSwitcher externalBaseLayers={layers} onBaseLayerChanged={onBaseLayerChanged} locale="en" />);
         expect(wrapper.find(".base-layer-switcher-item-container")).toHaveLength(1); //, "Expected 1 item");
@@ -18,7 +17,7 @@ describe("components/base-layer-switcher", () => {
         expect((wrapper.find(".base-layer-switcher-option").at(0).props() as any).checked).toBe(true);
     });
     it("Renders items on non-empty base layer array", () => {
-        const onBaseLayerChanged = td.function<LayerSwitchFunc>();
+        const onBaseLayerChanged = jest.fn();
         const layers: IExternalBaseLayer[] = [
             { name: "OpenStreetMap", kind: "OSM",  visible: true },
             { name: "Stamen - Toner", kind: "Stamen" }
@@ -34,7 +33,7 @@ describe("components/base-layer-switcher", () => {
         expect((wrapper.find(".base-layer-switcher-option").at(2).props() as any).checked).toBe(false);
     });
     it("Renders NONE as checked item on non-empty base layer array where more than one layer is set visible", () => {
-        const onBaseLayerChanged = td.function<LayerSwitchFunc>();
+        const onBaseLayerChanged = jest.fn();
         const layers: IExternalBaseLayer[] = [
             { name: "OpenStreetMap", kind: "OSM", visible: true },
             { name: "Stamen - Toner", kind: "Stamen", visible: true }

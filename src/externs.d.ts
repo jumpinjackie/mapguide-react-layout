@@ -124,20 +124,6 @@ declare module "react-draggable" {
     export = Draggable;
 }
 
-declare module "testdouble" {
-    interface TestDoubleFunctionSetup {
-        thenReturn(result: any): void;
-    }
-    interface TestDoubleAPI {
-        function<TFunc>(name?: string): TFunc;
-        function(name?: string): Function;
-        verify(funcCallResult: any): void;
-        when(funcCallResult: any): TestDoubleFunctionSetup;
-    }
-    var td: TestDoubleAPI;
-    export = td;
-}
-
 // Monkey patching Array.filter to support type narrowing
 // https://github.com/Microsoft/TypeScript/issues/7657
 interface Array<T> {

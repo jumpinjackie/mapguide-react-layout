@@ -91,7 +91,7 @@
     "raw-loader": "^0.5.1",
     "rimraf": "^2.6.1",
     "style-loader": "^0.13.2",
-    "testdouble": "^1.11.2",
+    "testdouble": "^2.0.1",
     "ts-jest": "^19.0.0",
     "ts-loader": "^2.0.1",
     "tslint": "^4.5.1",

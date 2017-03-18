@@ -4739,9 +4739,9 @@ strip-json-comments@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
 
-style-loader@^0.14.0:
-  version "0.14.0"
-  resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-0.14.0.tgz#e44fe69ef891513bb22fdd10c3167aaa99711164"
+style-loader@^0.14.1:
+  version "0.14.1"
+  resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-0.14.1.tgz#27b9b6c9822adf8c4748e02a1efae229405d79a5"
   dependencies:
     loader-utils "^1.0.2"
 
@@ -4923,9 +4923,9 @@ ts-jest@^19.0.1:
     source-map-support "^0.4.4"
     yargs "^6.1.1"
 
-ts-loader@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/ts-loader/-/ts-loader-2.0.1.tgz#2ec8fa5e20ef01062a4a2c28c9d6ac828c32e75d"
+ts-loader@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/ts-loader/-/ts-loader-2.0.2.tgz#74abc2f15a9f1d8432873dfa35eef8e513caa622"
   dependencies:
     colors "^1.0.3"
     enhanced-resolve "^3.0.0"

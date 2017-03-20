@@ -123,6 +123,26 @@
                 }
             }
         }
+        
+        function selectionHandler(mapName, selection) {
+            showMessage("");
+            if (selection) {
+                var xml = viewer.getSelectionXml(selection);
+                showMessage("Selection for (" + mapName + "):\n" + xml.replace(/</g, "&lt;").replace(/>/g, "&gt;\n"));
+            } else {
+                showMessage("Selection for (" + mapName + ") is empty");
+            }
+        }
+
+        function installListener() {
+            parent.parent.RegisterSelectionHandler(selectionHandler);
+            showMessage("Selection Listener installed. Remember to uninstall this handler when page unloads");
+        }
+
+        function uninstallListener() {
+            parent.parent.UnregisterSelectionHandler(selectionHandler);
+            showMessage("Selection listener uninstalled");
+        }
 
         window.onload = function() {
             //GetViewerInterface is the new API that Task Pane content
@@ -130,6 +150,14 @@
             viewer = parent.parent.GetViewerInterface();
             el = document.getElementById("messages");
         };
+
+        window.onunload = function() {
+            //Make sure to do this, otherwise the viewer will be holding onto dangling handlers
+            //as the browser reclaims memory used by this page
+            parent.parent.UnregisterSelectionHandler(selectionHandler);
+            console.log("Selection handler uninstalled");
+        };
+
     </script>
 </head>
 
@@ -148,6 +176,11 @@
         <button onclick="clearMessages()">Clear Messages</button>
         <button onclick="showProjection()">Show Map Projection</button>
         <button onclick="showSelectionXML()">Show Selection XML</button>
+    </fieldset>
+    <fieldset>
+        <legend>Selection Listeners</legend>
+        <button onclick="installListener()">Install</button>
+        <button onclick="uninstallListener()">Uninstall</button>
     </fieldset>
     <fieldset>
         <legend>Set Active Tool</legend>

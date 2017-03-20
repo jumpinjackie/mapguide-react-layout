@@ -118,15 +118,19 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IAjaxViewerShimDispatch {
 
 export type AjaxViewerShimProps = IAjaxViewerShimProps & Partial<IAjaxViewerShimState> & Partial<IAjaxViewerShimDispatch>;
 
+export type SelectionHandlerCallback = (mapName: string, selection: QueryMapFeaturesResponse | undefined) => void;
+
 @connect(mapStateToProps, mapDispatchToProps)
 export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {
     private fnFormFrameMounted: (component: FormFrameShim) => void;
+    private userSelectionHandlers: SelectionHandlerCallback[];
     private us: boolean;
     private formFrame: FormFrameShim;
     constructor(props: AjaxViewerShimProps) {
         super(props);
         this.us = true;
         this.fnFormFrameMounted = this.onFormFrameMounted.bind(this);
+        this.userSelectionHandlers = [];
     }
     private onFormFrameMounted(form: FormFrameShim) {
         this.formFrame = form;
@@ -510,6 +514,17 @@ export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {
         //    taskPane.goHome();
         //}
     }
+
+    private RegisterSelectionHandler(handler: SelectionHandlerCallback): number {
+        this.userSelectionHandlers.push(handler);
+        return this.userSelectionHandlers.length;
+    }
+
+    private UnregisterSelectionHandler(handler: SelectionHandlerCallback): number {
+        this.userSelectionHandlers = this.userSelectionHandlers.filter(h => h != handler);
+        return this.userSelectionHandlers.length;
+    }
+
     private installShims(browserWindow: any) {
         browserWindow.GetMapFrame = browserWindow.GetMapFrame || (() => this);
         //NOTE: mapFrame is technically not part of the "public" API for the AJAX viewer, but since most examples test
@@ -522,13 +537,24 @@ export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {
         browserWindow.SetSelectionXML = browserWindow.SetSelectionXML || ((xmlSet: string) => this.SetSelectionXML(xmlSet));
         browserWindow.ZoomToView = browserWindow.ZoomToView || ((x: number, y: number, scale: number, refresh: boolean) => this.ZoomToView(x, y, scale, refresh));
         browserWindow.GotoHomePage = browserWindow.GotoHomePage || (() => this.goHome());
+
+        // ======= Extended Viewer API ========== //
         browserWindow.GetViewerInterface = browserWindow.GetViewerInterface || (() => Runtime.getViewer());
+        browserWindow.RegisterSelectionHandler = browserWindow.RegisterSelectionHandler || ((handler: SelectionHandlerCallback) => this.RegisterSelectionHandler(handler));
+        browserWindow.UnregisterSelectionHandler = browserWindow.UnregisterSelectionHandler || ((handler: SelectionHandlerCallback) => this.UnregisterSelectionHandler(handler));
     }
     componentDidMount() {
         //Install shims into browser window
         let browserWindow: any = window;
         this.installShims(browserWindow);
         this.installShims(window.parent);
+    }
+    componentWillReceiveProps(nextProps: AjaxViewerShimProps) {
+        if (nextProps.map) {
+            for (const handler of this.userSelectionHandlers) {
+                handler(nextProps.map.Name, nextProps.selectionSet);
+            }
+        }
     }
     render(): JSX.Element {
         //This is for all intents and purposes, a "background" component. There is no real DOM representation

@@ -522,6 +522,7 @@ export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {
         browserWindow.SetSelectionXML = browserWindow.SetSelectionXML || ((xmlSet: string) => this.SetSelectionXML(xmlSet));
         browserWindow.ZoomToView = browserWindow.ZoomToView || ((x: number, y: number, scale: number, refresh: boolean) => this.ZoomToView(x, y, scale, refresh));
         browserWindow.GotoHomePage = browserWindow.GotoHomePage || (() => this.goHome());
+        browserWindow.GetViewerInterface = browserWindow.GetViewerInterface || (() => Runtime.getViewer());
     }
     componentDidMount() {
         //Install shims into browser window

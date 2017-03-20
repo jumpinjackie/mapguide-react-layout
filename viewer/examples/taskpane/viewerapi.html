@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Enhanced viewer API for Task Pane content samples</title>
+    <script type="text/javascript">
+        var viewer = null;
+        var el = null;
+
+        function showMessage(text) {
+            el.innerHTML = text;
+        }
+
+        function clearMessages() {
+            showMessage("");
+        }
+
+        function showCurrentExtent() {
+            showMessage("");
+            var bounds = viewer.getCurrentExtent();
+            showMessage("Bounds is:\n" + bounds.join(",\n"));
+        }
+        function showCurrentView() {
+            showMessage("");
+            var bounds = viewer.getCurrentExtent();
+            var view = viewer.getViewForExtent(bounds);
+            showMessage("View is:\nX: " + view.x + "\nY: " + view.y + "\nScale: " + view.scale);
+        }
+
+        function showMetersPerUnit() {
+            showMessage("");
+            var mpu = viewer.getMetersPerUnit();
+            showMessage("MPU is: " + mpu);
+        }
+
+        function initialView() {
+            showMessage("");
+            viewer.initialView();
+            showMessage("Zoomed to initial view");
+        }
+
+        function clearSelection() {
+            showMessage("");
+            viewer.clearSelection();
+            showMessage("Cleared selection");
+        }
+
+        function showProjection() {
+            showMessage("");
+            var proj = viewer.getProjection();
+            if (typeof(proj) == 'string') {
+                showMessage("Projection is: " + proj);
+            } else {
+                var msg = "Projection is:\n\n";
+                msg += "Code: " + proj.getCode() + "\n";
+                msg += "Extent:\n\t" + proj.getExtent().join(",\n\t") + "\n";
+                msg += "Units: " + proj.getUnits() + "\n";
+                msg += "MPU: " + proj.getMetersPerUnit() + "\n";
+                msg += "Is Global: "+ proj.isGlobal() + "\n";
+                showMessage(msg);
+            }
+        }
+
+        function setTool(code, name) {
+            showMessage("");
+            viewer.setActiveTool(code);
+            showMessage("Active tool set to: " + name);
+        }
+
+        function setToolZoom() {
+            setTool(0, "Zoom");
+        }
+
+        function setToolSelect() {
+            setTool(1, "Select");
+        }
+
+        function setToolPan() {
+            setTool(2, "Pan");
+        }
+
+        function setToolNone() {
+            setTool(3, "None");
+        }
+
+        function enableTT() {
+            showMessage("");
+            viewer.setFeatureTooltipEnabled(true);
+            showMessage("Enabled Feature Tooltips");
+        }
+
+        function disableTT() {
+            showMessage("");
+            viewer.setFeatureTooltipEnabled(false);
+            showMessage("Disabled Feature Tooltips");
+        }
+
+        function currentTTState() {
+            showMessage("");
+            var state = viewer.isFeatureTooltipEnabled();
+            showMessage("Feature Tooltips Enabled: " + state);
+        }
+
+        function showSelectionXML() {
+            showMessage("");
+            var sel = viewer.getSelection();
+            if (sel) {
+                var xml = viewer.getSelectionXml(sel);
+                showMessage(xml.replace(/</g, "&lt;").replace(/>/g, "&gt;\n"));
+            } else {
+                showMessage("No selection has been made");
+            }
+        }
+
+        function zoomToBounds() {
+            var bounds = prompt("Enter the bounds (x1 y1 x2 y2) each number separated by a space:");
+            if (bounds) {
+                var parts = bounds.split(" ").map(b => parseFloat(b));
+                if (parts.length == 4) {
+                    viewer.zoomToExtent(parts);
+                } else {
+                    alert("Bad input. Try again");
+                }
+            }
+        }
+
+        window.onload = function() {
+            //GetViewerInterface is the new API that Task Pane content
+            //can call to access the new IMapViewer interface
+            viewer = parent.parent.GetViewerInterface();
+            el = document.getElementById("messages");
+        };
+    </script>
+</head>
+
+<body>
+    <h1>Viewer API samples</h1>
+    <p>This page demonstrates enhanced viewer APIs provided by mapguide-react-layout that are accesible from Task Pane content</p>
+    <p>Any APIs that return values, will be displayed in the <strong>Messages</strong> section below</p>
+    <fieldset>
+        <legend>General</legend>
+        <button onclick="showCurrentExtent()">Show Current Extent</button>
+        <button onclick="showCurrentView()">Show View for Current Extent</button>
+        <button onclick="showMetersPerUnit()">Show meters-per-unit</button>
+        <button onclick="zoomToBounds()">Zoom to Bounds</button>
+        <button onclick="initialView()">Initial View</button>
+        <button onclick="clearSelection()">Clear Selection</button>
+        <button onclick="clearMessages()">Clear Messages</button>
+        <button onclick="showProjection()">Show Map Projection</button>
+        <button onclick="showSelectionXML()">Show Selection XML</button>
+    </fieldset>
+    <fieldset>
+        <legend>Set Active Tool</legend>
+        <button onclick="setToolZoom()">Zoom</button>
+        <button onclick="setToolSelect()">Select</button>
+        <button onclick="setToolPan()">Pan</button>
+        <button onclick="setToolNone()">None</button>
+    </fieldset>
+    <fieldset>
+        <legend>Feature Tooltips</legend>
+        <button onclick="enableTT()">Enable</button>
+        <button onclick="disableTT()">Disable</button>
+        <button onclick="currentTTState()">Current State</button>
+    </fieldset>
+    <fieldset>
+        <legend>Messages</legend>
+        <pre id="messages"></pre>
+    </fieldset>
+</body>
+
+</html>

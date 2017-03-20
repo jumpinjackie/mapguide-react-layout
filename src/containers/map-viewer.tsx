@@ -281,10 +281,15 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         return this.inner.getMetersPerUnit();
     }
     setActiveTool(tool: ActiveMapTool): void {
-        this.setState({ tool: tool }); //TODO: This should dispatch
+        if (this.props.setActiveTool) {
+            this.props.setActiveTool(tool);
+        }
     }
     getActiveTool(): ActiveMapTool {
-        return this.state.tool; //TODO: This should read from redux store
+        if (this.props.viewer) {
+            return this.props.viewer.tool;
+        }
+        return ActiveMapTool.None;
     }
     initialView(): void {
         this.inner.initialView();
@@ -323,10 +328,10 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         this.inner.zoomToExtent(extent);
     }
     isFeatureTooltipEnabled(): boolean {
-        return this.state.featureTooltipsEnabled;
+        return this.inner.isFeatureTooltipEnabled();
     }
     setFeatureTooltipEnabled(enabled: boolean): void {
-        this.setState({ featureTooltipsEnabled: enabled });
+        this.inner.setFeatureTooltipEnabled(enabled);
     }
     queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void {
         this.inner.queryMapFeatures(options, success, failure);

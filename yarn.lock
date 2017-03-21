@@ -23,9 +23,9 @@
   version "1.5.20"
   resolved "https://registry.yarnpkg.com/@types/dom4/-/dom4-1.5.20.tgz#ccf636d3b794fe65a4191ebc7ff979a78efea6c2"
 
-"@types/enzyme@2.7.5":
-  version "2.7.5"
-  resolved "https://registry.yarnpkg.com/@types/enzyme/-/enzyme-2.7.5.tgz#a7c52a444cfa7711b16096681d134f4718df8a86"
+"@types/enzyme@2.7.6":
+  version "2.7.6"
+  resolved "https://registry.yarnpkg.com/@types/enzyme/-/enzyme-2.7.6.tgz#b210dd68e0009a916a7f02f2d168cde1f85d35b9"
   dependencies:
     "@types/cheerio" "*"
     "@types/react" "*"
@@ -2870,12 +2870,13 @@ lcov-parse@0.0.10:
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/lcov-parse/-/lcov-parse-0.0.10.tgz#1b0b8ff9ac9c7889250582b70b71315d9da6d9a3"
 
-less-loader@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/less-loader/-/less-loader-3.0.0.tgz#199f7f4a79ff8a195ab47649d71c6d7109da32b9"
+less-loader@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/less-loader/-/less-loader-4.0.0.tgz#1bc89e6ed1f817972d8fbf79dc6845c35dd8a7f8"
   dependencies:
     clone-deep "^0.2.4"
     loader-utils "^1.0.2"
+    pify "^2.3.0"
 
 less@^2.7.2:
   version "2.7.2"
@@ -3710,7 +3711,7 @@ pbkdf2@^3.0.3:
   dependencies:
     create-hmac "^1.1.2"
 
-pify@^2.0.0:
+pify@^2.0.0, pify@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/pify/-/pify-2.3.0.tgz#ed141a6ac043a849ea588498e7dca8b15330e90c"
 
@@ -4746,9 +4747,9 @@ strip-json-comments@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
 
-style-loader@^0.14.1:
-  version "0.14.1"
-  resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-0.14.1.tgz#27b9b6c9822adf8c4748e02a1efae229405d79a5"
+style-loader@^0.15.0:
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-0.15.0.tgz#17ff9527ae109b94d8c53d253dc9333041438a2d"
   dependencies:
     loader-utils "^1.0.2"
 

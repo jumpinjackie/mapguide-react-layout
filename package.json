@@ -39,7 +39,7 @@
     "@blueprintjs/core": "1.12.0",
     "@types/es6-promise": "0.0.32",
     "@types/lodash.debounce": "4.0.1",
-    "@types/lodash.uniq": "4.5.1",
+    "@types/lodash.uniq": "4.5.2",
     "@types/lodash.xor": "^4.5.1",
     "@types/node": "7.0.8",
     "@types/query-string": "3.0.32",

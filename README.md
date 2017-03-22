@@ -40,6 +40,10 @@ It aims for reasonable compatibility with the existing Web Layout and Flexible L
  2. Extract the archive to MapGuide's physical wwwroot directory
  3. Launch the viewer using a pre-defined template (see `Templates` below)
 
+# Demo 
+
+See [DEMO.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/DEMO.md) to find out how to use [play-with-docker](http://play-with-docker.com) easily set up a mapguide-react-layout demo site
+
 # Templates
 
 The following templates are included with this viewer.

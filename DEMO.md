@@ -26,3 +26,5 @@ With [play-with-docker](http://play-with-docker.com), you can easily spin up a d
 ![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/doc/pwd-landing-page.png)
 
  8. Click on any template link to load the Sheboygan map in that selected template
+
+Many thanks to @brucepc for his [docker image](https://github.com/brucepc/mapguide), from which our demo image is built on top of.

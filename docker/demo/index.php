@@ -9,11 +9,11 @@ $siteConn = new MgSiteConnection();
 $userInfo = new MgUserInformation("Administrator", "admin");
 $siteConn->Open($userInfo);
 $resSvc = $siteConn->CreateService(MgServiceType::ResourceService);
-$resWl = new MgResourceIdentifier("Library://Samples/Melbourne/Layouts/Melbourne.WebLayout");
-$resAppDef = new MgResourceIdentifier("Library://Samples/Melbourne/Layouts/Melbourne.ApplicationDefinition");
+$resWl = new MgResourceIdentifier("Library://Samples/Sheboygan/Layouts/AdvancedStylization.WebLayout");
+$resAppDef = new MgResourceIdentifier("Library://Samples/Sheboygan/FlexibleLayouts/SlateCommercial.ApplicationDefinition");
 if (!$resSvc->ResourceExists($resWl) || !$resSvc->ResourceExists($resAppDef)) {
     //The docker container will have Melbourne.mgp pre-loaded at this path
-    $bs3 = new MgByteSource(dirname(__FILE__)."/../../server/Packages/Melbourne.mgp");
+    $bs3 = new MgByteSource(dirname(__FILE__)."/../../server/Packages/Sheboygan.mgp");
     $br3 = $bs3->GetReader();
     $resSvc->ApplyResourcePackage($br3);
 }
@@ -53,8 +53,8 @@ if (!$resSvc->ResourceExists($resWl) || !$resSvc->ResourceExists($resAppDef)) {
         <div class="container">
             <div class="alert alert-info">
                 <strong>NOTE</strong>
-                <p>These samples use the <a href="https://github.com/jumpinjackie/mapguide-sample-melbourne/releases">Melbourne dataset</a></p>
-                <p>The dataset has been pre-loaded for you</p>
+                <p>These samples use the Sheboygan Dataset</p>
+                <p>If you are reading this message, this dataset has already been pre-loaded for you</p>
             </div>
         </div>
         <div class="container">
@@ -66,13 +66,13 @@ if (!$resSvc->ResourceExists($resWl) || !$resSvc->ResourceExists($resAppDef)) {
                     <div class="panel">
                         <div class="panel-body">
                             <ul class="list-group">
-                                <li class="list-group-item"><a href="viewer/index.html?resource=Library://Samples/Melbourne/Layouts/Melbourne.WebLayout">AJAX Viewer</a></li>
-                                <li class="list-group-item"><a href="viewer/sidebar.html?resource=Library://Samples/Melbourne/Layouts/Melbourne.WebLayout">Sidebar</a></li>
-                                <li class="list-group-item"><a href="viewer/slate.html?resource=Library://Samples/Melbourne/Layouts/Melbourne.ApplicationDefinitiont">Slate</a></li>
-                                <li class="list-group-item"><a href="viewer/turquoiseyellow.html?resource=Library://Samples/Melbourne/Layouts/Melbourne.ApplicationDefinition">TurquoiseYellow</a></li>
-                                <li class="list-group-item"><a href="viewer/maroon.html?resource=Library://Samples/Melbourne/Layouts/Melbourne.ApplicationDefinition">Maroon</a></li>
-                                <li class="list-group-item"><a href="viewer/limegold.html?resource=Library://Samples/Melbourne/Layouts/Melbourne.ApplicationDefinition">LimeGold</a></li>
-                                <li class="list-group-item"><a href="viewer/aqua.html?resource=Library://Samples/Melbourne/Layouts/Melbourne.ApplicationDefinition">Aqua</a></li>
+                                <li class="list-group-item"><a href="viewer/index.html?resource=Library://Samples/Sheboygan/Layouts/AdvancedStylization.WebLayout">AJAX Viewer</a></li>
+                                <li class="list-group-item"><a href="viewer/sidebar.html?resource=Library://Samples/Sheboygan/Layouts/AdvancedStylization.WebLayout">Sidebar</a></li>
+                                <li class="list-group-item"><a href="viewer/slate.html?resource=Library://Samples/Sheboygan/FlexibleLayouts/SlateCommercial.ApplicationDefinition">Slate</a></li>
+                                <li class="list-group-item"><a href="viewer/turquoiseyellow.html?resource=Library://Samples/Sheboygan/FlexibleLayouts/SlateCommercial.ApplicationDefinition">TurquoiseYellow</a></li>
+                                <li class="list-group-item"><a href="viewer/maroon.html?resource=Library://Samples/Sheboygan/FlexibleLayouts/SlateCommercial.ApplicationDefinition">Maroon</a></li>
+                                <li class="list-group-item"><a href="viewer/limegold.html?resource=Library://Samples/Sheboygan/FlexibleLayouts/SlateCommercial.ApplicationDefinition">LimeGold</a></li>
+                                <li class="list-group-item"><a href="viewer/aqua.html?resource=Library://Samples/Sheboygan/FlexibleLayouts/SlateCommercial.ApplicationDefinition">Aqua</a></li>
                             </ul>
                         </div>
                     </div>

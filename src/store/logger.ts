@@ -1,5 +1,5 @@
 import * as Constants from "../constants";
-const createLogger = require('redux-logger');
+const createLogger = require("redux-logger").createLogger;
 
 const logger = createLogger({
     collapsed: true,

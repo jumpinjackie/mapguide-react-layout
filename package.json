@@ -80,7 +80,7 @@
     "bestzip": "^1.1.4",
     "copyfiles": "^1.2.0",
     "coveralls": "^2.12.0",
-    "cross-env": "^3.2.4",
+    "cross-env": "^4.0.0",
     "css-loader": "^0.27.3",
     "enzyme": "^2.8.0",
     "file-loader": "^0.10.1",

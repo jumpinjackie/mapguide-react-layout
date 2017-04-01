@@ -99,9 +99,9 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@15.0.20":
-  version "15.0.20"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-15.0.20.tgz#3d4a05ed04a8b1847ac6c8fa6093591d3910fba5"
+"@types/react@*", "@types/react@15.0.21":
+  version "15.0.21"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-15.0.21.tgz#29d849427237c1463abfb7b370755ee3e5b5b375"
 
 "@types/shortid@0.0.28":
   version "0.0.28"

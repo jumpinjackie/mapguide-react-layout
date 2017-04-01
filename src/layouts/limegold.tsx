@@ -40,7 +40,7 @@ function mapStateToProps(state: IApplicationState): Partial<ILimeGoldTemplateLay
 
 function mapDispatchToProps(dispatch: ReduxDispatch) {
     return {
-        
+
     };
 }
 
@@ -130,7 +130,7 @@ export class LimeGoldLayoutTemplate extends React.Component<LimeGoldLayoutTempla
                     })()}
                     {(() => {
                         if (hasLegend) {
-                            const p1 = { overflow: "auto" };
+                            const p1: React.CSSProperties = { overflow: "auto" };
                             return <TabPanel>
                                 <div style={{ ...tabPanelStyle, ...p1 }}>
                                     <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: false }} />

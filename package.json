@@ -54,14 +54,14 @@
     "lodash.debounce": "^4.0.8",
     "lodash.uniq": "^4.5.0",
     "lodash.xor": "^4.5.0",
-    "ol": "4.0.1-beta.2",
+    "ol": "4.1.0-beta.1",
     "proj4": "^2.4.3",
     "query-string": "^4.3.2",
-    "react": "^15.4.2",
-    "react-addons-css-transition-group": "^15.5.0",
-    "react-addons-test-utils": "^15.4.2",
-    "react-addons-update": "^15.5.0",
-    "react-dom": "^15.4.2",
+    "react": "^15.5.3",
+    "react-addons-css-transition-group": "^15.5.1",
+    "react-addons-test-utils": "^15.5.0",
+    "react-addons-update": "^15.5.1",
+    "react-dom": "^15.5.3",
     "react-draggable": "^2.2.3",
     "react-measure": "^1.4.6",
     "react-redux": "^5.0.3",
@@ -97,7 +97,7 @@
     "typescript": "2.2.2",
     "typings": "^2.1.0",
     "url-loader": "^0.5.8",
-    "webpack": "^2.3.2"
+    "webpack": "^2.3.3"
   },
   "greenkeeper": {
     "ignore": [

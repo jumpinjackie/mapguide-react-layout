@@ -5,28 +5,19 @@ import {
     IApplicationState,
     IConfigurationReducerState
 } from "../api/common";
+import { IOLFactory } from "../api/ol-factory";
 import { tr } from "../api/i18n";
 import * as logger from "../utils/logger";
 
-import olSphere from "ol/sphere";
-import proj from "ol/proj";
 import Observable from "ol/observable";
-
-import Style from "ol/style/style";
-import Fill from "ol/style/fill";
-import Stroke from "ol/style/stroke";
-import CircleStyle from "ol/style/circle";
-
-import VectorLayer from "ol/layer/vector";
-import VectorSource from "ol/source/vector";
-
-import Overlay from "ol/overlay";
-import Feature from "ol/feature";
-
-import Draw from "ol/interaction/draw";
-
-import LineString from "ol/geom/linestring";
-import Polygon from "ol/geom/polygon";
+import olSphere from "ol/sphere";
+import olOverlay from "ol/overlay";
+import olLineString from "ol/geom/linestring";
+import olPolygon from "ol/geom/polygon";
+import olStyle from "ol/style/style";
+import olInteractionDraw from "ol/interaction/draw";
+import olFeature from "ol/feature";
+import olVectorLayer from "ol/layer/vector";
 
 const LAYER_NAME = "measure-layer";
 const WGS84_SPHERE = new olSphere(6378137);
@@ -38,19 +29,20 @@ export interface IMeasureComponent {
 }
 
 export class MeasureContext {
+    private olFactory: IOLFactory;
     private fnDrawStart: GenericEventHandler;
     private fnDrawEnd: GenericEventHandler;
     private fnMouseMove: GenericEventHandler;
-    private draw: Draw;
-    private measureOverlays: Overlay[];
-    private measureLayer: VectorLayer;
+    private draw: olInteractionDraw;
+    private measureOverlays: olOverlay[];
+    private measureLayer: olVectorLayer;
     private viewer: IMapViewer;
-    private sketch: Feature | null;
+    private sketch: olFeature | null;
     private listener: any;
     private helpTooltipElement: Element;
-    private helpTooltip: Overlay;
+    private helpTooltip: olOverlay;
     private measureTooltipElement: Element | null;
-    private measureTooltip: Overlay;
+    private measureTooltip: olOverlay;
     private mapName: string;
     private layerName: string;
     private parent: IMeasureComponent;
@@ -63,8 +55,9 @@ export class MeasureContext {
         this.fnDrawEnd = this.onDrawEnd.bind(this);
         this.fnMouseMove = this.onMouseMove.bind(this);
         this.layerName = `${LAYER_NAME}-${mapName}`;
-        this.measureLayer = new VectorLayer({
-            source: new VectorSource(),
+        this.olFactory = viewer.getOLFactory();
+        this.measureLayer = this.olFactory.createVectorLayer({
+            source: this.olFactory.createVectorSource(),
             renderOrder: null as any //This is probably a bug in OL API doc
         });
         this.measureLayer.setStyle(this.createMeasureStyle());
@@ -74,15 +67,15 @@ export class MeasureContext {
      * @param {LineString} line The line.
      * @return {string} The formatted length.
      */
-    private formatLength(line: LineString) {
+    private formatLength(line: olLineString) {
         let length: number;
         if (this.parent.isGeodesic()) {
             const coordinates = line.getCoordinates();
             length = 0;
             const sourceProj = this.viewer.getProjection();
             for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-                const c1 = proj.transform(coordinates[i], sourceProj, 'EPSG:4326');
-                const c2 = proj.transform(coordinates[i + 1], sourceProj, 'EPSG:4326');
+                const c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, 'EPSG:4326');
+                const c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, 'EPSG:4326');
                 length += WGS84_SPHERE.haversineDistance(c1, c2);
             }
         } else {
@@ -103,11 +96,11 @@ export class MeasureContext {
      * @param {Polygon} polygon The polygon.
      * @return {string} Formatted area.
      */
-    private formatArea(polygon: Polygon) {
+    private formatArea(polygon: olPolygon) {
         let area: number;
         if (this.parent.isGeodesic()) {
             const sourceProj = this.viewer.getProjection();
-            const geom = (polygon.clone().transform(sourceProj, 'EPSG:4326') as Polygon);
+            const geom = (polygon.clone().transform(sourceProj, 'EPSG:4326') as olPolygon);
             const coordinates = geom.getLinearRing(0).getCoordinates();
             area = Math.abs(WGS84_SPHERE.geodesicArea(coordinates));
         } else {
@@ -134,10 +127,10 @@ export class MeasureContext {
             this.listener = this.sketch.getGeometry().on('change', (e: GenericEvent) => {
                 const geom = e.target;
                 let output: string;
-                if (geom instanceof Polygon) {
+                if (geom instanceof olPolygon) {
                     output = this.formatArea(geom);
                     tooltipCoord = geom.getInteriorPoint().getCoordinates();
-                } else if (geom instanceof LineString) {
+                } else if (geom instanceof olLineString) {
                     output = this.formatLength(geom);
                     tooltipCoord = geom.getLastCoordinate();
                 } else {
@@ -171,9 +164,9 @@ export class MeasureContext {
         let helpMsg = tr("MEASUREMENT_START_DRAWING", locale);
         if (this.sketch) {
             const geom = (this.sketch.getGeometry());
-            if (geom instanceof Polygon) {
+            if (geom instanceof olPolygon) {
                 helpMsg = tr("MEASUREMENT_CONTINUE_POLYGON", locale);
-            } else if (geom instanceof LineString) {
+            } else if (geom instanceof olLineString) {
                 helpMsg = tr("MEASUREMENT_CONTINUE_LINE", locale);
             }
         }
@@ -182,43 +175,43 @@ export class MeasureContext {
         this.helpTooltipElement.classList.remove('hidden');
     }
     public getMapName(): string { return this.mapName; }
-    private createMeasureStyle(): Style {
-        return new Style({
-            fill: new Fill({
+    private createMeasureStyle(): olStyle {
+        return this.olFactory.createStyle({
+            fill: this.olFactory.createStyleFill({
                 color: 'rgba(255, 255, 255, 0.2)'
             }),
-            stroke: new Stroke({
+            stroke: this.olFactory.createStyleStroke({
                 color: '#ffcc33',
                 width: 2
             }),
-            image: new CircleStyle({
+            image: this.olFactory.createStyleCircle({
                 radius: 7,
-                fill: new Fill({
+                fill: this.olFactory.createStyleFill({
                     color: '#ffcc33'
                 })
             })
         });
     }
-    private createDrawInteraction(type: string): Draw {
+    private createDrawInteraction(type: string): olInteractionDraw {
         const source = this.measureLayer.getSource();
-        return new Draw({
+        return this.olFactory.createInteractionDraw({
             source: source,
             type: /** @type {ol.geom.GeometryType} */ (type),
-            style: new Style({
-                fill: new Fill({
+            style: this.olFactory.createStyle({
+                fill: this.olFactory.createStyleFill({
                     color: 'rgba(255, 255, 255, 0.2)'
                 }),
-                stroke: new Stroke({
+                stroke: this.olFactory.createStyleStroke({
                     color: 'rgba(0, 0, 0, 0.5)',
                     lineDash: [10, 10],
                     width: 2
                 }),
-                image: new CircleStyle({
+                image: this.olFactory.createStyleCircle({
                     radius: 5,
-                    stroke: new Stroke({
+                    stroke: this.olFactory.createStyleStroke({
                         color: 'rgba(0, 0, 0, 0.7)'
                     }),
-                    fill: new Fill({
+                    fill: this.olFactory.createStyleFill({
                         color: 'rgba(255, 255, 255, 0.2)'
                     })
                 })
@@ -237,7 +230,7 @@ export class MeasureContext {
         this.removeElement(this.helpTooltipElement);
         this.helpTooltipElement = document.createElement('div');
         this.helpTooltipElement.className = 'tooltip hidden';
-        this.helpTooltip = new Overlay({
+        this.helpTooltip = this.olFactory.createOverlay({
             element: this.helpTooltipElement,
             offset: [15, 0],
             positioning: 'center-left'
@@ -255,7 +248,7 @@ export class MeasureContext {
         if (this.measureTooltip) {
             this.measureOverlays.push(this.measureTooltip);
         }
-        this.measureTooltip = new Overlay({
+        this.measureTooltip = this.olFactory.createOverlay({
             element: this.measureTooltipElement,
             offset: [0, -15],
             positioning: 'bottom-center'

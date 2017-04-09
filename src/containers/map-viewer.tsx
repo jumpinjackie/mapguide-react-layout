@@ -30,6 +30,7 @@ import { showModalComponent } from "../actions/modal";
 import { DefaultComponentNames } from "../api/registry/component";
 import { processMenuItems } from "../utils/menu";
 import { tr } from "../api/i18n";
+import { IOLFactory, OLFactory } from "../api/ol-factory";
 
 export interface IMapViewerContainerProps {
     overviewMapElementSelector?: () => (Element | null);
@@ -122,6 +123,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     implements IMapViewer {
     private fnMapViewerMounted: (component: MapViewerBase) => void;
     private inner: MapViewerBase;
+    private olFactory: OLFactory;
     private fnRequestZoomToView: (view: IMapView) => void;
     private fnQueryMapFeatures: (options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) => void;
     private fnBusyLoading: (busyCount: number) => void;
@@ -130,6 +132,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     private fnBeginDigitization: (callback: (cancelled: boolean) => void) => void;
     constructor(props: MapViewerContainerProps) {
         super(props);
+        this.olFactory = new OLFactory();
         this.fnMapViewerMounted = this.onMapViewerMounted.bind(this);
         this.fnRequestZoomToView = this.onRequestZoomToView.bind(this);
         this.fnQueryMapFeatures = this.onQueryMapFeatures.bind(this);
@@ -379,5 +382,8 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     }
     removeHandler(eventName: string, handler: Function) {
         this.inner.removeHandler(eventName, handler);
+    }
+    getOLFactory(): IOLFactory {
+        return this.olFactory;
     }
 }

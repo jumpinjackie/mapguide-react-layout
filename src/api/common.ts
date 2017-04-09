@@ -13,6 +13,8 @@ import olLayerBase from "ol/layer/base";
 import olInteraction from "ol/interaction/interaction";
 import olOverlay from "ol/overlay";
 
+import { IOLFactory } from "./ol-factory";
+
 /**
  * Describes a map view
  * @export
@@ -657,6 +659,10 @@ export interface IMapViewer {
      * @memberOf IMapViewer
      */
     removeHandler(eventName: string, handler: Function): void;
+    /**
+     * Gets the OL object factory
+     */
+    getOLFactory(): IOLFactory;
 }
 
 /**

@@ -20,9 +20,6 @@ import * as Constants from "../constants";
 import { ensureParameters } from "../actions/taskpane";
 import { DefaultComponentNames } from "../api/registry/component";
 import { Toaster, Position, Intent } from "@blueprintjs/core";
-import olExtent from "ol/extent";
-import olProj from "ol/proj";
-import olPolygon from "ol/geom/polygon";
 
 function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
     const settings: any = {
@@ -316,7 +313,8 @@ export function initDefaultCommands() {
         invoke: (dispatch, getState, viewer) => {
             if (viewer) {
                 viewer.digitizeCircle(circle => {
-                    const geom = olPolygon.fromCircle(circle);
+                    const fact = viewer.getOLFactory();
+                    const geom = fact.createGeomPolygonFromCircle(circle);
                     viewer.selectByGeometry(geom);
                 });
             }
@@ -380,6 +378,7 @@ export function initDefaultCommands() {
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer) => {
             if (viewer) {
+                const fact = viewer.getOLFactory();
                 const selection = getSelectionSet(getState());
                 let bounds: ol.Extent | null = null;
                 if (selection != null && selection.SelectedFeatures != null) {
@@ -389,7 +388,7 @@ export function initDefaultCommands() {
                             if (bounds == null) {
                                 bounds = b;
                             } else {
-                                bounds = olExtent.extend(bounds, b);
+                                bounds = fact.extendExtent(bounds, b);
                             }
                         })
                     });
@@ -448,10 +447,11 @@ export function initDefaultCommands() {
             const rtMap = getRuntimeMap(state);
             const locale = state.config.locale;
             if (viewer && view && rtMap) {
+                const fact = viewer.getOLFactory();
                 navigator.geolocation.getCurrentPosition(pos => {
                     const proj = viewer.getProjection();
-                    const txCoord = olProj.fromLonLat([ pos.coords.longitude, pos.coords.latitude ], proj);
-                    const testCoord = olProj.fromLonLat([ pos.coords.longitude, pos.coords.latitude ], `EPSG:${rtMap.CoordinateSystem.EpsgCode}`);
+                    const txCoord = fact.transformCoordinateFromLonLat([ pos.coords.longitude, pos.coords.latitude ], proj);
+                    const testCoord = fact.transformCoordinateFromLonLat([ pos.coords.longitude, pos.coords.latitude ], `EPSG:${rtMap.CoordinateSystem.EpsgCode}`);
                     viewer.zoomToView(txCoord[0], txCoord[1], view.scale);
                     const extents: [number, number, number, number] = [
                         rtMap.Extents.LowerLeftCoordinate.X,
@@ -459,7 +459,7 @@ export function initDefaultCommands() {
                         rtMap.Extents.UpperRightCoordinate.X,
                         rtMap.Extents.UpperRightCoordinate.Y
                     ];
-                    if (olExtent.containsXY(extents, testCoord[0], testCoord[1])) {
+                    if (fact.extentContainsXY(extents, testCoord[0], testCoord[1])) {
                         Toaster.create({ position: Position.TOP, className: "mg-toast" }).show({ iconName: "geolocation", message: tr("GEOLOCATION_SUCCESS", locale), intent: Intent.SUCCESS });
                     } else {
                         Toaster.create({ position: Position.TOP, className: "mg-toast" }).show({ iconName: "warning-sign", message: tr("GEOLOCATION_WARN_OUTSIDE_MAP", locale), intent: Intent.WARNING });

@@ -8,7 +8,13 @@ import { tr } from "../api/i18n";
 import { IDOMElementMetrics } from "../api/common";
 
 function currentUrlDoesNotMatchMapName(currentUrl: string, mapName: string): boolean {
-    return currentUrl.toLowerCase().indexOf(`mapname=${mapName.toLowerCase()}`) < 0;
+    const normUrl = currentUrl.toLowerCase();
+    //Only invalidate if url has mapname and it doesn't match our current one
+    if (normUrl.indexOf("mapname=") >= 0) {
+        return normUrl.indexOf(`mapname=${mapName.toLowerCase()}`) < 0;
+    } else {
+        return false;
+    }
 }
 
 export interface ITaskPaneProps {

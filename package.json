@@ -54,7 +54,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.uniq": "^4.5.0",
     "lodash.xor": "^4.5.0",
-    "ol": "4.1.0-beta.1",
+    "ol": "4.1.0",
     "proj4": "^2.4.3",
     "query-string": "^4.3.2",
     "react": "^15.5.4",

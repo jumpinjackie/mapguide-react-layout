@@ -54,7 +54,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.uniq": "^4.5.0",
     "lodash.xor": "^4.5.0",
-    "ol": "4.1.0-beta.1",
+    "ol": "4.1.0",
     "proj4": "^2.4.3",
     "query-string": "^4.3.2",
     "react": "^15.5.4",
@@ -82,7 +82,7 @@
     "coveralls": "^2.13.0",
     "cross-env": "^4.0.0",
     "css-loader": "^0.28.0",
-    "enzyme": "^2.8.0",
+    "enzyme": "^2.8.2",
     "file-loader": "^0.11.1",
     "jest": "^19.0.2",
     "jsonfile": "^2.4.0",
@@ -91,13 +91,13 @@
     "raw-loader": "^0.5.1",
     "rimraf": "^2.6.1",
     "style-loader": "^0.16.1",
-    "ts-jest": "^19.0.8",
+    "ts-jest": "^19.0.9",
     "ts-loader": "^2.0.3",
     "tslint": "^5.1.0",
     "typescript": "2.2.2",
     "typings": "^2.1.1",
     "url-loader": "^0.5.8",
-    "webpack": "^2.3.3"
+    "webpack": "^2.4.1"
   },
   "greenkeeper": {
     "ignore": [

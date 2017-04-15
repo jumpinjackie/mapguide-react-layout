@@ -1,4 +1,4 @@
-// Type definitions for OpenLayers v4.0.1
+// Type definitions for OpenLayers v4.1.0
 // Project: http://openlayers.org/
 // Definitions by: Jackie Ng <https://github.com/jumpinjackie>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -56,7 +56,7 @@ declare module ol {
      */
     type TileCoord = [number, number, number];
 }
-declare type proj4 = any;
+declare type Proj4 = any;
 declare type EsriJSONGeometry = any;
 declare type GeoJSONFeature = any;
 declare type GeoJSONFeatureCollection = any;
@@ -101,8 +101,9 @@ declare module ol {
         /**
          * TODO: This method has no documentation. Contact the library author if this method should be documented
          * @param opt_array  (Optional) Array.
+         * @param opt_options  (Optional) Collection options.
          */
-        constructor(opt_array?: T[]);
+        constructor(opt_array?: T[], opt_options?: olx.CollectionOptions);
         /**
          * Remove all elements from the collection.
          */
@@ -605,7 +606,7 @@ declare module ol {
         /**
          * Get a geometry of the position accuracy.
          */
-        getAccuracyGeometry(): ol.geom.Geometry;
+        getAccuracyGeometry(): ol.geom.Polygon;
         /**
          * Get the altitude associated with the position.
          */
@@ -1665,6 +1666,14 @@ otherwise it will be negative.
          */
         animate(...var_args: (olx.AnimationOptions|Function)[]): void;
         /**
+         * Determine if the view is being animated.
+         */
+        getAnimating(): boolean;
+        /**
+         * Cancel any ongoing animations.
+         */
+        cancelAnimations(): void;
+        /**
          * Get the constrained center of this view.
          * @param center  (Optional) Center.
          */
@@ -1704,6 +1713,24 @@ first map that uses this view will be used.
          */
         getMinResolution(): number;
         /**
+         * Get the maximum zoom level for the view.
+         */
+        getMaxZoom(): number;
+        /**
+         * Set a new maximum zoom level for the view.
+         * @param zoom  (Required) The maximum zoom level.
+         */
+        setMaxZoom(zoom: number): void;
+        /**
+         * Get the minimum zoom level for the view.
+         */
+        getMinZoom(): number;
+        /**
+         * Set a new minimum zoom level for the view.
+         * @param zoom  (Required) The minimum zoom level.
+         */
+        setMinZoom(zoom: number): void;
+        /**
          * Get the view projection.
          */
         getProjection(): ol.proj.Projection;
@@ -1725,6 +1752,11 @@ first map that uses this view will be used.
          * resolution is undefined or not within the "resolution constraints".
          */
         getZoom(): number;
+        /**
+         * Get the zoom level for a resolution.
+         * @param resolution  (Required) The resolution.
+         */
+        getZoomForResolution(resolution: number): number;
         /**
          * Fit the given geometry or extent based on the given map size and border.
          * The size is pixel dimensions of the box to fit the extent into.
@@ -2095,6 +2127,11 @@ first map that uses this view will be used.
      * "beforeoperations" and accessed again in "afteroperations".
      */
     type RasterOperation = (arg0: number[][]|ImageData[], arg1: any) => number[]|ImageData;
+    /**
+     * A function to be used when sorting features before rendering.
+     * It takes two instances of {@link ol.Feature} and returns a `{number}`.
+     */
+    type RenderOrderFunction = (arg0: ol.Feature, arg1: ol.Feature) => number;
     /**
      * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
      */
@@ -4039,6 +4076,11 @@ first map that uses this view will be used.
              * @param source  (Required) Source.
              */
             readFeatureCollectionMetadata(source: Document|Node|any|string): ol.WFSFeatureCollectionMetadata;
+            /**
+             * Encode filter as WFS `Filter` and return the Node.
+             * @param filter  (Required) Filter.
+             */
+            static writeFilter(filter: ol.format.filter.Filter): Node;
             /**
              * Encode format as WFS `GetFeature` and return the Node.
              * @param options  (Required) Options.
@@ -10350,7 +10392,7 @@ to zoom to the center of the map
          *     ol.proj.setProj4(proj4);
          * @param proj4  (Required) Proj4.
          */
-        function setProj4(proj4: proj4): void;
+        function setProj4(proj4: Proj4): void;
         /**
          * Get the resolution of the point in degrees or distance units.
          * For projections with degrees as the unit this will simply return the
@@ -10453,9 +10495,11 @@ to zoom to the center of the map
         function transformExtent(extent: ol.Extent, source?: ol.ProjectionLike, destination?: ol.ProjectionLike): ol.Extent;
         module common {
             /**
-             * FIXME empty description for jsdoc
+             * Deprecated.  Transforms between EPSG:4326 and EPSG:3857 are now included by
+             * default.  There is no need to call this function in application code and it
+             * will be removed in a future major release.
              */
-            function add(): void;
+            var add: any;
         }
     }
     module render {
@@ -10940,6 +10984,10 @@ If using named maps, a key-value lookup with the template parameters.
              */
             constructor(options: olx.source.ClusterOptions);
             /**
+             * Get the distance in pixels between clusters.
+             */
+            getDistance(): number;
+            /**
              * Get a reference to the wrapped source.
              */
             getSource(): ol.source.Vector;
@@ -11047,8 +11095,10 @@ If using named maps, a key-value lookup with the template parameters.
              * 
              * This method is not available when the source is configured with
              * `useSpatialIndex` set to `false`.
+             * @param opt_extent  (Optional) Destination extent. If provided, no new extent
+    will be created. Instead, that extent's coordinates will be overwritten.
              */
-            getExtent(): ol.Extent;
+            getExtent(opt_extent?: ol.Extent): ol.Extent;
             /**
              * Get a feature by its identifier (the value returned by feature.getId()).
              * Note that the index treats string and numeric identifiers as the same.  So
@@ -13912,8 +13962,10 @@ If using named maps, a key-value lookup with the template parameters.
              * 
              * This method is not available when the source is configured with
              * `useSpatialIndex` set to `false`.
+             * @param opt_extent  (Optional) Destination extent. If provided, no new extent
+    will be created. Instead, that extent's coordinates will be overwritten.
              */
-            getExtent(): ol.Extent;
+            getExtent(opt_extent?: ol.Extent): ol.Extent;
             /**
              * Get a feature by its identifier (the value returned by feature.getId()).
              * Note that the index treats string and numeric identifiers as the same.  So
@@ -14252,6 +14304,7 @@ Optional config properties:
  - style - {string} The name of the style
  - format - {string} Image format for the layer. Default is the first
       format returned in the GetCapabilities response.
+ - crossOrigin - {string|null|undefined} Cross origin. Default is `undefined`.
              */
             static optionsFromCapabilities(wmtsCap: any, config: any): olx.source.WMTSOptions;
             /**
@@ -16032,6 +16085,16 @@ declare module olx {
     /**
      * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
      */
+    interface CollectionOptions {
+        /**
+         * Disallow the same item from being added to the collection twice.  Default is
+         * false.
+         */
+        unique?: boolean;
+    }
+    /**
+     * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
+     */
     interface AttributionOptions {
         /**
          * HTML markup for this attribution.
@@ -16514,6 +16577,11 @@ declare module olx {
              */
             altShiftDragRotate?: boolean;
             /**
+             * Zoom to the closest integer zoom level after the wheel/trackpad or
+             * pinch gesture ends. Default is `false`.
+             */
+            constrainResolution?: boolean;
+            /**
              * Whether double click zoom is desired. Default is `true`.
              */
             doubleClickZoom?: boolean;
@@ -16595,18 +16663,14 @@ declare module olx {
              */
             condition?: ol.EventsConditionType;
             /**
+             * The minimum area of the box in pixel, this value is used by the default
+             * `boxEndCondition` function. Default is `64`.
+             */
+            minArea?: number;
+            /**
              * A function that takes a {@link ol.MapBrowserEvent} and two
-             * {@link ol.Pixel}s to indicate whether a boxend event should be fired.
-             * Default is:
-             * ```js
-             * function(mapBrowserEvent,
-             *     startPixel, endPixel) {
-             *   var width = endPixel[0] - startPixel[0];
-             *   var height = endPixel[1] - startPixel[1];
-             *   return width * width + height * height >=
-             *     ol.DRAG_BOX_HYSTERESIS_PIXELS_SQUARED;
-             * }
-             * ```
+             * {@link ol.Pixel}s to indicate whether a `boxend` event should be fired.
+             * Default is `true` if the area of the box is bigger than the `minArea` option.
              */
             boxEndCondition?: ol.DragBoxEndConditionType;
         }
@@ -16896,6 +16960,12 @@ declare module olx {
              * Mouse wheel timeout duration in milliseconds. Default is `80`.
              */
             timeout?: number;
+            /**
+             * When using a trackpad or magic mouse, zoom to the closest integer zoom level
+             * after the scroll gesture ends.
+             * Default is `false`.
+             */
+            constrainResolution?: boolean;
             /**
              * Enable zooming using the mouse's location as the anchor. Default is `true`.
              * When set to false, zooming in and out will zoom to the center of the screen
@@ -17790,6 +17860,11 @@ declare module olx {
              * GML options for the WFS transaction writer.
              */
             gmlOptions?: olx.format.GMLOptions;
+            /**
+             * WFS version to use for the transaction. Can be either `1.0.0` or `1.1.0`.
+             * Default is `1.1.0`.
+             */
+            version?: string;
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -18061,7 +18136,7 @@ declare module olx {
              * default features are drawn in the order that they are created. Use `null` to
              * avoid the sort, but get an undefined draw order.
              */
-            renderOrder: Function;
+            renderOrder?: ol.RenderOrderFunction;
             /**
              * Sets the layer as overlay on a map. The map will not manage this layer in its
              * layers collection, and the layer will be rendered on top. This is useful for
@@ -18150,7 +18225,7 @@ declare module olx {
              * Render order. Function to be used when sorting features before rendering. By
              * default features are drawn in the order that they are created.
              */
-            renderOrder: Function;
+            renderOrder?: ol.RenderOrderFunction;
             /**
              * Sets the layer as overlay on a map. The map will not manage this layer in its
              * layers collection, and the layer will be rendered on top. This is useful for
@@ -19674,7 +19749,7 @@ declare module olx {
              */
             opacity?: number;
             /**
-             * Scale.
+             * Scale. Default is `1`.
              */
             scale?: number;
             /**
@@ -19709,7 +19784,7 @@ declare module olx {
             /**
              * Image source URI.
              */
-            src: string;
+            src?: string;
         }
         /**
          * Specify radius for regular polygons, or radius1 and radius2 for stars.
@@ -19729,11 +19804,11 @@ declare module olx {
              */
             radius?: number;
             /**
-             * Inner radius of a star.
+             * Outer radius of a star.
              */
             radius1?: number;
             /**
-             * Outer radius of a star.
+             * Inner radius of a star.
              */
             radius2?: number;
             /**
@@ -21109,14 +21184,6 @@ declare module "ol/proj" {
         getTransform: ol.proj.getTransform,
         transform: ol.proj.transform,
         transformExtent: ol.proj.transformExtent
-    };
-}
-/*
- * ES2015 module declaration for ol.proj.common
- */
-declare module "ol/proj/common" {
-    export default {
-        add: ol.proj.common.add
     };
 }
 /*

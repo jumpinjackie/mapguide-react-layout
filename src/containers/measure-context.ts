@@ -57,8 +57,7 @@ export class MeasureContext {
         this.layerName = `${LAYER_NAME}-${mapName}`;
         this.olFactory = viewer.getOLFactory();
         this.measureLayer = this.olFactory.createVectorLayer({
-            source: this.olFactory.createVectorSource(),
-            renderOrder: null as any //This is probably a bug in OL API doc
+            source: this.olFactory.createVectorSource()
         });
         this.measureLayer.setStyle(this.createMeasureStyle());
     }

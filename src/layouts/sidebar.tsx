@@ -121,7 +121,7 @@ class Sidebar extends React.Component<ISidebarProps, any> {
     render(): JSX.Element {
         const { position, busy } = this.props;
         const { collapsed, activeTab } = this.state;
-        
+
         return <div className={`sidebar ${collapsed ? "collapsed" : ""} sidebar-${position}`}>
             <div className="sidebar-tabs">
                 <ul role="tablist">
@@ -225,7 +225,7 @@ function mapStateToProps(state: IApplicationState): Partial<ISidebarLayoutState>
 
 function mapDispatchToProps(dispatch: ReduxDispatch) {
     return {
-        
+
     };
 }
 
@@ -253,7 +253,7 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
         let sbWidth = SIDEBAR_WIDTH;
         let tpWidth = SIDEBAR_WIDTH;
         return <div style={{ width: "100%", height: "100%" }}>
-            <Sidebar position="left" 
+            <Sidebar position="left"
                      busy={viewer.busyCount > 0}
                      legend={hasLegend}
                      selection={hasSelectionPanel}
@@ -273,7 +273,7 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
                         top -= 40;
                     }
                     return <div id="toolbar-region" style={{ top: top }}>
-                        <ToolbarContainer id="main" containerClass="sidebar-toolbar" vertical={true} containerStyle={{ position: "absolute", left: 4, right: 6, zIndex: 100 }} />
+                        <ToolbarContainer id="Toolbar" containerClass="sidebar-toolbar" vertical={true} containerStyle={{ position: "absolute", left: 4, right: 6, zIndex: 100 }} />
                     </div>;
                 }
             })()}

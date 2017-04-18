@@ -34,7 +34,7 @@ function mapStateToProps(state: IApplicationState): Partial<IAjaxViewerLayoutSta
 
 function mapDispatchToProps(dispatch: ReduxDispatch) {
     return {
-        
+
     };
 }
 
@@ -116,7 +116,7 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
                 return <div style={{ position: "absolute", left: left, top: 0, bottom: 0, right: right }}>
                     {(() => {
                         if (hasToolbar) {
-                            return <ToolbarContainer id="main" containerStyle={{ position: "absolute", left: 10, top: 10, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />;
+                            return <ToolbarContainer id="Toolbar" containerStyle={{ position: "absolute", left: 10, top: 10, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />;
                         }
                     })()}
                     {(() => {

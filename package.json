@@ -46,7 +46,7 @@
     "@types/react": "15.0.21",
     "@types/react-addons-css-transition-group": "15.0.1",
     "@types/react-addons-update": "0.14.16",
-    "@types/react-dom": "0.14.23",
+    "@types/react-dom": "15.5.0",
     "@types/react-measure": "0.4.6",
     "@types/shortid": "0.0.28",
     "es6-promise": "^4.1.0",

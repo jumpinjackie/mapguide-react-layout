@@ -85,7 +85,7 @@
     "enzyme": "^2.8.2",
     "file-loader": "^0.11.1",
     "jest": "^19.0.2",
-    "jsonfile": "^2.4.0",
+    "jsonfile": "^3.0.0",
     "less": "^2.7.2",
     "less-loader": "^4.0.3",
     "raw-loader": "^0.5.1",

@@ -48,7 +48,7 @@
     "@types/react-addons-update": "0.14.16",
     "@types/react-dom": "15.5.0",
     "@types/react-measure": "0.4.6",
-    "@types/shortid": "0.0.28",
+    "@types/shortid": "0.0.29",
     "es6-promise": "^4.1.0",
     "ismobilejs": "^0.4.1",
     "lodash.debounce": "^4.0.8",

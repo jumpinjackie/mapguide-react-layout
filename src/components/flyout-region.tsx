@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import * as Constants from "../constants";
 import { MenuComponent } from "./menu";
 import { FlyoutMenuChildItem } from "./toolbar";
 import { IDOMElementMetrics } from "../api/common";
@@ -29,7 +30,7 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                     if (open) {
                         const items: any[] = flyout.childItems || [];
                         let align = "bottom right";
-                        if (flyoutId === "taskpane") {
+                        if (flyoutId === Constants.WEBLAYOUT_TASKMENU) {
                             align = "bottom left";
                         }
                         const containerStyle: React.CSSProperties = {};
@@ -41,7 +42,7 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                             } else {
                                 containerStyle.top = met.posY + met.height;
                             }
-                            if (flyoutId == "taskpane") {
+                            if (flyoutId == Constants.WEBLAYOUT_TASKMENU) {
                                 containerStyle.right = window.innerWidth - (met.posX + met.width);
                             } else {
                                 containerStyle.left = met.posX;
@@ -56,7 +57,7 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                         let className = "mg-flyout-menu-container";
                         if (flyout.componentName) {
                             className = "mg-flyout-component-container";
-                        } 
+                        }
 
                         children.push(<div key={flyoutId} className={className} style={containerStyle}>
                             {(() => {
@@ -67,7 +68,7 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                                 }
                             })()}
                             {(() => {
-                                if (flyoutId === "taskpane") {
+                                if (flyoutId === Constants.WEBLAYOUT_TASKMENU) {
                                     //HACK: In order for this flyout to show properly over the task pane iframe
                                     //when it contains embedded content (eg. An ActiveX/Flash/etc control) in IE
                                     //we have to stick an iframe into this flyout

@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as Constants from "../constants";
 import { Toolbar, IItem, IFlyoutMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
 import queryString = require("query-string");
 const parse = require("url-parse");
@@ -132,7 +133,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         const taskMenu: IFlyoutMenu = {
             label: tr("MENU_TASKS", this.props.locale),
             flyoutAlign: "bottom left",
-            flyoutId: "taskpane"
+            flyoutId: Constants.WEBLAYOUT_TASKMENU
         };
         const rootStyle: React.CSSProperties = {};
         const taskBarStyle: React.CSSProperties = {

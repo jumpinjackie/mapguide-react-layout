@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as Constants from "../constants";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
 import { ToolbarContainer } from "../containers/toolbar";
@@ -116,7 +117,7 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
                 return <div style={{ position: "absolute", left: left, top: 0, bottom: 0, right: right }}>
                     {(() => {
                         if (hasToolbar) {
-                            return <ToolbarContainer id="Toolbar" containerStyle={{ position: "absolute", left: 10, top: 10, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />;
+                            return <ToolbarContainer id={Constants.WEBLAYOUT_TOOLBAR} containerStyle={{ position: "absolute", left: 10, top: 10, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />;
                         }
                     })()}
                     {(() => {

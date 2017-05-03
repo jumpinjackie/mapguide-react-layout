@@ -210,7 +210,7 @@ function prepareSubMenus(tbConf: any): any {
     };
     for (const key in tbConf) {
         //Special case: Task pane. Transfer all to flyout
-        if (key == "taskpane") {
+        if (key == Constants.WEBLAYOUT_TASKMENU) {
             const flyoutId = key;
             prepared.flyouts[flyoutId] = {
                 children: tbConf[key].items
@@ -221,7 +221,7 @@ function prepareSubMenus(tbConf: any): any {
             };
             for (const item of tbConf[key].items) {
                 //Special case: contextmenu is all inline
-                if (item.children && key != 'contextmenu') {
+                if (item.children && key != Constants.WEBLAYOUT_CONTEXTMENU) {
                     const flyoutId = `${item.label}_${shortid.generate()}`;
                     prepared.toolbars[key].items.push({
                         label: item.label,
@@ -304,15 +304,6 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
         for (const widgetSet of appDef.WidgetSet) {
             for (const cont of widgetSet.Container) {
                 let tbName = cont.Name;
-                //Map known fusion containers
-                switch (tbName) {
-                    case "MapContextMenu":
-                        tbName = "contextmenu";
-                        break;
-                    case "TaskMenu":
-                        tbName = "taskpane";
-                        break;
-                }
                 tbConf[tbName] = { items: convertFlexLayoutUIItems(cont.Item, widgetsByKey, opts.locale) };
             }
         }
@@ -451,6 +442,16 @@ function makeWebLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any):
             }
         }
 
+        const menus: any = {};
+        menus[Constants.WEBLAYOUT_TOOLBAR] = {
+            items: mainToolbar
+        };
+        menus[Constants.WEBLAYOUT_TASKMENU] = {
+            items: taskBar
+        };
+        menus[Constants.WEBLAYOUT_CONTEXTMENU] = {
+            items: contextMenu
+        };
         dispatch({
             type: Constants.INIT_APP,
             payload: {
@@ -468,17 +469,7 @@ function makeWebLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any):
                     hasLegend: webLayout.InformationPane.Visible && webLayout.InformationPane.LegendVisible,
                     hasToolbar: webLayout.ToolBar.Visible
                 },
-                toolbars: prepareSubMenus({
-                    "main": {
-                        items: mainToolbar
-                    },
-                    "taskpane": {
-                        items: taskBar
-                    },
-                    "contextmenu": {
-                        items: contextMenu
-                    }
-                })
+                toolbars: prepareSubMenus(menus)
             }
         });
     };

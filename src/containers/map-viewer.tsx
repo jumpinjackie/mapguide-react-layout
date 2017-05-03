@@ -16,6 +16,7 @@ import {
     IViewerReducerState,
     IConfigurationReducerState
 } from "../api/common";
+import * as Constants from "../constants";
 import { MapViewerBase } from "../components/map-viewer-base";
 import * as Runtime from "../api/runtime";
 import { RuntimeMap } from "../api/contracts/runtime-map";
@@ -96,7 +97,7 @@ function mapStateToProps(state: IApplicationState): Partial<IMapViewerContainerS
         viewer: state.viewer,
         selection: selection,
         selectableLayers: selectableLayers,
-        contextmenu: state.toolbar.toolbars.contextmenu,
+        contextmenu: state.toolbar.toolbars[Constants.WEBLAYOUT_CONTEXTMENU],
         showGroups: showGroups,
         showLayers: showLayers,
         hideGroups: hideGroups,

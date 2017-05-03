@@ -44,3 +44,7 @@ export const COMPONENT_CLOSE = 'Flyout/COMPONENT_CLOSE';
 export const NBSP = String.fromCharCode(160);
 
 export const MDF_INFINITY = 1000000000000.0;
+
+export const WEBLAYOUT_TOOLBAR = "Toolbar";
+export const WEBLAYOUT_TASKMENU = "TaskMenu";
+export const WEBLAYOUT_CONTEXTMENU = "MapContextMenu";

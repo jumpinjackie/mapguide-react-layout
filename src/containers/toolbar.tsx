@@ -1,5 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import * as PropTypes from "prop-types";
 import {
     ICommand,
     IDOMElementMetrics,
@@ -105,8 +106,8 @@ export class ToolbarContainer extends React.Component<ToolbarContainerProps, any
             this.props.closeComponent(id);
         }
     }
-    static contextTypes: React.ValidationMap<any> = {
-        store: React.PropTypes.object
+    static contextTypes: PropTypes.ValidationMap<any> = {
+        store: PropTypes.object
     };
     render(): JSX.Element {
         const { toolbar, containerClass, containerStyle, vertical, invokeCommand } = this.props;

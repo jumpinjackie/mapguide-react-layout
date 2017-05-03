@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { FlyoutRegion } from "../components/flyout-region";
 import { closeFlyout } from "../actions/flyout";
@@ -12,7 +13,7 @@ import { processMenuItems } from "../utils/menu";
 import { mapToolbarReference } from "../api/registry/command";
 
 export interface IFlyoutRegionContainerProps {
-    
+
 }
 
 export interface IFlyoutRegionContainerState {
@@ -48,8 +49,8 @@ export class FlyoutRegionContainer extends React.Component<FlyoutRegionContainer
         super(props);
         this.fnCloseFlyout = this.onCloseFlyout.bind(this);
     }
-    static contextTypes: React.ValidationMap<any> = {
-        store: React.PropTypes.object
+    static contextTypes: PropTypes.ValidationMap<any> = {
+        store: PropTypes.object
     };
     private onCloseFlyout(id: string): void {
         if (this.props.closeFlyout) {

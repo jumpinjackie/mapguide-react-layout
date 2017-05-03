@@ -1,5 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import * as PropTypes from "prop-types";
 import {
     ICommand,
     IDOMElementMetrics,
@@ -43,7 +44,7 @@ export interface ITaskPaneDispatch {
 
 function mapStateToProps(state: IApplicationState): Partial<ITaskPaneContainerState> {
     //Technically speaking, this should be listening to every branch of the redux
-    //store. But practically speaking, toolbar commands really only cares about 
+    //store. But practically speaking, toolbar commands really only cares about
     //the branches below
     let branch;
     if (state.config.activeMapName) {
@@ -165,8 +166,8 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         }
         return false;
     }
-    static contextTypes: React.ValidationMap<any> = {
-        store: React.PropTypes.object
+    static contextTypes: PropTypes.ValidationMap<any> = {
+        store: PropTypes.object
     };
     render(): JSX.Element {
         const { taskpane, config, map, invokeCommand, maxHeight } = this.props;

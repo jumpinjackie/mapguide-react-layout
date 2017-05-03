@@ -1,9 +1,10 @@
 /**
  * context.ts
- * 
+ *
  * This module holds various React component contexts and validation maps
  */
 import * as React from "react";
+import * as PropTypes from "prop-types";
 import { IDOMElementMetrics } from "../api/common";
 import { MapLayer, MapGroup } from "../api/contracts/runtime-map";
 import { IMapGuideClient } from "../api/request-builder";
@@ -12,8 +13,8 @@ export interface IApplicationContext {
     getClient(): IMapGuideClient;
 }
 
-export const APPLICATION_CONTEXT_VALIDATION_MAP: React.ValidationMap<any> = {
-    getClient: React.PropTypes.func.isRequired
+export const APPLICATION_CONTEXT_VALIDATION_MAP: PropTypes.ValidationMap<any> = {
+    getClient: PropTypes.func.isRequired
 };
 
 export interface ILegendContext {
@@ -34,22 +35,22 @@ export interface ILegendContext {
     setLayerExpanded(layerId: string, expanded: boolean): void;
 }
 
-export const LEGEND_CONTEXT_VALIDATION_MAP: React.ValidationMap<any> = {
-    getStdIcon: React.PropTypes.func.isRequired,
-    getIconMimeType: React.PropTypes.func.isRequired,
-    getChildren: React.PropTypes.func.isRequired,
-    getCurrentScale: React.PropTypes.func.isRequired,
-    getTree: React.PropTypes.func.isRequired,
-    getGroupVisibility: React.PropTypes.func.isRequired,
-    getLayerVisibility: React.PropTypes.func.isRequired,
-    setGroupVisibility: React.PropTypes.func.isRequired,
-    setLayerVisibility: React.PropTypes.func.isRequired,
-    getLayerSelectability: React.PropTypes.func.isRequired,
-    setLayerSelectability: React.PropTypes.func.isRequired,
-    getGroupExpanded: React.PropTypes.func.isRequired,
-    setGroupExpanded: React.PropTypes.func.isRequired,
-    getLayerExpanded: React.PropTypes.func.isRequired,
-    setLayerExpanded: React.PropTypes.func.isRequired
+export const LEGEND_CONTEXT_VALIDATION_MAP: PropTypes.ValidationMap<any> = {
+    getStdIcon: PropTypes.func.isRequired,
+    getIconMimeType: PropTypes.func.isRequired,
+    getChildren: PropTypes.func.isRequired,
+    getCurrentScale: PropTypes.func.isRequired,
+    getTree: PropTypes.func.isRequired,
+    getGroupVisibility: PropTypes.func.isRequired,
+    getLayerVisibility: PropTypes.func.isRequired,
+    setGroupVisibility: PropTypes.func.isRequired,
+    setLayerVisibility: PropTypes.func.isRequired,
+    getLayerSelectability: PropTypes.func.isRequired,
+    setLayerSelectability: PropTypes.func.isRequired,
+    getGroupExpanded: PropTypes.func.isRequired,
+    setGroupExpanded: PropTypes.func.isRequired,
+    getLayerExpanded: PropTypes.func.isRequired,
+    setLayerExpanded: PropTypes.func.isRequired
 };
 
 export interface IToolbarContext {
@@ -60,8 +61,8 @@ export interface IToolbarContext {
 }
 
 export const TOOLBAR_CONTEXT_VALIDATION_MAP: React.ValidationMap<any> = {
-    openFlyout: React.PropTypes.func.isRequired,
-    closeFlyout: React.PropTypes.func.isRequired,
-    openComponent: React.PropTypes.func.isRequired,
-    closeComponent: React.PropTypes.func.isRequired
+    openFlyout: PropTypes.func.isRequired,
+    closeFlyout: PropTypes.func.isRequired,
+    openComponent: PropTypes.func.isRequired,
+    closeComponent: PropTypes.func.isRequired
 }

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import * as PropTypes from "prop-types";
 import {
     ICommand,
     IMapView,
@@ -141,8 +142,8 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         this.fnSessionExpired = this.onSessionExpired.bind(this);
         this.fnBeginDigitization = this.onBeginDigitization.bind(this);
     }
-    static contextTypes: React.ValidationMap<any> = {
-        store: React.PropTypes.object
+    static contextTypes: PropTypes.ValidationMap<any> = {
+        store: PropTypes.object
     };
     private onBeginDigitization(callback: (cancelled: boolean) => void): void {
         if (this.props.setActiveTool) {

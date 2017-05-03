@@ -597,6 +597,48 @@ function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<Runtime
                     }
                 } else {
                     switch (map.Type) {
+                        case "VirtualEarth":
+                            {
+                                //HACK: De-arrayification of arbitrary extension elements
+                                //is shallow (hence name/type is string[]). Do we bother to fix this?
+                                const name = map.Extension.Options.name[0];
+                                const type = map.Extension.Options.type[0];
+                                const options: any = {};
+                                let bAdd = true;
+                                switch (type)
+                                {
+                                    case "Aerial":
+                                    case "a":
+                                        options.imagerySet = "Aerial";
+                                        break;
+                                    case "AerialWithLabels":
+                                        options.imagerySet = "AerialWithLabels";
+                                        break;
+                                    case "Road":
+                                        options.imagerySet = "Road";
+                                        break;
+                                    default:
+                                        bAdd = false;
+                                        logger.warn(`Unknown bing maps layer type ${type}. Skipping this layer`);
+                                        break;
+                                }
+
+                                if (appDef.Extension.BingMapKey) {
+                                    options.key = appDef.Extension.BingMapKey;
+                                } else {
+                                    bAdd = false;
+                                    logger.warn(`A Bing Maps API key is required. Sign up for an API key at http://www.bingmapsportal.com/`);
+                                }
+
+                                if (bAdd) {
+                                    externalBaseLayers.push({
+                                        name: name,
+                                        kind: "BingMaps",
+                                        options: options
+                                    });
+                                }
+                            }
+                            break;
                         case "OpenStreetMap":
                             {
                                 //HACK: De-arrayification of arbitrary extension elements

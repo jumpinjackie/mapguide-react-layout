@@ -4,6 +4,7 @@ import Source from "ol/source/source";
 import XYZ from "ol/source/xyz";
 import OSM from "ol/source/osm";
 import Stamen from "ol/source/stamen";
+import BingMaps from "ol/source/bingmaps";
 
 interface OLSourceCtor {
     new (options?: any): Source;
@@ -21,6 +22,9 @@ export function createExternalSource(layer: IExternalBaseLayer) {
             break;
         case "Stamen":
             sourceCtor = Stamen;
+            break;
+        case "BingMaps":
+            sourceCtor = BingMaps;
             break;
         default:
             throw new MgError(`Unknown external base layer provider: ${layer.kind}`);

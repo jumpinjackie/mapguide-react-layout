@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { getViewer } from "../api/runtime";
+import { getViewer, getFusionRoot } from "../api/runtime";
 import { tr as xlate } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
@@ -157,8 +157,9 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
             paperSize = `${printSize},${tokens[2]}`;
         }
         const locale = this.getLocale();
+        const url = `${getFusionRoot()}/widgets/QuickPlot/PlotAsPDF.php`
         return <div className="component-quick-plot">
-            <form id="Form1" name="Form1" target="_blank" method="post" action="server/QuickPlot/PlotAsPDF.php">
+            <form id="Form1" name="Form1" target="_blank" method="post" action={url}>
                 <input type="hidden" id="printId" name="printId" value={`${Math.random() * 1000}`} />
                 <div className="Title FixWidth">{xlate("QUICKPLOT_HEADER", locale) }</div>
                 <label className="pt-label">
@@ -256,7 +257,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
                             <label className="pt-label">
                                 {xlate("QUICKPLOT_DPI", locale)}
                                 {/*
-                                    The pre-defined print DPI. 
+                                    The pre-defined print DPI.
                                     We can change the html code to extend the pre-defined values
                                 */}
                                 <div className="pt-select pt-fill">

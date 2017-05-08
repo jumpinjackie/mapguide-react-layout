@@ -93,9 +93,11 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
     }
     private onFrameMounted(iframe: HTMLIFrameElement) {
         this._iframe = iframe;
-        const el = ReactDOM.findDOMNode(this._iframe);
-        //This is needed for backcompat with certain fusion widgets
-        (el as any).taskPaneId = Constants.FUSION_TASKPANE_NAME;
+        if (this._iframe) {
+            const el = ReactDOM.findDOMNode(this._iframe);
+            //This is needed for backcompat with certain fusion widgets
+            (el as any).taskPaneId = Constants.FUSION_TASKPANE_NAME;
+        }
     }
     private onFrameLoaded(e: GenericEvent) {
         const frame = e.currentTarget;

@@ -31,6 +31,9 @@ class FusionApiShim {
     constructor(private parent: ViewerApiShim) {
         this.Event = new FusionEventApiShim();
     }
+    ajaxRequest(url: string, onSuccess: Function, onFailure: Function, parameters: any) {
+
+    }
 
     getMapByName(name: string): FusionWidgetApiShim | undefined {
         if (this.parent.props.map && this.parent.props.map.Name == name) {
@@ -45,17 +48,44 @@ class FusionApiShim {
         }
         return undefined;
     }
+    getWidgetsByType(type: string): FusionWidgetApiShim[] {
+        if (type == Constants.FUSION_REDLINE_NAME) {
+            return [
+                new FusionWidgetApiShim(this.parent)
+            ];
+        }
+        return [];
+    }
     registerForEvent(eventID: number, callback: (...args: any[]) => void): void {
         this.parent.registerForEvent(eventID, callback);
     }
 }
 
+/**
+ * This class emulates the OpenLayers.Function.bind helper
+ */
+class OL2FunctionHelper {
+    public bind(func: Function, obj_this: any) {
+        return func.bind(obj_this);
+    }
+}
+
+/**
+ * This class emulates a subset of the OpenLayers 2 API
+ */
 class OL2Shim {
+    public Function: OL2FunctionHelper;
+    constructor() {
+        this.Function = new OL2FunctionHelper();
+    }
     i18n(key: string): string {
         return tr(key);
     }
 }
 
+/**
+ * This class emulates event constants defined by Fusion
+ */
 class FusionEventApiShim {
     constructor() {
 

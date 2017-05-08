@@ -51,3 +51,4 @@ export const WEBLAYOUT_CONTEXTMENU = "MapContextMenu";
 
 export const FUSION_TASKPANE_NAME = "TaskPane";
 export const FUSION_MAP_NAME = "Map";
+export const FUSION_REDLINE_NAME = "Redline";

@@ -523,8 +523,8 @@ export function initDefaultCommands() {
             const map = getRuntimeMap(state);
             const config = state.config;
             if (map) {
-                let url = ensureParameters(`${getFusionRoot()}/widgets/Redline/markupmain.php`, map.Name, map.SessionId, config.locale, false);
-                url += "&popup=false&redlinestylization=ADVANCED";
+                let url = ensureParameters(`${getFusionRoot()}/widgets/Redline/markupmain.php`, map.Name, map.SessionId, config.locale, true);
+                url += "&POPUP=false&REDLINESTYLIZATION=ADVANCED";
                 dispatch({
                     type: Constants.TASK_INVOKE_URL,
                     payload: {

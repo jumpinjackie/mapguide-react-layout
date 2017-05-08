@@ -41,10 +41,10 @@
     "@types/lodash.debounce": "4.0.2",
     "@types/lodash.uniq": "4.5.2",
     "@types/lodash.xor": "^4.5.2",
-    "@types/node": "7.0.15",
+    "@types/node": "7.0.18",
     "@types/prop-types": "15.5.1",
     "@types/query-string": "4.3.1",
-    "@types/react": "15.0.23",
+    "@types/react": "15.0.24",
     "@types/react-addons-css-transition-group": "15.0.2",
     "@types/react-addons-update": "0.14.16",
     "@types/react-dom": "15.5.0",
@@ -55,7 +55,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.uniq": "^4.5.0",
     "lodash.xor": "^4.5.0",
-    "ol": "4.1.0",
+    "ol": "4.1.1",
     "proj4": "^2.4.3",
     "prop-types": "^15.5.8",
     "query-string": "^4.3.4",
@@ -72,13 +72,13 @@
     "redux-logger": "^3.0.1",
     "redux-thunk": "^2.2.0",
     "shortid": "^2.2.8",
-    "tslib": "^1.6.1",
-    "url-parse": "^1.1.8",
+    "tslib": "^1.7.0",
+    "url-parse": "^1.1.9",
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
-    "@types/enzyme": "2.7.9",
-    "@types/jest": "19.2.2",
+    "@types/enzyme": "2.8.0",
+    "@types/jest": "19.2.3",
     "bestzip": "^1.1.4",
     "copyfiles": "^1.2.0",
     "coveralls": "^2.13.1",
@@ -95,11 +95,11 @@
     "style-loader": "^0.16.1",
     "ts-jest": "^19.0.14",
     "ts-loader": "^2.0.3",
-    "tslint": "^5.1.0",
+    "tslint": "^5.2.0",
     "typescript": "2.3.2",
     "typings": "^2.1.1",
     "url-loader": "^0.5.8",
-    "webpack": "^2.4.1"
+    "webpack": "^2.5.1"
   },
   "greenkeeper": {
     "ignore": [

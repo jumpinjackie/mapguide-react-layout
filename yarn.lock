@@ -4110,9 +4110,9 @@ react-dom@^15.5.4:
     object-assign "^4.1.0"
     prop-types "~15.5.7"
 
-react-draggable@2.2.3:
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/react-draggable/-/react-draggable-2.2.3.tgz#17628cb8aaefed639d38e0021b978a685d80b08b"
+react-draggable@^2.2.6:
+  version "2.2.6"
+  resolved "https://registry.yarnpkg.com/react-draggable/-/react-draggable-2.2.6.tgz#3a806e10f2da6babfea4136be6510e89b0d76901"
   dependencies:
     classnames "^2.2.5"
 
@@ -4691,9 +4691,9 @@ strip-json-comments@^2.0.0, strip-json-comments@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
 
-style-loader@^0.16.1:
-  version "0.16.1"
-  resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-0.16.1.tgz#50e325258d4e78421dd9680636b41e8661595d10"
+style-loader@^0.17.0:
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-0.17.0.tgz#e8254bccdb7af74bd58274e36107b4d5ab4df310"
   dependencies:
     loader-utils "^1.0.2"
 

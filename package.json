@@ -64,7 +64,7 @@
     "react-addons-test-utils": "^15.5.1",
     "react-addons-update": "^15.5.2",
     "react-dom": "^15.5.4",
-    "react-draggable": "2.2.3",
+    "react-draggable": "^2.2.6",
     "react-measure": "^1.4.7",
     "react-redux": "^5.0.4",
     "redux": "^3.6.0",

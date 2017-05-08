@@ -1,5 +1,7 @@
 import * as React from "react";
-import Draggable = require('react-draggable');
+// According to this (https://github.com/mzabriskie/react-draggable/issues/246#issuecomment-299698481), typings
+// only works if module type is "es6". This is not the case for us, so just use untyped require()
+const Draggable = require('react-draggable');
 
 /**
  * [left, top, right, bottom]

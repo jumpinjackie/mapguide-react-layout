@@ -1,6 +1,8 @@
 import * as React from "react";
 import { tr } from "../api/i18n";
-import Draggable = require('react-draggable');
+// According to this (https://github.com/mzabriskie/react-draggable/issues/246#issuecomment-299698481), typings
+// only works if module type is "es6". This is not the case for us, so just use untyped require()
+const Draggable = require('react-draggable');
 import { getFiniteScaleIndexForScale } from "../utils/number";
 
 export enum ZoomDirection {
@@ -39,7 +41,7 @@ export interface INavigatorProps extends React.Props<any> {
     /**
      * A list of finite scales. Set when the map contains base (tiled) layers. When set, slider drags will snap to the values
      * in this list. Zooming in and out will move to the next/previous finite scale instead of the default logarithmic calculation
-     * 
+     *
      * @type {number[]}
      * @memberOf INavigatorProps
      */
@@ -162,7 +164,7 @@ export class Navigator extends React.Component<INavigatorProps, any> {
             <div style={{ position: "absolute", top: 6, left: 6, width: 39, height: 16 }}>
                 <img src="stdicons/spinner.gif" className="navigator-spinner" width="18" height="6" style={{ position: "absolute", top: 3, right: 4, visibility: busy ? "visible" : "hidden" }} />
             </div>
-            {/* 
+            {/*
                 NOTE: this.state.pos is the displacement from VERT_START instead of 0. This ensures
                 at the lowest possible scale, the slider doesn't "cross over" the (+) button
             */}

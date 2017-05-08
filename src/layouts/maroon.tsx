@@ -2,7 +2,7 @@ import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import { ToolbarContainer } from "../containers/toolbar";
-import { AjaxViewerShim } from "../containers/ajax-viewer-shim";
+import { ViewerApiShim } from "../containers/viewer-shim";
 import { ModalLauncher } from "../containers/modal-launcher";
 import { FlyoutRegionContainer } from "../containers/flyout-region";
 import { connect } from "react-redux";
@@ -34,7 +34,7 @@ function mapStateToProps(state: IApplicationState): Partial<IMaroonTemplateLayou
 
 function mapDispatchToProps(dispatch: ReduxDispatch) {
     return {
-        
+
     };
 }
 
@@ -74,33 +74,33 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
         const bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;
         const topOffset = (DEFAULT_TOOLBAR_SIZE * 2) + OUTER_PADDING;
         const panels: IAccordionPanelSpec[] = [
-            { 
+            {
                 id: "Legend",
                 title: tr("TPL_TITLE_LEGEND", locale),
                 contentRenderer: (dim: IAccordionPanelContentDimensions) => {
                     return <div style={{ width: dim.width, height: dim.height, overflowY: "auto" }}>
-                        <PlaceholderComponent id={DefaultComponentNames.Legend} 
-                                              locale={locale} 
+                        <PlaceholderComponent id={DefaultComponentNames.Legend}
+                                              locale={locale}
                                               componentProps={{ inlineBaseLayerSwitcher: false }} />
                     </div>;
-                } 
+                }
             },
-            { 
+            {
                 id: "Selection",
                 title: tr("TPL_TITLE_SELECTION_PANEL", locale),
                 contentRenderer: (dim: IAccordionPanelContentDimensions) => {
                     return <div style={{ width: dim.width, height: dim.height, overflowY: "auto" }}>
-                        <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} 
+                        <PlaceholderComponent id={DefaultComponentNames.SelectionPanel}
                                               locale={locale} />
                     </div>;
                 }
             },
-            { 
+            {
                 id: "TaskPane",
                 title: tr("TPL_TITLE_TASKPANE", locale),
                 contentRenderer: (dim: IAccordionPanelContentDimensions) => {
                     return <div style={{ width: dim.width, height: dim.height, overflowY: "auto" }}>
-                        <PlaceholderComponent id={DefaultComponentNames.TaskPane} 
+                        <PlaceholderComponent id={DefaultComponentNames.TaskPane}
                                                  locale={locale} />
                     </div>;
                 }
@@ -136,7 +136,7 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
                     </div>;
                 }
             })()}
-            <AjaxViewerShim />
+            <ViewerApiShim />
             <ModalLauncher />
             <FlyoutRegionContainer />
         </div>;

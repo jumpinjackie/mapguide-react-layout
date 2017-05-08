@@ -458,6 +458,12 @@ export interface IMapViewer {
      */
     isDigitizing(): boolean;
     /**
+     * Cancels active digitization
+     *
+     * @memberof IMapViewer
+     */
+    cancelDigitization(): void;
+    /**
      * Starts the digitization process for a point
      *
      * @param {DigitizerCallback<olPoint>} handler
@@ -663,6 +669,14 @@ export interface IMapViewer {
      * Gets the OL object factory
      */
     getOLFactory(): IOLFactory;
+    /**
+     * Gets the view resolution
+     *
+     * @returns {number}
+     *
+     * @memberof IMapViewer
+     */
+    getResolution(): number;
 }
 
 /**

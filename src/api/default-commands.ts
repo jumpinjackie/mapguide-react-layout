@@ -20,6 +20,7 @@ import * as Constants from "../constants";
 import { ensureParameters } from "../actions/taskpane";
 import { DefaultComponentNames } from "../api/registry/component";
 import { Toaster, Position, Intent } from "@blueprintjs/core";
+import { getFusionRoot } from "../api/runtime";
 
 function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
     const settings: any = {
@@ -480,8 +481,8 @@ export function initDefaultCommands() {
             const map = getRuntimeMap(state);
             const config = state.config;
             if (map) {
-                let url = ensureParameters("server/Buffer/BufferPanel.php", map.Name, map.SessionId, config.locale);
-                url += "&POPUP=false&US=0";
+                let url = ensureParameters(`${getFusionRoot()}/widgets/BufferPanel/BufferPanel.php`, map.Name, map.SessionId, config.locale, false);
+                url += "&popup=false&us=0";
                 dispatch({
                     type: Constants.TASK_INVOKE_URL,
                     payload: {
@@ -501,8 +502,8 @@ export function initDefaultCommands() {
             const map = getRuntimeMap(state);
             const config = state.config;
             if (map) {
-                let url = ensureParameters("server/SelectWithin/SelectWithinPanel.php", map.Name, map.SessionId, config.locale);
-                url += "&POPUP=false";
+                let url = ensureParameters(`${getFusionRoot()}/widgets/SelectWithin/SelectWithinPanel.php`, map.Name, map.SessionId, config.locale, true);
+                url += "&popup=false";
                 dispatch({
                     type: Constants.TASK_INVOKE_URL,
                     payload: {
@@ -522,8 +523,8 @@ export function initDefaultCommands() {
             const map = getRuntimeMap(state);
             const config = state.config;
             if (map) {
-                let url = ensureParameters("server/Redline/markupmain.php", map.Name, map.SessionId, config.locale);
-                url += "&POPUP=false&REDLINESTYLIZATION=ADVANCED";
+                let url = ensureParameters(`${getFusionRoot()}/widgets/Redline/markupmain.php`, map.Name, map.SessionId, config.locale, false);
+                url += "&popup=false&redlinestylization=ADVANCED";
                 dispatch({
                     type: Constants.TASK_INVOKE_URL,
                     payload: {
@@ -534,7 +535,7 @@ export function initDefaultCommands() {
         }
     });
 
-    registerCommand(DefaultCommands.FeatureInfo, { icon: "feature-info.png", url: "server/FeatureInfo/featureinfomain.php", target: "TaskPane", parameters: [] });
-    registerCommand(DefaultCommands.Query, { icon: "query.png", url: "server/Query/querymain.php", target: "TaskPane", parameters: [] });
-    registerCommand(DefaultCommands.Theme, { icon: "theme.png", url: "server/Theme/thememain.php", target: "TaskPane", parameters: [] });
+    registerCommand(DefaultCommands.FeatureInfo, { icon: "feature-info.png", url: `${getFusionRoot()}/widgets/FeatureInfo/featureinfomain.php`, target: "TaskPane", parameters: [] });
+    registerCommand(DefaultCommands.Query, { icon: "query.png", url: `${getFusionRoot()}/widgets/Query/querymain.php`, target: "TaskPane", parameters: [] });
+    registerCommand(DefaultCommands.Theme, { icon: "theme.png", url: `${getFusionRoot()}/widgets/Theme/thememain.php`, target: "TaskPane", parameters: [] });
 }

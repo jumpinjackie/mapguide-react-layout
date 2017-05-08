@@ -2,7 +2,7 @@ import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import { ToolbarContainer } from "../containers/toolbar";
-import { AjaxViewerShim } from "../containers/ajax-viewer-shim";
+import { ViewerApiShim } from "../containers/viewer-shim";
 import { ModalLauncher } from "../containers/modal-launcher";
 import { FlyoutRegionContainer } from "../containers/flyout-region";
 import { connect } from "react-redux";
@@ -158,7 +158,7 @@ export class TurquoiseYellowLayoutTemplate extends React.Component<TurquoiseYell
                     </div>;
                 }
             })()}
-            <AjaxViewerShim />
+            <ViewerApiShim />
             <ModalLauncher />
             <FlyoutRegionContainer />
         </div>;

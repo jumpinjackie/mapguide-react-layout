@@ -8,7 +8,16 @@
  */
 import { IMapViewer, IMapView } from "../api/common";
 
+let _fusionRoot: string | undefined;
 let _viewer: IMapViewer | undefined;
+
+export function setFusionRoot(root: string): void {
+    _fusionRoot = root;
+}
+
+export function getFusionRoot(): string {
+    return _fusionRoot || "../fusion";
+}
 
 /**
  * Sets the viewer instance. Called by the map viewer component when it has mounted.

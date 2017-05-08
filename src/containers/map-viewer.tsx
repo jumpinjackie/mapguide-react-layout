@@ -308,6 +308,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     isDigitizing(): boolean {
         return this.isDigitizing();
     }
+    cancelDigitization(): void {
+        this.inner.cancelDigitization();
+    }
     digitizePoint(handler: DigitizerCallback<ol.geom.Point>, prompt?: string): void {
         this.inner.digitizePoint(handler, prompt);
     }
@@ -387,5 +390,8 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     }
     getOLFactory(): IOLFactory {
         return this.olFactory;
+    }
+    getResolution(): number {
+        return this.inner.getResolution();
     }
 }

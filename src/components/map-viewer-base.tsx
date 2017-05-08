@@ -247,6 +247,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         const ur = this._map.getCoordinateFromPixel([point[0] + ptBuffer, point[1] + ptBuffer]);
         return [ll[0], ll[1], ur[0], ur[1]];
     }
+    public getResolution(): number {
+        return this._map.getView().getResolution();
+    }
     private onContextMenuItemInvoked() {
         ContextMenu.hide();
     }
@@ -360,7 +363,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             this.setState({ digitizingType: null });
         }
     }
-    private cancelDigitization() {
+    public cancelDigitization(): void {
         if (this.isDigitizing()) {
             this.removeActiveDrawInteraction();
             this._mapContext.clearMouseTooltip();

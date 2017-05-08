@@ -18,8 +18,8 @@ import { tr } from "../api/i18n";
 export interface IAppProps {
     layout: string;
     /**
-     * Agent configuration 
-     * 
+     * Agent configuration
+     *
      * @type {{
      *         uri: string,
      *         kind?: ClientKind
@@ -31,11 +31,15 @@ export interface IAppProps {
     },
     /**
      * A resource id to a Map Definition or Application Definition. If passing a Map Definition,
-     * a default viewer layout will be created 
-     * 
+     * a default viewer layout will be created
+     *
      * @type {string}
      */
     resourceId: string;
+    /**
+     * The base URL for fusion. Used to determine the paths to the PHP backends for servicing tools like buffer/theme/featureinfo/redline/theme/etc
+     */
+    fusionRoot: string;
     externalBaseLayers?: IExternalBaseLayer[];
 }
 

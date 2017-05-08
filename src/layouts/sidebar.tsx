@@ -2,7 +2,7 @@ import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
 import { ToolbarContainer } from "../containers/toolbar";
-import { AjaxViewerShim } from "../containers/ajax-viewer-shim";
+import { ViewerApiShim } from "../containers/viewer-shim";
 import { ModalLauncher } from "../containers/modal-launcher";
 import { FlyoutRegionContainer } from "../containers/flyout-region";
 import { connect } from "react-redux";
@@ -298,7 +298,7 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
                 }
             })()}
             <PlaceholderComponent id={DefaultComponentNames.Map} locale={config.locale} />
-            <AjaxViewerShim />
+            <ViewerApiShim />
             <ModalLauncher />
             <FlyoutRegionContainer />
             <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={config.locale} />

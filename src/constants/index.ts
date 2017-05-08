@@ -48,3 +48,6 @@ export const MDF_INFINITY = 1000000000000.0;
 export const WEBLAYOUT_TOOLBAR = "Toolbar";
 export const WEBLAYOUT_TASKMENU = "TaskMenu";
 export const WEBLAYOUT_CONTEXTMENU = "MapContextMenu";
+
+export const FUSION_TASKPANE_NAME = "TaskPane";
+export const FUSION_MAP_NAME = "Map";

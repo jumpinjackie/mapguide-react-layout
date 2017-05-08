@@ -3,7 +3,7 @@ import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/com
 import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
 import { Toolbar, IItem } from "../components/toolbar";
 import { ToolbarContainer } from "../containers/toolbar";
-import { AjaxViewerShim } from "../containers/ajax-viewer-shim";
+import { ViewerApiShim } from "../containers/viewer-shim";
 import { ModalLauncher } from "../containers/modal-launcher";
 import { FlyoutRegionContainer } from "../containers/flyout-region";
 import { ModalDialog } from "../components/modal-dialog";
@@ -46,7 +46,7 @@ function mapStateToProps(state: IApplicationState): Partial<IAquaTemplateLayoutS
 
 function mapDispatchToProps(dispatch: ReduxDispatch) {
     return {
-        
+
     };
 }
 
@@ -182,7 +182,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
             <ToolbarContainer id="ToolbarVertical" containerClass="aqua-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: 0, top: ((DEFAULT_TOOLBAR_SIZE * 2) - 1), zIndex: 100, bottom: bottomOffset }} />
             {(() => {
                 if (hasSelectionPanel) {
-                    return <ModalDialog 
+                    return <ModalDialog
                                 size={[SIDEBAR_WIDTH, SELECTION_DIALOG_HEIGHT]}
                                 position={[ 40, 500, null, null ]}
                                 title={tr("TPL_TITLE_SELECTION_PANEL", locale)}
@@ -195,7 +195,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
             })()}
             {(() => {
                 if (hasLegend) {
-                    return <ModalDialog 
+                    return <ModalDialog
                                 size={[SIDEBAR_WIDTH, LEGEND_DIALOG_HEIGHT]}
                                 position={[ 40, 70, null, null ]}
                                 title={tr("TPL_TITLE_LEGEND", locale)}
@@ -208,7 +208,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
             })()}
             {(() => {
                 if (hasTaskPane) {
-                    return <ModalDialog 
+                    return <ModalDialog
                                 size={[SIDEBAR_WIDTH, TASK_DIALOG_HEIGHT]}
                                 position={[ null, 70, 80, null ]}
                                 title={tr("TPL_TITLE_TASKPANE", locale)}
@@ -255,7 +255,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                     </div>;
                 }
             })()}
-            <AjaxViewerShim />
+            <ViewerApiShim />
             <ModalLauncher />
             <FlyoutRegionContainer />
         </div>;

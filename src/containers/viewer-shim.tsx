@@ -1,5 +1,12 @@
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 import { connect } from "react-redux";
+import olPoint from "ol/geom/point";
+import olLineString from "ol/geom/linestring";
+import olPolygon from "ol/geom/polygon";
+import olCircle from "ol/geom/circle";
+import olGeom  from "ol/geom/geometry";
+import * as Constants from "../constants";
 import * as Runtime from "../api/runtime";
 import * as logger from "../utils/logger";
 import { MgError } from "../api/error";
@@ -13,6 +20,293 @@ import * as LegendActions from "../actions/legend";
 import { buildSelectionXml } from "../api/builders/deArrayify";
 import { FormFrameShim } from "../components/form-frame-shim";
 import { getCommand, DefaultCommands, CommandConditions } from "../api/registry/command";
+import { Toaster, Position, Intent, IToaster } from "@blueprintjs/core";
+import { tr } from "../api/i18n";
+
+/**
+ * This class emulates a subset of the Fusion API. This represents the top-level object named "Fusion"
+ */
+class FusionApiShim {
+    public Event: FusionEventApiShim;
+    constructor(private parent: ViewerApiShim) {
+        this.Event = new FusionEventApiShim();
+    }
+
+    getMapByName(name: string): FusionWidgetApiShim | undefined {
+        if (this.parent.props.map && this.parent.props.map.Name == name) {
+            return new FusionWidgetApiShim(this.parent);
+        }
+        return undefined;
+    }
+    getWidgetById(id: string): FusionWidgetApiShim | undefined {
+        if (id == Constants.FUSION_TASKPANE_NAME ||
+            id == Constants.FUSION_MAP_NAME) {
+            return new FusionWidgetApiShim(this.parent);
+        }
+        return undefined;
+    }
+    registerForEvent(eventID: number, callback: (...args: any[]) => void): void {
+        this.parent.registerForEvent(eventID, callback);
+    }
+}
+
+class OL2Shim {
+    i18n(key: string): string {
+        return tr(key);
+    }
+}
+
+class FusionEventApiShim {
+    constructor() {
+
+    }
+    public get MAP_SELECTION_ON(): number { return 1; }
+    public get MAP_SELECTION_OFF(): number { return 2; }
+    public get MAP_ACTIVE_LAYER_CHANGED(): number { return 3; }
+}
+
+type FusionGeomDigitizer = (geom: any) => void;
+
+class OL2Rect {
+    constructor(private poly: olPolygon) { }
+    getVertices(): ({ x: number, y: number }|undefined)[] {
+        const coords = this.poly.getExtent();
+        return [
+            { x: coords[0], y: coords[1] },//0
+            undefined,                     //1
+            { x: coords[2], y: coords[3] } //2
+        ]
+    }
+}
+
+class OL2Geom {
+    constructor(private geom: olGeom) { }
+    get x(): number {
+        const g = this.geom;
+        if (g instanceof olPoint) {
+            return g.getCoordinates()[0];
+        }
+        return NaN;
+    }
+    get y(): number {
+        const g = this.geom;
+        if (g instanceof olPoint) {
+            return g.getCoordinates()[1];
+        }
+        return NaN;
+    }
+    getVertices(): { x: number, y: number }[] {
+        const g = this.geom;
+        if (g instanceof olPoint) {
+            const c = g.getCoordinates();
+        } else if (g instanceof olLineString) {
+            return g.getCoordinates().map(c => {
+                return { x: c[0], y: c[1] };
+            })
+        } else if (g instanceof olPolygon) {
+            return g.getLinearRing(0).getCoordinates().map(c => {
+                return { x: c[0], y: c[1] };
+            });
+        }
+        return [];
+    }
+    get CLASS_NAME(): string {
+        if (this.geom instanceof olPoint) {
+            return "OpenLayers.Geometry.Point";
+        } else if (this.geom instanceof olLineString) {
+            return "OpenLayers.Geometry.LineString";
+        } else if (this.geom instanceof olPolygon) {
+            return "OpenLayers.Geometry.Polygon";
+        } else {
+            return "Unknown";
+        }
+    }
+}
+
+class FusionWidgetApiShim {
+    private _activeLayer: any;
+    private _toaster: IToaster;
+    private _activeToast: string;
+
+    constructor(private parent: ViewerApiShim) {
+        this._toaster = Toaster.create({ position: Position.TOP, className: "mg-fusion-message-bar-toast" });
+    }
+
+    goHome(): void { //TaskPane
+        this.parent.goHome();
+    }
+    get mapWidget(): FusionWidgetApiShim { //Map
+        return this;
+    }
+    setActiveLayer(layer: any) { //Map
+        this._activeLayer = layer;
+    }
+    getActiveLayer(): any { //Map
+        return this._activeLayer;
+    }
+    clearSelection(): void { //Map
+        this.parent.ClearSelection();
+    }
+    cancelDigitization(): void { //Map
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            viewer.cancelDigitization();
+        }
+    }
+    query(options: any): void { //Map
+        const viewer = Runtime.getViewer();
+        if (viewer && this.parent.props.map) {
+            viewer.queryMapFeatures({
+                mapname: this.parent.props.map.Name,
+                session: this.parent.props.map.SessionId,
+                selectionvariant: options.selectionType,
+                maxfeatures: options.maxFeatures,
+                geometry: options.geometry,
+                layernames: options.layers
+            });
+        }
+    }
+    setSelection(xml: string, zoomTo: boolean): void {
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            //TODO: Support zoomTo
+            viewer.setSelectionXml(xml);
+        }
+    }
+    getSelectedLayers(): FusionSelectedLayer[] { //Map
+        const layers = [] as FusionSelectedLayer[];
+        const map = this.parent.props.map;
+        const selectionSet = this.parent.props.selectionSet;
+        if (map && map.Layer && selectionSet && selectionSet.FeatureSet) {
+            for (const fl of selectionSet.FeatureSet.Layer) {
+                const ml = map.Layer.filter(l => l.ObjectId == fl["@id"])[0];
+                if (ml) {
+                    layers.push({ legendLabel: ml.LegendLabel, layerName: ml.Name });
+                }
+            }
+        }
+        return layers;
+    }
+    isMapLoaded(): boolean {
+        return true;
+    }
+    redraw(): void { //Map
+        this.parent.Refresh();
+    }
+
+    reloadMap(): void { //Map
+        this.parent.Refresh();
+    }
+    info(msg: string): void { //Map MessageBar
+        this._activeToast = this._toaster.show({ iconName: "info", message: <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />, intent: Intent.PRIMARY });
+    }
+    clear(): void { //Map MessageBar
+        this._toaster.dismiss(this._activeToast);
+    }
+    get container(): FusionWidgetApiShim {
+        return this;
+    }
+    get ownerDocument(): Document {
+        return document;
+    }
+    get message(): FusionWidgetApiShim { //Map
+        return this;
+    }
+    get layerRoot(): FusionWidgetApiShim { //Map
+        return this;
+    }
+    findLayerByAttribute(name: string, value: string) {
+        const map = this.parent.props.map;
+        if (map && map.Layer) {
+            const ml = map.Layer.filter(lyr => {
+                switch (name) {
+                    case "layerName":
+                        return lyr.Name == value;
+                }
+                return false;
+            })[0];
+            if (ml) {
+                return { layerName: ml.Name };
+            }
+        }
+        return null;
+    }
+    pixToGeoMeasure(tolerance: number) {
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            return tolerance * viewer.getResolution();
+        }
+        return 0.000001; //Pull some random number
+    }
+    registerForEvent(eventID: number, callback: Function): void { //Widget
+        this.parent.registerForEvent(eventID, callback);
+    }
+    deregisterForEvent(eventID: number, callback: Function): void {
+        this.parent.deregisterForEvent(eventID, callback);
+    }
+    static toOL2Circle(circ: olCircle) {
+        const c = circ.getCenter();
+        return {
+            x: c[0],
+            y: c[1],
+            r: circ.getRadius()
+        };
+    }
+    digitizePoint(options: any, handler: FusionGeomDigitizer) {
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            viewer.digitizePoint(pt => {
+                handler(new OL2Geom(pt));
+            });
+        }
+    }
+    digitizeLineString(options: any, handler: FusionGeomDigitizer) {
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            viewer.digitizeLineString(lstr => {
+                handler(new OL2Geom(lstr));
+            });
+        }
+    }
+    digitizeRectangle(options: any, handler: FusionGeomDigitizer) {
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            viewer.digitizeRectangle(rect => {
+                handler(new OL2Rect(rect));
+            });
+        }
+    }
+    digitizePolygon(options: any, handler: FusionGeomDigitizer) {
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            viewer.digitizePolygon(poly => {
+                handler(new OL2Geom(poly));
+            });
+        }
+    }
+    digitizeCircle(options: any, handler: FusionGeomDigitizer) {
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            viewer.digitizeCircle(circ => {
+                handler(FusionWidgetApiShim.toOL2Circle(circ));
+            });
+        }
+    }
+}
+
+interface FusionSelectedLayer {
+    legendLabel: string;
+    layerName: string;
+}
+
+/**
+ * This class emulates the Fusion map widget API
+ */
+class FusionMapApiShim {
+    constructor(private parent: ViewerApiShim, private map: RuntimeMap, private selectionSet: QueryMapFeaturesResponse | undefined) { }
+
+
+}
 
 export class AjaxViewerLineStringOrPolygon {
     private coordinates: IAjaxViewerPoint[];
@@ -80,22 +374,22 @@ export enum AjaxViewerMapActionCode {
 
 export type IAjaxViewerSelectionSet = any;
 
-export interface IAjaxViewerShimProps {
+export interface IViewerApiShimProps {
 
 }
 
-export interface IAjaxViewerShimState {
+export interface IViewerApiShimState {
     map: RuntimeMap;
     selectionSet: QueryMapFeaturesResponse;
 }
 
-export interface IAjaxViewerShimDispatch {
+export interface IViewerApiShimDispatch {
     goHome: () => void;
     legendRefresh: () => void;
     invokeCommand: (cmd: ICommand) => void;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<IAjaxViewerShimState> {
+function mapStateToProps(state: IApplicationState): Partial<IViewerApiShimState> {
     let map;
     let selectionSet;
     if (state.config.activeMapName) {
@@ -108,7 +402,7 @@ function mapStateToProps(state: IApplicationState): Partial<IAjaxViewerShimState
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): IAjaxViewerShimDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): IViewerApiShimDispatch {
     return {
         goHome: () => dispatch(TaskPaneActions.goHome()),
         legendRefresh: () => dispatch(LegendActions.refresh()),
@@ -116,30 +410,61 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IAjaxViewerShimDispatch {
     };
 }
 
-export type AjaxViewerShimProps = IAjaxViewerShimProps & Partial<IAjaxViewerShimState> & Partial<IAjaxViewerShimDispatch>;
+export type ViewerApiShimProps = IViewerApiShimProps & Partial<IViewerApiShimState> & Partial<IViewerApiShimDispatch>;
 
 export type SelectionHandlerCallback = (mapName: string, selection: QueryMapFeaturesResponse | undefined) => void;
 
 @connect(mapStateToProps, mapDispatchToProps)
-export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {
+export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
     private fnFormFrameMounted: (component: FormFrameShim) => void;
     private userSelectionHandlers: SelectionHandlerCallback[];
     private us: boolean;
     private formFrame: FormFrameShim;
-    constructor(props: AjaxViewerShimProps) {
+    private ol2API: OL2Shim;
+    private fusionAPI: FusionApiShim;
+    private fusionEventHandlers: { [id: number]: Function[] };
+    constructor(props: ViewerApiShimProps) {
         super(props);
         this.us = true;
         this.fnFormFrameMounted = this.onFormFrameMounted.bind(this);
         this.userSelectionHandlers = [];
+        this.fusionEventHandlers = {};
+        this.ol2API = new OL2Shim();
+        this.fusionAPI = new FusionApiShim(this);
     }
     private onFormFrameMounted(form: FormFrameShim) {
         this.formFrame = form;
+    }
+    // ------------------------ Fusion API support ----------------------- //
+    public registerForEvent(eventID: number, callback: Function): void {
+        logger.debug(`Fusion registerForEvent - ${eventID}`);
+        if (!this.fusionEventHandlers[eventID]) {
+            this.fusionEventHandlers[eventID] = [];
+        }
+        this.fusionEventHandlers[eventID].push(callback);
+    }
+    public deregisterForEvent(eventID: number, callback: Function): void {
+        logger.debug(`Fusion deregisterForEvent - ${eventID}`);
+        if (this.fusionEventHandlers[eventID]) {
+            const funcs = this.fusionEventHandlers[eventID].filter(f => f != callback);
+            this.fusionEventHandlers[eventID] = funcs;
+        } else {
+            logger.debug(`No callbacks registered for fusion event - ${eventID}`);
+        }
+    }
+    private fusionSelectionHandler(mapName: string, selection: QueryMapFeaturesResponse | undefined) {
+        const eventID = selection ? this.fusionAPI.Event.MAP_SELECTION_ON : this.fusionAPI.Event.MAP_SELECTION_OFF;
+        if (this.fusionEventHandlers[eventID]) {
+            for (const cb of this.fusionEventHandlers[eventID]) {
+                cb();
+            }
+        }
     }
     // ------------------------ Map Frame -------------------------------- //
 
     /**
      * Indicates if the map frame is ready
-     * 
+     *
      * Although this not part of the "public" API, most AJAX viewer examples test for this
      * flag anyways, so we might as well emulate it here
      */
@@ -526,6 +851,9 @@ export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {
     }
 
     private installShims(browserWindow: any) {
+        browserWindow.Fusion = this.fusionAPI;
+        browserWindow.OpenLayers = this.ol2API;
+
         browserWindow.GetMapFrame = browserWindow.GetMapFrame || (() => this);
         //NOTE: mapFrame is technically not part of the "public" API for the AJAX viewer, but since most examples test
         //for this in place of GetMapFrame(), we might as well emulate it here
@@ -548,8 +876,12 @@ export class AjaxViewerShim extends React.Component<AjaxViewerShimProps, any> {
         let browserWindow: any = window;
         this.installShims(browserWindow);
         this.installShims(window.parent);
+
+        this.RegisterSelectionHandler((mapName: string, selection: QueryMapFeaturesResponse | undefined) => {
+            this.fusionSelectionHandler(mapName, selection);
+        });
     }
-    componentWillReceiveProps(nextProps: AjaxViewerShimProps) {
+    componentWillReceiveProps(nextProps: ViewerApiShimProps) {
         if (nextProps.map) {
             for (const handler of this.userSelectionHandlers) {
                 handler(nextProps.map.Name, nextProps.selectionSet);

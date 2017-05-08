@@ -97,6 +97,9 @@ class FusionEventApiShim {
 
 type FusionGeomDigitizer = (geom: any) => void;
 
+/**
+ * This class emulates a digitized rectangle
+ */
 class OL2Rect {
     constructor(private poly: olPolygon) { }
     getVertices(): ({ x: number, y: number }|undefined)[] {
@@ -109,6 +112,9 @@ class OL2Rect {
     }
 }
 
+/**
+ * This class emulates an OpenLayers 2 geometry
+ */
 class OL2Geom {
     constructor(private geom: olGeom) { }
     get x(): number {
@@ -153,6 +159,9 @@ class OL2Geom {
     }
 }
 
+/**
+ * This class emulates APIs from various widgets
+ */
 class FusionWidgetApiShim {
     private _activeLayer: any;
     private _toaster: IToaster;
@@ -185,10 +194,12 @@ class FusionWidgetApiShim {
     }
     query(options: any): void { //Map
         const viewer = Runtime.getViewer();
-        if (viewer && this.parent.props.map) {
+        const { map, setSelection } = this.parent.props;
+        if (viewer && map) {
+            const mapName = map.Name;
             const qmo = {
-                mapname: this.parent.props.map.Name,
-                session: this.parent.props.map.SessionId,
+                mapname: mapName,
+                session: map.SessionId,
                 selectionvariant: options.selectionType,
                 maxfeatures: options.maxFeatures,
                 geometry: options.geometry,
@@ -197,7 +208,11 @@ class FusionWidgetApiShim {
             if (qmo.maxfeatures == 0) {
                 qmo.maxfeatures = -1;
             }
-            viewer.queryMapFeatures(qmo);
+            viewer.queryMapFeatures(qmo, res => {
+                if (setSelection) {
+                    setSelection(mapName, res);
+                }
+            });
         }
     }
     setSelection(xml: string, zoomTo: boolean): void {
@@ -335,15 +350,6 @@ interface FusionSelectedLayer {
     layerName: string;
 }
 
-/**
- * This class emulates the Fusion map widget API
- */
-class FusionMapApiShim {
-    constructor(private parent: ViewerApiShim, private map: RuntimeMap, private selectionSet: QueryMapFeaturesResponse | undefined) { }
-
-
-}
-
 export class AjaxViewerLineStringOrPolygon {
     private coordinates: IAjaxViewerPoint[];
     constructor(coordinates: IAjaxViewerPoint[]) {
@@ -423,6 +429,7 @@ export interface IViewerApiShimDispatch {
     goHome: () => void;
     legendRefresh: () => void;
     invokeCommand: (cmd: ICommand) => void;
+    setSelection: (mapName: string, selectionSet: any) => void;
 }
 
 function mapStateToProps(state: IApplicationState): Partial<IViewerApiShimState> {
@@ -442,7 +449,8 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IViewerApiShimDispatch {
     return {
         goHome: () => dispatch(TaskPaneActions.goHome()),
         legendRefresh: () => dispatch(LegendActions.refresh()),
-        invokeCommand: (cmd) => dispatch(MapActions.invokeCommand(cmd))
+        invokeCommand: (cmd) => dispatch(MapActions.invokeCommand(cmd)),
+        setSelection: (mapName, res) => dispatch(MapActions.setSelection(mapName, res))
     };
 }
 

@@ -766,7 +766,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         view.setCenter([x, y]);
         view.setResolution(this.scaleToResolution(scale));
     }
-    public setSelectionXml(xml: string, queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void {
+    public setSelectionXml(xml: string, queryOpts?: Partial<IQueryMapFeaturesOptions>, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void {
         //NOTE: A quirk of QUERYMAPFEATURES is that when passing in selection XML (instead of geometry),
         //you must set the layerattributefilter to the full bit mask otherwise certain features in the
         //selection XML will not be rendered because they may not pass the layer attribute filter

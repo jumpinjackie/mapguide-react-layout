@@ -156,21 +156,27 @@ class FusionWidgetApiShim {
     query(options: any): void { //Map
         const viewer = Runtime.getViewer();
         if (viewer && this.parent.props.map) {
-            viewer.queryMapFeatures({
+            const qmo = {
                 mapname: this.parent.props.map.Name,
                 session: this.parent.props.map.SessionId,
                 selectionvariant: options.selectionType,
                 maxfeatures: options.maxFeatures,
                 geometry: options.geometry,
                 layernames: options.layers
-            });
+            };
+            if (qmo.maxfeatures == 0) {
+                qmo.maxfeatures = -1;
+            }
+            viewer.queryMapFeatures(qmo);
         }
     }
     setSelection(xml: string, zoomTo: boolean): void {
         const viewer = Runtime.getViewer();
         if (viewer) {
             //TODO: Support zoomTo
-            viewer.setSelectionXml(xml);
+            viewer.setSelectionXml(xml, {
+                layerattributefilter: 0 //Need to set this in order for requestdata to be respected
+            });
         }
     }
     getSelectedLayers(): FusionSelectedLayer[] { //Map

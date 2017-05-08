@@ -394,7 +394,7 @@ export interface IMapViewer {
      *
      * @memberOf IMapViewer
      */
-    setSelectionXml(xml: string, queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void;
+    setSelectionXml(xml: string, queryOpts?: Partial<IQueryMapFeaturesOptions>, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void;
     /**
      * Refreshes the map
      *

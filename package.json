@@ -93,7 +93,7 @@
     "raw-loader": "^0.5.1",
     "rimraf": "^2.6.1",
     "style-loader": "^0.17.0",
-    "ts-jest": "^20.0.0",
+    "ts-jest": "^20.0.2",
     "ts-loader": "^2.0.3",
     "tslint": "^5.2.0",
     "typescript": "2.3.2",

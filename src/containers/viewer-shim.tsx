@@ -291,7 +291,8 @@ class FusionWidgetApiShim {
     }
     setActiveLayer(layer: any) { //Map
         this._activeLayer = layer;
-        this.parent.triggerFusionEvent(this.parent.getFusionAPI().Event.MAP_ACTIVE_LAYER_CHANGED, layer);
+        const fusionAPI: FusionApiShim = this.parent.getFusionAPI();
+        this.parent.triggerFusionEvent(fusionAPI.Event.MAP_ACTIVE_LAYER_CHANGED, layer);
     }
     getActiveLayer(): any { //Map
         return this._activeLayer;
@@ -642,7 +643,7 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
         return undefined;
     }
     // ------------------------ Fusion API support ----------------------- //
-    getFusionAPI(): FusionApiShim {
+    getFusionAPI(): any { //any because I don't want to leak out the FusionApiShim internal class
         return this.fusionAPI;
     }
     public registerForEvent(eventID: number, callback: Function): void {

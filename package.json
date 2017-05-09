@@ -6,7 +6,7 @@
     "prebuild": "yarn run clean",
     "build": "yarn run build:apidoc && yarn run build:npm && cross-env NODE_ENV=production webpack && bestzip viewer.zip viewer/",
     "build:npm": "node tools/prepare-package.js && copyfiles *.md src/styles/** viewer/** package && tsc --p tsconfig.npm.json && cd package && yarn pack",
-    "build:apidoc": "typedoc --excludePrivate --excludeExternals --out ./apidoc ./src",
+    "build:apidoc": "typedoc --excludePrivate --excludeExternals --tsconfig tsconfig.npm.json --out ./apidoc ./src",
     "build:dev": "cross-env NODE_ENV=development webpack",
     "watch:dev": "cross-env NODE_ENV=development webpack -w --progress",
     "watch:test": "jest --watchAll",

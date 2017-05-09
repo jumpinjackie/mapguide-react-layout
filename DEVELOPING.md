@@ -9,17 +9,18 @@ or Application Definition as a query string to initialize your viewer applicatio
 
 `http://servername/mapguide/react/index.html?resource=Library://Path/To/Your.WebLayout`
 
-If the provided HTML pages are not suitable (you have custom requirements for embedding), then the 
-following HTML example illustrates how to embed the viewer  
+- OR
+
+`http://servername/mapguide/react/index.html?resource=Library://Path/To/Your.ApplicationDefinition`
+
+If the provided HTML pages are not suitable (you have custom requirements for embedding), then the
+following HTML example illustrates how to embed the viewer
 
 ```
 <!DOCTYPE html>
 <html>
     <head>
         <title>Viewer example</title>
-        <!-- These references only required if your layout uses font icons -->
-        <link href="css/animation.css" rel="stylesheet" />
-        <link href="css/fontello.css" rel="stylesheet" />
     </head>
     <body>
         <!-- The viewer will mount at this element -->
@@ -54,7 +55,7 @@ The viewer provides several extension points for customizing viewer functionalit
  * Custom layouts
 
 The viewer provides a registry API to allow you to register these custom extension points. Just like the
-existing AJAX/Fusion viewers. To activate these extension points, they must be referenced by the Web Layout 
+existing AJAX/Fusion viewers. To activate these extension points, they must be referenced by the Web Layout
 or Application Definition you pass to the viewer.
 
 Adding a custom command
@@ -65,10 +66,10 @@ The viewer supports two types of commands:
  * Invoke URL commands
  * Integrated commands
 
-Invoke URL commands is the traditional extension point for custom functionality that works across 
+Invoke URL commands is the traditional extension point for custom functionality that works across
 all MapGuide viewers.
 
-Invoke URL commands point to a server-side script (that contains map/selection interaction logic 
+Invoke URL commands point to a server-side script (that contains map/selection interaction logic
 that works against the MapGuide Web API), the Invoke URL script may present a UI for viewer interaction.
 
 Most of your existing AJAX viewer Invoke URL commands should be able to work in this viewer
@@ -78,7 +79,7 @@ Integrated commands are the successor to Invoke Script commands. These commands 
 
  * The viewer API
  * The centralized redux store
- * The redux action dispatcher (to flow state to the redux store) 
+ * The redux action dispatcher (to flow state to the redux store)
 
 The redux store is also available when evaluating whether the command should be enabled or disabled.
 

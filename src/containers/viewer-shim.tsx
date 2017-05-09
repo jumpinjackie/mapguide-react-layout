@@ -25,6 +25,17 @@ import { Toaster, Position, Intent, IToaster } from "@blueprintjs/core";
 import { tr } from "../api/i18n";
 import { serialize } from "../api/builders/mapagent";
 
+function isEmptySelection(selection: QueryMapFeaturesResponse | undefined): boolean {
+    if (selection && selection.FeatureSet) {
+        let count = 0;
+        for (const l of selection.FeatureSet.Layer) {
+            count += l.Class.ID.length;
+        }
+        return count === 0;
+    }
+    return true; //Treat undefined/null as empty
+}
+
 /**
  * This class emulates a subset of the Fusion API. This represents the top-level object named "Fusion"
  */
@@ -144,6 +155,7 @@ class FusionEventApiShim {
     public get MAP_SELECTION_ON(): number { return 1; }
     public get MAP_SELECTION_OFF(): number { return 2; }
     public get MAP_ACTIVE_LAYER_CHANGED(): number { return 3; }
+    public get MAP_BUSY_CHANGED(): number { return 4; }
 }
 
 type FusionGeomDigitizer = (geom: any) => void;
@@ -211,6 +223,29 @@ class OL2Geom {
 }
 
 /**
+ * This class emulates OpenLayers.Bounds
+ */
+class OL2Bounds {
+    public left: number;
+    public bottom: number;
+    public right: number;
+    public top: number;
+    constructor(bounds: [number, number, number, number] | { left: number, bottom: number, right: number, top: number }) {
+        if (Array.isArray(bounds)) {
+            this.left = bounds[0];
+            this.bottom = bounds[1];
+            this.right = bounds[2];
+            this.top = bounds[3];
+        } else {
+            this.left = bounds.left;
+            this.bottom = bounds.bottom;
+            this.right = bounds.right;
+            this.top = bounds.top;
+        }
+    }
+}
+
+/**
  * This class emulates APIs from various widgets
  */
 class FusionWidgetApiShim {
@@ -228,7 +263,7 @@ class FusionWidgetApiShim {
     get mapWidget(): FusionWidgetApiShim { //Map
         return this;
     }
-    getExtentFromPoint(x: number, y: number, scale: number): [number, number, number, number] | undefined { //Map
+    getExtentFromPoint(x: number, y: number, scale: number): OL2Bounds | undefined { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             const view = viewer.getCurrentView();
@@ -239,23 +274,24 @@ class FusionWidgetApiShim {
             const size = viewer.getSize();
             const w = size[0] * res;
             const h = size[1] * res;
-            return [
+            return new OL2Bounds([
                 x - w / 2,
                 y - h / 2,
                 x + w / 2,
                 y + h / 2
-            ];
+            ]);
         }
         return undefined;
     }
-    setExtents(bounds: [number, number, number, number]) { //Map
+    setExtents(bounds: OL2Bounds) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
-            viewer.zoomToExtent(bounds);
+            viewer.zoomToExtent([ bounds.left, bounds.bottom, bounds.right, bounds.top ]);
         }
     }
     setActiveLayer(layer: any) { //Map
         this._activeLayer = layer;
+        this.parent.triggerFusionEvent(this.parent.getFusionAPI().Event.MAP_ACTIVE_LAYER_CHANGED, layer);
     }
     getActiveLayer(): any { //Map
         return this._activeLayer;
@@ -332,6 +368,11 @@ class FusionWidgetApiShim {
             }
         }
         return layers;
+    }
+    isBusy(): boolean { //Map
+        if (this.parent.props.busyCount)
+            return this.parent.props.busyCount > 0;
+        return false;
     }
     isMapLoaded(): boolean { //Map
         return true;
@@ -531,6 +572,7 @@ export interface IViewerApiShimState {
     selectionSet: QueryMapFeaturesResponse;
     agentUri: string;
     agentKind: ClientKind;
+    busyCount: number;
 }
 
 export interface IViewerApiShimDispatch {
@@ -552,7 +594,8 @@ function mapStateToProps(state: IApplicationState): Partial<IViewerApiShimState>
         map: map,
         selectionSet: selectionSet,
         agentUri: state.config.agentUri,
-        agentKind: state.config.agentKind
+        agentKind: state.config.agentKind,
+        busyCount: state.viewer.busyCount
     };
 }
 
@@ -599,6 +642,9 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
         return undefined;
     }
     // ------------------------ Fusion API support ----------------------- //
+    getFusionAPI(): FusionApiShim {
+        return this.fusionAPI;
+    }
     public registerForEvent(eventID: number, callback: Function): void {
         logger.debug(`Fusion registerForEvent - ${eventID}`);
         if (!this.fusionEventHandlers[eventID]) {
@@ -615,13 +661,17 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
             logger.debug(`No callbacks registered for fusion event - ${eventID}`);
         }
     }
-    private fusionSelectionHandler(mapName: string, selection: QueryMapFeaturesResponse | undefined) {
-        const eventID = selection ? this.fusionAPI.Event.MAP_SELECTION_ON : this.fusionAPI.Event.MAP_SELECTION_OFF;
+    public triggerFusionEvent(eventID: number, ...args: any[]) {
+        logger.debug(`Trigger Fusion Event ID - ${eventID}`);
         if (this.fusionEventHandlers[eventID]) {
             for (const cb of this.fusionEventHandlers[eventID]) {
-                cb();
+                cb.apply(null, arguments);
             }
         }
+    }
+    private fusionSelectionHandler(mapName: string, selection: QueryMapFeaturesResponse | undefined) {
+        const eventID = isEmptySelection(selection) ? this.fusionAPI.Event.MAP_SELECTION_OFF : this.fusionAPI.Event.MAP_SELECTION_ON;
+        this.triggerFusionEvent(eventID);
     }
     // ------------------------ Map Frame -------------------------------- //
 
@@ -1045,10 +1095,13 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
         });
     }
     componentWillReceiveProps(nextProps: ViewerApiShimProps) {
-        if (nextProps.map) {
+        if (nextProps.map && nextProps.selectionSet != this.props.selectionSet) {
             for (const handler of this.userSelectionHandlers) {
                 handler(nextProps.map.Name, nextProps.selectionSet);
             }
+        }
+        if (nextProps.busyCount != this.props.busyCount) {
+            this.triggerFusionEvent(this.fusionAPI.Event.MAP_BUSY_CHANGED);
         }
     }
     render(): JSX.Element {

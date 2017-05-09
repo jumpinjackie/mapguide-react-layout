@@ -33,16 +33,9 @@ class FusionApiShim {
     constructor(private parent: ViewerApiShim) {
         this.Event = new FusionEventApiShim();
     }
-    getClient(): Client | undefined {
-        const { agentUri, agentKind } = this.parent.props;
-        if (agentUri && agentKind) {
-            return new Client(agentUri, agentKind);
-        }
-        return undefined;
-    }
     ajaxRequest(url: string, options: any) { // onSuccess: Function, onFailure: Function, parameters: any) {
         let reqUrl = `${Runtime.getFusionRoot()}/${url}`;
-        const client = this.getClient();
+        const client = this.parent.getClient();
         const resolve = options.onSuccess || ((res: any) => logger.debug(`No success handler defined for this operation`));
         const fail = options.onFailure || options.onException || ((r: any, res: Error) => logger.error(res));
         if (client) {
@@ -278,8 +271,8 @@ class FusionWidgetApiShim {
     }
     query(options: any): void { //Map
         const viewer = Runtime.getViewer();
-        const { map, setSelection } = this.parent.props;
-        if (viewer && map) {
+        const { map } = this.parent.props;
+        if (map && viewer) {
             const mapName = map.Name;
             const qmo = {
                 mapname: mapName,
@@ -292,11 +285,8 @@ class FusionWidgetApiShim {
             if (qmo.maxfeatures == 0) {
                 qmo.maxfeatures = -1;
             }
-            viewer.queryMapFeatures(qmo, res => {
-                if (setSelection) {
-                    setSelection(mapName, res);
-                }
-            });
+
+            viewer.setSelectionXml("", qmo);
         }
     }
     setSelection(xml: string, zoomTo: boolean): void { //Map
@@ -527,6 +517,7 @@ export interface IViewerApiShimDispatch {
     legendRefresh: () => void;
     invokeCommand: (cmd: ICommand) => void;
     setSelection: (mapName: string, selectionSet: any) => void;
+    queryMapFeatures: (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => void;
 }
 
 function mapStateToProps(state: IApplicationState): Partial<IViewerApiShimState> {
@@ -549,7 +540,8 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IViewerApiShimDispatch {
         goHome: () => dispatch(TaskPaneActions.goHome()),
         legendRefresh: () => dispatch(LegendActions.refresh()),
         invokeCommand: (cmd) => dispatch(MapActions.invokeCommand(cmd)),
-        setSelection: (mapName, res) => dispatch(MapActions.setSelection(mapName, res))
+        setSelection: (mapName, res) => dispatch(MapActions.setSelection(mapName, res)),
+        queryMapFeatures: (mapName, options) => dispatch(MapActions.queryMapFeatures(mapName, options))
     };
 }
 
@@ -577,6 +569,13 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
     }
     private onFormFrameMounted(form: FormFrameShim) {
         this.formFrame = form;
+    }
+    getClient(): Client | undefined {
+        const { agentUri, agentKind } = this.props;
+        if (agentUri && agentKind) {
+            return new Client(agentUri, agentKind);
+        }
+        return undefined;
     }
     // ------------------------ Fusion API support ----------------------- //
     public registerForEvent(eventID: number, callback: Function): void {

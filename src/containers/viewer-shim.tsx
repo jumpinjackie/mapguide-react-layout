@@ -9,11 +9,12 @@ import olGeom  from "ol/geom/geometry";
 import * as Constants from "../constants";
 import * as Runtime from "../api/runtime";
 import * as logger from "../utils/logger";
+import { Client } from "../api/client";
 import { MgError } from "../api/error";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { FeatureSet, SelectedFeatureSet, QueryMapFeaturesResponse } from "../api/contracts/query";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
-import { RefreshMode, ReduxDispatch, IApplicationState, ICommand } from "../api/common";
+import { RefreshMode, ReduxDispatch, IApplicationState, ICommand, ClientKind } from "../api/common";
 import * as MapActions from "../actions/map";
 import * as TaskPaneActions from "../actions/taskpane";
 import * as LegendActions from "../actions/legend";
@@ -22,6 +23,7 @@ import { FormFrameShim } from "../components/form-frame-shim";
 import { getCommand, DefaultCommands, CommandConditions } from "../api/registry/command";
 import { Toaster, Position, Intent, IToaster } from "@blueprintjs/core";
 import { tr } from "../api/i18n";
+import { serialize } from "../api/builders/mapagent";
 
 /**
  * This class emulates a subset of the Fusion API. This represents the top-level object named "Fusion"
@@ -31,8 +33,64 @@ class FusionApiShim {
     constructor(private parent: ViewerApiShim) {
         this.Event = new FusionEventApiShim();
     }
-    ajaxRequest(url: string, onSuccess: Function, onFailure: Function, parameters: any) {
-
+    getClient(): Client | undefined {
+        const { agentUri, agentKind } = this.parent.props;
+        if (agentUri && agentKind) {
+            return new Client(agentUri, agentKind);
+        }
+        return undefined;
+    }
+    ajaxRequest(url: string, options: any) { // onSuccess: Function, onFailure: Function, parameters: any) {
+        let reqUrl = `${Runtime.getFusionRoot()}/${url}`;
+        const client = this.getClient();
+        const resolve = options.onSuccess || ((res: any) => logger.debug(`No success handler defined for this operation`));
+        const fail = options.onFailure || options.onException || ((r: any, res: Error) => logger.error(res));
+        if (client) {
+            if (typeof(options.parameters) == 'string') {
+                reqUrl += "?" + options.parameters;
+                fetch(reqUrl, {
+                    method: "GET"
+                }).then(res => {
+                    if (!res.ok) {
+                        const stat = res.statusText;
+                        res.text().then(t => {
+                            fail({
+                                transport: {
+                                    responseText: t
+                                }
+                            }, new MgError(stat));
+                        });
+                    } else {
+                        res.text().then(t => resolve({
+                            responseText: t
+                        }));
+                    }
+                });
+            } else {
+                fetch(reqUrl, {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    },
+                    method: "POST",
+                    body: serialize(options.parameters) //form
+                }).then(res => {
+                    if (!res.ok) {
+                        const stat = res.statusText;
+                        res.text().then(t => {
+                            fail({
+                                transport: {
+                                    responseText: t
+                                }
+                            }, new MgError(stat));
+                        });
+                    } else {
+                        res.text().then(t => resolve({
+                            responseText: t
+                        }));
+                    }
+                });
+            }
+        }
     }
 
     getMapByName(name: string): FusionWidgetApiShim | undefined {
@@ -241,7 +299,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    setSelection(xml: string, zoomTo: boolean): void {
+    setSelection(xml: string, zoomTo: boolean): void { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             //TODO: Support zoomTo
@@ -264,7 +322,7 @@ class FusionWidgetApiShim {
         }
         return layers;
     }
-    isMapLoaded(): boolean {
+    isMapLoaded(): boolean { //Map
         return true;
     }
     redraw(): void { //Map
@@ -292,7 +350,7 @@ class FusionWidgetApiShim {
     get layerRoot(): FusionWidgetApiShim { //Map
         return this;
     }
-    findLayerByAttribute(name: string, value: string) {
+    findLayerByAttribute(name: string, value: string) { //Map
         const map = this.parent.props.map;
         if (map && map.Layer) {
             const ml = map.Layer.filter(lyr => {
@@ -308,17 +366,20 @@ class FusionWidgetApiShim {
         }
         return null;
     }
-    pixToGeoMeasure(tolerance: number) {
+    pixToGeoMeasure(tolerance: number) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             return tolerance * viewer.getResolution();
         }
         return 0.000001; //Pull some random number
     }
+    drawMap(): void {
+        this.parent.Refresh();
+    }
     registerForEvent(eventID: number, callback: Function): void { //Widget
         this.parent.registerForEvent(eventID, callback);
     }
-    deregisterForEvent(eventID: number, callback: Function): void {
+    deregisterForEvent(eventID: number, callback: Function): void { //Widget
         this.parent.deregisterForEvent(eventID, callback);
     }
     static toOL2Circle(circ: olCircle) {
@@ -329,7 +390,7 @@ class FusionWidgetApiShim {
             r: circ.getRadius()
         };
     }
-    digitizePoint(options: any, handler: FusionGeomDigitizer) {
+    digitizePoint(options: any, handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizePoint(pt => {
@@ -337,7 +398,15 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeLineString(options: any, handler: FusionGeomDigitizer) {
+    digitizeLine(options: any, handler: FusionGeomDigitizer) { //Map
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            viewer.digitizeLine(ln => {
+                handler(new OL2Geom(ln));
+            });
+        }
+    }
+    digitizeLineString(options: any, handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeLineString(lstr => {
@@ -345,7 +414,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeRectangle(options: any, handler: FusionGeomDigitizer) {
+    digitizeRectangle(options: any, handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeRectangle(rect => {
@@ -353,7 +422,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizePolygon(options: any, handler: FusionGeomDigitizer) {
+    digitizePolygon(options: any, handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizePolygon(poly => {
@@ -361,7 +430,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeCircle(options: any, handler: FusionGeomDigitizer) {
+    digitizeCircle(options: any, handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeCircle(circ => {
@@ -449,6 +518,8 @@ export interface IViewerApiShimProps {
 export interface IViewerApiShimState {
     map: RuntimeMap;
     selectionSet: QueryMapFeaturesResponse;
+    agentUri: string;
+    agentKind: ClientKind;
 }
 
 export interface IViewerApiShimDispatch {
@@ -467,7 +538,9 @@ function mapStateToProps(state: IApplicationState): Partial<IViewerApiShimState>
     }
     return {
         map: map,
-        selectionSet: selectionSet
+        selectionSet: selectionSet,
+        agentUri: state.config.agentUri,
+        agentKind: state.config.agentKind
     };
 }
 

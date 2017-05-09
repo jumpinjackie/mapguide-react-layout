@@ -177,6 +177,32 @@ class FusionWidgetApiShim {
     get mapWidget(): FusionWidgetApiShim { //Map
         return this;
     }
+    getExtentFromPoint(x: number, y: number, scale: number): [number, number, number, number] | undefined { //Map
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            const view = viewer.getCurrentView();
+            if (!scale) {
+                scale = view.scale;
+            }
+            const res = viewer.scaleToResolution(scale);
+            const size = viewer.getSize();
+            const w = size[0] * res;
+            const h = size[1] * res;
+            return [
+                x - w / 2,
+                y - h / 2,
+                x + w / 2,
+                y + h / 2
+            ];
+        }
+        return undefined;
+    }
+    setExtents(bounds: [number, number, number, number]) { //Map
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            viewer.zoomToExtent(bounds);
+        }
+    }
     setActiveLayer(layer: any) { //Map
         this._activeLayer = layer;
     }

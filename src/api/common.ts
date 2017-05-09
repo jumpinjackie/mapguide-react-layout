@@ -375,6 +375,14 @@ export interface IMapViewer {
      */
     getCurrentView(): IMapView;
     /**
+     * Gets the current size of the map 
+     * 
+     * @returns {[number, number]} 
+     * 
+     * @memberof IMapViewer
+     */
+    getSize(): [number, number];
+    /**
      * Zooms to the specified map view
      *
      * @param {number} x
@@ -677,6 +685,14 @@ export interface IMapViewer {
      * @memberof IMapViewer
      */
     getResolution(): number;
+    /**
+     * Gets the resolution for the given scale
+     * 
+     * @returns {number}
+     * 
+     * @memberof IMapViewer
+     */
+    scaleToResolution(scale: number): number;
 }
 
 /**

@@ -273,6 +273,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     getCurrentView(): IMapView {
         return this.inner.getCurrentView();
     }
+    getSize(): [number, number] {
+        return this.inner.getSize();
+    }
     zoomToView(x: number, y: number, scale: number): void {
         this.inner.zoomToView(x, y, scale);
     }
@@ -393,5 +396,8 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     }
     getResolution(): number {
         return this.inner.getResolution();
+    }
+    scaleToResolution(scale: number): number {
+        return this.inner.scaleToResolution(scale);
     }
 }

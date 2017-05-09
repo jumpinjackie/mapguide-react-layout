@@ -758,6 +758,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     public getCurrentExtent(): Bounds {
         return this._map.getView().calculateExtent(this._map.getSize());
     }
+    public getSize(): [number, number] {
+        return this._map.getSize();
+    }
     public getOLView(): View {
         return this._map.getView();
     }

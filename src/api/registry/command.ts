@@ -14,6 +14,7 @@ import {
     ALWAYS_FALSE,
     ALWAYS_TRUE
 } from "../../api/common";
+import { getFusionRoot } from "../../api/runtime";
 import { QueryMapFeaturesResponse } from "../contracts/query";
 import { ResultColumnSet } from "../contracts/weblayout";
 import { IItem, IInlineMenu, IFlyoutMenu, IComponentFlyoutItem, getIcon } from "../../components/toolbar";
@@ -246,7 +247,7 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                 const config = state.config;
                 const map = getRuntimeMap(state);
                 if (map) {
-                    const url = ensureParameters("server/Search/SearchPrompt.php", map.Name, map.SessionId, config.locale, false)
+                    const url = ensureParameters(`${getFusionRoot()}/widgets/Search/SearchPrompt.php`, map.Name, map.SessionId, config.locale, false)
                         + `&popup=0`
                         + `&target=TaskPane`
                         + `&title=${encodeURIComponent(cmdDef.title)}`

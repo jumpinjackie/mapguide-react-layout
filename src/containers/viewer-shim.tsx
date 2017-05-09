@@ -295,6 +295,27 @@ class FusionWidgetApiShim {
             //TODO: Support zoomTo
             viewer.setSelectionXml(xml, {
                 layerattributefilter: 0 //Need to set this in order for requestdata to be respected
+            }, (selection) => {
+                if (zoomTo) {
+                    const fact = viewer.getOLFactory();
+                    let bounds: ol.Extent | null = null;
+                    if (selection != null && selection.SelectedFeatures != null) {
+                        selection.SelectedFeatures.SelectedLayer.forEach(layer => {
+                            layer.Feature.forEach(feat => {
+                                const b: any = feat.Bounds.split(" ").map(s => parseFloat(s));
+                                if (bounds == null) {
+                                    bounds = b;
+                                } else {
+                                    bounds = fact.extendExtent(bounds, b);
+                                }
+                            })
+                        });
+                    }
+                    if (bounds) {
+                        const view = viewer.getViewForExtent(bounds);
+                        this.parent.ZoomToView(view.x, view.y, view.scale, true);
+                    }
+                }
             });
         }
     }

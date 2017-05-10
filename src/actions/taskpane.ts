@@ -68,6 +68,18 @@ export function pushUrl(url: string, silent?: boolean) {
     };
 }
 
+/**
+ * Normalizes the given URL to ensure it has the baseline set of required parameters for invoking any server-side script that uses the MapGuide Web API
+ * 
+ * @export
+ * @param {string} url The url to normalize
+ * @param {string} mapName The name of the current runtime map
+ * @param {string} session The current session id
+ * @param {string} [locale] An optional locale
+ * @param {boolean} [uppercase=true] If true, will uppercase all parameter names
+ * @param {IInvokeUrlCommandParameter[]} [extraParameters=[]] Any extra parameters to append to the URL
+ * @returns {string} 
+ */
 export function ensureParameters(url: string, mapName: string, session: string, locale?: string, uppercase = true, extraParameters: IInvokeUrlCommandParameter[] = []): string {
     //If this is a component URL, let it be
     if (url.indexOf("component://") >= 0) {

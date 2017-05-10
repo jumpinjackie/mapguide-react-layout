@@ -108,10 +108,38 @@ function combineSelections(oldRes: QueryMapFeaturesResponse | undefined, newRes:
     }
 }
 
+/**
+ * Options for map querying
+ * 
+ * @export
+ * @interface QueryMapFeatureActionOptions
+ */
 export interface QueryMapFeatureActionOptions {
+    /**
+     * The main set of map querying options
+     * 
+     * @type {IQueryMapFeaturesOptions}
+     * @memberof QueryMapFeatureActionOptions
+     */
     options: IQueryMapFeaturesOptions;
+    /**
+     * If true, the selection changes will be appended to the current selection set. False otherwise
+     * 
+     * @type {boolean}
+     * @memberof QueryMapFeatureActionOptions
+     */
     append?: boolean;
+    /**
+     * An optional callback to invoke on successful operation
+     * 
+     * @memberof QueryMapFeatureActionOptions
+     */
     callback?: (res: QueryMapFeaturesResponse) => void;
+    /**
+     * An optional callback to invoke on failure
+     * 
+     * @memberof QueryMapFeatureActionOptions
+     */
     errBack?: (err: any) => void;
 }
 
@@ -119,8 +147,8 @@ export interface QueryMapFeatureActionOptions {
  * Queries map features
  *
  * @export
- * @param {string} mapName
- * @param {QueryMapFeatureActionOptions} opts
+ * @param {string} mapName The name of the current runtime map
+ * @param {QueryMapFeatureActionOptions} opts query options
  * @returns {ReduxThunkedAction}
  */
 export function queryMapFeatures(mapName: string, opts: QueryMapFeatureActionOptions): ReduxThunkedAction {
@@ -169,10 +197,10 @@ export function queryMapFeatures(mapName: string, opts: QueryMapFeatureActionOpt
 }
 
 /**
- * Sets the current view
+ * Sets the current map view
  *
  * @export
- * @param {IMapView} view
+ * @param {IMapView} view The map view to set
  * @returns {ReduxThunkedAction}
  */
 export function setCurrentView(view: IMapView): ReduxThunkedAction {
@@ -207,8 +235,8 @@ export function setCurrentView(view: IMapView): ReduxThunkedAction {
  * Sets the selection set for the given map
  *
  * @export
- * @param {string} mapName
- * @param {*} selectionSet
+ * @param {string} mapName The name of the current runtime map
+ * @param {*} selectionSet The selection set to apply
  * @returns {ReduxAction}
  */
 export function setSelection(mapName: string, selectionSet: any): ReduxAction {
@@ -225,7 +253,7 @@ export function setSelection(mapName: string, selectionSet: any): ReduxAction {
  * Invokes the specified command
  *
  * @export
- * @param {ICommand} cmd
+ * @param {ICommand} cmd The command to invoke
  * @returns {ReduxThunkedAction}
  */
 export function invokeCommand(cmd: ICommand): ReduxThunkedAction {
@@ -235,10 +263,11 @@ export function invokeCommand(cmd: ICommand): ReduxThunkedAction {
 }
 
 /**
- * Sets the busy count of the viewer
+ * Sets the busy count of the viewer. A value greater than zero signifies that the viewer is currently
+ * busy performing various actions (eg. Loading/Rendering the current map image)
  *
  * @export
- * @param {number} busyCount
+ * @param {number} busyCount The current busy count
  * @returns {ReduxAction}
  */
 export function setBusyCount(busyCount: number): ReduxAction {
@@ -252,8 +281,8 @@ export function setBusyCount(busyCount: number): ReduxAction {
  * Set the given external base layer as the active base layer
  *
  * @export
- * @param {string} mapName
- * @param {string} layerName
+ * @param {string} mapName The name of the current runtime map
+ * @param {string} layerName The name of the external base layer to set as active
  * @returns
  */
 export function setBaseLayer(mapName: string, layerName: string) {
@@ -270,8 +299,8 @@ export function setBaseLayer(mapName: string, layerName: string) {
  * Sets the view scale
  *
  * @export
- * @param {string} mapName
- * @param {number} scale
+ * @param {string} mapName The name of the current runtime map
+ * @param {number} scale The scale to set
  * @returns
  */
 export function setScale(mapName: string, scale: number) {
@@ -284,6 +313,14 @@ export function setScale(mapName: string, scale: number) {
     };
 }
 
+/**
+ * Sets the current mouse coordinates
+ * 
+ * @export
+ * @param {string} mapName The name of the current runtime map
+ * @param {*} coord The current mouse coordinates
+ * @returns 
+ */
 export function setMouseCoordinates(mapName: string, coord: any) {
     return {
         type: Constants.UPDATE_MOUSE_COORDINATES,
@@ -294,6 +331,13 @@ export function setMouseCoordinates(mapName: string, coord: any) {
     };
 }
 
+/**
+ * Goes back to the previous view on the navigation stack
+ * 
+ * @export
+ * @param {string} mapName The name of the current runtime map
+ * @returns 
+ */
 export function previousView(mapName: string) {
     return {
         type: Constants.MAP_PREVIOUS_VIEW,
@@ -303,6 +347,13 @@ export function previousView(mapName: string) {
     };
 }
 
+/**
+ * Goes to the next view on the navigation stack
+ * 
+ * @export
+ * @param {string} mapName The name of the current runtime amp
+ * @returns 
+ */
 export function nextView(mapName: string) {
     return {
         type: Constants.MAP_NEXT_VIEW,
@@ -312,6 +363,13 @@ export function nextView(mapName: string) {
     };
 }
 
+/**
+ * Sets the active map tool
+ * 
+ * @export
+ * @param {ActiveMapTool} tool The active map tool command
+ * @returns 
+ */
 export function setActiveTool(tool: ActiveMapTool) {
     return {
         type: Constants.MAP_SET_ACTIVE_TOOL,
@@ -319,6 +377,13 @@ export function setActiveTool(tool: ActiveMapTool) {
     };
 }
 
+/**
+ * Sets the active runtime map
+ * 
+ * @export
+ * @param {string} mapName The name of the runtime map to set as active
+ * @returns 
+ */
 export function setActiveMap(mapName: string) {
     return {
         type: Constants.MAP_SET_ACTIVE_MAP,

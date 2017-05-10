@@ -5,16 +5,37 @@ import { deArrayify } from './deArrayify';
 
 const MG_MAPAGENT_ERROR_CODE = 559;
 
+/**
+ * Indicates if the given response is an error response
+ *
+ * @export
+ * @param {Response} response
+ * @returns {boolean}
+ */
 export function isErrorResponse(response: Response): boolean {
     return !response.ok || response.status === MG_MAPAGENT_ERROR_CODE;
 }
 
+/**
+ * Encodes the given object for a POST submission
+ *
+ * @export
+ * @param {*} data
+ * @returns {string}
+ */
 export function serialize(data: any): string {
     return Object.keys(data).map((keyName) => {
         return encodeURIComponent(keyName.toUpperCase()) + '=' + encodeURIComponent(data[keyName])
     }).join('&');
 }
 
+/**
+ * The mapagent client
+ *
+ * @export
+ * @class MapAgentRequestBuilder
+ * @extends {Request.RequestBuilder}
+ */
 export class MapAgentRequestBuilder extends Request.RequestBuilder {
     private locale: string;
     constructor(agentUri: string, locale: string = "en") {
@@ -28,7 +49,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
-                }, 
+                },
                 method: "GET"
             })
             .then(response => {
@@ -93,7 +114,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
                 bFirst = false;
             } else {
                 url += `&${key.toUpperCase()}=${options[key]}`;
-            } 
+            }
         }
         return url;
     }
@@ -154,13 +175,13 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
             return this.get<T>(url);
         }
     }
-    
+
     public createRuntimeMap(options: Request.ICreateRuntimeMapOptions): Request.IPromise<Contracts.RtMap.RuntimeMap> {
         const p1 = { operation: "CREATERUNTIMEMAP", version: "3.0.0" };
         const url = this.stringifyGetUrl({ ...options, ...p1 });
         return this.get<Contracts.RtMap.RuntimeMap>(url);
     }
-    
+
     public queryMapFeatures(options: Request.IQueryMapFeaturesOptions): Request.IPromise<Contracts.Query.QueryMapFeaturesResponse> {
         const p1 = { operation: "QUERYMAPFEATURES", version: "2.6.0" };
         return this.post<Contracts.Query.QueryMapFeaturesResponse>(this.agentUri, { ...options, ...p1 });

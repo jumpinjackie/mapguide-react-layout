@@ -372,6 +372,14 @@ export interface IMapGuideClient {
     getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string): string;
 }
 
+/**
+ * An abstract MapGuide service client
+ *
+ * @export
+ * @abstract
+ * @class RequestBuilder
+ * @implements {IMapGuideClient}
+ */
 export abstract class RequestBuilder implements IMapGuideClient {
     protected agentUri: string;
     constructor(agentUri: string) {

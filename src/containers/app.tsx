@@ -15,6 +15,12 @@ import { initLayout } from "../actions/init";
 import { Error, normalizeStack } from "../components/error";
 import { tr } from "../api/i18n";
 
+/**
+ * App component properties
+ *
+ * @export
+ * @interface IAppProps
+ */
 export interface IAppProps {
     layout: string;
     /**
@@ -43,6 +49,12 @@ export interface IAppProps {
     externalBaseLayers?: IExternalBaseLayer[];
 }
 
+/**
+ * App component state
+ *
+ * @export
+ * @interface IAppState
+ */
 export interface IAppState {
     error: InitError;
     includeStack: boolean;
@@ -56,6 +68,12 @@ export interface IInitAppLayout {
     externalBaseLayers?: IExternalBaseLayer[];
 }
 
+/**
+ * App component action dispatchers
+ *
+ * @export
+ * @interface IAppDispatch
+ */
 export interface IAppDispatch {
     initApp: (args: any) => void;
     initLayout: (args: IInitAppLayout) => void;

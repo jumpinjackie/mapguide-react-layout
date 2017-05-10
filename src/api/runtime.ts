@@ -11,10 +11,22 @@ import { IMapViewer, IMapView } from "../api/common";
 let _fusionRoot: string | undefined;
 let _viewer: IMapViewer | undefined;
 
+/**
+ * Sets the Fusion base URL
+ *
+ * @export
+ * @param {string} root
+ */
 export function setFusionRoot(root: string): void {
     _fusionRoot = root;
 }
 
+/**
+ * Gets the Fusion base URL
+ *
+ * @export
+ * @returns {string}
+ */
 export function getFusionRoot(): string {
     return _fusionRoot || "../fusion";
 }
@@ -24,7 +36,7 @@ export function getFusionRoot(): string {
  *
  * DO NOT CALL DIRECTLY
  *
- * @export
+ * @hidden
  * @param {IMapViewer} viewer
  */
 export function setViewer(viewer: IMapViewer): void {

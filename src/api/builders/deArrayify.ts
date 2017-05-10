@@ -816,10 +816,10 @@ function deArrayifyFlexibleLayout(json: any): Contracts.Fusion.ApplicationDefini
 
 /**
  * Normalizes the given JSON object to match the content model of its original XML form
- * 
+ *
  * @export
  * @param {*} json The JSON object to normalize
- * @returns {*} 
+ * @returns {*} The normalized JSON object
  */
 export function deArrayify(json: any): any {
     if (json["RuntimeMap"]) {
@@ -843,7 +843,7 @@ export function deArrayify(json: any): any {
 
 /**
  * Builds an XML selection string from the given selection set.
- * 
+ *
  * @export
  * @param {(Contracts.Query.FeatureSet | null | undefined)} selection The selection set
  * @param {string[]} [layerIds] If specified, the selection XML will only include selections from the specified layers

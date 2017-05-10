@@ -1,6 +1,13 @@
 import queryString = require("query-string");
 const parse = require("url-parse");
 
+/**
+ * Indicates if the given arrays are equal
+ *
+ * @param {(string[]|null)} a
+ * @param {(string[]|null)} b
+ * @returns {boolean}
+ */
 function arraysEqual(a: string[]|null, b: string[]|null): boolean {
     if (a === b) return true;
     if (a == null || b == null) return false;
@@ -17,6 +24,13 @@ function arraysEqual(a: string[]|null, b: string[]|null): boolean {
     return true;
 }
 
+/**
+ * Indicates if the given sets of parameterse are the same
+ *
+ * @param {*} params1
+ * @param {*} params2
+ * @returns {boolean}
+ */
 function areParamsEqual(params1: any, params2: any): boolean {
     //HACK: locale is an optional part of the mapname/session/locale triplet
     //For the purpose of the same url test, the presence (or lack thereof) of
@@ -34,6 +48,14 @@ function areParamsEqual(params1: any, params2: any): boolean {
     return false;
 }
 
+/**
+ * Indicates if the given URLs are the same
+ *
+ * @export
+ * @param {string} url1
+ * @param {string} url2
+ * @returns {boolean}
+ */
 export function areUrlsSame(url1: string, url2: string): boolean {
     const parsed1 = parse(url1);
     const parsed2 = parse(url2);

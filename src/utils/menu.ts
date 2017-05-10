@@ -5,6 +5,9 @@ import { IItem, IInlineMenu } from "../components/toolbar";
 //
 // https://github.com/jumpinjackie/mapguide-react-layout/issues/61
 
+/**
+ * @hidden
+ */
 export function processMenuItems(items: (IItem | IInlineMenu | null)[]): IItem[] {
     const processed = [] as IItem[];
     if (items != null) {

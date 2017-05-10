@@ -22,6 +22,9 @@ import * as Constants from "../../constants";
 import { ensureParameters } from "../../actions/taskpane";
 import { tr } from "../i18n";
 
+/**
+ * @hidden
+ */
 export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: (cmd: ICommand) => void): IItem|IInlineMenu|IFlyoutMenu|IComponentFlyoutItem|null {
     const state = store.getState();
     if (tb.error) {

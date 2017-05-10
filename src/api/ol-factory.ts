@@ -33,7 +33,7 @@ import olStyleCircle from "ol/style/circle";
 export type olProjectionLike = string | olProjection;
 
 /**
- * Creates OpenLayers types
+ * Creates various OpenLayers types used by the viewer
  *
  * @export
  * @interface IOLFactory
@@ -68,6 +68,13 @@ export interface IOLFactory {
     createFormatWKT(options?: olx.format.WKTOptions | undefined): olFormatWKT;
 }
 
+/**
+ * Creates various OpenLayers types used by the viewer
+ *
+ * @export
+ * @class OLFactory
+ * @implements {IOLFactory}
+ */
 export class OLFactory implements IOLFactory {
     public createStyle(options?: olx.style.StyleOptions): olStyle {
         return new olStyle(options);

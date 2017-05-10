@@ -5,7 +5,7 @@ import { ReduxAction } from "../api/common";
  * Displays the specified component in a modal dialog
  *
  * @export
- * @param {*} options
+ * @param {*} options Modal dialog display options
  * @returns {ReduxAction}
  */
 export function showModalComponent(options: any): ReduxAction {
@@ -23,7 +23,7 @@ export function showModalComponent(options: any): ReduxAction {
  * Displays the specified URL in a modal dialog
  *
  * @export
- * @param {*} options
+ * @param {*} options Modal dialog display options
  * @returns {ReduxAction}
  */
 export function showModalUrl(options: any): ReduxAction {
@@ -41,7 +41,7 @@ export function showModalUrl(options: any): ReduxAction {
  * Hides an open modal dialog
  *
  * @export
- * @param {*} options
+ * @param {*} options Modal dialog hide options
  * @returns {ReduxAction}
  */
 export function hideModal(options: any): ReduxAction {

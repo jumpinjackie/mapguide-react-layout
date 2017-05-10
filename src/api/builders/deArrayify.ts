@@ -814,6 +814,13 @@ function deArrayifyFlexibleLayout(json: any): Contracts.Fusion.ApplicationDefini
     return resp;
 }
 
+/**
+ * Normalizes the given JSON object to match the content model of its original XML form
+ * 
+ * @export
+ * @param {*} json The JSON object to normalize
+ * @returns {*} 
+ */
 export function deArrayify(json: any): any {
     if (json["RuntimeMap"]) {
         return deArrayifyRuntimeMap(json.RuntimeMap);
@@ -834,6 +841,14 @@ export function deArrayify(json: any): any {
     throw new MgError(`Unsure how to process JSON response. Root elements are: (${keys.join(", ")})`);
 }
 
+/**
+ * Builds an XML selection string from the given selection set.
+ * 
+ * @export
+ * @param {(Contracts.Query.FeatureSet | null | undefined)} selection The selection set
+ * @param {string[]} [layerIds] If specified, the selection XML will only include selections from the specified layers
+ * @returns {string} The selection XML string
+ */
 export function buildSelectionXml(selection: Contracts.Query.FeatureSet | null | undefined, layerIds?: string[]): string {
     let xml = '<?xml version="1.0" encoding="utf-8"?>';
     xml += '<FeatureSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FeatureSet-1.0.0.xsd">';

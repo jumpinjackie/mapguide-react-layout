@@ -1,4 +1,5 @@
 title: mapguide-react-layout
 description: A modern map viewer for MapGuide Open Source / Autodesk Infrastructure Map Server
 show_downloads: true
+include: ["apidoc/classes", "apidoc/enums", "apidoc/interfaces", "apidoc/modules"]
 theme: jekyll-theme-cayman

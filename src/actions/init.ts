@@ -532,7 +532,8 @@ function makeRuntimeMapSuccessHandler<TLayout>(client: Client, session: string, 
                 return Promise.all([maps, fetchEpsgs]);
             })
             .then(args => {
-                return Promise.all([args[0], args[1].map(f => resolveProjection(f.epsg, opts, f.mapDef))]);
+                const promisedEpsgs = Promise.all(args[1].map(f => resolveProjection(f.epsg, opts, f.mapDef)));
+                return Promise.all([args[0], promisedEpsgs]);
             })
             .then(args => {
                 const maps = args[0];

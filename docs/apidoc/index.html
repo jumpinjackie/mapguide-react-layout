@@ -60,86 +60,34 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<h1 id="mapguide-react-layout">mapguide-react-layout</h1>
-				<p><a href="https://travis-ci.org/jumpinjackie/mapguide-react-layout"><img src="https://travis-ci.org/jumpinjackie/mapguide-react-layout.svg" alt="Build status"></a>
-					<a href="https://ci.appveyor.com/project/jumpinjackie/mapguide-react-layout"><img src="https://ci.appveyor.com/api/projects/status/urdvk8788w6h26ae?svg=true" alt="Build status"></a>
-					<a href="https://coveralls.io/github/jumpinjackie/mapguide-react-layout?branch=master"><img src="https://coveralls.io/repos/github/jumpinjackie/mapguide-react-layout/badge.svg?branch=master" alt="Coverage Status"></a>
-				<a href="https://greenkeeper.io/"><img src="https://badges.greenkeeper.io/jumpinjackie/mapguide-react-layout.svg" alt="Greenkeeper badge"></a></p>
-				<p>mapguide-react-layout is a modern map viewer for MapGuide.</p>
-				<p>It is built from the ground up with modern web technologies (<a href="https://facebook.github.io/react/">React</a>, <a href="http://openlayers.org/">OpenLayers 3</a>, <a href="https://www.typescriptlang.org/">TypeScript</a>) to be <strong>the definitive map viewer</strong> for <a href="http://mapguide.osgeo.org">MapGuide Open Source</a> or <a href="http://www.autodesk.com/products/infrastructure-map-server/overview">Autodesk Infrastructure Map Server</a></p>
-				<p>It aims for reasonable compatibility with the existing Web Layout (AJAX Viewer) and Flexible Layout (Fusion)configuration documents that drive the existing AJAX and Fusion map viewers, ensuring an authoring and development experience similar to MapGuide&#39;s existing viewer offerings.</p>
-				<h1 id="requirements">Requirements</h1>
+				<h1 id="introduction">Introduction</h1>
+				<p><code>mapguide-react-layout</code> is a modern map viewer for <a href="http://mapguide.osgeo.org">MapGuide Open Source</a> and <a href="http://www.autodesk.com/products/infrastructure-map-server/overview">Autodesk Infrastructure Map Server</a></p>
+				<p>This API documentation covers the <code>mapguide-react-layout</code> npm module</p>
+				<p>For an example of how this npm module is used, check out the <a href="https://github.com/jumpinjackie/mapguide-react-layout-example">mapguide-react-layout-example</a></p>
+				<h1 id="browser-support">Browser Support</h1>
+				<p><code>mapguide-react-layout</code> is supported on all modern browsers</p>
 				<ul>
-					<li>MapGuide Open Source 3.0 or equivalent version of Autodesk Infrastructure Map Server (and newer versions)</li>
-					<li>A <a href="http://browsehappy.com/"><strong>modern web browser</strong></a>. Practically speaking, this means any of the following:<ul>
-							<li>Google Chrome (stable channel)</li>
-							<li>Mozilla Firefox (stable channel)</li>
-							<li>Internet Explorer 11. Older versions (intentionally) not supported.</li>
-							<li>Microsoft Edge</li>
-							<li>For mobile devices:<ul>
-									<li>iOS: Mobile Safari</li>
-									<li>Android: Google Chrome or Mozilla Firefox</li>
-								</ul>
-							</li>
-						</ul>
-					</li>
-					<li>For development: node.js 6.x or newer<ul>
-							<li>Make sure yarn is installed <code>npm install -g yarn</code></li>
-						</ul>
-					</li>
+					<li>Chrome</li>
+					<li>Firefox</li>
+					<li>Safari</li>
+					<li>IE11</li>
+					<li>Microsoft Edge</li>
 				</ul>
-				<h1 id="installation-from-source">Installation - From Source</h1>
-				<ol>
-					<li>Clone this repository</li>
-					<li>Run from the command-line: <code>yarn install</code> (note: If this fails for you on Windows, just run it again - <a href="https://github.com/yarnpkg/yarn/issues/919">Related issue</a>)</li>
-					<li>Either:<ul>
-							<li>Copy the <code>viewer</code> directory to MapGuide&#39;s physical wwwroot directory</li>
-							<li>Map the <code>viewer</code> directory as a child virtual directory under the MapGuide&#39;s wwwroot in your web server of choice (IIS or Apache)</li>
-						</ul>
-					</li>
-					<li>Launch the viewer using a pre-defined template (see <code>Templates</code> below)</li>
-				</ol>
-				<h1 id="installation-from-release-package">Installation - From release package</h1>
-				<ol>
-					<li>Download the <code>viewer.zip</code> from the <code>Releases</code> section</li>
-					<li>Extract the archive to MapGuide&#39;s physical wwwroot directory</li>
-					<li>Launch the viewer using a pre-defined template (see <code>Templates</code> below)</li>
-				</ol>
-				<h1 id="demo">Demo</h1>
-				<p>See <a href="https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs/DEMO.md">DEMO.md</a> to find out how to use <a href="http://play-with-docker.com">play-with-docker</a> easily set up a mapguide-react-layout demo site</p>
-				<h1 id="templates">Templates</h1>
-				<p>The following templates are included with this viewer.</p>
-				<p>See <a href="https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs/TEMPLATES.md">TEMPLATES.md</a> for how to launch a viewer with the desired template</p>
-				<h2 id="ajax-viewer">AJAX Viewer</h2>
-				<p><img src="https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/ajax-viewer.png" alt=""></p>
-				<h2 id="sidebar">Sidebar</h2>
-				<p><img src="https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/sidebar.png" alt=""></p>
-				<h2 id="slate">Slate</h2>
-				<p><img src="https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/slate.png" alt=""></p>
-				<h2 id="maroon">Maroon</h2>
-				<p><img src="https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/maroon.png" alt=""></p>
-				<h2 id="aqua">Aqua</h2>
-				<p><img src="https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/aqua.png" alt=""></p>
-				<h2 id="limegold">LimeGold</h2>
-				<p><img src="https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/limegold.png" alt=""></p>
-				<h2 id="turquoiseyellow">TurquoiseYellow</h2>
-				<p><img src="https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/turquoise-yellow.png" alt=""></p>
-				<h1 id="known-issues">Known Issues</h1>
-				<p>See <a href="https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs/KNOWN_ISSUES.md">KNOWN_ISSUES.md</a></p>
-				<h1 id="release-notes">Release Notes</h1>
-				<p>See <a href="https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs/RELEASE_NOTES.md">RELEASE_NOTES.md</a></p>
-				<h1 id="credits">Credits</h1>
-				<p>mapguide-react-layout could not be possible without the following tools and libraries:</p>
+				<h1 id="usage">Usage</h1>
+				<p><code>mapguide-react-layout</code> is available as:</p>
 				<ul>
-					<li><a href="http://openlayers.org/">OpenLayers 3</a></li>
-					<li><a href="http://proj4js.org/">proj4js</a></li>
-					<li><a href="https://www.typescriptlang.org/">TypeScript</a></li>
-					<li><a href="https://facebook.github.io/react/">React</a></li>
-					<li><a href="http://blueprintjs.com/">Blueprint</a></li>
-					<li><a href="https://github.com/Turbo87/sidebar-v2">sidebar-v2</a></li>
+					<li>A pre-built bundle (<code>viewer.js</code>)</li>
+					<li>A set of transpiled CommonJS modules on <a href="https://www.npmjs.com/package/mapguide-react-layout">npm</a></li>
 				</ul>
-				<h1 id="license">License</h1>
-				<p>mapguide-react-layout is licensed under the MIT license.</p>
+				<h1 id="typescript">TypeScript</h1>
+				<p><code>mapguide-react-layout</code> is written in <a href="https://www.typescriptlang.org/">TypeScript</a> and <code>.d.ts</code> type definitions are included with the npm package.</p>
+				<p>Although you can consume this package with vanilla JavaScript, the API documentation assumes you are also using TypeScript</p>
+				<h1 id="installation">Installation</h1>
+				<p>With npm: <code>npm install --save mapguide-react-layout</code></p>
+				<p>With yarn: <code>yarn add mapguide-react-layout</code></p>
+				<h1 id="importing-modules">Importing Modules</h1>
+				<p>For all the modules referenced on the right hand side, prepend <code>mapguide-react-layout/lib</code> for the actual module name to import</p>
+				<p>For example the module <a href="modules/_api_common_.html">&quot;api/common&quot;</a> should be imported as <code>mapguide-react-layout/lib/api/common</code></p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">

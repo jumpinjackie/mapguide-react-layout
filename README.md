@@ -9,7 +9,7 @@ mapguide-react-layout is a modern map viewer for MapGuide.
 
 It is built from the ground up with modern web technologies ([React](https://facebook.github.io/react/), [OpenLayers 3](http://openlayers.org/), [TypeScript](https://www.typescriptlang.org/)) to be **the definitive map viewer** for [MapGuide Open Source](http://mapguide.osgeo.org) or [Autodesk Infrastructure Map Server](http://www.autodesk.com/products/infrastructure-map-server/overview)
 
-It aims for reasonable compatibility with the existing Web Layout and Flexible Layout (TODO) configuration documents that drive the existing AJAX and Fusion map viewers, ensuring an authoring and development experience similar to MapGuide's existing viewer offerings.
+It aims for reasonable compatibility with the existing Web Layout (AJAX Viewer) and Flexible Layout (Fusion)configuration documents that drive the existing AJAX and Fusion map viewers, ensuring an authoring and development experience similar to MapGuide's existing viewer offerings.
 
 # Requirements
 
@@ -40,51 +40,51 @@ It aims for reasonable compatibility with the existing Web Layout and Flexible L
  2. Extract the archive to MapGuide's physical wwwroot directory
  3. Launch the viewer using a pre-defined template (see `Templates` below)
 
-# Demo 
+# Demo
 
-See [DEMO.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/DEMO.md) to find out how to use [play-with-docker](http://play-with-docker.com) easily set up a mapguide-react-layout demo site
+See [DEMO.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs/DEMO.md) to find out how to use [play-with-docker](http://play-with-docker.com) easily set up a mapguide-react-layout demo site
 
 # Templates
 
 The following templates are included with this viewer.
 
-See [TEMPLATES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/TEMPLATES.md) for how to launch a viewer with the desired template
+See [TEMPLATES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs/TEMPLATES.md) for how to launch a viewer with the desired template
 
 ## AJAX Viewer
 
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/doc/ajax-viewer.png)
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/ajax-viewer.png)
 
 ## Sidebar
 
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/doc/sidebar.png)
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/sidebar.png)
 
 ## Slate
 
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/doc/slate.png)
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/slate.png)
 
 ## Maroon
 
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/doc/maroon.png)
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/maroon.png)
 
 ## Aqua
 
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/doc/aqua.png)
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/aqua.png)
 
 ## LimeGold
 
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/doc/limegold.png)
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/limegold.png)
 
 ## TurquoiseYellow
 
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/doc/turquoise-yellow.png)
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/turquoise-yellow.png)
 
 # Known Issues
 
-See [KNOWN_ISSUES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/KNOWN_ISSUES.md)
+See [KNOWN_ISSUES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs/KNOWN_ISSUES.md)
 
 # Release Notes
 
-See [RELEASE_NOTES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/RELEASE_NOTES.md)
+See [RELEASE_NOTES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs/RELEASE_NOTES.md)
 
 # Credits
 

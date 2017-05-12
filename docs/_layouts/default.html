@@ -16,7 +16,10 @@
       {% if site.github.is_project_page %}
         <a href="{{ site.github.repository_url }}" class="btn">View on GitHub</a>
       {% endif %}
+      {% if site.show_downloads %}
         <a href="{{ site.github.releases_url }}/latest" class="btn">Download Latest Release</btn>
+      {% endif %}
+
     </section>
     <section class="main-content">
       {{ content }}

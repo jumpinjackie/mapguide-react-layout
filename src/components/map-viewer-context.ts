@@ -371,6 +371,7 @@ export class MgLayerSet {
             console.log(" " + layers[i].get("name"));
         }
         */
+        logger.debug(`Creating OL view with projection ${this.projection} and ${resolutions.length} resolutions`);
         if (resolutions.length == 0) {
             this.view = new View({
                 projection: this.projection
@@ -515,6 +516,7 @@ export class MgLayerSet {
             //ol.View has immutable projection, so we have to replace the whole view on the OverviewMap
             const center = this.view.getCenter();
             const resolution = this.view.getResolution();
+            debugger;
             if (center) {
                 ovMap.setView(new View({
                     center: [ center[0], center[1] ],

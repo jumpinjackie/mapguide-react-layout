@@ -2,9 +2,10 @@
     "extends": "./tsconfig.base.json",
     "compilerOptions": {
         "declaration": true,
-        "outDir": "./package/lib"
+        "outDir": "lib"
     },
     "exclude": [
+        "lib",
         "package",
         "node_modules",
         "test",

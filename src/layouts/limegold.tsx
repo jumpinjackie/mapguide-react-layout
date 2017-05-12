@@ -44,11 +44,11 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
     };
 }
 
-export type LimeGoldLayoutTemplateProps = Partial<ILimeGoldTemplateLayoutState>;
+export type LimeGoldTemplateLayoutProps = Partial<ILimeGoldTemplateLayoutState>;
 
 @connect(mapStateToProps, mapDispatchToProps)
-export class LimeGoldLayoutTemplate extends React.Component<LimeGoldLayoutTemplateProps, any> {
-    constructor(props: LimeGoldLayoutTemplateProps) {
+export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayoutProps, any> {
+    constructor(props: LimeGoldTemplateLayoutProps) {
         super(props);
     }
     private getLocale(): string {

@@ -44,11 +44,11 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
     };
 }
 
-export type TurquoiseYellowLayoutTemplateProps = Partial<ITurquoiseYellowTemplateLayoutState>;
+export type TurquoiseYellowTemplateLayoutProps = Partial<ITurquoiseYellowTemplateLayoutState>;
 
 @connect(mapStateToProps, mapDispatchToProps)
-export class TurquoiseYellowLayoutTemplate extends React.Component<TurquoiseYellowLayoutTemplateProps, any> {
-    constructor(props: TurquoiseYellowLayoutTemplateProps) {
+export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYellowTemplateLayoutProps, any> {
+    constructor(props: TurquoiseYellowTemplateLayoutProps) {
         super(props);
     }
     private getLocale(): string {

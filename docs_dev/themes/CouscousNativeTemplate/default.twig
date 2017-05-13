@@ -69,7 +69,9 @@
                 {% endif %}
 
                 <section class="{{ menu ? 'col-sm-9 col-lg-10 content' : 'col-sm-12 content' }}">
-                    {{ content|raw }}
+                    {% block content %}
+                        {{ content|raw }}
+                    {% endblock %}
                 </section>
 
             </div>

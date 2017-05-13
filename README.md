@@ -46,37 +46,7 @@ See [DEMO.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/
 
 # Templates
 
-The following templates are included with this viewer.
-
-See [TEMPLATES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs_dev/content/TEMPLATES.md) for how to launch a viewer with the desired template
-
-## AJAX Viewer
-
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/ajax-viewer.png)
-
-## Sidebar
-
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/sidebar.png)
-
-## Slate
-
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/slate.png)
-
-## Maroon
-
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/maroon.png)
-
-## Aqua
-
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/aqua.png)
-
-## LimeGold
-
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/limegold.png)
-
-## TurquoiseYellow
-
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/turquoise-yellow.png)
+See [TEMPLATES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs_dev/content/TEMPLATES.md) for more information ahout the templates provided with this viewer and how to launch the viewer with a given template
 
 # Known Issues
 

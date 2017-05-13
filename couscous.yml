@@ -5,7 +5,7 @@ include:
     - docs_dev/content
 
 # Base URL of the published website
-baseUrl: http://jumpinjackie.github.io/mapguide-react-layout
+baseUrl: https://jumpinjackie.github.io/mapguide-react-layout
 
 scripts:
     before:

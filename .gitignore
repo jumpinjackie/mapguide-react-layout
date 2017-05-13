@@ -1,4 +1,5 @@
 .vscode
+.couscous
 dist
 lib
 build

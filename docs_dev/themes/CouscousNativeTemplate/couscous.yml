@@ -1,0 +1,30 @@
+template:
+    directory: .
+
+github:
+    user: pnowy
+    repo: CouscousNativeTemplate
+
+title: Native Couscous template
+subTitle: The template for Couscous
+fontAwesomeIcon: fa fa-hand-peace-o
+footerText: This is a footer text
+# googleAnalyticsCode: U-EXAMPLE-CODE
+
+# The left menu bar
+menu:
+    sections:
+        main:
+            name: Main documentation
+            items:
+                home:
+                    text: Home page
+                    # You can use relative urls
+                    relativeUrl: doc/faq.html
+                foo:
+                    text: Another link
+                    # Or absolute urls
+                    absoluteUrl: https://example.com
+        other:
+            name: Other topics
+            items:

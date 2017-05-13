@@ -1,0 +1,14 @@
+template:
+    directory: docs_dev/themes/CouscousNativeTemplate
+
+# Base URL of the published website
+baseUrl: http://jumpinjackie.github.io/mapguide-react-layout
+
+# Used to link to the GitHub project
+github:
+    user: jumpinjackie
+    repo: mapguide-react-layout
+
+title: mapguide-react-layout
+subTitle: A modern map viewer for MapGuide Open Source / Autodesk Infrastructure Map Server
+googleAnalyticsCode: GOOGLE-ANALYTICS-CODE

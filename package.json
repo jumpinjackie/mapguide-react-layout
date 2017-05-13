@@ -9,6 +9,7 @@
     "build:site": "php tools/couscous.phar generate --target=./docs",
     "build:apidoc": "rimraf ./docs_dev/themes/CouscousNativeTemplate/apidoc && typedoc --readme ./docs_dev/content/API.md --excludePrivate --excludeExternals --excludeNotExported --mode modules --tsconfig tsconfig.npm.json --out ./docs_dev/themes/CouscousNativeTemplate/apidoc ./src",
     "build:dev": "cross-env NODE_ENV=development webpack",
+    "watch:site": "php tools/couscous.phar preview",
     "watch:dev": "cross-env NODE_ENV=development webpack -w --progress",
     "watch:test": "jest --watchAll",
     "stats": "cross-env NODE_ENV=production webpack --json > webpack.json",

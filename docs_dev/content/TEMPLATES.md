@@ -75,6 +75,8 @@ The following templates are included with this viewer.
  * Supports Flexible Layouts: `yes`
  * Supports Web Layouts: `no`^
 
+### Footnotes
+
 ^ The viewer will still load, but most likely will not have any toolbars initialized
 
 ~ For the templates to work against Flexible Layouts, you must author your Fusion Flexible Layouts using the following named containers

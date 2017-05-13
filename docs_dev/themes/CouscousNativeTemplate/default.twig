@@ -17,15 +17,15 @@
         <header class="site-header">
             <div class="site-branding">
                 <h1 class="site-name">
-                    <a href="{{ baseUrl }}" >{{ title|default('The title') }}</a>&nbsp;&nbsp;<i class="{{ fontAwesomeIcon|default('fa fa-hand-peace-o') }}"></i>
+                    <a href="{{ baseUrl }}" >{{ title|default('The title') }}</a>
                 </h1>
                 <h2 class="site-description">{{ subTitle|default('This is the default subtitle!')|raw }}</h2>
             </div>
 
             <div class="button-line">
                 <a href="https://github.com/{{ github.user }}/{{ github.repo }}" target="_blank" class="btn btn-default">View on GitHub</a>
-                <a href="https://github.com/{{ github.user }}/{{ github.repo }}/zipball/master" class="btn btn-default hidden-xs">Download .zip</a>
-                <a href="https://github.com/{{ github.user }}/{{ github.repo }}/tarball/master" class="btn btn-default hidden-xs">Download .tar.gz</a>
+                <a href="{{ baseUrl }}/apidoc/index.html" target="_blank" class="btn btn-default">API Docs</a>
+                <a href="https://github.com/{{ github.user }}/{{ github.repo }}/releases/latest" class="btn btn-default hidden-xs">Download Latest</a>
             </div>
 
             {% if github is defined %}

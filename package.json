@@ -6,6 +6,7 @@
     "prebuild": "yarn run clean",
     "build": "yarn run build:apidoc && yarn run build:npm && cross-env NODE_ENV=production webpack && bestzip viewer.zip viewer/",
     "build:npm": "node tools/prepare-package.js && tsc --p tsconfig.npm.json && copyfiles *.md lib/** src/** viewer/** package && rimraf lib",
+    "build:site": "php tools/couscous.phar generate --target=./docs_generated",
     "build:apidoc": "rimraf ./docs_dev/themes/CouscousNativeTemplate/apidoc && typedoc --readme ./docs/API.md --excludePrivate --excludeExternals --excludeNotExported --mode modules --tsconfig tsconfig.npm.json --out ./docs_dev/themes/CouscousNativeTemplate/apidoc ./src",
     "build:dev": "cross-env NODE_ENV=development webpack",
     "watch:dev": "cross-env NODE_ENV=development webpack -w --progress",

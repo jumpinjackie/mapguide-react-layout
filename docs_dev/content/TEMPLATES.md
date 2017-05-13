@@ -1,7 +1,3 @@
----
-layout: templates
----
-
 # Launching a viewer with a template
 
 NOTE: The terms `Flexible Layout` and `Application Definition` are interchangable. Where one is mentioned, it also means the other and vice versa.

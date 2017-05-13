@@ -46,75 +46,78 @@
 
                 
                 <section class="col-sm-12 content">
-                    <h1 id="launching-a-viewer-with-a-template">Launching a viewer with a template</h1>
+                                            <h1 id="launching-a-viewer-with-a-template">Launching a viewer with a template</h1>
+<p>NOTE: The terms <code>Flexible Layout</code> and <code>Application Definition</code> are interchangable. Where one is mentioned, it also means the other and vice versa.</p>
 <p>Assuming you installed the viewer as <code>viewer</code> under your MapGuide wwwroot. You can launch the viewer as follows:</p>
 <p><code>http://servername/mapguide/viewer/$ENTRY_POINT?resource=$RESOURCEID</code></p>
 <p>Where:</p>
 <ul>
 <li><code>$ENTRY_POINT</code> is the name of the entry point HTML file below</li>
-<li><code>$RESOURCEID</code> is the resource id of the Web Layout or Application Definition (eg. <code>Library://Samples/Sheboygan/Layouts/Sheboygan.WebLayout</code>) </li>
+<li><code>$RESOURCEID</code> is the resource id of the Web Layout or Flexible Layout (eg. <code>Library://Samples/Sheboygan/Layouts/Sheboygan.WebLayout</code>)</li>
 </ul>
 <p>You can also provide the following optional parameters:</p>
 <ul>
 <li><code>locale</code> - The language code to use for localized strings (default: <code>en</code>)</li>
 </ul>
-<p>Refer to the table below for information about each template</p>
-<table>
-<thead>
-<tr>
-<th>Template</th>
-<th>Supports Web Layouts</th>
-<th>Supports Application Definitions</th>
-<th>Entry Point</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>AJAX Viewer</td>
-<td>Yes</td>
-<td>No^</td>
-<td>index.html</td>
-</tr>
-<tr>
-<td>Sidebar</td>
-<td>Yes</td>
-<td>No^</td>
-<td>sidebar.html</td>
-</tr>
-<tr>
-<td>Aqua</td>
-<td>No^</td>
-<td>Yes</td>
-<td>aqua.html</td>
-</tr>
-<tr>
-<td>Slate</td>
-<td>No^</td>
-<td>Yes</td>
-<td>slate.html</td>
-</tr>
-<tr>
-<td>LimeGold</td>
-<td>No^</td>
-<td>Yes</td>
-<td>limegold.html</td>
-</tr>
-<tr>
-<td>Maroon</td>
-<td>No^</td>
-<td>Yes</td>
-<td>maroon.html</td>
-</tr>
-<tr>
-<td>TurquoiseYellow</td>
-<td>No^</td>
-<td>Yes</td>
-<td>turquoiseyellow.html</td>
-</tr>
-</tbody>
-</table>
+<h1 id="available-templates">Available Templates</h1>
+<p>The following templates are included with this viewer.</p>
+<h2 id="ajax-viewer">AJAX Viewer</h2>
+<p><img src="https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/ajax-viewer.png" alt="" /></p>
+<ul>
+<li>Entry Point: <code>index.html</code></li>
+<li>Supports Flexible Layouts: <code>yes</code>~</li>
+<li>Supports Web Layouts: <code>yes</code></li>
+</ul>
+<h2 id="sidebar">Sidebar</h2>
+<p><img src="https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/sidebar.png" alt="" /></p>
+<ul>
+<li>Entry Point: <code>sidebar.html</code></li>
+<li>Supports Flexible Layouts: <code>yes</code>~</li>
+<li>Supports Web Layouts: <code>yes</code></li>
+</ul>
+<h2 id="slate">Slate</h2>
+<p><img src="https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/slate.png" alt="" /></p>
+<ul>
+<li>Entry Point: <code>slate.html</code></li>
+<li>Supports Flexible Layouts: <code>yes</code></li>
+<li>Supports Web Layouts: <code>no</code>^</li>
+</ul>
+<h2 id="maroon">Maroon</h2>
+<p><img src="https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/maroon.png" alt="" /></p>
+<ul>
+<li>Entry Point: <code>maroon.html</code></li>
+<li>Supports Flexible Layouts: <code>yes</code></li>
+<li>Supports Web Layouts: <code>no</code>^</li>
+</ul>
+<h2 id="aqua">Aqua</h2>
+<p><img src="https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/aqua.png" alt="" /></p>
+<ul>
+<li>Entry Point: <code>aqua.html</code></li>
+<li>Supports Flexible Layouts: <code>yes</code></li>
+<li>Supports Web Layouts: <code>no</code>^</li>
+</ul>
+<h2 id="limegold">LimeGold</h2>
+<p><img src="https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/limegold.png" alt="" /></p>
+<ul>
+<li>Entry Point: <code>limegold.html</code></li>
+<li>Supports Flexible Layouts: <code>yes</code></li>
+<li>Supports Web Layouts: <code>no</code>^</li>
+</ul>
+<h2 id="turquoiseyellow">TurquoiseYellow</h2>
+<p><img src="https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/turquoise-yellow.png" alt="" /></p>
+<ul>
+<li>Entry Point: <code>turquoiseyellow.html</code></li>
+<li>Supports Flexible Layouts: <code>yes</code></li>
+<li>Supports Web Layouts: <code>no</code>^</li>
+</ul>
 <p>^ The viewer will still load, but most likely will not have any toolbars initialized</p>
-                </section>
+<p>~ For the templates to work against Flexible Layouts, you must author your Fusion Flexible Layouts using the following named containers</p>
+<ul>
+<li><code>Toolbar</code> - For the primary toolbar</li>
+<li><code>TaskMenu</code>- For the Task Pane menu</li>
+<li><code>MapContextMenu</code> - For the main context menu</li>
+</ul>
+                                    </section>
 
             </div>
         </main>

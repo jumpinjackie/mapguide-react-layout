@@ -1,6 +1,7 @@
 .vscode
 .couscous
-docs_dev/themes/CouscousNativeTemplate/apidoc
+docs_dev/themes/CouscousNativeTemplate/apidoc_npm
+docs_dev/themes/CouscousNativeTemplate/apidoc_globals
 dist
 lib
 build

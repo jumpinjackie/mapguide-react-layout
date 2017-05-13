@@ -42,49 +42,49 @@ It aims for reasonable compatibility with the existing Web Layout (AJAX Viewer) 
 
 # Demo
 
-See [DEMO.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs/DEMO.md) to find out how to use [play-with-docker](http://play-with-docker.com) easily set up a mapguide-react-layout demo site
+See [DEMO.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs_dev/content/DEMO.md) to find out how to use [play-with-docker](http://play-with-docker.com) easily set up a mapguide-react-layout demo site
 
 # Templates
 
 The following templates are included with this viewer.
 
-See [TEMPLATES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs/TEMPLATES.md) for how to launch a viewer with the desired template
+See [TEMPLATES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs_dev/content/TEMPLATES.md) for how to launch a viewer with the desired template
 
 ## AJAX Viewer
 
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/ajax-viewer.png)
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/ajax-viewer.png)
 
 ## Sidebar
 
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/sidebar.png)
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/sidebar.png)
 
 ## Slate
 
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/slate.png)
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/slate.png)
 
 ## Maroon
 
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/maroon.png)
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/maroon.png)
 
 ## Aqua
 
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/aqua.png)
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/aqua.png)
 
 ## LimeGold
 
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/limegold.png)
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/limegold.png)
 
 ## TurquoiseYellow
 
-![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs/turquoise-yellow.png)
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/turquoise-yellow.png)
 
 # Known Issues
 
-See [KNOWN_ISSUES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs/KNOWN_ISSUES.md)
+See [KNOWN_ISSUES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs_dev/content/KNOWN_ISSUES.md)
 
 # Release Notes
 
-See [RELEASE_NOTES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs/RELEASE_NOTES.md)
+See [RELEASE_NOTES.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs_dev/content/RELEASE_NOTES.md)
 
 # Credits
 

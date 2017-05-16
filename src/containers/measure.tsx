@@ -41,7 +41,7 @@ function mapStateToProps(state: IApplicationState): Partial<IMeasureContainerRed
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch) {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMeasureContainerDispatch> {
     return {
         setActiveTool: (tool: ActiveMapTool) => dispatch(setActiveTool(tool))
     };
@@ -51,8 +51,7 @@ export type MeasureProps = IMeasureContainerProps & Partial<IMeasureContainerRed
 
 const _measurements: MeasureContext[] = [];
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class MeasureContainer extends React.Component<MeasureProps, Partial<IMeasureContainerState>> implements IMeasureComponent {
+class MeasureContainer extends React.Component<MeasureProps, Partial<IMeasureContainerState>> implements IMeasureComponent {
     private fnTypeChanged: GenericEventHandler;
     private fnGeodesicChanged: GenericEventHandler;
     private fnClearMeasurements: GenericEventHandler;
@@ -214,3 +213,5 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
         </div>;
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(MeasureContainer);

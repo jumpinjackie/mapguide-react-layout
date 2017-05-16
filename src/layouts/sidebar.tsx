@@ -1,10 +1,10 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
-import { ToolbarContainer } from "../containers/toolbar";
-import { ViewerApiShim } from "../containers/viewer-shim";
-import { ModalLauncher } from "../containers/modal-launcher";
-import { FlyoutRegionContainer } from "../containers/flyout-region";
+import ToolbarContainer from "../containers/toolbar";
+import ViewerApiShim from "../containers/viewer-shim";
+import ModalLauncher from "../containers/modal-launcher";
+import FlyoutRegionContainer from "../containers/flyout-region";
 import { connect } from "react-redux";
 import { tr } from "../api/i18n";
 import * as Constants from "../constants";
@@ -231,8 +231,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
 
 export type SidebarLayoutProps = Partial<ISidebarLayoutState>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
+class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
     constructor(props: SidebarLayoutProps) {
         super(props);
     }
@@ -305,3 +304,5 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
         </div>;
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(SidebarLayout);

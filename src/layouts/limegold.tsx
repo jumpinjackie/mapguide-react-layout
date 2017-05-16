@@ -1,10 +1,10 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
-import { ToolbarContainer } from "../containers/toolbar";
-import { ViewerApiShim } from "../containers/viewer-shim";
-import { ModalLauncher } from "../containers/modal-launcher";
-import { FlyoutRegionContainer } from "../containers/flyout-region";
+import ToolbarContainer from "../containers/toolbar";
+import ViewerApiShim from "../containers/viewer-shim";
+import ModalLauncher from "../containers/modal-launcher";
+import FlyoutRegionContainer from "../containers/flyout-region";
 import { connect } from "react-redux";
 import { tr } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
@@ -46,8 +46,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
 
 export type LimeGoldTemplateLayoutProps = Partial<ILimeGoldTemplateLayoutState>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayoutProps, any> {
+class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayoutProps, any> {
     constructor(props: LimeGoldTemplateLayoutProps) {
         super(props);
     }
@@ -165,3 +164,5 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
         </div>;
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(LimeGoldTemplateLayout);

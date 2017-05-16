@@ -34,7 +34,7 @@ function mapStateToProps(state: IApplicationState): Partial<IScaleDisplayContain
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): IScaleDisplayContainerDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IScaleDisplayContainerDispatch> {
     return {
         setScale: (mapName, scale) => dispatch(setScale(mapName, scale))
     };
@@ -42,8 +42,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IScaleDisplayContainerDisp
 
 export type ScaleDisplayContainerProps = Partial<IScaleDisplayContainerState> & Partial<IScaleDisplayContainerDispatch>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainerProps, any> {
+class ScaleDisplayContainer extends React.Component<ScaleDisplayContainerProps, any> {
     private fnScaleChanged: (scale: number) => void;
     constructor(props: ScaleDisplayContainerProps) {
         super(props);
@@ -69,12 +68,14 @@ export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainer
         const locale = this.getLocale();
         if (view) {
             return <ScaleDisplay onScaleChanged={this.fnScaleChanged}
-                                 view={view} 
-                                 style={style} 
-                                 finiteScales={finiteScales} 
+                                 view={view}
+                                 style={style}
+                                 finiteScales={finiteScales}
                                  locale={locale} />;
         } else {
             return <noscript />;
         }
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(ScaleDisplayContainer);

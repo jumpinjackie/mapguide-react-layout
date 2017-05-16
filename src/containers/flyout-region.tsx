@@ -26,14 +26,14 @@ export interface IFlyoutRegionContainerDispatch {
     invokeCommand: (cmd: ICommand) => void;
 }
 
-function mapStateToProps(state: IApplicationState, ownProps: IFlyoutRegionContainerProps): IFlyoutRegionContainerState {
+function mapStateToProps(state: IApplicationState, ownProps: IFlyoutRegionContainerProps): Partial<IFlyoutRegionContainerState> {
     return {
         flyouts: state.toolbar.flyouts,
         locale: state.config.locale
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): IFlyoutRegionContainerDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IFlyoutRegionContainerDispatch> {
     return {
         closeFlyout: (id) => dispatch(closeFlyout(id)),
         invokeCommand: (cmd) => dispatch(invokeCommand(cmd))
@@ -42,8 +42,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IFlyoutRegionContainerDisp
 
 export type FlyoutRegionContainerProps = IFlyoutRegionContainerProps & Partial<IFlyoutRegionContainerState> & Partial<IFlyoutRegionContainerDispatch>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class FlyoutRegionContainer extends React.Component<FlyoutRegionContainerProps, any> {
+class FlyoutRegionContainer extends React.Component<FlyoutRegionContainerProps, any> {
     private fnCloseFlyout: (id: string) => void;
     constructor(props: FlyoutRegionContainerProps) {
         super(props);
@@ -81,3 +80,5 @@ export class FlyoutRegionContainer extends React.Component<FlyoutRegionContainer
         return <FlyoutRegion flyoutConf={flyouts} onCloseFlyout={this.fnCloseFlyout} locale={locale} />;
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(FlyoutRegionContainer);

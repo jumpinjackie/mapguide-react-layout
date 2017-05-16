@@ -61,7 +61,7 @@ function mapStateToProps(state: IApplicationState, ownProps: IToolbarContainerPr
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): IToolbarContainerDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IToolbarContainerDispatch> {
     return {
         invokeCommand: (cmd) => dispatch(invokeCommand(cmd)),
         openFlyout: (id, metrics) => dispatch(FlyoutActions.openFlyout(id, metrics)),
@@ -73,8 +73,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IToolbarContainerDispatch 
 
 export type ToolbarContainerProps = IToolbarContainerProps & Partial<IToolbarContainerState> & Partial<IToolbarContainerDispatch>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class ToolbarContainer extends React.Component<ToolbarContainerProps, any> {
+class ToolbarContainer extends React.Component<ToolbarContainerProps, any> {
     private fnOpenFlyout: (id: string, metrics: IDOMElementMetrics) => void;
     private fnCloseFlyout: (id: string) => void;
     private fnOpenComponent: (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => void;
@@ -134,3 +133,5 @@ export class ToolbarContainer extends React.Component<ToolbarContainerProps, any
         }
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(ToolbarContainer);

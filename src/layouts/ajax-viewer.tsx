@@ -2,10 +2,10 @@ import * as React from "react";
 import * as Constants from "../constants";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
-import { ToolbarContainer } from "../containers/toolbar";
-import { FlyoutRegionContainer } from "../containers/flyout-region";
-import { ViewerApiShim } from "../containers/viewer-shim";
-import { ModalLauncher } from "../containers/modal-launcher";
+import ToolbarContainer from "../containers/toolbar";
+import FlyoutRegionContainer from "../containers/flyout-region";
+import ViewerApiShim from "../containers/viewer-shim";
+import ModalLauncher from "../containers/modal-launcher";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { connect } from "react-redux";
 import {
@@ -41,8 +41,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
 
 export type AjaxViewerLayoutProps = Partial<IAjaxViewerLayoutState>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any> {
+class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any> {
     constructor(props: AjaxViewerLayoutProps) {
         super(props);
     }
@@ -164,3 +163,5 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
         </div>;
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(AjaxViewerLayout);

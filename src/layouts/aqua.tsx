@@ -2,10 +2,10 @@ import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
 import { Toolbar, IItem } from "../components/toolbar";
-import { ToolbarContainer } from "../containers/toolbar";
-import { ViewerApiShim } from "../containers/viewer-shim";
-import { ModalLauncher } from "../containers/modal-launcher";
-import { FlyoutRegionContainer } from "../containers/flyout-region";
+import ToolbarContainer from "../containers/toolbar";
+import ViewerApiShim from "../containers/viewer-shim";
+import ModalLauncher from "../containers/modal-launcher";
+import FlyoutRegionContainer from "../containers/flyout-region";
 import { ModalDialog } from "../components/modal-dialog";
 import { connect } from "react-redux";
 import { tr } from "../api/i18n";
@@ -52,8 +52,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
 
 export type AquaTemplateLayoutProps = Partial<IAquaTemplateLayoutState>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps, any> {
+class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps, any> {
     private fnHideTaskPane: () => void;
     private fnHideLegend: () => void;
     private fnHideSelection: () => void;
@@ -261,3 +260,5 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
         </div>;
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(AquaTemplateLayout);

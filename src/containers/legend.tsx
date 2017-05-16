@@ -41,7 +41,7 @@ export interface ILegendContainerDispatch {
     setGroupExpanded: (mapName: string, options: { id: string, value: boolean }) => void;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<ILegendContainerState> {
+function mapStateToProps(state: IApplicationState, ownProps: ILegendContainerProps): Partial<ILegendContainerState> {
     let view;
     let runtimeMap;
     let selectableLayers;
@@ -78,7 +78,7 @@ function mapStateToProps(state: IApplicationState): Partial<ILegendContainerStat
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): ILegendContainerDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ILegendContainerDispatch> {
     return {
         setBaseLayer: (mapName: string, layerName: string) => dispatch(MapActions.setBaseLayer(mapName, layerName)),
         setGroupVisibility: (mapName: string, options) => dispatch(LegendActions.setGroupVisibility(mapName, options)),
@@ -90,8 +90,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): ILegendContainerDispatch {
 
 export type LegendContainerProps = ILegendContainerProps & Partial<ILegendContainerState> & Partial<ILegendContainerDispatch>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class LegendContainer extends React.Component<LegendContainerProps, any> {
+class LegendContainer extends React.Component<LegendContainerProps, any> {
     private fnBaseLayerChanged: (baseLayerName: string) => void;
     private fnGroupVisibilityChanged: MapElementChangeFunc;
     private fnLayerVisibilityChanged: MapElementChangeFunc;
@@ -182,3 +181,5 @@ export class LegendContainer extends React.Component<LegendContainerProps, any> 
         }
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(LegendContainer);

@@ -27,14 +27,13 @@ function mapStateToProps(state: IApplicationState): Partial<ISelectionPanelConta
 
 function mapDispatchToProps(dispatch: ReduxDispatch) {
     return {
-        
+
     };
 }
 
 export type SelectedFeatureContainerProps = ISelectionPanelContainerProps & Partial<ISelectionPanelContainerState>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class SelectedFeatureCountContainer extends React.Component<SelectedFeatureContainerProps, any> {
+class SelectedFeatureCountContainer extends React.Component<SelectedFeatureContainerProps, any> {
     constructor(props: SelectedFeatureContainerProps) {
         super(props);
     }
@@ -51,3 +50,5 @@ export class SelectedFeatureCountContainer extends React.Component<SelectedFeatu
         }
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(SelectedFeatureCountContainer);

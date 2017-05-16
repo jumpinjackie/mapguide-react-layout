@@ -22,7 +22,7 @@ import { processMenuItems } from "../utils/menu";
 import { tr } from "../api/i18n";
 import * as FlyoutActions from "../actions/flyout";
 
-export interface ITaskPaneContainerStyle {
+export interface ITaskPaneContainerProps {
     maxHeight?: number;
 }
 
@@ -57,7 +57,7 @@ function mapStateToProps(state: IApplicationState): Partial<ITaskPaneContainerSt
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): ITaskPaneDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ITaskPaneDispatch> {
     return {
         invokeCommand: (cmd) => dispatch(invokeCommand(cmd)),
         goHome: () => dispatch(TaskPaneActions.goHome()),
@@ -69,10 +69,9 @@ function mapDispatchToProps(dispatch: ReduxDispatch): ITaskPaneDispatch {
     };
 }
 
-export type TaskPaneProps = ITaskPaneContainerStyle & Partial<ITaskPaneContainerState> & Partial<ITaskPaneDispatch>;
+export type TaskPaneProps = ITaskPaneContainerProps & Partial<ITaskPaneContainerState> & Partial<ITaskPaneDispatch>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
+class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
     private homeAction: IItem;
     private backAction: IItem;
     private forwardAction: IItem;
@@ -191,3 +190,5 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         return <noscript />;
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskPaneContainer);

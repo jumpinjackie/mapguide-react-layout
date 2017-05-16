@@ -24,7 +24,7 @@ export interface IBaseLayerSwitcherContainerDispatch {
     setBaseLayer: (mapName: string, layerName: string) => void;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<IBaseLayerSwitcherContainerState> {
+function mapStateToProps(state: IApplicationState, ownProps: IBaseLayerSwitcherContainerProps): Partial<IBaseLayerSwitcherContainerState> {
     let externalBaseLayers;
     if (state.config.activeMapName) {
         externalBaseLayers = state.mapState[state.config.activeMapName].externalBaseLayers;
@@ -36,7 +36,7 @@ function mapStateToProps(state: IApplicationState): Partial<IBaseLayerSwitcherCo
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): IBaseLayerSwitcherContainerDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IBaseLayerSwitcherContainerDispatch> {
     return {
         setBaseLayer: (mapName: string, layerName: string) => dispatch(MapActions.setBaseLayer(mapName, layerName)),
     };
@@ -44,8 +44,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IBaseLayerSwitcherContaine
 
 export type BaseLayerSwitcherContainerProps = IBaseLayerSwitcherContainerProps & Partial<IBaseLayerSwitcherContainerState> & Partial<IBaseLayerSwitcherContainerDispatch>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class BaseLayerSwitcherContainer extends React.Component<BaseLayerSwitcherContainerProps, any> {
+class BaseLayerSwitcherContainer extends React.Component<BaseLayerSwitcherContainerProps, any> {
     private fnBaseLayerChanged: (name: string) => void;
     constructor(props: BaseLayerSwitcherContainerProps) {
         super(props);
@@ -66,3 +65,5 @@ export class BaseLayerSwitcherContainer extends React.Component<BaseLayerSwitche
         }
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(BaseLayerSwitcherContainer);

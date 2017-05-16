@@ -29,7 +29,7 @@ function mapStateToProps(state: IApplicationState): Partial<IMapMenuContainerSta
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): IMapMenuContainerDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMapMenuContainerDispatch> {
     return {
         setActiveMap: (mapName: string) => dispatch(MapActions.setActiveMap(mapName))
     }
@@ -37,8 +37,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IMapMenuContainerDispatch 
 
 export type MapMenuContainerProps = Partial<IMapMenuContainerState> & Partial<IMapMenuContainerDispatch>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class MapMenuContainer extends React.Component<MapMenuContainerProps, any> {
+class MapMenuContainer extends React.Component<MapMenuContainerProps, any> {
     private fnActiveMapChanged: (name: string) => void;
     constructor(props: MapMenuContainerProps) {
         super(props);
@@ -63,3 +62,5 @@ export class MapMenuContainer extends React.Component<MapMenuContainerProps, any
         }
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(MapMenuContainer);

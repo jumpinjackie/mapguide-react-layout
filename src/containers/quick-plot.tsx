@@ -38,7 +38,7 @@ function mapStateToProps(state: IApplicationState): Partial<IQuickPlotContainerS
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): IQuickPlotContainerDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IQuickPlotContainerDispatch> {
     return {
 
     };
@@ -46,8 +46,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IQuickPlotContainerDispatc
 
 export type QuickPlotProps = IQuickPlotContainerProps & Partial<IQuickPlotContainerState> & Partial<IQuickPlotContainerDispatch>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
+class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
     private fnTitleChanged: GenericEventHandler;
     private fnSubTitleChanged: GenericEventHandler;
     private fnShowLegendChanged: GenericEventHandler;
@@ -299,3 +298,5 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
         </div>;
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(QuickPlotContainer);

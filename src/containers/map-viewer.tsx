@@ -64,7 +64,7 @@ export interface IMapViewerContainerDispatch {
     queryMapFeatures: (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => void;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<IMapViewerContainerState> {
+function mapStateToProps(state: IApplicationState, ownProps: IMapViewerContainerProps): Partial<IMapViewerContainerState> {
     let map;
     let legend;
     let selection;
@@ -106,7 +106,7 @@ function mapStateToProps(state: IApplicationState): Partial<IMapViewerContainerS
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): IMapViewerContainerDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMapViewerContainerDispatch> {
     return {
         setActiveTool: (tool) => dispatch(MapActions.setActiveTool(tool)),
         setCurrentView: (view) => dispatch(MapActions.setCurrentView(view)),
@@ -120,8 +120,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IMapViewerContainerDispatc
 
 export type MapViewerContainerProps = IMapViewerContainerProps & Partial<IMapViewerContainerState> & Partial<IMapViewerContainerDispatch>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class MapViewerContainer extends React.Component<MapViewerContainerProps, any>
+class MapViewerContainer extends React.Component<MapViewerContainerProps, any>
     implements IMapViewer {
     private fnMapViewerMounted: (component: MapViewerBase) => void;
     private inner: MapViewerBase;
@@ -401,3 +400,5 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         return this.inner.scaleToResolution(scale);
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(MapViewerContainer);

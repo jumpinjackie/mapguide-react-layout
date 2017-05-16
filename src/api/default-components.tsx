@@ -1,21 +1,21 @@
 import * as React from "react";
 
-import { LegendContainer } from "../containers/legend";
-import { MapViewerContainer } from "../containers/map-viewer";
-import { MouseCoordinatesContainer } from "../containers/mouse-coordinates";
-import { NavigatorContainer } from "../containers/navigator";
-import { ScaleDisplayContainer } from "../containers/scale-display";
-import { SelectedFeatureCountContainer } from "../containers/selected-feature-count";
-import { SelectionPanelContainer } from "../containers/selection-panel";
-import { TaskPaneContainer } from "../containers/task-pane";
+import LegendContainer from "../containers/legend";
+import MapViewerContainer from "../containers/map-viewer";
+import MouseCoordinatesContainer from "../containers/mouse-coordinates";
+import NavigatorContainer from "../containers/navigator";
+import ScaleDisplayContainer from "../containers/scale-display";
+import SelectedFeatureCountContainer from "../containers/selected-feature-count";
+import SelectionPanelContainer from "../containers/selection-panel";
+import TaskPaneContainer from "../containers/task-pane";
 import { PoweredByMapGuide } from "../components/pbmg";
 import { About } from "../components/about";
 import { SessionExpired } from "../components/session-expired";
-import { MeasureContainer } from "../containers/measure";
-import { ViewerOptions } from "../containers/viewer-options";
-import { QuickPlotContainer } from "../containers/quick-plot";
-import { BaseLayerSwitcherContainer } from "../containers/base-layer-switcher";
-import { MapMenuContainer } from "../containers/map-menu";
+import MeasureContainer from "../containers/measure";
+import ViewerOptions from "../containers/viewer-options";
+import QuickPlotContainer from "../containers/quick-plot";
+import BaseLayerSwitcherContainer from "../containers/base-layer-switcher";
+import MapMenuContainer from "../containers/map-menu";
 
 import { registerComponentFactory, DefaultComponentNames } from "../api/registry/component";
 

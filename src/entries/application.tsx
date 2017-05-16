@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-import { IAppProps, App } from "../containers/app";
+import App, { IAppProps } from "../containers/app";
 import { ClientKind } from "../api/common";
 import configureStore from "../store/configure-store";
 import { INITIAL_STATE } from "../reducers/config";

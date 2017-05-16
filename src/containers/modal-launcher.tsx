@@ -21,14 +21,14 @@ export interface IToolbarContainerDispatch {
     hideModal: (options: any) => void;
 }
 
-function mapStateToProps(state: IApplicationState): IToolbarContainerState {
+function mapStateToProps(state: IApplicationState): Partial<IToolbarContainerState> {
     return {
         config: state.config,
         modal: state.modal
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): IToolbarContainerDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IToolbarContainerDispatch> {
     return {
         hideModal: (options) => dispatch(hideModal(options))
     };
@@ -36,8 +36,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IToolbarContainerDispatch 
 
 export type ToolbarContainerProps = Partial<IToolbarContainerState> & Partial<IToolbarContainerDispatch>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
+class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
     constructor(props: ToolbarContainerProps) {
         super(props);
     }
@@ -86,3 +85,5 @@ export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
         </div>;
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(ModalLauncher);

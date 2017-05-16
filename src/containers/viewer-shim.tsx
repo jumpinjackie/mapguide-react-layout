@@ -498,6 +498,8 @@ interface FusionSelectedLayer {
     layerName: string;
 }
 
+export type SelectionHandlerCallback = (mapName: string, selection: QueryMapFeaturesResponse | undefined) => void;
+
 export class AjaxViewerLineStringOrPolygon {
     private coordinates: IAjaxViewerPoint[];
     constructor(coordinates: IAjaxViewerPoint[]) {
@@ -584,7 +586,7 @@ export interface IViewerApiShimDispatch {
     queryMapFeatures: (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => void;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<IViewerApiShimState> {
+function mapStateToProps(state: IApplicationState, ownProps: IViewerApiShimProps): Partial<IViewerApiShimState> {
     let map;
     let selectionSet;
     if (state.config.activeMapName) {
@@ -600,7 +602,7 @@ function mapStateToProps(state: IApplicationState): Partial<IViewerApiShimState>
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): IViewerApiShimDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IViewerApiShimDispatch> {
     return {
         goHome: () => dispatch(TaskPaneActions.goHome()),
         legendRefresh: () => dispatch(LegendActions.refresh()),
@@ -612,10 +614,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IViewerApiShimDispatch {
 
 export type ViewerApiShimProps = IViewerApiShimProps & Partial<IViewerApiShimState> & Partial<IViewerApiShimDispatch>;
 
-export type SelectionHandlerCallback = (mapName: string, selection: QueryMapFeaturesResponse | undefined) => void;
-
-@connect(mapStateToProps, mapDispatchToProps)
-export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
+class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
     private fnFormFrameMounted: (component: FormFrameShim) => void;
     private userSelectionHandlers: SelectionHandlerCallback[];
     private us: boolean;
@@ -1112,3 +1111,5 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
         </div>;
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(ViewerApiShim);

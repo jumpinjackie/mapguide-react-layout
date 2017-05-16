@@ -1,10 +1,10 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
-import { ToolbarContainer } from "../containers/toolbar";
-import { ViewerApiShim } from "../containers/viewer-shim";
-import { ModalLauncher } from "../containers/modal-launcher";
-import { FlyoutRegionContainer } from "../containers/flyout-region";
+import ToolbarContainer from "../containers/toolbar";
+import ViewerApiShim from "../containers/viewer-shim";
+import ModalLauncher from "../containers/modal-launcher";
+import FlyoutRegionContainer from "../containers/flyout-region";
 import { connect } from "react-redux";
 import { tr } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
@@ -45,8 +45,7 @@ const TOP_BAR_HEIGHT = 35;
 const STATUS_BAR_HEIGHT = 18;
 const SIDEBAR_PADDING = 0;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProps, any> {
+class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProps, any> {
     constructor(props: SlateLayoutTemplateProps) {
         super(props);
     }
@@ -141,3 +140,5 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
         </div>;
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(SlateTemplateLayout);

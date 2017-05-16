@@ -26,14 +26,14 @@ export interface ISelectionPanelContainerDispatch {
     setCurrentView: (view: IMapView) => void;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<ISelectionPanelContainerState> {
+function mapStateToProps(state: IApplicationState, ownProps: ISelectionPanelContainerProps): Partial<ISelectionPanelContainerState> {
     return {
         config: state.config,
         selection: getSelectionSet(state)
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): ISelectionPanelContainerDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ISelectionPanelContainerDispatch> {
     return {
         setCurrentView: (view) => dispatch(MapActions.setCurrentView(view))
     };
@@ -41,8 +41,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): ISelectionPanelContainerDi
 
 export type SelectionPanelContainerProps = ISelectionPanelContainerProps & Partial<ISelectionPanelContainerState> & Partial<ISelectionPanelContainerDispatch>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class SelectionPanelContainer extends React.Component<SelectionPanelContainerProps, any> {
+class SelectionPanelContainer extends React.Component<SelectionPanelContainerProps, any> {
     private fnZoomToSelectedFeature: (feature: SelectedFeature) => void;
     constructor(props: SelectionPanelContainerProps) {
         super(props);
@@ -62,7 +61,7 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
     render(): JSX.Element {
         const { selection, config, maxHeight } = this.props;
         const locale = this.getLocale();
-        if (selection != null && 
+        if (selection != null &&
             selection.SelectedFeatures != null) {
             return <SelectionPanel locale={locale} selection={selection.SelectedFeatures} onRequestZoomToFeature={this.fnZoomToSelectedFeature} maxHeight={maxHeight} />;
         } else {
@@ -72,3 +71,5 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
         }
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(SelectionPanelContainer);

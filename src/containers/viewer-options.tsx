@@ -22,14 +22,14 @@ export interface IViewerOptionsDispatch {
     toggleMapTips: (enabled: boolean) => void;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<IViewerOptionsState> {
+function mapStateToProps(state: IApplicationState, ownProps: IViewerOptionsProps): Partial<IViewerOptionsState> {
     return {
         viewer: state.viewer,
         config: state.config
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): IViewerOptionsDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IViewerOptionsDispatch> {
     return {
         toggleMapTips: (enabled: boolean) => {
             dispatch({
@@ -42,8 +42,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): IViewerOptionsDispatch {
 
 export type ViewerOptionsProps = IViewerOptionsProps & Partial<IViewerOptionsState> & Partial<IViewerOptionsDispatch>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
+class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
     private fnFeatureTooltipsChanged: GenericEventHandler;
     constructor(props: ViewerOptionsProps) {
         super(props);
@@ -73,3 +72,5 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
         </div>;
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(ViewerOptions);

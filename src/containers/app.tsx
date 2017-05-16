@@ -79,7 +79,7 @@ export interface IAppDispatch {
     initLayout: (args: IInitAppLayout) => void;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<IAppState> {
+function mapStateToProps(state: IApplicationState, ownProps: IAppProps): Partial<IAppState> {
     let map;
     if (state.config.activeMapName) {
         map = state.mapState[state.config.activeMapName];
@@ -101,8 +101,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAppDispatch> {
 
 export type AppProps = IAppProps & Partial<IAppState> & Partial<IAppDispatch>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class App extends React.Component<AppProps, any> {
+class App extends React.Component<AppProps, any> {
     private fnErrorRenderer: (err: Error) => JSX.Element;
     constructor(props: AppProps) {
         super(props);
@@ -210,3 +209,5 @@ export class App extends React.Component<AppProps, any> {
         }
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

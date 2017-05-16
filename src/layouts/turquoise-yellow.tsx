@@ -1,10 +1,10 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
-import { ToolbarContainer } from "../containers/toolbar";
-import { ViewerApiShim } from "../containers/viewer-shim";
-import { ModalLauncher } from "../containers/modal-launcher";
-import { FlyoutRegionContainer } from "../containers/flyout-region";
+import ToolbarContainer from "../containers/toolbar";
+import ViewerApiShim from "../containers/viewer-shim";
+import ModalLauncher from "../containers/modal-launcher";
+import FlyoutRegionContainer from "../containers/flyout-region";
 import { connect } from "react-redux";
 import { tr } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
@@ -46,8 +46,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
 
 export type TurquoiseYellowTemplateLayoutProps = Partial<ITurquoiseYellowTemplateLayoutState>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYellowTemplateLayoutProps, any> {
+class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYellowTemplateLayoutProps, any> {
     constructor(props: TurquoiseYellowTemplateLayoutProps) {
         super(props);
     }
@@ -164,3 +163,5 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
         </div>;
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(TurquoiseYellowTemplateLayout);

@@ -1,10 +1,10 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
-import { ToolbarContainer } from "../containers/toolbar";
-import { ViewerApiShim } from "../containers/viewer-shim";
-import { ModalLauncher } from "../containers/modal-launcher";
-import { FlyoutRegionContainer } from "../containers/flyout-region";
+import ToolbarContainer from "../containers/toolbar";
+import ViewerApiShim from "../containers/viewer-shim";
+import ModalLauncher from "../containers/modal-launcher";
+import FlyoutRegionContainer from "../containers/flyout-region";
 import { connect } from "react-redux";
 import { tr } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
@@ -46,8 +46,7 @@ const STATUS_BAR_HEIGHT = 18;
 const SIDEBAR_PADDING = 0;
 const OUTER_PADDING = 3;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplateProps, any> {
+class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplateProps, any> {
     constructor(props: MaroonLayoutTemplateProps) {
         super(props);
     }
@@ -142,3 +141,5 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
         </div>;
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(MaroonTemplateLayout);

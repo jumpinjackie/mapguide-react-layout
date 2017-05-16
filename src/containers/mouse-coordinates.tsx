@@ -19,23 +19,22 @@ export interface IMouseCoordinatesContainerState {
 
 export interface IMouseCoordinatesDispatch { }
 
-function mapStateToProps(state: IApplicationState): Partial<IMouseCoordinatesContainerState> {
+function mapStateToProps(state: IApplicationState, ownProps: IMouseCoordinatesContainerProps): Partial<IMouseCoordinatesContainerState> {
     return {
         config: state.config.coordinates,
         mouse: state.mouse.coords
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): IMouseCoordinatesDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMouseCoordinatesDispatch> {
     return {
-        
+
     };
 }
 
 export type MouseCoordinatesContainerProps = IMouseCoordinatesContainerProps & Partial<IMouseCoordinatesContainerState> & Partial<IMouseCoordinatesDispatch>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class MouseCoordinatesContainer extends React.Component<MouseCoordinatesContainerProps, any> {
+class MouseCoordinatesContainer extends React.Component<MouseCoordinatesContainerProps, any> {
     constructor(props: MouseCoordinatesContainerProps) {
         super(props);
     }
@@ -48,3 +47,5 @@ export class MouseCoordinatesContainer extends React.Component<MouseCoordinatesC
         }
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(MouseCoordinatesContainer);

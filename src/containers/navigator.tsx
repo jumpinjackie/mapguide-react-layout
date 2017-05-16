@@ -32,7 +32,7 @@ export interface INavigatorContainerDispatch {
     setScale: (mapName: string, scale: number) => void;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<INavigatorContainerState> {
+function mapStateToProps(state: IApplicationState, ownProps: INavigatorContainerProps): Partial<INavigatorContainerState> {
     let view;
     const map = getRuntimeMap(state);
     if (state.config.activeMapName) {
@@ -46,7 +46,7 @@ function mapStateToProps(state: IApplicationState): Partial<INavigatorContainerS
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): INavigatorContainerDispatch {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<INavigatorContainerDispatch> {
     return {
         setScale: (mapName, scale) => dispatch(setScale(mapName, scale)),
         invokeCommand: (cmd) => dispatch(invokeCommand(cmd))
@@ -55,8 +55,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): INavigatorContainerDispatc
 
 export type NavigatorContainerProps = INavigatorContainerProps & Partial<INavigatorContainerState> & Partial<INavigatorContainerDispatch>;
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class NavigatorContainer extends React.Component<NavigatorContainerProps, any> {
+class NavigatorContainer extends React.Component<NavigatorContainerProps, any> {
     private fnZoom: (direction: ZoomDirection) => void;
     private fnPan: (direction: PanDirection) => void;
     private fnRequestZoomToScale: (scale: number) => void;
@@ -126,3 +125,5 @@ export class NavigatorContainer extends React.Component<NavigatorContainerProps,
         }
     }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(NavigatorContainer);

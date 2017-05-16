@@ -305,8 +305,8 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
                         registerCommand(widget.Name, {
                             url: cmd.Url,
                             disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
-                            target: cmd.Target,
-                            targetFrame: convertToCommandTarget(cmd.Target),
+                            target: convertToCommandTarget(cmd.Target),
+                            targetFrame: cmd.Target,
                             parameters: (cmd.AdditionalParameter || []).map((p: any) => {
                                 return { name: p.Key, value: p.Value };
                             })

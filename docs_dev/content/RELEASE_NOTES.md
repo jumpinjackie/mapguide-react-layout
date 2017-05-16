@@ -26,6 +26,9 @@
    * As a result, many Fusion viewer APIs have been polyfilled to support these tools
  * [#145](https://github.com/jumpinjackie/mapguide-react-layout/issues/145): Added support for some Fusion events
  * [#197](https://github.com/jumpinjackie/mapguide-react-layout/issues/197): The `ajax-viewer` and `sidebar` templates now work with Application Definitions
+ * [#17](https://github.com/jumpinjackie/mapguide-react-layout/issues/17): InvokeURL and Search commands now support:
+   * Frame targeting (Target = `SpecifiedFrame`)
+   * Opening in a new window (will use a modal dialog)
 
 0.8
 ===

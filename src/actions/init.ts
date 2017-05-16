@@ -37,6 +37,7 @@ import * as logger from "../utils/logger";
 import queryString = require("query-string");
 import * as shortid from "shortid";
 import { registerStringBundle } from "../api/i18n";
+import { assertNever } from "../utils/never";
 const parse = require("url-parse");
 import proj4 from "proj4";
 
@@ -144,6 +145,8 @@ function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictiona
                     tooltip: item.Tooltip,
                     children: convertFlexLayoutUIItems(item.Item, widgetsByKey, locale)
                 };
+            default:
+                assertNever(item);
         }
         return null;
     });
@@ -194,6 +197,8 @@ function convertWebLayoutUIItems(items: UIItem[] | null | undefined, cmdsByKey: 
                 tooltip: item.Tooltip,
                 children: convertWebLayoutUIItems(item.SubItem, cmdsByKey, locale, false, false)
             };
+        } else {
+            assertNever(item);
         }
         return null;
     }).filter(item => item != null);

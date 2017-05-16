@@ -283,7 +283,9 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
                             resultColumns: cmd.ResultColumns,
                             filter: cmd.Filter,
                             matchLimit: cmd.MatchLimit,
-                            title: cmd.Title
+                            title: cmd.Title,
+                            target: cmd.Target,
+                            targetFrame: cmd.TargetFrame
                         });
                         break;
                     case "InvokeURL":
@@ -291,6 +293,7 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
                             url: cmd.Url,
                             disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
                             target: cmd.Target,
+                            targetFrame: cmd.TargetFrame,
                             parameters: (cmd.AdditionalParameter || []).map((p: any) => {
                                 return { name: p.Key, value: p.Value };
                             })
@@ -364,27 +367,25 @@ function makeWebLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any):
         //Register any InvokeURL and Search commands
         for (const cmd of webLayout.CommandSet.Command) {
             if (isInvokeURLCommand(cmd)) {
-                let cmdTarget = cmd.Target;
-                if (isNotTargeted(cmdTarget)) {
-                    registerCommand(cmd.Name, {
-                        url: cmd.URL,
-                        disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
-                        target: cmdTarget,
-                        parameters: (cmd.AdditionalParameter || []).map(p => {
-                            return { name: p.Key, value: p.Value };
-                        })
-                    });
-                } else {
-                    logger.warn(`Command ${cmd.Name} targets a specific frame which is not supported`);
-                }
+                registerCommand(cmd.Name, {
+                    url: cmd.URL,
+                    disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
+                    target: cmd.Target,
+                    targetFrame: cmd.TargetFrame,
+                    parameters: (cmd.AdditionalParameter || []).map(p => {
+                        return { name: p.Key, value: p.Value };
+                    })
+                });
             } else if (isSearchCommand(cmd)) {
                 registerCommand(cmd.Name, {
                     layer: cmd.Layer,
                     prompt: cmd.Prompt,
+                    target: cmd.Target,
+                    targetFrame: cmd.TargetFrame,
                     resultColumns: cmd.ResultColumns,
                     filter: cmd.Filter,
                     matchLimit: cmd.MatchLimit,
-                    title: cmd.Label
+                    title: cmd.Label,
                 });
             }
             cmdsByKey[cmd.Name] = cmd;

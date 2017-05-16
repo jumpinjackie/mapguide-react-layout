@@ -2,9 +2,11 @@ import {
     IMapView,
     IMapViewer,
     ICommand,
+    CommandTarget,
     Dictionary,
     IInvokeUrlCommand,
     ISearchCommand,
+    ITargetedCommand,
     IApplicationState,
     ReduxDispatch,
     ReduxStore,
@@ -21,6 +23,8 @@ import { IItem, IInlineMenu, IFlyoutMenu, IComponentFlyoutItem, getIcon } from "
 import * as Constants from "../../constants";
 import { ensureParameters } from "../../actions/taskpane";
 import { tr } from "../i18n";
+import { assertNever } from "../../utils/never";
+import * as logger from "../../utils/logger";
 
 /**
  * @hidden
@@ -191,6 +195,50 @@ function isSearchCommand(cmdDef: any): cmdDef is ISearchCommand {
     return typeof cmdDef.layer !== 'undefined';
 }
 
+function openUrlInTarget(name: string, cmdDef: ITargetedCommand, dispatch: ReduxDispatch, url: string): void {
+    const target = cmdDef.target;
+    if (target == "TaskPane") {
+        dispatch({
+            type: Constants.TASK_INVOKE_URL,
+            payload: {
+                url: url
+            }
+        });
+    } else if (target == "NewWindow") {
+        dispatch({
+            type: Constants.MODAL_SHOW_URL,
+            payload: {
+                modal: {
+                    title: tr(name),
+                    backdrop: false,
+                    size: [ 300, 500 ]
+                },
+                name: name,
+                url: url
+            }
+        });
+    } else if (target == "SpecifiedFrame") {
+        if (cmdDef.targetFrame) {
+            const frames = (window as any).frames as any[];
+            let bInvoked = false;
+            for (let i = 0; i < frames.length; i++) {
+                if (frames[i].name == cmdDef.targetFrame) {
+                    frames[i].location = url;
+                    bInvoked = true;
+                    break;
+                }
+            }
+            if (!bInvoked) {
+                logger.error(`Frame not found: ${cmdDef.targetFrame}`);
+            }
+        } else {
+            logger.error(`Command ${name} has a target of "SpecifiedFrame", but does not specify a target frame`);
+        }
+    } else {
+        assertNever(target);
+    }
+}
+
 /**
  * Registers a viewer command
  *
@@ -216,27 +264,8 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                 const map = getRuntimeMap(state);
                 const target = cmdDef.target;
                 if (map) {
-                    if (target == "TaskPane") {
-                        dispatch({
-                            type: Constants.TASK_INVOKE_URL,
-                            payload: {
-                                url: ensureParameters(cmdDef.url, map.Name, map.SessionId, config.locale, true, cmdDef.parameters)
-                            }
-                        });
-                    } else {
-                        dispatch({
-                            type: Constants.MODAL_SHOW_URL,
-                            payload: {
-                                modal: {
-                                    title: tr(name),
-                                    backdrop: false,
-                                    size: [ 300, 500 ]
-                                },
-                                name: name,
-                                url: ensureParameters(cmdDef.url, map.Name, map.SessionId, config.locale, true, cmdDef.parameters)
-                            }
-                        });
-                    }
+                    const url = ensureParameters(cmdDef.url, map.Name, map.SessionId, config.locale, true, cmdDef.parameters);
+                    openUrlInTarget(name, cmdDef, dispatch, url);
                 }
             }
         };
@@ -260,12 +289,7 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                         + `&limit=${cmdDef.matchLimit}`
                         + `&properties=${(cmdDef.resultColumns.Column || []).map(col => col.Property).join(",")}`
                         + `&propNames=${(cmdDef.resultColumns.Column || []).map(col => col.Name).join(",")}`;
-                    dispatch({
-                        type: Constants.TASK_INVOKE_URL,
-                        payload: {
-                            url: url
-                        }
-                    });
+                    openUrlInTarget(name, cmdDef, dispatch, url);
                 }
             }
         };

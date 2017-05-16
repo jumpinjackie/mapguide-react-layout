@@ -91,7 +91,7 @@ export interface ICommand {
 /**
  * Valid command targets for an InvokeURL command
  */
-export type InvokeUrlCommandTarget = "TaskPane" | "NewWindow";
+export type CommandTarget = "TaskPane" | "NewWindow" | "SpecifiedFrame";
 
 /**
  * An InvokeURL command parameter
@@ -116,13 +116,28 @@ export interface IInvokeUrlCommandParameter {
     value: string;
 }
 
+export interface ITargetedCommand {
+    /**
+     * Specifies the target which the URL should be invoked in
+     *
+     * @type {CommandTarget}
+     * @memberOf IInvokeUrlCommand
+     */
+    target: CommandTarget;
+    /**
+     * The name of the frame to run this command in. Only applies if the target is
+     * "SpecifiedFrame"
+     */
+    targetFrame?: string;
+}
+
 /**
  * Describes a command that invokes a URL into a specified target
  *
  * @export
  * @interface IInvokeUrlCommand
  */
-export interface IInvokeUrlCommand {
+export interface IInvokeUrlCommand extends ITargetedCommand {
     /**
      * The icon for this command
      *
@@ -145,13 +160,6 @@ export interface IInvokeUrlCommand {
      */
     disableIfSelectionEmpty?: boolean;
     /**
-     * Specifies the target which the URL should be invoked in
-     *
-     * @type {InvokeUrlCommandTarget}
-     * @memberOf IInvokeUrlCommand
-     */
-    target: InvokeUrlCommandTarget;
-    /**
      * Additional command parameters
      * @memberOf IInvokeUrlCommand
      */
@@ -164,7 +172,7 @@ export interface IInvokeUrlCommand {
  * @export
  * @interface ISearchCommand
  */
-export interface ISearchCommand {
+export interface ISearchCommand extends ITargetedCommand {
     /**
      * The icon for this command
      *
@@ -375,10 +383,10 @@ export interface IMapViewer {
      */
     getCurrentView(): IMapView;
     /**
-     * Gets the current size of the map 
-     * 
-     * @returns {[number, number]} 
-     * 
+     * Gets the current size of the map
+     *
+     * @returns {[number, number]}
+     *
      * @memberof IMapViewer
      */
     getSize(): [number, number];
@@ -687,9 +695,9 @@ export interface IMapViewer {
     getResolution(): number;
     /**
      * Gets the resolution for the given scale
-     * 
+     *
      * @returns {number}
-     * 
+     *
      * @memberof IMapViewer
      */
     scaleToResolution(scale: number): number;

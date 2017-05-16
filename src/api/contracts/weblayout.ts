@@ -13,9 +13,9 @@ export interface MapView {
 export type TargetType = "TaskPane" | "NewWindow" | "SpecifiedFrame";
 
 export interface WebLayoutMap extends ResourceReference {
-    InitialView?: MapView | null | undefined;
+    InitialView?: MapView | undefined;
     HyperlinkTarget: TargetType;
-    HyperlinkTargetFrame?: string | null | undefined;
+    HyperlinkTargetFrame?: string | undefined;
 }
 
 export interface WebLayoutControl {
@@ -29,11 +29,11 @@ export interface WebLayoutResizableControl extends WebLayoutControl {
 export interface FlyoutItem {
     Function: "Flyout";
     Label: string;
-    Tooltip?: string | null | undefined;
-    Description?: string | null | undefined;
-    ImageURL?: string | null | undefined;
-    DisabledImageURL?: string | null | undefined;
-    SubItem?: UIItem[] | null | undefined;
+    Tooltip?: string | undefined;
+    Description?: string | undefined;
+    ImageURL?: string | undefined;
+    DisabledImageURL?: string | undefined;
+    SubItem?: UIItem[] | undefined;
 }
 
 export interface SeparatorItem {
@@ -75,7 +75,7 @@ export interface TaskButton {
     DisabledImageURL: string;
 }
 
-export interface WebLayoutTaskBar extends WebLayoutControl { 
+export interface WebLayoutTaskBar extends WebLayoutControl {
     Home: TaskButton;
     Forward: TaskButton;
     Back: TaskButton;
@@ -107,10 +107,10 @@ export interface CommandDef {
     "@xsi:type": string;
     Name: string;
     Label: string;
-    Tooltip?: string | null | undefined;
-    Description?: string | null | undefined;
-    ImageURL?: string | null | undefined;
-    DisabledImageURL?: string | null | undefined;
+    Tooltip?: string | undefined;
+    Description?: string | undefined;
+    ImageURL?: string | undefined;
+    DisabledImageURL?: string | undefined;
     TargetViewer: TargetViewerType;
 }
 
@@ -152,7 +152,7 @@ export interface CustomCommandDef extends CommandDef {
 
 export interface TargetedCommandDef extends CustomCommandDef {
     Target: TargetType;
-    TargetFrame?: string | null | undefined;
+    TargetFrame?: string | undefined;
 }
 
 export interface ParameterPair {
@@ -161,7 +161,7 @@ export interface ParameterPair {
 }
 
 export interface LayerSet {
-    Layer?: string[] | null | undefined;
+    Layer?: string[] | undefined;
 }
 
 export function isInvokeURLCommand(cmd: any): cmd is InvokeURLCommandDef {
@@ -170,12 +170,12 @@ export function isInvokeURLCommand(cmd: any): cmd is InvokeURLCommandDef {
 
 export function isSearchCommand(cmd: CommandDef): cmd is SearchCommandDef {
     return cmd["@xsi:type"] == "SearchCommandType";
-} 
+}
 
 export interface InvokeURLCommandDef extends TargetedCommandDef {
     URL: string;
-    LayerSet?: LayerSet | null | undefined;
-    AdditionalParameter?: ParameterPair[] | null | undefined;
+    LayerSet?: LayerSet | undefined;
+    AdditionalParameter?: ParameterPair[] | undefined;
     DisableIfSelectionEmpty: boolean;
 }
 
@@ -189,7 +189,7 @@ export interface ResultColumn {
 }
 
 export interface ResultColumnSet {
-    Column?: ResultColumn[] | null | undefined;
+    Column?: ResultColumn[] | undefined;
 }
 
 export interface SearchCommandDef extends TargetedCommandDef {
@@ -204,7 +204,7 @@ export interface BufferCommandDef extends TargetedCommandDef { }
 
 export interface SelectWithinCommandDef extends TargetedCommandDef { }
 
-export interface PrintCommandDef extends TargetedCommandDef { 
+export interface PrintCommandDef extends TargetedCommandDef {
     PrintLayout?: ResourceReference[];
 }
 

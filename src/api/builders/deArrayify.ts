@@ -352,10 +352,10 @@ function deArrayifyWebLayoutInfoPane(json: any): Contracts.WebLayout.WebLayoutIn
     return infoPane;
 }
 
-function deArrayifyWebLayoutInitialView(json: any): Contracts.WebLayout.MapView | null {
+function deArrayifyWebLayoutInitialView(json: any): Contracts.WebLayout.MapView | undefined {
     const root = json;
     if (root == null || root.length != 1) {
-        return null;
+        return undefined;
     }
     const view = {
         CenterX: tryGetAsProperty(root[0], "CenterX", "float"),
@@ -487,10 +487,10 @@ function deArrayifyWebLayoutSearchResultColumnSet(json: any): Contracts.WebLayou
     return res;
 }
 
-function deArrayifyWebLayoutInvokeURLLayerSet(json: any): Contracts.WebLayout.LayerSet | null {
+function deArrayifyWebLayoutInvokeURLLayerSet(json: any): Contracts.WebLayout.LayerSet | undefined {
     const root = json;
     if (root == null || root.length != 1) {
-        return null;
+        return undefined;
     }
     const layerset = {
         Layer: root[0].Layer
@@ -534,7 +534,7 @@ function deArrayifyCommand(json: any): Contracts.WebLayout.CommandDef {
         cmd.Target = tryGetAsProperty(root, "Target");
     }
     if (typeof (root.TargetFrame) != 'undefined') {
-        cmd.Target = tryGetAsProperty(root, "TargetFrame");
+        cmd.TargetFrame = tryGetAsProperty(root, "TargetFrame");
     }
     //Search
     if (typeof (root.Layer) != 'undefined') {
@@ -628,7 +628,7 @@ function deArrayifyMapGroup(json: any): Contracts.Fusion.MapGroup {
     return mapGroup;
 }
 
-function deArrayifyMapSet(json: any): Contracts.Fusion.MapSet | null {
+function deArrayifyMapSet(json: any): Contracts.Fusion.MapSet | undefined {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected MapSet element");

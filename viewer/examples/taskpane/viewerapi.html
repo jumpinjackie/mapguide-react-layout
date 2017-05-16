@@ -115,7 +115,7 @@
         function zoomToBounds() {
             var bounds = prompt("Enter the bounds (x1 y1 x2 y2) each number separated by a space:");
             if (bounds) {
-                var parts = bounds.split(" ").map(b => parseFloat(b));
+                var parts = bounds.split(" ").map(parseFloat);
                 if (parts.length == 4) {
                     viewer.zoomToExtent(parts);
                 } else {
@@ -123,7 +123,7 @@
                 }
             }
         }
-        
+
         function selectionHandler(mapName, selection) {
             showMessage("");
             if (selection) {

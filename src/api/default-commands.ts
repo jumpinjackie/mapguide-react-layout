@@ -15,6 +15,7 @@ import { QueryMapFeaturesResponse } from "./contracts/query";
 import { RuntimeMap } from "./contracts/runtime-map";
 import * as LegendActions from "../actions/legend";
 import * as MapActions from "../actions/map";
+import * as TemplateActions from "../actions/template";
 import { tr } from "../api/i18n";
 import * as Constants from "../constants";
 import { ensureParameters } from "../actions/taskpane";
@@ -540,6 +541,7 @@ export function initDefaultCommands() {
     registerCommand(DefaultCommands.Theme, { icon: "theme.png", url: `${getFusionRoot()}/widgets/Theme/thememain.php`, target: "TaskPane", parameters: [] });
 
     //Fusion template helper commands
+    /*
     registerCommand("showOverview", {
         icon: "invoke-script.png",
         selected: () => false,
@@ -548,12 +550,14 @@ export function initDefaultCommands() {
 
         }
     });
+    */
     registerCommand("showTaskPane", {
         icon: "invoke-script.png",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer) => {
-
+            const tplState = getState().template;
+            dispatch(TemplateActions.setTaskPaneVisibility(true));
         }
     });
     registerCommand("showLegend", {
@@ -561,7 +565,8 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer) => {
-
+            const tplState = getState().template;
+            dispatch(TemplateActions.setLegendVisibility(true));
         }
     });
     registerCommand("showSelectionPanel", {
@@ -569,7 +574,8 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer) => {
-
+            const tplState = getState().template;
+            dispatch(TemplateActions.setSelectionPanelVisibility(true));
         }
     });
 }

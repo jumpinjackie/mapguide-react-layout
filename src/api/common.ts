@@ -1242,6 +1242,13 @@ export interface IApplicationState {
      */
     config: Readonly<IConfigurationReducerState>;
     /**
+     * Current template state
+     *
+     * @type {Readonly<ITemplateReducerState>}
+     * @memberof IApplicationState
+     */
+    template: Readonly<ITemplateReducerState>;
+    /**
      * Viewer state
      *
      * @type {Readonly<IViewerReducerState>}

@@ -19,6 +19,7 @@ import {
     getRuntimeMap
 } from "../api/common";
 import * as Constants from "../constants";
+import * as TemplateActions from "../actions/template";
 
 const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;
@@ -33,6 +34,15 @@ export interface IAquaTemplateLayoutState {
     config: IConfigurationReducerState;
     capabilities: IViewerCapabilities;
     lastAction: any;
+    showTaskPane: boolean;
+    showSelection: boolean;
+    showLegend: boolean;
+}
+
+export interface IAquaTemplateDispatch {
+    hideTaskPane: () => void;
+    hideLegend: () => void;
+    hideSelection: () => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>): Partial<IAquaTemplateLayoutState> {
@@ -40,17 +50,22 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IAquaTempl
         config: state.config,
         map: getRuntimeMap(state),
         capabilities: state.config.capabilities,
-        lastAction: state.lastaction
+        lastAction: state.lastaction,
+        showLegend: state.template.legendVisible,
+        showSelection: state.template.selectionPanelVisible,
+        showTaskPane: state.template.taskPaneVisible
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch) {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAquaTemplateDispatch> {
     return {
-
+        hideLegend: () => dispatch(TemplateActions.setLegendVisibility(false)),
+        hideSelection: () => dispatch(TemplateActions.setSelectionPanelVisibility(false)),
+        hideTaskPane: () => dispatch(TemplateActions.setTaskPaneVisibility(false))
     };
 }
 
-export type AquaTemplateLayoutProps = Partial<IAquaTemplateLayoutState>;
+export type AquaTemplateLayoutProps = Partial<IAquaTemplateLayoutState> & Partial<IAquaTemplateDispatch>;
 
 class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps, any> {
     private fnHideTaskPane: () => void;
@@ -58,7 +73,6 @@ class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps, any> {
     private fnHideSelection: () => void;
     private fnHideOverviewMap: () => void;
     private fnOverviewMapTargetMounted: (el: Element) => void;
-    private viewItems: IItem[];
     private fnGetOverviewMapTarget: () => (Element | null);
     private ovMapTarget: Element | null;
     constructor(props: AquaTemplateLayoutProps) {
@@ -70,12 +84,7 @@ class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps, any> {
         this.fnHideTaskPane = this.onHideTaskPane.bind(this);
         this.fnOverviewMapTargetMounted = this.onOverviewMapTargetMounted.bind(this);
         this.fnGetOverviewMapTarget = this.getOverviewMapTarget.bind(this);
-        this.state = {
-            showToggler: false,
-            isTaskPaneOpen: true,
-            isLegendOpen: true,
-            isSelectionOpen: true
-        };
+        this.state = {};
     }
     private getOverviewMapTarget() {
         return this.ovMapTarget;
@@ -84,13 +93,22 @@ class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps, any> {
         this.ovMapTarget = el;
     }
     private onHideTaskPane() {
-        this.setState({ isTaskPaneOpen: false });
+        const { hideTaskPane } = this.props;
+        if (hideTaskPane) {
+            hideTaskPane();
+        }
     }
     private onHideLegend() {
-        this.setState({ isLegendOpen: false });
+        const { hideLegend } = this.props;
+        if (hideLegend) {
+            hideLegend();
+        }
     }
     private onHideSelection() {
-        this.setState({ isSelectionOpen: false });
+        const { hideSelection } = this.props;
+        if (hideSelection) {
+            hideSelection();
+        }
     }
     private onHideOverviewMap() {
         this.setState({ isOverviewMapOpen: false });
@@ -114,44 +132,8 @@ class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps, any> {
             }
         }
     }
-    componentDidMount() {
-        const locale = this.getLocale();
-        this.viewItems = [
-            {
-                icon: "application-browser.png",
-                label: tr("TPL_TITLE_TASKPANE", locale),
-                invoke: () => {
-                    this.setState({
-                        isTaskPaneOpen: true
-                    });
-                },
-                enabled: () => !this.state.isTaskPaneOpen
-            },
-            {
-                icon: "legend-map.png",
-                label: tr("TPL_TITLE_LEGEND", locale),
-                invoke: () => {
-                    this.setState({
-                        isLegendOpen: true
-                    });
-                },
-                enabled: () => !this.state.isLegendOpen
-            },
-            {
-                icon: "property.png",
-                label: tr("TPL_TITLE_SELECTION_PANEL", locale),
-                invoke: () => {
-                    this.setState({
-                        isSelectionOpen: true
-                    });
-                },
-                enabled: () => !this.state.isSelectionOpen
-            }
-        ];
-        this.setState({ showToggler: true });
-    }
     render(): JSX.Element {
-        const { capabilities, config } = this.props;
+        const { capabilities, config, showLegend, showSelection, showTaskPane } = this.props;
         let hasTaskPane = false;
         let hasTaskBar = false;
         let hasStatusBar = false;
@@ -172,11 +154,6 @@ class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps, any> {
         let tpWidth = SIDEBAR_WIDTH;
         return <div style={{ width: "100%", height: "100%" }}>
             <ToolbarContainer id="FileMenu" containerClass="aqua-file-menu" containerStyle={{ position: "absolute", left: 0, top: 0, zIndex: 100, right: 0 }} />
-            {(() => {
-                if (this.state.showToggler) {
-                    return <Toolbar containerClass="aqua-toggler-menu" childItems={this.viewItems} containerStyle={{ position: "absolute", right: 0, top: 0, height: DEFAULT_TOOLBAR_SIZE, zIndex: 101, color: "white" }} onCloseFlyout={NOOP} onOpenFlyout={NOOP} />
-                }
-            })()}
             <ToolbarContainer id="Toolbar" containerClass="aqua-toolbar" containerStyle={{ position: "absolute", left: 0, top: DEFAULT_TOOLBAR_SIZE, height: DEFAULT_TOOLBAR_SIZE, zIndex: 100, right: 0 }} />
             <ToolbarContainer id="ToolbarVertical" containerClass="aqua-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: 0, top: ((DEFAULT_TOOLBAR_SIZE * 2) - 1), zIndex: 100, bottom: bottomOffset }} />
             {(() => {
@@ -186,7 +163,7 @@ class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps, any> {
                                 position={[ 40, 500, null, null ]}
                                 title={tr("TPL_TITLE_SELECTION_PANEL", locale)}
                                 backdrop={false}
-                                isOpen={this.state.isSelectionOpen}
+                                isOpen={!!showSelection}
                                 onClose={this.fnHideSelection}>
                         <PlaceholderComponent locale={locale} id={DefaultComponentNames.SelectionPanel} componentProps={{ maxHeight: SELECTION_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
                     </ModalDialog>;
@@ -199,7 +176,7 @@ class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps, any> {
                                 position={[ 40, 70, null, null ]}
                                 title={tr("TPL_TITLE_LEGEND", locale)}
                                 backdrop={false}
-                                isOpen={this.state.isLegendOpen}
+                                isOpen={!!showLegend}
                                 onClose={this.fnHideLegend}>
                         <PlaceholderComponent locale={locale} id={DefaultComponentNames.Legend} componentProps={{ inlineBaseLayerSwitcher: false, maxHeight: LEGEND_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
                     </ModalDialog>;
@@ -212,7 +189,7 @@ class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps, any> {
                                 position={[ null, 70, 80, null ]}
                                 title={tr("TPL_TITLE_TASKPANE", locale)}
                                 backdrop={false}
-                                isOpen={this.state.isTaskPaneOpen}
+                                isOpen={!!showTaskPane}
                                 onClose={this.fnHideTaskPane}>
                         <PlaceholderComponent locale={locale} id={DefaultComponentNames.TaskPane} componentProps={{ maxHeight: TASK_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
                     </ModalDialog>;

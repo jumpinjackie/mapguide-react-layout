@@ -1,7 +1,7 @@
 import { IView } from "../src/api/contracts/common";
 import { SelectedFeatureSet, SelectedFeature } from "../src/api/contracts/query";
 import { RuntimeMap } from "../src/api/contracts/runtime-map";
-import { 
+import {
     IApplicationState,
     IInitErrorReducerState,
     IConfigurationReducerState,
@@ -10,7 +10,8 @@ import {
     IModalReducerState,
     IViewerReducerState,
     IBranchedMapState,
-    IMouseReducerState
+    IMouseReducerState,
+    ITemplateReducerState
 } from "../src/api/common";
 import * as Constants from "../src/constants";
 import { INITIAL_STATE as CONFIG_INITIAL_STATE } from "../src/reducers/config";
@@ -20,6 +21,7 @@ import { INITIAL_STATE as TASKPANE_INITIAL_STATE } from "../src/reducers/taskpan
 import { INITIAL_STATE as TOOLBAR_INITIAL_STATE } from "../src/reducers/toolbar";
 import { INITIAL_STATE as VIEWER_INITIAL_STATE } from "../src/reducers/viewer";
 import { INITIAL_STATE as MOUSE_INITIAL_STATE } from "../src/reducers/mouse";
+import { INITIAL_STATE as TEMPLATE_INITIAL_STATE } from "../src/reducers/template";
 
 export function createMap(): any {
     return {
@@ -604,6 +606,7 @@ export function createInitialState(): IApplicationState {
     const modal: IModalReducerState = { ...MODAL_INITIAL_STATE };
     const viewer: IViewerReducerState =  { ...VIEWER_INITIAL_STATE };
     const mouse: IMouseReducerState = { ...MOUSE_INITIAL_STATE };
+    const template: ITemplateReducerState = { ...TEMPLATE_INITIAL_STATE };
     const lastaction: any = null;
     return {
         initError,
@@ -614,6 +617,7 @@ export function createInitialState(): IApplicationState {
         modal,
         viewer,
         mouse,
-        lastaction
+        lastaction,
+        template
     };
 }

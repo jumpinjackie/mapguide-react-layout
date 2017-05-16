@@ -47,3 +47,10 @@ exports.fonts = {
     publicPath: "./dist/"
   }
 };
+
+exports.sourcemap = {
+  test: /\.js$/,
+  loader: "source-map-loader",
+  include: /@blueprintjs/,
+  enforce: "pre"
+};

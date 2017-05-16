@@ -88,6 +88,7 @@ module.exports = {
 
     module: {
         rules: [
+            loaders.sourcemap,
             loaders.tsx,
             loaders.html,
             loaders.css,

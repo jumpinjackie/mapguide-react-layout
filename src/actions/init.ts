@@ -1,6 +1,6 @@
 import * as Constants from "../constants";
 import { Client } from "../api/client";
-import { ReduxDispatch, Dictionary, ICommand, IMapView } from "../api/common";
+import { ReduxDispatch, Dictionary, ICommand, IMapView, CommandTarget } from "../api/common";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
 import { registerCommand, DefaultCommands } from "../api/registry/command";
 import { DefaultComponentNames } from "../api/registry/component";
@@ -204,8 +204,16 @@ function convertWebLayoutUIItems(items: UIItem[] | null | undefined, cmdsByKey: 
     }).filter(item => item != null);
 }
 
-function isNotTargeted(target: "TaskPane" | "NewWindow" | "SpecifiedFrame"): target is "TaskPane" | "NewWindow" {
-    return target != "SpecifiedFrame";
+function convertToCommandTarget(fusionCmdTarget: string): CommandTarget {
+    switch (fusionCmdTarget) {
+        case "SearchWindow":
+        case "InvokeUrlWindow":
+            return "NewWindow";
+        case "TaskPane":
+            return "TaskPane";
+        default:
+            return "SpecifiedFrame";
+    }
 }
 
 function prepareSubMenus(tbConf: any): any {
@@ -289,8 +297,8 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
                             filter: cmd.Filter,
                             matchLimit: cmd.MatchLimit,
                             title: cmd.Title,
-                            target: cmd.Target,
-                            targetFrame: cmd.TargetFrame
+                            target: convertToCommandTarget(cmd.Target),
+                            targetFrame: cmd.Target
                         });
                         break;
                     case "InvokeURL":
@@ -298,7 +306,7 @@ function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any)
                             url: cmd.Url,
                             disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
                             target: cmd.Target,
-                            targetFrame: cmd.TargetFrame,
+                            targetFrame: convertToCommandTarget(cmd.Target),
                             parameters: (cmd.AdditionalParameter || []).map((p: any) => {
                                 return { name: p.Key, value: p.Value };
                             })

@@ -42,7 +42,7 @@ export interface ITaskPaneDispatch {
     closeFlyout: (id: string) => void;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<ITaskPaneContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<ITaskPaneContainerState> {
     //Technically speaking, this should be listening to every branch of the redux
     //store. But practically speaking, toolbar commands really only cares about
     //the branches below

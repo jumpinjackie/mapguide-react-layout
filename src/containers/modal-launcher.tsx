@@ -21,7 +21,7 @@ export interface IToolbarContainerDispatch {
     hideModal: (options: any) => void;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<IToolbarContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IToolbarContainerState> {
     return {
         config: state.config,
         modal: state.modal

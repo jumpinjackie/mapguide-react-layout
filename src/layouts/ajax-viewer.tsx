@@ -25,7 +25,7 @@ export interface IAjaxViewerLayoutState {
     capabilities: IViewerCapabilities;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<IAjaxViewerLayoutState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IAjaxViewerLayoutState> {
     return {
         config: state.config,
         map: getRuntimeMap(state),

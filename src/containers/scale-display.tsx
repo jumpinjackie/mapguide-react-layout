@@ -25,7 +25,7 @@ export interface IScaleDisplayContainerDispatch {
     setScale: (mapName: string, scale: number) => void;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<IScaleDisplayContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IScaleDisplayContainerState> {
     const map = getRuntimeMap(state);
     return {
         config: state.config,

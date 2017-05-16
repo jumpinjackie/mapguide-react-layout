@@ -79,7 +79,7 @@ export interface IAppDispatch {
     initLayout: (args: IInitAppLayout) => void;
 }
 
-function mapStateToProps(state: IApplicationState, ownProps: IAppProps): Partial<IAppState> {
+function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IAppProps): Partial<IAppState> {
     let map;
     if (state.config.activeMapName) {
         map = state.mapState[state.config.activeMapName];

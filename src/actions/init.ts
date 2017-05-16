@@ -132,6 +132,8 @@ function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictiona
                                 return { command: DefaultCommands.Measure, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
                             case "BasemapSwitcher":
                                 return { label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: DefaultComponentNames.BaseMapSwitcher, flyoutId: `${DefaultComponentNames.BaseMapSwitcher}_${shortid.generate()}` };
+                            case "InvokeScript":
+                                return { command: widget.Name, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip };
                             default:
                                 return { error: tr("UNKNOWN_WIDGET", locale, { widget: widget.Type }) }
                         }

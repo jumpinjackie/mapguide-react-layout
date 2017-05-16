@@ -32,7 +32,7 @@ export interface INavigatorContainerDispatch {
     setScale: (mapName: string, scale: number) => void;
 }
 
-function mapStateToProps(state: IApplicationState, ownProps: INavigatorContainerProps): Partial<INavigatorContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>, ownProps: INavigatorContainerProps): Partial<INavigatorContainerState> {
     let view;
     const map = getRuntimeMap(state);
     if (state.config.activeMapName) {

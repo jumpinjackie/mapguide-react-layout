@@ -8,10 +8,12 @@ import { initErrorReducer } from "./init-error";
 import { mapStateReducer } from "./map-state";
 import { viewerReducer } from "./viewer";
 import { mouseReducer } from "./mouse";
+import { templateReducer } from "./template";
 
 const rootReducer: any = combineReducers({
     initError: initErrorReducer,
     config: configReducer,
+    template: templateReducer,
     mapState: mapStateReducer,
     viewer: viewerReducer,
     toolbar: toolbarReducer,

@@ -29,7 +29,7 @@ export interface IQuickPlotContainerDispatch {
 
 }
 
-function mapStateToProps(state: IApplicationState): Partial<IQuickPlotContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IQuickPlotContainerState> {
     return {
         config: state.config,
         map: getRuntimeMap(state),

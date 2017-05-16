@@ -64,7 +64,7 @@ export interface IMapViewerContainerDispatch {
     queryMapFeatures: (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => void;
 }
 
-function mapStateToProps(state: IApplicationState, ownProps: IMapViewerContainerProps): Partial<IMapViewerContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewerContainerProps): Partial<IMapViewerContainerState> {
     let map;
     let legend;
     let selection;

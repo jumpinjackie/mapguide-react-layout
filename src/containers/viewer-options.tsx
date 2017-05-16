@@ -22,7 +22,7 @@ export interface IViewerOptionsDispatch {
     toggleMapTips: (enabled: boolean) => void;
 }
 
-function mapStateToProps(state: IApplicationState, ownProps: IViewerOptionsProps): Partial<IViewerOptionsState> {
+function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IViewerOptionsProps): Partial<IViewerOptionsState> {
     return {
         viewer: state.viewer,
         config: state.config

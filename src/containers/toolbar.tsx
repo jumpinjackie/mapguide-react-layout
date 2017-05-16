@@ -39,7 +39,7 @@ export interface IToolbarContainerDispatch {
     closeComponent: (id: string) => void;
 }
 
-function mapStateToProps(state: IApplicationState, ownProps: IToolbarContainerProps): Partial<IToolbarContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IToolbarContainerProps): Partial<IToolbarContainerState> {
     let map;
     let action = NULL_ACTION;
     if (state.config.activeMapName) {

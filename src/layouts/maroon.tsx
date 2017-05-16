@@ -24,7 +24,7 @@ export interface IMaroonTemplateLayoutState {
     capabilities: IViewerCapabilities;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<IMaroonTemplateLayoutState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IMaroonTemplateLayoutState> {
     return {
         config: state.config,
         map: getRuntimeMap(state),

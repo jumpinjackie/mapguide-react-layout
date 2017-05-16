@@ -41,7 +41,7 @@ export interface ILegendContainerDispatch {
     setGroupExpanded: (mapName: string, options: { id: string, value: boolean }) => void;
 }
 
-function mapStateToProps(state: IApplicationState, ownProps: ILegendContainerProps): Partial<ILegendContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>, ownProps: ILegendContainerProps): Partial<ILegendContainerState> {
     let view;
     let runtimeMap;
     let selectableLayers;

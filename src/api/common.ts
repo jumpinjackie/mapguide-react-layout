@@ -25,21 +25,21 @@ export interface IMapView {
      * The x coordinate
      *
      * @type {number}
-     * @memberOf IMapView
+     * @memberof IMapView
      */
     x: number;
     /**
      * The Y coordinate
      *
      * @type {number}
-     * @memberOf IMapView
+     * @memberof IMapView
      */
     y: number;
     /**
      * The scale
      *
      * @type {number}
-     * @memberOf IMapView
+     * @memberof IMapView
      */
     scale: number;
 }
@@ -47,7 +47,7 @@ export interface IMapView {
 /**
  * Describes a function that is called when a command is invoked
  */
-export type DispatcherFunc = (dispatch: ReduxDispatch, getState: () => IApplicationState, viewer?: IMapViewer) => any;
+export type DispatcherFunc = (dispatch: ReduxDispatch, getState: () => Readonly<IApplicationState>, viewer?: IMapViewer) => any;
 
 /**
  * Describes a viewer command
@@ -60,7 +60,7 @@ export interface ICommand {
      * The icon for this command
      *
      * @type {string}
-     * @memberOf ICommand
+     * @memberof ICommand
      */
     icon: string;
     //tooltip?: string;
@@ -69,21 +69,21 @@ export interface ICommand {
      * Indicates if this command is enabled based on the given application state
      *
      *
-     * @memberOf ICommand
+     * @memberof ICommand
      */
-    enabled: (state: IApplicationState) => boolean;
+    enabled: (state: Readonly<IApplicationState>) => boolean;
     /**
-     * Indicates if this command is selected based on the given application state
+     * Indicates if this command is enabled based on the given application state
      *
      *
-     * @memberOf ICommand
+     * @memberof ICommand
      */
-    selected: (state: IApplicationState) => boolean;
+    selected: (state: Readonly<IApplicationState>) => boolean;
     /**
      * Invokes the command
      *
      * @type {DispatcherFunc}
-     * @memberOf ICommand
+     * @memberof ICommand
      */
     invoke: DispatcherFunc;
 }
@@ -104,14 +104,14 @@ export interface IInvokeUrlCommandParameter {
      * The name of the parameter
      *
      * @type {string}
-     * @memberOf IInvokeUrlCommandParameter
+     * @memberof IInvokeUrlCommandParameter
      */
     name: string;
     /**
      * The value of the parameter
      *
      * @type {string}
-     * @memberOf IInvokeUrlCommandParameter
+     * @memberof IInvokeUrlCommandParameter
      */
     value: string;
 }
@@ -121,7 +121,7 @@ export interface ITargetedCommand {
      * Specifies the target which the URL should be invoked in
      *
      * @type {CommandTarget}
-     * @memberOf IInvokeUrlCommand
+     * @memberof IInvokeUrlCommand
      */
     target: CommandTarget;
     /**
@@ -142,26 +142,26 @@ export interface IInvokeUrlCommand extends ITargetedCommand {
      * The icon for this command
      *
      * @type {string}
-     * @memberOf IInvokeUrlCommand
+     * @memberof IInvokeUrlCommand
      */
     icon?: string;
     /**
      * The URL to invoke
      *
      * @type {string}
-     * @memberOf IInvokeUrlCommand
+     * @memberof IInvokeUrlCommand
      */
     url: string;
     /**
      * Indicates whether to disable this command if there is no map selection
      *
      * @type {boolean}
-     * @memberOf IInvokeUrlCommand
+     * @memberof IInvokeUrlCommand
      */
     disableIfSelectionEmpty?: boolean;
     /**
      * Additional command parameters
-     * @memberOf IInvokeUrlCommand
+     * @memberof IInvokeUrlCommand
      */
     parameters: IInvokeUrlCommandParameter[];
 }
@@ -177,49 +177,49 @@ export interface ISearchCommand extends ITargetedCommand {
      * The icon for this command
      *
      * @type {string}
-     * @memberOf ISearchCommand
+     * @memberof ISearchCommand
      */
     icon?: string;
     /**
      * The name of the map layer this commmand applies to
      *
      * @type {string}
-     * @memberOf ISearchCommand
+     * @memberof ISearchCommand
      */
     layer: string;
     /**
      * The prompt to display in the search command UI
      *
      * @type {string}
-     * @memberOf ISearchCommand
+     * @memberof ISearchCommand
      */
     prompt: string;
     /**
      * The title to display in the search command UI
      *
      * @type {string}
-     * @memberOf ISearchCommand
+     * @memberof ISearchCommand
      */
     title: string;
     /**
      * The set of feature properties to show in the search results
      *
      * @type {ResultColumnSet}
-     * @memberOf ISearchCommand
+     * @memberof ISearchCommand
      */
     resultColumns: ResultColumnSet;
     /**
      * The search filter to apply based on user input
      *
      * @type {string}
-     * @memberOf ISearchCommand
+     * @memberof ISearchCommand
      */
     filter?: string;
     /**
      * The maximum number of results to return
      *
      * @type {number}
-     * @memberOf ISearchCommand
+     * @memberof ISearchCommand
      */
     matchLimit: number;
 }
@@ -275,28 +275,28 @@ export interface IExternalBaseLayer {
      * The name of the external base layer
      *
      * @type {string}
-     * @memberOf IExternalBaseLayer
+     * @memberof IExternalBaseLayer
      */
     name: string;
     /**
      * The kind of external base layer
      *
      * @type {string}
-     * @memberOf IExternalBaseLayer
+     * @memberof IExternalBaseLayer
      */
     kind: string;
     /**
      * Indicates if this external base layer is visible
      *
      * @type {boolean}
-     * @memberOf IExternalBaseLayer
+     * @memberof IExternalBaseLayer
      */
     visible?: boolean;
     /**
      * Additional options for initializing the external base layer
      *
      * @type {*}
-     * @memberOf IExternalBaseLayer
+     * @memberof IExternalBaseLayer
      */
     options?: any;
 }
@@ -313,14 +313,14 @@ export interface IMapMenuEntry {
      * The runtime map name
      *
      * @type {string}
-     * @memberOf IMapMenuEntry
+     * @memberof IMapMenuEntry
      */
     mapName: string;
     /**
      * The menu entry label
      *
      * @type {string}
-     * @memberOf IMapMenuEntry
+     * @memberof IMapMenuEntry
      */
     label: string;
 }
@@ -354,7 +354,7 @@ export interface IMapViewer {
      *
      * @returns {ol.ProjectionLike}
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     getProjection(): ol.ProjectionLike;
     /**
@@ -363,7 +363,7 @@ export interface IMapViewer {
      * @param {Bounds} extent
      * @returns {IMapView}
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     getViewForExtent(extent: Bounds): IMapView;
     /**
@@ -371,7 +371,7 @@ export interface IMapViewer {
      *
      * @returns {Bounds}
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     getCurrentExtent(): Bounds;
     /**
@@ -379,7 +379,7 @@ export interface IMapViewer {
      *
      * @returns {IMapView}
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     getCurrentView(): IMapView;
     /**
@@ -397,7 +397,7 @@ export interface IMapViewer {
      * @param {number} y
      * @param {number} scale
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     zoomToView(x: number, y: number, scale: number): void;
     /**
@@ -408,7 +408,7 @@ export interface IMapViewer {
      * @param {(res: QueryMapFeaturesResponse) => void} [success]
      * @param {(err: Error) => void} [failure]
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     setSelectionXml(xml: string, queryOpts?: Partial<IQueryMapFeaturesOptions>, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void;
     /**
@@ -416,7 +416,7 @@ export interface IMapViewer {
      *
      * @param {RefreshMode} [mode]
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     refreshMap(mode?: RefreshMode): void;
     /**
@@ -424,7 +424,7 @@ export interface IMapViewer {
      *
      * @returns {number}
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     getMetersPerUnit(): number;
     /**
@@ -432,7 +432,7 @@ export interface IMapViewer {
      *
      * @param {ActiveMapTool} tool
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     setActiveTool(tool: ActiveMapTool): void;
     /**
@@ -440,21 +440,21 @@ export interface IMapViewer {
      *
      * @returns {ActiveMapTool}
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     getActiveTool(): ActiveMapTool;
     /**
      * Sets the initial map view
      *
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     initialView(): void;
     /**
      * Clears the map selection
      *
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     clearSelection(): void;
     /**
@@ -462,7 +462,7 @@ export interface IMapViewer {
      *
      * @param {number} delta
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     zoomDelta(delta: number): void;
     /**
@@ -470,7 +470,7 @@ export interface IMapViewer {
      *
      * @returns {boolean}
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     isDigitizing(): boolean;
     /**
@@ -485,7 +485,7 @@ export interface IMapViewer {
      * @param {DigitizerCallback<olPoint>} handler
      * @param {string} [prompt]
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     digitizePoint(handler: DigitizerCallback<olPoint>, prompt?: string): void;
     /**
@@ -494,7 +494,7 @@ export interface IMapViewer {
      * @param {DigitizerCallback<olLineString>} handler
      * @param {string} [prompt]
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     digitizeLine(handler: DigitizerCallback<olLineString>, prompt?: string): void;
     /**
@@ -503,7 +503,7 @@ export interface IMapViewer {
      * @param {DigitizerCallback<olLineString>} handler
      * @param {string} [prompt]
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     digitizeLineString(handler: DigitizerCallback<olLineString>, prompt?: string): void;
     /**
@@ -512,7 +512,7 @@ export interface IMapViewer {
      * @param {DigitizerCallback<olCircle>} handler
      * @param {string} [prompt]
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     digitizeCircle(handler: DigitizerCallback<olCircle>, prompt?: string): void;
     /**
@@ -521,7 +521,7 @@ export interface IMapViewer {
      * @param {DigitizerCallback<olPolygon>} handler
      * @param {string} [prompt]
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     digitizeRectangle(handler: DigitizerCallback<olPolygon>, prompt?: string): void;
     /**
@@ -530,7 +530,7 @@ export interface IMapViewer {
      * @param {DigitizerCallback<olPolygon>} handler
      * @param {string} [prompt]
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     digitizePolygon(handler: DigitizerCallback<olPolygon>, prompt?: string): void;
     /**
@@ -538,7 +538,7 @@ export interface IMapViewer {
      *
      * @param {olGeometry} geom
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     selectByGeometry(geom: olGeometry): void;
     /**
@@ -548,7 +548,7 @@ export interface IMapViewer {
      * @param {(res: QueryMapFeaturesResponse) => void} [success]
      * @param {(err: Error) => void} [failure]
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void;
     /**
@@ -556,7 +556,7 @@ export interface IMapViewer {
      *
      * @param {Bounds} extent
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     zoomToExtent(extent: Bounds): void;
     /**
@@ -564,7 +564,7 @@ export interface IMapViewer {
      *
      * @returns {boolean}
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     isFeatureTooltipEnabled(): boolean;
     /**
@@ -572,7 +572,7 @@ export interface IMapViewer {
      *
      * @param {boolean} enabled
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     setFeatureTooltipEnabled(enabled: boolean): void;
     /**
@@ -580,7 +580,7 @@ export interface IMapViewer {
      *
      * @returns {QueryMapFeaturesResponse}
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     getSelection(): QueryMapFeaturesResponse | null;
     /**
@@ -590,7 +590,7 @@ export interface IMapViewer {
      * @param {string[]} [layerIds]
      * @returns {string}
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     getSelectionXml(selection: FeatureSet, layerIds?: string[]): string;
     /**
@@ -605,7 +605,7 @@ export interface IMapViewer {
      * @param {T} layer
      * @returns {T}
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     addLayer<T extends olLayerBase>(name: string, layer: T): T;
     /**
@@ -614,7 +614,7 @@ export interface IMapViewer {
      * @param {string} name
      * @returns {(olLayerBase | undefined)}
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     removeLayer(name: string): olLayerBase | undefined;
     /**
@@ -625,7 +625,7 @@ export interface IMapViewer {
      * @param {() => T} factory
      * @returns {T}
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     getLayer<T extends olLayerBase>(name: string, factory: () => T): T;
     /**
@@ -635,7 +635,7 @@ export interface IMapViewer {
      * @param {T} interaction
      * @returns {T}
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     addInteraction<T extends olInteraction>(interaction: T): T;
     /**
@@ -644,7 +644,7 @@ export interface IMapViewer {
      * @template T
      * @param {T} interaction
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     removeInteraction<T extends olInteraction>(interaction: T): void;
     /**
@@ -652,7 +652,7 @@ export interface IMapViewer {
      *
      * @param {olOverlay} overlay
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     addOverlay(overlay: olOverlay): void;
     /**
@@ -660,7 +660,7 @@ export interface IMapViewer {
      *
      * @param {olOverlay} overlay
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     removeOverlay(overlay: olOverlay): void;
     /**
@@ -669,7 +669,7 @@ export interface IMapViewer {
      * @param {string} eventName
      * @param {Function} handler
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     addHandler(eventName: string, handler: Function): void;
     /**
@@ -678,7 +678,7 @@ export interface IMapViewer {
      * @param {string} eventName
      * @param {Function} handler
      *
-     * @memberOf IMapViewer
+     * @memberof IMapViewer
      */
     removeHandler(eventName: string, handler: Function): void;
     /**
@@ -737,28 +737,28 @@ export interface ITaskPaneReducerState {
      * The current navigation index
      *
      * @type {number}
-     * @memberOf ITaskPaneReducerState
+     * @memberof ITaskPaneReducerState
      */
     navIndex: number;
     /**
      * The current navigation history stack
      *
      * @type {string[]}
-     * @memberOf ITaskPaneReducerState
+     * @memberof ITaskPaneReducerState
      */
     navigation: string[];
     /**
      * The initial URL
      *
      * @type {(string | undefined)}
-     * @memberOf ITaskPaneReducerState
+     * @memberof ITaskPaneReducerState
      */
     initialUrl: string | undefined;
     /**
      * The last pushed URL
      *
      * @type {boolean}
-     * @memberOf ITaskPaneReducerState
+     * @memberof ITaskPaneReducerState
      */
     lastUrlPushed: boolean;
 }
@@ -782,105 +782,105 @@ export interface IBranchedMapSubState {
      * The external base layers for the runtime map
      *
      * @type {IExternalBaseLayer[]}
-     * @memberOf IBranchedMapSubState
+     * @memberof IBranchedMapSubState
      */
     externalBaseLayers: IExternalBaseLayer[];
     /**
      * The current map view
      *
      * @type {(IMapView | undefined)}
-     * @memberOf IBranchedMapSubState
+     * @memberof IBranchedMapSubState
      */
     currentView: IMapView | undefined;
     /**
      * The initial map view
      *
      * @type {(IMapView | undefined)}
-     * @memberOf IBranchedMapSubState
+     * @memberof IBranchedMapSubState
      */
     initialView: IMapView | undefined;
     /**
      * The view navigation history stack
      *
      * @type {IMapView[]}
-     * @memberOf IBranchedMapSubState
+     * @memberof IBranchedMapSubState
      */
     history: IMapView[];
     /**
      * The current position in the view navigation history stack
      *
      * @type {number}
-     * @memberOf IBranchedMapSubState
+     * @memberof IBranchedMapSubState
      */
     historyIndex: number;
     /**
      * The runtime map state
      *
      * @type {(RuntimeMap | undefined)}
-     * @memberOf IBranchedMapSubState
+     * @memberof IBranchedMapSubState
      */
     runtimeMap: RuntimeMap | undefined;
     /**
      * A set of selectable layer ids
      *
      * @type {*}
-     * @memberOf IBranchedMapSubState
+     * @memberof IBranchedMapSubState
      */
     selectableLayers: any;
     /**
      * A set of expanded group ids
      *
      * @type {*}
-     * @memberOf IBranchedMapSubState
+     * @memberof IBranchedMapSubState
      */
     expandedGroups: any;
     /**
      * The current selection state
      *
      * @type {(QueryMapFeaturesResponse | undefined)}
-     * @memberOf IBranchedMapSubState
+     * @memberof IBranchedMapSubState
      */
     selectionSet: QueryMapFeaturesResponse | undefined;
     /**
      * The current selected layer index
      *
      * @type {number}
-     * @memberOf IBranchedMapSubState
+     * @memberof IBranchedMapSubState
      */
     layerIndex: number;
     /**
      * The current selected feature index
      *
      * @type {number}
-     * @memberOf IBranchedMapSubState
+     * @memberof IBranchedMapSubState
      */
     featureIndex: number;
     /**
      * The array of ids of layers to show
      *
      * @type {string[]}
-     * @memberOf IBranchedMapSubState
+     * @memberof IBranchedMapSubState
      */
     showLayers: string[];
     /**
      * The array of ids of groups to show
      *
      * @type {string[]}
-     * @memberOf IBranchedMapSubState
+     * @memberof IBranchedMapSubState
      */
     showGroups: string[];
     /**
      * The array of ids of layers to hide
      *
      * @type {string[]}
-     * @memberOf IBranchedMapSubState
+     * @memberof IBranchedMapSubState
      */
     hideLayers: string[];
     /**
      * The array of ids of groups to hide
      *
      * @type {string[]}
-     * @memberOf IBranchedMapSubState
+     * @memberof IBranchedMapSubState
      */
     hideGroups: string[];
 }
@@ -907,7 +907,7 @@ export interface ICoordinateConfiguration {
      * The number of decimal places to show
      *
      * @type {number}
-     * @memberOf ICoordinateConfiguration
+     * @memberof ICoordinateConfiguration
      */
     decimals: number;
 }
@@ -923,49 +923,49 @@ export interface IViewerCapabilities {
      * Indicates if this viewer as a Task Pane component mounted
      *
      * @type {boolean}
-     * @memberOf IViewerCapabilities
+     * @memberof IViewerCapabilities
      */
     hasTaskPane: boolean;
     /**
      * Indicates if the Task Pane on this viewer has a Task Bar
      *
      * @type {boolean}
-     * @memberOf IViewerCapabilities
+     * @memberof IViewerCapabilities
      */
     hasTaskBar: boolean;
     /**
      * Indicates if this viewer has a status bar
      *
      * @type {boolean}
-     * @memberOf IViewerCapabilities
+     * @memberof IViewerCapabilities
      */
     hasStatusBar: boolean;
     /**
      * Indicates if this viewer has a zoom slider
      *
      * @type {boolean}
-     * @memberOf IViewerCapabilities
+     * @memberof IViewerCapabilities
      */
     hasNavigator: boolean;
     /**
      * Indicates if this viewer has a selection panel component mounted
      *
      * @type {boolean}
-     * @memberOf IViewerCapabilities
+     * @memberof IViewerCapabilities
      */
     hasSelectionPanel: boolean;
     /**
      * Indicates if this viewer has a legend component mounted
      *
      * @type {boolean}
-     * @memberOf IViewerCapabilities
+     * @memberof IViewerCapabilities
      */
     hasLegend: boolean;
     /**
      * Indicates if this viewer has a primary toolbar mounted
      *
      * @type {boolean}
-     * @memberOf IViewerCapabilities
+     * @memberof IViewerCapabilities
      */
     hasToolbar: boolean;
 }
@@ -981,16 +981,46 @@ export interface INameValuePair {
      * The name
      *
      * @type {string}
-     * @memberOf INameValuePair
+     * @memberof INameValuePair
      */
     name: string;
     /**
      * The value
      *
      * @type {string}
-     * @memberOf INameValuePair
+     * @memberof INameValuePair
      */
     value: string;
+}
+
+/**
+ * Describes the reducer state branch for the current viewer template
+ *
+ * @export
+ * @interface ITemplateReducerState
+ */
+export interface ITemplateReducerState {
+    /**
+     * Indicates if the task pane is visible
+     *
+     * @type {boolean}
+     * @memberof ITemplateReducerState
+     */
+    taskPaneVisible: boolean;
+    /**
+     * Indicates if the legend is visible
+     *
+     * @type {boolean}
+     * @memberof ITemplateReducerState
+     */
+    legendVisible: boolean;
+    /**
+     * Indicates if the selection panel is visible
+     *
+     * @type {boolean}
+     * @memberof ITemplateReducerState
+     */
+    selectionPanelVisible: boolean;
 }
 
 /**
@@ -1004,49 +1034,49 @@ export interface IConfigurationReducerState {
      * The agent URI
      *
      * @type {(string | undefined)}
-     * @memberOf IConfigurationReducerState
+     * @memberof IConfigurationReducerState
      */
     agentUri: string | undefined;
     /**
      * The type of agent
      *
      * @type {ClientKind}
-     * @memberOf IConfigurationReducerState
+     * @memberof IConfigurationReducerState
      */
     agentKind: ClientKind;
     /**
      * The current locale
      *
      * @type {string}
-     * @memberOf IConfigurationReducerState
+     * @memberof IConfigurationReducerState
      */
     locale: string;
     /**
      * The current active map name
      *
      * @type {(string | undefined)}
-     * @memberOf IConfigurationReducerState
+     * @memberof IConfigurationReducerState
      */
     activeMapName: string | undefined;
     /**
      * The array of available runtime maps
      *
      * @type {(INameValuePair[] | undefined)}
-     * @memberOf IConfigurationReducerState
+     * @memberof IConfigurationReducerState
      */
     availableMaps: INameValuePair[] | undefined;
     /**
      * Coordinate display configuration
      *
      * @type {ICoordinateConfiguration}
-     * @memberOf IConfigurationReducerState
+     * @memberof IConfigurationReducerState
      */
     coordinates: ICoordinateConfiguration;
     /**
      * Viewer capabilities
      *
      * @type {IViewerCapabilities}
-     * @memberOf IConfigurationReducerState
+     * @memberof IConfigurationReducerState
      */
     capabilities: IViewerCapabilities;
     /**
@@ -1058,7 +1088,7 @@ export interface IConfigurationReducerState {
      *         selectionColor: string;
      *         pointSelectionBuffer: number;
      *     }}
-     * @memberOf IConfigurationReducerState
+     * @memberof IConfigurationReducerState
      */
     viewer: {
         /**
@@ -1099,14 +1129,14 @@ export interface InitError {
      * The error message
      *
      * @type {string}
-     * @memberOf InitError
+     * @memberof InitError
      */
     message: string;
     /**
      * The error stack trace
      *
      * @type {string[]}
-     * @memberOf InitError
+     * @memberof InitError
      */
     stack: string[];
 }
@@ -1122,21 +1152,21 @@ export interface IInitErrorReducerState {
      * The caught initialization error
      *
      * @type {(InitError | undefined)}
-     * @memberOf IInitErrorReducerState
+     * @memberof IInitErrorReducerState
      */
     error: InitError | undefined;
     /**
      * The initialization options
      *
      * @type {*}
-     * @memberOf IInitErrorReducerState
+     * @memberof IInitErrorReducerState
      */
     options: any;
     /**
      * Indicates if the stack trace should be shown
      *
      * @type {boolean}
-     * @memberOf IInitErrorReducerState
+     * @memberof IInitErrorReducerState
      */
     includeStack: boolean;
 }
@@ -1153,21 +1183,21 @@ export interface IViewerReducerState {
      * indicates busy activity.
      *
      * @type {number}
-     * @memberOf IViewerReducerState
+     * @memberof IViewerReducerState
      */
     busyCount: number,
     /**
      * The active map tool
      *
      * @type {ActiveMapTool}
-     * @memberOf IViewerReducerState
+     * @memberof IViewerReducerState
      */
     tool: ActiveMapTool,
     /**
      * Indicates if feature tooltips are enabled
      *
      * @type {boolean}
-     * @memberOf IViewerReducerState
+     * @memberof IViewerReducerState
      */
     featureTooltipsEnabled: boolean,
 }
@@ -1183,7 +1213,7 @@ export interface IMouseReducerState {
      * The last tracked mouse coordinate
      *
      * @type {(Coordinate | undefined)}
-     * @memberOf IMouseReducerState
+     * @memberof IMouseReducerState
      */
     coords: Coordinate | undefined;
 }
@@ -1200,64 +1230,64 @@ export interface IApplicationState {
     /**
      * Initialization errors
      *
-     * @type {IInitErrorReducerState}
-     * @memberOf IApplicationState
+     * @type {Readonly<IInitErrorReducerState>}
+     * @memberof IApplicationState
      */
-    initError: IInitErrorReducerState;
+    initError: Readonly<IInitErrorReducerState>;
     /**
      * Viewer configuration
      *
-     * @type {IConfigurationReducerState}
-     * @memberOf IApplicationState
+     * @type {Readonly<IConfigurationReducerState>}
+     * @memberof IApplicationState
      */
-    config: IConfigurationReducerState;
+    config: Readonly<IConfigurationReducerState>;
     /**
      * Viewer state
      *
-     * @type {IViewerReducerState}
-     * @memberOf IApplicationState
+     * @type {Readonly<IViewerReducerState>}
+     * @memberof IApplicationState
      */
-    viewer: IViewerReducerState;
+    viewer: Readonly<IViewerReducerState>;
     /**
      * Runtime map state
      *
-     * @type {IBranchedMapState}
-     * @memberOf IApplicationState
+     * @type {Readonly<IBranchedMapState>}
+     * @memberof IApplicationState
      */
-    mapState: IBranchedMapState;
+    mapState: Readonly<IBranchedMapState>;
     /**
      * Toolbar state
      *
-     * @type {IToolbarReducerState}
-     * @memberOf IApplicationState
+     * @type {Readonly<IToolbarReducerState>}
+     * @memberof IApplicationState
      */
-    toolbar: IToolbarReducerState;
+    toolbar: Readonly<IToolbarReducerState>;
     /**
      * Task Pane component state
      *
-     * @type {ITaskPaneReducerState}
-     * @memberOf IApplicationState
+     * @type {Readonly<ITaskPaneReducerState>}
+     * @memberof IApplicationState
      */
-    taskpane: ITaskPaneReducerState;
+    taskpane: Readonly<ITaskPaneReducerState>;
     /**
      * Modal dialog state
      *
-     * @type {IModalReducerState}
-     * @memberOf IApplicationState
+     * @type {Readonly<IModalReducerState>}
+     * @memberof IApplicationState
      */
-    modal: IModalReducerState;
+    modal: Readonly<IModalReducerState>;
     /**
      * Tracked mouse coordinate state
      *
-     * @type {IMouseReducerState}
-     * @memberOf IApplicationState
+     * @type {Readonly<IMouseReducerState>}
+     * @memberof IApplicationState
      */
-    mouse: IMouseReducerState;
+    mouse: Readonly<IMouseReducerState>;
     /**
      * Tracks the last dispatched action
      *
      * @type {*}
-     * @memberOf IApplicationState
+     * @memberof IApplicationState
      */
     lastaction: any;
 }
@@ -1268,14 +1298,14 @@ export interface ReduxAction {
      * The type of action
      *
      * @type {string}
-     * @memberOf ReduxAction
+     * @memberof ReduxAction
      */
     type: string;
     /**
      * The action payload
      *
      * @type {*}
-     * @memberOf ReduxAction
+     * @memberof ReduxAction
      */
     payload?: any;
 }
@@ -1290,14 +1320,14 @@ export interface ReduxStore {
     /**
      * Gets the application state
      *
-     * @returns {IApplicationState}
+     * @returns {Readonly<IApplicationState>}
      *
-     * @memberOf ReduxStore
+     * @memberof ReduxStore
      */
-    getState(): IApplicationState;
+    getState(): Readonly<IApplicationState>;
 }
 
-export type ReduxThunkedAction = (dispatch: ReduxDispatch, getState: () => IApplicationState) => any;
+export type ReduxThunkedAction = (dispatch: ReduxDispatch, getState: () => Readonly<IApplicationState>) => any;
 
 export type ReduxActionCreator = ReduxAction | ReduxThunkedAction;
 
@@ -1318,35 +1348,35 @@ export interface IDOMElementMetrics {
      * The X position of this element
      *
      * @type {number}
-     * @memberOf IDOMElementMetrics
+     * @memberof IDOMElementMetrics
      */
     posX: number;
     /**
      * The Y position of this element
      *
      * @type {number}
-     * @memberOf IDOMElementMetrics
+     * @memberof IDOMElementMetrics
      */
     posY: number;
     /**
      * The width of this element
      *
      * @type {number}
-     * @memberOf IDOMElementMetrics
+     * @memberof IDOMElementMetrics
      */
     width: number;
     /**
      * The height of this element
      *
      * @type {number}
-     * @memberOf IDOMElementMetrics
+     * @memberof IDOMElementMetrics
      */
     height: number;
     /**
      * Indicates of this toolbar is vertically-oriented
      *
      * @type {boolean}
-     * @memberOf IDOMElementMetrics
+     * @memberof IDOMElementMetrics
      */
     vertical?: boolean;
 }
@@ -1355,10 +1385,10 @@ export interface IDOMElementMetrics {
  * Helper function to get the initial map view from the application state
  *
  * @export
- * @param {IApplicationState} state
+ * @param {Readonly<IApplicationState>} state
  * @returns {(IMapView | undefined)}
  */
-export function getInitialView(state: IApplicationState): IMapView | undefined {
+export function getInitialView(state: Readonly<IApplicationState>): IMapView | undefined {
     if (state.config.activeMapName) {
         return state.mapState[state.config.activeMapName].initialView;
     }
@@ -1369,10 +1399,10 @@ export function getInitialView(state: IApplicationState): IMapView | undefined {
  * Helper function to get the current selection set from the application state
  *
  * @export
- * @param {IApplicationState} state
+ * @param {Readonly<IApplicationState>} state
  * @returns {(QueryMapFeaturesResponse | undefined)}
  */
-export function getSelectionSet(state: IApplicationState): QueryMapFeaturesResponse | undefined {
+export function getSelectionSet(state: Readonly<IApplicationState>): QueryMapFeaturesResponse | undefined {
     if (state.config.activeMapName) {
         return state.mapState[state.config.activeMapName].selectionSet;
     }
@@ -1383,10 +1413,10 @@ export function getSelectionSet(state: IApplicationState): QueryMapFeaturesRespo
  * Helper function to get the current runtime map state from the application state
  *
  * @export
- * @param {IApplicationState} state
+ * @param {Readonly<IApplicationState>} state
  * @returns {(RuntimeMap | undefined)}
  */
-export function getRuntimeMap(state: IApplicationState): RuntimeMap | undefined {
+export function getRuntimeMap(state: Readonly<IApplicationState>): RuntimeMap | undefined {
     if (state.config.activeMapName) {
         return state.mapState[state.config.activeMapName].runtimeMap;
     }
@@ -1397,10 +1427,10 @@ export function getRuntimeMap(state: IApplicationState): RuntimeMap | undefined 
  * Helper function to get the current view from the application state
  *
  * @export
- * @param {IApplicationState} state
+ * @param {Readonly<IApplicationState>} state
  * @returns {(IMapView | undefined)}
  */
-export function getCurrentView(state: IApplicationState): IMapView | undefined {
+export function getCurrentView(state: Readonly<IApplicationState>): IMapView | undefined {
     if (state.config.activeMapName) {
         return state.mapState[state.config.activeMapName].currentView;
     }
@@ -1411,10 +1441,10 @@ export function getCurrentView(state: IApplicationState): IMapView | undefined {
  * Helper function to get the current set of available external base layers from the application state
  *
  * @export
- * @param {IApplicationState} state
+ * @param {Readonly<IApplicationState>} state
  * @returns {(IExternalBaseLayer[] | undefined)}
  */
-export function getExternalBaseLayers(state: IApplicationState): IExternalBaseLayer[] | undefined {
+export function getExternalBaseLayers(state: Readonly<IApplicationState>): IExternalBaseLayer[] | undefined {
     if (state.config.activeMapName) {
         return state.mapState[state.config.activeMapName].externalBaseLayers;
     }

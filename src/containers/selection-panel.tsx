@@ -26,7 +26,7 @@ export interface ISelectionPanelContainerDispatch {
     setCurrentView: (view: IMapView) => void;
 }
 
-function mapStateToProps(state: IApplicationState, ownProps: ISelectionPanelContainerProps): Partial<ISelectionPanelContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>, ownProps: ISelectionPanelContainerProps): Partial<ISelectionPanelContainerState> {
     return {
         config: state.config,
         selection: getSelectionSet(state)

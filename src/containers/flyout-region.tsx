@@ -26,7 +26,7 @@ export interface IFlyoutRegionContainerDispatch {
     invokeCommand: (cmd: ICommand) => void;
 }
 
-function mapStateToProps(state: IApplicationState, ownProps: IFlyoutRegionContainerProps): Partial<IFlyoutRegionContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IFlyoutRegionContainerProps): Partial<IFlyoutRegionContainerState> {
     return {
         flyouts: state.toolbar.flyouts,
         locale: state.config.locale

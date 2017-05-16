@@ -538,4 +538,38 @@ export function initDefaultCommands() {
     registerCommand(DefaultCommands.FeatureInfo, { icon: "feature-info.png", url: `${getFusionRoot()}/widgets/FeatureInfo/featureinfomain.php`, target: "TaskPane", parameters: [] });
     registerCommand(DefaultCommands.Query, { icon: "query.png", url: `${getFusionRoot()}/widgets/Query/querymain.php`, target: "TaskPane", parameters: [] });
     registerCommand(DefaultCommands.Theme, { icon: "theme.png", url: `${getFusionRoot()}/widgets/Theme/thememain.php`, target: "TaskPane", parameters: [] });
+
+    //Fusion template helper commands
+    registerCommand("showOverview", {
+        icon: "invoke-script.png",
+        selected: () => false,
+        enabled: CommandConditions.isNotBusy,
+        invoke: (dispatch, getState, viewer) => {
+
+        }
+    });
+    registerCommand("showTaskPane", {
+        icon: "invoke-script.png",
+        selected: () => false,
+        enabled: CommandConditions.isNotBusy,
+        invoke: (dispatch, getState, viewer) => {
+
+        }
+    });
+    registerCommand("showLegend", {
+        icon: "invoke-script.png",
+        selected: () => false,
+        enabled: CommandConditions.isNotBusy,
+        invoke: (dispatch, getState, viewer) => {
+
+        }
+    });
+    registerCommand("showSelectionPanel", {
+        icon: "invoke-script.png",
+        selected: () => false,
+        enabled: CommandConditions.isNotBusy,
+        invoke: (dispatch, getState, viewer) => {
+
+        }
+    });
 }

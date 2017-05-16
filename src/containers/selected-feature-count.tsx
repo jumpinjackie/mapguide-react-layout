@@ -18,7 +18,7 @@ export interface ISelectionPanelContainerState {
     selection: QueryMapFeaturesResponse;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<ISelectionPanelContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<ISelectionPanelContainerState> {
     return {
         config: state.config,
         selection: getSelectionSet(state)

@@ -586,7 +586,7 @@ export interface IViewerApiShimDispatch {
     queryMapFeatures: (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => void;
 }
 
-function mapStateToProps(state: IApplicationState, ownProps: IViewerApiShimProps): Partial<IViewerApiShimState> {
+function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IViewerApiShimProps): Partial<IViewerApiShimState> {
     let map;
     let selectionSet;
     if (state.config.activeMapName) {

@@ -33,7 +33,7 @@ export interface IMeasureContainerState {
     type: string;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<IMeasureContainerReducerState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IMeasureContainerReducerState> {
     return {
         activeMapName: state.config.activeMapName,
         locale: state.config.locale,

@@ -35,7 +35,7 @@ export interface IAquaTemplateLayoutState {
     lastAction: any;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<IAquaTemplateLayoutState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IAquaTemplateLayoutState> {
     return {
         config: state.config,
         map: getRuntimeMap(state),

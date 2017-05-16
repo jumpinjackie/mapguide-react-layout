@@ -92,24 +92,24 @@ export class CommandConditions {
      * The viewer is not busy
      *
      * @static
-     * @param {IApplicationState} state
+     * @param {Readonly<IApplicationState>} state
      * @returns {boolean}
      *
      * @memberOf CommandConditions
      */
-    public static isNotBusy(state: IApplicationState): boolean {
+    public static isNotBusy(state: Readonly<IApplicationState>): boolean {
         return state.viewer.busyCount == 0;
     }
     /**
      * The viewer has a selection set
      *
      * @static
-     * @param {IApplicationState} state
+     * @param {Readonly<IApplicationState>} state
      * @returns {boolean}
      *
      * @memberOf CommandConditions
      */
-    public static hasSelection(state: IApplicationState): boolean {
+    public static hasSelection(state: Readonly<IApplicationState>): boolean {
         const selection = getSelectionSet(state);
         return (selection != null && selection.SelectedFeatures != null);
     }
@@ -117,12 +117,12 @@ export class CommandConditions {
      * The viewer has a previous view in the view navigation stack
      *
      * @static
-     * @param {IApplicationState} state
+     * @param {Readonly<IApplicationState>} state
      * @returns {boolean}
      *
      * @memberOf CommandConditions
      */
-    public static hasPreviousView(state: IApplicationState): boolean {
+    public static hasPreviousView(state: Readonly<IApplicationState>): boolean {
         if (state.config.activeMapName) {
             return state.mapState[state.config.activeMapName].historyIndex > 0;
         }
@@ -132,12 +132,12 @@ export class CommandConditions {
      * The viewer has a next view in the view navigation stack
      *
      * @static
-     * @param {IApplicationState} state
+     * @param {Readonly<IApplicationState>} state
      * @returns {boolean}
      *
      * @memberOf CommandConditions
      */
-    public static hasNextView(state: IApplicationState): boolean {
+    public static hasNextView(state: Readonly<IApplicationState>): boolean {
         if (state.config.activeMapName) {
             return state.mapState[state.config.activeMapName].historyIndex < state.mapState[state.config.activeMapName].history.length - 1;
         }

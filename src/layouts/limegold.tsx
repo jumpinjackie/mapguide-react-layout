@@ -30,7 +30,7 @@ export interface ILimeGoldTemplateLayoutState {
     capabilities: IViewerCapabilities;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<ILimeGoldTemplateLayoutState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<ILimeGoldTemplateLayoutState> {
     return {
         config: state.config,
         map: getRuntimeMap(state),

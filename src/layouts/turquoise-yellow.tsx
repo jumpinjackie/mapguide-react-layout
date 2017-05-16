@@ -30,7 +30,7 @@ export interface ITurquoiseYellowTemplateLayoutState {
     capabilities: IViewerCapabilities;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<ITurquoiseYellowTemplateLayoutState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<ITurquoiseYellowTemplateLayoutState> {
     return {
         config: state.config,
         map: getRuntimeMap(state),

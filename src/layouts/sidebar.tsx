@@ -214,7 +214,7 @@ export interface ISidebarLayoutState {
     lastaction: any;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<ISidebarLayoutState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<ISidebarLayoutState> {
     return {
         viewer: state.viewer,
         config: state.config,

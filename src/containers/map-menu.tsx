@@ -21,7 +21,7 @@ export interface IMapMenuContainerDispatch {
     setActiveMap: (mapName: string) => void;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<IMapMenuContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IMapMenuContainerState> {
     return {
         locale: state.config.locale,
         activeMapName: state.config.activeMapName,

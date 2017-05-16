@@ -24,7 +24,7 @@ export interface ISlateTemplateLayoutState {
     capabilities: IViewerCapabilities;
 }
 
-function mapStateToProps(state: IApplicationState): Partial<ISlateTemplateLayoutState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<ISlateTemplateLayoutState> {
     return {
         config: state.config,
         map: getRuntimeMap(state),

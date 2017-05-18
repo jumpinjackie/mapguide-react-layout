@@ -1,8 +1,10 @@
 import * as Constants from "../constants";
 import {
+    ReducerFunction,
     ITemplateReducerState
 } from "../api/common";
 import { isCoordinate } from "../utils/type-guards";
+import { IElementState } from "../actions/template";
 
 export const INITIAL_STATE: ITemplateReducerState = {
     taskPaneVisible: true,
@@ -10,26 +12,36 @@ export const INITIAL_STATE: ITemplateReducerState = {
     legendVisible: true
 };
 
+/**
+ * Checks if the given payload is an element state
+ *
+ * @export
+ * @param {*} args
+ * @returns {args is IElementState}
+ */
+export function isElementState(args: any): args is IElementState {
+    return args != null
+        && typeof(args.legendVisible) != 'undefined'
+        && typeof(args.selectionPanelVisible) != 'undefined'
+        && typeof(args.taskPaneVisible) != 'undefined';
+}
+
+let _ovReducer: ReducerFunction<ITemplateReducerState>;
+
+/**
+ * Installs a custom template reducer function. This is generally used by viewer templates
+ * which need to respond to template-related actions in a way that is unique to the template
+ *
+ * @export
+ * @param {ReducerFunction<ITemplateReducerState>} func
+ */
+export function setCustomTemplateReducer(func: ReducerFunction<ITemplateReducerState>): void {
+    _ovReducer = func;
+}
+
 export function templateReducer(state = INITIAL_STATE, action = { type: '', payload: undefined }) {
-    const data: boolean | undefined = action.payload;
-    if (typeof(data) == "boolean") {
-        switch (action.type) {
-            case Constants.FUSION_SET_LEGEND_VISIBILITY:
-                {
-                    const state1: Partial<ITemplateReducerState> = { legendVisible: data };
-                    return { ...state, ...state1 };
-                }
-            case Constants.FUSION_SET_SELECTION_PANEL_VISIBILITY:
-                {
-                    const state1: Partial<ITemplateReducerState> = { selectionPanelVisible: data };
-                    return { ...state, ...state1 };
-                }
-            case Constants.FUSION_SET_TASK_PANE_VISIBILITY:
-                {
-                    const state1: Partial<ITemplateReducerState> = { taskPaneVisible: data };
-                    return { ...state, ...state1 };
-                }
-        }
+    if (typeof(_ovReducer) == 'function') {
+        return _ovReducer(state, action);
     }
     return state;
 }

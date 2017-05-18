@@ -6,6 +6,19 @@
 import * as Constants from "../constants";
 import { ReduxAction } from "../api/common";
 
+export interface IElementState {
+    legendVisible: boolean;
+    taskPaneVisible: boolean;
+    selectionPanelVisible: boolean;
+}
+
+export function setElementStates(states: IElementState): ReduxAction {
+    return {
+        type: Constants.FUSION_SET_ELEMENT_STATE,
+        payload: states
+    };
+}
+
 export function setTaskPaneVisibility(visible: boolean): ReduxAction {
     return {
         type: Constants.FUSION_SET_TASK_PANE_VISIBILITY,

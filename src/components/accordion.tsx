@@ -16,6 +16,8 @@ export interface IAccordionPanelSpec {
 export interface IAccordionProps {
     style: React.CSSProperties;
     panels: IAccordionPanelSpec[];
+    onActivePanelChanged?: (id: string) => void;
+    activePanelId?: string;
 }
 
 const PANEL_HEADER_HEIGHT = 24;
@@ -25,14 +27,38 @@ export class Accordion extends React.Component<IAccordionProps, any> {
     constructor(props: IAccordionProps) {
         super(props);
         this.fnTogglePanel = this.onTogglePanel.bind(this);
+        const activeId = this.validatePanelId(props.panels, props.activePanelId);
         this.state = {
-            openPanel: props.panels[props.panels.length - 1].id
+            openPanel: activeId || props.panels[props.panels.length - 1].id
         };
     }
     private onTogglePanel(e: GenericEvent) {
+        const { onActivePanelChanged } = this.props;
         const id = e.currentTarget.attributes["data-accordion-panel-id"].value;
         if (this.state.openPanel != id) {
-            this.setState({ openPanel: id });
+            this.setState({ openPanel: id }, () => {
+                if (onActivePanelChanged) {
+                    onActivePanelChanged(id);
+                }
+            });
+        }
+    }
+    private validatePanelId(panels: IAccordionPanelSpec[], id: string | undefined): string | null {
+        if (!id) {
+            return null;
+        }
+        const panel = panels.filter(p => p.id == id)[0];
+        if (panel) {
+            return id;
+        }
+        return null;
+    }
+    componentWillReceiveProps(nextProps: IAccordionProps) {
+        if (this.props.activePanelId != nextProps.activePanelId) {
+            const newId = this.validatePanelId(nextProps.panels, nextProps.activePanelId);
+            if (newId) {
+                this.setState({ openPanel: newId });
+            }
         }
     }
     render(): JSX.Element {

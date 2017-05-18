@@ -12,14 +12,50 @@ import { tr } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
     NOOP,
+    ReduxAction,
     ReduxDispatch,
     IApplicationState,
     IConfigurationReducerState,
+    ITemplateReducerState,
     IViewerCapabilities,
     getRuntimeMap
 } from "../api/common";
 import * as Constants from "../constants";
 import * as TemplateActions from "../actions/template";
+import { setCustomTemplateReducer, isElementState } from "../reducers/template";
+
+function aquaTemplateReducer(state: ITemplateReducerState, action: ReduxAction): ITemplateReducerState {
+    const data: boolean | TemplateActions.IElementState | undefined = action.payload;
+    switch (action.type) {
+        case Constants.FUSION_SET_LEGEND_VISIBILITY:
+            {
+                if (typeof(data) == "boolean") {
+                    let state1: Partial<ITemplateReducerState> = { legendVisible: data };
+                    return { ...state, ...state1 };
+                }
+            }
+        case Constants.FUSION_SET_SELECTION_PANEL_VISIBILITY:
+            {
+                if (typeof(data) == "boolean") {
+                    let state1: Partial<ITemplateReducerState> = { selectionPanelVisible: data };
+                    return { ...state, ...state1 };
+                }
+            }
+        case Constants.TASK_INVOKE_URL:
+            {
+                let state1: Partial<ITemplateReducerState> = { taskPaneVisible: true };
+                return { ...state, ...state1 };
+            }
+        case Constants.FUSION_SET_TASK_PANE_VISIBILITY:
+            {
+                if (typeof(data) == "boolean") {
+                    let state1: Partial<ITemplateReducerState> = { taskPaneVisible: data };
+                    return { ...state, ...state1 };
+                }
+            }
+    }
+    return state;
+}
 
 const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;
@@ -115,6 +151,9 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
     }
     private getLocale(): string {
         return this.props.config ? this.props.config.locale : "en";
+    }
+    componentDidMount() {
+        setCustomTemplateReducer(aquaTemplateReducer);
     }
     componentWillReceiveProps(nextProps: AquaTemplateLayoutProps) {
         const lastAction = nextProps.lastAction;

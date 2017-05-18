@@ -993,6 +993,8 @@ export interface INameValuePair {
     value: string;
 }
 
+export type ReducerFunction<TState> = (state: TState, action: ReduxAction) => TState;
+
 /**
  * Describes the reducer state branch for the current viewer template
  *

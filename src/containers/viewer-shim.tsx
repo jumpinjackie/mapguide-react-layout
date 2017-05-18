@@ -614,7 +614,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IViewerApiShimDisp
 
 export type ViewerApiShimProps = IViewerApiShimProps & Partial<IViewerApiShimState> & Partial<IViewerApiShimDispatch>;
 
-class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
+export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
     private fnFormFrameMounted: (component: FormFrameShim) => void;
     private userSelectionHandlers: SelectionHandlerCallback[];
     private us: boolean;

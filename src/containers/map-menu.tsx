@@ -37,7 +37,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMapMenuContainerD
 
 export type MapMenuContainerProps = Partial<IMapMenuContainerState> & Partial<IMapMenuContainerDispatch>;
 
-class MapMenuContainer extends React.Component<MapMenuContainerProps, any> {
+export class MapMenuContainer extends React.Component<MapMenuContainerProps, any> {
     private fnActiveMapChanged: (name: string) => void;
     constructor(props: MapMenuContainerProps) {
         super(props);

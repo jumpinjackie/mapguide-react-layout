@@ -101,7 +101,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAppDispatch> {
 
 export type AppProps = IAppProps & Partial<IAppState> & Partial<IAppDispatch>;
 
-class App extends React.Component<AppProps, any> {
+export class App extends React.Component<AppProps, any> {
     private fnErrorRenderer: (err: Error) => JSX.Element;
     constructor(props: AppProps) {
         super(props);

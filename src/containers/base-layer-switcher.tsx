@@ -44,7 +44,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IBaseLayerSwitcher
 
 export type BaseLayerSwitcherContainerProps = IBaseLayerSwitcherContainerProps & Partial<IBaseLayerSwitcherContainerState> & Partial<IBaseLayerSwitcherContainerDispatch>;
 
-class BaseLayerSwitcherContainer extends React.Component<BaseLayerSwitcherContainerProps, any> {
+export class BaseLayerSwitcherContainer extends React.Component<BaseLayerSwitcherContainerProps, any> {
     private fnBaseLayerChanged: (name: string) => void;
     constructor(props: BaseLayerSwitcherContainerProps) {
         super(props);

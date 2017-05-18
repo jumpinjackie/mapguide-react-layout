@@ -46,7 +46,7 @@ const STATUS_BAR_HEIGHT = 18;
 const SIDEBAR_PADDING = 0;
 const OUTER_PADDING = 3;
 
-class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplateProps, any> {
+export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplateProps, any> {
     constructor(props: MaroonLayoutTemplateProps) {
         super(props);
     }

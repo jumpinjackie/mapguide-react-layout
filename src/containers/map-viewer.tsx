@@ -120,7 +120,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMapViewerContaine
 
 export type MapViewerContainerProps = IMapViewerContainerProps & Partial<IMapViewerContainerState> & Partial<IMapViewerContainerDispatch>;
 
-class MapViewerContainer extends React.Component<MapViewerContainerProps, any>
+export class MapViewerContainer extends React.Component<MapViewerContainerProps, any>
     implements IMapViewer {
     private fnMapViewerMounted: (component: MapViewerBase) => void;
     private inner: MapViewerBase;

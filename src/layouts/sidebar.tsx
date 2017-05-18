@@ -231,7 +231,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
 
 export type SidebarLayoutProps = Partial<ISidebarLayoutState>;
 
-class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
+export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
     constructor(props: SidebarLayoutProps) {
         super(props);
     }

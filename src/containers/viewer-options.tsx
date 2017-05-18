@@ -42,7 +42,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IViewerOptionsDisp
 
 export type ViewerOptionsProps = IViewerOptionsProps & Partial<IViewerOptionsState> & Partial<IViewerOptionsDispatch>;
 
-class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
+export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
     private fnFeatureTooltipsChanged: GenericEventHandler;
     constructor(props: ViewerOptionsProps) {
         super(props);

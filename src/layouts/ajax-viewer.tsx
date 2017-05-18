@@ -41,7 +41,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
 
 export type AjaxViewerLayoutProps = Partial<IAjaxViewerLayoutState>;
 
-class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any> {
+export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any> {
     constructor(props: AjaxViewerLayoutProps) {
         super(props);
     }

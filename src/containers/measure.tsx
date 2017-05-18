@@ -51,7 +51,7 @@ export type MeasureProps = IMeasureContainerProps & Partial<IMeasureContainerRed
 
 const _measurements: MeasureContext[] = [];
 
-class MeasureContainer extends React.Component<MeasureProps, Partial<IMeasureContainerState>> implements IMeasureComponent {
+export class MeasureContainer extends React.Component<MeasureProps, Partial<IMeasureContainerState>> implements IMeasureComponent {
     private fnTypeChanged: GenericEventHandler;
     private fnGeodesicChanged: GenericEventHandler;
     private fnClearMeasurements: GenericEventHandler;

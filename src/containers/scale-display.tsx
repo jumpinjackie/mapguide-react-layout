@@ -42,7 +42,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IScaleDisplayConta
 
 export type ScaleDisplayContainerProps = Partial<IScaleDisplayContainerState> & Partial<IScaleDisplayContainerDispatch>;
 
-class ScaleDisplayContainer extends React.Component<ScaleDisplayContainerProps, any> {
+export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainerProps, any> {
     private fnScaleChanged: (scale: number) => void;
     constructor(props: ScaleDisplayContainerProps) {
         super(props);

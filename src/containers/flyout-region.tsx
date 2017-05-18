@@ -42,7 +42,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IFlyoutRegionConta
 
 export type FlyoutRegionContainerProps = IFlyoutRegionContainerProps & Partial<IFlyoutRegionContainerState> & Partial<IFlyoutRegionContainerDispatch>;
 
-class FlyoutRegionContainer extends React.Component<FlyoutRegionContainerProps, any> {
+export class FlyoutRegionContainer extends React.Component<FlyoutRegionContainerProps, any> {
     private fnCloseFlyout: (id: string) => void;
     constructor(props: FlyoutRegionContainerProps) {
         super(props);

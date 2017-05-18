@@ -45,7 +45,7 @@ const TOP_BAR_HEIGHT = 35;
 const STATUS_BAR_HEIGHT = 18;
 const SIDEBAR_PADDING = 0;
 
-class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProps, any> {
+export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProps, any> {
     constructor(props: SlateLayoutTemplateProps) {
         super(props);
     }

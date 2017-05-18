@@ -33,7 +33,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
 
 export type SelectedFeatureContainerProps = ISelectionPanelContainerProps & Partial<ISelectionPanelContainerState>;
 
-class SelectedFeatureCountContainer extends React.Component<SelectedFeatureContainerProps, any> {
+export class SelectedFeatureCountContainer extends React.Component<SelectedFeatureContainerProps, any> {
     constructor(props: SelectedFeatureContainerProps) {
         super(props);
     }

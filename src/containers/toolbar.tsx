@@ -73,7 +73,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IToolbarContainerD
 
 export type ToolbarContainerProps = IToolbarContainerProps & Partial<IToolbarContainerState> & Partial<IToolbarContainerDispatch>;
 
-class ToolbarContainer extends React.Component<ToolbarContainerProps, any> {
+export class ToolbarContainer extends React.Component<ToolbarContainerProps, any> {
     private fnOpenFlyout: (id: string, metrics: IDOMElementMetrics) => void;
     private fnCloseFlyout: (id: string) => void;
     private fnOpenComponent: (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => void;

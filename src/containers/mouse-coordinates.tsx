@@ -34,7 +34,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMouseCoordinatesD
 
 export type MouseCoordinatesContainerProps = IMouseCoordinatesContainerProps & Partial<IMouseCoordinatesContainerState> & Partial<IMouseCoordinatesDispatch>;
 
-class MouseCoordinatesContainer extends React.Component<MouseCoordinatesContainerProps, any> {
+export class MouseCoordinatesContainer extends React.Component<MouseCoordinatesContainerProps, any> {
     constructor(props: MouseCoordinatesContainerProps) {
         super(props);
     }

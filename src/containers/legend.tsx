@@ -90,7 +90,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ILegendContainerDi
 
 export type LegendContainerProps = ILegendContainerProps & Partial<ILegendContainerState> & Partial<ILegendContainerDispatch>;
 
-class LegendContainer extends React.Component<LegendContainerProps, any> {
+export class LegendContainer extends React.Component<LegendContainerProps, any> {
     private fnBaseLayerChanged: (baseLayerName: string) => void;
     private fnGroupVisibilityChanged: MapElementChangeFunc;
     private fnLayerVisibilityChanged: MapElementChangeFunc;

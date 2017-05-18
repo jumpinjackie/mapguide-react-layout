@@ -46,7 +46,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
 
 export type LimeGoldTemplateLayoutProps = Partial<ILimeGoldTemplateLayoutState>;
 
-class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayoutProps, any> {
+export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayoutProps, any> {
     constructor(props: LimeGoldTemplateLayoutProps) {
         super(props);
     }

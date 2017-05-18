@@ -36,7 +36,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IToolbarContainerD
 
 export type ToolbarContainerProps = Partial<IToolbarContainerState> & Partial<IToolbarContainerDispatch>;
 
-class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
+export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
     constructor(props: ToolbarContainerProps) {
         super(props);
     }

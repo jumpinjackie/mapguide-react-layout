@@ -67,7 +67,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAquaTemplateDispa
 
 export type AquaTemplateLayoutProps = Partial<IAquaTemplateLayoutState> & Partial<IAquaTemplateDispatch>;
 
-class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps, any> {
+export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps, any> {
     private fnHideTaskPane: () => void;
     private fnHideLegend: () => void;
     private fnHideSelection: () => void;

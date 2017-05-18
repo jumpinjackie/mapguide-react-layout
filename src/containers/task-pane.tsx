@@ -71,7 +71,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ITaskPaneDispatch>
 
 export type TaskPaneProps = ITaskPaneContainerProps & Partial<ITaskPaneContainerState> & Partial<ITaskPaneDispatch>;
 
-class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
+export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
     private homeAction: IItem;
     private backAction: IItem;
     private forwardAction: IItem;

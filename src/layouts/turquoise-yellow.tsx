@@ -46,7 +46,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
 
 export type TurquoiseYellowTemplateLayoutProps = Partial<ITurquoiseYellowTemplateLayoutState>;
 
-class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYellowTemplateLayoutProps, any> {
+export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYellowTemplateLayoutProps, any> {
     constructor(props: TurquoiseYellowTemplateLayoutProps) {
         super(props);
     }

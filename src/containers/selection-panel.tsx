@@ -41,7 +41,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ISelectionPanelCon
 
 export type SelectionPanelContainerProps = ISelectionPanelContainerProps & Partial<ISelectionPanelContainerState> & Partial<ISelectionPanelContainerDispatch>;
 
-class SelectionPanelContainer extends React.Component<SelectionPanelContainerProps, any> {
+export class SelectionPanelContainer extends React.Component<SelectionPanelContainerProps, any> {
     private fnZoomToSelectedFeature: (feature: SelectedFeature) => void;
     constructor(props: SelectionPanelContainerProps) {
         super(props);

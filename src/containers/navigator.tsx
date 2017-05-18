@@ -55,7 +55,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<INavigatorContaine
 
 export type NavigatorContainerProps = INavigatorContainerProps & Partial<INavigatorContainerState> & Partial<INavigatorContainerDispatch>;
 
-class NavigatorContainer extends React.Component<NavigatorContainerProps, any> {
+export class NavigatorContainer extends React.Component<NavigatorContainerProps, any> {
     private fnZoom: (direction: ZoomDirection) => void;
     private fnPan: (direction: PanDirection) => void;
     private fnRequestZoomToScale: (scale: number) => void;

@@ -46,7 +46,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IQuickPlotContaine
 
 export type QuickPlotProps = IQuickPlotContainerProps & Partial<IQuickPlotContainerState> & Partial<IQuickPlotContainerDispatch>;
 
-class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
+export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
     private fnTitleChanged: GenericEventHandler;
     private fnSubTitleChanged: GenericEventHandler;
     private fnShowLegendChanged: GenericEventHandler;

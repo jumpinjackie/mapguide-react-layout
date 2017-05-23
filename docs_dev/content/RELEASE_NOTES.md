@@ -5,6 +5,7 @@
  * [#210](https://github.com/jumpinjackie/mapguide-react-layout/issues/210): Now using TypeScript 2.3.2
  * Update OpenLayers to 4.1.1
    * [#126](https://github.com/jumpinjackie/mapguide-react-layout/issues/126): Now using `ol` npm package with ES2015 modules. As a result the viewer bundle now only carries parts of OpenLayers that are actually used
+   * [#155](https://github.com/jumpinjackie/mapguide-react-layout/issues/155): To support viewer APIs that require OL types as input parameters, a new object factory API is provided to create any required OL type.
  * Now available as a [npm module](https://www.npmjs.com/package/mapguide-react-layout). Use the npm module if you need to customize the viewer with:
    * Additional layout templates
    * Custom script commands
@@ -29,6 +30,16 @@
  * [#17](https://github.com/jumpinjackie/mapguide-react-layout/issues/17): InvokeURL and Search commands now support:
    * Frame targeting (Target = `SpecifiedFrame`)
    * Opening in a new window (will use a modal dialog)
+ * Fusion template tweaks:
+   * `limegold` and `turquoiseyellow` templates now use the blueprintjs `Tabs2` component instead of the deprecated `Tabs` component
+   * All templates now listen on a new dedicated redux state branch for controlling visibility/focus of primary elements:
+     * Task Pane
+     * Legend
+     * Selection
+   * New script commands are registered by default that can push new visibility/focus states to this redux state brach. As a result, any existing InvokeScript widgets that toggled the TaskPane/Legend/SelectionPanel (these commands exist if you created a fresh Application Definition in Maestro), now work out of the box and no longer show `[X] Error` placeholders
+   * As a result of the new redux state branch, any InvokeURL command executed now automatically toggles the visibility/focus of the Task Pane to be the active element (if hidden or not visible).
+ * [#174](https://github.com/jumpinjackie/mapguide-react-layout/issues/174): Fix init timing issues fetching custom projections from [epsg.io](https://epsg.io/)
+ * [#130](https://github.com/jumpinjackie/mapguide-react-layout/issues/130): Fix `parent.parent` pointing to nowhere when viewer itself is embedded in an iframe.
 
 0.8
 ===

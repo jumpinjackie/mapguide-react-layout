@@ -56,6 +56,7 @@
 <li>Update OpenLayers to 4.1.1
 <ul>
 <li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/126">#126</a>: Now using <code>ol</code> npm package with ES2015 modules. As a result the viewer bundle now only carries parts of OpenLayers that are actually used</li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/155">#155</a>: To support viewer APIs that require OL types as input parameters, a new object factory API is provided to create any required OL type.</li>
 </ul></li>
 <li>Now available as a <a href="https://www.npmjs.com/package/mapguide-react-layout">npm module</a>. Use the npm module if you need to customize the viewer with:
 <ul>
@@ -82,6 +83,25 @@
 </ul></li>
 <li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/145">#145</a>: Added support for some Fusion events</li>
 <li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/197">#197</a>: The <code>ajax-viewer</code> and <code>sidebar</code> templates now work with Application Definitions</li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/17">#17</a>: InvokeURL and Search commands now support:
+<ul>
+<li>Frame targeting (Target = <code>SpecifiedFrame</code>)</li>
+<li>Opening in a new window (will use a modal dialog)</li>
+</ul></li>
+<li>Fusion template tweaks:
+<ul>
+<li><code>limegold</code> and <code>turquoiseyellow</code> templates now use the blueprintjs <code>Tabs2</code> component instead of the deprecated <code>Tabs</code> component</li>
+<li>All templates now listen on a new dedicated redux state branch for controlling visibility/focus of primary elements:
+<ul>
+<li>Task Pane</li>
+<li>Legend</li>
+<li>Selection</li>
+</ul></li>
+<li>New script commands are registered by default that can push new visibility/focus states to this redux state brach. As a result, any existing InvokeScript widgets that toggled the TaskPane/Legend/SelectionPanel (these commands exist if you created a fresh Application Definition in Maestro), now work out of the box and no longer show <code>[X] Error</code> placeholders</li>
+<li>As a result of the new redux state branch, any InvokeURL command executed now automatically toggles the visibility/focus of the Task Pane to be the active element (if hidden or not visible).</li>
+</ul></li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/174">#174</a>: Fix init timing issues fetching custom projections from <a href="https://epsg.io/">epsg.io</a></li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/130">#130</a>: Fix <code>parent.parent</code> pointing to nowhere when viewer itself is embedded in an iframe.</li>
 </ul>
 <h1 id="08">0.8</h1>
 <ul>

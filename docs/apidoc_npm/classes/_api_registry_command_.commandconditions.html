@@ -94,6 +94,7 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_api_registry_command_.commandconditions.html#disabledifemptyselection" class="tsd-kind-icon">disabled<wbr>IfEmpty<wbr>Selection</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_api_registry_command_.commandconditions.html#hasnextview" class="tsd-kind-icon">has<wbr>Next<wbr>View</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_api_registry_command_.commandconditions.html#haspreviousview" class="tsd-kind-icon">has<wbr>Previous<wbr>View</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_api_registry_command_.commandconditions.html#hasselection" class="tsd-kind-icon">has<wbr>Selection</a></li>
@@ -105,6 +106,39 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="disabledifemptyselection" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> disabled<wbr>IfEmpty<wbr>Selection</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">disabled<wbr>IfEmpty<wbr>Selection<span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_common_.iapplicationstate.html" class="tsd-signature-type">IApplicationState</a><span class="tsd-signature-symbol">&gt;</span>, parameters<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>The command is set to be disabled if selection is empty</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>static</dt>
+									<dd></dd>
+									<dt>memberof</dt>
+									<dd><p>CommandConditions</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>state: <span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_common_.iapplicationstate.html" class="tsd-signature-type">IApplicationState</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> parameters: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
 					<a name="hasnextview" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> has<wbr>Next<wbr>View</h3>
@@ -199,7 +233,7 @@
 					<a name="isnotbusy" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> is<wbr>Not<wbr>Busy</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Not<wbr>Busy<span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_common_.iapplicationstate.html" class="tsd-signature-type">IApplicationState</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Not<wbr>Busy<span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_common_.iapplicationstate.html" class="tsd-signature-type">IApplicationState</a><span class="tsd-signature-symbol">&gt;</span>, parameters<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -219,6 +253,9 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5>state: <span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_common_.iapplicationstate.html" class="tsd-signature-type">IApplicationState</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> parameters: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -245,6 +282,9 @@
 					<li class="current tsd-kind-class tsd-parent-kind-external-module">
 						<a href="_api_registry_command_.commandconditions.html" class="tsd-kind-icon">Command<wbr>Conditions</a>
 						<ul>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="_api_registry_command_.commandconditions.html#disabledifemptyselection" class="tsd-kind-icon">disabled<wbr>IfEmpty<wbr>Selection</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="_api_registry_command_.commandconditions.html#hasnextview" class="tsd-kind-icon">has<wbr>Next<wbr>View</a>
 							</li>

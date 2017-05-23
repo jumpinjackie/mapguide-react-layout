@@ -85,6 +85,8 @@ The following APIs have been implemented
         * `findLayerByAttribute`
      * `message`
         * `info`
+        * `warn`
+        * `error`
         * `clear`
  * Task Pane
      * `goHome`

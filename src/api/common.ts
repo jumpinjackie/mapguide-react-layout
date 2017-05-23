@@ -116,6 +116,12 @@ export interface IInvokeUrlCommandParameter {
     value: string;
 }
 
+/**
+ * Describes a command that will run in a pre-defined target frame or window
+ *
+ * @export
+ * @interface ITargetedCommand
+ */
 export interface ITargetedCommand {
     /**
      * Specifies the target which the URL should be invoked in
@@ -993,6 +999,9 @@ export interface INameValuePair {
     value: string;
 }
 
+/**
+ * Describes a redux reducer function
+ */
 export type ReducerFunction<TState> = (state: TState, action: ReduxAction) => TState;
 
 /**
@@ -1302,6 +1311,13 @@ export interface IApplicationState {
 }
 
 // Redux typedefs to tighten up our redux code
+
+/**
+ * Defines a redux action payload
+ *
+ * @export
+ * @interface ReduxAction
+ */
 export interface ReduxAction {
     /**
      * The type of action
@@ -1336,14 +1352,43 @@ export interface ReduxStore {
     getState(): Readonly<IApplicationState>;
 }
 
+/**
+ * Describes a thunked redux action. Thunked redux actions are generally used for actions that push state
+ * asynchronously (eg. In response to an AJAX request)
+ */
 export type ReduxThunkedAction = (dispatch: ReduxDispatch, getState: () => Readonly<IApplicationState>) => any;
 
+/**
+ * Describes a redux action creator
+ */
 export type ReduxActionCreator = ReduxAction | ReduxThunkedAction;
 
+/**
+ * Describes a redux dispatcher function. A redux dispatch pushes new state to the redux store
+ */
 export type ReduxDispatch = (action: ReduxActionCreator) => void;
 
+/**
+ * A function that does nothing
+ *
+ * @export
+ */
 export function NOOP() { }
+
+/**
+ * A function that always returns false
+ *
+ * @export
+ * @returns false
+ */
 export function ALWAYS_FALSE() { return false; }
+
+/**
+ * A function that always returns true
+ *
+ * @export
+ * @returns true
+ */
 export function ALWAYS_TRUE() { return true; }
 
 /**

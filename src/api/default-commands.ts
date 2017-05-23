@@ -54,6 +54,13 @@ function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "l
     dispatch(MapActions.setCurrentView({ x: newPos[0], y: newPos[1], scale: view.scale }));
 }
 
+/**
+ * Registers the default set of commands into the command registry. This is automatically called by the default viewer
+ * bundle. If creating your own viewer bundle, be sure to call this function in your entry point, or invidually register
+ * the commands you want to make available in your custom viewer bundle
+ *
+ * @export
+ */
 export function initDefaultCommands() {
     //Select Tool
     registerCommand(DefaultCommands.Select, {

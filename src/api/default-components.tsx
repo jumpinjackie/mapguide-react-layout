@@ -19,6 +19,11 @@ import MapMenuContainer from "../containers/map-menu";
 
 import { registerComponentFactory, DefaultComponentNames } from "../api/registry/component";
 
+/**
+ * Registers the default set of components
+ *
+ * @export
+ */
 export function registerDefaultComponents(): void {
     registerComponentFactory(DefaultComponentNames.Map, (props) => <MapViewerContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.Legend, (props) => <LegendContainer {...props} />);

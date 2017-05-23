@@ -267,7 +267,7 @@ class FusionWidgetApiShim {
     private _activeToast: string;
 
     constructor(private parent: ViewerApiShim) {
-        this._toaster = Toaster.create({ position: Position.TOP, className: "mg-fusion-message-bar-toast" });
+        this._toaster = Toaster.create({ position: Position.TOP, className: "mg-toast mg-fusion-message-bar-toast" });
     }
 
     goHome(): void { //TaskPane
@@ -280,7 +280,7 @@ class FusionWidgetApiShim {
             const selXml = buildSelectionXml(norm.FeatureSet);
             this.setSelection(selXml, false);
         } else if (o.Message) {
-            this.info(o.Message);
+            this.warn(o.Message);
         }
     }
     getSelectableLayers(): FusionSelectedLayer[] { //Map
@@ -424,7 +424,13 @@ class FusionWidgetApiShim {
         this.parent.Refresh();
     }
     info(msg: string): void { //Map MessageBar
-        this._activeToast = this._toaster.show({ iconName: "info", message: <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />, intent: Intent.PRIMARY });
+        this._activeToast = this._toaster.show({ iconName: "info-sign", message: <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />, intent: Intent.PRIMARY });
+    }
+    warn(msg: string): void { //Map MessageBar
+        this._activeToast = this._toaster.show({ iconName: "warning-sign", message: <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />, intent: Intent.WARNING });
+    }
+    error(msg: string): void { //Map MessageBar
+        this._activeToast = this._toaster.show({ iconName: "error", message: <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />, intent: Intent.DANGER });
     }
     clear(): void { //Map MessageBar
         this._toaster.dismiss(this._activeToast);

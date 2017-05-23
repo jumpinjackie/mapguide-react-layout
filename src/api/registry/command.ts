@@ -59,7 +59,7 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
                 tooltip: tb.tooltip,
                 label: tb.label,
                 selected: () => cmd.selected(state),
-                enabled: () => cmd.enabled(state),
+                enabled: () => cmd.enabled(state, tb.parameters),
                 invoke: () => commandInvoker(cmd, tb.parameters)
             };
             return cmdItem;
@@ -95,9 +95,9 @@ export class CommandConditions {
      * @param {Readonly<IApplicationState>} state
      * @returns {boolean}
      *
-     * @memberOf CommandConditions
+     * @memberof CommandConditions
      */
-    public static isNotBusy(state: Readonly<IApplicationState>): boolean {
+    public static isNotBusy(state: Readonly<IApplicationState>, parameters?: any): boolean {
         return state.viewer.busyCount == 0;
     }
     /**
@@ -107,11 +107,26 @@ export class CommandConditions {
      * @param {Readonly<IApplicationState>} state
      * @returns {boolean}
      *
-     * @memberOf CommandConditions
+     * @memberof CommandConditions
      */
     public static hasSelection(state: Readonly<IApplicationState>): boolean {
         const selection = getSelectionSet(state);
         return (selection != null && selection.SelectedFeatures != null);
+    }
+    /**
+     * The command is set to be disabled if selection is empty
+     *
+     * @static
+     * @param {*} [parameters]
+     * @returns {boolean}
+     *
+     * @memberof CommandConditions
+     */
+    public static disabledIfEmptySelection(state: Readonly<IApplicationState>, parameters?: any): boolean {
+        if (!CommandConditions.hasSelection(state)) {
+            return (parameters != null && (parameters.DisableIfSelectionEmpty == "true" || parameters.DisableIfSelectionEmpty == true));
+        } else
+            return false;
     }
     /**
      * The viewer has a previous view in the view navigation stack
@@ -120,7 +135,7 @@ export class CommandConditions {
      * @param {Readonly<IApplicationState>} state
      * @returns {boolean}
      *
-     * @memberOf CommandConditions
+     * @memberof CommandConditions
      */
     public static hasPreviousView(state: Readonly<IApplicationState>): boolean {
         if (state.config.activeMapName) {
@@ -135,7 +150,7 @@ export class CommandConditions {
      * @param {Readonly<IApplicationState>} state
      * @returns {boolean}
      *
-     * @memberOf CommandConditions
+     * @memberof CommandConditions
      */
     public static hasNextView(state: Readonly<IApplicationState>): boolean {
         if (state.config.activeMapName) {

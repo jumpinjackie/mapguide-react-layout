@@ -13,6 +13,54 @@ describe("api/registry/command", () => {
             result = CommandConditions.isNotBusy(state);
             expect(result).toBe(true);
         });
+        it("disabledIfEmptySelection", () => {
+            const state = createInitialState();
+            //No selection
+            let result = CommandConditions.disabledIfEmptySelection(state);
+            expect(result).toBe(false);
+            result = CommandConditions.disabledIfEmptySelection(state, {});
+            expect(result).toBe(false);
+            result = CommandConditions.disabledIfEmptySelection(state, { DisableIfSelectionEmpty: false });
+            expect(result).toBe(false);
+            result = CommandConditions.disabledIfEmptySelection(state, { DisableIfSelectionEmpty: "false" });
+            expect(result).toBe(false);
+            result = CommandConditions.disabledIfEmptySelection(state, { DisableIfSelectionEmpty: true });
+            expect(result).toBe(true);
+            result = CommandConditions.disabledIfEmptySelection(state, { DisableIfSelectionEmpty: "true" });
+            expect(result).toBe(true);
+            const ms = {
+                ["Foo"]: {
+                    externalBaseLayers: [],
+                    currentView: undefined,
+                    initialView: undefined,
+                    history: [],
+                    historyIndex: -1,
+                    runtimeMap: createMap(),
+                    selectableLayers: [],
+                    expandedGroups: [],
+                    selectionSet: {
+                        SelectedFeatures: createSelectionSet()
+                    },
+                    layerIndex: -1,
+                    featureIndex: -1,
+                    showGroups: [],
+                    showLayers: [],
+                    hideGroups: [],
+                    hideLayers: []
+                }
+            }
+            state.mapState = { ...state.mapState, ...ms };
+            state.config = { ...state.config, ...{ activeMapName: "Foo" } };
+            //Now with selection
+            result = CommandConditions.disabledIfEmptySelection(state, { DisableIfSelectionEmpty: false });
+            expect(result).toBe(false);
+            result = CommandConditions.disabledIfEmptySelection(state, { DisableIfSelectionEmpty: "false" });
+            expect(result).toBe(false);
+            result = CommandConditions.disabledIfEmptySelection(state, { DisableIfSelectionEmpty: true });
+            expect(result).toBe(false);
+            result = CommandConditions.disabledIfEmptySelection(state, { DisableIfSelectionEmpty: "true" });
+            expect(result).toBe(false);
+        })
         it("hasSelection", () => {
             const state = createInitialState();
             let result = CommandConditions.hasSelection(state);

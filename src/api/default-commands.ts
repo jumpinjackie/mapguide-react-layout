@@ -518,13 +518,13 @@ export function initDefaultCommands() {
     registerCommand(DefaultCommands.SelectWithin, {
         icon: "select-features.png",
         selected: () => false,
-        enabled: CommandConditions.hasSelection,
+        enabled: (state, parameters) => !CommandConditions.disabledIfEmptySelection(state, parameters),
         invoke: (dispatch, getState, viewer, parameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
             const config = state.config;
             if (map) {
-                let url = ensureParameters(`${getFusionRoot()}/widgets/SelectWithin/SelectWithinPanel.php`, map.Name, map.SessionId, config.locale, true);
+                let url = ensureParameters(`${getFusionRoot()}/widgets/SelectWithin/SelectWithinPanel.php`, map.Name, map.SessionId, config.locale, false);
                 url += "&popup=false";
                 dispatch({
                     type: Constants.TASK_INVOKE_URL,

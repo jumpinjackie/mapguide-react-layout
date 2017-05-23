@@ -23,9 +23,9 @@ export function isErrorResponse(response: Response): boolean {
  * @param {*} data
  * @returns {string}
  */
-export function serialize(data: any): string {
+export function serialize(data: any, uppercase: boolean = true): string {
     return Object.keys(data).map((keyName) => {
-        return encodeURIComponent(keyName.toUpperCase()) + '=' + encodeURIComponent(data[keyName])
+        return encodeURIComponent(uppercase ? keyName.toUpperCase() : keyName) + '=' + encodeURIComponent(data[keyName])
     }).join('&');
 }
 

@@ -5,7 +5,7 @@ import olPoint from "ol/geom/point";
 import olLineString from "ol/geom/linestring";
 import olPolygon from "ol/geom/polygon";
 import olCircle from "ol/geom/circle";
-import olGeom  from "ol/geom/geometry";
+import olGeom from "ol/geom/geometry";
 import * as Constants from "../constants";
 import * as Runtime from "../api/runtime";
 import * as logger from "../utils/logger";
@@ -18,7 +18,7 @@ import { RefreshMode, ReduxDispatch, IApplicationState, ICommand, ClientKind } f
 import * as MapActions from "../actions/map";
 import * as TaskPaneActions from "../actions/taskpane";
 import * as LegendActions from "../actions/legend";
-import { buildSelectionXml } from "../api/builders/deArrayify";
+import { deArrayify, buildSelectionXml } from "../api/builders/deArrayify";
 import { FormFrameShim } from "../components/form-frame-shim";
 import { getCommand, DefaultCommands, CommandConditions } from "../api/registry/command";
 import { Toaster, Position, Intent, IToaster } from "@blueprintjs/core";
@@ -44,13 +44,26 @@ class FusionApiShim {
     constructor(private parent: ViewerApiShim) {
         this.Event = new FusionEventApiShim();
     }
+    xml2json(callback: Function, response: any, json: boolean) {
+        if (json) {
+            const o = JSON.parse(response.responseText);
+            callback(o);
+        } else {
+            const options = {
+                onSuccess: callback,
+                method: 'POST',
+                parameters: { 'xml': encodeURIComponent(response.responseText) }
+            };
+            this.ajaxRequest('common/php/Xml2JSON.php', options);
+        }
+    }
     ajaxRequest(url: string, options: any) { // onSuccess: Function, onFailure: Function, parameters: any) {
         let reqUrl = `${Runtime.getFusionRoot()}/${url}`;
         const client = this.parent.getClient();
         const resolve = options.onSuccess || ((res: any) => logger.debug(`No success handler defined for this operation`));
         const fail = options.onFailure || options.onException || ((r: any, res: Error) => logger.error(res));
         if (client) {
-            if (typeof(options.parameters) == 'string') {
+            if (typeof (options.parameters) == 'string') {
                 reqUrl += "?" + options.parameters;
                 fetch(reqUrl, {
                     method: "GET"
@@ -76,7 +89,7 @@ class FusionApiShim {
                         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                     },
                     method: "POST",
-                    body: serialize(options.parameters) //form
+                    body: serialize(options.parameters, false) //form
                 }).then(res => {
                     if (!res.ok) {
                         const stat = res.statusText;
@@ -165,7 +178,7 @@ type FusionGeomDigitizer = (geom: any) => void;
  */
 class OL2Rect {
     constructor(private poly: olPolygon) { }
-    getVertices(): ({ x: number, y: number }|undefined)[] {
+    getVertices(): ({ x: number, y: number } | undefined)[] {
         const coords = this.poly.getExtent();
         return [
             { x: coords[0], y: coords[1] },//0
@@ -260,15 +273,25 @@ class FusionWidgetApiShim {
     goHome(): void { //TaskPane
         this.parent.goHome();
     }
+    processFeatureInfo(r: any): void {
+        const o = JSON.parse(r.responseText);
+        if (o.FeatureInformation) {
+            const norm: QueryMapFeaturesResponse = deArrayify(o);
+            const selXml = buildSelectionXml(norm.FeatureSet);
+            this.setSelection(selXml, false);
+        } else if (o.Message) {
+            this.info(o.Message);
+        }
+    }
     getSelectableLayers(): FusionSelectedLayer[] { //Map
         const layers = [] as FusionSelectedLayer[];
         const { map } = this.parent.props;
         if (map && map.Layer) {
             const matches = map.Layer
-                               .filter(l => l.Selectable)
-                               .map(l => {
-                                    return { layerName: l.Name, legendLabel: l.LegendLabel };
-                               });
+                .filter(l => l.Selectable)
+                .map(l => {
+                    return { layerName: l.Name, legendLabel: l.LegendLabel };
+                });
             for (const l of matches) {
                 layers.push(l);
             }
@@ -301,7 +324,7 @@ class FusionWidgetApiShim {
     setExtents(bounds: OL2Bounds) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
-            viewer.zoomToExtent([ bounds.left, bounds.bottom, bounds.right, bounds.top ]);
+            viewer.zoomToExtent([bounds.left, bounds.bottom, bounds.right, bounds.top]);
         }
     }
     setActiveLayer(layer: any) { //Map

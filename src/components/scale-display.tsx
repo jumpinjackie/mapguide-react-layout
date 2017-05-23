@@ -4,6 +4,12 @@ import {
 } from "../api/common";
 import { tr } from "../api/i18n";
 
+/**
+ * ScaleDisplay component props
+ *
+ * @export
+ * @interface IScaleDisplayProps
+ */
 export interface IScaleDisplayProps {
     style?: React.CSSProperties;
     view: IMapView;
@@ -12,6 +18,13 @@ export interface IScaleDisplayProps {
     onScaleChanged: (scale: number) => void;
 }
 
+/**
+ * A component that displays the map scale
+ *
+ * @export
+ * @class ScaleDisplay
+ * @extends {React.Component<IScaleDisplayProps, any>}
+ */
 export class ScaleDisplay extends React.Component<IScaleDisplayProps, any> {
     private fnFiniteScaleChanged: GenericEventHandler;
     private fnScaleKeyPressed: GenericEventHandler;

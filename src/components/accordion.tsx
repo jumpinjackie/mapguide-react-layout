@@ -2,17 +2,35 @@ import * as React from "react";
 import { Collapse } from "@blueprintjs/core";
 import Measure = require("react-measure");
 
+/**
+ * Accordion panel dimensions
+ *
+ * @export
+ * @interface IAccordionPanelContentDimensions
+ */
 export interface IAccordionPanelContentDimensions {
     width: number;
     height: number;
 }
 
+/**
+ * Describes a panel in the accordion
+ *
+ * @export
+ * @interface IAccordionPanelSpec
+ */
 export interface IAccordionPanelSpec {
     id: string;
     title: string;
     contentRenderer: (dim: IAccordionPanelContentDimensions) => JSX.Element;
 }
 
+/**
+ * Accordion component props
+ *
+ * @export
+ * @interface IAccordionProps
+ */
 export interface IAccordionProps {
     style: React.CSSProperties;
     panels: IAccordionPanelSpec[];
@@ -22,6 +40,13 @@ export interface IAccordionProps {
 
 const PANEL_HEADER_HEIGHT = 24;
 
+/**
+ * A generic, reusable Accordion component
+ *
+ * @export
+ * @class Accordion
+ * @extends {React.Component<IAccordionProps, any>}
+ */
 export class Accordion extends React.Component<IAccordionProps, any> {
     private fnTogglePanel: GenericEventHandler;
     constructor(props: IAccordionProps) {

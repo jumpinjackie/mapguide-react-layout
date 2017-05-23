@@ -8,6 +8,12 @@ const Draggable = require('react-draggable');
  */
 export type ModalDialogPositioning = [number|null, number|null, number|null, number|null] | [string|null, string|null, string|null, string|null];
 
+/**
+ * ModalDialog component props
+ *
+ * @export
+ * @interface IModalDialogProps
+ */
 export interface IModalDialogProps {
     isOpen: boolean;
     backdrop?: boolean;
@@ -23,6 +29,13 @@ export interface IModalDialogProps {
     onClose?: () => void;
 }
 
+/**
+ * A generic floating Modal Dialog
+ *
+ * @export
+ * @class ModalDialog
+ * @extends {React.Component<IModalDialogProps, any>}
+ */
 export class ModalDialog extends React.Component<IModalDialogProps, any> {
     fnClose: GenericEventHandler;
     constructor(props: IModalDialogProps) {

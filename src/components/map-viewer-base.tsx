@@ -81,6 +81,13 @@ import Point from "ol/geom/point";
 import LineString from "ol/geom/linestring";
 import Circle from "ol/geom/circle";
 
+/**
+ * MapViewerBase component props
+ *
+ * @export
+ * @interface IMapViewerBaseProps
+ * @extends {IMapViewerContextProps}
+ */
 export interface IMapViewerBaseProps extends IMapViewerContextProps {
     tool: ActiveMapTool;
     view?: IMapView;
@@ -104,6 +111,15 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
     hideLayers: string[] | undefined;
 }
 
+/**
+ * Indicates if the given arrays are different (content-wise)
+ *
+ * @export
+ * @template T
+ * @param {(T[] | undefined)} arr
+ * @param {(T[] | undefined)} other
+ * @returns {boolean}
+ */
 export function arrayChanged<T>(arr: T[] | undefined, other: T[] | undefined): boolean {
     if (arr && other) {
         return arr.length != other.length
@@ -113,6 +129,14 @@ export function arrayChanged<T>(arr: T[] | undefined, other: T[] | undefined): b
     }
 }
 
+/**
+ * Determines if the given IMapView instances are equal or close to it
+ *
+ * @export
+ * @param {(IMapView | undefined)} view
+ * @param {(IMapView | undefined)} otherView
+ * @returns {boolean}
+ */
 export function areViewsCloseToEqual(view: IMapView | undefined, otherView: IMapView | undefined): boolean {
     if (view && otherView) {
         return areNumbersEqual(view.x, otherView.x) &&
@@ -123,6 +147,14 @@ export function areViewsCloseToEqual(view: IMapView | undefined, otherView: IMap
     }
 }
 
+/**
+ * Indicates if the given runtime map instances are the same or have the same name
+ *
+ * @export
+ * @param {Contracts.RtMap.RuntimeMap} map
+ * @param {Contracts.RtMap.RuntimeMap} other
+ * @returns {boolean}
+ */
 export function areMapsSame(map: Contracts.RtMap.RuntimeMap, other: Contracts.RtMap.RuntimeMap): boolean {
     if (map != other) {
         return map.Name == other.Name;
@@ -168,6 +200,13 @@ function cloneExtent(bounds: Bounds): Bounds {
     ];
 }
 
+/**
+ * The base map viewer component
+ *
+ * @export
+ * @class MapViewerBase
+ * @extends {React.Component<IMapViewerBaseProps, any>}
+ */
 @ContextMenuTarget
 export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     private fnMouseUp: GenericEventHandler;

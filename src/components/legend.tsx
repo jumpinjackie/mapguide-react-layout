@@ -26,6 +26,12 @@ const LegendLabel = (props: ILegendLabelProps) => {
     return <span style={{ lineHeight: `${ICON_HEIGHT}px`, verticalAlign: "middle" }}>{props.text}</span>;
 };
 
+/**
+ * Legend component props
+ *
+ * @export
+ * @interface ILegendProps
+ */
 export interface ILegendProps {
     map: RuntimeMap;
     showLayers: string[] | undefined;
@@ -307,6 +313,14 @@ function isGroupVisibleAtScale(group: MapGroup, tree: any, scale: number): boole
     return false;
 }
 
+/**
+ * The Legend component provides a component to view the layer structure, its styles and thematics and
+ * the ability to toggle the group/layer visibility of the current map
+ *
+ * @export
+ * @class Legend
+ * @extends {React.Component<ILegendProps, any>}
+ */
 export class Legend extends React.Component<ILegendProps, any> {
     static childContextTypes = LEGEND_CONTEXT_VALIDATION_MAP;
     constructor(props: ILegendProps) {

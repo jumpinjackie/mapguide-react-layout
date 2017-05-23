@@ -19,6 +19,12 @@ function currentUrlDoesNotMatchMapName(currentUrl: string, mapName: string): boo
     }
 }
 
+/**
+ * TaskPane component props
+ *
+ * @export
+ * @interface ITaskPaneProps
+ */
 export interface ITaskPaneProps {
     currentUrl?: string;
     mapName: string;
@@ -57,6 +63,13 @@ export interface ITaskPaneProps {
 // However, I suspect this doesn't work in React because of the virtual DOM retaining
 // the old iframe element. How can we get React to make a new iframe for each URL?
 
+/**
+ * A component that serves as a generic container for content or User Interface for custom functionality
+ *
+ * @export
+ * @class TaskPane
+ * @extends {React.Component<ITaskPaneProps, any>}
+ */
 export class TaskPane extends React.Component<ITaskPaneProps, any> {
     private _iframe: HTMLIFrameElement;
     private fnFrameMounted: (iframe: HTMLIFrameElement) => void;

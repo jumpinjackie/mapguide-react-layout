@@ -1,5 +1,9 @@
 import * as React from "react";
 
+/**
+ * The About component displays information about this viewer
+ * @param props
+ */
 export const About: React.StatelessComponent<any> = (props) => {
     return <div className="component-about-dialog-content">
         <h4>mapguide-react-layout</h4>

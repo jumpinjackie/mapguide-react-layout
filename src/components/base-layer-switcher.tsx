@@ -3,12 +3,26 @@ import { IExternalBaseLayer } from "../api/common";
 import { STR_EMPTY, strIsNullOrEmpty } from "../utils/string";
 import { tr } from "../api/i18n";
 
+/**
+ * BaseLayersSwitcher component props
+ *
+ * @export
+ * @interface IBaseLayerSwitcherProps
+ */
 export interface IBaseLayerSwitcherProps {
     locale: string | undefined;
     externalBaseLayers: IExternalBaseLayer[];
     onBaseLayerChanged?: (name: string) => void;
 }
 
+/**
+ * The BaseLayerSwitcher component provides a user interface for switching the active external
+ * base layer of the current map
+ *
+ * @export
+ * @class BaseLayerSwitcher
+ * @extends {React.Component<IBaseLayerSwitcherProps, any>}
+ */
 export class BaseLayerSwitcher extends React.Component<IBaseLayerSwitcherProps, any> {
     private fnBaseLayerChanged: (e: any) => void;
     constructor(props: IBaseLayerSwitcherProps) {

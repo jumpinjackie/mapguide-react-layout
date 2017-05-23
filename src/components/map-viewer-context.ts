@@ -558,6 +558,12 @@ export interface IMapViewerContextCallback {
     isFeatureTooltipEnabled(): boolean;
 }
 
+/**
+ * Provides contextual information for a map viewer
+ *
+ * @export
+ * @class MapViewerContext
+ */
 export class MapViewerContext {
     private _activeMapName: string;
     private _layerSets: Dictionary<MgLayerSet>;

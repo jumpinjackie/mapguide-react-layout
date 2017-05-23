@@ -16,6 +16,10 @@ export interface ISessionExpiredProps {
     locale: string;
 }
 
+/**
+ * Displays the "session expired" error message with possible recovery actions
+ * @param props
+ */
 export const SessionExpired = (props: ISessionExpiredProps) => {
     return <div className="component-session-expired">
         <p>{tr("SESSION_EXPIRED_DETAILED", props.locale)}</p>

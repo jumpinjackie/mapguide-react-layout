@@ -5,11 +5,24 @@ import { IItem, IInlineMenu, IFlyoutMenu, getIconStyle, getIcon, getEnabled } fr
 
 const MENU_ITEM_HEIGHT = 30;
 
+/**
+ * MenuComponent props
+ *
+ * @export
+ * @interface IMenuComponentProps
+ */
 export interface IMenuComponentProps {
     items: IItem[];
     onInvoked?: () => void;
 }
 
+/**
+ * A generic menu component
+ *
+ * @export
+ * @class MenuComponent
+ * @extends {React.Component<IMenuComponentProps, any>}
+ */
 export class MenuComponent extends React.Component<IMenuComponentProps, any> {
     constructor(props: IMenuComponentProps) {
         super(props);

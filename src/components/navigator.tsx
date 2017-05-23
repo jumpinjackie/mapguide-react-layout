@@ -34,6 +34,13 @@ const VERT_BEGIN = 60; //This position represents the starting scale (ie. initia
 
 const LN9 = Math.log(9);
 
+/**
+ * Navigator component props
+ *
+ * @export
+ * @interface INavigatorProps
+ * @extends {React.Props<any>}
+ */
 export interface INavigatorProps extends React.Props<any> {
     style?: React.CSSProperties;
     busy: boolean;
@@ -52,6 +59,13 @@ export interface INavigatorProps extends React.Props<any> {
     onRequestZoomToScale: (scale: number) => void;
 }
 
+/**
+ * The Navigator component provides an interactive zoom slider for the map viewer
+ *
+ * @export
+ * @class Navigator
+ * @extends {React.Component<INavigatorProps, any>}
+ */
 export class Navigator extends React.Component<INavigatorProps, any> {
     private fnPanEast: GenericEventHandler;
     private fnPanWest: GenericEventHandler;

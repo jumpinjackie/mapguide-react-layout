@@ -442,6 +442,12 @@ export interface IContainerItem extends IItem {
     renderContainerContent: () => JSX.Element;
 }
 
+/**
+ * Toolbar component props
+ *
+ * @export
+ * @interface IToolbarProps
+ */
 export interface IToolbarProps {
     childItems: IItem[];
     containerClass?: string;
@@ -453,6 +459,13 @@ export interface IToolbarProps {
     onCloseComponent?: (id: string) => void;
 }
 
+/**
+ * A generic toolbar component
+ *
+ * @export
+ * @class Toolbar
+ * @extends {React.Component<IToolbarProps, any>}
+ */
 export class Toolbar extends React.Component<IToolbarProps, any> {
     static childContextTypes = TOOLBAR_CONTEXT_VALIDATION_MAP;
     constructor(props: IToolbarProps) {

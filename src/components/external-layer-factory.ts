@@ -1,16 +1,23 @@
 import { MgError } from "../api/error";
 import { IExternalBaseLayer } from "../api/common";
-import Source from "ol/source/source";
+import olSource from "ol/source/source";
 import XYZ from "ol/source/xyz";
 import OSM from "ol/source/osm";
 import Stamen from "ol/source/stamen";
 import BingMaps from "ol/source/bingmaps";
 
 interface OLSourceCtor {
-    new (options?: any): Source;
+    new (options?: any): olSource;
 }
 
-export function createExternalSource(layer: IExternalBaseLayer) {
+/**
+ * Creates an OpenLayers source based on the given external base layer definition
+ *
+ * @export
+ * @param {IExternalBaseLayer} layer
+ * @returns
+ */
+export function createExternalSource(layer: IExternalBaseLayer): olSource {
     let sourceCtor: OLSourceCtor;
 
     switch (layer.kind) {

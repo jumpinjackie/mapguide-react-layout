@@ -2,11 +2,24 @@ import * as React from "react";
 import { InitError } from "../api/common";
 import { isError, isInitError } from "../utils/type-guards";
 
+/**
+ * Error component props
+ *
+ * @export
+ * @interface IErrorProps
+ */
 export interface IErrorProps {
     error: Error|InitError|string;
     errorRenderer?: (err: Error|InitError) => JSX.Element;
 }
 
+/**
+ * Returns a normalized stack trace for the given error object
+ *
+ * @export
+ * @param {(Error|InitError)} err
+ * @returns {string[]}
+ */
 export function normalizeStack(err: Error|InitError): string[] {
     let stack: string[];
     if (err.stack instanceof Array) {
@@ -19,6 +32,10 @@ export function normalizeStack(err: Error|InitError): string[] {
     return stack;
 }
 
+/**
+ * The Error component displays an error object in a nicely formatted manner
+ * @param props
+ */
 export const Error = (props: IErrorProps) => {
     const err = props.error;
     if (isError(err) || isInitError(err)) {

@@ -2,6 +2,13 @@ import * as React from 'react';
 
 export type FormFrameShimProps = any;
 
+/**
+ * The FormFrameShim component provides a compatibility shim for the AJAX viewer form frame
+ *
+ * @export
+ * @class FormFrameShim
+ * @extends {React.Component<FormFrameShimProps, any>}
+ */
 export class FormFrameShim extends React.Component<FormFrameShimProps, any> {
     private _form: HTMLFormElement;
     private fnFormMounted: (form: HTMLFormElement) => void;
@@ -19,7 +26,7 @@ export class FormFrameShim extends React.Component<FormFrameShimProps, any> {
     }
     submit(url: string, params: string[], target: string): void {
         this.setState({
-            action: url, 
+            action: url,
             params: params,
             target: target
         }, () => {

@@ -3,6 +3,12 @@ import { IMapMenuEntry } from "../api/common";
 import { STR_EMPTY, strIsNullOrEmpty } from "../utils/string";
 import { tr } from "../api/i18n";
 
+/**
+ * MapMenu component props
+ *
+ * @export
+ * @interface IMapMenuProps
+ */
 export interface IMapMenuProps {
     locale: string | undefined;
     selectedMap: string;
@@ -10,6 +16,13 @@ export interface IMapMenuProps {
     onActiveMapChanged?: (name: string) => void;
 }
 
+/**
+ * The MapMenu component provides the ability to switch between active maps
+ *
+ * @export
+ * @class MapMenu
+ * @extends {React.Component<IMapMenuProps, any>}
+ */
 export class MapMenu extends React.Component<IMapMenuProps, any> {
     private fnActiveMapChanged: (e: any) => void;
     constructor(props: IMapMenuProps) {

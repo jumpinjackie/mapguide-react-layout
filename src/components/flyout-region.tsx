@@ -6,12 +6,25 @@ import { FlyoutMenuChildItem } from "./toolbar";
 import { IDOMElementMetrics } from "../api/common";
 import { PlaceholderComponent } from "../api/registry/component";
 
+/**
+ * FlyoutRegion component props
+ *
+ * @export
+ * @interface IFlyoutRegionProps
+ */
 export interface IFlyoutRegionProps {
     flyoutConf: any;
     locale: string;
     onCloseFlyout: (id: string) => void;
 }
 
+/**
+ * A FlyoutRegion component defines a region where flyout menus can be displayed
+ *
+ * @export
+ * @class FlyoutRegion
+ * @extends {React.Component<IFlyoutRegionProps, any>}
+ */
 export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
     constructor(props: IFlyoutRegionProps) {
         super(props);

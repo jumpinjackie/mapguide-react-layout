@@ -4,6 +4,12 @@ import { Toolbar, IItem, IInlineMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_C
 import { tr as xlate } from "../api/i18n";
 import { NOOP } from "../api/common";
 
+/**
+ * SelectionPanel component props
+ *
+ * @export
+ * @interface ISelectionPanelProps
+ */
 export interface ISelectionPanelProps {
     locale?: string;
     selection: SelectedFeatureSet;
@@ -35,6 +41,13 @@ function buildToolbarItems(selPanel: SelectionPanel): IItem[] {
     ];
 }
 
+/**
+ * Displays attributes of selected features with the ability to zoom in on selected features
+ *
+ * @export
+ * @class SelectionPanel
+ * @extends {React.Component<ISelectionPanelProps, any>}
+ */
 export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
     selectionToolbarItems: IItem[];
     fnSelectedLayerChanged: GenericEventHandler;

@@ -581,7 +581,7 @@ export interface IViewerApiShimState {
 export interface IViewerApiShimDispatch {
     goHome: () => void;
     legendRefresh: () => void;
-    invokeCommand: (cmd: ICommand) => void;
+    invokeCommand: (cmd: ICommand, parameters?: any) => void;
     setSelection: (mapName: string, selectionSet: any) => void;
     queryMapFeatures: (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => void;
 }
@@ -606,7 +606,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IViewerApiShimDisp
     return {
         goHome: () => dispatch(TaskPaneActions.goHome()),
         legendRefresh: () => dispatch(LegendActions.refresh()),
-        invokeCommand: (cmd) => dispatch(MapActions.invokeCommand(cmd)),
+        invokeCommand: (cmd, parameters) => dispatch(MapActions.invokeCommand(cmd, parameters)),
         setSelection: (mapName, res) => dispatch(MapActions.setSelection(mapName, res)),
         queryMapFeatures: (mapName, options) => dispatch(MapActions.queryMapFeatures(mapName, options))
     };

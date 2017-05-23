@@ -29,7 +29,7 @@ import * as logger from "../../utils/logger";
 /**
  * @hidden
  */
-export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: (cmd: ICommand) => void): IItem|IInlineMenu|IFlyoutMenu|IComponentFlyoutItem|null {
+export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: (cmd: ICommand, parameters?: any) => void): IItem|IInlineMenu|IFlyoutMenu|IComponentFlyoutItem|null {
     const state = store.getState();
     if (tb.error) {
         const cmdItem: IItem = {
@@ -60,7 +60,7 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
                 label: tb.label,
                 selected: () => cmd.selected(state),
                 enabled: () => cmd.enabled(state),
-                invoke: () => commandInvoker(cmd)
+                invoke: () => commandInvoker(cmd, tb.parameters)
             };
             return cmdItem;
         }

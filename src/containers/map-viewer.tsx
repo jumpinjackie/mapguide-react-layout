@@ -59,7 +59,7 @@ export interface IMapViewerContainerDispatch {
     setCurrentView: (view: IMapView) => void;
     setBusyCount: (count: number) => void;
     setMouseCoordinates: (mapName: string, coord: Coordinate) => void;
-    invokeCommand: (cmd: ICommand) => void;
+    invokeCommand: (cmd: ICommand, parameters?: any) => void;
     showModalComponent: (options: any) => void;
     queryMapFeatures: (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => void;
 }
@@ -112,7 +112,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMapViewerContaine
         setCurrentView: (view) => dispatch(MapActions.setCurrentView(view)),
         setBusyCount: (count) => dispatch(MapActions.setBusyCount(count)),
         setMouseCoordinates: (mapName, coord) => dispatch(MapActions.setMouseCoordinates(mapName, coord)),
-        invokeCommand: (cmd) => dispatch(invokeCommand(cmd)),
+        invokeCommand: (cmd, parameters) => dispatch(invokeCommand(cmd, parameters)),
         showModalComponent: (options) => dispatch(showModalComponent(options)),
         queryMapFeatures: (mapName, options) => dispatch(queryMapFeatures(mapName, options))
     };

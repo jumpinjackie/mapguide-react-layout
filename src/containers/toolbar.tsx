@@ -32,7 +32,7 @@ export interface IToolbarContainerState {
 }
 
 export interface IToolbarContainerDispatch {
-    invokeCommand: (cmd: ICommand) => void;
+    invokeCommand: (cmd: ICommand, parameters?: any) => void;
     openFlyout: (id: string, metrics: IDOMElementMetrics) => void;
     closeFlyout: (id: string) => void;
     openComponent: (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => void;
@@ -63,7 +63,7 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IToolbarC
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IToolbarContainerDispatch> {
     return {
-        invokeCommand: (cmd) => dispatch(invokeCommand(cmd)),
+        invokeCommand: (cmd, parameters) => dispatch(invokeCommand(cmd, parameters)),
         openFlyout: (id, metrics) => dispatch(FlyoutActions.openFlyout(id, metrics)),
         closeFlyout: (id) => dispatch(FlyoutActions.closeFlyout(id)),
         openComponent: (id, metrics, name, props) => dispatch(FlyoutActions.openComponent(id, metrics, name, props)),

@@ -110,34 +110,34 @@ function combineSelections(oldRes: QueryMapFeaturesResponse | undefined, newRes:
 
 /**
  * Options for map querying
- * 
+ *
  * @export
  * @interface QueryMapFeatureActionOptions
  */
 export interface QueryMapFeatureActionOptions {
     /**
      * The main set of map querying options
-     * 
+     *
      * @type {IQueryMapFeaturesOptions}
      * @memberof QueryMapFeatureActionOptions
      */
     options: IQueryMapFeaturesOptions;
     /**
      * If true, the selection changes will be appended to the current selection set. False otherwise
-     * 
+     *
      * @type {boolean}
      * @memberof QueryMapFeatureActionOptions
      */
     append?: boolean;
     /**
      * An optional callback to invoke on successful operation
-     * 
+     *
      * @memberof QueryMapFeatureActionOptions
      */
     callback?: (res: QueryMapFeaturesResponse) => void;
     /**
      * An optional callback to invoke on failure
-     * 
+     *
      * @memberof QueryMapFeatureActionOptions
      */
     errBack?: (err: any) => void;
@@ -253,12 +253,13 @@ export function setSelection(mapName: string, selectionSet: any): ReduxAction {
  * Invokes the specified command
  *
  * @export
- * @param {ICommand} cmd The command to invoke
+ * @param {ICommand} cmd
+ * @param {*} [parameters]
  * @returns {ReduxThunkedAction}
  */
-export function invokeCommand(cmd: ICommand): ReduxThunkedAction {
+export function invokeCommand(cmd: ICommand, parameters?: any): ReduxThunkedAction {
     return (dispatch, getState) => {
-        return cmd.invoke(dispatch, getState, getViewer());
+        return cmd.invoke(dispatch, getState, getViewer(), parameters);
     };
 }
 
@@ -315,11 +316,11 @@ export function setScale(mapName: string, scale: number) {
 
 /**
  * Sets the current mouse coordinates
- * 
+ *
  * @export
  * @param {string} mapName The name of the current runtime map
  * @param {*} coord The current mouse coordinates
- * @returns 
+ * @returns
  */
 export function setMouseCoordinates(mapName: string, coord: any) {
     return {
@@ -333,10 +334,10 @@ export function setMouseCoordinates(mapName: string, coord: any) {
 
 /**
  * Goes back to the previous view on the navigation stack
- * 
+ *
  * @export
  * @param {string} mapName The name of the current runtime map
- * @returns 
+ * @returns
  */
 export function previousView(mapName: string) {
     return {
@@ -349,10 +350,10 @@ export function previousView(mapName: string) {
 
 /**
  * Goes to the next view on the navigation stack
- * 
+ *
  * @export
  * @param {string} mapName The name of the current runtime amp
- * @returns 
+ * @returns
  */
 export function nextView(mapName: string) {
     return {
@@ -365,10 +366,10 @@ export function nextView(mapName: string) {
 
 /**
  * Sets the active map tool
- * 
+ *
  * @export
  * @param {ActiveMapTool} tool The active map tool command
- * @returns 
+ * @returns
  */
 export function setActiveTool(tool: ActiveMapTool) {
     return {
@@ -379,10 +380,10 @@ export function setActiveTool(tool: ActiveMapTool) {
 
 /**
  * Sets the active runtime map
- * 
+ *
  * @export
  * @param {string} mapName The name of the runtime map to set as active
- * @returns 
+ * @returns
  */
 export function setActiveMap(mapName: string) {
     return {

@@ -28,7 +28,7 @@ export interface INavigatorContainerState {
 }
 
 export interface INavigatorContainerDispatch {
-    invokeCommand: (cmd: ICommand) => void;
+    invokeCommand: (cmd: ICommand, parameters?: any) => void;
     setScale: (mapName: string, scale: number) => void;
 }
 
@@ -49,7 +49,7 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: INavigato
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<INavigatorContainerDispatch> {
     return {
         setScale: (mapName, scale) => dispatch(setScale(mapName, scale)),
-        invokeCommand: (cmd) => dispatch(invokeCommand(cmd))
+        invokeCommand: (cmd, parameters) => dispatch(invokeCommand(cmd, parameters))
     };
 }
 

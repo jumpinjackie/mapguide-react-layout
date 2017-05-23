@@ -33,7 +33,7 @@ export interface ITaskPaneContainerState {
 }
 
 export interface ITaskPaneDispatch {
-    invokeCommand: (cmd: ICommand) => void;
+    invokeCommand: (cmd: ICommand, parameters?: any) => void;
     goHome: () => void;
     goForward: () => void;
     goBack: () => void;
@@ -59,7 +59,7 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<ITaskPaneC
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ITaskPaneDispatch> {
     return {
-        invokeCommand: (cmd) => dispatch(invokeCommand(cmd)),
+        invokeCommand: (cmd, parameters) => dispatch(invokeCommand(cmd, parameters)),
         goHome: () => dispatch(TaskPaneActions.goHome()),
         goForward: () => dispatch(TaskPaneActions.goForward()),
         goBack: () => dispatch(TaskPaneActions.goBack()),

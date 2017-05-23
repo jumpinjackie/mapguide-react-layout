@@ -47,7 +47,7 @@ export interface IMapView {
 /**
  * Describes a function that is called when a command is invoked
  */
-export type DispatcherFunc = (dispatch: ReduxDispatch, getState: () => Readonly<IApplicationState>, viewer?: IMapViewer) => any;
+export type DispatcherFunc = (dispatch: ReduxDispatch, getState: () => Readonly<IApplicationState>, viewer?: IMapViewer, parameters?: any) => any;
 
 /**
  * Describes a viewer command

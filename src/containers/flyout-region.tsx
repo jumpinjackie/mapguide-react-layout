@@ -23,7 +23,7 @@ export interface IFlyoutRegionContainerState {
 
 export interface IFlyoutRegionContainerDispatch {
     closeFlyout: (id: string) => void;
-    invokeCommand: (cmd: ICommand) => void;
+    invokeCommand: (cmd: ICommand, parameters?: any) => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IFlyoutRegionContainerProps): Partial<IFlyoutRegionContainerState> {
@@ -36,7 +36,7 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IFlyoutRe
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IFlyoutRegionContainerDispatch> {
     return {
         closeFlyout: (id) => dispatch(closeFlyout(id)),
-        invokeCommand: (cmd) => dispatch(invokeCommand(cmd))
+        invokeCommand: (cmd, parameters) => dispatch(invokeCommand(cmd, parameters))
     };
 }
 

@@ -69,7 +69,7 @@ export function initDefaultCommands() {
             return state.viewer.tool === ActiveMapTool.Select;
         },
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             return dispatch({
                 type: Constants.MAP_SET_ACTIVE_TOOL,
                 payload: ActiveMapTool.Select
@@ -83,7 +83,7 @@ export function initDefaultCommands() {
             return state.viewer.tool === ActiveMapTool.Pan;
         },
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             return dispatch({
                 type: Constants.MAP_SET_ACTIVE_TOOL,
                 payload: ActiveMapTool.Pan
@@ -97,7 +97,7 @@ export function initDefaultCommands() {
             return state.viewer.tool === ActiveMapTool.Zoom;
         },
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             return dispatch({
                 type: Constants.MAP_SET_ACTIVE_TOOL,
                 payload: ActiveMapTool.Zoom
@@ -111,7 +111,7 @@ export function initDefaultCommands() {
             return state.viewer.featureTooltipsEnabled === true;
         },
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             const enabled = getState().viewer.featureTooltipsEnabled;
             return dispatch({
                 type: Constants.MAP_SET_MAPTIP,
@@ -124,7 +124,7 @@ export function initDefaultCommands() {
         icon: "zoom-in-fixed.png",
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             if (viewer) {
                 viewer.zoomDelta(1);
             }
@@ -135,7 +135,7 @@ export function initDefaultCommands() {
         icon: "zoom-out-fixed.png",
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             if (viewer) {
                 viewer.zoomDelta(-1);
             }
@@ -146,7 +146,7 @@ export function initDefaultCommands() {
         icon: "pan-west.png",
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             if (viewer) {
                 panMap(dispatch, viewer, "left");
             }
@@ -157,7 +157,7 @@ export function initDefaultCommands() {
         icon: "pan-east.png",
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             if (viewer) {
                 panMap(dispatch, viewer, "right");
             }
@@ -168,7 +168,7 @@ export function initDefaultCommands() {
         icon: "pan-north.png",
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             if (viewer) {
                 panMap(dispatch, viewer, "up");
             }
@@ -179,7 +179,7 @@ export function initDefaultCommands() {
         icon: "pan-south.png",
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             if (viewer) {
                 panMap(dispatch, viewer, "down");
             }
@@ -190,7 +190,7 @@ export function initDefaultCommands() {
         icon: "about.png",
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             dispatch({
                 type: Constants.MODAL_SHOW_COMPONENT,
                 payload: {
@@ -209,7 +209,7 @@ export function initDefaultCommands() {
         icon: "help.png",
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             dispatch({
                 type: Constants.MODAL_SHOW_URL,
                 payload: {
@@ -229,7 +229,7 @@ export function initDefaultCommands() {
         icon: "measure.png",
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             const config = getState().config;
             if (config.capabilities.hasTaskPane) {
                 dispatch({
@@ -259,7 +259,7 @@ export function initDefaultCommands() {
         icon: "print.png",
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             const config = getState().config;
             if (config.capabilities.hasTaskPane) {
                 dispatch({
@@ -289,7 +289,7 @@ export function initDefaultCommands() {
         icon: "options.png",
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             const config = getState().config;
             if (config.capabilities.hasTaskPane) {
                 dispatch({
@@ -319,7 +319,7 @@ export function initDefaultCommands() {
         icon: "select-radius.png",
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             if (viewer) {
                 viewer.digitizeCircle(circle => {
                     const fact = viewer.getOLFactory();
@@ -334,7 +334,7 @@ export function initDefaultCommands() {
         icon: "select-polygon.png",
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             if (viewer) {
                 viewer.digitizePolygon(geom => {
                     viewer.selectByGeometry(geom);
@@ -347,7 +347,7 @@ export function initDefaultCommands() {
         icon: "initial-center.png",
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             if (viewer) {
                 const view = getInitialView(getState());
                 if (view != null) {
@@ -363,7 +363,7 @@ export function initDefaultCommands() {
         icon: "zoom-full.png",
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             if (viewer) {
                 viewer.initialView();
             }
@@ -374,7 +374,7 @@ export function initDefaultCommands() {
         icon: "select-clear.png",
         selected: () => false,
         enabled: CommandConditions.hasSelection,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             if (viewer) {
                 viewer.clearSelection();
             }
@@ -385,7 +385,7 @@ export function initDefaultCommands() {
         icon: "icon_zoomselect.gif",
         selected: () => false,
         enabled: CommandConditions.hasSelection,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             if (viewer) {
                 const fact = viewer.getOLFactory();
                 const selection = getSelectionSet(getState());
@@ -414,7 +414,7 @@ export function initDefaultCommands() {
         icon: "icon_refreshmap.gif",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             if (viewer) {
                 viewer.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
                 dispatch(LegendActions.refresh());
@@ -426,7 +426,7 @@ export function initDefaultCommands() {
         icon: "view-back.png",
         selected: () => false,
         enabled: CommandConditions.hasPreviousView,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             const mapName = getState().config.activeMapName;
             if (mapName) {
                 dispatch(MapActions.previousView(mapName));
@@ -438,7 +438,7 @@ export function initDefaultCommands() {
         icon: "view-forward.png",
         selected: () => false,
         enabled: CommandConditions.hasNextView,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             const mapName = getState().config.activeMapName;
             if (mapName) {
                 dispatch(MapActions.nextView(mapName));
@@ -450,18 +450,32 @@ export function initDefaultCommands() {
         icon: "geolocation.png",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             const state = getState();
             const view = getCurrentView(state);
             const rtMap = getRuntimeMap(state);
             const locale = state.config.locale;
             if (viewer && view && rtMap) {
                 const fact = viewer.getOLFactory();
+                const geoOptions: Partial<PositionOptions> = {};
+                let zoomScale = view.scale;
+                if (parameters.ZoomLevel) {
+                    zoomScale = parseInt(parameters.ZoomLevel, 10);
+                }
+                if (parameters.EnableHighAccuracy) {
+                    geoOptions.enableHighAccuracy = (parameters.EnableHighAccuracy == "true");
+                }
+                if (parameters.Timeout) {
+                    geoOptions.timeout = parseInt(parameters.Timeout, 10);
+                }
+                if (parameters.MaximumAge) {
+                    geoOptions.maximumAge = parseInt(parameters.MaximumAge, 10);
+                }
                 navigator.geolocation.getCurrentPosition(pos => {
                     const proj = viewer.getProjection();
                     const txCoord = fact.transformCoordinateFromLonLat([ pos.coords.longitude, pos.coords.latitude ], proj);
                     const testCoord = fact.transformCoordinateFromLonLat([ pos.coords.longitude, pos.coords.latitude ], `EPSG:${rtMap.CoordinateSystem.EpsgCode}`);
-                    viewer.zoomToView(txCoord[0], txCoord[1], view.scale);
+                    viewer.zoomToView(txCoord[0], txCoord[1], zoomScale);
                     const extents: [number, number, number, number] = [
                         rtMap.Extents.LowerLeftCoordinate.X,
                         rtMap.Extents.LowerLeftCoordinate.Y,
@@ -475,7 +489,7 @@ export function initDefaultCommands() {
                     }
                 }, err => {
                     Toaster.create({ position: Position.TOP, className: "mg-toast" }).show({ iconName: "error", message: tr("GEOLOCATION_ERROR", locale, { message: err.message, code: err.code }), intent: Intent.DANGER });
-                });
+                }, geoOptions);
             }
         }
     });
@@ -484,7 +498,7 @@ export function initDefaultCommands() {
         icon: "buffer.png",
         selected: () => false,
         enabled: CommandConditions.hasSelection,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
             const config = state.config;
@@ -505,7 +519,7 @@ export function initDefaultCommands() {
         icon: "select-features.png",
         selected: () => false,
         enabled: CommandConditions.hasSelection,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
             const config = state.config;
@@ -526,7 +540,7 @@ export function initDefaultCommands() {
         icon: "redline.png",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
             const config = state.config;
@@ -553,7 +567,7 @@ export function initDefaultCommands() {
         icon: "invoke-script.png",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
 
         }
     });
@@ -562,7 +576,7 @@ export function initDefaultCommands() {
         icon: "invoke-script.png",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             const tplState = getState().template;
             dispatch(TemplateActions.setTaskPaneVisibility(true));
         }
@@ -571,7 +585,7 @@ export function initDefaultCommands() {
         icon: "invoke-script.png",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             const tplState = getState().template;
             dispatch(TemplateActions.setLegendVisibility(true));
         }
@@ -580,7 +594,7 @@ export function initDefaultCommands() {
         icon: "invoke-script.png",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, getState, viewer, parameters) => {
             const tplState = getState().template;
             dispatch(TemplateActions.setSelectionPanelVisibility(true));
         }

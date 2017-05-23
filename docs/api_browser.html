@@ -48,13 +48,27 @@
 
                 
                 <section class="col-sm-12 content">
-                                            <h1 id="api-documentation">API Documentation</h1>
-<p>API documentation for mapguide-react-layout is available 2 forms:</p>
+                                            <h1 id="browser-api">Browser API</h1>
+<p>The default viewer bundle exposes the following browser global APIs:</p>
 <ul>
-<li><a href="api_browser.html">A global script bundle</a></li>
-<li><a href="apidoc_npm/index.html">A npm module</a></li>
+<li><code>MapGuide</code>
+<ul>
+<li><code>Application</code> <a href="apidoc_npm/classes/_entries_application_.applicationviewmodel.html">(reference)</a></li>
+<li><code>Registry</code> <a href="apidoc_npm/classes/_entries_library_.registry.html">(reference)</a></li>
+<li><code>Externals</code>
+<ul>
+<li><code>proj4</code> (exported <a href="http://proj4js.org/">public API</a> of proj4js)</li>
+<li><code>React</code> (exported <a href="https://facebook.github.io/react/docs/react-api.html">public API</a> of React)</li>
+<li><code>ReactDOM</code> (exported <a href="https://facebook.github.io/react/docs/react-dom.html">public API</a> of ReactDOM)</li>
+</ul></li>
+</ul></li>
 </ul>
-<p>mapguide-react-layout also offers an <a href="apicompat.html">API compatibility layer</a> which allows any AJAX/Fusion viewer application to be migrated across with little to no modifications required.</p>
+<p>NOTE: In a browser globals context, you're basically writing plain JavaScript, as a result any documentation references to TypeScript-specific features no longer apply:</p>
+<ul>
+<li>Interfaces</li>
+<li>Typedefs</li>
+</ul>
+<p>For Task Pane content, mapguide-react-layout will also provide an <a href="apicompat.html">API compatibility layer</a> which allows any AJAX/Fusion viewer application to be migrated across with little to no modifications required.</p>
                                     </section>
 
             </div>

@@ -18,7 +18,7 @@ export interface IScaleDisplayContainerState {
     style?: React.CSSProperties;
     view: IMapView;
     config: IConfigurationReducerState;
-    finiteScales: number[] | null | undefined;
+    finiteScales: number[] | undefined;
 }
 
 export interface IScaleDisplayContainerDispatch {

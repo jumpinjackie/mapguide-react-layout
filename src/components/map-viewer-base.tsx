@@ -741,7 +741,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             this.props.onSessionExpired();
         }
     }
-    private convertContextMenuItems(items: IItem[] | null | undefined): any[] {
+    private convertContextMenuItems(items: IItem[] | undefined): any[] {
         return (items || []).map(i => {
             if (i.isSeparator === true) {
                 return '-';

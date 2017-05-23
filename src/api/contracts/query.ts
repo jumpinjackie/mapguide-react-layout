@@ -19,14 +19,14 @@ export interface SelectionImage {
 export interface FeatureProperty {
     /**
      * The display name of the feature property. Use the layer metadata
-     * to get the real property name 
-     * 
+     * to get the real property name
+     *
      * @type {string}
      */
     Name: string;
     /**
-     * The value of the feature property 
-     * 
+     * The value of the feature property
+     *
      * @type {string}
      */
     Value: string;
@@ -51,7 +51,7 @@ export interface SelectedLayer {
     "@id": string;
     "@name": string;
     Feature: SelectedFeature[];
-    LayerMetadata?: LayerMetadata | null | undefined;
+    LayerMetadata?: LayerMetadata | undefined;
 }
 
 export interface SelectedFeatureSet {
@@ -59,9 +59,9 @@ export interface SelectedFeatureSet {
 }
 
 export interface QueryMapFeaturesResponse {
-    FeatureSet?: FeatureSet | null | undefined;
-    Hyperlink?: string | null | undefined;
-    InlineSelectionImage?: SelectionImage | null | undefined;
-    SelectedFeatures?: SelectedFeatureSet | null | undefined;
-    Tooltip?: string | null | undefined;
+    FeatureSet?: FeatureSet | undefined;
+    Hyperlink?: string | undefined;
+    InlineSelectionImage?: SelectionImage | undefined;
+    SelectedFeatures?: SelectedFeatureSet | undefined;
+    Tooltip?: string | undefined;
 }

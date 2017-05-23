@@ -119,8 +119,8 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
     }
     render(): JSX.Element {
         const { selection } = this.props;
-        let feat: SelectedFeature | null | undefined;
-        let meta: LayerMetadata | null | undefined = null;
+        let feat: SelectedFeature | undefined;
+        let meta: LayerMetadata | undefined;
         if (selection != null && this.state.selectedLayerIndex >= 0 && this.state.featureIndex >= 0) {
             const selLayer = selection.SelectedLayer[this.state.selectedLayerIndex];
             feat = selLayer.Feature[this.state.featureIndex];

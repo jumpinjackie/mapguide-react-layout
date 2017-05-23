@@ -79,9 +79,9 @@ function deArrayifyScaleRanges(scales: any[]): Contracts.RtMap.ScaleRangeInfo[] 
     });
 }
 
-function deArrayifyFeatureSourceInfo(fs: any[]): Contracts.RtMap.FeatureSourceInfo | null {
+function deArrayifyFeatureSourceInfo(fs: any[]): Contracts.RtMap.FeatureSourceInfo | undefined {
     if (!fs || fs.length !== 1) {
-        return null;
+        return undefined;
     }
     return {
         ResourceId: tryGetAsProperty(fs[0], "ResourceId"),
@@ -120,9 +120,9 @@ function deArrayifyLayers(layers: any[]): Contracts.RtMap.MapLayer[] {
     });
 }
 
-function deArrayifyGroups(groups: any[]): Contracts.RtMap.MapGroup[] | null {
+function deArrayifyGroups(groups: any[]): Contracts.RtMap.MapGroup[] | undefined {
     if (!groups)
-        return null;
+        return undefined;
 
     return groups.map(grp => {
         const group: Contracts.RtMap.MapGroup = {
@@ -174,9 +174,9 @@ function deArrayifyExtents(extents: any[]): Contracts.RtMap.Envelope {
     return env;
 }
 
-function deArrayifyFiniteDisplayScales(fds: any[]): number[] | null {
+function deArrayifyFiniteDisplayScales(fds: any[]): number[] | undefined {
     if (!fds)
-        return null;
+        return undefined;
 
     return fds.map(parseFloat);
 }
@@ -226,10 +226,10 @@ function deArrayifyFeatureSetLayers(json: any[]): Contracts.Query.FeatureSetLaye
     });
 }
 
-function deArrayifyFeatureSet(json: any): Contracts.Query.FeatureSet | null {
+function deArrayifyFeatureSet(json: any): Contracts.Query.FeatureSet | undefined {
     const root = json;
     if (root == null || root.length != 1) {
-        return null;
+        return undefined;
     }
     const fs = {
         Layer: deArrayifyFeatureSetLayers(root[0].Layer)
@@ -237,10 +237,10 @@ function deArrayifyFeatureSet(json: any): Contracts.Query.FeatureSet | null {
     return fs;
 }
 
-function deArrayifyInlineSelectionImage(json: any): Contracts.Query.SelectionImage | null {
+function deArrayifyInlineSelectionImage(json: any): Contracts.Query.SelectionImage | undefined {
     const root = json;
     if (root == null || root.length != 1) {
-        return null;
+        return undefined;
     }
     const img = {
         MimeType: tryGetAsProperty(root[0], "MimeType"),
@@ -280,11 +280,11 @@ function deArrayifyLayerMetadataProperties(json: any[]): Contracts.Query.LayerPr
     });
 }
 
-function deArrayifyLayerMetadata(json: any): Contracts.Query.LayerMetadata | null {
+function deArrayifyLayerMetadata(json: any): Contracts.Query.LayerMetadata | undefined {
     const root = json;
     //NOTE: root could be null if the layer selected has no properties beyond id/geom
     if (root == null || root.length != 1) {
-        return null;
+        return undefined;
     }
     const meta = {
         Property: deArrayifyLayerMetadataProperties(root[0].Property)
@@ -304,10 +304,10 @@ function deArrayifySelectedLayer(json: any[]): Contracts.Query.SelectedLayer[] {
     });
 }
 
-function deArrayifySelectedFeatures(json: any): Contracts.Query.SelectedFeatureSet | null {
+function deArrayifySelectedFeatures(json: any): Contracts.Query.SelectedFeatureSet | undefined {
     const root = json;
     if (root == null || root.length != 1) {
-        return null;
+        return undefined;
     }
     const sf = {
         SelectedLayer: deArrayifySelectedLayer(root[0].SelectedLayer)
@@ -845,11 +845,11 @@ export function deArrayify(json: any): any {
  * Builds an XML selection string from the given selection set.
  *
  * @export
- * @param {(Contracts.Query.FeatureSet | null | undefined)} selection The selection set
+ * @param {(Contracts.Query.FeatureSet | undefined)} selection The selection set
  * @param {string[]} [layerIds] If specified, the selection XML will only include selections from the specified layers
  * @returns {string} The selection XML string
  */
-export function buildSelectionXml(selection: Contracts.Query.FeatureSet | null | undefined, layerIds?: string[]): string {
+export function buildSelectionXml(selection: Contracts.Query.FeatureSet | undefined, layerIds?: string[]): string {
     let xml = '<?xml version="1.0" encoding="utf-8"?>';
     xml += '<FeatureSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FeatureSet-1.0.0.xsd">';
     if (selection) {

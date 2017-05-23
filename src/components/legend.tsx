@@ -52,7 +52,7 @@ export interface ILegendProps {
     inlineBaseLayerSwitcher: boolean;
 }
 
-function getIconUri(iconMimeType: string, iconBase64: string | null | undefined): string | undefined {
+function getIconUri(iconMimeType: string, iconBase64: string | undefined): string | undefined {
     if (iconBase64) {
         return `data:${iconMimeType};base64,${iconBase64}`;
     } else {
@@ -423,7 +423,7 @@ export class Legend extends React.Component<ILegendProps, any> {
     private getStdIcon(relPath: string): string {
         return `stdicons/${relPath}`;
     }
-    private getIconMimeType(): string | null | undefined {
+    private getIconMimeType(): string | undefined {
         return this.props.map.IconMimeType;
     }
     private getChildren(objectId: string): (MapLayer | MapGroup)[] {

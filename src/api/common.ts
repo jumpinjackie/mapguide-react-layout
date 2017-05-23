@@ -71,7 +71,7 @@ export interface ICommand {
      *
      * @memberof ICommand
      */
-    enabled: (state: Readonly<IApplicationState>) => boolean;
+    enabled: (state: Readonly<IApplicationState>, parameters?: any) => boolean;
     /**
      * Indicates if this command is enabled based on the given application state
      *

@@ -45,7 +45,7 @@ function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeat
     return merged;
 }
 
-function combineSelectedFeatureSets(oldRes: SelectedFeatureSet | null | undefined, newRes: SelectedFeatureSet | null | undefined): SelectedFeatureSet | null | undefined {
+function combineSelectedFeatureSets(oldRes: SelectedFeatureSet | undefined, newRes: SelectedFeatureSet | undefined): SelectedFeatureSet | undefined {
     if (oldRes == null) {
         return newRes;
     }
@@ -70,7 +70,7 @@ function combineSelectedFeatureSets(oldRes: SelectedFeatureSet | null | undefine
     return merged;
 }
 
-function combineFeatureSets(oldRes: FeatureSet | null | undefined, newRes: FeatureSet | null | undefined): FeatureSet | null | undefined {
+function combineFeatureSets(oldRes: FeatureSet | undefined, newRes: FeatureSet | undefined): FeatureSet | undefined {
     if (oldRes == null) {
         return newRes;
     }
@@ -99,8 +99,8 @@ function combineSelections(oldRes: QueryMapFeaturesResponse | undefined, newRes:
         const merged: QueryMapFeaturesResponse = {
             SelectedFeatures: combineSelectedFeatureSets(oldRes.SelectedFeatures, newRes.SelectedFeatures),
             FeatureSet: combineFeatureSets(oldRes.FeatureSet, newRes.FeatureSet),
-            Hyperlink: null,
-            InlineSelectionImage: null
+            Hyperlink: undefined,
+            InlineSelectionImage: undefined
         };
         return merged;
     } else {

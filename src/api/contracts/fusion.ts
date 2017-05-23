@@ -1,11 +1,11 @@
 export type IExtension = any;
 
 export interface ApplicationDefinition {
-    Title: string | null | undefined;
-    TemplateUrl: string | null | undefined;
-    MapSet: MapSet | null | undefined;
+    Title: string | undefined;
+    TemplateUrl: string | undefined;
+    MapSet: MapSet | undefined;
     WidgetSet: WidgetSet[];
-    Extension: IExtension | null | undefined;
+    Extension: IExtension | undefined;
 }
 
 export interface MapSet {
@@ -26,8 +26,8 @@ export interface MapInitialView {
 
 export interface MapConfiguration {
     Type: string;
-    SingleTile: boolean | null | undefined;
-    Extension: IExtension | null | undefined;
+    SingleTile: boolean | undefined;
+    Extension: IExtension | undefined;
 }
 
 export interface WidgetSet {
@@ -51,9 +51,9 @@ export interface SeparatorItem {
 export interface FlyoutItem {
     Function: "Flyout";
     Label: string;
-    Tooltip: string | null | undefined;
-    ImageUrl: string | null | undefined;
-    ImageClass: string | null | undefined;
+    Tooltip: string | undefined;
+    ImageUrl: string | undefined;
+    ImageClass: string | undefined;
     Item: ContainerItem[];
 }
 
@@ -72,8 +72,8 @@ export interface Widget {
     WidgetType: string | undefined;
     Name: string;
     Type: string;
-    Location: string | null | undefined;
-    Extension: IExtension | null | undefined;
+    Location: string | undefined;
+    Extension: IExtension | undefined;
 }
 
 export interface UIWidget extends Widget {

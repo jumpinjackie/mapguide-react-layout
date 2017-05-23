@@ -24,7 +24,7 @@ export interface INavigatorContainerState {
     viewer: IViewerReducerState;
     config: IConfigurationReducerState;
     view: IMapView | null;
-    finiteScales: number[] | null | undefined;
+    finiteScales: number[] | undefined;
 }
 
 export interface INavigatorContainerDispatch {

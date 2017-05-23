@@ -260,6 +260,21 @@ class FusionWidgetApiShim {
     goHome(): void { //TaskPane
         this.parent.goHome();
     }
+    getSelectableLayers(): FusionSelectedLayer[] { //Map
+        const layers = [] as FusionSelectedLayer[];
+        const { map } = this.parent.props;
+        if (map && map.Layer) {
+            const matches = map.Layer
+                               .filter(l => l.Selectable)
+                               .map(l => {
+                                    return { layerName: l.Name, legendLabel: l.LegendLabel };
+                               });
+            for (const l of matches) {
+                layers.push(l);
+            }
+        }
+        return layers;
+    }
     get mapWidget(): FusionWidgetApiShim { //Map
         return this;
     }

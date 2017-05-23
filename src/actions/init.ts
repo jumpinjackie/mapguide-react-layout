@@ -154,7 +154,7 @@ function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictiona
     });
 }
 
-function convertWebLayoutUIItems(items: UIItem[] | null | undefined, cmdsByKey: Dictionary<CommandDef>, locale: string, noToolbarLabels = true, canSupportFlyouts = true): any[] {
+function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Dictionary<CommandDef>, locale: string, noToolbarLabels = true, canSupportFlyouts = true): any[] {
     return (items || []).map(item => {
         if (isCommandItem(item)) {
             const cmdDef: CommandDef = cmdsByKey[item.Command];

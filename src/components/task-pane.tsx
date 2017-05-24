@@ -216,6 +216,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                 })()}
                 {(() => {
                     if (this.state.activeComponent != null) {
+                        taskComponentContainerStyle.overflowY = "auto";
                         return <div className={(invalidated === true ? "invalidated-task-pane" : undefined)} style={taskComponentContainerStyle}>
                             <PlaceholderComponent id={this.state.activeComponent} locale={this.props.locale} />
                         </div>

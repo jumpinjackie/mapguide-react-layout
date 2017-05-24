@@ -10,6 +10,7 @@
    * Additional layout templates
    * Custom script commands
    * Removing un-used features from the viewer bundle
+   * Check out [this example](https://github.com/jumpinjackie/mapguide-react-layout-example) to see how the npm module is used
  * [#50](https://github.com/jumpinjackie/mapguide-react-layout/issues/50): API documentation (provided by [Typedoc](https://github.com/TypeStrong/typedoc))
  * [#125](https://github.com/jumpinjackie/mapguide-react-layout/issues/125): New [project landing page](https://jumpinjackie.github.io/mapguide-react-layout)
  * [#189](https://github.com/jumpinjackie/mapguide-react-layout/issues/189): Added support for Bing Maps as external base layers
@@ -25,6 +26,7 @@
    * QuickPlot
    * Search Commands
    * As a result, many Fusion viewer APIs have been polyfilled to support these tools
+ * Components docked into the Task Pane will now properly scroll overflow content if required
  * [#145](https://github.com/jumpinjackie/mapguide-react-layout/issues/145): Added support for some Fusion events
  * [#197](https://github.com/jumpinjackie/mapguide-react-layout/issues/197): The `ajax-viewer` and `sidebar` templates now work with Application Definitions
  * [#17](https://github.com/jumpinjackie/mapguide-react-layout/issues/17): InvokeURL and Search commands now support:

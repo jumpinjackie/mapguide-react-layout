@@ -50,7 +50,7 @@
                 <section class="col-sm-12 content">
                                             <h1 id="09">0.9</h1>
 <ul>
-<li>Update blueprint to 1.17</li>
+<li>Update blueprint to 1.17.1</li>
 <li>Update to React 15.5.4</li>
 <li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/210">#210</a>: Now using TypeScript 2.3.2</li>
 <li>Update OpenLayers to 4.1.1
@@ -63,6 +63,7 @@
 <li>Additional layout templates</li>
 <li>Custom script commands</li>
 <li>Removing un-used features from the viewer bundle</li>
+<li>Check out <a href="https://github.com/jumpinjackie/mapguide-react-layout-example">this example</a> to see how the npm module is used</li>
 </ul></li>
 <li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/50">#50</a>: API documentation (provided by <a href="https://github.com/TypeStrong/typedoc">Typedoc</a>)</li>
 <li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/125">#125</a>: New <a href="https://jumpinjackie.github.io/mapguide-react-layout">project landing page</a></li>
@@ -81,6 +82,7 @@
 <li>Search Commands</li>
 <li>As a result, many Fusion viewer APIs have been polyfilled to support these tools</li>
 </ul></li>
+<li>Components docked into the Task Pane will now properly scroll overflow content if required</li>
 <li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/145">#145</a>: Added support for some Fusion events</li>
 <li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/197">#197</a>: The <code>ajax-viewer</code> and <code>sidebar</code> templates now work with Application Definitions</li>
 <li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/17">#17</a>: InvokeURL and Search commands now support:
@@ -100,7 +102,7 @@
 <li>New script commands are registered by default that can push new visibility/focus states to this redux state brach. As a result, any existing InvokeScript widgets that toggled the TaskPane/Legend/SelectionPanel (these commands exist if you created a fresh Application Definition in Maestro), now work out of the box and no longer show <code>[X] Error</code> placeholders</li>
 <li>As a result of the new redux state branch, any InvokeURL command executed now automatically toggles the visibility/focus of the Task Pane to be the active element (if hidden or not visible).</li>
 </ul></li>
-<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/174">#174</a>: Fix init timing issues fetching custom projections from <a href="https://epsg.io/">epsg.io</a></li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/174">#174</a>: Fix race condition where the viewer finishes init before the fetching custom projections from <a href="https://epsg.io/">epsg.io</a> has completed</li>
 <li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/130">#130</a>: Fix <code>parent.parent</code> pointing to nowhere when viewer itself is embedded in an iframe.</li>
 </ul>
 <h1 id="08">0.8</h1>

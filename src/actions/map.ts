@@ -391,3 +391,17 @@ export function setActiveMap(mapName: string) {
         payload: mapName
     };
 }
+
+/**
+ * Sets whether feature tooltips (aka. Map Tips) are enabled
+ *
+ * @export
+ * @param {boolean} enabled
+ * @returns
+ */
+export function setFeatureTooltipsEnabled(enabled: boolean) {
+    return {
+        type: Constants.MAP_SET_MAPTIP,
+        payload: enabled
+    };
+}

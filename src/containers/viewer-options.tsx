@@ -6,7 +6,7 @@ import {
     IViewerReducerState,
     IConfigurationReducerState
 } from "../api/common";
-import { MAP_SET_MAPTIP } from "../constants";
+import * as MapActions from "../actions/map";
 import { tr } from "../api/i18n";
 
 export interface IViewerOptionsProps {
@@ -31,12 +31,7 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IViewerOp
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IViewerOptionsDispatch> {
     return {
-        toggleMapTips: (enabled: boolean) => {
-            dispatch({
-                type: MAP_SET_MAPTIP,
-                payload: enabled
-            });
-        }
+        toggleMapTips: (enabled) => dispatch(MapActions.setFeatureTooltipsEnabled(enabled))
     };
 }
 

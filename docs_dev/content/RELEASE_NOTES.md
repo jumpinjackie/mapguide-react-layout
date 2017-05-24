@@ -1,6 +1,6 @@
 0.9
 ===
- * Update blueprint to 1.17
+ * Update blueprint to 1.17.1
  * Update to React 15.5.4
  * [#210](https://github.com/jumpinjackie/mapguide-react-layout/issues/210): Now using TypeScript 2.3.2
  * Update OpenLayers to 4.1.1
@@ -40,7 +40,7 @@
      * Selection
    * New script commands are registered by default that can push new visibility/focus states to this redux state brach. As a result, any existing InvokeScript widgets that toggled the TaskPane/Legend/SelectionPanel (these commands exist if you created a fresh Application Definition in Maestro), now work out of the box and no longer show `[X] Error` placeholders
    * As a result of the new redux state branch, any InvokeURL command executed now automatically toggles the visibility/focus of the Task Pane to be the active element (if hidden or not visible).
- * [#174](https://github.com/jumpinjackie/mapguide-react-layout/issues/174): Fix init timing issues fetching custom projections from [epsg.io](https://epsg.io/)
+ * [#174](https://github.com/jumpinjackie/mapguide-react-layout/issues/174): Fix race condition where the viewer finishes init before the fetching custom projections from [epsg.io](https://epsg.io/) has completed
  * [#130](https://github.com/jumpinjackie/mapguide-react-layout/issues/130): Fix `parent.parent` pointing to nowhere when viewer itself is embedded in an iframe.
 
 0.8

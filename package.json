@@ -63,7 +63,7 @@
     "prop-types": "^15.5.10",
     "query-string": "^4.3.4",
     "react": "^15.5.4",
-    "react-addons-css-transition-group": "15.5.2",
+    "react-addons-css-transition-group": "15.6.0",
     "react-addons-test-utils": "^15.5.1",
     "react-addons-update": "^15.5.2",
     "react-dom": "^15.5.4",

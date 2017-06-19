@@ -103,7 +103,7 @@
     "typedoc": "^0.7.1",
     "typescript": "2.3.4",
     "url-loader": "^0.5.9",
-    "webpack": "^2.6.1"
+    "webpack": "^3.0.0"
   },
   "greenkeeper": {
     "ignore": [

@@ -43,7 +43,7 @@
     "@types/lodash.debounce": "4.0.2",
     "@types/lodash.uniq": "4.5.2",
     "@types/lodash.xor": "^4.5.2",
-    "@types/node": "^7.0.31",
+    "@types/node": "^8.0.0",
     "@types/prop-types": "15.5.1",
     "@types/query-string": "4.3.1",
     "@types/react": "15.0.29",

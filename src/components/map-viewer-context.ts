@@ -88,11 +88,14 @@ class FeatureQueryTooltip {
     private featureTooltipElement: Element;
     private featureTooltip: Overlay;
     private enabled: boolean;
+    private isMouseOverTooltip: boolean;
     private callback: IMapViewerContextCallback;
     constructor(map: Map, callback: IMapViewerContextCallback) {
         this.callback = callback;
         this.wktFormat = new WKTFormat();
         this.featureTooltipElement = document.createElement("div");
+        this.featureTooltipElement.addEventListener("mouseover", e => this.isMouseOverTooltip = true);
+        this.featureTooltipElement.addEventListener("mouseout", e => this.isMouseOverTooltip = false);
         this.featureTooltipElement.className = 'feature-tooltip';
         this.featureTooltip = new Overlay({
             element: this.featureTooltipElement,
@@ -107,6 +110,7 @@ class FeatureQueryTooltip {
             this.sendTooltipQuery(coords);
         }, 1000);
         this.enabled = true;
+        this.isMouseOverTooltip = false;
     }
     public onMouseMove(e: GenericEvent) {
         this.throttledMouseMove(e);
@@ -123,6 +127,10 @@ class FeatureQueryTooltip {
     }
     private sendTooltipQuery(coords: Coordinate): void {
         if (!this.enabled) {
+            return;
+        }
+        if (this.isMouseOverTooltip) {
+            logger.debug(`Mouse over tooltip. Doing nothing`);
             return;
         }
         const geom = new Point(coords);

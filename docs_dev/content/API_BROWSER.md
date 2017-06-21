@@ -50,4 +50,4 @@ var viewer = new MapGuide.Application();
 viewer.mount(el, { ... });
 ```
 
-Any Web Layout or Application Definition loaded that contains a InvokeScript command/widget with the same name of `ViewAsKml` will
+Any Web Layout or Application Definition loaded that contains a InvokeScript command/widget with the same name of `ViewAsKml` will run this registered command when invoked.

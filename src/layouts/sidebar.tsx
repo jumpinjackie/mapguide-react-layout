@@ -13,7 +13,8 @@ import {
     IApplicationState,
     IViewerReducerState,
     IConfigurationReducerState,
-    IViewerCapabilities
+    IViewerCapabilities,
+    ITemplateReducerState
 } from "../api/common";
 
 const SIDEBAR_WIDTH = 250;
@@ -35,6 +36,8 @@ const SidebarHeader = (props: any) => {
     </h1>;
 };
 
+type SidebarTab = "legend" | "tasks" | "selection";
+
 interface ISidebarProps {
     taskpane: boolean;
     legend: boolean;
@@ -42,10 +45,15 @@ interface ISidebarProps {
     busy: boolean;
     locale: string;
     position: "left" | "right";
+    collapsed: boolean;
+    activeTab: string;
+    onExpand: () => void;
+    onCollapse: () => void;
+    onActivateTab: (tab: SidebarTab, collapsed?: boolean) => void;
     lastAction?: any;
 }
 
-class Sidebar extends React.Component<ISidebarProps, any> {
+class Sidebar extends React.Component<ISidebarProps, {}> {
     private fnClickExpand: GenericEventHandler;
     private fnClickCollapse: GenericEventHandler;
     private fnActivateTasks: GenericEventHandler;
@@ -58,10 +66,6 @@ class Sidebar extends React.Component<ISidebarProps, any> {
         this.fnActivateTasks = this.onActivateTasks.bind(this);
         this.fnActivateLegend = this.onActivateLegend.bind(this);
         this.fnActivateSelection = this.onActivateSelection.bind(this);
-        this.state = {
-            collapsed: true,
-            activeTab: "tasks"
-        };
     }
     componentWillReceiveProps(nextProps: ISidebarProps) {
         const lastAction = nextProps.lastAction;
@@ -69,10 +73,7 @@ class Sidebar extends React.Component<ISidebarProps, any> {
             switch (lastAction.type) {
                 case Constants.TASK_INVOKE_URL:
                     {
-                        this.setState({
-                            collapsed: false,
-                            activeTab: "tasks"
-                        });
+                        nextProps.onActivateTab("tasks", false);
                     }
                     break;
                 case Constants.MAP_SET_SELECTION:
@@ -81,47 +82,37 @@ class Sidebar extends React.Component<ISidebarProps, any> {
         }
     }
     onActivateTasks(e: GenericEvent) {
+        const { onActivateTab } = this.props;
         e.preventDefault();
-        this.setState({
-            collapsed: false,
-            activeTab: "tasks"
-        });
+        onActivateTab("tasks");
         return false;
     }
     onActivateLegend(e: GenericEvent) {
+        const { onActivateTab } = this.props;
         e.preventDefault();
-        this.setState({
-            collapsed: false,
-            activeTab: "legend"
-        });
+        onActivateTab("legend");
         return false;
     }
     onActivateSelection(e: GenericEvent) {
+        const { onActivateTab } = this.props;
         e.preventDefault();
-        this.setState({
-            collapsed: false,
-            activeTab: "selection"
-        });
+        onActivateTab("selection");
         return false;
     }
     onClickCollapse(e: GenericEvent) {
+        const { onCollapse } = this.props;
         e.preventDefault();
-        this.setState({
-            collapsed: true
-        });
+        onCollapse();
         return false;
     }
     onClickExpand(e: GenericEvent) {
+        const { onExpand } = this.props;
         e.preventDefault();
-        this.setState({
-            collapsed: false
-        });
+        onExpand();
         return false;
     }
     render(): JSX.Element {
-        const { position, busy } = this.props;
-        const { collapsed, activeTab } = this.state;
-
+        const { position, busy, collapsed, activeTab } = this.props;
         return <div className={`sidebar ${collapsed ? "collapsed" : ""} sidebar-${position}`}>
             <div className="sidebar-tabs">
                 <ul role="tablist">
@@ -211,6 +202,7 @@ export interface ISidebarLayoutState {
     viewer: IViewerReducerState;
     config: IConfigurationReducerState;
     capabilities: IViewerCapabilities;
+    templateState: ITemplateReducerState;
     lastaction: any;
 }
 
@@ -219,7 +211,8 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<ISidebarLa
         viewer: state.viewer,
         config: state.config,
         capabilities: state.config.capabilities,
-        lastaction: state.lastaction
+        lastaction: state.lastaction,
+        templateState: state.template
     };
 }
 
@@ -231,12 +224,61 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
 
 export type SidebarLayoutProps = Partial<ISidebarLayoutState>;
 
-export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
+interface SidebarLayoutState {
+    collapsed: boolean;
+    activeTab: SidebarTab;
+}
+
+export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<SidebarLayoutState>> {
+    private fnCollapse: () => void;
+    private fnExpand: () => void;
+    private fnActivateTab: (tab: string, collapsed?: boolean) => void;
     constructor(props: SidebarLayoutProps) {
         super(props);
+        this.fnActivateTab = this.onActivateTab.bind(this);
+        this.fnCollapse = this.onCollapse.bind(this);
+        this.fnExpand = this.onExpand.bind(this);
+        const { templateState } = props;
+        let collapsed = false;
+        let activeTab: SidebarTab = "tasks";
+        if (templateState) {
+            collapsed = !(templateState.legendVisible || templateState.selectionPanelVisible || templateState.taskPaneVisible);
+            if (templateState.legendVisible) {
+                activeTab = "legend";
+            } else if (templateState.selectionPanelVisible) {
+                activeTab = "selection";
+            }
+        }
+        this.state = {
+            collapsed: collapsed,
+            activeTab: activeTab
+        };
+    }
+    private onCollapse(): void {
+        this.setState({
+            collapsed: true
+        });
+    }
+    private onExpand(): void {
+        this.setState({
+            collapsed: false
+        });
+    }
+    private onActivateTab(tab: SidebarTab, collapsed?: boolean): void {
+        if (typeof(collapsed) != 'undefined') {
+            this.setState({
+                activeTab: tab,
+                collapsed: collapsed
+            });
+        } else {
+            this.setState({
+                activeTab: tab
+            });
+        }
     }
     render(): JSX.Element {
-        const { viewer, capabilities, config } = this.props;
+        const { collapsed, activeTab } = this.state;
+        const { viewer, capabilities, config, templateState } = this.props;
         if (!viewer || !capabilities || !config) {
             return <div />;
         }
@@ -251,6 +293,7 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
         } = capabilities;
         let sbWidth = SIDEBAR_WIDTH;
         let tpWidth = SIDEBAR_WIDTH;
+
         return <div style={{ width: "100%", height: "100%" }}>
             <Sidebar position="left"
                      busy={viewer.busyCount > 0}
@@ -258,6 +301,11 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, any> {
                      selection={hasSelectionPanel}
                      taskpane={hasTaskPane}
                      locale={config.locale}
+                     collapsed={collapsed || false}
+                     activeTab={activeTab || "tasks"}
+                     onCollapse={this.fnCollapse}
+                     onActivateTab={this.fnActivateTab}
+                     onExpand={this.fnExpand}
                      lastAction={this.props.lastaction} />
             {(() => {
                 if (hasToolbar) {

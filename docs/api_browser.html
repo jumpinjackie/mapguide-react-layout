@@ -69,6 +69,33 @@
 <li>Typedefs</li>
 </ul>
 <p>For Task Pane content, mapguide-react-layout will also provide an <a href="apicompat.html">API compatibility layer</a> which allows any AJAX/Fusion viewer application to be migrated across with little to no modifications required.</p>
+<h2 id="registering-script-commands">Registering Script Commands</h2>
+<p>Starting with the 0.9 release, you can use registered script commands as a replacement for InvokeScript commands and widgets. For such references in a Web Layout or Application Definition, they will work in mapguide-react-layout if you have a registered script command of the same name.</p>
+<p>To register script commands without using a custom viewer bundle using the npm module, you can use <code>MapGuide.Registry</code> for registering script commands. This should be done in your entry point code before creating a <code>MapGuide.Application</code> instance and <code>mount</code>-ing it at the target DOM element.</p>
+<p>The following example registers a <code>ViewAsKml</code> script command that gets the KML of the current map view:</p>
+<pre><code>MapGuide.Registry.registerCommand("ViewAsKml", {
+    icon: "invoke-script.png",
+    enabled: function() { return true; },
+    selected: function() { return false; },
+    invoke: function(dispatch, getState, viewer, parameters) {
+        var state = getState();
+        var mapState = state.mapState;
+        var activeMapName = state.config.activeMapName;
+        if (activeMapName) {
+            var map = mapState[activeMapName].runtimeMap;
+            if (map) {
+                var mapDefId = map.MapDefinition;
+                var url = `../mapagent/mapagent.fcgi?USERNAME=Anonymous&amp;OPERATION=GetMapKml&amp;VERSION=1.0.0&amp;MAPDEFINITION=${mapDefId}`;
+                window.open(url);
+            }
+        }
+    }
+});
+
+var el = document.getElementById("map");
+var viewer = new MapGuide.Application();
+viewer.mount(el, { ... });</code></pre>
+<p>Any Web Layout or Application Definition loaded that contains a InvokeScript command/widget with the same name of <code>ViewAsKml</code> will</p>
                                     </section>
 
             </div>

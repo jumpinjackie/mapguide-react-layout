@@ -44,12 +44,12 @@ export function mapStateReducer(state = INITIAL_STATE, action = { type: '', payl
                 const subState = state[payload.mapName];
                 if (subState) {
                     const state1 = {
-                        runtimeMap: subState.runtimeMap
+                        runtimeMap: payload.map
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
             }
-        case Constants.INIT_APP: 
+        case Constants.INIT_APP:
             {
                 const maps = payload.maps;
                 const newState: Partial<IBranchedMapState> = {};
@@ -87,7 +87,7 @@ export function mapStateReducer(state = INITIAL_STATE, action = { type: '', payl
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
             }
-        case Constants.MAP_SET_SCALE: 
+        case Constants.MAP_SET_SCALE:
             {
                 const subState = state[payload.mapName];
                 if (subState) {

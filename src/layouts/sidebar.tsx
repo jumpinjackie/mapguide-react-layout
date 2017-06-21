@@ -224,7 +224,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
 
 export type SidebarLayoutProps = Partial<ISidebarLayoutState>;
 
-interface SidebarLayoutState {
+export interface SidebarLayoutState {
     collapsed: boolean;
     activeTab: SidebarTab;
 }

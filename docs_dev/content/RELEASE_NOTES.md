@@ -1,3 +1,13 @@
+0.9.1
+=====
+
+ * Update blueprint to 1.20.0
+ * Update OpenLayers to 4.2.0
+ * Update React to 15.6.1
+ * [#261](https://github.com/jumpinjackie/mapguide-react-layout/issues/261): Now built with Webpack 3 with scope hoisting support for faster bundle loading and slightly smaller bundle size
+ * [#251](https://github.com/jumpinjackie/mapguide-react-layout/issues/251): Fix inability to interact with tooltip content
+ * [#262](https://github.com/jumpinjackie/mapguide-react-layout/issues/262): Fix refresh not rebuiling legend
+
 0.9
 ===
  * Update blueprint to 1.17.1

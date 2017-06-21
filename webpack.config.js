@@ -40,6 +40,7 @@ const prodPlugins = [
             context: __dirname
         }
     }),
+    new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.optimize.UglifyJsPlugin({
         sourceMap: true,
         compress: {

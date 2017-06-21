@@ -364,6 +364,7 @@ interface IToolbarButtonProps {
     height: number;
     item: IItem;
     vertical?: boolean;
+    hideVerticalLabels?: boolean;
 }
 
 class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
@@ -395,7 +396,7 @@ class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
         return false;
     }
     render(): JSX.Element {
-        const { height, item, vertical } = this.props;
+        const { height, item, vertical, hideVerticalLabels } = this.props;
         const selected = getSelected(item);
         const enabled = getEnabled(item);
         const imgStyle = getIconStyle(enabled, height);
@@ -407,7 +408,7 @@ class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
             ttip = item.tooltip;
         }
         return <div className={`noselect toolbar-btn ${selected ? "selected-item" : ""} ${(this.state.isMouseOver && enabled) ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} style={style} title={ttip} onClick={this.fnClick}>
-            <img style={imgStyle} src={getIcon(item.icon)} /> {item.label}
+            <img style={imgStyle} src={getIcon(item.icon)} /> {(vertical == true && hideVerticalLabels == true) ? null : item.label}
         </div>;
     }
 }
@@ -453,6 +454,7 @@ export interface IToolbarProps {
     containerClass?: string;
     containerStyle?: React.CSSProperties;
     vertical?: boolean;
+    hideVerticalLabels?: boolean;
     onOpenFlyout?: (id: string, metrics: IDOMElementMetrics) => void;
     onCloseFlyout?: (id: string) => void;
     onOpenComponent?: (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => void;
@@ -500,7 +502,7 @@ export class Toolbar extends React.Component<IToolbarProps, any> {
         }
     }
     render(): JSX.Element {
-        const { containerStyle, containerClass, childItems, vertical } = this.props;
+        const { containerStyle, containerClass, childItems, vertical, hideVerticalLabels } = this.props;
         const height = containerStyle != null
             ? (containerStyle.height || DEFAULT_TOOLBAR_SIZE)
             : DEFAULT_TOOLBAR_SIZE;
@@ -513,7 +515,7 @@ export class Toolbar extends React.Component<IToolbarProps, any> {
                 } else if (item.isSeparator === true) {
                     return <ToolbarSeparator key={index} size={height} vertical={vertical} />;
                 } else {
-                    return <ToolbarButton key={index} height={height} item={item} vertical={vertical} />;
+                    return <ToolbarButton key={index} height={height} item={item} vertical={vertical} hideVerticalLabels={hideVerticalLabels} />;
                 }
             })}
         </div>;

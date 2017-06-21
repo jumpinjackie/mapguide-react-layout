@@ -20,6 +20,7 @@ import { NULL_ACTION } from "../reducers/last-action";
 export interface IToolbarContainerProps {
     id: string;
     vertical?: boolean;
+    hideVerticalLabels?: boolean;
     containerClass?: string;
     containerStyle?: React.CSSProperties;
 }
@@ -109,7 +110,7 @@ export class ToolbarContainer extends React.Component<ToolbarContainerProps, any
         store: PropTypes.object
     };
     render(): JSX.Element {
-        const { toolbar, containerClass, containerStyle, vertical, invokeCommand } = this.props;
+        const { toolbar, containerClass, containerStyle, vertical, hideVerticalLabels, invokeCommand } = this.props;
         const store = (this.context as any).store;
         if (toolbar && toolbar.items && invokeCommand && containerStyle) {
             if (vertical === true) {
@@ -121,6 +122,7 @@ export class ToolbarContainer extends React.Component<ToolbarContainerProps, any
             const items = (toolbar.items as any[]).map(tb => mapToolbarReference(tb, store, invokeCommand));
             const childItems = processMenuItems(items);
             return <Toolbar vertical={vertical}
+                            hideVerticalLabels={hideVerticalLabels}
                             childItems={childItems}
                             containerClass={containerClass}
                             containerStyle={containerStyle}

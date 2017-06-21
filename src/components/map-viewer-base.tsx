@@ -521,7 +521,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         layerSet.view.setCenter([vw.x, vw.y]);
         //Don't use this.scaleToResolution() as that uses this.props to determine
         //applicable layer set, but we already have that here
-        layerSet.view.setResolution(layerSet.scaleToResolution(vw.scale));
+        const res = layerSet.scaleToResolution(vw.scale);
+        layerSet.view.setResolution(res);
         this._triggerZoomRequestOnMoveEnd = true;
     }
     // ----------------- React Lifecycle ----------------- //

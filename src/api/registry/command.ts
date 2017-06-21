@@ -289,7 +289,7 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
             icon: cmdDef.icon || "search.png",
             enabled: (state) => true,
             selected: (state) => false,
-            invoke: (dispatch: ReduxDispatch, getState: () => IApplicationState, viewer: IMapViewer) => {
+            invoke: (dispatch: ReduxDispatch, getState: () => IApplicationState, viewer: IMapViewer, parameters?: any) => {
                 const state = getState();
                 const config = state.config;
                 const map = getRuntimeMap(state);
@@ -300,6 +300,7 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                         + `&title=${encodeURIComponent(cmdDef.title)}`
                         + `&prompt=${encodeURIComponent(cmdDef.prompt)}`
                         + `&layer=${encodeURIComponent(cmdDef.layer)}`
+                        + `&pointZoomLevel=${parameters.PointZoomLevel}`
                         + (cmdDef.filter ? `&filter=${encodeURIComponent(cmdDef.filter)}` : '')
                         + `&limit=${cmdDef.matchLimit}`
                         + `&properties=${(cmdDef.resultColumns.Column || []).map(col => col.Property).join(",")}`

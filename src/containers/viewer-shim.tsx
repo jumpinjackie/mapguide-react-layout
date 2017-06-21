@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { connect } from "react-redux";
+import olExtent from "ol/extent";
 import olPoint from "ol/geom/point";
 import olLineString from "ol/geom/linestring";
 import olPolygon from "ol/geom/polygon";
@@ -387,8 +388,12 @@ class FusionWidgetApiShim {
                         });
                     }
                     if (bounds) {
-                        const view = viewer.getViewForExtent(bounds);
-                        this.parent.ZoomToView(view.x, view.y, view.scale, true);
+                        const bw = olExtent.getWidth(bounds);
+                        const bh = olExtent.getHeight(bounds);
+                        if (bw > 0 && bh > 0) { //Don't zoom if we get 0 bounds. Cruncing bounds from selected points would do this.
+                            const view = viewer.getViewForExtent(bounds);
+                            this.parent.ZoomToView(view.x, view.y, view.scale, true);
+                        }
                     }
                 }
             });

@@ -36,7 +36,7 @@ const SidebarHeader = (props: any) => {
     </h1>;
 };
 
-type SidebarTab = "legend" | "tasks" | "selection";
+export type SidebarTab = "legend" | "tasks" | "selection";
 
 interface ISidebarProps {
     taskpane: boolean;

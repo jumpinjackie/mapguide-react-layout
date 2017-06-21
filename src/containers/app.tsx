@@ -14,6 +14,7 @@ import {
 import { initLayout } from "../actions/init";
 import { Error, normalizeStack } from "../components/error";
 import { tr } from "../api/i18n";
+import * as TemplateActions from "../actions/template";
 
 /**
  * App component properties
@@ -35,6 +36,20 @@ export interface IAppProps {
         uri: string,
         kind?: ClientKind
     },
+    /**
+     * Defines initial element visibility
+     * 
+     * @type {{
+     *         taskpane: boolean;
+     *         legend: boolean;
+     *         selection: boolean;
+     *     }}
+     */
+    initialElementVisibility: {
+        taskpane: boolean;
+        legend: boolean;
+        selection: boolean;
+    }
     /**
      * A resource id to a Map Definition or Application Definition. If passing a Map Definition,
      * a default viewer layout will be created
@@ -77,6 +92,7 @@ export interface IInitAppLayout {
 export interface IAppDispatch {
     initApp: (args: any) => void;
     initLayout: (args: IInitAppLayout) => void;
+    setElementVisibility: (states: TemplateActions.IElementState) => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IAppProps): Partial<IAppState> {
@@ -95,7 +111,8 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IAppProps
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAppDispatch> {
     return {
-        initLayout: (args) => dispatch(initLayout(args))
+        initLayout: (args) => dispatch(initLayout(args)),
+        setElementVisibility: (state) => dispatch(TemplateActions.setElementStates(state))
     };
 }
 
@@ -111,7 +128,16 @@ export class App extends React.Component<AppProps, any> {
         };
     }
     componentDidMount() {
-        const { initApp, initLayout, agent, resourceId, externalBaseLayers } = this.props;
+        const { initApp, setElementVisibility, initialElementVisibility, initLayout, agent, resourceId, externalBaseLayers } = this.props;
+        if (setElementVisibility && initialElementVisibility) {
+            const { taskpane, legend, selection } = initialElementVisibility;
+            const states: TemplateActions.IElementState = {
+                taskPaneVisible: typeof(taskpane) != 'undefined' ? taskpane : true,
+                legendVisible: typeof(legend) != 'undefined' ? legend : true,
+                selectionPanelVisible: typeof(selection) != 'undefined' ? selection : true
+            };
+            setElementVisibility(states);
+        }
         if (initLayout) {
             initLayout({
                 resourceId: resourceId,

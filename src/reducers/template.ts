@@ -42,6 +42,14 @@ export function setCustomTemplateReducer(func: ReducerFunction<ITemplateReducerS
 export function templateReducer(state = INITIAL_STATE, action = { type: '', payload: undefined }) {
     if (typeof(_ovReducer) == 'function') {
         return _ovReducer(state, action);
+    } else {
+        //If no template present (they would've overridden this reducer), at least service the FUSION_SET_ELEMENT_STATE
+        //action
+        if (action.type == Constants.FUSION_SET_ELEMENT_STATE) {
+            if (isElementState(action.payload)) {
+                return { ...state, ...action.payload };
+            }
+        }
     }
     return state;
 }

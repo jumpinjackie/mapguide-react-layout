@@ -47,7 +47,7 @@
     "@types/prop-types": "15.5.1",
     "@types/query-string": "4.3.1",
     "@types/react": "15.0.30",
-    "@types/react-addons-css-transition-group": "15.0.2",
+    "@types/react-addons-css-transition-group": "15.0.3",
     "@types/react-addons-update": "0.14.17",
     "@types/react-dom": "15.5.0",
     "@types/react-measure": "0.4.6",

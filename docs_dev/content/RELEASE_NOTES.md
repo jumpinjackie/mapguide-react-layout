@@ -1,3 +1,8 @@
+0.9.2
+=====
+
+ * [#252](https://github.com/jumpinjackie/mapguide-react-layout/issues/252): Fix tooltip queries being sent with points instead of pixel-buffered polygons
+
 0.9.1
 =====
 

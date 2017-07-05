@@ -16,6 +16,7 @@ import {
     getRuntimeMap,
     getCurrentView,
     ITargetedCommand,
+    IConfigurationReducerState,
     DEFAULT_MODAL_SIZE
 } from "./common";
 import { QueryMapFeaturesResponse } from "./contracts/query";
@@ -39,7 +40,7 @@ function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "l
     };
 
     const view = viewer.getCurrentView();
-    const current_center = [ view.x, view.y ];
+    const current_center = [view.x, view.y];
     const currentExtent = viewer.getCurrentExtent();
     let newPos: number[];
 
@@ -59,6 +60,16 @@ function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "l
     }
 
     dispatch(MapActions.setCurrentView({ x: newPos[0], y: newPos[1], scale: view.scale }));
+}
+
+function buildTargetedCommand(config: Readonly<IConfigurationReducerState>, parameters: any): ITargetedCommand {
+    const cmdDef: ITargetedCommand = {
+        target: parameters.Target || "NewWindow"
+    };
+    if (config.capabilities.hasTaskPane && parameters.Target == "TaskPane") {
+        cmdDef.target = "TaskPane";
+    }
+    return cmdDef;
 }
 
 /**
@@ -222,12 +233,7 @@ export function initDefaultCommands() {
         invoke: (dispatch, getState, viewer, parameters) => {
             const config = getState().config;
             const url = "component://Measure";
-            const cmdDef: ITargetedCommand = {
-                target: "NewWindow"
-            };
-            if (config.capabilities.hasTaskPane && parameters.Target == "TaskPane") {
-                cmdDef.target = "TaskPane";
-            }
+            const cmdDef = buildTargetedCommand(config, parameters);
             openUrlInTarget(DefaultCommands.Measure, cmdDef, dispatch, url, tr("MEASURE", config.locale));
         }
     });
@@ -239,12 +245,7 @@ export function initDefaultCommands() {
         invoke: (dispatch, getState, viewer, parameters) => {
             const config = getState().config;
             const url = "component://QuickPlot";
-            const cmdDef: ITargetedCommand = {
-                target: "NewWindow"
-            };
-            if (config.capabilities.hasTaskPane && parameters.Target == "TaskPane") {
-                cmdDef.target = "TaskPane";
-            }
+            const cmdDef = buildTargetedCommand(config, parameters);
             openUrlInTarget(DefaultCommands.QuickPlot, cmdDef, dispatch, url);
         }
     });
@@ -256,12 +257,7 @@ export function initDefaultCommands() {
         invoke: (dispatch, getState, viewer, parameters) => {
             const config = getState().config;
             const url = "component://ViewerOptions";
-            const cmdDef: ITargetedCommand = {
-                target: "NewWindow"
-            };
-            if (config.capabilities.hasTaskPane && parameters.Target == "TaskPane") {
-                cmdDef.target = "TaskPane";
-            }
+            const cmdDef = buildTargetedCommand(config, parameters);
             openUrlInTarget(DefaultCommands.ViewerOptions, cmdDef, dispatch, url, tr("VIEWER_OPTIONS", config.locale));
         }
     });
@@ -424,8 +420,8 @@ export function initDefaultCommands() {
                 }
                 navigator.geolocation.getCurrentPosition(pos => {
                     const proj = viewer.getProjection();
-                    const txCoord = fact.transformCoordinateFromLonLat([ pos.coords.longitude, pos.coords.latitude ], proj);
-                    const testCoord = fact.transformCoordinateFromLonLat([ pos.coords.longitude, pos.coords.latitude ], `EPSG:${rtMap.CoordinateSystem.EpsgCode}`);
+                    const txCoord = fact.transformCoordinateFromLonLat([pos.coords.longitude, pos.coords.latitude], proj);
+                    const testCoord = fact.transformCoordinateFromLonLat([pos.coords.longitude, pos.coords.latitude], `EPSG:${rtMap.CoordinateSystem.EpsgCode}`);
                     viewer.zoomToView(txCoord[0], txCoord[1], zoomScale);
                     const extents: [number, number, number, number] = [
                         rtMap.Extents.LowerLeftCoordinate.X,
@@ -456,9 +452,7 @@ export function initDefaultCommands() {
             if (map) {
                 let url = ensureParameters(`${getFusionRoot()}/widgets/BufferPanel/BufferPanel.php`, map.Name, map.SessionId, config.locale, false);
                 url += "&popup=false&us=0";
-                const cmdDef: ITargetedCommand = {
-                    target: parameters.Target || "TaskPane"
-                };
+                const cmdDef = buildTargetedCommand(config, parameters);
                 openUrlInTarget(DefaultCommands.Buffer, cmdDef, dispatch, url);
             }
         }
@@ -475,9 +469,7 @@ export function initDefaultCommands() {
             if (map) {
                 let url = ensureParameters(`${getFusionRoot()}/widgets/SelectWithin/SelectWithinPanel.php`, map.Name, map.SessionId, config.locale, false);
                 url += "&popup=false";
-                const cmdDef: ITargetedCommand = {
-                    target: parameters.Target || "TaskPane"
-                };
+                const cmdDef = buildTargetedCommand(config, parameters);
                 openUrlInTarget(DefaultCommands.SelectWithin, cmdDef, dispatch, url);
             }
         }
@@ -494,17 +486,59 @@ export function initDefaultCommands() {
             if (map) {
                 let url = ensureParameters(`${getFusionRoot()}/widgets/Redline/markupmain.php`, map.Name, map.SessionId, config.locale, true);
                 url += "&POPUP=false&REDLINESTYLIZATION=ADVANCED";
-                const cmdDef: ITargetedCommand = {
-                    target: parameters.Target || "TaskPane"
-                };
+                const cmdDef = buildTargetedCommand(config, parameters);
                 openUrlInTarget(DefaultCommands.Redline, cmdDef, dispatch, url);
             }
         }
     });
-
-    registerCommand(DefaultCommands.FeatureInfo, { icon: "feature-info.png", url: `${getFusionRoot()}/widgets/FeatureInfo/featureinfomain.php`, target: "TaskPane", parameters: [] });
-    registerCommand(DefaultCommands.Query, { icon: "query.png", url: `${getFusionRoot()}/widgets/Query/querymain.php`, target: "TaskPane", parameters: [] });
-    registerCommand(DefaultCommands.Theme, { icon: "theme.png", url: `${getFusionRoot()}/widgets/Theme/thememain.php`, target: "TaskPane", parameters: [] });
+    //Feature Info
+    registerCommand(DefaultCommands.FeatureInfo, {
+        icon: "feature-info.png",
+        selected: () => false,
+        enabled: CommandConditions.isNotBusy,
+        invoke: (dispatch, getState, viewer, parameters) => {
+            const state = getState();
+            const map = getRuntimeMap(state);
+            const config = state.config;
+            if (map) {
+                const url = ensureParameters(`${getFusionRoot()}/widgets/FeatureInfo/featureinfomain.php`, map.Name, map.SessionId, config.locale, true);
+                const cmdDef = buildTargetedCommand(config, parameters);
+                openUrlInTarget(DefaultCommands.FeatureInfo, cmdDef, dispatch, url);
+            }
+        }
+    });
+    //Query
+    registerCommand(DefaultCommands.Query, {
+        icon: "query.png",
+        selected: () => false,
+        enabled: CommandConditions.isNotBusy,
+        invoke: (dispatch, getState, viewer, parameters) => {
+            const state = getState();
+            const map = getRuntimeMap(state);
+            const config = state.config;
+            if (map) {
+                const url = ensureParameters(`${getFusionRoot()}/widgets/Query/querymain.php`, map.Name, map.SessionId, config.locale, true);
+                const cmdDef = buildTargetedCommand(config, parameters);
+                openUrlInTarget(DefaultCommands.Query, cmdDef, dispatch, url);
+            }
+        }
+    });
+    //Theme
+    registerCommand(DefaultCommands.Theme, {
+        icon: "theme.png",
+        selected: () => false,
+        enabled: CommandConditions.isNotBusy,
+        invoke: (dispatch, getState, viewer, parameters) => {
+            const state = getState();
+            const map = getRuntimeMap(state);
+            const config = state.config;
+            if (map) {
+                const url = ensureParameters(`${getFusionRoot()}/widgets/Theme/thememain.php`, map.Name, map.SessionId, config.locale, true);
+                const cmdDef = buildTargetedCommand(config, parameters);
+                openUrlInTarget(DefaultCommands.Theme, cmdDef, dispatch, url);
+            }
+        }
+    });
 
     //Fusion template helper commands
     /*

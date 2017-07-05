@@ -1,4 +1,5 @@
 import {
+    Bounds,
     RefreshMode,
     ClientKind,
     Dictionary,
@@ -21,6 +22,7 @@ import View from "ol/view";
 import Overlay from "ol/overlay";
 import WKTFormat from "ol/format/wkt";
 import Point from "ol/geom/point";
+import Polygon from "ol/geom/polygon";
 import LayerBase from "ol/layer/base";
 import TileLayer from "ol/layer/tile";
 import ImageLayer from "ol/layer/image";
@@ -105,9 +107,11 @@ class FeatureQueryTooltip {
         this.map = map;
         this.map.addOverlay(this.featureTooltip);
         this.throttledMouseMove = debounce((e: GenericEvent) => {
+            const box = this.callback.getPointSelectionBox(e.pixel);
+            const geom = Polygon.fromExtent(box);
             const coords: Coordinate = e.coordinate;
-            logger.debug(`[${new Date()}] FeatureTooltip - onMouseMove (${coords[0]}, ${coords[1]})`);
-            this.sendTooltipQuery(coords);
+            logger.debug(`[${new Date()}] FeatureTooltip - onMouseMove (${box[0]}, ${box[1]}) (${box[2]}, ${box[3]})`);
+            this.sendTooltipQuery(geom);
         }, 1000);
         this.enabled = true;
         this.isMouseOverTooltip = false;
@@ -125,7 +129,7 @@ class FeatureQueryTooltip {
             this.featureTooltipElement.classList.add("tooltip-hidden");
         }
     }
-    private sendTooltipQuery(coords: Coordinate): void {
+    private sendTooltipQuery(geom: Polygon): void {
         if (!this.enabled) {
             return;
         }
@@ -133,7 +137,6 @@ class FeatureQueryTooltip {
             logger.debug(`Mouse over tooltip. Doing nothing`);
             return;
         }
-        const geom = new Point(coords);
         //const selectedLayerNames = this.onRequestSelectableLayers();
         //if (selectedLayerNames != null && selectedLayerNames.length == 0) {
         //    return;
@@ -146,6 +149,7 @@ class FeatureQueryTooltip {
         //
         //this.featureTooltipElement.innerHTML = "Querying tooltip data ...";
         //this.featureTooltipElement.classList.remove("tooltip-hidden");
+        const coords = olExtent.getCenter(geom.getExtent());
         this.featureTooltip.setPosition(coords);
         this.callback.incrementBusyWorker();
         client.queryMapFeatures({
@@ -564,6 +568,7 @@ export interface IMapViewerContextCallback {
     getMapName(): string;
     getSessionId(): string;
     isFeatureTooltipEnabled(): boolean;
+    getPointSelectionBox(point: Coordinate): Bounds;
 }
 
 /**

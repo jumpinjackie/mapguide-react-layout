@@ -304,13 +304,11 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
         if (this.props.tool === ActiveMapTool.Select) {
             const ptBuffer = this.props.pointSelectionBuffer || 2;
-            const box: Bounds | null = this.getPointSelectionBox(e.pixel, ptBuffer);
-            if (box) {
-                const geom = Polygon.fromExtent(box);
-                const options = this.buildDefaultQueryOptions(geom);
-                options.maxfeatures = 1;
-                this.sendSelectionQuery(options);
-            }
+            const box = this.getPointSelectionBox(e.pixel, ptBuffer);
+            const geom = Polygon.fromExtent(box);
+            const options = this.buildDefaultQueryOptions(geom);
+            options.maxfeatures = 1;
+            this.sendSelectionQuery(options);
         }
     }
     private getSelectableLayers(): string[] {
@@ -513,7 +511,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             getAgentKind: () => this.props.agentKind,
             getMapName: () => this.props.map.Name,
             getSessionId: () => this.props.map.SessionId,
-            isFeatureTooltipEnabled: this.isFeatureTooltipEnabled.bind(this)
+            isFeatureTooltipEnabled: this.isFeatureTooltipEnabled.bind(this),
+            getPointSelectionBox: (point) => this.getPointSelectionBox(point, this.props.pointSelectionBuffer || 2)
         };
     }
     private applyView(layerSet: MgLayerSet, vw: IMapView) {

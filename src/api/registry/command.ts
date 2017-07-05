@@ -12,10 +12,12 @@ import {
     ReduxStore,
     getSelectionSet,
     getRuntimeMap,
+    DEFAULT_MODAL_SIZE,
     NOOP,
     ALWAYS_FALSE,
     ALWAYS_TRUE
 } from "../../api/common";
+import * as ModalActions from "../../actions/modal";
 import { getFusionRoot } from "../../api/runtime";
 import { QueryMapFeaturesResponse } from "../contracts/query";
 import { ResultColumnSet } from "../contracts/weblayout";
@@ -160,6 +162,7 @@ export class CommandConditions {
     }
 }
 
+//TODO: Convert to actual string enum in TS 2.4 when we can finally upgrade to it
 /**
  * The set of default command names
  *
@@ -210,7 +213,16 @@ function isSearchCommand(cmdDef: any): cmdDef is ISearchCommand {
     return typeof cmdDef.layer !== 'undefined';
 }
 
-function openUrlInTarget(name: string, cmdDef: ITargetedCommand, dispatch: ReduxDispatch, url: string): void {
+/**
+ * Opens the given URL in the specified target
+ *
+ * @hidden
+ * @param name
+ * @param cmdDef
+ * @param dispatch
+ * @param url
+ */
+export function openUrlInTarget(name: string, cmdDef: ITargetedCommand, dispatch: ReduxDispatch, url: string, modalTitle?: string): void {
     const target = cmdDef.target;
     if (target == "TaskPane") {
         dispatch({
@@ -220,18 +232,16 @@ function openUrlInTarget(name: string, cmdDef: ITargetedCommand, dispatch: Redux
             }
         });
     } else if (target == "NewWindow") {
-        dispatch({
-            type: Constants.MODAL_SHOW_URL,
-            payload: {
-                modal: {
-                    title: tr(name),
-                    backdrop: false,
-                    size: [ 300, 500 ]
-                },
-                name: name,
-                url: url
-            }
-        });
+        dispatch(ModalActions.showModalUrl({
+            modal: {
+                title: modalTitle || tr(name),
+                backdrop: false,
+                size: DEFAULT_MODAL_SIZE,
+                overflowYScroll: true
+            },
+            name: name,
+            url: url
+        }));
     } else if (target == "SpecifiedFrame") {
         if (cmdDef.targetFrame) {
             const frames = (window as any).frames as any[];

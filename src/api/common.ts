@@ -724,6 +724,63 @@ export type ImageFormat = "PNG" | "PNG8" | "JPG" | "GIF";
  */
 export type ClientKind = "mapagent" | "mapguide-rest";
 
+export interface IModalParameters {
+    title: string;
+    backdrop: boolean;
+    size: [number, number];
+    overflowYScroll?: boolean;
+}
+
+/**
+ * The default modal dialog size
+ */
+export const DEFAULT_MODAL_SIZE: [number, number] = [ 300, 500 ];
+
+/**
+ * Base modal display options
+ *
+ * @export
+ * @interface IModalDisplayOptionsBase
+ */
+export interface IModalDisplayOptionsBase {
+    modal: IModalParameters;
+    name: string;
+}
+
+/**
+ * Modal display options for URL content
+ *
+ * @export
+ * @interface IModalDisplayOptions
+ * @extends {IModalDisplayOptionsBase}
+ */
+export interface IModalDisplayOptions extends IModalDisplayOptionsBase {
+    /**
+     * The URL of the content to load in the modal dialog
+     *
+     * @type {string}
+     * @memberof IModalDisplayOptions
+     */
+    url: string;
+}
+
+export interface IModalComponentDisplayOptions extends IModalDisplayOptionsBase {
+    /**
+     * The id of the component to display
+     *
+     * @type {string}
+     * @memberof IModalComponentDisplayOptions
+     */
+    component: string;
+    /**
+     * Component properties
+     *
+     * @type {*}
+     * @memberof IModalComponentDisplayOptions
+     */
+    componentProps?: any;
+}
+
 export type IToolbarReducerState = any;
 
 /*
@@ -769,7 +826,12 @@ export interface ITaskPaneReducerState {
     lastUrlPushed: boolean;
 }
 
-export type IModalReducerState = any;
+export type IModalReducerState = {
+    /**
+     * Gets the modal parameters for the given key
+     */
+    [key: string]: IModalDisplayOptions | IModalComponentDisplayOptions;
+};
 
 /*
 export interface IModalReducerState {

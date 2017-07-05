@@ -52,7 +52,7 @@ export function registerComponentFactory(id: string, factory: ComponentFactory):
  * @param {string} id
  * @returns {ComponentFactory}
  */
-export function getComponentFactory(id: string): ComponentFactory {
+export function getComponentFactory(id: string): ComponentFactory | undefined {
     return components[id];
 }
 

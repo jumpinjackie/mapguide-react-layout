@@ -24,6 +24,7 @@ export interface IModalDialogProps {
      * @memberOf IModalDialogProps
      */
     position?: ModalDialogPositioning;
+    overflowYScroll?: boolean;
     size?: [number, number];
     title?: string;
     onClose?: () => void;
@@ -43,7 +44,7 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
         this.fnClose = this.onClose.bind(this);
     }
     render(): JSX.Element {
-        const { isOpen, backdrop, size, position, title } = this.props;
+        const { isOpen, backdrop, size, position, title, overflowYScroll } = this.props;
         if (isOpen === false)
             return <div />;
 
@@ -72,6 +73,10 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
         if (backdrop === true) {
             modalStyle.zIndex = 5000;
         }
+        const modalBodyStyle: React.CSSProperties = { margin: 0 };
+        if (overflowYScroll == true) {
+            modalBodyStyle.overflowY = "auto";
+        }
         return <div>
             <Draggable handle=".pt-dialog-header">
                 <div className="pt-dialog" style={modalStyle}>
@@ -79,7 +84,7 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
                         <h5>{title}</h5>
                         <button onClick={this.fnClose} aria-label="Close" className="pt-dialog-close-button pt-icon-small-cross"></button>
                     </div>
-                    <div className="pt-dialog-body" style={{ margin: 0 }}>{this.props.children}</div>
+                    <div className="pt-dialog-body" style={modalBodyStyle}>{this.props.children}</div>
                 </div>
             </Draggable>
             {(() => {

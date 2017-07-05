@@ -1,5 +1,10 @@
 import * as Constants from "../constants";
-import { ReduxAction } from "../api/common";
+import {
+    IModalParameters,
+    IModalComponentDisplayOptions,
+    IModalDisplayOptions,
+    ReduxAction
+} from "../api/common";
 
 /**
  * Displays the specified component in a modal dialog
@@ -8,13 +13,11 @@ import { ReduxAction } from "../api/common";
  * @param {*} options Modal dialog display options
  * @returns {ReduxAction}
  */
-export function showModalComponent(options: any): ReduxAction {
+export function showModalComponent(options: IModalComponentDisplayOptions): ReduxAction {
     return {
         type: Constants.MODAL_SHOW_COMPONENT,
         payload: {
-            modal: options.modal,
-            name: options.name,
-            component: options.id
+            ...options
         }
     };
 }
@@ -26,13 +29,11 @@ export function showModalComponent(options: any): ReduxAction {
  * @param {*} options Modal dialog display options
  * @returns {ReduxAction}
  */
-export function showModalUrl(options: any): ReduxAction {
+export function showModalUrl(options: IModalDisplayOptions): ReduxAction {
     return {
         type: Constants.MODAL_SHOW_URL,
         payload: {
-            modal: options.modal,
-            name: options.name,
-            url: options.url
+            ...options
         }
     };
 }

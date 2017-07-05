@@ -1,6 +1,34 @@
-import { InitError, IMapView, ReduxAction } from "../api/common";
+import {
+    InitError,
+    IMapView,
+    IModalDisplayOptions,
+    IModalComponentDisplayOptions,
+    ReduxAction
+} from "../api/common";
 import { MapLayer } from "../api/contracts/runtime-map";
 import { IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../components/toolbar";
+
+/**
+ * Indicates if the given argument is an IModalDisplayOptions
+ *
+ * @export
+ * @param {*} arg
+ * @returns {arg is IModalDisplayOptions}
+ */
+export function isModalDisplayOptions(arg: any): arg is IModalDisplayOptions {
+    return typeof(arg.url) != 'undefined';
+}
+
+/**
+ * Indicates if the given argument is an IModalComponentDisplayOptions
+ *
+ * @export
+ * @param {*} arg
+ * @returns {arg is IModalComponentDisplayOptions}
+ */
+export function isModalComponentDisplayOptions(arg: any): arg is IModalComponentDisplayOptions {
+    return typeof(arg.component) != 'undefined';
+}
 
 /**
  * Indicates if the given argument is an Error object
@@ -21,7 +49,7 @@ export function isError(err: any): err is Error {
  * @returns {item is InitError}
  */
 export function isInitError(item: any): item is InitError {
-    return typeof(item.message) != 'undefined' && typeof(item.stack) != undefined;
+    return typeof (item.message) != 'undefined' && typeof (item.stack) != undefined;
 }
 
 /**
@@ -32,7 +60,7 @@ export function isInitError(item: any): item is InitError {
  * @returns {item is IFlyoutMenu}
  */
 export function isMenuRef(item: any): item is IFlyoutMenu {
-    return typeof(item.flyoutId) != 'undefined';
+    return typeof (item.flyoutId) != 'undefined';
 }
 
 /**
@@ -43,7 +71,7 @@ export function isMenuRef(item: any): item is IFlyoutMenu {
  * @returns {item is IComponentFlyoutItem}
  */
 export function isComponentFlyout(item: any): item is IComponentFlyoutItem {
-    return typeof(item.componentName) != 'undefined';
+    return typeof (item.componentName) != 'undefined';
 }
 
 /**
@@ -54,7 +82,7 @@ export function isComponentFlyout(item: any): item is IComponentFlyoutItem {
  * @returns {item is IInlineMenu}
  */
 export function isMenu(item: any): item is IInlineMenu {
-    return typeof(item.childItems) != 'undefined';
+    return typeof (item.childItems) != 'undefined';
 }
 
 /**
@@ -76,9 +104,9 @@ export function isLayer(layer: any): layer is MapLayer {
  * @returns {view is IMapView}
  */
 export function isMapView(view: any): view is IMapView {
-    return typeof(view.x) == 'number'
-        && typeof(view.y) == 'number'
-        && typeof(view.scale) == 'number';
+    return typeof (view.x) == 'number'
+        && typeof (view.y) == 'number'
+        && typeof (view.scale) == 'number';
 }
 
 /**
@@ -91,8 +119,8 @@ export function isMapView(view: any): view is IMapView {
 export function isCoordinate(coord: any): coord is [number, number] {
     return coord instanceof Array
         && coord.length == 2
-        && typeof(coord[0]) == 'number'
-        && typeof(coord[1]) == 'number';
+        && typeof (coord[0]) == 'number'
+        && typeof (coord[1]) == 'number';
 }
 
 /**
@@ -103,6 +131,6 @@ export function isCoordinate(coord: any): coord is [number, number] {
  * @returns {action is ReduxAction}
  */
 export function isAction(action: any): action is ReduxAction {
-    return typeof(action.type) != 'undefined'
-        && typeof(action.payload) != 'undefined';
+    return typeof (action.type) != 'undefined'
+        && typeof (action.payload) != 'undefined';
 }

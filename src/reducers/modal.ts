@@ -18,10 +18,7 @@ export function modalReducer(state = INITIAL_STATE, action: ReduxAction) {
         case Constants.MODAL_SHOW_URL:
             {
                 const newData: any = {};
-                newData[action.payload.name] = {
-                    modal: action.payload.modal,
-                    url: action.payload.url
-                };
+                newData[action.payload.name] = { ...action.payload };
                 return { ...state, ...newData };
             }
         case Constants.MODAL_CLOSE:

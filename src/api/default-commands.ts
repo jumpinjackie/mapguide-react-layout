@@ -1,4 +1,9 @@
-import { registerCommand, DefaultCommands, CommandConditions } from "./registry/command";
+import {
+    registerCommand,
+    DefaultCommands,
+    CommandConditions,
+    openUrlInTarget
+} from "./registry/command";
 import {
     IMapView,
     IMapViewer,
@@ -9,15 +14,17 @@ import {
     getInitialView,
     getSelectionSet,
     getRuntimeMap,
-    getCurrentView
+    getCurrentView,
+    ITargetedCommand,
+    DEFAULT_MODAL_SIZE
 } from "./common";
 import { QueryMapFeaturesResponse } from "./contracts/query";
 import { RuntimeMap } from "./contracts/runtime-map";
 import * as LegendActions from "../actions/legend";
 import * as MapActions from "../actions/map";
+import * as ModalActions from "../actions/modal";
 import * as TemplateActions from "../actions/template";
 import { tr } from "../api/i18n";
-import * as Constants from "../constants";
 import { ensureParameters } from "../actions/taskpane";
 import { DefaultComponentNames } from "../api/registry/component";
 import { Toaster, Position, Intent } from "@blueprintjs/core";
@@ -70,10 +77,7 @@ export function initDefaultCommands() {
         },
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
-            return dispatch({
-                type: Constants.MAP_SET_ACTIVE_TOOL,
-                payload: ActiveMapTool.Select
-            });
+            return dispatch(MapActions.setActiveTool(ActiveMapTool.Select));
         }
     });
     //Pan Tool
@@ -84,10 +88,7 @@ export function initDefaultCommands() {
         },
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
-            return dispatch({
-                type: Constants.MAP_SET_ACTIVE_TOOL,
-                payload: ActiveMapTool.Pan
-            });
+            return dispatch(MapActions.setActiveTool(ActiveMapTool.Pan));
         }
     });
     //Zoom Tool
@@ -98,10 +99,7 @@ export function initDefaultCommands() {
         },
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
-            return dispatch({
-                type: Constants.MAP_SET_ACTIVE_TOOL,
-                payload: ActiveMapTool.Zoom
-            });
+            return dispatch(MapActions.setActiveTool(ActiveMapTool.Zoom));
         }
     });
     //Feature Tooltips
@@ -113,10 +111,7 @@ export function initDefaultCommands() {
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
             const enabled = getState().viewer.featureTooltipsEnabled;
-            return dispatch({
-                type: Constants.MAP_SET_MAPTIP,
-                payload: !enabled
-            });
+            return dispatch(MapActions.setFeatureTooltipsEnabled(!enabled));
         }
     });
     //Zoom in
@@ -191,17 +186,15 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
-            dispatch({
-                type: Constants.MODAL_SHOW_COMPONENT,
-                payload: {
-                    modal: {
-                        title: tr("ABOUT", getState().config.locale),
-                        backdrop: true
-                    },
-                    name: DefaultComponentNames.About,
-                    component: DefaultComponentNames.About
-                }
-            });
+            dispatch(ModalActions.showModalComponent({
+                modal: {
+                    title: tr("ABOUT", getState().config.locale),
+                    backdrop: true,
+                    size: DEFAULT_MODAL_SIZE
+                },
+                name: DefaultComponentNames.About,
+                component: DefaultComponentNames.About
+            }));
         }
     });
     //Help
@@ -210,18 +203,15 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
-            dispatch({
-                type: Constants.MODAL_SHOW_URL,
-                payload: {
-                    modal: {
-                        title: tr("HELP", getState().config.locale),
-                        backdrop: true,
-                        size: [ 300, 500 ]
-                    },
-                    name: DefaultCommands.Help,
-                    url: "help/index.html"
-                }
-            });
+            dispatch(ModalActions.showModalUrl({
+                modal: {
+                    title: tr("HELP", getState().config.locale),
+                    backdrop: true,
+                    size: DEFAULT_MODAL_SIZE
+                },
+                name: DefaultCommands.Help,
+                url: "help/index.html"
+            }));
         }
     });
     //Measure
@@ -231,27 +221,14 @@ export function initDefaultCommands() {
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
             const config = getState().config;
-            if (config.capabilities.hasTaskPane) {
-                dispatch({
-                    type: Constants.TASK_INVOKE_URL,
-                    payload: {
-                        url: "component://Measure"
-                    }
-                });
-            } else {
-                dispatch({
-                    type: Constants.MODAL_SHOW_URL,
-                    payload: {
-                        modal: {
-                            title: tr("MEASURE", config.locale),
-                            backdrop: false,
-                            size: [ 300, 500 ]
-                        },
-                        name: DefaultCommands.Measure,
-                        url: "component://Measure"
-                    }
-                });
+            const url = "component://Measure";
+            const cmdDef: ITargetedCommand = {
+                target: "NewWindow"
+            };
+            if (config.capabilities.hasTaskPane && parameters.Target == "TaskPane") {
+                cmdDef.target = "TaskPane";
             }
+            openUrlInTarget(DefaultCommands.Measure, cmdDef, dispatch, url, tr("MEASURE", config.locale));
         }
     });
     //Quick Plot
@@ -261,27 +238,14 @@ export function initDefaultCommands() {
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
             const config = getState().config;
-            if (config.capabilities.hasTaskPane) {
-                dispatch({
-                    type: Constants.TASK_INVOKE_URL,
-                    payload: {
-                        url: "component://QuickPlot"
-                    }
-                });
-            } else {
-                dispatch({
-                    type: Constants.MODAL_SHOW_URL,
-                    payload: {
-                        modal: {
-                            title: tr("VIEWER_OPTIONS", config.locale),
-                            backdrop: false,
-                            size: [ 300, 500 ]
-                        },
-                        name: DefaultCommands.QuickPlot,
-                        url: "component://QuickPlot"
-                    }
-                });
+            const url = "component://QuickPlot";
+            const cmdDef: ITargetedCommand = {
+                target: "NewWindow"
+            };
+            if (config.capabilities.hasTaskPane && parameters.Target == "TaskPane") {
+                cmdDef.target = "TaskPane";
             }
+            openUrlInTarget(DefaultCommands.QuickPlot, cmdDef, dispatch, url);
         }
     });
     //Viewer Options
@@ -291,27 +255,14 @@ export function initDefaultCommands() {
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
             const config = getState().config;
-            if (config.capabilities.hasTaskPane) {
-                dispatch({
-                    type: Constants.TASK_INVOKE_URL,
-                    payload: {
-                        url: "component://ViewerOptions"
-                    }
-                });
-            } else {
-                dispatch({
-                    type: Constants.MODAL_SHOW_URL,
-                    payload: {
-                        modal: {
-                            title: tr("VIEWER_OPTIONS", config.locale),
-                            backdrop: false,
-                            size: [ 300, 500 ]
-                        },
-                        name: DefaultCommands.ViewerOptions,
-                        url: "component://ViewerOptions"
-                    }
-                });
+            const url = "component://ViewerOptions";
+            const cmdDef: ITargetedCommand = {
+                target: "NewWindow"
+            };
+            if (config.capabilities.hasTaskPane && parameters.Target == "TaskPane") {
+                cmdDef.target = "TaskPane";
             }
+            openUrlInTarget(DefaultCommands.ViewerOptions, cmdDef, dispatch, url, tr("VIEWER_OPTIONS", config.locale));
         }
     });
     //Select Radius
@@ -505,12 +456,10 @@ export function initDefaultCommands() {
             if (map) {
                 let url = ensureParameters(`${getFusionRoot()}/widgets/BufferPanel/BufferPanel.php`, map.Name, map.SessionId, config.locale, false);
                 url += "&popup=false&us=0";
-                dispatch({
-                    type: Constants.TASK_INVOKE_URL,
-                    payload: {
-                        url: url
-                    }
-                });
+                const cmdDef: ITargetedCommand = {
+                    target: parameters.Target || "TaskPane"
+                };
+                openUrlInTarget(DefaultCommands.Buffer, cmdDef, dispatch, url);
             }
         }
     });
@@ -526,12 +475,10 @@ export function initDefaultCommands() {
             if (map) {
                 let url = ensureParameters(`${getFusionRoot()}/widgets/SelectWithin/SelectWithinPanel.php`, map.Name, map.SessionId, config.locale, false);
                 url += "&popup=false";
-                dispatch({
-                    type: Constants.TASK_INVOKE_URL,
-                    payload: {
-                        url: url
-                    }
-                });
+                const cmdDef: ITargetedCommand = {
+                    target: parameters.Target || "TaskPane"
+                };
+                openUrlInTarget(DefaultCommands.SelectWithin, cmdDef, dispatch, url);
             }
         }
     });
@@ -547,12 +494,10 @@ export function initDefaultCommands() {
             if (map) {
                 let url = ensureParameters(`${getFusionRoot()}/widgets/Redline/markupmain.php`, map.Name, map.SessionId, config.locale, true);
                 url += "&POPUP=false&REDLINESTYLIZATION=ADVANCED";
-                dispatch({
-                    type: Constants.TASK_INVOKE_URL,
-                    payload: {
-                        url: url
-                    }
-                });
+                const cmdDef: ITargetedCommand = {
+                    target: parameters.Target || "TaskPane"
+                };
+                openUrlInTarget(DefaultCommands.Redline, cmdDef, dispatch, url);
             }
         }
     });

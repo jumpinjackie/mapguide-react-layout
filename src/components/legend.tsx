@@ -77,7 +77,7 @@ const RuleNode = (props: IRuleNodeProps) => {
     </li>;
 };
 
-interface ILayerNodeProps {
+export interface ILayerNodeProps {
     layer: MapLayer;
 }
 
@@ -214,7 +214,7 @@ export class LayerNode extends React.Component<ILayerNodeProps, any> {
     }
 }
 
-interface IGroupNodeProps {
+export interface IGroupNodeProps {
     group: MapGroup;
     childItems: (MapLayer|MapGroup)[];
 }

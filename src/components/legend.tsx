@@ -81,7 +81,7 @@ interface ILayerNodeProps {
     layer: MapLayer;
 }
 
-class LayerNode extends React.Component<ILayerNodeProps, any> {
+export class LayerNode extends React.Component<ILayerNodeProps, any> {
     static contextTypes = LEGEND_CONTEXT_VALIDATION_MAP;
     context: ILegendContext;
     fnVisibilityChanged: GenericEventHandler;
@@ -155,45 +155,51 @@ class LayerNode extends React.Component<ILayerNodeProps, any> {
         if (layer.ScaleRange) {
             for (const scaleRange of layer.ScaleRange) {
                 if (scaleRange.FeatureStyle && scaleRange.FeatureStyle.length > 0) {
+                    const ruleElements = [];
                     //if (this.debug)
                     //    text = label + " (" + scaleRange.MinScale + " - " + scaleRange.MaxScale + ")";
-                    const fts = scaleRange.FeatureStyle[0];
-                    const ruleCount = fts.Rule.length;
                     let body: JSX.Element | undefined;
                     let isExpanded = this.getExpanded();
-                    if (isExpanded && ruleCount > 1) {
+                    let totalRuleCount = 0;
+                    for (const fts of scaleRange.FeatureStyle) {
+                        totalRuleCount += fts.Rule.length;
+                    }
+                    if (isExpanded && totalRuleCount > 1) {
                         icon = this.context.getStdIcon("legend-theme.png");
-                        body = <ul style={UL_LIST_STYLE}>
-                        {(() => {
-                            const items = [] as JSX.Element[];
+
+                        for (let fi = 0; fi < scaleRange.FeatureStyle.length; fi++) {
+                            const fts = scaleRange.FeatureStyle[fi];
+                            const ftsRuleCount = fts.Rule.length;
                             //Test compression
-                            var bCompressed = false;
-                            if (ruleCount > 3) {
+                            let bCompressed = false;
+                            if (ftsRuleCount > 3) {
                                 bCompressed = !(fts.Rule[1].Icon);
                             }
                             if (bCompressed) {
-                                items.push(<RuleNode key={`layer-${layer.ObjectId}-rule-first`} iconMimeType={iconMimeType} rule={fts.Rule[0]} />);
-                                items.push(<li style={LI_LIST_STYLE} key={`layer-${layer.ObjectId}-rule-compressed`}><LegendLabel text={`... (${ruleCount - 2} other theme rules)`} /></li>);
-                                items.push(<RuleNode key={`layer-${layer.ObjectId}-rule-last`} iconMimeType={iconMimeType} rule={fts.Rule[ruleCount-1]} />);
+                                ruleElements.push(<RuleNode key={`layer-${layer.ObjectId}-style-${fi}-rule-first`} iconMimeType={iconMimeType} rule={fts.Rule[0]} />);
+                                ruleElements.push(<li style={LI_LIST_STYLE} key={`layer-${layer.ObjectId}-style-${fi}-rule-compressed`}><LegendLabel text={`... (${ftsRuleCount - 2} other theme rules)`} /></li>);
+                                ruleElements.push(<RuleNode key={`layer-${layer.ObjectId}-style-${fi}-rule-last`} iconMimeType={iconMimeType} rule={fts.Rule[ftsRuleCount-1]} />);
                             } else {
-                                for (var i = 0; i < ruleCount; i++) {
+                                for (let i = 0; i < ftsRuleCount; i++) {
                                     const rule = fts.Rule[i];
-                                    items.push(<RuleNode key={`layer-${layer.ObjectId}-rule-${i}`} iconMimeType={iconMimeType} rule={rule} />);
+                                    ruleElements.push(<RuleNode key={`layer-${layer.ObjectId}-style-${fi}-rule-${i}`} iconMimeType={iconMimeType} rule={rule} />);
                                 }
                             }
-                            return items;
-                        })()}
-                        </ul>;
+                        }
                     } else { //Collapsed
-                        if (ruleCount > 1) {
+                        if (totalRuleCount > 1) {
                             icon = this.context.getStdIcon("legend-theme.png");
                         } else {
-                            icon = getIconUri(iconMimeType, fts.Rule[0].Icon);
+                            icon = getIconUri(iconMimeType, scaleRange.FeatureStyle[0].Rule[0].Icon);
                         }
                     }
 
+                    if (ruleElements.length > 0) {
+                        body = <ul style={UL_LIST_STYLE}>{ruleElements}</ul>;
+                    }
+
                     let expanded: JSX.Element;
-                    if (ruleCount > 1) {
+                    if (totalRuleCount > 1) {
                         expanded = <img style={ROW_ITEM_ELEMENT_STYLE} onClick={this.fnToggleExpansion} src={this.context.getStdIcon(isExpanded ? "toggle.png" : "toggle-expand.png")} />;;
                     } else {
                         expanded = <EmptyNode />;
@@ -213,7 +219,7 @@ interface IGroupNodeProps {
     childItems: (MapLayer|MapGroup)[];
 }
 
-class GroupNode extends React.Component<IGroupNodeProps, any> {
+export class GroupNode extends React.Component<IGroupNodeProps, any> {
     fnVisibilityChanged: GenericEventHandler;
     fnToggleExpansion: GenericEventHandler;
     static contextTypes = LEGEND_CONTEXT_VALIDATION_MAP;

@@ -14,8 +14,8 @@ export enum FeatureStyleType {
 }
 
 export interface RuleInfo {
-    LegendLabel: string;
-    Filter: Common.FdoFilter;
+    LegendLabel?: string;
+    Filter?: Common.FdoFilter;
     Icon?: Common.Base64Content;
 }
 

@@ -539,7 +539,7 @@ export class MgLayerSet {
                     projection: this.view.getProjection()
                 });
                 ovMap.setView(view);
-                view.fit(this.extent, ovMap.getSize());
+                view.fit(this.extent, { size: ovMap.getSize() });
             }
         }
     }

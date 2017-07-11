@@ -62,7 +62,8 @@ export interface ICommand {
      * @type {string}
      * @memberof ICommand
      */
-    icon: string;
+    icon?: string;
+    iconClass?: string;
     //tooltip?: string;
     //label?: string;
     /**
@@ -151,6 +152,7 @@ export interface IInvokeUrlCommand extends ITargetedCommand {
      * @memberof IInvokeUrlCommand
      */
     icon?: string;
+    iconClass?: string;
     /**
      * The URL to invoke
      *
@@ -186,6 +188,7 @@ export interface ISearchCommand extends ITargetedCommand {
      * @memberof ISearchCommand
      */
     icon?: string;
+    iconClass?: string;
     /**
      * The name of the map layer this commmand applies to
      *

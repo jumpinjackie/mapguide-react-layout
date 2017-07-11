@@ -17,3 +17,9 @@ export function getAssetPath(url: string | undefined): string | undefined {
         return undefined;
     }
 }
+
+export const STD_CSS_SPRITE_RELPATH = "images/icons.png";
+
+export function getMainSprite(): string | undefined {
+    return getAssetPath(STD_CSS_SPRITE_RELPATH);
+}

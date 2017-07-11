@@ -85,7 +85,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         this.fnOpenFlyout = this.onOpenFlyout.bind(this);
         const locale = this.getLocale();
         this.homeAction = {
-            icon: "images/icons/icon_home.png",
+            iconClass: "sprite-icons-icon_home",
             tooltip: tr("TT_GO_HOME", locale),
             enabled: this.canGoHome.bind(this),
             invoke: () => {
@@ -96,7 +96,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
             }
         };
         this.backAction = {
-            icon: "images/icons/back.png",
+            iconClass: "sprite-icons-back",
             tooltip: tr("TT_GO_BACK", locale),
             enabled: this.canGoBack.bind(this),
             invoke: () => {
@@ -107,7 +107,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
             }
         };
         this.forwardAction = {
-            icon: "images/icons/forward.png",
+            iconClass: "sprite-icons-forward",
             tooltip: tr("TT_GO_FORWARD", locale),
             enabled: this.canGoForward.bind(this),
             invoke: () => {

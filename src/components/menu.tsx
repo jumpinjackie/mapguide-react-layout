@@ -67,7 +67,7 @@ export class MenuComponent extends React.Component<IMenuComponentProps, any> {
                     const text = item.label || "";
                     //NOTE: Not using MenuItem here as we want fine control over the item content
                     return <li key={index}>
-                        <a className="pt-menu-item" onClick={invoke}><Icon style={imgStyle} url={item.icon} /> {text}</a>
+                        <a className="pt-menu-item" onClick={invoke}><Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {text}</a>
                     </li>;
                 }
             })}

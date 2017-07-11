@@ -1,9 +1,10 @@
 import * as React from "react";
+import { Icon } from "./icon";
 
 /**
  * "Powered by MapGuide" logo
  * @param props
  */
 export const PoweredByMapGuide = (props: any) => {
-    return <img className="component-pbmg" {...props} src="stdassets/images/icons/PoweredBy_en.png" />;
+    return <Icon className="component-pbmg" {...props} iconClass="sprite-icons-PoweredBy_en" />;
 };

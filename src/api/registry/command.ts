@@ -25,16 +25,22 @@ import { IItem, IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../../com
 import * as Constants from "../../constants";
 import { ensureParameters } from "../../actions/taskpane";
 import { tr } from "../i18n";
-import { getAssetPath } from "../../utils/asset";
+import { getAssetPath, STD_CSS_SPRITE_RELPATH } from "../../utils/asset";
 import { assertNever } from "../../utils/never";
 import * as logger from "../../utils/logger";
 
-// This is a band-aid to suppress the fusion image sprite reference until we have working sprite icons
-function fusionFix(icon: string) {
-    if (icon == "images/icons.png") {
-        return null;
+function fusionFixSpriteClass(tb: any, cmd?: ICommand): string | undefined {
+    const url = tb.icon || (cmd || {} as any).icon;
+    if (tb.spriteClass) {
+        if (url == STD_CSS_SPRITE_RELPATH && tb.spriteClass.indexOf("sprite-icons-") < 0) {
+            return `sprite-icons-${tb.spriteClass}`;
+        }
+        return tb.spriteClass;
     }
-    return icon;
+    if (cmd && cmd.iconClass) {
+        return cmd.iconClass;
+    }
+    return undefined;
 }
 
 /**
@@ -44,7 +50,7 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
     const state = store.getState();
     if (tb.error) {
         const cmdItem: IItem = {
-            icon: "images/icons/error.png",
+            iconClass: "sprite-icons-error",
             tooltip: tb.error,
             label: tr("ERROR"),
             selected: ALWAYS_FALSE,
@@ -54,6 +60,8 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
         return cmdItem;
     } else if (tb.componentName) {
         return {
+            icon: tb.icon,
+            iconClass: fusionFixSpriteClass(tb),
             flyoutId: tb.flyoutId,
             tooltip: tb.tooltip,
             label: tb.label,
@@ -66,7 +74,8 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
         const cmd = getCommand(tb.command);
         if (cmd != null) {
             const cmdItem: IItem = {
-                icon: fusionFix(tb.icon) || cmd.icon,
+                icon: tb.icon || cmd.icon,
+                iconClass: fusionFixSpriteClass(tb, cmd),
                 tooltip: tb.tooltip,
                 label: tb.label,
                 selected: () => cmd.selected(state),
@@ -78,12 +87,16 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
     } else if (tb.children) {
         const childItems: any[] = tb.children;
         return {
+            icon: tb.icon,
+            iconClass: fusionFixSpriteClass(tb),
             label: tb.label,
             tooltip: tb.tooltip,
             childItems: childItems.map(tb => mapToolbarReference(tb, store, commandInvoker)).filter(tb => tb != null)
         };
     } else if (tb.label && tb.flyoutId) {
         return {
+            icon: tb.icon,
+            iconClass: fusionFixSpriteClass(tb),
             label: tb.label,
             tooltip: tb.tooltip,
             flyoutId: tb.flyoutId
@@ -284,7 +297,8 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
     let cmd: ICommand;
     if (isInvokeUrlCommand(cmdDef)) {
         cmd = {
-            icon: cmdDef.icon || "invoke-url.png",
+            icon: cmdDef.icon,
+            iconClass: cmdDef.iconClass,
             enabled: (state) => {
                 if (cmdDef.disableIfSelectionEmpty === true) {
                     return CommandConditions.hasSelection(state);
@@ -305,7 +319,8 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
         };
     } else if (isSearchCommand(cmdDef)) {
         cmd = {
-            icon: cmdDef.icon || "search.png",
+            icon: cmdDef.icon,
+            iconClass: cmdDef.iconClass,
             enabled: (state) => true,
             selected: (state) => false,
             invoke: (dispatch: ReduxDispatch, getState: () => IApplicationState, viewer: IMapViewer, parameters?: any) => {

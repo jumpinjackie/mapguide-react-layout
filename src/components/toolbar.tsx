@@ -253,7 +253,7 @@ class ComponentFlyoutItem extends React.Component<IComponentFlyoutItemProps, any
         const ttip = getTooltip(item);
         return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={ttip}>
             <div data-flyout-id={`flyout-${item.flyoutId}`}>
-                {label} <Icon style={imgStyle} url={item.icon || ((this.state.isFlownOut) ? "images/icons/icon_menuarrowup.png" : "images/icons/icon_menuarrow.png")} />
+                <Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {label} <Icon style={imgStyle} spriteClass={(this.state.isFlownOut) ? "sprite-icons-icon_menuarrowup" : "sprite-icons-icon_menuarrow"} />
             </div>
         </div>;
     }
@@ -329,7 +329,7 @@ class FlyoutMenuReferenceItem extends React.Component<IFlyoutMenuReferenceItemPr
         const ttip = getTooltip(menu);
         return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={ttip}>
             <div data-flyout-id={`flyout-${menu.flyoutId}`}>
-                {label} <Icon style={imgStyle} url={menu.icon || ((this.state.isFlownOut) ? "images/icons/icon_menuarrowup.png" : "images/icons/icon_menuarrow.png")} />
+                <Icon style={imgStyle} url={menu.icon} spriteClass={menu.iconClass} /> {label} <Icon style={imgStyle} spriteClass={(this.state.isFlownOut) ? "sprite-icons-icon_menuarrowup" : "sprite-icons-icon_menuarrow"} />
             </div>
         </div>;
     }
@@ -402,7 +402,7 @@ class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
             ttip = item.tooltip;
         }
         return <div className={`noselect toolbar-btn ${selected ? "selected-item" : ""} ${(this.state.isMouseOver && enabled) ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} style={style} title={ttip} onClick={this.fnClick}>
-            <Icon style={imgStyle} url={item.icon} /> {(vertical == true && hideVerticalLabels == true) ? null : item.label}
+            <Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {(vertical == true && hideVerticalLabels == true) ? null : item.label}
         </div>;
     }
 }
@@ -411,6 +411,7 @@ export interface IItem {
     label?: string | (() => string);
     tooltip?: string | (() => string);
     icon?: string;
+    iconClass?: string;
     invoke?: () => void;
     enabled?: boolean | (() => boolean);
     selected?: boolean | (() => boolean);

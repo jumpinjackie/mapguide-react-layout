@@ -1,5 +1,6 @@
 import * as React from "react";
-import { getAssetPath } from "../utils/asset";
+import { NBSP } from "../constants";
+import { getAssetPath, STD_CSS_SPRITE_RELPATH } from "../utils/asset";
 
 export interface IIconProps {
     /**
@@ -12,6 +13,7 @@ export interface IIconProps {
     spriteClass?: string;
     style?: React.CSSProperties;
     onClick?: GenericEventHandler;
+    otherProps?: any;
 }
 
 /**
@@ -19,5 +21,21 @@ export interface IIconProps {
  * @param props
  */
 export const Icon = (props: IIconProps) => {
-    return <img style={props.style} src={getAssetPath(props.url)} className={props.spriteClass} onClick={props.onClick} />;
+    if (!props.url && !props.spriteClass) {
+        return <noscript />;
+    }
+    let url;
+    let spriteClass = props.spriteClass;
+    if (props.url && props.url != STD_CSS_SPRITE_RELPATH) {
+        url = getAssetPath(props.url);
+        spriteClass = undefined;
+    }
+    if (spriteClass) {
+        const spStyle = { ...(props.style || {}) };
+        if (!spStyle.display) {
+            spStyle.display = "inline-block";
+        }
+        return <div style={spStyle} onClick={props.onClick} className={spriteClass} {...props.otherProps} />;
+    }
+    return <img style={props.style} src={url} onClick={props.onClick} {...props.otherProps} />;
 };

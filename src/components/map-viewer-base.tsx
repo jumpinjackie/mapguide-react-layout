@@ -678,27 +678,27 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             const dtype = this.state.digitizingType;
             switch (dtype) {
                 case "Point":
-                    style.cursor = `url(${getIcon("digitizePoint.cur")}), auto`;
+                    style.cursor = `url(${getIcon("cursors/digitizePoint.cur")}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
                 case "Line":
-                    style.cursor = `url(${getIcon("digitizeLine.cur")}), auto`;
+                    style.cursor = `url(${getIcon("cursors/digitizeLine.cur")}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
                 case "LineString":
-                    style.cursor = `url(${getIcon("digitizeLineString.cur")}), auto`;
+                    style.cursor = `url(${getIcon("cursors/digitizeLineString.cur")}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
                 case "Rectangle":
-                    style.cursor = `url(${getIcon("digitizeRectangle.cur")}), auto`;
+                    style.cursor = `url(${getIcon("cursors/digitizeRectangle.cur")}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
                 case "Polygon":
-                    style.cursor = `url(${getIcon("digitizePolygon.cur")}), auto`;
+                    style.cursor = `url(${getIcon("cursors/digitizePolygon.cur")}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
                 case "Circle":
-                    style.cursor = `url(${getIcon("digitizeCircle.cur")}), auto`;
+                    style.cursor = `url(${getIcon("cursors/digitizeCircle.cur")}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
             }
@@ -706,15 +706,15 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             switch (tool) {
                 case ActiveMapTool.Pan:
                     if (isMouseDown) {
-                        style.cursor = `url(${getIcon("grabbing.cur")}), auto`;
+                        style.cursor = `url(${getIcon("cursors/grabbing.cur")}), auto`;
                         //console.log(`cursor: ${style.cursor}`);
                     } else {
-                        style.cursor = `url(${getIcon("grab.cur")}), auto`;
+                        style.cursor = `url(${getIcon("cursors/grab.cur")}), auto`;
                         //console.log(`cursor: ${style.cursor}`);
                     }
                     break;
                 case ActiveMapTool.Zoom:
-                    style.cursor = `url(${getIcon("zoomin.cur")}), auto`;
+                    style.cursor = `url(${getIcon("cursors/zoomin.cur")}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
             }

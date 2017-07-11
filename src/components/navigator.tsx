@@ -174,9 +174,9 @@ export class Navigator extends React.Component<INavigatorProps, any> {
                 <area onClick={this.fnZoomOut} shape="circle" alt={tr("NAVIGATOR_ZOOM_OUT", this.props.locale)} title={tr("NAVIGATOR_ZOOM_OUT", this.props.locale)} coords="25,142,8" />
                 <area onClick={this.fnZoomIn} shape="circle" alt={tr("NAVIGATOR_ZOOM_IN", this.props.locale)} title={tr("NAVIGATOR_ZOOM_IN", this.props.locale)} coords="25,34,8" />
             </map>
-            <img src="stdassets/icons/sliderscale.png" className="png24" width="51" height="201" useMap="#Navigator_ImageMap" style={{ position: "absolute", left: 0, top: 0 }} />
+            <img src="stdassets/images/icons/sliderscale.png" className="png24" width="51" height="201" useMap="#Navigator_ImageMap" style={{ position: "absolute", left: 0, top: 0 }} />
             <div style={{ position: "absolute", top: 6, left: 6, width: 39, height: 16 }}>
-                <img src="stdassets/icons/spinner.gif" className="navigator-spinner" width="18" height="6" style={{ position: "absolute", top: 3, right: 4, visibility: busy ? "visible" : "hidden" }} />
+                <img src="stdassets/images/icons/spinner.gif" className="navigator-spinner" width="18" height="6" style={{ position: "absolute", top: 3, right: 4, visibility: busy ? "visible" : "hidden" }} />
             </div>
             {/*
                 NOTE: this.state.pos is the displacement from VERT_START instead of 0. This ensures
@@ -190,7 +190,7 @@ export class Navigator extends React.Component<INavigatorProps, any> {
                        onDrag={this.fnDrag}
                        onStop={this.fnStop}>
                 <div>
-                    <img src="stdassets/icons/slider.png" className="png24 navigator-drag-handle" width="29" height="12" style={{ position: "relative", left: 11, top: 28 }} />
+                    <img src="stdassets/images/icons/slider.png" className="png24 navigator-drag-handle" width="29" height="12" style={{ position: "relative", left: 11, top: 28 }} />
                     {(() => {
                         if (this.state.isDragging === true) {
                             const dragLabel = tr("FMT_NAVIGATOR_ZOOM_TO_SCALE", this.props.locale, { scale: this.calculateScaleForPos(this.state.previewPos).toFixed(2) });

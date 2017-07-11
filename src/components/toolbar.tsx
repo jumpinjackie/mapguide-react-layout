@@ -12,7 +12,7 @@ export const TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";
 
 export function getIcon(relPath: string | undefined): string | undefined {
     if (relPath) {
-        return `stdicons/${relPath}`;
+        return `stdassets/${relPath}`;
     } else {
         return undefined;
     }
@@ -259,7 +259,7 @@ class ComponentFlyoutItem extends React.Component<IComponentFlyoutItemProps, any
         const ttip = getTooltip(item);
         return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={ttip}>
             <div data-flyout-id={`flyout-${item.flyoutId}`}>
-                {label} <img style={imgStyle} src={getIcon(item.icon || ((this.state.isFlownOut) ? "icon_menuarrowup.gif" : "icon_menuarrow.gif"))} />
+                {label} <img style={imgStyle} src={getIcon(item.icon || ((this.state.isFlownOut) ? "images/icons/icon_menuarrowup.gif" : "images/icons/icon_menuarrow.gif"))} />
             </div>
         </div>;
     }
@@ -335,7 +335,7 @@ class FlyoutMenuReferenceItem extends React.Component<IFlyoutMenuReferenceItemPr
         const ttip = getTooltip(menu);
         return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={ttip}>
             <div data-flyout-id={`flyout-${menu.flyoutId}`}>
-                {label} <img style={imgStyle} src={getIcon(menu.icon || ((this.state.isFlownOut) ? "icon_menuarrowup.gif" : "icon_menuarrow.gif"))} />
+                {label} <img style={imgStyle} src={getIcon(menu.icon || ((this.state.isFlownOut) ? "images/icons/icon_menuarrowup.gif" : "images/icons/icon_menuarrow.gif"))} />
             </div>
         </div>;
     }

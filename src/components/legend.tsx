@@ -427,7 +427,7 @@ export class Legend extends React.Component<ILegendProps, any> {
         }
     }
     private getStdIcon(relPath: string): string {
-        return `stdicons/${relPath}`;
+        return `stdassets/images/icons/${relPath}`;
     }
     private getIconMimeType(): string | undefined {
         return this.props.map.IconMimeType;

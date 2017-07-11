@@ -82,7 +82,7 @@ function buildTargetedCommand(config: Readonly<IConfigurationReducerState>, para
 export function initDefaultCommands() {
     //Select Tool
     registerCommand(DefaultCommands.Select, {
-        icon: "select.png",
+        icon: "images/icons/select.png",
         selected: (state) => {
             return state.viewer.tool === ActiveMapTool.Select;
         },
@@ -93,7 +93,7 @@ export function initDefaultCommands() {
     });
     //Pan Tool
     registerCommand(DefaultCommands.Pan, {
-        icon: "pan.png",
+        icon: "images/icons/pan.png",
         selected: (state) => {
             return state.viewer.tool === ActiveMapTool.Pan;
         },
@@ -104,7 +104,7 @@ export function initDefaultCommands() {
     });
     //Zoom Tool
     registerCommand(DefaultCommands.Zoom, {
-        icon: "zoom-in.png",
+        icon: "images/icons/zoom-in.png",
         selected: (state) => {
             return state.viewer.tool === ActiveMapTool.Zoom;
         },
@@ -115,7 +115,7 @@ export function initDefaultCommands() {
     });
     //Feature Tooltips
     registerCommand(DefaultCommands.MapTip, {
-        icon: "maptip.png",
+        icon: "images/icons/maptip.png",
         selected: (state) => {
             return state.viewer.featureTooltipsEnabled === true;
         },
@@ -127,7 +127,7 @@ export function initDefaultCommands() {
     });
     //Zoom in
     registerCommand(DefaultCommands.ZoomIn, {
-        icon: "zoom-in-fixed.png",
+        icon: "images/icons/zoom-in-fixed.png",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -138,7 +138,7 @@ export function initDefaultCommands() {
     });
     //Zoom Out
     registerCommand(DefaultCommands.ZoomOut, {
-        icon: "zoom-out-fixed.png",
+        icon: "images/icons/zoom-out-fixed.png",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -149,7 +149,7 @@ export function initDefaultCommands() {
     });
     //Pan Left
     registerCommand(DefaultCommands.PanLeft, {
-        icon: "pan-west.png",
+        icon: "images/icons/pan-west.png",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -160,7 +160,7 @@ export function initDefaultCommands() {
     });
     //Pan Right
     registerCommand(DefaultCommands.PanRight, {
-        icon: "pan-east.png",
+        icon: "images/icons/pan-east.png",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -171,7 +171,7 @@ export function initDefaultCommands() {
     });
     //Pan Up
     registerCommand(DefaultCommands.PanUp, {
-        icon: "pan-north.png",
+        icon: "images/icons/pan-north.png",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -182,7 +182,7 @@ export function initDefaultCommands() {
     });
     //Pan Down
     registerCommand(DefaultCommands.PanDown, {
-        icon: "pan-south.png",
+        icon: "images/icons/pan-south.png",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -193,7 +193,7 @@ export function initDefaultCommands() {
     });
     //About
     registerCommand(DefaultCommands.About, {
-        icon: "about.png",
+        icon: "images/icons/about.png",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -210,7 +210,7 @@ export function initDefaultCommands() {
     });
     //Help
     registerCommand(DefaultCommands.Help, {
-        icon: "help.png",
+        icon: "images/icons/help.png",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -227,7 +227,7 @@ export function initDefaultCommands() {
     });
     //Measure
     registerCommand(DefaultCommands.Measure, {
-        icon: "measure.png",
+        icon: "images/icons/measure.png",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -239,7 +239,7 @@ export function initDefaultCommands() {
     });
     //Quick Plot
     registerCommand(DefaultCommands.QuickPlot, {
-        icon: "print.png",
+        icon: "images/icons/print.png",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -251,7 +251,7 @@ export function initDefaultCommands() {
     });
     //Viewer Options
     registerCommand(DefaultCommands.ViewerOptions, {
-        icon: "options.png",
+        icon: "images/icons/options.png",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -263,7 +263,7 @@ export function initDefaultCommands() {
     });
     //Select Radius
     registerCommand(DefaultCommands.SelectRadius, {
-        icon: "select-radius.png",
+        icon: "images/icons/select-radius.png",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -278,7 +278,7 @@ export function initDefaultCommands() {
     });
     //Select Radius
     registerCommand(DefaultCommands.SelectPolygon, {
-        icon: "select-polygon.png",
+        icon: "images/icons/select-polygon.png",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -291,7 +291,7 @@ export function initDefaultCommands() {
     });
     //Initial Center and scale
     registerCommand(DefaultCommands.RestoreView, {
-        icon: "initial-center.png",
+        icon: "images/icons/initial-center.png",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -307,7 +307,7 @@ export function initDefaultCommands() {
     })
     //Zoom Extents
     registerCommand(DefaultCommands.ZoomExtents, {
-        icon: "zoom-full.png",
+        icon: "images/icons/zoom-full.png",
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -318,7 +318,7 @@ export function initDefaultCommands() {
     });
     //Clear Selection
     registerCommand(DefaultCommands.ClearSelection, {
-        icon: "select-clear.png",
+        icon: "images/icons/select-clear.png",
         selected: () => false,
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -329,7 +329,7 @@ export function initDefaultCommands() {
     });
     //Zoom to Selection
     registerCommand(DefaultCommands.ZoomToSelection, {
-        icon: "icon_zoomselect.gif",
+        icon: "images/icons/icon_zoomselect.gif",
         selected: () => false,
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -358,7 +358,7 @@ export function initDefaultCommands() {
     });
     //Refresh Map
     registerCommand(DefaultCommands.RefreshMap, {
-        icon: "icon_refreshmap.gif",
+        icon: "images/icons/icon_refreshmap.gif",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -370,7 +370,7 @@ export function initDefaultCommands() {
     });
     //Previous View
     registerCommand(DefaultCommands.PreviousView, {
-        icon: "view-back.png",
+        icon: "images/icons/view-back.png",
         selected: () => false,
         enabled: CommandConditions.hasPreviousView,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -382,7 +382,7 @@ export function initDefaultCommands() {
     });
     //Next View
     registerCommand(DefaultCommands.NextView, {
-        icon: "view-forward.png",
+        icon: "images/icons/view-forward.png",
         selected: () => false,
         enabled: CommandConditions.hasNextView,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -394,7 +394,7 @@ export function initDefaultCommands() {
     });
     //Geolocation
     registerCommand(DefaultCommands.Geolocation, {
-        icon: "geolocation.png",
+        icon: "images/icons/geolocation.png",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -442,7 +442,7 @@ export function initDefaultCommands() {
     });
     //Buffer
     registerCommand(DefaultCommands.Buffer, {
-        icon: "buffer.png",
+        icon: "images/icons/buffer.png",
         selected: () => false,
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -459,7 +459,7 @@ export function initDefaultCommands() {
     });
     //Select Within
     registerCommand(DefaultCommands.SelectWithin, {
-        icon: "select-features.png",
+        icon: "images/icons/select-features.png",
         selected: () => false,
         enabled: (state, parameters) => !CommandConditions.disabledIfEmptySelection(state, parameters),
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -476,7 +476,7 @@ export function initDefaultCommands() {
     });
     //Redline
     registerCommand(DefaultCommands.Redline, {
-        icon: "redline.png",
+        icon: "images/icons/redline.png",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -493,7 +493,7 @@ export function initDefaultCommands() {
     });
     //Feature Info
     registerCommand(DefaultCommands.FeatureInfo, {
-        icon: "feature-info.png",
+        icon: "images/icons/feature-info.png",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -509,7 +509,7 @@ export function initDefaultCommands() {
     });
     //Query
     registerCommand(DefaultCommands.Query, {
-        icon: "query.png",
+        icon: "images/icons/query.png",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -525,7 +525,7 @@ export function initDefaultCommands() {
     });
     //Theme
     registerCommand(DefaultCommands.Theme, {
-        icon: "theme.png",
+        icon: "images/icons/theme.png",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -543,7 +543,7 @@ export function initDefaultCommands() {
     //Fusion template helper commands
     /*
     registerCommand("showOverview", {
-        icon: "invoke-script.png",
+        icon: "images/icons/invoke-script.png",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -552,7 +552,7 @@ export function initDefaultCommands() {
     });
     */
     registerCommand("showTaskPane", {
-        icon: "invoke-script.png",
+        icon: "images/icons/invoke-script.png",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -561,7 +561,7 @@ export function initDefaultCommands() {
         }
     });
     registerCommand("showLegend", {
-        icon: "invoke-script.png",
+        icon: "images/icons/invoke-script.png",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -570,7 +570,7 @@ export function initDefaultCommands() {
         }
     });
     registerCommand("showSelectionPanel", {
-        icon: "invoke-script.png",
+        icon: "images/icons/invoke-script.png",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {

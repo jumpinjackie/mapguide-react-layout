@@ -28,6 +28,14 @@ import { tr } from "../i18n";
 import { assertNever } from "../../utils/never";
 import * as logger from "../../utils/logger";
 
+// This is a band-aid to suppress the fusion image sprite reference until we have working sprite icons
+function fusionFix(icon: string) {
+    if (icon == "images/icons.png") {
+        return null;
+    }
+    return icon;
+}
+
 /**
  * @hidden
  */
@@ -35,7 +43,7 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
     const state = store.getState();
     if (tb.error) {
         const cmdItem: IItem = {
-            icon: "error.png",
+            icon: "images/icons/error.png",
             tooltip: tb.error,
             label: tr("ERROR"),
             selected: ALWAYS_FALSE,
@@ -57,7 +65,7 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
         const cmd = getCommand(tb.command);
         if (cmd != null) {
             const cmdItem: IItem = {
-                icon: cmd.icon,
+                icon: fusionFix(tb.icon) || cmd.icon,
                 tooltip: tb.tooltip,
                 label: tb.label,
                 selected: () => cmd.selected(state),

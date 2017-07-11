@@ -811,20 +811,26 @@ function makeSessionAcquired(client: Client, dispatch: ReduxDispatch, opts: any)
     }
 }
 
+export interface IInitAppLayout {
+    resourceId: string;
+    externalBaseLayers?: IExternalBaseLayer[];
+    session?: string;
+}
+
 /**
  * Initializes the viewer
  *
  * @export
- * @param {*} options
+ * @param {IInitAppLayout} options
  * @returns {ReduxThunkedAction}
  */
-export function initLayout(options: any): ReduxThunkedAction {
+export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
     const parsed = parse(window.location.href);
     const query = queryString.parse(parsed.query);
     const options1 = {
         resourceId: query["resource"] || options.resourceId,
         locale: query["locale"] || "en",
-        session: query["session"]
+        session: query["session"] || options.session
     };
     const opts = { ...options, ...options1 };
     return (dispatch, getState) => {

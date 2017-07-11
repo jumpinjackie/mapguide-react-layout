@@ -11,7 +11,7 @@ import {
     ClientKind,
     InitError
 } from "../api/common";
-import { initLayout } from "../actions/init";
+import { initLayout, IInitAppLayout } from "../actions/init";
 import { Error, normalizeStack } from "../components/error";
 import { tr } from "../api/i18n";
 import * as TemplateActions from "../actions/template";
@@ -24,6 +24,10 @@ import * as TemplateActions from "../actions/template";
  */
 export interface IAppProps {
     layout: string;
+    /**
+     * A session id to init this viewer with
+     */
+    session?: string;
     /**
      * Agent configuration
      *
@@ -38,7 +42,7 @@ export interface IAppProps {
     },
     /**
      * Defines initial element visibility
-     * 
+     *
      * @type {{
      *         taskpane: boolean;
      *         legend: boolean;
@@ -76,11 +80,6 @@ export interface IAppState {
     initOptions: any;
     config: IConfigurationReducerState;
     map: IBranchedMapSubState;
-}
-
-export interface IInitAppLayout {
-    resourceId: string;
-    externalBaseLayers?: IExternalBaseLayer[];
 }
 
 /**
@@ -128,20 +127,30 @@ export class App extends React.Component<AppProps, any> {
         };
     }
     componentDidMount() {
-        const { initApp, setElementVisibility, initialElementVisibility, initLayout, agent, resourceId, externalBaseLayers } = this.props;
+        const {
+            initApp,
+            setElementVisibility,
+            initialElementVisibility,
+            initLayout,
+            agent,
+            session,
+            resourceId,
+            externalBaseLayers
+        } = this.props;
         if (setElementVisibility && initialElementVisibility) {
             const { taskpane, legend, selection } = initialElementVisibility;
             const states: TemplateActions.IElementState = {
-                taskPaneVisible: typeof(taskpane) != 'undefined' ? taskpane : true,
-                legendVisible: typeof(legend) != 'undefined' ? legend : true,
-                selectionPanelVisible: typeof(selection) != 'undefined' ? selection : true
+                taskPaneVisible: typeof (taskpane) != 'undefined' ? taskpane : true,
+                legendVisible: typeof (legend) != 'undefined' ? legend : true,
+                selectionPanelVisible: typeof (selection) != 'undefined' ? selection : true
             };
             setElementVisibility(states);
         }
         if (initLayout) {
             initLayout({
                 resourceId: resourceId,
-                externalBaseLayers: externalBaseLayers
+                externalBaseLayers: externalBaseLayers,
+                session: session
             });
         }
     }

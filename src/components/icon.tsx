@@ -35,7 +35,7 @@ export const Icon = (props: IIconProps) => {
         if (!spStyle.display) {
             spStyle.display = "inline-block";
         }
-        return <div style={spStyle} onClick={props.onClick} className={spriteClass} {...props.otherProps} />;
+        return <div style={spStyle} onClick={props.onClick} className={`icon ${spriteClass}`} {...props.otherProps} />;
     }
-    return <img style={props.style} src={url} onClick={props.onClick} {...props.otherProps} />;
+    return <img className="icon" style={props.style} src={url} onClick={props.onClick} {...props.otherProps} />;
 };

@@ -8,7 +8,6 @@ import { ILegendContext } from "../src/components/context";
 function mockContext(): ILegendContext {
     return {
         getIconMimeType: () => "image/png",
-        getStdIcon: (path: string) => path,
         getChildren: (id) => [],
         getCurrentScale: () => this.props.currentScale,
         getTree: () => {},

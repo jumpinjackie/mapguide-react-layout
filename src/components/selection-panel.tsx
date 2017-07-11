@@ -20,20 +20,20 @@ export interface ISelectionPanelProps {
 function buildToolbarItems(selPanel: SelectionPanel): IItem[] {
     return [
         {
-            icon: "control-180.png",
+            icon: "images/icons/control-180.png",
             tooltip: xlate("SELECTION_PREV_FEATURE", selPanel.props.locale),
             enabled: () => selPanel.canGoPrev(),
             invoke: () => selPanel.prevFeature()
         },
         {
-            icon: "control.png",
+            icon: "images/icons/control.png",
             tooltip: xlate("SELECTION_NEXT_FEATURE", selPanel.props.locale),
             enabled: () => selPanel.canGoNext(),
             invoke: () => selPanel.nextFeature()
         },
         { isSeparator: true },
         {
-            icon: "icon_zoomselect.gif",
+            icon: "images/icons/icon_zoomselect.png",
             tooltip: xlate("SELECTION_ZOOMTO_FEATURE", selPanel.props.locale),
             enabled: () => selPanel.canZoomSelectedFeature(),
             invoke: () => selPanel.zoomSelectedFeature()

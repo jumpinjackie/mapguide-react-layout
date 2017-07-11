@@ -4,7 +4,9 @@ import { RuntimeMap, MapLayer, MapGroup, RuleInfo } from "../api/contracts/runti
 import { ILegendContext, LEGEND_CONTEXT_VALIDATION_MAP } from "./context";
 import { BaseLayerSwitcher } from "./base-layer-switcher";
 import { isLayer } from "../utils/type-guards";
+import { Icon } from "./icon";
 import { scaleRangeBetween } from "../utils/number";
+import { getAssetPath } from "../utils/asset";
 import { tr } from "../api/i18n";
 import * as Constants from "../constants";
 
@@ -136,12 +138,12 @@ export class LayerNode extends React.Component<ILayerNodeProps, any> {
         const label = layer.LegendLabel ? layer.LegendLabel : "";
         const iconMimeType = this.context.getIconMimeType();
         let text = label;
-        let icon: string | undefined = this.context.getStdIcon("legend-layer.png");
+        let icon = getAssetPath("images/icons/legend-layer.png");
         let selectable: JSX.Element | undefined;
         if (layer.Selectable === true) {
-            selectable = <img style={ROW_ITEM_ELEMENT_STYLE}
-                              onClick={this.fnToggleSelectability}
-                              src={this.context.getStdIcon(this.getLayerSelectability(layer.ObjectId) ? "icon_select.gif" : "lc_unselect.gif")} />;
+            selectable = <Icon style={ROW_ITEM_ELEMENT_STYLE}
+                               onClick={this.fnToggleSelectability}
+                               url={this.getLayerSelectability(layer.ObjectId) ? "images/icons/icon_select.png" : "images/icons/lc_unselect.png"} />;
         }
         let chkbox: JSX.Element | undefined;
         if (layer.Type == 1) { //Dynamic
@@ -165,7 +167,7 @@ export class LayerNode extends React.Component<ILayerNodeProps, any> {
                         totalRuleCount += fts.Rule.length;
                     }
                     if (isExpanded && totalRuleCount > 1) {
-                        icon = this.context.getStdIcon("legend-theme.png");
+                        icon = getAssetPath("images/icons/legend-theme.png");
 
                         for (let fi = 0; fi < scaleRange.FeatureStyle.length; fi++) {
                             const fts = scaleRange.FeatureStyle[fi];
@@ -188,9 +190,12 @@ export class LayerNode extends React.Component<ILayerNodeProps, any> {
                         }
                     } else { //Collapsed
                         if (totalRuleCount > 1) {
-                            icon = this.context.getStdIcon("legend-theme.png");
+                            icon = getAssetPath("images/icons/legend-theme.png");
                         } else {
-                            icon = getIconUri(iconMimeType, scaleRange.FeatureStyle[0].Rule[0].Icon);
+                            const uri = getIconUri(iconMimeType, scaleRange.FeatureStyle[0].Rule[0].Icon);
+                            if (uri) {
+                                icon = uri;
+                            }
                         }
                     }
 
@@ -200,13 +205,13 @@ export class LayerNode extends React.Component<ILayerNodeProps, any> {
 
                     let expanded: JSX.Element;
                     if (totalRuleCount > 1) {
-                        expanded = <img style={ROW_ITEM_ELEMENT_STYLE} onClick={this.fnToggleExpansion} src={this.context.getStdIcon(isExpanded ? "toggle.png" : "toggle-expand.png")} />;;
+                        expanded = <Icon style={ROW_ITEM_ELEMENT_STYLE} onClick={this.fnToggleExpansion} url={isExpanded ? "images/icons/toggle.png" : "images/icons/toggle-expand.png"} />;;
                     } else {
                         expanded = <EmptyNode />;
                     }
                     return <li style={LI_LIST_STYLE} className='layer-node'>{expanded} {chkbox} {selectable} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> <LegendLabel text={text} /> {body}</li>;
                 } else { //This is generally a raster
-                    icon = this.context.getStdIcon("legend-raster.png");
+                    icon = getAssetPath("images/icons/legend-raster.png");
                 }
             }
         }
@@ -260,11 +265,11 @@ export class GroupNode extends React.Component<IGroupNodeProps, any> {
         const { group } = this.props;
         const currentScale = this.context.getCurrentScale();
         const tree = this.context.getTree();
-        const icon = this.context.getStdIcon("folder-horizontal.png");
+        const icon = getAssetPath("images/icons/folder-horizontal.png");
         const isExpanded = this.getExpanded();
-        const expanded = <img style={ROW_ITEM_ELEMENT_STYLE}
-                              onClick={this.fnToggleExpansion}
-                              src={this.context.getStdIcon(isExpanded ? "toggle.png" : "toggle-expand.png")} />;
+        const expanded = <Icon style={ROW_ITEM_ELEMENT_STYLE}
+                               onClick={this.fnToggleExpansion}
+                               url={isExpanded ? "images/icons/toggle.png" : "images/icons/toggle-expand.png"} />;
         const chkbox = <input type='checkbox' className='group-checkbox' style={CHK_STYLE} value={group.ObjectId} onChange={this.fnVisibilityChanged} checked={(this.state.groupVisible)} />;
         return <li style={LI_LIST_STYLE}>
             <span>{expanded} {chkbox} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> <LegendLabel text={this.props.group.LegendLabel} /></span>
@@ -339,7 +344,6 @@ export class Legend extends React.Component<ILegendProps, any> {
     }
     getChildContext(): ILegendContext {
         return {
-            getStdIcon: this.getStdIcon.bind(this),
             getIconMimeType: this.getIconMimeType.bind(this),
             getChildren: this.getChildren.bind(this),
             getCurrentScale: () => this.props.currentScale,
@@ -425,9 +429,6 @@ export class Legend extends React.Component<ILegendProps, any> {
         if (this.props.onLayerVisibilityChanged != null) {
             this.props.onLayerVisibilityChanged(layerId, visible);
         }
-    }
-    private getStdIcon(relPath: string): string {
-        return `stdassets/images/icons/${relPath}`;
     }
     private getIconMimeType(): string | undefined {
         return this.props.map.IconMimeType;

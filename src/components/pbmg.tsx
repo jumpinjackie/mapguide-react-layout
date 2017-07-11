@@ -5,5 +5,5 @@ import * as React from "react";
  * @param props
  */
 export const PoweredByMapGuide = (props: any) => {
-    return <img className="component-pbmg" {...props} src="stdassets/images/icons/PoweredBy_en.gif" />;
+    return <img className="component-pbmg" {...props} src="stdassets/images/icons/PoweredBy_en.png" />;
 };

@@ -329,7 +329,7 @@ export function initDefaultCommands() {
     });
     //Zoom to Selection
     registerCommand(DefaultCommands.ZoomToSelection, {
-        icon: "images/icons/icon_zoomselect.gif",
+        icon: "images/icons/icon_zoomselect.png",
         selected: () => false,
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -358,7 +358,7 @@ export function initDefaultCommands() {
     });
     //Refresh Map
     registerCommand(DefaultCommands.RefreshMap, {
-        icon: "images/icons/icon_refreshmap.gif",
+        icon: "images/icons/icon_refreshmap.png",
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {

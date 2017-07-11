@@ -85,7 +85,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         this.fnOpenFlyout = this.onOpenFlyout.bind(this);
         const locale = this.getLocale();
         this.homeAction = {
-            icon: "images/icons/icon_home.gif",
+            icon: "images/icons/icon_home.png",
             tooltip: tr("TT_GO_HOME", locale),
             enabled: this.canGoHome.bind(this),
             invoke: () => {

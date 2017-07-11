@@ -43,7 +43,8 @@ import { MgError, isSessionExpiredError } from '../api/error';
 import { Client } from '../api/client';
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
-import { IInlineMenu, IItem, getEnabled, getIcon } from '../components/toolbar';
+import { IInlineMenu, IItem, getEnabled } from '../components/toolbar';
+import { getAssetPath } from "../utils/asset";
 import { isMenu } from '../utils/type-guards';
 import { tr } from "../api/i18n";
 const isMobile = require("ismobilejs");
@@ -678,27 +679,27 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             const dtype = this.state.digitizingType;
             switch (dtype) {
                 case "Point":
-                    style.cursor = `url(${getIcon("cursors/digitizePoint.cur")}), auto`;
+                    style.cursor = `url(${getAssetPath("cursors/digitizePoint.cur")}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
                 case "Line":
-                    style.cursor = `url(${getIcon("cursors/digitizeLine.cur")}), auto`;
+                    style.cursor = `url(${getAssetPath("cursors/digitizeLine.cur")}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
                 case "LineString":
-                    style.cursor = `url(${getIcon("cursors/digitizeLineString.cur")}), auto`;
+                    style.cursor = `url(${getAssetPath("cursors/digitizeLineString.cur")}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
                 case "Rectangle":
-                    style.cursor = `url(${getIcon("cursors/digitizeRectangle.cur")}), auto`;
+                    style.cursor = `url(${getAssetPath("cursors/digitizeRectangle.cur")}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
                 case "Polygon":
-                    style.cursor = `url(${getIcon("cursors/digitizePolygon.cur")}), auto`;
+                    style.cursor = `url(${getAssetPath("cursors/digitizePolygon.cur")}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
                 case "Circle":
-                    style.cursor = `url(${getIcon("cursors/digitizeCircle.cur")}), auto`;
+                    style.cursor = `url(${getAssetPath("cursors/digitizeCircle.cur")}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
             }
@@ -706,15 +707,15 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             switch (tool) {
                 case ActiveMapTool.Pan:
                     if (isMouseDown) {
-                        style.cursor = `url(${getIcon("cursors/grabbing.cur")}), auto`;
+                        style.cursor = `url(${getAssetPath("cursors/grabbing.cur")}), auto`;
                         //console.log(`cursor: ${style.cursor}`);
                     } else {
-                        style.cursor = `url(${getIcon("cursors/grab.cur")}), auto`;
+                        style.cursor = `url(${getAssetPath("cursors/grab.cur")}), auto`;
                         //console.log(`cursor: ${style.cursor}`);
                     }
                     break;
                 case ActiveMapTool.Zoom:
-                    style.cursor = `url(${getIcon("cursors/zoomin.cur")}), auto`;
+                    style.cursor = `url(${getAssetPath("cursors/zoomin.cur")}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
             }
@@ -759,7 +760,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 }
                 return {
                     text: i.label,
-                    icon: i.icon != null ? getIcon(i.icon) : null,
+                    icon: i.icon != null ? getAssetPath(i.icon) : null,
                     classname: getEnabled(i) === false ? "context-menu-item-disabled" : null,
                     callback: cb,
                     items: items

@@ -18,7 +18,6 @@ export const APPLICATION_CONTEXT_VALIDATION_MAP: PropTypes.ValidationMap<any> = 
 };
 
 export interface ILegendContext {
-    getStdIcon(iconRelPath: string): string;
     getIconMimeType(): string;
     getChildren(objectId: string): (MapLayer | MapGroup)[];
     getCurrentScale(): number;

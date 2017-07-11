@@ -21,10 +21,11 @@ import * as ModalActions from "../../actions/modal";
 import { getFusionRoot } from "../../api/runtime";
 import { QueryMapFeaturesResponse } from "../contracts/query";
 import { ResultColumnSet } from "../contracts/weblayout";
-import { IItem, IInlineMenu, IFlyoutMenu, IComponentFlyoutItem, getIcon } from "../../components/toolbar";
+import { IItem, IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../../components/toolbar";
 import * as Constants from "../../constants";
 import { ensureParameters } from "../../actions/taskpane";
 import { tr } from "../i18n";
+import { getAssetPath } from "../../utils/asset";
 import { assertNever } from "../../utils/never";
 import * as logger from "../../utils/logger";
 

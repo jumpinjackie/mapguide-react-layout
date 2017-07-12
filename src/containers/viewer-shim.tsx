@@ -22,7 +22,8 @@ import * as LegendActions from "../actions/legend";
 import { deArrayify, buildSelectionXml } from "../api/builders/deArrayify";
 import { FormFrameShim } from "../components/form-frame-shim";
 import { getCommand, DefaultCommands, CommandConditions } from "../api/registry/command";
-import { Toaster, Position, Intent, IToaster } from "@blueprintjs/core";
+import { Intent } from "@blueprintjs/core";
+import { getTopToaster } from "../components/toaster";
 import { tr } from "../api/i18n";
 import { serialize } from "../api/builders/mapagent";
 
@@ -259,16 +260,30 @@ class OL2Bounds {
     }
 }
 
+let mRedlineMessageEnabled: boolean | undefined;
+
+/**
+ * @hidden
+ */
+function isRedlineMessagePromptEnabled(): boolean {
+    return !!mRedlineMessageEnabled;
+}
+
+/**
+ * @hidden
+ */
+export function enableRedlineMessagePrompt(enabled: boolean): void {
+    mRedlineMessageEnabled = enabled;
+}
+
 /**
  * This class emulates APIs from various widgets
  */
 class FusionWidgetApiShim {
     private _activeLayer: any;
-    private _toaster: IToaster;
     private _activeToast: string;
 
     constructor(private parent: ViewerApiShim) {
-        this._toaster = Toaster.create({ position: Position.TOP, className: "mg-toast mg-fusion-message-bar-toast" });
     }
 
     goHome(): void { //TaskPane
@@ -429,16 +444,19 @@ class FusionWidgetApiShim {
         this.parent.Refresh();
     }
     info(msg: string): void { //Map MessageBar
-        this._activeToast = this._toaster.show({ iconName: "info-sign", message: <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />, intent: Intent.PRIMARY });
+        this._activeToast = getTopToaster().show({ iconName: "info-sign", message: <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />, intent: Intent.PRIMARY });
     }
     warn(msg: string): void { //Map MessageBar
-        this._activeToast = this._toaster.show({ iconName: "warning-sign", message: <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />, intent: Intent.WARNING });
+        this._activeToast = getTopToaster().show({ iconName: "warning-sign", message: <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />, intent: Intent.WARNING });
     }
     error(msg: string): void { //Map MessageBar
-        this._activeToast = this._toaster.show({ iconName: "error", message: <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />, intent: Intent.DANGER });
+        this._activeToast = getTopToaster().show({ iconName: "error", message: <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />, intent: Intent.DANGER });
     }
     clear(): void { //Map MessageBar
-        this._toaster.dismiss(this._activeToast);
+        getTopToaster().dismiss(this._activeToast);
+    }
+    get mapMessagePrompt(): boolean { //Redline
+        return isRedlineMessagePromptEnabled();
     }
     get container(): FusionWidgetApiShim {
         return this;

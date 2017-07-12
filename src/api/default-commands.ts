@@ -28,8 +28,10 @@ import * as TemplateActions from "../actions/template";
 import { tr } from "../api/i18n";
 import { ensureParameters } from "../actions/taskpane";
 import { DefaultComponentNames } from "../api/registry/component";
-import { Toaster, Position, Intent } from "@blueprintjs/core";
+import { Intent } from "@blueprintjs/core";
+import { getTopToaster } from "../components/toaster";
 import { getFusionRoot } from "../api/runtime";
+import { enableRedlineMessagePrompt } from "../containers/viewer-shim";
 
 function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
     const settings: any = {
@@ -430,12 +432,12 @@ export function initDefaultCommands() {
                         rtMap.Extents.UpperRightCoordinate.Y
                     ];
                     if (fact.extentContainsXY(extents, testCoord[0], testCoord[1])) {
-                        Toaster.create({ position: Position.TOP, className: "mg-toast" }).show({ iconName: "geolocation", message: tr("GEOLOCATION_SUCCESS", locale), intent: Intent.SUCCESS });
+                        getTopToaster().show({ iconName: "geolocation", message: tr("GEOLOCATION_SUCCESS", locale), intent: Intent.SUCCESS });
                     } else {
-                        Toaster.create({ position: Position.TOP, className: "mg-toast" }).show({ iconName: "warning-sign", message: tr("GEOLOCATION_WARN_OUTSIDE_MAP", locale), intent: Intent.WARNING });
+                        getTopToaster().show({ iconName: "warning-sign", message: tr("GEOLOCATION_WARN_OUTSIDE_MAP", locale), intent: Intent.WARNING });
                     }
                 }, err => {
-                    Toaster.create({ position: Position.TOP, className: "mg-toast" }).show({ iconName: "error", message: tr("GEOLOCATION_ERROR", locale, { message: err.message, code: err.code }), intent: Intent.DANGER });
+                    getTopToaster().show({ iconName: "error", message: tr("GEOLOCATION_ERROR", locale, { message: err.message, code: err.code }), intent: Intent.DANGER });
                 }, geoOptions);
             }
         }
@@ -484,6 +486,7 @@ export function initDefaultCommands() {
             const map = getRuntimeMap(state);
             const config = state.config;
             if (map) {
+                enableRedlineMessagePrompt(parameters.UseMapMessage == "true");
                 let url = ensureParameters(`${getFusionRoot()}/widgets/Redline/markupmain.php`, map.Name, map.SessionId, config.locale, true);
                 url += "&POPUP=false&REDLINESTYLIZATION=ADVANCED";
                 const cmdDef = buildTargetedCommand(config, parameters);

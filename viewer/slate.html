@@ -70,7 +70,8 @@
             var el = document.getElementById("map");
             var viewer = new MapGuide.Application();
             viewer.mount(el, {
-                layout: "slate",/*
+                layout: "slate",
+                assetRoot: "dist/stdassets",/*
                 externalBaseLayers: [
                     { name: "OpenStreetMap", kind: "OSM" },
                     { name: "Stamen - Toner", kind: "Stamen", visible: true, options: { layer: "toner" } },

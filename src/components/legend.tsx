@@ -6,7 +6,16 @@ import { BaseLayerSwitcher } from "./base-layer-switcher";
 import { isLayer } from "../utils/type-guards";
 import { Icon } from "./icon";
 import { scaleRangeBetween } from "../utils/number";
-import { getAssetPath } from "../utils/asset";
+import {
+    SPRITE_LEGEND_LAYER,
+    SPRITE_ICON_SELECT,
+    SPRITE_LC_UNSELECT,
+    SPRITE_LEGEND_THEME,
+    SPRITE_LEGEND_RASTER,
+    SPRITE_LEGEND_TOGGLE,
+    SPRITE_LEGEND_TOGGLE_EXPAND,
+    SPRITE_FOLDER_HORIZONTAL
+} from "../utils/asset";
 import { tr } from "../api/i18n";
 import * as Constants from "../constants";
 
@@ -138,12 +147,12 @@ export class LayerNode extends React.Component<ILayerNodeProps, any> {
         const label = layer.LegendLabel ? layer.LegendLabel : "";
         const iconMimeType = this.context.getIconMimeType();
         let text = label;
-        let icon = getAssetPath("images/icons/legend-layer.png");
+        let icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_LEGEND_LAYER} />;
         let selectable: JSX.Element | undefined;
         if (layer.Selectable === true) {
             selectable = <Icon style={ROW_ITEM_ELEMENT_STYLE}
                                onClick={this.fnToggleSelectability}
-                               url={this.getLayerSelectability(layer.ObjectId) ? "images/icons/icon_select.png" : "images/icons/lc_unselect.png"} />;
+                               spriteClass={this.getLayerSelectability(layer.ObjectId) ? SPRITE_ICON_SELECT : SPRITE_LC_UNSELECT} />;
         }
         let chkbox: JSX.Element | undefined;
         if (layer.Type == 1) { //Dynamic
@@ -167,7 +176,7 @@ export class LayerNode extends React.Component<ILayerNodeProps, any> {
                         totalRuleCount += fts.Rule.length;
                     }
                     if (isExpanded && totalRuleCount > 1) {
-                        icon = getAssetPath("images/icons/legend-theme.png");
+                        icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_LEGEND_THEME} />;
 
                         for (let fi = 0; fi < scaleRange.FeatureStyle.length; fi++) {
                             const fts = scaleRange.FeatureStyle[fi];
@@ -190,11 +199,11 @@ export class LayerNode extends React.Component<ILayerNodeProps, any> {
                         }
                     } else { //Collapsed
                         if (totalRuleCount > 1) {
-                            icon = getAssetPath("images/icons/legend-theme.png");
+                            icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_LEGEND_THEME} />;
                         } else {
                             const uri = getIconUri(iconMimeType, scaleRange.FeatureStyle[0].Rule[0].Icon);
                             if (uri) {
-                                icon = uri;
+                                icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} url={uri} />;
                             }
                         }
                     }
@@ -205,17 +214,17 @@ export class LayerNode extends React.Component<ILayerNodeProps, any> {
 
                     let expanded: JSX.Element;
                     if (totalRuleCount > 1) {
-                        expanded = <Icon style={ROW_ITEM_ELEMENT_STYLE} onClick={this.fnToggleExpansion} url={isExpanded ? "images/icons/toggle.png" : "images/icons/toggle-expand.png"} />;;
+                        expanded = <Icon style={ROW_ITEM_ELEMENT_STYLE} onClick={this.fnToggleExpansion} spriteClass={isExpanded ? SPRITE_LEGEND_TOGGLE : SPRITE_LEGEND_TOGGLE_EXPAND} />;
                     } else {
                         expanded = <EmptyNode />;
                     }
-                    return <li style={LI_LIST_STYLE} className='layer-node'>{expanded} {chkbox} {selectable} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> <LegendLabel text={text} /> {body}</li>;
+                    return <li style={LI_LIST_STYLE} className='layer-node'>{expanded} {chkbox} {selectable} {icon} <LegendLabel text={text} /> {body}</li>;
                 } else { //This is generally a raster
-                    icon = getAssetPath("images/icons/legend-raster.png");
+                    icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_LEGEND_RASTER} />;
                 }
             }
         }
-        return <li style={LI_LIST_STYLE} className='layer-node'><EmptyNode /> {chkbox} {selectable} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> {label}</li>;
+        return <li style={LI_LIST_STYLE} className='layer-node'><EmptyNode /> {chkbox} {selectable} {icon} {label}</li>;
     }
 }
 
@@ -265,14 +274,14 @@ export class GroupNode extends React.Component<IGroupNodeProps, any> {
         const { group } = this.props;
         const currentScale = this.context.getCurrentScale();
         const tree = this.context.getTree();
-        const icon = getAssetPath("images/icons/folder-horizontal.png");
+        const icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_FOLDER_HORIZONTAL} />;
         const isExpanded = this.getExpanded();
         const expanded = <Icon style={ROW_ITEM_ELEMENT_STYLE}
                                onClick={this.fnToggleExpansion}
-                               url={isExpanded ? "images/icons/toggle.png" : "images/icons/toggle-expand.png"} />;
+                               spriteClass={isExpanded ? SPRITE_LEGEND_TOGGLE : SPRITE_LEGEND_TOGGLE_EXPAND} />;
         const chkbox = <input type='checkbox' className='group-checkbox' style={CHK_STYLE} value={group.ObjectId} onChange={this.fnVisibilityChanged} checked={(this.state.groupVisible)} />;
         return <li style={LI_LIST_STYLE}>
-            <span>{expanded} {chkbox} <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> <LegendLabel text={this.props.group.LegendLabel} /></span>
+            <span>{expanded} {chkbox} {icon} <LegendLabel text={this.props.group.LegendLabel} /></span>
             {(() => {
                 if (isExpanded && this.props.childItems.length > 0) {
                     return <ul style={UL_LIST_STYLE}>{this.props.childItems.map(item => {

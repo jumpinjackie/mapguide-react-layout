@@ -3,6 +3,11 @@ import { SelectedFeatureSet, SelectedFeature, LayerMetadata, SelectedLayer, Feat
 import { Toolbar, IItem, IInlineMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
 import { tr as xlate } from "../api/i18n";
 import { NOOP } from "../api/common";
+import {
+    SPRITE_CONTROL,
+    SPRITE_CONTROL_180,
+    SPRITE_ICON_ZOOMSELECT
+} from "../utils/asset";
 
 /**
  * SelectionPanel component props
@@ -20,20 +25,20 @@ export interface ISelectionPanelProps {
 function buildToolbarItems(selPanel: SelectionPanel): IItem[] {
     return [
         {
-            icon: "images/icons/control-180.png",
+            iconClass: SPRITE_CONTROL_180,
             tooltip: xlate("SELECTION_PREV_FEATURE", selPanel.props.locale),
             enabled: () => selPanel.canGoPrev(),
             invoke: () => selPanel.prevFeature()
         },
         {
-            icon: "images/icons/control.png",
+            iconClass: SPRITE_CONTROL,
             tooltip: xlate("SELECTION_NEXT_FEATURE", selPanel.props.locale),
             enabled: () => selPanel.canGoNext(),
             invoke: () => selPanel.nextFeature()
         },
         { isSeparator: true },
         {
-            icon: "images/icons/icon_zoomselect.png",
+            iconClass: SPRITE_ICON_ZOOMSELECT,
             tooltip: xlate("SELECTION_ZOOMTO_FEATURE", selPanel.props.locale),
             enabled: () => selPanel.canZoomSelectedFeature(),
             invoke: () => selPanel.zoomSelectedFeature()

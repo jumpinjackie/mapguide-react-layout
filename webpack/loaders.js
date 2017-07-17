@@ -31,10 +31,19 @@ exports.css = {
 };
 
 exports.image = {
-  test: /\.(png|jpg)$/,
+  test: /\.(png|gif)$/,
   loader: "file-loader",
   options: {
-    name: "images/[name].[ext]",
+    name: "[path][name].[ext]",
+    publicPath: "./dist/"
+  }
+};
+
+exports.cursors = {
+  test: /\.cur$/,
+  loader: "file-loader",
+  options: {
+    name: "[path][name].[ext]",
     publicPath: "./dist/"
   }
 };
@@ -43,7 +52,7 @@ exports.fonts = {
   test: /\.(woff|woff2|ttf|eot|svg)$/,
   loader: "file-loader",
   options: {
-    name: "fonts/[name].[ext]",
+    name: "stdassets/fonts/[name].[ext]",
     publicPath: "./dist/"
   }
 };

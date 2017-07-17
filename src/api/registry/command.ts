@@ -25,9 +25,18 @@ import { IItem, IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../../com
 import * as Constants from "../../constants";
 import { ensureParameters } from "../../actions/taskpane";
 import { tr } from "../i18n";
-import { getAssetPath, STD_CSS_SPRITE_RELPATH } from "../../utils/asset";
+import { getAssetRoot, STD_CSS_SPRITE_RELPATH } from "../../utils/asset";
 import { assertNever } from "../../utils/never";
 import * as logger from "../../utils/logger";
+
+const FUSION_ICON_REGEX = /images\/icons\/[a-zA-Z\-]*.png/
+
+function fixIconPath(path: string): string {
+    if (FUSION_ICON_REGEX.test(path)) {
+        return `${getAssetRoot()}/${path}`;
+    }
+    return path;
+}
 
 function fusionFixSpriteClass(tb: any, cmd?: ICommand): string | undefined {
     const url = tb.icon || (cmd || {} as any).icon;
@@ -74,7 +83,7 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
         const cmd = getCommand(tb.command);
         if (cmd != null) {
             const cmdItem: IItem = {
-                icon: tb.icon || cmd.icon,
+                icon: fixIconPath(tb.icon || cmd.icon),
                 iconClass: fusionFixSpriteClass(tb, cmd),
                 tooltip: tb.tooltip,
                 label: tb.label,
@@ -87,7 +96,7 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
     } else if (tb.children) {
         const childItems: any[] = tb.children;
         return {
-            icon: tb.icon,
+            icon: fixIconPath(tb.icon),
             iconClass: fusionFixSpriteClass(tb),
             label: tb.label,
             tooltip: tb.tooltip,
@@ -95,7 +104,7 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
         };
     } else if (tb.label && tb.flyoutId) {
         return {
-            icon: tb.icon,
+            icon: fixIconPath(tb.icon),
             iconClass: fusionFixSpriteClass(tb),
             label: tb.label,
             tooltip: tb.tooltip,

@@ -44,7 +44,18 @@ import { Client } from '../api/client';
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { IInlineMenu, IItem, getEnabled } from '../components/toolbar';
-import { getAssetPath } from "../utils/asset";
+import {
+    getAssetPath,
+    CURSOR_DIGITIZE_POINT,
+    CURSOR_DIGITIZE_LINE,
+    CURSOR_DIGITIZE_LINESTRING,
+    CURSOR_DIGITIZE_RECT,
+    CURSOR_DIGITIZE_POLYGON,
+    CURSOR_DIGITIZE_CIRCLE,
+    CURSOR_GRABBING,
+    CURSOR_GRAB,
+    CURSOR_ZOOM_IN
+} from "../utils/asset";
 import { isMenu } from '../utils/type-guards';
 import { tr } from "../api/i18n";
 const isMobile = require("ismobilejs");
@@ -679,27 +690,27 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             const dtype = this.state.digitizingType;
             switch (dtype) {
                 case "Point":
-                    style.cursor = `url(${getAssetPath("cursors/digitizePoint.cur")}), auto`;
+                    style.cursor = `url(${CURSOR_DIGITIZE_POINT}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
                 case "Line":
-                    style.cursor = `url(${getAssetPath("cursors/digitizeLine.cur")}), auto`;
+                    style.cursor = `url(${CURSOR_DIGITIZE_LINE}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
                 case "LineString":
-                    style.cursor = `url(${getAssetPath("cursors/digitizeLineString.cur")}), auto`;
+                    style.cursor = `url(${CURSOR_DIGITIZE_LINESTRING}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
                 case "Rectangle":
-                    style.cursor = `url(${getAssetPath("cursors/digitizeRectangle.cur")}), auto`;
+                    style.cursor = `url(${CURSOR_DIGITIZE_RECT}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
                 case "Polygon":
-                    style.cursor = `url(${getAssetPath("cursors/digitizePolygon.cur")}), auto`;
+                    style.cursor = `url(${CURSOR_DIGITIZE_POLYGON}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
                 case "Circle":
-                    style.cursor = `url(${getAssetPath("cursors/digitizeCircle.cur")}), auto`;
+                    style.cursor = `url(${CURSOR_DIGITIZE_CIRCLE}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
             }
@@ -707,15 +718,15 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             switch (tool) {
                 case ActiveMapTool.Pan:
                     if (isMouseDown) {
-                        style.cursor = `url(${getAssetPath("cursors/grabbing.cur")}), auto`;
+                        style.cursor = `url(${CURSOR_GRABBING}), auto`;
                         //console.log(`cursor: ${style.cursor}`);
                     } else {
-                        style.cursor = `url(${getAssetPath("cursors/grab.cur")}), auto`;
+                        style.cursor = `url(${CURSOR_GRAB}), auto`;
                         //console.log(`cursor: ${style.cursor}`);
                     }
                     break;
                 case ActiveMapTool.Zoom:
-                    style.cursor = `url(${getAssetPath("cursors/zoomin.cur")}), auto`;
+                    style.cursor = `url(${CURSOR_ZOOM_IN}), auto`;
                     //console.log(`cursor: ${style.cursor}`);
                     break;
             }

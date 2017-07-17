@@ -15,6 +15,7 @@ import { initLayout, IInitAppLayout } from "../actions/init";
 import { Error, normalizeStack } from "../components/error";
 import { tr } from "../api/i18n";
 import * as TemplateActions from "../actions/template";
+import { setAssetRoot } from "../utils/asset";
 
 /**
  * App component properties
@@ -28,6 +29,10 @@ export interface IAppProps {
      * A session id to init this viewer with
      */
     session?: string;
+    /**
+     * The root path where all relative assets (images/icons/cursors/etc) urls resolve from
+     */
+    assetRoot?: string;
     /**
      * Agent configuration
      *
@@ -135,7 +140,8 @@ export class App extends React.Component<AppProps, any> {
             agent,
             session,
             resourceId,
-            externalBaseLayers
+            externalBaseLayers,
+            assetRoot
         } = this.props;
         if (setElementVisibility && initialElementVisibility) {
             const { taskpane, legend, selection } = initialElementVisibility;
@@ -145,6 +151,9 @@ export class App extends React.Component<AppProps, any> {
                 selectionPanelVisible: typeof (selection) != 'undefined' ? selection : true
             };
             setElementVisibility(states);
+        }
+        if (assetRoot) {
+            setAssetRoot(assetRoot);
         }
         if (initLayout) {
             initLayout({

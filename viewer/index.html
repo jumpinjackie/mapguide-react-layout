@@ -17,7 +17,8 @@
             var el = document.getElementById("map");
             var viewer = new MapGuide.Application();
             viewer.mount(el, {
-                layout: "ajax-viewer",/*
+                layout: "ajax-viewer",
+                assetRoot: "dist/stdassets",/*
                 externalBaseLayers: [
                     { name: "OpenStreetMap", kind: "OSM" },
                     { name: "Stamen - Toner", kind: "Stamen", visible: true, options: { layer: "toner" } },

@@ -102,7 +102,8 @@ module.exports = {
             loaders.woff2,
             loaders.ttf,
             */
-            loaders.image
+            loaders.image,
+            loaders.cursors
         ]
     }
 };

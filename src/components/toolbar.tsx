@@ -5,7 +5,6 @@ import { Popover, Position } from "@blueprintjs/core";
 import { MenuComponent } from "./menu";
 import { IToolbarContext, TOOLBAR_CONTEXT_VALIDATION_MAP } from "./context";
 import { STR_EMPTY } from "../utils/string";
-import { getAssetPath } from "../utils/asset";
 import { Icon } from "./icon";
 import * as Constants from "../constants";
 

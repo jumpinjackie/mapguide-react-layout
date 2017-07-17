@@ -1,5 +1,5 @@
 // A reducer to remember the last dispatched action. This is primarily used by layout
-// templates to listen on certain actions and be able to update their 
+// templates to listen on certain actions and be able to update their
 //
 // As suggested by the creator of redux:
 // https://github.com/reactjs/redux/issues/580
@@ -20,8 +20,8 @@ export function lastAction(state = null, action: ReduxAction|ReduxThunkedAction)
                 return action;
         }
     }
-    //As we're returning a const reference subsequent dispatched actions that 
-    //are not the ones listed above should give us the same branch in the eyes 
+    //As we're returning a const reference subsequent dispatched actions that
+    //are not the ones listed above should give us the same branch in the eyes
     //of redux
     return NULL_ACTION;
 }

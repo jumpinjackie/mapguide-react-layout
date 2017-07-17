@@ -3,6 +3,7 @@ import {
     ActiveMapTool,
     IViewerReducerState
 } from "../api/common";
+import { AnyAction } from "redux";
 
 export const INITIAL_STATE: IViewerReducerState = {
     busyCount: 0,
@@ -10,7 +11,7 @@ export const INITIAL_STATE: IViewerReducerState = {
     featureTooltipsEnabled: true
 }
 
-export function viewerReducer(state = INITIAL_STATE, action = { type: '', payload: null }) {
+export function viewerReducer(state = INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
     const payload: any = typeof(action.payload) != 'undefined' ? action.payload : {};
     switch (action.type) {
         case Constants.MAP_SET_ACTIVE_TOOL:

@@ -5,6 +5,7 @@ import {
 } from "../api/common";
 import { isCoordinate } from "../utils/type-guards";
 import { IElementState } from "../actions/template";
+import { AnyAction } from "redux";
 
 export const INITIAL_STATE: ITemplateReducerState = {
     taskPaneVisible: true,
@@ -39,7 +40,7 @@ export function setCustomTemplateReducer(func: ReducerFunction<ITemplateReducerS
     _ovReducer = func;
 }
 
-export function templateReducer(state = INITIAL_STATE, action = { type: '', payload: undefined }) {
+export function templateReducer(state = INITIAL_STATE, action: AnyAction = { type: '', payload: undefined }) {
     if (typeof(_ovReducer) == 'function') {
         return _ovReducer(state, action);
     } else {

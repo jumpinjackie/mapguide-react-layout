@@ -1,5 +1,6 @@
 import * as Constants from "../constants";
 import { IConfigurationReducerState, IExternalBaseLayer } from "../api/common";
+import { AnyAction } from "redux";
 
 export const INITIAL_STATE: IConfigurationReducerState = {
     agentUri: undefined,
@@ -27,9 +28,9 @@ export const INITIAL_STATE: IConfigurationReducerState = {
     }
 };
 
-export function configReducer(state = INITIAL_STATE, action = { type: '', payload: null }) {
+export function configReducer(state = INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
     switch (action.type) {
-        case Constants.INIT_APP: 
+        case Constants.INIT_APP:
             {
                 const payload: any = action.payload || {};
                 const maps = payload.maps;

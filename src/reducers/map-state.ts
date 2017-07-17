@@ -6,6 +6,7 @@ import {
     IExternalBaseLayer
 } from "../api/common";
 import { isMapView, isCoordinate } from "../utils/type-guards";
+import { AnyAction } from "redux";
 import uniq = require("lodash.uniq");
 
 export const INITIAL_STATE: IBranchedMapState = {
@@ -36,7 +37,7 @@ function mergeSubState(state: IBranchedMapState, mapName: string, subState: Part
     return { ...state, ...state1 };
 }
 
-export function mapStateReducer(state = INITIAL_STATE, action = { type: '', payload: null }) {
+export function mapStateReducer(state = INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
     const payload: any = typeof(action.payload) != 'undefined' ? action.payload : {};
     switch (action.type) {
         case Constants.MAP_REFRESH:

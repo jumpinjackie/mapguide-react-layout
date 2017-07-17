@@ -1,6 +1,7 @@
 import * as Constants from "../constants";
 import { ITaskPaneReducerState } from "../api/common";
 import { areUrlsSame } from "../utils/url";
+import { AnyAction } from "redux";
 
 export const INITIAL_STATE: ITaskPaneReducerState = {
     navIndex: -1,
@@ -8,7 +9,7 @@ export const INITIAL_STATE: ITaskPaneReducerState = {
     initialUrl: undefined,
     //Having this state sounds extremely hacky, but we need a way to signal to the "dumb" task pane that
     //the url its about to receive was pushed and should not be reloaded into the internal iframe
-    lastUrlPushed: false  
+    lastUrlPushed: false
 };
 
 function mergeNavigatedUrl(state: any, url: string): any {
@@ -29,7 +30,7 @@ function mergeNavigatedUrl(state: any, url: string): any {
     return { ...state, ...newState };
 }
 
-export function taskPaneReducer(state = INITIAL_STATE, action = { type: '', payload: null }) {
+export function taskPaneReducer(state = INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
     const payload: any = action.payload || {};
     switch (action.type) {
         case Constants.INIT_APP:

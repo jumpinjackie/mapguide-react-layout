@@ -149,11 +149,6 @@ export const SPRITE_THEME = "theme";
 export const SPRITE_INVOKE_SCRIPT = "invoke-script";
 export const SPRITE_INVOKE_URL = "invoke-url";
 
-let mStdAssetRoot = "";
-
-export function getAssetRoot(): string { return mStdAssetRoot; }
-
-export function setAssetRoot(root: string) {
-    mStdAssetRoot = root;
-    logger.debug(`Asset root set to: ${mStdAssetRoot}. All relative asset URLs will resolve relative to this root`);
+export function getAssetRoot(): string {
+    return ICON_ZOOM_OUT_FIXED.replace("/zoom-out-fixed.png", "/../../");
 }

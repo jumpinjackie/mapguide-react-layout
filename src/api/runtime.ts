@@ -7,6 +7,7 @@
  * Where possible, use actions instead of this module
  */
 import { IMapViewer, IMapView } from "../api/common";
+import * as logger from "../utils/logger";
 
 let _fusionRoot: string | undefined;
 let _viewer: IMapViewer | undefined;
@@ -19,6 +20,7 @@ let _viewer: IMapViewer | undefined;
  */
 export function setFusionRoot(root: string): void {
     _fusionRoot = root;
+    logger.debug(`Fusion root set to: ${root}. Access to Fusion backend services and widget content will be relative to this value`);
 }
 
 /**

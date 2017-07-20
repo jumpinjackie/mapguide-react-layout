@@ -16,6 +16,7 @@ import { Error, normalizeStack } from "../components/error";
 import { tr } from "../api/i18n";
 import * as TemplateActions from "../actions/template";
 import { setAssetRoot } from "../utils/asset";
+import { setFusionRoot } from "../api/runtime";
 
 /**
  * App component properties
@@ -139,6 +140,7 @@ export class App extends React.Component<AppProps, any> {
             initLayout,
             agent,
             session,
+            fusionRoot,
             resourceId,
             externalBaseLayers,
             assetRoot
@@ -154,6 +156,9 @@ export class App extends React.Component<AppProps, any> {
         }
         if (assetRoot) {
             setAssetRoot(assetRoot);
+        }
+        if (fusionRoot) {
+            setFusionRoot(fusionRoot);
         }
         if (initLayout) {
             initLayout({

@@ -9,6 +9,7 @@ import {
     WebLayout,
     CommandDef,
     isBasicCommand,
+    isTargetedCommand,
     isSeparatorItem,
     isFlyoutItem,
     isCommandItem,
@@ -164,6 +165,11 @@ function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Diction
                 logger.warn(`Invalid reference to command: ${item.Command}`);
                 return { error: tr("UNKNOWN_COMMAND_REFERENCE", locale, { command: item.Command }) };
             } else if (cmdDef.TargetViewer != "Dwf") {
+                const commonParams: any = {};
+                if (isTargetedCommand(cmdDef)) {
+                    commonParams.Target = cmdDef.Target;
+                    commonParams.TargetFrame = cmdDef.TargetFrame;
+                }
                 if (isBasicCommand(cmdDef)) {
                     let action: string = cmdDef.Action;
                     if (action == "ZoomRectangle") {
@@ -173,23 +179,23 @@ function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Diction
                     } else if (action == "Refresh") {
                         action = DefaultCommands.RefreshMap;
                     }
-                    return { command: action, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
+                    return { command: action, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams };
                 } else {
                     switch (cmdDef["@xsi:type"]) {
                         case "ViewOptionsCommandType":
-                            return { command: DefaultCommands.ViewerOptions, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
+                            return { command: DefaultCommands.ViewerOptions, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams };
                         case "MeasureCommandType":
-                            return { command: DefaultCommands.Measure, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
+                            return { command: DefaultCommands.Measure, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams };
                         case "HelpCommandType":
-                            return { command: DefaultCommands.Help, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
+                            return { command: DefaultCommands.Help, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams };
                         case "BufferCommandType":
-                            return { command: DefaultCommands.Buffer, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
+                            return { command: DefaultCommands.Buffer, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams };
                         case "SelectWithinCommandType":
-                            return { command: DefaultCommands.SelectWithin, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
+                            return { command: DefaultCommands.SelectWithin, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams };
                         case "GetPrintablePageCommandType":
-                            return { command: DefaultCommands.QuickPlot, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
+                            return { command: DefaultCommands.QuickPlot, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams };
                         default:
-                            return { command: cmdDef.Name, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip };
+                            return { command: cmdDef.Name, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams };
                     }
                 }
             }

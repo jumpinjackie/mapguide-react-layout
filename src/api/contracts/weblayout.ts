@@ -146,6 +146,10 @@ export function isBasicCommand(cmd: any): cmd is BasicCommandDef {
     return typeof(cmd.Action) != 'undefined';
 }
 
+export function isTargetedCommand(cmd: any): cmd is TargetedCommandDef {
+    return typeof(cmd.Target) != 'undefined';
+}
+
 export interface CustomCommandDef extends CommandDef {
 
 }

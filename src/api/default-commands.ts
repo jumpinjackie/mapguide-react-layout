@@ -99,11 +99,16 @@ function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "l
 }
 
 function buildTargetedCommand(config: Readonly<IConfigurationReducerState>, parameters: any): ITargetedCommand {
+    const cmdTarget = (parameters || {}).Target;
     const cmdDef: ITargetedCommand = {
-        target: parameters.Target || "NewWindow"
+        target: cmdTarget || "NewWindow"
     };
-    if (config.capabilities.hasTaskPane && parameters.Target == "TaskPane") {
+    if (config.capabilities.hasTaskPane && cmdTarget == "TaskPane") {
         cmdDef.target = "TaskPane";
+    }
+    if (cmdTarget == "SpecifiedFrame") {
+        cmdDef.target = cmdTarget;
+        cmdDef.targetFrame = (parameters || {}).TargetFrame;
     }
     return cmdDef;
 }

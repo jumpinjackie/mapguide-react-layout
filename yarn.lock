@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@blueprintjs/core@1.23.0":
-  version "1.23.0"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-1.23.0.tgz#3e0140e0b2887a6f1fc2f162aa0da32bb818646f"
+"@blueprintjs/core@1.23.1":
+  version "1.23.1"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-1.23.1.tgz#0b2880ad142549f07e0fd3d626bbd9b51ed32419"
   dependencies:
     "@types/dom4" "^1.5.20"
     "@types/tether" "^1.1.27"
@@ -89,9 +89,9 @@
   version "9.1.9"
   resolved "https://registry.yarnpkg.com/@types/highlight.js/-/highlight.js-9.1.9.tgz#ed6336955eaf233b75eb7923b9b1f373d045ef01"
 
-"@types/jest@20.0.3":
-  version "20.0.3"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-20.0.3.tgz#2b7d14d534061e32653509d747d2fc70154306dd"
+"@types/jest@20.0.4":
+  version "20.0.4"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-20.0.4.tgz#91e2c76fbe90b3a719b5d689958f0495f005beb9"
 
 "@types/lodash.debounce@4.0.2":
   version "4.0.2"

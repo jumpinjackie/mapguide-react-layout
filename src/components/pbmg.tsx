@@ -7,6 +7,6 @@ import { Icon } from "./icon";
  */
 export const PoweredByMapGuide = (props: any) => {
     return <div className="component-pbmg" {...props}>
-        <Icon style={{display: "block"}} spriteClass="sprite-icons-PoweredBy_en" />
+        <Icon style={{display: "block"}} spriteClass="PoweredBy_en" />
     </div>;
 };

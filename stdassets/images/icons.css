@@ -1,669 +1,645 @@
-/* glue: 0.13 hash: ebc0f768b9 */
-        .sprite-icons-sliderscale,
-.sprite-icons-PoweredBy_en,
-.sprite-icons-slider,
-.sprite-icons-spinner,
-.sprite-icons-zoom-out-fixed,
-.sprite-icons-zoom-in,
-.sprite-icons-zoom-in-fixed,
-.sprite-icons-zoom-full,
-.sprite-icons-zoom-dynamic,
-.sprite-icons-warning,
-.sprite-icons-view-refresh,
-.sprite-icons-view-forward,
-.sprite-icons-view-back,
-.sprite-icons-ui-menu,
-.sprite-icons-toggle,
-.sprite-icons-toggle-expand,
-.sprite-icons-theme,
-.sprite-icons-select,
-.sprite-icons-select-zoom,
-.sprite-icons-select-radius,
-.sprite-icons-select-polygon,
-.sprite-icons-select-features,
-.sprite-icons-select-clear,
-.sprite-icons-select-centre,
-.sprite-icons-search,
-.sprite-icons-redline,
-.sprite-icons-query,
-.sprite-icons-property,
-.sprite-icons-print,
-.sprite-icons-preview,
-.sprite-icons-pan,
-.sprite-icons-pan-west,
-.sprite-icons-pan-south,
-.sprite-icons-pan-north,
-.sprite-icons-pan-east,
-.sprite-icons-overview-map,
-.sprite-icons-out-of-range,
-.sprite-icons-options,
-.sprite-icons-measure,
-.sprite-icons-maptip,
-.sprite-icons-legend-theme,
-.sprite-icons-legend-raster,
-.sprite-icons-legend-map,
-.sprite-icons-legend-layer,
-.sprite-icons-legend-DWF,
-.sprite-icons-lc_unselect,
-.sprite-icons-invoke-url,
-.sprite-icons-invoke-script,
-.sprite-icons-initial-center,
-.sprite-icons-info,
-.sprite-icons-icon_zoomselect,
-.sprite-icons-icon_select,
-.sprite-icons-icon_refreshmap,
-.sprite-icons-icon_menuarrowup_disabled,
-.sprite-icons-icon_menuarrowup,
-.sprite-icons-icon_menuarrow_disabled,
-.sprite-icons-icon_menuarrow,
-.sprite-icons-icon_home,
-.sprite-icons-iconNavigator,
-.sprite-icons-help,
-.sprite-icons-geolocation,
-.sprite-icons-forward,
-.sprite-icons-folder-horizontal,
-.sprite-icons-folder-horizontal-open,
-.sprite-icons-file-save,
-.sprite-icons-file-print,
-.sprite-icons-feature-info,
-.sprite-icons-error,
-.sprite-icons-edit-xml,
-.sprite-icons-edit-paste,
-.sprite-icons-edit-duplicate,
-.sprite-icons-edit-cut,
-.sprite-icons-edit-copy,
-.sprite-icons-coordinate-tracker,
-.sprite-icons-control,
-.sprite-icons-control-stop,
-.sprite-icons-control-stop-180,
-.sprite-icons-control-180,
-.sprite-icons-buffer,
-.sprite-icons-back,
-.sprite-icons-application-browser,
-.sprite-icons-about {
+/* glue: 0.13 hash: a9a9d84af3 */
+        .PoweredBy_en,
+.zoom-out-fixed,
+.zoom-in,
+.zoom-in-fixed,
+.zoom-full,
+.zoom-dynamic,
+.view-refresh,
+.view-forward,
+.view-back,
+.ui-menu,
+.toggle,
+.toggle-expand,
+.theme,
+.select,
+.select-zoom,
+.select-radius,
+.select-polygon,
+.select-features,
+.select-clear,
+.select-centre,
+.search,
+.redline,
+.query,
+.property,
+.print,
+.preview,
+.pan,
+.pan-west,
+.pan-south,
+.pan-north,
+.pan-east,
+.overview-map,
+.out-of-range,
+.options,
+.measure,
+.maptip,
+.legend-theme,
+.legend-raster,
+.legend-map,
+.legend-layer,
+.legend-DWF,
+.lc_unselect,
+.invoke-url,
+.invoke-script,
+.initial-center,
+.info,
+.icon_zoomselect,
+.icon_warning,
+.icon_select,
+.icon_refreshmap,
+.icon_menuarrowup_disabled,
+.icon_menuarrowup,
+.icon_menuarrow_disabled,
+.icon_menuarrow,
+.icon_home,
+.icon_error,
+.iconNavigator,
+.help,
+.geolocation,
+.forward,
+.folder-horizontal,
+.folder-horizontal-open,
+.file-save,
+.file-print,
+.feature-info,
+.edit-xml,
+.edit-paste,
+.edit-duplicate,
+.edit-cut,
+.edit-copy,
+.coordinate-tracker,
+.control,
+.control-stop,
+.control-stop-180,
+.control-180,
+.buffer,
+.back,
+.application-browser,
+.about {
             background-image: url('icons.png');
             background-repeat: no-repeat;
         }
         
-        .sprite-icons-sliderscale {
+        .PoweredBy_en {
             background-position: 0 0;
-            width: 51px;
-            height: 204px;
-        }
-        
-        .sprite-icons-PoweredBy_en {
-            background-position: -51px 0;
             width: 136px;
             height: 19px;
         }
         
-        .sprite-icons-slider {
-            background-position: -51px -19px;
-            width: 29px;
-            height: 12px;
+        .zoom-out-fixed {
+            background-position: 0 -19px;
+            width: 16px;
+            height: 16px;
         }
         
-        .sprite-icons-spinner {
+        .zoom-in {
+            background-position: -16px -19px;
+            width: 16px;
+            height: 16px;
+        }
+        
+        .zoom-in-fixed {
+            background-position: -32px -19px;
+            width: 16px;
+            height: 16px;
+        }
+        
+        .zoom-full {
+            background-position: -48px -19px;
+            width: 16px;
+            height: 16px;
+        }
+        
+        .zoom-dynamic {
+            background-position: -64px -19px;
+            width: 16px;
+            height: 16px;
+        }
+        
+        .view-refresh {
             background-position: -80px -19px;
-            width: 18px;
-            height: 6px;
-        }
-        
-        .sprite-icons-zoom-out-fixed {
-            background-position: -51px -31px;
-            width: 16px;
-            height: 16px;
-        }
-        
-        .sprite-icons-zoom-in {
-            background-position: -67px -31px;
-            width: 16px;
-            height: 16px;
-        }
-        
-        .sprite-icons-zoom-in-fixed {
-            background-position: -83px -31px;
-            width: 16px;
-            height: 16px;
-        }
-        
-        .sprite-icons-zoom-full {
-            background-position: -99px -31px;
-            width: 16px;
-            height: 16px;
-        }
-        
-        .sprite-icons-zoom-dynamic {
-            background-position: -115px -31px;
-            width: 16px;
-            height: 16px;
-        }
-        
-        .sprite-icons-warning {
-            background-position: -131px -31px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-view-refresh {
-            background-position: -147px -31px;
+        .view-forward {
+            background-position: -96px -19px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-view-forward {
-            background-position: -163px -31px;
+        .view-back {
+            background-position: -112px -19px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-view-back {
-            background-position: -51px -47px;
+        .ui-menu {
+            background-position: 0 -35px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-ui-menu {
-            background-position: -67px -47px;
+        .toggle {
+            background-position: -16px -35px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-toggle {
-            background-position: -83px -47px;
+        .toggle-expand {
+            background-position: -32px -35px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-toggle-expand {
-            background-position: -99px -47px;
+        .theme {
+            background-position: -48px -35px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-theme {
-            background-position: -115px -47px;
+        .select {
+            background-position: -64px -35px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-select {
-            background-position: -131px -47px;
+        .select-zoom {
+            background-position: -80px -35px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-select-zoom {
-            background-position: -147px -47px;
+        .select-radius {
+            background-position: -96px -35px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-select-radius {
-            background-position: -163px -47px;
+        .select-polygon {
+            background-position: -112px -35px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-select-polygon {
-            background-position: -51px -63px;
+        .select-features {
+            background-position: 0 -51px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-select-features {
-            background-position: -67px -63px;
+        .select-clear {
+            background-position: -16px -51px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-select-clear {
-            background-position: -83px -63px;
+        .select-centre {
+            background-position: -32px -51px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-select-centre {
-            background-position: -99px -63px;
+        .search {
+            background-position: -48px -51px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-search {
-            background-position: -115px -63px;
+        .redline {
+            background-position: -64px -51px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-redline {
-            background-position: -131px -63px;
+        .query {
+            background-position: -80px -51px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-query {
-            background-position: -147px -63px;
+        .property {
+            background-position: -96px -51px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-property {
-            background-position: -163px -63px;
+        .print {
+            background-position: -112px -51px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-print {
-            background-position: -51px -79px;
+        .preview {
+            background-position: 0 -67px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-preview {
-            background-position: -67px -79px;
+        .pan {
+            background-position: -16px -67px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-pan {
-            background-position: -83px -79px;
+        .pan-west {
+            background-position: -32px -67px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-pan-west {
-            background-position: -99px -79px;
+        .pan-south {
+            background-position: -48px -67px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-pan-south {
-            background-position: -115px -79px;
+        .pan-north {
+            background-position: -64px -67px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-pan-north {
-            background-position: -131px -79px;
+        .pan-east {
+            background-position: -80px -67px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-pan-east {
-            background-position: -147px -79px;
+        .overview-map {
+            background-position: -96px -67px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-overview-map {
-            background-position: -163px -79px;
+        .out-of-range {
+            background-position: -112px -67px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-out-of-range {
-            background-position: -51px -95px;
+        .options {
+            background-position: 0 -83px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-options {
-            background-position: -67px -95px;
+        .measure {
+            background-position: -16px -83px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-measure {
-            background-position: -83px -95px;
+        .maptip {
+            background-position: -32px -83px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-maptip {
-            background-position: -99px -95px;
+        .legend-theme {
+            background-position: -48px -83px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-legend-theme {
-            background-position: -115px -95px;
+        .legend-raster {
+            background-position: -64px -83px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-legend-raster {
-            background-position: -131px -95px;
+        .legend-map {
+            background-position: -80px -83px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-legend-map {
-            background-position: -147px -95px;
+        .legend-layer {
+            background-position: -96px -83px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-legend-layer {
-            background-position: -163px -95px;
+        .legend-DWF {
+            background-position: -112px -83px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-legend-DWF {
-            background-position: -51px -111px;
+        .lc_unselect {
+            background-position: 0 -99px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-lc_unselect {
-            background-position: -67px -111px;
+        .invoke-url {
+            background-position: -16px -99px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-invoke-url {
-            background-position: -83px -111px;
+        .invoke-script {
+            background-position: -32px -99px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-invoke-script {
-            background-position: -99px -111px;
+        .initial-center {
+            background-position: -48px -99px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-initial-center {
-            background-position: -115px -111px;
+        .info {
+            background-position: -64px -99px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-info {
-            background-position: -131px -111px;
+        .icon_zoomselect {
+            background-position: -80px -99px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-icon_zoomselect {
-            background-position: -147px -111px;
+        .icon_warning {
+            background-position: -96px -99px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-icon_select {
-            background-position: -163px -111px;
+        .icon_select {
+            background-position: -112px -99px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-icon_refreshmap {
-            background-position: -51px -127px;
+        .icon_refreshmap {
+            background-position: 0 -115px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-icon_menuarrowup_disabled {
-            background-position: -67px -127px;
+        .icon_menuarrowup_disabled {
+            background-position: -16px -115px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-icon_menuarrowup {
-            background-position: -83px -127px;
+        .icon_menuarrowup {
+            background-position: -32px -115px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-icon_menuarrow_disabled {
-            background-position: -99px -127px;
+        .icon_menuarrow_disabled {
+            background-position: -48px -115px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-icon_menuarrow {
-            background-position: -115px -127px;
+        .icon_menuarrow {
+            background-position: -64px -115px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-icon_home {
-            background-position: -131px -127px;
+        .icon_home {
+            background-position: -80px -115px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-iconNavigator {
-            background-position: -147px -127px;
+        .icon_error {
+            background-position: -96px -115px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-help {
-            background-position: -163px -127px;
+        .iconNavigator {
+            background-position: -112px -115px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-geolocation {
-            background-position: -51px -143px;
+        .help {
+            background-position: -136px 0;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-forward {
-            background-position: -67px -143px;
+        .geolocation {
+            background-position: -136px -16px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-folder-horizontal {
-            background-position: -83px -143px;
+        .forward {
+            background-position: -136px -32px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-folder-horizontal-open {
-            background-position: -99px -143px;
+        .folder-horizontal {
+            background-position: -136px -48px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-file-save {
-            background-position: -115px -143px;
+        .folder-horizontal-open {
+            background-position: -136px -64px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-file-print {
-            background-position: -131px -143px;
+        .file-save {
+            background-position: -136px -80px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-feature-info {
-            background-position: -147px -143px;
+        .file-print {
+            background-position: -136px -96px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-error {
-            background-position: -163px -143px;
+        .feature-info {
+            background-position: -136px -112px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-edit-xml {
-            background-position: -51px -159px;
+        .edit-xml {
+            background-position: 0 -131px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-edit-paste {
-            background-position: -67px -159px;
+        .edit-paste {
+            background-position: -16px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-edit-duplicate {
-            background-position: -83px -159px;
+        .edit-duplicate {
+            background-position: -32px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-edit-cut {
-            background-position: -99px -159px;
+        .edit-cut {
+            background-position: -48px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-edit-copy {
-            background-position: -115px -159px;
+        .edit-copy {
+            background-position: -64px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-coordinate-tracker {
-            background-position: -131px -159px;
+        .coordinate-tracker {
+            background-position: -80px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-control {
-            background-position: -147px -159px;
+        .control {
+            background-position: -96px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-control-stop {
-            background-position: -163px -159px;
+        .control-stop {
+            background-position: -112px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-control-stop-180 {
-            background-position: -51px -175px;
+        .control-stop-180 {
+            background-position: -128px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-control-180 {
-            background-position: -67px -175px;
+        .control-180 {
+            background-position: -152px 0;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-buffer {
-            background-position: -83px -175px;
+        .buffer {
+            background-position: -152px -16px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-back {
-            background-position: -99px -175px;
+        .back {
+            background-position: -152px -32px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-application-browser {
-            background-position: -115px -175px;
+        .application-browser {
+            background-position: -152px -48px;
             width: 16px;
             height: 16px;
         }
         
-        .sprite-icons-about {
-            background-position: -131px -175px;
+        .about {
+            background-position: -152px -64px;
             width: 16px;
             height: 16px;
         }
         
         @media screen and (-webkit-min-device-pixel-ratio: 1.0), screen and (min--moz-device-pixel-ratio: 1.0), screen and (-o-min-device-pixel-ratio: 100/100), screen and (min-device-pixel-ratio: 1.0), screen and (min-resolution: 1.0dppx) {
-            .sprite-icons-sliderscale,
-    .sprite-icons-PoweredBy_en,
-    .sprite-icons-slider,
-    .sprite-icons-spinner,
-    .sprite-icons-zoom-out-fixed,
-    .sprite-icons-zoom-in,
-    .sprite-icons-zoom-in-fixed,
-    .sprite-icons-zoom-full,
-    .sprite-icons-zoom-dynamic,
-    .sprite-icons-warning,
-    .sprite-icons-view-refresh,
-    .sprite-icons-view-forward,
-    .sprite-icons-view-back,
-    .sprite-icons-ui-menu,
-    .sprite-icons-toggle,
-    .sprite-icons-toggle-expand,
-    .sprite-icons-theme,
-    .sprite-icons-select,
-    .sprite-icons-select-zoom,
-    .sprite-icons-select-radius,
-    .sprite-icons-select-polygon,
-    .sprite-icons-select-features,
-    .sprite-icons-select-clear,
-    .sprite-icons-select-centre,
-    .sprite-icons-search,
-    .sprite-icons-redline,
-    .sprite-icons-query,
-    .sprite-icons-property,
-    .sprite-icons-print,
-    .sprite-icons-preview,
-    .sprite-icons-pan,
-    .sprite-icons-pan-west,
-    .sprite-icons-pan-south,
-    .sprite-icons-pan-north,
-    .sprite-icons-pan-east,
-    .sprite-icons-overview-map,
-    .sprite-icons-out-of-range,
-    .sprite-icons-options,
-    .sprite-icons-measure,
-    .sprite-icons-maptip,
-    .sprite-icons-legend-theme,
-    .sprite-icons-legend-raster,
-    .sprite-icons-legend-map,
-    .sprite-icons-legend-layer,
-    .sprite-icons-legend-DWF,
-    .sprite-icons-lc_unselect,
-    .sprite-icons-invoke-url,
-    .sprite-icons-invoke-script,
-    .sprite-icons-initial-center,
-    .sprite-icons-info,
-    .sprite-icons-icon_zoomselect,
-    .sprite-icons-icon_select,
-    .sprite-icons-icon_refreshmap,
-    .sprite-icons-icon_menuarrowup_disabled,
-    .sprite-icons-icon_menuarrowup,
-    .sprite-icons-icon_menuarrow_disabled,
-    .sprite-icons-icon_menuarrow,
-    .sprite-icons-icon_home,
-    .sprite-icons-iconNavigator,
-    .sprite-icons-help,
-    .sprite-icons-geolocation,
-    .sprite-icons-forward,
-    .sprite-icons-folder-horizontal,
-    .sprite-icons-folder-horizontal-open,
-    .sprite-icons-file-save,
-    .sprite-icons-file-print,
-    .sprite-icons-feature-info,
-    .sprite-icons-error,
-    .sprite-icons-edit-xml,
-    .sprite-icons-edit-paste,
-    .sprite-icons-edit-duplicate,
-    .sprite-icons-edit-cut,
-    .sprite-icons-edit-copy,
-    .sprite-icons-coordinate-tracker,
-    .sprite-icons-control,
-    .sprite-icons-control-stop,
-    .sprite-icons-control-stop-180,
-    .sprite-icons-control-180,
-    .sprite-icons-buffer,
-    .sprite-icons-back,
-    .sprite-icons-application-browser,
-    .sprite-icons-about {
+            .PoweredBy_en,
+    .zoom-out-fixed,
+    .zoom-in,
+    .zoom-in-fixed,
+    .zoom-full,
+    .zoom-dynamic,
+    .view-refresh,
+    .view-forward,
+    .view-back,
+    .ui-menu,
+    .toggle,
+    .toggle-expand,
+    .theme,
+    .select,
+    .select-zoom,
+    .select-radius,
+    .select-polygon,
+    .select-features,
+    .select-clear,
+    .select-centre,
+    .search,
+    .redline,
+    .query,
+    .property,
+    .print,
+    .preview,
+    .pan,
+    .pan-west,
+    .pan-south,
+    .pan-north,
+    .pan-east,
+    .overview-map,
+    .out-of-range,
+    .options,
+    .measure,
+    .maptip,
+    .legend-theme,
+    .legend-raster,
+    .legend-map,
+    .legend-layer,
+    .legend-DWF,
+    .lc_unselect,
+    .invoke-url,
+    .invoke-script,
+    .initial-center,
+    .info,
+    .icon_zoomselect,
+    .icon_warning,
+    .icon_select,
+    .icon_refreshmap,
+    .icon_menuarrowup_disabled,
+    .icon_menuarrowup,
+    .icon_menuarrow_disabled,
+    .icon_menuarrow,
+    .icon_home,
+    .icon_error,
+    .iconNavigator,
+    .help,
+    .geolocation,
+    .forward,
+    .folder-horizontal,
+    .folder-horizontal-open,
+    .file-save,
+    .file-print,
+    .feature-info,
+    .edit-xml,
+    .edit-paste,
+    .edit-duplicate,
+    .edit-cut,
+    .edit-copy,
+    .coordinate-tracker,
+    .control,
+    .control-stop,
+    .control-stop-180,
+    .control-180,
+    .buffer,
+    .back,
+    .application-browser,
+    .about {
                 background-image: url('icons.png');
-                -webkit-background-size: 187px 204px;
-                -moz-background-size: 187px 204px;
-                background-size: 187px 204px;
+                -webkit-background-size: 168px 147px;
+                -moz-background-size: 168px 147px;
+                background-size: 168px 147px;
             }
         }
         

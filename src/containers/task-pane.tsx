@@ -21,6 +21,11 @@ import { areUrlsSame } from "../utils/url";
 import { processMenuItems } from "../utils/menu";
 import { tr } from "../api/i18n";
 import * as FlyoutActions from "../actions/flyout";
+import {
+    SPRITE_ICON_HOME,
+    SPRITE_BACK,
+    SPRITE_FORWARD
+} from "../utils/asset";
 
 export interface ITaskPaneContainerProps {
     maxHeight?: number;
@@ -85,7 +90,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         this.fnOpenFlyout = this.onOpenFlyout.bind(this);
         const locale = this.getLocale();
         this.homeAction = {
-            iconClass: "sprite-icons-icon_home",
+            iconClass: SPRITE_ICON_HOME,
             tooltip: tr("TT_GO_HOME", locale),
             enabled: this.canGoHome.bind(this),
             invoke: () => {
@@ -96,7 +101,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
             }
         };
         this.backAction = {
-            iconClass: "sprite-icons-back",
+            iconClass: SPRITE_BACK,
             tooltip: tr("TT_GO_BACK", locale),
             enabled: this.canGoBack.bind(this),
             invoke: () => {
@@ -107,7 +112,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
             }
         };
         this.forwardAction = {
-            iconClass: "sprite-icons-forward",
+            iconClass: SPRITE_FORWARD,
             tooltip: tr("TT_GO_FORWARD", locale),
             enabled: this.canGoForward.bind(this),
             invoke: () => {

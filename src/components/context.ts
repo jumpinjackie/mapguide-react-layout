@@ -35,7 +35,6 @@ export interface ILegendContext {
 }
 
 export const LEGEND_CONTEXT_VALIDATION_MAP: PropTypes.ValidationMap<any> = {
-    getStdIcon: PropTypes.func.isRequired,
     getIconMimeType: PropTypes.func.isRequired,
     getChildren: PropTypes.func.isRequired,
     getCurrentScale: PropTypes.func.isRequired,

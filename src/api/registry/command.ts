@@ -25,7 +25,11 @@ import { IItem, IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../../com
 import * as Constants from "../../constants";
 import { ensureParameters } from "../../actions/taskpane";
 import { tr } from "../i18n";
-import { getAssetRoot, STD_CSS_SPRITE_RELPATH } from "../../utils/asset";
+import { 
+    getAssetRoot,
+    STD_CSS_SPRITE_RELPATH,
+    SPRITE_ICON_ERROR
+} from "../../utils/asset";
 import { assertNever } from "../../utils/never";
 import * as logger from "../../utils/logger";
 
@@ -41,9 +45,6 @@ function fixIconPath(path: string): string {
 function fusionFixSpriteClass(tb: any, cmd?: ICommand): string | undefined {
     const url = tb.icon || (cmd || {} as any).icon;
     if (tb.spriteClass) {
-        if (url == STD_CSS_SPRITE_RELPATH && tb.spriteClass.indexOf("sprite-icons-") < 0) {
-            return `sprite-icons-${tb.spriteClass}`;
-        }
         return tb.spriteClass;
     }
     if (cmd && cmd.iconClass) {
@@ -59,7 +60,7 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
     const state = store.getState();
     if (tb.error) {
         const cmdItem: IItem = {
-            iconClass: "sprite-icons-error",
+            iconClass: SPRITE_ICON_ERROR,
             tooltip: tb.error,
             label: tr("ERROR"),
             selected: ALWAYS_FALSE,

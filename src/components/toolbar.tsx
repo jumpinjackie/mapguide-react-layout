@@ -6,6 +6,10 @@ import { MenuComponent } from "./menu";
 import { IToolbarContext, TOOLBAR_CONTEXT_VALIDATION_MAP } from "./context";
 import { STR_EMPTY } from "../utils/string";
 import { Icon } from "./icon";
+import { 
+    SPRITE_ICON_MENUARROWUP,
+    SPRITE_ICON_MENUARROW
+} from "../utils/asset";
 import * as Constants from "../constants";
 
 export const DEFAULT_TOOLBAR_SIZE = 29;
@@ -252,7 +256,7 @@ class ComponentFlyoutItem extends React.Component<IComponentFlyoutItemProps, any
         const ttip = getTooltip(item);
         return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={ttip}>
             <div data-flyout-id={`flyout-${item.flyoutId}`}>
-                <Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {label} <Icon style={imgStyle} spriteClass={(this.state.isFlownOut) ? "sprite-icons-icon_menuarrowup" : "sprite-icons-icon_menuarrow"} />
+                <Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {label} <Icon style={imgStyle} spriteClass={(this.state.isFlownOut) ? SPRITE_ICON_MENUARROWUP : SPRITE_ICON_MENUARROW } />
             </div>
         </div>;
     }
@@ -328,7 +332,7 @@ class FlyoutMenuReferenceItem extends React.Component<IFlyoutMenuReferenceItemPr
         const ttip = getTooltip(menu);
         return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={ttip}>
             <div data-flyout-id={`flyout-${menu.flyoutId}`}>
-                <Icon style={imgStyle} url={menu.icon} spriteClass={menu.iconClass} /> {label} <Icon style={imgStyle} spriteClass={(this.state.isFlownOut) ? "sprite-icons-icon_menuarrowup" : "sprite-icons-icon_menuarrow"} />
+                <Icon style={imgStyle} url={menu.icon} spriteClass={menu.iconClass} /> {label} <Icon style={imgStyle} spriteClass={(this.state.isFlownOut) ? SPRITE_ICON_MENUARROWUP : SPRITE_ICON_MENUARROW} />
             </div>
         </div>;
     }

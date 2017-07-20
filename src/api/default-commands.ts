@@ -32,6 +32,40 @@ import { Intent } from "@blueprintjs/core";
 import { getTopToaster } from "../components/toaster";
 import { getFusionRoot } from "../api/runtime";
 import { enableRedlineMessagePrompt } from "../containers/viewer-shim";
+import {
+    SPRITE_SELECT,
+    SPRITE_PAN,
+    SPRITE_ZOOM_IN,
+    SPRITE_MAPTIP,
+    SPRITE_ZOOM_IN_FIXED,
+    SPRITE_ZOOM_OUT_FIXED,
+    SPRITE_PAN_WEST,
+    SPRITE_PAN_EAST,
+    SPRITE_PAN_NORTH,
+    SPRITE_PAN_SOUTH,
+    SPRITE_ABOUT,
+    SPRITE_HELP,
+    SPRITE_MEASURE,
+    SPRITE_PRINT,
+    SPRITE_OPTIONS,
+    SPRITE_SELECT_RADIUS,
+    SPRITE_SELECT_POLYGON,
+    SPRITE_INITIAL_CENTER,
+    SPRITE_ZOOM_FULL,
+    SPRITE_SELECT_CLEAR,
+    SPRITE_ICON_ZOOMSELECT,
+    SPRITE_VIEW_BACK,
+    SPRITE_ICON_REFRESHMAP,
+    SPRITE_VIEW_FORWARD,
+    SPRITE_GEOLOCATION,
+    SPRITE_BUFFER,
+    SPRITE_SELECT_FEATURES,
+    SPRITE_REDLINE,
+    SPRITE_FEATURE_INFO,
+    SPRITE_QUERY,
+    SPRITE_THEME,
+    SPRITE_INVOKE_SCRIPT
+} from "../utils/asset";
 
 function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
     const settings: any = {
@@ -84,7 +118,7 @@ function buildTargetedCommand(config: Readonly<IConfigurationReducerState>, para
 export function initDefaultCommands() {
     //Select Tool
     registerCommand(DefaultCommands.Select, {
-        iconClass: "sprite-icons-select",
+        iconClass: SPRITE_SELECT,
         selected: (state) => {
             return state.viewer.tool === ActiveMapTool.Select;
         },
@@ -95,7 +129,7 @@ export function initDefaultCommands() {
     });
     //Pan Tool
     registerCommand(DefaultCommands.Pan, {
-        iconClass: "sprite-icons-pan",
+        iconClass: SPRITE_PAN,
         selected: (state) => {
             return state.viewer.tool === ActiveMapTool.Pan;
         },
@@ -106,7 +140,7 @@ export function initDefaultCommands() {
     });
     //Zoom Tool
     registerCommand(DefaultCommands.Zoom, {
-        iconClass: "sprite-icons-zoom-in",
+        iconClass: SPRITE_ZOOM_IN,
         selected: (state) => {
             return state.viewer.tool === ActiveMapTool.Zoom;
         },
@@ -117,7 +151,7 @@ export function initDefaultCommands() {
     });
     //Feature Tooltips
     registerCommand(DefaultCommands.MapTip, {
-        iconClass: "sprite-icons-maptip",
+        iconClass: SPRITE_MAPTIP,
         selected: (state) => {
             return state.viewer.featureTooltipsEnabled === true;
         },
@@ -129,7 +163,7 @@ export function initDefaultCommands() {
     });
     //Zoom in
     registerCommand(DefaultCommands.ZoomIn, {
-        iconClass: "sprite-icons-zoom-in-fixed",
+        iconClass: SPRITE_ZOOM_IN_FIXED,
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -140,7 +174,7 @@ export function initDefaultCommands() {
     });
     //Zoom Out
     registerCommand(DefaultCommands.ZoomOut, {
-        iconClass: "sprite-icons-zoom-out-fixed",
+        iconClass: SPRITE_ZOOM_OUT_FIXED,
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -151,7 +185,7 @@ export function initDefaultCommands() {
     });
     //Pan Left
     registerCommand(DefaultCommands.PanLeft, {
-        iconClass: "sprite-icons-pan-west",
+        iconClass: SPRITE_PAN_WEST,
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -162,7 +196,7 @@ export function initDefaultCommands() {
     });
     //Pan Right
     registerCommand(DefaultCommands.PanRight, {
-        iconClass: "sprite-icons-pan-east",
+        iconClass: SPRITE_PAN_EAST,
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -173,7 +207,7 @@ export function initDefaultCommands() {
     });
     //Pan Up
     registerCommand(DefaultCommands.PanUp, {
-        iconClass: "sprite-icons-pan-north",
+        iconClass: SPRITE_PAN_NORTH,
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -184,7 +218,7 @@ export function initDefaultCommands() {
     });
     //Pan Down
     registerCommand(DefaultCommands.PanDown, {
-        iconClass: "sprite-icons-pan-south",
+        iconClass: SPRITE_PAN_SOUTH,
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -195,7 +229,7 @@ export function initDefaultCommands() {
     });
     //About
     registerCommand(DefaultCommands.About, {
-        iconClass: "sprite-icons-about",
+        iconClass: SPRITE_ABOUT,
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -212,7 +246,7 @@ export function initDefaultCommands() {
     });
     //Help
     registerCommand(DefaultCommands.Help, {
-        iconClass: "sprite-icons-help",
+        iconClass: SPRITE_HELP,
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -229,7 +263,7 @@ export function initDefaultCommands() {
     });
     //Measure
     registerCommand(DefaultCommands.Measure, {
-        iconClass: "sprite-icons-measure",
+        iconClass: SPRITE_MEASURE,
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -241,7 +275,7 @@ export function initDefaultCommands() {
     });
     //Quick Plot
     registerCommand(DefaultCommands.QuickPlot, {
-        iconClass: "sprite-icons-print",
+        iconClass: SPRITE_PRINT,
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -253,7 +287,7 @@ export function initDefaultCommands() {
     });
     //Viewer Options
     registerCommand(DefaultCommands.ViewerOptions, {
-        iconClass: "sprite-icons-options",
+        iconClass: SPRITE_OPTIONS,
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -265,7 +299,7 @@ export function initDefaultCommands() {
     });
     //Select Radius
     registerCommand(DefaultCommands.SelectRadius, {
-        iconClass: "sprite-icons-select-radius",
+        iconClass: SPRITE_SELECT_RADIUS,
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -278,9 +312,9 @@ export function initDefaultCommands() {
             }
         }
     });
-    //Select Radius
+    //Select Polygon
     registerCommand(DefaultCommands.SelectPolygon, {
-        iconClass: "sprite-icons-select-polygon",
+        iconClass: SPRITE_SELECT_POLYGON,
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -293,7 +327,7 @@ export function initDefaultCommands() {
     });
     //Initial Center and scale
     registerCommand(DefaultCommands.RestoreView, {
-        iconClass: "sprite-icons-initial-center",
+        iconClass: SPRITE_INITIAL_CENTER,
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -309,7 +343,7 @@ export function initDefaultCommands() {
     })
     //Zoom Extents
     registerCommand(DefaultCommands.ZoomExtents, {
-        iconClass: "sprite-icons-zoom-full",
+        iconClass: SPRITE_ZOOM_FULL,
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -320,7 +354,7 @@ export function initDefaultCommands() {
     });
     //Clear Selection
     registerCommand(DefaultCommands.ClearSelection, {
-        iconClass: "sprite-icons-select-clear",
+        iconClass: SPRITE_SELECT_CLEAR,
         selected: () => false,
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -331,7 +365,7 @@ export function initDefaultCommands() {
     });
     //Zoom to Selection
     registerCommand(DefaultCommands.ZoomToSelection, {
-        iconClass: "sprite-icons-icon_zoomselect",
+        iconClass: SPRITE_ICON_ZOOMSELECT,
         selected: () => false,
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -360,7 +394,7 @@ export function initDefaultCommands() {
     });
     //Refresh Map
     registerCommand(DefaultCommands.RefreshMap, {
-        iconClass: "sprite-icons-icon_refreshmap",
+        iconClass: SPRITE_ICON_REFRESHMAP,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -372,7 +406,7 @@ export function initDefaultCommands() {
     });
     //Previous View
     registerCommand(DefaultCommands.PreviousView, {
-        iconClass: "sprite-icons-view-back",
+        iconClass: SPRITE_VIEW_BACK,
         selected: () => false,
         enabled: CommandConditions.hasPreviousView,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -384,7 +418,7 @@ export function initDefaultCommands() {
     });
     //Next View
     registerCommand(DefaultCommands.NextView, {
-        iconClass: "sprite-icons-view-forward",
+        iconClass: SPRITE_VIEW_FORWARD,
         selected: () => false,
         enabled: CommandConditions.hasNextView,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -396,7 +430,7 @@ export function initDefaultCommands() {
     });
     //Geolocation
     registerCommand(DefaultCommands.Geolocation, {
-        iconClass: "sprite-icons-geolocation",
+        iconClass: SPRITE_GEOLOCATION,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -444,7 +478,7 @@ export function initDefaultCommands() {
     });
     //Buffer
     registerCommand(DefaultCommands.Buffer, {
-        iconClass: "sprite-icons-buffer",
+        iconClass: SPRITE_BUFFER,
         selected: () => false,
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -461,7 +495,7 @@ export function initDefaultCommands() {
     });
     //Select Within
     registerCommand(DefaultCommands.SelectWithin, {
-        iconClass: "sprite-icons-select-features",
+        iconClass: SPRITE_SELECT_FEATURES,
         selected: () => false,
         enabled: (state, parameters) => !CommandConditions.disabledIfEmptySelection(state, parameters),
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -478,7 +512,7 @@ export function initDefaultCommands() {
     });
     //Redline
     registerCommand(DefaultCommands.Redline, {
-        iconClass: "sprite-icons-redline",
+        iconClass: SPRITE_REDLINE,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -496,7 +530,7 @@ export function initDefaultCommands() {
     });
     //Feature Info
     registerCommand(DefaultCommands.FeatureInfo, {
-        iconClass: "sprite-icons-feature-info",
+        iconClass: SPRITE_FEATURE_INFO,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -512,7 +546,7 @@ export function initDefaultCommands() {
     });
     //Query
     registerCommand(DefaultCommands.Query, {
-        iconClass: "sprite-icons-query",
+        iconClass: SPRITE_QUERY,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -528,7 +562,7 @@ export function initDefaultCommands() {
     });
     //Theme
     registerCommand(DefaultCommands.Theme, {
-        iconClass: "sprite-icons-theme",
+        iconClass: SPRITE_THEME,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -555,7 +589,7 @@ export function initDefaultCommands() {
     });
     */
     registerCommand("showTaskPane", {
-        iconClass: "sprite-icons-invoke-script",
+        iconClass: SPRITE_INVOKE_SCRIPT,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -564,7 +598,7 @@ export function initDefaultCommands() {
         }
     });
     registerCommand("showLegend", {
-        iconClass: "sprite-icons-invoke-script",
+        iconClass: SPRITE_INVOKE_SCRIPT,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {
@@ -573,7 +607,7 @@ export function initDefaultCommands() {
         }
     });
     registerCommand("showSelectionPanel", {
-        iconClass: "sprite-icons-invoke-script",
+        iconClass: SPRITE_INVOKE_SCRIPT,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState, viewer, parameters) => {

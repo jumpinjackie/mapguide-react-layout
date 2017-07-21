@@ -64,9 +64,9 @@
   version "1.5.20"
   resolved "https://registry.yarnpkg.com/@types/dom4/-/dom4-1.5.20.tgz#ccf636d3b794fe65a4191ebc7ff979a78efea6c2"
 
-"@types/enzyme@2.8.2":
-  version "2.8.2"
-  resolved "https://registry.yarnpkg.com/@types/enzyme/-/enzyme-2.8.2.tgz#5cd2582b7c7876d0a34dd9eaeadf6b52263fe88e"
+"@types/enzyme@2.8.3":
+  version "2.8.3"
+  resolved "https://registry.yarnpkg.com/@types/enzyme/-/enzyme-2.8.3.tgz#1f6b11248d99bf9a625d0552d56b627f73be4c9e"
   dependencies:
     "@types/cheerio" "*"
     "@types/react" "*"
@@ -160,9 +160,9 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-measure@0.4.7":
-  version "0.4.7"
-  resolved "https://registry.yarnpkg.com/@types/react-measure/-/react-measure-0.4.7.tgz#f4dd9f6265b488032a31677af5e5eadee67ac8ce"
+"@types/react-measure@0.4.8":
+  version "0.4.8"
+  resolved "https://registry.yarnpkg.com/@types/react-measure/-/react-measure-0.4.8.tgz#8747c98531fb05ae9a6b9422979606aa4dd2d25f"
   dependencies:
     "@types/react" "*"
 

@@ -76,4 +76,15 @@ describe("containers/scale-display", () => {
         expect(func.mock.calls[0]).toHaveLength(1);
         expect(func.mock.calls[0][0]).toBe(900);
     });
+    it("snaps to the closest finite scale if view scale has no exact match", () => {
+        const view: IMapView = {
+            x: 0,
+            y: 0,
+            scale: 600.000000003
+        };
+        const func = jest.fn();
+        const wrapper = mount(<ScaleDisplay locale="en" view={view} finiteScales={FINITE_SCALES} onScaleChanged={func} />);
+        const sel = wrapper.find("select");
+        expect(sel.props().value).toBe(600);
+    });
 });

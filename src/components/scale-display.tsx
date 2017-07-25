@@ -3,6 +3,7 @@ import {
     IMapView
 } from "../api/common";
 import { tr } from "../api/i18n";
+import { getFiniteScaleIndexForScale } from "../utils/number";
 
 /**
  * ScaleDisplay component props
@@ -67,8 +68,10 @@ export class ScaleDisplay extends React.Component<IScaleDisplayProps, any> {
             scale: ""
         });
         if (finiteScales) {
+            const fi = getFiniteScaleIndexForScale(finiteScales, view.scale);
+            const fiScale = finiteScales[fi];
             return <div className="component-scale-display" style={style}>
-                {label} <select className="scale-input" value={view.scale} onChange={this.fnFiniteScaleChanged}>
+                {label} <select className="scale-input" value={fiScale} onChange={this.fnFiniteScaleChanged}>
                     {finiteScales.map(s => {
                         return <option key={s} value={s}>{s}</option>;
                     })}

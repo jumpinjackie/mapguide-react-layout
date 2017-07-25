@@ -19,13 +19,12 @@ describe("components/map-menu", () => {
         const wrapper = mount(<MapMenu selectedMap={"Foo"} maps={EXTERNAL_LAYERS} locale="en" />);
         const radFoo = wrapper.find("input.map-menu-option").at(0);
         expect(radFoo).not.toBeNull();
-        //HACK: (any) band-aid because I'm guessing enzyme typings hasn't caught up?
-        const radFooProps: any = radFoo.props();
+        const radFooProps = radFoo.props();
         expect(radFooProps.value).toBe("Foo");
         expect(radFooProps.checked).toBe(true);
         const radBar = wrapper.find("input.map-menu-option").at(1);
         expect(radBar).not.toBeNull();
-        const radBarProps: any = radBar.props();
+        const radBarProps = radBar.props();
         expect(radBarProps.value).toBe("Bar");
         expect(radBarProps.checked).toBe(false);
     });
@@ -33,13 +32,12 @@ describe("components/map-menu", () => {
         const wrapper = mount(<MapMenu selectedMap={"Baz"} maps={EXTERNAL_LAYERS} locale="en" />);
         const radFoo = wrapper.find("input.map-menu-option").at(0);
         expect(radFoo).not.toBeNull();
-        //HACK: (any) band-aid because I'm guessing enzyme typings hasn't caught up?
-        const radFooProps: any = radFoo.props();
+        const radFooProps = radFoo.props();
         expect(radFooProps.value).toBe("Foo");
         expect(radFooProps.checked).toBe(false);
         const radBar = wrapper.find("input.map-menu-option").at(1);
         expect(radBar).not.toBeNull();
-        const radBarProps: any = radBar.props();
+        const radBarProps = radBar.props();
         expect(radBarProps.value).toBe("Bar");
         expect(radBarProps.checked).toBe(false);
     });

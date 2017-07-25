@@ -1,6 +1,6 @@
 import * as React from "react";
 import { isMenu, isMenuRef, isComponentFlyout } from "../utils/type-guards";
-import { IDOMElementMetrics } from "../api/common";
+import { IDOMElementMetrics, FlyoutVisibilitySet } from "../api/common";
 import { Popover, Position } from "@blueprintjs/core";
 import { MenuComponent } from "./menu";
 import { IToolbarContext, TOOLBAR_CONTEXT_VALIDATION_MAP } from "./context";
@@ -193,6 +193,7 @@ interface IComponentFlyoutItemProps {
     size: number;
     item: IComponentFlyoutItem;
     vertical?: boolean;
+    isFlownOut?: boolean;
 }
 
 class ComponentFlyoutItem extends React.Component<IComponentFlyoutItemProps, any> {
@@ -209,15 +210,13 @@ class ComponentFlyoutItem extends React.Component<IComponentFlyoutItemProps, any
         this.fnMouseLeave = this.onMouseLeave.bind(this);
         this.fnChildInvoked = this.onChildInvoked.bind(this);
         this.state = {
-            isMouseOver: false,
-            isFlownOut: false
+            isMouseOver: false
         };
     }
     private onClick(e: GenericEvent) {
         e.preventDefault();
         const { flyoutId, componentName, componentProps } = this.props.item;
-        const newState = !this.state.isFlownOut;
-        this.setState({ isFlownOut: newState });
+        const newState = !!!this.props.isFlownOut;
         if (newState) {
             const rect = e.currentTarget.getBoundingClientRect();
             const metrics: IDOMElementMetrics = {
@@ -240,11 +239,11 @@ class ComponentFlyoutItem extends React.Component<IComponentFlyoutItemProps, any
         this.setState({ isMouseOver: true });
     }
     private onChildInvoked() {
-        this.setState({ isFlownOut: false, isMouseOver: false });
+        this.setState({ isMouseOver: false });
         this.context.closeFlyout(this.props.item.flyoutId);
     }
     render(): JSX.Element {
-        const { size, item, vertical } = this.props;
+        const { size, item, vertical, isFlownOut } = this.props;
         const selected = getSelected(item);
         const enabled = getEnabled(item);
         const imgStyle = getIconStyle(enabled, size);
@@ -256,7 +255,7 @@ class ComponentFlyoutItem extends React.Component<IComponentFlyoutItemProps, any
         const ttip = getTooltip(item);
         return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={ttip}>
             <div data-flyout-id={`flyout-${item.flyoutId}`}>
-                <Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {label} <Icon style={imgStyle} spriteClass={(this.state.isFlownOut) ? SPRITE_ICON_MENUARROWUP : SPRITE_ICON_MENUARROW } />
+                <Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {label} <Icon style={imgStyle} spriteClass={isFlownOut ? SPRITE_ICON_MENUARROWUP : SPRITE_ICON_MENUARROW } />
             </div>
         </div>;
     }
@@ -266,6 +265,7 @@ interface IFlyoutMenuReferenceItemProps {
     size: number;
     menu: IFlyoutMenu;
     vertical?: boolean;
+    isFlownOut?: boolean;
 }
 
 class FlyoutMenuReferenceItem extends React.Component<IFlyoutMenuReferenceItemProps, any> {
@@ -283,13 +283,11 @@ class FlyoutMenuReferenceItem extends React.Component<IFlyoutMenuReferenceItemPr
         this.fnChildInvoked = this.onChildInvoked.bind(this);
         this.state = {
             isMouseOver: false,
-            isFlownOut: false
         };
     }
     private onClick(e: GenericEvent) {
         e.preventDefault();
-        const newState = !this.state.isFlownOut;
-        this.setState({ isFlownOut: newState });
+        const newState = !!!this.props.isFlownOut;
         if (newState) {
             const rect = e.currentTarget.getBoundingClientRect();
             const metrics: IDOMElementMetrics = {
@@ -312,11 +310,11 @@ class FlyoutMenuReferenceItem extends React.Component<IFlyoutMenuReferenceItemPr
         this.setState({ isMouseOver: true });
     }
     private onChildInvoked() {
-        this.setState({ isFlownOut: false, isMouseOver: false });
+        this.setState({ isMouseOver: false });
         this.context.closeFlyout(this.props.menu.flyoutId);
     }
     render(): JSX.Element {
-        const { size, menu, vertical } = this.props;
+        const { size, menu, vertical, isFlownOut } = this.props;
         const selected = getSelected(menu);
         const enabled = getEnabled(menu);
         const imgStyle = getIconStyle(enabled, size);
@@ -332,7 +330,7 @@ class FlyoutMenuReferenceItem extends React.Component<IFlyoutMenuReferenceItemPr
         const ttip = getTooltip(menu);
         return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={ttip}>
             <div data-flyout-id={`flyout-${menu.flyoutId}`}>
-                <Icon style={imgStyle} url={menu.icon} spriteClass={menu.iconClass} /> {label} <Icon style={imgStyle} spriteClass={(this.state.isFlownOut) ? SPRITE_ICON_MENUARROWUP : SPRITE_ICON_MENUARROW} />
+                <Icon style={imgStyle} url={menu.icon} spriteClass={menu.iconClass} /> {label} <Icon style={imgStyle} spriteClass={isFlownOut ? SPRITE_ICON_MENUARROWUP : SPRITE_ICON_MENUARROW} />
             </div>
         </div>;
     }
@@ -457,6 +455,7 @@ export interface IToolbarProps {
     onCloseFlyout?: (id: string) => void;
     onOpenComponent?: (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => void;
     onCloseComponent?: (id: string) => void;
+    flyoutStates?: FlyoutVisibilitySet;
 }
 
 /**
@@ -500,16 +499,18 @@ export class Toolbar extends React.Component<IToolbarProps, any> {
         }
     }
     render(): JSX.Element {
-        const { containerStyle, containerClass, childItems, vertical, hideVerticalLabels } = this.props;
+        const { containerStyle, containerClass, childItems, vertical, hideVerticalLabels, flyoutStates } = this.props;
         const height = containerStyle != null
             ? (containerStyle.height || DEFAULT_TOOLBAR_SIZE)
             : DEFAULT_TOOLBAR_SIZE;
         return <div style={containerStyle} className={`has-flyout noselect ${containerClass}`}>
             {childItems.map((item, index) => {
                 if (isComponentFlyout(item)) {
-                    return <ComponentFlyoutItem key={index} size={height} item={item} vertical={vertical} />;
+                    const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
+                    return <ComponentFlyoutItem key={index} size={height} item={item} vertical={vertical} isFlownOut={isFlownOut} />;
                 } else if (isMenuRef(item)) {
-                    return <FlyoutMenuReferenceItem key={index} size={height} menu={item} vertical={vertical} />;
+                    const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
+                    return <FlyoutMenuReferenceItem key={index} size={height} menu={item} vertical={vertical} isFlownOut={isFlownOut} />;
                 } else if (item.isSeparator === true) {
                     return <ToolbarSeparator key={index} size={height} vertical={vertical} />;
                 } else {

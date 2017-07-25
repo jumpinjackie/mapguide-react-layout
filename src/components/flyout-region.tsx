@@ -5,6 +5,19 @@ import { MenuComponent } from "./menu";
 import { FlyoutMenuChildItem } from "./toolbar";
 import { IDOMElementMetrics } from "../api/common";
 import { PlaceholderComponent } from "../api/registry/component";
+import { IItem } from "../components/toolbar";
+
+export interface IFlyoutConfiguration {
+    open?: boolean;
+    childItems?: IItem[];
+    metrics?: IDOMElementMetrics;
+    componentName?: string;
+    componentProps?: any;
+}
+
+export interface IFlyoutConfigurationSet {
+    [flyoutId: string]: IFlyoutConfiguration;
+}
 
 /**
  * FlyoutRegion component props
@@ -13,7 +26,7 @@ import { PlaceholderComponent } from "../api/registry/component";
  * @interface IFlyoutRegionProps
  */
 export interface IFlyoutRegionProps {
-    flyoutConf: any;
+    flyoutConf: IFlyoutConfigurationSet;
     locale: string;
     onCloseFlyout: (id: string) => void;
 }
@@ -41,7 +54,7 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                     const flyout = this.props.flyoutConf[flyoutId];
                     const open = !!flyout.open;
                     if (open) {
-                        const items: any[] = flyout.childItems || [];
+                        const items = flyout.childItems || [];
                         let align = "bottom right";
                         if (flyoutId === Constants.WEBLAYOUT_TASKMENU) {
                             align = "bottom left";
@@ -49,7 +62,7 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                         const containerStyle: React.CSSProperties = {};
                         containerStyle.zIndex = 2000; //This should be big enough to be above all possible UI elements
                         if (flyout.metrics) {
-                            const met: IDOMElementMetrics = flyout.metrics;
+                            const met = flyout.metrics;
                             if (flyout.metrics.vertical === true) {
                                 containerStyle.top = met.posY;
                             } else {

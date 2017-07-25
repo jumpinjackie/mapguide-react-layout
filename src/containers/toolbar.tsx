@@ -7,7 +7,8 @@ import {
     ReduxDispatch,
     IApplicationState,
     IToolbarReducerState,
-    IBranchedMapSubState
+    IBranchedMapSubState,
+    FlyoutVisibilitySet
 } from "../api/common";
 import { getCommand, mapToolbarReference } from "../api/registry/command";
 import { IItem, IInlineMenu, Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
@@ -110,8 +111,15 @@ export class ToolbarContainer extends React.Component<ToolbarContainerProps, any
         store: PropTypes.object
     };
     render(): JSX.Element {
-        const { toolbar, containerClass, containerStyle, vertical, hideVerticalLabels, invokeCommand } = this.props;
+        const { toolbar, containerClass, containerStyle, vertical, hideVerticalLabels, invokeCommand, flyouts } = this.props;
         const store = (this.context as any).store;
+        const flyoutStates: FlyoutVisibilitySet = {};
+        if (flyouts) {
+            const ids = Object.keys(flyouts);
+            for (const fid of ids) {
+                flyoutStates[fid] = !!flyouts[fid].open;
+            }
+        }
         if (toolbar && toolbar.items && invokeCommand && containerStyle) {
             if (vertical === true) {
                 containerStyle.width = DEFAULT_TOOLBAR_SIZE;
@@ -126,6 +134,7 @@ export class ToolbarContainer extends React.Component<ToolbarContainerProps, any
                             childItems={childItems}
                             containerClass={containerClass}
                             containerStyle={containerStyle}
+                            flyoutStates={flyoutStates}
                             onOpenComponent={this.fnOpenComponent}
                             onCloseComponent={this.fnCloseComponent}
                             onOpenFlyout={this.fnOpenFlyout}

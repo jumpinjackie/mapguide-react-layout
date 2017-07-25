@@ -9,7 +9,8 @@ import {
     ITaskPaneReducerState,
     IToolbarReducerState,
     IConfigurationReducerState,
-    IBranchedMapSubState
+    IBranchedMapSubState,
+    FlyoutVisibilitySet
 } from "../api/common";
 import { IItem } from "../components/toolbar";
 import { TaskPane } from "../components/task-pane";
@@ -35,6 +36,7 @@ export interface ITaskPaneContainerState {
     map: IBranchedMapSubState;
     taskpane: ITaskPaneReducerState;
     config: IConfigurationReducerState;
+    flyouts: any;
 }
 
 export interface ITaskPaneDispatch {
@@ -58,7 +60,8 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<ITaskPaneC
     return {
         map: branch,
         taskpane: state.taskpane,
-        config: state.config
+        config: state.config,
+        flyouts: state.toolbar.flyouts
     };
 }
 
@@ -174,9 +177,16 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         store: PropTypes.object
     };
     render(): JSX.Element {
-        const { taskpane, config, map, invokeCommand, maxHeight } = this.props;
+        const { taskpane, config, map, invokeCommand, maxHeight, flyouts } = this.props;
         if (taskpane && config && map && map.runtimeMap) {
             if (taskpane.navigation[taskpane.navIndex]) {
+                const flyoutStates: FlyoutVisibilitySet = {};
+                if (flyouts) {
+                    const ids = Object.keys(flyouts);
+                    for (const fid of ids) {
+                        flyoutStates[fid] = !!flyouts[fid].open;
+                    }
+                }
                 return <TaskPane currentUrl={taskpane.navigation[taskpane.navIndex]}
                                  showTaskBar={config.capabilities.hasTaskBar}
                                  lastUrlPushed={taskpane.lastUrlPushed}
@@ -189,6 +199,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
                                  mapName={map.runtimeMap.Name}
                                  onUrlLoaded={this.fnUrlLoaded}
                                  maxHeight={maxHeight}
+                                 flyoutStates={flyoutStates}
                                  locale={this.getLocale()} />;
             }
         }

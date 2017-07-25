@@ -1,13 +1,22 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import * as Constants from "../constants";
-import { Toolbar, IItem, IFlyoutMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
+import {
+    Toolbar,
+    IItem,
+    IFlyoutMenu,
+    DEFAULT_TOOLBAR_SIZE,
+    TOOLBAR_BACKGROUND_COLOR
+} from "./toolbar";
 import queryString = require("query-string");
 const parse = require("url-parse");
 import { ensureParameters } from "../actions/taskpane";
 import { PlaceholderComponent } from "../api/registry/component";
 import { tr } from "../api/i18n";
-import { IDOMElementMetrics } from "../api/common";
+import { 
+    IDOMElementMetrics,
+    FlyoutVisibilitySet
+} from "../api/common";
 
 function currentUrlDoesNotMatchMapName(currentUrl: string, mapName: string): boolean {
     const normUrl = currentUrl.toLowerCase();
@@ -37,6 +46,7 @@ export interface ITaskPaneProps {
     lastUrlPushed?: boolean;
     showTaskBar: boolean;
     maxHeight?: number;
+    flyoutStates?: FlyoutVisibilitySet;
     onOpenFlyout: (id: string, metrics: IDOMElementMetrics) => void;
     onCloseFlyout: (id: string) => void;
 }
@@ -199,8 +209,8 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             {(() => {
                 if (this.props.showTaskBar === true) {
                     return <div style={taskBarStyle}>
-                        <Toolbar childItems={this.taskButtons} containerStyle={{ float: "left", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={this.fnCloseFlyout} onOpenFlyout={this.fnOpenFlyout} />
-                        <Toolbar childItems={[ taskMenu ]} containerStyle={{ float: "right", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={this.fnCloseFlyout} onOpenFlyout={this.fnOpenFlyout} />
+                        <Toolbar childItems={this.taskButtons} containerStyle={{ float: "left", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={this.fnCloseFlyout} onOpenFlyout={this.fnOpenFlyout} flyoutStates={this.props.flyoutStates} />
+                        <Toolbar childItems={[ taskMenu ]} containerStyle={{ float: "right", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={this.fnCloseFlyout} onOpenFlyout={this.fnOpenFlyout} flyoutStates={this.props.flyoutStates} />
                         <div style={{ clear: "both" }} />
                     </div>;
                 }

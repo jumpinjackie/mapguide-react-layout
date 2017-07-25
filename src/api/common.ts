@@ -1569,3 +1569,8 @@ export function getExternalBaseLayers(state: Readonly<IApplicationState>): IExte
     }
     return undefined;
 }
+
+/**
+ * Defines the visibility of flyout menus
+ */
+export type FlyoutVisibilitySet = { [flyoutId: string]: boolean | undefined };

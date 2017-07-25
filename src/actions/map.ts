@@ -11,7 +11,7 @@ import {
 } from "../api/common";
 import { getViewer } from "../api/runtime";
 import { areViewsCloseToEqual } from "../components/map-viewer-base";
-import { areNumbersEqual } from '../utils/number';
+import { areNumbersEqual, getFiniteScaleIndexForScale } from '../utils/number';
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet, SelectedFeature, SelectedFeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
@@ -197,8 +197,12 @@ export function queryMapFeatures(mapName: string, opts: QueryMapFeatureActionOpt
 }
 
 /**
- * Sets the current map view
+ * Sets the current map view.
  *
+ * NOTE: Subscribing components are not guaranteed to receive every new view change sent by
+ * calling this method. For purposes of optimization, views passed in that are "close enough"
+ * to the current view are not dispatched to subscribing components.
+ * 
  * @export
  * @param {IMapView} view The map view to set
  * @returns {ReduxThunkedAction}
@@ -212,10 +216,21 @@ export function setCurrentView(view: IMapView): ReduxThunkedAction {
         // previous one
         const state = getState();
         const currentView = getCurrentView(state);
+        const newView = { ...view };
         const mapName = state.config.activeMapName;
         let dispatchThis = true;
-        if (currentView != null && view != null) {
-            if (areViewsCloseToEqual(currentView, view)) {
+        if (currentView && mapName) {
+            //If the current map is tiled (has finite scales), "snap" the view's scale
+            //to the closest applicable finite scale then do the test 
+            const mapState = state.mapState[mapName];
+            if (mapState.runtimeMap && 
+                mapState.runtimeMap.FiniteDisplayScale &&
+                mapState.runtimeMap.FiniteDisplayScale.length > 0) {
+
+                const fi = getFiniteScaleIndexForScale(mapState.runtimeMap.FiniteDisplayScale, newView.scale);
+                newView.scale = mapState.runtimeMap.FiniteDisplayScale[fi];
+            }
+            if (areViewsCloseToEqual(currentView, newView)) {
                 dispatchThis = false;
             }
         }
@@ -224,7 +239,7 @@ export function setCurrentView(view: IMapView): ReduxThunkedAction {
                 type: Constants.MAP_SET_VIEW,
                 payload: {
                     mapName,
-                    view
+                    view: newView
                 }
             });
         }

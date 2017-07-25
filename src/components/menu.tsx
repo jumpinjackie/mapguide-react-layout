@@ -28,11 +28,13 @@ export class MenuComponent extends React.Component<IMenuComponentProps, any> {
     constructor(props: IMenuComponentProps) {
         super(props);
     }
-    private onClick(item: any, e: GenericEvent) {
+    private onClick(item: IItem, e: GenericEvent) {
         const { onInvoked } = this.props;
         if (getEnabled(item)) {
-            item.invoke();
-            if (onInvoked != null) {
+            if (item.invoke) {
+                item.invoke();
+            }
+            if (onInvoked) {
                 onInvoked();
             }
         }

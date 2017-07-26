@@ -158,3 +158,7 @@ export function getAssetRoot(): string {
 export function setAssetRoot(root: string): void {
     mRoot = root;
 }
+
+export function getRelativeIconPath(iconName: string): string {
+    return `images/icons/${iconName}.png`;
+}

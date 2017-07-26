@@ -116,3 +116,4 @@ export const Externals = {
     ReactDOM: ReactDOM
 };
 export { ApplicationViewModel as Application } from "./application";
+export { setAssetRoot } from "../utils/asset";

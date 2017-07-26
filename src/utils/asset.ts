@@ -149,6 +149,12 @@ export const SPRITE_THEME = "theme";
 export const SPRITE_INVOKE_SCRIPT = "invoke-script";
 export const SPRITE_INVOKE_URL = "invoke-url";
 
+let mRoot = ICON_ZOOM_OUT_FIXED.replace("/zoom-out-fixed.png", "/../../");
+
 export function getAssetRoot(): string {
-    return ICON_ZOOM_OUT_FIXED.replace("/zoom-out-fixed.png", "/../../");
+    return mRoot;
+}
+
+export function setAssetRoot(root: string): void {
+    mRoot = root;
 }

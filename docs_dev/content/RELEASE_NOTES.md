@@ -5,6 +5,9 @@
 
 [Changelog](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.9.1...v0.9.5)
 
+ * [#250](https://github.com/jumpinjackie/mapguide-react-layout/issues/250): Added support for toggling layer transparency (via Viewer Options)
+ * API: Added OL factories for creating extent and snap interactions
+ * [#111](https://github.com/jumpinjackie/mapguide-react-layout/issues/111): Ensure that scales of new views "snap" to the closest finite scale when viewing a tiled map
  * [#252](https://github.com/jumpinjackie/mapguide-react-layout/issues/252): Fix tooltip queries being sent with points instead of pixel-buffered polygons
  * [#239](https://github.com/jumpinjackie/mapguide-react-layout/issues/239): 
    * Support element target (New Window / Task Pane / Specific Frame) for commands

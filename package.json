@@ -45,7 +45,7 @@
     "@types/lodash.debounce": "4.0.2",
     "@types/lodash.uniq": "4.5.2",
     "@types/lodash.xor": "^4.5.2",
-    "@types/node": "^8.0.16",
+    "@types/node": "^8.0.17",
     "@types/prop-types": "15.5.1",
     "@types/query-string": "4.3.1",
     "@types/react": "15.0.39",
@@ -102,10 +102,10 @@
     "ts-jest": "^20.0.7",
     "ts-loader": "^2.3.1",
     "tslint": "^5.5.0",
-    "typedoc": "^0.7.1",
+    "typedoc": "^0.7.2",
     "typescript": "2.4.2",
     "url-loader": "^0.5.9",
-    "webpack": "^3.3.0"
+    "webpack": "^3.4.1"
   },
   "greenkeeper": {
     "ignore": [

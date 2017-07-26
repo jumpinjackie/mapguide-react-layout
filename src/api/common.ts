@@ -14,6 +14,7 @@ import olInteraction from "ol/interaction/interaction";
 import olOverlay from "ol/overlay";
 
 import { IOLFactory } from "./ol-factory";
+import { Dispatch, Action } from "redux";
 
 /**
  * Describes a map view
@@ -1435,12 +1436,12 @@ export type ReduxThunkedAction = (dispatch: ReduxDispatch, getState: () => Reado
 /**
  * Describes a redux action creator
  */
-export type ReduxActionCreator = ReduxAction | ReduxThunkedAction;
+export type ReduxActionCreator = ReduxAction | ReduxThunkedAction | Action;
 
 /**
  * Describes a redux dispatcher function. A redux dispatch pushes new state to the redux store
  */
-export type ReduxDispatch = (action: ReduxActionCreator) => void;
+export type ReduxDispatch = Dispatch<any>;//(action: ReduxActionCreator) => void;
 
 /**
  * A function that does nothing

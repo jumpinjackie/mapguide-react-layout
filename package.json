@@ -90,7 +90,7 @@
     "cross-env": "^5.0.1",
     "css-loader": "^0.28.4",
     "enzyme": "^2.9.1",
-    "file-loader": "^0.11.2",
+    "file-loader": "^1.0.0-rc.0",
     "jest": "20.0.4",
     "jsonfile": "^3.0.1",
     "less": "^2.7.2",

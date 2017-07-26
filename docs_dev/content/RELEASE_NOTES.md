@@ -19,6 +19,7 @@
    * [#295](https://github.com/jumpinjackie/mapguide-react-layout/issues/295): Some helpers to ensure proper asset path resolution when using the npm module
  * Legend now properly renders layers with multiple geometry styles
  * Fix: Fusion MapMessage compat not spawning equivalent blueprint toast alerts
+ * [#290](https://github.com/jumpinjackie/mapguide-react-layout/issues/290): Fix flyout menus requiring double-click to re-open
  * [#277](https://github.com/jumpinjackie/mapguide-react-layout/issues/277): Fix excessive blueprint toaster components created when using toast alerts
 
 

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>IFlyoutMenuChildItemProps | mapguide-react-layout</title>
+	<title>IModalDisplayOptions | mapguide-react-layout</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -52,24 +52,46 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_components_toolbar_.html">&quot;components/toolbar&quot;</a>
+					<a href="../modules/_api_common_.html">&quot;api/common&quot;</a>
 				</li>
 				<li>
-					<a href="_components_toolbar_.iflyoutmenuchilditemprops.html">IFlyoutMenuChildItemProps</a>
+					<a href="_api_common_.imodaldisplayoptions.html">IModalDisplayOptions</a>
 				</li>
 			</ul>
-			<h1>Interface IFlyoutMenuChildItemProps</h1>
+			<h1>Interface IModalDisplayOptions</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Modal display options for URL content</p>
+					</div>
+					<dl class="tsd-comment-tags">
+						<dt>export</dt>
+						<dd></dd>
+						<dt>interface</dt>
+						<dd><p>IModalDisplayOptions</p>
+						</dd>
+						<dt>extends</dt>
+						<dd><p>{IModalDisplayOptionsBase}</p>
+						</dd>
+					</dl>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">IFlyoutMenuChildItemProps</span>
+						<a href="_api_common_.imodaldisplayoptionsbase.html" class="tsd-signature-type">IModalDisplayOptionsBase</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">IModalDisplayOptions</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -80,8 +102,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_components_toolbar_.iflyoutmenuchilditemprops.html#item" class="tsd-kind-icon">item</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_components_toolbar_.iflyoutmenuchilditemprops.html#oninvoked" class="tsd-kind-icon">on<wbr>Invoked</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_common_.imodaldisplayoptions.html#modal" class="tsd-kind-icon">modal</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="_api_common_.imodaldisplayoptions.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_api_common_.imodaldisplayoptions.html#url" class="tsd-kind-icon">url</a></li>
 							</ul>
 						</section>
 					</div>
@@ -89,15 +112,33 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="item" class="tsd-anchor"></a>
-					<h3>item</h3>
-					<div class="tsd-signature tsd-kind-icon">item<span class="tsd-signature-symbol">:</span> <a href="_components_toolbar_.iitem.html" class="tsd-signature-type">IItem</a><span class="tsd-signature-symbol"> | </span><a href="_components_toolbar_.iinlinemenu.html" class="tsd-signature-type">IInlineMenu</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="modal" class="tsd-anchor"></a>
+					<h3>modal</h3>
+					<div class="tsd-signature tsd-kind-icon">modal<span class="tsd-signature-symbol">:</span> <a href="_api_common_.imodalparameters.html" class="tsd-signature-type">IModalParameters</a></div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="name" class="tsd-anchor"></a>
+					<h3>name</h3>
+					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="oninvoked" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> on<wbr>Invoked</h3>
-					<div class="tsd-signature tsd-kind-icon">on<wbr>Invoked<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">function</span></div>
+					<a name="url" class="tsd-anchor"></a>
+					<h3>url</h3>
+					<div class="tsd-signature tsd-kind-icon">url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The URL of the content to load in the modal dialog</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>type</dt>
+							<dd><p>{string}</p>
+							</dd>
+							<dt>memberof</dt>
+							<dd><p>IModalDisplayOptions</p>
+							</dd>
+						</dl>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -108,63 +149,30 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_components_toolbar_.html">"components/toolbar"</a>
+						<a href="../modules/_api_common_.html">"api/common"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/_components_toolbar_.flyoutmenuchilditem.html" class="tsd-kind-icon">Flyout<wbr>Menu<wbr>Child<wbr>Item</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/_components_toolbar_.toolbar.html" class="tsd-kind-icon">Toolbar</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_components_toolbar_.icomponentflyoutitem.html" class="tsd-kind-icon">IComponent<wbr>Flyout<wbr>Item</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_components_toolbar_.icontaineritem.html" class="tsd-kind-icon">IContainer<wbr>Item</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_components_toolbar_.iflyoutmenu.html" class="tsd-kind-icon">IFlyout<wbr>Menu</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_components_toolbar_.iflyoutmenuchilditemprops.html" class="tsd-kind-icon">IFlyout<wbr>Menu<wbr>Child<wbr>Item<wbr>Props</a>
+						<a href="_api_common_.imodaldisplayoptions.html" class="tsd-kind-icon">IModal<wbr>Display<wbr>Options</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_components_toolbar_.iflyoutmenuchilditemprops.html#item" class="tsd-kind-icon">item</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_common_.imodaldisplayoptions.html#modal" class="tsd-kind-icon">modal</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="_api_common_.imodaldisplayoptions.html#name" class="tsd-kind-icon">name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_components_toolbar_.iflyoutmenuchilditemprops.html#oninvoked" class="tsd-kind-icon">on<wbr>Invoked</a>
+								<a href="_api_common_.imodaldisplayoptions.html#url" class="tsd-kind-icon">url</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_components_toolbar_.iinlinemenu.html" class="tsd-kind-icon">IInline<wbr>Menu</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_components_toolbar_.iitem.html" class="tsd-kind-icon">IItem</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_components_toolbar_.itoolbarprops.html" class="tsd-kind-icon">IToolbar<wbr>Props</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
-						<a href="../modules/_components_toolbar_.html#default_toolbar_size" class="tsd-kind-icon">DEFAULT_<wbr>TOOLBAR_<wbr>SIZE</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
-						<a href="../modules/_components_toolbar_.html#toolbar_background_color" class="tsd-kind-icon">TOOLBAR_<wbr>BACKGROUND_<wbr>COLOR</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_components_toolbar_.html#getenabled" class="tsd-kind-icon">get<wbr>Enabled</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="../modules/_components_toolbar_.html#geticonstyle" class="tsd-kind-icon">get<wbr>Icon<wbr>Style</a>
-					</li>
 				</ul>
 			</nav>
 		</div>

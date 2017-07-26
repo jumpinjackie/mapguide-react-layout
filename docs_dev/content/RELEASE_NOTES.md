@@ -1,10 +1,27 @@
-0.9.2
+
+
+0.9.5
 =====
 
+[Changelog](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.9.1...v0.9.5)
+
  * [#252](https://github.com/jumpinjackie/mapguide-react-layout/issues/252): Fix tooltip queries being sent with points instead of pixel-buffered polygons
+ * [#239](https://github.com/jumpinjackie/mapguide-react-layout/issues/239): 
+   * Support element target (New Window / Task Pane / Specific Frame) for commands
+   * Expanded extension property support for select Fusion widgets
+ * [#22](https://github.com/jumpinjackie/mapguide-react-layout/issues/22): Added sprite icon support. Any icon currently in the default Fusion image sprite is supported here.
+ * [#276](https://github.com/jumpinjackie/mapguide-react-layout/issues/276): 
+   * New standardized path (`dist/stdassets`) for all content assets (images/icons/fonts/etc)
+   * Command/Flyout icon settings are now respected.
+ * Legend now properly renders layers with multiple geometry styles
+ * Fix: Fusion MapMessage compat not spawning equivalent blueprint toast alerts
+ * [#277](https://github.com/jumpinjackie/mapguide-react-layout/issues/277): Fix excessive blueprint toaster components created when using toast alerts
+
 
 0.9.1
 =====
+
+[Changelog](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.9...v0.9.1)
 
  * Update blueprint to 1.21.0
  * Update OpenLayers to 4.2.0
@@ -16,6 +33,9 @@
 
 0.9
 ===
+
+[Changelog](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.8...v0.9)
+
  * Update blueprint to 1.17.1
  * Update to React 15.5.4
  * [#210](https://github.com/jumpinjackie/mapguide-react-layout/issues/210): Now using TypeScript 2.3.2
@@ -61,6 +81,9 @@
 
 0.8
 ===
+
+[Changelog](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.7.1...v0.8)
+
  * Update Blueprint to 1.9.0
  * Update React to 15.4.2
  * Improved performance due to restructured and optimized redux state tree and updates to minimize unnecessary re-rendering
@@ -76,12 +99,18 @@
 
 0.7.1
 =====
+
+[Changelog](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.7...v0.7.1)
+
  * [#64](https://github.com/jumpinjackie/mapguide-react-layout/issues/64): Fix accordion not showing last panel as initially expanded in Slate and Maroon templates
  * [#111](https://github.com/jumpinjackie/mapguide-react-layout/issues/111): Fix switching to fractional finite display scale not reflecting in scale dropdown
  * [#109](https://github.com/jumpinjackie/mapguide-react-layout/issues/109): Restore 'NONE' option in Base Layer Switcher component
 
 0.7
 ===
+
+[Changelog](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.6.2...v0.7)
+
  * [#98](https://github.com/jumpinjackie/mapguide-react-layout/issues/98): Updated to TypeScript 2.1
  * [#91](https://github.com/jumpinjackie/mapguide-react-layout/issues/91): Use [Blueprint](http://blueprintjs.com/) as UI foundation
    * Many UI elements updated/replaced/re-styled with blueprint equivalents
@@ -115,6 +144,8 @@
 0.6.2
 =====
 
+[Changelog](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.6.1...v0.6.2)
+
  * [#79](https://github.com/jumpinjackie/mapguide-react-layout/issues/79): Update OpenLayers to 3.19.1
  * [#87](https://github.com/jumpinjackie/mapguide-react-layout/issues/87): Update to TypeScript 2.0.10 and React 15.4.1
  * [#81](https://github.com/jumpinjackie/mapguide-react-layout/issues/81): Check that the `resource` parameter is specified
@@ -128,10 +159,14 @@
 0.6.1
 =====
 
+[Changelog](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.6...v0.6.1)
+
  * [#76](https://github.com/jumpinjackie/mapguide-react-layout/issues/76): Fix init error when loading map containing raster layers
 
 0.6
 ===
+
+[Changelog](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.4...v0.6)
 
  * [#75](https://github.com/jumpinjackie/mapguide-react-layout/issues/75): Refactored flyout menus to be physically de-coupled from their toolbars
     * [#52](https://github.com/jumpinjackie/mapguide-react-layout/issues/52): Task Pane flyout menu will now properly show over the task pane when it has embedded (ActiveX/Flash/etc) content in IE.

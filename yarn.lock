@@ -89,9 +89,9 @@
   version "9.1.9"
   resolved "https://registry.yarnpkg.com/@types/highlight.js/-/highlight.js-9.1.9.tgz#ed6336955eaf233b75eb7923b9b1f373d045ef01"
 
-"@types/jest@20.0.4":
-  version "20.0.4"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-20.0.4.tgz#91e2c76fbe90b3a719b5d689958f0495f005beb9"
+"@types/jest@20.0.5":
+  version "20.0.5"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-20.0.5.tgz#f463e58b2de6e801f40e33b05db894babdbad98c"
 
 "@types/lodash.debounce@4.0.2":
   version "4.0.2"

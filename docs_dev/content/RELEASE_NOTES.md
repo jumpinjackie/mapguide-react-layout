@@ -1,4 +1,4 @@
-
+[Changelog since last release](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.9.5...master)
 
 0.9.5
 =====
@@ -13,6 +13,7 @@
  * [#276](https://github.com/jumpinjackie/mapguide-react-layout/issues/276): 
    * New standardized path (`dist/stdassets`) for all content assets (images/icons/fonts/etc)
    * Command/Flyout icon settings are now respected.
+   * [#295](https://github.com/jumpinjackie/mapguide-react-layout/issues/295): Some helpers to ensure proper asset path resolution when using the npm module
  * Legend now properly renders layers with multiple geometry styles
  * Fix: Fusion MapMessage compat not spawning equivalent blueprint toast alerts
  * [#277](https://github.com/jumpinjackie/mapguide-react-layout/issues/277): Fix excessive blueprint toaster components created when using toast alerts

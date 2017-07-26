@@ -348,6 +348,26 @@ export function setMouseCoordinates(mapName: string, coord: any) {
 }
 
 /**
+ * Set the transparency for the given OL layer
+ * 
+ * @export
+ * @param {string} mapName The name of the current runtime map
+ * @param {string} layerName The name of the OL layer
+ * @param {number} opacity A value between 0 and 1. 1 - Fully Opaque, 0 - Fully Transparent
+ * @returns 
+ */
+export function setLayerTransparency(mapName: string, layerName: string, opacity: number) {
+    return {
+        type: Constants.MAP_SET_LAYER_TRANSPARENCY,
+        payload: {
+            mapName,
+            layerName,
+            opacity
+        }
+    };
+}
+
+/**
  * Goes back to the previous view on the navigation stack
  *
  * @export

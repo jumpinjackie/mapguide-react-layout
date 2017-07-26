@@ -29,7 +29,8 @@ import {
     ImageFormat,
     RefreshMode,
     ClientKind,
-    NOOP
+    NOOP,
+    LayerTransparencySet
 } from "../api/common";
 import {
     IApplicationContext,
@@ -121,6 +122,7 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
     showLayers: string[] | undefined;
     hideGroups: string[] | undefined;
     hideLayers: string[] | undefined;
+    layerTransparency: LayerTransparencySet;
 }
 
 /**
@@ -172,6 +174,28 @@ export function areMapsSame(map: Contracts.RtMap.RuntimeMap, other: Contracts.Rt
         return map.Name == other.Name;
     }
     return true;
+}
+
+/**
+ * Indicates if the given layer transparency sets are different
+ * @param set 
+ * @param other 
+ */
+export function layerTransparencyChanged(set: LayerTransparencySet, other: LayerTransparencySet): boolean {
+    if ((!set && other) || (set && !other)) {
+        return true;
+    }
+    const setLayers = Object.keys(set);
+    const otherLayers = Object.keys(other);
+    if (arrayChanged(setLayers, otherLayers))
+        return true;
+    
+    for (const name of setLayers) {
+        if (set[name] != other[name]) {
+            return true;
+        }
+    }
+    return false;
 }
 
 const KC_ESCAPE = 27;
@@ -584,6 +608,11 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             nextProps.externalBaseLayers.length > 0) {
             const layerSet = this._mapContext.getLayerSet(nextProps.map.Name);
             layerSet.updateExternalBaseLayers(nextProps.externalBaseLayers);
+        }
+        //Layer transparency
+        if (layerTransparencyChanged(nextProps.layerTransparency, props.layerTransparency)) {
+            const layerSet = this._mapContext.getLayerSet(nextProps.map.Name);
+            layerSet.updateTransparency(nextProps.layerTransparency);
         }
         //Layer/Group visibility
         if (arrayChanged(nextProps.showGroups, props.showGroups) ||

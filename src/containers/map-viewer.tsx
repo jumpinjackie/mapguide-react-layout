@@ -14,7 +14,8 @@ import {
     IExternalBaseLayer,
     IApplicationState,
     IViewerReducerState,
-    IConfigurationReducerState
+    IConfigurationReducerState,
+    LayerTransparencySet
 } from "../api/common";
 import * as Constants from "../constants";
 import { MapViewerBase } from "../components/map-viewer-base";
@@ -46,6 +47,7 @@ export interface IMapViewerContainerState {
     currentView: IMapView;
     initialView: IMapView;
     selectableLayers: any;
+    layerTransparency: LayerTransparencySet;
     contextmenu: any;
     showGroups: string[];
     showLayers: string[];
@@ -76,6 +78,7 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewe
     let showLayers;
     let hideGroups;
     let hideLayers;
+    let layerTransparency;
     if (state.config.activeMapName) {
         const branch = state.mapState[state.config.activeMapName];
         map = branch.runtimeMap;
@@ -88,6 +91,7 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewe
         hideLayers = branch.hideLayers;
         selectableLayers = branch.selectableLayers;
         externalBaseLayers = branch.externalBaseLayers;
+        layerTransparency = branch.layerTransparency;
     }
     return {
         config: state.config,
@@ -102,7 +106,8 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewe
         showLayers: showLayers,
         hideGroups: hideGroups,
         hideLayers: hideLayers,
-        externalBaseLayers: externalBaseLayers
+        externalBaseLayers: externalBaseLayers,
+        layerTransparency: layerTransparency
     };
 }
 
@@ -217,6 +222,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             contextmenu,
             selectableLayers,
             invokeCommand,
+            layerTransparency,
             overviewMapElementSelector,
             showGroups,
             hideGroups,
@@ -252,6 +258,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                   selectableLayerNames={selectableLayerNames}
                                   contextMenu={childItems}
                                   overviewMapElementSelector={overviewMapElementSelector}
+                                  layerTransparency={layerTransparency || Constants.EMPTY_OBJECT}
                                   onBeginDigitization={this.fnBeginDigitization}
                                   onSessionExpired={this.fnSessionExpired}
                                   onBusyLoading={this.fnBusyLoading}

@@ -4,10 +4,13 @@ import {
     ReduxDispatch,
     IApplicationState,
     IViewerReducerState,
-    IConfigurationReducerState
+    IConfigurationReducerState,
+    LayerTransparencySet
 } from "../api/common";
 import * as MapActions from "../actions/map";
 import { tr } from "../api/i18n";
+import { Slider } from "@blueprintjs/core";
+import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from "../constants/index";
 
 export interface IViewerOptionsProps {
 
@@ -16,22 +19,34 @@ export interface IViewerOptionsProps {
 export interface IViewerOptionsState {
     viewer: IViewerReducerState;
     config: IConfigurationReducerState;
+    layerTransparency: LayerTransparencySet;
+    mapName: string;
 }
 
 export interface IViewerOptionsDispatch {
     toggleMapTips: (enabled: boolean) => void;
+    setLayerTransparency: (mapName: string, id: string, opacity: number) => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IViewerOptionsProps): Partial<IViewerOptionsState> {
+    let layerTransparency;
+    let mapName = state.config.activeMapName;
+    if (mapName) {
+        const branch = state.mapState[mapName];
+        layerTransparency = branch.layerTransparency;
+    }
     return {
         viewer: state.viewer,
-        config: state.config
+        config: state.config,
+        mapName: mapName,
+        layerTransparency: layerTransparency
     };
 }
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IViewerOptionsDispatch> {
     return {
-        toggleMapTips: (enabled) => dispatch(MapActions.setFeatureTooltipsEnabled(enabled))
+        toggleMapTips: (enabled) => dispatch(MapActions.setFeatureTooltipsEnabled(enabled)),
+        setLayerTransparency: (mapName, id, opacity) => dispatch(MapActions.setLayerTransparency(mapName, id, opacity))
     };
 }
 
@@ -39,9 +54,33 @@ export type ViewerOptionsProps = IViewerOptionsProps & Partial<IViewerOptionsSta
 
 export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
     private fnFeatureTooltipsChanged: GenericEventHandler;
+    private fnBaseOpacityChanged: (value: number) => void;
+    private fnMgOpacityChanged: (value: number) => void;
+    private fnMgSelOpacityChanged: (value: number) => void;
     constructor(props: ViewerOptionsProps) {
         super(props);
         this.fnFeatureTooltipsChanged = this.onFeatureTooltipsChanged.bind(this);
+        this.fnBaseOpacityChanged = this.onBaseOpacityChanged.bind(this);
+        this.fnMgOpacityChanged = this.onMgOpacityChanged.bind(this);
+        this.fnMgSelOpacityChanged = this.onMgSelOpacityChanged.bind(this);
+    }
+    private onBaseOpacityChanged(value: number) {
+        const { setLayerTransparency, mapName } = this.props;
+        if (mapName && setLayerTransparency) {
+            setLayerTransparency(mapName, LAYER_ID_BASE, value);
+        }
+    }
+    private onMgOpacityChanged(value: number) {
+        const { setLayerTransparency, mapName } = this.props;
+        if (mapName && setLayerTransparency) {
+            setLayerTransparency(mapName, LAYER_ID_MG_BASE, value);
+        }
+    }
+    private onMgSelOpacityChanged(value: number) {
+        const { setLayerTransparency, mapName } = this.props;
+        if (mapName && setLayerTransparency) {
+            setLayerTransparency(mapName, LAYER_ID_MG_SEL_OVERLAY, value);
+        }
     }
     private onFeatureTooltipsChanged(e: GenericEvent) {
         const { toggleMapTips } = this.props;
@@ -50,8 +89,22 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
         }
     }
     render(): JSX.Element {
-        const { viewer, config } = this.props;
+        const { viewer, config, layerTransparency } = this.props;
         const locale = config ? config.locale : "en";
+        let opBase = 1.0;
+        let opMgBase = 1.0;
+        let opMgSelOverlay = 1.0;
+        if (layerTransparency) {
+            if (LAYER_ID_BASE in layerTransparency) {
+                opBase = layerTransparency[LAYER_ID_BASE];
+            }
+            if (LAYER_ID_MG_BASE in layerTransparency) {
+                opMgBase = layerTransparency[LAYER_ID_MG_BASE];
+            }
+            if (LAYER_ID_MG_SEL_OVERLAY in layerTransparency) {
+                opMgSelOverlay = layerTransparency[LAYER_ID_MG_SEL_OVERLAY];
+            }
+        }
         return <div className="component-viewer-options">
             <h5>{tr("VIEWER_OPTIONS", locale)}</h5>
             <hr />
@@ -64,6 +117,27 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
                     </label>;
                 }
             })()}
+            <fieldset>
+                <legend>{tr("LAYER_TRANSPARENCY", locale)}</legend>
+                <label className="pt-label">
+                    {tr("LAYER_ID_BASE", locale)}
+                    <div style={{ paddingLeft: 8, paddingRight: 8 }}>
+                        <Slider min={0} max={1.0} stepSize={0.01} value={opBase} onChange={this.fnBaseOpacityChanged} />
+                    </div>
+                </label>
+                <label className="pt-label">
+                    {tr("LAYER_ID_MG_BASE", locale)}
+                    <div style={{ paddingLeft: 8, paddingRight: 8 }}>
+                        <Slider min={0} max={1.0} stepSize={0.01} value={opMgBase} onChange={this.fnMgOpacityChanged} />
+                    </div>
+                </label>
+                <label className="pt-label">
+                    {tr("LAYER_ID_MG_SEL_OVERLAY", locale)}
+                    <div style={{ paddingLeft: 8, paddingRight: 8 }}>
+                        <Slider min={0} max={1.0} stepSize={0.01} value={opMgSelOverlay} onChange={this.fnMgSelOpacityChanged} />
+                    </div>
+                </label>
+            </fieldset>
         </div>;
     }
 }

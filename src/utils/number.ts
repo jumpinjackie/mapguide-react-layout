@@ -6,6 +6,18 @@ function epsilon(): number {
 }
 
 /**
+ * Restricts the given number to the given range
+ * 
+ * @export
+ * @param {number} val 
+ * @param {number} lower 
+ * @param {number} upper 
+ */
+export function restrictToRange(val: number, lower: number, upper: number) {
+    return Math.min(Math.max(val, lower), upper);
+}
+
+/**
  * Indicates if the given numbers are equal
  *
  * @export

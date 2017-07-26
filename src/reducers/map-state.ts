@@ -21,6 +21,7 @@ export const INITIAL_SUB_STATE: IBranchedMapSubState = {
     selectionSet: undefined,
     layerIndex: -1,
     featureIndex: -1,
+    layerTransparency: {},
     selectableLayers: {},
     expandedGroups: {},
     runtimeMap: undefined,
@@ -137,6 +138,18 @@ export function mapStateReducer(state = INITIAL_STATE, action: AnyAction = { typ
                         }
                         return mergeSubState(state, payload.mapName, newSubState);
                     }
+                }
+            }
+        case Constants.MAP_SET_LAYER_TRANSPARENCY:
+            {
+                const subState = state[payload.mapName];
+                if (subState) {
+                    const trans = { ...subState.layerTransparency };
+                    trans[payload.layerName] = payload.opacity;
+                    const state1: Partial<IBranchedMapSubState> = {
+                        layerTransparency: trans
+                    };
+                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
             }
         case Constants.LEGEND_SET_LAYER_SELECTABLE:

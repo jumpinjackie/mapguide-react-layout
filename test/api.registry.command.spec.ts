@@ -41,6 +41,7 @@ describe("api/registry/command", () => {
                     selectionSet: {
                         SelectedFeatures: createSelectionSet()
                     },
+                    layerTransparency: {},
                     layerIndex: -1,
                     featureIndex: -1,
                     showGroups: [],
@@ -76,6 +77,7 @@ describe("api/registry/command", () => {
                     selectableLayers: [],
                     expandedGroups: [],
                     selectionSet: undefined,
+                    layerTransparency: {},
                     layerIndex: -1,
                     featureIndex: -1,
                     showGroups: [],
@@ -115,6 +117,7 @@ describe("api/registry/command", () => {
                     selectableLayers: [],
                     expandedGroups: [],
                     selectionSet: undefined,
+                    layerTransparency: {},
                     layerIndex: -1,
                     featureIndex: -1,
                     showGroups: [],
@@ -146,6 +149,7 @@ describe("api/registry/command", () => {
                     selectableLayers: [],
                     expandedGroups: [],
                     selectionSet: undefined,
+                    layerTransparency: {},
                     layerIndex: -1,
                     featureIndex: -1,
                     showGroups: [],

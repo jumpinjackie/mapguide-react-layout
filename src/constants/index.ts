@@ -19,6 +19,7 @@ export const MAP_ZOOM_IN = 'Map/ZOOM_IN';
 export const MAP_ZOOM_OUT = 'Map/ZOOM_OUT';
 export const MAP_PREVIOUS_VIEW = 'Map/PREVIOUS_VIEW';
 export const MAP_NEXT_VIEW = 'Map/NEXT_VIEW';
+export const MAP_SET_LAYER_TRANSPARENCY = 'Map/SET_LAYER_TRANSPARENCY';
 
 export const TASK_INVOKE_URL = 'TaskPane/INVOKE_URL';
 export const TASK_PANE_HOME = 'TaskPane/HOME';
@@ -49,6 +50,8 @@ export const COMPONENT_CLOSE = 'Flyout/COMPONENT_CLOSE';
  */
 export const NBSP = String.fromCharCode(160);
 
+export const EMPTY_OBJECT = {};
+
 export const MDF_INFINITY = 1000000000000.0;
 
 export const WEBLAYOUT_TOOLBAR = "Toolbar";
@@ -58,3 +61,7 @@ export const WEBLAYOUT_CONTEXTMENU = "MapContextMenu";
 export const FUSION_TASKPANE_NAME = "TaskPane";
 export const FUSION_MAP_NAME = "Map";
 export const FUSION_REDLINE_NAME = "Redline";
+
+export const LAYER_ID_BASE = "LAYER_ID_BASE";
+export const LAYER_ID_MG_BASE = "LAYER_ID_MG_BASE";
+export const LAYER_ID_MG_SEL_OVERLAY = "LAYER_ID_MG_SEL_OVERLAY";

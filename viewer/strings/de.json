@@ -1,6 +1,10 @@
 {
     "NONE": "KEINER",
     "ERROR": "Fehler",
+    "LAYER_TRANSPARENCY": "Schichttransparenz",
+    "LAYER_ID_BASE": "Grundschicht",
+    "LAYER_ID_MG_BASE": "MapGuide Karte",
+    "LAYER_ID_MG_SEL_OVERLAY": "MapGuide Selection Overlay",
     "UNKNOWN_WIDGET": "Diese Schaltfläche verweist auf einen unbekannten oder nicht unterstützten Widget: {widget}",
     "UNKNOWN_COMMAND_REFERENCE": "Diese Schaltfläche verweist auf einen unbekannten Befehl oder nicht unterstützt: {command}",
     "INIT": "Initialisierung",

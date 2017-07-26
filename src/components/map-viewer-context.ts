@@ -5,7 +5,8 @@ import {
     Dictionary,
     Coordinate,
     ImageFormat,
-    IExternalBaseLayer
+    IExternalBaseLayer,
+    LayerTransparencySet
 } from "../api/common";
 import { Client } from '../api/client';
 import { MgError, isSessionExpiredError } from '../api/error';
@@ -31,6 +32,8 @@ import TileGrid from "ol/tilegrid/tilegrid";
 import TileImageSource from "ol/source/tileimage";
 import MapGuideSource from "ol/source/imagemapguide";
 import OverviewMap from "ol/control/overviewmap";
+import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from "../constants/index";
+import { restrictToRange } from "../utils/number";
 
 const HIDDEN_CLASS_NAME = "tooltip-hidden";
 
@@ -494,6 +497,32 @@ export class MgLayerSet {
                 l.setVisible(false);
             }
         })
+    }
+    public updateTransparency(trans: LayerTransparencySet) {
+        if (LAYER_ID_BASE in trans) {
+            this.baseLayerGroup.setOpacity(restrictToRange(trans[LAYER_ID_BASE], 0, 1.0));
+        } else {
+            this.baseLayerGroup.setOpacity(1.0);
+        }
+
+        if (LAYER_ID_MG_BASE in trans) {
+            const opacity = restrictToRange(trans[LAYER_ID_MG_BASE], 0, 1.0);
+            this.overlay.setOpacity(opacity);
+            for (const group of this.baseLayerGroups) {
+                group.setOpacity(opacity);
+            }
+        } else {
+            this.overlay.setOpacity(1.0);
+            for (const group of this.baseLayerGroups) {
+                group.setOpacity(1.0);
+            }
+        }
+
+        if (LAYER_ID_MG_SEL_OVERLAY in trans) {
+            this.selectionOverlay.setOpacity(restrictToRange(trans[LAYER_ID_MG_SEL_OVERLAY], 0, 1.0));
+        } else {
+            this.selectionOverlay.setOpacity(1.0);
+        }
     }
     public refreshMap(mode: RefreshMode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly): void {
         if ((mode & RefreshMode.LayersOnly) == RefreshMode.LayersOnly) {

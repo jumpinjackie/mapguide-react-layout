@@ -842,6 +842,8 @@ export interface IModalReducerState {
 }
 */
 
+export type LayerTransparencySet = { [layerName: string]: number };
+
 /**
  * Describes the reducer state branch for a runtime map
  *
@@ -954,6 +956,13 @@ export interface IBranchedMapSubState {
      * @memberof IBranchedMapSubState
      */
     hideGroups: string[];
+    /**
+     * Layer transparency settings
+     * 
+     * @type {{ [layerName: string]: number }}
+     * @memberof IBranchedMapSubState
+     */
+    layerTransparency: LayerTransparencySet;
 }
 
 /**

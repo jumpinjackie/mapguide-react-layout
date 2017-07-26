@@ -37,7 +37,7 @@ const FUSION_ICON_REGEX = /images\/icons\/[a-zA-Z\-]*.png/
 
 function fixIconPath(path: string): string {
     if (FUSION_ICON_REGEX.test(path)) {
-        return `${getAssetRoot()}/${path}`;
+        return `${getAssetRoot()}/${path}`.replace(/\/\//g, "/");
     }
     return path;
 }

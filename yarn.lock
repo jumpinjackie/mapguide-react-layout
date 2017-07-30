@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@blueprintjs/core@1.23.1":
-  version "1.23.1"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-1.23.1.tgz#0b2880ad142549f07e0fd3d626bbd9b51ed32419"
+"@blueprintjs/core@1.24.0":
+  version "1.24.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-1.24.0.tgz#879cf0b17d93c871c223ed478343cdda1abe45d2"
   dependencies:
     "@types/dom4" "^1.5.20"
     "@types/tether" "^1.1.27"
@@ -135,9 +135,9 @@
   version "15.5.1"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.5.1.tgz#1ecf52621299e65b855374337fb11fd2d1066fc1"
 
-"@types/query-string@4.3.1":
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/@types/query-string/-/query-string-4.3.1.tgz#59ea5c75d425817370158789aa4f6197e5abd987"
+"@types/query-string@5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@types/query-string/-/query-string-5.0.0.tgz#5dbebd24d0abeb555d0dd9704c33462d84a45e69"
 
 "@types/react-addons-css-transition-group@15.0.3":
   version "15.0.3"

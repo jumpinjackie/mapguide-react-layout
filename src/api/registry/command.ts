@@ -25,11 +25,11 @@ import { IItem, IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../../com
 import * as Constants from "../../constants";
 import { ensureParameters } from "../../actions/taskpane";
 import { tr } from "../i18n";
-import { 
-    getAssetRoot,
+import { getAssetRoot } from "../../utils/asset";
+import {
     STD_CSS_SPRITE_RELPATH,
     SPRITE_ICON_ERROR
-} from "../../utils/asset";
+} from "../../constants/assets";
 import { assertNever } from "../../utils/never";
 import * as logger from "../../utils/logger";
 

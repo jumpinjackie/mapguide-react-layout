@@ -8,7 +8,7 @@ import {
     IMG_SLIDER,
     IMG_SLIDER_SCALE,
     GIF_SPINNER
-} from "../utils/asset";
+} from "../constants/assets";
 
 export enum ZoomDirection {
     In,

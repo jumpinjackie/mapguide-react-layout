@@ -65,7 +65,7 @@ import {
     SPRITE_QUERY,
     SPRITE_THEME,
     SPRITE_INVOKE_SCRIPT
-} from "../utils/asset";
+} from "../constants/assets";
 
 function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
     const settings: any = {

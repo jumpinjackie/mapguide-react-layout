@@ -43,30 +43,23 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         this.locale = locale;
     }
 
-    public get<T>(url: string): Promise<T> {
-        return new Promise<T>((resolve, reject) => {
-            fetch(url, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                method: "GET"
-            })
-            .then(response => {
-                if (isErrorResponse(response)) {
-                    throw new MgError(response.statusText);
-                } else {
-                    return response.json();
-                }
-            })
-            .then(json => {
-                resolve(<T>deArrayify(json));
-            })
-            .catch(reject);
+    public async get<T>(url: string): Promise<T> {
+        const response = await fetch(url, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: "GET"
         });
+        if (isErrorResponse(response)) {
+            throw new MgError(response.statusText);
+        } else {
+            const json = await response.json();
+            return deArrayify(json) as T;
+        }
     }
 
-    public post<T>(url: string, data: any): Promise<T> {
+    public async post<T>(url: string, data: any): Promise<T> {
         if (!data.format) {
             data.format = "application/json";
         }
@@ -74,26 +67,19 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         //for (const key in data) {
         //    form.append(key.toUpperCase(), data[key]);
         //}
-        return new Promise<T>((resolve, reject) => {
-            fetch(url, {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                },
-                method: "POST",
-                body: serialize(data) //form
-            })
-            .then(response => {
-                if (isErrorResponse(response)) {
-                    throw new MgError(response.statusText);
-                } else {
-                    return response.json();
-                }
-            })
-            .then(json => {
-                resolve(<T>deArrayify(json));
-            })
-            .catch(reject);
+        const response = await fetch(url, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            method: "POST",
+            body: serialize(data) //form
         });
+        if (isErrorResponse(response)) {
+            throw new MgError(response.statusText);
+        } else {
+            const json = await response.json();
+            return deArrayify(json) as T;
+        }
     }
 
     private stringifyGetUrl(options: any): string {
@@ -119,53 +105,42 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         return url;
     }
 
-    public createSession(username: string, password: string): Request.IPromise<string> {
+    public async createSession(username: string, password: string): Promise<string> {
         const url = this.agentUri;
         const data = { operation: "CREATESESSION", version: "1.0.0", USERNAME: username, PASSWORD: password };
-        return new Promise<string>((resolve, reject) => {
-            fetch(url, {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                },
-                method: "POST",
-                body: serialize(data) //form
-            })
-            .then(response => {
-                if (isErrorResponse(response)) {
-                    throw new MgError(response.statusText);
-                } else {
-                    resolve(response.text());
-                }
-            })
-            .catch(reject);
+        const response = await fetch(url, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            method: "POST",
+            body: serialize(data) //form
         });
+        if (isErrorResponse(response)) {
+            throw new MgError(response.statusText);
+        } else {
+            return await response.text();
+        }
     }
 
-    public getServerSessionTimeout(session: string): Request.IPromise<number> {
+    public async getServerSessionTimeout(session: string): Promise<number> {
         const url = this.agentUri;
         const data = { operation: "GETSESSIONTIMEOUT", version: "1.0.0", SESSION: session };
-        return new Promise<number>((resolve, reject) => {
-            fetch(url, {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                },
-                method: "POST",
-                body: serialize(data) //form
-            })
-            .then(response => {
-                if (isErrorResponse(response)) {
-                    throw new MgError(response.statusText);
-                } else {
-                    response.text().then(val => {
-                        resolve(parseInt(val, 10));
-                    });
-                }
-            })
-            .catch(reject);
+        const response = await fetch(url, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            method: "POST",
+            body: serialize(data) //form
         });
+        if (isErrorResponse(response)) {
+            throw new MgError(response.statusText);
+        } else {
+            const val = await response.text();
+            return parseInt(val, 10);
+        }
     }
 
-    public getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier, args?: any): Request.IPromise<T> {
+    public getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier, args?: any): Promise<T> {
         if (args != null) {
             const p1 = { operation: "GETRESOURCECONTENT", resourceId: resourceId };
             const url = this.stringifyGetUrl({ ...args, ...p1 });
@@ -176,18 +151,18 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         }
     }
 
-    public createRuntimeMap(options: Request.ICreateRuntimeMapOptions): Request.IPromise<Contracts.RtMap.RuntimeMap> {
+    public createRuntimeMap(options: Request.ICreateRuntimeMapOptions): Promise<Contracts.RtMap.RuntimeMap> {
         const p1 = { operation: "CREATERUNTIMEMAP", version: "3.0.0" };
         const url = this.stringifyGetUrl({ ...options, ...p1 });
         return this.get<Contracts.RtMap.RuntimeMap>(url);
     }
 
-    public queryMapFeatures(options: Request.IQueryMapFeaturesOptions): Request.IPromise<Contracts.Query.QueryMapFeaturesResponse> {
+    public queryMapFeatures(options: Request.IQueryMapFeaturesOptions): Promise<Contracts.Query.QueryMapFeaturesResponse> {
         const p1 = { operation: "QUERYMAPFEATURES", version: "2.6.0" };
         return this.post<Contracts.Query.QueryMapFeaturesResponse>(this.agentUri, { ...options, ...p1 });
     }
 
-    public describeRuntimeMap(options: Request.IDescribeRuntimeMapOptions): Request.IPromise<Contracts.RtMap.RuntimeMap> {
+    public describeRuntimeMap(options: Request.IDescribeRuntimeMapOptions): Promise<Contracts.RtMap.RuntimeMap> {
         const p1 = { operation: "DESCRIBERUNTIMEMAP", version: "3.0.0" };
         const url = this.stringifyGetUrl({ ...options, ...p1 });
         return this.get<Contracts.RtMap.RuntimeMap>(url);

@@ -7,7 +7,7 @@ import {
     SPRITE_CONTROL,
     SPRITE_CONTROL_180,
     SPRITE_ICON_ZOOMSELECT
-} from "../utils/asset";
+} from "../constants/assets";
 
 /**
  * SelectionPanel component props

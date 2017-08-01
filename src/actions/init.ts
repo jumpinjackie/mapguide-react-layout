@@ -42,6 +42,24 @@ import { assertNever } from "../utils/never";
 const parse = require("url-parse");
 import proj4 from "proj4";
 
+interface IInitAppPayload {
+    activeMapName: string;
+    initialUrl: string;
+    locale: string;
+    maps: Dictionary<MapInfo>;
+    config: any;
+    capabilities: {
+        hasTaskPane: boolean,
+        hasTaskBar: boolean,
+        hasStatusBar: boolean,
+        hasNavigator: boolean,
+        hasSelectionPanel: boolean,
+        hasLegend: boolean,
+        hasToolbar: boolean
+    },
+    toolbars: any
+}
+
 function isUIWidget(widget: any): widget is UIWidget {
     return widget.WidgetType === "UiWidgetType";
 }
@@ -265,254 +283,16 @@ function prepareSubMenus(tbConf: any): any {
     return prepared;
 }
 
-function makeFlexLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any): (res: [ApplicationDefinition, Dictionary<RuntimeMap>]) => void {
-    return (res: [ApplicationDefinition, Dictionary<RuntimeMap>]) => {
-        const appDef = res[0];
-        const mapsByName = res[1];
-
-        let initialTask: string;
-        let taskPane: Widget|undefined;
-        let hasLegend = false;
-        let hasStatus = false;
-        let hasNavigator = false;
-        let hasSelectionPanel = false;
-        let hasTaskBar = false;
-        const config: any = {};
-        const tbConf: any = {};
-        const widgetsByKey: any = {};
-        //Register any InvokeURL and Search commands. Also set capabilities along the way
-        for (const widgetSet of appDef.WidgetSet) {
-            for (const widget of widgetSet.Widget) {
-                const cmd = widget.Extension;
-                switch (widget.Type) {
-                    case "TaskPane":
-                        taskPane = widget;
-                        break;
-                    case "Legend":
-                        hasLegend = true;
-                        break;
-                    case "SelectionPanel":
-                        hasSelectionPanel = true;
-                        break;
-                    case "CursorPosition":
-                    case "SelectionInfo":
-                        hasStatus = true;
-                        break;
-                    case "Navigator":
-                        hasNavigator = true;
-                        break;
-                    case "Search":
-                        registerCommand(widget.Name, {
-                            layer: cmd.Layer,
-                            prompt: cmd.Prompt,
-                            resultColumns: cmd.ResultColumns,
-                            filter: cmd.Filter,
-                            matchLimit: cmd.MatchLimit,
-                            title: cmd.Title,
-                            target: convertToCommandTarget(cmd.Target),
-                            targetFrame: cmd.Target
-                        });
-                        break;
-                    case "InvokeURL":
-                        registerCommand(widget.Name, {
-                            url: cmd.Url,
-                            disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
-                            target: convertToCommandTarget(cmd.Target),
-                            targetFrame: cmd.Target,
-                            parameters: (cmd.AdditionalParameter || []).map((p: any) => {
-                                return { name: p.Key, value: p.Value };
-                            })
-                        });
-                        break;
-                }
-                widgetsByKey[widget.Name] = widget;
-            }
-        }
-        //Now build toolbar layouts
-        for (const widgetSet of appDef.WidgetSet) {
-            for (const cont of widgetSet.Container) {
-                let tbName = cont.Name;
-                tbConf[tbName] = { items: convertFlexLayoutUIItems(cont.Item, widgetsByKey, opts.locale) };
-            }
-        }
-
-        const maps = setupMaps(appDef, mapsByName, config);
-
-        if (taskPane) {
-            hasTaskBar = true; //Fusion flex layouts can't control the visiblity of this
-            initialTask = taskPane.Extension.InitialTask || "server/TaskPane.html";
-        } else {
-            initialTask = "server/TaskPane.html";
-        }
-
-        if (appDef.Title) {
-            document.title = appDef.Title || document.title;
-        }
-
-        let firstMapName = "";
-        let firstSessionId = "";
-        for (const mapName in mapsByName) {
-            if (!firstMapName && !firstSessionId) {
-                const map = mapsByName[mapName];
-                firstMapName = map.Name;
-                firstSessionId = map.SessionId;
-                break;
-            }
-        }
-
-        dispatch({
-            type: Constants.INIT_APP,
-            payload: {
-                activeMapName: firstMapName,
-                initialUrl: ensureParameters(initialTask, firstMapName, firstSessionId, opts.locale),
-                locale: opts.locale,
-                maps: maps,
-                config: config,
-                capabilities: {
-                    hasTaskPane: (taskPane != null),
-                    hasTaskBar: hasTaskBar,
-                    hasStatusBar: hasStatus,
-                    hasNavigator: hasNavigator,
-                    hasSelectionPanel: hasSelectionPanel,
-                    hasLegend: hasLegend,
-                    hasToolbar: (Object.keys(tbConf).length > 0)
-                },
-                toolbars: prepareSubMenus(tbConf)
-            }
-        });
-    };
-}
-
-function makeWebLayoutAndRuntimeMapReceived(dispatch: ReduxDispatch, opts: any): (res: [WebLayout, Dictionary<RuntimeMap>]) => void {
-    return (res: [WebLayout, Dictionary<RuntimeMap>]) => {
-        const webLayout = res[0];
-        const mapsByName = res[1];
-
-        const cmdsByKey: any = {};
-        //Register any InvokeURL and Search commands
-        for (const cmd of webLayout.CommandSet.Command) {
-            if (isInvokeURLCommand(cmd)) {
-                registerCommand(cmd.Name, {
-                    url: cmd.URL,
-                    disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
-                    target: cmd.Target,
-                    targetFrame: cmd.TargetFrame,
-                    parameters: (cmd.AdditionalParameter || []).map(p => {
-                        return { name: p.Key, value: p.Value };
-                    })
-                });
-            } else if (isSearchCommand(cmd)) {
-                registerCommand(cmd.Name, {
-                    layer: cmd.Layer,
-                    prompt: cmd.Prompt,
-                    target: cmd.Target,
-                    targetFrame: cmd.TargetFrame,
-                    resultColumns: cmd.ResultColumns,
-                    filter: cmd.Filter,
-                    matchLimit: cmd.MatchLimit,
-                    title: cmd.Label,
-                });
-            }
-            cmdsByKey[cmd.Name] = cmd;
-        }
-        const mainToolbar = (webLayout.ToolBar.Visible
-                            ? convertWebLayoutUIItems(webLayout.ToolBar.Button, cmdsByKey, opts.locale)
-                            : []);
-        const taskBar = (webLayout.TaskPane.TaskBar.Visible
-                        ? convertWebLayoutUIItems(webLayout.TaskPane.TaskBar.MenuButton, cmdsByKey, opts.locale, false)
-                        : []);
-        const contextMenu = (webLayout.ContextMenu.Visible
-                            ? convertWebLayoutUIItems(webLayout.ContextMenu.MenuItem, cmdsByKey, opts.locale, false)
-                            : []);
-        const config: any = {};
-        if (webLayout.SelectionColor != null) {
-            config.selectionColor = webLayout.SelectionColor;
-        }
-        if (webLayout.MapImageFormat != null) {
-            config.imageFormat = webLayout.MapImageFormat;
-        }
-        if (webLayout.SelectionImageFormat != null) {
-            config.selectionImageFormat = webLayout.SelectionImageFormat;
-        }
-        if (webLayout.PointSelectionBuffer != null) {
-            config.pointSelectionBuffer = webLayout.PointSelectionBuffer;
-        }
-        let initialView: IView | null = null;
-        if (webLayout.Map.InitialView != null) {
-            initialView = {
-                x: webLayout.Map.InitialView.CenterX,
-                y: webLayout.Map.InitialView.CenterY,
-                scale: webLayout.Map.InitialView.Scale
-            };
-        }
-
-        if (webLayout.Title != "") {
-            document.title = webLayout.Title || document.title;
-        }
-
-        const maps: any = {};
-        let firstMapName = "";
-        let firstSessionId = "";
-        for (const mapName in mapsByName) {
-            if (!firstMapName && !firstSessionId) {
-                const map = mapsByName[mapName];
-                firstMapName = map.Name;
-                firstSessionId = map.SessionId;
-                maps[firstMapName] = {
-                    mapGroupId: map.Name,
-                    map: map,
-                    externalBaseLayers: opts.externalBaseLayers,
-                    initialView: initialView
-                };
-                break;
-            }
-        }
-
-        const menus: any = {};
-        menus[Constants.WEBLAYOUT_TOOLBAR] = {
-            items: mainToolbar
-        };
-        menus[Constants.WEBLAYOUT_TASKMENU] = {
-            items: taskBar
-        };
-        menus[Constants.WEBLAYOUT_CONTEXTMENU] = {
-            items: contextMenu
-        };
-        dispatch({
-            type: Constants.INIT_APP,
-            payload: {
-                activeMapName: firstMapName,
-                initialUrl: ensureParameters(webLayout.TaskPane.InitialTask || "server/TaskPane.html", firstMapName, firstSessionId, opts.locale),
-                maps: maps,
-                locale: opts.locale,
-                config: config,
-                capabilities: {
-                    hasTaskPane: webLayout.TaskPane.Visible,
-                    hasTaskBar: webLayout.TaskPane.TaskBar.Visible,
-                    hasStatusBar: webLayout.StatusBar.Visible,
-                    hasNavigator: webLayout.ZoomControl.Visible,
-                    hasSelectionPanel: webLayout.InformationPane.Visible && webLayout.InformationPane.PropertiesVisible,
-                    hasLegend: webLayout.InformationPane.Visible && webLayout.InformationPane.LegendVisible,
-                    hasToolbar: webLayout.ToolBar.Visible
-                },
-                toolbars: prepareSubMenus(menus)
-            }
-        });
-    };
-}
-
-function resolveProjection(epsg: string, opts: any, mapDef: string): Promise<any> {
-    return fetch(`//epsg.io?format=json&q=${epsg}`).then(resp => {
-        return resp.json();
-    }).then((resp: any) => {
-        if (resp.results && resp.results.length > 0) {
-            proj4.defs(`EPSG:${epsg}`, resp.results[0].proj4);
-            logger.debug(`Registered projection EPSG:${epsg} from epsg.io`);
-            return proj4.defs[`EPSG:${epsg}`];
-        } else {
-            throw new MgError(tr("INIT_ERROR_UNREGISTERED_EPSG_CODE", opts.locale || "en", { epsg: epsg, mapDefinition: mapDef }));
-        }
-    });
+async function resolveProjectionAsync(epsg: string, opts: IInitAsyncOptions, mapDef: string): Promise<any> {
+    const r = await fetch(`//epsg.io?format=json&q=${epsg}`);
+    const resp = await r.json();
+    if (resp.results && resp.results.length > 0) {
+        proj4.defs(`EPSG:${epsg}`, resp.results[0].proj4);
+        logger.debug(`Registered projection EPSG:${epsg} from epsg.io`);
+        return proj4.defs[`EPSG:${epsg}`];
+    } else {
+        throw new MgError(tr("INIT_ERROR_UNREGISTERED_EPSG_CODE", opts.locale, { epsg: epsg, mapDefinition: mapDef }));
+    }
 }
 
 function getDesiredTargetMapName(mapDef: string) {
@@ -523,56 +303,6 @@ function getDesiredTargetMapName(mapDef: string) {
     } else {
         return `Map_${shortid.generate()}`;
     }
-}
-
-function makeRuntimeMapSuccessHandler<TLayout>(client: Client, session: string, opts: any, mapDefSelector: (res: TLayout) => string[]): (res: TLayout) => [TLayout, Dictionary<RuntimeMap>] | Thenable<[TLayout, Dictionary<RuntimeMap>]> {
-    return (res) => {
-        const mapDefs = mapDefSelector(res);
-        const mapPromises = [];
-
-        for (const mapDef of mapDefs) {
-            const promise = client.createRuntimeMap({
-                mapDefinition: mapDef,
-                requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-                session: session,
-                targetMapName: `${getDesiredTargetMapName(mapDef)}`
-            });
-            mapPromises.push(promise);
-        }
-        return Promise.all(mapPromises)
-            .then(maps => {
-                const epsgs = maps.map(m => m.CoordinateSystem.EpsgCode);
-                const fetchEpsgs = [];
-                //All must be non-zero
-                for (const m of maps) {
-                    const epsg = m.CoordinateSystem.EpsgCode;
-                    const mapDef = m.MapDefinition;
-                    if (epsg == "0") {
-                        throw new MgError(tr("INIT_ERROR_UNSUPPORTED_COORD_SYS", opts.locale || "en", { mapDefinition: mapDef }));
-                    }
-                    //Must be registered to proj4js if not 4326 or 3857
-                    if (!proj4.defs[`EPSG:${epsg}`]) {
-                        fetchEpsgs.push({ epsg: epsg, mapDef: mapDef });
-                    }
-                }
-                return Promise.all([maps, fetchEpsgs]);
-            })
-            .then(args => {
-                const promisedEpsgs = Promise.all(args[1].map(f => resolveProjection(f.epsg, opts, f.mapDef)));
-                return Promise.all([args[0], promisedEpsgs]);
-            })
-            .then(args => {
-                const maps = args[0];
-                const epsgs = args[1];
-                //Build the Dictionary<RuntimeMap> from loaded maps
-                const mapsByName: Dictionary<RuntimeMap> = {};
-                for (const map of maps) {
-                    mapsByName[map.Name] = map;
-                }
-                //Return our promised result
-                return Promise.resolve([ res, mapsByName ]);
-            });
-    };
 }
 
 type MapInfo = {
@@ -761,7 +491,7 @@ function getMapDefinitionsFromFlexLayout(appDef: ApplicationDefinition): string[
     throw new MgError("No Map Definition found in Application Definition");
 }
 
-function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: any): void {
+function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: IInitAsyncOptions): void {
     if (error.stack) {
         dispatch({
             type: Constants.INIT_ERROR,
@@ -789,38 +519,306 @@ function processAndDispatchInitError(error: Error, includeStack: boolean, dispat
     }
 }
 
-function makeSessionAcquired(client: Client, dispatch: ReduxDispatch, opts: any): (session: string) => void {
-    return (session: string) => {
-        if (!opts.resourceId) {
-            processAndDispatchInitError(new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", opts.locale || "en")), false, dispatch, opts);
-        } else if (strEndsWith(opts.resourceId, "WebLayout")) {
-            const onWebLayoutAndRuntimeMapReceived = makeWebLayoutAndRuntimeMapReceived(dispatch, opts);
-            const handler = makeRuntimeMapSuccessHandler<WebLayout>(client, session, opts, wl => [ wl.Map.ResourceId ]);
-            client.getResource<WebLayout>(opts.resourceId, { SESSION: session })
-                .then(handler)
-                .then(onWebLayoutAndRuntimeMapReceived)
-                .catch(err => {
-                    processAndDispatchInitError(err, true, dispatch, opts);
-                });
-        } else if (strEndsWith(opts.resourceId, "ApplicationDefinition")) {
-            const onFlexLayoutAndRuntimeMapReceived = makeFlexLayoutAndRuntimeMapReceived(dispatch, opts);
-            const handler = makeRuntimeMapSuccessHandler<ApplicationDefinition>(client, session, opts, fl => getMapDefinitionsFromFlexLayout(fl));
-            client.getResource<ApplicationDefinition>(opts.resourceId, { SESSION: session })
-                .then(handler)
-                .then(onFlexLayoutAndRuntimeMapReceived)
-                .catch(err => {
-                    processAndDispatchInitError(err, true, dispatch, opts);
-                });
-        } else {
-            processAndDispatchInitError(new MgError(tr("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", opts.locale || "en", { resourceId: opts.resourceId })), false, dispatch, opts);
-        }
-    }
-}
-
 export interface IInitAppLayout {
     resourceId: string;
     externalBaseLayers?: IExternalBaseLayer[];
     session?: string;
+}
+
+interface IInitAsyncOptions extends IInitAppLayout {
+    locale: string;
+}
+
+async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, opts: IInitAsyncOptions, res: TLayout, mapDefSelector: (res: TLayout) => string[]): Promise<Dictionary<RuntimeMap>> {
+    const mapDefs = mapDefSelector(res);
+    const mapPromises: Promise<RuntimeMap>[] = [];
+    for (const mapDef of mapDefs) {
+        const promise = client.createRuntimeMap({
+            mapDefinition: mapDef,
+            requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+            session: session,
+            targetMapName: `${getDesiredTargetMapName(mapDef)}`
+        });
+        mapPromises.push(promise);
+    }
+    const maps = await Promise.all(mapPromises);
+    const fetchEpsgs: { epsg: string, mapDef: string }[] = [];
+    //All must be non-zero
+    for (const m of maps) {
+        const epsg = m.CoordinateSystem.EpsgCode;
+        const mapDef = m.MapDefinition;
+        if (epsg == "0") {
+            throw new MgError(tr("INIT_ERROR_UNSUPPORTED_COORD_SYS", opts.locale || "en", { mapDefinition: mapDef }));
+        }
+        //Must be registered to proj4js if not 4326 or 3857
+        if (!proj4.defs[`EPSG:${epsg}`]) {
+            fetchEpsgs.push({ epsg: epsg, mapDef: mapDef });
+        }
+    }
+    const epsgs = await Promise.all(fetchEpsgs.map(f => resolveProjectionAsync(f.epsg, opts, f.mapDef)));
+    //Build the Dictionary<RuntimeMap> from loaded maps
+    const mapsByName: Dictionary<RuntimeMap> = {};
+    for (const map of maps) {
+        mapsByName[map.Name] = map;
+    }
+    return mapsByName;
+}
+
+async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOptions, session: string, client: Client): Promise<IInitAppPayload> {
+    const mapsByName = await createRuntimeMapsAsync(client, session, opts, webLayout, wl => [ wl.Map.ResourceId ])
+    const cmdsByKey: any = {};
+    //Register any InvokeURL and Search commands
+    for (const cmd of webLayout.CommandSet.Command) {
+        if (isInvokeURLCommand(cmd)) {
+            registerCommand(cmd.Name, {
+                url: cmd.URL,
+                disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
+                target: cmd.Target,
+                targetFrame: cmd.TargetFrame,
+                parameters: (cmd.AdditionalParameter || []).map(p => {
+                    return { name: p.Key, value: p.Value };
+                })
+            });
+        } else if (isSearchCommand(cmd)) {
+            registerCommand(cmd.Name, {
+                layer: cmd.Layer,
+                prompt: cmd.Prompt,
+                target: cmd.Target,
+                targetFrame: cmd.TargetFrame,
+                resultColumns: cmd.ResultColumns,
+                filter: cmd.Filter,
+                matchLimit: cmd.MatchLimit,
+                title: cmd.Label,
+            });
+        }
+        cmdsByKey[cmd.Name] = cmd;
+    }
+    const mainToolbar = (webLayout.ToolBar.Visible
+                        ? convertWebLayoutUIItems(webLayout.ToolBar.Button, cmdsByKey, opts.locale)
+                        : []);
+    const taskBar = (webLayout.TaskPane.TaskBar.Visible
+                    ? convertWebLayoutUIItems(webLayout.TaskPane.TaskBar.MenuButton, cmdsByKey, opts.locale, false)
+                    : []);
+    const contextMenu = (webLayout.ContextMenu.Visible
+                        ? convertWebLayoutUIItems(webLayout.ContextMenu.MenuItem, cmdsByKey, opts.locale, false)
+                        : []);
+    const config: any = {};
+    if (webLayout.SelectionColor != null) {
+        config.selectionColor = webLayout.SelectionColor;
+    }
+    if (webLayout.MapImageFormat != null) {
+        config.imageFormat = webLayout.MapImageFormat;
+    }
+    if (webLayout.SelectionImageFormat != null) {
+        config.selectionImageFormat = webLayout.SelectionImageFormat;
+    }
+    if (webLayout.PointSelectionBuffer != null) {
+        config.pointSelectionBuffer = webLayout.PointSelectionBuffer;
+    }
+    let initialView: IView | null = null;
+    if (webLayout.Map.InitialView != null) {
+        initialView = {
+            x: webLayout.Map.InitialView.CenterX,
+            y: webLayout.Map.InitialView.CenterY,
+            scale: webLayout.Map.InitialView.Scale
+        };
+    }
+
+    if (webLayout.Title != "") {
+        document.title = webLayout.Title || document.title;
+    }
+
+    const maps: any = {};
+    let firstMapName = "";
+    let firstSessionId = "";
+    for (const mapName in mapsByName) {
+        if (!firstMapName && !firstSessionId) {
+            const map = mapsByName[mapName];
+            firstMapName = map.Name;
+            firstSessionId = map.SessionId;
+            maps[firstMapName] = {
+                mapGroupId: map.Name,
+                map: map,
+                externalBaseLayers: opts.externalBaseLayers,
+                initialView: initialView
+            };
+            break;
+        }
+    }
+
+    const menus: any = {};
+    menus[Constants.WEBLAYOUT_TOOLBAR] = {
+        items: mainToolbar
+    };
+    menus[Constants.WEBLAYOUT_TASKMENU] = {
+        items: taskBar
+    };
+    menus[Constants.WEBLAYOUT_CONTEXTMENU] = {
+        items: contextMenu
+    };
+    
+    return {
+        activeMapName: firstMapName,
+        initialUrl: ensureParameters(webLayout.TaskPane.InitialTask || "server/TaskPane.html", firstMapName, firstSessionId, opts.locale),
+        maps: maps,
+        locale: opts.locale,
+        config: config,
+        capabilities: {
+            hasTaskPane: webLayout.TaskPane.Visible,
+            hasTaskBar: webLayout.TaskPane.TaskBar.Visible,
+            hasStatusBar: webLayout.StatusBar.Visible,
+            hasNavigator: webLayout.ZoomControl.Visible,
+            hasSelectionPanel: webLayout.InformationPane.Visible && webLayout.InformationPane.PropertiesVisible,
+            hasLegend: webLayout.InformationPane.Visible && webLayout.InformationPane.LegendVisible,
+            hasToolbar: webLayout.ToolBar.Visible
+        },
+        toolbars: prepareSubMenus(menus)
+    };
+}
+
+async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsyncOptions, session: string, client: Client): Promise<IInitAppPayload> {
+    const mapsByName = await createRuntimeMapsAsync(client, session, opts, appDef, fl => getMapDefinitionsFromFlexLayout(fl));
+    let initialTask: string;
+    let taskPane: Widget|undefined;
+    let hasLegend = false;
+    let hasStatus = false;
+    let hasNavigator = false;
+    let hasSelectionPanel = false;
+    let hasTaskBar = false;
+    const config: any = {};
+    const tbConf: any = {};
+    const widgetsByKey: any = {};
+    //Register any InvokeURL and Search commands. Also set capabilities along the way
+    for (const widgetSet of appDef.WidgetSet) {
+        for (const widget of widgetSet.Widget) {
+            const cmd = widget.Extension;
+            switch (widget.Type) {
+                case "TaskPane":
+                    taskPane = widget;
+                    break;
+                case "Legend":
+                    hasLegend = true;
+                    break;
+                case "SelectionPanel":
+                    hasSelectionPanel = true;
+                    break;
+                case "CursorPosition":
+                case "SelectionInfo":
+                    hasStatus = true;
+                    break;
+                case "Navigator":
+                    hasNavigator = true;
+                    break;
+                case "Search":
+                    registerCommand(widget.Name, {
+                        layer: cmd.Layer,
+                        prompt: cmd.Prompt,
+                        resultColumns: cmd.ResultColumns,
+                        filter: cmd.Filter,
+                        matchLimit: cmd.MatchLimit,
+                        title: cmd.Title,
+                        target: convertToCommandTarget(cmd.Target),
+                        targetFrame: cmd.Target
+                    });
+                    break;
+                case "InvokeURL":
+                    registerCommand(widget.Name, {
+                        url: cmd.Url,
+                        disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
+                        target: convertToCommandTarget(cmd.Target),
+                        targetFrame: cmd.Target,
+                        parameters: (cmd.AdditionalParameter || []).map((p: any) => {
+                            return { name: p.Key, value: p.Value };
+                        })
+                    });
+                    break;
+            }
+            widgetsByKey[widget.Name] = widget;
+        }
+    }
+    //Now build toolbar layouts
+    for (const widgetSet of appDef.WidgetSet) {
+        for (const cont of widgetSet.Container) {
+            let tbName = cont.Name;
+            tbConf[tbName] = { items: convertFlexLayoutUIItems(cont.Item, widgetsByKey, opts.locale) };
+        }
+    }
+
+    const maps = setupMaps(appDef, mapsByName, config);
+
+    if (taskPane) {
+        hasTaskBar = true; //Fusion flex layouts can't control the visiblity of this
+        initialTask = taskPane.Extension.InitialTask || "server/TaskPane.html";
+    } else {
+        initialTask = "server/TaskPane.html";
+    }
+
+    if (appDef.Title) {
+        document.title = appDef.Title || document.title;
+    }
+
+    let firstMapName = "";
+    let firstSessionId = "";
+    for (const mapName in mapsByName) {
+        if (!firstMapName && !firstSessionId) {
+            const map = mapsByName[mapName];
+            firstMapName = map.Name;
+            firstSessionId = map.SessionId;
+            break;
+        }
+    }
+    return {
+        activeMapName: firstMapName,
+        initialUrl: ensureParameters(initialTask, firstMapName, firstSessionId, opts.locale),
+        locale: opts.locale,
+        maps: maps,
+        config: config,
+        capabilities: {
+            hasTaskPane: (taskPane != null),
+            hasTaskBar: hasTaskBar,
+            hasStatusBar: hasStatus,
+            hasNavigator: hasNavigator,
+            hasSelectionPanel: hasSelectionPanel,
+            hasLegend: hasLegend,
+            hasToolbar: (Object.keys(tbConf).length > 0)
+        },
+        toolbars: prepareSubMenus(tbConf)
+    };
+}
+
+async function sessionAcquiredAsync(opts: IInitAsyncOptions, session: string, client: Client): Promise<IInitAppPayload> {
+    if (!opts.resourceId) {
+        throw new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", opts.locale));
+    } else if (strEndsWith(opts.resourceId, "WebLayout")) {
+        const wl = await client.getResource<WebLayout>(opts.resourceId, { SESSION: session });
+        return await initFromWebLayoutAsync(wl, opts, session, client);
+    } else if (strEndsWith(opts.resourceId, "ApplicationDefinition")) {
+        const fl = await client.getResource<ApplicationDefinition>(opts.resourceId, { SESSION: session });
+        return await initFromAppDefAsync(fl, opts, session, client);
+    } else {
+        throw new MgError(tr("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", opts.locale, { resourceId: opts.resourceId }));
+    }
+} 
+
+async function initAsync(options: IInitAsyncOptions, client: Client): Promise<IInitAppPayload> {
+    //English strings are baked into this bundle. For non-en locales, we assume a strings/{locale}.json
+    //exists for us to fetch
+    if (options.locale != "en") {
+        const r = await fetch(`strings/${options.locale}.json`);
+        if (r.ok) {
+            const res = await r.json();
+            registerStringBundle(options.locale, res);
+            logger.info(`Registered string bundle for locale: ${options.locale}`);
+        } else {
+            //TODO: Push warning to init error/warning reducer when we implement it
+            logger.warn(`Failed to register string bundle for locale: ${options.locale}`);
+        }
+    }
+    let session = options.session;
+    if (!session) {
+        session = await client.createSession("Anonymous", "");
+    }
+    return await sessionAcquiredAsync(options, session, client);
 }
 
 /**
@@ -838,45 +836,19 @@ export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
         locale: query["locale"] || "en",
         session: query["session"] || options.session
     };
-    const opts = { ...options, ...options1 };
+    const opts: IInitAsyncOptions = { ...options, ...options1 };
     return (dispatch, getState) => {
         const args = getState().config;
         if (args.agentUri && args.agentKind) {
             const client = new Client(args.agentUri, args.agentKind);
-            const onSessionAcquired = makeSessionAcquired(client, dispatch, opts);
-            let postInit;
-            if (opts.locale && opts.locale != "en") {
-                postInit = (session: string) => {
-                    fetch(`strings/${opts.locale}.json`).then(r => {
-                        if (r.ok) {
-                            return r.json();
-                        }
-                        return null;
-                    }).then(res => {
-                        if (res) {
-                            registerStringBundle(opts.locale, res);
-                            logger.info(`Registered string bundle for locale: ${opts.locale}`);
-                        } else {
-                            //TODO: Push warning to init error/warning reducer when we implement it
-                            logger.warn(`Failed to register string bundle for locale: ${opts.locale}`);
-                        }
-                        onSessionAcquired(session);
-                    })
-                };
-            } else {
-                postInit = (session: string) => {
-                    onSessionAcquired(session);
-                };
-            }
-            if (opts.session) {
-                postInit(opts.session);
-            } else {
-                client.createSession("Anonymous", "")
-                    .then(postInit)
-                    .catch(err => {
-                        processAndDispatchInitError(err, true, dispatch, opts);
-                    });
-            }
+            initAsync(opts, client).then(payload => {
+                dispatch({
+                    type: Constants.INIT_APP,
+                    payload
+                });
+            }).catch(err => {
+                processAndDispatchInitError(err, false, dispatch, opts);
+            })
         }
     };
 }

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { NBSP } from "../constants";
-import { getAssetPath, STD_CSS_SPRITE_RELPATH } from "../utils/asset";
+import { getAssetPath } from "../utils/asset";
+import { STD_CSS_SPRITE_RELPATH } from "../constants/assets";
 
 export interface IIconProps {
     /**

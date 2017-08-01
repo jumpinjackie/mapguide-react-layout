@@ -9,7 +9,7 @@ import { Icon } from "./icon";
 import { 
     SPRITE_ICON_MENUARROWUP,
     SPRITE_ICON_MENUARROW
-} from "../utils/asset";
+} from "../constants/assets";
 import * as Constants from "../constants";
 
 export const DEFAULT_TOOLBAR_SIZE = 29;

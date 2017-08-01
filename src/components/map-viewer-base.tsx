@@ -45,8 +45,8 @@ import { Client } from '../api/client';
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { IInlineMenu, IItem, getEnabled } from '../components/toolbar';
+import { getAssetPath } from "../utils/asset";
 import {
-    getAssetPath,
     CURSOR_DIGITIZE_POINT,
     CURSOR_DIGITIZE_LINE,
     CURSOR_DIGITIZE_LINESTRING,
@@ -56,7 +56,7 @@ import {
     CURSOR_GRABBING,
     CURSOR_GRAB,
     CURSOR_ZOOM_IN
-} from "../utils/asset";
+} from "../constants/assets";
 import { isMenu } from '../utils/type-guards';
 import { tr } from "../api/i18n";
 const isMobile = require("ismobilejs");

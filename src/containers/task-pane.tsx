@@ -26,7 +26,7 @@ import {
     SPRITE_ICON_HOME,
     SPRITE_BACK,
     SPRITE_FORWARD
-} from "../utils/asset";
+} from "../constants/assets";
 
 export interface ITaskPaneContainerProps {
     maxHeight?: number;

@@ -15,7 +15,7 @@ import {
     SPRITE_LEGEND_TOGGLE,
     SPRITE_LEGEND_TOGGLE_EXPAND,
     SPRITE_FOLDER_HORIZONTAL
-} from "../utils/asset";
+} from "../constants/assets";
 import { tr } from "../api/i18n";
 import * as Constants from "../constants";
 

@@ -1,5 +1,15 @@
 [Changelog since last release](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.9.5...master)
 
+0.9.6
+=====
+
+[Changelog](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.9.5...v0.9.6)
+
+ * [#300](https://github.com/jumpinjackie/mapguide-react-layout/issues/300): Use `async`/`await` to simplify init and mapagent request code.
+   * API: Removed `IPromise<T>`. All references to `IPromise<T>` now reference standard `Promise<T>` to support `async`/`await`
+ * [#302](https://github.com/jumpinjackie/mapguide-react-layout/issues/302): Fix transparency toggler for maps with no external base layer configuration.
+ * API: Image/cursor file references moved from `utils/asset` to `constants/assets`
+
 0.9.5
 =====
 

@@ -5,7 +5,8 @@ import {
     IApplicationState,
     IViewerReducerState,
     IConfigurationReducerState,
-    LayerTransparencySet
+    LayerTransparencySet,
+    IExternalBaseLayer
 } from "../api/common";
 import * as MapActions from "../actions/map";
 import { tr } from "../api/i18n";
@@ -20,6 +21,7 @@ export interface IViewerOptionsState {
     viewer: IViewerReducerState;
     config: IConfigurationReducerState;
     layerTransparency: LayerTransparencySet;
+    externalBaseLayers: IExternalBaseLayer[];
     mapName: string;
 }
 
@@ -31,15 +33,18 @@ export interface IViewerOptionsDispatch {
 function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IViewerOptionsProps): Partial<IViewerOptionsState> {
     let layerTransparency;
     let mapName = state.config.activeMapName;
+    let externalBaseLayers;
     if (mapName) {
         const branch = state.mapState[mapName];
         layerTransparency = branch.layerTransparency;
+        externalBaseLayers = state.mapState[mapName].externalBaseLayers;
     }
     return {
         viewer: state.viewer,
         config: state.config,
         mapName: mapName,
-        layerTransparency: layerTransparency
+        layerTransparency: layerTransparency,
+        externalBaseLayers: externalBaseLayers
     };
 }
 
@@ -89,7 +94,7 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
         }
     }
     render(): JSX.Element {
-        const { viewer, config, layerTransparency } = this.props;
+        const { viewer, config, layerTransparency, externalBaseLayers } = this.props;
         const locale = config ? config.locale : "en";
         let opBase = 1.0;
         let opMgBase = 1.0;
@@ -119,19 +124,23 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
             })()}
             <fieldset>
                 <legend>{tr("LAYER_TRANSPARENCY", locale)}</legend>
-                <label className="pt-label">
-                    {tr("LAYER_ID_BASE", locale)}
-                    <div style={{ paddingLeft: 8, paddingRight: 8 }}>
-                        <Slider min={0} max={1.0} stepSize={0.01} value={opBase} onChange={this.fnBaseOpacityChanged} />
-                    </div>
-                </label>
-                <label className="pt-label">
+                {(() => {
+                    if (externalBaseLayers) {
+                        return <label className="pt-label noselect">
+                            {tr("LAYER_ID_BASE", locale)}
+                            <div style={{ paddingLeft: 8, paddingRight: 8 }}>
+                                <Slider min={0} max={1.0} stepSize={0.01} value={opBase} onChange={this.fnBaseOpacityChanged} />
+                            </div>
+                        </label>;
+                    }
+                })()}
+                <label className="pt-label noselect">
                     {tr("LAYER_ID_MG_BASE", locale)}
                     <div style={{ paddingLeft: 8, paddingRight: 8 }}>
                         <Slider min={0} max={1.0} stepSize={0.01} value={opMgBase} onChange={this.fnMgOpacityChanged} />
                     </div>
                 </label>
-                <label className="pt-label">
+                <label className="pt-label noselect">
                     {tr("LAYER_ID_MG_SEL_OVERLAY", locale)}
                     <div style={{ paddingLeft: 8, paddingRight: 8 }}>
                         <Slider min={0} max={1.0} stepSize={0.01} value={opMgSelOverlay} onChange={this.fnMgSelOpacityChanged} />

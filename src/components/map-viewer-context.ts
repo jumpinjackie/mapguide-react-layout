@@ -499,10 +499,13 @@ export class MgLayerSet {
         })
     }
     public updateTransparency(trans: LayerTransparencySet) {
-        if (LAYER_ID_BASE in trans) {
-            this.baseLayerGroup.setOpacity(restrictToRange(trans[LAYER_ID_BASE], 0, 1.0));
-        } else {
-            this.baseLayerGroup.setOpacity(1.0);
+        //If no external layers defined, this won't be set
+        if (this.baseLayerGroup) {
+            if (LAYER_ID_BASE in trans) {
+                this.baseLayerGroup.setOpacity(restrictToRange(trans[LAYER_ID_BASE], 0, 1.0));
+            } else {
+                this.baseLayerGroup.setOpacity(1.0);
+            }
         }
 
         if (LAYER_ID_MG_BASE in trans) {

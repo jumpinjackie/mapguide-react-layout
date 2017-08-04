@@ -51,7 +51,7 @@
     "@types/react": "15.6.0",
     "@types/react-addons-css-transition-group": "15.0.3",
     "@types/react-addons-update": "0.14.18",
-    "@types/react-dom": "15.5.1",
+    "@types/react-dom": "15.5.2",
     "@types/react-measure": "0.4.8",
     "@types/react-redux": "^4.4.47",
     "@types/shortid": "0.0.29",

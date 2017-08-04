@@ -3,6 +3,7 @@ import * as logger from "../utils/logger";
 import { deg2rad } from "../utils/number";
 import olExtent from "ol/extent";
 import olFeature from "ol/feature";
+import olCollection from "ol/collection";
 import olPolygon from "ol/geom/polygon";
 import olVectorSource from "ol/source/vector";
 import olVectorLayer from "ol/layer/vector";
@@ -10,23 +11,28 @@ import olInteractionTranslate from "ol/interaction/translate";
 
 export type Size = { w: number, h: number };
 
+export interface IMapCapturerContextCallback {
+    updateBoxCoords(box: string): void;
+}
+
 export class MapCapturerContext {
-    private mapName: string;
     private mapCapturerSource: olVectorSource;
     private mapCapturerLayer: olVectorLayer;
-    private viewer: IMapViewer;
     private layerName: string;
     private intTranslate: olInteractionTranslate;
-    constructor(viewer: IMapViewer, mapName: string) {
-        this.mapName = mapName;
-        this.mapCapturerSource = new olVectorSource();
+    private features: olCollection<olFeature>;
+    constructor(private viewer: IMapViewer, private mapName: string, private callback: IMapCapturerContextCallback) {
+        this.features = new olCollection<olFeature>();
+        this.mapCapturerSource = new olVectorSource({
+            features: this.features
+        });
         this.mapCapturerLayer = new olVectorLayer({
             source: this.mapCapturerSource
         });
         this.intTranslate = new olInteractionTranslate({
-            features: this.mapCapturerSource.getFeaturesCollection()
-        })
-        this.viewer = viewer;
+            features: this.features
+        });
+        this.intTranslate.on("translateend", this.onTranslateEnd.bind(this))
         this.layerName = `${mapName}_MapCapturer`;
     }
     private getRing(origin: { x: number, y: number }, paperSize: Size, scaleDenominator: number): [number, number][][] {
@@ -38,37 +44,50 @@ export class MapCapturerContext {
         ring.push([origin.x - paperSize.w * factor, origin.y + paperSize.h * factor]);
         return [ ring ];
     }
+    private onTranslateEnd() {
+        if (this.features.getLength() == 1) {
+            const box = this.features.item(0);
+            const poly = box.getGeometry() as olPolygon;
+            const coords = poly.getCoordinates()[0];
+            const boxCoords = coords.map(c => `${c[0]},${c[1]}`).join(",");
+            this.callback.updateBoxCoords(boxCoords);
+        }
+    }
     public updateBox(paperSize: Size, scaleDenominator: number, rotation: number): void {
-        const features = this.mapCapturerSource.getFeaturesCollection();
-        if (!features || features.getLength() == 0) {
-            this.createCaptureBox(paperSize, scaleDenominator, rotation);
+        let poly: olPolygon;
+        if (this.features.getLength() == 0) {
+            poly = this.createCaptureBox(paperSize, scaleDenominator, rotation);
         } else {
-            const box = features.item(0);
-            const geom = box.getGeometry() as olPolygon;
-            const center = olExtent.getCenter(geom.getExtent());
+            const box = this.features.item(0);
+            poly = box.getGeometry() as olPolygon;
+            const center = olExtent.getCenter(poly.getExtent());
             const origin = {
                 x: center[0],
                 y: center[1]
             };
             const ring = this.getRing(origin, paperSize, scaleDenominator);
-            geom.setCoordinates(ring);
-            geom.rotate(deg2rad(rotation), center);
+            poly.setCoordinates(ring);
+            poly.rotate(deg2rad(rotation), center);
         }
+        const coords = poly.getCoordinates()[0];
+        const boxCoords = coords.map(c => `${c[0]},${c[1]}`).join(",");
+        this.callback.updateBoxCoords(boxCoords);
     }
-    private createCaptureBox(paperSize: Size, scaleDenominator: number, rotation: number) {
+    private createCaptureBox(paperSize: Size, scaleDenominator: number, rotation: number): olPolygon {
         const origin = this.viewer.getCurrentView();
         const ring = this.getRing(origin, paperSize, scaleDenominator);
         const poly = new olPolygon(ring);
         poly.rotate(deg2rad(rotation), [ origin.x, origin.y ]);
         const box = new olFeature(poly);
-        this.mapCapturerSource.clear();
-        this.mapCapturerSource.addFeature(box);
+        this.features.clear();
+        this.features.push(box);
+        return poly;
     }
     public getMapName(): string { return this.mapName; }
     public activate(paperSize: Size, scaleDenominator: number, rotation: number): void {
         logger.debug(`Activating map capturer context for ${this.mapName}`);
         this.viewer.addLayer(this.layerName, this.mapCapturerLayer);
-        this.createCaptureBox(paperSize, scaleDenominator, rotation);
+        this.updateBox(paperSize, scaleDenominator, rotation);
         this.intTranslate.setActive(true);
         this.viewer.addInteraction(this.intTranslate);
     }

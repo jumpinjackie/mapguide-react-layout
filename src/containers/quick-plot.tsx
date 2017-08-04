@@ -17,7 +17,7 @@ import {
 import olFeature from "ol/feature";
 import olVectorSource from "ol/source/vector";
 import olVectorLayer from "ol/layer/vector";
-import { MapCapturerContext, Size } from "./map-capturer-context";
+import { MapCapturerContext, Size, IMapCapturerContextCallback } from "./map-capturer-context";
 import { Slider } from "@blueprintjs/core";
 
 function getMargin() {
@@ -81,12 +81,12 @@ function getPrintSize(viewer: IMapViewer, state: any): Size {
 
 const _mapCapturers: MapCapturerContext[] = [];
 
-function getActiveCapturer(viewer: IMapViewer, mapNames: string[], activeMapName: string): MapCapturerContext | undefined {
+function getActiveCapturer(viewer: IMapViewer, mapNames: string[], activeMapName: string, callback: IMapCapturerContextCallback): MapCapturerContext | undefined {
     let activeCapturer: MapCapturerContext | undefined;
     if (_mapCapturers.length == 0) {
         if (mapNames.length) {
             for (const mapName of mapNames) {
-                const context = new MapCapturerContext(viewer, mapName);
+                const context = new MapCapturerContext(viewer, mapName, callback);
                 _mapCapturers.push(context);
                 if (activeMapName == mapName) {
                     activeCapturer = context;
@@ -132,24 +132,25 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IQuickPlotContaine
 }
 
 export interface IQuickPlotContainerState {
-    title: string,
-    subTitle: string,
-    showLegend: boolean,
-    showNorthBar: boolean,
-    showCoordinates: boolean,
-    showScaleBar: boolean,
-    showDisclaimer: boolean,
-    showAdvanced: boolean,
-    orientation: "P" | "L",
-    paperSize: string,
-    scale: string,
-    dpi: string,
-    rotation: number
+    title: string;
+    subTitle: string;
+    showLegend: boolean;
+    showNorthBar: boolean;
+    showCoordinates: boolean;
+    showScaleBar: boolean;
+    showDisclaimer: boolean;
+    showAdvanced: boolean;
+    orientation: "P" | "L";
+    paperSize: string;
+    scale: string;
+    dpi: string;
+    rotation: number;
+    box: string;
 }
 
 export type QuickPlotProps = IQuickPlotContainerOwnProps & Partial<IQuickPlotContainerConnectedState> & Partial<IQuickPlotContainerDispatch>;
 
-export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<IQuickPlotContainerState>> {
+export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<IQuickPlotContainerState>> implements IMapCapturerContextCallback {
     private fnTitleChanged: GenericEventHandler;
     private fnSubTitleChanged: GenericEventHandler;
     private fnShowLegendChanged: GenericEventHandler;
@@ -195,7 +196,8 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
             paperSize: "210.0,297.0,A4",
             scale: "5000",
             dpi: "96",
-            rotation: 0
+            rotation: 0,
+            box: ""
         };
     }
     private onTitleChanged(e: GenericEvent) {
@@ -247,7 +249,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
         const bVisible: boolean = state.showAdvanced;
         const viewer = getViewer();
         if (viewer) {
-            const activeCapturer = getActiveCapturer(viewer, mapNames, activeMapName);
+            const activeCapturer = getActiveCapturer(viewer, mapNames, activeMapName, this);
             if (activeCapturer) {
                 if (bVisible) {
                     const paperSize = getPrintSize(viewer, state);
@@ -257,6 +259,9 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                 }
             }
         }
+    }
+    updateBoxCoords(box: string): void {
+        this.setState({ box: box });
     }
     componentWillUpdate(nextProps: QuickPlotProps, nextState: IQuickPlotContainerState) {
         const config = nextProps.config;
@@ -271,7 +276,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                 (nextState.rotation != this.state.rotation))) {
                 const viewer = getViewer();
                 if (viewer) {
-                    const capturer = getActiveCapturer(viewer, nextProps.mapNames, config.activeMapName);
+                    const capturer = getActiveCapturer(viewer, nextProps.mapNames, config.activeMapName, this);
                     if (capturer) {
                         const paperSize = getPrintSize(viewer, nextState);
                         capturer.updateBox(paperSize, parseFloat(nextState.scale), nextState.rotation);
@@ -290,8 +295,11 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
         if (externalBaseLayers) {
             hasExternalBaseLayers = externalBaseLayers.length > 0;
         }
-        const extent = viewer.getCurrentExtent();
-        const box = `${extent[0]}, ${extent[1]}, ${extent[2]}, ${extent[1]}, ${extent[2]}, ${extent[3]}, ${extent[0]}, ${extent[3]}, ${extent[0]}, ${extent[1]}`;
+        let box = this.state.box;
+        if (!this.state.showAdvanced) {
+            const extent = viewer.getCurrentExtent();
+            box = `${extent[0]}, ${extent[1]}, ${extent[2]}, ${extent[1]}, ${extent[2]}, ${extent[3]}, ${extent[0]}, ${extent[3]}, ${extent[0]}, ${extent[1]}`;
+        }
         let paperSize: string;
         let printSize: string;
         const tokens = this.state.paperSize.split(",");

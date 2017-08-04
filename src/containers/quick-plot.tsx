@@ -450,7 +450,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                 </div>
                 <input type="hidden" id="margin" name="margin" />
                 <input type="hidden" id="normalizedBox" name="normalizedBox" value={box} />
-                <input type="hidden" id="rotation" name="rotation" value={this.state.rotation} />
+                <input type="hidden" id="rotation" name="rotation" value={-(this.state.rotation || 0)} />
                 <input type="hidden" id="sessionId" name="sessionId" value={map.SessionId} />
                 <input type="hidden" id="mapName" name="mapName" value={map.Name} />
                 <input type="hidden" id="box" name="box" value={box} />

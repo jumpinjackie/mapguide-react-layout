@@ -11,30 +11,116 @@ import {
     IExternalBaseLayer,
     getRuntimeMap,
     getCurrentView,
-    getExternalBaseLayers
+    getExternalBaseLayers,
+    IMapViewer
 } from "../api/common";
+import olFeature from "ol/feature";
+import olVectorSource from "ol/source/vector";
+import olVectorLayer from "ol/layer/vector";
+import { MapCapturerContext, Size } from "./map-capturer-context";
 
-export interface IQuickPlotContainerProps {
+function getMargin() {
+    /*
+    var widget = getParent().Fusion.getWidgetsByType("QuickPlot")[0];
+    var margin;
+    
+    if(!!widget.margin){
+         margin = widget.margin;
+    }else{
+        //the default margin
+        margin = {top: 25.4, buttom: 12.7, left: 12.7, right: 12.7};
+    }
+    return margin;
+    */
+    return { top: 25.4, buttom: 12.7, left: 12.7, right: 12.7 };
+}
+
+function getPrintSize(viewer: IMapViewer, state: any): Size {
+    const value = state.paperSize.split(",");
+    let size: Size;
+    const orientation: "P" | "L" = state.orientation;
+    if (orientation === "P") {
+        size = { w: parseFloat(value[0]), h: parseFloat(value[1]) };
+    } else {
+        size = { w: parseFloat(value[1]), h: parseFloat(value[0]) };
+    }
+
+    if (!state.showAdvanced) {
+        // Calculate the paper size to make sure it has a same ratio with the viweport
+        const paperRatio = size.w / size.h;
+        var viewSize = viewer.getSize();
+        let vs: Size | undefined;
+        if (orientation === "P") {
+            vs = {
+                w: viewSize[1],
+                h: viewSize[0]
+            };
+        } else {
+            vs = {
+                w: viewSize[0],
+                h: viewSize[1]
+            };
+        }
+        if (vs) {
+            const viewRatio = vs.w / vs.h;
+            if (paperRatio > viewRatio) {
+                size.w = size.h * viewRatio;
+            } else {
+                size.h = size.w / viewRatio;
+            }
+        }
+    }
+
+    const margins = getMargin();
+    size.h = size.h - margins.top - margins.buttom;
+    size.w = size.w - margins.left - margins.right;
+
+    return size;
+}
+
+const _mapCapturers: MapCapturerContext[] = [];
+
+function getActiveCapturer(viewer: IMapViewer, mapNames: string[], activeMapName: string): MapCapturerContext | undefined {
+    let activeCapturer: MapCapturerContext | undefined;
+    if (_mapCapturers.length == 0) {
+        if (mapNames.length) {
+            for (const mapName of mapNames) {
+                const context = new MapCapturerContext(viewer, mapName);
+                _mapCapturers.push(context);
+                if (activeMapName == mapName) {
+                    activeCapturer = context;
+                }
+            }
+        }
+    } else {
+        activeCapturer = _mapCapturers.filter(m => m.getMapName() === activeMapName)[0];
+    }
+    return activeCapturer;
+}
+
+export interface IQuickPlotContainerOwnProps {
 
 }
 
-export interface IQuickPlotContainerState {
+export interface IQuickPlotContainerConnectedState {
     config: IConfigurationReducerState;
     map: RuntimeMap;
     view: IMapView;
     externalBaseLayers: IExternalBaseLayer[];
+    mapNames: string[];
 }
 
 export interface IQuickPlotContainerDispatch {
 
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>): Partial<IQuickPlotContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IQuickPlotContainerConnectedState> {
     return {
         config: state.config,
         map: getRuntimeMap(state),
         view: getCurrentView(state),
-        externalBaseLayers: getExternalBaseLayers(state)
+        externalBaseLayers: getExternalBaseLayers(state),
+        mapNames: Object.keys(state.mapState)
     };
 }
 
@@ -44,9 +130,25 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IQuickPlotContaine
     };
 }
 
-export type QuickPlotProps = IQuickPlotContainerProps & Partial<IQuickPlotContainerState> & Partial<IQuickPlotContainerDispatch>;
+export interface IQuickPlotContainerState {
+    title: string,
+    subTitle: string,
+    showLegend: boolean,
+    showNorthBar: boolean,
+    showCoordinates: boolean,
+    showScaleBar: boolean,
+    showDisclaimer: boolean,
+    showAdvanced: boolean,
+    orientation: "P" | "L",
+    paperSize: string,
+    scale: string,
+    dpi: string,
+    rotation: number
+}
 
-export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
+export type QuickPlotProps = IQuickPlotContainerOwnProps & Partial<IQuickPlotContainerConnectedState> & Partial<IQuickPlotContainerDispatch>;
+
+export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<IQuickPlotContainerState>> {
     private fnTitleChanged: GenericEventHandler;
     private fnSubTitleChanged: GenericEventHandler;
     private fnShowLegendChanged: GenericEventHandler;
@@ -60,6 +162,8 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
     private fnPaperSizeChanged: GenericEventHandler;
     private fnOrientationChanged: GenericEventHandler;
     private fnGeneratePlot: GenericEventHandler;
+    private mapCapturerSource: olVectorSource;
+    private mapCapturerLayer: olVectorLayer;
     constructor(props: QuickPlotProps) {
         super(props);
         this.fnTitleChanged = this.onTitleChanged.bind(this);
@@ -98,25 +202,25 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
         this.setState({ subTitle: e.target.value });
     }
     private onShowLegendChanged(e: GenericEvent) {
-        this.setState({ showLegend: !this.state.showLegend });
+        this.setState({ showLegend: !!!this.state.showLegend });
     }
     private onShowNorthArrowChanged(e: GenericEvent) {
-        this.setState({ showNorthBar: !this.state.showNorthBar });
+        this.setState({ showNorthBar: !!!this.state.showNorthBar });
     }
     private onShowCoordinatesChanged(e: GenericEvent) {
-        this.setState({ showCoordinates: !this.state.showCoordinates });
+        this.setState({ showCoordinates: !!!this.state.showCoordinates });
     }
     private onShowScaleBarChanged(e: GenericEvent) {
-        this.setState({ showScaleBar: !this.state.showScaleBar });
+        this.setState({ showScaleBar: !!!this.state.showScaleBar });
     }
     private onShowDisclaimerChanged(e: GenericEvent) {
-        this.setState({ showDisclaimer: !this.state.showDisclaimer });
+        this.setState({ showDisclaimer: !!!this.state.showDisclaimer });
     }
     private onDpiChanged(e: GenericEvent) {
         this.setState({ dpi: e.target.value });
     }
     private onAdvancedOptionsChanged(e: GenericEvent) {
-        this.setState({ showAdvanced: !this.state.showAdvanced });
+        this.setState({ showAdvanced: !!!this.state.showAdvanced });
     }
     private onScaleChanged(e: GenericEvent) {
         this.setState({ scale: e.target.value });
@@ -133,11 +237,47 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
     private getLocale(): string {
         return this.props.config ? this.props.config.locale : "en";
     }
+    private toggleMapCapturerLayer(activeMapName: string, mapNames: string[], state: any) {
+        const bVisible: boolean = state.showAdvanced;
+        const viewer = getViewer();
+        if (viewer) {
+            const activeCapturer = getActiveCapturer(viewer, mapNames, activeMapName);
+            if (activeCapturer) {
+                if (bVisible) {
+                    const paperSize = getPrintSize(viewer, state);
+                    activeCapturer.activate(paperSize, parseFloat(state.scale));
+                } else {
+                    activeCapturer.deactivate();
+                }
+            }
+        }
+    }
+    componentWillUpdate(nextProps: QuickPlotProps, nextState: IQuickPlotContainerState) {
+        const config = nextProps.config;
+        if (config && config.activeMapName && nextProps.mapNames) {
+            if (this.state.showAdvanced != nextState.showAdvanced) {
+                this.toggleMapCapturerLayer(config.activeMapName, nextProps.mapNames, nextState);
+            }
+            if (nextState.showAdvanced &&
+                (nextState.scale != this.state.scale) ||
+                (nextState.paperSize != this.state.paperSize) ||
+                (nextState.orientation != this.state.orientation)) {
+                const viewer = getViewer();
+                if (viewer) {
+                    const capturer = getActiveCapturer(viewer, nextProps.mapNames, config.activeMapName);
+                    if (capturer) {
+                        const paperSize = getPrintSize(viewer, nextState);
+                        capturer.updateBox(paperSize, parseFloat(nextState.scale));
+                    }
+                }
+            }
+        }
+    }
     render(): JSX.Element {
         const { map, view, externalBaseLayers } = this.props;
         const viewer = getViewer();
-        if (!viewer || !map || !view) {
-            return <div />;
+        if (!viewer || !map || !view || !this.state.paperSize) {
+            return <noscript />;
         }
         let hasExternalBaseLayers = false;
         if (externalBaseLayers) {
@@ -160,7 +300,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
         return <div className="component-quick-plot">
             <form id="Form1" name="Form1" target="_blank" method="post" action={url}>
                 <input type="hidden" id="printId" name="printId" value={`${Math.random() * 1000}`} />
-                <div className="Title FixWidth">{xlate("QUICKPLOT_HEADER", locale) }</div>
+                <div className="Title FixWidth">{xlate("QUICKPLOT_HEADER", locale)}</div>
                 <label className="pt-label">
                     {xlate("QUICKPLOT_TITLE", locale)}
                     <input type="text" className="pt-input pt-fill" dir="auto" name="{field:title}" id="title" maxLength={100} value={this.state.title} onChange={this.fnTitleChanged} />
@@ -192,15 +332,15 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
                     */}
                     <div className="pt-select pt-fill">
                         <select className="FixWidth" id="orientation" name="orientation" value={this.state.orientation} onChange={this.fnOrientationChanged}>
-                            <option value="P">{xlate("QUICKPLOT_ORIENTATION_P", locale) }</option>
-                            <option value="L">{xlate("QUICKPLOT_ORIENTATION_L", locale) }</option>
+                            <option value="P">{xlate("QUICKPLOT_ORIENTATION_P", locale)}</option>
+                            <option value="L">{xlate("QUICKPLOT_ORIENTATION_L", locale)}</option>
                         </select>
                     </div>
                 </label>
                 <input type="hidden" id="paperSize" name="paperSize" value={paperSize} />
                 <input type="hidden" id="printSize" name="printSize" value={printSize} />
                 <fieldset>
-                    <legend>{xlate("QUICKPLOT_SHOWELEMENTS", locale) }</legend>
+                    <legend>{xlate("QUICKPLOT_SHOWELEMENTS", locale)}</legend>
                     <label className="pt-control pt-checkbox">
                         <input type="checkbox" id="ShowLegendCheckBox" name="ShowLegend" checked={this.state.showLegend} onChange={this.fnShowLegendChanged} />
                         <span className="pt-control-indicator" />
@@ -280,7 +420,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
                 {(() => {
                     if (hasExternalBaseLayers) {
                         return <div id="commercialLayerWarning" className="pt-callout pt-intent-primary pt-icon-info-sign">
-                            {xlate("QUICKPLOT_COMMERCIAL_LAYER_WARNING", locale) }
+                            {xlate("QUICKPLOT_COMMERCIAL_LAYER_WARNING", locale)}
                         </div>;
                     }
                 })()}
@@ -293,7 +433,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, any> {
                 <input type="hidden" id="sessionId" name="sessionId" value={map.SessionId} />
                 <input type="hidden" id="mapName" name="mapName" value={map.Name} />
                 <input type="hidden" id="box" name="box" value={box} />
-                <input type="hidden" id="legalNotice" name="legalNotice"/>
+                <input type="hidden" id="legalNotice" name="legalNotice" />
             </form>
         </div>;
     }

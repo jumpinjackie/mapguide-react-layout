@@ -88,6 +88,7 @@ const STRINGS_EN: any = {
     "QUICKPLOT_ADVANCED_OPTIONS": "Advanced Options",
     "QUICKPLOT_SCALING": "Scale",
     "QUICKPLOT_DPI": "DPI",
+    "QUICKPLOT_BOX_ROTATION": "Capture Box Rotation",
     "QUICKPLOT_GENERATE": "Generate Plot",
     "QUICKPLOT_COMMERCIAL_LAYER_WARNING": "Quick Plot will NOT include any visible commercial map layers",
     "FEATURE_TOOLTIPS": "Feature Tooltips",

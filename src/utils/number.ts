@@ -101,3 +101,11 @@ export function getFiniteScaleIndexForScale(finiteScaleList: number[], scale: nu
     }
     return 0;
 }
+
+/**
+ * Converts the given angle in degrees to radians
+ * @param deg The angle in degrees
+ */
+export function deg2rad(deg: number): number {
+    return deg * (Math.PI / 180);
+}

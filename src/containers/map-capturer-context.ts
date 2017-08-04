@@ -1,5 +1,6 @@
 import { IMapViewer, Coordinate } from "../api/common";
 import * as logger from "../utils/logger";
+import { deg2rad } from "../utils/number";
 import olExtent from "ol/extent";
 import olFeature from "ol/feature";
 import olPolygon from "ol/geom/polygon";
@@ -37,10 +38,10 @@ export class MapCapturerContext {
         ring.push([origin.x - paperSize.w * factor, origin.y + paperSize.h * factor]);
         return [ ring ];
     }
-    public updateBox(paperSize: Size, scaleDenominator: number): void {
+    public updateBox(paperSize: Size, scaleDenominator: number, rotation: number): void {
         const features = this.mapCapturerSource.getFeaturesCollection();
         if (!features || features.getLength() == 0) {
-            this.createCaptureBox(paperSize, scaleDenominator);
+            this.createCaptureBox(paperSize, scaleDenominator, rotation);
         } else {
             const box = features.item(0);
             const geom = box.getGeometry() as olPolygon;
@@ -51,21 +52,23 @@ export class MapCapturerContext {
             };
             const ring = this.getRing(origin, paperSize, scaleDenominator);
             geom.setCoordinates(ring);
+            geom.rotate(deg2rad(rotation), center);
         }
     }
-    private createCaptureBox(paperSize: Size, scaleDenominator: number) {
+    private createCaptureBox(paperSize: Size, scaleDenominator: number, rotation: number) {
         const origin = this.viewer.getCurrentView();
         const ring = this.getRing(origin, paperSize, scaleDenominator);
         const poly = new olPolygon(ring);
+        poly.rotate(deg2rad(rotation), [ origin.x, origin.y ]);
         const box = new olFeature(poly);
         this.mapCapturerSource.clear();
         this.mapCapturerSource.addFeature(box);
     }
     public getMapName(): string { return this.mapName; }
-    public activate(paperSize: Size, scaleDenominator: number): void {
+    public activate(paperSize: Size, scaleDenominator: number, rotation: number): void {
         logger.debug(`Activating map capturer context for ${this.mapName}`);
         this.viewer.addLayer(this.layerName, this.mapCapturerLayer);
-        this.createCaptureBox(paperSize, scaleDenominator);
+        this.createCaptureBox(paperSize, scaleDenominator, rotation);
         this.intTranslate.setActive(true);
         this.viewer.addInteraction(this.intTranslate);
     }

@@ -18,6 +18,7 @@ import olFeature from "ol/feature";
 import olVectorSource from "ol/source/vector";
 import olVectorLayer from "ol/layer/vector";
 import { MapCapturerContext, Size } from "./map-capturer-context";
+import { Slider } from "@blueprintjs/core";
 
 function getMargin() {
     /*
@@ -162,6 +163,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
     private fnPaperSizeChanged: GenericEventHandler;
     private fnOrientationChanged: GenericEventHandler;
     private fnGeneratePlot: GenericEventHandler;
+    private fnRotationChanged: (value: number) => void;
     private mapCapturerSource: olVectorSource;
     private mapCapturerLayer: olVectorLayer;
     constructor(props: QuickPlotProps) {
@@ -176,6 +178,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
         this.fnDpiChanged = this.onDpiChanged.bind(this);
         this.fnAdvancedOptionsChanged = this.onAdvancedOptionsChanged.bind(this);
         this.fnScaleChanged = this.onScaleChanged.bind(this);
+        this.fnRotationChanged = this.onRotationChanged.bind(this);
         this.fnPaperSizeChanged = this.onPaperSizeChanged.bind(this);
         this.fnOrientationChanged = this.onOrientationChanged.bind(this);
         this.fnGeneratePlot = this.onGeneratePlot.bind(this);
@@ -231,6 +234,9 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
     private onOrientationChanged(e: GenericEvent) {
         this.setState({ orientation: e.target.value });
     }
+    private onRotationChanged(value: number) {
+        this.setState({ rotation: value });
+    }
     private onGeneratePlot(e: GenericEvent) {
 
     }
@@ -245,7 +251,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
             if (activeCapturer) {
                 if (bVisible) {
                     const paperSize = getPrintSize(viewer, state);
-                    activeCapturer.activate(paperSize, parseFloat(state.scale));
+                    activeCapturer.activate(paperSize, parseFloat(state.scale), state.rotation);
                 } else {
                     activeCapturer.deactivate();
                 }
@@ -259,15 +265,16 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                 this.toggleMapCapturerLayer(config.activeMapName, nextProps.mapNames, nextState);
             }
             if (nextState.showAdvanced &&
-                (nextState.scale != this.state.scale) ||
+                ((nextState.scale != this.state.scale) ||
                 (nextState.paperSize != this.state.paperSize) ||
-                (nextState.orientation != this.state.orientation)) {
+                (nextState.orientation != this.state.orientation) ||
+                (nextState.rotation != this.state.rotation))) {
                 const viewer = getViewer();
                 if (viewer) {
                     const capturer = getActiveCapturer(viewer, nextProps.mapNames, config.activeMapName);
                     if (capturer) {
                         const paperSize = getPrintSize(viewer, nextState);
-                        capturer.updateBox(paperSize, parseFloat(nextState.scale));
+                        capturer.updateBox(paperSize, parseFloat(nextState.scale), nextState.rotation);
                     }
                 }
             }
@@ -406,6 +413,12 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                                         <option value="300">300</option>
                                         <option value="600">600</option>
                                     </select>
+                                </div>
+                            </label>
+                            <label className="pt-label noselect">
+                                {xlate("QUICKPLOT_BOX_ROTATION", locale)}
+                                <div style={{ paddingLeft: 16, paddingRight: 16 }}>
+                                    <Slider min={0} max={360} labelStepSize={90} stepSize={1} value={this.state.rotation} onChange={this.fnRotationChanged} />
                                 </div>
                             </label>
                         </div>;

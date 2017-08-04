@@ -23,6 +23,7 @@ import olFeature from "ol/feature";
 import olInteractionExtent from "ol/interaction/extent";
 import olInteractionSnap from "ol/interaction/snap";
 import olInteractionDraw from "ol/interaction/draw";
+import olInteractionTranslate from "ol/interaction/translate";
 
 import olFormatGeoJSON from "ol/format/geojson";
 import olFormatWKT from "ol/format/wkt";
@@ -67,6 +68,7 @@ export interface IOLFactory {
     createInteractionDraw(options: olx.interaction.DrawOptions): olInteractionDraw;
     createInteractionExtent(options: olx.interaction.ExtentOptions): olInteractionExtent;
     createInteractionSnap(options: olx.interaction.SnapOptions): olInteractionSnap;
+    createInteractionTranslate(options: olx.interaction.TranslateOptions): olInteractionTranslate;
     createFeature(geomOrProps?: olGeometry | { [key: string]: any }): olFeature;
     createFormatGeoJSON(options?: olx.format.GeoJSONOptions | undefined): olFormatGeoJSON;
     createFormatWKT(options?: olx.format.WKTOptions | undefined): olFormatWKT;
@@ -154,6 +156,9 @@ export class OLFactory implements IOLFactory {
     }
     public createInteractionExtent(options: olx.interaction.ExtentOptions): olInteractionExtent {
         return new olInteractionExtent(options);
+    }
+    public createInteractionTranslate(options: olx.interaction.TranslateOptions): olInteractionTranslate {
+        return new olInteractionTranslate(options);
     }
     public createInteractionSnap(options: olx.interaction.SnapOptions): olInteractionSnap {
         return new olInteractionSnap(options);

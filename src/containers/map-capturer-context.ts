@@ -88,14 +88,12 @@ export class MapCapturerContext {
         logger.debug(`Activating map capturer context for ${this.mapName}`);
         this.viewer.addLayer(this.layerName, this.mapCapturerLayer);
         this.updateBox(paperSize, scaleDenominator, rotation);
-        this.intTranslate.setActive(true);
         this.viewer.addInteraction(this.intTranslate);
     }
     public deactivate(): void {
         logger.debug(`De-activating map capturer context for ${this.mapName}`);
-        this.mapCapturerLayer.getSource().clear();
+        this.features.clear();
         this.viewer.removeLayer(this.layerName);
-        this.intTranslate.setActive(false);
         this.viewer.removeInteraction(this.intTranslate);
     }
 }

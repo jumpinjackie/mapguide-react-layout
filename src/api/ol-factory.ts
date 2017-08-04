@@ -18,6 +18,7 @@ import olProjection from "ol/proj/projection";
 import olVectorLayer from "ol/layer/vector";
 import olVectorSource from "ol/source/vector";
 
+import olCollection from "ol/collection";
 import olFeature from "ol/feature";
 
 import olInteractionExtent from "ol/interaction/extent";
@@ -46,6 +47,7 @@ export interface IOLFactory {
     createStyleFill(options?: olx.style.FillOptions): olStyleFill;
     createStyleStroke(options?: olx.style.StrokeOptions): olStyleStroke;
     createStyleCircle(options?: olx.style.CircleOptions): olStyleCircle;
+    createFeatureCollection(): olCollection<olFeature>;
     extentContainsXY(extent: [number, number, number, number], x: number, y: number): boolean;
     extendExtent(extent: [number, number, number, number], other: [number, number, number, number]): [number, number, number, number];
     createProjection(options: olx.ProjectionOptions): olProjection;
@@ -93,6 +95,9 @@ export class OLFactory implements IOLFactory {
     }
     public createStyleCircle(options?: olx.style.CircleOptions): olStyleCircle {
         return new olStyleCircle(options);
+    }
+    public createFeatureCollection(): olCollection<olFeature> {
+        return new olCollection<olFeature>();
     }
     public extentContainsXY(extent: [number, number, number, number], x: number, y: number): boolean {
         return olExtent.containsXY(extent, x, y);

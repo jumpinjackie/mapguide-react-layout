@@ -440,3 +440,30 @@ export function setFeatureTooltipsEnabled(enabled: boolean) {
         payload: enabled
     };
 }
+
+/**
+ * Sets the rotation of the current view
+ * 
+ * @export
+ * @param {number} rotation 
+ * @returns 
+ */
+export function setViewRotation(rotation: number) {
+    return {
+        type: Constants.MAP_SET_VIEW_ROTATION,
+        payload: rotation
+    };
+}
+
+/**
+ * Sets whether view rotation is enabled or not
+ * 
+ * @export
+ * @param {boolean} enabled 
+ */
+export function setViewRotationEnabled(enabled: boolean) {
+    return {
+        type: Constants.MAP_SET_VIEW_ROTATION_ENABLED,
+        payload: enabled
+    };
+}

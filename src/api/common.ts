@@ -711,6 +711,41 @@ export interface IMapViewer {
      * @memberof IMapViewer
      */
     scaleToResolution(scale: number): number;
+    /**
+     * Gets the name of the current runtime map
+     * 
+     * @returns {string} 
+     * @memberof IMapViewer
+     */
+    getMapName(): string;
+    /**
+     * Sets the current view rotation
+     * 
+     * @param {number} rotation 
+     * @memberof IMapViewer
+     */
+    setViewRotation(rotation: number): void;
+    /**
+     * Gets the current view rotation
+     * 
+     * @returns {number} 
+     * @memberof IMapViewer
+     */
+    getViewRotation(): number;
+    /**
+     * Gets whether view rotation is enabled
+     * 
+     * @returns {boolean} 
+     * @memberof IMapViewer
+     */
+    isViewRotationEnabled(): boolean;
+    /**
+     * Sets whether view rotation is enabled or not
+     * 
+     * @param {boolean} enabled 
+     * @memberof IMapViewer
+     */
+    setViewRotationEnabled(enabled: boolean): void;
 }
 
 /**
@@ -1201,7 +1236,21 @@ export interface IConfigurationReducerState {
          * @type {number}
          */
         pointSelectionBuffer: number;
-    }
+    },
+    /**
+     * Indicates if view rotation is enabled
+     * 
+     * @type {boolean}
+     * @memberof IConfigurationReducerState
+     */
+    viewRotationEnabled: boolean;
+    /**
+     * The current view rotation
+     * 
+     * @type {number}
+     * @memberof IConfigurationReducerState
+     */
+    viewRotation: number;
 }
 
 /**

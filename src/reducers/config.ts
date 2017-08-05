@@ -8,6 +8,8 @@ export const INITIAL_STATE: IConfigurationReducerState = {
     locale: "en",
     activeMapName: undefined,
     availableMaps: undefined,
+    viewRotation: 0,
+    viewRotationEnabled: true,
     coordinates: {
         decimals: 6
     },
@@ -64,6 +66,14 @@ export function configReducer(state = INITIAL_STATE, action: AnyAction = { type:
                 } else {
                     return newState;
                 }
+            }
+        case Constants.MAP_SET_VIEW_ROTATION:
+            {
+                return { ...state, ...{ viewRotation: action.payload } };
+            }
+        case Constants.MAP_SET_VIEW_ROTATION_ENABLED:
+            {
+                return { ...state, ...{ viewRotationEnabled: action.payload } };
             }
         case Constants.MAP_SET_ACTIVE_MAP:
             {

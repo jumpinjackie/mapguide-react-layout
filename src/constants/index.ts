@@ -20,6 +20,8 @@ export const MAP_ZOOM_OUT = 'Map/ZOOM_OUT';
 export const MAP_PREVIOUS_VIEW = 'Map/PREVIOUS_VIEW';
 export const MAP_NEXT_VIEW = 'Map/NEXT_VIEW';
 export const MAP_SET_LAYER_TRANSPARENCY = 'Map/SET_LAYER_TRANSPARENCY';
+export const MAP_SET_VIEW_ROTATION = 'Map/SET_VIEW_ROTATION';
+export const MAP_SET_VIEW_ROTATION_ENABLED = 'Map/SET_VIEW_ROTATION_ENABLED';
 
 export const TASK_INVOKE_URL = 'TaskPane/INVOKE_URL';
 export const TASK_PANE_HOME = 'TaskPane/HOME';

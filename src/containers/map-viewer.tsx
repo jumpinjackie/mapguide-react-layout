@@ -40,7 +40,7 @@ export interface IMapViewerContainerProps {
 }
 
 export interface IMapViewerContainerState {
-    config: any;
+    config: IConfigurationReducerState;
     map: RuntimeMap;
     selection: QueryMapFeaturesResponse;
     viewer: IViewerReducerState;
@@ -64,6 +64,8 @@ export interface IMapViewerContainerDispatch {
     invokeCommand: (cmd: ICommand, parameters?: any) => void;
     showModalComponent: (options: any) => void;
     queryMapFeatures: (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => void;
+    setViewRotation: (rotation: number) => void;
+    setViewRotationEnabled: (enabled: boolean) => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewerContainerProps): Partial<IMapViewerContainerState> {
@@ -119,7 +121,9 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMapViewerContaine
         setMouseCoordinates: (mapName, coord) => dispatch(MapActions.setMouseCoordinates(mapName, coord)),
         invokeCommand: (cmd, parameters) => dispatch(invokeCommand(cmd, parameters)),
         showModalComponent: (options) => dispatch(showModalComponent(options)),
-        queryMapFeatures: (mapName, options) => dispatch(queryMapFeatures(mapName, options))
+        queryMapFeatures: (mapName, options) => dispatch(queryMapFeatures(mapName, options)),
+        setViewRotation: (rotation) => dispatch(MapActions.setViewRotation(rotation)),
+        setViewRotationEnabled: (enabled) => dispatch(MapActions.setViewRotationEnabled(enabled))
     };
 }
 
@@ -133,6 +137,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     private fnRequestZoomToView: (view: IMapView) => void;
     private fnQueryMapFeatures: (options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) => void;
     private fnBusyLoading: (busyCount: number) => void;
+    private fnRotationChanged: (newRotation: number) => void;
     private fnMouseCoordinateChanged: (coord: Coordinate) => void;
     private fnSessionExpired: () => void;
     private fnBeginDigitization: (callback: (cancelled: boolean) => void) => void;
@@ -143,6 +148,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         this.fnRequestZoomToView = this.onRequestZoomToView.bind(this);
         this.fnQueryMapFeatures = this.onQueryMapFeatures.bind(this);
         this.fnBusyLoading = this.onBusyLoading.bind(this);
+        this.fnRotationChanged = this.onRotationChanged.bind(this);
         this.fnMouseCoordinateChanged = this.onMouseCoordinateChanged.bind(this);
         this.fnSessionExpired = this.onSessionExpired.bind(this);
         this.fnBeginDigitization = this.onBeginDigitization.bind(this);
@@ -182,6 +188,11 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             this.props.setBusyCount(busyCount);
         }
     }
+    private onRotationChanged(newRotation: number) {
+        if (this.props.setViewRotation) {
+            this.props.setViewRotation(newRotation);
+        }
+    }
     private onMouseCoordinateChanged(coord: Coordinate) {
         const { config, setMouseCoordinates } = this.props;
         if (setMouseCoordinates && config && config.activeMapName) {
@@ -189,10 +200,11 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         }
     }
     private onSessionExpired() {
-        if (this.props.showModalComponent) {
-            this.props.showModalComponent({
+        const { showModalComponent, config } = this.props;
+        if (showModalComponent && config) {
+            showModalComponent({
                 modal: {
-                    title: tr("SESSION_EXPIRED", this.props.config.locale),
+                    title: tr("SESSION_EXPIRED", config.locale),
                     backdrop: true
                 },
                 name: DefaultComponentNames.SessionExpired,
@@ -206,10 +218,16 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         }
     }
     componentDidMount() {
-        Runtime.setViewer(this);
-        const browserWindow: any = window;
-        browserWindow.getViewer = browserWindow.getViewer || Runtime.getViewer;
-        browserWindow.getClient = browserWindow.getClient || (() => new Client(this.props.config.agentUri, this.props.config.agentKind));
+        const { config } = this.props;
+        if (config) {
+            Runtime.setViewer(this);
+            const browserWindow: any = window;
+            browserWindow.getViewer = browserWindow.getViewer || Runtime.getViewer;
+            const { agentUri, agentKind } = config;
+            if (agentUri) {
+                browserWindow.getClient = browserWindow.getClient || (() => new Client(agentUri, agentKind));
+            }
+        }
     }
     render(): JSX.Element {
         const {
@@ -229,6 +247,10 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             showLayers,
             hideLayers
         } = this.props;
+        let locale;
+        if (config) {
+            locale = config.locale;
+        }
         if (map && config && viewer && invokeCommand) {
             const selectableLayerNames = (map.Layer || [])
                 .filter(layer => layer.Selectable && selectableLayers[layer.ObjectId] !== false)
@@ -237,37 +259,41 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             const items: any[] = contextmenu != null ? contextmenu.items : [];
             const cmitems = (items || []).map(tb => mapToolbarReference(tb, store, invokeCommand));
             const childItems = processMenuItems(cmitems);
-            return <MapViewerBase ref={this.fnMapViewerMounted}
-                                  map={map}
-                                  agentUri={config.agentUri}
-                                  agentKind={config.agentKind}
-                                  locale={config.locale}
-                                  externalBaseLayers={externalBaseLayers}
-                                  imageFormat={config.viewer.imageFormat}
-                                  selectionImageFormat={config.viewer.selectionImageFormat}
-                                  selectionColor={config.viewer.selectionColor}
-                                  pointSelectionBuffer={config.viewer.pointSelectionBuffer}
-                                  tool={viewer.tool}
-                                  featureTooltipsEnabled={viewer.featureTooltipsEnabled}
-                                  showGroups={showGroups}
-                                  hideGroups={hideGroups}
-                                  showLayers={showLayers}
-                                  hideLayers={hideLayers}
-                                  view={currentView}
-                                  initialView={initialView}
-                                  selectableLayerNames={selectableLayerNames}
-                                  contextMenu={childItems}
-                                  overviewMapElementSelector={overviewMapElementSelector}
-                                  layerTransparency={layerTransparency || Constants.EMPTY_OBJECT}
-                                  onBeginDigitization={this.fnBeginDigitization}
-                                  onSessionExpired={this.fnSessionExpired}
-                                  onBusyLoading={this.fnBusyLoading}
-                                  onMouseCoordinateChanged={this.fnMouseCoordinateChanged}
-                                  onQueryMapFeatures={this.fnQueryMapFeatures}
-                                  onRequestZoomToView={this.fnRequestZoomToView} />;
-        } else {
-            return <div>{tr("LOADING_MSG", config.locale)}</div>;
+            if (config.agentUri) {
+                return <MapViewerBase ref={this.fnMapViewerMounted}
+                                      map={map}
+                                      agentUri={config.agentUri}
+                                      agentKind={config.agentKind}
+                                      locale={locale}
+                                      externalBaseLayers={externalBaseLayers}
+                                      imageFormat={config.viewer.imageFormat}
+                                      selectionImageFormat={config.viewer.selectionImageFormat}
+                                      selectionColor={config.viewer.selectionColor}
+                                      pointSelectionBuffer={config.viewer.pointSelectionBuffer}
+                                      tool={viewer.tool}
+                                      viewRotation={config.viewRotation}
+                                      viewRotationEnabled={config.viewRotationEnabled}
+                                      featureTooltipsEnabled={viewer.featureTooltipsEnabled}
+                                      showGroups={showGroups}
+                                      hideGroups={hideGroups}
+                                      showLayers={showLayers}
+                                      hideLayers={hideLayers}
+                                      view={currentView}
+                                      initialView={initialView}
+                                      selectableLayerNames={selectableLayerNames}
+                                      contextMenu={childItems}
+                                      overviewMapElementSelector={overviewMapElementSelector}
+                                      layerTransparency={layerTransparency || Constants.EMPTY_OBJECT}
+                                      onBeginDigitization={this.fnBeginDigitization}
+                                      onSessionExpired={this.fnSessionExpired}
+                                      onBusyLoading={this.fnBusyLoading}
+                                      onRotationChanged={this.fnRotationChanged}
+                                      onMouseCoordinateChanged={this.fnMouseCoordinateChanged}
+                                      onQueryMapFeatures={this.fnQueryMapFeatures}
+                                      onRequestZoomToView={this.fnRequestZoomToView} />;
+            }
         }
+        return <div>{tr("LOADING_MSG", locale)}</div>;
     }
     // ----------------- IMapViewer --------------------- //
     getViewForExtent(extent: Bounds): IMapView {
@@ -405,6 +431,39 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     }
     scaleToResolution(scale: number): number {
         return this.inner.scaleToResolution(scale);
+    }
+    getMapName(): string {
+        const { config } = this.props;
+        if (config && config.activeMapName) {
+            return config.activeMapName;
+        }
+        return "";
+    }
+    setViewRotation(rotation: number): void {
+        const { setViewRotation } = this.props;
+        if (setViewRotation) {
+            setViewRotation(rotation);
+        }
+    }
+    getViewRotation(): number {
+        const { config } = this.props;
+        if (config) {
+            return config.viewRotation || 0;
+        }
+        return 0;
+    }
+    isViewRotationEnabled(): boolean {
+        const { config } = this.props;
+        if (config) {
+            return !!config.viewRotationEnabled;
+        }
+        return true;
+    }
+    setViewRotationEnabled(enabled: boolean): void {
+        const { setViewRotationEnabled } = this.props;
+        if (setViewRotationEnabled) {
+            setViewRotationEnabled(enabled);
+        }
     }
 }
 

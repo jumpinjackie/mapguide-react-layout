@@ -106,6 +106,8 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
     view?: IMapView;
     initialView?: IMapView;
     agentKind: ClientKind;
+    viewRotationEnabled: boolean;
+    viewRotation: number;
     featureTooltipsEnabled: boolean;
     stateChangeDebounceTimeout?: number;
     pointSelectionBuffer?: number;
@@ -115,6 +117,7 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
     onQueryMapFeatures?: (options: Partial<IQueryMapFeaturesOptions>, callback?: (res: QueryMapFeaturesResponse) => void, errBack?: (err: any) => void) => void;
     onMouseCoordinateChanged?: (coords: number[]) => void;
     onBusyLoading: (busyCount: number) => void;
+    onRotationChanged: (newRotation: number) => void;
     onSessionExpired?: () => void;
     onBeginDigitization: (callback: (cancelled: boolean) => void) => void;
     overviewMapElementSelector?: () => (Element | null);
@@ -635,6 +638,29 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         if (nextProps.overviewMapElementSelector) {
             this._mapContext.updateOverviewMapElement(nextProps.overviewMapElementSelector);
         }
+        //viewRotation
+        if (this.props.viewRotation != nextProps.viewRotation) {
+            this.getOLView().setRotation(nextProps.viewRotation);
+        }
+        //viewRotationEnabled
+        if (this.props.viewRotationEnabled != nextProps.viewRotationEnabled) {
+            const view = this.getOLView();
+            const newView = new View({
+                enableRotation: nextProps.viewRotationEnabled,
+                rotation: nextProps.viewRotation,
+                center: view.getCenter(),
+                resolution: view.getResolution(),
+                resolutions: view.getResolutions(),
+                minResolution: view.getMinResolution(),
+                maxResolution: view.getMaxResolution(),
+                maxZoom: view.getMaxZoom(),
+                minZoom: view.getMinZoom(),
+                constrainRotation: view.constrainRotation(),
+                projection: view.getProjection(),
+                zoom: view.getZoom()
+            });
+            this._map.setView(newView);
+        }
     }
     componentDidMount() {
         const { map, agentUri, imageFormat } = this.props;
@@ -699,6 +725,12 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 this.onRequestZoomToView(this.getCurrentView());
             } else {
                 logger.info("Triggering zoom request on moveend suppresseed");
+            }
+            if (e.frameState.viewState.rotation != this.props.viewRotation) {
+                const { onRotationChanged } = this.props;
+                if (onRotationChanged) {
+                    onRotationChanged(e.frameState.viewState.rotation);
+                }
             }
         });
 

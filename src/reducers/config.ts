@@ -1,5 +1,11 @@
 import * as Constants from "../constants";
-import { IConfigurationReducerState, IExternalBaseLayer } from "../api/common";
+import {
+    IConfigurationReducerState,
+    IExternalBaseLayer,
+    ICoordinateConfiguration,
+    INameValuePair,
+    IViewerCapabilities
+} from "../api/common";
 import { AnyAction } from "redux";
 
 export const INITIAL_STATE: IConfigurationReducerState = {
@@ -12,7 +18,7 @@ export const INITIAL_STATE: IConfigurationReducerState = {
     viewRotationEnabled: true,
     coordinates: {
         decimals: 6
-    },
+    } as ICoordinateConfiguration,
     viewer: {
         imageFormat: "PNG",
         selectionImageFormat: "PNG8",
@@ -27,7 +33,7 @@ export const INITIAL_STATE: IConfigurationReducerState = {
         hasSelectionPanel: false,
         hasLegend: false,
         hasToolbar: false
-    }
+    } as IViewerCapabilities
 };
 
 export function configReducer(state = INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {

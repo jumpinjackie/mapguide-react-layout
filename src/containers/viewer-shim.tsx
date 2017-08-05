@@ -26,6 +26,7 @@ import { Intent } from "@blueprintjs/core";
 import { getTopToaster } from "../components/toaster";
 import { tr } from "../api/i18n";
 import { serialize } from "../api/builders/mapagent";
+import { ILocalizedMessages } from "../strings/en";
 
 function isEmptySelection(selection: QueryMapFeaturesResponse | undefined): boolean {
     if (selection && selection.FeatureSet) {
@@ -155,7 +156,7 @@ class OL2Shim {
     constructor() {
         this.Function = new OL2FunctionHelper();
     }
-    i18n(key: string): string {
+    i18n(key: keyof ILocalizedMessages): string {
         return tr(key);
     }
 }

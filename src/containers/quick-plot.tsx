@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { getViewer, getFusionRoot } from "../api/runtime";
-import { tr as xlate } from "../api/i18n";
+import { tr as xlate, tr } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
     IMapView,
@@ -14,11 +14,13 @@ import {
     getExternalBaseLayers,
     IMapViewer
 } from "../api/common";
+import * as MapActions from "../actions/map";
 import olFeature from "ol/feature";
 import olVectorSource from "ol/source/vector";
 import olVectorLayer from "ol/layer/vector";
 import { MapCapturerContext, Size, IMapCapturerContextCallback } from "./map-capturer-context";
-import { Slider } from "@blueprintjs/core";
+import { Slider, Toaster, Intent } from "@blueprintjs/core";
+import { getTopToaster } from "../components/toaster";
 
 function getMargin() {
     /*
@@ -112,7 +114,8 @@ export interface IQuickPlotContainerConnectedState {
 }
 
 export interface IQuickPlotContainerDispatch {
-
+    setViewRotation: (rotation: number) => void;
+    setViewRotationEnabled: (enabled: boolean) => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>): Partial<IQuickPlotContainerConnectedState> {
@@ -127,7 +130,8 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IQuickPlot
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IQuickPlotContainerDispatch> {
     return {
-
+        setViewRotation: (rotation) => dispatch(MapActions.setViewRotation(rotation)),
+        setViewRotationEnabled: (enabled) => dispatch(MapActions.setViewRotationEnabled(enabled))
     };
 }
 
@@ -245,17 +249,28 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
     private getLocale(): string {
         return this.props.config ? this.props.config.locale : "en";
     }
-    private toggleMapCapturerLayer(activeMapName: string, mapNames: string[], state: any) {
+    private toggleMapCapturerLayer(props: QuickPlotProps, activeMapName: string, state: IQuickPlotContainerState) {
+        const { mapNames, setViewRotation, setViewRotationEnabled, config } = props;
+        let locale = "en";
+        if (config) {
+            locale = config.locale;
+        }
         const bVisible: boolean = state.showAdvanced;
         const viewer = getViewer();
-        if (viewer) {
+        if (viewer && mapNames && setViewRotation && setViewRotationEnabled) {
             const activeCapturer = getActiveCapturer(viewer, mapNames, activeMapName, this);
             if (activeCapturer) {
                 if (bVisible) {
                     const paperSize = getPrintSize(viewer, state);
                     activeCapturer.activate(paperSize, parseFloat(state.scale), state.rotation);
+                    //For simplicity, reset rotation to 0 and prevent the ability to rotate while the map capture box
+                    //is active
+                    setViewRotationEnabled(false);
+                    setViewRotation(0);
+                    getTopToaster().show({ iconName: "info-sign", message: tr("QUICKPLOT_BOX_INFO", locale), intent: Intent.PRIMARY });
                 } else {
                     activeCapturer.deactivate();
+                    setViewRotationEnabled(true);
                 }
             }
         }
@@ -267,7 +282,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
         const config = nextProps.config;
         if (config && config.activeMapName && nextProps.mapNames) {
             if (this.state.showAdvanced != nextState.showAdvanced) {
-                this.toggleMapCapturerLayer(config.activeMapName, nextProps.mapNames, nextState);
+                this.toggleMapCapturerLayer(nextProps, config.activeMapName, nextState);
             }
             if (nextState.showAdvanced &&
                 ((nextState.scale != this.state.scale) ||

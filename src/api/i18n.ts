@@ -1,7 +1,7 @@
 import * as logger from "../utils/logger";
-import STRINGS_EN from "../strings/en";
+import STRINGS_EN, { ILocalizedMessages } from "../strings/en";
 
-const STRINGS: any = {
+const STRINGS: { [locale: string]: ILocalizedMessages } = {
     "en": STRINGS_EN
 };
 
@@ -10,9 +10,9 @@ const STRINGS: any = {
  *
  * @export
  * @param {string} locale
- * @param {*} bundle
+ * @param {ILocalizedMessages} bundle
  */
-export function registerStringBundle(locale: string, bundle: any) {
+export function registerStringBundle(locale: string, bundle: ILocalizedMessages) {
     STRINGS[locale] = bundle;
 }
 
@@ -40,14 +40,14 @@ export function fmt(format: string, args?: any): string {
 
 /**
  * Returns the localized string for the given key
- *
+ * 
  * @export
- * @param {string} key
- * @param {string} [locale="en"]
- * @param {*} [args]
- * @returns {string}
+ * @param {keyof ILocalizedMessages} key 
+ * @param {string} [locale="en"] 
+ * @param {*} [args] 
+ * @returns {string} 
  */
-export function tr(key: string, locale = "en", args?: any): string {
+export function tr(key: keyof ILocalizedMessages, locale = "en", args?: any): string {
     const bundle = STRINGS[locale];
     if (!bundle) {
         logger.warn(`No such string bundle for locale: ${locale}`);

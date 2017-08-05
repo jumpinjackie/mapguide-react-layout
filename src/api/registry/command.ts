@@ -266,7 +266,7 @@ export function openUrlInTarget(name: string, cmdDef: ITargetedCommand, dispatch
     } else if (target == "NewWindow") {
         dispatch(ModalActions.showModalUrl({
             modal: {
-                title: modalTitle || tr(name),
+                title: modalTitle || tr(name as any),
                 backdrop: false,
                 size: DEFAULT_MODAL_SIZE,
                 overflowYScroll: true

@@ -83,12 +83,12 @@ function getPrintSize(viewer: IMapViewer, state: any): Size {
 
 const _mapCapturers: MapCapturerContext[] = [];
 
-function getActiveCapturer(viewer: IMapViewer, mapNames: string[], activeMapName: string, callback: IMapCapturerContextCallback): MapCapturerContext | undefined {
+function getActiveCapturer(viewer: IMapViewer, mapNames: string[], activeMapName: string): MapCapturerContext | undefined {
     let activeCapturer: MapCapturerContext | undefined;
     if (_mapCapturers.length == 0) {
         if (mapNames.length) {
             for (const mapName of mapNames) {
-                const context = new MapCapturerContext(viewer, mapName, callback);
+                const context = new MapCapturerContext(viewer, mapName);
                 _mapCapturers.push(context);
                 if (activeMapName == mapName) {
                     activeCapturer = context;
@@ -258,11 +258,11 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
         const bVisible: boolean = state.showAdvanced;
         const viewer = getViewer();
         if (viewer && mapNames && setViewRotation && setViewRotationEnabled) {
-            const activeCapturer = getActiveCapturer(viewer, mapNames, activeMapName, this);
+            const activeCapturer = getActiveCapturer(viewer, mapNames, activeMapName);
             if (activeCapturer) {
                 if (bVisible) {
                     const paperSize = getPrintSize(viewer, state);
-                    activeCapturer.activate(paperSize, parseFloat(state.scale), state.rotation);
+                    activeCapturer.activate(this, paperSize, parseFloat(state.scale), state.rotation);
                     //For simplicity, reset rotation to 0 and prevent the ability to rotate while the map capture box
                     //is active
                     setViewRotationEnabled(false);
@@ -278,6 +278,17 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
     updateBoxCoords(box: string): void {
         this.setState({ box: box });
     }
+    componentWillUnmount() {
+        //Tear down the capture box layer
+        const { mapNames, config } = this.props;
+        const viewer = getViewer();
+        if (viewer && mapNames && config && config.activeMapName) {
+            const activeCapturer = getActiveCapturer(viewer, mapNames, config.activeMapName);
+            if (activeCapturer) {
+                activeCapturer.deactivate();
+            }
+        }
+    }
     componentWillUpdate(nextProps: QuickPlotProps, nextState: IQuickPlotContainerState) {
         const config = nextProps.config;
         if (config && config.activeMapName && nextProps.mapNames) {
@@ -291,7 +302,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                 (nextState.rotation != this.state.rotation))) {
                 const viewer = getViewer();
                 if (viewer) {
-                    const capturer = getActiveCapturer(viewer, nextProps.mapNames, config.activeMapName, this);
+                    const capturer = getActiveCapturer(viewer, nextProps.mapNames, config.activeMapName);
                     if (capturer) {
                         const paperSize = getPrintSize(viewer, nextState);
                         capturer.updateBox(paperSize, parseFloat(nextState.scale), nextState.rotation);

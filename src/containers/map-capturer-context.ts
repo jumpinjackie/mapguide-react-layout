@@ -12,7 +12,7 @@ import olInteractionTranslate from "ol/interaction/translate";
 export type Size = { w: number, h: number };
 
 export interface IMapCapturerContextCallback {
-    updateBoxCoords(box: string): void;
+    updateBoxCoords(box: string, normalizedBox: string): void;
 }
 
 export class MapCapturerContext {
@@ -22,7 +22,7 @@ export class MapCapturerContext {
     private intTranslate: olInteractionTranslate;
     private features: olCollection<olFeature>;
     private activeCallback: IMapCapturerContextCallback | undefined;
-    constructor(private viewer: IMapViewer, private mapName: string) {
+    constructor(private viewer: IMapViewer, private mapName: string, private rotation: number = 0) {
         this.features = new olCollection<olFeature>();
         this.mapCapturerSource = new olVectorSource({
             features: this.features
@@ -51,14 +51,21 @@ export class MapCapturerContext {
             const poly = box.getGeometry() as olPolygon;
             const coords = poly.getCoordinates()[0];
             const boxCoords = coords.map(c => `${c[0]},${c[1]}`).join(",");
-            this.activeCallback.updateBoxCoords(boxCoords);
+            //Process normalized one
+            const npoly = poly.clone();
+            const ncenter = olExtent.getCenter(npoly.getExtent());
+            npoly.rotate(deg2rad(this.rotation), ncenter);
+            const ncoords = npoly.getCoordinates()[0];
+            const nBoxCoords = ncoords.map(c => `${c[0]},${c[1]}`).join(",");
+            this.activeCallback.updateBoxCoords(boxCoords, nBoxCoords);
         }
     }
     public updateBox(paperSize: Size, scaleDenominator: number, rotation: number): void {
         if (this.activeCallback) {
+            this.rotation = rotation;
             let poly: olPolygon;
             if (this.features.getLength() == 0) {
-                poly = this.createCaptureBox(paperSize, scaleDenominator, rotation);
+                poly = this.createCaptureBox(paperSize, scaleDenominator, this.rotation);
             } else {
                 const box = this.features.item(0);
                 poly = box.getGeometry() as olPolygon;
@@ -69,18 +76,24 @@ export class MapCapturerContext {
                 };
                 const ring = this.getRing(origin, paperSize, scaleDenominator);
                 poly.setCoordinates(ring);
-                poly.rotate(deg2rad(rotation), center);
+                poly.rotate(-deg2rad(this.rotation), center);
             }
             const coords = poly.getCoordinates()[0];
             const boxCoords = coords.map(c => `${c[0]},${c[1]}`).join(",");
-            this.activeCallback.updateBoxCoords(boxCoords);
+            //Process normalized one
+            const npoly = poly.clone();
+            const ncenter = olExtent.getCenter(npoly.getExtent());
+            npoly.rotate(deg2rad(this.rotation), ncenter);
+            const ncoords = npoly.getCoordinates()[0];
+            const nBoxCoords = ncoords.map(c => `${c[0]},${c[1]}`).join(",");
+            this.activeCallback.updateBoxCoords(boxCoords, nBoxCoords);
         }
     }
     private createCaptureBox(paperSize: Size, scaleDenominator: number, rotation: number): olPolygon {
         const origin = this.viewer.getCurrentView();
         const ring = this.getRing(origin, paperSize, scaleDenominator);
         const poly = new olPolygon(ring);
-        poly.rotate(deg2rad(rotation), [ origin.x, origin.y ]);
+        poly.rotate(-deg2rad(rotation), [ origin.x, origin.y ]);
         const box = new olFeature(poly);
         this.features.clear();
         this.features.push(box);

@@ -150,6 +150,7 @@ export interface IQuickPlotContainerState {
     dpi: string;
     rotation: number;
     box: string;
+    normalizedBox: string;
 }
 
 export type QuickPlotProps = IQuickPlotContainerOwnProps & Partial<IQuickPlotContainerConnectedState> & Partial<IQuickPlotContainerDispatch>;
@@ -201,7 +202,8 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
             scale: "5000",
             dpi: "96",
             rotation: 0,
-            box: ""
+            box: "",
+            normalizedBox: ""
         };
     }
     private onTitleChanged(e: GenericEvent) {
@@ -275,8 +277,8 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
             }
         }
     }
-    updateBoxCoords(box: string): void {
-        this.setState({ box: box });
+    updateBoxCoords(box: string, normalizedBox: string): void {
+        this.setState({ box: box, normalizedBox: normalizedBox });
     }
     componentWillUnmount() {
         //Tear down the capture box layer
@@ -475,7 +477,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                     <button type="submit" className="pt-button pt-icon-print pt-intent-primary" onClick={this.fnGeneratePlot}>{xlate("QUICKPLOT_GENERATE", locale)}</button>
                 </div>
                 <input type="hidden" id="margin" name="margin" />
-                <input type="hidden" id="normalizedBox" name="normalizedBox" value={box} />
+                <input type="hidden" id="normalizedBox" name="normalizedBox" value={this.state.normalizedBox} />
                 <input type="hidden" id="rotation" name="rotation" value={-(this.state.rotation || 0)} />
                 <input type="hidden" id="sessionId" name="sessionId" value={map.SessionId} />
                 <input type="hidden" id="mapName" name="mapName" value={map.Name} />

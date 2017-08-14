@@ -1,4 +1,4 @@
-// Type definitions for OpenLayers v4.2.0
+// Type definitions for OpenLayers v4.3.1
 // Project: http://openlayers.org/
 // Definitions by: Jackie Ng <https://github.com/jumpinjackie>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -747,7 +747,7 @@ declare module ol {
          */
         getMeridians(): ol.geom.LineString[];
         /**
-         * Get the list of parallels.  Pallels are lines of equal latitude.
+         * Get the list of parallels.  Parallels are lines of equal latitude.
          */
         getParallels(): ol.geom.LineString[];
         /**
@@ -875,7 +875,7 @@ declare module ol {
         /**
          * Detect features that intersect a pixel on the viewport, and execute a
          * callback with each intersecting feature. Layers included in the detection can
-         * be configured through `opt_layerFilter`.
+         * be configured through the `layerFilter` option in `opt_options`.
          * @param pixel  (Required) Pixel.
          * @param callback  (Required) Feature callback. The callback will be
     called with two arguments. The first argument is one
@@ -887,6 +887,12 @@ declare module ol {
          * @param opt_options  (Optional) Optional options.
          */
         forEachFeatureAtPixel<S, T>(pixel: ol.Pixel, callback: Function, opt_options?: olx.AtPixelOptions): T;
+        /**
+         * Get all features that intersect a pixel on the viewport.
+         * @param pixel  (Required) Pixel.
+         * @param opt_options  (Optional) Optional options.
+         */
+        getFeaturesAtPixel(pixel: ol.Pixel, opt_options?: olx.AtPixelOptions): (ol.Feature|ol.render.Feature)[];
         /**
          * Detect layers that have a color value at a pixel on the viewport, and
          * execute a callback with each matching layer. Layers included in the
@@ -1768,6 +1774,11 @@ first map that uses this view will be used.
          */
         getZoomForResolution(resolution: number): number;
         /**
+         * Get the resolution for a zoom level.
+         * @param zoom  (Required) Zoom level.
+         */
+        getResolutionForZoom(zoom: number): number;
+        /**
          * Fit the given geometry or extent based on the given map size and border.
          * The size is pixel dimensions of the box to fit the extent into.
          * In most cases you will want to use the map size, that is `map.getSize()`.
@@ -2176,6 +2187,13 @@ first map that uses this view will be used.
      * {@link ol.geom.Geometry} that will be rendered and styled for the feature.
      */
     type StyleGeometryFunction = (arg0: ol.Feature|ol.render.Feature) => ol.geom.Geometry|ol.render.Feature;
+    /**
+     * Custom renderer function. Takes two arguments:
+     * 
+     * 1. The pixel coordinates of the geometry in GeoJSON notation.
+     * 2. The {@link olx.render.State} of the layer renderer.
+     */
+    type StyleRenderFunction = (arg0: ol.Coordinate|ol.Coordinate[]|ol.Coordinate[][], arg1: olx.render.State) => void;
     /**
      * A function that takes an {@link ol.Tile} for the tile and a `{string}` for
      * the url as arguments.
@@ -3925,6 +3943,10 @@ first map that uses this view will be used.
              * @param opt_options  (Optional) Options.
              */
             constructor(opt_options?: olx.format.MVTOptions);
+            /**
+             * Get the extent from the source of the last {@link readFeatures} call.
+             */
+            getLastExtent(): ol.Extent;
             /**
              * Read all features from a source.
              * @param source  (Required) Source.
@@ -7975,7 +7997,16 @@ first map that uses this view will be used.
             un(type: string|string[], listener: Function, opt_this?: any): void;
         }
         /**
-         * Interaction for modifying feature geometries.
+         * Interaction for modifying feature geometries.  To modify features that have
+         * been added to an existing source, construct the modify interaction with the
+         * `source` option.  If you want to modify features in a collection (for example,
+         * the collection used by a select interaction), construct the interaction with
+         * the `features` option.  The interaction must be constructed with either a
+         * `source` or `features` option.
+         * 
+         * By default, the interaction will allow deletion of vertices when the `alt`
+         * key is pressed.  To configure the interaction with a different condition
+         * for deletion, use the `deleteCondition` option.
          */
         class Modify extends ol.interaction.Pointer {
             /**
@@ -10435,8 +10466,10 @@ to zoom to the center of the map
          * @param projection  (Optional) The projection.
          * @param resolution  (Optional) Nominal resolution in projection units.
          * @param point  (Optional) Point to find adjusted resolution at.
+         * @param opt_units  (Optional) Units to get the point resolution in.
+Default is the projection's units.
          */
-        function getPointResolution(projection?: ol.ProjectionLike, resolution?: number, point?: ol.Coordinate): number;
+        function getPointResolution(projection?: ol.ProjectionLike, resolution?: number, point?: ol.Coordinate, opt_units?: string): number;
         /**
          * Registers transformation functions that don't alter coordinates. Those allow
          * to transform between projections with equal meaning.
@@ -15363,6 +15396,17 @@ Optional config properties:
              */
             clone(): ol.style.Style;
             /**
+             * Get the custom renderer function that was configured with
+             * {@link #setRenderer} or the `renderer` constructor option.
+             */
+            getRenderer(): ol.StyleRenderFunction;
+            /**
+             * Sets a custom renderer function for this style. When set, `fill`, `stroke`
+             * and `image` options of the style will be ignored.
+             * @param renderer  (Required) Custom renderer function.
+             */
+            setRenderer(renderer: ol.StyleRenderFunction): void;
+            /**
              * Get the geometry to be rendered.
              */
             getGeometry(): string|ol.geom.Geometry|ol.StyleGeometryFunction;
@@ -16759,6 +16803,14 @@ declare module olx {
              */
             formatConstructors?: (arg0: ol.format.Feature) => any;
             /**
+             * Optional vector source where features will be added.  If a source is provided
+             * all existing features will be removed and new features will be added when
+             * they are dropped on the target.  If you want to add features to a vector
+             * source without removing the existing features (append only), instead of
+             * providing the source option listen for the "addfeatures" event.
+             */
+            source?: ol.source.Vector;
+            /**
              * Target projection. By default, the map's view's projection is used.
              */
             projection?: ol.ProjectionLike;
@@ -17065,9 +17117,15 @@ declare module olx {
              */
             style?: ol.style.Style|ol.style.Style[]|ol.StyleFunction;
             /**
-             * The features the interaction works on.
+             * The vector source with features to modify.  If a vector source is not
+             * provided, a feature collection must be provided with the features option.
              */
-            features: ol.Collection<ol.Feature>;
+            source?: ol.source.Vector;
+            /**
+             * The features the interaction works on.  If a feature collection is not
+             * provided, a vector source must be provided with the source option.
+             */
+            features?: ol.Collection<ol.Feature>;
             /**
              * Wrap the world horizontally on the sketch overlay. Default is `false`.
              */
@@ -18197,6 +18255,11 @@ declare module olx {
              * Visibility. Default is `true` (visible).
              */
             visible?: boolean;
+            /**
+             * The z-index for layer rendering.  At rendering time, the layers will be
+             * ordered, first by Z-index and then by position. The default Z-index is 0.
+             */
+            zIndex?: number;
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -18234,6 +18297,11 @@ declare module olx {
              * The maximum resolution (exclusive) below which this layer will be visible.
              */
             maxResolution?: number;
+            /**
+             * The z-index for layer rendering.  At rendering time, the layers will be
+             * ordered, first by Z-index and then by position. The default Z-index is 0.
+             */
+            zIndex?: number;
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -18280,6 +18348,11 @@ declare module olx {
              * Use interim tiles on error. Default is `true`.
              */
             useInterimTilesOnError?: boolean;
+            /**
+             * The z-index for layer rendering.  At rendering time, the layers will be
+             * ordered, first by Z-index and then by position. The default Z-index is 0.
+             */
+            zIndex?: number;
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -18347,6 +18420,11 @@ declare module olx {
              * Visibility. Default is `true` (visible).
              */
             visible?: boolean;
+            /**
+             * The z-index for layer rendering.  At rendering time, the layers will be
+             * ordered, first by Z-index and then by position. The default Z-index is 0.
+             */
+            zIndex?: number;
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -18437,6 +18515,28 @@ declare module olx {
         }
     }
     module render {
+        /**
+         * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
+         */
+        interface State {
+            /**
+             * Canvas context that the layer is being rendered to.
+             */
+            context: CanvasRenderingContext2D;
+            /**
+             * Pixel ratio used by the layer renderer.
+             */
+            pixelRatio: number;
+            /**
+             * Resolution that the render batch was created and optimized for. This is
+             * not the view's resolution that is being rendered.
+             */
+            resolution: number;
+            /**
+             * Rotation of the rendered layer in radians.
+             */
+            rotation: number;
+        }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
          */
@@ -18724,18 +18824,13 @@ declare module olx {
              *     var format = tile.getFormat();
              *     tile.setFeatures(format.readFeatures(data));
              *     tile.setProjection(format.readProjection(data));
+             *     // uncomment the line below for ol.format.MVT only
+             *     //tile.setExtent(format.getLastExtent());
              *   };
              * });
              * ```
              */
             tileLoadFunction?: ol.TileLoadFunctionType;
-            /**
-             * The pixel ratio used by the tile service. For example, if the tile
-             * service advertizes 256px by 256px tiles but actually sends 512px
-             * by 512px tiles (for retina/hidpi devices) then `tilePixelRatio`
-             * should be set to `2`. Default is `1`.
-             */
-            tilePixelRatio?: number;
             /**
              * Optional function to get tile URL given a tile coordinate and the projection.
              */
@@ -19379,6 +19474,10 @@ declare module olx {
              * Logo.
              */
             logo?: string|olx.LogoOptions;
+            /**
+             * Class used to instantiate image tiles. Default is {@link ol.ImageTile}.
+             */
+            tileClass?: Function;
             /**
              * Tile grid. Base this on the resolutions, tilesize and extent supported by the
              * server.

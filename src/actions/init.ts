@@ -110,7 +110,8 @@ function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictiona
                             case "ClearSelection":
                                 return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.ClearSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
                             //case "ColorPicker":
-                            //case "CoordinateTracker":
+                            case "CoordinateTracker":
+                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.CoordinateTracker, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
                             case "FeatureInfo":
                                 return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.FeatureInfo, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
                             case "Geolocation":
@@ -491,6 +492,22 @@ function getMapDefinitionsFromFlexLayout(appDef: ApplicationDefinition): string[
     throw new MgError("No Map Definition found in Application Definition");
 }
 
+function getExtraProjectionsFromFlexLayout(appDef: ApplicationDefinition): string[] {
+    //The only widget we care about is the coordinate tracker
+    const epsgs: string[] = [];
+    for (const ws of appDef.WidgetSet) {
+        for (const w of ws.Widget) {
+            if (w.Type == "CoordinateTracker") {
+                const ps = w.Extension.Projection || [];
+                for (const p of ps) {
+                    epsgs.push(p.split(':')[1]);
+                }
+            }
+        }
+    }
+    return epsgs;
+}
+
 function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: IInitAsyncOptions): void {
     if (error.stack) {
         dispatch({
@@ -529,7 +546,7 @@ interface IInitAsyncOptions extends IInitAppLayout {
     locale: string;
 }
 
-async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, opts: IInitAsyncOptions, res: TLayout, mapDefSelector: (res: TLayout) => string[]): Promise<Dictionary<RuntimeMap>> {
+async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, opts: IInitAsyncOptions, res: TLayout, mapDefSelector: (res: TLayout) => string[], projectionSelector: (res: TLayout) => string[]): Promise<Dictionary<RuntimeMap>> {
     const mapDefs = mapDefSelector(res);
     const mapPromises: Promise<RuntimeMap>[] = [];
     for (const mapDef of mapDefs) {
@@ -555,6 +572,10 @@ async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, 
             fetchEpsgs.push({ epsg: epsg, mapDef: mapDef });
         }
     }
+    const extraEpsgs = projectionSelector(res);
+    for (const e of extraEpsgs) {
+        fetchEpsgs.push({ epsg: e, mapDef: "" });
+    }
     const epsgs = await Promise.all(fetchEpsgs.map(f => resolveProjectionAsync(f.epsg, opts, f.mapDef)));
     //Build the Dictionary<RuntimeMap> from loaded maps
     const mapsByName: Dictionary<RuntimeMap> = {};
@@ -565,7 +586,7 @@ async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, 
 }
 
 async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOptions, session: string, client: Client): Promise<IInitAppPayload> {
-    const mapsByName = await createRuntimeMapsAsync(client, session, opts, webLayout, wl => [ wl.Map.ResourceId ])
+    const mapsByName = await createRuntimeMapsAsync(client, session, opts, webLayout, wl => [ wl.Map.ResourceId ], wl => [])
     const cmdsByKey: any = {};
     //Register any InvokeURL and Search commands
     for (const cmd of webLayout.CommandSet.Command) {
@@ -677,7 +698,7 @@ async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOpti
 }
 
 async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsyncOptions, session: string, client: Client): Promise<IInitAppPayload> {
-    const mapsByName = await createRuntimeMapsAsync(client, session, opts, appDef, fl => getMapDefinitionsFromFlexLayout(fl));
+    const mapsByName = await createRuntimeMapsAsync(client, session, opts, appDef, fl => getMapDefinitionsFromFlexLayout(fl), fl => getExtraProjectionsFromFlexLayout(fl));
     let initialTask: string;
     let taskPane: Widget|undefined;
     let hasLegend = false;

@@ -14,7 +14,7 @@ export interface IMouseCoordinatesContainerProps {
 
 export interface IMouseCoordinatesContainerState {
     config: ICoordinateConfiguration;
-    mouse: Coordinate | null;
+    mouse: Coordinate | undefined;
 }
 
 export interface IMouseCoordinatesDispatch { }

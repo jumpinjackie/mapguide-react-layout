@@ -18,6 +18,7 @@ import {
     isModalDisplayOptions
 } from "../utils/type-guards";
 import { assertNever } from "../utils/never";
+import { ParsedComponentUri, parseComponentUri, isComponentUri } from "../utils/url";
 
 export interface IToolbarContainerState {
     modal: IModalReducerState;
@@ -43,11 +44,11 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IToolbarContainerD
 
 export type ToolbarContainerProps = Partial<IToolbarContainerState> & Partial<IToolbarContainerDispatch>;
 
-function getComponentId(diag: IModalComponentDisplayOptions | IModalDisplayOptions): string | undefined {
+function getComponentId(diag: IModalComponentDisplayOptions | IModalDisplayOptions): ParsedComponentUri | undefined {
     if (isModalComponentDisplayOptions(diag)) {
-        return diag.component;
+        return { name: diag.component, props: {} };
     } else if (isModalDisplayOptions(diag)) {
-        return diag.url.substring("component://".length);
+        return parseComponentUri(diag.url);
     } else {
         assertNever(diag);
     }
@@ -74,10 +75,10 @@ export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
         return <div>
             {Object.keys(modal).map(key => {
                 const diag = modal[key];
-                if (isModalComponentDisplayOptions(diag) || (isModalDisplayOptions(diag) && diag.url.indexOf("component://") >= 0)) {
+                if (isModalComponentDisplayOptions(diag) || (isModalDisplayOptions(diag) && isComponentUri(diag.url))) {
                     const componentId = getComponentId(diag);
                     if (componentId) {
-                        const componentRenderer = getComponentFactory(componentId);
+                        const componentRenderer = getComponentFactory(componentId.name);
                         return <ModalDialog size={diag.modal.size}
                                             title={diag.modal.title}
                                             backdrop={diag.modal.backdrop}
@@ -89,8 +90,8 @@ export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
                                 if (componentRenderer) {
                                     if (isModalComponentDisplayOptions(diag))
                                         return componentRenderer(diag.componentProps);
-                                    else //TODO: As this is a component:// pseudo-URI, we should extract props (if any) from the query string of this URI
-                                        return componentRenderer({});
+                                    else
+                                        return componentRenderer(componentId.props);
                                 } else {
                                     return <Error error={tr("ERR_UNREGISTERED_COMPONENT", locale, { componentId: componentId })} />;
                                 }

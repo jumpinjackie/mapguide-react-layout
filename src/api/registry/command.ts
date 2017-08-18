@@ -233,6 +233,7 @@ export class DefaultCommands {
     public static get Theme(): string { return "Theme"; }
     public static get Query(): string { return "Query"; }
     public static get Geolocation(): string { return "Geolocation"; }
+    public static get CoordinateTracker(): string { return "CoordinateTracker"; }
 }
 
 const commands: Dictionary<ICommand> = {};

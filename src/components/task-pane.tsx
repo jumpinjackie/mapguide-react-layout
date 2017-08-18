@@ -17,6 +17,7 @@ import {
     IDOMElementMetrics,
     FlyoutVisibilitySet
 } from "../api/common";
+import { parseComponentUri } from "../utils/url";
 
 function currentUrlDoesNotMatchMapName(currentUrl: string, mapName: string): boolean {
     const normUrl = currentUrl.toLowerCase();
@@ -147,8 +148,9 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         }
     }
     loadUrl(url: string) {
-        if (url.indexOf("component://") >= 0) {
-            this.setState({ activeComponent: url.substring(12) });
+        const compUri = parseComponentUri(url);
+        if (compUri) {
+            this.setState({ activeComponent: compUri.name, activeComponentProps: compUri.props });
         } else {
             this.setState({ activeComponent: null}, () => {
                 if (this._iframe) {
@@ -226,9 +228,10 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                 })()}
                 {(() => {
                     if (this.state.activeComponent != null) {
+                        const cpp = this.state.activeComponentProps;
                         taskComponentContainerStyle.overflowY = "auto";
                         return <div className={(invalidated === true ? "invalidated-task-pane" : undefined)} style={taskComponentContainerStyle}>
-                            <PlaceholderComponent id={this.state.activeComponent} locale={this.props.locale} />
+                            <PlaceholderComponent id={this.state.activeComponent} componentProps={cpp} locale={this.props.locale} />
                         </div>
                     } else {
                         return <iframe className={(invalidated === true ? "invalidated-task-pane" : undefined)} name="taskPaneFrame" ref={this.fnFrameMounted} onLoad={this.fnFrameLoaded} style={taskFrameStyle}>

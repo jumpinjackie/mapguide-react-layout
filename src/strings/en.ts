@@ -100,6 +100,8 @@ export interface ILocalizedMessages {
     GEOLOCATION_ERROR: string;
     TASK_PANE_CONTENT_FOR_INACTIVE_MAP_TITLE: string;
     TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING: string;
+    COORDTRACKER: string;
+    COORDTRACKER_NO_PROJECTIONS: string;
 }
 
 const STRINGS_EN: ILocalizedMessages = {
@@ -203,7 +205,9 @@ const STRINGS_EN: ILocalizedMessages = {
     "GEOLOCATION_WARN_OUTSIDE_MAP": "Zoomed to your position. It is outside the extents of your map",
     "GEOLOCATION_ERROR": "Geolocation error: {message} ({code})",
     "TASK_PANE_CONTENT_FOR_INACTIVE_MAP_TITLE": "Invalid Task Pane Content",
-    "TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING": "The current task pane content is not applicable for the current active map. If the content was loaded from a command, re-run that command"
+    "TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING": "The current task pane content is not applicable for the current active map. If the content was loaded from a command, re-run that command",
+    "COORDTRACKER": "Coordinate Tracker",
+    "COORDTRACKER_NO_PROJECTIONS": "You have no projections configured for this component"
 };
 
 export default STRINGS_EN;

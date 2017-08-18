@@ -742,6 +742,11 @@ function deArrayifyExtension(json: any, arrayCheck: boolean = true): any {
                         ext[key] = params;
                     }
                     break;
+                case "Projection":
+                    {
+                        ext[key] = root[0][key];
+                    }
+                    break;
                 default:
                     ext[key] = tryGetAsProperty(root[0], key, "string");
                     break;

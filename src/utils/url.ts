@@ -77,3 +77,44 @@ export function areUrlsSame(url1: string, url2: string): boolean {
 
     return same;
 }
+
+/**
+ * A parsed component URI
+ * 
+ * @export
+ * @interface ParsedComponentUri
+ */
+export interface ParsedComponentUri {
+    name: string;
+    props: any;
+}
+
+/**
+ * Indicates if the given URI is a component URI
+ * 
+ * @export
+ * @param {string} uri 
+ * @returns {boolean} 
+ */
+export function isComponentUri(uri: string): boolean {
+    return uri.indexOf("component://") >= 0;   
+}
+
+/**
+ * Parses the given component URI. If it not a valid component URI returns undefined
+ * 
+ * @export
+ * @param {string} uri 
+ * @returns {(ParsedComponentUri | undefined)} 
+ */
+export function parseComponentUri(uri: string): ParsedComponentUri | undefined {
+    if (isComponentUri(uri)) {
+        const qi = uri.lastIndexOf("?");
+        const name = qi < 0 ? uri.substring(12) : uri.substring(12, qi);
+        const props = qi < 0 ? {} : queryString.parse(uri.substring(qi));
+        return {
+            name,
+            props
+        };
+    }
+}

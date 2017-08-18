@@ -64,7 +64,8 @@ import {
     SPRITE_FEATURE_INFO,
     SPRITE_QUERY,
     SPRITE_THEME,
-    SPRITE_INVOKE_SCRIPT
+    SPRITE_INVOKE_SCRIPT,
+    SPRITE_COORDINATE_TRACKER
 } from "../constants/assets";
 
 function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
@@ -579,6 +580,18 @@ export function initDefaultCommands() {
                 const cmdDef = buildTargetedCommand(config, parameters);
                 openUrlInTarget(DefaultCommands.Theme, cmdDef, dispatch, url);
             }
+        }
+    });
+    //Coordinate Tracker
+    registerCommand(DefaultCommands.CoordinateTracker, {
+        iconClass: SPRITE_COORDINATE_TRACKER,
+        selected: () => false,
+        enabled: () => true,
+        invoke: (dispatch, getState, viewer, parameters) => {
+            const config = getState().config;
+            const url = `component://CoordinateTracker?${(parameters.Projection || []).map((p: string) => "projections=" + p).join("&")}`;
+            const cmdDef = buildTargetedCommand(config, parameters);
+            openUrlInTarget(DefaultCommands.Measure, cmdDef, dispatch, url, tr("COORDTRACKER", config.locale));
         }
     });
 

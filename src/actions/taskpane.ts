@@ -5,6 +5,7 @@ import {
     ReduxThunkedAction
 } from "../api/common";
 import queryString = require("query-string");
+import { isComponentUri } from "../utils/url";
 const parse = require("url-parse");
 
 /**
@@ -82,7 +83,7 @@ export function pushUrl(url: string, silent?: boolean) {
  */
 export function ensureParameters(url: string, mapName: string, session: string, locale?: string, uppercase = true, extraParameters: IInvokeUrlCommandParameter[] = []): string {
     //If this is a component URL, let it be
-    if (url.indexOf("component://") >= 0) {
+    if (isComponentUri(url)) {
         return url;
     }
     const parsed = parse(url);

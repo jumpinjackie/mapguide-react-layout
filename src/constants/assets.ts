@@ -94,6 +94,7 @@ export const ICON_ZOOM_IN_FIXED = require("../../stdassets/images/icons/zoom-in-
 export const ICON_ZOOM_IN = require("../../stdassets/images/icons/zoom-in.png");
 export const ICON_ZOOM_OUT_FIXED = require("../../stdassets/images/icons/zoom-out-fixed.png");
 
+export const SPRITE_COORDINATE_TRACKER = "coordinate-tracker";
 export const SPRITE_CONTROL_180 = "control-180";
 export const SPRITE_CONTROL = "control";
 export const SPRITE_ICON_ZOOMSELECT = "icon_zoomselect";

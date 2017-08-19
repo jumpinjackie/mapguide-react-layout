@@ -10,7 +10,8 @@ import {
     IInitErrorReducerState,
     IBranchedMapSubState,
     ClientKind,
-    InitError
+    InitError,
+    IMapViewer
 } from "../api/common";
 import { initLayout, IInitAppLayout } from "../actions/init";
 import { Error, normalizeStack } from "../components/error";
@@ -69,6 +70,7 @@ export interface IAppProps {
      */
     fusionRoot: string;
     externalBaseLayers?: IExternalBaseLayer[];
+    onInit?: (viewer: IMapViewer) => void;
 }
 
 /**
@@ -92,7 +94,6 @@ export interface IAppState {
  * @interface IAppDispatch
  */
 export interface IAppDispatch {
-    initApp: (args: any) => void;
     initLayout: (args: IInitAppLayout) => void;
     setElementVisibility: (states: TemplateActions.IElementState) => void;
 }
@@ -131,7 +132,7 @@ export class App extends React.Component<AppProps, any> {
     }
     componentDidMount() {
         const {
-            initApp,
+            onInit,
             setElementVisibility,
             initialElementVisibility,
             initLayout,
@@ -158,7 +159,8 @@ export class App extends React.Component<AppProps, any> {
             initLayout({
                 resourceId: resourceId,
                 externalBaseLayers: externalBaseLayers,
-                session: session
+                session: session,
+                onInit: onInit
             });
         }
     }

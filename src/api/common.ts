@@ -719,6 +719,13 @@ export interface IMapViewer {
      */
     getMapName(): string;
     /**
+     * Gets the current session id
+     * 
+     * @returns {string}
+     * @memberof IMapViewer
+     */
+    getSessionId(): string;
+    /**
      * Sets the current view rotation
      * 
      * @param {number} rotation 

@@ -1,5 +1,6 @@
 import * as Constants from "../constants";
 import { Client } from "../api/client";
+import * as Runtime from "../api/runtime";
 import { ReduxDispatch, Dictionary, ICommand, IMapView, CommandTarget } from "../api/common";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
 import { registerCommand, DefaultCommands } from "../api/registry/command";
@@ -27,7 +28,8 @@ import {
 } from "../api/contracts/fusion";
 import {
     IExternalBaseLayer,
-    ReduxThunkedAction
+    ReduxThunkedAction,
+    IMapViewer
 } from "../api/common";
 import { strEndsWith } from "../utils/string";
 import { IView } from "../api/contracts/common";
@@ -540,6 +542,7 @@ export interface IInitAppLayout {
     resourceId: string;
     externalBaseLayers?: IExternalBaseLayer[];
     session?: string;
+    onInit?: (viewer: IMapViewer) => void;
 }
 
 interface IInitAsyncOptions extends IInitAppLayout {
@@ -867,6 +870,12 @@ export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
                     type: Constants.INIT_APP,
                     payload
                 });
+                if (options.onInit) {
+                    const viewer = Runtime.getViewer();
+                    if (viewer) {
+                        options.onInit(viewer);
+                    }
+                }
             }).catch(err => {
                 processAndDispatchInitError(err, false, dispatch, opts);
             })

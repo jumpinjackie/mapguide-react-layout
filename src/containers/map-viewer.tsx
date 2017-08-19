@@ -439,6 +439,13 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         }
         return "";
     }
+    getSessionId(): string {
+        const { map } = this.props;
+        if (map) {
+            return map.SessionId;
+        }
+        return "";
+    }
     setViewRotation(rotation: number): void {
         const { setViewRotation } = this.props;
         if (setViewRotation) {

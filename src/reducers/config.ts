@@ -54,20 +54,27 @@ export function configReducer(state = INITIAL_STATE, action: AnyAction = { type:
                 };
                 const newState: Partial<IConfigurationReducerState> = { ...state, ...state1 };
                 if (payload.config != null && Object.keys(payload.config).length > 0) {
-                    const config: any = { ...state.viewer };
+                    const coordConfig = { ...state.coordinates };
+                    const viewerConfig = { ...state.viewer };
                     if (payload.config.imageFormat != null) {
-                        config.imageFormat = payload.config.imageFormat;
+                        viewerConfig.imageFormat = payload.config.imageFormat;
                     }
                     if (payload.config.selectionImageFormat != null) {
-                        config.selectionImageFormat = payload.config.selectionImageFormat;
+                        viewerConfig.selectionImageFormat = payload.config.selectionImageFormat;
                     }
                     if (payload.config.selectionColor != null) {
-                        config.selectionColor = payload.config.selectionColor;
+                        viewerConfig.selectionColor = payload.config.selectionColor;
                     }
                     if (payload.config.pointSelectionBuffer != null) {
-                        config.pointSelectionBuffer = payload.config.pointSelectionBuffer;
+                        viewerConfig.pointSelectionBuffer = payload.config.pointSelectionBuffer;
                     }
-                    const state2: Partial<IConfigurationReducerState> = { viewer: config };
+                    if (payload.config.coordinateProjection != null) {
+                        coordConfig.projection = payload.config.coordinateProjection;
+                    }
+                    if (payload.config.coordinateDecimals != null) {
+                        coordConfig.decimals = payload.config.coordinateDecimals;
+                    }
+                    const state2: Partial<IConfigurationReducerState> = { viewer: viewerConfig, coordinates: coordConfig };
                     return { ...newState, ...state2 };
                 } else {
                     return newState;

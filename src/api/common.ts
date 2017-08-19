@@ -1033,6 +1033,13 @@ export interface ICoordinateConfiguration {
      * @memberof ICoordinateConfiguration
      */
     decimals: number;
+    /**
+     * The display projection for these coordinates
+     * 
+     * @type {string}
+     * @memberof ICoordinateConfiguration
+     */
+    projection: string;
 }
 
 /**

@@ -43,6 +43,7 @@ import { registerStringBundle } from "../api/i18n";
 import { assertNever } from "../utils/never";
 const parse = require("url-parse");
 import proj4 from "proj4";
+import uniq = require("lodash.uniq");
 
 interface IInitAppPayload {
     activeMapName: string;
@@ -504,10 +505,15 @@ function getExtraProjectionsFromFlexLayout(appDef: ApplicationDefinition): strin
                 for (const p of ps) {
                     epsgs.push(p.split(':')[1]);
                 }
+            } else if (w.Type == "CursorPosition") {
+                const dp = w.Extension.DisplayProjection;
+                if (dp) {
+                    epsgs.push(dp.split(':')[1]);
+                }
             }
         }
     }
-    return epsgs;
+    return uniq(epsgs);
 }
 
 function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: IInitAsyncOptions): void {
@@ -765,6 +771,12 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
         for (const cont of widgetSet.Container) {
             let tbName = cont.Name;
             tbConf[tbName] = { items: convertFlexLayoutUIItems(cont.Item, widgetsByKey, opts.locale) };
+        }
+        for (const w of widgetSet.Widget) {
+            if (w.Type == "CursorPosition") {
+                config.coordinateProjection = w.Extension.DisplayProjection;
+                config.coordinateDecimals = w.Extension.Precision;
+            }
         }
     }
 

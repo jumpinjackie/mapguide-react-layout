@@ -30,6 +30,7 @@ import olImageLayer from "ol/layer/image";
 import olLayerGroup from "ol/layer/group";
 import olTileGrid from "ol/tilegrid/tilegrid";
 import olSource from "ol/source/source";
+import olImageSource from "ol/source/image";
 import olTileImageSource from "ol/source/tileimage";
 import olMapGuideSource from "ol/source/imagemapguide";
 import olOverviewMap from "ol/control/overviewmap";
@@ -283,6 +284,8 @@ export class MgLayerSet {
             tileSize: [tileWidth, tileHeight]
         });
 
+        const sources = [] as olSource[];
+
         const groupLayers = [] as olTileLayer[];
         if (map.Group) {
             for (let i = 0; i < map.Group.length; i++) {
@@ -290,15 +293,17 @@ export class MgLayerSet {
                 if (group.Type != 2 && group.Type != 3) { //BaseMap or LinkedTileSet
                     continue;
                 }
+                const tileSource = new olTileImageSource({
+                    tileGrid: tileGrid,
+                    projection: this.projection,
+                    tileUrlFunction: this.getTileUrlFunctionForGroup(resourceId, group.Name, zOrigin),
+                    wrapX: false
+                });
                 const tileLayer = new olTileLayer({
                     //name: group.Name,
-                    source: new olTileImageSource({
-                        tileGrid: tileGrid,
-                        projection: this.projection,
-                        tileUrlFunction: this.getTileUrlFunctionForGroup(resourceId, group.Name, zOrigin),
-                        wrapX: false
-                    })
+                    source: tileSource
                 });
+                sources.push(tileSource);
                 tileLayer.set("name", group.ObjectId);
                 groupLayers.push(tileLayer);
                 this.baseLayerGroups.push(tileLayer);
@@ -323,52 +328,60 @@ export class MgLayerSet {
         }
         */
 
+        const overlaySource = new olMapGuideSource({
+            projection: this.projection,
+            url: props.agentUri,
+            useOverlay: true,
+            metersPerUnit: metersPerUnit,
+            params: this.dynamicOverlayParams,
+            ratio: 1
+        });
+        sources.push(overlaySource);
         this.overlay = new olImageLayer({
             //name: "MapGuide Dynamic Overlay",
             extent: this.extent,
-            source: new olMapGuideSource({
-                projection: this.projection,
-                url: props.agentUri,
-                useOverlay: true,
-                metersPerUnit: metersPerUnit,
-                params: this.dynamicOverlayParams,
-                ratio: 1
-            })
+            source: overlaySource
+        });
+        const overviewOverlaySource = new olMapGuideSource({
+            projection: this.projection,
+            url: props.agentUri,
+            useOverlay: false,
+            metersPerUnit: metersPerUnit,
+            params: this.staticOverlayParams,
+            ratio: 1
         });
         this.overviewOverlay = new olImageLayer({
             //name: "MapGuide Dynamic Overlay",
             extent: this.extent,
-            source: new olMapGuideSource({
-                projection: this.projection,
-                url: props.agentUri,
-                useOverlay: false,
-                metersPerUnit: metersPerUnit,
-                params: this.staticOverlayParams,
-                ratio: 1
-            })
+            source: overviewOverlaySource
+        });
+        sources.push(overviewOverlaySource);
+        const selectionOverlaySource = new olMapGuideSource({
+            projection: this.projection,
+            url: props.agentUri,
+            useOverlay: true,
+            metersPerUnit: metersPerUnit,
+            params: this.selectionOverlayParams,
+            ratio: 1
         });
         this.selectionOverlay = new olImageLayer({
             //name: "MapGuide Dynamic Overlay",
             extent: this.extent,
-            source: new olMapGuideSource({
-                projection: this.projection,
-                url: props.agentUri,
-                useOverlay: true,
-                metersPerUnit: metersPerUnit,
-                params: this.selectionOverlayParams,
-                ratio: 1
-            })
+            source: selectionOverlaySource
         });
+        sources.push(selectionOverlaySource);
         if (props.externalBaseLayers != null) {
             const groupOpts: any = {
                 title: tr("EXTERNAL_BASE_LAYERS", props.locale),
                 layers: props.externalBaseLayers.map(ext => {
+                    const extSource = createExternalSource(ext);
                     const options: any = {
                         title: ext.name,
                         type: "base",
                         visible: ext.visible === true,
-                        source: createExternalSource(ext)
+                        source: extSource
                     };
+                    sources.push(extSource);
                     return new olTileLayer(options)
                 })
             };
@@ -402,16 +415,25 @@ export class MgLayerSet {
         //Listen for scale changes
         const selSource = this.selectionOverlay.getSource();
         const ovSource = this.overlay.getSource();
-        this.registerSourceEvents(selSource);
-        this.registerSourceEvents(ovSource);
+        
+        for (const src of sources) {
+            this.registerSourceEvents(src);
+        }
     }
     private registerSourceEvents(source: olSource): void {
-        source.on("imageloadstart", this.callback.incrementBusyWorker);
-        if (source instanceof olMapGuideSource) {
-            source.on("imageloaderror", this.callback.onImageError);
+        if (source instanceof olImageSource) {
+            source.on("imageloadstart", this.callback.incrementBusyWorker);
+            //onImageError is a MapGuide-specific callback
+            if (source instanceof olMapGuideSource) {
+                source.on("imageloaderror", this.callback.onImageError);
+            }
+            source.on("imageloaderror", this.callback.decrementBusyWorker);
+            source.on("imageloadend", this.callback.decrementBusyWorker);
+        } else if (source instanceof olTileImageSource) {
+            source.on("tileloadstart", this.callback.incrementBusyWorker);
+            source.on("tileloaderror", this.callback.decrementBusyWorker);
+            source.on("tileloadend", this.callback.decrementBusyWorker);
         }
-        source.on("imageloaderror", this.callback.decrementBusyWorker);
-        source.on("imageloadend", this.callback.decrementBusyWorker);
     }
     public getLayersForOverviewMap(): olLayerBase[] {
         //NOTE: MapGuide does not like concurrent map rendering operations of the same mapname/session pair, which

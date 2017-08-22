@@ -23,7 +23,9 @@ export const INITIAL_STATE: IConfigurationReducerState = {
         imageFormat: "PNG",
         selectionImageFormat: "PNG8",
         selectionColor: "0x0000FFAA",
-        pointSelectionBuffer: 2
+        pointSelectionBuffer: 2,
+        loadIndicatorPositioning: "top",
+        loadIndicatorColor: "rgba(34, 153, 221, 0.9)",
     },
     capabilities: {
         hasTaskPane: false,

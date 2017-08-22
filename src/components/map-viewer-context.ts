@@ -422,17 +422,17 @@ export class MgLayerSet {
     }
     private registerSourceEvents(source: olSource): void {
         if (source instanceof olImageSource) {
-            source.on("imageloadstart", this.callback.incrementBusyWorker);
+            source.on("imageloadstart", this.callback.addImageLoading);
             //onImageError is a MapGuide-specific callback
             if (source instanceof olMapGuideSource) {
                 source.on("imageloaderror", this.callback.onImageError);
             }
-            source.on("imageloaderror", this.callback.decrementBusyWorker);
-            source.on("imageloadend", this.callback.decrementBusyWorker);
+            source.on("imageloaderror", this.callback.addImageLoaded);
+            source.on("imageloadend", this.callback.addImageLoaded);
         } else if (source instanceof olTileImageSource) {
-            source.on("tileloadstart", this.callback.incrementBusyWorker);
-            source.on("tileloaderror", this.callback.decrementBusyWorker);
-            source.on("tileloadend", this.callback.decrementBusyWorker);
+            source.on("tileloadstart", this.callback.addImageLoading);
+            source.on("tileloaderror", this.callback.addImageLoaded);
+            source.on("tileloadend", this.callback.addImageLoaded);
         }
     }
     public getLayersForOverviewMap(): olLayerBase[] {
@@ -617,6 +617,8 @@ export class MgLayerSet {
 export interface IMapViewerContextCallback {
     incrementBusyWorker(): void;
     decrementBusyWorker(): void;
+    addImageLoading(): void;
+    addImageLoaded(): void;
     onImageError(e: GenericEvent): void;
     onSessionExpired(): void;
     getSelectableLayers(): string[];

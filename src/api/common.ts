@@ -1158,6 +1158,8 @@ export interface ITemplateReducerState {
     selectionPanelVisible: boolean;
 }
 
+export type MapLoadIndicatorPositioning = "top" | "bottom";
+
 /**
  * Describes the reducer state branch for various configuration properties
  *
@@ -1250,6 +1252,18 @@ export interface IConfigurationReducerState {
          * @type {number}
          */
         pointSelectionBuffer: number;
+        /**
+         * The position of the map loading indicator
+         * 
+         * @type {MapLoadIndicatorPositioning}
+         */
+        loadIndicatorPositioning: MapLoadIndicatorPositioning;
+        /**
+         * The color of the map loading indicator. This is an valid CSS color expression
+         * 
+         * @type {string}
+         */
+        loadIndicatorColor: string;
     },
     /**
      * Indicates if view rotation is enabled

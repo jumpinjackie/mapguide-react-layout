@@ -30,7 +30,8 @@ import {
     RefreshMode,
     ClientKind,
     NOOP,
-    LayerTransparencySet
+    LayerTransparencySet,
+    MapLoadIndicatorPositioning
 } from "../api/common";
 import {
     IApplicationContext,
@@ -126,6 +127,8 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
     hideGroups: string[] | undefined;
     hideLayers: string[] | undefined;
     layerTransparency: LayerTransparencySet;
+    loadIndicatorPosition: MapLoadIndicatorPositioning;
+    loadIndicatorColor: string;
 }
 
 /**
@@ -226,7 +229,40 @@ class SessionKeepAlive {
     }
 }
 
-function isMiddleMouseDownEvent(e: MouseEvent) {
+interface IMapLoadIndicatorProps {
+    loading: number;
+    loaded: number;
+    color: string;
+    position: MapLoadIndicatorPositioning;
+}
+
+const MapLoadIndicator = (props: IMapLoadIndicatorProps) => {
+    const { loaded, loading, color, position } = props;
+    let visibility = "visible";
+    let width = (loaded / loading * 100).toFixed(1) + "%";
+    if (loaded === loading) {
+        visibility = "hidden";
+        width = "0";
+    }
+    const style: React.CSSProperties = { 
+        position: "absolute",
+        zIndex: 50,
+        visibility: visibility,
+        left: 0,
+        height: 5,
+        width: width,
+        background: color,
+        transition: "width 250ms"
+    };
+    if (position == "top") {
+        style.top = 0;
+    } else {
+        style.bottom = 0;
+    }
+    return <div style={style} />;
+}
+
+function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4 ));
 }
 
@@ -239,6 +275,14 @@ function cloneExtent(bounds: Bounds): Bounds {
     ];
 }
 
+export interface IMapViewerBaseState {
+    shiftKey: boolean;
+    isMouseDown: boolean;
+    digitizingType: string;
+    loading: number;
+    loaded: number;
+}
+
 /**
  * The base map viewer component
  *
@@ -247,7 +291,7 @@ function cloneExtent(bounds: Bounds): Bounds {
  * @extends {React.Component<IMapViewerBaseProps, any>}
  */
 @ContextMenuTarget
-export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
+export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<IMapViewerBaseState>> {
     private fnMouseUp: GenericEventHandler;
     private fnMouseDown: GenericEventHandler;
     /**
@@ -298,7 +342,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this.state = {
             shiftKey: false,
             isMouseDown: false,
-            digitizingType: null
+            digitizingType: undefined,
+            loaded: 0,
+            loading: 0
         };
     }
     /**
@@ -436,7 +482,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         if (this._activeDrawInteraction) {
             this._map.removeInteraction(this._activeDrawInteraction);
             this._activeDrawInteraction = null;
-            this.setState({ digitizingType: null });
+            this.setState({ digitizingType: undefined });
         }
     }
     public cancelDigitization(): void {
@@ -509,6 +555,21 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             this.props.onMouseCoordinateChanged(e.coordinate);
         }
     }
+    private addImageLoading() {
+        const { loading } = this.state;
+        this.setState({ loading: (loading || 0) + 1 });
+        this.incrementBusyWorker();
+    }
+    private addImageLoaded() {
+        const { loaded, loading } = this.state;
+        const newLoadedCount = (loaded || 0) + 1;
+        if (loading === newLoadedCount) {
+            this.setState({ loaded: 0, loading: 0 });
+        } else {
+            this.setState({ loaded: newLoadedCount });
+        }
+        this.decrementBusyWorker();
+    }
     private incrementBusyWorker() {
         this._busyWorkers++;
         this.props.onBusyLoading(this._busyWorkers);
@@ -540,6 +601,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         return {
             incrementBusyWorker: this.incrementBusyWorker.bind(this),
             decrementBusyWorker: this.decrementBusyWorker.bind(this),
+            addImageLoaded: this.addImageLoaded.bind(this),
+            addImageLoading: this.addImageLoading.bind(this),
             onImageError: this.onImageError.bind(this),
             onSessionExpired: this.onSessionExpired.bind(this),
             getSelectableLayers: this.getSelectableLayers.bind(this),
@@ -794,7 +857,10 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         if (map) {
             style.backgroundColor = `#${map.BackgroundColor.substring(2)}`;
         }
-        return <div className="map-viewer-component" style={style} onMouseDown={this.fnMouseDown} onMouseUp={this.fnMouseUp} />;
+        const { loading, loaded } = this.state;
+        return <div className="map-viewer-component" style={style} onMouseDown={this.fnMouseDown} onMouseUp={this.fnMouseUp}>
+            <MapLoadIndicator loaded={loaded || 0} loading={loading || 0} position={this.props.loadIndicatorPosition} color={this.props.loadIndicatorColor} />
+        </div>;
     }
     componentWillUnmount() {
 

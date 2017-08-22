@@ -283,6 +283,8 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                       selectableLayerNames={selectableLayerNames}
                                       contextMenu={childItems}
                                       overviewMapElementSelector={overviewMapElementSelector}
+                                      loadIndicatorPosition={config.viewer.loadIndicatorPositioning}
+                                      loadIndicatorColor={config.viewer.loadIndicatorColor}
                                       layerTransparency={layerTransparency || Constants.EMPTY_OBJECT}
                                       onBeginDigitization={this.fnBeginDigitization}
                                       onSessionExpired={this.fnSessionExpired}

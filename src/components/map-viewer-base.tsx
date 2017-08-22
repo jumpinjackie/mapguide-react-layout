@@ -527,7 +527,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
     }
     private onImageError(e: GenericEvent) {
-        this.decrementBusyWorker();
         this._keepAlive.lastTry().catch(err => {
             if (isSessionExpiredError(err)) {
                 this.onSessionExpired();

@@ -201,20 +201,20 @@ export interface IMapViewerContextProps {
 }
 
 export class MgLayerSet {
-    baseLayerGroups: TileLayer[];
-    overlay: ImageLayer;
-    overviewOverlay: ImageLayer;
-    selectionOverlay: ImageLayer;
-    baseLayerGroup: LayerGroup;
-    dynamicOverlayParams: any;
-    staticOverlayParams: any;
-    selectionOverlayParams: any;
+    private baseLayerGroups: TileLayer[];
+    private overlay: ImageLayer;
+    private overviewOverlay: ImageLayer;
+    private selectionOverlay: ImageLayer;
+    private baseLayerGroup: LayerGroup;
+    private dynamicOverlayParams: any;
+    private staticOverlayParams: any;
+    private selectionOverlayParams: any;
     projection: string;
     dpi: number;
     extent: ol.Extent;
-    allLayers: LayerBase[];
-    inPerUnit: number;
-    resourceId: string;
+    private allLayers: LayerBase[];
+    private inPerUnit: number;
+    private resourceId: string;
     view: View;
     private callback: IMapViewerContextCallback;
     constructor(props: IMapViewerContextProps, callback: IMapViewerContextCallback) {
@@ -401,12 +401,14 @@ export class MgLayerSet {
         //Listen for scale changes
         const selSource = this.selectionOverlay.getSource();
         const ovSource = this.overlay.getSource();
-        selSource.on("imageloadstart", this.callback.incrementBusyWorker);
-        ovSource.on("imageloadstart", this.callback.incrementBusyWorker);
-        selSource.on("imageloaderror", this.callback.onImageError);
-        ovSource.on("imageloaderror", this.callback.onImageError);
-        selSource.on("imageloadend", this.callback.decrementBusyWorker);
-        ovSource.on("imageloadend", this.callback.decrementBusyWorker);
+        this.registerSourceEvents(selSource);
+        this.registerSourceEvents(ovSource);
+    }
+    private registerSourceEvents(source: ol.source.Image): void {
+        source.on("imageloadstart", this.callback.incrementBusyWorker);
+        source.on("imageloaderror", this.callback.onImageError);
+        source.on("imageloaderror", this.callback.decrementBusyWorker);
+        source.on("imageloadend", this.callback.decrementBusyWorker);
     }
     public getLayersForOverviewMap(): LayerBase[] {
         //NOTE: MapGuide does not like concurrent map rendering operations of the same mapname/session pair, which

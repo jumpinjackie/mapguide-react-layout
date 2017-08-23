@@ -106,6 +106,10 @@ export function configReducer(state = INITIAL_STATE, action: AnyAction = { type:
                     return { ...state, ...state1 };
                 }
             }
+        case Constants.MAP_SET_VIEW_SIZE_UNITS:
+            {
+                return { ...state, ...{ viewSizeUnits: action.payload } };
+            }
     }
     return state;
 }

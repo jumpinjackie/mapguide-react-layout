@@ -67,5 +67,5 @@ export const ViewSize = (props: IViewSizeProps) => {
         }
     }
     //TODO: Support format string extension parameter from fusion widget
-    return <div className="component-view-size">{gw} x {gh} ({uom.abbreviation})</div>;
+    return <div className="component-view-size">{gw} x {gh} ({uom.abbreviation()})</div>;
 };

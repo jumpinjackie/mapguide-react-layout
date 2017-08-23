@@ -82,7 +82,7 @@ export interface UnitInfo {
     unitsPerMeter: number;
     metersPerUnit: number;
     name: UnitName;
-    abbreviation: string;
+    abbreviation: () => JSX.Element | string;
 }
 
 /**

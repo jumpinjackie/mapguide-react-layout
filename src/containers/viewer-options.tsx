@@ -6,12 +6,14 @@ import {
     IViewerReducerState,
     IConfigurationReducerState,
     LayerTransparencySet,
-    IExternalBaseLayer
+    IExternalBaseLayer,
+    UnitOfMeasure
 } from "../api/common";
 import * as MapActions from "../actions/map";
 import { tr } from "../api/i18n";
 import { Slider } from "@blueprintjs/core";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from "../constants/index";
+import { getUnits } from "../utils/units";
 
 export interface IViewerOptionsProps {
 
@@ -28,6 +30,7 @@ export interface IViewerOptionsState {
 export interface IViewerOptionsDispatch {
     toggleMapTips: (enabled: boolean) => void;
     setLayerTransparency: (mapName: string, id: string, opacity: number) => void;
+    setViewSizeDisplayUnits: (units: UnitOfMeasure) => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IViewerOptionsProps): Partial<IViewerOptionsState> {
@@ -51,7 +54,8 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IViewerOp
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IViewerOptionsDispatch> {
     return {
         toggleMapTips: (enabled) => dispatch(MapActions.setFeatureTooltipsEnabled(enabled)),
-        setLayerTransparency: (mapName, id, opacity) => dispatch(MapActions.setLayerTransparency(mapName, id, opacity))
+        setLayerTransparency: (mapName, id, opacity) => dispatch(MapActions.setLayerTransparency(mapName, id, opacity)),
+        setViewSizeDisplayUnits: (units) => dispatch(MapActions.setViewSizeUnits(units))
     };
 }
 
@@ -62,12 +66,14 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
     private fnBaseOpacityChanged: (value: number) => void;
     private fnMgOpacityChanged: (value: number) => void;
     private fnMgSelOpacityChanged: (value: number) => void;
+    private fnViewSizeUnitsChanged: GenericEventHandler;
     constructor(props: ViewerOptionsProps) {
         super(props);
         this.fnFeatureTooltipsChanged = this.onFeatureTooltipsChanged.bind(this);
         this.fnBaseOpacityChanged = this.onBaseOpacityChanged.bind(this);
         this.fnMgOpacityChanged = this.onMgOpacityChanged.bind(this);
         this.fnMgSelOpacityChanged = this.onMgSelOpacityChanged.bind(this);
+        this.fnViewSizeUnitsChanged = this.onViewSizeUnitsChanged.bind(this);
     }
     private onBaseOpacityChanged(value: number) {
         const { setLayerTransparency, mapName } = this.props;
@@ -85,6 +91,12 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
         const { setLayerTransparency, mapName } = this.props;
         if (mapName && setLayerTransparency) {
             setLayerTransparency(mapName, LAYER_ID_MG_SEL_OVERLAY, value);
+        }
+    }
+    private onViewSizeUnitsChanged(e: GenericEvent) {
+        const { setViewSizeDisplayUnits } = this.props;
+        if (setViewSizeDisplayUnits) {
+            setViewSizeDisplayUnits(e.target.value);
         }
     }
     private onFeatureTooltipsChanged(e: GenericEvent) {
@@ -147,6 +159,19 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
                     </div>
                 </label>
             </fieldset>
+            {(() => {
+                if (config) {
+                    const units = getUnits();
+                    return <label className="pt-label">
+                        {tr("MAP_SIZE_DISPLAY_UNITS", locale)}
+                        <div className="pt-select">
+                            <select value={config.viewSizeUnits} onChange={this.fnViewSizeUnitsChanged}>
+                                {units.map(u => <option key={u[0]} value={u[0]}>{u[1]}</option>)}
+                            </select>
+                        </div>
+                    </label>;
+                }
+            })()}
         </div>;
     }
 }

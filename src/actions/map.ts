@@ -7,7 +7,8 @@ import {
     ReduxThunkedAction,
     getCurrentView,
     getRuntimeMap,
-    getSelectionSet
+    getSelectionSet,
+    UnitOfMeasure
 } from "../api/common";
 import { getViewer } from "../api/runtime";
 import { areViewsCloseToEqual } from "../components/map-viewer-base";
@@ -319,7 +320,7 @@ export function setBusyCount(busyCount: number): ReduxAction {
  * @param {string} layerName The name of the external base layer to set as active
  * @returns
  */
-export function setBaseLayer(mapName: string, layerName: string) {
+export function setBaseLayer(mapName: string, layerName: string): ReduxAction {
     return {
         type: Constants.MAP_SET_BASE_LAYER,
         payload: {
@@ -337,7 +338,7 @@ export function setBaseLayer(mapName: string, layerName: string) {
  * @param {number} scale The scale to set
  * @returns
  */
-export function setScale(mapName: string, scale: number) {
+export function setScale(mapName: string, scale: number): ReduxAction {
     const viewer = getViewer();
     let resolution;
     if (viewer) {
@@ -361,7 +362,7 @@ export function setScale(mapName: string, scale: number) {
  * @param {*} coord The current mouse coordinates
  * @returns
  */
-export function setMouseCoordinates(mapName: string, coord: any) {
+export function setMouseCoordinates(mapName: string, coord: any): ReduxAction {
     return {
         type: Constants.UPDATE_MOUSE_COORDINATES,
         payload: {
@@ -380,7 +381,7 @@ export function setMouseCoordinates(mapName: string, coord: any) {
  * @param {number} opacity A value between 0 and 1. 1 - Fully Opaque, 0 - Fully Transparent
  * @returns 
  */
-export function setLayerTransparency(mapName: string, layerName: string, opacity: number) {
+export function setLayerTransparency(mapName: string, layerName: string, opacity: number): ReduxAction {
     return {
         type: Constants.MAP_SET_LAYER_TRANSPARENCY,
         payload: {
@@ -392,13 +393,27 @@ export function setLayerTransparency(mapName: string, layerName: string, opacity
 }
 
 /**
+ * Sets the units for the map view size display
+ * 
+ * @export
+ * @param {UnitOfMeasure} unit 
+ * @returns {ReduxAction} 
+ */
+export function setViewSizeUnits(unit: UnitOfMeasure): ReduxAction {
+    return {
+        type: Constants.MAP_SET_VIEW_SIZE_UNITS,
+        payload: unit
+    };
+}
+
+/**
  * Goes back to the previous view on the navigation stack
  *
  * @export
  * @param {string} mapName The name of the current runtime map
  * @returns
  */
-export function previousView(mapName: string) {
+export function previousView(mapName: string): ReduxAction {
     return {
         type: Constants.MAP_PREVIOUS_VIEW,
         payload: {
@@ -414,7 +429,7 @@ export function previousView(mapName: string) {
  * @param {string} mapName The name of the current runtime amp
  * @returns
  */
-export function nextView(mapName: string) {
+export function nextView(mapName: string): ReduxAction {
     return {
         type: Constants.MAP_NEXT_VIEW,
         payload: {
@@ -430,7 +445,7 @@ export function nextView(mapName: string) {
  * @param {ActiveMapTool} tool The active map tool command
  * @returns
  */
-export function setActiveTool(tool: ActiveMapTool) {
+export function setActiveTool(tool: ActiveMapTool): ReduxAction {
     return {
         type: Constants.MAP_SET_ACTIVE_TOOL,
         payload: tool
@@ -444,7 +459,7 @@ export function setActiveTool(tool: ActiveMapTool) {
  * @param {string} mapName The name of the runtime map to set as active
  * @returns
  */
-export function setActiveMap(mapName: string) {
+export function setActiveMap(mapName: string): ReduxAction {
     return {
         type: Constants.MAP_SET_ACTIVE_MAP,
         payload: mapName
@@ -458,7 +473,7 @@ export function setActiveMap(mapName: string) {
  * @param {boolean} enabled
  * @returns
  */
-export function setFeatureTooltipsEnabled(enabled: boolean) {
+export function setFeatureTooltipsEnabled(enabled: boolean): ReduxAction {
     return {
         type: Constants.MAP_SET_MAPTIP,
         payload: enabled
@@ -472,7 +487,7 @@ export function setFeatureTooltipsEnabled(enabled: boolean) {
  * @param {number} rotation 
  * @returns 
  */
-export function setViewRotation(rotation: number) {
+export function setViewRotation(rotation: number): ReduxAction {
     return {
         type: Constants.MAP_SET_VIEW_ROTATION,
         payload: rotation
@@ -485,7 +500,7 @@ export function setViewRotation(rotation: number) {
  * @export
  * @param {boolean} enabled 
  */
-export function setViewRotationEnabled(enabled: boolean) {
+export function setViewRotationEnabled(enabled: boolean): ReduxAction {
     return {
         type: Constants.MAP_SET_VIEW_ROTATION_ENABLED,
         payload: enabled

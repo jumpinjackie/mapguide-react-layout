@@ -102,6 +102,7 @@ export interface ILocalizedMessages {
     TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING: string;
     COORDTRACKER: string;
     COORDTRACKER_NO_PROJECTIONS: string;
+    MAP_SIZE_DISPLAY_UNITS: string;
 }
 
 const STRINGS_EN: ILocalizedMessages = {
@@ -207,7 +208,8 @@ const STRINGS_EN: ILocalizedMessages = {
     "TASK_PANE_CONTENT_FOR_INACTIVE_MAP_TITLE": "Invalid Task Pane Content",
     "TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING": "The current task pane content is not applicable for the current active map. If the content was loaded from a command, re-run that command",
     "COORDTRACKER": "Coordinate Tracker",
-    "COORDTRACKER_NO_PROJECTIONS": "You have no projections configured for this component"
+    "COORDTRACKER_NO_PROJECTIONS": "You have no projections configured for this component",
+    "MAP_SIZE_DISPLAY_UNITS": "Map view size display units"
 };
 
 export default STRINGS_EN;

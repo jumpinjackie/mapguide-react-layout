@@ -153,9 +153,9 @@
     "@types/react" "*"
     redux "^3.6.0"
 
-"@types/react@*", "@types/react@16.0.3":
-  version "16.0.3"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.0.3.tgz#494d5aa71fc071be6eb2a8d3d489da529b25294a"
+"@types/react@*", "@types/react@16.0.4":
+  version "16.0.4"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.0.4.tgz#5603e4820c5b00af80693feaedc5862a1d1f2dc1"
 
 "@types/shelljs@^0.7.0":
   version "0.7.4"

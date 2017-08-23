@@ -1,6 +1,11 @@
 export interface ILocalizedMessages {
     NONE: string;
     ERROR: string;
+    WARNING: string;
+    INIT_WARNINGS_FOUND: string;
+    INIT_WARNING_BING_API_KEY_REQD: string;
+    INIT_WARNING_BING_UNKNOWN_LAYER: string;
+    INIT_WARNING_UNSUPPORTED_GOOGLE_MAPS: string;
     LAYER_TRANSPARENCY: string;
     LAYER_ID_BASE: string;
     LAYER_ID_MG_BASE: string;
@@ -103,11 +108,18 @@ export interface ILocalizedMessages {
     COORDTRACKER: string;
     COORDTRACKER_NO_PROJECTIONS: string;
     MAP_SIZE_DISPLAY_UNITS: string;
+    OK: string;
 }
 
 const STRINGS_EN: ILocalizedMessages = {
+    "OK": "OK",
     "NONE": "NONE",
     "ERROR": "Error",
+    "WARNING": "Warning",
+    "INIT_WARNINGS_FOUND": "The following warnings were encountered loading the viewer",
+    "INIT_WARNING_BING_API_KEY_REQD": "A Bing Maps API key is required. Sign up for an API key at http://www.bingmapsportal.com/",
+    "INIT_WARNING_BING_UNKNOWN_LAYER": "Unknown bing maps layer type {type}. This layer was skipped",
+    "INIT_WARNING_UNSUPPORTED_GOOGLE_MAPS": "This viewer does not support Google Maps base layers",
     "LAYER_TRANSPARENCY": "Layer Transparency",
     "LAYER_ID_BASE": "Base Layers",
     "LAYER_ID_MG_BASE": "MapGuide Map",

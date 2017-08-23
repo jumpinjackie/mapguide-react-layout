@@ -22,6 +22,7 @@ import {
 } from "../api/common";
 import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../components/accordion";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
+import InitWarningDisplay from "../containers/init-warning-display";
 
 function maroonTemplateReducer(state: ITemplateReducerState, action: ReduxAction): ITemplateReducerState {
     const data: boolean | TemplateActions.IElementState | undefined = action.payload;
@@ -247,6 +248,7 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
             <ViewerApiShim />
             <ModalLauncher />
             <FlyoutRegionContainer />
+            <InitWarningDisplay />
         </div>;
     }
 }

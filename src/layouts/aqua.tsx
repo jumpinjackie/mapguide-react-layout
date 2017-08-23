@@ -23,6 +23,7 @@ import {
 import * as Constants from "../constants";
 import * as TemplateActions from "../actions/template";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
+import InitWarningDisplay from "../containers/init-warning-display";
 
 function aquaTemplateReducer(state: ITemplateReducerState, action: ReduxAction): ITemplateReducerState {
     const data: boolean | TemplateActions.IElementState | undefined = action.payload;
@@ -274,6 +275,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
             <ViewerApiShim />
             <ModalLauncher />
             <FlyoutRegionContainer />
+            <InitWarningDisplay />
         </div>;
     }
 }

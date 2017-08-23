@@ -15,6 +15,7 @@ import {
     IConfigurationReducerState,
     IViewerCapabilities
 } from "../api/common";
+import InitWarningDisplay from "../containers/init-warning-display";
 
 const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;
@@ -23,13 +24,15 @@ export interface IAjaxViewerLayoutState {
     map: RuntimeMap;
     config: IConfigurationReducerState;
     capabilities: IViewerCapabilities;
+    initWarnings: string[];
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>): Partial<IAjaxViewerLayoutState> {
     return {
         config: state.config,
         map: getRuntimeMap(state),
-        capabilities: state.config.capabilities
+        capabilities: state.config.capabilities,
+        initWarnings: state.initError.warnings
     };
 }
 
@@ -167,6 +170,7 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
             <ViewerApiShim />
             <ModalLauncher />
             <FlyoutRegionContainer />
+            <InitWarningDisplay />
         </div>;
     }
 }

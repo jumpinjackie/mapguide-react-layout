@@ -1,15 +1,25 @@
 import * as Constants from "../constants";
 import { IInitErrorReducerState } from "../api/common";
 import { AnyAction } from "redux";
+import uniq = require("lodash.uniq");
 
 export const INITIAL_STATE: IInitErrorReducerState = {
     options: {},
     error: undefined,
-    includeStack: true
+    includeStack: true,
+    warnings: []
 };
 
 export function initErrorReducer(state = INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
     switch (action.type) {
+        case Constants.INIT_ACKNOWLEDGE_WARNINGS:
+            {
+                return { ...state, ...{ warnings: [] } };
+            }
+        case Constants.INIT_APP:
+            {
+                return { ...state, ...{ warnings: uniq(action.payload.warnings) } }
+            }
         case Constants.INIT_ERROR:
             {
                 const payload: any | null = action.payload;

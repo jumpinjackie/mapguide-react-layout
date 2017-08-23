@@ -22,6 +22,7 @@ import { Tabs2, Tab2 } from "@blueprintjs/core";
 import * as Constants from "../constants";
 import * as TemplateActions from "../actions/template";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
+import InitWarningDisplay from "../containers/init-warning-display";
 
 function limegoldTemplateReducer(state: ITemplateReducerState, action: ReduxAction): ITemplateReducerState {
     const data: boolean | TemplateActions.IElementState | undefined = action.payload;
@@ -253,6 +254,7 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
             <ViewerApiShim />
             <ModalLauncher />
             <FlyoutRegionContainer />
+            <InitWarningDisplay />
         </div>;
     }
 }

@@ -1422,6 +1422,13 @@ export interface IInitErrorReducerState {
      * @memberof IInitErrorReducerState
      */
     includeStack: boolean;
+    /**
+     * Any warnings that were encountered during initialization
+     * 
+     * @type {string[]}
+     * @memberof IInitErrorReducerState
+     */
+    warnings: string[];
 }
 
 /**

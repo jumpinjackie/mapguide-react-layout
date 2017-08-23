@@ -16,6 +16,7 @@ import {
     IViewerCapabilities,
     ITemplateReducerState
 } from "../api/common";
+import InitWarningDisplay from "../containers/init-warning-display";
 
 const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;
@@ -354,6 +355,7 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<S
             <ViewerApiShim />
             <ModalLauncher />
             <FlyoutRegionContainer />
+            <InitWarningDisplay />
             <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={config.locale} />
         </div>;
     }

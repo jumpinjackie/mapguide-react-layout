@@ -22,6 +22,7 @@ import { Tabs2, Tab2 } from "@blueprintjs/core";
 import * as Constants from "../constants";
 import * as TemplateActions from "../actions/template";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
+import InitWarningDisplay from "../containers/init-warning-display";
 
 function turquoiseYellowTemplateReducer(state: ITemplateReducerState, action: ReduxAction): ITemplateReducerState {
     const data: boolean | TemplateActions.IElementState | undefined = action.payload;
@@ -252,6 +253,7 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
             <ViewerApiShim />
             <ModalLauncher />
             <FlyoutRegionContainer />
+            <InitWarningDisplay />
         </div>;
     }
 }

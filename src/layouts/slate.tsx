@@ -22,6 +22,7 @@ import * as Constants from "../constants";
 import * as TemplateActions from "../actions/template";
 import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../components/accordion";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
+import InitWarningDisplay from "../containers/init-warning-display";
 
 function slateTemplateReducer(state: ITemplateReducerState, action: ReduxAction): ITemplateReducerState {
     const data: boolean | TemplateActions.IElementState | undefined = action.payload;
@@ -84,6 +85,7 @@ export interface ISlateTemplateLayoutState {
     showLegend: boolean;
     showTaskPane: boolean;
     showSelection: boolean;
+    initWarnings: string[];
 }
 
 export interface ISlateTemplateLayoutDispatch {
@@ -97,7 +99,8 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<ISlateTemp
         capabilities: state.config.capabilities,
         showLegend: state.template.legendVisible,
         showTaskPane: state.template.taskPaneVisible,
-        showSelection: state.template.selectionPanelVisible
+        showSelection: state.template.selectionPanelVisible,
+        initWarnings: state.initError.warnings
     };
 }
 
@@ -246,6 +249,7 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
             <ViewerApiShim />
             <ModalLauncher />
             <FlyoutRegionContainer />
+            <InitWarningDisplay />
         </div>;
     }
 }

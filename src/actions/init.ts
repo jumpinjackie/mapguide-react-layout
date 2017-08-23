@@ -29,7 +29,8 @@ import {
 import {
     IExternalBaseLayer,
     ReduxThunkedAction,
-    IMapViewer
+    IMapViewer,
+    ReduxAction
 } from "../api/common";
 import { strEndsWith } from "../utils/string";
 import { IView } from "../api/contracts/common";
@@ -61,7 +62,8 @@ interface IInitAppPayload {
         hasToolbar: boolean,
         hasViewSize: boolean
     },
-    toolbars: any
+    toolbars: any;
+    warnings: string[]
 }
 
 function isUIWidget(widget: any): widget is UIWidget {
@@ -317,7 +319,7 @@ type MapInfo = {
     externalBaseLayers: IExternalBaseLayer[];
 }
 
-function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<RuntimeMap>, config: any): Dictionary<MapInfo> {
+function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<RuntimeMap>, config: any, warnings: string[]): Dictionary<MapInfo> {
     const dict: Dictionary<MapInfo> = {};
     const mgGroups: Dictionary<MapGroup> = {};
     if (appDef.MapSet) {
@@ -350,6 +352,9 @@ function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<Runtime
                     }
                 } else {
                     switch (map.Type) {
+                        case "Google":
+                            warnings.push(tr("INIT_WARNING_UNSUPPORTED_GOOGLE_MAPS", config.locale));
+                            break;
                         case "VirtualEarth":
                             {
                                 //HACK: De-arrayification of arbitrary extension elements
@@ -372,7 +377,7 @@ function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<Runtime
                                         break;
                                     default:
                                         bAdd = false;
-                                        logger.warn(`Unknown bing maps layer type ${type}. Skipping this layer`);
+                                        warnings.push(tr("INIT_WARNING_BING_UNKNOWN_LAYER", config.locale, { type: type }));
                                         break;
                                 }
 
@@ -380,7 +385,7 @@ function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<Runtime
                                     options.key = appDef.Extension.BingMapKey;
                                 } else {
                                     bAdd = false;
-                                    logger.warn(`A Bing Maps API key is required. Sign up for an API key at http://www.bingmapsportal.com/`);
+                                    warnings.push(tr("INIT_WARNING_BING_API_KEY_REQD", config.locale));
                                 }
 
                                 if (bAdd) {
@@ -556,9 +561,10 @@ interface IInitAsyncOptions extends IInitAppLayout {
     locale: string;
 }
 
-async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, opts: IInitAsyncOptions, res: TLayout, mapDefSelector: (res: TLayout) => string[], projectionSelector: (res: TLayout) => string[]): Promise<Dictionary<RuntimeMap>> {
+async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, opts: IInitAsyncOptions, res: TLayout, mapDefSelector: (res: TLayout) => string[], projectionSelector: (res: TLayout) => string[]): Promise<[Dictionary<RuntimeMap>, string[]]> {
     const mapDefs = mapDefSelector(res);
     const mapPromises: Promise<RuntimeMap>[] = [];
+    const warnings = [] as string[];
     for (const mapDef of mapDefs) {
         const promise = client.createRuntimeMap({
             mapDefinition: mapDef,
@@ -592,11 +598,11 @@ async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, 
     for (const map of maps) {
         mapsByName[map.Name] = map;
     }
-    return mapsByName;
+    return [mapsByName, warnings];
 }
 
 async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOptions, session: string, client: Client): Promise<IInitAppPayload> {
-    const mapsByName = await createRuntimeMapsAsync(client, session, opts, webLayout, wl => [ wl.Map.ResourceId ], wl => [])
+    const [mapsByName, warnings] = await createRuntimeMapsAsync(client, session, opts, webLayout, wl => [ wl.Map.ResourceId ], wl => [])
     const cmdsByKey: any = {};
     //Register any InvokeURL and Search commands
     for (const cmd of webLayout.CommandSet.Command) {
@@ -704,12 +710,13 @@ async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOpti
             hasToolbar: webLayout.ToolBar.Visible,
             hasViewSize: webLayout.StatusBar.Visible
         },
-        toolbars: prepareSubMenus(menus)
+        toolbars: prepareSubMenus(menus),
+        warnings: warnings
     };
 }
 
 async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsyncOptions, session: string, client: Client): Promise<IInitAppPayload> {
-    const mapsByName = await createRuntimeMapsAsync(client, session, opts, appDef, fl => getMapDefinitionsFromFlexLayout(fl), fl => getExtraProjectionsFromFlexLayout(fl));
+    const [mapsByName, warnings] = await createRuntimeMapsAsync(client, session, opts, appDef, fl => getMapDefinitionsFromFlexLayout(fl), fl => getExtraProjectionsFromFlexLayout(fl));
     let initialTask: string;
     let taskPane: Widget|undefined;
     let viewSize: Widget|undefined;
@@ -786,7 +793,7 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
         }
     }
 
-    const maps = setupMaps(appDef, mapsByName, config);
+    const maps = setupMaps(appDef, mapsByName, config, warnings);
 
     if (taskPane) {
         hasTaskBar = true; //Fusion flex layouts can't control the visiblity of this
@@ -825,7 +832,8 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
             hasToolbar: (Object.keys(tbConf).length > 0),
             hasViewSize: (viewSize != null)
         },
-        toolbars: prepareSubMenus(tbConf)
+        toolbars: prepareSubMenus(tbConf),
+        warnings: warnings
     };
 }
 
@@ -900,4 +908,10 @@ export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
             })
         }
     };
+}
+
+export function acknowledgeInitWarnings(): ReduxAction {
+    return {
+        type: Constants.INIT_ACKNOWLEDGE_WARNINGS
+    }
 }

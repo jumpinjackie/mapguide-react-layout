@@ -66,6 +66,7 @@ export interface IMapViewerContainerDispatch {
     queryMapFeatures: (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => void;
     setViewRotation: (rotation: number) => void;
     setViewRotationEnabled: (enabled: boolean) => void;
+    mapResized: (width: number, height: number) => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewerContainerProps): Partial<IMapViewerContainerState> {
@@ -123,7 +124,8 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMapViewerContaine
         showModalComponent: (options) => dispatch(showModalComponent(options)),
         queryMapFeatures: (mapName, options) => dispatch(queryMapFeatures(mapName, options)),
         setViewRotation: (rotation) => dispatch(MapActions.setViewRotation(rotation)),
-        setViewRotationEnabled: (enabled) => dispatch(MapActions.setViewRotationEnabled(enabled))
+        setViewRotationEnabled: (enabled) => dispatch(MapActions.setViewRotationEnabled(enabled)),
+        mapResized: (width, height) => dispatch(MapActions.mapResized(width, height))
     };
 }
 
@@ -134,6 +136,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     private fnMapViewerMounted: (component: MapViewerBase) => void;
     private inner: MapViewerBase;
     private olFactory: OLFactory;
+    private fnMapResized: (size: [number, number]) => void;
     private fnRequestZoomToView: (view: IMapView) => void;
     private fnQueryMapFeatures: (options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) => void;
     private fnBusyLoading: (busyCount: number) => void;
@@ -145,6 +148,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         super(props);
         this.olFactory = new OLFactory();
         this.fnMapViewerMounted = this.onMapViewerMounted.bind(this);
+        this.fnMapResized = this.onMapResized.bind(this);
         this.fnRequestZoomToView = this.onRequestZoomToView.bind(this);
         this.fnQueryMapFeatures = this.onQueryMapFeatures.bind(this);
         this.fnBusyLoading = this.onBusyLoading.bind(this);
@@ -166,6 +170,11 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     }
     private onMapViewerMounted(component: MapViewerBase): void {
         this.inner = component;
+    }
+    private onMapResized(size: [number, number]): void {
+        if (this.props.mapResized) {
+            this.props.mapResized(size[0], size[1]);
+        }
     }
     private onRequestZoomToView(view: IMapView): void {
         if (this.props.setCurrentView) {
@@ -292,7 +301,8 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                       onRotationChanged={this.fnRotationChanged}
                                       onMouseCoordinateChanged={this.fnMouseCoordinateChanged}
                                       onQueryMapFeatures={this.fnQueryMapFeatures}
-                                      onRequestZoomToView={this.fnRequestZoomToView} />;
+                                      onRequestZoomToView={this.fnRequestZoomToView}
+                                      onMapResized={this.fnMapResized} />;
             }
         }
         return <div>{tr("LOADING_MSG", locale)}</div>;

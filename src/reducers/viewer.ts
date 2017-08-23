@@ -7,6 +7,7 @@ import { AnyAction } from "redux";
 
 export const INITIAL_STATE: IViewerReducerState = {
     busyCount: 0,
+    size: undefined,
     tool: ActiveMapTool.None,
     featureTooltipsEnabled: true
 }
@@ -32,6 +33,13 @@ export function viewerReducer(state = INITIAL_STATE, action: AnyAction = { type:
             {
                 const state1 = {
                     busyCount: payload
+                };
+                return { ...state, ...state1 };
+            }
+        case Constants.MAP_RESIZED:
+            {
+                const state1 = {
+                    size: [payload.width, payload.height]
                 };
                 return { ...state, ...state1 };
             }

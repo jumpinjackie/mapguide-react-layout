@@ -301,7 +301,7 @@ div.InfoText
     padding: 5px;
 }
 
-.component-mouse-coordinates, .component-selected-feature-count {
+.component-mouse-coordinates, .component-selected-feature-count, .component-view-size {
     padding: 3px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 8pt;
@@ -381,14 +381,14 @@ div.InfoText
 .component-scale-display {
     position: absolute;
     bottom: 0px;
-    right: 340px;
+    right: 320px;
     z-index: 100;
 }
 
 .component-selected-feature-count {
     position: absolute;
     bottom: 0px;
-    right: 140px;
+    left: 200px;
     z-index: 100;
 }
 
@@ -400,6 +400,13 @@ div.InfoText
     cursor: pointer;
     right: 10px;
     top: 10px;
+}
+
+.component-view-size {
+    position: absolute;
+    bottom: 0px;
+    right: 136px;
+    z-index: 100;
 }
 
 .component-pbmg {

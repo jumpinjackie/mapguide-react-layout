@@ -57,6 +57,7 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
         let hasNavigator = false;
         let hasSelectionPanel = false;
         let hasLegend = false;
+        let hasViewSize = false;
         if (capabilities) {
             hasToolbar = capabilities.hasToolbar;
             hasTaskPane = capabilities.hasTaskPane;
@@ -65,6 +66,7 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
             hasNavigator = capabilities.hasNavigator;
             hasSelectionPanel = capabilities.hasSelectionPanel;
             hasLegend = capabilities.hasLegend;
+            hasViewSize = capabilities.hasViewSize;
         }
         const locale = this.getLocale();
         let sbWidth = SIDEBAR_WIDTH;
@@ -140,6 +142,11 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
                     {(() => {
                         if (hasStatusBar) {
                             return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={locale} />;
+                        }
+                    })()}
+                    {(() => {
+                        if (hasViewSize) {
+                            return <PlaceholderComponent id={DefaultComponentNames.ViewSize} locale={locale} />;
                         }
                     })()}
                     {(() => {

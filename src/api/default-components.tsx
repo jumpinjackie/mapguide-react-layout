@@ -19,6 +19,7 @@ import MapMenuContainer from "../containers/map-menu";
 import CoordinateTrackerContainer from "../containers/coordinate-tracker";
 
 import { registerComponentFactory, DefaultComponentNames } from "../api/registry/component";
+import ViewSizeContainer from "../containers/view-size";
 
 /**
  * Registers the default set of components
@@ -42,5 +43,6 @@ export function registerDefaultComponents(): void {
     registerComponentFactory(DefaultComponentNames.QuickPlot, (props) => <QuickPlotContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.BaseMapSwitcher, (props) => <BaseLayerSwitcherContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.MapMenu, (props) => <MapMenuContainer {...props} />);
+    registerComponentFactory(DefaultComponentNames.ViewSize, (props) => <ViewSizeContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.CoordinateTracker, (props) => <CoordinateTrackerContainer {...props} />);
 }

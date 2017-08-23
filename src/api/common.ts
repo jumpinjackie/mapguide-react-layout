@@ -16,6 +16,75 @@ import olOverlay from "ol/overlay";
 import { IOLFactory } from "./ol-factory";
 import { Dispatch, Action } from "redux";
 
+export type UnitName = 'Unknown' | 'Inches' | 'Feet' | 'Yards' | 'Miles' | 'Nautical Miles' 
+                    | 'Millimeters' | 'Centimeters' | 'Meters' | 'Kilometers' 
+                    | 'Degrees' | 'Decimal Degrees' | 'Degrees Minutes Seconds'| 'Pixels';
+export enum UnitOfMeasure {
+    /**
+     * An unknown unit
+     */
+    Unknown = 0,
+    /**
+     * Inch unit
+     */
+    Inches = 1,
+    /**
+     * Feet unit
+     */
+    Feet = 2,
+    /**
+     * Yard unit
+     */
+    Yards = 3,
+    /**
+     * Mile unit
+     */
+    Miles = 4,
+    /**
+     * Nautical Mile unit
+     */
+    NauticalMiles = 5,
+    /**
+     * Millimeter unit
+     */
+    Millimeters = 6,
+    /**
+     * Centimeter unit
+     */
+    Centimeters = 7,
+    /**
+     * Meter unit
+     */
+    Meters = 8,
+    /**
+     * Kilometer unit
+     */
+    Kilometers = 9,
+    /**
+     * Degree unit
+     */
+    Degrees = 10,
+    /**
+     * Decimal Degree unit
+     */
+    DecimalDegrees = 11,
+    /**
+     * DMS unit
+     */
+    DMS = 12,
+    /**
+     * Pixel unit
+     */
+    Pixels = 13,
+}
+
+export interface UnitInfo {
+    unitsPerMeter: number;
+    metersPerUnit: number;
+    name: UnitName;
+    abbreviation: string;
+}
+
 /**
  * Describes a map view
  * @export
@@ -43,6 +112,13 @@ export interface IMapView {
      * @memberof IMapView
      */
     scale: number;
+    /**
+     * The view resolution
+     * 
+     * @type {number | undefined}
+     * @memberof IMapView
+     */
+    resolution?: number;
 }
 
 /**
@@ -1098,6 +1174,13 @@ export interface IViewerCapabilities {
      * @memberof IViewerCapabilities
      */
     hasToolbar: boolean;
+    /**
+     * Indicates if this viewer has the view size mounted
+     * 
+     * @type {boolean}
+     * @memberof IViewerCapabilities
+     */
+    hasViewSize: boolean;
 }
 
 /**
@@ -1279,6 +1362,13 @@ export interface IConfigurationReducerState {
      * @memberof IConfigurationReducerState
      */
     viewRotation: number;
+    /**
+     * The unit to display view size in
+     * 
+     * @type {UnitOfMeasure}
+     * @memberof IConfigurationReducerState
+     */
+    viewSizeUnits: UnitOfMeasure;
 }
 
 /**
@@ -1341,6 +1431,13 @@ export interface IInitErrorReducerState {
  * @interface IViewerReducerState
  */
 export interface IViewerReducerState {
+    /**
+     * The current size of the map viewport (in pixels)
+     * 
+     * @type {([number, number] | undefined)}
+     * @memberof IViewerReducerState
+     */
+    size: [number, number] | undefined;
     /**
      * The number of active busy actions. Zero indicates no busy activity. One or more
      * indicates busy activity.

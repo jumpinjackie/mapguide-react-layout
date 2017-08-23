@@ -4,7 +4,8 @@ import {
     IExternalBaseLayer,
     ICoordinateConfiguration,
     INameValuePair,
-    IViewerCapabilities
+    IViewerCapabilities,
+    UnitOfMeasure
 } from "../api/common";
 import { AnyAction } from "redux";
 
@@ -16,6 +17,7 @@ export const INITIAL_STATE: IConfigurationReducerState = {
     availableMaps: undefined,
     viewRotation: 0,
     viewRotationEnabled: true,
+    viewSizeUnits: UnitOfMeasure.Meters,
     coordinates: {
         decimals: 6
     } as ICoordinateConfiguration,
@@ -34,7 +36,8 @@ export const INITIAL_STATE: IConfigurationReducerState = {
         hasNavigator: false,
         hasSelectionPanel: false,
         hasLegend: false,
-        hasToolbar: false
+        hasToolbar: false,
+        hasViewSize: false
     } as IViewerCapabilities
 };
 
@@ -77,6 +80,9 @@ export function configReducer(state = INITIAL_STATE, action: AnyAction = { type:
                         coordConfig.decimals = payload.config.coordinateDecimals;
                     }
                     const state2: Partial<IConfigurationReducerState> = { viewer: viewerConfig, coordinates: coordConfig };
+                    if (payload.config.viewSizeUnits != null) {
+                        state2.viewSizeUnits = payload.config.viewSizeUnits;
+                    }
                     return { ...newState, ...state2 };
                 } else {
                     return newState;

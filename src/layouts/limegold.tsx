@@ -245,6 +245,7 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
                         <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={locale} />
                         <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={locale} />
                         <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={locale} />
+                        <PlaceholderComponent id={DefaultComponentNames.ViewSize} locale={locale} />
                         <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={locale} />
                     </div>;
                 }

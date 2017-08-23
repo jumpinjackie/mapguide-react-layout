@@ -121,6 +121,7 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
     onRotationChanged: (newRotation: number) => void;
     onSessionExpired?: () => void;
     onBeginDigitization: (callback: (cancelled: boolean) => void) => void;
+    onMapResized?: (size: [number, number]) => void;
     overviewMapElementSelector?: () => (Element | null);
     showGroups: string[] | undefined;
     showLayers: string[] | undefined;
@@ -514,6 +515,11 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             }
         });
     }
+    private onResize(e: GenericEvent) {
+        if (this.props.onMapResized) {
+            this.props.onMapResized(this._map.getSize());
+        }
+    }
     private onKeyDown(e: GenericEvent) {
         switch (e.keyCode) {
             case KC_ESCAPE:
@@ -583,7 +589,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             this.props.onRequestZoomToView({
                 x: view.x,
                 y: view.y,
-                scale: view.scale
+                scale: view.scale,
+                resolution: view.resolution
             });
         }
     }
@@ -764,6 +771,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         };
         this._map = this.createOLMap(mapOptions);
         this._map.on("pointermove", this.onMouseMove.bind(this));
+        this._map.on("change:size", this.onResize.bind(this));
         const callback = this.getCallback();
         this._mapContext = new MapViewerContext(this._map, callback);
         const activeLayerSet = this._mapContext.initLayerSet(this.props);
@@ -801,6 +809,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         } else {
             this._map.getView().fit(activeLayerSet.extent);
         }
+        this.onResize(this._map.getSize());
     }
     render(): JSX.Element {
         const { map, tool } = this.props;
@@ -871,7 +880,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         return {
             x: center[0],
             y: center[1],
-            scale: scale
+            scale: scale,
+            resolution: this.getResolution()
         };
     }
     private onSessionExpired() {
@@ -925,11 +935,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     public getCurrentView(): IMapView {
         const ov = this.getOLView();
         const center = ov.getCenter();
-        const scale = this.resolutionToScale(ov.getResolution());
+        const resolution = ov.getResolution();
+        const scale = this.resolutionToScale(resolution);
         return {
             x: center[0],
             y: center[1],
-            scale: scale
+            scale: scale,
+            resolution: resolution
         };
     }
     public getCurrentExtent(): Bounds {

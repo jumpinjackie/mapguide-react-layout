@@ -25,6 +25,7 @@ export class DefaultComponentNames {
     public static get QuickPlot(): string { return "QuickPlot"; }
     public static get BaseMapSwitcher(): string { return "BaseMapSwitcher"; }
     public static get MapMenu(): string { return "MapMenu"; }
+    public static get ViewSize(): string { return "ViewSize"; }
     public static get CoordinateTracker(): string { return "CoordinateTracker"; }
 }
 

@@ -58,7 +58,8 @@ interface IInitAppPayload {
         hasNavigator: boolean,
         hasSelectionPanel: boolean,
         hasLegend: boolean,
-        hasToolbar: boolean
+        hasToolbar: boolean,
+        hasViewSize: boolean
     },
     toolbars: any
 }
@@ -700,7 +701,8 @@ async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOpti
             hasNavigator: webLayout.ZoomControl.Visible,
             hasSelectionPanel: webLayout.InformationPane.Visible && webLayout.InformationPane.PropertiesVisible,
             hasLegend: webLayout.InformationPane.Visible && webLayout.InformationPane.LegendVisible,
-            hasToolbar: webLayout.ToolBar.Visible
+            hasToolbar: webLayout.ToolBar.Visible,
+            hasViewSize: webLayout.StatusBar.Visible
         },
         toolbars: prepareSubMenus(menus)
     };
@@ -710,6 +712,7 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
     const mapsByName = await createRuntimeMapsAsync(client, session, opts, appDef, fl => getMapDefinitionsFromFlexLayout(fl), fl => getExtraProjectionsFromFlexLayout(fl));
     let initialTask: string;
     let taskPane: Widget|undefined;
+    let viewSize: Widget|undefined;
     let hasLegend = false;
     let hasStatus = false;
     let hasNavigator = false;
@@ -725,6 +728,9 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
             switch (widget.Type) {
                 case "TaskPane":
                     taskPane = widget;
+                    break;
+                case "ViewSize":
+                    viewSize = widget;
                     break;
                 case "Legend":
                     hasLegend = true;
@@ -816,7 +822,8 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
             hasNavigator: hasNavigator,
             hasSelectionPanel: hasSelectionPanel,
             hasLegend: hasLegend,
-            hasToolbar: (Object.keys(tbConf).length > 0)
+            hasToolbar: (Object.keys(tbConf).length > 0),
+            hasViewSize: (viewSize != null)
         },
         toolbars: prepareSubMenus(tbConf)
     };

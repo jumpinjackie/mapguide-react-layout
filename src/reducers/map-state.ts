@@ -96,7 +96,7 @@ export function mapStateReducer(state = INITIAL_STATE, action: AnyAction = { typ
                     let view = subState.currentView;
                     const scale = payload.scale;
                     if (typeof view === 'object' && typeof scale === 'number') {
-                        const view1 = { scale: scale };
+                        const view1 = { scale: scale, resolution: payload.resolution };
                         view = { ...view, ...view1 };
                     }
                     const state1: Partial<IBranchedMapSubState> = {

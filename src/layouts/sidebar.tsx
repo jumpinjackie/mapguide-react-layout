@@ -289,6 +289,7 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<S
             hasNavigator,
             hasSelectionPanel,
             hasLegend,
+            hasViewSize,
             hasToolbar
         } = capabilities;
         let sbWidth = SIDEBAR_WIDTH;
@@ -337,6 +338,11 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<S
             {(() => {
                 if (hasStatusBar) {
                     return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={config.locale} />;
+                }
+            })()}
+            {(() => {
+                if (hasViewSize) {
+                    return <PlaceholderComponent id={DefaultComponentNames.ViewSize} locale={config.locale} />;
                 }
             })()}
             {(() => {

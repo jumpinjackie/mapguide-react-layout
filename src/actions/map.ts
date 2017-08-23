@@ -247,6 +247,24 @@ export function setCurrentView(view: IMapView): ReduxThunkedAction {
 }
 
 /**
+ * Sends a map resized notification
+ * 
+ * @export
+ * @param {number} width 
+ * @param {number} height 
+ * @returns {ReduxAction} 
+ */
+export function mapResized(width: number, height: number): ReduxAction {
+    return {
+        type: Constants.MAP_RESIZED,
+        payload: {
+            width,
+            height
+        }
+    }
+}
+
+/**
  * Sets the selection set for the given map
  *
  * @export
@@ -320,11 +338,17 @@ export function setBaseLayer(mapName: string, layerName: string) {
  * @returns
  */
 export function setScale(mapName: string, scale: number) {
+    const viewer = getViewer();
+    let resolution;
+    if (viewer) {
+        resolution = viewer.scaleToResolution(scale);
+    }
     return {
         type: Constants.MAP_SET_SCALE,
         payload: {
             mapName,
-            scale
+            scale,
+            resolution
         }
     };
 }

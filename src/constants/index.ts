@@ -22,6 +22,7 @@ export const MAP_NEXT_VIEW = 'Map/NEXT_VIEW';
 export const MAP_SET_LAYER_TRANSPARENCY = 'Map/SET_LAYER_TRANSPARENCY';
 export const MAP_SET_VIEW_ROTATION = 'Map/SET_VIEW_ROTATION';
 export const MAP_SET_VIEW_ROTATION_ENABLED = 'Map/SET_VIEW_ROTATION_ENABLED';
+export const MAP_RESIZED = 'Map/RESIZED';
 
 export const TASK_INVOKE_URL = 'TaskPane/INVOKE_URL';
 export const TASK_PANE_HOME = 'TaskPane/HOME';

@@ -12,6 +12,7 @@ const logger = createLogger({
             type !== 'redux-form/CHANGE' &&
             type !== 'redux-form/FOCUS' &&
             type !== 'redux-form/TOUCH' &&
+            type !== Constants.MAP_RESIZED &&
             type !== Constants.UPDATE_MOUSE_COORDINATES &&
             type !== Constants.MAP_SET_BUSY_COUNT;
     },

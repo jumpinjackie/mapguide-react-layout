@@ -10,7 +10,7 @@ export const INITIAL_STATE: IInitErrorReducerState = {
     warnings: []
 };
 
-export function initErrorReducer(state = INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
+export function initErrorReducer(state = INITIAL_STATE, action: AnyAction = { type: '', payload: null }): IInitErrorReducerState {
     switch (action.type) {
         case Constants.INIT_ACKNOWLEDGE_WARNINGS:
             {
@@ -31,7 +31,7 @@ export function initErrorReducer(state = INITIAL_STATE, action: AnyAction = { ty
                         includeStack = true;
                     }
                     if (error) {
-                        return { error: error, options: options, includeStack: includeStack };
+                        return { error: error, options: options, includeStack: includeStack, warnings: [] };
                     }
                 }
             }

@@ -31,7 +31,9 @@ describe("reducers/init-error", () => {
         expect(state.options).not.toBeNull();
         expect(state.options.foo).toBe("bar");
         expect(state.error).not.toBeNull();
-        expect(state.error.message).toBe("Uh-oh");
-        expect(state.error.stack).toHaveLength(2);
+        if (state.error) { //HACK: TS strict null check workaround
+            expect(state.error.message).toBe("Uh-oh");
+            expect(state.error.stack).toHaveLength(2);
+        }
     });
 });

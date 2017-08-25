@@ -2,7 +2,7 @@ import * as React from "react";
 import { tr } from "../api/i18n";
 // According to this (https://github.com/mzabriskie/react-draggable/issues/246#issuecomment-299698481), typings
 // only works if module type is "es6". This is not the case for us, so just use untyped require()
-const Draggable = require('react-draggable');
+import Draggable, { DraggableEventHandler } from "react-draggable";
 import { getFiniteScaleIndexForScale } from "../utils/number";
 import {
     IMG_SLIDER,
@@ -78,9 +78,9 @@ export class Navigator extends React.Component<INavigatorProps, any> {
     private fnPanNorth: GenericEventHandler;
     private fnZoomOut: GenericEventHandler;
     private fnZoomIn: GenericEventHandler;
-    private fnStart: (e: any, data: any) => void | boolean;
-    private fnDrag: (e: any, data: any) => void | boolean;
-    private fnStop: (e: any, data: any) => void | boolean;
+    private fnStart: DraggableEventHandler;
+    private fnDrag: DraggableEventHandler;
+    private fnStop: DraggableEventHandler;
     constructor(props: INavigatorProps) {
         super(props);
         this.fnPanEast = this.onPanEast.bind(this);
@@ -116,18 +116,18 @@ export class Navigator extends React.Component<INavigatorProps, any> {
     private onZoomIn(e: GenericEvent) {
         this.props.onZoom(ZoomDirection.In);
     }
-    private onStart(e: Event, data: DraggableData): void | boolean {
+    private onStart(e: MouseEvent, data: DraggableData): void {
         e.preventDefault();
         //console.log(`Drag start (dy: ${data.deltaY})`);
         this.setState({ isDragging: true, previewPos: this.state.pos });
     }
-    private onDrag(e: Event, data: DraggableData): void | boolean {
+    private onDrag(e: MouseEvent, data: DraggableData): void {
         e.preventDefault();
         //console.log(`Dragging (dy: ${data.deltaY})`);
         const pos = this.state.previewPos;
         this.setState({ previewPos: pos + data.deltaY });
     }
-    private onStop(e: Event, data: DraggableData): void | boolean {
+    private onStop(e: MouseEvent, data: DraggableData): void {
         e.preventDefault();
         //console.log(`Drag stop (dy: ${data.deltaY})`);
         const posDelta = this.state.previewPos - this.state.pos;

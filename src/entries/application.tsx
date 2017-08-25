@@ -19,6 +19,28 @@ export class ApplicationViewModel {
 
     }
     /**
+     * Returns any extra initial state to include as part of initializing the redux store
+     * 
+     * Overridable by sub-classes that want to include extra initial state
+     * 
+     * @virtual
+     * @protected
+     * @returns {*} 
+     * @memberof ApplicationViewModel
+     */
+    protected getExtraInitialState(): any { return {}; }
+    /**
+     * Returns any extra reducers to include as part of initializing the redux store
+     * 
+     * Overridable by sub-classes that want to include custom reducers
+     * 
+     * @virtual
+     * @protected
+     * @returns {*} 
+     * @memberof ApplicationViewModel
+     */
+    protected getExtraReducers(): any { return {}; }
+    /**
      * Mounts the map viewer application at the specified DOM element with the
      * given component props.
      *
@@ -36,7 +58,9 @@ export class ApplicationViewModel {
             agentUri: props.agent.uri,
             agentKind: props.agent.kind || "mapagent"
         };
-        const store = configureStore({ config: { ...INITIAL_STATE, ...agentConf } });
+        const initState = { ...{ config: { ...INITIAL_STATE, ...agentConf } }, ...this.getExtraInitialState() };
+        const extraReducers = this.getExtraReducers();
+        const store = configureStore(initState, extraReducers);
         ReactDOM.render(<Provider store={store}>
             <App {...props} />
         </Provider>, node);

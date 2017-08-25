@@ -15,7 +15,7 @@
     "watch:dev": "cross-env NODE_ENV=development webpack -w --progress",
     "watch:test": "jest --watchAll",
     "stats": "cross-env NODE_ENV=production webpack --json > webpack.json",
-    "clean": "rimraf viewer/dist/ && rimraf package/ && rimraf lib/",
+    "clean": "rimraf viewer/dist/stdassets && rimraf viewer/dist/viewer.* && rimraf package/ && rimraf lib/",
     "lint": "tslint 'src/**/*.tsx' 'src/**/*.ts' 'test/**/*.tsx' 'test/**/*.ts'",
     "postinstall": "yarn run build",
     "test": "jest --verbose",

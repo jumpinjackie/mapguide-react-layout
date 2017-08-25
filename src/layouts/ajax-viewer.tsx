@@ -118,10 +118,11 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
                 if (hasTaskPane) {
                     right = tpWidth;
                 }
+                const TB_Z_INDEX = 0;
                 return <div style={{ position: "absolute", left: left, top: 0, bottom: 0, right: right }}>
                     {(() => {
                         if (hasToolbar) {
-                            return <ToolbarContainer id={Constants.WEBLAYOUT_TOOLBAR} containerStyle={{ position: "absolute", left: 10, top: 10, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />;
+                            return <ToolbarContainer id={Constants.WEBLAYOUT_TOOLBAR} containerStyle={{ position: "absolute", left: 10, top: 10, zIndex: TB_Z_INDEX, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />;
                         }
                     })()}
                     {(() => {

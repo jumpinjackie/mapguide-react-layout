@@ -214,11 +214,12 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
         if (active.length == 1) {
             activeId = active[0].id;
         }
+        const TB_Z_INDEX = 0;
         return <div style={{ width: "100%", height: "100%" }}>
             <Accordion style={{ position: "absolute", top: OUTER_PADDING, bottom: bottomOffset, right: OUTER_PADDING, width: SIDEBAR_WIDTH }} onActivePanelChanged={this.fnActivePanelChanged} activePanelId={activeId} panels={panels} />
-            <ToolbarContainer id="FileMenu" containerClass="maroon-file-menu" containerStyle={{ position: "absolute", left: OUTER_PADDING, top: OUTER_PADDING, right: SIDEBAR_WIDTH + OUTER_PADDING, zIndex: 100 }} />
-            <ToolbarContainer id="Toolbar" containerClass="maroon-toolbar" containerStyle={{ position: "absolute", left: OUTER_PADDING, top: DEFAULT_TOOLBAR_SIZE + OUTER_PADDING, right: SIDEBAR_WIDTH + OUTER_PADDING, zIndex: 100 }} />
-            <ToolbarContainer id="ToolbarVertical" containerClass="maroon-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: OUTER_PADDING, top: topOffset, bottom: bottomOffset, zIndex: 100, right: 0 }} />
+            <ToolbarContainer id="FileMenu" containerClass="maroon-file-menu" containerStyle={{ position: "absolute", left: OUTER_PADDING, top: OUTER_PADDING, right: SIDEBAR_WIDTH + OUTER_PADDING, zIndex: TB_Z_INDEX }} />
+            <ToolbarContainer id="Toolbar" containerClass="maroon-toolbar" containerStyle={{ position: "absolute", left: OUTER_PADDING, top: DEFAULT_TOOLBAR_SIZE + OUTER_PADDING, right: SIDEBAR_WIDTH + OUTER_PADDING, zIndex: TB_Z_INDEX }} />
+            <ToolbarContainer id="ToolbarVertical" containerClass="maroon-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: OUTER_PADDING, top: topOffset, bottom: bottomOffset, zIndex: TB_Z_INDEX, right: 0 }} />
             <div style={{ position: "absolute", left: OUTER_PADDING + DEFAULT_TOOLBAR_SIZE, right: SIDEBAR_WIDTH + OUTER_PADDING, top: topOffset, bottom: bottomOffset }}>
                 {(() => {
                     //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with

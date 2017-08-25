@@ -56,6 +56,7 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
             //zIndex: 9999,
         };
         if (size != null) {
+            modalStyle.position = "absolute";
             modalStyle.top = 120;
             modalStyle.left = "50%";
             modalStyle.width = size[0];
@@ -65,6 +66,7 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
             modalStyle.left = "50%";
         }
         if (position != null) {
+            modalStyle.position = "absolute";
             modalStyle.left = position[0];
             modalStyle.top = position[1];
             modalStyle.right = position[2];
@@ -77,22 +79,23 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
         if (overflowYScroll == true) {
             modalBodyStyle.overflowY = "auto";
         }
-        return <div>
-            <Draggable handle=".pt-dialog-header">
-                <div className="pt-dialog" style={modalStyle}>
-                    <div className="pt-dialog-header noselect">
-                        <h5>{title}</h5>
-                        <button onClick={this.fnClose} aria-label="Close" className="pt-dialog-close-button pt-icon-small-cross"></button>
-                    </div>
-                    <div className="pt-dialog-body" style={modalBodyStyle}>{this.props.children}</div>
+        const diag = <Draggable handle=".pt-dialog-header">
+            <div className="pt-dialog" style={modalStyle}>
+                <div className="pt-dialog-header noselect">
+                    <h5>{title}</h5>
+                    <button onClick={this.fnClose} aria-label="Close" className="pt-dialog-close-button pt-icon-small-cross"></button>
                 </div>
-            </Draggable>
-            {(() => {
-                if (backdrop === true) {
-                    return <div className="modal-dialog-backdrop" onClick={this.fnClose} />;
-                }
-            })()}
-        </div>;
+                <div className="pt-dialog-body" style={modalBodyStyle}>{this.props.children}</div>
+            </div>
+        </Draggable>;
+        if (backdrop === true) {
+            return <div>
+                {diag}
+                <div className="modal-dialog-backdrop" onClick={this.fnClose} />
+            </div>;
+        } else {
+            return diag;
+        }
     }
     private onClose(e: GenericEvent) {
         e.preventDefault()

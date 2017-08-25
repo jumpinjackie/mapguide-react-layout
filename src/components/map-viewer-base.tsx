@@ -247,7 +247,7 @@ const MapLoadIndicator = (props: IMapLoadIndicatorProps) => {
     }
     const style: React.CSSProperties = { 
         position: "absolute",
-        zIndex: 50,
+        //zIndex: 50,
         visibility: visibility,
         left: 0,
         height: 5,

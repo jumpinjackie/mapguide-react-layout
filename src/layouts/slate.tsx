@@ -215,11 +215,12 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
         if (active.length == 1) {
             activeId = active[0].id;
         }
+        const TB_Z_INDEX = 0;
         return <div style={{ width: "100%", height: "100%" }}>
             <Accordion style={{ position: "absolute", top: 0, bottom: bottomOffset, left: 0, width: SIDEBAR_WIDTH }} onActivePanelChanged={this.fnActivePanelChanged} activePanelId={activeId} panels={panels} />
-            <ToolbarContainer id="FileMenu" containerClass="slate-file-menu" containerStyle={{ position: "absolute", left: SIDEBAR_WIDTH, top: 0, zIndex: 100, right: 0 }} />
-            <ToolbarContainer id="Toolbar" containerClass="slate-toolbar" containerStyle={{ position: "absolute", left: SIDEBAR_WIDTH, top: DEFAULT_TOOLBAR_SIZE, zIndex: 100, right: 0 }} />
-            <ToolbarContainer id="ToolbarSecondary" containerClass="slate-toolbar-secondary" containerStyle={{ position: "absolute", left: SIDEBAR_WIDTH, top: (DEFAULT_TOOLBAR_SIZE * 2), zIndex: 100, right: 0 }} />
+            <ToolbarContainer id="FileMenu" containerClass="slate-file-menu" containerStyle={{ position: "absolute", left: SIDEBAR_WIDTH, top: 0, zIndex: TB_Z_INDEX, right: 0 }} />
+            <ToolbarContainer id="Toolbar" containerClass="slate-toolbar" containerStyle={{ position: "absolute", left: SIDEBAR_WIDTH, top: DEFAULT_TOOLBAR_SIZE, zIndex: TB_Z_INDEX, right: 0 }} />
+            <ToolbarContainer id="ToolbarSecondary" containerClass="slate-toolbar-secondary" containerStyle={{ position: "absolute", left: SIDEBAR_WIDTH, top: (DEFAULT_TOOLBAR_SIZE * 2), zIndex: TB_Z_INDEX, right: 0 }} />
             <div style={{ position: "absolute", left: SIDEBAR_WIDTH, right: 0, top: topOffset, bottom: bottomOffset }}>
                 {(() => {
                     //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with

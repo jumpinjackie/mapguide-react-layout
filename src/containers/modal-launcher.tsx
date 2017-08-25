@@ -113,6 +113,7 @@ export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
                     assertNever(diag);
                 }
             })}
+            {this.props.children}
         </div>;
     }
 }

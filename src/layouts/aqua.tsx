@@ -192,75 +192,35 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
         const bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;
         let sbWidth = SIDEBAR_WIDTH;
         let tpWidth = SIDEBAR_WIDTH;
+        let left = DEFAULT_TOOLBAR_SIZE;
+        let right = 0;
+        /*
+        if (hasLegend || hasSelectionPanel) {
+            left = sbWidth;
+        }
+        if (hasTaskPane) {
+            right = tpWidth;
+        }*/
+        const TB_Z_INDEX = 0;
         return <div style={{ width: "100%", height: "100%" }}>
-            <ToolbarContainer id="FileMenu" containerClass="aqua-file-menu" containerStyle={{ position: "absolute", left: 0, top: 0, zIndex: 100, right: 0 }} />
-            <ToolbarContainer id="Toolbar" containerClass="aqua-toolbar" containerStyle={{ position: "absolute", left: 0, top: DEFAULT_TOOLBAR_SIZE, height: DEFAULT_TOOLBAR_SIZE, zIndex: 100, right: 0 }} />
-            <ToolbarContainer id="ToolbarVertical" containerClass="aqua-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: 0, top: ((DEFAULT_TOOLBAR_SIZE * 2) - 1), zIndex: 100, bottom: bottomOffset }} />
-            {(() => {
-                if (hasSelectionPanel) {
-                    return <ModalDialog
-                                size={[SIDEBAR_WIDTH, SELECTION_DIALOG_HEIGHT]}
-                                position={[ 40, 500, null, null ]}
-                                title={tr("TPL_TITLE_SELECTION_PANEL", locale)}
-                                backdrop={false}
-                                isOpen={!!showSelection}
-                                onClose={this.fnHideSelection}>
-                        <PlaceholderComponent locale={locale} id={DefaultComponentNames.SelectionPanel} componentProps={{ maxHeight: SELECTION_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
-                    </ModalDialog>;
-                }
-            })()}
-            {(() => {
-                if (hasLegend) {
-                    return <ModalDialog
-                                size={[SIDEBAR_WIDTH, LEGEND_DIALOG_HEIGHT]}
-                                position={[ 40, 70, null, null ]}
-                                title={tr("TPL_TITLE_LEGEND", locale)}
-                                backdrop={false}
-                                isOpen={!!showLegend}
-                                onClose={this.fnHideLegend}>
-                        <PlaceholderComponent locale={locale} id={DefaultComponentNames.Legend} componentProps={{ inlineBaseLayerSwitcher: false, maxHeight: LEGEND_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
-                    </ModalDialog>;
-                }
-            })()}
-            {(() => {
-                if (hasTaskPane) {
-                    return <ModalDialog
-                                size={[SIDEBAR_WIDTH, TASK_DIALOG_HEIGHT]}
-                                position={[ null, 70, 80, null ]}
-                                title={tr("TPL_TITLE_TASKPANE", locale)}
-                                backdrop={false}
-                                isOpen={!!showTaskPane}
-                                onClose={this.fnHideTaskPane}>
-                        <PlaceholderComponent locale={locale} id={DefaultComponentNames.TaskPane} componentProps={{ maxHeight: TASK_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
-                    </ModalDialog>;
-                }
-            })()}
-            {(() => {
-                let left = DEFAULT_TOOLBAR_SIZE;
-                let right = 0;
-                /*
-                if (hasLegend || hasSelectionPanel) {
-                    left = sbWidth;
-                }
-                if (hasTaskPane) {
-                    right = tpWidth;
-                }*/
-                return <div style={{ position: "absolute", left: left, top: (DEFAULT_TOOLBAR_SIZE * 2) - 2, bottom: bottomOffset, right: right }}>
-                    {(() => {
-                        //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
-                        //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()
-                        //call to fix
-                        if (this.props.map != null) {
-                            return <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />;
-                        }
-                    })()}
-                    {(() => {
-                        if (hasNavigator) {
-                            return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
-                        }
-                    })()}
-                </div>
-            })()}
+            <ToolbarContainer id="FileMenu" containerClass="aqua-file-menu" containerStyle={{ position: "absolute", left: 0, top: 0, zIndex: TB_Z_INDEX, right: 0 }} />
+            <ToolbarContainer id="Toolbar" containerClass="aqua-toolbar" containerStyle={{ position: "absolute", left: 0, top: DEFAULT_TOOLBAR_SIZE, height: DEFAULT_TOOLBAR_SIZE, zIndex: TB_Z_INDEX, right: 0 }} />
+            <ToolbarContainer id="ToolbarVertical" containerClass="aqua-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: 0, top: ((DEFAULT_TOOLBAR_SIZE * 2) - 1), zIndex: TB_Z_INDEX, bottom: bottomOffset }} />
+            <div style={{ position: "absolute", left: left, top: (DEFAULT_TOOLBAR_SIZE * 2), bottom: bottomOffset, right: right }}>
+                {(() => {
+                    //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
+                    //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()
+                    //call to fix
+                    if (this.props.map != null) {
+                        return <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />;
+                    }
+                })()}
+                {(() => {
+                    if (hasNavigator) {
+                        return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
+                    }
+                })()}
+            </div>
             {(() => {
                 if (hasStatusBar) {
                     return <div className="aqua-status-bar" style={{ position: "absolute", left: 0, bottom: 0, right: 0, height: bottomOffset }}>
@@ -273,7 +233,47 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                 }
             })()}
             <ViewerApiShim />
-            <ModalLauncher />
+            <ModalLauncher>
+                {(() => {
+                    if (hasSelectionPanel) {
+                        return <ModalDialog
+                                    size={[SIDEBAR_WIDTH, SELECTION_DIALOG_HEIGHT]}
+                                    position={[ 40, 500, null, null ]}
+                                    title={tr("TPL_TITLE_SELECTION_PANEL", locale)}
+                                    backdrop={false}
+                                    isOpen={!!showSelection}
+                                    onClose={this.fnHideSelection}>
+                            <PlaceholderComponent locale={locale} id={DefaultComponentNames.SelectionPanel} componentProps={{ maxHeight: SELECTION_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
+                        </ModalDialog>;
+                    }
+                })()}
+                {(() => {
+                    if (hasLegend) {
+                        return <ModalDialog
+                                    size={[SIDEBAR_WIDTH, LEGEND_DIALOG_HEIGHT]}
+                                    position={[ 40, 70, null, null ]}
+                                    title={tr("TPL_TITLE_LEGEND", locale)}
+                                    backdrop={false}
+                                    isOpen={!!showLegend}
+                                    onClose={this.fnHideLegend}>
+                            <PlaceholderComponent locale={locale} id={DefaultComponentNames.Legend} componentProps={{ inlineBaseLayerSwitcher: false, maxHeight: LEGEND_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
+                        </ModalDialog>;
+                    }
+                })()}
+                {(() => {
+                    if (hasTaskPane) {
+                        return <ModalDialog
+                                    size={[SIDEBAR_WIDTH, TASK_DIALOG_HEIGHT]}
+                                    position={[ null, 70, 80, null ]}
+                                    title={tr("TPL_TITLE_TASKPANE", locale)}
+                                    backdrop={false}
+                                    isOpen={!!showTaskPane}
+                                    onClose={this.fnHideTaskPane}>
+                            <PlaceholderComponent locale={locale} id={DefaultComponentNames.TaskPane} componentProps={{ maxHeight: TASK_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
+                        </ModalDialog>;
+                    }
+                })()}
+            </ModalLauncher>
             <FlyoutRegionContainer />
             <InitWarningDisplay />
         </div>;

@@ -192,10 +192,11 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
         const taskPaneTitle = tr("TPL_TITLE_TASKPANE", locale);
         const legendTitle = tr("TPL_TITLE_LEGEND", locale);
         const selectionTitle = tr("TPL_TITLE_SELECTION_PANEL", locale);
+        const TB_Z_INDEX = 0;
         return <div style={{ width: "100%", height: "100%" }}>
-            <ToolbarContainer id="FileMenu" containerClass="limegold-file-menu" containerStyle={{ position: "absolute", left: 0, top: ((TOP_BAR_HEIGHT - DEFAULT_TOOLBAR_SIZE) / 2), zIndex: 100, right: 0 }} />
-            <ToolbarContainer id="Toolbar" containerClass="limegold-toolbar" containerStyle={{ position: "absolute", left: 0, top: TOP_BAR_HEIGHT, zIndex: 100, right: 0 }} />
-            <ToolbarContainer id="ToolbarSecondary" containerClass="limegold-toolbar-secondary" containerStyle={{ position: "absolute", left: 0, top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), zIndex: 100, right: 0 }} />
+            <ToolbarContainer id="FileMenu" containerClass="limegold-file-menu" containerStyle={{ position: "absolute", left: 0, top: ((TOP_BAR_HEIGHT - DEFAULT_TOOLBAR_SIZE) / 2), zIndex: TB_Z_INDEX, right: 0 }} />
+            <ToolbarContainer id="Toolbar" containerClass="limegold-toolbar" containerStyle={{ position: "absolute", left: 0, top: TOP_BAR_HEIGHT, zIndex: TB_Z_INDEX, right: 0 }} />
+            <ToolbarContainer id="ToolbarSecondary" containerClass="limegold-toolbar-secondary" containerStyle={{ position: "absolute", left: 0, top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, right: 0 }} />
             <div style={{ position: "absolute", left: 0, top: topOffset, bottom: (bottomOffset + SIDEBAR_PADDING), right: sbWidth }}>
                 {(() => {
                     //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with

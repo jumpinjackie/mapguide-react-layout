@@ -16,6 +16,7 @@ src/**/*.js
 src/**/*.js.map
 !src/externs/*.js
 viewer/dist
+!viewer/dist/es6-promise.auto.min.js
 declarations
 webconfig.ini
 viewer.zip

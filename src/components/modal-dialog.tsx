@@ -55,6 +55,8 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
             //transform: 'translate(-50%, -50%)',
             //zIndex: 9999,
         };
+        //NOTE: Now need to apply absolute positioning so that initial position will be respected as before
+        //See: https://github.com/mzabriskie/react-draggable/issues/259
         if (size != null) {
             modalStyle.position = "absolute";
             modalStyle.top = 120;

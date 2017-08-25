@@ -8,25 +8,25 @@ import { tr } from "../i18n";
  * @export
  * @class DefaultComponentNames
  */
-export class DefaultComponentNames {
-    public static get Legend(): string { return "Legend"; }
-    public static get SelectionPanel(): string { return "SelectionPanel"; }
-    public static get Map(): string { return "Map"; }
-    public static get Navigator(): string { return "Navigator"; }
-    public static get MouseCoordinates(): string { return "MouseCoordinates"; }
-    public static get ScaleDisplay(): string { return "ScaleDisplay"; }
-    public static get SelectedFeatureCount(): string { return "SelectedFeatureCount"; }
-    public static get PoweredByMapGuide(): string { return "PoweredByMapGuide"; }
-    public static get TaskPane(): string { return "TaskPane"; }
-    public static get About(): string { return "About"; }
-    public static get SessionExpired(): string { return "SessionExpired"; }
-    public static get Measure(): string { return "Measure"; }
-    public static get ViewerOptions(): string { return "ViewerOptions"; }
-    public static get QuickPlot(): string { return "QuickPlot"; }
-    public static get BaseMapSwitcher(): string { return "BaseMapSwitcher"; }
-    public static get MapMenu(): string { return "MapMenu"; }
-    public static get ViewSize(): string { return "ViewSize"; }
-    public static get CoordinateTracker(): string { return "CoordinateTracker"; }
+export enum DefaultComponentNames {
+    Legend = "Legend",
+    SelectionPanel = "SelectionPanel",
+    Map = "Map",
+    Navigator = "Navigator",
+    MouseCoordinates = "MouseCoordinates",
+    ScaleDisplay = "ScaleDisplay",
+    SelectedFeatureCount = "SelectedFeatureCount",
+    PoweredByMapGuide = "PoweredByMapGuide",
+    TaskPane = "TaskPane",
+    About = "About",
+    SessionExpired = "SessionExpired",
+    Measure = "Measure",
+    ViewerOptions = "ViewerOptions",
+    QuickPlot = "QuickPlot",
+    BaseMapSwitcher = "BaseMapSwitcher",
+    MapMenu = "MapMenu",
+    ViewSize = "ViewSize",
+    CoordinateTracker = "CoordinateTracker"
 }
 
 /**

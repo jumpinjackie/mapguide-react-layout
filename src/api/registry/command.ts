@@ -201,39 +201,39 @@ export class CommandConditions {
  * @export
  * @class DefaultCommands
  */
-export class DefaultCommands {
-    public static get Select(): string { return "Select"; }
-    public static get Pan(): string { return "Pan"; }
-    public static get Zoom(): string { return "Zoom"; }
-    public static get MapTip(): string { return "MapTip"; }
-    public static get ZoomIn(): string { return "ZoomIn"; }
-    public static get ZoomOut(): string { return "ZoomOut"; }
-    public static get RestoreView(): string { return "RestoreView"; }
-    public static get ZoomExtents(): string { return "ZoomExtents"; }
-    public static get SelectRadius(): string { return "SelectRadius"; }
-    public static get SelectPolygon(): string { return "SelectPolygon"; }
-    public static get ClearSelection(): string { return "ClearSelection"; }
-    public static get ZoomToSelection(): string { return "ZoomToSelection"; }
-    public static get PanLeft(): string { return "PanLeft"; }
-    public static get PanRight(): string { return "PanRight"; }
-    public static get PanUp(): string { return "PanUp"; }
-    public static get PanDown(): string { return "PanDown"; }
-    public static get RefreshMap(): string { return "RefreshMap"; }
-    public static get PreviousView(): string { return "PreviousView"; }
-    public static get NextView(): string { return "NextView"; }
-    public static get About(): string { return "About"; }
-    public static get Help(): string { return "Help"; }
-    public static get Measure(): string { return "Measure"; }
-    public static get ViewerOptions(): string { return "ViewerOptions"; }
-    public static get Buffer(): string { return "Buffer"; }
-    public static get SelectWithin(): string { return "SelectWithin"; }
-    public static get QuickPlot(): string { return "QuickPlot"; }
-    public static get Redline(): string { return "Redline"; }
-    public static get FeatureInfo(): string { return "FeatureInfo"; }
-    public static get Theme(): string { return "Theme"; }
-    public static get Query(): string { return "Query"; }
-    public static get Geolocation(): string { return "Geolocation"; }
-    public static get CoordinateTracker(): string { return "CoordinateTracker"; }
+export enum DefaultCommands {
+    Select = "Select",
+    Pan = "Pan",
+    Zoom = "Zoom",
+    MapTip = "MapTip",
+    ZoomIn = "ZoomIn",
+    ZoomOut = "ZoomOut",
+    RestoreView = "RestoreView",
+    ZoomExtents = "ZoomExtents",
+    SelectRadius = "SelectRadius",
+    SelectPolygon = "SelectPolygon",
+    ClearSelection = "ClearSelection",
+    ZoomToSelection = "ZoomToSelection",
+    PanLeft = "PanLeft",
+    PanRight = "PanRight",
+    PanUp = "PanUp",
+    PanDown = "PanDown",
+    RefreshMap = "RefreshMap",
+    PreviousView = "PreviousView",
+    NextView = "NextView",
+    About = "About",
+    Help = "Help",
+    Measure = "Measure",
+    ViewerOptions = "ViewerOptions",
+    Buffer = "Buffer",
+    SelectWithin = "SelectWithin",
+    QuickPlot = "QuickPlot",
+    Redline = "Redline",
+    FeatureInfo = "FeatureInfo",
+    Theme = "Theme",
+    Query = "Query",
+    Geolocation = "Geolocation",
+    CoordinateTracker = "CoordinateTracker"
 }
 
 const commands: Dictionary<ICommand> = {};

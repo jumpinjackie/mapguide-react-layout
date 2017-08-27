@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { getViewer, getFusionRoot } from "../api/runtime";
-import { tr as xlate, tr } from "../api/i18n";
+import { tr as xlate, tr, DEFAULT_LOCALE } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
     IMapView,
@@ -249,14 +249,11 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
 
     }
     private getLocale(): string {
-        return this.props.config ? this.props.config.locale : "en";
+        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
     private toggleMapCapturerLayer(props: QuickPlotProps, activeMapName: string, state: IQuickPlotContainerState) {
         const { mapNames, setViewRotation, setViewRotationEnabled, config } = props;
-        let locale = "en";
-        if (config) {
-            locale = config.locale;
-        }
+        const locale = this.getLocale();
         const bVisible: boolean = state.showAdvanced;
         const viewer = getViewer();
         if (viewer && mapNames && setViewRotation && setViewRotationEnabled) {

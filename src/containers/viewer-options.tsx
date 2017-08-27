@@ -10,7 +10,7 @@ import {
     UnitOfMeasure
 } from "../api/common";
 import * as MapActions from "../actions/map";
-import { tr } from "../api/i18n";
+import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { Slider } from "@blueprintjs/core";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from "../constants/index";
 import { getUnits } from "../utils/units";
@@ -107,7 +107,7 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
     }
     render(): JSX.Element {
         const { viewer, config, layerTransparency, externalBaseLayers } = this.props;
-        const locale = config ? config.locale : "en";
+        const locale = config ? config.locale : DEFAULT_LOCALE;
         let opBase = 1.0;
         let opMgBase = 1.0;
         let opMgSelOverlay = 1.0;

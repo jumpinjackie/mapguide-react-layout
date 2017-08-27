@@ -1,6 +1,8 @@
 import * as logger from "../utils/logger";
 import STRINGS_EN, { ILocalizedMessages } from "../strings/en";
 
+export const DEFAULT_LOCALE = "en";
+
 const STRINGS: { [locale: string]: ILocalizedMessages } = {
     "en": STRINGS_EN
 };
@@ -47,7 +49,7 @@ export function fmt(format: string, args?: any): string {
  * @param {*} [args] 
  * @returns {string} 
  */
-export function tr(key: keyof ILocalizedMessages, locale = "en", args?: any): string {
+export function tr(key: keyof ILocalizedMessages, locale = DEFAULT_LOCALE, args?: any): string {
     const bundle = STRINGS[locale];
     if (!bundle) {
         logger.warn(`No such string bundle for locale: ${locale}`);

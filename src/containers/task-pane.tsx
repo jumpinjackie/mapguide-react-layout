@@ -20,7 +20,7 @@ import { invokeCommand } from "../actions/map";
 import * as TaskPaneActions from "../actions/taskpane";
 import { areUrlsSame } from "../utils/url";
 import { processMenuItems } from "../utils/menu";
-import { tr } from "../api/i18n";
+import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import * as FlyoutActions from "../actions/flyout";
 import {
     SPRITE_ICON_HOME,
@@ -127,7 +127,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         };
     }
     private getLocale(): string {
-        return this.props.config ? this.props.config.locale : "en";
+        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
     private onCloseFlyout(id: string): void {
         if (this.props.closeFlyout) {

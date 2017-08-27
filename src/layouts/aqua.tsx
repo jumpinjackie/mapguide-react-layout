@@ -8,7 +8,7 @@ import ModalLauncher from "../containers/modal-launcher";
 import FlyoutRegionContainer from "../containers/flyout-region";
 import { ModalDialog } from "../components/modal-dialog";
 import { connect } from "react-redux";
-import { tr } from "../api/i18n";
+import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
     NOOP,
@@ -151,7 +151,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
         this.setState({ isOverviewMapOpen: false });
     }
     private getLocale(): string {
-        return this.props.config ? this.props.config.locale : "en";
+        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
     componentDidMount() {
         setCustomTemplateReducer(aquaTemplateReducer);

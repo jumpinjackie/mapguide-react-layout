@@ -6,7 +6,7 @@ import ViewerApiShim from "../containers/viewer-shim";
 import ModalLauncher from "../containers/modal-launcher";
 import FlyoutRegionContainer from "../containers/flyout-region";
 import { connect } from "react-redux";
-import { tr } from "../api/i18n";
+import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
     NOOP,
@@ -123,7 +123,7 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
         this.fnActiveTabChanged = this.onActiveTabChanged.bind(this);
     }
     private getLocale(): string {
-        return this.props.config ? this.props.config.locale : "en";
+        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
     private onActiveTabChanged(id: string): void {
         const { setElementStates } = this.props;

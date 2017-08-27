@@ -3,7 +3,7 @@ import { Dialog, Button, Intent } from "@blueprintjs/core";
 import { IApplicationState, ReduxDispatch } from "../api/common";
 import { acknowledgeInitWarnings } from "../actions/init";
 import { connect } from "react-redux";
-import { tr } from "../api/i18n";
+import { tr, DEFAULT_LOCALE } from "../api/i18n";
 
 export interface IInitWarningDisplayProps {
     
@@ -39,7 +39,7 @@ export class InitWarningDisplay extends React.Component<InitWarningDisplayProps,
     }
     render(): JSX.Element {
         const { warnings, acknowledge } = this.props;
-        const locale = this.props.locale || "en";
+        const locale = this.props.locale || DEFAULT_LOCALE;
         if (warnings && warnings.length && acknowledge) {
             return <Dialog
                 iconName="warning-sign"

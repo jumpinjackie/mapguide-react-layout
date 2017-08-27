@@ -15,6 +15,7 @@ import {
     IApplicationState,
     getRuntimeMap
 } from "../api/common";
+import { DEFAULT_LOCALE } from "../api/i18n";
 
 export interface INavigatorContainerProps {
     style?: React.CSSProperties;
@@ -106,7 +107,7 @@ export class NavigatorContainer extends React.Component<NavigatorContainerProps,
         }
     }
     private getLocale(): string {
-        return this.props.config ? this.props.config.locale : "en";
+        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
     render(): JSX.Element {
         const { style, viewer, view, config, finiteScales } = this.props;

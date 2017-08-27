@@ -11,6 +11,7 @@ import {
 } from "../api/common";
 import { processMenuItems } from "../utils/menu";
 import { mapToolbarReference } from "../api/registry/command";
+import { DEFAULT_LOCALE } from "../api/i18n";
 
 export interface IFlyoutRegionContainerProps {
 
@@ -75,7 +76,7 @@ export class FlyoutRegionContainer extends React.Component<FlyoutRegionContainer
         return prepared;
     }
     render(): JSX.Element {
-        const locale = this.props.locale ? this.props.locale : "en";
+        const locale = this.props.locale ? this.props.locale : DEFAULT_LOCALE;
         const flyouts = this.prepareFlyouts();
         return <FlyoutRegion flyoutConf={flyouts} onCloseFlyout={this.fnCloseFlyout} locale={locale} />;
     }

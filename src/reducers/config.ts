@@ -8,11 +8,12 @@ import {
     UnitOfMeasure
 } from "../api/common";
 import { AnyAction } from "redux";
+import { DEFAULT_LOCALE } from "../api/i18n";
 
 export const INITIAL_STATE: IConfigurationReducerState = {
     agentUri: undefined,
     agentKind: "mapagent",
-    locale: "en",
+    locale: DEFAULT_LOCALE,
     activeMapName: undefined,
     availableMaps: undefined,
     viewRotation: 0,
@@ -52,7 +53,7 @@ export function configReducer(state = INITIAL_STATE, action: AnyAction = { type:
                     availableMaps.push({ name: maps[mapName].mapGroupId, value: mapName });
                 }
                 const state1: Partial<IConfigurationReducerState> = {
-                    locale: payload.locale || "en",
+                    locale: payload.locale || DEFAULT_LOCALE,
                     capabilities: payload.capabilities,
                     activeMapName: payload.activeMapName,
                     availableMaps: availableMaps

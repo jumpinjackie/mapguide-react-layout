@@ -8,6 +8,7 @@ import {
 } from "../api/common";
 import { SelectedFeatureCount } from "../components/selected-feature-count";
 import { QueryMapFeaturesResponse } from "../api/contracts/query";
+import { DEFAULT_LOCALE } from "../api/i18n";
 
 export interface ISelectionPanelContainerProps {
     style?: React.CSSProperties;
@@ -38,7 +39,7 @@ export class SelectedFeatureCountContainer extends React.Component<SelectedFeatu
         super(props);
     }
     private getLocale(): string {
-        return this.props.config ? this.props.config.locale : "en";
+        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
     render(): JSX.Element {
         const { selection, style, config } = this.props;

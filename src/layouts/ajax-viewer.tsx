@@ -16,6 +16,7 @@ import {
     IViewerCapabilities
 } from "../api/common";
 import InitWarningDisplay from "../containers/init-warning-display";
+import { DEFAULT_LOCALE } from "../api/i18n";
 
 const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;
@@ -49,7 +50,7 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
         super(props);
     }
     private getLocale(): string {
-        return this.props.config ? this.props.config.locale : "en";
+        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
     render(): JSX.Element {
         const { capabilities } = this.props;

@@ -11,7 +11,7 @@ import {
     getCurrentView,
     getRuntimeMap
 } from "../api/common";
-import { tr } from "../api/i18n";
+import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { ScaleDisplay } from "../components/scale-display";
 
 export interface IScaleDisplayContainerState {
@@ -55,7 +55,7 @@ export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainer
         }
     }
     private getLocale(): string {
-        return this.props.config ? this.props.config.locale : "en";
+        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
     componentWillReceiveProps(nextProps: ScaleDisplayContainerProps) {
         const { finiteScales, view } = nextProps;

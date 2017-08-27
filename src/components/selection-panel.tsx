@@ -1,13 +1,46 @@
 import * as React from "react";
 import { SelectedFeatureSet, SelectedFeature, LayerMetadata, SelectedLayer, FeatureProperty } from "../api/contracts/query";
 import { Toolbar, IItem, IInlineMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
-import { tr as xlate } from "../api/i18n";
+import { tr as xlate, DEFAULT_LOCALE } from "../api/i18n";
 import { NOOP } from "../api/common";
 import {
     SPRITE_CONTROL,
     SPRITE_CONTROL_180,
     SPRITE_ICON_ZOOMSELECT
 } from "../constants/assets";
+
+export interface ISelectedFeatureProps {
+    selectedFeature: SelectedFeature;
+    selectedLayer: LayerMetadata;
+    locale: string;
+}
+
+const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
+    const { selectedFeature, selectedLayer, locale } = props;
+    const featureProps = [] as FeatureProperty[];
+    for (const lp of selectedLayer.Property) {
+        const matches = selectedFeature.Property.filter(fp => fp.Name === lp.DisplayName);
+        if (matches.length === 1) {
+            featureProps.push(matches[0]);
+        }
+    }
+    return <table className="selection-panel-property-grid pt-table pt-condensed pt-bordered">
+        <thead>
+            <tr>
+                <th>{xlate("SELECTION_PROPERTY", locale)}</th>
+                <th>{xlate("SELECTION_VALUE", locale)}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {featureProps.map(prop => {
+            return <tr key={prop.Name}>
+                <td>{prop.Name}</td>
+                <td>{prop.Value}</td>
+            </tr>;
+        })}
+        </tbody>
+    </table>;
+};
 
 /**
  * SelectionPanel component props
@@ -124,6 +157,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
     }
     render(): JSX.Element {
         const { selection } = this.props;
+        let locale = this.props.locale || DEFAULT_LOCALE;
         let feat: SelectedFeature | undefined;
         let meta: LayerMetadata | undefined;
         if (selection != null && this.state.selectedLayerIndex >= 0 && this.state.featureIndex >= 0) {
@@ -166,33 +200,10 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
             <div className="selection-panel-body" style={selBodyStyle}>
                 {(() => {
                     if (feat && meta) {
-                        //Ensure properties are presented in the order specified by its layer metadata
-                        const props = [] as FeatureProperty[];
-                        for (const lp of meta.Property) {
-                            const matches = feat.Property.filter(fp => fp.Name === lp.DisplayName);
-                            if (matches.length === 1) {
-                                props.push(matches[0]);
-                            }
-                        }
-                        return <table className="selection-panel-property-grid pt-table pt-condensed pt-bordered">
-                            <thead>
-                                <tr>
-                                    <th>{xlate("SELECTION_PROPERTY", this.props.locale)}</th>
-                                    <th>{xlate("SELECTION_VALUE", this.props.locale)}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {props.map(prop => {
-                                return <tr key={prop.Name}>
-                                    <td>{prop.Name}</td>
-                                    <td>{prop.Value}</td>
-                                </tr>;
-                            })}
-                            </tbody>
-                        </table>;
+                        return <DefaultSelectedFeature selectedFeature={feat} selectedLayer={meta} locale={locale} />;
                     } else if (selection == null || (selection.SelectedLayer || []).length == 0) {
                         return <div className="pt-callout pt-intent-primary pt-icon-info-sign">
-                            <p className="selection-panel-no-selection">{xlate("NO_SELECTED_FEATURES", this.props.locale)}</p>
+                            <p className="selection-panel-no-selection">{xlate("NO_SELECTED_FEATURES", locale)}</p>
                         </div>;
                     }
                 })()}

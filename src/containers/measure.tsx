@@ -8,7 +8,7 @@ import {
     IConfigurationReducerState
 } from "../api/common";
 import { getViewer } from "../api/runtime";
-import { tr } from "../api/i18n";
+import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { NBSP } from "../constants";
 import { setActiveTool } from "../actions/map";
 import { MeasureContext, IMeasureComponent } from "./measure-context";
@@ -132,7 +132,7 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
     }
     getCurrentDrawType(): string | undefined { return this.state.type; }
     getLocale(): string {
-        return this.props.locale || "en";
+        return this.props.locale || DEFAULT_LOCALE;
     }
     isGeodesic(): boolean { return !!this.state.geodesic; }
     componentDidMount() {

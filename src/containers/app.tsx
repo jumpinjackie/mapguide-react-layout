@@ -15,7 +15,7 @@ import {
 } from "../api/common";
 import { initLayout, IInitAppLayout } from "../actions/init";
 import { Error, normalizeStack } from "../components/error";
-import { tr } from "../api/i18n";
+import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import * as TemplateActions from "../actions/template";
 import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
@@ -209,7 +209,7 @@ export class App extends React.Component<AppProps, any> {
     }
     private initErrorRenderer(err: Error | InitError): JSX.Element {
         const { config, initOptions } = this.props;
-        let locale = config ? (config.locale || "en") : "en";
+        let locale = config ? (config.locale || DEFAULT_LOCALE) : DEFAULT_LOCALE;
         if (initOptions && initOptions.locale) {
             locale = initOptions.locale;
         }
@@ -227,7 +227,7 @@ export class App extends React.Component<AppProps, any> {
             return <Error error={error} errorRenderer={this.fnErrorRenderer} />
         } else {
             //NOTE: Locale may not have been set at this point, so use default
-            const locale = config ? (config.locale || "en") : "en";
+            const locale = config ? (config.locale || DEFAULT_LOCALE) : DEFAULT_LOCALE;
             if (isLoading) {
                 return <div className="pt-non-ideal-state">
                     <div className="pt-non-ideal-state-visual pt-non-ideal-state-icon">

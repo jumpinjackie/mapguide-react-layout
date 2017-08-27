@@ -40,7 +40,7 @@ import { MgError } from "../api/error";
 import * as logger from "../utils/logger";
 import queryString = require("query-string");
 import * as shortid from "shortid";
-import { registerStringBundle } from "../api/i18n";
+import { registerStringBundle, DEFAULT_LOCALE } from "../api/i18n";
 import { assertNever } from "../utils/never";
 const parse = require("url-parse");
 import proj4 from "proj4";
@@ -581,7 +581,7 @@ async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, 
         const epsg = m.CoordinateSystem.EpsgCode;
         const mapDef = m.MapDefinition;
         if (epsg == "0") {
-            throw new MgError(tr("INIT_ERROR_UNSUPPORTED_COORD_SYS", opts.locale || "en", { mapDefinition: mapDef }));
+            throw new MgError(tr("INIT_ERROR_UNSUPPORTED_COORD_SYS", opts.locale || DEFAULT_LOCALE, { mapDefinition: mapDef }));
         }
         //Must be registered to proj4js if not 4326 or 3857
         if (!proj4.defs[`EPSG:${epsg}`]) {
@@ -854,7 +854,7 @@ async function sessionAcquiredAsync(opts: IInitAsyncOptions, session: string, cl
 async function initAsync(options: IInitAsyncOptions, client: Client): Promise<IInitAppPayload> {
     //English strings are baked into this bundle. For non-en locales, we assume a strings/{locale}.json
     //exists for us to fetch
-    if (options.locale != "en") {
+    if (options.locale != DEFAULT_LOCALE) {
         const r = await fetch(`strings/${options.locale}.json`);
         if (r.ok) {
             const res = await r.json();
@@ -884,7 +884,7 @@ export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
     const query = queryString.parse(parsed.query);
     const options1 = {
         resourceId: query["resource"] || options.resourceId,
-        locale: query["locale"] || "en",
+        locale: query["locale"] || DEFAULT_LOCALE,
         session: query["session"] || options.session
     };
     const opts: IInitAsyncOptions = { ...options, ...options1 };

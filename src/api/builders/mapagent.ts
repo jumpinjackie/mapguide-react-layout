@@ -2,6 +2,7 @@ import * as Request from '../request-builder';
 import * as Contracts from '../contracts';
 import { MgError } from '../error';
 import { deArrayify } from './deArrayify';
+import { DEFAULT_LOCALE } from "../i18n";
 
 const MG_MAPAGENT_ERROR_CODE = 559;
 
@@ -38,7 +39,7 @@ export function serialize(data: any, uppercase: boolean = true): string {
  */
 export class MapAgentRequestBuilder extends Request.RequestBuilder {
     private locale: string;
-    constructor(agentUri: string, locale: string = "en") {
+    constructor(agentUri: string, locale: string = DEFAULT_LOCALE) {
         super(agentUri);
         this.locale = locale;
     }

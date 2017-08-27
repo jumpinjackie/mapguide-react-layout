@@ -4,7 +4,7 @@ import { SelectionPanel } from "../components/selection-panel";
 import { QueryMapFeaturesResponse, SelectedFeature } from "../api/contracts/query";
 import * as MapActions from "../actions/map";
 import { getViewer } from "../api/runtime";
-import { tr } from "../api/i18n";
+import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import {
     IMapView,
     ReduxDispatch,
@@ -56,7 +56,7 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
         }
     }
     private getLocale(): string {
-        return this.props.config ? this.props.config.locale : "en";
+        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
     render(): JSX.Element {
         const { selection, config, maxHeight } = this.props;

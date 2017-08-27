@@ -44,7 +44,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ICoordinateTracker
 
 export type CoordinateTrackerContainerProps = ICoordinateTrackerContainerProps & Partial<ICoordinateTrackerContainerState> & Partial<ICoordinateTrackerContainerDispatch>;
 
-class CoordinateTrackerContainer extends React.Component<CoordinateTrackerContainerProps, any> {
+export class CoordinateTrackerContainer extends React.Component<CoordinateTrackerContainerProps, any> {
     constructor(props: CoordinateTrackerContainerProps) {
         super(props);
     }

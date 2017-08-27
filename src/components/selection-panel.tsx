@@ -56,24 +56,34 @@ export interface ISelectionPanelProps {
     selectedFeatureRenderer?: (props: ISelectedFeatureProps) => JSX.Element;
 }
 
-function buildToolbarItems(selPanel: SelectionPanel): IItem[] {
+interface ISelectionPanel {
+    locale: string;
+    canGoPrev(): boolean;
+    canGoNext(): boolean;
+    prevFeature(): void;
+    nextFeature(): void;
+    canZoomSelectedFeature(): boolean;
+    zoomSelectedFeature(): void;
+}
+
+function buildToolbarItems(selPanel: ISelectionPanel): IItem[] {
     return [
         {
             iconClass: SPRITE_CONTROL_180,
-            tooltip: xlate("SELECTION_PREV_FEATURE", selPanel.props.locale),
+            tooltip: xlate("SELECTION_PREV_FEATURE", selPanel.locale),
             enabled: () => selPanel.canGoPrev(),
             invoke: () => selPanel.prevFeature()
         },
         {
             iconClass: SPRITE_CONTROL,
-            tooltip: xlate("SELECTION_NEXT_FEATURE", selPanel.props.locale),
+            tooltip: xlate("SELECTION_NEXT_FEATURE", selPanel.locale),
             enabled: () => selPanel.canGoNext(),
             invoke: () => selPanel.nextFeature()
         },
         { isSeparator: true },
         {
             iconClass: SPRITE_ICON_ZOOMSELECT,
-            tooltip: xlate("SELECTION_ZOOMTO_FEATURE", selPanel.props.locale),
+            tooltip: xlate("SELECTION_ZOOMTO_FEATURE", selPanel.locale),
             enabled: () => selPanel.canZoomSelectedFeature(),
             invoke: () => selPanel.zoomSelectedFeature()
         }
@@ -88,8 +98,8 @@ function buildToolbarItems(selPanel: SelectionPanel): IItem[] {
  * @extends {React.Component<ISelectionPanelProps, any>}
  */
 export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
-    selectionToolbarItems: IItem[];
-    fnSelectedLayerChanged: GenericEventHandler;
+    private selectionToolbarItems: IItem[];
+    private fnSelectedLayerChanged: GenericEventHandler;
     constructor(props: ISelectionPanelProps) {
         super(props);
         this.fnSelectedLayerChanged = this.onSelectedLayerChanged.bind(this);
@@ -97,7 +107,15 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
             selectedLayerIndex: -1,
             featureIndex: -1
         };
-        this.selectionToolbarItems = buildToolbarItems(this);
+        this.selectionToolbarItems = buildToolbarItems({
+            locale: props.locale || DEFAULT_LOCALE,
+            canGoPrev: this.canGoPrev.bind(this),
+            canGoNext: this.canGoNext.bind(this),
+            prevFeature: this.prevFeature.bind(this),
+            nextFeature: this.nextFeature.bind(this),
+            canZoomSelectedFeature: this.canZoomSelectedFeature.bind(this),
+            zoomSelectedFeature: this.zoomSelectedFeature.bind(this)
+        });
     }
     private getCurrentLayer() {
         if (this.props.selection == null)
@@ -111,27 +129,27 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
         }
         return null;
     }
-    canGoPrev(): boolean {
+    private canGoPrev(): boolean {
         return this.state.featureIndex > 0;
     }
-    canGoNext(): boolean {
+    private canGoNext(): boolean {
         const layer = this.getCurrentLayer();
         if (layer != null) {
             return this.state.featureIndex + 1 < layer.Feature.length;
         }
         return false;
     }
-    canZoomSelectedFeature(): boolean {
+    private canZoomSelectedFeature(): boolean {
         const feat = this.getCurrentFeature();
         return feat != null && feat.Bounds != null;
     }
-    prevFeature() {
+    private prevFeature() {
         this.setState({ featureIndex: this.state.featureIndex - 1 });
     }
-    nextFeature() {
+    private nextFeature() {
         this.setState({ featureIndex: this.state.featureIndex + 1 });
     }
-    zoomSelectedFeature() {
+    private zoomSelectedFeature() {
         const feat = this.getCurrentFeature();
         if (feat) {
             this.props.onRequestZoomToFeature(feat);
@@ -153,7 +171,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
             this.setDefaultSelection(nextProps);
         }
     }
-    onSelectedLayerChanged(e: GenericEvent) {
+    private onSelectedLayerChanged(e: GenericEvent) {
         this.setState({ selectedLayerIndex: e.target.value, featureIndex: 0 });
     }
     render(): JSX.Element {

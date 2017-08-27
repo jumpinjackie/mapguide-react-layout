@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { SelectionPanel } from "../components/selection-panel";
+import { SelectionPanel, ISelectedFeatureProps } from "../components/selection-panel";
 import { QueryMapFeaturesResponse, SelectedFeature } from "../api/contracts/query";
 import * as MapActions from "../actions/map";
 import { getViewer } from "../api/runtime";
@@ -15,6 +15,7 @@ import {
 
 export interface ISelectionPanelContainerProps {
     maxHeight?: number;
+    selectedFeatureRenderer?: (props: ISelectedFeatureProps) => JSX.Element;
 }
 
 export interface ISelectionPanelContainerState {
@@ -63,7 +64,11 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
         const locale = this.getLocale();
         if (selection != null &&
             selection.SelectedFeatures != null) {
-            return <SelectionPanel locale={locale} selection={selection.SelectedFeatures} onRequestZoomToFeature={this.fnZoomToSelectedFeature} maxHeight={maxHeight} />;
+            return <SelectionPanel locale={locale} 
+                                   selection={selection.SelectedFeatures}
+                                   onRequestZoomToFeature={this.fnZoomToSelectedFeature}
+                                   selectedFeatureRenderer={this.props.selectedFeatureRenderer}
+                                   maxHeight={maxHeight} />;
         } else {
             return <div className="pt-callout pt-intent-primary pt-icon-info-sign">
                 <p className="selection-panel-no-selection">{tr("NO_SELECTED_FEATURES", locale)}</p>

@@ -53,6 +53,7 @@ export interface ISelectionPanelProps {
     selection: SelectedFeatureSet;
     onRequestZoomToFeature: (feat: SelectedFeature) => void;
     maxHeight?: number;
+    selectedFeatureRenderer?: (props: ISelectedFeatureProps) => JSX.Element;
 }
 
 function buildToolbarItems(selPanel: SelectionPanel): IItem[] {
@@ -156,7 +157,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
         this.setState({ selectedLayerIndex: e.target.value, featureIndex: 0 });
     }
     render(): JSX.Element {
-        const { selection } = this.props;
+        const { selection, selectedFeatureRenderer } = this.props;
         let locale = this.props.locale || DEFAULT_LOCALE;
         let feat: SelectedFeature | undefined;
         let meta: LayerMetadata | undefined;
@@ -200,7 +201,11 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
             <div className="selection-panel-body" style={selBodyStyle}>
                 {(() => {
                     if (feat && meta) {
-                        return <DefaultSelectedFeature selectedFeature={feat} selectedLayer={meta} locale={locale} />;
+                        if (selectedFeatureRenderer) {
+                            return selectedFeatureRenderer({ selectedFeature: feat, selectedLayer: meta, locale: locale });
+                        } else {
+                            return <DefaultSelectedFeature selectedFeature={feat} selectedLayer={meta} locale={locale} />;
+                        }
                     } else if (selection == null || (selection.SelectedLayer || []).length == 0) {
                         return <div className="pt-callout pt-intent-primary pt-icon-info-sign">
                             <p className="selection-panel-no-selection">{xlate("NO_SELECTED_FEATURES", locale)}</p>

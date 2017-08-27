@@ -6,7 +6,8 @@ import {
     Coordinate,
     ImageFormat,
     IExternalBaseLayer,
-    LayerTransparencySet
+    LayerTransparencySet,
+    ActiveSelectedFeature
 } from "../api/common";
 import { Client } from '../api/client';
 import { MgError, isSessionExpiredError } from '../api/error';
@@ -21,6 +22,7 @@ import olExtent from "ol/extent";
 import olMap from "ol/map";
 import olView from "ol/view";
 import olOverlay from "ol/overlay";
+import olProjection from "ol/proj/projection";
 import olWKTFormat from "ol/format/wkt";
 import olPoint from "ol/geom/point";
 import olPolygon from "ol/geom/polygon";
@@ -34,10 +36,14 @@ import olImageSource from "ol/source/image";
 import olTileImageSource from "ol/source/tileimage";
 import olMapGuideSource from "ol/source/imagemapguide";
 import olOverviewMap from "ol/control/overviewmap";
-import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from "../constants/index";
+import olImageStaticSource from "ol/source/imagestatic";
+import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY, BLANK_GIF_DATA_URI } from "../constants/index";
 import { restrictToRange } from "../utils/number";
+import { Size } from "../containers/map-capturer-context";
 
 const HIDDEN_CLASS_NAME = "tooltip-hidden";
+
+const BLANK_SIZE: Size = { w: 1, h: 1 };
 
 class MouseTrackingTooltip {
     private tooltip: olOverlay;
@@ -207,6 +213,7 @@ export class MgLayerSet {
     private overlay: olImageLayer;
     private overviewOverlay: olImageLayer;
     private selectionOverlay: olImageLayer;
+    private activeSelectedFeatureOverlay: olImageLayer;
     private baseLayerGroup: olLayerGroup;
     private dynamicOverlayParams: any;
     private staticOverlayParams: any;
@@ -370,6 +377,8 @@ export class MgLayerSet {
             source: selectionOverlaySource
         });
         sources.push(selectionOverlaySource);
+        //NOTE: Not tracking this source atm
+        this.activeSelectedFeatureOverlay = new olImageLayer();
         if (props.externalBaseLayers != null) {
             const groupOpts: any = {
                 title: tr("EXTERNAL_BASE_LAYERS", props.locale),
@@ -394,6 +403,7 @@ export class MgLayerSet {
         }
         this.allLayers.push(this.overlay);
         this.allLayers.push(this.selectionOverlay);
+        this.allLayers.push(this.activeSelectedFeatureOverlay);
         /*
         console.log("Draw Order:");
         for (let i = 0; i < layers.length; i++) {
@@ -419,6 +429,13 @@ export class MgLayerSet {
         for (const src of sources) {
             this.registerSourceEvents(src);
         }
+    }
+    private makeActiveSelectedFeatureSource(mapExtent: Bounds, size: Size, url: string = BLANK_GIF_DATA_URI) {
+        return new olImageStaticSource({
+            imageExtent: mapExtent,
+            imageSize: [size.w, size.h],
+            url: url
+        });
     }
     private registerSourceEvents(source: olSource): void {
         if (source instanceof olImageSource) {
@@ -612,6 +629,10 @@ export class MgLayerSet {
             ovMap.removeLayer(layer);
         }
     }
+    public showActiveSelectedFeature(mapExtent: Bounds, size: Size, uri: string) {
+        this.activeSelectedFeatureOverlay.setSource(this.makeActiveSelectedFeatureSource(mapExtent, size, uri));
+        this.activeSelectedFeatureOverlay.setVisible(true);
+    }
 }
 
 export interface IMapViewerContextCallback {
@@ -742,5 +763,32 @@ export class MapViewerContext {
     public refreshMap(name: string, mode: RefreshMode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly): void {
         const layerSet = this.getLayerSet(name);
         layerSet.refreshMap(mode);
+    }
+    public async showSelectedFeature(mapExtent: Bounds, size: Size, map: RuntimeMap, selectionColor: string, featureXml: string | undefined) {
+        const layerSet = this.getLayerSet(map.Name);
+        try {
+            if (featureXml) {
+                const r = await this.callback.getClient().queryMapFeatures({
+                    mapname: map.Name,
+                    session: map.SessionId,
+                    selectionformat: "PNG",
+                    featurefilter: featureXml,
+                    selectioncolor: selectionColor,
+                    requestdata: 2, //Inline selection
+                    layerattributefilter: 0,
+                    persist: 0 //IMPORTANT: This is a transient selection
+                });
+                if (r.InlineSelectionImage) {
+                    const dataUri = `data:${r.InlineSelectionImage.MimeType};base64,${r.InlineSelectionImage.Content}`;
+                    layerSet.showActiveSelectedFeature(mapExtent, size, dataUri);
+                } else {
+                    layerSet.showActiveSelectedFeature(mapExtent, BLANK_SIZE, BLANK_GIF_DATA_URI);
+                }
+            } else {
+                layerSet.showActiveSelectedFeature(mapExtent, BLANK_SIZE, BLANK_GIF_DATA_URI);
+            }
+        } catch (e) {
+            layerSet.showActiveSelectedFeature(mapExtent, BLANK_SIZE, BLANK_GIF_DATA_URI);
+        }
     }
 }

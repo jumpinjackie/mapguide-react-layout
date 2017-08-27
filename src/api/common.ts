@@ -963,6 +963,21 @@ export interface IModalReducerState {
 
 export type LayerTransparencySet = { [layerName: string]: number };
 
+export interface ActiveSelectedFeature {
+    /**
+     * The selected layer id
+     * 
+     * @type {string}
+     */
+    layerId: string;
+    /**
+     * The index of the feature to highlight
+     * 
+     * @type {number}
+     */
+    featureIndex: number;
+}
+
 /**
  * Describes the reducer state branch for a runtime map
  *
@@ -1082,6 +1097,13 @@ export interface IBranchedMapSubState {
      * @memberof IBranchedMapSubState
      */
     layerTransparency: LayerTransparencySet;
+    /**
+     * The active selected feature to highlight
+     * 
+     * @type {(ActiveSelectedFeature | undefined)}
+     * @memberof IBranchedMapSubState
+     */
+    activeSelectedFeature: ActiveSelectedFeature | undefined
 }
 
 /**
@@ -1329,6 +1351,12 @@ export interface IConfigurationReducerState {
          * @type {string}
          */
         selectionColor: string;
+        /**
+         * The color to use for highlighting active selected features
+         * 
+         * @type {string}
+         */
+        activeSelectedFeatureColor: string;
         /**
          * The current point selection pixel tolerance
          *

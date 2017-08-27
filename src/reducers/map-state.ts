@@ -29,7 +29,8 @@ export const INITIAL_SUB_STATE: IBranchedMapSubState = {
     showGroups: [],
     hideLayers: [],
     hideGroups: [],
-    externalBaseLayers: []
+    externalBaseLayers: [],
+    activeSelectedFeature: undefined
 };
 
 function mergeSubState(state: IBranchedMapState, mapName: string, subState: Partial<IBranchedMapSubState>) {
@@ -72,7 +73,8 @@ export function mapStateReducer(state = INITIAL_STATE, action: AnyAction = { typ
                     const index = subState.historyIndex - 1;
                     const state1: Partial<IBranchedMapSubState> = {
                         historyIndex: index,
-                        currentView: subState.history[index]
+                        currentView: subState.history[index],
+                        activeSelectedFeature: undefined
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
@@ -84,7 +86,8 @@ export function mapStateReducer(state = INITIAL_STATE, action: AnyAction = { typ
                     const index = subState.historyIndex + 1;
                     const state1: Partial<IBranchedMapSubState> = {
                         historyIndex: index,
-                        currentView: subState.history[index]
+                        currentView: subState.history[index],
+                        activeSelectedFeature: undefined
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
@@ -100,7 +103,8 @@ export function mapStateReducer(state = INITIAL_STATE, action: AnyAction = { typ
                         view = { ...view, ...view1 };
                     }
                     const state1: Partial<IBranchedMapSubState> = {
-                        currentView: view
+                        currentView: view,
+                        activeSelectedFeature: undefined
                     };
                     const newSubState: Partial<IBranchedMapSubState> = { ...state1, ...{ historyIndex: subState.historyIndex } };
                     newSubState.history = [...subState.history];
@@ -123,7 +127,8 @@ export function mapStateReducer(state = INITIAL_STATE, action: AnyAction = { typ
                     const data = payload.view;
                     if (isMapView(data)) {
                         const state1: Partial<IBranchedMapSubState> = {
-                            currentView: data
+                            currentView: data,
+                            activeSelectedFeature: undefined
                         };
                         const newSubState: Partial<IBranchedMapSubState> = { ...state1, ...{ historyIndex: subState.historyIndex } };
                         newSubState.history = [...subState.history];
@@ -231,7 +236,21 @@ export function mapStateReducer(state = INITIAL_STATE, action: AnyAction = { typ
                     const state1: Partial<IBranchedMapSubState> = {
                         selectionSet: payload.selection,
                         layerIndex: -1,
-                        featureIndex: -1
+                        featureIndex: -1,
+                        activeSelectedFeature: undefined
+                    };
+                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
+                }
+            }
+        case Constants.MAP_SHOW_SELECTED_FEATURE:
+            {
+                const subState = state[payload.mapName];
+                if (subState) {
+                    const state1: Partial<IBranchedMapSubState> = {
+                        activeSelectedFeature: {
+                            layerId: payload.layerId,
+                            featureIndex: payload.featureIndex
+                        }
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }

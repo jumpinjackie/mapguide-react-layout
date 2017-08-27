@@ -15,7 +15,8 @@ import {
     IApplicationState,
     IViewerReducerState,
     IConfigurationReducerState,
-    LayerTransparencySet
+    LayerTransparencySet,
+    ActiveSelectedFeature
 } from "../api/common";
 import * as Constants from "../constants";
 import { MapViewerBase } from "../components/map-viewer-base";
@@ -26,7 +27,7 @@ import { IItem, IInlineMenu } from "../components/toolbar";
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
-import { buildSelectionXml } from '../api/builders/deArrayify';
+import { buildSelectionXml, getActiveSelectedFeatureXml } from '../api/builders/deArrayify';
 import { getCommand, mapToolbarReference, } from "../api/registry/command";
 import { invokeCommand, queryMapFeatures } from "../actions/map";
 import { showModalComponent } from "../actions/modal";
@@ -54,6 +55,7 @@ export interface IMapViewerContainerState {
     hideGroups: string[];
     hideLayers: string[];
     externalBaseLayers: IExternalBaseLayer[];
+    activeSelectedFeature: ActiveSelectedFeature;
 }
 
 export interface IMapViewerContainerDispatch {
@@ -82,6 +84,7 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewe
     let hideGroups;
     let hideLayers;
     let layerTransparency;
+    let activeSelectedFeature;
     if (state.config.activeMapName) {
         const branch = state.mapState[state.config.activeMapName];
         map = branch.runtimeMap;
@@ -95,6 +98,7 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewe
         selectableLayers = branch.selectableLayers;
         externalBaseLayers = branch.externalBaseLayers;
         layerTransparency = branch.layerTransparency;
+        activeSelectedFeature = branch.activeSelectedFeature;
     }
     return {
         config: state.config,
@@ -110,7 +114,8 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewe
         hideGroups: hideGroups,
         hideLayers: hideLayers,
         externalBaseLayers: externalBaseLayers,
-        layerTransparency: layerTransparency
+        layerTransparency: layerTransparency,
+        activeSelectedFeature: activeSelectedFeature
     };
 }
 
@@ -241,6 +246,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     render(): JSX.Element {
         const {
             map,
+            selection,
             config,
             viewer,
             currentView,
@@ -254,7 +260,8 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             showGroups,
             hideGroups,
             showLayers,
-            hideLayers
+            hideLayers,
+            activeSelectedFeature
         } = this.props;
         let locale;
         if (config) {
@@ -268,6 +275,10 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             const items: any[] = contextmenu != null ? contextmenu.items : [];
             const cmitems = (items || []).map(tb => mapToolbarReference(tb, store, invokeCommand));
             const childItems = processMenuItems(cmitems);
+            let xml;
+            if (activeSelectedFeature && selection && selection.FeatureSet) {
+                xml = getActiveSelectedFeatureXml(selection.FeatureSet, activeSelectedFeature);
+            }
             if (config.agentUri) {
                 return <MapViewerBase ref={this.fnMapViewerMounted}
                                       map={map}
@@ -278,6 +289,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                       imageFormat={config.viewer.imageFormat}
                                       selectionImageFormat={config.viewer.selectionImageFormat}
                                       selectionColor={config.viewer.selectionColor}
+                                      activeSelectedFeatureColor={config.viewer.activeSelectedFeatureColor}
                                       pointSelectionBuffer={config.viewer.pointSelectionBuffer}
                                       tool={viewer.tool}
                                       viewRotation={config.viewRotation}
@@ -302,7 +314,8 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                       onMouseCoordinateChanged={this.fnMouseCoordinateChanged}
                                       onQueryMapFeatures={this.fnQueryMapFeatures}
                                       onRequestZoomToView={this.fnRequestZoomToView}
-                                      onMapResized={this.fnMapResized} />;
+                                      onMapResized={this.fnMapResized}
+                                      activeSelectedFeatureXml={xml} />;
             }
         }
         return <div>{tr("LOADING_MSG", locale)}</div>;

@@ -15,6 +15,7 @@
 import * as Contracts from "../contracts";
 import * as Constants from "../../constants";
 import { MgError } from "../error";
+import { ActiveSelectedFeature } from "../common";
 
 type ElementType = "string" | "boolean" | "int" | "float";
 
@@ -875,4 +876,22 @@ export function buildSelectionXml(selection: Contracts.Query.FeatureSet | undefi
     }
     xml += '</FeatureSet>';
     return xml;
+}
+
+export function getActiveSelectedFeatureXml(selection: Contracts.Query.FeatureSet, feat: ActiveSelectedFeature): string | undefined {
+    for (const layer of selection.Layer) {
+        const layerId = layer["@id"];
+        if (layerId == feat.layerId) {
+            const key = layer.Class.ID[feat.featureIndex];
+            let xml = '<?xml version="1.0" encoding="utf-8"?>';
+            xml += '<FeatureSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FeatureSet-1.0.0.xsd">';
+            xml += `<Layer id="${layerId}">`;
+            xml += `<Class id="${layer.Class["@id"]}">`;
+            xml += `<ID>${key}</ID>`;
+            xml += '</Class>';
+            xml += '</Layer>';
+            xml += '</FeatureSet>';
+            return xml;
+        }
+    }
 }

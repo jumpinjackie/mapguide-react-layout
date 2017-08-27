@@ -52,6 +52,7 @@ export interface ISelectionPanelProps {
     locale?: string;
     selection: SelectedFeatureSet;
     onRequestZoomToFeature: (feat: SelectedFeature) => void;
+    onShowSelectedFeature: (layerId: string, featureIndex: number) => void;
     maxHeight?: number;
     selectedFeatureRenderer?: (props: ISelectedFeatureProps) => JSX.Element;
 }
@@ -144,10 +145,28 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
         return feat != null && feat.Bounds != null;
     }
     private prevFeature() {
-        this.setState({ featureIndex: this.state.featureIndex - 1 });
+        const newIndex = this.state.featureIndex - 1;
+        this.setState({ featureIndex: newIndex });
+        const { onShowSelectedFeature } = this.props;
+        if (onShowSelectedFeature) {
+            const layer = this.getCurrentLayer();
+            if (layer) {
+                const layerId = layer["@id"];
+                onShowSelectedFeature(layerId, newIndex);
+            }
+        }
     }
     private nextFeature() {
-        this.setState({ featureIndex: this.state.featureIndex + 1 });
+        const newIndex = this.state.featureIndex + 1;
+        this.setState({ featureIndex: newIndex });
+        const { onShowSelectedFeature } = this.props;
+        if (onShowSelectedFeature) {
+            const layer = this.getCurrentLayer();
+            if (layer) {
+                const layerId = layer["@id"];
+                onShowSelectedFeature(layerId, newIndex);
+            }
+        }
     }
     private zoomSelectedFeature() {
         const feat = this.getCurrentFeature();

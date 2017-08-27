@@ -25,7 +25,8 @@ export const INITIAL_STATE: IConfigurationReducerState = {
     viewer: {
         imageFormat: "PNG",
         selectionImageFormat: "PNG8",
-        selectionColor: "0x0000FFAA",
+        selectionColor: "0x0000FFAA", //Blue
+        activeSelectedFeatureColor: "0xFF0000AA", //Red
         pointSelectionBuffer: 2,
         loadIndicatorPositioning: "top",
         loadIndicatorColor: "rgba(34, 153, 221, 0.9)",

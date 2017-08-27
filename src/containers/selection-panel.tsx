@@ -25,6 +25,7 @@ export interface ISelectionPanelContainerState {
 
 export interface ISelectionPanelContainerDispatch {
     setCurrentView: (view: IMapView) => void;
+    showSelectedFeature: (mapName: string, layerId: string, featureIndex: number) => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>, ownProps: ISelectionPanelContainerProps): Partial<ISelectionPanelContainerState> {
@@ -36,7 +37,8 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: ISelectio
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ISelectionPanelContainerDispatch> {
     return {
-        setCurrentView: (view) => dispatch(MapActions.setCurrentView(view))
+        setCurrentView: (view) => dispatch(MapActions.setCurrentView(view)),
+        showSelectedFeature: (mapName, layerId, featureIndex) => dispatch(MapActions.showSelectedFeature(mapName, layerId, featureIndex))
     };
 }
 
@@ -44,9 +46,11 @@ export type SelectionPanelContainerProps = ISelectionPanelContainerProps & Parti
 
 export class SelectionPanelContainer extends React.Component<SelectionPanelContainerProps, any> {
     private fnZoomToSelectedFeature: (feature: SelectedFeature) => void;
+    private fnShowSelectedFeature: (layerId: string, featureIndex: number) => void;
     constructor(props: SelectionPanelContainerProps) {
         super(props);
         this.fnZoomToSelectedFeature = this.onZoomToSelectedFeature.bind(this);
+        this.fnShowSelectedFeature = this.onShowSelectedFeature.bind(this);
     }
     private onZoomToSelectedFeature(feature: SelectedFeature) {
         const bbox: any = feature.Bounds.split(" ").map(s => parseFloat(s));
@@ -54,6 +58,12 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
         if (viewer && this.props.setCurrentView) {
             const view = viewer.getViewForExtent(bbox);
             this.props.setCurrentView(view);
+        }
+    }
+    private onShowSelectedFeature(layerId: string, featureIndex: number) {
+        const { showSelectedFeature, config } = this.props;
+        if (showSelectedFeature && config && config.activeMapName) {
+            showSelectedFeature(config.activeMapName, layerId, featureIndex);
         }
     }
     private getLocale(): string {
@@ -67,6 +77,7 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
             return <SelectionPanel locale={locale} 
                                    selection={selection.SelectedFeatures}
                                    onRequestZoomToFeature={this.fnZoomToSelectedFeature}
+                                   onShowSelectedFeature={this.fnShowSelectedFeature}
                                    selectedFeatureRenderer={this.props.selectedFeatureRenderer}
                                    maxHeight={maxHeight} />;
         } else {

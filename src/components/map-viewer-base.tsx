@@ -94,6 +94,7 @@ import Polygon from "ol/geom/polygon";
 import Point from "ol/geom/point";
 import LineString from "ol/geom/linestring";
 import Circle from "ol/geom/circle";
+import { BLANK_GIF_DATA_URI } from "../constants/index";
 
 /**
  * MapViewerBase component props
@@ -130,6 +131,8 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
     layerTransparency: LayerTransparencySet;
     loadIndicatorPosition: MapLoadIndicatorPositioning;
     loadIndicatorColor: string;
+    activeSelectedFeatureXml?: string;
+    activeSelectedFeatureColor: string;
 }
 
 /**
@@ -247,7 +250,7 @@ const MapLoadIndicator = (props: IMapLoadIndicatorProps) => {
     }
     const style: React.CSSProperties = { 
         position: "absolute",
-        //zIndex: 50,
+        zIndex: 10,
         visibility: visibility,
         left: 0,
         height: 5,
@@ -729,6 +732,14 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
                 zoom: view.getZoom()
             });
             this._map.setView(newView);
+        }
+        //activeSelectedFeatureXml
+        if (this.props.activeSelectedFeatureXml != nextProps.activeSelectedFeatureXml) {
+            const ms = this._map.getSize();
+            const view = this.getOLView();
+            const me = view.calculateExtent(ms);
+            const size = { w: ms[0], h: ms[1] };
+            this._mapContext.showSelectedFeature(me, size, this.props.map, this.props.activeSelectedFeatureColor, nextProps.activeSelectedFeatureXml);
         }
     }
     componentDidMount() {

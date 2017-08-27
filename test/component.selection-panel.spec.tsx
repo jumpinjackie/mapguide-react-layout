@@ -10,10 +10,11 @@ type ZoomFeatureFunc = (feat: SelectedFeature) => void;
 describe("components/selection-panel", () => {
     it("null selection results in empty results message", () => {
         const onZoomRequest = jest.fn();
+        const onShowSelectedFeature = jest.fn();
         const set: SelectedFeatureSet = {
             SelectedLayer: []
         };
-        const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} />);
+        const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(0);
         expect(wrapper.find(".selection-panel-property-grid")).toHaveLength(0);
         expect(wrapper.find(".selection-panel-no-selection")).toHaveLength(1);
@@ -21,10 +22,11 @@ describe("components/selection-panel", () => {
     });
     it("Empty selection results in empty results message", () => {
         const onZoomRequest = jest.fn();
+        const onShowSelectedFeature = jest.fn();
         const set: SelectedFeatureSet = {
             SelectedLayer: []
         };
-        const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} />);
+        const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(0);
         expect(wrapper.find(".selection-panel-property-grid")).toHaveLength(0);
         expect(wrapper.find(".selection-panel-no-selection")).toHaveLength(1);
@@ -32,8 +34,9 @@ describe("components/selection-panel", () => {
     });
     it("Selection should show first feature of first layer when set", () => {
         const onZoomRequest = jest.fn();
+        const onShowSelectedFeature = jest.fn();
         const set: SelectedFeatureSet = createSelectionSet();
-        const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} />);
+        const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(1);
         expect(wrapper.find(".selection-panel-property-grid")).toHaveLength(1);
         expect(wrapper.state("selectedLayerIndex")).toBe(0);
@@ -42,8 +45,9 @@ describe("components/selection-panel", () => {
     });
     it("Can scroll forwards/backwards on first selected layer", () => {
         const onZoomRequest = jest.fn();
+        const onShowSelectedFeature = jest.fn();
         const set: SelectedFeatureSet = createSelectionSet();
-        const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} />);
+        const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(1);
         expect(wrapper.find(".toolbar-btn")).toHaveLength(3);
         const back = wrapper.find(".toolbar-btn").at(0);
@@ -55,8 +59,9 @@ describe("components/selection-panel", () => {
     });
     it("Zoom to current feature raises handler", () => {
         const onZoomRequest = jest.fn();
+        const onShowSelectedFeature = jest.fn();
         const set: SelectedFeatureSet = createSelectionSet();
-        const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} />);
+        const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(1);
         expect(wrapper.find(".toolbar-btn")).toHaveLength(3);
         const zoom = wrapper.find(".toolbar-btn").at(2);
@@ -67,8 +72,9 @@ describe("components/selection-panel", () => {
     });
     it("Switching selected layer resets feature index to 0", () => {
         const onZoomRequest = jest.fn();
+        const onShowSelectedFeature = jest.fn();
         const set: SelectedFeatureSet = createSelectionSet();
-        const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} />);
+        const wrapper = mount(<SelectionPanel selection={set} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(1); //, "Has Toolbar");
         expect(wrapper.find(".toolbar-btn")).toHaveLength(3); //, "Has Toolbar Buttons");
         const fwd = wrapper.find(".toolbar-btn").at(1);

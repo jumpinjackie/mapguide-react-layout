@@ -506,3 +506,23 @@ export function setViewRotationEnabled(enabled: boolean): ReduxAction {
         payload: enabled
     };
 }
+
+/**
+ * Shows the selected feature on the map
+ * 
+ * @export
+ * @param {string} mapName 
+ * @param {string} layerId 
+ * @param {number} featureIndex 
+ * @returns {ReduxAction} 
+ */
+export function showSelectedFeature(mapName: string, layerId: string, featureIndex: number): ReduxAction {
+    return {
+        type: Constants.MAP_SHOW_SELECTED_FEATURE,
+        payload: {
+            mapName,
+            layerId,
+            featureIndex
+        }
+    }
+}

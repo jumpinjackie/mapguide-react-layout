@@ -2,9 +2,10 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import App, { IAppProps } from "../containers/app";
-import { ClientKind } from "../api/common";
+import { ClientKind, ReduxAction, ReduxThunkedAction, ICommand, IApplicationState } from "../api/common";
 import configureStore from "../store/configure-store";
 import { INITIAL_STATE } from "../reducers/config";
+import { getCommand as getRegisteredCommand } from "../api/registry/command";
 
 /**
  * This is the entry point to the Application component
@@ -12,6 +13,8 @@ import { INITIAL_STATE } from "../reducers/config";
  * In the browser globals context, this is accessible via MapGuide.Application
  */
 export class ApplicationViewModel {
+    protected _store: any;
+
     /**
      * @hidden
      */
@@ -60,9 +63,37 @@ export class ApplicationViewModel {
         };
         const initState = { ...{ config: { ...INITIAL_STATE, ...agentConf } }, ...this.getExtraInitialState() };
         const extraReducers = this.getExtraReducers();
-        const store = configureStore(initState, extraReducers);
-        ReactDOM.render(<Provider store={store}>
+        this._store = configureStore(initState, extraReducers);
+        ReactDOM.render(<Provider store={this._store}>
             <App {...props} />
         </Provider>, node);
+    }
+    /**
+     * Dispatches the given action
+     * 
+     * @param {(ReduxAction | ReduxThunkedAction)} action 
+     * @memberof ApplicationViewModel
+     */
+    public dispatch(action: ReduxAction | ReduxThunkedAction) {
+        this._store.dispatch(action);
+    }
+    /**
+     * Gets the command registered by the specific name
+     * 
+     * @param {string} commandName 
+     * @returns {(ICommand | undefined)} 
+     * @memberof ApplicationViewModel
+     */
+    public getCommand(commandName: string): ICommand | undefined {
+        return getRegisteredCommand(commandName);
+    }
+    /**
+     * Returns the current application state. This state is read-only and should not be modified.
+     * 
+     * @returns {Readonly<IApplicationState>} 
+     * @memberof ApplicationViewModel
+     */
+    public getState(): Readonly<IApplicationState> {
+        return this._store.getState();
     }
 }

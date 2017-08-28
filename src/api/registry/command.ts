@@ -23,7 +23,6 @@ import { QueryMapFeaturesResponse } from "../contracts/query";
 import { ResultColumnSet } from "../contracts/weblayout";
 import { IItem, IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../../components/toolbar";
 import * as Constants from "../../constants";
-import { ensureParameters } from "../../actions/taskpane";
 import { tr } from "../i18n";
 import { getAssetRoot } from "../../utils/asset";
 import {
@@ -32,6 +31,7 @@ import {
 } from "../../constants/assets";
 import { assertNever } from "../../utils/never";
 import * as logger from "../../utils/logger";
+import { ensureParameters } from "../../utils/url";
 
 const FUSION_ICON_REGEX = /images\/icons\/[a-zA-Z\-]*.png/
 
@@ -194,7 +194,6 @@ export class CommandConditions {
     }
 }
 
-//TODO: Convert to actual string enum in TS 2.4 when we can finally upgrade to it
 /**
  * The set of default command names
  *

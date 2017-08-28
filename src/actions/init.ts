@@ -5,7 +5,6 @@ import { ReduxDispatch, Dictionary, ICommand, IMapView, CommandTarget } from "..
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
 import { registerCommand, DefaultCommands } from "../api/registry/command";
 import { DefaultComponentNames } from "../api/registry/component";
-import { ensureParameters } from "../actions/taskpane";
 import {
     WebLayout,
     CommandDef,
@@ -45,6 +44,7 @@ import { assertNever } from "../utils/never";
 const parse = require("url-parse");
 import proj4 from "proj4";
 import uniq = require("lodash.uniq");
+import { ensureParameters } from "../utils/url";
 
 interface IInitAppPayload {
     activeMapName: string;

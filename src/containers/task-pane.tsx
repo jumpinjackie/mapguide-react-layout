@@ -18,7 +18,7 @@ import { RuntimeMap } from "../api/contracts/runtime-map";
 import { mapToolbarReference } from "../api/registry/command";
 import { invokeCommand } from "../actions/map";
 import * as TaskPaneActions from "../actions/taskpane";
-import { areUrlsSame } from "../utils/url";
+import { areUrlsSame, ensureParameters } from "../utils/url";
 import { processMenuItems } from "../utils/menu";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import * as FlyoutActions from "../actions/flyout";
@@ -152,7 +152,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         const { taskpane, map, config } = this.props;
         if (taskpane && taskpane.initialUrl) { //An initial URL was set
             const initUrl = map && map.runtimeMap && taskpane.initialUrl
-                ? TaskPaneActions.ensureParameters(taskpane.initialUrl, map.runtimeMap.Name, map.runtimeMap.SessionId, this.getLocale())
+                ? ensureParameters(taskpane.initialUrl, map.runtimeMap.Name, map.runtimeMap.SessionId, this.getLocale())
                 : taskpane.initialUrl;
             return taskpane.navigation.length > 0 //We have a navigation stack
                 && !areUrlsSame(taskpane.navigation[taskpane.navIndex], initUrl); //The current URL is not initial.

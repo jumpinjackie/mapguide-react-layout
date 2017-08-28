@@ -10,14 +10,13 @@ import {
 } from "./toolbar";
 import queryString = require("query-string");
 const parse = require("url-parse");
-import { ensureParameters } from "../actions/taskpane";
 import { PlaceholderComponent } from "../api/registry/component";
 import { tr } from "../api/i18n";
 import { 
     IDOMElementMetrics,
     FlyoutVisibilitySet
 } from "../api/common";
-import { parseComponentUri } from "../utils/url";
+import { parseComponentUri, ensureParameters } from "../utils/url";
 
 function currentUrlDoesNotMatchMapName(currentUrl: string, mapName: string): boolean {
     const normUrl = currentUrl.toLowerCase();

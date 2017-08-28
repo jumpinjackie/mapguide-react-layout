@@ -26,7 +26,6 @@ import * as MapActions from "../actions/map";
 import * as ModalActions from "../actions/modal";
 import * as TemplateActions from "../actions/template";
 import { tr } from "../api/i18n";
-import { ensureParameters } from "../actions/taskpane";
 import { DefaultComponentNames } from "../api/registry/component";
 import { Intent } from "@blueprintjs/core";
 import { getTopToaster } from "../components/toaster";
@@ -67,6 +66,7 @@ import {
     SPRITE_INVOKE_SCRIPT,
     SPRITE_COORDINATE_TRACKER
 } from "../constants/assets";
+import { ensureParameters } from "../utils/url";
 
 function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
     const settings: any = {

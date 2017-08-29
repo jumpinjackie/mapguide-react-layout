@@ -16,6 +16,11 @@ import olOverlay from "ol/overlay";
 import { IOLFactory } from "./ol-factory";
 import { Dispatch, Action } from "redux";
 
+// Event boilerplate
+export type GenericEvent = any;
+
+export type GenericEventHandler = (e: GenericEvent) => void;
+
 export type UnitName = 'Unknown' | 'Inches' | 'Feet' | 'Yards' | 'Miles' | 'Nautical Miles' 
                     | 'Millimeters' | 'Centimeters' | 'Meters' | 'Kilometers' 
                     | 'Degrees' | 'Decimal Degrees' | 'Degrees Minutes Seconds'| 'Pixels';

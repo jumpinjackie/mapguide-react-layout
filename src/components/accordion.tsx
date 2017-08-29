@@ -1,6 +1,10 @@
 import * as React from "react";
 import { Collapse } from "@blueprintjs/core";
 import Measure = require("react-measure");
+import {
+    GenericEvent,
+    GenericEventHandler
+} from "../api/common";
 
 /**
  * Accordion panel dimensions

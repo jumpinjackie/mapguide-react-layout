@@ -14,14 +14,14 @@ import {
     ITemplateReducerState
 } from "../src/api/common";
 import * as Constants from "../src/constants";
-import { INITIAL_STATE as CONFIG_INITIAL_STATE } from "../src/reducers/config";
-import { INITIAL_STATE as ERROR_INITIAL_STATE } from "../src/reducers/init-error";
-import { INITIAL_STATE as MODAL_INITIAL_STATE } from "../src/reducers/modal";
-import { INITIAL_STATE as TASKPANE_INITIAL_STATE } from "../src/reducers/taskpane";
-import { INITIAL_STATE as TOOLBAR_INITIAL_STATE } from "../src/reducers/toolbar";
-import { INITIAL_STATE as VIEWER_INITIAL_STATE } from "../src/reducers/viewer";
-import { INITIAL_STATE as MOUSE_INITIAL_STATE } from "../src/reducers/mouse";
-import { INITIAL_STATE as TEMPLATE_INITIAL_STATE } from "../src/reducers/template";
+import { CONFIG_INITIAL_STATE } from "../src/reducers/config";
+import { INIT_ERROR_INITIAL_STATE } from "../src/reducers/init-error";
+import { MODAL_INITIAL_STATE } from "../src/reducers/modal";
+import { TASK_PANE_INITIAL_STATE } from "../src/reducers/taskpane";
+import { TOOLBAR_INITIAL_STATE } from "../src/reducers/toolbar";
+import { VIEWER_INITIAL_STATE } from "../src/reducers/viewer";
+import { MOUSE_INITIAL_STATE } from "../src/reducers/mouse";
+import { TEMPLATE_INITIAL_STATE } from "../src/reducers/template";
 
 export function createMap(): any {
     return {
@@ -599,10 +599,10 @@ export function createInitAction(map: RuntimeMap, initialView: IView, locale = "
 }
 
 export function createInitialState(): IApplicationState {
-    const initError: IInitErrorReducerState = { ...ERROR_INITIAL_STATE };
+    const initError: IInitErrorReducerState = { ...INIT_ERROR_INITIAL_STATE };
     const config: IConfigurationReducerState = { ...CONFIG_INITIAL_STATE };
     const toolbar: IToolbarReducerState = { ...TOOLBAR_INITIAL_STATE };
-    const taskpane: ITaskPaneReducerState = { ...TASKPANE_INITIAL_STATE };
+    const taskpane: ITaskPaneReducerState = { ...TASK_PANE_INITIAL_STATE };
     const modal: IModalReducerState = { ...MODAL_INITIAL_STATE };
     const viewer: IViewerReducerState =  { ...VIEWER_INITIAL_STATE };
     const mouse: IMouseReducerState = { ...MOUSE_INITIAL_STATE };

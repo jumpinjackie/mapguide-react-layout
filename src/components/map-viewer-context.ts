@@ -1,4 +1,6 @@
 import {
+    GenericEvent,
+    GenericEventHandler,
     Bounds,
     RefreshMode,
     ClientKind,

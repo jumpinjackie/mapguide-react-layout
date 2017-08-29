@@ -1,6 +1,8 @@
+import { ResourceBase } from "./common";
+
 export type IExtension = any;
 
-export interface ApplicationDefinition {
+export interface ApplicationDefinition extends ResourceBase {
     Title: string | undefined;
     TemplateUrl: string | undefined;
     MapSet: MapSet | undefined;
@@ -9,10 +11,10 @@ export interface ApplicationDefinition {
 }
 
 export interface MapSet {
-    MapGroup: MapGroup[];
+    MapGroup: MapSetGroup[];
 }
 
-export interface MapGroup {
+export interface MapSetGroup {
     "@id": string;
     InitialView: MapInitialView | undefined;
     Map: MapConfiguration[];

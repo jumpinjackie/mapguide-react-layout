@@ -21,7 +21,7 @@ import {
     ApplicationDefinition,
     Widget,
     UIWidget,
-    MapGroup,
+    MapSetGroup,
     MapConfiguration,
     ContainerItem
 } from "../api/contracts/fusion";
@@ -321,7 +321,7 @@ type MapInfo = {
 
 function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<RuntimeMap>, config: any, warnings: string[]): Dictionary<MapInfo> {
     const dict: Dictionary<MapInfo> = {};
-    const mgGroups: Dictionary<MapGroup> = {};
+    const mgGroups: Dictionary<MapSetGroup> = {};
     if (appDef.MapSet) {
         for (const mgGroup of appDef.MapSet.MapGroup) {
             let mapName: string | undefined;
@@ -465,8 +465,8 @@ function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<Runtime
     return dict;
 }
 
-function getMapGuideMapGroup(appDef: ApplicationDefinition): MapGroup[] {
-    const configs = [] as MapGroup[];
+function getMapGuideMapGroup(appDef: ApplicationDefinition): MapSetGroup[] {
+    const configs = [] as MapSetGroup[];
     if (appDef.MapSet) {
         for (const mg of appDef.MapSet.MapGroup) {
             for (const map of mg.Map) {

@@ -2,6 +2,7 @@ import * as React from "react";
 // According to this (https://github.com/mzabriskie/react-draggable/issues/246#issuecomment-299698481), typings
 // only works if module type is "es6". This is not the case for us, so just use untyped require()
 import Draggable from "react-draggable";
+import { GenericEvent, GenericEventHandler } from "../api/common";
 
 /**
  * [left, top, right, bottom]
@@ -38,7 +39,7 @@ export interface IModalDialogProps {
  * @extends {React.Component<IModalDialogProps, any>}
  */
 export class ModalDialog extends React.Component<IModalDialogProps, any> {
-    fnClose: GenericEventHandler;
+    private fnClose: GenericEventHandler;
     constructor(props: IModalDialogProps) {
         super(props);
         this.fnClose = this.onClose.bind(this);

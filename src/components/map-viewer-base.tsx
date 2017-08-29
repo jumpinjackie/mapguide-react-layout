@@ -20,6 +20,8 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {
+    GenericEvent,
+    GenericEventHandler,
     IMapView,
     IExternalBaseLayer,
     DigitizerCallback,
@@ -37,7 +39,7 @@ import {
     IApplicationContext,
     APPLICATION_CONTEXT_VALIDATION_MAP
 } from "./context";
-import * as Contracts from '../api/contracts';
+import * as RtMap from '../api/contracts/runtime-map';
 import debounce = require("lodash.debounce");
 import { areNumbersEqual } from '../utils/number';
 import * as logger from '../utils/logger';
@@ -175,11 +177,11 @@ export function areViewsCloseToEqual(view: IMapView | undefined, otherView: IMap
  * Indicates if the given runtime map instances are the same or have the same name
  *
  * @export
- * @param {Contracts.RtMap.RuntimeMap} map
- * @param {Contracts.RtMap.RuntimeMap} other
+ * @param {RtMap.RuntimeMap} map
+ * @param {RtMap.RuntimeMap} other
  * @returns {boolean}
  */
-export function areMapsSame(map: Contracts.RtMap.RuntimeMap, other: Contracts.RtMap.RuntimeMap): boolean {
+export function areMapsSame(map: RtMap.RuntimeMap, other: RtMap.RuntimeMap): boolean {
     if (map != other) {
         return map.Name == other.Name;
     }

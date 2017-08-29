@@ -1,9 +1,9 @@
 import * as Constants from "../constants";
 import { IModalReducerState, ReduxAction } from "../api/common";
 
-export const INITIAL_STATE = { };
+export const MODAL_INITIAL_STATE = { };
 
-export function modalReducer(state = INITIAL_STATE, action: ReduxAction) {
+export function modalReducer(state = MODAL_INITIAL_STATE, action: ReduxAction) {
     switch (action.type) {
         case Constants.MODAL_SHOW_COMPONENT:
             {

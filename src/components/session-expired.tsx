@@ -1,5 +1,6 @@
 import * as React from "react";
 import { tr } from "../api/i18n";
+import { GenericEvent } from "../api/common";
 
 function reload(e: GenericEvent) {
     e.preventDefault();

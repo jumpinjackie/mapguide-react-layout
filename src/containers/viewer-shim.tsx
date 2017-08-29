@@ -26,7 +26,7 @@ import { Intent } from "@blueprintjs/core";
 import { getTopToaster } from "../components/toaster";
 import { tr } from "../api/i18n";
 import { serialize } from "../api/builders/mapagent";
-import { ILocalizedMessages } from "../strings/en";
+import { ILocalizedMessages } from "../strings/msgdef";
 
 function isEmptySelection(selection: QueryMapFeaturesResponse | undefined): boolean {
     if (selection && selection.FeatureSet) {

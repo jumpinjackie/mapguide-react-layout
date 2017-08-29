@@ -1,5 +1,6 @@
 import * as logger from "../utils/logger";
-import STRINGS_EN, { ILocalizedMessages } from "../strings/en";
+import STRINGS_EN from "../strings/en";
+import { ILocalizedMessages } from "../strings/msgdef";
 
 export const DEFAULT_LOCALE = "en";
 

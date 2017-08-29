@@ -3,6 +3,7 @@ import { isMenu, isMenuRef } from "../utils/type-guards";
 import { Menu, MenuItem, MenuDivider } from "@blueprintjs/core";
 import { IItem, IInlineMenu, IFlyoutMenu, getIconStyle, getEnabled } from "./toolbar";
 import { Icon } from "./icon";
+import { GenericEvent } from "../api/common";
 
 const MENU_ITEM_HEIGHT = 30;
 

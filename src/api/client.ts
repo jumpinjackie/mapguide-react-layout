@@ -1,7 +1,9 @@
 import * as Request from './request-builder';
 import { MgError } from './error';
 import { MapAgentRequestBuilder, isErrorResponse, serialize } from './builders/mapagent';
-import * as Contracts from './contracts';
+import * as Common from "./contracts/common";
+import * as RtMap from './contracts/runtime-map';
+import * as Query from "./contracts/query";
 import { ClientKind } from './common';
 
 /**
@@ -118,13 +120,13 @@ export class Client implements Request.IMapGuideClient {
      * Retrieves the requested resource
      *
      * @template T
-     * @param {Contracts.Common.ResourceIdentifier} resourceId
+     * @param {Common.ResourceIdentifier} resourceId
      * @param {*} [args]
      * @returns {Promise<T>}
      *
      * @memberOf Client
      */
-    public getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier, args?: any): Promise<T> {
+    public getResource<T extends Common.ResourceBase>(resourceId: Common.ResourceIdentifier, args?: any): Promise<T> {
         return this.builder.getResource<T>(resourceId, args);
     }
 
@@ -132,11 +134,11 @@ export class Client implements Request.IMapGuideClient {
      * Creates a runtime map from the specified map definition
      *
      * @param {Request.ICreateRuntimeMapOptions} options
-     * @returns {Promise<Contracts.RtMap.RuntimeMap>}
+     * @returns {Promise<RtMap.RuntimeMap>}
      *
      * @memberOf Client
      */
-    public createRuntimeMap(options: Request.ICreateRuntimeMapOptions): Promise<Contracts.RtMap.RuntimeMap> {
+    public createRuntimeMap(options: Request.ICreateRuntimeMapOptions): Promise<RtMap.RuntimeMap> {
         return this.builder.createRuntimeMap(options);
     }
 
@@ -144,11 +146,11 @@ export class Client implements Request.IMapGuideClient {
      * Describes a runtime map
      *
      * @param {Request.IDescribeRuntimeMapOptions} options
-     * @returns {Promise<Contracts.RtMap.RuntimeMap>}
+     * @returns {Promise<RtMap.RuntimeMap>}
      *
      * @memberOf Client
      */
-    public describeRuntimeMap(options: Request.IDescribeRuntimeMapOptions): Promise<Contracts.RtMap.RuntimeMap> {
+    public describeRuntimeMap(options: Request.IDescribeRuntimeMapOptions): Promise<RtMap.RuntimeMap> {
         return this.builder.describeRuntimeMap(options);
     }
 
@@ -156,11 +158,11 @@ export class Client implements Request.IMapGuideClient {
      * Performs a map selection query on the current map
      *
      * @param {Request.IQueryMapFeaturesOptions} options
-     * @returns {Promise<Contracts.Query.QueryMapFeaturesResponse>}
+     * @returns {Promise<Query.QueryMapFeaturesResponse>}
      *
      * @memberOf Client
      */
-    public queryMapFeatures(options: Request.IQueryMapFeaturesOptions): Promise<Contracts.Query.QueryMapFeaturesResponse> {
+    public queryMapFeatures(options: Request.IQueryMapFeaturesOptions): Promise<Query.QueryMapFeaturesResponse> {
         return this.builder.queryMapFeatures(options);
     }
 

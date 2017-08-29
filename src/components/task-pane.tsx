@@ -12,7 +12,9 @@ import queryString = require("query-string");
 const parse = require("url-parse");
 import { PlaceholderComponent } from "../api/registry/component";
 import { tr } from "../api/i18n";
-import { 
+import {
+    GenericEvent,
+    GenericEventHandler,
     IDOMElementMetrics,
     FlyoutVisibilitySet
 } from "../api/common";

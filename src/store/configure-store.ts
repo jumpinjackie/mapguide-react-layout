@@ -2,7 +2,7 @@ import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 import promiseMiddleware from './promise-middleware';
 import logger from './logger';
-import rootReducer from '../reducers';
+import rootReducer from '../reducers/root';
 const persistState = require('redux-localstorage');
 
 function configureStore(initialState: any, extraReducers?: any) {

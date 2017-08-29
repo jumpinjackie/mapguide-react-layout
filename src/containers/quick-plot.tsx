@@ -4,6 +4,8 @@ import { getViewer, getFusionRoot } from "../api/runtime";
 import { tr as xlate, tr, DEFAULT_LOCALE } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
+    GenericEvent,
+    GenericEventHandler,
     IMapView,
     ReduxDispatch,
     IApplicationState,

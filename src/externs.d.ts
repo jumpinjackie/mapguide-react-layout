@@ -24,11 +24,6 @@ interface Array<T> {
     filter<U extends T>(pred: (a: T) => a is U): U[];
 }
 
-// Event boilerplate
-type GenericEvent = any;
-
-type GenericEventHandler = (e: GenericEvent) => void;
-
 // Types for various development options.
 
 // A hack for the Redux DevTools Chrome extension.

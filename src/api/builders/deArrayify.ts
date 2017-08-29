@@ -12,7 +12,10 @@
  *
  * These functions help "clean" those responses to be of the form we expect (and prefer)
  */
-import * as Contracts from "../contracts";
+import * as RtMap from "../contracts/runtime-map";
+import * as Query from "../contracts/query";
+import * as WebLayout from "../contracts/weblayout";
+import * as Fusion from "../contracts/fusion";
 import * as Constants from "../../constants";
 import { MgError } from "../error";
 import { ActiveSelectedFeature } from "../common";
@@ -37,9 +40,9 @@ function tryGetAsProperty(el: any, name: string, type: ElementType = "string"): 
     }
 }
 
-function deArrayifyRules(rules: any[]): Contracts.RtMap.RuleInfo[] {
+function deArrayifyRules(rules: any[]): RtMap.RuleInfo[] {
     return rules.map(r => {
-        const rule: Contracts.RtMap.RuleInfo = {
+        const rule: RtMap.RuleInfo = {
             LegendLabel: tryGetAsProperty(r, "LegendLabel"),
             Filter: tryGetAsProperty(r, "Filter"),
             Icon: tryGetAsProperty(r, "Icon")
@@ -48,12 +51,12 @@ function deArrayifyRules(rules: any[]): Contracts.RtMap.RuleInfo[] {
     });
 }
 
-function deArrayifyFeatureStyles(fts: any[]): Contracts.RtMap.FeatureStyleInfo[] {
+function deArrayifyFeatureStyles(fts: any[]): RtMap.FeatureStyleInfo[] {
     if (!fts) {
         return [];
     }
     return fts.map(ft => {
-        const featureStyle: Contracts.RtMap.FeatureStyleInfo = {
+        const featureStyle: RtMap.FeatureStyleInfo = {
             Type: tryGetAsProperty(ft, "Type", "int"),
             Rule: deArrayifyRules(ft.Rule)
         };
@@ -61,9 +64,9 @@ function deArrayifyFeatureStyles(fts: any[]): Contracts.RtMap.FeatureStyleInfo[]
     });
 }
 
-function deArrayifyScaleRanges(scales: any[]): Contracts.RtMap.ScaleRangeInfo[] {
+function deArrayifyScaleRanges(scales: any[]): RtMap.ScaleRangeInfo[] {
     if (!scales) { //Happens with raster layers (this is probably a bug in CREATERUNTIMEMAP)
-        const defaultRange: Contracts.RtMap.ScaleRangeInfo = {
+        const defaultRange: RtMap.ScaleRangeInfo = {
             MinScale: 0,
             MaxScale: Constants.MDF_INFINITY,
             FeatureStyle: []
@@ -71,7 +74,7 @@ function deArrayifyScaleRanges(scales: any[]): Contracts.RtMap.ScaleRangeInfo[] 
         return [defaultRange];
     }
     return scales.map(sc => {
-        const scale: Contracts.RtMap.ScaleRangeInfo = {
+        const scale: RtMap.ScaleRangeInfo = {
             MinScale: tryGetAsProperty(sc, "MinScale", "float"),
             MaxScale: tryGetAsProperty(sc, "MaxScale", "float"),
             FeatureStyle: deArrayifyFeatureStyles(sc.FeatureStyle)
@@ -80,7 +83,7 @@ function deArrayifyScaleRanges(scales: any[]): Contracts.RtMap.ScaleRangeInfo[] 
     });
 }
 
-function deArrayifyFeatureSourceInfo(fs: any[]): Contracts.RtMap.FeatureSourceInfo | undefined {
+function deArrayifyFeatureSourceInfo(fs: any[]): RtMap.FeatureSourceInfo | undefined {
     if (!fs || fs.length !== 1) {
         return undefined;
     }
@@ -91,12 +94,12 @@ function deArrayifyFeatureSourceInfo(fs: any[]): Contracts.RtMap.FeatureSourceIn
     };
 }
 
-function deArrayifyLayers(layers: any[]): Contracts.RtMap.MapLayer[] {
+function deArrayifyLayers(layers: any[]): RtMap.MapLayer[] {
     if (!layers)
         return layers;
 
     return layers.map(lyr => {
-        const layer: Contracts.RtMap.MapLayer = {
+        const layer: RtMap.MapLayer = {
             Type: tryGetAsProperty(lyr, "Type", "int"),
             Selectable: tryGetAsProperty(lyr, "Selectable", "boolean"),
             LayerDefinition: tryGetAsProperty(lyr, "LayerDefinition"),
@@ -121,12 +124,12 @@ function deArrayifyLayers(layers: any[]): Contracts.RtMap.MapLayer[] {
     });
 }
 
-function deArrayifyGroups(groups: any[]): Contracts.RtMap.MapGroup[] | undefined {
+function deArrayifyGroups(groups: any[]): RtMap.MapGroup[] | undefined {
     if (!groups)
         return undefined;
 
     return groups.map(grp => {
-        const group: Contracts.RtMap.MapGroup = {
+        const group: RtMap.MapGroup = {
             Type: tryGetAsProperty(grp, "Type", "int"),
             Name: tryGetAsProperty(grp, "Name"),
             LegendLabel: tryGetAsProperty(grp, "LegendLabel"),
@@ -141,11 +144,11 @@ function deArrayifyGroups(groups: any[]): Contracts.RtMap.MapGroup[] | undefined
     });
 }
 
-function deArrayifyCoordinateSystem(cs: any[]): Contracts.RtMap.CoordinateSystemType {
+function deArrayifyCoordinateSystem(cs: any[]): RtMap.CoordinateSystemType {
     if (!cs || cs.length !== 1) {
         throw new MgError("Malformed input. Expected CoordinateSystem element");
     }
-    const res: Contracts.RtMap.CoordinateSystemType = {
+    const res: RtMap.CoordinateSystemType = {
         Wkt: tryGetAsProperty(cs[0], "Wkt"),
         MentorCode: tryGetAsProperty(cs[0], "MentorCode"),
         EpsgCode: tryGetAsProperty(cs[0], "EpsgCode"),
@@ -154,7 +157,7 @@ function deArrayifyCoordinateSystem(cs: any[]): Contracts.RtMap.CoordinateSystem
     return res;
 }
 
-function deArrayifyCoordinate(coord: any[]): Contracts.RtMap.Coordinate {
+function deArrayifyCoordinate(coord: any[]): RtMap.EnvCoordinate {
     if (!coord || coord.length !== 1) {
         throw new MgError("Malformed input. Expected coordinate array");
     }
@@ -164,11 +167,11 @@ function deArrayifyCoordinate(coord: any[]): Contracts.RtMap.Coordinate {
     };
 }
 
-function deArrayifyExtents(extents: any[]): Contracts.RtMap.Envelope {
+function deArrayifyExtents(extents: any[]): RtMap.Envelope {
     if (!extents || extents.length !== 1) {
         throw new MgError("Malformed input. Expected extent element");
     }
-    const env: Contracts.RtMap.Envelope = {
+    const env: RtMap.Envelope = {
         LowerLeftCoordinate: deArrayifyCoordinate(extents[0].LowerLeftCoordinate),
         UpperRightCoordinate: deArrayifyCoordinate(extents[0].UpperRightCoordinate)
     };
@@ -182,9 +185,9 @@ function deArrayifyFiniteDisplayScales(fds: any[]): number[] | undefined {
     return fds.map(parseFloat);
 }
 
-function deArrayifyRuntimeMap(json: any): Contracts.RtMap.RuntimeMap {
+function deArrayifyRuntimeMap(json: any): RtMap.RuntimeMap {
     const root = json;
-    const rtMap: Contracts.RtMap.RuntimeMap = {
+    const rtMap: RtMap.RuntimeMap = {
         SessionId: tryGetAsProperty(root, "SessionId"),
         SiteVersion: tryGetAsProperty(root, "SiteVersion"),
         Name: tryGetAsProperty(root, "Name"),
@@ -204,7 +207,7 @@ function deArrayifyRuntimeMap(json: any): Contracts.RtMap.RuntimeMap {
     return rtMap;
 }
 
-function deArrayifyFeatureSetClass(json: any): Contracts.Query.FeatureSetClass {
+function deArrayifyFeatureSetClass(json: any): Query.FeatureSetClass {
     const root = json;
     if (root.length != 1) {
         throw new MgError("Malformed input. Expected Class element");
@@ -216,7 +219,7 @@ function deArrayifyFeatureSetClass(json: any): Contracts.Query.FeatureSetClass {
     return cls;
 }
 
-function deArrayifyFeatureSetLayers(json: any[]): Contracts.Query.FeatureSetLayer[] {
+function deArrayifyFeatureSetLayers(json: any[]): Query.FeatureSetLayer[] {
     return (json || []).map(root => {
         const layer = {
             "@id": tryGetAsProperty(root, "@id"),
@@ -227,7 +230,7 @@ function deArrayifyFeatureSetLayers(json: any[]): Contracts.Query.FeatureSetLaye
     });
 }
 
-function deArrayifyFeatureSet(json: any): Contracts.Query.FeatureSet | undefined {
+function deArrayifyFeatureSet(json: any): Query.FeatureSet | undefined {
     const root = json;
     if (root == null || root.length != 1) {
         return undefined;
@@ -238,7 +241,7 @@ function deArrayifyFeatureSet(json: any): Contracts.Query.FeatureSet | undefined
     return fs;
 }
 
-function deArrayifyInlineSelectionImage(json: any): Contracts.Query.SelectionImage | undefined {
+function deArrayifyInlineSelectionImage(json: any): Query.SelectionImage | undefined {
     const root = json;
     if (root == null || root.length != 1) {
         return undefined;
@@ -250,7 +253,7 @@ function deArrayifyInlineSelectionImage(json: any): Contracts.Query.SelectionIma
     return img;
 }
 
-function deArrayifyFeatureProperties(json: any[]): Contracts.Query.FeatureProperty[] {
+function deArrayifyFeatureProperties(json: any[]): Query.FeatureProperty[] {
     return (json || []).map(root => {
         const prop = {
             Name: tryGetAsProperty(root, "Name"),
@@ -260,7 +263,7 @@ function deArrayifyFeatureProperties(json: any[]): Contracts.Query.FeatureProper
     });
 }
 
-function deArrayifyFeatures(json: any[]): Contracts.Query.SelectedFeature[] {
+function deArrayifyFeatures(json: any[]): Query.SelectedFeature[] {
     return (json || []).map(root => {
         const feat = {
             Bounds: tryGetAsProperty(root, "Bounds"),
@@ -270,7 +273,7 @@ function deArrayifyFeatures(json: any[]): Contracts.Query.SelectedFeature[] {
     });
 }
 
-function deArrayifyLayerMetadataProperties(json: any[]): Contracts.Query.LayerPropertyMetadata[] {
+function deArrayifyLayerMetadataProperties(json: any[]): Query.LayerPropertyMetadata[] {
     return (json || []).map(root => {
         const prop = {
             DisplayName: tryGetAsProperty(root, "DisplayName"),
@@ -281,7 +284,7 @@ function deArrayifyLayerMetadataProperties(json: any[]): Contracts.Query.LayerPr
     });
 }
 
-function deArrayifyLayerMetadata(json: any): Contracts.Query.LayerMetadata | undefined {
+function deArrayifyLayerMetadata(json: any): Query.LayerMetadata | undefined {
     const root = json;
     //NOTE: root could be null if the layer selected has no properties beyond id/geom
     if (root == null || root.length != 1) {
@@ -293,7 +296,7 @@ function deArrayifyLayerMetadata(json: any): Contracts.Query.LayerMetadata | und
     return meta;
 }
 
-function deArrayifySelectedLayer(json: any[]): Contracts.Query.SelectedLayer[] {
+function deArrayifySelectedLayer(json: any[]): Query.SelectedLayer[] {
     return (json || []).map(root => {
         const layer = {
             "@id": tryGetAsProperty(root, "@id"),
@@ -305,7 +308,7 @@ function deArrayifySelectedLayer(json: any[]): Contracts.Query.SelectedLayer[] {
     });
 }
 
-function deArrayifySelectedFeatures(json: any): Contracts.Query.SelectedFeatureSet | undefined {
+function deArrayifySelectedFeatures(json: any): Query.SelectedFeatureSet | undefined {
     const root = json;
     if (root == null || root.length != 1) {
         return undefined;
@@ -316,7 +319,7 @@ function deArrayifySelectedFeatures(json: any): Contracts.Query.SelectedFeatureS
     return sf;
 }
 
-function deArrayifyFeatureInformation(json: any): Contracts.Query.QueryMapFeaturesResponse {
+function deArrayifyFeatureInformation(json: any): Query.QueryMapFeaturesResponse {
     const root = json;
     const resp = {
         FeatureSet: deArrayifyFeatureSet(root.FeatureSet),
@@ -328,7 +331,7 @@ function deArrayifyFeatureInformation(json: any): Contracts.Query.QueryMapFeatur
     return resp;
 }
 
-function deArrayifyWebLayoutControl<T extends Contracts.WebLayout.WebLayoutControl>(json: any): T {
+function deArrayifyWebLayoutControl<T extends WebLayout.WebLayoutControl>(json: any): T {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected control element");
@@ -339,7 +342,7 @@ function deArrayifyWebLayoutControl<T extends Contracts.WebLayout.WebLayoutContr
     return control;
 }
 
-function deArrayifyWebLayoutInfoPane(json: any): Contracts.WebLayout.WebLayoutInfoPane {
+function deArrayifyWebLayoutInfoPane(json: any): WebLayout.WebLayoutInfoPane {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected InformationPane element");
@@ -353,7 +356,7 @@ function deArrayifyWebLayoutInfoPane(json: any): Contracts.WebLayout.WebLayoutIn
     return infoPane;
 }
 
-function deArrayifyWebLayoutInitialView(json: any): Contracts.WebLayout.MapView | undefined {
+function deArrayifyWebLayoutInitialView(json: any): WebLayout.MapView | undefined {
     const root = json;
     if (root == null || root.length != 1) {
         return undefined;
@@ -366,7 +369,7 @@ function deArrayifyWebLayoutInitialView(json: any): Contracts.WebLayout.MapView 
     return view;
 }
 
-function deArrayifyWebLayoutMap(json: any): Contracts.WebLayout.WebLayoutMap {
+function deArrayifyWebLayoutMap(json: any): WebLayout.WebLayoutMap {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected Map element");
@@ -380,7 +383,7 @@ function deArrayifyWebLayoutMap(json: any): Contracts.WebLayout.WebLayoutMap {
     return map;
 }
 
-function deArrayifyTaskButton(json: any): Contracts.WebLayout.TaskButton {
+function deArrayifyTaskButton(json: any): WebLayout.TaskButton {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected TaskButton element");
@@ -395,7 +398,7 @@ function deArrayifyTaskButton(json: any): Contracts.WebLayout.TaskButton {
     return button;
 }
 
-function deArrayifyWebLayoutTaskBar(json: any): Contracts.WebLayout.WebLayoutTaskBar {
+function deArrayifyWebLayoutTaskBar(json: any): WebLayout.WebLayoutTaskBar {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected TaskBar element");
@@ -406,7 +409,7 @@ function deArrayifyWebLayoutTaskBar(json: any): Contracts.WebLayout.WebLayoutTas
         Forward: deArrayifyTaskButton(root[0].Forward),
         Back: deArrayifyTaskButton(root[0].Back),
         Tasks: deArrayifyTaskButton(root[0].Tasks),
-        MenuButton: [] as Contracts.WebLayout.UIItem[]
+        MenuButton: [] as WebLayout.UIItem[]
     };
     if (root[0].MenuButton) {
         for (const mb of root[0].MenuButton) {
@@ -416,7 +419,7 @@ function deArrayifyWebLayoutTaskBar(json: any): Contracts.WebLayout.WebLayoutTas
     return taskbar;
 }
 
-function deArrayifyWebLayoutTaskPane(json: any): Contracts.WebLayout.WebLayoutTaskPane {
+function deArrayifyWebLayoutTaskPane(json: any): WebLayout.WebLayoutTaskPane {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected TaskPane element");
@@ -430,7 +433,7 @@ function deArrayifyWebLayoutTaskPane(json: any): Contracts.WebLayout.WebLayoutTa
     return taskPane;
 }
 
-function deArrayifyUIItem(json: any): Contracts.WebLayout.UIItem {
+function deArrayifyUIItem(json: any): WebLayout.UIItem {
     const root = json;
     const func: string = tryGetAsProperty(root, "Function");
     const item: any = {
@@ -455,7 +458,7 @@ function deArrayifyUIItem(json: any): Contracts.WebLayout.UIItem {
     return item;
 }
 
-function deArrayifyItemContainer<T extends Contracts.WebLayout.WebLayoutControl>(json: any, name: string): T {
+function deArrayifyItemContainer<T extends WebLayout.WebLayoutControl>(json: any, name: string): T {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected container element");
@@ -471,13 +474,13 @@ function deArrayifyItemContainer<T extends Contracts.WebLayout.WebLayoutControl>
     return container;
 }
 
-function deArrayifyWebLayoutSearchResultColumnSet(json: any): Contracts.WebLayout.ResultColumnSet {
+function deArrayifyWebLayoutSearchResultColumnSet(json: any): WebLayout.ResultColumnSet {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected ResultColumns element");
     }
     const res = {
-        Column: [] as Contracts.WebLayout.ResultColumn[]
+        Column: [] as WebLayout.ResultColumn[]
     };
     for (const col of root[0].Column) {
         res.Column.push({
@@ -488,7 +491,7 @@ function deArrayifyWebLayoutSearchResultColumnSet(json: any): Contracts.WebLayou
     return res;
 }
 
-function deArrayifyWebLayoutInvokeURLLayerSet(json: any): Contracts.WebLayout.LayerSet | undefined {
+function deArrayifyWebLayoutInvokeURLLayerSet(json: any): WebLayout.LayerSet | undefined {
     const root = json;
     if (root == null || root.length != 1) {
         return undefined;
@@ -499,9 +502,9 @@ function deArrayifyWebLayoutInvokeURLLayerSet(json: any): Contracts.WebLayout.La
     return layerset;
 }
 
-function deArrayifyWebLayoutParameterPairs(json: any): Contracts.WebLayout.ParameterPair[] {
+function deArrayifyWebLayoutParameterPairs(json: any): WebLayout.ParameterPair[] {
     const root = json;
-    const pairs = [] as Contracts.WebLayout.ParameterPair[]
+    const pairs = [] as WebLayout.ParameterPair[]
     if (!root) {
         return pairs;
     }
@@ -514,7 +517,7 @@ function deArrayifyWebLayoutParameterPairs(json: any): Contracts.WebLayout.Param
     return pairs;
 }
 
-function deArrayifyCommand(json: any): Contracts.WebLayout.CommandDef {
+function deArrayifyCommand(json: any): WebLayout.CommandDef {
     const root = json;
     const cmd: any = {
         "@xsi:type": tryGetAsProperty(root, "@xsi:type"),
@@ -561,13 +564,13 @@ function deArrayifyCommand(json: any): Contracts.WebLayout.CommandDef {
     return cmd;
 }
 
-function deArrayifyWebLayoutCommandSet(json: any): Contracts.WebLayout.WebLayoutCommandSet {
+function deArrayifyWebLayoutCommandSet(json: any): WebLayout.WebLayoutCommandSet {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected CommandSet element");
     }
     const set = {
-        Command: [] as Contracts.WebLayout.CommandDef[]
+        Command: [] as WebLayout.CommandDef[]
     };
     if (root[0].Command) {
         for (const cmd of root[0].Command) {
@@ -577,7 +580,7 @@ function deArrayifyWebLayoutCommandSet(json: any): Contracts.WebLayout.WebLayout
     return set;
 }
 
-function deArrayifyWebLayout(json: any): Contracts.WebLayout.WebLayout {
+function deArrayifyWebLayout(json: any): WebLayout.WebLayout {
     const root = json;
     const resp = {
         Title: tryGetAsProperty(root, "Title"),
@@ -588,26 +591,26 @@ function deArrayifyWebLayout(json: any): Contracts.WebLayout.WebLayout {
         MapImageFormat: tryGetAsProperty(root, "MapImageFormat"),
         SelectionImageFormat: tryGetAsProperty(root, "SelectionImageFormat"),
         StartupScript: tryGetAsProperty(root, "StartupScript"),
-        ToolBar: deArrayifyItemContainer<Contracts.WebLayout.WebLayoutToolbar>(root.ToolBar, "Button"),
+        ToolBar: deArrayifyItemContainer<WebLayout.WebLayoutToolbar>(root.ToolBar, "Button"),
         InformationPane: deArrayifyWebLayoutInfoPane(root.InformationPane),
-        ContextMenu: deArrayifyItemContainer<Contracts.WebLayout.WebLayoutContextMenu>(root.ContextMenu, "MenuItem"),
+        ContextMenu: deArrayifyItemContainer<WebLayout.WebLayoutContextMenu>(root.ContextMenu, "MenuItem"),
         TaskPane: deArrayifyWebLayoutTaskPane(root.TaskPane),
-        StatusBar: deArrayifyWebLayoutControl<Contracts.WebLayout.WebLayoutStatusBar>(root.StatusBar),
-        ZoomControl: deArrayifyWebLayoutControl<Contracts.WebLayout.WebLayoutZoomControl>(root.ZoomControl),
+        StatusBar: deArrayifyWebLayoutControl<WebLayout.WebLayoutStatusBar>(root.StatusBar),
+        ZoomControl: deArrayifyWebLayoutControl<WebLayout.WebLayoutZoomControl>(root.ZoomControl),
         CommandSet: deArrayifyWebLayoutCommandSet(root.CommandSet)
     };
     return resp;
 }
 
-function deArrayifyMapGroup(json: any): Contracts.Fusion.MapGroup {
+function deArrayifyMapGroup(json: any): Fusion.MapSetGroup {
     const root = json;
     if (root == null) {
         throw new MgError("Malformed input. Expected MapGroup element");
     }
-    const mapGroup: Contracts.Fusion.MapGroup = {
+    const mapGroup: Fusion.MapSetGroup = {
         "@id": tryGetAsProperty(root, "@id", "string"),
         InitialView: undefined,
-        Map: [] as Contracts.Fusion.MapConfiguration[]
+        Map: [] as Fusion.MapConfiguration[]
     };
     if (root.InitialView) {
         const iview = root.InitialView;
@@ -629,13 +632,13 @@ function deArrayifyMapGroup(json: any): Contracts.Fusion.MapGroup {
     return mapGroup;
 }
 
-function deArrayifyMapSet(json: any): Contracts.Fusion.MapSet | undefined {
+function deArrayifyMapSet(json: any): Fusion.MapSet | undefined {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected MapSet element");
     }
     const set = {
-        MapGroup: [] as Contracts.Fusion.MapGroup[]
+        MapGroup: [] as Fusion.MapSetGroup[]
     };
     if (root[0].MapGroup) {
         for (const map of root[0].MapGroup) {
@@ -645,8 +648,8 @@ function deArrayifyMapSet(json: any): Contracts.Fusion.MapSet | undefined {
     return set;
 }
 
-function deArrayifyContainerItems(json: any[]): Contracts.Fusion.ContainerItem[] {
-    const items = [] as Contracts.Fusion.ContainerItem[];
+function deArrayifyContainerItems(json: any[]): Fusion.ContainerItem[] {
+    const items = [] as Fusion.ContainerItem[];
     for (const i of json) {
         const func = tryGetAsProperty(i, "Function", "string");
         switch (func) {
@@ -676,8 +679,8 @@ function deArrayifyContainerItems(json: any[]): Contracts.Fusion.ContainerItem[]
     return items;
 }
 
-function deArrayifyContainer(json: any[]): Contracts.Fusion.ContainerDefinition[] {
-    const containers = [] as Contracts.Fusion.ContainerDefinition[];
+function deArrayifyContainer(json: any[]): Fusion.ContainerDefinition[] {
+    const containers = [] as Fusion.ContainerDefinition[];
     for (const c of json) {
         containers.push({
             Name: tryGetAsProperty(c, "Name", "string"),
@@ -690,8 +693,8 @@ function deArrayifyContainer(json: any[]): Contracts.Fusion.ContainerDefinition[
     return containers;
 }
 
-function deArrayifyWidgets(json: any[]): Contracts.Fusion.Widget[] {
-    const widgets = [] as Contracts.Fusion.Widget[];
+function deArrayifyWidgets(json: any[]): Fusion.Widget[] {
+    const widgets = [] as Fusion.Widget[];
     for (const w of json) {
         if (w["@xsi:type"] == "UiWidgetType") {
             const uiw = deArrayifyUiWidget(w);
@@ -703,7 +706,7 @@ function deArrayifyWidgets(json: any[]): Contracts.Fusion.Widget[] {
     return widgets;
 }
 
-function deArrayifyWidget(json: any): Contracts.Fusion.Widget {
+function deArrayifyWidget(json: any): Fusion.Widget {
     const root = json;
     if (root == null) {
         throw new MgError("Malformed input. Expected Widget element");
@@ -759,7 +762,7 @@ function deArrayifyExtension(json: any, arrayCheck: boolean = true): any {
     return ext;
 }
 
-function deArrayifyUiWidget(json: any): Contracts.Fusion.UIWidget {
+function deArrayifyUiWidget(json: any): Fusion.UIWidget {
     const root = json;
     if (root == null) {
         throw new MgError("Malformed input. Expected Widget element");
@@ -780,7 +783,7 @@ function deArrayifyUiWidget(json: any): Contracts.Fusion.UIWidget {
     return w;
 }
 
-function deArrayifyMapWidget(json: any): Contracts.Fusion.MapWidget {
+function deArrayifyMapWidget(json: any): Fusion.MapWidget {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected MapWidget element");
@@ -796,8 +799,8 @@ function deArrayifyMapWidget(json: any): Contracts.Fusion.MapWidget {
     return mw;
 }
 
-function deArrayifyWidgetSet(json: any): Contracts.Fusion.WidgetSet[] {
-    const widgetSet = [] as Contracts.Fusion.WidgetSet[];
+function deArrayifyWidgetSet(json: any): Fusion.WidgetSet[] {
+    const widgetSet = [] as Fusion.WidgetSet[];
     for (const ws of json) {
         widgetSet.push({
             Container: deArrayifyContainer(ws.Container),
@@ -808,7 +811,7 @@ function deArrayifyWidgetSet(json: any): Contracts.Fusion.WidgetSet[] {
     return widgetSet;
 }
 
-function deArrayifyFlexibleLayout(json: any): Contracts.Fusion.ApplicationDefinition {
+function deArrayifyFlexibleLayout(json: any): Fusion.ApplicationDefinition {
     const root = json;
     const resp = {
         Title: tryGetAsProperty(root, "Title"),
@@ -851,11 +854,11 @@ export function deArrayify(json: any): any {
  * Builds an XML selection string from the given selection set.
  *
  * @export
- * @param {(Contracts.Query.FeatureSet | undefined)} selection The selection set
+ * @param {(Query.FeatureSet | undefined)} selection The selection set
  * @param {string[]} [layerIds] If specified, the selection XML will only include selections from the specified layers
  * @returns {string} The selection XML string
  */
-export function buildSelectionXml(selection: Contracts.Query.FeatureSet | undefined, layerIds?: string[]): string {
+export function buildSelectionXml(selection: Query.FeatureSet | undefined, layerIds?: string[]): string {
     let xml = '<?xml version="1.0" encoding="utf-8"?>';
     xml += '<FeatureSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FeatureSet-1.0.0.xsd">';
     if (selection) {
@@ -878,7 +881,7 @@ export function buildSelectionXml(selection: Contracts.Query.FeatureSet | undefi
     return xml;
 }
 
-export function getActiveSelectedFeatureXml(selection: Contracts.Query.FeatureSet, feat: ActiveSelectedFeature): string | undefined {
+export function getActiveSelectedFeatureXml(selection: Query.FeatureSet, feat: ActiveSelectedFeature): string | undefined {
     for (const layer of selection.Layer) {
         const layerId = layer["@id"];
         if (layerId == feat.layerId) {

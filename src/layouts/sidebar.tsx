@@ -9,6 +9,8 @@ import { connect } from "react-redux";
 import { tr } from "../api/i18n";
 import * as Constants from "../constants";
 import {
+    GenericEvent,
+    GenericEventHandler,
     ReduxDispatch,
     IApplicationState,
     IViewerReducerState,

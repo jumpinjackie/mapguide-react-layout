@@ -2,7 +2,7 @@ import * as React from "react";
 import { SelectedFeatureSet, SelectedFeature, LayerMetadata, SelectedLayer, FeatureProperty } from "../api/contracts/query";
 import { Toolbar, IItem, IInlineMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
 import { tr as xlate, DEFAULT_LOCALE } from "../api/i18n";
-import { NOOP } from "../api/common";
+import { NOOP, GenericEvent, GenericEventHandler } from "../api/common";
 import {
     SPRITE_CONTROL,
     SPRITE_CONTROL_180,

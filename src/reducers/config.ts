@@ -10,7 +10,7 @@ import {
 import { AnyAction } from "redux";
 import { DEFAULT_LOCALE } from "../api/i18n";
 
-export const INITIAL_STATE: IConfigurationReducerState = {
+export const CONFIG_INITIAL_STATE: IConfigurationReducerState = {
     agentUri: undefined,
     agentKind: "mapagent",
     locale: DEFAULT_LOCALE,
@@ -43,7 +43,7 @@ export const INITIAL_STATE: IConfigurationReducerState = {
     } as IViewerCapabilities
 };
 
-export function configReducer(state = INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
+export function configReducer(state = CONFIG_INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
     switch (action.type) {
         case Constants.INIT_APP:
             {

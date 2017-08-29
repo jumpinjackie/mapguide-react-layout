@@ -2,6 +2,7 @@ import * as React from "react";
 import { NBSP } from "../constants";
 import { getAssetPath } from "../utils/asset";
 import { STD_CSS_SPRITE_RELPATH } from "../constants/assets";
+import { GenericEventHandler } from "../api/common";
 
 export interface IIconProps {
     /**

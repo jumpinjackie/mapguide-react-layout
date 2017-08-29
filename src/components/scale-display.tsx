@@ -1,5 +1,7 @@
 import * as React from "react";
 import {
+    GenericEvent,
+    GenericEventHandler,
     IMapView
 } from "../api/common";
 import { tr } from "../api/i18n";

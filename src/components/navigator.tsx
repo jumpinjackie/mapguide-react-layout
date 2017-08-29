@@ -9,6 +9,7 @@ import {
     IMG_SLIDER_SCALE,
     GIF_SPINNER
 } from "../constants/assets";
+import { GenericEventHandler, GenericEvent } from "../api/common";
 
 export enum ZoomDirection {
     In,

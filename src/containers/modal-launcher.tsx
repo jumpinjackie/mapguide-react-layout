@@ -20,29 +20,29 @@ import {
 import { assertNever } from "../utils/never";
 import { ParsedComponentUri, parseComponentUri, isComponentUri } from "../utils/url";
 
-export interface IToolbarContainerState {
+export interface IModalLauncherState {
     modal: IModalReducerState;
     config: IConfigurationReducerState;
 }
 
-export interface IToolbarContainerDispatch {
+export interface IModalLauncherDispatch {
     hideModal: (options: any) => void;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>): Partial<IToolbarContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IModalLauncherState> {
     return {
         config: state.config,
         modal: state.modal
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IToolbarContainerDispatch> {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IModalLauncherDispatch> {
     return {
         hideModal: (options) => dispatch(hideModal(options))
     };
 }
 
-export type ToolbarContainerProps = Partial<IToolbarContainerState> & Partial<IToolbarContainerDispatch>;
+export type ModalLauncherProps = Partial<IModalLauncherState> & Partial<IModalLauncherDispatch>;
 
 function getComponentId(diag: IModalComponentDisplayOptions | IModalDisplayOptions): ParsedComponentUri | undefined {
     if (isModalComponentDisplayOptions(diag)) {
@@ -54,8 +54,8 @@ function getComponentId(diag: IModalComponentDisplayOptions | IModalDisplayOptio
     }
 }
 
-export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
-    constructor(props: ToolbarContainerProps) {
+export class ModalLauncher extends React.Component<ModalLauncherProps, any> {
+    constructor(props: ModalLauncherProps) {
         super(props);
     }
     onCloseModal(name: string) {

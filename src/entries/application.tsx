@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import App, { IAppProps } from "../containers/app";
 import { ClientKind, ReduxAction, ReduxThunkedAction, ICommand, IApplicationState } from "../api/common";
 import configureStore from "../store/configure-store";
-import { INITIAL_STATE } from "../reducers/config";
+import { CONFIG_INITIAL_STATE } from "../reducers/config";
 import { getCommand as getRegisteredCommand } from "../api/registry/command";
 
 /**
@@ -61,7 +61,7 @@ export class ApplicationViewModel {
             agentUri: props.agent.uri,
             agentKind: props.agent.kind || "mapagent"
         };
-        const initState = { ...{ config: { ...INITIAL_STATE, ...agentConf } }, ...this.getExtraInitialState() };
+        const initState = { ...{ config: { ...CONFIG_INITIAL_STATE, ...agentConf } }, ...this.getExtraInitialState() };
         const extraReducers = this.getExtraReducers();
         this._store = configureStore(initState, extraReducers);
         ReactDOM.render(<Provider store={this._store}>

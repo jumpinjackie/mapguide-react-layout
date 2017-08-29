@@ -1,4 +1,6 @@
 import {
+    GenericEvent,
+    GenericEventHandler,
     IMapViewer,
     ActiveMapTool,
     ReduxDispatch,

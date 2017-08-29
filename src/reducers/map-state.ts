@@ -9,11 +9,11 @@ import { isMapView, isCoordinate } from "../utils/type-guards";
 import { AnyAction } from "redux";
 import uniq = require("lodash.uniq");
 
-export const INITIAL_STATE: IBranchedMapState = {
+export const MAP_STATE_INITIAL_STATE: IBranchedMapState = {
 
 };
 
-export const INITIAL_SUB_STATE: IBranchedMapSubState = {
+export const MAP_STATE_INITIAL_SUB_STATE: IBranchedMapSubState = {
     currentView: undefined,
     initialView: undefined,
     history: [],
@@ -39,7 +39,7 @@ function mergeSubState(state: IBranchedMapState, mapName: string, subState: Part
     return { ...state, ...state1 };
 }
 
-export function mapStateReducer(state = INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
+export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
     const payload: any = typeof(action.payload) != 'undefined' ? action.payload : {};
     switch (action.type) {
         case Constants.MAP_REFRESH:
@@ -58,7 +58,7 @@ export function mapStateReducer(state = INITIAL_STATE, action: AnyAction = { typ
                 const newState: Partial<IBranchedMapState> = {};
                 for (const mapName in maps) {
                     newState[mapName] = {
-                        ...INITIAL_SUB_STATE,
+                        ...MAP_STATE_INITIAL_SUB_STATE,
                         ...{ runtimeMap: maps[mapName].map },
                         ...{ externalBaseLayers: maps[mapName].externalBaseLayers },
                         ...{ initialView: maps[mapName].initialView }

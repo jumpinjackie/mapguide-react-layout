@@ -10,16 +10,16 @@ import { SelectedFeatureCount } from "../components/selected-feature-count";
 import { QueryMapFeaturesResponse } from "../api/contracts/query";
 import { DEFAULT_LOCALE } from "../api/i18n";
 
-export interface ISelectionPanelContainerProps {
+export interface ISelectedFeatureCountContainerProps {
     style?: React.CSSProperties;
 }
 
-export interface ISelectionPanelContainerState {
+export interface ISelectedFeatureCountContainerState {
     config: IConfigurationReducerState;
     selection: QueryMapFeaturesResponse;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>): Partial<ISelectionPanelContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<ISelectedFeatureCountContainerState> {
     return {
         config: state.config,
         selection: getSelectionSet(state)
@@ -32,7 +32,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch) {
     };
 }
 
-export type SelectedFeatureContainerProps = ISelectionPanelContainerProps & Partial<ISelectionPanelContainerState>;
+export type SelectedFeatureContainerProps = ISelectedFeatureCountContainerProps & Partial<ISelectedFeatureCountContainerState>;
 
 export class SelectedFeatureCountContainer extends React.Component<SelectedFeatureContainerProps, any> {
     constructor(props: SelectedFeatureContainerProps) {

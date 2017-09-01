@@ -97,7 +97,7 @@
     "rimraf": "^2.6.1",
     "source-map-loader": "^0.2.1",
     "style-loader": "^0.18.2",
-    "ts-jest": "^20.0.13",
+    "ts-jest": "^20.0.14",
     "ts-loader": "^2.3.4",
     "tslint": "^5.7.0",
     "typedoc": "^0.8.0",

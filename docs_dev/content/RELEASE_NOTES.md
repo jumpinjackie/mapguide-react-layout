@@ -1,10 +1,11 @@
-[Changelog since last release](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.9.5...master)
+[Changelog since last release](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.10.0...master)
 
 0.10.0
 ======
 
-[Changelog](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.9.5...v0.9.6)
+[Changelog](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.9.6...v0.10.0)
  * Updated OpenLayers to 4.3.1
+ * Update TypeScript to 2.5
  * [#188](https://github.com/jumpinjackie/mapguide-react-layout/issues/188): QuickPlot now supports box rotation via a numerical slider
  * [#150](https://github.com/jumpinjackie/mapguide-react-layout/issues/150): New APIs for `MapGuide.Application`:
    * A new `onInit` mount option that's called once the application is initialized

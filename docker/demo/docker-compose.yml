@@ -6,3 +6,4 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8008:8008"
+    command: ["--no-tomcat"]

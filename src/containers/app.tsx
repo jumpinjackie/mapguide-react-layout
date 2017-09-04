@@ -71,6 +71,7 @@ export interface IAppProps {
     fusionRoot: string;
     externalBaseLayers?: IExternalBaseLayer[];
     onInit?: (viewer: IMapViewer) => void;
+    locale?: string;
 }
 
 /**
@@ -137,6 +138,7 @@ export class App extends React.Component<AppProps, any> {
             initialElementVisibility,
             initLayout,
             agent,
+            locale,
             session,
             fusionRoot,
             resourceId,
@@ -158,6 +160,7 @@ export class App extends React.Component<AppProps, any> {
         if (initLayout) {
             initLayout({
                 resourceId: resourceId,
+                locale: locale,
                 externalBaseLayers: externalBaseLayers,
                 session: session,
                 onInit: onInit

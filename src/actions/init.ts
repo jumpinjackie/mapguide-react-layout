@@ -551,6 +551,7 @@ function processAndDispatchInitError(error: Error, includeStack: boolean, dispat
 }
 
 export interface IInitAppLayout {
+    locale?: string;
     resourceId: string;
     externalBaseLayers?: IExternalBaseLayer[];
     session?: string;
@@ -884,7 +885,7 @@ export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
     const query = queryString.parse(parsed.query);
     const options1 = {
         resourceId: query["resource"] || options.resourceId,
-        locale: query["locale"] || DEFAULT_LOCALE,
+        locale: query["locale"] || options.locale || DEFAULT_LOCALE,
         session: query["session"] || options.session
     };
     const opts: IInitAsyncOptions = { ...options, ...options1 };

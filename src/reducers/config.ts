@@ -81,6 +81,9 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: AnyAction = 
                     if (payload.config.coordinateDecimals != null) {
                         coordConfig.decimals = payload.config.coordinateDecimals;
                     }
+                    if (payload.config.coordinateDisplayFormat != null) {
+                        coordConfig.format = payload.config.coordinateDisplayFormat;
+                    }
                     const state2: Partial<IConfigurationReducerState> = { viewer: viewerConfig, coordinates: coordConfig };
                     if (payload.config.viewSizeUnits != null) {
                         state2.viewSizeUnits = payload.config.viewSizeUnits;

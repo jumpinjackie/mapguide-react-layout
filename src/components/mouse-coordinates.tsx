@@ -13,19 +13,34 @@ export interface IMouseCoordinatesProps extends React.Props<any> {
     coords?: [number, number];
     style?: React.CSSProperties;
     decimals?: number;
+    units?: string | JSX.Element;
 }
 
 function formatCoordinates(props: IMouseCoordinatesProps) {
-    const { coords, decimals, format } = props;
+    const { coords, decimals, format, units } = props;
     if (coords == null) {
         return null; //TODO: Use value indicated by EmptyText extension property
     }
     const [x, y] = coords;
     const sfmt = format || "X: {x}, Y: {y}";
-    return fmt(sfmt, {
+    const str = fmt(sfmt, {
         x: `${decimals != null ? x.toFixed(decimals) : x}`,
         y: `${decimals != null ? y.toFixed(decimals) : y}`
     });
+
+    //units may be JSX, so we have to manually interpolate that by returning
+    //an array of mixed strings and JSX elements. Doesn't matter to React, it
+    //knows what to do
+    const items = [];
+    const tokens = str.split("{units}");
+    if (tokens.length > 0) {
+        items.push(tokens[0]);
+        for (let i = 1; i < tokens.length; i++) {
+            items.push(units);
+            items.push(tokens[i]);
+        }
+    }
+    return items;
 }
 
 /**

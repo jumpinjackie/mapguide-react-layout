@@ -790,6 +790,7 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
             if (w.Type == "CursorPosition") {
                 config.coordinateProjection = w.Extension.DisplayProjection;
                 config.coordinateDecimals = w.Extension.Precision;
+                config.coordinateDisplayFormat = w.Extension.Template;
             }
         }
     }

@@ -8,6 +8,8 @@ import {
 } from "../api/common";
 import { MouseCoordinates } from "../components/mouse-coordinates";
 import olProj from "ol/proj";
+import { getUnitOfMeasure } from "../utils/units";
+import { UnitOfMeasure } from "../index";
 
 export interface IMouseCoordinatesContainerProps {
     style: React.CSSProperties;
@@ -51,6 +53,23 @@ export class MouseCoordinatesContainer extends React.Component<MouseCoordinatesC
     render(): JSX.Element {
         const { config, style, mouse, mapProjection } = this.props;
         if (config && mouse) {
+            const prj = olProj.get(config.projection || mapProjection);
+            let units;
+            if (prj) {
+                units = prj.getUnits();
+                switch (units) {
+                    case "degrees":
+                        units = getUnitOfMeasure(UnitOfMeasure.Degrees).abbreviation();
+                        break;
+                    case "pixels":
+                    case "tile-pixels":
+                        units = getUnitOfMeasure(UnitOfMeasure.Pixels).abbreviation();
+                        break;
+                    case "us-ft":
+                        units = getUnitOfMeasure(UnitOfMeasure.Feet).abbreviation();
+                        break;
+                }
+            }
             let coords: Coordinate = [mouse[0], mouse[1]];
             if (config.projection && mapProjection) {
                 try {
@@ -59,7 +78,7 @@ export class MouseCoordinatesContainer extends React.Component<MouseCoordinatesC
 
                 }
             }
-            return <MouseCoordinates coords={coords} style={style} decimals={config.decimals} />;
+            return <MouseCoordinates units={units} coords={coords} style={style} decimals={config.decimals} format={config.format} />;
         } else {
             return <div />;
         }

@@ -1143,6 +1143,13 @@ export interface ICoordinateConfiguration {
      * @memberof ICoordinateConfiguration
      */
     projection: string;
+    /**
+     * Display format string
+     * 
+     * @type {string}
+     * @memberof ICoordinateConfiguration
+     */
+    format?: string;
 }
 
 /**

@@ -56,6 +56,8 @@ export const COMPONENT_CLOSE = 'Flyout/COMPONENT_CLOSE';
  */
 export const NBSP = String.fromCharCode(160);
 
+export const DEG = String.fromCharCode(176);
+
 export const EMPTY_OBJECT = {};
 
 export const MDF_INFINITY = 1000000000000.0;

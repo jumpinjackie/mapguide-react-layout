@@ -87,7 +87,7 @@ export interface UnitInfo {
     unitsPerMeter: number;
     metersPerUnit: number;
     name: UnitName;
-    abbreviation: () => JSX.Element | string;
+    abbreviation: () => string;
 }
 
 /**

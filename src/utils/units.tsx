@@ -1,4 +1,5 @@
 import * as React from "react";
+import { DEG } from "../constants";
 import { UnitInfo, UnitOfMeasure, UnitName } from "../api/common";
 
 const mUnits: UnitInfo[] = [
@@ -12,9 +13,9 @@ const mUnits: UnitInfo[] = [
     { name: "Centimeters", abbreviation: () => "cm", unitsPerMeter: 100.0, metersPerUnit: 0.01 },
     { name: "Meters", abbreviation: () => "m", unitsPerMeter: 1.0, metersPerUnit: 1.0 },
     { name: "Kilometers", abbreviation: () => "km", unitsPerMeter: 0.001, metersPerUnit: 1000.0 },
-    { name: "Degrees", abbreviation: () => <span>&deg;</span>, unitsPerMeter: 0.000009044, metersPerUnit: 111061.75033 },
-    { name: "Decimal Degrees", abbreviation: () => <span>&deg;</span>, unitsPerMeter: 0.000009044, metersPerUnit: 111061.75033 },
-    { name: "Degrees Minutes Seconds", abbreviation: () => <span>&deg;</span>, unitsPerMeter: 0.000009044, metersPerUnit: 111061.75033 },
+    { name: "Degrees", abbreviation: () => DEG, unitsPerMeter: 0.000009044, metersPerUnit: 111061.75033 },
+    { name: "Decimal Degrees", abbreviation: () => DEG, unitsPerMeter: 0.000009044, metersPerUnit: 111061.75033 },
+    { name: "Degrees Minutes Seconds", abbreviation: () => DEG, unitsPerMeter: 0.000009044, metersPerUnit: 111061.75033 },
     { name: "Pixels", abbreviation: () => "px", unitsPerMeter: 1.0, metersPerUnit: 1.0 }
 ];
 

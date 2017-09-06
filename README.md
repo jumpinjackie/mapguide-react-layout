@@ -12,6 +12,8 @@ It is built from the ground up with modern web technologies ([React](https://fac
 
 It aims for reasonable compatibility with the existing Web Layout (AJAX Viewer) and Flexible Layout (Fusion)configuration documents that drive the existing AJAX and Fusion map viewers, ensuring an authoring and development experience similar to MapGuide's existing viewer offerings.
 
+This project is not affiliated with Autodesk or OSGeo.
+
 # Requirements
 
  * MapGuide Open Source 3.0 or equivalent version of Autodesk Infrastructure Map Server (and newer versions)

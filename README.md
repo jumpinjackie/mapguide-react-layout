@@ -63,7 +63,7 @@ See [RELEASE_NOTES.md](https://github.com/jumpinjackie/mapguide-react-layout/blo
 
 mapguide-react-layout could not be possible without the following tools and libraries:
 
- * [OpenLayers 3](http://openlayers.org/)
+ * [OpenLayers](http://openlayers.org/)
  * [proj4js](http://proj4js.org/)
  * [TypeScript](https://www.typescriptlang.org/)
  * [React](https://facebook.github.io/react/)

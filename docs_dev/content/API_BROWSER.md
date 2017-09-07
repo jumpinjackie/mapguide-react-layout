@@ -51,3 +51,75 @@ viewer.mount(el, { ... });
 ```
 
 Any Web Layout or Application Definition loaded that contains a InvokeScript command/widget with the same name of `ViewAsKml` will run this registered command when invoked.
+
+## Querying current application state
+
+Starting with the 0.10 release, the `MapGuide.Application` class exposes the redux `getState()` function for retrieving the current redux application state. The redux application state contains information that was previously not accessible in previous versions of the browser global API:
+
+ * Current map layer/group structure
+ * Current viewer configuration
+ * Template-specific state
+ * Task Pane navigation state
+ * Much more
+
+The following example shows how to check if the `Parcels` layer of the active map is currently visible or not
+
+```
+var viewer = new MapGuide.Application();
+...
+var state = viewer.getState();
+//Get active map name
+var activeMapName = state.config.activeMapName;
+//Get active runtime map
+var mapState = state.mapState[activeMapName];
+var currentMap = mapState.runtimeMap;
+//Get parcels layer
+var parcels = currentMap.Layer.filter(function(layer) { return layer.Name == "Parcels"; })[0];
+if (parcels) {
+    var bVisible = (mapState.hideLayers.indexOf(parcels.ObjectId) < 0);
+}
+```
+
+NOTE: `getState()` returns a *copy* of the current application state and not a reference to it. Whatever variable you assign the result of `getState()` does not transparently change as a result of dispatched redux actions that modify the application state through one or more application reducer functions.
+
+## Dispatching redux actions
+
+Starting with the 0.10 release, the `MapGuide.Application` class exposes the redux `dispatch()` function for dispatching redux actions.
+
+All available redux action creators are available under the `MapGuide.Actions` namespace.
+
+Below is an example of setting the view rotation by dispatching the action returned by the [setViewRotation](apidoc_npm/modules/_actions_map_.html#setviewrotation) action creator.
+
+```
+var viewer = new MapGuide.Application();
+
+...
+
+var action = MapGuide.Actions.Map.setViewRotation(45);
+viewer.dispatch(action);
+
+```
+
+## Invoking registered commands
+
+Starting with the 0.10 release, the `MapGuide.Application` class exposes the ability access registered commands through a `getCommand()` function.
+
+Combined with the ability to query the current application state via `getState()` you now have the means to programmatically execute commands and be able to determine if the command is able to execute under current circumstances.
+
+To invoke a command, use the `MapGuide.Actions.Map.invokeCommand` action creator.
+
+The following example programmatically executes the buffer command.
+
+```
+var viewer = new MapGuide.Application();
+...
+var bufferCmd = viewer.getCommand("Buffer");
+var state = viewer.getState();
+// Check if the buffer command can be executed
+if (bufferCmd.enabled(state)) {
+    var action = MapGuide.Actions.Map.invokeCommand(bufferCmd);
+    viewer.dispatch(action);
+} else {
+    //Can't execute buffer command at the moment (ie. No selection made on map)
+}
+```

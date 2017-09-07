@@ -1,5 +1,6 @@
 .vscode
 .couscous
+docs_output
 docs_dev/themes/CouscousNativeTemplate/apidoc_npm
 docs_dev/themes/CouscousNativeTemplate/apidoc_globals
 dist

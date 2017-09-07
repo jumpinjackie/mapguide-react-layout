@@ -1,0 +1,29 @@
+{
+    "extends": "./tsconfig.npm.json",
+    "exclude": [
+        "lib",
+        "package",
+        "node_modules",
+        "src/entries/library.tsx",
+        "src/actions/index.ts",
+        "src/api/index.ts",
+        "src/api/builders/index.ts",
+        "src/api/contracts/index.ts",
+        "src/api/registry/index.ts",
+        "src/components/index.ts",
+        "src/containers/index.ts",
+        "src/entries/index.ts",
+        "src/layouts/index.ts",
+        "src/reducers/index.ts",
+        "src/reducers/root.ts",
+        "src/strings/index.ts",
+        "src/utils/index.ts",
+        "src/index.ts",
+        "src/store",
+        "src/utils/menu.ts",
+        "test",
+        "test-data",
+        "typings/main",
+        "typings/main.d.ts"
+    ]
+}

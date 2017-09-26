@@ -44,7 +44,7 @@
     "@types/lodash.debounce": "4.0.3",
     "@types/lodash.uniq": "4.5.3",
     "@types/lodash.xor": "^4.5.3",
-    "@types/prop-types": "15.5.1",
+    "@types/prop-types": "15.5.2",
     "@types/query-string": "5.0.0",
     "@types/react": "16.0.5",
     "@types/react-addons-css-transition-group": "15.0.3",

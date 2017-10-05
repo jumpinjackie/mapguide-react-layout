@@ -101,7 +101,7 @@
     "tslint": "^5.7.0",
     "typedoc": "^0.8.0",
     "typescript": "2.5.3",
-    "url-loader": "^0.5.9",
+    "url-loader": "^0.6.1",
     "webpack": "^3.6.0"
   },
   "greenkeeper": {

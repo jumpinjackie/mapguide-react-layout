@@ -1,4 +1,4 @@
-// Type definitions for OpenLayers v4.3.1
+// Type definitions for OpenLayers v4.4.1
 // Project: http://openlayers.org/
 // Definitions by: Jackie Ng <https://github.com/jumpinjackie>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -89,6 +89,326 @@ declare module ol {
          * Get the attribution markup.
          */
         getHTML(): string;
+    }
+    /**
+     * The map is the core component of OpenLayers. For a map to render, a view,
+     * one or more layers, and a target container are needed:
+     * 
+     *     var map = new ol.CanvasMap({
+     *       view: new ol.View({
+     *         center: [0, 0],
+     *         zoom: 1
+     *       }),
+     *       layers: [
+     *         new ol.layer.Tile({
+     *           source: new ol.source.OSM()
+     *         })
+     *       ],
+     *       target: 'map'
+     *     });
+     * 
+     * The above snippet creates a map using a {@link ol.layer.Tile} to display
+     * {@link ol.source.OSM} OSM data and render it to a DOM element with the
+     * id `map`.
+     * 
+     * The constructor places a viewport container (with CSS class name
+     * `ol-viewport`) in the target element (see `getViewport()`), and then two
+     * further elements within the viewport: one with CSS class name
+     * `ol-overlaycontainer-stopevent` for controls and some overlays, and one with
+     * CSS class name `ol-overlaycontainer` for other overlays (see the `stopEvent`
+     * option of {@link ol.Overlay} for the difference). The map itself is placed in
+     * a further element within the viewport.
+     * 
+     * Layers are stored as a `ol.Collection` in layerGroups. A top-level group is
+     * provided by the library. This is what is accessed by `getLayerGroup` and
+     * `setLayerGroup`. Layers entered in the options are added to this group, and
+     * `addLayer` and `removeLayer` change the layer collection in the group.
+     * `getLayers` is a convenience function for `getLayerGroup().getLayers()`.
+     * Note that `ol.layer.Group` is a subclass of `ol.layer.Base`, so layers
+     * entered in the options or added with `addLayer` can be groups, which can
+     * contain further groups, and so on.
+     */
+    class CanvasMap extends ol.PluggableMap {
+        /**
+         * TODO: This method has no documentation. Contact the library author if this method should be documented
+         * @param options  (Required) Map options.
+         */
+        constructor(options: olx.MapOptions);
+        /**
+         * Add the given control to the map.
+         * @param control  (Required) Control.
+         */
+        addControl(control: ol.control.Control): void;
+        /**
+         * Add the given interaction to the map.
+         * @param interaction  (Required) Interaction to add.
+         */
+        addInteraction(interaction: ol.interaction.Interaction): void;
+        /**
+         * Adds the given layer to the top of this map. If you want to add a layer
+         * elsewhere in the stack, use `getLayers()` and the methods available on
+         * {@link ol.Collection}.
+         * @param layer  (Required) Layer.
+         */
+        addLayer(layer: ol.layer.Base): void;
+        /**
+         * Add the given overlay to the map.
+         * @param overlay  (Required) Overlay.
+         */
+        addOverlay(overlay: ol.Overlay): void;
+        /**
+         * Detect features that intersect a pixel on the viewport, and execute a
+         * callback with each intersecting feature. Layers included in the detection can
+         * be configured through the `layerFilter` option in `opt_options`.
+         * @param pixel  (Required) Pixel.
+         * @param callback  (Required) Feature callback. The callback will be
+    called with two arguments. The first argument is one
+    {@link ol.Feature feature} or
+    {@link ol.render.Feature render feature} at the pixel, the second is
+    the {@link ol.layer.Layer layer} of the feature and will be null for
+    unmanaged layers. To stop detection, callback functions can return a
+    truthy value.
+         * @param opt_options  (Optional) Optional options.
+         */
+        forEachFeatureAtPixel<S, T>(pixel: ol.Pixel, callback: Function, opt_options?: olx.AtPixelOptions): T;
+        /**
+         * Get all features that intersect a pixel on the viewport.
+         * @param pixel  (Required) Pixel.
+         * @param opt_options  (Optional) Optional options.
+         */
+        getFeaturesAtPixel(pixel: ol.Pixel, opt_options?: olx.AtPixelOptions): (ol.Feature|ol.render.Feature)[];
+        /**
+         * Detect layers that have a color value at a pixel on the viewport, and
+         * execute a callback with each matching layer. Layers included in the
+         * detection can be configured through `opt_layerFilter`.
+         * @param pixel  (Required) Pixel.
+         * @param callback  (Required) Layer callback. This callback will receive two arguments: first is the
+    {@link ol.layer.Layer layer}, second argument is an array representing
+    [R, G, B, A] pixel values (0 - 255) and will be `null` for layer types
+    that do not currently support this argument. To stop detection, callback
+    functions can return a truthy value.
+         * @param opt_this  (Optional) Value to use as `this` when executing `callback`.
+         * @param opt_layerFilter  (Optional) Layer
+    filter function. The filter function will receive one argument, the
+    {@link ol.layer.Layer layer-candidate} and it should return a boolean
+    value. Only layers which are visible and for which this function returns
+    `true` will be tested for features. By default, all visible layers will
+    be tested.
+         * @param opt_this2  (Optional) Value to use as `this` when executing `layerFilter`.
+         */
+        forEachLayerAtPixel<S, T, U>(pixel: ol.Pixel, callback: Function, opt_this?: S, opt_layerFilter?: Function, opt_this2?: U): T;
+        /**
+         * Detect if features intersect a pixel on the viewport. Layers included in the
+         * detection can be configured through `opt_layerFilter`.
+         * @param pixel  (Required) Pixel.
+         * @param opt_options  (Optional) Optional options.
+         */
+        hasFeatureAtPixel<U>(pixel: ol.Pixel, opt_options?: olx.AtPixelOptions): boolean;
+        /**
+         * Returns the coordinate in view projection for a browser event.
+         * @param event  (Required) Event.
+         */
+        getEventCoordinate(event: Event): ol.Coordinate;
+        /**
+         * Returns the map pixel position for a browser event relative to the viewport.
+         * @param event  (Required) Event.
+         */
+        getEventPixel(event: Event): ol.Pixel;
+        /**
+         * Get the target in which this map is rendered.
+         * Note that this returns what is entered as an option or in setTarget:
+         * if that was an element, it returns an element; if a string, it returns that.
+         */
+        getTarget(): Element|string;
+        /**
+         * Get the DOM element into which this map is rendered. In contrast to
+         * `getTarget` this method always return an `Element`, or `null` if the
+         * map has no target.
+         */
+        getTargetElement(): Element;
+        /**
+         * Get the coordinate for a given pixel.  This returns a coordinate in the
+         * map view projection.
+         * @param pixel  (Required) Pixel position in the map viewport.
+         */
+        getCoordinateFromPixel(pixel: ol.Pixel): ol.Coordinate;
+        /**
+         * Get the map controls. Modifying this collection changes the controls
+         * associated with the map.
+         */
+        getControls(): ol.Collection<ol.control.Control>;
+        /**
+         * Get the map overlays. Modifying this collection changes the overlays
+         * associated with the map.
+         */
+        getOverlays(): ol.Collection<ol.Overlay>;
+        /**
+         * Get an overlay by its identifier (the value returned by overlay.getId()).
+         * Note that the index treats string and numeric identifiers as the same. So
+         * `map.getOverlayById(2)` will return an overlay with id `'2'` or `2`.
+         * @param id  (Required) Overlay identifier.
+         */
+        getOverlayById(id: string|number): ol.Overlay;
+        /**
+         * Get the map interactions. Modifying this collection changes the interactions
+         * associated with the map.
+         * 
+         * Interactions are used for e.g. pan, zoom and rotate.
+         */
+        getInteractions(): ol.Collection<ol.interaction.Interaction>;
+        /**
+         * Get the layergroup associated with this map.
+         */
+        getLayerGroup(): ol.layer.Group;
+        /**
+         * Get the collection of layers associated with this map.
+         */
+        getLayers(): ol.Collection<ol.layer.Base>;
+        /**
+         * Get the pixel for a coordinate.  This takes a coordinate in the map view
+         * projection and returns the corresponding pixel.
+         * @param coordinate  (Required) A map coordinate.
+         */
+        getPixelFromCoordinate(coordinate: ol.Coordinate): ol.Pixel;
+        /**
+         * Get the size of this map.
+         */
+        getSize(): ol.Size;
+        /**
+         * Get the view associated with this map. A view manages properties such as
+         * center and resolution.
+         */
+        getView(): ol.View;
+        /**
+         * Get the element that serves as the map viewport.
+         */
+        getViewport(): Element;
+        /**
+         * Requests an immediate render in a synchronous manner.
+         */
+        renderSync(): void;
+        /**
+         * Request a map rendering (at the next animation frame).
+         */
+        render(): void;
+        /**
+         * Remove the given control from the map.
+         * @param control  (Required) Control.
+         */
+        removeControl(control: ol.control.Control): ol.control.Control;
+        /**
+         * Remove the given interaction from the map.
+         * @param interaction  (Required) Interaction to remove.
+         */
+        removeInteraction(interaction: ol.interaction.Interaction): ol.interaction.Interaction;
+        /**
+         * Removes the given layer from the map.
+         * @param layer  (Required) Layer.
+         */
+        removeLayer(layer: ol.layer.Base): ol.layer.Base;
+        /**
+         * Remove the given overlay from the map.
+         * @param overlay  (Required) Overlay.
+         */
+        removeOverlay(overlay: ol.Overlay): ol.Overlay;
+        /**
+         * Sets the layergroup of this map.
+         * @param layerGroup  (Required) A layer group containing the layers in
+    this map.
+         */
+        setLayerGroup(layerGroup: ol.layer.Group): void;
+        /**
+         * Set the size of this map.
+         * @param size  (Optional) The size in pixels of the map in the DOM.
+         */
+        setSize(size?: ol.Size): void;
+        /**
+         * Set the target element to render this map into.
+         * @param target  (Optional) The Element or id of the Element
+    that the map is rendered in.
+         */
+        setTarget(target?: Element|string): void;
+        /**
+         * Set the view for this map.
+         * @param view  (Required) The view that controls this map.
+         */
+        setView(view: ol.View): void;
+        /**
+         * Force a recalculation of the map viewport size.  This should be called when
+         * third-party code changes the size of the map viewport.
+         */
+        updateSize(): void;
+        /**
+         * Gets a value.
+         * @param key  (Required) Key name.
+         */
+        get(key: string): any;
+        /**
+         * Get a list of object property names.
+         */
+        getKeys(): string[];
+        /**
+         * Get an object of all property names and values.
+         */
+        getProperties(): { [key: string]: any; };
+        /**
+         * Sets a value.
+         * @param key  (Required) Key name.
+         * @param value  (Required) Value.
+         * @param opt_silent  (Optional) Update without triggering an event.
+         */
+        set(key: string, value: any, opt_silent?: boolean): void;
+        /**
+         * Sets a collection of key-value pairs.  Note that this changes any existing
+         * properties and adds new ones (it does not remove any existing properties).
+         * @param values  (Required) Values.
+         * @param opt_silent  (Optional) Update without triggering an event.
+         */
+        setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+        /**
+         * Unsets a property.
+         * @param key  (Required) Key name.
+         * @param opt_silent  (Optional) Unset without triggering an event.
+         */
+        unset(key: string, opt_silent?: boolean): void;
+        /**
+         * Increases the revision counter and dispatches a 'change' event.
+         */
+        changed(): void;
+        /**
+         * Dispatches an event and calls all listeners listening for events
+         * of this type. The event parameter can either be a string or an
+         * Object with a `type` property.
+         * @param event  (Required) Event object.
+         */
+        dispatchEvent(event: any|ol.events.Event|string): void;
+        /**
+         * Get the version number for this object.  Each time the object is modified,
+         * its version number will be incremented.
+         */
+        getRevision(): number;
+        /**
+         * Listen for a certain type of event.
+         * @param type  (Required) The event type or array of event types.
+         * @param listener  (Required) The listener function.
+         * @param opt_this  (Optional) The object to use as `this` in `listener`.
+         */
+        on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+        /**
+         * Listen once for a certain type of event.
+         * @param type  (Required) The event type or array of event types.
+         * @param listener  (Required) The listener function.
+         * @param opt_this  (Optional) The object to use as `this` in `listener`.
+         */
+        once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+        /**
+         * Unlisten for a certain type of event.
+         * @param type  (Required) The event type or array of event types.
+         * @param listener  (Required) The listener function.
+         * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+         */
+        un(type: string|string[], listener: Function, opt_this?: any): void;
     }
     /**
      * An expanded version of standard JS Array, adding convenience methods for
@@ -741,7 +1061,7 @@ declare module ol {
         /**
          * Get the map associated with this graticule.
          */
-        getMap(): ol.Map;
+        getMap(): ol.PluggableMap;
         /**
          * Get the list of meridians.  Meridians are lines of equal longitude.
          */
@@ -755,7 +1075,7 @@ declare module ol {
          * provided map.
          * @param map  (Required) Map.
          */
-        setMap(map: ol.Map): void;
+        setMap(map: ol.PluggableMap): void;
     }
     /**
      * TODO: This class has no documentation. Contact the library author if this class should be documented
@@ -844,7 +1164,7 @@ declare module ol {
      * entered in the options or added with `addLayer` can be groups, which can
      * contain further groups, and so on.
      */
-    class Map extends ol.Object {
+    class Map extends ol.PluggableMap {
         /**
          * TODO: This method has no documentation. Contact the library author if this method should be documented
          * @param options  (Required) Map options.
@@ -1139,7 +1459,7 @@ declare module ol {
          * @param opt_dragging  (Optional) Is the map currently being dragged?
          * @param opt_frameState  (Optional) Frame state.
          */
-        constructor(type: string, map: ol.Map, browserEvent: Event, opt_dragging?: boolean, opt_frameState?: olx.FrameState);
+        constructor(type: string, map: ol.PluggableMap, browserEvent: Event, opt_dragging?: boolean, opt_frameState?: olx.FrameState);
         /**
          * The original browser event.
          */
@@ -1168,7 +1488,7 @@ declare module ol {
         /**
          * The map where the event occurred.
          */
-        map: ol.Map;
+        map: ol.PluggableMap;
         /**
          * The frame state at the time of the event.
          */
@@ -1193,11 +1513,11 @@ declare module ol {
          * @param map  (Required) Map.
          * @param opt_frameState  (Optional) Frame state.
          */
-        constructor(type: string, map: ol.Map, opt_frameState?: olx.FrameState);
+        constructor(type: string, map: ol.PluggableMap, opt_frameState?: olx.FrameState);
         /**
          * The map where the event occurred.
          */
-        map: ol.Map;
+        map: ol.PluggableMap;
         /**
          * The frame state at the time of the event.
          */
@@ -1412,7 +1732,7 @@ declare module ol {
         /**
          * Get the map associated with this overlay.
          */
-        getMap(): ol.Map;
+        getMap(): ol.PluggableMap;
         /**
          * Get the offset of this overlay.
          */
@@ -1434,7 +1754,7 @@ declare module ol {
          * Set the map to be associated with this overlay.
          * @param map  (Optional) The map that the overlay is part of.
          */
-        setMap(map?: ol.Map): void;
+        setMap(map?: ol.PluggableMap): void;
         /**
          * Set the offset for this overlay.
          * @param offset  (Required) Offset.
@@ -1453,6 +1773,291 @@ declare module ol {
     positioned relative to its point on the map.
          */
         setPositioning(positioning: ol.OverlayPositioning): void;
+        /**
+         * Gets a value.
+         * @param key  (Required) Key name.
+         */
+        get(key: string): any;
+        /**
+         * Get a list of object property names.
+         */
+        getKeys(): string[];
+        /**
+         * Get an object of all property names and values.
+         */
+        getProperties(): { [key: string]: any; };
+        /**
+         * Sets a value.
+         * @param key  (Required) Key name.
+         * @param value  (Required) Value.
+         * @param opt_silent  (Optional) Update without triggering an event.
+         */
+        set(key: string, value: any, opt_silent?: boolean): void;
+        /**
+         * Sets a collection of key-value pairs.  Note that this changes any existing
+         * properties and adds new ones (it does not remove any existing properties).
+         * @param values  (Required) Values.
+         * @param opt_silent  (Optional) Update without triggering an event.
+         */
+        setProperties(values: { [key: string]: any; }, opt_silent?: boolean): void;
+        /**
+         * Unsets a property.
+         * @param key  (Required) Key name.
+         * @param opt_silent  (Optional) Unset without triggering an event.
+         */
+        unset(key: string, opt_silent?: boolean): void;
+        /**
+         * Increases the revision counter and dispatches a 'change' event.
+         */
+        changed(): void;
+        /**
+         * Dispatches an event and calls all listeners listening for events
+         * of this type. The event parameter can either be a string or an
+         * Object with a `type` property.
+         * @param event  (Required) Event object.
+         */
+        dispatchEvent(event: any|ol.events.Event|string): void;
+        /**
+         * Get the version number for this object.  Each time the object is modified,
+         * its version number will be incremented.
+         */
+        getRevision(): number;
+        /**
+         * Listen for a certain type of event.
+         * @param type  (Required) The event type or array of event types.
+         * @param listener  (Required) The listener function.
+         * @param opt_this  (Optional) The object to use as `this` in `listener`.
+         */
+        on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+        /**
+         * Listen once for a certain type of event.
+         * @param type  (Required) The event type or array of event types.
+         * @param listener  (Required) The listener function.
+         * @param opt_this  (Optional) The object to use as `this` in `listener`.
+         */
+        once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+        /**
+         * Unlisten for a certain type of event.
+         * @param type  (Required) The event type or array of event types.
+         * @param listener  (Required) The listener function.
+         * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+         */
+        un(type: string|string[], listener: Function, opt_this?: any): void;
+    }
+    /**
+     * TODO: This class has no documentation. Contact the library author if this class should be documented
+     */
+    class PluggableMap extends ol.Object {
+        /**
+         * TODO: This method has no documentation. Contact the library author if this method should be documented
+         * @param options  (Required) Map options.
+         */
+        constructor(options: olx.MapOptions);
+        /**
+         * Add the given control to the map.
+         * @param control  (Required) Control.
+         */
+        addControl(control: ol.control.Control): void;
+        /**
+         * Add the given interaction to the map.
+         * @param interaction  (Required) Interaction to add.
+         */
+        addInteraction(interaction: ol.interaction.Interaction): void;
+        /**
+         * Adds the given layer to the top of this map. If you want to add a layer
+         * elsewhere in the stack, use `getLayers()` and the methods available on
+         * {@link ol.Collection}.
+         * @param layer  (Required) Layer.
+         */
+        addLayer(layer: ol.layer.Base): void;
+        /**
+         * Add the given overlay to the map.
+         * @param overlay  (Required) Overlay.
+         */
+        addOverlay(overlay: ol.Overlay): void;
+        /**
+         * Detect features that intersect a pixel on the viewport, and execute a
+         * callback with each intersecting feature. Layers included in the detection can
+         * be configured through the `layerFilter` option in `opt_options`.
+         * @param pixel  (Required) Pixel.
+         * @param callback  (Required) Feature callback. The callback will be
+    called with two arguments. The first argument is one
+    {@link ol.Feature feature} or
+    {@link ol.render.Feature render feature} at the pixel, the second is
+    the {@link ol.layer.Layer layer} of the feature and will be null for
+    unmanaged layers. To stop detection, callback functions can return a
+    truthy value.
+         * @param opt_options  (Optional) Optional options.
+         */
+        forEachFeatureAtPixel<S, T>(pixel: ol.Pixel, callback: Function, opt_options?: olx.AtPixelOptions): T;
+        /**
+         * Get all features that intersect a pixel on the viewport.
+         * @param pixel  (Required) Pixel.
+         * @param opt_options  (Optional) Optional options.
+         */
+        getFeaturesAtPixel(pixel: ol.Pixel, opt_options?: olx.AtPixelOptions): (ol.Feature|ol.render.Feature)[];
+        /**
+         * Detect layers that have a color value at a pixel on the viewport, and
+         * execute a callback with each matching layer. Layers included in the
+         * detection can be configured through `opt_layerFilter`.
+         * @param pixel  (Required) Pixel.
+         * @param callback  (Required) Layer callback. This callback will receive two arguments: first is the
+    {@link ol.layer.Layer layer}, second argument is an array representing
+    [R, G, B, A] pixel values (0 - 255) and will be `null` for layer types
+    that do not currently support this argument. To stop detection, callback
+    functions can return a truthy value.
+         * @param opt_this  (Optional) Value to use as `this` when executing `callback`.
+         * @param opt_layerFilter  (Optional) Layer
+    filter function. The filter function will receive one argument, the
+    {@link ol.layer.Layer layer-candidate} and it should return a boolean
+    value. Only layers which are visible and for which this function returns
+    `true` will be tested for features. By default, all visible layers will
+    be tested.
+         * @param opt_this2  (Optional) Value to use as `this` when executing `layerFilter`.
+         */
+        forEachLayerAtPixel<S, T, U>(pixel: ol.Pixel, callback: Function, opt_this?: S, opt_layerFilter?: Function, opt_this2?: U): T;
+        /**
+         * Detect if features intersect a pixel on the viewport. Layers included in the
+         * detection can be configured through `opt_layerFilter`.
+         * @param pixel  (Required) Pixel.
+         * @param opt_options  (Optional) Optional options.
+         */
+        hasFeatureAtPixel<U>(pixel: ol.Pixel, opt_options?: olx.AtPixelOptions): boolean;
+        /**
+         * Returns the coordinate in view projection for a browser event.
+         * @param event  (Required) Event.
+         */
+        getEventCoordinate(event: Event): ol.Coordinate;
+        /**
+         * Returns the map pixel position for a browser event relative to the viewport.
+         * @param event  (Required) Event.
+         */
+        getEventPixel(event: Event): ol.Pixel;
+        /**
+         * Get the target in which this map is rendered.
+         * Note that this returns what is entered as an option or in setTarget:
+         * if that was an element, it returns an element; if a string, it returns that.
+         */
+        getTarget(): Element|string;
+        /**
+         * Get the DOM element into which this map is rendered. In contrast to
+         * `getTarget` this method always return an `Element`, or `null` if the
+         * map has no target.
+         */
+        getTargetElement(): Element;
+        /**
+         * Get the coordinate for a given pixel.  This returns a coordinate in the
+         * map view projection.
+         * @param pixel  (Required) Pixel position in the map viewport.
+         */
+        getCoordinateFromPixel(pixel: ol.Pixel): ol.Coordinate;
+        /**
+         * Get the map controls. Modifying this collection changes the controls
+         * associated with the map.
+         */
+        getControls(): ol.Collection<ol.control.Control>;
+        /**
+         * Get the map overlays. Modifying this collection changes the overlays
+         * associated with the map.
+         */
+        getOverlays(): ol.Collection<ol.Overlay>;
+        /**
+         * Get an overlay by its identifier (the value returned by overlay.getId()).
+         * Note that the index treats string and numeric identifiers as the same. So
+         * `map.getOverlayById(2)` will return an overlay with id `'2'` or `2`.
+         * @param id  (Required) Overlay identifier.
+         */
+        getOverlayById(id: string|number): ol.Overlay;
+        /**
+         * Get the map interactions. Modifying this collection changes the interactions
+         * associated with the map.
+         * 
+         * Interactions are used for e.g. pan, zoom and rotate.
+         */
+        getInteractions(): ol.Collection<ol.interaction.Interaction>;
+        /**
+         * Get the layergroup associated with this map.
+         */
+        getLayerGroup(): ol.layer.Group;
+        /**
+         * Get the collection of layers associated with this map.
+         */
+        getLayers(): ol.Collection<ol.layer.Base>;
+        /**
+         * Get the pixel for a coordinate.  This takes a coordinate in the map view
+         * projection and returns the corresponding pixel.
+         * @param coordinate  (Required) A map coordinate.
+         */
+        getPixelFromCoordinate(coordinate: ol.Coordinate): ol.Pixel;
+        /**
+         * Get the size of this map.
+         */
+        getSize(): ol.Size;
+        /**
+         * Get the view associated with this map. A view manages properties such as
+         * center and resolution.
+         */
+        getView(): ol.View;
+        /**
+         * Get the element that serves as the map viewport.
+         */
+        getViewport(): Element;
+        /**
+         * Requests an immediate render in a synchronous manner.
+         */
+        renderSync(): void;
+        /**
+         * Request a map rendering (at the next animation frame).
+         */
+        render(): void;
+        /**
+         * Remove the given control from the map.
+         * @param control  (Required) Control.
+         */
+        removeControl(control: ol.control.Control): ol.control.Control;
+        /**
+         * Remove the given interaction from the map.
+         * @param interaction  (Required) Interaction to remove.
+         */
+        removeInteraction(interaction: ol.interaction.Interaction): ol.interaction.Interaction;
+        /**
+         * Removes the given layer from the map.
+         * @param layer  (Required) Layer.
+         */
+        removeLayer(layer: ol.layer.Base): ol.layer.Base;
+        /**
+         * Remove the given overlay from the map.
+         * @param overlay  (Required) Overlay.
+         */
+        removeOverlay(overlay: ol.Overlay): ol.Overlay;
+        /**
+         * Sets the layergroup of this map.
+         * @param layerGroup  (Required) A layer group containing the layers in
+    this map.
+         */
+        setLayerGroup(layerGroup: ol.layer.Group): void;
+        /**
+         * Set the size of this map.
+         * @param size  (Optional) The size in pixels of the map in the DOM.
+         */
+        setSize(size?: ol.Size): void;
+        /**
+         * Set the target element to render this map into.
+         * @param target  (Optional) The Element or id of the Element
+    that the map is rendered in.
+         */
+        setTarget(target?: Element|string): void;
+        /**
+         * Set the view for this map.
+         * @param view  (Required) The view that controls this map.
+         */
+        setView(view: ol.View): void;
+        /**
+         * Force a recalculation of the map viewport size.  This should be called when
+         * third-party code changes the size of the map viewport.
+         */
+        updateSize(): void;
         /**
          * Gets a value.
          * @param key  (Required) Key name.
@@ -1560,6 +2165,26 @@ otherwise it will be negative.
          * @param c2  (Required) Coordinate 2.
          */
         haversineDistance(c1: ol.Coordinate, c2: ol.Coordinate): number;
+        /**
+         * Get the spherical length of a geometry.  This length is the sum of the
+         * great circle distances between coordinates.  For polygons, the length is
+         * the sum of all rings.  For points, the length is zero.  For multi-part
+         * geometries, the length is the sum of the length of each part.
+         * @param geometry  (Required) A geometry.
+         * @param opt_options  (Optional) Options for the length
+    calculation.  By default, geometries are assumed to be in 'EPSG:3857'.
+    You can change this by providing a `projection` option.
+         */
+        static getLength(geometry: ol.geom.Geometry, opt_options?: olx.SphereMetricOptions): number;
+        /**
+         * Get the spherical area of a geometry.  This is the area (in meters) assuming
+         * that polygon edges are segments of great circles on a sphere.
+         * @param geometry  (Required) A geometry.
+         * @param opt_options  (Optional) Options for the area
+    calculation.  By default, geometries are assumed to be in 'EPSG:3857'.
+    You can change this by providing a `projection` option.
+         */
+        static getArea(geometry: ol.geom.Geometry, opt_options?: olx.SphereMetricOptions): number;
     }
     /**
      * Base class for tiles.
@@ -1569,8 +2194,9 @@ otherwise it will be negative.
          * TODO: This method has no documentation. Contact the library author if this method should be documented
          * @param tileCoord  (Required) Tile coordinate.
          * @param state  (Required) State.
+         * @param opt_options  (Optional) Tile options.
          */
-        constructor(tileCoord: ol.TileCoord, state: ol.TileState);
+        constructor(tileCoord: ol.TileCoord, state: ol.TileState, opt_options?: olx.TileOptions);
         /**
          * Get the tile coordinate for this tile.
          */
@@ -2125,14 +2751,14 @@ first map that uses this view will be used.
     /**
      * TODO: This function typedef has no documentation. Contact the library author if this function typedef should be documented
      */
-    type PostRenderFunction = (arg0: ol.Map, arg1?: olx.FrameState) => boolean;
+    type PostRenderFunction = (arg0: ol.PluggableMap, arg1?: olx.FrameState) => boolean;
     /**
      * Function to perform manipulations before rendering. This function is called
      * with the {@link ol.Map} as first and an optional {@link olx.FrameState} as
      * second argument. Return `true` to keep this function for the next frame,
      * `false` to remove it.
      */
-    type PreRenderFunction = (arg0: ol.Map, arg1?: olx.FrameState) => boolean;
+    type PreRenderFunction = (arg0: ol.PluggableMap, arg1?: olx.FrameState) => boolean;
     /**
      * A function that takes an array of input data, performs some operation, and
      * returns an array of ouput data.
@@ -2291,7 +2917,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this control.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * This function is used to set a target element for the control. It has no
              * effect if it is called after the control has been added to the map (i.e.
@@ -2404,14 +3030,14 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this control.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Remove the control from its current map and attach it to the new map.
              * Subclasses may set up event handlers to get notified about changes to
              * the map here.
              * @param map  (Required) Map.
              */
-            setMap(map: ol.Map): void;
+            setMap(map: ol.PluggableMap): void;
             /**
              * This function is used to set a target element for the control. It has no
              * effect if it is called after the control has been added to the map (i.e.
@@ -2515,11 +3141,11 @@ first map that uses this view will be used.
              * the map here.
              * @param map  (Required) Map.
              */
-            setMap(map: ol.Map): void;
+            setMap(map: ol.PluggableMap): void;
             /**
              * Get the map associated with this control.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * This function is used to set a target element for the control. It has no
              * effect if it is called after the control has been added to the map (i.e.
@@ -2634,7 +3260,7 @@ first map that uses this view will be used.
              * the map here.
              * @param map  (Required) Map.
              */
-            setMap(map: ol.Map): void;
+            setMap(map: ol.PluggableMap): void;
             /**
              * Set the coordinate format type used to render the current position.
              * @param format  (Required) The format to render the current
@@ -2650,7 +3276,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this control.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * This function is used to set a target element for the control. It has no
              * effect if it is called after the control has been added to the map (i.e.
@@ -2749,7 +3375,7 @@ first map that uses this view will be used.
              * the map here.
              * @param map  (Required) Map.
              */
-            setMap(map: ol.Map): void;
+            setMap(map: ol.PluggableMap): void;
             /**
              * Update the overview map element.
              * @param mapEvent  (Required) Map event.
@@ -2778,11 +3404,11 @@ first map that uses this view will be used.
             /**
              * Return the overview map.
              */
-            getOverviewMap(): ol.Map;
+            getOverviewMap(): ol.PluggableMap;
             /**
              * Get the map associated with this control.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * This function is used to set a target element for the control. It has no
              * effect if it is called after the control has been added to the map (i.e.
@@ -2883,7 +3509,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this control.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * This function is used to set a target element for the control. It has no
              * effect if it is called after the control has been added to the map (i.e.
@@ -2997,7 +3623,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this control.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * This function is used to set a target element for the control. It has no
              * effect if it is called after the control has been added to the map (i.e.
@@ -3093,7 +3719,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this control.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * This function is used to set a target element for the control. It has no
              * effect if it is called after the control has been added to the map (i.e.
@@ -3196,7 +3822,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this control.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * This function is used to set a target element for the control. It has no
              * effect if it is called after the control has been added to the map (i.e.
@@ -3291,7 +3917,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this control.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * This function is used to set a target element for the control. It has no
              * effect if it is called after the control has been added to the map (i.e.
@@ -4177,8 +4803,9 @@ first map that uses this view will be used.
             /**
              * Write a single geometry as a WKT string.
              * @param geometry  (Required) Geometry.
+             * @param opt_options  (Optional) Write options.
              */
-            writeGeometry(geometry: ol.geom.Geometry): string;
+            writeGeometry(geometry: ol.geom.Geometry, opt_options?: olx.format.WriteOptions): string;
         }
         /**
          * Format for reading WMS capabilities data
@@ -4249,6 +4876,8 @@ first map that uses this view will be used.
         module filter {
             /**
              * Represents a logical `<And>` operator between two or more filter conditions.
+             * 
+             * deprecated: This class will no longer be exported starting from the next major version.
              */
             class And extends ol.format.filter.LogicalNary {
                 /**
@@ -4274,6 +4903,8 @@ first map that uses this view will be used.
             /**
              * Abstract class; normally only used for creating subclasses and not instantiated in apps.
              * Base class for WFS GetFeature property comparison filters.
+             * 
+             * deprecated: This class will no longer be exported starting from the next major version.
              */
             class Comparison extends ol.format.filter.Filter {
                 /**
@@ -4286,6 +4917,8 @@ first map that uses this view will be used.
             /**
              * Abstract class; normally only used for creating subclasses and not instantiated in apps.
              * Base class for WFS GetFeature property binary comparison filters.
+             * 
+             * deprecated: This class will no longer be exported starting from the next major version.
              */
             class ComparisonBinary extends ol.format.filter.Comparison {
                 /**
@@ -4324,6 +4957,8 @@ first map that uses this view will be used.
             /**
              * Abstract class; normally only used for creating subclasses and not instantiated in apps.
              * Base class for WFS GetFeature filters.
+             * 
+             * deprecated: This class will no longer be exported starting from the next major version.
              */
             class Filter {
                 /**
@@ -4475,8 +5110,11 @@ first map that uses this view will be used.
                 constructor(...conditions: ol.format.filter.Filter[]);
             }
             /**
+             * Abstract class; normally only used for creating subclasses and not instantiated in apps.
              * Represents a spatial operator to test whether a geometry-valued property
              * relates to a given geometry.
+             * 
+             * deprecated: This class will no longer be exported starting from the next major version.
              */
             class Spatial extends ol.format.filter.Filter {
                 /**
@@ -6770,7 +7408,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Activate or deactivate the interaction.
              * @param active  (Required) Active.
@@ -6864,7 +7502,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Gets a value.
              * @param key  (Required) Key name.
@@ -6964,7 +7602,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Activate or deactivate the interaction.
              * @param active  (Required) Active.
@@ -7058,7 +7696,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Activate or deactivate the interaction.
              * @param active  (Required) Active.
@@ -7156,7 +7794,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Activate or deactivate the interaction.
              * @param active  (Required) Active.
@@ -7256,7 +7894,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Activate or deactivate the interaction.
              * @param active  (Required) Active.
@@ -7359,7 +7997,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Activate or deactivate the interaction.
              * @param active  (Required) Active.
@@ -7493,7 +8131,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Activate or deactivate the interaction.
              * @param active  (Required) Active.
@@ -7598,7 +8236,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Activate or deactivate the interaction.
              * @param active  (Required) Active.
@@ -7700,7 +8338,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Activate or deactivate the interaction.
              * @param active  (Required) Active.
@@ -7809,7 +8447,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Activate or deactivate the interaction.
              * @param active  (Required) Active.
@@ -7918,7 +8556,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Activate or deactivate the interaction.
              * @param active  (Required) Active.
@@ -8031,7 +8669,7 @@ first map that uses this view will be used.
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Gets a value.
              * @param key  (Required) Key name.
@@ -8132,7 +8770,7 @@ to zoom to the center of the map
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Activate or deactivate the interaction.
              * @param active  (Required) Active.
@@ -8227,7 +8865,7 @@ to zoom to the center of the map
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Activate or deactivate the interaction.
              * @param active  (Required) Active.
@@ -8322,7 +8960,7 @@ to zoom to the center of the map
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Activate or deactivate the interaction.
              * @param active  (Required) Active.
@@ -8429,7 +9067,7 @@ to zoom to the center of the map
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Activate or deactivate the interaction.
              * @param active  (Required) Active.
@@ -8558,7 +9196,7 @@ to zoom to the center of the map
              * map, if any. Pass `null` to just remove the interaction from the current map.
              * @param map  (Required) Map.
              */
-            setMap(map: ol.Map): void;
+            setMap(map: ol.PluggableMap): void;
             /**
              * Return whether the interaction is currently active.
              */
@@ -8566,7 +9204,7 @@ to zoom to the center of the map
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Activate or deactivate the interaction.
              * @param active  (Required) Active.
@@ -8687,7 +9325,7 @@ to zoom to the center of the map
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Activate or deactivate the interaction.
              * @param active  (Required) Active.
@@ -8792,7 +9430,7 @@ to zoom to the center of the map
             /**
              * Get the map associated with this interaction.
              */
-            getMap(): ol.Map;
+            getMap(): ol.PluggableMap;
             /**
              * Activate or deactivate the interaction.
              * @param active  (Required) Active.
@@ -9261,7 +9899,7 @@ to zoom to the center of the map
              * {@link ol.Map#addLayer} instead.
              * @param map  (Required) Map.
              */
-            setMap(map: ol.Map): void;
+            setMap(map: ol.PluggableMap): void;
             /**
              * Set the layer source.
              * @param source  (Required) The layer source.
@@ -9425,7 +10063,7 @@ to zoom to the center of the map
              * {@link ol.Map#addLayer} instead.
              * @param map  (Required) Map.
              */
-            setMap(map: ol.Map): void;
+            setMap(map: ol.PluggableMap): void;
             /**
              * Set the layer source.
              * @param source  (Required) The layer source.
@@ -9596,7 +10234,7 @@ to zoom to the center of the map
              * {@link ol.Map#addLayer} instead.
              * @param map  (Required) Map.
              */
-            setMap(map: ol.Map): void;
+            setMap(map: ol.PluggableMap): void;
             /**
              * Set the layer source.
              * @param source  (Required) The layer source.
@@ -9778,7 +10416,7 @@ to zoom to the center of the map
              * {@link ol.Map#addLayer} instead.
              * @param map  (Required) Map.
              */
-            setMap(map: ol.Map): void;
+            setMap(map: ol.PluggableMap): void;
             /**
              * Set the layer source.
              * @param source  (Required) The layer source.
@@ -9960,7 +10598,7 @@ to zoom to the center of the map
              * {@link ol.Map#addLayer} instead.
              * @param map  (Required) Map.
              */
-            setMap(map: ol.Map): void;
+            setMap(map: ol.PluggableMap): void;
             /**
              * Set the layer source.
              * @param source  (Required) The layer source.
@@ -10160,7 +10798,7 @@ to zoom to the center of the map
              * {@link ol.Map#addLayer} instead.
              * @param map  (Required) Map.
              */
-            setMap(map: ol.Map): void;
+            setMap(map: ol.PluggableMap): void;
             /**
              * Set the layer source.
              * @param source  (Required) The layer source.
@@ -10570,14 +11208,14 @@ Default is the projection's units.
     module render {
         /**
          * Lightweight, read-only, {@link ol.Feature} and {@link ol.geom.Geometry} like
-         * structure, optimized for rendering and styling. Geometry access through the
-         * API is limited to getting the type and extent of the geometry.
+         * structure, optimized for vector tile rendering and styling. Geometry access
+         * through the API is limited to getting the type and extent of the geometry.
          */
         class Feature {
             /**
              * Lightweight, read-only, {@link ol.Feature} and {@link ol.geom.Geometry} like
-             * structure, optimized for rendering and styling. Geometry access through the
-             * API is limited to getting the type and extent of the geometry.
+             * structure, optimized for vector tile rendering and styling. Geometry access
+             * through the API is limited to getting the type and extent of the geometry.
              * @param type  (Required) Geometry type.
              * @param flatCoordinates  (Required) Flat coordinates. These always need
     to be right-handed for polygons.
@@ -10684,6 +11322,590 @@ Default is the projection's units.
                  * @param style  (Required) Style.
                  */
                 drawFeature(feature: ol.Feature, style: ol.style.Style): void;
+            }
+        }
+    }
+    module renderer {
+        /**
+         * TODO: This class has no documentation. Contact the library author if this class should be documented
+         */
+        class Layer extends ol.Observable {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param layer  (Required) Layer.
+             */
+            constructor(layer: ol.layer.Layer);
+            /**
+             * Increases the revision counter and dispatches a 'change' event.
+             */
+            changed(): void;
+            /**
+             * Dispatches an event and calls all listeners listening for events
+             * of this type. The event parameter can either be a string or an
+             * Object with a `type` property.
+             * @param event  (Required) Event object.
+             */
+            dispatchEvent(event: any|ol.events.Event|string): void;
+            /**
+             * Get the version number for this object.  Each time the object is modified,
+             * its version number will be incremented.
+             */
+            getRevision(): number;
+            /**
+             * Listen for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Listen once for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object to use as `this` in `listener`.
+             */
+            once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+            /**
+             * Unlisten for a certain type of event.
+             * @param type  (Required) The event type or array of event types.
+             * @param listener  (Required) The listener function.
+             * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+             */
+            un(type: string|string[], listener: Function, opt_this?: any): void;
+        }
+        /**
+         * TODO: This class has no documentation. Contact the library author if this class should be documented
+         */
+        class Map extends ol.Disposable {
+            /**
+             * TODO: This method has no documentation. Contact the library author if this method should be documented
+             * @param container  (Required) Container.
+             * @param map  (Required) Map.
+             */
+            constructor(container: Element, map: ol.PluggableMap);
+        }
+        /**
+         * Available renderers: `'canvas'` or `'webgl'`.
+         */
+        class Type {
+            /**
+             * "canvas"
+             */
+            public static CANVAS: string;
+            /**
+             * "webgl"
+             */
+            public static WEBGL: string;
+        }
+        module canvas {
+            /**
+             * TODO: This class has no documentation. Contact the library author if this class should be documented
+             */
+            class ImageLayer extends ol.renderer.canvas.IntermediateCanvas {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param imageLayer  (Required) Single image layer.
+                 */
+                constructor(imageLayer: ol.layer.Image);
+                /**
+                 * Increases the revision counter and dispatches a 'change' event.
+                 */
+                changed(): void;
+                /**
+                 * Dispatches an event and calls all listeners listening for events
+                 * of this type. The event parameter can either be a string or an
+                 * Object with a `type` property.
+                 * @param event  (Required) Event object.
+                 */
+                dispatchEvent(event: any|ol.events.Event|string): void;
+                /**
+                 * Get the version number for this object.  Each time the object is modified,
+                 * its version number will be incremented.
+                 */
+                getRevision(): number;
+                /**
+                 * Listen for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Listen once for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Unlisten for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+                 */
+                un(type: string|string[], listener: Function, opt_this?: any): void;
+            }
+            /**
+             * TODO: This class has no documentation. Contact the library author if this class should be documented
+             */
+            class IntermediateCanvas extends ol.renderer.canvas.Layer {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param layer  (Required) Layer.
+                 */
+                constructor(layer: ol.layer.Layer);
+                /**
+                 * Increases the revision counter and dispatches a 'change' event.
+                 */
+                changed(): void;
+                /**
+                 * Dispatches an event and calls all listeners listening for events
+                 * of this type. The event parameter can either be a string or an
+                 * Object with a `type` property.
+                 * @param event  (Required) Event object.
+                 */
+                dispatchEvent(event: any|ol.events.Event|string): void;
+                /**
+                 * Get the version number for this object.  Each time the object is modified,
+                 * its version number will be incremented.
+                 */
+                getRevision(): number;
+                /**
+                 * Listen for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Listen once for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Unlisten for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+                 */
+                un(type: string|string[], listener: Function, opt_this?: any): void;
+            }
+            /**
+             * TODO: This class has no documentation. Contact the library author if this class should be documented
+             */
+            class Layer extends ol.renderer.Layer {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param layer  (Required) Layer.
+                 */
+                constructor(layer: ol.layer.Layer);
+                /**
+                 * Increases the revision counter and dispatches a 'change' event.
+                 */
+                changed(): void;
+                /**
+                 * Dispatches an event and calls all listeners listening for events
+                 * of this type. The event parameter can either be a string or an
+                 * Object with a `type` property.
+                 * @param event  (Required) Event object.
+                 */
+                dispatchEvent(event: any|ol.events.Event|string): void;
+                /**
+                 * Get the version number for this object.  Each time the object is modified,
+                 * its version number will be incremented.
+                 */
+                getRevision(): number;
+                /**
+                 * Listen for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Listen once for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Unlisten for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+                 */
+                un(type: string|string[], listener: Function, opt_this?: any): void;
+            }
+            /**
+             * TODO: This class has no documentation. Contact the library author if this class should be documented
+             */
+            class Map extends ol.renderer.Map {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param container  (Required) Container.
+                 * @param map  (Required) Map.
+                 */
+                constructor(container: Element, map: ol.PluggableMap);
+            }
+            /**
+             * TODO: This class has no documentation. Contact the library author if this class should be documented
+             */
+            class TileLayer extends ol.renderer.canvas.IntermediateCanvas {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param tileLayer  (Required) Tile layer.
+                 */
+                constructor(tileLayer: ol.layer.Tile|ol.layer.VectorTile);
+                /**
+                 * Increases the revision counter and dispatches a 'change' event.
+                 */
+                changed(): void;
+                /**
+                 * Dispatches an event and calls all listeners listening for events
+                 * of this type. The event parameter can either be a string or an
+                 * Object with a `type` property.
+                 * @param event  (Required) Event object.
+                 */
+                dispatchEvent(event: any|ol.events.Event|string): void;
+                /**
+                 * Get the version number for this object.  Each time the object is modified,
+                 * its version number will be incremented.
+                 */
+                getRevision(): number;
+                /**
+                 * Listen for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Listen once for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Unlisten for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+                 */
+                un(type: string|string[], listener: Function, opt_this?: any): void;
+            }
+            /**
+             * TODO: This class has no documentation. Contact the library author if this class should be documented
+             */
+            class VectorLayer extends ol.renderer.canvas.Layer {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param vectorLayer  (Required) Vector layer.
+                 */
+                constructor(vectorLayer: ol.layer.Vector);
+                /**
+                 * Increases the revision counter and dispatches a 'change' event.
+                 */
+                changed(): void;
+                /**
+                 * Dispatches an event and calls all listeners listening for events
+                 * of this type. The event parameter can either be a string or an
+                 * Object with a `type` property.
+                 * @param event  (Required) Event object.
+                 */
+                dispatchEvent(event: any|ol.events.Event|string): void;
+                /**
+                 * Get the version number for this object.  Each time the object is modified,
+                 * its version number will be incremented.
+                 */
+                getRevision(): number;
+                /**
+                 * Listen for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Listen once for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Unlisten for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+                 */
+                un(type: string|string[], listener: Function, opt_this?: any): void;
+            }
+            /**
+             * TODO: This class has no documentation. Contact the library author if this class should be documented
+             */
+            class VectorTileLayer extends ol.renderer.canvas.TileLayer {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param layer  (Required) VectorTile layer.
+                 */
+                constructor(layer: ol.layer.VectorTile);
+                /**
+                 * Increases the revision counter and dispatches a 'change' event.
+                 */
+                changed(): void;
+                /**
+                 * Dispatches an event and calls all listeners listening for events
+                 * of this type. The event parameter can either be a string or an
+                 * Object with a `type` property.
+                 * @param event  (Required) Event object.
+                 */
+                dispatchEvent(event: any|ol.events.Event|string): void;
+                /**
+                 * Get the version number for this object.  Each time the object is modified,
+                 * its version number will be incremented.
+                 */
+                getRevision(): number;
+                /**
+                 * Listen for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Listen once for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Unlisten for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+                 */
+                un(type: string|string[], listener: Function, opt_this?: any): void;
+            }
+        }
+        module webgl {
+            /**
+             * TODO: This class has no documentation. Contact the library author if this class should be documented
+             */
+            class ImageLayer extends ol.renderer.webgl.Layer {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param mapRenderer  (Required) Map renderer.
+                 * @param imageLayer  (Required) Tile layer.
+                 */
+                constructor(mapRenderer: ol.renderer.webgl.Map, imageLayer: ol.layer.Image);
+                /**
+                 * Increases the revision counter and dispatches a 'change' event.
+                 */
+                changed(): void;
+                /**
+                 * Dispatches an event and calls all listeners listening for events
+                 * of this type. The event parameter can either be a string or an
+                 * Object with a `type` property.
+                 * @param event  (Required) Event object.
+                 */
+                dispatchEvent(event: any|ol.events.Event|string): void;
+                /**
+                 * Get the version number for this object.  Each time the object is modified,
+                 * its version number will be incremented.
+                 */
+                getRevision(): number;
+                /**
+                 * Listen for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Listen once for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Unlisten for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+                 */
+                un(type: string|string[], listener: Function, opt_this?: any): void;
+            }
+            /**
+             * TODO: This class has no documentation. Contact the library author if this class should be documented
+             */
+            class Layer extends ol.renderer.Layer {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param mapRenderer  (Required) Map renderer.
+                 * @param layer  (Required) Layer.
+                 */
+                constructor(mapRenderer: ol.renderer.webgl.Map, layer: ol.layer.Layer);
+                /**
+                 * Increases the revision counter and dispatches a 'change' event.
+                 */
+                changed(): void;
+                /**
+                 * Dispatches an event and calls all listeners listening for events
+                 * of this type. The event parameter can either be a string or an
+                 * Object with a `type` property.
+                 * @param event  (Required) Event object.
+                 */
+                dispatchEvent(event: any|ol.events.Event|string): void;
+                /**
+                 * Get the version number for this object.  Each time the object is modified,
+                 * its version number will be incremented.
+                 */
+                getRevision(): number;
+                /**
+                 * Listen for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Listen once for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Unlisten for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+                 */
+                un(type: string|string[], listener: Function, opt_this?: any): void;
+            }
+            /**
+             * TODO: This class has no documentation. Contact the library author if this class should be documented
+             */
+            class Map extends ol.renderer.Map {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param container  (Required) Container.
+                 * @param map  (Required) Map.
+                 */
+                constructor(container: Element, map: ol.PluggableMap);
+            }
+            /**
+             * TODO: This class has no documentation. Contact the library author if this class should be documented
+             */
+            class TileLayer extends ol.renderer.webgl.Layer {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param mapRenderer  (Required) Map renderer.
+                 * @param tileLayer  (Required) Tile layer.
+                 */
+                constructor(mapRenderer: ol.renderer.webgl.Map, tileLayer: ol.layer.Tile);
+                /**
+                 * Increases the revision counter and dispatches a 'change' event.
+                 */
+                changed(): void;
+                /**
+                 * Dispatches an event and calls all listeners listening for events
+                 * of this type. The event parameter can either be a string or an
+                 * Object with a `type` property.
+                 * @param event  (Required) Event object.
+                 */
+                dispatchEvent(event: any|ol.events.Event|string): void;
+                /**
+                 * Get the version number for this object.  Each time the object is modified,
+                 * its version number will be incremented.
+                 */
+                getRevision(): number;
+                /**
+                 * Listen for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Listen once for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Unlisten for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+                 */
+                un(type: string|string[], listener: Function, opt_this?: any): void;
+            }
+            /**
+             * TODO: This class has no documentation. Contact the library author if this class should be documented
+             */
+            class VectorLayer extends ol.renderer.webgl.Layer {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param mapRenderer  (Required) Map renderer.
+                 * @param vectorLayer  (Required) Vector layer.
+                 */
+                constructor(mapRenderer: ol.renderer.webgl.Map, vectorLayer: ol.layer.Vector);
+                /**
+                 * Increases the revision counter and dispatches a 'change' event.
+                 */
+                changed(): void;
+                /**
+                 * Dispatches an event and calls all listeners listening for events
+                 * of this type. The event parameter can either be a string or an
+                 * Object with a `type` property.
+                 * @param event  (Required) Event object.
+                 */
+                dispatchEvent(event: any|ol.events.Event|string): void;
+                /**
+                 * Get the version number for this object.  Each time the object is modified,
+                 * its version number will be incremented.
+                 */
+                getRevision(): number;
+                /**
+                 * Listen for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                on(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Listen once for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object to use as `this` in `listener`.
+                 */
+                once(type: string|string[], listener: Function, opt_this?: any): ol.EventsKey|ol.EventsKey[];
+                /**
+                 * Unlisten for a certain type of event.
+                 * @param type  (Required) The event type or array of event types.
+                 * @param listener  (Required) The listener function.
+                 * @param opt_this  (Optional) The object which was used as `this` by the
+`listener`.
+                 */
+                un(type: string|string[], listener: Function, opt_this?: any): void;
             }
         }
     }
@@ -10865,7 +12087,7 @@ Default is the projection's units.
             un(type: string|string[], listener: Function, opt_this?: any): void;
         }
         /**
-         * Layer source for the CartoDB tiles.
+         * Layer source for the CartoDB Maps API.
          */
         class CartoDB extends ol.source.XYZ {
             /**
@@ -11195,6 +12417,12 @@ If using named maps, a key-value lookup with the template parameters.
              * @param feature  (Required) Feature to remove.
              */
             removeFeature(feature: ol.Feature): void;
+            /**
+             * Set the new loader of the source. The next loadFeatures call will use the
+             * new loader.
+             * @param loader  (Required) The loader to set.
+             */
+            setLoader(loader: ol.FeatureLoader): void;
             /**
              * Get the attributions of the source.
              */
@@ -14061,6 +15289,12 @@ If using named maps, a key-value lookup with the template parameters.
              */
             removeFeature(feature: ol.Feature): void;
             /**
+             * Set the new loader of the source. The next loadFeatures call will use the
+             * new loader.
+             * @param loader  (Required) The loader to set.
+             */
+            setLoader(loader: ol.FeatureLoader): void;
+            /**
              * Get the attributions of the source.
              */
             getAttributions(): ol.Attribution[];
@@ -14174,6 +15408,10 @@ If using named maps, a key-value lookup with the template parameters.
              * @param options  (Required) Vector tile options.
              */
             constructor(options: olx.source.VectorTileOptions);
+            /**
+             * clear {@link ol.TileCache} and delete all source tiles
+             */
+            clear(): void;
             /**
              * Return the tile load function of the source.
              */
@@ -14709,7 +15947,8 @@ Optional config properties:
             un(type: string|string[], listener: Function, opt_this?: any): void;
         }
         /**
-         * Layer source for tile data in Zoomify format.
+         * Layer source for tile data in Zoomify format (both Zoomify and Internet
+         * Imaging Protocol are supported).
          */
         class Zoomify extends ol.source.TileImage {
             /**
@@ -15082,7 +16321,7 @@ Optional config properties:
              */
             constructor(opt_options?: olx.style.IconOptions);
             /**
-             * Clones the style.
+             * Clones the style. The underlying Image/HTMLCanvasElement is not cloned.
              */
             clone(): ol.style.Icon;
             /**
@@ -15480,9 +16719,21 @@ Optional config properties:
              */
             clone(): ol.style.Text;
             /**
+             * Get the `exceedLength` configuration.
+             */
+            getExceedLength(): boolean;
+            /**
              * Get the font name.
              */
             getFont(): string;
+            /**
+             * Get the maximum angle between adjacent characters.
+             */
+            getMaxAngle(): number;
+            /**
+             * Get the label placement.
+             */
+            getPlacement(): ol.style.TextPlacement|string;
             /**
              * Get the x-offset for the text.
              */
@@ -15524,10 +16775,20 @@ Optional config properties:
              */
             getTextBaseline(): string;
             /**
+             * Set the `exceedLength` property.
+             * @param exceedLength  (Required) Let text exceed the path that it follows.
+             */
+            setExceedLength(exceedLength: boolean): void;
+            /**
              * Set the font.
              * @param font  (Optional) Font.
              */
             setFont(font?: string): void;
+            /**
+             * Set the maximum angle between adjacent characters.
+             * @param maxAngle  (Required) Angle in radians.
+             */
+            setMaxAngle(maxAngle: number): void;
             /**
              * Set the x offset.
              * @param offsetX  (Required) Horizontal text offset.
@@ -15538,6 +16799,11 @@ Optional config properties:
              * @param offsetY  (Required) Vertical text offset.
              */
             setOffsetY(offsetY: number): void;
+            /**
+             * Set the text placement.
+             * @param placement  (Required) Placement.
+             */
+            setPlacement(placement: ol.style.TextPlacement|string): void;
             /**
              * Set the fill.
              * @param fill  (Required) Fill style.
@@ -15608,6 +16874,22 @@ Optional config properties:
              */
             public static TOP_RIGHT: string;
         }
+        /**
+         * Text placement. One of `'point'`, `'line'`. Default is `'point'`. Note that
+         * `'line'` requires the underlying geometry to be a {@link ol.geom.LineString},
+         * {@link ol.geom.Polygon}, {@link ol.geom.MultiLineString} or
+         * {@link ol.geom.MultiPolygon}.
+         */
+        class TextPlacement {
+            /**
+             * "point"
+             */
+            public static POINT: string;
+            /**
+             * "line"
+             */
+            public static LINE: string;
+        }
     }
     module tilegrid {
         /**
@@ -15623,7 +16905,7 @@ Optional config properties:
             /**
              * Call a function with each tile coordinate for a given extent and zoom level.
              * @param extent  (Required) Extent.
-             * @param zoom  (Required) Zoom level.
+             * @param zoom  (Required) Integer zoom level.
              * @param callback  (Required) Function called with each tile coordinate.
              */
             forEachTileCoord(extent: ol.Extent, zoom: number, callback: Function): void;
@@ -15637,12 +16919,12 @@ Optional config properties:
             getMinZoom(): number;
             /**
              * Get the origin for the grid at the given zoom level.
-             * @param z  (Required) Z.
+             * @param z  (Required) Integer zoom level.
              */
             getOrigin(z: number): ol.Coordinate;
             /**
              * Get the resolution for the given zoom level.
-             * @param z  (Required) Z.
+             * @param z  (Required) Integer zoom level.
              */
             getResolution(z: number): number;
             /**
@@ -15714,7 +16996,7 @@ Optional config properties:
             /**
              * Call a function with each tile coordinate for a given extent and zoom level.
              * @param extent  (Required) Extent.
-             * @param zoom  (Required) Zoom level.
+             * @param zoom  (Required) Integer zoom level.
              * @param callback  (Required) Function called with each tile coordinate.
              */
             forEachTileCoord(extent: ol.Extent, zoom: number, callback: Function): void;
@@ -15728,12 +17010,12 @@ Optional config properties:
             getMinZoom(): number;
             /**
              * Get the origin for the grid at the given zoom level.
-             * @param z  (Required) Z.
+             * @param z  (Required) Integer zoom level.
              */
             getOrigin(z: number): ol.Coordinate;
             /**
              * Get the resolution for the given zoom level.
-             * @param z  (Required) Z.
+             * @param z  (Required) Integer zoom level.
              */
             getResolution(z: number): number;
             /**
@@ -15783,21 +17065,6 @@ Optional config properties:
          * @param opt_options  (Optional) Tile grid options.
          */
         function createXYZ(opt_options?: olx.tilegrid.XYZOptions): ol.tilegrid.TileGrid;
-    }
-    module renderer {
-        /**
-         * Available renderers: `'canvas'` or `'webgl'`.
-         */
-        class Type {
-            /**
-             * "canvas"
-             */
-            public static CANVAS: string;
-            /**
-             * "webgl"
-             */
-            public static WEBGL: string;
-        }
     }
     module color {
         /**
@@ -16236,7 +17503,7 @@ declare module olx {
         /**
          * Reference to an `ol.Map` object.
          */
-        map?: ol.Map;
+        map?: ol.PluggableMap;
         /**
          * The maximum number of meridians and parallels from the center of the
          * map. The default value is 100, which means that at most 200 meridians
@@ -16411,6 +17678,33 @@ declare module olx {
          * construction time or through {@link ol.Map#setView}.
          */
         view?: ol.View;
+    }
+    /**
+     * Object literal with options for the {@link ol.Sphere.getLength} or
+     * {@link ol.Sphere.getArea} functions.
+     */
+    interface SphereMetricOptions {
+        /**
+         * Projection of the geometry.  By default, the geometry is assumed to be in
+         * EPSG:3857 (Web Mercator).
+         */
+        projection?: ol.ProjectionLike;
+        /**
+         * Sphere radius.  By default, the radius of the earth is used (Clarke 1866
+         * Authalic Sphere).
+         */
+        radius?: number;
+    }
+    /**
+     * Options for tile constructors.
+     */
+    interface TileOptions {
+        /**
+         * A duration for tile opacity transitions.  By default, tiles will render with
+         * an opacity transition that lasts 250 ms.  To change the duration, pass a
+         * number in milliseconds.  A duration of 0 disables the opacity transition.
+         */
+        transition?: number;
     }
     /**
      * Object literal with options for the {@link ol.Map#forEachFeatureAtPixel} and
@@ -17097,7 +18391,7 @@ declare module olx {
              * A function that takes an {@link ol.MapBrowserEvent} and returns a boolean
              * to indicate whether that event should be handled.
              * By default, {@link ol.events.condition.singleClick} with
-             * {@link ol.events.condition.noModifierKeys} results in a vertex deletion.
+             * {@link ol.events.condition.altKeyOnly} results in a vertex deletion.
              */
             deleteCondition?: ol.EventsConditionType;
             /**
@@ -17704,6 +18998,11 @@ declare module olx {
              */
             dataProjection?: ol.ProjectionLike;
             /**
+             * Tile extent of the tile being read. This is only used and required for
+             * {@link ol.format.MVT}.
+             */
+            extent: ol.Extent;
+            /**
              * Projection of the feature geometries created by the format reader. If not
              * provided, features will be returned in the `dataProjection`.
              */
@@ -18279,7 +19578,7 @@ declare module olx {
              * temporary layers. The standard way to add a layer to a map and have it
              * managed by the map is to use {@link ol.Map#addLayer}.
              */
-            map?: ol.Map;
+            map?: ol.PluggableMap;
             /**
              * Visibility. Default is `true` (visible).
              */
@@ -18326,7 +19625,7 @@ declare module olx {
              * temporary layers. The standard way to add a layer to a map and have it
              * managed by the map is to use {@link ol.Map#addLayer}.
              */
-            map?: ol.Map;
+            map?: ol.PluggableMap;
             /**
              * Visibility. Default is `true` (visible).
              */
@@ -18370,7 +19669,7 @@ declare module olx {
              * temporary layers. The standard way to add a layer to a map and have it
              * managed by the map is to use {@link ol.Map#addLayer}.
              */
-            map?: ol.Map;
+            map?: ol.PluggableMap;
             /**
              * The bounding extent for layer rendering.  The layer will not be rendered
              * outside of this extent.
@@ -18464,7 +19763,7 @@ declare module olx {
              * temporary layers. The standard way to add a layer to a map and have it
              * managed by the map is to use {@link ol.Map#addLayer}.
              */
-            map?: ol.Map;
+            map?: ol.PluggableMap;
             /**
              * The bounding extent for layer rendering.  The layer will not be rendered
              * outside of this extent.
@@ -18602,6 +19901,11 @@ declare module olx {
              * Whether to wrap the world horizontally. Default is `true`.
              */
             wrapX?: boolean;
+            /**
+             * Duration of the opacity transition for rendering.  To disable the opacity
+             * transition, pass `transition: 0`.
+             */
+            transition?: number;
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -18770,6 +20074,11 @@ declare module olx {
              * world only, but they will be wrapped horizontally to render multiple worlds.
              */
             wrapX?: boolean;
+            /**
+             * Duration of the opacity transition for rendering.  To disable the opacity
+             * transition, pass `transition: 0`.
+             */
+            transition?: number;
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -18822,10 +20131,11 @@ declare module olx {
              *   tile.setLoader(function() {
              *     var data = // ... fetch data
              *     var format = tile.getFormat();
-             *     tile.setFeatures(format.readFeatures(data));
-             *     tile.setProjection(format.readProjection(data));
-             *     // uncomment the line below for ol.format.MVT only
-             *     //tile.setExtent(format.getLastExtent());
+             *     tile.setFeatures(format.readFeatures(data, {
+             *       // uncomment the line below for ol.format.MVT only
+             *       extent: tile.getExtent(),
+             *       featureProjection: map.getView().getProjection()
+             *     }));
              *   };
              * });
              * ```
@@ -18851,6 +20161,11 @@ declare module olx {
              * render multiple worlds. Default is `true`.
              */
             wrapX?: boolean;
+            /**
+             * Duration of the opacity transition for rendering.  To disable the opacity
+             * transition, pass `transition: 0`.
+             */
+            transition?: number;
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -19368,6 +20683,11 @@ declare module olx {
              */
             wrapX?: boolean;
             /**
+             * Duration of the opacity transition for rendering.  To disable the opacity
+             * transition, pass `transition: 0`.
+             */
+            transition?: number;
+            /**
              * ArcGIS Rest service urls. Use this instead of `url` when the ArcGIS Service supports multiple
              * urls for export requests.
              */
@@ -19427,6 +20747,11 @@ declare module olx {
              * Whether to wrap the world horizontally. Default is `true`.
              */
             wrapX?: boolean;
+            /**
+             * Duration of the opacity transition for rendering.  To disable the opacity
+             * transition, pass `transition: 0`.
+             */
+            transition?: number;
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -19525,6 +20850,11 @@ declare module olx {
              * is `true`.
              */
             wrapX?: boolean;
+            /**
+             * Duration of the opacity transition for rendering.  To disable the opacity
+             * transition, pass `transition: 0`.
+             */
+            transition?: number;
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -19710,6 +21040,11 @@ declare module olx {
              * Whether to wrap the world horizontally. Default is `false`.
              */
             wrapX?: boolean;
+            /**
+             * Duration of the opacity transition for rendering.  To disable the opacity
+             * transition, pass `transition: 0`.
+             */
+            transition?: number;
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -19799,6 +21134,11 @@ declare module olx {
              * Whether to wrap the world horizontally. Default is `true`.
              */
             wrapX?: boolean;
+            /**
+             * Duration of the opacity transition for rendering.  To disable the opacity
+             * transition, pass `transition: 0`.
+             */
+            transition?: number;
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -19899,6 +21239,9 @@ declare module olx {
              * `http://my.zoomify.info/IMAGE.TIF/`. A URL template must include
              * `{TileGroup}`, `{x}`, `{y}`, and `{z}` placeholders, e.g.
              * `http://my.zoomify.info/IMAGE.TIF/{TileGroup}/{z}-{x}-{y}.jpg`.
+             * Internet Imaging Protocol (IIP) with JTL extension can be also used with
+             * `{tileIndex}` and `{z}` placeholders, e.g.
+             * `http://my.zoomify.info?FIF=IMAGE.TIF&JTL={z},{tileIndex}`.
              * A `{?-?}` template pattern, for example `subdomain{a-f}.domain.com`, may be
              * used instead of defining each one separately in the `urls` option.
              */
@@ -19911,6 +21254,11 @@ declare module olx {
              * Size of the image.
              */
             size: ol.Size;
+            /**
+             * Duration of the opacity transition for rendering.  To disable the opacity
+             * transition, pass `transition: 0`.
+             */
+            transition?: number;
         }
     }
     module style {
@@ -20147,11 +21495,23 @@ declare module olx {
          */
         interface TextOptions {
             /**
+             * For polygon labels or when `placement` is set to `'line'`, allow text to
+             * exceed the width of the polygon at the the label position or the length of
+             * the path that it follows. Default is `false`.
+             */
+            exceedLength?: boolean;
+            /**
              * Font style as CSS 'font' value, see:
              * {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/font}.
              * Default is '10px sans-serif'
              */
             font?: string;
+            /**
+             * When `placement` is set to `'line'`, allow a maximum angle between adjacent
+             * characters. The expected value is in radians, and the default is 45°
+             * (`Math.PI / 4`).
+             */
+            maxAngle?: number;
             /**
              * Horizontal text offset in pixels. A positive will shift the text right.
              * Default is `0`.
@@ -20162,6 +21522,10 @@ declare module olx {
              * is `0`.
              */
             offsetY?: number;
+            /**
+             * Text placement.
+             */
+            placement?: ol.style.TextPlacement;
             /**
              * Scale.
              */
@@ -20180,12 +21544,14 @@ declare module olx {
             text?: string;
             /**
              * Text alignment. Possible values: 'left', 'right', 'center', 'end' or 'start'.
-             * Default is 'start'.
+             * Default is 'center' for `placement: 'point'`. For `placement: 'line'`, the
+             * default is to let the renderer choose a placement where `maxAngle` is not
+             * exceeded.
              */
             textAlign?: string;
             /**
              * Text base line. Possible values: 'bottom', 'top', 'middle', 'alphabetic',
-             * 'hanging', 'ideographic'. Default is 'alphabetic'.
+             * 'hanging', 'ideographic'. Default is 'middle'.
              */
             textBaseline?: string;
             /**
@@ -20453,6 +21819,12 @@ declare module "ol/attribution" {
     export default ol.Attribution;
 }
 /*
+ * ES2015 module declaration for ol.CanvasMap
+ */
+declare module "ol/canvasmap" {
+    export default ol.CanvasMap;
+}
+/*
  * ES2015 module declaration for ol.Collection
  */
 declare module "ol/collection" {
@@ -20541,6 +21913,12 @@ declare module "ol/observable" {
  */
 declare module "ol/overlay" {
     export default ol.Overlay;
+}
+/*
+ * ES2015 module declaration for ol.PluggableMap
+ */
+declare module "ol/pluggablemap" {
+    export default ol.PluggableMap;
 }
 /*
  * ES2015 module declaration for ol.Sphere
@@ -21153,6 +22531,90 @@ declare module "ol/render/vectorcontext" {
  */
 declare module "ol/render/canvas/immediate" {
     export default ol.render.canvas.Immediate;
+}
+/*
+ * ES2015 module declaration for ol.renderer.Layer
+ */
+declare module "ol/renderer/layer" {
+    export default ol.renderer.Layer;
+}
+/*
+ * ES2015 module declaration for ol.renderer.Map
+ */
+declare module "ol/renderer/map" {
+    export default ol.renderer.Map;
+}
+/*
+ * ES2015 module declaration for ol.renderer.canvas.ImageLayer
+ */
+declare module "ol/renderer/canvas/imagelayer" {
+    export default ol.renderer.canvas.ImageLayer;
+}
+/*
+ * ES2015 module declaration for ol.renderer.canvas.IntermediateCanvas
+ */
+declare module "ol/renderer/canvas/intermediatecanvas" {
+    export default ol.renderer.canvas.IntermediateCanvas;
+}
+/*
+ * ES2015 module declaration for ol.renderer.canvas.Layer
+ */
+declare module "ol/renderer/canvas/layer" {
+    export default ol.renderer.canvas.Layer;
+}
+/*
+ * ES2015 module declaration for ol.renderer.canvas.Map
+ */
+declare module "ol/renderer/canvas/map" {
+    export default ol.renderer.canvas.Map;
+}
+/*
+ * ES2015 module declaration for ol.renderer.canvas.TileLayer
+ */
+declare module "ol/renderer/canvas/tilelayer" {
+    export default ol.renderer.canvas.TileLayer;
+}
+/*
+ * ES2015 module declaration for ol.renderer.canvas.VectorLayer
+ */
+declare module "ol/renderer/canvas/vectorlayer" {
+    export default ol.renderer.canvas.VectorLayer;
+}
+/*
+ * ES2015 module declaration for ol.renderer.canvas.VectorTileLayer
+ */
+declare module "ol/renderer/canvas/vectortilelayer" {
+    export default ol.renderer.canvas.VectorTileLayer;
+}
+/*
+ * ES2015 module declaration for ol.renderer.webgl.ImageLayer
+ */
+declare module "ol/renderer/webgl/imagelayer" {
+    export default ol.renderer.webgl.ImageLayer;
+}
+/*
+ * ES2015 module declaration for ol.renderer.webgl.Layer
+ */
+declare module "ol/renderer/webgl/layer" {
+    export default ol.renderer.webgl.Layer;
+}
+/*
+ * ES2015 module declaration for ol.renderer.webgl.Map
+ */
+declare module "ol/renderer/webgl/map" {
+    export default ol.renderer.webgl.Map;
+}
+/*
+ * ES2015 module declaration for ol.renderer.webgl.TileLayer
+ */
+declare module "ol/renderer/webgl/tilelayer" {
+    export default ol.renderer.webgl.TileLayer;
+}
+/*
+ * ES2015 module declaration for ol.renderer.webgl.VectorLayer
+ */
+declare module "ol/renderer/webgl/vectorlayer" {
+    export default ol.renderer.webgl.VectorLayer;
 }
 /*
  * ES2015 module declaration for ol.source.BingMaps

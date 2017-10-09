@@ -90,7 +90,7 @@
     "file-loader": "1.1.5",
     "jest": "21.2.1",
     "jsonfile": "4.0.0",
-    "less": "2.7.2",
+    "less": "3.0.0-alpha.3",
     "less-loader": "4.0.5",
     "raw-loader": "0.5.1",
     "rimraf": "2.6.2",

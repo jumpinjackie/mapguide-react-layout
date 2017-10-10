@@ -11,6 +11,26 @@
 // Stamped by webpack
 declare const __DEV__: boolean;
 
+// Monkey-patched ol ES2015 module declarations (this is a bug in the jsdoc-typescript-plugin that generated the OL typings)
+declare module "ol" {
+    export default ol;
+}
+
+declare module "ol/events" {
+    import olImage from "ol/image";
+    class Events {
+        static listen(image: olImage, event: string, handler: Function, thisArg: any): void;
+    }
+    export default Events;
+}
+
+declare module "ol/uri" {
+    class Uri {
+        static appendParams(baseUrl: string, params: any): string;
+    }
+    export default Uri;
+}
+
 declare module "ismobilejs" {
     var isMobile: any;
     export = isMobile;

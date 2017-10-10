@@ -36,7 +36,8 @@ import olTileGrid from "ol/tilegrid/tilegrid";
 import olSource from "ol/source/source";
 import olImageSource from "ol/source/image";
 import olTileImageSource from "ol/source/tileimage";
-import olMapGuideSource from "ol/source/imagemapguide";
+//import olMapGuideSource from "ol/source/imagemapguide";
+import createMapGuideSource, { isMapGuideImageSource } from "../api/ol-mapguide-source";
 import olOverviewMap from "ol/control/overviewmap";
 import olImageStaticSource from "ol/source/imagestatic";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY, BLANK_GIF_DATA_URI } from "../constants/index";
@@ -337,7 +338,7 @@ export class MgLayerSet {
         }
         */
 
-        const overlaySource = new olMapGuideSource({
+        const overlaySource = createMapGuideSource({
             projection: this.projection,
             url: props.agentUri,
             useOverlay: true,
@@ -351,7 +352,7 @@ export class MgLayerSet {
             extent: this.extent,
             source: overlaySource
         });
-        const overviewOverlaySource = new olMapGuideSource({
+        const overviewOverlaySource = createMapGuideSource({
             projection: this.projection,
             url: props.agentUri,
             useOverlay: false,
@@ -365,7 +366,7 @@ export class MgLayerSet {
             source: overviewOverlaySource
         });
         sources.push(overviewOverlaySource);
-        const selectionOverlaySource = new olMapGuideSource({
+        const selectionOverlaySource = createMapGuideSource({
             projection: this.projection,
             url: props.agentUri,
             useOverlay: true,
@@ -443,7 +444,7 @@ export class MgLayerSet {
         if (source instanceof olImageSource) {
             source.on("imageloadstart", this.callback.addImageLoading);
             //onImageError is a MapGuide-specific callback
-            if (source instanceof olMapGuideSource) {
+            if (isMapGuideImageSource(source)) {
                 source.on("imageloaderror", this.callback.onImageError);
             }
             source.on("imageloaderror", this.callback.addImageLoaded);
@@ -499,7 +500,7 @@ export class MgLayerSet {
     }
     public update(showGroups: string[] | undefined, showLayers: string[] | undefined, hideGroups: string[] | undefined, hideLayers: string[] | undefined) {
         //Send the request
-        const imgSource = this.overlay.getSource() as olMapGuideSource;
+        const imgSource = this.overlay.getSource() as any; //olMapGuideSource;
         //NOTE: Even if these group ids being shown/hidden are MG base layer groups, it still has to be
         //done as the server-side snapshot of the runtime map needs to be aware as well. This will be
         //apparent if you were to plot a runtime-map server-side that has base layer groups.
@@ -528,7 +529,7 @@ export class MgLayerSet {
         }
     }
     public updateSelectionColor(color: string) {
-        const source = this.selectionOverlay.getSource() as olMapGuideSource;
+        const source = this.selectionOverlay.getSource() as any; // olMapGuideSource;
         source.updateParams({
             SELECTIONCOLOR: color
         });
@@ -575,13 +576,13 @@ export class MgLayerSet {
     }
     public refreshMap(mode: RefreshMode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly): void {
         if ((mode & RefreshMode.LayersOnly) == RefreshMode.LayersOnly) {
-            const imgSource = this.overlay.getSource() as olMapGuideSource;
+            const imgSource = this.overlay.getSource() as any; // olMapGuideSource;
             imgSource.updateParams({
                 seq: (new Date()).getTime()
             });
         }
         if ((mode & RefreshMode.SelectionOnly) == RefreshMode.SelectionOnly) {
-            const imgSource = this.selectionOverlay.getSource() as olMapGuideSource;
+            const imgSource = this.selectionOverlay.getSource() as any; // olMapGuideSource;
             imgSource.updateParams({
                 seq: (new Date()).getTime()
             });

@@ -1,5 +1,11 @@
 [Changelog since last release](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.10.0...master)
 
+ * Updated React to 16.0
+ * Updated Blueprint to 1.31
+ * Updated OpenLayers to 4.4.1
+ * Updated TypeScript to 2.5.3
+ * [#379](https://github.com/jumpinjackie/mapguide-react-layout/issues/379): Now maintaining our own copy of a MapGuide image source for OpenLayers
+
 0.10.0
 ======
 

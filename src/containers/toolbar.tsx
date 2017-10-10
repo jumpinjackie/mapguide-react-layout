@@ -120,12 +120,13 @@ export class ToolbarContainer extends React.Component<ToolbarContainerProps, any
                 flyoutStates[fid] = !!flyouts[fid].open;
             }
         }
-        if (toolbar && toolbar.items && invokeCommand && containerStyle) {
+        let tbContainerStyle: React.CSSProperties = { ...(containerStyle || {}) };
+        if (toolbar && toolbar.items && invokeCommand) {
             if (vertical === true) {
-                containerStyle.width = DEFAULT_TOOLBAR_SIZE;
+                tbContainerStyle.width = DEFAULT_TOOLBAR_SIZE;
             } else {
-                containerStyle.height = DEFAULT_TOOLBAR_SIZE;
-                containerStyle.overflow = "auto";
+                tbContainerStyle.height = DEFAULT_TOOLBAR_SIZE;
+                tbContainerStyle.overflow = "auto";
             }
             const items = (toolbar.items as any[]).map(tb => mapToolbarReference(tb, store, invokeCommand));
             const childItems = processMenuItems(items);
@@ -133,7 +134,7 @@ export class ToolbarContainer extends React.Component<ToolbarContainerProps, any
                             hideVerticalLabels={hideVerticalLabels}
                             childItems={childItems}
                             containerClass={containerClass}
-                            containerStyle={containerStyle}
+                            containerStyle={tbContainerStyle}
                             flyoutStates={flyoutStates}
                             onOpenComponent={this.fnOpenComponent}
                             onCloseComponent={this.fnCloseComponent}

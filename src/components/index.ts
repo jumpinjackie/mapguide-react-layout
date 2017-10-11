@@ -21,6 +21,5 @@ export * from "./selected-feature-count";
 export * from "./selection-panel";
 export * from "./session-expired";
 export * from "./task-pane";
-export * from "./toaster";
 export * from "./toolbar";
 export * from "./view-size";

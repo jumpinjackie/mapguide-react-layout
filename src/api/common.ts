@@ -834,6 +834,12 @@ export interface IMapViewer {
      * @memberof IMapViewer
      */
     setViewRotationEnabled(enabled: boolean): void;
+
+    toastSuccess(iconName: string, message: string|JSX.Element): string | undefined;
+    toastWarning(iconName: string, message: string|JSX.Element): string | undefined;
+    toastError(iconName: string, message: string|JSX.Element): string | undefined;
+    toastPrimary(iconName: string, message: string|JSX.Element): string | undefined;
+    dismissToast(key: string): void;
 }
 
 /**

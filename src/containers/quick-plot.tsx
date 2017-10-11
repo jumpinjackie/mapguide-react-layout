@@ -21,8 +21,7 @@ import olFeature from "ol/feature";
 import olVectorSource from "ol/source/vector";
 import olVectorLayer from "ol/layer/vector";
 import { MapCapturerContext, Size, IMapCapturerContextCallback } from "./map-capturer-context";
-import { Slider, Toaster, Intent } from "@blueprintjs/core";
-import { getTopToaster } from "../components/toaster";
+import { Slider, Intent } from "@blueprintjs/core";
 
 function getMargin() {
     /*
@@ -268,7 +267,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                     //is active
                     setViewRotationEnabled(false);
                     setViewRotation(0);
-                    getTopToaster().show({ iconName: "info-sign", message: tr("QUICKPLOT_BOX_INFO", locale), intent: Intent.PRIMARY });
+                    viewer.toastPrimary("info-sign", tr("QUICKPLOT_BOX_INFO", locale));
                 } else {
                     activeCapturer.deactivate();
                     setViewRotationEnabled(true);

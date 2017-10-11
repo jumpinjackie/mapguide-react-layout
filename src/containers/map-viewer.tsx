@@ -35,6 +35,7 @@ import { DefaultComponentNames } from "../api/registry/component";
 import { processMenuItems } from "../utils/menu";
 import { tr } from "../api/i18n";
 import { IOLFactory, OLFactory } from "../api/ol-factory";
+import { Intent, Toaster, Position as BP_Pos } from "@blueprintjs/core";
 
 export interface IMapViewerContainerProps {
     overviewMapElementSelector?: () => (Element | null);
@@ -149,6 +150,10 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     private fnMouseCoordinateChanged: (coord: Coordinate) => void;
     private fnSessionExpired: () => void;
     private fnBeginDigitization: (callback: (cancelled: boolean) => void) => void;
+    private toaster: Toaster;
+    private refHandlers = {
+        toaster: (ref: Toaster) => this.toaster = ref,
+    };
     constructor(props: MapViewerContainerProps) {
         super(props);
         this.olFactory = new OLFactory();
@@ -243,7 +248,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             }
         }
     }
-    render(): JSX.Element {
+    render(): JSX.Element | JSX.Element[] | string | number | null | false {
         const {
             map,
             selection,
@@ -280,42 +285,47 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                 xml = getActiveSelectedFeatureXml(selection.FeatureSet, activeSelectedFeature);
             }
             if (config.agentUri) {
-                return <MapViewerBase ref={this.fnMapViewerMounted}
-                                      map={map}
-                                      agentUri={config.agentUri}
-                                      agentKind={config.agentKind}
-                                      locale={locale}
-                                      externalBaseLayers={externalBaseLayers}
-                                      imageFormat={config.viewer.imageFormat}
-                                      selectionImageFormat={config.viewer.selectionImageFormat}
-                                      selectionColor={config.viewer.selectionColor}
-                                      activeSelectedFeatureColor={config.viewer.activeSelectedFeatureColor}
-                                      pointSelectionBuffer={config.viewer.pointSelectionBuffer}
-                                      tool={viewer.tool}
-                                      viewRotation={config.viewRotation}
-                                      viewRotationEnabled={config.viewRotationEnabled}
-                                      featureTooltipsEnabled={viewer.featureTooltipsEnabled}
-                                      showGroups={showGroups}
-                                      hideGroups={hideGroups}
-                                      showLayers={showLayers}
-                                      hideLayers={hideLayers}
-                                      view={currentView}
-                                      initialView={initialView}
-                                      selectableLayerNames={selectableLayerNames}
-                                      contextMenu={childItems}
-                                      overviewMapElementSelector={overviewMapElementSelector}
-                                      loadIndicatorPosition={config.viewer.loadIndicatorPositioning}
-                                      loadIndicatorColor={config.viewer.loadIndicatorColor}
-                                      layerTransparency={layerTransparency || Constants.EMPTY_OBJECT}
-                                      onBeginDigitization={this.fnBeginDigitization}
-                                      onSessionExpired={this.fnSessionExpired}
-                                      onBusyLoading={this.fnBusyLoading}
-                                      onRotationChanged={this.fnRotationChanged}
-                                      onMouseCoordinateChanged={this.fnMouseCoordinateChanged}
-                                      onQueryMapFeatures={this.fnQueryMapFeatures}
-                                      onRequestZoomToView={this.fnRequestZoomToView}
-                                      onMapResized={this.fnMapResized}
-                                      activeSelectedFeatureXml={xml} />;
+                //Praise $DEITY, we can finally return multiple JSX elements in React 16! No more DOM contortions!
+                return [
+                    <Toaster key="toaster" position={BP_Pos.TOP} ref={this.refHandlers.toaster} />,
+                    <MapViewerBase  key="map"
+                                    ref={this.fnMapViewerMounted}
+                                    map={map}
+                                    agentUri={config.agentUri}
+                                    agentKind={config.agentKind}
+                                    locale={locale}
+                                    externalBaseLayers={externalBaseLayers}
+                                    imageFormat={config.viewer.imageFormat}
+                                    selectionImageFormat={config.viewer.selectionImageFormat}
+                                    selectionColor={config.viewer.selectionColor}
+                                    activeSelectedFeatureColor={config.viewer.activeSelectedFeatureColor}
+                                    pointSelectionBuffer={config.viewer.pointSelectionBuffer}
+                                    tool={viewer.tool}
+                                    viewRotation={config.viewRotation}
+                                    viewRotationEnabled={config.viewRotationEnabled}
+                                    featureTooltipsEnabled={viewer.featureTooltipsEnabled}
+                                    showGroups={showGroups}
+                                    hideGroups={hideGroups}
+                                    showLayers={showLayers}
+                                    hideLayers={hideLayers}
+                                    view={currentView}
+                                    initialView={initialView}
+                                    selectableLayerNames={selectableLayerNames}
+                                    contextMenu={childItems}
+                                    overviewMapElementSelector={overviewMapElementSelector}
+                                    loadIndicatorPosition={config.viewer.loadIndicatorPositioning}
+                                    loadIndicatorColor={config.viewer.loadIndicatorColor}
+                                    layerTransparency={layerTransparency || Constants.EMPTY_OBJECT}
+                                    onBeginDigitization={this.fnBeginDigitization}
+                                    onSessionExpired={this.fnSessionExpired}
+                                    onBusyLoading={this.fnBusyLoading}
+                                    onRotationChanged={this.fnRotationChanged}
+                                    onMouseCoordinateChanged={this.fnMouseCoordinateChanged}
+                                    onQueryMapFeatures={this.fnQueryMapFeatures}
+                                    onRequestZoomToView={this.fnRequestZoomToView}
+                                    onMapResized={this.fnMapResized}
+                                    activeSelectedFeatureXml={xml} />
+                ];
             }
         }
         return <div>{tr("LOADING_MSG", locale)}</div>;
@@ -496,6 +506,21 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         if (setViewRotationEnabled) {
             setViewRotationEnabled(enabled);
         }
+    }
+    toastSuccess(iconName: string, message: string): string | undefined {
+        return this.toaster.show({ iconName: (iconName as any), message: message, intent: Intent.SUCCESS });
+    }
+    toastWarning(iconName: string, message: string): string | undefined {
+        return this.toaster.show({ iconName: (iconName as any), message: message, intent: Intent.WARNING });
+    }
+    toastError(iconName: string, message: string): string | undefined {
+        return this.toaster.show({ iconName: (iconName as any), message: message, intent: Intent.DANGER });
+    }
+    toastPrimary(iconName: string, message: string): string | undefined {
+        return this.toaster.show({ iconName: (iconName as any), message: message, intent: Intent.PRIMARY });
+    }
+    dismissToast(key: string): void {
+        this.toaster.dismiss(key);
     }
 }
 

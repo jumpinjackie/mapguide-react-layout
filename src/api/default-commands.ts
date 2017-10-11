@@ -27,8 +27,6 @@ import * as ModalActions from "../actions/modal";
 import * as TemplateActions from "../actions/template";
 import { tr } from "../api/i18n";
 import { DefaultComponentNames } from "../api/registry/component";
-import { Intent } from "@blueprintjs/core";
-import { getTopToaster } from "../components/toaster";
 import { getFusionRoot } from "../api/runtime";
 import { enableRedlineMessagePrompt } from "../containers/viewer-shim";
 import {
@@ -472,12 +470,15 @@ export function initDefaultCommands() {
                         rtMap.Extents.UpperRightCoordinate.Y
                     ];
                     if (fact.extentContainsXY(extents, testCoord[0], testCoord[1])) {
-                        getTopToaster().show({ iconName: "geolocation", message: tr("GEOLOCATION_SUCCESS", locale), intent: Intent.SUCCESS });
+                        viewer.toastSuccess("geolocation", tr("GEOLOCATION_SUCCESS", locale));
+                        //getTopToaster().show({ iconName: "geolocation", message: tr("GEOLOCATION_SUCCESS", locale), intent: Intent.SUCCESS });
                     } else {
-                        getTopToaster().show({ iconName: "warning-sign", message: tr("GEOLOCATION_WARN_OUTSIDE_MAP", locale), intent: Intent.WARNING });
+                        viewer.toastWarning("warning-sign", tr("GEOLOCATION_WARN_OUTSIDE_MAP", locale));
+                        //getTopToaster().show({ iconName: "warning-sign", message: tr("GEOLOCATION_WARN_OUTSIDE_MAP", locale), intent: Intent.WARNING });
                     }
                 }, err => {
-                    getTopToaster().show({ iconName: "error", message: tr("GEOLOCATION_ERROR", locale, { message: err.message, code: err.code }), intent: Intent.DANGER });
+                    viewer.toastError("error", tr("GEOLOCATION_ERROR", locale, { message: err.message, code: err.code }));
+                    //getTopToaster().show({ iconName: "error", message: tr("GEOLOCATION_ERROR", locale, { message: err.message, code: err.code }), intent: Intent.DANGER });
                 }, geoOptions);
             }
         }

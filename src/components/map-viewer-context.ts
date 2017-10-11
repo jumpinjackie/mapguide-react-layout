@@ -349,7 +349,6 @@ export class MgLayerSet {
         sources.push(overlaySource);
         this.overlay = new olImageLayer({
             //name: "MapGuide Dynamic Overlay",
-            extent: this.extent,
             source: overlaySource
         });
         const overviewOverlaySource = createMapGuideSource({
@@ -362,7 +361,6 @@ export class MgLayerSet {
         });
         this.overviewOverlay = new olImageLayer({
             //name: "MapGuide Dynamic Overlay",
-            extent: this.extent,
             source: overviewOverlaySource
         });
         sources.push(overviewOverlaySource);
@@ -376,7 +374,6 @@ export class MgLayerSet {
         });
         this.selectionOverlay = new olImageLayer({
             //name: "MapGuide Dynamic Overlay",
-            extent: this.extent,
             source: selectionOverlaySource
         });
         sources.push(selectionOverlaySource);

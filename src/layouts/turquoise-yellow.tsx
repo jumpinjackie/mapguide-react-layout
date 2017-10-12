@@ -23,13 +23,15 @@ import * as Constants from "../constants";
 import * as TemplateActions from "../actions/template";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
 import InitWarningDisplay from "../containers/init-warning-display";
+import * as Runtime from "../api/runtime";
+import SplitterLayout from "react-splitter-layout";
 
 function turquoiseYellowTemplateReducer(state: ITemplateReducerState, action: ReduxAction): ITemplateReducerState {
     const data: boolean | TemplateActions.IElementState | undefined = action.payload;
     switch (action.type) {
         case Constants.FUSION_SET_LEGEND_VISIBILITY:
             {
-                if (typeof(data) == "boolean") {
+                if (typeof (data) == "boolean") {
                     let state1: Partial<ITemplateReducerState>;
                     if (data === true) {
                         state1 = { legendVisible: true, taskPaneVisible: false, selectionPanelVisible: false };
@@ -41,7 +43,7 @@ function turquoiseYellowTemplateReducer(state: ITemplateReducerState, action: Re
             }
         case Constants.FUSION_SET_SELECTION_PANEL_VISIBILITY:
             {
-                if (typeof(data) == "boolean") {
+                if (typeof (data) == "boolean") {
                     let state1: Partial<ITemplateReducerState>;
                     if (data === true) {
                         state1 = { legendVisible: false, taskPaneVisible: false, selectionPanelVisible: true };
@@ -58,7 +60,7 @@ function turquoiseYellowTemplateReducer(state: ITemplateReducerState, action: Re
             }
         case Constants.FUSION_SET_TASK_PANE_VISIBILITY:
             {
-                if (typeof(data) == "boolean") {
+                if (typeof (data) == "boolean") {
                     let state1: Partial<ITemplateReducerState>;
                     if (data === true) {
                         state1 = { legendVisible: false, taskPaneVisible: true, selectionPanelVisible: false };
@@ -117,10 +119,21 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ITurquoiseYellowTe
 export type TurquoiseYellowTemplateLayoutProps = Partial<ITurquoiseYellowTemplateLayoutState> & Partial<ITurquoiseYellowTemplateLayoutDispatch>;
 
 export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYellowTemplateLayoutProps, any> {
+    private fnSplitterChanged: (size: number) => void;
     private fnActiveTabChanged: (id: string) => void;
     constructor(props: TurquoiseYellowTemplateLayoutProps) {
         super(props);
         this.fnActiveTabChanged = this.onActiveTabChanged.bind(this);
+        this.fnSplitterChanged = this.onSplitterChanged.bind(this);
+    }
+    private onSplitterChanged(size: number): void {
+        //With the introduction of the splitter, we can no longer rely on a map 
+        //filling 100% of its space without needing to manually call updateSize(),
+        //so we do it here
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            viewer.updateSize();
+        }
     }
     private getLocale(): string {
         return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
@@ -193,53 +206,59 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
         const selectionTitle = tr("TPL_TITLE_SELECTION_PANEL", locale);
         const TB_Z_INDEX = 0;
         return <div style={{ width: "100%", height: "100%" }}>
-            <div className="turquoise-yellow-sidebar" style={{ position: "absolute", left: SIDEBAR_PADDING, top: TOP_BAR_HEIGHT, bottom: (bottomOffset + SIDEBAR_PADDING), width: (sbWidth - (SIDEBAR_PADDING * 2)) }}>
-                <Tabs2 id="SidebarTabs" onChange={this.fnActiveTabChanged} {...extraTabsProps}>
-                    {(() => {
-                        if (hasTaskPane) {
-                            const panel = <div style={tabPanelStyle}>
-                                <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={locale} />
-                            </div>;
-                            return <Tab2 id="TaskPane" title={taskPaneTitle} panel={panel} />;
-                        }
-                    })()}
-                    {(() => {
-                        if (hasLegend) {
-                            const p1: React.CSSProperties = { overflow: "auto" };
-                            const panel = <div style={{ ...tabPanelStyle, ...p1 }}>
+            <SplitterLayout primaryIndex={1} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={this.fnSplitterChanged}>
+                <div className="turquoise-yellow-sidebar" style={{ position: "absolute", left: SIDEBAR_PADDING, top: TOP_BAR_HEIGHT, bottom: (bottomOffset + SIDEBAR_PADDING), right: 0 }}>
+                    <Tabs2 id="SidebarTabs" onChange={this.fnActiveTabChanged} {...extraTabsProps}>
+                        {(() => {
+                            if (hasTaskPane) {
+                                const panel = <div style={tabPanelStyle}>
+                                    <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={locale} />
+                                </div>;
+                                return <Tab2 id="TaskPane" title={taskPaneTitle} panel={panel} />;
+                            }
+                        })()}
+                        {(() => {
+                            if (hasLegend) {
+                                const p1: React.CSSProperties = { overflow: "auto" };
+                                const panel = <div style={{ ...tabPanelStyle, ...p1 }}>
                                     <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: false }} />
                                 </div>;
-                            return <Tab2 id="Legend" title={legendTitle} panel={panel} />;
-                        }
-                    })()}
-                    {(() => {
-                        if (hasSelectionPanel) {
-                            const panel = <div style={tabPanelStyle}>
-                                <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
-                            </div>;
-                            return <Tab2 id="Selection" title={selectionTitle} panel={panel} />;
-                        }
-                    })()}
-                </Tabs2>
-            </div>
-            <ToolbarContainer id="FileMenu" containerClass="turquoise-yellow-file-menu" containerStyle={{ position: "absolute", left: sbWidth, top: (TOP_BAR_HEIGHT - DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, right: 0 }} />
-            <ToolbarContainer id="Toolbar" containerClass="turquoise-yellow-toolbar" containerStyle={{ position: "absolute", left: sbWidth, top: TOP_BAR_HEIGHT, zIndex: TB_Z_INDEX, right: 0 }} />
-            <ToolbarContainer id="ToolbarVertical" containerClass="turquoise-yellow-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: sbWidth, top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, bottom: (bottomOffset + SIDEBAR_PADDING) }} />
-            <div style={{ position: "absolute", left: (sbWidth + DEFAULT_TOOLBAR_SIZE), top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), bottom: (bottomOffset + SIDEBAR_PADDING), right: 0 }}>
-                {(() => {
-                    //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
-                    //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()
-                    //call to fix
-                    if (this.props.map != null) {
-                        return <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />;
-                    }
-                })()}
-                {(() => {
-                    if (hasNavigator) {
-                        return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
-                    }
-                })()}
-            </div>
+                                return <Tab2 id="Legend" title={legendTitle} panel={panel} />;
+                            }
+                        })()}
+                        {(() => {
+                            if (hasSelectionPanel) {
+                                const panel = <div style={tabPanelStyle}>
+                                    <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
+                                </div>;
+                                return <Tab2 id="Selection" title={selectionTitle} panel={panel} />;
+                            }
+                        })()}
+                    </Tabs2>
+                </div>
+                <div>
+                    <ToolbarContainer id="FileMenu" containerClass="turquoise-yellow-file-menu" containerStyle={{ position: "absolute", left: 0, top: (TOP_BAR_HEIGHT - DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, right: 0 }} />
+                    <ToolbarContainer id="Toolbar" containerClass="turquoise-yellow-toolbar" containerStyle={{ position: "absolute", left: 0, top: TOP_BAR_HEIGHT, zIndex: TB_Z_INDEX, right: 0 }} />
+                    <ToolbarContainer id="ToolbarVertical" containerClass="turquoise-yellow-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: 0, top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, bottom: (bottomOffset + SIDEBAR_PADDING) }} />
+                    <div style={{ position: "absolute", left: ( DEFAULT_TOOLBAR_SIZE), top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), bottom: (bottomOffset + SIDEBAR_PADDING), right: 0 }}>
+                        {(() => {
+                            //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
+                            //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()
+                            //call to fix
+                            if (this.props.map != null) {
+                                return <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />;
+                            }
+                        })()}
+                        {(() => {
+                            if (hasNavigator) {
+                                return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
+                            }
+                        })()}
+                    </div>
+                </div>
+            </SplitterLayout>
+
+
             {(() => {
                 if (hasStatusBar) {
                     return <div className="turquoise-yellow-status-bar" style={{ position: "absolute", left: 0, bottom: 0, right: 0, height: bottomOffset }}>

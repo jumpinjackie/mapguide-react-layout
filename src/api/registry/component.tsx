@@ -26,7 +26,8 @@ export enum DefaultComponentNames {
     BaseMapSwitcher = "BaseMapSwitcher",
     MapMenu = "MapMenu",
     ViewSize = "ViewSize",
-    CoordinateTracker = "CoordinateTracker"
+    CoordinateTracker = "CoordinateTracker",
+    AddWmsLayer = "AddWmsLayer"
 }
 
 /**

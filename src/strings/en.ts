@@ -110,7 +110,23 @@ const STRINGS_EN: ILocalizedMessages = {
     "TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING": "The current task pane content is not applicable for the current active map. If the content was loaded from a command, re-run that command",
     "COORDTRACKER": "Coordinate Tracker",
     "COORDTRACKER_NO_PROJECTIONS": "You have no projections configured for this component",
-    "MAP_SIZE_DISPLAY_UNITS": "Map view size display units"
+    "MAP_SIZE_DISPLAY_UNITS": "Map view size display units",
+    "ADD_WMS_LAYER": "Add WMS Layer",
+    "ADD_WMS_LAYER_URL": "WMS Service URL",
+    "ADD_WMS_LAYER_LOADING": "Loading",
+    "ADD_WMS_LAYER_LOADING_DESC": "Loading WMS Capabilities",
+    "ADD_WMS_LAYER_NO_LAYERS": "No WMS Layers",
+    "WMS_VERSION": "WMS Version: {version}",
+    "WMS_SERVICE_NAME": "Name: {name}",
+    "WMS_SERVICE_TITLE": "Title: {title}",
+    "WMS_SERVICE_ABSTRACT": "Abstract: {abstract}",
+    "WMS_LAYERS": "WMS Layers",
+    "WMS_LAYER_NAME": "Name: {name}",
+    "WMS_LAYER_TITLE": "Title: {title}",
+    "WMS_LAYER_ABSTRACT": "Abstract: {abstract}",
+    "WMS_ADD_LAYER_PROMPT": "Click this layer to add it to the map",
+    "ADDED_LAYER": "Added layer: {name}",
+    "ADD_WFS_LAYER": "Add WFS Layer"
 };
 
 export default STRINGS_EN;

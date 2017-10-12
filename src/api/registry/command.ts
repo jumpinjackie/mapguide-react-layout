@@ -232,7 +232,9 @@ export enum DefaultCommands {
     Theme = "Theme",
     Query = "Query",
     Geolocation = "Geolocation",
-    CoordinateTracker = "CoordinateTracker"
+    CoordinateTracker = "CoordinateTracker",
+    AddWMSLayer = "AddWMSLayer",
+    AddWFSLayer = "AddWFSLayer"
 }
 
 const commands: Dictionary<ICommand> = {};

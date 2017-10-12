@@ -62,7 +62,8 @@ import {
     SPRITE_QUERY,
     SPRITE_THEME,
     SPRITE_INVOKE_SCRIPT,
-    SPRITE_COORDINATE_TRACKER
+    SPRITE_COORDINATE_TRACKER,
+    SPRITE_GLOBE_ADD
 } from "../constants/assets";
 import { ensureParameters } from "../utils/url";
 
@@ -593,6 +594,30 @@ export function initDefaultCommands() {
             const url = `component://CoordinateTracker?${(parameters.Projection || []).map((p: string) => "projections=" + p).join("&")}`;
             const cmdDef = buildTargetedCommand(config, parameters);
             openUrlInTarget(DefaultCommands.Measure, cmdDef, dispatch, url, tr("COORDTRACKER", config.locale));
+        }
+    });
+    //Add WMS Layer
+    registerCommand(DefaultCommands.AddWMSLayer, {
+        iconClass: SPRITE_GLOBE_ADD,
+        selected: () => false,
+        enabled: () => true,
+        invoke: (dispatch, getState, viewer, parameters) => {
+            const config = getState().config;
+            const url = `component://AddWmsLayer`;
+            const cmdDef = buildTargetedCommand(config, parameters);
+            openUrlInTarget(DefaultCommands.Measure, cmdDef, dispatch, url, tr("ADD_WMS_LAYER", config.locale));
+        }
+    });
+    //Add WFS Layer
+    registerCommand(DefaultCommands.AddWFSLayer, {
+        iconClass: SPRITE_GLOBE_ADD,
+        selected: () => false,
+        enabled: () => true,
+        invoke: (dispatch, getState, viewer, parameters) => {
+            const config = getState().config;
+            const url = `component://AddWfsLayer`;
+            const cmdDef = buildTargetedCommand(config, parameters);
+            openUrlInTarget(DefaultCommands.Measure, cmdDef, dispatch, url, tr("ADD_WFS_LAYER", config.locale));
         }
     });
 

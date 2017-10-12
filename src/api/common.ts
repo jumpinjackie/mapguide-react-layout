@@ -1811,3 +1811,92 @@ export function getExternalBaseLayers(state: Readonly<IApplicationState>): IExte
  * Defines the visibility of flyout menus
  */
 export type FlyoutVisibilitySet = { [flyoutId: string]: boolean | undefined };
+
+/**
+ * Defines the capabilities of a WMS service
+ */
+export interface WmsCapabilitiesDocument {
+    /**
+     * WMS service version
+     * 
+     * @type {string}
+     * @memberof WmsCapabilitiesDocument
+     */
+    version: string;
+    Service: WMSServiceDescription;
+    Capability: WMSServiceCapabilities;
+}
+
+export interface WMSServiceCapabilities {
+    Request: any;
+    Exception: string[];
+    Layer: {
+        Title: string;
+        Abstract: string;
+        CRS: string[];
+        EX_GeographicBoundingBox: [number, number, number, number];
+        BoundingBox: {
+            crs: string;
+            extent: [number, number, number, number],
+            res: [any, any]
+        }[];
+        Layer: WMSPublishedLayer[];
+    }
+}
+
+export interface WMSPublishedLayer {
+    Name: string;
+    Title: string;
+    Abstract: string;
+    KeywordList: string;
+    CRS: string[];
+    EX_GeographicBoundingBox: [number, number, number, number];
+    BoundingBox: {
+        crs: string;
+        extent: [number, number, number, number],
+        res: [any, any]
+    }[];
+    Style: WMSLayerStyle[];
+    queryable: boolean;
+    opaque: boolean;
+    noSubsets: boolean;
+}
+
+export interface WMSLayerStyle {
+    Name: string;
+    Title: string;
+    Abstract: string;
+    LegendURL: {
+        Format: string;
+        OnlineResource: string;
+        size: [number, number];
+    }[]
+}
+
+export interface WMSServiceDescription {
+    Name: string;
+    Title: string;
+    Abstract: string;
+    KeywordList: string[];
+    OnlineResource: string;
+    ContactInformation: {
+        ContactPersonPrimary: {
+            ContactPerson: string;
+            ContactOrganization: string;
+        },
+        ContactPosition: string,
+        ContactAddress: {
+            AddressType: string,
+            Address: string,
+            City: string,
+            StateOrProvince: string,
+            PostCode: string,
+            Country: string
+        },
+        ContactVoiceTelephone: string,
+        ContactFacsimileTelephone: string,
+        ContactElectronicMailAddress: string
+    },
+    Fees: string;
+    AccessConstraints: string;
+}

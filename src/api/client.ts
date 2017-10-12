@@ -24,6 +24,11 @@ export class Client implements Request.IMapGuideClient {
                 throw new MgError(`Unknown or unsupported client kind: ${kind}`);
         }
     }
+    public async getText(url: string): Promise<string> {
+        const r = await fetch(url);
+        const text = await r.text();
+        return text;
+    }
 
     /**
      * Performs a generic GET request at the specified URL

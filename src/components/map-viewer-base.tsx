@@ -1145,5 +1145,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     public removeHandler(eventName: string, handler: Function) {
         this._map.un(eventName, handler);
     }
+    public updateSize() {
+        this._map.updateSize();
+    }
     //------------------------------------//
 }

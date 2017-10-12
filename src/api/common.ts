@@ -840,6 +840,7 @@ export interface IMapViewer {
     toastError(iconName: string, message: string|JSX.Element): string | undefined;
     toastPrimary(iconName: string, message: string|JSX.Element): string | undefined;
     dismissToast(key: string): void;
+    updateSize(): void;
 }
 
 /**

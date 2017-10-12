@@ -31,6 +31,20 @@ declare module "ol/uri" {
     export default Uri;
 }
 
+declare module "react-splitter-layout" {
+    import * as React from "react";
+
+    export interface ISplitterLayoutProps {
+        primaryIndex?: number;
+        primaryMinSize?: number;
+        secondaryInitialSize?: number;
+        onSecondaryPaneSizeChange?: (size: number) => void;
+    }
+    export default class SplitterLayout extends React.Component<ISplitterLayoutProps, any> {
+
+    }
+}
+
 declare module "ismobilejs" {
     var isMobile: any;
     export = isMobile;

@@ -522,6 +522,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     dismissToast(key: string): void {
         this.toaster.dismiss(key);
     }
+    updateSize(): void {
+        this.inner.updateSize();
+    }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MapViewerContainer);

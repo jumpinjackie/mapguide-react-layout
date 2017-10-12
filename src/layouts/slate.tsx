@@ -230,7 +230,7 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
         }
         const TB_Z_INDEX = 0;
         return <div style={{ width: "100%", height: "100%" }}>
-            <SplitterLayout primaryIndex={1} secondaryInitialSize={SIDEBAR_WIDTH} onSecondaryPaneSizeChange={this.fnSplitterChanged}>
+            <SplitterLayout customClassName="slate-splitter" primaryIndex={1} secondaryInitialSize={SIDEBAR_WIDTH} onSecondaryPaneSizeChange={this.fnSplitterChanged}>
                 <div>
                     <Accordion style={{ position: "absolute", top: 0, bottom: bottomOffset, left: 0, right: 0 }} onActivePanelChanged={this.fnActivePanelChanged} activePanelId={activeId} panels={panels} />
                 </div>

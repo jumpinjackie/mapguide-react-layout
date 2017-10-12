@@ -211,16 +211,9 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
             <ToolbarContainer id="Toolbar" containerClass="limegold-toolbar" containerStyle={{ position: "absolute", left: 0, top: TOP_BAR_HEIGHT, zIndex: TB_Z_INDEX, right: 0 }} />
             <ToolbarContainer id="ToolbarSecondary" containerClass="limegold-toolbar-secondary" containerStyle={{ position: "absolute", left: 0, top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, right: 0 }} />
             <div style={{ position: "absolute", left: 0, top: topOffset, bottom: (bottomOffset + SIDEBAR_PADDING), right: 0 }}>
-                <SplitterLayout primaryIndex={0} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={this.fnSplitterChanged}>
+                <SplitterLayout customClassName="limegold-splitter" primaryIndex={0} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={this.fnSplitterChanged}>
                     <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
-                        {(() => {
-                            //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
-                            //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()
-                            //call to fix
-                            if (this.props.map != null) {
-                                return <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />;
-                            }
-                        })()}
+                        <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />
                         {(() => {
                             if (hasNavigator) {
                                 return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;

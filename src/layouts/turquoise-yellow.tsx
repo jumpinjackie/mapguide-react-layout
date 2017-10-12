@@ -206,7 +206,7 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
         const selectionTitle = tr("TPL_TITLE_SELECTION_PANEL", locale);
         const TB_Z_INDEX = 0;
         return <div style={{ width: "100%", height: "100%" }}>
-            <SplitterLayout primaryIndex={1} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={this.fnSplitterChanged}>
+            <SplitterLayout customClassName="turquoise-yellow-splitter" primaryIndex={1} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={this.fnSplitterChanged}>
                 <div className="turquoise-yellow-sidebar" style={{ position: "absolute", left: SIDEBAR_PADDING, top: TOP_BAR_HEIGHT, bottom: (bottomOffset + SIDEBAR_PADDING), right: 0 }}>
                     <Tabs2 id="SidebarTabs" onChange={this.fnActiveTabChanged} {...extraTabsProps}>
                         {(() => {
@@ -241,14 +241,7 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
                     <ToolbarContainer id="Toolbar" containerClass="turquoise-yellow-toolbar" containerStyle={{ position: "absolute", left: 0, top: TOP_BAR_HEIGHT, zIndex: TB_Z_INDEX, right: 0 }} />
                     <ToolbarContainer id="ToolbarVertical" containerClass="turquoise-yellow-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: 0, top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, bottom: (bottomOffset + SIDEBAR_PADDING) }} />
                     <div style={{ position: "absolute", left: ( DEFAULT_TOOLBAR_SIZE), top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), bottom: (bottomOffset + SIDEBAR_PADDING), right: 0 }}>
-                        {(() => {
-                            //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
-                            //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()
-                            //call to fix
-                            if (this.props.map != null) {
-                                return <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />;
-                            }
-                        })()}
+                        <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />
                         {(() => {
                             if (hasNavigator) {
                                 return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;

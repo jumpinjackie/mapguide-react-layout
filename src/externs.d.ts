@@ -35,6 +35,7 @@ declare module "react-splitter-layout" {
     import * as React from "react";
 
     export interface ISplitterLayoutProps {
+        customClassName?: string;
         primaryIndex?: number;
         primaryMinSize?: number;
         secondaryInitialSize?: number;

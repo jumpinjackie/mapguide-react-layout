@@ -128,6 +128,9 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
         this.fnSplitterChanged = this.onSplitterChanged.bind(this);
     }
     private onSplitterChanged(size: number): void {
+        //With the introduction of the splitter, we can no longer rely on a map 
+        //filling 100% of its space without needing to manually call updateSize(),
+        //so we do it here
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.updateSize();

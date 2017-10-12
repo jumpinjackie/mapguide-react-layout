@@ -14,11 +14,12 @@ describe("components/about", () => {
         const hr = wrapper.find("hr");
         expect(hr).toHaveLength(1);
     });
-    it("renders 2 <a> links", () => {
+    it("renders 3 <a> links", () => {
         const wrapper = shallow(<About />);
         const anchors = wrapper.find("a");
-        expect(anchors).toHaveLength(2);
+        expect(anchors).toHaveLength(3);
         expect(anchors.at(0).text()).toBe("GitHub");
         expect(anchors.at(1).text()).toBe("Issues");
+        expect(anchors.at(2).text()).toBe("Fugue icon set by Yusuke Kamiyamane");
     });
 });

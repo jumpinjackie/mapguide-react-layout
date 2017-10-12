@@ -23,6 +23,8 @@ import {
 import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../components/accordion";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
 import InitWarningDisplay from "../containers/init-warning-display";
+import * as Runtime from "../api/runtime";
+import SplitterLayout from "react-splitter-layout";
 
 function maroonTemplateReducer(state: ITemplateReducerState, action: ReduxAction): ITemplateReducerState {
     const data: boolean | TemplateActions.IElementState | undefined = action.payload;
@@ -117,10 +119,12 @@ const SIDEBAR_PADDING = 0;
 const OUTER_PADDING = 3;
 
 export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplateProps, any> {
+    private fnSplitterChanged: (size: number) => void;
     private fnActivePanelChanged: (id: string) => void;
     constructor(props: MaroonLayoutTemplateProps) {
         super(props);
         this.fnActivePanelChanged = this.onActivePanelChanged.bind(this);
+        this.fnSplitterChanged = this.onSplitterChanged.bind(this);
     }
     private onActivePanelChanged(id: string): void {
         const { setElementStates } = this.props;
@@ -148,6 +152,15 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
     }
     private getLocale(): string {
         return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
+    }
+    private onSplitterChanged(size: number): void {
+        //With the introduction of the splitter, we can no longer rely on a map 
+        //filling 100% of its space without needing to manually call updateSize(),
+        //so we do it here
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            viewer.updateSize();
+        }
     }
     componentDidMount() {
         setCustomTemplateReducer(maroonTemplateReducer);
@@ -216,25 +229,31 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
         }
         const TB_Z_INDEX = 0;
         return <div style={{ width: "100%", height: "100%" }}>
-            <Accordion style={{ position: "absolute", top: OUTER_PADDING, bottom: bottomOffset, right: OUTER_PADDING, width: SIDEBAR_WIDTH }} onActivePanelChanged={this.fnActivePanelChanged} activePanelId={activeId} panels={panels} />
-            <ToolbarContainer id="FileMenu" containerClass="maroon-file-menu" containerStyle={{ position: "absolute", left: OUTER_PADDING, top: OUTER_PADDING, right: SIDEBAR_WIDTH + OUTER_PADDING, zIndex: TB_Z_INDEX }} />
-            <ToolbarContainer id="Toolbar" containerClass="maroon-toolbar" containerStyle={{ position: "absolute", left: OUTER_PADDING, top: DEFAULT_TOOLBAR_SIZE + OUTER_PADDING, right: SIDEBAR_WIDTH + OUTER_PADDING, zIndex: TB_Z_INDEX }} />
-            <ToolbarContainer id="ToolbarVertical" containerClass="maroon-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: OUTER_PADDING, top: topOffset, bottom: bottomOffset, zIndex: TB_Z_INDEX, right: 0 }} />
-            <div style={{ position: "absolute", left: OUTER_PADDING + DEFAULT_TOOLBAR_SIZE, right: SIDEBAR_WIDTH + OUTER_PADDING, top: topOffset, bottom: bottomOffset }}>
-                {(() => {
-                    //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
-                    //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()
-                    //call to fix
-                    if (this.props.map != null) {
-                        return <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />;
-                    }
-                })()}
-                {(() => {
-                    if (hasNavigator) {
-                        return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
-                    }
-                })()}
-            </div>
+            <SplitterLayout primaryIndex={0} secondaryInitialSize={SIDEBAR_WIDTH} onSecondaryPaneSizeChange={this.fnSplitterChanged}>
+                <div>
+                    <ToolbarContainer id="FileMenu" containerClass="maroon-file-menu" containerStyle={{ position: "absolute", left: OUTER_PADDING, top: OUTER_PADDING, right: 0, zIndex: TB_Z_INDEX }} />
+                    <ToolbarContainer id="Toolbar" containerClass="maroon-toolbar" containerStyle={{ position: "absolute", left: OUTER_PADDING, top: DEFAULT_TOOLBAR_SIZE + OUTER_PADDING, right: 0, zIndex: TB_Z_INDEX }} />
+                    <ToolbarContainer id="ToolbarVertical" containerClass="maroon-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: OUTER_PADDING, top: topOffset, bottom: bottomOffset, zIndex: TB_Z_INDEX, right: 0 }} />
+                    <div style={{ position: "absolute", left: OUTER_PADDING + DEFAULT_TOOLBAR_SIZE, right: 0, top: topOffset, bottom: bottomOffset }}>
+                        {(() => {
+                            //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
+                            //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()
+                            //call to fix
+                            if (this.props.map != null) {
+                                return <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />;
+                            }
+                        })()}
+                        {(() => {
+                            if (hasNavigator) {
+                                return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
+                            }
+                        })()}
+                    </div>
+                </div>
+                <div>
+                    <Accordion style={{ position: "absolute", top: OUTER_PADDING, bottom: bottomOffset, right: OUTER_PADDING, left: 0 }} onActivePanelChanged={this.fnActivePanelChanged} activePanelId={activeId} panels={panels} />
+                </div>
+            </SplitterLayout>
             {(() => {
                 if (hasStatusBar) {
                     return <div className="maroon-status-bar" style={{ position: "absolute", left: 0, bottom: 0, right: 0, height: bottomOffset }}>

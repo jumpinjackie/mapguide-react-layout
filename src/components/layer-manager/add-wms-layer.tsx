@@ -84,11 +84,19 @@ export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
         client.getText(wmsUrl).then(s => {
             const parser = new olWmsParser();
             const caps = parser.read(s);
-            this.setState({
-                loadingCapabilities: false,
-                caps: caps,
-                error: null
-            });
+            if (caps.version != "1.3.0") {
+                this.setState({
+                    loadingCapabilities: false,
+                    caps: null,
+                    error: `Unsupported WMS version: ${caps.version}`
+                });
+            } else {
+                this.setState({
+                    loadingCapabilities: false,
+                    caps: caps,
+                    error: null
+                });
+            }
         }).catch(err => {
             this.setState({
                 loadingCapabilities: false,

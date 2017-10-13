@@ -4,8 +4,11 @@ import { WmsCapabilitiesDocument, WMSPublishedLayer, WMSLayerStyle } from "../ap
 import { Tree, ITreeNode, Tooltip } from "@blueprintjs/core";
 import * as shortid from "shortid";
 
-function convertWmsLayerNodes(layers: WMSPublishedLayer[], locale: string | undefined): ITreeNode[] {
-    return layers.map(l => {
+type WMSLayerStylePair = [WMSPublishedLayer, WMSLayerStyle[]];
+
+function convertWmsLayerNodes(layers: WMSLayerStylePair[], locale: string | undefined): ITreeNode[] {
+    return layers.map(pair => {
+        const [l, styles] = pair;
         const tt = <div>
             <p>{tr("WMS_LAYER_NAME", locale, { name: l.Name })}</p>
             <p>{tr("WMS_LAYER_TITLE", locale, { title: l.Title })}</p>
@@ -35,12 +38,27 @@ export class WmsCapabilitiesTree extends React.Component<IWmsCapabilitiesTreePro
             content: this.convertToTreeNodes(props.capabilities, props.locale)
         }
     }
+    private extractWmsLayers(caps: WmsCapabilitiesDocument): WMSLayerStylePair[] {
+        const layers = [] as WMSLayerStylePair[];
+        const { Layer, ...rootLayer } = caps.Capability.Layer;
+        if (rootLayer.Name) { //Must have name to be considered
+            layers.push([ rootLayer, [] ]);
+        }
+        if (caps.Capability.Layer.Layer) {
+            for (const layer of caps.Capability.Layer.Layer) {
+                layers.push([ layer, layer.Style ]);
+            }
+        }
+        return layers;
+    }
     private convertToTreeNodes(caps: WmsCapabilitiesDocument, locale: string | undefined): ITreeNode[] {
         this._layerStyles = {};
-        for (const layer of caps.Capability.Layer.Layer) {
+        const layers = this.extractWmsLayers(caps);
+        for (const pair of layers) {
+            const [layer, styles] = pair;
             this._layerStyles[layer.Name] = [];
-            if (layer.Style) {
-                for (const style of layer.Style) {
+            if (styles.length) {
+                for (const style of styles) {
                     this._layerStyles[layer.Name].push(style);
                 }
             }
@@ -52,7 +70,7 @@ export class WmsCapabilitiesTree extends React.Component<IWmsCapabilitiesTreePro
             { id: `service_abstract_${shortid()}`, iconName: "pt-icon-info-sign", label: <Tooltip content={caps.Service.Abstract}>{tr("WMS_SERVICE_ABSTRACT", locale, { abstract: caps.Service.Abstract })}</Tooltip> },
             { 
                 id: `layers_${shortid()}`, iconName: "pt-icon-layers", label: tr("WMS_LAYERS", locale),
-                childNodes: convertWmsLayerNodes(caps.Capability.Layer.Layer, locale)
+                childNodes: convertWmsLayerNodes(layers, locale)
             }
         ];
     }

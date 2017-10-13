@@ -103,7 +103,7 @@ export class MapCapturerContext {
     public activate(callback: IMapCapturerContextCallback, paperSize: Size, scaleDenominator: number, rotation: number): void {
         this.activeCallback = callback;
         logger.debug(`Activating map capturer context for ${this.mapName}`);
-        this.viewer.addLayer(this.layerName, this.mapCapturerLayer);
+        this.viewer.getLayerManager().addLayer(this.layerName, this.mapCapturerLayer, true);
         this.updateBox(paperSize, scaleDenominator, rotation);
         this.viewer.addInteraction(this.intTranslate);
     }
@@ -111,7 +111,7 @@ export class MapCapturerContext {
         this.activeCallback = undefined;
         logger.debug(`De-activating map capturer context for ${this.mapName}`);
         this.features.clear();
-        this.viewer.removeLayer(this.layerName);
+        this.viewer.getLayerManager().removeLayer(this.layerName);
         this.viewer.removeInteraction(this.intTranslate);
     }
 }

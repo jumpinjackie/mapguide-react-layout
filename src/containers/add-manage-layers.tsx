@@ -4,6 +4,7 @@ import * as Runtime from "../api/runtime";
 import { tr } from "../api/i18n";
 import { Error } from "../components/error";
 import {
+    ILayerInfo,
     ReduxDispatch,
     IApplicationState,
     GenericEvent,
@@ -16,6 +17,61 @@ import { WmsCapabilitiesTree } from "../components/wms-capabilities-tree";
 import { Tab2, Tabs2 } from "@blueprintjs/core";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
+
+interface ILayerManagerProps {
+    locale: string | undefined;
+}
+
+class LayerManager extends React.Component<ILayerManagerProps, any> {
+    constructor(props: ILayerManagerProps) {
+        super(props);
+        this.state = {
+            layers: []
+        }
+    }
+    componentDidMount() {
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            const layers = viewer.getLayerManager().getLayers();
+            this.setState({ layers: layers });
+        }
+    }
+    private removeHandler = (name: string) => {
+        const { locale } = this.props;
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            const removed = viewer.getLayerManager().removeLayer(name);
+            if (removed) {
+                viewer.toastSuccess("icon-success", tr("REMOVED_LAYER", locale, { name: name }));
+                const layers = viewer.getLayerManager().getLayers();
+                this.setState({ layers: layers });
+            }
+        }
+    }
+    private upHandler = (name: string) => {
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            if (viewer.getLayerManager().moveUp(name) >= 0) {
+                const layers = viewer.getLayerManager().getLayers();
+                this.setState({ layers: layers });
+            }
+        }
+    }
+    private downHandler = (name: string) => {
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            if (viewer.getLayerManager().moveDown(name) >= 0) {
+                const layers = viewer.getLayerManager().getLayers();
+                this.setState({ layers: layers });
+            }
+        }
+    }
+    render(): JSX.Element {
+        const { locale } = this.props;
+        const { layers } = this.state;
+        return <ManageLayers layers={layers} onMoveLayerDown={this.downHandler} onMoveLayerUp={this.upHandler} onRemoveLayer={this.removeHandler} />;
+    }
+}
 
 export interface IAddManageLayersContainerProps {
 
@@ -47,10 +103,10 @@ export class AddManageLayersContainer extends React.Component<AddManageLayersCon
     }
     render(): JSX.Element {
         const { locale } = this.props;
-        return <Tabs2 id="tabs">
-            <Tab2 id="add_layer" title="Add Layer" panel={<AddLayer locale={locale} />} />
-            <Tab2 id="manage_layers" title="Manage Layers" panel={<ManageLayers />} />
-        </Tabs2>
+        return <Tabs2 id="tabs" renderActiveTabPanelOnly={true}>
+            <Tab2 id="add_layer" title={<span><span className="pt-icon-standard pt-icon-add" /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer locale={locale} />} />
+            <Tab2 id="manage_layers" title={<span><span className="pt-icon-standard pt-icon-layers" /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<LayerManager locale={locale} />} />
+        </Tabs2>;
     }
 }
 

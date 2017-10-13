@@ -110,6 +110,8 @@ export interface ILocalizedMessages {
     MAP_SIZE_DISPLAY_UNITS: string;
     OK: string;
     ADD_MANAGE_LAYERS: string;
+    ADD_LAYER: string;
+    MANAGE_LAYERS: string;
     LAYER_TYPE: string;
     SELECT_LAYER_TYPE: string;
     ADD_WMS_LAYER_URL: string;
@@ -126,5 +128,6 @@ export interface ILocalizedMessages {
     WMS_LAYER_ABSTRACT: string;
     WMS_ADD_LAYER_PROMPT: string;
     ADDED_LAYER: string;
+    REMOVED_LAYER: string;
     ADD_WFS_LAYER: string;
 }

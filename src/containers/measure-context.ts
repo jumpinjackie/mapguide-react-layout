@@ -306,7 +306,7 @@ export class MeasureContext {
         for (const ov of this.measureOverlays) {
             this.viewer.addOverlay(ov);
         }
-        this.viewer.addLayer(this.layerName, this.measureLayer);
+        this.viewer.getLayerManager().addLayer(this.layerName, this.measureLayer, true);
     }
     public deactivate() {
         logger.debug(`De-activating measure context for ${this.mapName}`);
@@ -314,6 +314,6 @@ export class MeasureContext {
         for (const ov of this.measureOverlays) {
             this.viewer.removeOverlay(ov);
         }
-        this.viewer.removeLayer(this.layerName);
+        this.viewer.getLayerManager().removeLayer(this.layerName);
     }
 }

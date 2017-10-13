@@ -23,6 +23,8 @@ import {
     GenericEvent,
     GenericEventHandler,
     IMapView,
+    ILayerManager,
+    ILayerInfo,
     IExternalBaseLayer,
     DigitizerCallback,
     ActiveMapTool,
@@ -297,7 +299,7 @@ export interface IMapViewerBaseState {
  * @extends {React.Component<IMapViewerBaseProps, any>}
  */
 @ContextMenuTarget
-export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<IMapViewerBaseState>> {
+export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<IMapViewerBaseState>> implements ILayerManager {
     private fnMouseUp: GenericEventHandler;
     private fnMouseDown: GenericEventHandler;
     /**
@@ -320,7 +322,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     private _keepAlive: SessionKeepAlive;
     private _contextMenuOpen: boolean;
 
-    private _customLayers: { [name: string]: LayerBase; };
+    
 
     private fnKeyUp: GenericEventHandler;
     private fnKeyDown: GenericEventHandler;
@@ -344,7 +346,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         this._triggerZoomRequestOnMoveEnd = true;
         this._supportsTouch = isMobile.phone || isMobile.tablet;
         this._contextMenuOpen = false;
-        this._customLayers = {};
         this.state = {
             shiftKey: false,
             isMouseDown: false,
@@ -1093,35 +1094,28 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         this._mapContext.enableFeatureTooltips(enabled);
     }
     public hasLayer(name: string): boolean {
-        return this._customLayers[name] != null;
+        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
+        return activeLayerSet.hasLayer(name);
     }
-    public addLayer<T extends LayerBase>(name: string, layer: T): T {
-        if (this._customLayers[name]) {
-            throw new MgError(`A layer named ${name} already exists`);
-        }
-        this._customLayers[name] = layer;
-        this._map.addLayer(layer);
-        return layer;
+    public addLayer<T extends LayerBase>(name: string, layer: T, allowReplace?: boolean): T {
+        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
+        return activeLayerSet.addLayer(this._map, name, layer, allowReplace);
     }
     public removeLayer(name: string): LayerBase | undefined {
-        let layer: LayerBase;
-        if (this._customLayers[name]) {
-            layer = this._customLayers[name];
-            this._map.removeLayer(layer);
-            delete this._customLayers[name];
-            return layer;
-        }
+        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
+        return activeLayerSet.removeLayer(this._map, name);
     }
     public getLayer<T extends LayerBase>(name: string, factory: () => T): T {
-        let layer: T;
-        if (this._customLayers[name]) {
-            layer = this._customLayers[name] as T;
-        } else {
-            layer = factory();
-            this._customLayers[name] = layer;
-            this._map.addLayer(layer);
-        }
-        return layer;
+        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
+        return activeLayerSet.getLayer(this._map, name, factory);
+    }
+    public moveUp(name: string): number {
+        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
+        return activeLayerSet.moveUp(this._map, name);
+    }
+    public moveDown(name: string): number {
+        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
+        return activeLayerSet.moveDown(this._map, name);
     }
     public addInteraction<T extends Interaction>(interaction: T): T {
         this._map.addInteraction(interaction);
@@ -1147,6 +1141,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     public updateSize() {
         this._map.updateSize();
+    }
+    public getLayerManager(): ILayerManager { 
+        return this;
+    }
+    public getLayers(): ILayerInfo[] {
+        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
+        return activeLayerSet.getCustomLayers();
     }
     //------------------------------------//
 }

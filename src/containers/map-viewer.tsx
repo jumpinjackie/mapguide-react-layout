@@ -5,6 +5,7 @@ import {
     ICommand,
     IMapView,
     IMapViewer,
+    ILayerManager,
     ActiveMapTool,
     RefreshMode,
     DigitizerCallback,
@@ -431,8 +432,8 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     hasLayer(name: string): boolean {
         return this.inner.hasLayer(name);
     }
-    addLayer<T extends ol.layer.Base>(name: string, layer: T): T {
-        return this.inner.addLayer(name, layer);
+    addLayer<T extends ol.layer.Base>(name: string, layer: T, allowReplace?: boolean): T {
+        return this.inner.addLayer(name, layer, allowReplace);
     }
     removeLayer(name: string): ol.layer.Base | undefined {
         return this.inner.removeLayer(name);
@@ -524,6 +525,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     }
     updateSize(): void {
         this.inner.updateSize();
+    }
+    getLayerManager(): ILayerManager {
+        return this.inner.getLayerManager();
     }
 }
 

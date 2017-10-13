@@ -9,7 +9,8 @@ import {
     ImageFormat,
     IExternalBaseLayer,
     LayerTransparencySet,
-    ActiveSelectedFeature
+    ActiveSelectedFeature,
+    ILayerInfo
 } from "../api/common";
 import { Client } from '../api/client';
 import { MgError, isSessionExpiredError } from '../api/error';
@@ -229,8 +230,10 @@ export class MgLayerSet {
     private resourceId: string;
     view: olView;
     private callback: IMapViewerContextCallback;
+    private _customLayers: { [name: string]: olLayerBase; };
     constructor(props: IMapViewerContextProps, callback: IMapViewerContextCallback) {
         this.callback = callback;
+        this._customLayers = {};
         const map = props.map;
 
         //If a tile set definition is defined it takes precedence over the map definition, this enables
@@ -632,6 +635,74 @@ export class MgLayerSet {
     public showActiveSelectedFeature(mapExtent: Bounds, size: Size, uri: string) {
         this.activeSelectedFeatureOverlay.setSource(this.makeActiveSelectedFeatureSource(mapExtent, size, uri));
         this.activeSelectedFeatureOverlay.setVisible(true);
+    }
+    public getCustomLayers(): ILayerInfo[] {
+        return Object.keys(this._customLayers).map(n => ({ name: n, type: this._customLayers[n].get("LAYER_TYPE") }));
+    }
+    public hasLayer(name: string): boolean {
+        return this._customLayers[name] != null;
+    }
+    public addLayer<T extends olLayerBase>(map: olMap, name: string, layer: T, allowReplace?: boolean): T {
+        const bAllow = !!allowReplace;
+        if (this._customLayers[name]) {
+            if (!bAllow) {
+                throw new MgError(`A layer named ${name} already exists`); //LOCALIZEME
+            } else {
+                //Remove the layer that is about to be replaced first 
+                map.removeLayer(this._customLayers[name]);
+            }
+        }
+        this._customLayers[name] = layer;
+        map.addLayer(layer);
+        return layer;
+    }
+    public removeLayer(map: olMap, name: string): olLayerBase | undefined {
+        let layer: olLayerBase;
+        if (this._customLayers[name]) {
+            layer = this._customLayers[name];
+            map.removeLayer(layer);
+            delete this._customLayers[name];
+            return layer;
+        }
+    }
+    public getLayer<T extends olLayerBase>(map: olMap, name: string, factory: () => T): T {
+        let layer: T;
+        if (this._customLayers[name]) {
+            layer = this._customLayers[name] as T;
+        } else {
+            layer = factory();
+            this._customLayers[name] = layer;
+            map.addLayer(layer);
+        }
+        return layer;
+    }
+    public moveUp(map: olMap, name: string): number {
+        const lyr = this._customLayers[name];
+        if (lyr) {
+            const layers = map.getLayers();
+            const arr = layers.getArray();
+            const idx = arr.indexOf(lyr);
+            if (idx > 0) {
+                layers.remove(lyr);
+                layers.setAt(idx - 1, lyr);
+                return idx - 1;
+            }
+        }
+        return -1;
+    }
+    public moveDown(map: olMap, name: string): number {
+        const lyr = this._customLayers[name];
+        if (lyr) {
+            const layers = map.getLayers();
+            const arr = layers.getArray();
+            const idx = arr.indexOf(lyr);
+            if (idx < arr.length - 1) {
+                layers.remove(lyr);
+                layers.setAt(idx + 1, lyr);
+                return idx + 1;
+            }
+        }
+        return -1;
     }
 }
 

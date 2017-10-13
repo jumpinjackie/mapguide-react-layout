@@ -685,40 +685,9 @@ export interface IMapViewer {
      */
     getSelectionXml(selection: FeatureSet, layerIds?: string[]): string;
     /**
-     * Gets whether the specified custom layer exists on the map
+     * Gets the layer manager
      */
-    hasLayer(name: string): boolean;
-    /**
-     * Adds a layer to the map
-     *
-     * @template T
-     * @param {string} name
-     * @param {T} layer
-     * @returns {T}
-     *
-     * @memberof IMapViewer
-     */
-    addLayer<T extends olLayerBase>(name: string, layer: T): T;
-    /**
-     * Removes a layer by the given name
-     *
-     * @param {string} name
-     * @returns {(olLayerBase | undefined)}
-     *
-     * @memberof IMapViewer
-     */
-    removeLayer(name: string): olLayerBase | undefined;
-    /**
-     * Gets a layer by the given name
-     *
-     * @template T
-     * @param {string} name
-     * @param {() => T} factory
-     * @returns {T}
-     *
-     * @memberof IMapViewer
-     */
-    getLayer<T extends olLayerBase>(name: string, factory: () => T): T;
+    getLayerManager(): ILayerManager;
     /**
      * Adds an OpenLayers interaction
      *
@@ -841,6 +810,77 @@ export interface IMapViewer {
     toastPrimary(iconName: string, message: string|JSX.Element): string | undefined;
     dismissToast(key: string): void;
     updateSize(): void;
+}
+
+export interface ILayerInfo {
+    /**
+     * The name of the layer
+     * 
+     * @type {string}
+     * @memberof ILayerInfo
+    * */
+    name: string;
+    /**
+     * The type of layer
+     * 
+     * @type {string}
+     * @memberof ILayerInfo
+     */
+    type: string;
+}
+
+/**
+ * Manages custom layers for a map
+ * 
+ * @export
+ * @interface ILayerManager
+ */
+export interface ILayerManager {
+    /**
+     * Gets all custom layers on this map, sorted by draw order
+     * 
+     * @returns {ILayerInfo[]} 
+     * @memberof ILayerManager
+    * */
+    getLayers(): ILayerInfo[];
+    /**
+     * Gets whether the specified custom layer exists on the map
+     */
+    hasLayer(name: string): boolean;
+    /**
+     * Adds a layer to the map
+     * 
+     * @template T 
+     * @param {string} name The name of the layer
+     * @param {T} layer The layer object
+     * @param {boolean} [allowReplace] If false or not set, this method will throw an error if a layer of the specified name already exists. Otherwise that layer will be replaced with the given layer
+     * @returns {T} The added layer
+     * @memberof ILayerManager
+     */
+    addLayer<T extends olLayerBase>(name: string, layer: T, allowReplace?: boolean): T;
+    /**
+     * Removes a layer by the given name
+     *
+     * @param {string} name
+     * @returns {(olLayerBase | undefined)}
+     *
+     * @memberof IMapViewer
+     */
+    removeLayer(name: string): olLayerBase | undefined;
+    /**
+     * Gets a layer by the given name
+     *
+     * @template T
+     * @param {string} name
+     * @param {() => T} factory
+     * @returns {T}
+     *
+     * @memberof IMapViewer
+     */
+    getLayer<T extends olLayerBase>(name: string, factory: () => T): T;
+
+    moveUp(name: string): number;
+    moveDown(name: string): number;
 }
 
 /**
@@ -1831,18 +1871,7 @@ export interface WmsCapabilitiesDocument {
 export interface WMSServiceCapabilities {
     Request: any;
     Exception: string[];
-    Layer: {
-        Title: string;
-        Abstract: string;
-        CRS: string[];
-        EX_GeographicBoundingBox: [number, number, number, number];
-        BoundingBox: {
-            crs: string;
-            extent: [number, number, number, number],
-            res: [any, any]
-        }[];
-        Layer: WMSPublishedLayer[];
-    }
+    Layer: WMSRootPublishedLayer;
 }
 
 export interface WMSPublishedLayer {
@@ -1861,6 +1890,10 @@ export interface WMSPublishedLayer {
     queryable: boolean;
     opaque: boolean;
     noSubsets: boolean;
+}
+
+export interface WMSRootPublishedLayer extends WMSPublishedLayer {
+    Layer: WMSPublishedLayer[];    
 }
 
 export interface WMSLayerStyle {

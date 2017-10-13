@@ -112,6 +112,8 @@ const STRINGS_EN: ILocalizedMessages = {
     "COORDTRACKER_NO_PROJECTIONS": "You have no projections configured for this component",
     "MAP_SIZE_DISPLAY_UNITS": "Map view size display units",
     "ADD_MANAGE_LAYERS": "Add/Manage Layers",
+    "ADD_LAYER": "Add Layer",
+    "MANAGE_LAYERS": "Manage Layers",
     "LAYER_TYPE": "Layer Type",
     "SELECT_LAYER_TYPE": "Select Layer Type ...",
     "ADD_WMS_LAYER_URL": "WMS Service URL",
@@ -128,6 +130,7 @@ const STRINGS_EN: ILocalizedMessages = {
     "WMS_LAYER_ABSTRACT": "Abstract: {abstract}",
     "WMS_ADD_LAYER_PROMPT": "Click this layer to add it to the map",
     "ADDED_LAYER": "Added layer: {name}",
+    "REMOVED_LAYER": "Removed layer: {name}",
     "ADD_WFS_LAYER": "Add WFS Layer"
 };
 

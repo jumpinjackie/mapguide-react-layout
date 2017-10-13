@@ -1,8 +1,4 @@
 import * as React from "react";
-import { connect } from "react-redux";
-import * as Runtime from "../api/runtime";
-import { tr } from "../api/i18n";
-import { Error } from "../components/error";
 import {
     ReduxDispatch,
     IApplicationState,
@@ -10,44 +6,27 @@ import {
     GenericEventHandler,
     WmsCapabilitiesDocument,
     WMSLayerStyle
-} from "../api/common";
-import { Client } from "../api/client";
-import { WmsCapabilitiesTree } from "../components/wms-capabilities-tree";
+} from "../../api/common";
+import { tr } from "../../api/i18n";
+import { Error } from "../error";
+import * as Runtime from "../../api/runtime";
+import { Client } from "../../api/client";
+import { WmsCapabilitiesTree } from "../wms-capabilities-tree";
 import olWmsParser from "ol/format/wmscapabilities";
 import olTileLayer from "ol/layer/tile";
 import olImageLayer from "ol/layer/image";
 import olWmsSource from "ol/source/imagewms";
 import olTiledWmsSource from "ol/source/tilewms";
 
-export interface IAddWmsLayerContainerProps {
-
+export interface IAddWmsLayerProps {
+    locale: string | undefined;
 }
 
-export interface IAddWmsLayerContainerState {
-    locale: string;
-}
-
-export interface IAddWmsLayerContainerDispatch {
-
-}
-
-function mapStateToProps(state: Readonly<IApplicationState>): Partial<IAddWmsLayerContainerState> {
-    return {
-        locale: state.config.locale
-    };
-}
-
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAddWmsLayerContainerDispatch> {
-    return {};
-}
-
-export type AddWmsLayerContainerProps = IAddWmsLayerContainerProps & Partial<IAddWmsLayerContainerState> & Partial<IAddWmsLayerContainerDispatch>;
-
-export class AddWmsLayerContainer extends React.Component<AddWmsLayerContainerProps, any> {
+export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
     private fnWmsUrlChange: GenericEventHandler;
     private fnLoadCaps: GenericEventHandler;
     private fnAddLayer: (name: string, style: WMSLayerStyle | undefined) => void;
-    constructor(props: AddWmsLayerContainerProps) {
+    constructor(props: IAddWmsLayerProps) {
         super(props);
         this.fnWmsUrlChange = this.onWmsUrlChange.bind(this);
         this.fnLoadCaps = this.onLoadCaps.bind(this);
@@ -123,13 +102,13 @@ export class AddWmsLayerContainer extends React.Component<AddWmsLayerContainerPr
     render(): JSX.Element {
         const { locale } = this.props;
         const { wmsUrl, loadingCapabilities, caps, error } = this.state;
-        return <div className="component-viewer-options">
-            <h5>{tr("ADD_WMS_LAYER", locale)}</h5>
-            <hr />
-            <div className="pt-input-group">
-                <span className="pt-icon pt-icon-geosearch"></span>
-                <input type="text" className="pt-input" placeholder={tr("ADD_WMS_LAYER_URL", locale)} value={wmsUrl} onChange={this.fnWmsUrlChange} readOnly={loadingCapabilities} />
-                <button className="pt-button pt-minimal pt-intent-primary pt-icon-arrow-right" onClick={this.fnLoadCaps} disabled={loadingCapabilities}></button>
+        return <div>
+            <div className="pt-control-group pt-fill">
+                <div className="pt-input-group">
+                    <span className="pt-icon pt-icon-geosearch"></span>
+                    <input type="text" className="pt-input" placeholder={tr("ADD_WMS_LAYER_URL", locale)} value={wmsUrl} onChange={this.fnWmsUrlChange} readOnly={loadingCapabilities} />
+                </div>
+                <button className="pt-button pt-fixed pt-intent-primary pt-icon-arrow-right" onClick={this.fnLoadCaps} disabled={loadingCapabilities}></button>
             </div>
             <br />
             <div>
@@ -171,5 +150,3 @@ export class AddWmsLayerContainer extends React.Component<AddWmsLayerContainerPr
         </div>;
     }
 }
-
-export default connect(mapStateToProps, mapDispatchToProps)(AddWmsLayerContainer);

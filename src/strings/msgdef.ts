@@ -109,7 +109,9 @@ export interface ILocalizedMessages {
     COORDTRACKER_NO_PROJECTIONS: string;
     MAP_SIZE_DISPLAY_UNITS: string;
     OK: string;
-    ADD_WMS_LAYER: string;
+    ADD_MANAGE_LAYERS: string;
+    LAYER_TYPE: string;
+    SELECT_LAYER_TYPE: string;
     ADD_WMS_LAYER_URL: string;
     ADD_WMS_LAYER_LOADING: string;
     ADD_WMS_LAYER_LOADING_DESC: string;

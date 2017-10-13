@@ -27,7 +27,7 @@ export enum DefaultComponentNames {
     MapMenu = "MapMenu",
     ViewSize = "ViewSize",
     CoordinateTracker = "CoordinateTracker",
-    AddWmsLayer = "AddWmsLayer"
+    AddManageLayers = "AddManageLayers"
 }
 
 /**

@@ -17,7 +17,7 @@ import QuickPlotContainer from "../containers/quick-plot";
 import BaseLayerSwitcherContainer from "../containers/base-layer-switcher";
 import MapMenuContainer from "../containers/map-menu";
 import CoordinateTrackerContainer from "../containers/coordinate-tracker";
-import AddWmsLayerContainer from "../containers/add-wms-layer";
+import AddManageLayersContainer from "../containers/add-manage-layers";
 
 import { registerComponentFactory, DefaultComponentNames } from "../api/registry/component";
 import ViewSizeContainer from "../containers/view-size";
@@ -46,5 +46,5 @@ export function registerDefaultComponents(): void {
     registerComponentFactory(DefaultComponentNames.MapMenu, (props) => <MapMenuContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.ViewSize, (props) => <ViewSizeContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.CoordinateTracker, (props) => <CoordinateTrackerContainer {...props} />);
-    registerComponentFactory(DefaultComponentNames.AddWmsLayer, (props) => <AddWmsLayerContainer {...props} />);
+    registerComponentFactory(DefaultComponentNames.AddManageLayers, (props) => <AddManageLayersContainer {...props} />);
 }

@@ -45,6 +45,7 @@ const parse = require("url-parse");
 import proj4 from "proj4";
 import uniq = require("lodash.uniq");
 import { ensureParameters } from "../utils/url";
+import { strIsNullOrEmpty } from "../utils/string";
 
 interface IInitAppPayload {
     activeMapName: string;
@@ -240,6 +241,10 @@ function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Diction
 }
 
 function convertToCommandTarget(fusionCmdTarget: string): CommandTarget {
+    //Treat empty/undefined target as new window
+    if (strIsNullOrEmpty(fusionCmdTarget)) {
+        return "NewWindow";
+    }
     switch (fusionCmdTarget) {
         case "SearchWindow":
         case "InvokeUrlWindow":

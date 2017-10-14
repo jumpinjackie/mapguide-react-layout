@@ -57,7 +57,7 @@
     "lodash.debounce": "4.0.8",
     "lodash.uniq": "4.5.0",
     "lodash.xor": "4.5.0",
-    "ol": "4.4.1",
+    "ol": "4.4.2",
     "proj4": "2.4.4",
     "prop-types": "15.6.0",
     "query-string": "5.0.0",
@@ -80,7 +80,7 @@
     "whatwg-fetch": "2.0.3"
   },
   "devDependencies": {
-    "@types/enzyme": "2.8.12",
+    "@types/enzyme": "3.1.0",
     "@types/jest": "21.1.2",
     "bestzip": "1.1.4",
     "copyfiles": "1.2.0",

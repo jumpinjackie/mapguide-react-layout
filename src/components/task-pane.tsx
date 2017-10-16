@@ -20,6 +20,8 @@ import {
 } from "../api/common";
 import { parseComponentUri, ensureParameters } from "../utils/url";
 
+export const TASK_PANE_OVERLAY_BGCOLOR = "#dee8f9";
+
 function currentUrlDoesNotMatchMapName(currentUrl: string, mapName: string): boolean {
     const normUrl = currentUrl.toLowerCase();
     //Only invalidate if url has mapname and it doesn't match our current one
@@ -244,7 +246,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                             </iframe>
                         ];
                         if (frameContentLoaded == false) {
-                            components.push(<div key="taskPaneFrameLoadingOverlay" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: "#dee8f9" }}>
+                            components.push(<div key="taskPaneFrameLoadingOverlay" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: TASK_PANE_OVERLAY_BGCOLOR }}>
                                 <div className="pt-non-ideal-state">
                                     <div className="pt-non-ideal-state-visual pt-non-ideal-state-icon">
                                         <div className="pt-spinner pt-large">

@@ -13,7 +13,7 @@ import {
     FlyoutVisibilitySet
 } from "../api/common";
 import { IItem } from "../components/toolbar";
-import { TaskPane } from "../components/task-pane";
+import { TaskPane, TASK_PANE_OVERLAY_BGCOLOR } from "../components/task-pane";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { mapToolbarReference } from "../api/registry/command";
 import { invokeCommand } from "../actions/map";
@@ -205,7 +205,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
                               locale={this.getLocale()} />
                     {(() => {
                         if (isResizing == true) {
-                            return <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: "#dee8f9" }}>
+                            return <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: TASK_PANE_OVERLAY_BGCOLOR }}>
                                 <div className="pt-non-ideal-state">
                                     <div className="pt-non-ideal-state-visual pt-non-ideal-state-icon">
                                         <span className="pt-icon pt-icon-arrows-horizontal"></span>

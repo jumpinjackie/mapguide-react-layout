@@ -40,6 +40,8 @@ declare module "react-splitter-layout" {
         primaryMinSize?: number;
         secondaryInitialSize?: number;
         onSecondaryPaneSizeChange?: (size: number) => void;
+        onDragStart?: Function;
+        onDragEnd?: Function;
     }
     export default class SplitterLayout extends React.Component<ISplitterLayoutProps, any> {
 

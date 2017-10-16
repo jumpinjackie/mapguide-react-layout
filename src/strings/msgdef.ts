@@ -105,6 +105,7 @@ export interface ILocalizedMessages {
     GEOLOCATION_ERROR: string;
     TASK_PANE_CONTENT_FOR_INACTIVE_MAP_TITLE: string;
     TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING: string;
+    TASK_PANE_RESIZING: string;
     COORDTRACKER: string;
     COORDTRACKER_NO_PROJECTIONS: string;
     MAP_SIZE_DISPLAY_UNITS: string;

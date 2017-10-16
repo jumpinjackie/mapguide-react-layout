@@ -121,10 +121,21 @@ export type LimeGoldTemplateLayoutProps = Partial<ILimeGoldTemplateLayoutState> 
 export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayoutProps, any> {
     private fnSplitterChanged: (size: number) => void;
     private fnActiveTabChanged: (id: string) => void;
+    private fnDragStart: Function;
+    private fnDragEnd: Function;
     constructor(props: LimeGoldTemplateLayoutProps) {
         super(props);
         this.fnActiveTabChanged = this.onActiveTabChanged.bind(this);
         this.fnSplitterChanged = this.onSplitterChanged.bind(this);
+        this.fnDragStart = this.onDragStart.bind(this);
+        this.fnDragEnd = this.onDragEnd.bind(this);
+        this.state = { isResizing: false };
+    }
+    private onDragStart() {
+        this.setState({ isResizing: true });
+    }
+    private onDragEnd() {
+        this.setState({ isResizing: false });
     }
     private getLocale(): string {
         return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
@@ -167,6 +178,7 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
     }
     render(): JSX.Element {
         const { config, map, capabilities } = this.props;
+        const { isResizing } = this.state;
         let hasTaskPane = false;
         let hasTaskBar = false;
         let hasStatusBar = false;
@@ -211,7 +223,7 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
             <ToolbarContainer id="Toolbar" containerClass="limegold-toolbar" containerStyle={{ position: "absolute", left: 0, top: TOP_BAR_HEIGHT, zIndex: TB_Z_INDEX, right: 0 }} />
             <ToolbarContainer id="ToolbarSecondary" containerClass="limegold-toolbar-secondary" containerStyle={{ position: "absolute", left: 0, top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, right: 0 }} />
             <div style={{ position: "absolute", left: 0, top: topOffset, bottom: (bottomOffset + SIDEBAR_PADDING), right: 0 }}>
-                <SplitterLayout customClassName="limegold-splitter" primaryIndex={0} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={this.fnSplitterChanged}>
+                <SplitterLayout customClassName="limegold-splitter" primaryIndex={0} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={this.fnSplitterChanged} onDragStart={this.fnDragStart} onDragEnd={this.fnDragEnd}>
                     <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
                         <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />
                         {(() => {
@@ -225,7 +237,7 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
                             {(() => {
                                 if (hasTaskPane) {
                                     const panel = <div style={tabPanelStyle}>
-                                        <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={locale} />
+                                        <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={locale} componentProps={{ isResizing: isResizing }} />
                                     </div>;
                                     return <Tab2 id="TaskPane" title={taskPaneTitle} panel={panel} />;
                                 }

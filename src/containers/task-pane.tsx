@@ -30,6 +30,7 @@ import {
 
 export interface ITaskPaneContainerProps {
     maxHeight?: number;
+    isResizing?: boolean;
 }
 
 export interface ITaskPaneContainerState {
@@ -177,7 +178,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         store: PropTypes.object
     };
     render(): JSX.Element {
-        const { taskpane, config, map, invokeCommand, maxHeight, flyouts } = this.props;
+        const { taskpane, config, map, invokeCommand, maxHeight, flyouts, isResizing } = this.props;
         if (taskpane && config && map && map.runtimeMap) {
             if (taskpane.navigation[taskpane.navIndex]) {
                 const flyoutStates: FlyoutVisibilitySet = {};
@@ -187,20 +188,36 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
                         flyoutStates[fid] = !!flyouts[fid].open;
                     }
                 }
-                return <TaskPane currentUrl={taskpane.navigation[taskpane.navIndex]}
-                                 showTaskBar={config.capabilities.hasTaskBar}
-                                 lastUrlPushed={taskpane.lastUrlPushed}
-                                 homeAction={this.homeAction}
-                                 backAction={this.backAction}
-                                 onOpenFlyout={this.fnOpenFlyout}
-                                 onCloseFlyout={this.fnCloseFlyout}
-                                 forwardAction={this.forwardAction}
-                                 session={map.runtimeMap.SessionId}
-                                 mapName={map.runtimeMap.Name}
-                                 onUrlLoaded={this.fnUrlLoaded}
-                                 maxHeight={maxHeight}
-                                 flyoutStates={flyoutStates}
-                                 locale={this.getLocale()} />;
+                return <div>
+                    <TaskPane currentUrl={taskpane.navigation[taskpane.navIndex]}
+                              showTaskBar={config.capabilities.hasTaskBar}
+                              lastUrlPushed={taskpane.lastUrlPushed}
+                              homeAction={this.homeAction}
+                              backAction={this.backAction}
+                              onOpenFlyout={this.fnOpenFlyout}
+                              onCloseFlyout={this.fnCloseFlyout}
+                              forwardAction={this.forwardAction}
+                              session={map.runtimeMap.SessionId}
+                              mapName={map.runtimeMap.Name}
+                              onUrlLoaded={this.fnUrlLoaded}
+                              maxHeight={maxHeight}
+                              flyoutStates={flyoutStates}
+                              locale={this.getLocale()} />
+                    {(() => {
+                        if (isResizing == true) {
+                            return <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: "#dee8f9" }}>
+                                <div className="pt-non-ideal-state">
+                                    <div className="pt-non-ideal-state-visual pt-non-ideal-state-icon">
+                                        <span className="pt-icon pt-icon-arrows-horizontal"></span>
+                                    </div>
+                                    <div className="pt-non-ideal-state-description">
+                                        {tr("TASK_PANE_RESIZING", this.getLocale())}
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    })()}
+                </div>
             }
         }
         return <noscript />;

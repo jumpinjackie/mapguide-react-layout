@@ -9,7 +9,7 @@ type WMSLayerStylePair = [WMSPublishedLayer, WMSLayerStyle[]];
 function convertWmsLayerNodes(layers: WMSLayerStylePair[], locale: string | undefined): ITreeNode[] {
     return layers.map(pair => {
         const [l, styles] = pair;
-        const tt = <div>
+        const tt = <div className="wms-layer-info-tooltip">
             <p>{tr("WMS_LAYER_NAME", locale, { name: l.Name })}</p>
             <p>{tr("WMS_LAYER_TITLE", locale, { title: l.Title })}</p>
             <p>{tr("WMS_LAYER_ABSTRACT", locale, { abstract: l.Abstract })}</p>

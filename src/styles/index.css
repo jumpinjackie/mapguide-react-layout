@@ -415,3 +415,8 @@ div.InfoText
     right: 0px;
     z-index: 100;
 }
+
+.wms-layer-info-tooltip p {
+    max-width: 250px;
+    word-wrap: break-word;
+}

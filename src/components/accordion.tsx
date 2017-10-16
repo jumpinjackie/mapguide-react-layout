@@ -26,7 +26,7 @@ export interface IAccordionPanelContentDimensions {
 export interface IAccordionPanelSpec {
     id: string;
     title: string;
-    contentRenderer: (dim: IAccordionPanelContentDimensions) => JSX.Element;
+    contentRenderer: (dim: IAccordionPanelContentDimensions, isResizing?: boolean) => JSX.Element;
 }
 
 /**
@@ -40,6 +40,7 @@ export interface IAccordionProps {
     panels: IAccordionPanelSpec[];
     onActivePanelChanged?: (id: string) => void;
     activePanelId?: string;
+    isResizing?: boolean;
 }
 
 const PANEL_HEADER_HEIGHT = 24;
@@ -92,7 +93,7 @@ export class Accordion extends React.Component<IAccordionProps, any> {
     }
     render(): JSX.Element {
         const { openPanel } = this.state;
-        const { panels, style } = this.props;
+        const { panels, style, isResizing } = this.props;
         return <Measure>
             {(dim: any) => {
                 return <div style={style} className="component-accordion">
@@ -103,7 +104,7 @@ export class Accordion extends React.Component<IAccordionProps, any> {
                             <span className={`pt-icon-standard pt-icon-chevron-${isOpen ? "up" : "down"}`}></span> {p.title}
                         </div>
                         <Collapse isOpen={isOpen}>
-                            {p.contentRenderer({ width: dim.width, height: (dim.height - (panels.length * PANEL_HEADER_HEIGHT)) })}
+                            {p.contentRenderer({ width: dim.width, height: (dim.height - (panels.length * PANEL_HEADER_HEIGHT)) }, isResizing)}
                         </Collapse>
                     </div>;
                 })}

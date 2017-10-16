@@ -121,10 +121,21 @@ const OUTER_PADDING = 3;
 export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplateProps, any> {
     private fnSplitterChanged: (size: number) => void;
     private fnActivePanelChanged: (id: string) => void;
+    private fnDragStart: Function;
+    private fnDragEnd: Function;
     constructor(props: MaroonLayoutTemplateProps) {
         super(props);
         this.fnActivePanelChanged = this.onActivePanelChanged.bind(this);
         this.fnSplitterChanged = this.onSplitterChanged.bind(this);
+        this.fnDragStart = this.onDragStart.bind(this);
+        this.fnDragEnd = this.onDragEnd.bind(this);
+        this.state = { isResizing: false };
+    }
+    private onDragStart() {
+        this.setState({ isResizing: true });
+    }
+    private onDragEnd() {
+        this.setState({ isResizing: false });
     }
     private onActivePanelChanged(id: string): void {
         const { setElementStates } = this.props;
@@ -167,6 +178,7 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
     }
     render(): JSX.Element {
         const { config, map, capabilities } = this.props;
+        const { isResizing } = this.state;
         let hasTaskPane = false;
         let hasTaskBar = false;
         let hasStatusBar = false;
@@ -209,10 +221,11 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
             {
                 id: "TaskPane",
                 title: tr("TPL_TITLE_TASKPANE", locale),
-                contentRenderer: (dim: IAccordionPanelContentDimensions) => {
+                contentRenderer: (dim: IAccordionPanelContentDimensions, isResizing?: boolean) => {
                     return <div style={{ width: dim.width, height: dim.height, overflowY: "auto" }}>
                         <PlaceholderComponent id={DefaultComponentNames.TaskPane}
-                                                 locale={locale} />
+                                                 locale={locale}
+                                                 componentProps={{ isResizing: isResizing }} />
                     </div>;
                 }
             }
@@ -230,7 +243,7 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
         const TB_Z_INDEX = 0;
         return <div style={{ width: "100%", height: "100%" }}>
             <div style={{ position: "absolute", left: 0, top: 0, bottom: bottomOffset, right: 0 }}>
-                <SplitterLayout customClassName="maroon-splitter" primaryIndex={0} secondaryInitialSize={SIDEBAR_WIDTH} onSecondaryPaneSizeChange={this.fnSplitterChanged}>
+                <SplitterLayout customClassName="maroon-splitter" primaryIndex={0} secondaryInitialSize={SIDEBAR_WIDTH} onSecondaryPaneSizeChange={this.fnSplitterChanged} onDragStart={this.fnDragStart} onDragEnd={this.fnDragEnd}>
                     <div>
                         <ToolbarContainer id="FileMenu" containerClass="maroon-file-menu" containerStyle={{ position: "absolute", left: OUTER_PADDING, top: OUTER_PADDING, right: 0, zIndex: TB_Z_INDEX }} />
                         <ToolbarContainer id="Toolbar" containerClass="maroon-toolbar" containerStyle={{ position: "absolute", left: OUTER_PADDING, top: DEFAULT_TOOLBAR_SIZE + OUTER_PADDING, right: 0, zIndex: TB_Z_INDEX }} />
@@ -245,7 +258,7 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
                         </div>
                     </div>
                     <div>
-                        <Accordion style={{ position: "absolute", top: OUTER_PADDING, bottom: 0, right: OUTER_PADDING, left: 0 }} onActivePanelChanged={this.fnActivePanelChanged} activePanelId={activeId} panels={panels} />
+                        <Accordion style={{ position: "absolute", top: OUTER_PADDING, bottom: 0, right: OUTER_PADDING, left: 0 }} onActivePanelChanged={this.fnActivePanelChanged} activePanelId={activeId} panels={panels} isResizing={isResizing} />
                     </div>
                 </SplitterLayout>
             </div>

@@ -103,7 +103,8 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         this.fnOpenFlyout = this.onOpenFlyout.bind(this);
         this.state = {
             activeComponent: null,
-            invalidated: false
+            invalidated: false,
+            frameContentLoaded: false
         };
     }
     private onCloseFlyout(id: string): void {
@@ -127,6 +128,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
     private onFrameLoaded(e: GenericEvent) {
         const frame = e.currentTarget;
         if (frame.contentWindow) {
+            this.setState({ frameContentLoaded: true });
             this.props.onUrlLoaded(frame.contentWindow.location.href);
         }
     }
@@ -153,7 +155,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         if (compUri) {
             this.setState({ activeComponent: compUri.name, activeComponentProps: compUri.props });
         } else {
-            this.setState({ activeComponent: null}, () => {
+            this.setState({ activeComponent: null, frameContentLoaded: false }, () => {
                 if (this._iframe) {
                     this._iframe.src = ensureParameters(url, this.props.mapName, this.props.session, this.props.locale);
                 }
@@ -161,9 +163,10 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         }
     }
     render(): JSX.Element {
-        const { invalidated } = this.state;
+        const { invalidated, activeComponent } = this.state;
+        const { locale, maxHeight, showTaskBar } = this.props;
         const taskMenu: IFlyoutMenu = {
-            label: tr("MENU_TASKS", this.props.locale),
+            label: tr("MENU_TASKS", locale),
             flyoutAlign: "bottom left",
             flyoutId: Constants.WEBLAYOUT_TASKMENU
         };
@@ -179,7 +182,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         const taskComponentContainerStyle: React.CSSProperties = {
             border: "none"
         };
-        if (!this.props.maxHeight) {
+        if (!maxHeight) {
             rootStyle.width = "100%";
             rootStyle.height = "100%";
 
@@ -189,7 +192,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             taskBarStyle.right = 0;
 
             taskBodyStyle.position = "absolute";
-            taskBodyStyle.top = (this.props.showTaskBar === true ? DEFAULT_TOOLBAR_SIZE : 0);
+            taskBodyStyle.top = (showTaskBar === true ? DEFAULT_TOOLBAR_SIZE : 0);
             taskBodyStyle.left = 0;
             taskBodyStyle.right = 0;
             taskBodyStyle.bottom = 0;
@@ -202,18 +205,18 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             taskComponentContainerStyle.height = "100%";
         } else {
             taskFrameStyle.width = "100%";
-            taskFrameStyle.height = (this.props.showTaskBar === true ? (this.props.maxHeight - DEFAULT_TOOLBAR_SIZE) : this.props.maxHeight);
+            taskFrameStyle.height = (showTaskBar === true ? (maxHeight - DEFAULT_TOOLBAR_SIZE) : maxHeight);
 
             taskComponentContainerStyle.width = "100%";
-            taskComponentContainerStyle.maxHeight = (this.props.showTaskBar === true ? (this.props.maxHeight - DEFAULT_TOOLBAR_SIZE) : this.props.maxHeight);
+            taskComponentContainerStyle.maxHeight = (showTaskBar === true ? (maxHeight - DEFAULT_TOOLBAR_SIZE) : maxHeight);
             taskComponentContainerStyle.overflowY = "auto";
         }
         return <div style={rootStyle}>
             {(() => {
-                if (this.props.showTaskBar === true) {
+                if (showTaskBar === true) {
                     return <div style={taskBarStyle}>
                         <Toolbar childItems={this.taskButtons} containerStyle={{ float: "left", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={this.fnCloseFlyout} onOpenFlyout={this.fnOpenFlyout} flyoutStates={this.props.flyoutStates} />
-                        <Toolbar childItems={[ taskMenu ]} containerStyle={{ float: "right", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={this.fnCloseFlyout} onOpenFlyout={this.fnOpenFlyout} flyoutStates={this.props.flyoutStates} />
+                        <Toolbar childItems={[taskMenu]} containerStyle={{ float: "right", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={this.fnCloseFlyout} onOpenFlyout={this.fnOpenFlyout} flyoutStates={this.props.flyoutStates} />
                         <div style={{ clear: "both" }} />
                     </div>;
                 }
@@ -228,16 +231,37 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                     }
                 })()}
                 {(() => {
-                    if (this.state.activeComponent != null) {
+                    if (activeComponent != null) {
                         const cpp = this.state.activeComponentProps;
                         taskComponentContainerStyle.overflowY = "auto";
                         return <div className={(invalidated === true ? "invalidated-task-pane" : undefined)} style={taskComponentContainerStyle}>
-                            <PlaceholderComponent id={this.state.activeComponent} componentProps={cpp} locale={this.props.locale} />
+                            <PlaceholderComponent id={activeComponent} componentProps={cpp} locale={this.props.locale} />
                         </div>
                     } else {
-                        return <iframe className={(invalidated === true ? "invalidated-task-pane" : undefined)} name="taskPaneFrame" ref={this.fnFrameMounted} onLoad={this.fnFrameLoaded} style={taskFrameStyle}>
-
-                        </iframe>
+                        const { frameContentLoaded } = this.state;
+                        const components = [
+                            <iframe key="taskPaneFrame" className={(invalidated === true ? "invalidated-task-pane" : undefined)} name="taskPaneFrame" ref={this.fnFrameMounted} onLoad={this.fnFrameLoaded} style={taskFrameStyle}>
+                            </iframe>
+                        ];
+                        if (frameContentLoaded == false) {
+                            components.push(<div key="taskPaneFrameLoadingOverlay" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: "#dee8f9" }}>
+                                <div className="pt-non-ideal-state">
+                                    <div className="pt-non-ideal-state-visual pt-non-ideal-state-icon">
+                                        <div className="pt-spinner pt-large">
+                                            <div className="pt-spinner-svg-container">
+                                                <svg viewBox="0 0 100 100">
+                                                    <path className="pt-spinner-track" d="M 50,50 m 0,-44.5 a 44.5,44.5 0 1 1 0,89 a 44.5,44.5 0 1 1 0,-89"></path>
+                                                    <path className="pt-spinner-head" d="M 94.5 50 A 44.5 44.5 0 0 0 50 5.5"></path>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h4 className="pt-non-ideal-state-title">{tr("TASK_PANE_LOADING", locale)}</h4>
+                                    <div className="pt-non-ideal-state-description">{tr("TASK_PANE_LOADING_DESC", locale)}</div>
+                                </div>
+                            </div>);
+                        }
+                        return components;
                     }
                 })()}
                 <iframe name="scriptFrame" style={{ width: 0, height: 0, visibility: "hidden" }}></iframe>

@@ -206,52 +206,52 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
         const selectionTitle = tr("TPL_TITLE_SELECTION_PANEL", locale);
         const TB_Z_INDEX = 0;
         return <div style={{ width: "100%", height: "100%" }}>
-            <SplitterLayout customClassName="turquoise-yellow-splitter" primaryIndex={1} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={this.fnSplitterChanged}>
-                <div className="turquoise-yellow-sidebar" style={{ position: "absolute", left: SIDEBAR_PADDING, top: TOP_BAR_HEIGHT, bottom: (bottomOffset + SIDEBAR_PADDING), right: 0 }}>
-                    <Tabs2 id="SidebarTabs" onChange={this.fnActiveTabChanged} {...extraTabsProps}>
-                        {(() => {
-                            if (hasTaskPane) {
-                                const panel = <div style={tabPanelStyle}>
-                                    <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={locale} />
-                                </div>;
-                                return <Tab2 id="TaskPane" title={taskPaneTitle} panel={panel} />;
-                            }
-                        })()}
-                        {(() => {
-                            if (hasLegend) {
-                                const p1: React.CSSProperties = { overflow: "auto" };
-                                const panel = <div style={{ ...tabPanelStyle, ...p1 }}>
-                                    <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: false }} />
-                                </div>;
-                                return <Tab2 id="Legend" title={legendTitle} panel={panel} />;
-                            }
-                        })()}
-                        {(() => {
-                            if (hasSelectionPanel) {
-                                const panel = <div style={tabPanelStyle}>
-                                    <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
-                                </div>;
-                                return <Tab2 id="Selection" title={selectionTitle} panel={panel} />;
-                            }
-                        })()}
-                    </Tabs2>
-                </div>
-                <div>
-                    <ToolbarContainer id="FileMenu" containerClass="turquoise-yellow-file-menu" containerStyle={{ position: "absolute", left: 0, top: (TOP_BAR_HEIGHT - DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, right: 0 }} />
-                    <ToolbarContainer id="Toolbar" containerClass="turquoise-yellow-toolbar" containerStyle={{ position: "absolute", left: 0, top: TOP_BAR_HEIGHT, zIndex: TB_Z_INDEX, right: 0 }} />
-                    <ToolbarContainer id="ToolbarVertical" containerClass="turquoise-yellow-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: 0, top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, bottom: (bottomOffset + SIDEBAR_PADDING) }} />
-                    <div style={{ position: "absolute", left: ( DEFAULT_TOOLBAR_SIZE), top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), bottom: (bottomOffset + SIDEBAR_PADDING), right: 0 }}>
-                        <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />
-                        {(() => {
-                            if (hasNavigator) {
-                                return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
-                            }
-                        })()}
+            <div style={{ position: "absolute", left: 0, top: 0, bottom: bottomOffset, right: 0 }}>
+                <SplitterLayout customClassName="turquoise-yellow-splitter" primaryIndex={1} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={this.fnSplitterChanged}>
+                    <div className="turquoise-yellow-sidebar" style={{ position: "absolute", left: SIDEBAR_PADDING, top: TOP_BAR_HEIGHT, bottom: SIDEBAR_PADDING, right: 0 }}>
+                        <Tabs2 id="SidebarTabs" onChange={this.fnActiveTabChanged} {...extraTabsProps}>
+                            {(() => {
+                                if (hasTaskPane) {
+                                    const panel = <div style={tabPanelStyle}>
+                                        <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={locale} />
+                                    </div>;
+                                    return <Tab2 id="TaskPane" title={taskPaneTitle} panel={panel} />;
+                                }
+                            })()}
+                            {(() => {
+                                if (hasLegend) {
+                                    const p1: React.CSSProperties = { overflow: "auto" };
+                                    const panel = <div style={{ ...tabPanelStyle, ...p1 }}>
+                                        <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: false }} />
+                                    </div>;
+                                    return <Tab2 id="Legend" title={legendTitle} panel={panel} />;
+                                }
+                            })()}
+                            {(() => {
+                                if (hasSelectionPanel) {
+                                    const panel = <div style={tabPanelStyle}>
+                                        <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
+                                    </div>;
+                                    return <Tab2 id="Selection" title={selectionTitle} panel={panel} />;
+                                }
+                            })()}
+                        </Tabs2>
                     </div>
-                </div>
-            </SplitterLayout>
-
-
+                    <div>
+                        <ToolbarContainer id="FileMenu" containerClass="turquoise-yellow-file-menu" containerStyle={{ position: "absolute", left: 0, top: (TOP_BAR_HEIGHT - DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, right: 0 }} />
+                        <ToolbarContainer id="Toolbar" containerClass="turquoise-yellow-toolbar" containerStyle={{ position: "absolute", left: 0, top: TOP_BAR_HEIGHT, zIndex: TB_Z_INDEX, right: 0 }} />
+                        <ToolbarContainer id="ToolbarVertical" containerClass="turquoise-yellow-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: 0, top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, bottom: SIDEBAR_PADDING }} />
+                        <div style={{ position: "absolute", left: ( DEFAULT_TOOLBAR_SIZE), top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), bottom: SIDEBAR_PADDING, right: 0 }}>
+                            <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />
+                            {(() => {
+                                if (hasNavigator) {
+                                    return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
+                                }
+                            })()}
+                        </div>
+                    </div>
+                </SplitterLayout>
+            </div>
             {(() => {
                 if (hasStatusBar) {
                     return <div className="turquoise-yellow-status-bar" style={{ position: "absolute", left: 0, bottom: 0, right: 0, height: bottomOffset }}>

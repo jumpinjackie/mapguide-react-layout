@@ -230,36 +230,38 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
         }
         const TB_Z_INDEX = 0;
         return <div style={{ width: "100%", height: "100%" }}>
-            <SplitterLayout customClassName="slate-splitter" primaryIndex={1} secondaryInitialSize={SIDEBAR_WIDTH} onSecondaryPaneSizeChange={this.fnSplitterChanged}>
-                <div>
-                    <Accordion style={{ position: "absolute", top: 0, bottom: bottomOffset, left: 0, right: 0 }} onActivePanelChanged={this.fnActivePanelChanged} activePanelId={activeId} panels={panels} />
-                </div>
-                <div>
-                    <ToolbarContainer id="FileMenu" containerClass="slate-file-menu" containerStyle={{ position: "absolute", left: 0, top: 0, zIndex: TB_Z_INDEX, right: 0 }} />
-                    <ToolbarContainer id="Toolbar" containerClass="slate-toolbar" containerStyle={{ position: "absolute", left: 0, top: DEFAULT_TOOLBAR_SIZE, zIndex: TB_Z_INDEX, right: 0 }} />
-                    <ToolbarContainer id="ToolbarSecondary" containerClass="slate-toolbar-secondary" containerStyle={{ position: "absolute", left: 0, top: (DEFAULT_TOOLBAR_SIZE * 2), zIndex: TB_Z_INDEX, right: 0 }} />
-                    <div style={{ position: "absolute", left: 0, right: 0, top: topOffset, bottom: bottomOffset }}>
-                        <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />
-                        {(() => {
-                            if (hasNavigator) {
-                                return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
-                            }
-                        })()}
+            <div style={{ position: "absolute", left: 0, top: 0, bottom: bottomOffset, right: 0 }}>
+                <SplitterLayout customClassName="slate-splitter" primaryIndex={1} secondaryInitialSize={SIDEBAR_WIDTH} onSecondaryPaneSizeChange={this.fnSplitterChanged}>
+                    <div>
+                        <Accordion style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0 }} onActivePanelChanged={this.fnActivePanelChanged} activePanelId={activeId} panels={panels} />
                     </div>
-                    {(() => {
-                        if (hasStatusBar) {
-                            return <div className="slate-status-bar" style={{ position: "absolute", left: 0, bottom: 0, right: 0, height: bottomOffset }}>
-                                <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={locale} />
-                                <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={locale} />
-                                <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={locale} />
-                                <PlaceholderComponent id={DefaultComponentNames.ViewSize} locale={locale} />
-                                <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={locale} />
-                            </div>;
-                        }
-                    })()}
-                    <ViewerApiShim />
-                </div>
-            </SplitterLayout>
+                    <div>
+                        <ToolbarContainer id="FileMenu" containerClass="slate-file-menu" containerStyle={{ position: "absolute", left: 0, top: 0, zIndex: TB_Z_INDEX, right: 0 }} />
+                        <ToolbarContainer id="Toolbar" containerClass="slate-toolbar" containerStyle={{ position: "absolute", left: 0, top: DEFAULT_TOOLBAR_SIZE, zIndex: TB_Z_INDEX, right: 0 }} />
+                        <ToolbarContainer id="ToolbarSecondary" containerClass="slate-toolbar-secondary" containerStyle={{ position: "absolute", left: 0, top: (DEFAULT_TOOLBAR_SIZE * 2), zIndex: TB_Z_INDEX, right: 0 }} />
+                        <div style={{ position: "absolute", left: 0, right: 0, top: topOffset, bottom: 0 }}>
+                            <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />
+                            {(() => {
+                                if (hasNavigator) {
+                                    return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
+                                }
+                            })()}
+                        </div>
+                        <ViewerApiShim />
+                    </div>
+                </SplitterLayout>
+            </div>
+            {(() => {
+                if (hasStatusBar) {
+                    return <div className="slate-status-bar" style={{ position: "absolute", left: 0, bottom: 0, right: 0, height: bottomOffset }}>
+                        <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={locale} />
+                        <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={locale} />
+                        <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={locale} />
+                        <PlaceholderComponent id={DefaultComponentNames.ViewSize} locale={locale} />
+                        <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={locale} />
+                    </div>;
+                }
+            })()}
             <ModalLauncher />
             <FlyoutRegionContainer />
             <InitWarningDisplay />

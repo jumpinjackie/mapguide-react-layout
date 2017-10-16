@@ -46,6 +46,7 @@ export class ManageLayers extends React.Component<IManageLayersProps, any> {
         const { onRemoveLayer } = this.props;
         if (selectedNode && onRemoveLayer) {
             onRemoveLayer(selectedNode.id);
+            this.setState({ selectedNode: null });
         }
     }
     private forEachNode(nodes: ITreeNode[], callback: (node: ITreeNode) => void) {

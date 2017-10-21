@@ -33,6 +33,8 @@ mapguide-react-layout could not be possible without the following tools and libr
  * [Blueprint](http://blueprintjs.com/)
  * [sidebar-v2](https://github.com/Turbo87/sidebar-v2)
 
+mapguide-react-layout uses icons from the Fugue icons set, by [Yusuke Kamiyamane](http://p.yusukekamiyamane.com)
+
 # License
 
 mapguide-react-layout is licensed under the MIT license.

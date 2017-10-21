@@ -8,7 +8,7 @@
 
 mapguide-react-layout is a modern map viewer for MapGuide.
 
-It is built from the ground up with modern web technologies ([React](https://facebook.github.io/react/), [OpenLayers 3](http://openlayers.org/), [TypeScript](https://www.typescriptlang.org/)) to be **the definitive map viewer** for [MapGuide Open Source](http://mapguide.osgeo.org) or [Autodesk Infrastructure Map Server](http://www.autodesk.com/products/infrastructure-map-server/overview)
+It is built from the ground up with modern web technologies ([React](https://facebook.github.io/react/), [OpenLayers](http://openlayers.org/), [TypeScript](https://www.typescriptlang.org/)) to be **the definitive map viewer** for [MapGuide Open Source](http://mapguide.osgeo.org) or [Autodesk Infrastructure Map Server](http://www.autodesk.com/products/infrastructure-map-server/overview)
 
 It aims for reasonable compatibility with the existing Web Layout (AJAX Viewer) and Flexible Layout (Fusion)configuration documents that drive the existing AJAX and Fusion map viewers, ensuring an authoring and development experience similar to MapGuide's existing viewer offerings.
 
@@ -69,6 +69,8 @@ mapguide-react-layout could not be possible without the following tools and libr
  * [React](https://facebook.github.io/react/)
  * [Blueprint](http://blueprintjs.com/)
  * [sidebar-v2](https://github.com/Turbo87/sidebar-v2)
+
+mapguide-react-layout uses icons from the Fugue icons set, by [Yusuke Kamiyamane](http://p.yusukekamiyamane.com)
 
 # License
 

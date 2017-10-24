@@ -60,7 +60,7 @@
     "ol": "4.4.2",
     "proj4": "2.4.4",
     "prop-types": "15.6.0",
-    "query-string": "5.0.0",
+    "query-string": "5.0.1",
     "react": "^16.0.0",
     "react-addons-css-transition-group": "15.6.2",
     "react-addons-test-utils": "15.6.2",

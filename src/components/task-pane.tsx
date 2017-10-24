@@ -8,8 +8,6 @@ import {
     DEFAULT_TOOLBAR_SIZE,
     TOOLBAR_BACKGROUND_COLOR
 } from "./toolbar";
-import queryString = require("query-string");
-const parse = require("url-parse");
 import { PlaceholderComponent } from "../api/registry/component";
 import { tr } from "../api/i18n";
 import {

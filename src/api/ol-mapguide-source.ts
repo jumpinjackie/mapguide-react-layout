@@ -1,3 +1,12 @@
+/**
+ * ol-mapguide-source.ts
+ * 
+ * This is an emergency implementation of ol.source.ImageMapGuide as insurance should ol.source.ImageMapGuide
+ * be pulled from OpenLayers in the future.
+ * 
+ * This is currently not the case, thus this entire module is not used
+ */
+
 import ImageSource from "ol/source/image";
 import ol from "ol";
 import olExtent from "ol/extent";
@@ -5,54 +14,7 @@ import olEvents from "ol/events";
 import olImage from "ol/image";
 import olUri from "ol/uri";
 import olProjection from "ol/proj/projection";
-
-export interface MapGuideImageSourceOptions {
-    /**
-     * The mapagent url.
-     */
-    url?: string;
-    /**
-     * The display resolution. Default is `96`.
-     */
-    displayDpi?: number;
-    /**
-     * The meters-per-unit value. Default is `1`.
-     */
-    metersPerUnit?: number;
-    /**
-     * Use the `ol.Map#pixelRatio` value when requesting the image from the remote
-     * server. Default is `true`.
-     */
-    hidpi?: boolean;
-    /**
-     * If `true`, will use `GETDYNAMICMAPOVERLAYIMAGE`.
-     */
-    useOverlay?: boolean;
-    /**
-     * Projection.
-     */
-    projection?: ol.ProjectionLike;
-    /**
-     * Ratio. `1` means image requests are the size of the map viewport, `2` means
-     * twice the width and height of the map viewport, and so on. Must be `1` or
-     * higher. Default is `1`.
-     */
-    ratio?: number;
-    /**
-     * Resolutions. If specified, requests will be made for these resolutions only.
-     */
-    resolutions?: number[];
-    /**
-     * Optional function to load an image given a URL.
-     */
-    imageLoadFunction?: ol.ImageLoadFunctionType;
-    /**
-     * Additional parameters.
-     */
-    params?: any;
-    crossOrigin?: string;
-    defaultImageLoadFunction?: ol.ImageLoadFunctionType;
-}
+import { MapGuideImageSourceOptions } from "./common";
 
 // Inlining impl because ol.source.Image.defaultImageLoadFunction is not exported
 function defaultImageLoadFunction(image: any, src: string) {
@@ -82,7 +44,7 @@ function scaleFromCenter(extent: ol.Extent, value: number) {
  * 
  * @param options 
  */
-var MapGuideImageSource = function(options: MapGuideImageSourceOptions): void {
+export const MapGuideImageSource = function(options: MapGuideImageSourceOptions): void {
     ImageSource.call(this, {
         projection: options.projection,
         resolutions: options.resolutions
@@ -288,18 +250,3 @@ MapGuideImageSource.prototype.setImageLoadFunction = function (imageLoadFunction
     this.imageLoadFunction_ = imageLoadFunction;
     this.changed();
 };
-
-export interface IMapGuideImageSource {
-    on(event: string, handler: Function): void;
-    updateParams(params: any): void;
-}
-
-export function isMapGuideImageSource(arg: any): arg is IMapGuideImageSource {
-    return typeof(arg.updateParams) != 'undefined';
-}
-
-export default function createMapGuideSource(options: MapGuideImageSourceOptions): any {
-    const ctor: any = MapGuideImageSource;
-    const source = new ctor(options);
-    return source;
-}

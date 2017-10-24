@@ -1934,3 +1934,56 @@ export interface WMSServiceDescription {
     Fees: string;
     AccessConstraints: string;
 }
+
+export interface IMapGuideImageSource {
+    on(event: string, handler: Function): void;
+    updateParams(params: any): void;
+}
+
+export interface MapGuideImageSourceOptions {
+    /**
+     * The mapagent url.
+     */
+    url?: string;
+    /**
+     * The display resolution. Default is `96`.
+     */
+    displayDpi?: number;
+    /**
+     * The meters-per-unit value. Default is `1`.
+     */
+    metersPerUnit?: number;
+    /**
+     * Use the `ol.Map#pixelRatio` value when requesting the image from the remote
+     * server. Default is `true`.
+     */
+    hidpi?: boolean;
+    /**
+     * If `true`, will use `GETDYNAMICMAPOVERLAYIMAGE`.
+     */
+    useOverlay?: boolean;
+    /**
+     * Projection.
+     */
+    projection?: ol.ProjectionLike;
+    /**
+     * Ratio. `1` means image requests are the size of the map viewport, `2` means
+     * twice the width and height of the map viewport, and so on. Must be `1` or
+     * higher. Default is `1`.
+     */
+    ratio?: number;
+    /**
+     * Resolutions. If specified, requests will be made for these resolutions only.
+     */
+    resolutions?: number[];
+    /**
+     * Optional function to load an image given a URL.
+     */
+    imageLoadFunction?: ol.ImageLoadFunctionType;
+    /**
+     * Additional parameters.
+     */
+    params?: any;
+    crossOrigin?: string;
+    defaultImageLoadFunction?: ol.ImageLoadFunctionType;
+}

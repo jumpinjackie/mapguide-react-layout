@@ -87,7 +87,7 @@
     "coveralls": "3.0.0",
     "cross-env": "5.1.1",
     "css-loader": "0.28.7",
-    "enzyme": "3.1.0",
+    "enzyme": "3.1.1",
     "enzyme-adapter-react-16": "1.0.3",
     "file-loader": "1.1.5",
     "jest": "21.2.1",

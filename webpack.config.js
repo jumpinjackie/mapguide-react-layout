@@ -3,6 +3,8 @@
 const path = require('path');
 const webpack = require('webpack');
 const loaders = require('./webpack/loaders');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+
 
 const baseAppEntries = [
     './src/entries/library.tsx',
@@ -25,11 +27,16 @@ const basePlugins = [
     new webpack.DefinePlugin({
         __DEV__: process.env.NODE_ENV !== 'production',
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
-    })
+    }),
+    new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true })
 ];
 
 const devPlugins = [
     new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.WatchIgnorePlugin([
+        /\.js$/,
+        /\.d\.ts$/
+    ])
 ];
 
 const prodPlugins = [

@@ -103,7 +103,7 @@
     "source-map-loader": "0.2.3",
     "style-loader": "0.19.0",
     "thread-loader": "^1.1.2",
-    "ts-jest": "21.1.4",
+    "ts-jest": "21.2.0",
     "ts-loader": "3.1.1",
     "tslint": "5.8.0",
     "typedoc": "0.9.0",
@@ -124,7 +124,9 @@
     "moduleFileExtensions": [
       "ts",
       "tsx",
-      "js"
+      "js",
+      "jsx",
+      "json"
     ],
     "setupFiles": [
       "raf/polyfill"

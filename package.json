@@ -65,7 +65,7 @@
     "react-addons-css-transition-group": "15.6.2",
     "react-addons-test-utils": "15.6.2",
     "react-addons-update": "15.6.2",
-    "react-dom": "16.1.0",
+    "react-dom": "16.1.1",
     "react-draggable": "3.0.3",
     "react-measure": "1.4.7",
     "react-redux": "5.0.6",

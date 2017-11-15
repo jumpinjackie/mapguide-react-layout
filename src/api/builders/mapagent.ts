@@ -51,7 +51,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
-            },
+            } as any,
             method: "GET"
         });
         if (isErrorResponse(response)) {
@@ -73,7 +73,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         const response = await fetch(url, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-            },
+            } as any,
             method: "POST",
             body: serialize(data) //form
         });
@@ -114,7 +114,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         const response = await fetch(url, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-            },
+            } as any,
             method: "POST",
             body: serialize(data) //form
         });
@@ -131,7 +131,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         const response = await fetch(url, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-            },
+            } as any,
             method: "POST",
             body: serialize(data) //form
         });

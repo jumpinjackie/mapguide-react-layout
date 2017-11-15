@@ -45,7 +45,7 @@ export class Client implements Request.IMapGuideClient {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
-                },
+                } as any,
                 method: "GET"
             })
             .then(response => {
@@ -81,7 +81,7 @@ export class Client implements Request.IMapGuideClient {
             fetch(url, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                },
+                } as any,
                 method: "POST",
                 body: serialize(data) //form
             })

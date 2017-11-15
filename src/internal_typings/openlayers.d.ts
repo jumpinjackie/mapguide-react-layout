@@ -1,4 +1,4 @@
-// Type definitions for OpenLayers v4.4.1
+// Type definitions for OpenLayers v4.5.0
 // Project: http://openlayers.org/
 // Definitions by: Jackie Ng <https://github.com/jumpinjackie>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -14901,6 +14901,11 @@ If using named maps, a key-value lookup with the template parameters.
              */
             setUrl(url: string): void;
             /**
+             * Set the URLs to use for requests.
+             * @param urls  (Required) URLs.
+             */
+            setUrls(urls: string[]): void;
+            /**
              * Return the tile grid of the tile source.
              */
             getTileGrid(): ol.tilegrid.TileGrid;
@@ -22848,199 +22853,111 @@ declare module "ol/tilegrid/wmts" {
  * ES2015 module declaration for ol.control
  */
 declare module "ol/control" {
-    export default {
-        defaults: ol.control.defaults
-    };
+    const _default: typeof ol.control;
+    export default _default;
 }
 /*
  * ES2015 module declaration for ol.events.condition
  */
 declare module "ol/events/condition" {
-    export default {
-        altKeyOnly: ol.events.condition.altKeyOnly,
-        altShiftKeysOnly: ol.events.condition.altShiftKeysOnly,
-        always: ol.events.condition.always,
-        click: ol.events.condition.click,
-        never: ol.events.condition.never,
-        pointerMove: ol.events.condition.pointerMove,
-        singleClick: ol.events.condition.singleClick,
-        doubleClick: ol.events.condition.doubleClick,
-        noModifierKeys: ol.events.condition.noModifierKeys,
-        platformModifierKeyOnly: ol.events.condition.platformModifierKeyOnly,
-        shiftKeyOnly: ol.events.condition.shiftKeyOnly,
-        targetNotEditable: ol.events.condition.targetNotEditable,
-        mouseOnly: ol.events.condition.mouseOnly,
-        primaryAction: ol.events.condition.primaryAction
-    };
+    const _default: typeof ol.events.condition;
+    export default _default;
 }
 /*
  * ES2015 module declaration for ol.format.filter
  */
 declare module "ol/format/filter" {
-    export default {
-        and: ol.format.filter.and,
-        or: ol.format.filter.or,
-        not: ol.format.filter.not,
-        bbox: ol.format.filter.bbox,
-        intersects: ol.format.filter.intersects,
-        within: ol.format.filter.within,
-        equalTo: ol.format.filter.equalTo,
-        notEqualTo: ol.format.filter.notEqualTo,
-        lessThan: ol.format.filter.lessThan,
-        lessThanOrEqualTo: ol.format.filter.lessThanOrEqualTo,
-        greaterThan: ol.format.filter.greaterThan,
-        greaterThanOrEqualTo: ol.format.filter.greaterThanOrEqualTo,
-        isNull: ol.format.filter.isNull,
-        between: ol.format.filter.between,
-        like: ol.format.filter.like,
-        during: ol.format.filter.during
-    };
+    const _default: typeof ol.format.filter;
+    export default _default;
 }
 /*
  * ES2015 module declaration for ol.interaction
  */
 declare module "ol/interaction" {
-    export default {
-        defaults: ol.interaction.defaults
-    };
+    const _default: typeof ol.interaction;
+    export default _default;
 }
 /*
  * ES2015 module declaration for ol.proj
  */
 declare module "ol/proj" {
-    export default {
-        setProj4: ol.proj.setProj4,
-        getPointResolution: ol.proj.getPointResolution,
-        addEquivalentProjections: ol.proj.addEquivalentProjections,
-        addProjection: ol.proj.addProjection,
-        addCoordinateTransforms: ol.proj.addCoordinateTransforms,
-        fromLonLat: ol.proj.fromLonLat,
-        toLonLat: ol.proj.toLonLat,
-        get: ol.proj.get,
-        equivalent: ol.proj.equivalent,
-        getTransform: ol.proj.getTransform,
-        transform: ol.proj.transform,
-        transformExtent: ol.proj.transformExtent
-    };
+    const _default: typeof ol.proj;
+    export default _default;
 }
 /*
  * ES2015 module declaration for ol.render
  */
 declare module "ol/render" {
-    export default {
-        toContext: ol.render.toContext
-    };
+    const _default: typeof ol.render;
+    export default _default;
 }
 /*
  * ES2015 module declaration for ol.tilegrid
  */
 declare module "ol/tilegrid" {
-    export default {
-        createXYZ: ol.tilegrid.createXYZ
-    };
+    const _default: typeof ol.tilegrid;
+    export default _default;
 }
 /*
  * ES2015 module declaration for ol.color
  */
 declare module "ol/color" {
-    export default {
-        asArray: ol.color.asArray,
-        asString: ol.color.asString
-    };
+    const _default: typeof ol.color;
+    export default _default;
 }
 /*
  * ES2015 module declaration for ol.colorlike
  */
 declare module "ol/colorlike" {
-    export default {
-        asColorLike: ol.colorlike.asColorLike
-    };
+    const _default: typeof ol.colorlike;
+    export default _default;
 }
 /*
  * ES2015 module declaration for ol.coordinate
  */
 declare module "ol/coordinate" {
-    export default {
-        add: ol.coordinate.add,
-        createStringXY: ol.coordinate.createStringXY,
-        format: ol.coordinate.format,
-        rotate: ol.coordinate.rotate,
-        toStringHDMS: ol.coordinate.toStringHDMS,
-        toStringXY: ol.coordinate.toStringXY
-    };
+    const _default: typeof ol.coordinate;
+    export default _default;
 }
 /*
  * ES2015 module declaration for ol.easing
  */
 declare module "ol/easing" {
-    export default {
-        easeIn: ol.easing.easeIn,
-        easeOut: ol.easing.easeOut,
-        inAndOut: ol.easing.inAndOut,
-        linear: ol.easing.linear,
-        upAndDown: ol.easing.upAndDown
-    };
+    const _default: typeof ol.easing;
+    export default _default;
 }
 /*
  * ES2015 module declaration for ol.extent
  */
 declare module "ol/extent" {
-    export default {
-        boundingExtent: ol.extent.boundingExtent,
-        buffer: ol.extent.buffer,
-        containsCoordinate: ol.extent.containsCoordinate,
-        containsExtent: ol.extent.containsExtent,
-        containsXY: ol.extent.containsXY,
-        createEmpty: ol.extent.createEmpty,
-        equals: ol.extent.equals,
-        extend: ol.extent.extend,
-        getArea: ol.extent.getArea,
-        getBottomLeft: ol.extent.getBottomLeft,
-        getBottomRight: ol.extent.getBottomRight,
-        getCenter: ol.extent.getCenter,
-        getHeight: ol.extent.getHeight,
-        getIntersection: ol.extent.getIntersection,
-        getSize: ol.extent.getSize,
-        getTopLeft: ol.extent.getTopLeft,
-        getTopRight: ol.extent.getTopRight,
-        getWidth: ol.extent.getWidth,
-        intersects: ol.extent.intersects,
-        isEmpty: ol.extent.isEmpty,
-        applyTransform: ol.extent.applyTransform
-    };
+    const _default: typeof ol.extent;
+    export default _default;
 }
 /*
  * ES2015 module declaration for ol.featureloader
  */
 declare module "ol/featureloader" {
-    export default {
-        xhr: ol.featureloader.xhr
-    };
+    const _default: typeof ol.featureloader;
+    export default _default;
 }
 /*
  * ES2015 module declaration for ol.loadingstrategy
  */
 declare module "ol/loadingstrategy" {
-    export default {
-        all: ol.loadingstrategy.all,
-        bbox: ol.loadingstrategy.bbox,
-        tile: ol.loadingstrategy.tile
-    };
+    const _default: typeof ol.loadingstrategy;
+    export default _default;
 }
 /*
  * ES2015 module declaration for ol.size
  */
 declare module "ol/size" {
-    export default {
-        toSize: ol.size.toSize
-    };
+    const _default: typeof ol.size;
+    export default _default;
 }
 /*
  * ES2015 module declaration for ol.xml
  */
 declare module "ol/xml" {
-    export default {
-        getAllTextContent: ol.xml.getAllTextContent,
-        parse: ol.xml.parse
-    };
+    const _default: typeof ol.xml;
+    export default _default;
 }

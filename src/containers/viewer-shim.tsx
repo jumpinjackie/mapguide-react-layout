@@ -89,7 +89,7 @@ class FusionApiShim {
                 fetch(reqUrl, {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                    },
+                    } as any,
                     method: "POST",
                     body: serialize(options.parameters, false) //form
                 }).then(res => {

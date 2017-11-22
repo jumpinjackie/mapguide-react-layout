@@ -80,7 +80,7 @@
     "whatwg-fetch": "2.0.3"
   },
   "devDependencies": {
-    "@types/enzyme": "3.1.4",
+    "@types/enzyme": "3.1.5",
     "@types/jest": "21.1.7",
     "bestzip": "1.1.4",
     "cache-loader": "^1.1.0",

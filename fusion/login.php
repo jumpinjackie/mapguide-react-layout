@@ -21,7 +21,9 @@ if(isset($_SESSION['session']) || ($login==$setlogin && $pass==$setpass))
     $_SESSION['login'] = $login;
     $response = array(
         "status" => "0",
-        "user" => $login
+        "data" => array(
+            "user" => $login
+        )
     );
 }
 

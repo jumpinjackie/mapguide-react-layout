@@ -1,0 +1,109 @@
+<WidgetInfo>
+  <Type>Scalebar</Type>
+  <LocalizedType>Scale Bar</LocalizedType>
+  <Description>Outputs a cartographic scalebar</Description>
+  <Location></Location>
+  <Label>Scalebar</Label>
+  <Tooltip></Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl></ImageUrl>
+  <ImageClass></ImageClass>
+  <StandardUi>false</StandardUi>
+  <ContainableBy></ContainableBy>
+  <Parameter>
+    <Name>Style</Name>
+    <Description>Name of a style for the scalebbar</Description>
+    <Type>String</Type>
+    <Label>Style</Label>
+    <AllowedValue>
+      <Name>fancy</Name>
+      <Label>Fancy</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>fat</Name>
+      <Label>Fat</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>thin</Name>
+      <Label>Thin</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>thinner</Name>
+      <Label>Thinner</Label>
+    </AllowedValue>
+    <DefaultValue>thin</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>DisplaySystem</Name>
+    <Description>Units to display</Description>
+    <Type>String</Type>
+    <Label>Display units</Label>
+    <AllowedValue>
+      <Name>metric</Name>
+      <Label>Metric</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>english</Name>
+      <Label>English</Label>
+    </AllowedValue>
+    <DefaultValue>metric</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>MinWidth</Name>
+    <Description>Minimum width of the scalebar in pixels</Description>
+    <Type>integer</Type>
+    <Label>Minimum width</Label>
+    <DefaultValue>100</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>MaxWidth</Name>
+    <Description>Maximum width of the scalebar in pixels</Description>
+    <Type>integer</Type>
+    <Label>Maximum width</Label>
+    <DefaultValue>200</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Divisions</Name>
+    <Description>The number of major divsions to use</Description>
+    <Type>integer</Type>
+    <Label>Divisions</Label>
+    <DefaultValue>2</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>SubDivisions</Name>
+    <Description>The number of minor divisions within each major divsion</Description>
+    <Type>integer</Type>
+    <Label>SubDivisions</Label>
+    <DefaultValue>2</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>ShowMinorMeasures</Name>
+    <Description>A flag to indicate if the minor divsions should be displayed</Description>
+    <Type>boolean</Type>
+    <Label>ShowMinorMeasures</Label>
+    <DefaultValue>true</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>AbbreviateLabel</Name>
+    <Description>A flag to indicate if the full or an abbreviated units name is displayed</Description>
+    <Type>boolean</Type>
+    <Label>Abbreviate label</Label>
+    <DefaultValue>true</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>SingleLine</Name>
+    <Description>A flag to indicate if the scalebar should bee drawn all on a single line</Description>
+    <Type>boolean</Type>
+    <Label>Single line</Label>
+    <DefaultValue>false</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

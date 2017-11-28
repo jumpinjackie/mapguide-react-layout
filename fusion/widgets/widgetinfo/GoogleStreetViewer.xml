@@ -1,0 +1,52 @@
+<WidgetInfo>
+  <Type>GoogleStreetViewer</Type>
+  <LocalizedType>Google StreetViewer</LocalizedType>
+  <Description>This widget is used to show Google StreetView on the map</Description>
+  <Location></Location>
+  <Label>Google StreetView</Label>
+  <Tooltip>Click to show Google StreetView</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl>../../../widgets/GoogleStreetViewer/GoogleStreetView.png</ImageUrl>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>Target</Name>
+    <Label>Target</Label>
+    <Type>target</Type>
+    <Description>The frame, window, or TaskPane in which to display Google StreetView for the widget. If empty, a new window is used</Description>
+    <IsMandatory>true</IsMandatory>
+    <DefaultValue>TaskPane</DefaultValue>
+  </Parameter>
+  <Parameter>
+    <Name>SymbolLayerName</Name>
+    <Label>Symbol Layer Name</Label>
+    <Description>The name of layer that shows the navigator symbol on map</Description>
+    <Type>string</Type>
+    <IsMandatory>false</IsMandatory>
+    <DefaultValue>GoogleStreetViewerSymbolLayer</DefaultValue>
+  </Parameter>
+  <Parameter>
+    <Name>ShowDirection</Name>
+    <Label>Show Direction</Label>
+    <Type>boolean</Type>
+    <Description>Whether to show a line to describe the current direction of the camera</Description>
+    <IsMandatory>false</IsMandatory>
+    <DefaultValue>true</DefaultValue>
+  </Parameter>
+  <Parameter>
+    <Name>DirectionLength</Name>
+    <Label>Direction Line Length</Label>
+    <Type>integer</Type>
+    <Description>The length of the line to describe the current direction of the camera</Description>
+    <IsMandatory>false</IsMandatory>
+    <DefaultValue>22</DefaultValue>
+  </Parameter>
+  <Parameter>
+    <Name>AdditionalParameter</Name>
+    <Description>A list of key/value pairs that will be added to the URL</Description>
+    <Type>XML</Type>
+    <Label>Additional parameter</Label>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

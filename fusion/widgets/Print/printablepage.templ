@@ -1,0 +1,87 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>%s</title>
+    <style type="text/css">
+    span.Title
+    {
+        font-family: __#@font#__;
+        font-size:22px;
+        font-weight:bold;
+    }
+    </style>
+    <script language="javascript">
+    var agent = navigator.userAgent.toLowerCase();
+    var msie = agent.indexOf("msie") != -1;
+    var safari = agent.indexOf("safari") != -1;
+    var firefox = agent.indexOf("firefox") != -1;
+    var clientAgent = "Fusion Viewer";
+    
+    var webAgent = '%s';
+    var scale = %s;
+    var centerX = %s;
+    var centerY = %s;
+    var dpi = %s;
+    var mapName = '%s';
+    var sessionId = '%s';
+    var locale = '%s';
+    var isTitle = %s, isLegend= %s, isArrow = %s;
+
+    function InitDocument()
+    {
+        var mapWidth = 480, mapHeight = 580;
+        if(!isTitle)
+        {
+            document.getElementById("Title").style.height = "0px";
+            mapHeight += 27;
+        }
+        if(isLegend)
+        {
+            var legendElt = document.getElementById("Legend");
+            legendElt.style.width = "180px";
+            legendElt.innerHTML = "<img id=\"legendImage\" width=\"180\" height=\"" + mapHeight + "\" src=\"" + webAgent + "?OPERATION=GETMAPLEGENDIMAGE&VERSION=1.0.0&MAPNAME=" + encodeURIComponent(mapName) + "&SESSION=" + sessionId + "&CLIENTAGENT=" + encodeURIComponent(clientAgent) + "&WIDTH=180&HEIGHT=" + mapHeight + "&FORMAT=PNG\" style=\"visibility: hidden\" onload=\"OnImageLoaded('legendImage');\">";
+        }
+        else
+            mapWidth += 180;
+
+        if(!isArrow)
+        {
+            mapHeight += 58;
+            document.getElementById("ScaleAndArrow").style.height = "0px";
+        }
+        
+        var imgReq = webAgent + "?OPERATION=GETMAPIMAGE&VERSION=1.0.0&FORMAT=PNG&LOCALE="+locale+"&MAPNAME=" + encodeURIComponent(mapName) + "&SESSION=" + sessionId + "&SETDISPLAYWIDTH=" + mapWidth + "&SETDISPLAYHEIGHT=" + mapHeight + "&SETDISPLAYDPI=" + dpi + "&SETVIEWSCALE=" + scale + "&SETVIEWCENTERX=" + centerX + "&SETVIEWCENTERY=" + centerY + "&SEQ=" + Math.random() + "&CLIENTAGENT=" + encodeURIComponent(clientAgent);
+        
+        var mapElt = document.getElementById("Map");
+        mapElt.style.width = mapWidth + "px";
+        mapElt.innerHTML = "<img id=\"mapImage\" width=\"" + mapWidth + "\" height=\"" + mapHeight + "\" src=\""+imgReq+"\" style=\"visibility: hidden;\" onload=\"OnImageLoaded('mapImage');\">";
+
+        if(isArrow)
+            document.getElementById("Arrow").innerHTML = "<img width=\"38\" height=\"58\" src=\"pr_north.gif\">";
+    }
+
+    function OnImageLoaded(id)
+    {
+        document.getElementById(id).style.visibility = "visible";
+    }
+
+    </script>
+  </head>
+  <body topmargin="5" bottommargin="5" leftmargin="5" rightmargin="5" marginwidth="5" marginheight="5" onload="InitDocument()">
+    <table border="0" cellpadding="0" cellspacing="0">
+      <tr id="Title" height="27">
+        <td colspan="2" align="center"><span class="Title">%s</span></td>
+      </tr>
+      <tr>
+        <td id="Legend" width="1" ></td>
+        <td id="Map" width="480" style="border: 1px;"></td>
+      </tr>
+    </table>
+    <table border="0" cellpadding="0" cellspacing="0">
+      <tr id="ScaleAndArrow">
+         <td id="Scale" width="622"></td>
+         <td id="Arrow" align="center" width="38"></td>
+      </tr>
+    </table>
+  </body>
+</body>

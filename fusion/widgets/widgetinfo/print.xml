@@ -1,0 +1,59 @@
+<WidgetInfo>
+  <Type>Print</Type>
+  <LocalizedType>Print</LocalizedType>
+  <Description>Produces a printable version of the page</Description>
+  <Label>Print</Label>
+  <Tooltip>Print the current map view</Tooltip>
+  <ImageUrl>images/icons.png</ImageUrl>
+  <ImageClass>file-print</ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>ShowPrintUI</Name>
+    <Description>Show the print dialog to allow configuration before printing</Description>
+    <Type>boolean</Type>
+    <Label>Show print dialog</Label>
+    <DefaultValue>true</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>ShowTitle</Name>
+    <Description>Show the title on the page</Description>
+    <Type>boolean</Type>
+    <Label>Show title</Label>
+    <DefaultValue>false</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>PageTitle</Name>
+    <Description>The title for the page</Description>
+    <Type>string</Type>
+    <Label>Page title</Label>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>ShowLegend</Name>
+    <Description>Show the legend on the page</Description>
+    <Type>boolean</Type>
+    <Label>Show legend</Label>
+    <DefaultValue>false</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>ShowNorthArrow</Name>
+    <Description>Show the north arrow on the page</Description>
+    <Type>boolean</Type>
+    <Label>Show north arrow</Label>
+    <DefaultValue>false</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>ImageBaseUrl</Name>
+    <Description>relative URL to the images directory for dialog</Description>
+    <Type>string</Type>
+    <Label>Image Base URL</Label>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

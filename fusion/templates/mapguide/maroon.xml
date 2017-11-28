@@ -1,0 +1,67 @@
+<TemplateInfo>
+<Name>Maroon</Name>
+<LocationUrl>fusion/templates/mapguide/maroon/index.html</LocationUrl>
+<Description>Maroon template</Description>
+<PreviewImageUrl>fusion/templates/mapguide/maroon/preview.png</PreviewImageUrl>
+
+<Panel>
+<Name>FileMenu</Name>
+<Label>Toolbar (Main Menu)</Label>
+<Description>The horizontal menu bar displayed at the top of the screen</Description>
+</Panel>
+
+<Panel>
+<Name>Toolbar</Name>
+<Label>Toolbar (Primary)</Label>
+<Description>The main toolbar, displayed across the top of the map</Description>
+</Panel>
+
+<Panel>
+<Name>ToolbarVertical</Name>
+<Label>Toolbar (Vertical)</Label>
+<Description>The vertical toolbar, displayed on the left side of the map</Description>
+</Panel>
+
+<Panel>
+<Name>Statusbar</Name>
+<Label>Status Bar</Label>
+<Description>The status bar, displayed below the map</Description>
+</Panel>
+
+<Panel>
+<Name>Map</Name>
+<Label>Map</Label>
+<Description>The main map display</Description>
+</Panel>
+
+<Panel>
+<Name>OverviewMap</Name>
+<Label>Map (Overview)</Label>
+<Description>The panel containing the overview map</Description>
+</Panel>
+
+<Panel>
+<Name>TaskPane</Name>
+<Label>Task Pane</Label>
+<Description>The panel displaying the task pane</Description>
+</Panel>
+
+<Panel>
+<Name>Legend</Name>
+<Label>Legend</Label>
+<Description>The panel displaying the legend</Description>
+</Panel>
+
+<Panel>
+<Name>SelectionPanel</Name>
+<Label>Selection Panel</Label>
+<Description>The panel displaying current selection</Description>
+</Panel>
+
+<Panel>
+<Name>Navigator</Name>
+<Label>Navigator (Zoom Slider)</Label>
+<Description>The navigator (zoom slider) that floats over the map</Description>
+</Panel>
+
+</TemplateInfo>

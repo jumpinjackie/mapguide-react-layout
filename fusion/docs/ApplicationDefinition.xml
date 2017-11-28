@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApplicationDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:noNamespaceSchemaLocation="ApplicationDefinition-1.0.0.xsd">
+  <MapSet xsi:type="MapSetType">
+    <Map id="xyz" xsi:type="MapType">
+        <InitialView xsi:type="MapViewType">
+            <CenterX>1</CenterX>
+            <CenterY>1</CenterY>
+            <Scale>1</Scale>
+        </InitialView>
+      <Layer xsi:type="MapGuideLayerType">
+        <Type>MapGuide</Type>
+        <SingleTile>true</SingleTile>
+        <ResourceId>Library://Samples/Sheboyan/Maps/Sheboygan.MapDefinition</ResourceId>
+      </Layer>
+    </Map>
+  </MapSet>
+  <WidgetSet xsi:type="WidgetSetType">
+      <Container xsi:type="UiItemContainerType">
+        <Name>ContextMenu</Name>
+        <Type>ContextMenu</Type>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>menuRefreshMap</Widget>
+        </Item>
+        <Item xsi:type="SeparatorItemType">
+          <Function>Separator</Function>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>menuPan</Widget>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>menuZoomInRectangle</Widget>
+        </Item>
+        <Item xsi:type="SeparatorItemType">
+          <Function>Separator</Function>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>menuZoomInFixed</Widget>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>menuZoomOutFixed</Widget>
+        </Item>
+        <Item xsi:type="SeparatorItemType">
+          <Function>Separator</Function>
+        </Item>
+        <Item xsi:type="FlyoutItemType">
+          <Function>Flyout</Function>
+          <Label>Zoom</Label>
+          <Tooltip>Open the zoom menu</Tooltip>
+          <ImageUrl/>
+          <ImageClass/>
+          <Item xsi:type="WidgetItemType">
+            <Function>Widget</Function>
+            <Widget>menuInitialMapView</Widget>
+          </Item>
+          <Item xsi:type="WidgetItemType">
+            <Function>Widget</Function>
+            <Widget>menuPreviousView</Widget>
+          </Item>
+          <Item xsi:type="WidgetItemType">
+            <Function>Widget</Function>
+            <Widget>menuNextView</Widget>
+          </Item>
+          <Item xsi:type="WidgetItemType">
+            <Function>Widget</Function>
+            <Widget>menuInitialMapScaleAndCenter</Widget>
+          </Item>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>menuSelect</Widget>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>menuClearSelection</Widget>
+        </Item>
+        <Item xsi:type="FlyoutItemType">
+          <Function>Flyout</Function>
+          <Label>Select More</Label>
+          <Tooltip>Open the select menu</Tooltip>
+          <ImageUrl/>
+          <ImageClass/>
+          <Item xsi:type="WidgetItemType">
+            <Function>Widget</Function>
+            <Widget>menuSelectRadius</Widget>
+          </Item>
+          <Item xsi:type="WidgetItemType">
+            <Function>Widget</Function>
+            <Widget>menuSelectPolygon</Widget>
+          </Item>
+          <Item xsi:type="WidgetItemType">
+            <Function>Widget</Function>
+            <Widget>menuSelectWithin</Widget>
+          </Item>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>menuBuffer</Widget>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>menuMeasure</Widget>
+        </Item>
+        <Item xsi:type="SeparatorItemType">
+          <Function>Separator</Function>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>menuViewOptions</Widget>
+        </Item>
+        <Item xsi:type="SeparatorItemType">
+          <Function>Separator</Function>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>menuHelp</Widget>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>menuAbout</Widget>
+        </Item>
+      </Container>
+      <Container xsi:type="UiItemContainerType">
+        <Name>Toolbar</Name>
+        <Type>Toolbar</Type>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>GetPrintablePage</Widget>
+        </Item>
+        <Item xsi:type="SeparatorItemType">
+          <Function>Separator</Function>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>Measure</Widget>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>Buffer</Widget>
+        </Item>
+        <Item xsi:type="SeparatorItemType">
+          <Function>Separator</Function>
+        </Item>
+        <Item xsi:type="FlyoutItemType">
+          <Function>Flyout</Function>
+          <Label>Zoom</Label>
+          <Tooltip>Open the zoom menu</Tooltip>
+          <ImageUrl/>
+          <ImageClass/>
+          <Item xsi:type="WidgetItemType">
+            <Function>Widget</Function>
+            <Widget>menuPreviousView</Widget>
+          </Item>
+          <Item xsi:type="WidgetItemType">
+            <Function>Widget</Function>
+            <Widget>menuNextView</Widget>
+          </Item>
+          <Item xsi:type="WidgetItemType">
+            <Function>Widget</Function>
+            <Widget>menuInitialMapScaleAndCenter</Widget>
+          </Item>
+        </Item>
+        <Item xsi:type="SeparatorItemType">
+          <Function>Separator</Function>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>ZoomRectangle</Widget>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>ZoomInFixed</Widget>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>ZoomOutFixed</Widget>
+        </Item>
+        <Item xsi:type="SeparatorItemType">
+          <Function>Separator</Function>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>Select</Widget>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>Pan</Widget>
+        </Item>
+      </Container>
+      <Container xsi:type="UiItemContainerType">
+        <Name>Toolbar</Name>
+        <Type>StatusBar</Type>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>CursorPosition</Widget>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>SelectionInfo</Widget>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>EditableScale</Widget>
+        </Item>
+        <Item xsi:type="WidgetItemType">
+          <Function>Widget</Function>
+          <Widget>ViewArea</Widget>
+        </Item>
+      </Container>
+    <Widget xsi:type="WidgetType">
+      <Name>Map</Name>
+      <Type>MGMap</Type>
+      <Description>The map.</Description>
+      <Extension xsi:type="CustomContentType">
+        <MapId>xyz</MapId>
+      </Extension>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>GetPrintablePage</Name>
+      <Type>Print</Type>
+      <Description>Get printer-friendly page.</Description>
+      <Extension xsi:type="CustomContentType">
+        <ShowPrintUI>false</ShowPrintUI>
+        <PageTitle>Some Title</PageTitle>
+        <ShowLegend>false</ShowLegend>
+        <ShowNorthArrow>false</ShowNorthArrow>
+      </Extension>
+      <ImageUrl>images/icons/print.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Get printable page.</Tooltip>
+      <Label/>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuRefreshMap</Name>
+      <Type>RefreshMap</Type>
+      <Description>Refreshes the map image.</Description>
+      <ImageUrl>images/icons/refresh.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Refresh map and reload all layers, keeping the current center point and scale.</Tooltip>
+      <Label>Refresh Map</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>Pan</Name>
+      <Type>Pan</Type>
+      <Description>Drag the map to view areas out of range.</Description>
+      <ImageUrl>images/icons/pan.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Pan mode</Tooltip>
+      <Label/>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuPan</Name>
+      <Type>Pan</Type>
+      <Description>Drag the map to view areas out of range.</Description>
+      <ImageUrl>images/icons/pan.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Pan mode</Tooltip>
+      <Label/>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>ZoomInRectangle</Name>
+      <Type>Zoom</Type>
+      <Description>Zoom in on an area.</Description>
+      <Extension xsi:type="CustomContentType">
+        <Tolerance>5</Tolerance>
+        <Factor>2</Factor>
+      </Extension>
+      <ImageUrl>images/icons/zoom-in.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Zoom rectangle.</Tooltip>
+      <Label/>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>ZoomInFixed</Name>
+      <Type>ZoomIn</Type>
+      <Description>Zoom in by a preset increment.</Description>
+      <Extension xsi:type="CustomContentType">
+        <Factor>2</Factor>
+      </Extension>
+      <ImageUrl>images/icons/zoom-in.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Zoom rectangle.</Tooltip>
+      <Label/>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuZoomInRectangle</Name>
+      <Type>Zoom</Type>
+      <Description>Zoom in on an area.</Description>
+      <Extension xsi:type="CustomContentType">
+        <Tolerance>5</Tolerance>
+        <Factor>2</Factor>
+      </Extension>
+      <ImageUrl>images/icons/zoom-in.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Zoom In</Tooltip>
+      <Label>Zoom Rectangle</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuZoomInFixed</Name>
+      <Type>ZoomIn</Type>
+      <Description>Zoom in by a preset increment.</Description>
+      <Extension xsi:type="CustomContentType">
+        <Factor>2</Factor>
+      </Extension>
+      <ImageUrl>images/icons/zoom-in.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Zoom In</Tooltip>
+      <Label>Zoom In</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>ZoomOutFixed</Name>
+      <Type>ZoomOut</Type>
+      <Description>Zoom out by a preset increment</Description>
+      <Extension xsi:type="CustomContentType">
+        <Factor>2</Factor>
+      </Extension>
+      <ImageUrl>images/icons/zoom-out.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Zoom In</Tooltip>
+      <Label/>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuZoomOutFixed</Name>
+      <Type>ZoomOut</Type>
+      <Description>Zoom out by a preset increment</Description>
+      <Extension xsi:type="CustomContentType">
+        <Factor>2</Factor>
+      </Extension>
+      <ImageUrl>images/icons/zoom-out.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Zoom Out</Tooltip>
+      <Label>Zoom Out</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuInitialMapView</Name>
+      <Type>InitialMapView</Type>
+      <Description>Fit the extents of the map to the window</Description>
+      <Extension xsi:type="CustomContentType">
+        <ViewType>extent</ViewType>
+      </Extension>
+      <ImageUrl>images/icons/zoom-full.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Initial Map View</Tooltip>
+      <Label>Initial Map View</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuPreviousView</Name>
+      <Type>ExtentHistory</Type>
+      <Description>Go to previous view.</Description>
+      <Extension xsi:type="CustomContentType">
+        <Direction>previous</Direction>
+      </Extension>
+      <ImageUrl>images/icons/view-back.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Previous View</Tooltip>
+      <Label>View Previous</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuNextView</Name>
+      <Type>ExtentHistory</Type>
+      <Description>Go to next view.</Description>
+      <Extension xsi:type="CustomContentType">
+        <Direction>next</Direction>
+      </Extension>
+      <ImageUrl>images/icons/view-forward.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Next View</Tooltip>
+      <Label>View Next</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuInitialMapScaleAndCenter</Name>
+      <Type>InitialMapView</Type>
+      <Description>Zoom to initial map center and scale.</Description>
+      <Extension xsi:type="CustomContentType">
+        <ViewType>center</ViewType>
+      </Extension>
+      <ImageUrl>images/icons/zoom-full.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Initial Map Center and Scale</Tooltip>
+      <Label>Initial Map View</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuZoomSelection</Name>
+      <Type>ZoomToSelection</Type>
+      <Description>Zoom to the extents of the current selection.</Description>
+      <ImageUrl>images/icons/select-zoom.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Zoom to selection.</Tooltip>
+      <Label>Zoom Selection</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuSelect</Name>
+      <Type>Select</Type>
+      <Description>Select features by clicking and dragging.</Description>
+      <ImageUrl>images/icons/select-zoom.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Select mode</Tooltip>
+      <Label>Select mode</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuClearSelection</Name>
+      <Type>ClearSelection</Type>
+      <Description>Clears the current selection.</Description>
+      <ImageUrl>images/icons/select-clear.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip/>
+      <Label>Clear Selection</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuSelectRadius</Name>
+      <Type>SelectRadius</Type>
+      <Description>Click and drag to select all features inside a circle.</Description>
+      <ImageUrl>images/icons/select-radius.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Select Radius</Tooltip>
+      <Label>Select Radius</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuSelectPolygon</Name>
+      <Type>SelectPolygon</Type>
+      <Description>Create a polygon and select all features that fall within.</Description>
+      <ImageUrl>images/icons/select-polygon.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Select Polygon</Tooltip>
+      <Label>Select Polygon</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuSelectWithin</Name>
+      <Type>SelectWidth</Type>
+      <Description>Select all features that fall within the currently selected area.</Description>
+      <ImageUrl>images/icons/select-within.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Select Within</Tooltip>
+      <Label>Select Within</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>Buffer</Name>
+      <Type>BufferPanel</Type>
+      <Description>Create buffers around the selected features</Description>
+      <ImageUrl>images/icons/buffer.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Buffer</Tooltip>
+      <Label/>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuBuffer</Name>
+      <Type>BufferPanel</Type>
+      <Description>Create buffers around the selected features</Description>
+      <ImageUrl>images/icons/buffer.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Buffer</Tooltip>
+      <Label>Buffer</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>Measure</Name>
+      <Type>Measure</Type>
+      <Description>Measure distances and areas on the map.</Description>
+      <Extension xsi:type="CustomContentType">
+        <Type>both</Type>
+        <RulerTooltipContainer>RulerResult</RulerTooltipContainer>
+        <RulerTooltipType>dynamic</RulerTooltipType>
+        <DistancePrecision>0</DistancePrecision>
+        <AreaPrecision>0</AreaPrecision>
+      </Extension>
+      <ImageUrl>images/icons/measure.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Measure</Tooltip>
+      <Label/>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuMeasure</Name>
+      <Type>Measure</Type>
+      <Description>Measure distances and areas on the map.</Description>
+      <Extension xsi:type="CustomContentType">
+        <Type>both</Type>
+        <RulerTooltipContainer>RulerResult</RulerTooltipContainer>
+        <RulerTooltipType>dynamic</RulerTooltipType>
+        <DistancePrecision>0</DistancePrecision>
+        <AreaPrecision>0</AreaPrecision>
+      </Extension>
+      <ImageUrl>images/icons/measure.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip>Buffer</Tooltip>
+      <Label>Measure</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuViewOptions</Name>
+      <Type>ViewOptions</Type>
+      <Description/>
+      <ImageUrl>images/icons/view-options.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip/>
+      <Label>View Options</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuHelp</Name>
+      <Type>Help</Type>
+      <Description/>
+      <ImageUrl>images/icons/help.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip/>
+      <Label>Help</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="UiWidgetType">
+      <Name>menuAbout</Name>
+      <Type>About</Type>
+      <Description/>
+      <ImageUrl>images/icons/about.png</ImageUrl>
+      <ImageClass/>
+      <Tooltip/>
+      <Label>About</Label>
+      <Disabled/>
+    </Widget>
+    <Widget xsi:type="WidgetType">
+      <Name>CursorPosition</Name>
+      <Type>CursorPosition</Type>
+      <Description/>
+      <Extension xsi:type="CustomContentType">
+        <Template>x: {x} {units}, y: {y} {units}</Template>
+        <Precision>0</Precision>
+        <Units>meters</Units>
+      </Extension>
+    </Widget>
+    <Widget xsi:type="WidgetType">
+      <Name>SelectionInfo</Name>
+      <Type>SelectionInfo</Type>
+      <Description/>
+    </Widget>
+    <Widget xsi:type="WidgetType">
+      <Name>EditableScale</Name>
+      <Type>EditableScale</Type>
+      <Description/>
+    </Widget>
+    <Widget xsi:type="WidgetType">
+      <Name>ViewArea</Name>
+      <Type>ViewArea</Type>
+      <Description/>
+      <Extension xsi:type="CustomContentType">
+        <Units>meters</Units>
+        <Precision>0</Precision>
+      </Extension>
+    </Widget>
+    <Widget xsi:type="WidgetType">
+        <Name>Legend</Name>
+        <Type>Legend</Type>
+        <Description/>
+    </Widget>
+    <Widget xsi:type="WidgetType">
+        <Name>SelectionPanel</Name>
+        <Type>SelectionPanel</Type>
+        <Description/>
+    </Widget>
+    <Widget xsi:type="WidgetType">
+        <Name>TaskPane</Name>
+        <Type>TaskPane</Type>
+        <Description/>
+    </Widget>
+    <Widget xsi:type="WidgetType">
+        <Name>OverviewMap</Name>
+        <Type>OverviewMap</Type>
+        <Description/>
+        <Extension xsi:type="CustomContentType">
+            <MapId>xyz</MapId>
+        </Extension>
+    </Widget>
+  </WidgetSet>
+  <Extension/>
+</ApplicationDefinition>

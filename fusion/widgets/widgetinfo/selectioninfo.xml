@@ -1,0 +1,29 @@
+<WidgetInfo>
+  <Type>SelectionInfo</Type>
+  <LocalizedType>Selection Info</LocalizedType>
+  <Description>Displays the number of features and number of layers in the current selection.</Description>
+  <Location></Location>
+  <Label>Selection info</Label>
+  <Tooltip></Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl></ImageUrl>
+  <ImageClass></ImageClass>
+  <StandardUi>false</StandardUi>
+  <ContainableBy>Splitterbar</ContainableBy>
+  <Parameter>
+    <Name>Template</Name>
+    <Description>The format of the output string.</Description>
+    <Type>String</Type>
+    <Label>Template</Label>
+    <DefaultValue>{0} feature(s) selected on {1} layer(s)</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>EmptyText</Name>
+    <Description>The string to display when nothing is selected</Description>
+    <Type>String</Type>
+    <Label>Empty selection string</Label>
+    <DefaultValue>No features selected</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

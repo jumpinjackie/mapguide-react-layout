@@ -1,0 +1,37 @@
+<WidgetInfo>
+  <Type>SelectWithin</Type>
+  <LocalizedType>Select Within</LocalizedType>
+  <Description>A widget to perform a selection within a currently selected set of features</Description>
+  <Location></Location>
+  <Label>Select within</Label>
+  <Tooltip>Click to select features within this selection</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl>images/icons.png</ImageUrl>
+  <ImageClass>select-features</ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>Target</Name>
+    <Label>Target</Label>
+    <Type>target</Type>
+    <Description>The frame, window, or TaskPane in which to display any UI for the widget. If empty, a new window is used</Description>
+    <DefaultValue>TaskPane</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>DisableIfSelectionEmpty</Name>
+    <Description>A flag to indicate if this widget should only be enabled if there is a selection available on the map</Description>
+    <Type>boolean</Type>
+    <Label>Disable If Selection Empty</Label>
+    <DefaultValue>true</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>OmitInvisibleLayers</Name>
+    <Description>A flag to indicate if invisible layers that are in the current selection should be omitted from the list of layers to restrict</Description>
+    <Type>boolean</Type>
+    <Label>Omit invisible layers</Label>
+    <DefaultValue>false</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

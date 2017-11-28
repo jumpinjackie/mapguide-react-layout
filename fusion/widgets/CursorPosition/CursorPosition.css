@@ -1,0 +1,17 @@
+.spanCursorPosition {
+    display: -moz-inline-box;
+    display: inline-block;
+    padding: 2px;
+    margin: 0;
+    border: none;
+    width: 300px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    line-height: 16px;
+    background-color: transparent;
+    color: #000;
+}
+
+.jxToolItem .spanCursorPosition {
+    padding: 6px 2px;
+}

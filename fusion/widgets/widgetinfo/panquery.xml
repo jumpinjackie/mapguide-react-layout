@@ -1,0 +1,38 @@
+<WidgetInfo>
+  <Type>PanQuery</Type>
+  <LocalizedType>Pan Query</LocalizedType>
+  <Description>A widget that combines pan and query actions.  If the mouse did not move, a query is issued, otherwise a pan is performed</Description>
+  <Location></Location>
+  <Label>Pan query</Label>
+  <Tooltip>Drag the mouse to pan, click to query</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl>images/icons.png</ImageUrl>
+  <ImageClass>pan</ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>SelectionType</Name>
+    <Description>The type of selection to do</Description>
+    <Type>String</Type>
+    <Label>Selection type</Label>
+    <DefaultValue>INTERSECTS</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Tolerance</Name>
+    <Description>pixel tolerance for a point click</Description>
+    <Type>integer</Type>
+    <Label>Tolerance</Label>
+    <Min>1</Min>
+    <DefaultValue>3</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>QueryActiveLayer</Name>
+    <Description>Flag to indicate if features should be selected only on the active layer</Description>
+    <Type>boolean</Type>
+    <Label>Query active layer</Label>
+    <DefaultValue>false</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

@@ -1,0 +1,13 @@
+<WidgetInfo>
+  <Type>Navigator</Type>
+  <LocalizedType>Navigator</LocalizedType>
+  <Description>In-map navigator widget</Description>
+  <Location></Location>
+  <Label>Navigator</Label>
+  <Tooltip>Click to navigate the map</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl></ImageUrl>
+  <ImageClass></ImageClass>
+  <StandardUi>false</StandardUi>
+  <ContainableBy></ContainableBy>
+</WidgetInfo>

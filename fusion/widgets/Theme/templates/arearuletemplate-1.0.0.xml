@@ -1,0 +1,17 @@
+<AreaRule>
+ <LegendLabel>%s</LegendLabel>
+ <Filter>%s</Filter>
+ <AreaSymbolization2D>
+  <Fill>
+   <FillPattern>Solid</FillPattern>
+   <ForegroundColor>%s</ForegroundColor>
+   <BackgroundColor>FF000000</BackgroundColor>
+  </Fill>
+  <Stroke>
+   <LineStyle>Solid</LineStyle>
+   <Thickness>0</Thickness>
+   <Color>%s</Color>
+   <Unit>Inches</Unit>
+  </Stroke>
+ </AreaSymbolization2D>
+</AreaRule>

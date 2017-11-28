@@ -1,0 +1,20 @@
+<WidgetInfo>
+    <Type>Query</Type>
+    <Location></Location>
+    <LocalizedType>Query</LocalizedType>
+    <Description>This widget will execute a custom query on the map.  Either a popup window or the task pane will be used to gather user input, depending on the setting of the Target parameter</Description>
+    <Label>Query</Label>
+    <Tooltip>Click to execute a custom query</Tooltip>
+    <ImageUrl>images/icons.png</ImageUrl>
+    <ImageClass>query</ImageClass>
+    <StandardUi>true</StandardUi>
+    <ContainableBy>Any</ContainableBy>
+    <Parameter>
+        <Name>Target</Name>
+        <Label>Target</Label>
+        <Type>target</Type>
+        <Description>The frame, window, or TaskPane in which to display any UI for the widget. If empty, a new window is used</Description>
+        <IsMandatory>true</IsMandatory>
+        <DefaultValue>TaskPane</DefaultValue>
+    </Parameter>
+</WidgetInfo>

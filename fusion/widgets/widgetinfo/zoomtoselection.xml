@@ -1,0 +1,29 @@
+<WidgetInfo>
+  <Type>ZoomToSelection</Type>
+  <LocalizedType>Zoom to Selection</LocalizedType>
+  <Description>A widget that will zoom the map to the currently selected features</Description>
+  <Location></Location>
+  <Label>Zoom Selection</Label>
+  <Tooltip>Click to zoom to the selection</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl>images/icons.png</ImageUrl>
+  <ImageClass>select-zoom</ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>MaximumZoomDimension</Name>
+    <Description>Controls how much to zoom</Description>
+    <Type>integer</Type>
+    <Label>MaximumZoomDimension</Label>
+    <DefaultValue>-1</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>ZoomFactor</Name>
+    <Description>The amount to zoom allowing all features to still be displayed</Description>
+    <Type>float</Type>
+    <Label>Zoom factor</Label>
+    <DefaultValue>2</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

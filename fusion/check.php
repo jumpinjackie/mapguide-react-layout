@@ -3,7 +3,7 @@
 if(isset($_SESSION['login'])) // 0 - success, logged in
 {
     $response = array(
-        "status" => "0",
+        "status" => 0,
         "data" => array(
             "user" => array(
                 "id" => "id",
@@ -15,7 +15,7 @@ if(isset($_SESSION['login'])) // 0 - success, logged in
 else // otherwise, 1
 {
     $response = array(
-        "status" => "1"
+        "status" => 1
     );
 }
 

@@ -10,9 +10,6 @@ if(isset($_POST["pass"]))
     $pass = ($_POST["pass"]);
 
 
-$response = array(
-    "status" => "1"
-);
 
 if(isset($_SESSION['session']) || ($login==$setlogin && $pass==$setpass))
 {
@@ -20,12 +17,15 @@ if(isset($_SESSION['session']) || ($login==$setlogin && $pass==$setpass))
     $_SESSION['session'] = $hsh;
     $_SESSION['login'] = $login;
     $response = array(
-        "status" => "0",
+        "status" => 0,
         "data" => array(
             "user" => $login
         )
     );
 }
+else $response = array(
+    "status" => 1
+);
 
 header("Content-type: application/json");
 

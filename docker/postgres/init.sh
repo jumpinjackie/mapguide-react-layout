@@ -1,10 +1,8 @@
---
--- PostgreSQL demo_gis database create 
---
+#!/bin/bash
 
-sudo -u postgres psql -c "CREATE DATABASE demo_gis;"
+psql -c "CREATE DATABASE demo_gis;"
 
-sudo -u postgres psql -d demo_gis -c "
+psql -d demo_gis -c "
 
 CREATE TABLE users (
     user_id integer PRIMARY KEY,

@@ -6,10 +6,10 @@ services:
       - "80:8008"
     command: ["--no-tomcat"]
     volumes:
-      - ../../viewer:/usr/local/mapguideopensource-3.1.0/webserverextensions/www/viewer
-      - ../../fusion:/usr/local/mapguideopensource-3.1.0/webserverextensions/www/fusion
+      - ../viewer:/usr/local/mapguideopensource-3.1.0/webserverextensions/www/viewer
+      - ../fusion:/usr/local/mapguideopensource-3.1.0/webserverextensions/www/fusion
   dbsrv:
-    image: postgres:9.6
+    image: mapguide-db
     ports:
       - "5432:5432"
     depends_on:
@@ -22,6 +22,6 @@ services:
         aliases:
           - dbsrv
     volumes:
-      - ../../pgdata:/var/lib/postgresql/data
+      - ../pgdata:/var/lib/postgresql/data
 networks:
   webnet:

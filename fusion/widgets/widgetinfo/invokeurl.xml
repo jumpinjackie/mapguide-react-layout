@@ -1,0 +1,44 @@
+<WidgetInfo>
+  <Type>InvokeURL</Type>
+  <LocalizedType>Invoke URL</LocalizedType>
+  <Description>A widget to call up a URL into the TaskPane, a new window or HTML element. The map name and Session ID are automatically added to the URL, as well as any additional parameters specifed</Description>
+  <Location></Location>
+  <Label></Label>
+  <Tooltip></Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl></ImageUrl>
+  <ImageClass></ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>Target</Name>
+    <Description>The frame, window, or TaskPane in which to display any UI for the widget. If empty, a new window is used</Description>
+    <Type>String</Type>
+    <Label>Target</Label>
+    <DefaultValue>InvokeUrlWindow</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Url</Name>
+    <Description>The URL to be opened in the target</Description>
+    <Type>String</Type>
+    <Label>URL</Label>
+    <IsMandatory>true</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>DisableIfSelectionEmpty</Name>
+    <Description>A flag to indicate if this widget should only be enabled if there is a selection available on the map</Description>
+    <Type>boolean</Type>
+    <Label>DisableIfSelectionEmpty</Label>
+    <DefaultValue>false</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>AdditionalParameter</Name>
+    <Description>A list of key/value pairs that will be added to the URL</Description>
+    <Type>XML</Type>
+    <Label>Additional parameter</Label>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

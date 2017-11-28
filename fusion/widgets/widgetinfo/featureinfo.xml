@@ -1,0 +1,20 @@
+<WidgetInfo>
+    <Type>FeatureInfo</Type>
+    <Location></Location>
+    <LocalizedType>FeatureInfo</LocalizedType>
+    <Description>This widget will display information about selected features in a task panel.</Description>
+    <Label>Feature Info</Label>
+    <Tooltip>Click to display selected feature info</Tooltip>
+    <ImageUrl>images/icons.png</ImageUrl>
+    <ImageClass>feature-info</ImageClass>
+    <StandardUi>true</StandardUi>
+    <ContainableBy>Any</ContainableBy>
+    <Parameter>
+        <Name>Target</Name>
+        <Label>Target</Label>
+        <Type>target</Type>
+        <Description>The frame, window, or TaskPane in which to display any UI for the widget. If empty, a new window is used</Description>
+        <IsMandatory>true</IsMandatory>
+        <DefaultValue>TaskPane</DefaultValue>
+    </Parameter>
+</WidgetInfo>

@@ -1,0 +1,13 @@
+<WidgetInfo>
+  <Type>LinkToView</Type>
+  <LocalizedType>Link to View</LocalizedType>
+  <Description>Displays a hyperlink to the current view of the application</Description>
+  <Location></Location>
+  <Label>Link to view</Label>
+  <Tooltip>A link to the current map view</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl></ImageUrl>
+  <ImageClass></ImageClass>
+  <StandardUi>false</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+</WidgetInfo>

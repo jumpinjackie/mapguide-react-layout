@@ -1,0 +1,97 @@
+<SymbolInstance>
+              <SimpleSymbolDefinition>
+                <Name>DASH</Name>
+                <Description>area_dash.templ</Description>
+                <Graphics>
+                  <Path>
+                    <Geometry>M 0.0,0.0 h 0.125 M 0.125,0.125 h 0.125</Geometry>
+                    <ScaleX>%SCALEX0%</ScaleX>
+                    <ScaleY>%SCALEY0%</ScaleY>
+                    <LineColor>%HATCHCOLOR%</LineColor>
+                    <LineCap>%LINECAP0%</LineCap>
+                    <LineJoin>%LINEJOIN0%</LineJoin>
+                  </Path>
+                </Graphics>
+                <AreaUsage>
+                  <Angle>%HATCHANGLE%</Angle>
+                  <RepeatX>2.54</RepeatX>
+                  <RepeatY>2.54</RepeatY>
+                </AreaUsage>
+                <ParameterDefinition>
+                  <Parameter>
+                    <Identifier>HATCHCOLOR</Identifier>
+                    <DefaultValue>0xff000000</DefaultValue>
+                    <DisplayName>&amp;Hatch Color</DisplayName>
+                    <Description>Color for the hatch style</Description>
+                    <DataType>LineColor</DataType>
+                  </Parameter>
+                  <Parameter>
+                    <Identifier>HATCHANGLE</Identifier>
+                    <DefaultValue>0.0</DefaultValue>
+                    <DisplayName>Hatch &amp;Angle</DisplayName>
+                    <Description>Rotation angle for the hatch style</Description>
+                    <DataType>Angle</DataType>
+                  </Parameter>
+                  <Parameter>
+                    <Identifier>SCALEX0</Identifier>
+                    <DefaultValue>1.0</DefaultValue>
+                    <DisplayName>Path ScaleX</DisplayName>
+                    <Description>Path ScaleX</Description>
+                    <DataType>Real</DataType>
+                  </Parameter>
+                  <Parameter>
+                    <Identifier>SCALEY0</Identifier>
+                    <DefaultValue>1.0</DefaultValue>
+                    <DisplayName>Path ScaleY</DisplayName>
+                    <Description>Path ScaleY</Description>
+                    <DataType>Real</DataType>
+                  </Parameter>
+                  <Parameter>
+                    <Identifier>LINECAP0</Identifier>
+                    <DefaultValue>'Round'</DefaultValue>
+                    <DisplayName>Line Cap</DisplayName>
+                    <Description>The cap type to use at the ends of each segment in the path outline.  This must evaluate to one of: None, Round (default), Triangle, or Square.</Description>
+                  </Parameter>
+                  <Parameter>
+                    <Identifier>LINEJOIN0</Identifier>
+                    <DefaultValue>'Round'</DefaultValue>
+                    <DisplayName>Line Join</DisplayName>
+                    <Description>The join type to use at each vertex in the path outline.  This must evaluate to one of: None, Bevel, Round (default), or Miter.</Description>
+                  </Parameter>
+                </ParameterDefinition>
+              </SimpleSymbolDefinition>
+              <ParameterOverrides>
+                <Override>
+                  <SymbolName>DASH</SymbolName>
+                  <ParameterIdentifier>HATCHCOLOR</ParameterIdentifier>
+                  <ParameterValue>0x#{FILL_FORE_COLOR}</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>DASH</SymbolName>
+                  <ParameterIdentifier>HATCHANGLE</ParameterIdentifier>
+                  <ParameterValue>0.0</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>DASH</SymbolName>
+                  <ParameterIdentifier>SCALEX0</ParameterIdentifier>
+                  <ParameterValue>10.1600203200407</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>DASH</SymbolName>
+                  <ParameterIdentifier>SCALEY0</ParameterIdentifier>
+                  <ParameterValue>10.1600203200407</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>DASH</SymbolName>
+                  <ParameterIdentifier>LINECAP0</ParameterIdentifier>
+                  <ParameterValue>'Round'</ParameterValue>
+                </Override>
+                <Override>
+                  <SymbolName>DASH</SymbolName>
+                  <ParameterIdentifier>LINEJOIN0</ParameterIdentifier>
+                  <ParameterValue>'Round'</ParameterValue>
+                </Override>
+              </ParameterOverrides>
+              <UsageContext>Area</UsageContext>
+              <GeometryContext>Polygon</GeometryContext>
+            </SymbolInstance>

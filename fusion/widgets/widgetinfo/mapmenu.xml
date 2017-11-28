@@ -1,0 +1,21 @@
+<WidgetInfo>
+  <Type>MapMenu</Type>
+  <LocalizedType>Map Menu</LocalizedType>
+  <Description>A widget that displays a list of maps that can be loaded into the application</Description>
+  <Location></Location>
+  <Label>Maps</Label>
+  <Tooltip>Choose a map theme</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl>images/icons.png</ImageUrl>
+  <ImageClass>legend-map</ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>Folder</Name>
+    <Label>MapDefinition root folder</Label>
+    <Type>string</Type>
+    <Description>The hierarchy below this folder will be searched for MapDefinitions to display</Description>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>0</IsMandatory>
+  </Parameter>
+</WidgetInfo>

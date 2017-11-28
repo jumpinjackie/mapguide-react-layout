@@ -1,0 +1,93 @@
+<WidgetInfo>
+  <Type>Legend</Type>
+  <LocalizedType>Legend</LocalizedType>
+  <Description>A widget that displays a listing of all layers that make up the map as a tree structure</Description>
+  <Location></Location>
+  <Label>Legend</Label>
+  <Tooltip>Map Legend</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl></ImageUrl>
+  <ImageClass></ImageClass>
+  <StandardUi>false</StandardUi>
+  <ContainableBy></ContainableBy>
+  <Parameter>
+    <Name>HideInvisibleLayers</Name>
+    <Description>Suppress invisible layers from the legend</Description>
+    <Type>boolean</Type>
+    <Label>Hide Invisible Layers</Label>
+    <DefaultValue>true</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>ShowRootFolder</Name>
+    <Description>flag to indicate if the root folder is shown</Description>
+    <Type>boolean</Type>
+    <Label>Show the root folder</Label>
+    <DefaultValue>false</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>ShowMapFolder</Name>
+    <Description>flag to indicate if the map folder is shown</Description>
+    <Type>boolean</Type>
+    <Label>Show the map folder</Label>
+    <DefaultValue>false</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>LayerRasterIcon</Name>
+    <Description>Icon to use for raster layers</Description>
+    <Type>String</Type>
+    <Label>Raster layer icon</Label>
+    <DefaultValue>images/icons/legend-raster.png</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>LayerDWFIcon</Name>
+    <Description>Icon to use for DWF layers</Description>
+    <Type>String</Type>
+    <Label>DWF layer icon</Label>
+    <DefaultValue>images/icons/legend-DWF.png</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>LayerThemeIcon</Name>
+    <Description>Icon to use for theme layers</Description>
+    <Type>String</Type>
+    <Label>Theme layer icon</Label>
+    <DefaultValue>images/icons/legend-theme.png</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>DisabledLayerIcon</Name>
+    <Description>Icon to use for disabled layers</Description>
+    <Type>String</Type>
+    <Label>Disabled layer icon</Label>
+    <DefaultValue>images/icons/legend-layer.png</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>LayerInfoIcon</Name>
+    <Description>Icon to use for layer information</Description>
+    <Type>String</Type>
+    <Label>Layer information icon</Label>
+    <DefaultValue>images/icons/tree_layer_info.png</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>GroupInfoIcon</Name>
+    <Description>Icon to use for layer groups</Description>
+    <Type>String</Type>
+    <Label>Group information icon</Label>
+    <DefaultValue>images/icons/tree_group_info.png</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>RootFolderIcon</Name>
+    <Description>Icon to use for the root folder</Description>
+    <Type>String</Type>
+    <Label>Map root folder icon</Label>
+    <DefaultValue>images/icons/legend-map.png</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

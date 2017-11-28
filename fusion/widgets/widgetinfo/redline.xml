@@ -1,0 +1,116 @@
+<WidgetInfo>
+    <Type>Redline</Type>
+    <Location></Location>
+    <LocalizedType>Redline</LocalizedType>
+    <Description>This widget opens a panel in the TaskPane and allows the user to digitize features that can be downloaded as a GML file or uploaded to restore previously digitized features.</Description>
+    <Label>Redline</Label>
+    <Tooltip>Click to draw redline features</Tooltip>
+    <ImageUrl>images/icons.png</ImageUrl>
+    <ImageClass>redline</ImageClass>
+    <StandardUi>true</StandardUi>
+    <ContainableBy>Any</ContainableBy>
+    <Parameter>
+        <Name>Target</Name>
+        <Label>Target</Label>
+        <Type>target</Type>
+        <Description>The frame, window, or TaskPane in which to display any UI for the widget. If empty, a new window is used</Description>
+        <IsMandatory>true</IsMandatory>
+        <DefaultValue>TaskPane</DefaultValue>
+    </Parameter>
+    <Parameter>
+        <Name>AutogenerateLayerNames</Name>
+        <Description>Indicates whether to prompt the auto-generate redline layer names when creating a new redline layer or to prompt the user. Default is true (don't prompt)</Description>
+        <Type>boolean</Type>
+        <Label>AutogenerateLayerNames</Label>
+        <DefaultValue>true</DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>UseMapMessage</Name>
+        <Description>Indicates to use the map message bar for digitization prompts. Default is true</Description>
+        <Type>boolean</Type>
+        <Label>UseMapMessage</Label>
+        <DefaultValue>true</DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>DataStoreFormat</Name>
+        <Description>The default data store format. Valid values include: SDF, SHP or SQLite</Description>
+        <Type>String</Type>
+        <Label>DataStoreFormat</Label>
+        <AllowedValue>
+          <Name>SDF</Name>
+          <Label>SDF</Label>
+        </AllowedValue>
+        <AllowedValue>
+          <Name>SHP</Name>
+          <Label>SHP</Label>
+        </AllowedValue>
+        <AllowedValue>
+          <Name>SQLite</Name>
+          <Label>SQLite</Label>
+        </AllowedValue>
+        <DefaultValue></DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>RedlineGeometryFormat</Name>
+        <Description>The types of redline geometry that the user can record. If the data store is SHP, only one geometry type can be specified. Value is a bitmask of any of the following values: (1=point, 2=line, 4=polygon)</Description>
+        <Type>integer</Type>
+        <Label>RedlineGeometryFormat</Label>
+        <AllowedValue>
+          <Name>1</Name>
+          <Label>Point</Label>
+        </AllowedValue>
+        <AllowedValue>
+          <Name>2</Name>
+          <Label>Line</Label>
+        </AllowedValue>
+        <AllowedValue>
+          <Name>4</Name>
+          <Label>Polygon</Label>
+        </AllowedValue>
+        <AllowedValue>
+          <Name>3</Name>
+          <Label>Point+Line</Label>
+        </AllowedValue>
+        <AllowedValue>
+          <Name>5</Name>
+          <Label>Point+Polygon</Label>
+        </AllowedValue>
+        <AllowedValue>
+          <Name>6</Name>
+          <Label>Line+Polygon</Label>
+        </AllowedValue>
+        <AllowedValue>
+          <Name>7</Name>
+          <Label>Point+Line+Polygon</Label>
+        </AllowedValue>
+        <DefaultValue>7</DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>AutoCreateOnStartup</Name>
+        <Description>If DataStoreFormat and RedlineGeometryFormat parameters are specified, determines if the redline data store is automatically created on widget invocation. If true, the widget starts off in the Redline editing page instead of the Redline Management page</Description>
+        <Type>boolean</Type>
+        <Label>AutoCreateOnStartup</Label>
+        <DefaultValue>true</DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>StylizationType</Name>
+        <Description>Determines which type of stylization to use for rendering redline features.</Description>
+        <Type>string</Type>
+        <Label>StylizationType</Label>
+        <AllowedValue>
+          <Name>basic</Name>
+          <Label>Basic Stylization</Label>
+        </AllowedValue>
+        <AllowedValue>
+          <Name>advanced</Name>
+          <Label>Advanced (Composite) Stylization</Label>
+        </AllowedValue>
+        <DefaultValue>basic</DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+</WidgetInfo>

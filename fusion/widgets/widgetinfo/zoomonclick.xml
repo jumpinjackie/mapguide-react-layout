@@ -1,0 +1,21 @@
+<WidgetInfo>
+  <Type>ZoomOnClick</Type>
+  <LocalizedType>Zoom on Click</LocalizedType>
+  <Description>Zoom the map by a fixed amount when a button is clicked</Description>
+  <Location></Location>
+  <Label></Label>
+  <Tooltip></Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl></ImageUrl>
+  <ImageClass></ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>Factor</Name>
+    <Description>The factor to zoom by. Values less than 0 zoom out.</Description>
+    <Type>double</Type>
+    <Label>Factor</Label>
+    <DefaultValue>2</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

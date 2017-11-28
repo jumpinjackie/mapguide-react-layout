@@ -1,0 +1,58 @@
+.selectionPanelToolbar {
+	background-color: #eee;
+	border-bottom: 1px solid #999;
+	padding: 1px;
+	text-align: center;
+}
+.selectionPanelToolbar select.layerSelector {
+	/* this needs to be adjusted based on the skin */
+	font-family: Arial, sans-serif;
+	font-size: 11px;
+	width: 70%;
+}
+.selectionPanelToolbar select.featureSelector {
+	font-family: Arial, sans-serif;
+	font-size: 11px;
+	width: 20%;
+}
+
+.selectionPanelContent {
+	font-family: Arial, sans-serif;
+	font-size: 11px;
+}
+
+.noSelection {
+	margin-top: 5px;
+	color: #ccc;
+	font-size: 16px;
+	font-weight: bold;
+	text-align: center;
+}
+
+.selectionPanelContent table {
+	font-family: Arial, sans-serif;
+	font-size: 11px;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+
+.selectionPanelContent thead th {
+	font-weight: bold;
+	background-color: #e4e4e4;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	padding: 3px;
+}
+.selectionPanelContent tbody th {
+	border-right: 1px solid #ccc;
+	padding: 3px;
+}
+
+.selectionPanelContent tbody td {
+	border-right: 1px solid #ccc;
+	padding: 3px;
+}
+
+.selectionPanelContent tbody tr.oddRow {
+	background-color: #f4f4f4;
+}

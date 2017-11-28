@@ -1,0 +1,20 @@
+<WidgetInfo>
+    <Type>Theme</Type>
+    <Location></Location>
+    <LocalizedType>Theme</LocalizedType>
+    <Description>This widget will create a new themed layer based on an existing map layer.  Either a popup window or the task pane will be used to gather user input, depending on the setting of the Target parameter</Description>
+    <Label>Theme</Label>
+    <Tooltip>Click to create a themed layer</Tooltip>
+    <ImageUrl>images/icons.png</ImageUrl>
+    <ImageClass>theme</ImageClass>
+    <StandardUi>true</StandardUi>
+    <ContainableBy>Any</ContainableBy>
+    <Parameter>
+        <Name>Target</Name>
+        <Label>Target</Label>
+        <Type>target</Type>
+        <Description>The frame, window, or TaskPane in which to display any UI for the widget. If empty, a new window is used</Description>
+        <IsMandatory>true</IsMandatory>
+        <DefaultValue>TaskPane</DefaultValue>
+    </Parameter>
+</WidgetInfo>

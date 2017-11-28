@@ -1,0 +1,53 @@
+<WidgetInfo>
+  <Type>ScalebarDual</Type>
+  <LocalizedType>Scale Bar Dual</LocalizedType>
+  <Description>A dynamically generated cartographic scalebar that looks like the Google scalebar</Description>
+  <Location></Location>
+  <Label>ScalebarDual</Label>
+  <Tooltip></Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl></ImageUrl>
+  <ImageClass></ImageClass>
+  <StandardUi>false</StandardUi>
+  <ContainableBy></ContainableBy>
+  <Parameter>
+    <Name>MaxWidth</Name>
+    <Description>Maximum width of the scalebar in pixels</Description>
+    <Type>integer</Type>
+    <Label>Maximum width</Label>
+    <DefaultValue>300</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>TopInUnits</Name>
+    <Description>Units for zoomed in on top bar</Description>
+    <Type>String</Type>
+    <Label>Top bar units (zoomed in)</Label>
+    <DefaultValue>ft</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>TopOutUnits</Name>
+    <Description>Units for zoomed out on top bar</Description>
+    <Type>String</Type>
+    <Label>Top bar units (zoomed out)</Label>
+    <DefaultValue>mi</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>BottomInUnits</Name>
+    <Description>Units for zoomed in on bottom bar</Description>
+    <Type>String</Type>
+    <Label>Bottom bar units (zoomed in)</Label>
+    <DefaultValue>m</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>BottomOutUnits</Name>
+    <Description>Units for zoomed out on bottom bar</Description>
+    <Type>String</Type>
+    <Label>Bottom bar units (zoomed out)</Label>
+    <DefaultValue>km</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

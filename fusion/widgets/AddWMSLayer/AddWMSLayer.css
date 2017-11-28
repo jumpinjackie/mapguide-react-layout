@@ -1,0 +1,41 @@
+/* SHEET STYLES */
+
+.addWMSDialog {
+  padding: 5px;
+  font-size: 12px;
+  line-height: 18px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.addWMSDialog label {
+  display: block;
+  float: left;
+  clear: left;
+  background-color:transparent;
+  color:#000000;
+}
+
+.addWMSDialog select, 
+.addWMSDialog textarea,
+.addWMSDialog input {
+  float: left;
+}
+
+.layerList {
+  overflow: auto;
+  border: 1px solid #CCCCCC;
+  background-color: #fff;
+  height: 180px;
+  margin: 10px;
+  padding: 5px;
+}
+
+#serviceURLFieldset .jxInputLabel {
+  width: 70px;
+}
+
+#serviceURLFieldset .jxInputCombo {
+  width: 210px;
+}
+
+

@@ -1,0 +1,29 @@
+<WidgetInfo>
+  <Type>TaskPane</Type>
+  <LocalizedType>Task Pane</LocalizedType>
+  <Description>A widget that acts as a workspace for widgets that require user input/output, e.g. InvokeURL, Buffer, Search, etc. widgets</Description>
+  <Location></Location>
+  <Label>TaskPane</Label>
+  <Tooltip></Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl></ImageUrl>
+  <ImageClass></ImageClass>
+  <StandardUi>false</StandardUi>
+  <ContainableBy></ContainableBy>
+  <Parameter>
+    <Name>InitialTask</Name>
+    <Description>The URL of the task that acts as the 'home' task</Description>
+    <Type>String</Type>
+    <Label>Initial Task URL</Label>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>MenuContainer</Name>
+    <Description>The menu displayed in the drop-down task list</Description>
+    <Type>menu</Type>
+    <Label>Task menu</Label>
+    <DefaultValue>TaskMenu</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

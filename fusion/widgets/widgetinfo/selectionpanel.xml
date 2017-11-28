@@ -1,0 +1,53 @@
+<WidgetInfo>
+    <Type>SelectionPanel</Type>
+    <LocalizedType>Selection Panel</LocalizedType>
+    <Description>The SelectionPanel widget displays attributes for the features that are selected on the map.</Description>
+    <Location></Location>
+    <Label>Selection Panel</Label>
+    <Tooltip></Tooltip>
+    <StatusText></StatusText>
+    <ImageUrl></ImageUrl>
+    <ImageClass></ImageClass>
+    <StandardUi>false</StandardUi>
+    <ContainableBy></ContainableBy>
+    <Parameter>
+        <Name>PreviousImageUrl</Name>
+        <Label>Previous Image URL</Label>
+        <Type>string</Type>
+        <Description>Previous Image icon URL</Description>
+        <DefaultValue></DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>NextImageUrl</Name>
+        <Label>Next Image URL</Label>
+        <Type>string</Type>
+        <Description>Next Image icon URL</Description>
+        <DefaultValue></DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>ResultsPerPage</Name>
+        <Label>Results Per Page</Label>
+        <Type>integer</Type>
+        <Description>The number of results to show per page</Description>
+        <DefaultValue>0</DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>SelectionRenderer</Name>
+        <Label>Selection Renderer</Label>
+        <Type>string</Type>
+        <Description>The type of selection renderer to use</Description>
+        <AllowedValue>
+          <Name>Fusion.Widget.SelectionPanel.SelectionRendererDefault</Name>
+          <Label>Default</Label>
+        </AllowedValue>
+        <AllowedValue>
+          <Name>Fusion.Widget.SelectionPanel.SelectionRendererHorizontal</Name>
+          <Label>Horizontal</Label>
+        </AllowedValue>
+        <DefaultValue>Fusion.Widget.SelectionPanel.SelectionRendererDefault</DefaultValue>
+        <IsMandatory>true</IsMandatory>
+    </Parameter>
+</WidgetInfo>

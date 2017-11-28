@@ -1,0 +1,175 @@
+<WidgetInfo>
+  <Type>Measure</Type>
+  <LocalizedType>Measure</LocalizedType>
+  <Description>A widget that allows measurements to be made on the map</Description>
+  <Location></Location>
+  <Label>Measure</Label>
+  <Tooltip>Measure distances and areas on the map</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl>images/icons.png</ImageUrl>
+  <ImageClass>measure</ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>Units</Name>
+    <Description>the units to display distances in</Description>
+    <Type>String</Type>
+    <Label>Units</Label>
+    <AllowedValue>
+      <Name>Meters</Name>
+      <Label>Meters</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Miles</Name>
+      <Label>Miles</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Degrees</Name>
+      <Label>Degrees</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Kilometers</Name>
+      <Label>Kilometers</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Feet</Name>
+      <Label>Feet</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Inches</Name>
+      <Label>Inches</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Nautical Miles</Name>
+      <Label>Nautical Miles</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Millimeters</Name>
+      <Label>Millimeters</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Centimeters</Name>
+      <Label>Centimeters</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Pixels</Name>
+      <Label>Pixels</Label>
+    </AllowedValue>
+    <DefaultValue>none</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>DistancePrecision</Name>
+    <Description>Precision of the distance displayed</Description>
+    <Type>integer</Type>
+    <Label>DistancePrecision</Label>
+    <Min>1</Min>
+    <Max>8</Max>
+    <DefaultValue>4</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>AreaPrecision</Name>
+    <Description>Precision of the area displayed</Description>
+    <Type>integer</Type>
+    <Label>Area Precision</Label>
+    <Min>1</Min>
+    <Max>8</Max>
+    <DefaultValue>4</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Type</Name>
+    <Description>The type of measurement to display</Description>
+    <Type>String</Type>
+    <Label>measurement type</Label>
+    <AllowedValue>
+      <Name>Both</Name>
+      <Label>Distance and Area</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Distance</Name>
+      <Label>Distance</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Area</Name>
+      <Label>Area</Label>
+    </AllowedValue>
+    <DefaultValue>Both</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>MeasureTooltipContainer</Name>
+    <Description>String</Description>
+    <Type>String</Type>
+    <Label>an HTML container to put the current distance in</Label>
+    <DefaultValue>MeasureContainerBox</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>FillStyle</Name>
+    <Description>Style for the polygon used for area draw</Description>
+    <Type>String</Type>
+    <Label>Fill style</Label>
+    <DefaultValue>rgba(0,0,255, 0.3)</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>LineStyleWidth</Name>
+    <Description>width of the line to use</Description>
+    <Type>integer</Type>
+    <Label>Line style width</Label>
+    <Min>1</Min>
+    <Max>6</Max>
+    <DefaultValue>2</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>LineStyleColor</Name>
+    <Description>color to use for drawing lines</Description>
+    <Type>String</Type>
+    <Label>Line style color</Label>
+    <DefaultValue>rgba(0,0,255,0.3)</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>MeasureTooltipType</Name>
+    <Description>Type of tooltip measurement to use</Description>
+    <Type>String</Type>
+    <Label>Measure tooltip type</Label>
+    <AllowedValue>
+      <Name>static</Name>
+      <Label>static</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>dynamic</Name>
+      <Label>dynamic</Label>
+    </AllowedValue>
+    <DefaultValue>static</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>MeasureTipPositionTop</Name>
+    <Description>Static position of Tooltip Box TOP</Description>
+    <Type>String</Type>
+    <Label>Measure Tip Top Position</Label>
+    <DefaultValue>100</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>MeasureTipPositionLeft</Name>
+    <Description>Static position of Tooltip Box LEFT</Description>
+    <Type>String</Type>
+    <Label>Measure Tip Left Position</Label>
+    <DefaultValue>15</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+      <Name>Target</Name>
+      <Label>Target</Label>
+      <Type>target</Type>
+      <Description>The frame, window, or TaskPane in which to display any UI for the widget. If empty, a new window is used</Description>
+      <IsMandatory>true</IsMandatory>
+      <DefaultValue>TaskPane</DefaultValue>
+  </Parameter>
+</WidgetInfo>

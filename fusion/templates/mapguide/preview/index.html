@@ -1,0 +1,182 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd
+">
+<html>
+<head>
+<title>Preview</title>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" >
+<script type="text/javascript" src="../../../lib/fusionSF-compressed.js"></script>
+<link rel="stylesheet" href="../../../lib/jxLib/themes/delicious/jxtheme.css" type="text/css" media="screen" charset="utf-8">
+<link rel="stylesheet" href="preview.css" type="text/css" media="screen" charset="utf-8">
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="ie6.css" type="text/css" media="screen" charset="utf-8">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" href="ie7.css" type="text/css" media="screen" charset="utf-8">
+<![endif]-->
+<style type="text/css">
+    #Statusbar .spanCursorPosition,
+    #Statusbar .inputEditableScalePrefix,
+    #Statusbar .inputEditableScale,
+    #Statusbar .spanViewSize,
+    #Statusbar .spanSelectionInfo {
+        padding: 2px 4px;
+        line-height: 18px;
+        font-size: 11px;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    #Statusbar {
+      background-image: url(images/toolbar.png);
+      background-color: #f0f0f0;
+   }
+</style>
+<link rel="stylesheet" href="icons.css" type="text/css" media="screen" charset="utf-8">
+
+<script type="text/javascript">
+window.onload = function() {
+
+     // Initialize the locale setting before any strings are used
+     Fusion.initializeLocale();
+
+     // Make 'thePage' just fill the browser window and resize automagically
+     new Jx.Layout('thePage');
+
+     // Create the main pane
+     new Jx.Layout('Main', {bottom: 21});
+
+     new Jx.Layout('MapPane');
+     new Jx.Layout('Map');
+
+     // Create the status bar
+     new Jx.Layout('Statusbar', {height: 21, top: null, bottom: 0});
+
+     // Split the page into two vertical panels
+     var splitter = new Jx.Splitter('Main', {
+         containerOptions: [{width: 200}, {}]
+     });
+
+     // Add the toolbar, map and navigator to the right panel
+     new Jx.Panel({
+         parent: splitter.elements[1],
+         hideTitle: true,
+         toolbars: [
+             new Jx.Toolbar({
+                 id: 'Toolbar',
+                 position: 'top'
+             })
+         ],
+         content: 'MapPane'
+     });
+
+     // Add a tabbox to the left panel, containing the legend,
+     // selection panel, and overview map
+     new Jx.TabBox({
+         parent: splitter.elements[0]
+     }).add(
+         new Jx.Tab({
+             label: OpenLayers.i18n('legendTitle'),
+             contentId: 'Legend'
+         }),
+         new Jx.Tab({
+             label: OpenLayers.i18n('selectionPanelTitle'),
+             contentId: 'SelectionPanel'
+         }),
+         new Jx.Tab({
+             label: OpenLayers.i18n('ovmapTitleShort'),
+             contentId: 'OverviewMap'
+         })
+     );
+
+     Fusion.registerForEvent(Fusion.Event.FUSION_INITIALIZED, fusionInitialized);
+     Fusion.registerForEvent(Fusion.Event.FUSION_ERROR, fusionError);
+     Fusion.initialize();
+}
+
+var fusionError = function(eventId, error) {
+    var errorMessage = error.toString();
+    var readableMessage = '';
+
+    //Case 1: For dealing with Function: convertXML (fusion.js)
+    //******************************************
+    //        xml2json: function(callback, r, json) {
+    //      if (json) {
+    //        var o;
+    //        eval("o="+r.responseText);
+    //        callback(o);
+    //      } else {
+    //      if (r.status >= 400) {
+    //          Fusion.reportError(new Fusion.Error(Fusion.Error.FATAL,
+    //              'xml2json: invalid XML document: ' + r.transport.responseText + " : " + r.request.url));
+    //          return;
+    //      }
+    //******************************************
+    var tagStart = '<h2>';
+    var tagEnd = '</h2>';
+    var indexStart = errorMessage.indexOf(tagStart);
+    var indexEnd = errorMessage.indexOf(tagEnd, tagStart);
+    if (indexStart != -1 && indexEnd != -1) {
+        readableMessage = errorMessage.substring(indexStart + tagStart.length, indexEnd);
+        readableMessage = readableMessage.replace(/\\n/g, '\n');
+        readableMessage = readableMessage.replace(/\\t/g, '\t');
+        readableMessage = readableMessage.replace(/\\'/g, '\'');
+    }
+
+    //Case 2: For dealing with Function: ajaxException. (fusion.js)
+    //******************************************
+    //        ajaxException: function(r, e) {
+    //        this.reportError(new Fusion.Error(Fusion.Error.WARNING, 
+    //            OpenLayers.i18n('ajaxError', {'exception':e.message, 
+    //                                          'filename':e.fileName, 
+    //                                          'line':e.lineNumber,
+    //                                          'response': r.transport.responseText
+    //                                          })));
+    //    },
+    //******************************************
+    if (readableMessage == '') {
+        var ajaxCallback = 'WARNING: Exception occurred in AJAX callback.';
+        var responseError = 'Response: ERROR: ';
+        var indexAjaxCallback = errorMessage.indexOf(ajaxCallback);
+        var indexResponseError = errorMessage.indexOf(responseError);
+        if (indexAjaxCallback != -1 && indexResponseError != -1) {
+            var indexReturn = errorMessage.indexOf('\n', indexResponseError);
+            if (indexReturn != -1) {
+                readableMessage = errorMessage.substring(indexResponseError + responseError.length, indexReturn);
+                readableMessage = readableMessage.replace(/\\n/g, '\n');
+                readableMessage = readableMessage.replace(/\\t/g, '\t');
+                readableMessage = readableMessage.replace(/\\'/g, '\'');
+            }
+        }
+    }
+
+    if (readableMessage != '') {
+        alert(readableMessage);
+    }
+    else {
+        alert('Fusion Error: \n' + errorMessage);
+    }
+    console.log('Fusion Error: \n' + errorMessage);
+}
+
+function fusionInitialized() {
+     $('thePage').resize({forceResize: true});
+     $('thePage').style.visibility = 'visible'; }
+
+</script>
+</head>
+
+<body>
+
+<div id='thePage' style='visibility: hidden'>
+    <div id='Main'>
+        <div id='MapPane'>
+            <div id='Map'></div>
+            <div id='Navigator'></div>
+        </div>
+    </div>
+    <div id='Statusbar'></div>
+</div>
+<div id='Maptip'></div>
+
+</body>
+
+</html>

@@ -1,0 +1,13 @@
+<WidgetInfo>
+  <Type>Pan</Type>
+  <LocalizedType>Pan</LocalizedType>
+  <Description>Pans the map</Description>
+  <Location></Location>
+  <Label>Pan</Label>
+  <Tooltip>Click and drag to pan the map</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl>images/icons.png</ImageUrl>
+  <ImageClass>pan</ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+</WidgetInfo>

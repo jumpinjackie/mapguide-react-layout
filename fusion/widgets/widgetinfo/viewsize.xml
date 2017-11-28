@@ -1,0 +1,68 @@
+<!-- this widget doesn't work the same was as the scale entry in the existing AJAX viewer, so we may make a new one -->
+<WidgetInfo>
+  <Type>ViewSize</Type>
+  <LocalizedType>View Size</LocalizedType>
+  <Description>Display the size of the current view in user-definable units</Description>
+  <Location></Location>
+  <Label>ViewSize</Label>
+  <Tooltip>The size of the map</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl></ImageUrl>
+  <ImageClass></ImageClass>
+  <StandardUi>false</StandardUi>
+  <ContainableBy>Splitterbar</ContainableBy>
+  <Parameter>
+    <Name>Units</Name>
+    <Description>the units to display the size in</Description>
+    <Type>String</Type>
+    <Label>Units</Label>
+    <AllowedValue>
+      <Name>Meters</Name>
+      <Label>Meters</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Kilometers</Name>
+      <Label>Kilometers</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Feet</Name>
+      <Label>Feet</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Yards</Name>
+      <Label>Yards</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Miles</Name>
+      <Label>Miles</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Degrees</Name>
+      <Label>Degrees</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Pixels</Name>
+      <Label>Pixels</Label>
+    </AllowedValue>
+    <DefaultValue>Meters</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Precision</Name>
+    <Description>Precision of the size displayed</Description>
+    <Type>integer</Type>
+    <Label>DistancePrecision</Label>
+    <Min>-1</Min>
+    <Max>6</Max>
+    <DefaultValue>2</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Template</Name>
+    <Description>A template string to display the size. Values in {} will be replaced by actual values</Description>
+    <Type>String</Type>
+    <Label>Template</Label>
+    <DefaultValue>{w} x {h} {units}</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

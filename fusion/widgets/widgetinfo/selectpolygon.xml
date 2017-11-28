@@ -1,0 +1,30 @@
+<WidgetInfo>
+  <Type>SelectPolygon</Type>
+  <LocalizedType>Select Polygon</LocalizedType>
+  <Description>Perform a selection using a polygon</Description>
+  <Location></Location>
+  <Label>Select Polygon</Label>
+  <Tooltip>Draw a polygon to perform a selection</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl>images/icons.png</ImageUrl>
+  <ImageClass>select-polygon</ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>SelectionType</Name>
+    <Description>The type of selection to do</Description>
+    <Type>String</Type>
+    <Label>Selection type</Label>
+    <DefaultValue>INTERSECTS</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Tolerance</Name>
+    <Description>pixel tolerance for a point click</Description>
+    <Type>integer</Type>
+    <Label>Tolerance</Label>
+    <Min>1</Min>
+    <DefaultValue>3</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

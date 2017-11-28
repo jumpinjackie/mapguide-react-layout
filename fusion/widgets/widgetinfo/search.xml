@@ -1,0 +1,77 @@
+<WidgetInfo>
+  <Type>Search</Type>
+  <LocalizedType>Search</LocalizedType>
+  <Description>A widget which will perform an attribute based search</Description>
+  <Location></Location>
+  <Label>Search</Label>
+  <Tooltip>Click to carry out a search on the map data</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl>images/icons.png</ImageUrl>
+  <ImageClass>search</ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>Target</Name>
+    <Label>Target</Label>
+    <Type>target</Type>
+    <Description>The frame, window, or TaskPane in which to display any UI for the widget. If empty, a new window is used</Description>
+    <IsMandatory>true</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Prompt</Name>
+    <Description>The prompt to display beside the user input</Description>
+    <Type>String</Type>
+    <Label>Prompt</Label>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Layer</Name>
+    <Description>Layer name in the map on which to carry out the search</Description>
+    <Type>String</Type>
+    <Label>Layer</Label>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Filter</Name>
+    <Description>The search expression template to return features. The filter must include a $USER_VARIABLE placeholder (that will contain the search term)</Description>
+    <Type>String</Type>
+    <Label>Filter</Label>
+    <DefaultValue>String</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>MatchLimit</Name>
+    <Description>The maximum number of hits to return</Description>
+    <Type>integer</Type>
+    <Label>Match limit</Label>
+    <Min>0</Min>
+    <DefaultValue>100</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>ResultColumns</Name>
+    <Description>An XML structure describing the columns to be returned as part of the search and their labels</Description>
+    <Type>XML</Type>
+    <Label>ResultColumns</Label>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Title</Name>
+    <Description>The title to use for the search form</Description>
+    <Type>String</Type>
+    <Label>Title</Label>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>PointZoomLevel</Name>
+    <Label>Point zoom level</Label>
+    <Type>double</Type>
+    <Description>The zoom level to use when clicking on a point feature search result. Note that when basemaps are active, it will zoom to the discrete zoom level closest to the specified value</Description>
+    <DefaultValue>500.0</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

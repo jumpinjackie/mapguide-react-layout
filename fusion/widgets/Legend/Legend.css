@@ -1,0 +1,73 @@
+/* The tree item a tag */
+.jxTreeContainer a.fusionCheckboxItem  {
+    padding-left: 36px;
+}
+
+a.fusionCheckboxItem img.jxTreeIcon {
+    left: 16px;
+}
+
+li.jxUnselectable a.jxTreeItem {
+  cursor: default;
+}
+            
+.fusionLegendTreeRoot li.jxUnselectable a.jxPressed,
+.fusionLegendTreeRoot li.jxUnselectable a.jxTreeItem:focus,
+.fusionLegendTreeRoot li.jxUnselectable a.jxTreeItem:hover {
+  background-position: left top;
+  background-color: transparent;
+  border: none;
+  margin: 0px 1px 0px 17px;
+}
+
+
+/* The checkbox */
+.fusionLegendCheckboxContainer {
+    position: absolute;
+    left: 16px;
+    top: 0px;
+    height: 20px;
+    width: 16px;
+    z-index: 2;
+    line-height: 20px;
+    text-align: center;
+    font-size: 0px;
+}
+
+.fusionLegendCheckboxInput {
+    vertical-align: middle;
+}
+
+/* Group Info Icon */
+.fusionShowGroupInfo .fusionGroupInfo {
+    display: block;
+}
+
+.fusionGroupInfo {
+    display: none;
+}
+
+.fusionGroupInfoIcon {
+    
+}
+
+/* Layer Information Icon */
+.fusionLayerInfo {
+    display: none;
+    position: absolute;
+    right: 1px;
+    top: 0px;
+    height: 20px;
+    width: 16px;
+    z-index: 2;
+    line-height: 20px;
+    font-size: 0px;
+}
+
+.fusionShowLayerInfo .fusionLayerInfo {
+    display: block;
+}
+
+.fusionLayerInfoIcon {
+    vertical-align: middle;
+}

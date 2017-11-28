@@ -1,0 +1,43 @@
+<WidgetInfo>
+  <Type>CursorPosition</Type>
+  <LocalizedType>Cursor Position</LocalizedType>
+  <Description>Provides dynamic cursor tracking as it moves over the map</Description>
+  <Label>CursorPosition</Label>
+  <Tooltip>this will display the cursor position</Tooltip>
+  <StandardUi>false</StandardUi>
+  <ContainableBy>Splitterbar</ContainableBy>
+  <Parameter>
+    <Name>Template</Name>
+    <Type>string</Type>
+    <Label>Template</Label>
+    <Description>The template string to use to generate the displayed text</Description>
+    <DefaultValue>x: {x}, y: {y}</DefaultValue>
+    <IsMandatory>1</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Precision</Name>
+    <Type>integer</Type>
+    <Label>Precision</Label>
+    <Description>The precision to display for the coordinates</Description>
+    <DefaultValue>4</DefaultValue>
+    <Min>0</Min>
+    <Max>15</Max>
+    <IsMandatory>0</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>DisplayProjection</Name>
+    <Type>string</Type>
+    <Label>DisplayProjection</Label>
+    <Description>The projection to display mouse coordinates in. This can be an EPSG code (EPSG:XXXX) or a WKT string. This parameter takes precedence over the Units parameter if specified</Description>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>0</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Units</Name>
+    <Type>string</Type>
+    <Label>Units</Label>
+    <Description>The coordinate units</Description>
+    <DefaultValue>dd</DefaultValue>
+    <IsMandatory>1</IsMandatory>
+  </Parameter>
+</WidgetInfo>

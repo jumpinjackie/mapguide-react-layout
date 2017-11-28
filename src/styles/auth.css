@@ -11,8 +11,10 @@
 .auth__input {
   margin-top: 10px;
   border: 1px solid #000;
+  height: 20px;
 }
 
 .auth__auth-btn {
   margin-top: 10px;
+  padding: 5px 10px;
 }

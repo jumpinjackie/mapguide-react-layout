@@ -21,21 +21,37 @@ const customStyles = {
   },
 };
 
-export class Auth extends React.Component<{}, {}> {
+interface IState {
+  login: string;
+  password: string;
+}
+
+export class Auth extends React.Component<{}, IState> {
     constructor(props: any) {
         super(props);
         this.state = {
             login: '',
-            pasword: '',
+            password: '',
         };
     }
 
     @bind
     handlerAuthClick() {
-      console.log('click')
+      const { login, password } = this.state;
+      console.log(login, password)
     }
+
+    @bind
+    onInputChange(e: any) {
+      const { value, name } = e.currentTarget;
+      const newState: any = {};
+      newState[name] = value;
+      this.setState(newState);
+    }
+
     render(): any {
       const b = block('auth');
+      const { login, password } = this.state;
       return (
         <div className={b()}>
           <Modal
@@ -46,8 +62,8 @@ export class Auth extends React.Component<{}, {}> {
           >
             <div className={b('content')()}>
               <h1>Авторизация</h1>
-              <input className={b('input')()} type="text"/>
-              <input className={b('input')()} type="password"/>
+              <input value={login} name="login" onChange={this.onInputChange} className={b('input')()} type="text" placeholder='Логин' />
+              <input value={password} name="password" onChange={this.onInputChange} className={b('input')()} type="password" placeholder='Пароль' />
               <button className={b('auth-btn')()} onClick={this.handlerAuthClick}>Войти</button>
             </div>
           </Modal>

@@ -18,6 +18,7 @@ import { Error, normalizeStack } from "../components/error";
 import Auth from "../components/auth";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import * as TemplateActions from "../actions/template";
+import * as AuthActions from "../actions/auth";
 import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
 
@@ -100,6 +101,7 @@ export interface IAppState {
 export interface IAppDispatch {
     initLayout: (args: IInitAppLayout) => void;
     setElementVisibility: (states: TemplateActions.IElementState) => void;
+    checkUserIsAuthenticated: () => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IAppProps): Partial<IAppState> {
@@ -120,7 +122,8 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IAppProps
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAppDispatch> {
     return {
         initLayout: (args) => dispatch(initLayout(args)),
-        setElementVisibility: (state) => dispatch(TemplateActions.setElementStates(state))
+        setElementVisibility: (state) => dispatch(TemplateActions.setElementStates(state)),
+        checkUserIsAuthenticated: () => dispatch(AuthActions.checkUserIsAuthenticated()),
     };
 }
 
@@ -146,8 +149,12 @@ export class App extends React.Component<AppProps, any> {
             session,
             fusionRoot,
             resourceId,
-            externalBaseLayers
+            externalBaseLayers,
+            checkUserIsAuthenticated
         } = this.props;
+
+        if(checkUserIsAuthenticated) checkUserIsAuthenticated();
+
         if (setElementVisibility && initialElementVisibility) {
             const { taskpane, legend, selection } = initialElementVisibility;
             const states: TemplateActions.IElementState = {

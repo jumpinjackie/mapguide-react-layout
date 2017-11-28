@@ -63,6 +63,10 @@ declare type GeoJSONFeatureCollection = any;
 declare type GeoJSONGeometry = any;
 declare type GeoJSONGeometryCollection = any;
 declare type TileJSON = any;
+
+declare module 'react-modal';
+declare module 'bem-cn';
+declare module 'decko';
 declare module ol {
     /**
      * An attribution for a layer source.

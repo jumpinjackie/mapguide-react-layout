@@ -15,6 +15,7 @@ import {
 } from "../api/common";
 import { initLayout, IInitAppLayout } from "../actions/init";
 import { Error, normalizeStack } from "../components/error";
+import Auth from "../components/auth";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import * as TemplateActions from "../actions/template";
 import { getAssetRoot } from "../utils/asset";
@@ -32,6 +33,7 @@ export interface IAppProps {
      * A session id to init this viewer with
      */
     session?: string;
+    isAuth: any;
     /**
      * Agent configuration
      *
@@ -86,6 +88,7 @@ export interface IAppState {
     initOptions: any;
     config: IConfigurationReducerState;
     map: IBranchedMapSubState;
+    isAuth: any;
 }
 
 /**
@@ -109,7 +112,8 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IAppProps
         includeStack: state.initError.includeStack,
         initOptions: state.initError.options,
         config: state.config,
-        map: map
+        map: map,
+        isAuth: state.auth.isAuth,
     };
 }
 
@@ -224,10 +228,12 @@ export class App extends React.Component<AppProps, any> {
         </div>;
     }
     render(): JSX.Element {
-        const { layout, config, error, map } = this.props;
+        const { layout, config, error, map, isAuth } = this.props;
         const { isLoading } = this.state;
         if (error) {
             return <Error error={error} errorRenderer={this.fnErrorRenderer} />
+        } else if(!isAuth) {
+            return <Auth />
         } else {
             //NOTE: Locale may not have been set at this point, so use default
             const locale = config ? (config.locale || DEFAULT_LOCALE) : DEFAULT_LOCALE;

@@ -9,3 +9,4 @@ export * from "./taskpane";
 export * from "./template";
 export * from "./toolbar";
 export * from "./viewer";
+export * from "./auth";

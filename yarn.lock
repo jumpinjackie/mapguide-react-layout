@@ -15,6 +15,10 @@
     tether "^1.4"
     tslib "^1.5.0"
 
+"@types/bem-cn@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@types/bem-cn/-/bem-cn-2.1.1.tgz#2dfca53ce30fcb9bf1e27f911962152abf06d9d6"
+
 "@types/cheerio@*":
   version "0.22.5"
   resolved "https://registry.yarnpkg.com/@types/cheerio/-/cheerio-0.22.5.tgz#db749e8470d98f103d51407db9bee5a8b9d20d45"
@@ -123,6 +127,12 @@
 "@types/react-measure@0.4.8":
   version "0.4.8"
   resolved "https://registry.yarnpkg.com/@types/react-measure/-/react-measure-0.4.8.tgz#8747c98531fb05ae9a6b9422979606aa4dd2d25f"
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-modal@^2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@types/react-modal/-/react-modal-2.2.2.tgz#651157522ba45c1ffd8831a2e7bbd8094390a925"
   dependencies:
     "@types/react" "*"
 
@@ -580,6 +590,10 @@ bcrypt-pbkdf@^1.0.0:
   resolved "https://registry.yarnpkg.com/bcrypt-pbkdf/-/bcrypt-pbkdf-1.0.1.tgz#63bc5dcb61331b92bc05fd528953c33462a06f8d"
   dependencies:
     tweetnacl "^0.14.3"
+
+bem-cn@^2.1.3:
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/bem-cn/-/bem-cn-2.1.3.tgz#1e2145bc0f1106085de5563b6611c79644e71c2c"
 
 bestzip@1.1.4:
   version "1.1.4"
@@ -1255,6 +1269,10 @@ decamelize@^1.0.0, decamelize@^1.1.1, decamelize@^1.1.2:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/decamelize/-/decamelize-1.2.0.tgz#f6534d15148269b20352e7bee26f501f9a191290"
 
+decko@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/decko/-/decko-1.2.0.tgz#fd43c735e967b8013306884a56fbe665996b6817"
+
 decode-uri-component@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.2.0.tgz#eb3913333458775cb84cd1a1fae062106bb87545"
@@ -1634,6 +1652,10 @@ execa@^0.7.0:
     p-finally "^1.0.0"
     signal-exit "^3.0.0"
     strip-eof "^1.0.0"
+
+exenv@^1.2.0:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/exenv/-/exenv-1.2.2.tgz#2ae78e85d9894158670b03d47bec1f03bd91bb9d"
 
 expand-brackets@^0.1.4:
   version "0.1.5"
@@ -3949,6 +3971,13 @@ react-measure@1.4.7:
     get-node-dimensions "^1.2.0"
     prop-types "^15.5.4"
     resize-observer-polyfill "^1.4.1"
+
+react-modal@^3.1.5:
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/react-modal/-/react-modal-3.1.5.tgz#9cfdb7634b5003148ffb7c8ead13a36f671d744e"
+  dependencies:
+    exenv "^1.2.0"
+    prop-types "^15.5.10"
 
 react-redux@5.0.6:
   version "5.0.6"

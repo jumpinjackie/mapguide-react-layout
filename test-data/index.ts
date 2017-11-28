@@ -22,6 +22,7 @@ import { TOOLBAR_INITIAL_STATE } from "../src/reducers/toolbar";
 import { VIEWER_INITIAL_STATE } from "../src/reducers/viewer";
 import { MOUSE_INITIAL_STATE } from "../src/reducers/mouse";
 import { TEMPLATE_INITIAL_STATE } from "../src/reducers/template";
+import { AUTH_INITIAL_STATE } from "../src/reducers/auth";
 
 export function createMap(): any {
     return {
@@ -607,6 +608,7 @@ export function createInitialState(): IApplicationState {
     const viewer: IViewerReducerState =  { ...VIEWER_INITIAL_STATE };
     const mouse: IMouseReducerState = { ...MOUSE_INITIAL_STATE };
     const template: ITemplateReducerState = { ...TEMPLATE_INITIAL_STATE };
+    const auth: any = { ...AUTH_INITIAL_STATE };
     const lastaction: any = null;
     return {
         initError,
@@ -618,6 +620,7 @@ export function createInitialState(): IApplicationState {
         viewer,
         mouse,
         lastaction,
-        template
+        template,
+        auth
     };
 }

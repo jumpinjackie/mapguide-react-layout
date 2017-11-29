@@ -894,7 +894,8 @@ export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
         locale: query["locale"] || options.locale || DEFAULT_LOCALE,
         session: query["session"] || options.session
     };
-    const opts: IInitAsyncOptions = { ...options, ...options1 };
+    let opts: IInitAsyncOptions = { ...options, ...options1 };
+    opts = { ...opts, resourceId: "Library://Samples/Sheboygan/Layouts/AdvancedStylization.WebLayout" };
     return (dispatch, getState) => {
         const args = getState().config;
         if (args.agentUri && args.agentKind) {

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WGS</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta charset="utf-8">
+        <!-- NOTE: If you don't care about IE, you can remove/comment the es6-promise script reference below -->
+        <script type="text/javascript" src="dist/es6-promise.auto.min.js"></script>
+        <script type="text/javascript" src="dist/viewer.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react/<react-version>/react.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react/<react-version>/react-dom.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react-bootstrap/<version>/react-bootstrap.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap-theme.min.css">
+    </head>
+
+    <body>
+        <div id="map"></div>
+        <script type="text/javascript">
+          var el = document.getElementById("map");
+          var viewer = new MapGuide.Application();
+          viewer.mount(el, {
+              layout: "admin",
+              agent: {
+                  uri: "../mapagent/mapagent.fcgi"
+              }
+          });
+      </script>
+    </body>
+</html>

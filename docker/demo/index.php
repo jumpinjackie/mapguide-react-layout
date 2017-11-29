@@ -13,7 +13,7 @@ $resWl = new MgResourceIdentifier("Library://Samples/Sheboygan/Layouts/AdvancedS
 $resAppDef = new MgResourceIdentifier("Library://Samples/Sheboygan/FlexibleLayouts/SlateCommercial.ApplicationDefinition");
 if (!$resSvc->ResourceExists($resWl) || !$resSvc->ResourceExists($resAppDef)) {
     //The docker container will have Melbourne.mgp pre-loaded at this path
-    $bs3 = new MgByteSource(dirname(__FILE__)."/../../server/Packages/Sheboygan.mgp");
+    $bs3 = new MgByteSource(dirname(__FILE__)."/../../server/Packages/webgis.mgp");
     $br3 = $bs3->GetReader();
     $resSvc->ApplyResourcePackage($br3);
 }

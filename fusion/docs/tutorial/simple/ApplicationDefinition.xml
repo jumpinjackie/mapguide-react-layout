@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApplicationDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:noNamespaceSchemaLocation="ApplicationDefinition-1.0.0.xsd">
+
+<!-- ****************************************** 
+* MapSet
+* 
+* Contains the map(s) you want available to your
+* application.
+ ****************************************** -->
+
+  <MapSet>
+    <MapGroup id="sheboygan">
+      <Map>
+        <Type>MapGuide</Type>
+        <SingleTile>true</SingleTile>
+        <Extension>
+          <ResourceId>Library://Samples/Sheboygan/Maps/Sheboygan.MapDefinition</ResourceId>
+        </Extension>
+      </Map>
+    </MapGroup>
+  </MapSet>
+
+<!-- ****************************************** 
+* WidgetSet
+*
+* Contains the widgets you want available to your 
+* application.
+ ****************************************** -->
+
+  <WidgetSet>
+
+<!-- MAP -->
+
+    <MapWidget>
+      <Name>map</Name>
+      <Type>Map</Type>
+      <MapId>sheboygan</MapId>
+    </MapWidget>
+
+<!-- INMAP NAVIGATOR -->
+
+    <Widget>
+      <Name>navigator</Name>
+      <Type>Navigator</Type>
+    </Widget>
+
+    <Widget>
+      <Name>pan</Name>
+      <Type>Pan</Type>
+      <Enabled/>
+    </Widget>
+
+  </WidgetSet>
+
+</ApplicationDefinition>

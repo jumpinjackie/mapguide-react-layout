@@ -1,0 +1,37 @@
+<WidgetInfo>
+  <Type>SelectRadiusValue</Type>
+  <LocalizedType>Select Radius Value</LocalizedType>
+  <Description>A widget to allow the user can manually enter a radius for the SelectRadius widget</Description>
+  <Location></Location>
+  <Label>Select radius value</Label>
+  <Tooltip>enter the radius for the Select by Radius tool</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl></ImageUrl>
+  <ImageClass></ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>RadiusName</Name>
+    <Description>The name of the SelectRadius widget this applies to</Description>
+    <Type>String</Type>
+    <Label>SelectRadius widget name</Label>
+    <DefaultValue>SelectRadius</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Label</Name>
+    <Description>Label to use for this widget</Description>
+    <Type>String</Type>
+    <Label>Label</Label>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>ClassName</Name>
+    <Description>CSS class name for the Label</Description>
+    <Type>String</Type>
+    <Label>CSS Class name</Label>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+      <title>Fusion Web Mapping Tutorial</title>
+      <link rel="stylesheet" type="text/css" href="crispin/jxtheme.css"/>
+      
+      <script src="/mapguide/fusionTrunk/lib/fusion.js"></script>
+      <script type="text/javascript">
+        window.onload = function() {
+          
+          //do Jx Layouts
+          new Jx.Layout('thePage');
+          new Jx.Layout('header', {bottom: null, height: 50});
+          var mainFrame = new Jx.Layout('main', {top: 50, bottom: null});
+          
+          var splitter = new Jx.Splitter(mainFrame.domObj, {
+              elements: [$('leftColumn'), $('rightColumn')],
+              containerOptions: [{width:200},null]
+          });
+          
+          /* last step is to trigger initial layout of everything */
+          $('thePage').resize();
+        }
+      </script>
+      
+      <style type="text/css">
+        #header {
+          background-color: olive;
+        }
+        #leftColumn {
+          background-color: yellow;
+        }
+        #rightColumn {
+          background-color: cyan;
+        }
+      </style>
+      
+  </head>
+  <body>
+
+  <div id="thePage">
+    <div id="header">
+      Fusion Tutorial Application
+    </div>
+    <div id="main">
+      <div id="leftColumn"></div>
+      <div id="rightColumn"></div>
+    </div>
+  </div>
+  
+  </body>
+</html>

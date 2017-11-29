@@ -1,0 +1,109 @@
+<!-- this release of fusion uses the BufferPanel widget rather than Buffer.  These
+wil be merged in the future -->
+<WidgetInfo>
+    <Type>Buffer</Type>
+    <LocalizedType>Buffer</LocalizedType>
+    <Description>This widget will perform a buffering operation on selected features in the Map.  Either a popup window or the task pane will be used to gather user input, depending on the setting of the Target parameter</Description>
+    <Label>Create a buffer</Label>
+    <Tooltip>Click to create a buffer</Tooltip>
+    <ImageUrl>images/icons.png</ImageUrl>
+    <ImageClass>buffer</ImageClass>
+    <StandardUi>true</StandardUi>
+    <ContainableBy>Any</ContainableBy>
+    <Parameter>
+        <Name>LayerName</Name>
+        <Label>Layer name</Label>
+        <Type>string</Type>
+        <Description>The name of the buffer layer</Description>
+        <DefaultValue>Buffer</DefaultValue>
+        <IsMandatory>0</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>LayerNameInput</Name>
+        <Label>Layer name input field label</Label>
+        <Type>string</Type>
+        <Description>The label for the buffer layer name input field</Description>
+        <DefaultValue>BufferLayerName</DefaultValue>
+        <IsMandatory>0</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>BufferDistance</Name>
+        <Label>Buffer distance</Label>
+        <Type>double</Type>
+        <Description>The distance to buffer</Description>
+        <DefaultValue>100</DefaultValue>
+        <IsMandatory>0</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>BufferDistanceInput</Name>
+        <Label>Buffer distance input field label</Label>
+        <Type>string</Type>
+        <Description>The label for the buffer distance input field</Description>
+        <DefaultValue>BufferDistance</DefaultValue>
+        <IsMandatory>0</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>BufferUnits</Name>
+        <Label>Buffer units</Label>
+        <Type>string</Type>
+        <Description>The units for the buffer distance</Description>
+        <AllowedValue>
+          <Name>meters</Name>
+          <Label>Meters</Label>
+        </AllowedValue>
+        <AllowedValue>
+          <Name>feet</Name>
+          <Label>Feet</Label>
+        </AllowedValue>
+        <AllowedValue>
+          <Name>miles</Name>
+          <Label>Miles</Label>
+        </AllowedValue>
+        <AllowedValue>
+          <Name>kilometers</Name>
+          <Label>Kilometers</Label>
+        </AllowedValue>
+        <DefaultValue>meters</DefaultValue>
+        <IsMandatory>0</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>BufferUnitsInput</Name>
+        <Label>Buffer units input field label</Label>
+        <Type>string</Type>
+        <Description>The label for the buffer units input field</Description>
+        <DefaultValue>BufferUnits</DefaultValue>
+        <IsMandatory>0</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>BorderColor</Name>
+        <Label>Border color</Label>
+        <Type>color</Type>
+        <Description>The color of the buffer border</Description>
+        <DefaultValue>ff000000</DefaultValue>
+        <IsMandatory>0</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>BorderColorInput</Name>
+        <Label>Border color input field label</Label>
+        <Type>string</Type>
+        <Description>The label for the border color input field</Description>
+        <DefaultValue>BufferBorderColor</DefaultValue>
+        <IsMandatory>0</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>FillColor</Name>
+        <Label>Fill color</Label>
+        <Type>color</Type>
+        <Description>The color of the buffer fill</Description>
+        <DefaultValue>33FF0000</DefaultValue>
+        <IsMandatory>0</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>FillColorInput</Name>
+        <Label>Fill color input field label</Label>
+        <Type>string</Type>
+        <Description>The label for the fill color input field</Description>
+        <DefaultValue>BufferFillColor</DefaultValue>
+        <IsMandatory>0</IsMandatory>
+    </Parameter>
+</WidgetInfo>

@@ -9,6 +9,7 @@ import { mapStateReducer } from "./map-state";
 import { viewerReducer } from "./viewer";
 import { mouseReducer } from "./mouse";
 import { templateReducer } from "./template";
+import { authReducer } from "./auth";
 
 const rootReducer: any = {
     initError: initErrorReducer,
@@ -16,11 +17,12 @@ const rootReducer: any = {
     template: templateReducer,
     mapState: mapStateReducer,
     viewer: viewerReducer,
+    auth: authReducer,
     toolbar: toolbarReducer,
     taskpane: taskPaneReducer,
     modal: modalReducer,
     mouse: mouseReducer,
-    lastaction: lastAction
+    lastaction: lastAction,
 };
 
 export default rootReducer;

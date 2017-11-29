@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>Untitled Document</title>
+</head>
+
+<body>
+<h1>MapGuide Fusion Installation Instructions</h1>
+<p>This document covers basic installation steps for getting MapGuide Fusion running in your MapGuide installation. </p>
+<p>MapGuide Fusion is designed to work with MapGuide Enterprise and MapGuide Open Source. It will not work with earlier versions of MapGuide. </p>
+<h2>Pre-Requisites</h2>
+<p>You must first obtain and correctly install MGOS/E and one of the Web Server Extension API languages.  Currently, Fusion only supports the PHP API.</p>
+<p>Once you have a working MapGuide OS/E installation with PHP API extensions, you can install Fusion.</p>
+<h2>Obtaining MapGuide Fusion</h2>
+<p>Fusion is available from .....</p>
+<h2>Installing MapGuide Fusion</h2>
+<p>NOTE: It is <strong>HIGHLY RECOMMENDED </strong>that you install MapGuide Fusion inside the <code>WebServerExtensions/www</code> directory of your MGOS/E installation.</p>
+<p>NOTE: MapGuide Fusion must be installed on the same server as your MGOS/E Web Server Extensions because it uses the API included with the Web Server Extensions. </p>
+<p>To install Fusion, extract the MapGuide Fusion source code from the distribution package that you chose (either a tar.gz or a zip file).  By default, MapGuide Fusion is configured to be installed into the 'www' directory of your WebServerExtensions installation. You may install MapGuide Fusion into a different location, as long as you follow the Configuring MapGuide Fusion steps below, and you really, really know what you are doing. Seriously. If you don't have a good reason for installing to a different location, don't do it.</p>
+<h2>Configuring MapGuide Fusion</h2>
+<p>If you installed MapGuide Fusion into the <code>WebServerExtensions/www</code> directory, and your WebServerExtensions is installed in <code>C:\Program Files</code>, Fusion is ready to go.</p>
+<p>If the Web Server Extensions are installed elsewhere, you must now change the default values in the following file:</p>
+<code>fusion/mapguide/php/Common.php</code>
+<p>At the beginning of this file (after the first comment block) are two lines as follows:</p>
+<code>$defaultInstallDir = &quot;C:/Program Files/MapGuideOpenSource/&quot;;<br />
+$defaultExtensionDir = $installDir . &quot;WebServerExtensions/www/&quot;;</code>
+<p>Modify these lines to point to your actual installation path.</p>
+<p>If Fusion is not installed inside the <code>WebServerExtensions/www</code> directory, you must configure your web server to provide web access to MapGuide Fusion.</p>
+<p>Doing this is dependent on the actual web server you have installed.  As a minimum, you will need to set up an alias (Apache) or virtual directory (IIS) to the <code>fusion</code> directory and configure it to allow execution of PHP scripts inside <code>fusion</code> and make the PHP API extensions of MapGuide available as well.</p>
+<p>If you do not know how to configure your web server to do this, please move the <code>fusion</code> directory to the <code>WebServerExtensions/www</code> directory.</p>
+<h2>Testing your Installation</h2>
+<p>Fusion comes with some sample applications in the samples directory.  To
+test your Fusion installation, you need to modify these applications for
+your particular setup and then load the applications.  If you get a map,
+everything is good!</p>
+
+<p>To configure the sample applications, you need to edit the following files:</p>
+<dl>
+    <dt>index.html</dt>
+    <dd>look for the <code>&lt;script&gt;</code> tag that includes fusion.js and modify the url appropriately.  It is configured to use <code>localhost:8008</code>, which will work for local installations of MGOS/E</dd>
+    <dt>redirect.php</dt>
+    <dd>the sample applications use the Anonymous user by default.  If you have modified MGOS/E default user configuration or would like to use a different user name and password (for instance, if you need a user that has the Author role), then you can modify the $username and $password variables near the top of this file.  Note that these values are not accessible to the user of the application (see Fusion Developer&quot;s guide for more details on why redirect.php is needed and what it does).</dd>
+    <dt>WebLayout.xml</dt>
+    <dd>the sample applications are configured to load the Sheboygan sample map that is freely available with MGOS/E.  If you do not have this sample data set installed, have installed it in a different location than the default, or simply wish to use a different map, you will need to edit this file.  Look for the following block:
+  <pre>
+  &lt;Command xsi:type="MapCommandType"&gt;
+      &lt;Name&gt;Map&lt;/Name&gt;
+      &lt;Label&gt;Map&lt;/Label&gt;
+      &lt;TargetViewer&gt;All&lt;/TargetViewer&gt;
+      &lt;Action&gt;MGMap&lt;/Action&gt;
+      &lt;ResourceId&gt;Library://Samples/Sheboygan/Maps/Sheboygan.MapDefinition&lt;/ResourceId&gt;
+  &lt;/Command&gt;
+  </pre>
+  
+  Change the ResourceId tag to point to the appropriate MapDefinition.</dd>
+</dl>
+<h2>Getting Help</h2>
+<p>If you are having trouble getting fusion running ... </p>
+<p><cite>$Id: installation.html 496 2007-03-20 20:32:22Z pspencer $</cite></p>
+</body>
+</html>

@@ -5,3 +5,4 @@ export * from "./map";
 export * from "./modal";
 export * from "./taskpane";
 export * from "./template";
+export * from "./auth";

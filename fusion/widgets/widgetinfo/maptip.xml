@@ -1,0 +1,56 @@
+<WidgetInfo>
+  <Type>Maptip</Type>
+  <LocalizedType>Map Tip</LocalizedType>
+  <Description>A widget to display information about features under the mouse as it hovers over the map</Description>
+  <Location></Location>
+  <Label>Maptip</Label>
+  <Tooltip>Click to Enable/Disable get information about features from Server</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl>images/icons.png</ImageUrl>
+  <ImageClass>maptip</ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>Delay</Name>
+    <Description>The delay in milliseconds before showing a map tip</Description>
+    <Type>integer</Type>
+    <Label>Delay</Label>
+    <Min>0</Min>
+    <Max>10000</Max>
+    <DefaultValue>350</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Layer</Name>
+    <Description>The layers to display information about</Description>
+    <Type>String</Type>
+    <Label>Layers</Label>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Tolerance</Name>
+    <Description>The number of screen pixels around the cursor to query</Description>
+    <Type>integer</Type>
+    <Label>Tolerance</Label>
+    <Min>0</Min>
+    <Max>10</Max>
+    <DefaultValue>2</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Target</Name>
+    <Label>Target</Label>
+    <Type>String</Type>
+    <Description>The frame, window, or TaskPane in which to open hyperlinks. If empty, a new window is used</Description>
+    <IsMandatory>false</IsMandatory>
+    <DefaultValue>MaptipWindow</DefaultValue>
+  </Parameter>
+  <Parameter>
+    <Name>WinFeatures</Name>
+    <Label>Window Features</Label>
+    <Type>String</Type>
+    <Description>Options for opening hyperlinks new window, if used</Description>
+    <IsMandatory>false</IsMandatory>
+    <DefaultValue>menubar=no,location=no,resizable=no,status=no</DefaultValue>
+  </Parameter>
+</WidgetInfo>

@@ -1,0 +1,33 @@
+<WidgetInfo>
+  <Type>ViewOptions</Type>
+  <LocalizedType>View Options</LocalizedType>
+  <Description>A widget to allow selection of the display units for various widgets</Description>
+  <Location></Location>
+  <Label>Options</Label>
+  <Tooltip>Click to change the units displayed</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl>images/icons.png</ImageUrl>
+  <ImageClass>options</ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>DisplayUnits</Name>
+    <Description>The units to use for display by other widgets</Description>
+    <Type>String</Type>
+    <Label>Display units</Label>
+    <AllowedValue>
+      <Name>Miles</Name>
+      <Label>Miles</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Meters</Name>
+      <Label>Meters</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>Degrees</Name>
+      <Label>Degrees</Label>
+    </AllowedValue>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

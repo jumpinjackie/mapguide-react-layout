@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Sample Fusion Application</title>
+<!-- include this tag when using Google maps base layers
+<script type="text/javascript" src='http://maps.google.com/maps/api/js?sensor=false'></script>
+ -->    
+<script type="text/javascript" src="../../../lib/fusion.js" charset="utf-8"></script>
+<script type="text/javascript" src="EPSG42304.js"></script>
+<link rel="stylesheet" href="../../../lib/jxLib/themes/delicious/jxtheme.uncompressed.css" type="text/css" media="screen" charset="utf-8">
+<link rel="stylesheet" href="icons.css" type="text/css" media="screen" charset="utf-8">
+<style type="text/css">
+    #Statusbar .spanCursorPosition,
+    #Statusbar .inputEditableScale,
+    #Statusbar .spanViewSize,
+    #Statusbar .spanSelectionInfo {
+        background-color: #fff;
+        padding: 2px 4px;
+        line-height: 18px;
+    }
+
+
+    li.jxToolItem.activityIndicator {
+        float: right;
+        padding: 6px 3px;
+    }
+
+</style>
+<!--[if IE]>
+<style>
+</style>
+<![endif]-->
+<script type="text/javascript">
+window.onload = function() {
+    /* make 'thePage' just fill the browser window and resize automagically
+       the user resizes the browser */
+    new Jx.Layout('thePage').resize();
+    
+    var topToolbar = new Jx.Toolbar({id: 'Toolbar', position: 'top'});
+    var mainPanel = new Jx.Panel({
+        id: 'Main',
+        hideTitle: true,
+        toolbars: [topToolbar]
+    });
+    mainPanel.addTo('thePage')
+    new Jx.Layout('Main', {right: 250, bottom: 30});
+    new Jx.Layout('TaskPane', {width: 250, left: null, bottom: 30});
+    new Jx.Layout('Statusbar', {height: 30, top: null});
+    
+    new Jx.Splitter(mainPanel.content, {
+       elements: ['PanelPane', 'Map'],
+       containerOptions: [{width: 200}, {}]
+    });
+
+    var p1 = new Jx.Panel({
+        label: 'Legend', 
+        content: 'Legend', 
+        collapse: false, 
+        maximize: true
+    });
+    var p2 = new Jx.Panel({
+        label: 'Selection', 
+        content: 'SelectionPanel', 
+        collapse: false, 
+        maximize: true
+    });
+    var p3 = new Jx.Panel({
+        label: 'Overview Map', 
+        content: 'OverviewMap', 
+        collapse: false, 
+        maximize: true
+    });
+    var pm = new Jx.PanelSet({parent: 'PanelPane', panels: [p1, p2, p3]});
+    
+    Fusion.registerForEvent(Fusion.Event.FUSION_INITIALIZED, function() {
+        $('thePage').resize({forceResize: true});
+        $('thePage').style.visibility = 'visible';
+        mainPanel.layoutContent();
+    });
+    Fusion.registerForEvent(Fusion.Event.FUSION_ERROR, fusionError);
+    Fusion.initialize();
+}
+
+function fusionError(eventId, error) {
+    console.log('Fusion Error: \n' + error.toString());
+}
+
+</script>
+</head>
+
+<body>
+
+<div id="thePage" style="visibility: hidden">
+
+<div id="PanelPane">
+    <div id="Legend"></div>
+    <div id="SelectionPanel"></div>
+    <div id="OverviewMap"></div>
+</div>
+<div id="Map">
+  <div id="Navigator"></div>
+  <div id="Maptip"></div>
+</div>
+<div id="Statusbar"></div>
+<div id="TaskPane"></div>
+<div id="PoweredBy" class="statusBarItem">
+<a href="http://mapserver.gis.umn.edu.org/" target="_blank">
+  <img src="images/PoweredBy_en.gif" width="137" height="18" border="0">
+</a>
+</div>
+
+</div>
+<div id="BusyIndicator" style="visibility: hidden;">
+</div>
+
+</body>
+</html>

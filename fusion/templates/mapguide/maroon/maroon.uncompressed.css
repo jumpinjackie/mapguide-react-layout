@@ -1,0 +1,601 @@
+/*
+Copyright (c) 2006, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.net/yui/license.txt
+version: 0.11.0
+*/
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,blockquote,th,td{margin:0;padding:0;}
+table{border-collapse:collapse;border-spacing:0;}
+fieldset,img{border:0;}
+address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal;}
+ol,ul {list-style:none;}
+caption,th {text-align:left;}
+h1,h2,h3,h4,h5,h6{font-size:100%;}
+q:before,q:after{content:'';}
+
+/********************************************************
+  Noble Studios - 05/21/07
+  ns_adsk.css
+  Mapguide Layout
+********************************************************/
+
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  width:  100%;
+  height:  100%;
+  overflow:  hidden;
+  background-image: url(images/background.png);
+  background-repeat: repeat-x;
+  background-color: #3e5c5f;
+  background-position: top;
+}
+
+body, table {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 75%;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  color: #000000;
+}
+
+/********************************************************
+  Overall Structure
+********************************************************/
+
+#AppContainer {
+}
+
+#MapArea {
+  border-top: 1px solid #000;
+  z-index: 0;
+  overflow: hidden;
+}
+
+#Map {
+  border: 1px solid #adadad;
+}
+
+.olMapViewport {
+    z-index: 1;
+}
+
+#Maptip {
+  display: none;
+  border: 1px solid #000;
+  background-color: #E5DAC7;
+  padding: 4px;
+}
+
+/********************************************************
+  Primary Toolbar
+********************************************************/
+
+#Toolbar {
+  background-image: url(images/toolbarBackground.png);
+  background-color: #500000;
+  border-left: 1px solid #000000;
+  border-right: 1px solid #000000;
+  z-index: 1;
+}
+
+#ToolbarVertical {
+  padding: 10px 0px 0 0px;
+  background: #500000;
+  border: 1px solid #000000;
+  z-index: 1;
+}
+
+#Toolbar span.jxButtonContainer {
+  padding: 0px 2px 0px 2px;
+}
+
+#Toolbar a.jxButton {
+  padding: 0px 0px 0px 4px;
+  background-image: url(images/toolbarButton.png);
+}
+
+#Toolbar span.jxButtonContent {
+  padding: 5px 4px 4px 0px; /* makes room for the right of the button bg */
+  background-image: url(images/toolbarButton.png);
+}
+
+
+#Toolbar span.jxButtonLabel,
+#ToolbarVertical a.jxButtonLabel {
+  color: #fff;
+}
+
+
+
+li.jxToolItem .separator {
+  padding: 4px;
+}
+
+/********************************************************
+  Main Menu
+********************************************************/
+
+#FileMenu {
+  background-image: url(images/fileMenuBackground.png);
+  background-repeat: repeat-x;
+  background-color: #ad1b25;
+  background-position: center;
+  border: 1px solid #000000;
+  z-index: 2;
+}
+
+#FileMenu span.jxButtonContainer {
+  padding: 0px 2px 0px 2px;
+}
+
+#FileMenu a.jxButton {
+  padding: 0px 0px 0px 4px; /* makes room for the left of the button bg */
+  background-image: url(images/fileMenuButton.png);
+}
+
+#FileMenu span.jxButtonContent {
+  padding: 3px 4px 4px 0px; /* makes room for the right of the button bg */
+  background-image: url(images/fileMenuButton.png);
+}
+
+#FileMenu span.jxButtonLabel {
+  color: #ffffff;
+  padding: 0 4px 0 4px;
+  background-image: none;
+}
+
+.jxBarTop  li.jxToolItem  span.separator,
+.jxBarBottom  li.jxToolItem  span.separator {
+  width: 8px;
+  height: 16px;
+}
+
+.jxBarLeft  li.jxToolItem  span.separator,
+.jxBarRight  li.jxToolItem  span.separator {
+  width: 16px;
+  height: 8px;
+}
+
+#Toolbar a.jxButtonMenu span.jxButtonContent span,
+#Toolbar a.jxButtonFlyout span.jxButtonContent span,
+#Toolbar a.jxButtonMulti span.jxButtonContent span,
+#Toolbar a.jxButtonCombo span.jxButtonContent span,
+#Toolbar a.jxButtonEditCombo span.jxButtonContent span {
+  background-image: url(images/emblems_alt.png);
+}
+
+
+/********************************************************
+  Status bar
+********************************************************/
+
+#StatusbarContainer {
+  border-top: 1px solid #000000;
+  color: #ffffff;
+  line-height: 22px;
+  font-size: 10px;
+  vertical-align: middle;
+  background-image: url(images/statusbarBackground.png);
+  background-position: top left;
+  background-repeat: repeat-x;
+}
+
+#Statusbar .jxSplitBarHorizontal {
+  width: 3px;
+  border-left: 1px solid #fef7dd;
+  background-color: #ad1b25;
+  cursor: 'col-resize';
+  margin-top: 4px;
+  height: 14px;
+}
+
+#Statusbar .spanCursorPosition,
+#Statusbar .spanViewSize,
+#Statusbar .spanSelectionInfo {
+  padding: 4px 10px;
+}
+
+.inputEditableScale {
+  font-size: 10px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  color: #fff;
+  background-color: #C66067;
+  border: 1px solid #ccc;
+}
+
+#pbmg {
+  position: absolute;
+  right: 1px;
+  padding-top: 1px;
+}
+
+/********************************************************
+  Sidebar
+********************************************************/
+#SplitterArea .jxSplitBarHorizontal {
+  width: 1px;
+  background-color: #3a3a38;
+  border-top: 1px solid #000
+}
+
+#Sidebar {
+  border-right: 1px solid #000;
+  padding-left: 8px;
+}
+
+#Sidebar .jxSplitArea {
+  border-top: 1px solid #000000;
+}
+
+#Sidebar .jxBarTop .jxBarControls,
+#Sidebar .jxBarBottom .jxBarControls{
+  display: none;
+}
+
+#Tasks {
+  display: block;
+  visibility: visible;
+  height: 250px;
+}
+
+#TaskTools {
+  padding: 5px 8px;
+  background: #ffffff;
+  border-bottom: 1px solid #8e99a3;
+}
+
+.TaskMenuIcon {
+  float: right;
+}
+
+
+#OverviewMap {
+  height: 180px;
+}
+
+#OverviewMapContent {
+  border: 1px solid #ffffff;
+  height: 177px;
+}
+
+#SidebarCollapse {
+  position: absolute;
+  width: 8px;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+  background: url(images/sidebarCollapseBackground.png) repeat-y #000;
+  z-index: 1;
+  border-top: 1px solid #000;
+}
+
+#SidebarCollapseButton {
+  display: block;
+  width: 8px;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  position: absolute;
+  height: 100%;
+  font-size: 1px;
+}
+
+.jxSnapOpened #SidebarCollapseButton {
+  background: url(images/sidebarCloseButton.png) center no-repeat;
+}
+
+.jxSnapClosed #SidebarCollapseButton {
+  background: url(images/sidebarOpenButton.png) center no-repeat;
+}
+
+#TaskPane {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/*#Legend {
+  width: 100%;
+  height: 100%;
+}
+*/
+.inputEditableScale {
+  font: normal 10px Verdana, Arial, Helvetica, sans-serif;
+}
+
+#Navigator {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: block;
+  z-index: 100;
+}
+
+
+/* ====================== */
+/* OVERRIDE BUTTON STYLES */
+/* ====================== */
+
+/* focus button */
+ul.jxToolbar .jxButton:focus,
+.jxButton:focus {
+  background-position: left -96px;
+}
+
+ul.jxToolbar .jxButton:focus span.jxButtonContent,
+.jxButton:focus span.jxButtonContent {
+  background-position: right -96px;
+}
+
+/* focus active button */
+ul.jxToolbar .jxButtonActive:focus,
+.jxButtonActive:focus {
+  background-position: left -72px;
+}
+
+ul.jxToolbar .jxButtonActive:focus span.jxButtonContent,
+.jxButtonActive:focus span.jxButtonContent {
+  background-position: right -72px;
+}
+
+span.jxButtonContent span {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+a.jxButtonEditCombo input {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: transparent;
+}
+
+/* ====================== */
+/* OVERRIDE CHROME STYLES */
+/* ====================== */
+
+.jxChromeTL img {
+  width: 500px;
+  height:500px;
+}
+
+.jxChromeTR img {
+  width: 500px;
+  height:500px;
+}
+
+.jxChromeBL img {
+  width: 500px;
+  height:500px;
+}
+
+.jxChromeBR img {
+  width: 500px;
+  height:500px;
+}
+
+/* ====================== */
+/* OVERRIDE DIALOG STYLES */
+/* ====================== */
+
+.jxDialog .jxChrome {
+  background-image: url(images/dialog_chrome.png);
+}
+
+.jxDialogContentContainer {
+  margin: 0px 11px 16px 11px;
+  border: none;
+}
+
+.jxDialogModal {
+  /* Base setup */
+  position: absolute;
+  display: block;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+
+  background-color: #000;
+  opacity: .2;
+  -ms-filter: "Alpha(opacity=20)";
+}
+
+.jxDialogTitle {
+  /* this makes the dialog draggable by the title bar in IE
+   * Without it, only the label is draggable
+   */
+  background-image: url(images/a_pixel.png);
+
+  /* note: height is hard coded into jx.js Jx.Dialog initialize function - change there as well as here */
+  height: 16px;
+
+  margin: 10px 10px 0px 10px;
+}
+
+.jxDialogIcon {
+  left: 10px;
+  top: 0px;
+}
+
+.jxDialogLabel {
+  font-family: Arial, Helvetica, sans-serif;
+  line-height:15px;
+  display:block;
+  top: 0px;
+}
+
+.jxDialogControls {
+  top: 0px;
+}
+
+.jxDialogControls img {
+  background-image: url('images/dialog_controls.png');
+}
+
+/* ======================== */
+/* OVERRIDE JX PANEL STYLES */
+/* ======================== */
+
+.jxPanelContentContainer {
+  background-image: url(images/panelBackground.png);
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  background-color: #f0f0f0;
+}
+
+.jxPanelContent {
+  background-color: transparent;
+}
+
+.jxPanelTitle {
+  background-image: url(images/panelbar.png);
+  background-repeat: repeat-x;
+  background-position: left top;
+  text-align: left;
+}
+
+/* JX PANELSET STYLE FOR TITLE BAR */
+.jxPanelBar {
+  background-color: transparent;
+}
+
+.jxPanelLabel {
+  /* make room for the loading spinner */
+  padding-left: 20px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  /* line-height vertically aligns the label in the containing div. */
+  line-height:21px;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.jxPanelControls {
+  top: 2px;
+  left: 2px;
+  height: 16px;
+  width: 16px;
+}
+
+.jxPanelControls img {
+  background-image: url('images/panel_controls.png');
+  background-repeat: no-repeat;
+}
+
+/* ======================== */
+/* OVERRIDE SPLITTER STYLES */
+/* ======================== */
+
+.jxSplitBarHorizontal {
+  width: 2px;
+  background-color: transparent;
+}
+
+.jxSplitBarVertical {
+  width: 2px;
+  background-color: transparent;
+}
+
+.jxSplitterMask { 
+  position: absolute; 
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-image: url(images/a_pixel.png);
+  z-index: 1; 
+} 
+
+.jxSplitArea {
+  display: block;
+  position: absolute;
+  margin: 0px;
+  padding: 0px;
+  border: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* ======================= */
+/* OVERRIDE TOOLBAR STYLES */
+/* ======================= */
+
+.jxBarTop,
+.jxBarBottom {
+  background-image: url(images/toolbar.png);
+  background-repeat: repeat-x;
+  background-position: 0px 0px;
+}
+
+.jxBarTop .jxBarScroller,
+.jxBarBottom .jxBarScroller {
+  position: absolute;
+  /* much bigger than its container */
+  width: 10000%;
+  overflow: hidden;
+}
+
+.jxBarTop  li.jxToolItem  span.jxBarSeparator,
+.jxBarBottom  li.jxToolItem  span.jxBarSeparator {
+  /* width/height should be defined */
+  width: 8px;
+  height: 20px;
+  background-image: url(images/toolbar_separator_h.png);
+}
+
+.jxBarLeft  li.jxToolItem  span.jxBarSeparator,
+.jxBarRight  li.jxToolItem  span.jxBarSeparator {
+  /* width/height should be defined */
+  width: 20px;
+  height: 8px;
+  background-image: url(images/toolbar_separator_v.png);
+}
+
+.jxBarTop .jxBarScrollLeft img.jxButtonIcon,
+.jxBarBottom .jxBarScrollLeft img.jxButtonIcon {
+  background-image: url(images/emblems.png);
+  background-position: 0px -80px;
+}
+
+.jxBarTop .jxBarScrollRight img.jxButtonIcon,
+.jxBarBottom .jxBarScrollRight img.jxButtonIcon {
+  background-image: url(images/emblems.png);
+  background-position: 0px -96px;
+}
+
+.jxBarTop .jxBarControls .jxButtonContainer,
+.jxBarBottom .jxBarControls .jxButtonContainer,
+.jxBarTop .jxBarScroller .jxBarWrapper .jxToolbar .jxToolItem .jxButtonContainer,
+.jxBarBottom .jxBarScroller .jxBarWrapper .jxToolbar .jxToolItem .jxButtonContainer{
+  z-index: 1;
+  padding: 2px;
+  margin-left: -1px;
+}
+
+/* trick here:  hide disabled buttons */
+.jxBarTop .jxBarControls .jxDisabled span.jxButtonContent span,
+.jxBarBottom .jxBarControls .jxDisabled span.jxButtonContent span,
+.jxBarTop .jxBarControls .jxDisabled span.jxButtonContent span,
+.jxBarBottom .jxBarControls  .jxDisabled span.jxButtonContent span,
+.jxBarTop .jxBarControls .jxDisabled .jxButton,
+.jxBarBottom .jxBarControls .jxDisabled .jxButton,
+.jxBarTop .jxBarControls .jxDisabled .jxButton,
+.jxBarBottom .jxBarControls  .jxDisabled .jxButton{
+  visibility:hidden;
+  cursor: default; 
+}
+
+/* ==================== */
+/* OVERRIDE TREE STYLES */
+/* ==================== */
+
+a.jxTreeItem {
+  font-family: Arial,Helvetica,sans-serif;
+}

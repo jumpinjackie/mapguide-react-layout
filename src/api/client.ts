@@ -39,6 +39,8 @@ export class Client implements Request.IMapGuideClient {
      *
      * @memberOf Client
      */
+
+    
     public get<T>(url: string): Promise<T> {
         return new Promise<T>((resolve, reject) => {
             fetch(url, {
@@ -56,6 +58,37 @@ export class Client implements Request.IMapGuideClient {
                 }
             })
             .catch(reject);
+        });
+    }
+
+    /**
+     * Performs a generic GET request at the specified URL
+     *
+     * @template T The type of the object you are expecting to receive
+     * @param {string} url The url to make the request to
+     * @returns {Promise<T>} A promise for the value of the requested type
+     *
+     * @memberOf Client
+     */
+    public getRoot(url: string) {
+        return new Promise((resolve, reject) => {
+            fetch(url, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                } as any,
+                method: "GET"
+            })
+            .then((response: any) => {
+                response.json().then((res: any)=>{
+                    const success = res.status === 0;
+                    resolve({
+                        success,
+                        data: success ? res.data : null,
+                        errorMessage: success ? null : 'Ошибка выполнения запроса',
+                    });
+                });
+            })
         });
     }
 
@@ -91,6 +124,33 @@ export class Client implements Request.IMapGuideClient {
                 } else {
                     resolve(response.json());
                 }
+            })
+            .catch(reject);
+        });
+    }
+
+    public postRoot<T>(url: string, data: any) {
+        if (!data.format) {
+            data.format = "application/x-www-form-urlencoded";
+        }
+        return new Promise((resolve, reject) => {
+            fetch(url, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                } as any,
+                method: "POST",
+                body: serialize(data) //form
+            })
+            .then((response: any) => {
+                response.json().then((res: any)=>{
+                    const success = res.status === 0;
+                    resolve({
+                        success,
+                        data: success ? res.data : null,
+                        errorMessage: success ? null : 'Ошибка выполнения запроса',
+                    });
+                
+                });
             })
             .catch(reject);
         });

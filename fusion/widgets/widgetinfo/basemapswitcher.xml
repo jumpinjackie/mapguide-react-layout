@@ -1,0 +1,13 @@
+<WidgetInfo>
+  <Type>BasemapSwitcher</Type>
+  <LocalizedType>BasemapSwitcher</LocalizedType>
+  <Description>A widget to allow selection of the basemaps display under the overlay MapGuide layer</Description>
+  <Location></Location>
+  <Label>External Providers</Label>
+  <Tooltip>Click to change the basemap</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl>images/icons.png</ImageUrl>
+  <ImageClass>options</ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+</WidgetInfo>

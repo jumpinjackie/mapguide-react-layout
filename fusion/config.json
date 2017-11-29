@@ -1,0 +1,50 @@
+/* This is the fusion configuration file.  Adjust as necessary. */
+{
+    /* The general section contains settings that are general to
+       fusion as a whole. */
+    "general": {
+	    /* PHP is the default and only script language supported.
+	       Don"t change this. */
+	    "scriptLanguage": "php",
+
+	    /* A directory on this system that fusion can use for
+	       temporary files. */
+	    "temporaryDirectory": "/ms4w/tmp"
+    },
+    /* The MapGuide section is required if you are installing
+       fusion for MapGuide. */
+    "mapguide": {
+	    /* The WebTierURL is the url to mapguide, it should start
+	       with http and end with /mapguide.  If you have installed
+	       fusion inside the www directory of MapGuide, then you can
+	       leave this empty as it will be automatically calculated. */
+           "webTierUrl": "",
+      /* for MapGuide OS version > 2.1 and MGE2010 and higher set this to true*/
+          "useAsyncOverlay": true,
+	    /* The tileCacheUrl is the root url to a static mapguide tile cache.
+	       A relative URL will be relative to your application.
+	       The root url will be appended with the 'Sn'
+         directories for each zoom level. */
+           "tileCacheUrl": "http://localhost:8008/sheboygan"
+    },
+    /* The MapServer section is required if you are installing fusion
+       for MapServer. */
+   "mapserver": {
+	    /* The URL of the mapserver CGI that you want to use.  */
+	    "cgi": "/cgi-bin/mapserv",
+	    /* The file system path to where mapserver should put
+	        web-accessible temporary images. */
+	    "imagePath": "/ms4w/tmp/ms_tmp",
+	    /* The URL to the image path configured above. */
+	    "imageUrl": "http://localhost/ms_tmp",
+	    /* The file system path to where mapserver should put
+	        web-accessible temporary legend images. */
+	    "legendIconCacheDir":"/ms4w/tmp/ms_tmp",
+            /* The file  system path to where the maps are stored. */
+        "mapFileRoot":"/ms4w/apps/",
+        /*The file  system path where the saved map sessions are stored.*/
+         "mapRestoreState":"/opt/fgs/apps/savedSession/",
+        /*The file  system path where the php sessions are stored.*/
+         "mapRestoreStateSession":"/opt/fgs/tmp/"
+    }
+}

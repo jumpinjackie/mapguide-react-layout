@@ -1,0 +1,264 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Aqua</title>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" >
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<script type="text/javascript" src="../../../lib/fusionSF-compressed.js"></script>
+<link rel="stylesheet" href="../../../lib/jxLib/themes/delicious/jxtheme.css" type="text/css" media="screen" charset="utf-8">
+<link rel="stylesheet" href="aqua.css" type="text/css" media="screen" charset="utf-8">
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="ie6.css" type="text/css" media="screen" charset="utf-8">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" href="ie7.css" type="text/css" media="screen" charset="utf-8">
+<![endif]-->
+<link rel="stylesheet" href="icons.css" type="text/css" media="screen" charset="utf-8">
+<script type="text/javascript">
+
+var dOverviewMap;
+var dTasks;
+var dLegend;
+
+window.onload = function() {
+    Fusion.initializeLocale();  //need to call this first if String.Translate is to be used in the onload
+
+    var main = new Jx.Layout('AppContainer');
+    new Jx.Layout('FileMenu', {height: 34, bottom: null});
+    new Jx.Layout('Toolbar', {height: 25, top: 34, bottom: null});
+    new Jx.Layout('ToolbarVertical', {width: 25, right: null, top: 59, bottom: 21});
+    new Jx.Layout('Map', {left: 25, right: 0, top: 59, bottom: 21});
+    new Jx.Layout('StatusbarContainer', {height: 21, top: null, bottom: 0});
+    new Jx.Layout('Statusbar', {height: 21, right: 159, top: null, bottom: 0});
+
+    dOverviewMap = new Jx.Dialog({
+        id: 'dialogOverviewMap',
+        label: OpenLayers.i18n('ovmapTitle'),
+        modal: false,
+        resize: false,
+        horizontal: 'right -10',
+        vertical: 'bottom -10',
+        width: 300,
+        height: 300,
+        contentId: 'OverviewMap'
+        });
+    dOverviewMap.open();
+    
+    dLegend = new Jx.Dialog({
+        id: 'dialogLegend',
+        label: OpenLayers.i18n('legendTitle'),
+        modal: false,
+        resize: true,
+        horizontal: 'right -10',
+        vertical: '10 top',
+        width: 300,
+        height: 400,
+        contentId: 'Legend'
+        });
+
+    dTasks = new Jx.Dialog({
+        id: 'dialogTasks',
+        label: OpenLayers.i18n('taskPaneTitle'),
+        modal: false,
+        resize: true,
+        horizontal: '50 left',
+        vertical: 'bottom -10',
+        width: 400,
+        height: 400,
+        contentId: 'TaskPane'
+        });
+
+    dSelection = new Jx.Dialog({
+        id: 'dialogSelection',
+        label: OpenLayers.i18n('selectionPanelTitle'),
+        modal: false,
+        resize: true,
+        horizontal: '50 left',
+        vertical: '10 top',
+        width: 400,
+        height: 400,
+        contentId: 'SelectionPanel'
+        });
+
+    main.addEvent('sizeChange', function(){
+        if (dOverviewMap.domObj.getStyle('display') != 'none'){
+            dOverviewMap.show();
+        }
+        if (dLegend.domObj.getStyle('display') != 'none'){
+            dLegend.show();
+        }
+        if (dTasks.domObj.getStyle('display') != 'none'){
+            dTasks.show();
+        }
+        if (dSelection.domObj.getStyle('display') != 'none'){
+            dSelection.show();
+        }
+
+    });
+    main.resize();
+
+    Fusion.registerForEvent(Fusion.Event.FUSION_INITIALIZED, fusionInitialized);
+    Fusion.registerForEvent(Fusion.Event.FUSION_ERROR, fusionError);
+    Fusion.initialize();
+}
+
+var showErrorDialog = function(msg) {
+    var errorDialog = new Jx.Dialog({
+        label: "Fusion Error",
+        image: "images/icons/error.png",
+        width: 800,
+        height: 400,
+        modal: true,
+        resize: true,
+        move: true,
+        content: msg
+    });
+    errorDialog.show();
+};
+
+var fusionError = function(eventId, error) {
+    if (error instanceof Fusion.DetailedError) {
+        //Case 1: Session Expiry
+        //
+        //
+        if (error.message.indexOf("MgSessionExpiredException") >= 0) {
+            var sessionId = Fusion.getQueryParam("Session");
+            var map = Fusion.getMapByIndice(0);
+            //Graceful reload is only possible if session id was not passed in as a query parameter
+            if (sessionId == "") {
+                map.message.error(OpenLayers.i18n('sessionExpired') + ' <a href="javascript:window.location.reload()">' + OpenLayers.i18n("reload") + '</a>');
+            } else {
+                map.message.error(OpenLayers.i18n('sessionExpired'));
+            }
+            return;
+        }
+    
+        //Default Case: Show a formatted summary of the error
+        var fmtStack = "";
+        for (var i = 0; i < error.stack.length; i++) {
+            var stackFrame = error.stack[i];
+            fmtStack += " - " + (stackFrame.func != "" ? stackFrame.func : "?") + " at " + stackFrame.url + " (line: " + stackFrame.line + ")";
+            fmtStack += "\n";
+        }
+        var message = OpenLayers.i18n("detailedErrorTemplateHtml", {
+            name: error.name,
+            source: error.url,
+            message: error.message,
+            stacktrace: fmtStack
+        });
+        showErrorDialog(message);
+        console.log('Fusion Error: \n' + message);
+    } else {
+        var errorMessage = error.toString();
+        var readableMessage = '';
+
+        //Case 1: For dealing with Function: convertXML (fusion.js)
+        //******************************************
+        //        xml2json: function(callback, r, json) {
+        //      if (json) {
+        //        var o;
+        //        eval("o="+r.responseText);
+        //        callback(o);
+        //      } else {
+        //      if (r.status >= 400) {
+        //          Fusion.reportError(new Fusion.Error(Fusion.Error.FATAL,
+        //              'xml2json: invalid XML document: ' + r.transport.responseText + " : " + r.request.url));
+        //          return;
+        //      }
+        //******************************************
+        var tagStart = '<h2>';
+        var tagEnd = '</h2>';
+        var indexStart = errorMessage.indexOf(tagStart);
+        var indexEnd = errorMessage.indexOf(tagEnd, tagStart);
+        if (indexStart != -1 && indexEnd != -1) {
+            readableMessage = errorMessage.substring(indexStart + tagStart.length, indexEnd);
+            readableMessage = readableMessage.replace(/\\n/g, '\n');
+            readableMessage = readableMessage.replace(/\\t/g, '\t');
+            readableMessage = readableMessage.replace(/\\'/g, '\'');
+        }
+
+        if (readableMessage != '') {
+            showErrorDialog(readableMessage);
+        }
+        else {
+            showErrorDialog('Fusion Error: \n' + errorMessage);
+        }
+        console.log('Fusion Error: \n' + errorMessage);
+    }
+}
+
+var fusionInitialized = function() {
+
+    $('AppContainer').resize({forceResize: true});
+    $('AppContainer').style.visibility = 'visible';
+    var mapWidget = Fusion.getMapById('Map');
+    mapWidget.registerForEvent(Fusion.Event.MAP_LOADED, initPanelHandler);
+}
+
+var isTaskPaneRegistered = false;
+
+var initPanelHandler = function() {
+    if(isTaskPaneRegistered) return;
+    //register this with MAP_LOADED so that the initial layout will remain
+    Fusion.registerForEvent(Fusion.Event.TASK_PANE_LOADED, showTaskPane);
+    isTaskPaneRegistered = true;
+}
+
+var showOverviewMap = function() {
+    dOverviewMap.open();
+}
+
+var showTaskPane = function() {
+    dTasks.open();
+}
+
+var showLegend = function() {
+    dLegend.open();
+}
+
+var showSelectionPanel = function() {
+    dSelection.open();
+}
+
+</script>
+</head>
+
+<body>
+
+<div id="AppContainer" style="visibility: hidden;">
+
+  <div id="Map">
+    <div id="Navigator"></div>
+  </div>
+
+  <!-- File Menu -->
+  <div id="FileMenu"></div>
+  <!-- /File Menu -->
+
+  <!-- Toolbar -->
+  <div id="Toolbar"></div>
+  <!-- /Toolbar -->
+
+  <!-- Toolbar Vertical -->
+  <div id="ToolbarVertical"></div>
+  <!-- /Toolbar Vertical -->
+
+  <div id="StatusbarContainer">
+    <div id="Statusbar"></div>
+    <div id="StatusOverviewMap"></div>
+    <div id="pbmg"><img src="images/pbmg.gif" alt=""></div>
+  </div>
+
+  <div id="Maptip"></div>
+
+</div>
+
+<!--
+<div id="TaskPane"></div>
+<div id="OverviewMap"></div>
+<div id="Legend"></div>
+<div id="SelectionPanel"></div>
+-->
+</body>
+</html>

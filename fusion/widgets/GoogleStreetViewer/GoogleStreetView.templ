@@ -1,0 +1,258 @@
+<html xmlns='http://www.w3.org/1999/xhtml' >
+<head>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true"></script>
+    <script language="javascript">
+        (function(window) {
+            var document = window.document;
+            
+            var camera = null;
+            
+            var isViewSetting = false;
+            
+            var DEFAULT_FLOAT_TOLERANCE = 1e-9;
+            var DEFAULT_RADIUS = 2;
+            //Assume the camera car is 3 meter tall.
+            var DEFAULT_Z = 3/111061.75033;        
+    
+            function isSameDouble(one, other) {
+                return Math.abs(one - other) < DEFAULT_FLOAT_TOLERANCE;
+            }
+            
+            function setNormalizedView(x, y, z, targetX, targetY, targetZ) {      
+                var changed = false;
+            
+                if(!camera) {
+                    camera = {
+                        x:x,
+                        y:y,
+                        z:z,
+                        targetX:targetX,
+                        targetY:targetY,
+                        targetZ:targetZ
+                    };
+                    window.camera = camera;
+                    changed = true;
+                }
+                else{
+                    changed = ((!isSameDouble(camera.x, x)) || (!isSameDouble(camera.y, y)) || (!isSameDouble(camera.z, z)) ||
+                        (!isSameDouble(camera.targetX, targetX)) || (!isSameDouble(camera.targetY, targetY)) || (!isSameDouble(camera.targetZ, targetZ)));
+
+                    camera.x = x;
+                    camera.y = y;
+                    camera.z = z;
+                    camera.targetX = targetX;
+                    camera.targetY = targetY;
+                    camera.targetZ = targetZ;
+                }
+
+                return changed;
+            }
+            
+            function isZero(d) {
+                return ( Math.abs(d) < DEFAULT_FLOAT_TOLERANCE );
+            }
+            
+            var panorama = null;
+            
+            var viewChangeListenerList = [];
+            
+            // register listener for view change
+            var registerViewChangeListener = function (listener) {
+                if(!listener || typeof(listener.onStreetViewChange) != "function" || typeof(listener.setGoogleSVPage) != "function"){
+                    return;
+                }
+                //make sure the same listener will not be added twice   
+                for(var index = 0; index < viewChangeListenerList.length; index++) {
+                    if(viewChangeListenerList[index] == listener) {
+                        return;
+                    }
+                }
+                
+                viewChangeListenerList[viewChangeListenerList.length] = listener;
+            };
+            
+            if(!window.registerViewChangeListener) {
+                window.registerViewChangeListener = registerViewChangeListener;
+            }
+            
+            var deregisterViewChangeListener = function(listener) {
+                if(!listener) return;
+                for(var index = 0; index < viewChangeListenerList.length; index++) {
+                    if(viewChangeListenerList[index] == listener) {
+                        viewChangeListenerList.splice(index, 1);
+                        break;
+                    }
+                }
+            };
+            
+            if(!window.deregisterViewChangeListener) {
+                window.deregisterViewChangeListener = deregisterViewChangeListener;
+            }
+            
+            function FireViewChanged() {
+                if(camera == null) return;
+                for(var index = 0; index < viewChangeListenerList.length; index++) {
+                    viewChangeListenerList[index].onStreetViewChange(camera);
+                }
+            }
+            
+            function onViewChanged() {
+                if(!panorama || !camera) return;
+                var latLng = panorama.position;
+                var pov = panorama.pov;
+                var changed = false;
+                
+                var diffX = camera.targetX - camera.x;
+                var diffY = camera.targetY - camera.y;
+                var diffXY = Math.sqrt(diffX*diffX + diffY*diffY);
+                if(diffXY == 0) {
+                    diffXY = DEFAULT_RADIUS;
+                }
+                
+                if(pov.pitch == 90 || pov.pitch == -90) {
+                    changed = setNormalizedView(latLng.lng(), latLng.lat(), DEFAULT_Z, latLng.lng(), latLng.lat(), (pov.pitch == 90) ? (DEFAULT_Z - diffXY) : (DEFAULT_Z + diffXY));
+                }
+                else {
+                    var direction = Math.PI * (0.5 - pov.heading/180);
+                    changed = setNormalizedView(latLng.lng(), latLng.lat(), DEFAULT_Z, 
+                        latLng.lng() + diffXY * Math.cos(direction), latLng.lat() + diffXY * Math.sin(direction),
+                        DEFAULT_Z-diffXY*Math.tan(Math.PI*pov.pitch/180));
+                }
+                if(changed && !isViewSetting){
+                    FireViewChanged();
+                }
+            }
+            
+            function resetView() {
+                if(!camera) return;
+                
+                var position = new google.maps.LatLng(camera.y, camera.x);
+                var diffX = camera.targetX - camera.x;
+                var diffY = camera.targetY - camera.y;
+                var diffZ = camera.targetZ - camera.z;
+                var diffXY = Math.sqrt(diffX * diffX + diffY * diffY);
+                var heading = 0;
+                var pitch = 0;
+                
+                if(isZero(diffXY)) {
+                    pitch = (diffZ > 0) ? 90 : -90;
+                }
+                else {
+                    heading = 90- Math.atan2(diffY, diffX)*180/Math.PI;
+                    pitch = Math.atan2(-diffZ, 2)*180/Math.PI;
+                }
+                
+                var pov = {
+                    heading: heading,
+                    pitch: pitch,
+                    zoom: 1
+                };
+                
+                
+                if(!panorama) {
+                    panorama = new google.maps.StreetViewPanorama(document.getElementById("pano"), {
+                        position: position,
+                        pov: pov
+                    });
+                    google.maps.event.addListener(panorama, 'position_changed', onViewChanged);
+                    google.maps.event.addListener(panorama, 'pov_changed', onViewChanged);
+                }
+                else {
+                    pov.zoom = panorama.getPov().zoom;
+                    panorama.setPosition(position);
+                    panorama.setPov(pov);
+                }
+                
+                var sv = new google.maps.StreetViewService();
+                sv.getPanoramaByLocation(position, 50, processSVData);
+            }
+            
+            //Show or hide warning message accroding to the StreetViewStatus
+            function processSVData(data, status) { 
+                
+                var widgetList = getParent().Fusion.getWidgetsByType("GoogleStreetViewer");
+                if(!widgetList) return;
+                var widget = widgetList[0];
+                if(!widget) return;
+                
+                if (status == google.maps.StreetViewStatus.OK) {
+                    if(typeof(widget.hideMessage) == "function") {
+                        widget.hideMessage(widget.serviceUnavailableMessage);
+                    }     
+                }
+                else
+                {
+                    if(typeof(widget.showMessage) == "function") {
+                        widget.showMessage(widget.serviceUnavailableMessage);
+                    } 
+                }
+            }
+              
+            var setView = function(x, y, z, targetX, targetY, targetZ) {
+                targetZ = DEFAULT_Z+(targetZ-z);
+                isViewSetting = true;
+                var changed = setNormalizedView(x, y, z, targetX, targetY, targetZ);
+                if(changed) {
+                    resetView();
+                }
+                isViewSetting = false;
+            };
+            
+            if(!window.setView) {
+                window.setView = setView;
+            }
+            
+            var popup = %s;
+
+            // Get window where the Fusion object is available
+            function getParent()
+            {
+                if (popup) {
+                    return window.opener;
+                } 
+                else if (window.parent.Fusion) {
+                    return window.parent;
+                } 
+                else if (window.parent.parent.Fusion) {
+                    return window.parent.parent;
+                }
+                return null;
+            }
+
+            function hidePage()
+            {
+                var pano = document.getElementById("pano");
+                pano.style.visibility = "hidden";
+            }
+
+            if(!window.hidePage) {
+                window.hidePage = hidePage;
+            }
+            
+            // Callback when body is loaded
+            window.onBodyLoad = function() {
+                // register this page to widget
+                var widgetList = getParent().Fusion.getWidgetsByType("GoogleStreetViewer");
+                if(!widgetList) return;
+                for(var index = 0; index < widgetList.length; index++) {
+                    var widget = widgetList[index];
+                    if(widget.setGoogleSVPage != null) {
+                        widget.setGoogleSVPage(window);
+                    }
+                }
+            };
+            
+            // Callback when body is unloaded
+            window.onBodyUnload = function() {
+                // deregister this page to widget
+                for(var index = 0; index < viewChangeListenerList.length; index++) {
+                    viewChangeListenerList[index].setGoogleSVPage(null);
+                }
+            };
+        })(window);
+    </script>
+</head>
+<body onload="onBodyLoad()" onunload="onBodyUnload()">
+    <div id="pano" style="width: 100%%; height: 100%%"></div>
+</body>
+</html>

@@ -1581,9 +1581,11 @@ export interface IMouseReducerState {
  * @interface IApplicationState
  */
 export interface IApplicationState {
+    auth: any;
     /**
      * Initialization errors
      *
+     * 
      * @type {Readonly<IInitErrorReducerState>}
      * @memberof IApplicationState
      */

@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApplicationDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:noNamespaceSchemaLocation="ApplicationDefinition-1.0.0.xsd">
+
+<!-- ****************************************** 
+* MapSet
+* 
+* Contains the map(s) you want available to your
+* application.
+ ****************************************** -->
+
+  <MapSet>
+    <MapGroup id="sheboygan">
+      <Map>
+        <Type>MapGuide</Type>
+        <SingleTile>true</SingleTile>
+        <Extension>
+          <ResourceId>Library://Samples/Sheboygan/Maps/Sheboygan.MapDefinition</ResourceId>
+          <ImageFormat>PNG8</ImageFormat>
+          <SelectionAsOverlay>true</SelectionAsOverlay>
+          <SelectionFormat>PNG</SelectionFormat>
+          <SelectionColor>0xFF0000FF</SelectionColor>
+          <ProjectionCode>EPSG:4326</ProjectionCode>
+        </Extension>
+      </Map>
+    </MapGroup>
+    <MapGroup id="mixed">
+      <Map>
+        <Type>WMS</Type>
+        <Extension>
+          <ResourceId>http://localhost/cgi-bin/testwms.exe</ResourceId>
+          <Options>
+            <name>test WMS</name>
+            <singleTile>true</singleTile>
+            <!--maxResolution>auto</maxResolution>
+            <minScale>1000000000</minScale-->
+          </Options>
+          <Parameters>
+            <layers>bathymetry</layers>
+            <transparent>true</transparent>
+          </Parameters>
+        </Extension>
+      </Map>
+      <Map>
+        <Type>MapGuide</Type>
+        <SingleTile>true</SingleTile>
+        <Extension>
+          <ResourceId>Library://Samples/Sheboygan/Maps/Sheboygan.MapDefinition</ResourceId>
+          <SelectionAsOverlay>true</SelectionAsOverlay>
+          <SelectionFormat>PNG</SelectionFormat>
+          <SelectionColor>0xFF0000FF</SelectionColor>
+        </Extension>
+      </Map>
+    </MapGroup>
+  </MapSet>
+
+<!-- ****************************************** 
+* WidgetSet
+*
+* Contains the widgets you want available to your 
+* application.
+ ****************************************** -->
+
+  <WidgetSet>
+
+<!-- ****************************************** 
+* ContextMenu (Map)
+*
+* Menu available to the Map on right-click
+ ****************************************** -->
+
+    <Container>
+      <Name>MapContextMenu</Name>
+      <Type>ContextMenu</Type>
+      <Item>
+        <Function>Widget</Function>
+        <Widget>menuPan</Widget>
+      </Item>
+      <Item>
+        <Function>Widget</Function>
+        <Widget>menuZoomInRectangle</Widget>
+      </Item>
+      <Item>
+        <Function>Widget</Function>
+        <Widget>menuZoomInFixed</Widget>
+      </Item>
+      <Item>
+        <Function>Widget</Function>
+        <Widget>menuZoomOutFixed</Widget>
+      </Item>
+    </Container>
+
+<!-- ****************************************** 
+* Toolbar (Primary)
+*
+* 
+ ****************************************** -->
+
+    <Container>
+      <Name>navigationToolbar</Name>
+      <Type>Toolbar</Type>
+      <Item>
+        <Function>Widget</Function>
+        <Widget>MapMenu</Widget>
+      </Item>
+      <Item>
+        <Function>Separator</Function>
+      </Item>
+      <Item>
+        <Function>Widget</Function>
+        <Widget>Select</Widget>
+      </Item>
+      <Item>
+        <Function>Widget</Function>
+        <Widget>Pan</Widget>
+      </Item>
+      <Item>
+        <Function>Widget</Function>
+        <Widget>ZoomInRectangle</Widget>
+      </Item>
+      <Item>
+        <Function>Widget</Function>
+        <Widget>ZoomInFixed</Widget>
+      </Item>
+      <Item>
+        <Function>Widget</Function>
+        <Widget>ZoomOutFixed</Widget>
+      </Item>
+    </Container>
+
+<!-- MAP -->
+
+    <MapWidget>
+      <Name>map</Name>
+      <Type>Map</Type>
+      <StatusText>The map.</StatusText>
+      <Extension>
+        <MenuContainer>MapContextMenu</MenuContainer>
+      </Extension>
+      <MapId>sheboygan</MapId>
+    </MapWidget>
+
+<!-- ****************************************** 
+* Context Menu - Widgets
+*
+* Widgets belonging to the map context menu
+ ****************************************** -->
+
+<!-- CONTEXT MENU PAN -->
+
+    <Widget>
+      <Name>menuPan</Name>
+      <Type>Pan</Type>
+      <StatusText>Drag the map to view areas out of range.</StatusText>
+      <ImageUrl>images/icons.png</ImageUrl>
+      <ImageClass>pan</ImageClass>
+      <Tooltip>Pan mode</Tooltip>
+      <Label>Pan</Label>
+      <Disabled/>
+    </Widget>
+
+<!-- CONTEXT MENU ZOOM RECTANGLE -->
+
+    <Widget>
+      <Name>menuZoomInRectangle</Name>
+      <Type>Zoom</Type>
+      <StatusText>Zoom in on an area.</StatusText>
+      <Extension>
+        <Tolerance>5</Tolerance>
+        <Factor>2</Factor>
+      </Extension>
+      <ImageUrl>images/icons.png</ImageUrl>
+      <ImageClass>zoom-in</ImageClass>
+      <Tooltip>Zoom In</Tooltip>
+      <Label>Zoom Rectangle</Label>
+      <Disabled/>
+    </Widget>
+
+<!-- CONTEXT MENU ZOOM FIXED (IN) -->
+
+    <Widget>
+      <Name>menuZoomInFixed</Name>
+      <Type>ZoomOnClick</Type>
+      <StatusText>Zoom in by a preset increment.</StatusText>
+      <Extension>
+        <Factor>2</Factor>
+      </Extension>
+      <ImageUrl>images/icons.png</ImageUrl>
+      <ImageClass>zoom-in-fixed</ImageClass>
+      <Tooltip>Zoom In</Tooltip>
+      <Label>Zoom In</Label>
+      <Disabled/>
+    </Widget>
+
+<!-- CONTEXT MENU ZOOM FIXED (OUT) -->
+
+    <Widget>
+      <Name>menuZoomOutFixed</Name>
+      <Type>ZoomOnClick</Type>
+      <StatusText>Zoom out by a preset increment</StatusText>
+      <Extension>
+        <Factor>0.5</Factor>
+      </Extension>
+      <ImageUrl>images/icons.png</ImageUrl>
+      <ImageClass>zoom-out-fixed</ImageClass>
+      <Tooltip>Zoom Out</Tooltip>
+      <Label>Zoom Out</Label>
+      <Disabled/>
+    </Widget>
+
+<!-- TOOLBAR INITIAL MAP VIEW -->
+
+    <Widget>
+      <Name>toolbarInitialMapView</Name>
+      <Type>InitialMapView</Type>
+      <StatusText>Fit the extents of the map to the window</StatusText>
+      <Extension>
+        <ViewType>extent</ViewType>
+      </Extension>
+      <ImageUrl>images/icons.png</ImageUrl>
+      <ImageClass>zoom-full</ImageClass>
+      <Tooltip>Initial Map View</Tooltip>
+      <Label/>
+      <Disabled/>
+    </Widget>
+
+<!-- ****************************************** 
+* Panels - Widgets
+*
+* Widgets belonging to the status bar
+ ****************************************** -->
+
+<!-- LEGEND -->
+
+    <Widget>
+      <Name>legend</Name>
+      <Type>Legend</Type>
+      <Extension>
+        <ShowRootFolder>false</ShowRootFolder>
+      </Extension>
+      <StatusText/>
+    </Widget>
+
+<!-- SELECTION -->
+
+    <Widget>
+      <Name>selectionPanel</Name>
+      <Type>SelectionPanel</Type>
+      <StatusText/>
+    </Widget>
+
+<!-- ****************************************** 
+* Misc - Widgets
+ ****************************************** -->
+
+<!-- INMAP NAVIGATOR -->
+
+    <Widget>
+      <Name>navigator</Name>
+      <Type>Navigator</Type>
+      <Extension>
+      </Extension>
+    </Widget>
+
+<!-- ****************************************** 
+* Toolbar - Widgets
+*
+* Widgets belonging to the main toolbar
+ ****************************************** -->
+
+<!-- MAPMENU -->
+
+    <Widget>
+      <Name>MapMenu</Name>
+      <Type>MapMenu</Type>
+      <StatusText/>
+      <Extension>
+        <Folder>Library://Samples/Sheboygan/</Folder>
+      </Extension>
+      <ImageUrl/>
+      <ImageClass/>
+      <Tooltip/>
+      <Label>Maps</Label>
+      <Disabled/>
+    </Widget>
+
+<!-- SELECT -->
+
+    <Widget>
+      <Name>Select</Name>
+      <Type>Select</Type>
+      <StatusText>Select features by clicking and dragging.</StatusText>
+      <ImageUrl>images/icons.png</ImageUrl>
+      <ImageClass>select-features</ImageClass>
+      <Tooltip>Select mode</Tooltip>
+      <Label/>
+      <Disabled/>
+    </Widget>
+
+<!-- PAN -->
+
+    <Widget>
+      <Name>Pan</Name>
+      <Type>Pan</Type>
+      <StatusText>Drag the map to view areas out of range.</StatusText>
+      <ImageUrl>images/icons.png</ImageUrl>
+      <ImageClass>pan</ImageClass>
+      <Tooltip>Pan mode</Tooltip>
+      <Label/>
+      <Disabled/>
+    </Widget>
+
+<!-- ZOOM IN RECTANGLE -->
+
+    <Widget>
+      <Name>ZoomInRectangle</Name>
+      <Type>Zoom</Type>
+      <StatusText>Zoom in on an area.</StatusText>
+      <Extension>
+        <Tolerance>5</Tolerance>
+        <Factor>2</Factor>
+      </Extension>
+      <ImageUrl>images/icons.png</ImageUrl>
+      <ImageClass>zoom-in</ImageClass>
+      <Tooltip>Zoom in to a rectangular region.</Tooltip>
+      <Label/>
+      <Disabled/>
+    </Widget>
+
+<!-- ZOOM ON CLICK (IN) -->
+
+    <Widget>
+      <Name>ZoomInFixed</Name>
+      <Type>ZoomOnClick</Type>
+      <StatusText>Zoom in by a preset increment.</StatusText>
+      <Extension>
+        <Factor>4</Factor>
+      </Extension>
+      <ImageUrl>images/icons.png</ImageUrl>
+      <ImageClass>zoom-in-fixed</ImageClass>
+      <Tooltip>Zoom in by a fixed factor.</Tooltip>
+      <Label/>
+      <Disabled/>
+    </Widget>
+
+<!-- ZOOM ON CLICK (OUT) -->
+
+    <Widget>
+      <Name>ZoomOutFixed</Name>
+      <Type>ZoomOnClick</Type>
+      <StatusText>Zoom out by a preset increment</StatusText>
+      <Extension>
+        <Factor>0.5</Factor>
+      </Extension>
+      <ImageUrl>images/icons.png</ImageUrl>
+      <ImageClass>zoom-out-fixed</ImageClass>
+      <Tooltip>Zoom Out by a fixed factor</Tooltip>
+      <Label/>
+      <Disabled/>
+    </Widget>
+
+    <Widget>
+      <Name>scalebar</Name>
+      <Type>ScalebarDual</Type>
+    </Widget>
+    
+    <Widget>
+      <Name>mapTip</Name>
+      <Type>Maptip</Type>
+      <Extension>
+        <Label>Map Tips</Label>
+        <Delay>350</Delay>
+        <Layer>Parcels</Layer>
+      </Extension>
+    </Widget>
+
+  </WidgetSet>
+
+  <Extension/>
+
+</ApplicationDefinition>

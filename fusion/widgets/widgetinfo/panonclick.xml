@@ -1,0 +1,50 @@
+<WidgetInfo>
+  <Type>PanOnClick</Type>
+  <LocalizedType>Pan on Click</LocalizedType>
+  <Description>Pans the map in the specified direction on a click</Description>
+  <Location></Location>
+  <Label></Label>
+  <Tooltip></Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl></ImageUrl>
+  <ImageClass></ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>Percentage</Name>
+    <Description>Percentage of the map width/height to move in the specified direction</Description>
+    <Type>integer</Type>
+    <Label>Percentage</Label>
+    <Min>10</Min>
+    <Max>100</Max>
+    <DefaultValue>75</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Direction</Name>
+    <Description>The direction in which to pan</Description>
+    <Type>String</Type>
+    <Label>Direction</Label>
+    <AllowedValue>
+      <Name>north</Name>
+      <Label>north</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>south</Name>
+      <Label>south</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>east</Name>
+      <Label>east</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>west</Name>
+      <Label>west</Label>
+    </AllowedValue>
+    <DefaultValue>none</DefaultValue>
+    <IsMandatory>true</IsMandatory>
+  </Parameter>
+</WidgetInfo>
+
+
+

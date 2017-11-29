@@ -1,0 +1,63 @@
+<SimpleSymbolDefinition>
+                <Name>LINE_SYMBOL</Name>
+                <Description>line_dash.templ</Description>
+                <Graphics>
+                  <Path>
+                    <Geometry>M 0,0 L 6,0</Geometry>
+                    <ScaleX>%SCALEX%</ScaleX>
+                    <ScaleY>%SCALEY%</ScaleY>
+                    <LineColor>%LINECOLOR%</LineColor>
+                    <LineWeight>%LINEWEIGHT%</LineWeight>
+                    <LineWeightScalable>false</LineWeightScalable>
+                    <LineCap>%LINECAP%</LineCap>
+                    <LineJoin>%LINEJOIN%</LineJoin>
+                  </Path>
+                </Graphics>
+                <LineUsage>
+                  <Repeat>1.666621</Repeat>
+                </LineUsage>
+                <ParameterDefinition>
+                  <Parameter>
+                    <Identifier>LINECOLOR</Identifier>
+                    <DefaultValue>ff000000</DefaultValue>
+                    <DisplayName>Line &amp;Color</DisplayName>
+                    <Description>Line Color</Description>
+                    <DataType>LineColor</DataType>
+                  </Parameter>
+                  <Parameter>
+                    <Identifier>LINEWEIGHT</Identifier>
+                    <DefaultValue>0.0</DefaultValue>
+                    <DisplayName>Line &amp;Thickness</DisplayName>
+                    <Description>Line Thickness</Description>
+                    <DataType>LineWeight</DataType>
+                  </Parameter>
+                  <Parameter>
+                    <Identifier>SCALEX</Identifier>
+                    <DefaultValue>0.166666666666667</DefaultValue>
+                    <DisplayName>Path ScaleX</DisplayName>
+                    <Description>Path ScaleX</Description>
+                    <DataType>Real</DataType>
+                  </Parameter>
+                  <Parameter>
+                    <Identifier>SCALEY</Identifier>
+                    <DefaultValue>0.166666666666667</DefaultValue>
+                    <DisplayName>Path ScaleY</DisplayName>
+                    <Description>Path ScaleY</Description>
+                    <DataType>Real</DataType>
+                  </Parameter>
+                  <Parameter>
+                    <Identifier>LINECAP</Identifier>
+                    <DefaultValue>'Round'</DefaultValue>
+                    <DisplayName>Line Cap</DisplayName>
+                    <Description>The cap type to use at the ends of each segment in the path outline.  This must evaluate to one of: None, Round (default), Triangle, or Square.</Description>
+                    <DataType>String</DataType>
+                  </Parameter>
+                  <Parameter>
+                    <Identifier>LINEJOIN</Identifier>
+                    <DefaultValue>'Round'</DefaultValue>
+                    <DisplayName>Line Join</DisplayName>
+                    <Description>The join type to use at each vertex in the path outline.  This must evaluate to one of: None, Bevel, Round (default), or Miter.</Description>
+                    <DataType>String</DataType>
+                  </Parameter>
+                </ParameterDefinition>
+              </SimpleSymbolDefinition>

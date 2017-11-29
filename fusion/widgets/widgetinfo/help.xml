@@ -1,0 +1,29 @@
+<WidgetInfo>
+  <Type>Help</Type>
+  <LocalizedType>Help</LocalizedType>
+  <Description>Outputs a user help page</Description>
+  <Location></Location>
+  <Label>Help</Label>
+  <Tooltip>Click to get help</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl>images/icons.png</ImageUrl>
+  <ImageClass>help</ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>Target</Name>
+    <Description>The frame, window, or TaskPane in which to display any UI for the widget. If empty, a new window is used</Description>
+    <Type>String</Type>
+    <Label>Target</Label>
+    <DefaultValue>HelpWindow</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Url</Name>
+    <Description>The URL which contaions the help page contents.</Description>
+    <Type>String</Type>
+    <Label>Help URL</Label>
+    <DefaultValue>widgets/Help/Help.html</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

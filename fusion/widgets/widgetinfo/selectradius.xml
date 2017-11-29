@@ -1,0 +1,60 @@
+<WidgetInfo>
+  <Type>SelectRadius</Type>
+  <LocalizedType>Select Radius</LocalizedType>
+  <Description>Perform a selection within a certain radius of a click</Description>
+  <Label>Select Radius</Label>
+  <Tooltip>Click to select within a radius</Tooltip>
+  <ImageUrl>images/icons.png</ImageUrl>
+  <ImageClass>select-radius</ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>SelectionType</Name>
+    <Description>The type of selection to do</Description>
+    <Type>String</Type>
+    <Label>Selection type</Label>
+    <DefaultValue>INTERSECTS</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Tolerance</Name>
+    <Description>Pixel tolerance for a point click</Description>
+    <Type>integer</Type>
+    <Label>Tolerance</Label>
+    <Min>1</Min>
+    <DefaultValue>3</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>DefaultRadius</Name>
+    <Description>The radius in pixels to use for the selection</Description>
+    <Type>integer</Type>
+    <Label>Default radius</Label>
+    <DefaultValue>20</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>RadiusTooltipContainer</Name>
+    <Description>String</Description>
+    <Type>String</Type>
+    <Label>An HTML container to put the radius value in</Label>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>RadiusTooltipType</Name>
+    <Description>Type of tooltip to use</Description>
+    <Type>String</Type>
+    <Label>Radius tooltip type</Label>
+    <AllowedValue>
+      <Name>static</Name>
+      <Label>static</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>dynamic</Name>
+      <Label>dynamic</Label>
+    </AllowedValue>
+    <DefaultValue>dynamic</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

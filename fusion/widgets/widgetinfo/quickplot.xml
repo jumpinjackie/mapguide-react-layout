@@ -1,0 +1,131 @@
+<WidgetInfo>
+    <Type>QuickPlot</Type>
+    <LocalizedType>QuickPlot</LocalizedType>
+    <Description>This widget offers a quick way to print map</Description>
+    <Label>Quick Plot</Label>
+    <Tooltip>Click to create a plot quickly</Tooltip>
+    <ImageUrl>images/icons/print.png</ImageUrl>
+    <ImageClass></ImageClass>
+    <StandardUi>true</StandardUi>
+    <ContainableBy>Any</ContainableBy>
+    <Parameter>
+        <Name>Target</Name>
+        <Description>The frame, window, or TaskPane in which to display any UI for the widget. If empty, a new window is used</Description>
+        <Type>target</Type>
+        <Label>Target</Label>
+        <DefaultValue>TaskPane</DefaultValue>
+        <IsMandatory>true</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>RememberPlotOptions</Name>
+        <Description>Indicates whether to persist the current QuickPlot UI settings to a cookie. If empty or false, these settings will not be saved</Description>
+        <Type>boolean</Type>
+        <Label>RememberPlotOptions</Label>
+        <DefaultValue>false</DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>ShowCoordinateLabels</Name>
+        <Description>Indicates whether to show the coordinate labels in the QuickPlot preview dialog. If empty, will default to true</Description>
+        <Type>boolean</Type>
+        <Label>ShowCoordinateLabels</Label>
+        <DefaultValue>true</DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>ShowSubTitle</Name>
+        <Description>Indicates whether to show the sub title in the QuickPlot UI and preview dialog. If empty, will default to true</Description>
+        <Type>boolean</Type>
+        <Label>ShowSubTitle</Label>
+        <DefaultValue>true</DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>DefaultDpi</Name>
+        <Description>Indicates the default DPI to use for plotting. If specified, this will hide the DPI field in the QuickPlot UI and will override whatever DPI is used.</Description>
+        <Type>integer</Type>
+        <Label>DefaultDpi</Label>
+        <DefaultValue>96</DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>PaperListEntry</Name>
+        <Description>Indicates a list of name/value pairs that will override the paper size list in the QuickPlot UI if specified.</Description>
+        <Type>xml</Type>
+        <Label>PaperListEntry</Label>
+        <DefaultValue></DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>ScaleListEntry</Name>
+        <Description>Indicates a list of name/value pairs that will override the scale list in the QuickPlot UI if specified.</Description>
+        <Type>xml</Type>
+        <Label>ScaleListEntry</Label>
+        <DefaultValue></DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>DefaultMargin</Name>
+        <Description>Indicates the default Margin to use for plotting. If specified, this will hide the Margin field in the QuickPlot UI and will override whatever Margin is used.</Description>
+        <Type>string</Type>
+        <Label>Margin</Label>
+        <DefaultValue>25.4,12.7,12.7,12.7</DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>Disclaimer</Name>
+        <Description>The legal disclaimer text to show in the preview dialog and final printout</Description>
+        <Type>string</Type>
+        <Label>Disclaimer</Label>
+        <DefaultValue>The materials available at this web site are for informational purposes only and do not constitute a legal document.</DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>AllowDisclaimerToggle</Name>
+        <Description>Indicates whether the disclaimer element in the Quick Plot UI is shown by default (allowing it to be toggled). This is already hidden if there is no configured disclaimer, this option allows you to hide it if there is a configured disclaimer (ie. You always want to have the disclaimer in the final plot). Defaults to true if unspecified</Description>
+        <Type>boolean</Type>
+        <Label>AllowDisclaimerToggle</Label>
+        <DefaultValue>true</DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>ShowLegend</Name>
+        <Description>Indicates whether the legend element in the Quick Plot UI is checked by default. Defaults to false if unspecified</Description>
+        <Type>boolean</Type>
+        <Label>ShowLegend</Label>
+        <DefaultValue>false</DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>ShowNorthArrow</Name>
+        <Description>Indicates whether the north arrow element in the Quick Plot UI is checked by default. Defaults to false if unspecified</Description>
+        <Type>boolean</Type>
+        <Label>ShowNorthArrow</Label>
+        <DefaultValue>false</DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>ShowCoordinates</Name>
+        <Description>Indicates whether the coordinates element in the Quick Plot UI is checked by default. Defaults to false if unspecified</Description>
+        <Type>boolean</Type>
+        <Label>ShowCoordinates</Label>
+        <DefaultValue>false</DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>ShowScaleBar</Name>
+        <Description>Indicates whether the scale bar element in the Quick Plot UI is checked by default. Defaults to false if unspecified</Description>
+        <Type>boolean</Type>
+        <Label>ShowScaleBar</Label>
+        <DefaultValue>false</DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+    <Parameter>
+        <Name>ShowLegalDisclaimer</Name>
+        <Description>Indicates whether the legal disclaimer element in the Quick Plot UI is checked by default. Has no effect if this widget has no disclaimer configured. Defaults to true if unspecified</Description>
+        <Type>boolean</Type>
+        <Label>ShowLegalDisclaimer</Label>
+        <DefaultValue>true</DefaultValue>
+        <IsMandatory>false</IsMandatory>
+    </Parameter>
+</WidgetInfo>

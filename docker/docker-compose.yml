@@ -1,0 +1,27 @@
+version: "3"
+services:
+  demo:
+    image: mapguide-react
+    ports:
+      - "80:8008"
+    command: ["--no-tomcat"]
+    volumes:
+      - /home/lina/projects/xakaton/mapguide-react-layout/viewer:/usr/local/mapguideopensource-3.1.0/webserverextensions/www/viewer
+      - /home/lina/projects/xakaton/mapguide-react-layout/fusion:/usr/local/mapguideopensource-3.1.0/webserverextensions/www/fusion
+  dbsrv:
+    image: mapguide-db
+    ports:
+      - "5432:5432"
+    depends_on:
+      - dbsrv
+    environment:
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_USER: postgres
+    networks:
+      webnet:
+        aliases:
+          - dbsrv
+    volumes:
+      - /home/lina/projects/xakaton/mapguide-react-layout/pgdata:/var/lib/postgresql/data
+networks:
+  webnet:

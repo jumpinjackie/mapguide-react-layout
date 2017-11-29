@@ -1,0 +1,479 @@
+﻿# Web surround localized strings
+# English language
+#
+# Important: This file must be saved with UTF-8 encoding
+#
+
+# General
+
+# Fonts - the 6 following entries are mandatory
+@fontWindows        = Arial
+@fontsizeWindows    = 8pt
+@fontLinux          = Arial
+@fontsizeLinux      = 8pt
+@fontMacintosh      = Arial
+@fontsizeMacintosh  = 8pt
+
+# Distances
+DISTANCEMILES       = Miles
+DISTANCEKILOMETERS  = Kilometers
+DISTANCEFEET        = Feet
+DISTANCEMETERS      = Meters
+
+# Fill Patterns/Values
+FILLSOLID           = Solid
+FILLNET             = Net
+FILLLINE            = Line
+FILLLINE45          = Line_45
+FILLLINE90          = Line_90
+FILLLINE135         = Line_135
+FILLSQUARE          = Square
+FILLBOX             = Box
+FILLCROSS           = Cross
+FILLDASH            = Dash
+FILLDOLMIT          = Dolmit
+FILLHEX             = Hex
+FILLSACNCR          = Sacncr
+FILLSTEEL           = Steel
+
+# Transparency
+TRANSPARENT         = transparent
+
+# Line Styles/Values
+LINESOLID           = Solid
+LINEDASH            = Dash
+LINEDOT             = Dot
+LINEDASHDOT         = DashDot
+LINEDASHDOTDOT      = DashDotDot
+LINERAIL            = Rail
+LINEBORDER          = Border
+LINEDIVIDE          = Divide
+LINEFENCELINE       = FenceLine
+
+# Buttons
+BUTTONOK            = OK
+BUTTONDONE          = Done
+BUTTONCANCEL        = Cancel
+BUTTONREFRESH       = Refresh
+BUTTONCLOSE         = Close
+BUTTONCLEAR         = Clear
+BUTTONSAVE          = Save
+
+# Colors
+COLORRED            = Red
+COLORGREEN          = Green
+COLORBLUE           = Blue
+
+# BufferReport
+BUFFERREPORTTITLE               = Create Buffer
+BUFFERREPORTCREATED             = %s has been created.
+BUFFERREPORTUPDATED             = %s has been updated.
+BUFFERREPORTFEATURESSINGULAR    = %s buffer feature was created.
+BUFFERREPORTFEATURESPLURAL      = %s buffer features were created.
+BUFFERREPORTWARNINGSINGULAR     = <b>Warning:</b> %s layer was excluded from buffer computation because its coordinate system is incompatible with the coordinate system of the map, or because it has no coordinate system at all
+BUFFERREPORTWARNINGPLURAL       = <b>Warning:</b> %s layers were excluded from buffer computation because their coordinate systems are incompatible with the coordinate system of the map, or because they have no coordinate system at all
+BUFFERREPORTERRORTITLE          = Buffer Error
+
+# Buffer
+BUFFERCLASSDESCR                = Feature class for buffer layer
+BUFFERSCHEMADESCR               = Temporary buffer schema
+BUFFERDIFFARBXY                 = Cannot compute a unique buffer around features with different 'Arbitrary X-Y' coordinate systems. Please uncheck the option 'Merge buffer areas' or select only one layer
+
+# BufferUI
+BUFFERTITLE                     = Create a Buffer
+BUFFERSUBTITLE                  = &nbsp;Buffer settings
+BUFFERINFOTEXT                  = Select features on the image.
+BUFFERDISTANCE                  = Distance around features:
+BUFFERLAYERS                    = Layers to include in the buffer:
+BUFFERNOLAYER                   = <No layer selected>
+BUFFERNAME                      = Name for the resulting buffer layer:
+BUFFERNAMETEXT                  = Buffer 1
+BUFFERMERGE                     = Merge buffer areas
+BUFFERFILLSTYLE                 = &nbsp;Fill style
+BUFFERFILLPATTERN               = Fill pattern:
+BUFFERFOREGROUNDCOLOR           = Foreground color:
+BUFFERTRANSPARENCY              = Transparency:
+BUFFERBACKGROUNDCOLOR           = Background color:
+BUFFERBORDERSTYLE               = &nbsp;Border style
+BUFFERBORDERLINEPATTERN         = Line pattern:
+BUFFERBORDERLINECOLOR           = Line color:
+BUFFERBORDERLINETHICKNESS       = Line thickness:
+BUFFERHELP                      = <li><p align="left">Results of the buffer are put into a new layer above the top feature layer. This buffer layer has the name you enter here.</li><li><p align="left">To create multiple buffer layers, use different buffer names.</li><li><p align="left">To hide buffer layers, turn them off.</li><li><p align="left">Buffer layers are temporary and are removed when you close the viewer.</li>
+BUFFERERRORZERODISTANCE         = Please enter a nonzero distance.
+BUFFERERRORNOLAYERNAME          = Please enter a layer name.
+BUFFERERRORNEGATIVETHICKNESS    = Please enter positive or null thickness.
+BUFFERERRORNOSELECTION          = Please select feature(s) to calculate a buffer around.
+
+# ColorPicker
+COLORPICKERDLGTITLE             = Select a color
+COLORPICKERTITLE                = Color palette
+COLORPICKERSUBTITLE             = Specify a color
+COLORPICKER100TRANSPARENCY      = 100%% transparency
+COLORPICKERHEXFORMAT            = Hex format
+
+# MeasureUI
+MEASUREDISTANCETITLE    = Measure Distance
+MEASUREAREATITLE        = Measure Area
+MEASUREBOTHTITLE        = Measure Distance And Area
+MEASUREINFO             = Click a start and end point.
+RESUME                  = Resume
+STOP                    = Stop
+CLEAR                   = Clear
+MILES                   = Miles
+KILOMETERS              = Kilometers
+MEASUREHELP             = <li>To measure multiple distances, continue clicking new points.</li><li>To finish, click &quot;Stop&quot;.</li><li>You can pan or zoom and continue measuring by clicking &quot;Resume&quot;.</li><li>To start over, click &quot;Clear&quot;.</li>
+SEGMENT                 = Segment
+LENGTH                  = Length
+TOTALLENGTH             = Total Length
+TOTALAREA               = Total Area
+MEASUREERROR            = Measure Error
+
+# Measure
+MEASUREFEATURECLASS     = Feature class for measure layer
+MEASURESCHEMADESCR      = Temporary measure schema
+MEASUREPARTIAL          = Partial
+MEASURETOTAL            = total
+MEASURELAYER            = Measure
+MEASURESTOP             = Stop
+MEASURESTART            = Start
+MEASUREHINT             = To measure multiple distances, continue clicking new points. To finish, double click on the last point. You can cancel and restart the measuring by pressing the ESC key or by using the Stop and Start buttons.
+
+# FeatureInfoUI
+FEATUREINFOTITLE        = Feature Information
+FEATUREINFOSUBTITLE     = Select a Layer
+FEATUREINFOLAYER        = Layer:
+FEATUREINFOSELECTFEATURE= Select Features:
+FEATUREINFOEXTRAHELP    = Select features using the standard selection tools or select features based on the digitized geometry you select below
+FEATUREINFODIGITIZE     = Digitize:
+FEATUREINFOPOINT        = Point
+FEATUREINFORECTANGLE    = Rectangle
+FEATUREINFOPOLYGON      = Polygon
+FEATUREINFOTOTAL        = Total:
+FEATUREINFONOSELECTED   = no features selected.
+FEATUREINFOERROR        = Error
+FEATUREINFOFETCHINFO    = fetching feature info ...
+FEATUREINFOFEATURESEL   = features selected
+FEATUREINFOAREA         = Area:
+FEATUREINFOAREAUNDEFINE = areaIdx undefined
+FEATUREINFONOINFO       = no layer info
+FEATUREINFONOFEATUREIN  = no features in selected layer.
+FEATUREINFOREFRESH      = Refresh Layers
+
+# QueryUI
+QUERYTITLE              = Query Features
+QUERYSELECTLAYER        = Select a Layer
+QUERYLAYER              = Layer:
+QUERYPROPERTYFILTER     = Property Filter
+QUERYPROPERTY           = Property:
+QUERYOPERATOR           = Operator:
+QUERYVALUE              = Value:
+QUERYSPATIALFILTER      = Spatial Filter
+QUERYDIGITIZE           = Digitize:
+QUERYRECTANGLE          = Rectangle
+QUERYPOLYGON            = Polygon
+QUERYCLEAR              = Clear
+QUERYOUTPUT             = Output
+QUERYOUTPUTPROPERTY     = Output property:
+QUERYEXECUTE            = Execute
+QUERYMAXRESULT          = Max results:
+QUERYRESULTS            = Results
+QUERYSCALE              = Scale:
+QUERYZOOM               = Zoom
+QUERYSELECT             = Select
+QUERYERROR              = Error
+QUERYEQUALTO            = Equal to
+QUERYNOTEQUALTO         = Not equal to
+QUERYGREATTHAN          = Greater than
+QUERYGREATTHANEQUAL     = Greater than or equal to
+QUERYLESSTHAN           = Less than
+QUERYLESSTHANEQUAL      = Less than or equal to
+QUERYBEGIN              = Begins with
+QUERYCONTAINS           = Contains
+
+# Theme UI
+THEMETITLE              = Theme Layer
+THEMESELECTLAYER        = Select a Layer
+THEMELAYER              = Layer:
+THEMENAME               = Theme Name:
+THEMECONDITIONS         = Define Conditions
+THEMEPROPERTY           = Property:
+THEMEMIN                = Min:
+THEMEMAX                = Max:
+THEMEDISTRIBUTION       = Distribution:
+THEMERULE               = # of Rules:
+THEMESCALERANGE         = Scale Range
+THEMESTYLERAMP          = Style Ramp
+THEMEFILLTRANS          = Fill Transparency:
+THEMEFILLCOLOR          = Fill Color:
+THEMEFROM               = From:
+THEMETO                 = To:
+THEMEBORDERCOLOR        = Border Color:
+THEMEAPPLY              = Apply
+THEMEERROR              = Error
+THEMEINDIVIDUAL         = Individual
+THEMEEQUAL              = Equal
+THEMESTANDARD           = Standard Deviation
+THEMEQUANTILE           = Quantile
+THEMEJENKS              = Jenks (Natural Breaks)
+
+# Redline Management
+REDLINEMANAGE           = Manage Redline
+REDLINEAVAILABLELAYERS  = Available Redline Layers
+REDLINELOADEDLAYERS     = Redline Layers on Map
+REDLINENEWSDF           = SDF
+REDLINENEWSHP           = SHP
+REDLINENEWSQLITE        = SQLite
+REDLINECREATENEW        = Create New Redline
+REDLINEADDTOMAP         = Add To Map
+REDLINEDELETE           = Delete
+REDLINEREFRESH          = Refresh List
+REDLINEEDIT             = Add/Edit Redlines
+REDLINEREMOVEFROMMAP    = Remove From Map
+REDLINEDOWNLOADOPTIONS  = Download Options
+REDLINEDOWNLOAD         = Download
+REDLINEDOWNLOADNATIVE   = Native Format
+REDLINEDOWNLOADKML      = KML Format
+REDLINEDOWNLOADKMZ      = KMZ Format
+REDLINEUPLOAD           = Upload Redline
+REDLINEOTHEROPTIONS     = Other Options
+REDLINEEDITSTYLE        = Edit Style
+REDLINECREATEFAILURE    = Failed to create redline
+REDLINEUPLOADUNKNOWNPROVIDER  = Could not determine FDO provider from uploaded file
+REDLINEUPLOADNOGEOMETRY = Could not find geometry property in uploaded file
+REDLINEPOINT            = Point
+REDLINELINE             = Line
+REDLINEPOLY             = Polygon
+
+# Edit Redline Style UI
+REDLINEEDITLAYERSTYLE   = Edit Redline Style
+REDLINELAYERSETTINGS    = Redline Layer Settings
+REDLINENAME             = Redline Name:
+REDLINEPOINTSTYLE       = Point Style
+REDLINEMARKERTYPE       = Marker Type
+REDLINEMARKERSQUARE     = Square
+REDLINEMARKERCIRCLE     = Circle
+REDLINEMARKERTRIANGLE   = Triangle
+REDLINEMARKERSTAR       = Star
+REDLINEMARKERCROSS      = Cross
+REDLINEMARKERX          = X
+REDLINEUNITSPT          = Points
+REDLINEUNITSIN          = Inches
+REDLINEUNITSMM          = Millimeters
+REDLINEUNITSCM          = Centimeters
+REDLINEUNITSM           = Meters
+REDLINEMARKERSIZE       = Marker size:
+REDLINEMARKERCOLOR      = Marker color:
+REDLINELINESTYLE        = Line Style
+REDLINELINEPATTERN      = Line pattern:
+REDLINEPATTERNSOLID     = Solid
+REDLINEPATTERNDASH      = Dash
+REDLINEPATTERNDOT       = Dot
+REDLINEPATTERNDASHDOT   = DashDot
+REDLINEPATTERNDASHDOTDOT = DashDotDot
+REDLINEPATTERNRAIL      = Rail
+REDLINEPATTERNBORDER    = Border
+REDLINEPATTERNDIVIDE    = Divide
+REDLINEPATTERNFENCELINE = FenceLine
+REDLINEPATTERNNET       = Net
+REDLINEPATTERNLINE      = Line
+REDLINEPATTERNLINE45    = Line_45
+REDLINEPATTERNLINE90    = Line_90
+REDLINEPATTERNLINE135   = Line_135
+REDLINEPATTERNSQUARE    = Square
+REDLINEPATTERNBOX       = Box
+REDLINEPATTERNCROSS     = Cross
+REDLINEPATTERNDOLMIT    = Dolmit
+REDLINEPATTERNHEX       = Hex
+REDLINEPATTERNSACNCR    = Sacncr
+REDLINEPATTERNSTEEL     = Steel
+REDLINESIZEUNITS        = Size units:
+REDLINELINETHICKNESS    = Line thickness:
+REDLINELINECOLOR        = Line color:
+REDLINETRANSPARENT      = Transparent
+REDLINEPOLYGONSTYLE     = Polygon Style
+REDLINEFILLPATTERN      = Fill pattern:
+REDLINEFILLTRANSPARENCY = Transparency:
+REDLINEFOREGROUND   = Foreground color:
+REDLINEBACKGROUND   = Background color:
+REDLINEBORDERPATTERN    = Border pattern:
+REDLINEBORDERCOLOR      = Border color:
+REDLINELABELSTYLE       = Label Style
+REDLINEBORDERTHICKNESS  = Border thickness:
+REDLINELABELFONTSIZE    = Label font size:
+REDLINEFONTBOLD         = Bold
+REDLINEFONTITALIC       = Italic
+REDLINEFONTUNDERLINE    = Underline
+REDLINELABELCOLOR       = Label color:
+REDLINELABELBACKGROUNDSTYLE = Label background style:
+REDLINELABELGHOSTED     = Ghosted
+REDLINELABELOPAQUE      = Opaque
+
+# Redline Editing
+REDLINEEDIT             = Edit Redline
+REDLINEEDITDEFAULTHELP  = To begin select the type of redline to digitize.
+REDLINEEDITPOINTHELP    = Click the map to specify the location of the point.
+REDLINEEDITLINEHELP     = Click and drag on the map to specify the start and end points of the line.
+REDLINEEDITLINESTRINGHELP = Click the map to define each point of the line, Double Click on the final point to end.
+REDLINEEDITRECTANGLEHELP = Click on the map to specify the first corner and drag the mouse to define the rectangle.
+REDLINEEDITPOLYGONHELP  = Click the map to define each point of the polygon, Double Click on the final point to end.
+REDLINEEDITCIRCLEHELP   = Click on the map and drag the mouse out to the desired radius to define your circle. Release the mouse button to finish.
+REDLINEPROMPTLABEL      = Enter a label for the redline item
+REDLINEPROMPTFORLABELS  = Include labels
+REDLINEADD              = Add Redline
+REDLINEDIGITIZE         = Digitize Redline
+REDLINEOBJECTPOINT      = Point
+REDLINEOBJECTCIRCLE     = Circle
+REDLINEOBJECTLINE       = Line
+REDLINEOBJECTLINESTRING = Line String
+REDLINEOBJECTRECTANGLE  = Rectangle
+REDLINEOBJECTPOLYGON    = Polygon
+REDLINEMODIFY           = Modify Redline
+REDLINESELECTOBJECT     = Select
+REDLINEDELETEOBJECT     = Delete
+REDLINEUPDATETEXT       = Update Text
+REDLINEEDITCLOSE        = Close
+REDLINENOTEXT           = no text
+REDLINEMULTISELECTHELP  = To select multiple redline objects in the list above, hold down the CTRL key while selecting. To select a range of items, hold down the SHIFT key and select the first and last items.
+
+# Redline Upload
+REDLINEUPLOAD           = Upload Redline
+REDLINEDATAFILE         = Redline Data File
+REDLINEUPLOADNOTE       = Note: Data file must be a SDF, SQLite or SHP file and you can only upload data files that have either been originally created by this widget or have an identical feature schema.<br><br>For SHP files, you must upload a zip file containing the SHP file and its associated files (.dbf, .idx, .shx, etc)
+REDLINEUPLOADREQUIRED   = Redline Data File not specified
+REDLINEUPLOADTEXT       = Upload
+REDLINEUPLOADCLOSE      = Close
+REDLINEUPLOADSHPZIPERROR = Error uploading zip file. File is either:<ul><li>Not a zip file</li><li>A corrupted zip file</li><li>Does not contain a .shp file</li></ul>
+REDLINEUPLOADINVALIDSCHEMA = The uploaded redline data file has an invalid schema. This widget expects the following properties in the class definition:<ul><li>The class definition is named 'Markup'</li><li>It has an auto-generated numeric identity property (ID or FeatId)</li><li>It has a geometry property (Geometry)</li><li>It has a string property (Text)</li></ul><br>Redline data files created by this widget satisfy this schema requirements.
+
+# HtmlViewerAbout
+HTMLABOUTTITLE          = About %s
+HTMLABOUTTITLEBAR       = MapGuide Viewer
+HTMLABOUTSERVERTITLE    = MapGuide Server
+HTMLABOUTVIEWERTITLE    = MapGuide Viewer
+HTMLABOUTSERVERVERSION  = %s (Version %s)
+HTMLABOUTVIEWERVERSION  = %s (Version %s)
+HTMLABOUTTEXT           = <br>This product is made available subject to the terms of GNU Lesser General Public License Version 2.1 ("LGPL").  A copy of the LGPL, as well as additional copyright notices and license terms applicable to portions of this product are set forth in the <a href="../localized/license_en.htm" target="blank">license</a> file.<br><br>All trademarks and registered trademarks mentioned herein are the property of their respective owners.<br><br>Copyright &copy; 2007 Autodesk, Inc.<br><br>
+HTMLABOUTLICENSE        = license file
+HTMLABOUTLICENSEFILE    = license_en.htm
+
+# LegendUI
+LEGENDLISTSEPARATOR     = ,
+
+# PrintablePageUi
+PRINTTITLE              = Get Printable Page
+PRINTELEMENTS           = Select the elements to include in the print layout.
+PRINTPAGETITLE          = Page title:
+PRINTLEGEND             = Legend
+PRINTNORTHARROW         = North arrow
+PRINTCREATEPAGE         = Create Page
+
+# PropertyCtrl
+PROPERTIESNONE          = None Selected
+PROPERTIESNAME          = Name
+PROPERTIESVALUE         = Value
+PROPERTIESITEMSEL       = Items selected: {0}
+
+# Search
+SEARCHDLGTITLE          = Search features
+SEARCHTITLE             = Search results
+SEARCHERROR             = Search error
+SEARCHREPORT            = Search report
+SEARCHLAYERNOTFOUND     = Layer {0} not found!
+SEARCHNOMULTIPROP       = Multi-properties identity not supported yet
+SEARCHTYYPENOTSUP       = Identity property type not supported yet ({0})
+SEARCHNOMATCHES         = No matches.
+
+# SearchPrompt
+SEARCHPROMPTFIND        = Find
+
+# SelectWithinUi
+SELECTWITHINTITLE       = Select Within
+SELECTWITHINAREAS       = Select areas on the image.
+SELECTWITHINRESTRICTION = Restrict results to selected layers:
+SELECTWITHINTEXT        = <li>If you continue to select areas on the image, click &quot;Refresh&quot; to update the layer list.</li><li>To finish and select all features within the highlighted areas, click &quot;Done&quot;.</li><li>To start over, click &quot;Clear&quot;.</li>
+
+# Error/Report
+REPORTTITLE             = Report
+
+# Legend UI
+REFRESH                 = Refresh
+EXPANDALL               = Expand
+COLLAPSEALL             = Collapse All
+DISPLAYALLINGROUP       = Display All in Group
+HIDEALLINGROUP          = Hide All in Group
+SHOWLONGTHEME           = Show Long Theme
+
+# Task Bar
+TASKS                   = Tasks
+
+# Viewer Options
+OPTIONSTITLE            = Viewer Options
+OPTIONSINFOTEXT         = Select viewing options for status bar and tool tips.
+OPTIONSDISTANCE         = Display distances in
+OPTIONSMETRIC           = Metric (Kilometers, Meters)
+OPTIONSUSENGLISH        = US/English (Miles, Feet)
+OPTIONSPOSITION         = Display cursor position in
+OPTIONSLATLON           = Latitude, Longitude (Degrees)
+OPTIONSMAPUNITS         = Map Coordinate System (X,Y)
+
+# AJAX Viewer
+VIEWERLAYERS            = Layers
+VIEWERPROPS             = Properties
+VIEWERPANNORTH          = Pan North
+VIEWERPANWEST           = Pan West
+VIEWERPANSOUTH          = Pan South
+VIEWERPANEAST           = Pan East
+VIEWERZOOMIN            = Zoom In
+VIEWERZOOMOUT           = Zoom Out
+VIEWERMOVESLIDER        = Drag to move slider
+VIEWERDRAGZOOM          = Drag to zoom
+ENDSEL                  = CTRL + click to end
+ENDSELSAFARI            = SHIFT + click to end
+DECIMALSEPARATOR        = .
+THOUSANDSEPARATOR       = ,
+
+# Main Frame
+NEEDLOGIN               = You must enter a valid login ID and password to access this site
+ALREADYINMEASURE        = Only one measure command is allowed in a web layout
+ACCESSDENIED            = Access Denied
+LATLONCURPOS            = Lat: {0}, Lon: {1}
+MAPUNITSCURPOS          = X: {0}, Y: {1}
+FEATURESSELECTED        = {0} features selected
+FEATURESELECTED         = {0} feature selected
+MI                      = mi
+FT                      = ft
+IN                      = in
+KM                      = km
+MT                      = m
+CM                      = cm
+DIGALREADYRUNNING       = Cannot execute measure: A digitization command is in progress.
+MEASALREADYRUNNING      = Cannot execute digitization: A measure is in progress.
+
+# Localized Icon Files
+POWEREDBYICON           = PoweredBy_en.gif
+
+# Quick Plot UI
+QUICKPLOT_HEADER                = Quick Plot
+QUICKPLOT_TITLE                 = Title
+QUICKPLOT_SUBTITLE              = Sub title
+QUICKPLOT_PAPER_SIZE            = Paper size
+QUICKPLOT_SCALING               = Scaling
+QUICKPLOT_DPI                   = Print DPI
+QUICKPLOT_ORIENTATION           = Orientation
+QUICKPLOT_ORIENTATION_P         = Portrait Orientation
+QUICKPLOT_ORIENTATION_L         = Landscape Orientation
+QUICKPLOT_GENERATE              = Generate
+QUICKPLOT_SHOWELEMENTS          = Show Elements
+QUICKPLOT_SHOWLEGEND            = Legend
+QUICKPLOT_SHOWNORTHARROW        = North Arrow
+QUICKPLOT_SHOWCOORDINTES        = Coordinates
+QUICKPLOT_SHOWSCALEBAR          = Scale Bar
+QUICKPLOT_SHOWDISCLAIMER        = Legal Disclaimer
+QUICKPLOT_ADVANCED_OPTIONS      = Advanced options
+QUICKPLOT_PREVIEW_ERROR         = The application resources required to generate the plot exceed the settings defined by the administrator
+QUICKPLOT_RESOLUTION_WARNING    = The current settings exceed the map resolution. Zooming out or increasing the scaling will help create a more legible plot
+QUICKPLOT_SCALE_LABEL           = Scale
+QUICKPLOT_COMMERCIAL_LAYER_WARNING = Quick Plot will NOT include any visible commercial map layers
+
+# Coordinate Tracker
+COORDINATETRACKERTITLE          = Coordinate Tracker

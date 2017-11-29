@@ -1,0 +1,29 @@
+<WidgetInfo>
+  <Type>CoordinateTracker</Type>
+  <LocalizedType>CoordinateTracker</LocalizedType>
+  <Description>This widget displays mouse coordinates in various projections</Description>
+  <Location></Location>
+  <Label>Coordinate Tracker</Label>
+  <Tooltip>Click to view mouse coordinates in various projections</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl>images/icons.png</ImageUrl>
+  <ImageClass>coordinate-tracker</ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>Target</Name>
+    <Description>The frame, window, or TaskPane in which to display any UI for the widget. If empty, a new window is used</Description>
+    <Type>target</Type>
+    <Label>Target</Label>
+    <DefaultValue>TaskPane</DefaultValue>
+    <IsMandatory>true</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Projection</Name>
+    <Description>Indicates a list of projections (as EPSG codes) to display coordinates in</Description>
+    <Type>xml</Type>
+    <Label>Projection</Label>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>true</IsMandatory>
+  </Parameter>
+</WidgetInfo>

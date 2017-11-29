@@ -1,4 +1,5 @@
 #!/bin/sh
+mkdir -p pgdata;
 (cd docker/demo; docker build -t mapguide-react .) && \
 (cd docker/postgres; docker build . -t mapguide-db) && \
 #docker run -p 80:8008 --rm \

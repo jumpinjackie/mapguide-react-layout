@@ -81,38 +81,38 @@ CREATE TABLE function (
 
 GRANT ALL ON function TO PUBLIC;
 
-CREATE TABLE cart_type (
-    cart_type_id integer PRIMARY KEY,
+CREATE TABLE card_type (
+    card_type_id integer PRIMARY KEY,
     name character varying(255),
     short_name character varying(255), 
     description character varying(255),
     creation_date timestamp without time zone
 );
 
-GRANT ALL ON cart_type TO PUBLIC;
+GRANT ALL ON card_type TO PUBLIC;
 
-CREATE TABLE cart (
-    cart_id integer PRIMARY KEY,
-    cart_type_id integer,
+CREATE TABLE card (
+    card_id integer PRIMARY KEY,
+    card_type_id integer,
     name character varying(255),
     short_name character varying(255), 
     description character varying(255),
     creation_date timestamp without time zone,
     author character varying(255),
-    FOREIGN KEY (cart_type_id) REFERENCES cart_type (cart_type_id)
+    FOREIGN KEY (card_type_id) REFERENCES card_type (card_type_id)
 );
 
-GRANT ALL ON cart TO PUBLIC;
+GRANT ALL ON card TO PUBLIC;
 
-CREATE TABLE layer_cart_type (
+CREATE TABLE layer_card_type (
     layer_id integer,
-    cart_type_id integer,
-    PRIMARY KEY (layer_id, cart_type_id),
+    card_type_id integer,
+    PRIMARY KEY (layer_id, card_type_id),
     FOREIGN KEY (layer_id) REFERENCES layer (layer_id),
-    FOREIGN KEY (cart_type_id) REFERENCES cart_type (cart_type_id)
+    FOREIGN KEY (card_type_id) REFERENCES card_type (card_type_id)
 );
 
-GRANT ALL ON layer_cart_type TO PUBLIC;
+GRANT ALL ON layer_card_type TO PUBLIC;
 
 CREATE TABLE feature (
     feature_id integer PRIMARY KEY,
@@ -122,30 +122,40 @@ CREATE TABLE feature (
 
 GRANT ALL ON feature TO PUBLIC;
 
-CREATE TABLE feature_cart_type (
+CREATE TABLE feature_card_type (
     feature_id integer,
-    cart_type_id integer,
-    PRIMARY KEY (feature_id, cart_type_id),
+    card_type_id integer,
+    PRIMARY KEY (feature_id, card_type_id),
     FOREIGN KEY (feature_id) REFERENCES feature (feature_id),
-    FOREIGN KEY (cart_type_id) REFERENCES cart_type (cart_type_id)
+    FOREIGN KEY (card_type_id) REFERENCES card_type (card_type_id)
 );
 
-GRANT ALL ON feature_cart_type TO PUBLIC;
+GRANT ALL ON feature_card_type TO PUBLIC;
+
+CREATE TABLE feature_value_type (
+    feature_value_type_id integer PRIMARY KEY,
+    type character varying(255)
+);
+
+GRANT ALL ON feature_value_type TO PUBLIC;
 
 CREATE TABLE feature_value (
     feature_id integer,
-    cart_id integer,
-    PRIMARY KEY (feature_id, cart_id),
+    card_id integer,
+    feature_value_type_id integer,
+    value character varying(255),
+    PRIMARY KEY (feature_id, card_id),
     FOREIGN KEY (feature_id) REFERENCES feature (feature_id),
-    FOREIGN KEY (cart_id) REFERENCES cart (cart_id)
+    FOREIGN KEY (feature_value_type_id) REFERENCES feature_value_type (feature_value_type_id),
+    FOREIGN KEY (card_id) REFERENCES card (card_id)
 );
 
 GRANT ALL ON feature_value TO PUBLIC;
 
 CREATE TABLE geodata (
     geodata_id integer PRIMARY KEY,
-    cart_id integer,
-    FOREIGN KEY (cart_id) REFERENCES cart (cart_id)
+    card_id integer,
+    FOREIGN KEY (card_id) REFERENCES card (card_id)
 );
 
 GRANT ALL ON geodata TO PUBLIC;

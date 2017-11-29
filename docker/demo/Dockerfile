@@ -23,4 +23,5 @@ RUN apt-get install -y --no-install-recommends fontconfig ttf-mscorefonts-instal
 RUN wget http://download.osgeo.org/mapguide/releases/3.0.0/extras/Sheboygan.mgp -O /usr/local/mapguideopensource-3.1.0/server/Packages/Sheboygan.mgp
 #RUN unzip /tmp/viewer.zip -d /usr/local/mapguideopensource-3.1.0/webserverextensions/www
 ADD index.php /usr/local/mapguideopensource-3.1.0/webserverextensions/www
+ADD webgis.mgp /usr/local/mapguideopensource-3.1.0/server/Packages
 

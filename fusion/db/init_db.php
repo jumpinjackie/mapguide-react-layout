@@ -2,10 +2,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-class MyDB extends SQLite3
-{
-    function __construct()
-    {
+class MyDB extends SQLite3 {
+    function __construct() {
         $this->open('demo.sqlite', SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
     }
 }
@@ -20,15 +18,15 @@ if (!$db) {
 $sql = <<<EOF
     CREATE TABLE users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    login TEXT,
-    password TEXT,
-    registration_date INTEGER
+    user_login TEXT,
+    user_password TEXT,
+    user_registration_date INTEGER
 );
 
 CREATE TABLE roles (
     role_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    description TEXT
+    role_name TEXT,
+    role_description TEXT
 );
 
 CREATE TABLE user_role (
@@ -41,31 +39,37 @@ CREATE TABLE user_role (
 
 CREATE TABLE permission (
     permission_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    description TEXT
+    permission_name TEXT,
+    permission_description TEXT
 );
 
 CREATE TABLE permission_role (
-    permission_id INTEGER,
     role_id INTEGER,
+    permission_id INTEGER,
     PRIMARY KEY (permission_id, role_id),
-    FOREIGN KEY (permission_id) REFERENCES permission (permission_id),
-    FOREIGN KEY (role_id) REFERENCES roles (role_id)
+    FOREIGN KEY (role_id) REFERENCES roles (role_id),
+    FOREIGN KEY (permission_id) REFERENCES permission (permission_id)
 );
 
 CREATE TABLE object (
     object_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    object_name TEXT,
+    object_description TEXT
+);
+
+CREATE TABLE permission_object (
+    object_id INTEGER,
     permission_id INTEGER,
-    name TEXT,
-    description TEXT,
+    PRIMARY KEY (permission_id, object_id),
+    FOREIGN KEY (object_id) REFERENCES object (object_id),
     FOREIGN KEY (permission_id) REFERENCES permission (permission_id)
 );
 
 CREATE TABLE layer (
     layer_id INTEGER PRIMARY KEY AUTOINCREMENT,
     object_id INTEGER,
-    name TEXT,
-    description TEXT,
+    layer_name TEXT,
+    layer_description TEXT,
     UNIQUE(object_id),
     FOREIGN KEY (object_id) REFERENCES object (object_id)
 );
@@ -73,8 +77,8 @@ CREATE TABLE layer (
 CREATE TABLE function (
     function_id INTEGER PRIMARY KEY AUTOINCREMENT,
     object_id INTEGER,
-    name TEXT,
-    description TEXT,
+    function_name TEXT,
+    function_description TEXT,
     UNIQUE(object_id),
     FOREIGN KEY (object_id) REFERENCES object (object_id)
 );
@@ -83,10 +87,10 @@ CREATE TABLE geodata (
     geodata_id INTEGER PRIMARY KEY AUTOINCREMENT
 );
 
-INSERT INTO roles (role_id, name, description)
+INSERT INTO roles (role_id, role_name, role_description)
 	VALUES (1, 'superuser', '');
 
-INSERT INTO users (user_id, login, password)
+INSERT INTO users (user_id, user_login, user_password)
 	VALUES (1, 'admin', 'cooladmin');
 
 INSERT INTO user_role (user_id, role_id)

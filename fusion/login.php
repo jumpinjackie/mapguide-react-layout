@@ -12,7 +12,7 @@ if(isset($_POST["PASS"]))
 session_start();
 if($_SESSION['authorized'] == 1){
     $response = array(
-        "status" => "0",
+        "status" => 0,
         "message" =>  "already authorized",
         "data" => array(
             "user" => array(
@@ -27,7 +27,7 @@ else if($login==$setlogin && $pass==$setpass)
     $_SESSION['authorized'] = 1;
     $_SESSION['login'] = $login;
     $response = array(
-        "status" => "0",
+        "status" => 0,
         "message" =>  "logged in",
         "data" => array(
             "user" => array(

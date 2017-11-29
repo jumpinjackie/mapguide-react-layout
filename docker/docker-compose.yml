@@ -6,8 +6,8 @@ services:
       - "80:8008"
     command: ["--no-tomcat"]
     volumes:
-      - /home/lina/projects/xakaton/mapguide-react-layout/viewer:/usr/local/mapguideopensource-3.1.0/webserverextensions/www/viewer
-      - /home/lina/projects/xakaton/mapguide-react-layout/fusion:/usr/local/mapguideopensource-3.1.0/webserverextensions/www/fusion
+      - /home/krashaen/Work/xak/mapguide-react-layout/viewer:/usr/local/mapguideopensource-3.1.0/webserverextensions/www/viewer
+      - /home/krashaen/Work/xak/mapguide-react-layout/fusion:/usr/local/mapguideopensource-3.1.0/webserverextensions/www/fusion
   dbsrv:
     image: mapguide-db
     ports:
@@ -22,6 +22,6 @@ services:
         aliases:
           - dbsrv
     volumes:
-      - /home/lina/projects/xakaton/mapguide-react-layout/pgdata:/var/lib/postgresql/data
+      - /home/krashaen/Work/xak/mapguide-react-layout/pgdata:/var/lib/postgresql/data
 networks:
   webnet:

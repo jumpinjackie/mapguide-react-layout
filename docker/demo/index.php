@@ -23,6 +23,7 @@ if (!$resSvc->ResourceExists($resWl) || !$resSvc->ResourceExists($resAppDef)) {
     <head>
         <title>WGS</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="/mapguide/viewer/indexPage.css" />
         <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <style type="text/css">
             /* Move down content because we have a fixed navbar that is 50px tall */
@@ -36,7 +37,7 @@ if (!$resSvc->ResourceExists($resWl) || !$resSvc->ResourceExists($resAppDef)) {
         <nav class="navbar navbar-inverse navbar-fixed-top">
           <div class="container">
             <div class="navbar-header">
-              <a class="navbar-brand" href="index.php">mapguide-react-layout demo</a>
+              <a class="navbar-brand" href="index.php">НОВЫЙ ПИРАТ</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
               
@@ -45,34 +46,35 @@ if (!$resSvc->ResourceExists($resWl) || !$resSvc->ResourceExists($resAppDef)) {
         </nav>
         <div class="jumbotron">
             <div class="container">
-                <h1>mapguide-react-layout demo</h1>
-                <p>Here you will find a demonstration of mapguide-react-layout</p>
-                <p>Click on a link below to go to that particular sample</p>
+                <h1 class="jumbotron__article">У.К.Р.О.П. - demo</h1>
+                <p class="jumbotron__sub-article">Универсальная Картографическая Российская Облачная Платформа</p>
+                <p class="jumbotron__comment">Мощный, но простой инструмент картографирования, предоставляющий организациям возможность манипулирования геоданными.</p>
             </div>
         </div>
         <div class="container">
             <div class="alert alert-info">
-                <strong>NOTE</strong>
-                <p>These samples use the Sheboygan Dataset</p>
-                <p>If you are reading this message, this dataset has already been pre-loaded for you</p>
+                <strong>Заметка</strong>
+                <p>С У.К.Р.О.П. вы можете создавать карты и приложения, проводить аналитический анализ данных, настраивать совместную работу с ними и выполнять операции администрирования.</p>
+                <p>Современная высокотехнологичная функциональность позволяет удобно и просто работать с картографическими решениями, доступ к которым можно открыть любым сотрудникам вашей организации.</p>
             </div>
         </div>
         <div class="container">
             <div class="panel-group" id="accordion">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <strong>Viewer Templates</strong>
+                        <strong>Продукты</strong>
                     </div>
                     <div class="panel">
                         <div class="panel-body">
                             <ul class="list-group">
-                                <li class="list-group-item"><a href="viewer/index.html?resource=Library://Samples/Sheboygan/Layouts/AdvancedStylization.WebLayout">AJAX Viewer</a></li>
-                                <li class="list-group-item"><a href="viewer/sidebar.html?resource=Library://Samples/Sheboygan/Layouts/AdvancedStylization.WebLayout">Sidebar</a></li>
-                                <li class="list-group-item"><a href="viewer/slate.html?resource=Library://Samples/Sheboygan/FlexibleLayouts/SlateCommercial.ApplicationDefinition">Slate</a></li>
-                                <li class="list-group-item"><a href="viewer/turquoiseyellow.html?resource=Library://Samples/Sheboygan/FlexibleLayouts/SlateCommercial.ApplicationDefinition">TurquoiseYellow</a></li>
-                                <li class="list-group-item"><a href="viewer/maroon.html?resource=Library://Samples/Sheboygan/FlexibleLayouts/SlateCommercial.ApplicationDefinition">Maroon</a></li>
+                                <!-- <li class="list-group-item"><a href="viewer/index.html?resource=Library://Samples/Sheboygan/Layouts/AdvancedStylization.WebLayout">AJAX Viewer</a></li> -->
+                                <li class="list-group-item"><a href="viewer/admin.html">Административная панель</a></li>
+                                <li class="list-group-item"><a href="viewer/sidebar.html?resource=Library://Samples/Sheboygan/Layouts/AdvancedStylization.WebLayout">Клиентское приложение</a></li>
+                                <!-- <li class="list-group-item"><a href="viewer/slate.html?resource=Library://Samples/Sheboygan/FlexibleLayouts/SlateCommercial.ApplicationDefinition">Slate</a></li>
+                                <li class="list-group-item"><a href="viewer/turquoiseyellow.html?resource=Library://Samples/Sheboygan/FlexibleLayouts/SlateCommercial.ApplicationDefinition">TurquoiseYellow</a></li> -->
+                                <!-- <li class="list-group-item"><a href="viewer/maroon.html?resource=Library://Samples/Sheboygan/FlexibleLayouts/SlateCommercial.ApplicationDefinition">Maroon</a></li>
                                 <li class="list-group-item"><a href="viewer/limegold.html?resource=Library://Samples/Sheboygan/FlexibleLayouts/SlateCommercial.ApplicationDefinition">LimeGold</a></li>
-                                <li class="list-group-item"><a href="viewer/aqua.html?resource=Library://Samples/Sheboygan/FlexibleLayouts/SlateCommercial.ApplicationDefinition">Aqua</a></li>
+                                <li class="list-group-item"><a href="viewer/aqua.html?resource=Library://Samples/Sheboygan/FlexibleLayouts/SlateCommercial.ApplicationDefinition">Aqua</a></li> -->
                             </ul>
                         </div>
                     </div>

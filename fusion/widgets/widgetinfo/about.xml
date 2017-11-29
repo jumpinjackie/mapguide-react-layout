@@ -1,0 +1,21 @@
+<WidgetInfo>
+  <Type>About</Type>
+  <LocalizedType>About</LocalizedType>
+  <Description>This widget displays information about the application including the license and copyright information retrieved from a URL set as a parameter</Description>
+  <Location></Location>
+  <Label>About</Label>
+  <Tooltip>Click to show information about this application</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl>images/icons.png</ImageUrl>
+  <ImageClass>about</ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>AboutURL</Name>
+    <Description>This is a pointer to the URL that will be displayed in the popup window</Description>
+    <Type>String</Type>
+    <Label>URL pointing to the About page</Label>
+    <DefaultValue>widgets/About/About.html</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

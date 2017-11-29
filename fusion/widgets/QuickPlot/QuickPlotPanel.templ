@@ -1,0 +1,236 @@
+<html>
+<head>
+<title>__#QUICKPLOT_HEADER#__</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+body, table, td, div, select, input 
+{
+    font: 8pt/1em __#@font#__;
+}
+
+div.Label
+{
+    padding:5px 0px;
+}
+
+div.Ctrl
+{
+    padding:5px 0px;
+}
+
+div.Title
+{
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 0px;
+}
+
+div.HPlaceholder5px
+{
+    font-size:0px;
+    height:5px;
+}
+
+div.ButtonContainer
+{
+    padding: 5px 0px;
+    text-align: right;
+}
+
+.FixWidth
+{
+    width: 100%%;
+}
+
+input.Button
+{
+    width:75px;
+    height:23px;
+    margin-left:7px;
+}
+
+div.InfoText
+{
+    padding: 3px;
+    background-color: #FFFFCC;
+    color: #666666;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8pt;
+}
+
+</style>
+<script language="javascript" type="text/javascript">
+var popup = %s;
+
+// Get window where the Fusion object is available
+function getParent()
+{
+    if (popup) 
+    {
+        return opener;
+    } 
+    else if (parent.Fusion)
+    {
+        return parent;
+    } 
+    else if (parent.parent.Fusion) 
+    {
+        return parent.parent;
+    }
+    
+    return null;
+}
+
+</script>
+<script language="javascript" type="text/javascript" src="%sQuickPlotPanel.js"></script>
+
+</head>
+<body onload="panelLoaded()" onunload="panelUnloaded()">
+    <form id="Form1" name="Form1" method="post" action="PlotAsPDF.php">
+        <div class="Title FixWidth">__#QUICKPLOT_HEADER#__</div>
+        <div class="Label ">__#QUICKPLOT_TITLE#__</div>
+        <div class="Ctrl">
+            <input type="text" class="FixWidth" name="{field:title}" id="title" maxLength=100"/>
+        </div>
+        <div class="HPlaceholder5px"></div>
+        <div class="HPlaceholder5px"></div>
+        <div class="Label" id="SubTitleLabel">__#QUICKPLOT_SUBTITLE#__</div>
+        <div class="Ctrl" id="SubTitleCtrl">
+            <input type="text" class="FixWidth" name="{field:sub_title}" id="subtitle" maxLength=100"/>
+        </div>
+        <div class="HPlaceholder5px"></div>
+        <div class="HPlaceholder5px"></div>
+        <div class="Label">__#QUICKPLOT_PAPER_SIZE#__</div>
+        <div class="Ctrl">
+            <!--
+                The pre-defined paper size list. The value for each "option" item is in this format: [width,height]. The unit is in millimeter.
+                We can change the html code to add more paper size or remove some ones.
+            -->
+            <select class="FixWidth" name="PaperList" id="PaperList" onchange="drawCaptureBox(this)">
+                <option value="210.0,297.0,A4">A4 (210x297 mm ; 8.27x11.69 In)</option>
+                <option value="297.0,420.0,A3">A3 (297x420 mm ; 11.69x16.54 In)</option>
+                <option value="148.0,210.0,A5">A5 (148x210 mm ; 5.83x8.27 in)</option>
+                <option value="216.0,279.0,Letter">Letter (216x279 mm ; 8.50x11.00 In)</option>
+                <option value="216.0,356.0,Legal">Legal (216x356 mm ; 8.50x14.00 In)</option>
+            </select>
+        </div>
+        <input type="hidden" id="paperSize" name="paperSize" />
+        <div class="HPlaceholder5px"></div> 
+        <div class="HPlaceholder5px"></div>       
+        <div class="Label">__#QUICKPLOT_ORIENTATION#__</div>
+        <div class="Ctrl">
+            <!--
+                The pre-defined scales. The value for each "option" item is the scale denominator.
+                We can change the html code to extend the pre-defined scales
+            -->
+            <select class="FixWidth" name="OrientationList" id="OrientationList" onchange="drawCaptureBox(this)">
+                <option value="P">__#QUICKPLOT_ORIENTATION_P#__</option>
+                <option value="L">__#QUICKPLOT_ORIENTATION_L#__</option>
+            </select>
+        </div>
+        <input type="hidden" id="orientation" name="orientation" /> 
+        <div class="HPlaceholder5px"></div>
+        <div class="HPlaceholder5px"></div>
+        <div class="HPlaceholder5px"></div>
+        <fieldset>
+            <legend>__#QUICKPLOT_SHOWELEMENTS#__</legend>        
+            <div class="Label" id="LegendCtrl">
+                <table cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td><input type="checkbox" id="ShowLegendCheckBox" name="ShowLegend" /></td>
+                        <td><label for="ShowLegendCheckBox">__#QUICKPLOT_SHOWLEGEND#__</label></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="Label" id="NorthArrowCtrl">
+                <table cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td><input type="checkbox" id="ShowNorthArrowCheckBox" name="ShowNorthArrow" /></td>
+                        <td><label for="ShowNorthArrowCheckBox">__#QUICKPLOT_SHOWNORTHARROW#__</label></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="Label" id="CoordinatesCtrl">
+                <table cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td><input type="checkbox" id="ShowCoordinatesCheckBox" name="ShowCoordinates" /></td>
+                        <td><label for="ShowCoordinatesCheckBox">__#QUICKPLOT_SHOWCOORDINTES#__</label></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="Label" id="ScaleBarCtrl">
+                <table cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td><input type="checkbox" id="ShowScaleBarCheckBox" name="ShowScaleBar" /></td>
+                        <td><label for="ShowScaleBarCheckBox">__#QUICKPLOT_SHOWSCALEBAR#__</label></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="Label" id="DisclaimerCtrl">
+                <table cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td><input type="checkbox" id="ShowDisclaimerCheckBox" name="ShowDisclaimer" /></td>
+                        <td><label for="ShowDisclaimerCheckBox">__#QUICKPLOT_SHOWDISCLAIMER#__</label></td>
+                    </tr>
+                </table>
+            </div>
+        </fieldset>
+        <div class="HPlaceholder5px"></div>
+        <div class="HPlaceholder5px"></div>
+        <div class="HPlaceholder5px"></div>
+        <div class="Label">
+            <table cellspacing="0" cellpadding="0">
+                <tr>
+                    <td><input type="checkbox" id="AdvancedOptionsCheckBox" onclick="setAdvancedOptionsUI(this.checked)" /></td>
+                    <td><label for="AdvancedOptionsCheckBox">__#QUICKPLOT_ADVANCED_OPTIONS#__</label></td>
+                </tr>
+            </table>
+        </div>
+        <div class="Label">__#QUICKPLOT_SCALING#__</div>
+        <div class="Ctrl">
+            <!--
+                The pre-defined scales. The value for each "option" item is the scale denominator.
+                We can change the html code to extend the pre-defined scales
+            -->
+            <select class="FixWidth" id="ScalingList" onchange="drawCaptureBox(this)">
+                <option value="500">1 : 500</option>
+                <option value="1000">1 : 1000</option>
+                <option value="2500">1 : 2500</option>
+                <option value="5000">1 : 5000</option>
+            </select>
+        </div>
+        <input type="hidden" id="scaleDenominator" name="scaleDenominator" />
+        <div class="Label" id="DPILabel">__#QUICKPLOT_DPI#__</div>
+        <div class="Ctrl" id="DPICtrl">
+            <!--
+                The pre-defined print DPI. 
+                We can change the html code to extend the pre-defined values
+            -->
+            <select class="FixWidth" name="DPIList" id="DPIList">
+                <option value="96">96</option>
+                <option value="150" selected>150</option>
+                <option value="300">300</option>
+                <option value="600">600</option>
+            </select>
+        </div>
+        <input type="hidden" id="dpi" name="dpi" /> 
+        <div class="HPlaceholder5px"></div>
+        <div class="HPlaceholder5px"></div>
+        <div class="HPlaceholder5px"></div>
+        <div id="commercialLayerWarning" class="InfoText">
+            __#QUICKPLOT_COMMERCIAL_LAYER_WARNING#__
+        </div>
+        <div class="ButtonContainer FixWidth">
+            <input type="button" class="Button" value="__#QUICKPLOT_GENERATE#__" onclick="generatePlot()" />
+        </div>
+        <input type="hidden" id="margin" name="margin" />
+        <input type="hidden" id="normalizedBox" name="normalizedBox" />
+        <input type="hidden" id="printSize" name="printSize" />
+        <input type="hidden" id="rotation" name="rotation" />
+        <input type="hidden" id="sessionId" name="sessionId" />
+        <input type="hidden" id="mapName" name="mapName" />
+        <input type="hidden" id="box" name="box" />
+        <input type="hidden" id="legalNotice" name="legalNotice"/>
+    </form>
+</body>
+</html>

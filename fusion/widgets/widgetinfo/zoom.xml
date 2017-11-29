@@ -1,0 +1,48 @@
+<WidgetInfo>
+  <Type>Zoom</Type>
+  <LocalizedType>Zoom</LocalizedType>
+  <Description>Zooms in on the map</Description>
+  <Label>Zoom Rectangle</Label>
+  <Tooltip>Click or click and drag on the map to zoom in</Tooltip>
+  <StatusText>Click or click and drag on the map to zoom in</StatusText>
+  <ImageUrl>images/icons.png</ImageUrl>
+  <ImageClass>zoom-in</ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>Tolerance</Name>
+    <Description>Zoom tolerance</Description>
+    <Type>integer</Type>
+    <Label>Tolerance</Label>
+    <Min></Min>
+    <Max></Max>
+    <DefaultValue>5</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Factor</Name>
+    <Description>The amount to zoom in or out</Description>
+    <Type>integer</Type>
+    <Label>Factor</Label>
+    <Min>1</Min>
+    <DefaultValue>2</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Direction</Name>
+    <Description>Indicates if the map should zoom in or out</Description>
+    <Type>String</Type>
+    <Label>Direction</Label>
+    <AllowedValue>
+      <Name>in</Name>
+      <Label>in</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>out</Name>
+      <Label>out</Label>
+    </AllowedValue>
+    <DefaultValue>in</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+
+</WidgetInfo>

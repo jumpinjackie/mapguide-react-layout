@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd
+">
+<html>
+<head>
+<title>Preview</title>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="../../../lib/fusionSF-compressed.js"></script>
+<link rel="stylesheet" href="../../../lib/jxLib/themes/delicious/jxtheme.css" type="text/css" media="screen" charset="utf-8">
+<link rel="stylesheet" href="preview.css" type="text/css" media="screen" charset="utf-8">
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="ie6.css" type="text/css" media="screen" charset="utf-8">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" href="ie7.css" type="text/css" media="screen" charset="utf-8">
+<![endif]-->
+<style type="text/css">
+    #Statusbar .spanCursorPosition,
+    #Statusbar .inputEditableScalePrefix,
+    #Statusbar .inputEditableScale,
+    #Statusbar .spanViewSize,
+    #Statusbar .spanSelectionInfo {
+        padding: 2px 4px;
+        line-height: 18px;
+        font-size: 11px;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    #Statusbar {
+      background-image: url(images/toolbar.png);
+      background-color: #f0f0f0;
+   }
+</style>
+<link rel="stylesheet" href="icons.css" type="text/css" media="screen" charset="utf-8">
+
+<script type="text/javascript">
+window.onload = function() {
+
+     // Initialize the locale setting before any strings are used
+     Fusion.initializeLocale();
+
+     // Make 'thePage' just fill the browser window and resize automagically
+     new Jx.Layout('thePage');
+
+     // Create the main pane
+     var main = new Jx.Layout('Main', {bottom: 21});
+
+     new Jx.Layout('MapPane');
+     new Jx.Layout('Map');
+
+     // Create the status bar
+     new Jx.Layout('Statusbar', {height: 21, top: null, bottom: 0});
+
+     // Add the toolbar, map and navigator to the main panel
+     new Jx.Panel({
+         parent: $('Main'),
+         hideTitle: true,
+         toolbars: [
+             new Jx.Toolbar({
+                 id: 'Toolbar',
+                 position: 'top'
+             })
+         ],
+         content: 'MapPane'
+     });
+
+     Fusion.registerForEvent(Fusion.Event.FUSION_INITIALIZED, fusionInitialized);
+     Fusion.registerForEvent(Fusion.Event.FUSION_ERROR, fusionError);
+     Fusion.initialize();
+}
+
+function fusionError(eventId, error) {
+     console.log('Fusion Error: \n' + error.toString()); }
+
+function fusionInitialized() {
+     $('thePage').resize({forceResize: true});
+     $('thePage').style.visibility = 'visible'; }
+
+</script>
+</head>
+
+<body>
+
+<div id='thePage' style='visibility: hidden'>
+    <div id='Main'>
+        <div id='MapPane'>
+            <div id='Map'></div>
+            <div id='Navigator'></div>
+        </div>
+    </div>
+    <div id='Statusbar'></div>
+</div>
+<div id='Maptip'></div>
+
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+.taskPanePanel ul.jxToolbar {
+	width: auto;
+}
+
+.taskPanePanel li.taskMenu {
+	float: right;
+}
+
+.taskPanePanel .jxPanelContent {
+	overflow: hidden;
+}
+
+/* In case the above selector doesn't match */
+#TaskPane { overflow: hidden; }
+
+.taskPaneHelp h1 {
+	font-family: Arial, sans-serif;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.taskPaneHelp h2 {
+	font-family: Arial, sans-serif;
+	font-size: 15px;
+	font-weight: bold;
+}
+
+.taskPaneHelp p {
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+}
+
+/* default icons for the images in the task pane */
+img.TaskPane_back { background-position: 0px 0px !important; }
+img.TaskPane_forward { background-position: -16px 0px !important; }
+img.TaskPane_home { background-position: -32px 0px !important; }
+img.TaskPane_tasks { background-position: -48px 0px !important; }

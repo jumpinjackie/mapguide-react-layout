@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xs:element name="ApplicationDefinition" type="ApplicationDefinitionType" />
+  <xs:complexType name="ApplicationDefinitionType">
+    <xs:sequence>
+      <xs:element name="Title" type="xs:string" minOccurs="0" />
+      <xs:element name="TemplateUrl" type="xs:string" minOccurs="0" />
+      <xs:element name="MapSet" type="MapSetType" minOccurs="0" maxOccurs="1" />
+      <xs:element name="WidgetSet" type="WidgetSetType" minOccurs="1" maxOccurs="unbounded" />
+      <xs:element name="Extension" type="CustomContentType" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CustomContentType">
+    <xs:sequence>
+      <xs:any processContents="lax"   minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MapSetType">
+    <xs:sequence>
+      <xs:element name="MapGroup" type="MapGroupType" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MapGroupType">
+    <xs:sequence>
+      <xs:element name="InitialView" type="MapViewType" minOccurs="0"/>
+      <xs:element name="Map" type="MapType" minOccurs="1" maxOccurs="unbounded" />
+      <xs:element name="Extension" type="CustomContentType" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="MapViewType">
+    <xs:sequence>
+      <xs:element name="CenterX" type="xs:double"/>
+      <xs:element name="CenterY" type="xs:double"/>
+      <xs:element name="Scale" type="xs:double"/>
+    </xs:sequence>
+  </xs:complexType>  
+  <xs:complexType name="MapType">
+    <xs:sequence>
+      <xs:element name="Type" type="xs:string" />
+      <xs:element name="SingleTile" type="xs:string" minOccurs="0" />
+      <xs:element name="Extension" type="CustomContentType" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="WidgetSetType">
+    <xs:sequence>
+      <xs:element name="Container" type="ContainerType" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="MapWidget" type="MapWidgetType" />
+      <xs:element name="Widget" type="WidgetType" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="WidgetType">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" />
+      <xs:element name="Type" type="xs:string" />
+      <xs:element name="Location" type="xs:string" minOccurs="0"/>
+      <xs:element name="Extension" type="CustomContentType" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MapWidgetType">
+    <xs:complexContent>
+      <xs:extension base="WidgetType">
+        <xs:sequence>
+          <xs:element name="MapId" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="UiWidgetType">
+    <xs:complexContent>
+      <xs:extension base="WidgetType">
+        <xs:sequence>
+          <xs:element name="ImageUrl" type="xs:string" />
+          <xs:element name="ImageClass" type="xs:string" />
+          <xs:element name="Label" type="xs:string" />
+          <xs:element name="Tooltip" type="xs:string" />
+          <xs:element name="StatusText" type="xs:string" />
+          <xs:element name="Disabled" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ContainerType">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" />
+      <xs:element name="Type" type="xs:string" />
+      <xs:element name="Position" type="xs:string" />
+      <xs:element name="Extension" type="CustomContentType" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="UiItemContainerType">
+    <xs:complexContent>
+      <xs:extension base="ContainerType">
+        <xs:sequence>
+          <xs:element name="Item" type="UiItemType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="UiItemType" abstract="true">
+    <xs:sequence>
+      <xs:element name="Function" type="UiItemFunctionType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="UiItemFunctionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Separator" />
+      <xs:enumeration value="Widget" />
+      <xs:enumeration value="Flyout" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="FlyoutItemType">
+    <xs:complexContent>
+      <xs:extension base="UiItemType">
+        <xs:sequence>
+          <xs:element name="Label" type="xs:string" />
+          <xs:element name="Tooltip" type="xs:string" minOccurs="0" />
+          <xs:element name="ImageUrl" type="xs:string" minOccurs="0" />
+          <xs:element name="ImageClass" type="xs:string" minOccurs="0"/>
+          <xs:element name="Item" type="UiItemType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="SeparatorItemType">
+    <xs:complexContent>
+      <xs:extension base="UiItemType" />
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="WidgetItemType">
+    <xs:complexContent>
+      <xs:extension base="UiItemType">
+        <xs:sequence>
+          <xs:element name="Widget" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

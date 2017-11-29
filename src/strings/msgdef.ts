@@ -23,6 +23,7 @@ export interface ILocalizedMessages {
     INIT_ERROR_RESOURCE_NOT_FOUND: string;
     INIT_ERROR_NO_CONNECTION: string;
     TPL_SIDEBAR_OPEN_TASKPANE: string;
+    TPL_SIDEBAR_LOGOUT: string,
     TPL_SIDEBAR_OPEN_LEGEND: string;
     TPL_SIDEBAR_OPEN_SELECTION_PANEL: string;
     TPL_TITLE_TASKPANE: string;

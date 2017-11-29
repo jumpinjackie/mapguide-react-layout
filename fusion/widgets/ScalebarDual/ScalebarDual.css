@@ -1,0 +1,11 @@
+.scaleDiv{
+    background-color: #000;
+    border: 1px solid #fff;
+    margin: 1px;
+}
+.scaleLabel{
+    font-size: 9px;
+    padding-left: 2px;
+    line-height: 12px;
+    color: #fff;
+}

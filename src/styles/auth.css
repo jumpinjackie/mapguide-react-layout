@@ -1,0 +1,34 @@
+.auth {
+  color: red;
+}
+
+.auth__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.auth__input {
+  margin-top: 10px;
+  border: 1px solid #00000061;
+  height: 25px;
+  padding-left: 15px;
+  width: 80%;
+  -webkit-box-shadow: inset 0 0 0 50px #fff;
+  -webkit-text-fill-color: #000;
+}
+
+.auth__auth-btn {
+  margin-top: 20px;
+  padding: 5px 15px;
+  background-color: #005bae;
+  outline: none;
+  border: none;
+  border-radius: 7px;
+  color: #fff;
+  width: 50%;
+}
+
+.auth__auth-btn:hover {
+  background-color: #005baec4;
+}

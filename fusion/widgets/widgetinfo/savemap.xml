@@ -1,0 +1,51 @@
+<WidgetInfo>
+  <Type>SaveMap</Type>
+  <LocalizedType>Save Map</LocalizedType>
+  <Description>A widget to save the map as an image</Description>
+  <Label>Save map</Label>
+  <Tooltip>Click to save the map as an image</Tooltip>
+  <ImageUrl>images/icons.png</ImageUrl>
+  <ImageClass>file-save</ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy>Any</ContainableBy>
+  <Parameter>
+    <Name>Format</Name>
+    <Description>The image format to use</Description>
+    <Type>String</Type>
+    <Label>Format</Label>
+    <AllowedValue>
+      <Name>dwf</Name>
+      <Label>DWF</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>png</Name>
+      <Label>PNG</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>jpg</Name>
+      <Label>JPEG</Label>
+    </AllowedValue>
+    <AllowedValue>
+      <Name>gif</Name>
+      <Label>GIF</Label>
+    </AllowedValue>
+    <DefaultValue>png</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>Scale</Name>
+    <Description>The scale at which the map is to be saved, or 0 to use the current map scale</Description>
+    <Type>integer</Type>
+    <Label>Scale</Label>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+      <Name>ResourceId</Name>
+      <Description>The print layout to be used for DWF creation.  This is mandatory if the format is set to DWF.</Description>
+      <Type>PrintLayout</Type>
+      <Label>Print Layout (DWF Only)</Label>
+      <DefaultValue></DefaultValue>
+      <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

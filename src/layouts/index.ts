@@ -5,3 +5,4 @@ export * from "./maroon";
 export * from "./sidebar";
 export * from "./slate";
 export * from "./turquoise-yellow";
+export * from "./admin";

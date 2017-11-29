@@ -10,6 +10,7 @@ import TurquoiseYellowTemplateLayout from "../layouts/turquoise-yellow";
 import LimeGoldTemplateLayout from "../layouts/limegold";
 import SlateTemplateLayout from "../layouts/slate";
 import MaroonTemplateLayout from "../layouts/maroon";
+import AdminTemplateLayout from "../layouts/admin";
 import { registerLayout } from "../api/registry/layout";
 import { registerCommand } from "../api/registry/command";
 import { registerComponentFactory } from "../api/registry/component";
@@ -28,6 +29,7 @@ registerLayout("turquoise-yellow", () => <TurquoiseYellowTemplateLayout />);
 registerLayout("limegold", () => <LimeGoldTemplateLayout />);
 registerLayout("slate", () => <SlateTemplateLayout />);
 registerLayout("maroon", () => <MaroonTemplateLayout />);
+registerLayout("admin", () => <AdminTemplateLayout />);
 initDefaultCommands();
 registerDefaultComponents();
 

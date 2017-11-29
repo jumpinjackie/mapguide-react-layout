@@ -1,0 +1,21 @@
+<WidgetInfo>
+  <Type>ColorPicker</Type>
+  <LocalizedType>Color Picker</LocalizedType>
+  <Description>The user can pick from a palette of web-safe colors or enter a hex value</Description>
+  <Location></Location>
+  <Label>Color picker</Label>
+  <Tooltip>Use this tool to select a color</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl></ImageUrl>
+  <ImageClass></ImageClass>
+  <StandardUi>true</StandardUi>
+  <ContainableBy></ContainableBy>
+  <Parameter>
+    <Name>ColorInputId</Name>
+    <Description>The HTML Input element where the selected color should be written</Description>
+    <Type>String</Type>
+    <Label>ColorInputId</Label>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>true</IsMandatory>
+  </Parameter>
+</WidgetInfo>

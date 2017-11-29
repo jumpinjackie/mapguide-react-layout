@@ -15,8 +15,10 @@ import {
 } from "../api/common";
 import { initLayout, IInitAppLayout } from "../actions/init";
 import { Error, normalizeStack } from "../components/error";
+import Auth from "../components/auth";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import * as TemplateActions from "../actions/template";
+import * as AuthActions from "../actions/auth";
 import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
 
@@ -32,6 +34,7 @@ export interface IAppProps {
      * A session id to init this viewer with
      */
     session?: string;
+    isAuth: any;
     /**
      * Agent configuration
      *
@@ -86,6 +89,7 @@ export interface IAppState {
     initOptions: any;
     config: IConfigurationReducerState;
     map: IBranchedMapSubState;
+    isAuth: any;
 }
 
 /**
@@ -97,6 +101,8 @@ export interface IAppState {
 export interface IAppDispatch {
     initLayout: (args: IInitAppLayout) => void;
     setElementVisibility: (states: TemplateActions.IElementState) => void;
+    checkUserIsAuthenticated: () => void;
+    signIn: (login: string, password: string) => void | undefined;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IAppProps): Partial<IAppState> {
@@ -109,20 +115,23 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IAppProps
         includeStack: state.initError.includeStack,
         initOptions: state.initError.options,
         config: state.config,
-        map: map
+        map: map,
+        isAuth: state.auth.isAuth,
     };
 }
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAppDispatch> {
     return {
         initLayout: (args) => dispatch(initLayout(args)),
-        setElementVisibility: (state) => dispatch(TemplateActions.setElementStates(state))
+        setElementVisibility: (state) => dispatch(TemplateActions.setElementStates(state)),
+        checkUserIsAuthenticated: () => dispatch(AuthActions.checkUserIsAuthenticated()),
+        signIn: (login, password) => dispatch(AuthActions.signIn( login, password )),
     };
 }
 
 export type AppProps = IAppProps & Partial<IAppState> & Partial<IAppDispatch>;
 
-export class App extends React.Component<AppProps, any> {
+export class App extends React.Component<any, any> {
     private fnErrorRenderer: (err: Error) => JSX.Element;
     constructor(props: AppProps) {
         super(props);
@@ -142,8 +151,12 @@ export class App extends React.Component<AppProps, any> {
             session,
             fusionRoot,
             resourceId,
-            externalBaseLayers
+            externalBaseLayers,
+            checkUserIsAuthenticated
         } = this.props;
+
+        if(checkUserIsAuthenticated) checkUserIsAuthenticated();
+
         if (setElementVisibility && initialElementVisibility) {
             const { taskpane, legend, selection } = initialElementVisibility;
             const states: TemplateActions.IElementState = {
@@ -224,10 +237,12 @@ export class App extends React.Component<AppProps, any> {
         </div>;
     }
     render(): JSX.Element {
-        const { layout, config, error, map } = this.props;
+        const { layout, config, error, map, isAuth, signIn } = this.props;
         const { isLoading } = this.state;
         if (error) {
             return <Error error={error} errorRenderer={this.fnErrorRenderer} />
+        } else if(!isAuth) {
+            return <Auth signIn={signIn} />
         } else {
             //NOTE: Locale may not have been set at this point, so use default
             const locale = config ? (config.locale || DEFAULT_LOCALE) : DEFAULT_LOCALE;

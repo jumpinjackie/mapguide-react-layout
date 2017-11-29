@@ -1,0 +1,37 @@
+<WidgetInfo>
+  <Type>OverviewMap</Type>
+  <LocalizedType>Overview Map</LocalizedType>
+  <Description>A key map to locate the vewing area of the primary map</Description>
+  <Location></Location>
+  <Label>Overview map</Label>
+  <Tooltip>Click and drag to recenter the map</Tooltip>
+  <StatusText></StatusText>
+  <ImageUrl></ImageUrl>
+  <ImageClass></ImageClass>
+  <StandardUi>false</StandardUi>
+  <ContainableBy></ContainableBy>
+  <Parameter>
+    <Name>MapId</Name>
+    <Description>The ID of a map from the fusion MapSet to use as the map image. If this parameter is missing, the main map will be re-used.</Description>
+    <Type>mapgroup</Type>
+    <Label>MapId</Label>
+    <DefaultValue></DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>MinRatio</Name>
+    <Description>The ratio of the overview map resolution to the main map resolution at which to zoom farther out on the overview map.</Description>
+    <Type>float</Type>
+    <Label>Minimum ratio</Label>
+    <DefaultValue>32</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+  <Parameter>
+    <Name>MaxRatio</Name>
+    <Description>The ratio of the overview map resolution to the main map resolution at which to zoom farther in on the overview map.</Description>
+    <Type>float</Type>
+    <Label>Maximum ratio</Label>
+    <DefaultValue>128</DefaultValue>
+    <IsMandatory>false</IsMandatory>
+  </Parameter>
+</WidgetInfo>

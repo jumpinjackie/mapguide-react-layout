@@ -4,6 +4,16 @@
 
 //$_POST; // createCard, setFeatureData, assignCardToGeolayer, createCardType, createFeature, assignFeatureToCardType
 
+session_start();
+
+if($_SESSION['authorized']<>1){
+    echo array(
+        "status" => "1",
+        "message" => "unauthorized"
+    );
+    exit;
+}
+
 if(isset($_GET)){
     $action = $_GET["ACTION"];
     echo $action;

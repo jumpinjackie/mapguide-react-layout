@@ -9,30 +9,44 @@ if(isset($_POST["LOGIN"]))
 if(isset($_POST["PASS"]))
     $pass = ($_POST["PASS"]);
 
-if(isset($_SESSION['session']) || ($login==$setlogin && $pass==$setpass))
-{
-    $hsh = get_session_hash($login, $pass);
-    $_SESSION['session'] = $hsh;
-    $_SESSION['login'] = $login;
+session_start();
+if($_SESSION['authorized'] == 1){
     $response = array(
-        "status" => 0,
+        "status" => "0",
+        "message" =>  "already authorized",
         "data" => array(
-            "user" => $login
+            "user" => array(
+                "login" => $_SESSION['login'],
+                "role" => "admin"
+                )
         )
     );
 }
-else $response = array(
-    "status" => 1
-);
+else if($login==$setlogin && $pass==$setpass)
+{
+    $_SESSION['authorized'] = 1;
+    $_SESSION['login'] = $login;
+    $response = array(
+        "status" => "0",
+        "message" =>  "logged in",
+        "data" => array(
+            "user" => array(
+                "login" => $login,
+                "role" => "admin"
+                )
+        )
+    );
+}
+else
+{
+    $_SESSION['authorized'] = 0;
+    $response = array(
+        "status" => 1
+    );
+}
 
 header("Content-type: application/json");
 
 echo json_encode($response);
-
-function get_session_hash($usr, $p)
-{
-    // echo "test";
-    return hash("md5", $usr.$p.time());
-}
 
 ?>

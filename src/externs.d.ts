@@ -16,6 +16,8 @@ declare module "ol" {
     export default ol;
 }
 
+declare module "react-bootstrap-table";
+
 declare module "ol/events" {
     import olImage from "ol/image";
     class Events {

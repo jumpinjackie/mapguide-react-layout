@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { typeTab } from "./data/typeTab";
 import { Nav, NavItem } from 'react-bootstrap';
 
+import AtributeLayout from './AtributeLayout';
 import * as Constants from "../../constants";
 
 interface IState {
@@ -37,7 +38,7 @@ export class AdminLayout extends React.Component<any, IState> {
           layout = <div>Пользователи</div>
           break;
         case typeTab.atributeTab:
-          layout = <div>Атрибутивное описание</div>
+          layout = <AtributeLayout />
           break;
       
         default:

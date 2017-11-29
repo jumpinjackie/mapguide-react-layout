@@ -1,0 +1,28 @@
+.atribute-layout {
+  display: flex;
+  padding-top: 50px;
+}
+
+.atribute-layout__item {
+  padding-top: 5px;
+}
+
+.atribute-layout__item:hover {
+  cursor: pointer;
+  color: red;
+}
+
+.atribute-layout__item_isActive {
+  color: red;
+}
+
+.atribute-layout__position_left {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.atribute-layout__position_right {
+  width: 70%;
+}
+

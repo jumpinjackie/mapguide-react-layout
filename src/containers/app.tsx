@@ -102,7 +102,7 @@ export interface IAppDispatch {
     initLayout: (args: IInitAppLayout) => void;
     setElementVisibility: (states: TemplateActions.IElementState) => void;
     checkUserIsAuthenticated: () => void;
-    signIn: (login: string, password: string) => void;
+    signIn: (login: string, password: string) => void | undefined;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IAppProps): Partial<IAppState> {
@@ -131,7 +131,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAppDispatch> {
 
 export type AppProps = IAppProps & Partial<IAppState> & Partial<IAppDispatch>;
 
-export class App extends React.Component<AppProps, any> {
+export class App extends React.Component<any, any> {
     private fnErrorRenderer: (err: Error) => JSX.Element;
     constructor(props: AppProps) {
         super(props);

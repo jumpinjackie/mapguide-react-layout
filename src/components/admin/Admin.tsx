@@ -5,19 +5,19 @@ import { connect } from "react-redux";
 import { typeTab } from "./data/typeTab";
 import { Nav, NavItem } from 'react-bootstrap';
 
-import * as Constants from "../constants";
+import * as Constants from "../../constants";
 
 interface IState {
   activeTab: number;
 }
 
-export class AdminLayout extends React.Component<any, IState> {);
-  public state: IStateIState = {
+export class AdminLayout extends React.Component<any, IState> {
+  public state: IState = {
     activeTab: typeTab.userTab,
   }
   
   @bind
-  handleSelect(selectedKey) {
+  handleSelect(selectedKey: any) {
     // alert(`selected ${selectedKey}`);
     this.setState({
       activeTab: selectedKey

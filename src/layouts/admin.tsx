@@ -7,7 +7,7 @@ import * as Constants from "../constants";
 import Admin from "../components/admin";
 
 
-export class AdminLayout extends React.Component<any, any> {);
+export class AdminLayout extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
     }

@@ -1,12 +1,17 @@
 import * as Constants from "../constants";
 import { Client } from "../api/client";
 
+interface IData {
+  user: string;
+  isAuth: boolean;
+}
+
 interface IResponse {
   user: string | null;
   errorMessage: string;
   success: boolean;
   isAuth: boolean | null;
-  data: object;
+  data: IData;
 }
 
 export function checkUserIsAuthenticated() {

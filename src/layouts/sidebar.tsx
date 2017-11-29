@@ -55,9 +55,10 @@ interface ISidebarProps {
     onCollapse: () => void;
     onActivateTab: (tab: SidebarTab, collapsed?: boolean) => void;
     lastAction?: any;
+    signOut: () => any;
 }
 
-class Sidebar extends React.Component<ISidebarProps, {}> {
+class Sidebar extends React.Component<any, any> {
     private fnClickExpand: GenericEventHandler;
     private fnClickCollapse: GenericEventHandler;
     private fnActivateTasks: GenericEventHandler;
@@ -94,7 +95,8 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
         return false;
     }
     onHandlerLogout() {
-        this.props.signOut();
+        const { signOut } = this.props;
+        signOut();
     }
     onActivateLegend(e: GenericEvent) {
         const { onActivateTab } = this.props;
@@ -218,6 +220,7 @@ export interface ISidebarLayoutState {
     capabilities: IViewerCapabilities;
     templateState: ITemplateReducerState;
     lastaction: any;
+    signOut: () => any;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>): Partial<ISidebarLayoutState> {
@@ -243,7 +246,7 @@ export interface SidebarLayoutState {
     activeTab: SidebarTab;
 }
 
-export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<SidebarLayoutState>> {
+export class SidebarLayout extends React.Component<any, any> {
     private fnCollapse: () => void;
     private fnExpand: () => void;
     private fnActivateTab: (tab: string, collapsed?: boolean) => void;

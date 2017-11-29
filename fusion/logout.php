@@ -2,4 +2,6 @@
 
 $_SESSION = array();
 
+echo 0;
+
 ?>

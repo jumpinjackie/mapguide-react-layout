@@ -13,7 +13,7 @@ if(isset($_SESSION['session']) || ($login==$setlogin && $pass==$setpass))
 {
     $hsh = get_session_hash($login, $pass);
     $_SESSION['session'] = $hsh;
-    $_SESSION['LOGIN'] = $login;
+    $_SESSION['login'] = $login;
     $response = array(
         "status" => 0,
         "data" => array(

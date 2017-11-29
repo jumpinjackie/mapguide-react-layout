@@ -5,6 +5,7 @@ import ToolbarContainer from "../containers/toolbar";
 import ViewerApiShim from "../containers/viewer-shim";
 import ModalLauncher from "../containers/modal-launcher";
 import FlyoutRegionContainer from "../containers/flyout-region";
+import * as AuthActions from "../actions/auth";
 import { connect } from "react-redux";
 import { tr } from "../api/i18n";
 import * as Constants from "../constants";
@@ -60,6 +61,7 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
     private fnClickExpand: GenericEventHandler;
     private fnClickCollapse: GenericEventHandler;
     private fnActivateTasks: GenericEventHandler;
+    private handlerLogout : any;
     private fnActivateLegend: GenericEventHandler;
     private fnActivateSelection: GenericEventHandler;
     constructor(props: ISidebarProps) {
@@ -67,6 +69,7 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
         this.fnClickCollapse = this.onClickCollapse.bind(this);
         this.fnClickExpand = this.onClickExpand.bind(this);
         this.fnActivateTasks = this.onActivateTasks.bind(this);
+        this.handlerLogout = this.onHandlerLogout.bind(this);
         this.fnActivateLegend = this.onActivateLegend.bind(this);
         this.fnActivateSelection = this.onActivateSelection.bind(this);
     }
@@ -89,6 +92,9 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
         e.preventDefault();
         onActivateTab("tasks");
         return false;
+    }
+    onHandlerLogout() {
+        this.props.signOut();
     }
     onActivateLegend(e: GenericEvent) {
         const { onActivateTab } = this.props;
@@ -119,6 +125,11 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
         return <div className={`sidebar ${collapsed ? "collapsed" : ""} sidebar-${position}`}>
             <div className="sidebar-tabs">
                 <ul role="tablist">
+                    {(() => {
+                        return <li className={collapsed == false && activeTab == "logout" ? "active" : ""}>
+                            <a onClick={this.handlerLogout} title={tr("TPL_SIDEBAR_LOGOUT", this.props.locale)} role="tab"><span className="pt-icon-standard pt-icon-application" /></a>
+                        </li>;
+                    })()}
                     <li>
                         {(() => {
                             if (busy === true) {
@@ -219,9 +230,9 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<ISidebarLa
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch) {
+function mapDispatchToProps(dispatch: any) {
     return {
-
+        signOut: () => dispatch(AuthActions.signOut()),
     };
 }
 
@@ -310,7 +321,9 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<S
                      onCollapse={this.fnCollapse}
                      onActivateTab={this.fnActivateTab}
                      onExpand={this.fnExpand}
-                     lastAction={this.props.lastaction} />
+                     lastAction={this.props.lastaction}
+                     signOut={this.props.signOut}
+                     />
             {(() => {
                 if (hasToolbar) {
                     let top = 180;

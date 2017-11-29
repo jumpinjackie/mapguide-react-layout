@@ -5,7 +5,8 @@ interface IResponse {
   user: string | null;
   errorMessage: string;
   success: boolean;
-  isAuth: boolean;
+  isAuth: boolean | null;
+  data: object;
 }
 
 export function checkUserIsAuthenticated() {
@@ -14,9 +15,9 @@ export function checkUserIsAuthenticated() {
     const args = state.config;
     if (args.agentUri && args.agentKind) {
         const client = new Client(args.agentUri, args.agentKind);
-        client.getRoot(`/mapguide/fusion/checkUser.php`).then((res: IResponse) => {
+        client.getRoot(`/mapguide/fusion/check.php`).then((res: IResponse) => {
           if(res.success) {
-            dispatch({ type: Constants.CHECK_AUTHENTIFICATED_SUCCESS, payload: { auth: res.isAuth, user: res.user } });
+            dispatch({ type: Constants.CHECK_AUTHENTIFICATED_SUCCESS, payload: { auth: res.data.isAuth, user: res.data.user } });
           } else {
             dispatch({ type: Constants.CHECK_AUTHENTIFICATED_FAILURE, payload: res.errorMessage });
           }
@@ -33,7 +34,7 @@ export function signIn(login: string, password: string) {
         const client = new Client(args.agentUri, args.agentKind);
         client.postRoot(`/mapguide/fusion/login.php`, {login, pass: password}).then((res: IResponse) => {
             if(res.success) {
-              dispatch({ type: Constants.SIGN_IN_SUCCESS, payload: res.user });
+              dispatch({ type: Constants.SIGN_IN_SUCCESS, payload: res.data.user });
             } else {
               dispatch({ type: Constants.SIGN_IN_FAILURE, payload: res.errorMessage });
             }
@@ -48,7 +49,7 @@ export function signOut() {
     const args = state.config;
     if (args.agentUri && args.agentKind) {
         const client = new Client(args.agentUri, args.agentKind);
-        client.getRoot(`/mapguide/fusion/logOut.php`).then((res: IResponse) => {
+        client.getRoot(`/mapguide/fusion/logout.php`).then((res: IResponse) => {
           if(res.success) {
             dispatch({ type: Constants.LOG_OUT_SUCCESS});
           } else {

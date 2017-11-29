@@ -26,7 +26,11 @@ interface IState {
   password: string;
 }
 
-export class Auth extends React.Component<{}, IState> {
+interface IProps {
+  signIn: (login: string, password: string) => void;
+}
+
+export class Auth extends React.Component<IProps, IState> {
     constructor(props: any) {
         super(props);
         this.state = {
@@ -38,7 +42,9 @@ export class Auth extends React.Component<{}, IState> {
     @bind
     handlerAuthClick() {
       const { login, password } = this.state;
+      const { signIn } = this.props;
       console.log(login, password)
+      signIn(login, password);
     }
 
     @bind

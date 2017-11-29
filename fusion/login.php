@@ -4,18 +4,16 @@ $setlogin = "demo";
 $setpass = "demo";
 
 
-if(isset($_POST["login"]))
-    $login = ($_POST["login"]);
-if(isset($_POST["pass"]))
-    $pass = ($_POST["pass"]);
-
-
+if(isset($_POST["LOGIN"]))
+    $login = ($_POST["LOGIN"]);
+if(isset($_POST["PASS"]))
+    $pass = ($_POST["PASS"]);
 
 if(isset($_SESSION['session']) || ($login==$setlogin && $pass==$setpass))
 {
     $hsh = get_session_hash($login, $pass);
     $_SESSION['session'] = $hsh;
-    $_SESSION['login'] = $login;
+    $_SESSION['LOGIN'] = $login;
     $response = array(
         "status" => 0,
         "data" => array(

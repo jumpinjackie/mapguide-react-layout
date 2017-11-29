@@ -102,6 +102,7 @@ export interface IAppDispatch {
     initLayout: (args: IInitAppLayout) => void;
     setElementVisibility: (states: TemplateActions.IElementState) => void;
     checkUserIsAuthenticated: () => void;
+    signIn: (login: string, password: string) => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IAppProps): Partial<IAppState> {
@@ -124,6 +125,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAppDispatch> {
         initLayout: (args) => dispatch(initLayout(args)),
         setElementVisibility: (state) => dispatch(TemplateActions.setElementStates(state)),
         checkUserIsAuthenticated: () => dispatch(AuthActions.checkUserIsAuthenticated()),
+        signIn: (login, password) => dispatch(AuthActions.signIn( login, password )),
     };
 }
 
@@ -235,12 +237,12 @@ export class App extends React.Component<AppProps, any> {
         </div>;
     }
     render(): JSX.Element {
-        const { layout, config, error, map, isAuth } = this.props;
+        const { layout, config, error, map, isAuth, signIn } = this.props;
         const { isLoading } = this.state;
         if (error) {
             return <Error error={error} errorRenderer={this.fnErrorRenderer} />
         } else if(!isAuth) {
-            return <Auth />
+            return <Auth signIn={signIn} />
         } else {
             //NOTE: Locale may not have been set at this point, so use default
             const locale = config ? (config.locale || DEFAULT_LOCALE) : DEFAULT_LOCALE;

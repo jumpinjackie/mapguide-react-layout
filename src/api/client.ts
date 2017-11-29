@@ -79,16 +79,16 @@ export class Client implements Request.IMapGuideClient {
                 } as any,
                 method: "GET"
             })
-            .then(( response: any ) => {
-                // resolve(response.json());
-                const success = response.status === 0;
-                resolve({
-                    success,
-                    data: success ? response.data : null,
-                    errorMessage: success ? null : 'Ошибка выполнения запроса',
+            .then((response: any) => {
+                response.json().then((res: any)=>{
+                    const success = res.status === 0;
+                    resolve({
+                        success,
+                        data: success ? res.data : null,
+                        errorMessage: success ? null : 'Ошибка выполнения запроса',
+                    });
                 });
             })
-            .catch(reject);
         });
     }
 
@@ -131,7 +131,7 @@ export class Client implements Request.IMapGuideClient {
 
     public postRoot<T>(url: string, data: any) {
         if (!data.format) {
-            data.format = "application/json";
+            data.format = "application/x-www-form-urlencoded";
         }
         return new Promise((resolve, reject) => {
             fetch(url, {
@@ -142,12 +142,14 @@ export class Client implements Request.IMapGuideClient {
                 body: serialize(data) //form
             })
             .then((response: any) => {
-                    // resolve(response.json());
-                const success = response.status === 0;
-                resolve({
-                    success,
-                    data: success ? response.data : null,
-                    errorMessage: success ? null : 'Ошибка выполнения запроса',
+                response.json().then((res: any)=>{
+                    const success = res.status === 0;
+                    resolve({
+                        success,
+                        data: success ? res.data : null,
+                        errorMessage: success ? null : 'Ошибка выполнения запроса',
+                    });
+                
                 });
             })
             .catch(reject);

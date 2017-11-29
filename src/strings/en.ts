@@ -26,6 +26,7 @@ const STRINGS_EN: ILocalizedMessages = {
     "INIT_ERROR_RESOURCE_NOT_FOUND": "Attempted to load the following resource, but it was not found: <strong>{resourceId}</strong>",
     "INIT_ERROR_NO_CONNECTION": "<p>There is no connection between the MapGuide Web Tier and the MapGuide Server.</p><p>Possible causes:</p><ul><li>MapGuide Server is not running or is no longer responding</li><li>Internet connection problems</li></ul><p>Possible solutions:</p><ul><li>Restart the MapGuide Server Service</li><li>Contact your server administrator</li></ul>",
     "TPL_SIDEBAR_OPEN_TASKPANE": "Open Task Pane",
+    "TPL_SIDEBAR_LOGOUT": "Logout",
     "TPL_SIDEBAR_OPEN_LEGEND": "Open Legend",
     "TPL_SIDEBAR_OPEN_SELECTION_PANEL": "Open Selection Panel",
     "TPL_TITLE_TASKPANE": "Task Pane",

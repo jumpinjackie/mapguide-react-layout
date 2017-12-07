@@ -1,4 +1,4 @@
-// Type definitions for OpenLayers v4.5.0
+// Type definitions for OpenLayers v4.6.2
 // Project: http://openlayers.org/
 // Definitions by: Jackie Ng <https://github.com/jumpinjackie>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
@@ -1086,12 +1086,11 @@ declare module ol {
          * @param extent  (Required) Extent.
          * @param resolution  (Optional) Resolution.
          * @param pixelRatio  (Optional) Pixel ratio.
-         * @param attributions  (Optional) Attributions.
          * @param src  (Optional) Image source URI.
          * @param crossOrigin  (Optional) Cross origin.
          * @param imageLoadFunction  (Optional) Image load function.
          */
-        constructor(extent: ol.Extent, resolution?: number, pixelRatio?: number, attributions?: ol.Attribution[], src?: string, crossOrigin?: string, imageLoadFunction?: ol.ImageLoadFunctionType);
+        constructor(extent: ol.Extent, resolution?: number, pixelRatio?: number, src?: string, crossOrigin?: string, imageLoadFunction?: ol.ImageLoadFunctionType);
         /**
          * Load the image or retry if loading previously failed.
          * Loading is taken care of by the tile queue, and calling this method is
@@ -1109,9 +1108,8 @@ declare module ol {
          * @param resolution  (Optional) Resolution.
          * @param pixelRatio  (Optional) Pixel ratio.
          * @param state  (Optional) State.
-         * @param attributions  (Optional) Attributions.
          */
-        constructor(extent: ol.Extent, resolution?: number, pixelRatio?: number, state?: ol.ImageState, attributions?: ol.Attribution[]);
+        constructor(extent: ol.Extent, resolution?: number, pixelRatio?: number, state?: ol.ImageState);
     }
     /**
      * Implementation of inertial deceleration for map movement.
@@ -2390,8 +2388,9 @@ first map that uses this view will be used.
          */
         getRotation(): number;
         /**
-         * Get the current zoom level. Return undefined if the current
-         * resolution is undefined or not within the "resolution constraints".
+         * Get the current zoom level.  If you configured your view with a resolutions
+         * array (this is rare), this method may return non-integer zoom levels (so
+         * the zoom level is not safe to use as an index into a resolutions array).
          */
         getZoom(): number;
         /**
@@ -2586,12 +2585,13 @@ first map that uses this view will be used.
      * A type that can be used to provide attribution information for data sources.
      * 
      * It represents either
-     * * a simple string (e.g. `'© Acme Inc.'`),
-     * * an array of simple strings (e.g. `['© Acme Inc.', '© Bacme Inc.']`),
-     * * an instance of `{@link ol.Attribution}`,
-     * * or an array with multiple `{@link ol.Attribution}` instances.
+     * * a simple string (e.g. `'© Acme Inc.'`)
+     * * an array of simple strings (e.g. `['© Acme Inc.', '© Bacme Inc.']`)
+     * * a function that returns a string or array of strings (`{@link ol.Attribution2}`)
+     * 
+     * Note that the `{@link ol.Attribution}` constructor is deprecated.
      */
-    type AttributionLike = string|string[]|ol.Attribution|ol.Attribution[];
+    type AttributionLike = string|string[]|ol.Attribution2|ol.Attribution|ol.Attribution[];
 
     /**
      * A type accepted by CanvasRenderingContext2D.fillStyle
@@ -2654,6 +2654,11 @@ first map that uses this view will be used.
      */
     type WFSTransactionResponse = any;
 
+    /**
+     * A function that returns a string or an array of strings representing source
+     * attributions.
+     */
+    type Attribution2 = (arg0: olx.FrameState) => string|string[];
     /**
      * A function returning the canvas element (`{HTMLCanvasElement}`)
      * used by the source as an image. The arguments passed to the function are:
@@ -4931,6 +4936,20 @@ first map that uses this view will be used.
                 constructor(tagName: string, propertyName: string, expression: string|number, opt_matchCase?: boolean);
             }
             /**
+             * Represents a `<Contains>` operator to test whether a geometry-valued property
+             * contains a given geometry.
+             */
+            class Contains extends ol.format.filter.Spatial {
+                /**
+                 * TODO: This method has no documentation. Contact the library author if this method should be documented
+                 * @param geometryName  (Required) Geometry name to use.
+                 * @param geometry  (Required) Geometry.
+                 * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
+   set on geometries when this is not provided.
+                 */
+                constructor(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string);
+            }
+            /**
              * Represents a `<During>` comparison operator.
              */
             class During extends ol.format.filter.Comparison {
@@ -5165,6 +5184,15 @@ first map that uses this view will be used.
    set on geometries when this is not provided.
              */
             function bbox(geometryName: string, extent: ol.Extent, opt_srsName?: string): ol.format.filter.Bbox;
+            /**
+             * Create a `<Contains>` operator to test whether a geometry-valued property
+             * contains a given geometry.
+             * @param geometryName  (Required) Geometry name to use.
+             * @param geometry  (Required) Geometry.
+             * @param opt_srsName  (Optional) SRS name. No srsName attribute will be
+   set on geometries when this is not provided.
+             */
+            function contains(geometryName: string, geometry: ol.geom.Geometry, opt_srsName?: string): ol.format.filter.Contains;
             /**
              * Create a `<Intersects>` operator to test whether a geometry-valued property
              * intersects a given geometry.
@@ -10935,6 +10963,24 @@ to zoom to the center of the map
             un(type: string|string[], listener: Function, opt_this?: any): void;
         }
         /**
+         * Render mode for vector layers:
+         *  * `'image'`: Vector layers are rendered as images. Great performance, but
+         *    point symbols and texts are always rotated with the view and pixels are
+         *    scaled during zoom animations.
+         *  * `'vector'`: Vector layers are rendered as vectors. Most accurate rendering
+         *    even during animations, but slower performance.
+         */
+        class VectorRenderType {
+            /**
+             * "image"
+             */
+            public static IMAGE: string;
+            /**
+             * "vector"
+             */
+            public static VECTOR: string;
+        }
+        /**
          * Render mode for vector tiles:
          *  * `'image'`: Vector tiles are rendered as images. Great performance, but
          *    point symbols and texts are always rotated with the view and pixels are
@@ -11013,6 +11059,16 @@ to zoom to the center of the map
              * Get the world extent for this projection.
              */
             getWorldExtent(): ol.Extent;
+            /**
+             * Get the axis orientation of this projection.
+             * Example values are:
+             * enu - the default easting, northing, elevation.
+             * neu - northing, easting, up - useful for "lat/long" geographic coordinates,
+             *     or south orientated transverse mercator.
+             * wnu - westing, northing, up - some planetary coordinate systems have
+             *     "west positive" coordinate systems
+             */
+            getAxisOrientation(): string;
             /**
              * Is this projection a global projection which spans the whole world?
              */
@@ -11923,7 +11979,7 @@ Default is the projection's units.
              * The attribution containing a link to the Microsoft® Bing™ Maps Platform APIs’
              * Terms Of Use.
              */
-            static TOS_ATTRIBUTION: ol.Attribution;
+            static TOS_ATTRIBUTION: string;
             /**
              * Get the api key used for this source.
              */
@@ -12010,8 +12066,8 @@ Default is the projection's units.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -12190,8 +12246,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -12411,6 +12467,11 @@ If using named maps, a key-value lookup with the template parameters.
              */
             getUrl(): string|ol.FeatureUrlFunction;
             /**
+             * Remove an extent from the list of loaded extents.
+             * @param extent  (Required) Extent.
+             */
+            removeLoadedExtent(extent: ol.Extent): void;
+            /**
              * Remove a single feature from the source.  If you want to remove all features
              * at once, use the {@link ol.source.Vector#clear source.clear()} method
              * instead.
@@ -12442,8 +12503,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -12552,8 +12613,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -12693,8 +12754,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -12801,8 +12862,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -12928,8 +12989,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -13036,8 +13097,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -13113,6 +13174,9 @@ If using named maps, a key-value lookup with the template parameters.
             un(type: string|string[], listener: Function, opt_this?: any): void;
         }
         /**
+         * **Deprecated**. Use an `ol.layer.Vector` with `renderMode: 'image'` and an
+         * `ol.source.Vector` instead.
+         * 
          * An image source whose images are canvas elements into which vector features
          * read from a vector source (`ol.source.Vector`) are drawn. An
          * `ol.source.ImageVector` object is to be used as the `source` of an image
@@ -13175,8 +13239,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -13324,8 +13388,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -13413,7 +13477,7 @@ If using named maps, a key-value lookup with the template parameters.
              * The attribution containing a link to the OpenStreetMap Copyright and License
              * page.
              */
-            static ATTRIBUTION: ol.Attribution;
+            static ATTRIBUTION: string;
             /**
              * Sets whether to render reprojection edges or not (usually for debugging).
              * @param render  (Required) Render the edges.
@@ -13492,8 +13556,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -13569,8 +13633,8 @@ If using named maps, a key-value lookup with the template parameters.
             un(type: string|string[], listener: Function, opt_this?: any): void;
         }
         /**
-         * A source that transforms data from any number of input sources using an array
-         * of {@link ol.RasterOperation} functions to transform input pixel values into
+         * A source that transforms data from any number of input sources using an
+         * {@link ol.RasterOperation} function to transform input pixel values into
          * output pixel values.
          */
         class Raster extends ol.source.Image {
@@ -13609,8 +13673,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -13721,8 +13785,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -13884,8 +13948,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -13994,8 +14058,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -14172,8 +14236,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -14288,8 +14352,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -14451,8 +14515,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -14618,8 +14682,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -14746,8 +14810,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -14932,8 +14996,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -15079,8 +15143,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -15287,6 +15351,11 @@ If using named maps, a key-value lookup with the template parameters.
              */
             getUrl(): string|ol.FeatureUrlFunction;
             /**
+             * Remove an extent from the list of loaded extents.
+             * @param extent  (Required) Extent.
+             */
+            removeLoadedExtent(extent: ol.Extent): void;
+            /**
              * Remove a single feature from the source.  If you want to remove all features
              * at once, use the {@link ol.source.Vector#clear source.clear()} method
              * instead.
@@ -15322,8 +15391,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -15479,8 +15548,8 @@ If using named maps, a key-value lookup with the template parameters.
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -15669,11 +15738,6 @@ Optional config properties:
              */
             setUrl(url: string): void;
             /**
-             * Set the URLs to use for requests.
-             * @param urls  (Required) URLs.
-             */
-            setUrls(urls: string[]): void;
-            /**
              * Return the tile grid of the tile source.
              */
             getTileGrid(): ol.tilegrid.TileGrid;
@@ -15700,8 +15764,8 @@ Optional config properties:
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -15875,8 +15939,8 @@ Optional config properties:
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -16039,8 +16103,8 @@ Optional config properties:
             /**
              * Set the attributions of the source.
              * @param attributions  (Optional) Attributions.
-    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution}`,
-    `Array<{@link ol.Attribution}>` or `undefined`.
+    Can be passed as `string`, `Array<string>`, `{@link ol.Attribution2}`,
+    or `undefined`.
              */
             setAttributions(attributions?: ol.AttributionLike): void;
             /**
@@ -16724,9 +16788,9 @@ Optional config properties:
              */
             clone(): ol.style.Text;
             /**
-             * Get the `exceedLength` configuration.
+             * Get the `overflow` configuration.
              */
-            getExceedLength(): boolean;
+            getOverflow(): boolean;
             /**
              * Get the font name.
              */
@@ -16780,10 +16844,22 @@ Optional config properties:
              */
             getTextBaseline(): string;
             /**
-             * Set the `exceedLength` property.
-             * @param exceedLength  (Required) Let text exceed the path that it follows.
+             * Get the background fill style for the text.
              */
-            setExceedLength(exceedLength: boolean): void;
+            getBackgroundFill(): ol.style.Fill;
+            /**
+             * Get the background stroke style for the text.
+             */
+            getBackgroundStroke(): ol.style.Stroke;
+            /**
+             * Get the padding for the text.
+             */
+            getPadding(): number[];
+            /**
+             * Set the `overflow` property.
+             * @param overflow  (Required) Let text overflow the path that it follows.
+             */
+            setOverflow(overflow: boolean): void;
             /**
              * Set the font.
              * @param font  (Optional) Font.
@@ -16844,6 +16920,21 @@ Optional config properties:
              * @param textBaseline  (Optional) Text baseline.
              */
             setTextBaseline(textBaseline?: string): void;
+            /**
+             * Set the background fill.
+             * @param fill  (Required) Fill style.
+             */
+            setBackgroundFill(fill: ol.style.Fill): void;
+            /**
+             * Set the background stroke.
+             * @param stroke  (Required) Stroke style.
+             */
+            setBackgroundStroke(stroke: ol.style.Stroke): void;
+            /**
+             * Set the padding (`[top, right, bottom, left]`).
+             * @param padding  (Required) Padding.
+             */
+            setPadding(padding: number[]): void;
         }
         /**
          * Icon anchor units. One of 'fraction', 'pixels'.
@@ -16895,6 +16986,10 @@ Optional config properties:
              */
             public static LINE: string;
         }
+        /**
+         * The {@link ol.style.IconImageCache} for {@link ol.style.Icon} images.
+         */
+        var iconImageCache: any;
     }
     module tilegrid {
         /**
@@ -17792,6 +17887,10 @@ declare module olx {
          * autopanning. The default is `20`.
          */
         autoPanMargin?: number;
+        /**
+         * CSS class name. Default is `ol-overlay-container ol-selectable`.
+         */
+        className?: string;
     }
     /**
      * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -18016,6 +18115,10 @@ declare module olx {
          * <p><span class="required-option">Required.</span></p>
          */
         rotation: number;
+        /**
+         * The current zoom level.
+         */
+        zoom: number;
     }
     module interaction {
         /**
@@ -18024,9 +18127,10 @@ declare module olx {
         interface InteractionOptions {
             /**
              * Method called by the map to notify the interaction that a browser event was
-             * dispatched to the map. The function may return `false` to prevent the
+             * dispatched to the map. If the function returns a falsy value,
              * propagation of the event to other interactions in the map's interactions
-             * chain.
+             * chain will be prevented (this includes functions with no explicit return). See
+             * {@link https://developer.mozilla.org/en-US/docs/Glossary/Falsy}
              */
             handleEvent: Function;
         }
@@ -18240,7 +18344,12 @@ declare module olx {
              * Drawing type ('Point', 'LineString', 'Polygon', 'MultiPoint',
              * 'MultiLineString', 'MultiPolygon' or 'Circle').
              */
-            type: ol.geom.GeometryType;
+            type: ol.geom.GeometryType|string;
+            /**
+             * Stop click, singleclick, and doubleclick events from firing during drawing.
+             * Default is `false`.
+             */
+            stopClick?: boolean;
             /**
              * The number of points that can be drawn before a polygon ring or line string
              * is finished. The default is no restriction.
@@ -18307,6 +18416,11 @@ declare module olx {
              * Defaults to ol.style.Style.createDefaultEditing()[ol.geom.GeometryType.POLYGON]
              */
             boxStyle?: ol.style.Style|ol.style.Style[]|ol.StyleFunction;
+            /**
+             * Pixel tolerance for considering the pointer close enough to a segment or
+             * vertex for editing. Default is `10`.
+             */
+            pixelTolerance?: number;
             /**
              * Style for the cursor used to draw the extent.
              * Defaults to ol.style.Style.createDefaultEditing()[ol.geom.GeometryType.POINT]
@@ -18633,9 +18747,10 @@ declare module olx {
              */
             className?: string;
             /**
-             * Target.
+             * Specify a target if you want the control to be rendered outside of the map's
+             * viewport.
              */
-            target?: Element;
+            target?: Element|string;
             /**
              * Specify if attributions can be collapsed. If you use an OSM source,
              * should be set to `false` — see
@@ -18744,9 +18859,10 @@ declare module olx {
              */
             keys?: boolean;
             /**
-             * Target.
+             * Specify a target if you want the control to be rendered outside of the map's
+             * viewport.
              */
-            target?: Element;
+            target?: Element|string;
             /**
              * The element to be displayed fullscreen. When not provided, the element containing the map viewport will be displayed fullscreen.
              */
@@ -18774,9 +18890,10 @@ declare module olx {
              */
             render?: Function;
             /**
-             * Target.
+             * Specify a target if you want the control to be rendered outside of the map's
+             * viewport.
              */
-            target?: Element;
+            target?: Element|string;
             /**
              * Markup for undefined coordinates. Default is `` (empty string).
              */
@@ -18819,7 +18936,7 @@ declare module olx {
              * Specify a target if you want the control to be rendered outside of the map's
              * viewport.
              */
-            target?: Element;
+            target?: Element|string;
             /**
              * Text label to use for the button tip. Default is `Overview map`
              */
@@ -18848,9 +18965,10 @@ declare module olx {
              */
             render?: Function;
             /**
-             * Target.
+             * Specify a target if you want the control to be rendered outside of the map's
+             * viewport.
              */
-            target?: Element;
+            target?: Element|string;
             /**
              * Units. Default is `metric`.
              */
@@ -18892,9 +19010,10 @@ declare module olx {
              */
             resetNorth?: Function;
             /**
-             * Target.
+             * Specify a target if you want the control to be rendered outside of the map's
+             * viewport.
              */
-            target?: Element;
+            target?: Element|string;
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -18931,9 +19050,10 @@ declare module olx {
              */
             delta?: number;
             /**
-             * Target.
+             * Specify a target if you want the control to be rendered outside of the map's
+             * viewport.
              */
-            target?: Element;
+            target?: Element|string;
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -18970,9 +19090,10 @@ declare module olx {
              */
             className?: string;
             /**
-             * Target.
+             * Specify a target if you want the control to be rendered outside of the map's
+             * viewport.
              */
-            target?: Element;
+            target?: Element|string;
             /**
              * Text label to use for the button. Default is `E`.
              * Instead of text, also a Node (e.g. a `span` element) can be used.
@@ -19068,6 +19189,14 @@ declare module olx {
              * Geometry name to use when creating features.
              */
             geometryName?: string;
+            /**
+             * Certain GeoJSON providers include the geometry_name field in the feature
+             * geoJSON. If set to `true` the geoJSON reader will look for that field to
+             * set the geometry name. If both this field is set to `true` and a
+             * `geometryName` is provided, the `geometryName` will take precedence.
+             * Default is `false`.
+             */
+            extractGeometryName?: boolean;
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -19663,6 +19792,16 @@ declare module olx {
          */
         interface VectorOptions {
             /**
+             * Render mode for vector layers:
+             *  * `'image'`: Vector layers are rendered as images. Great performance, but
+             *    point symbols and texts are always rotated with the view and pixels are
+             *    scaled during zoom animations.
+             *  * `'vector'`: Vector layers are rendered as vectors. Most accurate rendering
+             *    even during animations, but slower performance.
+             * Default is `vector`.
+             */
+            renderMode?: string|string;
+            /**
              * Render order. Function to be used when sorting features before rendering. By
              * default features are drawn in the order that they are created. Use `null` to
              * avoid the sort, but get an undefined draw order.
@@ -19703,6 +19842,12 @@ declare module olx {
              * Source.
              */
             source: ol.source.Vector;
+            /**
+             * Declutter images and text. Decluttering is applied to all image and text
+             * styles, and the priority is defined by the z-index of the style. Lower
+             * z-index means higher priority. Default is `false`.
+             */
+            declutter?: boolean;
             /**
              * Layer style. See {@link ol.style} for default style which will be used if
              * this is not defined.
@@ -19754,7 +19899,8 @@ declare module olx {
              *  * `'vector'`: Vector tiles are rendered as vectors. Most accurate rendering
              *    even during animations, but slower performance than the other options.
              * 
-             * The default is `'hybrid'`.
+             * When `declutter` is set to `true`, `'hybrid'` will be used instead of
+             * `'image'`. The default is `'hybrid'`.
              */
             renderMode?: string|string;
             /**
@@ -19796,6 +19942,13 @@ declare module olx {
              */
             source?: ol.source.VectorTile;
             /**
+             * Declutter images and text. Decluttering is applied to all image and text
+             * styles, and the priority is defined by the z-index of the style. Lower
+             * z-index means higher priority. When set to `true`, a `renderMode` of
+             * `'image'` will be overridden with `'hybrid'`. Default is `false`.
+             */
+            declutter?: boolean;
+            /**
              * Layer style. See {@link ol.style} for default style which will be used if
              * this is not defined.
              */
@@ -19816,6 +19969,11 @@ declare module olx {
              * Visibility. Default is `true` (visible).
              */
             visible?: boolean;
+            /**
+             * The z-index for layer rendering.  At rendering time, the layers will be
+             * ordered, first by Z-index and then by position. The default Z-index is 0.
+             */
+            zIndex?: number;
         }
     }
     module render {
@@ -20298,7 +20456,7 @@ declare module olx {
             /**
              * Attributions.
              */
-            attributions?: ol.Attribution[];
+            attributions?: ol.AttributionLike;
             /**
              * The `crossOrigin` attribute for loaded images.  Note that you must provide a
              * `crossOrigin` value if you are using the WebGL renderer or if you want to
@@ -20883,6 +21041,37 @@ declare module olx {
              * The loader function used to load features, from a remote source for example.
              * If this is not set and `url` is set, the source will create and use an XHR
              * feature loader.
+             * 
+             * Example:
+             * 
+             * ```js
+             * var vectorSource = new ol.source.Vector({
+             *   format: new ol.format.GeoJSON(),
+             *   loader: function(extent, resolution, projection) {
+             *      var proj = projection.getCode();
+             *      var url = 'https://ahocevar.com/geoserver/wfs?service=WFS&' +
+             *          'version=1.1.0&request=GetFeature&typename=osm:water_areas&' +
+             *          'outputFormat=application/json&srsname=' + proj + '&' +
+             *          'bbox=' + extent.join(',') + ',' + proj;
+             *      var xhr = new XMLHttpRequest();
+             *      xhr.open('GET', url);
+             *      var onError = function() {
+             *        vectorSource.removeLoadedExtent(extent);
+             *      }
+             *      xhr.onerror = onError;
+             *      xhr.onload = function() {
+             *        if (xhr.status == 200) {
+             *          vectorSource.addFeatures(
+             *              vectorSource.getFormat().readFeatures(xhr.responseText));
+             *        } else {
+             *          onError();
+             *        }
+             *      }
+             *      xhr.send();
+             *    },
+             *    strategy: ol.loadingstrategy.bbox
+             *  });
+             * ```
              */
             loader?: ol.FeatureLoader;
             /**
@@ -21260,10 +21449,22 @@ declare module olx {
              */
             size: ol.Size;
             /**
+             * Extent for the TileGrid that is created. Default sets the TileGrid in the
+             * fourth quadrant, meaning extent is `[0, -height, width, 0]`. To change the
+             * extent to the first quadrant (the default for OpenLayers 2) set the extent
+             * as `[0, 0, width, height]`.
+             */
+            extent?: ol.Extent;
+            /**
              * Duration of the opacity transition for rendering.  To disable the opacity
              * transition, pass `transition: 0`.
              */
             transition?: number;
+            /**
+             * Tile size. Same tile size is used for all zoom levels. Default value is
+             * `OpenLayers.DEFAULT_TILE_SIZE`.
+             */
+            tileSize?: number;
         }
     }
     module style {
@@ -21500,8 +21701,10 @@ declare module olx {
          */
         interface TextOptions {
             /**
+             * **Deprecated**. Use the `overflow` option instead.
+             * 
              * For polygon labels or when `placement` is set to `'line'`, allow text to
-             * exceed the width of the polygon at the the label position or the length of
+             * exceed the width of the polygon at the label position or the length of
              * the path that it follows. Default is `false`.
              */
             exceedLength?: boolean;
@@ -21527,6 +21730,12 @@ declare module olx {
              * is `0`.
              */
             offsetY?: number;
+            /**
+             * For polygon labels or when `placement` is set to `'line'`, allow text to
+             * exceed the width of the polygon at the label position or the length of
+             * the path that it follows. Default is `false`.
+             */
+            overflow?: boolean;
             /**
              * Text placement.
              */
@@ -21567,6 +21776,22 @@ declare module olx {
              * Stroke style.
              */
             stroke?: ol.style.Stroke;
+            /**
+             * Fill style for the text background when `placement` is `'point'`. Default is
+             * no fill.
+             */
+            backgroundFill?: ol.style.Fill;
+            /**
+             * Stroke style for the text background  when `placement` is `'point'`. Default
+             * is no stroke.
+             */
+            backgroundStroke?: ol.style.Stroke;
+            /**
+             * Padding in pixels around the text for decluttering and background. The order
+             * of values in the array is `[top, right, bottom, left]`. Default is
+             * `[0, 0, 0, 0]`.
+             */
+            padding?: number[];
         }
         /**
          * TODO: This typedef has no documentation. Contact the library author if this typedef should be documented
@@ -22176,6 +22401,12 @@ declare module "ol/format/filter/comparison" {
  */
 declare module "ol/format/filter/comparisonbinary" {
     export default ol.format.filter.ComparisonBinary;
+}
+/*
+ * ES2015 module declaration for ol.format.filter.Contains
+ */
+declare module "ol/format/filter/contains" {
+    export default ol.format.filter.Contains;
 }
 /*
  * ES2015 module declaration for ol.format.filter.During

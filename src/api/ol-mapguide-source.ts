@@ -156,7 +156,7 @@ MapGuideImageSource.prototype.getImageInternal = function (extent: ol.Extent, re
 
     if (this.url_ !== undefined) {
         const imageUrl = this.getUrl(this.url_, this.params_, extent, size, projection);
-        image = new olImage(extent, resolution, pixelRatio, this.getAttributions(), imageUrl, this.crossOrigin_, this.imageLoadFunction_);
+        image = new olImage(extent, resolution, pixelRatio, imageUrl, this.crossOrigin_, this.imageLoadFunction_);
         olEvents.listen(image, "change" /* ol.events.EventType.CHANGE */, this.handleImageChange, this);
     } else {
         image = null;

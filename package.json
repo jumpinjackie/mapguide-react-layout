@@ -81,7 +81,7 @@
   },
   "devDependencies": {
     "@types/enzyme": "3.1.6",
-    "@types/jest": "21.1.8",
+    "@types/jest": "21.1.9",
     "bestzip": "1.1.4",
     "cache-loader": "^1.2.0",
     "copyfiles": "1.2.0",

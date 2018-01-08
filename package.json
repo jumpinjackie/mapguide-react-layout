@@ -20,7 +20,7 @@
     "postinstall": "yarn run build",
     "test": "jest --verbose",
     "test:appveyor": "jest --verbose --coverage --colors",
-    "test:travis": "jest --runInBand --maxWorkers=4 --verbose --coverage --colors && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "test:travis": "jest --runInBand --verbose --coverage --colors && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "ci:appveyor": "yarn run lint && yarn run test:appveyor",
     "ci:travis": "yarn run lint && yarn run test:travis"
   },

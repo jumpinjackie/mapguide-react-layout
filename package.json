@@ -40,7 +40,7 @@
   },
   "homepage": "https://github.com/jumpinjackie/mapguide-react-layout#readme",
   "dependencies": {
-    "@blueprintjs/core": "1.35.1",
+    "@blueprintjs/core": "2.0.0-beta.1",
     "@types/lodash.debounce": "4.0.3",
     "@types/lodash.uniq": "4.5.3",
     "@types/lodash.xor": "4.5.3",

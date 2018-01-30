@@ -3,44 +3,50 @@ import * as logger from "../src/utils/logger";
 describe("utils/logger", () => {
     describe("info", () => {
         it("calls console.info when __DEV__ == true", () => {
-            spyOn(console, "info");
+            const spy = jest.spyOn(console, "info").mockImplementation(() => {});
             logger.info("test");
-            expect(console.info).toHaveBeenCalledTimes(1);
+            expect(spy).toHaveBeenCalledTimes(1);
+            spy.mockReset();
         });
         it("is a no-op when __DEV__ == false", () => {
             (global as any)["__DEV__"] = false;
-            spyOn(console, "info");
+            const spy = jest.spyOn(console, "info").mockImplementation(() => {});
             logger.info("test");
-            expect(console.info).toHaveBeenCalledTimes(0);
+            expect(spy).toHaveBeenCalledTimes(0);
             (global as any)["__DEV__"] = true;
+            spy.mockReset();
         });
     });
     describe("warn", () => {
         it("calls console.warn when __DEV__ == true", () => {
-            spyOn(console, "warn");
+            const spy = jest.spyOn(console, "warn").mockImplementation(() => {});
             logger.warn("test");
-            expect(console.warn).toHaveBeenCalledTimes(1);
+            expect(spy).toHaveBeenCalledTimes(1);
+            spy.mockReset();
         });
         it("is a no-op when __DEV__ == false", () => {
             (global as any)["__DEV__"] = false;
-            spyOn(console, "warn");
+            const spy = jest.spyOn(console, "warn").mockImplementation(() => {});
             logger.warn("test");
-            expect(console.warn).toHaveBeenCalledTimes(0);
+            expect(spy).toHaveBeenCalledTimes(0);
             (global as any)["__DEV__"] = true;
+            spy.mockReset();
         });
     });
     describe("error", () => {
         it("calls console.error when __DEV__ == true", () => {
-            spyOn(console, "error");
+            const spy = jest.spyOn(console, "error").mockImplementation(() => {});
             logger.error("test");
-            expect(console.error).toHaveBeenCalledTimes(1);
+            expect(spy).toHaveBeenCalledTimes(1);
+            spy.mockReset();
         });
         it("is a no-op when __DEV__ == false", () => {
             (global as any)["__DEV__"] = false;
-            spyOn(console, "error");
+            const spy = jest.spyOn(console, "error").mockImplementation(() => {});
             logger.error("test");
-            expect(console.error).toHaveBeenCalledTimes(0);
+            expect(spy).toHaveBeenCalledTimes(0);
             (global as any)["__DEV__"] = true;
+            spy.mockReset();
         });
     });
 });

@@ -18,9 +18,6 @@ export function bootstrap() {
     require('whatwg-fetch');
     proj.setProj4(proj4);
 
-    const history = createHistory();
-    configureUrlQuery({ history });
-
     // For our little blue friend from Redmond
     if (typeof ((Object as any).assign) != 'function') {
         (Object as any).assign = function (target: any, varArgs: any) { // .length of function is 2
@@ -40,4 +37,8 @@ export function bootstrap() {
             return to;
         };
     }
+
+    //Need to do this after as it assumes Object.assign is present
+    const history = createHistory();
+    configureUrlQuery({ history });
 }

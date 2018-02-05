@@ -309,8 +309,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                     hideGroups={hideGroups}
                                     showLayers={showLayers}
                                     hideLayers={hideLayers}
-                                    view={currentView}
-                                    initialView={initialView}
+                                    view={currentView || initialView}
                                     selectableLayerNames={selectableLayerNames}
                                     contextMenu={childItems}
                                     overviewMapElementSelector={overviewMapElementSelector}

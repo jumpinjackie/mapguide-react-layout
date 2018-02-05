@@ -49,6 +49,7 @@ import { strIsNullOrEmpty } from "../utils/string";
 
 interface IInitAppPayload {
     activeMapName: string;
+    initialView?: IMapView;
     initialUrl: string;
     locale: string;
     maps: Dictionary<MapInfo>;
@@ -556,10 +557,12 @@ function processAndDispatchInitError(error: Error, includeStack: boolean, dispat
 }
 
 export interface IInitAppLayout {
-    locale?: string;
+    locale: string;
     resourceId: string;
     externalBaseLayers?: IExternalBaseLayer[];
     session?: string;
+    initialView?: IMapView;
+    initialActiveMap?: string;
     onInit?: (viewer: IMapViewer) => void;
 }
 
@@ -875,6 +878,8 @@ async function initAsync(options: IInitAsyncOptions, client: Client): Promise<II
     let session = options.session;
     if (!session) {
         session = await client.createSession("Anonymous", "");
+    } else {
+        logger.info(`Re-using session: ${session}`);
     }
     return await sessionAcquiredAsync(options, session, client);
 }
@@ -887,19 +892,21 @@ async function initAsync(options: IInitAsyncOptions, client: Client): Promise<II
  * @returns {ReduxThunkedAction}
  */
 export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
-    const parsed = parse(window.location.href);
-    const query = queryString.parse(parsed.query);
-    const options1 = {
-        resourceId: query["resource"] || options.resourceId,
-        locale: query["locale"] || options.locale || DEFAULT_LOCALE,
-        session: query["session"] || options.session
-    };
-    const opts: IInitAsyncOptions = { ...options, ...options1 };
+    const opts: IInitAsyncOptions = { ...options };
     return (dispatch, getState) => {
         const args = getState().config;
         if (args.agentUri && args.agentKind) {
             const client = new Client(args.agentUri, args.agentKind);
             initAsync(opts, client).then(payload => {
+                let initPayload = payload;
+                if (opts.initialView) {
+                    initPayload.initialView = {
+                        ...opts.initialView
+                    };
+                }
+                if (opts.initialActiveMap) {
+                    initPayload.activeMapName = opts.initialActiveMap;
+                }
                 dispatch({
                     type: Constants.INIT_APP,
                     payload

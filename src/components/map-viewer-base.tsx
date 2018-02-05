@@ -110,7 +110,6 @@ import { BLANK_GIF_DATA_URI } from "../constants/index";
 export interface IMapViewerBaseProps extends IMapViewerContextProps {
     tool: ActiveMapTool;
     view?: IMapView;
-    initialView?: IMapView;
     agentKind: ClientKind;
     viewRotationEnabled: boolean;
     viewRotation: number;
@@ -818,8 +817,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             }
         });
 
-        if (this.props.initialView != null) {
-            this.zoomToView(this.props.initialView.x, this.props.initialView.y, this.props.initialView.scale);
+        if (this.props.view != null) {
+            this.zoomToView(this.props.view.x, this.props.view.y, this.props.view.scale);
         } else {
             this._map.getView().fit(activeLayerSet.extent);
         }

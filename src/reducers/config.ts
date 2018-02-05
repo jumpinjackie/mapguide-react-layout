@@ -7,6 +7,7 @@ import {
     IViewerCapabilities,
     UnitOfMeasure
 } from "../api/common";
+import * as logger from "../utils/logger";
 import { AnyAction } from "redux";
 import { DEFAULT_LOCALE } from "../api/i18n";
 
@@ -50,13 +51,19 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: AnyAction = 
                 const payload: any = action.payload || {};
                 const maps = payload.maps;
                 const availableMaps = [];
-                for (const mapName in maps) {
+                let am = payload.activeMapName;
+                const mapNames = Object.keys(maps);
+                for (const mapName of mapNames) {
                     availableMaps.push({ name: maps[mapName].mapGroupId, value: mapName });
+                }
+                if (mapNames.indexOf(am) < 0) {
+                    logger.warn(`Invalid initial active map name: ${am}. Probably because we haven't properly implemented recovery of runtime maps on reload yet`);
+                    am = mapNames[0];
                 }
                 const state1: Partial<IConfigurationReducerState> = {
                     locale: payload.locale || DEFAULT_LOCALE,
                     capabilities: payload.capabilities,
-                    activeMapName: payload.activeMapName,
+                    activeMapName: am,
                     availableMaps: availableMaps
                 };
                 const newState: Partial<IConfigurationReducerState> = { ...state, ...state1 };

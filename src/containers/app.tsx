@@ -19,6 +19,44 @@ import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import * as TemplateActions from "../actions/template";
 import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
+import { addUrlProps, UrlQueryParamTypes, replaceInUrlQuery } from 'react-url-query';
+import { url, Session } from 'inspector';
+
+const urlPropsQueryConfig = {
+    urlX: { type: UrlQueryParamTypes.number, queryParam: "x" },
+    urlY: { type: UrlQueryParamTypes.number, queryParam: "y" },
+    urlScale: { type: UrlQueryParamTypes.number, queryParam: "scale" },
+    urlResource: { type: UrlQueryParamTypes.string, queryParam: "resource" },
+    urlLocale: { type: UrlQueryParamTypes.string, queryParam: "locale" },
+    urlSession: { type: UrlQueryParamTypes.string, queryParam: "session" },
+    urlMap: { type: UrlQueryParamTypes.string, queryParam: "map" }
+}
+
+/**
+ * Props exposed to URL state
+ */
+export interface IAppUrlStateProps {
+    urlLocale?: string;
+    urlSession?: string;
+    urlResource: string;
+    urlX?: number;
+    urlY?: number;
+    urlScale?: number;
+    urlMap?: string;
+}
+
+export type UrlValueChangeCallback = (value: string) => void;
+
+/**
+ * Callback interface for propagating changes to URL state
+ */
+export interface IAppUrlStateCallback {
+    onChangeUrlX: UrlValueChangeCallback;
+    onChangeUrlY: UrlValueChangeCallback;
+    onChangeUrlScale: UrlValueChangeCallback;
+    onChangeUrlSession: UrlValueChangeCallback;
+    onChangeUrlMap: UrlValueChangeCallback;
+}
 
 /**
  * App component properties
@@ -120,7 +158,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAppDispatch> {
     };
 }
 
-export type AppProps = IAppProps & Partial<IAppState> & Partial<IAppDispatch>;
+export type AppProps = IAppProps & Partial<IAppState> & Partial<IAppDispatch> & Partial<IAppUrlStateProps> & Partial<IAppUrlStateCallback>;
 
 export class App extends React.Component<AppProps, any> {
     private fnErrorRenderer: (err: Error) => JSX.Element;
@@ -142,7 +180,14 @@ export class App extends React.Component<AppProps, any> {
             session,
             fusionRoot,
             resourceId,
-            externalBaseLayers
+            externalBaseLayers,
+            urlLocale,
+            urlResource,
+            urlSession,
+            urlX,
+            urlY,
+            urlScale,
+            urlMap
         } = this.props;
         if (setElementVisibility && initialElementVisibility) {
             const { taskpane, legend, selection } = initialElementVisibility;
@@ -158,18 +203,67 @@ export class App extends React.Component<AppProps, any> {
             setFusionRoot(fusionRoot);
         }
         if (initLayout) {
-            initLayout({
-                resourceId: resourceId,
-                locale: locale,
-                externalBaseLayers: externalBaseLayers,
-                session: session,
-                onInit: onInit
-            });
+            let amArgs: Partial<IInitAppLayout> | undefined;
+            if (urlMap) {
+                amArgs = {
+                    initialActiveMap: urlMap
+                };
+            }
+            let ivArgs: Partial<IInitAppLayout> | undefined;
+            if (urlX && urlY && urlScale) {
+                ivArgs = {
+                    initialView: {
+                        x: urlX,
+                        y: urlY,
+                        scale: urlScale
+                    }
+                };
+            }
+            const args: IInitAppLayout = {
+                ...{
+                    resourceId: urlResource || resourceId,
+                    locale: urlLocale || locale || DEFAULT_LOCALE,
+                    externalBaseLayers: externalBaseLayers,
+                    session: urlSession || session,
+                    onInit: onInit
+                },
+                ...(amArgs || {}),
+                ...(ivArgs || {})
+            };
+            initLayout(args);
         }
     }
     componentWillReceiveProps(nextProps: AppProps) {
         if (nextProps.map != null && this.props.map != nextProps.map) {
             this.setState({ isLoading: false });
+        }
+        if (nextProps.config && nextProps.config.activeMapName) {
+            const { onChangeUrlMap } = nextProps;
+            if (onChangeUrlMap) {
+                onChangeUrlMap(nextProps.config.activeMapName);
+            }
+        }
+        if (nextProps.map) {
+            if (nextProps.map.currentView) {
+                const { x, y, scale } = nextProps.map.currentView;
+                const { onChangeUrlX, onChangeUrlY, onChangeUrlScale } = nextProps;
+                if (onChangeUrlX) {
+                    onChangeUrlX(`${x}`);
+                }
+                if (onChangeUrlY) {
+                    onChangeUrlY(`${y}`);
+                }
+                if (onChangeUrlScale) {
+                    onChangeUrlScale(`${scale}`);
+                }
+            }
+            if (nextProps.map.runtimeMap) {
+                const { SessionId } = nextProps.map.runtimeMap;
+                const { onChangeUrlSession } = nextProps;
+                if (onChangeUrlSession) {
+                    onChangeUrlSession(SessionId);
+                }
+            }
         }
     }
     private renderErrorMessage(err: Error | InitError, locale: string, args: any): JSX.Element {
@@ -258,4 +352,4 @@ export class App extends React.Component<AppProps, any> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(addUrlProps<App>({ urlPropsQueryConfig })(App));

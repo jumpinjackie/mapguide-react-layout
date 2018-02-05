@@ -55,6 +55,22 @@ declare module "ismobilejs" {
 
 declare module "proj4";
 
+declare module "react-url-query" {
+    export function replaceInUrlQuery(key: string, value: string): void;
+    export function configureUrlQuery(obj: any): void;
+    export function addUrlProps<T>(config: any): (component: any) => any;
+    export interface UrlQueryParamTypes {
+        array: any,
+        string: any,
+        number: any
+    }
+    export const UrlQueryParamTypes: UrlQueryParamTypes;
+}
+
+declare module "history/createBrowserHistory" {
+    export default function createHistory(): any;
+}
+
 // Monkey patching Array.filter to support type narrowing
 // https://github.com/Microsoft/TypeScript/issues/7657
 interface Array<T> {

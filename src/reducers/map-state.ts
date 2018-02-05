@@ -55,15 +55,31 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
         case Constants.INIT_APP:
             {
                 const maps = payload.maps;
+                const mapKeys = Object.keys(maps);
                 const newState: Partial<IBranchedMapState> = {};
-                for (const mapName in maps) {
+                let mapNameToApplyInitialView;
+                if (payload.initialView) {
+                    mapNameToApplyInitialView = payload.activeMapName;
+                    if (!mapNameToApplyInitialView && mapKeys.length == 1) {
+                        mapNameToApplyInitialView = mapKeys[0];
+                    }
+                }
+                for (const mapName of mapKeys) {
+                    let cv: Partial<IBranchedMapSubState> | undefined;
+                    if (payload.initialView && mapName == mapNameToApplyInitialView) {
+                        cv = {
+                            currentView: { ...payload.initialView }
+                        };
+                    }
                     newState[mapName] = {
                         ...MAP_STATE_INITIAL_SUB_STATE,
                         ...{ runtimeMap: maps[mapName].map },
                         ...{ externalBaseLayers: maps[mapName].externalBaseLayers },
-                        ...{ initialView: maps[mapName].initialView }
+                        ...{ initialView: maps[mapName].initialView },
+                        ...(cv || {})
                     };
                 }
+                
                 return { ...state, ...newState };
             }
         case Constants.MAP_PREVIOUS_VIEW:

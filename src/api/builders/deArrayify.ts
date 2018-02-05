@@ -22,7 +22,13 @@ import { ActiveSelectedFeature } from "../common";
 
 type ElementType = "string" | "boolean" | "int" | "float";
 
-function tryGetAsProperty(el: any, name: string, type: ElementType = "string"): any {
+function buildPropertyGetter<T>() {
+    return (el: any, name: keyof T, type: ElementType = "string") => {
+        return tryGetAsProperty<T>(el, name, type);
+    }
+}
+
+function tryGetAsProperty<T>(el: any, name: keyof T, type: ElementType = "string"): any {
     if (!el[name]) {
         return null;
     } else if (el[name].length === 1) {
@@ -41,11 +47,12 @@ function tryGetAsProperty(el: any, name: string, type: ElementType = "string"): 
 }
 
 function deArrayifyRules(rules: any[]): RtMap.RuleInfo[] {
+    const getter = buildPropertyGetter<RtMap.RuleInfo>();
     return rules.map(r => {
         const rule: RtMap.RuleInfo = {
-            LegendLabel: tryGetAsProperty(r, "LegendLabel"),
-            Filter: tryGetAsProperty(r, "Filter"),
-            Icon: tryGetAsProperty(r, "Icon")
+            LegendLabel: getter(r, "LegendLabel"),
+            Filter: getter(r, "Filter"),
+            Icon: getter(r, "Icon")
         };
         return rule;
     });
@@ -55,9 +62,10 @@ function deArrayifyFeatureStyles(fts: any[]): RtMap.FeatureStyleInfo[] {
     if (!fts) {
         return [];
     }
+    const getter = buildPropertyGetter<RtMap.FeatureStyleInfo>();
     return fts.map(ft => {
         const featureStyle: RtMap.FeatureStyleInfo = {
-            Type: tryGetAsProperty(ft, "Type", "int"),
+            Type: getter(ft, "Type", "int"),
             Rule: deArrayifyRules(ft.Rule)
         };
         return featureStyle;
@@ -73,10 +81,12 @@ function deArrayifyScaleRanges(scales: any[]): RtMap.ScaleRangeInfo[] {
         };
         return [defaultRange];
     }
+    
+    const getter = buildPropertyGetter<RtMap.ScaleRangeInfo>();
     return scales.map(sc => {
         const scale: RtMap.ScaleRangeInfo = {
-            MinScale: tryGetAsProperty(sc, "MinScale", "float"),
-            MaxScale: tryGetAsProperty(sc, "MaxScale", "float"),
+            MinScale: getter(sc, "MinScale", "float"),
+            MaxScale: getter(sc, "MaxScale", "float"),
             FeatureStyle: deArrayifyFeatureStyles(sc.FeatureStyle)
         };
         return scale;
@@ -87,10 +97,11 @@ function deArrayifyFeatureSourceInfo(fs: any[]): RtMap.FeatureSourceInfo | undef
     if (!fs || fs.length !== 1) {
         return undefined;
     }
+    const getter = buildPropertyGetter<RtMap.FeatureSourceInfo>();
     return {
-        ResourceId: tryGetAsProperty(fs[0], "ResourceId"),
-        ClassName: tryGetAsProperty(fs[0], "ClassName"),
-        Geometry: tryGetAsProperty(fs[0], "Geometry")
+        ResourceId: getter(fs[0], "ResourceId"),
+        ClassName: getter(fs[0], "ClassName"),
+        Geometry: getter(fs[0], "Geometry")
     };
 }
 
@@ -98,19 +109,20 @@ function deArrayifyLayers(layers: any[]): RtMap.MapLayer[] {
     if (!layers)
         return layers;
 
+    const getter = buildPropertyGetter<RtMap.MapLayer>();
     return layers.map(lyr => {
         const layer: RtMap.MapLayer = {
-            Type: tryGetAsProperty(lyr, "Type", "int"),
-            Selectable: tryGetAsProperty(lyr, "Selectable", "boolean"),
-            LayerDefinition: tryGetAsProperty(lyr, "LayerDefinition"),
-            Name: tryGetAsProperty(lyr, "Name"),
-            LegendLabel: tryGetAsProperty(lyr, "LegendLabel"),
-            ObjectId: tryGetAsProperty(lyr, "ObjectId"),
-            ParentId: tryGetAsProperty(lyr, "ParentId"),
-            DisplayInLegend: tryGetAsProperty(lyr, "DisplayInLegend", "boolean"),
-            ExpandInLegend: tryGetAsProperty(lyr, "ExpandInLegend", "boolean"),
-            Visible: tryGetAsProperty(lyr, "Visible", "boolean"),
-            ActuallyVisible: tryGetAsProperty(lyr, "ActuallyVisible", "boolean"),
+            Type: getter(lyr, "Type", "int"),
+            Selectable: getter(lyr, "Selectable", "boolean"),
+            LayerDefinition: getter(lyr, "LayerDefinition"),
+            Name: getter(lyr, "Name"),
+            LegendLabel: getter(lyr, "LegendLabel"),
+            ObjectId: getter(lyr, "ObjectId"),
+            ParentId: getter(lyr, "ParentId"),
+            DisplayInLegend: getter(lyr, "DisplayInLegend", "boolean"),
+            ExpandInLegend: getter(lyr, "ExpandInLegend", "boolean"),
+            Visible: getter(lyr, "Visible", "boolean"),
+            ActuallyVisible: getter(lyr, "ActuallyVisible", "boolean"),
             FeatureSource: deArrayifyFeatureSourceInfo(lyr.FeatureSource),
             ScaleRange: deArrayifyScaleRanges(lyr.ScaleRange)
         };
@@ -128,17 +140,18 @@ function deArrayifyGroups(groups: any[]): RtMap.MapGroup[] | undefined {
     if (!groups)
         return undefined;
 
+    const getter = buildPropertyGetter<RtMap.MapGroup>();
     return groups.map(grp => {
         const group: RtMap.MapGroup = {
-            Type: tryGetAsProperty(grp, "Type", "int"),
-            Name: tryGetAsProperty(grp, "Name"),
-            LegendLabel: tryGetAsProperty(grp, "LegendLabel"),
-            ObjectId: tryGetAsProperty(grp, "ObjectId"),
-            ParentId: tryGetAsProperty(grp, "ParentId"),
-            DisplayInLegend: tryGetAsProperty(grp, "DisplayInLegend", "boolean"),
-            ExpandInLegend: tryGetAsProperty(grp, "ExpandInLegend", "boolean"),
-            Visible: tryGetAsProperty(grp, "Visible", "boolean"),
-            ActuallyVisible: tryGetAsProperty(grp, "ActuallyVisible", "boolean")
+            Type: getter(grp, "Type", "int"),
+            Name: getter(grp, "Name"),
+            LegendLabel: getter(grp, "LegendLabel"),
+            ObjectId: getter(grp, "ObjectId"),
+            ParentId: getter(grp, "ParentId"),
+            DisplayInLegend: getter(grp, "DisplayInLegend", "boolean"),
+            ExpandInLegend: getter(grp, "ExpandInLegend", "boolean"),
+            Visible: getter(grp, "Visible", "boolean"),
+            ActuallyVisible: getter(grp, "ActuallyVisible", "boolean")
         };
         return group;
     });
@@ -148,11 +161,12 @@ function deArrayifyCoordinateSystem(cs: any[]): RtMap.CoordinateSystemType {
     if (!cs || cs.length !== 1) {
         throw new MgError("Malformed input. Expected CoordinateSystem element");
     }
+    const getter = buildPropertyGetter<RtMap.CoordinateSystemType>();
     const res: RtMap.CoordinateSystemType = {
-        Wkt: tryGetAsProperty(cs[0], "Wkt"),
-        MentorCode: tryGetAsProperty(cs[0], "MentorCode"),
-        EpsgCode: tryGetAsProperty(cs[0], "EpsgCode"),
-        MetersPerUnit: tryGetAsProperty(cs[0], "MetersPerUnit", "float")
+        Wkt: getter(cs[0], "Wkt"),
+        MentorCode: getter(cs[0], "MentorCode"),
+        EpsgCode: getter(cs[0], "EpsgCode"),
+        MetersPerUnit: getter(cs[0], "MetersPerUnit", "float")
     };
     return res;
 }
@@ -161,9 +175,10 @@ function deArrayifyCoordinate(coord: any[]): RtMap.EnvCoordinate {
     if (!coord || coord.length !== 1) {
         throw new MgError("Malformed input. Expected coordinate array");
     }
+    const getter = buildPropertyGetter<RtMap.EnvCoordinate>();
     return {
-        X: tryGetAsProperty(coord[0], "X", "float"),
-        Y: tryGetAsProperty(coord[0], "Y", "float")
+        X: getter(coord[0], "X", "float"),
+        Y: getter(coord[0], "Y", "float")
     };
 }
 
@@ -187,17 +202,18 @@ function deArrayifyFiniteDisplayScales(fds: any[]): number[] | undefined {
 
 function deArrayifyRuntimeMap(json: any): RtMap.RuntimeMap {
     const root = json;
+    const getter = buildPropertyGetter<RtMap.RuntimeMap>();
     const rtMap: RtMap.RuntimeMap = {
-        SessionId: tryGetAsProperty(root, "SessionId"),
-        SiteVersion: tryGetAsProperty(root, "SiteVersion"),
-        Name: tryGetAsProperty(root, "Name"),
-        MapDefinition: tryGetAsProperty(root, "MapDefinition"),
-        TileSetDefinition: tryGetAsProperty(root, "TileSetDefinition"),
-        TileWidth: tryGetAsProperty(root, "TileWidth", "int"),
-        TileHeight: tryGetAsProperty(root, "TileHeight", "int"),
-        BackgroundColor: tryGetAsProperty(root, "BackgroundColor"),
-        DisplayDpi: tryGetAsProperty(root, "DisplayDpi", "int"),
-        IconMimeType: tryGetAsProperty(root, "IconMimeType"),
+        SessionId: getter(root, "SessionId"),
+        SiteVersion: getter(root, "SiteVersion"),
+        Name: getter(root, "Name"),
+        MapDefinition: getter(root, "MapDefinition"),
+        TileSetDefinition: getter(root, "TileSetDefinition"),
+        TileWidth: getter(root, "TileWidth", "int"),
+        TileHeight: getter(root, "TileHeight", "int"),
+        BackgroundColor: getter(root, "BackgroundColor"),
+        DisplayDpi: getter(root, "DisplayDpi", "int"),
+        IconMimeType: getter(root, "IconMimeType"),
         CoordinateSystem: deArrayifyCoordinateSystem(root.CoordinateSystem),
         Extents: deArrayifyExtents(root.Extents),
         Group: deArrayifyGroups(root.Group),
@@ -209,21 +225,23 @@ function deArrayifyRuntimeMap(json: any): RtMap.RuntimeMap {
 
 function deArrayifyFeatureSetClass(json: any): Query.FeatureSetClass {
     const root = json;
+    const getter = buildPropertyGetter<Query.FeatureSetClass>();
     if (root.length != 1) {
         throw new MgError("Malformed input. Expected Class element");
     }
     const cls = {
-        "@id": tryGetAsProperty(root[0], "@id"),
+        "@id": getter(root[0], "@id"),
         ID: root[0].ID
     };
     return cls;
 }
 
 function deArrayifyFeatureSetLayers(json: any[]): Query.FeatureSetLayer[] {
+    const getter = buildPropertyGetter<Query.FeatureSetLayer>();
     return (json || []).map(root => {
         const layer = {
-            "@id": tryGetAsProperty(root, "@id"),
-            "@name": tryGetAsProperty(root, "@name"),
+            "@id": getter(root, "@id"),
+            "@name": getter(root, "@name"),
             Class: deArrayifyFeatureSetClass(root.Class)
         };
         return layer;
@@ -246,27 +264,30 @@ function deArrayifyInlineSelectionImage(json: any): Query.SelectionImage | undef
     if (root == null || root.length != 1) {
         return undefined;
     }
+    const getter = buildPropertyGetter<Query.SelectionImage>();
     const img = {
-        MimeType: tryGetAsProperty(root[0], "MimeType"),
-        Content: tryGetAsProperty(root[0], "Content")
+        MimeType: getter(root[0], "MimeType"),
+        Content: getter(root[0], "Content")
     };
     return img;
 }
 
 function deArrayifyFeatureProperties(json: any[]): Query.FeatureProperty[] {
+    const getter = buildPropertyGetter<Query.FeatureProperty>();
     return (json || []).map(root => {
         const prop = {
-            Name: tryGetAsProperty(root, "Name"),
-            Value: tryGetAsProperty(root, "Value")
+            Name: getter(root, "Name"),
+            Value: getter(root, "Value")
         };
         return prop;
     });
 }
 
 function deArrayifyFeatures(json: any[]): Query.SelectedFeature[] {
+    const getter = buildPropertyGetter<Query.SelectedFeature>();
     return (json || []).map(root => {
         const feat = {
-            Bounds: tryGetAsProperty(root, "Bounds"),
+            Bounds: getter(root, "Bounds"),
             Property: deArrayifyFeatureProperties(root.Property)
         };
         return feat;
@@ -274,11 +295,12 @@ function deArrayifyFeatures(json: any[]): Query.SelectedFeature[] {
 }
 
 function deArrayifyLayerMetadataProperties(json: any[]): Query.LayerPropertyMetadata[] {
+    const getter = buildPropertyGetter<Query.LayerPropertyMetadata>();
     return (json || []).map(root => {
         const prop = {
-            DisplayName: tryGetAsProperty(root, "DisplayName"),
-            Name: tryGetAsProperty(root, "Name"),
-            Type: tryGetAsProperty(root, "Type", "int")
+            DisplayName: getter(root, "DisplayName"),
+            Name: getter(root, "Name"),
+            Type: getter(root, "Type", "int")
         };
         return prop;
     });
@@ -297,10 +319,11 @@ function deArrayifyLayerMetadata(json: any): Query.LayerMetadata | undefined {
 }
 
 function deArrayifySelectedLayer(json: any[]): Query.SelectedLayer[] {
+    const getter = buildPropertyGetter<Query.SelectedLayer>();
     return (json || []).map(root => {
         const layer = {
-            "@id": tryGetAsProperty(root, "@id"),
-            "@name": tryGetAsProperty(root, "@name"),
+            "@id": getter(root, "@id"),
+            "@name": getter(root, "@name"),
             Feature: deArrayifyFeatures(root.Feature),
             LayerMetadata: deArrayifyLayerMetadata(root.LayerMetadata)
         };
@@ -321,12 +344,13 @@ function deArrayifySelectedFeatures(json: any): Query.SelectedFeatureSet | undef
 
 function deArrayifyFeatureInformation(json: any): Query.QueryMapFeaturesResponse {
     const root = json;
+    const getter = buildPropertyGetter<Query.QueryMapFeaturesResponse>();
     const resp = {
         FeatureSet: deArrayifyFeatureSet(root.FeatureSet),
-        Hyperlink: tryGetAsProperty(root, "Hyperlink"),
+        Hyperlink: getter(root, "Hyperlink"),
         InlineSelectionImage: deArrayifyInlineSelectionImage(root.InlineSelectionImage),
         SelectedFeatures: deArrayifySelectedFeatures(root.SelectedFeatures),
-        Tooltip: tryGetAsProperty(root, "Tooltip")
+        Tooltip: getter(root, "Tooltip")
     };
     return resp;
 }
@@ -336,8 +360,9 @@ function deArrayifyWebLayoutControl<T extends WebLayout.WebLayoutControl>(json: 
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected control element");
     }
+    const getter = buildPropertyGetter<T>();
     const control: any = {
-        Visible: tryGetAsProperty(root[0], "Visible", "boolean")
+        Visible: getter(root[0], "Visible", "boolean")
     };
     return control;
 }
@@ -347,11 +372,12 @@ function deArrayifyWebLayoutInfoPane(json: any): WebLayout.WebLayoutInfoPane {
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected InformationPane element");
     }
+    const getter = buildPropertyGetter<WebLayout.WebLayoutInfoPane>();
     const infoPane = {
-        Visible: tryGetAsProperty(root[0], "Visible", "boolean"),
-        Width: tryGetAsProperty(root[0], "Width", "int"),
-        LegendVisible: tryGetAsProperty(root[0], "LegendVisible", "boolean"),
-        PropertiesVisible: tryGetAsProperty(root[0], "PropertiesVisible", "boolean")
+        Visible: getter(root[0], "Visible", "boolean"),
+        Width: getter(root[0], "Width", "int"),
+        LegendVisible: getter(root[0], "LegendVisible", "boolean"),
+        PropertiesVisible: getter(root[0], "PropertiesVisible", "boolean")
     };
     return infoPane;
 }
@@ -361,10 +387,11 @@ function deArrayifyWebLayoutInitialView(json: any): WebLayout.MapView | undefine
     if (root == null || root.length != 1) {
         return undefined;
     }
+    const getter = buildPropertyGetter<WebLayout.MapView>();
     const view = {
-        CenterX: tryGetAsProperty(root[0], "CenterX", "float"),
-        CenterY: tryGetAsProperty(root[0], "CenterY", "float"),
-        Scale: tryGetAsProperty(root[0], "Scale", "float")
+        CenterX: getter(root[0], "CenterX", "float"),
+        CenterY: getter(root[0], "CenterY", "float"),
+        Scale: getter(root[0], "Scale", "float")
     };
     return view;
 }
@@ -374,11 +401,12 @@ function deArrayifyWebLayoutMap(json: any): WebLayout.WebLayoutMap {
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected Map element");
     }
+    const getter = buildPropertyGetter<WebLayout.WebLayoutMap>();
     const map = {
-        ResourceId: tryGetAsProperty(root[0], "ResourceId"),
+        ResourceId: getter(root[0], "ResourceId"),
         InitialView: deArrayifyWebLayoutInitialView(root[0].InitialView),
-        HyperlinkTarget: tryGetAsProperty(root[0], "HyperlinkTarget"),
-        HyperlinkTargetFrame: tryGetAsProperty(root[0], "HyperlinkTargetFrame")
+        HyperlinkTarget: getter(root[0], "HyperlinkTarget"),
+        HyperlinkTargetFrame: getter(root[0], "HyperlinkTargetFrame")
     };
     return map;
 }
@@ -388,12 +416,13 @@ function deArrayifyTaskButton(json: any): WebLayout.TaskButton {
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected TaskButton element");
     }
+    const getter = buildPropertyGetter<WebLayout.TaskButton>();
     const button = {
-        Name: tryGetAsProperty(root[0], "Name"),
-        Tooltip: tryGetAsProperty(root[0], "Tooltip"),
-        Description: tryGetAsProperty(root[0], "Description"),
-        ImageURL: tryGetAsProperty(root[0], "ImageURL"),
-        DisabledImageURL: tryGetAsProperty(root[0], "DisabledImageURL")
+        Name: getter(root[0], "Name"),
+        Tooltip: getter(root[0], "Tooltip"),
+        Description: getter(root[0], "Description"),
+        ImageURL: getter(root[0], "ImageURL"),
+        DisabledImageURL: getter(root[0], "DisabledImageURL")
     };
     return button;
 }
@@ -403,8 +432,9 @@ function deArrayifyWebLayoutTaskBar(json: any): WebLayout.WebLayoutTaskBar {
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected TaskBar element");
     }
+    const getter = buildPropertyGetter<WebLayout.WebLayoutTaskBar>();
     const taskbar = {
-        Visible: tryGetAsProperty(root[0], "Visible", "boolean"),
+        Visible: getter(root[0], "Visible", "boolean"),
         Home: deArrayifyTaskButton(root[0].Home),
         Forward: deArrayifyTaskButton(root[0].Forward),
         Back: deArrayifyTaskButton(root[0].Back),
@@ -424,10 +454,11 @@ function deArrayifyWebLayoutTaskPane(json: any): WebLayout.WebLayoutTaskPane {
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected TaskPane element");
     }
+    const getter = buildPropertyGetter<WebLayout.WebLayoutTaskPane>();
     const taskPane = {
-        Visible: tryGetAsProperty(root[0], "Visible", "boolean"),
-        InitialTask: tryGetAsProperty(root[0], "InitialTask"),
-        Width: tryGetAsProperty(root[0], "Width", "int"),
+        Visible: getter(root[0], "Visible", "boolean"),
+        InitialTask: getter(root[0], "InitialTask"),
+        Width: getter(root[0], "Width", "int"),
         TaskBar: deArrayifyWebLayoutTaskBar(root[0].TaskBar)
     };
     return taskPane;
@@ -435,20 +466,25 @@ function deArrayifyWebLayoutTaskPane(json: any): WebLayout.WebLayoutTaskPane {
 
 function deArrayifyUIItem(json: any): WebLayout.UIItem {
     const root = json;
-    const func: string = tryGetAsProperty(root, "Function");
+    const getter = buildPropertyGetter<WebLayout.UIItem & WebLayout.CommandUIItem & WebLayout.FlyoutUIItem>();
+    const func: string = getter(root, "Function");
+    //Wouldn't it be nice if we could incrementally build up a union type that then becomes a specific
+    //type once certain properties are set?
+    //
+    //Well, that's currently not possible. So we have to resort to "any"
     const item: any = {
         Function: func
     };
     switch (func) {
         case "Command":
-            item.Command = tryGetAsProperty(root, "Command");
+            item.Command = getter(root, "Command");
             break;
         case "Flyout":
-            item.Label = tryGetAsProperty(root, "Label");
-            item.Tooltip = tryGetAsProperty(root, "Tooltip");
-            item.Description = tryGetAsProperty(root, "Description");
-            item.ImageURL = tryGetAsProperty(root, "ImageURL");
-            item.DisabledImageURL = tryGetAsProperty(root, "DisabledImageURL");
+            item.Label = getter(root, "Label");
+            item.Tooltip = getter(root, "Tooltip");
+            item.Description = getter(root, "Description");
+            item.ImageURL = getter(root, "ImageURL");
+            item.DisabledImageURL = getter(root, "DisabledImageURL");
             item.SubItem = [];
             for (const si of root.SubItem) {
                 item.SubItem.push(deArrayifyUIItem(si));
@@ -463,13 +499,14 @@ function deArrayifyItemContainer<T extends WebLayout.WebLayoutControl>(json: any
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected container element");
     }
+    const getter = buildPropertyGetter<T>();
     const container: any = {};
     container[name] = [];
     for (const item of root[0][name]) {
         container[name].push(deArrayifyUIItem(item));
     }
     if (typeof (root[0].Visible) != 'undefined') {
-        container.Visible = tryGetAsProperty(root[0], "Visible", "boolean");
+        container.Visible = getter(root[0], "Visible", "boolean");
     }
     return container;
 }
@@ -479,13 +516,14 @@ function deArrayifyWebLayoutSearchResultColumnSet(json: any): WebLayout.ResultCo
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected ResultColumns element");
     }
+    const getter = buildPropertyGetter<WebLayout.ResultColumn>();
     const res = {
         Column: [] as WebLayout.ResultColumn[]
     };
     for (const col of root[0].Column) {
         res.Column.push({
-            Name: tryGetAsProperty(col, "Name"),
-            Property: tryGetAsProperty(col, "Property")
+            Name: getter(col, "Name"),
+            Property: getter(col, "Property")
         });
     }
     return res;
@@ -508,10 +546,11 @@ function deArrayifyWebLayoutParameterPairs(json: any): WebLayout.ParameterPair[]
     if (!root) {
         return pairs;
     }
+    const getter = buildPropertyGetter<WebLayout.ParameterPair>();
     for (const kvp of root) {
         pairs.push({
-            Key: tryGetAsProperty(kvp, "Key"),
-            Value: tryGetAsProperty(kvp, "Value")
+            Key: getter(kvp, "Key"),
+            Value: getter(kvp, "Value")
         });
     }
     return pairs;
@@ -519,47 +558,48 @@ function deArrayifyWebLayoutParameterPairs(json: any): WebLayout.ParameterPair[]
 
 function deArrayifyCommand(json: any): WebLayout.CommandDef {
     const root = json;
+    const getter = buildPropertyGetter<WebLayout.CommandDef & WebLayout.BasicCommandDef & WebLayout.InvokeScriptCommandDef & WebLayout.InvokeURLCommandDef & WebLayout.SearchCommandDef>();
     const cmd: any = {
-        "@xsi:type": tryGetAsProperty(root, "@xsi:type"),
-        Name: tryGetAsProperty(root, "Name"),
-        Label: tryGetAsProperty(root, "Label"),
-        Tooltip: tryGetAsProperty(root, "Tooltip"),
-        Description: tryGetAsProperty(root, "Description"),
-        ImageURL: tryGetAsProperty(root, "ImageURL"),
-        DisabledImageURL: tryGetAsProperty(root, "DisabledImageURL"),
-        TargetViewer: tryGetAsProperty(root, "TargetViewer")
+        "@xsi:type": getter(root, "@xsi:type"),
+        Name: getter(root, "Name"),
+        Label: getter(root, "Label"),
+        Tooltip: getter(root, "Tooltip"),
+        Description: getter(root, "Description"),
+        ImageURL: getter(root, "ImageURL"),
+        DisabledImageURL: getter(root, "DisabledImageURL"),
+        TargetViewer: getter(root, "TargetViewer")
     };
     //Basic
     if (typeof (root.Action) != 'undefined') {
-        cmd.Action = tryGetAsProperty(root, "Action");
+        cmd.Action = getter(root, "Action");
     }
     //Targeted
     if (typeof (root.Target) != 'undefined') {
-        cmd.Target = tryGetAsProperty(root, "Target");
+        cmd.Target = getter(root, "Target");
     }
     if (typeof (root.TargetFrame) != 'undefined') {
-        cmd.TargetFrame = tryGetAsProperty(root, "TargetFrame");
+        cmd.TargetFrame = getter(root, "TargetFrame");
     }
     //Search
     if (typeof (root.Layer) != 'undefined') {
-        cmd.Layer = tryGetAsProperty(root, "Layer");
-        cmd.Prompt = tryGetAsProperty(root, "Prompt");
+        cmd.Layer = getter(root, "Layer");
+        cmd.Prompt = getter(root, "Prompt");
         cmd.ResultColumns = deArrayifyWebLayoutSearchResultColumnSet(root.ResultColumns);
-        cmd.Filter = tryGetAsProperty(root, "Filter");
-        cmd.MatchLimit = tryGetAsProperty(root, "MatchLimit", "int");
+        cmd.Filter = getter(root, "Filter");
+        cmd.MatchLimit = getter(root, "MatchLimit", "int");
     }
     //InvokeURL | Help
     if (typeof (root.URL) != 'undefined') {
-        cmd.URL = tryGetAsProperty(root, "URL");
+        cmd.URL = getter(root, "URL");
     }
     if (typeof (root.DisableIfSelectionEmpty) != 'undefined') {
         cmd.LayerSet = deArrayifyWebLayoutInvokeURLLayerSet(root.LayerSet);
         cmd.AdditionalParameter = deArrayifyWebLayoutParameterPairs(root.AdditionalParameter);
-        cmd.DisableIfSelectionEmpty = tryGetAsProperty(root, "DisableIfSelectionEmpty", "boolean");
+        cmd.DisableIfSelectionEmpty = getter(root, "DisableIfSelectionEmpty", "boolean");
     }
     //InvokeScript
     if (typeof (root.Script) != 'undefined') {
-        cmd.Script = tryGetAsProperty(root, "Script");
+        cmd.Script = getter(root, "Script");
     }
     return cmd;
 }
@@ -582,15 +622,16 @@ function deArrayifyWebLayoutCommandSet(json: any): WebLayout.WebLayoutCommandSet
 
 function deArrayifyWebLayout(json: any): WebLayout.WebLayout {
     const root = json;
+    const getter = buildPropertyGetter<WebLayout.WebLayout>();
     const resp = {
-        Title: tryGetAsProperty(root, "Title"),
+        Title: getter(root, "Title"),
         Map: deArrayifyWebLayoutMap(root.Map),
-        EnablePingServer: tryGetAsProperty(root, "EnablePingServer", "boolean"),
-        SelectionColor: tryGetAsProperty(root, "SelectionColor"),
-        PointSelectionBuffer: tryGetAsProperty(root, "PointSelectionBuffer", "int"),
-        MapImageFormat: tryGetAsProperty(root, "MapImageFormat"),
-        SelectionImageFormat: tryGetAsProperty(root, "SelectionImageFormat"),
-        StartupScript: tryGetAsProperty(root, "StartupScript"),
+        EnablePingServer: getter(root, "EnablePingServer", "boolean"),
+        SelectionColor: getter(root, "SelectionColor"),
+        PointSelectionBuffer: getter(root, "PointSelectionBuffer", "int"),
+        MapImageFormat: getter(root, "MapImageFormat"),
+        SelectionImageFormat: getter(root, "SelectionImageFormat"),
+        StartupScript: getter(root, "StartupScript"),
         ToolBar: deArrayifyItemContainer<WebLayout.WebLayoutToolbar>(root.ToolBar, "Button"),
         InformationPane: deArrayifyWebLayoutInfoPane(root.InformationPane),
         ContextMenu: deArrayifyItemContainer<WebLayout.WebLayoutContextMenu>(root.ContextMenu, "MenuItem"),
@@ -607,24 +648,25 @@ function deArrayifyMapGroup(json: any): Fusion.MapSetGroup {
     if (root == null) {
         throw new MgError("Malformed input. Expected MapGroup element");
     }
+    const getter = buildPropertyGetter<Fusion.MapSetGroup & Fusion.MapInitialView & Fusion.MapConfiguration>();
     const mapGroup: Fusion.MapSetGroup = {
-        "@id": tryGetAsProperty(root, "@id", "string"),
+        "@id": getter(root, "@id", "string"),
         InitialView: undefined,
         Map: [] as Fusion.MapConfiguration[]
     };
     if (root.InitialView) {
         const iview = root.InitialView;
         mapGroup.InitialView = {
-            CenterX: tryGetAsProperty(iview, "CenterX", "float"),
-            CenterY: tryGetAsProperty(iview, "CenterY", "float"),
-            Scale: tryGetAsProperty(iview, "Scale", "float")
+            CenterX: getter(iview, "CenterX", "float"),
+            CenterY: getter(iview, "CenterY", "float"),
+            Scale: getter(iview, "Scale", "float")
         };
     }
     if (root.Map) {
         for (const m of root.Map) {
             mapGroup.Map.push({
-                Type: tryGetAsProperty(m, "Type", "string"),
-                SingleTile: tryGetAsProperty(m, "SingleTile", "boolean"),
+                Type: getter(m, "Type", "string"),
+                SingleTile: getter(m, "SingleTile", "boolean"),
                 Extension: deArrayifyExtension(m.Extension)
             });
         }
@@ -650,8 +692,9 @@ function deArrayifyMapSet(json: any): Fusion.MapSet | undefined {
 
 function deArrayifyContainerItems(json: any[]): Fusion.ContainerItem[] {
     const items = [] as Fusion.ContainerItem[];
+    const getter = buildPropertyGetter<Fusion.ContainerItem & Fusion.FlyoutItem & Fusion.WidgetItem>();
     for (const i of json) {
-        const func = tryGetAsProperty(i, "Function", "string");
+        const func = getter(i, "Function", "string");
         switch (func) {
             case "Separator":
                 items.push({
@@ -661,16 +704,16 @@ function deArrayifyContainerItems(json: any[]): Fusion.ContainerItem[] {
             case "Widget":
                 items.push({
                     Function: "Widget",
-                    Widget: tryGetAsProperty(i, "Widget", "string")
+                    Widget: getter(i, "Widget", "string")
                 })
                 break;
             case "Flyout":
                 items.push({
                     Function: "Flyout",
-                    Label: tryGetAsProperty(i, "Label", "string"),
-                    Tooltip: tryGetAsProperty(i, "Tooltip", "string"),
-                    ImageUrl: tryGetAsProperty(i, "ImageUrl", "string"),
-                    ImageClass: tryGetAsProperty(i, "ImageClass", "string"),
+                    Label: getter(i, "Label", "string"),
+                    Tooltip: getter(i, "Tooltip", "string"),
+                    ImageUrl: getter(i, "ImageUrl", "string"),
+                    ImageClass: getter(i, "ImageClass", "string"),
                     Item: deArrayifyContainerItems(i.Item || [])
                 })
                 break;
@@ -681,11 +724,12 @@ function deArrayifyContainerItems(json: any[]): Fusion.ContainerItem[] {
 
 function deArrayifyContainer(json: any[]): Fusion.ContainerDefinition[] {
     const containers = [] as Fusion.ContainerDefinition[];
+    const getter = buildPropertyGetter<Fusion.ContainerDefinition>();
     for (const c of json) {
         containers.push({
-            Name: tryGetAsProperty(c, "Name", "string"),
-            Type: tryGetAsProperty(c, "Type", "string"),
-            Position: tryGetAsProperty(c, "Position", "string"),
+            Name: getter(c, "Name", "string"),
+            Type: getter(c, "Type", "string"),
+            Position: getter(c, "Position", "string"),
             Extension: deArrayifyExtension(c.Extension),
             Item: deArrayifyContainerItems(c.Item)
         });
@@ -711,11 +755,12 @@ function deArrayifyWidget(json: any): Fusion.Widget {
     if (root == null) {
         throw new MgError("Malformed input. Expected Widget element");
     }
+    const getter = buildPropertyGetter<Fusion.Widget & { "@xsi:type": string }>();
     const w = {
-        WidgetType: tryGetAsProperty(root, "@xsi:type", "string"),
-        Name: tryGetAsProperty(root, "Name", "string"),
-        Type: tryGetAsProperty(root, "Type", "string"),
-        Location: tryGetAsProperty(root, "Location", "string"),
+        WidgetType: getter(root, "@xsi:type", "string"),
+        Name: getter(root, "Name", "string"),
+        Type: getter(root, "Type", "string"),
+        Location: getter(root, "Location", "string"),
         Extension: deArrayifyExtension(root.Extension)
     };
     return w;
@@ -729,6 +774,7 @@ function deArrayifyExtension(json: any, arrayCheck: boolean = true): any {
     if (arrayCheck && root.length != 1) {
         throw new MgError("Malformed input. Expected Extension element");
     }
+    const getter = buildPropertyGetter<{ Key: string, Value: string, [key: string]: string}>();
     const ext: any = {};
     for (const key in root[0]) {
         if (Array.isArray(root[0][key])) {
@@ -739,8 +785,8 @@ function deArrayifyExtension(json: any, arrayCheck: boolean = true): any {
                         const params = [];
                         for (const p of root[0][key]) {
                             params.push({
-                                Key: tryGetAsProperty(p, "Key", "string"),
-                                Value: tryGetAsProperty(p, "Value", "string")
+                                Key: getter(p, "Key", "string"),
+                                Value: getter(p, "Value", "string")
                             });
                         }
                         ext[key] = params;
@@ -752,7 +798,7 @@ function deArrayifyExtension(json: any, arrayCheck: boolean = true): any {
                     }
                     break;
                 default:
-                    ext[key] = tryGetAsProperty(root[0], key, "string");
+                    ext[key] = getter(root[0], key, "string");
                     break;
             }
         } else {
@@ -767,17 +813,18 @@ function deArrayifyUiWidget(json: any): Fusion.UIWidget {
     if (root == null) {
         throw new MgError("Malformed input. Expected Widget element");
     }
+    const getter = buildPropertyGetter<Fusion.UIWidget & { "@xsi:type": string }>();
     const w = {
-        WidgetType: tryGetAsProperty(root, "@xsi:type", "string"),
-        ImageUrl: tryGetAsProperty(root, "ImageUrl", "string"),
-        ImageClass: tryGetAsProperty(root, "ImageClass", "string"),
-        Label: tryGetAsProperty(root, "Label", "string"),
-        Tooltip: tryGetAsProperty(root, "Tooltip", "string"),
-        StatusText: tryGetAsProperty(root, "StatusText", "string"),
-        Disabled: tryGetAsProperty(root, "Disabled", "boolean"),
-        Name: tryGetAsProperty(root, "Name", "string"),
-        Type: tryGetAsProperty(root, "Type", "string"),
-        Location: tryGetAsProperty(root, "Location", "string"),
+        WidgetType: getter(root, "@xsi:type", "string"),
+        ImageUrl: getter(root, "ImageUrl", "string"),
+        ImageClass: getter(root, "ImageClass", "string"),
+        Label: getter(root, "Label", "string"),
+        Tooltip: getter(root, "Tooltip", "string"),
+        StatusText: getter(root, "StatusText", "string"),
+        Disabled: getter(root, "Disabled", "boolean"),
+        Name: getter(root, "Name", "string"),
+        Type: getter(root, "Type", "string"),
+        Location: getter(root, "Location", "string"),
         Extension: deArrayifyExtension(root.Extension)
     };
     return w;
@@ -788,12 +835,13 @@ function deArrayifyMapWidget(json: any): Fusion.MapWidget {
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected MapWidget element");
     }
+    const getter = buildPropertyGetter<Fusion.MapWidget & { "@xsi:type": string }>();
     const mw = {
-        WidgetType: tryGetAsProperty(root, "@xsi:type", "string"),
-        MapId: tryGetAsProperty(root, "MapId", "string"),
-        Name: tryGetAsProperty(root, "Name", "string"),
-        Type: tryGetAsProperty(root, "Type", "string"),
-        Location: tryGetAsProperty(root, "Location", "string"),
+        WidgetType: getter(root, "@xsi:type", "string"),
+        MapId: getter(root, "MapId", "string"),
+        Name: getter(root, "Name", "string"),
+        Type: getter(root, "Type", "string"),
+        Location: getter(root, "Location", "string"),
         Extension: deArrayifyExtension(root.Extension)
     };
     return mw;
@@ -813,9 +861,10 @@ function deArrayifyWidgetSet(json: any): Fusion.WidgetSet[] {
 
 function deArrayifyFlexibleLayout(json: any): Fusion.ApplicationDefinition {
     const root = json;
+    const getter = buildPropertyGetter<Fusion.ApplicationDefinition>();
     const resp = {
-        Title: tryGetAsProperty(root, "Title"),
-        TemplateUrl: tryGetAsProperty(root, "TemplateUrl"),
+        Title: getter(root, "Title"),
+        TemplateUrl: getter(root, "TemplateUrl"),
         MapSet: deArrayifyMapSet(root.MapSet),
         WidgetSet: deArrayifyWidgetSet(root.WidgetSet),
         Extension: deArrayifyExtension(root.Extension)

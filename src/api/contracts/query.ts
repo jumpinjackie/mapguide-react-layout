@@ -5,6 +5,7 @@ export interface FeatureSetClass {
 
 export interface FeatureSetLayer {
     "@id": string;
+    "@name": string;
     Class: FeatureSetClass;
 }
 export interface FeatureSet {

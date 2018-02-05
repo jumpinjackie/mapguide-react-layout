@@ -9,6 +9,7 @@ function createSelectionSet(): FeatureSet {
         Layer: [
             {
                 "@id": "foo",
+                "@name": "FooLayer",
                 Class: {
                     "@id": "1",
                     ID: [
@@ -20,6 +21,7 @@ function createSelectionSet(): FeatureSet {
             },
             {
                 "@id": "bar",
+                "@name": "BarLayer",
                 Class: {
                     "@id": "2",
                     ID: [

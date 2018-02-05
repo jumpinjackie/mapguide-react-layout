@@ -9,7 +9,7 @@
     "build:docs_sprite": "glue stdassets/images/icons docs_output --html --png8 --sprite-namespace= --namespace=",
     "build:npm": "rimraf package && node tools/prepare-package.js && tsc --p tsconfig.npm.json && copyfiles *.md lib/** src/** viewer/** stdassets/** package && rimraf lib",
     "build:site": "php tools/couscous.phar generate --target=./docs_output && yarn run build:docs_sprite",
-    "build:apidoc_npm": "rimraf ./docs_output/latest/apidoc_npm && typedoc --theme ./docs_dev/themes/typedoc-default --readme ./docs_dev/content/API_NPM.md --excludePrivate --excludeExternals --excludeNotExported --gaID UA-99064723-1 --mode modules --tsconfig tsconfig.npmdoc.json --out ./docs_output/latest/apidoc_npm ./src",
+    "build:apidoc_npm": "rimraf ./docs_output/latest/apidoc_npm && typedoc --theme ./docs_dev/themes/typedoc-default --readme ./docs_dev/content/API_NPM.md --excludePrivate --excludeExternals --gaID UA-99064723-1 --mode modules --tsconfig tsconfig.npmdoc.json --out ./docs_output/latest/apidoc_npm ./src",
     "build:dev": "cross-env NODE_ENV=development webpack",
     "watch:site": "php tools/couscous.phar preview",
     "watch:dev": "cross-env NODE_ENV=development webpack -w --progress",

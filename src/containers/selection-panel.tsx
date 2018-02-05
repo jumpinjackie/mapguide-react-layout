@@ -12,6 +12,7 @@ import {
     IConfigurationReducerState,
     getSelectionSet
 } from "../api/common";
+import { APPLICATION_CONTEXT_VALIDATION_MAP, IApplicationContext } from '../index';
 
 export interface ISelectionPanelContainerProps {
     maxHeight?: number;
@@ -52,6 +53,8 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
         this.fnZoomToSelectedFeature = this.onZoomToSelectedFeature.bind(this);
         this.fnShowSelectedFeature = this.onShowSelectedFeature.bind(this);
     }
+    static contextTypes = APPLICATION_CONTEXT_VALIDATION_MAP;
+    context: IApplicationContext;
     private onZoomToSelectedFeature(feature: SelectedFeature) {
         const bbox: any = feature.Bounds.split(" ").map(s => parseFloat(s));
         const viewer = getViewer();
@@ -72,9 +75,11 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
     render(): JSX.Element {
         const { selection, config, maxHeight } = this.props;
         const locale = this.getLocale();
-        if (selection != null &&
-            selection.SelectedFeatures != null) {
-            return <SelectionPanel locale={locale} 
+        if (selection != null && selection.SelectedFeatures != null) {
+            const cleaner = this.context.getHTMLCleaner();
+            return <SelectionPanel locale={locale}
+                                   allowHtmlValues={this.context.allowHtmlValuesInSelection()}
+                                   cleanHTML={cleaner}
                                    selection={selection.SelectedFeatures}
                                    onRequestZoomToFeature={this.fnZoomToSelectedFeature}
                                    onShowSelectedFeature={this.fnShowSelectedFeature}

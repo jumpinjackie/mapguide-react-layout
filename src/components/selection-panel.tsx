@@ -13,10 +13,12 @@ export interface ISelectedFeatureProps {
     selectedFeature: SelectedFeature;
     selectedLayer: LayerMetadata;
     locale: string;
+    allowHtmlValues: boolean;
+    cleanHTML?: (html: string) => string;
 }
 
 const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
-    const { selectedFeature, selectedLayer, locale } = props;
+    const { selectedFeature, selectedLayer, locale, allowHtmlValues, cleanHTML } = props;
     const featureProps = [] as FeatureProperty[];
     for (const lp of selectedLayer.Property) {
         const matches = selectedFeature.Property.filter(fp => fp.Name === lp.DisplayName);
@@ -35,7 +37,17 @@ const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
         {featureProps.map(prop => {
             return <tr key={prop.Name}>
                 <td>{prop.Name}</td>
-                <td>{prop.Value}</td>
+                {(() => {
+                    let value = prop.Value;
+                    if (allowHtmlValues) {
+                        if (cleanHTML) {
+                            value = cleanHTML(value);
+                        }
+                        return <td dangerouslySetInnerHTML={{ __html: value }} />
+                    } else {
+                        return <td>{prop.Value}</td>;
+                    }
+                })()}
             </tr>;
         })}
         </tbody>
@@ -55,6 +67,8 @@ export interface ISelectionPanelProps {
     onShowSelectedFeature: (layerId: string, featureIndex: number) => void;
     maxHeight?: number;
     selectedFeatureRenderer?: (props: ISelectedFeatureProps) => JSX.Element;
+    allowHtmlValues: boolean;
+    cleanHTML?: (html: string) => string;
 }
 
 interface ISelectionPanel {
@@ -194,7 +208,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
         this.setState({ selectedLayerIndex: e.target.value, featureIndex: 0 });
     }
     render(): JSX.Element {
-        const { selection, selectedFeatureRenderer } = this.props;
+        const { selection, selectedFeatureRenderer, allowHtmlValues, cleanHTML } = this.props;
         let locale = this.props.locale || DEFAULT_LOCALE;
         let feat: SelectedFeature | undefined;
         let meta: LayerMetadata | undefined;
@@ -239,9 +253,9 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
                 {(() => {
                     if (feat && meta) {
                         if (selectedFeatureRenderer) {
-                            return selectedFeatureRenderer({ selectedFeature: feat, selectedLayer: meta, locale: locale });
+                            return selectedFeatureRenderer({ selectedFeature: feat, cleanHTML: cleanHTML, allowHtmlValues: allowHtmlValues, selectedLayer: meta, locale: locale });
                         } else {
-                            return <DefaultSelectedFeature selectedFeature={feat} selectedLayer={meta} locale={locale} />;
+                            return <DefaultSelectedFeature selectedFeature={feat} cleanHTML={cleanHTML} allowHtmlValues={allowHtmlValues} selectedLayer={meta} locale={locale} />;
                         }
                     } else if (selection == null || (selection.SelectedLayer || []).length == 0) {
                         return <div className="pt-callout pt-intent-primary pt-icon-info-sign">

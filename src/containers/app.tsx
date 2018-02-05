@@ -20,7 +20,7 @@ import * as TemplateActions from "../actions/template";
 import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
 import { addUrlProps, UrlQueryParamTypes, replaceInUrlQuery } from 'react-url-query';
-import { url, Session } from 'inspector';
+import { IApplicationContext, APPLICATION_CONTEXT_VALIDATION_MAP } from "../components/context";
 
 const urlPropsQueryConfig = {
     urlX: { type: UrlQueryParamTypes.number, queryParam: "x" },
@@ -56,6 +56,11 @@ export interface IAppUrlStateCallback {
     onChangeUrlScale: UrlValueChangeCallback;
     onChangeUrlSession: UrlValueChangeCallback;
     onChangeUrlMap: UrlValueChangeCallback;
+}
+
+export interface SelectionOptions {
+    allowHtmlValues?: boolean;
+    cleanHtml?: (value: string) => string;
 }
 
 /**
@@ -110,6 +115,7 @@ export interface IAppProps {
     externalBaseLayers?: IExternalBaseLayer[];
     onInit?: (viewer: IMapViewer) => void;
     locale?: string;
+    selectionSettings?: SelectionOptions;
 }
 
 /**
@@ -168,6 +174,27 @@ export class App extends React.Component<AppProps, any> {
         this.state = {
             isLoading: true
         };
+    }
+    private allowHtmlValuesInSelection(): boolean {
+        const { selectionSettings } = this.props;
+        if (selectionSettings) {
+            return selectionSettings.allowHtmlValues || false;
+        }
+        return false;
+    }
+    private getHtmlCleaner(): (value: string) => string {
+        const { selectionSettings } = this.props;
+        if (selectionSettings && selectionSettings.cleanHtml) {
+            return selectionSettings.cleanHtml;
+        }
+        return v => v;
+    }
+    static childContextTypes = APPLICATION_CONTEXT_VALIDATION_MAP;
+    getChildContext(): IApplicationContext {
+        return {
+            allowHtmlValuesInSelection: () => this.allowHtmlValuesInSelection(),
+            getHTMLCleaner: () => this.getHtmlCleaner()
+        }
     }
     componentDidMount() {
         const {

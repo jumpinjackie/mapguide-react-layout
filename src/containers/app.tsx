@@ -29,7 +29,7 @@ const urlPropsQueryConfig = {
     urlResource: { type: UrlQueryParamTypes.string, queryParam: "resource" },
     urlLocale: { type: UrlQueryParamTypes.string, queryParam: "locale" },
     urlSession: { type: UrlQueryParamTypes.string, queryParam: "session" },
-    urlMap: { type: UrlQueryParamTypes.string, queryParam: "map" }
+    //urlMap: { type: UrlQueryParamTypes.string, queryParam: "map" }
 }
 
 /**

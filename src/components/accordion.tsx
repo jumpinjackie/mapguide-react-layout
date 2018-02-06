@@ -5,6 +5,7 @@ import {
     GenericEvent,
     GenericEventHandler
 } from "../api/common";
+import { safePropAccess } from '../utils/safe-prop';
 
 /**
  * Accordion panel dimensions
@@ -65,9 +66,7 @@ export class Accordion extends React.Component<IAccordionProps, any> {
         const id = e.currentTarget.attributes["data-accordion-panel-id"].value;
         if (this.state.openPanel != id) {
             this.setState({ openPanel: id }, () => {
-                if (onActivePanelChanged) {
-                    onActivePanelChanged(id);
-                }
+                safePropAccess(this.props, "onActivePanelChanged", func => func!(id));
             });
         }
     }

@@ -2,6 +2,7 @@ import * as React from "react";
 import { IMapMenuEntry } from "../api/common";
 import { STR_EMPTY, strIsNullOrEmpty } from "../utils/string";
 import { tr } from "../api/i18n";
+import { safePropAccess } from '../utils/safe-prop';
 
 /**
  * MapMenu component props
@@ -29,12 +30,9 @@ export class MapMenu extends React.Component<IMapMenuProps, any> {
         const selected = props.maps.filter(entry => entry.mapName === props.selectedMap);
     }
     private onActiveMapChanged = (e: any) => {
-        const { onActiveMapChanged } = this.props;
         const value = e.currentTarget.value;
         this.setState({ selected: value });
-        if (onActiveMapChanged) {
-            onActiveMapChanged(value);
-        }
+        safePropAccess(this.props, "onActiveMapChanged", func => func!(value));
     }
     render(): JSX.Element {
         const { locale } = this.props;

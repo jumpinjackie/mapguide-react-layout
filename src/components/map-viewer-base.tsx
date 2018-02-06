@@ -99,6 +99,7 @@ import Point from "ol/geom/point";
 import LineString from "ol/geom/linestring";
 import Circle from "ol/geom/circle";
 import { BLANK_GIF_DATA_URI } from "../constants/index";
+import { safePropAccess } from '../utils/safe-prop';
 
 /**
  * MapViewerBase component props
@@ -799,10 +800,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
                 logger.info("Triggering zoom request on moveend suppresseed");
             }
             if (e.frameState.viewState.rotation != this.props.viewRotation) {
-                const { onRotationChanged } = this.props;
-                if (onRotationChanged) {
-                    onRotationChanged(e.frameState.viewState.rotation);
-                }
+                safePropAccess(this.props, "onRotationChanged", func => func(e.frameState.viewState.rotation));
             }
         });
 

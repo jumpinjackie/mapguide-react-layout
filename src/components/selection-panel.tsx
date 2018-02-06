@@ -8,6 +8,7 @@ import {
     SPRITE_CONTROL_180,
     SPRITE_ICON_ZOOMSELECT
 } from "../constants/assets";
+import { safePropAccess } from '../utils/safe-prop';
 
 export interface ISelectedFeatureProps {
     selectedFeature: SelectedFeature;
@@ -164,25 +165,19 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
     private prevFeature() {
         const newIndex = this.state.featureIndex - 1;
         this.setState({ featureIndex: newIndex });
-        const { onShowSelectedFeature } = this.props;
-        if (onShowSelectedFeature) {
-            const layer = this.getCurrentLayer();
-            if (layer) {
-                const layerId = layer["@id"];
-                onShowSelectedFeature(layerId, newIndex);
-            }
+        const layer = this.getCurrentLayer();
+        if (layer) {
+            const layerId = layer["@id"];
+            safePropAccess(this.props, "onShowSelectedFeature", func => func(layerId, newIndex));
         }
     }
     private nextFeature() {
         const newIndex = this.state.featureIndex + 1;
         this.setState({ featureIndex: newIndex });
-        const { onShowSelectedFeature } = this.props;
-        if (onShowSelectedFeature) {
-            const layer = this.getCurrentLayer();
-            if (layer) {
-                const layerId = layer["@id"];
-                onShowSelectedFeature(layerId, newIndex);
-            }
+        const layer = this.getCurrentLayer();
+        if (layer) {
+            const layerId = layer["@id"];
+            safePropAccess(this.props, "onShowSelectedFeature", func => func(layerId, newIndex));
         }
     }
     private zoomSelectedFeature() {

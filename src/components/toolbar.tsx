@@ -11,6 +11,7 @@ import {
     SPRITE_ICON_MENUARROW
 } from "../constants/assets";
 import * as Constants from "../constants";
+import { safePropAccess } from '../utils/safe-prop';
 
 export const DEFAULT_TOOLBAR_SIZE = 29;
 export const TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";
@@ -136,14 +137,10 @@ export class FlyoutMenuChildItem extends React.Component<IFlyoutMenuChildItemPro
         };
     }
     private onClick = (e: GenericEvent) => {
-        const { item, onInvoked } = this.props;
+        const { item } = this.props;
         if (getEnabled(item)) {
-            if (item.invoke) {
-                item.invoke();
-            }
-            if (onInvoked != null) {
-                onInvoked();
-            }
+            safePropAccess(item, "invoke", func => func!());
+            safePropAccess(this.props, "onInvoked", func => func!());
         }
     }
     private onMouseLeave = (e: GenericEvent) => {

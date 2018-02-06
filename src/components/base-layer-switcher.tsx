@@ -2,6 +2,7 @@ import * as React from "react";
 import { IExternalBaseLayer } from "../api/common";
 import { STR_EMPTY, strIsNullOrEmpty } from "../utils/string";
 import { tr } from "../api/i18n";
+import { safePropAccess } from '../utils/safe-prop';
 
 /**
  * BaseLayersSwitcher component props
@@ -32,12 +33,9 @@ export class BaseLayerSwitcher extends React.Component<IBaseLayerSwitcherProps, 
         };
     }
     private onBaseLayerChanged = (e: any) => {
-        const { onBaseLayerChanged } = this.props;
         const value = e.currentTarget.value;
         this.setState({ selected: value });
-        if (onBaseLayerChanged) {
-            onBaseLayerChanged(value);
-        }
+        safePropAccess(this.props, "onBaseLayerChanged", func => func!(value));
     }
     render(): JSX.Element {
         const { locale } = this.props;

@@ -21,7 +21,7 @@ import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
 import { addUrlProps, UrlQueryParamTypes } from 'react-url-query';
 import { IApplicationContext, APPLICATION_CONTEXT_VALIDATION_MAP } from "../components/context";
-import { safePropGet } from '../utils/safe-prop';
+import { safePropAccess } from '../utils/safe-prop';
 
 const urlPropsQueryConfig = {
     urlX: { type: UrlQueryParamTypes.number, queryParam: "x" },
@@ -277,14 +277,14 @@ export class App extends React.Component<AppProps, any> {
         }
         if (nextProps.config && nextProps.config.activeMapName) {
             const am = nextProps.config.activeMapName;
-            safePropGet(nextProps, "onChangeUrlMap", func => func!(am));
+            safePropAccess(nextProps, "onChangeUrlMap", func => func!(am));
         }
         if (nextProps.map) {
             if (nextProps.map.currentView) {
                 const { x, y, scale } = nextProps.map.currentView;
-                safePropGet(nextProps, "onChangeUrlX", func => func!(`${x}`));
-                safePropGet(nextProps, "onChangeUrlY", func => func!(`${y}`));
-                safePropGet(nextProps, "onChangeUrlScale", func => func!(`${scale}`));
+                safePropAccess(nextProps, "onChangeUrlX", func => func!(`${x}`));
+                safePropAccess(nextProps, "onChangeUrlY", func => func!(`${y}`));
+                safePropAccess(nextProps, "onChangeUrlScale", func => func!(`${scale}`));
             }
             if (nextProps.map.runtimeMap) {
                 const { showGroups, showLayers, hideGroups, hideLayers } = nextProps.map;
@@ -310,12 +310,12 @@ export class App extends React.Component<AppProps, any> {
                         }
                     }
                 }
-                safePropGet(nextProps, "onChangeUrlShowGroups", func => func!(sg));
-                safePropGet(nextProps, "onChangeUrlHideGroups", func => func!(hg));
-                safePropGet(nextProps, "onChangeUrlShowLayers", func => func!(sl));
-                safePropGet(nextProps, "onChangeUrlHideLayers", func => func!(hl));
+                safePropAccess(nextProps, "onChangeUrlShowGroups", func => func!(sg));
+                safePropAccess(nextProps, "onChangeUrlHideGroups", func => func!(hg));
+                safePropAccess(nextProps, "onChangeUrlShowLayers", func => func!(sl));
+                safePropAccess(nextProps, "onChangeUrlHideLayers", func => func!(hl));
                 const { SessionId } = nextProps.map.runtimeMap;
-                safePropGet(nextProps, "onChangeUrlSession", func => func!(SessionId));
+                safePropAccess(nextProps, "onChangeUrlSession", func => func!(SessionId));
             }
         }
     }

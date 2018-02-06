@@ -24,13 +24,11 @@ const ADD_LAYER_TYPES: { [key: string]: AddLayerConf } = {
 };
 
 export class AddLayer extends React.Component<IAddLayerProps, Partial<IAddLayerState>> {
-    private fnLayerTypeChanged: GenericEventHandler;
     constructor(props: IAddLayerProps) {
         super(props);
-        this.fnLayerTypeChanged = this.onLayerTypeChanged.bind(this);
         this.state = {};
     }
-    private onLayerTypeChanged(e: GenericEvent) {
+    private onLayerTypeChanged = (e: GenericEvent) => {
         this.setState({ selectedType: e.target.value });
     }
     render(): JSX.Element {
@@ -41,7 +39,7 @@ export class AddLayer extends React.Component<IAddLayerProps, Partial<IAddLayerS
             <label className="pt-label .modifier">
                 {tr("LAYER_TYPE", locale)}
                 <div className="pt-select">
-                    <select value={selectedType || ""} onChange={this.fnLayerTypeChanged}>
+                    <select value={selectedType || ""} onChange={this.onLayerTypeChanged}>
                         <option>{tr("SELECT_LAYER_TYPE", locale)}</option>
                         {items.map(it => <option key={it.value} value={it.value}>{it.value}</option>)}
                     </select>

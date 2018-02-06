@@ -105,6 +105,11 @@ function buildToolbarItems(selPanel: ISelectionPanel): IItem[] {
     ];
 }
 
+const SELECTION_TOOLBAR_STYLE = { float: "right", height: DEFAULT_TOOLBAR_SIZE };
+const SELECTION_PANEL_TOOLBAR_STYLE = { height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR };
+const LAYER_COMBO_STYLE = { float: "left", height: DEFAULT_TOOLBAR_SIZE };
+const FloatClear = (props: any) => <div style={{ clear: "both" }} />;
+
 /**
  * Displays attributes of selected features with the ability to zoom in on selected features
  *
@@ -114,10 +119,8 @@ function buildToolbarItems(selPanel: ISelectionPanel): IItem[] {
  */
 export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
     private selectionToolbarItems: IItem[];
-    private fnSelectedLayerChanged: GenericEventHandler;
     constructor(props: ISelectionPanelProps) {
         super(props);
-        this.fnSelectedLayerChanged = this.onSelectedLayerChanged.bind(this);
         this.state = {
             selectedLayerIndex: -1,
             featureIndex: -1
@@ -204,7 +207,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
             this.setDefaultSelection(nextProps);
         }
     }
-    private onSelectedLayerChanged(e: GenericEvent) {
+    private onSelectedLayerChanged = (e: GenericEvent) => {
         this.setState({ selectedLayerIndex: e.target.value, featureIndex: 0 });
     }
     render(): JSX.Element {
@@ -236,16 +239,16 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
         return <div>
             {(() => {
                 if (selection != null && selection.SelectedLayer != null && selection.SelectedLayer.length > 0) {
-                    return <div className="selection-panel-toolbar" style={{ height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR }}>
+                    return <div className="selection-panel-toolbar" style={SELECTION_PANEL_TOOLBAR_STYLE}>
                         <div className="pt-select selection-panel-layer-selector">
-                            <select value={this.state.selectedLayerIndex} style={{ float: "left", height: DEFAULT_TOOLBAR_SIZE }} onChange={this.fnSelectedLayerChanged}>
+                            <select value={this.state.selectedLayerIndex} style={LAYER_COMBO_STYLE} onChange={this.onSelectedLayerChanged}>
                                 {selection.SelectedLayer.map((layer: SelectedLayer, index: number) => {
                                     return <option key={`selected-layer-${layer["@id"]}`} value={`${index}`}>{layer["@name"]}</option>
                                 })}
                             </select>
                         </div>
-                        <Toolbar childItems={this.selectionToolbarItems} containerStyle={{ float: "right", height: DEFAULT_TOOLBAR_SIZE }} />
-                        <div style={{ clear: "both" }} />
+                        <Toolbar childItems={this.selectionToolbarItems} containerStyle={SELECTION_TOOLBAR_STYLE} />
+                        <FloatClear />
                     </div>;
                 }
             })()}

@@ -694,7 +694,6 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IViewerApiShimDisp
 export type ViewerApiShimProps = IViewerApiShimProps & Partial<IViewerApiShimState> & Partial<IViewerApiShimDispatch>;
 
 export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
-    private fnFormFrameMounted: (component: FormFrameShim) => void;
     private userSelectionHandlers: SelectionHandlerCallback[];
     private us: boolean;
     private formFrame: FormFrameShim;
@@ -705,13 +704,12 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
     constructor(props: ViewerApiShimProps) {
         super(props);
         this.us = true;
-        this.fnFormFrameMounted = this.onFormFrameMounted.bind(this);
         this.userSelectionHandlers = [];
         this.fusionEventHandlers = {};
         this.ol2API = new OL2Shim();
         this.fusionAPI = new FusionApiShim(this);
     }
-    private onFormFrameMounted(form: FormFrameShim) {
+    private onFormFrameMounted = (form: FormFrameShim) => {
         this.formFrame = form;
     }
     getClient(): Client | undefined {
@@ -1187,7 +1185,7 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
     render(): JSX.Element {
         //This is for all intents and purposes, a "background" component. There is no real DOM representation
         return <div>
-            <FormFrameShim ref={this.fnFormFrameMounted} />
+            <FormFrameShim ref={this.onFormFrameMounted} />
         </div>;
     }
 }

@@ -76,33 +76,25 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IToolbarContainerD
 export type ToolbarContainerProps = IToolbarContainerProps & Partial<IToolbarContainerState> & Partial<IToolbarContainerDispatch>;
 
 export class ToolbarContainer extends React.Component<ToolbarContainerProps, any> {
-    private fnOpenFlyout: (id: string, metrics: IDOMElementMetrics) => void;
-    private fnCloseFlyout: (id: string) => void;
-    private fnOpenComponent: (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => void;
-    private fnCloseComponent: (id: string) => void;
     constructor(props: ToolbarContainerProps) {
         super(props);
-        this.fnCloseFlyout = this.onCloseFlyout.bind(this);
-        this.fnOpenFlyout = this.onOpenFlyout.bind(this);
-        this.fnOpenComponent = this.onOpenComponent.bind(this);
-        this.fnCloseComponent = this.onCloseComponent.bind(this);
     }
-    private onCloseFlyout(id: string): void {
+    private onCloseFlyout = (id: string) => {
         if (this.props.closeFlyout) {
             this.props.closeFlyout(id);
         }
     }
-    private onOpenFlyout(id: string, metrics: IDOMElementMetrics): void {
+    private onOpenFlyout = (id: string, metrics: IDOMElementMetrics) => {
         if (this.props.openFlyout) {
             this.props.openFlyout(id, metrics);
         }
     }
-    private onOpenComponent(id: string, metrics: IDOMElementMetrics, name: string, props?: any): void {
+    private onOpenComponent = (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => {
         if (this.props.openComponent) {
             this.props.openComponent(id, metrics, name, props);
         }
     }
-    private onCloseComponent(id: string): void {
+    private onCloseComponent = (id: string) => {
         if (this.props.closeComponent) {
             this.props.closeComponent(id);
         }
@@ -136,10 +128,10 @@ export class ToolbarContainer extends React.Component<ToolbarContainerProps, any
                             containerClass={containerClass}
                             containerStyle={tbContainerStyle}
                             flyoutStates={flyoutStates}
-                            onOpenComponent={this.fnOpenComponent}
-                            onCloseComponent={this.fnCloseComponent}
-                            onOpenFlyout={this.fnOpenFlyout}
-                            onCloseFlyout={this.fnCloseFlyout} />;
+                            onOpenComponent={this.onOpenComponent}
+                            onCloseComponent={this.onCloseComponent}
+                            onOpenFlyout={this.onOpenFlyout}
+                            onCloseFlyout={this.onCloseFlyout} />;
         } else {
             return <div />;
         }

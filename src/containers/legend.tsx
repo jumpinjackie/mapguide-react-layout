@@ -91,44 +91,34 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ILegendContainerDi
 export type LegendContainerProps = ILegendContainerProps & Partial<ILegendContainerState> & Partial<ILegendContainerDispatch>;
 
 export class LegendContainer extends React.Component<LegendContainerProps, any> {
-    private fnBaseLayerChanged: (baseLayerName: string) => void;
-    private fnGroupVisibilityChanged: MapElementChangeFunc;
-    private fnLayerVisibilityChanged: MapElementChangeFunc;
-    private fnLayerSelectabilityChanged: (id: string, selectable: boolean) => void;
-    private fnGroupExpansionChanged: (id: string, selectable: boolean) => void;
     constructor(props: LegendContainerProps) {
         super(props);
-        this.fnGroupVisibilityChanged = this.onGroupVisibilityChanged.bind(this);
-        this.fnLayerVisibilityChanged = this.onLayerVisibilityChanged.bind(this);
-        this.fnBaseLayerChanged = this.onBaseLayerChanged.bind(this);
-        this.fnLayerSelectabilityChanged = this.onLayerSelectabilityChanged.bind(this);
-        this.fnGroupExpansionChanged = this.onGroupExpansionChanged.bind(this);
     }
-    private onLayerSelectabilityChanged(id: string, selectable: boolean) {
+    private onLayerSelectabilityChanged = (id: string, selectable: boolean) => {
         const { config, setLayerSelectable } = this.props;
         if (setLayerSelectable && config && config.activeMapName) {
             setLayerSelectable(config.activeMapName, { id: id, value: selectable });
         }
     }
-    private onGroupExpansionChanged(id: string, expanded: boolean) {
+    private onGroupExpansionChanged = (id: string, expanded: boolean) => {
         const { config, setGroupExpanded } = this.props;
         if (setGroupExpanded && config && config.activeMapName) {
             setGroupExpanded(config.activeMapName, { id: id, value: expanded });
         }
     }
-    private onGroupVisibilityChanged(groupId: string, visible: boolean) {
+    private onGroupVisibilityChanged = (groupId: string, visible: boolean) => {
         const { config, setGroupVisibility } = this.props;
         if (setGroupVisibility && config && config.activeMapName) {
             setGroupVisibility(config.activeMapName, { id: groupId, value: visible });
         }
     }
-    private onLayerVisibilityChanged(layerId: string, visible: boolean) {
+    private onLayerVisibilityChanged = (layerId: string, visible: boolean) => {
         const { config, setLayerVisibility } = this.props;
         if (setLayerVisibility && config && config.activeMapName) {
             setLayerVisibility(config.activeMapName, { id: layerId, value: visible });
         }
     }
-    private onBaseLayerChanged(layerName: string) {
+    private onBaseLayerChanged = (layerName: string) => {
         const { config, setBaseLayer } = this.props;
         if (setBaseLayer && config && config.activeMapName) {
             setBaseLayer(config.activeMapName, layerName);
@@ -166,13 +156,13 @@ export class LegendContainer extends React.Component<LegendContainerProps, any> 
                     locale={config.locale}
                     inlineBaseLayerSwitcher={!!inlineBaseLayerSwitcher}
                     externalBaseLayers={externalBaseLayers}
-                    onBaseLayerChanged={this.fnBaseLayerChanged}
+                    onBaseLayerChanged={this.onBaseLayerChanged}
                     overrideSelectableLayers={selectableLayers}
                     overrideExpandedItems={expandedGroups}
-                    onLayerSelectabilityChanged={this.fnLayerSelectabilityChanged}
-                    onGroupExpansionChanged={this.fnGroupExpansionChanged}
-                    onGroupVisibilityChanged={this.fnGroupVisibilityChanged}
-                    onLayerVisibilityChanged={this.fnLayerVisibilityChanged} />;
+                    onLayerSelectabilityChanged={this.onLayerSelectabilityChanged}
+                    onGroupExpansionChanged={this.onGroupExpansionChanged}
+                    onGroupVisibilityChanged={this.onGroupVisibilityChanged}
+                    onLayerVisibilityChanged={this.onLayerVisibilityChanged} />;
             } else {
                 return <div>{tr("LOADING_MSG", locale)}</div>;
             }

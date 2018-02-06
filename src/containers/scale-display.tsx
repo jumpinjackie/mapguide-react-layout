@@ -43,12 +43,10 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IScaleDisplayConta
 export type ScaleDisplayContainerProps = Partial<IScaleDisplayContainerState> & Partial<IScaleDisplayContainerDispatch>;
 
 export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainerProps, any> {
-    private fnScaleChanged: (scale: number) => void;
     constructor(props: ScaleDisplayContainerProps) {
         super(props);
-        this.fnScaleChanged = this.onScaleChanged.bind(this);
     }
-    private onScaleChanged(scale: number) {
+    private onScaleChanged = (scale: number) => {
         const { setScale, config } = this.props;
         if (setScale && config && config.activeMapName) {
             setScale(config.activeMapName, scale);
@@ -67,7 +65,7 @@ export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainer
         const { view, style, config, finiteScales } = this.props;
         const locale = this.getLocale();
         if (view) {
-            return <ScaleDisplay onScaleChanged={this.fnScaleChanged}
+            return <ScaleDisplay onScaleChanged={this.onScaleChanged}
                                  view={view}
                                  style={style}
                                  finiteScales={finiteScales}

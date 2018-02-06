@@ -45,12 +45,10 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IBaseLayerSwitcher
 export type BaseLayerSwitcherContainerProps = IBaseLayerSwitcherContainerProps & Partial<IBaseLayerSwitcherContainerState> & Partial<IBaseLayerSwitcherContainerDispatch>;
 
 export class BaseLayerSwitcherContainer extends React.Component<BaseLayerSwitcherContainerProps, any> {
-    private fnBaseLayerChanged: (name: string) => void;
     constructor(props: BaseLayerSwitcherContainerProps) {
         super(props);
-        this.fnBaseLayerChanged = this.onBaseLayerChanged.bind(this);
     }
-    private onBaseLayerChanged(layerName: string) {
+    private onBaseLayerChanged = (layerName: string) => {
         const { mapName, setBaseLayer } = this.props;
         if (setBaseLayer && mapName) {
             setBaseLayer(mapName, layerName);
@@ -59,7 +57,7 @@ export class BaseLayerSwitcherContainer extends React.Component<BaseLayerSwitche
     render(): JSX.Element {
         const { locale, externalBaseLayers } = this.props;
         if (locale && externalBaseLayers) {
-            return <BaseLayerSwitcher onBaseLayerChanged={this.fnBaseLayerChanged} externalBaseLayers={externalBaseLayers} locale={locale} />;
+            return <BaseLayerSwitcher onBaseLayerChanged={this.onBaseLayerChanged} externalBaseLayers={externalBaseLayers} locale={locale} />;
         } else {
             return <noscript />;
         }

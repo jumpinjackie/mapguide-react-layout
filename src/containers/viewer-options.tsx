@@ -64,44 +64,34 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IViewerOptionsDisp
 export type ViewerOptionsProps = IViewerOptionsProps & Partial<IViewerOptionsState> & Partial<IViewerOptionsDispatch>;
 
 export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
-    private fnFeatureTooltipsChanged: GenericEventHandler;
-    private fnBaseOpacityChanged: (value: number) => void;
-    private fnMgOpacityChanged: (value: number) => void;
-    private fnMgSelOpacityChanged: (value: number) => void;
-    private fnViewSizeUnitsChanged: GenericEventHandler;
     constructor(props: ViewerOptionsProps) {
         super(props);
-        this.fnFeatureTooltipsChanged = this.onFeatureTooltipsChanged.bind(this);
-        this.fnBaseOpacityChanged = this.onBaseOpacityChanged.bind(this);
-        this.fnMgOpacityChanged = this.onMgOpacityChanged.bind(this);
-        this.fnMgSelOpacityChanged = this.onMgSelOpacityChanged.bind(this);
-        this.fnViewSizeUnitsChanged = this.onViewSizeUnitsChanged.bind(this);
     }
-    private onBaseOpacityChanged(value: number) {
+    private onBaseOpacityChanged = (value: number) => {
         const { setLayerTransparency, mapName } = this.props;
         if (mapName && setLayerTransparency) {
             setLayerTransparency(mapName, LAYER_ID_BASE, value);
         }
     }
-    private onMgOpacityChanged(value: number) {
+    private onMgOpacityChanged = (value: number) => {
         const { setLayerTransparency, mapName } = this.props;
         if (mapName && setLayerTransparency) {
             setLayerTransparency(mapName, LAYER_ID_MG_BASE, value);
         }
     }
-    private onMgSelOpacityChanged(value: number) {
+    private onMgSelOpacityChanged = (value: number) => {
         const { setLayerTransparency, mapName } = this.props;
         if (mapName && setLayerTransparency) {
             setLayerTransparency(mapName, LAYER_ID_MG_SEL_OVERLAY, value);
         }
     }
-    private onViewSizeUnitsChanged(e: GenericEvent) {
+    private onViewSizeUnitsChanged = (e: GenericEvent) => {
         const { setViewSizeDisplayUnits } = this.props;
         if (setViewSizeDisplayUnits) {
             setViewSizeDisplayUnits(e.target.value);
         }
     }
-    private onFeatureTooltipsChanged(e: GenericEvent) {
+    private onFeatureTooltipsChanged = (e: GenericEvent) => {
         const { toggleMapTips } = this.props;
         if (toggleMapTips) {
             toggleMapTips(e.target.checked);
@@ -130,7 +120,7 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
             {(() => {
                 if (viewer) {
                     return <label className="pt-control pt-switch">
-                        <input type="checkbox" checked={viewer.featureTooltipsEnabled} onChange={this.fnFeatureTooltipsChanged} />
+                        <input type="checkbox" checked={viewer.featureTooltipsEnabled} onChange={this.onFeatureTooltipsChanged} />
                         <span className="pt-control-indicator"></span>
                         {tr("FEATURE_TOOLTIPS", locale)}
                     </label>;
@@ -143,7 +133,7 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
                         return <label className="pt-label noselect">
                             {tr("LAYER_ID_BASE", locale)}
                             <div style={{ paddingLeft: 8, paddingRight: 8 }}>
-                                <Slider min={0} max={1.0} stepSize={0.01} value={opBase} onChange={this.fnBaseOpacityChanged} />
+                                <Slider min={0} max={1.0} stepSize={0.01} value={opBase} onChange={this.onBaseOpacityChanged} />
                             </div>
                         </label>;
                     }
@@ -151,13 +141,13 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
                 <label className="pt-label noselect">
                     {tr("LAYER_ID_MG_BASE", locale)}
                     <div style={{ paddingLeft: 8, paddingRight: 8 }}>
-                        <Slider min={0} max={1.0} stepSize={0.01} value={opMgBase} onChange={this.fnMgOpacityChanged} />
+                        <Slider min={0} max={1.0} stepSize={0.01} value={opMgBase} onChange={this.onMgOpacityChanged} />
                     </div>
                 </label>
                 <label className="pt-label noselect">
                     {tr("LAYER_ID_MG_SEL_OVERLAY", locale)}
                     <div style={{ paddingLeft: 8, paddingRight: 8 }}>
-                        <Slider min={0} max={1.0} stepSize={0.01} value={opMgSelOverlay} onChange={this.fnMgSelOpacityChanged} />
+                        <Slider min={0} max={1.0} stepSize={0.01} value={opMgSelOverlay} onChange={this.onMgSelOpacityChanged} />
                     </div>
                 </label>
             </fieldset>

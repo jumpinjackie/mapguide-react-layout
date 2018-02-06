@@ -119,28 +119,20 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ILimeGoldTemplateL
 export type LimeGoldTemplateLayoutProps = Partial<ILimeGoldTemplateLayoutState> & Partial<ILimeGoldTemplateLayoutDispatch>;
 
 export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayoutProps, any> {
-    private fnSplitterChanged: (size: number) => void;
-    private fnActiveTabChanged: (id: string) => void;
-    private fnDragStart: Function;
-    private fnDragEnd: Function;
     constructor(props: LimeGoldTemplateLayoutProps) {
         super(props);
-        this.fnActiveTabChanged = this.onActiveTabChanged.bind(this);
-        this.fnSplitterChanged = this.onSplitterChanged.bind(this);
-        this.fnDragStart = this.onDragStart.bind(this);
-        this.fnDragEnd = this.onDragEnd.bind(this);
         this.state = { isResizing: false };
     }
-    private onDragStart() {
+    private onDragStart = () => {
         this.setState({ isResizing: true });
     }
-    private onDragEnd() {
+    private onDragEnd = () => {
         this.setState({ isResizing: false });
     }
     private getLocale(): string {
         return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
-    private onSplitterChanged(size: number): void {
+    private onSplitterChanged = (size: number) => {
         //With the introduction of the splitter, we can no longer rely on a map 
         //filling 100% of its space without needing to manually call updateSize(),
         //so we do it here
@@ -149,7 +141,7 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
             viewer.updateSize();
         }
     }
-    private onActiveTabChanged(id: string): void {
+    private onActiveTabChanged = (id: string) => {
         const { setElementStates } = this.props;
         if (setElementStates) {
             const states: TemplateActions.IElementState = {
@@ -223,7 +215,7 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
             <ToolbarContainer id="Toolbar" containerClass="limegold-toolbar" containerStyle={{ position: "absolute", left: 0, top: TOP_BAR_HEIGHT, zIndex: TB_Z_INDEX, right: 0 }} />
             <ToolbarContainer id="ToolbarSecondary" containerClass="limegold-toolbar-secondary" containerStyle={{ position: "absolute", left: 0, top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, right: 0 }} />
             <div style={{ position: "absolute", left: 0, top: topOffset, bottom: (bottomOffset + SIDEBAR_PADDING), right: 0 }}>
-                <SplitterLayout customClassName="limegold-splitter" primaryIndex={0} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={this.fnSplitterChanged} onDragStart={this.fnDragStart} onDragEnd={this.fnDragEnd}>
+                <SplitterLayout customClassName="limegold-splitter" primaryIndex={0} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={this.onSplitterChanged} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
                     <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
                         <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />
                         {(() => {
@@ -233,7 +225,7 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
                         })()}
                     </div>
                     <div className="limegold-sidebar" style={{ position: "absolute", right: SIDEBAR_PADDING, top: 0, left: 0, bottom: 0 }}>
-                        <Tabs2 id="SidebarTabs" onChange={this.fnActiveTabChanged} {...extraTabsProps}>
+                        <Tabs2 id="SidebarTabs" onChange={this.onActiveTabChanged} {...extraTabsProps}>
                             {(() => {
                                 if (hasTaskPane) {
                                     const panel = <div style={tabPanelStyle}>

@@ -39,10 +39,8 @@ export interface IModalDialogProps {
  * @extends {React.Component<IModalDialogProps, any>}
  */
 export class ModalDialog extends React.Component<IModalDialogProps, any> {
-    private fnClose: GenericEventHandler;
     constructor(props: IModalDialogProps) {
         super(props);
-        this.fnClose = this.onClose.bind(this);
     }
     render(): JSX.Element {
         const { isOpen, backdrop, size, position, title, overflowYScroll } = this.props;
@@ -86,7 +84,7 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
             <div className="pt-dialog" style={modalStyle}>
                 <div className="pt-dialog-header noselect">
                     <h5>{title}</h5>
-                    <button onClick={this.fnClose} aria-label="Close" className="pt-dialog-close-button pt-icon-small-cross"></button>
+                    <button onClick={this.onClose} aria-label="Close" className="pt-dialog-close-button pt-icon-small-cross"></button>
                 </div>
                 <div className="pt-dialog-body" style={modalBodyStyle}>{this.props.children}</div>
             </div>
@@ -94,13 +92,13 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
         if (backdrop === true) {
             return <div>
                 {diag}
-                <div className="modal-dialog-backdrop" onClick={this.fnClose} />
+                <div className="modal-dialog-backdrop" onClick={this.onClose} />
             </div>;
         } else {
             return diag;
         }
     }
-    private onClose(e: GenericEvent) {
+    private onClose = (e: GenericEvent) => {
         e.preventDefault()
         if (this.props.onClose) {
             this.props.onClose()

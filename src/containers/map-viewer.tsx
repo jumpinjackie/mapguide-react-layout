@@ -138,19 +138,9 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMapViewerContaine
 
 export type MapViewerContainerProps = IMapViewerContainerProps & Partial<IMapViewerContainerState> & Partial<IMapViewerContainerDispatch>;
 
-export class MapViewerContainer extends React.Component<MapViewerContainerProps, any>
-    implements IMapViewer {
-    private fnMapViewerMounted: (component: MapViewerBase) => void;
+export class MapViewerContainer extends React.Component<MapViewerContainerProps, any> implements IMapViewer {
     private inner: MapViewerBase;
     private olFactory: OLFactory;
-    private fnMapResized: (size: [number, number]) => void;
-    private fnRequestZoomToView: (view: IMapView) => void;
-    private fnQueryMapFeatures: (options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) => void;
-    private fnBusyLoading: (busyCount: number) => void;
-    private fnRotationChanged: (newRotation: number) => void;
-    private fnMouseCoordinateChanged: (coord: Coordinate) => void;
-    private fnSessionExpired: () => void;
-    private fnBeginDigitization: (callback: (cancelled: boolean) => void) => void;
     private toaster: Toaster;
     private refHandlers = {
         toaster: (ref: Toaster) => this.toaster = ref,
@@ -158,20 +148,11 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     constructor(props: MapViewerContainerProps) {
         super(props);
         this.olFactory = new OLFactory();
-        this.fnMapViewerMounted = this.onMapViewerMounted.bind(this);
-        this.fnMapResized = this.onMapResized.bind(this);
-        this.fnRequestZoomToView = this.onRequestZoomToView.bind(this);
-        this.fnQueryMapFeatures = this.onQueryMapFeatures.bind(this);
-        this.fnBusyLoading = this.onBusyLoading.bind(this);
-        this.fnRotationChanged = this.onRotationChanged.bind(this);
-        this.fnMouseCoordinateChanged = this.onMouseCoordinateChanged.bind(this);
-        this.fnSessionExpired = this.onSessionExpired.bind(this);
-        this.fnBeginDigitization = this.onBeginDigitization.bind(this);
     }
     static contextTypes: PropTypes.ValidationMap<any> = {
         store: PropTypes.object
     };
-    private onBeginDigitization(callback: (cancelled: boolean) => void): void {
+    private onBeginDigitization = (callback: (cancelled: boolean) => void) => {
         if (this.props.setActiveTool) {
             this.props.setActiveTool(ActiveMapTool.None);
         }
@@ -179,20 +160,20 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         //be "None" before the user clicks their first digitizing vertex/point
         callback(false);
     }
-    private onMapViewerMounted(component: MapViewerBase): void {
+    private onMapViewerMounted = (component: MapViewerBase) => {
         this.inner = component;
     }
-    private onMapResized(size: [number, number]): void {
+    private onMapResized = (size: [number, number]) => {
         if (this.props.mapResized) {
             this.props.mapResized(size[0], size[1]);
         }
     }
-    private onRequestZoomToView(view: IMapView): void {
+    private onRequestZoomToView = (view: IMapView) => {
         if (this.props.setCurrentView) {
             this.props.setCurrentView(view);
         }
     }
-    private onQueryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) {
+    private onQueryMapFeatures = (options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) => {
         const { config, queryMapFeatures } = this.props;
         if (queryMapFeatures && config && config.activeMapName) {
             queryMapFeatures(config.activeMapName, {
@@ -203,23 +184,23 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             });
         }
     }
-    private onBusyLoading(busyCount: number) {
+    private onBusyLoading = (busyCount: number) => {
         if (this.props.setBusyCount) {
             this.props.setBusyCount(busyCount);
         }
     }
-    private onRotationChanged(newRotation: number) {
+    private onRotationChanged = (newRotation: number) => {
         if (this.props.setViewRotation) {
             this.props.setViewRotation(newRotation);
         }
     }
-    private onMouseCoordinateChanged(coord: Coordinate) {
+    private onMouseCoordinateChanged = (coord: Coordinate) => {
         const { config, setMouseCoordinates } = this.props;
         if (setMouseCoordinates && config && config.activeMapName) {
             setMouseCoordinates(config.activeMapName, coord);
         }
     }
-    private onSessionExpired() {
+    private onSessionExpired = () => {
         const { showModalComponent, config } = this.props;
         if (showModalComponent && config) {
             showModalComponent({
@@ -290,7 +271,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                 return [
                     <Toaster key="toaster" position={BP_Pos.TOP} ref={this.refHandlers.toaster} />,
                     <MapViewerBase  key="map"
-                                    ref={this.fnMapViewerMounted}
+                                    ref={this.onMapViewerMounted}
                                     map={map}
                                     agentUri={config.agentUri}
                                     agentKind={config.agentKind}
@@ -316,14 +297,14 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                     loadIndicatorPosition={config.viewer.loadIndicatorPositioning}
                                     loadIndicatorColor={config.viewer.loadIndicatorColor}
                                     layerTransparency={layerTransparency || Constants.EMPTY_OBJECT}
-                                    onBeginDigitization={this.fnBeginDigitization}
-                                    onSessionExpired={this.fnSessionExpired}
-                                    onBusyLoading={this.fnBusyLoading}
-                                    onRotationChanged={this.fnRotationChanged}
-                                    onMouseCoordinateChanged={this.fnMouseCoordinateChanged}
-                                    onQueryMapFeatures={this.fnQueryMapFeatures}
-                                    onRequestZoomToView={this.fnRequestZoomToView}
-                                    onMapResized={this.fnMapResized}
+                                    onBeginDigitization={this.onBeginDigitization}
+                                    onSessionExpired={this.onSessionExpired}
+                                    onBusyLoading={this.onBusyLoading}
+                                    onRotationChanged={this.onRotationChanged}
+                                    onMouseCoordinateChanged={this.onMouseCoordinateChanged}
+                                    onQueryMapFeatures={this.onQueryMapFeatures}
+                                    onRequestZoomToView={this.onRequestZoomToView}
+                                    onMapResized={this.onMapResized}
                                     activeSelectedFeatureXml={xml} />
                 ];
             }

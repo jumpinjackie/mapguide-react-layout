@@ -24,13 +24,11 @@ export interface IMapMenuProps {
  * @extends {React.Component<IMapMenuProps, any>}
  */
 export class MapMenu extends React.Component<IMapMenuProps, any> {
-    private fnActiveMapChanged: (e: any) => void;
     constructor(props: IMapMenuProps) {
         super(props);
-        this.fnActiveMapChanged = this.onActiveMapChanged.bind(this);
         const selected = props.maps.filter(entry => entry.mapName === props.selectedMap);
     }
-    private onActiveMapChanged(e: any): void {
+    private onActiveMapChanged = (e: any) => {
         const { onActiveMapChanged } = this.props;
         const value = e.currentTarget.value;
         this.setState({ selected: value });
@@ -44,7 +42,7 @@ export class MapMenu extends React.Component<IMapMenuProps, any> {
             {this.props.maps.map(layer => {
                 return <div className="map-menu-item-container" key={`base-layer-${layer.mapName}`}>
                     <label className="pt-control pt-radio">
-                        <input className="map-menu-option" type="radio" value={layer.mapName} checked={layer.mapName === this.props.selectedMap} onChange={this.fnActiveMapChanged} />
+                        <input className="map-menu-option" type="radio" value={layer.mapName} checked={layer.mapName === this.props.selectedMap} onChange={this.onActiveMapChanged} />
                         <span className="pt-control-indicator" />
                         {layer.label}
                     </label>

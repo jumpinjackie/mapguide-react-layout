@@ -167,10 +167,8 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAppDispatch> {
 export type AppProps = IAppProps & Partial<IAppState> & Partial<IAppDispatch> & Partial<IAppUrlStateProps> & Partial<IAppUrlStateCallback>;
 
 export class App extends React.Component<AppProps, any> {
-    private fnErrorRenderer: (err: Error) => JSX.Element;
     constructor(props: AppProps) {
         super(props);
-        this.fnErrorRenderer = this.initErrorRenderer.bind(this);
         this.state = {
             isLoading: true
         };
@@ -331,7 +329,7 @@ export class App extends React.Component<AppProps, any> {
                 }
         }
     }
-    private initErrorRenderer(err: Error | InitError): JSX.Element {
+    private initErrorRenderer = (err: Error | InitError) => {
         const { config, initOptions } = this.props;
         let locale = config ? (config.locale || DEFAULT_LOCALE) : DEFAULT_LOCALE;
         if (initOptions && initOptions.locale) {
@@ -348,7 +346,7 @@ export class App extends React.Component<AppProps, any> {
         const { layout, config, error, map } = this.props;
         const { isLoading } = this.state;
         if (error) {
-            return <Error error={error} errorRenderer={this.fnErrorRenderer} />
+            return <Error error={error} errorRenderer={this.initErrorRenderer} />
         } else {
             //NOTE: Locale may not have been set at this point, so use default
             const locale = config ? (config.locale || DEFAULT_LOCALE) : DEFAULT_LOCALE;

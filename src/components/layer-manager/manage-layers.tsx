@@ -10,14 +10,8 @@ export interface IManageLayersProps {
 }
 
 export class ManageLayers extends React.Component<IManageLayersProps, any> {
-    private fnRemoveLayer: GenericEventHandler;
-    private fnMoveLayerUp: GenericEventHandler;
-    private fnMoveLayerDown: GenericEventHandler;
     constructor(props: IManageLayersProps) {
         super(props);
-        this.fnMoveLayerDown = this.onMoveLayerDown.bind(this);
-        this.fnMoveLayerUp = this.onMoveLayerUp.bind(this);
-        this.fnRemoveLayer = this.onRemoveLayer.bind(this);
         this.state = {
             selectedNode: null,
             nodes: props.layers.map(li => ({ id: li.name, label: li.name, secondaryLabel: li.type, iconName: "pt-icon-layer" }))
@@ -27,21 +21,21 @@ export class ManageLayers extends React.Component<IManageLayersProps, any> {
         const nodes = nextProps.layers.map(li => ({ id: li.name, label: li.name, secondaryLabel: li.type, iconName: "pt-icon-layer" }));
         this.setState({ nodes: nodes });
     }
-    private onMoveLayerDown(e: GenericEvent) {
+    private onMoveLayerDown = (e: GenericEvent) => {
         const { selectedNode } = this.state;
         const { onMoveLayerDown } = this.props;
         if (selectedNode && onMoveLayerDown) {
             onMoveLayerDown(selectedNode.id);
         }
     }
-    private onMoveLayerUp(e: GenericEvent) {
+    private onMoveLayerUp = (e: GenericEvent) => {
         const { selectedNode } = this.state;
         const { onMoveLayerUp } = this.props;
         if (selectedNode && onMoveLayerUp) {
             onMoveLayerUp(selectedNode.id);
         }
     }
-    private onRemoveLayer(e: GenericEvent) {
+    private onRemoveLayer = (e: GenericEvent) => {
         const { selectedNode } = this.state;
         const { onRemoveLayer } = this.props;
         if (selectedNode && onRemoveLayer) {
@@ -73,9 +67,9 @@ export class ManageLayers extends React.Component<IManageLayersProps, any> {
         return <div>
             <hr />
             <div className="pt-button-group pt-fill">
-                <button type="button" className="pt-button pt-intent-danger pt-icon-delete" onClick={this.fnRemoveLayer} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0}>Remove</button>
-                <button type="button" className="pt-button pt-intent-primary pt-icon-caret-up" onClick={this.fnMoveLayerUp} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0 || selectedNode == nodes[0]}></button>
-                <button type="button" className="pt-button pt-intent-primary pt-icon-caret-down" onClick={this.fnMoveLayerDown} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0 || selectedNode == nodes[nodes.length - 1]}></button>
+                <button type="button" className="pt-button pt-intent-danger pt-icon-delete" onClick={this.onRemoveLayer} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0}>Remove</button>
+                <button type="button" className="pt-button pt-intent-primary pt-icon-caret-up" onClick={this.onMoveLayerUp} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0 || selectedNode == nodes[0]}></button>
+                <button type="button" className="pt-button pt-intent-primary pt-icon-caret-down" onClick={this.onMoveLayerDown} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0 || selectedNode == nodes[nodes.length - 1]}></button>
             </div>
             <Tree contents={nodes} onNodeClick={this.handleNodeClick} />
         </div>;

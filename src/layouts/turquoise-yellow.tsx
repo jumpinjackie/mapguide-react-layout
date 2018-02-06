@@ -119,25 +119,17 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ITurquoiseYellowTe
 export type TurquoiseYellowTemplateLayoutProps = Partial<ITurquoiseYellowTemplateLayoutState> & Partial<ITurquoiseYellowTemplateLayoutDispatch>;
 
 export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYellowTemplateLayoutProps, any> {
-    private fnSplitterChanged: (size: number) => void;
-    private fnActiveTabChanged: (id: string) => void;
-    private fnDragStart: Function;
-    private fnDragEnd: Function;
     constructor(props: TurquoiseYellowTemplateLayoutProps) {
         super(props);
-        this.fnActiveTabChanged = this.onActiveTabChanged.bind(this);
-        this.fnSplitterChanged = this.onSplitterChanged.bind(this);
-        this.fnDragStart = this.onDragStart.bind(this);
-        this.fnDragEnd = this.onDragEnd.bind(this);
         this.state = { isResizing: false };
     }
-    private onDragStart() {
+    private onDragStart = () => {
         this.setState({ isResizing: true });
     }
-    private onDragEnd() {
+    private onDragEnd = () => {
         this.setState({ isResizing: false });
     }
-    private onSplitterChanged(size: number): void {
+    private onSplitterChanged = (size: number) => {
         //With the introduction of the splitter, we can no longer rely on a map 
         //filling 100% of its space without needing to manually call updateSize(),
         //so we do it here
@@ -149,7 +141,7 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
     private getLocale(): string {
         return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
-    private onActiveTabChanged(id: string): void {
+    private onActiveTabChanged = (id: string) => {
         const { setElementStates } = this.props;
         if (setElementStates) {
             const states: TemplateActions.IElementState = {
@@ -219,9 +211,9 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
         const TB_Z_INDEX = 0;
         return <div style={{ width: "100%", height: "100%" }}>
             <div style={{ position: "absolute", left: 0, top: 0, bottom: bottomOffset, right: 0 }}>
-                <SplitterLayout customClassName="turquoise-yellow-splitter" primaryIndex={1} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={this.fnSplitterChanged} onDragStart={this.fnDragStart} onDragEnd={this.fnDragEnd}>
+                <SplitterLayout customClassName="turquoise-yellow-splitter" primaryIndex={1} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={this.onSplitterChanged} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
                     <div className="turquoise-yellow-sidebar" style={{ position: "absolute", left: SIDEBAR_PADDING, top: TOP_BAR_HEIGHT, bottom: SIDEBAR_PADDING, right: 0 }}>
-                        <Tabs2 id="SidebarTabs" onChange={this.fnActiveTabChanged} {...extraTabsProps}>
+                        <Tabs2 id="SidebarTabs" onChange={this.onActiveTabChanged} {...extraTabsProps}>
                             {(() => {
                                 if (hasTaskPane) {
                                     const panel = <div style={tabPanelStyle}>

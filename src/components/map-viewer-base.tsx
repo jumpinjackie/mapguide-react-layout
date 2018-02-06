@@ -299,8 +299,6 @@ export interface IMapViewerBaseState {
  */
 @ContextMenuTarget
 export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<IMapViewerBaseState>> implements ILayerManager {
-    private fnMouseUp: GenericEventHandler;
-    private fnMouseDown: GenericEventHandler;
     /**
      * Indicates if touch events are supported.
      */
@@ -320,11 +318,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     private _triggerZoomRequestOnMoveEnd: boolean;
     private _keepAlive: SessionKeepAlive;
     private _contextMenuOpen: boolean;
-
-    
-
-    private fnKeyUp: GenericEventHandler;
-    private fnKeyDown: GenericEventHandler;
     /**
      * This is a throttled version of _refreshOnStateChange(). Call this on any
      * modifications to pendingStateChanges
@@ -337,10 +330,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         super(props);
         this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), props.stateChangeDebounceTimeout || 500);
         this._wktFormat = new WKTFormat();
-        this.fnKeyDown = this.onKeyDown.bind(this);
-        this.fnKeyUp = this.onKeyUp.bind(this);
-        this.fnMouseDown = this.onMouseDown.bind(this);
-        this.fnMouseUp = this.onMouseUp.bind(this);
         this._busyWorkers = 0;
         this._triggerZoomRequestOnMoveEnd = true;
         this._supportsTouch = isMobile.phone || isMobile.tablet;
@@ -525,7 +514,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             this.props.onMapResized(this._map.getSize());
         }
     }
-    private onKeyDown(e: GenericEvent) {
+    private onKeyDown = (e: GenericEvent) => {
         switch (e.keyCode) {
             case KC_ESCAPE:
                 this.cancelDigitization();
@@ -533,17 +522,17 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         }
         this.setState({ shiftKey: e.shiftKey });
     }
-    private onKeyUp(e: GenericEvent) {
+    private onKeyUp = (e: GenericEvent) => {
         this.setState({ shiftKey: e.shiftKey });
     }
-    private onMouseDown(e: GenericEvent) {
+    private onMouseDown = (e: GenericEvent) => {
         if (!this.state.isMouseDown) {
             this.setState({
                 isMouseDown: true
             });
         }
     }
-    private onMouseUp(e: GenericEvent) {
+    private onMouseUp = (e: GenericEvent) => {
         if (this.state.isMouseDown) {
             this.setState({
                 isMouseDown: false
@@ -789,8 +778,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         this._mapContext = new MapViewerContext(this._map, callback);
         const activeLayerSet = this._mapContext.initLayerSet(this.props);
         this._mapContext.initContext(activeLayerSet, this.props.overviewMapElementSelector);
-        document.addEventListener("keydown", this.fnKeyDown);
-        document.addEventListener("keyup", this.fnKeyUp);
+        document.addEventListener("keydown", this.onKeyDown);
+        document.addEventListener("keyup", this.onKeyUp);
 
         this._map.on("click", this.onMapClick.bind(this));
         this._map.on("moveend", (e: GenericEvent) => {
@@ -880,7 +869,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             style.backgroundColor = `#${map.BackgroundColor.substring(2)}`;
         }
         const { loading, loaded } = this.state;
-        return <div className="map-viewer-component" style={style} onMouseDown={this.fnMouseDown} onMouseUp={this.fnMouseUp}>
+        return <div className="map-viewer-component" style={style} onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp}>
             <MapLoadIndicator loaded={loaded || 0} loading={loading || 0} position={this.props.loadIndicatorPosition} color={this.props.loadIndicatorColor} />
         </div>;
     }

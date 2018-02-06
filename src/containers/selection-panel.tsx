@@ -46,16 +46,12 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ISelectionPanelCon
 export type SelectionPanelContainerProps = ISelectionPanelContainerProps & Partial<ISelectionPanelContainerState> & Partial<ISelectionPanelContainerDispatch>;
 
 export class SelectionPanelContainer extends React.Component<SelectionPanelContainerProps, any> {
-    private fnZoomToSelectedFeature: (feature: SelectedFeature) => void;
-    private fnShowSelectedFeature: (layerId: string, featureIndex: number) => void;
     constructor(props: SelectionPanelContainerProps) {
         super(props);
-        this.fnZoomToSelectedFeature = this.onZoomToSelectedFeature.bind(this);
-        this.fnShowSelectedFeature = this.onShowSelectedFeature.bind(this);
     }
     static contextTypes = APPLICATION_CONTEXT_VALIDATION_MAP;
     context: IApplicationContext;
-    private onZoomToSelectedFeature(feature: SelectedFeature) {
+    private onZoomToSelectedFeature = (feature: SelectedFeature) => {
         const bbox: any = feature.Bounds.split(" ").map(s => parseFloat(s));
         const viewer = getViewer();
         if (viewer && this.props.setCurrentView) {
@@ -63,7 +59,7 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
             this.props.setCurrentView(view);
         }
     }
-    private onShowSelectedFeature(layerId: string, featureIndex: number) {
+    private onShowSelectedFeature = (layerId: string, featureIndex: number) => {
         const { showSelectedFeature, config } = this.props;
         if (showSelectedFeature && config && config.activeMapName) {
             showSelectedFeature(config.activeMapName, layerId, featureIndex);
@@ -81,8 +77,8 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
                                    allowHtmlValues={this.context.allowHtmlValuesInSelection()}
                                    cleanHTML={cleaner}
                                    selection={selection.SelectedFeatures}
-                                   onRequestZoomToFeature={this.fnZoomToSelectedFeature}
-                                   onShowSelectedFeature={this.fnShowSelectedFeature}
+                                   onRequestZoomToFeature={this.onZoomToSelectedFeature}
+                                   onShowSelectedFeature={this.onShowSelectedFeature}
                                    selectedFeatureRenderer={this.props.selectedFeatureRenderer}
                                    maxHeight={maxHeight} />;
         } else {

@@ -32,9 +32,6 @@ export interface IMeasureComponent {
 
 export class MeasureContext {
     private olFactory: IOLFactory;
-    private fnDrawStart: GenericEventHandler;
-    private fnDrawEnd: GenericEventHandler;
-    private fnMouseMove: GenericEventHandler;
     private draw: olInteractionDraw;
     private measureOverlays: olOverlay[];
     private measureLayer: olVectorLayer;
@@ -53,9 +50,6 @@ export class MeasureContext {
         this.viewer = viewer;
         this.mapName = mapName;
         this.parent = parent;
-        this.fnDrawStart = this.onDrawStart.bind(this);
-        this.fnDrawEnd = this.onDrawEnd.bind(this);
-        this.fnMouseMove = this.onMouseMove.bind(this);
         this.layerName = `${LAYER_NAME}-${mapName}`;
         this.olFactory = viewer.getOLFactory();
         this.measureLayer = this.olFactory.createVectorLayer({
@@ -117,7 +111,7 @@ export class MeasureContext {
         }
         return output;
     }
-    private onDrawStart(evt: GenericEvent) {
+    private onDrawStart = (evt: GenericEvent) => {
         // set sketch
         this.sketch = evt.feature;
 
@@ -144,7 +138,7 @@ export class MeasureContext {
             });
         }
     }
-    private onDrawEnd(evt: GenericEvent) {
+    private onDrawEnd = (evt: GenericEvent) => {
         if (this.measureTooltipElement) {
             this.measureTooltipElement.className = 'tooltip tooltip-static';
         }
@@ -156,7 +150,7 @@ export class MeasureContext {
         this.createMeasureTooltip();
         Observable.unByKey(this.listener);
     }
-    private onMouseMove(evt: GenericEvent) {
+    private onMouseMove = (evt: GenericEvent) => {
         if (evt.dragging) {
             return;
         }
@@ -258,14 +252,14 @@ export class MeasureContext {
     }
     private setActiveInteraction(type: string) {
         if (this.draw) {
-            this.draw.un("drawstart", this.fnDrawStart);
-            this.draw.un("drawend", this.fnDrawEnd);
+            this.draw.un("drawstart", this.onDrawStart);
+            this.draw.un("drawend", this.onDrawEnd);
             this.viewer.removeInteraction(this.draw);
         }
         this.draw = this.createDrawInteraction(type);
         if (this.draw) {
-            this.draw.on("drawstart", this.fnDrawStart);
-            this.draw.on("drawend", this.fnDrawEnd);
+            this.draw.on("drawstart", this.onDrawStart);
+            this.draw.on("drawend", this.onDrawEnd);
             this.viewer.addInteraction(this.draw);
         }
     }
@@ -275,14 +269,14 @@ export class MeasureContext {
             this.createMeasureTooltip();
             this.createHelpTooltip();
             this.setActiveInteraction(type);
-            this.viewer.addHandler('pointermove', this.fnMouseMove);
+            this.viewer.addHandler('pointermove', this.onMouseMove);
         }
     }
     public endMeasure() {
-        this.viewer.removeHandler('pointermove', this.fnMouseMove);
+        this.viewer.removeHandler('pointermove', this.onMouseMove);
         if (this.draw) {
-            this.draw.un("drawstart", this.fnDrawStart);
-            this.draw.un("drawend", this.fnDrawEnd);
+            this.draw.un("drawstart", this.onDrawStart);
+            this.draw.un("drawend", this.onDrawEnd);
             this.viewer.removeInteraction(this.draw);
             //this.draw = null;
         }

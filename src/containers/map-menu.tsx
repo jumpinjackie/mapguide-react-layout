@@ -38,12 +38,10 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMapMenuContainerD
 export type MapMenuContainerProps = Partial<IMapMenuContainerState> & Partial<IMapMenuContainerDispatch>;
 
 export class MapMenuContainer extends React.Component<MapMenuContainerProps, any> {
-    private fnActiveMapChanged: (name: string) => void;
     constructor(props: MapMenuContainerProps) {
         super(props);
-        this.fnActiveMapChanged = this.onActiveMapChanged.bind(this);
     }
-    private onActiveMapChanged(mapName: string) {
+    private onActiveMapChanged = (mapName: string) => {
         const { setActiveMap } = this.props;
         if (setActiveMap) {
             setActiveMap(mapName);
@@ -56,7 +54,7 @@ export class MapMenuContainer extends React.Component<MapMenuContainerProps, any
             const entries = availableMaps.map(m => {
                 return { label: m.name, mapName: m.value };
             });
-            return <MapMenu onActiveMapChanged={this.fnActiveMapChanged} selectedMap={activeMapName} maps={entries} locale={locale} />;
+            return <MapMenu onActiveMapChanged={this.onActiveMapChanged} selectedMap={activeMapName} maps={entries} locale={locale} />;
         } else {
             return <noscript />;
         }

@@ -84,14 +84,8 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
     private homeAction: IItem;
     private backAction: IItem;
     private forwardAction: IItem;
-    private fnUrlLoaded: (url: string) => void;
-    private fnOpenFlyout: (id: string, metrics: IDOMElementMetrics) => void;
-    private fnCloseFlyout: (id: string) => void;
     constructor(props: TaskPaneProps) {
         super(props);
-        this.fnUrlLoaded = this.onUrlLoaded.bind(this);
-        this.fnCloseFlyout = this.onCloseFlyout.bind(this);
-        this.fnOpenFlyout = this.onOpenFlyout.bind(this);
         const locale = this.getLocale();
         this.homeAction = {
             iconClass: SPRITE_ICON_HOME,
@@ -130,17 +124,17 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
     private getLocale(): string {
         return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
-    private onCloseFlyout(id: string): void {
+    private onCloseFlyout = (id: string) => {
         if (this.props.closeFlyout) {
             this.props.closeFlyout(id);
         }
     }
-    private onOpenFlyout(id: string, metrics: IDOMElementMetrics): void {
+    private onOpenFlyout = (id: string, metrics: IDOMElementMetrics) => {
         if (this.props.openFlyout) {
             this.props.openFlyout(id, metrics);
         }
     }
-    private onUrlLoaded(url: string): void {
+    private onUrlLoaded = (url: string) => {
         const { taskpane, pushUrl } = this.props;
         if (taskpane) {
             const currentUrl = taskpane.navigation[taskpane.navIndex];
@@ -194,12 +188,12 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
                               lastUrlPushed={taskpane.lastUrlPushed}
                               homeAction={this.homeAction}
                               backAction={this.backAction}
-                              onOpenFlyout={this.fnOpenFlyout}
-                              onCloseFlyout={this.fnCloseFlyout}
+                              onOpenFlyout={this.onOpenFlyout}
+                              onCloseFlyout={this.onCloseFlyout}
                               forwardAction={this.forwardAction}
                               session={map.runtimeMap.SessionId}
                               mapName={map.runtimeMap.Name}
-                              onUrlLoaded={this.fnUrlLoaded}
+                              onUrlLoaded={this.onUrlLoaded}
                               maxHeight={maxHeight}
                               flyoutStates={flyoutStates}
                               locale={this.getLocale()} />

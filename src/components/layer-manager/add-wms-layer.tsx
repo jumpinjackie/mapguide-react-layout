@@ -23,14 +23,8 @@ export interface IAddWmsLayerProps {
 }
 
 export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
-    private fnWmsUrlChange: GenericEventHandler;
-    private fnLoadCaps: GenericEventHandler;
-    private fnAddLayer: (name: string, style: WMSLayerStyle | undefined) => void;
     constructor(props: IAddWmsLayerProps) {
         super(props);
-        this.fnWmsUrlChange = this.onWmsUrlChange.bind(this);
-        this.fnLoadCaps = this.onLoadCaps.bind(this);
-        this.fnAddLayer = this.onAddLayer.bind(this);
         this.state = {
             wmsUrl: "",
             loadingCapabilities: false,
@@ -38,7 +32,7 @@ export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
             error: null
         };
     }
-    private onAddLayer(name: string, style: WMSLayerStyle | undefined) {
+    private onAddLayer = (name: string, style: WMSLayerStyle | undefined) => {
         const bTiled = true;
         const { locale } = this.props;
         const caps: WmsCapabilitiesDocument = this.state.caps;
@@ -74,7 +68,7 @@ export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
             viewer.toastSuccess("icon-success", tr("ADDED_LAYER", locale, { name: name }));
         }
     }
-    private onLoadCaps(e: GenericEvent) {
+    private onLoadCaps = (e: GenericEvent) => {
         const { wmsUrl } = this.state;
         this.setState({
             caps: null,
@@ -105,7 +99,7 @@ export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
             });
         });
     }
-    private onWmsUrlChange(e: GenericEvent) {
+    private onWmsUrlChange = (e: GenericEvent) => {
         this.setState({ wmsUrl: e.target.value });
     }
     render(): JSX.Element {
@@ -115,9 +109,9 @@ export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
             <div className="pt-control-group pt-fill">
                 <div className="pt-input-group">
                     <span className="pt-icon pt-icon-geosearch"></span>
-                    <input type="text" className="pt-input" placeholder={tr("ADD_WMS_LAYER_URL", locale)} value={wmsUrl} onChange={this.fnWmsUrlChange} readOnly={loadingCapabilities} />
+                    <input type="text" className="pt-input" placeholder={tr("ADD_WMS_LAYER_URL", locale)} value={wmsUrl} onChange={this.onWmsUrlChange} readOnly={loadingCapabilities} />
                 </div>
-                <button className="pt-button pt-fixed pt-intent-primary pt-icon-arrow-right" onClick={this.fnLoadCaps} disabled={loadingCapabilities}></button>
+                <button className="pt-button pt-fixed pt-intent-primary pt-icon-arrow-right" onClick={this.onLoadCaps} disabled={loadingCapabilities}></button>
             </div>
             <br />
             <div>
@@ -139,7 +133,7 @@ export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
                         </div>;
                     } else {
                         if (caps) {
-                            return <WmsCapabilitiesTree onAddLayer={this.fnAddLayer} capabilities={caps} locale={locale} />;
+                            return <WmsCapabilitiesTree onAddLayer={this.onAddLayer} capabilities={caps} locale={locale} />;
                         } else if (error) {
                             return <Error error={error} />;
                         } else {

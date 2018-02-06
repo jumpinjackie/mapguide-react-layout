@@ -84,11 +84,7 @@ export interface ITaskPaneProps {
  */
 export class TaskPane extends React.Component<ITaskPaneProps, any> {
     private _iframe: HTMLIFrameElement;
-    private fnFrameMounted: (iframe: HTMLIFrameElement) => void;
-    private fnFrameLoaded: GenericEventHandler;
     private taskButtons: IItem[];
-    private fnOpenFlyout: (id: string, metrics: IDOMElementMetrics) => void;
-    private fnCloseFlyout: (id: string) => void;
     constructor(props: ITaskPaneProps) {
         super(props);
         this.taskButtons = [
@@ -97,27 +93,23 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             props.backAction,
             props.forwardAction
         ];
-        this.fnFrameLoaded = this.onFrameLoaded.bind(this);
-        this.fnFrameMounted = this.onFrameMounted.bind(this);
-        this.fnCloseFlyout = this.onCloseFlyout.bind(this);
-        this.fnOpenFlyout = this.onOpenFlyout.bind(this);
         this.state = {
             activeComponent: null,
             invalidated: false,
             frameContentLoaded: false
         };
     }
-    private onCloseFlyout(id: string): void {
+    private onCloseFlyout = (id: string) => {
         if (this.props.onCloseFlyout) {
             this.props.onCloseFlyout(id);
         }
     }
-    private onOpenFlyout(id: string, metrics: IDOMElementMetrics): void {
+    private onOpenFlyout = (id: string, metrics: IDOMElementMetrics) => {
         if (this.props.onOpenFlyout) {
             this.props.onOpenFlyout(id, metrics);
         }
     }
-    private onFrameMounted(iframe: HTMLIFrameElement) {
+    private onFrameMounted = (iframe: HTMLIFrameElement) => {
         this._iframe = iframe;
         if (this._iframe) {
             const el = ReactDOM.findDOMNode(this._iframe);
@@ -125,7 +117,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             (el as any).taskPaneId = Constants.FUSION_TASKPANE_NAME;
         }
     }
-    private onFrameLoaded(e: GenericEvent) {
+    private onFrameLoaded = (e: GenericEvent) => {
         const frame = e.currentTarget;
         if (frame.contentWindow) {
             this.setState({ frameContentLoaded: true });
@@ -215,8 +207,8 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             {(() => {
                 if (showTaskBar === true) {
                     return <div style={taskBarStyle}>
-                        <Toolbar childItems={this.taskButtons} containerStyle={{ float: "left", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={this.fnCloseFlyout} onOpenFlyout={this.fnOpenFlyout} flyoutStates={this.props.flyoutStates} />
-                        <Toolbar childItems={[taskMenu]} containerStyle={{ float: "right", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={this.fnCloseFlyout} onOpenFlyout={this.fnOpenFlyout} flyoutStates={this.props.flyoutStates} />
+                        <Toolbar childItems={this.taskButtons} containerStyle={{ float: "left", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={this.onCloseFlyout} onOpenFlyout={this.onOpenFlyout} flyoutStates={this.props.flyoutStates} />
+                        <Toolbar childItems={[taskMenu]} containerStyle={{ float: "right", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={this.onCloseFlyout} onOpenFlyout={this.onOpenFlyout} flyoutStates={this.props.flyoutStates} />
                         <div style={{ clear: "both" }} />
                     </div>;
                 }
@@ -240,7 +232,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                     } else {
                         const { frameContentLoaded } = this.state;
                         const components = [
-                            <iframe key="taskPaneFrame" className={(invalidated === true ? "invalidated-task-pane" : undefined)} name="taskPaneFrame" ref={this.fnFrameMounted} onLoad={this.fnFrameLoaded} style={taskFrameStyle}>
+                            <iframe key="taskPaneFrame" className={(invalidated === true ? "invalidated-task-pane" : undefined)} name="taskPaneFrame" ref={this.onFrameMounted} onLoad={this.onFrameLoaded} style={taskFrameStyle}>
                             </iframe>
                         ];
                         if (frameContentLoaded == false) {

@@ -54,26 +54,16 @@ export type MeasureProps = IMeasureContainerProps & Partial<IMeasureContainerRed
 const _measurements: MeasureContext[] = [];
 
 export class MeasureContainer extends React.Component<MeasureProps, Partial<IMeasureContainerState>> implements IMeasureComponent {
-    private fnTypeChanged: GenericEventHandler;
-    private fnGeodesicChanged: GenericEventHandler;
-    private fnClearMeasurements: GenericEventHandler;
-    private fnStartMeasure: GenericEventHandler;
-    private fnEndMeasure: GenericEventHandler;
 
     constructor(props: MeasureProps) {
         super(props);
-        this.fnTypeChanged = this.onTypeChanged.bind(this);
-        this.fnGeodesicChanged = this.onGeodesicChanged.bind(this);
-        this.fnClearMeasurements = this.onClearMeasurements.bind(this);
-        this.fnStartMeasure = this.onStartMeasure.bind(this);
-        this.fnEndMeasure = this.onEndMeasure.bind(this);
         this.state = {
             measuring: false,
             geodesic: false,
             type: "LineString"
         }
     }
-    private onTypeChanged(e: GenericEvent) {
+    private onTypeChanged = (e: GenericEvent) => {
         const newType = e.target.value;
         this.setState({ type: newType }, () => {
             const { activeMapName } = this.props;
@@ -85,11 +75,11 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
             }
         });
     }
-    private onGeodesicChanged(e: GenericEvent) {
+    private onGeodesicChanged = (e: GenericEvent) => {
         const newValue = e.target.checked;
         this.setState({ geodesic: newValue });
     }
-    private onClearMeasurements(e: GenericEvent) {
+    private onClearMeasurements = (e: GenericEvent) => {
         e.preventDefault();
         const { activeMapName } = this.props;
         if (activeMapName) {
@@ -100,10 +90,10 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
         }
         return false;
     }
-    private onStartMeasure(e: GenericEvent) {
+    private onStartMeasure = (e: GenericEvent) => {
         this.startMeasure();
     }
-    private onEndMeasure(e: GenericEvent) {
+    private onEndMeasure = (e: GenericEvent) => {
         this.endMeasure();
     }
     private startMeasure() {
@@ -187,21 +177,21 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
                 <label className="pt-label">
                     {tr("MEASUREMENT_TYPE", locale)}
                     <div className="pt-select">
-                        <select value={type} onChange={this.fnTypeChanged}>
+                        <select value={type} onChange={this.onTypeChanged}>
                             <option value="LineString">{tr("MEASUREMENT_TYPE_LENGTH", locale)}</option>
                             <option value="Polygon">{tr("MEASUREMENT_TYPE_AREA", locale)}</option>
                         </select>
                     </div>
                 </label>
                 <label className="pt-control pt-checkbox">
-                    <input type="checkbox" checked={geodesic} onChange={this.fnGeodesicChanged} />
+                    <input type="checkbox" checked={geodesic} onChange={this.onGeodesicChanged} />
                     <span className="pt-control-indicator" />
                     {tr("MEASUREMENT_USE_GEODESIC", locale)}
                 </label>
                 <div className="pt-button-group">
-                    <button type="button" className="pt-button pt-icon-play" disabled={measuring} onClick={this.fnStartMeasure}>{tr("MEASUREMENT_START", locale)}</button>
-                    <button type="button" className="pt-button pt-icon-stop" disabled={!measuring} onClick={this.fnEndMeasure}>{tr("MEASUREMENT_END", locale)}</button>
-                    <button type="button" className="pt-button pt-icon-cross" onClick={this.fnClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</button>
+                    <button type="button" className="pt-button pt-icon-play" disabled={measuring} onClick={this.onStartMeasure}>{tr("MEASUREMENT_START", locale)}</button>
+                    <button type="button" className="pt-button pt-icon-stop" disabled={!measuring} onClick={this.onEndMeasure}>{tr("MEASUREMENT_END", locale)}</button>
+                    <button type="button" className="pt-button pt-icon-cross" onClick={this.onClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</button>
                 </div>
                 {(() => {
                     if (this.state.measuring === true) {

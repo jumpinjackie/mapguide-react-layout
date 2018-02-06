@@ -105,49 +105,37 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAquaTemplateDispa
 export type AquaTemplateLayoutProps = Partial<IAquaTemplateLayoutState> & Partial<IAquaTemplateDispatch>;
 
 export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps, any> {
-    private fnHideTaskPane: () => void;
-    private fnHideLegend: () => void;
-    private fnHideSelection: () => void;
-    private fnHideOverviewMap: () => void;
-    private fnOverviewMapTargetMounted: (el: Element) => void;
-    private fnGetOverviewMapTarget: () => (Element | null);
     private ovMapTarget: Element | null;
     constructor(props: AquaTemplateLayoutProps) {
         super(props);
         this.ovMapTarget = null;
-        this.fnHideLegend = this.onHideLegend.bind(this);
-        this.fnHideOverviewMap = this.onHideOverviewMap.bind(this);
-        this.fnHideSelection = this.onHideSelection.bind(this);
-        this.fnHideTaskPane = this.onHideTaskPane.bind(this);
-        this.fnOverviewMapTargetMounted = this.onOverviewMapTargetMounted.bind(this);
-        this.fnGetOverviewMapTarget = this.getOverviewMapTarget.bind(this);
         this.state = {};
     }
-    private getOverviewMapTarget() {
+    private getOverviewMapTarget = () => {
         return this.ovMapTarget;
     }
-    private onOverviewMapTargetMounted(el: Element) {
+    private onOverviewMapTargetMounted = (el: Element) => {
         this.ovMapTarget = el;
     }
-    private onHideTaskPane() {
+    private onHideTaskPane = () => {
         const { hideTaskPane } = this.props;
         if (hideTaskPane) {
             hideTaskPane();
         }
     }
-    private onHideLegend() {
+    private onHideLegend = () => {
         const { hideLegend } = this.props;
         if (hideLegend) {
             hideLegend();
         }
     }
-    private onHideSelection() {
+    private onHideSelection = () => {
         const { hideSelection } = this.props;
         if (hideSelection) {
             hideSelection();
         }
     }
-    private onHideOverviewMap() {
+    private onHideOverviewMap = () => {
         this.setState({ isOverviewMapOpen: false });
     }
     private getLocale(): string {
@@ -242,7 +230,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                                     title={tr("TPL_TITLE_SELECTION_PANEL", locale)}
                                     backdrop={false}
                                     isOpen={!!showSelection}
-                                    onClose={this.fnHideSelection}>
+                                    onClose={this.onHideSelection}>
                             <PlaceholderComponent locale={locale} id={DefaultComponentNames.SelectionPanel} componentProps={{ maxHeight: SELECTION_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
                         </ModalDialog>;
                     }
@@ -255,7 +243,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                                     title={tr("TPL_TITLE_LEGEND", locale)}
                                     backdrop={false}
                                     isOpen={!!showLegend}
-                                    onClose={this.fnHideLegend}>
+                                    onClose={this.onHideLegend}>
                             <PlaceholderComponent locale={locale} id={DefaultComponentNames.Legend} componentProps={{ inlineBaseLayerSwitcher: false, maxHeight: LEGEND_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
                         </ModalDialog>;
                     }
@@ -268,7 +256,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                                     title={tr("TPL_TITLE_TASKPANE", locale)}
                                     backdrop={false}
                                     isOpen={!!showTaskPane}
-                                    onClose={this.fnHideTaskPane}>
+                                    onClose={this.onHideTaskPane}>
                             <PlaceholderComponent locale={locale} id={DefaultComponentNames.TaskPane} componentProps={{ maxHeight: TASK_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
                         </ModalDialog>;
                     }

@@ -120,25 +120,17 @@ const STATUS_BAR_HEIGHT = 18;
 const SIDEBAR_PADDING = 0;
 
 export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProps, any> {
-    private fnSplitterChanged: (size: number) => void;
-    private fnActivePanelChanged: (id: string) => void;
-    private fnDragStart: Function;
-    private fnDragEnd: Function;
     constructor(props: SlateLayoutTemplateProps) {
         super(props);
-        this.fnActivePanelChanged = this.onActivePanelChanged.bind(this);
-        this.fnSplitterChanged = this.onSplitterChanged.bind(this);
-        this.fnDragStart = this.onDragStart.bind(this);
-        this.fnDragEnd = this.onDragEnd.bind(this);
         this.state = { isResizing: false };
     }
-    private onDragStart() {
+    private onDragStart = () => {
         this.setState({ isResizing: true });
     }
-    private onDragEnd() {
+    private onDragEnd = () => {
         this.setState({ isResizing: false });
     }
-    private onSplitterChanged(size: number): void {
+    private onSplitterChanged = (size: number) => {
         //With the introduction of the splitter, we can no longer rely on a map 
         //filling 100% of its space without needing to manually call updateSize(),
         //so we do it here
@@ -150,7 +142,7 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
     private getLocale(): string {
         return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
-    private onActivePanelChanged(id: string): void {
+    private onActivePanelChanged = (id: string) => {
         const { setElementStates } = this.props;
         if (setElementStates) {
             const states: TemplateActions.IElementState = {
@@ -244,9 +236,9 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
         const TB_Z_INDEX = 0;
         return <div style={{ width: "100%", height: "100%" }}>
             <div style={{ position: "absolute", left: 0, top: 0, bottom: bottomOffset, right: 0 }}>
-                <SplitterLayout customClassName="slate-splitter" primaryIndex={1} secondaryInitialSize={SIDEBAR_WIDTH} onSecondaryPaneSizeChange={this.fnSplitterChanged} onDragStart={this.fnDragStart} onDragEnd={this.fnDragEnd}>
+                <SplitterLayout customClassName="slate-splitter" primaryIndex={1} secondaryInitialSize={SIDEBAR_WIDTH} onSecondaryPaneSizeChange={this.onSplitterChanged} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
                     <div>
-                        <Accordion style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0 }} onActivePanelChanged={this.fnActivePanelChanged} activePanelId={activeId} panels={panels} isResizing={isResizing} />
+                        <Accordion style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0 }} onActivePanelChanged={this.onActivePanelChanged} activePanelId={activeId} panels={panels} isResizing={isResizing} />
                     </div>
                     <div>
                         <ToolbarContainer id="FileMenu" containerClass="slate-file-menu" containerStyle={{ position: "absolute", left: 0, top: 0, zIndex: TB_Z_INDEX, right: 0 }} />

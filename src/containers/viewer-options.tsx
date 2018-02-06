@@ -157,7 +157,7 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
                     return <label className="pt-label">
                         {tr("MAP_SIZE_DISPLAY_UNITS", locale)}
                         <div className="pt-select">
-                            <select value={config.viewSizeUnits} onChange={this.fnViewSizeUnitsChanged}>
+                            <select value={config.viewSizeUnits} onChange={this.onViewSizeUnitsChanged}>
                                 {units.map(u => <option key={u[0]} value={u[0]}>{u[1]}</option>)}
                             </select>
                         </div>

@@ -341,25 +341,19 @@ interface IToolbarButtonProps {
 }
 
 class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
-    fnMouseLeave: GenericEventHandler;
-    fnMouseEnter: GenericEventHandler;
-    fnClick: GenericEventHandler;
     constructor(props: IToolbarButtonProps) {
         super(props);
-        this.fnMouseEnter = this.onMouseEnter.bind(this);
-        this.fnMouseLeave = this.onMouseLeave.bind(this);
-        this.fnClick = this.onClick.bind(this);
         this.state = {
             isMouseOver: false
         };
     }
-    onMouseLeave(e: any) {
+    private onMouseLeave = (e: any) => {
         this.setState({ isMouseOver: false });
     }
-    onMouseEnter(e: any) {
+    private onMouseEnter = (e: any) => {
         this.setState({ isMouseOver: true });
     }
-    onClick(e: any) {
+    private onClick = (e: any) => {
         e.preventDefault();
         const { item } = this.props;
         const enabled = getEnabled(item);
@@ -380,7 +374,7 @@ class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
         } else {
             ttip = item.tooltip;
         }
-        return <div className={`noselect toolbar-btn ${selected ? "selected-item" : ""} ${(this.state.isMouseOver && enabled) ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} style={style} title={ttip} onClick={this.fnClick}>
+        return <div className={`noselect toolbar-btn ${selected ? "selected-item" : ""} ${(this.state.isMouseOver && enabled) ? "mouse-over" : ""}`} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} style={style} title={ttip} onClick={this.onClick}>
             <Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {(vertical == true && hideVerticalLabels == true) ? null : item.label}
         </div>;
     }

@@ -19,8 +19,9 @@ import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import * as TemplateActions from "../actions/template";
 import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
-import { addUrlProps, UrlQueryParamTypes, replaceInUrlQuery } from 'react-url-query';
+import { addUrlProps, UrlQueryParamTypes } from 'react-url-query';
 import { IApplicationContext, APPLICATION_CONTEXT_VALIDATION_MAP } from "../components/context";
+import { safePropGet } from '../utils/safe-prop';
 
 const urlPropsQueryConfig = {
     urlX: { type: UrlQueryParamTypes.number, queryParam: "x" },
@@ -29,7 +30,11 @@ const urlPropsQueryConfig = {
     urlResource: { type: UrlQueryParamTypes.string, queryParam: "resource" },
     urlLocale: { type: UrlQueryParamTypes.string, queryParam: "locale" },
     urlSession: { type: UrlQueryParamTypes.string, queryParam: "session" },
-    urlMap: { type: UrlQueryParamTypes.string, queryParam: "map" }
+    urlMap: { type: UrlQueryParamTypes.string, queryParam: "map" },
+    urlShowLayers: { type: UrlQueryParamTypes.array, queryParam: "sl" },
+    urlHideLayers: { type: UrlQueryParamTypes.array, queryParam: "hl" },
+    urlShowGroups: { type: UrlQueryParamTypes.array, queryParam: "sg" },
+    urlHideGroups: { type: UrlQueryParamTypes.array, queryParam: "hg" },
 }
 
 /**
@@ -43,9 +48,13 @@ export interface IAppUrlStateProps {
     urlY?: number;
     urlScale?: number;
     urlMap?: string;
+    urlShowLayers?: string;
+    urlHideLayers?: string;
+    urlShowGroups?: string;
+    urlHideGroups?: string;
 }
 
-export type UrlValueChangeCallback = (value: string) => void;
+export type UrlValueChangeCallback = (value: any) => void;
 
 /**
  * Callback interface for propagating changes to URL state
@@ -56,6 +65,10 @@ export interface IAppUrlStateCallback {
     onChangeUrlScale: UrlValueChangeCallback;
     onChangeUrlSession: UrlValueChangeCallback;
     onChangeUrlMap: UrlValueChangeCallback;
+    onChangeUrlShowLayers: UrlValueChangeCallback;
+    onChangeUrlHideLayers: UrlValueChangeCallback;
+    onChangeUrlShowGroups: UrlValueChangeCallback;
+    onChangeUrlHideGroups: UrlValueChangeCallback;
 }
 
 export interface SelectionOptions {
@@ -263,31 +276,46 @@ export class App extends React.Component<AppProps, any> {
             this.setState({ isLoading: false });
         }
         if (nextProps.config && nextProps.config.activeMapName) {
-            const { onChangeUrlMap } = nextProps;
-            if (onChangeUrlMap) {
-                onChangeUrlMap(nextProps.config.activeMapName);
-            }
+            const am = nextProps.config.activeMapName;
+            safePropGet(nextProps, "onChangeUrlMap", func => func!(am));
         }
         if (nextProps.map) {
             if (nextProps.map.currentView) {
                 const { x, y, scale } = nextProps.map.currentView;
-                const { onChangeUrlX, onChangeUrlY, onChangeUrlScale } = nextProps;
-                if (onChangeUrlX) {
-                    onChangeUrlX(`${x}`);
-                }
-                if (onChangeUrlY) {
-                    onChangeUrlY(`${y}`);
-                }
-                if (onChangeUrlScale) {
-                    onChangeUrlScale(`${scale}`);
-                }
+                safePropGet(nextProps, "onChangeUrlX", func => func!(`${x}`));
+                safePropGet(nextProps, "onChangeUrlY", func => func!(`${y}`));
+                safePropGet(nextProps, "onChangeUrlScale", func => func!(`${scale}`));
             }
             if (nextProps.map.runtimeMap) {
-                const { SessionId } = nextProps.map.runtimeMap;
-                const { onChangeUrlSession } = nextProps;
-                if (onChangeUrlSession) {
-                    onChangeUrlSession(SessionId);
+                const { showGroups, showLayers, hideGroups, hideLayers } = nextProps.map;
+                const sg = [] as string[];
+                const hg = [] as string[];
+                const sl = [] as string[];
+                const hl = [] as string[];
+                if (nextProps.map.runtimeMap.Group) {
+                    for (const g of nextProps.map.runtimeMap.Group) {
+                        if (showGroups.indexOf(g.ObjectId) >= 0) {
+                            sg.push(g.Name);
+                        } else if (hideGroups.indexOf(g.ObjectId) >= 0) {
+                            hg.push(g.Name);
+                        }
+                    }
                 }
+                if (nextProps.map.runtimeMap.Layer) {
+                    for (const l of nextProps.map.runtimeMap.Layer) {
+                        if (showLayers.indexOf(l.ObjectId) >= 0) {
+                            sl.push(l.Name);
+                        } else if (hideLayers.indexOf(l.ObjectId) >= 0) {
+                            hl.push(l.Name);
+                        }
+                    }
+                }
+                safePropGet(nextProps, "onChangeUrlShowGroups", func => func!(sg));
+                safePropGet(nextProps, "onChangeUrlHideGroups", func => func!(hg));
+                safePropGet(nextProps, "onChangeUrlShowLayers", func => func!(sl));
+                safePropGet(nextProps, "onChangeUrlHideLayers", func => func!(hl));
+                const { SessionId } = nextProps.map.runtimeMap;
+                safePropGet(nextProps, "onChangeUrlSession", func => func!(SessionId));
             }
         }
     }

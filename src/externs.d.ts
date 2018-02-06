@@ -56,6 +56,7 @@ declare module "ismobilejs" {
 declare module "proj4";
 
 declare module "react-url-query" {
+    export const Serialize: Serialize;
     export function replaceInUrlQuery(key: string, value: string): void;
     export function configureUrlQuery(obj: any): void;
     export function addUrlProps<T>(config: any): (component: any) => any;

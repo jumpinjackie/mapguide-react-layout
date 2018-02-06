@@ -312,7 +312,7 @@ function getDesiredTargetMapName(mapDef: string) {
     const lastSlash = mapDef.lastIndexOf("/");
     const lastDot = mapDef.lastIndexOf(".");
     if (lastSlash >= 0 && lastDot >= 0 && lastDot > lastSlash) {
-        return `${mapDef.substring(lastSlash + 1, lastDot)}_${shortid.generate()}`;
+        return `${mapDef.substring(lastSlash + 1, lastDot)}`;
     } else {
         return `Map_${shortid.generate()}`;
     }
@@ -485,13 +485,13 @@ function getMapGuideMapGroup(appDef: ApplicationDefinition): MapSetGroup[] {
     return configs;
 }
 
-function getMapGuideConfiguration(appDef: ApplicationDefinition): MapConfiguration[] {
-    const configs = [] as MapConfiguration[];
+function getMapGuideConfiguration(appDef: ApplicationDefinition): [string, MapConfiguration][] {
+    const configs = [] as [string, MapConfiguration][];
     if (appDef.MapSet) {
         for (const mg of appDef.MapSet.MapGroup) {
             for (const map of mg.Map) {
                 if (map.Type == "MapGuide") {
-                    configs.push(map);
+                    configs.push([mg["@id"], map]);
                 }
             }
         }
@@ -499,10 +499,10 @@ function getMapGuideConfiguration(appDef: ApplicationDefinition): MapConfigurati
     return configs;
 }
 
-function getMapDefinitionsFromFlexLayout(appDef: ApplicationDefinition): string[] {
+function getMapDefinitionsFromFlexLayout(appDef: ApplicationDefinition): MapToLoad[] {
     const configs = getMapGuideConfiguration(appDef);
     if (configs.length > 0) {
-        return configs.map(c => c.Extension.ResourceId);
+        return configs.map(c => ({ name: c[0], mapDef: c[1].Extension.ResourceId }));
     }
     throw new MgError("No Map Definition found in Application Definition");
 }
@@ -570,18 +570,31 @@ interface IInitAsyncOptions extends IInitAppLayout {
     locale: string;
 }
 
-async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, opts: IInitAsyncOptions, res: TLayout, mapDefSelector: (res: TLayout) => string[], projectionSelector: (res: TLayout) => string[]): Promise<[Dictionary<RuntimeMap>, string[]]> {
+type MapToLoad = { name: string, mapDef: string };
+
+async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, opts: IInitAsyncOptions, res: TLayout, mapDefSelector: (res: TLayout) => MapToLoad[], projectionSelector: (res: TLayout) => string[], sessionWasReused: boolean): Promise<[Dictionary<RuntimeMap>, string[]]> {
     const mapDefs = mapDefSelector(res);
     const mapPromises: Promise<RuntimeMap>[] = [];
     const warnings = [] as string[];
-    for (const mapDef of mapDefs) {
-        const promise = client.createRuntimeMap({
-            mapDefinition: mapDef,
-            requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-            session: session,
-            targetMapName: `${getDesiredTargetMapName(mapDef)}`
-        });
-        mapPromises.push(promise);
+    for (const m of mapDefs) {
+        //sessionWasReused is a hint whether to create a new runtime map, or recover the last runtime map state from the given map name
+        if (sessionWasReused) {
+            //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
+            logger.info(`Session ID re-used. Recovering map state of: ${m.name}`);
+            mapPromises.push(client.describeRuntimeMap({
+                mapname: m.name,
+                requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+                session: session
+            }));
+        } else {
+            logger.info(`Creating runtime map state (${m.name}) for: ${m.mapDef}`);
+            mapPromises.push(client.createRuntimeMap({
+                mapDefinition: m.mapDef,
+                requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+                session: session,
+                targetMapName: m.name
+            }));
+        }
     }
     const maps = await Promise.all(mapPromises);
     const fetchEpsgs: { epsg: string, mapDef: string }[] = [];
@@ -610,8 +623,8 @@ async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, 
     return [mapsByName, warnings];
 }
 
-async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOptions, session: string, client: Client): Promise<IInitAppPayload> {
-    const [mapsByName, warnings] = await createRuntimeMapsAsync(client, session, opts, webLayout, wl => [ wl.Map.ResourceId ], wl => [])
+async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOptions, session: string, client: Client, sessionWasReused: boolean): Promise<IInitAppPayload> {
+    const [mapsByName, warnings] = await createRuntimeMapsAsync(client, session, opts, webLayout, wl => [ { name: getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId } ], wl => [], sessionWasReused);
     const cmdsByKey: any = {};
     //Register any InvokeURL and Search commands
     for (const cmd of webLayout.CommandSet.Command) {
@@ -724,8 +737,8 @@ async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOpti
     };
 }
 
-async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsyncOptions, session: string, client: Client): Promise<IInitAppPayload> {
-    const [mapsByName, warnings] = await createRuntimeMapsAsync(client, session, opts, appDef, fl => getMapDefinitionsFromFlexLayout(fl), fl => getExtraProjectionsFromFlexLayout(fl));
+async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsyncOptions, session: string, client: Client, sessionWasReused: boolean): Promise<IInitAppPayload> {
+    const [mapsByName, warnings] = await createRuntimeMapsAsync(client, session, opts, appDef, fl => getMapDefinitionsFromFlexLayout(fl), fl => getExtraProjectionsFromFlexLayout(fl), sessionWasReused);
     let initialTask: string;
     let taskPane: Widget|undefined;
     let viewSize: Widget|undefined;
@@ -847,15 +860,15 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
     };
 }
 
-async function sessionAcquiredAsync(opts: IInitAsyncOptions, session: string, client: Client): Promise<IInitAppPayload> {
+async function sessionAcquiredAsync(opts: IInitAsyncOptions, session: string, client: Client, sessionWasReused: boolean): Promise<IInitAppPayload> {
     if (!opts.resourceId) {
         throw new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", opts.locale));
     } else if (strEndsWith(opts.resourceId, "WebLayout")) {
         const wl = await client.getResource<WebLayout>(opts.resourceId, { SESSION: session });
-        return await initFromWebLayoutAsync(wl, opts, session, client);
+        return await initFromWebLayoutAsync(wl, opts, session, client, sessionWasReused);
     } else if (strEndsWith(opts.resourceId, "ApplicationDefinition")) {
         const fl = await client.getResource<ApplicationDefinition>(opts.resourceId, { SESSION: session });
-        return await initFromAppDefAsync(fl, opts, session, client);
+        return await initFromAppDefAsync(fl, opts, session, client, sessionWasReused);
     } else {
         throw new MgError(tr("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", opts.locale, { resourceId: opts.resourceId }));
     }
@@ -876,12 +889,14 @@ async function initAsync(options: IInitAsyncOptions, client: Client): Promise<II
         }
     }
     let session = options.session;
+    let sessionWasReused = false;
     if (!session) {
         session = await client.createSession("Anonymous", "");
     } else {
         logger.info(`Re-using session: ${session}`);
+        sessionWasReused = true;
     }
-    return await sessionAcquiredAsync(options, session, client);
+    return await sessionAcquiredAsync(options, session, client, sessionWasReused);
 }
 
 /**

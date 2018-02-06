@@ -5,8 +5,10 @@ import {
     IBranchedMapSubState,
     IExternalBaseLayer
 } from "../api/common";
+import { RuntimeMap } from "../api/contracts/runtime-map";
 import { isMapView, isCoordinate } from "../utils/type-guards";
 import { AnyAction } from "redux";
+import * as logger from "../utils/logger";
 import uniq = require("lodash.uniq");
 
 export const MAP_STATE_INITIAL_STATE: IBranchedMapState = {
@@ -71,12 +73,61 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
                             currentView: { ...payload.initialView }
                         };
                     }
+
+                    const sl = [];
+                    const sg = [];
+                    const hl = [];
+                    const hg = [];
+                    
+                    if (mapName == mapNameToApplyInitialView) {
+                        const rtm: RuntimeMap = maps[mapName].map;
+                        const isl = payload.initialShowLayers || [];
+                        const isg = payload.initialShowGroups || [];
+                        const ihl = payload.initialHideLayers || [];
+                        const ihg = payload.initialHideGroups || [];
+
+                        //Only initally show what is initially hidden and vice versa
+                        //NOTE: A map could have duplicate group/layer names, we make no attempt
+                        //to pick out the "correct" one. It's first come first serve.
+                        if (rtm.Layer) {
+                            for (const l of rtm.Layer) {
+                                if (isl.indexOf(l.Name) >= 0 && !l.Visible) {
+                                    sl.push(l.ObjectId);
+                                } else if (ihl.indexOf(l.Name) >= 0 && l.Visible) {
+                                    hl.push(l.ObjectId);
+                                }
+                            }
+                        }
+                        if (rtm.Group) {
+                            for (const g of rtm.Group) {
+                                if (isg.indexOf(g.Name) >= 0 && !g.Visible) {
+                                    sg.push(g.ObjectId);
+                                } else if (ihg.indexOf(g.Name) >= 0 && g.Visible) {
+                                    hg.push(g.ObjectId);
+                                }
+                            }
+                        }
+                        logger.debug(`Initially showing layers: ${isl.join("|")}`);
+                        logger.debug(`Initially showing groups: ${isg.join("|")}`);
+                        logger.debug(`Initially hiding layers: ${ihl.join("|")}`);
+                        logger.debug(`Initially hiding groups: ${ihg.join("|")}`);
+
+                        logger.debug(`Initially showing layer ids: ${sl.join("|")}`);
+                        logger.debug(`Initially showing group ids: ${sg.join("|")}`);
+                        logger.debug(`Initially hiding layer ids: ${hl.join("|")}`);
+                        logger.debug(`Initially hiding group ids: ${hg.join("|")}`);
+                    }
+
                     newState[mapName] = {
                         ...MAP_STATE_INITIAL_SUB_STATE,
                         ...{ runtimeMap: maps[mapName].map },
                         ...{ externalBaseLayers: maps[mapName].externalBaseLayers },
                         ...{ initialView: maps[mapName].initialView },
-                        ...(cv || {})
+                        ...(cv || {}),
+                        ...(sl.length > 0 ? { showLayers: [ ...sl ] } : {}),
+                        ...(sg.length > 0 ? { showGroups: [ ...sg ] } : {}),
+                        ...(hl.length > 0 ? { hideLayers: [ ...hl ] } : {}),
+                        ...(hg.length > 0 ? { hideGroups: [ ...hg ] } : {})
                     };
                 }
                 

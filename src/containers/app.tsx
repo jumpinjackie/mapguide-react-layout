@@ -48,10 +48,10 @@ export interface IAppUrlStateProps {
     urlY?: number;
     urlScale?: number;
     urlMap?: string;
-    urlShowLayers?: string;
-    urlHideLayers?: string;
-    urlShowGroups?: string;
-    urlHideGroups?: string;
+    urlShowLayers?: string[];
+    urlHideLayers?: string[];
+    urlShowGroups?: string[];
+    urlHideGroups?: string[];
 }
 
 export type UrlValueChangeCallback = (value: any) => void;
@@ -225,7 +225,11 @@ export class App extends React.Component<AppProps, any> {
             urlX,
             urlY,
             urlScale,
-            urlMap
+            urlMap,
+            urlShowLayers,
+            urlHideLayers,
+            urlShowGroups,
+            urlHideGroups
         } = this.props;
         if (setElementVisibility && initialElementVisibility) {
             const { taskpane, legend, selection } = initialElementVisibility;
@@ -257,6 +261,30 @@ export class App extends React.Component<AppProps, any> {
                     }
                 };
             }
+            let slArgs: Partial<IInitAppLayout> | undefined;
+            if (urlShowLayers) {
+                slArgs = {
+                    initialShowLayers: [...urlShowLayers]
+                };
+            }
+            let hlArgs: Partial<IInitAppLayout> | undefined;
+            if (urlHideLayers) {
+                hlArgs = {
+                    initialHideLayers: [...urlHideLayers]
+                };
+            }
+            let sgArgs: Partial<IInitAppLayout> | undefined;
+            if (urlShowGroups) {
+                sgArgs = {
+                    initialShowGroups: [...urlShowGroups]
+                };
+            }
+            let hgArgs: Partial<IInitAppLayout> | undefined;
+            if (urlHideGroups) {
+                hgArgs = {
+                    initialHideGroups: [...urlHideGroups]
+                };
+            }
             const args: IInitAppLayout = {
                 ...{
                     resourceId: urlResource || resourceId,
@@ -266,7 +294,11 @@ export class App extends React.Component<AppProps, any> {
                     onInit: onInit
                 },
                 ...(amArgs || {}),
-                ...(ivArgs || {})
+                ...(ivArgs || {}),
+                ...(slArgs || {}),
+                ...(hlArgs || {}),
+                ...(sgArgs || {}),
+                ...(hgArgs || {})
             };
             initLayout(args);
         }

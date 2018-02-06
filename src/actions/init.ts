@@ -62,6 +62,10 @@ interface IInitAppPayload {
         hasToolbar: boolean,
         hasViewSize: boolean
     },
+    initialShowLayers?: string[];
+    initialShowGroups?: string[];
+    initialHideLayers?: string[];
+    initialHideGroups?: string[];
     toolbars: any;
     warnings: string[]
 }
@@ -561,6 +565,10 @@ export interface IInitAppLayout {
     session?: string;
     initialView?: IMapView;
     initialActiveMap?: string;
+    initialShowLayers?: string[];
+    initialShowGroups?: string[];
+    initialHideLayers?: string[];
+    initialHideGroups?: string[];
     onInit?: (viewer: IMapViewer) => void;
 }
 
@@ -920,6 +928,10 @@ export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
                 if (opts.initialActiveMap) {
                     initPayload.activeMapName = opts.initialActiveMap;
                 }
+                initPayload.initialHideGroups = opts.initialHideGroups;
+                initPayload.initialHideLayers = opts.initialHideLayers;
+                initPayload.initialShowGroups = opts.initialShowGroups;
+                initPayload.initialShowLayers = opts.initialShowLayers;
                 dispatch({
                     type: Constants.INIT_APP,
                     payload

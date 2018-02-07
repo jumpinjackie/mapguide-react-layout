@@ -62,7 +62,6 @@ export class Accordion extends React.Component<IAccordionProps, any> {
         };
     }
     private onTogglePanel = (e: GenericEvent) => {
-        const { onActivePanelChanged } = this.props;
         const id = e.currentTarget.attributes["data-accordion-panel-id"].value;
         if (this.state.openPanel != id) {
             this.setState({ openPanel: id }, () => {

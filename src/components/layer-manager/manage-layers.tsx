@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Tree, ITreeNode } from "@blueprintjs/core";
 import { ILayerInfo, GenericEvent, GenericEventHandler } from "../../api/common";
+import { safePropAccess } from '../../utils/safe-prop';
 
 export interface IManageLayersProps {
     layers: ILayerInfo[];
@@ -23,23 +24,20 @@ export class ManageLayers extends React.Component<IManageLayersProps, any> {
     }
     private onMoveLayerDown = (e: GenericEvent) => {
         const { selectedNode } = this.state;
-        const { onMoveLayerDown } = this.props;
-        if (selectedNode && onMoveLayerDown) {
-            onMoveLayerDown(selectedNode.id);
+        if (selectedNode) {
+            safePropAccess(this.props, "onMoveLayerDown", func => func(selectedNode.id));
         }
     }
     private onMoveLayerUp = (e: GenericEvent) => {
         const { selectedNode } = this.state;
-        const { onMoveLayerUp } = this.props;
-        if (selectedNode && onMoveLayerUp) {
-            onMoveLayerUp(selectedNode.id);
+        if (selectedNode) {
+            safePropAccess(this.props, "onMoveLayerUp", func => func(selectedNode.id));
         }
     }
     private onRemoveLayer = (e: GenericEvent) => {
         const { selectedNode } = this.state;
-        const { onRemoveLayer } = this.props;
-        if (selectedNode && onRemoveLayer) {
-            onRemoveLayer(selectedNode.id);
+        if (selectedNode) {
+            safePropAccess(this.props, "onRemoveLayer", func => func(selectedNode.id));
             this.setState({ selectedNode: null });
         }
     }

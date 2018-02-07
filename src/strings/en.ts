@@ -9,6 +9,7 @@ const STRINGS_EN: ILocalizedMessages = {
     "INIT_WARNING_BING_API_KEY_REQD": "A Bing Maps API key is required. Sign up for an API key at http://www.bingmapsportal.com/",
     "INIT_WARNING_BING_UNKNOWN_LAYER": "Unknown bing maps layer type {type}. This layer was skipped",
     "INIT_WARNING_UNSUPPORTED_GOOGLE_MAPS": "This viewer does not support Google Maps base layers",
+    "INIT_WARNING_NO_CONTEXT_MENU": "Could not find the context menu configuration. Right-clicking the map will show an empty context menu. If you are loading from a Flexible Layout, it must have a container named '{containerName}'",
     "LAYER_TRANSPARENCY": "Layer Transparency",
     "LAYER_ID_BASE": "Base Layers",
     "LAYER_ID_MG_BASE": "MapGuide Map",

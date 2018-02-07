@@ -259,12 +259,17 @@ function convertToCommandTarget(fusionCmdTarget: string): CommandTarget {
     }
 }
 
-function prepareSubMenus(tbConf: any): any {
+function prepareSubMenus(tbConf: any): [any, boolean] {
     const prepared: any = {
         toolbars: {},
         flyouts: {}
     };
+    let bFoundContextMenu = false;
     for (const key in tbConf) {
+        if (key == Constants.WEBLAYOUT_CONTEXTMENU) {
+            bFoundContextMenu = true;
+        }
+
         //Special case: Task pane. Transfer all to flyout
         if (key == Constants.WEBLAYOUT_TASKMENU) {
             const flyoutId = key;
@@ -295,7 +300,7 @@ function prepareSubMenus(tbConf: any): any {
             }
         }
     }
-    return prepared;
+    return [prepared, bFoundContextMenu]
 }
 
 async function resolveProjectionAsync(epsg: string, opts: IInitAsyncOptions, mapDef: string): Promise<any> {
@@ -722,6 +727,7 @@ async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOpti
         items: contextMenu
     };
     
+    const tb = prepareSubMenus(menus)[0];
     return {
         activeMapName: firstMapName,
         initialUrl: ensureParameters(webLayout.TaskPane.InitialTask || "server/TaskPane.html", firstMapName, firstSessionId, opts.locale),
@@ -738,7 +744,7 @@ async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOpti
             hasToolbar: webLayout.ToolBar.Visible,
             hasViewSize: webLayout.StatusBar.Visible
         },
-        toolbars: prepareSubMenus(menus),
+        toolbars: tb,
         warnings: warnings
     };
 }
@@ -845,6 +851,10 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
             break;
         }
     }
+    const [tb, bFoundContextMenu] = prepareSubMenus(tbConf);
+    if (!bFoundContextMenu) {
+        warnings.push(tr("INIT_WARNING_NO_CONTEXT_MENU", opts.locale, { containerName: Constants.WEBLAYOUT_CONTEXTMENU }));
+    }
     return {
         activeMapName: firstMapName,
         initialUrl: ensureParameters(initialTask, firstMapName, firstSessionId, opts.locale),
@@ -861,7 +871,7 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
             hasToolbar: (Object.keys(tbConf).length > 0),
             hasViewSize: (viewSize != null)
         },
-        toolbars: prepareSubMenus(tbConf),
+        toolbars: tb,
         warnings: warnings
     };
 }

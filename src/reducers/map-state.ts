@@ -59,16 +59,13 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
                 const maps = payload.maps;
                 const mapKeys = Object.keys(maps);
                 const newState: Partial<IBranchedMapState> = {};
-                let mapNameToApplyInitialView;
-                if (payload.initialView) {
-                    mapNameToApplyInitialView = payload.activeMapName;
-                    if (!mapNameToApplyInitialView && mapKeys.length == 1) {
-                        mapNameToApplyInitialView = mapKeys[0];
-                    }
+                let mapNameToApplyInitialState = payload.activeMapName;
+                if (!mapNameToApplyInitialState && mapKeys.length == 1) {
+                    mapNameToApplyInitialState = mapKeys[0];
                 }
                 for (const mapName of mapKeys) {
                     let cv: Partial<IBranchedMapSubState> | undefined;
-                    if (payload.initialView && mapName == mapNameToApplyInitialView) {
+                    if (payload.initialView && mapName == mapNameToApplyInitialState) {
                         cv = {
                             currentView: { ...payload.initialView }
                         };
@@ -79,7 +76,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
                     const hl = [];
                     const hg = [];
                     
-                    if (mapName == mapNameToApplyInitialView) {
+                    if (mapName == mapNameToApplyInitialState) {
                         const rtm: RuntimeMap = maps[mapName].map;
                         const isl = payload.initialShowLayers || [];
                         const isg = payload.initialShowGroups || [];

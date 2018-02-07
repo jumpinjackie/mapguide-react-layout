@@ -209,6 +209,10 @@ export interface IMapViewerContextProps {
     agentUri: string;
     externalBaseLayers?: IExternalBaseLayer[];
     locale?: string;
+    showGroups?: string[];
+    showLayers?: string[];
+    hideGroups?: string[];
+    hideLayers?: string[];
 }
 
 export class MgLayerSet {
@@ -754,6 +758,7 @@ export class MapViewerContext {
         if (!this._activeMapName) {
             this._activeMapName = props.map.Name;
         }
+        layerSet.update(props.showGroups, props.showLayers, props.hideGroups, props.hideLayers);
         return layerSet;
     }
     public initContext(layerSet: MgLayerSet, overviewMapElementSelector?: () => (Element | null)) {

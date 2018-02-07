@@ -94,7 +94,7 @@
     "enzyme-adapter-react-16": "1.1.1",
     "file-loader": "1.1.6",
     "fork-ts-checker-webpack-plugin": "^0.3.0",
-    "jest": "22.1.4",
+    "jest": "22.2.0",
     "jsonfile": "4.0.0",
     "less": "2.7.3",
     "less-loader": "4.0.5",

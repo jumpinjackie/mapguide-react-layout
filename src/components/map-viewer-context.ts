@@ -121,14 +121,16 @@ class FeatureQueryTooltip {
         this.map = map;
         this.map.addOverlay(this.featureTooltip);
         this.throttledMouseMove = debounce((e: GenericEvent) => {
-            const box = this.callback.getPointSelectionBox(e.pixel);
-            const geom = olPolygon.fromExtent(box);
-            const coords: Coordinate = e.coordinate;
-            logger.debug(`[${new Date()}] FeatureTooltip - onMouseMove (${box[0]}, ${box[1]}) (${box[2]}, ${box[3]})`);
-            this.sendTooltipQuery(geom);
+            this.raiseQueryFromPoint(e.pixel);
         }, 1000);
         this.enabled = true;
         this.isMouseOverTooltip = false;
+    }
+    public raiseQueryFromPoint(pixel: [number, number]) {
+        const box = this.callback.getPointSelectionBox(pixel);
+        const geom = olPolygon.fromExtent(box);
+        logger.debug(`[${new Date()}] FeatureTooltip - onMouseMove (${box[0]}, ${box[1]}) (${box[2]}, ${box[3]})`);
+        this.sendTooltipQuery(geom);
     }
     public onMouseMove(e: GenericEvent) {
         this.throttledMouseMove(e);
@@ -818,6 +820,11 @@ export class MapViewerContext {
     public handleMouseTooltipMouseMove(e: GenericEvent) {
         if (this._mouseTooltip) {
             this._mouseTooltip.onMouseMove(e);
+        }
+    }
+    public queryFeatureTooltip(pixel: [number, number]) {
+        if (this._featureTooltip && this._featureTooltip.isEnabled()) {
+            this._featureTooltip.raiseQueryFromPoint(pixel);
         }
     }
     public handleFeatureTooltipMouseMove(e: GenericEvent) {

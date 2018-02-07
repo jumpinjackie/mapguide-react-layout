@@ -137,6 +137,7 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
     loadIndicatorColor: string;
     activeSelectedFeatureXml?: string;
     activeSelectedFeatureColor: string;
+    manualFeatureTooltips: boolean;
 }
 
 /**
@@ -383,7 +384,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         if (this.isDigitizing()) {
             return;
         }
-        if (this.props.tool === ActiveMapTool.Select) {
+        if (this.props.manualFeatureTooltips && this.props.featureTooltipsEnabled) {
+            this._mapContext.queryFeatureTooltip(e.pixel);
+        } else if (this.props.tool === ActiveMapTool.Select) {
             const ptBuffer = this.props.pointSelectionBuffer || 2;
             const box = this.getPointSelectionBox(e.pixel, ptBuffer);
             const geom = Polygon.fromExtent(box);
@@ -551,7 +554,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         //if (this._featureTooltip && this._featureTooltip.isEnabled()) {
         //    this._featureTooltip.onMouseMove(e);
         //}
-        this._mapContext.handleFeatureTooltipMouseMove(e);
+        if (!this.props.manualFeatureTooltips) {
+            this._mapContext.handleFeatureTooltipMouseMove(e);
+        }
         if (this.props.onMouseCoordinateChanged != null) {
             this.props.onMouseCoordinateChanged(e.coordinate);
         }

@@ -7,6 +7,15 @@ import configureStore from "../store/configure-store";
 import { CONFIG_INITIAL_STATE } from "../reducers/config";
 import { getCommand as getRegisteredCommand } from "../api/registry/command";
 
+export interface IApplicationMountOptions {
+    /**
+     * Initial configuration settings to apply.
+     */
+    initialConfig: {
+        manualFeatureTooltips: boolean
+    }
+}
+
 /**
  * This is the entry point to the Application component
  *
@@ -52,16 +61,16 @@ export class ApplicationViewModel {
      * sure to call this method must on the template's HTML.
      *
      * @param {Element} node
-     * @param {IAppProps} props
+     * @param {IAppProps & IApplicationMountOptions} props
      *
      * @memberof ApplicationViewModel
      */
-    public mount(node: Element, props: IAppProps) {
+    public mount(node: Element, props: IAppProps & IApplicationMountOptions) {
         const agentConf = {
             agentUri: props.agent.uri,
             agentKind: props.agent.kind || "mapagent"
         };
-        const initState = { ...{ config: { ...CONFIG_INITIAL_STATE, ...agentConf } }, ...this.getExtraInitialState() };
+        const initState = { ...{ config: { ...CONFIG_INITIAL_STATE, ...agentConf, ...(props.initialConfig || {}) } }, ...this.getExtraInitialState() };
         const extraReducers = this.getExtraReducers();
         this._store = configureStore(initState, extraReducers);
         ReactDOM.render(<Provider store={this._store}>

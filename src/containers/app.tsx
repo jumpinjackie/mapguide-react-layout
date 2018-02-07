@@ -128,6 +128,9 @@ export interface IAppProps {
     externalBaseLayers?: IExternalBaseLayer[];
     onInit?: (viewer: IMapViewer) => void;
     locale?: string;
+    /**
+     * Settings that control the selection panel (if provided by the template)
+     */
     selectionSettings?: SelectionOptions;
 }
 

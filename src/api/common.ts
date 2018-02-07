@@ -1456,6 +1456,16 @@ export interface IConfigurationReducerState {
      * @memberof IConfigurationReducerState
      */
     viewSizeUnits: UnitOfMeasure;
+    /**
+     * If specified and true and the MapTip component is active, then feature tooltips are activated
+     * by mouse click instead of idle mouse cursor at a given point on the map for a certain period of time. 
+     * 
+     * An active MapTip component with this setting enabled will override normal click-based selection.
+     * 
+     * @type {boolean}
+     * @memberof IConfigurationReducerState
+     */
+    manualFeatureTooltips: boolean;
 }
 
 /**

@@ -20,6 +20,7 @@ export const CONFIG_INITIAL_STATE: IConfigurationReducerState = {
     viewRotation: 0,
     viewRotationEnabled: true,
     viewSizeUnits: UnitOfMeasure.Meters,
+    manualFeatureTooltips: false,
     coordinates: {
         decimals: 6
     } as ICoordinateConfiguration,

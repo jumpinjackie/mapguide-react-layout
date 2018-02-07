@@ -286,6 +286,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                     viewRotation={config.viewRotation}
                                     viewRotationEnabled={config.viewRotationEnabled}
                                     featureTooltipsEnabled={viewer.featureTooltipsEnabled}
+                                    manualFeatureTooltips={config.manualFeatureTooltips}
                                     showGroups={showGroups}
                                     hideGroups={hideGroups}
                                     showLayers={showLayers}

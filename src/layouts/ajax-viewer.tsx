@@ -110,32 +110,36 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
                         })()}
                         <div style={{ position: "absolute", left: 0, top: topOffset, bottom: 0, right: 0 }}>
                             <SplitterLayout customClassName="ajax-viewer-splitter" primaryIndex={1} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={this.onSplitterChanged}>
-                                <SplitterLayout customClassName="ajax-viewer-splitter" vertical={true} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
-                                    {(() => {
-                                        if (hasLegend) {
-                                            return <div className="ajax-sidebar-panel" style={lgStyle}>
-                                                <div className="ajax-sidebar-panel-heading">
-                                                    <p>{tr("TPL_TITLE_LEGEND", locale)}</p>
-                                                </div>
-                                                <div className="ajax-sidebar-panel-body">
-                                                    <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: true }} />
-                                                </div>
-                                            </div>;
-                                        }
-                                    })()}
-                                    {(() => {
-                                        if (hasSelectionPanel) {
-                                            return <div className="ajax-sidebar-panel" style={selStyle}>
-                                                <div className="ajax-sidebar-panel-heading">
-                                                    <p>{tr("TPL_TITLE_SELECTION_PANEL", locale)}</p>
-                                                </div>
-                                                <div className="ajax-sidebar-panel-body">
-                                                    <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
-                                                </div>
-                                            </div>;
-                                        }
-                                    })()}
-                                </SplitterLayout>
+                                {(() => {
+                                    if (hasLegend || hasSelectionPanel) {
+                                        return <SplitterLayout customClassName="ajax-viewer-splitter" vertical={true} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
+                                            {(() => {
+                                                if (hasLegend) {
+                                                    return <div className="ajax-sidebar-panel" style={lgStyle}>
+                                                        <div className="ajax-sidebar-panel-heading">
+                                                            <p>{tr("TPL_TITLE_LEGEND", locale)}</p>
+                                                        </div>
+                                                        <div className="ajax-sidebar-panel-body">
+                                                            <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: true }} />
+                                                        </div>
+                                                    </div>;
+                                                }
+                                            })()}
+                                            {(() => {
+                                                if (hasSelectionPanel) {
+                                                    return <div className="ajax-sidebar-panel" style={selStyle}>
+                                                        <div className="ajax-sidebar-panel-heading">
+                                                            <p>{tr("TPL_TITLE_SELECTION_PANEL", locale)}</p>
+                                                        </div>
+                                                        <div className="ajax-sidebar-panel-body">
+                                                            <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
+                                                        </div>
+                                                    </div>;
+                                                }
+                                            })()}
+                                        </SplitterLayout>;
+                                    }
+                                })()}
                                 <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
                                     <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />
                                     {(() => {

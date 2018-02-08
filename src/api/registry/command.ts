@@ -246,6 +246,19 @@ function isSearchCommand(cmdDef: any): cmdDef is ISearchCommand {
     return typeof cmdDef.layer !== 'undefined';
 }
 
+function openModalUrl(name: string, dispatch: ReduxDispatch, url: string, modalTitle?: string) {
+    dispatch(ModalActions.showModalUrl({
+        modal: {
+            title: modalTitle || tr(name as any),
+            backdrop: false,
+            size: DEFAULT_MODAL_SIZE,
+            overflowYScroll: true
+        },
+        name: name,
+        url: url
+    }));
+}
+
 /**
  * Opens the given URL in the specified target
  *
@@ -255,26 +268,22 @@ function isSearchCommand(cmdDef: any): cmdDef is ISearchCommand {
  * @param dispatch
  * @param url
  */
-export function openUrlInTarget(name: string, cmdDef: ITargetedCommand, dispatch: ReduxDispatch, url: string, modalTitle?: string): void {
+export function openUrlInTarget(name: string, cmdDef: ITargetedCommand, hasTaskPane: boolean, dispatch: ReduxDispatch, url: string, modalTitle?: string): void {
     const target = cmdDef.target;
     if (target == "TaskPane") {
-        dispatch({
-            type: Constants.TASK_INVOKE_URL,
-            payload: {
-                url: url
-            }
-        });
+        //If there's no actual task pane, fallback to modal dialog
+        if (!hasTaskPane) {
+            openModalUrl(name, dispatch, url, modalTitle);
+        } else {
+            dispatch({
+                type: Constants.TASK_INVOKE_URL,
+                payload: {
+                    url: url
+                }
+            });
+        }
     } else if (target == "NewWindow") {
-        dispatch(ModalActions.showModalUrl({
-            modal: {
-                title: modalTitle || tr(name as any),
-                backdrop: false,
-                size: DEFAULT_MODAL_SIZE,
-                overflowYScroll: true
-            },
-            name: name,
-            url: url
-        }));
+        openModalUrl(name, dispatch, url, modalTitle);
     } else if (target == "SpecifiedFrame") {
         if (cmdDef.targetFrame) {
             const frames = (window as any).frames as any[];
@@ -324,7 +333,7 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                 const target = cmdDef.target;
                 if (map) {
                     const url = ensureParameters(cmdDef.url, map.Name, map.SessionId, config.locale, true, cmdDef.parameters);
-                    openUrlInTarget(name, cmdDef, dispatch, url);
+                    openUrlInTarget(name, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
                 }
             }
         };
@@ -350,7 +359,7 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                         + `&limit=${cmdDef.matchLimit}`
                         + `&properties=${(cmdDef.resultColumns.Column || []).map(col => col.Property).join(",")}`
                         + `&propNames=${(cmdDef.resultColumns.Column || []).map(col => col.Name).join(",")}`;
-                    openUrlInTarget(name, cmdDef, dispatch, url);
+                    openUrlInTarget(name, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
                 }
             }
         };

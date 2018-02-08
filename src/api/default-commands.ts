@@ -275,7 +275,7 @@ export function initDefaultCommands() {
             const config = getState().config;
             const url = "component://Measure";
             const cmdDef = buildTargetedCommand(config, parameters);
-            openUrlInTarget(DefaultCommands.Measure, cmdDef, dispatch, url, tr("MEASURE", config.locale));
+            openUrlInTarget(DefaultCommands.Measure, cmdDef, config.capabilities.hasTaskPane, dispatch, url, tr("MEASURE", config.locale));
         }
     });
     //Quick Plot
@@ -287,7 +287,7 @@ export function initDefaultCommands() {
             const config = getState().config;
             const url = "component://QuickPlot";
             const cmdDef = buildTargetedCommand(config, parameters);
-            openUrlInTarget(DefaultCommands.QuickPlot, cmdDef, dispatch, url);
+            openUrlInTarget(DefaultCommands.QuickPlot, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
         }
     });
     //Viewer Options
@@ -299,7 +299,7 @@ export function initDefaultCommands() {
             const config = getState().config;
             const url = "component://ViewerOptions";
             const cmdDef = buildTargetedCommand(config, parameters);
-            openUrlInTarget(DefaultCommands.ViewerOptions, cmdDef, dispatch, url, tr("VIEWER_OPTIONS", config.locale));
+            openUrlInTarget(DefaultCommands.ViewerOptions, cmdDef, config.capabilities.hasTaskPane, dispatch, url, tr("VIEWER_OPTIONS", config.locale));
         }
     });
     //Select Radius
@@ -497,7 +497,7 @@ export function initDefaultCommands() {
                 let url = ensureParameters(`${getFusionRoot()}/widgets/BufferPanel/BufferPanel.php`, map.Name, map.SessionId, config.locale, false);
                 url += "&popup=false&us=0";
                 const cmdDef = buildTargetedCommand(config, parameters);
-                openUrlInTarget(DefaultCommands.Buffer, cmdDef, dispatch, url);
+                openUrlInTarget(DefaultCommands.Buffer, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
             }
         }
     });
@@ -514,7 +514,7 @@ export function initDefaultCommands() {
                 let url = ensureParameters(`${getFusionRoot()}/widgets/SelectWithin/SelectWithinPanel.php`, map.Name, map.SessionId, config.locale, false);
                 url += "&popup=false";
                 const cmdDef = buildTargetedCommand(config, parameters);
-                openUrlInTarget(DefaultCommands.SelectWithin, cmdDef, dispatch, url);
+                openUrlInTarget(DefaultCommands.SelectWithin, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
             }
         }
     });
@@ -532,7 +532,7 @@ export function initDefaultCommands() {
                 let url = ensureParameters(`${getFusionRoot()}/widgets/Redline/markupmain.php`, map.Name, map.SessionId, config.locale, true);
                 url += "&POPUP=false&REDLINESTYLIZATION=ADVANCED";
                 const cmdDef = buildTargetedCommand(config, parameters);
-                openUrlInTarget(DefaultCommands.Redline, cmdDef, dispatch, url);
+                openUrlInTarget(DefaultCommands.Redline, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
             }
         }
     });
@@ -548,7 +548,7 @@ export function initDefaultCommands() {
             if (map) {
                 const url = ensureParameters(`${getFusionRoot()}/widgets/FeatureInfo/featureinfomain.php`, map.Name, map.SessionId, config.locale, true);
                 const cmdDef = buildTargetedCommand(config, parameters);
-                openUrlInTarget(DefaultCommands.FeatureInfo, cmdDef, dispatch, url);
+                openUrlInTarget(DefaultCommands.FeatureInfo, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
             }
         }
     });
@@ -564,7 +564,7 @@ export function initDefaultCommands() {
             if (map) {
                 const url = ensureParameters(`${getFusionRoot()}/widgets/Query/querymain.php`, map.Name, map.SessionId, config.locale, true);
                 const cmdDef = buildTargetedCommand(config, parameters);
-                openUrlInTarget(DefaultCommands.Query, cmdDef, dispatch, url);
+                openUrlInTarget(DefaultCommands.Query, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
             }
         }
     });
@@ -580,7 +580,7 @@ export function initDefaultCommands() {
             if (map) {
                 const url = ensureParameters(`${getFusionRoot()}/widgets/Theme/thememain.php`, map.Name, map.SessionId, config.locale, true);
                 const cmdDef = buildTargetedCommand(config, parameters);
-                openUrlInTarget(DefaultCommands.Theme, cmdDef, dispatch, url);
+                openUrlInTarget(DefaultCommands.Theme, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
             }
         }
     });
@@ -593,7 +593,7 @@ export function initDefaultCommands() {
             const config = getState().config;
             const url = `component://CoordinateTracker?${(parameters.Projection || []).map((p: string) => "projections=" + p).join("&")}`;
             const cmdDef = buildTargetedCommand(config, parameters);
-            openUrlInTarget(DefaultCommands.CoordinateTracker, cmdDef, dispatch, url, tr("COORDTRACKER", config.locale));
+            openUrlInTarget(DefaultCommands.CoordinateTracker, cmdDef, config.capabilities.hasTaskPane, dispatch, url, tr("COORDTRACKER", config.locale));
         }
     });
     //Add WMS Layer
@@ -605,7 +605,7 @@ export function initDefaultCommands() {
             const config = getState().config;
             const url = `component://${DefaultComponentNames.AddManageLayers}`;
             const cmdDef = buildTargetedCommand(config, parameters);
-            openUrlInTarget(DefaultCommands.AddManageLayers, cmdDef, dispatch, url, tr("ADD_MANAGE_LAYERS", config.locale));
+            openUrlInTarget(DefaultCommands.AddManageLayers, cmdDef, config.capabilities.hasTaskPane, dispatch, url, tr("ADD_MANAGE_LAYERS", config.locale));
         }
     });
 

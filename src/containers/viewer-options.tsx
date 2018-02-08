@@ -16,6 +16,7 @@ import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { Slider } from "@blueprintjs/core";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from "../constants/index";
 import { getUnits } from "../utils/units";
+import { safePropAccess } from '../utils/safe-prop';
 
 export interface IViewerOptionsProps {
 
@@ -30,6 +31,7 @@ export interface IViewerOptionsState {
 }
 
 export interface IViewerOptionsDispatch {
+    toggleManualMapTips: (enabled: boolean) => void;
     toggleMapTips: (enabled: boolean) => void;
     setLayerTransparency: (mapName: string, id: string, opacity: number) => void;
     setViewSizeDisplayUnits: (units: UnitOfMeasure) => void;
@@ -55,6 +57,7 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IViewerOp
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IViewerOptionsDispatch> {
     return {
+        toggleManualMapTips: (enabled) => dispatch(MapActions.setManualFeatureTooltipsEnabled(enabled)),
         toggleMapTips: (enabled) => dispatch(MapActions.setFeatureTooltipsEnabled(enabled)),
         setLayerTransparency: (mapName, id, opacity) => dispatch(MapActions.setLayerTransparency(mapName, id, opacity)),
         setViewSizeDisplayUnits: (units) => dispatch(MapActions.setViewSizeUnits(units))
@@ -68,34 +71,28 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
         super(props);
     }
     private onBaseOpacityChanged = (value: number) => {
-        const { setLayerTransparency, mapName } = this.props;
-        if (mapName && setLayerTransparency) {
-            setLayerTransparency(mapName, LAYER_ID_BASE, value);
-        }
+        safePropAccess(this.props, "mapName", mn => {
+            safePropAccess(this.props, "setLayerTransparency", func => func!(mn!, LAYER_ID_BASE, value));
+        });
     }
     private onMgOpacityChanged = (value: number) => {
-        const { setLayerTransparency, mapName } = this.props;
-        if (mapName && setLayerTransparency) {
-            setLayerTransparency(mapName, LAYER_ID_MG_BASE, value);
-        }
+        safePropAccess(this.props, "mapName", mn => {
+            safePropAccess(this.props, "setLayerTransparency", func => func!(mn!, LAYER_ID_MG_BASE, value));
+        });
     }
     private onMgSelOpacityChanged = (value: number) => {
-        const { setLayerTransparency, mapName } = this.props;
-        if (mapName && setLayerTransparency) {
-            setLayerTransparency(mapName, LAYER_ID_MG_SEL_OVERLAY, value);
-        }
+        safePropAccess(this.props, "mapName", mn => {
+            safePropAccess(this.props, "setLayerTransparency", func => func!(mn!, LAYER_ID_MG_SEL_OVERLAY, value));
+        });
     }
     private onViewSizeUnitsChanged = (e: GenericEvent) => {
-        const { setViewSizeDisplayUnits } = this.props;
-        if (setViewSizeDisplayUnits) {
-            setViewSizeDisplayUnits(e.target.value);
-        }
+        safePropAccess(this.props, "setViewSizeDisplayUnits", func => func!(e.target.value));
     }
     private onFeatureTooltipsChanged = (e: GenericEvent) => {
-        const { toggleMapTips } = this.props;
-        if (toggleMapTips) {
-            toggleMapTips(e.target.checked);
-        }
+        safePropAccess(this.props, "toggleMapTips", func => func!(e.target.checked));
+    }
+    private onManualFeatureTooltipsChanged = (e: GenericEvent) => {
+        safePropAccess(this.props, "toggleManualMapTips", func => func!(e.target.checked));
     }
     render(): JSX.Element {
         const { viewer, config, layerTransparency, externalBaseLayers } = this.props;
@@ -123,6 +120,15 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
                         <input type="checkbox" checked={viewer.featureTooltipsEnabled} onChange={this.onFeatureTooltipsChanged} />
                         <span className="pt-control-indicator"></span>
                         {tr("FEATURE_TOOLTIPS", locale)}
+                    </label>;
+                }
+            })()}
+            {(() => {
+                if (config && viewer && viewer.featureTooltipsEnabled) {
+                    return <label className="pt-control pt-switch">
+                        <input type="checkbox" checked={config.manualFeatureTooltips} onChange={this.onManualFeatureTooltipsChanged} />
+                        <span className="pt-control-indicator"></span>
+                        {tr("MANUAL_FEATURE_TOOLTIPS", locale)}
                     </label>;
                 }
             })()}

@@ -104,6 +104,7 @@ const STRINGS_EN: ILocalizedMessages = {
     "QUICKPLOT_GENERATE": "Generate Plot",
     "QUICKPLOT_COMMERCIAL_LAYER_WARNING": "Quick Plot will NOT include any visible commercial map layers",
     "FEATURE_TOOLTIPS": "Feature Tooltips",
+    "MANUAL_FEATURE_TOOLTIPS": "Manual Feature Tooltips (click to show)",
     "GEOLOCATION_SUCCESS": "Zoomed to your position",
     "GEOLOCATION_WARN_OUTSIDE_MAP": "Zoomed to your position. It is outside the extents of your map",
     "GEOLOCATION_ERROR": "Geolocation error: {message} ({code})",

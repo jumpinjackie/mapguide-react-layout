@@ -481,6 +481,20 @@ export function setFeatureTooltipsEnabled(enabled: boolean): ReduxAction {
 }
 
 /**
+ * Sets whether manual feature tooltips (aka. Map Tips) are enabled
+ *
+ * @export
+ * @param {boolean} enabled
+ * @returns
+ */
+export function setManualFeatureTooltipsEnabled(enabled: boolean): ReduxAction {
+    return {
+        type: Constants.MAP_SET_MANUAL_MAPTIP,
+        payload: enabled
+    };
+}
+
+/**
  * Sets the rotation of the current view
  * 
  * @export

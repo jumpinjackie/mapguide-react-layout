@@ -13,6 +13,7 @@ export const MAP_SET_VIEW = 'Map/SET_VIEW';
 export const MAP_SET_SCALE = 'Map/SET_SCALE';
 export const MAP_SET_ACTIVE_TOOL = 'Map/SET_ACTIVE_TOOL';
 export const MAP_SET_MAPTIP = 'Map/SET_MAPTIP';
+export const MAP_SET_MANUAL_MAPTIP = 'Map/MAP_SET_MANUAL_MAPTIP';
 export const MAP_SET_SELECTION = 'Map/SET_SELECTION';
 export const MAP_SET_BUSY_COUNT = 'Map/SET_BUSY_COUNT';
 export const MAP_SET_BASE_LAYER = 'Map/SET_BASE_LAYER';

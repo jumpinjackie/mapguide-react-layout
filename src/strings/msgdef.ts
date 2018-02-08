@@ -101,6 +101,7 @@ export interface ILocalizedMessages {
     QUICKPLOT_GENERATE: string;
     QUICKPLOT_COMMERCIAL_LAYER_WARNING: string;
     FEATURE_TOOLTIPS: string;
+    MANUAL_FEATURE_TOOLTIPS: string;
     GEOLOCATION_SUCCESS: string;
     GEOLOCATION_WARN_OUTSIDE_MAP: string;
     GEOLOCATION_ERROR: string;

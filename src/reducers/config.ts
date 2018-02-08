@@ -123,6 +123,10 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: AnyAction = 
             {
                 return { ...state, ...{ viewSizeUnits: action.payload } };
             }
+        case Constants.MAP_SET_MANUAL_MAPTIP:
+            {
+                return { ...state, ...{ manualFeatureTooltips: action.payload } };
+            }
     }
     return state;
 }

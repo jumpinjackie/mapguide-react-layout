@@ -75,10 +75,10 @@ module.exports = {
         library: "MapGuide",
         path: path.join(__dirname, 'viewer/dist'),
         //filename: '[name].[hash].js',
-        filename: '[name].js',
+        filename: process.env.DEBUG_BUILD === '1' ? '[name]-debug.js' : '[name].js',
         publicPath: '/',
         //sourceMapFilename: '[name].[hash].js.map',
-        sourceMapFilename: '[name].js.map',
+        sourceMapFilename: process.env.DEBUG_BUILD === '1' ? '[name]-debug.js.map' : '[name].js.map',
         chunkFilename: '[id].chunk.js'
     },
 

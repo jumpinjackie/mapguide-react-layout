@@ -52,7 +52,7 @@
     "@types/react": "16.0.36",
     "@types/react-addons-css-transition-group": "15.0.3",
     "@types/react-addons-update": "0.14.18",
-    "@types/react-dom": "16.0.3",
+    "@types/react-dom": "16.0.4",
     "@types/react-measure": "0.4.8",
     "@types/react-redux": "^5.0.14",
     "@types/shortid": "0.0.29",

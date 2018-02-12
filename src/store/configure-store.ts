@@ -1,15 +1,16 @@
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 import promiseMiddleware from './promise-middleware';
 import logger from './logger';
-import rootReducer from '../reducers';
+import rootReducer from '../reducers/root';
 const persistState = require('redux-localstorage');
 
-function configureStore(initialState: any) {
+function configureStore(initialState: any, extraReducers?: any) {
+    const root = extraReducers ? combineReducers({ ...rootReducer, ...extraReducers }) : combineReducers(rootReducer);
     const store = (<any>compose)( //HACK: Something bogus about the compose() declaration
         _getMiddleware(),
         ..._getEnhancers()
-    )(createStore)(rootReducer, initialState);
+    )(createStore)(root, initialState);
 
     _enableHotLoader(store);
     return store;

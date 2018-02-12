@@ -1,5 +1,7 @@
 .vscode
 .couscous
+.cache-loader
+docs_output
 docs_dev/themes/CouscousNativeTemplate/apidoc_npm
 docs_dev/themes/CouscousNativeTemplate/apidoc_globals
 dist
@@ -16,6 +18,7 @@ src/**/*.js
 src/**/*.js.map
 !src/externs/*.js
 viewer/dist
+!viewer/dist/es6-promise.auto.min.js
 declarations
 webconfig.ini
 viewer.zip

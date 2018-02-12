@@ -5,15 +5,17 @@ import {
     IBranchedMapSubState,
     IExternalBaseLayer
 } from "../api/common";
+import { RuntimeMap } from "../api/contracts/runtime-map";
 import { isMapView, isCoordinate } from "../utils/type-guards";
 import { AnyAction } from "redux";
+import * as logger from "../utils/logger";
 import uniq = require("lodash.uniq");
 
-export const INITIAL_STATE: IBranchedMapState = {
+export const MAP_STATE_INITIAL_STATE: IBranchedMapState = {
 
 };
 
-export const INITIAL_SUB_STATE: IBranchedMapSubState = {
+export const MAP_STATE_INITIAL_SUB_STATE: IBranchedMapSubState = {
     currentView: undefined,
     initialView: undefined,
     history: [],
@@ -29,7 +31,8 @@ export const INITIAL_SUB_STATE: IBranchedMapSubState = {
     showGroups: [],
     hideLayers: [],
     hideGroups: [],
-    externalBaseLayers: []
+    externalBaseLayers: [],
+    activeSelectedFeature: undefined
 };
 
 function mergeSubState(state: IBranchedMapState, mapName: string, subState: Partial<IBranchedMapSubState>) {
@@ -38,7 +41,7 @@ function mergeSubState(state: IBranchedMapState, mapName: string, subState: Part
     return { ...state, ...state1 };
 }
 
-export function mapStateReducer(state = INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
+export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
     const payload: any = typeof(action.payload) != 'undefined' ? action.payload : {};
     switch (action.type) {
         case Constants.MAP_REFRESH:
@@ -54,15 +57,77 @@ export function mapStateReducer(state = INITIAL_STATE, action: AnyAction = { typ
         case Constants.INIT_APP:
             {
                 const maps = payload.maps;
+                const mapKeys = Object.keys(maps);
                 const newState: Partial<IBranchedMapState> = {};
-                for (const mapName in maps) {
+                let mapNameToApplyInitialState = payload.activeMapName;
+                if (!mapNameToApplyInitialState && mapKeys.length == 1) {
+                    mapNameToApplyInitialState = mapKeys[0];
+                }
+                for (const mapName of mapKeys) {
+                    let cv: Partial<IBranchedMapSubState> | undefined;
+                    if (payload.initialView && mapName == mapNameToApplyInitialState) {
+                        cv = {
+                            currentView: { ...payload.initialView }
+                        };
+                    }
+
+                    const sl = [];
+                    const sg = [];
+                    const hl = [];
+                    const hg = [];
+                    
+                    if (mapName == mapNameToApplyInitialState) {
+                        const rtm: RuntimeMap = maps[mapName].map;
+                        const isl = payload.initialShowLayers || [];
+                        const isg = payload.initialShowGroups || [];
+                        const ihl = payload.initialHideLayers || [];
+                        const ihg = payload.initialHideGroups || [];
+
+                        //Only initally show what is initially hidden and vice versa
+                        //NOTE: A map could have duplicate group/layer names, we make no attempt
+                        //to pick out the "correct" one. It's first come first serve.
+                        if (rtm.Layer) {
+                            for (const l of rtm.Layer) {
+                                if (isl.indexOf(l.Name) >= 0 && !l.Visible) {
+                                    sl.push(l.ObjectId);
+                                } else if (ihl.indexOf(l.Name) >= 0 && l.Visible) {
+                                    hl.push(l.ObjectId);
+                                }
+                            }
+                        }
+                        if (rtm.Group) {
+                            for (const g of rtm.Group) {
+                                if (isg.indexOf(g.Name) >= 0 && !g.Visible) {
+                                    sg.push(g.ObjectId);
+                                } else if (ihg.indexOf(g.Name) >= 0 && g.Visible) {
+                                    hg.push(g.ObjectId);
+                                }
+                            }
+                        }
+                        logger.debug(`Initially showing layers: ${isl.join("|")}`);
+                        logger.debug(`Initially showing groups: ${isg.join("|")}`);
+                        logger.debug(`Initially hiding layers: ${ihl.join("|")}`);
+                        logger.debug(`Initially hiding groups: ${ihg.join("|")}`);
+
+                        logger.debug(`Initially showing layer ids: ${sl.join("|")}`);
+                        logger.debug(`Initially showing group ids: ${sg.join("|")}`);
+                        logger.debug(`Initially hiding layer ids: ${hl.join("|")}`);
+                        logger.debug(`Initially hiding group ids: ${hg.join("|")}`);
+                    }
+
                     newState[mapName] = {
-                        ...INITIAL_SUB_STATE,
+                        ...MAP_STATE_INITIAL_SUB_STATE,
                         ...{ runtimeMap: maps[mapName].map },
                         ...{ externalBaseLayers: maps[mapName].externalBaseLayers },
-                        ...{ initialView: maps[mapName].initialView }
+                        ...{ initialView: maps[mapName].initialView },
+                        ...(cv || {}),
+                        ...(sl.length > 0 ? { showLayers: [ ...sl ] } : {}),
+                        ...(sg.length > 0 ? { showGroups: [ ...sg ] } : {}),
+                        ...(hl.length > 0 ? { hideLayers: [ ...hl ] } : {}),
+                        ...(hg.length > 0 ? { hideGroups: [ ...hg ] } : {})
                     };
                 }
+                
                 return { ...state, ...newState };
             }
         case Constants.MAP_PREVIOUS_VIEW:
@@ -96,7 +161,7 @@ export function mapStateReducer(state = INITIAL_STATE, action: AnyAction = { typ
                     let view = subState.currentView;
                     const scale = payload.scale;
                     if (typeof view === 'object' && typeof scale === 'number') {
-                        const view1 = { scale: scale };
+                        const view1 = { scale: scale, resolution: payload.resolution };
                         view = { ...view, ...view1 };
                     }
                     const state1: Partial<IBranchedMapSubState> = {
@@ -231,7 +296,21 @@ export function mapStateReducer(state = INITIAL_STATE, action: AnyAction = { typ
                     const state1: Partial<IBranchedMapSubState> = {
                         selectionSet: payload.selection,
                         layerIndex: -1,
-                        featureIndex: -1
+                        featureIndex: -1,
+                        activeSelectedFeature: undefined
+                    };
+                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
+                }
+            }
+        case Constants.MAP_SHOW_SELECTED_FEATURE:
+            {
+                const subState = state[payload.mapName];
+                if (subState) {
+                    const state1: Partial<IBranchedMapSubState> = {
+                        activeSelectedFeature: {
+                            layerId: payload.layerId,
+                            featureIndex: payload.featureIndex
+                        }
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }

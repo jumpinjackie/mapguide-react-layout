@@ -5,6 +5,7 @@ import {
     ICommand,
     IMapView,
     IMapViewer,
+    ILayerManager,
     ActiveMapTool,
     RefreshMode,
     DigitizerCallback,
@@ -15,7 +16,8 @@ import {
     IApplicationState,
     IViewerReducerState,
     IConfigurationReducerState,
-    LayerTransparencySet
+    LayerTransparencySet,
+    ActiveSelectedFeature
 } from "../api/common";
 import * as Constants from "../constants";
 import { MapViewerBase } from "../components/map-viewer-base";
@@ -26,7 +28,7 @@ import { IItem, IInlineMenu } from "../components/toolbar";
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
-import { buildSelectionXml } from '../api/builders/deArrayify';
+import { buildSelectionXml, getActiveSelectedFeatureXml } from '../api/builders/deArrayify';
 import { getCommand, mapToolbarReference, } from "../api/registry/command";
 import { invokeCommand, queryMapFeatures } from "../actions/map";
 import { showModalComponent } from "../actions/modal";
@@ -34,6 +36,7 @@ import { DefaultComponentNames } from "../api/registry/component";
 import { processMenuItems } from "../utils/menu";
 import { tr } from "../api/i18n";
 import { IOLFactory, OLFactory } from "../api/ol-factory";
+import { Intent, Toaster, Position as BP_Pos } from "@blueprintjs/core";
 
 export interface IMapViewerContainerProps {
     overviewMapElementSelector?: () => (Element | null);
@@ -54,6 +57,7 @@ export interface IMapViewerContainerState {
     hideGroups: string[];
     hideLayers: string[];
     externalBaseLayers: IExternalBaseLayer[];
+    activeSelectedFeature: ActiveSelectedFeature;
 }
 
 export interface IMapViewerContainerDispatch {
@@ -66,6 +70,7 @@ export interface IMapViewerContainerDispatch {
     queryMapFeatures: (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => void;
     setViewRotation: (rotation: number) => void;
     setViewRotationEnabled: (enabled: boolean) => void;
+    mapResized: (width: number, height: number) => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewerContainerProps): Partial<IMapViewerContainerState> {
@@ -81,6 +86,7 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewe
     let hideGroups;
     let hideLayers;
     let layerTransparency;
+    let activeSelectedFeature;
     if (state.config.activeMapName) {
         const branch = state.mapState[state.config.activeMapName];
         map = branch.runtimeMap;
@@ -94,6 +100,7 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewe
         selectableLayers = branch.selectableLayers;
         externalBaseLayers = branch.externalBaseLayers;
         layerTransparency = branch.layerTransparency;
+        activeSelectedFeature = branch.activeSelectedFeature;
     }
     return {
         config: state.config,
@@ -109,7 +116,8 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewe
         hideGroups: hideGroups,
         hideLayers: hideLayers,
         externalBaseLayers: externalBaseLayers,
-        layerTransparency: layerTransparency
+        layerTransparency: layerTransparency,
+        activeSelectedFeature: activeSelectedFeature
     };
 }
 
@@ -123,40 +131,28 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMapViewerContaine
         showModalComponent: (options) => dispatch(showModalComponent(options)),
         queryMapFeatures: (mapName, options) => dispatch(queryMapFeatures(mapName, options)),
         setViewRotation: (rotation) => dispatch(MapActions.setViewRotation(rotation)),
-        setViewRotationEnabled: (enabled) => dispatch(MapActions.setViewRotationEnabled(enabled))
+        setViewRotationEnabled: (enabled) => dispatch(MapActions.setViewRotationEnabled(enabled)),
+        mapResized: (width, height) => dispatch(MapActions.mapResized(width, height))
     };
 }
 
 export type MapViewerContainerProps = IMapViewerContainerProps & Partial<IMapViewerContainerState> & Partial<IMapViewerContainerDispatch>;
 
-export class MapViewerContainer extends React.Component<MapViewerContainerProps, any>
-    implements IMapViewer {
-    private fnMapViewerMounted: (component: MapViewerBase) => void;
+export class MapViewerContainer extends React.Component<MapViewerContainerProps, any> implements IMapViewer {
     private inner: MapViewerBase;
     private olFactory: OLFactory;
-    private fnRequestZoomToView: (view: IMapView) => void;
-    private fnQueryMapFeatures: (options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) => void;
-    private fnBusyLoading: (busyCount: number) => void;
-    private fnRotationChanged: (newRotation: number) => void;
-    private fnMouseCoordinateChanged: (coord: Coordinate) => void;
-    private fnSessionExpired: () => void;
-    private fnBeginDigitization: (callback: (cancelled: boolean) => void) => void;
+    private toaster: Toaster;
+    private refHandlers = {
+        toaster: (ref: Toaster) => this.toaster = ref,
+    };
     constructor(props: MapViewerContainerProps) {
         super(props);
         this.olFactory = new OLFactory();
-        this.fnMapViewerMounted = this.onMapViewerMounted.bind(this);
-        this.fnRequestZoomToView = this.onRequestZoomToView.bind(this);
-        this.fnQueryMapFeatures = this.onQueryMapFeatures.bind(this);
-        this.fnBusyLoading = this.onBusyLoading.bind(this);
-        this.fnRotationChanged = this.onRotationChanged.bind(this);
-        this.fnMouseCoordinateChanged = this.onMouseCoordinateChanged.bind(this);
-        this.fnSessionExpired = this.onSessionExpired.bind(this);
-        this.fnBeginDigitization = this.onBeginDigitization.bind(this);
     }
     static contextTypes: PropTypes.ValidationMap<any> = {
         store: PropTypes.object
     };
-    private onBeginDigitization(callback: (cancelled: boolean) => void): void {
+    private onBeginDigitization = (callback: (cancelled: boolean) => void) => {
         if (this.props.setActiveTool) {
             this.props.setActiveTool(ActiveMapTool.None);
         }
@@ -164,15 +160,20 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         //be "None" before the user clicks their first digitizing vertex/point
         callback(false);
     }
-    private onMapViewerMounted(component: MapViewerBase): void {
+    private onMapViewerMounted = (component: MapViewerBase) => {
         this.inner = component;
     }
-    private onRequestZoomToView(view: IMapView): void {
+    private onMapResized = (size: [number, number]) => {
+        if (this.props.mapResized) {
+            this.props.mapResized(size[0], size[1]);
+        }
+    }
+    private onRequestZoomToView = (view: IMapView) => {
         if (this.props.setCurrentView) {
             this.props.setCurrentView(view);
         }
     }
-    private onQueryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) {
+    private onQueryMapFeatures = (options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) => {
         const { config, queryMapFeatures } = this.props;
         if (queryMapFeatures && config && config.activeMapName) {
             queryMapFeatures(config.activeMapName, {
@@ -183,23 +184,23 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             });
         }
     }
-    private onBusyLoading(busyCount: number) {
+    private onBusyLoading = (busyCount: number) => {
         if (this.props.setBusyCount) {
             this.props.setBusyCount(busyCount);
         }
     }
-    private onRotationChanged(newRotation: number) {
+    private onRotationChanged = (newRotation: number) => {
         if (this.props.setViewRotation) {
             this.props.setViewRotation(newRotation);
         }
     }
-    private onMouseCoordinateChanged(coord: Coordinate) {
+    private onMouseCoordinateChanged = (coord: Coordinate) => {
         const { config, setMouseCoordinates } = this.props;
         if (setMouseCoordinates && config && config.activeMapName) {
             setMouseCoordinates(config.activeMapName, coord);
         }
     }
-    private onSessionExpired() {
+    private onSessionExpired = () => {
         const { showModalComponent, config } = this.props;
         if (showModalComponent && config) {
             showModalComponent({
@@ -229,9 +230,10 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             }
         }
     }
-    render(): JSX.Element {
+    render(): JSX.Element | JSX.Element[] | string | number | null | false {
         const {
             map,
+            selection,
             config,
             viewer,
             currentView,
@@ -245,7 +247,8 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             showGroups,
             hideGroups,
             showLayers,
-            hideLayers
+            hideLayers,
+            activeSelectedFeature
         } = this.props;
         let locale;
         if (config) {
@@ -259,38 +262,52 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             const items: any[] = contextmenu != null ? contextmenu.items : [];
             const cmitems = (items || []).map(tb => mapToolbarReference(tb, store, invokeCommand));
             const childItems = processMenuItems(cmitems);
+            let xml;
+            if (activeSelectedFeature && selection && selection.FeatureSet) {
+                xml = getActiveSelectedFeatureXml(selection.FeatureSet, activeSelectedFeature);
+            }
             if (config.agentUri) {
-                return <MapViewerBase ref={this.fnMapViewerMounted}
-                                      map={map}
-                                      agentUri={config.agentUri}
-                                      agentKind={config.agentKind}
-                                      locale={locale}
-                                      externalBaseLayers={externalBaseLayers}
-                                      imageFormat={config.viewer.imageFormat}
-                                      selectionImageFormat={config.viewer.selectionImageFormat}
-                                      selectionColor={config.viewer.selectionColor}
-                                      pointSelectionBuffer={config.viewer.pointSelectionBuffer}
-                                      tool={viewer.tool}
-                                      viewRotation={config.viewRotation}
-                                      viewRotationEnabled={config.viewRotationEnabled}
-                                      featureTooltipsEnabled={viewer.featureTooltipsEnabled}
-                                      showGroups={showGroups}
-                                      hideGroups={hideGroups}
-                                      showLayers={showLayers}
-                                      hideLayers={hideLayers}
-                                      view={currentView}
-                                      initialView={initialView}
-                                      selectableLayerNames={selectableLayerNames}
-                                      contextMenu={childItems}
-                                      overviewMapElementSelector={overviewMapElementSelector}
-                                      layerTransparency={layerTransparency || Constants.EMPTY_OBJECT}
-                                      onBeginDigitization={this.fnBeginDigitization}
-                                      onSessionExpired={this.fnSessionExpired}
-                                      onBusyLoading={this.fnBusyLoading}
-                                      onRotationChanged={this.fnRotationChanged}
-                                      onMouseCoordinateChanged={this.fnMouseCoordinateChanged}
-                                      onQueryMapFeatures={this.fnQueryMapFeatures}
-                                      onRequestZoomToView={this.fnRequestZoomToView} />;
+                //Praise $DEITY, we can finally return multiple JSX elements in React 16! No more DOM contortions!
+                return [
+                    <Toaster key="toaster" position={BP_Pos.TOP} ref={this.refHandlers.toaster} />,
+                    <MapViewerBase  key="map"
+                                    ref={this.onMapViewerMounted}
+                                    map={map}
+                                    agentUri={config.agentUri}
+                                    agentKind={config.agentKind}
+                                    locale={locale}
+                                    externalBaseLayers={externalBaseLayers}
+                                    imageFormat={config.viewer.imageFormat}
+                                    selectionImageFormat={config.viewer.selectionImageFormat}
+                                    selectionColor={config.viewer.selectionColor}
+                                    activeSelectedFeatureColor={config.viewer.activeSelectedFeatureColor}
+                                    pointSelectionBuffer={config.viewer.pointSelectionBuffer}
+                                    tool={viewer.tool}
+                                    viewRotation={config.viewRotation}
+                                    viewRotationEnabled={config.viewRotationEnabled}
+                                    featureTooltipsEnabled={viewer.featureTooltipsEnabled}
+                                    manualFeatureTooltips={config.manualFeatureTooltips}
+                                    showGroups={showGroups}
+                                    hideGroups={hideGroups}
+                                    showLayers={showLayers}
+                                    hideLayers={hideLayers}
+                                    view={currentView || initialView}
+                                    selectableLayerNames={selectableLayerNames}
+                                    contextMenu={childItems}
+                                    overviewMapElementSelector={overviewMapElementSelector}
+                                    loadIndicatorPosition={config.viewer.loadIndicatorPositioning}
+                                    loadIndicatorColor={config.viewer.loadIndicatorColor}
+                                    layerTransparency={layerTransparency || Constants.EMPTY_OBJECT}
+                                    onBeginDigitization={this.onBeginDigitization}
+                                    onSessionExpired={this.onSessionExpired}
+                                    onBusyLoading={this.onBusyLoading}
+                                    onRotationChanged={this.onRotationChanged}
+                                    onMouseCoordinateChanged={this.onMouseCoordinateChanged}
+                                    onQueryMapFeatures={this.onQueryMapFeatures}
+                                    onRequestZoomToView={this.onRequestZoomToView}
+                                    onMapResized={this.onMapResized}
+                                    activeSelectedFeatureXml={xml} />
+                ];
             }
         }
         return <div>{tr("LOADING_MSG", locale)}</div>;
@@ -396,8 +413,8 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     hasLayer(name: string): boolean {
         return this.inner.hasLayer(name);
     }
-    addLayer<T extends ol.layer.Base>(name: string, layer: T): T {
-        return this.inner.addLayer(name, layer);
+    addLayer<T extends ol.layer.Base>(name: string, layer: T, allowReplace?: boolean): T {
+        return this.inner.addLayer(name, layer, allowReplace);
     }
     removeLayer(name: string): ol.layer.Base | undefined {
         return this.inner.removeLayer(name);
@@ -439,6 +456,13 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         }
         return "";
     }
+    getSessionId(): string {
+        const { map } = this.props;
+        if (map) {
+            return map.SessionId;
+        }
+        return "";
+    }
     setViewRotation(rotation: number): void {
         const { setViewRotation } = this.props;
         if (setViewRotation) {
@@ -464,6 +488,27 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         if (setViewRotationEnabled) {
             setViewRotationEnabled(enabled);
         }
+    }
+    toastSuccess(iconName: string, message: string): string | undefined {
+        return this.toaster.show({ iconName: (iconName as any), message: message, intent: Intent.SUCCESS });
+    }
+    toastWarning(iconName: string, message: string): string | undefined {
+        return this.toaster.show({ iconName: (iconName as any), message: message, intent: Intent.WARNING });
+    }
+    toastError(iconName: string, message: string): string | undefined {
+        return this.toaster.show({ iconName: (iconName as any), message: message, intent: Intent.DANGER });
+    }
+    toastPrimary(iconName: string, message: string): string | undefined {
+        return this.toaster.show({ iconName: (iconName as any), message: message, intent: Intent.PRIMARY });
+    }
+    dismissToast(key: string): void {
+        this.toaster.dismiss(key);
+    }
+    updateSize(): void {
+        this.inner.updateSize();
+    }
+    getLayerManager(): ILayerManager {
+        return this.inner.getLayerManager();
     }
 }
 

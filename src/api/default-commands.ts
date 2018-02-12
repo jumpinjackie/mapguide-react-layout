@@ -26,10 +26,7 @@ import * as MapActions from "../actions/map";
 import * as ModalActions from "../actions/modal";
 import * as TemplateActions from "../actions/template";
 import { tr } from "../api/i18n";
-import { ensureParameters } from "../actions/taskpane";
 import { DefaultComponentNames } from "../api/registry/component";
-import { Intent } from "@blueprintjs/core";
-import { getTopToaster } from "../components/toaster";
 import { getFusionRoot } from "../api/runtime";
 import { enableRedlineMessagePrompt } from "../containers/viewer-shim";
 import {
@@ -64,8 +61,11 @@ import {
     SPRITE_FEATURE_INFO,
     SPRITE_QUERY,
     SPRITE_THEME,
-    SPRITE_INVOKE_SCRIPT
+    SPRITE_INVOKE_SCRIPT,
+    SPRITE_COORDINATE_TRACKER,
+    SPRITE_LAYER_ADD
 } from "../constants/assets";
+import { ensureParameters } from "../utils/url";
 
 function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
     const settings: any = {
@@ -115,7 +115,7 @@ function buildTargetedCommand(config: Readonly<IConfigurationReducerState>, para
 
 /**
  * Registers the default set of commands into the command registry. This is automatically called by the default viewer
- * bundle. If creating your own viewer bundle, be sure to call this function in your entry point, or invidually register
+ * bundle. If creating your own viewer bundle, be sure to call this function in your entry point, or individually register
  * the commands you want to make available in your custom viewer bundle
  *
  * @export
@@ -275,7 +275,7 @@ export function initDefaultCommands() {
             const config = getState().config;
             const url = "component://Measure";
             const cmdDef = buildTargetedCommand(config, parameters);
-            openUrlInTarget(DefaultCommands.Measure, cmdDef, dispatch, url, tr("MEASURE", config.locale));
+            openUrlInTarget(DefaultCommands.Measure, cmdDef, config.capabilities.hasTaskPane, dispatch, url, tr("MEASURE", config.locale));
         }
     });
     //Quick Plot
@@ -287,7 +287,7 @@ export function initDefaultCommands() {
             const config = getState().config;
             const url = "component://QuickPlot";
             const cmdDef = buildTargetedCommand(config, parameters);
-            openUrlInTarget(DefaultCommands.QuickPlot, cmdDef, dispatch, url);
+            openUrlInTarget(DefaultCommands.QuickPlot, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
         }
     });
     //Viewer Options
@@ -299,7 +299,7 @@ export function initDefaultCommands() {
             const config = getState().config;
             const url = "component://ViewerOptions";
             const cmdDef = buildTargetedCommand(config, parameters);
-            openUrlInTarget(DefaultCommands.ViewerOptions, cmdDef, dispatch, url, tr("VIEWER_OPTIONS", config.locale));
+            openUrlInTarget(DefaultCommands.ViewerOptions, cmdDef, config.capabilities.hasTaskPane, dispatch, url, tr("VIEWER_OPTIONS", config.locale));
         }
     });
     //Select Radius
@@ -471,12 +471,15 @@ export function initDefaultCommands() {
                         rtMap.Extents.UpperRightCoordinate.Y
                     ];
                     if (fact.extentContainsXY(extents, testCoord[0], testCoord[1])) {
-                        getTopToaster().show({ iconName: "geolocation", message: tr("GEOLOCATION_SUCCESS", locale), intent: Intent.SUCCESS });
+                        viewer.toastSuccess("geolocation", tr("GEOLOCATION_SUCCESS", locale));
+                        //getTopToaster().show({ iconName: "geolocation", message: tr("GEOLOCATION_SUCCESS", locale), intent: Intent.SUCCESS });
                     } else {
-                        getTopToaster().show({ iconName: "warning-sign", message: tr("GEOLOCATION_WARN_OUTSIDE_MAP", locale), intent: Intent.WARNING });
+                        viewer.toastWarning("warning-sign", tr("GEOLOCATION_WARN_OUTSIDE_MAP", locale));
+                        //getTopToaster().show({ iconName: "warning-sign", message: tr("GEOLOCATION_WARN_OUTSIDE_MAP", locale), intent: Intent.WARNING });
                     }
                 }, err => {
-                    getTopToaster().show({ iconName: "error", message: tr("GEOLOCATION_ERROR", locale, { message: err.message, code: err.code }), intent: Intent.DANGER });
+                    viewer.toastError("error", tr("GEOLOCATION_ERROR", locale, { message: err.message, code: err.code }));
+                    //getTopToaster().show({ iconName: "error", message: tr("GEOLOCATION_ERROR", locale, { message: err.message, code: err.code }), intent: Intent.DANGER });
                 }, geoOptions);
             }
         }
@@ -494,7 +497,7 @@ export function initDefaultCommands() {
                 let url = ensureParameters(`${getFusionRoot()}/widgets/BufferPanel/BufferPanel.php`, map.Name, map.SessionId, config.locale, false);
                 url += "&popup=false&us=0";
                 const cmdDef = buildTargetedCommand(config, parameters);
-                openUrlInTarget(DefaultCommands.Buffer, cmdDef, dispatch, url);
+                openUrlInTarget(DefaultCommands.Buffer, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
             }
         }
     });
@@ -511,7 +514,7 @@ export function initDefaultCommands() {
                 let url = ensureParameters(`${getFusionRoot()}/widgets/SelectWithin/SelectWithinPanel.php`, map.Name, map.SessionId, config.locale, false);
                 url += "&popup=false";
                 const cmdDef = buildTargetedCommand(config, parameters);
-                openUrlInTarget(DefaultCommands.SelectWithin, cmdDef, dispatch, url);
+                openUrlInTarget(DefaultCommands.SelectWithin, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
             }
         }
     });
@@ -529,7 +532,7 @@ export function initDefaultCommands() {
                 let url = ensureParameters(`${getFusionRoot()}/widgets/Redline/markupmain.php`, map.Name, map.SessionId, config.locale, true);
                 url += "&POPUP=false&REDLINESTYLIZATION=ADVANCED";
                 const cmdDef = buildTargetedCommand(config, parameters);
-                openUrlInTarget(DefaultCommands.Redline, cmdDef, dispatch, url);
+                openUrlInTarget(DefaultCommands.Redline, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
             }
         }
     });
@@ -545,7 +548,7 @@ export function initDefaultCommands() {
             if (map) {
                 const url = ensureParameters(`${getFusionRoot()}/widgets/FeatureInfo/featureinfomain.php`, map.Name, map.SessionId, config.locale, true);
                 const cmdDef = buildTargetedCommand(config, parameters);
-                openUrlInTarget(DefaultCommands.FeatureInfo, cmdDef, dispatch, url);
+                openUrlInTarget(DefaultCommands.FeatureInfo, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
             }
         }
     });
@@ -561,7 +564,7 @@ export function initDefaultCommands() {
             if (map) {
                 const url = ensureParameters(`${getFusionRoot()}/widgets/Query/querymain.php`, map.Name, map.SessionId, config.locale, true);
                 const cmdDef = buildTargetedCommand(config, parameters);
-                openUrlInTarget(DefaultCommands.Query, cmdDef, dispatch, url);
+                openUrlInTarget(DefaultCommands.Query, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
             }
         }
     });
@@ -577,8 +580,32 @@ export function initDefaultCommands() {
             if (map) {
                 const url = ensureParameters(`${getFusionRoot()}/widgets/Theme/thememain.php`, map.Name, map.SessionId, config.locale, true);
                 const cmdDef = buildTargetedCommand(config, parameters);
-                openUrlInTarget(DefaultCommands.Theme, cmdDef, dispatch, url);
+                openUrlInTarget(DefaultCommands.Theme, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
             }
+        }
+    });
+    //Coordinate Tracker
+    registerCommand(DefaultCommands.CoordinateTracker, {
+        iconClass: SPRITE_COORDINATE_TRACKER,
+        selected: () => false,
+        enabled: () => true,
+        invoke: (dispatch, getState, viewer, parameters) => {
+            const config = getState().config;
+            const url = `component://CoordinateTracker?${(parameters.Projection || []).map((p: string) => "projections=" + p).join("&")}`;
+            const cmdDef = buildTargetedCommand(config, parameters);
+            openUrlInTarget(DefaultCommands.CoordinateTracker, cmdDef, config.capabilities.hasTaskPane, dispatch, url, tr("COORDTRACKER", config.locale));
+        }
+    });
+    //Add WMS Layer
+    registerCommand(DefaultCommands.AddManageLayers, {
+        iconClass: SPRITE_LAYER_ADD,
+        selected: () => false,
+        enabled: () => true,
+        invoke: (dispatch, getState, viewer, parameters) => {
+            const config = getState().config;
+            const url = `component://${DefaultComponentNames.AddManageLayers}`;
+            const cmdDef = buildTargetedCommand(config, parameters);
+            openUrlInTarget(DefaultCommands.AddManageLayers, cmdDef, config.capabilities.hasTaskPane, dispatch, url, tr("ADD_MANAGE_LAYERS", config.locale));
         }
     });
 

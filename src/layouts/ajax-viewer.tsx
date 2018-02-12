@@ -15,6 +15,10 @@ import {
     IConfigurationReducerState,
     IViewerCapabilities
 } from "../api/common";
+import InitWarningDisplay from "../containers/init-warning-display";
+import SplitterLayout from "react-splitter-layout";
+import { DEFAULT_LOCALE, tr } from "../api/i18n";
+import * as Runtime from "../api/runtime";
 
 const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;
@@ -23,13 +27,15 @@ export interface IAjaxViewerLayoutState {
     map: RuntimeMap;
     config: IConfigurationReducerState;
     capabilities: IViewerCapabilities;
+    initWarnings: string[];
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>): Partial<IAjaxViewerLayoutState> {
     return {
         config: state.config,
         map: getRuntimeMap(state),
-        capabilities: state.config.capabilities
+        capabilities: state.config.capabilities,
+        initWarnings: state.initError.warnings
     };
 }
 
@@ -44,12 +50,29 @@ export type AjaxViewerLayoutProps = Partial<IAjaxViewerLayoutState>;
 export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any> {
     constructor(props: AjaxViewerLayoutProps) {
         super(props);
+        this.state = { isResizing: false };
     }
     private getLocale(): string {
-        return this.props.config ? this.props.config.locale : "en";
+        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
+    }
+    private onDragStart = () => {
+        this.setState({ isResizing: true });
+    }
+    private onDragEnd = () => {
+        this.setState({ isResizing: false });
+    }
+    private onSplitterChanged = (size: number) => {
+        //With the introduction of the splitter, we can no longer rely on a map 
+        //filling 100% of its space without needing to manually call updateSize(),
+        //so we do it here
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            viewer.updateSize();
+        }
     }
     render(): JSX.Element {
         const { capabilities } = this.props;
+        const { isResizing } = this.state;
         let hasToolbar = false;
         let hasTaskPane = false;
         let hasTaskBar = false;
@@ -57,6 +80,7 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
         let hasNavigator = false;
         let hasSelectionPanel = false;
         let hasLegend = false;
+        let hasViewSize = false;
         if (capabilities) {
             hasToolbar = capabilities.hasToolbar;
             hasTaskPane = capabilities.hasTaskPane;
@@ -65,101 +89,90 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
             hasNavigator = capabilities.hasNavigator;
             hasSelectionPanel = capabilities.hasSelectionPanel;
             hasLegend = capabilities.hasLegend;
+            hasViewSize = capabilities.hasViewSize;
         }
         const locale = this.getLocale();
+        const TB_Z_INDEX = 10;
+        const topOffset = hasToolbar ? DEFAULT_TOOLBAR_SIZE : 0;
+        const bottomOffset = hasStatusBar ? 20 : 0;
         let sbWidth = SIDEBAR_WIDTH;
         let tpWidth = SIDEBAR_WIDTH;
+        const lgStyle = {};
+        const selStyle = {};
         return <div style={{ width: "100%", height: "100%" }}>
-            {(() => {
-                const lgStyle: React.CSSProperties = { position: "absolute", left: 0, top: 0, bottom: 0, right: 0, overflowY: "auto" };
-                const selStyle: React.CSSProperties = { position: "absolute", left: 0, bottom: 0, right: 0 };
-                if (hasLegend) {
-                    if (hasSelectionPanel) {
-                        lgStyle.height = LEGEND_HEIGHT;
-                    }
-                }
-                if (hasSelectionPanel) {
-                    if (hasLegend) {
-                        selStyle.top = LEGEND_HEIGHT;
-                    } else {
-                        selStyle.top = 0;
-                    }
-                }
-                if (hasLegend || hasSelectionPanel) {
-                    return <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: sbWidth }}>
+            <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: bottomOffset }}>
+                <SplitterLayout customClassName="ajax-viewer-splitter" primaryIndex={0} secondaryInitialSize={tpWidth} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
+                    <div>
                         {(() => {
-                            if (hasLegend) {
-                                return <div style={lgStyle}>
-                                    <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: true }} />
-                                </div>;
+                            if (hasToolbar) {
+                                return <ToolbarContainer id={Constants.WEBLAYOUT_TOOLBAR} containerStyle={{ position: "absolute", left: 0, top: 0, right: 0, zIndex: TB_Z_INDEX, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />;
                             }
                         })()}
-                        {(() => {
-                            if (hasSelectionPanel) {
-                                return <div style={selStyle}>
-                                    <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
-                                </div>;
-                            }
-                        })()}
-                    </div>;
-                }
-            })()}
+                        <div style={{ position: "absolute", left: 0, top: topOffset, bottom: 0, right: 0 }}>
+                            <SplitterLayout customClassName="ajax-viewer-splitter" primaryIndex={1} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={this.onSplitterChanged}>
+                                {(() => {
+                                    if (hasLegend || hasSelectionPanel) {
+                                        return <SplitterLayout customClassName="ajax-viewer-splitter" vertical={true} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
+                                            {(() => {
+                                                if (hasLegend) {
+                                                    return <div className="ajax-sidebar-panel" style={lgStyle}>
+                                                        <div className="ajax-sidebar-panel-heading">
+                                                            <p>{tr("TPL_TITLE_LEGEND", locale)}</p>
+                                                        </div>
+                                                        <div className="ajax-sidebar-panel-body">
+                                                            <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: true }} />
+                                                        </div>
+                                                    </div>;
+                                                }
+                                            })()}
+                                            {(() => {
+                                                if (hasSelectionPanel) {
+                                                    return <div className="ajax-sidebar-panel" style={selStyle}>
+                                                        <div className="ajax-sidebar-panel-heading">
+                                                            <p>{tr("TPL_TITLE_SELECTION_PANEL", locale)}</p>
+                                                        </div>
+                                                        <div className="ajax-sidebar-panel-body">
+                                                            <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
+                                                        </div>
+                                                    </div>;
+                                                }
+                                            })()}
+                                        </SplitterLayout>;
+                                    }
+                                })()}
+                                <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
+                                    <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />
+                                    {(() => {
+                                        if (hasNavigator) {
+                                            return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
+                                        }
+                                    })()}
+                                </div>
+                            </SplitterLayout>
+                        </div>
+                    </div>
+                    {(() => {
+                        if (hasTaskPane) {
+                            return <PlaceholderComponent locale={locale} id={DefaultComponentNames.TaskPane} componentProps={{ isResizing: isResizing }} />;
+                        }
+                    })()}
+                </SplitterLayout>
+            </div>
             {(() => {
-                let left = 0;
-                let right = 0;
-                if (hasLegend || hasSelectionPanel) {
-                    left = sbWidth;
-                }
-                if (hasTaskPane) {
-                    right = tpWidth;
-                }
-                return <div style={{ position: "absolute", left: left, top: 0, bottom: 0, right: right }}>
-                    {(() => {
-                        if (hasToolbar) {
-                            return <ToolbarContainer id={Constants.WEBLAYOUT_TOOLBAR} containerStyle={{ position: "absolute", left: 10, top: 10, zIndex: 100, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />;
-                        }
-                    })()}
-                    {(() => {
-                        //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
-                        //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()
-                        //call to fix
-                        if (this.props.map != null) {
-                            return <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />;
-                        }
-                    })()}
-                    {(() => {
-                        if (hasNavigator) {
-                            return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
-                        }
-                    })()}
-                    {(() => {
-                        if (hasStatusBar) {
-                            return <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={locale} />;
-                        }
-                    })()}
-                    {(() => {
-                        if (hasStatusBar) {
-                            return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={locale} />;
-                        }
-                    })()}
-                    {(() => {
-                        if (hasStatusBar) {
-                            return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={locale} />;
-                        }
-                    })()}
-                    <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={locale} />
-                </div>
-            })()}
-            {(() => {
-                if (hasTaskPane) {
-                    return <div style={{ position: "absolute", top: 0, bottom: 0, right: 0, width: tpWidth }}>
-                        <PlaceholderComponent locale={locale} id={DefaultComponentNames.TaskPane} />
+                if (hasStatusBar) {
+                    return <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: bottomOffset, backgroundColor: TOOLBAR_BACKGROUND_COLOR }}>
+                        <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={locale} />
+                        <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={locale} />
+                        <PlaceholderComponent id={DefaultComponentNames.ViewSize} locale={locale} />
+                        <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={locale} />
+                        <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={locale} />
                     </div>;
                 }
             })()}
             <ViewerApiShim />
             <ModalLauncher />
             <FlyoutRegionContainer />
+            <InitWarningDisplay />
         </div>;
     }
 }

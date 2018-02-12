@@ -7,10 +7,6 @@ include:
 # Base URL of the published website
 baseUrl: https://jumpinjackie.github.io/mapguide-react-layout
 
-scripts:
-    before:
-        - yarn run build:apidoc_npm
-
 # Used to link to the GitHub project
 github:
     user: jumpinjackie

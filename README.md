@@ -1,5 +1,6 @@
 # mapguide-react-layout
 
+[![npm version](https://badge.fury.io/js/mapguide-react-layout.svg)](https://badge.fury.io/js/mapguide-react-layout)
 [![Build status](https://travis-ci.org/jumpinjackie/mapguide-react-layout.svg)](https://travis-ci.org/jumpinjackie/mapguide-react-layout)
 [![Build status](https://ci.appveyor.com/api/projects/status/urdvk8788w6h26ae?svg=true)](https://ci.appveyor.com/project/jumpinjackie/mapguide-react-layout)
 [![Coverage Status](https://coveralls.io/repos/github/jumpinjackie/mapguide-react-layout/badge.svg?branch=master)](https://coveralls.io/github/jumpinjackie/mapguide-react-layout?branch=master)
@@ -7,9 +8,11 @@
 
 mapguide-react-layout is a modern map viewer for MapGuide.
 
-It is built from the ground up with modern web technologies ([React](https://facebook.github.io/react/), [OpenLayers 3](http://openlayers.org/), [TypeScript](https://www.typescriptlang.org/)) to be **the definitive map viewer** for [MapGuide Open Source](http://mapguide.osgeo.org) or [Autodesk Infrastructure Map Server](http://www.autodesk.com/products/infrastructure-map-server/overview)
+It is built from the ground up with modern web technologies ([React](https://facebook.github.io/react/), [OpenLayers](http://openlayers.org/), [TypeScript](https://www.typescriptlang.org/)) to be **the definitive map viewer** for [MapGuide Open Source](http://mapguide.osgeo.org) or [Autodesk Infrastructure Map Server](http://www.autodesk.com/products/infrastructure-map-server/overview)
 
 It aims for reasonable compatibility with the existing Web Layout (AJAX Viewer) and Flexible Layout (Fusion)configuration documents that drive the existing AJAX and Fusion map viewers, ensuring an authoring and development experience similar to MapGuide's existing viewer offerings.
+
+This project is not affiliated with Autodesk or OSGeo.
 
 # Requirements
 
@@ -60,12 +63,14 @@ See [RELEASE_NOTES.md](https://github.com/jumpinjackie/mapguide-react-layout/blo
 
 mapguide-react-layout could not be possible without the following tools and libraries:
 
- * [OpenLayers 3](http://openlayers.org/)
+ * [OpenLayers](http://openlayers.org/)
  * [proj4js](http://proj4js.org/)
  * [TypeScript](https://www.typescriptlang.org/)
  * [React](https://facebook.github.io/react/)
  * [Blueprint](http://blueprintjs.com/)
  * [sidebar-v2](https://github.com/Turbo87/sidebar-v2)
+
+mapguide-react-layout uses icons from the Fugue icons set, by [Yusuke Kamiyamane](http://p.yusukekamiyamane.com)
 
 # License
 

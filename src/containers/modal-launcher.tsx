@@ -18,43 +18,44 @@ import {
     isModalDisplayOptions
 } from "../utils/type-guards";
 import { assertNever } from "../utils/never";
+import { ParsedComponentUri, parseComponentUri, isComponentUri } from "../utils/url";
 
-export interface IToolbarContainerState {
+export interface IModalLauncherState {
     modal: IModalReducerState;
     config: IConfigurationReducerState;
 }
 
-export interface IToolbarContainerDispatch {
+export interface IModalLauncherDispatch {
     hideModal: (options: any) => void;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>): Partial<IToolbarContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IModalLauncherState> {
     return {
         config: state.config,
         modal: state.modal
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IToolbarContainerDispatch> {
+function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IModalLauncherDispatch> {
     return {
         hideModal: (options) => dispatch(hideModal(options))
     };
 }
 
-export type ToolbarContainerProps = Partial<IToolbarContainerState> & Partial<IToolbarContainerDispatch>;
+export type ModalLauncherProps = Partial<IModalLauncherState> & Partial<IModalLauncherDispatch>;
 
-function getComponentId(diag: IModalComponentDisplayOptions | IModalDisplayOptions): string | undefined {
+function getComponentId(diag: IModalComponentDisplayOptions | IModalDisplayOptions): ParsedComponentUri | undefined {
     if (isModalComponentDisplayOptions(diag)) {
-        return diag.component;
+        return { name: diag.component, props: {} };
     } else if (isModalDisplayOptions(diag)) {
-        return diag.url.substring("component://".length);
+        return parseComponentUri(diag.url);
     } else {
         assertNever(diag);
     }
 }
 
-export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
-    constructor(props: ToolbarContainerProps) {
+export class ModalLauncher extends React.Component<ModalLauncherProps, any> {
+    constructor(props: ModalLauncherProps) {
         super(props);
     }
     onCloseModal(name: string) {
@@ -74,10 +75,10 @@ export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
         return <div>
             {Object.keys(modal).map(key => {
                 const diag = modal[key];
-                if (isModalComponentDisplayOptions(diag) || (isModalDisplayOptions(diag) && diag.url.indexOf("component://") >= 0)) {
+                if (isModalComponentDisplayOptions(diag) || (isModalDisplayOptions(diag) && isComponentUri(diag.url))) {
                     const componentId = getComponentId(diag);
                     if (componentId) {
-                        const componentRenderer = getComponentFactory(componentId);
+                        const componentRenderer = getComponentFactory(componentId.name);
                         return <ModalDialog size={diag.modal.size}
                                             title={diag.modal.title}
                                             backdrop={diag.modal.backdrop}
@@ -89,8 +90,8 @@ export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
                                 if (componentRenderer) {
                                     if (isModalComponentDisplayOptions(diag))
                                         return componentRenderer(diag.componentProps);
-                                    else //TODO: As this is a component:// pseudo-URI, we should extract props (if any) from the query string of this URI
-                                        return componentRenderer({});
+                                    else
+                                        return componentRenderer(componentId.props);
                                 } else {
                                     return <Error error={tr("ERR_UNREGISTERED_COMPONENT", locale, { componentId: componentId })} />;
                                 }
@@ -112,6 +113,7 @@ export class ModalLauncher extends React.Component<ToolbarContainerProps, any> {
                     assertNever(diag);
                 }
             })}
+            {this.props.children}
         </div>;
     }
 }

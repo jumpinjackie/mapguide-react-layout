@@ -1,6 +1,6 @@
 import * as React from "react";
 import { isMenu, isMenuRef, isComponentFlyout } from "../utils/type-guards";
-import { IDOMElementMetrics, FlyoutVisibilitySet } from "../api/common";
+import { IDOMElementMetrics, FlyoutVisibilitySet, GenericEvent, GenericEventHandler } from "../api/common";
 import { Popover, Position } from "@blueprintjs/core";
 import { MenuComponent } from "./menu";
 import { IToolbarContext, TOOLBAR_CONTEXT_VALIDATION_MAP } from "./context";
@@ -11,6 +11,7 @@ import {
     SPRITE_ICON_MENUARROW
 } from "../constants/assets";
 import * as Constants from "../constants";
+import { safePropAccess } from '../utils/safe-prop';
 
 export const DEFAULT_TOOLBAR_SIZE = 29;
 export const TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";
@@ -129,33 +130,23 @@ export interface IFlyoutMenuChildItemProps {
 }
 
 export class FlyoutMenuChildItem extends React.Component<IFlyoutMenuChildItemProps, any> {
-    private fnMouseLeave: GenericEventHandler;
-    private fnMouseEnter: GenericEventHandler;
-    private fnClick: GenericEventHandler;
     constructor(props: IFlyoutMenuChildItemProps) {
         super(props);
-        this.fnClick = this.onClick.bind(this);
-        this.fnMouseEnter = this.onMouseEnter.bind(this);
-        this.fnMouseLeave = this.onMouseLeave.bind(this);
         this.state = {
             isMouseOver: false
         };
     }
-    private onClick(e: GenericEvent) {
-        const { item, onInvoked } = this.props;
+    private onClick = (e: GenericEvent) => {
+        const { item } = this.props;
         if (getEnabled(item)) {
-            if (item.invoke) {
-                item.invoke();
-            }
-            if (onInvoked != null) {
-                onInvoked();
-            }
+            safePropAccess(item, "invoke", func => func!());
+            safePropAccess(this.props, "onInvoked", func => func!());
         }
     }
-    private onMouseLeave(e: GenericEvent) {
+    private onMouseLeave = (e: GenericEvent) => {
         this.setState({ isMouseOver: false });
     }
-    private onMouseEnter(e: GenericEvent) {
+    private onMouseEnter = (e: GenericEvent) => {
         this.setState({ isMouseOver: true });
     }
     render(): JSX.Element {
@@ -166,7 +157,7 @@ export class FlyoutMenuChildItem extends React.Component<IFlyoutMenuChildItemPro
         const tt = getTooltip(item);
         const imgStyle = getIconStyle(enabled, height);
         const style = getMenuItemStyle(enabled, selected, height, this.state.isMouseOver);
-        return <li className="noselect flyout-menu-child-item" title={tt} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick}>
+        return <li className="noselect flyout-menu-child-item" title={tt} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={this.onClick}>
             <div style={style}>
                 <Icon style={imgStyle} url={item.icon} /> {item.label}
             </div>
@@ -197,23 +188,15 @@ interface IComponentFlyoutItemProps {
 }
 
 class ComponentFlyoutItem extends React.Component<IComponentFlyoutItemProps, any> {
-    private fnMouseLeave: GenericEventHandler;
-    private fnMouseEnter: GenericEventHandler;
-    private fnClick: GenericEventHandler;
-    private fnChildInvoked: () => void;
     static contextTypes = TOOLBAR_CONTEXT_VALIDATION_MAP;
     context: IToolbarContext;
     constructor(props: IComponentFlyoutItemProps) {
         super(props);
-        this.fnClick = this.onClick.bind(this);
-        this.fnMouseEnter = this.onMouseEnter.bind(this);
-        this.fnMouseLeave = this.onMouseLeave.bind(this);
-        this.fnChildInvoked = this.onChildInvoked.bind(this);
         this.state = {
             isMouseOver: false
         };
     }
-    private onClick(e: GenericEvent) {
+    private onClick = (e: GenericEvent) => {
         e.preventDefault();
         const { flyoutId, componentName, componentProps } = this.props.item;
         const newState = !!!this.props.isFlownOut;
@@ -232,13 +215,13 @@ class ComponentFlyoutItem extends React.Component<IComponentFlyoutItemProps, any
         }
         return false;
     }
-    private onMouseLeave(e: GenericEvent) {
+    private onMouseLeave = (e: GenericEvent) => {
         this.setState({ isMouseOver: false });
     }
-    private onMouseEnter(e: GenericEvent) {
+    private onMouseEnter = (e: GenericEvent) => {
         this.setState({ isMouseOver: true });
     }
-    private onChildInvoked() {
+    private onChildInvoked = () => {
         this.setState({ isMouseOver: false });
         this.context.closeFlyout(this.props.item.flyoutId);
     }
@@ -253,7 +236,7 @@ class ComponentFlyoutItem extends React.Component<IComponentFlyoutItemProps, any
             label = <div className="rotated-text"><span className="rotated-text__inner rotated-text-ccw">{item.label}</span></div>;
         }
         const ttip = getTooltip(item);
-        return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={ttip}>
+        return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={this.onClick} style={style} title={ttip}>
             <div data-flyout-id={`flyout-${item.flyoutId}`}>
                 <Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {label} <Icon style={imgStyle} spriteClass={isFlownOut ? SPRITE_ICON_MENUARROWUP : SPRITE_ICON_MENUARROW } />
             </div>
@@ -269,23 +252,15 @@ interface IFlyoutMenuReferenceItemProps {
 }
 
 class FlyoutMenuReferenceItem extends React.Component<IFlyoutMenuReferenceItemProps, any> {
-    private fnMouseLeave: GenericEventHandler;
-    private fnMouseEnter: GenericEventHandler;
-    private fnClick: GenericEventHandler;
-    private fnChildInvoked: () => void;
     static contextTypes = TOOLBAR_CONTEXT_VALIDATION_MAP;
     context: IToolbarContext;
     constructor(props: IFlyoutMenuReferenceItemProps) {
         super(props);
-        this.fnClick = this.onClick.bind(this);
-        this.fnMouseEnter = this.onMouseEnter.bind(this);
-        this.fnMouseLeave = this.onMouseLeave.bind(this);
-        this.fnChildInvoked = this.onChildInvoked.bind(this);
         this.state = {
             isMouseOver: false,
         };
     }
-    private onClick(e: GenericEvent) {
+    private onClick = (e: GenericEvent) => {
         e.preventDefault();
         const newState = !!!this.props.isFlownOut;
         if (newState) {
@@ -303,13 +278,13 @@ class FlyoutMenuReferenceItem extends React.Component<IFlyoutMenuReferenceItemPr
         }
         return false;
     }
-    private onMouseLeave(e: GenericEvent) {
+    private onMouseLeave = (e: GenericEvent) => {
         this.setState({ isMouseOver: false });
     }
-    private onMouseEnter(e: GenericEvent) {
+    private onMouseEnter = (e: GenericEvent) => {
         this.setState({ isMouseOver: true });
     }
-    private onChildInvoked() {
+    private onChildInvoked = () => {
         this.setState({ isMouseOver: false });
         this.context.closeFlyout(this.props.menu.flyoutId);
     }
@@ -328,7 +303,7 @@ class FlyoutMenuReferenceItem extends React.Component<IFlyoutMenuReferenceItemPr
             align = (vertical === true) ? "right bottom" : "bottom right";
         }
         const ttip = getTooltip(menu);
-        return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} onClick={this.fnClick} style={style} title={ttip}>
+        return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={this.onClick} style={style} title={ttip}>
             <div data-flyout-id={`flyout-${menu.flyoutId}`}>
                 <Icon style={imgStyle} url={menu.icon} spriteClass={menu.iconClass} /> {label} <Icon style={imgStyle} spriteClass={isFlownOut ? SPRITE_ICON_MENUARROWUP : SPRITE_ICON_MENUARROW} />
             </div>
@@ -363,25 +338,19 @@ interface IToolbarButtonProps {
 }
 
 class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
-    fnMouseLeave: GenericEventHandler;
-    fnMouseEnter: GenericEventHandler;
-    fnClick: GenericEventHandler;
     constructor(props: IToolbarButtonProps) {
         super(props);
-        this.fnMouseEnter = this.onMouseEnter.bind(this);
-        this.fnMouseLeave = this.onMouseLeave.bind(this);
-        this.fnClick = this.onClick.bind(this);
         this.state = {
             isMouseOver: false
         };
     }
-    onMouseLeave(e: any) {
+    private onMouseLeave = (e: any) => {
         this.setState({ isMouseOver: false });
     }
-    onMouseEnter(e: any) {
+    private onMouseEnter = (e: any) => {
         this.setState({ isMouseOver: true });
     }
-    onClick(e: any) {
+    private onClick = (e: any) => {
         e.preventDefault();
         const { item } = this.props;
         const enabled = getEnabled(item);
@@ -402,7 +371,7 @@ class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
         } else {
             ttip = item.tooltip;
         }
-        return <div className={`noselect toolbar-btn ${selected ? "selected-item" : ""} ${(this.state.isMouseOver && enabled) ? "mouse-over" : ""}`} onMouseEnter={this.fnMouseEnter} onMouseLeave={this.fnMouseLeave} style={style} title={ttip} onClick={this.fnClick}>
+        return <div className={`noselect toolbar-btn ${selected ? "selected-item" : ""} ${(this.state.isMouseOver && enabled) ? "mouse-over" : ""}`} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} style={style} title={ttip} onClick={this.onClick}>
             <Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {(vertical == true && hideVerticalLabels == true) ? null : item.label}
         </div>;
     }

@@ -1,7 +1,10 @@
 import * as Request from '../request-builder';
-import * as Contracts from '../contracts';
+import * as Common from "../contracts/common";
+import * as RtMap from '../contracts/runtime-map';
+import * as Query from "../contracts/query";
 import { MgError } from '../error';
 import { deArrayify } from './deArrayify';
+import { DEFAULT_LOCALE } from "../i18n";
 
 const MG_MAPAGENT_ERROR_CODE = 559;
 
@@ -38,7 +41,7 @@ export function serialize(data: any, uppercase: boolean = true): string {
  */
 export class MapAgentRequestBuilder extends Request.RequestBuilder {
     private locale: string;
-    constructor(agentUri: string, locale: string = "en") {
+    constructor(agentUri: string, locale: string = DEFAULT_LOCALE) {
         super(agentUri);
         this.locale = locale;
     }
@@ -48,7 +51,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
-            },
+            } as any,
             method: "GET"
         });
         if (isErrorResponse(response)) {
@@ -70,7 +73,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         const response = await fetch(url, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-            },
+            } as any,
             method: "POST",
             body: serialize(data) //form
         });
@@ -111,7 +114,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         const response = await fetch(url, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-            },
+            } as any,
             method: "POST",
             body: serialize(data) //form
         });
@@ -128,7 +131,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         const response = await fetch(url, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-            },
+            } as any,
             method: "POST",
             body: serialize(data) //form
         });
@@ -140,7 +143,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         }
     }
 
-    public getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier, args?: any): Promise<T> {
+    public getResource<T extends Common.ResourceBase>(resourceId: Common.ResourceIdentifier, args?: any): Promise<T> {
         if (args != null) {
             const p1 = { operation: "GETRESOURCECONTENT", resourceId: resourceId };
             const url = this.stringifyGetUrl({ ...args, ...p1 });
@@ -151,21 +154,21 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         }
     }
 
-    public createRuntimeMap(options: Request.ICreateRuntimeMapOptions): Promise<Contracts.RtMap.RuntimeMap> {
+    public createRuntimeMap(options: Request.ICreateRuntimeMapOptions): Promise<RtMap.RuntimeMap> {
         const p1 = { operation: "CREATERUNTIMEMAP", version: "3.0.0" };
         const url = this.stringifyGetUrl({ ...options, ...p1 });
-        return this.get<Contracts.RtMap.RuntimeMap>(url);
+        return this.get<RtMap.RuntimeMap>(url);
     }
 
-    public queryMapFeatures(options: Request.IQueryMapFeaturesOptions): Promise<Contracts.Query.QueryMapFeaturesResponse> {
+    public queryMapFeatures(options: Request.IQueryMapFeaturesOptions): Promise<Query.QueryMapFeaturesResponse> {
         const p1 = { operation: "QUERYMAPFEATURES", version: "2.6.0" };
-        return this.post<Contracts.Query.QueryMapFeaturesResponse>(this.agentUri, { ...options, ...p1 });
+        return this.post<Query.QueryMapFeaturesResponse>(this.agentUri, { ...options, ...p1 });
     }
 
-    public describeRuntimeMap(options: Request.IDescribeRuntimeMapOptions): Promise<Contracts.RtMap.RuntimeMap> {
+    public describeRuntimeMap(options: Request.IDescribeRuntimeMapOptions): Promise<RtMap.RuntimeMap> {
         const p1 = { operation: "DESCRIBERUNTIMEMAP", version: "3.0.0" };
         const url = this.stringifyGetUrl({ ...options, ...p1 });
-        return this.get<Contracts.RtMap.RuntimeMap>(url);
+        return this.get<RtMap.RuntimeMap>(url);
     }
 
     public getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string): string {

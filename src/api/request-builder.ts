@@ -1,4 +1,6 @@
-import * as Contracts from "./contracts";
+import * as Common from "./contracts/common";
+import * as RtMap from "./contracts/runtime-map";
+import * as Query from "./contracts/query";
 
 /**
  * Describes a request that takes either a session or username/password pair
@@ -62,10 +64,10 @@ export interface ICreateRuntimeMapOptions extends IAuthenticatedRequest {
     /**
      * The map definition id
      *
-     * @type {Contracts.Common.ResourceIdentifier}
+     * @type {Common.ResourceIdentifier}
      * @memberOf ICreateRuntimeMapOptions
      */
-    mapDefinition: Contracts.Common.ResourceIdentifier;
+    mapDefinition: Common.ResourceIdentifier;
     /**
      * A bitmask indicating what data to return
      *
@@ -303,7 +305,7 @@ export interface IMapGuideClient {
      * @param {string} resourceId
      * @returns {PromiseLike<T>}
      */
-    getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier, args?: any): Promise<T>;
+    getResource<T extends Common.ResourceBase>(resourceId: Common.ResourceIdentifier, args?: any): Promise<T>;
 
     /**
      * Creates a runtime map from the specified map definition
@@ -312,7 +314,7 @@ export interface IMapGuideClient {
      * @param {ICreateRuntimeMapOptions} options
      * @returns {PromiseLike<RtMap.RuntimeMap>}
      */
-    createRuntimeMap(options: ICreateRuntimeMapOptions): Promise<Contracts.RtMap.RuntimeMap>;
+    createRuntimeMap(options: ICreateRuntimeMapOptions): Promise<RtMap.RuntimeMap>;
 
     /**
      * Performs a map selection query on the current map
@@ -321,7 +323,7 @@ export interface IMapGuideClient {
      * @param {IQueryMapFeaturesOptions} options
      * @returns {PromiseLike<Query.QueryMapFeaturesResponse>}
      */
-    queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<Contracts.Query.QueryMapFeaturesResponse>;
+    queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<Query.QueryMapFeaturesResponse>;
 
     /**
      * Describes a runtime map
@@ -330,7 +332,7 @@ export interface IMapGuideClient {
      * @param {IDescribeRuntimeMapOptions} options
      * @returns {PromiseLike<RtMap.RuntimeMap>}
      */
-    describeRuntimeMap(options: IDescribeRuntimeMapOptions): Promise<Contracts.RtMap.RuntimeMap>;
+    describeRuntimeMap(options: IDescribeRuntimeMapOptions): Promise<RtMap.RuntimeMap>;
 
     /**
      * Gets the tile template URL used by the viewer to send tile requests
@@ -363,13 +365,13 @@ export abstract class RequestBuilder implements IMapGuideClient {
 
     public abstract getServerSessionTimeout(session: string): Promise<number>;
 
-    public abstract getResource<T extends Contracts.Resource.ResourceBase>(resourceId: Contracts.Common.ResourceIdentifier, args?: any): Promise<T>;
+    public abstract getResource<T extends Common.ResourceBase>(resourceId: Common.ResourceIdentifier, args?: any): Promise<T>;
 
-    public abstract createRuntimeMap(options: ICreateRuntimeMapOptions): Promise<Contracts.RtMap.RuntimeMap>;
+    public abstract createRuntimeMap(options: ICreateRuntimeMapOptions): Promise<RtMap.RuntimeMap>;
 
-    public abstract queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<Contracts.Query.QueryMapFeaturesResponse>;
+    public abstract queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<Query.QueryMapFeaturesResponse>;
 
-    public abstract describeRuntimeMap(options: IDescribeRuntimeMapOptions): Promise<Contracts.RtMap.RuntimeMap>;
+    public abstract describeRuntimeMap(options: IDescribeRuntimeMapOptions): Promise<RtMap.RuntimeMap>;
 
     public abstract getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string): string;
 }

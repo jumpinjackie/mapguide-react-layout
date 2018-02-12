@@ -8,7 +8,7 @@ import ViewerApiShim from "../containers/viewer-shim";
 import ModalLauncher from "../containers/modal-launcher";
 import FlyoutRegionContainer from "../containers/flyout-region";
 import { connect } from "react-redux";
-import { tr } from "../api/i18n";
+import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
     NOOP,
@@ -22,6 +22,9 @@ import {
 } from "../api/common";
 import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../components/accordion";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
+import InitWarningDisplay from "../containers/init-warning-display";
+import * as Runtime from "../api/runtime";
+import SplitterLayout from "react-splitter-layout";
 
 function maroonTemplateReducer(state: ITemplateReducerState, action: ReduxAction): ITemplateReducerState {
     const data: boolean | TemplateActions.IElementState | undefined = action.payload;
@@ -116,12 +119,17 @@ const SIDEBAR_PADDING = 0;
 const OUTER_PADDING = 3;
 
 export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplateProps, any> {
-    private fnActivePanelChanged: (id: string) => void;
     constructor(props: MaroonLayoutTemplateProps) {
         super(props);
-        this.fnActivePanelChanged = this.onActivePanelChanged.bind(this);
+        this.state = { isResizing: false };
     }
-    private onActivePanelChanged(id: string): void {
+    private onDragStart = () => {
+        this.setState({ isResizing: true });
+    }
+    private onDragEnd = () => {
+        this.setState({ isResizing: false });
+    }
+    private onActivePanelChanged = (id: string) => {
         const { setElementStates } = this.props;
         if (setElementStates) {
             const states: TemplateActions.IElementState = {
@@ -146,13 +154,23 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
         }
     }
     private getLocale(): string {
-        return this.props.config ? this.props.config.locale : "en";
+        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
+    }
+    private onSplitterChanged = (size: number) => {
+        //With the introduction of the splitter, we can no longer rely on a map 
+        //filling 100% of its space without needing to manually call updateSize(),
+        //so we do it here
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            viewer.updateSize();
+        }
     }
     componentDidMount() {
         setCustomTemplateReducer(maroonTemplateReducer);
     }
     render(): JSX.Element {
         const { config, map, capabilities } = this.props;
+        const { isResizing } = this.state;
         let hasTaskPane = false;
         let hasTaskBar = false;
         let hasStatusBar = false;
@@ -195,10 +213,11 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
             {
                 id: "TaskPane",
                 title: tr("TPL_TITLE_TASKPANE", locale),
-                contentRenderer: (dim: IAccordionPanelContentDimensions) => {
+                contentRenderer: (dim: IAccordionPanelContentDimensions, isResizing?: boolean) => {
                     return <div style={{ width: dim.width, height: dim.height, overflowY: "auto" }}>
                         <PlaceholderComponent id={DefaultComponentNames.TaskPane}
-                                                 locale={locale} />
+                                                 locale={locale}
+                                                 componentProps={{ isResizing: isResizing }} />
                     </div>;
                 }
             }
@@ -213,25 +232,27 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
         if (active.length == 1) {
             activeId = active[0].id;
         }
+        const TB_Z_INDEX = 0;
         return <div style={{ width: "100%", height: "100%" }}>
-            <Accordion style={{ position: "absolute", top: OUTER_PADDING, bottom: bottomOffset, right: OUTER_PADDING, width: SIDEBAR_WIDTH }} onActivePanelChanged={this.fnActivePanelChanged} activePanelId={activeId} panels={panels} />
-            <ToolbarContainer id="FileMenu" containerClass="maroon-file-menu" containerStyle={{ position: "absolute", left: OUTER_PADDING, top: OUTER_PADDING, right: SIDEBAR_WIDTH + OUTER_PADDING, zIndex: 100 }} />
-            <ToolbarContainer id="Toolbar" containerClass="maroon-toolbar" containerStyle={{ position: "absolute", left: OUTER_PADDING, top: DEFAULT_TOOLBAR_SIZE + OUTER_PADDING, right: SIDEBAR_WIDTH + OUTER_PADDING, zIndex: 100 }} />
-            <ToolbarContainer id="ToolbarVertical" containerClass="maroon-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: OUTER_PADDING, top: topOffset, bottom: bottomOffset, zIndex: 100, right: 0 }} />
-            <div style={{ position: "absolute", left: OUTER_PADDING + DEFAULT_TOOLBAR_SIZE, right: SIDEBAR_WIDTH + OUTER_PADDING, top: topOffset, bottom: bottomOffset }}>
-                {(() => {
-                    //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
-                    //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()
-                    //call to fix
-                    if (this.props.map != null) {
-                        return <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />;
-                    }
-                })()}
-                {(() => {
-                    if (hasNavigator) {
-                        return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
-                    }
-                })()}
+            <div style={{ position: "absolute", left: 0, top: 0, bottom: bottomOffset, right: 0 }}>
+                <SplitterLayout customClassName="maroon-splitter" primaryIndex={0} secondaryInitialSize={SIDEBAR_WIDTH} onSecondaryPaneSizeChange={this.onSplitterChanged} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
+                    <div>
+                        <ToolbarContainer id="FileMenu" containerClass="maroon-file-menu" containerStyle={{ position: "absolute", left: OUTER_PADDING, top: OUTER_PADDING, right: 0, zIndex: TB_Z_INDEX }} />
+                        <ToolbarContainer id="Toolbar" containerClass="maroon-toolbar" containerStyle={{ position: "absolute", left: OUTER_PADDING, top: DEFAULT_TOOLBAR_SIZE + OUTER_PADDING, right: 0, zIndex: TB_Z_INDEX }} />
+                        <ToolbarContainer id="ToolbarVertical" containerClass="maroon-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: OUTER_PADDING, top: topOffset, bottom: 0, zIndex: TB_Z_INDEX, right: 0 }} />
+                        <div style={{ position: "absolute", left: OUTER_PADDING + DEFAULT_TOOLBAR_SIZE, right: 0, top: topOffset, bottom: 0 }}>
+                            <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />
+                            {(() => {
+                                if (hasNavigator) {
+                                    return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
+                                }
+                            })()}
+                        </div>
+                    </div>
+                    <div>
+                        <Accordion style={{ position: "absolute", top: OUTER_PADDING, bottom: 0, right: OUTER_PADDING, left: 0 }} onActivePanelChanged={this.onActivePanelChanged} activePanelId={activeId} panels={panels} isResizing={isResizing} />
+                    </div>
+                </SplitterLayout>
             </div>
             {(() => {
                 if (hasStatusBar) {
@@ -239,6 +260,7 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
                         <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={locale} />
                         <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={locale} />
                         <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={locale} />
+                        <PlaceholderComponent id={DefaultComponentNames.ViewSize} locale={locale} />
                         <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={locale} />
                     </div>;
                 }
@@ -246,6 +268,7 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
             <ViewerApiShim />
             <ModalLauncher />
             <FlyoutRegionContainer />
+            <InitWarningDisplay />
         </div>;
     }
 }

@@ -20,7 +20,11 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {
+    GenericEvent,
+    GenericEventHandler,
     IMapView,
+    ILayerManager,
+    ILayerInfo,
     IExternalBaseLayer,
     DigitizerCallback,
     ActiveMapTool,
@@ -30,13 +34,14 @@ import {
     RefreshMode,
     ClientKind,
     NOOP,
-    LayerTransparencySet
+    LayerTransparencySet,
+    MapLoadIndicatorPositioning
 } from "../api/common";
 import {
     IApplicationContext,
     APPLICATION_CONTEXT_VALIDATION_MAP
 } from "./context";
-import * as Contracts from '../api/contracts';
+import * as RtMap from '../api/contracts/runtime-map';
 import debounce = require("lodash.debounce");
 import { areNumbersEqual } from '../utils/number';
 import * as logger from '../utils/logger';
@@ -93,6 +98,8 @@ import Polygon from "ol/geom/polygon";
 import Point from "ol/geom/point";
 import LineString from "ol/geom/linestring";
 import Circle from "ol/geom/circle";
+import { BLANK_GIF_DATA_URI } from "../constants/index";
+import { safePropAccess } from '../utils/safe-prop';
 
 /**
  * MapViewerBase component props
@@ -104,7 +111,6 @@ import Circle from "ol/geom/circle";
 export interface IMapViewerBaseProps extends IMapViewerContextProps {
     tool: ActiveMapTool;
     view?: IMapView;
-    initialView?: IMapView;
     agentKind: ClientKind;
     viewRotationEnabled: boolean;
     viewRotation: number;
@@ -120,12 +126,18 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
     onRotationChanged: (newRotation: number) => void;
     onSessionExpired?: () => void;
     onBeginDigitization: (callback: (cancelled: boolean) => void) => void;
+    onMapResized?: (size: [number, number]) => void;
     overviewMapElementSelector?: () => (Element | null);
     showGroups: string[] | undefined;
     showLayers: string[] | undefined;
     hideGroups: string[] | undefined;
     hideLayers: string[] | undefined;
     layerTransparency: LayerTransparencySet;
+    loadIndicatorPosition: MapLoadIndicatorPositioning;
+    loadIndicatorColor: string;
+    activeSelectedFeatureXml?: string;
+    activeSelectedFeatureColor: string;
+    manualFeatureTooltips: boolean;
 }
 
 /**
@@ -168,11 +180,11 @@ export function areViewsCloseToEqual(view: IMapView | undefined, otherView: IMap
  * Indicates if the given runtime map instances are the same or have the same name
  *
  * @export
- * @param {Contracts.RtMap.RuntimeMap} map
- * @param {Contracts.RtMap.RuntimeMap} other
+ * @param {RtMap.RuntimeMap} map
+ * @param {RtMap.RuntimeMap} other
  * @returns {boolean}
  */
-export function areMapsSame(map: Contracts.RtMap.RuntimeMap, other: Contracts.RtMap.RuntimeMap): boolean {
+export function areMapsSame(map: RtMap.RuntimeMap, other: RtMap.RuntimeMap): boolean {
     if (map != other) {
         return map.Name == other.Name;
     }
@@ -226,7 +238,40 @@ class SessionKeepAlive {
     }
 }
 
-function isMiddleMouseDownEvent(e: MouseEvent) {
+interface IMapLoadIndicatorProps {
+    loading: number;
+    loaded: number;
+    color: string;
+    position: MapLoadIndicatorPositioning;
+}
+
+const MapLoadIndicator = (props: IMapLoadIndicatorProps) => {
+    const { loaded, loading, color, position } = props;
+    let visibility = "visible";
+    let width = (loaded / loading * 100).toFixed(1) + "%";
+    if (loaded === loading) {
+        visibility = "hidden";
+        width = "0";
+    }
+    const style: React.CSSProperties = { 
+        position: "absolute",
+        zIndex: 10,
+        visibility: visibility,
+        left: 0,
+        height: 5,
+        width: width,
+        background: color,
+        transition: "width 250ms"
+    };
+    if (position == "top") {
+        style.top = 0;
+    } else {
+        style.bottom = 0;
+    }
+    return <div style={style} />;
+}
+
+function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4 ));
 }
 
@@ -239,6 +284,14 @@ function cloneExtent(bounds: Bounds): Bounds {
     ];
 }
 
+export interface IMapViewerBaseState {
+    shiftKey: boolean;
+    isMouseDown: boolean;
+    digitizingType: string;
+    loading: number;
+    loaded: number;
+}
+
 /**
  * The base map viewer component
  *
@@ -247,9 +300,7 @@ function cloneExtent(bounds: Bounds): Bounds {
  * @extends {React.Component<IMapViewerBaseProps, any>}
  */
 @ContextMenuTarget
-export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
-    private fnMouseUp: GenericEventHandler;
-    private fnMouseDown: GenericEventHandler;
+export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<IMapViewerBaseState>> implements ILayerManager {
     /**
      * Indicates if touch events are supported.
      */
@@ -269,11 +320,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     private _triggerZoomRequestOnMoveEnd: boolean;
     private _keepAlive: SessionKeepAlive;
     private _contextMenuOpen: boolean;
-
-    private _customLayers: { [name: string]: LayerBase; };
-
-    private fnKeyUp: GenericEventHandler;
-    private fnKeyDown: GenericEventHandler;
     /**
      * This is a throttled version of _refreshOnStateChange(). Call this on any
      * modifications to pendingStateChanges
@@ -286,19 +332,16 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         super(props);
         this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), props.stateChangeDebounceTimeout || 500);
         this._wktFormat = new WKTFormat();
-        this.fnKeyDown = this.onKeyDown.bind(this);
-        this.fnKeyUp = this.onKeyUp.bind(this);
-        this.fnMouseDown = this.onMouseDown.bind(this);
-        this.fnMouseUp = this.onMouseUp.bind(this);
         this._busyWorkers = 0;
         this._triggerZoomRequestOnMoveEnd = true;
         this._supportsTouch = isMobile.phone || isMobile.tablet;
         this._contextMenuOpen = false;
-        this._customLayers = {};
         this.state = {
             shiftKey: false,
             isMouseDown: false,
-            digitizingType: null
+            digitizingType: undefined,
+            loaded: 0,
+            loading: 0
         };
     }
     /**
@@ -341,7 +384,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         if (this.isDigitizing()) {
             return;
         }
-        if (this.props.tool === ActiveMapTool.Select) {
+        if (this.props.manualFeatureTooltips && this.props.featureTooltipsEnabled) {
+            this._mapContext.queryFeatureTooltip(e.pixel);
+        } else if (this.props.tool === ActiveMapTool.Select) {
             const ptBuffer = this.props.pointSelectionBuffer || 2;
             const box = this.getPointSelectionBox(e.pixel, ptBuffer);
             const geom = Polygon.fromExtent(box);
@@ -436,7 +481,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         if (this._activeDrawInteraction) {
             this._map.removeInteraction(this._activeDrawInteraction);
             this._activeDrawInteraction = null;
-            this.setState({ digitizingType: null });
+            this.setState({ digitizingType: undefined });
         }
     }
     public cancelDigitization(): void {
@@ -468,7 +513,12 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             }
         });
     }
-    private onKeyDown(e: GenericEvent) {
+    private onResize(e: GenericEvent) {
+        if (this.props.onMapResized) {
+            this.props.onMapResized(this._map.getSize());
+        }
+    }
+    private onKeyDown = (e: GenericEvent) => {
         switch (e.keyCode) {
             case KC_ESCAPE:
                 this.cancelDigitization();
@@ -476,17 +526,17 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         }
         this.setState({ shiftKey: e.shiftKey });
     }
-    private onKeyUp(e: GenericEvent) {
+    private onKeyUp = (e: GenericEvent) => {
         this.setState({ shiftKey: e.shiftKey });
     }
-    private onMouseDown(e: GenericEvent) {
+    private onMouseDown = (e: GenericEvent) => {
         if (!this.state.isMouseDown) {
             this.setState({
                 isMouseDown: true
             });
         }
     }
-    private onMouseUp(e: GenericEvent) {
+    private onMouseUp = (e: GenericEvent) => {
         if (this.state.isMouseDown) {
             this.setState({
                 isMouseDown: false
@@ -504,10 +554,27 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         //if (this._featureTooltip && this._featureTooltip.isEnabled()) {
         //    this._featureTooltip.onMouseMove(e);
         //}
-        this._mapContext.handleFeatureTooltipMouseMove(e);
+        if (!this.props.manualFeatureTooltips) {
+            this._mapContext.handleFeatureTooltipMouseMove(e);
+        }
         if (this.props.onMouseCoordinateChanged != null) {
             this.props.onMouseCoordinateChanged(e.coordinate);
         }
+    }
+    private addImageLoading() {
+        const { loading } = this.state;
+        this.setState({ loading: (loading || 0) + 1 });
+        this.incrementBusyWorker();
+    }
+    private addImageLoaded() {
+        const { loaded, loading } = this.state;
+        const newLoadedCount = (loaded || 0) + 1;
+        if (loading === newLoadedCount) {
+            this.setState({ loaded: 0, loading: 0 });
+        } else {
+            this.setState({ loaded: newLoadedCount });
+        }
+        this.decrementBusyWorker();
     }
     private incrementBusyWorker() {
         this._busyWorkers++;
@@ -522,12 +589,12 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             this.props.onRequestZoomToView({
                 x: view.x,
                 y: view.y,
-                scale: view.scale
+                scale: view.scale,
+                resolution: view.resolution
             });
         }
     }
     private onImageError(e: GenericEvent) {
-        this.decrementBusyWorker();
         this._keepAlive.lastTry().catch(err => {
             if (isSessionExpiredError(err)) {
                 this.onSessionExpired();
@@ -541,6 +608,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         return {
             incrementBusyWorker: this.incrementBusyWorker.bind(this),
             decrementBusyWorker: this.decrementBusyWorker.bind(this),
+            addImageLoaded: this.addImageLoaded.bind(this),
+            addImageLoading: this.addImageLoading.bind(this),
             onImageError: this.onImageError.bind(this),
             onSessionExpired: this.onSessionExpired.bind(this),
             getSelectableLayers: this.getSelectableLayers.bind(this),
@@ -661,6 +730,14 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
             });
             this._map.setView(newView);
         }
+        //activeSelectedFeatureXml
+        if (this.props.activeSelectedFeatureXml != nextProps.activeSelectedFeatureXml) {
+            const ms = this._map.getSize();
+            const view = this.getOLView();
+            const me = view.calculateExtent(ms);
+            const size = { w: ms[0], h: ms[1] };
+            this._mapContext.showSelectedFeature(me, size, this.props.map, this.props.activeSelectedFeatureColor, nextProps.activeSelectedFeatureXml);
+        }
     }
     componentDidMount() {
         const { map, agentUri, imageFormat } = this.props;
@@ -702,12 +779,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         };
         this._map = this.createOLMap(mapOptions);
         this._map.on("pointermove", this.onMouseMove.bind(this));
+        this._map.on("change:size", this.onResize.bind(this));
         const callback = this.getCallback();
         this._mapContext = new MapViewerContext(this._map, callback);
         const activeLayerSet = this._mapContext.initLayerSet(this.props);
         this._mapContext.initContext(activeLayerSet, this.props.overviewMapElementSelector);
-        document.addEventListener("keydown", this.fnKeyDown);
-        document.addEventListener("keyup", this.fnKeyUp);
+        document.addEventListener("keydown", this.onKeyDown);
+        document.addEventListener("keyup", this.onKeyUp);
 
         this._map.on("click", this.onMapClick.bind(this));
         this._map.on("moveend", (e: GenericEvent) => {
@@ -727,18 +805,16 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
                 logger.info("Triggering zoom request on moveend suppresseed");
             }
             if (e.frameState.viewState.rotation != this.props.viewRotation) {
-                const { onRotationChanged } = this.props;
-                if (onRotationChanged) {
-                    onRotationChanged(e.frameState.viewState.rotation);
-                }
+                safePropAccess(this.props, "onRotationChanged", func => func(e.frameState.viewState.rotation));
             }
         });
 
-        if (this.props.initialView != null) {
-            this.zoomToView(this.props.initialView.x, this.props.initialView.y, this.props.initialView.scale);
+        if (this.props.view != null) {
+            this.zoomToView(this.props.view.x, this.props.view.y, this.props.view.scale);
         } else {
             this._map.getView().fit(activeLayerSet.extent);
         }
+        this.onResize(this._map.getSize());
     }
     render(): JSX.Element {
         const { map, tool } = this.props;
@@ -795,7 +871,10 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         if (map) {
             style.backgroundColor = `#${map.BackgroundColor.substring(2)}`;
         }
-        return <div className="map-viewer-component" style={style} onMouseDown={this.fnMouseDown} onMouseUp={this.fnMouseUp} />;
+        const { loading, loaded } = this.state;
+        return <div className="map-viewer-component" style={style} onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp}>
+            <MapLoadIndicator loaded={loaded || 0} loading={loading || 0} position={this.props.loadIndicatorPosition} color={this.props.loadIndicatorColor} />
+        </div>;
     }
     componentWillUnmount() {
 
@@ -806,7 +885,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         return {
             x: center[0],
             y: center[1],
-            scale: scale
+            scale: scale,
+            resolution: this.getResolution()
         };
     }
     private onSessionExpired() {
@@ -860,11 +940,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     public getCurrentView(): IMapView {
         const ov = this.getOLView();
         const center = ov.getCenter();
-        const scale = this.resolutionToScale(ov.getResolution());
+        const resolution = ov.getResolution();
+        const scale = this.resolutionToScale(resolution);
         return {
             x: center[0],
             y: center[1],
-            scale: scale
+            scale: scale,
+            resolution: resolution
         };
     }
     public getCurrentExtent(): Bounds {
@@ -1003,35 +1085,28 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
         this._mapContext.enableFeatureTooltips(enabled);
     }
     public hasLayer(name: string): boolean {
-        return this._customLayers[name] != null;
+        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
+        return activeLayerSet.hasLayer(name);
     }
-    public addLayer<T extends LayerBase>(name: string, layer: T): T {
-        if (this._customLayers[name]) {
-            throw new MgError(`A layer named ${name} already exists`);
-        }
-        this._customLayers[name] = layer;
-        this._map.addLayer(layer);
-        return layer;
+    public addLayer<T extends LayerBase>(name: string, layer: T, allowReplace?: boolean): T {
+        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
+        return activeLayerSet.addLayer(this._map, name, layer, allowReplace);
     }
     public removeLayer(name: string): LayerBase | undefined {
-        let layer: LayerBase;
-        if (this._customLayers[name]) {
-            layer = this._customLayers[name];
-            this._map.removeLayer(layer);
-            delete this._customLayers[name];
-            return layer;
-        }
+        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
+        return activeLayerSet.removeLayer(this._map, name);
     }
     public getLayer<T extends LayerBase>(name: string, factory: () => T): T {
-        let layer: T;
-        if (this._customLayers[name]) {
-            layer = this._customLayers[name] as T;
-        } else {
-            layer = factory();
-            this._customLayers[name] = layer;
-            this._map.addLayer(layer);
-        }
-        return layer;
+        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
+        return activeLayerSet.getLayer(this._map, name, factory);
+    }
+    public moveUp(name: string): number {
+        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
+        return activeLayerSet.moveUp(this._map, name);
+    }
+    public moveDown(name: string): number {
+        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
+        return activeLayerSet.moveDown(this._map, name);
     }
     public addInteraction<T extends Interaction>(interaction: T): T {
         this._map.addInteraction(interaction);
@@ -1054,6 +1129,16 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, any> {
     }
     public removeHandler(eventName: string, handler: Function) {
         this._map.un(eventName, handler);
+    }
+    public updateSize() {
+        this._map.updateSize();
+    }
+    public getLayerManager(): ILayerManager { 
+        return this;
+    }
+    public getLayers(): ILayerInfo[] {
+        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
+        return activeLayerSet.getCustomLayers();
     }
     //------------------------------------//
 }

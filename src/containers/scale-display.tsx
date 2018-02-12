@@ -11,7 +11,7 @@ import {
     getCurrentView,
     getRuntimeMap
 } from "../api/common";
-import { tr } from "../api/i18n";
+import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { ScaleDisplay } from "../components/scale-display";
 
 export interface IScaleDisplayContainerState {
@@ -43,19 +43,17 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IScaleDisplayConta
 export type ScaleDisplayContainerProps = Partial<IScaleDisplayContainerState> & Partial<IScaleDisplayContainerDispatch>;
 
 export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainerProps, any> {
-    private fnScaleChanged: (scale: number) => void;
     constructor(props: ScaleDisplayContainerProps) {
         super(props);
-        this.fnScaleChanged = this.onScaleChanged.bind(this);
     }
-    private onScaleChanged(scale: number) {
+    private onScaleChanged = (scale: number) => {
         const { setScale, config } = this.props;
         if (setScale && config && config.activeMapName) {
             setScale(config.activeMapName, scale);
         }
     }
     private getLocale(): string {
-        return this.props.config ? this.props.config.locale : "en";
+        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
     componentWillReceiveProps(nextProps: ScaleDisplayContainerProps) {
         const { finiteScales, view } = nextProps;
@@ -67,7 +65,7 @@ export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainer
         const { view, style, config, finiteScales } = this.props;
         const locale = this.getLocale();
         if (view) {
-            return <ScaleDisplay onScaleChanged={this.fnScaleChanged}
+            return <ScaleDisplay onScaleChanged={this.onScaleChanged}
                                  view={view}
                                  style={style}
                                  finiteScales={finiteScales}

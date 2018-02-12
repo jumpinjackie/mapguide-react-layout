@@ -10,14 +10,71 @@ import {
     IInitErrorReducerState,
     IBranchedMapSubState,
     ClientKind,
-    InitError
+    InitError,
+    IMapViewer
 } from "../api/common";
 import { initLayout, IInitAppLayout } from "../actions/init";
 import { Error, normalizeStack } from "../components/error";
-import { tr } from "../api/i18n";
+import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import * as TemplateActions from "../actions/template";
 import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
+import { addUrlProps, UrlQueryParamTypes } from 'react-url-query';
+import { IApplicationContext, APPLICATION_CONTEXT_VALIDATION_MAP } from "../components/context";
+import { safePropAccess } from '../utils/safe-prop';
+
+const urlPropsQueryConfig = {
+    urlX: { type: UrlQueryParamTypes.number, queryParam: "x" },
+    urlY: { type: UrlQueryParamTypes.number, queryParam: "y" },
+    urlScale: { type: UrlQueryParamTypes.number, queryParam: "scale" },
+    urlResource: { type: UrlQueryParamTypes.string, queryParam: "resource" },
+    urlLocale: { type: UrlQueryParamTypes.string, queryParam: "locale" },
+    urlSession: { type: UrlQueryParamTypes.string, queryParam: "session" },
+    urlMap: { type: UrlQueryParamTypes.string, queryParam: "map" },
+    urlShowLayers: { type: UrlQueryParamTypes.array, queryParam: "sl" },
+    urlHideLayers: { type: UrlQueryParamTypes.array, queryParam: "hl" },
+    urlShowGroups: { type: UrlQueryParamTypes.array, queryParam: "sg" },
+    urlHideGroups: { type: UrlQueryParamTypes.array, queryParam: "hg" },
+}
+
+/**
+ * Props exposed to URL state
+ */
+export interface IAppUrlStateProps {
+    urlLocale?: string;
+    urlSession?: string;
+    urlResource: string;
+    urlX?: number;
+    urlY?: number;
+    urlScale?: number;
+    urlMap?: string;
+    urlShowLayers?: string[];
+    urlHideLayers?: string[];
+    urlShowGroups?: string[];
+    urlHideGroups?: string[];
+}
+
+export type UrlValueChangeCallback = (value: any) => void;
+
+/**
+ * Callback interface for propagating changes to URL state
+ */
+export interface IAppUrlStateCallback {
+    onChangeUrlX: UrlValueChangeCallback;
+    onChangeUrlY: UrlValueChangeCallback;
+    onChangeUrlScale: UrlValueChangeCallback;
+    onChangeUrlSession: UrlValueChangeCallback;
+    onChangeUrlMap: UrlValueChangeCallback;
+    onChangeUrlShowLayers: UrlValueChangeCallback;
+    onChangeUrlHideLayers: UrlValueChangeCallback;
+    onChangeUrlShowGroups: UrlValueChangeCallback;
+    onChangeUrlHideGroups: UrlValueChangeCallback;
+}
+
+export interface SelectionOptions {
+    allowHtmlValues?: boolean;
+    cleanHtml?: (value: string) => string;
+}
 
 /**
  * App component properties
@@ -69,6 +126,12 @@ export interface IAppProps {
      */
     fusionRoot: string;
     externalBaseLayers?: IExternalBaseLayer[];
+    onInit?: (viewer: IMapViewer) => void;
+    locale?: string;
+    /**
+     * Settings that control the selection panel (if provided by the template)
+     */
+    selectionSettings?: SelectionOptions;
 }
 
 /**
@@ -92,7 +155,6 @@ export interface IAppState {
  * @interface IAppDispatch
  */
 export interface IAppDispatch {
-    initApp: (args: any) => void;
     initLayout: (args: IInitAppLayout) => void;
     setElementVisibility: (states: TemplateActions.IElementState) => void;
 }
@@ -118,28 +180,59 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAppDispatch> {
     };
 }
 
-export type AppProps = IAppProps & Partial<IAppState> & Partial<IAppDispatch>;
+export type AppProps = IAppProps & Partial<IAppState> & Partial<IAppDispatch> & Partial<IAppUrlStateProps> & Partial<IAppUrlStateCallback>;
 
 export class App extends React.Component<AppProps, any> {
-    private fnErrorRenderer: (err: Error) => JSX.Element;
     constructor(props: AppProps) {
         super(props);
-        this.fnErrorRenderer = this.initErrorRenderer.bind(this);
         this.state = {
             isLoading: true
         };
     }
+    private allowHtmlValuesInSelection(): boolean {
+        const { selectionSettings } = this.props;
+        if (selectionSettings) {
+            return selectionSettings.allowHtmlValues || false;
+        }
+        return false;
+    }
+    private getHtmlCleaner(): (value: string) => string {
+        const { selectionSettings } = this.props;
+        if (selectionSettings && selectionSettings.cleanHtml) {
+            return selectionSettings.cleanHtml;
+        }
+        return v => v;
+    }
+    static childContextTypes = APPLICATION_CONTEXT_VALIDATION_MAP;
+    getChildContext(): IApplicationContext {
+        return {
+            allowHtmlValuesInSelection: () => this.allowHtmlValuesInSelection(),
+            getHTMLCleaner: () => this.getHtmlCleaner()
+        }
+    }
     componentDidMount() {
         const {
-            initApp,
+            onInit,
             setElementVisibility,
             initialElementVisibility,
             initLayout,
             agent,
+            locale,
             session,
             fusionRoot,
             resourceId,
-            externalBaseLayers
+            externalBaseLayers,
+            urlLocale,
+            urlResource,
+            urlSession,
+            urlX,
+            urlY,
+            urlScale,
+            urlMap,
+            urlShowLayers,
+            urlHideLayers,
+            urlShowGroups,
+            urlHideGroups
         } = this.props;
         if (setElementVisibility && initialElementVisibility) {
             const { taskpane, legend, selection } = initialElementVisibility;
@@ -155,16 +248,110 @@ export class App extends React.Component<AppProps, any> {
             setFusionRoot(fusionRoot);
         }
         if (initLayout) {
-            initLayout({
-                resourceId: resourceId,
-                externalBaseLayers: externalBaseLayers,
-                session: session
-            });
+            let amArgs: Partial<IInitAppLayout> | undefined;
+            if (urlMap) {
+                amArgs = {
+                    initialActiveMap: urlMap
+                };
+            }
+            let ivArgs: Partial<IInitAppLayout> | undefined;
+            if (urlX && urlY && urlScale) {
+                ivArgs = {
+                    initialView: {
+                        x: urlX,
+                        y: urlY,
+                        scale: urlScale
+                    }
+                };
+            }
+            let slArgs: Partial<IInitAppLayout> | undefined;
+            if (urlShowLayers) {
+                slArgs = {
+                    initialShowLayers: [...urlShowLayers]
+                };
+            }
+            let hlArgs: Partial<IInitAppLayout> | undefined;
+            if (urlHideLayers) {
+                hlArgs = {
+                    initialHideLayers: [...urlHideLayers]
+                };
+            }
+            let sgArgs: Partial<IInitAppLayout> | undefined;
+            if (urlShowGroups) {
+                sgArgs = {
+                    initialShowGroups: [...urlShowGroups]
+                };
+            }
+            let hgArgs: Partial<IInitAppLayout> | undefined;
+            if (urlHideGroups) {
+                hgArgs = {
+                    initialHideGroups: [...urlHideGroups]
+                };
+            }
+            const args: IInitAppLayout = {
+                ...{
+                    resourceId: urlResource || resourceId,
+                    locale: urlLocale || locale || DEFAULT_LOCALE,
+                    externalBaseLayers: externalBaseLayers,
+                    session: urlSession || session,
+                    onInit: onInit
+                },
+                ...(amArgs || {}),
+                ...(ivArgs || {}),
+                ...(slArgs || {}),
+                ...(hlArgs || {}),
+                ...(sgArgs || {}),
+                ...(hgArgs || {})
+            };
+            initLayout(args);
         }
     }
     componentWillReceiveProps(nextProps: AppProps) {
         if (nextProps.map != null && this.props.map != nextProps.map) {
             this.setState({ isLoading: false });
+        }
+        if (nextProps.config && nextProps.config.activeMapName) {
+            const am = nextProps.config.activeMapName;
+            safePropAccess(nextProps, "onChangeUrlMap", func => func!(am));
+        }
+        if (nextProps.map) {
+            if (nextProps.map.currentView) {
+                const { x, y, scale } = nextProps.map.currentView;
+                safePropAccess(nextProps, "onChangeUrlX", func => func!(`${x}`));
+                safePropAccess(nextProps, "onChangeUrlY", func => func!(`${y}`));
+                safePropAccess(nextProps, "onChangeUrlScale", func => func!(`${scale}`));
+            }
+            if (nextProps.map.runtimeMap) {
+                const { showGroups, showLayers, hideGroups, hideLayers } = nextProps.map;
+                const sg = [] as string[];
+                const hg = [] as string[];
+                const sl = [] as string[];
+                const hl = [] as string[];
+                if (nextProps.map.runtimeMap.Group) {
+                    for (const g of nextProps.map.runtimeMap.Group) {
+                        if (showGroups.indexOf(g.ObjectId) >= 0) {
+                            sg.push(g.Name);
+                        } else if (hideGroups.indexOf(g.ObjectId) >= 0) {
+                            hg.push(g.Name);
+                        }
+                    }
+                }
+                if (nextProps.map.runtimeMap.Layer) {
+                    for (const l of nextProps.map.runtimeMap.Layer) {
+                        if (showLayers.indexOf(l.ObjectId) >= 0) {
+                            sl.push(l.Name);
+                        } else if (hideLayers.indexOf(l.ObjectId) >= 0) {
+                            hl.push(l.Name);
+                        }
+                    }
+                }
+                safePropAccess(nextProps, "onChangeUrlShowGroups", func => func!(sg));
+                safePropAccess(nextProps, "onChangeUrlHideGroups", func => func!(hg));
+                safePropAccess(nextProps, "onChangeUrlShowLayers", func => func!(sl));
+                safePropAccess(nextProps, "onChangeUrlHideLayers", func => func!(hl));
+                const { SessionId } = nextProps.map.runtimeMap;
+                safePropAccess(nextProps, "onChangeUrlSession", func => func!(SessionId));
+            }
         }
     }
     private renderErrorMessage(err: Error | InitError, locale: string, args: any): JSX.Element {
@@ -205,9 +392,9 @@ export class App extends React.Component<AppProps, any> {
                 }
         }
     }
-    private initErrorRenderer(err: Error | InitError): JSX.Element {
+    private initErrorRenderer = (err: Error | InitError) => {
         const { config, initOptions } = this.props;
-        let locale = config ? (config.locale || "en") : "en";
+        let locale = config ? (config.locale || DEFAULT_LOCALE) : DEFAULT_LOCALE;
         if (initOptions && initOptions.locale) {
             locale = initOptions.locale;
         }
@@ -222,10 +409,10 @@ export class App extends React.Component<AppProps, any> {
         const { layout, config, error, map } = this.props;
         const { isLoading } = this.state;
         if (error) {
-            return <Error error={error} errorRenderer={this.fnErrorRenderer} />
+            return <Error error={error} errorRenderer={this.initErrorRenderer} />
         } else {
             //NOTE: Locale may not have been set at this point, so use default
-            const locale = config ? (config.locale || "en") : "en";
+            const locale = config ? (config.locale || DEFAULT_LOCALE) : DEFAULT_LOCALE;
             if (isLoading) {
                 return <div className="pt-non-ideal-state">
                     <div className="pt-non-ideal-state-visual pt-non-ideal-state-icon">
@@ -253,4 +440,4 @@ export class App extends React.Component<AppProps, any> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(addUrlProps<App>({ urlPropsQueryConfig })(App));

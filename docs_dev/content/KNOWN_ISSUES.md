@@ -1,4 +1,4 @@
-Known viewer issues are documented here.
+Known viewer issues or limitations are documented here.
 
 Where applicable, an issue number is attached to indicate that such issues are actioned to be resolved.
 
@@ -6,6 +6,19 @@ Localization
 ============
 
  * No known issues
+
+Fusion compatibility
+====================
+
+ * API
+   * Only a subset of the Fusion events are supported (only what's necessary to support the widgets converted to work in this viewer)
+   * [Only a subset of the Fusion client-side API](https://jumpinjackie.github.io/mapguide-react-layout/apicompat.html) is supported
+ * The following widgets are not supported due to their limited usefulness in the context of this viewer:
+   * ColorPicker
+   * ActivityIndicator
+   * Print (QuickPlot supercedes this)
+   * SaveMap (QuickPlot supercedes this)
+ * Due to lack of Google Maps integration, the Google Street View widget is not supported if referenced in an Application Definition (and will not be ported across due to current technical and legal constraints)
 
 Components
 ==========
@@ -24,9 +37,7 @@ Commands
 ========
 
  * General
-   * The following commands are quick-and-dirty ports of their Fusion counterparts:
-     * QuickPlot
-       * The draggable map capturer box mode is not implemented
+   * The following commands are quick-and-dirty ports of their Fusion counterparts with the same UI and UX:
      * Buffer
      * Search
      * SelectWithin
@@ -37,14 +48,10 @@ Commands
      * Theme: `server/Theme/thememain.php`
 
  * InvokeScript commands
-   * [#14](https://github.com/jumpinjackie/mapguide-react-layout/issues/14): InvokeScript commands are not supported. Once we implement a server-side wrapper, such commands will be supported.
-
- * Due to lack of Google Maps integration, the Google Street View widget is not supported if reference in an Application Definition (and will not be ported across due to current technical and legal constraints)
+   * InvokeScript commands are not supported as-is. In the context of mapguide-react-layout, and InvokeScript command merely invokes a registered command of the same name in the command registry. The script content of such commands are completely ignored.
 
 Viewer
 ======
-
- * Initial view does not span the full dimensions of the map viewport.
 
  * Viewer will only accept Map Definitions in coordinate systems that have a corresponding EPSG code
 
@@ -63,4 +70,3 @@ Templates
 
  * Aqua:
    * Floating windows for Legend / Selection / Task Pane have fixed width and height
-   * Legend / Selection / Task Pane toggle actions are hard-coded into the template, as a result the existing InvokeScript widgets that would've performed this action are redundant

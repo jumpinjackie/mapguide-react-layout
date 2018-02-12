@@ -9,6 +9,8 @@ import { connect } from "react-redux";
 import { tr } from "../api/i18n";
 import * as Constants from "../constants";
 import {
+    GenericEvent,
+    GenericEventHandler,
     ReduxDispatch,
     IApplicationState,
     IViewerReducerState,
@@ -16,6 +18,7 @@ import {
     IViewerCapabilities,
     ITemplateReducerState
 } from "../api/common";
+import InitWarningDisplay from "../containers/init-warning-display";
 
 const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;
@@ -54,18 +57,8 @@ interface ISidebarProps {
 }
 
 class Sidebar extends React.Component<ISidebarProps, {}> {
-    private fnClickExpand: GenericEventHandler;
-    private fnClickCollapse: GenericEventHandler;
-    private fnActivateTasks: GenericEventHandler;
-    private fnActivateLegend: GenericEventHandler;
-    private fnActivateSelection: GenericEventHandler;
     constructor(props: ISidebarProps) {
         super(props);
-        this.fnClickCollapse = this.onClickCollapse.bind(this);
-        this.fnClickExpand = this.onClickExpand.bind(this);
-        this.fnActivateTasks = this.onActivateTasks.bind(this);
-        this.fnActivateLegend = this.onActivateLegend.bind(this);
-        this.fnActivateSelection = this.onActivateSelection.bind(this);
     }
     componentWillReceiveProps(nextProps: ISidebarProps) {
         const lastAction = nextProps.lastAction;
@@ -81,31 +74,31 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
             }
         }
     }
-    onActivateTasks(e: GenericEvent) {
+    private onActivateTasks = (e: GenericEvent) => {
         const { onActivateTab } = this.props;
         e.preventDefault();
         onActivateTab("tasks");
         return false;
     }
-    onActivateLegend(e: GenericEvent) {
+    private onActivateLegend = (e: GenericEvent) => {
         const { onActivateTab } = this.props;
         e.preventDefault();
         onActivateTab("legend");
         return false;
     }
-    onActivateSelection(e: GenericEvent) {
+    private onActivateSelection = (e: GenericEvent) => {
         const { onActivateTab } = this.props;
         e.preventDefault();
         onActivateTab("selection");
         return false;
     }
-    onClickCollapse(e: GenericEvent) {
+    private onClickCollapse = (e: GenericEvent) => {
         const { onCollapse } = this.props;
         e.preventDefault();
         onCollapse();
         return false;
     }
-    onClickExpand(e: GenericEvent) {
+    private onClickExpand = (e: GenericEvent) => {
         const { onExpand } = this.props;
         e.preventDefault();
         onExpand();
@@ -131,9 +124,9 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
                                 </a>;
                             } else {
                                 if (collapsed) {
-                                    return <a onClick={this.fnClickExpand}><span className="pt-icon-standard pt-icon-menu-open" /></a>;
+                                    return <a onClick={this.onClickExpand}><span className="pt-icon-standard pt-icon-menu-open" /></a>;
                                 } else {
-                                    return <a onClick={this.fnClickCollapse}><span className="pt-icon-standard pt-icon-menu-closed" /></a>;
+                                    return <a onClick={this.onClickCollapse}><span className="pt-icon-standard pt-icon-menu-closed" /></a>;
                                 }
                             }
                         })()}
@@ -141,21 +134,21 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
                     {(() => {
                         if (this.props.taskpane) {
                             return <li className={collapsed == false && activeTab == "tasks" ? "active" : ""}>
-                                <a onClick={this.fnActivateTasks} title={tr("TPL_SIDEBAR_OPEN_TASKPANE", this.props.locale)} role="tab"><span className="pt-icon-standard pt-icon-application" /></a>
+                                <a onClick={this.onActivateTasks} title={tr("TPL_SIDEBAR_OPEN_TASKPANE", this.props.locale)} role="tab"><span className="pt-icon-standard pt-icon-application" /></a>
                             </li>;
                         }
                     })()}
                     {(() => {
                         if (this.props.legend) {
                             return <li className={collapsed == false && activeTab == "legend" ? "active" : ""}>
-                                <a onClick={this.fnActivateLegend} title={tr("TPL_SIDEBAR_OPEN_LEGEND", this.props.locale)} role="tab"><span className="pt-icon-standard pt-icon-layers" /></a>
+                                <a onClick={this.onActivateLegend} title={tr("TPL_SIDEBAR_OPEN_LEGEND", this.props.locale)} role="tab"><span className="pt-icon-standard pt-icon-layers" /></a>
                             </li>;
                         }
                     })()}
                     {(() => {
                         if (this.props.selection) {
                             return <li className={collapsed == false && activeTab == "selection" ? "active" : ""}>
-                                <a onClick={this.fnActivateSelection} title={tr("TPL_SIDEBAR_OPEN_SELECTION_PANEL", this.props.locale)} role="tab"><span className="pt-icon-standard pt-icon-th" /></a>
+                                <a onClick={this.onActivateSelection} title={tr("TPL_SIDEBAR_OPEN_SELECTION_PANEL", this.props.locale)} role="tab"><span className="pt-icon-standard pt-icon-th" /></a>
                             </li>;
                         }
                     })()}
@@ -166,7 +159,7 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
                 {(() => {
                     if (this.props.taskpane) {
                         return <div className={`sidebar-pane ${activeTab == "tasks" ? "active" : ""}`}>
-                            <SidebarHeader text={tr("TPL_TITLE_TASKPANE", this.props.locale)} onCloseClick={this.fnClickCollapse} />
+                            <SidebarHeader text={tr("TPL_TITLE_TASKPANE", this.props.locale)} onCloseClick={this.onClickCollapse} />
                             <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
                                 <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={this.props.locale} />
                             </div>
@@ -176,7 +169,7 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
                 {(() => {
                     if (this.props.legend) {
                         return <div className={`sidebar-pane ${activeTab == "legend" ? "active" : ""}`}>
-                            <SidebarHeader text={tr("TPL_TITLE_LEGEND", this.props.locale)} onCloseClick={this.fnClickCollapse} />
+                            <SidebarHeader text={tr("TPL_TITLE_LEGEND", this.props.locale)} onCloseClick={this.onClickCollapse} />
                             <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0, overflow: "auto" }}>
                                 <PlaceholderComponent id={DefaultComponentNames.Legend} locale={this.props.locale} componentProps={{ inlineBaseLayerSwitcher: true }} />
                             </div>
@@ -186,7 +179,7 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
                 {(() => {
                     if (this.props.selection) {
                         return <div className={`sidebar-pane ${activeTab == "selection" ? "active" : ""}`}>
-                            <SidebarHeader text={tr("TPL_TITLE_SELECTION_PANEL", this.props.locale)} onCloseClick={this.fnClickCollapse} />
+                            <SidebarHeader text={tr("TPL_TITLE_SELECTION_PANEL", this.props.locale)} onCloseClick={this.onClickCollapse} />
                             <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
                                 <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={this.props.locale} />
                             </div>
@@ -230,14 +223,8 @@ export interface SidebarLayoutState {
 }
 
 export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<SidebarLayoutState>> {
-    private fnCollapse: () => void;
-    private fnExpand: () => void;
-    private fnActivateTab: (tab: string, collapsed?: boolean) => void;
     constructor(props: SidebarLayoutProps) {
         super(props);
-        this.fnActivateTab = this.onActivateTab.bind(this);
-        this.fnCollapse = this.onCollapse.bind(this);
-        this.fnExpand = this.onExpand.bind(this);
         const { templateState } = props;
         let collapsed = false;
         let activeTab: SidebarTab = "tasks";
@@ -254,17 +241,17 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<S
             activeTab: activeTab
         };
     }
-    private onCollapse(): void {
+    private onCollapse = () => {
         this.setState({
             collapsed: true
         });
     }
-    private onExpand(): void {
+    private onExpand = () => {
         this.setState({
             collapsed: false
         });
     }
-    private onActivateTab(tab: SidebarTab, collapsed?: boolean): void {
+    private onActivateTab = (tab: SidebarTab, collapsed?: boolean) => {
         if (typeof(collapsed) != 'undefined') {
             this.setState({
                 activeTab: tab,
@@ -289,6 +276,7 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<S
             hasNavigator,
             hasSelectionPanel,
             hasLegend,
+            hasViewSize,
             hasToolbar
         } = capabilities;
         let sbWidth = SIDEBAR_WIDTH;
@@ -303,9 +291,9 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<S
                      locale={config.locale}
                      collapsed={collapsed || false}
                      activeTab={activeTab || "tasks"}
-                     onCollapse={this.fnCollapse}
-                     onActivateTab={this.fnActivateTab}
-                     onExpand={this.fnExpand}
+                     onCollapse={this.onCollapse}
+                     onActivateTab={this.onActivateTab}
+                     onExpand={this.onExpand}
                      lastAction={this.props.lastaction} />
             {(() => {
                 if (hasToolbar) {
@@ -340,6 +328,11 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<S
                 }
             })()}
             {(() => {
+                if (hasViewSize) {
+                    return <PlaceholderComponent id={DefaultComponentNames.ViewSize} locale={config.locale} />;
+                }
+            })()}
+            {(() => {
                 if (hasStatusBar) {
                     return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={config.locale} />;
                 }
@@ -348,6 +341,7 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<S
             <ViewerApiShim />
             <ModalLauncher />
             <FlyoutRegionContainer />
+            <InitWarningDisplay />
             <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={config.locale} />
         </div>;
     }

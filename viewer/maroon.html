@@ -2,6 +2,8 @@
 <html>
     <head>
         <title>MapGuide React Viewer</title>
+        <!-- NOTE: If you don't care about IE, you can remove/comment the es6-promise script reference below -->
+        <script type="text/javascript" src="dist/es6-promise.auto.min.js"></script>
         <script type="text/javascript" src="dist/viewer.js"></script>
         <style type="text/css">
             /* Prevent scrollbars due to floating modal dialogs going past the bounds of the root element */
@@ -44,6 +46,9 @@
             .maroon-status-bar {
                 background-color: #A5132E;
                 color: white;
+            }
+            .maroon-splitter > .layout-splitter {
+                background-color: #3E5C5F;
             }
             .component-accordion {
                 background-color: #E4E3E3;

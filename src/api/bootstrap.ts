@@ -1,11 +1,12 @@
 import proj from "ol/proj";
 import proj4 from "proj4";
+import { configureUrlQuery } from 'react-url-query';
+import createHistory from 'history/createBrowserHistory';
 
 /**
  * Sets up key dependencies needed by the viewer:
  *
  *  - proj4js
- *  - polyfill for Promise
  *  - polyfill for fetch
  *
  * You must call this function if rolling your own viewer bundle. This is automatically
@@ -14,7 +15,6 @@ import proj4 from "proj4";
  * @export
  */
 export function bootstrap() {
-    require("es6-promise").polyfill();
     require('whatwg-fetch');
     proj.setProj4(proj4);
 
@@ -37,4 +37,8 @@ export function bootstrap() {
             return to;
         };
     }
+
+    //Need to do this after as it assumes Object.assign is present
+    const history = createHistory();
+    configureUrlQuery({ history });
 }

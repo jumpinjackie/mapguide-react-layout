@@ -19,7 +19,9 @@ jsonfile.readFile(origPackageJson, function(err, obj) {
     delete obj.greenkeeper;
     delete obj.jest;
     delete obj.devDependencies;
-
+    obj.main = "lib/index.js";
+    obj.types = "lib/index.d.ts";
+    obj.typings = "lib/index.d.ts";
     obj.directories = {
         lib: "lib"
     };

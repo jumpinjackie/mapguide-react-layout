@@ -1,26 +1,11 @@
-import { combineReducers } from "redux";
-import { configReducer} from "./config";
-import { toolbarReducer } from "./toolbar";
-import { taskPaneReducer } from "./taskpane";
-import { lastAction } from "./last-action";
-import { modalReducer } from "./modal";
-import { initErrorReducer } from "./init-error";
-import { mapStateReducer } from "./map-state";
-import { viewerReducer } from "./viewer";
-import { mouseReducer } from "./mouse";
-import { templateReducer } from "./template";
-
-const rootReducer: any = combineReducers({
-    initError: initErrorReducer,
-    config: configReducer,
-    template: templateReducer,
-    mapState: mapStateReducer,
-    viewer: viewerReducer,
-    toolbar: toolbarReducer,
-    taskpane: taskPaneReducer,
-    modal: modalReducer,
-    mouse: mouseReducer,
-    lastaction: lastAction
-});
-
-export default rootReducer;
+export * from "./config";
+export * from "./init-error";
+export * from "./last-action";
+export * from "./map-state";
+export * from "./modal";
+export * from "./mouse";
+export * from "./root";
+export * from "./taskpane";
+export * from "./template";
+export * from "./toolbar";
+export * from "./viewer";

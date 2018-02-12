@@ -3,6 +3,8 @@
 const path = require('path');
 const webpack = require('webpack');
 const loaders = require('./webpack/loaders');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+
 
 const baseAppEntries = [
     './src/entries/library.tsx',
@@ -25,11 +27,16 @@ const basePlugins = [
     new webpack.DefinePlugin({
         __DEV__: process.env.NODE_ENV !== 'production',
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
-    })
+    }),
+    new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true })
 ];
 
 const devPlugins = [
     new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.WatchIgnorePlugin([
+        /\.js$/,
+        /\.d\.ts$/
+    ])
 ];
 
 const prodPlugins = [
@@ -68,10 +75,10 @@ module.exports = {
         library: "MapGuide",
         path: path.join(__dirname, 'viewer/dist'),
         //filename: '[name].[hash].js',
-        filename: '[name].js',
+        filename: process.env.DEBUG_BUILD === '1' ? '[name]-debug.js' : '[name].js',
         publicPath: '/',
         //sourceMapFilename: '[name].[hash].js.map',
-        sourceMapFilename: '[name].js.map',
+        sourceMapFilename: process.env.DEBUG_BUILD === '1' ? '[name]-debug.js.map' : '[name].js.map',
         chunkFilename: '[id].chunk.js'
     },
 

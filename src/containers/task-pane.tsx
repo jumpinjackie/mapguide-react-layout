@@ -13,14 +13,14 @@ import {
     FlyoutVisibilitySet
 } from "../api/common";
 import { IItem } from "../components/toolbar";
-import { TaskPane } from "../components/task-pane";
+import { TaskPane, TASK_PANE_OVERLAY_BGCOLOR } from "../components/task-pane";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { mapToolbarReference } from "../api/registry/command";
 import { invokeCommand } from "../actions/map";
 import * as TaskPaneActions from "../actions/taskpane";
-import { areUrlsSame } from "../utils/url";
+import { areUrlsSame, ensureParameters } from "../utils/url";
 import { processMenuItems } from "../utils/menu";
-import { tr } from "../api/i18n";
+import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import * as FlyoutActions from "../actions/flyout";
 import {
     SPRITE_ICON_HOME,
@@ -30,6 +30,7 @@ import {
 
 export interface ITaskPaneContainerProps {
     maxHeight?: number;
+    isResizing?: boolean;
 }
 
 export interface ITaskPaneContainerState {
@@ -83,14 +84,8 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
     private homeAction: IItem;
     private backAction: IItem;
     private forwardAction: IItem;
-    private fnUrlLoaded: (url: string) => void;
-    private fnOpenFlyout: (id: string, metrics: IDOMElementMetrics) => void;
-    private fnCloseFlyout: (id: string) => void;
     constructor(props: TaskPaneProps) {
         super(props);
-        this.fnUrlLoaded = this.onUrlLoaded.bind(this);
-        this.fnCloseFlyout = this.onCloseFlyout.bind(this);
-        this.fnOpenFlyout = this.onOpenFlyout.bind(this);
         const locale = this.getLocale();
         this.homeAction = {
             iconClass: SPRITE_ICON_HOME,
@@ -127,19 +122,19 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         };
     }
     private getLocale(): string {
-        return this.props.config ? this.props.config.locale : "en";
+        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
-    private onCloseFlyout(id: string): void {
+    private onCloseFlyout = (id: string) => {
         if (this.props.closeFlyout) {
             this.props.closeFlyout(id);
         }
     }
-    private onOpenFlyout(id: string, metrics: IDOMElementMetrics): void {
+    private onOpenFlyout = (id: string, metrics: IDOMElementMetrics) => {
         if (this.props.openFlyout) {
             this.props.openFlyout(id, metrics);
         }
     }
-    private onUrlLoaded(url: string): void {
+    private onUrlLoaded = (url: string) => {
         const { taskpane, pushUrl } = this.props;
         if (taskpane) {
             const currentUrl = taskpane.navigation[taskpane.navIndex];
@@ -152,7 +147,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         const { taskpane, map, config } = this.props;
         if (taskpane && taskpane.initialUrl) { //An initial URL was set
             const initUrl = map && map.runtimeMap && taskpane.initialUrl
-                ? TaskPaneActions.ensureParameters(taskpane.initialUrl, map.runtimeMap.Name, map.runtimeMap.SessionId, this.getLocale())
+                ? ensureParameters(taskpane.initialUrl, map.runtimeMap.Name, map.runtimeMap.SessionId, this.getLocale())
                 : taskpane.initialUrl;
             return taskpane.navigation.length > 0 //We have a navigation stack
                 && !areUrlsSame(taskpane.navigation[taskpane.navIndex], initUrl); //The current URL is not initial.
@@ -177,7 +172,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         store: PropTypes.object
     };
     render(): JSX.Element {
-        const { taskpane, config, map, invokeCommand, maxHeight, flyouts } = this.props;
+        const { taskpane, config, map, invokeCommand, maxHeight, flyouts, isResizing } = this.props;
         if (taskpane && config && map && map.runtimeMap) {
             if (taskpane.navigation[taskpane.navIndex]) {
                 const flyoutStates: FlyoutVisibilitySet = {};
@@ -187,20 +182,36 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
                         flyoutStates[fid] = !!flyouts[fid].open;
                     }
                 }
-                return <TaskPane currentUrl={taskpane.navigation[taskpane.navIndex]}
-                                 showTaskBar={config.capabilities.hasTaskBar}
-                                 lastUrlPushed={taskpane.lastUrlPushed}
-                                 homeAction={this.homeAction}
-                                 backAction={this.backAction}
-                                 onOpenFlyout={this.fnOpenFlyout}
-                                 onCloseFlyout={this.fnCloseFlyout}
-                                 forwardAction={this.forwardAction}
-                                 session={map.runtimeMap.SessionId}
-                                 mapName={map.runtimeMap.Name}
-                                 onUrlLoaded={this.fnUrlLoaded}
-                                 maxHeight={maxHeight}
-                                 flyoutStates={flyoutStates}
-                                 locale={this.getLocale()} />;
+                return <div>
+                    <TaskPane currentUrl={taskpane.navigation[taskpane.navIndex]}
+                              showTaskBar={config.capabilities.hasTaskBar}
+                              lastUrlPushed={taskpane.lastUrlPushed}
+                              homeAction={this.homeAction}
+                              backAction={this.backAction}
+                              onOpenFlyout={this.onOpenFlyout}
+                              onCloseFlyout={this.onCloseFlyout}
+                              forwardAction={this.forwardAction}
+                              session={map.runtimeMap.SessionId}
+                              mapName={map.runtimeMap.Name}
+                              onUrlLoaded={this.onUrlLoaded}
+                              maxHeight={maxHeight}
+                              flyoutStates={flyoutStates}
+                              locale={this.getLocale()} />
+                    {(() => {
+                        if (isResizing == true) {
+                            return <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: TASK_PANE_OVERLAY_BGCOLOR }}>
+                                <div className="pt-non-ideal-state">
+                                    <div className="pt-non-ideal-state-visual pt-non-ideal-state-icon">
+                                        <span className="pt-icon pt-icon-arrows-horizontal"></span>
+                                    </div>
+                                    <div className="pt-non-ideal-state-description">
+                                        {tr("TASK_PANE_RESIZING", this.getLocale())}
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    })()}
+                </div>
             }
         }
         return <noscript />;

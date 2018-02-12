@@ -3,12 +3,12 @@ import { IToolbarReducerState } from "../api/common";
 import { AnyAction } from "redux";
 import update = require("react-addons-update");
 
-export const INITIAL_STATE: IToolbarReducerState = {
+export const TOOLBAR_INITIAL_STATE: IToolbarReducerState = {
     toolbars: {},
     flyouts: {}
 };
 
-export function toolbarReducer(state = INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
+export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
     const payload: any = action.payload || {};
     switch (action.type) {
         case Constants.INIT_APP:

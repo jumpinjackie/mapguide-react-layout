@@ -7,6 +7,9 @@ import {
     ICoordinateConfiguration
 } from "../api/common";
 import { MouseCoordinates } from "../components/mouse-coordinates";
+import olProj from "ol/proj";
+import { getUnitOfMeasure } from "../utils/units";
+import { UnitOfMeasure } from "../index";
 
 export interface IMouseCoordinatesContainerProps {
     style: React.CSSProperties;
@@ -14,15 +17,24 @@ export interface IMouseCoordinatesContainerProps {
 
 export interface IMouseCoordinatesContainerState {
     config: ICoordinateConfiguration;
-    mouse: Coordinate | null;
+    mapProjection: string;
+    mouse: Coordinate | undefined;
 }
 
 export interface IMouseCoordinatesDispatch { }
 
 function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMouseCoordinatesContainerProps): Partial<IMouseCoordinatesContainerState> {
+    let mapProjection;
+    if (state.config.activeMapName) {
+        const map = state.mapState[state.config.activeMapName].runtimeMap;
+        if (map) {
+            mapProjection = `EPSG:${map.CoordinateSystem.EpsgCode}`;
+        }
+    }
     return {
         config: state.config.coordinates,
-        mouse: state.mouse.coords
+        mouse: state.mouse.coords,
+        mapProjection: mapProjection
     };
 }
 
@@ -39,9 +51,34 @@ export class MouseCoordinatesContainer extends React.Component<MouseCoordinatesC
         super(props);
     }
     render(): JSX.Element {
-        const { config, style, mouse } = this.props;
-        if (config != null && mouse != null) {
-            return <MouseCoordinates coords={mouse} style={style} decimals={config.decimals} />;
+        const { config, style, mouse, mapProjection } = this.props;
+        if (config && mouse) {
+            const prj = olProj.get(config.projection || mapProjection);
+            let units;
+            if (prj) {
+                units = prj.getUnits();
+                switch (units) {
+                    case "degrees":
+                        units = getUnitOfMeasure(UnitOfMeasure.Degrees).abbreviation();
+                        break;
+                    case "pixels":
+                    case "tile-pixels":
+                        units = getUnitOfMeasure(UnitOfMeasure.Pixels).abbreviation();
+                        break;
+                    case "us-ft":
+                        units = getUnitOfMeasure(UnitOfMeasure.Feet).abbreviation();
+                        break;
+                }
+            }
+            let coords: Coordinate = [mouse[0], mouse[1]];
+            if (config.projection && mapProjection) {
+                try {
+                    coords = olProj.transform(coords, mapProjection, config.projection);
+                } catch (e) {
+
+                }
+            }
+            return <MouseCoordinates units={units} coords={coords} style={style} decimals={config.decimals} format={config.format} />;
         } else {
             return <div />;
         }

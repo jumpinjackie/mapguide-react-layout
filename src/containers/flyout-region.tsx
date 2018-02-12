@@ -11,6 +11,7 @@ import {
 } from "../api/common";
 import { processMenuItems } from "../utils/menu";
 import { mapToolbarReference } from "../api/registry/command";
+import { DEFAULT_LOCALE } from "../api/i18n";
 
 export interface IFlyoutRegionContainerProps {
 
@@ -43,15 +44,13 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IFlyoutRegionConta
 export type FlyoutRegionContainerProps = IFlyoutRegionContainerProps & Partial<IFlyoutRegionContainerState> & Partial<IFlyoutRegionContainerDispatch>;
 
 export class FlyoutRegionContainer extends React.Component<FlyoutRegionContainerProps, any> {
-    private fnCloseFlyout: (id: string) => void;
     constructor(props: FlyoutRegionContainerProps) {
         super(props);
-        this.fnCloseFlyout = this.onCloseFlyout.bind(this);
     }
     static contextTypes: PropTypes.ValidationMap<any> = {
         store: PropTypes.object
     };
-    private onCloseFlyout(id: string): void {
+    private onCloseFlyout = (id: string) => {
         if (this.props.closeFlyout) {
             this.props.closeFlyout(id);
         }
@@ -75,9 +74,9 @@ export class FlyoutRegionContainer extends React.Component<FlyoutRegionContainer
         return prepared;
     }
     render(): JSX.Element {
-        const locale = this.props.locale ? this.props.locale : "en";
+        const locale = this.props.locale ? this.props.locale : DEFAULT_LOCALE;
         const flyouts = this.prepareFlyouts();
-        return <FlyoutRegion flyoutConf={flyouts} onCloseFlyout={this.fnCloseFlyout} locale={locale} />;
+        return <FlyoutRegion flyoutConf={flyouts} onCloseFlyout={this.onCloseFlyout} locale={locale} />;
     }
 }
 

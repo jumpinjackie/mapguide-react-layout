@@ -1,5 +1,5 @@
 import * as React from "react";
-import { IExternalBaseLayer } from "../api/common";
+import { IExternalBaseLayer, GenericEvent, GenericEventHandler } from "../api/common";
 import { RuntimeMap, MapLayer, MapGroup, RuleInfo } from "../api/contracts/runtime-map";
 import { ILegendContext, LEGEND_CONTEXT_VALIDATION_MAP } from "./context";
 import { BaseLayerSwitcher } from "./base-layer-switcher";
@@ -95,23 +95,17 @@ export interface ILayerNodeProps {
 export class LayerNode extends React.Component<ILayerNodeProps, any> {
     static contextTypes = LEGEND_CONTEXT_VALIDATION_MAP;
     context: ILegendContext;
-    fnVisibilityChanged: GenericEventHandler;
-    fnToggleSelectability: GenericEventHandler;
-    fnToggleExpansion: GenericEventHandler;
     constructor(props: ILayerNodeProps) {
         super(props);
-        this.fnVisibilityChanged = this.onVisibilityChanged.bind(this);
-        this.fnToggleSelectability = this.onToggleSelectability.bind(this);
-        this.fnToggleExpansion = this.onToggleExpansion.bind(this);
         this.state = {
             layerVisible: props.layer.Visible
         };
     }
-    private onVisibilityChanged(e: GenericEvent) {
+    private onVisibilityChanged = (e: GenericEvent) => {
         this.setState({ layerVisible: e.target.checked });
         this.context.setLayerVisibility(this.props.layer.ObjectId, e.target.checked);
     }
-    private onToggleSelectability(e: GenericEvent) {
+    private onToggleSelectability = (e: GenericEvent) => {
         const selectable = this.getLayerSelectability(this.props.layer.ObjectId);
         this.context.setLayerSelectability(this.props.layer.ObjectId, !selectable);
     }
@@ -121,7 +115,7 @@ export class LayerNode extends React.Component<ILayerNodeProps, any> {
             expanded = this.props.layer.ExpandInLegend;
         return expanded;
     }
-    private onToggleExpansion(e: GenericEvent) {
+    private onToggleExpansion = (e: GenericEvent) => {
         const expanded = this.getExpanded();
         this.context.setLayerExpanded(this.props.layer.ObjectId, !expanded);
     }
@@ -151,7 +145,7 @@ export class LayerNode extends React.Component<ILayerNodeProps, any> {
         let selectable: JSX.Element | undefined;
         if (layer.Selectable === true) {
             selectable = <Icon style={ROW_ITEM_ELEMENT_STYLE}
-                               onClick={this.fnToggleSelectability}
+                               onClick={this.onToggleSelectability}
                                spriteClass={this.getLayerSelectability(layer.ObjectId) ? SPRITE_ICON_SELECT : SPRITE_LC_UNSELECT} />;
         }
         let chkbox: JSX.Element | undefined;
@@ -160,7 +154,7 @@ export class LayerNode extends React.Component<ILayerNodeProps, any> {
                             className='layer-checkbox'
                             style={CHK_STYLE}
                             value={layer.ObjectId}
-                            onChange={this.fnVisibilityChanged}
+                            onChange={this.onVisibilityChanged}
                             checked={(this.state.layerVisible)} />;
         }
         if (layer.ScaleRange) {
@@ -214,7 +208,7 @@ export class LayerNode extends React.Component<ILayerNodeProps, any> {
 
                     let expanded: JSX.Element;
                     if (totalRuleCount > 1) {
-                        expanded = <Icon style={ROW_ITEM_ELEMENT_STYLE} onClick={this.fnToggleExpansion} spriteClass={isExpanded ? SPRITE_LEGEND_TOGGLE : SPRITE_LEGEND_TOGGLE_EXPAND} />;
+                        expanded = <Icon style={ROW_ITEM_ELEMENT_STYLE} onClick={this.onToggleExpansion} spriteClass={isExpanded ? SPRITE_LEGEND_TOGGLE : SPRITE_LEGEND_TOGGLE_EXPAND} />;
                     } else {
                         expanded = <EmptyNode />;
                     }
@@ -234,23 +228,19 @@ export interface IGroupNodeProps {
 }
 
 export class GroupNode extends React.Component<IGroupNodeProps, any> {
-    fnVisibilityChanged: GenericEventHandler;
-    fnToggleExpansion: GenericEventHandler;
     static contextTypes = LEGEND_CONTEXT_VALIDATION_MAP;
     context: ILegendContext;
     constructor(props: IGroupNodeProps) {
         super(props);
-        this.fnVisibilityChanged = this.onVisibilityChanged.bind(this);
-        this.fnToggleExpansion = this.onToggleExpansion.bind(this);
         this.state = {
             groupVisible: props.group.Visible
         };
     }
-    private onToggleExpansion(e: GenericEvent) {
+    private onToggleExpansion = (e: GenericEvent) => {
         const expanded = this.getExpanded();
         this.context.setGroupExpanded(this.props.group.ObjectId, !expanded);
     }
-    private onVisibilityChanged(e: GenericEvent) {
+    private onVisibilityChanged = (e: GenericEvent) => {
         this.setState({ groupVisible: e.target.checked });
         this.context.setGroupVisibility(this.props.group.ObjectId, e.target.checked);
     }
@@ -277,9 +267,9 @@ export class GroupNode extends React.Component<IGroupNodeProps, any> {
         const icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_FOLDER_HORIZONTAL} />;
         const isExpanded = this.getExpanded();
         const expanded = <Icon style={ROW_ITEM_ELEMENT_STYLE}
-                               onClick={this.fnToggleExpansion}
+                               onClick={this.onToggleExpansion}
                                spriteClass={isExpanded ? SPRITE_LEGEND_TOGGLE : SPRITE_LEGEND_TOGGLE_EXPAND} />;
-        const chkbox = <input type='checkbox' className='group-checkbox' style={CHK_STYLE} value={group.ObjectId} onChange={this.fnVisibilityChanged} checked={(this.state.groupVisible)} />;
+        const chkbox = <input type='checkbox' className='group-checkbox' style={CHK_STYLE} value={group.ObjectId} onChange={this.onVisibilityChanged} checked={(this.state.groupVisible)} />;
         return <li style={LI_LIST_STYLE}>
             <span>{expanded} {chkbox} {icon} <LegendLabel text={this.props.group.LegendLabel} /></span>
             {(() => {

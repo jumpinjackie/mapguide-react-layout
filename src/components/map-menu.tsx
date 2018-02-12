@@ -2,6 +2,7 @@ import * as React from "react";
 import { IMapMenuEntry } from "../api/common";
 import { STR_EMPTY, strIsNullOrEmpty } from "../utils/string";
 import { tr } from "../api/i18n";
+import { safePropAccess } from '../utils/safe-prop';
 
 /**
  * MapMenu component props
@@ -24,19 +25,14 @@ export interface IMapMenuProps {
  * @extends {React.Component<IMapMenuProps, any>}
  */
 export class MapMenu extends React.Component<IMapMenuProps, any> {
-    private fnActiveMapChanged: (e: any) => void;
     constructor(props: IMapMenuProps) {
         super(props);
-        this.fnActiveMapChanged = this.onActiveMapChanged.bind(this);
         const selected = props.maps.filter(entry => entry.mapName === props.selectedMap);
     }
-    private onActiveMapChanged(e: any): void {
-        const { onActiveMapChanged } = this.props;
+    private onActiveMapChanged = (e: any) => {
         const value = e.currentTarget.value;
         this.setState({ selected: value });
-        if (onActiveMapChanged) {
-            onActiveMapChanged(value);
-        }
+        safePropAccess(this.props, "onActiveMapChanged", func => func!(value));
     }
     render(): JSX.Element {
         const { locale } = this.props;
@@ -44,7 +40,7 @@ export class MapMenu extends React.Component<IMapMenuProps, any> {
             {this.props.maps.map(layer => {
                 return <div className="map-menu-item-container" key={`base-layer-${layer.mapName}`}>
                     <label className="pt-control pt-radio">
-                        <input className="map-menu-option" type="radio" value={layer.mapName} checked={layer.mapName === this.props.selectedMap} onChange={this.fnActiveMapChanged} />
+                        <input className="map-menu-option" type="radio" value={layer.mapName} checked={layer.mapName === this.props.selectedMap} onChange={this.onActiveMapChanged} />
                         <span className="pt-control-indicator" />
                         {layer.label}
                     </label>

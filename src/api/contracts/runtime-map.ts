@@ -121,14 +121,14 @@ export interface MapGroup extends MapElement {
     Type: GroupType;
 }
 
-export interface Coordinate {
+export interface EnvCoordinate {
     X: number;
     Y: number;
 }
 
 export interface Envelope {
-    LowerLeftCoordinate: Coordinate;
-    UpperRightCoordinate: Coordinate;
+    LowerLeftCoordinate: EnvCoordinate;
+    UpperRightCoordinate: EnvCoordinate;
 }
 
 /**

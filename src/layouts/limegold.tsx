@@ -6,7 +6,7 @@ import ViewerApiShim from "../containers/viewer-shim";
 import ModalLauncher from "../containers/modal-launcher";
 import FlyoutRegionContainer from "../containers/flyout-region";
 import { connect } from "react-redux";
-import { tr } from "../api/i18n";
+import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
     NOOP,
@@ -22,6 +22,9 @@ import { Tabs2, Tab2 } from "@blueprintjs/core";
 import * as Constants from "../constants";
 import * as TemplateActions from "../actions/template";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
+import InitWarningDisplay from "../containers/init-warning-display";
+import SplitterLayout from "react-splitter-layout";
+import * as Runtime from "../api/runtime";
 
 function limegoldTemplateReducer(state: ITemplateReducerState, action: ReduxAction): ITemplateReducerState {
     const data: boolean | TemplateActions.IElementState | undefined = action.payload;
@@ -116,15 +119,29 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ILimeGoldTemplateL
 export type LimeGoldTemplateLayoutProps = Partial<ILimeGoldTemplateLayoutState> & Partial<ILimeGoldTemplateLayoutDispatch>;
 
 export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayoutProps, any> {
-    private fnActiveTabChanged: (id: string) => void;
     constructor(props: LimeGoldTemplateLayoutProps) {
         super(props);
-        this.fnActiveTabChanged = this.onActiveTabChanged.bind(this);
+        this.state = { isResizing: false };
+    }
+    private onDragStart = () => {
+        this.setState({ isResizing: true });
+    }
+    private onDragEnd = () => {
+        this.setState({ isResizing: false });
     }
     private getLocale(): string {
-        return this.props.config ? this.props.config.locale : "en";
+        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
-    private onActiveTabChanged(id: string): void {
+    private onSplitterChanged = (size: number) => {
+        //With the introduction of the splitter, we can no longer rely on a map 
+        //filling 100% of its space without needing to manually call updateSize(),
+        //so we do it here
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            viewer.updateSize();
+        }
+    }
+    private onActiveTabChanged = (id: string) => {
         const { setElementStates } = this.props;
         if (setElementStates) {
             const states: TemplateActions.IElementState = {
@@ -153,6 +170,7 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
     }
     render(): JSX.Element {
         const { config, map, capabilities } = this.props;
+        const { isResizing } = this.state;
         let hasTaskPane = false;
         let hasTaskBar = false;
         let hasStatusBar = false;
@@ -191,53 +209,51 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
         const taskPaneTitle = tr("TPL_TITLE_TASKPANE", locale);
         const legendTitle = tr("TPL_TITLE_LEGEND", locale);
         const selectionTitle = tr("TPL_TITLE_SELECTION_PANEL", locale);
+        const TB_Z_INDEX = 0;
         return <div style={{ width: "100%", height: "100%" }}>
-            <ToolbarContainer id="FileMenu" containerClass="limegold-file-menu" containerStyle={{ position: "absolute", left: 0, top: ((TOP_BAR_HEIGHT - DEFAULT_TOOLBAR_SIZE) / 2), zIndex: 100, right: 0 }} />
-            <ToolbarContainer id="Toolbar" containerClass="limegold-toolbar" containerStyle={{ position: "absolute", left: 0, top: TOP_BAR_HEIGHT, zIndex: 100, right: 0 }} />
-            <ToolbarContainer id="ToolbarSecondary" containerClass="limegold-toolbar-secondary" containerStyle={{ position: "absolute", left: 0, top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), zIndex: 100, right: 0 }} />
-            <div style={{ position: "absolute", left: 0, top: topOffset, bottom: (bottomOffset + SIDEBAR_PADDING), right: sbWidth }}>
-                {(() => {
-                    //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
-                    //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()
-                    //call to fix
-                    if (this.props.map != null) {
-                        return <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />;
-                    }
-                })()}
-                {(() => {
-                    if (hasNavigator) {
-                        return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
-                    }
-                })()}
-            </div>
-            <div className="limegold-sidebar" style={{ position: "absolute", right: SIDEBAR_PADDING, top: topOffset, bottom: (bottomOffset + SIDEBAR_PADDING), width: (sbWidth - (SIDEBAR_PADDING * 2)) }}>
-                <Tabs2 id="SidebarTabs" onChange={this.fnActiveTabChanged} {...extraTabsProps}>
-                    {(() => {
-                        if (hasTaskPane) {
-                            const panel = <div style={tabPanelStyle}>
-                                <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={locale} />
-                            </div>;
-                            return <Tab2 id="TaskPane" title={taskPaneTitle} panel={panel} />;
-                        }
-                    })()}
-                    {(() => {
-                        if (hasLegend) {
-                            const p1: React.CSSProperties = { overflow: "auto" };
-                            const panel = <div style={{ ...tabPanelStyle, ...p1 }}>
-                                    <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: false }} />
-                                </div>;
-                            return <Tab2 id="Legend" title={legendTitle} panel={panel} />;
-                        }
-                    })()}
-                    {(() => {
-                        if (hasSelectionPanel) {
-                            const panel = <div style={tabPanelStyle}>
-                                <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
-                            </div>;
-                            return <Tab2 id="Selection" title={selectionTitle} panel={panel} />;
-                        }
-                    })()}
-                </Tabs2>
+            <ToolbarContainer id="FileMenu" containerClass="limegold-file-menu" containerStyle={{ position: "absolute", left: 0, top: ((TOP_BAR_HEIGHT - DEFAULT_TOOLBAR_SIZE) / 2), zIndex: TB_Z_INDEX, right: 0 }} />
+            <ToolbarContainer id="Toolbar" containerClass="limegold-toolbar" containerStyle={{ position: "absolute", left: 0, top: TOP_BAR_HEIGHT, zIndex: TB_Z_INDEX, right: 0 }} />
+            <ToolbarContainer id="ToolbarSecondary" containerClass="limegold-toolbar-secondary" containerStyle={{ position: "absolute", left: 0, top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, right: 0 }} />
+            <div style={{ position: "absolute", left: 0, top: topOffset, bottom: (bottomOffset + SIDEBAR_PADDING), right: 0 }}>
+                <SplitterLayout customClassName="limegold-splitter" primaryIndex={0} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={this.onSplitterChanged} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
+                    <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
+                        <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />
+                        {(() => {
+                            if (hasNavigator) {
+                                return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
+                            }
+                        })()}
+                    </div>
+                    <div className="limegold-sidebar" style={{ position: "absolute", right: SIDEBAR_PADDING, top: 0, left: 0, bottom: 0 }}>
+                        <Tabs2 id="SidebarTabs" onChange={this.onActiveTabChanged} {...extraTabsProps}>
+                            {(() => {
+                                if (hasTaskPane) {
+                                    const panel = <div style={tabPanelStyle}>
+                                        <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={locale} componentProps={{ isResizing: isResizing }} />
+                                    </div>;
+                                    return <Tab2 id="TaskPane" title={taskPaneTitle} panel={panel} />;
+                                }
+                            })()}
+                            {(() => {
+                                if (hasLegend) {
+                                    const p1: React.CSSProperties = { overflow: "auto" };
+                                    const panel = <div style={{ ...tabPanelStyle, ...p1 }}>
+                                            <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: false }} />
+                                        </div>;
+                                    return <Tab2 id="Legend" title={legendTitle} panel={panel} />;
+                                }
+                            })()}
+                            {(() => {
+                                if (hasSelectionPanel) {
+                                    const panel = <div style={tabPanelStyle}>
+                                        <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
+                                    </div>;
+                                    return <Tab2 id="Selection" title={selectionTitle} panel={panel} />;
+                                }
+                            })()}
+                        </Tabs2>
+                    </div>
+                </SplitterLayout>
             </div>
             {(() => {
                 if (hasStatusBar) {
@@ -245,6 +261,7 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
                         <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={locale} />
                         <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={locale} />
                         <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={locale} />
+                        <PlaceholderComponent id={DefaultComponentNames.ViewSize} locale={locale} />
                         <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={locale} />
                     </div>;
                 }
@@ -252,6 +269,7 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
             <ViewerApiShim />
             <ModalLauncher />
             <FlyoutRegionContainer />
+            <InitWarningDisplay />
         </div>;
     }
 }

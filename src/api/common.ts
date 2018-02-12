@@ -16,6 +16,80 @@ import olOverlay from "ol/overlay";
 import { IOLFactory } from "./ol-factory";
 import { Dispatch, Action } from "redux";
 
+// Event boilerplate
+export type GenericEvent = any;
+
+export type GenericEventHandler = (e: GenericEvent) => void;
+
+export type UnitName = 'Unknown' | 'Inches' | 'Feet' | 'Yards' | 'Miles' | 'Nautical Miles' 
+                    | 'Millimeters' | 'Centimeters' | 'Meters' | 'Kilometers' 
+                    | 'Degrees' | 'Decimal Degrees' | 'Degrees Minutes Seconds'| 'Pixels';
+export enum UnitOfMeasure {
+    /**
+     * An unknown unit
+     */
+    Unknown = 0,
+    /**
+     * Inch unit
+     */
+    Inches = 1,
+    /**
+     * Feet unit
+     */
+    Feet = 2,
+    /**
+     * Yard unit
+     */
+    Yards = 3,
+    /**
+     * Mile unit
+     */
+    Miles = 4,
+    /**
+     * Nautical Mile unit
+     */
+    NauticalMiles = 5,
+    /**
+     * Millimeter unit
+     */
+    Millimeters = 6,
+    /**
+     * Centimeter unit
+     */
+    Centimeters = 7,
+    /**
+     * Meter unit
+     */
+    Meters = 8,
+    /**
+     * Kilometer unit
+     */
+    Kilometers = 9,
+    /**
+     * Degree unit
+     */
+    Degrees = 10,
+    /**
+     * Decimal Degree unit
+     */
+    DecimalDegrees = 11,
+    /**
+     * DMS unit
+     */
+    DMS = 12,
+    /**
+     * Pixel unit
+     */
+    Pixels = 13,
+}
+
+export interface UnitInfo {
+    unitsPerMeter: number;
+    metersPerUnit: number;
+    name: UnitName;
+    abbreviation: () => string;
+}
+
 /**
  * Describes a map view
  * @export
@@ -43,6 +117,13 @@ export interface IMapView {
      * @memberof IMapView
      */
     scale: number;
+    /**
+     * The view resolution
+     * 
+     * @type {number | undefined}
+     * @memberof IMapView
+     */
+    resolution?: number;
 }
 
 /**
@@ -604,40 +685,9 @@ export interface IMapViewer {
      */
     getSelectionXml(selection: FeatureSet, layerIds?: string[]): string;
     /**
-     * Gets whether the specified custom layer exists on the map
+     * Gets the layer manager
      */
-    hasLayer(name: string): boolean;
-    /**
-     * Adds a layer to the map
-     *
-     * @template T
-     * @param {string} name
-     * @param {T} layer
-     * @returns {T}
-     *
-     * @memberof IMapViewer
-     */
-    addLayer<T extends olLayerBase>(name: string, layer: T): T;
-    /**
-     * Removes a layer by the given name
-     *
-     * @param {string} name
-     * @returns {(olLayerBase | undefined)}
-     *
-     * @memberof IMapViewer
-     */
-    removeLayer(name: string): olLayerBase | undefined;
-    /**
-     * Gets a layer by the given name
-     *
-     * @template T
-     * @param {string} name
-     * @param {() => T} factory
-     * @returns {T}
-     *
-     * @memberof IMapViewer
-     */
-    getLayer<T extends olLayerBase>(name: string, factory: () => T): T;
+    getLayerManager(): ILayerManager;
     /**
      * Adds an OpenLayers interaction
      *
@@ -719,6 +769,13 @@ export interface IMapViewer {
      */
     getMapName(): string;
     /**
+     * Gets the current session id
+     * 
+     * @returns {string}
+     * @memberof IMapViewer
+     */
+    getSessionId(): string;
+    /**
      * Sets the current view rotation
      * 
      * @param {number} rotation 
@@ -746,6 +803,84 @@ export interface IMapViewer {
      * @memberof IMapViewer
      */
     setViewRotationEnabled(enabled: boolean): void;
+
+    toastSuccess(iconName: string, message: string|JSX.Element): string | undefined;
+    toastWarning(iconName: string, message: string|JSX.Element): string | undefined;
+    toastError(iconName: string, message: string|JSX.Element): string | undefined;
+    toastPrimary(iconName: string, message: string|JSX.Element): string | undefined;
+    dismissToast(key: string): void;
+    updateSize(): void;
+}
+
+export interface ILayerInfo {
+    /**
+     * The name of the layer
+     * 
+     * @type {string}
+     * @memberof ILayerInfo
+    * */
+    name: string;
+    /**
+     * The type of layer
+     * 
+     * @type {string}
+     * @memberof ILayerInfo
+     */
+    type: string;
+}
+
+/**
+ * Manages custom layers for a map
+ * 
+ * @export
+ * @interface ILayerManager
+ */
+export interface ILayerManager {
+    /**
+     * Gets all custom layers on this map, sorted by draw order
+     * 
+     * @returns {ILayerInfo[]} 
+     * @memberof ILayerManager
+    * */
+    getLayers(): ILayerInfo[];
+    /**
+     * Gets whether the specified custom layer exists on the map
+     */
+    hasLayer(name: string): boolean;
+    /**
+     * Adds a layer to the map
+     * 
+     * @template T 
+     * @param {string} name The name of the layer
+     * @param {T} layer The layer object
+     * @param {boolean} [allowReplace] If false or not set, this method will throw an error if a layer of the specified name already exists. Otherwise that layer will be replaced with the given layer
+     * @returns {T} The added layer
+     * @memberof ILayerManager
+     */
+    addLayer<T extends olLayerBase>(name: string, layer: T, allowReplace?: boolean): T;
+    /**
+     * Removes a layer by the given name
+     *
+     * @param {string} name
+     * @returns {(olLayerBase | undefined)}
+     *
+     * @memberof IMapViewer
+     */
+    removeLayer(name: string): olLayerBase | undefined;
+    /**
+     * Gets a layer by the given name
+     *
+     * @template T
+     * @param {string} name
+     * @param {() => T} factory
+     * @returns {T}
+     *
+     * @memberof IMapViewer
+     */
+    getLayer<T extends olLayerBase>(name: string, factory: () => T): T;
+
+    moveUp(name: string): number;
+    moveDown(name: string): number;
 }
 
 /**
@@ -880,6 +1015,21 @@ export interface IModalReducerState {
 
 export type LayerTransparencySet = { [layerName: string]: number };
 
+export interface ActiveSelectedFeature {
+    /**
+     * The selected layer id
+     * 
+     * @type {string}
+     */
+    layerId: string;
+    /**
+     * The index of the feature to highlight
+     * 
+     * @type {number}
+     */
+    featureIndex: number;
+}
+
 /**
  * Describes the reducer state branch for a runtime map
  *
@@ -999,6 +1149,13 @@ export interface IBranchedMapSubState {
      * @memberof IBranchedMapSubState
      */
     layerTransparency: LayerTransparencySet;
+    /**
+     * The active selected feature to highlight
+     * 
+     * @type {(ActiveSelectedFeature | undefined)}
+     * @memberof IBranchedMapSubState
+     */
+    activeSelectedFeature: ActiveSelectedFeature | undefined
 }
 
 /**
@@ -1026,6 +1183,20 @@ export interface ICoordinateConfiguration {
      * @memberof ICoordinateConfiguration
      */
     decimals: number;
+    /**
+     * The display projection for these coordinates
+     * 
+     * @type {string}
+     * @memberof ICoordinateConfiguration
+     */
+    projection: string;
+    /**
+     * Display format string
+     * 
+     * @type {string}
+     * @memberof ICoordinateConfiguration
+     */
+    format?: string;
 }
 
 /**
@@ -1084,6 +1255,13 @@ export interface IViewerCapabilities {
      * @memberof IViewerCapabilities
      */
     hasToolbar: boolean;
+    /**
+     * Indicates if this viewer has the view size mounted
+     * 
+     * @type {boolean}
+     * @memberof IViewerCapabilities
+     */
+    hasViewSize: boolean;
 }
 
 /**
@@ -1143,6 +1321,8 @@ export interface ITemplateReducerState {
      */
     selectionPanelVisible: boolean;
 }
+
+export type MapLoadIndicatorPositioning = "top" | "bottom";
 
 /**
  * Describes the reducer state branch for various configuration properties
@@ -1231,11 +1411,29 @@ export interface IConfigurationReducerState {
          */
         selectionColor: string;
         /**
+         * The color to use for highlighting active selected features
+         * 
+         * @type {string}
+         */
+        activeSelectedFeatureColor: string;
+        /**
          * The current point selection pixel tolerance
          *
          * @type {number}
          */
         pointSelectionBuffer: number;
+        /**
+         * The position of the map loading indicator
+         * 
+         * @type {MapLoadIndicatorPositioning}
+         */
+        loadIndicatorPositioning: MapLoadIndicatorPositioning;
+        /**
+         * The color of the map loading indicator. This is an valid CSS color expression
+         * 
+         * @type {string}
+         */
+        loadIndicatorColor: string;
     },
     /**
      * Indicates if view rotation is enabled
@@ -1251,6 +1449,23 @@ export interface IConfigurationReducerState {
      * @memberof IConfigurationReducerState
      */
     viewRotation: number;
+    /**
+     * The unit to display view size in
+     * 
+     * @type {UnitOfMeasure}
+     * @memberof IConfigurationReducerState
+     */
+    viewSizeUnits: UnitOfMeasure;
+    /**
+     * If specified and true and the MapTip component is active, then feature tooltips are activated
+     * by mouse click instead of idle mouse cursor at a given point on the map for a certain period of time. 
+     * 
+     * An active MapTip component with this setting enabled will override normal click-based selection.
+     * 
+     * @type {boolean}
+     * @memberof IConfigurationReducerState
+     */
+    manualFeatureTooltips: boolean;
 }
 
 /**
@@ -1304,6 +1519,13 @@ export interface IInitErrorReducerState {
      * @memberof IInitErrorReducerState
      */
     includeStack: boolean;
+    /**
+     * Any warnings that were encountered during initialization
+     * 
+     * @type {string[]}
+     * @memberof IInitErrorReducerState
+     */
+    warnings: string[];
 }
 
 /**
@@ -1313,6 +1535,13 @@ export interface IInitErrorReducerState {
  * @interface IViewerReducerState
  */
 export interface IViewerReducerState {
+    /**
+     * The current size of the map viewport (in pixels)
+     * 
+     * @type {([number, number] | undefined)}
+     * @memberof IViewerReducerState
+     */
+    size: [number, number] | undefined;
     /**
      * The number of active busy actions. Zero indicates no busy activity. One or more
      * indicates busy activity.
@@ -1633,3 +1862,138 @@ export function getExternalBaseLayers(state: Readonly<IApplicationState>): IExte
  * Defines the visibility of flyout menus
  */
 export type FlyoutVisibilitySet = { [flyoutId: string]: boolean | undefined };
+
+/**
+ * Defines the capabilities of a WMS service
+ */
+export interface WmsCapabilitiesDocument {
+    /**
+     * WMS service version
+     * 
+     * @type {string}
+     * @memberof WmsCapabilitiesDocument
+     */
+    version: string;
+    Service: WMSServiceDescription;
+    Capability: WMSServiceCapabilities;
+}
+
+export interface WMSServiceCapabilities {
+    Request: any;
+    Exception: string[];
+    Layer: WMSRootPublishedLayer;
+}
+
+export interface WMSPublishedLayer {
+    Name: string;
+    Title: string;
+    Abstract: string;
+    KeywordList: string;
+    CRS: string[];
+    EX_GeographicBoundingBox: [number, number, number, number];
+    BoundingBox: {
+        crs: string;
+        extent: [number, number, number, number],
+        res: [any, any]
+    }[];
+    Style: WMSLayerStyle[];
+    queryable: boolean;
+    opaque: boolean;
+    noSubsets: boolean;
+}
+
+export interface WMSRootPublishedLayer extends WMSPublishedLayer {
+    Layer: WMSPublishedLayer[];    
+}
+
+export interface WMSLayerStyle {
+    Name: string;
+    Title: string;
+    Abstract: string;
+    LegendURL: {
+        Format: string;
+        OnlineResource: string;
+        size: [number, number];
+    }[]
+}
+
+export interface WMSServiceDescription {
+    Name: string;
+    Title: string;
+    Abstract: string;
+    KeywordList: string[];
+    OnlineResource: string;
+    ContactInformation: {
+        ContactPersonPrimary: {
+            ContactPerson: string;
+            ContactOrganization: string;
+        },
+        ContactPosition: string,
+        ContactAddress: {
+            AddressType: string,
+            Address: string,
+            City: string,
+            StateOrProvince: string,
+            PostCode: string,
+            Country: string
+        },
+        ContactVoiceTelephone: string,
+        ContactFacsimileTelephone: string,
+        ContactElectronicMailAddress: string
+    },
+    Fees: string;
+    AccessConstraints: string;
+}
+
+export interface IMapGuideImageSource {
+    on(event: string, handler: Function): void;
+    updateParams(params: any): void;
+}
+
+export interface MapGuideImageSourceOptions {
+    /**
+     * The mapagent url.
+     */
+    url?: string;
+    /**
+     * The display resolution. Default is `96`.
+     */
+    displayDpi?: number;
+    /**
+     * The meters-per-unit value. Default is `1`.
+     */
+    metersPerUnit?: number;
+    /**
+     * Use the `ol.Map#pixelRatio` value when requesting the image from the remote
+     * server. Default is `true`.
+     */
+    hidpi?: boolean;
+    /**
+     * If `true`, will use `GETDYNAMICMAPOVERLAYIMAGE`.
+     */
+    useOverlay?: boolean;
+    /**
+     * Projection.
+     */
+    projection?: ol.ProjectionLike;
+    /**
+     * Ratio. `1` means image requests are the size of the map viewport, `2` means
+     * twice the width and height of the map viewport, and so on. Must be `1` or
+     * higher. Default is `1`.
+     */
+    ratio?: number;
+    /**
+     * Resolutions. If specified, requests will be made for these resolutions only.
+     */
+    resolutions?: number[];
+    /**
+     * Optional function to load an image given a URL.
+     */
+    imageLoadFunction?: ol.ImageLoadFunctionType;
+    /**
+     * Additional parameters.
+     */
+    params?: any;
+    crossOrigin?: string;
+    defaultImageLoadFunction?: ol.ImageLoadFunctionType;
+}

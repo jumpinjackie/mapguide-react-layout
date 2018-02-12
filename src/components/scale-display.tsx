@@ -1,5 +1,7 @@
 import * as React from "react";
 import {
+    GenericEvent,
+    GenericEventHandler,
     IMapView
 } from "../api/common";
 import { tr } from "../api/i18n";
@@ -27,27 +29,21 @@ export interface IScaleDisplayProps {
  * @extends {React.Component<IScaleDisplayProps, any>}
  */
 export class ScaleDisplay extends React.Component<IScaleDisplayProps, any> {
-    private fnFiniteScaleChanged: GenericEventHandler;
-    private fnScaleKeyPressed: GenericEventHandler;
-    private fnScaleInputChanged: GenericEventHandler;
     constructor(props: IScaleDisplayProps) {
         super(props);
-        this.fnFiniteScaleChanged = this.onFiniteScaleChanged.bind(this);
-        this.fnScaleKeyPressed = this.onScaleKeyPressed.bind(this);
-        this.fnScaleInputChanged = this.onScaleInputChanged.bind(this);
         this.state = {};
     }
-    private onFiniteScaleChanged(e: GenericEvent) {
+    private onFiniteScaleChanged = (e: GenericEvent) => {
         if (this.props.onScaleChanged) {
             this.props.onScaleChanged(parseFloat(e.target.value));
         }
     }
-    private onScaleKeyPressed(e: GenericEvent) {
+    private onScaleKeyPressed = (e: GenericEvent) => {
         if (e.key == 'Enter' && this.props.onScaleChanged) {
             this.props.onScaleChanged(this.state.localScale);
         }
     }
-    private onScaleInputChanged(e: GenericEvent) {
+    private onScaleInputChanged = (e: GenericEvent) => {
         this.setState({ localScale: parseFloat(e.target.value) });
     }
     private updateLocalScale(props: IScaleDisplayProps) {
@@ -71,7 +67,7 @@ export class ScaleDisplay extends React.Component<IScaleDisplayProps, any> {
             const fi = getFiniteScaleIndexForScale(finiteScales, view.scale);
             const fiScale = finiteScales[fi];
             return <div className="component-scale-display" style={style}>
-                {label} <select className="scale-input" value={fiScale} onChange={this.fnFiniteScaleChanged}>
+                {label} <select className="scale-input" value={fiScale} onChange={this.onFiniteScaleChanged}>
                     {finiteScales.map(s => {
                         return <option key={s} value={s}>{s}</option>;
                     })}
@@ -79,7 +75,7 @@ export class ScaleDisplay extends React.Component<IScaleDisplayProps, any> {
             </div>;
         } else {
             return <div className="component-scale-display" style={style}>
-                {label} <input className="scale-input" type="number" value={this.state.localScale || ""} onChange={this.fnScaleInputChanged} onKeyPress={this.fnScaleKeyPressed} />
+                {label} <input className="scale-input" type="number" value={this.state.localScale || ""} onChange={this.onScaleInputChanged} onKeyPress={this.onScaleKeyPressed} />
             </div>;
         }
     }

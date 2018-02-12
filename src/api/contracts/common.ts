@@ -21,3 +21,7 @@ export interface IView {
     y: number;
     scale: number;
 }
+
+export interface ResourceBase {
+    
+}

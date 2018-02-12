@@ -1,5 +1,7 @@
 //TODO: When TypeScript 2.0 drops, some of these interfaces can be converted to discriminated unions
 
+import { ResourceBase } from "./common";
+
 export interface ResourceReference {
     ResourceId: string;
 }
@@ -26,7 +28,7 @@ export interface WebLayoutResizableControl extends WebLayoutControl {
     Width: number;
 }
 
-export interface FlyoutItem {
+export interface FlyoutUIItem {
     Function: "Flyout";
     Label: string;
     Tooltip?: string | undefined;
@@ -36,26 +38,26 @@ export interface FlyoutItem {
     SubItem?: UIItem[] | undefined;
 }
 
-export interface SeparatorItem {
+export interface SeparatorUIItem {
     Function: "Separator";
 }
 
-export interface CommandItem {
+export interface CommandUIItem {
     Function: "Command";
     Command: string;
 }
 
-export type UIItem = FlyoutItem | SeparatorItem | CommandItem;
+export type UIItem = FlyoutUIItem | SeparatorUIItem | CommandUIItem;
 
-export function isCommandItem(item: UIItem): item is CommandItem {
+export function isCommandItem(item: UIItem): item is CommandUIItem {
     return item.Function === "Command";
 }
 
-export function isFlyoutItem(item: UIItem): item is FlyoutItem {
+export function isFlyoutItem(item: UIItem): item is FlyoutUIItem {
     return item.Function === "Flyout";
 }
 
-export function isSeparatorItem(item: UIItem): item is SeparatorItem {
+export function isSeparatorItem(item: UIItem): item is SeparatorUIItem {
     return item.Function === "Separator";
 }
 
@@ -226,7 +228,7 @@ export interface WebLayoutCommandSet {
     Command: CommandDef[];
 }
 
-export interface WebLayout {
+export interface WebLayout extends ResourceBase {
     Title: string;
     Map: WebLayoutMap;
     EnablePingServer?: boolean;

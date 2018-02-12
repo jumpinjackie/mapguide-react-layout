@@ -9,6 +9,7 @@ function createSelectionSet(): FeatureSet {
         Layer: [
             {
                 "@id": "foo",
+                "@name": "FooLayer",
                 Class: {
                     "@id": "1",
                     ID: [
@@ -20,6 +21,7 @@ function createSelectionSet(): FeatureSet {
             },
             {
                 "@id": "bar",
+                "@name": "BarLayer",
                 Class: {
                     "@id": "2",
                     ID: [
@@ -45,11 +47,12 @@ describe("components/selected-feature-count", () => {
         expect(wrapper.text()).toBe(tr("FMT_SELECTION_COUNT", "en", { total: 4, layerCount: 2 }));
     });
     it("Non-empty selection results with unsupported locale results in localization key", () => {
-        spyOn(console, "warn");
+        const spy = jest.spyOn(console, "warn").mockImplementation(() => {});
         const set = createSelectionSet();
         const wrapper = shallow(<SelectedFeatureCount selection={set} locale="zh" />);
         expect(wrapper.text()).toBe("FMT_SELECTION_COUNT");
-        expect(console.warn).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledTimes(1);
+        spy.mockReset();
     });
     it("Non-empty selection with custom format results in count displayed in specified format", () => {
         const set = createSelectionSet();

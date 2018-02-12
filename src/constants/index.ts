@@ -1,5 +1,6 @@
 export const INIT_APP = 'MapGuide/INIT_APP';
 export const INIT_ERROR = 'MapGuide/INIT_ERROR';
+export const INIT_ACKNOWLEDGE_WARNINGS = 'MapGuide/INIT_ACKNOWLEDGE_WARNINGS';
 
 export const LEGEND_SET_GROUP_VISIBILITY = 'Legend/SET_GROUP_VISIBILITY';
 export const LEGEND_SET_LAYER_VISIBILITY = 'Legend/SET_LAYER_VISIBILITY';
@@ -12,6 +13,7 @@ export const MAP_SET_VIEW = 'Map/SET_VIEW';
 export const MAP_SET_SCALE = 'Map/SET_SCALE';
 export const MAP_SET_ACTIVE_TOOL = 'Map/SET_ACTIVE_TOOL';
 export const MAP_SET_MAPTIP = 'Map/SET_MAPTIP';
+export const MAP_SET_MANUAL_MAPTIP = 'Map/MAP_SET_MANUAL_MAPTIP';
 export const MAP_SET_SELECTION = 'Map/SET_SELECTION';
 export const MAP_SET_BUSY_COUNT = 'Map/SET_BUSY_COUNT';
 export const MAP_SET_BASE_LAYER = 'Map/SET_BASE_LAYER';
@@ -20,8 +22,11 @@ export const MAP_ZOOM_OUT = 'Map/ZOOM_OUT';
 export const MAP_PREVIOUS_VIEW = 'Map/PREVIOUS_VIEW';
 export const MAP_NEXT_VIEW = 'Map/NEXT_VIEW';
 export const MAP_SET_LAYER_TRANSPARENCY = 'Map/SET_LAYER_TRANSPARENCY';
+export const MAP_SET_VIEW_SIZE_UNITS = 'Map/SET_VIEW_SIZE_UNITS';
 export const MAP_SET_VIEW_ROTATION = 'Map/SET_VIEW_ROTATION';
 export const MAP_SET_VIEW_ROTATION_ENABLED = 'Map/SET_VIEW_ROTATION_ENABLED';
+export const MAP_RESIZED = 'Map/RESIZED';
+export const MAP_SHOW_SELECTED_FEATURE = 'Map/SHOW_SELECTED_FEATURE';
 
 export const TASK_INVOKE_URL = 'TaskPane/INVOKE_URL';
 export const TASK_PANE_HOME = 'TaskPane/HOME';
@@ -52,6 +57,8 @@ export const COMPONENT_CLOSE = 'Flyout/COMPONENT_CLOSE';
  */
 export const NBSP = String.fromCharCode(160);
 
+export const DEG = String.fromCharCode(176);
+
 export const EMPTY_OBJECT = {};
 
 export const MDF_INFINITY = 1000000000000.0;
@@ -67,3 +74,7 @@ export const FUSION_REDLINE_NAME = "Redline";
 export const LAYER_ID_BASE = "LAYER_ID_BASE";
 export const LAYER_ID_MG_BASE = "LAYER_ID_MG_BASE";
 export const LAYER_ID_MG_SEL_OVERLAY = "LAYER_ID_MG_SEL_OVERLAY";
+
+export const BLANK_GIF_DATA_URI = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+
+export * from "./assets";

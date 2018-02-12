@@ -3,6 +3,8 @@
     <head>
         <title>MapGuide React Viewer</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <!-- NOTE: If you don't care about IE, you can remove/comment the es6-promise script reference below -->
+        <script type="text/javascript" src="dist/es6-promise.auto.min.js"></script>
         <script type="text/javascript" src="dist/viewer.js"></script>
         <style type="text/css">
             html,
@@ -153,7 +155,7 @@
 
             .sidebar-tabs > li > a,
             .sidebar-tabs > ul > li > a {
-                display: block;
+                display: inline-block;
                 width: 100%;
                 height: 100%;
                 line-height: 40px;
@@ -418,6 +420,11 @@
                 color: white;
             }
 
+            .component-view-size {
+                background-color: rgba(0, 60, 136, 0.5);
+                color: white;
+            }
+
             .component-mouse-coordinates {
                 position: absolute;
                 bottom: auto;
@@ -433,6 +440,9 @@
                     display: none;
                 }
                 .component-scale-display {
+                    display: none;
+                }
+                .component-view-size {
                     display: none;
                 }
                 .component-selected-feature-count {

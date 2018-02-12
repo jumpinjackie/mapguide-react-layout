@@ -15,6 +15,7 @@ import {
     IApplicationState,
     getRuntimeMap
 } from "../api/common";
+import { DEFAULT_LOCALE } from "../api/i18n";
 
 export interface INavigatorContainerProps {
     style?: React.CSSProperties;
@@ -56,16 +57,10 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<INavigatorContaine
 export type NavigatorContainerProps = INavigatorContainerProps & Partial<INavigatorContainerState> & Partial<INavigatorContainerDispatch>;
 
 export class NavigatorContainer extends React.Component<NavigatorContainerProps, any> {
-    private fnZoom: (direction: ZoomDirection) => void;
-    private fnPan: (direction: PanDirection) => void;
-    private fnRequestZoomToScale: (scale: number) => void;
     constructor(props: NavigatorContainerProps) {
         super(props);
-        this.fnZoom = this.onZoom.bind(this);
-        this.fnPan = this.onPan.bind(this);
-        this.fnRequestZoomToScale = this.onRequestZoomToScale.bind(this);
     }
-    private onZoom(direction: ZoomDirection) {
+    private onZoom = (direction: ZoomDirection) => {
         let cmd: ICommand | undefined;
         switch (direction) {
             case ZoomDirection.In:
@@ -79,7 +74,7 @@ export class NavigatorContainer extends React.Component<NavigatorContainerProps,
             this.props.invokeCommand(cmd);
         }
     }
-    private onPan(direction: PanDirection) {
+    private onPan = (direction: PanDirection) => {
         let cmd: ICommand | undefined;
         switch (direction) {
             case PanDirection.East:
@@ -99,14 +94,14 @@ export class NavigatorContainer extends React.Component<NavigatorContainerProps,
             this.props.invokeCommand(cmd);
         }
     }
-    private onRequestZoomToScale(scale: number) {
+    private onRequestZoomToScale = (scale: number) => {
         const { setScale, config } = this.props;
         if (setScale && config && config.activeMapName) {
             setScale(config.activeMapName, scale);
         }
     }
     private getLocale(): string {
-        return this.props.config ? this.props.config.locale : "en";
+        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
     render(): JSX.Element {
         const { style, viewer, view, config, finiteScales } = this.props;
@@ -117,9 +112,9 @@ export class NavigatorContainer extends React.Component<NavigatorContainerProps,
                               finiteScaleList={finiteScales}
                               locale={locale}
                               busy={viewer.busyCount > 0}
-                              onRequestZoomToScale={this.fnRequestZoomToScale}
-                              onPan={this.fnPan}
-                              onZoom={this.fnZoom} />;
+                              onRequestZoomToScale={this.onRequestZoomToScale}
+                              onPan={this.onPan}
+                              onZoom={this.onZoom} />;
         } else {
             return <div />;
         }

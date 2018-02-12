@@ -22,11 +22,10 @@ import * as LegendActions from "../actions/legend";
 import { deArrayify, buildSelectionXml } from "../api/builders/deArrayify";
 import { FormFrameShim } from "../components/form-frame-shim";
 import { getCommand, DefaultCommands, CommandConditions } from "../api/registry/command";
-import { Intent } from "@blueprintjs/core";
-import { getTopToaster } from "../components/toaster";
+import { Intent, IToastProps } from "@blueprintjs/core";
 import { tr } from "../api/i18n";
 import { serialize } from "../api/builders/mapagent";
-import { ILocalizedMessages } from "../strings/en";
+import { ILocalizedMessages } from "../strings/msgdef";
 
 function isEmptySelection(selection: QueryMapFeaturesResponse | undefined): boolean {
     if (selection && selection.FeatureSet) {
@@ -90,7 +89,7 @@ class FusionApiShim {
                 fetch(reqUrl, {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                    },
+                    } as any,
                     method: "POST",
                     body: serialize(options.parameters, false) //form
                 }).then(res => {
@@ -282,7 +281,7 @@ export function enableRedlineMessagePrompt(enabled: boolean): void {
  */
 class FusionWidgetApiShim {
     private _activeLayer: any;
-    private _activeToast: string;
+    private _activeToast: string | undefined;
 
     constructor(private parent: ViewerApiShim) {
     }
@@ -445,16 +444,28 @@ class FusionWidgetApiShim {
         this.parent.Refresh();
     }
     info(msg: string): void { //Map MessageBar
-        this._activeToast = getTopToaster().show({ iconName: "info-sign", message: <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />, intent: Intent.PRIMARY });
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            this._activeToast = viewer.toastPrimary("info-sign", <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />);
+        }
     }
     warn(msg: string): void { //Map MessageBar
-        this._activeToast = getTopToaster().show({ iconName: "warning-sign", message: <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />, intent: Intent.WARNING });
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            this._activeToast = viewer.toastPrimary("warning-sign", <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />);
+        }
     }
     error(msg: string): void { //Map MessageBar
-        this._activeToast = getTopToaster().show({ iconName: "error", message: <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />, intent: Intent.DANGER });
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            this._activeToast = viewer.toastPrimary("error", <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />);
+        }
     }
     clear(): void { //Map MessageBar
-        getTopToaster().dismiss(this._activeToast);
+        const viewer = Runtime.getViewer();
+        if (viewer && this._activeToast) {
+            viewer.dismissToast(this._activeToast);
+        }
     }
     get mapMessagePrompt(): boolean { //Redline
         return isRedlineMessagePromptEnabled();
@@ -683,23 +694,22 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IViewerApiShimDisp
 export type ViewerApiShimProps = IViewerApiShimProps & Partial<IViewerApiShimState> & Partial<IViewerApiShimDispatch>;
 
 export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
-    private fnFormFrameMounted: (component: FormFrameShim) => void;
     private userSelectionHandlers: SelectionHandlerCallback[];
     private us: boolean;
     private formFrame: FormFrameShim;
     private ol2API: OL2Shim;
     private fusionAPI: FusionApiShim;
     private fusionEventHandlers: { [id: number]: Function[] };
+
     constructor(props: ViewerApiShimProps) {
         super(props);
         this.us = true;
-        this.fnFormFrameMounted = this.onFormFrameMounted.bind(this);
         this.userSelectionHandlers = [];
         this.fusionEventHandlers = {};
         this.ol2API = new OL2Shim();
         this.fusionAPI = new FusionApiShim(this);
     }
-    private onFormFrameMounted(form: FormFrameShim) {
+    private onFormFrameMounted = (form: FormFrameShim) => {
         this.formFrame = form;
     }
     getClient(): Client | undefined {
@@ -1175,7 +1185,7 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
     render(): JSX.Element {
         //This is for all intents and purposes, a "background" component. There is no real DOM representation
         return <div>
-            <FormFrameShim ref={this.fnFormFrameMounted} />
+            <FormFrameShim ref={this.onFormFrameMounted} />
         </div>;
     }
 }

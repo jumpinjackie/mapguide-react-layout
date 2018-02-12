@@ -24,13 +24,14 @@ describe("api/i18n", () => {
             expect(tr("QUICKPLOT_HEADER", "en")).toBe("Quick Plot");
         });
         it("locale with unregistered locale should return original localization key", () => {
-            spyOn(console, "warn");
+            const spy = jest.spyOn(console, "warn").mockImplementation(() => {});
             expect(tr("MEASURE", "dk")).toBe("MEASURE");
             expect(tr("SESSION_EXPIRED", "dk")).toBe("SESSION_EXPIRED");
             expect(tr("SELECTION_PROPERTY", "dk")).toBe("SELECTION_PROPERTY");
             expect(tr("ABOUT", "dk")).toBe("ABOUT");
             expect(tr("QUICKPLOT_HEADER", "dk")).toBe("QUICKPLOT_HEADER");
-            expect(console.warn).toHaveBeenCalledTimes(5); //One warning per tr()
+            expect(spy).toHaveBeenCalledTimes(5); //One warning per tr()
+            spy.mockReset();
         });
     });
 });

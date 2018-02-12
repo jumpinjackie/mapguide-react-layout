@@ -1,4 +1,5 @@
 import queryString = require("query-string");
+import { IInvokeUrlCommandParameter } from "../api/common";
 const parse = require("url-parse");
 
 /**
@@ -76,4 +77,117 @@ export function areUrlsSame(url1: string, url2: string): boolean {
         && areParamsEqual(params1, params2);
 
     return same;
+}
+
+/**
+ * A parsed component URI
+ * 
+ * @export
+ * @interface ParsedComponentUri
+ */
+export interface ParsedComponentUri {
+    name: string;
+    props: any;
+}
+
+/**
+ * Indicates if the given URI is a component URI
+ * 
+ * @export
+ * @param {string} uri 
+ * @returns {boolean} 
+ */
+export function isComponentUri(uri: string): boolean {
+    return uri.indexOf("component://") >= 0;   
+}
+
+/**
+ * Parses the given component URI. If it not a valid component URI returns undefined
+ * 
+ * @export
+ * @param {string} uri 
+ * @returns {(ParsedComponentUri | undefined)} 
+ */
+export function parseComponentUri(uri: string): ParsedComponentUri | undefined {
+    if (isComponentUri(uri)) {
+        const qi = uri.lastIndexOf("?");
+        const name = qi < 0 ? uri.substring(12) : uri.substring(12, qi);
+        const props = qi < 0 ? {} : queryString.parse(uri.substring(qi));
+        return {
+            name,
+            props
+        };
+    }
+}
+
+/**
+ * Normalizes the given URL to ensure it has the baseline set of required parameters for invoking any server-side script that uses the MapGuide Web API
+ * 
+ * @export
+ * @param {string} url The url to normalize
+ * @param {string} mapName The name of the current runtime map
+ * @param {string} session The current session id
+ * @param {string} [locale] An optional locale
+ * @param {boolean} [uppercase=true] If true, will uppercase all parameter names
+ * @param {IInvokeUrlCommandParameter[]} [extraParameters=[]] Any extra parameters to append to the URL
+ * @returns {string} 
+ */
+export function ensureParameters(url: string, mapName: string, session: string, locale?: string, uppercase = true, extraParameters: IInvokeUrlCommandParameter[] = []): string {
+    //If this is a component URL, let it be
+    if (isComponentUri(url)) {
+        return url;
+    }
+    const parsed = parse(url);
+    const params: any = parsed.query != null ? queryString.parse(parsed.query) : {};
+    let bNeedMapName = true;
+    let bNeedSession = true;
+    let bNeedLocale = true;
+    for (const key in params) {
+        const name = key.toLowerCase();
+        switch (name) {
+            case "session":
+                bNeedSession = false;
+                break;
+            case "mapname":
+                bNeedMapName = false;
+                break;
+            case "locale":
+                bNeedLocale = false;
+                break;
+        }
+    }
+    if (bNeedMapName) {
+        if (uppercase) {
+            params.MAPNAME = mapName;
+        } else {
+            params.mapname = mapName;
+        }
+    }
+    if (bNeedSession) {
+        if (uppercase) {
+            params.SESSION = session;
+        } else {
+            params.session = session;
+        }
+    }
+    if (bNeedLocale) {
+        if (uppercase) {
+            params.LOCALE = locale;
+        } else {
+            params.locale = locale;
+        }
+    }
+
+    for (const p of extraParameters) {
+        params[p.name] = p.value;
+    }
+
+    parsed.query = queryString.stringify(params);
+    const result = parsed.toString();
+
+    if (url.indexOf(parsed.protocol) >= 0 || url.indexOf("/") == 0) {
+        return result;
+    }
+
+    return result;
 }

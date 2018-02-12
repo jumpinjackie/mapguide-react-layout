@@ -10,11 +10,13 @@ import { MapLayer, MapGroup } from "../api/contracts/runtime-map";
 import { IMapGuideClient } from "../api/request-builder";
 
 export interface IApplicationContext {
-    getClient(): IMapGuideClient;
+    allowHtmlValuesInSelection: () => boolean;
+    getHTMLCleaner: () => (((value: string) => string) | undefined);
 }
 
 export const APPLICATION_CONTEXT_VALIDATION_MAP: PropTypes.ValidationMap<any> = {
-    getClient: PropTypes.func.isRequired
+    allowHtmlValuesInSelection: PropTypes.func.isRequired,
+    getHTMLCleaner: PropTypes.func.isRequired
 };
 
 export interface ILegendContext {

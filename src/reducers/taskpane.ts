@@ -3,7 +3,7 @@ import { ITaskPaneReducerState } from "../api/common";
 import { areUrlsSame } from "../utils/url";
 import { AnyAction } from "redux";
 
-export const INITIAL_STATE: ITaskPaneReducerState = {
+export const TASK_PANE_INITIAL_STATE: ITaskPaneReducerState = {
     navIndex: -1,
     navigation: [],
     initialUrl: undefined,
@@ -30,7 +30,7 @@ function mergeNavigatedUrl(state: any, url: string): any {
     return { ...state, ...newState };
 }
 
-export function taskPaneReducer(state = INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
+export function taskPaneReducer(state = TASK_PANE_INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
     const payload: any = action.payload || {};
     switch (action.type) {
         case Constants.INIT_APP:

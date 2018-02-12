@@ -13,18 +13,22 @@ export interface IMouseCoordinatesProps extends React.Props<any> {
     coords?: [number, number];
     style?: React.CSSProperties;
     decimals?: number;
+    units?: string;
 }
 
 function formatCoordinates(props: IMouseCoordinatesProps) {
-    const { coords, decimals, format } = props;
+    const { coords, decimals, format, units } = props;
     if (coords == null) {
-        return null;
+        return null; //TODO: Use value indicated by EmptyText extension property
     }
+    const [x, y] = coords;
     const sfmt = format || "X: {x}, Y: {y}";
-    return fmt(sfmt, {
-        x: `${decimals != null ? coords[0].toFixed(decimals) : coords[0]}`,
-        y: `${decimals != null ? coords[1].toFixed(decimals) : coords[1]}`
+    const str = fmt(sfmt, {
+        x: `${decimals != null ? x.toFixed(decimals) : x}`,
+        y: `${decimals != null ? y.toFixed(decimals) : y}`,
+        units: units || ""
     });
+    return str;
 }
 
 /**

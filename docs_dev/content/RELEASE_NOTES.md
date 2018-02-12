@@ -1,4 +1,44 @@
-[Changelog since last release](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.9.5...master)
+[Changelog since last release](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.10.0...master)
+
+ * Updated React to 16.0
+ * Updated Blueprint to 1.31
+ * Updated OpenLayers to 4.4.1
+ * Updated TypeScript to 2.5.3
+ * [#379](https://github.com/jumpinjackie/mapguide-react-layout/issues/379): Now maintaining our own copy of a MapGuide image source for OpenLayers
+
+0.10.0
+======
+
+[Changelog](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.9.6...v0.10.0)
+ * Updated OpenLayers to 4.3.2
+ * Update TypeScript to 2.5
+ * Update Blueprint to 1.27
+ * [#188](https://github.com/jumpinjackie/mapguide-react-layout/issues/188): QuickPlot now supports box rotation via a numerical slider
+ * [#6](https://github.com/jumpinjackie/mapguide-react-layout/issues/6): Selection Panel component now highlights the currently selected feature (when multiple features are selected)
+ * [#325](https://github.com/jumpinjackie/mapguide-react-layout/issues/325): New persistent busy loading indicator
+ * [#36](https://github.com/jumpinjackie/mapguide-react-layout/issues/36): NPM module now supports customizable Selection Panel body rendering
+ * [#97](https://github.com/jumpinjackie/mapguide-react-layout/issues/97): Port across Coordinate Tracker widget from Fusion
+ * [#11](https://github.com/jumpinjackie/mapguide-react-layout/issues/11): Port across view size status bar component
+ * [#329](https://github.com/jumpinjackie/mapguide-react-layout/issues/329): Removed es6-promise from the main viewer bundle. This is now loaded as a separate script from all the entry-point HTML templates. If you do not care to support Internet Explorer, you can remove this script reference.
+ * [#63](https://github.com/jumpinjackie/mapguide-react-layout/issues/63): New init warnings reducer, this is used to display warnings about:
+   * Missing Bing Maps API key
+   * Unknown Bing Maps layers
+   * Usage of Google Maps (not supported in mapguide-react-layout)
+ * [#239](https://github.com/jumpinjackie/mapguide-react-layout/issues/239): Full extension property support for Fusion `CursorPosition`
+ * API: [#337](https://github.com/jumpinjackie/mapguide-react-layout/issues/337): `locale` now supported as a `mount()` option.
+ * API: [#332](https://github.com/jumpinjackie/mapguide-react-layout/issues/332): Everything can now be imported directly from the `mapguide-react-layout` NPM module (eg. This is now a legal import: `import { ApplicationViewModel } from "mapguide-react-layout"`). Piecemeal imports is still available.
+ * API: [#318](https://github.com/jumpinjackie/mapguide-react-layout/issues/318): NPM module support for adding in custom application-specific reducers
+ * API: [#150](https://github.com/jumpinjackie/mapguide-react-layout/issues/150): New APIs for `MapGuide.Application`:
+   * A new `onInit` mount option that's called once the application is initialized
+   * A new `getCommand(name)` function to get a registered command by name
+   * [#305](https://github.com/jumpinjackie/mapguide-react-layout/issues/305): Expose redux `dispatch()` to allow redux actions to be dispatched from a browser globals context
+      * All redux action available under `MapGuide.Actions`
+ * API: Added extra factories for `ol.Collection` and `ol.interaction.translate`
+ * API: New `IMapViewer` APIs for:
+   * Getting name of the current runtime map
+   * Enabling/disabling view rotation
+   * Setting/getting the current view rotation
+ * Docs: API docs now versioned (from 0.9.6 onwards)
 
 0.9.6
 =====

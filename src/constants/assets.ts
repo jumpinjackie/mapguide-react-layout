@@ -93,7 +93,12 @@ export const ICON_ZOOM_FULL = require("../../stdassets/images/icons/zoom-full.pn
 export const ICON_ZOOM_IN_FIXED = require("../../stdassets/images/icons/zoom-in-fixed.png");
 export const ICON_ZOOM_IN = require("../../stdassets/images/icons/zoom-in.png");
 export const ICON_ZOOM_OUT_FIXED = require("../../stdassets/images/icons/zoom-out-fixed.png");
+export const ICON_LAYER_ADD = require("../../stdassets/images/icons/layer_add.png");
+export const ICON_GLOBE_ADD = require("../../stdassets/images/icons/globe_add.png");
 
+export const SPRITE_GLOBE_ADD = "globe_add";
+export const SPRITE_LAYER_ADD = "layer_add";
+export const SPRITE_COORDINATE_TRACKER = "coordinate-tracker";
 export const SPRITE_CONTROL_180 = "control-180";
 export const SPRITE_CONTROL = "control";
 export const SPRITE_ICON_ZOOMSELECT = "icon_zoomselect";

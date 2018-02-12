@@ -23,7 +23,6 @@ import { QueryMapFeaturesResponse } from "../contracts/query";
 import { ResultColumnSet } from "../contracts/weblayout";
 import { IItem, IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../../components/toolbar";
 import * as Constants from "../../constants";
-import { ensureParameters } from "../../actions/taskpane";
 import { tr } from "../i18n";
 import { getAssetRoot } from "../../utils/asset";
 import {
@@ -32,6 +31,7 @@ import {
 } from "../../constants/assets";
 import { assertNever } from "../../utils/never";
 import * as logger from "../../utils/logger";
+import { ensureParameters } from "../../utils/url";
 
 const FUSION_ICON_REGEX = /images\/icons\/[a-zA-Z\-]*.png/
 
@@ -194,45 +194,46 @@ export class CommandConditions {
     }
 }
 
-//TODO: Convert to actual string enum in TS 2.4 when we can finally upgrade to it
 /**
  * The set of default command names
  *
  * @export
  * @class DefaultCommands
  */
-export class DefaultCommands {
-    public static get Select(): string { return "Select"; }
-    public static get Pan(): string { return "Pan"; }
-    public static get Zoom(): string { return "Zoom"; }
-    public static get MapTip(): string { return "MapTip"; }
-    public static get ZoomIn(): string { return "ZoomIn"; }
-    public static get ZoomOut(): string { return "ZoomOut"; }
-    public static get RestoreView(): string { return "RestoreView"; }
-    public static get ZoomExtents(): string { return "ZoomExtents"; }
-    public static get SelectRadius(): string { return "SelectRadius"; }
-    public static get SelectPolygon(): string { return "SelectPolygon"; }
-    public static get ClearSelection(): string { return "ClearSelection"; }
-    public static get ZoomToSelection(): string { return "ZoomToSelection"; }
-    public static get PanLeft(): string { return "PanLeft"; }
-    public static get PanRight(): string { return "PanRight"; }
-    public static get PanUp(): string { return "PanUp"; }
-    public static get PanDown(): string { return "PanDown"; }
-    public static get RefreshMap(): string { return "RefreshMap"; }
-    public static get PreviousView(): string { return "PreviousView"; }
-    public static get NextView(): string { return "NextView"; }
-    public static get About(): string { return "About"; }
-    public static get Help(): string { return "Help"; }
-    public static get Measure(): string { return "Measure"; }
-    public static get ViewerOptions(): string { return "ViewerOptions"; }
-    public static get Buffer(): string { return "Buffer"; }
-    public static get SelectWithin(): string { return "SelectWithin"; }
-    public static get QuickPlot(): string { return "QuickPlot"; }
-    public static get Redline(): string { return "Redline"; }
-    public static get FeatureInfo(): string { return "FeatureInfo"; }
-    public static get Theme(): string { return "Theme"; }
-    public static get Query(): string { return "Query"; }
-    public static get Geolocation(): string { return "Geolocation"; }
+export enum DefaultCommands {
+    Select = "Select",
+    Pan = "Pan",
+    Zoom = "Zoom",
+    MapTip = "MapTip",
+    ZoomIn = "ZoomIn",
+    ZoomOut = "ZoomOut",
+    RestoreView = "RestoreView",
+    ZoomExtents = "ZoomExtents",
+    SelectRadius = "SelectRadius",
+    SelectPolygon = "SelectPolygon",
+    ClearSelection = "ClearSelection",
+    ZoomToSelection = "ZoomToSelection",
+    PanLeft = "PanLeft",
+    PanRight = "PanRight",
+    PanUp = "PanUp",
+    PanDown = "PanDown",
+    RefreshMap = "RefreshMap",
+    PreviousView = "PreviousView",
+    NextView = "NextView",
+    About = "About",
+    Help = "Help",
+    Measure = "Measure",
+    ViewerOptions = "ViewerOptions",
+    Buffer = "Buffer",
+    SelectWithin = "SelectWithin",
+    QuickPlot = "QuickPlot",
+    Redline = "Redline",
+    FeatureInfo = "FeatureInfo",
+    Theme = "Theme",
+    Query = "Query",
+    Geolocation = "Geolocation",
+    CoordinateTracker = "CoordinateTracker",
+    AddManageLayers = "AddManageLayers"
 }
 
 const commands: Dictionary<ICommand> = {};
@@ -245,6 +246,19 @@ function isSearchCommand(cmdDef: any): cmdDef is ISearchCommand {
     return typeof cmdDef.layer !== 'undefined';
 }
 
+function openModalUrl(name: string, dispatch: ReduxDispatch, url: string, modalTitle?: string) {
+    dispatch(ModalActions.showModalUrl({
+        modal: {
+            title: modalTitle || tr(name as any),
+            backdrop: false,
+            size: DEFAULT_MODAL_SIZE,
+            overflowYScroll: true
+        },
+        name: name,
+        url: url
+    }));
+}
+
 /**
  * Opens the given URL in the specified target
  *
@@ -254,26 +268,22 @@ function isSearchCommand(cmdDef: any): cmdDef is ISearchCommand {
  * @param dispatch
  * @param url
  */
-export function openUrlInTarget(name: string, cmdDef: ITargetedCommand, dispatch: ReduxDispatch, url: string, modalTitle?: string): void {
+export function openUrlInTarget(name: string, cmdDef: ITargetedCommand, hasTaskPane: boolean, dispatch: ReduxDispatch, url: string, modalTitle?: string): void {
     const target = cmdDef.target;
     if (target == "TaskPane") {
-        dispatch({
-            type: Constants.TASK_INVOKE_URL,
-            payload: {
-                url: url
-            }
-        });
+        //If there's no actual task pane, fallback to modal dialog
+        if (!hasTaskPane) {
+            openModalUrl(name, dispatch, url, modalTitle);
+        } else {
+            dispatch({
+                type: Constants.TASK_INVOKE_URL,
+                payload: {
+                    url: url
+                }
+            });
+        }
     } else if (target == "NewWindow") {
-        dispatch(ModalActions.showModalUrl({
-            modal: {
-                title: modalTitle || tr(name as any),
-                backdrop: false,
-                size: DEFAULT_MODAL_SIZE,
-                overflowYScroll: true
-            },
-            name: name,
-            url: url
-        }));
+        openModalUrl(name, dispatch, url, modalTitle);
     } else if (target == "SpecifiedFrame") {
         if (cmdDef.targetFrame) {
             const frames = (window as any).frames as any[];
@@ -323,7 +333,7 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                 const target = cmdDef.target;
                 if (map) {
                     const url = ensureParameters(cmdDef.url, map.Name, map.SessionId, config.locale, true, cmdDef.parameters);
-                    openUrlInTarget(name, cmdDef, dispatch, url);
+                    openUrlInTarget(name, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
                 }
             }
         };
@@ -349,7 +359,7 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                         + `&limit=${cmdDef.matchLimit}`
                         + `&properties=${(cmdDef.resultColumns.Column || []).map(col => col.Property).join(",")}`
                         + `&propNames=${(cmdDef.resultColumns.Column || []).map(col => col.Name).join(",")}`;
-                    openUrlInTarget(name, cmdDef, dispatch, url);
+                    openUrlInTarget(name, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
                 }
             }
         };

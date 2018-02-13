@@ -73,12 +73,19 @@ import xor = require("lodash.xor");
 import olExtent from "ol/extent";
 import olEasing from "ol/easing";
 
-import Map from "ol/map";
+import Map from "ol/pluggablemap";
+import MapRenderer from "ol/renderer/canvas/map";
+import TileLayerRenderer from "ol/renderer/canvas/tilelayer";
+import ImageLayerRenderer from "ol/renderer/canvas/imagelayer";
+import VectorLayerRenderer from "ol/renderer/canvas/vectorlayer";
+//import VectorTileLayerRenderer from "ol/renderer/canvas/vectortilelayer";
 import View from "ol/view";
 import Feature from "ol/feature";
 import Overlay from "ol/overlay";
 import WKTFormat from "ol/format/wkt";
 import LayerBase from "ol/layer/base";
+import plugins from "ol/plugins";
+import PluginType from "ol/plugintype";
 
 import Interaction from "ol/interaction/interaction";
 import Draw from "ol/interaction/draw";
@@ -100,6 +107,12 @@ import LineString from "ol/geom/linestring";
 import Circle from "ol/geom/circle";
 import { BLANK_GIF_DATA_URI } from "../constants/index";
 import { safePropAccess } from '../utils/safe-prop';
+
+plugins.register(PluginType.MAP_RENDERER, MapRenderer);
+plugins.register(PluginType.LAYER_RENDERER, TileLayerRenderer);
+plugins.register(PluginType.LAYER_RENDERER, ImageLayerRenderer);
+plugins.register(PluginType.LAYER_RENDERER, VectorLayerRenderer);
+//plugins.register(PluginType.LAYER_RENDERER, VectorTileLayerRenderer);
 
 /**
  * MapViewerBase component props

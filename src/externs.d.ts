@@ -31,6 +31,21 @@ declare module "ol/uri" {
     export default Uri;
 }
 
+declare module "ol/plugins" {
+    class Plugins {
+        static register(type: string, plugin: any): void;
+    }
+    export default Plugins 
+}
+
+declare module "ol/plugintype" {
+    class PluginType {
+        static MAP_RENDERER: string;
+        static LAYER_RENDERER: string;
+    }
+    export default PluginType;
+}
+
 declare module "react-splitter-layout" {
     import * as React from "react";
 

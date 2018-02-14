@@ -44,6 +44,13 @@ import proj4 from "proj4";
 import uniq = require("lodash.uniq");
 import { ensureParameters } from "../utils/url";
 import { strIsNullOrEmpty } from "../utils/string";
+import { convertWidget, isFlyoutSpec, ToolbarConf, PreparedSubMenuSet } from '../api/registry/command-spec';
+import {
+    IFlyoutSpec,
+    ISeparatorSpec,
+    IUnknownCommandSpec,
+    ICommandSpec
+} from "../api/registry/command-spec";
 
 interface IInitAppPayload {
     activeMapName: string;
@@ -66,7 +73,7 @@ interface IInitAppPayload {
     initialShowGroups?: string[];
     initialHideLayers?: string[];
     initialHideGroups?: string[];
-    toolbars: any;
+    toolbars: PreparedSubMenuSet;
     warnings: string[]
 }
 
@@ -74,104 +81,18 @@ function isUIWidget(widget: any): widget is UIWidget {
     return widget.WidgetType === "UiWidgetType";
 }
 
-function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictionary<Widget>, locale: string, noToolbarLabels = false, canSupportFlyouts = true): any[] {
-    return items.map(item => {
+function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictionary<Widget>, locale: string, noToolbarLabels = false, canSupportFlyouts = true): (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[] {
+    const converted = items.map(item => {
         switch (item.Function) {
             case "Widget":
                 {
                     const widget = widgetsByKey[item.Widget];
-                    //TODO: Offload to registry, just like commands and components
                     if (widget && isUIWidget(widget)) {
-                        switch (widget.Type) {
-                            case "Select":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Select, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "Pan":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Pan, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            //case "PanQuery":
-                            //case "PanOnClick":
-                            case "Zoom":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Zoom, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "ZoomOnClick": //Covers in and out. Look at Factor parameter
-                                {
-                                    const factor = parseFloat(widget.Extension.Factor);
-                                    if (factor >= 1.0) {
-                                        return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.ZoomIn, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                                    } else {
-                                        return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.ZoomOut, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                                    }
-                                }
-                            case "InitialMapView":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.ZoomExtents, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "ZoomToSelection":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.ZoomToSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "ExtentHistory": //Covers prev and next. Look at Direction parameter
-                                {
-                                    if (widget.Extension.Direction == "previous") {
-                                        return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.PreviousView, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                                    } else {
-                                        return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.NextView, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                                    }
-                                }
-                            case "CenterSelection":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.CenterSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "About":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.About, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "BufferPanel":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Buffer, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "ClearSelection":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.ClearSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            //case "ColorPicker":
-                            case "CoordinateTracker":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.CoordinateTracker, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "FeatureInfo":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.FeatureInfo, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "Geolocation":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Geolocation, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            //case "GoogleStreetViewer":
-                            case "Help":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Help, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "Maptip":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.MapTip, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "MapMenu":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: DefaultComponentNames.MapMenu, flyoutId: `${DefaultComponentNames.MapMenu}_${shortid.generate()}`, parameters: widget.Extension };
-                            case "Query":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Query, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "QuickPlot":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.QuickPlot, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "Redline":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Redline, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "RefreshMap":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.RefreshMap, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            //case "SaveMap":
-                            case "InvokeURL": //Commands with this name would've been registered beforehand
-                            case "Search":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: widget.Name, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "SelectPolygon":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.SelectPolygon, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "SelectRadius":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.SelectRadius, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            //case "SelectRadiusValue":
-                            case "SelectWithin":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.SelectWithin, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "Theme":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Theme, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "ViewOptions":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.ViewerOptions, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "ZoomToSelection":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.ZoomToSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "Measure":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Measure, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            case "BasemapSwitcher":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: DefaultComponentNames.BaseMapSwitcher, flyoutId: `${DefaultComponentNames.BaseMapSwitcher}_${shortid.generate()}`, parameters: widget.Extension };
-                            case "InvokeScript":
-                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: widget.Name, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
-                            default:
-                                return { error: tr("UNKNOWN_WIDGET", locale, { widget: widget.Type }) }
-                        }
+                        return convertWidget(widget, locale, noToolbarLabels);
                     }
                 }
             case "Separator":
-                return { isSeparator: true };
+                return { isSeparator: true } as ISeparatorSpec;
             case "Flyout":
                 return {
                     label: item.Label,
@@ -179,21 +100,24 @@ function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictiona
                     icon: item.ImageUrl,
                     spriteClass: item.ImageClass,
                     children: convertFlexLayoutUIItems(item.Item, widgetsByKey, locale)
-                };
+                } as IFlyoutSpec;
             default:
                 assertNever(item);
         }
         return null;
-    });
+    })
+    .filter(i => i != null)
+    .map(i => i as (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec));
+    return converted;
 }
 
-function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Dictionary<CommandDef>, locale: string, noToolbarLabels = true, canSupportFlyouts = true): any[] {
-    return (items || []).map(item => {
+function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Dictionary<CommandDef>, locale: string, noToolbarLabels = true, canSupportFlyouts = true): (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[] {
+    const converted = (items || []).map(item => {
         if (isCommandItem(item)) {
             const cmdDef: CommandDef = cmdsByKey[item.Command];
             if (!cmdDef) {
                 logger.warn(`Invalid reference to command: ${item.Command}`);
-                return { error: tr("UNKNOWN_COMMAND_REFERENCE", locale, { command: item.Command }) };
+                return { error: tr("UNKNOWN_COMMAND_REFERENCE", locale, { command: item.Command }) } as IUnknownCommandSpec;
             } else if (cmdDef.TargetViewer != "Dwf") {
                 const commonParams: any = {};
                 if (isTargetedCommand(cmdDef)) {
@@ -230,18 +154,21 @@ function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Diction
                 }
             }
         } else if (isSeparatorItem(item)) {
-            return { isSeparator: true };
+            return { isSeparator: true } as ISeparatorSpec;
         } else if (isFlyoutItem(item)) {
             return {
                 label: item.Label,
                 tooltip: item.Tooltip,
                 children: convertWebLayoutUIItems(item.SubItem, cmdsByKey, locale, false, false)
-            };
+            } as IFlyoutSpec;
         } else {
             assertNever(item);
         }
         return null;
-    }).filter(item => item != null);
+    })
+    .filter(i => i != null)
+    .map(i => i as (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec));
+    return converted;
 }
 
 function convertToCommandTarget(fusionCmdTarget: string): CommandTarget {
@@ -260,8 +187,8 @@ function convertToCommandTarget(fusionCmdTarget: string): CommandTarget {
     }
 }
 
-function prepareSubMenus(tbConf: any): [any, boolean] {
-    const prepared: any = {
+function prepareSubMenus(tbConf: Dictionary<ToolbarConf>): [PreparedSubMenuSet, boolean] {
+    const prepared: PreparedSubMenuSet = {
         toolbars: {},
         flyouts: {}
     };
@@ -283,7 +210,7 @@ function prepareSubMenus(tbConf: any): [any, boolean] {
             };
             for (const item of tbConf[key].items) {
                 //Special case: contextmenu is all inline
-                if (item.children && key != Constants.WEBLAYOUT_CONTEXTMENU) {
+                if (isFlyoutSpec(item) && key != Constants.WEBLAYOUT_CONTEXTMENU) {
                     const flyoutId = `${item.label}_${shortid.generate()}`;
                     prepared.toolbars[key].items.push({
                         label: item.label,
@@ -291,7 +218,7 @@ function prepareSubMenus(tbConf: any): [any, boolean] {
                         icon: item.icon,
                         spriteClass: item.spriteClass,
                         flyoutId: flyoutId
-                    });
+                    } as ICommandSpec);
                     prepared.flyouts[flyoutId] = {
                         children: item.children
                     }
@@ -717,7 +644,7 @@ async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOpti
         }
     }
 
-    const menus: any = {};
+    const menus: Dictionary<ToolbarConf> = {};
     menus[Constants.WEBLAYOUT_TOOLBAR] = {
         items: mainToolbar
     };
@@ -761,8 +688,8 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
     let hasSelectionPanel = false;
     let hasTaskBar = false;
     const config: any = {};
-    const tbConf: any = {};
-    const widgetsByKey: any = {};
+    const tbConf: Dictionary<ToolbarConf> = {};
+    const widgetsByKey: Dictionary<Widget> = {};
     //Register any InvokeURL and Search commands. Also set capabilities along the way
     for (const widgetSet of appDef.WidgetSet) {
         for (const widget of widgetSet.Widget) {

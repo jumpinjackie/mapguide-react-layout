@@ -233,7 +233,8 @@ export enum DefaultCommands {
     Query = "Query",
     Geolocation = "Geolocation",
     CoordinateTracker = "CoordinateTracker",
-    AddManageLayers = "AddManageLayers"
+    AddManageLayers = "AddManageLayers",
+    CenterSelection = "CenterSelection"
 }
 
 const commands: Dictionary<ICommand> = {};

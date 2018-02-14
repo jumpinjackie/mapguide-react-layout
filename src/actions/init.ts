@@ -112,7 +112,8 @@ function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictiona
                                         return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.NextView, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
                                     }
                                 }
-                            //case "CenterSelection":
+                            case "CenterSelection":
+                                return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.CenterSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
                             case "About":
                                 return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.About, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
                             case "BufferPanel":

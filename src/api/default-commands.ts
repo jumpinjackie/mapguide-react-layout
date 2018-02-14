@@ -63,8 +63,10 @@ import {
     SPRITE_THEME,
     SPRITE_INVOKE_SCRIPT,
     SPRITE_COORDINATE_TRACKER,
-    SPRITE_LAYER_ADD
+    SPRITE_LAYER_ADD,
+    SPRITE_SELECT_CENTRE
 } from "../constants/assets";
+import olExtent from "ol/extent";
 import { ensureParameters } from "../utils/url";
 
 function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
@@ -606,6 +608,36 @@ export function initDefaultCommands() {
             const url = `component://${DefaultComponentNames.AddManageLayers}`;
             const cmdDef = buildTargetedCommand(config, parameters);
             openUrlInTarget(DefaultCommands.AddManageLayers, cmdDef, config.capabilities.hasTaskPane, dispatch, url, tr("ADD_MANAGE_LAYERS", config.locale));
+        }
+    });
+    //Center Selection
+    registerCommand(DefaultCommands.CenterSelection, {
+        iconClass: SPRITE_SELECT_CENTRE,
+        selected: () => false,
+        enabled: CommandConditions.hasSelection,
+        invoke: (dispatch, getState, viewer, parameters) => {
+            const state = getState();
+            const mapName = state.config.activeMapName;
+            if (mapName && viewer) {
+                const mapState = state.mapState[mapName];
+                if (mapState.selectionSet && mapState.selectionSet.SelectedFeatures) {
+                    let bbox;
+                    for (const layer of mapState.selectionSet.SelectedFeatures.SelectedLayer) {
+                        for (const f of layer.Feature) {
+                            const b: any = f.Bounds.split(" ").map(s => parseFloat(s));
+                            if (!bbox) {
+                                bbox = b;
+                            } else {
+                                bbox = olExtent.extend(bbox, b);
+                            }
+                        }
+                    }
+                    if (bbox) {
+                        const view = viewer.getViewForExtent(bbox);
+                        dispatch(MapActions.setCurrentView(view));
+                    }
+                }
+            }
         }
     });
 

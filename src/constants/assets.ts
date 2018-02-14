@@ -148,3 +148,4 @@ export const SPRITE_QUERY = "query";
 export const SPRITE_THEME = "theme";
 export const SPRITE_INVOKE_SCRIPT = "invoke-script";
 export const SPRITE_INVOKE_URL = "invoke-url";
+export const SPRITE_SELECT_CENTRE = "select-centre";

@@ -25,6 +25,8 @@ import olInteractionExtent from "ol/interaction/extent";
 import olInteractionSnap from "ol/interaction/snap";
 import olInteractionDraw from "ol/interaction/draw";
 import olInteractionTranslate from "ol/interaction/translate";
+import olInteractionModify from "ol/interaction/modify";
+import olInteractionSelect from "ol/interaction/select";
 
 import olFormatGeoJSON from "ol/format/geojson";
 import olFormatWKT from "ol/format/wkt";
@@ -68,6 +70,8 @@ export interface IOLFactory {
     createVectorLayer(options?: olx.layer.VectorOptions | undefined): olVectorLayer;
     createOverlay(options: olx.OverlayOptions): olOverlay;
     createInteractionDraw(options: olx.interaction.DrawOptions): olInteractionDraw;
+    createInteractionModify(options: olx.interaction.ModifyOptions): olInteractionModify;
+    createInteractionSelect(options: olx.interaction.SelectOptions): olInteractionSelect;
     createInteractionExtent(options: olx.interaction.ExtentOptions): olInteractionExtent;
     createInteractionSnap(options: olx.interaction.SnapOptions): olInteractionSnap;
     createInteractionTranslate(options: olx.interaction.TranslateOptions): olInteractionTranslate;
@@ -167,6 +171,12 @@ export class OLFactory implements IOLFactory {
     }
     public createInteractionSnap(options: olx.interaction.SnapOptions): olInteractionSnap {
         return new olInteractionSnap(options);
+    }
+    public createInteractionModify(options: olx.interaction.ModifyOptions): olInteractionModify {
+        return new olInteractionModify(options);
+    }
+    public createInteractionSelect(options: olx.interaction.SelectOptions): olInteractionSelect {
+        return new olInteractionSelect(options);
     }
     public createFeature(geomOrProps?: olGeometry | { [key: string]: any }): olFeature {
         return new olFeature(geomOrProps);

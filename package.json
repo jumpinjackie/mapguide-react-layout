@@ -106,7 +106,7 @@
     "react-test-renderer": "16.2.0",
     "rimraf": "2.6.2",
     "source-map-loader": "0.2.3",
-    "style-loader": "0.20.1",
+    "style-loader": "0.20.2",
     "thread-loader": "^1.1.2",
     "ts-jest": "22.0.4",
     "ts-loader": "3.5.0",

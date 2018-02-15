@@ -5,12 +5,13 @@ import {
     ICoordinateConfiguration,
     INameValuePair,
     IViewerCapabilities,
-    UnitOfMeasure
+    UnitOfMeasure,
+    KC_ESCAPE, 
+    KC_U
 } from "../api/common";
 import * as logger from "../utils/logger";
 import { AnyAction } from "redux";
 import { DEFAULT_LOCALE } from "../api/i18n";
-import { KC_ESCAPE, KC_U } from '../components/map-viewer-base';
 
 export const CONFIG_INITIAL_STATE: IConfigurationReducerState = {
     agentUri: undefined,

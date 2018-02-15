@@ -35,7 +35,9 @@ import {
     ClientKind,
     NOOP,
     LayerTransparencySet,
-    MapLoadIndicatorPositioning
+    MapLoadIndicatorPositioning,
+    KC_ESCAPE,
+    KC_U
 } from "../api/common";
 import {
     IApplicationContext,
@@ -227,9 +229,6 @@ export function layerTransparencyChanged(set: LayerTransparencySet, other: Layer
     }
     return false;
 }
-
-export const KC_ESCAPE = 27;
-export const KC_U = 85;
 
 class SessionKeepAlive {
     private getSession: () => string;

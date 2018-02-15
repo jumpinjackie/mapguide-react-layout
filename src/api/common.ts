@@ -1322,6 +1322,9 @@ export interface ITemplateReducerState {
     selectionPanelVisible: boolean;
 }
 
+export const KC_ESCAPE = 27;
+export const KC_U = 85;
+
 export type MapLoadIndicatorPositioning = "top" | "bottom";
 
 /**

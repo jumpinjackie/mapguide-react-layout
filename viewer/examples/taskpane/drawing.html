@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Viewer API drawing examples</title>
+    <script type="text/javascript">
+        var viewer = null;
+        var LAYER_NAME = "myvectorlayer";
+        var layerAdded = false;
+        var customLayer = null;
+        var factory = null;
+
+        window.onload = function() {
+            //GetViewerInterface is the new API that Task Pane content
+            //can call to access the new IMapViewer interface
+            viewer = parent.parent.GetViewerInterface();
+            factory = viewer.getOLFactory();
+            if (viewer.hasLayer(LAYER_NAME)) {
+                customLayer = viewer.getLayer(LAYER_NAME);
+                setupInteractions();
+            }
+        };
+
+        window.onunload = function() {
+            detachInteractions();
+        };
+
+        var int_snap = null;
+        var int_select = null;
+
+        /**
+         * NOTE: We use OL draw interaction here directly instead of the digitizeXXX APIs provided
+         * by the viewer as the snap interaction requires certain setup order of various OL interactions
+         * that usage of digitizeXXX APIs would violate
+         * 
+         * This is only a concern if you care about being able to snap to other objects on the same
+         * vector layer you're drawing on. If you don't care about that, using the digitizeXXX APIs is
+         * fine.
+         * 
+         * Another thing to note about digitizeXXX APIs is their "one shot" nature. Drawing via these
+         * APIs is only active until the geometry is drawn. This is to retain the API experience of 
+         * previous MapGuide viewer offerings. 
+         * 
+         * If this kind of drawing behavior is undesirable you can work with the underlying OL interactions
+         * directly as demonstrated in this example.
+         */
+        var int_draw = null;
+        var int_modify = null;
+
+        function setupInteractions() {
+            var source = customLayer.getSource();
+            int_select = factory.createInteractionSelect({
+                source: source
+            });
+            int_modify = factory.createInteractionModify({
+                source: source
+            });
+            int_snap = factory.createInteractionSnap({
+                source: source
+            });
+            
+            viewer.addInteraction(int_modify);
+        }
+
+        function clearFeatures() {
+            if (customLayer) {
+                customLayer.getSource().clear();
+            }
+        }
+
+        function enableModify() {
+            detachInteractions();
+            viewer.addInteraction(int_modify);
+            setMessage("Modify mode active. Any drawn features can be modified");
+        }
+
+        function enableSelect() {
+            detachInteractions();
+            viewer.addInteraction(int_select);
+            setMessage("Selection mode active. Click on any drawn feature to select it");
+        }
+
+        function detachInteractions() {
+            if (int_snap) {
+                viewer.removeInteraction(int_snap);
+            }
+            if (int_select) {
+                viewer.removeInteraction(int_select);
+            }
+            if (int_modify) {
+                viewer.removeInteraction(int_modify);
+            }
+            if (int_draw) {
+                viewer.removeInteraction(int_draw);
+            }
+        }
+
+        function addVectorLayer() {
+            if (!viewer.hasLayer(LAYER_NAME)) {
+                var source = factory.createVectorSource();
+                var layer = factory.createVectorLayer({
+                    source: source
+                });
+                viewer.addLayer(LAYER_NAME, layer);
+                alert("Layer (" + LAYER_NAME + ") added");
+                layerAdded = true;
+                document.getElementById("btnAddLayer").disabled = true;
+                customLayer = layer;
+                setupInteractions();
+            } else {
+                alert("Layer (" + LAYER_NAME + ") already added");
+            }
+        }
+
+        function setMessage(message) {
+            document.getElementById("message").innerHTML = message;
+        }
+
+        function endDraw() {
+            if (int_draw) {
+                viewer.removeInteraction(int_draw);
+            }
+            if (int_snap) {
+                viewer.removeInteraction(int_snap);
+            }
+        }
+
+        function startDraw(type) {
+            if (!viewer.hasLayer(LAYER_NAME)) {
+                alert("Add the layer first");
+                return;
+            }
+            endDraw();
+            if (type == "Line") {
+                int_draw = factory.createInteractionDraw({
+                    type: "LineString",
+                    source: customLayer.getSource(),
+                    minPoints: 2,
+                    maxPoints: 2
+                });
+            } else {
+                int_draw = factory.createInteractionDraw({
+                    type: type,
+                    source: customLayer.getSource()
+                });
+            }
+            viewer.addInteraction(int_draw);
+            viewer.addInteraction(int_snap);
+            setMessage("Draw mode active. You can snap against any existing drawn objects");
+        }
+
+        function drawPoint() {
+            startDraw("Point");
+        }
+
+        function drawLine() {
+            startDraw("Line");
+        }
+
+        function drawLineString() {
+            startDraw("LineString");
+        }
+
+        function drawCircle() {
+            startDraw("Circle");
+        }
+
+        function drawPolygon() {
+            startDraw("Polygon");
+        }
+
+    </script>
+</head>
+
+<body>
+    <h1>Viewer API drawing examples</h1>
+    <p>This page demonstrates the feature drawing APIs provided by mapguide-react-layout that are accesible from Task Pane content</p>
+    <fieldset>
+        <legend>Actions</legend>
+        <button id="btnAddLayer" onclick="addVectorLayer()">Add Vector Layer</button>
+        <button id="btnModify" onclick="enableModify()">Modify</button>
+        <button id="btnSelect" onclick="enableSelect()">Select</button>
+        <button onclick="clearFeatures()">Clear Features</button>
+    </fieldset>
+    <fieldset>
+        <legend>Messages</legend>
+        <p id="message"></p>
+    </fieldset>
+    <fieldset>
+        <legend>Draw</legend>
+        <button onclick="drawPoint()">Point</button>
+        <button onclick="drawLine()">Line</button>
+        <button onclick="drawLineString()">LineString</button>
+        <button onclick="drawCircle()">Circle</button>
+        <button onclick="drawPolygon()">Polygon</button>
+    </fieldset>
+</body>
+
+</html>

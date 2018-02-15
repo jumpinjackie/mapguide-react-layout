@@ -1093,10 +1093,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         //return this._featureTooltip.isEnabled();
         return this._mapContext.isFeatureTooltipEnabled();
     }
-    public setFeatureTooltipEnabled(enabled: boolean): void {
-        //this._featureTooltip.setEnabled(enabled);
-        this._mapContext.enableFeatureTooltips(enabled);
-    }
     public hasLayer(name: string): boolean {
         const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
         return activeLayerSet.hasLayer(name);

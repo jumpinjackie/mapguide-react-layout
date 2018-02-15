@@ -71,6 +71,7 @@ export interface IMapViewerContainerDispatch {
     setViewRotation: (rotation: number) => void;
     setViewRotationEnabled: (enabled: boolean) => void;
     mapResized: (width: number, height: number) => void;
+    setFeatureTooltipsEnabled: (enabled: boolean) => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewerContainerProps): Partial<IMapViewerContainerState> {
@@ -132,7 +133,8 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMapViewerContaine
         queryMapFeatures: (mapName, options) => dispatch(queryMapFeatures(mapName, options)),
         setViewRotation: (rotation) => dispatch(MapActions.setViewRotation(rotation)),
         setViewRotationEnabled: (enabled) => dispatch(MapActions.setViewRotationEnabled(enabled)),
-        mapResized: (width, height) => dispatch(MapActions.mapResized(width, height))
+        mapResized: (width, height) => dispatch(MapActions.mapResized(width, height)),
+        setFeatureTooltipsEnabled: (enabled) => dispatch(MapActions.setFeatureTooltipsEnabled(enabled))
     };
 }
 
@@ -391,7 +393,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         return this.inner.isFeatureTooltipEnabled();
     }
     setFeatureTooltipEnabled(enabled: boolean): void {
-        this.inner.setFeatureTooltipEnabled(enabled);
+        if (this.props.setFeatureTooltipsEnabled) {
+            this.props.setFeatureTooltipsEnabled(enabled);
+        }
     }
     queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void {
         this.inner.queryMapFeatures(options, success, failure);

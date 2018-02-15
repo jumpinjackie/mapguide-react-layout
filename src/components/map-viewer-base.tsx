@@ -228,8 +228,8 @@ export function layerTransparencyChanged(set: LayerTransparencySet, other: Layer
     return false;
 }
 
-const KC_ESCAPE = 27;
-const KC_U = 85;
+export const KC_ESCAPE = 27;
+export const KC_U = 85;
 
 class SessionKeepAlive {
     private getSession: () => string;

@@ -1466,6 +1466,20 @@ export interface IConfigurationReducerState {
      * @memberof IConfigurationReducerState
      */
     manualFeatureTooltips: boolean;
+    /**
+     * The key code to listen for cancelling an active digitization
+     * 
+     * @type {number}
+     * @memberof IKeyBindingConfiguration
+     */
+    cancelDigitizationKey: number;
+    /**
+     * The key code to listen for undoing the last drawn point of an active digitization
+     * 
+     * @type {number}
+     * @memberof IKeyBindingConfiguration
+     */
+    undoLastPointKey: number;
 }
 
 /**

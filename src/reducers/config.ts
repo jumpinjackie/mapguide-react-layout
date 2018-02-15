@@ -10,6 +10,7 @@ import {
 import * as logger from "../utils/logger";
 import { AnyAction } from "redux";
 import { DEFAULT_LOCALE } from "../api/i18n";
+import { KC_ESCAPE, KC_U } from '../components/map-viewer-base';
 
 export const CONFIG_INITIAL_STATE: IConfigurationReducerState = {
     agentUri: undefined,
@@ -21,6 +22,8 @@ export const CONFIG_INITIAL_STATE: IConfigurationReducerState = {
     viewRotationEnabled: true,
     viewSizeUnits: UnitOfMeasure.Meters,
     manualFeatureTooltips: false,
+    cancelDigitizationKey: KC_ESCAPE,
+    undoLastPointKey: KC_U,
     coordinates: {
         decimals: 6
     } as ICoordinateConfiguration,

@@ -308,6 +308,8 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                     onQueryMapFeatures={this.onQueryMapFeatures}
                                     onRequestZoomToView={this.onRequestZoomToView}
                                     onMapResized={this.onMapResized}
+                                    cancelDigitizationKey={config.cancelDigitizationKey}
+                                    undoLastPointKey={config.undoLastPointKey}
                                     activeSelectedFeatureXml={xml} />
                 ];
             }

@@ -6,14 +6,16 @@ import { ClientKind, ReduxAction, ReduxThunkedAction, ICommand, IApplicationStat
 import configureStore from "../store/configure-store";
 import { CONFIG_INITIAL_STATE } from "../reducers/config";
 import { getCommand as getRegisteredCommand } from "../api/registry/command";
+import { IConfigurationReducerState } from '..';
 
 export interface IApplicationMountOptions {
     /**
      * Initial configuration settings to apply.
+     * 
+     * @type {Partial<IConfigurationReducerState>}
+     * @memberof IApplicationMountOptions
      */
-    initialConfig: {
-        manualFeatureTooltips: boolean
-    }
+    initialConfig: Partial<IConfigurationReducerState>;
 }
 
 /**

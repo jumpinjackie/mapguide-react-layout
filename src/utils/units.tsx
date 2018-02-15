@@ -1,6 +1,6 @@
 import * as React from "react";
 import { DEG } from "../constants";
-import { UnitInfo, UnitOfMeasure, UnitName } from "../api/common";
+import { UnitInfo, UnitOfMeasure, UnitName, IMapView } from "../api/common";
 
 const mUnits: UnitInfo[] = [
     { name: "Unknown", abbreviation: () => "unk", unitsPerMeter: 1.0, metersPerUnit: 1.0 },
@@ -41,4 +41,26 @@ export function getUnits(): [UnitOfMeasure, UnitName][] {
 export function getUnitOfMeasure(unit: UnitOfMeasure): UnitInfo {
     const u =  mUnits[unit];
     return u || mUnits[0]; //The unknown unit
+}
+
+export function getMapSize(displaySize: [number, number], metersPerUnit: number, units: UnitOfMeasure, resolution?: number, precision?: number): [number, number] {
+    const [width, height] = displaySize;
+    let gw = width;
+    let gh = height;
+    const uom = getUnitOfMeasure(units);
+    if (resolution && units != UnitOfMeasure.Pixels) {
+        gw = resolution * width;
+        gh = resolution * height;
+        if (units != UnitOfMeasure.Unknown) {
+            gw = uom.unitsPerMeter * gw * metersPerUnit;
+            gh = uom.unitsPerMeter * gh * metersPerUnit;
+        }
+        let prec = precision || 2;
+        if (prec >= 0) {
+            const factor = Math.pow(10, prec);
+            gw = Math.round(gw * factor) / factor;
+            gh = Math.round(gh * factor) / factor;
+        }
+    }
+    return [gw, gh];
 }

@@ -474,7 +474,7 @@ export interface IMapViewer {
      */
     getCurrentView(): IMapView;
     /**
-     * Gets the current size of the map
+     * Gets the current physical size of the map
      *
      * @returns {[number, number]}
      *

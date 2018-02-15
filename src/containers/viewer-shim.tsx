@@ -15,7 +15,7 @@ import { MgError } from "../api/error";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { FeatureSet, SelectedFeatureSet, QueryMapFeaturesResponse } from "../api/contracts/query";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
-import { RefreshMode, ReduxDispatch, IApplicationState, ICommand, ClientKind } from "../api/common";
+import { RefreshMode, ReduxDispatch, IApplicationState, ICommand, ClientKind, UnitOfMeasure } from "../api/common";
 import * as MapActions from "../actions/map";
 import * as TaskPaneActions from "../actions/taskpane";
 import * as LegendActions from "../actions/legend";
@@ -26,6 +26,7 @@ import { Intent, IToastProps } from "@blueprintjs/core";
 import { tr } from "../api/i18n";
 import { serialize } from "../api/builders/mapagent";
 import { ILocalizedMessages } from "../strings/msgdef";
+import { getUnitOfMeasure, getMapSize } from '../utils/units';
 
 function isEmptySelection(selection: QueryMapFeaturesResponse | undefined): boolean {
     if (selection && selection.FeatureSet) {
@@ -655,6 +656,7 @@ export interface IViewerApiShimState {
     agentUri: string;
     agentKind: ClientKind;
     busyCount: number;
+    sizeUnits: UnitOfMeasure;
 }
 
 export interface IViewerApiShimDispatch {
@@ -677,7 +679,8 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IViewerAp
         selectionSet: selectionSet,
         agentUri: state.config.agentUri,
         agentKind: state.config.agentKind,
-        busyCount: state.viewer.busyCount
+        busyCount: state.viewer.busyCount,
+        sizeUnits: state.config.viewSizeUnits
     };
 }
 
@@ -968,7 +971,12 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
         return null;
     }
     public GetMapHeight(): number {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetMapHeight()`);
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            const [gw, gh] = viewer.getSize();
+            return gh;
+        }
+        return NaN;
     }
     public GetMapName(): string | undefined {
         if (this.props.map) {
@@ -977,10 +985,16 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
         return undefined;
     }
     public GetMapUnitsType(): string {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetMapUnitsType()`);
+        const uom = getUnitOfMeasure(this.props.sizeUnits || UnitOfMeasure.Unknown);
+        return uom.name;
     }
-    public GetMapWidth(): string {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetMapWidth()`);
+    public GetMapWidth(): number {
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            const [gw, gh] = viewer.getSize();
+            return gw;
+        }
+        return NaN;
     }
     public GetScale(): number | null {
         const viewer = Runtime.getViewer();

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { IMapView, UnitOfMeasure } from "../api/common";
-import { getUnitOfMeasure } from "../utils/units";
+import { getUnitOfMeasure, getMapSize } from "../utils/units";
 
 export interface IViewSizeProps {
     /**
@@ -50,22 +50,7 @@ export interface IViewSizeProps {
 export const ViewSize = (props: IViewSizeProps) => {
     const { width, height, view, metersPerUnit, units, precision } = props;
     const uom = getUnitOfMeasure(units);
-    let gw = width;
-    let gh = height;
-    if (view.resolution && units != UnitOfMeasure.Pixels) {
-        gw = view.resolution * width;
-        gh = view.resolution * height;
-        if (units != UnitOfMeasure.Unknown) {
-            gw = uom.unitsPerMeter * gw * metersPerUnit;
-            gh = uom.unitsPerMeter * gh * metersPerUnit;
-        }
-        let prec = precision || 2;
-        if (prec >= 0) {
-            const factor = Math.pow(10, prec);
-            gw = Math.round(gw * factor) / factor;
-            gh = Math.round(gh * factor) / factor;
-        }
-    }
+    const [gw, gh] = getMapSize([width, height], metersPerUnit, units, view.resolution, precision);
     //TODO: Support format string extension parameter from fusion widget
     return <div className="component-view-size">{gw} x {gh} ({uom.abbreviation()})</div>;
 };

@@ -151,6 +151,8 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
     activeSelectedFeatureXml?: string;
     activeSelectedFeatureColor: string;
     manualFeatureTooltips: boolean;
+    cancelDigitizationKey?: number;
+    undoLastPointKey?: number;
 }
 
 /**
@@ -227,6 +229,7 @@ export function layerTransparencyChanged(set: LayerTransparencySet, other: Layer
 }
 
 const KC_ESCAPE = 27;
+const KC_U = 85;
 
 class SessionKeepAlive {
     private getSession: () => string;
@@ -532,10 +535,12 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         }
     }
     private onKeyDown = (e: GenericEvent) => {
-        switch (e.keyCode) {
-            case KC_ESCAPE:
-                this.cancelDigitization();
-                break;
+        const cancelKey = this.props.cancelDigitizationKey || KC_ESCAPE;
+        const undoKey = this.props.undoLastPointKey || KC_U;
+        if (e.keyCode == cancelKey) {
+            this.cancelDigitization();
+        } else if (e.keyCode == undoKey && this._activeDrawInteraction) {
+            this._activeDrawInteraction.removeLastPoint();
         }
         this.setState({ shiftKey: e.shiftKey });
     }
@@ -1050,7 +1055,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             type: "LineString", //ol.geom.GeometryType.LINE_STRING,
             minPoints: 2
         });
-        this.pushDrawInteraction("LineString", draw, handler, prompt || tr("DIGITIZE_LINESTRING_PROMPT", this.props.locale));
+        this.pushDrawInteraction("LineString", draw, handler, prompt || tr("DIGITIZE_LINESTRING_PROMPT", this.props.locale, {
+            key: String.fromCharCode(this.props.undoLastPointKey || KC_U) //Pray that a sane (printable) key was bound
+        }));
     }
     public digitizeCircle(handler: DigitizerCallback<Circle>, prompt?: string): void {
         const draw = new Draw({
@@ -1081,7 +1088,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         const draw = new Draw({
             type: "Polygon" //ol.geom.GeometryType.POLYGON
         });
-        this.pushDrawInteraction("Polygon", draw, handler, prompt || tr("DIGITIZE_POLYGON_PROMPT", this.props.locale));
+        this.pushDrawInteraction("Polygon", draw, handler, prompt || tr("DIGITIZE_POLYGON_PROMPT", this.props.locale, {
+            key: String.fromCharCode(this.props.undoLastPointKey || KC_U) //Pray that a sane (printable) key was bound
+        }));
     }
     public selectByGeometry(geom: Geometry): void {
         this.sendSelectionQuery(this.buildDefaultQueryOptions(geom));

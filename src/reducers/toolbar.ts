@@ -30,6 +30,16 @@ export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: AnyAction 
                             componentProps: payload.props
                         }
                     };
+                    //Close others
+                    for (const key in state.flyouts) {
+                        if (key != flyoutId) {
+                            updateSpec.flyouts[key] = {
+                                "$merge": {
+                                    open: false
+                                }
+                            };
+                        }
+                    }
                     const newState = update(state, updateSpec);
                     return newState;
                 }
@@ -66,6 +76,16 @@ export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: AnyAction 
                             metrics: payload.metrics
                         }
                     };
+                    //Close others
+                    for (const key in state.flyouts) {
+                        if (key != flyoutId) {
+                            updateSpec.flyouts[key] = {
+                                "$merge": {
+                                    open: false
+                                }
+                            };
+                        }
+                    }
                     const newState = update(state, updateSpec);
                     return newState;
                 }

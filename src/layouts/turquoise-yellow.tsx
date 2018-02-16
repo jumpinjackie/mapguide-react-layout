@@ -212,35 +212,39 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
         return <div style={{ width: "100%", height: "100%" }}>
             <div style={{ position: "absolute", left: 0, top: 0, bottom: bottomOffset, right: 0 }}>
                 <SplitterLayout customClassName="turquoise-yellow-splitter" primaryIndex={1} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={this.onSplitterChanged} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
-                    <div className="turquoise-yellow-sidebar" style={{ position: "absolute", left: SIDEBAR_PADDING, top: TOP_BAR_HEIGHT, bottom: SIDEBAR_PADDING, right: 0 }}>
-                        <Tabs2 id="SidebarTabs" onChange={this.onActiveTabChanged} {...extraTabsProps}>
-                            {(() => {
-                                if (hasTaskPane) {
-                                    const panel = <div style={tabPanelStyle}>
-                                        <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={locale} componentProps={{ isResizing: isResizing }} />
-                                    </div>;
-                                    return <Tab2 id="TaskPane" title={taskPaneTitle} panel={panel} />;
-                                }
-                            })()}
-                            {(() => {
-                                if (hasLegend) {
-                                    const p1: React.CSSProperties = { overflow: "auto" };
-                                    const panel = <div style={{ ...tabPanelStyle, ...p1 }}>
-                                        <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: false }} />
-                                    </div>;
-                                    return <Tab2 id="Legend" title={legendTitle} panel={panel} />;
-                                }
-                            })()}
-                            {(() => {
-                                if (hasSelectionPanel) {
-                                    const panel = <div style={tabPanelStyle}>
-                                        <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
-                                    </div>;
-                                    return <Tab2 id="Selection" title={selectionTitle} panel={panel} />;
-                                }
-                            })()}
-                        </Tabs2>
-                    </div>
+                    {(() => {
+                        if (this.props.showSelection || this.props.showTaskPane || this.props.showLegend) {
+                            return <div className="turquoise-yellow-sidebar" style={{ position: "absolute", left: SIDEBAR_PADDING, top: TOP_BAR_HEIGHT, bottom: SIDEBAR_PADDING, right: 0 }}>
+                                <Tabs2 id="SidebarTabs" onChange={this.onActiveTabChanged} {...extraTabsProps}>
+                                    {(() => {
+                                        if (hasTaskPane) {
+                                            const panel = <div style={tabPanelStyle}>
+                                                <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={locale} componentProps={{ isResizing: isResizing }} />
+                                            </div>;
+                                            return <Tab2 id="TaskPane" title={taskPaneTitle} panel={panel} />;
+                                        }
+                                    })()}
+                                    {(() => {
+                                        if (hasLegend) {
+                                            const p1: React.CSSProperties = { overflow: "auto" };
+                                            const panel = <div style={{ ...tabPanelStyle, ...p1 }}>
+                                                <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: false }} />
+                                            </div>;
+                                            return <Tab2 id="Legend" title={legendTitle} panel={panel} />;
+                                        }
+                                    })()}
+                                    {(() => {
+                                        if (hasSelectionPanel) {
+                                            const panel = <div style={tabPanelStyle}>
+                                                <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
+                                            </div>;
+                                            return <Tab2 id="Selection" title={selectionTitle} panel={panel} />;
+                                        }
+                                    })()}
+                                </Tabs2>
+                            </div>;
+                        }
+                    })()}
                     <div>
                         <ToolbarContainer id="FileMenu" containerClass="turquoise-yellow-file-menu" containerStyle={{ position: "absolute", left: 0, top: (TOP_BAR_HEIGHT - DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, right: 0 }} />
                         <ToolbarContainer id="Toolbar" containerClass="turquoise-yellow-toolbar" containerStyle={{ position: "absolute", left: 0, top: TOP_BAR_HEIGHT, zIndex: TB_Z_INDEX, right: 0 }} />

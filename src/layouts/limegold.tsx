@@ -224,35 +224,39 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
                             }
                         })()}
                     </div>
-                    <div className="limegold-sidebar" style={{ position: "absolute", right: SIDEBAR_PADDING, top: 0, left: 0, bottom: 0 }}>
-                        <Tabs2 id="SidebarTabs" onChange={this.onActiveTabChanged} {...extraTabsProps}>
-                            {(() => {
-                                if (hasTaskPane) {
-                                    const panel = <div style={tabPanelStyle}>
-                                        <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={locale} componentProps={{ isResizing: isResizing }} />
-                                    </div>;
-                                    return <Tab2 id="TaskPane" title={taskPaneTitle} panel={panel} />;
-                                }
-                            })()}
-                            {(() => {
-                                if (hasLegend) {
-                                    const p1: React.CSSProperties = { overflow: "auto" };
-                                    const panel = <div style={{ ...tabPanelStyle, ...p1 }}>
-                                            <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: false }} />
-                                        </div>;
-                                    return <Tab2 id="Legend" title={legendTitle} panel={panel} />;
-                                }
-                            })()}
-                            {(() => {
-                                if (hasSelectionPanel) {
-                                    const panel = <div style={tabPanelStyle}>
-                                        <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
-                                    </div>;
-                                    return <Tab2 id="Selection" title={selectionTitle} panel={panel} />;
-                                }
-                            })()}
-                        </Tabs2>
-                    </div>
+                    {(() => {
+                        if (this.props.showSelection || this.props.showTaskPane || this.props.showLegend) {
+                            return <div className="limegold-sidebar" style={{ position: "absolute", right: SIDEBAR_PADDING, top: 0, left: 0, bottom: 0 }}>
+                                <Tabs2 id="SidebarTabs" onChange={this.onActiveTabChanged} {...extraTabsProps}>
+                                    {(() => {
+                                        if (hasTaskPane) {
+                                            const panel = <div style={tabPanelStyle}>
+                                                <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={locale} componentProps={{ isResizing: isResizing }} />
+                                            </div>;
+                                            return <Tab2 id="TaskPane" title={taskPaneTitle} panel={panel} />;
+                                        }
+                                    })()}
+                                    {(() => {
+                                        if (hasLegend) {
+                                            const p1: React.CSSProperties = { overflow: "auto" };
+                                            const panel = <div style={{ ...tabPanelStyle, ...p1 }}>
+                                                    <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: false }} />
+                                                </div>;
+                                            return <Tab2 id="Legend" title={legendTitle} panel={panel} />;
+                                        }
+                                    })()}
+                                    {(() => {
+                                        if (hasSelectionPanel) {
+                                            const panel = <div style={tabPanelStyle}>
+                                                <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
+                                            </div>;
+                                            return <Tab2 id="Selection" title={selectionTitle} panel={panel} />;
+                                        }
+                                    })()}
+                                </Tabs2>
+                            </div>;
+                        }
+                    })()}
                 </SplitterLayout>
             </div>
             {(() => {

@@ -249,9 +249,13 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
                             })()}
                         </div>
                     </div>
-                    <div>
-                        <Accordion style={{ position: "absolute", top: OUTER_PADDING, bottom: 0, right: OUTER_PADDING, left: 0 }} onActivePanelChanged={this.onActivePanelChanged} activePanelId={activeId} panels={panels} isResizing={isResizing} />
-                    </div>
+                    {(() => {
+                        if (this.props.showSelection || this.props.showTaskPane || this.props.showLegend) {
+                            return <div>
+                                <Accordion style={{ position: "absolute", top: OUTER_PADDING, bottom: 0, right: OUTER_PADDING, left: 0 }} onActivePanelChanged={this.onActivePanelChanged} activePanelId={activeId} panels={panels} isResizing={isResizing} />
+                            </div>;
+                        }
+                    })()}
                 </SplitterLayout>
             </div>
             {(() => {

@@ -237,9 +237,13 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
         return <div style={{ width: "100%", height: "100%" }}>
             <div style={{ position: "absolute", left: 0, top: 0, bottom: bottomOffset, right: 0 }}>
                 <SplitterLayout customClassName="slate-splitter" primaryIndex={1} secondaryInitialSize={SIDEBAR_WIDTH} onSecondaryPaneSizeChange={this.onSplitterChanged} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
-                    <div>
-                        <Accordion style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0 }} onActivePanelChanged={this.onActivePanelChanged} activePanelId={activeId} panels={panels} isResizing={isResizing} />
-                    </div>
+                    {(() => {
+                        if (this.props.showSelection || this.props.showTaskPane || this.props.showLegend) {
+                            return <div>
+                                <Accordion style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0 }} onActivePanelChanged={this.onActivePanelChanged} activePanelId={activeId} panels={panels} isResizing={isResizing} />
+                            </div>;
+                        }
+                    })()}
                     <div>
                         <ToolbarContainer id="FileMenu" containerClass="slate-file-menu" containerStyle={{ position: "absolute", left: 0, top: 0, zIndex: TB_Z_INDEX, right: 0 }} />
                         <ToolbarContainer id="Toolbar" containerClass="slate-toolbar" containerStyle={{ position: "absolute", left: 0, top: DEFAULT_TOOLBAR_SIZE, zIndex: TB_Z_INDEX, right: 0 }} />

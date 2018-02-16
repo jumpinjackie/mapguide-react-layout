@@ -1,4 +1,4 @@
-/* glue: 0.13 hash: 8e60799432 */
+/* glue: 0.13 hash: be5913421d */
         .PoweredBy_en,
 .zoom-out-fixed,
 .zoom-in,
@@ -59,6 +59,7 @@
 .iconNavigator,
 .help,
 .globe_add,
+.globe-share,
 .geolocation,
 .forward,
 .folder-horizontal,
@@ -444,128 +445,134 @@
             height: 16px;
         }
         
-        .geolocation {
+        .globe-share {
             background-position: -136px -48px;
             width: 16px;
             height: 16px;
         }
         
-        .forward {
+        .geolocation {
             background-position: -136px -64px;
             width: 16px;
             height: 16px;
         }
         
-        .folder-horizontal {
+        .forward {
             background-position: -136px -80px;
             width: 16px;
             height: 16px;
         }
         
-        .folder-horizontal-open {
+        .folder-horizontal {
             background-position: -136px -96px;
             width: 16px;
             height: 16px;
         }
         
-        .file-save {
+        .folder-horizontal-open {
             background-position: -136px -112px;
             width: 16px;
             height: 16px;
         }
         
-        .file-print {
+        .file-save {
             background-position: 0 -131px;
             width: 16px;
             height: 16px;
         }
         
-        .feature-info {
+        .file-print {
             background-position: -16px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .edit-xml {
+        .feature-info {
             background-position: -32px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .edit-paste {
+        .edit-xml {
             background-position: -48px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .edit-duplicate {
+        .edit-paste {
             background-position: -64px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .edit-cut {
+        .edit-duplicate {
             background-position: -80px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .edit-copy {
+        .edit-cut {
             background-position: -96px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .coordinate-tracker {
+        .edit-copy {
             background-position: -112px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .control {
+        .coordinate-tracker {
             background-position: -128px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .control-stop {
+        .control {
             background-position: -152px 0;
             width: 16px;
             height: 16px;
         }
         
-        .control-stop-180 {
+        .control-stop {
             background-position: -152px -16px;
             width: 16px;
             height: 16px;
         }
         
-        .control-180 {
+        .control-stop-180 {
             background-position: -152px -32px;
             width: 16px;
             height: 16px;
         }
         
-        .buffer {
+        .control-180 {
             background-position: -152px -48px;
             width: 16px;
             height: 16px;
         }
         
-        .back {
+        .buffer {
             background-position: -152px -64px;
             width: 16px;
             height: 16px;
         }
         
-        .application-browser {
+        .back {
             background-position: -152px -80px;
             width: 16px;
             height: 16px;
         }
         
-        .about {
+        .application-browser {
             background-position: -152px -96px;
+            width: 16px;
+            height: 16px;
+        }
+        
+        .about {
+            background-position: -152px -112px;
             width: 16px;
             height: 16px;
         }
@@ -631,6 +638,7 @@
     .iconNavigator,
     .help,
     .globe_add,
+    .globe-share,
     .geolocation,
     .forward,
     .folder-horizontal,

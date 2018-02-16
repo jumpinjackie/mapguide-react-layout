@@ -19,42 +19,10 @@ import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import * as TemplateActions from "../actions/template";
 import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
-import { addUrlProps, UrlQueryParamTypes } from 'react-url-query';
 import { IApplicationContext, APPLICATION_CONTEXT_VALIDATION_MAP } from "../components/context";
 import { safePropAccess } from '../utils/safe-prop';
-
-const urlPropsQueryConfig = {
-    urlX: { type: UrlQueryParamTypes.number, queryParam: "x" },
-    urlY: { type: UrlQueryParamTypes.number, queryParam: "y" },
-    urlScale: { type: UrlQueryParamTypes.number, queryParam: "scale" },
-    urlResource: { type: UrlQueryParamTypes.string, queryParam: "resource" },
-    urlLocale: { type: UrlQueryParamTypes.string, queryParam: "locale" },
-    urlSession: { type: UrlQueryParamTypes.string, queryParam: "session" },
-    urlMap: { type: UrlQueryParamTypes.string, queryParam: "map" },
-    urlShowLayers: { type: UrlQueryParamTypes.array, queryParam: "sl" },
-    urlHideLayers: { type: UrlQueryParamTypes.array, queryParam: "hl" },
-    urlShowGroups: { type: UrlQueryParamTypes.array, queryParam: "sg" },
-    urlHideGroups: { type: UrlQueryParamTypes.array, queryParam: "hg" },
-}
-
-/**
- * Props exposed to URL state
- */
-export interface IAppUrlStateProps {
-    urlLocale?: string;
-    urlSession?: string;
-    urlResource: string;
-    urlX?: number;
-    urlY?: number;
-    urlScale?: number;
-    urlMap?: string;
-    urlShowLayers?: string[];
-    urlHideLayers?: string[];
-    urlShowGroups?: string[];
-    urlHideGroups?: string[];
-}
-
-export type UrlValueChangeCallback = (value: any) => void;
+import { UrlValueChangeCallback, IAppUrlStateProps, urlPropsQueryConfig } from './url-state';
+import { addUrlProps } from 'react-url-query';
 
 /**
  * Callback interface for propagating changes to URL state

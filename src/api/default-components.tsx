@@ -18,9 +18,9 @@ import BaseLayerSwitcherContainer from "../containers/base-layer-switcher";
 import MapMenuContainer from "../containers/map-menu";
 import CoordinateTrackerContainer from "../containers/coordinate-tracker";
 import AddManageLayersContainer from "../containers/add-manage-layers";
-
 import { registerComponentFactory, DefaultComponentNames } from "../api/registry/component";
 import ViewSizeContainer from "../containers/view-size";
+import ShareLinkToViewContainer from '../containers/share-link-to-view';
 
 /**
  * Registers the default set of components
@@ -47,4 +47,5 @@ export function registerDefaultComponents(): void {
     registerComponentFactory(DefaultComponentNames.ViewSize, (props) => <ViewSizeContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.CoordinateTracker, (props) => <CoordinateTrackerContainer {...props} />);
     registerComponentFactory(DefaultComponentNames.AddManageLayers, (props) => <AddManageLayersContainer {...props} />);
+    registerComponentFactory(DefaultComponentNames.ShareLinkToView, (props) => <ShareLinkToViewContainer {...props} />);
 }

@@ -1072,8 +1072,24 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
         }
         return count;
     }
-    public GetSelectedFeatures(): IAjaxViewerSelectionSet {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.GetSelectedFeatures()`);
+    public GetSelectedFeatures(): IAjaxViewerSelectionSet | undefined {
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            const selection = viewer.getSelection();
+            if (selection && selection.SelectedFeatures) {
+                const sel: IAjaxViewerSelectionSet = {};
+                for (const sl of selection.SelectedFeatures.SelectedLayer) {
+                    sel[sl["@name"]] = sl.Feature.map(f => {
+                        const bbox = f.Bounds.split(" ").map(s => parseFloat(s));
+                        return { 
+                            zoom: { minx: bbox[0], miny: bbox[1], maxx: bbox[2], maxy: bbox[3] }, 
+                            values: f.Property.map(p => ({ name: p.Name, value: p.Value }))
+                        };
+                    })
+                }
+                return sel;
+            }
+        }
     }
     public IsDigitizing(): boolean {
         const viewer = Runtime.getViewer();

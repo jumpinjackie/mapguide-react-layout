@@ -37,7 +37,8 @@ import {
     LayerTransparencySet,
     MapLoadIndicatorPositioning,
     KC_ESCAPE,
-    KC_U
+    KC_U,
+    SelectionVariant
 } from "../api/common";
 import {
     IApplicationContext,
@@ -1091,8 +1092,12 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             key: String.fromCharCode(this.props.undoLastPointKey || KC_U) //Pray that a sane (printable) key was bound
         }));
     }
-    public selectByGeometry(geom: Geometry): void {
-        this.sendSelectionQuery(this.buildDefaultQueryOptions(geom));
+    public selectByGeometry(geom: Geometry, selectionMethod?: SelectionVariant): void {
+        const options = this.buildDefaultQueryOptions(geom);
+        if (selectionMethod) {
+            options.selectionvariant = selectionMethod;
+        }
+        this.sendSelectionQuery(options);
     }
     public queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void {
         this.sendSelectionQuery(options, success, failure);

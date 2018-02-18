@@ -433,6 +433,8 @@ export enum RefreshMode {
     SelectionOnly = 2
 }
 
+export type SelectionVariant = "INTERSECTS" | "TOUCHES" | "WITHIN" | "ENVELOPEINTERSECTS";
+
 /**
  * Describes the API for interacting with the map viewer
  *
@@ -627,11 +629,11 @@ export interface IMapViewer {
     /**
      * Performs a map selection by the given geometry
      *
-     * @param {olGeometry} geom
-     *
+     * @param {olGeometry} geom The geometry to select with
+     * @param {SelectionVariant} selectionMethod The selection method
      * @memberof IMapViewer
      */
-    selectByGeometry(geom: olGeometry): void;
+    selectByGeometry(geom: olGeometry, selectionMethod?: SelectionVariant): void;
     /**
      * Performs a map selection by the given query options
      *

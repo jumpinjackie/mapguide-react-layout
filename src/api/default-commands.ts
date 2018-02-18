@@ -311,10 +311,11 @@ export function initDefaultCommands() {
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
             if (viewer) {
+                const selMethod = parameters.SelectionType || "INTERSECTS";
                 viewer.digitizeCircle(circle => {
                     const fact = viewer.getOLFactory();
                     const geom = fact.createGeomPolygonFromCircle(circle);
-                    viewer.selectByGeometry(geom);
+                    viewer.selectByGeometry(geom, selMethod);
                 });
             }
         }
@@ -530,9 +531,49 @@ export function initDefaultCommands() {
             const map = getRuntimeMap(state);
             const config = state.config;
             if (map) {
+                let autogenerateLayerNames = true;
+                let bUseAdvancedStylization = true;
+                let defaultDataStoreFormat = null;
+                let defaultRedlineGeometryType = 0;
+                let bCreateOnStartup = false;
+                if (parameters.AutogenerateLayerNames)
+                    autogenerateLayerNames = (parameters.AutogenerateLayerNames == "true");
+
+                if (parameters.StylizationType)
+                    bUseAdvancedStylization = (parameters.StylizationType == "advanced");
+                
+                if (parameters.DataStoreFormat && parameters.RedlineGeometryFormat) {
+                    if (parameters.DataStoreFormat == "SDF" ||
+                        parameters.DataStoreFormat == "SHP" ||
+                        parameters.DataStoreFormat == "SQLite") {
+                        
+                        var geomTypes = parseInt(parameters.RedlineGeometryFormat);
+                        if (parameters.DataStoreFormat == "SHP") {
+                            //Only accept if geometry type is singular
+                            if (geomTypes == 1 || geomTypes == 2 || geomTypes == 4) {
+                                defaultDataStoreFormat = parameters.DataStoreFormat;
+                                defaultRedlineGeometryType = geomTypes;
+                                if (parameters.AutoCreateOnStartup)
+                                    bCreateOnStartup = (parameters.AutoCreateOnStartup == "true");
+                            }
+                        } else {
+                            defaultDataStoreFormat = parameters.DataStoreFormat;
+                            defaultRedlineGeometryType = geomTypes;
+                            if (parameters.AutoCreateOnStartup)
+                                bCreateOnStartup = (parameters.AutoCreateOnStartup == "true");
+                        }
+                    }
+                }
+
                 enableRedlineMessagePrompt(parameters.UseMapMessage == "true");
                 let url = ensureParameters(`${getFusionRoot()}/widgets/Redline/markupmain.php`, map.Name, map.SessionId, config.locale, true);
-                url += "&POPUP=false&REDLINESTYLIZATION=ADVANCED";
+                url += "&POPUP=false";
+                if (defaultDataStoreFormat != null && defaultRedlineGeometryType > 0) {
+                    url += `&REDLINEFORMAT=${defaultDataStoreFormat}`;
+                    url += `&REDLINEGEOMTYPE=${defaultRedlineGeometryType}`;
+                    url += `&AUTOCREATE=${bCreateOnStartup ? "1" : "0"}`;
+                }
+                url += `&REDLINESTYLIZATION=${bUseAdvancedStylization ? "ADVANCED" : "BASIC"}`;
                 const cmdDef = buildTargetedCommand(config, parameters);
                 openUrlInTarget(DefaultCommands.Redline, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
             }

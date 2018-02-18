@@ -1,6 +1,7 @@
 import * as Common from "./contracts/common";
 import * as RtMap from "./contracts/runtime-map";
 import * as Query from "./contracts/query";
+import { SelectionVariant } from './common';
 
 /**
  * Describes a request that takes either a session or username/password pair
@@ -170,6 +171,8 @@ export enum QueryFeaturesSet {
     Hyperlink = 8
 }
 
+
+
 /**
  * Options for querying map features
  *
@@ -194,9 +197,9 @@ export interface IQueryMapFeaturesOptions extends IRuntimeMapRequest {
     /**
      * The spatial query operator to use with the input geometry
      *
-     * @type {("INTERSECTS" | "TOUCHES" | "WITHIN" | "ENVELOPEINTERSECTS")}
+     * @type {SelectionVariant}
      */
-    selectionvariant?: "INTERSECTS" | "TOUCHES" | "WITHIN" | "ENVELOPEINTERSECTS";
+    selectionvariant?: SelectionVariant;
     /**
      * A bitmask containing what features to ask for
      *

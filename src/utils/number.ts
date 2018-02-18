@@ -109,3 +109,33 @@ export function getFiniteScaleIndexForScale(finiteScaleList: number[], scale: nu
 export function deg2rad(deg: number): number {
     return deg * (Math.PI / 180);
 }
+
+/**
+ * Computes the sum of the given array
+ * 
+ * @export
+ * @template T 
+ * @param {T[]} array 
+ * @param {(item: T) => number} numSelector 
+ * @returns {number} 
+ */
+export function sum<T>(array: T[], numSelector: (item: T) => number): number {
+    let total = 0;
+    for (const item of array) {
+        total += numSelector(item);
+    }
+    return total;
+}
+
+/**
+ * Rounds the given number to the specified number of decimals
+ * 
+ * @export
+ * @param {number} num 
+ * @param {number} [decimals=2] 
+ * @returns {number} 
+ */
+export function roundTo(num: number, decimals: number = 2): number {
+    const a = Math.pow(10, decimals);
+    return Math.round(num * a) / a;
+}

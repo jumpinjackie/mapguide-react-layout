@@ -1,4 +1,4 @@
-import { areNumbersEqual, scaleRangeBetween, getFiniteScaleIndexForScale, getClosestScaleIndex } from "../src/utils/number";
+import { sum, roundTo, areNumbersEqual, scaleRangeBetween, getFiniteScaleIndexForScale, getClosestScaleIndex } from "../src/utils/number";
 
 const SCALES = [390.625, 781.25, 1562.5, 3125, 6250, 12500, 25000, 50000, 100000, 200000];
 
@@ -49,6 +49,27 @@ describe("utils/number", () => {
         });
         it("Returns upper when scale is closest to upper", () => {
             expect(getClosestScaleIndex([1, 5], 4)).toBe(1);
+        });
+    });
+    describe("sum", () => {
+        it("adds selected item property", () => {
+            const items = [
+                { foo: 2, bar: "asdsdf" },
+                { foo: 4, bar: "sdgjdskf" },
+                { foo: 23, bar: "sdfjdskfd" }
+            ];
+            expect(sum(items, i => i.foo)).toBe(2 + 4 + 23);
+        })
+    });
+    describe("roundTo", () => {
+        it("rounds to 2 decimal places", () => {
+            expect(roundTo(123.45483454, 2)).toBe(123.45);
+        });
+        it("rounds to 3 decimal places", () => {
+            expect(roundTo(123.45483454, 3)).toBe(123.455);
+        });
+        it("rounds to 4 decimal places", () => {
+            expect(roundTo(123.45483454, 4)).toBe(123.4548);
         });
     });
 });

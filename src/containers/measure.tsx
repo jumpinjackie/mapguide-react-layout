@@ -13,7 +13,8 @@ import { getViewer } from "../api/runtime";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { NBSP } from "../constants";
 import { setActiveTool } from "../actions/map";
-import { MeasureContext, IMeasureComponent } from "./measure-context";
+import { IMeasureCallback, MeasureSegment, MeasureContext, IMeasureComponent } from "./measure-context";
+import { sum, roundTo } from "../utils/number";
 
 export interface IMeasureContainerProps {
 
@@ -33,6 +34,9 @@ export interface IMeasureContainerState {
     measuring: boolean;
     geodesic: boolean;
     type: string;
+    activeType: "LineString" | "Area";
+    segmentTotal: number;
+    segments: MeasureSegment[];
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>): Partial<IMeasureContainerReducerState> {
@@ -53,7 +57,7 @@ export type MeasureProps = IMeasureContainerProps & Partial<IMeasureContainerRed
 
 const _measurements: MeasureContext[] = [];
 
-export class MeasureContainer extends React.Component<MeasureProps, Partial<IMeasureContainerState>> implements IMeasureComponent {
+export class MeasureContainer extends React.Component<MeasureProps, Partial<IMeasureContainerState>> implements IMeasureComponent, IMeasureCallback {
 
     constructor(props: MeasureProps) {
         super(props);
@@ -122,6 +126,12 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
             }
         }
     }
+    updateSegments(kind: "LineString" | "Area", total: number, segments: MeasureSegment[] | undefined): void {
+        this.setState({ activeType: kind, segmentTotal: total, segments: segments });
+    }
+    clearSegments(): void {
+        this.setState({ segments: undefined });
+    }
     getCurrentDrawType(): string | undefined { return this.state.type; }
     getLocale(): string {
         return this.props.locale || DEFAULT_LOCALE;
@@ -146,7 +156,7 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
         }
 
         if (activeMeasure) {
-            activeMeasure.activate();
+            activeMeasure.activate(this);
         }
     }
     componentWillUnmount() {
@@ -163,7 +173,7 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
                 oldMeasure.deactivate();
             }
             if (newMeasure) {
-                newMeasure.activate();
+                newMeasure.activate(this);
             }
             //Reset
             this.setState({ measuring: false });
@@ -195,10 +205,40 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
                 </div>
                 {(() => {
                     if (this.state.measuring === true) {
-                        return <div className="pt-callout pt-intent-primary">
-                            <h5>{tr("MEASURING", locale)}</h5>
-                            {tr("MEASURING_MESSAGE", locale)}
-                        </div>
+                        return <div>
+                            <div className="pt-callout pt-intent-primary">
+                                <h5>{tr("MEASURING", locale)}</h5>
+                                {tr("MEASURING_MESSAGE", locale)}
+                            </div>
+                            {(() => {
+                                if (this.state.segments) {
+                                    return <table className="pt-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Segment</th>
+                                                <th>Length</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {this.state.segments.map(s => {
+                                                return <tr key={`segment-${s.segment}`}>
+                                                    <td>Segment {s.segment}</td>
+                                                    <td>{roundTo(s.length, 2)}m</td>
+                                                </tr>
+                                            })}
+                                            {(() => {
+                                                if (this.state.segmentTotal && this.state.activeType) {
+                                                    return <tr>
+                                                        <td><strong>Total {this.state.activeType == "Area" ? "Area" : "Length"}</strong></td>
+                                                        <td>{roundTo(this.state.segmentTotal, 4)}m<sup>2</sup></td>
+                                                    </tr>;
+                                                }
+                                            })()}
+                                        </tbody>
+                                    </table>;
+                                }
+                            })()}
+                        </div>;
                     }
                 })()}
             </form>

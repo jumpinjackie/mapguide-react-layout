@@ -10,7 +10,7 @@ import {
 import { IOLFactory } from "../api/ol-factory";
 import { tr } from "../api/i18n";
 import * as logger from "../utils/logger";
-
+import { roundTo } from "../utils/number";
 import Observable from "ol/observable";
 import olSphere from "ol/sphere";
 import olOverlay from "ol/overlay";
@@ -23,6 +23,16 @@ import olVectorLayer from "ol/layer/vector";
 
 const LAYER_NAME = "measure-layer";
 const WGS84_SPHERE = new olSphere(6378137);
+
+export interface MeasureSegment { 
+    segment: number;
+    length: number;
+}
+
+export interface IMeasureCallback {
+    updateSegments(kind: "LineString" | "Area", total: number, segments: MeasureSegment[] | undefined): void;
+    clearSegments(): void;
+}
 
 export interface IMeasureComponent {
     getCurrentDrawType(): string | undefined;
@@ -45,6 +55,7 @@ export class MeasureContext {
     private mapName: string;
     private layerName: string;
     private parent: IMeasureComponent;
+    private callback: IMeasureCallback | undefined;
     constructor(viewer: IMapViewer, mapName: string, parent: IMeasureComponent) {
         this.measureOverlays = [];
         this.viewer = viewer;
@@ -62,54 +73,64 @@ export class MeasureContext {
      * @param {LineString} line The line.
      * @return {string} The formatted length.
      */
-    private formatLength(line: olLineString) {
+    private formatLength(line: olLineString): [string, number, MeasureSegment[] | undefined] {
         let length: number;
+        let segments: MeasureSegment[] | undefined;
         if (this.parent.isGeodesic()) {
             const coordinates = line.getCoordinates();
+            segments = [];
             length = 0;
             const sourceProj = this.viewer.getProjection();
             for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
                 const c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, 'EPSG:4326');
                 const c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, 'EPSG:4326');
-                length += WGS84_SPHERE.haversineDistance(c1, c2);
+                const dist = WGS84_SPHERE.haversineDistance(c1, c2);
+                length += dist;
+                segments.push({ segment: (i + 1), length: dist });
             }
         } else {
-            length = Math.round(line.getLength() * 100) / 100;
+            length = roundTo(line.getLength(), 2);
         }
         let output: string;
         if (length > 100) {
-            output = (Math.round(length / 1000 * 100) / 100) +
-                ' ' + 'km';
+            output = (roundTo(length / 1000, 2)) + ' ' + 'km';
         } else {
-            output = (Math.round(length * 100) / 100) +
-                ' ' + 'm';
+            output = (roundTo(length, 2)) + ' ' + 'm';
         }
-        return output;
+        return [output, length, segments];
     }
     /**
      * Format area output.
      * @param {Polygon} polygon The polygon.
      * @return {string} Formatted area.
      */
-    private formatArea(polygon: olPolygon) {
+    private formatArea(polygon: olPolygon): [string, number, MeasureSegment[] | undefined] {
         let area: number;
+        let segments: MeasureSegment[] | undefined;
         if (this.parent.isGeodesic()) {
+            segments = [];
             const sourceProj = this.viewer.getProjection();
             const geom = (polygon.clone().transform(sourceProj, 'EPSG:4326') as olPolygon);
             const coordinates = geom.getLinearRing(0).getCoordinates();
             area = Math.abs(WGS84_SPHERE.geodesicArea(coordinates));
+            for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
+                const c1 = coordinates[i]; 
+                const c2 = coordinates[i + 1];
+                const dist = WGS84_SPHERE.haversineDistance(c1, c2);
+                segments.push({ segment: (i + 1), length: dist });
+            }
         } else {
             area = polygon.getArea();
         }
         let output: string;
         if (area > 10000) {
-            output = (Math.round(area / 1000000 * 100) / 100) +
+            output = (roundTo(area / 1000000, 2)) +
                 ' ' + 'km<sup>2</sup>';
         } else {
-            output = (Math.round(area * 100) / 100) +
+            output = (roundTo(area, 2)) +
                 ' ' + 'm<sup>2</sup>';
         }
-        return output;
+        return [output, area, segments];
     }
     private onDrawStart = (evt: GenericEvent) => {
         // set sketch
@@ -123,10 +144,18 @@ export class MeasureContext {
                 const geom = e.target;
                 let output: string;
                 if (geom instanceof olPolygon) {
-                    output = this.formatArea(geom);
+                    const [o, total, segments] = this.formatArea(geom);
+                    output = o;
+                    if (this.callback) {
+                        this.callback.updateSegments("Area", total, segments);
+                    }
                     tooltipCoord = geom.getInteriorPoint().getCoordinates();
                 } else if (geom instanceof olLineString) {
-                    output = this.formatLength(geom);
+                    const [o, total, segments] = this.formatLength(geom);
+                    output = o;
+                    if (this.callback) {
+                        this.callback.updateSegments("LineString", total, segments);
+                    }
                     tooltipCoord = geom.getLastCoordinate();
                 } else {
                     output = "";
@@ -288,6 +317,9 @@ export class MeasureContext {
             this.viewer.removeOverlay(ov);
         }
         this.measureOverlays.length = 0; //Clear
+        if (this.callback) {
+            this.callback.clearSegments();
+        }
     }
     public handleDrawTypeChange() {
         const type = this.parent.getCurrentDrawType();
@@ -295,7 +327,8 @@ export class MeasureContext {
             this.setActiveInteraction(type);
         }
     }
-    public activate() {
+    public activate(callback: IMeasureCallback) {
+        this.callback = callback;
         logger.debug(`Activating measure context for ${this.mapName}`);
         for (const ov of this.measureOverlays) {
             this.viewer.addOverlay(ov);
@@ -303,6 +336,7 @@ export class MeasureContext {
         this.viewer.getLayerManager().addLayer(this.layerName, this.measureLayer, true);
     }
     public deactivate() {
+        this.callback = undefined;
         logger.debug(`De-activating measure context for ${this.mapName}`);
         this.endMeasure();
         for (const ov of this.measureOverlays) {

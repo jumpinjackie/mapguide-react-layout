@@ -1,7 +1,7 @@
 import * as React from "react";
 import { NBSP } from "../constants";
 import { getAssetPath } from "../utils/asset";
-import { STD_CSS_SPRITE_RELPATH } from "../constants/assets";
+import { STD_CSS_SPRITE_RELPATH, ICON_ERROR } from "../constants/assets";
 import { GenericEventHandler } from "../api/common";
 
 export interface IIconProps {
@@ -39,5 +39,5 @@ export const Icon = (props: IIconProps) => {
         }
         return <div style={spStyle} onClick={props.onClick} className={`icon ${spriteClass}`} {...props.otherProps} />;
     }
-    return <img className="icon" style={props.style} src={url} onClick={props.onClick} {...props.otherProps} />;
+    return <img className="icon" style={props.style} src={url} onClick={props.onClick} {...props.otherProps} onError={e => e.currentTarget.src = ICON_ERROR} />;
 };

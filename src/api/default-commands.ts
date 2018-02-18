@@ -327,8 +327,9 @@ export function initDefaultCommands() {
         enabled: () => true,
         invoke: (dispatch, getState, viewer, parameters) => {
             if (viewer) {
+                const selMethod = parameters.SelectionType || "INTERSECTS";
                 viewer.digitizePolygon(geom => {
-                    viewer.selectByGeometry(geom);
+                    viewer.selectByGeometry(geom, selMethod);
                 });
             }
         }

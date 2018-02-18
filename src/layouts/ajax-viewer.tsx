@@ -27,6 +27,8 @@ export interface IAjaxViewerLayoutState {
     map: RuntimeMap;
     config: IConfigurationReducerState;
     capabilities: IViewerCapabilities;
+    initTaskPaneWidth: number;
+    initInfoPaneWidth: number;
     initWarnings: string[];
 }
 
@@ -35,7 +37,9 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IAjaxViewe
         config: state.config,
         map: getRuntimeMap(state),
         capabilities: state.config.capabilities,
-        initWarnings: state.initError.warnings
+        initWarnings: state.initError.warnings,
+        initInfoPaneWidth: state.template.initialInfoPaneWidth,
+        initTaskPaneWidth: state.template.initialTaskPaneWidth
     };
 }
 
@@ -71,7 +75,7 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
         }
     }
     render(): JSX.Element {
-        const { capabilities } = this.props;
+        const { capabilities, initInfoPaneWidth, initTaskPaneWidth } = this.props;
         const { isResizing } = this.state;
         let hasToolbar = false;
         let hasTaskPane = false;
@@ -95,8 +99,8 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
         const TB_Z_INDEX = 10;
         const topOffset = hasToolbar ? DEFAULT_TOOLBAR_SIZE : 0;
         const bottomOffset = hasStatusBar ? 20 : 0;
-        let sbWidth = SIDEBAR_WIDTH;
-        let tpWidth = SIDEBAR_WIDTH;
+        let sbWidth = initInfoPaneWidth || SIDEBAR_WIDTH;
+        let tpWidth = initTaskPaneWidth || SIDEBAR_WIDTH;
         const lgStyle = {};
         const selStyle = {};
         return <div style={{ width: "100%", height: "100%" }}>

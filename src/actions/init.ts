@@ -56,6 +56,8 @@ interface IInitAppPayload {
     activeMapName: string;
     initialView?: IMapView;
     initialUrl: string;
+    initialTaskPaneWidth?: number;
+    initialInfoPaneWidth?: number;
     locale: string;
     maps: Dictionary<MapInfo>;
     config: any;
@@ -659,6 +661,8 @@ async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOpti
     return {
         activeMapName: firstMapName,
         initialUrl: ensureParameters(webLayout.TaskPane.InitialTask || "server/TaskPane.html", firstMapName, firstSessionId, opts.locale),
+        initialTaskPaneWidth: webLayout.TaskPane.Width,
+        initialInfoPaneWidth: webLayout.InformationPane.Width,
         maps: maps,
         locale: opts.locale,
         config: config,

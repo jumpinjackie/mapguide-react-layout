@@ -1300,6 +1300,20 @@ export type ReducerFunction<TState> = (state: TState, action: ReduxAction) => TS
  */
 export interface ITemplateReducerState {
     /**
+     * The initial width of the information pane. Only certain templates will recognise this setting
+     * 
+     * @type {number}
+     * @memberof ITemplateReducerState
+     */
+    initialInfoPaneWidth: number;
+    /**
+     * The initial width of the task pane. Only certain templates will recognise this setting
+     * 
+     * @type {number}
+     * @memberof ITemplateReducerState
+     */
+    initialTaskPaneWidth: number;
+    /**
      * Indicates if the task pane is visible
      *
      * @type {boolean}

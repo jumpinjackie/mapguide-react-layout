@@ -55,7 +55,7 @@ function limegoldTemplateReducer(state: ITemplateReducerState, action: ReduxActi
             }
         case Constants.TASK_INVOKE_URL:
             {
-                let state1: ITemplateReducerState = { taskPaneVisible: true, selectionPanelVisible: false, legendVisible: false };
+                let state1: Partial<ITemplateReducerState> = { taskPaneVisible: true, selectionPanelVisible: false, legendVisible: false };
                 return { ...state, ...state1 };
             }
         case Constants.FUSION_SET_TASK_PANE_VISIBILITY:

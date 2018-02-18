@@ -1101,8 +1101,12 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
             this.props.legendRefresh();
         }
     }
-    public ScreenToMapUnits(x: number, y: number): IAjaxViewerPoint {
-        throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.ScreenToMapUnits(x, y)`);
+    public ScreenToMapUnits(x: number, y: number): IAjaxViewerPoint | undefined {
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            const [ sx, sy ] = viewer.screenToMapUnits(x, y);
+            return { X: sx, Y: sy };
+        }
     }
     public SetEnglishUnits(usEnglish: boolean): void {
         this.us = usEnglish;
@@ -1121,6 +1125,9 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
         if (viewer) {
             viewer.zoomToView(x, y, scale);
         }
+    }
+    public SetStatusMsg(msg: string): void {
+        window.status = msg || ""; //Most browsers do nothing with window.status, but that is what this method does in the AJAX viewer
     }
     //This isn't in the AJAX Viewer API reference, but there are samples referencing it!
     public ZoomToScale(scale: number): void {

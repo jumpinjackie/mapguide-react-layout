@@ -516,6 +516,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     getLayerManager(): ILayerManager {
         return this.inner.getLayerManager();
     }
+    screenToMapUnits(x: number, y: number): [number, number] {
+        return this.inner.screenToMapUnits(x, y);
+    }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MapViewerContainer);

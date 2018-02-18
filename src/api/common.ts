@@ -805,6 +805,7 @@ export interface IMapViewer {
      * @memberof IMapViewer
      */
     setViewRotationEnabled(enabled: boolean): void;
+    screenToMapUnits(x: number, y: number): [number, number];
 
     toastSuccess(iconName: string, message: string|JSX.Element): string | undefined;
     toastWarning(iconName: string, message: string|JSX.Element): string | undefined;

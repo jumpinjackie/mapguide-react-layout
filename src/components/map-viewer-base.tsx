@@ -1162,5 +1162,21 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
         return activeLayerSet.getCustomLayers();
     }
+    public screenToMapUnits(x: number, y: number): [number, number] {
+        let bAllowOutsideWindow = false;
+        const [ mapDevW, mapDevH ] = this.getSize();
+        const [ extX1, extY1, extX2, extY2 ] = this.getCurrentExtent();
+        if (!bAllowOutsideWindow)
+        {
+            if(x > mapDevW - 1) x = mapDevW - 1;
+            else if(x < 0) x = 0;
+    
+            if(y > mapDevH - 1) y = mapDevH - 1;
+            else if(y < 0) y = 0;
+        }    
+        x = extX1 + (extX2 - extX1) * (x / mapDevW);
+        y = extY1 - (extY1 - extY2) * (y / mapDevH);
+        return [x, y];
+    }
     //------------------------------------//
 }

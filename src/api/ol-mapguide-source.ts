@@ -42,6 +42,7 @@ function scaleFromCenter(extent: ol.Extent, value: number) {
 /**
  * Class constructor
  * 
+ * @hidden
  * @param options 
  */
 export const MapGuideImageSource = function(options: MapGuideImageSourceOptions): void {

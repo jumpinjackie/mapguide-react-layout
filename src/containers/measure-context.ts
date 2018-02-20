@@ -24,22 +24,34 @@ import olVectorLayer from "ol/layer/vector";
 const LAYER_NAME = "measure-layer";
 const WGS84_SPHERE = new olSphere(6378137);
 
+/**
+ * @hidden
+ */
 export interface MeasureSegment { 
     segment: number;
     length: number;
 }
 
+/**
+ * @hidden
+ */
 export interface IMeasureCallback {
     updateSegments(kind: "LineString" | "Area", total: number, segments: MeasureSegment[] | undefined): void;
     clearSegments(): void;
 }
 
+/**
+ * @hidden
+ */
 export interface IMeasureComponent {
     getCurrentDrawType(): string | undefined;
     getLocale(): string;
     isGeodesic(): boolean;
 }
 
+/**
+ * @hidden
+ */
 export class MeasureContext {
     private olFactory: IOLFactory;
     private draw: olInteractionDraw;

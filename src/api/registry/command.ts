@@ -233,7 +233,13 @@ export enum DefaultCommands {
     Query = "Query",
     Geolocation = "Geolocation",
     CoordinateTracker = "CoordinateTracker",
+    /**
+     * @since 0.11
+     */
     AddManageLayers = "AddManageLayers",
+    /**
+     * @since 0.11
+     */
     CenterSelection = "CenterSelection"
 }
 

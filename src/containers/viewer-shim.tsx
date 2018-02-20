@@ -696,6 +696,14 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IViewerApiShimDisp
 
 export type ViewerApiShimProps = IViewerApiShimProps & Partial<IViewerApiShimState> & Partial<IViewerApiShimDispatch>;
 
+/**
+ * This component installs a AJAX/Fusion viewer API compatibility layer when mounted allowing for existing
+ * script content to work against this viewer.
+ * 
+ * @export
+ * @class ViewerApiShim
+ * @extends {React.Component<ViewerApiShimProps, any>}
+ */
 export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
     private userSelectionHandlers: SelectionHandlerCallback[];
     private us: boolean;

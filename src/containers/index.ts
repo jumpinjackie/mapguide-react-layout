@@ -7,7 +7,7 @@ export * from "./legend";
 export * from "./map-capturer-context";
 export * from "./map-menu";
 export * from "./map-viewer";
-export * from "./measure-context";
+//export * from "./measure-context";
 export * from "./measure";
 export * from "./modal-launcher";
 export * from "./mouse-coordinates";

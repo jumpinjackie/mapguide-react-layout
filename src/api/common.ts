@@ -1907,6 +1907,8 @@ export type FlyoutVisibilitySet = { [flyoutId: string]: boolean | undefined };
 
 /**
  * Defines the capabilities of a WMS service
+ * 
+ * @since 0.11
  */
 export interface WmsCapabilitiesDocument {
     /**
@@ -1920,12 +1922,18 @@ export interface WmsCapabilitiesDocument {
     Capability: WMSServiceCapabilities;
 }
 
+/**
+ * @since 0.11
+ */
 export interface WMSServiceCapabilities {
     Request: any;
     Exception: string[];
     Layer: WMSRootPublishedLayer;
 }
 
+/**
+ * @since 0.11
+ */
 export interface WMSPublishedLayer {
     Name: string;
     Title: string;
@@ -1944,10 +1952,16 @@ export interface WMSPublishedLayer {
     noSubsets: boolean;
 }
 
+/**
+ * @since 0.11
+ */
 export interface WMSRootPublishedLayer extends WMSPublishedLayer {
     Layer: WMSPublishedLayer[];    
 }
 
+/**
+ * @since 0.11
+ */
 export interface WMSLayerStyle {
     Name: string;
     Title: string;
@@ -1959,6 +1973,9 @@ export interface WMSLayerStyle {
     }[]
 }
 
+/**
+ * @since 0.11
+ */
 export interface WMSServiceDescription {
     Name: string;
     Title: string;

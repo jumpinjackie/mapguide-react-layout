@@ -1,4 +1,4 @@
-/* glue: 0.13 hash: 902db1cef4 */
+/* glue: 0.13 hash: 08964617d6 */
         .PoweredBy_en,
 .zoom-out-fixed,
 .zoom-in,
@@ -41,6 +41,7 @@
 .legend-layer,
 .legend-DWF,
 .lc_unselect,
+.layer_add,
 .invoke-url,
 .invoke-script,
 .initial-center,
@@ -57,6 +58,8 @@
 .icon_error,
 .iconNavigator,
 .help,
+.globe_add,
+.globe-share,
 .geolocation,
 .forward,
 .folder-horizontal,
@@ -334,224 +337,242 @@
             height: 16px;
         }
         
-        .invoke-url {
+        .layer_add {
             background-position: -16px -99px;
             width: 16px;
             height: 16px;
         }
         
-        .invoke-script {
+        .invoke-url {
             background-position: -32px -99px;
             width: 16px;
             height: 16px;
         }
         
-        .initial-center {
+        .invoke-script {
             background-position: -48px -99px;
             width: 16px;
             height: 16px;
         }
         
-        .info {
+        .initial-center {
             background-position: -64px -99px;
             width: 16px;
             height: 16px;
         }
         
-        .icon_zoomselect {
+        .info {
             background-position: -80px -99px;
             width: 16px;
             height: 16px;
         }
         
-        .icon_warning {
+        .icon_zoomselect {
             background-position: -96px -99px;
             width: 16px;
             height: 16px;
         }
         
-        .icon_select {
+        .icon_warning {
             background-position: -112px -99px;
             width: 16px;
             height: 16px;
         }
         
-        .icon_refreshmap {
+        .icon_select {
             background-position: 0 -115px;
             width: 16px;
             height: 16px;
         }
         
-        .icon_menuarrowup_disabled {
+        .icon_refreshmap {
             background-position: -16px -115px;
             width: 16px;
             height: 16px;
         }
         
-        .icon_menuarrowup {
+        .icon_menuarrowup_disabled {
             background-position: -32px -115px;
             width: 16px;
             height: 16px;
         }
         
-        .icon_menuarrow_disabled {
+        .icon_menuarrowup {
             background-position: -48px -115px;
             width: 16px;
             height: 16px;
         }
         
-        .icon_menuarrow {
+        .icon_menuarrow_disabled {
             background-position: -64px -115px;
             width: 16px;
             height: 16px;
         }
         
-        .icon_home {
+        .icon_menuarrow {
             background-position: -80px -115px;
             width: 16px;
             height: 16px;
         }
         
-        .icon_error {
+        .icon_home {
             background-position: -96px -115px;
             width: 16px;
             height: 16px;
         }
         
-        .iconNavigator {
+        .icon_error {
             background-position: -112px -115px;
             width: 16px;
             height: 16px;
         }
         
-        .help {
+        .iconNavigator {
             background-position: -136px 0;
             width: 16px;
             height: 16px;
         }
         
-        .geolocation {
+        .help {
             background-position: -136px -16px;
             width: 16px;
             height: 16px;
         }
         
-        .forward {
+        .globe_add {
             background-position: -136px -32px;
             width: 16px;
             height: 16px;
         }
         
-        .folder-horizontal {
+        .globe-share {
             background-position: -136px -48px;
             width: 16px;
             height: 16px;
         }
         
-        .folder-horizontal-open {
+        .geolocation {
             background-position: -136px -64px;
             width: 16px;
             height: 16px;
         }
         
-        .file-save {
+        .forward {
             background-position: -136px -80px;
             width: 16px;
             height: 16px;
         }
         
-        .file-print {
+        .folder-horizontal {
             background-position: -136px -96px;
             width: 16px;
             height: 16px;
         }
         
-        .feature-info {
+        .folder-horizontal-open {
             background-position: -136px -112px;
             width: 16px;
             height: 16px;
         }
         
-        .edit-xml {
+        .file-save {
             background-position: 0 -131px;
             width: 16px;
             height: 16px;
         }
         
-        .edit-paste {
+        .file-print {
             background-position: -16px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .edit-duplicate {
+        .feature-info {
             background-position: -32px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .edit-cut {
+        .edit-xml {
             background-position: -48px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .edit-copy {
+        .edit-paste {
             background-position: -64px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .coordinate-tracker {
+        .edit-duplicate {
             background-position: -80px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .control {
+        .edit-cut {
             background-position: -96px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .control-stop {
+        .edit-copy {
             background-position: -112px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .control-stop-180 {
+        .coordinate-tracker {
             background-position: -128px -131px;
             width: 16px;
             height: 16px;
         }
         
-        .control-180 {
+        .control {
             background-position: -152px 0;
             width: 16px;
             height: 16px;
         }
         
-        .buffer {
+        .control-stop {
             background-position: -152px -16px;
             width: 16px;
             height: 16px;
         }
         
-        .back {
+        .control-stop-180 {
             background-position: -152px -32px;
             width: 16px;
             height: 16px;
         }
         
-        .application-browser {
+        .control-180 {
             background-position: -152px -48px;
             width: 16px;
             height: 16px;
         }
         
-        .about {
+        .buffer {
             background-position: -152px -64px;
+            width: 16px;
+            height: 16px;
+        }
+        
+        .back {
+            background-position: -152px -80px;
+            width: 16px;
+            height: 16px;
+        }
+        
+        .application-browser {
+            background-position: -152px -96px;
+            width: 16px;
+            height: 16px;
+        }
+        
+        .about {
+            background-position: -152px -112px;
             width: 16px;
             height: 16px;
         }
@@ -599,6 +620,7 @@
     .legend-layer,
     .legend-DWF,
     .lc_unselect,
+    .layer_add,
     .invoke-url,
     .invoke-script,
     .initial-center,
@@ -615,6 +637,8 @@
     .icon_error,
     .iconNavigator,
     .help,
+    .globe_add,
+    .globe-share,
     .geolocation,
     .forward,
     .folder-horizontal,

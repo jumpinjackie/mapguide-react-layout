@@ -48,11 +48,31 @@
 
                 
                 <section class="col-sm-12 content">
-                                            <p>Known viewer issues are documented here.</p>
+                                            <p>Known viewer issues or limitations are documented here.</p>
 <p>Where applicable, an issue number is attached to indicate that such issues are actioned to be resolved.</p>
 <h1 id="localization">Localization</h1>
 <ul>
 <li>No known issues</li>
+</ul>
+<h1 id="fusion-compatibility">Fusion compatibility</h1>
+<ul>
+<li>API
+<ul>
+<li>Only a subset of the Fusion events are supported (only what's necessary to support the widgets converted to work in this viewer)</li>
+<li><a href="https://jumpinjackie.github.io/mapguide-react-layout/apicompat.html">Only a subset of the Fusion client-side API</a> is supported</li>
+</ul></li>
+<li>The following widgets are not supported (and there are no plans to port across) due to incompatible widget semantics or their limited usefulness in the context of this viewer:
+<ul>
+<li><code>ColorPicker</code></li>
+<li><code>ActivityIndicator</code></li>
+<li><code>Print</code> (QuickPlot supercedes this)</li>
+<li><code>SaveMap</code> (QuickPlot supercedes this)</li>
+<li><code>LinkToView</code> (Replaced with <code>ShareLinkToView</code> component)</li>
+<li><code>SelectRadiusValue</code> (Replacement planned)</li>
+<li><code>PanQuery</code></li>
+<li><code>PanOnClick</code></li>
+</ul></li>
+<li>Due to lack of Google Maps integration, the Google Street View widget is not supported if referenced in an Application Definition (and will not be ported across due to current technical and legal constraints)</li>
 </ul>
 <h1 id="components">Components</h1>
 <ul>
@@ -69,23 +89,24 @@
 <li>Toolbars in vertical orientation currently make no attempts to gracefully handle overflow when the toolbar has more items than the physical screen/container space allows.</li>
 </ul>
 </li>
-<li>Measure
+<li>
+<p>Measure</p>
 <ul>
 <li>Recorded measurements will temporarily disappear on templates with a collapsible Task Pane (eg. Slate) when the Task Pane panel is collapsed.</li>
-</ul></li>
+</ul>
+</li>
+<li>Modal dialogs are not resizable</li>
 </ul>
 <h1 id="commands">Commands</h1>
 <ul>
 <li>
 <p>General</p>
 <ul>
-<li>The following commands are quick-and-dirty ports of their Fusion counterparts:
+<li>The following commands are quick-and-dirty ports of their Fusion counterparts with the same UI and UX:
 <ul>
-<li>QuickPlot</li>
-<li>The draggable map capturer box mode is not implemented</li>
-<li>Buffer</li>
-<li>Search</li>
-<li>SelectWithin</li>
+<li><code>Buffer</code></li>
+<li><code>Search</code></li>
+<li><code>SelectWithin</code></li>
 </ul></li>
 <li>The following Fusion widgets are also available, but must be accessed as InvokeURL commands:
 <ul>
@@ -96,19 +117,13 @@
 </ul></li>
 </ul>
 </li>
-<li>
-<p>InvokeScript commands</p>
+<li>InvokeScript commands
 <ul>
-<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/14">#14</a>: InvokeScript commands are not supported. Once we implement a server-side wrapper, such commands will be supported.</li>
-</ul>
-</li>
-<li>Due to lack of Google Maps integration, the Google Street View widget is not supported if reference in an Application Definition (and will not be ported across due to current technical and legal constraints)</li>
+<li>InvokeScript commands are not supported as-is. In the context of mapguide-react-layout, and InvokeScript command merely invokes a registered command of the same name in the command registry. The script content of such commands are completely ignored.</li>
+</ul></li>
 </ul>
 <h1 id="viewer">Viewer</h1>
 <ul>
-<li>
-<p>Initial view does not span the full dimensions of the map viewport.</p>
-</li>
 <li>
 <p>Viewer will only accept Map Definitions in coordinate systems that have a corresponding EPSG code</p>
 </li>
@@ -132,7 +147,6 @@
 <li>Aqua:
 <ul>
 <li>Floating windows for Legend / Selection / Task Pane have fixed width and height</li>
-<li>Legend / Selection / Task Pane toggle actions are hard-coded into the template, as a result the existing InvokeScript widgets that would've performed this action are redundant</li>
 </ul></li>
 </ul>
                                     </section>

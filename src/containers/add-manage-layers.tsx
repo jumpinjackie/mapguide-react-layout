@@ -73,14 +73,32 @@ class LayerManager extends React.Component<ILayerManagerProps, any> {
     }
 }
 
+/**
+ * 
+ * @since 0.11
+ * @export
+ * @interface IAddManageLayersContainerProps
+ */
 export interface IAddManageLayersContainerProps {
 
 }
 
+/**
+ * 
+ * @since 0.11
+ * @export
+ * @interface IAddManageLayersContainerState
+ */
 export interface IAddManageLayersContainerState {
     locale: string;
 }
 
+/**
+ * 
+ * @since 0.11
+ * @export
+ * @interface IAddManageLayersContainerDispatch
+ */
 export interface IAddManageLayersContainerDispatch {
 
 }
@@ -95,8 +113,18 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAddManageLayersCo
     return {};
 }
 
+/**
+ * @since 0.11
+ */
 export type AddManageLayersContainerProps = IAddManageLayersContainerProps & Partial<IAddManageLayersContainerState> & Partial<IAddManageLayersContainerDispatch>;
 
+/**
+ * A component for adding custom external layers to the map
+ * @since 0.11
+ * @export
+ * @class AddManageLayersContainer
+ * @extends {React.Component<AddManageLayersContainerProps, any>}
+ */
 export class AddManageLayersContainer extends React.Component<AddManageLayersContainerProps, any> {
     constructor(props: AddManageLayersContainerProps) {
         super(props);

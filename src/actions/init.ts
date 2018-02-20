@@ -499,10 +499,40 @@ export interface IInitAppLayout {
     externalBaseLayers?: IExternalBaseLayer[];
     session?: string;
     initialView?: IMapView;
+    /**
+     * 
+     * @since 0.11
+     * @type {string}
+     * @memberof IInitAppLayout
+     */
     initialActiveMap?: string;
+    /**
+     * 
+     * @since 0.11
+     * @type {string[]}
+     * @memberof IInitAppLayout
+     */
     initialShowLayers?: string[];
+    /**
+     * 
+     * @since 0.11
+     * @type {string[]}
+     * @memberof IInitAppLayout
+     */
     initialShowGroups?: string[];
+    /**
+     * 
+     * @since 0.11
+     * @type {string[]}
+     * @memberof IInitAppLayout
+     */
     initialHideLayers?: string[];
+    /**
+     * 
+     * @since 0.11
+     * @type {string[]}
+     * @memberof IInitAppLayout
+     */
     initialHideGroups?: string[];
     onInit?: (viewer: IMapViewer) => void;
 }

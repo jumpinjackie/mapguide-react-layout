@@ -3,6 +3,9 @@ import { Tree, ITreeNode } from "@blueprintjs/core";
 import { ILayerInfo, GenericEvent, GenericEventHandler } from "../../api/common";
 import { safePropAccess } from '../../utils/safe-prop';
 
+/**
+ * @hidden
+ */
 export interface IManageLayersProps {
     layers: ILayerInfo[];
     onRemoveLayer: (name: string) => void;
@@ -10,6 +13,9 @@ export interface IManageLayersProps {
     onMoveLayerDown: (name: string) => void;
 }
 
+/**
+ * @hidden
+ */
 export class ManageLayers extends React.Component<IManageLayersProps, any> {
     constructor(props: IManageLayersProps) {
         super(props);

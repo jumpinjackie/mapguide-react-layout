@@ -45,9 +45,9 @@ export function fmt(format: string, args?: any): string {
  * Returns the localized string for the given key
  * 
  * @export
- * @param {keyof ILocalizedMessages} key 
+ * @param {keyof ILocalizedMessages} key Any property name of {@link ILocalizedMessages}
  * @param {string} [locale="en"] 
- * @param {*} [args] 
+ * @param {*} [args] If a localized string has placeholders, they will be replaced with the values defined here
  * @returns {string} 
  */
 export function tr(key: keyof ILocalizedMessages, locale = DEFAULT_LOCALE, args?: any): string {

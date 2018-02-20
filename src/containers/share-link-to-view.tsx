@@ -9,14 +9,32 @@ import { urlPropsQueryConfig, IAppUrlStateProps } from './url-state';
 import { Checkbox, TextArea } from '@blueprintjs/core';
 import queryString = require("query-string");
 
+/**
+ * 
+ * @since 0.11
+ * @export
+ * @interface IShareLinkToViewContainerProps
+ */
 export interface IShareLinkToViewContainerProps {
 
 }
 
+/**
+ * 
+ * @since 0.11
+ * @export
+ * @interface IShareLinkToViewContainerState
+ */
 export interface IShareLinkToViewContainerState {
 
 }
 
+/**
+ * 
+ * @since 0.11
+ * @export
+ * @interface IShareLinkToViewContainerDispatch
+ */
 export interface IShareLinkToViewContainerDispatch {
 
 }
@@ -33,8 +51,18 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IShareLinkToViewCo
 
 function NOOP() {}
 
+/**
+ * @since 0.11
+ */
 export type ShareLinkToViewContainerProps = IShareLinkToViewContainerProps & Partial<IAppUrlStateProps> & Partial<IShareLinkToViewContainerState> & Partial<IShareLinkToViewContainerDispatch>;
 
+/**
+ * A component for sharing a link to the current view
+ * @since 0.11
+ * @export
+ * @class ShareLinkToViewContainer
+ * @extends {React.Component<ShareLinkToViewContainerProps, any>}
+ */
 export class ShareLinkToViewContainer extends React.Component<ShareLinkToViewContainerProps, any> {
     constructor(props: ShareLinkToViewContainerProps) {
         super(props);

@@ -43,6 +43,18 @@ export function getUnitOfMeasure(unit: UnitOfMeasure): UnitInfo {
     return u || mUnits[0]; //The unknown unit
 }
 
+/**
+ * Utility function to compute the physical map size based on the given display size and various display settings
+ * 
+ * @since 0.11
+ * @export
+ * @param {[number, number]} displaySize 
+ * @param {number} metersPerUnit 
+ * @param {UnitOfMeasure} units 
+ * @param {number} [resolution] 
+ * @param {number} [precision] 
+ * @returns {[number, number]} 
+ */
 export function getMapSize(displaySize: [number, number], metersPerUnit: number, units: UnitOfMeasure, resolution?: number, precision?: number): [number, number] {
     const [width, height] = displaySize;
     let gw = width;

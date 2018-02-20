@@ -3,10 +3,16 @@ import { tr } from "../../api/i18n";
 import { GenericEvent, GenericEventHandler } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 
+/**
+ * @hidden
+ */
 export interface IAddLayerProps {
     locale: string | undefined;
 }
 
+/**
+ * @hidden
+ */
 export interface IAddLayerState {
     selectedType: string;
 }
@@ -23,6 +29,9 @@ const ADD_LAYER_TYPES: { [key: string]: AddLayerConf } = {
     }
 };
 
+/**
+ * @hidden
+ */
 export class AddLayer extends React.Component<IAddLayerProps, Partial<IAddLayerState>> {
     constructor(props: IAddLayerProps) {
         super(props);

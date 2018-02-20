@@ -95,6 +95,9 @@ export const ICON_ZOOM_IN = require("../../stdassets/images/icons/zoom-in.png");
 export const ICON_ZOOM_OUT_FIXED = require("../../stdassets/images/icons/zoom-out-fixed.png");
 export const ICON_LAYER_ADD = require("../../stdassets/images/icons/layer_add.png");
 export const ICON_GLOBE_ADD = require("../../stdassets/images/icons/globe_add.png");
+/** 
+ * @since 0.11
+ */
 export const ICON_GLOBE_SHARE = require("../../stdassets/images/icons/globe-share.png");
 
 export const SPRITE_GLOBE_ADD = "globe_add";
@@ -150,4 +153,7 @@ export const SPRITE_THEME = "theme";
 export const SPRITE_INVOKE_SCRIPT = "invoke-script";
 export const SPRITE_INVOKE_URL = "invoke-url";
 export const SPRITE_SELECT_CENTRE = "select-centre";
+/** 
+ * @since 0.11
+ */
 export const SPRITE_GLOBE_SHARE = "globe-share";

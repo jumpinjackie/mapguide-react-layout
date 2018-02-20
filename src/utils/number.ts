@@ -113,6 +113,7 @@ export function deg2rad(deg: number): number {
 /**
  * Computes the sum of the given array
  * 
+ * @since 0.11
  * @export
  * @template T 
  * @param {T[]} array 
@@ -130,6 +131,7 @@ export function sum<T>(array: T[], numSelector: (item: T) => number): number {
 /**
  * Rounds the given number to the specified number of decimals
  * 
+ * @since 0.11
  * @export
  * @param {number} num 
  * @param {number} [decimals=2] 

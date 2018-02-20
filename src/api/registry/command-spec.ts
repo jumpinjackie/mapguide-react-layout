@@ -5,19 +5,31 @@ import { DefaultComponentNames } from './component';
 import { tr } from '../i18n';
 import { Dictionary } from '../common';
 
+/**
+ * @hidden
+ */
 export interface ToolbarConf {
     items: (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[];
 }
 
+/**
+ * @hidden
+ */
 export interface PreparedSubMenuSet {
     toolbars: Dictionary<ToolbarConf>;
     flyouts: Dictionary<IFlyoutSpec>;
 }
 
+/**
+ * @hidden
+ */
 export function isFlyoutSpec(item: any): item is IFlyoutSpec {
     return typeof(item.children) != 'undefined';
 }
 
+/**
+ * @hidden
+ */
 export interface IFlyoutSpec {
     label?: string;
     tooltip?: string;
@@ -26,14 +38,23 @@ export interface IFlyoutSpec {
     children: (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[];
 }
 
+/**
+ * @hidden
+ */
 export interface ISeparatorSpec {
     isSeparator: boolean;
 }
 
+/**
+ * @hidden
+ */
 export interface IUnknownCommandSpec {
     error: string;
 }
 
+/**
+ * @hidden
+ */
 export interface ICommandSpec {
     icon: string;
     spriteClass: string;
@@ -45,6 +66,9 @@ export interface ICommandSpec {
     flyoutId?: string;
 }
 
+/**
+ * @hidden
+ */
 export function convertWidget(widget: UIWidget, locale: string, noToolbarLabels: boolean): ICommandSpec | IUnknownCommandSpec {
     switch (widget.Type) {
         case "Select":

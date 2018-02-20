@@ -805,6 +805,14 @@ export interface IMapViewer {
      * @memberof IMapViewer
      */
     setViewRotationEnabled(enabled: boolean): void;
+    /**
+     * 
+     * @since 0.11
+     * @param {number} x 
+     * @param {number} y 
+     * @returns {[number, number]} 
+     * @memberof IMapViewer
+     */
     screenToMapUnits(x: number, y: number): [number, number];
 
     toastSuccess(iconName: string, message: string|JSX.Element): string | undefined;

@@ -20,6 +20,7 @@
  *     func!();
  * });
  * 
+ * @since 0.11
  * @param obj The object
  * @param name The name of the property
  * @param callback The callback that will receive the property value

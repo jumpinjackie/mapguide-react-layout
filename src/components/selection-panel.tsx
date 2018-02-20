@@ -68,7 +68,22 @@ export interface ISelectionPanelProps {
     onShowSelectedFeature: (layerId: string, featureIndex: number) => void;
     maxHeight?: number;
     selectedFeatureRenderer?: (props: ISelectedFeatureProps) => JSX.Element;
+    /**
+     * Controls whether HTML values are allowed be rendered in property values
+     * 
+     * @since 0.11
+     * @type {boolean}
+     * @memberof ISelectionPanelProps
+     */
     allowHtmlValues: boolean;
+    /**
+     * If allowHtmlValues = true, defines a custom function for sanitizing the given HTML string
+     * to guard against cross-site scripting attacks. You are strongly recommended to provide
+     * a santitization function if your HTML property values come from an un-trusted source
+     * 
+     * @since 0.11
+     * @memberof ISelectionPanelProps
+     */
     cleanHTML?: (html: string) => string;
 }
 

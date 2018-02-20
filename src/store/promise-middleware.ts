@@ -1,6 +1,7 @@
 /**
  * Returns whether the provided value is a promise
  *
+ * @hidden
  * @param {object} value Potential promise
  * @return {Boolean}
  */
@@ -10,7 +11,9 @@ function isPromise(value: any) {
     }
 }
 
-
+/**
+ * @hidden
+ */
 export default function promiseMiddleware({ dispatch }: { dispatch: any }) {
     return (next: any) => (action: any) => {
         if (!isPromise(action.payload)) {

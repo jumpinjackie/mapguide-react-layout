@@ -70,7 +70,21 @@ export interface IOLFactory {
     createVectorLayer(options?: olx.layer.VectorOptions | undefined): olVectorLayer;
     createOverlay(options: olx.OverlayOptions): olOverlay;
     createInteractionDraw(options: olx.interaction.DrawOptions): olInteractionDraw;
+    /**
+     * 
+     * @since 0.11
+     * @param {olx.interaction.ModifyOptions} options 
+     * @returns {olInteractionModify} 
+     * @memberof IOLFactory
+     */
     createInteractionModify(options: olx.interaction.ModifyOptions): olInteractionModify;
+    /**
+     * 
+     * @since 0.11
+     * @param {olx.interaction.SelectOptions} options 
+     * @returns {olInteractionSelect} 
+     * @memberof IOLFactory
+     */
     createInteractionSelect(options: olx.interaction.SelectOptions): olInteractionSelect;
     createInteractionExtent(options: olx.interaction.ExtentOptions): olInteractionExtent;
     createInteractionSnap(options: olx.interaction.SnapOptions): olInteractionSnap;

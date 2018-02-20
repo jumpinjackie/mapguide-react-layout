@@ -8,10 +8,18 @@ import { CONFIG_INITIAL_STATE } from "../reducers/config";
 import { getCommand as getRegisteredCommand } from "../api/registry/command";
 import { IConfigurationReducerState } from '..';
 
+/**
+ * Extra application mount options.
+ * 
+ * @since 0.11
+ * @export
+ * @interface IApplicationMountOptions
+ */
 export interface IApplicationMountOptions {
     /**
      * Initial configuration settings to apply.
      * 
+     * @since 0.11
      * @type {Partial<IConfigurationReducerState>}
      * @memberof IApplicationMountOptions
      */

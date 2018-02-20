@@ -18,10 +18,16 @@ import olImageLayer from "ol/layer/image";
 import olWmsSource from "ol/source/imagewms";
 import olTiledWmsSource from "ol/source/tilewms";
 
+/**
+ * @hidden
+ */
 export interface IAddWmsLayerProps {
     locale: string | undefined;
 }
 
+/**
+ * @hidden
+ */
 export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
     constructor(props: IAddWmsLayerProps) {
         super(props);

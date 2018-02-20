@@ -21,6 +21,8 @@ Component URIs are structured as follows:
 
 For components that accept parameters, you would pass them through the query string of the Component URI.
 
+Component URIs in an `InvokeURL` command behave just like normal URLs invoked by an `InvokeURL` command except you cannot invoke a component URI into a specific frame, only in a Task Pane or a New Window (which mapguide-react-layout will re-interpret as opening in a modal dialog)
+
 Available Components
 --------------------
 

@@ -79,12 +79,21 @@ Integrated commands are the successor to Invoke Script commands. These commands 
 
  * The viewer API
  * The centralized redux store
- * The redux action dispatcher (to flow state to the redux store)
+ * The redux action dispatcher (to flow state to the redux store, automatically updating any subscribed components)
 
 The redux store is also available when evaluating whether the command should be enabled or disabled.
+
+Mount Options
+-------------
+
+TODO
 
 Adding a custom component
 -------------------------
 
+TODO
+
 Adding a custom layout
 ----------------------
+
+TODO

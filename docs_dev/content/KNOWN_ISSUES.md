@@ -13,11 +13,15 @@ Fusion compatibility
  * API
    * Only a subset of the Fusion events are supported (only what's necessary to support the widgets converted to work in this viewer)
    * [Only a subset of the Fusion client-side API](https://jumpinjackie.github.io/mapguide-react-layout/apicompat.html) is supported
- * The following widgets are not supported due to their limited usefulness in the context of this viewer:
-   * ColorPicker
-   * ActivityIndicator
-   * Print (QuickPlot supercedes this)
-   * SaveMap (QuickPlot supercedes this)
+ * The following widgets are not supported (and there are no plans to port across) due to incompatible widget semantics or their limited usefulness in the context of this viewer:
+   * `ColorPicker`
+   * `ActivityIndicator`
+   * `Print` (QuickPlot supercedes this)
+   * `SaveMap` (QuickPlot supercedes this)
+   * `LinkToView` (Replaced with `ShareLinkToView` component)
+   * `SelectRadiusValue` (Replacement planned)
+   * `PanQuery`
+   * `PanOnClick`
  * Due to lack of Google Maps integration, the Google Street View widget is not supported if referenced in an Application Definition (and will not be ported across due to current technical and legal constraints)
 
 Components
@@ -33,14 +37,16 @@ Components
  * Measure
    * Recorded measurements will temporarily disappear on templates with a collapsible Task Pane (eg. Slate) when the Task Pane panel is collapsed.
 
+ * Modal dialogs are not resizable
+
 Commands
 ========
 
  * General
    * The following commands are quick-and-dirty ports of their Fusion counterparts with the same UI and UX:
-     * Buffer
-     * Search
-     * SelectWithin
+     * `Buffer`
+     * `Search`
+     * `SelectWithin`
    * The following Fusion widgets are also available, but must be accessed as InvokeURL commands:
      * FeatureInfo: `server/FeatureInfo/featureinfomain.php`
      * Query: `server/Query/querymain.php`

@@ -23,23 +23,22 @@ The following APIs have been implemented
         * `GetCenter`
         * `GetLayers`
         * `GetMapName`
-        * `GetMapHeight` (not implemented)
-        * `GetMapUnitsType` (not implemented)
-        * `GetMapWidth` (not implemented)
+        * `GetMapHeight` (implemented in 0.11)
+        * `GetMapUnitsType` (implemented in 0.11)
+        * `GetMapWidth` (implemented in 0.11)
         * `GetMetersPerUnit`
         * `GetScale`
         * `GetSelectedBounds`
         * `GetSelectedCount`
-        * `GetSelectedFeatures` (not implemented)
+        * `GetSelectedFeatures` (implemented in 0.11)
         * `GetSelectedLayers`
         * `GetSelectionXML`
         * `GetSessionId`
         * `IsDigitizing`
         * `IsEnglishUnits`
         * `IsLatLonDisplayUnits`
-        * `MapUnitsToLatLon` (not implemented)
         * `Refresh`
-        * `ScreenToMapUnits` (not implemented)
+        * `ScreenToMapUnits` (implemented in 0.11)
         * `SetEnglishUnits`
         * `SetLatLonDisplayUnits`
         * `SetSelectionXML`

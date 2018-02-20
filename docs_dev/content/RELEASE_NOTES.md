@@ -1,10 +1,49 @@
-[Changelog since last release](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.10.0...master)
+0.11.0
+======
 
- * Updated React to 16.0
- * Updated Blueprint to 1.31
- * Updated OpenLayers to 4.4.1
- * Updated TypeScript to 2.5.3
- * [#379](https://github.com/jumpinjackie/mapguide-react-layout/issues/379): Now maintaining our own copy of a MapGuide image source for OpenLayers
+[Changelog](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.10.0...v0.11.0)
+
+ * Updated React to 16.2
+ * Updated Blueprint to 1.35.5
+ * Updated OpenLayers to 4.6.4
+ * Updated TypeScript to 2.7.2
+ * [#481](https://github.com/jumpinjackie/mapguide-react-layout/issues/481): Partial application state now pushed to URL, making a browser reload effectively "resume" from where you left off.
+   * Current view
+   * Active map (if multiple maps are present)
+   * Shown/Hidden group and layer names
+   * Current session id
+ * Template changes:
+   * [#516](https://github.com/jumpinjackie/mapguide-react-layout/issues/516): AJAX Viewer now looks more like the original.
+   * [#64](https://github.com/jumpinjackie/mapguide-react-layout/issues/64): Sidebar now resizable for `slate`, `maroon`, `limegold` and `turquoiseyellow` templates.
+     * Sidebar now can properly collapse/hide if all 3 child elements (Task Pane, Selection, Legend) are all set to be hidden.
+ * [#192](https://github.com/jumpinjackie/mapguide-react-layout/issues/192): Measure tool now displays segment lengths (and total length/area) of active measure
+ * [#304](https://github.com/jumpinjackie/mapguide-react-layout/issues/304): Broken/404 toolbar/menu icons now gracefully show an error icon in its place.
+ * [#475](https://github.com/jumpinjackie/mapguide-react-layout/issues/475): Support for manual tooltip display (ie. click to show tooltip instead of selecting)
+ * [#244](https://github.com/jumpinjackie/mapguide-react-layout/issues/244): Flyouts are now mutually exclusive, making them behave more like their Fusion counterparts.
+ * [#243](https://github.com/jumpinjackie/mapguide-react-layout/issues/243): Port across additional Fusion widgets
+   * `CenterSelection`
+ * [#239](https://github.com/jumpinjackie/mapguide-react-layout/issues/239) Port across additional extension parameter support for the following Fusion widgets:
+   * `Redline`
+   * `SelectPolygon`
+ * [#30](https://github.com/jumpinjackie/mapguide-react-layout/issues/30): Support for taskpane/infopane width elements of a Web Layout (only recognized by the `ajax-viewer` template).
+ * [#477](https://github.com/jumpinjackie/mapguide-react-layout/issues/477): Selection panel now supports HTML property values (through a new `selectionSettings.allowHtmlValues` mount option)
+   * For un-trusted content, a mount option `selectionSettings.cleanHtml` is available to provide a content sanitization function.
+ * [#518](https://github.com/jumpinjackie/mapguide-react-layout/issues/518): Debug viewer bundle (`viewer-debug.js`) now included
+ * [#531](https://github.com/jumpinjackie/mapguide-react-layout/issues/531): Improved digitization controls:
+   * Support undoing last drawn point by pressing the `U` key
+   * New mount options for customizing keybindings for cancelling digitization (default: `ESC`) and undoing last point (default: `U`)
+ * New components accessible through the existing InvokeURL mechanism:
+   * [#528](https://github.com/jumpinjackie/mapguide-react-layout/issues/528): Share link to current view (`component://ShareLinkToView`)
+   * [#324](https://github.com/jumpinjackie/mapguide-react-layout/issues/324): Add external WMS layers (`component://AddManageLayers`)
+ * [#526](https://github.com/jumpinjackie/mapguide-react-layout/issues/526): Viewer now uses OL `PluggableMap` for reduced bundle size
+ * [#517](https://github.com/jumpinjackie/mapguide-react-layout/issues/517): Fix: Commands now fall back to running in modal dialog if Task Pane is not present.
+ * [#383](https://github.com/jumpinjackie/mapguide-react-layout/issues/383): Fix: Initial rendered map does not cover full viewport.
+ * API changes:
+   * [#532](https://github.com/jumpinjackie/mapguide-react-layout/issues/532): IMapViewer.setFeatureTooltipEnabled() now properly flows state to the redux store (properly updating any components that care about whether feature tooltips are enabled or not)
+   * [#533](https://github.com/jumpinjackie/mapguide-react-layout/issues/533): Added ability to create select and modify interactions in OL factory
+   * [#4](https://github.com/jumpinjackie/mapguide-react-layout/issues/4): Full AJAX Viewer map frame API parity
+ * NPM module changes:
+   * No longer includes `@types/*` packages as dependencies to avoid "dll-hell" with conflicting typings. You can install your own typings for React, etc.
 
 0.10.0
 ======

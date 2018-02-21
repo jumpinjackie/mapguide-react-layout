@@ -27,8 +27,7 @@ const basePlugins = [
     new webpack.DefinePlugin({
         __DEV__: process.env.NODE_ENV !== 'production',
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
-    }),
-    new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true })
+    })
 ];
 
 const devPlugins = [
@@ -61,6 +60,29 @@ const prodPlugins = [
 const plugins = basePlugins
     .concat(process.env.NODE_ENV === 'production' ? prodPlugins : [])
     .concat(process.env.NODE_ENV === 'development' ? devPlugins : []);
+
+const rules = [
+    loaders.sourcemap,
+    loaders.html,
+    loaders.css,
+    loaders.less,
+    loaders.fonts,
+    /*
+    loaders.svg,
+    loaders.eot,
+    loaders.woff,
+    loaders.woff2,
+    loaders.ttf,
+    */
+    loaders.image,
+    loaders.cursors
+];
+if (process.env.NODE_ENV === 'production' || process.env.DEBUG_BUILD === '1') {
+    rules.push(loaders.tsx);
+} else {
+    rules.push(loaders.tsx_multithreaded);
+    plugins.push(new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }));
+}
 
 module.exports = {
 
@@ -95,22 +117,6 @@ module.exports = {
     plugins: plugins,
 
     module: {
-        rules: [
-            loaders.sourcemap,
-            loaders.tsx,
-            loaders.html,
-            loaders.css,
-            loaders.less,
-            loaders.fonts,
-            /*
-            loaders.svg,
-            loaders.eot,
-            loaders.woff,
-            loaders.woff2,
-            loaders.ttf,
-            */
-            loaders.image,
-            loaders.cursors
-        ]
+        rules: rules
     }
 };

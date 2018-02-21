@@ -6,7 +6,7 @@ exports.tslint = {
   exclude: /node_modules/
 };
 */
-exports.tsx = {
+exports.tsx_multithreaded = {
   test: /\.tsx?$/,
   use: [
     { loader: 'cache-loader' },
@@ -24,6 +24,12 @@ exports.tsx = {
       }
     }
   ],
+  exclude: /(node_modules|test-utils|\.test\.ts$)/
+};
+
+exports.tsx = {
+  test: /\.tsx?$/,
+  loader: 'ts-loader',
   exclude: /(node_modules|test-utils|\.test\.ts$)/
 };
 

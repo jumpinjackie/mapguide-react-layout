@@ -108,7 +108,7 @@
     "source-map-loader": "0.2.3",
     "style-loader": "0.20.2",
     "thread-loader": "^1.1.4",
-    "ts-jest": "22.0.4",
+    "ts-jest": "22.4.0",
     "ts-loader": "3.5.0",
     "tslint": "5.9.1",
     "typedoc": "0.10.0",

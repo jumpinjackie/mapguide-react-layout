@@ -43,6 +43,7 @@ import olImageStaticSource from "ol/source/imagestatic";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY, BLANK_GIF_DATA_URI } from "../constants/index";
 import { restrictToRange } from "../utils/number";
 import { Size } from "../containers/map-capturer-context";
+import tilelayer from 'ol/renderer/webgl/tilelayer';
 
 const HIDDEN_CLASS_NAME = "tooltip-hidden";
 
@@ -323,6 +324,7 @@ export class MgLayerSet {
                 });
                 sources.push(tileSource);
                 tileLayer.set("name", group.ObjectId);
+                tileLayer.setVisible(group.Visible);
                 groupLayers.push(tileLayer);
                 this.baseLayerGroups.push(tileLayer);
             }

@@ -1,3 +1,10 @@
+0.11.1
+======
+
+[Changelog](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.11.0...v0.11.1)
+
+ * [#476](https://github.com/jumpinjackie/mapguide-react-layout/issues/476): Fix tiled base layer group initial visibility not being respected
+
 0.11.0
 ======
 

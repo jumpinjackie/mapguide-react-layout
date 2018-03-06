@@ -86,7 +86,7 @@
     "@types/react-redux": "^5.0.15",
     "@types/shortid": "0.0.29",
     "@types/enzyme": "3.1.9",
-    "@types/jest": "22.1.4",
+    "@types/jest": "22.2.0",
     "bestzip": "1.1.4",
     "cache-loader": "^1.2.2",
     "copyfiles": "1.2.0",

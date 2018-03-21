@@ -43,7 +43,7 @@
   },
   "homepage": "https://github.com/jumpinjackie/mapguide-react-layout#readme",
   "dependencies": {
-    "@blueprintjs/core": "1.35.5",
+    "@blueprintjs/core": "1.35.7",
     "history": "4.7.2",
     "ismobilejs": "0.4.1",
     "lodash.debounce": "4.0.8",
@@ -92,7 +92,7 @@
     "copyfiles": "2.0.0",
     "coveralls": "3.0.0",
     "cross-env": "5.1.4",
-    "css-loader": "0.28.10",
+    "css-loader": "0.28.11",
     "enzyme": "3.3.0",
     "enzyme-adapter-react-16": "1.1.1",
     "file-loader": "1.1.11",

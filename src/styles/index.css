@@ -242,28 +242,26 @@ div.InfoText
     overflow: hidden;
     width: 1.5em;
 }
-.rotated-text-cw {
-    -webkit-transform: translate(1.1em,0) rotate(90deg);
-       -moz-transform: translate(1.1em,0) rotate(90deg);
-         -o-transform: translate(1.1em,0) rotate(90deg);
-            transform: translate(1.1em,0) rotate(90deg);
-}
 .rotated-text-ccw {
-    -webkit-transform: translate(0,2.8em) rotate(270deg);
-       -moz-transform: translate(0,2.8em) rotate(270deg);
-         -o-transform: translate(0,2.8em) rotate(270deg);
-            transform: translate(0,2.8em) rotate(270deg);
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+
+    /* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
+    -webkit-transform-origin: 50% 50%;
+    -moz-transform-origin: 50% 50%;
+    -ms-transform-origin: 50% 50%;
+    -o-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+
+    /* Should be unset in IE9+ I think. */
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 .rotated-text__inner {
     display: inline-block;
     white-space: nowrap;
-    /* this is for "non IE" browsers
-       that dosn't support writing-mode */
-
-    -webkit-transform-origin: 0 0;
-       -moz-transform-origin: 0 0;
-         -o-transform-origin: 0 0;
-            transform-origin: 0 0;
 }
 .rotated-text__inner:before {
     content: "";

@@ -1,4 +1,7 @@
 'use strict';
+
+const path = require("path");
+
 /*
 exports.tslint = {
   test: /\.tsx?$/,
@@ -32,6 +35,21 @@ exports.tsx = {
   loader: 'ts-loader',
   exclude: /(node_modules|test-utils|\.test\.ts$)/
 };
+
+exports.babel = {
+  test: /\.js$/,
+  exclude: /node_modules/,
+  /*
+  include: [
+    path.resolve(__dirname, "../node_modules/history")
+  ],*/
+  use: {
+    loader: "babel-loader",
+    options: {
+      plugins: ["babel-plugin-transform-object-assign"]
+    }
+  }
+}
 
 exports.html = {
   test: /\.html$/,

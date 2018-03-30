@@ -293,10 +293,12 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
         if (externalBaseLayers) {
             hasExternalBaseLayers = externalBaseLayers.length > 0;
         }
+        let normBox = this.state.normalizedBox;
         let box = this.state.box;
         if (!this.state.showAdvanced) {
             const extent = viewer.getCurrentExtent();
             box = `${extent[0]}, ${extent[1]}, ${extent[2]}, ${extent[1]}, ${extent[2]}, ${extent[3]}, ${extent[0]}, ${extent[3]}, ${extent[0]}, ${extent[1]}`;
+            normBox = box;
         }
         let paperSize: string;
         let printSize: string;
@@ -447,7 +449,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                     <button type="submit" className="pt-button pt-icon-print pt-intent-primary" onClick={this.onGeneratePlot}>{xlate("QUICKPLOT_GENERATE", locale)}</button>
                 </div>
                 <input type="hidden" id="margin" name="margin" />
-                <input type="hidden" id="normalizedBox" name="normalizedBox" value={this.state.normalizedBox} />
+                <input type="hidden" id="normalizedBox" name="normalizedBox" value={normBox} />
                 <input type="hidden" id="rotation" name="rotation" value={-(this.state.rotation || 0)} />
                 <input type="hidden" id="sessionId" name="sessionId" value={map.SessionId} />
                 <input type="hidden" id="mapName" name="mapName" value={map.Name} />

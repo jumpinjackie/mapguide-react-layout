@@ -1,3 +1,12 @@
+0.11.2
+======
+
+[Changelog](https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.11.1...v0.11.2)
+
+ * Updated OpenLayers to 4.6.5
+ * [#562](https://github.com/jumpinjackie/mapguide-react-layout/issues/562): More scalable vertical text CSS for sidebar template
+ * [#566](https://github.com/jumpinjackie/mapguide-react-layout/issues/566): Fix QuickPlot not working without toggling print box first
+
 0.11.1
 ======
 

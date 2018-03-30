@@ -87,8 +87,6 @@
     "@types/react-measure": "0.4.8",
     "@types/react-redux": "^5.0.15",
     "@types/shortid": "0.0.29",
-    "babel-loader": "^7.1.4",
-    "babel-plugin-transform-object-assign": "^6.22.0",
     "bestzip": "1.1.4",
     "cache-loader": "^1.2.2",
     "copyfiles": "2.0.0",

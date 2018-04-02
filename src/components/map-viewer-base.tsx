@@ -756,7 +756,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             const view = this.getOLView();
             const me = view.calculateExtent(ms);
             const size = { w: ms[0], h: ms[1] };
-            this._mapContext.showSelectedFeature(me, size, prevProps.map, prevProps.activeSelectedFeatureColor, nextProps.activeSelectedFeatureXml);
+            this._mapContext.showSelectedFeature(me, size, nextProps.map, nextProps.activeSelectedFeatureColor, nextProps.activeSelectedFeatureXml);
         }
     }
     componentDidMount() {

@@ -60,9 +60,10 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
     constructor(props: ISidebarProps) {
         super(props);
     }
-    componentWillReceiveProps(nextProps: ISidebarProps) {
+    componentDidUpdate(prevProps: ISidebarProps) {
+        const nextProps = this.props;
         const lastAction = nextProps.lastAction;
-        if (lastAction != this.props.lastAction) {
+        if (lastAction != prevProps.lastAction) {
             switch (lastAction.type) {
                 case Constants.TASK_INVOKE_URL:
                     {

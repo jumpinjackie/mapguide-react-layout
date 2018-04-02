@@ -48,15 +48,15 @@ export class ScaleDisplay extends React.Component<IScaleDisplayProps, any> {
     }
     private updateLocalScale(props: IScaleDisplayProps) {
         const { finiteScales, view } = props;
-        if (!finiteScales && view) {
+        if (!finiteScales && view && view.scale != this.state.localScale) {
             this.setState({ localScale: view.scale });
         }
     }
     componentDidMount() {
         this.updateLocalScale(this.props);
     }
-    componentWillReceiveProps(nextProps: IScaleDisplayProps) {
-        this.updateLocalScale(nextProps);
+    componentDidUpdate(prevProps: IScaleDisplayProps) {
+        this.updateLocalScale(this.props);
     }
     render(): JSX.Element {
         const { view, style, locale, finiteScales } = this.props;

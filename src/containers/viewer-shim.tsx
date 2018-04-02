@@ -1217,13 +1217,14 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
             this.fusionSelectionHandler(mapName, selection);
         });
     }
-    componentWillReceiveProps(nextProps: ViewerApiShimProps) {
-        if (nextProps.map && nextProps.selectionSet != this.props.selectionSet) {
+    componentDidUpdate(prevProps: ViewerApiShimProps) {
+        const nextProps = this.props;
+        if (nextProps.map && nextProps.selectionSet != prevProps.selectionSet) {
             for (const handler of this.userSelectionHandlers) {
                 handler(nextProps.map.Name, nextProps.selectionSet);
             }
         }
-        if (nextProps.busyCount != this.props.busyCount) {
+        if (nextProps.busyCount != prevProps.busyCount) {
             this.triggerFusionEvent(this.fusionAPI.Event.MAP_BUSY_CHANGED);
         }
     }

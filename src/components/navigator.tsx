@@ -145,8 +145,9 @@ export class Navigator extends React.Component<INavigatorProps, any> {
         const pos = this.calculatePosForScale(this.props.scale);
         this.setState({ pos: pos, previewPos: pos });
     }
-    componentWillReceiveProps(nextProps: INavigatorProps) {
-        if (this.props.scale != nextProps.scale) {
+    componentDidUpdate(prevProps: INavigatorProps) {
+        const nextProps = this.props;
+        if (prevProps.scale != nextProps.scale) {
             const pos = this.calculatePosForScale(nextProps.scale);
             this.setState({ pos: pos, previewPos: pos });
         }

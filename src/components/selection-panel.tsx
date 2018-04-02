@@ -212,8 +212,9 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
     componentDidMount() {
         this.setDefaultSelection(this.props);
     }
-    componentWillReceiveProps(nextProps: ISelectionPanelProps) {
-        if (this.props.selection != nextProps.selection) {
+    componentDidUpdate(prevProps: ISelectionPanelProps) {
+        const nextProps = this.props;
+        if (prevProps.selection != nextProps.selection) {
             this.setDefaultSelection(nextProps);
         }
     }

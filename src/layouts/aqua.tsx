@@ -144,9 +144,10 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
     componentDidMount() {
         setCustomTemplateReducer(aquaTemplateReducer);
     }
-    componentWillReceiveProps(nextProps: AquaTemplateLayoutProps) {
+    componentDidUpdate(prevProps: AquaTemplateLayoutProps) {
+        const nextProps = this.props;
         const lastAction = nextProps.lastAction;
-        if (lastAction != this.props.lastAction) {
+        if (lastAction != prevProps.lastAction) {
             switch (lastAction.type) {
                 case Constants.TASK_INVOKE_URL:
                     {

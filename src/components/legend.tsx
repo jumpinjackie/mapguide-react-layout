@@ -131,10 +131,12 @@ export class LayerNode extends React.Component<ILayerNodeProps, any> {
             layerVisible: this.context.getLayerVisibility(this.props.layer)
         });
     }
-    componentWillReceiveProps(nextProps: ILayerNodeProps) {
-        this.setState({
-            layerVisible: this.context.getLayerVisibility(nextProps.layer)
-        });
+    componentDidUpdate(prevProps: ILayerNodeProps) {
+        const nextProps = this.props;
+        const vis = this.context.getLayerVisibility(nextProps.layer);
+        if (this.state.layerVisible != vis) {
+            this.setState({ layerVisible: vis });
+        }
     }
     render(): JSX.Element {
         const { layer } = this.props;
@@ -255,10 +257,12 @@ export class GroupNode extends React.Component<IGroupNodeProps, any> {
             groupVisible: this.context.getGroupVisibility(this.props.group)
         });
     }
-    componentWillReceiveProps(nextProps: IGroupNodeProps) {
-        this.setState({
-            groupVisible: this.context.getGroupVisibility(nextProps.group)
-        });
+    componentDidUpdate(prevProps: IGroupNodeProps) {
+        const nextProps = this.props;
+        const vis = this.context.getGroupVisibility(nextProps.group);
+        if (this.state.groupVisible != vis) {
+            this.setState({ groupVisible: vis });
+        }
     }
     render(): JSX.Element {
         const { group } = this.props;
@@ -337,10 +341,13 @@ export class Legend extends React.Component<ILegendProps, any> {
         super(props);
         this.state = this.setupTree(props.map);
     }
-    componentWillReceiveProps(props: ILegendProps) {
-        const tree: any = this.setupTree(props.map);
+    //According to our tests, it isn't necessary to implement componentDidUpdate(), which is
+    //good otherwise we're in a world of hurt
+    /*
+    componentDidUpdate(prevProps: ILegendProps) {
+        const tree: any = this.setupTree(this.props.map);
         this.setState(tree);
-    }
+    }*/
     getChildContext(): ILegendContext {
         return {
             getIconMimeType: this.getIconMimeType.bind(this),

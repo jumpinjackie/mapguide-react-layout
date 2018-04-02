@@ -124,8 +124,9 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             this.props.onUrlLoaded(frame.contentWindow.location.href);
         }
     }
-    componentWillReceiveProps(nextProps: ITaskPaneProps) {
-        if (this.props.currentUrl != nextProps.currentUrl) {
+    componentDidUpdate(prevProps: ITaskPaneProps) {
+        const nextProps = this.props;
+        if (prevProps.currentUrl != nextProps.currentUrl) {
             if (nextProps.currentUrl && nextProps.lastUrlPushed === false) {
                 this.loadUrl(nextProps.currentUrl);
             }
@@ -133,7 +134,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         if (!this.state.invalidated && nextProps.currentUrl && nextProps.currentUrl.indexOf("component://") != 0 && currentUrlDoesNotMatchMapName(nextProps.currentUrl, nextProps.mapName)) {
             //TODO: If we want to be smart, we could have the TaskPane amend the currentUrl with the new map name
             this.setState({ invalidated: true });
-        } else if (nextProps.currentUrl && (nextProps.currentUrl.indexOf("component://") == 0 || !currentUrlDoesNotMatchMapName(nextProps.currentUrl, nextProps.mapName))) {
+        } else if (this.state.invalidated && nextProps.currentUrl && (nextProps.currentUrl.indexOf("component://") == 0 || !currentUrlDoesNotMatchMapName(nextProps.currentUrl, nextProps.mapName))) {
             this.setState({ invalidated: false });
         }
     }

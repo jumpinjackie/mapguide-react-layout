@@ -341,13 +341,13 @@ export class Legend extends React.Component<ILegendProps, any> {
         super(props);
         this.state = this.setupTree(props.map);
     }
-    //According to our tests, it isn't necessary to implement componentDidUpdate(), which is
-    //good otherwise we're in a world of hurt
-    /*
     componentDidUpdate(prevProps: ILegendProps) {
-        const tree: any = this.setupTree(this.props.map);
-        this.setState(tree);
-    }*/
+        //Only rebuild tree on change of active map
+        if (prevProps.map != this.props.map) {
+            const tree: any = this.setupTree(this.props.map);
+            this.setState(tree);
+        }
+    }
     getChildContext(): ILegendContext {
         return {
             getIconMimeType: this.getIconMimeType.bind(this),

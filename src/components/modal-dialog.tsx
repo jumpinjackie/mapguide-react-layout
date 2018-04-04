@@ -7,7 +7,7 @@ import { GenericEvent, GenericEventHandler } from "../api/common";
 /**
  * [left, top, right, bottom]
  */
-export type ModalDialogPositioning = [number|null, number|null, number|null, number|null] | [string|null, string|null, string|null, string|null];
+export type ModalDialogPositioning = [number|undefined, number|undefined, number|undefined, number|undefined] | [string|undefined, string|undefined, string|undefined, string|undefined];
 
 /**
  * ModalDialog component props

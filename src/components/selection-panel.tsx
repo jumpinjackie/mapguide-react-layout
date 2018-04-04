@@ -121,9 +121,9 @@ function buildToolbarItems(selPanel: ISelectionPanel): IItem[] {
     ];
 }
 
-const SELECTION_TOOLBAR_STYLE = { float: "right", height: DEFAULT_TOOLBAR_SIZE };
-const SELECTION_PANEL_TOOLBAR_STYLE = { height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR };
-const LAYER_COMBO_STYLE = { float: "left", height: DEFAULT_TOOLBAR_SIZE };
+const SELECTION_TOOLBAR_STYLE: React.CSSProperties = { float: "right", height: DEFAULT_TOOLBAR_SIZE };
+const SELECTION_PANEL_TOOLBAR_STYLE: React.CSSProperties = { height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR };
+const LAYER_COMBO_STYLE: React.CSSProperties = { float: "left", height: DEFAULT_TOOLBAR_SIZE };
 const FloatClear = (props: any) => <div style={{ clear: "both" }} />;
 
 /**

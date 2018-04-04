@@ -469,9 +469,13 @@ export class Toolbar extends React.Component<IToolbarProps, any> {
     }
     render(): JSX.Element {
         const { containerStyle, containerClass, childItems, vertical, hideVerticalLabels, flyoutStates } = this.props;
-        const height = containerStyle != null
-            ? (containerStyle.height || DEFAULT_TOOLBAR_SIZE)
-            : DEFAULT_TOOLBAR_SIZE;
+        let height = DEFAULT_TOOLBAR_SIZE;
+        if (containerStyle) {
+            const ch = containerStyle.height;
+            if (typeof(ch) == 'number') {
+                height = ch;
+            }
+        }
         return <div style={containerStyle} className={`has-flyout noselect ${containerClass}`}>
             {childItems.map((item, index) => {
                 if (isComponentFlyout(item)) {

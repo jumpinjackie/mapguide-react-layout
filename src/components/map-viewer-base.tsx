@@ -771,7 +771,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         this._zoomSelectBox.on("boxend", this.onZoomSelectBox.bind(this));
         const mapOptions: olx.MapOptions = {
             logo: false,
-            target: mapNode,
+            target: mapNode as any,
             //layers: layers,
             //view: view,
             controls: [

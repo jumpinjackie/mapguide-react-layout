@@ -79,8 +79,9 @@ export class Accordion extends React.Component<IAccordionProps, any> {
         }
         return null;
     }
-    componentWillReceiveProps(nextProps: IAccordionProps) {
-        if (this.props.activePanelId != nextProps.activePanelId) {
+    componentDidUpdate(prevProps: IAccordionProps) {
+        const nextProps = this.props;
+        if (prevProps.activePanelId != nextProps.activePanelId) {
             const newId = this.validatePanelId(nextProps.panels, nextProps.activePanelId);
             if (newId) {
                 this.setState({ openPanel: newId });

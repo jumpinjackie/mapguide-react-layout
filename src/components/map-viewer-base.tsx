@@ -263,7 +263,7 @@ interface IMapLoadIndicatorProps {
 
 const MapLoadIndicator = (props: IMapLoadIndicatorProps) => {
     const { loaded, loading, color, position } = props;
-    let visibility = "visible";
+    let visibility: "visible" | "hidden" = "visible";
     let width = (loaded / loading * 100).toFixed(1) + "%";
     if (loaded === loading) {
         visibility = "hidden";
@@ -581,7 +581,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     private addImageLoading() {
         const { loading } = this.state;
-        this.setState({ loading: (loading || 0) + 1 });
+        const newLoading = (loading || 0) + 1;
+        this.setState({ loading: newLoading });
         this.incrementBusyWorker();
     }
     private addImageLoaded() {
@@ -651,11 +652,12 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         this._triggerZoomRequestOnMoveEnd = true;
     }
     // ----------------- React Lifecycle ----------------- //
-    componentWillReceiveProps(nextProps: IMapViewerBaseProps) {
+    componentDidUpdate(prevProps: IMapViewerBaseProps) {
         //
         // React (no pun intended) to prop changes
         //
-        const props = this.props;
+        const props = prevProps;
+        const nextProps = this.props;
         if (nextProps.imageFormat != props.imageFormat) {
             logger.warn(`Unsupported change of props: imageFormat`);
         }
@@ -726,11 +728,11 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             this._mapContext.updateOverviewMapElement(nextProps.overviewMapElementSelector);
         }
         //viewRotation
-        if (this.props.viewRotation != nextProps.viewRotation) {
+        if (prevProps.viewRotation != nextProps.viewRotation) {
             this.getOLView().setRotation(nextProps.viewRotation);
         }
         //viewRotationEnabled
-        if (this.props.viewRotationEnabled != nextProps.viewRotationEnabled) {
+        if (prevProps.viewRotationEnabled != nextProps.viewRotationEnabled) {
             const view = this.getOLView();
             const newView = new View({
                 enableRotation: nextProps.viewRotationEnabled,
@@ -749,12 +751,12 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             this._map.setView(newView);
         }
         //activeSelectedFeatureXml
-        if (this.props.activeSelectedFeatureXml != nextProps.activeSelectedFeatureXml) {
+        if (prevProps.activeSelectedFeatureXml != nextProps.activeSelectedFeatureXml) {
             const ms = this._map.getSize();
             const view = this.getOLView();
             const me = view.calculateExtent(ms);
             const size = { w: ms[0], h: ms[1] };
-            this._mapContext.showSelectedFeature(me, size, this.props.map, this.props.activeSelectedFeatureColor, nextProps.activeSelectedFeatureXml);
+            this._mapContext.showSelectedFeature(me, size, nextProps.map, nextProps.activeSelectedFeatureColor, nextProps.activeSelectedFeatureXml);
         }
     }
     componentDidMount() {
@@ -769,7 +771,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         this._zoomSelectBox.on("boxend", this.onZoomSelectBox.bind(this));
         const mapOptions: olx.MapOptions = {
             logo: false,
-            target: mapNode,
+            target: mapNode as any,
             //layers: layers,
             //view: view,
             controls: [
@@ -811,7 +813,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             //
             //What we're hoping here is that when the view has been broadcasted back up
             //and flowed back in through new view props, that the resulting zoom/pan
-            //operation in componentWillReceiveProps() is effectively a no-op as the intended
+            //operation in componentDidUpdate() is effectively a no-op as the intended
             //zoom/pan location has already been reached by this event right here
             //
             //If we look at this through Redux DevTools, we see 2 entries for Map/SET_VIEW

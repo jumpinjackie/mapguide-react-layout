@@ -215,8 +215,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             });
         }
     }
-    componentWillReceiveProps(nextProps: MapViewerContainerProps) {
-        if (this.props.selection != nextProps.selection) {
+    componentDidUpdate(prevProps: MapViewerContainerProps) {
+        const nextProps = this.props;
+        if (prevProps.selection != nextProps.selection) {
             this.inner.refreshMap(RefreshMode.SelectionOnly);
         }
     }

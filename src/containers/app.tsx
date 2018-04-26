@@ -274,8 +274,9 @@ export class App extends React.Component<AppProps, any> {
             initLayout(args);
         }
     }
-    componentWillReceiveProps(nextProps: AppProps) {
-        if (nextProps.map != null && this.props.map != nextProps.map) {
+    componentDidUpdate(prevProps: AppProps) {
+        const nextProps = this.props;
+        if (nextProps.map != null && prevProps.map != nextProps.map) {
             this.setState({ isLoading: false });
         }
         if (nextProps.config && nextProps.config.activeMapName) {

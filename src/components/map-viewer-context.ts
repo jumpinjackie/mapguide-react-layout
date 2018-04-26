@@ -794,7 +794,7 @@ export class MapViewerContext {
         if (el) {
             this._ovMap.setCollapsed(false);
             this._ovMap.setCollapsible(false);
-            this._ovMap.setTarget(ReactDOM.findDOMNode(el));
+            this._ovMap.setTarget(ReactDOM.findDOMNode(el) as any);
         } else {
             this._ovMap.setCollapsed(true);
             this._ovMap.setCollapsible(true);

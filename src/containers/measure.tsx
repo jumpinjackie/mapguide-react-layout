@@ -164,10 +164,11 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
             measure.deactivate();
         }
     }
-    componentWillReceiveProps(nextProps: MeasureProps) {
+    componentDidUpdate(prevProps: MeasureProps) {
+        const nextProps = this.props;
         //Active map changed
-        if (this.props.activeMapName != nextProps.activeMapName) {
-            const oldMeasure = _measurements.filter(m => m.getMapName() === this.props.activeMapName)[0];
+        if (prevProps.activeMapName != nextProps.activeMapName) {
+            const oldMeasure = _measurements.filter(m => m.getMapName() === prevProps.activeMapName)[0];
             const newMeasure = _measurements.filter(m => m.getMapName() === nextProps.activeMapName)[0];
             if (oldMeasure) {
                 oldMeasure.deactivate();

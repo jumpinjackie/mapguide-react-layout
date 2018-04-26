@@ -144,9 +144,10 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
     componentDidMount() {
         setCustomTemplateReducer(aquaTemplateReducer);
     }
-    componentWillReceiveProps(nextProps: AquaTemplateLayoutProps) {
+    componentDidUpdate(prevProps: AquaTemplateLayoutProps) {
+        const nextProps = this.props;
         const lastAction = nextProps.lastAction;
-        if (lastAction != this.props.lastAction) {
+        if (lastAction != prevProps.lastAction) {
             switch (lastAction.type) {
                 case Constants.TASK_INVOKE_URL:
                     {
@@ -226,7 +227,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                     if (hasSelectionPanel) {
                         return <ModalDialog
                                     size={[SIDEBAR_WIDTH, SELECTION_DIALOG_HEIGHT]}
-                                    position={[ 40, 500, null, null ]}
+                                    position={[ 40, 500, undefined, undefined ]}
                                     title={tr("TPL_TITLE_SELECTION_PANEL", locale)}
                                     backdrop={false}
                                     isOpen={!!showSelection}
@@ -239,7 +240,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                     if (hasLegend) {
                         return <ModalDialog
                                     size={[SIDEBAR_WIDTH, LEGEND_DIALOG_HEIGHT]}
-                                    position={[ 40, 70, null, null ]}
+                                    position={[ 40, 70, undefined, undefined ]}
                                     title={tr("TPL_TITLE_LEGEND", locale)}
                                     backdrop={false}
                                     isOpen={!!showLegend}
@@ -252,7 +253,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                     if (hasTaskPane) {
                         return <ModalDialog
                                     size={[SIDEBAR_WIDTH, TASK_DIALOG_HEIGHT]}
-                                    position={[ null, 70, 80, null ]}
+                                    position={[ undefined, 70, 80, undefined ]}
                                     title={tr("TPL_TITLE_TASKPANE", locale)}
                                     backdrop={false}
                                     isOpen={!!showTaskPane}

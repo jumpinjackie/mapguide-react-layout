@@ -45,6 +45,7 @@ export type ScaleDisplayContainerProps = Partial<IScaleDisplayContainerState> & 
 export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainerProps, any> {
     constructor(props: ScaleDisplayContainerProps) {
         super(props);
+        this.state = {};
     }
     private onScaleChanged = (scale: number) => {
         const { setScale, config } = this.props;
@@ -55,9 +56,10 @@ export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainer
     private getLocale(): string {
         return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
-    componentWillReceiveProps(nextProps: ScaleDisplayContainerProps) {
+    componentDidUpdate(prevProps: ScaleDisplayContainerProps) {
+        const nextProps = this.props;
         const { finiteScales, view } = nextProps;
-        if (!finiteScales && view) {
+        if (!finiteScales && view && view.scale != this.state.localScale) {
             this.setState({ localScale: view.scale });
         }
     }

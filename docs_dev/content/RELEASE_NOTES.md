@@ -1,3 +1,12 @@
+Latest
+======
+
+ * [#569](https://github.com/jumpinjackie/mapguide-react-layout/issues/569): Update to use `componentDidUpdate` instead of `componentWillReceiveProps`
+ * Updated Blueprint to 1.36.0
+ * Updated TypeScript to 2.8.3
+ * Updated React to 16.3.2
+ * Now built with webpack 4.x
+
 0.11.2
 ======
 

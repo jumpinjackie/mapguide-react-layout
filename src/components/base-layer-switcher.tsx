@@ -35,7 +35,7 @@ export class BaseLayerSwitcher extends React.Component<IBaseLayerSwitcherProps, 
     private onBaseLayerChanged = (e: any) => {
         const value = e.currentTarget.value;
         this.setState({ selected: value });
-        safePropAccess(this.props, "onBaseLayerChanged", func => func!(value));
+        safePropAccess(this.props, "onBaseLayerChanged", func => (value));
     }
     render(): JSX.Element {
         const { locale } = this.props;

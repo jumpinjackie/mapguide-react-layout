@@ -139,8 +139,8 @@ export class FlyoutMenuChildItem extends React.Component<IFlyoutMenuChildItemPro
     private onClick = (e: GenericEvent) => {
         const { item } = this.props;
         if (getEnabled(item)) {
-            safePropAccess(item, "invoke", func => func!());
-            safePropAccess(this.props, "onInvoked", func => func!());
+            safePropAccess(item, "invoke", func => func());
+            safePropAccess(this.props, "onInvoked", func => func());
         }
     }
     private onMouseLeave = (e: GenericEvent) => {

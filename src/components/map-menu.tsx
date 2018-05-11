@@ -32,7 +32,7 @@ export class MapMenu extends React.Component<IMapMenuProps, any> {
     private onActiveMapChanged = (e: any) => {
         const value = e.currentTarget.value;
         this.setState({ selected: value });
-        safePropAccess(this.props, "onActiveMapChanged", func => func!(value));
+        safePropAccess(this.props, "onActiveMapChanged", func => func(value));
     }
     render(): JSX.Element {
         const { locale } = this.props;

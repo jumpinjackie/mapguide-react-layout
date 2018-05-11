@@ -83,7 +83,7 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
         const diag = <Draggable handle=".pt-dialog-header">
             <div className="pt-dialog" style={modalStyle}>
                 <div className="pt-dialog-header noselect">
-                    <h5>{title}</h5>
+                    <h4 className="pt-dialog-header-title">{title}</h4>
                     <button onClick={this.onClose} aria-label="Close" className="pt-dialog-close-button pt-icon-small-cross"></button>
                 </div>
                 <div className="pt-dialog-body" style={modalBodyStyle}>{this.props.children}</div>

@@ -72,27 +72,27 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
     }
     private onBaseOpacityChanged = (value: number) => {
         safePropAccess(this.props, "mapName", mn => {
-            safePropAccess(this.props, "setLayerTransparency", func => func(mn, LAYER_ID_BASE, value));
+            safePropAccess(this.props, "setLayerTransparency", func => func!(mn!, LAYER_ID_BASE, value));
         });
     }
     private onMgOpacityChanged = (value: number) => {
         safePropAccess(this.props, "mapName", mn => {
-            safePropAccess(this.props, "setLayerTransparency", func => func(mn, LAYER_ID_MG_BASE, value));
+            safePropAccess(this.props, "setLayerTransparency", func => func!(mn!, LAYER_ID_MG_BASE, value));
         });
     }
     private onMgSelOpacityChanged = (value: number) => {
         safePropAccess(this.props, "mapName", mn => {
-            safePropAccess(this.props, "setLayerTransparency", func => func(mn, LAYER_ID_MG_SEL_OVERLAY, value));
+            safePropAccess(this.props, "setLayerTransparency", func => func!(mn!, LAYER_ID_MG_SEL_OVERLAY, value));
         });
     }
     private onViewSizeUnitsChanged = (e: GenericEvent) => {
-        safePropAccess(this.props, "setViewSizeDisplayUnits", func => func(e.target.value));
+        safePropAccess(this.props, "setViewSizeDisplayUnits", func => func!(e.target.value));
     }
     private onFeatureTooltipsChanged = (e: GenericEvent) => {
-        safePropAccess(this.props, "toggleMapTips", func => func(e.target.checked));
+        safePropAccess(this.props, "toggleMapTips", func => func!(e.target.checked));
     }
     private onManualFeatureTooltipsChanged = (e: GenericEvent) => {
-        safePropAccess(this.props, "toggleManualMapTips", func => func(e.target.checked));
+        safePropAccess(this.props, "toggleManualMapTips", func => func!(e.target.checked));
     }
     render(): JSX.Element {
         const { viewer, config, layerTransparency, externalBaseLayers } = this.props;

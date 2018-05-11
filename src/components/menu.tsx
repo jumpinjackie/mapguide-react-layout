@@ -32,8 +32,8 @@ export class MenuComponent extends React.Component<IMenuComponentProps, any> {
     }
     private onClick(item: IItem, e: GenericEvent) {
         if (getEnabled(item)) {
-            safePropAccess(item, "invoke", func => func());
-            safePropAccess(this.props, "onInvoked", func => func());
+            safePropAccess(item, "invoke", func => func!());
+            safePropAccess(this.props, "onInvoked", func => func!());
         }
     }
     render(): JSX.Element {

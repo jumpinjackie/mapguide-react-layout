@@ -216,21 +216,21 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
                                     return <table className="pt-table">
                                         <thead>
                                             <tr>
-                                                <th>Segment</th>
-                                                <th>Length</th>
+                                                <th>{tr("MEASURE_SEGMENT", locale)}</th>
+                                                <th>{tr("MEASURE_LENGTH", locale)}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {this.state.segments.map(s => {
                                                 return <tr key={`segment-${s.segment}`}>
-                                                    <td>Segment {s.segment}</td>
+                                                    <td>{tr("MEASURE_SEGMENT_PART", locale, { segment: s.segment })}</td>
                                                     <td>{roundTo(s.length, 2)}m</td>
                                                 </tr>
                                             })}
                                             {(() => {
                                                 if (this.state.segmentTotal && this.state.activeType) {
                                                     return <tr>
-                                                        <td><strong>Total {this.state.activeType == "Area" ? "Area" : "Length"}</strong></td>
+                                                        <td><strong>{this.state.activeType == "Area" ? tr("MEASURE_TOTAL_AREA", locale) : tr("MEASURE_TOTAL_LENGTH", locale)}</strong></td>
                                                         <td>{roundTo(this.state.segmentTotal, 4)}m<sup>2</sup></td>
                                                     </tr>;
                                                 }

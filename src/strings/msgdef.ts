@@ -61,6 +61,11 @@ export interface ILocalizedMessages {
     DIGITIZE_RECT_PROMPT: string;
     DIGITIZE_POLYGON_PROMPT: string;
     MEASURE: string;
+    MEASURE_SEGMENT: string;
+    MEASURE_LENGTH: string;
+    MEASURE_SEGMENT_PART: string;
+    MEASURE_TOTAL_AREA: string;
+    MEASURE_TOTAL_LENGTH: string;
     MEASURING: string;
     MEASURING_MESSAGE: string;
     MEASUREMENT: string;

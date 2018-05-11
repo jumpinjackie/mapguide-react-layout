@@ -71,7 +71,7 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
         const newType = e.target.value;
         this.setState({ type: newType }, () => {
             const { activeMapName } = this.props;
-            if (activeMapName) {
+            if (activeMapName && this.state.measuring === true) {
                 const activeMeasure = _measurements.filter(m => m.getMapName() === activeMapName)[0];
                 if (activeMeasure) {
                     activeMeasure.handleDrawTypeChange();

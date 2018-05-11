@@ -5,6 +5,7 @@ import { IItem, IInlineMenu, IFlyoutMenu, getIconStyle, getEnabled } from "./too
 import { Icon } from "./icon";
 import { GenericEvent } from "../api/common";
 import { safePropAccess } from '../utils/safe-prop';
+import { NBSP } from '../constants';
 
 const MENU_ITEM_HEIGHT = 30;
 
@@ -66,7 +67,7 @@ export class MenuComponent extends React.Component<IMenuComponentProps, any> {
                     const text = item.label || "";
                     //NOTE: Not using MenuItem here as we want fine control over the item content
                     return <li key={index}>
-                        <a className="pt-menu-item" onClick={invoke}><Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {text}</a>
+                        <a className="pt-menu-item" onClick={invoke}><Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} />{NBSP}{text}</a>
                     </li>;
                 }
             })}

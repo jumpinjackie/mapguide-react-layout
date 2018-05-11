@@ -100,7 +100,7 @@ export class Accordion extends React.Component<IAccordionProps, any> {
                         <div className="component-accordion-panel-header" style={{ height: PANEL_HEADER_HEIGHT }} data-accordion-panel-id={p.id} onClick={this.onTogglePanel}>
                             <span className={`pt-icon-standard pt-icon-chevron-${isOpen ? "up" : "down"}`}></span> {p.title}
                         </div>
-                        <Collapse isOpen={isOpen}>
+                        <Collapse isOpen={isOpen} keepChildrenMounted={true}>
                             {p.contentRenderer({ width: dim.width, height: (dim.height - (panels.length * PANEL_HEADER_HEIGHT)) }, isResizing)}
                         </Collapse>
                     </div>;

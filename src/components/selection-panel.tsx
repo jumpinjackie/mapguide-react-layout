@@ -27,7 +27,7 @@ const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
             featureProps.push(matches[0]);
         }
     }
-    return <table className="selection-panel-property-grid pt-table pt-condensed pt-bordered">
+    return <table className="selection-panel-property-grid pt-html-table pt-html-table-bordered pt-small pt-interactive">
         <thead>
             <tr>
                 <th>{xlate("SELECTION_PROPERTY", locale)}</th>

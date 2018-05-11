@@ -18,7 +18,7 @@ import {
     ITemplateReducerState,
     getRuntimeMap
 } from "../api/common";
-import { Tabs2, Tab2 } from "@blueprintjs/core";
+import { Tabs, Tab } from "@blueprintjs/core";
 import * as Constants from "../constants";
 import * as TemplateActions from "../actions/template";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
@@ -215,13 +215,13 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
                     {(() => {
                         if (this.props.showSelection || this.props.showTaskPane || this.props.showLegend) {
                             return <div className="turquoise-yellow-sidebar" style={{ position: "absolute", left: SIDEBAR_PADDING, top: TOP_BAR_HEIGHT, bottom: SIDEBAR_PADDING, right: 0 }}>
-                                <Tabs2 id="SidebarTabs" onChange={this.onActiveTabChanged} {...extraTabsProps}>
+                                <Tabs id="SidebarTabs" onChange={this.onActiveTabChanged} {...extraTabsProps}>
                                     {(() => {
                                         if (hasTaskPane) {
                                             const panel = <div style={tabPanelStyle}>
                                                 <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={locale} componentProps={{ isResizing: isResizing }} />
                                             </div>;
-                                            return <Tab2 id="TaskPane" title={taskPaneTitle} panel={panel} />;
+                                            return <Tab id="TaskPane" title={taskPaneTitle} panel={panel} />;
                                         }
                                     })()}
                                     {(() => {
@@ -230,7 +230,7 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
                                             const panel = <div style={{ ...tabPanelStyle, ...p1 }}>
                                                 <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: false }} />
                                             </div>;
-                                            return <Tab2 id="Legend" title={legendTitle} panel={panel} />;
+                                            return <Tab id="Legend" title={legendTitle} panel={panel} />;
                                         }
                                     })()}
                                     {(() => {
@@ -238,10 +238,10 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
                                             const panel = <div style={tabPanelStyle}>
                                                 <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
                                             </div>;
-                                            return <Tab2 id="Selection" title={selectionTitle} panel={panel} />;
+                                            return <Tab id="Selection" title={selectionTitle} panel={panel} />;
                                         }
                                     })()}
-                                </Tabs2>
+                                </Tabs>
                             </div>;
                         }
                     })()}

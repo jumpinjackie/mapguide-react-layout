@@ -48,7 +48,7 @@ export class MenuComponent extends React.Component<IMenuComponentProps, any> {
                     } else {
                         text = item.label || "";
                     }
-                    return <MenuItem key={index} text={text} iconName="pt-icon-menu-open">
+                    return <MenuItem key={index} text={text} icon="menu-open">
                         <MenuComponent items={item.childItems} onInvoked={this.props.onInvoked} />
                     </MenuItem>;
                 } else {

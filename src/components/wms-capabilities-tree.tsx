@@ -17,7 +17,7 @@ function convertWmsLayerNodes(layers: WMSLayerStylePair[], locale: string | unde
         </div>;
         return {
             id: l.Name,
-            iconName: "pt-icon-layer",
+            iconName: "layer",
             label: <Tooltip content={tt}>{l.Name}</Tooltip>
         } as ITreeNode;
     });
@@ -64,19 +64,19 @@ export class WmsCapabilitiesTree extends React.Component<IWmsCapabilitiesTreePro
             }
         }
         return [
-            { id: `version_${shortid()}`, iconName: "pt-icon-tag", label: tr("WMS_VERSION", locale, { version: caps.version }) },
-            { id: `service_name_${shortid()}`, iconName: "pt-icon-info-sign", label: tr("WMS_SERVICE_NAME", locale, { name: caps.Service.Name }) },
-            { id: `service_title_${shortid()}`, iconName: "pt-icon-info-sign", label: <Tooltip content={caps.Service.Title}>{tr("WMS_SERVICE_TITLE", locale, { title: caps.Service.Title })}</Tooltip> },
-            { id: `service_abstract_${shortid()}`, iconName: "pt-icon-info-sign", label: <Tooltip content={caps.Service.Abstract}>{tr("WMS_SERVICE_ABSTRACT", locale, { abstract: caps.Service.Abstract })}</Tooltip> },
+            { id: `version_${shortid()}`, icon: "tag", label: tr("WMS_VERSION", locale, { version: caps.version }) },
+            { id: `service_name_${shortid()}`, icon: "info-sign", label: tr("WMS_SERVICE_NAME", locale, { name: caps.Service.Name }) },
+            { id: `service_title_${shortid()}`, icon: "info-sign", label: <Tooltip content={caps.Service.Title}>{tr("WMS_SERVICE_TITLE", locale, { title: caps.Service.Title })}</Tooltip> },
+            { id: `service_abstract_${shortid()}`, icon: "info-sign", label: <Tooltip content={caps.Service.Abstract}>{tr("WMS_SERVICE_ABSTRACT", locale, { abstract: caps.Service.Abstract })}</Tooltip> },
             { 
-                id: `layers_${shortid()}`, iconName: "pt-icon-layers", label: tr("WMS_LAYERS", locale),
+                id: `layers_${shortid()}`, icon: "layers", label: tr("WMS_LAYERS", locale),
                 childNodes: convertWmsLayerNodes(layers, locale)
             }
         ];
     }
     private handleNodeClick = (nodeData: ITreeNode, _nodePath: number[], e: React.MouseEvent<HTMLElement>) => {
         //It's a layer node
-        if (nodeData.iconName == "pt-icon-layer") {
+        if (nodeData.icon == "layer") {
             const { onAddLayer } = this.props;
             const name = `${nodeData.id}`;
             onAddLayer(name, this._layerStyles[name][0]);

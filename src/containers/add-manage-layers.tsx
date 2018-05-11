@@ -14,7 +14,7 @@ import {
 } from "../api/common";
 import { Client } from "../api/client";
 import { WmsCapabilitiesTree } from "../components/wms-capabilities-tree";
-import { Tab2, Tabs2 } from "@blueprintjs/core";
+import { Tab, Tabs } from "@blueprintjs/core";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
 
@@ -131,10 +131,10 @@ export class AddManageLayersContainer extends React.Component<AddManageLayersCon
     }
     render(): JSX.Element {
         const { locale } = this.props;
-        return <Tabs2 id="tabs" renderActiveTabPanelOnly={true}>
-            <Tab2 id="add_layer" title={<span><span className="pt-icon-standard pt-icon-add" /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer locale={locale} />} />
-            <Tab2 id="manage_layers" title={<span><span className="pt-icon-standard pt-icon-layers" /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<LayerManager locale={locale} />} />
-        </Tabs2>;
+        return <Tabs id="tabs" renderActiveTabPanelOnly={true}>
+            <Tab id="add_layer" title={<span><span className="pt-icon-standard pt-icon-add" /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer locale={locale} />} />
+            <Tab id="manage_layers" title={<span><span className="pt-icon-standard pt-icon-layers" /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<LayerManager locale={locale} />} />
+        </Tabs>;
     }
 }
 

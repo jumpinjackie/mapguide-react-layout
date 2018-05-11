@@ -6,7 +6,10 @@ import {
 } from '../api/common';
 import { addUrlProps } from 'react-url-query';
 import { urlPropsQueryConfig, IAppUrlStateProps } from './url-state';
-import { Checkbox, TextArea } from '@blueprintjs/core';
+import { tr } from '../api/i18n';
+import { getViewer } from '../api/runtime';
+import { Checkbox, TextArea, Toaster } from '@blueprintjs/core';
+import CopyToClipboard = require('react-copy-to-clipboard');
 import queryString = require("query-string");
 
 /**
@@ -26,7 +29,7 @@ export interface IShareLinkToViewContainerProps {
  * @interface IShareLinkToViewContainerState
  */
 export interface IShareLinkToViewContainerState {
-
+    locale: string;
 }
 
 /**
@@ -41,7 +44,7 @@ export interface IShareLinkToViewContainerDispatch {
 
 function mapStateToProps(state: Readonly<IApplicationState>): Partial<IShareLinkToViewContainerState> {
     return {
-
+        locale: state.config.locale
     };
 }
 
@@ -73,15 +76,25 @@ export class ShareLinkToViewContainer extends React.Component<ShareLinkToViewCon
     private onShowSessionChanged = (e: any) => {
         this.setState({ showSession: !this.state.showSession });
     }
+    private onCopied = (e: any) => {
+        const v = getViewer();
+        if (v) {
+            v.toastSuccess("clipboard", tr("SHARE_LINK_COPIED", this.props.locale));
+        }
+    }
     render(): JSX.Element {
         const parsed = queryString.parseUrl(`${window.location}`);
         if (!this.state.showSession) {
             delete parsed.query.session;
         }
+        const shareUrl = `${parsed.url}?${queryString.stringify(parsed.query)}`;
         return <div>
-            <TextArea fill={true} rows={16} readOnly value={`${parsed.url}?${queryString.stringify(parsed.query)}`} onChange={NOOP} />
+            <TextArea fill={true} rows={16} readOnly value={shareUrl} onChange={NOOP} />
             <br />
             <Checkbox checked={this.state.showSession} label="Include Session ID" onChange={this.onShowSessionChanged} />
+            <CopyToClipboard text={shareUrl} onCopy={this.onCopied}>
+                <button className="pt-button">{tr("SHARE_LINK_COPY_CLIPBOARD", this.props.locale)}</button>
+            </CopyToClipboard>
         </div>;
     }
 }

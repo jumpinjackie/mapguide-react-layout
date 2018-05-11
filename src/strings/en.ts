@@ -141,7 +141,9 @@ const STRINGS_EN: ILocalizedMessages = {
     "WMS_ADD_LAYER_PROMPT": "Click this layer to add it to the map",
     "ADDED_LAYER": "Added layer: {name}",
     "REMOVED_LAYER": "Removed layer: {name}",
-    "ADD_WFS_LAYER": "Add WFS Layer"
+    "ADD_WFS_LAYER": "Add WFS Layer",
+    "SHARE_LINK_COPY_CLIPBOARD": "Copy Link",
+    "SHARE_LINK_COPIED": "Link copied"
 };
 
 export default STRINGS_EN;

@@ -208,7 +208,7 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
                     if (this.state.measuring === true) {
                         return <div>
                             <div className="pt-callout pt-intent-primary">
-                                <h5>{tr("MEASURING", locale)}</h5>
+                                <h5 className="pt-callout-title">{tr("MEASURING", locale)}</h5>
                                 {tr("MEASURING_MESSAGE", locale)}
                             </div>
                             {(() => {

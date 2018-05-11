@@ -370,7 +370,7 @@ export class App extends React.Component<AppProps, any> {
         //Not showing stack as the error cases are well-defined here and we know where they
         //originate from
         return <div className="pt-callout pt-intent-danger">
-            <h5>{tr("INIT_ERROR_TITLE", locale)}</h5>
+            <h5 className="pt-callout-title">{tr("INIT_ERROR_TITLE", locale)}</h5>
             {this.renderErrorMessage(err, locale, initOptions || {})}
         </div>;
     }

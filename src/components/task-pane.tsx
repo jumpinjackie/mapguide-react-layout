@@ -218,7 +218,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                 {(() => {
                     if (invalidated === true) {
                         return <div className="pt-callout pt-intent-warning">
-                            <h5>{tr("TASK_PANE_CONTENT_FOR_INACTIVE_MAP_TITLE", this.props.locale)}</h5>
+                            <h5 className="pt-callout-title">{tr("TASK_PANE_CONTENT_FOR_INACTIVE_MAP_TITLE", this.props.locale)}</h5>
                             {tr("TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING", this.props.locale)}
                         </div>;
                     }

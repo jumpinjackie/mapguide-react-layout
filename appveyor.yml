@@ -4,7 +4,7 @@ shallow_clone: true
 build: off
 # Cache yarn packages to speed up builds
 cache:
-  - "%LOCALAPPDATA%\\Yarn"
+  #- "%LOCALAPPDATA%\\Yarn"
 
 # restore NuGet packages before running MSBuild
 before_build:

@@ -3,7 +3,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const loaders = require('./webpack/loaders');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+//const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const baseAppEntries = [
     './src/entries/library.tsx',
@@ -61,20 +61,23 @@ const rules = [
     loaders.ttf,
     */
     loaders.image,
-    loaders.cursors
+    loaders.cursors,
+    loaders.tsx
 ];
+/*
 if (process.env.BUILD_MODE === 'production' || process.env.DEBUG_BUILD === '1') {
     rules.push(loaders.tsx);
 } else {
     rules.push(loaders.tsx_multithreaded);
     plugins.push(new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }));
 }
-
+*/
 module.exports = {
     mode: process.env.BUILD_MODE,
     entry: {
         viewer: appEntries
     },
+    devtool: 'source-map',
     output: {
         libraryTarget: "var",
         library: "MapGuide",

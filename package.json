@@ -93,7 +93,7 @@
     "cache-loader": "^1.2.2",
     "copyfiles": "2.0.0",
     "coveralls": "3.0.1",
-    "cross-env": "5.1.6",
+    "cross-env": "5.2.0",
     "css-loader": "0.28.11",
     "enzyme": "3.3.0",
     "enzyme-adapter-react-16": "1.1.1",

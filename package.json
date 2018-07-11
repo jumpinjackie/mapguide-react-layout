@@ -22,7 +22,7 @@
     "lint": "tslint 'src/**/*.tsx' 'src/**/*.ts' 'test/**/*.tsx' 'test/**/*.ts'",
     "postinstall": "yarn run build",
     "test": "jest --verbose",
-    "test:e2e": "testcafe chrome e2e/test.*.ts -S -s e2e/screenshots",
+    "test:e2e": "testcafe chrome e2e/test.*.ts -q -S -s e2e/screenshots",
     "test:appveyor": "jest --verbose --coverage --colors",
     "test:travis": "jest --runInBand --verbose --coverage --colors && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "ci:appveyor": "yarn run lint && yarn run test:appveyor",

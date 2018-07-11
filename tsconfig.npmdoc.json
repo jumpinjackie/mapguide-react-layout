@@ -3,6 +3,7 @@
     "exclude": [
         "lib",
         "package",
+        "e2e",
         "node_modules",
         "src/entries/library.tsx",
         "src/actions/index.ts",

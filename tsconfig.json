@@ -2,6 +2,7 @@
     "extends": "./tsconfig.base.json",
     "exclude": [
         "package",
+        "e2e",
         "node_modules",
         "typings/main",
         "typings/main.d.ts"

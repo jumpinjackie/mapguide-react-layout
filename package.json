@@ -69,7 +69,7 @@
     "redux-localstorage": "0.4.1",
     "redux-logger": "3.0.1",
     "redux-thunk": "2.2.0",
-    "shortid": "2.2.11",
+    "shortid": "2.2.12",
     "tslib": "1.9.3",
     "url-parse": "1.4.1",
     "whatwg-fetch": "2.0.4"

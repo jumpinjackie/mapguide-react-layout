@@ -147,6 +147,9 @@
       "\\.(jpg|jpeg|png|gif|cur|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/mocks/fileMock.js",
       "\\.(css|less)$": "<rootDir>/mocks/styleMock.js"
     },
+    "modulePathIgnorePatterns": [
+      "<rootDir>[/\\\\](build|docs|node_modules|package)[/\\\\]"
+    ],
     "coveragePathIgnorePatterns": [
       "<rootDir>/test-data/",
       "<rootDir>/node_modules/"

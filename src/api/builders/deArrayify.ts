@@ -693,30 +693,32 @@ function deArrayifyMapSet(json: any): Fusion.MapSet | undefined {
 function deArrayifyContainerItems(json: any[]): Fusion.ContainerItem[] {
     const items = [] as Fusion.ContainerItem[];
     const getter = buildPropertyGetter<Fusion.ContainerItem & Fusion.FlyoutItem & Fusion.WidgetItem>();
-    for (const i of json) {
-        const func = getter(i, "Function", "string");
-        switch (func) {
-            case "Separator":
-                items.push({
-                    Function: "Separator"
-                });
-                break;
-            case "Widget":
-                items.push({
-                    Function: "Widget",
-                    Widget: getter(i, "Widget", "string")
-                })
-                break;
-            case "Flyout":
-                items.push({
-                    Function: "Flyout",
-                    Label: getter(i, "Label", "string"),
-                    Tooltip: getter(i, "Tooltip", "string"),
-                    ImageUrl: getter(i, "ImageUrl", "string"),
-                    ImageClass: getter(i, "ImageClass", "string"),
-                    Item: deArrayifyContainerItems(i.Item || [])
-                })
-                break;
+    if (json && json.length) {
+        for (const i of json) {
+            const func = getter(i, "Function", "string");
+            switch (func) {
+                case "Separator":
+                    items.push({
+                        Function: "Separator"
+                    });
+                    break;
+                case "Widget":
+                    items.push({
+                        Function: "Widget",
+                        Widget: getter(i, "Widget", "string")
+                    })
+                    break;
+                case "Flyout":
+                    items.push({
+                        Function: "Flyout",
+                        Label: getter(i, "Label", "string"),
+                        Tooltip: getter(i, "Tooltip", "string"),
+                        ImageUrl: getter(i, "ImageUrl", "string"),
+                        ImageClass: getter(i, "ImageClass", "string"),
+                        Item: deArrayifyContainerItems(i.Item || [])
+                    })
+                    break;
+            }
         }
     }
     return items;

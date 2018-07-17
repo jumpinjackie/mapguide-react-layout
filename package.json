@@ -113,7 +113,7 @@
     "testcafe": "^0.20.4",
     "testcafe-react-selectors": "^2.1.0",
     "thread-loader": "^1.1.5",
-    "ts-jest": "23.0.0",
+    "ts-jest": "23.0.1",
     "ts-loader": "4.4.2",
     "tslint": "5.10.0",
     "typedoc": "0.11.1",

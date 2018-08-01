@@ -59,7 +59,7 @@
     "react-addons-test-utils": "15.6.2",
     "react-addons-update": "15.6.2",
     "react-copy-to-clipboard": "^5.0.1",
-    "react-dom": "16.4.1",
+    "react-dom": "16.4.2",
     "react-draggable": "3.0.5",
     "react-measure": "1.4.7",
     "react-redux": "5.0.7",

@@ -83,7 +83,7 @@
     "@types/prop-types": "15.5.3",
     "@types/query-string": "5.1.0",
     "@types/react": "16.4.6",
-    "@types/react-addons-css-transition-group": "15.0.4",
+    "@types/react-addons-css-transition-group": "15.0.5",
     "@types/react-addons-update": "0.14.19",
     "@types/react-copy-to-clipboard": "^4.2.5",
     "@types/react-dom": "16.0.6",

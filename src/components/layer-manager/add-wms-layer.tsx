@@ -114,10 +114,10 @@ export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
         return <div>
             <div className="pt-control-group pt-fill">
                 <div className="pt-input-group">
-                    <span className="pt-icon pt-icon-geosearch"></span>
+                    <span className="pt-icon geosearch"></span>
                     <input type="text" className="pt-input" placeholder={tr("ADD_WMS_LAYER_URL", locale)} value={wmsUrl} onChange={this.onWmsUrlChange} readOnly={loadingCapabilities} />
                 </div>
-                <button className="pt-button pt-fixed pt-intent-primary pt-icon-arrow-right" onClick={this.onLoadCaps} disabled={loadingCapabilities}></button>
+                <button className="pt-button pt-fixed pt-intent-primary arrow-right" onClick={this.onLoadCaps} disabled={loadingCapabilities}></button>
             </div>
             <br />
             <div>
@@ -145,11 +145,11 @@ export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
                         } else {
                             return <div className="pt-non-ideal-state">
                                 <div className="pt-non-ideal-state-visual pt-non-ideal-state-icon">
-                                    <span className="pt-icon pt-icon-issue"></span>
+                                    <span className="pt-icon issue"></span>
                                 </div>
                                 <h4 className="pt-non-ideal-state-title">{tr("ADD_WMS_LAYER_NO_LAYERS", locale)}</h4>
                                 <div className="pt-non-ideal-state-description">
-                                    Enter a WMS Service URL and click the <span className="pt-icon pt-icon-arrow-right" /> button to load available layers
+                                    Enter a WMS Service URL and click the <span className="pt-icon arrow-right" /> button to load available layers
                                 </div>
                             </div>;
                         }

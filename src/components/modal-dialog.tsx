@@ -84,7 +84,7 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
             <div className="pt-dialog" style={modalStyle}>
                 <div className="pt-dialog-header noselect">
                     <h5>{title}</h5>
-                    <button onClick={this.onClose} aria-label="Close" className="pt-dialog-close-button pt-icon-small-cross"></button>
+                    <button onClick={this.onClose} aria-label="Close" className="pt-dialog-close-button small-cross"></button>
                 </div>
                 <div className="pt-dialog-body" style={modalBodyStyle}>{this.props.children}</div>
             </div>

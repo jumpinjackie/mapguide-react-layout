@@ -42,7 +42,7 @@ export class InitWarningDisplay extends React.Component<InitWarningDisplayProps,
         const locale = this.props.locale || DEFAULT_LOCALE;
         if (warnings && warnings.length && acknowledge) {
             return <Dialog
-                iconName="warning-sign"
+                icon="warning-sign"
                 isOpen={true}
                 onClose={acknowledge}
                 title={tr("WARNING", locale)}>

@@ -440,13 +440,13 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                 <div className="HPlaceholder5px"></div>
                 {(() => {
                     if (hasExternalBaseLayers) {
-                        return <div id="commercialLayerWarning" className="pt-callout pt-intent-primary pt-icon-info-sign">
+                        return <div id="commercialLayerWarning" className="pt-callout pt-intent-primary info-sign">
                             {xlate("QUICKPLOT_COMMERCIAL_LAYER_WARNING", locale)}
                         </div>;
                     }
                 })()}
                 <div className="ButtonContainer FixWidth">
-                    <button type="submit" className="pt-button pt-icon-print pt-intent-primary" onClick={this.onGeneratePlot}>{xlate("QUICKPLOT_GENERATE", locale)}</button>
+                    <button type="submit" className="pt-button print pt-intent-primary" onClick={this.onGeneratePlot}>{xlate("QUICKPLOT_GENERATE", locale)}</button>
                 </div>
                 <input type="hidden" id="margin" name="margin" />
                 <input type="hidden" id="normalizedBox" name="normalizedBox" value={normBox} />

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Collapse } from "@blueprintjs/core";
+import { Collapse, Icon } from "@blueprintjs/core";
 import Measure from "react-measure";
 import {
     GenericEvent,
@@ -105,7 +105,7 @@ export class Accordion extends React.Component<IAccordionProps, any> {
                         const isOpen = (p.id == openPanel);
                         return <div key={p.id} className="component-accordion-panel">
                             <div className="component-accordion-panel-header" style={{ height: PANEL_HEADER_HEIGHT }} data-accordion-panel-id={p.id} onClick={this.onTogglePanel}>
-                                <span className={`pt-icon-standard pt-icon-chevron-${isOpen ? "up" : "down"}`}></span> {p.title}
+                                <Icon icon={isOpen ? "chevron-up" : "chevron-down"} /> {p.title}
                             </div>
                             <Collapse isOpen={isOpen}>
                                 {p.contentRenderer({ width: dim.width, height: (dim.height - (panels.length * PANEL_HEADER_HEIGHT)) }, isResizing)}

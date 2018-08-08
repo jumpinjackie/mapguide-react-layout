@@ -21,12 +21,12 @@ export class ManageLayers extends React.Component<IManageLayersProps, any> {
         super(props);
         this.state = {
             selectedNode: null,
-            nodes: props.layers.map(li => ({ id: li.name, label: li.name, secondaryLabel: li.type, iconName: "pt-icon-layer" }))
+            nodes: props.layers.map(li => ({ id: li.name, label: li.name, secondaryLabel: li.type, icon: "layer" }))
         };
     }
     componentDidUpdate(prevProps: IManageLayersProps) {
         const nextProps = this.props;
-        const nodes = nextProps.layers.map(li => ({ id: li.name, label: li.name, secondaryLabel: li.type, iconName: "pt-icon-layer" }));
+        const nodes = nextProps.layers.map(li => ({ id: li.name, label: li.name, secondaryLabel: li.type, icon: "layer" }));
         this.setState({ nodes: nodes });
     }
     private onMoveLayerDown = (e: GenericEvent) => {
@@ -72,9 +72,9 @@ export class ManageLayers extends React.Component<IManageLayersProps, any> {
         return <div>
             <hr />
             <div className="pt-button-group pt-fill">
-                <button type="button" className="pt-button pt-intent-danger pt-icon-delete" onClick={this.onRemoveLayer} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0}>Remove</button>
-                <button type="button" className="pt-button pt-intent-primary pt-icon-caret-up" onClick={this.onMoveLayerUp} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0 || selectedNode == nodes[0]}></button>
-                <button type="button" className="pt-button pt-intent-primary pt-icon-caret-down" onClick={this.onMoveLayerDown} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0 || selectedNode == nodes[nodes.length - 1]}></button>
+                <button type="button" className="pt-button pt-intent-danger delete" onClick={this.onRemoveLayer} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0}>Remove</button>
+                <button type="button" className="pt-button pt-intent-primary caret-up" onClick={this.onMoveLayerUp} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0 || selectedNode == nodes[0]}></button>
+                <button type="button" className="pt-button pt-intent-primary caret-down" onClick={this.onMoveLayerDown} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0 || selectedNode == nodes[nodes.length - 1]}></button>
             </div>
             <Tree contents={nodes} onNodeClick={this.handleNodeClick} />
         </div>;

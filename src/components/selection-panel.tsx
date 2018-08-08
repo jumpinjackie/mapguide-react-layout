@@ -272,7 +272,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
                             return <DefaultSelectedFeature selectedFeature={feat} cleanHTML={cleanHTML} allowHtmlValues={allowHtmlValues} selectedLayer={meta} locale={locale} />;
                         }
                     } else if (selection == null || (selection.SelectedLayer || []).length == 0) {
-                        return <div className="pt-callout pt-intent-primary pt-icon-info-sign">
+                        return <div className="pt-callout pt-intent-primary info-sign">
                             <p className="selection-panel-no-selection">{xlate("NO_SELECTED_FEATURES", locale)}</p>
                         </div>;
                     }

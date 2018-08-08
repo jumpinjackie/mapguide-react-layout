@@ -200,9 +200,9 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
                     {tr("MEASUREMENT_USE_GEODESIC", locale)}
                 </label>
                 <div className="pt-button-group">
-                    <button type="button" className="pt-button pt-icon-play" disabled={measuring} onClick={this.onStartMeasure}>{tr("MEASUREMENT_START", locale)}</button>
-                    <button type="button" className="pt-button pt-icon-stop" disabled={!measuring} onClick={this.onEndMeasure}>{tr("MEASUREMENT_END", locale)}</button>
-                    <button type="button" className="pt-button pt-icon-cross" onClick={this.onClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</button>
+                    <button type="button" className="pt-button play" disabled={measuring} onClick={this.onStartMeasure}>{tr("MEASUREMENT_START", locale)}</button>
+                    <button type="button" className="pt-button stop" disabled={!measuring} onClick={this.onEndMeasure}>{tr("MEASUREMENT_END", locale)}</button>
+                    <button type="button" className="pt-button cross" onClick={this.onClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</button>
                 </div>
                 {(() => {
                     if (this.state.measuring === true) {

@@ -125,9 +125,9 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
                                 </a>;
                             } else {
                                 if (collapsed) {
-                                    return <a onClick={this.onClickExpand}><span className="pt-icon-standard pt-icon-menu-open" /></a>;
+                                    return <a onClick={this.onClickExpand}><span className="standard menu-open" /></a>;
                                 } else {
-                                    return <a onClick={this.onClickCollapse}><span className="pt-icon-standard pt-icon-menu-closed" /></a>;
+                                    return <a onClick={this.onClickCollapse}><span className="standard menu-closed" /></a>;
                                 }
                             }
                         })()}
@@ -135,21 +135,21 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
                     {(() => {
                         if (this.props.taskpane) {
                             return <li className={collapsed == false && activeTab == "tasks" ? "active" : ""}>
-                                <a onClick={this.onActivateTasks} title={tr("TPL_SIDEBAR_OPEN_TASKPANE", this.props.locale)} role="tab"><span className="pt-icon-standard pt-icon-application" /></a>
+                                <a onClick={this.onActivateTasks} title={tr("TPL_SIDEBAR_OPEN_TASKPANE", this.props.locale)} role="tab"><span className="standard application" /></a>
                             </li>;
                         }
                     })()}
                     {(() => {
                         if (this.props.legend) {
                             return <li className={collapsed == false && activeTab == "legend" ? "active" : ""}>
-                                <a onClick={this.onActivateLegend} title={tr("TPL_SIDEBAR_OPEN_LEGEND", this.props.locale)} role="tab"><span className="pt-icon-standard pt-icon-layers" /></a>
+                                <a onClick={this.onActivateLegend} title={tr("TPL_SIDEBAR_OPEN_LEGEND", this.props.locale)} role="tab"><span className="standard layers" /></a>
                             </li>;
                         }
                     })()}
                     {(() => {
                         if (this.props.selection) {
                             return <li className={collapsed == false && activeTab == "selection" ? "active" : ""}>
-                                <a onClick={this.onActivateSelection} title={tr("TPL_SIDEBAR_OPEN_SELECTION_PANEL", this.props.locale)} role="tab"><span className="pt-icon-standard pt-icon-th" /></a>
+                                <a onClick={this.onActivateSelection} title={tr("TPL_SIDEBAR_OPEN_SELECTION_PANEL", this.props.locale)} role="tab"><span className="standard th" /></a>
                             </li>;
                         }
                     })()}

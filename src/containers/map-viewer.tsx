@@ -497,16 +497,16 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         }
     }
     toastSuccess(iconName: string, message: string): string | undefined {
-        return this.toaster.show({ iconName: (iconName as any), message: message, intent: Intent.SUCCESS });
+        return this.toaster.show({ icon: (iconName as any), message: message, intent: Intent.SUCCESS });
     }
     toastWarning(iconName: string, message: string): string | undefined {
-        return this.toaster.show({ iconName: (iconName as any), message: message, intent: Intent.WARNING });
+        return this.toaster.show({ icon: (iconName as any), message: message, intent: Intent.WARNING });
     }
     toastError(iconName: string, message: string): string | undefined {
-        return this.toaster.show({ iconName: (iconName as any), message: message, intent: Intent.DANGER });
+        return this.toaster.show({ icon: (iconName as any), message: message, intent: Intent.DANGER });
     }
     toastPrimary(iconName: string, message: string): string | undefined {
-        return this.toaster.show({ iconName: (iconName as any), message: message, intent: Intent.PRIMARY });
+        return this.toaster.show({ icon: (iconName as any), message: message, intent: Intent.PRIMARY });
     }
     dismissToast(key: string): void {
         this.toaster.dismiss(key);

@@ -82,7 +82,7 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
                                    selectedFeatureRenderer={this.props.selectedFeatureRenderer}
                                    maxHeight={maxHeight} />;
         } else {
-            return <div className="pt-callout pt-intent-primary pt-icon-info-sign">
+            return <div className="pt-callout pt-intent-primary info-sign">
                 <p className="selection-panel-no-selection">{tr("NO_SELECTED_FEATURES", locale)}</p>
             </div>;
         }

@@ -1,6 +1,6 @@
 @import "ol.css";
 @import "../../stdassets/sprites/icons.css";
-@import "~@blueprintjs/core/dist/blueprint.css";
+@import "~@blueprintjs/core/lib/css/blueprint.css";
 
 .invalidated-task-pane {
     opacity: 0.6; /* Real browsers */

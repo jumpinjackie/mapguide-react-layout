@@ -1,8 +1,6 @@
 import * as React from "react";
-import { isMenu, isMenuRef, isComponentFlyout } from "../utils/type-guards";
-import { IDOMElementMetrics, FlyoutVisibilitySet, GenericEvent, GenericEventHandler } from "../api/common";
-import { Popover, Position } from "@blueprintjs/core";
-import { MenuComponent } from "./menu";
+import { isMenuRef, isComponentFlyout } from "../utils/type-guards";
+import { IDOMElementMetrics, FlyoutVisibilitySet, GenericEvent } from "../api/common";
 import { IToolbarContext, TOOLBAR_CONTEXT_VALIDATION_MAP } from "./context";
 import { STR_EMPTY } from "../utils/string";
 import { Icon } from "./icon";

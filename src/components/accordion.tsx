@@ -1,11 +1,12 @@
 import * as React from "react";
-import { Collapse, Icon } from "@blueprintjs/core";
 import Measure from "react-measure";
 import {
     GenericEvent,
     GenericEventHandler
 } from "../api/common";
 import { safePropAccess } from '../utils/safe-prop';
+import { Icon } from '@blueprintjs/core/lib/esm/components/icon/icon';
+import { Collapse } from '@blueprintjs/core/lib/esm/components/collapse/collapse';
 
 /**
  * Accordion panel dimensions

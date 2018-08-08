@@ -69,7 +69,6 @@ import { isMenu } from '../utils/type-guards';
 import { tr } from "../api/i18n";
 const isMobile = require("ismobilejs");
 import { MenuComponent } from "./menu";
-import { ContextMenuTarget, ContextMenu } from "@blueprintjs/core";
 import { IMapViewerContextCallback, IMapViewerContextProps, MapViewerContext, MgLayerSet } from "./map-viewer-context";
 import xor = require("lodash.xor");
 
@@ -110,6 +109,8 @@ import LineString from "ol/geom/linestring";
 import Circle from "ol/geom/circle";
 import { BLANK_GIF_DATA_URI } from "../constants/index";
 import { safePropAccess } from '../utils/safe-prop';
+import { ContextMenuTarget } from '@blueprintjs/core/lib/esm/components/context-menu/contextMenuTarget';
+import { ContextMenu } from '@blueprintjs/core/lib/esm/components';
 
 plugins.register(PluginType.MAP_RENDERER, MapRenderer);
 plugins.register(PluginType.LAYER_RENDERER, TileLayerRenderer);

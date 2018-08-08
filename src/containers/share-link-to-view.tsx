@@ -8,9 +8,10 @@ import { addUrlProps } from 'react-url-query';
 import { urlPropsQueryConfig, IAppUrlStateProps } from './url-state';
 import { tr } from '../api/i18n';
 import { getViewer } from '../api/runtime';
-import { Checkbox, TextArea, Toaster } from '@blueprintjs/core';
 import CopyToClipboard = require('react-copy-to-clipboard');
 import queryString = require("query-string");
+import { TextArea } from '@blueprintjs/core/lib/esm/components/forms/textArea';
+import { Checkbox } from '@blueprintjs/core/lib/esm/components/forms/controls';
 
 /**
  * 

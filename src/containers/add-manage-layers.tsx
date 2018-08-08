@@ -14,9 +14,10 @@ import {
 } from "../api/common";
 import { Client } from "../api/client";
 import { WmsCapabilitiesTree } from "../components/wms-capabilities-tree";
-import { Tab, Tabs } from "@blueprintjs/core";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
+import { Tabs } from '@blueprintjs/core/lib/esm/components/tabs/tabs';
+import { Tab } from '@blueprintjs/core/lib/esm/components/tabs/tab';
 
 interface ILayerManagerProps {
     locale: string | undefined;

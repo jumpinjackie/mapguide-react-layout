@@ -1,10 +1,12 @@
 import * as React from "react";
 import { isMenu, isMenuRef } from "../utils/type-guards";
-import { Menu, MenuItem, MenuDivider } from "@blueprintjs/core";
 import { IItem, IInlineMenu, IFlyoutMenu, getIconStyle, getEnabled } from "./toolbar";
 import { Icon } from "./icon";
 import { GenericEvent } from "../api/common";
 import { safePropAccess } from '../utils/safe-prop';
+import { Menu } from '@blueprintjs/core/lib/esm/components/menu/menu';
+import { MenuDivider } from '@blueprintjs/core/lib/esm/components/menu/menuDivider';
+import { MenuItem } from '@blueprintjs/core/lib/esm/components/menu/menuItem';
 
 const MENU_ITEM_HEIGHT = 30;
 

@@ -21,7 +21,7 @@ import olFeature from "ol/feature";
 import olVectorSource from "ol/source/vector";
 import olVectorLayer from "ol/layer/vector";
 import { MapCapturerContext, Size, IMapCapturerContextCallback } from "./map-capturer-context";
-import { Slider, Intent } from "@blueprintjs/core";
+import { Slider } from '@blueprintjs/core/lib/esm/components/slider/slider';
 
 function getMargin() {
     /*

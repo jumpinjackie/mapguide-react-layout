@@ -22,7 +22,6 @@ import * as LegendActions from "../actions/legend";
 import { deArrayify, buildSelectionXml } from "../api/builders/deArrayify";
 import { FormFrameShim } from "../components/form-frame-shim";
 import { getCommand, DefaultCommands, CommandConditions } from "../api/registry/command";
-import { Intent, IToastProps } from "@blueprintjs/core";
 import { tr } from "../api/i18n";
 import { serialize } from "../api/builders/mapagent";
 import { ILocalizedMessages } from "../strings/msgdef";

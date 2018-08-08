@@ -36,7 +36,9 @@ import { DefaultComponentNames } from "../api/registry/component";
 import { processMenuItems } from "../utils/menu";
 import { tr } from "../api/i18n";
 import { IOLFactory, OLFactory } from "../api/ol-factory";
-import { Intent, Toaster, Position as BP_Pos } from "@blueprintjs/core";
+import { Toaster } from '@blueprintjs/core/lib/esm/components/toast/toaster';
+import { Intent } from '@blueprintjs/core/lib/esm/common/intent';
+import { Position as BP_Pos } from '@blueprintjs/core/lib/esm/common/position';
 
 export interface IMapViewerContainerProps {
     overviewMapElementSelector?: () => (Element | null);

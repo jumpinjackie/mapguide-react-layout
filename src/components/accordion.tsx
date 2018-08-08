@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Collapse } from "@blueprintjs/core";
-import Measure = require("react-measure");
+import Measure from "react-measure";
 import {
     GenericEvent,
     GenericEventHandler
@@ -58,7 +58,11 @@ export class Accordion extends React.Component<IAccordionProps, any> {
         super(props);
         const activeId = this.validatePanelId(props.panels, props.activePanelId);
         this.state = {
-            openPanel: activeId || props.panels[props.panels.length - 1].id
+            openPanel: activeId || props.panels[props.panels.length - 1].id,
+            dim: {
+                width: -1,
+                height: -1
+            }
         };
     }
     private onTogglePanel = (e: GenericEvent) => {
@@ -89,23 +93,26 @@ export class Accordion extends React.Component<IAccordionProps, any> {
         }
     }
     render(): JSX.Element {
-        const { openPanel } = this.state;
+        const { openPanel, dim } = this.state;
         const { panels, style, isResizing } = this.props;
-        return <Measure>
-            {(dim: any) => {
-                return <div style={style} className="component-accordion">
-                {panels.map(p => {
-                    const isOpen = (p.id == openPanel);
-                    return <div key={p.id} className="component-accordion-panel">
-                        <div className="component-accordion-panel-header" style={{ height: PANEL_HEADER_HEIGHT }} data-accordion-panel-id={p.id} onClick={this.onTogglePanel}>
-                            <span className={`pt-icon-standard pt-icon-chevron-${isOpen ? "up" : "down"}`}></span> {p.title}
-                        </div>
-                        <Collapse isOpen={isOpen}>
-                            {p.contentRenderer({ width: dim.width, height: (dim.height - (panels.length * PANEL_HEADER_HEIGHT)) }, isResizing)}
-                        </Collapse>
-                    </div>;
-                })}
-            </div>
+        return <Measure bounds onResize={(contentRect) => {
+            console.log(contentRect);
+            this.setState({ dim: contentRect.entry })
+          }}>
+            {({ measureRef }) => {
+                return <div ref={measureRef} style={style} className="component-accordion">
+                    {panels.map(p => {
+                        const isOpen = (p.id == openPanel);
+                        return <div key={p.id} className="component-accordion-panel">
+                            <div className="component-accordion-panel-header" style={{ height: PANEL_HEADER_HEIGHT }} data-accordion-panel-id={p.id} onClick={this.onTogglePanel}>
+                                <span className={`pt-icon-standard pt-icon-chevron-${isOpen ? "up" : "down"}`}></span> {p.title}
+                            </div>
+                            <Collapse isOpen={isOpen}>
+                                {p.contentRenderer({ width: dim.width, height: (dim.height - (panels.length * PANEL_HEADER_HEIGHT)) }, isResizing)}
+                            </Collapse>
+                        </div>;
+                    })}
+                </div>
             }}
         </Measure>;
     }

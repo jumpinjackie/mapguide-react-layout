@@ -162,9 +162,9 @@
     "@types/node" "*"
     "@types/react" "*"
 
-"@types/react-measure@0.4.8":
-  version "0.4.8"
-  resolved "https://registry.yarnpkg.com/@types/react-measure/-/react-measure-0.4.8.tgz#8747c98531fb05ae9a6b9422979606aa4dd2d25f"
+"@types/react-measure@2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@types/react-measure/-/react-measure-2.0.4.tgz#54ca765f7b5171861e8249f7184a07fa24724769"
   dependencies:
     "@types/react" "*"
 
@@ -5671,7 +5671,7 @@ prompts@^0.1.9:
     kleur "^2.0.1"
     sisteransi "^0.1.1"
 
-prop-types@15.6.2, prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.8, prop-types@^15.5.9, prop-types@^15.6.0, prop-types@^15.6.2:
+prop-types@15.6.2, prop-types@^15.5.10, prop-types@^15.5.6, prop-types@^15.5.8, prop-types@^15.5.9, prop-types@^15.6.0, prop-types@^15.6.2:
   version "15.6.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
   dependencies:
@@ -5887,13 +5887,13 @@ react-is@^16.4.2:
   version "16.4.2"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.4.2.tgz#84891b56c2b6d9efdee577cc83501dfc5ecead88"
 
-react-measure@1.4.7:
-  version "1.4.7"
-  resolved "https://registry.yarnpkg.com/react-measure/-/react-measure-1.4.7.tgz#a1d2ca0dcfef04978b7ac263a765dcb6a0936fdb"
+react-measure@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/react-measure/-/react-measure-2.1.0.tgz#e9a4645066d6fed54cf0ce44aa7a28da6dd7a9f7"
   dependencies:
     get-node-dimensions "^1.2.0"
-    prop-types "^15.5.4"
-    resize-observer-polyfill "^1.4.1"
+    prop-types "^15.5.10"
+    resize-observer-polyfill "^1.4.2"
 
 react-reconciler@^0.7.0:
   version "0.7.0"
@@ -6193,7 +6193,7 @@ requires-port@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
 
-resize-observer-polyfill@^1.4.1:
+resize-observer-polyfill@^1.4.2:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/resize-observer-polyfill/-/resize-observer-polyfill-1.5.0.tgz#660ff1d9712a2382baa2cad450a4716209f9ca69"
 

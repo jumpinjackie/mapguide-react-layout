@@ -109,7 +109,7 @@
     "react-test-renderer": "16.4.2",
     "rimraf": "2.6.2",
     "source-map-loader": "0.2.3",
-    "style-loader": "0.22.0",
+    "style-loader": "0.22.1",
     "testcafe": "^0.21.0",
     "testcafe-react-selectors": "^2.1.0",
     "thread-loader": "^1.1.5",

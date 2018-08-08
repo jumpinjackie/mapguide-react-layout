@@ -1,4 +1,5 @@
-var enzyme = require('enzyme');
-var Adapter = require('enzyme-adapter-react-16');
+require('jsdom-global/register');
+const enzyme = require('enzyme');
+const Adapter = require('enzyme-adapter-react-16');
 
 enzyme.configure({ adapter: new Adapter() });

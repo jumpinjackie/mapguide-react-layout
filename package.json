@@ -75,7 +75,7 @@
     "whatwg-fetch": "2.0.4"
   },
   "devDependencies": {
-    "@types/enzyme": "3.1.12",
+    "@types/enzyme": "3.1.13",
     "@types/jest": "23.3.0",
     "@types/lodash.debounce": "4.0.4",
     "@types/lodash.uniq": "4.5.4",

@@ -3,6 +3,8 @@
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 //const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const baseAppEntries = [
@@ -25,7 +27,7 @@ const basePlugins = [
     new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output
         // both options are optional
-        filename: "[name].css",
+        filename: process.env.DEBUG_BUILD === '1' ? '[name]-debug.css' : '[name].css',
         chunkFilename: "[id].css"
     })
 ];
@@ -107,7 +109,7 @@ const rules = [
         exclude: /(node_modules|icons\.png)/,
         loader: "file-loader",
         options: {
-            name (file) {
+            name(file) {
                 var fidx = file.indexOf("stdassets");
                 var relPath = file.substring(fidx).replace(/\\/g, "/");
                 if (relPath.startsWith("stdassets/images/icons/")) {
@@ -125,7 +127,7 @@ const rules = [
         test: /icons\.(png|gif)$/,
         loader: "file-loader",
         options: {
-            name (file) {
+            name(file) {
                 return "[path][name].[ext]";
             }
         }
@@ -135,7 +137,7 @@ const rules = [
         exclude: /node_modules/,
         loader: "file-loader",
         options: {
-            name (file) {
+            name(file) {
                 return "stdassets/cursors/[name].[ext]";
             },
             publicPath: "./dist"
@@ -155,8 +157,22 @@ if (process.env.BUILD_MODE === 'production' || process.env.DEBUG_BUILD === '1') 
     plugins.push(new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }));
 }
 */
+
+const opts = (process.env.BUILD_MODE === 'production')
+    ? {
+        minimizer: [
+            new UglifyJsPlugin({
+                cache: true,
+                parallel: true,
+                sourceMap: true // set to true if you want JS source maps
+            }),
+            new OptimizeCSSAssetsPlugin({})
+        ]
+    }
+    : { minimize: false }
+
 module.exports = {
-    mode: process.env.BUILD_MODE,
+    optimization: opts,
     entry: {
         viewer: appEntries
     },

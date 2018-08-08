@@ -1,5 +1,5 @@
 @import "ol.css";
-@import "../../stdassets/images/icons.css";
+@import "../../stdassets/sprites/icons.css";
 @import "~@blueprintjs/core/dist/blueprint.css";
 
 .invalidated-task-pane {

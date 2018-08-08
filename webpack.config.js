@@ -2,7 +2,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
-const loaders = require('./webpack/loaders');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 //const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const baseAppEntries = [
@@ -21,6 +21,12 @@ const basePlugins = [
     }),
     new webpack.DefinePlugin({
         __DEV__: process.env.BUILD_MODE !== 'production'
+    }),
+    new MiniCssExtractPlugin({
+        // Options similar to the same options in webpackOptions.output
+        // both options are optional
+        filename: "[name].css",
+        chunkFilename: "[id].css"
     })
 ];
 
@@ -47,22 +53,99 @@ const plugins = basePlugins
     .concat(process.env.BUILD_MODE === 'development' ? devPlugins : []);
 
 const rules = [
-    loaders.sourcemap,
-    loaders.html,
-    loaders.css,
-    loaders.less,
-    loaders.fonts,
-    loaders.babel,
-    /*
-    loaders.svg,
-    loaders.eot,
-    loaders.woff,
-    loaders.woff2,
-    loaders.ttf,
-    */
-    loaders.image,
-    loaders.cursors,
-    loaders.tsx
+    { //sourcemap
+        test: /\.js$/,
+        loader: "source-map-loader",
+        include: /@blueprintjs/,
+        enforce: "pre"
+    },
+    { //html
+        test: /\.html$/,
+        loader: 'raw-loader',
+        exclude: /node_modules/
+    },
+    { //css
+        test: /\.css$/,
+        use: [
+            {
+                loader: MiniCssExtractPlugin.loader,
+                options: {
+                    publicPath: './'
+                }
+            },
+            "css-loader"
+        ]
+    },
+    { //less
+        test: /\.less$/,
+        loader: 'less-loader!css-loader',
+        exclude: /node_modules/
+    },
+    { //fonts
+        test: /\.(woff|woff2|ttf|eot|svg)$/,
+        loader: "file-loader",
+        options: {
+            name: "stdassets/fonts/[name].[ext]"
+        }
+    },
+    { //babel
+        test: /\.js$/,
+        exclude: /node_modules/,
+        /*
+        include: [
+          path.resolve(__dirname, "../node_modules/history")
+        ],*/
+        use: {
+            loader: "babel-loader",
+            options: {
+                plugins: ["babel-plugin-transform-object-assign"]
+            }
+        }
+    },
+    { //Non-sprite images
+        test: /\.(png|gif)$/,
+        exclude: /(node_modules|icons\.png)/,
+        loader: "file-loader",
+        options: {
+            name (file) {
+                var fidx = file.indexOf("stdassets");
+                var relPath = file.substring(fidx).replace(/\\/g, "/");
+                if (relPath.startsWith("stdassets/images/icons/")) {
+                    return "stdassets/images/icons/[name].[ext]";
+                } else if (relPath.startsWith("stdassets/images/res")) {
+                    return "stdassets/images/res/[name].[ext]";
+                } else {
+                    return "[path][name].[ext]";
+                }
+            },
+            publicPath: "./dist"
+        }
+    },
+    { //Image sprite
+        test: /icons\.(png|gif)$/,
+        loader: "file-loader",
+        options: {
+            name (file) {
+                return "[path][name].[ext]";
+            }
+        }
+    },
+    { //Cursors
+        test: /\.cur$/,
+        exclude: /node_modules/,
+        loader: "file-loader",
+        options: {
+            name (file) {
+                return "stdassets/cursors/[name].[ext]";
+            },
+            publicPath: "./dist"
+        }
+    },
+    { //TypeScript React
+        test: /\.tsx?$/,
+        loader: 'ts-loader',
+        exclude: /(node_modules|test-utils|\.test\.ts$)/
+    }
 ];
 /*
 if (process.env.BUILD_MODE === 'production' || process.env.DEBUG_BUILD === '1') {

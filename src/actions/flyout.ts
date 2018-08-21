@@ -1,5 +1,5 @@
 import * as Constants from "../constants";
-import { IDOMElementMetrics, ReduxAction } from "../api/common";
+import { IDOMElementMetrics } from "../api/common";
 import {
     IOpenFlyoutAction, 
     ICloseFlyoutAction,
@@ -14,7 +14,7 @@ import { ActionType } from '../constants/actions';
  * @export
  * @param {string} id
  * @param {IDOMElementMetrics} metrics
- * @returns {ReduxAction}
+ * @returns {IOpenFlyoutAction}
  */
 export function openFlyout(id: string, metrics: IDOMElementMetrics): IOpenFlyoutAction {
     return {
@@ -31,7 +31,7 @@ export function openFlyout(id: string, metrics: IDOMElementMetrics): IOpenFlyout
  *
  * @export
  * @param {string} id
- * @returns {ReduxAction}
+ * @returns {ICloseFlyoutAction}
  */
 export function closeFlyout(id: string): ICloseFlyoutAction {
     return {
@@ -50,7 +50,7 @@ export function closeFlyout(id: string): ICloseFlyoutAction {
  * @param {IDOMElementMetrics} metrics
  * @param {string} name
  * @param {*} props
- * @returns {ReduxAction}
+ * @returns {IOpenComponentInFlyoutAction}
  */
 export function openComponent(id: string, metrics: IDOMElementMetrics, name: string, props: any): IOpenComponentInFlyoutAction {
     return {
@@ -69,7 +69,7 @@ export function openComponent(id: string, metrics: IDOMElementMetrics, name: str
  *
  * @export
  * @param {string} id
- * @returns {ReduxAction}
+ * @returns {ICloseComponentInFlyoutAction}
  */
 export function closeComponent(id: string): ICloseComponentInFlyoutAction {
     return {

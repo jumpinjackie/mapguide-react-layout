@@ -15,6 +15,7 @@ import olOverlay from "ol/overlay";
 
 import { IOLFactory } from "./ol-factory";
 import { Dispatch, Action } from "redux";
+import { ViewerAction } from '../actions/defs';
 
 // Event boilerplate
 export type GenericEvent = any;
@@ -1301,7 +1302,7 @@ export interface INameValuePair {
 /**
  * Describes a redux reducer function
  */
-export type ReducerFunction<TState> = (state: TState, action: ReduxAction) => TState;
+export type ReducerFunction<TState> = (state: TState, action: ViewerAction) => TState;
 
 /**
  * Describes the reducer state branch for the current viewer template
@@ -1708,29 +1709,6 @@ export interface IApplicationState {
 // Redux typedefs to tighten up our redux code
 
 /**
- * Defines a redux action payload
- *
- * @export
- * @interface ReduxAction
- */
-export interface ReduxAction {
-    /**
-     * The type of action
-     *
-     * @type {string}
-     * @memberof ReduxAction
-     */
-    type: string;
-    /**
-     * The action payload
-     *
-     * @type {*}
-     * @memberof ReduxAction
-     */
-    payload?: any;
-}
-
-/**
  * Describes the redux store
  *
  * @export
@@ -1754,14 +1732,9 @@ export interface ReduxStore {
 export type ReduxThunkedAction = (dispatch: ReduxDispatch, getState: () => Readonly<IApplicationState>) => any;
 
 /**
- * Describes a redux action creator
- */
-export type ReduxActionCreator = ReduxAction | ReduxThunkedAction | Action;
-
-/**
  * Describes a redux dispatcher function. A redux dispatch pushes new state to the redux store
  */
-export type ReduxDispatch = Dispatch<any>;//(action: ReduxActionCreator) => void;
+export type ReduxDispatch = (action: ViewerAction | ReduxThunkedAction) => void;
 
 /**
  * A function that does nothing

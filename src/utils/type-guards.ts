@@ -2,11 +2,11 @@ import {
     InitError,
     IMapView,
     IModalDisplayOptions,
-    IModalComponentDisplayOptions,
-    ReduxAction
+    IModalComponentDisplayOptions
 } from "../api/common";
 import { MapLayer } from "../api/contracts/runtime-map";
 import { IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../components/toolbar";
+import { ViewerAction } from '../actions/defs';
 
 /**
  * Indicates if the given argument is an IModalDisplayOptions
@@ -124,13 +124,13 @@ export function isCoordinate(coord: any): coord is [number, number] {
 }
 
 /**
- * Indicates if the given argument has the shape of a ReduxAction
+ * Indicates if the given argument has the shape of a ViewerAction
  *
  * @export
  * @param {*} action
- * @returns {action is ReduxAction}
+ * @returns {action is ViewerAction}
  */
-export function isAction(action: any): action is ReduxAction {
+export function isAction(action: any): action is ViewerAction {
     return typeof (action.type) != 'undefined'
         && typeof (action.payload) != 'undefined';
 }

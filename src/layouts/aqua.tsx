@@ -12,7 +12,6 @@ import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
     NOOP,
-    ReduxAction,
     ReduxDispatch,
     IApplicationState,
     IConfigurationReducerState,
@@ -25,13 +24,13 @@ import * as TemplateActions from "../actions/template";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
 import InitWarningDisplay from "../containers/init-warning-display";
 import { ActionType } from '../constants/actions';
-import { IElementState } from '../actions/defs';
+import { IElementState, ViewerAction } from '../actions/defs';
 
-function aquaTemplateReducer(state: ITemplateReducerState, action: ReduxAction): ITemplateReducerState {
-    const data: boolean | IElementState | undefined = action.payload;
+function aquaTemplateReducer(state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
         case ActionType.FUSION_SET_LEGEND_VISIBILITY:
             {
+                const data = action.payload;
                 if (typeof(data) == "boolean") {
                     let state1: Partial<ITemplateReducerState> = { legendVisible: data };
                     return { ...state, ...state1 };
@@ -39,6 +38,7 @@ function aquaTemplateReducer(state: ITemplateReducerState, action: ReduxAction):
             }
         case ActionType.FUSION_SET_SELECTION_PANEL_VISIBILITY:
             {
+                const data = action.payload;
                 if (typeof(data) == "boolean") {
                     let state1: Partial<ITemplateReducerState> = { selectionPanelVisible: data };
                     return { ...state, ...state1 };
@@ -51,6 +51,7 @@ function aquaTemplateReducer(state: ITemplateReducerState, action: ReduxAction):
             }
         case ActionType.FUSION_SET_TASK_PANE_VISIBILITY:
             {
+                const data = action.payload;
                 if (typeof(data) == "boolean") {
                     let state1: Partial<ITemplateReducerState> = { taskPaneVisible: data };
                     return { ...state, ...state1 };

@@ -3,7 +3,6 @@ import {
     ActiveMapTool,
     ICommand,
     IMapView,
-    ReduxAction,
     ReduxThunkedAction,
     getCurrentView,
     getRuntimeMap,
@@ -237,7 +236,7 @@ export function setCurrentView(view: IMapView): ReduxThunkedAction {
                 dispatchThis = false;
             }
         }
-        if (dispatchThis) {
+        if (dispatchThis && mapName) {
             dispatch({
                 type: ActionType.MAP_SET_VIEW,
                 payload: {
@@ -255,7 +254,7 @@ export function setCurrentView(view: IMapView): ReduxThunkedAction {
  * @export
  * @param {number} width 
  * @param {number} height 
- * @returns {ReduxAction} 
+ * @returns {IMapResizedAction} 
  */
 export function mapResized(width: number, height: number): IMapResizedAction {
     return {
@@ -273,7 +272,7 @@ export function mapResized(width: number, height: number): IMapResizedAction {
  * @export
  * @param {string} mapName The name of the current runtime map
  * @param {*} selectionSet The selection set to apply
- * @returns {ReduxAction}
+ * @returns {IMapSetSelectionAction}
  */
 export function setSelection(mapName: string, selectionSet: any): IMapSetSelectionAction {
     return {
@@ -305,7 +304,7 @@ export function invokeCommand(cmd: ICommand, parameters?: any): ReduxThunkedActi
  *
  * @export
  * @param {number} busyCount The current busy count
- * @returns {ReduxAction}
+ * @returns {IMapSetBusyCountAction}
  */
 export function setBusyCount(busyCount: number): IMapSetBusyCountAction {
     return {
@@ -399,7 +398,7 @@ export function setLayerTransparency(mapName: string, layerName: string, opacity
  * 
  * @export
  * @param {UnitOfMeasure} unit 
- * @returns {ReduxAction} 
+ * @returns {IMapSetViewSizeUnitsAction} 
  */
 export function setViewSizeUnits(unit: UnitOfMeasure): IMapSetViewSizeUnitsAction {
     return {
@@ -530,7 +529,7 @@ export function setViewRotationEnabled(enabled: boolean): IMapSetViewRotationEna
  * @param {string} mapName 
  * @param {string} layerId 
  * @param {number} featureIndex 
- * @returns {ReduxAction} 
+ * @returns {IShowSelectedFeatureAction} 
  */
 export function showSelectedFeature(mapName: string, layerId: string, featureIndex: number): IShowSelectedFeatureAction {
     return {

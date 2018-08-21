@@ -86,13 +86,15 @@ export function refresh(): ReduxThunkedAction {
                 session: map.SessionId,
                 requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups
             }).then(res => {
-                dispatch({
-                    type: ActionType.MAP_REFRESH,
-                    payload: {
-                        mapName: args.activeMapName,
-                        map: res
-                    }
-                });
+                if (args.activeMapName) {
+                    dispatch({
+                        type: ActionType.MAP_REFRESH,
+                        payload: {
+                            mapName: args.activeMapName,
+                            map: res
+                        }
+                    });
+                }
             });
         }
     };

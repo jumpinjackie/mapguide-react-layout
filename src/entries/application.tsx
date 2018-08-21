@@ -2,11 +2,12 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import App, { IAppProps } from "../containers/app";
-import { ClientKind, ReduxAction, ReduxThunkedAction, ICommand, IApplicationState } from "../api/common";
+import { ClientKind, ReduxThunkedAction, ICommand, IApplicationState } from "../api/common";
 import configureStore from "../store/configure-store";
 import { CONFIG_INITIAL_STATE } from "../reducers/config";
 import { getCommand as getRegisteredCommand } from "../api/registry/command";
 import { IConfigurationReducerState } from '..';
+import { ViewerAction } from '../actions/defs';
 
 /**
  * Extra application mount options.
@@ -90,10 +91,10 @@ export class ApplicationViewModel {
     /**
      * Dispatches the given action
      * 
-     * @param {(ReduxAction | ReduxThunkedAction)} action 
+     * @param {(ViewerAction | ReduxThunkedAction)} action 
      * @memberof ApplicationViewModel
      */
-    public dispatch(action: ReduxAction | ReduxThunkedAction) {
+    public dispatch(action: ViewerAction | ReduxThunkedAction) {
         this._store.dispatch(action);
     }
     /**

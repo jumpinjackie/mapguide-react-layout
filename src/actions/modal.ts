@@ -2,8 +2,7 @@ import * as Constants from "../constants";
 import {
     IModalParameters,
     IModalComponentDisplayOptions,
-    IModalDisplayOptions,
-    ReduxAction
+    IModalDisplayOptions
 } from "../api/common";
 import { ActionType } from '../constants/actions';
 import { ICloseModalAction, IShowModalUrlAction, IShowComponentInModalAction } from './defs';
@@ -13,7 +12,7 @@ import { ICloseModalAction, IShowModalUrlAction, IShowComponentInModalAction } f
  *
  * @export
  * @param {*} options Modal dialog display options
- * @returns {ReduxAction}
+ * @returns {IShowComponentInModalAction}
  */
 export function showModalComponent(options: IModalComponentDisplayOptions): IShowComponentInModalAction {
     return {
@@ -29,7 +28,7 @@ export function showModalComponent(options: IModalComponentDisplayOptions): ISho
  *
  * @export
  * @param {*} options Modal dialog display options
- * @returns {ReduxAction}
+ * @returns {IShowModalUrlAction}
  */
 export function showModalUrl(options: IModalDisplayOptions): IShowModalUrlAction {
     return {
@@ -45,7 +44,7 @@ export function showModalUrl(options: IModalDisplayOptions): IShowModalUrlAction
  *
  * @export
  * @param {*} options Modal dialog hide options
- * @returns {ReduxAction}
+ * @returns {ICloseModalAction}
  */
 export function hideModal(options: any): ICloseModalAction {
     return {

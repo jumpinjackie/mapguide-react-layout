@@ -28,8 +28,7 @@ import {
 import {
     IExternalBaseLayer,
     ReduxThunkedAction,
-    IMapViewer,
-    ReduxAction
+    IMapViewer
 } from "../api/common";
 import { strEndsWith } from "../utils/string";
 import { IView } from "../api/contracts/common";

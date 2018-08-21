@@ -23,6 +23,7 @@ import { IApplicationContext, APPLICATION_CONTEXT_VALIDATION_MAP } from "../comp
 import { safePropAccess } from '../utils/safe-prop';
 import { UrlValueChangeCallback, IAppUrlStateProps, urlPropsQueryConfig } from './url-state';
 import { addUrlProps } from 'react-url-query';
+import { IElementState } from '../actions/defs';
 
 /**
  * Callback interface for propagating changes to URL state
@@ -124,7 +125,7 @@ export interface IAppState {
  */
 export interface IAppDispatch {
     initLayout: (args: IInitAppLayout) => void;
-    setElementVisibility: (states: TemplateActions.IElementState) => void;
+    setElementVisibility: (states: IElementState) => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IAppProps): Partial<IAppState> {
@@ -204,7 +205,7 @@ export class App extends React.Component<AppProps, any> {
         } = this.props;
         if (setElementVisibility && initialElementVisibility) {
             const { taskpane, legend, selection } = initialElementVisibility;
-            const states: TemplateActions.IElementState = {
+            const states: IElementState = {
                 taskPaneVisible: typeof (taskpane) != 'undefined' ? taskpane : true,
                 legendVisible: typeof (legend) != 'undefined' ? legend : true,
                 selectionPanelVisible: typeof (selection) != 'undefined' ? selection : true

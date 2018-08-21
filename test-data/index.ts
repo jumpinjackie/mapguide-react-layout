@@ -22,6 +22,7 @@ import { TOOLBAR_INITIAL_STATE } from "../src/reducers/toolbar";
 import { VIEWER_INITIAL_STATE } from "../src/reducers/viewer";
 import { MOUSE_INITIAL_STATE } from "../src/reducers/mouse";
 import { TEMPLATE_INITIAL_STATE } from "../src/reducers/template";
+import { ActionType } from '../src/constants/actions';
 
 export function createMap(): any {
     return {
@@ -578,7 +579,7 @@ export function createInitAction(map: RuntimeMap, initialView: IView, locale = "
     const maps: any = {};
     maps[map.Name] = map;
     return {
-        type: Constants.INIT_APP,
+        type: ActionType.INIT_APP,
         payload: {
             initialUrl: "server/TaskPane.html",
             maps: maps,

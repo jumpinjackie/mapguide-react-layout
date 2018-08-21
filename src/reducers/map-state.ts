@@ -10,6 +10,8 @@ import { isMapView, isCoordinate } from "../utils/type-guards";
 import { AnyAction } from "redux";
 import * as logger from "../utils/logger";
 import uniq = require("lodash.uniq");
+import { ActionType } from '../constants/actions';
+import { ViewerAction } from '../actions/defs';
 
 export const MAP_STATE_INITIAL_STATE: IBranchedMapState = {
 
@@ -41,11 +43,11 @@ function mergeSubState(state: IBranchedMapState, mapName: string, subState: Part
     return { ...state, ...state1 };
 }
 
-export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
-    const payload: any = typeof(action.payload) != 'undefined' ? action.payload : {};
+export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerAction) {
     switch (action.type) {
-        case Constants.MAP_REFRESH:
+        case ActionType.MAP_REFRESH:
             {
+                const { payload } = action;
                 const subState = state[payload.mapName];
                 if (subState) {
                     const state1 = {
@@ -53,9 +55,11 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
+                return state;
             }
-        case Constants.INIT_APP:
+        case ActionType.INIT_APP:
             {
+                const { payload } = action;
                 const maps = payload.maps;
                 const mapKeys = Object.keys(maps);
                 const newState: Partial<IBranchedMapState> = {};
@@ -114,8 +118,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
                         logger.debug(`Initially hiding layer ids: ${hl.join("|")}`);
                         logger.debug(`Initially hiding group ids: ${hg.join("|")}`);
                     }
-
-                    newState[mapName] = {
+                    const newMapState = {
                         ...MAP_STATE_INITIAL_SUB_STATE,
                         ...{ runtimeMap: maps[mapName].map },
                         ...{ externalBaseLayers: maps[mapName].externalBaseLayers },
@@ -126,12 +129,14 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
                         ...(hl.length > 0 ? { hideLayers: [ ...hl ] } : {}),
                         ...(hg.length > 0 ? { hideGroups: [ ...hg ] } : {})
                     };
+                    newState[mapName] = newMapState;
                 }
                 
                 return { ...state, ...newState };
             }
-        case Constants.MAP_PREVIOUS_VIEW:
+        case ActionType.MAP_PREVIOUS_VIEW:
             {
+                const { payload } = action;
                 const subState = state[payload.mapName];
                 if (subState) {
                     const index = subState.historyIndex - 1;
@@ -141,9 +146,11 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
+                return state;
             }
-        case Constants.MAP_NEXT_VIEW:
+        case ActionType.MAP_NEXT_VIEW:
             {
+                const { payload } = action;
                 const subState = state[payload.mapName];
                 if (subState) {
                     const index = subState.historyIndex + 1;
@@ -153,9 +160,11 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
+                return state;
             }
-        case Constants.MAP_SET_SCALE:
+        case ActionType.MAP_SET_SCALE:
             {
+                const { payload } = action;
                 const subState = state[payload.mapName];
                 if (subState) {
                     let view = subState.currentView;
@@ -180,9 +189,11 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
                     }
                     return mergeSubState(state, payload.mapName, newSubState);
                 }
+                return state;
             }
-        case Constants.MAP_SET_VIEW:
+        case ActionType.MAP_SET_VIEW:
             {
+                const { payload } = action;
                 const subState = state[payload.mapName];
                 if (subState) {
                     const data = payload.view;
@@ -204,9 +215,11 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
                         return mergeSubState(state, payload.mapName, newSubState);
                     }
                 }
+                return state;
             }
-        case Constants.MAP_SET_LAYER_TRANSPARENCY:
+        case ActionType.MAP_SET_LAYER_TRANSPARENCY:
             {
+                const { payload } = action;
                 const subState = state[payload.mapName];
                 if (subState) {
                     const trans = { ...subState.layerTransparency };
@@ -216,9 +229,11 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
+                return state;
             }
-        case Constants.LEGEND_SET_LAYER_SELECTABLE:
+        case ActionType.LEGEND_SET_LAYER_SELECTABLE:
             {
+                const { payload } = action;
                 const subState = state[payload.mapName];
                 if (subState) {
                     const layers = { ...subState.selectableLayers };
@@ -228,9 +243,11 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
+                return state;
             }
-        case Constants.LEGEND_SET_GROUP_EXPANDABLE:
+        case ActionType.LEGEND_SET_GROUP_EXPANDABLE:
             {
+                const { payload } = action;
                 const subState = state[payload.mapName];
                 if (subState) {
                     const groups = { ...subState.expandedGroups };
@@ -240,9 +257,11 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
+                return state;
             }
-        case Constants.LEGEND_SET_GROUP_VISIBILITY:
+        case ActionType.LEGEND_SET_GROUP_VISIBILITY:
             {
+                const { payload } = action;
                 const subState = state[payload.mapName];
                 if (subState) {
                     let showGroups: string[] = [...subState.showGroups];
@@ -264,9 +283,11 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
+                return state;
             }
-        case Constants.LEGEND_SET_LAYER_VISIBILITY:
+        case ActionType.LEGEND_SET_LAYER_VISIBILITY:
             {
+                const { payload } = action;
                 const subState = state[payload.mapName];
                 if (subState) {
                     let showLayers: string[] = [...subState.showLayers];
@@ -288,9 +309,11 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
+                return state;
             }
-        case Constants.MAP_SET_SELECTION:
+        case ActionType.MAP_SET_SELECTION:
             {
+                const { payload } = action;
                 const subState = state[payload.mapName];
                 if (subState) {
                     const state1: Partial<IBranchedMapSubState> = {
@@ -301,9 +324,11 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
+                return state;
             }
-        case Constants.MAP_SHOW_SELECTED_FEATURE:
+        case ActionType.MAP_SHOW_SELECTED_FEATURE:
             {
+                const { payload } = action;
                 const subState = state[payload.mapName];
                 if (subState) {
                     const state1: Partial<IBranchedMapSubState> = {
@@ -314,9 +339,11 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
+                return state;
             }
-        case Constants.MAP_SET_BASE_LAYER:
+        case ActionType.MAP_SET_BASE_LAYER:
             {
+                const { payload } = action;
                 const subState = state[payload.mapName];
                 if (subState) {
                     const layers: IExternalBaseLayer[] = (subState.externalBaseLayers || []);
@@ -332,6 +359,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: AnyActi
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                 }
+                return state;
             }
     }
     return state;

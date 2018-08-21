@@ -1,7 +1,7 @@
-import * as Constants from "../constants";
 import { ITaskPaneReducerState } from "../api/common";
-import { areUrlsSame } from "../utils/url";
 import { AnyAction } from "redux";
+import { ActionType } from '../constants/actions';
+import { ViewerAction } from '../actions/defs';
 
 export const TASK_PANE_INITIAL_STATE: ITaskPaneReducerState = {
     navIndex: -1,
@@ -30,11 +30,11 @@ function mergeNavigatedUrl(state: any, url: string): any {
     return { ...state, ...newState };
 }
 
-export function taskPaneReducer(state = TASK_PANE_INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
-    const payload: any = action.payload || {};
+export function taskPaneReducer(state = TASK_PANE_INITIAL_STATE, action: ViewerAction) {
     switch (action.type) {
-        case Constants.INIT_APP:
+        case ActionType.INIT_APP:
             {
+                const { payload } = action;
                 const newState = {
                     initialUrl: payload.initialUrl,
                     navIndex: 0,
@@ -42,13 +42,14 @@ export function taskPaneReducer(state = TASK_PANE_INITIAL_STATE, action: AnyActi
                 };
                 return { ...state, ...newState };
             }
-        case Constants.TASK_PANE_HOME:
+        case ActionType.TASK_PANE_HOME:
             {
                 if (state.initialUrl != null) {
                     return mergeNavigatedUrl(state, state.initialUrl);
                 }
+                return state;
             }
-        case Constants.TASK_PANE_BACK:
+        case ActionType.TASK_PANE_BACK:
             {
                 let index = state.navIndex;
                 const nav = state.navigation;
@@ -60,7 +61,7 @@ export function taskPaneReducer(state = TASK_PANE_INITIAL_STATE, action: AnyActi
                 };
                 return { ...state, ...newState };
             }
-        case Constants.TASK_PANE_FORWARD:
+        case ActionType.TASK_PANE_FORWARD:
             {
                 let index = state.navIndex;
                 const nav = state.navigation;
@@ -72,8 +73,9 @@ export function taskPaneReducer(state = TASK_PANE_INITIAL_STATE, action: AnyActi
                 };
                 return { ...state, ...newState };
             }
-        case Constants.TASK_PANE_PUSH_URL:
+        case ActionType.TASK_PANE_PUSH_URL:
             {
+                const { payload } = action;
                 const index = state.navIndex;
                 const nav: string[] = state.navigation;
                 //if (areUrlsSame(nav[index], action.payload.url)) {
@@ -99,9 +101,9 @@ export function taskPaneReducer(state = TASK_PANE_INITIAL_STATE, action: AnyActi
                     return { ...state, ...newState };
                 }
             }
-        case Constants.TASK_INVOKE_URL:
+        case ActionType.TASK_INVOKE_URL:
             {
-                return mergeNavigatedUrl(state, payload.url);
+                return mergeNavigatedUrl(state, action.payload.url);
             }
     }
     return state;

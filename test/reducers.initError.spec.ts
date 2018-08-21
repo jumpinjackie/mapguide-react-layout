@@ -5,12 +5,14 @@ import { RuntimeMap } from "../src/api/contracts/runtime-map";
 import thunk from 'redux-thunk';
 import { createMap, createInitAction, createInitialState } from "../test-data";
 import { initErrorReducer } from "../src/reducers/init-error";
+import { ActionType } from '../src/constants/actions';
+import { IInitErrorAction } from '../src/actions/defs';
 
 describe("reducers/init-error", () => {
     it("INIT_ERROR", () => {
         const initialState = createInitialState();
-        const action = {
-            type: Constants.INIT_ERROR,
+        const action: IInitErrorAction = {
+            type: ActionType.INIT_ERROR,
             payload: {
                 error: {
                     message: "Uh-oh",
@@ -25,12 +27,12 @@ describe("reducers/init-error", () => {
                 }
             }
         };
-        const state = initErrorReducer(initialState.initError, action as any);
-        expect(state).not.toBeNull();
+        const state = initErrorReducer(initialState.initError, action);
+        expect(state).not.toBeUndefined();
         expect(state.includeStack).toBe(true);
-        expect(state.options).not.toBeNull();
+        expect(state.options).not.toBeUndefined();
         expect(state.options.foo).toBe("bar");
-        expect(state.error).not.toBeNull();
+        expect(state.error).not.toBeUndefined();
         if (state.error) { //HACK: TS strict null check workaround
             expect(state.error.message).toBe("Uh-oh");
             expect(state.error.stack).toHaveLength(2);

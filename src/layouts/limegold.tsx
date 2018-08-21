@@ -25,11 +25,13 @@ import { setCustomTemplateReducer, isElementState } from "../reducers/template";
 import InitWarningDisplay from "../containers/init-warning-display";
 import SplitterLayout from "react-splitter-layout";
 import * as Runtime from "../api/runtime";
+import { ActionType } from '../constants/actions';
+import { IElementState } from '../actions/defs';
 
 function limegoldTemplateReducer(state: ITemplateReducerState, action: ReduxAction): ITemplateReducerState {
-    const data: boolean | TemplateActions.IElementState | undefined = action.payload;
+    const data: boolean | IElementState | undefined = action.payload;
     switch (action.type) {
-        case Constants.FUSION_SET_LEGEND_VISIBILITY:
+        case ActionType.FUSION_SET_LEGEND_VISIBILITY:
             {
                 if (typeof(data) == "boolean") {
                     let state1: Partial<ITemplateReducerState>;
@@ -41,7 +43,7 @@ function limegoldTemplateReducer(state: ITemplateReducerState, action: ReduxActi
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.FUSION_SET_SELECTION_PANEL_VISIBILITY:
+        case ActionType.FUSION_SET_SELECTION_PANEL_VISIBILITY:
             {
                 if (typeof(data) == "boolean") {
                     let state1: Partial<ITemplateReducerState>;
@@ -53,12 +55,12 @@ function limegoldTemplateReducer(state: ITemplateReducerState, action: ReduxActi
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.TASK_INVOKE_URL:
+        case ActionType.TASK_INVOKE_URL:
             {
                 let state1: Partial<ITemplateReducerState> = { taskPaneVisible: true, selectionPanelVisible: false, legendVisible: false };
                 return { ...state, ...state1 };
             }
-        case Constants.FUSION_SET_TASK_PANE_VISIBILITY:
+        case ActionType.FUSION_SET_TASK_PANE_VISIBILITY:
             {
                 if (typeof(data) == "boolean") {
                     let state1: Partial<ITemplateReducerState>;
@@ -70,7 +72,7 @@ function limegoldTemplateReducer(state: ITemplateReducerState, action: ReduxActi
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.FUSION_SET_ELEMENT_STATE:
+        case ActionType.FUSION_SET_ELEMENT_STATE:
             {
                 if (isElementState(data)) {
                     return { ...state, ...data };
@@ -96,7 +98,7 @@ export interface ILimeGoldTemplateLayoutState {
 }
 
 export interface ILimeGoldTemplateLayoutDispatch {
-    setElementStates: (states: TemplateActions.IElementState) => void;
+    setElementStates: (states: IElementState) => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>): Partial<ILimeGoldTemplateLayoutState> {
@@ -112,7 +114,7 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<ILimeGoldT
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ILimeGoldTemplateLayoutDispatch> {
     return {
-        setElementStates: (states: TemplateActions.IElementState) => dispatch(TemplateActions.setElementStates(states))
+        setElementStates: (states: IElementState) => dispatch(TemplateActions.setElementStates(states))
     };
 }
 
@@ -144,7 +146,7 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
     private onActiveTabChanged = (id: string) => {
         const { setElementStates } = this.props;
         if (setElementStates) {
-            const states: TemplateActions.IElementState = {
+            const states: IElementState = {
                 legendVisible: false,
                 taskPaneVisible: false,
                 selectionPanelVisible: false

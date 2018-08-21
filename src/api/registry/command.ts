@@ -32,6 +32,7 @@ import {
 import { assertNever } from "../../utils/never";
 import * as logger from "../../utils/logger";
 import { ensureParameters } from "../../utils/url";
+import { ActionType } from '../../constants/actions';
 
 const FUSION_ICON_REGEX = /images\/icons\/[a-zA-Z\-]*.png/
 
@@ -283,7 +284,7 @@ export function openUrlInTarget(name: string, cmdDef: ITargetedCommand, hasTaskP
             openModalUrl(name, dispatch, url, modalTitle);
         } else {
             dispatch({
-                type: Constants.TASK_INVOKE_URL,
+                type: ActionType.TASK_INVOKE_URL,
                 payload: {
                     url: url
                 }

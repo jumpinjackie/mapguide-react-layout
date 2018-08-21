@@ -4,8 +4,9 @@ import {
     ITemplateReducerState
 } from "../api/common";
 import { isCoordinate } from "../utils/type-guards";
-import { IElementState } from "../actions/template";
 import { AnyAction } from "redux";
+import { ActionType } from '../constants/actions';
+import { IElementState, ViewerAction } from '../actions/defs';
 
 export const TEMPLATE_INITIAL_STATE: ITemplateReducerState = {
     initialInfoPaneWidth: 250,
@@ -42,20 +43,21 @@ export function setCustomTemplateReducer(func: ReducerFunction<ITemplateReducerS
     _ovReducer = func;
 }
 
-export function templateReducer(state = TEMPLATE_INITIAL_STATE, action: AnyAction = { type: '', payload: undefined }) {
+export function templateReducer(state = TEMPLATE_INITIAL_STATE, action: ViewerAction) {
     if (typeof(_ovReducer) == 'function') {
         return _ovReducer(state, action);
     } else {
         //If no template present (they would've overridden this reducer), at least service the actions we know affect this
         //particular state branch
         switch (action.type) {
-            case Constants.FUSION_SET_ELEMENT_STATE:
+            case ActionType.FUSION_SET_ELEMENT_STATE:
                 {
                     if (isElementState(action.payload)) {
                         return { ...state, ...action.payload };
                     }
+                    return state;
                 }
-            case Constants.INIT_APP:
+            case ActionType.INIT_APP:
                 {
                     let state1: Partial<ITemplateReducerState> = {};
                     if (action.payload.initialTaskPaneWidth) {

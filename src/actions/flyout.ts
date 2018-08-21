@@ -1,5 +1,12 @@
 import * as Constants from "../constants";
 import { IDOMElementMetrics, ReduxAction } from "../api/common";
+import {
+    IOpenFlyoutAction, 
+    ICloseFlyoutAction,
+    IOpenComponentInFlyoutAction,
+    ICloseComponentInFlyoutAction
+} from "./defs";
+import { ActionType } from '../constants/actions';
 
 /**
  * Opens the specified flyout menu
@@ -9,9 +16,9 @@ import { IDOMElementMetrics, ReduxAction } from "../api/common";
  * @param {IDOMElementMetrics} metrics
  * @returns {ReduxAction}
  */
-export function openFlyout(id: string, metrics: IDOMElementMetrics): ReduxAction {
+export function openFlyout(id: string, metrics: IDOMElementMetrics): IOpenFlyoutAction {
     return {
-        type: Constants.FLYOUT_OPEN,
+        type: ActionType.FLYOUT_OPEN,
         payload: {
             flyoutId: id,
             metrics: metrics
@@ -26,9 +33,9 @@ export function openFlyout(id: string, metrics: IDOMElementMetrics): ReduxAction
  * @param {string} id
  * @returns {ReduxAction}
  */
-export function closeFlyout(id: string): ReduxAction {
+export function closeFlyout(id: string): ICloseFlyoutAction {
     return {
-        type: Constants.FLYOUT_CLOSE,
+        type: ActionType.FLYOUT_CLOSE,
         payload: {
             flyoutId: id
         }
@@ -45,9 +52,9 @@ export function closeFlyout(id: string): ReduxAction {
  * @param {*} props
  * @returns {ReduxAction}
  */
-export function openComponent(id: string, metrics: IDOMElementMetrics, name: string, props: any): ReduxAction {
+export function openComponent(id: string, metrics: IDOMElementMetrics, name: string, props: any): IOpenComponentInFlyoutAction {
     return {
-        type: Constants.COMPONENT_OPEN,
+        type: ActionType.COMPONENT_OPEN,
         payload: {
             flyoutId: id,
             metrics: metrics,
@@ -64,9 +71,9 @@ export function openComponent(id: string, metrics: IDOMElementMetrics, name: str
  * @param {string} id
  * @returns {ReduxAction}
  */
-export function closeComponent(id: string): ReduxAction {
+export function closeComponent(id: string): ICloseComponentInFlyoutAction {
     return {
-        type: Constants.COMPONENT_CLOSE,
+        type: ActionType.COMPONENT_CLOSE,
         payload: {
             flyoutId: id
         }

@@ -51,33 +51,8 @@ import {
     IUnknownCommandSpec,
     ICommandSpec
 } from "../api/registry/command-spec";
-
-interface IInitAppPayload {
-    activeMapName: string;
-    initialView?: IMapView;
-    initialUrl: string;
-    initialTaskPaneWidth?: number;
-    initialInfoPaneWidth?: number;
-    locale: string;
-    maps: Dictionary<MapInfo>;
-    config: any;
-    capabilities: {
-        hasTaskPane: boolean,
-        hasTaskBar: boolean,
-        hasStatusBar: boolean,
-        hasNavigator: boolean,
-        hasSelectionPanel: boolean,
-        hasLegend: boolean,
-        hasToolbar: boolean,
-        hasViewSize: boolean
-    },
-    initialShowLayers?: string[];
-    initialShowGroups?: string[];
-    initialHideLayers?: string[];
-    initialHideGroups?: string[];
-    toolbars: PreparedSubMenuSet;
-    warnings: string[]
-}
+import { MapInfo, IInitAppActionPayload, IAcknowledgeStartupWarningsAction } from './defs';
+import { ActionType } from '../constants/actions';
 
 function isUIWidget(widget: any): widget is UIWidget {
     return widget.WidgetType === "UiWidgetType";
@@ -255,13 +230,6 @@ function getDesiredTargetMapName(mapDef: string) {
     }
 }
 
-type MapInfo = {
-    mapGroupId: string;
-    map: RuntimeMap;
-    initialView: IMapView | null;
-    externalBaseLayers: IExternalBaseLayer[];
-}
-
 function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<RuntimeMap>, config: any, warnings: string[]): Dictionary<MapInfo> {
     const dict: Dictionary<MapInfo> = {};
     const mgGroups: Dictionary<MapSetGroup> = {};
@@ -386,7 +354,7 @@ function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<Runtime
             }
 
             //Setup initial view
-            let initialView: IView | null = null;
+            let initialView: IView | undefined;
             if (mgGroup.InitialView) {
                 initialView = {
                     x: mgGroup.InitialView.CenterX,
@@ -468,7 +436,7 @@ function getExtraProjectionsFromFlexLayout(appDef: ApplicationDefinition): strin
 function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: IInitAsyncOptions): void {
     if (error.stack) {
         dispatch({
-            type: Constants.INIT_ERROR,
+            type: ActionType.INIT_ERROR,
             payload: {
                 error: {
                     message: error.message,
@@ -480,7 +448,7 @@ function processAndDispatchInitError(error: Error, includeStack: boolean, dispat
         });
     } else {
         dispatch({
-            type: Constants.INIT_ERROR,
+            type: ActionType.INIT_ERROR,
             payload: {
                 error: {
                     message: error.message,
@@ -537,7 +505,7 @@ export interface IInitAppLayout {
     onInit?: (viewer: IMapViewer) => void;
 }
 
-interface IInitAsyncOptions extends IInitAppLayout {
+export interface IInitAsyncOptions extends IInitAppLayout {
     locale: string;
 }
 
@@ -594,7 +562,7 @@ async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, 
     return [mapsByName, warnings];
 }
 
-async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOptions, session: string, client: Client, sessionWasReused: boolean): Promise<IInitAppPayload> {
+async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOptions, session: string, client: Client, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
     const [mapsByName, warnings] = await createRuntimeMapsAsync(client, session, opts, webLayout, wl => [ { name: getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId } ], wl => [], sessionWasReused);
     const cmdsByKey: any = {};
     //Register any InvokeURL and Search commands
@@ -711,7 +679,7 @@ async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOpti
     };
 }
 
-async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsyncOptions, session: string, client: Client, sessionWasReused: boolean): Promise<IInitAppPayload> {
+async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsyncOptions, session: string, client: Client, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
     const [mapsByName, warnings] = await createRuntimeMapsAsync(client, session, opts, appDef, fl => getMapDefinitionsFromFlexLayout(fl), fl => getExtraProjectionsFromFlexLayout(fl), sessionWasReused);
     let initialTask: string;
     let taskPane: Widget|undefined;
@@ -838,7 +806,7 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
     };
 }
 
-async function sessionAcquiredAsync(opts: IInitAsyncOptions, session: string, client: Client, sessionWasReused: boolean): Promise<IInitAppPayload> {
+async function sessionAcquiredAsync(opts: IInitAsyncOptions, session: string, client: Client, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
     if (!opts.resourceId) {
         throw new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", opts.locale));
     } else if (strEndsWith(opts.resourceId, "WebLayout")) {
@@ -852,7 +820,7 @@ async function sessionAcquiredAsync(opts: IInitAsyncOptions, session: string, cl
     }
 } 
 
-async function initAsync(options: IInitAsyncOptions, client: Client): Promise<IInitAppPayload> {
+async function initAsync(options: IInitAsyncOptions, client: Client): Promise<IInitAppActionPayload> {
     //English strings are baked into this bundle. For non-en locales, we assume a strings/{locale}.json
     //exists for us to fetch
     if (options.locale != DEFAULT_LOCALE) {
@@ -905,7 +873,7 @@ export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
                 initPayload.initialShowGroups = opts.initialShowGroups;
                 initPayload.initialShowLayers = opts.initialShowLayers;
                 dispatch({
-                    type: Constants.INIT_APP,
+                    type: ActionType.INIT_APP,
                     payload
                 });
                 if (options.onInit) {
@@ -921,8 +889,8 @@ export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
     };
 }
 
-export function acknowledgeInitWarnings(): ReduxAction {
+export function acknowledgeInitWarnings(): IAcknowledgeStartupWarningsAction {
     return {
-        type: Constants.INIT_ACKNOWLEDGE_WARNINGS
+        type: ActionType.INIT_ACKNOWLEDGE_WARNINGS
     }
 }

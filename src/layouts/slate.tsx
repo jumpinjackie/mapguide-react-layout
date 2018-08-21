@@ -25,11 +25,13 @@ import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
 import InitWarningDisplay from "../containers/init-warning-display";
 import SplitterLayout from "react-splitter-layout";
+import { ActionType } from '../constants/actions';
+import { IElementState } from '../actions/defs';
 
 function slateTemplateReducer(state: ITemplateReducerState, action: ReduxAction): ITemplateReducerState {
-    const data: boolean | TemplateActions.IElementState | undefined = action.payload;
+    const data: boolean | IElementState | undefined = action.payload;
     switch (action.type) {
-        case Constants.FUSION_SET_LEGEND_VISIBILITY:
+        case ActionType.FUSION_SET_LEGEND_VISIBILITY:
             {
                 if (typeof (data) == "boolean") {
                     let state1: Partial<ITemplateReducerState>;
@@ -41,7 +43,7 @@ function slateTemplateReducer(state: ITemplateReducerState, action: ReduxAction)
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.FUSION_SET_SELECTION_PANEL_VISIBILITY:
+        case ActionType.FUSION_SET_SELECTION_PANEL_VISIBILITY:
             {
                 if (typeof (data) == "boolean") {
                     let state1: Partial<ITemplateReducerState>;
@@ -53,12 +55,12 @@ function slateTemplateReducer(state: ITemplateReducerState, action: ReduxAction)
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.TASK_INVOKE_URL:
+        case ActionType.TASK_INVOKE_URL:
             {
                 let state1: Partial<ITemplateReducerState> = { taskPaneVisible: true, selectionPanelVisible: false, legendVisible: false };
                 return { ...state, ...state1 };
             }
-        case Constants.FUSION_SET_TASK_PANE_VISIBILITY:
+        case ActionType.FUSION_SET_TASK_PANE_VISIBILITY:
             {
                 if (typeof (data) == "boolean") {
                     let state1: Partial<ITemplateReducerState>;
@@ -70,7 +72,7 @@ function slateTemplateReducer(state: ITemplateReducerState, action: ReduxAction)
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.FUSION_SET_ELEMENT_STATE:
+        case ActionType.FUSION_SET_ELEMENT_STATE:
             {
                 if (isElementState(data)) {
                     return { ...state, ...data };
@@ -91,7 +93,7 @@ export interface ISlateTemplateLayoutState {
 }
 
 export interface ISlateTemplateLayoutDispatch {
-    setElementStates: (states: TemplateActions.IElementState) => void;
+    setElementStates: (states: IElementState) => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>): Partial<ISlateTemplateLayoutState> {
@@ -108,7 +110,7 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<ISlateTemp
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ISlateTemplateLayoutDispatch> {
     return {
-        setElementStates: (states: TemplateActions.IElementState) => dispatch(TemplateActions.setElementStates(states))
+        setElementStates: (states: IElementState) => dispatch(TemplateActions.setElementStates(states))
     };
 }
 
@@ -145,7 +147,7 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
     private onActivePanelChanged = (id: string) => {
         const { setElementStates } = this.props;
         if (setElementStates) {
-            const states: TemplateActions.IElementState = {
+            const states: IElementState = {
                 legendVisible: false,
                 taskPaneVisible: false,
                 selectionPanelVisible: false

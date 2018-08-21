@@ -24,30 +24,32 @@ import * as Constants from "../constants";
 import * as TemplateActions from "../actions/template";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
 import InitWarningDisplay from "../containers/init-warning-display";
+import { ActionType } from '../constants/actions';
+import { IElementState } from '../actions/defs';
 
 function aquaTemplateReducer(state: ITemplateReducerState, action: ReduxAction): ITemplateReducerState {
-    const data: boolean | TemplateActions.IElementState | undefined = action.payload;
+    const data: boolean | IElementState | undefined = action.payload;
     switch (action.type) {
-        case Constants.FUSION_SET_LEGEND_VISIBILITY:
+        case ActionType.FUSION_SET_LEGEND_VISIBILITY:
             {
                 if (typeof(data) == "boolean") {
                     let state1: Partial<ITemplateReducerState> = { legendVisible: data };
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.FUSION_SET_SELECTION_PANEL_VISIBILITY:
+        case ActionType.FUSION_SET_SELECTION_PANEL_VISIBILITY:
             {
                 if (typeof(data) == "boolean") {
                     let state1: Partial<ITemplateReducerState> = { selectionPanelVisible: data };
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.TASK_INVOKE_URL:
+        case ActionType.TASK_INVOKE_URL:
             {
                 let state1: Partial<ITemplateReducerState> = { taskPaneVisible: true };
                 return { ...state, ...state1 };
             }
-        case Constants.FUSION_SET_TASK_PANE_VISIBILITY:
+        case ActionType.FUSION_SET_TASK_PANE_VISIBILITY:
             {
                 if (typeof(data) == "boolean") {
                     let state1: Partial<ITemplateReducerState> = { taskPaneVisible: data };
@@ -149,14 +151,14 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
         const lastAction = nextProps.lastAction;
         if (lastAction != prevProps.lastAction) {
             switch (lastAction.type) {
-                case Constants.TASK_INVOKE_URL:
+                case ActionType.TASK_INVOKE_URL:
                     {
                         this.setState({
                             isTaskPaneOpen: true
                         });
                     }
                     break;
-                case Constants.MAP_SET_SELECTION:
+                case ActionType.MAP_SET_SELECTION:
                     break;
             }
         }

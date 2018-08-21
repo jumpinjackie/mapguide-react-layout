@@ -19,6 +19,7 @@ import {
     ITemplateReducerState
 } from "../api/common";
 import InitWarningDisplay from "../containers/init-warning-display";
+import { ActionType } from '../constants/actions';
 
 const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;
@@ -65,12 +66,12 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
         const lastAction = nextProps.lastAction;
         if (lastAction != prevProps.lastAction) {
             switch (lastAction.type) {
-                case Constants.TASK_INVOKE_URL:
+                case ActionType.TASK_INVOKE_URL:
                     {
                         nextProps.onActivateTab("tasks", false);
                     }
                     break;
-                case Constants.MAP_SET_SELECTION:
+                case ActionType.MAP_SET_SELECTION:
                     break;
             }
         }

@@ -5,6 +5,8 @@ import {
     ReduxThunkedAction,
     getRuntimeMap
 } from "../api/common";
+import { ActionType } from '../constants/actions';
+import { ILegendSetGroupVisibilityAction, ILegendSetGroupExpandedAction, ILegendSetLayerVisibilityAction, ILegendSetGroupSelectableAction } from './defs';
 
 /**
  * Sets the visibility for the given map group
@@ -14,9 +16,9 @@ import {
  * @param {{ id: string, value: boolean }} options
  * @returns
  */
-export function setGroupVisibility(mapName: string, options: { id: string, value: boolean }) {
+export function setGroupVisibility(mapName: string, options: { id: string, value: boolean }): ILegendSetGroupVisibilityAction {
     return {
-        type: Constants.LEGEND_SET_GROUP_VISIBILITY,
+        type: ActionType.LEGEND_SET_GROUP_VISIBILITY,
         payload: { ...options, ...{ mapName: mapName } }
     };
 }
@@ -29,9 +31,9 @@ export function setGroupVisibility(mapName: string, options: { id: string, value
  * @param {{ id: string, value: boolean }} options
  * @returns
  */
-export function setLayerVisibility(mapName: string, options: { id: string, value: boolean }) {
+export function setLayerVisibility(mapName: string, options: { id: string, value: boolean }): ILegendSetLayerVisibilityAction {
     return {
-        type: Constants.LEGEND_SET_LAYER_VISIBILITY,
+        type: ActionType.LEGEND_SET_LAYER_VISIBILITY,
         payload: { ...options, ...{ mapName: mapName } }
     };
 }
@@ -44,9 +46,9 @@ export function setLayerVisibility(mapName: string, options: { id: string, value
  * @param {{ id: string, value: boolean }} options
  * @returns
  */
-export function setGroupExpanded(mapName: string, options: { id: string, value: boolean }) {
+export function setGroupExpanded(mapName: string, options: { id: string, value: boolean }): ILegendSetGroupExpandedAction {
     return {
-        type: Constants.LEGEND_SET_GROUP_EXPANDABLE,
+        type: ActionType.LEGEND_SET_GROUP_EXPANDABLE,
         payload: { ...options, ...{ mapName: mapName } }
     };
 }
@@ -59,9 +61,9 @@ export function setGroupExpanded(mapName: string, options: { id: string, value: 
  * @param {{ id: string, value: boolean }} options
  * @returns
  */
-export function setLayerSelectable(mapName: string, options: { id: string, value: boolean }) {
+export function setLayerSelectable(mapName: string, options: { id: string, value: boolean }): ILegendSetGroupSelectableAction {
     return {
-        type: Constants.LEGEND_SET_LAYER_SELECTABLE,
+        type: ActionType.LEGEND_SET_LAYER_SELECTABLE,
         payload: { ...options, ...{ mapName: mapName } }
     };
 }
@@ -85,7 +87,7 @@ export function refresh(): ReduxThunkedAction {
                 requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups
             }).then(res => {
                 dispatch({
-                    type: Constants.MAP_REFRESH,
+                    type: ActionType.MAP_REFRESH,
                     payload: {
                         mapName: args.activeMapName,
                         map: res

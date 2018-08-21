@@ -121,4 +121,4 @@ export class NavigatorContainer extends React.Component<NavigatorContainerProps,
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(NavigatorContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(NavigatorContainer);

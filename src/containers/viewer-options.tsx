@@ -174,4 +174,4 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ViewerOptions);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(ViewerOptions);

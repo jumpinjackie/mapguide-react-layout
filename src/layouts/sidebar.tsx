@@ -349,4 +349,4 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<S
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SidebarLayout);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(SidebarLayout);

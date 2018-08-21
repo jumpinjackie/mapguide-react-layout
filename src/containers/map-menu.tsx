@@ -61,4 +61,4 @@ export class MapMenuContainer extends React.Component<MapMenuContainerProps, any
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MapMenuContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(MapMenuContainer);

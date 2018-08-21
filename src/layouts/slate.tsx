@@ -282,4 +282,4 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SlateTemplateLayout);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(SlateTemplateLayout);

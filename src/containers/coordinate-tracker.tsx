@@ -81,4 +81,4 @@ export class CoordinateTrackerContainer extends React.Component<CoordinateTracke
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CoordinateTrackerContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(CoordinateTrackerContainer);

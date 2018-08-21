@@ -118,4 +118,4 @@ export class ModalLauncher extends React.Component<ModalLauncherProps, any> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ModalLauncher);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(ModalLauncher);

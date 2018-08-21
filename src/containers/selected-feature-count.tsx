@@ -52,4 +52,4 @@ export class SelectedFeatureCountContainer extends React.Component<SelectedFeatu
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SelectedFeatureCountContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(SelectedFeatureCountContainer);

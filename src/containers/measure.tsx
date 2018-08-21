@@ -258,4 +258,4 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MeasureContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(MeasureContainer);

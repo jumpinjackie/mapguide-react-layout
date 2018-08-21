@@ -80,4 +80,4 @@ export class FlyoutRegionContainer extends React.Component<FlyoutRegionContainer
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FlyoutRegionContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(FlyoutRegionContainer);

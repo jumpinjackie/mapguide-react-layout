@@ -99,4 +99,4 @@ export class ShareLinkToViewContainer extends React.Component<ShareLinkToViewCon
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(addUrlProps<ShareLinkToViewContainer>({ urlPropsQueryConfig })(ShareLinkToViewContainer));
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(addUrlProps<ShareLinkToViewContainer>({ urlPropsQueryConfig })(ShareLinkToViewContainer));

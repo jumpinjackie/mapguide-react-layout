@@ -522,4 +522,4 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MapViewerContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(MapViewerContainer);

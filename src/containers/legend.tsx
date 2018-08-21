@@ -172,4 +172,4 @@ export class LegendContainer extends React.Component<LegendContainerProps, any> 
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LegendContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(LegendContainer);

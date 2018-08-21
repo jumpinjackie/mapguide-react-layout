@@ -218,4 +218,4 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TaskPaneContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(TaskPaneContainer);

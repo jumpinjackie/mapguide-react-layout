@@ -410,4 +410,4 @@ export class App extends React.Component<AppProps, any> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(addUrlProps<App>({ urlPropsQueryConfig })(App));
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(addUrlProps<App>({ urlPropsQueryConfig })(App));

@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import olExtent from "ol/extent";
 import olPoint from "ol/geom/point";
@@ -14,19 +13,17 @@ import { Client } from "../api/client";
 import { MgError } from "../api/error";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { FeatureSet, SelectedFeatureSet, QueryMapFeaturesResponse } from "../api/contracts/query";
-import { RuntimeMapFeatureFlags } from "../api/request-builder";
 import { RefreshMode, ReduxDispatch, IApplicationState, ICommand, ClientKind, UnitOfMeasure } from "../api/common";
 import * as MapActions from "../actions/map";
 import * as TaskPaneActions from "../actions/taskpane";
 import * as LegendActions from "../actions/legend";
 import { deArrayify, buildSelectionXml } from "../api/builders/deArrayify";
 import { FormFrameShim } from "../components/form-frame-shim";
-import { getCommand, DefaultCommands, CommandConditions } from "../api/registry/command";
-import { Intent, IToastProps } from "@blueprintjs/core";
+import { getCommand, DefaultCommands } from "../api/registry/command";
 import { tr } from "../api/i18n";
 import { serialize } from "../api/builders/mapagent";
 import { ILocalizedMessages } from "../strings/msgdef";
-import { getUnitOfMeasure, getMapSize } from '../utils/units';
+import { getUnitOfMeasure } from '../utils/units';
 
 function isEmptySelection(selection: QueryMapFeaturesResponse | undefined): boolean {
     if (selection && selection.FeatureSet) {
@@ -63,7 +60,7 @@ class FusionApiShim {
     ajaxRequest(url: string, options: any) { // onSuccess: Function, onFailure: Function, parameters: any) {
         let reqUrl = `${Runtime.getFusionRoot()}/${url}`;
         const client = this.parent.getClient();
-        const resolve = options.onSuccess || ((res: any) => logger.debug(`No success handler defined for this operation`));
+        const resolve = options.onSuccess || (() => logger.debug(`No success handler defined for this operation`));
         const fail = options.onFailure || options.onException || ((r: any, res: Error) => logger.error(res));
         if (client) {
             if (typeof (options.parameters) == 'string') {
@@ -213,7 +210,6 @@ class OL2Geom {
     getVertices(): { x: number, y: number }[] {
         const g = this.geom;
         if (g instanceof olPoint) {
-            const c = g.getCoordinates();
         } else if (g instanceof olLineString) {
             return g.getCoordinates().map(c => {
                 return { x: c[0], y: c[1] };
@@ -347,7 +343,7 @@ class FusionWidgetApiShim {
     setActiveLayer(layer: any) { //Map
         this._activeLayer = layer;
         const fusionAPI: FusionApiShim = this.parent.getFusionAPI();
-        this.parent.triggerFusionEvent(fusionAPI.Event.MAP_ACTIVE_LAYER_CHANGED, layer);
+        this.parent.triggerFusionEvent(fusionAPI.Event.MAP_ACTIVE_LAYER_CHANGED);
     }
     getActiveLayer(): any { //Map
         return this._activeLayer;
@@ -408,7 +404,7 @@ class FusionWidgetApiShim {
                         const bh = olExtent.getHeight(bounds);
                         if (bw > 0 && bh > 0) { //Don't zoom if we get 0 bounds. Cruncing bounds from selected points would do this.
                             const view = viewer.getViewForExtent(bounds);
-                            this.parent.ZoomToView(view.x, view.y, view.scale, true);
+                            this.parent.ZoomToView(view.x, view.y, view.scale);
                         }
                     }
                 }
@@ -523,7 +519,7 @@ class FusionWidgetApiShim {
             r: circ.getRadius()
         };
     }
-    digitizePoint(options: any, handler: FusionGeomDigitizer) { //Map
+    digitizePoint(handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizePoint(pt => {
@@ -531,7 +527,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeLine(options: any, handler: FusionGeomDigitizer) { //Map
+    digitizeLine(handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeLine(ln => {
@@ -539,7 +535,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeLineString(options: any, handler: FusionGeomDigitizer) { //Map
+    digitizeLineString(handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeLineString(lstr => {
@@ -547,7 +543,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeRectangle(options: any, handler: FusionGeomDigitizer) { //Map
+    digitizeRectangle(handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeRectangle(rect => {
@@ -555,7 +551,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizePolygon(options: any, handler: FusionGeomDigitizer) { //Map
+    digitizePolygon(handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizePolygon(poly => {
@@ -563,7 +559,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeCircle(options: any, handler: FusionGeomDigitizer) { //Map
+    digitizeCircle(handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeCircle(circ => {
@@ -667,7 +663,7 @@ export interface IViewerApiShimDispatch {
     queryMapFeatures: (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => void;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IViewerApiShimProps): Partial<IViewerApiShimState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IViewerApiShimState> {
     let map;
     let selectionSet;
     if (state.config.activeMapName) {
@@ -750,7 +746,7 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
             logger.debug(`No callbacks registered for fusion event - ${eventID}`);
         }
     }
-    public triggerFusionEvent(eventID: number, ...args: any[]) {
+    public triggerFusionEvent(eventID: number) {
         logger.debug(`Trigger Fusion Event ID - ${eventID}`);
         if (this.fusionEventHandlers[eventID]) {
             for (const cb of this.fusionEventHandlers[eventID]) {
@@ -758,7 +754,7 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
             }
         }
     }
-    private fusionSelectionHandler(mapName: string, selection: QueryMapFeaturesResponse | undefined) {
+    private fusionSelectionHandler(selection: QueryMapFeaturesResponse | undefined) {
         const eventID = isEmptySelection(selection) ? this.fusionAPI.Event.MAP_SELECTION_OFF : this.fusionAPI.Event.MAP_SELECTION_ON;
         this.triggerFusionEvent(eventID);
     }
@@ -981,7 +977,7 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
     public GetMapHeight(): number {
         const viewer = Runtime.getViewer();
         if (viewer) {
-            const [gw, gh] = viewer.getSize();
+            const [, gh] = viewer.getSize();
             return gh;
         }
         return NaN;
@@ -999,7 +995,7 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
     public GetMapWidth(): number {
         const viewer = Runtime.getViewer();
         if (viewer) {
-            const [gw, gh] = viewer.getSize();
+            const [gw] = viewer.getSize();
             return gw;
         }
         return NaN;
@@ -1073,7 +1069,7 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
         if (selectionSet && selectionSet.FeatureSet) {
             const fset: FeatureSet = selectionSet.FeatureSet;
             fset.Layer.forEach(layer => {
-                layer.Class.ID.forEach(element => {
+                layer.Class.ID.forEach(() => {
                     count++;
                 });
             });
@@ -1113,7 +1109,7 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
     public IsLatLongDisplayUnits(): boolean {
         return true; //This is what the AJAX viewer returns
     }
-    public MapUnitsToLatLon(x: number, y: number): IAjaxViewerPoint {
+    public MapUnitsToLatLon(): IAjaxViewerPoint {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.MapUnitsToLatLon(x, y)`);
     }
     public Refresh(): void {
@@ -1135,7 +1131,7 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
     public SetEnglishUnits(usEnglish: boolean): void {
         this.us = usEnglish;
     }
-    public SetLatLongDisplayUnits(latLon: boolean): void {
+    public SetLatLongDisplayUnits(): void {
         //This is what the AJAX viewer does
     }
     public SetSelectionXML(xmlSet: string): void {
@@ -1144,7 +1140,7 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
             viewer.setSelectionXml(xmlSet);
         }
     }
-    public ZoomToView(x: number, y: number, scale: number, refresh: boolean) {
+    public ZoomToView(x: number, y: number, scale: number) {
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.zoomToView(x, y, scale);
@@ -1199,7 +1195,7 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
         browserWindow.ExecuteMapAction = browserWindow.ExecuteMapAction || ((code: any) => this.ExecuteMapAction(code));
         browserWindow.Refresh = browserWindow.Refresh || (() => this.Refresh());
         browserWindow.SetSelectionXML = browserWindow.SetSelectionXML || ((xmlSet: string) => this.SetSelectionXML(xmlSet));
-        browserWindow.ZoomToView = browserWindow.ZoomToView || ((x: number, y: number, scale: number, refresh: boolean) => this.ZoomToView(x, y, scale, refresh));
+        browserWindow.ZoomToView = browserWindow.ZoomToView || ((x: number, y: number, scale: number, refresh: boolean) => this.ZoomToView(x, y, scale));
         browserWindow.GotoHomePage = browserWindow.GotoHomePage || (() => this.goHome());
 
         // ======= Extended Viewer API ========== //
@@ -1214,7 +1210,7 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
         this.installShims(window.parent);
 
         this.RegisterSelectionHandler((mapName: string, selection: QueryMapFeaturesResponse | undefined) => {
-            this.fusionSelectionHandler(mapName, selection);
+            this.fusionSelectionHandler(selection);
         });
     }
     componentDidUpdate(prevProps: ViewerApiShimProps) {

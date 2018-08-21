@@ -9,7 +9,6 @@ import {
     ImageFormat,
     IExternalBaseLayer,
     LayerTransparencySet,
-    ActiveSelectedFeature,
     ILayerInfo
 } from "../api/common";
 import { Client } from '../api/client';
@@ -25,9 +24,7 @@ import olExtent from "ol/extent";
 import olMap from "ol/map";
 import olView from "ol/view";
 import olOverlay from "ol/overlay";
-import olProjection from "ol/proj/projection";
 import olWKTFormat from "ol/format/wkt";
-import olPoint from "ol/geom/point";
 import olPolygon from "ol/geom/polygon";
 import olLayerBase from "ol/layer/base";
 import olTileLayer from "ol/layer/tile";
@@ -43,7 +40,6 @@ import olImageStaticSource from "ol/source/imagestatic";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY, BLANK_GIF_DATA_URI } from "../constants/index";
 import { restrictToRange } from "../utils/number";
 import { Size } from "../containers/map-capturer-context";
-import tilelayer from 'ol/renderer/webgl/tilelayer';
 
 const HIDDEN_CLASS_NAME = "tooltip-hidden";
 
@@ -79,7 +75,7 @@ class MouseTrackingTooltip {
         else
             this.tooltipElement.classList.add(HIDDEN_CLASS_NAME);
     }
-    private onMouseOut(e: GenericEvent) {
+    private onMouseOut() {
         this.tooltipElement.classList.add(HIDDEN_CLASS_NAME);
     }
     public setText(prompt: string) {
@@ -100,7 +96,6 @@ class MouseTrackingTooltip {
 class FeatureQueryTooltip {
     private wktFormat: olWKTFormat;
     private map: olMap;
-    private onRequestSelectableLayers: (() => string[]) | undefined;
     private throttledMouseMove: GenericEventHandler;
     private featureTooltipElement: Element;
     private featureTooltip: olOverlay;
@@ -111,8 +106,8 @@ class FeatureQueryTooltip {
         this.callback = callback;
         this.wktFormat = new olWKTFormat();
         this.featureTooltipElement = document.createElement("div");
-        this.featureTooltipElement.addEventListener("mouseover", e => this.isMouseOverTooltip = true);
-        this.featureTooltipElement.addEventListener("mouseout", e => this.isMouseOverTooltip = false);
+        this.featureTooltipElement.addEventListener("mouseover", () => this.isMouseOverTooltip = true);
+        this.featureTooltipElement.addEventListener("mouseout", () => this.isMouseOverTooltip = false);
         this.featureTooltipElement.className = 'feature-tooltip';
         this.featureTooltip = new olOverlay({
             element: this.featureTooltipElement,
@@ -193,9 +188,9 @@ class FeatureQueryTooltip {
             } else {
                 this.featureTooltipElement.classList.remove("tooltip-hidden");
             }
-        }).then(res => {
-            this.callback.decrementBusyWorker();
-        }).catch (err => {
+        }).then(() => {
+                this.callback.decrementBusyWorker();
+            }).catch (err => {
             this.callback.decrementBusyWorker();
             if (isSessionExpiredError(err)) {
                 this.callback.onSessionExpired();
@@ -233,7 +228,6 @@ export class MgLayerSet {
     extent: ol.Extent;
     private allLayers: olLayerBase[];
     private inPerUnit: number;
-    private resourceId: string;
     view: olView;
     private callback: IMapViewerContextCallback;
     private _customLayers: { [name: string]: olLayerBase; };
@@ -432,9 +426,6 @@ export class MgLayerSet {
             });
         }
 
-        //Listen for scale changes
-        const selSource = this.selectionOverlay.getSource();
-        const ovSource = this.overlay.getSource();
         
         for (const src of sources) {
             this.registerSourceEvents(src);
@@ -613,7 +604,6 @@ export class MgLayerSet {
             }
             //ol.View has immutable projection, so we have to replace the whole view on the OverviewMap
             const center = this.view.getCenter();
-            const resolution = this.view.getResolution();
             if (center) {
                 ovMap.setView(new olView({
                     center: [ center[0], center[1] ],
@@ -756,7 +746,6 @@ export class MapViewerContext {
         this._featureTooltip.setEnabled(this.isFeatureTooltipEnabled());
     }
     public initLayerSet(props: IMapViewerContextProps): MgLayerSet {
-        const map = props.map;
         const layerSet = new MgLayerSet(props, this.callback);
         this._layerSets[props.map.Name] = layerSet;
         if (!this._activeMapName) {

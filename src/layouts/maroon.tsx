@@ -1,7 +1,6 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
-import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
-import * as Constants from "../constants";
+import { DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import * as TemplateActions from "../actions/template";
 import ToolbarContainer from "../containers/toolbar";
 import ViewerApiShim from "../containers/viewer-shim";
@@ -11,7 +10,6 @@ import { connect } from "react-redux";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
-    NOOP,
     ReduxDispatch,
     IApplicationState,
     IConfigurationReducerState,
@@ -117,9 +115,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMaroonTemplateLay
 export type MaroonLayoutTemplateProps = Partial<IMaroonTemplateLayoutState> & Partial<IMaroonTemplateLayoutDispatch>;
 
 const SIDEBAR_WIDTH = 250;
-const TOP_BAR_HEIGHT = 35;
 const STATUS_BAR_HEIGHT = 18;
-const SIDEBAR_PADDING = 0;
 const OUTER_PADDING = 3;
 
 export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplateProps, any> {
@@ -160,7 +156,7 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
     private getLocale(): string {
         return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
-    private onSplitterChanged = (size: number) => {
+    private onSplitterChanged = () => {
         //With the introduction of the splitter, we can no longer rely on a map 
         //filling 100% of its space without needing to manually call updateSize(),
         //so we do it here
@@ -173,21 +169,13 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
         setCustomTemplateReducer(maroonTemplateReducer);
     }
     render(): JSX.Element {
-        const { config, map, capabilities } = this.props;
+        const { capabilities } = this.props;
         const { isResizing } = this.state;
-        let hasTaskPane = false;
-        let hasTaskBar = false;
         let hasStatusBar = false;
         let hasNavigator = false;
-        let hasSelectionPanel = false;
-        let hasLegend = false;
         if (capabilities) {
-            hasTaskPane = capabilities.hasTaskPane;
-            hasTaskBar = capabilities.hasTaskBar;
             hasStatusBar = capabilities.hasStatusBar;
             hasNavigator = capabilities.hasNavigator;
-            hasSelectionPanel = capabilities.hasSelectionPanel;
-            hasLegend = capabilities.hasLegend;
         }
         const locale = this.getLocale();
         const bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;

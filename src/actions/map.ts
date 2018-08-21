@@ -1,4 +1,3 @@
-import * as Constants from "../constants";
 import {
     ActiveMapTool,
     ICommand,
@@ -11,7 +10,7 @@ import {
 } from "../api/common";
 import { getViewer } from "../api/runtime";
 import { areViewsCloseToEqual } from "../components/map-viewer-base";
-import { areNumbersEqual, getFiniteScaleIndexForScale } from '../utils/number';
+import { getFiniteScaleIndexForScale } from '../utils/number';
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet, SelectedFeature, SelectedFeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
@@ -182,10 +181,10 @@ export function queryMapFeatures(mapName: string, opts: QueryMapFeatureActionOpt
                             mapname: map.Name,
                             persist: 1,
                             featurefilter: mergedXml
-                        }).then(r => {
-                            dispatch(setSelection(mapName, combined));
-                            success(combined);
-                        });
+                        }).then(() => {
+                                dispatch(setSelection(mapName, combined));
+                                success(combined);
+                            });
                     } else {
                         dispatch(setSelection(mapName, res));
                         success(res);

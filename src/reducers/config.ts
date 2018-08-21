@@ -1,16 +1,12 @@
-import * as Constants from "../constants";
 import {
     IConfigurationReducerState,
-    IExternalBaseLayer,
     ICoordinateConfiguration,
-    INameValuePair,
     IViewerCapabilities,
     UnitOfMeasure,
     KC_ESCAPE, 
     KC_U
 } from "../api/common";
 import * as logger from "../utils/logger";
-import { AnyAction } from "redux";
 import { DEFAULT_LOCALE } from "../api/i18n";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';

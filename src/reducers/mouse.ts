@@ -1,9 +1,7 @@
-import * as Constants from "../constants";
 import {
     IMouseReducerState
 } from "../api/common";
 import { isCoordinate } from "../utils/type-guards";
-import { AnyAction } from "redux";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 

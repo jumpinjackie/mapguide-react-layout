@@ -1,4 +1,3 @@
-import { combineReducers } from "redux";
 import { configReducer} from "./config";
 import { toolbarReducer } from "./toolbar";
 import { taskPaneReducer } from "./taskpane";

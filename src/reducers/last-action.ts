@@ -3,9 +3,7 @@
 //
 // As suggested by the creator of redux:
 // https://github.com/reactjs/redux/issues/580
-import { ReduxThunkedAction } from "../api/common";
 import { isAction } from "../utils/type-guards";
-import * as Constants from "../constants";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 

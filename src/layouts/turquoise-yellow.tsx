@@ -1,6 +1,6 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
-import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
+import { DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import ToolbarContainer from "../containers/toolbar";
 import ViewerApiShim from "../containers/viewer-shim";
 import ModalLauncher from "../containers/modal-launcher";
@@ -9,7 +9,6 @@ import { connect } from "react-redux";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
-    NOOP,
     ReduxDispatch,
     IApplicationState,
     IConfigurationReducerState,
@@ -18,7 +17,6 @@ import {
     getRuntimeMap
 } from "../api/common";
 import { Tabs2, Tab2 } from "@blueprintjs/core";
-import * as Constants from "../constants";
 import * as TemplateActions from "../actions/template";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
 import InitWarningDisplay from "../containers/init-warning-display";
@@ -133,7 +131,7 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
     private onDragEnd = () => {
         this.setState({ isResizing: false });
     }
-    private onSplitterChanged = (size: number) => {
+    private onSplitterChanged = () => {
         //With the introduction of the splitter, we can no longer rely on a map 
         //filling 100% of its space without needing to manually call updateSize(),
         //so we do it here
@@ -173,17 +171,15 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
         setCustomTemplateReducer(turquoiseYellowTemplateReducer);
     }
     render(): JSX.Element {
-        const { config, map, capabilities } = this.props;
+        const { capabilities } = this.props;
         const { isResizing } = this.state;
         let hasTaskPane = false;
-        let hasTaskBar = false;
         let hasStatusBar = false;
         let hasNavigator = false;
         let hasSelectionPanel = false;
         let hasLegend = false;
         if (capabilities) {
             hasTaskPane = capabilities.hasTaskPane;
-            hasTaskBar = capabilities.hasTaskBar;
             hasStatusBar = capabilities.hasStatusBar;
             hasNavigator = capabilities.hasNavigator;
             hasSelectionPanel = capabilities.hasSelectionPanel;

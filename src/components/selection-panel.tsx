@@ -1,8 +1,8 @@
 import * as React from "react";
 import { SelectedFeatureSet, SelectedFeature, LayerMetadata, SelectedLayer, FeatureProperty } from "../api/contracts/query";
-import { Toolbar, IItem, IInlineMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
+import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
 import { tr as xlate, DEFAULT_LOCALE } from "../api/i18n";
-import { NOOP, GenericEvent, GenericEventHandler } from "../api/common";
+import { GenericEvent } from "../api/common";
 import {
     SPRITE_CONTROL,
     SPRITE_CONTROL_180,
@@ -124,7 +124,7 @@ function buildToolbarItems(selPanel: ISelectionPanel): IItem[] {
 const SELECTION_TOOLBAR_STYLE: React.CSSProperties = { float: "right", height: DEFAULT_TOOLBAR_SIZE };
 const SELECTION_PANEL_TOOLBAR_STYLE: React.CSSProperties = { height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR };
 const LAYER_COMBO_STYLE: React.CSSProperties = { float: "left", height: DEFAULT_TOOLBAR_SIZE };
-const FloatClear = (props: any) => <div style={{ clear: "both" }} />;
+const FloatClear = () => <div style={{ clear: "both" }} />;
 
 /**
  * Displays attributes of selected features with the ability to zoom in on selected features

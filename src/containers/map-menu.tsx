@@ -1,10 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import {
-    IMapView,
     INameValuePair,
-    IConfigurationReducerState,
-    IExternalBaseLayer,
     ReduxDispatch,
     IApplicationState
 } from "../api/common";

@@ -1,5 +1,4 @@
 import { ITaskPaneReducerState } from "../api/common";
-import { AnyAction } from "redux";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 

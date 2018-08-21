@@ -8,7 +8,6 @@ import { IDOMElementMetrics, IMapView, Dictionary, IExternalBaseLayer, IModalCom
 import { ActionType } from '../constants/actions';
 import { PreparedSubMenuSet } from '../api/registry/command-spec';
 import { RuntimeMap } from '../api/contracts/runtime-map';
-import { IInitAsyncOptions } from './init';
 
 /**
  * Opens a flyout menu

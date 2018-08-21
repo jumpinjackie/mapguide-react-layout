@@ -1,8 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import {
-    IMapView,
-    IConfigurationReducerState,
     IExternalBaseLayer,
     ReduxDispatch,
     IApplicationState
@@ -24,7 +22,7 @@ export interface IBaseLayerSwitcherContainerDispatch {
     setBaseLayer: (mapName: string, layerName: string) => void;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IBaseLayerSwitcherContainerProps): Partial<IBaseLayerSwitcherContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IBaseLayerSwitcherContainerState> {
     let externalBaseLayers;
     if (state.config.activeMapName) {
         externalBaseLayers = state.mapState[state.config.activeMapName].externalBaseLayers;

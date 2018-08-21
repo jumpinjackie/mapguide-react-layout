@@ -1,7 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { IApplicationState, ReduxDispatch, UnitOfMeasure, IMapView } from "../api/common";
-import { NBSP } from "../constants/index";
+import { IApplicationState, UnitOfMeasure, IMapView } from "../api/common";
 import { ViewSize } from "../components/view-size";
 
 export interface IViewSizeContainerProps {
@@ -45,7 +44,7 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IViewSizeC
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IViewSizeContainerDispatch> {
+function mapDispatchToProps(): Partial<IViewSizeContainerDispatch> {
     return {
 
     };

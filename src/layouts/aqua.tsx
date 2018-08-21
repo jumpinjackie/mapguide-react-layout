@@ -1,7 +1,6 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
-import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
-import { Toolbar, IItem } from "../components/toolbar";
+import { DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import ToolbarContainer from "../containers/toolbar";
 import ViewerApiShim from "../containers/viewer-shim";
 import ModalLauncher from "../containers/modal-launcher";
@@ -11,7 +10,6 @@ import { connect } from "react-redux";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
-    NOOP,
     ReduxDispatch,
     IApplicationState,
     IConfigurationReducerState,
@@ -19,12 +17,11 @@ import {
     IViewerCapabilities,
     getRuntimeMap
 } from "../api/common";
-import * as Constants from "../constants";
 import * as TemplateActions from "../actions/template";
-import { setCustomTemplateReducer, isElementState } from "../reducers/template";
+import { setCustomTemplateReducer } from "../reducers/template";
 import InitWarningDisplay from "../containers/init-warning-display";
 import { ActionType } from '../constants/actions';
-import { IElementState, ViewerAction } from '../actions/defs';
+import { ViewerAction } from '../actions/defs';
 
 function aquaTemplateReducer(state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
@@ -62,7 +59,6 @@ function aquaTemplateReducer(state: ITemplateReducerState, action: ViewerAction)
 }
 
 const SIDEBAR_WIDTH = 250;
-const LEGEND_HEIGHT = 350;
 const SELECTION_DIALOG_HEIGHT = 300;
 const LEGEND_DIALOG_HEIGHT = 400;
 const TASK_DIALOG_HEIGHT = 500;
@@ -114,12 +110,6 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
         this.ovMapTarget = null;
         this.state = {};
     }
-    private getOverviewMapTarget = () => {
-        return this.ovMapTarget;
-    }
-    private onOverviewMapTargetMounted = (el: Element) => {
-        this.ovMapTarget = el;
-    }
     private onHideTaskPane = () => {
         const { hideTaskPane } = this.props;
         if (hideTaskPane) {
@@ -137,9 +127,6 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
         if (hideSelection) {
             hideSelection();
         }
-    }
-    private onHideOverviewMap = () => {
-        this.setState({ isOverviewMapOpen: false });
     }
     private getLocale(): string {
         return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
@@ -165,16 +152,14 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
         }
     }
     render(): JSX.Element {
-        const { capabilities, config, showLegend, showSelection, showTaskPane } = this.props;
+        const { capabilities, showLegend, showSelection, showTaskPane } = this.props;
         let hasTaskPane = false;
-        let hasTaskBar = false;
         let hasStatusBar = false;
         let hasNavigator = false;
         let hasSelectionPanel = false;
         let hasLegend = false;
         if (capabilities) {
             hasTaskPane = capabilities.hasTaskPane;
-            hasTaskBar = capabilities.hasTaskBar;
             hasStatusBar = capabilities.hasStatusBar;
             hasNavigator = capabilities.hasNavigator;
             hasSelectionPanel = capabilities.hasSelectionPanel;
@@ -182,8 +167,6 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
         }
         const locale = this.getLocale();
         const bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;
-        let sbWidth = SIDEBAR_WIDTH;
-        let tpWidth = SIDEBAR_WIDTH;
         let left = DEFAULT_TOOLBAR_SIZE;
         let right = 0;
         /*

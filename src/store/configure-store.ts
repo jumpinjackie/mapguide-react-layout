@@ -3,7 +3,6 @@ import thunk from 'redux-thunk';
 import promiseMiddleware from './promise-middleware';
 import logger from './logger';
 import rootReducer from '../reducers/root';
-const persistState = require('redux-localstorage');
 
 function configureStore(initialState: any, extraReducers?: any) {
     const root = extraReducers ? combineReducers({ ...rootReducer, ...extraReducers }) : combineReducers(rootReducer);
@@ -46,19 +45,5 @@ function _enableHotLoader(store: any) {
     }
 }
 
-function _getStorageConfig() {
-    /*
-    return {
-        key: 'react-redux-seed',
-        serialize: (store: any) => {
-            return store;
-        },
-        deserialize: (state: any) => ({
-            session: state ? JSON.parse(state) : {}
-        }),
-    };
-    */
-    return {};
-}
 
 export default configureStore;

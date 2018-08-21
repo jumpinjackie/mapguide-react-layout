@@ -1,5 +1,3 @@
-import * as Constants from "../constants";
-import { IModalReducerState } from "../api/common";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 

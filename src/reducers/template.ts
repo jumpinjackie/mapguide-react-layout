@@ -1,10 +1,7 @@
-import * as Constants from "../constants";
 import {
     ReducerFunction,
     ITemplateReducerState
 } from "../api/common";
-import { isCoordinate } from "../utils/type-guards";
-import { AnyAction } from "redux";
 import { ActionType } from '../constants/actions';
 import { IElementState, ViewerAction } from '../actions/defs';
 

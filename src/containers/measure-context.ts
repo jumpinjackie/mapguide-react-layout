@@ -1,11 +1,6 @@
 import {
     GenericEvent,
-    GenericEventHandler,
-    IMapViewer,
-    ActiveMapTool,
-    ReduxDispatch,
-    IApplicationState,
-    IConfigurationReducerState
+    IMapViewer
 } from "../api/common";
 import { IOLFactory } from "../api/ol-factory";
 import { tr } from "../api/i18n";
@@ -179,7 +174,7 @@ export class MeasureContext {
             });
         }
     }
-    private onDrawEnd = (evt: GenericEvent) => {
+    private onDrawEnd = () => {
         if (this.measureTooltipElement) {
             this.measureTooltipElement.className = 'tooltip tooltip-static';
         }

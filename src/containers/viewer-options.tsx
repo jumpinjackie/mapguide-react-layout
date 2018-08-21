@@ -2,7 +2,6 @@ import * as React from "react";
 import { connect } from "react-redux";
 import {
     GenericEvent,
-    GenericEventHandler,
     ReduxDispatch,
     IApplicationState,
     IViewerReducerState,
@@ -37,7 +36,7 @@ export interface IViewerOptionsDispatch {
     setViewSizeDisplayUnits: (units: UnitOfMeasure) => void;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IViewerOptionsProps): Partial<IViewerOptionsState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IViewerOptionsState> {
     let layerTransparency;
     let mapName = state.config.activeMapName;
     let externalBaseLayers;

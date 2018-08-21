@@ -9,7 +9,6 @@ import {
     ReduxDispatch,
     IApplicationState
 } from "../api/common";
-import { processMenuItems } from "../utils/menu";
 import { mapToolbarReference } from "../api/registry/command";
 import { DEFAULT_LOCALE } from "../api/i18n";
 

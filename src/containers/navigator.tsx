@@ -2,9 +2,6 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { ICommand } from "../api/common";
 import { Navigator, ZoomDirection, PanDirection } from "../components/navigator";
-import { QueryMapFeaturesResponse } from "../api/contracts/query";
-import { RuntimeMap } from "../api/contracts/runtime-map";
-import { getViewer } from "../api/runtime";
 import { invokeCommand, setScale } from "../actions/map";
 import { getCommand, DefaultCommands } from "../api/registry/command";
 import {
@@ -33,7 +30,7 @@ export interface INavigatorContainerDispatch {
     setScale: (mapName: string, scale: number) => void;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>, ownProps: INavigatorContainerProps): Partial<INavigatorContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<INavigatorContainerState> {
     let view;
     const map = getRuntimeMap(state);
     if (state.config.activeMapName) {
@@ -104,7 +101,7 @@ export class NavigatorContainer extends React.Component<NavigatorContainerProps,
         return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
     render(): JSX.Element {
-        const { style, viewer, view, config, finiteScales } = this.props;
+        const { style, viewer, view, finiteScales } = this.props;
         const locale = this.getLocale();
         if (viewer != null && view != null) {
             return <Navigator style={style}

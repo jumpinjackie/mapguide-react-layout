@@ -2,19 +2,15 @@ import * as React from "react";
 import { connect } from "react-redux";
 import {
     GenericEvent,
-    GenericEventHandler,
-    IMapViewer,
     ActiveMapTool,
     ReduxDispatch,
-    IApplicationState,
-    IConfigurationReducerState
+    IApplicationState
 } from "../api/common";
 import { getViewer } from "../api/runtime";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
-import { NBSP } from "../constants";
 import { setActiveTool } from "../actions/map";
 import { IMeasureCallback, MeasureSegment, MeasureContext, IMeasureComponent } from "./measure-context";
-import { sum, roundTo } from "../utils/number";
+import { roundTo } from "../utils/number";
 
 export interface IMeasureContainerProps {
 
@@ -94,10 +90,10 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
         }
         return false;
     }
-    private onStartMeasure = (e: GenericEvent) => {
+    private onStartMeasure = () => {
         this.startMeasure();
     }
-    private onEndMeasure = (e: GenericEvent) => {
+    private onEndMeasure = () => {
         this.endMeasure();
     }
     private startMeasure() {

@@ -1,6 +1,4 @@
-import * as Constants from "../constants";
 import {
-    IModalParameters,
     IModalComponentDisplayOptions,
     IModalDisplayOptions
 } from "../api/common";

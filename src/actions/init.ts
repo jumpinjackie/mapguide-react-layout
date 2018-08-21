@@ -1,10 +1,9 @@
 import * as Constants from "../constants";
 import { Client } from "../api/client";
 import * as Runtime from "../api/runtime";
-import { ReduxDispatch, Dictionary, ICommand, IMapView, CommandTarget } from "../api/common";
+import { ReduxDispatch, Dictionary, IMapView, CommandTarget } from "../api/common";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
 import { registerCommand, DefaultCommands } from "../api/registry/command";
-import { DefaultComponentNames } from "../api/registry/component";
 import {
     WebLayout,
     CommandDef,
@@ -57,7 +56,7 @@ function isUIWidget(widget: any): widget is UIWidget {
     return widget.WidgetType === "UiWidgetType";
 }
 
-function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictionary<Widget>, locale: string, noToolbarLabels = false, canSupportFlyouts = true): (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[] {
+function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictionary<Widget>, locale: string, noToolbarLabels = false): (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[] {
     const converted = items.map(item => {
         switch (item.Function) {
             case "Widget":
@@ -87,7 +86,7 @@ function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictiona
     return converted;
 }
 
-function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Dictionary<CommandDef>, locale: string, noToolbarLabels = true, canSupportFlyouts = true): (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[] {
+function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Dictionary<CommandDef>, locale: string, noToolbarLabels = true): (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[] {
     const converted = (items || []).map(item => {
         if (isCommandItem(item)) {
             const cmdDef: CommandDef = cmdsByKey[item.Command];
@@ -135,7 +134,7 @@ function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Diction
             return {
                 label: item.Label,
                 tooltip: item.Tooltip,
-                children: convertWebLayoutUIItems(item.SubItem, cmdsByKey, locale, false, false)
+                children: convertWebLayoutUIItems(item.SubItem, cmdsByKey, locale, false)
             } as IFlyoutSpec;
         } else {
             assertNever(item);
@@ -231,7 +230,6 @@ function getDesiredTargetMapName(mapDef: string) {
 
 function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<RuntimeMap>, config: any, warnings: string[]): Dictionary<MapInfo> {
     const dict: Dictionary<MapInfo> = {};
-    const mgGroups: Dictionary<MapSetGroup> = {};
     if (appDef.MapSet) {
         for (const mgGroup of appDef.MapSet.MapGroup) {
             let mapName: string | undefined;
@@ -375,19 +373,6 @@ function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<Runtime
     return dict;
 }
 
-function getMapGuideMapGroup(appDef: ApplicationDefinition): MapSetGroup[] {
-    const configs = [] as MapSetGroup[];
-    if (appDef.MapSet) {
-        for (const mg of appDef.MapSet.MapGroup) {
-            for (const map of mg.Map) {
-                if (map.Type == "MapGuide") {
-                    configs.push(mg);
-                }
-            }
-        }
-    }
-    return configs;
-}
 
 function getMapGuideConfiguration(appDef: ApplicationDefinition): [string, MapConfiguration][] {
     const configs = [] as [string, MapConfiguration][];
@@ -552,7 +537,6 @@ async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, 
     for (const e of extraEpsgs) {
         fetchEpsgs.push({ epsg: e, mapDef: "" });
     }
-    const epsgs = await Promise.all(fetchEpsgs.map(f => resolveProjectionAsync(f.epsg, opts, f.mapDef)));
     //Build the Dictionary<RuntimeMap> from loaded maps
     const mapsByName: Dictionary<RuntimeMap> = {};
     for (const map of maps) {
@@ -562,7 +546,7 @@ async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, 
 }
 
 async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOptions, session: string, client: Client, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
-    const [mapsByName, warnings] = await createRuntimeMapsAsync(client, session, opts, webLayout, wl => [ { name: getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId } ], wl => [], sessionWasReused);
+    const [mapsByName, warnings] = await createRuntimeMapsAsync(client, session, opts, webLayout, wl => [ { name: getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId } ], () => [], sessionWasReused);
     const cmdsByKey: any = {};
     //Register any InvokeURL and Search commands
     for (const cmd of webLayout.CommandSet.Command) {

@@ -14,9 +14,7 @@ import olInteraction from "ol/interaction/interaction";
 import olOverlay from "ol/overlay";
 
 import { IOLFactory } from "./ol-factory";
-import { Dispatch, Action, AnyAction } from "redux";
 import { ViewerAction } from '../actions/defs';
-import { ThunkAction } from 'redux-thunk';
 
 // Event boilerplate
 export type GenericEvent = any;

@@ -3,7 +3,6 @@
  *
  * Actions to support fusion templates
  */
-import * as Constants from "../constants";
 import { ActionType } from '../constants/actions';
 import { IElementState, ITemplateSetElementStateAction, ITemplateSetTaskPaneVisibilityAction, ITemplateSetSelectionPanelVisibility, ITemplateSetLegendVisibility } from './defs';
 

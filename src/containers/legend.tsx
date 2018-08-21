@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Legend, MapElementChangeFunc } from "../components/legend";
+import { Legend } from "../components/legend";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import * as LegendActions from "../actions/legend";
 import * as MapActions from "../actions/map";
@@ -9,7 +9,6 @@ import {
     IApplicationState,
     ReduxDispatch,
     IConfigurationReducerState,
-    IBranchedMapSubState,
     IExternalBaseLayer,
     getExternalBaseLayers
 } from "../api/common";
@@ -41,13 +40,12 @@ export interface ILegendContainerDispatch {
     setGroupExpanded: (mapName: string, options: { id: string, value: boolean }) => void;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>, ownProps: ILegendContainerProps): Partial<ILegendContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<ILegendContainerState> {
     let view;
     let runtimeMap;
     let selectableLayers;
     let expandedGroups;
     let externalBaseLayers;
-    let viewer;
     let showGroups;
     let showLayers;
     let hideGroups;

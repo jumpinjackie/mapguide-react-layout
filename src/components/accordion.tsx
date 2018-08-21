@@ -2,8 +2,7 @@ import * as React from "react";
 import { Collapse } from "@blueprintjs/core";
 import Measure, { ContentRect } from "react-measure";
 import {
-    GenericEvent,
-    GenericEventHandler
+    GenericEvent
 } from "../api/common";
 import { safePropAccess } from '../utils/safe-prop';
 

@@ -1,4 +1,3 @@
-import * as Constants from "../constants";
 import { IDOMElementMetrics } from "../api/common";
 import {
     IOpenFlyoutAction, 

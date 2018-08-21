@@ -1,9 +1,7 @@
-import * as Constants from "../constants";
 import {
     ActiveMapTool,
     IViewerReducerState
 } from "../api/common";
-import { AnyAction } from "redux";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 

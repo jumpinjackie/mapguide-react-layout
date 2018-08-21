@@ -2,7 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import App, { IAppProps } from "../containers/app";
-import { ClientKind, ReduxThunkedAction, ICommand, IApplicationState } from "../api/common";
+import { ReduxThunkedAction, ICommand, IApplicationState } from "../api/common";
 import configureStore from "../store/configure-store";
 import { CONFIG_INITIAL_STATE } from "../reducers/config";
 import { getCommand as getRegisteredCommand } from "../api/registry/command";

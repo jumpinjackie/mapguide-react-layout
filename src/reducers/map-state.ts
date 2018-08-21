@@ -1,13 +1,10 @@
-import * as Constants from "../constants";
 import {
-    ActiveMapTool,
     IBranchedMapState,
     IBranchedMapSubState,
     IExternalBaseLayer
 } from "../api/common";
 import { RuntimeMap } from "../api/contracts/runtime-map";
-import { isMapView, isCoordinate } from "../utils/type-guards";
-import { AnyAction } from "redux";
+import { isMapView } from "../utils/type-guards";
 import * as logger from "../utils/logger";
 import uniq = require("lodash.uniq");
 import { ActionType } from '../constants/actions';

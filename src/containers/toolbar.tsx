@@ -10,12 +10,11 @@ import {
     IBranchedMapSubState,
     FlyoutVisibilitySet
 } from "../api/common";
-import { getCommand, mapToolbarReference } from "../api/registry/command";
-import { IItem, IInlineMenu, Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
+import { mapToolbarReference } from "../api/registry/command";
+import { Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import { invokeCommand } from "../actions/map";
 import { processMenuItems } from "../utils/menu";
 import * as FlyoutActions from "../actions/flyout";
-import * as Constants from "../constants";
 import { NULL_ACTION } from "../reducers/last-action";
 import { ActionType } from '../constants/actions';
 

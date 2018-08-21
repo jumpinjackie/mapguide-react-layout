@@ -7,7 +7,6 @@ import {
     ReduxDispatch,
     IApplicationState,
     IConfigurationReducerState,
-    IInitErrorReducerState,
     IBranchedMapSubState,
     ClientKind,
     InitError,
@@ -128,7 +127,7 @@ export interface IAppDispatch {
     setElementVisibility: (states: IElementState) => void;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IAppProps): Partial<IAppState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IAppState> {
     let map;
     if (state.config.activeMapName) {
         map = state.mapState[state.config.activeMapName];
@@ -185,7 +184,6 @@ export class App extends React.Component<AppProps, any> {
             setElementVisibility,
             initialElementVisibility,
             initLayout,
-            agent,
             locale,
             session,
             fusionRoot,
@@ -376,7 +374,7 @@ export class App extends React.Component<AppProps, any> {
         </div>;
     }
     render(): JSX.Element {
-        const { layout, config, error, map } = this.props;
+        const { layout, config, error } = this.props;
         const { isLoading } = this.state;
         if (error) {
             return <Error error={error} errorRenderer={this.initErrorRenderer} />

@@ -2,9 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import {
     Coordinate,
-    ReduxDispatch,
-    IApplicationState,
-    ICoordinateConfiguration
+    IApplicationState
 } from "../api/common";
 import { tr } from "../api/i18n";
 import olProj from "ol/proj";
@@ -38,7 +36,7 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<ICoordinat
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ICoordinateTrackerContainerDispatch> {
+function mapDispatchToProps(): Partial<ICoordinateTrackerContainerDispatch> {
     return { };
 }
 

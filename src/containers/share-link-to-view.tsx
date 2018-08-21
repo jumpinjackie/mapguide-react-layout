@@ -1,14 +1,13 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { 
-    IApplicationState,
-    ReduxDispatch
+    IApplicationState
 } from '../api/common';
 import { addUrlProps } from 'react-url-query';
 import { urlPropsQueryConfig, IAppUrlStateProps } from './url-state';
 import { tr } from '../api/i18n';
 import { getViewer } from '../api/runtime';
-import { Checkbox, TextArea, Toaster } from '@blueprintjs/core';
+import { Checkbox, TextArea } from '@blueprintjs/core';
 import CopyToClipboard = require('react-copy-to-clipboard');
 import queryString = require("query-string");
 
@@ -48,7 +47,7 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IShareLink
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IShareLinkToViewContainerDispatch> {
+function mapDispatchToProps(): Partial<IShareLinkToViewContainerDispatch> {
     return { };
 }
 
@@ -73,10 +72,10 @@ export class ShareLinkToViewContainer extends React.Component<ShareLinkToViewCon
             showSession: false
         };
     }
-    private onShowSessionChanged = (e: any) => {
+    private onShowSessionChanged = () => {
         this.setState({ showSession: !this.state.showSession });
     }
-    private onCopied = (e: any) => {
+    private onCopied = () => {
         const v = getViewer();
         if (v) {
             v.toastSuccess("clipboard", tr("SHARE_LINK_COPIED", this.props.locale));

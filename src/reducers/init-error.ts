@@ -1,6 +1,4 @@
-import * as Constants from "../constants";
 import { IInitErrorReducerState } from "../api/common";
-import { AnyAction } from "redux";
 import uniq = require("lodash.uniq");
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';

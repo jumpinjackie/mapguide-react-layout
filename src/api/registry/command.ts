@@ -1,8 +1,6 @@
 import {
-    IMapView,
     IMapViewer,
     ICommand,
-    CommandTarget,
     Dictionary,
     IInvokeUrlCommand,
     ISearchCommand,
@@ -14,19 +12,14 @@ import {
     getRuntimeMap,
     DEFAULT_MODAL_SIZE,
     NOOP,
-    ALWAYS_FALSE,
-    ALWAYS_TRUE
+    ALWAYS_FALSE
 } from "../../api/common";
 import * as ModalActions from "../../actions/modal";
 import { getFusionRoot } from "../../api/runtime";
-import { QueryMapFeaturesResponse } from "../contracts/query";
-import { ResultColumnSet } from "../contracts/weblayout";
 import { IItem, IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../../components/toolbar";
-import * as Constants from "../../constants";
 import { tr } from "../i18n";
 import { getAssetRoot } from "../../utils/asset";
 import {
-    STD_CSS_SPRITE_RELPATH,
     SPRITE_ICON_ERROR
 } from "../../constants/assets";
 import { assertNever } from "../../utils/never";
@@ -44,7 +37,6 @@ function fixIconPath(path: string): string {
 }
 
 function fusionFixSpriteClass(tb: any, cmd?: ICommand): string | undefined {
-    const url = tb.icon || (cmd || {} as any).icon;
     if (tb.spriteClass) {
         return tb.spriteClass;
     }
@@ -132,7 +124,7 @@ export class CommandConditions {
      *
      * @memberof CommandConditions
      */
-    public static isNotBusy(state: Readonly<IApplicationState>, parameters?: any): boolean {
+    public static isNotBusy(state: Readonly<IApplicationState>): boolean {
         return state.viewer.busyCount == 0;
     }
     /**
@@ -333,12 +325,11 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                 }
                 return true;
             },
-            selected: (state) => false,
-            invoke: (dispatch: ReduxDispatch, getState: () => IApplicationState, viewer: IMapViewer) => {
+            selected: () => false,
+            invoke: (dispatch: ReduxDispatch, getState: () => IApplicationState) => {
                 const state = getState();
                 const config = state.config;
                 const map = getRuntimeMap(state);
-                const target = cmdDef.target;
                 if (map) {
                     const url = ensureParameters(cmdDef.url, map.Name, map.SessionId, config.locale, true, cmdDef.parameters);
                     openUrlInTarget(name, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
@@ -349,8 +340,8 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
         cmd = {
             icon: cmdDef.icon,
             iconClass: cmdDef.iconClass,
-            enabled: (state) => true,
-            selected: (state) => false,
+            enabled: () => true,
+            selected: () => false,
             invoke: (dispatch: ReduxDispatch, getState: () => IApplicationState, viewer: IMapViewer, parameters?: any) => {
                 const state = getState();
                 const config = state.config;

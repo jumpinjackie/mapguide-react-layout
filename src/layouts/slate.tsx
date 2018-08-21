@@ -1,6 +1,6 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
-import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
+import { DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import ToolbarContainer from "../containers/toolbar";
 import ViewerApiShim from "../containers/viewer-shim";
 import ModalLauncher from "../containers/modal-launcher";
@@ -10,7 +10,6 @@ import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import * as Runtime from "../api/runtime";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
-    NOOP,
     ReduxDispatch,
     IApplicationState,
     IConfigurationReducerState,
@@ -18,7 +17,6 @@ import {
     ITemplateReducerState,
     getRuntimeMap
 } from "../api/common";
-import * as Constants from "../constants";
 import * as TemplateActions from "../actions/template";
 import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../components/accordion";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
@@ -119,9 +117,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ISlateTemplateLayo
 export type SlateLayoutTemplateProps = Partial<ISlateTemplateLayoutState> & Partial<ISlateTemplateLayoutDispatch>;
 
 const SIDEBAR_WIDTH = 250;
-const TOP_BAR_HEIGHT = 35;
 const STATUS_BAR_HEIGHT = 18;
-const SIDEBAR_PADDING = 0;
 
 export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProps, any> {
     constructor(props: SlateLayoutTemplateProps) {
@@ -134,7 +130,7 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
     private onDragEnd = () => {
         this.setState({ isResizing: false });
     }
-    private onSplitterChanged = (size: number) => {
+    private onSplitterChanged = () => {
         //With the introduction of the splitter, we can no longer rely on a map 
         //filling 100% of its space without needing to manually call updateSize(),
         //so we do it here
@@ -174,21 +170,13 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
         setCustomTemplateReducer(slateTemplateReducer);
     }
     render(): JSX.Element {
-        const { config, map, capabilities } = this.props;
+        const { capabilities } = this.props;
         const { isResizing } = this.state;
-        let hasTaskPane = false;
-        let hasTaskBar = false;
         let hasStatusBar = false;
         let hasNavigator = false;
-        let hasSelectionPanel = false;
-        let hasLegend = false;
         if (capabilities) {
-            hasTaskPane = capabilities.hasTaskPane;
-            hasTaskBar = capabilities.hasTaskBar;
             hasStatusBar = capabilities.hasStatusBar;
             hasNavigator = capabilities.hasNavigator;
-            hasSelectionPanel = capabilities.hasSelectionPanel;
-            hasLegend = capabilities.hasLegend;
         }
         const locale = this.getLocale();
         const bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;

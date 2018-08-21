@@ -1,4 +1,3 @@
-import * as Constants from "../constants";
 import { MgError } from "../api/error";
 import {
     ReduxThunkedAction

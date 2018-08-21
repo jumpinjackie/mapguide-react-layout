@@ -1,5 +1,5 @@
 import * as React from "react";
-import { IExternalBaseLayer, GenericEvent, GenericEventHandler } from "../api/common";
+import { IExternalBaseLayer, GenericEvent } from "../api/common";
 import { RuntimeMap, MapLayer, MapGroup, RuleInfo } from "../api/contracts/runtime-map";
 import { ILegendContext, LEGEND_CONTEXT_VALIDATION_MAP } from "./context";
 import { BaseLayerSwitcher } from "./base-layer-switcher";

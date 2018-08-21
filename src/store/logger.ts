@@ -1,4 +1,3 @@
-import * as Constants from "../constants";
 import { ActionType } from '../constants/actions';
 const createLogger = require("redux-logger").createLogger;
 

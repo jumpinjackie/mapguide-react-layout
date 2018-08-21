@@ -1932,6 +1932,15 @@ export interface WMSServiceCapabilities {
 }
 
 /**
+ * @since 0.12
+ */
+export interface WMSLayerBoundingBox {
+    crs: string;
+    extent: [number, number, number, number],
+    res: [any, any]
+}
+
+/**
  * @since 0.11
  */
 export interface WMSPublishedLayer {
@@ -1941,11 +1950,7 @@ export interface WMSPublishedLayer {
     KeywordList: string;
     CRS: string[];
     EX_GeographicBoundingBox: [number, number, number, number];
-    BoundingBox: {
-        crs: string;
-        extent: [number, number, number, number],
-        res: [any, any]
-    }[];
+    BoundingBox: WMSLayerBoundingBox[];
     Style: WMSLayerStyle[];
     queryable: boolean;
     opaque: boolean;
@@ -1960,17 +1965,54 @@ export interface WMSRootPublishedLayer extends WMSPublishedLayer {
 }
 
 /**
+ * @since 0.12
+ */
+export interface WMSLegendURLDefinition {
+    Format: string;
+    OnlineResource: string;
+    size: [number, number];
+}
+
+/**
  * @since 0.11
  */
 export interface WMSLayerStyle {
     Name: string;
     Title: string;
     Abstract: string;
-    LegendURL: {
-        Format: string;
-        OnlineResource: string;
-        size: [number, number];
-    }[]
+    LegendURL: WMSLegendURLDefinition[];
+}
+
+/**
+ * @since 0.12
+ */
+export interface WMSContactAddress {
+    AddressType: string,
+    Address: string,
+    City: string,
+    StateOrProvince: string,
+    PostCode: string,
+    Country: string
+}
+
+/**
+ * @since 0.12
+ */
+export interface WMSContact {
+    ContactPerson: string;
+    ContactOrganization: string;
+}
+
+/**
+ * @since 0.12
+ */
+export interface WMSContactInformation {
+    ContactPersonPrimary: WMSContact,
+    ContactPosition: string,
+    ContactAddress: WMSContactAddress,
+    ContactVoiceTelephone: string,
+    ContactFacsimileTelephone: string,
+    ContactElectronicMailAddress: string
 }
 
 /**
@@ -1982,24 +2024,7 @@ export interface WMSServiceDescription {
     Abstract: string;
     KeywordList: string[];
     OnlineResource: string;
-    ContactInformation: {
-        ContactPersonPrimary: {
-            ContactPerson: string;
-            ContactOrganization: string;
-        },
-        ContactPosition: string,
-        ContactAddress: {
-            AddressType: string,
-            Address: string,
-            City: string,
-            StateOrProvince: string,
-            PostCode: string,
-            Country: string
-        },
-        ContactVoiceTelephone: string,
-        ContactFacsimileTelephone: string,
-        ContactElectronicMailAddress: string
-    },
+    ContactInformation: WMSContactInformation,
     Fees: string;
     AccessConstraints: string;
 }

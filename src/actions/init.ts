@@ -49,8 +49,9 @@ import {
     IUnknownCommandSpec,
     ICommandSpec
 } from "../api/registry/command-spec";
-import { MapInfo, IInitAppActionPayload, IAcknowledgeStartupWarningsAction } from './defs';
+import { MapInfo, IInitAppActionPayload, IAcknowledgeStartupWarningsAction, IRestoredSelectionSets } from './defs';
 import { ActionType } from '../constants/actions';
+import { getSelectionSet, clearSessionStore } from '../api/session-store';
 
 function isUIWidget(widget: any): widget is UIWidget {
     return widget.WidgetType === "UiWidgetType";
@@ -826,7 +827,25 @@ async function initAsync(options: IInitAsyncOptions, client: Client): Promise<II
         logger.info(`Re-using session: ${session}`);
         sessionWasReused = true;
     }
-    return await sessionAcquiredAsync(options, session, client, sessionWasReused);
+    const payload = await sessionAcquiredAsync(options, session, client, sessionWasReused);
+    if (sessionWasReused) {
+        let initSelections: IRestoredSelectionSets = {};
+        for (const mapName in payload.maps) {
+            const sset = await getSelectionSet(session, mapName);
+            if (sset) {
+                initSelections[mapName] = sset;
+            }
+        }
+        payload.initialSelections = initSelections;
+        try {
+            //In the interest of being a responsible citizen, clean up all selection-related stuff from
+            //session store
+            await clearSessionStore();
+        } catch (e) {
+
+        }
+    }
+    return payload;
 }
 
 /**

@@ -18,6 +18,7 @@ import { buildSelectionXml } from '../api/builders/deArrayify';
 import uniq = require("lodash.uniq");
 import { ActionType } from '../constants/actions';
 import { IMapSetBusyCountAction, IMapSetBaseLayerAction, IMapSetScaleAction, IMapSetMouseCoordinatesAction, IMapSetLayerTransparencyAction, IMapSetViewSizeUnitsAction, IMapPreviousViewAction, IMapNextViewAction, ISetActiveMapToolAction, ISetActiveMapAction, ISetManualFeatureTooltipsEnabledAction, ISetFeatureTooltipsEnabledAction, IMapSetViewRotationAction, IMapSetViewRotationEnabledAction, IShowSelectedFeatureAction, IMapSetSelectionAction, IMapResizedAction } from './defs';
+import { storeSelectionSet } from '../api/session-store';
 
 function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeature[]): SelectedFeature[] {
     const merged: SelectedFeature[] = [];
@@ -182,10 +183,12 @@ export function queryMapFeatures(mapName: string, opts: QueryMapFeatureActionOpt
                             persist: 1,
                             featurefilter: mergedXml
                         }).then(() => {
-                                dispatch(setSelection(mapName, combined));
-                                success(combined);
-                            });
+                            storeSelectionSet(map.SessionId, mapName, combined); // set and forget
+                            dispatch(setSelection(mapName, combined));
+                            success(combined);
+                        });
                     } else {
+                        storeSelectionSet(map.SessionId, mapName, res); // set and forget
                         dispatch(setSelection(mapName, res));
                         success(res);
                     }

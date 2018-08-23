@@ -71,6 +71,13 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                             currentView: { ...payload.initialView }
                         };
                     }
+                    let isel: Partial<IBranchedMapSubState> | undefined;
+                    if (payload.initialSelections && payload.initialSelections[mapName]) {
+                        isel = {
+                            selectionSet: payload.initialSelections[mapName]
+                        };
+                        logger.debug(`Restoring client-side selection set for: ${mapName}`);
+                    }
 
                     const sl = [];
                     const sg = [];
@@ -121,6 +128,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                         ...{ externalBaseLayers: maps[mapName].externalBaseLayers },
                         ...{ initialView: maps[mapName].initialView },
                         ...(cv || {}),
+                        ...(isel || {}),
                         ...(sl.length > 0 ? { showLayers: [ ...sl ] } : {}),
                         ...(sg.length > 0 ? { showGroups: [ ...sg ] } : {}),
                         ...(hl.length > 0 ? { hideLayers: [ ...hl ] } : {}),

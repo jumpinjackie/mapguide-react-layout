@@ -8,6 +8,7 @@ import { IDOMElementMetrics, IMapView, Dictionary, IExternalBaseLayer, IModalCom
 import { ActionType } from '../constants/actions';
 import { PreparedSubMenuSet } from '../api/registry/command-spec';
 import { RuntimeMap } from '../api/contracts/runtime-map';
+import { QueryMapFeaturesResponse } from '../api';
 
 /**
  * Opens a flyout menu
@@ -74,6 +75,13 @@ export type MapInfo = {
 /**
  * @since 0.12
  */
+export interface IRestoredSelectionSets {
+    [mapName: string]: QueryMapFeaturesResponse;
+}
+
+/**
+ * @since 0.12
+ */
 export interface IInitAppActionPayload {
     activeMapName: string;
     initialView?: IMapView;
@@ -98,7 +106,11 @@ export interface IInitAppActionPayload {
     initialHideLayers?: string[];
     initialHideGroups?: string[];
     toolbars: PreparedSubMenuSet;
-    warnings: string[]
+    warnings: string[];
+    /**
+     * @since 0.12
+     */
+    initialSelections?: IRestoredSelectionSets;
 }
 
 /**

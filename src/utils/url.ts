@@ -1,6 +1,8 @@
-import queryString = require("query-string");
+import queryString = require("qs");
 import { IInvokeUrlCommandParameter } from "../api/common";
 const parse = require("url-parse");
+
+const DEFAULT_PARSE_OPTIONS = { ignoreQueryPrefix: true };
 
 /**
  * Indicates if the given arrays are equal
@@ -9,7 +11,7 @@ const parse = require("url-parse");
  * @param {(string[]|null)} b
  * @returns {boolean}
  */
-function arraysEqual(a: string[]|null, b: string[]|null): boolean {
+function arraysEqual(a: string[] | null, b: string[] | null): boolean {
     if (a === b) return true;
     if (a == null || b == null) return false;
     if (a.length != b.length) return false;
@@ -60,8 +62,8 @@ function areParamsEqual(params1: any, params2: any): boolean {
 export function areUrlsSame(url1: string, url2: string): boolean {
     const parsed1 = parse(url1);
     const parsed2 = parse(url2);
-    const params1 = queryString.parse(parsed1.query);
-    const params2 = queryString.parse(parsed2.query);
+    const params1 = queryString.parse(parsed1.query, DEFAULT_PARSE_OPTIONS);
+    const params2 = queryString.parse(parsed2.query, DEFAULT_PARSE_OPTIONS);
 
     const same = parsed1.protocol == parsed2.protocol
         && parsed1.slashes == parsed2.slashes
@@ -98,7 +100,7 @@ export interface ParsedComponentUri {
  * @returns {boolean} 
  */
 export function isComponentUri(uri: string): boolean {
-    return uri.indexOf("component://") >= 0;   
+    return uri.indexOf("component://") >= 0;
 }
 
 /**
@@ -112,7 +114,7 @@ export function parseComponentUri(uri: string): ParsedComponentUri | undefined {
     if (isComponentUri(uri)) {
         const qi = uri.lastIndexOf("?");
         const name = qi < 0 ? uri.substring(12) : uri.substring(12, qi);
-        const props = qi < 0 ? {} : queryString.parse(uri.substring(qi));
+        const props = qi < 0 ? {} : queryString.parse(uri.substring(qi), DEFAULT_PARSE_OPTIONS);
         return {
             name,
             props
@@ -137,8 +139,8 @@ export function ensureParameters(url: string, mapName: string, session: string, 
     if (isComponentUri(url)) {
         return url;
     }
-    const parsed = parse(url);
-    const params: any = parsed.query != null ? queryString.parse(parsed.query) : {};
+    const parsed = parseUrl(url);
+    const params: any = parsed.query != null ? queryString.parse(parsed.query, DEFAULT_PARSE_OPTIONS) : {};
     let bNeedMapName = true;
     let bNeedSession = true;
     let bNeedLocale = true;
@@ -202,7 +204,7 @@ export function ensureParameters(url: string, mapName: string, session: string, 
  * @interface IParsedUrl
  * @since 0.12
  */
-export interface IParsedUrl { 
+export interface IParsedUrl {
     url: string;
     query: any;
 }
@@ -216,7 +218,14 @@ export interface IParsedUrl {
  * @since 0.12
  */
 export function parseUrl(url: string): IParsedUrl {
-    return queryString.parseUrl(url);
+    //return queryString.parseUrl(url);
+    const qi = url.lastIndexOf("?");
+    const parsedUrl = qi < 0 ? url : url.substring(0, qi);
+    const query = qi < 0 ? {} : queryString.parse(url.substring(qi), DEFAULT_PARSE_OPTIONS);
+    return {
+        url: parsedUrl,
+        query
+    };
 }
 
 /**
@@ -242,7 +251,7 @@ export function stringifyQuery(parameters: any): string {
  */
 export function appendParameters(url: string, parameters: any, bOverwriteExisting: boolean = true, bConvertToUppercase: boolean = false) {
     const parsed = parse(url);
-    let currentParams: any = parsed.query != null ? queryString.parse(parsed.query) : {};
+    let currentParams: any = parsed.query != null ? queryString.parse(parsed.query, DEFAULT_PARSE_OPTIONS) : {};
 
     const paramNames: any = {};
     for (const key in currentParams) {

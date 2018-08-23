@@ -1,4 +1,4 @@
-import { areUrlsSame, parseComponentUri, isComponentUri, ensureParameters, appendParameters } from "../src/utils/url";
+import { areUrlsSame, parseComponentUri, isComponentUri, ensureParameters, appendParameters, parseUrl } from "../src/utils/url";
 
 describe("utils/url", () => {
     describe("areUrlsSame", () => {
@@ -50,6 +50,25 @@ describe("utils/url", () => {
             expect(isComponentUri("component://Foo")).toBe(true);
             expect(isComponentUri("http://www.google.com")).toBe(false);
             expect(isComponentUri("https://www.google.com")).toBe(false);
+        });
+    });
+    describe("parseUrl", () => {
+        it("Returns parsed url", () => {
+            let parsed = parseUrl("http://www.google.com");
+            expect(parsed).not.toBeUndefined();
+            expect(parsed.url).toBe("http://www.google.com");
+            expect(Object.keys(parsed.query)).toHaveLength(0);
+            parsed = parseUrl("http://www.google.com?foo=bar");
+            expect(parsed).not.toBeUndefined();
+            expect(parsed.url).toBe("http://www.google.com");
+            expect(Object.keys(parsed.query)).toHaveLength(1);
+            expect(parsed.query.foo).toBe("bar");
+            parsed = parseUrl("http://www.google.com?foo=bar&a=1");
+            expect(parsed).not.toBeUndefined();
+            expect(parsed.url).toBe("http://www.google.com");
+            expect(Object.keys(parsed.query)).toHaveLength(2);
+            expect(parsed.query.foo).toBe("bar");
+            expect(parsed.query.a).toBe("1");
         });
     });
     describe("parseComponentUri", () => {

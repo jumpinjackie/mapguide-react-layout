@@ -1,4 +1,4 @@
-import { areUrlsSame, parseComponentUri } from "../src/utils/url";
+import { areUrlsSame, parseComponentUri, isComponentUri, ensureParameters, appendParameters } from "../src/utils/url";
 
 describe("utils/url", () => {
     describe("areUrlsSame", () => {
@@ -18,6 +18,40 @@ describe("utils/url", () => {
             expect(areUrlsSame("/my_mapguide_app/script.php?SESSION=abcdefgh123456&MAPNAME=Foo", "/my_mapguide_app/script.php?SESSION=abcdefgh123456&MAPNAME=Foo&locale=en")).toBe(true);
         });
     });
+    describe("appendParameters", () => {
+        it("appends specified parameters", () => {
+            expect(appendParameters("https://www.google.com", { foo: "bar" })).toBe("https://www.google.com?foo=bar");
+            expect(appendParameters("https://www.google.com?", { foo: "bar" })).toBe("https://www.google.com?foo=bar");
+            expect(appendParameters("https://www.google.com", { foo: "bar" }, true, true)).toBe("https://www.google.com?FOO=bar");
+        });
+        it("only overwrites existing parameters if specified", () => {
+            expect(appendParameters("https://www.google.com?foo=bar", { foo: "baz" }, true, false)).toBe("https://www.google.com?foo=baz");
+            expect(appendParameters("https://www.google.com?foo=bar", { foo: "baz" }, false, false)).toBe("https://www.google.com?foo=bar");
+            expect(appendParameters("https://www.google.com?foo=bar", { foo: "baz" }, false, true)).toBe("https://www.google.com?FOO=bar");
+            expect(appendParameters("https://www.google.com?foo=bar", { foo: "baz" }, true, true)).toBe("https://www.google.com?FOO=baz");
+        });
+    })
+    describe("ensureParameters", () => {
+        const mapName = "TestMap";
+        const session = "abcd1234";
+        const locale = "en";
+        it("does nothing for component URIs", () => {
+            expect(ensureParameters("component://Foo", mapName, session, locale)).toBe("component://Foo");
+        });
+        it("does not append parameters that are already appended", () => {
+            expect(ensureParameters("https://www.google.com", mapName, session, locale)).toBe(appendParameters("https://www.google.com", { mapName, session, locale }, true, true));
+            expect(ensureParameters("https://www.google.com?mapName=Foo", mapName, session, locale)).toBe(appendParameters("https://www.google.com", { mapName: "Foo", session, locale }, true, true));
+            expect(ensureParameters("https://www.google.com?mapName=Foo&session=sdfjsds", mapName, session, locale)).toBe(appendParameters("https://www.google.com", { mapName: "Foo", session: "sdfjsds", locale }, true, true));
+            expect(ensureParameters("https://www.google.com?mapName=Foo&session=sdfjsds&locale=de", mapName, session, locale)).toBe(appendParameters("https://www.google.com", { mapName: "Foo", session: "sdfjsds", locale: "de" }, true, true));
+        });
+    });
+    describe("isComponentUri", () => {
+        it("returns true for component URIs", () => {
+            expect(isComponentUri("component://Foo")).toBe(true);
+            expect(isComponentUri("http://www.google.com")).toBe(false);
+            expect(isComponentUri("https://www.google.com")).toBe(false);
+        });
+    });
     describe("parseComponentUri", () => {
         it("returns undefined on invalid component uris", () => {
             expect(parseComponentUri("http://www.google.com")).toBeUndefined();
@@ -25,7 +59,7 @@ describe("utils/url", () => {
         it("Returns parsed component uri", () => {
             const parsed = parseComponentUri("component://Foo");
             expect(parsed).not.toBeUndefined();
-            //HACK: TypeScript leaking out required test for undefined (b/c strictNullChecks) even though we asserted it to not be the case above
+            //HACK: TypeScript leaking out required test for undefined (b/c strictNullChecks) even though we asserted it to not be the case above (because assertion is not a type-guard)
             if (parsed) {
                 expect(parsed.name).toBe("Foo");
             }
@@ -33,7 +67,7 @@ describe("utils/url", () => {
         it("Returns parsed component uri with props", () => {
             const parsed = parseComponentUri("component://Foo?name=Bar&boo=Baz");
             expect(parsed).not.toBeUndefined();
-            //HACK: TypeScript leaking out required test for undefined (b/c strictNullChecks) even though we asserted it to not be the case above
+            //HACK: TypeScript leaking out required test for undefined (b/c strictNullChecks) even though we asserted it to not be the case above (because assertion is not a type-guard)
             if (parsed) {
                 expect(parsed.name).toBe("Foo");
                 expect(parsed.props.name).toBe("Bar");
@@ -43,7 +77,7 @@ describe("utils/url", () => {
         it("Returns parsed component uri with array prop", () => {
             const parsed = parseComponentUri("component://Foo?blah=Bi&name=Bar&name=Baz");
             expect(parsed).not.toBeUndefined();
-            //HACK: TypeScript leaking out required test for undefined (b/c strictNullChecks) even though we asserted it to not be the case above
+            //HACK: TypeScript leaking out required test for undefined (b/c strictNullChecks) even though we asserted it to not be the case above (because assertion is not a type-guard)
             if (parsed) {
                 expect(parsed.name).toBe("Foo");
                 expect(parsed.props.blah).toBe("Bi");

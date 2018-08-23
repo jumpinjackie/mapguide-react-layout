@@ -182,7 +182,93 @@ export function ensureParameters(url: string, mapName: string, session: string, 
         params[p.name] = p.value;
     }
 
+    /*
     parsed.query = queryString.stringify(params);
+    const result = parsed.toString();
+
+    if (url.indexOf(parsed.protocol) >= 0 || url.indexOf("/") == 0) {
+        return result;
+    }
+
+    return result;
+    */
+    return appendParameters(url, params, true, uppercase);
+}
+
+/**
+ * Represents a parsed URL with query string separated
+ *
+ * @export
+ * @interface IParsedUrl
+ * @since 0.12
+ */
+export interface IParsedUrl { 
+    url: string;
+    query: any;
+}
+
+/**
+ * Parses the given URL and separates out the query string parameters
+ *
+ * @export
+ * @param {string} url The URL to parse
+ * @returns {IParsedUrl}
+ * @since 0.12
+ */
+export function parseUrl(url: string): IParsedUrl {
+    return queryString.parseUrl(url);
+}
+
+/**
+ * Converts the given object to a query string fragment
+ *
+ * @export
+ * @param {*} parameters The object to stringify
+ * @returns {string} The query string fragment
+ */
+export function stringifyQuery(parameters: any): string {
+    return queryString.stringify(parameters);
+}
+
+/**
+ * Appends the specified parameters to the given URL
+ *
+ * @export
+ * @param {string} url The URL to append parameters to
+ * @param {*} parameters The parameters to append
+ * @param {boolean} [bOverwriteExisting=true] If true, will overwrite any existing parameters if the URL already has them
+ * @param {boolean} [bConvertToUppercase=true] If true, will ensure all parameter names are uppercase
+ * @since 0.12
+ */
+export function appendParameters(url: string, parameters: any, bOverwriteExisting: boolean = true, bConvertToUppercase: boolean = false) {
+    const parsed = parse(url);
+    let currentParams: any = parsed.query != null ? queryString.parse(parsed.query) : {};
+
+    const paramNames: any = {};
+    for (const key in currentParams) {
+        paramNames[key.toUpperCase()] = key;
+    }
+
+    for (const name in parameters) {
+        //See if this parameter name was normalized
+        const key = paramNames[name.toUpperCase()] || name;
+        //If it was and we've got an existing value there, skip if not overwriting
+        if (key && currentParams[key] && !bOverwriteExisting) {
+            continue;
+        }
+        //Put the parameter value
+        currentParams[key] = parameters[name];
+    }
+
+    if (bConvertToUppercase) {
+        let params2: any = {};
+        for (const name in currentParams) {
+            params2[name.toUpperCase()] = currentParams[name];
+        }
+        currentParams = params2;
+    }
+
+    parsed.query = queryString.stringify(currentParams);
     const result = parsed.toString();
 
     if (url.indexOf(parsed.protocol) >= 0 || url.indexOf("/") == 0) {

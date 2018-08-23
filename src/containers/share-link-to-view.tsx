@@ -9,7 +9,7 @@ import { tr } from '../api/i18n';
 import { getViewer } from '../api/runtime';
 import { Checkbox, TextArea } from '@blueprintjs/core';
 import CopyToClipboard = require('react-copy-to-clipboard');
-import queryString = require("query-string");
+import { parseUrl, stringifyQuery } from "../utils/url";
 
 /**
  * 
@@ -82,11 +82,11 @@ export class ShareLinkToViewContainer extends React.Component<ShareLinkToViewCon
         }
     }
     render(): JSX.Element {
-        const parsed = queryString.parseUrl(`${window.location}`);
+        const parsed = parseUrl(`${window.location}`);
         if (!this.state.showSession) {
             delete parsed.query.session;
         }
-        const shareUrl = `${parsed.url}?${queryString.stringify(parsed.query)}`;
+        const shareUrl = `${parsed.url}?${stringifyQuery(parsed.query)}`;
         return <div>
             <TextArea fill={true} rows={16} readOnly value={shareUrl} onChange={NOOP} />
             <br />

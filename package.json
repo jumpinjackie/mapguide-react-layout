@@ -128,7 +128,8 @@
   },
   "greenkeeper": {
     "ignore": [
-      "@types/react"
+      "@types/react",
+      "bestzip"
     ]
   }
 }

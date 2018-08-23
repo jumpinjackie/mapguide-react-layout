@@ -537,6 +537,7 @@ async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, 
     for (const e of extraEpsgs) {
         fetchEpsgs.push({ epsg: e, mapDef: "" });
     }
+    const epsgs = await Promise.all(fetchEpsgs.map(f => resolveProjectionAsync(f.epsg, opts, f.mapDef)));
     //Build the Dictionary<RuntimeMap> from loaded maps
     const mapsByName: Dictionary<RuntimeMap> = {};
     for (const map of maps) {

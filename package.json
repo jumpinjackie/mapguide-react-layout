@@ -96,7 +96,7 @@
     "coveralls": "3.0.2",
     "cross-env": "5.2.0",
     "css-loader": "1.0.0",
-    "enzyme": "3.4.4",
+    "enzyme": "3.5.0",
     "enzyme-adapter-react-16": "1.2.0",
     "file-loader": "2.0.0",
     "fork-ts-checker-webpack-plugin": "^0.4.9",

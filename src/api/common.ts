@@ -687,9 +687,15 @@ export interface IMapViewer {
      */
     getSelectionXml(selection: FeatureSet, layerIds?: string[]): string;
     /**
-     * Gets the layer manager
+     * Gets the layer manager for the given map. If map name is not specifed
+     * it will get the layer manager for the currently active map.
+     *
+     * @param {string} [mapName]
+     * @returns {ILayerManager}
+     * @memberof IMapViewer
+     * @since 0.12
      */
-    getLayerManager(): ILayerManager;
+    getLayerManager(mapName?: string): ILayerManager;
     /**
      * Adds an OpenLayers interaction
      *

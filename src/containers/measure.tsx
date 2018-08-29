@@ -148,16 +148,27 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
                 }
             }
         } else {
+            for (const measure of _measurements) {
+                measure.setParent(this);
+            }
+
             activeMeasure = _measurements.filter(m => m.getMapName() === this.props.activeMapName)[0];
         }
 
-        if (activeMeasure) {
-            activeMeasure.activate(this);
+        if (activeMeasure && this.props.activeMapName) {
+            activeMeasure.activate(this.props.activeMapName, this);
         }
     }
     componentWillUnmount() {
+        const { activeMapName } = this.props;
+        this.setState({ measuring: false });
         for (const measure of _measurements) {
-            measure.deactivate();
+            measure.detachParent();
+        }
+        if (activeMapName) {
+            for (const measure of _measurements) {
+                measure.deactivate(activeMapName);
+            }
         }
     }
     componentDidUpdate(prevProps: MeasureProps) {
@@ -167,10 +178,10 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
             const oldMeasure = _measurements.filter(m => m.getMapName() === prevProps.activeMapName)[0];
             const newMeasure = _measurements.filter(m => m.getMapName() === nextProps.activeMapName)[0];
             if (oldMeasure) {
-                oldMeasure.deactivate();
+                oldMeasure.deactivate(prevProps.activeMapName!);
             }
             if (newMeasure) {
-                newMeasure.activate(this);
+                newMeasure.activate(nextProps.activeMapName!, this);
             }
             //Reset
             this.setState({ measuring: false });

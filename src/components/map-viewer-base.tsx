@@ -70,7 +70,7 @@ import { tr } from "../api/i18n";
 const isMobile = require("ismobilejs");
 import { MenuComponent } from "./menu";
 import { ContextMenuTarget, ContextMenu } from "@blueprintjs/core";
-import { IMapViewerContextCallback, IMapViewerContextProps, MapViewerContext, MgLayerSet } from "./map-viewer-context";
+import { IMapViewerContextCallback, IMapViewerContextProps, MapViewerContext, MgLayerSet, MgLayerManager } from "./map-viewer-context";
 import xor = require("lodash.xor");
 
 import olExtent from "ol/extent";
@@ -311,12 +311,14 @@ export interface IMapViewerBaseState {
 /**
  * The base map viewer component
  *
+ * Since 0.12, this no longer implements ILayerManager
+ * 
  * @export
  * @class MapViewerBase
  * @extends {React.Component<IMapViewerBaseProps, any>}
  */
 @ContextMenuTarget
-export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<IMapViewerBaseState>> implements ILayerManager {
+export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<IMapViewerBaseState>> {
     /**
      * Indicates if touch events are supported.
      */
@@ -1108,30 +1110,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         //return this._featureTooltip.isEnabled();
         return this._mapContext.isFeatureTooltipEnabled();
     }
-    public hasLayer(name: string): boolean {
-        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
-        return activeLayerSet.hasLayer(name);
-    }
-    public addLayer<T extends LayerBase>(name: string, layer: T, allowReplace?: boolean): T {
-        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
-        return activeLayerSet.addLayer(this._map, name, layer, allowReplace);
-    }
-    public removeLayer(name: string): LayerBase | undefined {
-        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
-        return activeLayerSet.removeLayer(this._map, name);
-    }
-    public getLayer<T extends LayerBase>(name: string, factory: () => T): T {
-        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
-        return activeLayerSet.getLayer(this._map, name, factory);
-    }
-    public moveUp(name: string): number {
-        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
-        return activeLayerSet.moveUp(this._map, name);
-    }
-    public moveDown(name: string): number {
-        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
-        return activeLayerSet.moveDown(this._map, name);
-    }
     public addInteraction<T extends Interaction>(interaction: T): T {
         this._map.addInteraction(interaction);
         return interaction;
@@ -1157,12 +1135,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     public updateSize() {
         this._map.updateSize();
     }
-    public getLayerManager(): ILayerManager { 
-        return this;
-    }
-    public getLayers(): ILayerInfo[] {
-        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
-        return activeLayerSet.getCustomLayers();
+    public getLayerManager(mapName?: string): ILayerManager { 
+        const layerSet = this._mapContext.getLayerSet(mapName || this.props.map.Name, true, this.props);
+        return new MgLayerManager(this._map, layerSet);
     }
     public screenToMapUnits(x: number, y: number): [number, number] {
         let bAllowOutsideWindow = false;

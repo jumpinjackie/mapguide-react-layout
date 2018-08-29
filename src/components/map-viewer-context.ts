@@ -9,7 +9,8 @@ import {
     ImageFormat,
     IExternalBaseLayer,
     LayerTransparencySet,
-    ILayerInfo
+    ILayerInfo,
+    ILayerManager
 } from "../api/common";
 import { Client } from '../api/client';
 import { MgError, isSessionExpiredError } from '../api/error';
@@ -700,6 +701,33 @@ export class MgLayerSet {
             }
         }
         return -1;
+    }
+}
+
+export class MgLayerManager implements ILayerManager {
+    constructor(private map: olMap, private layerSet: MgLayerSet) {
+
+    }
+    getLayers(): ILayerInfo[] {
+        return this.layerSet.getCustomLayers();
+    }    
+    hasLayer(name: string): boolean {
+        return this.layerSet.hasLayer(name);
+    }
+    addLayer<T extends olLayerBase>(name: string, layer: T, allowReplace?: boolean | undefined): T {
+        return this.layerSet.addLayer(this.map, name, layer, allowReplace);
+    }
+    removeLayer(name: string): olLayerBase | undefined {
+        return this.layerSet.removeLayer(this.map, name);
+    }
+    getLayer<T extends olLayerBase>(name: string, factory: () => T): T {
+        return this.layerSet.getLayer(this.map, name, factory);
+    }
+    moveUp(name: string): number {
+        return this.layerSet.moveUp(this.map, name);
+    }
+    moveDown(name: string): number {
+        return this.layerSet.moveDown(this.map, name);
     }
 }
 

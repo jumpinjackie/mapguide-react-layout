@@ -1,10 +1,22 @@
 Latest
 ======
 
+ * [#481](https://github.com/jumpinjackie/mapguide-react-layout/issues/481): Current selection set now also stashed to local storage to persist (and be restored) between browser refreshes.
+ * [#645](https://github.com/jumpinjackie/mapguide-react-layout/issues/645): Viewer CSS is now extracted out to a 
+ separate asset (instead of integrated with the JS bundle)
+   * As part of this change, workaround a potential infinite loop if the error icon asset could not be found by adding an inline base64 copy of this icon.
+ * [#596](https://github.com/jumpinjackie/mapguide-react-layout/issues/596): Add copy link button to ShareLinkToView widget (via `react-copy-to-clipboard`)
+ * [#631](https://github.com/jumpinjackie/mapguide-react-layout/issues/631): Fix init failure if appdef has an empty widget container
+ * [#595](https://github.com/jumpinjackie/mapguide-react-layout/issues/595): Fix line measurement total showing units in m^2
+ * [#593](https://github.com/jumpinjackie/mapguide-react-layout/issues/593): Fix measure tool starting measuring when switching measurement type
+ * [#643](https://github.com/jumpinjackie/mapguide-react-layout/issues/643): Added basic e2e test suite. Powered by `testcafe`
+ * [#698](https://github.com/jumpinjackie/mapguide-react-layout/issues/698): Fix memory leak due to dangling measure components being held on by the measure context after unmount
  * [#569](https://github.com/jumpinjackie/mapguide-react-layout/issues/569): Update to use `componentDidUpdate` instead of `componentWillReceiveProps`
+ * [#690](https://github.com/jumpinjackie/mapguide-react-layout/issues/690): Made redux action more strongly-typed
  * Updated Blueprint to 1.36.0
- * Updated TypeScript to 2.8.3
- * Updated React to 16.3.2
+ * Updated TypeScript to 3.0.1
+ * Updated React to 16.4.2
+ * Replaced `query-string` module with `qs`
  * Now built with webpack 4.x
 
 0.11.2

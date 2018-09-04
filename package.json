@@ -92,7 +92,7 @@
     "@types/shortid": "0.0.29",
     "bestzip": "2.0.0",
     "cache-loader": "^1.2.2",
-    "copyfiles": "2.0.0",
+    "copyfiles": "2.1.0",
     "coveralls": "3.0.2",
     "cross-env": "5.2.0",
     "css-loader": "1.0.0",

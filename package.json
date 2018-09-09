@@ -88,7 +88,7 @@
     "@types/react-copy-to-clipboard": "^4.2.6",
     "@types/react-dom": "16.0.7",
     "@types/react-measure": "2.0.4",
-    "@types/react-redux": "^6.0.6",
+    "@types/react-redux": "^6.0.7",
     "@types/shortid": "0.0.29",
     "bestzip": "2.0.0",
     "cache-loader": "^1.2.2",

@@ -1274,17 +1274,16 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
-bestzip@2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/bestzip/-/bestzip-2.1.1.tgz#4c8dce118a5119dff4b4150c68dd12a8d31138c5"
+bestzip@2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/bestzip/-/bestzip-2.1.2.tgz#ba0ec79b22d6b180c1ee4867e3790d9405ddc909"
   dependencies:
     archiver "^3.0.0"
     async "^2.6.1"
     concat-stream "^1.6.2"
     glob "^7.1.3"
-    jest "^23.5.0"
-    lodash "^4.17.10"
-    yargs "^12.0.1"
+    lodash "^4.17.11"
+    yargs "^12.0.2"
 
 big.js@^3.1.3:
   version "3.2.0"
@@ -4029,7 +4028,7 @@ jest-worker@^23.2.0:
   dependencies:
     merge-stream "^1.0.1"
 
-jest@23.6.0, jest@^23.5.0:
+jest@23.6.0:
   version "23.6.0"
   resolved "https://registry.yarnpkg.com/jest/-/jest-23.6.0.tgz#ad5835e923ebf6e19e7a1d7529a432edfee7813d"
   dependencies:
@@ -4412,6 +4411,10 @@ lodash.xor@4.5.0:
 lodash@4.17.10, "lodash@4.6.1 || ^4.16.1", lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.10, lodash@^4.17.4, lodash@^4.17.5:
   version "4.17.10"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
+
+lodash@^4.17.11:
+  version "4.17.11"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
 
 log-driver@^1.2.7:
   version "1.2.7"
@@ -7682,7 +7685,7 @@ yargs@^11.0.0:
     y18n "^3.2.1"
     yargs-parser "^9.0.2"
 
-yargs@^12.0.1, yargs@^12.0.2:
+yargs@^12.0.2:
   version "12.0.2"
   resolved "https://registry.yarnpkg.com/yargs/-/yargs-12.0.2.tgz#fe58234369392af33ecbef53819171eff0f5aadc"
   dependencies:

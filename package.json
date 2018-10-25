@@ -114,7 +114,7 @@
     "rimraf": "2.6.2",
     "source-map-loader": "0.2.4",
     "style-loader": "0.23.1",
-    "testcafe": "^0.22.0",
+    "testcafe": "^0.23.0",
     "testcafe-react-selectors": "^3.0.0",
     "thread-loader": "^1.2.0",
     "ts-jest": "23.10.4",

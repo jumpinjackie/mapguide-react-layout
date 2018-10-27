@@ -1,4 +1,4 @@
-import { MgError, isSessionExpiredError } from "../src/api/error";
+import { MgError, isSessionExpiredError } from "../../src/api/error";
 
 describe("api/error", () => {
     describe("MgError", () => {
@@ -25,6 +25,12 @@ describe("api/error", () => {
             expect(isSessionExpiredError(err5)).toBe(true);
             const err6 = new Error("MgSessionExpiredException - Your MapGuide Session has expired");
             expect(isSessionExpiredError(err6)).toBe(true);
+        });
+        it("returns true for MgSessionExpiredException", () => {
+            expect(isSessionExpiredError(new MgError("MgSessionExpiredException"))).toBe(true);
+        });
+        it("returns false for non-session-expiry", () => {
+            expect(isSessionExpiredError(new MgError("asdgdsifdf"))).toBe(false);
         });
     });
 });

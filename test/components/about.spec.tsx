@@ -1,6 +1,6 @@
 import * as React from "react";
 import { shallow, mount, render } from "enzyme";
-import { About } from "../src/components/about";
+import { About } from "../../src/components/about";
 
 describe("components/about", () => {
     it("renders a <h4> title", () => {

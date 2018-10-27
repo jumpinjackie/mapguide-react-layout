@@ -1,8 +1,8 @@
 import * as React from "react";
 import { shallow, mount, render } from "enzyme";
-import { SelectedFeatureCount } from "../src/components/selected-feature-count";
-import { FeatureSet } from "../src/api/contracts/query";
-import { tr } from "../src/api/i18n";
+import { SelectedFeatureCount } from "../../src/components/selected-feature-count";
+import { FeatureSet } from "../../src/api/contracts/query";
+import { tr } from "../../src/api/i18n";
 
 function createSelectionSet(): FeatureSet {
      return {

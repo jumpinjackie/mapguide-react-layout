@@ -1,7 +1,7 @@
 import * as React from "react";
 import { shallow, mount, render } from "enzyme";
-import { MgError } from "../src/api/error";
-import { Error } from "../src/components/error";
+import { MgError } from "../../src/api/error";
+import { Error } from "../../src/components/error";
 
 function throwme() {
     throw new MgError("Uh oh!");

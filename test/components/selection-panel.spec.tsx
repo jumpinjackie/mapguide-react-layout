@@ -1,9 +1,9 @@
 import * as React from "react";
 import { shallow, mount, render } from "enzyme";
-import { SelectionPanel } from "../src/components/selection-panel";
-import { SelectedFeatureSet, SelectedFeature } from "../src/api/contracts/query";
-import { tr } from "../src/api/i18n";
-import { createSelectionSet } from "../test-data";
+import { SelectionPanel } from "../../src/components/selection-panel";
+import { SelectedFeatureSet, SelectedFeature } from "../../src/api/contracts/query";
+import { tr } from "../../src/api/i18n";
+import { createSelectionSet } from "../../test-data";
 
 type ZoomFeatureFunc = (feat: SelectedFeature) => void;
 

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { shallow, mount, render } from "enzyme";
-import { MenuComponent } from "../src/components/menu";
-import { IItem } from "../src/components/toolbar";
+import { MenuComponent } from "../../src/components/menu";
+import { IItem } from "../../src/components/toolbar";
 
 describe("components/menu", () => {
     it("Renders", () => {

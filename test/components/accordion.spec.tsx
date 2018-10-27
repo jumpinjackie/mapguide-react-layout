@@ -1,6 +1,6 @@
 import * as React from "react";
 import { shallow, mount, render } from "enzyme";
-import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../src/components/accordion";
+import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../../src/components/accordion";
 
 const PANEL_SPEC: IAccordionPanelSpec[] = [
     {

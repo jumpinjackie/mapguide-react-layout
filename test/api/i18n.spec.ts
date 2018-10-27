@@ -1,4 +1,4 @@
-import { fmt, tr } from "../src/api/i18n";
+import { fmt, tr } from "../../src/api/i18n";
 
 describe("api/i18n", () => {
     describe("fmt", () => {

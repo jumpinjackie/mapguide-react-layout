@@ -1,6 +1,6 @@
 import * as React from "react";
 import { shallow, mount, render } from "enzyme";
-import { Navigator, PanDirection, ZoomDirection } from "../src/components/navigator";
+import { Navigator, PanDirection, ZoomDirection } from "../../src/components/navigator";
 
 type PanFunc = (direction: PanDirection) => void;
 type ZoomFunc = (direction: ZoomDirection) => void;

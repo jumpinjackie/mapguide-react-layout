@@ -1,8 +1,8 @@
 import * as React from "react";
 import { shallow, mount, render } from "enzyme";
-import { IExternalBaseLayer } from "../src/api/common";
-import { BaseLayerSwitcher } from "../src/components/base-layer-switcher";
-import { STR_EMPTY } from "../src/utils/string";
+import { IExternalBaseLayer } from "../../src/api/common";
+import { BaseLayerSwitcher } from "../../src/components/base-layer-switcher";
+import { STR_EMPTY } from "../../src/utils/string";
 
 type LayerSwitchFunc = (name: string) => void;
 

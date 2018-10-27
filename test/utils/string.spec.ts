@@ -1,4 +1,4 @@
-import { strEndsWith } from '../src/utils/string';
+import { strEndsWith } from '../../src/utils/string';
 
 describe("utils/string", () => {
     describe("strEndsWith", () => {

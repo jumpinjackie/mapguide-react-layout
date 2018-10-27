@@ -1,7 +1,7 @@
 import * as React from "react";
 import { shallow, mount, render } from "enzyme";
-import { IMapMenuEntry } from "../src/api/common";
-import { MapMenu } from "../src/components/map-menu";
+import { IMapMenuEntry } from "../../src/api/common";
+import { MapMenu } from "../../src/components/map-menu";
 
 const EXTERNAL_LAYERS: IMapMenuEntry[] = [
     {

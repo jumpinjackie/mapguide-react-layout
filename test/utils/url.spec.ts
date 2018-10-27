@@ -1,4 +1,4 @@
-import { areUrlsSame, parseComponentUri, isComponentUri, ensureParameters, appendParameters, parseUrl } from "../src/utils/url";
+import { areUrlsSame, parseComponentUri, isComponentUri, ensureParameters, appendParameters, parseUrl } from "../../src/utils/url";
 
 describe("utils/url", () => {
     describe("areUrlsSame", () => {

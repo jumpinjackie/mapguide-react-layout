@@ -1,9 +1,9 @@
 import * as React from "react";
 import { shallow, mount, render } from "enzyme";
-import { ScaleDisplay } from "../src/components/scale-display";
+import { ScaleDisplay } from "../../src/components/scale-display";
 import {
     IMapView
-} from "../src/api/common";
+} from "../../src/api/common";
 
 const FINITE_SCALES = [
     100.25,

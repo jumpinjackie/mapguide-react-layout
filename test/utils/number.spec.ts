@@ -1,4 +1,4 @@
-import { sum, roundTo, areNumbersEqual, scaleRangeBetween, getFiniteScaleIndexForScale, getClosestScaleIndex } from "../src/utils/number";
+import { sum, roundTo, areNumbersEqual, scaleRangeBetween, getFiniteScaleIndexForScale, getClosestScaleIndex } from "../../src/utils/number";
 
 const SCALES = [390.625, 781.25, 1562.5, 3125, 6250, 12500, 25000, 50000, 100000, 200000];
 

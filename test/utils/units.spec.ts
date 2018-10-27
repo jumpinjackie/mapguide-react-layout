@@ -1,5 +1,5 @@
-import { getUnitOfMeasure, getUnits } from "../src/utils/units";
-import { UnitOfMeasure, UnitName } from "../src/api/common";
+import { getUnitOfMeasure, getUnits } from "../../src/utils/units";
+import { UnitOfMeasure, UnitName } from "../../src/api/common";
 
 describe("utils/units", () => {
     describe("getUnitOfMeasure", () => {

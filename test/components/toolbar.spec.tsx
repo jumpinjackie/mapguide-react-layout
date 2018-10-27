@@ -1,6 +1,6 @@
 import * as React from "react";
 import { shallow, mount, render } from "enzyme";
-import { IItem, FlyoutMenuChildItem } from "../src/components/toolbar";
+import { IItem, FlyoutMenuChildItem } from "../../src/components/toolbar";
 
 describe("components/toolbar", () => {
     describe("FlyoutMenuChildItem", () => {

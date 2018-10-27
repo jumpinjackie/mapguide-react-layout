@@ -1,4 +1,4 @@
-import * as logger from "../src/utils/logger";
+import * as logger from "../../src/utils/logger";
 
 describe("utils/logger", () => {
     describe("info", () => {

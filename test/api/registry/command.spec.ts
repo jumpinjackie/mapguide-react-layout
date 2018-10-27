@@ -1,6 +1,6 @@
-import { CommandConditions } from "../src/api/registry/command";
-import { IApplicationState } from "../src/api/common";
-import { createInitialState, createMap, createSelectionSet } from "../test-data";
+import { CommandConditions } from "../../../src/api/registry/command";
+import { IApplicationState } from "../../../src/api/common";
+import { createInitialState, createMap, createSelectionSet } from "../../../test-data";
 
 describe("api/registry/command", () => {
     describe("CommandConditions", () => {

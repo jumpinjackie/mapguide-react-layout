@@ -1,6 +1,6 @@
 import * as React from "react";
 import { shallow, mount, render } from "enzyme";
-import { SessionExpired } from "../src/components/session-expired";
+import { SessionExpired } from "../../src/components/session-expired";
 
 describe("components/session-expired", () => {
     it("renders", () => {

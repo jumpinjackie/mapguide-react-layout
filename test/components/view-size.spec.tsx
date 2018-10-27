@@ -1,7 +1,7 @@
 import * as React from "react";
 import { shallow, mount, render } from "enzyme";
-import { ViewSize } from "../src/components/view-size";
-import { UnitOfMeasure, IMapView } from "../src/api/common";
+import { ViewSize } from "../../src/components/view-size";
+import { UnitOfMeasure, IMapView } from "../../src/api/common";
 
 describe("components/view-size", () => {
     it("renders same values as fusion baseline", () => {

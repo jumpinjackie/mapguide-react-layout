@@ -1,6 +1,6 @@
 import * as React from "react";
 import { shallow, mount, render } from "enzyme";
-import { MouseCoordinates } from "../src/components/mouse-coordinates";
+import { MouseCoordinates } from "../../src/components/mouse-coordinates";
 
 describe("components/mouse-coordinates", () => {
     it("renders with no props", () => {

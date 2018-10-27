@@ -1,8 +1,8 @@
 import * as React from "react";
 import { shallow, mount, render } from "enzyme";
-import { MapLayer } from "../src/api/contracts/runtime-map";
-import { LayerNode } from "../src/components/legend";
-import { ILegendContext } from "../src/components/context";
+import { MapLayer } from "../../src/api/contracts/runtime-map";
+import { LayerNode } from "../../src/components/legend";
+import { ILegendContext } from "../../src/components/context";
 
 // Mocks the ILegendContext needed by LayerNode and other legend sub-components
 function mockContext(): ILegendContext {

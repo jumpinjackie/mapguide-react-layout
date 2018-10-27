@@ -235,7 +235,7 @@ class SessionKeepAlive {
     private getSession: () => string;
     private client: Client;
     private interval: number;
-    private timeoutID: number;
+    private timeoutID: any;
     constructor(getSession: () => string, client: Client, onSessionExpired: () => void) {
         this.getSession = getSession;
         this.client = client;

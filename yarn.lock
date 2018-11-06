@@ -25,10 +25,10 @@
   dependencies:
     regenerator-runtime "^0.12.0"
 
-"@blueprintjs/core@1.36.0":
-  version "1.36.0"
-  resolved "http://registry.npmjs.org/@blueprintjs/core/-/core-1.36.0.tgz#255933aa0790f89021d6ad2681af82d00a46e9c3"
-  integrity sha512-RRE3Tr5yh1LUYupHvKKCDRIJX2d66S3prJfKot7++iIqTBDixPE+0qMK85OlZmUp08SbJNbWyNoPYdp5g+/rwg==
+"@blueprintjs/core@1.40.0":
+  version "1.40.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-1.40.0.tgz#72db1bc2f161d34b7f4ab270bd84979b25f703ca"
+  integrity sha512-5qXiFLOZwKzKZFi+IVgiMictOfZPpkclgdpzte2BpZ4ptlNitFiK79aRmDu1O7rnA1iiR0EJRrE8p9gr95USRw==
   dependencies:
     "@types/dom4" "^1.5.20"
     "@types/tether" "^1.1.27"

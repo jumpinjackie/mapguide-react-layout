@@ -62,7 +62,7 @@
     "react-dom": "16.6.1",
     "react-draggable": "3.0.5",
     "react-measure": "2.1.2",
-    "react-redux": "5.1.0",
+    "react-redux": "5.1.1",
     "react-splitter-layout": "3.0.1",
     "react-url-query": "1.4.0",
     "redux": "4.0.1",

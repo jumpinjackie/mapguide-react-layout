@@ -155,11 +155,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-dom@16.0.10":
-  version "16.0.10"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.0.10.tgz#0c8980a639fa1d92a8547c8b6d0cf47af96c8966"
+"@types/react-dom@16.0.11":
+  version "16.0.11"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.0.11.tgz#bd10ccb0d9260343f4b9a49d4f7a8330a5c1f081"
   dependencies:
-    "@types/node" "*"
     "@types/react" "*"
 
 "@types/react-measure@2.0.4":

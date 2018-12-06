@@ -194,7 +194,9 @@ export function ensureParameters(url: string, mapName: string, session: string, 
 
     return result;
     */
-    return appendParameters(url, params, true, uppercase);
+    //Don't uppercase the parameters here if true, uppercasing is only for filling in
+    //missing parameters
+    return appendParameters(url, params, true, false /*uppercase*/);
 }
 
 /**

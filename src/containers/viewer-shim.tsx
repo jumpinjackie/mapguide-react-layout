@@ -519,7 +519,7 @@ class FusionWidgetApiShim {
             r: circ.getRadius()
         };
     }
-    digitizePoint(handler: FusionGeomDigitizer) { //Map
+    digitizePoint(options: any, handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizePoint(pt => {
@@ -527,7 +527,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeLine(handler: FusionGeomDigitizer) { //Map
+    digitizeLine(options: any,handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeLine(ln => {
@@ -535,7 +535,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeLineString(handler: FusionGeomDigitizer) { //Map
+    digitizeLineString(options: any,handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeLineString(lstr => {
@@ -543,7 +543,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeRectangle(handler: FusionGeomDigitizer) { //Map
+    digitizeRectangle(options: any,handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeRectangle(rect => {
@@ -551,7 +551,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizePolygon(handler: FusionGeomDigitizer) { //Map
+    digitizePolygon(options: any,handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizePolygon(poly => {
@@ -559,7 +559,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeCircle(handler: FusionGeomDigitizer) { //Map
+    digitizeCircle(options: any,handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeCircle(circ => {

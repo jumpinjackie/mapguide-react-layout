@@ -39,10 +39,10 @@ describe("utils/url", () => {
             expect(ensureParameters("component://Foo", mapName, session, locale)).toBe("component://Foo");
         });
         it("does not append parameters that are already appended", () => {
-            expect(ensureParameters("https://www.google.com", mapName, session, locale)).toBe(appendParameters("https://www.google.com", { mapName, session, locale }, true, true));
-            expect(ensureParameters("https://www.google.com?mapName=Foo", mapName, session, locale)).toBe(appendParameters("https://www.google.com", { mapName: "Foo", session, locale }, true, true));
-            expect(ensureParameters("https://www.google.com?mapName=Foo&session=sdfjsds", mapName, session, locale)).toBe(appendParameters("https://www.google.com", { mapName: "Foo", session: "sdfjsds", locale }, true, true));
-            expect(ensureParameters("https://www.google.com?mapName=Foo&session=sdfjsds&locale=de", mapName, session, locale)).toBe(appendParameters("https://www.google.com", { mapName: "Foo", session: "sdfjsds", locale: "de" }, true, true));
+            expect(ensureParameters("https://www.google.com", mapName, session, locale)).toBe(`https://www.google.com?MAPNAME=${mapName}&SESSION=${session}&LOCALE=${locale}`);
+            expect(ensureParameters("https://www.google.com?mapName=Foo", mapName, session, locale)).toBe(`https://www.google.com?mapName=Foo&SESSION=${session}&LOCALE=${locale}`);
+            expect(ensureParameters("https://www.google.com?mapName=Foo&session=sdfjsds", mapName, session, locale)).toBe(`https://www.google.com?mapName=Foo&session=sdfjsds&LOCALE=${locale}`);
+            expect(ensureParameters("https://www.google.com?mapName=Foo&session=sdfjsds&locale=de", mapName, session, locale)).toBe(`https://www.google.com?mapName=Foo&session=sdfjsds&locale=de`);
         });
     });
     describe("isComponentUri", () => {

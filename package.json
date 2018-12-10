@@ -98,7 +98,7 @@
     "cross-env": "5.2.0",
     "css-loader": "2.0.0",
     "enzyme": "3.7.0",
-    "enzyme-adapter-react-16": "1.7.0",
+    "enzyme-adapter-react-16": "1.7.1",
     "file-loader": "2.0.0",
     "fork-ts-checker-webpack-plugin": "^0.5.0",
     "jest": "23.6.0",

@@ -3,4 +3,5 @@ cache: yarn
 node_js:
   - "8"
 script:
+  - yarn audit
   - yarn run ci:travis

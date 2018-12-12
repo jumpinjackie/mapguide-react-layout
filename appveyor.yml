@@ -27,6 +27,7 @@ environment:
 install:
   # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node $env:nodejs_version
+  - choco install yarn
   # A pre-existing yarn.lock appears to confuse yarn with regards to @types packages, namely a * version
   # does not go for the latest available version of said package when doing a "yarn install" with the
   # new package version with a pre-existing yarn.lock. This causes a whole load of bogus duplicate identifer

@@ -363,7 +363,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         this.inner.zoomDelta(delta);
     }
     isDigitizing(): boolean {
-        return this.isDigitizing();
+        return this.inner.isDigitizing();
     }
     cancelDigitization(): void {
         this.inner.cancelDigitization();

@@ -21,38 +21,29 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {
     GenericEvent,
-    GenericEventHandler,
     IMapView,
     ILayerManager,
-    ILayerInfo,
-    IExternalBaseLayer,
     DigitizerCallback,
     ActiveMapTool,
     Bounds,
     Coordinate,
-    ImageFormat,
     RefreshMode,
     ClientKind,
-    NOOP,
     LayerTransparencySet,
     MapLoadIndicatorPositioning,
     KC_ESCAPE,
     KC_U,
     SelectionVariant
 } from "../api/common";
-import {
-    IApplicationContext,
-    APPLICATION_CONTEXT_VALIDATION_MAP
-} from "./context";
 import * as RtMap from '../api/contracts/runtime-map';
 import debounce = require("lodash.debounce");
 import { areNumbersEqual } from '../utils/number';
 import * as logger from '../utils/logger';
-import { MgError, isSessionExpiredError } from '../api/error';
+import { isSessionExpiredError } from '../api/error';
 import { Client } from '../api/client';
-import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
+import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
-import { IInlineMenu, IItem, getEnabled } from '../components/toolbar';
+import { IItem, getEnabled } from '../components/toolbar';
 import { getAssetPath } from "../utils/asset";
 import {
     CURSOR_DIGITIZE_POINT,
@@ -86,7 +77,6 @@ import View from "ol/view";
 import Feature from "ol/feature";
 import Overlay from "ol/overlay";
 import WKTFormat from "ol/format/wkt";
-import LayerBase from "ol/layer/base";
 import plugins from "ol/plugins";
 import PluginType from "ol/plugintype";
 
@@ -108,7 +98,6 @@ import Polygon from "ol/geom/polygon";
 import Point from "ol/geom/point";
 import LineString from "ol/geom/linestring";
 import Circle from "ol/geom/circle";
-import { BLANK_GIF_DATA_URI } from "../constants/index";
 import { safePropAccess } from '../utils/safe-prop';
 
 plugins.register(PluginType.MAP_RENDERER, MapRenderer);
@@ -1038,7 +1027,10 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         this.onRequestZoomToView(this.getViewForExtent(extent));
     }
     public isDigitizing(): boolean {
-        return this._activeDrawInteraction != null;
+        if (this._map == null)
+            return false;
+        const activeDraw = this._map.getInteractions().getArray().find(inter => inter instanceof Draw);
+        return activeDraw != null;
     }
     public digitizePoint(handler: DigitizerCallback<Point>, prompt?: string): void {
         const draw = new Draw({

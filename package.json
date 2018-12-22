@@ -92,7 +92,7 @@
     "@types/react-redux": "^6.0.11",
     "@types/shortid": "0.0.29",
     "bestzip": "2.1.2",
-    "cache-loader": "^1.2.5",
+    "cache-loader": "^2.0.0",
     "copyfiles": "2.1.0",
     "coveralls": "3.0.2",
     "cross-env": "5.2.0",

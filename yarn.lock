@@ -110,10 +110,10 @@
   dependencies:
     "@types/lodash" "*"
 
-"@types/lodash.uniq@4.5.4":
-  version "4.5.4"
-  resolved "https://registry.yarnpkg.com/@types/lodash.uniq/-/lodash.uniq-4.5.4.tgz#8dd571e4a68adddcd1bac810538e68f440e87403"
-  integrity sha512-q0FI7RCY99bUPBR7sJyfefWDa/KSD21pMWM1hi+2O+rJTzY2N4eRs+A6BwLotPNy/JOySfcZJYamZ8Owcs3SkQ==
+"@types/lodash.uniq@4.5.5":
+  version "4.5.5"
+  resolved "https://registry.yarnpkg.com/@types/lodash.uniq/-/lodash.uniq-4.5.5.tgz#fa22d643c00ffb0483c349dd3b61ec133ad291ed"
+  integrity sha512-aWPg52StzPnPLct3cwHbbXiv60alUyBkLjmJGP5V9mkJAeA4FEE5SXx94yLfUHcebkpj/Q17/9kosynceU964g==
   dependencies:
     "@types/lodash" "*"
 

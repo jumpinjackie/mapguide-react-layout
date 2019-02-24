@@ -1,7 +1,7 @@
 module.exports = {
     testEnvironment: "node",
     transform: {
-        ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+        ".(ts|tsx)": "ts-jest"
     },
     testRegex: "(/test/.*|\\.(test|spec))\\.(ts|tsx|js)$",
     moduleFileExtensions: [
@@ -14,7 +14,9 @@ module.exports = {
     setupFiles: [
         "raf/polyfill"
     ],
-    setupTestFrameworkScriptFile: "<rootDir>/jest-setup-framework.js",
+    setupFilesAfterEnv: [
+        "<rootDir>/jest-setup-framework.js"
+    ],
     moduleNameMapper: {
         "\\.(jpg|jpeg|png|gif|cur|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/mocks/fileMock.js",
         "\\.(css|less)$": "<rootDir>/mocks/styleMock.js"

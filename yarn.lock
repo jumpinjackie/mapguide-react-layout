@@ -237,10 +237,10 @@
   dependencies:
     "@types/lodash" "*"
 
-"@types/lodash.xor@4.5.5":
-  version "4.5.5"
-  resolved "https://registry.yarnpkg.com/@types/lodash.xor/-/lodash.xor-4.5.5.tgz#74f0fb91049236f9142955dbfc2d13292c8e26ed"
-  integrity sha512-NytV7niOaqp0Ya3WL/7KTjhAACt3kfQjZnMrMELXEtLpVsyVczr5U3aSwVSc4+2+xqqir3CwKBs1NHF5WIEwvQ==
+"@types/lodash.xor@4.5.6":
+  version "4.5.6"
+  resolved "https://registry.yarnpkg.com/@types/lodash.xor/-/lodash.xor-4.5.6.tgz#28ffbb779429ff6eac27db208d90124a00a0bff8"
+  integrity sha512-rD3zHQuR04SMUWEn6CHLGYNRHEFgakV4K9QhFFP/Ly5xdN2MWsy+gWFA4MxhY+sKKSSKjktjPVyBTo/6rUdTjA==
   dependencies:
     "@types/lodash" "*"
 

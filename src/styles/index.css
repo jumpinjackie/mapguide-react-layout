@@ -1,6 +1,7 @@
 @import "ol.css";
 @import "../../stdassets/sprites/icons.css";
 @import "~@blueprintjs/core/dist/blueprint.css";
+@import "~react-splitter-layout/lib/index.css";
 
 .invalidated-task-pane {
     opacity: 0.6; /* Real browsers */

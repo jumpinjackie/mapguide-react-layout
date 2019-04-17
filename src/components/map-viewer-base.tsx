@@ -1029,7 +1029,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     public isDigitizing(): boolean {
         if (this._map == null)
             return false;
-        const activeDraw = this._map.getInteractions().getArray().find(inter => inter instanceof Draw);
+        const activeDraw = this._map.getInteractions().getArray().filter(inter => inter instanceof Draw)[0];
         return activeDraw != null;
     }
     public digitizePoint(handler: DigitizerCallback<Point>, prompt?: string): void {

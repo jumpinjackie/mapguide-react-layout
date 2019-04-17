@@ -84,7 +84,8 @@ declare module "react-url-query" {
 }
 
 declare module "history/createBrowserHistory" {
-    export default function createHistory(): any;
+    function createHistory(): any;
+    export = createHistory;
 }
 
 // Monkey patching Array.filter to support type narrowing

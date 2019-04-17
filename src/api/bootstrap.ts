@@ -1,7 +1,7 @@
 import proj from "ol/proj";
 import proj4 from "proj4";
 import { configureUrlQuery } from 'react-url-query';
-import createHistory from 'history/createBrowserHistory';
+import createHistory = require('history/createBrowserHistory');
 
 /**
  * Sets up key dependencies needed by the viewer:

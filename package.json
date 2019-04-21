@@ -102,7 +102,7 @@
     "file-loader": "3.0.1",
     "fork-ts-checker-webpack-plugin": "^1.0.2",
     "jest": "24.7.1",
-    "jsdom": "^14.0.0",
+    "jsdom": "^15.0.0",
     "jsdom-global": "^3.0.2",
     "jsonfile": "5.0.0",
     "less": "3.9.0",

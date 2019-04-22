@@ -127,6 +127,9 @@
     "webpack": "4.30.0",
     "webpack-cli": "^3.3.0"
   },
+  "resolutions": {
+    "marked": "0.6.2"
+  },
   "greenkeeper": {
     "ignore": [
       "@types/react",

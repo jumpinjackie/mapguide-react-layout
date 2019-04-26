@@ -71,7 +71,7 @@
     "redux-thunk": "2.3.0",
     "shortid": "2.2.14",
     "tslib": "1.9.3",
-    "url-parse": "1.4.6",
+    "url-parse": "1.4.7",
     "whatwg-fetch": "3.0.0"
   },
   "devDependencies": {

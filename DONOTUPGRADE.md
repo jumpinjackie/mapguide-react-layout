@@ -23,3 +23,9 @@ Reason for staying at this version: Our viewer code makes usage of the legacy Re
 Current version used: `2.1.3`
 
 Reason for staying at this version: Breaking API change in newer releases.
+
+## ts-loader
+
+Current version used: `5.3.3`
+
+Reason for staying at this version: Newer versions break our build (https://github.com/TypeStrong/ts-loader/issues/919)

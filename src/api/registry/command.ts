@@ -12,7 +12,8 @@ import {
     getRuntimeMap,
     DEFAULT_MODAL_SIZE,
     NOOP,
-    ALWAYS_FALSE
+    ALWAYS_FALSE,
+    IInvokeUrlCommandParameter
 } from "../../api/common";
 import * as ModalActions from "../../actions/modal";
 import { getFusionRoot } from "../../api/runtime";
@@ -44,6 +45,28 @@ function fusionFixSpriteClass(tb: any, cmd?: ICommand): string | undefined {
         return cmd.iconClass;
     }
     return undefined;
+}
+
+/**
+ * @hidden
+ */
+export function mergeInvokeUrlParameters(currentParameters: IInvokeUrlCommandParameter[], extraParameters?: any) {
+    const currentP = currentParameters.reduce<any>((prev, current, i, arr) => {
+        prev[current.name] = current.value;
+        return prev;
+    }, {});
+    if (extraParameters) {
+        const keys = Object.keys(extraParameters);
+        for (const k of keys) {
+            currentP[k] = extraParameters[k];
+        }
+    }
+    const merged: IInvokeUrlCommandParameter[] = [];
+    const mkeys = Object.keys(currentP);
+    for (const k of mkeys) {
+        merged.push({ name: k, value: currentP[k] });
+    }
+    return merged;
 }
 
 /**
@@ -326,12 +349,13 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                 return true;
             },
             selected: () => false,
-            invoke: (dispatch: ReduxDispatch, getState: () => IApplicationState) => {
+            invoke: (dispatch: ReduxDispatch, getState: () => IApplicationState, viewer: IMapViewer, parameters?: any) => {
                 const state = getState();
                 const config = state.config;
                 const map = getRuntimeMap(state);
                 if (map) {
-                    const url = ensureParameters(cmdDef.url, map.Name, map.SessionId, config.locale, true, cmdDef.parameters);
+                    const params = mergeInvokeUrlParameters(cmdDef.parameters, parameters);
+                    const url = ensureParameters(cmdDef.url, map.Name, map.SessionId, config.locale, true, params);
                     openUrlInTarget(name, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
                 }
             }

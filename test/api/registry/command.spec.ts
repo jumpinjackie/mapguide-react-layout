@@ -1,8 +1,52 @@
-import { CommandConditions } from "../../../src/api/registry/command";
+import { CommandConditions, mergeInvokeUrlParameters } from "../../../src/api/registry/command";
 import { IApplicationState } from "../../../src/api/common";
 import { createInitialState, createMap, createSelectionSet } from "../../../test-data";
 
 describe("api/registry/command", () => {
+    describe("mergeInvokeUrlParameters", () => {
+        it("returns itself if no extra parameters", () => {
+            const p = [
+                { name: "MAPNAME", value: "Sheboygan" }
+            ];
+            const merged = mergeInvokeUrlParameters(p);
+            expect(merged).toHaveLength(p.length);
+            expect(merged[0]).toStrictEqual(p[0]);
+        });
+        it("appends extra parameters", () => {
+            const p = [
+                { name: "MAPNAME", value: "Sheboygan" }
+            ];
+            const merged = mergeInvokeUrlParameters(p, { foo: "bar", baz: 1 });
+            expect(merged).toHaveLength(3);
+            const p1 = merged.filter(pr => pr.name == "MAPNAME")[0];
+            const p2 = merged.filter(pr => pr.name == "foo")[0];
+            const p3 = merged.filter(pr => pr.name == "baz")[0];
+            expect(p1).not.toBeUndefined();
+            expect(p2).not.toBeUndefined();
+            expect(p3).not.toBeUndefined();
+            expect(p1).not.toBeNull();
+            expect(p2).not.toBeNull();
+            expect(p3).not.toBeNull();
+            expect(p1.value).toBe("Sheboygan");
+            expect(p2.value).toBe("bar");
+            expect(p3.value).toBe(1);
+        });
+        it("overwrites existing parameters if specified in extra", () => {
+            const p = [
+                { name: "MAPNAME", value: "Sheboygan" }
+            ];
+            const merged = mergeInvokeUrlParameters(p, { MAPNAME: "bar", baz: 1 });
+            expect(merged).toHaveLength(2);
+            const p1 = merged.filter(pr => pr.name == "MAPNAME")[0];
+            const p2 = merged.filter(pr => pr.name == "baz")[0];
+            expect(p1).not.toBeUndefined();
+            expect(p2).not.toBeUndefined();
+            expect(p1).not.toBeNull();
+            expect(p2).not.toBeNull();
+            expect(p1.value).toBe("bar");
+            expect(p2.value).toBe(1);
+        })
+    });
     describe("CommandConditions", () => {
         it("isNotBusy", () => {
             const state = createInitialState();

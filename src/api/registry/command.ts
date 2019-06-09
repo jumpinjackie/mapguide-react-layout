@@ -69,6 +69,12 @@ export function mergeInvokeUrlParameters(currentParameters: IInvokeUrlCommandPar
     return merged;
 }
 
+function fixChildItems(childItems: any[], store: ReduxStore, commandInvoker: (cmd: ICommand, parameters?: any) => void): IItem[] {
+    return childItems
+        .map(tb => mapToolbarReference(tb, store, commandInvoker))
+        .filter(tb => tb != null) as IItem[];
+}
+
 /**
  * @hidden
  */
@@ -117,7 +123,7 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
             iconClass: fusionFixSpriteClass(tb),
             label: tb.label,
             tooltip: tb.tooltip,
-            childItems: childItems.map(tb => mapToolbarReference(tb, store, commandInvoker)).filter(tb => tb != null)
+            childItems: fixChildItems(childItems, store, commandInvoker)
         };
     } else if (tb.label && tb.flyoutId) {
         return {

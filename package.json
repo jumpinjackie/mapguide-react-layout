@@ -70,7 +70,7 @@
     "redux-logger": "3.0.6",
     "redux-thunk": "2.3.0",
     "shortid": "2.2.14",
-    "tslib": "1.9.3",
+    "tslib": "1.10.0",
     "url-parse": "1.4.7",
     "whatwg-fetch": "3.0.0"
   },

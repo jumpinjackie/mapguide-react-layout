@@ -77,7 +77,7 @@
   "devDependencies": {
     "@types/dom4": "2.0.1",
     "@types/enzyme": "3.9.3",
-    "@types/jest": "24.0.14",
+    "@types/jest": "24.0.15",
     "@types/lodash.debounce": "4.0.6",
     "@types/lodash.uniq": "4.5.6",
     "@types/lodash.xor": "4.5.6",

@@ -1,5 +1,5 @@
-Latest
-======
+0.12
+====
 
  * [#481](https://github.com/jumpinjackie/mapguide-react-layout/issues/481): Current selection set now also stashed to local storage to persist (and be restored) between browser refreshes.
  * [#645](https://github.com/jumpinjackie/mapguide-react-layout/issues/645): Viewer CSS is now extracted out to a 
@@ -13,9 +13,9 @@ Latest
  * [#698](https://github.com/jumpinjackie/mapguide-react-layout/issues/698): Fix memory leak due to dangling measure components being held on by the measure context after unmount
  * [#569](https://github.com/jumpinjackie/mapguide-react-layout/issues/569): Update to use `componentDidUpdate` instead of `componentWillReceiveProps`
  * [#690](https://github.com/jumpinjackie/mapguide-react-layout/issues/690): Made redux action more strongly-typed
- * Updated Blueprint to 1.36.0
- * Updated TypeScript to 3.0.1
- * Updated React to 16.4.2
+ * Updated Blueprint to 1.40.0
+ * Updated TypeScript to 3.5.3
+ * Updated React to 16.8.6
  * Replaced `query-string` module with `qs`
  * Now built with webpack 4.x
 

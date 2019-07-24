@@ -29,7 +29,12 @@ function encodeKey(sessionId: string, mapName: string) {
 
 export async function storeSelectionSet(sessionId: string, mapName: string, resp: QueryMapFeaturesResponse): Promise<void> {
     const key = encodeKey(sessionId, mapName);
-    window.localStorage.setItem(key, JSON.stringify(resp));
+    const value = JSON.stringify(resp);
+    try {
+        window.localStorage.setItem(key, value);
+    } catch (e) {
+
+    }
 }
 
 export async function getSelectionSet(sessionId: string, mapName: string): Promise<QueryMapFeaturesResponse | undefined> {

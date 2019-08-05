@@ -1040,11 +1040,11 @@ export interface ActiveSelectedFeature {
      */
     layerId: string;
     /**
-     * The index of the feature to highlight
+     * The selection key of the feature
      * 
-     * @type {number}
+     * @type {string}
      */
-    featureIndex: number;
+    selectionKey: string;
 }
 
 /**

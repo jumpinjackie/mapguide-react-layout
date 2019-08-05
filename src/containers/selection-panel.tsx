@@ -26,7 +26,7 @@ export interface ISelectionPanelContainerState {
 
 export interface ISelectionPanelContainerDispatch {
     setCurrentView: (view: IMapView) => void;
-    showSelectedFeature: (mapName: string, layerId: string, featureIndex: number) => void;
+    showSelectedFeature: (mapName: string, layerId: string, selectionKey: string) => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>, ownProps: ISelectionPanelContainerProps): Partial<ISelectionPanelContainerState> {
@@ -39,7 +39,7 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: ISelectio
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ISelectionPanelContainerDispatch> {
     return {
         setCurrentView: (view) => dispatch(MapActions.setCurrentView(view)),
-        showSelectedFeature: (mapName, layerId, featureIndex) => dispatch(MapActions.showSelectedFeature(mapName, layerId, featureIndex))
+        showSelectedFeature: (mapName, layerId, selectionKey) => dispatch(MapActions.showSelectedFeature(mapName, layerId, selectionKey))
     };
 }
 
@@ -59,10 +59,10 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
             this.props.setCurrentView(view);
         }
     }
-    private onShowSelectedFeature = (layerId: string, featureIndex: number) => {
+    private onShowSelectedFeature = (layerId: string, selectionKey: string) => {
         const { showSelectedFeature, config } = this.props;
         if (showSelectedFeature && config && config.activeMapName) {
-            showSelectedFeature(config.activeMapName, layerId, featureIndex);
+            showSelectedFeature(config.activeMapName, layerId, selectionKey);
         }
     }
     private getLocale(): string {

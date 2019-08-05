@@ -19,6 +19,7 @@ import uniq = require("lodash.uniq");
 import { ActionType } from '../constants/actions';
 import { IMapSetBusyCountAction, IMapSetBaseLayerAction, IMapSetScaleAction, IMapSetMouseCoordinatesAction, IMapSetLayerTransparencyAction, IMapSetViewSizeUnitsAction, IMapPreviousViewAction, IMapNextViewAction, ISetActiveMapToolAction, ISetActiveMapAction, ISetManualFeatureTooltipsEnabledAction, ISetFeatureTooltipsEnabledAction, IMapSetViewRotationAction, IMapSetViewRotationEnabledAction, IShowSelectedFeatureAction, IMapSetSelectionAction, IMapResizedAction } from './defs';
 import { storeSelectionSet } from '../api/session-store';
+import { getSiteVersion } from '../utils/site-version';
 
 function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeature[]): SelectedFeature[] {
     const merged: SelectedFeature[] = [];
@@ -171,13 +172,18 @@ export function queryMapFeatures(mapName: string, opts: QueryMapFeatureActionOpt
                     opts.errBack(err);
                 }
             };
-            client.queryMapFeatures(opts.options).then(res => {
+            //We want v4.0.0 QUERYMAPFEATURES if available
+            const [vMaj] = getSiteVersion(map);
+            const queryOp = vMaj >= 4
+                ? (opts: IQueryMapFeaturesOptions) => client.queryMapFeatures_v4(opts)
+                : (opts: IQueryMapFeaturesOptions) => client.queryMapFeatures(opts);
+            queryOp(opts.options).then(res => {
                 if (opts.options.persist === 1) {
                     if (opts.append === true) {
                         const combined = combineSelections(selectionSet, res);
                         const mergedXml = buildSelectionXml(combined.FeatureSet);
                         //Need to update the server-side selection with the merged result
-                        client.queryMapFeatures({
+                        queryOp({
                             session: map.SessionId,
                             mapname: map.Name,
                             persist: 1,
@@ -530,16 +536,16 @@ export function setViewRotationEnabled(enabled: boolean): IMapSetViewRotationEna
  * @export
  * @param {string} mapName 
  * @param {string} layerId 
- * @param {number} featureIndex 
+ * @param {string} selectionKey 
  * @returns {IShowSelectedFeatureAction} 
  */
-export function showSelectedFeature(mapName: string, layerId: string, featureIndex: number): IShowSelectedFeatureAction {
+export function showSelectedFeature(mapName: string, layerId: string, selectionKey: string): IShowSelectedFeatureAction {
     return {
         type: ActionType.MAP_SHOW_SELECTED_FEATURE,
         payload: {
             mapName,
             layerId,
-            featureIndex
+            selectionKey
         }
     }
 }

@@ -288,7 +288,8 @@ function deArrayifyFeatures(json: any[]): Query.SelectedFeature[] {
     return (json || []).map(root => {
         const feat = {
             Bounds: getter(root, "Bounds"),
-            Property: deArrayifyFeatureProperties(root.Property)
+            Property: deArrayifyFeatureProperties(root.Property),
+            SelectionKey: getter(root, "SelectionKey")
         };
         return feat;
     });
@@ -932,11 +933,16 @@ export function buildSelectionXml(selection: Query.FeatureSet | undefined, layer
     return xml;
 }
 
+/**
+ * Can only be used for a v4.0.0 or higher QUERYMAPFEATURES request
+ * @param selection Current selection set
+ * @param feat The active selected feature
+ */
 export function getActiveSelectedFeatureXml(selection: Query.FeatureSet, feat: ActiveSelectedFeature): string | undefined {
     for (const layer of selection.Layer) {
         const layerId = layer["@id"];
         if (layerId == feat.layerId) {
-            const key = layer.Class.ID[feat.featureIndex];
+            const key = feat.selectionKey;
             let xml = '<?xml version="1.0" encoding="utf-8"?>';
             xml += '<FeatureSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FeatureSet-1.0.0.xsd">';
             xml += `<Layer id="${layerId}">`;

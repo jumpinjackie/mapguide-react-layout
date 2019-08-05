@@ -172,6 +172,19 @@ export class Client implements Request.IMapGuideClient {
     }
 
     /**
+     * Performs a map selection query on the current map. Only applicable for use in MapGuide Open Source
+     * 4.0 and higher
+     *
+     * @param {Request.IQueryMapFeaturesOptions} options
+     * @returns {Promise<Query.QueryMapFeaturesResponse>}
+     *
+     * @memberOf Client
+     */
+    public queryMapFeatures_v4(options: Request.IQueryMapFeaturesOptions): Promise<Query.QueryMapFeaturesResponse> {
+        return this.builder.queryMapFeatures_v4(options);
+    }
+
+    /**
      * Gets the tile template URL used by the viewer to send tile requests
      *
      * @param {string} resourceId

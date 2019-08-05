@@ -41,6 +41,7 @@ import olImageStaticSource from "ol/source/imagestatic";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY, BLANK_GIF_DATA_URI } from "../constants/index";
 import { restrictToRange } from "../utils/number";
 import { Size } from "../containers/map-capturer-context";
+import { getSiteVersion } from '../utils/site-version';
 
 const HIDDEN_CLASS_NAME = "tooltip-hidden";
 
@@ -866,10 +867,15 @@ export class MapViewerContext {
         layerSet.refreshMap(mode);
     }
     public async showSelectedFeature(mapExtent: Bounds, size: Size, map: RuntimeMap, selectionColor: string, featureXml: string | undefined) {
+        const [vMaj] = getSiteVersion(map);
+        // This operation requires v4.0.0 QUERYMAPFEATURES, so bail if this ain't the right version
+        if (vMaj < 4) {
+            return;
+        }
         const layerSet = this.getLayerSet(map.Name);
         try {
             if (featureXml) {
-                const r = await this.callback.getClient().queryMapFeatures({
+                const r = await this.callback.getClient().queryMapFeatures_v4({
                     mapname: map.Name,
                     session: map.SessionId,
                     selectionformat: "PNG",

@@ -339,7 +339,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                     const state1: Partial<IBranchedMapSubState> = {
                         activeSelectedFeature: {
                             layerId: payload.layerId,
-                            featureIndex: payload.featureIndex
+                            selectionKey: payload.selectionKey
                         }
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });

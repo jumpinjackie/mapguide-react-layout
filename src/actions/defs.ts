@@ -416,7 +416,7 @@ export interface IShowSelectedFeatureAction {
     payload: {
         mapName: string;
         layerId: string;
-        featureIndex: number;
+        selectionKey: string;
     }
 }
 

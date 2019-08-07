@@ -65,7 +65,7 @@ export interface ISelectionPanelProps {
     locale?: string;
     selection: SelectedFeatureSet;
     onRequestZoomToFeature: (feat: SelectedFeature) => void;
-    onShowSelectedFeature: (layerId: string, featureIndex: number) => void;
+    onShowSelectedFeature: (layerId: string, selectionKey: string) => void;
     maxHeight?: number;
     selectedFeatureRenderer?: (props: ISelectedFeatureProps) => JSX.Element;
     /**
@@ -156,12 +156,15 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
             return null;
         return this.props.selection.SelectedLayer[this.state.selectedLayerIndex];
     }
-    private getCurrentFeature() {
+    private getFeatureAt(index: number) {
         const layer = this.getCurrentLayer();
         if (layer != null) {
-            return layer.Feature[this.state.featureIndex];
+            return layer.Feature[index];
         }
         return null;
+    }
+    private getCurrentFeature() {
+        return this.getFeatureAt(this.state.featureIndex);
     }
     private canGoPrev(): boolean {
         return this.state.featureIndex > 0;
@@ -183,7 +186,10 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
         const layer = this.getCurrentLayer();
         if (layer) {
             const layerId = layer["@id"];
-            safePropAccess(this.props, "onShowSelectedFeature", func => func(layerId, newIndex));
+            const f = this.getFeatureAt(newIndex);
+            if (f && f.SelectionKey) {
+                safePropAccess(this.props, "onShowSelectedFeature", func => func(layerId, f!.SelectionKey!));
+            }
         }
     }
     private nextFeature() {
@@ -192,7 +198,10 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
         const layer = this.getCurrentLayer();
         if (layer) {
             const layerId = layer["@id"];
-            safePropAccess(this.props, "onShowSelectedFeature", func => func(layerId, newIndex));
+            const f = this.getFeatureAt(newIndex);
+            if (f && f.SelectionKey) {
+                safePropAccess(this.props, "onShowSelectedFeature", func => func(layerId, f!.SelectionKey!));
+            }
         }
     }
     private zoomSelectedFeature() {

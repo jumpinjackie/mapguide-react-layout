@@ -329,6 +329,16 @@ export interface IMapGuideClient {
     queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<Query.QueryMapFeaturesResponse>;
 
     /**
+     * Performs a map selection query on the current map. Only applicable for use with MapGuide
+     * Open Source 4.0 and higher
+     *
+     * @abstract
+     * @param {IQueryMapFeaturesOptions} options
+     * @returns {PromiseLike<Query.QueryMapFeaturesResponse>}
+     */
+    queryMapFeatures_v4(options: IQueryMapFeaturesOptions): Promise<Query.QueryMapFeaturesResponse>;
+
+    /**
      * Describes a runtime map
      *
      * @abstract
@@ -373,6 +383,8 @@ export abstract class RequestBuilder implements IMapGuideClient {
     public abstract createRuntimeMap(options: ICreateRuntimeMapOptions): Promise<RtMap.RuntimeMap>;
 
     public abstract queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<Query.QueryMapFeaturesResponse>;
+
+    public abstract queryMapFeatures_v4(options: IQueryMapFeaturesOptions): Promise<Query.QueryMapFeaturesResponse>;
 
     public abstract describeRuntimeMap(options: IDescribeRuntimeMapOptions): Promise<RtMap.RuntimeMap>;
 

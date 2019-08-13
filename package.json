@@ -124,7 +124,7 @@
     "tslint": "5.18.0",
     "typescript": "3.5.3",
     "url-loader": "2.1.0",
-    "webpack": "4.39.1",
+    "webpack": "4.39.2",
     "webpack-cli": "^3.3.6"
   },
   "greenkeeper": {

@@ -28,7 +28,6 @@ export interface IMeasureContainerDispatch {
 
 export interface IMeasureContainerState {
     measuring: boolean;
-    geodesic: boolean;
     type: string;
     activeType: "LineString" | "Area";
     segmentTotal: number;
@@ -59,7 +58,6 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
         super(props);
         this.state = {
             measuring: false,
-            geodesic: false,
             type: "LineString"
         }
     }
@@ -74,10 +72,6 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
                 }
             }
         });
-    }
-    private onGeodesicChanged = (e: GenericEvent) => {
-        const newValue = e.target.checked;
-        this.setState({ geodesic: newValue });
     }
     private onClearMeasurements = (e: GenericEvent) => {
         e.preventDefault();
@@ -132,7 +126,6 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
     getLocale(): string {
         return this.props.locale || DEFAULT_LOCALE;
     }
-    isGeodesic(): boolean { return !!this.state.geodesic; }
     componentDidMount() {
         let activeMeasure: MeasureContext | undefined;
         if (_measurements.length == 0) {
@@ -188,7 +181,7 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
         }
     }
     render(): JSX.Element {
-        const { measuring, geodesic, type } = this.state;
+        const { measuring, type } = this.state;
         const locale = this.getLocale();
         return <div className="component-measure">
             <form className="form-inline">
@@ -200,11 +193,6 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
                             <option value="Polygon">{tr("MEASUREMENT_TYPE_AREA", locale)}</option>
                         </select>
                     </div>
-                </label>
-                <label className="pt-control pt-checkbox">
-                    <input type="checkbox" checked={geodesic} onChange={this.onGeodesicChanged} />
-                    <span className="pt-control-indicator" />
-                    {tr("MEASUREMENT_USE_GEODESIC", locale)}
                 </label>
                 <div className="pt-button-group">
                     <button type="button" className="pt-button pt-icon-play" disabled={measuring} onClick={this.onStartMeasure}>{tr("MEASUREMENT_START", locale)}</button>

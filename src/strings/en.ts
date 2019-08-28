@@ -65,7 +65,6 @@ const STRINGS_EN: ILocalizedMessages = {
     "MEASUREMENT_TYPE": "Measurement Type",
     "MEASUREMENT_TYPE_LENGTH": "Length (LineString)",
     "MEASUREMENT_TYPE_AREA": "Area (Polygon)",
-    "MEASUREMENT_USE_GEODESIC": "Use geodesic measure",
     "MEASUREMENT_CLEAR": "Clear",
     "MEASUREMENT_CONTINUE_POLYGON": "Click to continue drawing the polygon. Double-click to finish.",
     "MEASUREMENT_CONTINUE_LINE": "Click to continue drawing the line. Double-click to finish.",

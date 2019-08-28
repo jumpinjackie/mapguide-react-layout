@@ -41,7 +41,6 @@ export interface IMeasureCallback {
 export interface IMeasureComponent {
     getCurrentDrawType(): string | undefined;
     getLocale(): string;
-    isGeodesic(): boolean;
 }
 
 /**
@@ -103,7 +102,7 @@ export class MeasureContext {
     private formatLength(line: olLineString): [string, number, MeasureSegment[] | undefined] {
         let length: number;
         let segments: MeasureSegment[] | undefined;
-        if (this.parent && this.parent.isGeodesic()) {
+        if (this.parent) {
             const coordinates = line.getCoordinates();
             segments = [];
             length = 0;
@@ -116,7 +115,7 @@ export class MeasureContext {
                 segments.push({ segment: (i + 1), length: dist });
             }
         } else {
-            length = roundTo(line.getLength(), 2);
+            length = NaN;
         }
         let output: string;
         if (length > 100) {
@@ -134,7 +133,8 @@ export class MeasureContext {
     private formatArea(polygon: olPolygon): [string, number, MeasureSegment[] | undefined] {
         let area: number;
         let segments: MeasureSegment[] | undefined;
-        if (this.parent && this.parent.isGeodesic()) {
+        if (this.parent) {
+            //TODO: When we upgrade to OL 6, we'll need to update this (they changed their measure example)
             segments = [];
             const sourceProj = this.viewer.getProjection();
             const geom = (polygon.clone().transform(sourceProj, 'EPSG:4326') as olPolygon);
@@ -147,7 +147,7 @@ export class MeasureContext {
                 segments.push({ segment: (i + 1), length: dist });
             }
         } else {
-            area = polygon.getArea();
+            area = NaN;
         }
         let output: string;
         if (area > 10000) {

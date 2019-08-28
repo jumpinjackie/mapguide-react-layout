@@ -72,7 +72,6 @@ export interface ILocalizedMessages {
     MEASUREMENT_TYPE: string;
     MEASUREMENT_TYPE_LENGTH: string;
     MEASUREMENT_TYPE_AREA: string;
-    MEASUREMENT_USE_GEODESIC: string;
     MEASUREMENT_CLEAR: string;
     MEASUREMENT_CONTINUE_POLYGON: string;
     MEASUREMENT_CONTINUE_LINE: string;

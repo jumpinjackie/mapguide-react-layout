@@ -11,6 +11,19 @@ export function strEndsWith(str: string, suffix: string): boolean {
 }
 
 /**
+ * Replaces all occurrences of the given string with the specified replacement in the target
+ * string
+ * 
+ * @param str 
+ * @param find 
+ * @param replace 
+ * @since 0.12
+ */
+export function strReplaceAll(str: string, find: string, replace: string): string {
+    return str.split(find).join(replace);
+}
+
+/**
  * Empty string constant
  */
 export const STR_EMPTY = "";

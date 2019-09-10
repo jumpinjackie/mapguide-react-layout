@@ -29,7 +29,7 @@ import {
     ReduxThunkedAction,
     IMapViewer
 } from "../api/common";
-import { strEndsWith } from "../utils/string";
+import { strEndsWith, strReplaceAll } from "../utils/string";
 import { IView } from "../api/contracts/common";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { tr } from "../api/i18n";
@@ -325,7 +325,7 @@ function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<Runtime
                                     name: name,
                                     kind: "OSM",
                                     options: options
-                                })
+                                });
                             }
                             break;
                         case "Stamen":
@@ -340,7 +340,28 @@ function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<Runtime
                                     options: {
                                         layer: type
                                     }
-                                })
+                                });
+                            }
+                            break;
+                        case "XYZ":
+                            {
+                                //HACK: De-arrayification of arbitrary extension elements
+                                //is shallow (hence name/type is string[]). Do we bother to fix this?
+                                const name = map.Extension.Options.name[0];
+                                const type = map.Extension.Options.type[0];
+                                //NOTE: From a fusion appdef, we're expecting placeholder tokens to be in ${this_format} instead of
+                                //{this_format} as the primary consumer is the Fusion viewer that is based on OpenLayers 2
+                                //As we're not using OL2, but OL4+ the expected format is {this_format}, so we need to convert these
+                                //placeholder tokens
+                                const urls = (map.Extension.Options.urls || []).map((s: string) => strReplaceAll(s, "${", "{"));
+                                externalBaseLayers.push({
+                                    name: name,
+                                    kind: "XYZ",
+                                    options: {
+                                        layer: type,
+                                        urls: urls
+                                    }
+                                });
                             }
                             break;
                     }

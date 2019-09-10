@@ -89,5 +89,12 @@
     "TASK_PANE_CONTENT_FOR_INACTIVE_MAP_TITLE": "Ungültiger Aufgabenbereich",
     "TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING": "Der aktuelle Aufgabenbereichsinhalt ist für die aktuelle aktive Karte nicht gültig. Wenn der Inhalt von einem Befehl geladen wurde, führen Sie diesen Befehl erneut aus",
     "SHARE_LINK_COPY_CLIPBOARD": "Link kopieren",
-    "SHARE_LINK_COPIED": "Link kopiert"
+    "SHARE_LINK_COPIED": "Link kopiert",
+    "ADD_LAYER": "Ebene hinzufügen",
+    "MANAGE_LAYERS": "Ebenen verwalten",
+    "LAYER_TYPE": "Ebenentyp",
+    "SELECT_LAYER_TYPE": "Wählen Sie den Ebenentyp",
+    "ADD_WMS_LAYER_URL": "WMS-Layer-URL hinzufügen",
+    "ADD_WMS_LAYER_NO_LAYERS": "Keine WMS-Ebenen",
+    "WMS_NO_LAYER_DESCRIPITON": "Geben Sie oben eine WMS-Service-URL ein und klicken Sie auf die Schaltfläche daneben, um die verfügbaren Ebenen zu laden"
 }

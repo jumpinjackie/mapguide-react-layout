@@ -142,7 +142,8 @@ const STRINGS_EN: ILocalizedMessages = {
     "REMOVED_LAYER": "Removed layer: {name}",
     "ADD_WFS_LAYER": "Add WFS Layer",
     "SHARE_LINK_COPY_CLIPBOARD": "Copy Link",
-    "SHARE_LINK_COPIED": "Link copied"
+    "SHARE_LINK_COPIED": "Link copied",
+    "WMS_NO_LAYER_DESCRIPITON": "Enter a WMS Service URL above and click the button beside it to load available layers"
 };
 
 export default STRINGS_EN;

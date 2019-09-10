@@ -147,7 +147,7 @@ export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
                                 </div>
                                 <h4 className="pt-non-ideal-state-title">{tr("ADD_WMS_LAYER_NO_LAYERS", locale)}</h4>
                                 <div className="pt-non-ideal-state-description">
-                                    Enter a WMS Service URL and click the <span className="pt-icon pt-icon-arrow-right" /> button to load available layers
+                                    {tr("WMS_NO_LAYER_DESCRIPITON", locale)}
                                 </div>
                             </div>;
                         }

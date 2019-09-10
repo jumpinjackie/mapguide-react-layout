@@ -151,4 +151,5 @@ export interface ILocalizedMessages {
     ADD_WFS_LAYER: string;
     SHARE_LINK_COPY_CLIPBOARD: string;
     SHARE_LINK_COPIED: string;
+    WMS_NO_LAYER_DESCRIPITON: string;
 }

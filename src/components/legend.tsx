@@ -159,6 +159,9 @@ export class LayerNode extends React.Component<ILayerNodeProps, any> {
                             onChange={this.onVisibilityChanged}
                             checked={(this.state.layerVisible)} />;
         }
+        const tooltip = label;
+        const nodeClassName = "layer-node";
+        let nodeStyle: React.CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", ...LI_LIST_STYLE };
         if (layer.ScaleRange) {
             for (const scaleRange of layer.ScaleRange) {
                 if (scaleRange.FeatureStyle && scaleRange.FeatureStyle.length > 0) {
@@ -214,13 +217,13 @@ export class LayerNode extends React.Component<ILayerNodeProps, any> {
                     } else {
                         expanded = <EmptyNode />;
                     }
-                    return <li style={LI_LIST_STYLE} className='layer-node'>{expanded} {chkbox} {selectable} {icon} <LegendLabel text={text} /> {body}</li>;
+                    return <li title={tooltip} style={nodeStyle} className={nodeClassName}>{expanded} {chkbox} {selectable} {icon} <LegendLabel text={text} /> {body}</li>;
                 } else { //This is generally a raster
                     icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_LEGEND_RASTER} />;
                 }
             }
         }
-        return <li style={LI_LIST_STYLE} className='layer-node'><EmptyNode /> {chkbox} {selectable} {icon} {label}</li>;
+        return <li title={tooltip} style={nodeStyle} className={nodeClassName}><EmptyNode /> {chkbox} {selectable} {icon} {label}</li>;
     }
 }
 
@@ -274,7 +277,10 @@ export class GroupNode extends React.Component<IGroupNodeProps, any> {
                                onClick={this.onToggleExpansion}
                                spriteClass={isExpanded ? SPRITE_LEGEND_TOGGLE : SPRITE_LEGEND_TOGGLE_EXPAND} />;
         const chkbox = <input type='checkbox' className='group-checkbox' style={CHK_STYLE} value={group.ObjectId} onChange={this.onVisibilityChanged} checked={(this.state.groupVisible)} />;
-        return <li style={LI_LIST_STYLE}>
+        const tooltip = this.props.group.LegendLabel;
+        const nodeClassName = "group-node";
+        let nodeStyle: React.CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", ...LI_LIST_STYLE };
+        return <li title={tooltip} style={nodeStyle} className={nodeClassName}>
             <span>{expanded} {chkbox} {icon} <LegendLabel text={this.props.group.LegendLabel} /></span>
             {(() => {
                 if (isExpanded && this.props.childItems.length > 0) {

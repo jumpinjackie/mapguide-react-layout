@@ -1,6 +1,10 @@
 0.12
 ====
 
+ * [#670](https://github.com/jumpinjackie/mapguide-react-layout/issues/670): Add support for XYZ layers defined in a Flexible Layout to match functional parity with Fusion
+ * [#587](https://github.com/jumpinjackie/mapguide-react-layout/issues/587): Plug remaining i18n holes in measure and WMS layer manager components.
+ * [#955](https://github.com/jumpinjackie/mapguide-react-layout/issues/955): Don't word wrap layer/group node labels in Legend component and provide tooltips for these labels
+ * [#940](https://github.com/jumpinjackie/mapguide-react-layout/issues/940): Remove non-geodesic measure option as it is mostly inaccurate.
  * [#481](https://github.com/jumpinjackie/mapguide-react-layout/issues/481): Current selection set now also stashed to local storage to persist (and be restored) between browser refreshes.
  * [#645](https://github.com/jumpinjackie/mapguide-react-layout/issues/645): Viewer CSS is now extracted out to a 
  separate asset (instead of integrated with the JS bundle)
@@ -12,10 +16,10 @@
  * [#643](https://github.com/jumpinjackie/mapguide-react-layout/issues/643): Added basic e2e test suite. Powered by `testcafe`
  * [#698](https://github.com/jumpinjackie/mapguide-react-layout/issues/698): Fix memory leak due to dangling measure components being held on by the measure context after unmount
  * [#569](https://github.com/jumpinjackie/mapguide-react-layout/issues/569): Update to use `componentDidUpdate` instead of `componentWillReceiveProps`
- * [#690](https://github.com/jumpinjackie/mapguide-react-layout/issues/690): Made redux action more strongly-typed
+ * [#690](https://github.com/jumpinjackie/mapguide-react-layout/issues/690): Made redux actions more strongly-typed
  * Updated Blueprint to 1.40.0
- * Updated TypeScript to 3.5.3
- * Updated React to 16.8.6
+ * Updated TypeScript to 3.6.3
+ * Updated React to 16.9.0
  * Replaced `query-string` module with `qs`
  * Now built with webpack 4.x
 

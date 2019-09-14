@@ -4060,10 +4060,10 @@ highlight.js@^9.15.8:
   resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-9.15.10.tgz#7b18ed75c90348c045eef9ed08ca1319a2219ad2"
   integrity sha512-RoV7OkQm0T3os3Dd2VHLNMoaoDVx77Wygln3n9l5YV172XonWG6rgQD3XnF/BuFFZw9A0TJgmMSO8FEWQgvcXw==
 
-history@^4.10.0:
-  version "4.10.0"
-  resolved "https://registry.yarnpkg.com/history/-/history-4.10.0.tgz#68301fedd6d3484e4a6adbc957551d6d238d4cb2"
-  integrity sha512-w5dPeWoxlMyl4zKMXWT3zRxSt1dSblRCtrOoxxinK1fhYQ4Fwm5TPef8hNUYTVVu5Hwxr2nS0uaCX3JJFUeabA==
+history@^4.10.1:
+  version "4.10.1"
+  resolved "https://registry.yarnpkg.com/history/-/history-4.10.1.tgz#33371a65e3a83b267434e2b3f3b1b4c58aad4cf3"
+  integrity sha512-36nwAD620w12kuzPAsyINPWJqlNbij+hpK1k9XRloDtym8mxzGYl2c17LnV6IAGB2Dmg4tEa7G7DlawS0+qjew==
   dependencies:
     "@babel/runtime" "^7.1.2"
     loose-envify "^1.2.0"
@@ -5430,7 +5430,7 @@ lodash.isplainobject@^4.0.6:
   resolved "https://registry.yarnpkg.com/lodash.isplainobject/-/lodash.isplainobject-4.0.6.tgz#7c526a52d89b45c45cc690b88163be0497f550cb"
   integrity sha1-fFJqUtibRcRcxpC4gWO+BJf1UMs=
 
-lodash.memoize@^4.1.2:
+lodash.memoize@4.x, lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
   integrity sha1-vMbEmkKihA7Zl/Mj6tpezRguC/4=
@@ -7295,10 +7295,10 @@ react-transition-group@^1.2.0:
     prop-types "^15.5.6"
     warning "^3.0.0"
 
-react-url-query@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/react-url-query/-/react-url-query-1.4.0.tgz#e0e639e25ec63e28c548140f4b12fba4c10cfcb2"
-  integrity sha512-/Lhnxt3i6+Fu3pCcmjF37IfKWWXHZAeg4aIKgOVeT9lhu8nqOTk4h93HlCEWcF4fxy7AGwvYhuFkuM6PZk7KIg==
+react-url-query@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/react-url-query/-/react-url-query-1.5.0.tgz#02675c021731002d64a96c8558827d2ba6a17315"
+  integrity sha512-mivzv+T7+qNIvY3Ho+ja318huiWamFq6MbhxgU/hn71nICd5hqNMmULOZyp6+iTB+fyjQcdjsEI5iwz++syipw==
   dependencies:
     loose-envify "^1.2.0"
     prop-types "^15.5.9"
@@ -8372,10 +8372,10 @@ testcafe-browser-tools@1.6.8:
     read-file-relative "^1.2.0"
     which-promise "^1.0.0"
 
-testcafe-hammerhead@14.9.0:
-  version "14.9.0"
-  resolved "https://registry.yarnpkg.com/testcafe-hammerhead/-/testcafe-hammerhead-14.9.0.tgz#4faec0232b6f22710a3d207cb899de3e76626fb7"
-  integrity sha512-4vbZjpQ0J8mA9044Ottuh4YcWNgsQ4HrIBiYZ27bbsG3iAQBHqnR+t80WeaZ+Q+/JFH1KhiuE+IVTdgF9vRJWw==
+testcafe-hammerhead@14.9.2:
+  version "14.9.2"
+  resolved "https://registry.yarnpkg.com/testcafe-hammerhead/-/testcafe-hammerhead-14.9.2.tgz#5ab3f32a08d994f189885f4bf648d9bbe90f9be2"
+  integrity sha512-0rO9NTTueDXPqeWASThKEHX5AGF0FDhiPVRdkkWnKUOAtfPJz/qovZnIEpoC7q0DdmgbYYvK3if9Si8SdFNk0A==
   dependencies:
     acorn-hammerhead "^0.3.0"
     asar "^2.0.1"
@@ -8394,7 +8394,6 @@ testcafe-hammerhead@14.9.0:
     nanoid "^0.2.2"
     os-family "^1.0.0"
     parse5 "2.2.3"
-    pify "^2.3.0"
     pinkie "1.0.0"
     read-file-relative "^1.2.0"
     semver "5.5.0"
@@ -8451,10 +8450,10 @@ testcafe-reporter-xunit@^2.1.0:
   resolved "https://registry.yarnpkg.com/testcafe-reporter-xunit/-/testcafe-reporter-xunit-2.1.0.tgz#e6d66c572ce15af266706af0fd610b2a841dd443"
   integrity sha1-5tZsVyzhWvJmcGrw/WELKoQd1EM=
 
-testcafe@^1.4.3:
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/testcafe/-/testcafe-1.4.3.tgz#92361a875307f84f79006a148aff475bb71155cd"
-  integrity sha512-fj/W5Xp+ebhfTGk48Rjk++BrmxrZt3Ap2NHMEg5t2/+Mo/JgqlahR2xX8xUqetY4WW24f4nPkpcH6Xj8YVHlPA==
+testcafe@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/testcafe/-/testcafe-1.5.0.tgz#536b606207b358edc408c735cd18a4ccf8441721"
+  integrity sha512-qtSUH8csayEW/zVLFNmhglBmQIM38rV0dtWzz5khC1BXyIk1xW+Os5vcrepkS8hIXblpJRG0ugi/2FMzBHhH/A==
   dependencies:
     "@types/node" "^10.12.19"
     async-exit-hook "^1.1.2"
@@ -8516,7 +8515,7 @@ testcafe@^1.4.3:
     source-map-support "^0.5.5"
     strip-bom "^2.0.0"
     testcafe-browser-tools "1.6.8"
-    testcafe-hammerhead "14.9.0"
+    testcafe-hammerhead "14.9.2"
     testcafe-legacy-api "3.1.11"
     testcafe-reporter-json "^2.1.0"
     testcafe-reporter-list "^2.1.0"
@@ -8725,15 +8724,16 @@ truncate-utf8-bytes@^1.0.0:
   dependencies:
     utf8-byte-length "^1.0.1"
 
-ts-jest@24.0.2:
-  version "24.0.2"
-  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-24.0.2.tgz#8dde6cece97c31c03e80e474c749753ffd27194d"
-  integrity sha512-h6ZCZiA1EQgjczxq+uGLXQlNgeg02WWJBbeT8j6nyIBRQdglqbvzDoHahTEIiS6Eor6x8mK6PfZ7brQ9Q6tzHw==
+ts-jest@24.1.0:
+  version "24.1.0"
+  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-24.1.0.tgz#2eaa813271a2987b7e6c3fefbda196301c131734"
+  integrity sha512-HEGfrIEAZKfu1pkaxB9au17b1d9b56YZSqz5eCVE8mX68+5reOvlM93xGOzzCREIov9mdH7JBG+s0UyNAqr0tQ==
   dependencies:
     bs-logger "0.x"
     buffer-from "1.x"
     fast-json-stable-stringify "2.x"
     json5 "2.x"
+    lodash.memoize "4.x"
     make-error "1.x"
     mkdirp "0.x"
     resolve "1.x"
@@ -9104,10 +9104,10 @@ webpack-sources@^1.1.0, webpack-sources@^1.4.0, webpack-sources@^1.4.1:
     source-list-map "^2.0.0"
     source-map "~0.6.1"
 
-webpack@4.39.3:
-  version "4.39.3"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.39.3.tgz#a02179d1032156b713b6ec2da7e0df9d037def50"
-  integrity sha512-BXSI9M211JyCVc3JxHWDpze85CvjC842EvpRsVTc/d15YJGlox7GIDd38kJgWrb3ZluyvIjgenbLDMBQPDcxYQ==
+webpack@4.40.2:
+  version "4.40.2"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.40.2.tgz#d21433d250f900bf0facbabe8f50d585b2dc30a7"
+  integrity sha512-5nIvteTDCUws2DVvP9Qe+JPla7kWPPIDFZv55To7IycHWZ+Z5qBdaBYPyuXWdhggTufZkQwfIK+5rKQTVovm2A==
   dependencies:
     "@webassemblyjs/ast" "1.8.5"
     "@webassemblyjs/helper-module-context" "1.8.5"

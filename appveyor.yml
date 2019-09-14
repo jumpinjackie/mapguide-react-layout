@@ -58,7 +58,7 @@ deploy:
   description: 'Release $(appveyor_repo_tag_name) ($(appveyor_build_version))'
   provider: GitHub
   auth_token:
-    secure: d+aY+YJPCp6KzWE2XcGKdp5XFXoh66H7le3SJiqxtAHDZ1P2+kw/PgIF5Unj3kxG
+    secure: Dw0UkS+M9jDa7xofORbKLKgTBWZsBTN56QA7xD7F0pCCdNqnLH3K5oFk3smWjRfX
   artifact: dist
   draft: true
   prerelease: true

@@ -1,3 +1,6 @@
 .couscous/
 .idea/
-api_npm.html
+/api_npm.html
+/api_browser.html
+/release_process.html
+/components.html

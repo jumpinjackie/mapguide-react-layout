@@ -48,7 +48,40 @@
 
                 
                 <section class="col-sm-12 content">
-                                            <h1 id="0111">0.11.1</h1>
+                                            <h1 id="012">0.12</h1>
+<ul>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/670">#670</a>: Add support for XYZ layers defined in a Flexible Layout to match functional parity with Fusion</li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/587">#587</a>: Plug remaining i18n holes in measure and WMS layer manager components.</li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/955">#955</a>: Don't word wrap layer/group node labels in Legend component and provide tooltips for these labels</li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/940">#940</a>: Remove non-geodesic measure option as it is mostly inaccurate.</li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/481">#481</a>: Current selection set now also stashed to local storage to persist (and be restored) between browser refreshes.</li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/645">#645</a>: Viewer CSS is now extracted out to a
+separate asset (instead of integrated with the JS bundle)
+<ul>
+<li>As part of this change, workaround a potential infinite loop if the error icon asset could not be found by adding an inline base64 copy of this icon.</li>
+</ul></li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/596">#596</a>: Add copy link button to ShareLinkToView widget (via <code>react-copy-to-clipboard</code>)</li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/631">#631</a>: Fix init failure if appdef has an empty widget container</li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/595">#595</a>: Fix line measurement total showing units in m^2</li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/593">#593</a>: Fix measure tool starting measuring when switching measurement type</li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/643">#643</a>: Added basic e2e test suite. Powered by <code>testcafe</code></li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/698">#698</a>: Fix memory leak due to dangling measure components being held on by the measure context after unmount</li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/569">#569</a>: Update to use <code>componentDidUpdate</code> instead of <code>componentWillReceiveProps</code></li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/690">#690</a>: Made redux actions more strongly-typed</li>
+<li>Updated Blueprint to 1.40.0</li>
+<li>Updated TypeScript to 3.6.3</li>
+<li>Updated React to 16.9.0</li>
+<li>Replaced <code>query-string</code> module with <code>qs</code></li>
+<li>Now built with webpack 4.x</li>
+</ul>
+<h1 id="0112">0.11.2</h1>
+<p><a href="https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.11.1...v0.11.2">Changelog</a></p>
+<ul>
+<li>Updated OpenLayers to 4.6.5</li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/562">#562</a>: More scalable vertical text CSS for sidebar template</li>
+<li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/566">#566</a>: Fix QuickPlot not working without toggling print box first</li>
+</ul>
+<h1 id="0111">0.11.1</h1>
 <p><a href="https://github.com/jumpinjackie/mapguide-react-layout/compare/v0.11.0...v0.11.1">Changelog</a></p>
 <ul>
 <li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/476">#476</a>: Fix tiled base layer group initial visibility not being respected</li>

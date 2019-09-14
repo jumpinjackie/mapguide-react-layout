@@ -1,6 +1,7 @@
 0.12
 ====
 
+ * [#804](https://github.com/jumpinjackie/mapguide-react-layout/issues/804): Selection sub-highlighting now only available for MapGuide Open Source 4.0 (and newer) servers.
  * [#670](https://github.com/jumpinjackie/mapguide-react-layout/issues/670): Add support for XYZ layers defined in a Flexible Layout to match functional parity with Fusion
  * [#587](https://github.com/jumpinjackie/mapguide-react-layout/issues/587): Plug remaining i18n holes in measure and WMS layer manager components.
  * [#955](https://github.com/jumpinjackie/mapguide-react-layout/issues/955): Don't word wrap layer/group node labels in Legend component and provide tooltips for these labels

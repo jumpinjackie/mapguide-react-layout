@@ -1,3 +1,8 @@
+0.12.1
+======
+
+ * [#960](https://github.com/jumpinjackie/mapguide-react-layout/issues/960): Fix react update exceeded depth errors in WMS (External) layer manager component
+
 0.12
 ====
 

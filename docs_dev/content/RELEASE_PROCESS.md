@@ -1,7 +1,10 @@
 Release Process
 ===============
 
-1. Ensure appveyor.yml and package.json are using the new release version number
+1. Ensure the following files are using the new release version number:
+   * `appveyor.yml`
+   * `package.json`
+   * `docs_dev/content/API_NPM.md` (In the **Introduction** section)
 2. Write up new features/fixes in `docs_dev/content/RELEASE_NOTES.md`
 3. Generate API docs and copy output to a new versioned subdirectory in the `gh-pages` branch
 4. Regenerate static site content and overwrite existing site html in the `gh-pages` branch

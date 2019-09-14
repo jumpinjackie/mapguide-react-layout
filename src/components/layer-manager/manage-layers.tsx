@@ -26,8 +26,10 @@ export class ManageLayers extends React.Component<IManageLayersProps, any> {
     }
     componentDidUpdate(prevProps: IManageLayersProps) {
         const nextProps = this.props;
-        const nodes = nextProps.layers.map(li => ({ id: li.name, label: li.name, secondaryLabel: li.type, iconName: "pt-icon-layer" }));
-        this.setState({ nodes: nodes });
+        if (prevProps.layers != nextProps.layers) {
+            const nodes = nextProps.layers.map(li => ({ id: li.name, label: li.name, secondaryLabel: li.type, iconName: "pt-icon-layer" }));
+            this.setState({ nodes: nodes });
+        }
     }
     private onMoveLayerDown = () => {
         const { selectedNode } = this.state;

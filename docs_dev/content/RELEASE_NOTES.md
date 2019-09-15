@@ -2,6 +2,7 @@
 ======
 
  * [#960](https://github.com/jumpinjackie/mapguide-react-layout/issues/960): Fix react update exceeded depth errors in WMS (External) layer manager component
+ * [#961](https://github.com/jumpinjackie/mapguide-react-layout/issues/961): Refine test for QUERYMAPFEATURES 4.0.0 support
 
 0.12
 ====

@@ -19,7 +19,7 @@ import uniq = require("lodash.uniq");
 import { ActionType } from '../constants/actions';
 import { IMapSetBusyCountAction, IMapSetBaseLayerAction, IMapSetScaleAction, IMapSetMouseCoordinatesAction, IMapSetLayerTransparencyAction, IMapSetViewSizeUnitsAction, IMapPreviousViewAction, IMapNextViewAction, ISetActiveMapToolAction, ISetActiveMapAction, ISetManualFeatureTooltipsEnabledAction, ISetFeatureTooltipsEnabledAction, IMapSetViewRotationAction, IMapSetViewRotationEnabledAction, IShowSelectedFeatureAction, IMapSetSelectionAction, IMapResizedAction } from './defs';
 import { storeSelectionSet } from '../api/session-store';
-import { getSiteVersion } from '../utils/site-version';
+import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
 
 function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeature[]): SelectedFeature[] {
     const merged: SelectedFeature[] = [];
@@ -173,8 +173,8 @@ export function queryMapFeatures(mapName: string, opts: QueryMapFeatureActionOpt
                 }
             };
             //We want v4.0.0 QUERYMAPFEATURES if available
-            const [vMaj] = getSiteVersion(map);
-            const queryOp = vMaj >= 4
+            const sv = getSiteVersion(map);
+            const queryOp = canUseQueryMapFeaturesV4(sv)
                 ? (opts: IQueryMapFeaturesOptions) => client.queryMapFeatures_v4(opts)
                 : (opts: IQueryMapFeaturesOptions) => client.queryMapFeatures(opts);
             queryOp(opts.options).then(res => {

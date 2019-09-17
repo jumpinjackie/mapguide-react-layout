@@ -45,12 +45,16 @@ export interface IViewSizeProps {
      * @memberof IViewSizeProps
      */
     units: UnitOfMeasure;
+    /**
+     * @since 0.12.2
+     */
+    locale?: string;
 }
 
 export const ViewSize = (props: IViewSizeProps) => {
-    const { width, height, view, metersPerUnit, units, precision } = props;
+    const { width, height, view, metersPerUnit, units, precision, locale } = props;
     const uom = getUnitOfMeasure(units);
     const [gw, gh] = getMapSize([width, height], metersPerUnit, units, view.resolution, precision);
     //TODO: Support format string extension parameter from fusion widget
-    return <div className="component-view-size">{gw} x {gh} ({uom.abbreviation()})</div>;
+    return <div className="component-view-size">{gw} x {gh} (<span dangerouslySetInnerHTML={{ __html: uom.abbreviation(locale) }} />)</div>;
 };

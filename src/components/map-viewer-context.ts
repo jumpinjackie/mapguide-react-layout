@@ -783,7 +783,7 @@ export class MapViewerContext {
         layerSet.update(props.showGroups, props.showLayers, props.hideGroups, props.hideLayers);
         return layerSet;
     }
-    public initContext(layerSet: MgLayerSet, overviewMapElementSelector?: () => (Element | null)) {
+    public initContext(layerSet: MgLayerSet, locale?: string, overviewMapElementSelector?: () => (Element | null)) {
         // HACK: className property not documented. This needs to be fixed in OL api doc.
         const overviewMapOpts: any = {
             className: 'ol-overviewmap ol-custom-overviewmap',
@@ -791,6 +791,7 @@ export class MapViewerContext {
             view: new olView({
                 projection: layerSet.projection
             }),
+            tipLabel: tr("OL_OVERVIEWMAP_TIP", locale),
             collapseLabel: String.fromCharCode(187), //'\u00BB',
             label: String.fromCharCode(171) //'\u00AB'
         };

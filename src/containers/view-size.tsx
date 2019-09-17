@@ -13,6 +13,10 @@ export interface IViewSizeContainerState {
     sizeUnits: UnitOfMeasure;
     view: IMapView;
     metersPerUnit: number;
+    /**
+     * @since 0.12.2
+     */
+    locale: string;
 }
 
 export interface IViewSizeContainerDispatch {
@@ -40,7 +44,8 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IViewSizeC
         height,
         view,
         metersPerUnit,
-        sizeUnits: state.config.viewSizeUnits
+        sizeUnits: state.config.viewSizeUnits,
+        locale: state.config.locale
     };
 }
 
@@ -57,9 +62,9 @@ export class ViewSizeContainer extends React.Component<ViewSizeContainerProps, a
         super(props);
     }
     render(): JSX.Element {
-        const { width, height, view, sizeUnits, metersPerUnit } = this.props;
+        const { width, height, view, sizeUnits, metersPerUnit, locale } = this.props;
         if (width && height && metersPerUnit && view) {
-            return <ViewSize width={width} height={height} view={view} metersPerUnit={metersPerUnit} units={sizeUnits || UnitOfMeasure.Unknown} />;
+            return <ViewSize locale={locale} width={width} height={height} view={view} metersPerUnit={metersPerUnit} units={sizeUnits || UnitOfMeasure.Unknown} />;
         } else {
             return <noscript />;
         }

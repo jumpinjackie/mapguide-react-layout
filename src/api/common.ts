@@ -21,6 +21,9 @@ export type GenericEvent = any;
 
 export type GenericEventHandler = (e: GenericEvent) => void;
 
+/**
+ * @deprecated Use UnitOfMeasure enum instead
+ */
 export type UnitName = 'Unknown' | 'Inches' | 'Feet' | 'Yards' | 'Miles' | 'Nautical Miles' 
                     | 'Millimeters' | 'Centimeters' | 'Meters' | 'Kilometers' 
                     | 'Degrees' | 'Decimal Degrees' | 'Degrees Minutes Seconds'| 'Pixels';
@@ -87,7 +90,11 @@ export interface UnitInfo {
     unitsPerMeter: number;
     metersPerUnit: number;
     name: UnitName;
-    abbreviation: () => string;
+    /**
+     * @since 0.12.2
+     */
+    localizedName: (locale?: string) => string;
+    abbreviation: (locale?: string) => string;
 }
 
 /**

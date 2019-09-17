@@ -133,7 +133,9 @@ export class MeasureContext {
     private formatArea(polygon: olPolygon): [string, number, MeasureSegment[] | undefined] {
         let area: number;
         let segments: MeasureSegment[] | undefined;
+        let locale;
         if (this.parent) {
+            locale = this.parent.getLocale();
             //TODO: When we upgrade to OL 6, we'll need to update this (they changed their measure example)
             segments = [];
             const sourceProj = this.viewer.getProjection();
@@ -150,12 +152,17 @@ export class MeasureContext {
             area = NaN;
         }
         let output: string;
+        //TODO: The dynamic switch in display of measurement unit based on size of value may prove to be
+        //jarring, so we should provide a fixed unit value option in the future that will be used to 
+        //display regardless of the size of value
         if (area > 10000) {
-            output = (roundTo(area / 1000000, 2)) +
-                ' ' + 'km<sup>2</sup>';
+            output = tr("UNIT_FMT_SQKM", locale, {
+                value: `${(roundTo(area / 1000000, 2))}`
+            });
         } else {
-            output = (roundTo(area, 2)) +
-                ' ' + 'm<sup>2</sup>';
+            output = tr("UNIT_FMT_SQM", locale, {
+                value: `${(roundTo(area, 2))}`
+            });
         }
         return [output, area, segments];
     }

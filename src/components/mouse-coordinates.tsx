@@ -28,7 +28,7 @@ function formatCoordinates(props: IMouseCoordinatesProps) {
         y: `${decimals != null ? y.toFixed(decimals) : y}`,
         units: units || ""
     });
-    return str;
+    return <span dangerouslySetInnerHTML={{ __html: str }} />;
 }
 
 /**

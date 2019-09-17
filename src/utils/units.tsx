@@ -1,24 +1,51 @@
 import * as React from "react";
+import { tr } from "../api/i18n";
 import { DEG } from "../constants";
 import { UnitInfo, UnitOfMeasure, UnitName, IMapView } from "../api/common";
 
 const mUnits: UnitInfo[] = [
-    { name: "Unknown", abbreviation: () => "unk", unitsPerMeter: 1.0, metersPerUnit: 1.0 },
-    { name: "Inches", abbreviation: () => "in", unitsPerMeter: 39.370079, metersPerUnit: 0.0254 },
-    { name: "Feet", abbreviation: () => "ft", unitsPerMeter: 3.2808, metersPerUnit: 0.3048 },
-    { name: "Yards", abbreviation: () => "yd", unitsPerMeter: 1.0936133, metersPerUnit: 0.9144 },
-    { name: "Miles", abbreviation: () => "mi", unitsPerMeter: 0.00062137, metersPerUnit: 1609.344 },
-    { name: "Nautical Miles", abbreviation: () => "nm", unitsPerMeter: 0.000539956803, metersPerUnit: 1852 },
-    { name: "Millimeters", abbreviation: () => "mm", unitsPerMeter: 1000.0, metersPerUnit: 0.001 },
-    { name: "Centimeters", abbreviation: () => "cm", unitsPerMeter: 100.0, metersPerUnit: 0.01 },
-    { name: "Meters", abbreviation: () => "m", unitsPerMeter: 1.0, metersPerUnit: 1.0 },
-    { name: "Kilometers", abbreviation: () => "km", unitsPerMeter: 0.001, metersPerUnit: 1000.0 },
-    { name: "Degrees", abbreviation: () => DEG, unitsPerMeter: 0.000009044, metersPerUnit: 111061.75033 },
-    { name: "Decimal Degrees", abbreviation: () => DEG, unitsPerMeter: 0.000009044, metersPerUnit: 111061.75033 },
-    { name: "Degrees Minutes Seconds", abbreviation: () => DEG, unitsPerMeter: 0.000009044, metersPerUnit: 111061.75033 },
-    { name: "Pixels", abbreviation: () => "px", unitsPerMeter: 1.0, metersPerUnit: 1.0 }
+    { name: "Unknown", localizedName: (locale) => tr("UNIT_UNKNOWN", locale), abbreviation: (locale) => tr("UNIT_ABBR_UNKNOWN", locale), unitsPerMeter: 1.0, metersPerUnit: 1.0 },
+    { name: "Inches", localizedName: (locale) => tr("UNIT_INCHES", locale), abbreviation: (locale) => tr("UNIT_ABBR_INCHES", locale), unitsPerMeter: 39.370079, metersPerUnit: 0.0254 },
+    { name: "Feet", localizedName: (locale) => tr("UNIT_FEET", locale), abbreviation: (locale) => tr("UNIT_ABBR_FEET", locale), unitsPerMeter: 3.2808, metersPerUnit: 0.3048 },
+    { name: "Yards", localizedName: (locale) => tr("UNIT_YARDS", locale), abbreviation: (locale) => tr("UNIT_ABBR_YARDS", locale), unitsPerMeter: 1.0936133, metersPerUnit: 0.9144 },
+    { name: "Miles", localizedName: (locale) => tr("UNIT_MILES", locale), abbreviation: (locale) => tr("UNIT_ABBR_MILES", locale), unitsPerMeter: 0.00062137, metersPerUnit: 1609.344 },
+    { name: "Nautical Miles", localizedName: (locale) => tr("UNIT_NAUT_MILES", locale), abbreviation: (locale) => tr("UNIT_ABBR_NAUT_MILES", locale), unitsPerMeter: 0.000539956803, metersPerUnit: 1852 },
+    { name: "Millimeters", localizedName: (locale) => tr("UNIT_MILLIMETERS", locale), abbreviation: (locale) => tr("UNIT_ABBR_MILLIMETERS", locale), unitsPerMeter: 1000.0, metersPerUnit: 0.001 },
+    { name: "Centimeters", localizedName: (locale) => tr("UNIT_CENTIMETERS", locale), abbreviation: (locale) => tr("UNIT_ABBR_CENTIMETERS", locale), unitsPerMeter: 100.0, metersPerUnit: 0.01 },
+    { name: "Meters", localizedName: (locale) => tr("UNIT_METERS", locale), abbreviation: (locale) => tr("UNIT_ABBR_METERS", locale), unitsPerMeter: 1.0, metersPerUnit: 1.0 },
+    { name: "Kilometers", localizedName: (locale) => tr("UNIT_KILOMETERS", locale), abbreviation: (locale) => tr("UNIT_ABBR_KILOMETERS", locale), unitsPerMeter: 0.001, metersPerUnit: 1000.0 },
+    { name: "Degrees", localizedName: (locale) => tr("UNIT_DEGREES", locale), abbreviation: (locale) => tr("UNIT_ABBR_DEGREES", locale), unitsPerMeter: 0.000009044, metersPerUnit: 111061.75033 },
+    { name: "Decimal Degrees", localizedName: (locale) => tr("UNIT_DEC_DEGREES", locale), abbreviation: (locale) => tr("UNIT_ABBR_DEC_DEGREES", locale), unitsPerMeter: 0.000009044, metersPerUnit: 111061.75033 },
+    { name: "Degrees Minutes Seconds", localizedName: (locale) => tr("UNIT_DMS", locale), abbreviation: (locale) => tr("UNIT_ABBR_DMS", locale), unitsPerMeter: 0.000009044, metersPerUnit: 111061.75033 },
+    { name: "Pixels", localizedName: (locale) => tr("UNIT_PIXELS", locale), abbreviation: (locale) => tr("UNIT_ABBR_PIXELS", locale), unitsPerMeter: 1.0, metersPerUnit: 1.0 }
 ];
 
+/**
+ * Gets all available units of measure
+ * @since 0.12.2
+ */
+export function getUnitsOfMeasure(): UnitOfMeasure[] {
+    return [
+        UnitOfMeasure.Centimeters,
+        UnitOfMeasure.DecimalDegrees,
+        UnitOfMeasure.Degrees,
+        UnitOfMeasure.DMS,
+        UnitOfMeasure.Feet,
+        UnitOfMeasure.Inches,
+        UnitOfMeasure.Kilometers,
+        UnitOfMeasure.Meters,
+        UnitOfMeasure.Miles,
+        UnitOfMeasure.Millimeters,
+        UnitOfMeasure.NauticalMiles,
+        UnitOfMeasure.Pixels,
+        UnitOfMeasure.Unknown,
+        UnitOfMeasure.Yards
+    ]
+}
+
+/**
+ * @deprecated Use getUnitsOfMeasure() instead
+ */
 export function getUnits(): [UnitOfMeasure, UnitName][] {
     return [
         [UnitOfMeasure.Centimeters, "Centimeters"],
@@ -39,7 +66,7 @@ export function getUnits(): [UnitOfMeasure, UnitName][] {
 }
 
 export function getUnitOfMeasure(unit: UnitOfMeasure): UnitInfo {
-    const u =  mUnits[unit];
+    const u = mUnits[unit];
     return u || mUnits[0]; //The unknown unit
 }
 

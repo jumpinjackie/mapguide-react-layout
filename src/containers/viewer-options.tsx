@@ -14,7 +14,7 @@ import * as MapActions from "../actions/map";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { Slider } from "@blueprintjs/core";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from "../constants/index";
-import { getUnits } from "../utils/units";
+import { getUnits, getUnitOfMeasure } from "../utils/units";
 import { safePropAccess } from '../utils/safe-prop';
 
 export interface IViewerOptionsProps {
@@ -163,7 +163,11 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
                         {tr("MAP_SIZE_DISPLAY_UNITS", locale)}
                         <div className="pt-select">
                             <select value={config.viewSizeUnits} onChange={this.onViewSizeUnitsChanged}>
-                                {units.map(u => <option key={u[0]} value={u[0]}>{u[1]}</option>)}
+                                {units.map(u => {
+                                    const [ uom ] = u;
+                                    const ui = getUnitOfMeasure(uom);
+                                    return <option key={uom} value={uom}>{ui.localizedName(locale)}</option>;
+                                })}
                             </select>
                         </div>
                     </label>;

@@ -229,12 +229,12 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
                                                             if (this.state.activeType == "Area") {
                                                                 return <>
                                                                     <td><strong>{tr("MEASURE_TOTAL_AREA", locale)}</strong></td>
-                                                                    <td>{roundTo(this.state.segmentTotal, 4)}m<sup>2</sup></td>
+                                                                    <td><div dangerouslySetInnerHTML={{ __html: tr("UNIT_FMT_SQM", locale, { value: `${roundTo(this.state.segmentTotal, 4)}` }) }} /></td>
                                                                 </>
                                                             } else {
                                                                 return <>
                                                                     <td><strong>{tr("MEASURE_TOTAL_LENGTH", locale)}</strong></td>
-                                                                    <td>{roundTo(this.state.segmentTotal, 4)}m</td>
+                                                                    <td><div dangerouslySetInnerHTML={{ __html: tr("UNIT_FMT_M", locale, { value: `${roundTo(this.state.segmentTotal, 4)}` }) }} /></td>
                                                                 </>
                                                             }
                                                         })()}

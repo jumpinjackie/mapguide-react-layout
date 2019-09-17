@@ -19,6 +19,10 @@ export interface IMouseCoordinatesContainerState {
     config: ICoordinateConfiguration;
     mapProjection: string;
     mouse: Coordinate | undefined;
+    /**
+     * @since 0.12.2
+     */
+    locale: string;
 }
 
 export interface IMouseCoordinatesDispatch { }
@@ -34,7 +38,8 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMouseCoo
     return {
         config: state.config.coordinates,
         mouse: state.mouse.coords,
-        mapProjection: mapProjection
+        mapProjection: mapProjection,
+        locale: state.config.locale
     };
 }
 
@@ -51,7 +56,7 @@ export class MouseCoordinatesContainer extends React.Component<MouseCoordinatesC
         super(props);
     }
     render(): JSX.Element {
-        const { config, style, mouse, mapProjection } = this.props;
+        const { config, style, mouse, mapProjection, locale } = this.props;
         if (config && mouse) {
             const prj = olProj.get(config.projection || mapProjection);
             let units;
@@ -59,14 +64,14 @@ export class MouseCoordinatesContainer extends React.Component<MouseCoordinatesC
                 units = prj.getUnits();
                 switch (units) {
                     case "degrees":
-                        units = getUnitOfMeasure(UnitOfMeasure.Degrees).abbreviation();
+                        units = getUnitOfMeasure(UnitOfMeasure.Degrees).abbreviation(locale);
                         break;
                     case "pixels":
                     case "tile-pixels":
-                        units = getUnitOfMeasure(UnitOfMeasure.Pixels).abbreviation();
+                        units = getUnitOfMeasure(UnitOfMeasure.Pixels).abbreviation(locale);
                         break;
                     case "us-ft":
-                        units = getUnitOfMeasure(UnitOfMeasure.Feet).abbreviation();
+                        units = getUnitOfMeasure(UnitOfMeasure.Feet).abbreviation(locale);
                         break;
                 }
             }

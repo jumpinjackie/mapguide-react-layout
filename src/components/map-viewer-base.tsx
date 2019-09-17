@@ -751,7 +751,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         }
     }
     componentDidMount() {
-        const { map, agentUri, imageFormat } = this.props;
+        const { map, agentUri, imageFormat, locale } = this.props;
         const mapNode = ReactDOM.findDOMNode(this);
 
         this._client = new Client(this.props.agentUri, this.props.agentKind);
@@ -766,8 +766,12 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             //layers: layers,
             //view: view,
             controls: [
-                new Attribution(),
-                new Rotate()
+                new Attribution({
+                    tipLabel: tr("OL_ATTRIBUTION_TIP", locale)
+                }),
+                new Rotate({
+                    tipLabel: tr("OL_RESET_ROTATION_TIP", locale)
+                })
             ],
             interactions: [
                 new DragRotate(),
@@ -794,7 +798,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         const callback = this.getCallback();
         this._mapContext = new MapViewerContext(this._map, callback);
         const activeLayerSet = this._mapContext.initLayerSet(this.props);
-        this._mapContext.initContext(activeLayerSet, this.props.overviewMapElementSelector);
+        this._mapContext.initContext(activeLayerSet, locale, this.props.overviewMapElementSelector);
         document.addEventListener("keydown", this.onKeyDown);
         document.addEventListener("keyup", this.onKeyUp);
 

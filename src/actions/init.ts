@@ -880,6 +880,9 @@ export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
     const opts: IInitAsyncOptions = { ...options };
     return (dispatch, getState) => {
         const args = getState().config;
+        //TODO: Fetch and init the string bundle earlier if "locale" is present
+        //so the English init messages are seen only for a blink if requesting a
+        //non-english string bundle
         if (args.agentUri && args.agentKind) {
             const client = new Client(args.agentUri, args.agentKind);
             initAsync(opts, client).then(payload => {

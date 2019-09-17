@@ -1,3 +1,8 @@
+0.12.2
+======
+
+ * [#964](https://github.com/jumpinjackie/mapguide-react-layout/issues/964): Plug additional i18n holes in measurement units and OpenLayers controls
+
 0.12.1
 ======
 

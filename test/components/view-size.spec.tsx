@@ -1,5 +1,5 @@
 import * as React from "react";
-import { shallow, mount, render } from "enzyme";
+import { render } from "enzyme";
 import { ViewSize } from "../../src/components/view-size";
 import { UnitOfMeasure, IMapView } from "../../src/api/common";
 
@@ -15,7 +15,7 @@ describe("components/view-size", () => {
             scale: 0,
             resolution: 0.00019652198461480883
         }
-        const wrapper = shallow(<ViewSize width={1150} height={540} view={view} units={UnitOfMeasure.Meters} metersPerUnit={mpu} />);
-        expect(wrapper.text()).toBe("25158.24 x 11813.43 (m)");
+        const wrapper = render(<ViewSize width={1150} height={540} view={view} units={UnitOfMeasure.Meters} metersPerUnit={mpu} />).find("span");
+        expect(wrapper.html()).toBe("25158.24 x 11813.43 (m)");
     });
 });

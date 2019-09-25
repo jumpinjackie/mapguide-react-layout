@@ -170,10 +170,10 @@
     lunr "^2.3.6"
     underscore "^1.9.1"
 
-"@gerrit0/typedoc@0.15.5":
-  version "0.15.5"
-  resolved "https://registry.yarnpkg.com/@gerrit0/typedoc/-/typedoc-0.15.5.tgz#5efde868fbdadaf24c38c4083b8d0f21d74fd91c"
-  integrity sha512-V5XZKIJdnhbMeS9pXLYWfk1cSUd5iYIDP9Lll0yfYjwHblpO8eVYwhTudHljWsis3x+J9HfXf5eXYGX4KtDNLA==
+"@gerrit0/typedoc@0.15.6":
+  version "0.15.6"
+  resolved "https://registry.yarnpkg.com/@gerrit0/typedoc/-/typedoc-0.15.6.tgz#075ccb8ccae067bd328af393155752fcd6a2da07"
+  integrity sha512-Q0XQyRAM9ASyHxzqf/r/jTJNAdeU9o9v3EGaBDk6ncGSi3XCkKAWM+z7g2oDqatGT7Q8XZfRZc9XUJeuwSR83Q==
   dependencies:
     "@gerrit0/typedoc-default-themes" "^0.6.1"
     "@types/minimatch" "3.0.3"
@@ -185,7 +185,7 @@
     minimatch "^3.0.0"
     progress "^2.0.3"
     shelljs "^0.8.3"
-    typescript "3.5.x"
+    typescript "3.6.x"
 
 "@jest/console@^24.7.1", "@jest/console@^24.9.0":
   version "24.9.0"
@@ -555,10 +555,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-dom@16.9.0":
-  version "16.9.0"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.0.tgz#ba6ddb00bf5de700b0eb91daa452081ffccbfdea"
-  integrity sha512-OL2lk7LYGjxn4b0efW3Pvf2KBVP0y1v3wip1Bp7nA79NkOpElH98q3WdCEdDj93b2b0zaeBG9DvriuKjIK5xDA==
+"@types/react-dom@16.9.1":
+  version "16.9.1"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.1.tgz#79206237cba9532a9f870b1cd5428bef6b66378c"
+  integrity sha512-1S/akvkKr63qIUWVu5IKYou2P9fHLb/P2VAwyxVV85JGaGZTcUniMiTuIqM3lXFB25ej6h+CYEQ27ERVwi6eGA==
   dependencies:
     "@types/react" "*"
 
@@ -8825,12 +8825,7 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@3.5.x:
-  version "3.5.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.5.3.tgz#c830f657f93f1ea846819e929092f5fe5983e977"
-  integrity sha512-ACzBtm/PhXBDId6a6sDJfroT2pOWt/oOnk4/dElG5G33ZL776N3Y6/6bKZJBFpd+b05F3Ct9qDjMeJmRWtE2/g==
-
-typescript@3.6.3, typescript@^3.3.3:
+typescript@3.6.3, typescript@3.6.x, typescript@^3.3.3:
   version "3.6.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.6.3.tgz#fea942fabb20f7e1ca7164ff626f1a9f3f70b4da"
   integrity sha512-N7bceJL1CtRQ2RiG0AQME13ksR7DiuQh/QehubYcghzv20tnh+MQnQIuJddTmsbqYj+dztchykemz0zFzlvdQw==

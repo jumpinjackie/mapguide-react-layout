@@ -174,6 +174,7 @@ const opts = (process.env.BUILD_MODE === 'production')
 
 module.exports = {
     optimization: opts,
+    mode: (process.env.BUILD_MODE === 'development' ? 'development' : 'none'),
     entry: {
         viewer: appEntries
     },

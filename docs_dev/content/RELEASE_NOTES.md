@@ -1,3 +1,8 @@
+0.12.3
+======
+
+ * [#968](https://github.com/jumpinjackie/mapguide-react-layout/issues/968): Fix initial view on appdef breaking viewer
+
 0.12.2
 ======
 

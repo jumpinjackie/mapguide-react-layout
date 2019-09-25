@@ -656,7 +656,7 @@ function deArrayifyMapGroup(json: any): Fusion.MapSetGroup {
         Map: [] as Fusion.MapConfiguration[]
     };
     if (root.InitialView) {
-        const iview = root.InitialView;
+        const iview = root.InitialView[0];
         mapGroup.InitialView = {
             CenterX: getter(iview, "CenterX", "float"),
             CenterY: getter(iview, "CenterY", "float"),

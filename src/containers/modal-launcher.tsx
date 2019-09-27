@@ -42,7 +42,7 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IModalLauncherDisp
     };
 }
 
-export type ModalLauncherProps = Partial<IModalLauncherState> & Partial<IModalLauncherDispatch>;
+export type ModalLauncherProps = Partial<IModalLauncherState> & Partial<IModalLauncherDispatch> & { children?: any };
 
 function getComponentId(diag: IModalComponentDisplayOptions | IModalDisplayOptions): ParsedComponentUri | undefined {
     if (isModalComponentDisplayOptions(diag)) {

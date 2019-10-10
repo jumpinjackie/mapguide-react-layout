@@ -95,7 +95,7 @@
     "bestzip": "2.1.4",
     "cache-loader": "^4.1.0",
     "copyfiles": "2.1.1",
-    "coveralls": "3.0.6",
+    "coveralls": "3.0.7",
     "cross-env": "6.0.3",
     "css-loader": "3.2.0",
     "enzyme": "3.10.0",

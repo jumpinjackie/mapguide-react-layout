@@ -169,16 +169,16 @@
     lunr "^2.3.6"
     underscore "^1.9.1"
 
-"@gerrit0/typedoc@0.15.6":
-  version "0.15.6"
-  resolved "https://registry.yarnpkg.com/@gerrit0/typedoc/-/typedoc-0.15.6.tgz#075ccb8ccae067bd328af393155752fcd6a2da07"
-  integrity sha512-Q0XQyRAM9ASyHxzqf/r/jTJNAdeU9o9v3EGaBDk6ncGSi3XCkKAWM+z7g2oDqatGT7Q8XZfRZc9XUJeuwSR83Q==
+"@gerrit0/typedoc@0.15.7":
+  version "0.15.7"
+  resolved "https://registry.yarnpkg.com/@gerrit0/typedoc/-/typedoc-0.15.7.tgz#515b1e0f0f344185eb28b5280ce871c0c2f364ca"
+  integrity sha512-Kk4RvOe/vljUsX3O9bV+Zm5gpPrgc7Qy336sl3OtQMyNU0M7bMeFLf4cXcXuvab9vWWcOjM39Du8QF6ds/eS/A==
   dependencies:
     "@gerrit0/typedoc-default-themes" "^0.6.1"
     "@types/minimatch" "3.0.3"
     fs-extra "^8.1.0"
-    handlebars "^4.1.2"
-    highlight.js "^9.15.8"
+    handlebars "^4.4.3"
+    highlight.js "^9.15.10"
     lodash "^4.17.15"
     marked "^0.7.0"
     minimatch "^3.0.0"
@@ -3964,6 +3964,17 @@ handlebars@^4.1.2:
   optionalDependencies:
     uglify-js "^3.1.4"
 
+handlebars@^4.4.3:
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.4.3.tgz#180bae52c1d0e9ec0c15d7e82a4362d662762f6e"
+  integrity sha512-B0W4A2U1ww3q7VVthTKfh+epHx+q4mCt6iK+zEAzbMBpWQAwxCeKxEGpj/1oQTpzPXDNSOG7hmG14TsISH50yw==
+  dependencies:
+    neo-async "^2.6.0"
+    optimist "^0.6.1"
+    source-map "^0.6.1"
+  optionalDependencies:
+    uglify-js "^3.1.4"
+
 har-schema@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/har-schema/-/har-schema-2.0.0.tgz#a94c2224ebcac04782a0d9035521f24735b7ec92"
@@ -4067,7 +4078,7 @@ highlight-es@^1.0.0:
     is-es2016-keyword "^1.0.0"
     js-tokens "^3.0.0"
 
-highlight.js@^9.15.8:
+highlight.js@^9.15.10:
   version "9.15.10"
   resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-9.15.10.tgz#7b18ed75c90348c045eef9ed08ca1319a2219ad2"
   integrity sha512-RoV7OkQm0T3os3Dd2VHLNMoaoDVx77Wygln3n9l5YV172XonWG6rgQD3XnF/BuFFZw9A0TJgmMSO8FEWQgvcXw==

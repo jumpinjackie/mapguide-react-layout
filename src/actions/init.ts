@@ -517,6 +517,28 @@ export interface IInitAsyncOptions extends IInitAppLayout {
 
 type MapToLoad = { name: string, mapDef: string };
 
+async function tryDescribeRuntimeMapAsync(client: Client, mapName: string, session: string, mapDef: string) {
+    try {
+        const map = await client.describeRuntimeMap({
+            mapname: mapName,
+            requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+            session: session
+        });
+        return map;
+    } catch (e) {
+        if (e.message === "MgResourceNotFoundException") {
+            const map = await client.createRuntimeMap({
+                mapDefinition: mapDef,
+                requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+                session: session,
+                targetMapName: mapName
+            });
+            return map;
+        }
+        throw e;
+    }
+}
+
 async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, opts: IInitAsyncOptions, res: TLayout, mapDefSelector: (res: TLayout) => MapToLoad[], projectionSelector: (res: TLayout) => string[], sessionWasReused: boolean): Promise<[Dictionary<RuntimeMap>, string[]]> {
     const mapDefs = mapDefSelector(res);
     const mapPromises: Promise<RuntimeMap>[] = [];
@@ -525,12 +547,8 @@ async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, 
         //sessionWasReused is a hint whether to create a new runtime map, or recover the last runtime map state from the given map name
         if (sessionWasReused) {
             //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
-            logger.info(`Session ID re-used. Recovering map state of: ${m.name}`);
-            mapPromises.push(client.describeRuntimeMap({
-                mapname: m.name,
-                requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-                session: session
-            }));
+            logger.info(`Session ID re-used. Attempting recovery of map state of: ${m.name}`);
+            mapPromises.push(tryDescribeRuntimeMapAsync(client, m.name, session, m.mapDef));
         } else {
             logger.info(`Creating runtime map state (${m.name}) for: ${m.mapDef}`);
             mapPromises.push(client.createRuntimeMap({

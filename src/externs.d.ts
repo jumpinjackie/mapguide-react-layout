@@ -11,6 +11,8 @@
 // Stamped by webpack
 declare const __DEV__: boolean;
 
+declare module "history";
+
 // Monkey-patched ol ES2015 module declarations (this is a bug in the jsdoc-typescript-plugin that generated the OL typings)
 declare module "ol" {
     export default ol;

@@ -1,6 +1,7 @@
 0.12.4
 ======
 
+ * [#989](https://github.com/jumpinjackie/mapguide-react-layout/issues/989): Fix scrambled font icons
  * [#988](https://github.com/jumpinjackie/mapguide-react-layout/issues/988): Allow map to properly init if session id is passed, but runtime map was not created yet (can happen if loading a weblayout/appdef from a session resource id or the session id was pre-generated up front before the viewer was loaded)
  * Fix some warnings around usage of the `history` module and redux dev tools
  * Fix possible duplicated source maps as a result of recent versions of webpack

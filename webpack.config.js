@@ -185,7 +185,7 @@ module.exports = {
         path: path.join(__dirname, 'viewer/dist'),
         filename: process.env.DEBUG_BUILD === '1' ? '[name]-debug.js' : '[name].js',
         publicPath: '/',
-        sourceMapFilename: process.env.DEBUG_BUILD === '1' ? '[name]-debug.js.map' : '[name].js.map',
+        sourceMapFilename: '[file].map[query]',
         chunkFilename: '[id].chunk.js'
     },
     resolve: {

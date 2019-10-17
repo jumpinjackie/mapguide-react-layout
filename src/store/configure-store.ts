@@ -30,8 +30,8 @@ function _getMiddleware() {
 
 function _getEnhancers() {
     let enhancers = [] as any[];
-    if (__DEV__ && window.devToolsExtension) {
-        enhancers = [...enhancers, window.devToolsExtension()];
+    if (__DEV__ && window.__REDUX_DEVTOOLS_EXTENSION__) {
+        enhancers = [...enhancers, window.__REDUX_DEVTOOLS_EXTENSION__()];
     }
     return enhancers;
 }

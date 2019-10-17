@@ -100,7 +100,7 @@ interface Array<T> {
 
 // A hack for the Redux DevTools Chrome extension.
 interface Window {
-    devToolsExtension?: () => void;
+    __REDUX_DEVTOOLS_EXTENSION__?: () => void;
 }
 
 // webpack-hot-loader sets some extra attributes on node's `module`if that

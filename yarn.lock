@@ -169,10 +169,10 @@
     lunr "^2.3.6"
     underscore "^1.9.1"
 
-"@gerrit0/typedoc@0.15.7":
-  version "0.15.7"
-  resolved "https://registry.yarnpkg.com/@gerrit0/typedoc/-/typedoc-0.15.7.tgz#515b1e0f0f344185eb28b5280ce871c0c2f364ca"
-  integrity sha512-Kk4RvOe/vljUsX3O9bV+Zm5gpPrgc7Qy336sl3OtQMyNU0M7bMeFLf4cXcXuvab9vWWcOjM39Du8QF6ds/eS/A==
+"@gerrit0/typedoc@0.15.8":
+  version "0.15.8"
+  resolved "https://registry.yarnpkg.com/@gerrit0/typedoc/-/typedoc-0.15.8.tgz#c4f10fa5853fc909c75794e5f8fc5afbf87f36ee"
+  integrity sha512-pOJny6TdrDsy1CBCsjzUuTGji4QAkOIHu5Q0TUWojMeN00hDXPG2M26r2Kt8oo3CEDZyZlP/Fy0yP8PHwJAX6Q==
   dependencies:
     "@gerrit0/typedoc-default-themes" "^0.6.1"
     "@types/minimatch" "3.0.3"

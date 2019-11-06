@@ -1,3 +1,10 @@
+0.12.5
+======
+
+ * [#1000](https://github.com/jumpinjackie/mapguide-react-layout/issues/1000): Fix clicked hyperlinks in tooltips not opening in Task Pane
+ * [#990](https://github.com/jumpinjackie/mapguide-react-layout/issues/990): Default initial active viewer tool to "Pan" instead of un-set
+ * [#991](https://github.com/jumpinjackie/mapguide-react-layout/issues/991): Fix default format string for mouse coordinates component missing localized units display
+
 0.12.4
 ======
 

@@ -462,10 +462,10 @@
   resolved "https://registry.yarnpkg.com/@types/jest-diff/-/jest-diff-20.0.1.tgz#35cc15b9c4f30a18ef21852e255fdb02f6d59b89"
   integrity sha512-yALhelO3i0hqZwhjtcr6dYyaLoCHbAMshwtj6cGxTvHZAKXHsYGdff6E8EPw3xLKY0ELUTQ69Q1rQiJENnccMA==
 
-"@types/jest@24.0.19":
-  version "24.0.19"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-24.0.19.tgz#f7036058d2a5844fe922609187c0ad8be430aff5"
-  integrity sha512-YYiqfSjocv7lk5H/T+v5MjATYjaTMsUkbDnjGqSMoO88jWdtJXJV4ST/7DKZcoMHMBvB2SeSfyOzZfkxXHR5xg==
+"@types/jest@24.0.21":
+  version "24.0.21"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-24.0.21.tgz#2c0a25440e025bb265f4a17d8b79b11b231426bf"
+  integrity sha512-uyqFvx78Tuy0h5iLCPWRCvi5HhWwEqhIj30doitp191oYLqlCxUyAJHdWVm5+Nr271/vPnkyt6rWeEIjGowBTg==
   dependencies:
     "@types/jest-diff" "*"
 
@@ -1850,14 +1850,15 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
-bestzip@2.1.4:
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/bestzip/-/bestzip-2.1.4.tgz#cf28d0b044419fd05cbf755f87e391c9e28b5713"
-  integrity sha512-Hzy9V/MD8wcSy7q27fxa5PIM7ojLnTJ811W7zA7lKXpes/0C/8+cn8sLuKqroj2TT4KEPNrb7Usf5IW9shyKYg==
+bestzip@2.1.5:
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/bestzip/-/bestzip-2.1.5.tgz#815980248bbbd907fa724d5c5e5cb9fd295619d3"
+  integrity sha512-ieNnkUNC4iF3eC8L+00Gd/niBqyjqZ28UnKYOSozWDBluqht3NMlQXLJVi47mehwgSsvGq+GqvEmVWZHQy2nrQ==
   dependencies:
     archiver "^3.0.0"
     async "^2.6.1"
     glob "^7.1.3"
+    which "^1.3.1"
     yargs "^13.2.4"
 
 big.js@^5.2.2:
@@ -3680,10 +3681,10 @@ forever-agent@~0.6.1:
   resolved "https://registry.yarnpkg.com/forever-agent/-/forever-agent-0.6.1.tgz#fbc71f0c41adeb37f96c577ad1ed42d8fdacca91"
   integrity sha1-+8cfDEGt6zf5bFd60e1C2P2sypE=
 
-fork-ts-checker-webpack-plugin@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/fork-ts-checker-webpack-plugin/-/fork-ts-checker-webpack-plugin-1.5.0.tgz#ce1d77190b44d81a761b10b6284a373795e41f0c"
-  integrity sha512-zEhg7Hz+KhZlBhILYpXy+Beu96gwvkROWJiTXOCyOOMMrdBIRPvsBpBqgTI4jfJGrJXcqGwJR8zsBGDmzY0jsA==
+fork-ts-checker-webpack-plugin@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/fork-ts-checker-webpack-plugin/-/fork-ts-checker-webpack-plugin-3.0.0.tgz#9d1eaca50ff4c006dae7f882849481a39e27634c"
+  integrity sha512-WArJLuWoQJz3gli0tc8MjuSl+arIeXPU5cADg0LxnczoNYngXlo26AYpsqgj1X+79q1GS8dNUAHVjtQ+Z+WQZA==
   dependencies:
     babel-code-frame "^6.22.0"
     chalk "^2.4.1"

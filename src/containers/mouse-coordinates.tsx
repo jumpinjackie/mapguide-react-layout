@@ -70,6 +70,10 @@ export class MouseCoordinatesContainer extends React.Component<MouseCoordinatesC
                     case "tile-pixels":
                         units = getUnitOfMeasure(UnitOfMeasure.Pixels).abbreviation(locale);
                         break;
+                    case "m":
+                        units = getUnitOfMeasure(UnitOfMeasure.Meters).abbreviation(locale);
+                        break;
+                    case "ft":
                     case "us-ft":
                         units = getUnitOfMeasure(UnitOfMeasure.Feet).abbreviation(locale);
                         break;

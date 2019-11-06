@@ -1,5 +1,6 @@
 import * as React from "react";
 import { fmt } from "../api/i18n";
+import { strTrim } from '../utils/string';
 
 /**
  * MouseCoordinates component props
@@ -22,13 +23,13 @@ function formatCoordinates(props: IMouseCoordinatesProps) {
         return null; //TODO: Use value indicated by EmptyText extension property
     }
     const [x, y] = coords;
-    const sfmt = format || "X: {x}, Y: {y}";
+    const sfmt = format || "X: {x}, Y: {y} {units}";
     const str = fmt(sfmt, {
         x: `${decimals != null ? x.toFixed(decimals) : x}`,
         y: `${decimals != null ? y.toFixed(decimals) : y}`,
         units: units || ""
     });
-    return <span dangerouslySetInnerHTML={{ __html: str }} />;
+    return <span dangerouslySetInnerHTML={{ __html: strTrim(str) }} />;
 }
 
 /**

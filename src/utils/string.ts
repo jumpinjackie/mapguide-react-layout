@@ -38,3 +38,16 @@ export const STR_EMPTY = "";
 export function strIsNullOrEmpty(str: string | undefined): boolean {
     return null === str || "" === str;
 }
+
+/**
+ * Returns a trimmed version of the given string
+ * 
+ * @param str The string to trim
+ * @since 0.12.5
+ */
+export function strTrim(str: string): string {
+    if (!String.prototype.trim) {
+        return str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+    }
+    return str.trim();
+}

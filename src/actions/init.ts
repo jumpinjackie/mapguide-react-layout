@@ -1,7 +1,7 @@
 import * as Constants from "../constants";
 import { Client } from "../api/client";
 import * as Runtime from "../api/runtime";
-import { ReduxDispatch, Dictionary, IMapView, CommandTarget } from "../api/common";
+import { ReduxDispatch, Dictionary, IMapView, CommandTarget, ActiveMapTool } from "../api/common";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
 import { registerCommand, DefaultCommands } from "../api/registry/command";
 import {
@@ -699,7 +699,8 @@ async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOpti
             hasViewSize: webLayout.StatusBar.Visible
         },
         toolbars: tb,
-        warnings: warnings
+        warnings: warnings,
+        initialActiveTool: ActiveMapTool.Pan
     };
 }
 
@@ -826,7 +827,8 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
             hasViewSize: (viewSize != null)
         },
         toolbars: tb,
-        warnings: warnings
+        warnings: warnings,
+        initialActiveTool: ActiveMapTool.Pan
     };
 }
 

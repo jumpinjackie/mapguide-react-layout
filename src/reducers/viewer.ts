@@ -14,6 +14,16 @@ export const VIEWER_INITIAL_STATE: IViewerReducerState = {
 
 export function viewerReducer(state = VIEWER_INITIAL_STATE, action: ViewerAction) {
     switch (action.type) {
+        case ActionType.INIT_APP:
+            {
+                let tool = action.payload.initialActiveTool;
+                if (tool) {
+                    const state1 = {
+                        tool: tool
+                    };
+                    return { ...state, ...state1 };
+                }
+            }
         case ActionType.MAP_SET_ACTIVE_TOOL:
             {
                 const state1 = {

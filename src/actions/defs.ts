@@ -111,6 +111,10 @@ export interface IInitAppActionPayload {
      * @since 0.12
      */
     initialSelections?: IRestoredSelectionSets;
+    /**
+     * @since 0.12.5
+     */
+    initialActiveTool?: ActiveMapTool;
 }
 
 /**

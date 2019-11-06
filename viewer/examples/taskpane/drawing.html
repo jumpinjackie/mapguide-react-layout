@@ -15,8 +15,9 @@
             //can call to access the new IMapViewer interface
             viewer = parent.parent.GetViewerInterface();
             factory = viewer.getOLFactory();
-            if (viewer.hasLayer(LAYER_NAME)) {
-                customLayer = viewer.getLayer(LAYER_NAME);
+            var layerMgr = viewer.getLayerManager();
+            if (layerMgr.hasLayer(LAYER_NAME)) {
+                customLayer = layerMgr.getLayer(LAYER_NAME);
                 setupInteractions();
             }
         };
@@ -96,12 +97,13 @@
         }
 
         function addVectorLayer() {
-            if (!viewer.hasLayer(LAYER_NAME)) {
+            var layerMgr = viewer.getLayerManager();
+            if (!layerMgr.hasLayer(LAYER_NAME)) {
                 var source = factory.createVectorSource();
                 var layer = factory.createVectorLayer({
                     source: source
                 });
-                viewer.addLayer(LAYER_NAME, layer);
+                layerMgr.addLayer(LAYER_NAME, layer);
                 alert("Layer (" + LAYER_NAME + ") added");
                 layerAdded = true;
                 document.getElementById("btnAddLayer").disabled = true;
@@ -126,7 +128,7 @@
         }
 
         function startDraw(type) {
-            if (!viewer.hasLayer(LAYER_NAME)) {
+            if (!viewer.getLayerManager().hasLayer(LAYER_NAME)) {
                 alert("Add the layer first");
                 return;
             }

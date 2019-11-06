@@ -182,7 +182,7 @@ class FeatureQueryTooltip {
                 html += `<div class='feature-tooltip-body'>${res.Tooltip.replace(/\\n/g, "<br/>")}</div>`;
             }
             if (res.Hyperlink) {
-                html += `<div><a href='${res.Hyperlink}'>Click for more information</a></div>`;
+                html += `<div><a target='taskPaneFrame' href='${res.Hyperlink}'>Click for more information</a></div>`;
             }
             this.featureTooltipElement.innerHTML = html;
             if (html == "") {

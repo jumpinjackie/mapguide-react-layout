@@ -29,7 +29,13 @@ const basePlugins = [
         // both options are optional
         filename: process.env.DEBUG_BUILD === '1' ? '[name]-debug.css' : '[name].css',
         chunkFilename: "[id].css"
-    })
+    }),
+    // Intercept the BP icon import with our own slimmed down version
+    // Ref: https://github.com/palantir/blueprint/issues/2193#issuecomment-453326234
+    new webpack.NormalModuleReplacementPlugin(
+        /.*\/generated\/iconSvgPaths.*/,
+        path.resolve(__dirname, 'stdassets/bp-icons.js'),
+    )
 ];
 
 const devPlugins = [

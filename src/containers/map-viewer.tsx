@@ -365,7 +365,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         this.inner.zoomDelta(delta);
     }
     isDigitizing(): boolean {
-        return this.isDigitizing();
+        return this.inner.isDigitizing();
     }
     cancelDigitization(): void {
         this.inner.cancelDigitization();
@@ -418,18 +418,6 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     }
     getProjection(): ol.ProjectionLike {
         return this.inner.getProjection();
-    }
-    hasLayer(name: string): boolean {
-        return this.inner.hasLayer(name);
-    }
-    addLayer<T extends ol.layer.Base>(name: string, layer: T, allowReplace?: boolean): T {
-        return this.inner.addLayer(name, layer, allowReplace);
-    }
-    removeLayer(name: string): ol.layer.Base | undefined {
-        return this.inner.removeLayer(name);
-    }
-    getLayer<T extends ol.layer.Base>(name: string, factory: () => T): T {
-        return this.inner.getLayer(name, factory);
     }
     addInteraction<T extends ol.interaction.Interaction>(interaction: T): T {
         return this.inner.addInteraction(interaction);
@@ -524,4 +512,4 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MapViewerContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(MapViewerContainer);

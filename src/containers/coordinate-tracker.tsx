@@ -2,9 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import {
     Coordinate,
-    ReduxDispatch,
-    IApplicationState,
-    ICoordinateConfiguration
+    IApplicationState
 } from "../api/common";
 import { tr } from "../api/i18n";
 import olProj from "ol/proj";
@@ -38,7 +36,7 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<ICoordinat
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ICoordinateTrackerContainerDispatch> {
+function mapDispatchToProps(): Partial<ICoordinateTrackerContainerDispatch> {
     return { };
 }
 
@@ -81,4 +79,4 @@ export class CoordinateTrackerContainer extends React.Component<CoordinateTracke
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CoordinateTrackerContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(CoordinateTrackerContainer);

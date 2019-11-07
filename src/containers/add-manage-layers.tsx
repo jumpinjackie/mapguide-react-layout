@@ -2,18 +2,10 @@ import * as React from "react";
 import { connect } from "react-redux";
 import * as Runtime from "../api/runtime";
 import { tr } from "../api/i18n";
-import { Error } from "../components/error";
 import {
-    ILayerInfo,
     ReduxDispatch,
-    IApplicationState,
-    GenericEvent,
-    GenericEventHandler,
-    WmsCapabilitiesDocument,
-    WMSLayerStyle
+    IApplicationState
 } from "../api/common";
-import { Client } from "../api/client";
-import { WmsCapabilitiesTree } from "../components/wms-capabilities-tree";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
 import { Tabs } from '@blueprintjs/core/lib/esm/components/tabs/tabs';
@@ -68,7 +60,6 @@ class LayerManager extends React.Component<ILayerManagerProps, any> {
         }
     }
     render(): JSX.Element {
-        const { locale } = this.props;
         const { layers } = this.state;
         return <ManageLayers layers={layers} onMoveLayerDown={this.downHandler} onMoveLayerUp={this.upHandler} onRemoveLayer={this.removeHandler} />;
     }
@@ -110,7 +101,7 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IAddManage
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAddManageLayersContainerDispatch> {
+function mapDispatchToProps(): Partial<IAddManageLayersContainerDispatch> {
     return {};
 }
 
@@ -139,4 +130,4 @@ export class AddManageLayersContainer extends React.Component<AddManageLayersCon
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddManageLayersContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(AddManageLayersContainer);

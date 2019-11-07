@@ -9,7 +9,6 @@ import olMultiPolygon from "ol/geom/multipolygon";
 import olGeometry from "ol/geom/geometry";
 import olGeometryCollection from "ol/geom/geometrycollection";
 
-import olLayerBase from "ol/layer/base";
 import olOverlay from "ol/overlay";
 import olExtent from "ol/extent";
 import olProj from "ol/proj";

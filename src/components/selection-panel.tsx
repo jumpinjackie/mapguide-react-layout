@@ -1,8 +1,8 @@
 import * as React from "react";
 import { SelectedFeatureSet, SelectedFeature, LayerMetadata, SelectedLayer, FeatureProperty } from "../api/contracts/query";
-import { Toolbar, IItem, IInlineMenu, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
+import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
 import { tr as xlate, DEFAULT_LOCALE } from "../api/i18n";
-import { NOOP, GenericEvent, GenericEventHandler } from "../api/common";
+import { GenericEvent } from "../api/common";
 import {
     SPRITE_CONTROL,
     SPRITE_CONTROL_180,
@@ -65,7 +65,7 @@ export interface ISelectionPanelProps {
     locale?: string;
     selection: SelectedFeatureSet;
     onRequestZoomToFeature: (feat: SelectedFeature) => void;
-    onShowSelectedFeature: (layerId: string, featureIndex: number) => void;
+    onShowSelectedFeature: (layerId: string, selectionKey: string) => void;
     maxHeight?: number;
     selectedFeatureRenderer?: (props: ISelectedFeatureProps) => JSX.Element;
     /**
@@ -124,7 +124,7 @@ function buildToolbarItems(selPanel: ISelectionPanel): IItem[] {
 const SELECTION_TOOLBAR_STYLE: React.CSSProperties = { float: "right", height: DEFAULT_TOOLBAR_SIZE };
 const SELECTION_PANEL_TOOLBAR_STYLE: React.CSSProperties = { height: DEFAULT_TOOLBAR_SIZE, backgroundColor: TOOLBAR_BACKGROUND_COLOR };
 const LAYER_COMBO_STYLE: React.CSSProperties = { float: "left", height: DEFAULT_TOOLBAR_SIZE };
-const FloatClear = (props: any) => <div style={{ clear: "both" }} />;
+const FloatClear = () => <div style={{ clear: "both" }} />;
 
 /**
  * Displays attributes of selected features with the ability to zoom in on selected features
@@ -156,12 +156,15 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
             return null;
         return this.props.selection.SelectedLayer[this.state.selectedLayerIndex];
     }
-    private getCurrentFeature() {
+    private getFeatureAt(index: number) {
         const layer = this.getCurrentLayer();
         if (layer != null) {
-            return layer.Feature[this.state.featureIndex];
+            return layer.Feature[index];
         }
         return null;
+    }
+    private getCurrentFeature() {
+        return this.getFeatureAt(this.state.featureIndex);
     }
     private canGoPrev(): boolean {
         return this.state.featureIndex > 0;
@@ -183,7 +186,10 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
         const layer = this.getCurrentLayer();
         if (layer) {
             const layerId = layer["@id"];
-            safePropAccess(this.props, "onShowSelectedFeature", func => func(layerId, newIndex));
+            const f = this.getFeatureAt(newIndex);
+            if (f && f.SelectionKey) {
+                safePropAccess(this.props, "onShowSelectedFeature", func => func(layerId, f!.SelectionKey!));
+            }
         }
     }
     private nextFeature() {
@@ -192,7 +198,10 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
         const layer = this.getCurrentLayer();
         if (layer) {
             const layerId = layer["@id"];
-            safePropAccess(this.props, "onShowSelectedFeature", func => func(layerId, newIndex));
+            const f = this.getFeatureAt(newIndex);
+            if (f && f.SelectionKey) {
+                safePropAccess(this.props, "onShowSelectedFeature", func => func(layerId, f!.SelectionKey!));
+            }
         }
     }
     private zoomSelectedFeature() {

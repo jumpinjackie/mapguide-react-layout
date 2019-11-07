@@ -2,7 +2,6 @@ import * as React from "react";
 import { connect } from "react-redux";
 import {
     GenericEvent,
-    GenericEventHandler,
     ReduxDispatch,
     IApplicationState,
     IViewerReducerState,
@@ -14,7 +13,7 @@ import {
 import * as MapActions from "../actions/map";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from "../constants/index";
-import { getUnits } from "../utils/units";
+import { getUnits, getUnitOfMeasure } from "../utils/units";
 import { safePropAccess } from '../utils/safe-prop';
 import { Slider } from '@blueprintjs/core/lib/esm/components/slider/slider';
 
@@ -37,7 +36,7 @@ export interface IViewerOptionsDispatch {
     setViewSizeDisplayUnits: (units: UnitOfMeasure) => void;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IViewerOptionsProps): Partial<IViewerOptionsState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IViewerOptionsState> {
     let layerTransparency;
     let mapName = state.config.activeMapName;
     let externalBaseLayers;
@@ -164,7 +163,11 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
                         {tr("MAP_SIZE_DISPLAY_UNITS", locale)}
                         <div className="pt-select">
                             <select value={config.viewSizeUnits} onChange={this.onViewSizeUnitsChanged}>
-                                {units.map(u => <option key={u[0]} value={u[0]}>{u[1]}</option>)}
+                                {units.map(u => {
+                                    const [ uom ] = u;
+                                    const ui = getUnitOfMeasure(uom);
+                                    return <option key={uom} value={uom}>{ui.localizedName(locale)}</option>;
+                                })}
                             </select>
                         </div>
                     </label>;
@@ -174,4 +177,4 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ViewerOptions);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(ViewerOptions);

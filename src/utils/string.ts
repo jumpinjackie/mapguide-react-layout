@@ -11,6 +11,19 @@ export function strEndsWith(str: string, suffix: string): boolean {
 }
 
 /**
+ * Replaces all occurrences of the given string with the specified replacement in the target
+ * string
+ * 
+ * @param str 
+ * @param find 
+ * @param replace 
+ * @since 0.12
+ */
+export function strReplaceAll(str: string, find: string, replace: string): string {
+    return str.split(find).join(replace);
+}
+
+/**
  * Empty string constant
  */
 export const STR_EMPTY = "";
@@ -24,4 +37,17 @@ export const STR_EMPTY = "";
  */
 export function strIsNullOrEmpty(str: string | undefined): boolean {
     return null === str || "" === str;
+}
+
+/**
+ * Returns a trimmed version of the given string
+ * 
+ * @param str The string to trim
+ * @since 0.12.5
+ */
+export function strTrim(str: string): string {
+    if (!String.prototype.trim) {
+        return str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+    }
+    return str.trim();
 }

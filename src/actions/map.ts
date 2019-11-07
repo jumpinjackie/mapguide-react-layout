@@ -1,9 +1,7 @@
-import * as Constants from "../constants";
 import {
     ActiveMapTool,
     ICommand,
     IMapView,
-    ReduxAction,
     ReduxThunkedAction,
     getCurrentView,
     getRuntimeMap,
@@ -12,12 +10,16 @@ import {
 } from "../api/common";
 import { getViewer } from "../api/runtime";
 import { areViewsCloseToEqual } from "../components/map-viewer-base";
-import { areNumbersEqual, getFiniteScaleIndexForScale } from '../utils/number';
+import { getFiniteScaleIndexForScale } from '../utils/number';
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet, SelectedFeature, SelectedFeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml } from '../api/builders/deArrayify';
 import uniq = require("lodash.uniq");
+import { ActionType } from '../constants/actions';
+import { IMapSetBusyCountAction, IMapSetBaseLayerAction, IMapSetScaleAction, IMapSetMouseCoordinatesAction, IMapSetLayerTransparencyAction, IMapSetViewSizeUnitsAction, IMapPreviousViewAction, IMapNextViewAction, ISetActiveMapToolAction, ISetActiveMapAction, ISetManualFeatureTooltipsEnabledAction, ISetFeatureTooltipsEnabledAction, IMapSetViewRotationAction, IMapSetViewRotationEnabledAction, IShowSelectedFeatureAction, IMapSetSelectionAction, IMapResizedAction } from './defs';
+import { storeSelectionSet } from '../api/session-store';
+import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
 
 function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeature[]): SelectedFeature[] {
     const merged: SelectedFeature[] = [];
@@ -170,22 +172,29 @@ export function queryMapFeatures(mapName: string, opts: QueryMapFeatureActionOpt
                     opts.errBack(err);
                 }
             };
-            client.queryMapFeatures(opts.options).then(res => {
+            //We want v4.0.0 QUERYMAPFEATURES if available
+            const sv = getSiteVersion(map);
+            const queryOp = canUseQueryMapFeaturesV4(sv)
+                ? (opts: IQueryMapFeaturesOptions) => client.queryMapFeatures_v4(opts)
+                : (opts: IQueryMapFeaturesOptions) => client.queryMapFeatures(opts);
+            queryOp(opts.options).then(res => {
                 if (opts.options.persist === 1) {
                     if (opts.append === true) {
                         const combined = combineSelections(selectionSet, res);
                         const mergedXml = buildSelectionXml(combined.FeatureSet);
                         //Need to update the server-side selection with the merged result
-                        client.queryMapFeatures({
+                        queryOp({
                             session: map.SessionId,
                             mapname: map.Name,
                             persist: 1,
                             featurefilter: mergedXml
-                        }).then(r => {
+                        }).then(() => {
+                            storeSelectionSet(map.SessionId, mapName, combined); // set and forget
                             dispatch(setSelection(mapName, combined));
                             success(combined);
                         });
                     } else {
+                        storeSelectionSet(map.SessionId, mapName, res); // set and forget
                         dispatch(setSelection(mapName, res));
                         success(res);
                     }
@@ -235,9 +244,9 @@ export function setCurrentView(view: IMapView): ReduxThunkedAction {
                 dispatchThis = false;
             }
         }
-        if (dispatchThis) {
+        if (dispatchThis && mapName) {
             dispatch({
-                type: Constants.MAP_SET_VIEW,
+                type: ActionType.MAP_SET_VIEW,
                 payload: {
                     mapName,
                     view: newView
@@ -253,11 +262,11 @@ export function setCurrentView(view: IMapView): ReduxThunkedAction {
  * @export
  * @param {number} width 
  * @param {number} height 
- * @returns {ReduxAction} 
+ * @returns {IMapResizedAction} 
  */
-export function mapResized(width: number, height: number): ReduxAction {
+export function mapResized(width: number, height: number): IMapResizedAction {
     return {
-        type: Constants.MAP_RESIZED,
+        type: ActionType.MAP_RESIZED,
         payload: {
             width,
             height
@@ -271,11 +280,11 @@ export function mapResized(width: number, height: number): ReduxAction {
  * @export
  * @param {string} mapName The name of the current runtime map
  * @param {*} selectionSet The selection set to apply
- * @returns {ReduxAction}
+ * @returns {IMapSetSelectionAction}
  */
-export function setSelection(mapName: string, selectionSet: any): ReduxAction {
+export function setSelection(mapName: string, selectionSet: any): IMapSetSelectionAction {
     return {
-        type: Constants.MAP_SET_SELECTION,
+        type: ActionType.MAP_SET_SELECTION,
         payload: {
             mapName,
             selection: selectionSet
@@ -303,11 +312,11 @@ export function invokeCommand(cmd: ICommand, parameters?: any): ReduxThunkedActi
  *
  * @export
  * @param {number} busyCount The current busy count
- * @returns {ReduxAction}
+ * @returns {IMapSetBusyCountAction}
  */
-export function setBusyCount(busyCount: number): ReduxAction {
+export function setBusyCount(busyCount: number): IMapSetBusyCountAction {
     return {
-        type: Constants.MAP_SET_BUSY_COUNT,
+        type: ActionType.MAP_SET_BUSY_COUNT,
         payload: busyCount
     };
 }
@@ -320,9 +329,9 @@ export function setBusyCount(busyCount: number): ReduxAction {
  * @param {string} layerName The name of the external base layer to set as active
  * @returns
  */
-export function setBaseLayer(mapName: string, layerName: string): ReduxAction {
+export function setBaseLayer(mapName: string, layerName: string): IMapSetBaseLayerAction {
     return {
-        type: Constants.MAP_SET_BASE_LAYER,
+        type: ActionType.MAP_SET_BASE_LAYER,
         payload: {
             mapName,
             layerName
@@ -338,14 +347,14 @@ export function setBaseLayer(mapName: string, layerName: string): ReduxAction {
  * @param {number} scale The scale to set
  * @returns
  */
-export function setScale(mapName: string, scale: number): ReduxAction {
+export function setScale(mapName: string, scale: number): IMapSetScaleAction {
     const viewer = getViewer();
     let resolution;
     if (viewer) {
         resolution = viewer.scaleToResolution(scale);
     }
     return {
-        type: Constants.MAP_SET_SCALE,
+        type: ActionType.MAP_SET_SCALE,
         payload: {
             mapName,
             scale,
@@ -362,9 +371,9 @@ export function setScale(mapName: string, scale: number): ReduxAction {
  * @param {*} coord The current mouse coordinates
  * @returns
  */
-export function setMouseCoordinates(mapName: string, coord: any): ReduxAction {
+export function setMouseCoordinates(mapName: string, coord: any): IMapSetMouseCoordinatesAction {
     return {
-        type: Constants.UPDATE_MOUSE_COORDINATES,
+        type: ActionType.UPDATE_MOUSE_COORDINATES,
         payload: {
             mapName,
             coord
@@ -381,9 +390,9 @@ export function setMouseCoordinates(mapName: string, coord: any): ReduxAction {
  * @param {number} opacity A value between 0 and 1. 1 - Fully Opaque, 0 - Fully Transparent
  * @returns 
  */
-export function setLayerTransparency(mapName: string, layerName: string, opacity: number): ReduxAction {
+export function setLayerTransparency(mapName: string, layerName: string, opacity: number): IMapSetLayerTransparencyAction {
     return {
-        type: Constants.MAP_SET_LAYER_TRANSPARENCY,
+        type: ActionType.MAP_SET_LAYER_TRANSPARENCY,
         payload: {
             mapName,
             layerName,
@@ -397,11 +406,11 @@ export function setLayerTransparency(mapName: string, layerName: string, opacity
  * 
  * @export
  * @param {UnitOfMeasure} unit 
- * @returns {ReduxAction} 
+ * @returns {IMapSetViewSizeUnitsAction} 
  */
-export function setViewSizeUnits(unit: UnitOfMeasure): ReduxAction {
+export function setViewSizeUnits(unit: UnitOfMeasure): IMapSetViewSizeUnitsAction {
     return {
-        type: Constants.MAP_SET_VIEW_SIZE_UNITS,
+        type: ActionType.MAP_SET_VIEW_SIZE_UNITS,
         payload: unit
     };
 }
@@ -413,9 +422,9 @@ export function setViewSizeUnits(unit: UnitOfMeasure): ReduxAction {
  * @param {string} mapName The name of the current runtime map
  * @returns
  */
-export function previousView(mapName: string): ReduxAction {
+export function previousView(mapName: string): IMapPreviousViewAction {
     return {
-        type: Constants.MAP_PREVIOUS_VIEW,
+        type: ActionType.MAP_PREVIOUS_VIEW,
         payload: {
             mapName
         }
@@ -429,9 +438,9 @@ export function previousView(mapName: string): ReduxAction {
  * @param {string} mapName The name of the current runtime amp
  * @returns
  */
-export function nextView(mapName: string): ReduxAction {
+export function nextView(mapName: string): IMapNextViewAction {
     return {
-        type: Constants.MAP_NEXT_VIEW,
+        type: ActionType.MAP_NEXT_VIEW,
         payload: {
             mapName
         }
@@ -445,9 +454,9 @@ export function nextView(mapName: string): ReduxAction {
  * @param {ActiveMapTool} tool The active map tool command
  * @returns
  */
-export function setActiveTool(tool: ActiveMapTool): ReduxAction {
+export function setActiveTool(tool: ActiveMapTool): ISetActiveMapToolAction {
     return {
-        type: Constants.MAP_SET_ACTIVE_TOOL,
+        type: ActionType.MAP_SET_ACTIVE_TOOL,
         payload: tool
     };
 }
@@ -459,9 +468,9 @@ export function setActiveTool(tool: ActiveMapTool): ReduxAction {
  * @param {string} mapName The name of the runtime map to set as active
  * @returns
  */
-export function setActiveMap(mapName: string): ReduxAction {
+export function setActiveMap(mapName: string): ISetActiveMapAction {
     return {
-        type: Constants.MAP_SET_ACTIVE_MAP,
+        type: ActionType.MAP_SET_ACTIVE_MAP,
         payload: mapName
     };
 }
@@ -473,9 +482,9 @@ export function setActiveMap(mapName: string): ReduxAction {
  * @param {boolean} enabled
  * @returns
  */
-export function setFeatureTooltipsEnabled(enabled: boolean): ReduxAction {
+export function setFeatureTooltipsEnabled(enabled: boolean): ISetFeatureTooltipsEnabledAction {
     return {
-        type: Constants.MAP_SET_MAPTIP,
+        type: ActionType.MAP_SET_MAPTIP,
         payload: enabled
     };
 }
@@ -487,9 +496,9 @@ export function setFeatureTooltipsEnabled(enabled: boolean): ReduxAction {
  * @param {boolean} enabled
  * @returns
  */
-export function setManualFeatureTooltipsEnabled(enabled: boolean): ReduxAction {
+export function setManualFeatureTooltipsEnabled(enabled: boolean): ISetManualFeatureTooltipsEnabledAction {
     return {
-        type: Constants.MAP_SET_MANUAL_MAPTIP,
+        type: ActionType.MAP_SET_MANUAL_MAPTIP,
         payload: enabled
     };
 }
@@ -501,9 +510,9 @@ export function setManualFeatureTooltipsEnabled(enabled: boolean): ReduxAction {
  * @param {number} rotation 
  * @returns 
  */
-export function setViewRotation(rotation: number): ReduxAction {
+export function setViewRotation(rotation: number): IMapSetViewRotationAction {
     return {
-        type: Constants.MAP_SET_VIEW_ROTATION,
+        type: ActionType.MAP_SET_VIEW_ROTATION,
         payload: rotation
     };
 }
@@ -514,9 +523,9 @@ export function setViewRotation(rotation: number): ReduxAction {
  * @export
  * @param {boolean} enabled 
  */
-export function setViewRotationEnabled(enabled: boolean): ReduxAction {
+export function setViewRotationEnabled(enabled: boolean): IMapSetViewRotationEnabledAction {
     return {
-        type: Constants.MAP_SET_VIEW_ROTATION_ENABLED,
+        type: ActionType.MAP_SET_VIEW_ROTATION_ENABLED,
         payload: enabled
     };
 }
@@ -527,16 +536,16 @@ export function setViewRotationEnabled(enabled: boolean): ReduxAction {
  * @export
  * @param {string} mapName 
  * @param {string} layerId 
- * @param {number} featureIndex 
- * @returns {ReduxAction} 
+ * @param {string} selectionKey 
+ * @returns {IShowSelectedFeatureAction} 
  */
-export function showSelectedFeature(mapName: string, layerId: string, featureIndex: number): ReduxAction {
+export function showSelectedFeature(mapName: string, layerId: string, selectionKey: string): IShowSelectedFeatureAction {
     return {
-        type: Constants.MAP_SHOW_SELECTED_FEATURE,
+        type: ActionType.MAP_SHOW_SELECTED_FEATURE,
         payload: {
             mapName,
             layerId,
-            featureIndex
+            selectionKey
         }
     }
 }

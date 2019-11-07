@@ -1,11 +1,6 @@
 import {
     GenericEvent,
-    GenericEventHandler,
-    IMapViewer,
-    ActiveMapTool,
-    ReduxDispatch,
-    IApplicationState,
-    IConfigurationReducerState
+    IMapViewer
 } from "../api/common";
 import { IOLFactory } from "../api/ol-factory";
 import { tr } from "../api/i18n";
@@ -46,7 +41,6 @@ export interface IMeasureCallback {
 export interface IMeasureComponent {
     getCurrentDrawType(): string | undefined;
     getLocale(): string;
-    isGeodesic(): boolean;
 }
 
 /**
@@ -66,7 +60,7 @@ export class MeasureContext {
     private measureTooltip: olOverlay;
     private mapName: string;
     private layerName: string;
-    private parent: IMeasureComponent;
+    private parent: IMeasureComponent | undefined;
     private callback: IMeasureCallback | undefined;
     constructor(viewer: IMapViewer, mapName: string, parent: IMeasureComponent) {
         this.measureOverlays = [];
@@ -81,6 +75,26 @@ export class MeasureContext {
         this.measureLayer.setStyle(this.createMeasureStyle());
     }
     /**
+     * Establishes the new parent component for this context. Is called by the
+     * new parent component when it mounts and is resuming from previously recorded
+     * measurements and is not meant to be called directly
+     * 
+     * @param parent The new parent component
+     * @since 0.12
+     */
+    public setParent(parent: IMeasureComponent) {
+        this.parent = parent;
+    }
+    /**
+     * Detaches the parent component from this context. Is called by the parent
+     * component when it unmounts and is not meant to be called directly.
+     * 
+     * @since 0.12
+     */
+    public detachParent() {
+        this.parent = undefined;
+    }
+    /**
      * Format length output.
      * @param {LineString} line The line.
      * @return {string} The formatted length.
@@ -88,7 +102,7 @@ export class MeasureContext {
     private formatLength(line: olLineString): [string, number, MeasureSegment[] | undefined] {
         let length: number;
         let segments: MeasureSegment[] | undefined;
-        if (this.parent.isGeodesic()) {
+        if (this.parent) {
             const coordinates = line.getCoordinates();
             segments = [];
             length = 0;
@@ -101,7 +115,7 @@ export class MeasureContext {
                 segments.push({ segment: (i + 1), length: dist });
             }
         } else {
-            length = roundTo(line.getLength(), 2);
+            length = NaN;
         }
         let output: string;
         if (length > 100) {
@@ -119,7 +133,10 @@ export class MeasureContext {
     private formatArea(polygon: olPolygon): [string, number, MeasureSegment[] | undefined] {
         let area: number;
         let segments: MeasureSegment[] | undefined;
-        if (this.parent.isGeodesic()) {
+        let locale;
+        if (this.parent) {
+            locale = this.parent.getLocale();
+            //TODO: When we upgrade to OL 6, we'll need to update this (they changed their measure example)
             segments = [];
             const sourceProj = this.viewer.getProjection();
             const geom = (polygon.clone().transform(sourceProj, 'EPSG:4326') as olPolygon);
@@ -132,15 +149,20 @@ export class MeasureContext {
                 segments.push({ segment: (i + 1), length: dist });
             }
         } else {
-            area = polygon.getArea();
+            area = NaN;
         }
         let output: string;
+        //TODO: The dynamic switch in display of measurement unit based on size of value may prove to be
+        //jarring, so we should provide a fixed unit value option in the future that will be used to 
+        //display regardless of the size of value
         if (area > 10000) {
-            output = (roundTo(area / 1000000, 2)) +
-                ' ' + 'km<sup>2</sup>';
+            output = tr("UNIT_FMT_SQKM", locale, {
+                value: `${(roundTo(area / 1000000, 2))}`
+            });
         } else {
-            output = (roundTo(area, 2)) +
-                ' ' + 'm<sup>2</sup>';
+            output = tr("UNIT_FMT_SQM", locale, {
+                value: `${(roundTo(area, 2))}`
+            });
         }
         return [output, area, segments];
     }
@@ -179,7 +201,7 @@ export class MeasureContext {
             });
         }
     }
-    private onDrawEnd = (evt: GenericEvent) => {
+    private onDrawEnd = () => {
         if (this.measureTooltipElement) {
             this.measureTooltipElement.className = 'tooltip tooltip-static';
         }
@@ -192,7 +214,7 @@ export class MeasureContext {
         Observable.unByKey(this.listener);
     }
     private onMouseMove = (evt: GenericEvent) => {
-        if (evt.dragging) {
+        if (evt.dragging || !this.parent) {
             return;
         }
         const locale = this.parent.getLocale();
@@ -305,12 +327,14 @@ export class MeasureContext {
         }
     }
     public startMeasure() {
-        const type = this.parent.getCurrentDrawType();
-        if (type) {
-            this.createMeasureTooltip();
-            this.createHelpTooltip();
-            this.setActiveInteraction(type);
-            this.viewer.addHandler('pointermove', this.onMouseMove);
+        if (this.parent) {
+            const type = this.parent.getCurrentDrawType();
+            if (type) {
+                this.createMeasureTooltip();
+                this.createHelpTooltip();
+                this.setActiveInteraction(type);
+                this.viewer.addHandler('pointermove', this.onMouseMove);
+            }
         }
     }
     public endMeasure() {
@@ -334,26 +358,41 @@ export class MeasureContext {
         }
     }
     public handleDrawTypeChange() {
-        const type = this.parent.getCurrentDrawType();
-        if (type) {
-            this.setActiveInteraction(type);
+        if (this.parent) {
+            const type = this.parent.getCurrentDrawType();
+            if (type) {
+                this.setActiveInteraction(type);
+            }
         }
     }
-    public activate(callback: IMeasureCallback) {
+    /**
+     * Since 0.12, mapName is required to explicitly state which map you are activating the context for
+     *
+     * @param {string} mapName
+     * @param {IMeasureCallback} callback
+     * @memberof MeasureContext
+     */
+    public activate(mapName: string, callback: IMeasureCallback) {
         this.callback = callback;
         logger.debug(`Activating measure context for ${this.mapName}`);
         for (const ov of this.measureOverlays) {
             this.viewer.addOverlay(ov);
         }
-        this.viewer.getLayerManager().addLayer(this.layerName, this.measureLayer, true);
+        this.viewer.getLayerManager(mapName).addLayer(this.layerName, this.measureLayer, true);
     }
-    public deactivate() {
+    /**
+     * Since 0.12, mapName is required to explicitly state which map you are deactivating the context for
+     *
+     * @param {string} mapName
+     * @memberof MeasureContext
+     */
+    public deactivate(mapName: string) {
         this.callback = undefined;
         logger.debug(`De-activating measure context for ${this.mapName}`);
         this.endMeasure();
         for (const ov of this.measureOverlays) {
             this.viewer.removeOverlay(ov);
         }
-        this.viewer.getLayerManager().removeLayer(this.layerName);
+        this.viewer.getLayerManager(mapName).removeLayer(this.layerName);
     }
 }

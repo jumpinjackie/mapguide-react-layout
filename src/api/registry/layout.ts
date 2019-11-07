@@ -1,5 +1,3 @@
-import * as React from "react";
-
 /**
  * A react layout template component factory function signature
  */

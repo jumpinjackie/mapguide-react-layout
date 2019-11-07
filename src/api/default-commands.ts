@@ -5,9 +5,7 @@ import {
     openUrlInTarget
 } from "./registry/command";
 import {
-    IMapView,
     IMapViewer,
-    IApplicationState,
     ActiveMapTool,
     RefreshMode,
     ReduxDispatch,
@@ -19,8 +17,6 @@ import {
     IConfigurationReducerState,
     DEFAULT_MODAL_SIZE
 } from "./common";
-import { QueryMapFeaturesResponse } from "./contracts/query";
-import { RuntimeMap } from "./contracts/runtime-map";
 import * as LegendActions from "../actions/legend";
 import * as MapActions from "../actions/map";
 import * as ModalActions from "../actions/modal";
@@ -130,7 +126,7 @@ export function initDefaultCommands() {
             return state.viewer.tool === ActiveMapTool.Select;
         },
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch) => {
             return dispatch(MapActions.setActiveTool(ActiveMapTool.Select));
         }
     });
@@ -141,7 +137,7 @@ export function initDefaultCommands() {
             return state.viewer.tool === ActiveMapTool.Pan;
         },
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch) => {
             return dispatch(MapActions.setActiveTool(ActiveMapTool.Pan));
         }
     });
@@ -152,7 +148,7 @@ export function initDefaultCommands() {
             return state.viewer.tool === ActiveMapTool.Zoom;
         },
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch) => {
             return dispatch(MapActions.setActiveTool(ActiveMapTool.Zoom));
         }
     });
@@ -163,7 +159,7 @@ export function initDefaultCommands() {
             return state.viewer.featureTooltipsEnabled === true;
         },
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState) => {
             const enabled = getState().viewer.featureTooltipsEnabled;
             return dispatch(MapActions.setFeatureTooltipsEnabled(!enabled));
         }
@@ -173,7 +169,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_ZOOM_IN_FIXED,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer) => {
             if (viewer) {
                 viewer.zoomDelta(1);
             }
@@ -184,7 +180,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_ZOOM_OUT_FIXED,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer) => {
             if (viewer) {
                 viewer.zoomDelta(-1);
             }
@@ -195,7 +191,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_PAN_WEST,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer) => {
             if (viewer) {
                 panMap(dispatch, viewer, "left");
             }
@@ -206,7 +202,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_PAN_EAST,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer) => {
             if (viewer) {
                 panMap(dispatch, viewer, "right");
             }
@@ -217,7 +213,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_PAN_NORTH,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer) => {
             if (viewer) {
                 panMap(dispatch, viewer, "up");
             }
@@ -228,7 +224,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_PAN_SOUTH,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer) => {
             if (viewer) {
                 panMap(dispatch, viewer, "down");
             }
@@ -239,7 +235,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_ABOUT,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState) => {
             dispatch(ModalActions.showModalComponent({
                 modal: {
                     title: tr("ABOUT", getState().config.locale),
@@ -256,7 +252,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_HELP,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState) => {
             dispatch(ModalActions.showModalUrl({
                 modal: {
                     title: tr("HELP", getState().config.locale),
@@ -339,7 +335,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_INITIAL_CENTER,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer) => {
             if (viewer) {
                 const view = getInitialView(getState());
                 if (view != null) {
@@ -355,7 +351,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_ZOOM_FULL,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer) => {
             if (viewer) {
                 viewer.initialView();
             }
@@ -366,7 +362,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_SELECT_CLEAR,
         selected: () => false,
         enabled: CommandConditions.hasSelection,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer) => {
             if (viewer) {
                 viewer.clearSelection();
             }
@@ -377,7 +373,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_ICON_ZOOMSELECT,
         selected: () => false,
         enabled: CommandConditions.hasSelection,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer) => {
             if (viewer) {
                 const fact = viewer.getOLFactory();
                 const selection = getSelectionSet(getState());
@@ -406,7 +402,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_ICON_REFRESHMAP,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer) => {
             if (viewer) {
                 viewer.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
                 dispatch(LegendActions.refresh());
@@ -418,7 +414,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_VIEW_BACK,
         selected: () => false,
         enabled: CommandConditions.hasPreviousView,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState) => {
             const mapName = getState().config.activeMapName;
             if (mapName) {
                 dispatch(MapActions.previousView(mapName));
@@ -430,7 +426,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_VIEW_FORWARD,
         selected: () => false,
         enabled: CommandConditions.hasNextView,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState) => {
             const mapName = getState().config.activeMapName;
             if (mapName) {
                 dispatch(MapActions.nextView(mapName));
@@ -532,13 +528,11 @@ export function initDefaultCommands() {
             const map = getRuntimeMap(state);
             const config = state.config;
             if (map) {
-                let autogenerateLayerNames = true;
                 let bUseAdvancedStylization = true;
                 let defaultDataStoreFormat = null;
                 let defaultRedlineGeometryType = 0;
                 let bCreateOnStartup = false;
                 if (parameters.AutogenerateLayerNames)
-                    autogenerateLayerNames = (parameters.AutogenerateLayerNames == "true");
 
                 if (parameters.StylizationType)
                     bUseAdvancedStylization = (parameters.StylizationType == "advanced");
@@ -657,7 +651,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_SELECT_CENTRE,
         selected: () => false,
         enabled: CommandConditions.hasSelection,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer) => {
             const state = getState();
             const mapName = state.config.activeMapName;
             if (mapName && viewer) {
@@ -698,8 +692,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_INVOKE_SCRIPT,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer, parameters) => {
-            const tplState = getState().template;
+        invoke: (dispatch, getState) => {
             dispatch(TemplateActions.setTaskPaneVisibility(true));
         }
     });
@@ -707,8 +700,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_INVOKE_SCRIPT,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer, parameters) => {
-            const tplState = getState().template;
+        invoke: (dispatch, getState) => {
             dispatch(TemplateActions.setLegendVisibility(true));
         }
     });
@@ -716,8 +708,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_INVOKE_SCRIPT,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer, parameters) => {
-            const tplState = getState().template;
+        invoke: (dispatch, getState) => {
             dispatch(TemplateActions.setSelectionPanelVisibility(true));
         }
     });

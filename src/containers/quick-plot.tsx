@@ -5,7 +5,6 @@ import { tr as xlate, tr, DEFAULT_LOCALE } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
     GenericEvent,
-    GenericEventHandler,
     IMapView,
     ReduxDispatch,
     IApplicationState,
@@ -17,9 +16,6 @@ import {
     IMapViewer
 } from "../api/common";
 import * as MapActions from "../actions/map";
-import olFeature from "ol/feature";
-import olVectorSource from "ol/source/vector";
-import olVectorLayer from "ol/layer/vector";
 import { MapCapturerContext, Size, IMapCapturerContextCallback } from "./map-capturer-context";
 import { Slider } from '@blueprintjs/core/lib/esm/components/slider/slider';
 
@@ -157,8 +153,6 @@ export interface IQuickPlotContainerState {
 export type QuickPlotProps = IQuickPlotContainerOwnProps & Partial<IQuickPlotContainerConnectedState> & Partial<IQuickPlotContainerDispatch>;
 
 export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<IQuickPlotContainerState>> implements IMapCapturerContextCallback {
-    private mapCapturerSource: olVectorSource;
-    private mapCapturerLayer: olVectorLayer;
     constructor(props: QuickPlotProps) {
         super(props);
         this.state = {
@@ -185,25 +179,25 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
     private onSubTitleChanged = (e: GenericEvent) => {
         this.setState({ subTitle: e.target.value });
     }
-    private onShowLegendChanged = (e: GenericEvent) => {
+    private onShowLegendChanged = () => {
         this.setState({ showLegend: !!!this.state.showLegend });
     }
-    private onShowNorthArrowChanged = (e: GenericEvent) => {
+    private onShowNorthArrowChanged = () => {
         this.setState({ showNorthBar: !!!this.state.showNorthBar });
     }
-    private onShowCoordinatesChanged = (e: GenericEvent) => {
+    private onShowCoordinatesChanged = () => {
         this.setState({ showCoordinates: !!!this.state.showCoordinates });
     }
-    private onShowScaleBarChanged = (e: GenericEvent) => {
+    private onShowScaleBarChanged = () => {
         this.setState({ showScaleBar: !!!this.state.showScaleBar });
     }
-    private onShowDisclaimerChanged = (e: GenericEvent) => {
+    private onShowDisclaimerChanged = () => {
         this.setState({ showDisclaimer: !!!this.state.showDisclaimer });
     }
     private onDpiChanged = (e: GenericEvent) => {
         this.setState({ dpi: e.target.value });
     }
-    private onAdvancedOptionsChanged = (e: GenericEvent) => {
+    private onAdvancedOptionsChanged = () => {
         this.setState({ showAdvanced: !!!this.state.showAdvanced });
     }
     private onScaleChanged = (e: GenericEvent) => {
@@ -218,14 +212,13 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
     private onRotationChanged = (value: number) => {
         this.setState({ rotation: value });
     }
-    private onGeneratePlot = (e: GenericEvent) => {
-
+    private onGeneratePlot = () => {
     }
     private getLocale(): string {
         return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
     private toggleMapCapturerLayer(props: QuickPlotProps, activeMapName: string, state: IQuickPlotContainerState) {
-        const { mapNames, setViewRotation, setViewRotationEnabled, config } = props;
+        const { mapNames, setViewRotation, setViewRotationEnabled } = props;
         const locale = this.getLocale();
         const bVisible: boolean = state.showAdvanced;
         const viewer = getViewer();
@@ -460,4 +453,4 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(QuickPlotContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(QuickPlotContainer);

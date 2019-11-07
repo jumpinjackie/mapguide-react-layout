@@ -6,7 +6,7 @@
  *
  * Where possible, use actions instead of this module
  */
-import { IMapViewer, IMapView } from "../api/common";
+import { IMapViewer } from "../api/common";
 import * as logger from "../utils/logger";
 
 let _fusionRoot: string | undefined;

@@ -3,7 +3,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 //const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
@@ -161,7 +161,8 @@ if (process.env.BUILD_MODE === 'production' || process.env.DEBUG_BUILD === '1') 
 const opts = (process.env.BUILD_MODE === 'production')
     ? {
         minimizer: [
-            new UglifyJsPlugin({
+            new TerserPlugin({
+                extractComments: true,
                 cache: true,
                 parallel: true,
                 sourceMap: true // set to true if you want JS source maps
@@ -173,6 +174,7 @@ const opts = (process.env.BUILD_MODE === 'production')
 
 module.exports = {
     optimization: opts,
+    mode: (process.env.BUILD_MODE === 'development' ? 'development' : 'none'),
     entry: {
         viewer: appEntries
     },
@@ -183,7 +185,7 @@ module.exports = {
         path: path.join(__dirname, 'viewer/dist'),
         filename: process.env.DEBUG_BUILD === '1' ? '[name]-debug.js' : '[name].js',
         publicPath: '/',
-        sourceMapFilename: process.env.DEBUG_BUILD === '1' ? '[name]-debug.js.map' : '[name].js.map',
+        sourceMapFilename: '[file].map[query]',
         chunkFilename: '[id].chunk.js'
     },
     resolve: {

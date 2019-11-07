@@ -12,7 +12,6 @@ import { PlaceholderComponent } from "../api/registry/component";
 import { tr } from "../api/i18n";
 import {
     GenericEvent,
-    GenericEventHandler,
     IDOMElementMetrics,
     FlyoutVisibilitySet
 } from "../api/common";

@@ -7,7 +7,6 @@ import * as React from "react";
 import * as PropTypes from "prop-types";
 import { IDOMElementMetrics } from "../api/common";
 import { MapLayer, MapGroup } from "../api/contracts/runtime-map";
-import { IMapGuideClient } from "../api/request-builder";
 
 export interface IApplicationContext {
     /**

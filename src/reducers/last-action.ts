@@ -3,20 +3,20 @@
 //
 // As suggested by the creator of redux:
 // https://github.com/reactjs/redux/issues/580
-import { ReduxAction, ReduxThunkedAction } from "../api/common";
 import { isAction } from "../utils/type-guards";
-import * as Constants from "../constants";
+import { ActionType } from '../constants/actions';
+import { ViewerAction } from '../actions/defs';
 
 export const NULL_ACTION = {};
 
-export function lastAction(state = null, action: ReduxAction|ReduxThunkedAction) {
+export function lastAction(state = null, action: ViewerAction) {
     if (isAction(action)) {
         switch (action.type) {
-            case Constants.MAP_SET_BUSY_COUNT:
-            case Constants.TASK_INVOKE_URL:
-            case Constants.MAP_SET_SELECTION:
-            case Constants.MAP_SET_MAPTIP:
-            case Constants.MAP_SET_ACTIVE_TOOL:
+            case ActionType.MAP_SET_BUSY_COUNT:
+            case ActionType.TASK_INVOKE_URL:
+            case ActionType.MAP_SET_SELECTION:
+            case ActionType.MAP_SET_MAPTIP:
+            case ActionType.MAP_SET_ACTIVE_TOOL:
                 return action;
         }
     }

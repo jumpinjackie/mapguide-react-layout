@@ -1,6 +1,6 @@
 import * as React from "react";
 import { tr } from "../../api/i18n";
-import { GenericEvent, GenericEventHandler } from "../../api/common";
+import { GenericEvent } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 
 /**

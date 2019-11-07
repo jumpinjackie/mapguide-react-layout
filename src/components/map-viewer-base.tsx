@@ -21,38 +21,29 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {
     GenericEvent,
-    GenericEventHandler,
     IMapView,
     ILayerManager,
-    ILayerInfo,
-    IExternalBaseLayer,
     DigitizerCallback,
     ActiveMapTool,
     Bounds,
     Coordinate,
-    ImageFormat,
     RefreshMode,
     ClientKind,
-    NOOP,
     LayerTransparencySet,
     MapLoadIndicatorPositioning,
     KC_ESCAPE,
     KC_U,
     SelectionVariant
 } from "../api/common";
-import {
-    IApplicationContext,
-    APPLICATION_CONTEXT_VALIDATION_MAP
-} from "./context";
 import * as RtMap from '../api/contracts/runtime-map';
 import debounce = require("lodash.debounce");
 import { areNumbersEqual } from '../utils/number';
 import * as logger from '../utils/logger';
-import { MgError, isSessionExpiredError } from '../api/error';
+import { isSessionExpiredError } from '../api/error';
 import { Client } from '../api/client';
-import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
+import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
-import { IInlineMenu, IItem, getEnabled } from '../components/toolbar';
+import { IItem, getEnabled } from '../components/toolbar';
 import { getAssetPath } from "../utils/asset";
 import {
     CURSOR_DIGITIZE_POINT,
@@ -69,7 +60,7 @@ import { isMenu } from '../utils/type-guards';
 import { tr } from "../api/i18n";
 const isMobile = require("ismobilejs");
 import { MenuComponent } from "./menu";
-import { IMapViewerContextCallback, IMapViewerContextProps, MapViewerContext, MgLayerSet } from "./map-viewer-context";
+import { IMapViewerContextCallback, IMapViewerContextProps, MapViewerContext, MgLayerSet, MgLayerManager } from "./map-viewer-context";
 import xor = require("lodash.xor");
 
 import olExtent from "ol/extent";
@@ -85,7 +76,6 @@ import View from "ol/view";
 import Feature from "ol/feature";
 import Overlay from "ol/overlay";
 import WKTFormat from "ol/format/wkt";
-import LayerBase from "ol/layer/base";
 import plugins from "ol/plugins";
 import PluginType from "ol/plugintype";
 
@@ -107,7 +97,6 @@ import Polygon from "ol/geom/polygon";
 import Point from "ol/geom/point";
 import LineString from "ol/geom/linestring";
 import Circle from "ol/geom/circle";
-import { BLANK_GIF_DATA_URI } from "../constants/index";
 import { safePropAccess } from '../utils/safe-prop';
 import { ContextMenuTarget } from '@blueprintjs/core/lib/esm/components/context-menu/contextMenuTarget';
 import { ContextMenu } from '@blueprintjs/core/lib/esm/components';
@@ -236,7 +225,7 @@ class SessionKeepAlive {
     private getSession: () => string;
     private client: Client;
     private interval: number;
-    private timeoutID: number;
+    private timeoutID: any;
     constructor(getSession: () => string, client: Client, onSessionExpired: () => void) {
         this.getSession = getSession;
         this.client = client;
@@ -312,12 +301,14 @@ export interface IMapViewerBaseState {
 /**
  * The base map viewer component
  *
+ * Since 0.12, this no longer implements ILayerManager
+ * 
  * @export
  * @class MapViewerBase
  * @extends {React.Component<IMapViewerBaseProps, any>}
  */
 @ContextMenuTarget
-export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<IMapViewerBaseState>> implements ILayerManager {
+export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<IMapViewerBaseState>> {
     /**
      * Indicates if touch events are supported.
      */
@@ -761,7 +752,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         }
     }
     componentDidMount() {
-        const { map, agentUri, imageFormat } = this.props;
+        const { map, agentUri, imageFormat, locale } = this.props;
         const mapNode = ReactDOM.findDOMNode(this);
 
         this._client = new Client(this.props.agentUri, this.props.agentKind);
@@ -776,8 +767,12 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             //layers: layers,
             //view: view,
             controls: [
-                new Attribution(),
-                new Rotate()
+                new Attribution({
+                    tipLabel: tr("OL_ATTRIBUTION_TIP", locale)
+                }),
+                new Rotate({
+                    tipLabel: tr("OL_RESET_ROTATION_TIP", locale)
+                })
             ],
             interactions: [
                 new DragRotate(),
@@ -804,7 +799,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         const callback = this.getCallback();
         this._mapContext = new MapViewerContext(this._map, callback);
         const activeLayerSet = this._mapContext.initLayerSet(this.props);
-        this._mapContext.initContext(activeLayerSet, this.props.overviewMapElementSelector);
+        this._mapContext.initContext(activeLayerSet, locale, this.props.overviewMapElementSelector);
         document.addEventListener("keydown", this.onKeyDown);
         document.addEventListener("keyup", this.onKeyUp);
 
@@ -1037,7 +1032,10 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         this.onRequestZoomToView(this.getViewForExtent(extent));
     }
     public isDigitizing(): boolean {
-        return this._activeDrawInteraction != null;
+        if (this._map == null)
+            return false;
+        const activeDraw = this._map.getInteractions().getArray().filter(inter => inter instanceof Draw)[0];
+        return activeDraw != null;
     }
     public digitizePoint(handler: DigitizerCallback<Point>, prompt?: string): void {
         const draw = new Draw({
@@ -1109,30 +1107,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         //return this._featureTooltip.isEnabled();
         return this._mapContext.isFeatureTooltipEnabled();
     }
-    public hasLayer(name: string): boolean {
-        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
-        return activeLayerSet.hasLayer(name);
-    }
-    public addLayer<T extends LayerBase>(name: string, layer: T, allowReplace?: boolean): T {
-        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
-        return activeLayerSet.addLayer(this._map, name, layer, allowReplace);
-    }
-    public removeLayer(name: string): LayerBase | undefined {
-        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
-        return activeLayerSet.removeLayer(this._map, name);
-    }
-    public getLayer<T extends LayerBase>(name: string, factory: () => T): T {
-        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
-        return activeLayerSet.getLayer(this._map, name, factory);
-    }
-    public moveUp(name: string): number {
-        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
-        return activeLayerSet.moveUp(this._map, name);
-    }
-    public moveDown(name: string): number {
-        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
-        return activeLayerSet.moveDown(this._map, name);
-    }
     public addInteraction<T extends Interaction>(interaction: T): T {
         this._map.addInteraction(interaction);
         return interaction;
@@ -1158,12 +1132,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     public updateSize() {
         this._map.updateSize();
     }
-    public getLayerManager(): ILayerManager { 
-        return this;
-    }
-    public getLayers(): ILayerInfo[] {
-        const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
-        return activeLayerSet.getCustomLayers();
+    public getLayerManager(mapName?: string): ILayerManager { 
+        const layerSet = this._mapContext.getLayerSet(mapName || this.props.map.Name, true, this.props);
+        return new MgLayerManager(this._map, layerSet);
     }
     public screenToMapUnits(x: number, y: number): [number, number] {
         let bAllowOutsideWindow = false;

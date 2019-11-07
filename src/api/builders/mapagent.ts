@@ -165,6 +165,11 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         return this.post<Query.QueryMapFeaturesResponse>(this.agentUri, { ...options, ...p1 });
     }
 
+    public queryMapFeatures_v4(options: Request.IQueryMapFeaturesOptions): Promise<Query.QueryMapFeaturesResponse> {
+        const p1 = { operation: "QUERYMAPFEATURES", version: "4.0.0" };
+        return this.post<Query.QueryMapFeaturesResponse>(this.agentUri, { ...options, ...p1 });
+    }
+
     public describeRuntimeMap(options: Request.IDescribeRuntimeMapOptions): Promise<RtMap.RuntimeMap> {
         const p1 = { operation: "DESCRIBERUNTIMEMAP", version: "3.0.0" };
         const url = this.stringifyGetUrl({ ...options, ...p1 });

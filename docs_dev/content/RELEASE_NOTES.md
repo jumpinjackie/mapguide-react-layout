@@ -1,10 +1,59 @@
-Latest
+0.12.5
 ======
 
+ * [#1000](https://github.com/jumpinjackie/mapguide-react-layout/issues/1000): Fix clicked hyperlinks in tooltips not opening in Task Pane
+ * [#990](https://github.com/jumpinjackie/mapguide-react-layout/issues/990): Default initial active viewer tool to "Pan" instead of un-set
+ * [#991](https://github.com/jumpinjackie/mapguide-react-layout/issues/991): Fix default format string for mouse coordinates component missing localized units display
+ * Fix drawing task pane sample
+
+0.12.4
+======
+
+ * [#989](https://github.com/jumpinjackie/mapguide-react-layout/issues/989): Fix scrambled font icons
+ * [#988](https://github.com/jumpinjackie/mapguide-react-layout/issues/988): Allow map to properly init if session id is passed, but runtime map was not created yet (can happen if loading a weblayout/appdef from a session resource id or the session id was pre-generated up front before the viewer was loaded)
+ * Fix some warnings around usage of the `history` module and redux dev tools
+ * Fix possible duplicated source maps as a result of recent versions of webpack
+
+0.12.3
+======
+
+ * [#968](https://github.com/jumpinjackie/mapguide-react-layout/issues/968): Fix initial view on appdef breaking viewer
+
+0.12.2
+======
+
+ * [#964](https://github.com/jumpinjackie/mapguide-react-layout/issues/964): Plug additional i18n holes in measurement units and OpenLayers controls
+
+0.12.1
+======
+
+ * [#960](https://github.com/jumpinjackie/mapguide-react-layout/issues/960): Fix react update exceeded depth errors in WMS (External) layer manager component
+ * [#961](https://github.com/jumpinjackie/mapguide-react-layout/issues/961): Refine test for QUERYMAPFEATURES 4.0.0 support
+
+0.12
+====
+
+ * [#804](https://github.com/jumpinjackie/mapguide-react-layout/issues/804): Selection sub-highlighting now only available for MapGuide Open Source 4.0 (and newer) servers.
+ * [#670](https://github.com/jumpinjackie/mapguide-react-layout/issues/670): Add support for XYZ layers defined in a Flexible Layout to match functional parity with Fusion
+ * [#587](https://github.com/jumpinjackie/mapguide-react-layout/issues/587): Plug remaining i18n holes in measure and WMS layer manager components.
+ * [#955](https://github.com/jumpinjackie/mapguide-react-layout/issues/955): Don't word wrap layer/group node labels in Legend component and provide tooltips for these labels
+ * [#940](https://github.com/jumpinjackie/mapguide-react-layout/issues/940): Remove non-geodesic measure option as it is mostly inaccurate.
+ * [#481](https://github.com/jumpinjackie/mapguide-react-layout/issues/481): Current selection set now also stashed to local storage to persist (and be restored) between browser refreshes.
+ * [#645](https://github.com/jumpinjackie/mapguide-react-layout/issues/645): Viewer CSS is now extracted out to a 
+ separate asset (instead of integrated with the JS bundle)
+   * As part of this change, workaround a potential infinite loop if the error icon asset could not be found by adding an inline base64 copy of this icon.
+ * [#596](https://github.com/jumpinjackie/mapguide-react-layout/issues/596): Add copy link button to ShareLinkToView widget (via `react-copy-to-clipboard`)
+ * [#631](https://github.com/jumpinjackie/mapguide-react-layout/issues/631): Fix init failure if appdef has an empty widget container
+ * [#595](https://github.com/jumpinjackie/mapguide-react-layout/issues/595): Fix line measurement total showing units in m^2
+ * [#593](https://github.com/jumpinjackie/mapguide-react-layout/issues/593): Fix measure tool starting measuring when switching measurement type
+ * [#643](https://github.com/jumpinjackie/mapguide-react-layout/issues/643): Added basic e2e test suite. Powered by `testcafe`
+ * [#698](https://github.com/jumpinjackie/mapguide-react-layout/issues/698): Fix memory leak due to dangling measure components being held on by the measure context after unmount
  * [#569](https://github.com/jumpinjackie/mapguide-react-layout/issues/569): Update to use `componentDidUpdate` instead of `componentWillReceiveProps`
- * Updated Blueprint to 1.36.0
- * Updated TypeScript to 2.8.3
- * Updated React to 16.3.2
+ * [#690](https://github.com/jumpinjackie/mapguide-react-layout/issues/690): Made redux actions more strongly-typed
+ * Updated Blueprint to 1.40.0
+ * Updated TypeScript to 3.6.3
+ * Updated React to 16.9.0
+ * Replaced `query-string` module with `qs`
  * Now built with webpack 4.x
 
 0.11.2

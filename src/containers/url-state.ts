@@ -1,4 +1,4 @@
-import { addUrlProps, UrlQueryParamTypes } from 'react-url-query';
+import { UrlQueryParamTypes } from 'react-url-query';
 
 export const urlPropsQueryConfig = {
     urlX: { type: UrlQueryParamTypes.number, queryParam: "x" },

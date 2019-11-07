@@ -7,19 +7,15 @@ import {
     ReduxDispatch,
     IApplicationState,
     ITaskPaneReducerState,
-    IToolbarReducerState,
     IConfigurationReducerState,
     IBranchedMapSubState,
     FlyoutVisibilitySet
 } from "../api/common";
 import { IItem } from "../components/toolbar";
 import { TaskPane, TASK_PANE_OVERLAY_BGCOLOR } from "../components/task-pane";
-import { RuntimeMap } from "../api/contracts/runtime-map";
-import { mapToolbarReference } from "../api/registry/command";
 import { invokeCommand } from "../actions/map";
 import * as TaskPaneActions from "../actions/taskpane";
 import { areUrlsSame, ensureParameters } from "../utils/url";
-import { processMenuItems } from "../utils/menu";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import * as FlyoutActions from "../actions/flyout";
 import {
@@ -144,7 +140,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         }
     }
     private canGoHome(): boolean {
-        const { taskpane, map, config } = this.props;
+        const { taskpane, map } = this.props;
         if (taskpane && taskpane.initialUrl) { //An initial URL was set
             const initUrl = map && map.runtimeMap && taskpane.initialUrl
                 ? ensureParameters(taskpane.initialUrl, map.runtimeMap.Name, map.runtimeMap.SessionId, this.getLocale())
@@ -172,7 +168,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         store: PropTypes.object
     };
     render(): JSX.Element {
-        const { taskpane, config, map, invokeCommand, maxHeight, flyouts, isResizing } = this.props;
+        const { taskpane, config, map, maxHeight, flyouts, isResizing } = this.props;
         if (taskpane && config && map && map.runtimeMap) {
             if (taskpane.navigation[taskpane.navIndex]) {
                 const flyoutStates: FlyoutVisibilitySet = {};
@@ -218,4 +214,4 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TaskPaneContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(TaskPaneContainer);

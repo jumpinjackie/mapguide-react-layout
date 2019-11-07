@@ -2,19 +2,15 @@ import * as React from "react";
 import { connect } from "react-redux";
 import {
     GenericEvent,
-    GenericEventHandler,
-    IMapViewer,
     ActiveMapTool,
     ReduxDispatch,
-    IApplicationState,
-    IConfigurationReducerState
+    IApplicationState
 } from "../api/common";
 import { getViewer } from "../api/runtime";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
-import { NBSP } from "../constants";
 import { setActiveTool } from "../actions/map";
 import { IMeasureCallback, MeasureSegment, MeasureContext, IMeasureComponent } from "./measure-context";
-import { sum, roundTo } from "../utils/number";
+import { roundTo } from "../utils/number";
 
 export interface IMeasureContainerProps {
 
@@ -32,7 +28,6 @@ export interface IMeasureContainerDispatch {
 
 export interface IMeasureContainerState {
     measuring: boolean;
-    geodesic: boolean;
     type: string;
     activeType: "LineString" | "Area";
     segmentTotal: number;
@@ -63,7 +58,6 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
         super(props);
         this.state = {
             measuring: false,
-            geodesic: false,
             type: "LineString"
         }
     }
@@ -79,10 +73,6 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
             }
         });
     }
-    private onGeodesicChanged = (e: GenericEvent) => {
-        const newValue = e.target.checked;
-        this.setState({ geodesic: newValue });
-    }
     private onClearMeasurements = (e: GenericEvent) => {
         e.preventDefault();
         const { activeMapName } = this.props;
@@ -94,10 +84,10 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
         }
         return false;
     }
-    private onStartMeasure = (e: GenericEvent) => {
+    private onStartMeasure = () => {
         this.startMeasure();
     }
-    private onEndMeasure = (e: GenericEvent) => {
+    private onEndMeasure = () => {
         this.endMeasure();
     }
     private startMeasure() {
@@ -136,7 +126,6 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
     getLocale(): string {
         return this.props.locale || DEFAULT_LOCALE;
     }
-    isGeodesic(): boolean { return !!this.state.geodesic; }
     componentDidMount() {
         let activeMeasure: MeasureContext | undefined;
         if (_measurements.length == 0) {
@@ -152,16 +141,27 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
                 }
             }
         } else {
+            for (const measure of _measurements) {
+                measure.setParent(this);
+            }
+
             activeMeasure = _measurements.filter(m => m.getMapName() === this.props.activeMapName)[0];
         }
 
-        if (activeMeasure) {
-            activeMeasure.activate(this);
+        if (activeMeasure && this.props.activeMapName) {
+            activeMeasure.activate(this.props.activeMapName, this);
         }
     }
     componentWillUnmount() {
+        const { activeMapName } = this.props;
+        this.setState({ measuring: false });
         for (const measure of _measurements) {
-            measure.deactivate();
+            measure.detachParent();
+        }
+        if (activeMapName) {
+            for (const measure of _measurements) {
+                measure.deactivate(activeMapName);
+            }
         }
     }
     componentDidUpdate(prevProps: MeasureProps) {
@@ -171,17 +171,17 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
             const oldMeasure = _measurements.filter(m => m.getMapName() === prevProps.activeMapName)[0];
             const newMeasure = _measurements.filter(m => m.getMapName() === nextProps.activeMapName)[0];
             if (oldMeasure) {
-                oldMeasure.deactivate();
+                oldMeasure.deactivate(prevProps.activeMapName!);
             }
             if (newMeasure) {
-                newMeasure.activate(this);
+                newMeasure.activate(nextProps.activeMapName!, this);
             }
             //Reset
             this.setState({ measuring: false });
         }
     }
     render(): JSX.Element {
-        const { measuring, geodesic, type } = this.state;
+        const { measuring, type } = this.state;
         const locale = this.getLocale();
         return <div className="component-measure">
             <form className="form-inline">
@@ -193,11 +193,6 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
                             <option value="Polygon">{tr("MEASUREMENT_TYPE_AREA", locale)}</option>
                         </select>
                     </div>
-                </label>
-                <label className="pt-control pt-checkbox">
-                    <input type="checkbox" checked={geodesic} onChange={this.onGeodesicChanged} />
-                    <span className="pt-control-indicator" />
-                    {tr("MEASUREMENT_USE_GEODESIC", locale)}
                 </label>
                 <div className="pt-button-group">
                     <button type="button" className="pt-button play" disabled={measuring} onClick={this.onStartMeasure}>{tr("MEASUREMENT_START", locale)}</button>
@@ -234,12 +229,12 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
                                                             if (this.state.activeType == "Area") {
                                                                 return <>
                                                                     <td><strong>{tr("MEASURE_TOTAL_AREA", locale)}</strong></td>
-                                                                    <td>{roundTo(this.state.segmentTotal, 4)}m<sup>2</sup></td>
+                                                                    <td><div dangerouslySetInnerHTML={{ __html: tr("UNIT_FMT_SQM", locale, { value: `${roundTo(this.state.segmentTotal, 4)}` }) }} /></td>
                                                                 </>
                                                             } else {
                                                                 return <>
                                                                     <td><strong>{tr("MEASURE_TOTAL_LENGTH", locale)}</strong></td>
-                                                                    <td>{roundTo(this.state.segmentTotal, 4)}m</td>
+                                                                    <td><div dangerouslySetInnerHTML={{ __html: tr("UNIT_FMT_M", locale, { value: `${roundTo(this.state.segmentTotal, 4)}` }) }} /></td>
                                                                 </>
                                                             }
                                                         })()}
@@ -258,4 +253,4 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MeasureContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(MeasureContainer);

@@ -1,21 +1,20 @@
-import * as Constants from "../constants";
 import {
-    IModalParameters,
     IModalComponentDisplayOptions,
-    IModalDisplayOptions,
-    ReduxAction
+    IModalDisplayOptions
 } from "../api/common";
+import { ActionType } from '../constants/actions';
+import { ICloseModalAction, IShowModalUrlAction, IShowComponentInModalAction } from './defs';
 
 /**
  * Displays the specified component in a modal dialog
  *
  * @export
  * @param {*} options Modal dialog display options
- * @returns {ReduxAction}
+ * @returns {IShowComponentInModalAction}
  */
-export function showModalComponent(options: IModalComponentDisplayOptions): ReduxAction {
+export function showModalComponent(options: IModalComponentDisplayOptions): IShowComponentInModalAction {
     return {
-        type: Constants.MODAL_SHOW_COMPONENT,
+        type: ActionType.MODAL_SHOW_COMPONENT,
         payload: {
             ...options
         }
@@ -27,11 +26,11 @@ export function showModalComponent(options: IModalComponentDisplayOptions): Redu
  *
  * @export
  * @param {*} options Modal dialog display options
- * @returns {ReduxAction}
+ * @returns {IShowModalUrlAction}
  */
-export function showModalUrl(options: IModalDisplayOptions): ReduxAction {
+export function showModalUrl(options: IModalDisplayOptions): IShowModalUrlAction {
     return {
-        type: Constants.MODAL_SHOW_URL,
+        type: ActionType.MODAL_SHOW_URL,
         payload: {
             ...options
         }
@@ -43,11 +42,11 @@ export function showModalUrl(options: IModalDisplayOptions): ReduxAction {
  *
  * @export
  * @param {*} options Modal dialog hide options
- * @returns {ReduxAction}
+ * @returns {ICloseModalAction}
  */
-export function hideModal(options: any): ReduxAction {
+export function hideModal(options: any): ICloseModalAction {
     return {
-        type: Constants.MODAL_CLOSE,
+        type: ActionType.MODAL_CLOSE,
         payload: options.name
     };
 }

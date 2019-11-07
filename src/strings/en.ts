@@ -1,4 +1,5 @@
 import { ILocalizedMessages } from "./msgdef";
+import { DEG } from '../constants';
 
 const STRINGS_EN: ILocalizedMessages = {
     "OK": "OK",
@@ -65,7 +66,6 @@ const STRINGS_EN: ILocalizedMessages = {
     "MEASUREMENT_TYPE": "Measurement Type",
     "MEASUREMENT_TYPE_LENGTH": "Length (LineString)",
     "MEASUREMENT_TYPE_AREA": "Area (Polygon)",
-    "MEASUREMENT_USE_GEODESIC": "Use geodesic measure",
     "MEASUREMENT_CLEAR": "Clear",
     "MEASUREMENT_CONTINUE_POLYGON": "Click to continue drawing the polygon. Double-click to finish.",
     "MEASUREMENT_CONTINUE_LINE": "Click to continue drawing the line. Double-click to finish.",
@@ -143,7 +143,42 @@ const STRINGS_EN: ILocalizedMessages = {
     "REMOVED_LAYER": "Removed layer: {name}",
     "ADD_WFS_LAYER": "Add WFS Layer",
     "SHARE_LINK_COPY_CLIPBOARD": "Copy Link",
-    "SHARE_LINK_COPIED": "Link copied"
+    "SHARE_LINK_COPIED": "Link copied",
+    "WMS_NO_LAYER_DESCRIPITON": "Enter a WMS Service URL above and click the button beside it to load available layers",
+    "UNIT_UNKNOWN": "Unknown",
+    "UNIT_INCHES": "Inches",
+    "UNIT_FEET": "Feet",
+    "UNIT_YARDS": "Yards",
+    "UNIT_MILES": "Miles",
+    "UNIT_NAUT_MILES": "Nautical Miles",
+    "UNIT_MILLIMETERS": "Millimeters",
+    "UNIT_CENTIMETERS": "Centimeters",
+    "UNIT_METERS": "Meters",
+    "UNIT_KILOMETERS": "Kilometers",
+    "UNIT_DEGREES": "Degrees",
+    "UNIT_DEC_DEGREES": "Decimal Degrees",
+    "UNIT_DMS": "Degrees Minutes Seconds",
+    "UNIT_PIXELS": "Pixels",
+    "UNIT_ABBR_UNKNOWN": "unk",
+    "UNIT_ABBR_INCHES": "in",
+    "UNIT_ABBR_FEET": "ft",
+    "UNIT_ABBR_YARDS": "yd",
+    "UNIT_ABBR_MILES": "mi",
+    "UNIT_ABBR_NAUT_MILES": "nm",
+    "UNIT_ABBR_MILLIMETERS": "mm",
+    "UNIT_ABBR_CENTIMETERS": "cm",
+    "UNIT_ABBR_METERS": "m",
+    "UNIT_ABBR_KILOMETERS": "km",
+    "UNIT_ABBR_DEGREES": DEG,
+    "UNIT_ABBR_DEC_DEGREES": DEG,
+    "UNIT_ABBR_DMS": DEG,
+    "UNIT_ABBR_PIXELS": "px",
+    "UNIT_FMT_M": "{value} m",
+    "UNIT_FMT_SQM": "{value} m&lt;sup&gt;2&lt;/sup&gt;",
+    "UNIT_FMT_SQKM": "{value} km&lt;sup&gt;2&lt;/sup&gt;",
+    "OL_ATTRIBUTION_TIP": "Attributions",
+    "OL_OVERVIEWMAP_TIP": "Overview Map",
+    "OL_RESET_ROTATION_TIP": "Reset Rotation"
 };
 
 export default STRINGS_EN;

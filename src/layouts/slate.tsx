@@ -1,6 +1,6 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
-import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
+import { DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import ToolbarContainer from "../containers/toolbar";
 import ViewerApiShim from "../containers/viewer-shim";
 import ModalLauncher from "../containers/modal-launcher";
@@ -10,27 +10,26 @@ import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import * as Runtime from "../api/runtime";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
-    NOOP,
     ReduxDispatch,
-    ReduxAction,
     IApplicationState,
     IConfigurationReducerState,
     IViewerCapabilities,
     ITemplateReducerState,
     getRuntimeMap
 } from "../api/common";
-import * as Constants from "../constants";
 import * as TemplateActions from "../actions/template";
 import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../components/accordion";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
 import InitWarningDisplay from "../containers/init-warning-display";
 import SplitterLayout from "react-splitter-layout";
+import { ActionType } from '../constants/actions';
+import { IElementState, ViewerAction } from '../actions/defs';
 
-function slateTemplateReducer(state: ITemplateReducerState, action: ReduxAction): ITemplateReducerState {
-    const data: boolean | TemplateActions.IElementState | undefined = action.payload;
+function slateTemplateReducer(state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
-        case Constants.FUSION_SET_LEGEND_VISIBILITY:
+        case ActionType.FUSION_SET_LEGEND_VISIBILITY:
             {
+                const data = action.payload;
                 if (typeof (data) == "boolean") {
                     let state1: Partial<ITemplateReducerState>;
                     if (data === true) {
@@ -41,8 +40,9 @@ function slateTemplateReducer(state: ITemplateReducerState, action: ReduxAction)
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.FUSION_SET_SELECTION_PANEL_VISIBILITY:
+        case ActionType.FUSION_SET_SELECTION_PANEL_VISIBILITY:
             {
+                const data = action.payload;
                 if (typeof (data) == "boolean") {
                     let state1: Partial<ITemplateReducerState>;
                     if (data === true) {
@@ -53,13 +53,14 @@ function slateTemplateReducer(state: ITemplateReducerState, action: ReduxAction)
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.TASK_INVOKE_URL:
+        case ActionType.TASK_INVOKE_URL:
             {
                 let state1: Partial<ITemplateReducerState> = { taskPaneVisible: true, selectionPanelVisible: false, legendVisible: false };
                 return { ...state, ...state1 };
             }
-        case Constants.FUSION_SET_TASK_PANE_VISIBILITY:
+        case ActionType.FUSION_SET_TASK_PANE_VISIBILITY:
             {
+                const data = action.payload;
                 if (typeof (data) == "boolean") {
                     let state1: Partial<ITemplateReducerState>;
                     if (data === true) {
@@ -70,8 +71,9 @@ function slateTemplateReducer(state: ITemplateReducerState, action: ReduxAction)
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.FUSION_SET_ELEMENT_STATE:
+        case ActionType.FUSION_SET_ELEMENT_STATE:
             {
+                const data = action.payload;
                 if (isElementState(data)) {
                     return { ...state, ...data };
                 }
@@ -91,7 +93,7 @@ export interface ISlateTemplateLayoutState {
 }
 
 export interface ISlateTemplateLayoutDispatch {
-    setElementStates: (states: TemplateActions.IElementState) => void;
+    setElementStates: (states: IElementState) => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>): Partial<ISlateTemplateLayoutState> {
@@ -108,16 +110,14 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<ISlateTemp
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ISlateTemplateLayoutDispatch> {
     return {
-        setElementStates: (states: TemplateActions.IElementState) => dispatch(TemplateActions.setElementStates(states))
+        setElementStates: (states: IElementState) => dispatch(TemplateActions.setElementStates(states))
     };
 }
 
 export type SlateLayoutTemplateProps = Partial<ISlateTemplateLayoutState> & Partial<ISlateTemplateLayoutDispatch>;
 
 const SIDEBAR_WIDTH = 250;
-const TOP_BAR_HEIGHT = 35;
 const STATUS_BAR_HEIGHT = 18;
-const SIDEBAR_PADDING = 0;
 
 export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProps, any> {
     constructor(props: SlateLayoutTemplateProps) {
@@ -130,7 +130,7 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
     private onDragEnd = () => {
         this.setState({ isResizing: false });
     }
-    private onSplitterChanged = (size: number) => {
+    private onSplitterChanged = () => {
         //With the introduction of the splitter, we can no longer rely on a map 
         //filling 100% of its space without needing to manually call updateSize(),
         //so we do it here
@@ -145,7 +145,7 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
     private onActivePanelChanged = (id: string) => {
         const { setElementStates } = this.props;
         if (setElementStates) {
-            const states: TemplateActions.IElementState = {
+            const states: IElementState = {
                 legendVisible: false,
                 taskPaneVisible: false,
                 selectionPanelVisible: false
@@ -170,21 +170,13 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
         setCustomTemplateReducer(slateTemplateReducer);
     }
     render(): JSX.Element {
-        const { config, map, capabilities } = this.props;
+        const { capabilities } = this.props;
         const { isResizing } = this.state;
-        let hasTaskPane = false;
-        let hasTaskBar = false;
         let hasStatusBar = false;
         let hasNavigator = false;
-        let hasSelectionPanel = false;
-        let hasLegend = false;
         if (capabilities) {
-            hasTaskPane = capabilities.hasTaskPane;
-            hasTaskBar = capabilities.hasTaskBar;
             hasStatusBar = capabilities.hasStatusBar;
             hasNavigator = capabilities.hasNavigator;
-            hasSelectionPanel = capabilities.hasSelectionPanel;
-            hasLegend = capabilities.hasLegend;
         }
         const locale = this.getLocale();
         const bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;
@@ -278,4 +270,4 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SlateTemplateLayout);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(SlateTemplateLayout);

@@ -1,17 +1,15 @@
-import * as Constants from "../constants";
 import {
     IConfigurationReducerState,
-    IExternalBaseLayer,
     ICoordinateConfiguration,
-    INameValuePair,
     IViewerCapabilities,
     UnitOfMeasure,
     KC_ESCAPE, 
     KC_U
 } from "../api/common";
 import * as logger from "../utils/logger";
-import { AnyAction } from "redux";
 import { DEFAULT_LOCALE } from "../api/i18n";
+import { ActionType } from '../constants/actions';
+import { ViewerAction } from '../actions/defs';
 
 export const CONFIG_INITIAL_STATE: IConfigurationReducerState = {
     agentUri: undefined,
@@ -49,9 +47,9 @@ export const CONFIG_INITIAL_STATE: IConfigurationReducerState = {
     } as IViewerCapabilities
 };
 
-export function configReducer(state = CONFIG_INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
+export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction) {
     switch (action.type) {
-        case Constants.INIT_APP:
+        case ActionType.INIT_APP:
             {
                 const payload: any = action.payload || {};
                 const maps = payload.maps;
@@ -105,15 +103,15 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: AnyAction = 
                     return newState;
                 }
             }
-        case Constants.MAP_SET_VIEW_ROTATION:
+        case ActionType.MAP_SET_VIEW_ROTATION:
             {
                 return { ...state, ...{ viewRotation: action.payload } };
             }
-        case Constants.MAP_SET_VIEW_ROTATION_ENABLED:
+        case ActionType.MAP_SET_VIEW_ROTATION_ENABLED:
             {
                 return { ...state, ...{ viewRotationEnabled: action.payload } };
             }
-        case Constants.MAP_SET_ACTIVE_MAP:
+        case ActionType.MAP_SET_ACTIVE_MAP:
             {
                 const data: any = action.payload;
                 if (data) {
@@ -123,11 +121,11 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: AnyAction = 
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.MAP_SET_VIEW_SIZE_UNITS:
+        case ActionType.MAP_SET_VIEW_SIZE_UNITS:
             {
                 return { ...state, ...{ viewSizeUnits: action.payload } };
             }
-        case Constants.MAP_SET_MANUAL_MAPTIP:
+        case ActionType.MAP_SET_MANUAL_MAPTIP:
             {
                 return { ...state, ...{ manualFeatureTooltips: action.payload } };
             }

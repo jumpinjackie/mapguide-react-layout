@@ -7,7 +7,6 @@ import {
     ReduxDispatch,
     IApplicationState,
     IConfigurationReducerState,
-    IInitErrorReducerState,
     IBranchedMapSubState,
     ClientKind,
     InitError,
@@ -23,6 +22,7 @@ import { IApplicationContext, APPLICATION_CONTEXT_VALIDATION_MAP } from "../comp
 import { safePropAccess } from '../utils/safe-prop';
 import { UrlValueChangeCallback, IAppUrlStateProps, urlPropsQueryConfig } from './url-state';
 import { addUrlProps } from 'react-url-query';
+import { IElementState } from '../actions/defs';
 
 /**
  * Callback interface for propagating changes to URL state
@@ -124,10 +124,10 @@ export interface IAppState {
  */
 export interface IAppDispatch {
     initLayout: (args: IInitAppLayout) => void;
-    setElementVisibility: (states: TemplateActions.IElementState) => void;
+    setElementVisibility: (states: IElementState) => void;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IAppProps): Partial<IAppState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IAppState> {
     let map;
     if (state.config.activeMapName) {
         map = state.mapState[state.config.activeMapName];
@@ -184,7 +184,6 @@ export class App extends React.Component<AppProps, any> {
             setElementVisibility,
             initialElementVisibility,
             initLayout,
-            agent,
             locale,
             session,
             fusionRoot,
@@ -204,7 +203,7 @@ export class App extends React.Component<AppProps, any> {
         } = this.props;
         if (setElementVisibility && initialElementVisibility) {
             const { taskpane, legend, selection } = initialElementVisibility;
-            const states: TemplateActions.IElementState = {
+            const states: IElementState = {
                 taskPaneVisible: typeof (taskpane) != 'undefined' ? taskpane : true,
                 legendVisible: typeof (legend) != 'undefined' ? legend : true,
                 selectionPanelVisible: typeof (selection) != 'undefined' ? selection : true
@@ -375,7 +374,7 @@ export class App extends React.Component<AppProps, any> {
         </div>;
     }
     render(): JSX.Element {
-        const { layout, config, error, map } = this.props;
+        const { layout, config, error } = this.props;
         const { isLoading } = this.state;
         if (error) {
             return <Error error={error} errorRenderer={this.initErrorRenderer} />
@@ -409,4 +408,4 @@ export class App extends React.Component<AppProps, any> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(addUrlProps<App>({ urlPropsQueryConfig })(App));
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(addUrlProps<App>({ urlPropsQueryConfig })(App));

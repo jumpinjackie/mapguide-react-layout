@@ -1,10 +1,9 @@
 import * as Constants from "../constants";
 import { Client } from "../api/client";
 import * as Runtime from "../api/runtime";
-import { ReduxDispatch, Dictionary, ICommand, IMapView, CommandTarget } from "../api/common";
+import { ReduxDispatch, Dictionary, IMapView, CommandTarget, ActiveMapTool } from "../api/common";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
 import { registerCommand, DefaultCommands } from "../api/registry/command";
-import { DefaultComponentNames } from "../api/registry/component";
 import {
     WebLayout,
     CommandDef,
@@ -28,10 +27,9 @@ import {
 import {
     IExternalBaseLayer,
     ReduxThunkedAction,
-    IMapViewer,
-    ReduxAction
+    IMapViewer
 } from "../api/common";
-import { strEndsWith } from "../utils/string";
+import { strEndsWith, strReplaceAll } from "../utils/string";
 import { IView } from "../api/contracts/common";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { tr } from "../api/i18n";
@@ -51,39 +49,15 @@ import {
     IUnknownCommandSpec,
     ICommandSpec
 } from "../api/registry/command-spec";
-
-interface IInitAppPayload {
-    activeMapName: string;
-    initialView?: IMapView;
-    initialUrl: string;
-    initialTaskPaneWidth?: number;
-    initialInfoPaneWidth?: number;
-    locale: string;
-    maps: Dictionary<MapInfo>;
-    config: any;
-    capabilities: {
-        hasTaskPane: boolean,
-        hasTaskBar: boolean,
-        hasStatusBar: boolean,
-        hasNavigator: boolean,
-        hasSelectionPanel: boolean,
-        hasLegend: boolean,
-        hasToolbar: boolean,
-        hasViewSize: boolean
-    },
-    initialShowLayers?: string[];
-    initialShowGroups?: string[];
-    initialHideLayers?: string[];
-    initialHideGroups?: string[];
-    toolbars: PreparedSubMenuSet;
-    warnings: string[]
-}
+import { MapInfo, IInitAppActionPayload, IAcknowledgeStartupWarningsAction, IRestoredSelectionSets } from './defs';
+import { ActionType } from '../constants/actions';
+import { getSelectionSet, clearSessionStore } from '../api/session-store';
 
 function isUIWidget(widget: any): widget is UIWidget {
     return widget.WidgetType === "UiWidgetType";
 }
 
-function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictionary<Widget>, locale: string, noToolbarLabels = false, canSupportFlyouts = true): (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[] {
+function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictionary<Widget>, locale: string, noToolbarLabels = false): (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[] {
     const converted = items.map(item => {
         switch (item.Function) {
             case "Widget":
@@ -113,7 +87,7 @@ function convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictiona
     return converted;
 }
 
-function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Dictionary<CommandDef>, locale: string, noToolbarLabels = true, canSupportFlyouts = true): (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[] {
+function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Dictionary<CommandDef>, locale: string, noToolbarLabels = true): (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[] {
     const converted = (items || []).map(item => {
         if (isCommandItem(item)) {
             const cmdDef: CommandDef = cmdsByKey[item.Command];
@@ -161,7 +135,7 @@ function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Diction
             return {
                 label: item.Label,
                 tooltip: item.Tooltip,
-                children: convertWebLayoutUIItems(item.SubItem, cmdsByKey, locale, false, false)
+                children: convertWebLayoutUIItems(item.SubItem, cmdsByKey, locale, false)
             } as IFlyoutSpec;
         } else {
             assertNever(item);
@@ -255,16 +229,8 @@ function getDesiredTargetMapName(mapDef: string) {
     }
 }
 
-type MapInfo = {
-    mapGroupId: string;
-    map: RuntimeMap;
-    initialView: IMapView | null;
-    externalBaseLayers: IExternalBaseLayer[];
-}
-
 function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<RuntimeMap>, config: any, warnings: string[]): Dictionary<MapInfo> {
     const dict: Dictionary<MapInfo> = {};
-    const mgGroups: Dictionary<MapSetGroup> = {};
     if (appDef.MapSet) {
         for (const mgGroup of appDef.MapSet.MapGroup) {
             let mapName: string | undefined;
@@ -359,7 +325,7 @@ function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<Runtime
                                     name: name,
                                     kind: "OSM",
                                     options: options
-                                })
+                                });
                             }
                             break;
                         case "Stamen":
@@ -374,7 +340,28 @@ function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<Runtime
                                     options: {
                                         layer: type
                                     }
-                                })
+                                });
+                            }
+                            break;
+                        case "XYZ":
+                            {
+                                //HACK: De-arrayification of arbitrary extension elements
+                                //is shallow (hence name/type is string[]). Do we bother to fix this?
+                                const name = map.Extension.Options.name[0];
+                                const type = map.Extension.Options.type[0];
+                                //NOTE: From a fusion appdef, we're expecting placeholder tokens to be in ${this_format} instead of
+                                //{this_format} as the primary consumer is the Fusion viewer that is based on OpenLayers 2
+                                //As we're not using OL2, but OL4+ the expected format is {this_format}, so we need to convert these
+                                //placeholder tokens
+                                const urls = (map.Extension.Options.urls || []).map((s: string) => strReplaceAll(s, "${", "{"));
+                                externalBaseLayers.push({
+                                    name: name,
+                                    kind: "XYZ",
+                                    options: {
+                                        layer: type,
+                                        urls: urls
+                                    }
+                                });
                             }
                             break;
                     }
@@ -386,7 +373,7 @@ function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<Runtime
             }
 
             //Setup initial view
-            let initialView: IView | null = null;
+            let initialView: IView | undefined;
             if (mgGroup.InitialView) {
                 initialView = {
                     x: mgGroup.InitialView.CenterX,
@@ -408,19 +395,6 @@ function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<Runtime
     return dict;
 }
 
-function getMapGuideMapGroup(appDef: ApplicationDefinition): MapSetGroup[] {
-    const configs = [] as MapSetGroup[];
-    if (appDef.MapSet) {
-        for (const mg of appDef.MapSet.MapGroup) {
-            for (const map of mg.Map) {
-                if (map.Type == "MapGuide") {
-                    configs.push(mg);
-                }
-            }
-        }
-    }
-    return configs;
-}
 
 function getMapGuideConfiguration(appDef: ApplicationDefinition): [string, MapConfiguration][] {
     const configs = [] as [string, MapConfiguration][];
@@ -468,7 +442,7 @@ function getExtraProjectionsFromFlexLayout(appDef: ApplicationDefinition): strin
 function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: IInitAsyncOptions): void {
     if (error.stack) {
         dispatch({
-            type: Constants.INIT_ERROR,
+            type: ActionType.INIT_ERROR,
             payload: {
                 error: {
                     message: error.message,
@@ -480,7 +454,7 @@ function processAndDispatchInitError(error: Error, includeStack: boolean, dispat
         });
     } else {
         dispatch({
-            type: Constants.INIT_ERROR,
+            type: ActionType.INIT_ERROR,
             payload: {
                 error: {
                     message: error.message,
@@ -537,11 +511,33 @@ export interface IInitAppLayout {
     onInit?: (viewer: IMapViewer) => void;
 }
 
-interface IInitAsyncOptions extends IInitAppLayout {
+export interface IInitAsyncOptions extends IInitAppLayout {
     locale: string;
 }
 
 type MapToLoad = { name: string, mapDef: string };
+
+async function tryDescribeRuntimeMapAsync(client: Client, mapName: string, session: string, mapDef: string) {
+    try {
+        const map = await client.describeRuntimeMap({
+            mapname: mapName,
+            requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+            session: session
+        });
+        return map;
+    } catch (e) {
+        if (e.message === "MgResourceNotFoundException") {
+            const map = await client.createRuntimeMap({
+                mapDefinition: mapDef,
+                requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+                session: session,
+                targetMapName: mapName
+            });
+            return map;
+        }
+        throw e;
+    }
+}
 
 async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, opts: IInitAsyncOptions, res: TLayout, mapDefSelector: (res: TLayout) => MapToLoad[], projectionSelector: (res: TLayout) => string[], sessionWasReused: boolean): Promise<[Dictionary<RuntimeMap>, string[]]> {
     const mapDefs = mapDefSelector(res);
@@ -551,12 +547,8 @@ async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, 
         //sessionWasReused is a hint whether to create a new runtime map, or recover the last runtime map state from the given map name
         if (sessionWasReused) {
             //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
-            logger.info(`Session ID re-used. Recovering map state of: ${m.name}`);
-            mapPromises.push(client.describeRuntimeMap({
-                mapname: m.name,
-                requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-                session: session
-            }));
+            logger.info(`Session ID re-used. Attempting recovery of map state of: ${m.name}`);
+            mapPromises.push(tryDescribeRuntimeMapAsync(client, m.name, session, m.mapDef));
         } else {
             logger.info(`Creating runtime map state (${m.name}) for: ${m.mapDef}`);
             mapPromises.push(client.createRuntimeMap({
@@ -594,8 +586,8 @@ async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, 
     return [mapsByName, warnings];
 }
 
-async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOptions, session: string, client: Client, sessionWasReused: boolean): Promise<IInitAppPayload> {
-    const [mapsByName, warnings] = await createRuntimeMapsAsync(client, session, opts, webLayout, wl => [ { name: getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId } ], wl => [], sessionWasReused);
+async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOptions, session: string, client: Client, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
+    const [mapsByName, warnings] = await createRuntimeMapsAsync(client, session, opts, webLayout, wl => [ { name: getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId } ], () => [], sessionWasReused);
     const cmdsByKey: any = {};
     //Register any InvokeURL and Search commands
     for (const cmd of webLayout.CommandSet.Command) {
@@ -707,11 +699,12 @@ async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOpti
             hasViewSize: webLayout.StatusBar.Visible
         },
         toolbars: tb,
-        warnings: warnings
+        warnings: warnings,
+        initialActiveTool: ActiveMapTool.Pan
     };
 }
 
-async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsyncOptions, session: string, client: Client, sessionWasReused: boolean): Promise<IInitAppPayload> {
+async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsyncOptions, session: string, client: Client, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
     const [mapsByName, warnings] = await createRuntimeMapsAsync(client, session, opts, appDef, fl => getMapDefinitionsFromFlexLayout(fl), fl => getExtraProjectionsFromFlexLayout(fl), sessionWasReused);
     let initialTask: string;
     let taskPane: Widget|undefined;
@@ -834,11 +827,12 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
             hasViewSize: (viewSize != null)
         },
         toolbars: tb,
-        warnings: warnings
+        warnings: warnings,
+        initialActiveTool: ActiveMapTool.Pan
     };
 }
 
-async function sessionAcquiredAsync(opts: IInitAsyncOptions, session: string, client: Client, sessionWasReused: boolean): Promise<IInitAppPayload> {
+async function sessionAcquiredAsync(opts: IInitAsyncOptions, session: string, client: Client, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
     if (!opts.resourceId) {
         throw new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", opts.locale));
     } else if (strEndsWith(opts.resourceId, "WebLayout")) {
@@ -852,7 +846,7 @@ async function sessionAcquiredAsync(opts: IInitAsyncOptions, session: string, cl
     }
 } 
 
-async function initAsync(options: IInitAsyncOptions, client: Client): Promise<IInitAppPayload> {
+async function initAsync(options: IInitAsyncOptions, client: Client): Promise<IInitAppActionPayload> {
     //English strings are baked into this bundle. For non-en locales, we assume a strings/{locale}.json
     //exists for us to fetch
     if (options.locale != DEFAULT_LOCALE) {
@@ -874,7 +868,25 @@ async function initAsync(options: IInitAsyncOptions, client: Client): Promise<II
         logger.info(`Re-using session: ${session}`);
         sessionWasReused = true;
     }
-    return await sessionAcquiredAsync(options, session, client, sessionWasReused);
+    const payload = await sessionAcquiredAsync(options, session, client, sessionWasReused);
+    if (sessionWasReused) {
+        let initSelections: IRestoredSelectionSets = {};
+        for (const mapName in payload.maps) {
+            const sset = await getSelectionSet(session, mapName);
+            if (sset) {
+                initSelections[mapName] = sset;
+            }
+        }
+        payload.initialSelections = initSelections;
+        try {
+            //In the interest of being a responsible citizen, clean up all selection-related stuff from
+            //session store
+            await clearSessionStore();
+        } catch (e) {
+
+        }
+    }
+    return payload;
 }
 
 /**
@@ -888,6 +900,9 @@ export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
     const opts: IInitAsyncOptions = { ...options };
     return (dispatch, getState) => {
         const args = getState().config;
+        //TODO: Fetch and init the string bundle earlier if "locale" is present
+        //so the English init messages are seen only for a blink if requesting a
+        //non-english string bundle
         if (args.agentUri && args.agentKind) {
             const client = new Client(args.agentUri, args.agentKind);
             initAsync(opts, client).then(payload => {
@@ -905,7 +920,7 @@ export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
                 initPayload.initialShowGroups = opts.initialShowGroups;
                 initPayload.initialShowLayers = opts.initialShowLayers;
                 dispatch({
-                    type: Constants.INIT_APP,
+                    type: ActionType.INIT_APP,
                     payload
                 });
                 if (options.onInit) {
@@ -921,8 +936,8 @@ export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
     };
 }
 
-export function acknowledgeInitWarnings(): ReduxAction {
+export function acknowledgeInitWarnings(): IAcknowledgeStartupWarningsAction {
     return {
-        type: Constants.INIT_ACKNOWLEDGE_WARNINGS
+        type: ActionType.INIT_ACKNOWLEDGE_WARNINGS
     }
 }

@@ -1,9 +1,6 @@
 import * as React from "react";
 import {
-    ReduxDispatch,
-    IApplicationState,
     GenericEvent,
-    GenericEventHandler,
     WmsCapabilitiesDocument,
     WMSLayerStyle
 } from "../../api/common";
@@ -74,7 +71,7 @@ export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
             viewer.toastSuccess("icon-success", tr("ADDED_LAYER", locale, { name: name }));
         }
     }
-    private onLoadCaps = (e: GenericEvent) => {
+    private onLoadCaps = () => {
         const { wmsUrl } = this.state;
         this.setState({
             caps: null,
@@ -90,7 +87,8 @@ export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
                     caps: null,
                     error: `Unsupported WMS version: ${caps.version}`
                 });
-            } else {
+            }
+            else {
                 this.setState({
                     loadingCapabilities: false,
                     caps: caps,
@@ -149,7 +147,7 @@ export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
                                 </div>
                                 <h4 className="pt-non-ideal-state-title">{tr("ADD_WMS_LAYER_NO_LAYERS", locale)}</h4>
                                 <div className="pt-non-ideal-state-description">
-                                    Enter a WMS Service URL and click the <span className="pt-icon arrow-right" /> button to load available layers
+                                    {tr("WMS_NO_LAYER_DESCRIPITON", locale)}
                                 </div>
                             </div>;
                         }

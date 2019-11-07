@@ -116,7 +116,9 @@ export class WmsCapabilitiesTree extends React.Component<IWmsCapabilitiesTreePro
     }
     componentDidUpdate(prevProps: IWmsCapabilitiesTreeProps) {
         const nextProps = this.props;
-        this.setState({ content: this.convertToTreeNodes(nextProps.capabilities, nextProps.locale) });
+        if (prevProps.capabilities != nextProps.capabilities || prevProps.locale != nextProps.locale) {
+            this.setState({ content: this.convertToTreeNodes(nextProps.capabilities, nextProps.locale) });
+        }
     }
     render(): JSX.Element {
         return <Tree contents={this.state.content}

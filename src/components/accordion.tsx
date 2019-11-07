@@ -1,8 +1,7 @@
 import * as React from "react";
-import Measure from "react-measure";
+import Measure, { ContentRect } from "react-measure";
 import {
-    GenericEvent,
-    GenericEventHandler
+    GenericEvent
 } from "../api/common";
 import { safePropAccess } from '../utils/safe-prop';
 import { Icon } from '@blueprintjs/core/lib/esm/components/icon/icon';
@@ -84,6 +83,9 @@ export class Accordion extends React.Component<IAccordionProps, any> {
         }
         return null;
     }
+    private onResize = (contentRect: ContentRect) => {
+        this.setState({ dim: contentRect.entry });
+    }
     componentDidUpdate(prevProps: IAccordionProps) {
         const nextProps = this.props;
         if (prevProps.activePanelId != nextProps.activePanelId) {
@@ -96,10 +98,7 @@ export class Accordion extends React.Component<IAccordionProps, any> {
     render(): JSX.Element {
         const { openPanel, dim } = this.state;
         const { panels, style, isResizing } = this.props;
-        return <Measure bounds onResize={(contentRect) => {
-            console.log(contentRect);
-            this.setState({ dim: contentRect.entry })
-          }}>
+        return <Measure bounds onResize={this.onResize}>
             {({ measureRef }) => {
                 return <div ref={measureRef} style={style} className="component-accordion">
                     {panels.map(p => {

@@ -2,7 +2,7 @@ import * as React from "react";
 // According to this (https://github.com/mzabriskie/react-draggable/issues/246#issuecomment-299698481), typings
 // only works if module type is "es6". This is not the case for us, so just use untyped require()
 import Draggable from "react-draggable";
-import { GenericEvent, GenericEventHandler } from "../api/common";
+import { GenericEvent } from "../api/common";
 
 /**
  * [left, top, right, bottom]

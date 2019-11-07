@@ -70,4 +70,4 @@ export class InitWarningDisplay extends React.Component<InitWarningDisplayProps,
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(InitWarningDisplay);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(InitWarningDisplay);

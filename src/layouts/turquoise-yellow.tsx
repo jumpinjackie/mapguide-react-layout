@@ -1,6 +1,6 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
-import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
+import { DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import ToolbarContainer from "../containers/toolbar";
 import ViewerApiShim from "../containers/viewer-shim";
 import ModalLauncher from "../containers/modal-launcher";
@@ -9,8 +9,6 @@ import { connect } from "react-redux";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
-    NOOP,
-    ReduxAction,
     ReduxDispatch,
     IApplicationState,
     IConfigurationReducerState,
@@ -18,7 +16,6 @@ import {
     ITemplateReducerState,
     getRuntimeMap
 } from "../api/common";
-import * as Constants from "../constants";
 import * as TemplateActions from "../actions/template";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
 import InitWarningDisplay from "../containers/init-warning-display";
@@ -26,12 +23,14 @@ import * as Runtime from "../api/runtime";
 import SplitterLayout from "react-splitter-layout";
 import { Tabs } from '@blueprintjs/core/lib/esm/components/tabs/tabs';
 import { Tab } from '@blueprintjs/core/lib/esm/components/tabs/tab';
+import { IElementState, ViewerAction } from '../actions/defs';
+import { ActionType } from '../constants/actions';
 
-function turquoiseYellowTemplateReducer(state: ITemplateReducerState, action: ReduxAction): ITemplateReducerState {
-    const data: boolean | TemplateActions.IElementState | undefined = action.payload;
+function turquoiseYellowTemplateReducer(state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
-        case Constants.FUSION_SET_LEGEND_VISIBILITY:
+        case ActionType.FUSION_SET_LEGEND_VISIBILITY:
             {
+                const data = action.payload;
                 if (typeof (data) == "boolean") {
                     let state1: Partial<ITemplateReducerState>;
                     if (data === true) {
@@ -42,8 +41,9 @@ function turquoiseYellowTemplateReducer(state: ITemplateReducerState, action: Re
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.FUSION_SET_SELECTION_PANEL_VISIBILITY:
+        case ActionType.FUSION_SET_SELECTION_PANEL_VISIBILITY:
             {
+                const data = action.payload;
                 if (typeof (data) == "boolean") {
                     let state1: Partial<ITemplateReducerState>;
                     if (data === true) {
@@ -54,13 +54,14 @@ function turquoiseYellowTemplateReducer(state: ITemplateReducerState, action: Re
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.TASK_INVOKE_URL:
+        case ActionType.TASK_INVOKE_URL:
             {
                 let state1: Partial<ITemplateReducerState> = { taskPaneVisible: true, selectionPanelVisible: false, legendVisible: false };
                 return { ...state, ...state1 };
             }
-        case Constants.FUSION_SET_TASK_PANE_VISIBILITY:
+        case ActionType.FUSION_SET_TASK_PANE_VISIBILITY:
             {
+                const data = action.payload;
                 if (typeof (data) == "boolean") {
                     let state1: Partial<ITemplateReducerState>;
                     if (data === true) {
@@ -71,8 +72,9 @@ function turquoiseYellowTemplateReducer(state: ITemplateReducerState, action: Re
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.FUSION_SET_ELEMENT_STATE:
+        case ActionType.FUSION_SET_ELEMENT_STATE:
             {
+                const data = action.payload;
                 if (isElementState(data)) {
                     return { ...state, ...data };
                 }
@@ -97,7 +99,7 @@ export interface ITurquoiseYellowTemplateLayoutState {
 }
 
 export interface ITurquoiseYellowTemplateLayoutDispatch {
-    setElementStates: (states: TemplateActions.IElementState) => void;
+    setElementStates: (states: IElementState) => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>): Partial<ITurquoiseYellowTemplateLayoutState> {
@@ -113,7 +115,7 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<ITurquoise
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ITurquoiseYellowTemplateLayoutDispatch> {
     return {
-        setElementStates: (states: TemplateActions.IElementState) => dispatch(TemplateActions.setElementStates(states))
+        setElementStates: (states: IElementState) => dispatch(TemplateActions.setElementStates(states))
     };
 }
 
@@ -130,7 +132,7 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
     private onDragEnd = () => {
         this.setState({ isResizing: false });
     }
-    private onSplitterChanged = (size: number) => {
+    private onSplitterChanged = () => {
         //With the introduction of the splitter, we can no longer rely on a map 
         //filling 100% of its space without needing to manually call updateSize(),
         //so we do it here
@@ -145,7 +147,7 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
     private onActiveTabChanged = (id: string) => {
         const { setElementStates } = this.props;
         if (setElementStates) {
-            const states: TemplateActions.IElementState = {
+            const states: IElementState = {
                 legendVisible: false,
                 taskPaneVisible: false,
                 selectionPanelVisible: false
@@ -170,17 +172,15 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
         setCustomTemplateReducer(turquoiseYellowTemplateReducer);
     }
     render(): JSX.Element {
-        const { config, map, capabilities } = this.props;
+        const { capabilities } = this.props;
         const { isResizing } = this.state;
         let hasTaskPane = false;
-        let hasTaskBar = false;
         let hasStatusBar = false;
         let hasNavigator = false;
         let hasSelectionPanel = false;
         let hasLegend = false;
         if (capabilities) {
             hasTaskPane = capabilities.hasTaskPane;
-            hasTaskBar = capabilities.hasTaskBar;
             hasStatusBar = capabilities.hasStatusBar;
             hasNavigator = capabilities.hasNavigator;
             hasSelectionPanel = capabilities.hasSelectionPanel;
@@ -280,4 +280,4 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TurquoiseYellowTemplateLayout);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(TurquoiseYellowTemplateLayout);

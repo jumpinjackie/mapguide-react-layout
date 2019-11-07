@@ -1,4 +1,4 @@
-version: 0.11.2.{build}
+version: 0.12.5.{build}
 shallow_clone: true
 # Don't actually build. This is not a .net project
 build: off
@@ -22,11 +22,12 @@ before_build:
   - echo APPVEYOR_REPO_COMMIT_TIMESTAMP %APPVEYOR_REPO_COMMIT_TIMESTAMP%
 
 environment:
-  nodejs_version: "6"
+  nodejs_version: "8"
 
 install:
   # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node $env:nodejs_version
+  - choco install yarn
   # A pre-existing yarn.lock appears to confuse yarn with regards to @types packages, namely a * version
   # does not go for the latest available version of said package when doing a "yarn install" with the
   # new package version with a pre-existing yarn.lock. This causes a whole load of bogus duplicate identifer
@@ -41,6 +42,7 @@ install:
   # - del yarn.lock
   # install packages, this will also do a production build as a postinstall
   - yarn install
+  - yarn audit
 
 test_script:
   - yarn --version
@@ -56,7 +58,7 @@ deploy:
   description: 'Release $(appveyor_repo_tag_name) ($(appveyor_build_version))'
   provider: GitHub
   auth_token:
-    secure: d+aY+YJPCp6KzWE2XcGKdp5XFXoh66H7le3SJiqxtAHDZ1P2+kw/PgIF5Unj3kxG
+    secure: Dw0UkS+M9jDa7xofORbKLKgTBWZsBTN56QA7xD7F0pCCdNqnLH3K5oFk3smWjRfX
   artifact: dist
   draft: true
   prerelease: true

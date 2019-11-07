@@ -1,6 +1,5 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
-import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
 import ToolbarContainer from "../containers/toolbar";
 import ViewerApiShim from "../containers/viewer-shim";
 import ModalLauncher from "../containers/modal-launcher";
@@ -10,8 +9,6 @@ import { tr } from "../api/i18n";
 import * as Constants from "../constants";
 import {
     GenericEvent,
-    GenericEventHandler,
-    ReduxDispatch,
     IApplicationState,
     IViewerReducerState,
     IConfigurationReducerState,
@@ -19,9 +16,9 @@ import {
     ITemplateReducerState
 } from "../api/common";
 import InitWarningDisplay from "../containers/init-warning-display";
+import { ActionType } from '../constants/actions';
 
 const SIDEBAR_WIDTH = 250;
-const LEGEND_HEIGHT = 350;
 
 const SidebarHeader = (props: any) => {
     const sbHeaderStyle: React.CSSProperties = {
@@ -65,12 +62,12 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
         const lastAction = nextProps.lastAction;
         if (lastAction != prevProps.lastAction) {
             switch (lastAction.type) {
-                case Constants.TASK_INVOKE_URL:
+                case ActionType.TASK_INVOKE_URL:
                     {
                         nextProps.onActivateTab("tasks", false);
                     }
                     break;
-                case Constants.MAP_SET_SELECTION:
+                case ActionType.MAP_SET_SELECTION:
                     break;
             }
         }
@@ -210,7 +207,7 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<ISidebarLa
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch) {
+function mapDispatchToProps() {
     return {
 
     };
@@ -266,13 +263,12 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<S
     }
     render(): JSX.Element {
         const { collapsed, activeTab } = this.state;
-        const { viewer, capabilities, config, templateState } = this.props;
+        const { viewer, capabilities, config } = this.props;
         if (!viewer || !capabilities || !config) {
             return <div />;
         }
         const {
             hasTaskPane,
-            hasTaskBar,
             hasStatusBar,
             hasNavigator,
             hasSelectionPanel,
@@ -280,8 +276,6 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<S
             hasViewSize,
             hasToolbar
         } = capabilities;
-        let sbWidth = SIDEBAR_WIDTH;
-        let tpWidth = SIDEBAR_WIDTH;
 
         return <div style={{ width: "100%", height: "100%" }}>
             <Sidebar position="left"
@@ -348,4 +342,4 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<S
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SidebarLayout);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(SidebarLayout);

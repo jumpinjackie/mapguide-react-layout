@@ -2,14 +2,13 @@ import * as React from "react";
 import { tr } from "../api/i18n";
 // According to this (https://github.com/mzabriskie/react-draggable/issues/246#issuecomment-299698481), typings
 // only works if module type is "es6". This is not the case for us, so just use untyped require()
-import Draggable, { DraggableEventHandler } from "react-draggable";
+import Draggable from "react-draggable";
 import { getFiniteScaleIndexForScale } from "../utils/number";
 import {
     IMG_SLIDER,
     IMG_SLIDER_SCALE,
     GIF_SPINNER
 } from "../constants/assets";
-import { GenericEventHandler, GenericEvent } from "../api/common";
 
 export enum ZoomDirection {
     In,
@@ -36,7 +35,6 @@ interface DraggableData {
 
 const VERT_START = 10;
 const VERT_SPAN = 81;  //This is the pixel height of the maximum draggable scale range
-const VERT_BEGIN = 60; //This position represents the starting scale (ie. initial view)
 
 const LN9 = Math.log(9);
 
@@ -81,25 +79,25 @@ export class Navigator extends React.Component<INavigatorProps, any> {
             isDragging: false
         };
     }
-    private onPanEast = (e: GenericEvent) => {
+    private onPanEast = () => {
         this.props.onPan(PanDirection.East);
     }
-    private onPanWest = (e: GenericEvent) => {
+    private onPanWest = () => {
         this.props.onPan(PanDirection.West);
     }
-    private onPanSouth = (e: GenericEvent) => {
+    private onPanSouth = () => {
         this.props.onPan(PanDirection.South);
     }
-    private onPanNorth = (e: GenericEvent) => {
+    private onPanNorth = () => {
         this.props.onPan(PanDirection.North);
     }
-    private onZoomOut = (e: GenericEvent) => {
+    private onZoomOut = () => {
         this.props.onZoom(ZoomDirection.Out);
     }
-    private onZoomIn = (e: GenericEvent) => {
+    private onZoomIn = () => {
         this.props.onZoom(ZoomDirection.In);
     }
-    private onStart = (e: MouseEvent, data: DraggableData) => {
+    private onStart = (e: MouseEvent) => {
         e.preventDefault();
         //console.log(`Drag start (dy: ${data.deltaY})`);
         this.setState({ isDragging: true, previewPos: this.state.pos });
@@ -110,10 +108,8 @@ export class Navigator extends React.Component<INavigatorProps, any> {
         const pos = this.state.previewPos;
         this.setState({ previewPos: pos + data.deltaY });
     }
-    private onStop = (e: MouseEvent, data: DraggableData) => {
+    private onStop = (e: MouseEvent) => {
         e.preventDefault();
-        //console.log(`Drag stop (dy: ${data.deltaY})`);
-        const posDelta = this.state.previewPos - this.state.pos;
         const newScale = this.calculateScaleForPos(this.state.previewPos);
         //console.log(`posDelta: ${posDelta}`);
         this.setState({ isDragging: false, pos: this.state.previewPos });

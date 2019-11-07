@@ -1,4 +1,4 @@
-import * as Constants from "../constants";
+import { ActionType } from '../constants/actions';
 const createLogger = require("redux-logger").createLogger;
 
 const logger = createLogger({
@@ -12,9 +12,9 @@ const logger = createLogger({
             type !== 'redux-form/CHANGE' &&
             type !== 'redux-form/FOCUS' &&
             type !== 'redux-form/TOUCH' &&
-            type !== Constants.MAP_RESIZED &&
-            type !== Constants.UPDATE_MOUSE_COORDINATES &&
-            type !== Constants.MAP_SET_BUSY_COUNT;
+            type !== ActionType.MAP_RESIZED &&
+            type !== ActionType.UPDATE_MOUSE_COORDINATES &&
+            type !== ActionType.MAP_SET_BUSY_COUNT;
     },
 });
 

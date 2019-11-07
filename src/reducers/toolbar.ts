@@ -1,22 +1,22 @@
-import * as Constants from "../constants";
 import { IToolbarReducerState } from "../api/common";
-import { AnyAction } from "redux";
 import update = require("react-addons-update");
+import { ActionType } from '../constants/actions';
+import { ViewerAction } from '../actions/defs';
 
 export const TOOLBAR_INITIAL_STATE: IToolbarReducerState = {
     toolbars: {},
     flyouts: {}
 };
 
-export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: AnyAction = { type: '', payload: null }) {
-    const payload: any = action.payload || {};
+export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: ViewerAction) {
     switch (action.type) {
-        case Constants.INIT_APP:
+        case ActionType.INIT_APP:
             {
-                return { ...state, ...payload.toolbars };
+                return { ...state, ...action.payload.toolbars };
             }
-        case Constants.COMPONENT_OPEN:
+        case ActionType.COMPONENT_OPEN:
             {
+                const payload = action.payload;
                 let flyoutId = payload.flyoutId;
                 if (flyoutId) {
                     const updateSpec: any = {
@@ -43,10 +43,11 @@ export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: AnyAction 
                     const newState = update(state, updateSpec);
                     return newState;
                 }
+                return state;
             }
-        case Constants.COMPONENT_CLOSE:
+        case ActionType.COMPONENT_CLOSE:
             {
-                let flyoutId = payload.flyoutId;
+                let flyoutId = action.payload.flyoutId;
                 if (flyoutId) {
                     const updateSpec: any = {
                         flyouts: {}
@@ -62,10 +63,11 @@ export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: AnyAction 
                     const newState = update(state, updateSpec);
                     return newState;
                 }
+                return state;
             }
-        case Constants.FLYOUT_OPEN:
+        case ActionType.FLYOUT_OPEN:
             {
-                let flyoutId = payload.flyoutId;
+                let flyoutId = action.payload.flyoutId;
                 if (flyoutId) {
                     const updateSpec: any = {
                         flyouts: {}
@@ -73,7 +75,7 @@ export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: AnyAction 
                     updateSpec.flyouts[flyoutId] = {
                         "$merge": {
                             open: true,
-                            metrics: payload.metrics
+                            metrics: action.payload.metrics
                         }
                     };
                     //Close others
@@ -89,10 +91,11 @@ export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: AnyAction 
                     const newState = update(state, updateSpec);
                     return newState;
                 }
+                return state;
             }
-        case Constants.FLYOUT_CLOSE:
+        case ActionType.FLYOUT_CLOSE:
             {
-                let flyoutId = payload.flyoutId;
+                let flyoutId = action.payload.flyoutId;
                 if (flyoutId) {
                     const updateSpec: any = {
                         flyouts: {}

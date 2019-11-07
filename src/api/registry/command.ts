@@ -1,8 +1,6 @@
 import {
-    IMapView,
     IMapViewer,
     ICommand,
-    CommandTarget,
     Dictionary,
     IInvokeUrlCommand,
     ISearchCommand,
@@ -15,23 +13,20 @@ import {
     DEFAULT_MODAL_SIZE,
     NOOP,
     ALWAYS_FALSE,
-    ALWAYS_TRUE
+    IInvokeUrlCommandParameter
 } from "../../api/common";
 import * as ModalActions from "../../actions/modal";
 import { getFusionRoot } from "../../api/runtime";
-import { QueryMapFeaturesResponse } from "../contracts/query";
-import { ResultColumnSet } from "../contracts/weblayout";
 import { IItem, IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../../components/toolbar";
-import * as Constants from "../../constants";
 import { tr } from "../i18n";
 import { getAssetRoot } from "../../utils/asset";
 import {
-    STD_CSS_SPRITE_RELPATH,
     SPRITE_ICON_ERROR
 } from "../../constants/assets";
 import { assertNever } from "../../utils/never";
 import * as logger from "../../utils/logger";
 import { ensureParameters } from "../../utils/url";
+import { ActionType } from '../../constants/actions';
 
 const FUSION_ICON_REGEX = /images\/icons\/[a-zA-Z\-]*.png/
 
@@ -43,7 +38,6 @@ function fixIconPath(path: string): string {
 }
 
 function fusionFixSpriteClass(tb: any, cmd?: ICommand): string | undefined {
-    const url = tb.icon || (cmd || {} as any).icon;
     if (tb.spriteClass) {
         return tb.spriteClass;
     }
@@ -51,6 +45,34 @@ function fusionFixSpriteClass(tb: any, cmd?: ICommand): string | undefined {
         return cmd.iconClass;
     }
     return undefined;
+}
+
+/**
+ * @hidden
+ */
+export function mergeInvokeUrlParameters(currentParameters: IInvokeUrlCommandParameter[], extraParameters?: any) {
+    const currentP = currentParameters.reduce<any>((prev, current, i, arr) => {
+        prev[current.name] = current.value;
+        return prev;
+    }, {});
+    if (extraParameters) {
+        const keys = Object.keys(extraParameters);
+        for (const k of keys) {
+            currentP[k] = extraParameters[k];
+        }
+    }
+    const merged: IInvokeUrlCommandParameter[] = [];
+    const mkeys = Object.keys(currentP);
+    for (const k of mkeys) {
+        merged.push({ name: k, value: currentP[k] });
+    }
+    return merged;
+}
+
+function fixChildItems(childItems: any[], store: ReduxStore, commandInvoker: (cmd: ICommand, parameters?: any) => void): IItem[] {
+    return childItems
+        .map(tb => mapToolbarReference(tb, store, commandInvoker))
+        .filter(tb => tb != null) as IItem[];
 }
 
 /**
@@ -101,7 +123,7 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
             iconClass: fusionFixSpriteClass(tb),
             label: tb.label,
             tooltip: tb.tooltip,
-            childItems: childItems.map(tb => mapToolbarReference(tb, store, commandInvoker)).filter(tb => tb != null)
+            childItems: fixChildItems(childItems, store, commandInvoker)
         };
     } else if (tb.label && tb.flyoutId) {
         return {
@@ -131,7 +153,7 @@ export class CommandConditions {
      *
      * @memberof CommandConditions
      */
-    public static isNotBusy(state: Readonly<IApplicationState>, parameters?: any): boolean {
+    public static isNotBusy(state: Readonly<IApplicationState>): boolean {
         return state.viewer.busyCount == 0;
     }
     /**
@@ -283,7 +305,7 @@ export function openUrlInTarget(name: string, cmdDef: ITargetedCommand, hasTaskP
             openModalUrl(name, dispatch, url, modalTitle);
         } else {
             dispatch({
-                type: Constants.TASK_INVOKE_URL,
+                type: ActionType.TASK_INVOKE_URL,
                 payload: {
                     url: url
                 }
@@ -332,14 +354,14 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                 }
                 return true;
             },
-            selected: (state) => false,
-            invoke: (dispatch: ReduxDispatch, getState: () => IApplicationState, viewer: IMapViewer) => {
+            selected: () => false,
+            invoke: (dispatch: ReduxDispatch, getState: () => IApplicationState, viewer: IMapViewer, parameters?: any) => {
                 const state = getState();
                 const config = state.config;
                 const map = getRuntimeMap(state);
-                const target = cmdDef.target;
                 if (map) {
-                    const url = ensureParameters(cmdDef.url, map.Name, map.SessionId, config.locale, true, cmdDef.parameters);
+                    const params = mergeInvokeUrlParameters(cmdDef.parameters, parameters);
+                    const url = ensureParameters(cmdDef.url, map.Name, map.SessionId, config.locale, true, params);
                     openUrlInTarget(name, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
                 }
             }
@@ -348,8 +370,8 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
         cmd = {
             icon: cmdDef.icon,
             iconClass: cmdDef.iconClass,
-            enabled: (state) => true,
-            selected: (state) => false,
+            enabled: () => true,
+            selected: () => false,
             invoke: (dispatch: ReduxDispatch, getState: () => IApplicationState, viewer: IMapViewer, parameters?: any) => {
                 const state = getState();
                 const config = state.config;

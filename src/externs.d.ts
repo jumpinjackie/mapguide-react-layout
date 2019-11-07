@@ -11,6 +11,8 @@
 // Stamped by webpack
 declare const __DEV__: boolean;
 
+declare module "history";
+
 // Monkey-patched ol ES2015 module declarations (this is a bug in the jsdoc-typescript-plugin that generated the OL typings)
 declare module "ol" {
     export default ol;
@@ -84,7 +86,8 @@ declare module "react-url-query" {
 }
 
 declare module "history/createBrowserHistory" {
-    export default function createHistory(): any;
+    function createHistory(): any;
+    export = createHistory;
 }
 
 // Monkey patching Array.filter to support type narrowing
@@ -97,7 +100,7 @@ interface Array<T> {
 
 // A hack for the Redux DevTools Chrome extension.
 interface Window {
-    devToolsExtension?: () => void;
+    __REDUX_DEVTOOLS_EXTENSION__?: () => void;
 }
 
 // webpack-hot-loader sets some extra attributes on node's `module`if that

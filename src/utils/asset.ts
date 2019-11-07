@@ -1,4 +1,3 @@
-import * as logger from "./logger";
 export function getAssetPath(url: string | undefined): string | undefined {
     return url;
 }

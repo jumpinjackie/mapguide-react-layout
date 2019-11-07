@@ -10,13 +10,13 @@ import {
     IBranchedMapSubState,
     FlyoutVisibilitySet
 } from "../api/common";
-import { getCommand, mapToolbarReference } from "../api/registry/command";
-import { IItem, IInlineMenu, Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
+import { mapToolbarReference } from "../api/registry/command";
+import { Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import { invokeCommand } from "../actions/map";
 import { processMenuItems } from "../utils/menu";
 import * as FlyoutActions from "../actions/flyout";
-import * as Constants from "../constants";
 import { NULL_ACTION } from "../reducers/last-action";
+import { ActionType } from '../constants/actions';
 
 export interface IToolbarContainerProps {
     id: string;
@@ -49,10 +49,10 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IToolbarC
     }
     //We only care to pass on the dispatched action if the action is any of the
     //following
-    if (state.lastaction.type == Constants.MAP_SET_BUSY_COUNT ||
-        state.lastaction.type == Constants.MAP_SET_MAPTIP ||
-        state.lastaction.type == Constants.MAP_SET_SELECTION ||
-        state.lastaction.type == Constants.MAP_SET_ACTIVE_TOOL) {
+    if (state.lastaction.type == ActionType.MAP_SET_BUSY_COUNT ||
+        state.lastaction.type == ActionType.MAP_SET_MAPTIP ||
+        state.lastaction.type == ActionType.MAP_SET_SELECTION ||
+        state.lastaction.type == ActionType.MAP_SET_ACTIVE_TOOL) {
         action = state.lastaction;
     }
     return {
@@ -138,4 +138,4 @@ export class ToolbarContainer extends React.Component<ToolbarContainerProps, any
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ToolbarContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(ToolbarContainer);

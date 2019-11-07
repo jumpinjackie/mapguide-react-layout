@@ -1,7 +1,5 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { SelectedFeatureCount } from "../components/selected-feature-count";
-import { QueryMapFeaturesResponse } from "../api/contracts/query";
 import { setScale } from "../actions/map";
 import {
     IMapView,
@@ -11,7 +9,7 @@ import {
     getCurrentView,
     getRuntimeMap
 } from "../api/common";
-import { tr, DEFAULT_LOCALE } from "../api/i18n";
+import { DEFAULT_LOCALE } from "../api/i18n";
 import { ScaleDisplay } from "../components/scale-display";
 
 export interface IScaleDisplayContainerState {
@@ -64,7 +62,7 @@ export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainer
         }
     }
     render(): JSX.Element {
-        const { view, style, config, finiteScales } = this.props;
+        const { view, style, finiteScales } = this.props;
         const locale = this.getLocale();
         if (view) {
             return <ScaleDisplay onScaleChanged={this.onScaleChanged}
@@ -78,4 +76,4 @@ export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainer
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ScaleDisplayContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(ScaleDisplayContainer);

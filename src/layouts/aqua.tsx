@@ -1,7 +1,6 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
-import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
-import { Toolbar, IItem } from "../components/toolbar";
+import { DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import ToolbarContainer from "../containers/toolbar";
 import ViewerApiShim from "../containers/viewer-shim";
 import ModalLauncher from "../containers/modal-launcher";
@@ -11,8 +10,6 @@ import { connect } from "react-redux";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
-    NOOP,
-    ReduxAction,
     ReduxDispatch,
     IApplicationState,
     IConfigurationReducerState,
@@ -20,35 +17,38 @@ import {
     IViewerCapabilities,
     getRuntimeMap
 } from "../api/common";
-import * as Constants from "../constants";
 import * as TemplateActions from "../actions/template";
-import { setCustomTemplateReducer, isElementState } from "../reducers/template";
+import { setCustomTemplateReducer } from "../reducers/template";
 import InitWarningDisplay from "../containers/init-warning-display";
+import { ActionType } from '../constants/actions';
+import { ViewerAction } from '../actions/defs';
 
-function aquaTemplateReducer(state: ITemplateReducerState, action: ReduxAction): ITemplateReducerState {
-    const data: boolean | TemplateActions.IElementState | undefined = action.payload;
+function aquaTemplateReducer(state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
-        case Constants.FUSION_SET_LEGEND_VISIBILITY:
+        case ActionType.FUSION_SET_LEGEND_VISIBILITY:
             {
+                const data = action.payload;
                 if (typeof(data) == "boolean") {
                     let state1: Partial<ITemplateReducerState> = { legendVisible: data };
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.FUSION_SET_SELECTION_PANEL_VISIBILITY:
+        case ActionType.FUSION_SET_SELECTION_PANEL_VISIBILITY:
             {
+                const data = action.payload;
                 if (typeof(data) == "boolean") {
                     let state1: Partial<ITemplateReducerState> = { selectionPanelVisible: data };
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.TASK_INVOKE_URL:
+        case ActionType.TASK_INVOKE_URL:
             {
                 let state1: Partial<ITemplateReducerState> = { taskPaneVisible: true };
                 return { ...state, ...state1 };
             }
-        case Constants.FUSION_SET_TASK_PANE_VISIBILITY:
+        case ActionType.FUSION_SET_TASK_PANE_VISIBILITY:
             {
+                const data = action.payload;
                 if (typeof(data) == "boolean") {
                     let state1: Partial<ITemplateReducerState> = { taskPaneVisible: data };
                     return { ...state, ...state1 };
@@ -59,7 +59,6 @@ function aquaTemplateReducer(state: ITemplateReducerState, action: ReduxAction):
 }
 
 const SIDEBAR_WIDTH = 250;
-const LEGEND_HEIGHT = 350;
 const SELECTION_DIALOG_HEIGHT = 300;
 const LEGEND_DIALOG_HEIGHT = 400;
 const TASK_DIALOG_HEIGHT = 500;
@@ -111,12 +110,6 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
         this.ovMapTarget = null;
         this.state = {};
     }
-    private getOverviewMapTarget = () => {
-        return this.ovMapTarget;
-    }
-    private onOverviewMapTargetMounted = (el: Element) => {
-        this.ovMapTarget = el;
-    }
     private onHideTaskPane = () => {
         const { hideTaskPane } = this.props;
         if (hideTaskPane) {
@@ -135,9 +128,6 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
             hideSelection();
         }
     }
-    private onHideOverviewMap = () => {
-        this.setState({ isOverviewMapOpen: false });
-    }
     private getLocale(): string {
         return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
@@ -149,29 +139,27 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
         const lastAction = nextProps.lastAction;
         if (lastAction != prevProps.lastAction) {
             switch (lastAction.type) {
-                case Constants.TASK_INVOKE_URL:
+                case ActionType.TASK_INVOKE_URL:
                     {
                         this.setState({
                             isTaskPaneOpen: true
                         });
                     }
                     break;
-                case Constants.MAP_SET_SELECTION:
+                case ActionType.MAP_SET_SELECTION:
                     break;
             }
         }
     }
     render(): JSX.Element {
-        const { capabilities, config, showLegend, showSelection, showTaskPane } = this.props;
+        const { capabilities, showLegend, showSelection, showTaskPane } = this.props;
         let hasTaskPane = false;
-        let hasTaskBar = false;
         let hasStatusBar = false;
         let hasNavigator = false;
         let hasSelectionPanel = false;
         let hasLegend = false;
         if (capabilities) {
             hasTaskPane = capabilities.hasTaskPane;
-            hasTaskBar = capabilities.hasTaskBar;
             hasStatusBar = capabilities.hasStatusBar;
             hasNavigator = capabilities.hasNavigator;
             hasSelectionPanel = capabilities.hasSelectionPanel;
@@ -179,8 +167,6 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
         }
         const locale = this.getLocale();
         const bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;
-        let sbWidth = SIDEBAR_WIDTH;
-        let tpWidth = SIDEBAR_WIDTH;
         let left = DEFAULT_TOOLBAR_SIZE;
         let right = 0;
         /*
@@ -269,4 +255,4 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AquaTemplateLayout);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(AquaTemplateLayout);

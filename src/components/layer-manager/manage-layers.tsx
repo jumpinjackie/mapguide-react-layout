@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ILayerInfo, GenericEvent, GenericEventHandler } from "../../api/common";
+import { ILayerInfo, GenericEvent } from "../../api/common";
 import { safePropAccess } from '../../utils/safe-prop';
 import { ITreeNode } from '@blueprintjs/core/lib/esm/components/tree/treeNode';
 import { Tree } from '@blueprintjs/core/lib/esm/components/tree/tree';
@@ -27,22 +27,24 @@ export class ManageLayers extends React.Component<IManageLayersProps, any> {
     }
     componentDidUpdate(prevProps: IManageLayersProps) {
         const nextProps = this.props;
-        const nodes = nextProps.layers.map(li => ({ id: li.name, label: li.name, secondaryLabel: li.type, icon: "layer" }));
-        this.setState({ nodes: nodes });
+        if (prevProps.layers != nextProps.layers) {
+            const nodes = nextProps.layers.map(li => ({ id: li.name, label: li.name, secondaryLabel: li.type, iconName: "pt-icon-layer" }));
+            this.setState({ nodes: nodes });
+        }
     }
-    private onMoveLayerDown = (e: GenericEvent) => {
+    private onMoveLayerDown = () => {
         const { selectedNode } = this.state;
         if (selectedNode) {
             safePropAccess(this.props, "onMoveLayerDown", func => func(selectedNode.id));
         }
     }
-    private onMoveLayerUp = (e: GenericEvent) => {
+    private onMoveLayerUp = () => {
         const { selectedNode } = this.state;
         if (selectedNode) {
             safePropAccess(this.props, "onMoveLayerUp", func => func(selectedNode.id));
         }
     }
-    private onRemoveLayer = (e: GenericEvent) => {
+    private onRemoveLayer = () => {
         const { selectedNode } = this.state;
         if (selectedNode) {
             safePropAccess(this.props, "onRemoveLayer", func => func(selectedNode.id));

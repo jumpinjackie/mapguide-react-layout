@@ -1,7 +1,6 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
-import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
-import * as Constants from "../constants";
+import { DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import * as TemplateActions from "../actions/template";
 import ToolbarContainer from "../containers/toolbar";
 import ViewerApiShim from "../containers/viewer-shim";
@@ -11,8 +10,6 @@ import { connect } from "react-redux";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
-    NOOP,
-    ReduxAction,
     ReduxDispatch,
     IApplicationState,
     IConfigurationReducerState,
@@ -25,12 +22,14 @@ import { setCustomTemplateReducer, isElementState } from "../reducers/template";
 import InitWarningDisplay from "../containers/init-warning-display";
 import * as Runtime from "../api/runtime";
 import SplitterLayout from "react-splitter-layout";
+import { ActionType } from '../constants/actions';
+import { IElementState, ViewerAction } from '../actions/defs';
 
-function maroonTemplateReducer(state: ITemplateReducerState, action: ReduxAction): ITemplateReducerState {
-    const data: boolean | TemplateActions.IElementState | undefined = action.payload;
+function maroonTemplateReducer(state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
-        case Constants.FUSION_SET_LEGEND_VISIBILITY:
+        case ActionType.FUSION_SET_LEGEND_VISIBILITY:
             {
+                const data = action.payload;
                 if (typeof(data) == "boolean") {
                     let state1: Partial<ITemplateReducerState>;
                     if (data === true) {
@@ -41,8 +40,9 @@ function maroonTemplateReducer(state: ITemplateReducerState, action: ReduxAction
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.FUSION_SET_SELECTION_PANEL_VISIBILITY:
+        case ActionType.FUSION_SET_SELECTION_PANEL_VISIBILITY:
             {
+                const data = action.payload;
                 if (typeof(data) == "boolean") {
                     let state1: Partial<ITemplateReducerState>;
                     if (data === true) {
@@ -53,13 +53,14 @@ function maroonTemplateReducer(state: ITemplateReducerState, action: ReduxAction
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.TASK_INVOKE_URL:
+        case ActionType.TASK_INVOKE_URL:
             {
                 let state1: Partial<ITemplateReducerState> = { taskPaneVisible: true, selectionPanelVisible: false, legendVisible: false };
                 return { ...state, ...state1 };
             }
-        case Constants.FUSION_SET_TASK_PANE_VISIBILITY:
+        case ActionType.FUSION_SET_TASK_PANE_VISIBILITY:
             {
+                const data = action.payload;
                 if (typeof(data) == "boolean") {
                     let state1: Partial<ITemplateReducerState>;
                     if (data === true) {
@@ -70,8 +71,9 @@ function maroonTemplateReducer(state: ITemplateReducerState, action: ReduxAction
                     return { ...state, ...state1 };
                 }
             }
-        case Constants.FUSION_SET_ELEMENT_STATE:
+        case ActionType.FUSION_SET_ELEMENT_STATE:
             {
+                const data = action.payload;
                 if (isElementState(data)) {
                     return { ...state, ...data };
                 }
@@ -90,7 +92,7 @@ export interface IMaroonTemplateLayoutState {
 }
 
 export interface IMaroonTemplateLayoutDispatch {
-    setElementStates: (states: TemplateActions.IElementState) => void;
+    setElementStates: (states: IElementState) => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>): Partial<IMaroonTemplateLayoutState> {
@@ -106,16 +108,14 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IMaroonTem
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMaroonTemplateLayoutDispatch> {
     return {
-        setElementStates: (states: TemplateActions.IElementState) => dispatch(TemplateActions.setElementStates(states))
+        setElementStates: (states: IElementState) => dispatch(TemplateActions.setElementStates(states))
     };
 }
 
 export type MaroonLayoutTemplateProps = Partial<IMaroonTemplateLayoutState> & Partial<IMaroonTemplateLayoutDispatch>;
 
 const SIDEBAR_WIDTH = 250;
-const TOP_BAR_HEIGHT = 35;
 const STATUS_BAR_HEIGHT = 18;
-const SIDEBAR_PADDING = 0;
 const OUTER_PADDING = 3;
 
 export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplateProps, any> {
@@ -132,7 +132,7 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
     private onActivePanelChanged = (id: string) => {
         const { setElementStates } = this.props;
         if (setElementStates) {
-            const states: TemplateActions.IElementState = {
+            const states: IElementState = {
                 legendVisible: false,
                 taskPaneVisible: false,
                 selectionPanelVisible: false
@@ -156,7 +156,7 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
     private getLocale(): string {
         return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
     }
-    private onSplitterChanged = (size: number) => {
+    private onSplitterChanged = () => {
         //With the introduction of the splitter, we can no longer rely on a map 
         //filling 100% of its space without needing to manually call updateSize(),
         //so we do it here
@@ -169,21 +169,13 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
         setCustomTemplateReducer(maroonTemplateReducer);
     }
     render(): JSX.Element {
-        const { config, map, capabilities } = this.props;
+        const { capabilities } = this.props;
         const { isResizing } = this.state;
-        let hasTaskPane = false;
-        let hasTaskBar = false;
         let hasStatusBar = false;
         let hasNavigator = false;
-        let hasSelectionPanel = false;
-        let hasLegend = false;
         if (capabilities) {
-            hasTaskPane = capabilities.hasTaskPane;
-            hasTaskBar = capabilities.hasTaskBar;
             hasStatusBar = capabilities.hasStatusBar;
             hasNavigator = capabilities.hasNavigator;
-            hasSelectionPanel = capabilities.hasSelectionPanel;
-            hasLegend = capabilities.hasLegend;
         }
         const locale = this.getLocale();
         const bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;
@@ -277,4 +269,4 @@ export class MaroonTemplateLayout extends React.Component<MaroonLayoutTemplatePr
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MaroonTemplateLayout);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(MaroonTemplateLayout);

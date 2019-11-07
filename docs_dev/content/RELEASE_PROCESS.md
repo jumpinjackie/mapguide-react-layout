@@ -1,10 +1,15 @@
 Release Process
 ===============
 
-1. Ensure appveyor.yml and package.json are using the new release version number
+1. Ensure the following files are using the new release version number:
+   * `appveyor.yml`
+   * `package.json`
+   * `docs_dev/content/API_NPM.md` (In the **Introduction** section). You may skip this part if doing a point (bugfix) release.
 2. Write up new features/fixes in `docs_dev/content/RELEASE_NOTES.md`
 3. Generate API docs and copy output to a new versioned subdirectory in the `gh-pages` branch
 4. Regenerate static site content and overwrite existing site html in the `gh-pages` branch
+   4.1. Ensure the following static site content reside in the versioned subdirectory as well:
+     * `api_browser.html`
 5. Build the npm package `yarn run build:npm` and publish a `-pre` package
 6. Verify the [sample project](https://github.com/jumpinjackie/mapguide-react-layout-example) works with the published package
 7. Once the sample project is verified as working, start the actual release process:

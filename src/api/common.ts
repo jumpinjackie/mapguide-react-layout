@@ -14,13 +14,16 @@ import olInteraction from "ol/interaction/interaction";
 import olOverlay from "ol/overlay";
 
 import { IOLFactory } from "./ol-factory";
-import { Dispatch, Action } from "redux";
+import { ViewerAction } from '../actions/defs';
 
 // Event boilerplate
 export type GenericEvent = any;
 
 export type GenericEventHandler = (e: GenericEvent) => void;
 
+/**
+ * @deprecated Use UnitOfMeasure enum instead
+ */
 export type UnitName = 'Unknown' | 'Inches' | 'Feet' | 'Yards' | 'Miles' | 'Nautical Miles' 
                     | 'Millimeters' | 'Centimeters' | 'Meters' | 'Kilometers' 
                     | 'Degrees' | 'Decimal Degrees' | 'Degrees Minutes Seconds'| 'Pixels';
@@ -87,7 +90,11 @@ export interface UnitInfo {
     unitsPerMeter: number;
     metersPerUnit: number;
     name: UnitName;
-    abbreviation: () => string;
+    /**
+     * @since 0.12.2
+     */
+    localizedName: (locale?: string) => string;
+    abbreviation: (locale?: string) => string;
 }
 
 /**
@@ -687,9 +694,15 @@ export interface IMapViewer {
      */
     getSelectionXml(selection: FeatureSet, layerIds?: string[]): string;
     /**
-     * Gets the layer manager
+     * Gets the layer manager for the given map. If map name is not specifed
+     * it will get the layer manager for the currently active map.
+     *
+     * @param {string} [mapName]
+     * @returns {ILayerManager}
+     * @memberof IMapViewer
+     * @since 0.12
      */
-    getLayerManager(): ILayerManager;
+    getLayerManager(mapName?: string): ILayerManager;
     /**
      * Adds an OpenLayers interaction
      *
@@ -1034,11 +1047,11 @@ export interface ActiveSelectedFeature {
      */
     layerId: string;
     /**
-     * The index of the feature to highlight
+     * The selection key of the feature
      * 
-     * @type {number}
+     * @type {string}
      */
-    featureIndex: number;
+    selectionKey: string;
 }
 
 /**
@@ -1301,7 +1314,7 @@ export interface INameValuePair {
 /**
  * Describes a redux reducer function
  */
-export type ReducerFunction<TState> = (state: TState, action: ReduxAction) => TState;
+export type ReducerFunction<TState> = (state: TState, action: ViewerAction) => TState;
 
 /**
  * Describes the reducer state branch for the current viewer template
@@ -1708,29 +1721,6 @@ export interface IApplicationState {
 // Redux typedefs to tighten up our redux code
 
 /**
- * Defines a redux action payload
- *
- * @export
- * @interface ReduxAction
- */
-export interface ReduxAction {
-    /**
-     * The type of action
-     *
-     * @type {string}
-     * @memberof ReduxAction
-     */
-    type: string;
-    /**
-     * The action payload
-     *
-     * @type {*}
-     * @memberof ReduxAction
-     */
-    payload?: any;
-}
-
-/**
  * Describes the redux store
  *
  * @export
@@ -1754,14 +1744,9 @@ export interface ReduxStore {
 export type ReduxThunkedAction = (dispatch: ReduxDispatch, getState: () => Readonly<IApplicationState>) => any;
 
 /**
- * Describes a redux action creator
- */
-export type ReduxActionCreator = ReduxAction | ReduxThunkedAction | Action;
-
-/**
  * Describes a redux dispatcher function. A redux dispatch pushes new state to the redux store
  */
-export type ReduxDispatch = Dispatch<any>;//(action: ReduxActionCreator) => void;
+export type ReduxDispatch = (action: ViewerAction | ReduxThunkedAction) => void;
 
 /**
  * A function that does nothing
@@ -1932,6 +1917,15 @@ export interface WMSServiceCapabilities {
 }
 
 /**
+ * @since 0.12
+ */
+export interface WMSLayerBoundingBox {
+    crs: string;
+    extent: [number, number, number, number],
+    res: [any, any]
+}
+
+/**
  * @since 0.11
  */
 export interface WMSPublishedLayer {
@@ -1941,11 +1935,7 @@ export interface WMSPublishedLayer {
     KeywordList: string;
     CRS: string[];
     EX_GeographicBoundingBox: [number, number, number, number];
-    BoundingBox: {
-        crs: string;
-        extent: [number, number, number, number],
-        res: [any, any]
-    }[];
+    BoundingBox: WMSLayerBoundingBox[];
     Style: WMSLayerStyle[];
     queryable: boolean;
     opaque: boolean;
@@ -1960,17 +1950,54 @@ export interface WMSRootPublishedLayer extends WMSPublishedLayer {
 }
 
 /**
+ * @since 0.12
+ */
+export interface WMSLegendURLDefinition {
+    Format: string;
+    OnlineResource: string;
+    size: [number, number];
+}
+
+/**
  * @since 0.11
  */
 export interface WMSLayerStyle {
     Name: string;
     Title: string;
     Abstract: string;
-    LegendURL: {
-        Format: string;
-        OnlineResource: string;
-        size: [number, number];
-    }[]
+    LegendURL: WMSLegendURLDefinition[];
+}
+
+/**
+ * @since 0.12
+ */
+export interface WMSContactAddress {
+    AddressType: string,
+    Address: string,
+    City: string,
+    StateOrProvince: string,
+    PostCode: string,
+    Country: string
+}
+
+/**
+ * @since 0.12
+ */
+export interface WMSContact {
+    ContactPerson: string;
+    ContactOrganization: string;
+}
+
+/**
+ * @since 0.12
+ */
+export interface WMSContactInformation {
+    ContactPersonPrimary: WMSContact,
+    ContactPosition: string,
+    ContactAddress: WMSContactAddress,
+    ContactVoiceTelephone: string,
+    ContactFacsimileTelephone: string,
+    ContactElectronicMailAddress: string
 }
 
 /**
@@ -1982,24 +2009,7 @@ export interface WMSServiceDescription {
     Abstract: string;
     KeywordList: string[];
     OnlineResource: string;
-    ContactInformation: {
-        ContactPersonPrimary: {
-            ContactPerson: string;
-            ContactOrganization: string;
-        },
-        ContactPosition: string,
-        ContactAddress: {
-            AddressType: string,
-            Address: string,
-            City: string,
-            StateOrProvince: string,
-            PostCode: string,
-            Country: string
-        },
-        ContactVoiceTelephone: string,
-        ContactFacsimileTelephone: string,
-        ContactElectronicMailAddress: string
-    },
+    ContactInformation: WMSContactInformation,
     Fees: string;
     AccessConstraints: string;
 }

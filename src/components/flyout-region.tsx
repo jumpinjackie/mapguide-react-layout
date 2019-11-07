@@ -1,8 +1,6 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 import * as Constants from "../constants";
 import { MenuComponent } from "./menu";
-import { FlyoutMenuChildItem } from "./toolbar";
 import { IDOMElementMetrics } from "../api/common";
 import { PlaceholderComponent } from "../api/registry/component";
 import { IItem } from "../components/toolbar";
@@ -55,9 +53,7 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                     const open = !!flyout.open;
                     if (open) {
                         const items = flyout.childItems || [];
-                        let align = "bottom right";
                         if (flyoutId === Constants.WEBLAYOUT_TASKMENU) {
-                            align = "bottom left";
                         }
                         const containerStyle: React.CSSProperties = {};
                         containerStyle.zIndex = 2000; //This should be big enough to be above all possible UI elements

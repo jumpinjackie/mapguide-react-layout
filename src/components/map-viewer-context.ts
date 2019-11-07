@@ -9,8 +9,8 @@ import {
     ImageFormat,
     IExternalBaseLayer,
     LayerTransparencySet,
-    ActiveSelectedFeature,
-    ILayerInfo
+    ILayerInfo,
+    ILayerManager
 } from "../api/common";
 import { Client } from '../api/client';
 import { MgError, isSessionExpiredError } from '../api/error';
@@ -25,9 +25,7 @@ import olExtent from "ol/extent";
 import olMap from "ol/map";
 import olView from "ol/view";
 import olOverlay from "ol/overlay";
-import olProjection from "ol/proj/projection";
 import olWKTFormat from "ol/format/wkt";
-import olPoint from "ol/geom/point";
 import olPolygon from "ol/geom/polygon";
 import olLayerBase from "ol/layer/base";
 import olTileLayer from "ol/layer/tile";
@@ -43,7 +41,7 @@ import olImageStaticSource from "ol/source/imagestatic";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY, BLANK_GIF_DATA_URI } from "../constants/index";
 import { restrictToRange } from "../utils/number";
 import { Size } from "../containers/map-capturer-context";
-import tilelayer from 'ol/renderer/webgl/tilelayer';
+import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
 
 const HIDDEN_CLASS_NAME = "tooltip-hidden";
 
@@ -79,7 +77,7 @@ class MouseTrackingTooltip {
         else
             this.tooltipElement.classList.add(HIDDEN_CLASS_NAME);
     }
-    private onMouseOut(e: GenericEvent) {
+    private onMouseOut() {
         this.tooltipElement.classList.add(HIDDEN_CLASS_NAME);
     }
     public setText(prompt: string) {
@@ -100,7 +98,6 @@ class MouseTrackingTooltip {
 class FeatureQueryTooltip {
     private wktFormat: olWKTFormat;
     private map: olMap;
-    private onRequestSelectableLayers: (() => string[]) | undefined;
     private throttledMouseMove: GenericEventHandler;
     private featureTooltipElement: Element;
     private featureTooltip: olOverlay;
@@ -111,8 +108,8 @@ class FeatureQueryTooltip {
         this.callback = callback;
         this.wktFormat = new olWKTFormat();
         this.featureTooltipElement = document.createElement("div");
-        this.featureTooltipElement.addEventListener("mouseover", e => this.isMouseOverTooltip = true);
-        this.featureTooltipElement.addEventListener("mouseout", e => this.isMouseOverTooltip = false);
+        this.featureTooltipElement.addEventListener("mouseover", () => this.isMouseOverTooltip = true);
+        this.featureTooltipElement.addEventListener("mouseout", () => this.isMouseOverTooltip = false);
         this.featureTooltipElement.className = 'feature-tooltip';
         this.featureTooltip = new olOverlay({
             element: this.featureTooltipElement,
@@ -185,7 +182,7 @@ class FeatureQueryTooltip {
                 html += `<div class='feature-tooltip-body'>${res.Tooltip.replace(/\\n/g, "<br/>")}</div>`;
             }
             if (res.Hyperlink) {
-                html += `<div><a href='${res.Hyperlink}'>Click for more information</a></div>`;
+                html += `<div><a target='taskPaneFrame' href='${res.Hyperlink}'>Click for more information</a></div>`;
             }
             this.featureTooltipElement.innerHTML = html;
             if (html == "") {
@@ -193,9 +190,9 @@ class FeatureQueryTooltip {
             } else {
                 this.featureTooltipElement.classList.remove("tooltip-hidden");
             }
-        }).then(res => {
-            this.callback.decrementBusyWorker();
-        }).catch (err => {
+        }).then(() => {
+                this.callback.decrementBusyWorker();
+            }).catch (err => {
             this.callback.decrementBusyWorker();
             if (isSessionExpiredError(err)) {
                 this.callback.onSessionExpired();
@@ -233,7 +230,6 @@ export class MgLayerSet {
     extent: ol.Extent;
     private allLayers: olLayerBase[];
     private inPerUnit: number;
-    private resourceId: string;
     view: olView;
     private callback: IMapViewerContextCallback;
     private _customLayers: { [name: string]: olLayerBase; };
@@ -432,9 +428,6 @@ export class MgLayerSet {
             });
         }
 
-        //Listen for scale changes
-        const selSource = this.selectionOverlay.getSource();
-        const ovSource = this.overlay.getSource();
         
         for (const src of sources) {
             this.registerSourceEvents(src);
@@ -613,7 +606,6 @@ export class MgLayerSet {
             }
             //ol.View has immutable projection, so we have to replace the whole view on the OverviewMap
             const center = this.view.getCenter();
-            const resolution = this.view.getResolution();
             if (center) {
                 ovMap.setView(new olView({
                     center: [ center[0], center[1] ],
@@ -713,6 +705,33 @@ export class MgLayerSet {
     }
 }
 
+export class MgLayerManager implements ILayerManager {
+    constructor(private map: olMap, private layerSet: MgLayerSet) {
+
+    }
+    getLayers(): ILayerInfo[] {
+        return this.layerSet.getCustomLayers();
+    }    
+    hasLayer(name: string): boolean {
+        return this.layerSet.hasLayer(name);
+    }
+    addLayer<T extends olLayerBase>(name: string, layer: T, allowReplace?: boolean | undefined): T {
+        return this.layerSet.addLayer(this.map, name, layer, allowReplace);
+    }
+    removeLayer(name: string): olLayerBase | undefined {
+        return this.layerSet.removeLayer(this.map, name);
+    }
+    getLayer<T extends olLayerBase>(name: string, factory: () => T): T {
+        return this.layerSet.getLayer(this.map, name, factory);
+    }
+    moveUp(name: string): number {
+        return this.layerSet.moveUp(this.map, name);
+    }
+    moveDown(name: string): number {
+        return this.layerSet.moveDown(this.map, name);
+    }
+}
+
 export interface IMapViewerContextCallback {
     incrementBusyWorker(): void;
     decrementBusyWorker(): void;
@@ -756,7 +775,6 @@ export class MapViewerContext {
         this._featureTooltip.setEnabled(this.isFeatureTooltipEnabled());
     }
     public initLayerSet(props: IMapViewerContextProps): MgLayerSet {
-        const map = props.map;
         const layerSet = new MgLayerSet(props, this.callback);
         this._layerSets[props.map.Name] = layerSet;
         if (!this._activeMapName) {
@@ -765,7 +783,7 @@ export class MapViewerContext {
         layerSet.update(props.showGroups, props.showLayers, props.hideGroups, props.hideLayers);
         return layerSet;
     }
-    public initContext(layerSet: MgLayerSet, overviewMapElementSelector?: () => (Element | null)) {
+    public initContext(layerSet: MgLayerSet, locale?: string, overviewMapElementSelector?: () => (Element | null)) {
         // HACK: className property not documented. This needs to be fixed in OL api doc.
         const overviewMapOpts: any = {
             className: 'ol-overviewmap ol-custom-overviewmap',
@@ -773,6 +791,7 @@ export class MapViewerContext {
             view: new olView({
                 projection: layerSet.projection
             }),
+            tipLabel: tr("OL_OVERVIEWMAP_TIP", locale),
             collapseLabel: String.fromCharCode(187), //'\u00BB',
             label: String.fromCharCode(171) //'\u00AB'
         };
@@ -849,10 +868,15 @@ export class MapViewerContext {
         layerSet.refreshMap(mode);
     }
     public async showSelectedFeature(mapExtent: Bounds, size: Size, map: RuntimeMap, selectionColor: string, featureXml: string | undefined) {
+        const sv = getSiteVersion(map);
+        // This operation requires v4.0.0 QUERYMAPFEATURES, so bail if this ain't the right version
+        if (!canUseQueryMapFeaturesV4(sv)) {
+            return;
+        }
         const layerSet = this.getLayerSet(map.Name);
         try {
             if (featureXml) {
-                const r = await this.callback.getClient().queryMapFeatures({
+                const r = await this.callback.getClient().queryMapFeatures_v4({
                     mapname: map.Name,
                     session: map.SessionId,
                     selectionformat: "PNG",

@@ -1,7 +1,5 @@
 import * as React from "react";
 import { IMapMenuEntry } from "../api/common";
-import { STR_EMPTY, strIsNullOrEmpty } from "../utils/string";
-import { tr } from "../api/i18n";
 import { safePropAccess } from '../utils/safe-prop';
 
 /**
@@ -27,7 +25,6 @@ export interface IMapMenuProps {
 export class MapMenu extends React.Component<IMapMenuProps, any> {
     constructor(props: IMapMenuProps) {
         super(props);
-        const selected = props.maps.filter(entry => entry.mapName === props.selectedMap);
     }
     private onActiveMapChanged = (e: any) => {
         const value = e.currentTarget.value;
@@ -35,7 +32,6 @@ export class MapMenu extends React.Component<IMapMenuProps, any> {
         safePropAccess(this.props, "onActiveMapChanged", func => func!(value));
     }
     render(): JSX.Element {
-        const { locale } = this.props;
         return <div>
             {this.props.maps.map(layer => {
                 return <div className="map-menu-item-container" key={`base-layer-${layer.mapName}`}>

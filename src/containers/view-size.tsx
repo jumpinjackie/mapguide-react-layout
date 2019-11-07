@@ -1,7 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { IApplicationState, ReduxDispatch, UnitOfMeasure, IMapView } from "../api/common";
-import { NBSP } from "../constants/index";
+import { IApplicationState, UnitOfMeasure, IMapView } from "../api/common";
 import { ViewSize } from "../components/view-size";
 
 export interface IViewSizeContainerProps {
@@ -14,6 +13,10 @@ export interface IViewSizeContainerState {
     sizeUnits: UnitOfMeasure;
     view: IMapView;
     metersPerUnit: number;
+    /**
+     * @since 0.12.2
+     */
+    locale: string;
 }
 
 export interface IViewSizeContainerDispatch {
@@ -41,11 +44,12 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IViewSizeC
         height,
         view,
         metersPerUnit,
-        sizeUnits: state.config.viewSizeUnits
+        sizeUnits: state.config.viewSizeUnits,
+        locale: state.config.locale
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IViewSizeContainerDispatch> {
+function mapDispatchToProps(): Partial<IViewSizeContainerDispatch> {
     return {
 
     };
@@ -58,13 +62,13 @@ export class ViewSizeContainer extends React.Component<ViewSizeContainerProps, a
         super(props);
     }
     render(): JSX.Element {
-        const { width, height, view, sizeUnits, metersPerUnit } = this.props;
+        const { width, height, view, sizeUnits, metersPerUnit, locale } = this.props;
         if (width && height && metersPerUnit && view) {
-            return <ViewSize width={width} height={height} view={view} metersPerUnit={metersPerUnit} units={sizeUnits || UnitOfMeasure.Unknown} />;
+            return <ViewSize locale={locale} width={width} height={height} view={view} metersPerUnit={metersPerUnit} units={sizeUnits || UnitOfMeasure.Unknown} />;
         } else {
             return <noscript />;
         }
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ViewSizeContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(ViewSizeContainer);

@@ -9,7 +9,6 @@ import {
     ReduxDispatch,
     IApplicationState
 } from "../api/common";
-import { processMenuItems } from "../utils/menu";
 import { mapToolbarReference } from "../api/registry/command";
 import { DEFAULT_LOCALE } from "../api/i18n";
 
@@ -80,4 +79,4 @@ export class FlyoutRegionContainer extends React.Component<FlyoutRegionContainer
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FlyoutRegionContainer);
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(FlyoutRegionContainer);

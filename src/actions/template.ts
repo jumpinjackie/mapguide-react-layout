@@ -3,32 +3,26 @@
  *
  * Actions to support fusion templates
  */
-import * as Constants from "../constants";
-import { ReduxAction } from "../api/common";
+import { ActionType } from '../constants/actions';
+import { IElementState, ITemplateSetElementStateAction, ITemplateSetTaskPaneVisibilityAction, ITemplateSetSelectionPanelVisibility, ITemplateSetLegendVisibility } from './defs';
 
-export interface IElementState {
-    legendVisible: boolean;
-    taskPaneVisible: boolean;
-    selectionPanelVisible: boolean;
-}
-
-export function setElementStates(states: IElementState): ReduxAction {
+export function setElementStates(states: IElementState): ITemplateSetElementStateAction {
     return {
-        type: Constants.FUSION_SET_ELEMENT_STATE,
+        type: ActionType.FUSION_SET_ELEMENT_STATE,
         payload: states
     };
 }
 
-export function setTaskPaneVisibility(visible: boolean): ReduxAction {
+export function setTaskPaneVisibility(visible: boolean): ITemplateSetTaskPaneVisibilityAction {
     return {
-        type: Constants.FUSION_SET_TASK_PANE_VISIBILITY,
+        type: ActionType.FUSION_SET_TASK_PANE_VISIBILITY,
         payload: visible
     };
 }
 
-export function setSelectionPanelVisibility(visible: boolean): ReduxAction {
+export function setSelectionPanelVisibility(visible: boolean): ITemplateSetSelectionPanelVisibility {
     return {
-        type: Constants.FUSION_SET_SELECTION_PANEL_VISIBILITY,
+        type: ActionType.FUSION_SET_SELECTION_PANEL_VISIBILITY,
         payload: visible
     };
 }
@@ -36,15 +30,15 @@ export function setSelectionPanelVisibility(visible: boolean): ReduxAction {
 /*
 export function setOverviewMapVisibility(visible: boolean): ReduxAction {
     return {
-        type: Constants.FUSION_SET_OVERVIEW_MAP_VISIBILITY,
+        type: ActionType.FUSION_SET_OVERVIEW_MAP_VISIBILITY,
         payload: visible
     };
 }
 */
 
-export function setLegendVisibility(visible: boolean): ReduxAction {
+export function setLegendVisibility(visible: boolean): ITemplateSetLegendVisibility {
     return {
-        type: Constants.FUSION_SET_LEGEND_VISIBILITY,
+        type: ActionType.FUSION_SET_LEGEND_VISIBILITY,
         payload: visible
     };
 }

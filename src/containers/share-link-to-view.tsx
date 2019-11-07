@@ -1,15 +1,14 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { 
-    IApplicationState,
-    ReduxDispatch
+    IApplicationState
 } from '../api/common';
 import { addUrlProps } from 'react-url-query';
 import { urlPropsQueryConfig, IAppUrlStateProps } from './url-state';
 import { tr } from '../api/i18n';
 import { getViewer } from '../api/runtime';
 import CopyToClipboard = require('react-copy-to-clipboard');
-import queryString = require("query-string");
+import { parseUrl, stringifyQuery } from "../utils/url";
 import { TextArea } from '@blueprintjs/core/lib/esm/components/forms/textArea';
 import { Checkbox } from '@blueprintjs/core/lib/esm/components/forms/controls';
 
@@ -49,7 +48,7 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IShareLink
     };
 }
 
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IShareLinkToViewContainerDispatch> {
+function mapDispatchToProps(): Partial<IShareLinkToViewContainerDispatch> {
     return { };
 }
 
@@ -74,21 +73,21 @@ export class ShareLinkToViewContainer extends React.Component<ShareLinkToViewCon
             showSession: false
         };
     }
-    private onShowSessionChanged = (e: any) => {
+    private onShowSessionChanged = () => {
         this.setState({ showSession: !this.state.showSession });
     }
-    private onCopied = (e: any) => {
+    private onCopied = () => {
         const v = getViewer();
         if (v) {
             v.toastSuccess("clipboard", tr("SHARE_LINK_COPIED", this.props.locale));
         }
     }
     render(): JSX.Element {
-        const parsed = queryString.parseUrl(`${window.location}`);
+        const parsed = parseUrl(`${window.location}`);
         if (!this.state.showSession) {
             delete parsed.query.session;
         }
-        const shareUrl = `${parsed.url}?${queryString.stringify(parsed.query)}`;
+        const shareUrl = `${parsed.url}?${stringifyQuery(parsed.query)}`;
         return <div>
             <TextArea fill={true} rows={16} readOnly value={shareUrl} onChange={NOOP} />
             <br />
@@ -100,4 +99,4 @@ export class ShareLinkToViewContainer extends React.Component<ShareLinkToViewCon
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(addUrlProps<ShareLinkToViewContainer>({ urlPropsQueryConfig })(ShareLinkToViewContainer));
+export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(addUrlProps<ShareLinkToViewContainer>({ urlPropsQueryConfig })(ShareLinkToViewContainer));

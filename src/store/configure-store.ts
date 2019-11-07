@@ -3,7 +3,6 @@ import thunk from 'redux-thunk';
 import promiseMiddleware from './promise-middleware';
 import logger from './logger';
 import rootReducer from '../reducers/root';
-const persistState = require('redux-localstorage');
 
 function configureStore(initialState: any, extraReducers?: any) {
     const root = extraReducers ? combineReducers({ ...rootReducer, ...extraReducers }) : combineReducers(rootReducer);
@@ -31,8 +30,8 @@ function _getMiddleware() {
 
 function _getEnhancers() {
     let enhancers = [] as any[];
-    if (__DEV__ && window.devToolsExtension) {
-        enhancers = [...enhancers, window.devToolsExtension()];
+    if (__DEV__ && window.__REDUX_DEVTOOLS_EXTENSION__) {
+        enhancers = [...enhancers, window.__REDUX_DEVTOOLS_EXTENSION__()];
     }
     return enhancers;
 }
@@ -46,19 +45,5 @@ function _enableHotLoader(store: any) {
     }
 }
 
-function _getStorageConfig() {
-    /*
-    return {
-        key: 'react-redux-seed',
-        serialize: (store: any) => {
-            return store;
-        },
-        deserialize: (state: any) => ({
-            session: state ? JSON.parse(state) : {}
-        }),
-    };
-    */
-    return {};
-}
 
 export default configureStore;

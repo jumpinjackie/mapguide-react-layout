@@ -82,8 +82,7 @@ function getItemStyle(enabled: boolean, selected: boolean, size: number, isMouse
     return style;
 }
 
-function getToolbarSeparatorItemStyle(height: number, vertical?: boolean): React.CSSProperties {
-    const vertPad = 6;
+function getToolbarSeparatorItemStyle(vertical?: boolean): React.CSSProperties {
     const style: React.CSSProperties = {
         display: vertical === true ? "block" : "inline-block"
     };
@@ -134,17 +133,17 @@ export class FlyoutMenuChildItem extends React.Component<IFlyoutMenuChildItemPro
             isMouseOver: false
         };
     }
-    private onClick = (e: GenericEvent) => {
+    private onClick = () => {
         const { item } = this.props;
         if (getEnabled(item)) {
             safePropAccess(item, "invoke", func => func!());
             safePropAccess(this.props, "onInvoked", func => func!());
         }
     }
-    private onMouseLeave = (e: GenericEvent) => {
+    private onMouseLeave = () => {
         this.setState({ isMouseOver: false });
     }
-    private onMouseEnter = (e: GenericEvent) => {
+    private onMouseEnter = () => {
         this.setState({ isMouseOver: true });
     }
     render(): JSX.Element {
@@ -168,15 +167,6 @@ interface IToolbarContentContainerProps {
     vertical?: boolean;
 }
 
-class ToolbarContentContainer extends React.Component<IToolbarContentContainerProps, any> {
-    constructor(props: IToolbarContentContainerProps) {
-        super(props);
-    }
-    render(): JSX.Element {
-        const { size, vertical } = this.props;
-        return <div className="noselect toolbar-content-container">{this.props.children}</div>;
-    }
-}
 
 interface IComponentFlyoutItemProps {
     size: number;
@@ -213,15 +203,11 @@ class ComponentFlyoutItem extends React.Component<IComponentFlyoutItemProps, any
         }
         return false;
     }
-    private onMouseLeave = (e: GenericEvent) => {
+    private onMouseLeave = () => {
         this.setState({ isMouseOver: false });
     }
-    private onMouseEnter = (e: GenericEvent) => {
+    private onMouseEnter = () => {
         this.setState({ isMouseOver: true });
-    }
-    private onChildInvoked = () => {
-        this.setState({ isMouseOver: false });
-        this.context.closeFlyout(this.props.item.flyoutId);
     }
     render(): JSX.Element {
         const { size, item, vertical, isFlownOut } = this.props;
@@ -276,15 +262,11 @@ class FlyoutMenuReferenceItem extends React.Component<IFlyoutMenuReferenceItemPr
         }
         return false;
     }
-    private onMouseLeave = (e: GenericEvent) => {
+    private onMouseLeave = () => {
         this.setState({ isMouseOver: false });
     }
-    private onMouseEnter = (e: GenericEvent) => {
+    private onMouseEnter = () => {
         this.setState({ isMouseOver: true });
-    }
-    private onChildInvoked = () => {
-        this.setState({ isMouseOver: false });
-        this.context.closeFlyout(this.props.menu.flyoutId);
     }
     render(): JSX.Element {
         const { size, menu, vertical, isFlownOut } = this.props;
@@ -319,7 +301,7 @@ class ToolbarSeparator extends React.Component<IToolbarSeparatorProps, any> {
         super(props);
     }
     render(): JSX.Element {
-        const style = getToolbarSeparatorItemStyle(this.props.size, this.props.vertical);
+        const style = getToolbarSeparatorItemStyle(this.props.vertical);
         if (this.props.vertical === true) {
             return <div className="noselect toolbar-separator-vertical" style={style} />;
         } else {
@@ -342,10 +324,10 @@ class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
             isMouseOver: false
         };
     }
-    private onMouseLeave = (e: any) => {
+    private onMouseLeave = () => {
         this.setState({ isMouseOver: false });
     }
-    private onMouseEnter = (e: any) => {
+    private onMouseEnter = () => {
         this.setState({ isMouseOver: true });
     }
     private onClick = (e: any) => {

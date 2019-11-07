@@ -1,8 +1,9 @@
-import * as Constants from "../constants";
 import { MgError } from "../api/error";
 import {
     ReduxThunkedAction
 } from "../api/common";
+import { ActionType } from '../constants/actions';
+import { ITaskPaneBackAction, ITaskPaneForwardAction, ITaskPanePushUrlAction } from './defs';
 
 /**
  * Go back to the initial task URL
@@ -15,7 +16,7 @@ export function goHome(): ReduxThunkedAction {
         const initUrl = getState().taskpane.initialUrl;
         if (initUrl != null) {
             dispatch({
-                type: Constants.TASK_PANE_HOME
+                type: ActionType.TASK_PANE_HOME
             });
         } else {
             throw new MgError("Case not handled yet: Home action when no initial task URL set");
@@ -29,9 +30,9 @@ export function goHome(): ReduxThunkedAction {
  * @export
  * @returns
  */
-export function goBack() {
+export function goBack(): ITaskPaneBackAction {
     return {
-        type: Constants.TASK_PANE_BACK
+        type: ActionType.TASK_PANE_BACK
     };
 }
 
@@ -41,9 +42,9 @@ export function goBack() {
  * @export
  * @returns
  */
-export function goForward() {
+export function goForward(): ITaskPaneForwardAction {
     return {
-        type: Constants.TASK_PANE_FORWARD
+        type: ActionType.TASK_PANE_FORWARD
     };
 }
 
@@ -55,9 +56,9 @@ export function goForward() {
  * @param {boolean} [silent]
  * @returns
  */
-export function pushUrl(url: string, silent?: boolean) {
+export function pushUrl(url: string, silent?: boolean): ITaskPanePushUrlAction {
     return {
-        type: Constants.TASK_PANE_PUSH_URL,
+        type: ActionType.TASK_PANE_PUSH_URL,
         payload: {
             url: url,
             silent: silent

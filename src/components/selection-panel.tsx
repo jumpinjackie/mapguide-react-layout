@@ -9,6 +9,7 @@ import {
     SPRITE_ICON_ZOOMSELECT
 } from "../constants/assets";
 import { safePropAccess } from '../utils/safe-prop';
+import { Callout, Intent } from '@blueprintjs/core';
 
 export interface ISelectedFeatureProps {
     selectedFeature: SelectedFeature;
@@ -281,9 +282,9 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
                             return <DefaultSelectedFeature selectedFeature={feat} cleanHTML={cleanHTML} allowHtmlValues={allowHtmlValues} selectedLayer={meta} locale={locale} />;
                         }
                     } else if (selection == null || (selection.SelectedLayer || []).length == 0) {
-                        return <div className="bp3-callout bp3-intent-primary info-sign">
+                        return <Callout intent={Intent.PRIMARY} icon="info-sign">
                             <p className="selection-panel-no-selection">{xlate("NO_SELECTED_FEATURES", locale)}</p>
-                        </div>;
+                        </Callout>;
                     }
                 })()}
             </div>

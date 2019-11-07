@@ -1,11 +1,10 @@
 import * as React from "react";
-import Measure, { ContentRect } from "react-measure";
 import {
     GenericEvent
 } from "../api/common";
 import { safePropAccess } from '../utils/safe-prop';
 import Icon from 'ol/style/icon';
-import { Collapse, Icon as BpIcon } from '@blueprintjs/core';
+import { Collapse, Icon as BpIcon, ResizeSensor, IResizeEntry } from '@blueprintjs/core';
 
 /**
  * Accordion panel dimensions
@@ -83,8 +82,8 @@ export class Accordion extends React.Component<IAccordionProps, any> {
         }
         return null;
     }
-    private onResize = (contentRect: ContentRect) => {
-        this.setState({ dim: contentRect.entry });
+    private onResize = (entries: IResizeEntry[]) => {
+        this.setState({ dim: entries[0].contentRect });
     }
     componentDidUpdate(prevProps: IAccordionProps) {
         const nextProps = this.props;
@@ -98,22 +97,20 @@ export class Accordion extends React.Component<IAccordionProps, any> {
     render(): JSX.Element {
         const { openPanel, dim } = this.state;
         const { panels, style, isResizing } = this.props;
-        return <Measure bounds onResize={this.onResize}>
-            {({ measureRef }) => {
-                return <div ref={measureRef} style={style} className="component-accordion">
-                    {panels.map(p => {
-                        const isOpen = (p.id == openPanel);
-                        return <div key={p.id} className="component-accordion-panel">
-                            <div className="component-accordion-panel-header" style={{ height: PANEL_HEADER_HEIGHT }} data-accordion-panel-id={p.id} onClick={this.onTogglePanel}>
-                                <BpIcon icon={isOpen ? "chevron-up" : "chevron-down"} /> {p.title}
-                            </div>
-                            <Collapse isOpen={isOpen}>
-                                {p.contentRenderer({ width: dim.width, height: (dim.height - (panels.length * PANEL_HEADER_HEIGHT)) }, isResizing)}
-                            </Collapse>
-                        </div>;
-                    })}
-                </div>
-            }}
-        </Measure>;
+        return <ResizeSensor onResize={this.onResize}>
+            <div style={style} className="component-accordion">
+                {panels.map(p => {
+                    const isOpen = (p.id == openPanel);
+                    return <div key={p.id} className="component-accordion-panel">
+                        <div className="component-accordion-panel-header" style={{ height: PANEL_HEADER_HEIGHT }} data-accordion-panel-id={p.id} onClick={this.onTogglePanel}>
+                            <BpIcon icon={isOpen ? "chevron-up" : "chevron-down"} /> {p.title}
+                        </div>
+                        <Collapse isOpen={isOpen}>
+                            {p.contentRenderer({ width: dim.width, height: (dim.height - (panels.length * PANEL_HEADER_HEIGHT)) }, isResizing)}
+                        </Collapse>
+                    </div>;
+                })}
+            </div>
+        </ResizeSensor>;
     }
 }

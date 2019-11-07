@@ -13,6 +13,7 @@ import {
     getSelectionSet
 } from "../api/common";
 import { APPLICATION_CONTEXT_VALIDATION_MAP, IApplicationContext } from '../index';
+import { Callout, Intent } from '@blueprintjs/core';
 
 export interface ISelectionPanelContainerProps {
     maxHeight?: number;
@@ -82,9 +83,9 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
                                    selectedFeatureRenderer={this.props.selectedFeatureRenderer}
                                    maxHeight={maxHeight} />;
         } else {
-            return <div className="bp3-callout bp3-intent-primary info-sign">
+            return <Callout intent={Intent.PRIMARY} icon="info-sign">
                 <p className="selection-panel-no-selection">{tr("NO_SELECTED_FEATURES", locale)}</p>
-            </div>;
+            </Callout>;
         }
     }
 }

@@ -14,6 +14,7 @@ import olTileLayer from "ol/layer/tile";
 import olImageLayer from "ol/layer/image";
 import olWmsSource from "ol/source/imagewms";
 import olTiledWmsSource from "ol/source/tilewms";
+import { Spinner, NonIdealState, Intent, ControlGroup, InputGroup, Button } from '@blueprintjs/core';
 
 /**
  * @hidden
@@ -110,46 +111,32 @@ export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
         const { locale } = this.props;
         const { wmsUrl, loadingCapabilities, caps, error } = this.state;
         return <div>
-            <div className="bp3-control-group bp3-fill">
-                <div className="bp3-input-group">
-                    <span className="bp3-icon geosearch"></span>
-                    <input type="text" className="bp3-input" placeholder={tr("ADD_WMS_LAYER_URL", locale)} value={wmsUrl} onChange={this.onWmsUrlChange} readOnly={loadingCapabilities} />
-                </div>
-                <button className="bp3-button bp3-fixed bp3-intent-primary arrow-right" onClick={this.onLoadCaps} disabled={loadingCapabilities}></button>
-            </div>
+            <ControlGroup fill>
+                <InputGroup leftIcon="geosearch"
+                    placeholder={tr("ADD_WMS_LAYER_URL", locale)}
+                    value={wmsUrl}
+                    onChange={this.onWmsUrlChange}
+                    readOnly={loadingCapabilities}
+                    rightElement={<Button intent={Intent.PRIMARY} icon="arrow-right" onClick={this.onLoadCaps} disabled={loadingCapabilities} />} />
+            </ControlGroup>
             <br />
             <div>
                 {(() => {
                     if (loadingCapabilities) {
-                        return <div className="bp3-non-ideal-state">
-                            <div className="bp3-non-ideal-state-visual bp3-non-ideal-state-icon">
-                                <div className="bp3-spinner bp3-large">
-                                    <div className="bp3-spinner-svg-container">
-                                        <svg viewBox="0 0 100 100">
-                                            <path className="bp3-spinner-track" d="M 50,50 m 0,-44.5 a 44.5,44.5 0 1 1 0,89 a 44.5,44.5 0 1 1 0,-89"></path>
-                                            <path className="bp3-spinner-head" d="M 94.5 50 A 44.5 44.5 0 0 0 50 5.5"></path>
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-                            <h4 className="bp3-non-ideal-state-title">{tr("ADD_WMS_LAYER_LOADING", locale)}</h4>
-                            <div className="bp3-non-ideal-state-description">{tr("ADD_WMS_LAYER_LOADING_DESC", locale)}</div>
-                        </div>;
+                        return <NonIdealState
+                            icon={<Spinner intent={Intent.NONE} size={Spinner.SIZE_LARGE} />}
+                            title={tr("ADD_WMS_LAYER_LOADING", locale)}
+                            description={tr("ADD_WMS_LAYER_LOADING_DESC", locale)} />;
                     } else {
                         if (caps) {
                             return <WmsCapabilitiesTree onAddLayer={this.onAddLayer} capabilities={caps} locale={locale} />;
                         } else if (error) {
                             return <Error error={error} />;
                         } else {
-                            return <div className="bp3-non-ideal-state">
-                                <div className="bp3-non-ideal-state-visual bp3-non-ideal-state-icon">
-                                    <span className="bp3-icon issue"></span>
-                                </div>
-                                <h4 className="bp3-non-ideal-state-title">{tr("ADD_WMS_LAYER_NO_LAYERS", locale)}</h4>
-                                <div className="bp3-non-ideal-state-description">
-                                    {tr("WMS_NO_LAYER_DESCRIPITON", locale)}
-                                </div>
-                            </div>;
+                            return <NonIdealState
+                                icon="issue"
+                                title={tr("ADD_WMS_LAYER_NO_LAYERS", locale)}
+                                description={tr("WMS_NO_LAYER_DESCRIPITON", locale)} />;
                         }
                     }
                 })()}

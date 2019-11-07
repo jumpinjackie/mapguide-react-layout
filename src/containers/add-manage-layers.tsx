@@ -8,7 +8,7 @@ import {
 } from "../api/common";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
-import { Tabs, Tab } from '@blueprintjs/core';
+import { Tabs, Tab, Icon } from '@blueprintjs/core';
 
 interface ILayerManagerProps {
     locale: string | undefined;
@@ -123,8 +123,8 @@ export class AddManageLayersContainer extends React.Component<AddManageLayersCon
     render(): JSX.Element {
         const { locale } = this.props;
         return <Tabs id="tabs" renderActiveTabPanelOnly={true}>
-            <Tab id="add_layer" title={<span><span className="standard add" /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer locale={locale} />} />
-            <Tab id="manage_layers" title={<span><span className="standard layers" /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<LayerManager locale={locale} />} />
+            <Tab id="add_layer" title={<span><Icon icon="new-layer" iconSize={Icon.SIZE_STANDARD} /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer locale={locale} />} />
+            <Tab id="manage_layers" title={<span><Icon icon="layers" iconSize={Icon.SIZE_STANDARD} /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<LayerManager locale={locale} />} />
         </Tabs>;
     }
 }

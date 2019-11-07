@@ -23,6 +23,7 @@ import { safePropAccess } from '../utils/safe-prop';
 import { UrlValueChangeCallback, IAppUrlStateProps, urlPropsQueryConfig } from './url-state';
 import { addUrlProps } from 'react-url-query';
 import { IElementState } from '../actions/defs';
+import { NonIdealState, Spinner, Intent } from '@blueprintjs/core';
 
 /**
  * Callback interface for propagating changes to URL state
@@ -382,20 +383,10 @@ export class App extends React.Component<AppProps, any> {
             //NOTE: Locale may not have been set at this point, so use default
             const locale = config ? (config.locale || DEFAULT_LOCALE) : DEFAULT_LOCALE;
             if (isLoading) {
-                return <div className="bp3-non-ideal-state">
-                    <div className="bp3-non-ideal-state-visual bp3-non-ideal-state-icon">
-                        <div className="bp3-spinner bp3-large">
-                            <div className="bp3-spinner-svg-container">
-                                <svg viewBox="0 0 100 100">
-                                    <path className="bp3-spinner-track" d="M 50,50 m 0,-44.5 a 44.5,44.5 0 1 1 0,89 a 44.5,44.5 0 1 1 0,-89"></path>
-                                    <path className="bp3-spinner-head" d="M 94.5 50 A 44.5 44.5 0 0 0 50 5.5"></path>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                    <h4 className="bp3-non-ideal-state-title">{tr("INIT", locale)}</h4>
-                    <div className="bp3-non-ideal-state-description">{tr("INIT_DESC", locale)}</div>
-                </div>;
+                return <NonIdealState 
+                    icon={<Spinner intent={Intent.NONE} size={Spinner.SIZE_LARGE} />}
+                    title={tr("INIT", locale)}
+                    description={tr("INIT_DESC", locale)} />;
             } else {
                 const layoutEl = getLayout(layout);
                 if (layoutEl) {

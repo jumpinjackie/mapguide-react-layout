@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ILayerInfo, GenericEvent } from "../../api/common";
 import { safePropAccess } from '../../utils/safe-prop';
-import { ITreeNode, Tree } from '@blueprintjs/core';
+import { ITreeNode, Tree, Button, Intent, ButtonGroup } from '@blueprintjs/core';
 
 /**
  * @hidden
@@ -27,7 +27,7 @@ export class ManageLayers extends React.Component<IManageLayersProps, any> {
     componentDidUpdate(prevProps: IManageLayersProps) {
         const nextProps = this.props;
         if (prevProps.layers != nextProps.layers) {
-            const nodes = nextProps.layers.map(li => ({ id: li.name, label: li.name, secondaryLabel: li.type, iconName: "bp3-icon-layer" }));
+            const nodes = nextProps.layers.map(li => ({ id: li.name, label: li.name, secondaryLabel: li.type, icon: "layer" }));
             this.setState({ nodes: nodes });
         }
     }
@@ -73,11 +73,11 @@ export class ManageLayers extends React.Component<IManageLayersProps, any> {
         const { selectedNode, nodes } = this.state;
         return <div>
             <hr />
-            <div className="bp3-button-group bp3-fill">
-                <button type="button" className="bp3-button bp3-intent-danger delete" onClick={this.onRemoveLayer} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0}>Remove</button>
-                <button type="button" className="bp3-button bp3-intent-primary caret-up" onClick={this.onMoveLayerUp} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0 || selectedNode == nodes[0]}></button>
-                <button type="button" className="bp3-button bp3-intent-primary caret-down" onClick={this.onMoveLayerDown} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0 || selectedNode == nodes[nodes.length - 1]}></button>
-            </div>
+            <ButtonGroup fill>
+                <Button intent={Intent.DANGER} icon="delete" onClick={this.onRemoveLayer} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0}>Remove</Button>
+                <Button intent={Intent.PRIMARY} icon="caret-up" onClick={this.onMoveLayerUp} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0 || selectedNode == nodes[0]}></Button>
+                <Button intent={Intent.PRIMARY} icon="caret-down" onClick={this.onMoveLayerDown} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0 || selectedNode == nodes[nodes.length - 1]}></Button>
+            </ButtonGroup>
             <Tree contents={nodes} onNodeClick={this.handleNodeClick} />
         </div>;
     }

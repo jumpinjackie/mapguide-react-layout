@@ -17,7 +17,7 @@ import {
 } from "../api/common";
 import * as MapActions from "../actions/map";
 import { MapCapturerContext, Size, IMapCapturerContextCallback } from "./map-capturer-context";
-import { Slider } from '@blueprintjs/core';
+import { Slider, Button, Intent } from '@blueprintjs/core';
 
 function getMargin() {
     /*
@@ -439,7 +439,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                     }
                 })()}
                 <div className="ButtonContainer FixWidth">
-                    <button type="submit" className="bp3-button print bp3-intent-primary" onClick={this.onGeneratePlot}>{xlate("QUICKPLOT_GENERATE", locale)}</button>
+                    <Button type="submit" intent={Intent.PRIMARY} icon="print" onClick={this.onGeneratePlot}>{xlate("QUICKPLOT_GENERATE", locale)}</Button>
                 </div>
                 <input type="hidden" id="margin" name="margin" />
                 <input type="hidden" id="normalizedBox" name="normalizedBox" value={normBox} />

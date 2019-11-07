@@ -31,6 +31,10 @@ import olFormatGeoJSON from "ol/format/geojson";
 import olFormatWKT from "ol/format/wkt";
 
 import olStyle from "ol/style/style";
+import olStyleIcon from "ol/style/icon";
+import olStyleImage from "ol/style/image";
+import olStyleRegularShape from "ol/style/regularshape";
+import olStyleText from "ol/style/text";
 import olStyleFill from "ol/style/fill";
 import olStyleStroke from "ol/style/stroke";
 import olStyleCircle from "ol/style/circle";
@@ -48,6 +52,22 @@ export interface IOLFactory {
     createStyleFill(options?: olx.style.FillOptions): olStyleFill;
     createStyleStroke(options?: olx.style.StrokeOptions): olStyleStroke;
     createStyleCircle(options?: olx.style.CircleOptions): olStyleCircle;
+    /**
+     * @since 0.12.6
+     */
+    createStyleIcon(options?: olx.style.IconOptions): olStyleIcon;
+    /**
+     * @since 0.12.6
+     */
+    createStyleImage(options?: any): olStyleImage;
+    /**
+     * @since 0.12.6
+     */
+    createStyleRegularShape(options: olx.style.RegularShapeOptions): olStyleRegularShape;
+    /**
+     * @since 0.12.6
+     */
+    createStyleText(options?: olx.style.TextOptions): olStyleText;
     createFeatureCollection(): olCollection<olFeature>;
     extentContainsXY(extent: [number, number, number, number], x: number, y: number): boolean;
     extendExtent(extent: [number, number, number, number], other: [number, number, number, number]): [number, number, number, number];
@@ -199,5 +219,30 @@ export class OLFactory implements IOLFactory {
     }
     public createFormatWKT(options?: olx.format.WKTOptions | undefined): olFormatWKT {
         return new olFormatWKT(options);
+    }
+
+    /**
+     * @since 0.12.6
+     */
+    public createStyleIcon(options?: olx.style.IconOptions | undefined): olStyleIcon {
+        return new olStyleIcon(options);
+    }
+    /**
+     * @since 0.12.6
+     */
+    public createStyleImage(options?: any): olStyleImage {
+        return new olStyleImage(options);
+    }
+    /**
+     * @since 0.12.6
+     */
+    public createStyleRegularShape(options: olx.style.RegularShapeOptions): olStyleRegularShape {
+        return new olStyleRegularShape(options);
+    }
+    /**
+     * @since 0.12.6
+     */
+    public createStyleText(options?: olx.style.TextOptions | undefined): olStyleText {
+        return new olStyleText(options);
     }
 }

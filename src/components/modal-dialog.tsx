@@ -80,13 +80,13 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
         if (overflowYScroll == true) {
             modalBodyStyle.overflowY = "auto";
         }
-        const diag = <Draggable handle=".pt-dialog-header">
-            <div className="pt-dialog" style={modalStyle}>
-                <div className="pt-dialog-header noselect">
+        const diag = <Draggable handle=".bp3-dialog-header">
+            <div className="bp3-dialog" style={modalStyle}>
+                <div className="bp3-dialog-header noselect">
                     <h5>{title}</h5>
-                    <button onClick={this.onClose} aria-label="Close" className="pt-dialog-close-button small-cross"></button>
+                    <button onClick={this.onClose} aria-label="Close" className="bp3-dialog-close-button small-cross"></button>
                 </div>
-                <div className="pt-dialog-body" style={modalBodyStyle}>{this.props.children}</div>
+                <div className="bp3-dialog-body" style={modalBodyStyle}>{this.props.children}</div>
             </div>
         </Draggable>;
         if (backdrop === true) {

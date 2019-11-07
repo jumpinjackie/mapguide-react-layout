@@ -309,17 +309,17 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
             <form id="Form1" name="Form1" target="_blank" method="post" action={url}>
                 <input type="hidden" id="printId" name="printId" value={`${Math.random() * 1000}`} />
                 <div className="Title FixWidth">{xlate("QUICKPLOT_HEADER", locale)}</div>
-                <label className="pt-label">
+                <label className="bp3-label">
                     {xlate("QUICKPLOT_TITLE", locale)}
-                    <input type="text" className="pt-input pt-fill" dir="auto" name="{field:title}" id="title" maxLength={100} value={this.state.title} onChange={this.onTitleChanged} />
+                    <input type="text" className="bp3-input bp3-fill" dir="auto" name="{field:title}" id="title" maxLength={100} value={this.state.title} onChange={this.onTitleChanged} />
                 </label>
-                <label className="pt-label">
+                <label className="bp3-label">
                     {xlate("QUICKPLOT_SUBTITLE", locale)}
-                    <input type="text" className="pt-input pt-fill" dir="auto" name="{field:sub_title}" id="subtitle" maxLength={100} value={this.state.subTitle} onChange={this.onSubTitleChanged} />
+                    <input type="text" className="bp3-input bp3-fill" dir="auto" name="{field:sub_title}" id="subtitle" maxLength={100} value={this.state.subTitle} onChange={this.onSubTitleChanged} />
                 </label>
-                <label className="pt-label">
+                <label className="bp3-label">
                     {xlate("QUICKPLOT_PAPER_SIZE", locale)}
-                    <div className="pt-select pt-fill">
+                    <div className="bp3-select bp3-fill">
                         {/*
                             The pre-defined paper size list. The value for each "option" item is in this format: [width,height]. The unit is in millimeter.
                             We can change the html code to add more paper size or remove some ones.
@@ -333,12 +333,12 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                         </select>
                     </div>
                 </label>
-                <label className="pt-label">
+                <label className="bp3-label">
                     {xlate("QUICKPLOT_ORIENTATION", locale)}
                     {/*
                         The pre-defined paper orientations
                     */}
-                    <div className="pt-select pt-fill">
+                    <div className="bp3-select bp3-fill">
                         <select className="FixWidth" id="orientation" name="orientation" value={this.state.orientation} onChange={this.onOrientationChanged}>
                             <option value="P">{xlate("QUICKPLOT_ORIENTATION_P", locale)}</option>
                             <option value="L">{xlate("QUICKPLOT_ORIENTATION_L", locale)}</option>
@@ -349,50 +349,50 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                 <input type="hidden" id="printSize" name="printSize" value={printSize} />
                 <fieldset>
                     <legend>{xlate("QUICKPLOT_SHOWELEMENTS", locale)}</legend>
-                    <label className="pt-control pt-checkbox">
+                    <label className="bp3-control bp3-checkbox">
                         <input type="checkbox" id="ShowLegendCheckBox" name="ShowLegend" checked={this.state.showLegend} onChange={this.onShowLegendChanged} />
-                        <span className="pt-control-indicator" />
+                        <span className="bp3-control-indicator" />
                         {xlate("QUICKPLOT_SHOWLEGEND", locale)}
                     </label>
-                    <label className="pt-control pt-checkbox">
+                    <label className="bp3-control bp3-checkbox">
                         <input type="checkbox" id="ShowNorthArrowCheckBox" name="ShowNorthArrow" checked={this.state.showNorthBar} onChange={this.onShowNorthArrowChanged} />
-                        <span className="pt-control-indicator" />
+                        <span className="bp3-control-indicator" />
                         {xlate("QUICKPLOT_SHOWNORTHARROW", locale)}
                     </label>
-                    <label className="pt-control pt-checkbox">
+                    <label className="bp3-control bp3-checkbox">
                         <input type="checkbox" id="ShowCoordinatesCheckBox" name="ShowCoordinates" checked={this.state.showCoordinates} onChange={this.onShowCoordinatesChanged} />
-                        <span className="pt-control-indicator" />
+                        <span className="bp3-control-indicator" />
                         {xlate("QUICKPLOT_SHOWCOORDINTES", locale)}
                     </label>
-                    <label className="pt-control pt-checkbox">
+                    <label className="bp3-control bp3-checkbox">
                         <input type="checkbox" id="ShowScaleBarCheckBox" name="ShowScaleBar" checked={this.state.showScaleBar} onChange={this.onShowScaleBarChanged} />
-                        <span className="pt-control-indicator" />
+                        <span className="bp3-control-indicator" />
                         {xlate("QUICKPLOT_SHOWSCALEBAR", locale)}
                     </label>
-                    <label className="pt-control pt-checkbox">
+                    <label className="bp3-control bp3-checkbox">
                         <input type="checkbox" id="ShowDisclaimerCheckBox" name="ShowDisclaimer" checked={this.state.showDisclaimer} onChange={this.onShowDisclaimerChanged} />
-                        <span className="pt-control-indicator" />
+                        <span className="bp3-control-indicator" />
                         {xlate("QUICKPLOT_SHOWDISCLAIMER", locale)}
                     </label>
                 </fieldset>
                 <div className="HPlaceholder5px"></div>
                 <div>
-                    <label className="pt-control pt-checkbox">
+                    <label className="bp3-control bp3-checkbox">
                         <input type="checkbox" id="AdvancedOptionsCheckBox" onChange={this.onAdvancedOptionsChanged} />
-                        <span className="pt-control-indicator" />
+                        <span className="bp3-control-indicator" />
                         {xlate("QUICKPLOT_ADVANCED_OPTIONS", locale)}
                     </label>
                 </div>
                 {(() => {
                     if (this.state.showAdvanced) {
                         return <div>
-                            <label className="pt-label">
+                            <label className="bp3-label">
                                 {xlate("QUICKPLOT_SCALING", locale)}
                                 {/*
                                     The pre-defined scales. The value for each "option" item is the scale denominator.
                                     We can change the html code to extend the pre-defined scales
                                 */}
-                                <div className="pt-select pt-fill">
+                                <div className="bp3-select bp3-fill">
                                     <select className="FixWidth" id="scaleDenominator" name="scaleDenominator" value={this.state.scale} onChange={this.onScaleChanged}>
                                         <option value="500">1: 500</option>
                                         <option value="1000">1: 1000</option>
@@ -401,13 +401,13 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                                     </select>
                                 </div>
                             </label>
-                            <label className="pt-label">
+                            <label className="bp3-label">
                                 {xlate("QUICKPLOT_DPI", locale)}
                                 {/*
                                     The pre-defined print DPI.
                                     We can change the html code to extend the pre-defined values
                                 */}
-                                <div className="pt-select pt-fill">
+                                <div className="bp3-select bp3-fill">
                                     <select className="FixWidth" id="dpi" name="dpi" value={this.state.dpi} onChange={this.onDpiChanged}>
                                         <option value="96">96</option>
                                         <option value="150">150</option>
@@ -416,7 +416,7 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                                     </select>
                                 </div>
                             </label>
-                            <label className="pt-label noselect">
+                            <label className="bp3-label noselect">
                                 {xlate("QUICKPLOT_BOX_ROTATION", locale)}
                                 <div style={{ paddingLeft: 16, paddingRight: 16 }}>
                                     <Slider min={0} max={360} labelStepSize={90} stepSize={1} value={this.state.rotation} onChange={this.onRotationChanged} />
@@ -433,13 +433,13 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                 <div className="HPlaceholder5px"></div>
                 {(() => {
                     if (hasExternalBaseLayers) {
-                        return <div id="commercialLayerWarning" className="pt-callout pt-intent-primary info-sign">
+                        return <div id="commercialLayerWarning" className="bp3-callout bp3-intent-primary info-sign">
                             {xlate("QUICKPLOT_COMMERCIAL_LAYER_WARNING", locale)}
                         </div>;
                     }
                 })()}
                 <div className="ButtonContainer FixWidth">
-                    <button type="submit" className="pt-button print pt-intent-primary" onClick={this.onGeneratePlot}>{xlate("QUICKPLOT_GENERATE", locale)}</button>
+                    <button type="submit" className="bp3-button print bp3-intent-primary" onClick={this.onGeneratePlot}>{xlate("QUICKPLOT_GENERATE", locale)}</button>
                 </div>
                 <input type="hidden" id="margin" name="margin" />
                 <input type="hidden" id="normalizedBox" name="normalizedBox" value={normBox} />

@@ -92,7 +92,7 @@ export class ShareLinkToViewContainer extends React.Component<ShareLinkToViewCon
             <br />
             <Checkbox checked={this.state.showSession} label="Include Session ID" onChange={this.onShowSessionChanged} />
             <CopyToClipboard text={shareUrl} onCopy={this.onCopied}>
-                <button className="pt-button">{tr("SHARE_LINK_COPY_CLIPBOARD", this.props.locale)}</button>
+                <button className="bp3-button">{tr("SHARE_LINK_COPY_CLIPBOARD", this.props.locale)}</button>
             </CopyToClipboard>
         </div>;
     }

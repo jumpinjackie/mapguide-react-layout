@@ -46,14 +46,14 @@ export class InitWarningDisplay extends React.Component<InitWarningDisplayProps,
                 isOpen={true}
                 onClose={acknowledge}
                 title={tr("WARNING", locale)}>
-                <div className="pt-dialog-body">
+                <div className="bp3-dialog-body">
                     <p>{tr("INIT_WARNINGS_FOUND", locale)}</p>
                     <ul>
                         {warnings.map(w => <li key={w}>{w}</li>)}
                     </ul>
                 </div>
-                <div className="pt-dialog-footer">
-                    <div className="pt-dialog-footer-actions">
+                <div className="bp3-dialog-footer">
+                    <div className="bp3-dialog-footer-actions">
                         <Button
                             intent={Intent.PRIMARY}
                             onClick={acknowledge}

@@ -27,7 +27,7 @@ const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
             featureProps.push(matches[0]);
         }
     }
-    return <table className="selection-panel-property-grid pt-table pt-condensed pt-bordered">
+    return <table className="selection-panel-property-grid bp3-table bp3-condensed bp3-bordered">
         <thead>
             <tr>
                 <th>{xlate("SELECTION_PROPERTY", locale)}</th>
@@ -260,7 +260,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
             {(() => {
                 if (selection != null && selection.SelectedLayer != null && selection.SelectedLayer.length > 0) {
                     return <div className="selection-panel-toolbar" style={SELECTION_PANEL_TOOLBAR_STYLE}>
-                        <div className="pt-select selection-panel-layer-selector">
+                        <div className="bp3-select selection-panel-layer-selector">
                             <select value={this.state.selectedLayerIndex} style={LAYER_COMBO_STYLE} onChange={this.onSelectedLayerChanged}>
                                 {selection.SelectedLayer.map((layer: SelectedLayer, index: number) => {
                                     return <option key={`selected-layer-${layer["@id"]}`} value={`${index}`}>{layer["@name"]}</option>
@@ -281,7 +281,7 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
                             return <DefaultSelectedFeature selectedFeature={feat} cleanHTML={cleanHTML} allowHtmlValues={allowHtmlValues} selectedLayer={meta} locale={locale} />;
                         }
                     } else if (selection == null || (selection.SelectedLayer || []).length == 0) {
-                        return <div className="pt-callout pt-intent-primary info-sign">
+                        return <div className="bp3-callout bp3-intent-primary info-sign">
                             <p className="selection-panel-no-selection">{xlate("NO_SELECTED_FEATURES", locale)}</p>
                         </div>;
                     }

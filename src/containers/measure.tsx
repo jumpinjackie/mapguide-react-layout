@@ -185,30 +185,30 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
         const locale = this.getLocale();
         return <div className="component-measure">
             <form className="form-inline">
-                <label className="pt-label">
+                <label className="bp3-label">
                     {tr("MEASUREMENT_TYPE", locale)}
-                    <div className="pt-select">
+                    <div className="bp3-select">
                         <select value={type} onChange={this.onTypeChanged}>
                             <option value="LineString">{tr("MEASUREMENT_TYPE_LENGTH", locale)}</option>
                             <option value="Polygon">{tr("MEASUREMENT_TYPE_AREA", locale)}</option>
                         </select>
                     </div>
                 </label>
-                <div className="pt-button-group">
-                    <button type="button" className="pt-button play" disabled={measuring} onClick={this.onStartMeasure}>{tr("MEASUREMENT_START", locale)}</button>
-                    <button type="button" className="pt-button stop" disabled={!measuring} onClick={this.onEndMeasure}>{tr("MEASUREMENT_END", locale)}</button>
-                    <button type="button" className="pt-button cross" onClick={this.onClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</button>
+                <div className="bp3-button-group">
+                    <button type="button" className="bp3-button play" disabled={measuring} onClick={this.onStartMeasure}>{tr("MEASUREMENT_START", locale)}</button>
+                    <button type="button" className="bp3-button stop" disabled={!measuring} onClick={this.onEndMeasure}>{tr("MEASUREMENT_END", locale)}</button>
+                    <button type="button" className="bp3-button cross" onClick={this.onClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</button>
                 </div>
                 {(() => {
                     if (this.state.measuring === true) {
                         return <div>
-                            <div className="pt-callout pt-intent-primary">
+                            <div className="bp3-callout bp3-intent-primary">
                                 <h5>{tr("MEASURING", locale)}</h5>
                                 {tr("MEASURING_MESSAGE", locale)}
                             </div>
                             {(() => {
                                 if (this.state.segments) {
-                                    return <table className="pt-table">
+                                    return <table className="bp3-table">
                                         <thead>
                                             <tr>
                                                 <th>{tr("MEASURE_SEGMENT", locale)}</th>

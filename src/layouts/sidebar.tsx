@@ -111,11 +111,11 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
                         {(() => {
                             if (busy === true) {
                                 return <a>
-                                    <div className="pt-spinner pt-small pt-intent-warning">
-                                        <div className="pt-spinner-svg-container">
+                                    <div className="bp3-spinner bp3-small bp3-intent-warning">
+                                        <div className="bp3-spinner-svg-container">
                                             <svg viewBox="0 0 100 100">
-                                                <path className="pt-spinner-track" d="M 50,50 m 0,-44.5 a 44.5,44.5 0 1 1 0,89 a 44.5,44.5 0 1 1 0,-89"></path>
-                                                <path className="pt-spinner-head" d="M 94.5 50 A 44.5 44.5 0 0 0 50 5.5"></path>
+                                                <path className="bp3-spinner-track" d="M 50,50 m 0,-44.5 a 44.5,44.5 0 1 1 0,89 a 44.5,44.5 0 1 1 0,-89"></path>
+                                                <path className="bp3-spinner-head" d="M 94.5 50 A 44.5 44.5 0 0 0 50 5.5"></path>
                                             </svg>
                                         </div>
                                     </div>

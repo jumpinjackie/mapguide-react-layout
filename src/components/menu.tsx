@@ -36,7 +36,7 @@ export class MenuComponent extends React.Component<IMenuComponentProps, any> {
         }
     }
     render(): JSX.Element {
-        return <Menu className="pt-elevation-1">
+        return <Menu className="bp3-elevation-1">
             {this.props.items.map((item, index) => {
                 if (item.isSeparator) {
                     return <MenuDivider key={index} />;
@@ -65,7 +65,7 @@ export class MenuComponent extends React.Component<IMenuComponentProps, any> {
                     const text = item.label || "";
                     //NOTE: Not using MenuItem here as we want fine control over the item content
                     return <li key={index}>
-                        <a className="pt-menu-item" onClick={invoke}><Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {text}</a>
+                        <a className="bp3-menu-item" onClick={invoke}><Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {text}</a>
                     </li>;
                 }
             })}

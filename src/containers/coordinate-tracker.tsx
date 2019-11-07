@@ -70,7 +70,7 @@ export class CoordinateTrackerContainer extends React.Component<CoordinateTracke
             </div>;
         } else {
             return <div>
-                <div className="pt-callout pt-intent-danger">
+                <div className="bp3-callout bp3-intent-danger">
                     <h5>{tr("ERROR", locale)}</h5>
                     {tr("COORDTRACKER_NO_PROJECTIONS", locale)}
                 </div>

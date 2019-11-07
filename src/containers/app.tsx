@@ -368,7 +368,7 @@ export class App extends React.Component<AppProps, any> {
         }
         //Not showing stack as the error cases are well-defined here and we know where they
         //originate from
-        return <div className="pt-callout pt-intent-danger">
+        return <div className="bp3-callout bp3-intent-danger">
             <h5>{tr("INIT_ERROR_TITLE", locale)}</h5>
             {this.renderErrorMessage(err, locale, initOptions || {})}
         </div>;
@@ -382,19 +382,19 @@ export class App extends React.Component<AppProps, any> {
             //NOTE: Locale may not have been set at this point, so use default
             const locale = config ? (config.locale || DEFAULT_LOCALE) : DEFAULT_LOCALE;
             if (isLoading) {
-                return <div className="pt-non-ideal-state">
-                    <div className="pt-non-ideal-state-visual pt-non-ideal-state-icon">
-                        <div className="pt-spinner pt-large">
-                            <div className="pt-spinner-svg-container">
+                return <div className="bp3-non-ideal-state">
+                    <div className="bp3-non-ideal-state-visual bp3-non-ideal-state-icon">
+                        <div className="bp3-spinner bp3-large">
+                            <div className="bp3-spinner-svg-container">
                                 <svg viewBox="0 0 100 100">
-                                    <path className="pt-spinner-track" d="M 50,50 m 0,-44.5 a 44.5,44.5 0 1 1 0,89 a 44.5,44.5 0 1 1 0,-89"></path>
-                                    <path className="pt-spinner-head" d="M 94.5 50 A 44.5 44.5 0 0 0 50 5.5"></path>
+                                    <path className="bp3-spinner-track" d="M 50,50 m 0,-44.5 a 44.5,44.5 0 1 1 0,89 a 44.5,44.5 0 1 1 0,-89"></path>
+                                    <path className="bp3-spinner-head" d="M 94.5 50 A 44.5 44.5 0 0 0 50 5.5"></path>
                                 </svg>
                             </div>
                         </div>
                     </div>
-                    <h4 className="pt-non-ideal-state-title">{tr("INIT", locale)}</h4>
-                    <div className="pt-non-ideal-state-description">{tr("INIT_DESC", locale)}</div>
+                    <h4 className="bp3-non-ideal-state-title">{tr("INIT", locale)}</h4>
+                    <div className="bp3-non-ideal-state-description">{tr("INIT_DESC", locale)}</div>
                 </div>;
             } else {
                 const layoutEl = getLayout(layout);

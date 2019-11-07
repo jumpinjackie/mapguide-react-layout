@@ -216,7 +216,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             <div style={taskBodyStyle}>
                 {(() => {
                     if (invalidated === true) {
-                        return <div className="pt-callout pt-intent-warning">
+                        return <div className="bp3-callout bp3-intent-warning">
                             <h5>{tr("TASK_PANE_CONTENT_FOR_INACTIVE_MAP_TITLE", this.props.locale)}</h5>
                             {tr("TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING", this.props.locale)}
                         </div>;
@@ -237,19 +237,19 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                         ];
                         if (frameContentLoaded == false) {
                             components.push(<div key="taskPaneFrameLoadingOverlay" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: TASK_PANE_OVERLAY_BGCOLOR }}>
-                                <div className="pt-non-ideal-state">
-                                    <div className="pt-non-ideal-state-visual pt-non-ideal-state-icon">
-                                        <div className="pt-spinner pt-large">
-                                            <div className="pt-spinner-svg-container">
+                                <div className="bp3-non-ideal-state">
+                                    <div className="bp3-non-ideal-state-visual bp3-non-ideal-state-icon">
+                                        <div className="bp3-spinner bp3-large">
+                                            <div className="bp3-spinner-svg-container">
                                                 <svg viewBox="0 0 100 100">
-                                                    <path className="pt-spinner-track" d="M 50,50 m 0,-44.5 a 44.5,44.5 0 1 1 0,89 a 44.5,44.5 0 1 1 0,-89"></path>
-                                                    <path className="pt-spinner-head" d="M 94.5 50 A 44.5 44.5 0 0 0 50 5.5"></path>
+                                                    <path className="bp3-spinner-track" d="M 50,50 m 0,-44.5 a 44.5,44.5 0 1 1 0,89 a 44.5,44.5 0 1 1 0,-89"></path>
+                                                    <path className="bp3-spinner-head" d="M 94.5 50 A 44.5 44.5 0 0 0 50 5.5"></path>
                                                 </svg>
                                             </div>
                                         </div>
                                     </div>
-                                    <h4 className="pt-non-ideal-state-title">{tr("TASK_PANE_LOADING", locale)}</h4>
-                                    <div className="pt-non-ideal-state-description">{tr("TASK_PANE_LOADING_DESC", locale)}</div>
+                                    <h4 className="bp3-non-ideal-state-title">{tr("TASK_PANE_LOADING", locale)}</h4>
+                                    <div className="bp3-non-ideal-state-description">{tr("TASK_PANE_LOADING_DESC", locale)}</div>
                                 </div>
                             </div>);
                         }

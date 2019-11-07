@@ -196,11 +196,11 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
                     {(() => {
                         if (isResizing == true) {
                             return <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: TASK_PANE_OVERLAY_BGCOLOR }}>
-                                <div className="pt-non-ideal-state">
-                                    <div className="pt-non-ideal-state-visual pt-non-ideal-state-icon">
-                                        <span className="pt-icon arrows-horizontal"></span>
+                                <div className="bp3-non-ideal-state">
+                                    <div className="bp3-non-ideal-state-visual bp3-non-ideal-state-icon">
+                                        <span className="bp3-icon arrows-horizontal"></span>
                                     </div>
-                                    <div className="pt-non-ideal-state-description">
+                                    <div className="bp3-non-ideal-state-description">
                                         {tr("TASK_PANE_RESIZING", this.getLocale())}
                                     </div>
                                 </div>

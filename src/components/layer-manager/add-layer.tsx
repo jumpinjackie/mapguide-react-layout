@@ -45,9 +45,9 @@ export class AddLayer extends React.Component<IAddLayerProps, Partial<IAddLayerS
         const { selectedType } = this.state;
         const items = Object.keys(ADD_LAYER_TYPES).map(lt => ({ value: lt, label: ADD_LAYER_TYPES[lt].label }))
         return <div>
-            <label className="pt-label .modifier">
+            <label className="bp3-label .modifier">
                 {tr("LAYER_TYPE", locale)}
-                <div className="pt-select">
+                <div className="bp3-select">
                     <select value={selectedType || ""} onChange={this.onLayerTypeChanged}>
                         <option>{tr("SELECT_LAYER_TYPE", locale)}</option>
                         {items.map(it => <option key={it.value} value={it.value}>{it.value}</option>)}

@@ -61,7 +61,10 @@ export class MenuComponent extends React.Component<IMenuComponentProps, any> {
                             enabled = item.enabled;
                         }
                     }
-                    const imgStyle = getIconStyle(enabled, height);
+                    const imgStyle = {
+                        marginRight: 5,
+                        ...getIconStyle(enabled, height)
+                    };
                     const text = item.label || "";
                     //NOTE: Not using MenuItem here as we want fine control over the item content
                     return <li key={index}>

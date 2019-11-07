@@ -21,10 +21,9 @@ import { setCustomTemplateReducer, isElementState } from "../reducers/template";
 import InitWarningDisplay from "../containers/init-warning-display";
 import SplitterLayout from "react-splitter-layout";
 import * as Runtime from "../api/runtime";
-import { Tabs } from '@blueprintjs/core/lib/esm/components/tabs/tabs';
-import { Tab } from '@blueprintjs/core/lib/esm/components/tabs/tab';
 import { IElementState, ViewerAction } from '../actions/defs';
 import { ActionType } from '../constants/actions';
+import { Tabs, Tab } from '@blueprintjs/core';
 
 function limegoldTemplateReducer(state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {

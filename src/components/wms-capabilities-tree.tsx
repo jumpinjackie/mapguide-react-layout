@@ -2,9 +2,7 @@ import * as React from "react";
 import { tr } from "../api/i18n";
 import { WmsCapabilitiesDocument, WMSPublishedLayer, WMSLayerStyle } from "../api/common";
 import * as shortid from "shortid";
-import { Tooltip } from '@blueprintjs/core/lib/esm/components/tooltip/tooltip';
-import { ITreeNode } from '@blueprintjs/core/lib/esm/components/tree/treeNode';
-import { Tree } from '@blueprintjs/core/lib/esm/components/tree/tree';
+import { Tooltip, ITreeNode, Tree } from '@blueprintjs/core';
 
 type WMSLayerStylePair = [WMSPublishedLayer, WMSLayerStyle[]];
 

@@ -3,9 +3,7 @@ import { IApplicationState, ReduxDispatch } from "../api/common";
 import { acknowledgeInitWarnings } from "../actions/init";
 import { connect } from "react-redux";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
-import { Dialog } from '@blueprintjs/core/lib/esm/components/dialog/dialog';
-import { Button } from '@blueprintjs/core/lib/esm/components/button/buttons';
-import { Intent } from '@blueprintjs/core/lib/esm/common/intent';
+import { Dialog, Button, Intent } from '@blueprintjs/core';
 
 export interface IInitWarningDisplayProps {
     

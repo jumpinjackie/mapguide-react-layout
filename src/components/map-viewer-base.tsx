@@ -98,8 +98,7 @@ import Point from "ol/geom/point";
 import LineString from "ol/geom/linestring";
 import Circle from "ol/geom/circle";
 import { safePropAccess } from '../utils/safe-prop';
-import { ContextMenuTarget } from '@blueprintjs/core/lib/esm/components/context-menu/contextMenuTarget';
-import { ContextMenu } from '@blueprintjs/core/lib/esm/components';
+import { ContextMenuTarget, ContextMenu } from '@blueprintjs/core';
 
 plugins.register(PluginType.MAP_RENDERER, MapRenderer);
 plugins.register(PluginType.LAYER_RENDERER, TileLayerRenderer);

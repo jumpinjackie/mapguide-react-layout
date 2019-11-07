@@ -1,8 +1,7 @@
 import * as React from "react";
 import { ILayerInfo, GenericEvent } from "../../api/common";
 import { safePropAccess } from '../../utils/safe-prop';
-import { ITreeNode } from '@blueprintjs/core/lib/esm/components/tree/treeNode';
-import { Tree } from '@blueprintjs/core/lib/esm/components/tree/tree';
+import { ITreeNode, Tree } from '@blueprintjs/core';
 
 /**
  * @hidden

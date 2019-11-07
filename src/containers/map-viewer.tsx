@@ -36,9 +36,7 @@ import { DefaultComponentNames } from "../api/registry/component";
 import { processMenuItems } from "../utils/menu";
 import { tr } from "../api/i18n";
 import { IOLFactory, OLFactory } from "../api/ol-factory";
-import { Toaster } from '@blueprintjs/core/lib/esm/components/toast/toaster';
-import { Intent } from '@blueprintjs/core/lib/esm/common/intent';
-import { Position as BP_Pos } from '@blueprintjs/core/lib/esm/common/position';
+import { Toaster, Position, Intent } from '@blueprintjs/core';
 
 export interface IMapViewerContainerProps {
     overviewMapElementSelector?: () => (Element | null);
@@ -274,7 +272,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             if (config.agentUri) {
                 //Praise $DEITY, we can finally return multiple JSX elements in React 16! No more DOM contortions!
                 return [
-                    <Toaster key="toaster" position={BP_Pos.TOP} ref={this.refHandlers.toaster} />,
+                    <Toaster key="toaster" position={Position.TOP} ref={this.refHandlers.toaster} />,
                     <MapViewerBase  key="map"
                                     ref={this.onMapViewerMounted}
                                     map={map}

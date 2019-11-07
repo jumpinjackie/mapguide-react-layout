@@ -17,7 +17,7 @@ import {
 } from "../api/common";
 import * as MapActions from "../actions/map";
 import { MapCapturerContext, Size, IMapCapturerContextCallback } from "./map-capturer-context";
-import { Slider } from '@blueprintjs/core/lib/esm/components/slider/slider';
+import { Slider } from '@blueprintjs/core';
 
 function getMargin() {
     /*

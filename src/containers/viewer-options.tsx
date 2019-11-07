@@ -15,7 +15,7 @@ import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from "../constants/index";
 import { getUnits, getUnitOfMeasure } from "../utils/units";
 import { safePropAccess } from '../utils/safe-prop';
-import { Slider } from '@blueprintjs/core/lib/esm/components/slider/slider';
+import { Slider } from '@blueprintjs/core';
 
 export interface IViewerOptionsProps {
 

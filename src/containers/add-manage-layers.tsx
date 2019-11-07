@@ -8,8 +8,7 @@ import {
 } from "../api/common";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
-import { Tabs } from '@blueprintjs/core/lib/esm/components/tabs/tabs';
-import { Tab } from '@blueprintjs/core/lib/esm/components/tabs/tab';
+import { Tabs, Tab } from '@blueprintjs/core';
 
 interface ILayerManagerProps {
     locale: string | undefined;

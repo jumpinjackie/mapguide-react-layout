@@ -4,8 +4,8 @@ import {
     GenericEvent
 } from "../api/common";
 import { safePropAccess } from '../utils/safe-prop';
-import { Icon } from '@blueprintjs/core/lib/esm/components/icon/icon';
-import { Collapse } from '@blueprintjs/core/lib/esm/components/collapse/collapse';
+import Icon from 'ol/style/icon';
+import { Collapse, Icon as BpIcon } from '@blueprintjs/core';
 
 /**
  * Accordion panel dimensions
@@ -105,7 +105,7 @@ export class Accordion extends React.Component<IAccordionProps, any> {
                         const isOpen = (p.id == openPanel);
                         return <div key={p.id} className="component-accordion-panel">
                             <div className="component-accordion-panel-header" style={{ height: PANEL_HEADER_HEIGHT }} data-accordion-panel-id={p.id} onClick={this.onTogglePanel}>
-                                <Icon icon={isOpen ? "chevron-up" : "chevron-down"} /> {p.title}
+                                <BpIcon icon={isOpen ? "chevron-up" : "chevron-down"} /> {p.title}
                             </div>
                             <Collapse isOpen={isOpen}>
                                 {p.contentRenderer({ width: dim.width, height: (dim.height - (panels.length * PANEL_HEADER_HEIGHT)) }, isResizing)}

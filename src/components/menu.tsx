@@ -3,9 +3,7 @@ import { isMenu } from "../utils/type-guards";
 import { IItem, getIconStyle, getEnabled } from "./toolbar";
 import { Icon } from "./icon";
 import { safePropAccess } from '../utils/safe-prop';
-import { Menu } from '@blueprintjs/core/lib/esm/components/menu/menu';
-import { MenuDivider } from '@blueprintjs/core/lib/esm/components/menu/menuDivider';
-import { MenuItem } from '@blueprintjs/core/lib/esm/components/menu/menuItem';
+import { Menu, MenuDivider, MenuItem } from '@blueprintjs/core';
 
 const MENU_ITEM_HEIGHT = 30;
 

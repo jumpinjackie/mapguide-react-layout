@@ -9,8 +9,7 @@ import { tr } from '../api/i18n';
 import { getViewer } from '../api/runtime';
 import CopyToClipboard = require('react-copy-to-clipboard');
 import { parseUrl, stringifyQuery } from "../utils/url";
-import { TextArea } from '@blueprintjs/core/lib/esm/components/forms/textArea';
-import { Checkbox } from '@blueprintjs/core/lib/esm/components/forms/controls';
+import { TextArea, Checkbox } from '@blueprintjs/core';
 
 /**
  * 

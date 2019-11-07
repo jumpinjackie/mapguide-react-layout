@@ -1,3 +1,9 @@
+0.12.6
+======
+
+ * Fix production bundle not being minified (due to behavioral change introduced by a recent webpack update)
+ * [#1004](https://github.com/jumpinjackie/mapguide-react-layout/issues/1004): Add OL factory APIs for creating missing OL style types.
+
 0.12.5
 ======
 

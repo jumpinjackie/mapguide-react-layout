@@ -17,7 +17,7 @@ import {
 } from "../api/common";
 import * as MapActions from "../actions/map";
 import { MapCapturerContext, Size, IMapCapturerContextCallback } from "./map-capturer-context";
-import { Slider, Button, Intent } from '@blueprintjs/core';
+import { Slider, Button, Intent, Callout } from '@blueprintjs/core';
 
 function getMargin() {
     /*
@@ -433,9 +433,9 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                 <div className="HPlaceholder5px"></div>
                 {(() => {
                     if (hasExternalBaseLayers) {
-                        return <div id="commercialLayerWarning" className="bp3-callout bp3-intent-primary info-sign">
+                        return <Callout intent={Intent.PRIMARY} icon="info-sign">
                             {xlate("QUICKPLOT_COMMERCIAL_LAYER_WARNING", locale)}
-                        </div>;
+                        </Callout>;
                     }
                 })()}
                 <div className="ButtonContainer FixWidth">

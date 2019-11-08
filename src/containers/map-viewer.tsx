@@ -233,7 +233,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             }
         }
     }
-    render(): JSX.Element | JSX.Element[] | string | number | null | false {
+    render() {
         const {
             map,
             selection,
@@ -270,9 +270,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                 xml = getActiveSelectedFeatureXml(selection.FeatureSet, activeSelectedFeature);
             }
             if (config.agentUri) {
-                //Praise $DEITY, we can finally return multiple JSX elements in React 16! No more DOM contortions!
-                return [
-                    <Toaster usePortal={false} key="toaster" position={Position.TOP} ref={this.refHandlers.toaster} />,
+                return <>
+                    {/* HACK: usePortal=false to workaround what I think is: https://github.com/palantir/blueprint/issues/3248 */}
+                    <Toaster usePortal={false} key="toaster" position={Position.TOP} ref={this.refHandlers.toaster} />
                     <MapViewerBase  key="map"
                                     ref={this.onMapViewerMounted}
                                     map={map}
@@ -312,7 +312,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                     cancelDigitizationKey={config.cancelDigitizationKey}
                                     undoLastPointKey={config.undoLastPointKey}
                                     activeSelectedFeatureXml={xml} />
-                ];
+                </>;
             }
         }
         return <div>{tr("LOADING_MSG", locale)}</div>;

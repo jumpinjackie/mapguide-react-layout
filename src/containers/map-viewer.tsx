@@ -272,7 +272,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             if (config.agentUri) {
                 //Praise $DEITY, we can finally return multiple JSX elements in React 16! No more DOM contortions!
                 return [
-                    <Toaster key="toaster" position={Position.TOP} ref={this.refHandlers.toaster} />,
+                    <Toaster usePortal={false} key="toaster" position={Position.TOP} ref={this.refHandlers.toaster} />,
                     <MapViewerBase  key="map"
                                     ref={this.onMapViewerMounted}
                                     map={map}

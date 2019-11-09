@@ -13,6 +13,9 @@ declare const __DEV__: boolean;
 
 declare module "history";
 
+// Until this is fixed: https://github.com/fkhadra/react-contexify/issues/129
+declare module "react-contextify";
+
 // Monkey-patched ol ES2015 module declarations (this is a bug in the jsdoc-typescribp3-plugin that generated the OL typings)
 declare module "ol" {
     export default ol;

@@ -176,8 +176,8 @@ export function arrayChanged<T>(arr: T[] | undefined, other: T[] | undefined): b
 export function areViewsCloseToEqual(view: IMapView | undefined, otherView: IMapView | undefined): boolean {
     if (view && otherView) {
         return areNumbersEqual(view.x, otherView.x) &&
-               areNumbersEqual(view.y, otherView.y) &&
-               areNumbersEqual(view.scale, otherView.scale);
+            areNumbersEqual(view.y, otherView.y) &&
+            areNumbersEqual(view.scale, otherView.scale);
     } else {
         return false;
     }
@@ -211,7 +211,7 @@ export function layerTransparencyChanged(set: LayerTransparencySet, other: Layer
     const otherLayers = Object.keys(other);
     if (arrayChanged(setLayers, otherLayers))
         return true;
-    
+
     for (const name of setLayers) {
         if (set[name] != other[name]) {
             return true;
@@ -258,7 +258,7 @@ const MapLoadIndicator = (props: IMapLoadIndicatorProps) => {
         visibility = "hidden";
         width = "0";
     }
-    const style: React.CSSProperties = { 
+    const style: React.CSSProperties = {
         position: "absolute",
         zIndex: 10,
         visibility: visibility,
@@ -277,7 +277,7 @@ const MapLoadIndicator = (props: IMapLoadIndicatorProps) => {
 }
 
 function isMiddleMouseDownEvent(e: MouseEvent): boolean {
-    return (e && (e.which == 2 || e.button == 4 ));
+    return (e && (e.which == 2 || e.button == 4));
 }
 
 function cloneExtent(bounds: Bounds): Bounds {
@@ -1131,22 +1131,21 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     public updateSize() {
         this._map.updateSize();
     }
-    public getLayerManager(mapName?: string): ILayerManager { 
+    public getLayerManager(mapName?: string): ILayerManager {
         const layerSet = this._mapContext.getLayerSet(mapName || this.props.map.Name, true, this.props);
         return new MgLayerManager(this._map, layerSet);
     }
     public screenToMapUnits(x: number, y: number): [number, number] {
         let bAllowOutsideWindow = false;
-        const [ mapDevW, mapDevH ] = this.getSize();
-        const [ extX1, extY1, extX2, extY2 ] = this.getCurrentExtent();
-        if (!bAllowOutsideWindow)
-        {
-            if(x > mapDevW - 1) x = mapDevW - 1;
-            else if(x < 0) x = 0;
-    
-            if(y > mapDevH - 1) y = mapDevH - 1;
-            else if(y < 0) y = 0;
-        }    
+        const [mapDevW, mapDevH] = this.getSize();
+        const [extX1, extY1, extX2, extY2] = this.getCurrentExtent();
+        if (!bAllowOutsideWindow) {
+            if (x > mapDevW - 1) x = mapDevW - 1;
+            else if (x < 0) x = 0;
+
+            if (y > mapDevH - 1) y = mapDevH - 1;
+            else if (y < 0) y = 0;
+        }
         x = extX1 + (extX2 - extX1) * (x / mapDevW);
         y = extY1 - (extY1 - extY2) * (y / mapDevH);
         return [x, y];

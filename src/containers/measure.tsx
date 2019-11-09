@@ -11,6 +11,7 @@ import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { setActiveTool } from "../actions/map";
 import { IMeasureCallback, MeasureSegment, MeasureContext, IMeasureComponent } from "./measure-context";
 import { roundTo } from "../utils/number";
+import { Callout, Intent, ButtonGroup, Button } from '@blueprintjs/core';
 
 export interface IMeasureContainerProps {
 
@@ -194,21 +195,20 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
                         </select>
                     </div>
                 </label>
-                <div className="bp3-button-group">
-                    <button type="button" className="bp3-button play" disabled={measuring} onClick={this.onStartMeasure}>{tr("MEASUREMENT_START", locale)}</button>
-                    <button type="button" className="bp3-button stop" disabled={!measuring} onClick={this.onEndMeasure}>{tr("MEASUREMENT_END", locale)}</button>
-                    <button type="button" className="bp3-button cross" onClick={this.onClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</button>
-                </div>
+                <ButtonGroup>
+                    <Button type="button" icon="play" disabled={measuring} onClick={this.onStartMeasure}>{tr("MEASUREMENT_START", locale)}</Button>
+                    <Button type="button" icon="stop" disabled={!measuring} onClick={this.onEndMeasure}>{tr("MEASUREMENT_END", locale)}</Button>
+                    <Button type="button" icon="cross" onClick={this.onClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</Button>
+                </ButtonGroup>
                 {(() => {
                     if (this.state.measuring === true) {
                         return <div>
-                            <div className="bp3-callout bp3-intent-primary">
-                                <h5>{tr("MEASURING", locale)}</h5>
+                            <Callout intent={Intent.PRIMARY} title={tr("MEASURING", locale)}>
                                 {tr("MEASURING_MESSAGE", locale)}
-                            </div>
+                            </Callout>
                             {(() => {
                                 if (this.state.segments) {
-                                    return <table className="bp3-table">
+                                    return <table className="bp3-html-table bp3-html-table-condensed">
                                         <thead>
                                             <tr>
                                                 <th>{tr("MEASURE_SEGMENT", locale)}</th>

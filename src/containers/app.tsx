@@ -23,7 +23,7 @@ import { safePropAccess } from '../utils/safe-prop';
 import { UrlValueChangeCallback, IAppUrlStateProps, urlPropsQueryConfig } from './url-state';
 import { addUrlProps } from 'react-url-query';
 import { IElementState } from '../actions/defs';
-import { NonIdealState, Spinner, Intent } from '@blueprintjs/core';
+import { NonIdealState, Spinner, Intent, Callout } from '@blueprintjs/core';
 
 /**
  * Callback interface for propagating changes to URL state
@@ -369,10 +369,9 @@ export class App extends React.Component<AppProps, any> {
         }
         //Not showing stack as the error cases are well-defined here and we know where they
         //originate from
-        return <div className="bp3-callout bp3-intent-danger">
-            <h5>{tr("INIT_ERROR_TITLE", locale)}</h5>
+        return <Callout intent={Intent.DANGER} title={tr("INIT_ERROR_TITLE", locale)} icon="error">
             {this.renderErrorMessage(err, locale, initOptions || {})}
-        </div>;
+        </Callout>;
     }
     render(): JSX.Element {
         const { layout, config, error } = this.props;

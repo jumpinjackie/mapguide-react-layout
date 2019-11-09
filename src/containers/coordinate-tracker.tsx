@@ -6,6 +6,7 @@ import {
 } from "../api/common";
 import { tr } from "../api/i18n";
 import olProj from "ol/proj";
+import { Callout, Intent } from '@blueprintjs/core';
 
 export interface ICoordinateTrackerContainerProps {
     projections: string[];
@@ -69,12 +70,9 @@ export class CoordinateTrackerContainer extends React.Component<CoordinateTracke
                 })}
             </div>;
         } else {
-            return <div>
-                <div className="bp3-callout bp3-intent-danger">
-                    <h5>{tr("ERROR", locale)}</h5>
-                    {tr("COORDTRACKER_NO_PROJECTIONS", locale)}
-                </div>
-            </div>;
+            return <Callout intent={Intent.DANGER} title={tr("ERROR", locale)} icon="error">
+                {tr("COORDTRACKER_NO_PROJECTIONS", locale)}
+            </Callout>;
         }
     }
 }

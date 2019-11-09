@@ -24,12 +24,11 @@ import { MapViewerBase } from "../components/map-viewer-base";
 import * as Runtime from "../api/runtime";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import * as MapActions from "../actions/map";
-import { IItem, IInlineMenu } from "../components/toolbar";
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml, getActiveSelectedFeatureXml } from '../api/builders/deArrayify';
-import { getCommand, mapToolbarReference, } from "../api/registry/command";
+import { mapToolbarReference, } from "../api/registry/command";
 import { invokeCommand, queryMapFeatures } from "../actions/map";
 import { showModalComponent } from "../actions/modal";
 import { DefaultComponentNames } from "../api/registry/component";
@@ -74,9 +73,8 @@ export interface IMapViewerContainerDispatch {
     setFeatureTooltipsEnabled: (enabled: boolean) => void;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewerContainerProps): Partial<IMapViewerContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IMapViewerContainerState> {
     let map;
-    let legend;
     let selection;
     let currentView;
     let initialView;
@@ -272,46 +270,45 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             if (config.agentUri) {
                 return <>
                     {/* HACK: usePortal=false to workaround what I think is: https://github.com/palantir/blueprint/issues/3248 */}
-                    <Toaster usePortal={false} key="toaster" position={Position.TOP} ref={this.refHandlers.toaster} />
-                    <MapViewerBase  key="map"
-                                    ref={this.onMapViewerMounted}
-                                    map={map}
-                                    agentUri={config.agentUri}
-                                    agentKind={config.agentKind}
-                                    locale={locale}
-                                    externalBaseLayers={externalBaseLayers}
-                                    imageFormat={config.viewer.imageFormat}
-                                    selectionImageFormat={config.viewer.selectionImageFormat}
-                                    selectionColor={config.viewer.selectionColor}
-                                    activeSelectedFeatureColor={config.viewer.activeSelectedFeatureColor}
-                                    pointSelectionBuffer={config.viewer.pointSelectionBuffer}
-                                    tool={viewer.tool}
-                                    viewRotation={config.viewRotation}
-                                    viewRotationEnabled={config.viewRotationEnabled}
-                                    featureTooltipsEnabled={viewer.featureTooltipsEnabled}
-                                    manualFeatureTooltips={config.manualFeatureTooltips}
-                                    showGroups={showGroups}
-                                    hideGroups={hideGroups}
-                                    showLayers={showLayers}
-                                    hideLayers={hideLayers}
-                                    view={currentView || initialView}
-                                    selectableLayerNames={selectableLayerNames}
-                                    contextMenu={childItems}
-                                    overviewMapElementSelector={overviewMapElementSelector}
-                                    loadIndicatorPosition={config.viewer.loadIndicatorPositioning}
-                                    loadIndicatorColor={config.viewer.loadIndicatorColor}
-                                    layerTransparency={layerTransparency || Constants.EMPTY_OBJECT}
-                                    onBeginDigitization={this.onBeginDigitization}
-                                    onSessionExpired={this.onSessionExpired}
-                                    onBusyLoading={this.onBusyLoading}
-                                    onRotationChanged={this.onRotationChanged}
-                                    onMouseCoordinateChanged={this.onMouseCoordinateChanged}
-                                    onQueryMapFeatures={this.onQueryMapFeatures}
-                                    onRequestZoomToView={this.onRequestZoomToView}
-                                    onMapResized={this.onMapResized}
-                                    cancelDigitizationKey={config.cancelDigitizationKey}
-                                    undoLastPointKey={config.undoLastPointKey}
-                                    activeSelectedFeatureXml={xml} />
+                    <Toaster usePortal={false} position={Position.TOP} ref={this.refHandlers.toaster} />
+                    <MapViewerBase ref={this.onMapViewerMounted}
+                        map={map}
+                        agentUri={config.agentUri}
+                        agentKind={config.agentKind}
+                        locale={locale}
+                        externalBaseLayers={externalBaseLayers}
+                        imageFormat={config.viewer.imageFormat}
+                        selectionImageFormat={config.viewer.selectionImageFormat}
+                        selectionColor={config.viewer.selectionColor}
+                        activeSelectedFeatureColor={config.viewer.activeSelectedFeatureColor}
+                        pointSelectionBuffer={config.viewer.pointSelectionBuffer}
+                        tool={viewer.tool}
+                        viewRotation={config.viewRotation}
+                        viewRotationEnabled={config.viewRotationEnabled}
+                        featureTooltipsEnabled={viewer.featureTooltipsEnabled}
+                        manualFeatureTooltips={config.manualFeatureTooltips}
+                        showGroups={showGroups}
+                        hideGroups={hideGroups}
+                        showLayers={showLayers}
+                        hideLayers={hideLayers}
+                        view={currentView || initialView}
+                        selectableLayerNames={selectableLayerNames}
+                        contextMenu={childItems}
+                        overviewMapElementSelector={overviewMapElementSelector}
+                        loadIndicatorPosition={config.viewer.loadIndicatorPositioning}
+                        loadIndicatorColor={config.viewer.loadIndicatorColor}
+                        layerTransparency={layerTransparency || Constants.EMPTY_OBJECT}
+                        onBeginDigitization={this.onBeginDigitization}
+                        onSessionExpired={this.onSessionExpired}
+                        onBusyLoading={this.onBusyLoading}
+                        onRotationChanged={this.onRotationChanged}
+                        onMouseCoordinateChanged={this.onMouseCoordinateChanged}
+                        onQueryMapFeatures={this.onQueryMapFeatures}
+                        onRequestZoomToView={this.onRequestZoomToView}
+                        onMapResized={this.onMapResized}
+                        cancelDigitizationKey={config.cancelDigitizationKey}
+                        undoLastPointKey={config.undoLastPointKey}
+                        activeSelectedFeatureXml={xml} />
                 </>;
             }
         }

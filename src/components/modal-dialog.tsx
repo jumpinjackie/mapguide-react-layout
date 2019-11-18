@@ -3,11 +3,12 @@ import * as React from "react";
 // only works if module type is "es6". This is not the case for us, so just use untyped require()
 import Draggable from "react-draggable";
 import { GenericEvent } from "../api/common";
+import { Dialog, Icon, Button } from '@blueprintjs/core';
 
 /**
  * [left, top, right, bottom]
  */
-export type ModalDialogPositioning = [number|undefined, number|undefined, number|undefined, number|undefined] | [string|undefined, string|undefined, string|undefined, string|undefined];
+export type ModalDialogPositioning = [number | undefined, number | undefined, number | undefined, number | undefined] | [string | undefined, string | undefined, string | undefined, string | undefined];
 
 /**
  * ModalDialog component props
@@ -81,12 +82,14 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
             modalBodyStyle.overflowY = "auto";
         }
         const diag = <Draggable handle=".bp3-dialog-header">
-            <div className="bp3-dialog" style={modalStyle}>
-                <div className="bp3-dialog-header noselect">
-                    <h5>{title}</h5>
-                    <button onClick={this.onClose} aria-label="Close" className="bp3-dialog-close-button small-cross"></button>
+            <div className="bp3-dialog-container">
+                <div className="bp3-dialog" style={modalStyle}>
+                    <div className="bp3-dialog-header noselect">
+                        <h4 className="bp3-heading">{title}</h4>
+                        <Button onClick={this.onClose} aria-label="Close" className="bp3-dialog-close-button bp3-button" minimal icon="small-cross" />
+                    </div>
+                    <div className="bp3-dialog-body" style={modalBodyStyle}>{this.props.children}</div>
                 </div>
-                <div className="bp3-dialog-body" style={modalBodyStyle}>{this.props.children}</div>
             </div>
         </Draggable>;
         if (backdrop === true) {

@@ -159,32 +159,32 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@gerrit0/typedoc-default-themes@^0.6.1":
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/@gerrit0/typedoc-default-themes/-/typedoc-default-themes-0.6.2.tgz#225e8bc585e7b9fd0c59231fc7059ff128bf879f"
-  integrity sha512-d1nGmlecgjB4wcQKJif+BZl5V8Ea4xNHPbwVzYU1vaXt+YFE2gVU0/HO+jITo8exVO5DCqL0hVPDeN3DRnpslQ==
+"@gerrit0/typedoc-default-themes@^0.6.4":
+  version "0.6.4"
+  resolved "https://registry.yarnpkg.com/@gerrit0/typedoc-default-themes/-/typedoc-default-themes-0.6.4.tgz#fd929e83b7cd8c08092ab7be03fa80e5be7715bc"
+  integrity sha512-XhvpjLQzzOk4TvUbszjfGjEPdEZk73gcdk2QiYqRzv6paZHeeaylAiXjj//Wq1+SQ7htH14dV1WHkdQ7pa1fzA==
   dependencies:
     backbone "^1.4.0"
     jquery "^3.4.1"
     lunr "^2.3.6"
     underscore "^1.9.1"
 
-"@gerrit0/typedoc@0.15.7":
-  version "0.15.7"
-  resolved "https://registry.yarnpkg.com/@gerrit0/typedoc/-/typedoc-0.15.7.tgz#515b1e0f0f344185eb28b5280ce871c0c2f364ca"
-  integrity sha512-Kk4RvOe/vljUsX3O9bV+Zm5gpPrgc7Qy336sl3OtQMyNU0M7bMeFLf4cXcXuvab9vWWcOjM39Du8QF6ds/eS/A==
+"@gerrit0/typedoc@0.15.10":
+  version "0.15.10"
+  resolved "https://registry.yarnpkg.com/@gerrit0/typedoc/-/typedoc-0.15.10.tgz#b05c62a104ee539b7439436584c811da5f8b4918"
+  integrity sha512-WM19E3jgrv9Dg9eDKNGoUWz6ovdxtw+p3d7xHnS8D95n3OEZKu5On2Xu5KDh5AIQBMgqtHmmIyUX40ULKl1wQg==
   dependencies:
-    "@gerrit0/typedoc-default-themes" "^0.6.1"
+    "@gerrit0/typedoc-default-themes" "^0.6.4"
     "@types/minimatch" "3.0.3"
     fs-extra "^8.1.0"
-    handlebars "^4.4.3"
-    highlight.js "^9.15.10"
+    handlebars "^4.5.1"
+    highlight.js "^9.16.2"
     lodash "^4.17.15"
     marked "^0.7.0"
     minimatch "^3.0.0"
     progress "^2.0.3"
     shelljs "^0.8.3"
-    typescript "3.6.x"
+    typescript "3.7.x"
 
 "@jest/console@^24.7.1", "@jest/console@^24.9.0":
   version "24.9.0"
@@ -3954,10 +3954,10 @@ growly@^1.3.0:
   resolved "https://registry.yarnpkg.com/growly/-/growly-1.3.0.tgz#f10748cbe76af964b7c96c93c6bcc28af120c081"
   integrity sha1-8QdIy+dq+WS3yWyTxrzCivEgwIE=
 
-handlebars@4.4.5, handlebars@^4.1.2, handlebars@^4.4.3:
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.4.5.tgz#1b1f94f9bfe7379adda86a8b73fb570265a0dddd"
-  integrity sha512-0Ce31oWVB7YidkaTq33ZxEbN+UDxMMgThvCe8ptgQViymL5DPis9uLdTA13MiRPhgvqyxIegugrP97iK3JeBHg==
+handlebars@4.5.2, handlebars@^4.1.2, handlebars@^4.5.1:
+  version "4.5.2"
+  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.5.2.tgz#5a4eb92ab5962ca3415ac188c86dc7f784f76a0f"
+  integrity sha512-29Zxv/cynYB7mkT1rVWQnV7mGX6v7H/miQ6dbEpYTKq5eJBN7PsRB+ViYJlcT6JINTSu4dVB9kOqEun78h6Exg==
   dependencies:
     neo-async "^2.6.0"
     optimist "^0.6.1"
@@ -4068,10 +4068,10 @@ highlight-es@^1.0.0:
     is-es2016-keyword "^1.0.0"
     js-tokens "^3.0.0"
 
-highlight.js@^9.15.10:
-  version "9.15.10"
-  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-9.15.10.tgz#7b18ed75c90348c045eef9ed08ca1319a2219ad2"
-  integrity sha512-RoV7OkQm0T3os3Dd2VHLNMoaoDVx77Wygln3n9l5YV172XonWG6rgQD3XnF/BuFFZw9A0TJgmMSO8FEWQgvcXw==
+highlight.js@^9.16.2:
+  version "9.16.2"
+  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-9.16.2.tgz#68368d039ffe1c6211bcc07e483daf95de3e403e"
+  integrity sha512-feMUrVLZvjy0oC7FVJQcSQRqbBq9kwqnYE4+Kj9ZjbHh3g+BisiPgF49NyQbVLNdrL/qqZr3Ca9yOKwgn2i/tw==
 
 history@^4.10.1:
   version "4.10.1"
@@ -8850,10 +8850,15 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@3.6.3, typescript@3.6.x, typescript@^3.3.3:
+typescript@3.6.3, typescript@^3.3.3:
   version "3.6.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.6.3.tgz#fea942fabb20f7e1ca7164ff626f1a9f3f70b4da"
   integrity sha512-N7bceJL1CtRQ2RiG0AQME13ksR7DiuQh/QehubYcghzv20tnh+MQnQIuJddTmsbqYj+dztchykemz0zFzlvdQw==
+
+typescript@3.7.x:
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.2.tgz#27e489b95fa5909445e9fef5ee48d81697ad18fb"
+  integrity sha512-ml7V7JfiN2Xwvcer+XAf2csGO1bPBdRbFCkYBczNZggrBZ9c7G3riSUeJmqEU5uOtXNPMhE3n+R4FA/3YOAWOQ==
 
 ua-parser-js@^0.7.18:
   version "0.7.20"

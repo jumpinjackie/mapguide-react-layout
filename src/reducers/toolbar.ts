@@ -111,6 +111,10 @@ export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: ViewerActi
                     return mergeFlyoutCloseState(flyoutId, state);
                 }
             }
+        case ActionType.CONTEXT_MENU_CLOSE:
+            {
+                return mergeFlyoutCloseState(WEBLAYOUT_CONTEXTMENU, state);
+            }
     }
     return state;
 }

@@ -29,11 +29,9 @@ import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml, getActiveSelectedFeatureXml } from '../api/builders/deArrayify';
-import { mapToolbarReference, } from "../api/registry/command";
 import { invokeCommand, queryMapFeatures } from "../actions/map";
 import { showModalComponent } from "../actions/modal";
 import { DefaultComponentNames } from "../api/registry/component";
-import { processMenuItems } from "../utils/menu";
 import { tr } from "../api/i18n";
 import { IOLFactory, OLFactory } from "../api/ol-factory";
 import { Toaster, Position, Intent } from '@blueprintjs/core';
@@ -57,6 +55,7 @@ export interface IMapViewerContainerState {
     hideLayers: string[];
     externalBaseLayers: IExternalBaseLayer[];
     activeSelectedFeature: ActiveSelectedFeature;
+    isContextMenuOpen: boolean;
 }
 
 export interface IMapViewerContainerDispatch {
@@ -88,6 +87,7 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IMapViewer
     let hideLayers;
     let layerTransparency;
     let activeSelectedFeature;
+    let isContextMenuOpen = false;
     if (state.config.activeMapName) {
         const branch = state.mapState[state.config.activeMapName];
         map = branch.runtimeMap;
@@ -103,6 +103,9 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IMapViewer
         layerTransparency = branch.layerTransparency;
         activeSelectedFeature = branch.activeSelectedFeature;
     }
+    if (state?.toolbar?.flyouts?.[Constants.WEBLAYOUT_CONTEXTMENU]?.open === true) {
+        isContextMenuOpen = true;
+    }
     return {
         config: state.config,
         map: map,
@@ -117,7 +120,8 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IMapViewer
         hideLayers: hideLayers,
         externalBaseLayers: externalBaseLayers,
         layerTransparency: layerTransparency,
-        activeSelectedFeature: activeSelectedFeature
+        activeSelectedFeature: activeSelectedFeature,
+        isContextMenuOpen
     };
 }
 
@@ -234,6 +238,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             }
         }
     }
+    private onHideContextMenu = () => {
+        this.props.hideContextMenu?.();
+    }
     private onContextMenu = (pos: [number, number]) => {
         this.props.showContextMenu?.(pos);
     }
@@ -315,7 +322,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                         cancelDigitizationKey={config.cancelDigitizationKey}
                         undoLastPointKey={config.undoLastPointKey}
                         activeSelectedFeatureXml={xml}
-                        onContextMenu={this.onContextMenu} />
+                        onContextMenu={this.onContextMenu}
+                        onHideContextMenu={this.onHideContextMenu}
+                        isContextMenuOpen={!!this.props.isContextMenuOpen} />
                 </>;
             }
         }

@@ -98,7 +98,6 @@ import Point from "ol/geom/point";
 import LineString from "ol/geom/linestring";
 import Circle from "ol/geom/circle";
 import { safePropAccess } from '../utils/safe-prop';
-//import { ContextMenuTarget, ContextMenu } from '@blueprintjs/core';
 
 plugins.register(PluginType.MAP_RENDERER, MapRenderer);
 plugins.register(PluginType.LAYER_RENDERER, TileLayerRenderer);
@@ -123,7 +122,6 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
     stateChangeDebounceTimeout?: number;
     pointSelectionBuffer?: number;
     selectableLayerNames: string[];
-    contextMenu?: IItem[];
     onRequestZoomToView?: (view: IMapView) => void;
     onQueryMapFeatures?: (options: Partial<IQueryMapFeaturesOptions>, callback?: (res: QueryMapFeaturesResponse) => void, errBack?: (err: any) => void) => void;
     onMouseCoordinateChanged?: (coords: number[]) => void;
@@ -145,6 +143,8 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
     manualFeatureTooltips: boolean;
     cancelDigitizationKey?: number;
     undoLastPointKey?: number;
+    isContextMenuOpen: boolean;
+    onHideContextMenu?: () => void;
     onContextMenu?: (pos: [number, number]) => void;
 }
 
@@ -307,7 +307,6 @@ export interface IMapViewerBaseState {
  * @class MapViewerBase
  * @extends {React.Component<IMapViewerBaseProps, any>}
  */
-//@ContextMenuTarget
 export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<IMapViewerBaseState>> {
     /**
      * Indicates if touch events are supported.
@@ -327,7 +326,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     private _busyWorkers: number;
     private _triggerZoomRequestOnMoveEnd: boolean;
     private _keepAlive: SessionKeepAlive;
-    private _contextMenuOpen: boolean;
     /**
      * This is a throttled version of _refreshOnStateChange(). Call this on any
      * modifications to pendingStateChanges
@@ -343,7 +341,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         this._busyWorkers = 0;
         this._triggerZoomRequestOnMoveEnd = true;
         this._supportsTouch = isMobile.phone || isMobile.tablet;
-        this._contextMenuOpen = false;
         this.state = {
             shiftKey: false,
             isMouseDown: false,
@@ -379,16 +376,14 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     public getResolution(): number {
         return this._map.getView().getResolution();
     }
-    private onContextMenuItemInvoked() {
-        //ContextMenu.hide();
-    }
-    public renderContextMenu(): JSX.Element {
-        if (this.props.contextMenu) {
-            return <MenuComponent items={this.props.contextMenu} onInvoked={this.onContextMenuItemInvoked.bind(this)} />;
-        }
-        return <noscript />;
-    }
     private onMapClick(e: GenericEvent) {
+        if (this.props.isContextMenuOpen) {
+            // We're going on the assumption that due to element placement
+            // if this event is fired, it meant that the user clicked outside
+            // the context menu, otherwise the context menu itself would've handled
+            // the event
+            this.props.onHideContextMenu?.();
+        }
         if (this.isDigitizing()) {
             return;
         }
@@ -558,7 +553,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         //    this._mouseTooltip.onMouseMove(e);
         //}
         this._mapContext.handleMouseTooltipMouseMove(e);
-        if (this._contextMenuOpen) {
+        if (this.props.isContextMenuOpen) {
             return;
         }
         //if (this._featureTooltip && this._featureTooltip.isEnabled()) {
@@ -625,7 +620,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             onSessionExpired: this.onSessionExpired.bind(this),
             getSelectableLayers: this.getSelectableLayers.bind(this),
             getClient: () => this._client,
-            isContextMenuOpen: () => this._contextMenuOpen,
+            isContextMenuOpen: () => this.props.isContextMenuOpen,
             getAgentUri: () => this.props.agentUri,
             getAgentKind: () => this.props.agentKind,
             getMapName: () => this.props.map.Name,
@@ -834,7 +829,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     private onContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault();
-        console.log(`Open context menu at (${e.clientX}, ${e.clientY})`);
+        //console.log(`Open context menu at (${e.clientX}, ${e.clientY})`);
         this.props.onContextMenu?.([e.clientX, e.clientY]);
     }
     render(): JSX.Element {

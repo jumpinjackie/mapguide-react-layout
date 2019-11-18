@@ -127,6 +127,14 @@ export interface IInitAppAction {
     payload: IInitAppActionPayload;
 }
 
+/**
+ * @since 0.12.7
+ */
+export interface ISetLocaleAction {
+    type: ActionType.SET_LOCALE;
+    payload: string;
+}
+
 export interface IInitErrorAction {
     type: ActionType.INIT_ERROR,
     payload: {
@@ -528,3 +536,4 @@ export type ViewerAction = IOpenFlyoutAction
     | ILegendSetGroupExpandedAction
     | ILegendSetGroupSelectableAction
     | IMapRefreshAction
+    | ISetLocaleAction //@since 0.12.7

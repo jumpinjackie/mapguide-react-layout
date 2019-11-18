@@ -846,7 +846,7 @@ async function sessionAcquiredAsync(opts: IInitAsyncOptions, session: string, cl
     }
 } 
 
-async function initAsync(options: IInitAsyncOptions, client: Client): Promise<IInitAppActionPayload> {
+async function initAsync(options: IInitAsyncOptions, dispatch: ReduxDispatch, client: Client): Promise<IInitAppActionPayload> {
     //English strings are baked into this bundle. For non-en locales, we assume a strings/{locale}.json
     //exists for us to fetch
     if (options.locale != DEFAULT_LOCALE) {
@@ -854,6 +854,11 @@ async function initAsync(options: IInitAsyncOptions, client: Client): Promise<II
         if (r.ok) {
             const res = await r.json();
             registerStringBundle(options.locale, res);
+            // Dispatch the SET_LOCALE as it is safe to change UI strings at this point
+            dispatch({
+                type: ActionType.SET_LOCALE,
+                payload: options.locale
+            });
             logger.info(`Registered string bundle for locale: ${options.locale}`);
         } else {
             //TODO: Push warning to init error/warning reducer when we implement it
@@ -905,7 +910,7 @@ export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
         //non-english string bundle
         if (args.agentUri && args.agentKind) {
             const client = new Client(args.agentUri, args.agentKind);
-            initAsync(opts, client).then(payload => {
+            initAsync(opts, dispatch, client).then(payload => {
                 let initPayload = payload;
                 if (opts.initialView) {
                     initPayload.initialView = {

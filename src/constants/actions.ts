@@ -4,6 +4,8 @@
  * @since 0.12
  */
 export enum ActionType {
+    SET_LOCALE = 'MapGuide/SET_LOCALE',
+    
     INIT_APP = 'MapGuide/INIT_APP',
     INIT_ERROR = 'MapGuide/INIT_ERROR',
     INIT_ACKNOWLEDGE_WARNINGS = 'MapGuide/INIT_ACKNOWLEDGE_WARNINGS',

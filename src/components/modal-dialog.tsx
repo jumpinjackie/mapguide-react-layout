@@ -92,6 +92,9 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
                 </div>
             </div>
         </Draggable>;
+        //TODO/FIXME: Backdrops are busted after migration to bp3
+        return diag;
+        /*
         if (backdrop === true) {
             return <div>
                 {diag}
@@ -100,6 +103,7 @@ export class ModalDialog extends React.Component<IModalDialogProps, any> {
         } else {
             return diag;
         }
+        */
     }
     private onClose = (e: GenericEvent) => {
         e.preventDefault()

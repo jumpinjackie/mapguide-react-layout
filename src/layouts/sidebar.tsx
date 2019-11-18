@@ -13,10 +13,13 @@ import {
     IViewerReducerState,
     IConfigurationReducerState,
     IViewerCapabilities,
-    ITemplateReducerState
+    ITemplateReducerState,
+    ReduxDispatch
 } from "../api/common";
 import InitWarningDisplay from "../containers/init-warning-display";
 import { ActionType } from '../constants/actions';
+import { IElementState } from '../actions/defs';
+import * as TemplateActions from "../actions/template";
 
 const SIDEBAR_WIDTH = 250;
 
@@ -207,16 +210,19 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<ISidebarLa
     };
 }
 
-function mapDispatchToProps() {
-    return {
+interface ISlateTemplateLayoutDispatch {
+    setElementStates: (states: IElementState) => void;
+}
 
+function mapDispatchToProps(dispatch: ReduxDispatch): ISlateTemplateLayoutDispatch {
+    return {
+        setElementStates: (states: IElementState) => dispatch(TemplateActions.setElementStates(states))
     };
 }
 
-export type SidebarLayoutProps = Partial<ISidebarLayoutState>;
+export type SidebarLayoutProps = Partial<ISidebarLayoutState> & Partial<ISlateTemplateLayoutDispatch>;
 
 export interface SidebarLayoutState {
-    collapsed: boolean;
     activeTab: SidebarTab;
 }
 
@@ -224,10 +230,8 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<S
     constructor(props: SidebarLayoutProps) {
         super(props);
         const { templateState } = props;
-        let collapsed = false;
         let activeTab: SidebarTab = "tasks";
         if (templateState) {
-            collapsed = !(templateState.legendVisible || templateState.selectionPanelVisible || templateState.taskPaneVisible);
             if (templateState.legendVisible) {
                 activeTab = "legend";
             } else if (templateState.selectionPanelVisible) {
@@ -235,37 +239,77 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<S
             }
         }
         this.state = {
-            collapsed: collapsed,
             activeTab: activeTab
         };
     }
     private onCollapse = () => {
-        this.setState({
-            collapsed: true
-        });
-    }
-    private onExpand = () => {
-        this.setState({
-            collapsed: false
-        });
-    }
-    private onActivateTab = (tab: SidebarTab, collapsed?: boolean) => {
-        if (typeof(collapsed) != 'undefined') {
-            this.setState({
-                activeTab: tab,
-                collapsed: collapsed
-            });
-        } else {
-            this.setState({
-                activeTab: tab
+        if (this.props.setElementStates) {
+            this.props.setElementStates({
+                taskPaneVisible: false,
+                legendVisible: false,
+                selectionPanelVisible: false
             });
         }
     }
+    private onExpand = () => {
+        if (this.props.setElementStates) {
+            const est: IElementState = {
+                legendVisible: false,
+                selectionPanelVisible: false,
+                taskPaneVisible: false
+            };
+            switch (this.state.activeTab) {
+                case "legend":
+                    est.legendVisible = true;
+                    break;
+                case "selection":
+                    est.selectionPanelVisible = true;
+                    break;
+                case "tasks":
+                    est.taskPaneVisible = true;
+                    break;
+            }
+
+            if (est.legendVisible || est.selectionPanelVisible || est.taskPaneVisible) {
+                this.props.setElementStates(est);
+            }
+        }
+    }
+    private onActivateTab = (tab: SidebarTab, collapsed?: boolean) => {
+        if (this.props.setElementStates) {
+            const est: IElementState = {
+                legendVisible: false,
+                selectionPanelVisible: false,
+                taskPaneVisible: false
+            };
+            switch (tab) {
+                case "legend":
+                    est.legendVisible = true;
+                    break;
+                case "selection":
+                    est.selectionPanelVisible = true;
+                    break;
+                case "tasks":
+                    est.taskPaneVisible = true;
+                    break;
+            }
+            if (est.legendVisible || est.selectionPanelVisible || est.taskPaneVisible) {
+                this.props.setElementStates(est);
+                this.setState({
+                    activeTab: tab
+                });
+            }
+        }
+    }
     render(): JSX.Element {
-        const { collapsed, activeTab } = this.state;
-        const { viewer, capabilities, config } = this.props;
+        const { activeTab } = this.state;
+        const { viewer, capabilities, config, templateState } = this.props;
         if (!viewer || !capabilities || !config) {
             return <div />;
+        }
+        let collapsed = false;
+        if (templateState) {
+            collapsed = !(templateState.legendVisible || templateState.selectionPanelVisible || templateState.taskPaneVisible);
         }
         const {
             hasTaskPane,

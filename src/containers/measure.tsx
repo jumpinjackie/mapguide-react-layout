@@ -219,7 +219,7 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
                                             {this.state.segments.map(s => {
                                                 return <tr key={`segment-${s.segment}`}>
                                                     <td>{tr("MEASURE_SEGMENT_PART", locale, { segment: s.segment })}</td>
-                                                    <td>{roundTo(s.length, 2)}m</td>
+                                                    <td>{tr("UNIT_FMT_M", locale, { value: roundTo(s.length, 2) })}</td>
                                                 </tr>
                                             })}
                                             {(() => {

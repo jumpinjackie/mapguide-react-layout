@@ -1,6 +1,6 @@
 {
   "name": "mapguide-react-layout",
-  "version": "0.12.6",
+  "version": "0.12.7",
   "description": "A modern react-based map viewer for MapGuide",
   "scripts": {
     "prebuild": "yarn run clean",
@@ -74,7 +74,7 @@
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
-    "@gerrit0/typedoc": "0.15.8",
+    "@gerrit0/typedoc": "0.15.10",
     "@types/dom4": "2.0.1",
     "@types/enzyme": "3.10.3",
     "@types/jest": "24.0.22",
@@ -129,7 +129,7 @@
     "webpack-cli": "^3.3.10"
   },
   "resolutions": {
-    "handlebars": "4.4.5"
+    "handlebars": "4.5.2"
   },
   "greenkeeper": {
     "ignore": [

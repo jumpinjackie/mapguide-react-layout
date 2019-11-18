@@ -49,6 +49,13 @@ export const CONFIG_INITIAL_STATE: IConfigurationReducerState = {
 
 export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction) {
     switch (action.type) {
+        case ActionType.SET_LOCALE:
+            {
+                return {
+                    ...state,
+                    ...{ locale: action.payload }
+                }
+            }
         case ActionType.INIT_APP:
             {
                 const payload: any = action.payload || {};

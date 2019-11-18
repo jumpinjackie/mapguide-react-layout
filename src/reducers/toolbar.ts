@@ -2,6 +2,22 @@ import { IToolbarReducerState } from "../api/common";
 import update = require("react-addons-update");
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
+import { isElementState } from './template';
+import { WEBLAYOUT_TASKMENU } from '../constants';
+
+function mergeFlyoutCloseState(flyoutId: string, state: any) {
+    const updateSpec: any = {
+        flyouts: {}
+    };
+    updateSpec.flyouts[flyoutId] = {
+        "$merge": {
+            open: false,
+            metrics: null
+        }
+    };
+    const newState = update(state, updateSpec);
+    return newState;
+}
 
 export const TOOLBAR_INITIAL_STATE: IToolbarReducerState = {
     toolbars: {},
@@ -93,21 +109,18 @@ export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: ViewerActi
                 }
                 return state;
             }
+        case ActionType.FUSION_SET_ELEMENT_STATE:
+            {
+                if (isElementState(action.payload) && !action.payload.taskPaneVisible) {
+                    return mergeFlyoutCloseState(WEBLAYOUT_TASKMENU, state);
+                }
+                return state;
+            }
         case ActionType.FLYOUT_CLOSE:
             {
                 let flyoutId = action.payload.flyoutId;
                 if (flyoutId) {
-                    const updateSpec: any = {
-                        flyouts: {}
-                    };
-                    updateSpec.flyouts[flyoutId] = {
-                        "$merge": {
-                            open: false,
-                            metrics: null
-                        }
-                    };
-                    const newState = update(state, updateSpec);
-                    return newState;
+                    return mergeFlyoutCloseState(flyoutId, state);
                 }
             }
     }

@@ -1,3 +1,11 @@
+0.12.7
+======
+
+ * Fix more i18n gaps in:
+   * Measure segment display ([#1008](https://github.com/jumpinjackie/mapguide-react-layout/issues/1008))
+   * Loading screen text ([#1007](https://github.com/jumpinjackie/mapguide-react-layout/issues/1007))
+ * [#1006](https://github.com/jumpinjackie/mapguide-react-layout/issues/1006): Fix Task Pane menu not auto-closing if task pane is made invisible.
+
 0.12.6
 ======
 

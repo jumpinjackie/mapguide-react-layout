@@ -24,6 +24,7 @@ import { MapViewerBase } from "../components/map-viewer-base";
 import * as Runtime from "../api/runtime";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import * as MapActions from "../actions/map";
+import * as FlyoutActions from "../actions/flyout";
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
@@ -50,7 +51,6 @@ export interface IMapViewerContainerState {
     initialView: IMapView;
     selectableLayers: any;
     layerTransparency: LayerTransparencySet;
-    contextmenu: any;
     showGroups: string[];
     showLayers: string[];
     hideGroups: string[];
@@ -71,6 +71,8 @@ export interface IMapViewerContainerDispatch {
     setViewRotationEnabled: (enabled: boolean) => void;
     mapResized: (width: number, height: number) => void;
     setFeatureTooltipsEnabled: (enabled: boolean) => void;
+    showContextMenu: (pos: [number, number]) => void;
+    hideContextMenu: () => void;
 }
 
 function mapStateToProps(state: Readonly<IApplicationState>): Partial<IMapViewerContainerState> {
@@ -109,7 +111,6 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IMapViewer
         viewer: state.viewer,
         selection: selection,
         selectableLayers: selectableLayers,
-        contextmenu: state.toolbar.toolbars[Constants.WEBLAYOUT_CONTEXTMENU],
         showGroups: showGroups,
         showLayers: showLayers,
         hideGroups: hideGroups,
@@ -132,7 +133,9 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMapViewerContaine
         setViewRotation: (rotation) => dispatch(MapActions.setViewRotation(rotation)),
         setViewRotationEnabled: (enabled) => dispatch(MapActions.setViewRotationEnabled(enabled)),
         mapResized: (width, height) => dispatch(MapActions.mapResized(width, height)),
-        setFeatureTooltipsEnabled: (enabled) => dispatch(MapActions.setFeatureTooltipsEnabled(enabled))
+        setFeatureTooltipsEnabled: (enabled) => dispatch(MapActions.setFeatureTooltipsEnabled(enabled)),
+        showContextMenu: (pos) => dispatch(FlyoutActions.openContextMenu({ x: pos[0], y: pos[1] })),
+        hideContextMenu: () => dispatch(FlyoutActions.closeContextMenu())
     };
 }
 
@@ -231,6 +234,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             }
         }
     }
+    private onContextMenu = (pos: [number, number]) => {
+        this.props.showContextMenu?.(pos);
+    }
     render() {
         const {
             map,
@@ -240,7 +246,6 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             currentView,
             externalBaseLayers,
             initialView,
-            contextmenu,
             selectableLayers,
             invokeCommand,
             layerTransparency,
@@ -259,10 +264,12 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             const selectableLayerNames = (map.Layer || [])
                 .filter(layer => layer.Selectable && selectableLayers[layer.ObjectId] !== false)
                 .map(layer => layer.Name);
+            /*
             const store = (this.context as any).store;
             const items: any[] = contextmenu != null ? contextmenu.items : [];
             const cmitems = (items || []).map(tb => mapToolbarReference(tb, store, invokeCommand));
             const childItems = processMenuItems(cmitems);
+            */
             let xml;
             if (activeSelectedFeature && selection && selection.FeatureSet) {
                 xml = getActiveSelectedFeatureXml(selection.FeatureSet, activeSelectedFeature);
@@ -293,7 +300,6 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                         hideLayers={hideLayers}
                         view={currentView || initialView}
                         selectableLayerNames={selectableLayerNames}
-                        contextMenu={childItems}
                         overviewMapElementSelector={overviewMapElementSelector}
                         loadIndicatorPosition={config.viewer.loadIndicatorPositioning}
                         loadIndicatorColor={config.viewer.loadIndicatorColor}
@@ -308,7 +314,8 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                         onMapResized={this.onMapResized}
                         cancelDigitizationKey={config.cancelDigitizationKey}
                         undoLastPointKey={config.undoLastPointKey}
-                        activeSelectedFeatureXml={xml} />
+                        activeSelectedFeatureXml={xml}
+                        onContextMenu={this.onContextMenu} />
                 </>;
             }
         }

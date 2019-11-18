@@ -98,7 +98,7 @@ import Point from "ol/geom/point";
 import LineString from "ol/geom/linestring";
 import Circle from "ol/geom/circle";
 import { safePropAccess } from '../utils/safe-prop';
-import { ContextMenuTarget, ContextMenu } from '@blueprintjs/core';
+//import { ContextMenuTarget, ContextMenu } from '@blueprintjs/core';
 
 plugins.register(PluginType.MAP_RENDERER, MapRenderer);
 plugins.register(PluginType.LAYER_RENDERER, TileLayerRenderer);
@@ -145,6 +145,7 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
     manualFeatureTooltips: boolean;
     cancelDigitizationKey?: number;
     undoLastPointKey?: number;
+    onContextMenu?: (pos: [number, number]) => void;
 }
 
 /**
@@ -306,7 +307,7 @@ export interface IMapViewerBaseState {
  * @class MapViewerBase
  * @extends {React.Component<IMapViewerBaseProps, any>}
  */
-@ContextMenuTarget
+//@ContextMenuTarget
 export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<IMapViewerBaseState>> {
     /**
      * Indicates if touch events are supported.
@@ -379,7 +380,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         return this._map.getView().getResolution();
     }
     private onContextMenuItemInvoked() {
-        ContextMenu.hide();
+        //ContextMenu.hide();
     }
     public renderContextMenu(): JSX.Element {
         if (this.props.contextMenu) {
@@ -831,6 +832,11 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         }
         this.onResize(this._map.getSize());
     }
+    private onContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        console.log(`Open context menu at (${e.clientX}, ${e.clientY})`);
+        this.props.onContextMenu?.([e.clientX, e.clientY]);
+    }
     render(): JSX.Element {
         const { map, tool } = this.props;
         const { isMouseDown } = this.state;
@@ -887,7 +893,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             style.backgroundColor = `#${map.BackgroundColor.substring(2)}`;
         }
         const { loading, loaded } = this.state;
-        return <div className="map-viewer-component" style={style} onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp}>
+        return <div className="map-viewer-component" style={style} onContextMenu={this.onContextMenu} onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp}>
             <MapLoadIndicator loaded={loaded || 0} loading={loading || 0} position={this.props.loadIndicatorPosition} color={this.props.loadIndicatorColor} />
         </div>;
     }

@@ -1,22 +1,38 @@
-import { IToolbarReducerState } from "../api/common";
+import { IToolbarReducerState, IDOMElementMetrics } from "../api/common";
 import update = require("react-addons-update");
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 import { isElementState } from './template';
-import { WEBLAYOUT_TASKMENU } from '../constants';
+import { WEBLAYOUT_TASKMENU, WEBLAYOUT_CONTEXTMENU } from '../constants';
 
-function mergeFlyoutCloseState(flyoutId: string, state: any) {
+function mergeFlyoutState(flyoutId: string, state: any, flyoutPayload: any, flyoutUpdateAction: "$set" | "$merge", closeOtherFlyouts: boolean = false) {
     const updateSpec: any = {
         flyouts: {}
     };
-    updateSpec.flyouts[flyoutId] = {
-        "$merge": {
-            open: false,
-            metrics: null
+    const flyoutUpdateSpec: any = {};
+    flyoutUpdateSpec[flyoutUpdateAction] = flyoutPayload;
+    updateSpec.flyouts[flyoutId] = flyoutUpdateSpec;
+    if (closeOtherFlyouts) {
+        //Close others
+        for (const key in state.flyouts) {
+            if (key != flyoutId) {
+                updateSpec.flyouts[key] = {
+                    "$merge": {
+                        open: false
+                    }
+                };
+            }
         }
-    };
+    }
     const newState = update(state, updateSpec);
     return newState;
+}
+
+function mergeFlyoutCloseState(flyoutId: string, state: any) {
+    return mergeFlyoutState(flyoutId, state, {
+        open: false,
+        metrics: null
+    }, "$merge");
 }
 
 export const TOOLBAR_INITIAL_STATE: IToolbarReducerState = {
@@ -35,29 +51,15 @@ export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: ViewerActi
                 const payload = action.payload;
                 let flyoutId = payload.flyoutId;
                 if (flyoutId) {
-                    const updateSpec: any = {
-                        flyouts: {}
-                    };
-                    updateSpec.flyouts[flyoutId] = {
-                        "$set": { //Need to use $set instead of $merge as the tree won't have component flyout info initially
+                    return mergeFlyoutState(flyoutId, state,
+                        {
                             open: true,
                             metrics: payload.metrics,
                             componentName: payload.name,
                             componentProps: payload.props
-                        }
-                    };
-                    //Close others
-                    for (const key in state.flyouts) {
-                        if (key != flyoutId) {
-                            updateSpec.flyouts[key] = {
-                                "$merge": {
-                                    open: false
-                                }
-                            };
-                        }
-                    }
-                    const newState = update(state, updateSpec);
-                    return newState;
+                        },
+                        "$set", //Need to use $set instead of $merge as the tree won't have component flyout info initially
+                        true);
                 }
                 return state;
             }
@@ -65,47 +67,33 @@ export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: ViewerActi
             {
                 let flyoutId = action.payload.flyoutId;
                 if (flyoutId) {
-                    const updateSpec: any = {
-                        flyouts: {}
-                    };
-                    updateSpec.flyouts[flyoutId] = {
-                        "$set": { //Need to use $set instead of $merge as the tree won't have component flyout info initially
-                            open: false,
-                            metrics: null,
-                            componentName: null,
-                            componentProps: null
-                        }
-                    };
-                    const newState = update(state, updateSpec);
-                    return newState;
+                    return mergeFlyoutState(flyoutId, state, {
+                        open: false,
+                        metrics: null,
+                        componentName: null,
+                        componentProps: null
+                    }, "$set"); //Need to use $set instead of $merge as the tree won't have component flyout info initially
                 }
                 return state;
+            }
+        case ActionType.CONTEXT_MENU_OPEN:
+            {
+                return mergeFlyoutState(WEBLAYOUT_CONTEXTMENU, state, {
+                    open: true,
+                    metrics: {
+                        posX: action.payload.x,
+                        posY: action.payload.y
+                    } as IDOMElementMetrics
+                }, "$merge", true);
             }
         case ActionType.FLYOUT_OPEN:
             {
                 let flyoutId = action.payload.flyoutId;
                 if (flyoutId) {
-                    const updateSpec: any = {
-                        flyouts: {}
-                    };
-                    updateSpec.flyouts[flyoutId] = {
-                        "$merge": {
-                            open: true,
-                            metrics: action.payload.metrics
-                        }
-                    };
-                    //Close others
-                    for (const key in state.flyouts) {
-                        if (key != flyoutId) {
-                            updateSpec.flyouts[key] = {
-                                "$merge": {
-                                    open: false
-                                }
-                            };
-                        }
-                    }
-                    const newState = update(state, updateSpec);
-                    return newState;
+                    return mergeFlyoutState(flyoutId, state, {
+                        open: true,
+                        metrics: action.payload.metrics
+                    }, "$merge", true);
                 }
                 return state;
             }

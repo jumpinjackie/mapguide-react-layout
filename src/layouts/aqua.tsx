@@ -209,6 +209,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                 {(() => {
                     if (hasSelectionPanel) {
                         return <RndModalDialog
+                            icon="th"
                             isOpen={!!showSelection}
                             onClose={this.onHideSelection}
                             title={tr("TPL_TITLE_SELECTION_PANEL", locale)}
@@ -224,6 +225,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                 {(() => {
                     if (hasLegend) {
                         return <RndModalDialog
+                            icon="layers"
                             isOpen={!!showLegend}
                             onClose={this.onHideLegend}
                             title={tr("TPL_TITLE_LEGEND", locale)}
@@ -239,6 +241,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                 {(() => {
                     if (hasTaskPane) {
                         return <RndModalDialog
+                            icon="application"
                             isOpen={!!showTaskPane}
                             onClose={this.onHideTaskPane}
                             width={SIDEBAR_WIDTH}

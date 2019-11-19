@@ -104,6 +104,13 @@ export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: ViewerActi
                 }
                 return state;
             }
+        case ActionType.FUSION_SET_TASK_PANE_VISIBILITY:
+            {
+                if (!action.payload) {
+                    return mergeFlyoutCloseState(WEBLAYOUT_TASKMENU, state);
+                }
+                return state;
+            }
         case ActionType.FLYOUT_CLOSE:
             {
                 let flyoutId = action.payload.flyoutId;

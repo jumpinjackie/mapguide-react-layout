@@ -3,7 +3,7 @@ import * as React from "react";
 // only works if module type is "es6". This is not the case for us, so just use untyped require()
 import Draggable from "react-draggable";
 import { GenericEvent, IDOMElementMetrics } from "../api/common";
-import { Dialog, Icon, Button, NonIdealState } from '@blueprintjs/core';
+import { Dialog, Icon, Button, NonIdealState, IconName } from '@blueprintjs/core';
 import { Rnd } from "react-rnd";
 import { tr } from '../api/i18n';
 
@@ -14,6 +14,7 @@ export interface IRndModalDialogProps {
     height: number;
     title: string;
     isOpen: boolean;
+    icon?: IconName;
     onClose?: () => void;
     children: (bodyDim: [number, number]) => React.ReactNode;
     locale?: string;
@@ -88,6 +89,7 @@ export const RndModalDialog = (props: IRndModalDialogProps) => {
         <div className="bp3-dialog-container">
             <div className="bp3-dialog" style={modalStyle}>
                 <div className="bp3-dialog-header noselect">
+                    {props.icon && <Icon icon={props.icon} />}
                     <h4 className="bp3-heading">{props.title}</h4>
                     <Button onClick={props.onClose} aria-label="Close" className="bp3-dialog-close-button bp3-button" minimal icon="small-cross" />
                 </div>

@@ -532,9 +532,7 @@ export class Legend extends React.Component<ILegendProps, any> {
         const { currentScale, externalBaseLayers, onBaseLayerChanged, maxHeight } = this.props;
         const rootItems: (MapLayer|MapGroup)[] = tree.root;
 
-        const rootStyle: React.CSSProperties = {
-            overflow: "auto"
-        }
+        const rootStyle: React.CSSProperties = {};
         if (maxHeight) {
             rootStyle.maxHeight = maxHeight;
         }

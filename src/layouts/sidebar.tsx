@@ -370,11 +370,11 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<S
                     return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={config.locale} />;
                 }
             })()}
-            <PlaceholderComponent id={DefaultComponentNames.Map} locale={config.locale} />
             <ViewerApiShim />
             <ModalLauncher />
             <FlyoutRegionContainer />
             <InitWarningDisplay />
+            <PlaceholderComponent id={DefaultComponentNames.Map} locale={config.locale} />
             <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={config.locale} />
         </div>;
     }

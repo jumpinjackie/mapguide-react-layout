@@ -5,7 +5,7 @@ import ToolbarContainer from "../containers/toolbar";
 import ViewerApiShim from "../containers/viewer-shim";
 import ModalLauncher from "../containers/modal-launcher";
 import FlyoutRegionContainer from "../containers/flyout-region";
-import { ModalDialog } from "../components/modal-dialog";
+import { RndModalDialog } from "../components/modal-dialog";
 import { connect } from "react-redux";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
@@ -28,7 +28,7 @@ function aquaTemplateReducer(state: ITemplateReducerState, action: ViewerAction)
         case ActionType.FUSION_SET_LEGEND_VISIBILITY:
             {
                 const data = action.payload;
-                if (typeof(data) == "boolean") {
+                if (typeof (data) == "boolean") {
                     let state1: Partial<ITemplateReducerState> = { legendVisible: data };
                     return { ...state, ...state1 };
                 }
@@ -36,7 +36,7 @@ function aquaTemplateReducer(state: ITemplateReducerState, action: ViewerAction)
         case ActionType.FUSION_SET_SELECTION_PANEL_VISIBILITY:
             {
                 const data = action.payload;
-                if (typeof(data) == "boolean") {
+                if (typeof (data) == "boolean") {
                     let state1: Partial<ITemplateReducerState> = { selectionPanelVisible: data };
                     return { ...state, ...state1 };
                 }
@@ -49,7 +49,7 @@ function aquaTemplateReducer(state: ITemplateReducerState, action: ViewerAction)
         case ActionType.FUSION_SET_TASK_PANE_VISIBILITY:
             {
                 const data = action.payload;
-                if (typeof(data) == "boolean") {
+                if (typeof (data) == "boolean") {
                     let state1: Partial<ITemplateReducerState> = { taskPaneVisible: data };
                     return { ...state, ...state1 };
                 }
@@ -62,7 +62,6 @@ const SIDEBAR_WIDTH = 250;
 const SELECTION_DIALOG_HEIGHT = 300;
 const LEGEND_DIALOG_HEIGHT = 400;
 const TASK_DIALOG_HEIGHT = 500;
-const DIALOG_HEADER_HEIGHT = 40 + 3;//28 + 3;
 const STATUS_BAR_HEIGHT = 18;
 
 export interface IAquaTemplateLayoutState {
@@ -104,10 +103,8 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAquaTemplateDispa
 export type AquaTemplateLayoutProps = Partial<IAquaTemplateLayoutState> & Partial<IAquaTemplateDispatch>;
 
 export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps, any> {
-    private ovMapTarget: Element | null;
     constructor(props: AquaTemplateLayoutProps) {
         super(props);
-        this.ovMapTarget = null;
         this.state = {};
     }
     private onHideTaskPane = () => {
@@ -211,41 +208,48 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
             <ModalLauncher>
                 {(() => {
                     if (hasSelectionPanel) {
-                        return <ModalDialog
-                                    size={[SIDEBAR_WIDTH, SELECTION_DIALOG_HEIGHT]}
-                                    position={[ 40, 500, undefined, undefined ]}
-                                    title={tr("TPL_TITLE_SELECTION_PANEL", locale)}
-                                    backdrop={false}
-                                    isOpen={!!showSelection}
-                                    onClose={this.onHideSelection}>
-                            <PlaceholderComponent locale={locale} id={DefaultComponentNames.SelectionPanel} componentProps={{ maxHeight: SELECTION_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
-                        </ModalDialog>;
+                        return <RndModalDialog
+                            isOpen={!!showSelection}
+                            onClose={this.onHideSelection}
+                            title={tr("TPL_TITLE_SELECTION_PANEL", locale)}
+                            x={40}
+                            y={500}
+                            width={SIDEBAR_WIDTH}
+                            height={SELECTION_DIALOG_HEIGHT}
+                            enableInteractionMask={true}>
+                            {([, h]) => <PlaceholderComponent locale={locale} id={DefaultComponentNames.SelectionPanel} componentProps={{ maxHeight: h }} />}
+                        </RndModalDialog>
                     }
                 })()}
                 {(() => {
                     if (hasLegend) {
-                        return <ModalDialog
-                                    size={[SIDEBAR_WIDTH, LEGEND_DIALOG_HEIGHT]}
-                                    position={[ 40, 70, undefined, undefined ]}
-                                    title={tr("TPL_TITLE_LEGEND", locale)}
-                                    backdrop={false}
-                                    isOpen={!!showLegend}
-                                    onClose={this.onHideLegend}>
-                            <PlaceholderComponent locale={locale} id={DefaultComponentNames.Legend} componentProps={{ inlineBaseLayerSwitcher: false, maxHeight: LEGEND_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
-                        </ModalDialog>;
+                        return <RndModalDialog
+                            isOpen={!!showLegend}
+                            onClose={this.onHideLegend}
+                            title={tr("TPL_TITLE_LEGEND", locale)}
+                            x={40}
+                            y={70}
+                            width={SIDEBAR_WIDTH}
+                            height={LEGEND_DIALOG_HEIGHT}
+                            enableInteractionMask={true}>
+                            {([, h]) => <PlaceholderComponent locale={locale} id={DefaultComponentNames.Legend} componentProps={{ inlineBaseLayerSwitcher: false, maxHeight: h }} />}
+                        </RndModalDialog>
                     }
                 })()}
                 {(() => {
                     if (hasTaskPane) {
-                        return <ModalDialog
-                                    size={[SIDEBAR_WIDTH, TASK_DIALOG_HEIGHT]}
-                                    position={[ undefined, 70, 80, undefined ]}
-                                    title={tr("TPL_TITLE_TASKPANE", locale)}
-                                    backdrop={false}
-                                    isOpen={!!showTaskPane}
-                                    onClose={this.onHideTaskPane}>
-                            <PlaceholderComponent locale={locale} id={DefaultComponentNames.TaskPane} componentProps={{ maxHeight: TASK_DIALOG_HEIGHT - DIALOG_HEADER_HEIGHT }} />
-                        </ModalDialog>;
+                        return <RndModalDialog
+                            isOpen={!!showTaskPane}
+                            onClose={this.onHideTaskPane}
+                            width={SIDEBAR_WIDTH}
+                            height={TASK_DIALOG_HEIGHT}
+                            title={tr("TPL_TITLE_TASKPANE", locale)}
+                            x={document.body.clientWidth - SIDEBAR_WIDTH - 70}
+                            y={80}
+                            disableYOverflow={true}
+                            enableInteractionMask={false}>
+                            {([, h]) => <PlaceholderComponent locale={locale} id={DefaultComponentNames.TaskPane} componentProps={{ maxHeight: h - 15 /* some height breathing space */ }} />}
+                        </RndModalDialog>;
                     }
                 })()}
             </ModalLauncher>

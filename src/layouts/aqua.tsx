@@ -217,6 +217,7 @@ export class AquaTemplateLayout extends React.Component<AquaTemplateLayoutProps,
                             y={500}
                             width={SIDEBAR_WIDTH}
                             height={SELECTION_DIALOG_HEIGHT}
+                            disableYOverflow={true}
                             enableInteractionMask={true}>
                             {([, h]) => <PlaceholderComponent locale={locale} id={DefaultComponentNames.SelectionPanel} componentProps={{ maxHeight: h }} />}
                         </RndModalDialog>

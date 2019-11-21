@@ -2,7 +2,7 @@ import * as React from "react";
 import { shallow, mount, render } from "enzyme";
 import { MapLayer } from "../../src/api/contracts/runtime-map";
 import { LayerNode } from "../../src/components/legend";
-import { ILegendContext } from "../../src/components/context";
+import { ILegendContext, LegendContext } from "../../src/components/context";
 
 // Mocks the ILegendContext needed by LayerNode and other legend sub-components
 function mockContext(): ILegendContext {
@@ -10,17 +10,17 @@ function mockContext(): ILegendContext {
         getIconMimeType: () => "image/png",
         getChildren: (id) => [],
         getCurrentScale: () => this.props.currentScale,
-        getTree: () => {},
+        getTree: () => { },
         getGroupVisibility: (group) => group.ActuallyVisible,
         getLayerVisibility: (layer) => layer.ActuallyVisible,
-        setGroupVisibility: () => {},
-        setLayerVisibility: () => {},
+        setGroupVisibility: () => { },
+        setLayerVisibility: () => { },
         getLayerSelectability: (layer) => true,
-        setLayerSelectability: () => {},
+        setLayerSelectability: () => { },
         getGroupExpanded: (group) => true,
-        setGroupExpanded: () => {},
+        setGroupExpanded: () => { },
         getLayerExpanded: (layer) => true,
-        setLayerExpanded: () => {}
+        setLayerExpanded: () => { }
     };
 }
 
@@ -90,9 +90,9 @@ describe("components/legend", () => {
                 }
             ]
         };
-        const wrapper = shallow(<LayerNode layer={layer} />, {
-            context: mockContext()
-        });
+        const wrapper = mount(<LegendContext.Provider value={mockContext()}>
+            <LayerNode layer={layer} />
+        </LegendContext.Provider>);
         const rules = wrapper.find("RuleNode");
         expect(rules.length).toBe(8);
     });
@@ -141,9 +141,9 @@ describe("components/legend", () => {
                 }
             ]
         };
-        const wrapper = shallow(<LayerNode layer={layer} />, {
-            context: mockContext()
-        });
+        const wrapper = mount(<LegendContext.Provider value={mockContext()}>
+            <LayerNode layer={layer} />
+        </LegendContext.Provider>);
         const rules = wrapper.find("RuleNode");
         expect(rules.length).toBe(3); //One for each geom style
     });

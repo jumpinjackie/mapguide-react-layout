@@ -83,7 +83,7 @@ interface IRuleNodeProps {
 const RuleNode = (props: IRuleNodeProps) => {
     const icon = getIconUri(props.iconMimeType, props.rule.Icon);
     const label = (props.rule.LegendLabel ? props.rule.LegendLabel : "");
-    return <li style={LI_LIST_STYLE}>
+    return <li className="layer-rule-node" style={LI_LIST_STYLE}>
         <EmptyNode /> <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> <LegendLabel text={label} />
     </li>;
 };
@@ -207,7 +207,7 @@ export const LayerNode = (props: ILayerNodeProps) => {
         }
     }
     return <li title={tooltip} style={nodeStyle} className={nodeClassName}><EmptyNode /> {chkbox} {selectable} {icon} {label}</li>;
-}
+};
 
 export interface IGroupNodeProps {
     group: MapGroup;
@@ -266,7 +266,7 @@ export const GroupNode = (props: IGroupNodeProps) => {
             }
         })()}
     </li>;
-}
+};
 
 function isLayerVisibleAtScale(layer: MapLayer, scale: number): boolean {
     if (layer.ScaleRange) {

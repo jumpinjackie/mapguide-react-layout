@@ -24,19 +24,17 @@ import { MapViewerBase } from "../components/map-viewer-base";
 import * as Runtime from "../api/runtime";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import * as MapActions from "../actions/map";
-import { IItem, IInlineMenu } from "../components/toolbar";
+import * as FlyoutActions from "../actions/flyout";
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml, getActiveSelectedFeatureXml } from '../api/builders/deArrayify';
-import { getCommand, mapToolbarReference, } from "../api/registry/command";
 import { invokeCommand, queryMapFeatures } from "../actions/map";
 import { showModalComponent } from "../actions/modal";
 import { DefaultComponentNames } from "../api/registry/component";
-import { processMenuItems } from "../utils/menu";
 import { tr } from "../api/i18n";
 import { IOLFactory, OLFactory } from "../api/ol-factory";
-import { Intent, Toaster, Position as BP_Pos } from "@blueprintjs/core";
+import { Toaster, Position, Intent } from '@blueprintjs/core';
 
 export interface IMapViewerContainerProps {
     overviewMapElementSelector?: () => (Element | null);
@@ -51,13 +49,13 @@ export interface IMapViewerContainerState {
     initialView: IMapView;
     selectableLayers: any;
     layerTransparency: LayerTransparencySet;
-    contextmenu: any;
     showGroups: string[];
     showLayers: string[];
     hideGroups: string[];
     hideLayers: string[];
     externalBaseLayers: IExternalBaseLayer[];
     activeSelectedFeature: ActiveSelectedFeature;
+    isContextMenuOpen: boolean;
 }
 
 export interface IMapViewerContainerDispatch {
@@ -72,11 +70,12 @@ export interface IMapViewerContainerDispatch {
     setViewRotationEnabled: (enabled: boolean) => void;
     mapResized: (width: number, height: number) => void;
     setFeatureTooltipsEnabled: (enabled: boolean) => void;
+    showContextMenu: (pos: [number, number]) => void;
+    hideContextMenu: () => void;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewerContainerProps): Partial<IMapViewerContainerState> {
+function mapStateToProps(state: Readonly<IApplicationState>): Partial<IMapViewerContainerState> {
     let map;
-    let legend;
     let selection;
     let currentView;
     let initialView;
@@ -88,6 +87,7 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewe
     let hideLayers;
     let layerTransparency;
     let activeSelectedFeature;
+    let isContextMenuOpen = false;
     if (state.config.activeMapName) {
         const branch = state.mapState[state.config.activeMapName];
         map = branch.runtimeMap;
@@ -103,6 +103,9 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewe
         layerTransparency = branch.layerTransparency;
         activeSelectedFeature = branch.activeSelectedFeature;
     }
+    if (state?.toolbar?.flyouts?.[Constants.WEBLAYOUT_CONTEXTMENU]?.open === true) {
+        isContextMenuOpen = true;
+    }
     return {
         config: state.config,
         map: map,
@@ -111,14 +114,14 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewe
         viewer: state.viewer,
         selection: selection,
         selectableLayers: selectableLayers,
-        contextmenu: state.toolbar.toolbars[Constants.WEBLAYOUT_CONTEXTMENU],
         showGroups: showGroups,
         showLayers: showLayers,
         hideGroups: hideGroups,
         hideLayers: hideLayers,
         externalBaseLayers: externalBaseLayers,
         layerTransparency: layerTransparency,
-        activeSelectedFeature: activeSelectedFeature
+        activeSelectedFeature: activeSelectedFeature,
+        isContextMenuOpen
     };
 }
 
@@ -134,7 +137,9 @@ function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMapViewerContaine
         setViewRotation: (rotation) => dispatch(MapActions.setViewRotation(rotation)),
         setViewRotationEnabled: (enabled) => dispatch(MapActions.setViewRotationEnabled(enabled)),
         mapResized: (width, height) => dispatch(MapActions.mapResized(width, height)),
-        setFeatureTooltipsEnabled: (enabled) => dispatch(MapActions.setFeatureTooltipsEnabled(enabled))
+        setFeatureTooltipsEnabled: (enabled) => dispatch(MapActions.setFeatureTooltipsEnabled(enabled)),
+        showContextMenu: (pos) => dispatch(FlyoutActions.openContextMenu({ x: pos[0], y: pos[1] })),
+        hideContextMenu: () => dispatch(FlyoutActions.closeContextMenu())
     };
 }
 
@@ -233,7 +238,13 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             }
         }
     }
-    render(): JSX.Element | JSX.Element[] | string | number | null | false {
+    private onHideContextMenu = () => {
+        this.props.hideContextMenu?.();
+    }
+    private onContextMenu = (pos: [number, number]) => {
+        this.props.showContextMenu?.(pos);
+    }
+    render() {
         const {
             map,
             selection,
@@ -242,7 +253,6 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             currentView,
             externalBaseLayers,
             initialView,
-            contextmenu,
             selectableLayers,
             invokeCommand,
             layerTransparency,
@@ -261,58 +271,61 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
             const selectableLayerNames = (map.Layer || [])
                 .filter(layer => layer.Selectable && selectableLayers[layer.ObjectId] !== false)
                 .map(layer => layer.Name);
+            /*
             const store = (this.context as any).store;
             const items: any[] = contextmenu != null ? contextmenu.items : [];
             const cmitems = (items || []).map(tb => mapToolbarReference(tb, store, invokeCommand));
             const childItems = processMenuItems(cmitems);
+            */
             let xml;
             if (activeSelectedFeature && selection && selection.FeatureSet) {
                 xml = getActiveSelectedFeatureXml(selection.FeatureSet, activeSelectedFeature);
             }
             if (config.agentUri) {
-                //Praise $DEITY, we can finally return multiple JSX elements in React 16! No more DOM contortions!
-                return [
-                    <Toaster key="toaster" position={BP_Pos.TOP} ref={this.refHandlers.toaster} />,
-                    <MapViewerBase  key="map"
-                                    ref={this.onMapViewerMounted}
-                                    map={map}
-                                    agentUri={config.agentUri}
-                                    agentKind={config.agentKind}
-                                    locale={locale}
-                                    externalBaseLayers={externalBaseLayers}
-                                    imageFormat={config.viewer.imageFormat}
-                                    selectionImageFormat={config.viewer.selectionImageFormat}
-                                    selectionColor={config.viewer.selectionColor}
-                                    activeSelectedFeatureColor={config.viewer.activeSelectedFeatureColor}
-                                    pointSelectionBuffer={config.viewer.pointSelectionBuffer}
-                                    tool={viewer.tool}
-                                    viewRotation={config.viewRotation}
-                                    viewRotationEnabled={config.viewRotationEnabled}
-                                    featureTooltipsEnabled={viewer.featureTooltipsEnabled}
-                                    manualFeatureTooltips={config.manualFeatureTooltips}
-                                    showGroups={showGroups}
-                                    hideGroups={hideGroups}
-                                    showLayers={showLayers}
-                                    hideLayers={hideLayers}
-                                    view={currentView || initialView}
-                                    selectableLayerNames={selectableLayerNames}
-                                    contextMenu={childItems}
-                                    overviewMapElementSelector={overviewMapElementSelector}
-                                    loadIndicatorPosition={config.viewer.loadIndicatorPositioning}
-                                    loadIndicatorColor={config.viewer.loadIndicatorColor}
-                                    layerTransparency={layerTransparency || Constants.EMPTY_OBJECT}
-                                    onBeginDigitization={this.onBeginDigitization}
-                                    onSessionExpired={this.onSessionExpired}
-                                    onBusyLoading={this.onBusyLoading}
-                                    onRotationChanged={this.onRotationChanged}
-                                    onMouseCoordinateChanged={this.onMouseCoordinateChanged}
-                                    onQueryMapFeatures={this.onQueryMapFeatures}
-                                    onRequestZoomToView={this.onRequestZoomToView}
-                                    onMapResized={this.onMapResized}
-                                    cancelDigitizationKey={config.cancelDigitizationKey}
-                                    undoLastPointKey={config.undoLastPointKey}
-                                    activeSelectedFeatureXml={xml} />
-                ];
+                return <>
+                    {/* HACK: usePortal=false to workaround what I think is: https://github.com/palantir/blueprint/issues/3248 */}
+                    <Toaster usePortal={false} position={Position.TOP} ref={this.refHandlers.toaster} />
+                    <MapViewerBase ref={this.onMapViewerMounted}
+                        map={map}
+                        agentUri={config.agentUri}
+                        agentKind={config.agentKind}
+                        locale={locale}
+                        externalBaseLayers={externalBaseLayers}
+                        imageFormat={config.viewer.imageFormat}
+                        selectionImageFormat={config.viewer.selectionImageFormat}
+                        selectionColor={config.viewer.selectionColor}
+                        activeSelectedFeatureColor={config.viewer.activeSelectedFeatureColor}
+                        pointSelectionBuffer={config.viewer.pointSelectionBuffer}
+                        tool={viewer.tool}
+                        viewRotation={config.viewRotation}
+                        viewRotationEnabled={config.viewRotationEnabled}
+                        featureTooltipsEnabled={viewer.featureTooltipsEnabled}
+                        manualFeatureTooltips={config.manualFeatureTooltips}
+                        showGroups={showGroups}
+                        hideGroups={hideGroups}
+                        showLayers={showLayers}
+                        hideLayers={hideLayers}
+                        view={currentView || initialView}
+                        selectableLayerNames={selectableLayerNames}
+                        overviewMapElementSelector={overviewMapElementSelector}
+                        loadIndicatorPosition={config.viewer.loadIndicatorPositioning}
+                        loadIndicatorColor={config.viewer.loadIndicatorColor}
+                        layerTransparency={layerTransparency || Constants.EMPTY_OBJECT}
+                        onBeginDigitization={this.onBeginDigitization}
+                        onSessionExpired={this.onSessionExpired}
+                        onBusyLoading={this.onBusyLoading}
+                        onRotationChanged={this.onRotationChanged}
+                        onMouseCoordinateChanged={this.onMouseCoordinateChanged}
+                        onQueryMapFeatures={this.onQueryMapFeatures}
+                        onRequestZoomToView={this.onRequestZoomToView}
+                        onMapResized={this.onMapResized}
+                        cancelDigitizationKey={config.cancelDigitizationKey}
+                        undoLastPointKey={config.undoLastPointKey}
+                        activeSelectedFeatureXml={xml}
+                        onContextMenu={this.onContextMenu}
+                        onHideContextMenu={this.onHideContextMenu}
+                        isContextMenuOpen={!!this.props.isContextMenuOpen} />
+                </>;
             }
         }
         return <div>{tr("LOADING_MSG", locale)}</div>;
@@ -485,16 +498,16 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
         }
     }
     toastSuccess(iconName: string, message: string): string | undefined {
-        return this.toaster.show({ iconName: (iconName as any), message: message, intent: Intent.SUCCESS });
+        return this.toaster.show({ icon: (iconName as any), message: message, intent: Intent.SUCCESS });
     }
     toastWarning(iconName: string, message: string): string | undefined {
-        return this.toaster.show({ iconName: (iconName as any), message: message, intent: Intent.WARNING });
+        return this.toaster.show({ icon: (iconName as any), message: message, intent: Intent.WARNING });
     }
     toastError(iconName: string, message: string): string | undefined {
-        return this.toaster.show({ iconName: (iconName as any), message: message, intent: Intent.DANGER });
+        return this.toaster.show({ icon: (iconName as any), message: message, intent: Intent.DANGER });
     }
     toastPrimary(iconName: string, message: string): string | undefined {
-        return this.toaster.show({ iconName: (iconName as any), message: message, intent: Intent.PRIMARY });
+        return this.toaster.show({ icon: (iconName as any), message: message, intent: Intent.PRIMARY });
     }
     dismissToast(key: string): void {
         this.toaster.dismiss(key);

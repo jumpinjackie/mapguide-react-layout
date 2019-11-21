@@ -472,14 +472,14 @@ export function initDefaultCommands() {
                     ];
                     if (fact.extentContainsXY(extents, testCoord[0], testCoord[1])) {
                         viewer.toastSuccess("geolocation", tr("GEOLOCATION_SUCCESS", locale));
-                        //getTopToaster().show({ iconName: "geolocation", message: tr("GEOLOCATION_SUCCESS", locale), intent: Intent.SUCCESS });
+                        //getTopToaster().show({ icon: "geolocation", message: tr("GEOLOCATION_SUCCESS", locale), intent: Intent.SUCCESS });
                     } else {
                         viewer.toastWarning("warning-sign", tr("GEOLOCATION_WARN_OUTSIDE_MAP", locale));
-                        //getTopToaster().show({ iconName: "warning-sign", message: tr("GEOLOCATION_WARN_OUTSIDE_MAP", locale), intent: Intent.WARNING });
+                        //getTopToaster().show({ icon: "warning-sign", message: tr("GEOLOCATION_WARN_OUTSIDE_MAP", locale), intent: Intent.WARNING });
                     }
                 }, err => {
                     viewer.toastError("error", tr("GEOLOCATION_ERROR", locale, { message: err.message, code: err.code }));
-                    //getTopToaster().show({ iconName: "error", message: tr("GEOLOCATION_ERROR", locale, { message: err.message, code: err.code }), intent: Intent.DANGER });
+                    //getTopToaster().show({ icon: "error", message: tr("GEOLOCATION_ERROR", locale, { message: err.message, code: err.code }), intent: Intent.DANGER });
                 }, geoOptions);
             }
         }

@@ -11,7 +11,7 @@ describe("components/menu", () => {
         ];
         const fnInvoke = jest.fn();
         const wrapper = mount(<MenuComponent items={items} onInvoked={fnInvoke} />);
-        const eItems = wrapper.find("a.pt-menu-item");
+        const eItems = wrapper.find("a.bp3-menu-item");
         expect(eItems.length).toBe(2);
     });
     it("Raises onInvoke if a child item is clicked", () => {
@@ -20,7 +20,7 @@ describe("components/menu", () => {
         ];
         const fnInvoke = jest.fn();
         const wrapper = mount(<MenuComponent items={items} onInvoked={fnInvoke} />);
-        const eItems = wrapper.find("a.pt-menu-item");
+        const eItems = wrapper.find("a.bp3-menu-item");
         eItems.at(0).simulate("click");
         expect(fnInvoke.mock.calls).toHaveLength(1);
     });
@@ -31,7 +31,7 @@ describe("components/menu", () => {
             { label: "Foo", invoke: fnInvoke2 }
         ];
         const wrapper = mount(<MenuComponent items={items} onInvoked={fnInvoke} />);
-        const eItems = wrapper.find("a.pt-menu-item");
+        const eItems = wrapper.find("a.bp3-menu-item");
         eItems.at(0).simulate("click");
         expect(fnInvoke.mock.calls).toHaveLength(1);
         expect(fnInvoke2.mock.calls).toHaveLength(1);

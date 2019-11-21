@@ -60,7 +60,6 @@ import { isMenu } from '../utils/type-guards';
 import { tr } from "../api/i18n";
 const isMobile = require("ismobilejs");
 import { MenuComponent } from "./menu";
-import { ContextMenuTarget, ContextMenu } from "@blueprintjs/core";
 import { IMapViewerContextCallback, IMapViewerContextProps, MapViewerContext, MgLayerSet, MgLayerManager } from "./map-viewer-context";
 import xor = require("lodash.xor");
 
@@ -123,7 +122,6 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
     stateChangeDebounceTimeout?: number;
     pointSelectionBuffer?: number;
     selectableLayerNames: string[];
-    contextMenu?: IItem[];
     onRequestZoomToView?: (view: IMapView) => void;
     onQueryMapFeatures?: (options: Partial<IQueryMapFeaturesOptions>, callback?: (res: QueryMapFeaturesResponse) => void, errBack?: (err: any) => void) => void;
     onMouseCoordinateChanged?: (coords: number[]) => void;
@@ -145,6 +143,9 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
     manualFeatureTooltips: boolean;
     cancelDigitizationKey?: number;
     undoLastPointKey?: number;
+    isContextMenuOpen: boolean;
+    onHideContextMenu?: () => void;
+    onContextMenu?: (pos: [number, number]) => void;
 }
 
 /**
@@ -176,8 +177,8 @@ export function arrayChanged<T>(arr: T[] | undefined, other: T[] | undefined): b
 export function areViewsCloseToEqual(view: IMapView | undefined, otherView: IMapView | undefined): boolean {
     if (view && otherView) {
         return areNumbersEqual(view.x, otherView.x) &&
-               areNumbersEqual(view.y, otherView.y) &&
-               areNumbersEqual(view.scale, otherView.scale);
+            areNumbersEqual(view.y, otherView.y) &&
+            areNumbersEqual(view.scale, otherView.scale);
     } else {
         return false;
     }
@@ -211,7 +212,7 @@ export function layerTransparencyChanged(set: LayerTransparencySet, other: Layer
     const otherLayers = Object.keys(other);
     if (arrayChanged(setLayers, otherLayers))
         return true;
-    
+
     for (const name of setLayers) {
         if (set[name] != other[name]) {
             return true;
@@ -258,7 +259,7 @@ const MapLoadIndicator = (props: IMapLoadIndicatorProps) => {
         visibility = "hidden";
         width = "0";
     }
-    const style: React.CSSProperties = { 
+    const style: React.CSSProperties = {
         position: "absolute",
         zIndex: 10,
         visibility: visibility,
@@ -277,7 +278,7 @@ const MapLoadIndicator = (props: IMapLoadIndicatorProps) => {
 }
 
 function isMiddleMouseDownEvent(e: MouseEvent): boolean {
-    return (e && (e.which == 2 || e.button == 4 ));
+    return (e && (e.which == 2 || e.button == 4));
 }
 
 function cloneExtent(bounds: Bounds): Bounds {
@@ -306,7 +307,6 @@ export interface IMapViewerBaseState {
  * @class MapViewerBase
  * @extends {React.Component<IMapViewerBaseProps, any>}
  */
-@ContextMenuTarget
 export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<IMapViewerBaseState>> {
     /**
      * Indicates if touch events are supported.
@@ -326,7 +326,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     private _busyWorkers: number;
     private _triggerZoomRequestOnMoveEnd: boolean;
     private _keepAlive: SessionKeepAlive;
-    private _contextMenuOpen: boolean;
     /**
      * This is a throttled version of _refreshOnStateChange(). Call this on any
      * modifications to pendingStateChanges
@@ -342,7 +341,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         this._busyWorkers = 0;
         this._triggerZoomRequestOnMoveEnd = true;
         this._supportsTouch = isMobile.phone || isMobile.tablet;
-        this._contextMenuOpen = false;
         this.state = {
             shiftKey: false,
             isMouseDown: false,
@@ -378,16 +376,14 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     public getResolution(): number {
         return this._map.getView().getResolution();
     }
-    private onContextMenuItemInvoked() {
-        ContextMenu.hide();
-    }
-    public renderContextMenu(): JSX.Element {
-        if (this.props.contextMenu) {
-            return <MenuComponent items={this.props.contextMenu} onInvoked={this.onContextMenuItemInvoked.bind(this)} />;
-        }
-        return <noscript />;
-    }
     private onMapClick(e: GenericEvent) {
+        if (this.props.isContextMenuOpen) {
+            // We're going on the assumption that due to element placement
+            // if this event is fired, it meant that the user clicked outside
+            // the context menu, otherwise the context menu itself would've handled
+            // the event
+            this.props.onHideContextMenu?.();
+        }
         if (this.isDigitizing()) {
             return;
         }
@@ -557,7 +553,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         //    this._mouseTooltip.onMouseMove(e);
         //}
         this._mapContext.handleMouseTooltipMouseMove(e);
-        if (this._contextMenuOpen) {
+        if (this.props.isContextMenuOpen) {
             return;
         }
         //if (this._featureTooltip && this._featureTooltip.isEnabled()) {
@@ -624,7 +620,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             onSessionExpired: this.onSessionExpired.bind(this),
             getSelectableLayers: this.getSelectableLayers.bind(this),
             getClient: () => this._client,
-            isContextMenuOpen: () => this._contextMenuOpen,
+            isContextMenuOpen: () => this.props.isContextMenuOpen,
             getAgentUri: () => this.props.agentUri,
             getAgentKind: () => this.props.agentKind,
             getMapName: () => this.props.map.Name,
@@ -831,6 +827,11 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         }
         this.onResize(this._map.getSize());
     }
+    private onContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        //console.log(`Open context menu at (${e.clientX}, ${e.clientY})`);
+        this.props.onContextMenu?.([e.clientX, e.clientY]);
+    }
     render(): JSX.Element {
         const { map, tool } = this.props;
         const { isMouseDown } = this.state;
@@ -887,7 +888,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             style.backgroundColor = `#${map.BackgroundColor.substring(2)}`;
         }
         const { loading, loaded } = this.state;
-        return <div className="map-viewer-component" style={style} onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp}>
+        return <div className="map-viewer-component" style={style} onContextMenu={this.onContextMenu} onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp}>
             <MapLoadIndicator loaded={loaded || 0} loading={loading || 0} position={this.props.loadIndicatorPosition} color={this.props.loadIndicatorColor} />
         </div>;
     }
@@ -1131,22 +1132,21 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     public updateSize() {
         this._map.updateSize();
     }
-    public getLayerManager(mapName?: string): ILayerManager { 
+    public getLayerManager(mapName?: string): ILayerManager {
         const layerSet = this._mapContext.getLayerSet(mapName || this.props.map.Name, true, this.props);
         return new MgLayerManager(this._map, layerSet);
     }
     public screenToMapUnits(x: number, y: number): [number, number] {
         let bAllowOutsideWindow = false;
-        const [ mapDevW, mapDevH ] = this.getSize();
-        const [ extX1, extY1, extX2, extY2 ] = this.getCurrentExtent();
-        if (!bAllowOutsideWindow)
-        {
-            if(x > mapDevW - 1) x = mapDevW - 1;
-            else if(x < 0) x = 0;
-    
-            if(y > mapDevH - 1) y = mapDevH - 1;
-            else if(y < 0) y = 0;
-        }    
+        const [mapDevW, mapDevH] = this.getSize();
+        const [extX1, extY1, extX2, extY2] = this.getCurrentExtent();
+        if (!bAllowOutsideWindow) {
+            if (x > mapDevW - 1) x = mapDevW - 1;
+            else if (x < 0) x = 0;
+
+            if (y > mapDevH - 1) y = mapDevH - 1;
+            else if (y < 0) y = 0;
+        }
         x = extX1 + (extX2 - extX1) * (x / mapDevW);
         y = extY1 - (extY1 - extY2) * (y / mapDevH);
         return [x, y];

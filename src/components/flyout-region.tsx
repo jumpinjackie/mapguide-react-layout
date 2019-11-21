@@ -53,23 +53,29 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                     const open = !!flyout.open;
                     if (open) {
                         const items = flyout.childItems || [];
-                        if (flyoutId === Constants.WEBLAYOUT_TASKMENU) {
-                        }
                         const containerStyle: React.CSSProperties = {};
                         containerStyle.zIndex = 2000; //This should be big enough to be above all possible UI elements
                         if (flyout.metrics) {
                             const met = flyout.metrics;
-                            if (flyout.metrics.vertical === true) {
-                                containerStyle.top = met.posY;
+                            if (flyoutId == Constants.WEBLAYOUT_CONTEXTMENU) {
+                                // TODO: Refine the layout positioning so that it better behaves like it did
+                                // previously when the blueprint context menu worked (ie. If right-clicking near
+                                // the bottom, the menu should be shown "above" the cursor)
+                                containerStyle.top = met.posY - 40;
+                                containerStyle.left = met.posX + 20;
                             } else {
-                                containerStyle.top = met.posY + met.height;
-                            }
-                            if (flyoutId == Constants.WEBLAYOUT_TASKMENU) {
-                                containerStyle.right = window.innerWidth - (met.posX + met.width);
-                            } else {
-                                containerStyle.left = met.posX;
                                 if (flyout.metrics.vertical === true) {
-                                    containerStyle.left += met.width;
+                                    containerStyle.top = met.posY;
+                                } else {
+                                    containerStyle.top = met.posY + met.height;
+                                }
+                                if (flyoutId == Constants.WEBLAYOUT_TASKMENU) {
+                                    containerStyle.right = window.innerWidth - (met.posX + met.width);
+                                } else {
+                                    containerStyle.left = met.posX;
+                                    if (flyout.metrics.vertical === true) {
+                                        containerStyle.left += met.width;
+                                    }
                                 }
                             }
                         }

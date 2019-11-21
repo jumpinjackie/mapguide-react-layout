@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { hideModal } from "../actions/modal";
-import { ModalDialog } from "../components/modal-dialog";
+import { RndModalDialog } from "../components/modal-dialog";
 import { getComponentFactory } from "../api/registry/component";
 import { Error } from "../components/error";
 import { tr } from "../api/i18n";
@@ -65,6 +65,8 @@ export class ModalLauncher extends React.Component<ModalLauncherProps, any> {
     }
     render(): JSX.Element {
         const { modal, config } = this.props;
+        const MODAL_INIT_X = 500;
+        const MODAL_INIT_Y = 80;
         if (!modal) {
             return <noscript />;
         }
@@ -79,14 +81,17 @@ export class ModalLauncher extends React.Component<ModalLauncherProps, any> {
                     const componentId = getComponentId(diag);
                     if (componentId) {
                         const componentRenderer = getComponentFactory(componentId.name);
-                        return <ModalDialog size={diag.modal.size}
-                                            title={diag.modal.title}
-                                            backdrop={diag.modal.backdrop}
-                                            overflowYScroll={diag.modal.overflowYScroll}
-                                            isOpen={true}
-                                            key={key}
-                                            onClose={() => this.onCloseModal(key)}>
-                            {(() => {
+                        return <RndModalDialog title={diag.modal.title}
+                            x={MODAL_INIT_X}
+                            y={MODAL_INIT_Y}
+                            enableInteractionMask={true}
+                            width={diag.modal.size[0]}
+                            height={diag.modal.size[1]}
+                            disableYOverflow={!diag.modal.overflowYScroll}
+                            isOpen={true}
+                            key={key}
+                            onClose={() => this.onCloseModal(key)}>
+                            {([w, h]) => {
                                 if (componentRenderer) {
                                     if (isModalComponentDisplayOptions(diag))
                                         return componentRenderer(diag.componentProps);
@@ -95,20 +100,23 @@ export class ModalLauncher extends React.Component<ModalLauncherProps, any> {
                                 } else {
                                     return <Error error={tr("ERR_UNREGISTERED_COMPONENT", locale, { componentId: componentId })} />;
                                 }
-                            })()}
-                        </ModalDialog>;
+                            }}
+                        </RndModalDialog>;
                     } else {
                         return <Error error={tr("ERR_NO_COMPONENT_ID", locale)} />;
                     }
                 } else if (isModalDisplayOptions(diag)) {
-                    return <ModalDialog size={diag.modal.size}
-                                        title={diag.modal.title}
-                                        backdrop={diag.modal.backdrop}
-                                        isOpen={true}
-                                        key={key}
-                                        onClose={() => this.onCloseModal(key)}>
-                        <iframe frameBorder={0} src={diag.url}  width={diag.modal.size[0]} height={diag.modal.size[1] - 30} />
-                    </ModalDialog>;
+                    return <RndModalDialog title={diag.modal.title}
+                        isOpen={true}
+                        key={key}
+                        x={MODAL_INIT_X}
+                        y={MODAL_INIT_Y}
+                        enableInteractionMask={false}
+                        width={diag.modal.size[0]}
+                        height={diag.modal.size[1]}
+                        onClose={() => this.onCloseModal(key)}>
+                        {([w, h]) => <iframe frameBorder={0} src={diag.url} width={w} height={h} />}
+                    </RndModalDialog>;
                 } else {
                     assertNever(diag);
                 }

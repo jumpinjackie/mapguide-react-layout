@@ -532,9 +532,7 @@ export class Legend extends React.Component<ILegendProps, any> {
         const { currentScale, externalBaseLayers, onBaseLayerChanged, maxHeight } = this.props;
         const rootItems: (MapLayer|MapGroup)[] = tree.root;
 
-        const rootStyle: React.CSSProperties = {
-            overflow: "auto"
-        }
+        const rootStyle: React.CSSProperties = {};
         if (maxHeight) {
             rootStyle.maxHeight = maxHeight;
         }
@@ -544,7 +542,7 @@ export class Legend extends React.Component<ILegendProps, any> {
                 if (externalBaseLayers != null &&
                     externalBaseLayers.length > 0 &&
                     this.props.inlineBaseLayerSwitcher) {
-                    return <div className="pt-card pt-interactive">
+                    return <div className="bp3-card bp3-interactive">
                         <h5>{tr("EXTERNAL_BASE_LAYERS", this.props.locale)}</h5>
                         <BaseLayerSwitcher locale={this.props.locale} externalBaseLayers={externalBaseLayers} onBaseLayerChanged={onBaseLayerChanged} />
                     </div>;

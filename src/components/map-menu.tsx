@@ -35,9 +35,9 @@ export class MapMenu extends React.Component<IMapMenuProps, any> {
         return <div>
             {this.props.maps.map(layer => {
                 return <div className="map-menu-item-container" key={`base-layer-${layer.mapName}`}>
-                    <label className="pt-control pt-radio">
+                    <label className="bp3-control bp3-radio">
                         <input className="map-menu-option" type="radio" value={layer.mapName} checked={layer.mapName === this.props.selectedMap} onChange={this.onActiveMapChanged} />
-                        <span className="pt-control-indicator" />
+                        <span className="bp3-control-indicator" />
                         {layer.label}
                     </label>
                 </div>;

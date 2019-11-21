@@ -1,9 +1,9 @@
 import * as React from "react";
-import { Dialog, Button, Intent } from "@blueprintjs/core";
 import { IApplicationState, ReduxDispatch } from "../api/common";
 import { acknowledgeInitWarnings } from "../actions/init";
 import { connect } from "react-redux";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
+import { Dialog, Button, Intent } from '@blueprintjs/core';
 
 export interface IInitWarningDisplayProps {
     
@@ -42,18 +42,18 @@ export class InitWarningDisplay extends React.Component<InitWarningDisplayProps,
         const locale = this.props.locale || DEFAULT_LOCALE;
         if (warnings && warnings.length && acknowledge) {
             return <Dialog
-                iconName="warning-sign"
+                icon="warning-sign"
                 isOpen={true}
                 onClose={acknowledge}
                 title={tr("WARNING", locale)}>
-                <div className="pt-dialog-body">
+                <div className="bp3-dialog-body">
                     <p>{tr("INIT_WARNINGS_FOUND", locale)}</p>
                     <ul>
                         {warnings.map(w => <li key={w}>{w}</li>)}
                     </ul>
                 </div>
-                <div className="pt-dialog-footer">
-                    <div className="pt-dialog-footer-actions">
+                <div className="bp3-dialog-footer">
+                    <div className="bp3-dialog-footer-actions">
                         <Button
                             intent={Intent.PRIMARY}
                             onClick={acknowledge}

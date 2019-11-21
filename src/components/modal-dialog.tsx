@@ -2,106 +2,114 @@ import * as React from "react";
 // According to this (https://github.com/mzabriskie/react-draggable/issues/246#issuecomment-299698481), typings
 // only works if module type is "es6". This is not the case for us, so just use untyped require()
 import Draggable from "react-draggable";
-import { GenericEvent } from "../api/common";
+import { GenericEvent, IDOMElementMetrics } from "../api/common";
+import { Dialog, Icon, Button, NonIdealState, IconName } from '@blueprintjs/core';
+import { Rnd } from "react-rnd";
+import { tr } from '../api/i18n';
 
-/**
- * [left, top, right, bottom]
- */
-export type ModalDialogPositioning = [number|undefined, number|undefined, number|undefined, number|undefined] | [string|undefined, string|undefined, string|undefined, string|undefined];
-
-/**
- * ModalDialog component props
- *
- * @export
- * @interface IModalDialogProps
- */
-export interface IModalDialogProps {
+export interface IRndModalDialogProps {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    title: string;
     isOpen: boolean;
-    backdrop?: boolean;
-    /**
-     * [left, top, right, bottom]
-     *
-     * @type {ModalDialogPositioning}
-     * @memberOf IModalDialogProps
-     */
-    position?: ModalDialogPositioning;
-    overflowYScroll?: boolean;
-    size?: [number, number];
-    title?: string;
+    icon?: IconName;
     onClose?: () => void;
+    children: (bodyDim: [number, number]) => React.ReactNode;
+    locale?: string;
+    enableInteractionMask: boolean;
+    disableYOverflow?: boolean;
 }
 
-/**
- * A generic floating Modal Dialog
- *
- * @export
- * @class ModalDialog
- * @extends {React.Component<IModalDialogProps, any>}
- */
-export class ModalDialog extends React.Component<IModalDialogProps, any> {
-    constructor(props: IModalDialogProps) {
-        super(props);
-    }
-    render(): JSX.Element {
-        const { isOpen, backdrop, size, position, title, overflowYScroll } = this.props;
-        if (isOpen === false)
-            return <div />;
+const DIAG_HEADER_HEIGHT = 40;
 
-        const modalStyle: React.CSSProperties = {
-            //position: 'absolute',
-            //top: '50%',
-            //left: '50%',
-            //transform: 'translate(-50%, -50%)',
-            //zIndex: 9999,
-        };
-        //NOTE: Now need to apply absolute positioning so that initial position will be respected as before
-        //See: https://github.com/mzabriskie/react-draggable/issues/259
-        if (size != null) {
-            modalStyle.position = "absolute";
-            modalStyle.top = 120;
-            modalStyle.left = "50%";
-            modalStyle.width = size[0];
-            modalStyle.height = size[1];
-        } else {
-            modalStyle.top = "50%";
-            modalStyle.left = "50%";
-        }
-        if (position != null) {
-            modalStyle.position = "absolute";
-            modalStyle.left = position[0];
-            modalStyle.top = position[1];
-            modalStyle.right = position[2];
-            modalStyle.bottom = position[3];
-        }
-        if (backdrop === true) {
-            modalStyle.zIndex = 5000;
-        }
-        const modalBodyStyle: React.CSSProperties = { margin: 0 };
-        if (overflowYScroll == true) {
-            modalBodyStyle.overflowY = "auto";
-        }
-        const diag = <Draggable handle=".pt-dialog-header">
-            <div className="pt-dialog" style={modalStyle}>
-                <div className="pt-dialog-header noselect">
-                    <h5>{title}</h5>
-                    <button onClick={this.onClose} aria-label="Close" className="pt-dialog-close-button pt-icon-small-cross"></button>
+export const RndModalDialog = (props: IRndModalDialogProps) => {
+    if (props.isOpen === false)
+        return <div />;
+    const modalBodyStyle: React.CSSProperties = {
+        margin: 0
+    };
+    if (!props.disableYOverflow) {
+        modalBodyStyle.overflowY = "auto";
+    }
+    const [isDragging, setIsDragging] = React.useState(false);
+    const [isResizing, setIsResizing] = React.useState(false);
+    const [diagWidth, setDiagWidth] = React.useState<number>(props.width);
+    const [diagHeight, setDiagHeight] = React.useState< number>(props.height);
+    const [diagX, setDiagX] = React.useState(props.x);
+    const [diagY, setDiagY] = React.useState(props.y);
+    const ZINDEX = {
+        zIndex: 1980 //So flyouts will appear above it
+    };
+    const modalStyle: React.CSSProperties = {
+        width: diagWidth,
+        height: diagHeight,
+        //bp defaults this to 30, which invisibly offsets the 
+        //position of expected rnd drag/resize handles
+        marginTop: 0,
+        ...ZINDEX
+    };
+    const rndStyle: React.CSSProperties = {
+        //border: "1px solid red", //Uncomment to debug where the rnd "container" is
+        ...ZINDEX
+    };
+    const diagSize: [number, number] = [ diagWidth, diagHeight - DIAG_HEADER_HEIGHT ];
+    //console.log(`Resizing: ${isResizing}, Dragging: ${isDragging}`);
+    return <Rnd style={rndStyle}
+        enableResizing={{
+            bottomRight: true,
+            bottomLeft: true,
+            topLeft: true,
+            topRight: true
+        }}
+        enableUserSelectHack={false}
+        onDragStart={() => setIsDragging(true)}
+        onDragStop={(e, d) => {
+            setDiagX(d.x);
+            setDiagY(d.y);
+            setIsDragging(false);
+        }}
+        onResizeStart={() => setIsResizing(true)}
+        onResize={(e, direction, ref, delta, position) => {
+            setDiagWidth(ref.offsetWidth);
+            setDiagHeight(ref.offsetHeight);
+            setDiagX(position.x);
+            setDiagY(position.y);
+        }}
+        onResizeStop={(e, direction, ref, delta, position) => {
+            setDiagWidth(ref.offsetWidth);
+            setDiagHeight(ref.offsetHeight);
+            setDiagX(position.x);
+            setDiagY(position.y);
+            setIsResizing(false);
+        }}
+        dragHandleClassName="bp3-heading"
+        default={{ x: props.x, y: props.y, width: props.width, height: props.height }}>
+        <div className="bp3-dialog-container">
+            <div className="bp3-dialog" style={modalStyle}>
+                <div className="bp3-dialog-header noselect">
+                    {props.icon && <Icon icon={props.icon} />}
+                    <h4 className="bp3-heading">{props.title}</h4>
+                    <Button onClick={props.onClose} aria-label="Close" className="bp3-dialog-close-button bp3-button" minimal icon="small-cross" />
                 </div>
-                <div className="pt-dialog-body" style={modalBodyStyle}>{this.props.children}</div>
+                <div className="bp3-dialog-body" style={modalBodyStyle}>
+                    {(() => {
+                        //We use NonIdealState as a visual mask to suppress unwanted mouse 
+                        //interaction during the act of dragging/resizing, similar to what the
+                        //Task Pane does
+                        if (props.enableInteractionMask && (isResizing || isDragging)) {
+                            const key = isResizing ? "WINDOW_RESIZING" : "WINDOW_MOVING";
+                            return <NonIdealState
+                                icon="arrows-horizontal"
+                                description={tr(key, props.locale)} />
+                        } else {
+                            return props.children(diagSize);
+                        }
+                    })()}
+                </div>
             </div>
-        </Draggable>;
-        if (backdrop === true) {
-            return <div>
-                {diag}
-                <div className="modal-dialog-backdrop" onClick={this.onClose} />
-            </div>;
-        } else {
-            return diag;
-        }
-    }
-    private onClose = (e: GenericEvent) => {
-        e.preventDefault()
-        if (this.props.onClose) {
-            this.props.onClose()
-        }
-    }
+        </div>
+
+    </Rnd>
 }

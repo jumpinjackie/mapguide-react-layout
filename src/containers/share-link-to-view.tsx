@@ -7,9 +7,9 @@ import { addUrlProps } from 'react-url-query';
 import { urlPropsQueryConfig, IAppUrlStateProps } from './url-state';
 import { tr } from '../api/i18n';
 import { getViewer } from '../api/runtime';
-import { Checkbox, TextArea } from '@blueprintjs/core';
 import CopyToClipboard = require('react-copy-to-clipboard');
 import { parseUrl, stringifyQuery } from "../utils/url";
+import { TextArea, Checkbox } from '@blueprintjs/core';
 
 /**
  * 
@@ -92,7 +92,7 @@ export class ShareLinkToViewContainer extends React.Component<ShareLinkToViewCon
             <br />
             <Checkbox checked={this.state.showSession} label="Include Session ID" onChange={this.onShowSessionChanged} />
             <CopyToClipboard text={shareUrl} onCopy={this.onCopied}>
-                <button className="pt-button">{tr("SHARE_LINK_COPY_CLIPBOARD", this.props.locale)}</button>
+                <button className="bp3-button">{tr("SHARE_LINK_COPY_CLIPBOARD", this.props.locale)}</button>
             </CopyToClipboard>
         </div>;
     }

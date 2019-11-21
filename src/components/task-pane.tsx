@@ -16,6 +16,7 @@ import {
     FlyoutVisibilitySet
 } from "../api/common";
 import { parseComponentUri, ensureParameters } from "../utils/url";
+import { Callout, Intent, NonIdealState, Spinner } from '@blueprintjs/core';
 
 export const TASK_PANE_OVERLAY_BGCOLOR = "#dee8f9";
 
@@ -216,10 +217,9 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             <div style={taskBodyStyle}>
                 {(() => {
                     if (invalidated === true) {
-                        return <div className="pt-callout pt-intent-warning">
-                            <h5>{tr("TASK_PANE_CONTENT_FOR_INACTIVE_MAP_TITLE", this.props.locale)}</h5>
+                        return <Callout intent={Intent.WARNING} icon="warning-sign" title={tr("TASK_PANE_CONTENT_FOR_INACTIVE_MAP_TITLE", this.props.locale)}>
                             {tr("TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING", this.props.locale)}
-                        </div>;
+                        </Callout>;
                     }
                 })()}
                 {(() => {
@@ -237,20 +237,10 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                         ];
                         if (frameContentLoaded == false) {
                             components.push(<div key="taskPaneFrameLoadingOverlay" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: TASK_PANE_OVERLAY_BGCOLOR }}>
-                                <div className="pt-non-ideal-state">
-                                    <div className="pt-non-ideal-state-visual pt-non-ideal-state-icon">
-                                        <div className="pt-spinner pt-large">
-                                            <div className="pt-spinner-svg-container">
-                                                <svg viewBox="0 0 100 100">
-                                                    <path className="pt-spinner-track" d="M 50,50 m 0,-44.5 a 44.5,44.5 0 1 1 0,89 a 44.5,44.5 0 1 1 0,-89"></path>
-                                                    <path className="pt-spinner-head" d="M 94.5 50 A 44.5 44.5 0 0 0 50 5.5"></path>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <h4 className="pt-non-ideal-state-title">{tr("TASK_PANE_LOADING", locale)}</h4>
-                                    <div className="pt-non-ideal-state-description">{tr("TASK_PANE_LOADING_DESC", locale)}</div>
-                                </div>
+                                <NonIdealState 
+                                    icon={<Spinner intent={Intent.NONE} size={Spinner.SIZE_LARGE} />}
+                                    title={tr("TASK_PANE_LOADING", locale)}
+                                    description={tr("TASK_PANE_LOADING_DESC", locale)} />
                             </div>);
                         }
                         return components;

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { InitError } from "../api/common";
 import { isError, isInitError } from "../utils/type-guards";
+import { Intent, Callout } from '@blueprintjs/core';
 
 /**
  * Error component props
@@ -44,16 +45,16 @@ export const Error = (props: IErrorProps) => {
         } else {
             const message = err.message;
             const stack = normalizeStack(err);
-            return <div className="pt-callout pt-intent-danger">
+            return <Callout intent={Intent.DANGER} icon="error">
                 <h5 className="error-header">{err.message}</h5>
                 <ul className="error-stack">
                     {stack.map((ln, i) => <li key={`stack-line-${i}`}>{ln}</li>)}
                 </ul>
-            </div>;
+            </Callout>;
         }
     } else {
-        return <div className="pt-callout pt-intent-danger">
+        return <Callout intent={Intent.DANGER} icon="error">
             <h5 className="error-header">{err}</h5>
-        </div>;
+        </Callout>;
     }
 };

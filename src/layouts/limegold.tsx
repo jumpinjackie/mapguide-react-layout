@@ -16,14 +16,14 @@ import {
     ITemplateReducerState,
     getRuntimeMap
 } from "../api/common";
-import { Tabs2, Tab2 } from "@blueprintjs/core";
 import * as TemplateActions from "../actions/template";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
 import InitWarningDisplay from "../containers/init-warning-display";
 import SplitterLayout from "react-splitter-layout";
 import * as Runtime from "../api/runtime";
-import { ActionType } from '../constants/actions';
 import { IElementState, ViewerAction } from '../actions/defs';
+import { ActionType } from '../constants/actions';
+import { Tabs, Tab } from '@blueprintjs/core';
 
 function limegoldTemplateReducer(state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
@@ -227,13 +227,13 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
                     {(() => {
                         if (this.props.showSelection || this.props.showTaskPane || this.props.showLegend) {
                             return <div className="limegold-sidebar" style={{ position: "absolute", right: SIDEBAR_PADDING, top: 0, left: 0, bottom: 0 }}>
-                                <Tabs2 id="SidebarTabs" onChange={this.onActiveTabChanged} {...extraTabsProps}>
+                                <Tabs id="SidebarTabs" onChange={this.onActiveTabChanged} {...extraTabsProps}>
                                     {(() => {
                                         if (hasTaskPane) {
                                             const panel = <div style={tabPanelStyle}>
                                                 <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={locale} componentProps={{ isResizing: isResizing }} />
                                             </div>;
-                                            return <Tab2 id="TaskPane" title={taskPaneTitle} panel={panel} />;
+                                            return <Tab id="TaskPane" title={taskPaneTitle} panel={panel} />;
                                         }
                                     })()}
                                     {(() => {
@@ -242,7 +242,7 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
                                             const panel = <div style={{ ...tabPanelStyle, ...p1 }}>
                                                     <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: false }} />
                                                 </div>;
-                                            return <Tab2 id="Legend" title={legendTitle} panel={panel} />;
+                                            return <Tab id="Legend" title={legendTitle} panel={panel} />;
                                         }
                                     })()}
                                     {(() => {
@@ -250,10 +250,10 @@ export class LimeGoldTemplateLayout extends React.Component<LimeGoldTemplateLayo
                                             const panel = <div style={tabPanelStyle}>
                                                 <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
                                             </div>;
-                                            return <Tab2 id="Selection" title={selectionTitle} panel={panel} />;
+                                            return <Tab id="Selection" title={selectionTitle} panel={panel} />;
                                         }
                                     })()}
-                                </Tabs2>
+                                </Tabs>
                             </div>;
                         }
                     })()}

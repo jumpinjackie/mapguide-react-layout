@@ -11,6 +11,23 @@ import { RuntimeMap } from '../api/contracts/runtime-map';
 import { QueryMapFeaturesResponse } from '../api';
 
 /**
+ * Opens the context menu
+ * 
+ * @since 0.13
+ */
+export interface IOpenContextMenuAction {
+    type: ActionType.CONTEXT_MENU_OPEN;
+    payload: {
+        x: number;
+        y: number;
+    }
+}
+
+export interface ICloseContextMenuAction {
+    type: ActionType.CONTEXT_MENU_CLOSE;
+}
+
+/**
  * Opens a flyout menu
  * 
  * @since 0.12
@@ -496,6 +513,8 @@ export interface IMapRefreshAction {
  */
 export type ViewerAction = IOpenFlyoutAction 
     | ICloseFlyoutAction
+    | IOpenContextMenuAction //@since 0.13
+    | ICloseContextMenuAction //@since 0.13
     | IOpenComponentInFlyoutAction
     | ICloseComponentInFlyoutAction
     | IInitAppAction

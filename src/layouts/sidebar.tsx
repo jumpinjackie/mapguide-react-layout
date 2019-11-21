@@ -20,6 +20,7 @@ import InitWarningDisplay from "../containers/init-warning-display";
 import { ActionType } from '../constants/actions';
 import { IElementState } from '../actions/defs';
 import * as TemplateActions from "../actions/template";
+import { Spinner, Intent, Icon } from '@blueprintjs/core';
 
 const SIDEBAR_WIDTH = 250;
 
@@ -114,20 +115,13 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
                         {(() => {
                             if (busy === true) {
                                 return <a>
-                                    <div className="pt-spinner pt-small pt-intent-warning">
-                                        <div className="pt-spinner-svg-container">
-                                            <svg viewBox="0 0 100 100">
-                                                <path className="pt-spinner-track" d="M 50,50 m 0,-44.5 a 44.5,44.5 0 1 1 0,89 a 44.5,44.5 0 1 1 0,-89"></path>
-                                                <path className="pt-spinner-head" d="M 94.5 50 A 44.5 44.5 0 0 0 50 5.5"></path>
-                                            </svg>
-                                        </div>
-                                    </div>
+                                    <Spinner intent={Intent.WARNING} size={Spinner.SIZE_SMALL} />
                                 </a>;
                             } else {
                                 if (collapsed) {
-                                    return <a onClick={this.onClickExpand}><span className="pt-icon-standard pt-icon-menu-open" /></a>;
+                                    return <a onClick={this.onClickExpand}><Icon icon="menu-open" /></a>;
                                 } else {
-                                    return <a onClick={this.onClickCollapse}><span className="pt-icon-standard pt-icon-menu-closed" /></a>;
+                                    return <a onClick={this.onClickCollapse}><Icon icon="menu-closed" /></a>;
                                 }
                             }
                         })()}
@@ -135,21 +129,21 @@ class Sidebar extends React.Component<ISidebarProps, {}> {
                     {(() => {
                         if (this.props.taskpane) {
                             return <li className={collapsed == false && activeTab == "tasks" ? "active" : ""}>
-                                <a onClick={this.onActivateTasks} title={tr("TPL_SIDEBAR_OPEN_TASKPANE", this.props.locale)} role="tab"><span className="pt-icon-standard pt-icon-application" /></a>
+                                <a onClick={this.onActivateTasks} title={tr("TPL_SIDEBAR_OPEN_TASKPANE", this.props.locale)} role="tab"><Icon icon="application" /></a>
                             </li>;
                         }
                     })()}
                     {(() => {
                         if (this.props.legend) {
                             return <li className={collapsed == false && activeTab == "legend" ? "active" : ""}>
-                                <a onClick={this.onActivateLegend} title={tr("TPL_SIDEBAR_OPEN_LEGEND", this.props.locale)} role="tab"><span className="pt-icon-standard pt-icon-layers" /></a>
+                                <a onClick={this.onActivateLegend} title={tr("TPL_SIDEBAR_OPEN_LEGEND", this.props.locale)} role="tab"><Icon icon="layers" /></a>
                             </li>;
                         }
                     })()}
                     {(() => {
                         if (this.props.selection) {
                             return <li className={collapsed == false && activeTab == "selection" ? "active" : ""}>
-                                <a onClick={this.onActivateSelection} title={tr("TPL_SIDEBAR_OPEN_SELECTION_PANEL", this.props.locale)} role="tab"><span className="pt-icon-standard pt-icon-th" /></a>
+                                <a onClick={this.onActivateSelection} title={tr("TPL_SIDEBAR_OPEN_SELECTION_PANEL", this.props.locale)} role="tab"><Icon icon="th" /></a>
                             </li>;
                         }
                     })()}
@@ -376,11 +370,11 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<S
                     return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={config.locale} />;
                 }
             })()}
-            <PlaceholderComponent id={DefaultComponentNames.Map} locale={config.locale} />
             <ViewerApiShim />
             <ModalLauncher />
             <FlyoutRegionContainer />
             <InitWarningDisplay />
+            <PlaceholderComponent id={DefaultComponentNames.Map} locale={config.locale} />
             <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={config.locale} />
         </div>;
     }

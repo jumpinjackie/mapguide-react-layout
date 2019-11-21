@@ -3,9 +3,37 @@ import {
     IOpenFlyoutAction, 
     ICloseFlyoutAction,
     IOpenComponentInFlyoutAction,
-    ICloseComponentInFlyoutAction
+    ICloseComponentInFlyoutAction,
+    IOpenContextMenuAction,
+    ICloseContextMenuAction
 } from "./defs";
 import { ActionType } from '../constants/actions';
+
+/**
+ * Opens the context menu at the specific position
+ * 
+ * @param position The client x/y position
+ * @since 0.13
+ */
+export function openContextMenu(position: { x: number, y: number }): IOpenContextMenuAction {
+    return {
+        type: ActionType.CONTEXT_MENU_OPEN,
+        payload: {
+            ...position
+        }
+    };
+}
+
+/**
+ * Closes the context menu
+ * 
+ * @since 0.13
+ */
+export function closeContextMenu(): ICloseContextMenuAction {
+    return {
+        type: ActionType.CONTEXT_MENU_CLOSE
+    };
+}
 
 /**
  * Opens the specified flyout menu

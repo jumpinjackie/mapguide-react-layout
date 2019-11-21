@@ -12,10 +12,10 @@ import {
 } from "../api/common";
 import * as MapActions from "../actions/map";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
-import { Slider } from "@blueprintjs/core";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from "../constants/index";
 import { getUnits, getUnitOfMeasure } from "../utils/units";
 import { safePropAccess } from '../utils/safe-prop';
+import { Slider, HTMLSelect } from '@blueprintjs/core';
 
 export interface IViewerOptionsProps {
 
@@ -115,18 +115,18 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
             <hr />
             {(() => {
                 if (viewer) {
-                    return <label className="pt-control pt-switch">
+                    return <label className="bp3-control bp3-switch">
                         <input type="checkbox" checked={viewer.featureTooltipsEnabled} onChange={this.onFeatureTooltipsChanged} />
-                        <span className="pt-control-indicator"></span>
+                        <span className="bp3-control-indicator"></span>
                         {tr("FEATURE_TOOLTIPS", locale)}
                     </label>;
                 }
             })()}
             {(() => {
                 if (config && viewer && viewer.featureTooltipsEnabled) {
-                    return <label className="pt-control pt-switch">
+                    return <label className="bp3-control bp3-switch">
                         <input type="checkbox" checked={config.manualFeatureTooltips} onChange={this.onManualFeatureTooltipsChanged} />
-                        <span className="pt-control-indicator"></span>
+                        <span className="bp3-control-indicator"></span>
                         {tr("MANUAL_FEATURE_TOOLTIPS", locale)}
                     </label>;
                 }
@@ -135,7 +135,7 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
                 <legend>{tr("LAYER_TRANSPARENCY", locale)}</legend>
                 {(() => {
                     if (externalBaseLayers) {
-                        return <label className="pt-label noselect">
+                        return <label className="bp3-label noselect">
                             {tr("LAYER_ID_BASE", locale)}
                             <div style={{ paddingLeft: 8, paddingRight: 8 }}>
                                 <Slider min={0} max={1.0} stepSize={0.01} value={opBase} onChange={this.onBaseOpacityChanged} />
@@ -143,13 +143,13 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
                         </label>;
                     }
                 })()}
-                <label className="pt-label noselect">
+                <label className="bp3-label noselect">
                     {tr("LAYER_ID_MG_BASE", locale)}
                     <div style={{ paddingLeft: 8, paddingRight: 8 }}>
                         <Slider min={0} max={1.0} stepSize={0.01} value={opMgBase} onChange={this.onMgOpacityChanged} />
                     </div>
                 </label>
-                <label className="pt-label noselect">
+                <label className="bp3-label noselect">
                     {tr("LAYER_ID_MG_SEL_OVERLAY", locale)}
                     <div style={{ paddingLeft: 8, paddingRight: 8 }}>
                         <Slider min={0} max={1.0} stepSize={0.01} value={opMgSelOverlay} onChange={this.onMgSelOpacityChanged} />
@@ -159,16 +159,16 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
             {(() => {
                 if (config) {
                     const units = getUnits();
-                    return <label className="pt-label">
+                    return <label className="bp3-label">
                         {tr("MAP_SIZE_DISPLAY_UNITS", locale)}
-                        <div className="pt-select">
-                            <select value={config.viewSizeUnits} onChange={this.onViewSizeUnitsChanged}>
+                        <div className="bp3-select">
+                            <HTMLSelect value={config.viewSizeUnits} onChange={this.onViewSizeUnitsChanged}>
                                 {units.map(u => {
                                     const [ uom ] = u;
                                     const ui = getUnitOfMeasure(uom);
                                     return <option key={uom} value={uom}>{ui.localizedName(locale)}</option>;
                                 })}
-                            </select>
+                            </HTMLSelect>
                         </div>
                     </label>;
                 }

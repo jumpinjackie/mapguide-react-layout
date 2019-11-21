@@ -174,8 +174,8 @@ function prepareSubMenus(tbConf: Dictionary<ToolbarConf>): [PreparedSubMenuSet, 
             bFoundContextMenu = true;
         }
 
-        //Special case: Task pane. Transfer all to flyout
-        if (key == Constants.WEBLAYOUT_TASKMENU) {
+        //Special cases: Task pane and Context Menu. Transfer all to flyout
+        if (key == Constants.WEBLAYOUT_TASKMENU || key == Constants.WEBLAYOUT_CONTEXTMENU) {
             const flyoutId = key;
             prepared.flyouts[flyoutId] = {
                 children: tbConf[key].items

@@ -186,4 +186,6 @@ export interface ILocalizedMessages {
     OL_ATTRIBUTION_TIP: string;
     OL_OVERVIEWMAP_TIP: string;
     OL_RESET_ROTATION_TIP: string;
+    WINDOW_RESIZING: string;
+    WINDOW_MOVING: string;
 }

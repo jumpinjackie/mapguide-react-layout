@@ -828,10 +828,10 @@ export interface IMapViewer {
      */
     screenToMapUnits(x: number, y: number): [number, number];
 
-    toastSuccess(iconName: string, message: string|JSX.Element): string | undefined;
-    toastWarning(iconName: string, message: string|JSX.Element): string | undefined;
-    toastError(iconName: string, message: string|JSX.Element): string | undefined;
-    toastPrimary(iconName: string, message: string|JSX.Element): string | undefined;
+    toastSuccess(icon: string, message: string|JSX.Element): string | undefined;
+    toastWarning(icon: string, message: string|JSX.Element): string | undefined;
+    toastError(icon: string, message: string|JSX.Element): string | undefined;
+    toastPrimary(icon: string, message: string|JSX.Element): string | undefined;
     dismissToast(key: string): void;
     updateSize(): void;
 }

@@ -5,6 +5,7 @@ import {
 } from "../api/common";
 import { tr } from "../api/i18n";
 import { getFiniteScaleIndexForScale } from "../utils/number";
+import { HTMLSelect } from '@blueprintjs/core';
 
 /**
  * ScaleDisplay component props
@@ -65,6 +66,7 @@ export class ScaleDisplay extends React.Component<IScaleDisplayProps, any> {
         if (finiteScales) {
             const fi = getFiniteScaleIndexForScale(finiteScales, view.scale);
             const fiScale = finiteScales[fi];
+            //NOTE: Not using BP styled HTML select as the size imposed is not acceptable
             return <div className="component-scale-display" style={style}>
                 {label} <select className="scale-input" value={fiScale} onChange={this.onFiniteScaleChanged}>
                     {finiteScales.map(s => {

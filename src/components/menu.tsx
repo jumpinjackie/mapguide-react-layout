@@ -1,9 +1,9 @@
 import * as React from "react";
 import { isMenu } from "../utils/type-guards";
-import { Menu, MenuItem, MenuDivider } from "@blueprintjs/core";
 import { IItem, getIconStyle, getEnabled } from "./toolbar";
 import { Icon } from "./icon";
 import { safePropAccess } from '../utils/safe-prop';
+import { Menu, MenuDivider, MenuItem } from '@blueprintjs/core';
 
 const MENU_ITEM_HEIGHT = 30;
 
@@ -36,7 +36,7 @@ export class MenuComponent extends React.Component<IMenuComponentProps, any> {
         }
     }
     render(): JSX.Element {
-        return <Menu className="pt-elevation-1">
+        return <Menu className="bp3-elevation-1">
             {this.props.items.map((item, index) => {
                 if (item.isSeparator) {
                     return <MenuDivider key={index} />;
@@ -47,7 +47,7 @@ export class MenuComponent extends React.Component<IMenuComponentProps, any> {
                     } else {
                         text = item.label || "";
                     }
-                    return <MenuItem key={index} text={text} iconName="pt-icon-menu-open">
+                    return <MenuItem key={index} text={text} icon="menu-open">
                         <MenuComponent items={item.childItems} onInvoked={this.props.onInvoked} />
                     </MenuItem>;
                 } else {
@@ -61,11 +61,14 @@ export class MenuComponent extends React.Component<IMenuComponentProps, any> {
                             enabled = item.enabled;
                         }
                     }
-                    const imgStyle = getIconStyle(enabled, height);
+                    const imgStyle = {
+                        marginRight: 5,
+                        ...getIconStyle(enabled, height)
+                    };
                     const text = item.label || "";
                     //NOTE: Not using MenuItem here as we want fine control over the item content
                     return <li key={index}>
-                        <a className="pt-menu-item" onClick={invoke}><Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {text}</a>
+                        <a className="bp3-menu-item" onClick={invoke}><Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {text}</a>
                     </li>;
                 }
             })}

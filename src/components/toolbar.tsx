@@ -381,12 +381,8 @@ export interface IToolbarProps {
 
 /**
  * A generic toolbar component
- *
- * @export
- * @class Toolbar
- * @extends {React.Component<IToolbarProps, any>}
+ * @param props 
  */
-
 export const Toolbar = (props: IToolbarProps) => {
     const {
         containerStyle,

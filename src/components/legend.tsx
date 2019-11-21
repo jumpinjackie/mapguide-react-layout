@@ -378,10 +378,7 @@ function setupTree(map: RuntimeMap) {
 /**
  * The Legend component provides a component to view the layer structure, its styles and thematics and
  * the ability to toggle the group/layer visibility of the current map
- *
- * @export
- * @class Legend
- * @extends {React.Component<ILegendProps, any>}
+ * @param props 
  */
 export const Legend = (props: ILegendProps) => {
     const [state, setState] = React.useState(setupTree(props.map));

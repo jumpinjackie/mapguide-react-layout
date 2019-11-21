@@ -59,9 +59,7 @@ import {
 import { isMenu } from '../utils/type-guards';
 import { tr } from "../api/i18n";
 const isMobile = require("ismobilejs");
-import { MenuComponent } from "./menu";
 import { IMapViewerContextCallback, IMapViewerContextProps, MapViewerContext, MgLayerSet, MgLayerManager } from "./map-viewer-context";
-import xor = require("lodash.xor");
 
 import olExtent from "ol/extent";
 import olEasing from "ol/easing";
@@ -97,6 +95,7 @@ import Polygon from "ol/geom/polygon";
 import Point from "ol/geom/point";
 import LineString from "ol/geom/linestring";
 import Circle from "ol/geom/circle";
+import { areArraysDifferent } from '../utils/array';
 
 plugins.register(PluginType.MAP_RENDERER, MapRenderer);
 plugins.register(PluginType.LAYER_RENDERER, TileLayerRenderer);
@@ -148,24 +147,6 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
 }
 
 /**
- * Indicates if the given arrays are different (content-wise)
- *
- * @export
- * @template T
- * @param {(T[] | undefined)} arr
- * @param {(T[] | undefined)} other
- * @returns {boolean}
- */
-export function arrayChanged<T>(arr: T[] | undefined, other: T[] | undefined): boolean {
-    if (arr && other) {
-        return arr.length != other.length
-            || xor(arr, other).length > 0;
-    } else {
-        return true;
-    }
-}
-
-/**
  * Determines if the given IMapView instances are equal or close to it
  *
  * @export
@@ -209,7 +190,7 @@ export function layerTransparencyChanged(set: LayerTransparencySet, other: Layer
     }
     const setLayers = Object.keys(set);
     const otherLayers = Object.keys(other);
-    if (arrayChanged(setLayers, otherLayers))
+    if (areArraysDifferent(setLayers, otherLayers))
         return true;
 
     for (const name of setLayers) {
@@ -693,10 +674,10 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             layerSet.updateTransparency(nextProps.layerTransparency);
         }
         //Layer/Group visibility
-        if (arrayChanged(nextProps.showGroups, props.showGroups) ||
-            arrayChanged(nextProps.hideGroups, props.hideGroups) ||
-            arrayChanged(nextProps.showLayers, props.showLayers) ||
-            arrayChanged(nextProps.hideLayers, props.hideLayers)) {
+        if (areArraysDifferent(nextProps.showGroups, props.showGroups) ||
+            areArraysDifferent(nextProps.hideGroups, props.hideGroups) ||
+            areArraysDifferent(nextProps.showLayers, props.showLayers) ||
+            areArraysDifferent(nextProps.hideLayers, props.hideLayers)) {
             this.refreshOnStateChange(nextProps);
         }
         //view

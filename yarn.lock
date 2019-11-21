@@ -498,13 +498,6 @@
   dependencies:
     "@types/lodash" "*"
 
-"@types/lodash.xor@4.5.6":
-  version "4.5.6"
-  resolved "https://registry.yarnpkg.com/@types/lodash.xor/-/lodash.xor-4.5.6.tgz#28ffbb779429ff6eac27db208d90124a00a0bff8"
-  integrity sha512-rD3zHQuR04SMUWEn6CHLGYNRHEFgakV4K9QhFFP/Ly5xdN2MWsy+gWFA4MxhY+sKKSSKjktjPVyBTo/6rUdTjA==
-  dependencies:
-    "@types/lodash" "*"
-
 "@types/lodash@*", "@types/lodash@^4.14.72":
   version "4.14.140"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.140.tgz#8d2bd55e6a22221cd662bbb85969eb00ec283da6"
@@ -5688,11 +5681,6 @@ lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
   integrity sha1-0CJTc662Uq3BvILklFM5qEJ1R3M=
-
-lodash.xor@^4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/lodash.xor/-/lodash.xor-4.5.0.tgz#4d48ed7e98095b0632582ba714d3ff8ae8fb1db6"
-  integrity sha1-TUjtfpgJWwYyWCunFNP/iuj7HbY=
 
 "lodash@4.6.1 || ^4.16.1", lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.11, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.4, lodash@^4.17.5:
   version "4.17.15"

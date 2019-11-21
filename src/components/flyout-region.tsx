@@ -72,7 +72,7 @@ export const FlyoutRegion = (props: IFlyoutRegionProps) => {
                         }
                     }
                     const invoked = () => {
-                        props.onCloseFlyout(id);
+                        props.onCloseFlyout(flyoutId);
                     };
                     let className = "mg-flyout-menu-container";
                     if (flyout.componentName) {

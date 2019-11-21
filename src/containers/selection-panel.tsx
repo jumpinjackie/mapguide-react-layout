@@ -12,8 +12,8 @@ import {
     IConfigurationReducerState,
     getSelectionSet
 } from "../api/common";
-import { APPLICATION_CONTEXT_VALIDATION_MAP, IApplicationContext } from '../index';
 import { Callout, Intent } from '@blueprintjs/core';
+import { AppContext } from '../components/context';
 
 export interface ISelectionPanelContainerProps {
     maxHeight?: number;
@@ -50,8 +50,6 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
     constructor(props: SelectionPanelContainerProps) {
         super(props);
     }
-    static contextTypes = APPLICATION_CONTEXT_VALIDATION_MAP;
-    context: IApplicationContext;
     private onZoomToSelectedFeature = (feature: SelectedFeature) => {
         const bbox: any = feature.Bounds.split(" ").map(s => parseFloat(s));
         const viewer = getViewer();
@@ -73,15 +71,16 @@ export class SelectionPanelContainer extends React.Component<SelectionPanelConta
         const { selection, config, maxHeight } = this.props;
         const locale = this.getLocale();
         if (selection != null && selection.SelectedFeatures != null) {
-            const cleaner = this.context.getHTMLCleaner();
-            return <SelectionPanel locale={locale}
-                                   allowHtmlValues={this.context.allowHtmlValuesInSelection()}
-                                   cleanHTML={cleaner}
-                                   selection={selection.SelectedFeatures}
-                                   onRequestZoomToFeature={this.onZoomToSelectedFeature}
-                                   onShowSelectedFeature={this.onShowSelectedFeature}
-                                   selectedFeatureRenderer={this.props.selectedFeatureRenderer}
-                                   maxHeight={maxHeight} />;
+            return <AppContext.Consumer>
+                {({ allowHtmlValuesInSelection, getHTMLCleaner }) => <SelectionPanel locale={locale}
+                    allowHtmlValues={allowHtmlValuesInSelection()}
+                    cleanHTML={getHTMLCleaner()}
+                    selection={selection.SelectedFeatures!}
+                    onRequestZoomToFeature={this.onZoomToSelectedFeature}
+                    onShowSelectedFeature={this.onShowSelectedFeature}
+                    selectedFeatureRenderer={this.props.selectedFeatureRenderer}
+                    maxHeight={maxHeight} />}
+            </AppContext.Consumer>;
         } else {
             return <Callout intent={Intent.PRIMARY} icon="info-sign">
                 <p className="selection-panel-no-selection">{tr("NO_SELECTED_FEATURES", locale)}</p>

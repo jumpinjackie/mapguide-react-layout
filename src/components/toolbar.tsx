@@ -1,10 +1,10 @@
 import * as React from "react";
 import { isMenuRef, isComponentFlyout } from "../utils/type-guards";
 import { IDOMElementMetrics, FlyoutVisibilitySet, GenericEvent } from "../api/common";
-import { IToolbarContext, TOOLBAR_CONTEXT_VALIDATION_MAP } from "./context";
+import { ToolbarContext } from "./context";
 import { STR_EMPTY } from "../utils/string";
 import { Icon } from "./icon";
-import { 
+import {
     SPRITE_ICON_MENUARROWUP,
     SPRITE_ICON_MENUARROW
 } from "../constants/assets";
@@ -121,7 +121,7 @@ function getMenuItemStyle(enabled: boolean, selected: boolean, height: number, i
 }
 
 export interface IFlyoutMenuChildItemProps {
-    item: IItem|IInlineMenu;
+    item: IItem | IInlineMenu;
     onInvoked?: () => void;
 }
 
@@ -174,19 +174,14 @@ interface IComponentFlyoutItemProps {
     isFlownOut?: boolean;
 }
 
-class ComponentFlyoutItem extends React.Component<IComponentFlyoutItemProps, any> {
-    static contextTypes = TOOLBAR_CONTEXT_VALIDATION_MAP;
-    context: IToolbarContext;
-    constructor(props: IComponentFlyoutItemProps) {
-        super(props);
-        this.state = {
-            isMouseOver: false
-        };
-    }
-    private onClick = (e: GenericEvent) => {
+const ComponentFlyoutItem = (props: IComponentFlyoutItemProps) => {
+    const { size, item, vertical, isFlownOut } = props;
+    const toolbarCtx = React.useContext(ToolbarContext);
+    const [isMouseOver, setIsMouseOver] = React.useState(false);
+    const onClick = (e: GenericEvent) => {
         e.preventDefault();
-        const { flyoutId, componentName, componentProps } = this.props.item;
-        const newState = !!!this.props.isFlownOut;
+        const { flyoutId, componentName, componentProps } = item;
+        const newState = !!!isFlownOut;
         if (newState) {
             const rect = e.currentTarget.getBoundingClientRect();
             const metrics: IDOMElementMetrics = {
@@ -194,38 +189,35 @@ class ComponentFlyoutItem extends React.Component<IComponentFlyoutItemProps, any
                 posY: rect.top, // e.clientY,
                 width: rect.width, // e.currentTarget.offsetWidth,
                 height: rect.height, // e.currentTarget.offsetHeight
-                vertical: this.props.vertical
+                vertical: vertical
             };
-            this.context.openComponent(flyoutId, metrics, componentName, componentProps);
+            toolbarCtx.openComponent(flyoutId, metrics, componentName, componentProps);
         } else {
-            this.context.closeComponent(flyoutId);
+            toolbarCtx.closeComponent(flyoutId);
         }
         return false;
+    };
+    const onMouseLeave = () => {
+        setIsMouseOver(false);
+    };
+    const onMouseEnter = () => {
+        setIsMouseOver(true);
+    };
+    const selected = getSelected(item);
+    const enabled = getEnabled(item);
+    const imgStyle = getIconStyle(enabled, size);
+    const style = getItemStyle(enabled, selected, size, isMouseOver, vertical);
+    let label: any = item.label;
+    if (vertical === true) {
+        label = <div className="rotated-text"><span className="rotated-text__inner rotated-text-ccw">{item.label}</span></div>;
     }
-    private onMouseLeave = () => {
-        this.setState({ isMouseOver: false });
-    }
-    private onMouseEnter = () => {
-        this.setState({ isMouseOver: true });
-    }
-    render(): JSX.Element {
-        const { size, item, vertical, isFlownOut } = this.props;
-        const selected = getSelected(item);
-        const enabled = getEnabled(item);
-        const imgStyle = getIconStyle(enabled, size);
-        const style = getItemStyle(enabled, selected, size, this.state.isMouseOver, vertical);
-        let label: any = item.label;
-        if (vertical === true) {
-            label = <div className="rotated-text"><span className="rotated-text__inner rotated-text-ccw">{item.label}</span></div>;
-        }
-        const ttip = getTooltip(item);
-        return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={this.onClick} style={style} title={ttip}>
-            <div data-flyout-id={`flyout-${item.flyoutId}`}>
-                <Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {label} <Icon style={imgStyle} spriteClass={isFlownOut ? SPRITE_ICON_MENUARROWUP : SPRITE_ICON_MENUARROW } />
-            </div>
-        </div>;
-    }
-}
+    const ttip = getTooltip(item);
+    return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${isMouseOver ? "mouse-over" : ""}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} style={style} title={ttip}>
+        <div data-flyout-id={`flyout-${item.flyoutId}`}>
+            <Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {label} <Icon style={imgStyle} spriteClass={isFlownOut ? SPRITE_ICON_MENUARROWUP : SPRITE_ICON_MENUARROW} />
+        </div>
+    </div>;
+};
 
 interface IFlyoutMenuReferenceItemProps {
     size: number;
@@ -234,18 +226,13 @@ interface IFlyoutMenuReferenceItemProps {
     isFlownOut?: boolean;
 }
 
-class FlyoutMenuReferenceItem extends React.Component<IFlyoutMenuReferenceItemProps, any> {
-    static contextTypes = TOOLBAR_CONTEXT_VALIDATION_MAP;
-    context: IToolbarContext;
-    constructor(props: IFlyoutMenuReferenceItemProps) {
-        super(props);
-        this.state = {
-            isMouseOver: false,
-        };
-    }
-    private onClick = (e: GenericEvent) => {
+const FlyoutMenuReferenceItem = (props: IFlyoutMenuReferenceItemProps) => {
+    const { size, menu, vertical, isFlownOut } = props;
+    const toolbarCtx = React.useContext(ToolbarContext);
+    const [isMouseOver, setIsMouseOver] = React.useState(false);
+    const onClick = (e: GenericEvent) => {
         e.preventDefault();
-        const newState = !!!this.props.isFlownOut;
+        const newState = !!!isFlownOut;
         if (newState) {
             const rect = e.currentTarget.getBoundingClientRect();
             const metrics: IDOMElementMetrics = {
@@ -253,59 +240,51 @@ class FlyoutMenuReferenceItem extends React.Component<IFlyoutMenuReferenceItemPr
                 posY: rect.top, // e.clientY,
                 width: rect.width, // e.currentTarget.offsetWidth,
                 height: rect.height, // e.currentTarget.offsetHeight
-                vertical: this.props.vertical
+                vertical: vertical
             };
-            this.context.openFlyout(this.props.menu.flyoutId, metrics);
+            toolbarCtx.openFlyout(menu.flyoutId, metrics);
         } else {
-            this.context.closeFlyout(this.props.menu.flyoutId);
+            toolbarCtx.closeFlyout(menu.flyoutId);
         }
         return false;
     }
-    private onMouseLeave = () => {
-        this.setState({ isMouseOver: false });
+    const onMouseLeave = () => {
+        setIsMouseOver(false);
+    };
+    const onMouseEnter = () => {
+        setIsMouseOver(true);
+    };
+    const selected = getSelected(menu);
+    const enabled = getEnabled(menu);
+    const imgStyle = getIconStyle(enabled, size);
+    const style = getItemStyle(enabled, selected, size, isMouseOver, vertical);
+    let label: any = menu.label;
+    if (vertical === true) {
+        label = <div className="rotated-text"><span className="rotated-text__inner rotated-text-ccw">{menu.label}</span></div>;
     }
-    private onMouseEnter = () => {
-        this.setState({ isMouseOver: true });
+    let align = menu.flyoutAlign;
+    if (!align) {
+        align = (vertical === true) ? "right bottom" : "bottom right";
     }
-    render(): JSX.Element {
-        const { size, menu, vertical, isFlownOut } = this.props;
-        const selected = getSelected(menu);
-        const enabled = getEnabled(menu);
-        const imgStyle = getIconStyle(enabled, size);
-        const style = getItemStyle(enabled, selected, size, this.state.isMouseOver, vertical);
-        let label: any = menu.label;
-        if (vertical === true) {
-            label = <div className="rotated-text"><span className="rotated-text__inner rotated-text-ccw">{menu.label}</span></div>;
-        }
-        let align = menu.flyoutAlign;
-        if (!align) {
-            align = (vertical === true) ? "right bottom" : "bottom right";
-        }
-        const ttip = getTooltip(menu);
-        return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${this.state.isMouseOver ? "mouse-over" : ""}`} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={this.onClick} style={style} title={ttip}>
-            <div data-flyout-id={`flyout-${menu.flyoutId}`}>
-                <Icon style={imgStyle} url={menu.icon} spriteClass={menu.iconClass} /> {label} <Icon style={imgStyle} spriteClass={isFlownOut ? SPRITE_ICON_MENUARROWUP : SPRITE_ICON_MENUARROW} />
-            </div>
-        </div>;
-    }
-}
+    const ttip = getTooltip(menu);
+    return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${isMouseOver ? "mouse-over" : ""}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} style={style} title={ttip}>
+        <div data-flyout-id={`flyout-${menu.flyoutId}`}>
+            <Icon style={imgStyle} url={menu.icon} spriteClass={menu.iconClass} /> {label} <Icon style={imgStyle} spriteClass={isFlownOut ? SPRITE_ICON_MENUARROWUP : SPRITE_ICON_MENUARROW} />
+        </div>
+    </div>;
+};
 
 interface IToolbarSeparatorProps {
     size: number;
     vertical?: boolean;
 }
 
-class ToolbarSeparator extends React.Component<IToolbarSeparatorProps, any> {
-    constructor(props: IToolbarSeparatorProps) {
-        super(props);
-    }
-    render(): JSX.Element {
-        const style = getToolbarSeparatorItemStyle(this.props.vertical);
-        if (this.props.vertical === true) {
-            return <div className="noselect toolbar-separator-vertical" style={style} />;
-        } else {
-            return <div className="noselect toolbar-separator-horizontal" style={style}>{Constants.NBSP}</div>;
-        }
+const ToolbarSeparator = (props: IToolbarSeparatorProps) => {
+    const style = getToolbarSeparatorItemStyle(props.vertical);
+    if (props.vertical === true) {
+        return <div className="noselect toolbar-separator-vertical" style={style} />;
+    } else {
+        return <div className="noselect toolbar-separator-horizontal" style={style}>{Constants.NBSP}</div>;
     }
 }
 
@@ -316,44 +295,38 @@ interface IToolbarButtonProps {
     hideVerticalLabels?: boolean;
 }
 
-class ToolbarButton extends React.Component<IToolbarButtonProps, any> {
-    constructor(props: IToolbarButtonProps) {
-        super(props);
-        this.state = {
-            isMouseOver: false
-        };
+const ToolbarButton = (props: IToolbarButtonProps) => {
+    const { height, item, vertical, hideVerticalLabels } = props;
+    const toolbarCtx = React.useContext(ToolbarContext);
+    const [isMouseOver, setIsMouseOver] = React.useState(false);
+    const onMouseLeave = () => {
+        setIsMouseOver(false);
     }
-    private onMouseLeave = () => {
-        this.setState({ isMouseOver: false });
+    const onMouseEnter = () => {
+        setIsMouseOver(true);
     }
-    private onMouseEnter = () => {
-        this.setState({ isMouseOver: true });
-    }
-    private onClick = (e: any) => {
+    const onClick = (e: any) => {
         e.preventDefault();
-        const { item } = this.props;
+        const { item } = props;
         const enabled = getEnabled(item);
         if (enabled && item.invoke) {
             item.invoke();
         }
         return false;
     }
-    render(): JSX.Element {
-        const { height, item, vertical, hideVerticalLabels } = this.props;
-        const selected = getSelected(item);
-        const enabled = getEnabled(item);
-        const imgStyle = getIconStyle(enabled, height);
-        const style = getItemStyle(enabled, selected, height, this.state.isMouseOver, vertical);
-        let ttip = null;
-        if (typeof(item.tooltip) == 'function') {
-            ttip = item.tooltip();
-        } else {
-            ttip = item.tooltip;
-        }
-        return <div className={`noselect toolbar-btn ${selected ? "selected-item" : ""} ${(this.state.isMouseOver && enabled) ? "mouse-over" : ""}`} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} style={style} title={ttip} onClick={this.onClick}>
-            <Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {(vertical == true && hideVerticalLabels == true) ? null : item.label}
-        </div>;
+    const selected = getSelected(item);
+    const enabled = getEnabled(item);
+    const imgStyle = getIconStyle(enabled, height);
+    const style = getItemStyle(enabled, selected, height, isMouseOver, vertical);
+    let ttip = null;
+    if (typeof (item.tooltip) == 'function') {
+        ttip = item.tooltip();
+    } else {
+        ttip = item.tooltip;
     }
+    return <div className={`noselect toolbar-btn ${selected ? "selected-item" : ""} ${(isMouseOver && enabled) ? "mouse-over" : ""}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} style={style} title={ttip} onClick={onClick}>
+        <Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {(vertical == true && hideVerticalLabels == true) ? null : item.label}
+    </div>;
 }
 
 export interface IItem {
@@ -414,17 +387,8 @@ export interface IToolbarProps {
  * @extends {React.Component<IToolbarProps, any>}
  */
 export class Toolbar extends React.Component<IToolbarProps, any> {
-    static childContextTypes = TOOLBAR_CONTEXT_VALIDATION_MAP;
     constructor(props: IToolbarProps) {
         super(props);
-    }
-    getChildContext(): IToolbarContext {
-        return {
-            openFlyout: this.openFlyout.bind(this),
-            closeFlyout: this.closeFlyout.bind(this),
-            openComponent: this.openComponent.bind(this),
-            closeComponent: this.closeComponent.bind(this)
-        }
     }
     private openFlyout(id: string, metrics: IDOMElementMetrics): void {
         if (this.props.onOpenFlyout) {
@@ -451,24 +415,32 @@ export class Toolbar extends React.Component<IToolbarProps, any> {
         let height = DEFAULT_TOOLBAR_SIZE;
         if (containerStyle) {
             const ch = containerStyle.height;
-            if (typeof(ch) == 'number') {
+            if (typeof (ch) == 'number') {
                 height = ch;
             }
         }
-        return <div style={containerStyle} className={`has-flyout noselect ${containerClass}`}>
-            {childItems.map((item, index) => {
-                if (isComponentFlyout(item)) {
-                    const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
-                    return <ComponentFlyoutItem key={index} size={height} item={item} vertical={vertical} isFlownOut={isFlownOut} />;
-                } else if (isMenuRef(item)) {
-                    const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
-                    return <FlyoutMenuReferenceItem key={index} size={height} menu={item} vertical={vertical} isFlownOut={isFlownOut} />;
-                } else if (item.isSeparator === true) {
-                    return <ToolbarSeparator key={index} size={height} vertical={vertical} />;
-                } else {
-                    return <ToolbarButton key={index} height={height} item={item} vertical={vertical} hideVerticalLabels={hideVerticalLabels} />;
-                }
-            })}
-        </div>;
+        const providerImpl = {
+            openFlyout: this.openFlyout.bind(this),
+            closeFlyout: this.closeFlyout.bind(this),
+            openComponent: this.openComponent.bind(this),
+            closeComponent: this.closeComponent.bind(this)
+        };
+        return <ToolbarContext.Provider value={providerImpl}>
+            <div style={containerStyle} className={`has-flyout noselect ${containerClass}`}>
+                {childItems.map((item, index) => {
+                    if (isComponentFlyout(item)) {
+                        const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
+                        return <ComponentFlyoutItem key={index} size={height} item={item} vertical={vertical} isFlownOut={isFlownOut} />;
+                    } else if (isMenuRef(item)) {
+                        const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
+                        return <FlyoutMenuReferenceItem key={index} size={height} menu={item} vertical={vertical} isFlownOut={isFlownOut} />;
+                    } else if (item.isSeparator === true) {
+                        return <ToolbarSeparator key={index} size={height} vertical={vertical} />;
+                    } else {
+                        return <ToolbarButton key={index} height={height} item={item} vertical={vertical} hideVerticalLabels={hideVerticalLabels} />;
+                    }
+                })}
+            </div>
+        </ToolbarContext.Provider>;
     }
 }

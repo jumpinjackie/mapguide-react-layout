@@ -127,7 +127,7 @@
     "webpack-cli": "^3.3.10"
   },
   "resolutions": {
-    "handlebars": "4.5.2"
+    "handlebars": "4.5.3"
   },
   "greenkeeper": {
     "ignore": [

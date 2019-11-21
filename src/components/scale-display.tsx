@@ -5,7 +5,6 @@ import {
 } from "../api/common";
 import { tr } from "../api/i18n";
 import { getFiniteScaleIndexForScale } from "../utils/number";
-import { HTMLSelect } from '@blueprintjs/core';
 
 /**
  * ScaleDisplay component props
@@ -23,61 +22,40 @@ export interface IScaleDisplayProps {
 
 /**
  * A component that displays the map scale
- *
- * @export
- * @class ScaleDisplay
- * @extends {React.Component<IScaleDisplayProps, any>}
+ * @param props 
  */
-export class ScaleDisplay extends React.Component<IScaleDisplayProps, any> {
-    constructor(props: IScaleDisplayProps) {
-        super(props);
-        this.state = {};
-    }
-    private onFiniteScaleChanged = (e: GenericEvent) => {
-        if (this.props.onScaleChanged) {
-            this.props.onScaleChanged(parseFloat(e.target.value));
+export const ScaleDisplay = (props: IScaleDisplayProps) => {
+    const { view, style, locale, finiteScales, onScaleChanged } = props;
+    const [localScale, setLocalScale] = React.useState<number | undefined>(undefined);
+    const onFiniteScaleChanged = (e: GenericEvent) => onScaleChanged?.(parseFloat(e.target.value));
+    const onScaleKeyPressed = (e: GenericEvent) => {
+        if (e.key == 'Enter' && localScale) {
+            onScaleChanged?.(localScale);
         }
-    }
-    private onScaleKeyPressed = (e: GenericEvent) => {
-        if (e.key == 'Enter' && this.props.onScaleChanged) {
-            this.props.onScaleChanged(this.state.localScale);
+    };
+    const onScaleInputChanged = (e: GenericEvent) => setLocalScale(parseFloat(e.target.value));
+    React.useEffect(() => {
+        if (!finiteScales && view && view.scale != localScale) {
+            setLocalScale(view.scale);
         }
-    }
-    private onScaleInputChanged = (e: GenericEvent) => {
-        this.setState({ localScale: parseFloat(e.target.value) });
-    }
-    private updateLocalScale(props: IScaleDisplayProps) {
-        const { finiteScales, view } = props;
-        if (!finiteScales && view && view.scale != this.state.localScale) {
-            this.setState({ localScale: view.scale });
-        }
-    }
-    componentDidMount() {
-        this.updateLocalScale(this.props);
-    }
-    componentDidUpdate(prevProps: IScaleDisplayProps) {
-        this.updateLocalScale(this.props);
-    }
-    render(): JSX.Element {
-        const { view, style, locale, finiteScales } = this.props;
-        const label = tr("FMT_SCALE_DISPLAY", locale, {
-            scale: ""
-        });
-        if (finiteScales) {
-            const fi = getFiniteScaleIndexForScale(finiteScales, view.scale);
-            const fiScale = finiteScales[fi];
-            //NOTE: Not using BP styled HTML select as the size imposed is not acceptable
-            return <div className="component-scale-display" style={style}>
-                {label} <select className="scale-input" value={fiScale} onChange={this.onFiniteScaleChanged}>
-                    {finiteScales.map(s => {
-                        return <option key={s} value={s}>{s}</option>;
-                    })}
-                </select>
-            </div>;
-        } else {
-            return <div className="component-scale-display" style={style}>
-                {label} <input className="scale-input" type="number" value={this.state.localScale || ""} onChange={this.onScaleInputChanged} onKeyPress={this.onScaleKeyPressed} />
-            </div>;
-        }
+    }, [finiteScales, view]);
+    const label = tr("FMT_SCALE_DISPLAY", locale, {
+        scale: ""
+    });
+    if (finiteScales) {
+        const fi = getFiniteScaleIndexForScale(finiteScales, view.scale);
+        const fiScale = finiteScales[fi];
+        //NOTE: Not using BP styled HTML select as the size imposed is not acceptable
+        return <div className="component-scale-display" style={style}>
+            {label} <select className="scale-input" value={fiScale} onChange={onFiniteScaleChanged}>
+                {finiteScales.map(s => {
+                    return <option key={s} value={s}>{s}</option>;
+                })}
+            </select>
+        </div>;
+    } else {
+        return <div className="component-scale-display" style={style}>
+            {label} <input className="scale-input" type="number" value={localScale || ""} onChange={onScaleInputChanged} onKeyPress={onScaleKeyPressed} />
+        </div>;
     }
 }

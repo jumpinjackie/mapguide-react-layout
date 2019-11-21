@@ -45,8 +45,7 @@ describe("components/selection-panel", () => {
         const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={set} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(1);
         expect(wrapper.find(".selection-panel-property-grid")).toHaveLength(1);
-        expect(wrapper.state("selectedLayerIndex")).toBe(0);
-        expect(wrapper.state("featureIndex")).toBe(0);
+        expect(wrapper.find({ "data-property-value-for": "Name" }).text()).toBe("Foo / Feature 1");
         expect(wrapper.find("tr")).toHaveLength(3);
     });
     it("Can scroll forwards/backwards on first selected layer", () => {
@@ -61,9 +60,9 @@ describe("components/selection-panel", () => {
         const back = wrapper.find(".toolbar-btn").at(0);
         const fwd = wrapper.find(".toolbar-btn").at(1);
         fwd.simulate("click");
-        expect(wrapper.state("featureIndex")).toBe(1);
+        expect(wrapper.find({ "data-property-value-for": "Name" }).text()).toBe("Foo / Feature 2");
         back.simulate("click");
-        expect(wrapper.state("featureIndex")).toBe(0);
+        expect(wrapper.find({ "data-property-value-for": "Name" }).text()).toBe("Foo / Feature 1");
     });
     it("Zoom to current feature raises handler", () => {
         const onZoomRequest = jest.fn();
@@ -94,9 +93,8 @@ describe("components/selection-panel", () => {
         expect(select).toHaveLength(1); //, "Has Layer Select");
         expect(select.find("option")).toHaveLength(2);
         fwd.simulate("click");
-        expect(wrapper.state("featureIndex")).toBe(1);
-        select.simulate('change', { target: { value : 1 } });
-        expect(wrapper.state("selectedLayerIndex")).toBe(1);
-        expect(wrapper.state("featureIndex")).toBe(0);
+        expect(wrapper.find({ "data-property-value-for": "Name" }).text()).toBe("Foo / Feature 2");
+        select.simulate('change', { target: { value : 1 } })
+        expect(wrapper.find({ "data-property-value-for": "Name" }).text()).toBe("Bar / Feature 1");
     });
 });

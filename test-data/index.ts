@@ -530,14 +530,14 @@ export function createSelectionSet(): SelectedFeatureSet {
                         Bounds: "1 2 3 4",
                         Property: [
                             { Name: "ID", Value: "1" },
-                            { Name: "Name", Value: "Feature 1" }
+                            { Name: "Name", Value: "Foo / Feature 1" }
                         ]
                     },
                     {
                         Bounds: "2 3 4 5",
                         Property: [
                             { Name: "ID", Value: "2" },
-                            { Name: "Name", Value: "Feature 2" }
+                            { Name: "Name", Value: "Foo / Feature 2" }
                         ]
                     }
                 ]
@@ -557,7 +557,7 @@ export function createSelectionSet(): SelectedFeatureSet {
                         Bounds: "1 2 3 4",
                         Property: [
                             { Name: "ID", Value: "1" },
-                            { Name: "Name", Value: "Feature 1" },
+                            { Name: "Name", Value: "Bar / Feature 1" },
                             { Name: "Address", Value: "Testing" }
                         ]
                     },
@@ -565,7 +565,7 @@ export function createSelectionSet(): SelectedFeatureSet {
                         Bounds: "2 3 4 5",
                         Property: [
                             { Name: "ID", Value: "2" },
-                            { Name: "Name", Value: "Feature 2" },
+                            { Name: "Name", Value: "Bar / Feature 2" },
                             { Name: "Address", Value: "Testing" }
                         ]
                     }

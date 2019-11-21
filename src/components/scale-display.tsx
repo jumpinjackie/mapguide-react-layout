@@ -66,12 +66,13 @@ export class ScaleDisplay extends React.Component<IScaleDisplayProps, any> {
         if (finiteScales) {
             const fi = getFiniteScaleIndexForScale(finiteScales, view.scale);
             const fiScale = finiteScales[fi];
+            //NOTE: Not using BP styled HTML select as the size imposed is not acceptable
             return <div className="component-scale-display" style={style}>
-                {label} <HTMLSelect className="scale-input" value={fiScale} onChange={this.onFiniteScaleChanged}>
+                {label} <select className="scale-input" value={fiScale} onChange={this.onFiniteScaleChanged}>
                     {finiteScales.map(s => {
                         return <option key={s} value={s}>{s}</option>;
                     })}
-                </HTMLSelect>
+                </select>
             </div>;
         } else {
             return <div className="component-scale-display" style={style}>

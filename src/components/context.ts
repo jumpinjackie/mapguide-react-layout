@@ -33,7 +33,7 @@ export const AppContext = React.createContext<IApplicationContext>({
 });
 
 export interface ILegendContext {
-    getIconMimeType(): string;
+    getIconMimeType(): string | undefined;
     getChildren(objectId: string): (MapLayer | MapGroup)[];
     getCurrentScale(): number;
     getTree(): any;

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IExternalBaseLayer, GenericEvent } from "../api/common";
 import { RuntimeMap, MapLayer, MapGroup, RuleInfo } from "../api/contracts/runtime-map";
-import { LegendContext } from "./context";
+import { LegendContext, ILegendContext } from "./context";
 import { BaseLayerSwitcher } from "./base-layer-switcher";
 import { isLayer } from "../utils/type-guards";
 import { Icon } from "./icon";
@@ -63,8 +63,8 @@ export interface ILegendProps {
     inlineBaseLayerSwitcher: boolean;
 }
 
-function getIconUri(iconMimeType: string, iconBase64: string | undefined): string | undefined {
-    if (iconBase64) {
+function getIconUri(iconMimeType: string | undefined, iconBase64: string | undefined): string | undefined {
+    if (iconMimeType && iconBase64) {
         return `data:${iconMimeType};base64,${iconBase64}`;
     } else {
         return undefined;
@@ -76,7 +76,7 @@ const EmptyNode: React.StatelessComponent<any> = (props) => {
 };
 
 interface IRuleNodeProps {
-    iconMimeType: string;
+    iconMimeType: string | undefined;
     rule: RuleInfo;
 }
 
@@ -295,6 +295,86 @@ function isGroupVisibleAtScale(group: MapGroup, tree: any, scale: number): boole
     return false;
 }
 
+function setupTree(map: RuntimeMap) {
+    const state: any = {
+        Layers: map.Layer,
+        Groups: map.Group,
+        LayerMap: {},
+        GroupMap: {}
+    };
+    if (map.Layer) {
+        for (const layer of map.Layer) {
+            state.LayerMap[layer.ObjectId] = layer;
+        }
+    }
+    if (map.Group) {
+        for (const group of map.Group) {
+            state.GroupMap[group.ObjectId] = group;
+        }
+    }
+    const { Layers, Groups, LayerMap, GroupMap } = state;
+    const tree: any = {
+        root: [],
+        groupChildren: {}
+    };
+    const { root, groupChildren } = tree;
+    if (Groups) {
+        const remainingGroups: any = {};
+        //1st pass, un-parented groups
+        for (const group of Groups) {
+            groupChildren[group.ObjectId] = [];
+            if (group.ParentId) {
+                remainingGroups[group.ObjectId] = group;
+                continue;
+            }
+            root.push(group);
+        }
+        //2nd pass, parented groups
+        var itemCount = 0;
+        for (const objId in remainingGroups) {
+            itemCount++;
+        }
+        //Whittle down
+        while (itemCount > 0) {
+            var removeIds = [] as string[];
+            for (const objId in remainingGroups) {
+                var group = remainingGroups[objId];
+                //Do we have a parent?
+                if (typeof (groupChildren[group.ParentId]) != 'undefined') {
+                    if (typeof (groupChildren[group.ObjectId]) != 'undefined') {
+                        groupChildren[group.ObjectId] = [];
+                    }
+                    groupChildren[group.ParentId].push(group);
+                    removeIds.push(group.ObjectId);
+                }
+            }
+            for (const id of removeIds) {
+                delete remainingGroups[id];
+            }
+
+            itemCount = 0;
+            for (const objId in remainingGroups) {
+                itemCount++;
+            }
+        }
+    }
+    if (Layers) {
+        for (const layer of Layers) {
+            if (layer.ParentId) {
+                //Do we have a parent?
+                if (typeof (groupChildren[layer.ParentId]) === 'undefined') {
+                    groupChildren[layer.ParentId] = [];
+                }
+                groupChildren[layer.ParentId].push(layer);
+            } else {
+                root.push(layer);
+            }
+        }
+    }
+    state.tree = tree;
+    return state;
+}
+
 /**
  * The Legend component provides a component to view the layer structure, its styles and thematics and
  * the ability to toggle the group/layer visibility of the current map
@@ -303,60 +383,38 @@ function isGroupVisibleAtScale(group: MapGroup, tree: any, scale: number): boole
  * @class Legend
  * @extends {React.Component<ILegendProps, any>}
  */
-export class Legend extends React.Component<ILegendProps, any> {
-    constructor(props: ILegendProps) {
-        super(props);
-        this.state = this.setupTree(props.map);
-    }
-    componentDidUpdate(prevProps: ILegendProps) {
-        //Only rebuild tree on change of active map
-        if (prevProps.map != this.props.map) {
-            const tree: any = this.setupTree(this.props.map);
-            this.setState(tree);
-        }
-    }
-    public getSelectableLayers(): string[] {
-        const layers = [] as string[];
-        for (const layerId in this.state.LayerMap) {
-            const layer: MapLayer = this.state.LayerMap[layerId];
-            if (layer.Selectable === true) {
-                if (this.props.overrideSelectableLayers[layerId] === false) {
-                    continue;
-                }
-                layers.push(layer.Name);
-            }
-        }
-        return layers;
-    }
-    private getLayerSelectability(layerId: string): boolean {
-        const items: any = this.props.overrideSelectableLayers || {};
+export const Legend = (props: ILegendProps) => {
+    const [state, setState] = React.useState(setupTree(props.map));
+    const { tree } = state;
+    const { currentScale, externalBaseLayers, onBaseLayerChanged, maxHeight } = props;
+    const rootItems: (MapLayer | MapGroup)[] = tree.root;
+    React.useEffect(() => {
+        const tree: any = setupTree(props.map);
+        setState(tree);
+    }, [props.map]);
+    const getLayerSelectability = (layerId: string): boolean => {
+        const items: any = props.overrideSelectableLayers || {};
         return items[layerId];
-    }
-    private setLayerSelectability(layerId: string, selectable: boolean): void {
-        if (this.props.onLayerSelectabilityChanged != null) {
-            this.props.onLayerSelectabilityChanged(layerId, selectable);
-        }
-    }
-    private getGroupExpanded(groupId: string): boolean {
-        const items: any = this.props.overrideExpandedItems || {};
+    };
+    const setLayerSelectability = (layerId: string, selectable: boolean): void => {
+        props.onLayerSelectabilityChanged?.(layerId, selectable);
+    };
+    const getGroupExpanded = (groupId: string): boolean => {
+        const items: any = props.overrideExpandedItems || {};
         return items[groupId];
-    }
-    private setGroupExpanded(groupId: string, expanded: boolean): void {
-        if (this.props.onGroupExpansionChanged != null) {
-            this.props.onGroupExpansionChanged(groupId, expanded);
-        }
-    }
-    private getLayerExpanded(layerId: string): boolean {
-        const items: any = this.props.overrideExpandedItems || {};
+    };
+    const setGroupExpanded = (groupId: string, expanded: boolean): void => {
+        props.onGroupExpansionChanged?.(groupId, expanded);
+    };
+    const getLayerExpanded = (layerId: string): boolean => {
+        const items: any = props.overrideExpandedItems || {};
         return items[layerId];
-    }
-    private setLayerExpanded(layerId: string, expanded: boolean): void {
-        if (this.props.onGroupExpansionChanged != null) {
-            this.props.onGroupExpansionChanged(layerId, expanded);
-        }
-    }
-    private getGroupVisibility(group: MapGroup): boolean {
-        const { showGroups, hideGroups } = this.props;
+    };
+    const setLayerExpanded = (layerId: string, expanded: boolean): void => {
+        props.onGroupExpansionChanged?.(layerId, expanded);
+    };
+    const getGroupVisibility = (group: MapGroup): boolean => {
+        const { showGroups, hideGroups } = props;
         let visible = group.Visible;
         if (showGroups && showGroups.indexOf(group.ObjectId) >= 0) {
             visible = true;
@@ -364,9 +422,9 @@ export class Legend extends React.Component<ILegendProps, any> {
             visible = false;
         }
         return visible;
-    }
-    private getLayerVisibility(layer: MapLayer): boolean {
-        const { showLayers, hideLayers } = this.props;
+    };
+    const getLayerVisibility = (layer: MapLayer): boolean => {
+        const { showLayers, hideLayers } = props;
         let visible = layer.Visible;
         if (showLayers && showLayers.indexOf(layer.ObjectId) >= 0) {
             visible = true;
@@ -374,159 +432,69 @@ export class Legend extends React.Component<ILegendProps, any> {
             visible = false;
         }
         return visible;
+    };
+    const setGroupVisibility = (groupId: string, visible: boolean) => {
+        props.onGroupVisibilityChanged?.(groupId, visible);
+    };
+    const setLayerVisibility = (layerId: string, visible: boolean) => {
+        props.onLayerVisibilityChanged?.(layerId, visible);
+    };
+    const getIconMimeType = (): string | undefined => {
+        return props.map.IconMimeType;
+    };
+    const getChildren = (objectId: string): (MapLayer | MapGroup)[] => {
+        return state.tree.groupChildren[objectId] || [];
+    };
+    const rootStyle: React.CSSProperties = {};
+    if (maxHeight) {
+        rootStyle.maxHeight = maxHeight;
     }
-    private setGroupVisibility(groupId: string, visible: boolean) {
-        if (this.props.onGroupVisibilityChanged != null) {
-            this.props.onGroupVisibilityChanged(groupId, visible);
-        }
-    }
-    private setLayerVisibility(layerId: string, visible: boolean) {
-        if (this.props.onLayerVisibilityChanged != null) {
-            this.props.onLayerVisibilityChanged(layerId, visible);
-        }
-    }
-    private getIconMimeType(): string | undefined {
-        return this.props.map.IconMimeType;
-    }
-    private getChildren(objectId: string): (MapLayer | MapGroup)[] {
-        return this.state.tree.groupChildren[objectId] || [];
-    }
-    private setupTree(map: RuntimeMap) {
-        const state: any = {
-            Layers: map.Layer,
-            Groups: map.Group,
-            LayerMap: {},
-            GroupMap: {}
-        };
-        if (map.Layer) {
-            for (const layer of map.Layer) {
-                state.LayerMap[layer.ObjectId] = layer;
-            }
-        }
-        if (map.Group) {
-            for (const group of map.Group) {
-                state.GroupMap[group.ObjectId] = group;
-            }
-        }
-        const { Layers, Groups, LayerMap, GroupMap } = state;
-        const tree: any = {
-            root: [],
-            groupChildren: {}
-        };
-        const { root, groupChildren } = tree;
-        if (Groups) {
-            const remainingGroups: any = {};
-            //1st pass, un-parented groups
-            for (const group of Groups) {
-                groupChildren[group.ObjectId] = [];
-                if (group.ParentId) {
-                    remainingGroups[group.ObjectId] = group;
-                    continue;
+    const providerImpl: ILegendContext = {
+        getIconMimeType: getIconMimeType,
+        getChildren: getChildren,
+        getCurrentScale: () => props.currentScale,
+        getTree: () => state.tree,
+        getGroupVisibility: getGroupVisibility,
+        getLayerVisibility: getLayerVisibility,
+        setGroupVisibility: setGroupVisibility,
+        setLayerVisibility: setLayerVisibility,
+        getLayerSelectability: getLayerSelectability,
+        setLayerSelectability: setLayerSelectability,
+        getGroupExpanded: getGroupExpanded,
+        setGroupExpanded: setGroupExpanded,
+        getLayerExpanded: getLayerExpanded,
+        setLayerExpanded: setLayerExpanded
+    };
+    return <LegendContext.Provider value={providerImpl}>
+        <div style={rootStyle}>
+            {(() => {
+                if (externalBaseLayers != null &&
+                    externalBaseLayers.length > 0 &&
+                    props.inlineBaseLayerSwitcher) {
+                    return <div className="bp3-card bp3-interactive">
+                        <h5>{tr("EXTERNAL_BASE_LAYERS", props.locale)}</h5>
+                        <BaseLayerSwitcher locale={props.locale} externalBaseLayers={externalBaseLayers} onBaseLayerChanged={onBaseLayerChanged} />
+                    </div>;
                 }
-                root.push(group);
-            }
-            //2nd pass, parented groups
-            var itemCount = 0;
-            for (const objId in remainingGroups) {
-                itemCount++;
-            }
-            //Whittle down
-            while (itemCount > 0) {
-                var removeIds = [] as string[];
-                for (const objId in remainingGroups) {
-                    var group = remainingGroups[objId];
-                    //Do we have a parent?
-                    if (typeof (groupChildren[group.ParentId]) != 'undefined') {
-                        if (typeof (groupChildren[group.ObjectId]) != 'undefined') {
-                            groupChildren[group.ObjectId] = [];
-                        }
-                        groupChildren[group.ParentId].push(group);
-                        removeIds.push(group.ObjectId);
-                    }
-                }
-                for (const id of removeIds) {
-                    delete remainingGroups[id];
-                }
-
-                itemCount = 0;
-                for (const objId in remainingGroups) {
-                    itemCount++;
-                }
-            }
-        }
-        if (Layers) {
-            for (const layer of Layers) {
-                if (layer.ParentId) {
-                    //Do we have a parent?
-                    if (typeof (groupChildren[layer.ParentId]) === 'undefined') {
-                        groupChildren[layer.ParentId] = [];
-                    }
-                    groupChildren[layer.ParentId].push(layer);
-                } else {
-                    root.push(layer);
-                }
-            }
-        }
-        state.tree = tree;
-        return state;
-    }
-    render(): JSX.Element {
-        const { tree } = this.state;
-        const { currentScale, externalBaseLayers, onBaseLayerChanged, maxHeight } = this.props;
-        const rootItems: (MapLayer | MapGroup)[] = tree.root;
-
-        const rootStyle: React.CSSProperties = {};
-        if (maxHeight) {
-            rootStyle.maxHeight = maxHeight;
-        }
-
-        const providerImpl = {
-            getIconMimeType: this.getIconMimeType.bind(this),
-            getChildren: this.getChildren.bind(this),
-            getCurrentScale: () => this.props.currentScale,
-            getTree: () => this.state.tree,
-            getGroupVisibility: this.getGroupVisibility.bind(this),
-            getLayerVisibility: this.getLayerVisibility.bind(this),
-            setGroupVisibility: this.setGroupVisibility.bind(this),
-            setLayerVisibility: this.setLayerVisibility.bind(this),
-            getLayerSelectability: this.getLayerSelectability.bind(this),
-            setLayerSelectability: this.setLayerSelectability.bind(this),
-            getGroupExpanded: this.getGroupExpanded.bind(this),
-            setGroupExpanded: this.setGroupExpanded.bind(this),
-            getLayerExpanded: this.getLayerExpanded.bind(this),
-            setLayerExpanded: this.setLayerExpanded.bind(this)
-        };
-        return <LegendContext.Provider value={providerImpl}>
-            <div style={rootStyle}>
-                {(() => {
-                    if (externalBaseLayers != null &&
-                        externalBaseLayers.length > 0 &&
-                        this.props.inlineBaseLayerSwitcher) {
-                        return <div className="bp3-card bp3-interactive">
-                            <h5>{tr("EXTERNAL_BASE_LAYERS", this.props.locale)}</h5>
-                            <BaseLayerSwitcher locale={this.props.locale} externalBaseLayers={externalBaseLayers} onBaseLayerChanged={onBaseLayerChanged} />
-                        </div>;
-                    }
-                })()}
-                <ul style={UL_LIST_STYLE}>
-                    {rootItems.map(item => {
-                        if (item.DisplayInLegend === true) {
-                            if (isLayer(item)) {
-                                if (isLayerVisibleAtScale(item, currentScale)) {
-                                    //console.debug(`isLayerVisibleAtScale(${item.Name}, ${currentScale}) = true`);
-                                    return <LayerNode key={item.ObjectId} layer={item} />;
-                                }
-                            } else {
-                                if (isGroupVisibleAtScale(item, tree, currentScale)) {
-                                    //console.debug(`isGroupVisibleAtScale(${item.Name}, ${currentScale}) = true`);
-                                    const children = tree.groupChildren[item.ObjectId] || [];
-                                    return <GroupNode key={item.ObjectId} group={item} childItems={children} />;
-                                }
+            })()}
+            <ul style={UL_LIST_STYLE}>
+                {rootItems.map(item => {
+                    if (item.DisplayInLegend === true) {
+                        if (isLayer(item)) {
+                            if (isLayerVisibleAtScale(item, currentScale)) {
+                                //console.debug(`isLayerVisibleAtScale(${item.Name}, ${currentScale}) = true`);
+                                return <LayerNode key={item.ObjectId} layer={item} />;
+                            }
+                        } else {
+                            if (isGroupVisibleAtScale(item, tree, currentScale)) {
+                                //console.debug(`isGroupVisibleAtScale(${item.Name}, ${currentScale}) = true`);
+                                const children = tree.groupChildren[item.ObjectId] || [];
+                                return <GroupNode key={item.ObjectId} group={item} childItems={children} />;
                             }
                         }
-                    })}
-                </ul>
-            </div>
-        </LegendContext.Provider>;
-    }
+                    }
+                })}
+            </ul>
+        </div>
+    </LegendContext.Provider>;
 }

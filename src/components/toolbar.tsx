@@ -386,61 +386,52 @@ export interface IToolbarProps {
  * @class Toolbar
  * @extends {React.Component<IToolbarProps, any>}
  */
-export class Toolbar extends React.Component<IToolbarProps, any> {
-    constructor(props: IToolbarProps) {
-        super(props);
-    }
-    private openFlyout(id: string, metrics: IDOMElementMetrics): void {
-        if (this.props.onOpenFlyout) {
-            this.props.onOpenFlyout(id, metrics);
+
+export const Toolbar = (props: IToolbarProps) => {
+    const {
+        containerStyle,
+        containerClass,
+        childItems,
+        vertical,
+        hideVerticalLabels,
+        flyoutStates,
+        onOpenFlyout,
+        onCloseFlyout,
+        onOpenComponent,
+        onCloseComponent
+    } = props;
+    const openFlyout = (id: string, metrics: IDOMElementMetrics) => onOpenFlyout?.(id, metrics);
+    const closeFlyout = (id: string) => onCloseFlyout?.(id);
+    const openComponent = (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => onOpenComponent?.(id, metrics, name, props);
+    const closeComponent = (id: string) => onCloseComponent?.(id);
+    let height = DEFAULT_TOOLBAR_SIZE;
+    if (containerStyle) {
+        const ch = containerStyle.height;
+        if (typeof (ch) == 'number') {
+            height = ch;
         }
     }
-    private closeFlyout(id: string): void {
-        if (this.props.onCloseFlyout) {
-            this.props.onCloseFlyout(id);
-        }
-    }
-    private openComponent(id: string, metrics: IDOMElementMetrics, name: string, props?: any): void {
-        if (this.props.onOpenComponent) {
-            this.props.onOpenComponent(id, metrics, name, props);
-        }
-    }
-    private closeComponent(id: string): void {
-        if (this.props.onCloseComponent) {
-            this.props.onCloseComponent(id);
-        }
-    }
-    render(): JSX.Element {
-        const { containerStyle, containerClass, childItems, vertical, hideVerticalLabels, flyoutStates } = this.props;
-        let height = DEFAULT_TOOLBAR_SIZE;
-        if (containerStyle) {
-            const ch = containerStyle.height;
-            if (typeof (ch) == 'number') {
-                height = ch;
-            }
-        }
-        const providerImpl = {
-            openFlyout: this.openFlyout.bind(this),
-            closeFlyout: this.closeFlyout.bind(this),
-            openComponent: this.openComponent.bind(this),
-            closeComponent: this.closeComponent.bind(this)
-        };
-        return <ToolbarContext.Provider value={providerImpl}>
-            <div style={containerStyle} className={`has-flyout noselect ${containerClass}`}>
-                {childItems.map((item, index) => {
-                    if (isComponentFlyout(item)) {
-                        const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
-                        return <ComponentFlyoutItem key={index} size={height} item={item} vertical={vertical} isFlownOut={isFlownOut} />;
-                    } else if (isMenuRef(item)) {
-                        const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
-                        return <FlyoutMenuReferenceItem key={index} size={height} menu={item} vertical={vertical} isFlownOut={isFlownOut} />;
-                    } else if (item.isSeparator === true) {
-                        return <ToolbarSeparator key={index} size={height} vertical={vertical} />;
-                    } else {
-                        return <ToolbarButton key={index} height={height} item={item} vertical={vertical} hideVerticalLabels={hideVerticalLabels} />;
-                    }
-                })}
-            </div>
-        </ToolbarContext.Provider>;
-    }
+    const providerImpl = {
+        openFlyout: openFlyout,
+        closeFlyout: closeFlyout,
+        openComponent: openComponent,
+        closeComponent: closeComponent
+    };
+    return <ToolbarContext.Provider value={providerImpl}>
+        <div style={containerStyle} className={`has-flyout noselect ${containerClass}`}>
+            {childItems.map((item, index) => {
+                if (isComponentFlyout(item)) {
+                    const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
+                    return <ComponentFlyoutItem key={index} size={height} item={item} vertical={vertical} isFlownOut={isFlownOut} />;
+                } else if (isMenuRef(item)) {
+                    const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
+                    return <FlyoutMenuReferenceItem key={index} size={height} menu={item} vertical={vertical} isFlownOut={isFlownOut} />;
+                } else if (item.isSeparator === true) {
+                    return <ToolbarSeparator key={index} size={height} vertical={vertical} />;
+                } else {
+                    return <ToolbarButton key={index} height={height} item={item} vertical={vertical} hideVerticalLabels={hideVerticalLabels} />;
+                }
+            })}
+        </div>
+    </ToolbarContext.Provider>;
 }

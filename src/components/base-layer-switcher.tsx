@@ -27,7 +27,7 @@ function getSelectedLayer(externalBaseLayers: IExternalBaseLayer[]): string | un
  * The BaseLayerSwitcher component provides a user interface for switching the active external base layer of the current map
  * @param props 
  */
-export const BaseLayersSwitcher = (props: IBaseLayerSwitcherProps) => {
+export const BaseLayerSwitcher = (props: IBaseLayerSwitcherProps) => {
     const { locale, externalBaseLayers } = props;
     const [selected, setSelected] = React.useState(getSelectedLayer(props.externalBaseLayers));
     React.useEffect(() => {

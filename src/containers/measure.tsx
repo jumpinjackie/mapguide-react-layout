@@ -11,7 +11,7 @@ import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { setActiveTool } from "../actions/map";
 import { IMeasureCallback, MeasureSegment, MeasureContext, IMeasureComponent } from "./measure-context";
 import { roundTo } from "../utils/number";
-import { Callout, Intent, ButtonGroup, Button } from '@blueprintjs/core';
+import { Callout, Intent, ButtonGroup, Button, HTMLSelect } from '@blueprintjs/core';
 
 export interface IMeasureContainerProps {
 
@@ -189,10 +189,10 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
                 <label className="bp3-label">
                     {tr("MEASUREMENT_TYPE", locale)}
                     <div className="bp3-select">
-                        <select value={type} onChange={this.onTypeChanged}>
+                        <HTMLSelect value={type} onChange={this.onTypeChanged}>
                             <option value="LineString">{tr("MEASUREMENT_TYPE_LENGTH", locale)}</option>
                             <option value="Polygon">{tr("MEASUREMENT_TYPE_AREA", locale)}</option>
-                        </select>
+                        </HTMLSelect>
                     </div>
                 </label>
                 <ButtonGroup>

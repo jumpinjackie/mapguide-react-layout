@@ -17,7 +17,7 @@ import {
 } from "../api/common";
 import * as MapActions from "../actions/map";
 import { MapCapturerContext, Size, IMapCapturerContextCallback } from "./map-capturer-context";
-import { Slider, Button, Intent, Callout } from '@blueprintjs/core';
+import { Slider, Button, Intent, Callout, HTMLSelect } from '@blueprintjs/core';
 
 function getMargin() {
     /*
@@ -324,13 +324,13 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                             The pre-defined paper size list. The value for each "option" item is in this format: [width,height]. The unit is in millimeter.
                             We can change the html code to add more paper size or remove some ones.
                         */}
-                        <select className="FixWidth" id="paperSizeSelect" name="paperSizeSelect" value={this.state.paperSize} onChange={this.onPaperSizeChanged}>
+                        <HTMLSelect className="FixWidth" id="paperSizeSelect" name="paperSizeSelect" value={this.state.paperSize} onChange={this.onPaperSizeChanged}>
                             <option value="210.0,297.0,A4">A4 (210x297 mm; 8.27x11.69 In) </option>
                             <option value="297.0,420.0,A3">A3 (297x420 mm; 11.69x16.54 In) </option>
                             <option value="148.0,210.0,A5">A5 (148x210 mm; 5.83x8.27 in) </option>
                             <option value="216.0,279.0,Letter">Letter (216x279 mm; 8.50x11.00 In) </option>
                             <option value="216.0,356.0,Legal">Legal (216x356 mm; 8.50x14.00 In) </option>
-                        </select>
+                        </HTMLSelect>
                     </div>
                 </label>
                 <label className="bp3-label">
@@ -339,10 +339,10 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                         The pre-defined paper orientations
                     */}
                     <div className="bp3-select bp3-fill">
-                        <select className="FixWidth" id="orientation" name="orientation" value={this.state.orientation} onChange={this.onOrientationChanged}>
+                        <HTMLSelect className="FixWidth" id="orientation" name="orientation" value={this.state.orientation} onChange={this.onOrientationChanged}>
                             <option value="P">{xlate("QUICKPLOT_ORIENTATION_P", locale)}</option>
                             <option value="L">{xlate("QUICKPLOT_ORIENTATION_L", locale)}</option>
-                        </select>
+                        </HTMLSelect>
                     </div>
                 </label>
                 <input type="hidden" id="paperSize" name="paperSize" value={paperSize} />
@@ -393,12 +393,12 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                                     We can change the html code to extend the pre-defined scales
                                 */}
                                 <div className="bp3-select bp3-fill">
-                                    <select className="FixWidth" id="scaleDenominator" name="scaleDenominator" value={this.state.scale} onChange={this.onScaleChanged}>
+                                    <HTMLSelect className="FixWidth" id="scaleDenominator" name="scaleDenominator" value={this.state.scale} onChange={this.onScaleChanged}>
                                         <option value="500">1: 500</option>
                                         <option value="1000">1: 1000</option>
                                         <option value="2500">1: 2500</option>
                                         <option value="5000">1: 5000</option>
-                                    </select>
+                                    </HTMLSelect>
                                 </div>
                             </label>
                             <label className="bp3-label">
@@ -408,12 +408,12 @@ export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<
                                     We can change the html code to extend the pre-defined values
                                 */}
                                 <div className="bp3-select bp3-fill">
-                                    <select className="FixWidth" id="dpi" name="dpi" value={this.state.dpi} onChange={this.onDpiChanged}>
+                                    <HTMLSelect className="FixWidth" id="dpi" name="dpi" value={this.state.dpi} onChange={this.onDpiChanged}>
                                         <option value="96">96</option>
                                         <option value="150">150</option>
                                         <option value="300">300</option>
                                         <option value="600">600</option>
-                                    </select>
+                                    </HTMLSelect>
                                 </div>
                             </label>
                             <label className="bp3-label noselect">

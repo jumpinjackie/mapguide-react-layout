@@ -4,6 +4,11 @@
 @import "~@blueprintjs/core/lib/css/blueprint.css";
 @import "~react-splitter-layout/lib/index.css";
 
+/* HACK: Clear out any trace of the font icon as HTMLSelect should be using the SVG counterpart */
+.bp3-select:after {
+    content: "";
+}
+
 .invalidated-task-pane {
     opacity: 0.6; /* Real browsers */
     filter: alpha(opacity = 60); /* IE */

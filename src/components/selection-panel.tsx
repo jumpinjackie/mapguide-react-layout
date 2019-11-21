@@ -9,7 +9,7 @@ import {
     SPRITE_ICON_ZOOMSELECT
 } from "../constants/assets";
 import { safePropAccess } from '../utils/safe-prop';
-import { Callout, Intent } from '@blueprintjs/core';
+import { Callout, Intent, HTMLSelect } from '@blueprintjs/core';
 
 export interface ISelectedFeatureProps {
     selectedFeature: SelectedFeature;
@@ -262,11 +262,11 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
                 if (selection != null && selection.SelectedLayer != null && selection.SelectedLayer.length > 0) {
                     return <div className="selection-panel-toolbar" style={SELECTION_PANEL_TOOLBAR_STYLE}>
                         <div className="bp3-select selection-panel-layer-selector">
-                            <select value={this.state.selectedLayerIndex} style={LAYER_COMBO_STYLE} onChange={this.onSelectedLayerChanged}>
+                            <HTMLSelect value={this.state.selectedLayerIndex} style={LAYER_COMBO_STYLE} onChange={this.onSelectedLayerChanged}>
                                 {selection.SelectedLayer.map((layer: SelectedLayer, index: number) => {
                                     return <option key={`selected-layer-${layer["@id"]}`} value={`${index}`}>{layer["@name"]}</option>
                                 })}
-                            </select>
+                            </HTMLSelect>
                         </div>
                         <Toolbar childItems={this.selectionToolbarItems} containerStyle={SELECTION_TOOLBAR_STYLE} />
                         <FloatClear />

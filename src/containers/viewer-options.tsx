@@ -15,7 +15,7 @@ import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from "../constants/index";
 import { getUnits, getUnitOfMeasure } from "../utils/units";
 import { safePropAccess } from '../utils/safe-prop';
-import { Slider } from '@blueprintjs/core';
+import { Slider, HTMLSelect } from '@blueprintjs/core';
 
 export interface IViewerOptionsProps {
 
@@ -162,13 +162,13 @@ export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
                     return <label className="bp3-label">
                         {tr("MAP_SIZE_DISPLAY_UNITS", locale)}
                         <div className="bp3-select">
-                            <select value={config.viewSizeUnits} onChange={this.onViewSizeUnitsChanged}>
+                            <HTMLSelect value={config.viewSizeUnits} onChange={this.onViewSizeUnitsChanged}>
                                 {units.map(u => {
                                     const [ uom ] = u;
                                     const ui = getUnitOfMeasure(uom);
                                     return <option key={uom} value={uom}>{ui.localizedName(locale)}</option>;
                                 })}
-                            </select>
+                            </HTMLSelect>
                         </div>
                     </label>;
                 }

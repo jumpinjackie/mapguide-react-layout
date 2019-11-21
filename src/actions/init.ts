@@ -39,7 +39,7 @@ import * as shortid from "shortid";
 import { registerStringBundle, DEFAULT_LOCALE } from "../api/i18n";
 import { assertNever } from "../utils/never";
 import proj4 from "proj4";
-import uniq = require("lodash.uniq");
+import { makeUnique } from "../utils/array";
 import { ensureParameters } from "../utils/url";
 import { strIsNullOrEmpty } from "../utils/string";
 import { convertWidget, isFlyoutSpec, ToolbarConf, PreparedSubMenuSet } from '../api/registry/command-spec';
@@ -436,7 +436,7 @@ function getExtraProjectionsFromFlexLayout(appDef: ApplicationDefinition): strin
             }
         }
     }
-    return uniq(epsgs);
+    return makeUnique(epsgs);
 }
 
 function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: IInitAsyncOptions): void {

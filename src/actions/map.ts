@@ -15,7 +15,7 @@ import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet, SelectedFeature, SelectedFeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml } from '../api/builders/deArrayify';
-import uniq = require("lodash.uniq");
+import { makeUnique } from "../utils/array";
 import { ActionType } from '../constants/actions';
 import { IMapSetBusyCountAction, IMapSetBaseLayerAction, IMapSetScaleAction, IMapSetMouseCoordinatesAction, IMapSetLayerTransparencyAction, IMapSetViewSizeUnitsAction, IMapPreviousViewAction, IMapNextViewAction, ISetActiveMapToolAction, ISetActiveMapAction, ISetManualFeatureTooltipsEnabledAction, ISetFeatureTooltipsEnabledAction, IMapSetViewRotationAction, IMapSetViewRotationEnabledAction, IShowSelectedFeatureAction, IMapSetSelectionAction, IMapResizedAction } from './defs';
 import { storeSelectionSet } from '../api/session-store';
@@ -90,7 +90,7 @@ function combineFeatureSets(oldRes: FeatureSet | undefined, newRes: FeatureSet |
             if (existing.length == 0) {
                 merged.Layer.push(layer);
             } else {
-                existing[0].Class.ID = uniq(existing[0].Class.ID.concat(layer.Class.ID));
+                existing[0].Class.ID = makeUnique(existing[0].Class.ID.concat(layer.Class.ID));
             }
         }
     }

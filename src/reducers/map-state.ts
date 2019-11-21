@@ -6,7 +6,7 @@ import {
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { isMapView } from "../utils/type-guards";
 import * as logger from "../utils/logger";
-import uniq = require("lodash.uniq");
+import { makeUnique } from "../utils/array";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 
@@ -273,11 +273,11 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                     let hideGroups: string[] = [...subState.hideGroups];
                     if (payload.value === true) { //Show it
                         showGroups.push(payload.id);
-                        showGroups = uniq(showGroups);
+                        showGroups = makeUnique(showGroups);
                         hideGroups = hideGroups.filter(g => g != payload.id);
                     } else { //Hide it
                         hideGroups.push(payload.id);
-                        hideGroups = uniq(hideGroups);
+                        hideGroups = makeUnique(hideGroups);
                         showGroups = showGroups.filter(g => g != payload.id);
                     }
                     const state1: Partial<IBranchedMapSubState> = {
@@ -299,11 +299,11 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                     let hideLayers: string[] = [...subState.hideLayers];
                     if (payload.value === true) { //Show it
                         showLayers.push(payload.id);
-                        showLayers = uniq(showLayers);
+                        showLayers = makeUnique(showLayers);
                         hideLayers = hideLayers.filter(g => g != payload.id);
                     } else { //Hide it
                         hideLayers.push(payload.id);
-                        hideLayers = uniq(hideLayers);
+                        hideLayers = makeUnique(hideLayers);
                         showLayers = showLayers.filter(g => g != payload.id);
                     }
                     const state1 = {

@@ -1,6 +1,5 @@
 import * as React from "react";
 import { IMapMenuEntry } from "../api/common";
-import { safePropAccess } from '../utils/safe-prop';
 
 /**
  * MapMenu component props
@@ -29,7 +28,7 @@ export class MapMenu extends React.Component<IMapMenuProps, any> {
     private onActiveMapChanged = (e: any) => {
         const value = e.currentTarget.value;
         this.setState({ selected: value });
-        safePropAccess(this.props, "onActiveMapChanged", func => func!(value));
+        this.props.onActiveMapChanged?.(value);
     }
     render(): JSX.Element {
         return <div>

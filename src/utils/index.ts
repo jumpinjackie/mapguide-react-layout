@@ -7,4 +7,3 @@ export * from "./string";
 export * from "./type-guards";
 export * from "./units";
 export * from "./url";
-export * from "./safe-prop";

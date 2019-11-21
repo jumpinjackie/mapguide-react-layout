@@ -2,7 +2,6 @@ import * as React from "react";
 import { isMenu } from "../utils/type-guards";
 import { IItem, getIconStyle, getEnabled } from "./toolbar";
 import { Icon } from "./icon";
-import { safePropAccess } from '../utils/safe-prop';
 import { Menu, MenuDivider, MenuItem } from '@blueprintjs/core';
 
 const MENU_ITEM_HEIGHT = 30;
@@ -31,8 +30,8 @@ export class MenuComponent extends React.Component<IMenuComponentProps, any> {
     }
     private onClick(item: IItem) {
         if (getEnabled(item)) {
-            safePropAccess(item, "invoke", func => func!());
-            safePropAccess(this.props, "onInvoked", func => func!());
+            item?.invoke?.();
+            this.props.onInvoked?.();
         }
     }
     render(): JSX.Element {

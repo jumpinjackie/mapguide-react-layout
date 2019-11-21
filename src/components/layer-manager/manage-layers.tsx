@@ -1,6 +1,5 @@
 import * as React from "react";
 import { ILayerInfo, GenericEvent } from "../../api/common";
-import { safePropAccess } from '../../utils/safe-prop';
 import { ITreeNode, Tree, Button, Intent, ButtonGroup } from '@blueprintjs/core';
 
 /**
@@ -34,19 +33,19 @@ export class ManageLayers extends React.Component<IManageLayersProps, any> {
     private onMoveLayerDown = () => {
         const { selectedNode } = this.state;
         if (selectedNode) {
-            safePropAccess(this.props, "onMoveLayerDown", func => func(selectedNode.id));
+            this.props.onMoveLayerDown?.(selectedNode.id);
         }
     }
     private onMoveLayerUp = () => {
         const { selectedNode } = this.state;
         if (selectedNode) {
-            safePropAccess(this.props, "onMoveLayerUp", func => func(selectedNode.id));
+            this.props.onMoveLayerUp?.(selectedNode.id);
         }
     }
     private onRemoveLayer = () => {
         const { selectedNode } = this.state;
         if (selectedNode) {
-            safePropAccess(this.props, "onRemoveLayer", func => func(selectedNode.id));
+            this.props.onRemoveLayer?.(selectedNode.id);
             this.setState({ selectedNode: null });
         }
     }

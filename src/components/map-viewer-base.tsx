@@ -97,7 +97,6 @@ import Polygon from "ol/geom/polygon";
 import Point from "ol/geom/point";
 import LineString from "ol/geom/linestring";
 import Circle from "ol/geom/circle";
-import { safePropAccess } from '../utils/safe-prop';
 
 plugins.register(PluginType.MAP_RENDERER, MapRenderer);
 plugins.register(PluginType.LAYER_RENDERER, TileLayerRenderer);
@@ -816,7 +815,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
                 logger.info("Triggering zoom request on moveend suppresseed");
             }
             if (e.frameState.viewState.rotation != this.props.viewRotation) {
-                safePropAccess(this.props, "onRotationChanged", func => func(e.frameState.viewState.rotation));
+                this.props.onRotationChanged?.(e.frameState.viewState.rotation);
             }
         });
 

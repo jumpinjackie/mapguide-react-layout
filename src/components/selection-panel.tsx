@@ -8,7 +8,6 @@ import {
     SPRITE_CONTROL_180,
     SPRITE_ICON_ZOOMSELECT
 } from "../constants/assets";
-import { safePropAccess } from '../utils/safe-prop';
 import { Callout, Intent, HTMLSelect } from '@blueprintjs/core';
 
 export interface ISelectedFeatureProps {
@@ -187,9 +186,9 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
         const layer = this.getCurrentLayer();
         if (layer) {
             const layerId = layer["@id"];
-            const f = this.getFeatureAt(newIndex);
-            if (f && f.SelectionKey) {
-                safePropAccess(this.props, "onShowSelectedFeature", func => func(layerId, f!.SelectionKey!));
+            const sKey = this.getFeatureAt(newIndex)?.SelectionKey;
+            if (sKey) {
+                this.props.onShowSelectedFeature?.(layerId, sKey);
             }
         }
     }
@@ -199,9 +198,9 @@ export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
         const layer = this.getCurrentLayer();
         if (layer) {
             const layerId = layer["@id"];
-            const f = this.getFeatureAt(newIndex);
-            if (f && f.SelectionKey) {
-                safePropAccess(this.props, "onShowSelectedFeature", func => func(layerId, f!.SelectionKey!));
+            const sKey = this.getFeatureAt(newIndex)?.SelectionKey;
+            if (sKey) {
+                this.props.onShowSelectedFeature?.(layerId, sKey);
             }
         }
     }

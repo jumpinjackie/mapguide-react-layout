@@ -2,7 +2,6 @@ import * as React from "react";
 import { IExternalBaseLayer } from "../api/common";
 import { STR_EMPTY, strIsNullOrEmpty } from "../utils/string";
 import { tr } from "../api/i18n";
-import { safePropAccess } from '../utils/safe-prop';
 
 /**
  * BaseLayersSwitcher component props
@@ -16,45 +15,44 @@ export interface IBaseLayerSwitcherProps {
     onBaseLayerChanged?: (name: string) => void;
 }
 
+function getSelectedLayer(externalBaseLayers: IExternalBaseLayer[]): string | undefined {
+    const matches = externalBaseLayers.filter(layer => layer.visible === true);
+    if (matches.length == 1) {
+        return matches[0].name;
+    }
+    return undefined;
+}
+
 /**
- * The BaseLayerSwitcher component provides a user interface for switching the active external
- * base layer of the current map
- *
- * @export
- * @class BaseLayerSwitcher
- * @extends {React.Component<IBaseLayerSwitcherProps, any>}
+ * The BaseLayerSwitcher component provides a user interface for switching the active external base layer of the current map
+ * @param props 
  */
-export class BaseLayerSwitcher extends React.Component<IBaseLayerSwitcherProps, any> {
-    constructor(props: IBaseLayerSwitcherProps) {
-        super(props);
-        const selected = props.externalBaseLayers.filter(layer => layer.visible === true);
-        this.state = {
-            selected: (selected.length == 1 ? selected[0].name : null)
-        };
-    }
-    private onBaseLayerChanged = (e: any) => {
-        const value = e.currentTarget.value;
-        this.setState({ selected: value });
-        safePropAccess(this.props, "onBaseLayerChanged", func => func!(value));
-    }
-    render(): JSX.Element {
-        const { locale } = this.props;
-        return <div>
-            <div className="base-layer-switcher-item-container">
+export const BaseLayersSwitcher = (props: IBaseLayerSwitcherProps) => {
+    const { locale, externalBaseLayers } = props;
+    const [selected, setSelected] = React.useState(getSelectedLayer(props.externalBaseLayers));
+    React.useEffect(() => {
+        setSelected(getSelectedLayer(props.externalBaseLayers));
+    }, [props.externalBaseLayers]);
+    const onBaseLayerChanged = (e: any) => {
+        const value = e.currentTarget?.value;
+        setSelected(value);
+        props.onBaseLayerChanged?.(value);
+    };
+    return <div>
+        <div className="base-layer-switcher-item-container">
+            <label className="bp3-control bp3-radio">
+                <input className="base-layer-switcher-option" type="radio" value={STR_EMPTY} checked={strIsNullOrEmpty(selected)} onChange={onBaseLayerChanged} />
+                <span className="bp3-control-indicator" /> {tr("NONE", locale)}
+            </label>
+        </div>
+        {externalBaseLayers.map(layer => {
+            return <div className="base-layer-switcher-item-container" key={`base-layer-${layer.name}`}>
                 <label className="bp3-control bp3-radio">
-                    <input className="base-layer-switcher-option" type="radio" value={STR_EMPTY} checked={strIsNullOrEmpty(this.state.selected)} onChange={this.onBaseLayerChanged} />
-                    <span className="bp3-control-indicator" /> {tr("NONE", locale)}
+                    <input className="base-layer-switcher-option" type="radio" value={layer.name} checked={layer.name === selected} onChange={onBaseLayerChanged} />
+                    <span className="bp3-control-indicator" />
+                    {layer.name}
                 </label>
-            </div>
-            {this.props.externalBaseLayers.map(layer => {
-                return <div className="base-layer-switcher-item-container" key={`base-layer-${layer.name}`}>
-                    <label className="bp3-control bp3-radio">
-                        <input className="base-layer-switcher-option" type="radio" value={layer.name} checked={layer.name === this.state.selected} onChange={this.onBaseLayerChanged} />
-                        <span className="bp3-control-indicator" />
-                        {layer.name}
-                    </label>
-                </div>;
-            })}
-        </div>;
-    }
+            </div>;
+        })}
+    </div>;
 }

@@ -135,5 +135,7 @@
     "UNIT_FMT_SQKM": "{value} km<sup>2</sup>",
     "OL_ATTRIBUTION_TIP": "Zuschreibungen",
     "OL_OVERVIEWMAP_TIP": "Übersichtskarte",
-    "OL_RESET_ROTATION_TIP": "Drehung zurücksetzen"
+    "OL_RESET_ROTATION_TIP": "Drehung zurücksetzen",
+    "FEATURE_TOOLTIP_URL_HELP_TEXT": "Klicken Sie hier, um weitere Informationen zu erhalten",
+    "SHARE_LINK_INCLUDE_SESSION": "Sitzungs-ID einschließen"
 }

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { 
+import {
     IApplicationState
 } from '../api/common';
 import { addUrlProps } from 'react-url-query';
@@ -48,10 +48,10 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IShareLink
 }
 
 function mapDispatchToProps(): Partial<IShareLinkToViewContainerDispatch> {
-    return { };
+    return {};
 }
 
-function NOOP() {}
+function NOOP() { }
 
 /**
  * @since 0.11
@@ -90,10 +90,12 @@ export class ShareLinkToViewContainer extends React.Component<ShareLinkToViewCon
         return <div>
             <TextArea fill={true} rows={16} readOnly value={shareUrl} onChange={NOOP} />
             <br />
-            <Checkbox checked={this.state.showSession} label="Include Session ID" onChange={this.onShowSessionChanged} />
-            <CopyToClipboard text={shareUrl} onCopy={this.onCopied}>
-                <button className="bp3-button">{tr("SHARE_LINK_COPY_CLIPBOARD", this.props.locale)}</button>
-            </CopyToClipboard>
+            <div style={{ padding: 15 }}>
+                <Checkbox checked={this.state.showSession} label={tr("SHARE_LINK_INCLUDE_SESSION", this.props.locale)} onChange={this.onShowSessionChanged} />
+                <CopyToClipboard text={shareUrl} onCopy={this.onCopied}>
+                    <button className="pt-button">{tr("SHARE_LINK_COPY_CLIPBOARD", this.props.locale)}</button>
+                </CopyToClipboard>
+            </div>
         </div>;
     }
 }

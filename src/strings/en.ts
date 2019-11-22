@@ -179,6 +179,8 @@ const STRINGS_EN: ILocalizedMessages = {
     "OL_ATTRIBUTION_TIP": "Attributions",
     "OL_OVERVIEWMAP_TIP": "Overview Map",
     "OL_RESET_ROTATION_TIP": "Reset Rotation",
+    "FEATURE_TOOLTIP_URL_HELP_TEXT": "Click for more information",
+    "SHARE_LINK_INCLUDE_SESSION": "Include Session ID",
     "WINDOW_RESIZING": "Resizing Window",
     "WINDOW_MOVING": "Moving Window"
 };

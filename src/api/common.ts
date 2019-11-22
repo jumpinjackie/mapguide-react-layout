@@ -154,7 +154,10 @@ export interface ICommand {
     icon?: string;
     iconClass?: string;
     //tooltip?: string;
-    //label?: string;
+    /**
+     * @since 0.12.8
+     */
+    title?: string;
     /**
      * Indicates if this command is enabled based on the given application state
      *
@@ -242,6 +245,10 @@ export interface IInvokeUrlCommand extends ITargetedCommand {
      */
     icon?: string;
     iconClass?: string;
+    /**
+     * @since 0.12.8
+     */
+    title?: string;
     /**
      * The URL to invoke
      *

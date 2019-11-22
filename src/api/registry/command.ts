@@ -348,6 +348,7 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
         cmd = {
             icon: cmdDef.icon,
             iconClass: cmdDef.iconClass,
+            title: cmdDef.title,
             enabled: (state) => {
                 if (cmdDef.disableIfSelectionEmpty === true) {
                     return CommandConditions.hasSelection(state);
@@ -362,7 +363,7 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                 if (map) {
                     const params = mergeInvokeUrlParameters(cmdDef.parameters, parameters);
                     const url = ensureParameters(cmdDef.url, map.Name, map.SessionId, config.locale, true, params);
-                    openUrlInTarget(name, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
+                    openUrlInTarget(name, cmdDef, config.capabilities.hasTaskPane, dispatch, url, cmd.title);
                 }
             }
         };
@@ -370,6 +371,7 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
         cmd = {
             icon: cmdDef.icon,
             iconClass: cmdDef.iconClass,
+            title: cmdDef.title,
             enabled: () => true,
             selected: () => false,
             invoke: (dispatch: ReduxDispatch, getState: () => IApplicationState, viewer: IMapViewer, parameters?: any) => {
@@ -388,7 +390,7 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                         + `&limit=${cmdDef.matchLimit}`
                         + `&properties=${(cmdDef.resultColumns.Column || []).map(col => col.Property).join(",")}`
                         + `&propNames=${(cmdDef.resultColumns.Column || []).map(col => col.Name).join(",")}`;
-                    openUrlInTarget(name, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
+                    openUrlInTarget(name, cmdDef, config.capabilities.hasTaskPane, dispatch, url, cmd.title);
                 }
             }
         };

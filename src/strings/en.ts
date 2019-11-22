@@ -178,7 +178,8 @@ const STRINGS_EN: ILocalizedMessages = {
     "UNIT_FMT_SQKM": "{value} km&lt;sup&gt;2&lt;/sup&gt;",
     "OL_ATTRIBUTION_TIP": "Attributions",
     "OL_OVERVIEWMAP_TIP": "Overview Map",
-    "OL_RESET_ROTATION_TIP": "Reset Rotation"
+    "OL_RESET_ROTATION_TIP": "Reset Rotation",
+    "FEATURE_TOOLTIP_URL_HELP_TEXT": "Click for more information"
 };
 
 export default STRINGS_EN;

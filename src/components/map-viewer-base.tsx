@@ -629,6 +629,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             getAgentKind: () => this.props.agentKind,
             getMapName: () => this.props.map.Name,
             getSessionId: () => this.props.map.SessionId,
+            getLocale: () => this.props.locale,
             isFeatureTooltipEnabled: this.isFeatureTooltipEnabled.bind(this),
             getPointSelectionBox: (point) => this.getPointSelectionBox(point, this.props.pointSelectionBuffer || 2)
         };

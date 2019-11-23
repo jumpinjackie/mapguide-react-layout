@@ -144,6 +144,8 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         }
     }
     loadUrl(url: string) {
+        //TODO: Can't convert this to functional component with hooks, until this type
+        //of pattern is possible
         const compUri = parseComponentUri(url);
         if (compUri) {
             this.setState({ activeComponent: compUri.name, activeComponentProps: compUri.props });

@@ -125,40 +125,32 @@ export interface IFlyoutMenuChildItemProps {
     onInvoked?: () => void;
 }
 
-export class FlyoutMenuChildItem extends React.Component<IFlyoutMenuChildItemProps, any> {
-    constructor(props: IFlyoutMenuChildItemProps) {
-        super(props);
-        this.state = {
-            isMouseOver: false
-        };
-    }
-    private onClick = () => {
-        const { item } = this.props;
+export const FlyoutMenuChildItem = (props: IFlyoutMenuChildItemProps) => {
+    const { item } = props;
+    const [isMouseOver, setIsMouseOver] = React.useState(false);
+    const onClick = () => {
         if (getEnabled(item)) {
             item.invoke?.();
-            this.props.onInvoked?.();
+            props.onInvoked?.();
         }
-    }
-    private onMouseLeave = () => {
-        this.setState({ isMouseOver: false });
-    }
-    private onMouseEnter = () => {
-        this.setState({ isMouseOver: true });
-    }
-    render(): JSX.Element {
-        const { item } = this.props;
-        const height = DEFAULT_TOOLBAR_SIZE;
-        const selected = getSelected(item);
-        const enabled = getEnabled(item);
-        const tt = getTooltip(item);
-        const imgStyle = getIconStyle(enabled, height);
-        const style = getMenuItemStyle(enabled, selected, height, this.state.isMouseOver);
-        return <li className="noselect flyout-menu-child-item" title={tt} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave} onClick={this.onClick}>
-            <div style={style}>
-                <Icon style={imgStyle} url={item.icon} /> {item.label}
-            </div>
-        </li>;
-    }
+    };
+    const onMouseLeave = () => {
+        setIsMouseOver(false);
+    };
+    const onMouseEnter = () => {
+        setIsMouseOver(true);
+    };
+    const height = DEFAULT_TOOLBAR_SIZE;
+    const selected = getSelected(item);
+    const enabled = getEnabled(item);
+    const tt = getTooltip(item);
+    const imgStyle = getIconStyle(enabled, height);
+    const style = getMenuItemStyle(enabled, selected, height, isMouseOver);
+    return <li className="noselect flyout-menu-child-item" title={tt} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick}>
+        <div style={style}>
+            <Icon style={imgStyle} url={item.icon} /> {item.label}
+        </div>
+    </li>;
 }
 
 interface IToolbarContentContainerProps {

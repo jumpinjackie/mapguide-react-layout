@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IExternalBaseLayer, GenericEvent } from "../api/common";
 import { RuntimeMap, MapLayer, MapGroup, RuleInfo } from "../api/contracts/runtime-map";
-import { ILegendContext, LEGEND_CONTEXT_VALIDATION_MAP } from "./context";
+import { LegendContext, ILegendContext } from "./context";
 import { BaseLayerSwitcher } from "./base-layer-switcher";
 import { isLayer } from "../utils/type-guards";
 import { Icon } from "./icon";
@@ -63,8 +63,8 @@ export interface ILegendProps {
     inlineBaseLayerSwitcher: boolean;
 }
 
-function getIconUri(iconMimeType: string, iconBase64: string | undefined): string | undefined {
-    if (iconBase64) {
+function getIconUri(iconMimeType: string | undefined, iconBase64: string | undefined): string | undefined {
+    if (iconMimeType && iconBase64) {
         return `data:${iconMimeType};base64,${iconBase64}`;
     } else {
         return undefined;
@@ -76,14 +76,14 @@ const EmptyNode: React.StatelessComponent<any> = (props) => {
 };
 
 interface IRuleNodeProps {
-    iconMimeType: string;
+    iconMimeType: string | undefined;
     rule: RuleInfo;
 }
 
 const RuleNode = (props: IRuleNodeProps) => {
     const icon = getIconUri(props.iconMimeType, props.rule.Icon);
     const label = (props.rule.LegendLabel ? props.rule.LegendLabel : "");
-    return <li style={LI_LIST_STYLE}>
+    return <li className="layer-rule-node" style={LI_LIST_STYLE}>
         <EmptyNode /> <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> <LegendLabel text={label} />
     </li>;
 };
@@ -92,219 +92,181 @@ export interface ILayerNodeProps {
     layer: MapLayer;
 }
 
-export class LayerNode extends React.Component<ILayerNodeProps, any> {
-    static contextTypes = LEGEND_CONTEXT_VALIDATION_MAP;
-    context: ILegendContext;
-    constructor(props: ILayerNodeProps) {
-        super(props);
-        this.state = {
-            layerVisible: props.layer.Visible
-        };
+export const LayerNode = (props: ILayerNodeProps) => {
+    const { layer } = props;
+    const legendCtx = React.useContext(LegendContext);
+    const [layerVisible, setLayerVisible] = React.useState(legendCtx.getLayerVisibility(props.layer));
+    const label = layer.LegendLabel ? layer.LegendLabel : "";
+    const iconMimeType = legendCtx.getIconMimeType();
+
+    const onVisibilityChanged = (e: GenericEvent) => {
+        setLayerVisible(e.target.checked);
+        legendCtx.setLayerVisibility(layer.ObjectId, e.target.checked);
     }
-    private onVisibilityChanged = (e: GenericEvent) => {
-        this.setState({ layerVisible: e.target.checked });
-        this.context.setLayerVisibility(this.props.layer.ObjectId, e.target.checked);
+    const onToggleSelectability = (e: GenericEvent) => {
+        const selectable = getLayerSelectability(layer.ObjectId);
+        legendCtx.setLayerSelectability(layer.ObjectId, !selectable);
     }
-    private onToggleSelectability = (e: GenericEvent) => {
-        const selectable = this.getLayerSelectability(this.props.layer.ObjectId);
-        this.context.setLayerSelectability(this.props.layer.ObjectId, !selectable);
-    }
-    private getExpanded(): boolean {
-        let expanded = this.context.getLayerExpanded(this.props.layer.ObjectId);
+    const getExpanded = () => {
+        let expanded = legendCtx.getLayerExpanded(layer.ObjectId);
         if (expanded == null)
-            expanded = this.props.layer.ExpandInLegend;
+            expanded = layer.ExpandInLegend;
         return expanded;
+    };
+    const onToggleExpansion = (e: GenericEvent) => {
+        const expanded = getExpanded();
+        legendCtx.setLayerExpanded(layer.ObjectId, !expanded);
     }
-    private onToggleExpansion = (e: GenericEvent) => {
-        const expanded = this.getExpanded();
-        this.context.setLayerExpanded(this.props.layer.ObjectId, !expanded);
-    }
-    private getLayerSelectability(layerId: string): boolean {
-        let selectable = this.context.getLayerSelectability(layerId);
+    const getLayerSelectability = (layerId: string) => {
+        let selectable = legendCtx.getLayerSelectability(layerId);
         if (selectable == null) {
-            selectable = this.props.layer.Selectable;
+            selectable = layer.Selectable;
         }
         return selectable;
     }
-    componentDidMount() {
-        this.setState({
-            layerVisible: this.context.getLayerVisibility(this.props.layer)
-        });
+
+    let text = label;
+    let icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_LEGEND_LAYER} />;
+    let selectable: JSX.Element | undefined;
+    if (layer.Selectable === true) {
+        selectable = <Icon style={ROW_ITEM_ELEMENT_STYLE}
+            onClick={onToggleSelectability}
+            spriteClass={getLayerSelectability(layer.ObjectId) ? SPRITE_ICON_SELECT : SPRITE_LC_UNSELECT} />;
     }
-    componentDidUpdate(prevProps: ILayerNodeProps) {
-        const nextProps = this.props;
-        const vis = this.context.getLayerVisibility(nextProps.layer);
-        if (this.state.layerVisible != vis) {
-            this.setState({ layerVisible: vis });
-        }
+    let chkbox: JSX.Element | undefined;
+    if (layer.Type == 1) { //Dynamic
+        chkbox = <input type='checkbox'
+            className='layer-checkbox'
+            style={CHK_STYLE}
+            value={layer.ObjectId}
+            onChange={onVisibilityChanged}
+            checked={(layerVisible)} />;
     }
-    render(): JSX.Element {
-        const { layer } = this.props;
-        const label = layer.LegendLabel ? layer.LegendLabel : "";
-        const iconMimeType = this.context.getIconMimeType();
-        let text = label;
-        let icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_LEGEND_LAYER} />;
-        let selectable: JSX.Element | undefined;
-        if (layer.Selectable === true) {
-            selectable = <Icon style={ROW_ITEM_ELEMENT_STYLE}
-                               onClick={this.onToggleSelectability}
-                               spriteClass={this.getLayerSelectability(layer.ObjectId) ? SPRITE_ICON_SELECT : SPRITE_LC_UNSELECT} />;
-        }
-        let chkbox: JSX.Element | undefined;
-        if (layer.Type == 1) { //Dynamic
-            chkbox = <input type='checkbox'
-                            className='layer-checkbox'
-                            style={CHK_STYLE}
-                            value={layer.ObjectId}
-                            onChange={this.onVisibilityChanged}
-                            checked={(this.state.layerVisible)} />;
-        }
-        const tooltip = label;
-        const nodeClassName = "layer-node";
-        let nodeStyle: React.CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", ...LI_LIST_STYLE };
-        if (layer.ScaleRange) {
-            for (const scaleRange of layer.ScaleRange) {
-                if (scaleRange.FeatureStyle && scaleRange.FeatureStyle.length > 0) {
-                    const ruleElements = [];
-                    //if (this.debug)
-                    //    text = label + " (" + scaleRange.MinScale + " - " + scaleRange.MaxScale + ")";
-                    let body: JSX.Element | undefined;
-                    let isExpanded = this.getExpanded();
-                    let totalRuleCount = 0;
-                    for (const fts of scaleRange.FeatureStyle) {
-                        totalRuleCount += fts.Rule.length;
-                    }
-                    if (isExpanded && totalRuleCount > 1) {
-                        icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_LEGEND_THEME} />;
-
-                        for (let fi = 0; fi < scaleRange.FeatureStyle.length; fi++) {
-                            const fts = scaleRange.FeatureStyle[fi];
-                            const ftsRuleCount = fts.Rule.length;
-                            //Test compression
-                            let bCompressed = false;
-                            if (ftsRuleCount > 3) {
-                                bCompressed = !(fts.Rule[1].Icon);
-                            }
-                            if (bCompressed) {
-                                ruleElements.push(<RuleNode key={`layer-${layer.ObjectId}-style-${fi}-rule-first`} iconMimeType={iconMimeType} rule={fts.Rule[0]} />);
-                                ruleElements.push(<li style={LI_LIST_STYLE} key={`layer-${layer.ObjectId}-style-${fi}-rule-compressed`}><LegendLabel text={`... (${ftsRuleCount - 2} other theme rules)`} /></li>);
-                                ruleElements.push(<RuleNode key={`layer-${layer.ObjectId}-style-${fi}-rule-last`} iconMimeType={iconMimeType} rule={fts.Rule[ftsRuleCount-1]} />);
-                            } else {
-                                for (let i = 0; i < ftsRuleCount; i++) {
-                                    const rule = fts.Rule[i];
-                                    ruleElements.push(<RuleNode key={`layer-${layer.ObjectId}-style-${fi}-rule-${i}`} iconMimeType={iconMimeType} rule={rule} />);
-                                }
-                            }
-                        }
-                    } else { //Collapsed
-                        if (totalRuleCount > 1) {
-                            icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_LEGEND_THEME} />;
-                        } else {
-                            const uri = getIconUri(iconMimeType, scaleRange.FeatureStyle[0].Rule[0].Icon);
-                            if (uri) {
-                                icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} url={uri} />;
-                            }
-                        }
-                    }
-
-                    if (ruleElements.length > 0) {
-                        body = <ul style={UL_LIST_STYLE}>{ruleElements}</ul>;
-                    }
-
-                    let expanded: JSX.Element;
-                    if (totalRuleCount > 1) {
-                        expanded = <Icon style={ROW_ITEM_ELEMENT_STYLE} onClick={this.onToggleExpansion} spriteClass={isExpanded ? SPRITE_LEGEND_TOGGLE : SPRITE_LEGEND_TOGGLE_EXPAND} />;
-                    } else {
-                        expanded = <EmptyNode />;
-                    }
-                    return <li title={tooltip} style={nodeStyle} className={nodeClassName}>{expanded} {chkbox} {selectable} {icon} <LegendLabel text={text} /> {body}</li>;
-                } else { //This is generally a raster
-                    icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_LEGEND_RASTER} />;
+    const tooltip = label;
+    const nodeClassName = "layer-node";
+    let nodeStyle: React.CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", ...LI_LIST_STYLE };
+    if (layer.ScaleRange) {
+        for (const scaleRange of layer.ScaleRange) {
+            if (scaleRange.FeatureStyle && scaleRange.FeatureStyle.length > 0) {
+                const ruleElements = [];
+                //if (debug)
+                //    text = label + " (" + scaleRange.MinScale + " - " + scaleRange.MaxScale + ")";
+                let body: JSX.Element | undefined;
+                let isExpanded = getExpanded();
+                let totalRuleCount = 0;
+                for (const fts of scaleRange.FeatureStyle) {
+                    totalRuleCount += fts.Rule.length;
                 }
+                if (isExpanded && totalRuleCount > 1) {
+                    icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_LEGEND_THEME} />;
+
+                    for (let fi = 0; fi < scaleRange.FeatureStyle.length; fi++) {
+                        const fts = scaleRange.FeatureStyle[fi];
+                        const ftsRuleCount = fts.Rule.length;
+                        //Test compression
+                        let bCompressed = false;
+                        if (ftsRuleCount > 3) {
+                            bCompressed = !(fts.Rule[1].Icon);
+                        }
+                        if (bCompressed) {
+                            ruleElements.push(<RuleNode key={`layer-${layer.ObjectId}-style-${fi}-rule-first`} iconMimeType={iconMimeType} rule={fts.Rule[0]} />);
+                            ruleElements.push(<li style={LI_LIST_STYLE} key={`layer-${layer.ObjectId}-style-${fi}-rule-compressed`}><LegendLabel text={`... (${ftsRuleCount - 2} other theme rules)`} /></li>);
+                            ruleElements.push(<RuleNode key={`layer-${layer.ObjectId}-style-${fi}-rule-last`} iconMimeType={iconMimeType} rule={fts.Rule[ftsRuleCount - 1]} />);
+                        } else {
+                            for (let i = 0; i < ftsRuleCount; i++) {
+                                const rule = fts.Rule[i];
+                                ruleElements.push(<RuleNode key={`layer-${layer.ObjectId}-style-${fi}-rule-${i}`} iconMimeType={iconMimeType} rule={rule} />);
+                            }
+                        }
+                    }
+                } else { //Collapsed
+                    if (totalRuleCount > 1) {
+                        icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_LEGEND_THEME} />;
+                    } else {
+                        const uri = getIconUri(iconMimeType, scaleRange.FeatureStyle[0].Rule[0].Icon);
+                        if (uri) {
+                            icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} url={uri} />;
+                        }
+                    }
+                }
+
+                if (ruleElements.length > 0) {
+                    body = <ul style={UL_LIST_STYLE}>{ruleElements}</ul>;
+                }
+
+                let expanded: JSX.Element;
+                if (totalRuleCount > 1) {
+                    expanded = <Icon style={ROW_ITEM_ELEMENT_STYLE} onClick={onToggleExpansion} spriteClass={isExpanded ? SPRITE_LEGEND_TOGGLE : SPRITE_LEGEND_TOGGLE_EXPAND} />;
+                } else {
+                    expanded = <EmptyNode />;
+                }
+                return <li title={tooltip} style={nodeStyle} className={nodeClassName}>{expanded} {chkbox} {selectable} {icon} <LegendLabel text={text} /> {body}</li>;
+            } else { //This is generally a raster
+                icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_LEGEND_RASTER} />;
             }
         }
-        return <li title={tooltip} style={nodeStyle} className={nodeClassName}><EmptyNode /> {chkbox} {selectable} {icon} {label}</li>;
     }
-}
+    return <li title={tooltip} style={nodeStyle} className={nodeClassName}><EmptyNode /> {chkbox} {selectable} {icon} {label}</li>;
+};
 
 export interface IGroupNodeProps {
     group: MapGroup;
-    childItems: (MapLayer|MapGroup)[];
+    childItems: (MapLayer | MapGroup)[];
 }
 
-export class GroupNode extends React.Component<IGroupNodeProps, any> {
-    static contextTypes = LEGEND_CONTEXT_VALIDATION_MAP;
-    context: ILegendContext;
-    constructor(props: IGroupNodeProps) {
-        super(props);
-        this.state = {
-            groupVisible: props.group.Visible
-        };
-    }
-    private onToggleExpansion = (e: GenericEvent) => {
-        const expanded = this.getExpanded();
-        this.context.setGroupExpanded(this.props.group.ObjectId, !expanded);
-    }
-    private onVisibilityChanged = (e: GenericEvent) => {
-        this.setState({ groupVisible: e.target.checked });
-        this.context.setGroupVisibility(this.props.group.ObjectId, e.target.checked);
-    }
-    private getExpanded(): boolean {
-        let expanded = this.context.getGroupExpanded(this.props.group.ObjectId);
+export const GroupNode = (props: IGroupNodeProps) => {
+    const { group } = props;
+    const [groupVisible, setGroupVisible] = React.useState(group.Visible);
+    const legendCtx = React.useContext(LegendContext);
+    const getExpanded = () => {
+        let expanded = legendCtx.getGroupExpanded(group.ObjectId);
         if (expanded == null)
-            expanded = this.props.group.ExpandInLegend;
+            expanded = group.ExpandInLegend;
         return expanded;
-    }
-    componentDidMount() {
-        this.setState({
-            groupVisible: this.context.getGroupVisibility(this.props.group)
-        });
-    }
-    componentDidUpdate(prevProps: IGroupNodeProps) {
-        const nextProps = this.props;
-        const vis = this.context.getGroupVisibility(nextProps.group);
-        if (this.state.groupVisible != vis) {
-            this.setState({ groupVisible: vis });
-        }
-    }
-    render(): JSX.Element {
-        const { group } = this.props;
-        const currentScale = this.context.getCurrentScale();
-        const tree = this.context.getTree();
-        const icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_FOLDER_HORIZONTAL} />;
-        const isExpanded = this.getExpanded();
-        const expanded = <Icon style={ROW_ITEM_ELEMENT_STYLE}
-                               onClick={this.onToggleExpansion}
-                               spriteClass={isExpanded ? SPRITE_LEGEND_TOGGLE : SPRITE_LEGEND_TOGGLE_EXPAND} />;
-        const chkbox = <input type='checkbox' className='group-checkbox' style={CHK_STYLE} value={group.ObjectId} onChange={this.onVisibilityChanged} checked={(this.state.groupVisible)} />;
-        const tooltip = this.props.group.LegendLabel;
-        const nodeClassName = "group-node";
-        let nodeStyle: React.CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", ...LI_LIST_STYLE };
-        return <li title={tooltip} style={nodeStyle} className={nodeClassName}>
-            <span>{expanded} {chkbox} {icon} <LegendLabel text={this.props.group.LegendLabel} /></span>
-            {(() => {
-                if (isExpanded && this.props.childItems.length > 0) {
-                    return <ul style={UL_LIST_STYLE}>{this.props.childItems.map(item => {
-                        if (item.DisplayInLegend === true) {
-                            if (isLayer(item)) {
-                                if (isLayerVisibleAtScale(item, currentScale)) {
-                                    //console.debug(`isLayerVisibleAtScale(${item.Name}, ${currentScale}) = true`);
-                                    return <LayerNode key={item.ObjectId} layer={item} />;
-                                }
-                            } else {
-                                if (isGroupVisibleAtScale(item, tree, currentScale)) {
-                                    //console.debug(`isGroupVisibleAtScale(${item.Name}, ${currentScale}) = true`);
-                                    const children = tree.groupChildren[item.ObjectId] || [];
-                                    return <GroupNode key={item.ObjectId} group={item} childItems={children} />;
-                                }
+    };
+    const onToggleExpansion = (e: GenericEvent) => {
+        const expanded = getExpanded();
+        legendCtx.setGroupExpanded(group.ObjectId, !expanded);
+    };
+    const onVisibilityChanged = (e: GenericEvent) => {
+        setGroupVisible(e.target.checked);
+        legendCtx.setGroupVisibility(group.ObjectId, e.target.checked);
+    };
+    const currentScale = legendCtx.getCurrentScale();
+    const tree = legendCtx.getTree();
+    const icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_FOLDER_HORIZONTAL} />;
+    const isExpanded = getExpanded();
+    const expanded = <Icon style={ROW_ITEM_ELEMENT_STYLE}
+        onClick={onToggleExpansion}
+        spriteClass={isExpanded ? SPRITE_LEGEND_TOGGLE : SPRITE_LEGEND_TOGGLE_EXPAND} />;
+    const chkbox = <input type='checkbox' className='group-checkbox' style={CHK_STYLE} value={group.ObjectId} onChange={onVisibilityChanged} checked={(groupVisible)} />;
+    const tooltip = group.LegendLabel;
+    const nodeClassName = "group-node";
+    let nodeStyle: React.CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", ...LI_LIST_STYLE };
+    return <li title={tooltip} style={nodeStyle} className={nodeClassName}>
+        <span>{expanded} {chkbox} {icon} <LegendLabel text={group.LegendLabel} /></span>
+        {(() => {
+            if (isExpanded && props.childItems.length > 0) {
+                return <ul style={UL_LIST_STYLE}>{props.childItems.map(item => {
+                    if (item.DisplayInLegend === true) {
+                        if (isLayer(item)) {
+                            if (isLayerVisibleAtScale(item, currentScale)) {
+                                //console.debug(`isLayerVisibleAtScale(${item.Name}, ${currentScale}) = true`);
+                                return <LayerNode key={item.ObjectId} layer={item} />;
+                            }
+                        } else {
+                            if (isGroupVisibleAtScale(item, tree, currentScale)) {
+                                //console.debug(`isGroupVisibleAtScale(${item.Name}, ${currentScale}) = true`);
+                                const children = tree.groupChildren[item.ObjectId] || [];
+                                return <GroupNode key={item.ObjectId} group={item} childItems={children} />;
                             }
                         }
-                    })}</ul>;
-                }
-            })()}
-        </li>;
-    }
-}
+                    }
+                })}</ul>;
+            }
+        })()}
+    </li>;
+};
 
 function isLayerVisibleAtScale(layer: MapLayer, scale: number): boolean {
     if (layer.ScaleRange) {
@@ -318,7 +280,7 @@ function isLayerVisibleAtScale(layer: MapLayer, scale: number): boolean {
 }
 
 function isGroupVisibleAtScale(group: MapGroup, tree: any, scale: number): boolean {
-    const children: (MapLayer|MapGroup)[] = tree.groupChildren[group.ObjectId] || [];
+    const children: (MapLayer | MapGroup)[] = tree.groupChildren[group.ObjectId] || [];
     for (const child of children) {
         if (isLayer(child)) {
             if (isLayerVisibleAtScale(child, scale)) {
@@ -333,87 +295,123 @@ function isGroupVisibleAtScale(group: MapGroup, tree: any, scale: number): boole
     return false;
 }
 
+function setupTree(map: RuntimeMap) {
+    const state: any = {
+        Layers: map.Layer,
+        Groups: map.Group,
+        LayerMap: {},
+        GroupMap: {}
+    };
+    if (map.Layer) {
+        for (const layer of map.Layer) {
+            state.LayerMap[layer.ObjectId] = layer;
+        }
+    }
+    if (map.Group) {
+        for (const group of map.Group) {
+            state.GroupMap[group.ObjectId] = group;
+        }
+    }
+    const { Layers, Groups, LayerMap, GroupMap } = state;
+    const tree: any = {
+        root: [],
+        groupChildren: {}
+    };
+    const { root, groupChildren } = tree;
+    if (Groups) {
+        const remainingGroups: any = {};
+        //1st pass, un-parented groups
+        for (const group of Groups) {
+            groupChildren[group.ObjectId] = [];
+            if (group.ParentId) {
+                remainingGroups[group.ObjectId] = group;
+                continue;
+            }
+            root.push(group);
+        }
+        //2nd pass, parented groups
+        var itemCount = 0;
+        for (const objId in remainingGroups) {
+            itemCount++;
+        }
+        //Whittle down
+        while (itemCount > 0) {
+            var removeIds = [] as string[];
+            for (const objId in remainingGroups) {
+                var group = remainingGroups[objId];
+                //Do we have a parent?
+                if (typeof (groupChildren[group.ParentId]) != 'undefined') {
+                    if (typeof (groupChildren[group.ObjectId]) != 'undefined') {
+                        groupChildren[group.ObjectId] = [];
+                    }
+                    groupChildren[group.ParentId].push(group);
+                    removeIds.push(group.ObjectId);
+                }
+            }
+            for (const id of removeIds) {
+                delete remainingGroups[id];
+            }
+
+            itemCount = 0;
+            for (const objId in remainingGroups) {
+                itemCount++;
+            }
+        }
+    }
+    if (Layers) {
+        for (const layer of Layers) {
+            if (layer.ParentId) {
+                //Do we have a parent?
+                if (typeof (groupChildren[layer.ParentId]) === 'undefined') {
+                    groupChildren[layer.ParentId] = [];
+                }
+                groupChildren[layer.ParentId].push(layer);
+            } else {
+                root.push(layer);
+            }
+        }
+    }
+    state.tree = tree;
+    return state;
+}
+
 /**
  * The Legend component provides a component to view the layer structure, its styles and thematics and
  * the ability to toggle the group/layer visibility of the current map
- *
- * @export
- * @class Legend
- * @extends {React.Component<ILegendProps, any>}
+ * @param props 
  */
-export class Legend extends React.Component<ILegendProps, any> {
-    static childContextTypes = LEGEND_CONTEXT_VALIDATION_MAP;
-    constructor(props: ILegendProps) {
-        super(props);
-        this.state = this.setupTree(props.map);
-    }
-    componentDidUpdate(prevProps: ILegendProps) {
-        //Only rebuild tree on change of active map
-        if (prevProps.map != this.props.map) {
-            const tree: any = this.setupTree(this.props.map);
-            this.setState(tree);
-        }
-    }
-    getChildContext(): ILegendContext {
-        return {
-            getIconMimeType: this.getIconMimeType.bind(this),
-            getChildren: this.getChildren.bind(this),
-            getCurrentScale: () => this.props.currentScale,
-            getTree: () => this.state.tree,
-            getGroupVisibility: this.getGroupVisibility.bind(this),
-            getLayerVisibility: this.getLayerVisibility.bind(this),
-            setGroupVisibility: this.setGroupVisibility.bind(this),
-            setLayerVisibility: this.setLayerVisibility.bind(this),
-            getLayerSelectability: this.getLayerSelectability.bind(this),
-            setLayerSelectability: this.setLayerSelectability.bind(this),
-            getGroupExpanded: this.getGroupExpanded.bind(this),
-            setGroupExpanded: this.setGroupExpanded.bind(this),
-            getLayerExpanded: this.getLayerExpanded.bind(this),
-            setLayerExpanded: this.setLayerExpanded.bind(this)
-        };
-    }
-    public getSelectableLayers(): string[] {
-        const layers = [] as string[];
-        for (const layerId in this.state.LayerMap) {
-            const layer: MapLayer = this.state.LayerMap[layerId];
-            if (layer.Selectable === true) {
-                if (this.props.overrideSelectableLayers[layerId] === false) {
-                    continue;
-                }
-                layers.push(layer.Name);
-            }
-        }
-        return layers;
-    }
-    private getLayerSelectability(layerId: string): boolean {
-        const items: any = this.props.overrideSelectableLayers || {};
+export const Legend = (props: ILegendProps) => {
+    const [state, setState] = React.useState(setupTree(props.map));
+    const { tree } = state;
+    const { currentScale, externalBaseLayers, onBaseLayerChanged, maxHeight } = props;
+    const rootItems: (MapLayer | MapGroup)[] = tree.root;
+    React.useEffect(() => {
+        const tree: any = setupTree(props.map);
+        setState(tree);
+    }, [props.map]);
+    const getLayerSelectability = (layerId: string): boolean => {
+        const items: any = props.overrideSelectableLayers || {};
         return items[layerId];
-    }
-    private setLayerSelectability(layerId: string, selectable: boolean): void {
-        if (this.props.onLayerSelectabilityChanged != null) {
-            this.props.onLayerSelectabilityChanged(layerId, selectable);
-        }
-    }
-    private getGroupExpanded(groupId: string): boolean {
-        const items: any = this.props.overrideExpandedItems || {};
+    };
+    const setLayerSelectability = (layerId: string, selectable: boolean): void => {
+        props.onLayerSelectabilityChanged?.(layerId, selectable);
+    };
+    const getGroupExpanded = (groupId: string): boolean => {
+        const items: any = props.overrideExpandedItems || {};
         return items[groupId];
-    }
-    private setGroupExpanded(groupId: string, expanded: boolean): void {
-        if (this.props.onGroupExpansionChanged != null) {
-            this.props.onGroupExpansionChanged(groupId, expanded);
-        }
-    }
-    private getLayerExpanded(layerId: string): boolean {
-        const items: any = this.props.overrideExpandedItems || {};
+    };
+    const setGroupExpanded = (groupId: string, expanded: boolean): void => {
+        props.onGroupExpansionChanged?.(groupId, expanded);
+    };
+    const getLayerExpanded = (layerId: string): boolean => {
+        const items: any = props.overrideExpandedItems || {};
         return items[layerId];
-    }
-    private setLayerExpanded(layerId: string, expanded: boolean): void {
-        if (this.props.onGroupExpansionChanged != null) {
-            this.props.onGroupExpansionChanged(layerId, expanded);
-        }
-    }
-    private getGroupVisibility(group: MapGroup): boolean {
-        const { showGroups, hideGroups } = this.props;
+    };
+    const setLayerExpanded = (layerId: string, expanded: boolean): void => {
+        props.onGroupExpansionChanged?.(layerId, expanded);
+    };
+    const getGroupVisibility = (group: MapGroup): boolean => {
+        const { showGroups, hideGroups } = props;
         let visible = group.Visible;
         if (showGroups && showGroups.indexOf(group.ObjectId) >= 0) {
             visible = true;
@@ -421,9 +419,9 @@ export class Legend extends React.Component<ILegendProps, any> {
             visible = false;
         }
         return visible;
-    }
-    private getLayerVisibility(layer: MapLayer): boolean {
-        const { showLayers, hideLayers } = this.props;
+    };
+    const getLayerVisibility = (layer: MapLayer): boolean => {
+        const { showLayers, hideLayers } = props;
         let visible = layer.Visible;
         if (showLayers && showLayers.indexOf(layer.ObjectId) >= 0) {
             visible = true;
@@ -431,141 +429,69 @@ export class Legend extends React.Component<ILegendProps, any> {
             visible = false;
         }
         return visible;
+    };
+    const setGroupVisibility = (groupId: string, visible: boolean) => {
+        props.onGroupVisibilityChanged?.(groupId, visible);
+    };
+    const setLayerVisibility = (layerId: string, visible: boolean) => {
+        props.onLayerVisibilityChanged?.(layerId, visible);
+    };
+    const getIconMimeType = (): string | undefined => {
+        return props.map.IconMimeType;
+    };
+    const getChildren = (objectId: string): (MapLayer | MapGroup)[] => {
+        return state.tree.groupChildren[objectId] || [];
+    };
+    const rootStyle: React.CSSProperties = {};
+    if (maxHeight) {
+        rootStyle.maxHeight = maxHeight;
     }
-    private setGroupVisibility(groupId: string, visible: boolean) {
-        if (this.props.onGroupVisibilityChanged != null) {
-            this.props.onGroupVisibilityChanged(groupId, visible);
-        }
-    }
-    private setLayerVisibility(layerId: string, visible: boolean) {
-        if (this.props.onLayerVisibilityChanged != null) {
-            this.props.onLayerVisibilityChanged(layerId, visible);
-        }
-    }
-    private getIconMimeType(): string | undefined {
-        return this.props.map.IconMimeType;
-    }
-    private getChildren(objectId: string): (MapLayer | MapGroup)[] {
-        return this.state.tree.groupChildren[objectId] || [];
-    }
-    private setupTree(map: RuntimeMap) {
-        const state: any = {
-            Layers: map.Layer,
-            Groups: map.Group,
-            LayerMap: {},
-            GroupMap: {}
-        };
-        if (map.Layer) {
-            for (const layer of map.Layer) {
-                state.LayerMap[layer.ObjectId] = layer;
-            }
-        }
-        if (map.Group) {
-            for (const group of map.Group) {
-                state.GroupMap[group.ObjectId] = group;
-            }
-        }
-        const { Layers, Groups, LayerMap, GroupMap } = state;
-        const tree: any = {
-            root: [],
-            groupChildren: {}
-        };
-        const { root, groupChildren } = tree;
-        if (Groups) {
-            const remainingGroups: any = {};
-            //1st pass, un-parented groups
-            for (const group of Groups) {
-                groupChildren[group.ObjectId] = [];
-                if (group.ParentId) {
-                    remainingGroups[group.ObjectId] = group;
-                    continue;
-                }
-                root.push(group);
-            }
-            //2nd pass, parented groups
-            var itemCount = 0;
-            for (const objId in remainingGroups) {
-                itemCount++;
-            }
-            //Whittle down
-            while(itemCount > 0) {
-                var removeIds = [] as string[];
-                for (const objId in remainingGroups) {
-                    var group = remainingGroups[objId];
-                    //Do we have a parent?
-                    if (typeof(groupChildren[group.ParentId]) != 'undefined') {
-                        if (typeof(groupChildren[group.ObjectId]) != 'undefined') {
-                            groupChildren[group.ObjectId] = [];
-                        }
-                        groupChildren[group.ParentId].push(group);
-                        removeIds.push(group.ObjectId);
-                    }
-                }
-                for (const id of removeIds) {
-                    delete remainingGroups[id];
-                }
-
-                itemCount = 0;
-                for (const objId in remainingGroups) {
-                    itemCount++;
-                }
-            }
-        }
-        if (Layers) {
-            for (const layer of Layers) {
-                if (layer.ParentId) {
-                    //Do we have a parent?
-                    if (typeof(groupChildren[layer.ParentId]) === 'undefined') {
-                        groupChildren[layer.ParentId] = [];
-                    }
-                    groupChildren[layer.ParentId].push(layer);
-                } else {
-                    root.push(layer);
-                }
-            }
-        }
-        state.tree = tree;
-        return state;
-    }
-    render(): JSX.Element {
-        const { tree } = this.state;
-        const { currentScale, externalBaseLayers, onBaseLayerChanged, maxHeight } = this.props;
-        const rootItems: (MapLayer|MapGroup)[] = tree.root;
-
-        const rootStyle: React.CSSProperties = {};
-        if (maxHeight) {
-            rootStyle.maxHeight = maxHeight;
-        }
-
-        return <div style={rootStyle}>
+    const providerImpl: ILegendContext = {
+        getIconMimeType: getIconMimeType,
+        getChildren: getChildren,
+        getCurrentScale: () => props.currentScale,
+        getTree: () => state.tree,
+        getGroupVisibility: getGroupVisibility,
+        getLayerVisibility: getLayerVisibility,
+        setGroupVisibility: setGroupVisibility,
+        setLayerVisibility: setLayerVisibility,
+        getLayerSelectability: getLayerSelectability,
+        setLayerSelectability: setLayerSelectability,
+        getGroupExpanded: getGroupExpanded,
+        setGroupExpanded: setGroupExpanded,
+        getLayerExpanded: getLayerExpanded,
+        setLayerExpanded: setLayerExpanded
+    };
+    return <LegendContext.Provider value={providerImpl}>
+        <div style={rootStyle}>
             {(() => {
                 if (externalBaseLayers != null &&
                     externalBaseLayers.length > 0 &&
-                    this.props.inlineBaseLayerSwitcher) {
+                    props.inlineBaseLayerSwitcher) {
                     return <div className="bp3-card bp3-interactive">
-                        <h5>{tr("EXTERNAL_BASE_LAYERS", this.props.locale)}</h5>
-                        <BaseLayerSwitcher locale={this.props.locale} externalBaseLayers={externalBaseLayers} onBaseLayerChanged={onBaseLayerChanged} />
+                        <h5>{tr("EXTERNAL_BASE_LAYERS", props.locale)}</h5>
+                        <BaseLayerSwitcher locale={props.locale} externalBaseLayers={externalBaseLayers} onBaseLayerChanged={onBaseLayerChanged} />
                     </div>;
                 }
             })()}
             <ul style={UL_LIST_STYLE}>
-            {rootItems.map(item => {
-                if (item.DisplayInLegend === true) {
-                    if (isLayer(item)) {
-                        if (isLayerVisibleAtScale(item, currentScale)) {
-                            //console.debug(`isLayerVisibleAtScale(${item.Name}, ${currentScale}) = true`);
-                            return <LayerNode key={item.ObjectId} layer={item} />;
-                        }
-                    } else {
-                        if (isGroupVisibleAtScale(item, tree, currentScale)) {
-                            //console.debug(`isGroupVisibleAtScale(${item.Name}, ${currentScale}) = true`);
-                            const children = tree.groupChildren[item.ObjectId] || [];
-                            return <GroupNode key={item.ObjectId} group={item} childItems={children} />;
+                {rootItems.map(item => {
+                    if (item.DisplayInLegend === true) {
+                        if (isLayer(item)) {
+                            if (isLayerVisibleAtScale(item, currentScale)) {
+                                //console.debug(`isLayerVisibleAtScale(${item.Name}, ${currentScale}) = true`);
+                                return <LayerNode key={item.ObjectId} layer={item} />;
+                            }
+                        } else {
+                            if (isGroupVisibleAtScale(item, tree, currentScale)) {
+                                //console.debug(`isGroupVisibleAtScale(${item.Name}, ${currentScale}) = true`);
+                                const children = tree.groupChildren[item.ObjectId] || [];
+                                return <GroupNode key={item.ObjectId} group={item} childItems={children} />;
+                            }
                         }
                     }
-                }
-            })}
+                })}
             </ul>
-        </div>;
-    }
+        </div>
+    </LegendContext.Provider>;
 }

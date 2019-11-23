@@ -8,7 +8,6 @@ import {
     SPRITE_CONTROL_180,
     SPRITE_ICON_ZOOMSELECT
 } from "../constants/assets";
-import { safePropAccess } from '../utils/safe-prop';
 import { Callout, Intent, HTMLSelect } from '@blueprintjs/core';
 
 export interface ISelectedFeatureProps {
@@ -28,7 +27,7 @@ const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
             featureProps.push(matches[0]);
         }
     }
-    return <table className="selection-panel-property-grid bp3-table bp3-condensed bp3-bordered">
+    return <table className="selection-panel-property-grid bp3-html-table bp3-html-table-condensed bp3-html-table-bordered">
         <thead>
             <tr>
                 <th>{xlate("SELECTION_PROPERTY", locale)}</th>
@@ -36,22 +35,22 @@ const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
             </tr>
         </thead>
         <tbody>
-        {featureProps.map(prop => {
-            return <tr key={prop.Name}>
-                <td>{prop.Name}</td>
-                {(() => {
-                    let value = prop.Value;
-                    if (allowHtmlValues) {
-                        if (cleanHTML) {
-                            value = cleanHTML(value);
+            {featureProps.map(prop => {
+                return <tr key={prop.Name}>
+                    <td className="property-name-cell" data-property-name={prop.Name}>{prop.Name}</td>
+                    {(() => {
+                        let value = prop.Value;
+                        if (allowHtmlValues) {
+                            if (cleanHTML) {
+                                value = cleanHTML(value);
+                            }
+                            return <td className="property-value-cell" data-property-value-for={prop.Name} dangerouslySetInnerHTML={{ __html: value }} />
+                        } else {
+                            return <td className="property-value-cell" data-property-value-for={prop.Name}>{prop.Value}</td>;
                         }
-                        return <td dangerouslySetInnerHTML={{ __html: value }} />
-                    } else {
-                        return <td>{prop.Value}</td>;
-                    }
-                })()}
-            </tr>;
-        })}
+                    })()}
+                </tr>;
+            })}
         </tbody>
     </table>;
 };
@@ -129,165 +128,154 @@ const FloatClear = () => <div style={{ clear: "both" }} />;
 
 /**
  * Displays attributes of selected features with the ability to zoom in on selected features
- *
- * @export
- * @class SelectionPanel
- * @extends {React.Component<ISelectionPanelProps, any>}
+ * @param props 
  */
-export class SelectionPanel extends React.Component<ISelectionPanelProps, any> {
-    private selectionToolbarItems: IItem[];
-    constructor(props: ISelectionPanelProps) {
-        super(props);
-        this.state = {
-            selectedLayerIndex: -1,
-            featureIndex: -1
-        };
-        this.selectionToolbarItems = buildToolbarItems({
-            locale: props.locale || DEFAULT_LOCALE,
-            canGoPrev: this.canGoPrev.bind(this),
-            canGoNext: this.canGoNext.bind(this),
-            prevFeature: this.prevFeature.bind(this),
-            nextFeature: this.nextFeature.bind(this),
-            canZoomSelectedFeature: this.canZoomSelectedFeature.bind(this),
-            zoomSelectedFeature: this.zoomSelectedFeature.bind(this)
-        });
-    }
-    private getCurrentLayer() {
-        if (this.props.selection == null)
+export const SelectionPanel = (props: ISelectionPanelProps) => {
+    const {
+        maxHeight,
+        selection,
+        selectedFeatureRenderer,
+        allowHtmlValues,
+        cleanHTML,
+        onShowSelectedFeature,
+        onRequestZoomToFeature
+    } = props;
+    const [selectedLayerIndex, setSelectedLayerIndex] = React.useState(-1);
+    const [featureIndex, setFeatureIndex] = React.useState(-1);
+    React.useEffect(() => {
+        if (selection != null) {
+            if ((selection.SelectedLayer || []).length > 0) {
+                setSelectedLayerIndex(0);
+                setFeatureIndex(0);
+            }
+        }
+    }, [selection]);
+    const getCurrentLayer = () => {
+        if (selection == null)
             return null;
-        return this.props.selection.SelectedLayer[this.state.selectedLayerIndex];
-    }
-    private getFeatureAt(index: number) {
-        const layer = this.getCurrentLayer();
+        return selection.SelectedLayer[selectedLayerIndex];
+    };
+    const getFeatureAt = (index: number) => {
+        const layer = getCurrentLayer();
         if (layer != null) {
             return layer.Feature[index];
         }
         return null;
-    }
-    private getCurrentFeature() {
-        return this.getFeatureAt(this.state.featureIndex);
-    }
-    private canGoPrev(): boolean {
-        return this.state.featureIndex > 0;
-    }
-    private canGoNext(): boolean {
-        const layer = this.getCurrentLayer();
+    };
+    const getCurrentFeature = () => {
+        return getFeatureAt(featureIndex);
+    };
+    const canGoPrev = (): boolean => {
+        return featureIndex > 0;
+    };
+    const canGoNext = (): boolean => {
+        const layer = getCurrentLayer();
         if (layer != null) {
-            return this.state.featureIndex + 1 < layer.Feature.length;
+            return featureIndex + 1 < layer.Feature.length;
         }
         return false;
-    }
-    private canZoomSelectedFeature(): boolean {
-        const feat = this.getCurrentFeature();
+    };
+    const canZoomSelectedFeature = (): boolean => {
+        const feat = getCurrentFeature();
         return feat != null && feat.Bounds != null;
-    }
-    private prevFeature() {
-        const newIndex = this.state.featureIndex - 1;
-        this.setState({ featureIndex: newIndex });
-        const layer = this.getCurrentLayer();
+    };
+    const prevFeature = () => {
+        const newIndex = featureIndex - 1;
+        setFeatureIndex(newIndex);
+        const layer = getCurrentLayer();
         if (layer) {
             const layerId = layer["@id"];
-            const f = this.getFeatureAt(newIndex);
-            if (f && f.SelectionKey) {
-                safePropAccess(this.props, "onShowSelectedFeature", func => func(layerId, f!.SelectionKey!));
+            const sKey = getFeatureAt(newIndex)?.SelectionKey;
+            if (sKey) {
+                onShowSelectedFeature?.(layerId, sKey);
             }
         }
-    }
-    private nextFeature() {
-        const newIndex = this.state.featureIndex + 1;
-        this.setState({ featureIndex: newIndex });
-        const layer = this.getCurrentLayer();
+    };
+    const nextFeature = () => {
+        const newIndex = featureIndex + 1;
+        setFeatureIndex(newIndex);
+        const layer = getCurrentLayer();
         if (layer) {
             const layerId = layer["@id"];
-            const f = this.getFeatureAt(newIndex);
-            if (f && f.SelectionKey) {
-                safePropAccess(this.props, "onShowSelectedFeature", func => func(layerId, f!.SelectionKey!));
+            const sKey = getFeatureAt(newIndex)?.SelectionKey;
+            if (sKey) {
+                onShowSelectedFeature?.(layerId, sKey);
             }
         }
-    }
-    private zoomSelectedFeature() {
-        const feat = this.getCurrentFeature();
+    };
+    const zoomSelectedFeature = () => {
+        const feat = getCurrentFeature();
         if (feat) {
-            this.props.onRequestZoomToFeature(feat);
+            onRequestZoomToFeature(feat);
+        }
+    };
+    const onSelectedLayerChanged = (e: GenericEvent) => {
+        setSelectedLayerIndex(e.target.value);
+        setFeatureIndex(0);
+    };
+    const locale = props.locale || DEFAULT_LOCALE;
+    let feat: SelectedFeature | undefined;
+    let meta: LayerMetadata | undefined;
+    if (selection != null && selectedLayerIndex >= 0 && featureIndex >= 0) {
+        const selLayer = selection.SelectedLayer[selectedLayerIndex];
+        feat = selLayer.Feature[featureIndex];
+        meta = selLayer.LayerMetadata;
+    }
+    let selBodyStyle: React.CSSProperties | undefined;
+    if (maxHeight) {
+        selBodyStyle = {
+            overflowY: "auto",
+            maxHeight: maxHeight - DEFAULT_TOOLBAR_SIZE
+        };
+    } else {
+        selBodyStyle = {
+            overflow: "auto",
+            position: "absolute",
+            top: DEFAULT_TOOLBAR_SIZE,
+            bottom: 0,
+            right: 0,
+            left: 0
         }
     }
-    private setDefaultSelection(props: ISelectionPanelProps) {
-        const { selection } = props;
-        if (selection != null) {
-            if ((selection.SelectedLayer || []).length > 0) {
-                this.setState({ selectedLayerIndex: 0, featureIndex: 0 });
+    return <div>
+        {(() => {
+            if (selection != null && selection.SelectedLayer != null && selection.SelectedLayer.length > 0) {
+                const selectionToolbarItems = buildToolbarItems({
+                    locale,
+                    canGoPrev,
+                    canGoNext,
+                    prevFeature,
+                    nextFeature,
+                    canZoomSelectedFeature,
+                    zoomSelectedFeature
+                });
+                return <div className="selection-panel-toolbar" style={SELECTION_PANEL_TOOLBAR_STYLE}>
+                    <div className="bp3-select selection-panel-layer-selector">
+                        <HTMLSelect value={selectedLayerIndex} style={LAYER_COMBO_STYLE} onChange={onSelectedLayerChanged}>
+                            {selection.SelectedLayer.map((layer: SelectedLayer, index: number) => {
+                                return <option key={`selected-layer-${layer["@id"]}`} value={`${index}`}>{layer["@name"]}</option>
+                            })}
+                        </HTMLSelect>
+                    </div>
+                    <Toolbar childItems={selectionToolbarItems} containerStyle={SELECTION_TOOLBAR_STYLE} />
+                    <FloatClear />
+                </div>;
             }
-        }
-    }
-    componentDidMount() {
-        this.setDefaultSelection(this.props);
-    }
-    componentDidUpdate(prevProps: ISelectionPanelProps) {
-        const nextProps = this.props;
-        if (prevProps.selection != nextProps.selection) {
-            this.setDefaultSelection(nextProps);
-        }
-    }
-    private onSelectedLayerChanged = (e: GenericEvent) => {
-        this.setState({ selectedLayerIndex: e.target.value, featureIndex: 0 });
-    }
-    render(): JSX.Element {
-        const { selection, selectedFeatureRenderer, allowHtmlValues, cleanHTML } = this.props;
-        let locale = this.props.locale || DEFAULT_LOCALE;
-        let feat: SelectedFeature | undefined;
-        let meta: LayerMetadata | undefined;
-        if (selection != null && this.state.selectedLayerIndex >= 0 && this.state.featureIndex >= 0) {
-            const selLayer = selection.SelectedLayer[this.state.selectedLayerIndex];
-            feat = selLayer.Feature[this.state.featureIndex];
-            meta = selLayer.LayerMetadata;
-        }
-        let selBodyStyle: React.CSSProperties | undefined;
-        if (this.props.maxHeight) {
-            selBodyStyle = {
-                overflowY: "auto",
-                maxHeight: this.props.maxHeight - DEFAULT_TOOLBAR_SIZE
-            };
-        } else {
-            selBodyStyle = {
-                overflow: "auto",
-                position: "absolute",
-                top: DEFAULT_TOOLBAR_SIZE,
-                bottom: 0,
-                right: 0,
-                left: 0
-            }
-        }
-        return <div>
+        })()}
+        <div className="selection-panel-body" style={selBodyStyle}>
             {(() => {
-                if (selection != null && selection.SelectedLayer != null && selection.SelectedLayer.length > 0) {
-                    return <div className="selection-panel-toolbar" style={SELECTION_PANEL_TOOLBAR_STYLE}>
-                        <div className="bp3-select selection-panel-layer-selector">
-                            <HTMLSelect value={this.state.selectedLayerIndex} style={LAYER_COMBO_STYLE} onChange={this.onSelectedLayerChanged}>
-                                {selection.SelectedLayer.map((layer: SelectedLayer, index: number) => {
-                                    return <option key={`selected-layer-${layer["@id"]}`} value={`${index}`}>{layer["@name"]}</option>
-                                })}
-                            </HTMLSelect>
-                        </div>
-                        <Toolbar childItems={this.selectionToolbarItems} containerStyle={SELECTION_TOOLBAR_STYLE} />
-                        <FloatClear />
-                    </div>;
+                if (feat && meta) {
+                    if (selectedFeatureRenderer) {
+                        return selectedFeatureRenderer({ selectedFeature: feat, cleanHTML: cleanHTML, allowHtmlValues: allowHtmlValues, selectedLayer: meta, locale: locale });
+                    } else {
+                        return <DefaultSelectedFeature selectedFeature={feat} cleanHTML={cleanHTML} allowHtmlValues={allowHtmlValues} selectedLayer={meta} locale={locale} />;
+                    }
+                } else if (selection == null || (selection.SelectedLayer || []).length == 0) {
+                    return <Callout intent={Intent.PRIMARY} icon="info-sign">
+                        <p className="selection-panel-no-selection">{xlate("NO_SELECTED_FEATURES", locale)}</p>
+                    </Callout>;
                 }
             })()}
-            <div className="selection-panel-body" style={selBodyStyle}>
-                {(() => {
-                    if (feat && meta) {
-                        if (selectedFeatureRenderer) {
-                            return selectedFeatureRenderer({ selectedFeature: feat, cleanHTML: cleanHTML, allowHtmlValues: allowHtmlValues, selectedLayer: meta, locale: locale });
-                        } else {
-                            return <DefaultSelectedFeature selectedFeature={feat} cleanHTML={cleanHTML} allowHtmlValues={allowHtmlValues} selectedLayer={meta} locale={locale} />;
-                        }
-                    } else if (selection == null || (selection.SelectedLayer || []).length == 0) {
-                        return <Callout intent={Intent.PRIMARY} icon="info-sign">
-                            <p className="selection-panel-no-selection">{xlate("NO_SELECTED_FEATURES", locale)}</p>
-                        </Callout>;
-                    }
-                })()}
-            </div>
-        </div>;
-    }
+        </div>
+    </div>;
 }

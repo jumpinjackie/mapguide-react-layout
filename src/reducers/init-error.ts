@@ -1,5 +1,5 @@
 import { IInitErrorReducerState } from "../api/common";
-import uniq = require("lodash.uniq");
+import { makeUnique } from "../utils/array";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 
@@ -18,7 +18,7 @@ export function initErrorReducer(state = INIT_ERROR_INITIAL_STATE, action: Viewe
             }
         case ActionType.INIT_APP:
             {
-                return { ...state, ...{ warnings: uniq(action.payload.warnings) } }
+                return { ...state, ...{ warnings: makeUnique(action.payload.warnings) } }
             }
         case ActionType.INIT_ERROR:
             {

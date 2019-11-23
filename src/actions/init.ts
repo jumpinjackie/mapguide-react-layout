@@ -39,7 +39,7 @@ import * as shortid from "shortid";
 import { registerStringBundle, DEFAULT_LOCALE } from "../api/i18n";
 import { assertNever } from "../utils/never";
 import proj4 from "proj4";
-import uniq = require("lodash.uniq");
+import { makeUnique } from "../utils/array";
 import { ensureParameters } from "../utils/url";
 import { strIsNullOrEmpty } from "../utils/string";
 import { convertWidget, isFlyoutSpec, ToolbarConf, PreparedSubMenuSet } from '../api/registry/command-spec';
@@ -436,7 +436,7 @@ function getExtraProjectionsFromFlexLayout(appDef: ApplicationDefinition): strin
             }
         }
     }
-    return uniq(epsgs);
+    return makeUnique(epsgs);
 }
 
 function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: IInitAsyncOptions): void {
@@ -599,7 +599,8 @@ async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOpti
                 targetFrame: cmd.TargetFrame,
                 parameters: (cmd.AdditionalParameter || []).map(p => {
                     return { name: p.Key, value: p.Value };
-                })
+                }),
+                title: cmd.Label
             });
         } else if (isSearchCommand(cmd)) {
             registerCommand(cmd.Name, {
@@ -610,7 +611,7 @@ async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOpti
                 resultColumns: cmd.ResultColumns,
                 filter: cmd.Filter,
                 matchLimit: cmd.MatchLimit,
-                title: cmd.Label,
+                title: cmd.Label
             });
         }
         cmdsByKey[cmd.Name] = cmd;
@@ -748,7 +749,7 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
                         resultColumns: cmd.ResultColumns,
                         filter: cmd.Filter,
                         matchLimit: cmd.MatchLimit,
-                        title: cmd.Title,
+                        title: (cmd.Title || (isUIWidget(widget) ? widget.Label : undefined)),
                         target: convertToCommandTarget(cmd.Target),
                         targetFrame: cmd.Target
                     });
@@ -761,7 +762,8 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
                         targetFrame: cmd.Target,
                         parameters: (cmd.AdditionalParameter || []).map((p: any) => {
                             return { name: p.Key, value: p.Value };
-                        })
+                        }),
+                        title: isUIWidget(widget) ? widget.Label : undefined
                     });
                     break;
             }

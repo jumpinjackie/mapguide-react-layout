@@ -33,24 +33,26 @@ const PANEL_SPEC: IAccordionPanelSpec[] = [
 ];
 
 describe("components/accordion", () => {
-    it("renders last panel as expanded", () => {
-        const wrapper = mount(<Accordion style={{ width: 250, height: 500 }} panels={PANEL_SPEC} />);
-        expect(wrapper.state("openPanel")).toBe("Baz");
-    });
     it("clicking collapsed panel expands it and collapses others", () => {
-        const wrapper = mount(<Accordion style={{ width: 250, height: 500 }} panels={PANEL_SPEC} />);
-        expect(wrapper.state("openPanel")).toBe("Baz");
+        const handler = jest.fn();
+        const wrapper = mount(<Accordion style={{ width: 250, height: 500 }} panels={PANEL_SPEC} onActivePanelChanged={handler} />);
         const midPanel = wrapper.find(".component-accordion-panel-header").at(1);
         expect(midPanel).not.toBeNull();
         midPanel.simulate("click");
-        expect(wrapper.state("openPanel")).toBe("Bar");
+        //1 call
+        expect(handler.mock.calls.length).toBe(1);
+        //1 argument
+        expect(handler.mock.calls[0].length).toBe(1);
+        //argument is the id of the panel we clicked
+        expect(handler.mock.calls[0][0]).toBe("Bar");
     });
     it("clicking expanded panel does not collapse it", () => {
+        const handler = jest.fn();
         const wrapper = mount(<Accordion style={{ width: 250, height: 500 }} panels={PANEL_SPEC} />);
-        expect(wrapper.state("openPanel")).toBe("Baz");
         const lastPanel = wrapper.find(".component-accordion-panel-header").at(2);
         expect(lastPanel).not.toBeNull();
         lastPanel.simulate("click");
-        expect(wrapper.state("openPanel")).toBe("Baz");
+        //Expect handler to not be called as the panel clicked is already expanded
+        expect(handler.mock.calls.length).toBe(0);
     });
 });

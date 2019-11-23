@@ -18,8 +18,7 @@ import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import * as TemplateActions from "../actions/template";
 import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
-import { IApplicationContext, APPLICATION_CONTEXT_VALIDATION_MAP } from "../components/context";
-import { safePropAccess } from '../utils/safe-prop';
+import { AppContext } from "../components/context";
 import { UrlValueChangeCallback, IAppUrlStateProps, urlPropsQueryConfig } from './url-state';
 import { addUrlProps } from 'react-url-query';
 import { IElementState } from '../actions/defs';
@@ -172,13 +171,6 @@ export class App extends React.Component<AppProps, any> {
         }
         return v => v;
     }
-    static childContextTypes = APPLICATION_CONTEXT_VALIDATION_MAP;
-    getChildContext(): IApplicationContext {
-        return {
-            allowHtmlValuesInSelection: () => this.allowHtmlValuesInSelection(),
-            getHTMLCleaner: () => this.getHtmlCleaner()
-        }
-    }
     componentDidMount() {
         const {
             onInit,
@@ -281,14 +273,14 @@ export class App extends React.Component<AppProps, any> {
         }
         if (nextProps.config && nextProps.config.activeMapName) {
             const am = nextProps.config.activeMapName;
-            safePropAccess(nextProps, "onChangeUrlMap", func => func!(am));
+            nextProps.onChangeUrlMap?.(am);
         }
         if (nextProps.map) {
             if (nextProps.map.currentView) {
                 const { x, y, scale } = nextProps.map.currentView;
-                safePropAccess(nextProps, "onChangeUrlX", func => func!(`${x}`));
-                safePropAccess(nextProps, "onChangeUrlY", func => func!(`${y}`));
-                safePropAccess(nextProps, "onChangeUrlScale", func => func!(`${scale}`));
+                nextProps.onChangeUrlX?.(`${x}`);
+                nextProps.onChangeUrlY?.(`${y}`);
+                nextProps.onChangeUrlScale?.(`${scale}`);
             }
             if (nextProps.map.runtimeMap) {
                 const { showGroups, showLayers, hideGroups, hideLayers } = nextProps.map;
@@ -314,12 +306,12 @@ export class App extends React.Component<AppProps, any> {
                         }
                     }
                 }
-                safePropAccess(nextProps, "onChangeUrlShowGroups", func => func!(sg));
-                safePropAccess(nextProps, "onChangeUrlHideGroups", func => func!(hg));
-                safePropAccess(nextProps, "onChangeUrlShowLayers", func => func!(sl));
-                safePropAccess(nextProps, "onChangeUrlHideLayers", func => func!(hl));
+                nextProps.onChangeUrlShowGroups?.(sg);
+                nextProps.onChangeUrlHideGroups?.(hg);
+                nextProps.onChangeUrlShowLayers?.(sl);
+                nextProps.onChangeUrlHideLayers?.(hl);
                 const { SessionId } = nextProps.map.runtimeMap;
-                safePropAccess(nextProps, "onChangeUrlSession", func => func!(SessionId));
+                nextProps.onChangeUrlSession?.(SessionId);
             }
         }
     }
@@ -389,7 +381,13 @@ export class App extends React.Component<AppProps, any> {
             } else {
                 const layoutEl = getLayout(layout);
                 if (layoutEl) {
-                    return layoutEl();
+                    const providerImpl = {
+                        allowHtmlValuesInSelection: () => this.allowHtmlValuesInSelection(),
+                        getHTMLCleaner: () => this.getHtmlCleaner()
+                    };
+                    return <AppContext.Provider value={providerImpl}>
+                        {layoutEl()}
+                    </AppContext.Provider>
                 } else {
                     return <Error error={tr("ERR_UNREGISTERED_LAYOUT", locale, { layout: layout })} />;
                 }

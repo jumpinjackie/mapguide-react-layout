@@ -23,6 +23,8 @@ export class FormFrameShim extends React.Component<FormFrameShimProps, any> {
         this._form = form;
     }
     submit(url: string, params: string[], target: string): void {
+        //TODO: Can't convert this to functional component with hooks, until this type
+        //of pattern is possible
         this.setState({
             action: url,
             params: params,

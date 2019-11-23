@@ -182,7 +182,7 @@ class FeatureQueryTooltip {
                 html += `<div class='feature-tooltip-body'>${res.Tooltip.replace(/\\n/g, "<br/>")}</div>`;
             }
             if (res.Hyperlink) {
-                html += `<div><a target='taskPaneFrame' href='${res.Hyperlink}'>Click for more information</a></div>`;
+                html += `<div><a target='taskPaneFrame' href='${res.Hyperlink}'>${tr("FEATURE_TOOLTIP_URL_HELP_TEXT", this.callback.getLocale())}</a></div>`;
             }
             this.featureTooltipElement.innerHTML = html;
             if (html == "") {
@@ -746,6 +746,7 @@ export interface IMapViewerContextCallback {
     getAgentKind(): ClientKind;
     getMapName(): string;
     getSessionId(): string;
+    getLocale(): string | undefined;
     isFeatureTooltipEnabled(): boolean;
     getPointSelectionBox(point: Coordinate): Bounds;
 }

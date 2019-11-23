@@ -180,15 +180,15 @@
     lunr "^2.3.6"
     underscore "^1.9.1"
 
-"@gerrit0/typedoc@0.15.10":
-  version "0.15.10"
-  resolved "https://registry.yarnpkg.com/@gerrit0/typedoc/-/typedoc-0.15.10.tgz#b05c62a104ee539b7439436584c811da5f8b4918"
-  integrity sha512-WM19E3jgrv9Dg9eDKNGoUWz6ovdxtw+p3d7xHnS8D95n3OEZKu5On2Xu5KDh5AIQBMgqtHmmIyUX40ULKl1wQg==
+"@gerrit0/typedoc@0.15.11":
+  version "0.15.11"
+  resolved "https://registry.yarnpkg.com/@gerrit0/typedoc/-/typedoc-0.15.11.tgz#6a88e25900131087cde57202650c53a11dab2223"
+  integrity sha512-1OyxF8UJbZsenZP/WEu/PTTtnhNcCGXGi+P4Eh2gro95DQ/mbJUszrvufPN2hUtXZnDCNwKeA1VVD4KcrmScgg==
   dependencies:
     "@gerrit0/typedoc-default-themes" "^0.6.4"
     "@types/minimatch" "3.0.3"
     fs-extra "^8.1.0"
-    handlebars "^4.5.1"
+    handlebars "^4.5.3"
     highlight.js "^9.16.2"
     lodash "^4.17.15"
     marked "^0.7.0"
@@ -4176,7 +4176,7 @@ gud@^1.0.0:
   resolved "https://registry.yarnpkg.com/gud/-/gud-1.0.0.tgz#a489581b17e6a70beca9abe3ae57de7a499852c0"
   integrity sha512-zGEOVKFM5sVPPrYs7J5/hYEw2Pof8KCyOwyhG8sAF26mCAeUFAcYPu1mwB7hhpIP29zOIBaDqwuHdLp0jvZXjw==
 
-handlebars@4.5.3, handlebars@^4.1.2, handlebars@^4.5.1:
+handlebars@4.5.3, handlebars@^4.1.2, handlebars@^4.5.3:
   version "4.5.3"
   resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.5.3.tgz#5cf75bd8714f7605713511a56be7c349becb0482"
   integrity sha512-3yPecJoJHK/4c6aZhSvxOyG4vJKDshV36VHp0iVCDVh7o9w2vwi3NSnL2MMPj3YdduqaBcu7cGbggJQM0br9xA==

@@ -75,6 +75,8 @@ function fixChildItems(childItems: any[], state: IApplicationState, commandInvok
         .filter(tb => tb != null) as IItem[];
 }
 
+//TODO: This function should be its own react hook that layers on top of the
+//useDispatch() and useSelector() hooks provided by react-redux
 /**
  * @hidden
  */

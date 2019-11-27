@@ -22,7 +22,7 @@ before_build:
   - echo APPVEYOR_REPO_COMMIT_TIMESTAMP %APPVEYOR_REPO_COMMIT_TIMESTAMP%
 
 environment:
-  nodejs_version: "8"
+  nodejs_version: "10"
 
 install:
   # Get the latest stable version of Node.js or io.js

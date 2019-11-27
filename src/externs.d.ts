@@ -11,6 +11,10 @@
 // Stamped by webpack
 declare const __DEV__: boolean;
 
+declare module "*.png";
+declare module "*.cur";
+declare module "*.gif";
+
 declare module "history";
 
 // Monkey-patched ol ES2015 module declarations (this is a bug in the jsdoc-typescribp3-plugin that generated the OL typings)

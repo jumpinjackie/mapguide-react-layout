@@ -1,22 +1,17 @@
 import * as React from "react";
-import { connect } from "react-redux";
-import * as PropTypes from "prop-types";
+import { useSelector, useDispatch } from "react-redux";
 import {
     ICommand,
     IDOMElementMetrics,
-    ReduxDispatch,
     IApplicationState,
-    IToolbarReducerState,
-    IBranchedMapSubState,
-    FlyoutVisibilitySet
+    FlyoutVisibilitySet,
+    PropType
 } from "../api/common";
 import { mapToolbarReference } from "../api/registry/command";
 import { Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
-import { invokeCommand } from "../actions/map";
+import * as MapActions from "../actions/map";
 import { processMenuItems } from "../utils/menu";
 import * as FlyoutActions from "../actions/flyout";
-import { NULL_ACTION } from "../reducers/last-action";
-import { ActionType } from '../constants/actions';
 
 export interface IToolbarContainerProps {
     id: string;
@@ -26,14 +21,8 @@ export interface IToolbarContainerProps {
     containerStyle?: React.CSSProperties;
 }
 
-export interface IToolbarContainerState {
-    map: IBranchedMapSubState;
-    toolbar: IToolbarReducerState;
-    flyouts: any;
-    lastaction: any;
-}
-
-export interface IToolbarContainerDispatch {
+// NOTE: Keeping this interface around for ease of typing the dispatchers below
+interface IToolbarContainerDispatch {
     invokeCommand: (cmd: ICommand, parameters?: any) => void;
     openFlyout: (id: string, metrics: IDOMElementMetrics) => void;
     closeFlyout: (id: string) => void;
@@ -41,101 +30,54 @@ export interface IToolbarContainerDispatch {
     closeComponent: (id: string) => void;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IToolbarContainerProps): Partial<IToolbarContainerState> {
-    let map;
-    let action = NULL_ACTION;
-    if (state.config.activeMapName) {
-        map = state.mapState[state.config.activeMapName];
-    }
-    //We only care to pass on the dispatched action if the action is any of the
-    //following
-    if (state.lastaction.type == ActionType.MAP_SET_BUSY_COUNT ||
-        state.lastaction.type == ActionType.MAP_SET_MAPTIP ||
-        state.lastaction.type == ActionType.MAP_SET_SELECTION ||
-        state.lastaction.type == ActionType.MAP_SET_ACTIVE_TOOL) {
-        action = state.lastaction;
-    }
-    return {
-        map: map,
-        flyouts: state.toolbar.flyouts,
-        toolbar: state.toolbar.toolbars[ownProps.id],
-        lastaction: action
-    };
-}
+const ToolbarContainer = (props: IToolbarContainerProps) => {
+    const { containerClass, containerStyle, vertical, hideVerticalLabels } = props;
+    const dispatch = useDispatch();
+    const appState = useSelector<IApplicationState, IApplicationState>(s => s);
+    
+    const invokeCommand: PropType<IToolbarContainerDispatch, "invokeCommand"> = (cmd, parameters) => dispatch(MapActions.invokeCommand(cmd, parameters));
+    const openFlyout: PropType<IToolbarContainerDispatch, "openFlyout"> = (id, metrics) => dispatch(FlyoutActions.openFlyout(id, metrics));
+    const closeFlyout: PropType<IToolbarContainerDispatch, "closeFlyout"> = (id) => dispatch(FlyoutActions.closeFlyout(id));
+    const openComponent: PropType<IToolbarContainerDispatch, "openComponent"> = (id, metrics, name, props) => dispatch(FlyoutActions.openComponent(id, metrics, name, props));
+    const closeComponent: PropType<IToolbarContainerDispatch, "closeComponent"> = (id) => dispatch(FlyoutActions.closeComponent(id));
 
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IToolbarContainerDispatch> {
-    return {
-        invokeCommand: (cmd, parameters) => dispatch(invokeCommand(cmd, parameters)),
-        openFlyout: (id, metrics) => dispatch(FlyoutActions.openFlyout(id, metrics)),
-        closeFlyout: (id) => dispatch(FlyoutActions.closeFlyout(id)),
-        openComponent: (id, metrics, name, props) => dispatch(FlyoutActions.openComponent(id, metrics, name, props)),
-        closeComponent: (id) => dispatch(FlyoutActions.closeComponent(id))
-    };
-}
+    const onCloseFlyout = (id: string) => closeFlyout?.(id);
+    const onOpenFlyout = (id: string, metrics: IDOMElementMetrics) => openFlyout?.(id, metrics);
+    const onOpenComponent = (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => openComponent?.(id, metrics, name, props);
+    const onCloseComponent = (id: string) => closeComponent?.(id);
 
-export type ToolbarContainerProps = IToolbarContainerProps & Partial<IToolbarContainerState> & Partial<IToolbarContainerDispatch>;
-
-export class ToolbarContainer extends React.Component<ToolbarContainerProps, any> {
-    constructor(props: ToolbarContainerProps) {
-        super(props);
-    }
-    private onCloseFlyout = (id: string) => {
-        if (this.props.closeFlyout) {
-            this.props.closeFlyout(id);
+    const flyouts = appState.toolbar.flyouts;
+    const toolbar = appState.toolbar.toolbars[props.id];
+    const flyoutStates: FlyoutVisibilitySet = {};
+    if (flyouts) {
+        const ids = Object.keys(flyouts);
+        for (const fid of ids) {
+            flyoutStates[fid] = !!flyouts[fid].open;
         }
     }
-    private onOpenFlyout = (id: string, metrics: IDOMElementMetrics) => {
-        if (this.props.openFlyout) {
-            this.props.openFlyout(id, metrics);
-        }
-    }
-    private onOpenComponent = (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => {
-        if (this.props.openComponent) {
-            this.props.openComponent(id, metrics, name, props);
-        }
-    }
-    private onCloseComponent = (id: string) => {
-        if (this.props.closeComponent) {
-            this.props.closeComponent(id);
-        }
-    }
-    static contextTypes: PropTypes.ValidationMap<any> = {
-        store: PropTypes.object
-    };
-    render(): JSX.Element {
-        const { toolbar, containerClass, containerStyle, vertical, hideVerticalLabels, invokeCommand, flyouts } = this.props;
-        const store = (this.context as any).store;
-        const flyoutStates: FlyoutVisibilitySet = {};
-        if (flyouts) {
-            const ids = Object.keys(flyouts);
-            for (const fid of ids) {
-                flyoutStates[fid] = !!flyouts[fid].open;
-            }
-        }
-        let tbContainerStyle: React.CSSProperties = { ...(containerStyle || {}) };
-        if (toolbar && toolbar.items && invokeCommand) {
-            if (vertical === true) {
-                tbContainerStyle.width = DEFAULT_TOOLBAR_SIZE;
-            } else {
-                tbContainerStyle.height = DEFAULT_TOOLBAR_SIZE;
-                tbContainerStyle.overflow = "auto";
-            }
-            const items = (toolbar.items as any[]).map(tb => mapToolbarReference(tb, store, invokeCommand));
-            const childItems = processMenuItems(items);
-            return <Toolbar vertical={vertical}
-                            hideVerticalLabels={hideVerticalLabels}
-                            childItems={childItems}
-                            containerClass={containerClass}
-                            containerStyle={tbContainerStyle}
-                            flyoutStates={flyoutStates}
-                            onOpenComponent={this.onOpenComponent}
-                            onCloseComponent={this.onCloseComponent}
-                            onOpenFlyout={this.onOpenFlyout}
-                            onCloseFlyout={this.onCloseFlyout} />;
+    let tbContainerStyle: React.CSSProperties = { ...(containerStyle || {}) };
+    if (toolbar && toolbar.items && invokeCommand) {
+        if (vertical === true) {
+            tbContainerStyle.width = DEFAULT_TOOLBAR_SIZE;
         } else {
-            return <div />;
+            tbContainerStyle.height = DEFAULT_TOOLBAR_SIZE;
+            tbContainerStyle.overflow = "auto";
         }
+        const items = (toolbar.items as any[]).map(tb => mapToolbarReference(tb, appState, invokeCommand));
+        const childItems = processMenuItems(items);
+        return <Toolbar vertical={vertical}
+            hideVerticalLabels={hideVerticalLabels}
+            childItems={childItems}
+            containerClass={containerClass}
+            containerStyle={tbContainerStyle}
+            flyoutStates={flyoutStates}
+            onOpenComponent={onOpenComponent}
+            onCloseComponent={onCloseComponent}
+            onOpenFlyout={onOpenFlyout}
+            onCloseFlyout={onCloseFlyout} />;
+    } else {
+        return <div />;
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(ToolbarContainer);
+export default ToolbarContainer;

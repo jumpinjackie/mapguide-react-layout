@@ -35,7 +35,7 @@ const BaseLayerSwitcherContainer = () => {
         } as BLSState;
     });
     const dispatch = useDispatch();
-    const setBaseLayer: PropType<BLSDispatch, "setBaseLayer"> = (mapName: string, layerName: string) => dispatch(MapActions.setBaseLayer(mapName, layerName)),
+    const setBaseLayer: PropType<BLSDispatch, "setBaseLayer"> = (mapName: string, layerName: string) => dispatch(MapActions.setBaseLayer(mapName, layerName));
     const onBaseLayerChanged = (layerName: string) => {
         if (mapName) {
             setBaseLayer?.(mapName, layerName);

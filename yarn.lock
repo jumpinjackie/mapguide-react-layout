@@ -144,10 +144,10 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@blueprintjs/core@^3.21.0":
-  version "3.21.0"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-3.21.0.tgz#31233a596de716a9a40284f56d856577707a8dc7"
-  integrity sha512-yrv0zf9ZUhBDHkPGgxGlwWqUZtmmGgDVEvyn8vXjMsM1sMJIuNiLkFSJICcRNOJn/Hr77qQNRS1Aw9bef/WAeA==
+"@blueprintjs/core@^3.22.0":
+  version "3.22.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-3.22.0.tgz#6c7e7562a7e5fb7d2924ee3cd0832734eeb24470"
+  integrity sha512-CzKRY/ZmwmRPoybHFS4HI2GWuphMzIMuBQttaQi3OYQx28vyczKlmhlZPXhbX5pEn4RFajRJvMx086iuJXlnOw==
   dependencies:
     "@blueprintjs/icons" "^3.12.0"
     "@types/dom4" "^2.0.1"

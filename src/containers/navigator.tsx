@@ -1,63 +1,39 @@
 import * as React from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ICommand } from "../api/common";
 import { Navigator, ZoomDirection, PanDirection } from "../components/navigator";
-import { invokeCommand, setScale } from "../actions/map";
+import * as MapActions from "../actions/map";
 import { getCommand, DefaultCommands } from "../api/registry/command";
 import {
     IMapView,
-    IConfigurationReducerState,
-    IViewerReducerState,
-    ReduxDispatch,
     IApplicationState,
     getRuntimeMap
 } from "../api/common";
-import { DEFAULT_LOCALE } from "../api/i18n";
 
 export interface INavigatorContainerProps {
     style?: React.CSSProperties;
 }
 
-export interface INavigatorContainerState {
-    viewer: IViewerReducerState;
-    config: IConfigurationReducerState;
-    view: IMapView | null;
-    finiteScales: number[] | undefined;
-}
-
-export interface INavigatorContainerDispatch {
-    invokeCommand: (cmd: ICommand, parameters?: any) => void;
-    setScale: (mapName: string, scale: number) => void;
-}
-
-function mapStateToProps(state: Readonly<IApplicationState>): Partial<INavigatorContainerState> {
-    let view;
-    const map = getRuntimeMap(state);
-    if (state.config.activeMapName) {
-        view = state.mapState[state.config.activeMapName].currentView;
-    }
-    return {
-        config: state.config,
-        viewer: state.viewer,
-        view: view,
-        finiteScales: map != null ? map.FiniteDisplayScale : undefined
-    };
-}
-
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<INavigatorContainerDispatch> {
-    return {
-        setScale: (mapName, scale) => dispatch(setScale(mapName, scale)),
-        invokeCommand: (cmd, parameters) => dispatch(invokeCommand(cmd, parameters))
-    };
-}
-
-export type NavigatorContainerProps = INavigatorContainerProps & Partial<INavigatorContainerState> & Partial<INavigatorContainerDispatch>;
-
-export class NavigatorContainer extends React.Component<NavigatorContainerProps, any> {
-    constructor(props: NavigatorContainerProps) {
-        super(props);
-    }
-    private onZoom = (direction: ZoomDirection) => {
+const NavigatorContainer = (props: INavigatorContainerProps) => {
+    const { style } = props;
+    const dispatch = useDispatch();
+    const locale = useSelector<IApplicationState, string>(state => state.config.locale);
+    const finiteScales = useSelector<IApplicationState, number[] | undefined>(state => {
+        const map = getRuntimeMap(state);
+        return map != null ? map.FiniteDisplayScale : undefined;
+    });
+    const view = useSelector<IApplicationState, IMapView | undefined>(state => {
+        let v;
+        if (state.config.activeMapName) {
+            v = state.mapState[state.config.activeMapName].currentView;
+        }
+        return v;
+    });
+    const busyCount = useSelector<IApplicationState, number>(state => state.viewer.busyCount);
+    const activeMapName = useSelector<IApplicationState, string | undefined>(state => state.config.activeMapName);
+    const setScale = (mapName: string, scale: number) => dispatch(MapActions.setScale(mapName, scale));
+    const invokeCommand = (cmd: ICommand, parameters?: any) => dispatch(MapActions.invokeCommand(cmd, parameters));
+    const onZoom = (direction: ZoomDirection) => {
         let cmd: ICommand | undefined;
         switch (direction) {
             case ZoomDirection.In:
@@ -67,11 +43,11 @@ export class NavigatorContainer extends React.Component<NavigatorContainerProps,
                 cmd = getCommand(DefaultCommands.ZoomOut);
                 break;
         }
-        if (cmd && this.props.invokeCommand) {
-            this.props.invokeCommand(cmd);
+        if (cmd) {
+            invokeCommand(cmd);
         }
-    }
-    private onPan = (direction: PanDirection) => {
+    };
+    const onPan = (direction: PanDirection) => {
         let cmd: ICommand | undefined;
         switch (direction) {
             case PanDirection.East:
@@ -87,35 +63,27 @@ export class NavigatorContainer extends React.Component<NavigatorContainerProps,
                 cmd = getCommand(DefaultCommands.PanDown);
                 break;
         }
-        if (cmd && this.props.invokeCommand) {
-            this.props.invokeCommand(cmd);
+        if (cmd) {
+            invokeCommand(cmd);
         }
-    }
-    private onRequestZoomToScale = (scale: number) => {
-        const { setScale, config } = this.props;
-        if (setScale && config && config.activeMapName) {
-            setScale(config.activeMapName, scale);
+    };
+    const onRequestZoomToScale = (scale: number) => {
+        if (activeMapName) {
+            setScale(activeMapName, scale);
         }
-    }
-    private getLocale(): string {
-        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
-    }
-    render(): JSX.Element {
-        const { style, viewer, view, finiteScales } = this.props;
-        const locale = this.getLocale();
-        if (viewer != null && view != null) {
-            return <Navigator style={style}
-                              scale={view.scale}
-                              finiteScaleList={finiteScales}
-                              locale={locale}
-                              busy={viewer.busyCount > 0}
-                              onRequestZoomToScale={this.onRequestZoomToScale}
-                              onPan={this.onPan}
-                              onZoom={this.onZoom} />;
-        } else {
-            return <div />;
-        }
+    };
+    if (view) {
+        return <Navigator style={style}
+            scale={view.scale}
+            finiteScaleList={finiteScales}
+            locale={locale}
+            busy={busyCount > 0}
+            onRequestZoomToScale={onRequestZoomToScale}
+            onPan={onPan}
+            onZoom={onZoom} />;
+    } else {
+        return <div />;
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(NavigatorContainer);
+export default NavigatorContainer;

@@ -34,6 +34,7 @@ import { tr } from "../api/i18n";
 import { IOLFactory, OLFactory } from "../api/ol-factory";
 import { Toaster, Position, Intent } from '@blueprintjs/core';
 import * as logger from "../utils/logger";
+import { useActiveMapState, useActiveMapSelectionSet, useActiveMapView, useActiveMapInitialView, useActiveMapExternalBaseLayers, useActiveMapSelectableLayers, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapHideLayers, useActiveMapActiveSelectedFeature, useIsContextMenuOpen, useActiveMapName, useActiveMapSessionId, useActiveMapSelectableLayerNames, useViewerActiveTool, useConfiguredAgentUri, useConfiguredAgentKind, useViewerViewRotation, useViewerViewRotationEnabled, useViewerLocale, useViewerImageFormat, useViewerSelectionImageFormat, useViewerSelectionColor, useViewerActiveFeatureSelectionColor as useViewerActiveSelectedFeatureColor, useViewerPointSelectionBuffer, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey } from './hooks';
 
 export interface IMapViewerContainerProps {
     overviewMapElementSelector?: () => (Element | null);
@@ -73,6 +74,7 @@ interface MVDispatch {
     hideContextMenu: () => void;
 }
 
+/*
 function useMapContainerState(): IMapViewerContainerState {
     const st = useSelector<IApplicationState, IMapViewerContainerState>(state => {
         let map;
@@ -126,6 +128,7 @@ function useMapContainerState(): IMapViewerContainerState {
     });
     return st;
 }
+*/
 
 type INonBaseMapViewer = Pick<IMapViewer,
     "toastSuccess" |
@@ -315,23 +318,39 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
     const { overviewMapElementSelector } = props;
     const toasterRef = React.useRef<Toaster>(null);
     const innerRef = React.useRef<MapViewerBase>(null);
-    const {
-        map,
-        selection,
-        config,
-        viewer,
-        currentView,
-        externalBaseLayers,
-        initialView,
-        selectableLayers,
-        layerTransparency,
-        showGroups,
-        hideGroups,
-        showLayers,
-        hideLayers,
-        activeSelectedFeature,
-        isContextMenuOpen
-    } = useMapContainerState();
+    const locale = useViewerLocale();
+    const map = useActiveMapState();
+    const selection = useActiveMapSelectionSet();
+    const currentView = useActiveMapView();
+    const initialView = useActiveMapInitialView();
+    const externalBaseLayers = useActiveMapExternalBaseLayers();
+    const selectableLayers = useActiveMapSelectableLayers();
+    const layerTransparency = useActiveMapLayerTransparency();
+    const showGroups = useActiveMapShowGroups();
+    const hideGroups = useActiveMapHideGroups();
+    const showLayers = useActiveMapShowLayers();
+    const hideLayers = useActiveMapHideLayers();
+    const activeSelectedFeature = useActiveMapActiveSelectedFeature();
+    const isContextMenuOpen = useIsContextMenuOpen();
+    const activeMapName = useActiveMapName();
+    const sessionId = useActiveMapSessionId();
+    const selectableLayerNames = useActiveMapSelectableLayerNames();
+    const tool = useViewerActiveTool();
+    const agentUri = useConfiguredAgentUri();
+    const agentKind = useConfiguredAgentKind();
+    const viewRotation = useViewerViewRotation();
+    const viewRotationEnabled = useViewerViewRotationEnabled();
+    const imageFormat = useViewerImageFormat();
+    const selectionImageFormat = useViewerSelectionImageFormat();
+    const selectionColor = useViewerSelectionColor();
+    const activeSelectedFeatureColor = useViewerActiveSelectedFeatureColor();
+    const pointSelectionBuffer = useViewerPointSelectionBuffer();
+    const featureTooltipsEnabled = useViewerFeatureTooltipsEnabled();
+    const manualFeatureTooltips = useConfiguredManualFeatureTooltips();
+    const loadIndicatorPositioning = useConfiguredLoadIndicatorPositioning();
+    const loadIndicatorColor = useConfiguredLoadIndicatorColor();
+    const cancelDigitizationKey = useConfiguredCancelDigitizationKey();
+    const undoLastPointKey = useConfiguredUndoLastPointKey();
     const dispatch = useDispatch();
     const setActiveTool: PropType<MVDispatch, "setActiveTool"> = (tool) => dispatch(MapActions.setActiveTool(tool));
     const setCurrentView: PropType<MVDispatch, "setCurrentView"> = (view) => dispatch(MapActions.setCurrentView(view));
@@ -355,13 +374,12 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
             Runtime.setViewer(adapter);
             const browserWindow: any = window;
             browserWindow.getViewer = browserWindow.getViewer || Runtime.getViewer;
-            const { agentUri, agentKind } = config;
             if (agentUri) {
                 browserWindow.getClient = browserWindow.getClient || (() => new Client(agentUri, agentKind));
             }
             logger.debug(`React.useEffect - Attached runtime viewer instance and installed browser global APIs`);
         }
-    }, [innerRef.current]);
+    }, [innerRef, agentUri, agentKind]);
     // Side-effect to imperatively refresh the map upon selection change
     React.useEffect(() => {
         logger.debug(`React.useEffect - Change of selection`);
@@ -372,7 +390,7 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
     React.useEffect(() => {
         logger.debug(`React.useEffect - Change of any of [toasterRef.current, map, selection, viewer, config]`);
         const adapter = Runtime.getViewer() as MapViewerAdapter;
-        if (adapter) {
+        if (adapter && sessionId && activeMapName) {
             const external: INonBaseMapViewer = {
                 dismissToast: key => toasterRef.current?.dismiss(key),
                 toastSuccess: (iconName, message) => toasterRef.current?.show({ icon: (iconName as any), message: message, intent: Intent.SUCCESS }),
@@ -381,12 +399,12 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
                 toastPrimary: (iconName, message) => toasterRef.current?.show({ icon: (iconName as any), message: message, intent: Intent.PRIMARY }),
                 setViewRotation: setViewRotation,
                 setViewRotationEnabled: setViewRotationEnabled,
-                getViewRotation: () => config.viewRotation,
-                isViewRotationEnabled: () => config.viewRotationEnabled,
-                getSessionId: () => map.SessionId,
-                getMapName: () => map.Name,
+                getViewRotation: () => viewRotation,
+                isViewRotationEnabled: () => viewRotationEnabled,
+                getSessionId: () => sessionId,
+                getMapName: () => activeMapName,
                 setActiveTool: setActiveTool,
-                getActiveTool: () => viewer.tool,
+                getActiveTool: () => tool,
                 setFeatureTooltipEnabled: setFeatureTooltipsEnabled,
                 getSelection: () => selection,
                 getSelectionXml: (s, layerIds) => buildSelectionXml(s, layerIds)
@@ -394,7 +412,7 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
             adapter.attachExternal(external);
             logger.debug(`Attached updated external "API" to runtime viewer instance`);
         }
-    }, [toasterRef.current, map, selection, viewer, config]);
+    }, [toasterRef, sessionId, activeMapName, selection, tool, viewRotation, viewRotationEnabled]);
 
     const onBeginDigitization = (callback: (cancelled: boolean) => void) => {
         setActiveTool?.(ActiveMapTool.None);
@@ -405,8 +423,8 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
     const onMapResized = (size: [number, number]) => mapResized?.(size[0], size[1]);
     const onRequestZoomToView = (view: IMapView) => setCurrentView?.(view);
     const onQueryMapFeatures = (options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) => {
-        if (config?.activeMapName) {
-            queryMapFeatures?.(config.activeMapName, {
+        if (activeMapName) {
+            queryMapFeatures?.(activeMapName, {
                 options: options,
                 //append: this.inner.state.shiftKey === true,
                 callback: success,
@@ -417,28 +435,22 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
     const onBusyLoading = (busyCount: number) => setBusyCount?.(busyCount);
     const onRotationChanged = (newRotation: number) => setViewRotation?.(newRotation);
     const onMouseCoordinateChanged = (coord: Coordinate) => {
-        if (config?.activeMapName) {
-            setMouseCoordinates?.(config.activeMapName, coord);
+        if (activeMapName) {
+            setMouseCoordinates?.(activeMapName, coord);
         }
     };
     const onSessionExpired = () => {
-        if (config) {
-            showModalComponent?.({
-                modal: {
-                    title: tr("SESSION_EXPIRED", config.locale),
-                    backdrop: true
-                },
-                name: DefaultComponentNames.SessionExpired,
-                id: DefaultComponentNames.SessionExpired
-            });
-        }
+        showModalComponent?.({
+            modal: {
+                title: tr("SESSION_EXPIRED", locale),
+                backdrop: true
+            },
+            name: DefaultComponentNames.SessionExpired,
+            id: DefaultComponentNames.SessionExpired
+        });
     };
     const onHideContextMenu = () => hideContextMenu?.();
     const onContextMenu = (pos: [number, number]) => showContextMenu?.(pos);
-
-    const selectableLayerNames = (map.Layer || [])
-        .filter(layer => layer.Selectable && selectableLayers[layer.ObjectId] !== false)
-        .map(layer => layer.Name);
     /*
     const store = (this.context as any).store;
     const items: any[] = contextmenu != null ? contextmenu.items : [];
@@ -449,26 +461,26 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
     if (activeSelectedFeature && selection && selection.FeatureSet) {
         xml = getActiveSelectedFeatureXml(selection.FeatureSet, activeSelectedFeature);
     }
-    if (config.agentUri) {
+    if (map && agentUri) {
         return <>
             {/* HACK: usePortal=false to workaround what I think is: https://github.com/palantir/blueprint/issues/3248 */}
             <Toaster usePortal={false} position={Position.TOP} ref={toasterRef} />
             <MapViewerBase ref={innerRef}
                 map={map}
-                agentUri={config.agentUri}
-                agentKind={config.agentKind}
-                locale={config.locale}
+                agentUri={agentUri}
+                agentKind={agentKind}
+                locale={locale}
                 externalBaseLayers={externalBaseLayers}
-                imageFormat={config.viewer.imageFormat}
-                selectionImageFormat={config.viewer.selectionImageFormat}
-                selectionColor={config.viewer.selectionColor}
-                activeSelectedFeatureColor={config.viewer.activeSelectedFeatureColor}
-                pointSelectionBuffer={config.viewer.pointSelectionBuffer}
-                tool={viewer.tool}
-                viewRotation={config.viewRotation}
-                viewRotationEnabled={config.viewRotationEnabled}
-                featureTooltipsEnabled={viewer.featureTooltipsEnabled}
-                manualFeatureTooltips={config.manualFeatureTooltips}
+                imageFormat={imageFormat}
+                selectionImageFormat={selectionImageFormat}
+                selectionColor={selectionColor}
+                activeSelectedFeatureColor={activeSelectedFeatureColor}
+                pointSelectionBuffer={pointSelectionBuffer}
+                tool={tool}
+                viewRotation={viewRotation}
+                viewRotationEnabled={viewRotationEnabled}
+                featureTooltipsEnabled={featureTooltipsEnabled}
+                manualFeatureTooltips={manualFeatureTooltips}
                 showGroups={showGroups}
                 hideGroups={hideGroups}
                 showLayers={showLayers}
@@ -476,8 +488,8 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
                 view={currentView || initialView}
                 selectableLayerNames={selectableLayerNames}
                 overviewMapElementSelector={overviewMapElementSelector}
-                loadIndicatorPosition={config.viewer.loadIndicatorPositioning}
-                loadIndicatorColor={config.viewer.loadIndicatorColor}
+                loadIndicatorPosition={loadIndicatorPositioning}
+                loadIndicatorColor={loadIndicatorColor}
                 layerTransparency={layerTransparency || Constants.EMPTY_OBJECT}
                 onBeginDigitization={onBeginDigitization}
                 onSessionExpired={onSessionExpired}
@@ -487,15 +499,15 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
                 onQueryMapFeatures={onQueryMapFeatures}
                 onRequestZoomToView={onRequestZoomToView}
                 onMapResized={onMapResized}
-                cancelDigitizationKey={config.cancelDigitizationKey}
-                undoLastPointKey={config.undoLastPointKey}
+                cancelDigitizationKey={cancelDigitizationKey}
+                undoLastPointKey={undoLastPointKey}
                 activeSelectedFeatureXml={xml}
                 onContextMenu={onContextMenu}
                 onHideContextMenu={onHideContextMenu}
                 isContextMenuOpen={!!isContextMenuOpen} />
         </>;
     }
-    return <div>{tr("LOADING_MSG", config.locale)}</div>;
+    return <div>{tr("LOADING_MSG", locale)}</div>;
 };
 
 export default MapViewerContainer;

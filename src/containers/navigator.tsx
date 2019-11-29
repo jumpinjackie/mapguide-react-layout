@@ -1,14 +1,10 @@
 import * as React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { ICommand } from "../api/common";
 import { Navigator, ZoomDirection, PanDirection } from "../components/navigator";
 import * as MapActions from "../actions/map";
 import { getCommand, DefaultCommands } from "../api/registry/command";
-import {
-    IMapView,
-    IApplicationState,
-    getRuntimeMap
-} from "../api/common";
+import { useViewerLocale, useActiveMapFiniteScales, useActiveMapView, useActiveMapName, useViewerBusyCount } from './hooks';
 
 export interface INavigatorContainerProps {
     style?: React.CSSProperties;
@@ -17,20 +13,11 @@ export interface INavigatorContainerProps {
 const NavigatorContainer = (props: INavigatorContainerProps) => {
     const { style } = props;
     const dispatch = useDispatch();
-    const locale = useSelector<IApplicationState, string>(state => state.config.locale);
-    const finiteScales = useSelector<IApplicationState, number[] | undefined>(state => {
-        const map = getRuntimeMap(state);
-        return map != null ? map.FiniteDisplayScale : undefined;
-    });
-    const view = useSelector<IApplicationState, IMapView | undefined>(state => {
-        let v;
-        if (state.config.activeMapName) {
-            v = state.mapState[state.config.activeMapName].currentView;
-        }
-        return v;
-    });
-    const busyCount = useSelector<IApplicationState, number>(state => state.viewer.busyCount);
-    const activeMapName = useSelector<IApplicationState, string | undefined>(state => state.config.activeMapName);
+    const locale = useViewerLocale();
+    const finiteScales = useActiveMapFiniteScales();
+    const view = useActiveMapView();
+    const busyCount = useViewerBusyCount();;
+    const activeMapName = useActiveMapName();
     const setScale = (mapName: string, scale: number) => dispatch(MapActions.setScale(mapName, scale));
     const invokeCommand = (cmd: ICommand, parameters?: any) => dispatch(MapActions.invokeCommand(cmd, parameters));
     const onZoom = (direction: ZoomDirection) => {

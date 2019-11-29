@@ -1,39 +1,19 @@
 import * as React from "react";
-import { useSelector } from "react-redux";
-import {
-    Coordinate,
-    IApplicationState
-} from "../api/common";
 import { tr } from "../api/i18n";
 import olProj from "ol/proj";
 import { Callout, Intent } from '@blueprintjs/core';
+import { useViewerLocale, useCurrentMouseCoordinates, useActiveMapProjection } from './hooks';
 
 export interface ICoordinateTrackerContainerProps {
     projections: string[];
 }
 
-interface CTState {
-    mouse: Coordinate | undefined;
-    locale: string;
-    proj: string;
-}
 
 const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerProps) => {
     const { projections } = props;
-    const { locale, mouse, proj } = useSelector<IApplicationState, CTState>(state => {
-        let proj;
-        if (state.config.activeMapName) {
-            const map = state.mapState[state.config.activeMapName].runtimeMap;
-            if (map) {
-                proj = `EPSG:${map.CoordinateSystem.EpsgCode}`;
-            }
-        }
-        return {
-            mouse: state.mouse.coords,
-            locale: state.config.locale,
-            proj: proj
-        } as CTState;
-    })
+    const locale = useViewerLocale();
+    const mouse = useCurrentMouseCoordinates();
+    const proj = useActiveMapProjection();
     if (projections && projections.length) {
         return <div style={{ margin: 8 }}>
             <h5>{tr("COORDTRACKER", locale)}</h5>

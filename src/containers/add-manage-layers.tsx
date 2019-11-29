@@ -1,14 +1,13 @@
 import * as React from "react";
-import { useSelector } from "react-redux";
 import * as Runtime from "../api/runtime";
 import { tr } from "../api/i18n";
 import {
-    IApplicationState,
     ILayerInfo
 } from "../api/common";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
 import { Tabs, Tab, Icon } from '@blueprintjs/core';
+import { useViewerLocale } from './hooks';
 
 interface ILayerManagerProps {
     locale: string | undefined;
@@ -67,8 +66,8 @@ export interface IAddManageLayersContainerProps {
 
 }
 
-const AddManageLayersContainer = (props: IAddManageLayersContainerProps) => {
-    const locale = useSelector<IApplicationState, string>(st => st.config.locale);
+const AddManageLayersContainer = () => {
+    const locale = useViewerLocale();
     return <Tabs id="tabs" renderActiveTabPanelOnly={true}>
         <Tab id="add_layer" title={<span><Icon icon="new-layer" iconSize={Icon.SIZE_STANDARD} /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer locale={locale} />} />
         <Tab id="manage_layers" title={<span><Icon icon="layers" iconSize={Icon.SIZE_STANDARD} /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<LayerManager locale={locale} />} />

@@ -1,14 +1,12 @@
 import * as React from "react";
-import { useSelector } from "react-redux";
 import {
     Coordinate,
-    IApplicationState,
-    ICoordinateConfiguration,
     UnitOfMeasure
 } from "../api/common";
 import { MouseCoordinates } from "../components/mouse-coordinates";
 import olProj from "ol/proj";
 import { getUnitOfMeasure } from "../utils/units";
+import { useViewerLocale, useCurrentMouseCoordinates, useActiveMapProjection, useConfiguredCoordinateProjection, useConfiguredCoordinateDecimals, useConfiguredCoordinateFormat } from './hooks';
 
 export interface IMouseCoordinatesContainerProps {
     style: React.CSSProperties;
@@ -16,21 +14,14 @@ export interface IMouseCoordinatesContainerProps {
 
 const MouseCoordinatesContainer = (props: IMouseCoordinatesContainerProps) => {
     const { style } = props;
-    const mapProjection = useSelector<IApplicationState, string | undefined>(state => {
-        let mp;
-        if (state.config.activeMapName) {
-            const map = state.mapState[state.config.activeMapName].runtimeMap;
-            if (map) {
-                mp = `EPSG:${map.CoordinateSystem.EpsgCode}`;
-            }
-        }
-        return mp;
-    });
-    const config = useSelector<IApplicationState, ICoordinateConfiguration>(state => state.config.coordinates);
-    const mouse = useSelector<IApplicationState, Coordinate | undefined>(state => state.mouse.coords);
-    const locale = useSelector<IApplicationState, string>(state => state.config.locale);
-    if (config && mouse) {
-        const prj = olProj.get(config.projection || mapProjection);
+    const mapProjection = useActiveMapProjection();
+    const projection = useConfiguredCoordinateProjection();
+    const decimals = useConfiguredCoordinateDecimals();
+    const format = useConfiguredCoordinateFormat();
+    const mouse = useCurrentMouseCoordinates();
+    const locale = useViewerLocale();
+    if (mouse) {
+        const prj = olProj.get(projection || mapProjection);
         let units;
         if (prj) {
             units = prj.getUnits();
@@ -52,14 +43,14 @@ const MouseCoordinatesContainer = (props: IMouseCoordinatesContainerProps) => {
             }
         }
         let coords: Coordinate = [mouse[0], mouse[1]];
-        if (config.projection && mapProjection) {
+        if (projection && mapProjection) {
             try {
-                coords = olProj.transform(coords, mapProjection, config.projection);
+                coords = olProj.transform(coords, mapProjection, projection);
             } catch (e) {
 
             }
         }
-        return <MouseCoordinates units={units} coords={coords} style={style} decimals={config.decimals} format={config.format} />;
+        return <MouseCoordinates units={units} coords={coords} style={style} decimals={decimals} format={format} />;
     } else {
         return <div />;
     }

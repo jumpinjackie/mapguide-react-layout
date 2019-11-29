@@ -1,18 +1,11 @@
 import * as React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
-    INameValuePair,
-    IApplicationState,
     PropType
 } from "../api/common";
 import { MapMenu } from "../components/map-menu";
 import * as MapActions from "../actions/map";
-
-interface MMCState {
-    locale: string;
-    activeMapName: string;
-    availableMaps: INameValuePair[];
-}
+import { useViewerLocale, useActiveMapName, useAvailableMaps } from './hooks';
 
 interface MMCDispatch {
     setActiveMap: (mapName: string) => void;
@@ -20,13 +13,9 @@ interface MMCDispatch {
 
 const MapMenuContainer = () => {
     const dispatch = useDispatch();
-    const { locale, activeMapName, availableMaps } = useSelector<IApplicationState, MMCState>(state => {
-        return {
-            locale: state.config.locale,
-            activeMapName: state.config.activeMapName,
-            availableMaps: state.config.availableMaps
-        } as MMCState;
-    });
+    const locale = useViewerLocale();
+    const activeMapName = useActiveMapName();
+    const availableMaps = useAvailableMaps();
     const setActiveMap: PropType<MMCDispatch, "setActiveMap"> = (mapName: string) => dispatch(MapActions.setActiveMap(mapName));
     const onActiveMapChanged = (mapName: string) => setActiveMap(mapName);
     if (locale && activeMapName && availableMaps) {

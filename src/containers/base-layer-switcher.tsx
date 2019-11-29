@@ -1,21 +1,14 @@
 import * as React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
-    IExternalBaseLayer,
-    IApplicationState,
     PropType
 } from "../api/common";
 import { BaseLayerSwitcher } from "../components/base-layer-switcher";
 import * as MapActions from "../actions/map";
+import { useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers } from './hooks';
 
 export interface IBaseLayerSwitcherContainerProps {
 
-}
-
-interface BLSState {
-    mapName: string;
-    locale: string;
-    externalBaseLayers: IExternalBaseLayer[];
 }
 
 interface BLSDispatch {
@@ -23,17 +16,9 @@ interface BLSDispatch {
 }
 
 const BaseLayerSwitcherContainer = () => {
-    const { mapName, locale, externalBaseLayers } = useSelector<IApplicationState, BLSState>(state => {
-        let externalBaseLayers;
-        if (state.config.activeMapName) {
-            externalBaseLayers = state.mapState[state.config.activeMapName].externalBaseLayers;
-        }
-        return {
-            mapName: state.config.activeMapName,
-            locale: state.config.locale,
-            externalBaseLayers: externalBaseLayers
-        } as BLSState;
-    });
+    const mapName = useActiveMapName();
+    const locale = useViewerLocale();
+    const externalBaseLayers = useActiveMapExternalBaseLayers();
     const dispatch = useDispatch();
     const setBaseLayer: PropType<BLSDispatch, "setBaseLayer"> = (mapName: string, layerName: string) => dispatch(MapActions.setBaseLayer(mapName, layerName));
     const onBaseLayerChanged = (layerName: string) => {

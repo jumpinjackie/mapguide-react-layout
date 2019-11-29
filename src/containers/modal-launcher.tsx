@@ -16,6 +16,7 @@ import {
 } from "../utils/type-guards";
 import { assertNever } from "../utils/never";
 import { ParsedComponentUri, parseComponentUri, isComponentUri } from "../utils/url";
+import { useViewerLocale } from './hooks';
 
 function getComponentId(diag: IModalComponentDisplayOptions | IModalDisplayOptions): ParsedComponentUri | undefined {
     if (isModalComponentDisplayOptions(diag)) {
@@ -32,7 +33,7 @@ const ModalLauncher = (props: { children?: React.ReactNode }) => {
     const hideModal = (options: any) => dispatch(ModalActions.hideModal(options));
     const onCloseModal = (name: string) => hideModal({ name: name });
     const modal = useSelector<IApplicationState, IModalReducerState>(state => state.modal);
-    const locale = useSelector<IApplicationState, string>(state => state.config.locale);
+    const locale = useViewerLocale();
     const MODAL_INIT_X = 500;
     const MODAL_INIT_Y = 80;
     if (!modal) {

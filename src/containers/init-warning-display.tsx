@@ -1,28 +1,20 @@
 import * as React from "react";
-import { IApplicationState } from "../api/common";
 import { acknowledgeInitWarnings } from "../actions/init";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { tr } from "../api/i18n";
 import { Dialog, Button, Intent } from '@blueprintjs/core';
+import { useInitWarnings, useViewerLocale } from './hooks';
 
 export interface IInitWarningDisplayProps {
 
 }
 
-interface IWDState {
-    warnings: string[];
-    locale: string;
-}
 
 const InitWarningDisplay = () => {
     const dispatch = useDispatch();
     const acknowledge = () => dispatch(acknowledgeInitWarnings());
-    const { warnings, locale } = useSelector<IApplicationState, IWDState>(state => {
-        return {
-            warnings: state.initError.warnings,
-            locale: state.config.locale
-        };
-    });
+    const warnings = useInitWarnings();
+    const locale = useViewerLocale();
     if (warnings && warnings.length && acknowledge) {
         return <Dialog
             icon="warning-sign"

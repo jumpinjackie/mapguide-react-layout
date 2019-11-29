@@ -1,8 +1,14 @@
-import { IApplicationState, IMapView, UnitOfMeasure, getRuntimeMap, getCurrentView } from '../api/common';
+import { IApplicationState, IMapView, UnitOfMeasure, getRuntimeMap, getCurrentView, IExternalBaseLayer, Coordinate } from '../api/common';
 import { useSelector } from 'react-redux';
+import { RuntimeMap, getExternalBaseLayers, INameValuePair, ActiveSelectedFeature, LayerTransparencySet, QueryMapFeaturesResponse, ActiveMapTool, ClientKind, ImageFormat, MapLoadIndicatorPositioning } from '../api';
+import { WEBLAYOUT_CONTEXTMENU } from '../constants';
 
 export function useActiveMapName() {
     return useSelector<IApplicationState, string | undefined>(state => state.config.activeMapName);
+}
+
+export function useActiveMapSessionId() {
+    return useSelector<IApplicationState, string | undefined>(state => getRuntimeMap(state)?.SessionId);
 }
 
 export function useViewerLocale() {
@@ -45,4 +51,190 @@ export function useActiveMapFiniteScales() {
         const map = getRuntimeMap(state);
         return map != null ? map.FiniteDisplayScale : undefined;
     });
+}
+
+export function useActiveMapExternalBaseLayers() {
+    return useSelector<IApplicationState, IExternalBaseLayer[] | undefined>(state => getExternalBaseLayers(state));
+}
+
+export function useActiveMapProjection() {
+    return useSelector<IApplicationState, string | undefined>(state => {
+        let proj;
+        if (state.config.activeMapName) {
+            const map = state.mapState[state.config.activeMapName].runtimeMap;
+            if (map) {
+                proj = `EPSG:${map.CoordinateSystem.EpsgCode}`;
+            }
+        }
+        return proj;
+    });
+}
+
+export function useCurrentMouseCoordinates() {
+    return useSelector<IApplicationState, Coordinate | undefined>(state => state.mouse.coords);
+}
+
+export function useViewerFlyouts() {
+    return useSelector<IApplicationState, any>(state => state.toolbar.flyouts);
+}
+
+export function useInitWarnings() {
+    return useSelector<IApplicationState, string[]>(state => state.initError.warnings);
+}
+
+function getActiveMapBranch(state: IApplicationState) {
+    if (state.config.activeMapName) {
+        return state.mapState[state.config.activeMapName];
+    }
+    return undefined;
+}
+
+export function useActiveMapExpandedGroups() {
+    return useSelector<IApplicationState, string[]>(state => getActiveMapBranch(state)?.expandedGroups);
+}
+
+export function useActiveMapSelectableLayers() {
+    return useSelector<IApplicationState, any>(state => getActiveMapBranch(state)?.selectableLayers);
+}
+
+export function useActiveMapShowGroups() {
+    return useSelector<IApplicationState, string[] | undefined>(state => getActiveMapBranch(state)?.showGroups);
+}
+
+export function useActiveMapShowLayers() {
+    return useSelector<IApplicationState, string[] | undefined>(state => getActiveMapBranch(state)?.showLayers);
+}
+
+export function useActiveMapHideGroups(){
+    return useSelector<IApplicationState, string[] | undefined>(state => getActiveMapBranch(state)?.hideGroups);
+}
+
+export function useActiveMapHideLayers() {
+    return useSelector<IApplicationState, string[] | undefined>(state => getActiveMapBranch(state)?.hideLayers);
+}
+
+export function useActiveMapSelectableLayerNames() {
+    const map = useActiveMapState();
+    const selectableLayers = useActiveMapSelectableLayers();
+    if (map) {
+        const selectableLayerNames = (map.Layer || [])
+            .filter(layer => layer.Selectable && selectableLayers[layer.ObjectId] !== false)
+            .map(layer => layer.Name);
+        return selectableLayerNames;
+    }
+    return [];
+}
+
+export function useActiveMapLayerTransparency() {
+    return useSelector<IApplicationState, LayerTransparencySet | undefined>(state => getActiveMapBranch(state)?.layerTransparency);
+}
+
+export function useActiveMapActiveSelectedFeature() {
+    return useSelector<IApplicationState, ActiveSelectedFeature | undefined>(state => getActiveMapBranch(state)?.activeSelectedFeature);
+}
+
+export function useActiveMapSelectionSet() {
+    return useSelector<IApplicationState, QueryMapFeaturesResponse | null>(state => getActiveMapBranch(state)?.selectionSet ?? null);
+}
+
+export function useActiveMapInitialView() {
+    return useSelector<IApplicationState, IMapView | undefined>(state => getActiveMapBranch(state)?.initialView);
+}
+
+export function useActiveMapState() {
+    return useSelector<IApplicationState, RuntimeMap | undefined>(state => getRuntimeMap(state));
+}
+
+export function useAvailableMaps() {
+    return useSelector<IApplicationState, INameValuePair[] | undefined>(state => state.config.availableMaps);
+}
+
+export function useViewerBusyCount() {
+    return useSelector<IApplicationState, number>(state => state.viewer.busyCount);
+}
+
+export function useViewerViewRotation() {
+    return useSelector<IApplicationState, number>(state => state.config.viewRotation);
+}
+
+export function useViewerActiveTool() {
+    return useSelector<IApplicationState, ActiveMapTool>(state => state.viewer.tool);
+}
+
+export function useViewerViewRotationEnabled() {
+    return useSelector<IApplicationState, boolean>(state => state.config.viewRotationEnabled);
+}
+
+export function useConfiguredCoordinateProjection() {
+    return useSelector<IApplicationState, string>(state => state.config.coordinates.projection);
+}
+
+export function useConfiguredCoordinateDecimals() {
+    return useSelector<IApplicationState, number>(state => state.config.coordinates.decimals);
+}
+
+export function useConfiguredCoordinateFormat() {
+    return useSelector<IApplicationState, string | undefined>(state => state.config.coordinates.format);
+}
+
+export function useConfiguredAgentUri() {
+    return useSelector<IApplicationState, string | undefined>(state => state.config.agentUri);
+}
+
+export function useConfiguredAgentKind() {
+    return useSelector<IApplicationState, ClientKind>(state => state.config.agentKind);
+}
+
+export function useIsContextMenuOpen() {
+    return useSelector<IApplicationState, boolean>(state => {
+        let isContextMenuOpen = false;
+        if (state?.toolbar?.flyouts?.[WEBLAYOUT_CONTEXTMENU]?.open === true) {
+            isContextMenuOpen = true;
+        }
+        return isContextMenuOpen;
+    })
+}
+
+export function useViewerImageFormat() {
+    return useSelector<IApplicationState, ImageFormat>(state => state.config.viewer.imageFormat);
+}
+
+export function useViewerSelectionImageFormat() {
+    return useSelector<IApplicationState, ImageFormat>(state => state.config.viewer.selectionImageFormat);
+}
+
+export function useViewerSelectionColor() {
+    return useSelector<IApplicationState, string>(state => state.config.viewer.selectionColor);
+}
+
+export function useViewerActiveFeatureSelectionColor() {
+    return useSelector<IApplicationState, string>(state => state.config.viewer.activeSelectedFeatureColor);
+}
+
+export function useViewerPointSelectionBuffer() {
+    return useSelector<IApplicationState, number>(state => state.config.viewer.pointSelectionBuffer);
+}
+
+export function useViewerFeatureTooltipsEnabled() {
+    return useSelector<IApplicationState, boolean>(state => state.viewer.featureTooltipsEnabled);
+}
+
+export function useConfiguredManualFeatureTooltips() {
+    return useSelector<IApplicationState, boolean>(state => state.config.manualFeatureTooltips);
+}
+
+export function useConfiguredLoadIndicatorPositioning() {
+    return useSelector<IApplicationState, MapLoadIndicatorPositioning>(state => state.config.viewer.loadIndicatorPositioning);
+}
+
+export function useConfiguredLoadIndicatorColor() {
+    return useSelector<IApplicationState, string>(state => state.config.viewer.loadIndicatorColor);
+}
+
+export function useConfiguredCancelDigitizationKey() {
+    return useSelector<IApplicationState, number>(state => state.config.cancelDigitizationKey);
+}
+
+export function useConfiguredUndoLastPointKey() {
+    return useSelector<IApplicationState, number>(state => state.config.undoLastPointKey);
 }

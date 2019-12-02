@@ -93,7 +93,6 @@ const SlateTemplateLayout = () => {
     React.useEffect(() => {
         setCustomTemplateReducer(slateTemplateReducer);
     }, []);
-
     const onSplitterChanged = () => {
         //With the introduction of the splitter, we can no longer rely on a map 
         //filling 100% of its space without needing to manually call updateSize(),
@@ -102,7 +101,7 @@ const SlateTemplateLayout = () => {
         if (viewer) {
             viewer.updateSize();
         }
-    }
+    };
     const onActivePanelChanged = (id: string) => {
         const states: IElementState = {
             legendVisible: false,
@@ -123,7 +122,7 @@ const SlateTemplateLayout = () => {
         //One of these must be true
         if (states.legendVisible || states.taskPaneVisible || states.selectionPanelVisible)
             setElementStates(states);
-    }
+    };
     let hasStatusBar = false;
     let hasNavigator = false;
     if (capabilities) {

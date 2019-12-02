@@ -5,18 +5,15 @@ import ToolbarContainer from "../containers/toolbar";
 import ViewerApiShim from "../containers/viewer-shim";
 import ModalLauncher from "../containers/modal-launcher";
 import FlyoutRegionContainer from "../containers/flyout-region";
-import { useDispatch } from "react-redux";
 import { tr } from "../api/i18n";
-import * as Runtime from "../api/runtime";
 import { ITemplateReducerState } from "../api/common";
-import * as TemplateActions from "../actions/template";
 import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../components/accordion";
-import { setCustomTemplateReducer, isElementState } from "../reducers/template";
+import { isElementState } from "../reducers/template";
 import InitWarningDisplay from "../containers/init-warning-display";
 import SplitterLayout from "react-splitter-layout";
 import { ActionType } from '../constants/actions';
-import { IElementState, ViewerAction } from '../actions/defs';
-import { useViewerLocale, useConfiguredCapabilities, useTemplateSelectionVisible, useTemplateLegendVisible, useTemplateTaskPaneVisible } from '../containers/hooks';
+import { ViewerAction } from '../actions/defs';
+import { useCommonTemplateState } from './hooks';
 
 function slateTemplateReducer(state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
@@ -79,50 +76,18 @@ const SIDEBAR_WIDTH = 250;
 const STATUS_BAR_HEIGHT = 18;
 
 const SlateTemplateLayout = () => {
-    const [isResizing, setIsResizing] = React.useState(false);
-    const locale = useViewerLocale();
-    const capabilities = useConfiguredCapabilities();
-    const showSelection = useTemplateSelectionVisible();
-    const showLegend = useTemplateLegendVisible();
-    const showTaskPane = useTemplateTaskPaneVisible();
-    const dispatch = useDispatch();
-    const setElementStates = (states: IElementState) => dispatch(TemplateActions.setElementStates(states));
-    const onDragStart = () => setIsResizing(true);
-    const onDragEnd = () => setIsResizing(false);
-    //componentDidMount
-    React.useEffect(() => {
-        setCustomTemplateReducer(slateTemplateReducer);
-    }, []);
-    const onSplitterChanged = () => {
-        //With the introduction of the splitter, we can no longer rely on a map 
-        //filling 100% of its space without needing to manually call updateSize(),
-        //so we do it here
-        const viewer = Runtime.getViewer();
-        if (viewer) {
-            viewer.updateSize();
-        }
-    };
-    const onActivePanelChanged = (id: string) => {
-        const states: IElementState = {
-            legendVisible: false,
-            taskPaneVisible: false,
-            selectionPanelVisible: false
-        };
-        switch (id) {
-            case "Legend":
-                states.legendVisible = true;
-                break;
-            case "TaskPane":
-                states.taskPaneVisible = true;
-                break;
-            case "Selection":
-                states.selectionPanelVisible = true;
-                break;
-        }
-        //One of these must be true
-        if (states.legendVisible || states.taskPaneVisible || states.selectionPanelVisible)
-            setElementStates(states);
-    };
+    const {
+        isResizing,
+        locale,
+        capabilities,
+        showSelection,
+        showLegend,
+        showTaskPane,
+        onDragStart,
+        onDragEnd,
+        onSplitterChanged,
+        onActiveElementChanged,
+    } = useCommonTemplateState(slateTemplateReducer);
     let hasStatusBar = false;
     let hasNavigator = false;
     if (capabilities) {
@@ -182,7 +147,7 @@ const SlateTemplateLayout = () => {
                 {(() => {
                     if (showSelection || showTaskPane || showLegend) {
                         return <div>
-                            <Accordion style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0 }} onActivePanelChanged={onActivePanelChanged} activePanelId={activeId} panels={panels} isResizing={isResizing} />
+                            <Accordion style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0 }} onActivePanelChanged={onActiveElementChanged} activePanelId={activeId} panels={panels} isResizing={isResizing} />
                         </div>;
                     }
                 })()}

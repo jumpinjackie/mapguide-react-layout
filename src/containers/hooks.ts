@@ -254,3 +254,11 @@ export function useTemplateTaskPaneVisible() {
 export function useTemplateSelectionVisible() {
     return useSelector<IApplicationState, boolean>(state => state.template.selectionPanelVisible);
 }
+
+export function useTemplateInitialInfoPaneWidth() {
+    return useSelector<IApplicationState, number>(state => state.template.initialInfoPaneWidth);
+}
+
+export function useTemplateInitialTaskPaneWidth() {
+    return useSelector<IApplicationState, number>(state => state.template.initialTaskPaneWidth);
+}

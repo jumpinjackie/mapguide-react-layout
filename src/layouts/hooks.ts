@@ -23,7 +23,13 @@ export type CommonTemplateState = {
     onActiveElementChanged: (id: "Legend" | "TaskPane" | "Selection") => void;
 };
 
-export function useCommonTemplateState(templateReducer: TemplateReducerFunc): CommonTemplateState {
+export function useCommonTemplateState(templateReducer?: TemplateReducerFunc): CommonTemplateState {
+    //TODO: To promote more reusability, the resizing flag should be defined and set on a 
+    //dispatcher-defined basis.
+    //
+    //ie. A template could have more than 1 resizing flag. Right now, the AJAX viewer template is
+    //one such template, which awkwardly shows "Task Pane is resizing" UI when resizing the info pane
+    //(on the opposite side of the task pane!) due to this current limitation when it uses this hook
     const [isResizing, setIsResizing] = React.useState(false);
     const locale = useViewerLocale();
     const capabilities = useConfiguredCapabilities();
@@ -36,7 +42,9 @@ export function useCommonTemplateState(templateReducer: TemplateReducerFunc): Co
     const onDragEnd = () => setIsResizing(false);
     //componentDidMount
     React.useEffect(() => {
-        setCustomTemplateReducer(templateReducer);
+        if (templateReducer) {
+            setCustomTemplateReducer(templateReducer);
+        }
     }, []);
     const onSplitterChanged = () => {
         //With the introduction of the splitter, we can no longer rely on a map 

@@ -1,6 +1,6 @@
 import { IApplicationState, IMapView, UnitOfMeasure, getRuntimeMap, getCurrentView, IExternalBaseLayer, Coordinate } from '../api/common';
 import { useSelector } from 'react-redux';
-import { RuntimeMap, getExternalBaseLayers, INameValuePair, ActiveSelectedFeature, LayerTransparencySet, QueryMapFeaturesResponse, ActiveMapTool, ClientKind, ImageFormat, MapLoadIndicatorPositioning } from '../api';
+import { RuntimeMap, getExternalBaseLayers, INameValuePair, ActiveSelectedFeature, LayerTransparencySet, QueryMapFeaturesResponse, ActiveMapTool, ClientKind, ImageFormat, MapLoadIndicatorPositioning, getSelectionSet } from '../api';
 import { WEBLAYOUT_CONTEXTMENU } from '../constants';
 
 export function useActiveMapName() {
@@ -134,7 +134,7 @@ export function useActiveMapActiveSelectedFeature() {
 }
 
 export function useActiveMapSelectionSet() {
-    return useSelector<IApplicationState, QueryMapFeaturesResponse | null>(state => getActiveMapBranch(state)?.selectionSet ?? null);
+    return useSelector<IApplicationState, QueryMapFeaturesResponse | null>(state => getSelectionSet(state) ?? null);
 }
 
 export function useActiveMapInitialView() {

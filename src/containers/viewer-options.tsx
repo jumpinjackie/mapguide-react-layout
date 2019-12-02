@@ -1,178 +1,126 @@
 import * as React from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
     GenericEvent,
-    ReduxDispatch,
-    IApplicationState,
-    IViewerReducerState,
-    IConfigurationReducerState,
-    LayerTransparencySet,
-    IExternalBaseLayer,
     UnitOfMeasure
 } from "../api/common";
 import * as MapActions from "../actions/map";
-import { tr, DEFAULT_LOCALE } from "../api/i18n";
+import { tr } from "../api/i18n";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from "../constants/index";
 import { getUnits, getUnitOfMeasure } from "../utils/units";
 import { Slider, HTMLSelect } from '@blueprintjs/core';
+import { useActiveMapName, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSizeUnits, useViewerLocale, useActiveMapLayerTransparency, useActiveMapExternalBaseLayers } from './hooks';
 
 export interface IViewerOptionsProps {
 
 }
 
-export interface IViewerOptionsState {
-    viewer: IViewerReducerState;
-    config: IConfigurationReducerState;
-    layerTransparency: LayerTransparencySet;
-    externalBaseLayers: IExternalBaseLayer[];
-    mapName: string;
-}
-
-export interface IViewerOptionsDispatch {
-    toggleManualMapTips: (enabled: boolean) => void;
-    toggleMapTips: (enabled: boolean) => void;
-    setLayerTransparency: (mapName: string, id: string, opacity: number) => void;
-    setViewSizeDisplayUnits: (units: UnitOfMeasure) => void;
-}
-
-function mapStateToProps(state: Readonly<IApplicationState>): Partial<IViewerOptionsState> {
-    let layerTransparency;
-    let mapName = state.config.activeMapName;
-    let externalBaseLayers;
-    if (mapName) {
-        const branch = state.mapState[mapName];
-        layerTransparency = branch.layerTransparency;
-        externalBaseLayers = state.mapState[mapName].externalBaseLayers;
-    }
-    return {
-        viewer: state.viewer,
-        config: state.config,
-        mapName: mapName,
-        layerTransparency: layerTransparency,
-        externalBaseLayers: externalBaseLayers
-    };
-}
-
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IViewerOptionsDispatch> {
-    return {
-        toggleManualMapTips: (enabled) => dispatch(MapActions.setManualFeatureTooltipsEnabled(enabled)),
-        toggleMapTips: (enabled) => dispatch(MapActions.setFeatureTooltipsEnabled(enabled)),
-        setLayerTransparency: (mapName, id, opacity) => dispatch(MapActions.setLayerTransparency(mapName, id, opacity)),
-        setViewSizeDisplayUnits: (units) => dispatch(MapActions.setViewSizeUnits(units))
-    };
-}
-
-export type ViewerOptionsProps = IViewerOptionsProps & Partial<IViewerOptionsState> & Partial<IViewerOptionsDispatch>;
-
-export class ViewerOptions extends React.Component<ViewerOptionsProps, any> {
-    constructor(props: ViewerOptionsProps) {
-        super(props);
-    }
-    private onMgLayerOpacityChanged(mapName: string | undefined, layerId: string, value: number) {
+const ViewerOptions = () => {
+    const externalBaseLayers = useActiveMapExternalBaseLayers();
+    const mapName = useActiveMapName();
+    const layerTransparency = useActiveMapLayerTransparency();
+    const featureTooltipsEnabled = useViewerFeatureTooltipsEnabled();
+    const manualFeatureTooltips = useConfiguredManualFeatureTooltips();
+    const viewSizeUnits = useViewerSizeUnits();
+    const locale = useViewerLocale();
+    const dispatch = useDispatch();
+    const toggleManualMapTips = (enabled: boolean) => dispatch(MapActions.setManualFeatureTooltipsEnabled(enabled));
+    const toggleMapTips = (enabled: boolean) => dispatch(MapActions.setFeatureTooltipsEnabled(enabled));
+    const setLayerTransparency = (mapName: string, id: string, opacity: number) => dispatch(MapActions.setLayerTransparency(mapName, id, opacity));
+    const setViewSizeDisplayUnits = (units: UnitOfMeasure) => dispatch(MapActions.setViewSizeUnits(units));
+    const onMgLayerOpacityChanged = (mapName: string | undefined, layerId: string, value: number) => {
         if (mapName) {
-            this.props.setLayerTransparency?.(mapName, layerId, value);
+            setLayerTransparency?.(mapName, layerId, value);
+        }
+    };
+    const onBaseOpacityChanged = (value: number) => {
+        onMgLayerOpacityChanged(mapName, LAYER_ID_BASE, value);
+    };
+    const onMgOpacityChanged = (value: number) => {
+        onMgLayerOpacityChanged(mapName, LAYER_ID_MG_BASE, value);
+    };
+    const onMgSelOpacityChanged = (value: number) => {
+        onMgLayerOpacityChanged(mapName, LAYER_ID_MG_SEL_OVERLAY, value);
+    };
+    const onViewSizeUnitsChanged = (e: GenericEvent) => {
+        setViewSizeDisplayUnits(e.target.value);
+    };
+    const onFeatureTooltipsChanged = (e: GenericEvent) => {
+        toggleMapTips(e.target.checked);
+    };
+    const onManualFeatureTooltipsChanged = (e: GenericEvent) => {
+        toggleManualMapTips(e.target.checked);
+    };
+    const units = getUnits();
+    let opBase = 1.0;
+    let opMgBase = 1.0;
+    let opMgSelOverlay = 1.0;
+    if (layerTransparency) {
+        if (LAYER_ID_BASE in layerTransparency) {
+            opBase = layerTransparency[LAYER_ID_BASE];
+        }
+        if (LAYER_ID_MG_BASE in layerTransparency) {
+            opMgBase = layerTransparency[LAYER_ID_MG_BASE];
+        }
+        if (LAYER_ID_MG_SEL_OVERLAY in layerTransparency) {
+            opMgSelOverlay = layerTransparency[LAYER_ID_MG_SEL_OVERLAY];
         }
     }
-    private onBaseOpacityChanged = (value: number) => {
-        this.onMgLayerOpacityChanged(this.props.mapName, LAYER_ID_BASE, value);
-    }
-    private onMgOpacityChanged = (value: number) => {
-        this.onMgLayerOpacityChanged(this.props.mapName, LAYER_ID_MG_BASE, value);
-    }
-    private onMgSelOpacityChanged = (value: number) => {
-        this.onMgLayerOpacityChanged(this.props.mapName, LAYER_ID_MG_SEL_OVERLAY, value);
-    }
-    private onViewSizeUnitsChanged = (e: GenericEvent) => {
-        this.props.setViewSizeDisplayUnits?.(e.target.value);
-    }
-    private onFeatureTooltipsChanged = (e: GenericEvent) => {
-        this.props.toggleMapTips?.(e.target.checked);
-    }
-    private onManualFeatureTooltipsChanged = (e: GenericEvent) => {
-        this.props.toggleManualMapTips?.(e.target.checked);
-    }
-    render(): JSX.Element {
-        const { viewer, config, layerTransparency, externalBaseLayers } = this.props;
-        const locale = config ? config.locale : DEFAULT_LOCALE;
-        let opBase = 1.0;
-        let opMgBase = 1.0;
-        let opMgSelOverlay = 1.0;
-        if (layerTransparency) {
-            if (LAYER_ID_BASE in layerTransparency) {
-                opBase = layerTransparency[LAYER_ID_BASE];
+    return <div className="component-viewer-options">
+        <h5>{tr("VIEWER_OPTIONS", locale)}</h5>
+        <hr />
+        <label className="bp3-control bp3-switch">
+            <input type="checkbox" checked={featureTooltipsEnabled} onChange={onFeatureTooltipsChanged} />
+            <span className="bp3-control-indicator"></span>
+            {tr("FEATURE_TOOLTIPS", locale)}
+        </label>
+        {(() => {
+            if (featureTooltipsEnabled) {
+                return <label className="bp3-control bp3-switch">
+                    <input type="checkbox" checked={manualFeatureTooltips} onChange={onManualFeatureTooltipsChanged} />
+                    <span className="bp3-control-indicator"></span>
+                    {tr("MANUAL_FEATURE_TOOLTIPS", locale)}
+                </label>;
             }
-            if (LAYER_ID_MG_BASE in layerTransparency) {
-                opMgBase = layerTransparency[LAYER_ID_MG_BASE];
-            }
-            if (LAYER_ID_MG_SEL_OVERLAY in layerTransparency) {
-                opMgSelOverlay = layerTransparency[LAYER_ID_MG_SEL_OVERLAY];
-            }
-        }
-        return <div className="component-viewer-options">
-            <h5>{tr("VIEWER_OPTIONS", locale)}</h5>
-            <hr />
+        })()}
+        <fieldset>
+            <legend>{tr("LAYER_TRANSPARENCY", locale)}</legend>
             {(() => {
-                if (viewer) {
-                    return <label className="bp3-control bp3-switch">
-                        <input type="checkbox" checked={viewer.featureTooltipsEnabled} onChange={this.onFeatureTooltipsChanged} />
-                        <span className="bp3-control-indicator"></span>
-                        {tr("FEATURE_TOOLTIPS", locale)}
-                    </label>;
-                }
-            })()}
-            {(() => {
-                if (config && viewer && viewer.featureTooltipsEnabled) {
-                    return <label className="bp3-control bp3-switch">
-                        <input type="checkbox" checked={config.manualFeatureTooltips} onChange={this.onManualFeatureTooltipsChanged} />
-                        <span className="bp3-control-indicator"></span>
-                        {tr("MANUAL_FEATURE_TOOLTIPS", locale)}
-                    </label>;
-                }
-            })()}
-            <fieldset>
-                <legend>{tr("LAYER_TRANSPARENCY", locale)}</legend>
-                {(() => {
-                    if (externalBaseLayers) {
-                        return <label className="bp3-label noselect">
-                            {tr("LAYER_ID_BASE", locale)}
-                            <div style={{ paddingLeft: 8, paddingRight: 8 }}>
-                                <Slider min={0} max={1.0} stepSize={0.01} value={opBase} onChange={this.onBaseOpacityChanged} />
-                            </div>
-                        </label>;
-                    }
-                })()}
-                <label className="bp3-label noselect">
-                    {tr("LAYER_ID_MG_BASE", locale)}
-                    <div style={{ paddingLeft: 8, paddingRight: 8 }}>
-                        <Slider min={0} max={1.0} stepSize={0.01} value={opMgBase} onChange={this.onMgOpacityChanged} />
-                    </div>
-                </label>
-                <label className="bp3-label noselect">
-                    {tr("LAYER_ID_MG_SEL_OVERLAY", locale)}
-                    <div style={{ paddingLeft: 8, paddingRight: 8 }}>
-                        <Slider min={0} max={1.0} stepSize={0.01} value={opMgSelOverlay} onChange={this.onMgSelOpacityChanged} />
-                    </div>
-                </label>
-            </fieldset>
-            {(() => {
-                if (config) {
-                    const units = getUnits();
-                    return <label className="bp3-label">
-                        {tr("MAP_SIZE_DISPLAY_UNITS", locale)}
-                        <div className="bp3-select">
-                            <HTMLSelect value={config.viewSizeUnits} onChange={this.onViewSizeUnitsChanged}>
-                                {units.map(u => {
-                                    const [ uom ] = u;
-                                    const ui = getUnitOfMeasure(uom);
-                                    return <option key={uom} value={uom}>{ui.localizedName(locale)}</option>;
-                                })}
-                            </HTMLSelect>
+                if (externalBaseLayers) {
+                    return <label className="bp3-label noselect">
+                        {tr("LAYER_ID_BASE", locale)}
+                        <div style={{ paddingLeft: 8, paddingRight: 8 }}>
+                            <Slider min={0} max={1.0} stepSize={0.01} value={opBase} onChange={onBaseOpacityChanged} />
                         </div>
                     </label>;
                 }
             })()}
-        </div>;
-    }
-}
+            <label className="bp3-label noselect">
+                {tr("LAYER_ID_MG_BASE", locale)}
+                <div style={{ paddingLeft: 8, paddingRight: 8 }}>
+                    <Slider min={0} max={1.0} stepSize={0.01} value={opMgBase} onChange={onMgOpacityChanged} />
+                </div>
+            </label>
+            <label className="bp3-label noselect">
+                {tr("LAYER_ID_MG_SEL_OVERLAY", locale)}
+                <div style={{ paddingLeft: 8, paddingRight: 8 }}>
+                    <Slider min={0} max={1.0} stepSize={0.01} value={opMgSelOverlay} onChange={onMgSelOpacityChanged} />
+                </div>
+            </label>
+        </fieldset>
+        <label className="bp3-label">
+            {tr("MAP_SIZE_DISPLAY_UNITS", locale)}
+            <div className="bp3-select">
+                <HTMLSelect value={viewSizeUnits} onChange={onViewSizeUnitsChanged}>
+                    {units.map(u => {
+                        const [uom] = u;
+                        const ui = getUnitOfMeasure(uom);
+                        return <option key={uom} value={uom}>{ui.localizedName(locale)}</option>;
+                    })}
+                </HTMLSelect>
+            </div>
+        </label>
+    </div>;
+};
 
-export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(ViewerOptions);
+export default ViewerOptions;

@@ -1,6 +1,6 @@
 import { IApplicationState, IMapView, UnitOfMeasure, getRuntimeMap, getCurrentView, IExternalBaseLayer, Coordinate } from '../api/common';
 import { useSelector } from 'react-redux';
-import { RuntimeMap, getExternalBaseLayers, INameValuePair, ActiveSelectedFeature, LayerTransparencySet, QueryMapFeaturesResponse, ActiveMapTool, ClientKind, ImageFormat, MapLoadIndicatorPositioning, getSelectionSet } from '../api';
+import { RuntimeMap, getExternalBaseLayers, INameValuePair, ActiveSelectedFeature, LayerTransparencySet, QueryMapFeaturesResponse, ActiveMapTool, ClientKind, ImageFormat, MapLoadIndicatorPositioning, getSelectionSet, IViewerCapabilities } from '../api';
 import { WEBLAYOUT_CONTEXTMENU } from '../constants';
 
 export function useActiveMapName() {
@@ -237,4 +237,20 @@ export function useConfiguredCancelDigitizationKey() {
 
 export function useConfiguredUndoLastPointKey() {
     return useSelector<IApplicationState, number>(state => state.config.undoLastPointKey);
+}
+
+export function useConfiguredCapabilities() {
+    return useSelector<IApplicationState, IViewerCapabilities>(state => state.config.capabilities);
+}
+
+export function useTemplateLegendVisible() {
+    return useSelector<IApplicationState, boolean>(state => state.template.legendVisible);
+}
+
+export function useTemplateTaskPaneVisible() {
+    return useSelector<IApplicationState, boolean>(state => state.template.taskPaneVisible);
+}
+
+export function useTemplateSelectionVisible() {
+    return useSelector<IApplicationState, boolean>(state => state.template.selectionPanelVisible);
 }

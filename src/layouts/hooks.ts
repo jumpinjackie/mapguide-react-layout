@@ -6,6 +6,7 @@ import * as TemplateActions from "../actions/template";
 import * as Runtime from "../api/runtime";
 import { ITemplateReducerState, IViewerCapabilities } from '../api/common';
 import { setCustomTemplateReducer } from '../reducers/template';
+import { Dispatch } from 'redux';
 
 export type TemplateReducerFunc = (state: ITemplateReducerState, action: ViewerAction) => ITemplateReducerState;
 
@@ -21,6 +22,7 @@ export type CommonTemplateState = {
     onDragEnd: () => void;
     onSplitterChanged: () => void;
     onActiveElementChanged: (id: "Legend" | "TaskPane" | "Selection") => void;
+    dispatch: Dispatch<any>;
 };
 
 export function useCommonTemplateState(templateReducer?: TemplateReducerFunc): CommonTemplateState {
@@ -88,5 +90,6 @@ export function useCommonTemplateState(templateReducer?: TemplateReducerFunc): C
         onDragEnd,
         onSplitterChanged,
         onActiveElementChanged,
+        dispatch
     };
 }

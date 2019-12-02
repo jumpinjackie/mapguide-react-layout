@@ -66,6 +66,9 @@ export const Accordion = (props: IAccordionProps) => {
         height: -1
     });
     const [openPanel, setOpenPanel] = React.useState(activeId || panels[panels.length - 1].id);
+    React.useEffect(() => {
+        setOpenPanel(activeId || panels[panels.length - 1].id);
+    }, [activeId]);
     const onResize = (entries: IResizeEntry[]) => {
         setDim(entries[0].contentRect);
     };

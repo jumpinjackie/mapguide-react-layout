@@ -295,3 +295,19 @@ export function useTemplateInitialInfoPaneWidth() {
 export function useTemplateInitialTaskPaneWidth() {
     return useSelector<IApplicationState, number>(state => state.template.initialTaskPaneWidth);
 }
+
+export function useTaskPaneInitialUrl() {
+    return useSelector<IApplicationState, string | undefined>(state => state.taskpane.initialUrl);
+}
+
+export function useTaskPaneNavigationIndex() {
+    return useSelector<IApplicationState, number>(state => state.taskpane.navIndex);
+}
+
+export function useTaskPaneLastUrlPushed() {
+    return useSelector<IApplicationState, boolean>(state => state.taskpane.lastUrlPushed);
+}
+
+export function useTaskPaneNavigationStack() {
+    return useSelector<IApplicationState, string[]>(state => state.taskpane.navigation);
+}

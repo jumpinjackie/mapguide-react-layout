@@ -1,22 +1,18 @@
 import * as React from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import * as PropTypes from "prop-types";
 import {
     ICommand,
     IDOMElementMetrics,
-    ReduxDispatch,
-    IApplicationState,
-    ITaskPaneReducerState,
-    IConfigurationReducerState,
     IBranchedMapSubState,
     FlyoutVisibilitySet
 } from "../api/common";
 import { IItem } from "../components/toolbar";
 import { TaskPane, TASK_PANE_OVERLAY_BGCOLOR } from "../components/task-pane";
-import { invokeCommand } from "../actions/map";
+import * as MapActions from "../actions/map";
 import * as TaskPaneActions from "../actions/taskpane";
 import { areUrlsSame, ensureParameters } from "../utils/url";
-import { tr, DEFAULT_LOCALE } from "../api/i18n";
+import { tr } from "../api/i18n";
 import * as FlyoutActions from "../actions/flyout";
 import {
     SPRITE_ICON_HOME,
@@ -24,20 +20,25 @@ import {
     SPRITE_FORWARD
 } from "../constants/assets";
 import { NonIdealState } from '@blueprintjs/core';
+import { useActiveMapBranch, useViewerFlyouts, useTaskPaneInitialUrl, useTaskPaneLastUrlPushed, useTaskPaneNavigationIndex, useTaskPaneNavigationStack, useConfiguredCapabilities, useViewerLocale } from './hooks';
 
 export interface ITaskPaneContainerProps {
     maxHeight?: number;
     isResizing?: boolean;
 }
 
-export interface ITaskPaneContainerState {
-    map: IBranchedMapSubState;
-    taskpane: ITaskPaneReducerState;
-    config: IConfigurationReducerState;
+interface ITaskPaneContainerState {
+    map: IBranchedMapSubState | undefined;
+    initialUrl: string | undefined;
+    navIndex: number;
+    navigationStack: string[];
+    locale: string;
     flyouts: any;
+    lastUrlPushed: boolean;
+    hasTaskBar: boolean;
 }
 
-export interface ITaskPaneDispatch {
+interface ITaskPaneDispatch {
     invokeCommand: (cmd: ICommand, parameters?: any) => void;
     goHome: () => void;
     goForward: () => void;
@@ -47,37 +48,9 @@ export interface ITaskPaneDispatch {
     closeFlyout: (id: string) => void;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>): Partial<ITaskPaneContainerState> {
-    //Technically speaking, this should be listening to every branch of the redux
-    //store. But practically speaking, toolbar commands really only cares about
-    //the branches below
-    let branch;
-    if (state.config.activeMapName) {
-        branch = state.mapState[state.config.activeMapName];
-    }
-    return {
-        map: branch,
-        taskpane: state.taskpane,
-        config: state.config,
-        flyouts: state.toolbar.flyouts
-    };
-}
+type TaskPaneProps = ITaskPaneContainerProps & ITaskPaneContainerState & ITaskPaneDispatch;
 
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ITaskPaneDispatch> {
-    return {
-        invokeCommand: (cmd, parameters) => dispatch(invokeCommand(cmd, parameters)),
-        goHome: () => dispatch(TaskPaneActions.goHome()),
-        goForward: () => dispatch(TaskPaneActions.goForward()),
-        goBack: () => dispatch(TaskPaneActions.goBack()),
-        pushUrl: (url, silent?) => dispatch(TaskPaneActions.pushUrl(url, silent)),
-        openFlyout: (id, metrics) => dispatch(FlyoutActions.openFlyout(id, metrics)),
-        closeFlyout: (id) => dispatch(FlyoutActions.closeFlyout(id))
-    };
-}
-
-export type TaskPaneProps = ITaskPaneContainerProps & Partial<ITaskPaneContainerState> & Partial<ITaskPaneDispatch>;
-
-export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
+class TaskPaneContainerInner extends React.Component<TaskPaneProps, any> {
     private homeAction: IItem;
     private backAction: IItem;
     private forwardAction: IItem;
@@ -119,7 +92,7 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         };
     }
     private getLocale(): string {
-        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
+        return this.props.locale;
     }
     private onCloseFlyout = (id: string) => {
         if (this.props.closeFlyout) {
@@ -132,46 +105,38 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
         }
     }
     private onUrlLoaded = (url: string) => {
-        const { taskpane, pushUrl } = this.props;
-        if (taskpane) {
-            const currentUrl = taskpane.navigation[taskpane.navIndex];
-            if (pushUrl && !areUrlsSame(currentUrl, url)) {
-                pushUrl(url);
-            }
+        const { navigationStack, navIndex, pushUrl } = this.props;
+        const currentUrl = navigationStack[navIndex];
+        if (pushUrl && !areUrlsSame(currentUrl, url)) {
+            pushUrl(url);
         }
     }
     private canGoHome(): boolean {
-        const { taskpane, map } = this.props;
-        if (taskpane && taskpane.initialUrl) { //An initial URL was set
-            const initUrl = map && map.runtimeMap && taskpane.initialUrl
-                ? ensureParameters(taskpane.initialUrl, map.runtimeMap.Name, map.runtimeMap.SessionId, this.getLocale())
-                : taskpane.initialUrl;
-            return taskpane.navigation.length > 0 //We have a navigation stack
-                && !areUrlsSame(taskpane.navigation[taskpane.navIndex], initUrl); //The current URL is not initial.
+        const { initialUrl, navigationStack, navIndex, map } = this.props;
+        if (initialUrl) { //An initial URL was set
+            const initUrl = map && map.runtimeMap && initialUrl
+                ? ensureParameters(initialUrl, map.runtimeMap.Name, map.runtimeMap.SessionId, this.getLocale())
+                : initialUrl;
+            return navigationStack.length > 0 //We have a navigation stack
+                && !areUrlsSame(navigationStack[navIndex], initUrl); //The current URL is not initial.
         }
         return false;
     }
     private canGoBack(): boolean {
-        const { taskpane } = this.props;
-        if (taskpane) {
-            return taskpane.navIndex > 0;
-        }
-        return false;
+        const { navIndex } = this.props;
+        return navIndex > 0;
     }
     private canGoForward(): boolean {
-        const { taskpane } = this.props;
-        if (taskpane) {
-            return taskpane.navIndex < taskpane.navigation.length - 1;
-        }
-        return false;
+        const { navigationStack, navIndex } = this.props;
+        return navIndex < navigationStack.length - 1;
     }
     static contextTypes: PropTypes.ValidationMap<any> = {
         store: PropTypes.object
     };
     render(): JSX.Element {
-        const { taskpane, config, map, maxHeight, flyouts, isResizing } = this.props;
-        if (taskpane && config && map && map.runtimeMap) {
-            if (taskpane.navigation[taskpane.navIndex]) {
+        const { navigationStack, navIndex, hasTaskBar, lastUrlPushed, map, maxHeight, flyouts, isResizing } = this.props;
+        if (map && map.runtimeMap) {
+            if (navigationStack[navIndex]) {
                 const flyoutStates: FlyoutVisibilitySet = {};
                 if (flyouts) {
                     const ids = Object.keys(flyouts);
@@ -180,20 +145,20 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
                     }
                 }
                 return <div>
-                    <TaskPane currentUrl={taskpane.navigation[taskpane.navIndex]}
-                              showTaskBar={config.capabilities.hasTaskBar}
-                              lastUrlPushed={taskpane.lastUrlPushed}
-                              homeAction={this.homeAction}
-                              backAction={this.backAction}
-                              onOpenFlyout={this.onOpenFlyout}
-                              onCloseFlyout={this.onCloseFlyout}
-                              forwardAction={this.forwardAction}
-                              session={map.runtimeMap.SessionId}
-                              mapName={map.runtimeMap.Name}
-                              onUrlLoaded={this.onUrlLoaded}
-                              maxHeight={maxHeight}
-                              flyoutStates={flyoutStates}
-                              locale={this.getLocale()} />
+                    <TaskPane currentUrl={navigationStack[navIndex]}
+                        showTaskBar={hasTaskBar}
+                        lastUrlPushed={lastUrlPushed}
+                        homeAction={this.homeAction}
+                        backAction={this.backAction}
+                        onOpenFlyout={this.onOpenFlyout}
+                        onCloseFlyout={this.onCloseFlyout}
+                        forwardAction={this.forwardAction}
+                        session={map.runtimeMap.SessionId}
+                        mapName={map.runtimeMap.Name}
+                        onUrlLoaded={this.onUrlLoaded}
+                        maxHeight={maxHeight}
+                        flyoutStates={flyoutStates}
+                        locale={this.getLocale()} />
                     {(() => {
                         if (isResizing == true) {
                             return <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: TASK_PANE_OVERLAY_BGCOLOR }}>
@@ -210,4 +175,41 @@ export class TaskPaneContainer extends React.Component<TaskPaneProps, any> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(TaskPaneContainer);
+const TaskPaneContainer = (props: ITaskPaneContainerProps) => {
+    const locale = useViewerLocale();
+    const map = useActiveMapBranch();
+    const flyouts = useViewerFlyouts();
+    const initialUrl = useTaskPaneInitialUrl();
+    const lastUrlPushed = useTaskPaneLastUrlPushed();
+    const navIndex = useTaskPaneNavigationIndex();
+    const navigationStack = useTaskPaneNavigationStack();
+    const hasTaskBar = useConfiguredCapabilities().hasTaskBar;
+
+    const dispatch = useDispatch();
+    const invokeCommand = (cmd: ICommand, parameters: any) => dispatch(MapActions.invokeCommand(cmd, parameters));
+    const goHome = () => dispatch(TaskPaneActions.goHome());
+    const goForward = () => dispatch(TaskPaneActions.goForward());
+    const goBack = () => dispatch(TaskPaneActions.goBack());
+    const pushUrl = (url: string, silent?: boolean) => dispatch(TaskPaneActions.pushUrl(url, silent));
+    const openFlyout = (id: string, metrics: IDOMElementMetrics) => dispatch(FlyoutActions.openFlyout(id, metrics));
+    const closeFlyout = (id: string) => dispatch(FlyoutActions.closeFlyout(id));
+
+    return <TaskPaneContainerInner map={map}
+        locale={locale}
+        flyouts={flyouts}
+        initialUrl={initialUrl}
+        lastUrlPushed={lastUrlPushed}
+        navIndex={navIndex}
+        navigationStack={navigationStack}
+        invokeCommand={invokeCommand}
+        hasTaskBar={hasTaskBar}
+        goHome={goHome}
+        goForward={goForward}
+        goBack={goBack}
+        pushUrl={pushUrl}
+        openFlyout={openFlyout}
+        closeFlyout={closeFlyout}
+        {...props} />;
+};
+
+export default TaskPaneContainer;

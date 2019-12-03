@@ -1,6 +1,6 @@
 import { IApplicationState, IMapView, UnitOfMeasure, getRuntimeMap, getCurrentView, IExternalBaseLayer, Coordinate } from '../api/common';
 import { useSelector } from 'react-redux';
-import { RuntimeMap, getExternalBaseLayers, INameValuePair, ActiveSelectedFeature, LayerTransparencySet, QueryMapFeaturesResponse, ActiveMapTool, ClientKind, ImageFormat, MapLoadIndicatorPositioning, getSelectionSet, IViewerCapabilities } from '../api';
+import { RuntimeMap, getExternalBaseLayers, INameValuePair, ActiveSelectedFeature, LayerTransparencySet, QueryMapFeaturesResponse, ActiveMapTool, ClientKind, ImageFormat, MapLoadIndicatorPositioning, getSelectionSet, IViewerCapabilities, InitError, IBranchedMapState, IBranchedMapSubState } from '../api';
 import { WEBLAYOUT_CONTEXTMENU } from '../constants';
 import { useRef, useEffect } from "react";
 
@@ -99,11 +99,27 @@ export function useInitWarnings() {
     return useSelector<IApplicationState, string[]>(state => state.initError.warnings);
 }
 
+export function useInitError() {
+    return useSelector<IApplicationState, InitError | undefined>(state => state.initError.error);
+}
+
+export function useInitErrorStack() {
+    return useSelector<IApplicationState, boolean>(state => state.initError.includeStack)
+}
+
+export function useInitErrorOptions() {
+    return useSelector<IApplicationState, any>(state => state.initError.options);
+}
+
 function getActiveMapBranch(state: IApplicationState) {
     if (state.config.activeMapName) {
         return state.mapState[state.config.activeMapName];
     }
     return undefined;
+}
+
+export function useActiveMapBranch() {
+    return useSelector<IApplicationState, IBranchedMapSubState | undefined>(state => getActiveMapBranch(state));
 }
 
 export function useActiveMapExpandedGroups() {

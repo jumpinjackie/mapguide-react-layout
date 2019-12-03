@@ -2,6 +2,23 @@ import { IApplicationState, IMapView, UnitOfMeasure, getRuntimeMap, getCurrentVi
 import { useSelector } from 'react-redux';
 import { RuntimeMap, getExternalBaseLayers, INameValuePair, ActiveSelectedFeature, LayerTransparencySet, QueryMapFeaturesResponse, ActiveMapTool, ClientKind, ImageFormat, MapLoadIndicatorPositioning, getSelectionSet, IViewerCapabilities } from '../api';
 import { WEBLAYOUT_CONTEXTMENU } from '../constants';
+import { useRef, useEffect } from "react";
+
+// From: https://usehooks.com/usePrevious/
+
+export function usePrevious<T>(value: T) {
+    // The ref object is a generic container whose current property is mutable ...
+    // ... and can hold any value, similar to an instance property on a class
+    const ref = useRef<T>();
+
+    // Store current value in ref
+    useEffect(() => {
+        ref.current = value;
+    }, [value]); // Only re-run if value changes
+
+    // Return previous value (happens before update in useEffect above)
+    return ref.current;
+}
 
 export function useActiveMapName() {
     return useSelector<IApplicationState, string | undefined>(state => state.config.activeMapName);
@@ -105,7 +122,7 @@ export function useActiveMapShowLayers() {
     return useSelector<IApplicationState, string[] | undefined>(state => getActiveMapBranch(state)?.showLayers);
 }
 
-export function useActiveMapHideGroups(){
+export function useActiveMapHideGroups() {
     return useSelector<IApplicationState, string[] | undefined>(state => getActiveMapBranch(state)?.hideGroups);
 }
 

@@ -7,16 +7,12 @@ import { MapMenu } from "../components/map-menu";
 import * as MapActions from "../actions/map";
 import { useViewerLocale, useActiveMapName, useAvailableMaps } from './hooks';
 
-interface MMCDispatch {
-    setActiveMap: (mapName: string) => void;
-}
-
 const MapMenuContainer = () => {
     const dispatch = useDispatch();
     const locale = useViewerLocale();
     const activeMapName = useActiveMapName();
     const availableMaps = useAvailableMaps();
-    const setActiveMap: PropType<MMCDispatch, "setActiveMap"> = (mapName: string) => dispatch(MapActions.setActiveMap(mapName));
+    const setActiveMap = (mapName: string) => dispatch(MapActions.setActiveMap(mapName));
     const onActiveMapChanged = (mapName: string) => setActiveMap(mapName);
     if (locale && activeMapName && availableMaps) {
         //TODO: Should use MapGroup id has label. For now, use map name for both

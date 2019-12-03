@@ -1,33 +1,31 @@
 import * as React from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
     GenericEvent,
-    ActiveMapTool,
-    ReduxDispatch,
-    IApplicationState
-} from "../api/common";
+    ActiveMapTool} from "../api/common";
 import { getViewer } from "../api/runtime";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
-import { setActiveTool } from "../actions/map";
+import * as MapActions from "../actions/map";
 import { IMeasureCallback, MeasureSegment, MeasureContext, IMeasureComponent } from "./measure-context";
 import { roundTo } from "../utils/number";
 import { Callout, Intent, ButtonGroup, Button, HTMLSelect } from '@blueprintjs/core';
+import { useActiveMapName, useViewerLocale, useAvailableMaps } from './hooks';
 
 export interface IMeasureContainerProps {
 
 }
 
-export interface IMeasureContainerReducerState {
-    mapNames: string[];
-    activeMapName: string;
+interface IMeasureContainerReducerState {
+    mapNames: string[] | undefined;
+    activeMapName: string | undefined;
     locale: string;
 }
 
-export interface IMeasureContainerDispatch {
+interface IMeasureContainerDispatch {
     setActiveTool: (tool: ActiveMapTool) => void;
 }
 
-export interface IMeasureContainerState {
+interface IMeasureContainerState {
     measuring: boolean;
     type: string;
     activeType: "LineString" | "Area";
@@ -35,25 +33,11 @@ export interface IMeasureContainerState {
     segments: MeasureSegment[];
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>): Partial<IMeasureContainerReducerState> {
-    return {
-        activeMapName: state.config.activeMapName,
-        locale: state.config.locale,
-        mapNames: Object.keys(state.mapState)
-    };
-}
-
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMeasureContainerDispatch> {
-    return {
-        setActiveTool: (tool: ActiveMapTool) => dispatch(setActiveTool(tool))
-    };
-}
-
-export type MeasureProps = IMeasureContainerProps & Partial<IMeasureContainerReducerState> & Partial<IMeasureContainerDispatch>;
+type MeasureProps = IMeasureContainerProps & IMeasureContainerReducerState & IMeasureContainerDispatch;
 
 const _measurements: MeasureContext[] = [];
 
-export class MeasureContainer extends React.Component<MeasureProps, Partial<IMeasureContainerState>> implements IMeasureComponent, IMeasureCallback {
+class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasureContainerState>> implements IMeasureComponent, IMeasureCallback {
 
     constructor(props: MeasureProps) {
         super(props);
@@ -253,4 +237,18 @@ export class MeasureContainer extends React.Component<MeasureProps, Partial<IMea
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(MeasureContainer);
+const MeasureContainer = (props: IMeasureContainerProps) => {
+    const activeMapName = useActiveMapName();
+    const locale = useViewerLocale();
+    const mapNames = useAvailableMaps()?.map(m => m.value);
+    const dispatch = useDispatch();
+    const setActiveTool = (tool: ActiveMapTool) => dispatch(MapActions.setActiveTool(tool))
+    return <MeasureContainerInner 
+        activeMapName={activeMapName}
+        locale={locale}
+        mapNames={mapNames}
+        setActiveTool={setActiveTool}
+        {...props} />;
+};
+
+export default MeasureContainer;

@@ -1,68 +1,60 @@
 import * as React from "react";
-import { connect } from "react-redux";
 import * as Runtime from "../api/runtime";
 import { tr } from "../api/i18n";
 import {
-    ReduxDispatch,
-    IApplicationState
+    ILayerInfo
 } from "../api/common";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
 import { Tabs, Tab, Icon } from '@blueprintjs/core';
+import { useViewerLocale } from './hooks';
 
 interface ILayerManagerProps {
     locale: string | undefined;
 }
 
-class LayerManager extends React.Component<ILayerManagerProps, any> {
-    constructor(props: ILayerManagerProps) {
-        super(props);
-        this.state = {
-            layers: []
-        }
-    }
-    componentDidMount() {
+const LayerManager = (props: ILayerManagerProps) => {
+    const { locale } = props;
+    const [layers, setLayers] = React.useState<ILayerInfo[]>([]);
+    React.useEffect(() => {
         const viewer = Runtime.getViewer();
         if (viewer) {
             const layers = viewer.getLayerManager().getLayers();
-            this.setState({ layers: layers });
+            setLayers(layers);
         }
-    }
-    private removeHandler = (name: string) => {
-        const { locale } = this.props;
+    }, []);
+    const removeHandler = (name: string) => {
         const viewer = Runtime.getViewer();
         if (viewer) {
             const removed = viewer.getLayerManager().removeLayer(name);
             if (removed) {
                 viewer.toastSuccess("icon-success", tr("REMOVED_LAYER", locale, { name: name }));
                 const layers = viewer.getLayerManager().getLayers();
-                this.setState({ layers: layers });
+                setLayers(layers);
             }
         }
-    }
-    private upHandler = (name: string) => {
+    };
+    const upHandler = (name: string) => {
         const viewer = Runtime.getViewer();
         if (viewer) {
             if (viewer.getLayerManager().moveUp(name) >= 0) {
                 const layers = viewer.getLayerManager().getLayers();
-                this.setState({ layers: layers });
+                setLayers(layers);
             }
         }
-    }
-    private downHandler = (name: string) => {
+    };
+    const downHandler = (name: string) => {
         const viewer = Runtime.getViewer();
         if (viewer) {
             if (viewer.getLayerManager().moveDown(name) >= 0) {
                 const layers = viewer.getLayerManager().getLayers();
-                this.setState({ layers: layers });
+                setLayers(layers);
             }
         }
-    }
-    render(): JSX.Element {
-        const { layers } = this.state;
-        return <ManageLayers layers={layers} onMoveLayerDown={this.downHandler} onMoveLayerUp={this.upHandler} onRemoveLayer={this.removeHandler} />;
-    }
+    };
+    return <ManageLayers layers={layers} onMoveLayerDown={downHandler} onMoveLayerUp={upHandler} onRemoveLayer={removeHandler} />;
 }
+
 
 /**
  * 
@@ -74,59 +66,12 @@ export interface IAddManageLayersContainerProps {
 
 }
 
-/**
- * 
- * @since 0.11
- * @export
- * @interface IAddManageLayersContainerState
- */
-export interface IAddManageLayersContainerState {
-    locale: string;
-}
+const AddManageLayersContainer = () => {
+    const locale = useViewerLocale();
+    return <Tabs id="tabs" renderActiveTabPanelOnly={true}>
+        <Tab id="add_layer" title={<span><Icon icon="new-layer" iconSize={Icon.SIZE_STANDARD} /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer locale={locale} />} />
+        <Tab id="manage_layers" title={<span><Icon icon="layers" iconSize={Icon.SIZE_STANDARD} /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<LayerManager locale={locale} />} />
+    </Tabs>;
+};
 
-/**
- * 
- * @since 0.11
- * @export
- * @interface IAddManageLayersContainerDispatch
- */
-export interface IAddManageLayersContainerDispatch {
-
-}
-
-function mapStateToProps(state: Readonly<IApplicationState>): Partial<IAddManageLayersContainerState> {
-    return {
-        locale: state.config.locale
-    };
-}
-
-function mapDispatchToProps(): Partial<IAddManageLayersContainerDispatch> {
-    return {};
-}
-
-/**
- * @since 0.11
- */
-export type AddManageLayersContainerProps = IAddManageLayersContainerProps & Partial<IAddManageLayersContainerState> & Partial<IAddManageLayersContainerDispatch>;
-
-/**
- * A component for adding custom external layers to the map
- * @since 0.11
- * @export
- * @class AddManageLayersContainer
- * @extends {React.Component<AddManageLayersContainerProps, any>}
- */
-export class AddManageLayersContainer extends React.Component<AddManageLayersContainerProps, any> {
-    constructor(props: AddManageLayersContainerProps) {
-        super(props);
-    }
-    render(): JSX.Element {
-        const { locale } = this.props;
-        return <Tabs id="tabs" renderActiveTabPanelOnly={true}>
-            <Tab id="add_layer" title={<span><Icon icon="new-layer" iconSize={Icon.SIZE_STANDARD} /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer locale={locale} />} />
-            <Tab id="manage_layers" title={<span><Icon icon="layers" iconSize={Icon.SIZE_STANDARD} /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<LayerManager locale={locale} />} />
-        </Tabs>;
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(AddManageLayersContainer);
+export default AddManageLayersContainer;

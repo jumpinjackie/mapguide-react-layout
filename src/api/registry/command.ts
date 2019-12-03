@@ -69,17 +69,18 @@ export function mergeInvokeUrlParameters(currentParameters: IInvokeUrlCommandPar
     return merged;
 }
 
-function fixChildItems(childItems: any[], store: ReduxStore, commandInvoker: (cmd: ICommand, parameters?: any) => void): IItem[] {
+function fixChildItems(childItems: any[], state: IApplicationState, commandInvoker: (cmd: ICommand, parameters?: any) => void): IItem[] {
     return childItems
-        .map(tb => mapToolbarReference(tb, store, commandInvoker))
+        .map(tb => mapToolbarReference(tb, state, commandInvoker))
         .filter(tb => tb != null) as IItem[];
 }
 
+//TODO: This function should be its own react hook that layers on top of the
+//useDispatch() and useSelector() hooks provided by react-redux
 /**
  * @hidden
  */
-export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: (cmd: ICommand, parameters?: any) => void): IItem|IInlineMenu|IFlyoutMenu|IComponentFlyoutItem|null {
-    const state = store.getState();
+export function mapToolbarReference(tb: any, state: IApplicationState, commandInvoker: (cmd: ICommand, parameters?: any) => void): IItem|IInlineMenu|IFlyoutMenu|IComponentFlyoutItem|null {
     if (tb.error) {
         const cmdItem: IItem = {
             iconClass: SPRITE_ICON_ERROR,
@@ -123,7 +124,7 @@ export function mapToolbarReference(tb: any, store: ReduxStore, commandInvoker: 
             iconClass: fusionFixSpriteClass(tb),
             label: tb.label,
             tooltip: tb.tooltip,
-            childItems: fixChildItems(childItems, store, commandInvoker)
+            childItems: fixChildItems(childItems, state, commandInvoker)
         };
     } else if (tb.label && tb.flyoutId) {
         return {

@@ -16,6 +16,11 @@ import olOverlay from "ol/overlay";
 import { IOLFactory } from "./ol-factory";
 import { ViewerAction } from '../actions/defs';
 
+/**
+ * @since 0.13
+ */
+export type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
+
 // Event boilerplate
 export type GenericEvent = any;
 

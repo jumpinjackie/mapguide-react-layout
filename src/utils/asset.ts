@@ -4,7 +4,12 @@ export function getAssetPath(url: string | undefined): string | undefined {
 
 import { ICON_ZOOM_OUT_FIXED } from "../constants/assets";
 
-let mRoot = ICON_ZOOM_OUT_FIXED.replace("/zoom-out-fixed.png", "/../../");
+//HACK: url-loader has done some breaking things to how our icon asset imports are handled
+//while this has been addressed for the main bundle build, this import is still undefined in
+//the context of our jest tests. Since nothing in our jest test suite cares that this value
+//be set at the moment, just use ?. as a workaround ($DEITY bless TS 3.7 for this wonderful
+//syntactic addition!)
+let mRoot = ICON_ZOOM_OUT_FIXED?.replace("/zoom-out-fixed.png", "/../../");
 
 export function getAssetRoot(): string {
     return mRoot;

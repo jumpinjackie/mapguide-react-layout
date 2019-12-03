@@ -1,61 +1,28 @@
 import * as React from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
-    INameValuePair,
-    ReduxDispatch,
-    IApplicationState
+    PropType
 } from "../api/common";
 import { MapMenu } from "../components/map-menu";
 import * as MapActions from "../actions/map";
+import { useViewerLocale, useActiveMapName, useAvailableMaps } from './hooks';
 
-export interface IMapMenuContainerState {
-    locale: string;
-    activeMapName: string;
-    availableMaps: INameValuePair[];
-}
-
-export interface IMapMenuContainerDispatch {
-    setActiveMap: (mapName: string) => void;
-}
-
-function mapStateToProps(state: Readonly<IApplicationState>): Partial<IMapMenuContainerState> {
-    return {
-        locale: state.config.locale,
-        activeMapName: state.config.activeMapName,
-        availableMaps: state.config.availableMaps
-    };
-}
-
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMapMenuContainerDispatch> {
-    return {
-        setActiveMap: (mapName: string) => dispatch(MapActions.setActiveMap(mapName))
+const MapMenuContainer = () => {
+    const dispatch = useDispatch();
+    const locale = useViewerLocale();
+    const activeMapName = useActiveMapName();
+    const availableMaps = useAvailableMaps();
+    const setActiveMap = (mapName: string) => dispatch(MapActions.setActiveMap(mapName));
+    const onActiveMapChanged = (mapName: string) => setActiveMap(mapName);
+    if (locale && activeMapName && availableMaps) {
+        //TODO: Should use MapGroup id has label. For now, use map name for both
+        const entries = availableMaps.map(m => {
+            return { label: m.name, mapName: m.value };
+        });
+        return <MapMenu onActiveMapChanged={onActiveMapChanged} selectedMap={activeMapName} maps={entries} locale={locale} />;
+    } else {
+        return <noscript />;
     }
 }
 
-export type MapMenuContainerProps = Partial<IMapMenuContainerState> & Partial<IMapMenuContainerDispatch>;
-
-export class MapMenuContainer extends React.Component<MapMenuContainerProps, any> {
-    constructor(props: MapMenuContainerProps) {
-        super(props);
-    }
-    private onActiveMapChanged = (mapName: string) => {
-        const { setActiveMap } = this.props;
-        if (setActiveMap) {
-            setActiveMap(mapName);
-        }
-    }
-    render(): JSX.Element {
-        const { locale, activeMapName, availableMaps } = this.props;
-        if (locale && activeMapName && availableMaps) {
-            //TODO: Should use MapGroup id has label. For now, use map name for both
-            const entries = availableMaps.map(m => {
-                return { label: m.name, mapName: m.value };
-            });
-            return <MapMenu onActiveMapChanged={this.onActiveMapChanged} selectedMap={activeMapName} maps={entries} locale={locale} />;
-        } else {
-            return <noscript />;
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(MapMenuContainer);
+export default MapMenuContainer;

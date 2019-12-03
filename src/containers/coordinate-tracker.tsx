@@ -1,80 +1,44 @@
 import * as React from "react";
-import { connect } from "react-redux";
-import {
-    Coordinate,
-    IApplicationState
-} from "../api/common";
 import { tr } from "../api/i18n";
 import olProj from "ol/proj";
 import { Callout, Intent } from '@blueprintjs/core';
+import { useViewerLocale, useCurrentMouseCoordinates, useActiveMapProjection } from './hooks';
 
 export interface ICoordinateTrackerContainerProps {
     projections: string[];
 }
 
-export interface ICoordinateTrackerContainerState { 
-    mouse: Coordinate | undefined;
-    locale: string;
-    proj: string;
-}
 
-export interface ICoordinateTrackerContainerDispatch {
+const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerProps) => {
+    const { projections } = props;
+    const locale = useViewerLocale();
+    const mouse = useCurrentMouseCoordinates();
+    const proj = useActiveMapProjection();
+    if (projections && projections.length) {
+        return <div style={{ margin: 8 }}>
+            <h5>{tr("COORDTRACKER", locale)}</h5>
+            {projections.map(p => {
+                let x = NaN;
+                let y = NaN;
+                if (mouse && proj) {
+                    try {
+                        [x, y] = olProj.transform(mouse, proj, p);
+                    } catch (e) {
 
-}
-
-function mapStateToProps(state: Readonly<IApplicationState>): Partial<ICoordinateTrackerContainerState> {
-    let proj;
-    if (state.config.activeMapName) {
-        const map = state.mapState[state.config.activeMapName].runtimeMap;
-        if (map) {
-            proj = `EPSG:${map.CoordinateSystem.EpsgCode}`;
-        }
-    }
-    return {
-        mouse: state.mouse.coords,
-        locale: state.config.locale,
-        proj: proj
-    };
-}
-
-function mapDispatchToProps(): Partial<ICoordinateTrackerContainerDispatch> {
-    return { };
-}
-
-export type CoordinateTrackerContainerProps = ICoordinateTrackerContainerProps & Partial<ICoordinateTrackerContainerState> & Partial<ICoordinateTrackerContainerDispatch>;
-
-export class CoordinateTrackerContainer extends React.Component<CoordinateTrackerContainerProps, any> {
-    constructor(props: CoordinateTrackerContainerProps) {
-        super(props);
-    }
-    render(): JSX.Element {
-        const { locale, projections, mouse, proj } = this.props;
-        if (projections && projections.length) {
-            return <div style={{ margin: 8 }}>
-                <h5>{tr("COORDTRACKER", locale)}</h5>
-                {projections.map(p => {
-                    let x = NaN;
-                    let y = NaN;
-                    if (mouse && proj) {
-                        try {
-                            [x, y] = olProj.transform(mouse, proj, p);
-                        } catch (e) {
-
-                        }
                     }
-                    return <fieldset key={p}>
-                        <legend>{p}</legend>
-                        <p><strong>X:</strong> {x}</p>
-                        <p><strong>Y:</strong> {y}</p>
-                    </fieldset>;
-                })}
-            </div>;
-        } else {
-            return <Callout intent={Intent.DANGER} title={tr("ERROR", locale)} icon="error">
-                {tr("COORDTRACKER_NO_PROJECTIONS", locale)}
-            </Callout>;
-        }
+                }
+                return <fieldset key={p}>
+                    <legend>{p}</legend>
+                    <p><strong>X:</strong> {x}</p>
+                    <p><strong>Y:</strong> {y}</p>
+                </fieldset>;
+            })}
+        </div>;
+    } else {
+        return <Callout intent={Intent.DANGER} title={tr("ERROR", locale)} icon="error">
+            {tr("COORDTRACKER_NO_PROJECTIONS", locale)}
+        </Callout>;
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(CoordinateTrackerContainer);
+export default CoordinateTrackerContainer;

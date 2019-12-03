@@ -1,7 +1,7 @@
 import * as React from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getViewer, getFusionRoot } from "../api/runtime";
-import { tr as xlate, tr, DEFAULT_LOCALE } from "../api/i18n";
+import { tr as xlate, tr } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
     GenericEvent,
@@ -18,6 +18,8 @@ import {
 import * as MapActions from "../actions/map";
 import { MapCapturerContext, Size, IMapCapturerContextCallback } from "./map-capturer-context";
 import { Slider, Button, Intent, Callout, HTMLSelect } from '@blueprintjs/core';
+import { useActiveMapName, useActiveMapState, useActiveMapView, useActiveMapExternalBaseLayers, useViewerLocale, useAvailableMaps, usePrevious } from './hooks';
+import * as logger from "../utils/logger";
 
 function getMargin() {
     /*
@@ -35,17 +37,16 @@ function getMargin() {
     return { top: 25.4, buttom: 12.7, left: 12.7, right: 12.7 };
 }
 
-function getPrintSize(viewer: IMapViewer, state: any): Size {
-    const value = state.paperSize.split(",");
+function getPrintSize(viewer: IMapViewer, showAdvanced: boolean, paperSize: string, orientation: "P" | "L"): Size {
+    const value = paperSize.split(",");
     let size: Size;
-    const orientation: "P" | "L" = state.orientation;
     if (orientation === "P") {
         size = { w: parseFloat(value[0]), h: parseFloat(value[1]) };
     } else {
         size = { w: parseFloat(value[1]), h: parseFloat(value[0]) };
     }
 
-    if (!state.showAdvanced) {
+    if (!showAdvanced) {
         // Calculate the paper size to make sure it has a same ratio with the viweport
         const paperRatio = size.w / size.h;
         var viewSize = viewer.getSize();
@@ -98,6 +99,41 @@ function getActiveCapturer(viewer: IMapViewer, mapNames: string[], activeMapName
     return activeCapturer;
 }
 
+function toggleMapCapturerLayer(locale: string,
+    mapNames: string[] | undefined,
+    activeMapName: string,
+    showAdvanced: boolean,
+    paperSize: string,
+    orientation: "P" | "L",
+    scale: string,
+    rotation: number,
+    updateBoxCoords: (box: string, normalizedBox: string) => void,
+    setViewRotationEnabled: (flag: boolean) => void,
+    setViewRotation: (rot: number) => void) {
+    const bVisible: boolean = showAdvanced;
+    const viewer = getViewer();
+    if (viewer && mapNames) {
+        const activeCapturer = getActiveCapturer(viewer, mapNames, activeMapName);
+        if (activeCapturer) {
+            if (bVisible) {
+                const ppSize = getPrintSize(viewer, showAdvanced, paperSize, orientation);
+                const cb: IMapCapturerContextCallback = {
+                    updateBoxCoords
+                }
+                activeCapturer.activate(cb, ppSize, parseFloat(scale), rotation);
+                //For simplicity, reset rotation to 0 and prevent the ability to rotate while the map capture box
+                //is active
+                setViewRotationEnabled(false);
+                setViewRotation(0);
+                viewer.toastPrimary("info-sign", tr("QUICKPLOT_BOX_INFO", locale));
+            } else {
+                activeCapturer.deactivate();
+                setViewRotationEnabled(true);
+            }
+        }
+    }
+}
+
 export interface IQuickPlotContainerOwnProps {
 
 }
@@ -115,22 +151,7 @@ export interface IQuickPlotContainerDispatch {
     setViewRotationEnabled: (enabled: boolean) => void;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>): Partial<IQuickPlotContainerConnectedState> {
-    return {
-        config: state.config,
-        map: getRuntimeMap(state),
-        view: getCurrentView(state),
-        externalBaseLayers: getExternalBaseLayers(state),
-        mapNames: Object.keys(state.mapState)
-    };
-}
 
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IQuickPlotContainerDispatch> {
-    return {
-        setViewRotation: (rotation) => dispatch(MapActions.setViewRotation(rotation)),
-        setViewRotationEnabled: (enabled) => dispatch(MapActions.setViewRotationEnabled(enabled))
-    };
-}
 
 export interface IQuickPlotContainerState {
     title: string;
@@ -150,307 +171,298 @@ export interface IQuickPlotContainerState {
     normalizedBox: string;
 }
 
-export type QuickPlotProps = IQuickPlotContainerOwnProps & Partial<IQuickPlotContainerConnectedState> & Partial<IQuickPlotContainerDispatch>;
+const QuickPlotContainer = () => {
+    const [title, setTitle] = React.useState(""); ``
+    const [subTitle, setSubTitle] = React.useState("");
+    const [showLegend, setShowLegend] = React.useState(false);
+    const [showNorthBar, setShowNorthBar] = React.useState(false);
+    const [showCoordinates, setShowCoordinates] = React.useState(false);
+    const [showScaleBar, setShowScaleBar] = React.useState(false);
+    const [showDisclaimer, setShowDisclaimer] = React.useState(false);
+    const [showAdvanced, setShowAdvanced] = React.useState(false);
+    const [orientation, setOrientation] = React.useState<"L" | "P">("P");
+    const [paperSize, setPaperSize] = React.useState("210.0,297.0,A4");
+    const [scale, setScale] = React.useState("5000");
+    const [dpi, setDpi] = React.useState("96");
+    const [rotation, setRotation] = React.useState(0);
+    const [box, setBox] = React.useState("");
+    const [normalizedBox, setNormalizedBox] = React.useState("");
 
-export class QuickPlotContainer extends React.Component<QuickPlotProps, Partial<IQuickPlotContainerState>> implements IMapCapturerContextCallback {
-    constructor(props: QuickPlotProps) {
-        super(props);
-        this.state = {
-            title: "",
-            subTitle: "",
-            showLegend: false,
-            showNorthBar: false,
-            showCoordinates: false,
-            showScaleBar: false,
-            showDisclaimer: false,
-            showAdvanced: false,
-            orientation: "P",
-            paperSize: "210.0,297.0,A4",
-            scale: "5000",
-            dpi: "96",
-            rotation: 0,
-            box: "",
-            normalizedBox: ""
-        };
-    }
-    private onTitleChanged = (e: GenericEvent) => {
-        this.setState({ title: e.target.value });
-    }
-    private onSubTitleChanged = (e: GenericEvent) => {
-        this.setState({ subTitle: e.target.value });
-    }
-    private onShowLegendChanged = () => {
-        this.setState({ showLegend: !!!this.state.showLegend });
-    }
-    private onShowNorthArrowChanged = () => {
-        this.setState({ showNorthBar: !!!this.state.showNorthBar });
-    }
-    private onShowCoordinatesChanged = () => {
-        this.setState({ showCoordinates: !!!this.state.showCoordinates });
-    }
-    private onShowScaleBarChanged = () => {
-        this.setState({ showScaleBar: !!!this.state.showScaleBar });
-    }
-    private onShowDisclaimerChanged = () => {
-        this.setState({ showDisclaimer: !!!this.state.showDisclaimer });
-    }
-    private onDpiChanged = (e: GenericEvent) => {
-        this.setState({ dpi: e.target.value });
-    }
-    private onAdvancedOptionsChanged = () => {
-        this.setState({ showAdvanced: !!!this.state.showAdvanced });
-    }
-    private onScaleChanged = (e: GenericEvent) => {
-        this.setState({ scale: e.target.value });
-    }
-    private onPaperSizeChanged = (e: GenericEvent) => {
-        this.setState({ paperSize: e.target.value });
-    }
-    private onOrientationChanged = (e: GenericEvent) => {
-        this.setState({ orientation: e.target.value });
-    }
-    private onRotationChanged = (value: number) => {
-        this.setState({ rotation: value });
-    }
-    private onGeneratePlot = () => {
-    }
-    private getLocale(): string {
-        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
-    }
-    private toggleMapCapturerLayer(props: QuickPlotProps, activeMapName: string, state: IQuickPlotContainerState) {
-        const { mapNames, setViewRotation, setViewRotationEnabled } = props;
-        const locale = this.getLocale();
-        const bVisible: boolean = state.showAdvanced;
-        const viewer = getViewer();
-        if (viewer && mapNames && setViewRotation && setViewRotationEnabled) {
-            const activeCapturer = getActiveCapturer(viewer, mapNames, activeMapName);
-            if (activeCapturer) {
-                if (bVisible) {
-                    const paperSize = getPrintSize(viewer, state);
-                    activeCapturer.activate(this, paperSize, parseFloat(state.scale), state.rotation);
-                    //For simplicity, reset rotation to 0 and prevent the ability to rotate while the map capture box
-                    //is active
-                    setViewRotationEnabled(false);
-                    setViewRotation(0);
-                    viewer.toastPrimary("info-sign", tr("QUICKPLOT_BOX_INFO", locale));
-                } else {
-                    activeCapturer.deactivate();
-                    setViewRotationEnabled(true);
+    const locale = useViewerLocale();
+    const activeMapName = useActiveMapName();
+    const mapNames = useAvailableMaps()?.map(m => m.value);
+    const map = useActiveMapState();
+    const view = useActiveMapView();
+    const externalBaseLayers = useActiveMapExternalBaseLayers();
+    const dispatch = useDispatch();
+    const setViewRotation = (rotation: number) => dispatch(MapActions.setViewRotation(rotation));
+    const setViewRotationEnabled = (enabled: boolean) => dispatch(MapActions.setViewRotationEnabled(enabled));
+
+    const onTitleChanged = (e: GenericEvent) => {
+        setTitle(e.target.value);
+    };
+    const onSubTitleChanged = (e: GenericEvent) => {
+        setSubTitle(e.target.value);
+    };
+    const onShowLegendChanged = () => {
+        setShowLegend(!showLegend);
+    };
+    const onShowNorthArrowChanged = () => {
+        setShowNorthBar(!showNorthBar);
+    };
+    const onShowCoordinatesChanged = () => {
+        setShowCoordinates(!showCoordinates);
+    };
+    const onShowScaleBarChanged = () => {
+        setShowScaleBar(!showScaleBar);
+    };
+    const onShowDisclaimerChanged = () => {
+        setShowDisclaimer(!showDisclaimer);
+    };
+    const onDpiChanged = (e: GenericEvent) => {
+        setDpi(e.target.value);
+    };
+    const onAdvancedOptionsChanged = () => {
+        setShowAdvanced(!showAdvanced);
+    };
+    const onScaleChanged = (e: GenericEvent) => {
+        setScale(e.target.value);
+    };
+    const onPaperSizeChanged = (e: GenericEvent) => {
+        setPaperSize(e.target.value);
+    };
+    const onOrientationChanged = (e: GenericEvent) => {
+        setOrientation(e.target.value);
+    };
+    const onRotationChanged = (value: number) => {
+        setRotation(value);
+    };
+    const onGeneratePlot = () => { };
+    const updateBoxCoords = (box: string, normalizedBox: string): void => {
+        setBox(box);
+        setNormalizedBox(normalizedBox);
+    };
+    //Side-effect that emulates the old componentWillUnmount lifecyle method to tear down
+    //the active map capturer
+    React.useEffect(() => {
+        return () => {
+            //Tear down all active capture box layers
+            const viewer = getViewer();
+            if (viewer && mapNames) {
+                for (const activeMapName of mapNames) {
+                    const activeCapturer = getActiveCapturer(viewer, mapNames, activeMapName);
+                    if (activeCapturer) {
+                        logger.debug(`De-activating map capturer for: ${activeMapName}`);
+                        activeCapturer.deactivate();
+                    }
                 }
             }
-        }
-    }
-    updateBoxCoords(box: string, normalizedBox: string): void {
-        this.setState({ box: box, normalizedBox: normalizedBox });
-    }
-    componentWillUnmount() {
-        //Tear down the capture box layer
-        const { mapNames, config } = this.props;
-        const viewer = getViewer();
-        if (viewer && mapNames && config && config.activeMapName) {
-            const activeCapturer = getActiveCapturer(viewer, mapNames, config.activeMapName);
-            if (activeCapturer) {
-                activeCapturer.deactivate();
+        };
+    }, []);
+    //Although the dep array arg of React.useEffect() has effectively rendered the need to
+    //track previous values obsolete, we still need to track the previous advanced flag to
+    //verify that the flag is amongst the actual values in the dep array that has changed
+    const prevShowAdvanced = usePrevious(showAdvanced);
+    //Side-effect that toggles/updates associated map capturers
+    React.useEffect(() => {
+        if (activeMapName && mapNames) {
+            if (showAdvanced != prevShowAdvanced) {
+                toggleMapCapturerLayer(locale,
+                    mapNames,
+                    activeMapName,
+                    showAdvanced,
+                    paperSize,
+                    orientation,
+                    scale,
+                    rotation,
+                    updateBoxCoords,
+                    setViewRotationEnabled,
+                    setViewRotation);
             }
-        }
-    }
-    componentWillUpdate(nextProps: QuickPlotProps, nextState: IQuickPlotContainerState) {
-        const config = nextProps.config;
-        if (config && config.activeMapName && nextProps.mapNames) {
-            if (this.state.showAdvanced != nextState.showAdvanced) {
-                this.toggleMapCapturerLayer(nextProps, config.activeMapName, nextState);
-            }
-            if (nextState.showAdvanced &&
-                ((nextState.scale != this.state.scale) ||
-                (nextState.paperSize != this.state.paperSize) ||
-                (nextState.orientation != this.state.orientation) ||
-                (nextState.rotation != this.state.rotation))) {
-                const viewer = getViewer();
-                if (viewer) {
-                    const capturer = getActiveCapturer(viewer, nextProps.mapNames, config.activeMapName);
+            if (showAdvanced) {
+                const v = getViewer();
+                if (v) {
+                    const capturer = getActiveCapturer(v, mapNames, activeMapName);
                     if (capturer) {
-                        const paperSize = getPrintSize(viewer, nextState);
-                        capturer.updateBox(paperSize, parseFloat(nextState.scale), nextState.rotation);
+                        const ppSize = getPrintSize(v, showAdvanced, paperSize, orientation);
+                        logger.debug(`Updating map capturer for: ${activeMapName}`);
+                        capturer.updateBox(ppSize, parseFloat(scale), rotation);
                     }
                 }
             }
         }
+    }, [mapNames, activeMapName, showAdvanced, scale, paperSize, orientation, rotation, locale]);
+    const viewer = getViewer();
+    if (!viewer || !map || !view) {
+        return <noscript />;
     }
-    render(): JSX.Element {
-        const { map, view, externalBaseLayers } = this.props;
-        const viewer = getViewer();
-        if (!viewer || !map || !view || !this.state.paperSize) {
-            return <noscript />;
-        }
-        let hasExternalBaseLayers = false;
-        if (externalBaseLayers) {
-            hasExternalBaseLayers = externalBaseLayers.length > 0;
-        }
-        let normBox = this.state.normalizedBox;
-        let box = this.state.box;
-        if (!this.state.showAdvanced) {
-            const extent = viewer.getCurrentExtent();
-            box = `${extent[0]}, ${extent[1]}, ${extent[2]}, ${extent[1]}, ${extent[2]}, ${extent[3]}, ${extent[0]}, ${extent[3]}, ${extent[0]}, ${extent[1]}`;
-            normBox = box;
-        }
-        let paperSize: string;
-        let printSize: string;
-        const tokens = this.state.paperSize.split(",");
-        if (this.state.orientation === "L") {
-            printSize = `${tokens[1]},${tokens[0]}`;
-            paperSize = `${printSize},${tokens[2]}`;
-        } else { // P
-            printSize = `${tokens[0]},${tokens[1]}`;
-            paperSize = `${printSize},${tokens[2]}`;
-        }
-        const locale = this.getLocale();
-        const url = `${getFusionRoot()}/widgets/QuickPlot/PlotAsPDF.php`
-        return <div className="component-quick-plot">
-            <form id="Form1" name="Form1" target="_blank" method="post" action={url}>
-                <input type="hidden" id="printId" name="printId" value={`${Math.random() * 1000}`} />
-                <div className="Title FixWidth">{xlate("QUICKPLOT_HEADER", locale)}</div>
-                <label className="bp3-label">
-                    {xlate("QUICKPLOT_TITLE", locale)}
-                    <input type="text" className="bp3-input bp3-fill" dir="auto" name="{field:title}" id="title" maxLength={100} value={this.state.title} onChange={this.onTitleChanged} />
-                </label>
-                <label className="bp3-label">
-                    {xlate("QUICKPLOT_SUBTITLE", locale)}
-                    <input type="text" className="bp3-input bp3-fill" dir="auto" name="{field:sub_title}" id="subtitle" maxLength={100} value={this.state.subTitle} onChange={this.onSubTitleChanged} />
-                </label>
-                <label className="bp3-label">
-                    {xlate("QUICKPLOT_PAPER_SIZE", locale)}
-                    <div className="bp3-select bp3-fill">
-                        {/*
+    let hasExternalBaseLayers = false;
+    if (externalBaseLayers) {
+        hasExternalBaseLayers = externalBaseLayers.length > 0;
+    }
+    let normBox = normalizedBox;
+    let theBox = box;
+    if (!showAdvanced) {
+        const extent = viewer.getCurrentExtent();
+        theBox = `${extent[0]}, ${extent[1]}, ${extent[2]}, ${extent[1]}, ${extent[2]}, ${extent[3]}, ${extent[0]}, ${extent[3]}, ${extent[0]}, ${extent[1]}`;
+        normBox = theBox;
+    }
+    let ppSize: string;
+    let prSize: string;
+    const tokens = paperSize.split(",");
+    if (orientation === "L") {
+        prSize = `${tokens[1]},${tokens[0]}`;
+        ppSize = `${prSize},${tokens[2]}`;
+    } else { // P
+        prSize = `${tokens[0]},${tokens[1]}`;
+        ppSize = `${prSize},${tokens[2]}`;
+    }
+    const url = `${getFusionRoot()}/widgets/QuickPlot/PlotAsPDF.php`
+    return <div className="component-quick-plot">
+        <form id="Form1" name="Form1" target="_blank" method="post" action={url}>
+            <input type="hidden" id="printId" name="printId" value={`${Math.random() * 1000}`} />
+            <div className="Title FixWidth">{xlate("QUICKPLOT_HEADER", locale)}</div>
+            <label className="bp3-label">
+                {xlate("QUICKPLOT_TITLE", locale)}
+                <input type="text" className="bp3-input bp3-fill" dir="auto" name="{field:title}" id="title" maxLength={100} value={title} onChange={onTitleChanged} />
+            </label>
+            <label className="bp3-label">
+                {xlate("QUICKPLOT_SUBTITLE", locale)}
+                <input type="text" className="bp3-input bp3-fill" dir="auto" name="{field:sub_title}" id="subtitle" maxLength={100} value={subTitle} onChange={onSubTitleChanged} />
+            </label>
+            <label className="bp3-label">
+                {xlate("QUICKPLOT_PAPER_SIZE", locale)}
+                <div className="bp3-select bp3-fill">
+                    {/*
                             The pre-defined paper size list. The value for each "option" item is in this format: [width,height]. The unit is in millimeter.
                             We can change the html code to add more paper size or remove some ones.
                         */}
-                        <HTMLSelect className="FixWidth" id="paperSizeSelect" name="paperSizeSelect" value={this.state.paperSize} onChange={this.onPaperSizeChanged}>
-                            <option value="210.0,297.0,A4">A4 (210x297 mm; 8.27x11.69 In) </option>
-                            <option value="297.0,420.0,A3">A3 (297x420 mm; 11.69x16.54 In) </option>
-                            <option value="148.0,210.0,A5">A5 (148x210 mm; 5.83x8.27 in) </option>
-                            <option value="216.0,279.0,Letter">Letter (216x279 mm; 8.50x11.00 In) </option>
-                            <option value="216.0,356.0,Legal">Legal (216x356 mm; 8.50x14.00 In) </option>
-                        </HTMLSelect>
-                    </div>
-                </label>
-                <label className="bp3-label">
-                    {xlate("QUICKPLOT_ORIENTATION", locale)}
-                    {/*
+                    <HTMLSelect className="FixWidth" id="paperSizeSelect" name="paperSizeSelect" value={paperSize} onChange={onPaperSizeChanged}>
+                        <option value="210.0,297.0,A4">A4 (210x297 mm; 8.27x11.69 In) </option>
+                        <option value="297.0,420.0,A3">A3 (297x420 mm; 11.69x16.54 In) </option>
+                        <option value="148.0,210.0,A5">A5 (148x210 mm; 5.83x8.27 in) </option>
+                        <option value="216.0,279.0,Letter">Letter (216x279 mm; 8.50x11.00 In) </option>
+                        <option value="216.0,356.0,Legal">Legal (216x356 mm; 8.50x14.00 In) </option>
+                    </HTMLSelect>
+                </div>
+            </label>
+            <label className="bp3-label">
+                {xlate("QUICKPLOT_ORIENTATION", locale)}
+                {/*
                         The pre-defined paper orientations
                     */}
-                    <div className="bp3-select bp3-fill">
-                        <HTMLSelect className="FixWidth" id="orientation" name="orientation" value={this.state.orientation} onChange={this.onOrientationChanged}>
-                            <option value="P">{xlate("QUICKPLOT_ORIENTATION_P", locale)}</option>
-                            <option value="L">{xlate("QUICKPLOT_ORIENTATION_L", locale)}</option>
-                        </HTMLSelect>
-                    </div>
-                </label>
-                <input type="hidden" id="paperSize" name="paperSize" value={paperSize} />
-                <input type="hidden" id="printSize" name="printSize" value={printSize} />
-                <fieldset>
-                    <legend>{xlate("QUICKPLOT_SHOWELEMENTS", locale)}</legend>
-                    <label className="bp3-control bp3-checkbox">
-                        <input type="checkbox" id="ShowLegendCheckBox" name="ShowLegend" checked={this.state.showLegend} onChange={this.onShowLegendChanged} />
-                        <span className="bp3-control-indicator" />
-                        {xlate("QUICKPLOT_SHOWLEGEND", locale)}
-                    </label>
-                    <label className="bp3-control bp3-checkbox">
-                        <input type="checkbox" id="ShowNorthArrowCheckBox" name="ShowNorthArrow" checked={this.state.showNorthBar} onChange={this.onShowNorthArrowChanged} />
-                        <span className="bp3-control-indicator" />
-                        {xlate("QUICKPLOT_SHOWNORTHARROW", locale)}
-                    </label>
-                    <label className="bp3-control bp3-checkbox">
-                        <input type="checkbox" id="ShowCoordinatesCheckBox" name="ShowCoordinates" checked={this.state.showCoordinates} onChange={this.onShowCoordinatesChanged} />
-                        <span className="bp3-control-indicator" />
-                        {xlate("QUICKPLOT_SHOWCOORDINTES", locale)}
-                    </label>
-                    <label className="bp3-control bp3-checkbox">
-                        <input type="checkbox" id="ShowScaleBarCheckBox" name="ShowScaleBar" checked={this.state.showScaleBar} onChange={this.onShowScaleBarChanged} />
-                        <span className="bp3-control-indicator" />
-                        {xlate("QUICKPLOT_SHOWSCALEBAR", locale)}
-                    </label>
-                    <label className="bp3-control bp3-checkbox">
-                        <input type="checkbox" id="ShowDisclaimerCheckBox" name="ShowDisclaimer" checked={this.state.showDisclaimer} onChange={this.onShowDisclaimerChanged} />
-                        <span className="bp3-control-indicator" />
-                        {xlate("QUICKPLOT_SHOWDISCLAIMER", locale)}
-                    </label>
-                </fieldset>
-                <div className="HPlaceholder5px"></div>
-                <div>
-                    <label className="bp3-control bp3-checkbox">
-                        <input type="checkbox" id="AdvancedOptionsCheckBox" onChange={this.onAdvancedOptionsChanged} />
-                        <span className="bp3-control-indicator" />
-                        {xlate("QUICKPLOT_ADVANCED_OPTIONS", locale)}
-                    </label>
+                <div className="bp3-select bp3-fill">
+                    <HTMLSelect className="FixWidth" id="orientation" name="orientation" value={orientation} onChange={onOrientationChanged}>
+                        <option value="P">{xlate("QUICKPLOT_ORIENTATION_P", locale)}</option>
+                        <option value="L">{xlate("QUICKPLOT_ORIENTATION_L", locale)}</option>
+                    </HTMLSelect>
                 </div>
-                {(() => {
-                    if (this.state.showAdvanced) {
-                        return <div>
-                            <label className="bp3-label">
-                                {xlate("QUICKPLOT_SCALING", locale)}
-                                {/*
+            </label>
+            <input type="hidden" id="paperSize" name="paperSize" value={ppSize} />
+            <input type="hidden" id="printSize" name="printSize" value={prSize} />
+            <fieldset>
+                <legend>{xlate("QUICKPLOT_SHOWELEMENTS", locale)}</legend>
+                <label className="bp3-control bp3-checkbox">
+                    <input type="checkbox" id="ShowLegendCheckBox" name="ShowLegend" checked={showLegend} onChange={onShowLegendChanged} />
+                    <span className="bp3-control-indicator" />
+                    {xlate("QUICKPLOT_SHOWLEGEND", locale)}
+                </label>
+                <label className="bp3-control bp3-checkbox">
+                    <input type="checkbox" id="ShowNorthArrowCheckBox" name="ShowNorthArrow" checked={showNorthBar} onChange={onShowNorthArrowChanged} />
+                    <span className="bp3-control-indicator" />
+                    {xlate("QUICKPLOT_SHOWNORTHARROW", locale)}
+                </label>
+                <label className="bp3-control bp3-checkbox">
+                    <input type="checkbox" id="ShowCoordinatesCheckBox" name="ShowCoordinates" checked={showCoordinates} onChange={onShowCoordinatesChanged} />
+                    <span className="bp3-control-indicator" />
+                    {xlate("QUICKPLOT_SHOWCOORDINTES", locale)}
+                </label>
+                <label className="bp3-control bp3-checkbox">
+                    <input type="checkbox" id="ShowScaleBarCheckBox" name="ShowScaleBar" checked={showScaleBar} onChange={onShowScaleBarChanged} />
+                    <span className="bp3-control-indicator" />
+                    {xlate("QUICKPLOT_SHOWSCALEBAR", locale)}
+                </label>
+                <label className="bp3-control bp3-checkbox">
+                    <input type="checkbox" id="ShowDisclaimerCheckBox" name="ShowDisclaimer" checked={showDisclaimer} onChange={onShowDisclaimerChanged} />
+                    <span className="bp3-control-indicator" />
+                    {xlate("QUICKPLOT_SHOWDISCLAIMER", locale)}
+                </label>
+            </fieldset>
+            <div className="HPlaceholder5px"></div>
+            <div>
+                <label className="bp3-control bp3-checkbox">
+                    <input type="checkbox" id="AdvancedOptionsCheckBox" onChange={onAdvancedOptionsChanged} />
+                    <span className="bp3-control-indicator" />
+                    {xlate("QUICKPLOT_ADVANCED_OPTIONS", locale)}
+                </label>
+            </div>
+            {(() => {
+                if (showAdvanced) {
+                    return <div>
+                        <label className="bp3-label">
+                            {xlate("QUICKPLOT_SCALING", locale)}
+                            {/*
                                     The pre-defined scales. The value for each "option" item is the scale denominator.
                                     We can change the html code to extend the pre-defined scales
                                 */}
-                                <div className="bp3-select bp3-fill">
-                                    <HTMLSelect className="FixWidth" id="scaleDenominator" name="scaleDenominator" value={this.state.scale} onChange={this.onScaleChanged}>
-                                        <option value="500">1: 500</option>
-                                        <option value="1000">1: 1000</option>
-                                        <option value="2500">1: 2500</option>
-                                        <option value="5000">1: 5000</option>
-                                    </HTMLSelect>
-                                </div>
-                            </label>
-                            <label className="bp3-label">
-                                {xlate("QUICKPLOT_DPI", locale)}
-                                {/*
+                            <div className="bp3-select bp3-fill">
+                                <HTMLSelect className="FixWidth" id="scaleDenominator" name="scaleDenominator" value={scale} onChange={onScaleChanged}>
+                                    <option value="500">1: 500</option>
+                                    <option value="1000">1: 1000</option>
+                                    <option value="2500">1: 2500</option>
+                                    <option value="5000">1: 5000</option>
+                                </HTMLSelect>
+                            </div>
+                        </label>
+                        <label className="bp3-label">
+                            {xlate("QUICKPLOT_DPI", locale)}
+                            {/*
                                     The pre-defined print DPI.
                                     We can change the html code to extend the pre-defined values
                                 */}
-                                <div className="bp3-select bp3-fill">
-                                    <HTMLSelect className="FixWidth" id="dpi" name="dpi" value={this.state.dpi} onChange={this.onDpiChanged}>
-                                        <option value="96">96</option>
-                                        <option value="150">150</option>
-                                        <option value="300">300</option>
-                                        <option value="600">600</option>
-                                    </HTMLSelect>
-                                </div>
-                            </label>
-                            <label className="bp3-label noselect">
-                                {xlate("QUICKPLOT_BOX_ROTATION", locale)}
-                                <div style={{ paddingLeft: 16, paddingRight: 16 }}>
-                                    <Slider min={0} max={360} labelStepSize={90} stepSize={1} value={this.state.rotation} onChange={this.onRotationChanged} />
-                                </div>
-                            </label>
-                        </div>;
-                    } else {
-                        return <div>
-                            <input type="hidden" id="scaleDenominator" name="scaleDenominator" value={`${view.scale}`} />
-                            <input type="hidden" id="dpi" name="dpi" value={this.state.dpi} />
-                        </div>;
-                    }
-                })()}
-                <div className="HPlaceholder5px"></div>
-                {(() => {
-                    if (hasExternalBaseLayers) {
-                        return <Callout intent={Intent.PRIMARY} icon="info-sign">
-                            {xlate("QUICKPLOT_COMMERCIAL_LAYER_WARNING", locale)}
-                        </Callout>;
-                    }
-                })()}
-                <div className="ButtonContainer FixWidth">
-                    <Button type="submit" intent={Intent.PRIMARY} icon="print" onClick={this.onGeneratePlot}>{xlate("QUICKPLOT_GENERATE", locale)}</Button>
-                </div>
-                <input type="hidden" id="margin" name="margin" />
-                <input type="hidden" id="normalizedBox" name="normalizedBox" value={normBox} />
-                <input type="hidden" id="rotation" name="rotation" value={-(this.state.rotation || 0)} />
-                <input type="hidden" id="sessionId" name="sessionId" value={map.SessionId} />
-                <input type="hidden" id="mapName" name="mapName" value={map.Name} />
-                <input type="hidden" id="box" name="box" value={box} />
-                <input type="hidden" id="legalNotice" name="legalNotice" />
-            </form>
-        </div>;
-    }
+                            <div className="bp3-select bp3-fill">
+                                <HTMLSelect className="FixWidth" id="dpi" name="dpi" value={dpi} onChange={onDpiChanged}>
+                                    <option value="96">96</option>
+                                    <option value="150">150</option>
+                                    <option value="300">300</option>
+                                    <option value="600">600</option>
+                                </HTMLSelect>
+                            </div>
+                        </label>
+                        <label className="bp3-label noselect">
+                            {xlate("QUICKPLOT_BOX_ROTATION", locale)}
+                            <div style={{ paddingLeft: 16, paddingRight: 16 }}>
+                                <Slider min={0} max={360} labelStepSize={90} stepSize={1} value={rotation} onChange={onRotationChanged} />
+                            </div>
+                        </label>
+                    </div>;
+                } else {
+                    return <div>
+                        <input type="hidden" id="scaleDenominator" name="scaleDenominator" value={`${view.scale}`} />
+                        <input type="hidden" id="dpi" name="dpi" value={dpi} />
+                    </div>;
+                }
+            })()}
+            <div className="HPlaceholder5px"></div>
+            {(() => {
+                if (hasExternalBaseLayers) {
+                    return <Callout intent={Intent.PRIMARY} icon="info-sign">
+                        {xlate("QUICKPLOT_COMMERCIAL_LAYER_WARNING", locale)}
+                    </Callout>;
+                }
+            })()}
+            <div className="ButtonContainer FixWidth">
+                <Button type="submit" intent={Intent.PRIMARY} icon="print" onClick={onGeneratePlot}>{xlate("QUICKPLOT_GENERATE", locale)}</Button>
+            </div>
+            <input type="hidden" id="margin" name="margin" />
+            <input type="hidden" id="normalizedBox" name="normalizedBox" value={normBox} />
+            <input type="hidden" id="rotation" name="rotation" value={-(rotation || 0)} />
+            <input type="hidden" id="sessionId" name="sessionId" value={map.SessionId} />
+            <input type="hidden" id="mapName" name="mapName" value={map.Name} />
+            <input type="hidden" id="box" name="box" value={theBox} />
+            <input type="hidden" id="legalNotice" name="legalNotice" />
+        </form>
+    </div>;
 }
 
-export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(QuickPlotContainer);
+export default QuickPlotContainer;

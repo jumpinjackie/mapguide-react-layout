@@ -1,18 +1,16 @@
 import * as React from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import * as logger from "../utils/logger";
 import { getLayout } from "../api/registry/layout";
 import {
     IExternalBaseLayer,
-    ReduxDispatch,
-    IApplicationState,
-    IConfigurationReducerState,
     IBranchedMapSubState,
     ClientKind,
     InitError,
     IMapViewer
 } from "../api/common";
-import { initLayout, IInitAppLayout } from "../actions/init";
+import * as InitActions from "../actions/init";
+import { IInitAppLayout } from "../actions/init";
 import { Error, normalizeStack } from "../components/error";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import * as TemplateActions from "../actions/template";
@@ -23,6 +21,7 @@ import { UrlValueChangeCallback, IAppUrlStateProps, urlPropsQueryConfig } from '
 import { addUrlProps } from 'react-url-query';
 import { IElementState } from '../actions/defs';
 import { NonIdealState, Spinner, Intent, Callout } from '@blueprintjs/core';
+import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, useActiveMapBranch, useActiveMapName } from './hooks';
 
 /**
  * Callback interface for propagating changes to URL state
@@ -109,11 +108,13 @@ export interface IAppProps {
  * @interface IAppState
  */
 export interface IAppState {
-    error: InitError;
+    error: InitError | undefined;
     includeStack: boolean;
     initOptions: any;
-    config: IConfigurationReducerState;
-    map: IBranchedMapSubState;
+    //config: IConfigurationReducerState;
+    configuredLocale: string;
+    map: IBranchedMapSubState | undefined;
+    activeMapName: string | undefined;
 }
 
 /**
@@ -127,31 +128,10 @@ export interface IAppDispatch {
     setElementVisibility: (states: IElementState) => void;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>): Partial<IAppState> {
-    let map;
-    if (state.config.activeMapName) {
-        map = state.mapState[state.config.activeMapName];
-    }
-    return {
-        error: state.initError.error,
-        includeStack: state.initError.includeStack,
-        initOptions: state.initError.options,
-        config: state.config,
-        map: map
-    };
-}
+type AppInnerProps = IAppProps & IAppState & IAppDispatch & Partial<IAppUrlStateProps> & Partial<IAppUrlStateCallback>;
 
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAppDispatch> {
-    return {
-        initLayout: (args) => dispatch(initLayout(args)),
-        setElementVisibility: (state) => dispatch(TemplateActions.setElementStates(state))
-    };
-}
-
-export type AppProps = IAppProps & Partial<IAppState> & Partial<IAppDispatch> & Partial<IAppUrlStateProps> & Partial<IAppUrlStateCallback>;
-
-export class App extends React.Component<AppProps, any> {
-    constructor(props: AppProps) {
+class AppInner extends React.Component<AppInnerProps, any> {
+    constructor(props: AppInnerProps) {
         super(props);
         this.state = {
             isLoading: true
@@ -266,13 +246,13 @@ export class App extends React.Component<AppProps, any> {
             initLayout(args);
         }
     }
-    componentDidUpdate(prevProps: AppProps) {
+    componentDidUpdate(prevProps: AppInnerProps) {
         const nextProps = this.props;
         if (nextProps.map != null && prevProps.map != nextProps.map) {
             this.setState({ isLoading: false });
         }
-        if (nextProps.config && nextProps.config.activeMapName) {
-            const am = nextProps.config.activeMapName;
+        if (nextProps.activeMapName) {
+            const am = nextProps.activeMapName;
             nextProps.onChangeUrlMap?.(am);
         }
         if (nextProps.map) {
@@ -354,8 +334,8 @@ export class App extends React.Component<AppProps, any> {
         }
     }
     private initErrorRenderer = (err: Error | InitError) => {
-        const { config, initOptions } = this.props;
-        let locale = config ? (config.locale || DEFAULT_LOCALE) : DEFAULT_LOCALE;
+        const { configuredLocale, initOptions } = this.props;
+        let locale = configuredLocale;
         if (initOptions && initOptions.locale) {
             locale = initOptions.locale;
         }
@@ -366,13 +346,13 @@ export class App extends React.Component<AppProps, any> {
         </Callout>;
     }
     render(): JSX.Element {
-        const { layout, config, error } = this.props;
+        const { layout, configuredLocale, error } = this.props;
         const { isLoading } = this.state;
         if (error) {
             return <Error error={error} errorRenderer={this.initErrorRenderer} />
         } else {
             //NOTE: Locale may not have been set at this point, so use default
-            const locale = config ? (config.locale || DEFAULT_LOCALE) : DEFAULT_LOCALE;
+            const locale = configuredLocale;
             if (isLoading) {
                 return <NonIdealState 
                     icon={<Spinner intent={Intent.NONE} size={Spinner.SIZE_LARGE} />}
@@ -396,4 +376,27 @@ export class App extends React.Component<AppProps, any> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(addUrlProps<App>({ urlPropsQueryConfig })(App));
+const App = (props: IAppProps) => {
+    const error = useInitError();
+    const includeStack = useInitErrorStack();
+    const initOptions = useInitErrorOptions();
+    const configuredLocale = useViewerLocale();
+    const map = useActiveMapBranch();
+    const activeMapName = useActiveMapName();
+
+    const dispatch = useDispatch();
+    const initLayout = (args: InitActions.IInitAppLayout) => dispatch(InitActions.initLayout(args));
+    const setElementVisibility = (state: IElementState) => dispatch(TemplateActions.setElementStates(state));
+
+    return <AppInner error={error}
+        includeStack={includeStack}
+        initOptions={initOptions}
+        configuredLocale={configuredLocale}
+        map={map}
+        activeMapName={activeMapName}
+        initLayout={initLayout}
+        setElementVisibility={setElementVisibility}
+        {...props} />;
+}
+
+export default addUrlProps<React.ComponentClass<IAppProps>>({ urlPropsQueryConfig })(App);

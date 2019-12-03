@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import olExtent from "ol/extent";
 import olPoint from "ol/geom/point";
 import olLineString from "ol/geom/linestring";
@@ -24,6 +24,7 @@ import { tr } from "../api/i18n";
 import { serialize } from "../api/builders/mapagent";
 import { ILocalizedMessages } from "../strings/msgdef";
 import { getUnitOfMeasure } from '../utils/units';
+import { useActiveMapState, useActiveMapSelectionSet, useConfiguredAgentUri, useConfiguredAgentKind, useViewerBusyCount, useViewerSizeUnits } from './hooks';
 
 function isEmptySelection(selection: QueryMapFeaturesResponse | undefined): boolean {
     if (selection && selection.FeatureSet) {
@@ -41,7 +42,7 @@ function isEmptySelection(selection: QueryMapFeaturesResponse | undefined): bool
  */
 class FusionApiShim {
     public Event: FusionEventApiShim;
-    constructor(private parent: ViewerApiShim) {
+    constructor(private parent: ViewerApiShimInner) {
         this.Event = new FusionEventApiShim();
     }
     xml2json(callback: Function, response: any, json: boolean) {
@@ -280,7 +281,7 @@ class FusionWidgetApiShim {
     private _activeLayer: any;
     private _activeToast: string | undefined;
 
-    constructor(private parent: ViewerApiShim) {
+    constructor(private parent: ViewerApiShimInner) {
     }
 
     goHome(): void { //TaskPane
@@ -527,7 +528,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeLine(options: any,handler: FusionGeomDigitizer) { //Map
+    digitizeLine(options: any, handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeLine(ln => {
@@ -535,7 +536,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeLineString(options: any,handler: FusionGeomDigitizer) { //Map
+    digitizeLineString(options: any, handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeLineString(lstr => {
@@ -543,7 +544,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeRectangle(options: any,handler: FusionGeomDigitizer) { //Map
+    digitizeRectangle(options: any, handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeRectangle(rect => {
@@ -551,7 +552,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizePolygon(options: any,handler: FusionGeomDigitizer) { //Map
+    digitizePolygon(options: any, handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizePolygon(poly => {
@@ -559,7 +560,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeCircle(options: any,handler: FusionGeomDigitizer) { //Map
+    digitizeCircle(options: any, handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeCircle(circ => {
@@ -646,16 +647,16 @@ export interface IViewerApiShimProps {
 
 }
 
-export interface IViewerApiShimState {
-    map: RuntimeMap;
-    selectionSet: QueryMapFeaturesResponse;
-    agentUri: string;
+interface IViewerApiShimState {
+    map: RuntimeMap | undefined;
+    selectionSet: QueryMapFeaturesResponse | null;
+    agentUri: string | undefined;
     agentKind: ClientKind;
     busyCount: number;
     sizeUnits: UnitOfMeasure;
 }
 
-export interface IViewerApiShimDispatch {
+interface IViewerApiShimDispatch {
     goHome: () => void;
     legendRefresh: () => void;
     invokeCommand: (cmd: ICommand, parameters?: any) => void;
@@ -663,34 +664,7 @@ export interface IViewerApiShimDispatch {
     queryMapFeatures: (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => void;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>): Partial<IViewerApiShimState> {
-    let map;
-    let selectionSet;
-    if (state.config.activeMapName) {
-        map = state.mapState[state.config.activeMapName].runtimeMap;
-        selectionSet = state.mapState[state.config.activeMapName].selectionSet;
-    }
-    return {
-        map: map,
-        selectionSet: selectionSet,
-        agentUri: state.config.agentUri,
-        agentKind: state.config.agentKind,
-        busyCount: state.viewer.busyCount,
-        sizeUnits: state.config.viewSizeUnits
-    };
-}
-
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IViewerApiShimDispatch> {
-    return {
-        goHome: () => dispatch(TaskPaneActions.goHome()),
-        legendRefresh: () => dispatch(LegendActions.refresh()),
-        invokeCommand: (cmd, parameters) => dispatch(MapActions.invokeCommand(cmd, parameters)),
-        setSelection: (mapName, res) => dispatch(MapActions.setSelection(mapName, res)),
-        queryMapFeatures: (mapName, options) => dispatch(MapActions.queryMapFeatures(mapName, options))
-    };
-}
-
-export type ViewerApiShimProps = IViewerApiShimProps & Partial<IViewerApiShimState> & Partial<IViewerApiShimDispatch>;
+type ViewerApiShimProps = IViewerApiShimProps & IViewerApiShimState & IViewerApiShimDispatch;
 
 /**
  * This component installs a AJAX/Fusion viewer API compatibility layer when mounted allowing for existing
@@ -700,7 +674,7 @@ export type ViewerApiShimProps = IViewerApiShimProps & Partial<IViewerApiShimSta
  * @class ViewerApiShim
  * @extends {React.Component<ViewerApiShimProps, any>}
  */
-export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
+class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
     private userSelectionHandlers: SelectionHandlerCallback[];
     private us: boolean;
     private formFrame: FormFrameShim;
@@ -1085,8 +1059,8 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
                 for (const sl of selection.SelectedFeatures.SelectedLayer) {
                     sel[sl["@name"]] = sl.Feature.map(f => {
                         const bbox = f.Bounds.split(" ").map(s => parseFloat(s));
-                        return { 
-                            zoom: { minx: bbox[0], miny: bbox[1], maxx: bbox[2], maxy: bbox[3] }, 
+                        return {
+                            zoom: { minx: bbox[0], miny: bbox[1], maxx: bbox[2], maxy: bbox[3] },
                             values: f.Property.map(p => ({ name: p.Name, value: p.Value }))
                         };
                     })
@@ -1124,7 +1098,7 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
     public ScreenToMapUnits(x: number, y: number): IAjaxViewerPoint | undefined {
         const viewer = Runtime.getViewer();
         if (viewer) {
-            const [ sx, sy ] = viewer.screenToMapUnits(x, y);
+            const [sx, sy] = viewer.screenToMapUnits(x, y);
             return { X: sx, Y: sy };
         }
     }
@@ -1217,7 +1191,7 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
         const nextProps = this.props;
         if (nextProps.map && nextProps.selectionSet != prevProps.selectionSet) {
             for (const handler of this.userSelectionHandlers) {
-                handler(nextProps.map.Name, nextProps.selectionSet);
+                handler(nextProps.map.Name, nextProps.selectionSet ?? undefined);
             }
         }
         if (nextProps.busyCount != prevProps.busyCount) {
@@ -1232,4 +1206,32 @@ export class ViewerApiShim extends React.Component<ViewerApiShimProps, any> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(ViewerApiShim);
+const ViewerApiShim = () => {
+    const map = useActiveMapState();
+    const selectionSet = useActiveMapSelectionSet();
+    const agentUri = useConfiguredAgentUri();
+    const agentKind = useConfiguredAgentKind();
+    const busyCount = useViewerBusyCount();
+    const sizeUnits = useViewerSizeUnits();
+
+    const dispatch = useDispatch();
+    const goHome = () => dispatch(TaskPaneActions.goHome());
+    const legendRefresh = () => dispatch(LegendActions.refresh());
+    const invokeCommand = (cmd: ICommand, parameters: any) => dispatch(MapActions.invokeCommand(cmd, parameters));
+    const setSelection = (mapName: string, res: any) => dispatch(MapActions.setSelection(mapName, res));
+    const queryMapFeatures = (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => dispatch(MapActions.queryMapFeatures(mapName, options));
+
+    return <ViewerApiShimInner map={map}
+        selectionSet={selectionSet}
+        agentUri={agentUri}
+        agentKind={agentKind}
+        busyCount={busyCount}
+        sizeUnits={sizeUnits}
+        goHome={goHome}
+        legendRefresh={legendRefresh}
+        invokeCommand={invokeCommand}
+        setSelection={setSelection}
+        queryMapFeatures={queryMapFeatures} />;
+}
+
+export default ViewerApiShim;

@@ -1,97 +1,59 @@
 import * as React from "react";
-import { connect } from "react-redux";
 import {
     Coordinate,
-    ReduxDispatch,
-    IApplicationState,
-    ICoordinateConfiguration
+    UnitOfMeasure
 } from "../api/common";
 import { MouseCoordinates } from "../components/mouse-coordinates";
 import olProj from "ol/proj";
 import { getUnitOfMeasure } from "../utils/units";
-import { UnitOfMeasure } from "../index";
+import { useViewerLocale, useCurrentMouseCoordinates, useActiveMapProjection, useConfiguredCoordinateProjection, useConfiguredCoordinateDecimals, useConfiguredCoordinateFormat } from './hooks';
 
 export interface IMouseCoordinatesContainerProps {
     style: React.CSSProperties;
 }
 
-export interface IMouseCoordinatesContainerState {
-    config: ICoordinateConfiguration;
-    mapProjection: string;
-    mouse: Coordinate | undefined;
-    /**
-     * @since 0.12.2
-     */
-    locale: string;
-}
-
-export interface IMouseCoordinatesDispatch { }
-
-function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMouseCoordinatesContainerProps): Partial<IMouseCoordinatesContainerState> {
-    let mapProjection;
-    if (state.config.activeMapName) {
-        const map = state.mapState[state.config.activeMapName].runtimeMap;
-        if (map) {
-            mapProjection = `EPSG:${map.CoordinateSystem.EpsgCode}`;
-        }
-    }
-    return {
-        config: state.config.coordinates,
-        mouse: state.mouse.coords,
-        mapProjection: mapProjection,
-        locale: state.config.locale
-    };
-}
-
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMouseCoordinatesDispatch> {
-    return {
-
-    };
-}
-
-export type MouseCoordinatesContainerProps = IMouseCoordinatesContainerProps & Partial<IMouseCoordinatesContainerState> & Partial<IMouseCoordinatesDispatch>;
-
-export class MouseCoordinatesContainer extends React.Component<MouseCoordinatesContainerProps, any> {
-    constructor(props: MouseCoordinatesContainerProps) {
-        super(props);
-    }
-    render(): JSX.Element {
-        const { config, style, mouse, mapProjection, locale } = this.props;
-        if (config && mouse) {
-            const prj = olProj.get(config.projection || mapProjection);
-            let units;
-            if (prj) {
-                units = prj.getUnits();
-                switch (units) {
-                    case "degrees":
-                        units = getUnitOfMeasure(UnitOfMeasure.Degrees).abbreviation(locale);
-                        break;
-                    case "pixels":
-                    case "tile-pixels":
-                        units = getUnitOfMeasure(UnitOfMeasure.Pixels).abbreviation(locale);
-                        break;
-                    case "m":
-                        units = getUnitOfMeasure(UnitOfMeasure.Meters).abbreviation(locale);
-                        break;
-                    case "ft":
-                    case "us-ft":
-                        units = getUnitOfMeasure(UnitOfMeasure.Feet).abbreviation(locale);
-                        break;
-                }
+const MouseCoordinatesContainer = (props: IMouseCoordinatesContainerProps) => {
+    const { style } = props;
+    const mapProjection = useActiveMapProjection();
+    const projection = useConfiguredCoordinateProjection();
+    const decimals = useConfiguredCoordinateDecimals();
+    const format = useConfiguredCoordinateFormat();
+    const mouse = useCurrentMouseCoordinates();
+    const locale = useViewerLocale();
+    if (mouse) {
+        const prj = olProj.get(projection || mapProjection);
+        let units;
+        if (prj) {
+            units = prj.getUnits();
+            switch (units) {
+                case "degrees":
+                    units = getUnitOfMeasure(UnitOfMeasure.Degrees).abbreviation(locale);
+                    break;
+                case "pixels":
+                case "tile-pixels":
+                    units = getUnitOfMeasure(UnitOfMeasure.Pixels).abbreviation(locale);
+                    break;
+                case "m":
+                    units = getUnitOfMeasure(UnitOfMeasure.Meters).abbreviation(locale);
+                    break;
+                case "ft":
+                case "us-ft":
+                    units = getUnitOfMeasure(UnitOfMeasure.Feet).abbreviation(locale);
+                    break;
             }
-            let coords: Coordinate = [mouse[0], mouse[1]];
-            if (config.projection && mapProjection) {
-                try {
-                    coords = olProj.transform(coords, mapProjection, config.projection);
-                } catch (e) {
-
-                }
-            }
-            return <MouseCoordinates units={units} coords={coords} style={style} decimals={config.decimals} format={config.format} />;
-        } else {
-            return <div />;
         }
-    }
-}
+        let coords: Coordinate = [mouse[0], mouse[1]];
+        if (projection && mapProjection) {
+            try {
+                coords = olProj.transform(coords, mapProjection, projection);
+            } catch (e) {
 
-export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(MouseCoordinatesContainer);
+            }
+        }
+        return <MouseCoordinates units={units} coords={coords} style={style} decimals={decimals} format={format} />;
+    } else {
+        return <div />;
+    }
+};
+
+export default MouseCoordinatesContainer;

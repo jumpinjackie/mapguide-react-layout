@@ -1,38 +1,21 @@
 import * as React from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Legend } from "../components/legend";
-import { RuntimeMap } from "../api/contracts/runtime-map";
 import * as LegendActions from "../actions/legend";
 import * as MapActions from "../actions/map";
 import {
-    IMapView,
-    IApplicationState,
-    ReduxDispatch,
-    IConfigurationReducerState,
-    IExternalBaseLayer,
-    getExternalBaseLayers
+    PropType
 } from "../api/common";
 import { tr } from "../api/i18n";
+import { useActiveMapState, useActiveMapView, useActiveMapShowGroups, useActiveMapShowLayers, useActiveMapHideGroups, useActiveMapHideLayers, useActiveMapExpandedGroups, useActiveMapSelectableLayers, useActiveMapExternalBaseLayers, useActiveMapName, useViewerLocale } from './hooks';
 
 export interface ILegendContainerProps {
     maxHeight?: number;
     inlineBaseLayerSwitcher?: boolean;
 }
 
-export interface ILegendContainerState {
-    view: IMapView | null;
-    config: IConfigurationReducerState;
-    map: RuntimeMap | null;
-    selectableLayers: any;
-    expandedGroups: any;
-    externalBaseLayers: IExternalBaseLayer[];
-    showGroups: string[];
-    showLayers: string[];
-    hideGroups: string[];
-    hideLayers: string[];
-}
 
-export interface ILegendContainerDispatch {
+interface LCDispatch {
     setBaseLayer: (mapName: string, layerName: string) => void;
     setGroupVisibility: (mapName: string, options: { id: string, value: boolean }) => void;
     setLayerVisibility: (mapName: string, options: { id: string, value: boolean }) => void;
@@ -40,134 +23,79 @@ export interface ILegendContainerDispatch {
     setGroupExpanded: (mapName: string, options: { id: string, value: boolean }) => void;
 }
 
-function mapStateToProps(state: Readonly<IApplicationState>): Partial<ILegendContainerState> {
-    let view;
-    let runtimeMap;
-    let selectableLayers;
-    let expandedGroups;
-    let externalBaseLayers;
-    let showGroups;
-    let showLayers;
-    let hideGroups;
-    let hideLayers;
-    if (state.config.activeMapName) {
-        const branch = state.mapState[state.config.activeMapName];
-        view = branch.currentView;
-        externalBaseLayers = branch.externalBaseLayers;
-        runtimeMap = branch.runtimeMap;
-        expandedGroups = branch.expandedGroups;
-        selectableLayers = branch.selectableLayers;
-        showGroups = branch.showGroups;
-        showLayers = branch.showLayers;
-        hideGroups = branch.hideGroups;
-        hideLayers = branch.hideLayers;
-    }
-    return {
-        view: view,
-        showGroups: showGroups,
-        showLayers: showLayers,
-        hideGroups: hideGroups,
-        hideLayers: hideLayers,
-        config: state.config,
-        map: runtimeMap,
-        selectableLayers: selectableLayers,
-        expandedGroups: expandedGroups,
-        externalBaseLayers: getExternalBaseLayers(state)
+const LegendContainer = (props: ILegendContainerProps) => {
+    const { maxHeight, inlineBaseLayerSwitcher } = props;
+    const dispatch = useDispatch();
+    const activeMapName = useActiveMapName();
+    const locale = useViewerLocale();
+    const map = useActiveMapState();
+    const view = useActiveMapView();
+    const showGroups = useActiveMapShowGroups();
+    const showLayers = useActiveMapShowLayers();
+    const hideGroups = useActiveMapHideGroups();
+    const hideLayers=  useActiveMapHideLayers();
+    const expandedGroups = useActiveMapExpandedGroups();
+    const selectableLayers = useActiveMapSelectableLayers();
+    const externalBaseLayers = useActiveMapExternalBaseLayers();
+    const setBaseLayer: PropType<LCDispatch, "setBaseLayer"> = (mapName: string, layerName: string) => dispatch(MapActions.setBaseLayer(mapName, layerName));
+    const setGroupVisibility: PropType<LCDispatch, "setGroupVisibility"> = (mapName: string, options) => dispatch(LegendActions.setGroupVisibility(mapName, options));
+    const setLayerVisibility: PropType<LCDispatch, "setLayerVisibility"> = (mapName: string, options) => dispatch(LegendActions.setLayerVisibility(mapName, options));
+    const setLayerSelectable: PropType<LCDispatch, "setLayerSelectable"> = (mapName: string, options) => dispatch(LegendActions.setLayerSelectable(mapName, options));
+    const setGroupExpanded: PropType<LCDispatch, "setGroupExpanded"> = (mapName: string, options) => dispatch(LegendActions.setGroupExpanded(mapName, options));
+
+    const onLayerSelectabilityChanged = (id: string, selectable: boolean) => {
+        if (activeMapName) {
+            setLayerSelectable?.(activeMapName, { id: id, value: selectable });
+        }
     };
-}
-
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ILegendContainerDispatch> {
-    return {
-        setBaseLayer: (mapName: string, layerName: string) => dispatch(MapActions.setBaseLayer(mapName, layerName)),
-        setGroupVisibility: (mapName: string, options) => dispatch(LegendActions.setGroupVisibility(mapName, options)),
-        setLayerVisibility: (mapName: string, options) => dispatch(LegendActions.setLayerVisibility(mapName, options)),
-        setLayerSelectable: (mapName: string, options) => dispatch(LegendActions.setLayerSelectable(mapName, options)),
-        setGroupExpanded: (mapName: string, options) => dispatch(LegendActions.setGroupExpanded(mapName, options))
+    const onGroupExpansionChanged = (id: string, expanded: boolean) => {
+        if (setGroupExpanded && activeMapName) {
+            setGroupExpanded(activeMapName, { id: id, value: expanded });
+        }
     };
-}
-
-export type LegendContainerProps = ILegendContainerProps & Partial<ILegendContainerState> & Partial<ILegendContainerDispatch>;
-
-export class LegendContainer extends React.Component<LegendContainerProps, any> {
-    constructor(props: LegendContainerProps) {
-        super(props);
-    }
-    private onLayerSelectabilityChanged = (id: string, selectable: boolean) => {
-        const { config, setLayerSelectable } = this.props;
-        if (setLayerSelectable && config && config.activeMapName) {
-            setLayerSelectable(config.activeMapName, { id: id, value: selectable });
+    const onGroupVisibilityChanged = (groupId: string, visible: boolean) => {
+        if (setGroupVisibility && activeMapName) {
+            setGroupVisibility(activeMapName, { id: groupId, value: visible });
         }
-    }
-    private onGroupExpansionChanged = (id: string, expanded: boolean) => {
-        const { config, setGroupExpanded } = this.props;
-        if (setGroupExpanded && config && config.activeMapName) {
-            setGroupExpanded(config.activeMapName, { id: id, value: expanded });
+    };
+    const onLayerVisibilityChanged = (layerId: string, visible: boolean) => {
+        if (setLayerVisibility && activeMapName) {
+            setLayerVisibility(activeMapName, { id: layerId, value: visible });
         }
-    }
-    private onGroupVisibilityChanged = (groupId: string, visible: boolean) => {
-        const { config, setGroupVisibility } = this.props;
-        if (setGroupVisibility && config && config.activeMapName) {
-            setGroupVisibility(config.activeMapName, { id: groupId, value: visible });
+    };
+    const onBaseLayerChanged = (layerName: string) => {
+        if (setBaseLayer && activeMapName) {
+            setBaseLayer(activeMapName, layerName);
         }
-    }
-    private onLayerVisibilityChanged = (layerId: string, visible: boolean) => {
-        const { config, setLayerVisibility } = this.props;
-        if (setLayerVisibility && config && config.activeMapName) {
-            setLayerVisibility(config.activeMapName, { id: layerId, value: visible });
-        }
-    }
-    private onBaseLayerChanged = (layerName: string) => {
-        const { config, setBaseLayer } = this.props;
-        if (setBaseLayer && config && config.activeMapName) {
-            setBaseLayer(config.activeMapName, layerName);
-        }
-    }
-    render(): JSX.Element {
-        //overrideSelectableLayers?: any;
-        //overrideExpandedItems?: any;
-        const {
-            map,
-            config,
-            view,
-            showGroups,
-            showLayers,
-            hideGroups,
-            hideLayers,
-            expandedGroups,
-            selectableLayers,
-            maxHeight,
-            inlineBaseLayerSwitcher,
-            externalBaseLayers
-        } = this.props;
-        let locale: string | undefined;
-        if (map && config && view) {
-            locale = config.locale;
-            let scale = view.scale;
-            if (scale) {
-                return <Legend map={map}
-                    maxHeight={maxHeight}
-                    currentScale={scale}
-                    showLayers={showLayers}
-                    showGroups={showGroups}
-                    hideLayers={hideLayers}
-                    hideGroups={hideGroups}
-                    locale={config.locale}
-                    inlineBaseLayerSwitcher={!!inlineBaseLayerSwitcher}
-                    externalBaseLayers={externalBaseLayers}
-                    onBaseLayerChanged={this.onBaseLayerChanged}
-                    overrideSelectableLayers={selectableLayers}
-                    overrideExpandedItems={expandedGroups}
-                    onLayerSelectabilityChanged={this.onLayerSelectabilityChanged}
-                    onGroupExpansionChanged={this.onGroupExpansionChanged}
-                    onGroupVisibilityChanged={this.onGroupVisibilityChanged}
-                    onLayerVisibilityChanged={this.onLayerVisibilityChanged} />;
-            } else {
-                return <div>{tr("LOADING_MSG", locale)}</div>;
-            }
+    };
+    //overrideSelectableLayers?: any;
+    //overrideExpandedItems?: any;
+    if (map && view) {
+        let scale = view.scale;
+        if (scale) {
+            return <Legend map={map}
+                maxHeight={maxHeight}
+                currentScale={scale}
+                showLayers={showLayers}
+                showGroups={showGroups}
+                hideLayers={hideLayers}
+                hideGroups={hideGroups}
+                locale={locale}
+                inlineBaseLayerSwitcher={!!inlineBaseLayerSwitcher}
+                externalBaseLayers={externalBaseLayers}
+                onBaseLayerChanged={onBaseLayerChanged}
+                overrideSelectableLayers={selectableLayers}
+                overrideExpandedItems={expandedGroups}
+                onLayerSelectabilityChanged={onLayerSelectabilityChanged}
+                onGroupExpansionChanged={onGroupExpansionChanged}
+                onGroupVisibilityChanged={onGroupVisibilityChanged}
+                onLayerVisibilityChanged={onLayerVisibilityChanged} />;
         } else {
             return <div>{tr("LOADING_MSG", locale)}</div>;
         }
+    } else {
+        return <div>{tr("LOADING_MSG", locale)}</div>;
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(LegendContainer);
+export default LegendContainer;

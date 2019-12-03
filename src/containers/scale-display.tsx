@@ -1,79 +1,35 @@
 import * as React from "react";
-import { connect } from "react-redux";
-import { setScale } from "../actions/map";
-import {
-    IMapView,
-    ReduxDispatch,
-    IApplicationState,
-    IConfigurationReducerState,
-    getCurrentView,
-    getRuntimeMap
-} from "../api/common";
-import { DEFAULT_LOCALE } from "../api/i18n";
+import { useDispatch } from "react-redux";
+import * as MapActions from "../actions/map";
 import { ScaleDisplay } from "../components/scale-display";
+import { useActiveMapView, useActiveMapName, useActiveMapFiniteScales, useViewerLocale } from './hooks';
 
-export interface IScaleDisplayContainerState {
+export interface IScaleDisplayContainerProps {
     style?: React.CSSProperties;
-    view: IMapView;
-    config: IConfigurationReducerState;
-    finiteScales: number[] | undefined;
 }
 
-export interface IScaleDisplayContainerDispatch {
-    setScale: (mapName: string, scale: number) => void;
-}
-
-function mapStateToProps(state: Readonly<IApplicationState>): Partial<IScaleDisplayContainerState> {
-    const map = getRuntimeMap(state);
-    return {
-        config: state.config,
-        view: getCurrentView(state),
-        finiteScales: map != null ? map.FiniteDisplayScale : undefined
+const ScaleDisplayContainer = (props: IScaleDisplayContainerProps) => {
+    const { style } = props;
+    const dispatch = useDispatch();
+    const locale = useViewerLocale();
+    const activeMapName = useActiveMapName();
+    const view = useActiveMapView();
+    const finiteScales = useActiveMapFiniteScales();
+    const setScale = (mapName: string, scale: number) => dispatch(MapActions.setScale(mapName, scale))
+    const onScaleChanged = (scale: number) => {
+        if (activeMapName) {
+            setScale(activeMapName, scale);
+        }
     };
-}
+    if (view) {
+        return <ScaleDisplay onScaleChanged={onScaleChanged}
+            view={view}
+            style={style}
+            finiteScales={finiteScales}
+            locale={locale} />;
+    } else {
+        return <noscript />;
+    }
+};
 
-function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IScaleDisplayContainerDispatch> {
-    return {
-        setScale: (mapName, scale) => dispatch(setScale(mapName, scale))
-    };
-}
-
-export type ScaleDisplayContainerProps = Partial<IScaleDisplayContainerState> & Partial<IScaleDisplayContainerDispatch>;
-
-export class ScaleDisplayContainer extends React.Component<ScaleDisplayContainerProps, any> {
-    constructor(props: ScaleDisplayContainerProps) {
-        super(props);
-        this.state = {};
-    }
-    private onScaleChanged = (scale: number) => {
-        const { setScale, config } = this.props;
-        if (setScale && config && config.activeMapName) {
-            setScale(config.activeMapName, scale);
-        }
-    }
-    private getLocale(): string {
-        return this.props.config ? this.props.config.locale : DEFAULT_LOCALE;
-    }
-    componentDidUpdate(prevProps: ScaleDisplayContainerProps) {
-        const nextProps = this.props;
-        const { finiteScales, view } = nextProps;
-        if (!finiteScales && view && view.scale != this.state.localScale) {
-            this.setState({ localScale: view.scale });
-        }
-    }
-    render(): JSX.Element {
-        const { view, style, finiteScales } = this.props;
-        const locale = this.getLocale();
-        if (view) {
-            return <ScaleDisplay onScaleChanged={this.onScaleChanged}
-                                 view={view}
-                                 style={style}
-                                 finiteScales={finiteScales}
-                                 locale={locale} />;
-        } else {
-            return <noscript />;
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(ScaleDisplayContainer);
+export default ScaleDisplayContainer;

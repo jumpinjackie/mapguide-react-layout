@@ -4,25 +4,20 @@ import ToolbarContainer from "../containers/toolbar";
 import ViewerApiShim from "../containers/viewer-shim";
 import ModalLauncher from "../containers/modal-launcher";
 import FlyoutRegionContainer from "../containers/flyout-region";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { tr } from "../api/i18n";
 import * as Constants from "../constants";
 import {
     GenericEvent,
-    IApplicationState,
-    IViewerReducerState,
-    IConfigurationReducerState,
-    IViewerCapabilities,
-    ITemplateReducerState,
-    ReduxDispatch
+    IApplicationState
 } from "../api/common";
 import InitWarningDisplay from "../containers/init-warning-display";
 import { ActionType } from '../constants/actions';
 import { IElementState } from '../actions/defs';
 import * as TemplateActions from "../actions/template";
 import { Spinner, Intent, Icon } from '@blueprintjs/core';
+import { useTemplateLegendVisible, useTemplateSelectionVisible, useTemplateTaskPaneVisible, useConfiguredCapabilities, useViewerBusyCount, useViewerLocale, useLastDispatchedAction } from '../containers/hooks';
 
-const SIDEBAR_WIDTH = 250;
 
 const SidebarHeader = (props: any) => {
     const sbHeaderStyle: React.CSSProperties = {
@@ -57,327 +52,265 @@ interface ISidebarProps {
     lastAction?: any;
 }
 
-class Sidebar extends React.Component<ISidebarProps, {}> {
-    constructor(props: ISidebarProps) {
-        super(props);
-    }
-    componentDidUpdate(prevProps: ISidebarProps) {
-        const nextProps = this.props;
-        const lastAction = nextProps.lastAction;
-        if (lastAction != prevProps.lastAction) {
-            switch (lastAction.type) {
-                case ActionType.TASK_INVOKE_URL:
-                    {
-                        nextProps.onActivateTab("tasks", false);
-                    }
-                    break;
-                case ActionType.MAP_SET_SELECTION:
-                    break;
-            }
-        }
-    }
-    private onActivateTasks = (e: GenericEvent) => {
-        const { onActivateTab } = this.props;
+const Sidebar = (props: ISidebarProps) => {
+    const onActivateTasks = (e: GenericEvent) => {
+        const { onActivateTab } = props;
         e.preventDefault();
         onActivateTab("tasks");
         return false;
-    }
-    private onActivateLegend = (e: GenericEvent) => {
-        const { onActivateTab } = this.props;
+    };
+    const onActivateLegend = (e: GenericEvent) => {
+        const { onActivateTab } = props;
         e.preventDefault();
         onActivateTab("legend");
         return false;
-    }
-    private onActivateSelection = (e: GenericEvent) => {
-        const { onActivateTab } = this.props;
+    };
+    const onActivateSelection = (e: GenericEvent) => {
+        const { onActivateTab } = props;
         e.preventDefault();
         onActivateTab("selection");
         return false;
-    }
-    private onClickCollapse = (e: GenericEvent) => {
-        const { onCollapse } = this.props;
+    };
+    const onClickCollapse = (e: GenericEvent) => {
+        const { onCollapse } = props;
         e.preventDefault();
         onCollapse();
         return false;
-    }
-    private onClickExpand = (e: GenericEvent) => {
-        const { onExpand } = this.props;
+    };
+    const onClickExpand = (e: GenericEvent) => {
+        const { onExpand } = props;
         e.preventDefault();
         onExpand();
         return false;
-    }
-    render(): JSX.Element {
-        const { position, busy, collapsed, activeTab } = this.props;
-        return <div className={`sidebar ${collapsed ? "collapsed" : ""} sidebar-${position}`}>
-            <div className="sidebar-tabs">
-                <ul role="tablist">
-                    <li>
-                        {(() => {
-                            if (busy === true) {
-                                return <a>
-                                    <Spinner intent={Intent.WARNING} size={Spinner.SIZE_SMALL} />
-                                </a>;
+    };
+    const lastAction = useLastDispatchedAction();
+    React.useEffect(() => {
+        switch (lastAction.type) {
+            case ActionType.TASK_INVOKE_URL:
+                {
+                    props.onActivateTab("tasks", false);
+                }
+                break;
+            case ActionType.MAP_SET_SELECTION:
+                break;
+        }
+    }, [lastAction]);
+    const { position, busy, collapsed, activeTab } = props;
+    return <div className={`sidebar ${collapsed ? "collapsed" : ""} sidebar-${position}`}>
+        <div className="sidebar-tabs">
+            <ul role="tablist">
+                <li>
+                    {(() => {
+                        if (busy === true) {
+                            return <a>
+                                <Spinner intent={Intent.WARNING} size={Spinner.SIZE_SMALL} />
+                            </a>;
+                        } else {
+                            if (collapsed) {
+                                return <a onClick={onClickExpand}><Icon icon="menu-open" /></a>;
                             } else {
-                                if (collapsed) {
-                                    return <a onClick={this.onClickExpand}><Icon icon="menu-open" /></a>;
-                                } else {
-                                    return <a onClick={this.onClickCollapse}><Icon icon="menu-closed" /></a>;
-                                }
+                                return <a onClick={onClickCollapse}><Icon icon="menu-closed" /></a>;
                             }
-                        })()}
-                    </li>
-                    {(() => {
-                        if (this.props.taskpane) {
-                            return <li className={collapsed == false && activeTab == "tasks" ? "active" : ""}>
-                                <a onClick={this.onActivateTasks} title={tr("TPL_SIDEBAR_OPEN_TASKPANE", this.props.locale)} role="tab"><Icon icon="application" /></a>
-                            </li>;
                         }
                     })()}
-                    {(() => {
-                        if (this.props.legend) {
-                            return <li className={collapsed == false && activeTab == "legend" ? "active" : ""}>
-                                <a onClick={this.onActivateLegend} title={tr("TPL_SIDEBAR_OPEN_LEGEND", this.props.locale)} role="tab"><Icon icon="layers" /></a>
-                            </li>;
-                        }
-                    })()}
-                    {(() => {
-                        if (this.props.selection) {
-                            return <li className={collapsed == false && activeTab == "selection" ? "active" : ""}>
-                                <a onClick={this.onActivateSelection} title={tr("TPL_SIDEBAR_OPEN_SELECTION_PANEL", this.props.locale)} role="tab"><Icon icon="th" /></a>
-                            </li>;
-                        }
-                    })()}
-                    <li className="sidebar-separator"></li>
-                </ul>
-            </div>
-            <div className="sidebar-content">
+                </li>
                 {(() => {
-                    if (this.props.taskpane) {
-                        return <div className={`sidebar-pane ${activeTab == "tasks" ? "active" : ""}`}>
-                            <SidebarHeader text={tr("TPL_TITLE_TASKPANE", this.props.locale)} onCloseClick={this.onClickCollapse} />
-                            <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
-                                <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={this.props.locale} />
-                            </div>
-                        </div>;
+                    if (props.taskpane) {
+                        return <li className={collapsed == false && activeTab == "tasks" ? "active" : ""}>
+                            <a onClick={onActivateTasks} title={tr("TPL_SIDEBAR_OPEN_TASKPANE", props.locale)} role="tab"><Icon icon="application" /></a>
+                        </li>;
                     }
                 })()}
                 {(() => {
-                    if (this.props.legend) {
-                        return <div className={`sidebar-pane ${activeTab == "legend" ? "active" : ""}`}>
-                            <SidebarHeader text={tr("TPL_TITLE_LEGEND", this.props.locale)} onCloseClick={this.onClickCollapse} />
-                            <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0, overflow: "auto" }}>
-                                <PlaceholderComponent id={DefaultComponentNames.Legend} locale={this.props.locale} componentProps={{ inlineBaseLayerSwitcher: true }} />
-                            </div>
-                        </div>;
+                    if (props.legend) {
+                        return <li className={collapsed == false && activeTab == "legend" ? "active" : ""}>
+                            <a onClick={onActivateLegend} title={tr("TPL_SIDEBAR_OPEN_LEGEND", props.locale)} role="tab"><Icon icon="layers" /></a>
+                        </li>;
                     }
                 })()}
                 {(() => {
-                    if (this.props.selection) {
-                        return <div className={`sidebar-pane ${activeTab == "selection" ? "active" : ""}`}>
-                            <SidebarHeader text={tr("TPL_TITLE_SELECTION_PANEL", this.props.locale)} onCloseClick={this.onClickCollapse} />
-                            <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
-                                <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={this.props.locale} />
-                            </div>
-                        </div>;
+                    if (props.selection) {
+                        return <li className={collapsed == false && activeTab == "selection" ? "active" : ""}>
+                            <a onClick={onActivateSelection} title={tr("TPL_SIDEBAR_OPEN_SELECTION_PANEL", props.locale)} role="tab"><Icon icon="th" /></a>
+                        </li>;
                     }
                 })()}
-            </div>
-        </div>;
-    }
-}
-
-export interface ISidebarLayoutState {
-    viewer: IViewerReducerState;
-    config: IConfigurationReducerState;
-    capabilities: IViewerCapabilities;
-    templateState: ITemplateReducerState;
-    lastaction: any;
-}
-
-function mapStateToProps(state: Readonly<IApplicationState>): Partial<ISidebarLayoutState> {
-    return {
-        viewer: state.viewer,
-        config: state.config,
-        capabilities: state.config.capabilities,
-        lastaction: state.lastaction,
-        templateState: state.template
-    };
-}
-
-interface ISlateTemplateLayoutDispatch {
-    setElementStates: (states: IElementState) => void;
-}
-
-function mapDispatchToProps(dispatch: ReduxDispatch): ISlateTemplateLayoutDispatch {
-    return {
-        setElementStates: (states: IElementState) => dispatch(TemplateActions.setElementStates(states))
-    };
-}
-
-export type SidebarLayoutProps = Partial<ISidebarLayoutState> & Partial<ISlateTemplateLayoutDispatch>;
-
-export interface SidebarLayoutState {
-    activeTab: SidebarTab;
-}
-
-export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<SidebarLayoutState>> {
-    constructor(props: SidebarLayoutProps) {
-        super(props);
-        const { templateState } = props;
-        let activeTab: SidebarTab = "tasks";
-        if (templateState) {
-            if (templateState.legendVisible) {
-                activeTab = "legend";
-            } else if (templateState.selectionPanelVisible) {
-                activeTab = "selection";
-            }
-        }
-        this.state = {
-            activeTab: activeTab
-        };
-    }
-    private onCollapse = () => {
-        if (this.props.setElementStates) {
-            this.props.setElementStates({
-                taskPaneVisible: false,
-                legendVisible: false,
-                selectionPanelVisible: false
-            });
-        }
-    }
-    private onExpand = () => {
-        if (this.props.setElementStates) {
-            const est: IElementState = {
-                legendVisible: false,
-                selectionPanelVisible: false,
-                taskPaneVisible: false
-            };
-            switch (this.state.activeTab) {
-                case "legend":
-                    est.legendVisible = true;
-                    break;
-                case "selection":
-                    est.selectionPanelVisible = true;
-                    break;
-                case "tasks":
-                    est.taskPaneVisible = true;
-                    break;
-            }
-
-            if (est.legendVisible || est.selectionPanelVisible || est.taskPaneVisible) {
-                this.props.setElementStates(est);
-            }
-        }
-    }
-    private onActivateTab = (tab: SidebarTab, collapsed?: boolean) => {
-        if (this.props.setElementStates) {
-            const est: IElementState = {
-                legendVisible: false,
-                selectionPanelVisible: false,
-                taskPaneVisible: false
-            };
-            switch (tab) {
-                case "legend":
-                    est.legendVisible = true;
-                    break;
-                case "selection":
-                    est.selectionPanelVisible = true;
-                    break;
-                case "tasks":
-                    est.taskPaneVisible = true;
-                    break;
-            }
-            if (est.legendVisible || est.selectionPanelVisible || est.taskPaneVisible) {
-                this.props.setElementStates(est);
-                this.setState({
-                    activeTab: tab
-                });
-            }
-        }
-    }
-    render(): JSX.Element {
-        const { activeTab } = this.state;
-        const { viewer, capabilities, config, templateState } = this.props;
-        if (!viewer || !capabilities || !config) {
-            return <div />;
-        }
-        let collapsed = false;
-        if (templateState) {
-            collapsed = !(templateState.legendVisible || templateState.selectionPanelVisible || templateState.taskPaneVisible);
-        }
-        const {
-            hasTaskPane,
-            hasStatusBar,
-            hasNavigator,
-            hasSelectionPanel,
-            hasLegend,
-            hasViewSize,
-            hasToolbar
-        } = capabilities;
-
-        return <div style={{ width: "100%", height: "100%" }}>
-            <Sidebar position="left"
-                     busy={viewer.busyCount > 0}
-                     legend={hasLegend}
-                     selection={hasSelectionPanel}
-                     taskpane={hasTaskPane}
-                     locale={config.locale}
-                     collapsed={collapsed || false}
-                     activeTab={activeTab || "tasks"}
-                     onCollapse={this.onCollapse}
-                     onActivateTab={this.onActivateTab}
-                     onExpand={this.onExpand}
-                     lastAction={this.props.lastaction} />
+                <li className="sidebar-separator"></li>
+            </ul>
+        </div>
+        <div className="sidebar-content">
             {(() => {
-                if (hasToolbar) {
-                    let top = 180;
-                    if (!hasSelectionPanel) {
-                        top -= 40;
-                    }
-                    if (!hasLegend) {
-                        top -= 40;
-                    }
-                    if (!hasTaskPane) {
-                        top -= 40;
-                    }
-                    return <div id="toolbar-region" style={{ top: top }}>
-                        <ToolbarContainer id={Constants.WEBLAYOUT_TOOLBAR} containerClass="sidebar-toolbar" vertical={true} hideVerticalLabels={true} containerStyle={{ position: "absolute", left: 4, right: 6, zIndex: 100 }} />
+                if (props.taskpane) {
+                    return <div className={`sidebar-pane ${activeTab == "tasks" ? "active" : ""}`}>
+                        <SidebarHeader text={tr("TPL_TITLE_TASKPANE", props.locale)} onCloseClick={onClickCollapse} />
+                        <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
+                            <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={props.locale} />
+                        </div>
                     </div>;
                 }
             })()}
             {(() => {
-                if (hasNavigator) {
-                    return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={config.locale} />;
+                if (props.legend) {
+                    return <div className={`sidebar-pane ${activeTab == "legend" ? "active" : ""}`}>
+                        <SidebarHeader text={tr("TPL_TITLE_LEGEND", props.locale)} onCloseClick={onClickCollapse} />
+                        <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0, overflow: "auto" }}>
+                            <PlaceholderComponent id={DefaultComponentNames.Legend} locale={props.locale} componentProps={{ inlineBaseLayerSwitcher: true }} />
+                        </div>
+                    </div>;
                 }
             })()}
             {(() => {
-                if (hasStatusBar) {
-                    return <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={config.locale} />;
+                if (props.selection) {
+                    return <div className={`sidebar-pane ${activeTab == "selection" ? "active" : ""}`}>
+                        <SidebarHeader text={tr("TPL_TITLE_SELECTION_PANEL", props.locale)} onCloseClick={onClickCollapse} />
+                        <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0 }}>
+                            <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={props.locale} />
+                        </div>
+                    </div>;
                 }
             })()}
-            {(() => {
-                if (hasStatusBar) {
-                    return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={config.locale} />;
-                }
-            })()}
-            {(() => {
-                if (hasViewSize) {
-                    return <PlaceholderComponent id={DefaultComponentNames.ViewSize} locale={config.locale} />;
-                }
-            })()}
-            {(() => {
-                if (hasStatusBar) {
-                    return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={config.locale} />;
-                }
-            })()}
-            <ViewerApiShim />
-            <ModalLauncher />
-            <FlyoutRegionContainer />
-            <InitWarningDisplay />
-            <PlaceholderComponent id={DefaultComponentNames.Map} locale={config.locale} />
-            <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={config.locale} />
-        </div>;
-    }
+        </div>
+    </div>;
 }
 
-export default connect(mapStateToProps, mapDispatchToProps as any /* HACK: I dunno how to type thunked actions for 4.0 */)(SidebarLayout);
+const SidebarLayout = () => {
+    const dispatch = useDispatch();
+    const setElementStates = (states: IElementState) => dispatch(TemplateActions.setElementStates(states));
+    const lastaction = useSelector<IApplicationState, any>(state => state.lastaction);
+    const locale = useViewerLocale();
+    const showLegend = useTemplateLegendVisible();
+    const showSelection = useTemplateSelectionVisible();
+    const showTaskPane = useTemplateTaskPaneVisible();
+    const {
+        hasTaskPane,
+        hasStatusBar,
+        hasNavigator,
+        hasSelectionPanel,
+        hasLegend,
+        hasViewSize,
+        hasToolbar
+    } = useConfiguredCapabilities();
+    const busyCount = useViewerBusyCount();
+    let defaultActiveTab: SidebarTab = "tasks";
+    if (showLegend) {
+        defaultActiveTab = "legend";
+    } else if (showSelection) {
+        defaultActiveTab = "selection";
+    }
+    const [activeTab, setActiveTab] = React.useState(defaultActiveTab);
+    const onCollapse = () => {
+        setElementStates({
+            taskPaneVisible: false,
+            legendVisible: false,
+            selectionPanelVisible: false
+        });
+    };
+    const onExpand = () => {
+        const est: IElementState = {
+            legendVisible: false,
+            selectionPanelVisible: false,
+            taskPaneVisible: false
+        };
+        switch (activeTab) {
+            case "legend":
+                est.legendVisible = true;
+                break;
+            case "selection":
+                est.selectionPanelVisible = true;
+                break;
+            case "tasks":
+                est.taskPaneVisible = true;
+                break;
+        }
+        if (est.legendVisible || est.selectionPanelVisible || est.taskPaneVisible) {
+            setElementStates(est);
+        }
+    }
+    const onActivateTab = (tab: SidebarTab) => {
+        const est: IElementState = {
+            legendVisible: false,
+            selectionPanelVisible: false,
+            taskPaneVisible: false
+        };
+        switch (tab) {
+            case "legend":
+                est.legendVisible = true;
+                break;
+            case "selection":
+                est.selectionPanelVisible = true;
+                break;
+            case "tasks":
+                est.taskPaneVisible = true;
+                break;
+        }
+        if (est.legendVisible || est.selectionPanelVisible || est.taskPaneVisible) {
+            setElementStates(est);
+            setActiveTab(tab);
+        }
+    }
+    const collapsed = !(showLegend || showSelection || showTaskPane);
+    return <div style={{ width: "100%", height: "100%" }}>
+        <Sidebar position="left"
+            busy={busyCount > 0}
+            legend={hasLegend}
+            selection={hasSelectionPanel}
+            taskpane={hasTaskPane}
+            locale={locale}
+            collapsed={collapsed || false}
+            activeTab={activeTab || "tasks"}
+            onCollapse={onCollapse}
+            onActivateTab={onActivateTab}
+            onExpand={onExpand}
+            lastAction={lastaction} />
+        {(() => {
+            if (hasToolbar) {
+                let top = 180;
+                if (!hasSelectionPanel) {
+                    top -= 40;
+                }
+                if (!hasLegend) {
+                    top -= 40;
+                }
+                if (!hasTaskPane) {
+                    top -= 40;
+                }
+                return <div id="toolbar-region" style={{ top: top }}>
+                    <ToolbarContainer id={Constants.WEBLAYOUT_TOOLBAR} containerClass="sidebar-toolbar" vertical={true} hideVerticalLabels={true} containerStyle={{ position: "absolute", left: 4, right: 6, zIndex: 100 }} />
+                </div>;
+            }
+        })()}
+        {(() => {
+            if (hasNavigator) {
+                return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
+            }
+        })()}
+        {(() => {
+            if (hasStatusBar) {
+                return <PlaceholderComponent id={DefaultComponentNames.MouseCoordinates} locale={locale} />;
+            }
+        })()}
+        {(() => {
+            if (hasStatusBar) {
+                return <PlaceholderComponent id={DefaultComponentNames.ScaleDisplay} locale={locale} />;
+            }
+        })()}
+        {(() => {
+            if (hasViewSize) {
+                return <PlaceholderComponent id={DefaultComponentNames.ViewSize} locale={locale} />;
+            }
+        })()}
+        {(() => {
+            if (hasStatusBar) {
+                return <PlaceholderComponent id={DefaultComponentNames.SelectedFeatureCount} locale={locale} />;
+            }
+        })()}
+        <ViewerApiShim />
+        <ModalLauncher />
+        <FlyoutRegionContainer />
+        <InitWarningDisplay />
+        <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />
+        <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={locale} />
+    </div>;
+};
+
+export default SidebarLayout;

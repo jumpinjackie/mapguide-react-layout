@@ -311,3 +311,7 @@ export function useTaskPaneLastUrlPushed() {
 export function useTaskPaneNavigationStack() {
     return useSelector<IApplicationState, string[]>(state => state.taskpane.navigation);
 }
+
+export function useLastDispatchedAction() {
+    return useSelector<IApplicationState, any>(state => state.lastaction);
+}

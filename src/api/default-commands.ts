@@ -15,7 +15,8 @@ import {
     getCurrentView,
     ITargetedCommand,
     IConfigurationReducerState,
-    DEFAULT_MODAL_SIZE
+    DEFAULT_MODAL_SIZE,
+    Bounds
 } from "./common";
 import * as LegendActions from "../actions/legend";
 import * as MapActions from "../actions/map";
@@ -62,7 +63,7 @@ import {
     SPRITE_LAYER_ADD,
     SPRITE_SELECT_CENTRE
 } from "../constants/assets";
-import olExtent from "ol/extent";
+import * as olExtent from "ol/extent";
 import { ensureParameters } from "../utils/url";
 
 function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
@@ -377,7 +378,7 @@ export function initDefaultCommands() {
             if (viewer) {
                 const fact = viewer.getOLFactory();
                 const selection = getSelectionSet(getState());
-                let bounds: ol.Extent | null = null;
+                let bounds: Bounds | null = null;
                 if (selection != null && selection.SelectedFeatures != null) {
                     selection.SelectedFeatures.SelectedLayer.forEach(layer => {
                         layer.Feature.forEach(feat => {

@@ -11,46 +11,12 @@
 // Stamped by webpack
 declare const __DEV__: boolean;
 
+// To allow file imports (that webpack will transform)
 declare module "*.png";
 declare module "*.cur";
 declare module "*.gif";
 
 declare module "history";
-
-// Monkey-patched ol ES2015 module declarations (this is a bug in the jsdoc-typescribp3-plugin that generated the OL typings)
-declare module "ol" {
-    export default ol;
-}
-
-declare module "ol/events" {
-    import olImage from "ol/image";
-    class Events {
-        static listen(image: olImage, event: string, handler: Function, thisArg: any): void;
-    }
-    export default Events;
-}
-
-declare module "ol/uri" {
-    class Uri {
-        static appendParams(baseUrl: string, params: any): string;
-    }
-    export default Uri;
-}
-
-declare module "ol/plugins" {
-    class Plugins {
-        static register(type: string, plugin: any): void;
-    }
-    export default Plugins 
-}
-
-declare module "ol/plugintype" {
-    class PluginType {
-        static MAP_RENDERER: string;
-        static LAYER_RENDERER: string;
-    }
-    export default PluginType;
-}
 
 declare module "react-splitter-layout" {
     import * as React from "react";

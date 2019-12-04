@@ -1,45 +1,45 @@
-import olPoint from "ol/geom/point";
-import olLineString from "ol/geom/linestring";
-import olCircle from "ol/geom/circle";
-import olPolygon from "ol/geom/polygon";
-import olLinearRing from "ol/geom/linearring";
-import olMultiLineString from "ol/geom/multilinestring";
-import olMultiPoint from "ol/geom/multipoint";
-import olMultiPolygon from "ol/geom/multipolygon";
-import olGeometry from "ol/geom/geometry";
-import olGeometryCollection from "ol/geom/geometrycollection";
+import olPoint from "ol/geom/Point";
+import olLineString from "ol/geom/LineString";
+import olCircle from "ol/geom/Circle";
+import olPolygon from "ol/geom/Polygon";
+import olLinearRing from "ol/geom/LinearRing";
+import olMultiLineString from "ol/geom/MultiLineString";
+import olMultiPoint from "ol/geom/MultiPoint";
+import olMultiPolygon from "ol/geom/MultiPolygon";
+import olGeometry from "ol/geom/Geometry";
+import olGeometryCollection from "ol/geom/GeometryCollection";
 
-import olOverlay from "ol/overlay";
-import olExtent from "ol/extent";
-import olProj from "ol/proj";
-import olProjection from "ol/proj/projection";
+import olOverlay, { Options as OverlayOptions } from "ol/Overlay";
+import * as olExtent from "ol/extent";
+import * as olProj from "ol/proj";
+import olProjection, { Options as ProjectionOptions } from "ol/proj/Projection";
 
-import olVectorLayer from "ol/layer/vector";
-import olVectorSource from "ol/source/vector";
+import { Options as VectorLayerOptions } from "ol/layer/BaseVector";
+import olVectorLayer from "ol/layer/Vector";
+import olVectorSource, { Options as VectorOptions } from "ol/source/Vector";
 
-import olCollection from "ol/collection";
-import olFeature from "ol/feature";
+import olCollection from "ol/Collection";
+import olFeature from "ol/Feature";
 
-import olInteractionExtent from "ol/interaction/extent";
-import olInteractionSnap from "ol/interaction/snap";
-import olInteractionDraw from "ol/interaction/draw";
-import olInteractionTranslate from "ol/interaction/translate";
-import olInteractionModify from "ol/interaction/modify";
-import olInteractionSelect from "ol/interaction/select";
+import olInteractionExtent, { Options as ExtentOptions } from "ol/interaction/Extent";
+import olInteractionSnap, { Options as SnapOptions } from "ol/interaction/Snap";
+import olInteractionDraw, { Options as DrawOptions } from "ol/interaction/Draw";
+import olInteractionTranslate, { Options as TranslateOptions } from "ol/interaction/Translate";
+import olInteractionModify, { Options as ModifyOptions } from "ol/interaction/Modify";
+import olInteractionSelect, { Options as SelectOptions } from "ol/interaction/Select";
 
-import olFormatGeoJSON from "ol/format/geojson";
-import olFormatWKT from "ol/format/wkt";
+import olFormatGeoJSON, { Options as GeoJSONOptions } from "ol/format/GeoJSON";
+import olFormatWKT, { Options as WKTOptions } from "ol/format/WKT";
 
-import olStyle from "ol/style/style";
-import olStyleIcon from "ol/style/icon";
-import olStyleImage from "ol/style/image";
-import olStyleRegularShape from "ol/style/regularshape";
-import olStyleText from "ol/style/text";
-import olStyleFill from "ol/style/fill";
-import olStyleStroke from "ol/style/stroke";
-import olStyleCircle from "ol/style/circle";
-
-export type olProjectionLike = string | olProjection;
+import olStyle, { Options as StyleOptions } from "ol/style/Style";
+import olStyleIcon, { Options as IconOptions } from "ol/style/Icon";
+import olStyleRegularShape, { Options as RegularShapeOptions } from "ol/style/RegularShape";
+import olStyleText, { Options as TextOptions } from "ol/style/Text";
+import olStyleFill, { Options as FillOptions } from "ol/style/Fill";
+import olStyleStroke, { Options as StrokeOptions } from "ol/style/Stroke";
+import olStyleCircle, { Options as CircleOptions } from "ol/style/Circle";
+import { Bounds, Coordinate2D } from './common';
+import { ProjectionLike } from 'ol/proj';
 
 /**
  * Creates various OpenLayers types used by the viewer
@@ -48,69 +48,65 @@ export type olProjectionLike = string | olProjection;
  * @interface IOLFactory
  */
 export interface IOLFactory {
-    createStyle(options?: olx.style.StyleOptions): olStyle;
-    createStyleFill(options?: olx.style.FillOptions): olStyleFill;
-    createStyleStroke(options?: olx.style.StrokeOptions): olStyleStroke;
-    createStyleCircle(options?: olx.style.CircleOptions): olStyleCircle;
+    createStyle(options?: StyleOptions): olStyle;
+    createStyleFill(options?: FillOptions): olStyleFill;
+    createStyleStroke(options?: StrokeOptions): olStyleStroke;
+    createStyleCircle(options?: CircleOptions): olStyleCircle;
     /**
      * @since 0.12.6
      */
-    createStyleIcon(options?: olx.style.IconOptions): olStyleIcon;
+    createStyleIcon(options?: IconOptions): olStyleIcon;
     /**
      * @since 0.12.6
      */
-    createStyleImage(options?: any): olStyleImage;
+    createStyleRegularShape(options: RegularShapeOptions): olStyleRegularShape;
     /**
      * @since 0.12.6
      */
-    createStyleRegularShape(options: olx.style.RegularShapeOptions): olStyleRegularShape;
-    /**
-     * @since 0.12.6
-     */
-    createStyleText(options?: olx.style.TextOptions): olStyleText;
+    createStyleText(options?: TextOptions): olStyleText;
     createFeatureCollection(): olCollection<olFeature>;
-    extentContainsXY(extent: [number, number, number, number], x: number, y: number): boolean;
-    extendExtent(extent: [number, number, number, number], other: [number, number, number, number]): [number, number, number, number];
-    createProjection(options: olx.ProjectionOptions): olProjection;
-    transformCoordinateFromLonLat(lonlat: [number, number], proj?: olProjectionLike): [number, number];
-    transformCoordinate(coordinate: [number, number], source: olProjectionLike, target: olProjectionLike): [number, number];
-    transformExtent(extent: [number, number, number, number], source: olProjectionLike, target: olProjectionLike): [number, number, number, number];
-    createGeomPoint(coordinates: [number, number]): olPoint;
-    createGeomLineString(coordinates: [number, number][]): olLineString;
-    createGeomCircle(center: [number, number], radius: number | undefined): olCircle;
-    createGeomLinearRing(coordinates: [number, number][]): olLinearRing;
-    createGeomPolygon(coordinates: [number, number][][]): olPolygon;
+    extentContainsXY(extent: Bounds, x: number, y: number): boolean;
+    extendExtent(extent: Bounds, other: Bounds): Bounds;
+    createProjection(options: ProjectionOptions): olProjection;
+    transformCoordinateFromLonLat(lonlat: Coordinate2D, proj?: ProjectionLike): Coordinate2D;
+    transformCoordinate(coordinate: Coordinate2D, source: ProjectionLike, target: ProjectionLike): Coordinate2D;
+    transformExtent(extent: Bounds, source: ProjectionLike, target: ProjectionLike): Bounds;
+    createGeomPoint(coordinates: Coordinate2D): olPoint;
+    createGeomLineString(coordinates: Coordinate2D[]): olLineString;
+    createGeomCircle(center: Coordinate2D, radius: number | undefined): olCircle;
+    createGeomLinearRing(coordinates: Coordinate2D[]): olLinearRing;
+    createGeomPolygon(coordinates: Coordinate2D[][]): olPolygon;
     createGeomPolygonFromCircle(circle: olCircle): olPolygon;
-    createGeomMultiLineString(coordinates: [number, number][][]): olMultiLineString;
-    createGeomMultiPoint(coordinates: [number, number][]): olMultiPoint;
-    createGeomMultiPolygon(coordinates: [number, number][][][]): olMultiPolygon;
+    createGeomMultiLineString(coordinates: Coordinate2D[][]): olMultiLineString;
+    createGeomMultiPoint(coordinates: Coordinate2D[]): olMultiPoint;
+    createGeomMultiPolygon(coordinates: Coordinate2D[][][]): olMultiPolygon;
     createGeomCollection(geometries: olGeometry[]): olGeometryCollection;
-    createVectorSource(options?: olx.source.VectorOptions): olVectorSource;
-    createVectorLayer(options?: olx.layer.VectorOptions | undefined): olVectorLayer;
-    createOverlay(options: olx.OverlayOptions): olOverlay;
-    createInteractionDraw(options: olx.interaction.DrawOptions): olInteractionDraw;
+    createVectorSource(options?: VectorOptions): olVectorSource;
+    createVectorLayer(options?: VectorLayerOptions | undefined): olVectorLayer;
+    createOverlay(options: OverlayOptions): olOverlay;
+    createInteractionDraw(options: DrawOptions): olInteractionDraw;
     /**
      * 
      * @since 0.11
-     * @param {olx.interaction.ModifyOptions} options 
+     * @param {ModifyOptions} options 
      * @returns {olInteractionModify} 
      * @memberof IOLFactory
      */
-    createInteractionModify(options: olx.interaction.ModifyOptions): olInteractionModify;
+    createInteractionModify(options: ModifyOptions): olInteractionModify;
     /**
      * 
      * @since 0.11
-     * @param {olx.interaction.SelectOptions} options 
+     * @param {SelectOptions} options 
      * @returns {olInteractionSelect} 
      * @memberof IOLFactory
      */
-    createInteractionSelect(options: olx.interaction.SelectOptions): olInteractionSelect;
-    createInteractionExtent(options: olx.interaction.ExtentOptions): olInteractionExtent;
-    createInteractionSnap(options: olx.interaction.SnapOptions): olInteractionSnap;
-    createInteractionTranslate(options: olx.interaction.TranslateOptions): olInteractionTranslate;
+    createInteractionSelect(options: SelectOptions): olInteractionSelect;
+    createInteractionExtent(options: ExtentOptions): olInteractionExtent;
+    createInteractionSnap(options: SnapOptions): olInteractionSnap;
+    createInteractionTranslate(options: TranslateOptions): olInteractionTranslate;
     createFeature(geomOrProps?: olGeometry | { [key: string]: any }): olFeature;
-    createFormatGeoJSON(options?: olx.format.GeoJSONOptions | undefined): olFormatGeoJSON;
-    createFormatWKT(options?: olx.format.WKTOptions | undefined): olFormatWKT;
+    createFormatGeoJSON(options?: GeoJSONOptions | undefined): olFormatGeoJSON;
+    createFormatWKT(options?: WKTOptions | undefined): olFormatWKT;
 }
 
 /**
@@ -121,128 +117,123 @@ export interface IOLFactory {
  * @implements {IOLFactory}
  */
 export class OLFactory implements IOLFactory {
-    public createStyle(options?: olx.style.StyleOptions): olStyle {
+    public createStyle(options?: StyleOptions): olStyle {
         return new olStyle(options);
     }
-    public createStyleFill(options?: olx.style.FillOptions): olStyleFill {
+    public createStyleFill(options?: FillOptions): olStyleFill {
         return new olStyleFill(options);
     }
-    public createStyleStroke(options?: olx.style.StrokeOptions): olStyleStroke {
+    public createStyleStroke(options?: StrokeOptions): olStyleStroke {
         return new olStyleStroke(options);
     }
-    public createStyleCircle(options?: olx.style.CircleOptions): olStyleCircle {
+    public createStyleCircle(options?: CircleOptions): olStyleCircle {
         return new olStyleCircle(options);
     }
     public createFeatureCollection(): olCollection<olFeature> {
         return new olCollection<olFeature>();
     }
-    public extentContainsXY(extent: [number, number, number, number], x: number, y: number): boolean {
+    public extentContainsXY(extent: Bounds, x: number, y: number): boolean {
         return olExtent.containsXY(extent, x, y);
     }
-    public extendExtent(extent: [number, number, number, number], other: [number, number, number, number]): [number, number, number, number] {
-        return olExtent.extend(extent, other);
+    public extendExtent(extent: Bounds, other: Bounds): Bounds {
+        return olExtent.extend(extent as number[], other as number[]) as Bounds;
     }
-    public createProjection(options: olx.ProjectionOptions): olProjection {
+    public createProjection(options: ProjectionOptions): olProjection {
         return new olProjection(options);
     }
-    public transformCoordinateFromLonLat(lonlat: [number, number], proj?: olProjectionLike): [number, number] {
-        return olProj.fromLonLat(lonlat, proj)
+    public transformCoordinateFromLonLat(lonlat: Coordinate2D, proj?: ProjectionLike): Coordinate2D {
+        return olProj.fromLonLat(lonlat as number[], proj) as Coordinate2D;
     }
-    public transformCoordinate(coordinate: [number, number], source: olProjectionLike, target: olProjectionLike): [number, number] {
-        return olProj.transform(coordinate, source, target);
+    public transformCoordinate(coordinate: Coordinate2D, source: ProjectionLike, target: ProjectionLike): Coordinate2D {
+        return olProj.transform(coordinate, source, target) as Coordinate2D;
     }
-    public transformExtent(extent: [number, number, number, number], source: olProjectionLike, target: olProjectionLike): [number, number, number, number] {
-        return olProj.transformExtent(extent, source, target);
+    public transformExtent(extent: Bounds, source: ProjectionLike, target: ProjectionLike): Bounds {
+        return olProj.transformExtent(extent, source, target) as Bounds;
     }
-    public createGeomPoint(coordinates: [number, number]): olPoint {
+    public createGeomPoint(coordinates: Coordinate2D): olPoint {
         return new olPoint(coordinates);
     }
-    public createGeomLineString(coordinates: [number, number][]): olLineString {
+    public createGeomLineString(coordinates: Coordinate2D[]): olLineString {
         return new olLineString(coordinates);
     }
-    public createGeomCircle(center: [number, number], radius: number | undefined): olCircle {
+    public createGeomCircle(center: Coordinate2D, radius: number | undefined): olCircle {
         return new olCircle(center, radius);
     }
-    public createGeomLinearRing(coordinates: [number, number][]): olLinearRing {
+    public createGeomLinearRing(coordinates: Coordinate2D[]): olLinearRing {
         return new olLinearRing(coordinates);
     }
-    public createGeomPolygon(coordinates: [number, number][][]): olPolygon {
+    public createGeomPolygon(coordinates: Coordinate2D[][]): olPolygon {
         return new olPolygon(coordinates);
     }
     public createGeomPolygonFromCircle(circle: olCircle): olPolygon {
-        return olPolygon.fromCircle(circle);
+        //HACK: fromCircle not present in our type defn
+        return (olPolygon as any).fromCircle(circle) as olPolygon;
     }
-    public createGeomMultiLineString(coordinates: [number, number][][]): olMultiLineString {
+    public createGeomMultiLineString(coordinates: Coordinate2D[][]): olMultiLineString {
         return new olMultiLineString(coordinates);
     }
-    public createGeomMultiPoint(coordinates: [number, number][]): olMultiPoint {
+    public createGeomMultiPoint(coordinates: Coordinate2D[]): olMultiPoint {
         return new olMultiPoint(coordinates);
     }
-    public createGeomMultiPolygon(coordinates: [number, number][][][]): olMultiPolygon {
+    public createGeomMultiPolygon(coordinates: Coordinate2D[][][]): olMultiPolygon {
         return new olMultiPolygon(coordinates);
     }
     public createGeomCollection(geometries: olGeometry[]): olGeometryCollection {
         return new olGeometryCollection(geometries);
     }
-    public createVectorSource(options?: olx.source.VectorOptions): olVectorSource {
+    public createVectorSource(options?: VectorOptions): olVectorSource {
         return new olVectorSource(options);
     }
-    public createVectorLayer(options?: olx.layer.VectorOptions | undefined): olVectorLayer {
+    public createVectorLayer(options?: VectorLayerOptions | undefined): olVectorLayer {
         return new olVectorLayer(options);
     }
-    public createOverlay(options: olx.OverlayOptions): olOverlay {
+    public createOverlay(options: OverlayOptions): olOverlay {
         return new olOverlay(options);
     }
-    public createInteractionDraw(options: olx.interaction.DrawOptions): olInteractionDraw {
+    public createInteractionDraw(options: DrawOptions): olInteractionDraw {
         return new olInteractionDraw(options);
     }
-    public createInteractionExtent(options: olx.interaction.ExtentOptions): olInteractionExtent {
+    public createInteractionExtent(options: ExtentOptions): olInteractionExtent {
         return new olInteractionExtent(options);
     }
-    public createInteractionTranslate(options: olx.interaction.TranslateOptions): olInteractionTranslate {
+    public createInteractionTranslate(options: TranslateOptions): olInteractionTranslate {
         return new olInteractionTranslate(options);
     }
-    public createInteractionSnap(options: olx.interaction.SnapOptions): olInteractionSnap {
+    public createInteractionSnap(options: SnapOptions): olInteractionSnap {
         return new olInteractionSnap(options);
     }
-    public createInteractionModify(options: olx.interaction.ModifyOptions): olInteractionModify {
+    public createInteractionModify(options: ModifyOptions): olInteractionModify {
         return new olInteractionModify(options);
     }
-    public createInteractionSelect(options: olx.interaction.SelectOptions): olInteractionSelect {
+    public createInteractionSelect(options: SelectOptions): olInteractionSelect {
         return new olInteractionSelect(options);
     }
     public createFeature(geomOrProps?: olGeometry | { [key: string]: any }): olFeature {
         return new olFeature(geomOrProps);
     }
-    public createFormatGeoJSON(options?: olx.format.GeoJSONOptions | undefined): olFormatGeoJSON {
+    public createFormatGeoJSON(options?: GeoJSONOptions | undefined): olFormatGeoJSON {
         return new olFormatGeoJSON(options);
     }
-    public createFormatWKT(options?: olx.format.WKTOptions | undefined): olFormatWKT {
+    public createFormatWKT(options?: WKTOptions | undefined): olFormatWKT {
         return new olFormatWKT(options);
     }
 
     /**
      * @since 0.12.6
      */
-    public createStyleIcon(options?: olx.style.IconOptions | undefined): olStyleIcon {
+    public createStyleIcon(options?: IconOptions | undefined): olStyleIcon {
         return new olStyleIcon(options);
     }
     /**
      * @since 0.12.6
      */
-    public createStyleImage(options?: any): olStyleImage {
-        return new olStyleImage(options);
-    }
-    /**
-     * @since 0.12.6
-     */
-    public createStyleRegularShape(options: olx.style.RegularShapeOptions): olStyleRegularShape {
+    public createStyleRegularShape(options: RegularShapeOptions): olStyleRegularShape {
         return new olStyleRegularShape(options);
     }
     /**
      * @since 0.12.6
      */
-    public createStyleText(options?: olx.style.TextOptions | undefined): olStyleText {
+    public createStyleText(options?: TextOptions | undefined): olStyleText {
         return new olStyleText(options);
     }
 }

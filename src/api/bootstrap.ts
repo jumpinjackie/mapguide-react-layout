@@ -1,4 +1,4 @@
-import proj from "ol/proj";
+import { register } from "ol/proj/proj4";
 import proj4 from "proj4";
 import { configureUrlQuery } from 'react-url-query';
 const createHistory = require("history").createBrowserHistory;
@@ -16,7 +16,7 @@ const createHistory = require("history").createBrowserHistory;
  */
 export function bootstrap() {
     require('whatwg-fetch');
-    proj.setProj4(proj4);
+    register(proj4);
     const history = createHistory();
     configureUrlQuery({ history });
 }

@@ -1,10 +1,10 @@
 import * as React from "react";
 import {
-    Coordinate,
+    Coordinate2D,
     UnitOfMeasure
 } from "../api/common";
 import { MouseCoordinates } from "../components/mouse-coordinates";
-import olProj from "ol/proj";
+import * as olProj from "ol/proj";
 import { getUnitOfMeasure } from "../utils/units";
 import { useViewerLocale, useCurrentMouseCoordinates, useActiveMapProjection, useConfiguredCoordinateProjection, useConfiguredCoordinateDecimals, useConfiguredCoordinateFormat } from './hooks';
 
@@ -21,7 +21,7 @@ const MouseCoordinatesContainer = (props: IMouseCoordinatesContainerProps) => {
     const mouse = useCurrentMouseCoordinates();
     const locale = useViewerLocale();
     if (mouse) {
-        const prj = olProj.get(projection || mapProjection);
+        const prj = olProj.get(projection ?? mapProjection);
         let units;
         if (prj) {
             units = prj.getUnits();
@@ -42,10 +42,10 @@ const MouseCoordinatesContainer = (props: IMouseCoordinatesContainerProps) => {
                     break;
             }
         }
-        let coords: Coordinate = [mouse[0], mouse[1]];
+        let coords: Coordinate2D = [mouse[0], mouse[1]];
         if (projection && mapProjection) {
             try {
-                coords = olProj.transform(coords, mapProjection, projection);
+                coords = olProj.transform(coords, mapProjection, projection) as Coordinate2D;
             } catch (e) {
 
             }

@@ -9,11 +9,11 @@ import { Error } from "../error";
 import * as Runtime from "../../api/runtime";
 import { Client } from "../../api/client";
 import { WmsCapabilitiesTree } from "../wms-capabilities-tree";
-import olWmsParser from "ol/format/wmscapabilities";
-import olTileLayer from "ol/layer/tile";
-import olImageLayer from "ol/layer/image";
-import olWmsSource from "ol/source/imagewms";
-import olTiledWmsSource from "ol/source/tilewms";
+import olWmsParser from "ol/format/WMSCapabilities";
+import olTileLayer from "ol/layer/Tile";
+import olImageLayer from "ol/layer/Image";
+import olWmsSource from "ol/source/ImageWMS";
+import olTiledWmsSource from "ol/source/TileWMS";
 import { Spinner, NonIdealState, Intent, ControlGroup, InputGroup, Button } from '@blueprintjs/core';
 
 /**

@@ -48,7 +48,7 @@
     "history": "^4.10.1",
     "ismobilejs": "^1.0.3",
     "lodash.debounce": "^4.0.8",
-    "ol": "4.6.5",
+    "ol": "^6.1.1",
     "proj4": "2.6.0",
     "prop-types": "^15.7.2",
     "qs": "^6.9.1",
@@ -70,6 +70,8 @@
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
+    "@hanreev/types-ol": "^3.0.0",
+    "@types/ol": "file:node_modules/@hanreev/types-ol/ol",
     "@gerrit0/typedoc": "0.15.11",
     "@types/dom4": "2.0.1",
     "@types/enzyme": "3.10.3",

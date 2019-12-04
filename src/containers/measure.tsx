@@ -10,6 +10,7 @@ import { IMeasureCallback, MeasureSegment, MeasureContext, IMeasureComponent } f
 import { roundTo } from "../utils/number";
 import { Callout, Intent, ButtonGroup, Button, HTMLSelect } from '@blueprintjs/core';
 import { useActiveMapName, useViewerLocale, useAvailableMaps } from './hooks';
+import GeometryType from 'ol/geom/GeometryType';
 
 export interface IMeasureContainerProps {
 
@@ -27,7 +28,7 @@ interface IMeasureContainerDispatch {
 
 interface IMeasureContainerState {
     measuring: boolean;
-    type: string;
+    drawType: GeometryType;
     activeType: "LineString" | "Area";
     segmentTotal: number;
     segments: MeasureSegment[];
@@ -43,12 +44,12 @@ class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasu
         super(props);
         this.state = {
             measuring: false,
-            type: "LineString"
+            drawType: GeometryType.LINE_STRING // "LineString"
         }
     }
     private onTypeChanged = (e: GenericEvent) => {
         const newType = e.target.value;
-        this.setState({ type: newType }, () => {
+        this.setState({ drawType: newType }, () => {
             const { activeMapName } = this.props;
             if (activeMapName && this.state.measuring === true) {
                 const activeMeasure = _measurements.filter(m => m.getMapName() === activeMapName)[0];
@@ -77,7 +78,7 @@ class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasu
     }
     private startMeasure() {
         const { activeMapName } = this.props;
-        const { type, measuring } = this.state;
+        const { drawType: type, measuring } = this.state;
         if (activeMapName && type && !measuring) {
             //Set to none to prevent select tool interference when measuring
             if (this.props.setActiveTool) {
@@ -107,7 +108,7 @@ class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasu
     clearSegments(): void {
         this.setState({ segments: undefined });
     }
-    getCurrentDrawType(): string | undefined { return this.state.type; }
+    getCurrentDrawType(): GeometryType | undefined { return this.state.drawType; }
     getLocale(): string {
         return this.props.locale || DEFAULT_LOCALE;
     }
@@ -166,7 +167,7 @@ class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasu
         }
     }
     render(): JSX.Element {
-        const { measuring, type } = this.state;
+        const { measuring, drawType: type } = this.state;
         const locale = this.getLocale();
         return <div className="component-measure">
             <form className="form-inline">

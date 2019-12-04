@@ -26,14 +26,15 @@ import {
     DigitizerCallback,
     ActiveMapTool,
     Bounds,
-    Coordinate,
+    Coordinate2D,
     RefreshMode,
     ClientKind,
     LayerTransparencySet,
     MapLoadIndicatorPositioning,
     KC_ESCAPE,
     KC_U,
-    SelectionVariant
+    SelectionVariant,
+    Size2
 } from "../api/common";
 import * as RtMap from '../api/contracts/runtime-map';
 import debounce = require("lodash.debounce");
@@ -61,47 +62,37 @@ import { tr } from "../api/i18n";
 const isMobile = require("ismobilejs");
 import { IMapViewerContextCallback, IMapViewerContextProps, MapViewerContext, MgLayerSet, MgLayerManager } from "./map-viewer-context";
 
-import olExtent from "ol/extent";
-import olEasing from "ol/easing";
+import * as olExtent from "ol/extent";
+import * as olEasing from "ol/easing";
 
-import Map from "ol/pluggablemap";
-import MapRenderer from "ol/renderer/canvas/map";
-import TileLayerRenderer from "ol/renderer/canvas/tilelayer";
-import ImageLayerRenderer from "ol/renderer/canvas/imagelayer";
-import VectorLayerRenderer from "ol/renderer/canvas/vectorlayer";
-//import VectorTileLayerRenderer from "ol/renderer/canvas/vectortilelayer";
-import View from "ol/view";
-import Feature from "ol/feature";
-import Overlay from "ol/overlay";
-import WKTFormat from "ol/format/wkt";
-import plugins from "ol/plugins";
-import PluginType from "ol/plugintype";
+import { MapOptions } from "ol/PluggableMap";
+import Map from "ol/Map";
+import View from "ol/View";
+import Feature from "ol/Feature";
+import Overlay from "ol/Overlay";
+import WKTFormat from "ol/format/WKT";
 
-import Interaction from "ol/interaction/interaction";
-import Draw from "ol/interaction/draw";
-import DragBox from "ol/interaction/dragbox";
-import DragRotate from "ol/interaction/dragrotate";
-import DragPan from "ol/interaction/dragpan";
-import PinchRotate from "ol/interaction/pinchrotate";
-import PinchZoom from "ol/interaction/pinchzoom";
-import KeyboardPan from "ol/interaction/keyboardpan";
-import KeyboardZoom from "ol/interaction/keyboardzoom";
-import MouseWheelZoom from "ol/interaction/mousewheelzoom";
-import Attribution from "ol/control/attribution";
-import Rotate from "ol/control/rotate";
+import Interaction from "ol/interaction/Interaction";
+import Draw, { GeometryFunction } from "ol/interaction/Draw";
+import DragBox from "ol/interaction/DragBox";
+import DragRotate from "ol/interaction/DragRotate";
+import DragPan from "ol/interaction/DragPan";
+import PinchRotate from "ol/interaction/PinchRotate";
+import PinchZoom from "ol/interaction/PinchZoom";
+import KeyboardPan from "ol/interaction/KeyboardPan";
+import KeyboardZoom from "ol/interaction/KeyboardZoom";
+import MouseWheelZoom from "ol/interaction/MouseWheelZoom";
+import Attribution from "ol/control/Attribution";
+import Rotate from "ol/control/Rotate";
 
-import Geometry from "ol/geom/geometry";
-import Polygon from "ol/geom/polygon";
-import Point from "ol/geom/point";
-import LineString from "ol/geom/linestring";
-import Circle from "ol/geom/circle";
+import Geometry from "ol/geom/Geometry";
+import Polygon from "ol/geom/Polygon";
+import Point from "ol/geom/Point";
+import LineString from "ol/geom/LineString";
+import Circle from "ol/geom/Circle";
 import { areArraysDifferent } from '../utils/array';
-
-plugins.register(PluginType.MAP_RENDERER, MapRenderer);
-plugins.register(PluginType.LAYER_RENDERER, TileLayerRenderer);
-plugins.register(PluginType.LAYER_RENDERER, ImageLayerRenderer);
-plugins.register(PluginType.LAYER_RENDERER, VectorLayerRenderer);
-//plugins.register(PluginType.LAYER_RENDERER, VectorTileLayerRenderer);
+import GeometryType from 'ol/geom/GeometryType';
+import { ProjectionLike } from 'ol/proj';
 
 /**
  * MapViewerBase component props
@@ -348,7 +339,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
         return activeLayerSet.resolutionToScale(resolution);
     }
-    public getPointSelectionBox(point: Coordinate, ptBuffer: number): Bounds {
+    public getPointSelectionBox(point: Coordinate2D, ptBuffer: number): Bounds {
         const ll = this._map.getCoordinateFromPixel([point[0] - ptBuffer, point[1] - ptBuffer]);
         const ur = this._map.getCoordinateFromPixel([point[0] + ptBuffer, point[1] + ptBuffer]);
         return [ll[0], ll[1], ur[0], ur[1]];
@@ -372,7 +363,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         } else if (this.props.tool === ActiveMapTool.Select) {
             const ptBuffer = this.props.pointSelectionBuffer || 2;
             const box = this.getPointSelectionBox(e.pixel, ptBuffer);
-            const geom = Polygon.fromExtent(box);
+            const geom = (Polygon as any).fromExtent(box); //HACK: Missing fromExtent in type defn
             const options = this.buildDefaultQueryOptions(geom);
             options.maxfeatures = 1;
             this.sendSelectionQuery(options);
@@ -403,7 +394,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         switch (this.props.tool) {
             case ActiveMapTool.Zoom:
                 {
-                    const ext = extent.getExtent();
+                    const ext: any = extent.getExtent();
                     this.onRequestZoomToView(this.getViewForExtent(ext));
                 }
                 break;
@@ -455,7 +446,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
                 duration: 250,
                 easing: olEasing.easeOut
             });
-            const newResolution = view.constrainResolution(currentResolution, delta);
+            const newResolution = view.getConstrainedResolution(currentResolution, delta);
             view.setResolution(newResolution);
         }
     }
@@ -498,7 +489,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     private onResize(e: GenericEvent) {
         if (this.props.onMapResized) {
-            this.props.onMapResized(this._map.getSize());
+            this.props.onMapResized(this._map.getSize() as Size2);
         }
     }
     private onKeyDown = (e: GenericEvent) => {
@@ -587,7 +578,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             }
         });
     }
-    protected createOLMap(options: olx.MapOptions): any {
+    protected createOLMap(options: MapOptions): any {
         return new Map(options);
     }
     private getCallback(): IMapViewerContextCallback {
@@ -712,7 +703,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
                 maxResolution: view.getMaxResolution(),
                 maxZoom: view.getMaxZoom(),
                 minZoom: view.getMinZoom(),
-                constrainRotation: view.constrainRotation(),
+                //constrainRotation: view.constrainRotation(),
                 projection: view.getProjection(),
                 zoom: view.getZoom()
             });
@@ -722,7 +713,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         if (prevProps.activeSelectedFeatureXml != nextProps.activeSelectedFeatureXml) {
             const ms = this._map.getSize();
             const view = this.getOLView();
-            const me = view.calculateExtent(ms);
+            const me: any = view.calculateExtent(ms);
             const size = { w: ms[0], h: ms[1] };
             this._mapContext.showSelectedFeature(me, size, nextProps.map, nextProps.activeSelectedFeatureColor, nextProps.activeSelectedFeatureXml);
         }
@@ -737,8 +728,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             condition: (e) => !this.isDigitizing() && (this.props.tool === ActiveMapTool.Select || this.props.tool === ActiveMapTool.Zoom)
         });
         this._zoomSelectBox.on("boxend", this.onZoomSelectBox.bind(this));
-        const mapOptions: olx.MapOptions = {
-            logo: false,
+        const mapOptions: MapOptions = {
             target: mapNode as any,
             //layers: layers,
             //view: view,
@@ -947,10 +937,10 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         };
     }
     public getCurrentExtent(): Bounds {
-        return this._map.getView().calculateExtent(this._map.getSize());
+        return this._map.getView().calculateExtent(this._map.getSize()) as Bounds;
     }
-    public getSize(): [number, number] {
-        return this._map.getSize();
+    public getSize(): Size2 {
+        return this._map.getSize() as Size2;
     }
     public getOLView(): View {
         return this._map.getView();
@@ -1020,13 +1010,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     public digitizePoint(handler: DigitizerCallback<Point>, prompt?: string): void {
         const draw = new Draw({
-            type: "Point"//ol.geom.GeometryType.POINT
+            type: GeometryType.POINT // "Point"//ol.geom.GeometryType.POINT
         });
         this.pushDrawInteraction("Point", draw, handler, prompt || tr("DIGITIZE_POINT_PROMPT", this.props.locale));
     }
     public digitizeLine(handler: DigitizerCallback<LineString>, prompt?: string): void {
         const draw = new Draw({
-            type: "LineString", //ol.geom.GeometryType.LINE_STRING,
+            type: GeometryType.LINE_STRING, // "LineString", //ol.geom.GeometryType.LINE_STRING,
             minPoints: 2,
             maxPoints: 2
         });
@@ -1034,7 +1024,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     public digitizeLineString(handler: DigitizerCallback<LineString>, prompt?: string): void {
         const draw = new Draw({
-            type: "LineString", //ol.geom.GeometryType.LINE_STRING,
+            type: GeometryType.LINE_STRING, //"LineString", //ol.geom.GeometryType.LINE_STRING,
             minPoints: 2
         });
         this.pushDrawInteraction("LineString", draw, handler, prompt || tr("DIGITIZE_LINESTRING_PROMPT", this.props.locale, {
@@ -1043,12 +1033,12 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     public digitizeCircle(handler: DigitizerCallback<Circle>, prompt?: string): void {
         const draw = new Draw({
-            type: "Circle" //ol.geom.GeometryType.CIRCLE
+            type: GeometryType.CIRCLE  // "Circle" //ol.geom.GeometryType.CIRCLE
         });
         this.pushDrawInteraction("Circle", draw, handler, prompt || tr("DIGITIZE_CIRCLE_PROMPT", this.props.locale));
     }
     public digitizeRectangle(handler: DigitizerCallback<Polygon>, prompt?: string): void {
-        const geomFunc: ol.DrawGeometryFunctionType = (coordinates, geometry) => {
+        const geomFunc: GeometryFunction = (coordinates, geometry) => {
             if (!geometry) {
                 geometry = new Polygon([]);
             }
@@ -1060,7 +1050,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             return geometry;
         };
         const draw = new Draw({
-            type: "LineString", //ol.geom.GeometryType.LINE_STRING,
+            type: GeometryType.LINE_STRING, //"LineString", //ol.geom.GeometryType.LINE_STRING,
             maxPoints: 2,
             geometryFunction: geomFunc
         });
@@ -1068,7 +1058,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     public digitizePolygon(handler: DigitizerCallback<Polygon>, prompt?: string): void {
         const draw = new Draw({
-            type: "Polygon" //ol.geom.GeometryType.POLYGON
+            type: GeometryType.POLYGON //"Polygon" //ol.geom.GeometryType.POLYGON
         });
         this.pushDrawInteraction("Polygon", draw, handler, prompt || tr("DIGITIZE_POLYGON_PROMPT", this.props.locale, {
             key: String.fromCharCode(this.props.undoLastPointKey || KC_U) //Pray that a sane (printable) key was bound
@@ -1101,14 +1091,14 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     public removeOverlay(overlay: Overlay): void {
         this._map.removeOverlay(overlay);
     }
-    public getProjection(): ol.ProjectionLike {
+    public getProjection(): ProjectionLike {
         return this._map.getView().getProjection();
     }
     public addHandler(eventName: string, handler: Function) {
-        this._map.on(eventName, handler);
+        this._map.on(eventName, handler as any);
     }
     public removeHandler(eventName: string, handler: Function) {
-        this._map.un(eventName, handler);
+        this._map.un(eventName, handler as any);
     }
     public updateSize() {
         this._map.updateSize();

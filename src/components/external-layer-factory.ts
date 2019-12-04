@@ -1,10 +1,10 @@
 import { MgError } from "../api/error";
 import { IExternalBaseLayer } from "../api/common";
-import olSource from "ol/source/source";
-import XYZ from "ol/source/xyz";
-import OSM from "ol/source/osm";
-import Stamen from "ol/source/stamen";
-import BingMaps from "ol/source/bingmaps";
+import olSource from "ol/source/Source";
+import XYZ from "ol/source/XYZ";
+import OSM from "ol/source/OSM";
+import Stamen from "ol/source/Stamen";
+import BingMaps from "ol/source/BingMaps";
 
 interface OLSourceCtor {
     new (options?: any): olSource;

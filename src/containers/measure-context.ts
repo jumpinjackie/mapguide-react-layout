@@ -141,8 +141,10 @@ export class MeasureContext {
             segments = [];
             const sourceProj = this.viewer.getProjection();
             const geom = (polygon.clone().transform(sourceProj, 'EPSG:4326') as olPolygon);
-            const coordinates: any = geom.getLinearRing(0).getCoordinates();
-            area = Math.abs(olSphere.getArea(coordinates));
+            const ring = geom.getLinearRing(0);
+            area = Math.abs(olSphere.getArea(ring));
+            logger.debug(`Ring area: ${area}`);
+            const coordinates = ring.getCoordinates();
             for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
                 const c1 = coordinates[i]; 
                 const c2 = coordinates[i + 1];

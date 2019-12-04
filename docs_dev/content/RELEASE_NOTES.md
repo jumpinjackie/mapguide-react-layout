@@ -1,3 +1,10 @@
+0.12.8
+======
+
+* [#1016](https://github.com/jumpinjackie/mapguide-react-layout/issues/1016): Fix i18n hole in feature tooltip hyperlink prompt.
+* [#1012](https://github.com/jumpinjackie/mapguide-react-layout/issues/1012): Use command label as title for modal dialogs spawned by it. Fix display and i18n issues in share link to view component.
+* Fix `<sup>` in measure area displat being unnecessarily escaped
+
 0.12.7
 ======
 

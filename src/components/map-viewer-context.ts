@@ -26,7 +26,7 @@ import olMap from "ol/Map";
 import olView from "ol/View";
 import olOverlay from "ol/Overlay";
 import olWKTFormat from "ol/format/WKT";
-import olPolygon from "ol/geom/Polygon";
+import olPolygon, { fromExtent } from "ol/geom/Polygon";
 import olLayerBase from "ol/layer/Base";
 import olTileLayer from "ol/layer/Tile";
 import olImageLayer from "ol/layer/Image";
@@ -126,7 +126,7 @@ class FeatureQueryTooltip {
     }
     public raiseQueryFromPoint(pixel: [number, number]) {
         const box = this.callback.getPointSelectionBox(pixel);
-        const geom = (olPolygon as any).fromExtent(box);  //HACK: Missing fromExtent in type defn
+        const geom = fromExtent(box);
         logger.debug(`[${new Date()}] FeatureTooltip - onMouseMove (${box[0]}, ${box[1]}) (${box[2]}, ${box[3]})`);
         this.sendTooltipQuery(geom);
     }

@@ -86,7 +86,7 @@ import Attribution from "ol/control/Attribution";
 import Rotate from "ol/control/Rotate";
 
 import Geometry from "ol/geom/Geometry";
-import Polygon from "ol/geom/Polygon";
+import Polygon, { fromExtent } from "ol/geom/Polygon";
 import Point from "ol/geom/Point";
 import LineString from "ol/geom/LineString";
 import Circle from "ol/geom/Circle";
@@ -363,7 +363,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         } else if (this.props.tool === ActiveMapTool.Select) {
             const ptBuffer = this.props.pointSelectionBuffer || 2;
             const box = this.getPointSelectionBox(e.pixel, ptBuffer);
-            const geom = (Polygon as any).fromExtent(box); //HACK: Missing fromExtent in type defn
+            const geom = fromExtent(box);
             const options = this.buildDefaultQueryOptions(geom);
             options.maxfeatures = 1;
             this.sendSelectionQuery(options);

@@ -39,6 +39,7 @@ import * as shortid from "shortid";
 import { registerStringBundle, DEFAULT_LOCALE } from "../api/i18n";
 import { assertNever } from "../utils/never";
 import proj4 from "proj4";
+import { register } from "ol/proj/proj4";
 import { makeUnique } from "../utils/array";
 import { ensureParameters } from "../utils/url";
 import { strIsNullOrEmpty } from "../utils/string";
@@ -578,6 +579,15 @@ async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, 
         fetchEpsgs.push({ epsg: e, mapDef: "" });
     }
     const epsgs = await Promise.all(fetchEpsgs.map(f => resolveProjectionAsync(f.epsg, opts, f.mapDef)));
+
+    //Previously, we register proj4 with OpenLayers on the bootstrap phase way before this init
+    //process is started. This no longer works for OL6 where it doesn't seem to pick up the extra
+    //projections we've registered with proj4 after linking proj4 to OpenLayers. So that registration
+    //step has been relocated here, after all the custom projections have been fetched and registered
+    //with proj4
+    logger.debug(`Register proj4 with OpenLayers`);
+    register(proj4);
+
     //Build the Dictionary<RuntimeMap> from loaded maps
     const mapsByName: Dictionary<RuntimeMap> = {};
     for (const map of maps) {

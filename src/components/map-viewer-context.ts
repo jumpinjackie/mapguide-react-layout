@@ -45,7 +45,6 @@ import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version'
 import OverlayPositioning from 'ol/OverlayPositioning';
 
 const HIDDEN_CLASS_NAME = "tooltip-hidden";
-
 const BLANK_SIZE: Size = { w: 1, h: 1 };
 
 class MouseTrackingTooltip {
@@ -385,7 +384,17 @@ export class MgLayerSet {
         });
         sources.push(selectionOverlaySource);
         //NOTE: Not tracking this source atm
-        this.activeSelectedFeatureOverlay = new olImageLayer();
+        this.activeSelectedFeatureOverlay = new olImageLayer({
+            //OL6: need to specify a source up-front otherwise it will error blindly
+            //trying to get a source out of this URL, so set up a source with an empty
+            //image data URI, it will be updated if we receive a request to show an
+            //active selected feature image
+            source: new olImageStaticSource({
+                imageExtent: this.extent,
+                imageSize: [BLANK_SIZE.w, BLANK_SIZE.h],
+                url: BLANK_GIF_DATA_URI
+            })
+        });
         if (props.externalBaseLayers != null) {
             const groupOpts: any = {
                 title: tr("EXTERNAL_BASE_LAYERS", props.locale),

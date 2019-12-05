@@ -71,7 +71,6 @@
   },
   "devDependencies": {
     "@hanreev/types-ol": "^3.0.0",
-    "@types/ol": "file:node_modules/@hanreev/types-ol/ol",
     "@gerrit0/typedoc": "0.15.11",
     "@types/dom4": "2.0.1",
     "@types/enzyme": "3.10.3",

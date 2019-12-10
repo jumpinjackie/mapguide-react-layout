@@ -137,17 +137,18 @@ export class MeasureContext {
         let locale;
         if (this.parent) {
             locale = this.parent.getLocale();
-            //TODO: When we upgrade to OL 6, we'll need to update this (they changed their measure example)
             segments = [];
             const sourceProj = this.viewer.getProjection();
-            const geom = (polygon.clone().transform(sourceProj, 'EPSG:4326') as olPolygon);
+            const geom = polygon;
+            area = olSphere.getArea(geom, { projection: sourceProj });
+            logger.debug(`Polygon area: ${area}`);
             const ring = geom.getLinearRing(0);
-            area = Math.abs(olSphere.getArea(ring));
-            logger.debug(`Ring area: ${area}`);
             const coordinates = ring.getCoordinates();
             for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-                const c1 = coordinates[i]; 
-                const c2 = coordinates[i + 1];
+                // Unlike getArea(), getDistance() requires that our input coordinates are in
+                // EPSG:4326 first
+                const c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, 'EPSG:4326');
+                const c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, 'EPSG:4326');
                 const dist = olSphere.getDistance(c1, c2);
                 segments.push({ segment: (i + 1), length: dist });
             }

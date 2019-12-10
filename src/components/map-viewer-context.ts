@@ -5,7 +5,7 @@ import {
     RefreshMode,
     ClientKind,
     Dictionary,
-    Coordinate,
+    Coordinate2D,
     ImageFormat,
     IExternalBaseLayer,
     LayerTransparencySet,
@@ -21,35 +21,35 @@ import * as logger from '../utils/logger';
 import debounce = require("lodash.debounce");
 import { createExternalSource } from "./external-layer-factory";
 
-import olExtent from "ol/extent";
-import olMap from "ol/map";
-import olView from "ol/view";
-import olOverlay from "ol/overlay";
-import olWKTFormat from "ol/format/wkt";
-import olPolygon from "ol/geom/polygon";
-import olLayerBase from "ol/layer/base";
-import olTileLayer from "ol/layer/tile";
-import olImageLayer from "ol/layer/image";
-import olLayerGroup from "ol/layer/group";
-import olTileGrid from "ol/tilegrid/tilegrid";
-import olSource from "ol/source/source";
-import olImageSource from "ol/source/image";
-import olTileImageSource from "ol/source/tileimage";
+import * as olExtent from "ol/extent";
+import olMap from "ol/Map";
+import olView from "ol/View";
+import olOverlay from "ol/Overlay";
+import olWKTFormat from "ol/format/WKT";
+import olPolygon, { fromExtent } from "ol/geom/Polygon";
+import olLayerBase from "ol/layer/Base";
+import olTileLayer from "ol/layer/Tile";
+import olImageLayer from "ol/layer/Image";
+import olLayerGroup from "ol/layer/Group";
+import olTileGrid from "ol/tilegrid/TileGrid";
+import olSource from "ol/source/Source";
+import olImageSource from "ol/source/Image";
+import olTileImageSource from "ol/source/TileImage";
 import createMapGuideSource, { isMapGuideImageSource } from "../api/ol-mapguide-source-factory";
-import olOverviewMap from "ol/control/overviewmap";
-import olImageStaticSource from "ol/source/imagestatic";
+import olOverviewMap from "ol/control/OverviewMap";
+import olImageStaticSource from "ol/source/ImageStatic";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY, BLANK_GIF_DATA_URI } from "../constants/index";
 import { restrictToRange } from "../utils/number";
 import { Size } from "../containers/map-capturer-context";
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
+import OverlayPositioning from 'ol/OverlayPositioning';
 
 const HIDDEN_CLASS_NAME = "tooltip-hidden";
-
 const BLANK_SIZE: Size = { w: 1, h: 1 };
 
 class MouseTrackingTooltip {
     private tooltip: olOverlay;
-    private tooltipElement: Element;
+    private tooltipElement: HTMLElement;
     private map: olMap;
     private text: string | null;
     private isContextMenuOpen: () => boolean;
@@ -62,7 +62,7 @@ class MouseTrackingTooltip {
         this.tooltip = new olOverlay({
             element: this.tooltipElement,
             offset: [15, 0],
-            positioning: "center-left" /*ol.OverlayPositioning.CENTER_LEFT*/
+            positioning: OverlayPositioning.CENTER_LEFT // "center-left" /*ol.OverlayPositioning.CENTER_LEFT*/
         })
         this.map.addOverlay(this.tooltip);
         this.text = null;
@@ -99,7 +99,7 @@ class FeatureQueryTooltip {
     private wktFormat: olWKTFormat;
     private map: olMap;
     private throttledMouseMove: GenericEventHandler;
-    private featureTooltipElement: Element;
+    private featureTooltipElement: HTMLElement;
     private featureTooltip: olOverlay;
     private enabled: boolean;
     private isMouseOverTooltip: boolean;
@@ -114,7 +114,7 @@ class FeatureQueryTooltip {
         this.featureTooltip = new olOverlay({
             element: this.featureTooltipElement,
             offset: [15, 0],
-            positioning: "center-left" /* ol.OverlayPositioning.CENTER_LEFT */
+            positioning: OverlayPositioning.CENTER_LEFT // "center-left" /* ol.OverlayPositioning.CENTER_LEFT */
         })
         this.map = map;
         this.map.addOverlay(this.featureTooltip);
@@ -126,7 +126,7 @@ class FeatureQueryTooltip {
     }
     public raiseQueryFromPoint(pixel: [number, number]) {
         const box = this.callback.getPointSelectionBox(pixel);
-        const geom = olPolygon.fromExtent(box);
+        const geom = fromExtent(box);
         logger.debug(`[${new Date()}] FeatureTooltip - onMouseMove (${box[0]}, ${box[1]}) (${box[2]}, ${box[3]})`);
         this.sendTooltipQuery(geom);
     }
@@ -227,7 +227,7 @@ export class MgLayerSet {
     private selectionOverlayParams: any;
     projection: string;
     dpi: number;
-    extent: ol.Extent;
+    extent: Bounds;
     private allLayers: olLayerBase[];
     private inPerUnit: number;
     view: olView;
@@ -384,7 +384,17 @@ export class MgLayerSet {
         });
         sources.push(selectionOverlaySource);
         //NOTE: Not tracking this source atm
-        this.activeSelectedFeatureOverlay = new olImageLayer();
+        this.activeSelectedFeatureOverlay = new olImageLayer({
+            //OL6: need to specify a source up-front otherwise it will error blindly
+            //trying to get a source out of this URL, so set up a source with an empty
+            //image data URI, it will be updated if we receive a request to show an
+            //active selected feature image
+            source: new olImageStaticSource({
+                imageExtent: this.extent,
+                imageSize: [BLANK_SIZE.w, BLANK_SIZE.h],
+                url: BLANK_GIF_DATA_URI
+            })
+        });
         if (props.externalBaseLayers != null) {
             const groupOpts: any = {
                 title: tr("EXTERNAL_BASE_LAYERS", props.locale),
@@ -748,7 +758,7 @@ export interface IMapViewerContextCallback {
     getSessionId(): string;
     getLocale(): string | undefined;
     isFeatureTooltipEnabled(): boolean;
-    getPointSelectionBox(point: Coordinate): Bounds;
+    getPointSelectionBox(point: Coordinate2D): Bounds;
 }
 
 /**

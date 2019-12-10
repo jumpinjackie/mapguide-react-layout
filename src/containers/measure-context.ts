@@ -6,18 +6,19 @@ import { IOLFactory } from "../api/ol-factory";
 import { tr } from "../api/i18n";
 import * as logger from "../utils/logger";
 import { roundTo } from "../utils/number";
-import Observable from "ol/observable";
-import olSphere from "ol/sphere";
-import olOverlay from "ol/overlay";
-import olLineString from "ol/geom/linestring";
-import olPolygon from "ol/geom/polygon";
-import olStyle from "ol/style/style";
-import olInteractionDraw from "ol/interaction/draw";
-import olFeature from "ol/feature";
-import olVectorLayer from "ol/layer/vector";
+import * as olObservable from "ol/Observable";
+import * as olSphere from "ol/sphere";
+import olOverlay from "ol/Overlay";
+import olLineString from "ol/geom/LineString";
+import olPolygon from "ol/geom/Polygon";
+import olStyle from "ol/style/Style";
+import olInteractionDraw from "ol/interaction/Draw";
+import olFeature from "ol/Feature";
+import olVectorLayer from "ol/layer/Vector";
+import GeometryType from 'ol/geom/GeometryType';
+import OverlayPositioning from 'ol/OverlayPositioning';
 
 const LAYER_NAME = "measure-layer";
-const WGS84_SPHERE = new olSphere(6378137);
 
 /**
  * @hidden
@@ -39,7 +40,7 @@ export interface IMeasureCallback {
  * @hidden
  */
 export interface IMeasureComponent {
-    getCurrentDrawType(): string | undefined;
+    getCurrentDrawType(): GeometryType | undefined;
     getLocale(): string;
 }
 
@@ -54,9 +55,9 @@ export class MeasureContext {
     private viewer: IMapViewer;
     private sketch: olFeature | null;
     private listener: any;
-    private helpTooltipElement: Element;
+    private helpTooltipElement: HTMLElement;
     private helpTooltip: olOverlay;
-    private measureTooltipElement: Element | null;
+    private measureTooltipElement: HTMLElement | null;
     private measureTooltip: olOverlay;
     private mapName: string;
     private layerName: string;
@@ -110,7 +111,7 @@ export class MeasureContext {
             for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
                 const c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, 'EPSG:4326');
                 const c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, 'EPSG:4326');
-                const dist = WGS84_SPHERE.haversineDistance(c1, c2);
+                const dist = olSphere.getDistance(c1, c2);
                 length += dist;
                 segments.push({ segment: (i + 1), length: dist });
             }
@@ -136,16 +137,19 @@ export class MeasureContext {
         let locale;
         if (this.parent) {
             locale = this.parent.getLocale();
-            //TODO: When we upgrade to OL 6, we'll need to update this (they changed their measure example)
             segments = [];
             const sourceProj = this.viewer.getProjection();
-            const geom = (polygon.clone().transform(sourceProj, 'EPSG:4326') as olPolygon);
-            const coordinates = geom.getLinearRing(0).getCoordinates();
-            area = Math.abs(WGS84_SPHERE.geodesicArea(coordinates));
+            const geom = polygon;
+            area = olSphere.getArea(geom, { projection: sourceProj });
+            logger.debug(`Polygon area: ${area}`);
+            const ring = geom.getLinearRing(0);
+            const coordinates = ring.getCoordinates();
             for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-                const c1 = coordinates[i]; 
-                const c2 = coordinates[i + 1];
-                const dist = WGS84_SPHERE.haversineDistance(c1, c2);
+                // Unlike getArea(), getDistance() requires that our input coordinates are in
+                // EPSG:4326 first
+                const c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, 'EPSG:4326');
+                const c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, 'EPSG:4326');
+                const dist = olSphere.getDistance(c1, c2);
                 segments.push({ segment: (i + 1), length: dist });
             }
         } else {
@@ -211,7 +215,7 @@ export class MeasureContext {
         // unset tooltip so that a new one can be created
         this.measureTooltipElement = null;
         this.createMeasureTooltip();
-        Observable.unByKey(this.listener);
+        olObservable.unByKey(this.listener);
     }
     private onMouseMove = (evt: GenericEvent) => {
         if (evt.dragging || !this.parent) {
@@ -250,7 +254,7 @@ export class MeasureContext {
             })
         });
     }
-    private createDrawInteraction(type: string): olInteractionDraw {
+    private createDrawInteraction(type: GeometryType): olInteractionDraw {
         const source = this.measureLayer.getSource();
         return this.olFactory.createInteractionDraw({
             source: source,
@@ -291,7 +295,7 @@ export class MeasureContext {
         this.helpTooltip = this.olFactory.createOverlay({
             element: this.helpTooltipElement,
             offset: [15, 0],
-            positioning: 'center-left'
+            positioning: OverlayPositioning.CENTER_LEFT // 'center-left'
         });
         this.viewer.addOverlay(this.helpTooltip);
     }
@@ -309,11 +313,11 @@ export class MeasureContext {
         this.measureTooltip = this.olFactory.createOverlay({
             element: this.measureTooltipElement,
             offset: [0, -15],
-            positioning: 'bottom-center'
+            positioning: OverlayPositioning.BOTTOM_CENTER //'bottom-center'
         });
         this.viewer.addOverlay(this.measureTooltip);
     }
-    private setActiveInteraction(type: string) {
+    private setActiveInteraction(type: GeometryType) {
         if (this.draw) {
             this.draw.un("drawstart", this.onDrawStart);
             this.draw.un("drawend", this.onDrawEnd);

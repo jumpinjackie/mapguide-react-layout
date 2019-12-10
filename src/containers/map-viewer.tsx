@@ -9,7 +9,7 @@ import {
     RefreshMode,
     DigitizerCallback,
     Bounds,
-    Coordinate,
+    Coordinate2D,
     IExternalBaseLayer,
     IApplicationState,
     IViewerReducerState,
@@ -35,6 +35,14 @@ import { IOLFactory, OLFactory } from "../api/ol-factory";
 import { Toaster, Position, Intent } from '@blueprintjs/core';
 import * as logger from "../utils/logger";
 import { useActiveMapState, useActiveMapSelectionSet, useActiveMapView, useActiveMapInitialView, useActiveMapExternalBaseLayers, useActiveMapSelectableLayers, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapHideLayers, useActiveMapActiveSelectedFeature, useIsContextMenuOpen, useActiveMapName, useActiveMapSessionId, useActiveMapSelectableLayerNames, useViewerActiveTool, useConfiguredAgentUri, useConfiguredAgentKind, useViewerViewRotation, useViewerViewRotationEnabled, useViewerLocale, useViewerImageFormat, useViewerSelectionImageFormat, useViewerSelectionColor, useViewerActiveFeatureSelectionColor as useViewerActiveSelectedFeatureColor, useViewerPointSelectionBuffer, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey } from './hooks';
+import olInteraction from "ol/interaction/Interaction";
+import olOverlay from "ol/Overlay";
+import { ProjectionLike } from "ol/proj";
+import olGeometry from "ol/geom/Geometry";
+import olGeomPoint from "ol/geom/Point";
+import olGeomLineString from "ol/geom/LineString";
+import olGeomCircle from "ol/geom/Circle";
+import olGeomPolygon from "ol/geom/Polygon";
 
 export interface IMapViewerContainerProps {
     overviewMapElementSelector?: () => (Element | null);
@@ -62,7 +70,7 @@ interface MVDispatch {
     setActiveTool: (tool: ActiveMapTool) => void;
     setCurrentView: (view: IMapView) => void;
     setBusyCount: (count: number) => void;
-    setMouseCoordinates: (mapName: string, coord: Coordinate) => void;
+    setMouseCoordinates: (mapName: string, coord: Coordinate2D) => void;
     invokeCommand: (cmd: ICommand, parameters?: any) => void;
     showModalComponent: (options: any) => void;
     queryMapFeatures: (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => void;
@@ -73,62 +81,6 @@ interface MVDispatch {
     showContextMenu: (pos: [number, number]) => void;
     hideContextMenu: () => void;
 }
-
-/*
-function useMapContainerState(): IMapViewerContainerState {
-    const st = useSelector<IApplicationState, IMapViewerContainerState>(state => {
-        let map;
-        let selection;
-        let currentView;
-        let initialView;
-        let selectableLayers;
-        let externalBaseLayers;
-        let showGroups;
-        let showLayers;
-        let hideGroups;
-        let hideLayers;
-        let layerTransparency;
-        let activeSelectedFeature;
-        let isContextMenuOpen = false;
-        if (state.config.activeMapName) {
-            const branch = state.mapState[state.config.activeMapName];
-            map = branch.runtimeMap;
-            selection = branch.selectionSet;
-            currentView = branch.currentView;
-            initialView = branch.initialView;
-            showGroups = branch.showGroups;
-            showLayers = branch.showLayers;
-            hideGroups = branch.hideGroups;
-            hideLayers = branch.hideLayers;
-            selectableLayers = branch.selectableLayers;
-            externalBaseLayers = branch.externalBaseLayers;
-            layerTransparency = branch.layerTransparency;
-            activeSelectedFeature = branch.activeSelectedFeature;
-        }
-        if (state?.toolbar?.flyouts?.[Constants.WEBLAYOUT_CONTEXTMENU]?.open === true) {
-            isContextMenuOpen = true;
-        }
-        return {
-            config: state.config,
-            map: map,
-            currentView: currentView,
-            initialView: initialView,
-            viewer: state.viewer,
-            selection: selection,
-            selectableLayers: selectableLayers,
-            showGroups: showGroups,
-            showLayers: showLayers,
-            hideGroups: hideGroups,
-            hideLayers: hideLayers,
-            externalBaseLayers: externalBaseLayers,
-            layerTransparency: layerTransparency,
-            activeSelectedFeature: activeSelectedFeature,
-            isContextMenuOpen
-        } as IMapViewerContainerState;
-    });
-    return st;
-}
-*/
 
 type INonBaseMapViewer = Pick<IMapViewer,
     "toastSuccess" |
@@ -149,7 +101,7 @@ type INonBaseMapViewer = Pick<IMapViewer,
     "getActiveTool">;
 
 class MapViewerAdapter implements IMapViewer {
-    getProjection(): ol.ProjectionLike {
+    getProjection(): ProjectionLike {
         return this.inner.getProjection();
     }
     getViewForExtent(extent: Bounds): IMapView {
@@ -188,25 +140,25 @@ class MapViewerAdapter implements IMapViewer {
     cancelDigitization(): void {
         this.inner.cancelDigitization();
     }
-    digitizePoint(handler: DigitizerCallback<ol.geom.Point>, prompt?: string | undefined): void {
+    digitizePoint(handler: DigitizerCallback<olGeomPoint>, prompt?: string | undefined): void {
         this.inner.digitizePoint(handler, prompt);
     }
-    digitizeLine(handler: DigitizerCallback<ol.geom.LineString>, prompt?: string | undefined): void {
+    digitizeLine(handler: DigitizerCallback<olGeomLineString>, prompt?: string | undefined): void {
         this.inner.digitizeLine(handler, prompt);
     }
-    digitizeLineString(handler: DigitizerCallback<ol.geom.LineString>, prompt?: string | undefined): void {
+    digitizeLineString(handler: DigitizerCallback<olGeomLineString>, prompt?: string | undefined): void {
         this.inner.digitizeLineString(handler, prompt);
     }
-    digitizeCircle(handler: DigitizerCallback<ol.geom.Circle>, prompt?: string | undefined): void {
+    digitizeCircle(handler: DigitizerCallback<olGeomCircle>, prompt?: string | undefined): void {
         this.inner.digitizeCircle(handler, prompt);
     }
-    digitizeRectangle(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string | undefined): void {
+    digitizeRectangle(handler: DigitizerCallback<olGeomPolygon>, prompt?: string | undefined): void {
         this.inner.digitizeRectangle(handler, prompt);
     }
-    digitizePolygon(handler: DigitizerCallback<ol.geom.Polygon>, prompt?: string | undefined): void {
+    digitizePolygon(handler: DigitizerCallback<olGeomPolygon>, prompt?: string | undefined): void {
         this.inner.digitizePolygon(handler, prompt);
     }
-    selectByGeometry(geom: ol.geom.Geometry, selectionMethod?: "INTERSECTS" | "TOUCHES" | "WITHIN" | "ENVELOPEINTERSECTS" | undefined): void {
+    selectByGeometry(geom: olGeometry, selectionMethod?: "INTERSECTS" | "TOUCHES" | "WITHIN" | "ENVELOPEINTERSECTS" | undefined): void {
         this.inner.selectByGeometry(geom, selectionMethod)
     }
     queryMapFeatures(options: IQueryMapFeaturesOptions, success?: ((res: QueryMapFeaturesResponse) => void) | undefined, failure?: ((err: Error) => void) | undefined): void {
@@ -221,16 +173,16 @@ class MapViewerAdapter implements IMapViewer {
     getLayerManager(mapName?: string | undefined): ILayerManager {
         return this.inner.getLayerManager();
     }
-    addInteraction<T extends ol.interaction.Interaction>(interaction: T): T {
+    addInteraction<T extends olInteraction>(interaction: T): T {
         return this.inner.addInteraction(interaction);
     }
-    removeInteraction<T extends ol.interaction.Interaction>(interaction: T): void {
+    removeInteraction<T extends olInteraction>(interaction: T): void {
         this.inner.removeInteraction(interaction);
     }
-    addOverlay(overlay: ol.Overlay): void {
+    addOverlay(overlay: olOverlay): void {
         this.inner.addOverlay(overlay);
     }
-    removeOverlay(overlay: ol.Overlay): void {
+    removeOverlay(overlay: olOverlay): void {
         this.inner.removeOverlay(overlay);
     }
     addHandler(eventName: string, handler: Function): void {
@@ -434,7 +386,7 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
     };
     const onBusyLoading = (busyCount: number) => setBusyCount?.(busyCount);
     const onRotationChanged = (newRotation: number) => setViewRotation?.(newRotation);
-    const onMouseCoordinateChanged = (coord: Coordinate) => {
+    const onMouseCoordinateChanged = (coord: Coordinate2D) => {
         if (activeMapName) {
             setMouseCoordinates?.(activeMapName, coord);
         }

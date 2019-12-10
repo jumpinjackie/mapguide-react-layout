@@ -1,4 +1,4 @@
-import { IApplicationState, IMapView, UnitOfMeasure, getRuntimeMap, getCurrentView, IExternalBaseLayer, Coordinate } from '../api/common';
+import { IApplicationState, IMapView, UnitOfMeasure, getRuntimeMap, getCurrentView, IExternalBaseLayer, Coordinate2D } from '../api/common';
 import { useSelector } from 'react-redux';
 import { RuntimeMap, getExternalBaseLayers, INameValuePair, ActiveSelectedFeature, LayerTransparencySet, QueryMapFeaturesResponse, ActiveMapTool, ClientKind, ImageFormat, MapLoadIndicatorPositioning, getSelectionSet, IViewerCapabilities, InitError, IBranchedMapState, IBranchedMapSubState } from '../api';
 import { WEBLAYOUT_CONTEXTMENU } from '../constants';
@@ -88,7 +88,7 @@ export function useActiveMapProjection() {
 }
 
 export function useCurrentMouseCoordinates() {
-    return useSelector<IApplicationState, Coordinate | undefined>(state => state.mouse.coords);
+    return useSelector<IApplicationState, Coordinate2D | undefined>(state => state.mouse.coords);
 }
 
 export function useViewerFlyouts() {

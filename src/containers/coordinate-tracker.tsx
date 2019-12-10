@@ -1,6 +1,6 @@
 import * as React from "react";
 import { tr } from "../api/i18n";
-import olProj from "ol/proj";
+import * as olProj from "ol/proj";
 import { Callout, Intent } from '@blueprintjs/core';
 import { useViewerLocale, useCurrentMouseCoordinates, useActiveMapProjection } from './hooks';
 

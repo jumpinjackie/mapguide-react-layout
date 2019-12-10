@@ -3,18 +3,20 @@ import { RuntimeMap } from "./contracts/runtime-map";
 import { FeatureSet, QueryMapFeaturesResponse } from "./contracts/query";
 import { IQueryMapFeaturesOptions } from './request-builder';
 
-import olPoint from "ol/geom/point";
-import olLineString from "ol/geom/linestring";
-import olCircle from "ol/geom/circle";
-import olPolygon from "ol/geom/polygon";
-import olGeometry from "ol/geom/geometry";
+import olPoint from "ol/geom/Point";
+import olLineString from "ol/geom/LineString";
+import olCircle from "ol/geom/Circle";
+import olPolygon from "ol/geom/Polygon";
+import olGeometry from "ol/geom/Geometry";
 
-import olLayerBase from "ol/layer/base";
-import olInteraction from "ol/interaction/interaction";
-import olOverlay from "ol/overlay";
+import olLayerBase from "ol/layer/Base";
+import olInteraction from "ol/interaction/Interaction";
+import olOverlay from "ol/Overlay";
 
 import { IOLFactory } from "./ol-factory";
 import { ViewerAction } from '../actions/defs';
+import { ProjectionLike } from 'ol/proj';
+import { LoadFunction } from 'ol/Image';
 
 /**
  * @since 0.13
@@ -340,9 +342,15 @@ export interface ISearchCommand extends ITargetedCommand {
 export type Dictionary<T> = { [key: string]: T };
 
 /**
- * A 2d coordinate
+ * A 2d coordinate (renamed to Coordinate2D from Coordinate in 0.13)
  */
-export type Coordinate = [number, number];
+export type Coordinate2D = [number, number];
+
+/**
+ * A size quantity
+ * @since 0.13
+ */
+export type Size2 = [number, number];
 
 /**
  * A bounding box array
@@ -468,7 +476,7 @@ export interface IMapViewer {
      *
      * @memberof IMapViewer
      */
-    getProjection(): ol.ProjectionLike;
+    getProjection(): ProjectionLike;
     /**
      * Gets the view for the given extent
      *
@@ -1643,10 +1651,10 @@ export interface IMouseReducerState {
     /**
      * The last tracked mouse coordinate
      *
-     * @type {(Coordinate | undefined)}
+     * @type {(Coordinate2D | undefined)}
      * @memberof IMouseReducerState
      */
-    coords: Coordinate | undefined;
+    coords: Coordinate2D | undefined;
 }
 
 /**
@@ -2056,7 +2064,7 @@ export interface MapGuideImageSourceOptions {
     /**
      * Projection.
      */
-    projection?: ol.ProjectionLike;
+    projection?: ProjectionLike;
     /**
      * Ratio. `1` means image requests are the size of the map viewport, `2` means
      * twice the width and height of the map viewport, and so on. Must be `1` or
@@ -2070,11 +2078,11 @@ export interface MapGuideImageSourceOptions {
     /**
      * Optional function to load an image given a URL.
      */
-    imageLoadFunction?: ol.ImageLoadFunctionType;
+    imageLoadFunction?: LoadFunction;
     /**
      * Additional parameters.
      */
     params?: any;
     crossOrigin?: string;
-    defaultImageLoadFunction?: ol.ImageLoadFunctionType;
+    defaultImageLoadFunction?: LoadFunction;
 }

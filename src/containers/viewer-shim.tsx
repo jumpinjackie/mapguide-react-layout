@@ -1,11 +1,11 @@
 import * as React from "react";
-import { connect, useDispatch } from "react-redux";
-import olExtent from "ol/extent";
-import olPoint from "ol/geom/point";
-import olLineString from "ol/geom/linestring";
-import olPolygon from "ol/geom/polygon";
-import olCircle from "ol/geom/circle";
-import olGeom from "ol/geom/geometry";
+import { useDispatch } from "react-redux";
+import { getWidth, getHeight } from "ol/extent";
+import olPoint from "ol/geom/Point";
+import olLineString from "ol/geom/LineString";
+import olPolygon from "ol/geom/Polygon";
+import olCircle from "ol/geom/Circle";
+import olGeom from "ol/geom/Geometry";
 import * as Constants from "../constants";
 import * as Runtime from "../api/runtime";
 import * as logger from "../utils/logger";
@@ -13,13 +13,13 @@ import { Client } from "../api/client";
 import { MgError } from "../api/error";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { FeatureSet, SelectedFeatureSet, QueryMapFeaturesResponse } from "../api/contracts/query";
-import { RefreshMode, ReduxDispatch, IApplicationState, ICommand, ClientKind, UnitOfMeasure } from "../api/common";
+import { RefreshMode, ICommand, ClientKind, UnitOfMeasure, Bounds } from "../api/common";
 import * as MapActions from "../actions/map";
 import * as TaskPaneActions from "../actions/taskpane";
 import * as LegendActions from "../actions/legend";
 import { deArrayify, buildSelectionXml } from "../api/builders/deArrayify";
 import { FormFrameShim } from "../components/form-frame-shim";
-import { getCommand, DefaultCommands, CommandConditions } from "../api/registry/command";
+import { getCommand, DefaultCommands } from "../api/registry/command";
 import { tr } from "../api/i18n";
 import { serialize } from "../api/builders/mapagent";
 import { ILocalizedMessages } from "../strings/msgdef";
@@ -387,7 +387,7 @@ class FusionWidgetApiShim {
             }, (selection) => {
                 if (zoomTo) {
                     const fact = viewer.getOLFactory();
-                    let bounds: ol.Extent | null = null;
+                    let bounds: Bounds | null = null;
                     if (selection != null && selection.SelectedFeatures != null) {
                         selection.SelectedFeatures.SelectedLayer.forEach(layer => {
                             layer.Feature.forEach(feat => {
@@ -401,8 +401,8 @@ class FusionWidgetApiShim {
                         });
                     }
                     if (bounds) {
-                        const bw = olExtent.getWidth(bounds);
-                        const bh = olExtent.getHeight(bounds);
+                        const bw = getWidth(bounds);
+                        const bh = getHeight(bounds);
                         if (bw > 0 && bh > 0) { //Don't zoom if we get 0 bounds. Cruncing bounds from selected points would do this.
                             const view = viewer.getViewForExtent(bounds);
                             this.parent.ZoomToView(view.x, view.y, view.scale);
@@ -520,7 +520,7 @@ class FusionWidgetApiShim {
             r: circ.getRadius()
         };
     }
-    digitizePoint(options: any, handler: FusionGeomDigitizer) { //Map
+    digitizePoint(handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizePoint(pt => {
@@ -528,7 +528,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeLine(options: any, handler: FusionGeomDigitizer) { //Map
+    digitizeLine(handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeLine(ln => {
@@ -536,7 +536,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeLineString(options: any, handler: FusionGeomDigitizer) { //Map
+    digitizeLineString(handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeLineString(lstr => {
@@ -544,7 +544,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeRectangle(options: any, handler: FusionGeomDigitizer) { //Map
+    digitizeRectangle(handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeRectangle(rect => {
@@ -552,7 +552,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizePolygon(options: any, handler: FusionGeomDigitizer) { //Map
+    digitizePolygon(handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizePolygon(poly => {
@@ -560,7 +560,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeCircle(options: any, handler: FusionGeomDigitizer) { //Map
+    digitizeCircle(handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeCircle(circ => {
@@ -1169,7 +1169,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         browserWindow.ExecuteMapAction = browserWindow.ExecuteMapAction || ((code: any) => this.ExecuteMapAction(code));
         browserWindow.Refresh = browserWindow.Refresh || (() => this.Refresh());
         browserWindow.SetSelectionXML = browserWindow.SetSelectionXML || ((xmlSet: string) => this.SetSelectionXML(xmlSet));
-        browserWindow.ZoomToView = browserWindow.ZoomToView || ((x: number, y: number, scale: number, refresh: boolean) => this.ZoomToView(x, y, scale));
+        browserWindow.ZoomToView = browserWindow.ZoomToView || ((x: number, y: number, scale: number) => this.ZoomToView(x, y, scale));
         browserWindow.GotoHomePage = browserWindow.GotoHomePage || (() => this.goHome());
 
         // ======= Extended Viewer API ========== //

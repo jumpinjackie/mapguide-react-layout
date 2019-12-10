@@ -1,6 +1,6 @@
 import { MapGuideImageSourceOptions, IMapGuideImageSource } from "./common";
 //import { MapGuideImageSource } from "./ol-mapguide-source";
-import olMapGuideSource from "ol/source/imagemapguide";
+import olMapGuideSource from "ol/source/ImageMapGuide";
 
 /**
  * @hidden

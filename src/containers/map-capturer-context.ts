@@ -1,13 +1,13 @@
-import { IMapViewer, Coordinate } from "../api/common";
+import { IMapViewer, Coordinate2D } from "../api/common";
 import * as logger from "../utils/logger";
 import { deg2rad } from "../utils/number";
-import olExtent from "ol/extent";
-import olFeature from "ol/feature";
-import olCollection from "ol/collection";
-import olPolygon from "ol/geom/polygon";
-import olVectorSource from "ol/source/vector";
-import olVectorLayer from "ol/layer/vector";
-import olInteractionTranslate from "ol/interaction/translate";
+import * as olExtent from "ol/extent";
+import olFeature from "ol/Feature";
+import olCollection from "ol/Collection";
+import olPolygon from "ol/geom/Polygon";
+import olVectorSource from "ol/source/Vector";
+import olVectorLayer from "ol/layer/Vector";
+import olInteractionTranslate from "ol/interaction/Translate";
 
 export type Size = { w: number, h: number };
 
@@ -37,7 +37,7 @@ export class MapCapturerContext {
         this.layerName = `${mapName}_MapCapturer`;
     }
     private getRing(origin: { x: number, y: number }, paperSize: Size, scaleDenominator: number): [number, number][][] {
-        const ring: Coordinate[] = [];
+        const ring: Coordinate2D[] = [];
         const factor = scaleDenominator / (this.viewer.getMetersPerUnit() * 1000 * 2);
         ring.push([origin.x - paperSize.w * factor, origin.y - paperSize.h * factor]);
         ring.push([origin.x + paperSize.w * factor, origin.y - paperSize.h * factor]);
@@ -50,13 +50,14 @@ export class MapCapturerContext {
             const box = this.features.item(0);
             const poly = box.getGeometry() as olPolygon;
             const coords = poly.getCoordinates()[0];
-            const boxCoords = coords.map(c => `${c[0]},${c[1]}`).join(",");
+            const boxCoords = coords.map((c: any) => `${c[0]},${c[1]}`).join(",");
             //Process normalized one
-            const npoly = poly.clone();
+            const npoly = poly.clone() as olPolygon;
             const ncenter = olExtent.getCenter(npoly.getExtent());
             npoly.rotate(deg2rad(this.rotation), ncenter);
+            //HACK: Missing getCoordinates() from type defn
             const ncoords = npoly.getCoordinates()[0];
-            const nBoxCoords = ncoords.map(c => `${c[0]},${c[1]}`).join(",");
+            const nBoxCoords = ncoords.map((c: any) => `${c[0]},${c[1]}`).join(",");
             this.activeCallback.updateBoxCoords(boxCoords, nBoxCoords);
         }
     }
@@ -79,13 +80,13 @@ export class MapCapturerContext {
                 poly.rotate(-deg2rad(this.rotation), center);
             }
             const coords = poly.getCoordinates()[0];
-            const boxCoords = coords.map(c => `${c[0]},${c[1]}`).join(",");
+            const boxCoords = coords.map((c: any) => `${c[0]},${c[1]}`).join(",");
             //Process normalized one
-            const npoly = poly.clone();
+            const npoly = poly.clone() as olPolygon;
             const ncenter = olExtent.getCenter(npoly.getExtent());
             npoly.rotate(deg2rad(this.rotation), ncenter);
             const ncoords = npoly.getCoordinates()[0];
-            const nBoxCoords = ncoords.map(c => `${c[0]},${c[1]}`).join(",");
+            const nBoxCoords = ncoords.map((c: any) => `${c[0]},${c[1]}`).join(",");
             this.activeCallback.updateBoxCoords(boxCoords, nBoxCoords);
         }
     }

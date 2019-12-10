@@ -914,7 +914,8 @@ export function buildSelectionXml(selection: Query.FeatureSet | undefined, layer
     let xml = '<?xml version="1.0" encoding="utf-8"?>';
     xml += '<FeatureSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FeatureSet-1.0.0.xsd">';
     if (selection) {
-        for (const layer of selection.Layer) {
+        const selLayers = selection.Layer;
+        for (const layer of selLayers) {
             const layerId = layer["@id"];
             if (layerIds != null && layerIds.indexOf(layerId) < 0) {
                 continue;

@@ -104,8 +104,8 @@
         function showSelectionXML() {
             showMessage("");
             var sel = viewer.getSelection();
-            if (sel) {
-                var xml = viewer.getSelectionXml(sel);
+            if (sel && sel.FeatureSet) {
+                var xml = viewer.getSelectionXml(sel.FeatureSet);
                 showMessage(xml.replace(/</g, "&lt;").replace(/>/g, "&gt;\n"));
             } else {
                 showMessage("No selection has been made");
@@ -126,8 +126,8 @@
 
         function selectionHandler(mapName, selection) {
             showMessage("");
-            if (selection) {
-                var xml = viewer.getSelectionXml(selection);
+            if (selection && selection.FeatureSet) {
+                var xml = viewer.getSelectionXml(selection.FeatureSet);
                 showMessage("Selection for (" + mapName + "):\n" + xml.replace(/</g, "&lt;").replace(/>/g, "&gt;\n"));
             } else {
                 showMessage("Selection for (" + mapName + ") is empty");

@@ -52,7 +52,7 @@ export interface ILegendProps {
     showGroups: string[] | undefined;
     hideLayers: string[] | undefined;
     hideGroups: string[] | undefined;
-    locale?: string | undefined;
+    locale: string;
     externalBaseLayers?: IExternalBaseLayer[] | undefined;
     onBaseLayerChanged?: (name: string) => void | undefined;
     onLayerSelectabilityChanged?: (id: string, selectable: boolean) => void | undefined;
@@ -185,7 +185,7 @@ export const LayerNode = (props: ILayerNodeProps) => {
                         }
                         if (bCompressed) {
                             ruleElements.push(<RuleNode baseSize={legendCtx.getBaseIconSize()} key={`layer-${layer.ObjectId}-style-${fi}-rule-first`} iconMimeType={iconMimeType} rule={fts.Rule[0]} />);
-                            ruleElements.push(<li style={LI_LIST_STYLE} key={`layer-${layer.ObjectId}-style-${fi}-rule-compressed`}><LegendLabel baseSize={legendCtx.getBaseIconSize()} text={`... (${ftsRuleCount - 2} other theme rules)`} /></li>);
+                            ruleElements.push(<li style={LI_LIST_STYLE} key={`layer-${layer.ObjectId}-style-${fi}-rule-compressed`}><LegendLabel baseSize={legendCtx.getBaseIconSize()} text={tr("OTHER_THEME_RULE_COUNT", legendCtx.getLocale(), { count: ftsRuleCount - 2 })} /></li>);
                             ruleElements.push(<RuleNode baseSize={legendCtx.getBaseIconSize()} key={`layer-${layer.ObjectId}-style-${fi}-rule-last`} iconMimeType={iconMimeType} rule={fts.Rule[ftsRuleCount - 1]} />);
                         } else {
                             for (let i = 0; i < ftsRuleCount; i++) {
@@ -472,6 +472,7 @@ export const Legend = (props: ILegendProps) => {
         rootStyle.maxHeight = maxHeight;
     }
     const providerImpl: ILegendContext = {
+        getLocale: () => props.locale,
         getBaseIconSize: () => props.baseIconSize ?? DEFAULT_ICON_SIZE,
         getIconMimeType: getIconMimeType,
         getChildren: getChildren,

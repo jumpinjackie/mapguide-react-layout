@@ -7,6 +7,7 @@ import * as React from "react";
 import { IDOMElementMetrics } from "../api/common";
 import { MapLayer, MapGroup } from "../api/contracts/runtime-map";
 import { STR_EMPTY } from '../utils';
+import { DEFAULT_LOCALE } from 'src/api';
 
 const VOID_NOOP = () => {}
 
@@ -33,6 +34,7 @@ export const AppContext = React.createContext<IApplicationContext>({
 });
 
 export interface ILegendContext {
+    getLocale(): string;
     getBaseIconSize(): number;
     getIconMimeType(): string | undefined;
     getChildren(objectId: string): (MapLayer | MapGroup)[];
@@ -51,6 +53,7 @@ export interface ILegendContext {
 }
 
 export const LegendContext = React.createContext<ILegendContext>({
+    getLocale: () => DEFAULT_LOCALE,
     getBaseIconSize: () => 0,
     getIconMimeType: () => STR_EMPTY,
     getChildren: () => [],

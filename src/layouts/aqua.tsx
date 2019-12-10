@@ -154,6 +154,7 @@ const AquaTemplateLayout = () => {
                 if (hasSelectionPanel) {
                     return <RndModalDialog
                         icon="th"
+                        locale={locale}
                         isOpen={!!showSelection}
                         onClose={onHideSelection}
                         title={tr("TPL_TITLE_SELECTION_PANEL", locale)}
@@ -171,6 +172,7 @@ const AquaTemplateLayout = () => {
                 if (hasLegend) {
                     return <RndModalDialog
                         icon="layers"
+                        locale={locale}
                         isOpen={!!showLegend}
                         onClose={onHideLegend}
                         title={tr("TPL_TITLE_LEGEND", locale)}
@@ -187,6 +189,7 @@ const AquaTemplateLayout = () => {
                 if (hasTaskPane) {
                     return <RndModalDialog
                         icon="application"
+                        locale={locale}
                         isOpen={!!showTaskPane}
                         onClose={onHideTaskPane}
                         width={SIDEBAR_WIDTH}

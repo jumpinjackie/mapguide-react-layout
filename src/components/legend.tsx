@@ -139,8 +139,10 @@ export const LayerNode = (props: ILayerNodeProps) => {
     </Icon> //spriteClass={SPRITE_LEGEND_LAYER} />;
     let selectable: JSX.Element | undefined;
     if (layer.Selectable === true) {
+        //NOTE: As we've intercepted the BP icons package, we've re-appropriated the "disable" icon for
+        //disabling selection
         selectable = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE} onClick={onToggleSelectability}>
-            {bs => <BpIcon icon={getLayerSelectability(layer.ObjectId) ? "select" : undefined} iconSize={bs} />}
+            {bs => <BpIcon icon={getLayerSelectability(layer.ObjectId) ? "select" : "disable"} iconSize={bs} />}
         </Icon>;
         //spriteClass={getLayerSelectability(layer.ObjectId) ? SPRITE_ICON_SELECT : SPRITE_LC_UNSELECT} />;
     }

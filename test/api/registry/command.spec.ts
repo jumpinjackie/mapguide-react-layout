@@ -1,5 +1,4 @@
-import { CommandConditions, mergeInvokeUrlParameters } from "../../../src/api/registry/command";
-import { IApplicationState } from "../../../src/api/common";
+import { CommandConditions, mergeInvokeUrlParameters, reduceAppToToolbarState } from "../../../src/api/registry/command";
 import { createInitialState, createMap, createSelectionSet } from "../../../test-data";
 
 describe("api/registry/command", () => {
@@ -51,26 +50,26 @@ describe("api/registry/command", () => {
         it("isNotBusy", () => {
             const state = createInitialState();
             state.viewer = { ...state.viewer, ... { busyCount: 1 }};
-            let result = CommandConditions.isNotBusy(state);
+            let result = CommandConditions.isNotBusy(reduceAppToToolbarState(state));
             expect(result).toBe(false);
             state.viewer = { ...state.viewer, ... { busyCount: 0 }};
-            result = CommandConditions.isNotBusy(state);
+            result = CommandConditions.isNotBusy(reduceAppToToolbarState(state));
             expect(result).toBe(true);
         });
         it("disabledIfEmptySelection", () => {
             const state = createInitialState();
             //No selection
-            let result = CommandConditions.disabledIfEmptySelection(state);
+            let result = CommandConditions.disabledIfEmptySelection(reduceAppToToolbarState(state));
             expect(result).toBe(false);
-            result = CommandConditions.disabledIfEmptySelection(state, {});
+            result = CommandConditions.disabledIfEmptySelection(reduceAppToToolbarState(state), {});
             expect(result).toBe(false);
-            result = CommandConditions.disabledIfEmptySelection(state, { DisableIfSelectionEmpty: false });
+            result = CommandConditions.disabledIfEmptySelection(reduceAppToToolbarState(state), { DisableIfSelectionEmpty: false });
             expect(result).toBe(false);
-            result = CommandConditions.disabledIfEmptySelection(state, { DisableIfSelectionEmpty: "false" });
+            result = CommandConditions.disabledIfEmptySelection(reduceAppToToolbarState(state), { DisableIfSelectionEmpty: "false" });
             expect(result).toBe(false);
-            result = CommandConditions.disabledIfEmptySelection(state, { DisableIfSelectionEmpty: true });
+            result = CommandConditions.disabledIfEmptySelection(reduceAppToToolbarState(state), { DisableIfSelectionEmpty: true });
             expect(result).toBe(true);
-            result = CommandConditions.disabledIfEmptySelection(state, { DisableIfSelectionEmpty: "true" });
+            result = CommandConditions.disabledIfEmptySelection(reduceAppToToolbarState(state), { DisableIfSelectionEmpty: "true" });
             expect(result).toBe(true);
             const ms = {
                 ["Foo"]: {
@@ -98,18 +97,18 @@ describe("api/registry/command", () => {
             state.mapState = { ...state.mapState, ...ms };
             state.config = { ...state.config, ...{ activeMapName: "Foo" } };
             //Now with selection
-            result = CommandConditions.disabledIfEmptySelection(state, { DisableIfSelectionEmpty: false });
+            result = CommandConditions.disabledIfEmptySelection(reduceAppToToolbarState(state), { DisableIfSelectionEmpty: false });
             expect(result).toBe(false);
-            result = CommandConditions.disabledIfEmptySelection(state, { DisableIfSelectionEmpty: "false" });
+            result = CommandConditions.disabledIfEmptySelection(reduceAppToToolbarState(state), { DisableIfSelectionEmpty: "false" });
             expect(result).toBe(false);
-            result = CommandConditions.disabledIfEmptySelection(state, { DisableIfSelectionEmpty: true });
+            result = CommandConditions.disabledIfEmptySelection(reduceAppToToolbarState(state), { DisableIfSelectionEmpty: true });
             expect(result).toBe(false);
-            result = CommandConditions.disabledIfEmptySelection(state, { DisableIfSelectionEmpty: "true" });
+            result = CommandConditions.disabledIfEmptySelection(reduceAppToToolbarState(state), { DisableIfSelectionEmpty: "true" });
             expect(result).toBe(false);
         })
         it("hasSelection", () => {
             const state = createInitialState();
-            let result = CommandConditions.hasSelection(state);
+            let result = CommandConditions.hasSelection(reduceAppToToolbarState(state));
             expect(result).toBe(false);
             const ms = {
                 ["Foo"]: {
@@ -133,23 +132,23 @@ describe("api/registry/command", () => {
                 }
             }
             state.mapState = { ...state.mapState, ...ms };
-            result = CommandConditions.hasSelection(state);
+            result = CommandConditions.hasSelection(reduceAppToToolbarState(state));
             expect(result).toBe(false);
             state.config = { ...state.config, ...{ activeMapName: "Foo" } };
-            result = CommandConditions.hasSelection(state);
+            result = CommandConditions.hasSelection(reduceAppToToolbarState(state));
             expect(result).toBe(false);
             state.mapState["Foo"].selectionSet = {
                 SelectedFeatures: createSelectionSet()
             };
-            result = CommandConditions.hasSelection(state);
+            result = CommandConditions.hasSelection(reduceAppToToolbarState(state));
             expect(result).toBe(true);
             state.config = { ...state.config, ...{ activeMapName: undefined } };
-            result = CommandConditions.hasSelection(state);
+            result = CommandConditions.hasSelection(reduceAppToToolbarState(state));
             expect(result).toBe(false);
         });
         it("hasPreviousView", () => {
             const state = createInitialState();
-            let result = CommandConditions.hasPreviousView(state);
+            let result = CommandConditions.hasPreviousView(reduceAppToToolbarState(state));
             expect(result).toBe(false);
             state.config = { ...state.config, ...{ activeMapName: "Foo" } };
             const ms = {
@@ -174,15 +173,15 @@ describe("api/registry/command", () => {
                 }
             };
             state.mapState = { ...state.mapState, ...ms };
-            result = CommandConditions.hasPreviousView(state);
+            result = CommandConditions.hasPreviousView(reduceAppToToolbarState(state));
             expect(result).toBe(false);
             state.mapState["Foo"].historyIndex = 3;
-            result = CommandConditions.hasPreviousView(state);
+            result = CommandConditions.hasPreviousView(reduceAppToToolbarState(state));
             expect(result).toBe(true);
         });
         it("hasNextView", () => {
             const state = createInitialState();
-            let result = CommandConditions.hasNextView(state);
+            let result = CommandConditions.hasNextView(reduceAppToToolbarState(state));
             expect(result).toBe(false);
             state.config = { ...state.config, ...{ activeMapName: "Foo" } };
             const ms = {
@@ -207,7 +206,7 @@ describe("api/registry/command", () => {
                 }
             };
             state.mapState = { ...state.mapState, ...ms };
-            result = CommandConditions.hasNextView(state);
+            result = CommandConditions.hasNextView(reduceAppToToolbarState(state));
             expect(result).toBe(false);
             state.mapState["Foo"].historyIndex = 1;
             state.mapState["Foo"].history = [
@@ -215,7 +214,7 @@ describe("api/registry/command", () => {
                 { x: 1, y: 1, scale: 1 },
                 { x: 1, y: 1, scale: 1 },
             ]
-            result = CommandConditions.hasNextView(state);
+            result = CommandConditions.hasNextView(reduceAppToToolbarState(state));
             expect(result).toBe(true);
         });
     });

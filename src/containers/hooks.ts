@@ -1,6 +1,6 @@
 import { IApplicationState, IMapView, UnitOfMeasure, getRuntimeMap, getCurrentView, IExternalBaseLayer, Coordinate2D } from '../api/common';
 import { useSelector } from 'react-redux';
-import { RuntimeMap, getExternalBaseLayers, INameValuePair, ActiveSelectedFeature, LayerTransparencySet, QueryMapFeaturesResponse, ActiveMapTool, ClientKind, ImageFormat, MapLoadIndicatorPositioning, getSelectionSet, IViewerCapabilities, InitError, IBranchedMapState, IBranchedMapSubState } from '../api';
+import { RuntimeMap, getExternalBaseLayers, INameValuePair, ActiveSelectedFeature, LayerTransparencySet, QueryMapFeaturesResponse, ActiveMapTool, ClientKind, ImageFormat, MapLoadIndicatorPositioning, getSelectionSet, IViewerCapabilities, InitError, IBranchedMapState, IBranchedMapSubState, IToolbarAppState, reduceAppToToolbarState } from '../api';
 import { WEBLAYOUT_CONTEXTMENU } from '../constants';
 import { useRef, useEffect } from "react";
 
@@ -314,4 +314,15 @@ export function useTaskPaneNavigationStack() {
 
 export function useLastDispatchedAction() {
     return useSelector<IApplicationState, any>(state => state.lastaction);
+}
+
+export function useReducedToolbarAppState() {
+    return useSelector<IApplicationState, IToolbarAppState>(state => reduceAppToToolbarState(state), (left, right) => {
+        return left?.busyWorkerCount == right?.busyWorkerCount
+            && left?.hasNextView == right?.hasNextView
+            && left?.hasPreviousView == right?.hasPreviousView
+            && left?.hasSelection == right?.hasSelection
+            && left?.featureTooltipsEnabled == right?.featureTooltipsEnabled
+            && left?.activeTool == right?.activeTool;
+    });
 }

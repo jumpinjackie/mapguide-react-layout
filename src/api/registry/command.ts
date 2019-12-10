@@ -13,7 +13,8 @@ import {
     DEFAULT_MODAL_SIZE,
     NOOP,
     ALWAYS_FALSE,
-    IInvokeUrlCommandParameter
+    IInvokeUrlCommandParameter,
+    ActiveMapTool
 } from "../../api/common";
 import * as ModalActions from "../../actions/modal";
 import { getFusionRoot } from "../../api/runtime";
@@ -69,7 +70,7 @@ export function mergeInvokeUrlParameters(currentParameters: IInvokeUrlCommandPar
     return merged;
 }
 
-function fixChildItems(childItems: any[], state: IApplicationState, commandInvoker: (cmd: ICommand, parameters?: any) => void): IItem[] {
+function fixChildItems(childItems: any[], state: IToolbarAppState, commandInvoker: (cmd: ICommand, parameters?: any) => void): IItem[] {
     return childItems
         .map(tb => mapToolbarReference(tb, state, commandInvoker))
         .filter(tb => tb != null) as IItem[];
@@ -80,7 +81,7 @@ function fixChildItems(childItems: any[], state: IApplicationState, commandInvok
 /**
  * @hidden
  */
-export function mapToolbarReference(tb: any, state: IApplicationState, commandInvoker: (cmd: ICommand, parameters?: any) => void): IItem|IInlineMenu|IFlyoutMenu|IComponentFlyoutItem|null {
+export function mapToolbarReference(tb: any, state: IToolbarAppState, commandInvoker: (cmd: ICommand, parameters?: any) => void): IItem|IInlineMenu|IFlyoutMenu|IComponentFlyoutItem|null {
     if (tb.error) {
         const cmdItem: IItem = {
             iconClass: SPRITE_ICON_ERROR,
@@ -139,6 +140,47 @@ export function mapToolbarReference(tb: any, state: IApplicationState, commandIn
 }
 
 /**
+ * A subset of IApplicationState that's only relevant for toolbar items
+ * @since 0.13
+ */
+export interface IToolbarAppState {
+    busyWorkerCount: number;
+    hasSelection: boolean;
+    hasPreviousView: boolean;
+    hasNextView: boolean;
+    featureTooltipsEnabled: boolean;
+    activeTool: ActiveMapTool;
+}
+
+/**
+ * Helper function to reduce full application state to state relevant for toolbar items
+ * 
+ * @param state The full application state
+ * @since 0.13
+ */
+export function reduceAppToToolbarState(state: Readonly<IApplicationState>): Readonly<IToolbarAppState> {
+    let hasSelection = false;
+    let hasPreviousView = false;
+    let hasNextView = false;
+    const selection = getSelectionSet(state);
+    hasSelection = (selection != null && selection.SelectedFeatures != null);
+    if (state.config.activeMapName) {
+        hasPreviousView = state.mapState[state.config.activeMapName].historyIndex > 0;
+    }
+    if (state.config.activeMapName) {
+        hasNextView = state.mapState[state.config.activeMapName].historyIndex < state.mapState[state.config.activeMapName].history.length - 1;
+    }
+    return {
+        busyWorkerCount: state.viewer.busyCount,
+        hasSelection,
+        hasPreviousView,
+        hasNextView,
+        activeTool: state.viewer.tool,
+        featureTooltipsEnabled: state.viewer.featureTooltipsEnabled
+    }
+}
+
+/**
  * Common command condition evaluators
  *
  * @export
@@ -149,26 +191,25 @@ export class CommandConditions {
      * The viewer is not busy
      *
      * @static
-     * @param {Readonly<IApplicationState>} state
+     * @param {Readonly<IToolbarAppState>} state
      * @returns {boolean}
      *
      * @memberof CommandConditions
      */
-    public static isNotBusy(state: Readonly<IApplicationState>): boolean {
-        return state.viewer.busyCount == 0;
+    public static isNotBusy(state: Readonly<IToolbarAppState>): boolean {
+        return state.busyWorkerCount == 0;
     }
     /**
      * The viewer has a selection set
      *
      * @static
-     * @param {Readonly<IApplicationState>} state
+     * @param {Readonly<IToolbarAppState>} state
      * @returns {boolean}
      *
      * @memberof CommandConditions
      */
-    public static hasSelection(state: Readonly<IApplicationState>): boolean {
-        const selection = getSelectionSet(state);
-        return (selection != null && selection.SelectedFeatures != null);
+    public static hasSelection(state: Readonly<IToolbarAppState>): boolean {
+        return state.hasSelection;
     }
     /**
      * The command is set to be disabled if selection is empty
@@ -179,8 +220,8 @@ export class CommandConditions {
      *
      * @memberof CommandConditions
      */
-    public static disabledIfEmptySelection(state: Readonly<IApplicationState>, parameters?: any): boolean {
-        if (!CommandConditions.hasSelection(state)) {
+    public static disabledIfEmptySelection(state: Readonly<IToolbarAppState>, parameters?: any): boolean {
+        if (!state.hasSelection) {
             return (parameters != null && (parameters.DisableIfSelectionEmpty == "true" || parameters.DisableIfSelectionEmpty == true));
         } else
             return false;
@@ -189,31 +230,25 @@ export class CommandConditions {
      * The viewer has a previous view in the view navigation stack
      *
      * @static
-     * @param {Readonly<IApplicationState>} state
+     * @param {Readonly<IToolbarAppState>} state
      * @returns {boolean}
      *
      * @memberof CommandConditions
      */
-    public static hasPreviousView(state: Readonly<IApplicationState>): boolean {
-        if (state.config.activeMapName) {
-            return state.mapState[state.config.activeMapName].historyIndex > 0;
-        }
-        return false;
+    public static hasPreviousView(state: Readonly<IToolbarAppState>): boolean {
+        return state.hasPreviousView;
     }
     /**
      * The viewer has a next view in the view navigation stack
      *
      * @static
-     * @param {Readonly<IApplicationState>} state
+     * @param {Readonly<IToolbarAppState>} state
      * @returns {boolean}
      *
      * @memberof CommandConditions
      */
-    public static hasNextView(state: Readonly<IApplicationState>): boolean {
-        if (state.config.activeMapName) {
-            return state.mapState[state.config.activeMapName].historyIndex < state.mapState[state.config.activeMapName].history.length - 1;
-        }
-        return false;
+    public static hasNextView(state: Readonly<IToolbarAppState>): boolean {
+        return state.hasNextView;
     }
 }
 

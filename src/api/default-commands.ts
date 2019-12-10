@@ -124,7 +124,7 @@ export function initDefaultCommands() {
     registerCommand(DefaultCommands.Select, {
         iconClass: SPRITE_SELECT,
         selected: (state) => {
-            return state.viewer.tool === ActiveMapTool.Select;
+            return state.activeTool === ActiveMapTool.Select;
         },
         enabled: () => true,
         invoke: (dispatch) => {
@@ -135,7 +135,7 @@ export function initDefaultCommands() {
     registerCommand(DefaultCommands.Pan, {
         iconClass: SPRITE_PAN,
         selected: (state) => {
-            return state.viewer.tool === ActiveMapTool.Pan;
+            return state.activeTool === ActiveMapTool.Pan;
         },
         enabled: () => true,
         invoke: (dispatch) => {
@@ -146,7 +146,7 @@ export function initDefaultCommands() {
     registerCommand(DefaultCommands.Zoom, {
         iconClass: SPRITE_ZOOM_IN,
         selected: (state) => {
-            return state.viewer.tool === ActiveMapTool.Zoom;
+            return state.activeTool === ActiveMapTool.Zoom;
         },
         enabled: () => true,
         invoke: (dispatch) => {
@@ -157,7 +157,7 @@ export function initDefaultCommands() {
     registerCommand(DefaultCommands.MapTip, {
         iconClass: SPRITE_MAPTIP,
         selected: (state) => {
-            return state.viewer.featureTooltipsEnabled === true;
+            return state.featureTooltipsEnabled === true;
         },
         enabled: () => true,
         invoke: (dispatch, getState) => {

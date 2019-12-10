@@ -9,7 +9,7 @@ import {
     IApplicationState
 } from "../api/common";
 import { mapToolbarReference } from "../api/registry/command";
-import { useViewerLocale, useViewerFlyouts } from './hooks';
+import { useViewerLocale, useViewerFlyouts, useReducedToolbarAppState } from './hooks';
 
 export interface IFlyoutRegionContainerProps {
 
@@ -28,13 +28,13 @@ const FlyoutRegionContainer = () => {
     const onCloseFlyout = (id: string) => closeFlyout(id);
     const flyouts = useViewerFlyouts();
     const locale = useViewerLocale();
-    const appState = useSelector<IApplicationState, IApplicationState>(s => s);
+    const tbState = useReducedToolbarAppState();
     const prepared: any = {};
     if (invokeCommand) {
         for (const flyoutId in flyouts) {
             const tb = flyouts[flyoutId];
             if (typeof(tb.componentName) == 'undefined') {
-                prepared[flyoutId] = mapToolbarReference(tb, appState, invokeCommand);
+                prepared[flyoutId] = mapToolbarReference(tb, tbState, invokeCommand);
                 prepared[flyoutId].open = !!flyouts[flyoutId].open;
                 prepared[flyoutId].metrics = flyouts[flyoutId].metrics;
             } else {

@@ -7,11 +7,12 @@ import {
     FlyoutVisibilitySet,
     PropType
 } from "../api/common";
-import { mapToolbarReference } from "../api/registry/command";
+import { mapToolbarReference, IToolbarAppState, reduceAppToToolbarState } from "../api/registry/command";
 import { Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import * as MapActions from "../actions/map";
 import { processMenuItems } from "../utils/menu";
 import * as FlyoutActions from "../actions/flyout";
+import { useReducedToolbarAppState } from './hooks';
 
 export interface IToolbarContainerProps {
     id: string;
@@ -33,7 +34,9 @@ interface IToolbarContainerDispatch {
 const ToolbarContainer = (props: IToolbarContainerProps) => {
     const { containerClass, containerStyle, vertical, hideVerticalLabels } = props;
     const dispatch = useDispatch();
-    const appState = useSelector<IApplicationState, IApplicationState>(s => s);
+    const flyouts = useSelector<IApplicationState, any>(state => state.toolbar.flyouts);
+    const toolbar = useSelector<IApplicationState, any>(state => state.toolbar.toolbars[props.id]);
+    const tbState = useReducedToolbarAppState();
     
     const invokeCommand: PropType<IToolbarContainerDispatch, "invokeCommand"> = (cmd, parameters) => dispatch(MapActions.invokeCommand(cmd, parameters));
     const openFlyout: PropType<IToolbarContainerDispatch, "openFlyout"> = (id, metrics) => dispatch(FlyoutActions.openFlyout(id, metrics));
@@ -46,8 +49,6 @@ const ToolbarContainer = (props: IToolbarContainerProps) => {
     const onOpenComponent = (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => openComponent?.(id, metrics, name, props);
     const onCloseComponent = (id: string) => closeComponent?.(id);
 
-    const flyouts = appState.toolbar.flyouts;
-    const toolbar = appState.toolbar.toolbars[props.id];
     const flyoutStates: FlyoutVisibilitySet = {};
     if (flyouts) {
         const ids = Object.keys(flyouts);
@@ -63,7 +64,7 @@ const ToolbarContainer = (props: IToolbarContainerProps) => {
             tbContainerStyle.height = DEFAULT_TOOLBAR_SIZE;
             tbContainerStyle.overflow = "auto";
         }
-        const items = (toolbar.items as any[]).map(tb => mapToolbarReference(tb, appState, invokeCommand));
+        const items = (toolbar.items as any[]).map(tb => mapToolbarReference(tb, tbState, invokeCommand));
         const childItems = processMenuItems(items);
         return <Toolbar vertical={vertical}
             hideVerticalLabels={hideVerticalLabels}

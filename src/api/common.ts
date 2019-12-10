@@ -17,6 +17,7 @@ import { IOLFactory } from "./ol-factory";
 import { ViewerAction } from '../actions/defs';
 import { ProjectionLike } from 'ol/proj';
 import { LoadFunction } from 'ol/Image';
+import { IToolbarAppState } from './registry';
 
 /**
  * @since 0.13
@@ -171,14 +172,14 @@ export interface ICommand {
      *
      * @memberof ICommand
      */
-    enabled: (state: Readonly<IApplicationState>, parameters?: any) => boolean;
+    enabled: (state: Readonly<IToolbarAppState>, parameters?: any) => boolean;
     /**
      * Indicates if this command is enabled based on the given application state
      *
      *
      * @memberof ICommand
      */
-    selected: (state: Readonly<IApplicationState>) => boolean;
+    selected: (state: Readonly<IToolbarAppState>) => boolean;
     /**
      * Invokes the command
      *

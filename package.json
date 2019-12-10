@@ -61,7 +61,6 @@
     "react-splitter-layout": "^4.0.0",
     "react-url-query": "^1.5.0",
     "redux": "^4.0.4",
-    "redux-localstorage": "^0.4.1",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
     "shortid": "^2.2.15",

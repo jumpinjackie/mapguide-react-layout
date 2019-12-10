@@ -1,3 +1,26 @@
+0.13
+====
+
+ * Major updates of key libraries:
+   * [#1034](https://github.com/jumpinjackie/mapguide-react-layout/issues/1034): Upgrade to latest OpenLayers (6.1.1)
+   * [#1010](https://github.com/jumpinjackie/mapguide-react-layout/issues/1010): Upgrade to latest Blueprint 3.x (3.22.2)
+   * [#1029](https://github.com/jumpinjackie/mapguide-react-layout/issues/1029): Upgrade to latest react-redux package (7.1.2) 
+ * Internal plumbing changes and restructuring:
+   * [#1018](https://github.com/jumpinjackie/mapguide-react-layout/issues/1018): Convert react components over to functional components with hooks and replace internal usages of legacy React context API over to new context API
+   * Remove usage of superfluous libraries to improve bundle size:
+     * [#1015](https://github.com/jumpinjackie/mapguide-react-layout/issues/1015): `lodash.uniq` and `lodash.xor`
+ * Modal dialogs **are now resizable** via `react-rnd`
+ * Update Coordinate Tracker component with Blueprint styling
+ * [#1040](https://github.com/jumpinjackie/mapguide-react-layout/issues/1040): Refactor toolbar item/command construction to work against a slimmed down version of the application state to avoid excessive toolbar re-rendering, fixing UI sluggishness as a result.
+   * This is technically a **breaking change** as any custom commands you may register may have `enabled` or `selected` checks that may break because we are no longer passing the full application state. Please report an issue if there is application state not in this slimmed down version that you need to observe on.
+
+0.12.8
+======
+
+ * [#1016](https://github.com/jumpinjackie/mapguide-react-layout/issues/1016): Fix i18n hole in feature tooltip hyperlink prompt.
+ * [#1012](https://github.com/jumpinjackie/mapguide-react-layout/issues/1012): Use command label as title for modal dialogs spawned by it. Fix display and i18n issues in share link to view component.
+ * Fix `<sup>` in measure area displat being unnecessarily escaped
+
 0.12.7
 ======
 

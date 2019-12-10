@@ -1,7 +1,7 @@
 import * as React from "react";
 import { tr } from "../api/i18n";
 import * as olProj from "ol/proj";
-import { Callout, Intent } from '@blueprintjs/core';
+import { Callout, Intent, Elevation, Card } from '@blueprintjs/core';
 import { useViewerLocale, useCurrentMouseCoordinates, useActiveMapProjection } from './hooks';
 
 export interface ICoordinateTrackerContainerProps {
@@ -16,7 +16,7 @@ const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerProps) => 
     const proj = useActiveMapProjection();
     if (projections && projections.length) {
         return <div style={{ margin: 8 }}>
-            <h5>{tr("COORDTRACKER", locale)}</h5>
+            <h4 className="bp3-heading">{tr("COORDTRACKER", locale)}</h4>
             {projections.map(p => {
                 let x = NaN;
                 let y = NaN;
@@ -27,11 +27,11 @@ const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerProps) => 
 
                     }
                 }
-                return <fieldset key={p}>
-                    <legend>{p}</legend>
+                return <Card style={{ marginBottom: 10 }}>
+                    <h5 className="bp3-heading"><a href="#">{p}</a></h5>
                     <p><strong>X:</strong> {x}</p>
                     <p><strong>Y:</strong> {y}</p>
-                </fieldset>;
+                </Card>;
             })}
         </div>;
     } else {

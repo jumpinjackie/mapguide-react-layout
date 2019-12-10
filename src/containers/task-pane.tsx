@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useDispatch } from "react-redux";
-import * as PropTypes from "prop-types";
 import {
     ICommand,
     IDOMElementMetrics,
@@ -130,9 +129,6 @@ class TaskPaneContainerInner extends React.Component<TaskPaneProps, any> {
         const { navigationStack, navIndex } = this.props;
         return navIndex < navigationStack.length - 1;
     }
-    static contextTypes: PropTypes.ValidationMap<any> = {
-        store: PropTypes.object
-    };
     render(): JSX.Element {
         const { navigationStack, navIndex, hasTaskBar, lastUrlPushed, map, maxHeight, flyouts, isResizing } = this.props;
         if (map && map.runtimeMap) {

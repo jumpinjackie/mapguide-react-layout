@@ -4,8 +4,10 @@ import { RuntimeMap, MapLayer, MapGroup, RuleInfo } from "../api/contracts/runti
 import { LegendContext, ILegendContext } from "./context";
 import { BaseLayerSwitcher } from "./base-layer-switcher";
 import { isLayer } from "../utils/type-guards";
-import { Icon } from "./icon";
+import { Icon, ImageIcon } from "./icon";
+import { Icon as BpIcon } from "@blueprintjs/core";
 import { scaleRangeBetween } from "../utils/number";
+/*
 import {
     SPRITE_LEGEND_LAYER,
     SPRITE_ICON_SELECT,
@@ -16,25 +18,25 @@ import {
     SPRITE_LEGEND_TOGGLE_EXPAND,
     SPRITE_FOLDER_HORIZONTAL
 } from "../constants/assets";
+*/
 import { tr } from "../api/i18n";
 import * as Constants from "../constants";
 
-const ICON_HEIGHT = 16;
-const ICON_WIDTH = 16;
-const UL_LIST_STYLE = { listStyle: "none", paddingLeft: 20, marginTop: 2, marginBottom: 2 };
+const UL_LIST_STYLE = (baseSize: number) => ({ listStyle: "none", paddingLeft: baseSize + 4, marginTop: 2, marginBottom: 2 });
 const LI_LIST_STYLE = { listStyle: "none", marginTop: 2, marginBottom: 2 };
 const ROW_ITEM_ELEMENT_STYLE = { verticalAlign: "middle" };
-const CHK_STYLE = { margin: 0, width: `${ICON_WIDTH - 2}px`, height: `${ICON_HEIGHT - 2}px`, padding: 1, verticalAlign: "middle" };
-const EMPTY_STYLE = { display: "inline-block", margin: 0, width: `${ICON_WIDTH}px`, height: `${ICON_HEIGHT}px`, verticalAlign: "middle" };
+const CHK_STYLE = (baseSize: number) => ({ margin: 0, width: `${baseSize - 2}px`, height: `${baseSize - 2}px`, padding: 1, verticalAlign: "middle" });
+const EMPTY_STYLE = (baseSize: number) => ({ display: "inline-block", margin: 0, width: `${baseSize}px`, height: `${baseSize}px`, verticalAlign: "middle" });
 
 export type MapElementChangeFunc = (objectId: string, visible: boolean) => void;
 
 interface ILegendLabelProps {
     text: string;
+    baseSize: number;
 }
 
 const LegendLabel = (props: ILegendLabelProps) => {
-    return <span style={{ lineHeight: `${ICON_HEIGHT}px`, verticalAlign: "middle" }}>{props.text}</span>;
+    return <span style={{ lineHeight: `${props.baseSize}px`, verticalAlign: "middle" }}>{props.text}</span>;
 };
 
 /**
@@ -44,6 +46,7 @@ const LegendLabel = (props: ILegendLabelProps) => {
  * @interface ILegendProps
  */
 export interface ILegendProps {
+    baseIconSize?: number;
     map: RuntimeMap;
     showLayers: string[] | undefined;
     showGroups: string[] | undefined;
@@ -71,20 +74,25 @@ function getIconUri(iconMimeType: string | undefined, iconBase64: string | undef
     }
 }
 
-const EmptyNode: React.StatelessComponent<any> = (props) => {
-    return <div style={EMPTY_STYLE}>{Constants.NBSP}</div>;
+interface IEmptyNodeProps {
+    baseSize: number;
+}
+
+const EmptyNode: React.StatelessComponent<IEmptyNodeProps> = (props: IEmptyNodeProps) => {
+    return <div style={EMPTY_STYLE(props.baseSize)}>{Constants.NBSP}</div>;
 };
 
 interface IRuleNodeProps {
     iconMimeType: string | undefined;
     rule: RuleInfo;
+    baseSize: number;
 }
 
 const RuleNode = (props: IRuleNodeProps) => {
     const icon = getIconUri(props.iconMimeType, props.rule.Icon);
     const label = (props.rule.LegendLabel ? props.rule.LegendLabel : "");
     return <li className="layer-rule-node" style={LI_LIST_STYLE}>
-        <EmptyNode /> <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> <LegendLabel text={label} />
+        <EmptyNode baseSize={props.baseSize} /> <img style={ROW_ITEM_ELEMENT_STYLE} src={icon} /> <LegendLabel baseSize={props.baseSize} text={label} />
     </li>;
 };
 
@@ -126,18 +134,21 @@ export const LayerNode = (props: ILayerNodeProps) => {
     }
 
     let text = label;
-    let icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_LEGEND_LAYER} />;
+    let icon = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE}>
+        {bs => <BpIcon icon="layer" iconSize={bs} />}
+    </Icon> //spriteClass={SPRITE_LEGEND_LAYER} />;
     let selectable: JSX.Element | undefined;
     if (layer.Selectable === true) {
-        selectable = <Icon style={ROW_ITEM_ELEMENT_STYLE}
-            onClick={onToggleSelectability}
-            spriteClass={getLayerSelectability(layer.ObjectId) ? SPRITE_ICON_SELECT : SPRITE_LC_UNSELECT} />;
+        selectable = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE} onClick={onToggleSelectability}>
+            {bs => <BpIcon icon={getLayerSelectability(layer.ObjectId) ? "select" : undefined} iconSize={bs} />}
+        </Icon>;
+        //spriteClass={getLayerSelectability(layer.ObjectId) ? SPRITE_ICON_SELECT : SPRITE_LC_UNSELECT} />;
     }
     let chkbox: JSX.Element | undefined;
     if (layer.Type == 1) { //Dynamic
         chkbox = <input type='checkbox'
             className='layer-checkbox'
-            style={CHK_STYLE}
+            style={CHK_STYLE(legendCtx.getBaseIconSize())}
             value={layer.ObjectId}
             onChange={onVisibilityChanged}
             checked={(layerVisible)} />;
@@ -158,7 +169,9 @@ export const LayerNode = (props: ILayerNodeProps) => {
                     totalRuleCount += fts.Rule.length;
                 }
                 if (isExpanded && totalRuleCount > 1) {
-                    icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_LEGEND_THEME} />;
+                    icon = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE}>
+                        {bs => <BpIcon icon="multi-select" iconSize={bs} />}
+                    </Icon>; //spriteClass={SPRITE_LEGEND_THEME} />;
 
                     for (let fi = 0; fi < scaleRange.FeatureStyle.length; fi++) {
                         const fts = scaleRange.FeatureStyle[fi];
@@ -169,44 +182,50 @@ export const LayerNode = (props: ILayerNodeProps) => {
                             bCompressed = !(fts.Rule[1].Icon);
                         }
                         if (bCompressed) {
-                            ruleElements.push(<RuleNode key={`layer-${layer.ObjectId}-style-${fi}-rule-first`} iconMimeType={iconMimeType} rule={fts.Rule[0]} />);
-                            ruleElements.push(<li style={LI_LIST_STYLE} key={`layer-${layer.ObjectId}-style-${fi}-rule-compressed`}><LegendLabel text={`... (${ftsRuleCount - 2} other theme rules)`} /></li>);
-                            ruleElements.push(<RuleNode key={`layer-${layer.ObjectId}-style-${fi}-rule-last`} iconMimeType={iconMimeType} rule={fts.Rule[ftsRuleCount - 1]} />);
+                            ruleElements.push(<RuleNode baseSize={legendCtx.getBaseIconSize()} key={`layer-${layer.ObjectId}-style-${fi}-rule-first`} iconMimeType={iconMimeType} rule={fts.Rule[0]} />);
+                            ruleElements.push(<li style={LI_LIST_STYLE} key={`layer-${layer.ObjectId}-style-${fi}-rule-compressed`}><LegendLabel baseSize={legendCtx.getBaseIconSize()} text={`... (${ftsRuleCount - 2} other theme rules)`} /></li>);
+                            ruleElements.push(<RuleNode baseSize={legendCtx.getBaseIconSize()} key={`layer-${layer.ObjectId}-style-${fi}-rule-last`} iconMimeType={iconMimeType} rule={fts.Rule[ftsRuleCount - 1]} />);
                         } else {
                             for (let i = 0; i < ftsRuleCount; i++) {
                                 const rule = fts.Rule[i];
-                                ruleElements.push(<RuleNode key={`layer-${layer.ObjectId}-style-${fi}-rule-${i}`} iconMimeType={iconMimeType} rule={rule} />);
+                                ruleElements.push(<RuleNode baseSize={legendCtx.getBaseIconSize()} key={`layer-${layer.ObjectId}-style-${fi}-rule-${i}`} iconMimeType={iconMimeType} rule={rule} />);
                             }
                         }
                     }
                 } else { //Collapsed
                     if (totalRuleCount > 1) {
-                        icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_LEGEND_THEME} />;
+                        icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} baseSize={legendCtx.getBaseIconSize()}>
+                            {bs => <BpIcon icon="multi-select" iconSize={bs} />}
+                        </Icon>; //spriteClass={SPRITE_LEGEND_THEME} />;
                     } else {
                         const uri = getIconUri(iconMimeType, scaleRange.FeatureStyle[0].Rule[0].Icon);
                         if (uri) {
-                            icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} url={uri} />;
+                            icon = <ImageIcon style={ROW_ITEM_ELEMENT_STYLE} url={uri} />;
                         }
                     }
                 }
 
                 if (ruleElements.length > 0) {
-                    body = <ul style={UL_LIST_STYLE}>{ruleElements}</ul>;
+                    body = <ul style={UL_LIST_STYLE(legendCtx.getBaseIconSize())}>{ruleElements}</ul>;
                 }
 
                 let expanded: JSX.Element;
                 if (totalRuleCount > 1) {
-                    expanded = <Icon style={ROW_ITEM_ELEMENT_STYLE} onClick={onToggleExpansion} spriteClass={isExpanded ? SPRITE_LEGEND_TOGGLE : SPRITE_LEGEND_TOGGLE_EXPAND} />;
+                    expanded = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE} onClick={onToggleExpansion}>
+                        {bs => <BpIcon icon={isExpanded ? "chevron-down" : "chevron-right"} iconSize={bs} />}
+                    </Icon>;// spriteClass={isExpanded ? SPRITE_LEGEND_TOGGLE : SPRITE_LEGEND_TOGGLE_EXPAND} />;
                 } else {
-                    expanded = <EmptyNode />;
+                    expanded = <EmptyNode baseSize={legendCtx.getBaseIconSize()} />;
                 }
-                return <li title={tooltip} style={nodeStyle} className={nodeClassName}>{expanded} {chkbox} {selectable} {icon} <LegendLabel text={text} /> {body}</li>;
+                return <li title={tooltip} style={nodeStyle} className={nodeClassName}>{expanded} {chkbox} {selectable} {icon} <LegendLabel baseSize={legendCtx.getBaseIconSize()} text={text} /> {body}</li>;
             } else { //This is generally a raster
-                icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_LEGEND_RASTER} />;
+                icon = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE}>
+                    {bs => <BpIcon icon="media" iconSize={bs} />}
+                </Icon>; // spriteClass={SPRITE_LEGEND_RASTER} />;
             }
         }
     }
-    return <li title={tooltip} style={nodeStyle} className={nodeClassName}><EmptyNode /> {chkbox} {selectable} {icon} {label}</li>;
+    return <li title={tooltip} style={nodeStyle} className={nodeClassName}><EmptyNode baseSize={legendCtx.getBaseIconSize()} /> {chkbox} {selectable} {icon} {label}</li>;
 };
 
 export interface IGroupNodeProps {
@@ -234,20 +253,22 @@ export const GroupNode = (props: IGroupNodeProps) => {
     };
     const currentScale = legendCtx.getCurrentScale();
     const tree = legendCtx.getTree();
-    const icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} spriteClass={SPRITE_FOLDER_HORIZONTAL} />;
+    const icon = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE}>
+        {bs => <BpIcon icon="folder-close" iconSize={bs} />}
+    </Icon>; //spriteClass={SPRITE_FOLDER_HORIZONTAL} />;
     const isExpanded = getExpanded();
-    const expanded = <Icon style={ROW_ITEM_ELEMENT_STYLE}
-        onClick={onToggleExpansion}
-        spriteClass={isExpanded ? SPRITE_LEGEND_TOGGLE : SPRITE_LEGEND_TOGGLE_EXPAND} />;
-    const chkbox = <input type='checkbox' className='group-checkbox' style={CHK_STYLE} value={group.ObjectId} onChange={onVisibilityChanged} checked={(groupVisible)} />;
+    const expanded = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE} onClick={onToggleExpansion}>
+        {bs => <BpIcon icon={isExpanded ? "chevron-down" : "chevron-right"} iconSize={bs} />}
+    </Icon>; //spriteClass={isExpanded ? SPRITE_LEGEND_TOGGLE : SPRITE_LEGEND_TOGGLE_EXPAND} />;
+    const chkbox = <input type='checkbox' className='group-checkbox' style={CHK_STYLE(legendCtx.getBaseIconSize())} value={group.ObjectId} onChange={onVisibilityChanged} checked={(groupVisible)} />;
     const tooltip = group.LegendLabel;
     const nodeClassName = "group-node";
     let nodeStyle: React.CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", ...LI_LIST_STYLE };
     return <li title={tooltip} style={nodeStyle} className={nodeClassName}>
-        <span>{expanded} {chkbox} {icon} <LegendLabel text={group.LegendLabel} /></span>
+        <span>{expanded} {chkbox} {icon} <LegendLabel baseSize={legendCtx.getBaseIconSize()} text={group.LegendLabel} /></span>
         {(() => {
             if (isExpanded && props.childItems.length > 0) {
-                return <ul style={UL_LIST_STYLE}>{props.childItems.map(item => {
+                return <ul style={UL_LIST_STYLE(legendCtx.getBaseIconSize())}>{props.childItems.map(item => {
                     if (item.DisplayInLegend === true) {
                         if (isLayer(item)) {
                             if (isLayerVisibleAtScale(item, currentScale)) {
@@ -375,6 +396,8 @@ function setupTree(map: RuntimeMap) {
     return state;
 }
 
+const DEFAULT_ICON_SIZE = 16;
+
 /**
  * The Legend component provides a component to view the layer structure, its styles and thematics and
  * the ability to toggle the group/layer visibility of the current map
@@ -447,6 +470,7 @@ export const Legend = (props: ILegendProps) => {
         rootStyle.maxHeight = maxHeight;
     }
     const providerImpl: ILegendContext = {
+        getBaseIconSize: () => props.baseIconSize ?? DEFAULT_ICON_SIZE,
         getIconMimeType: getIconMimeType,
         getChildren: getChildren,
         getCurrentScale: () => props.currentScale,
@@ -474,7 +498,7 @@ export const Legend = (props: ILegendProps) => {
                     </div>;
                 }
             })()}
-            <ul style={UL_LIST_STYLE}>
+            <ul style={UL_LIST_STYLE(props.baseIconSize ?? DEFAULT_ICON_SIZE)}>
                 {rootItems.map(item => {
                     if (item.DisplayInLegend === true) {
                         if (isLayer(item)) {

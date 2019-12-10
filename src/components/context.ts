@@ -33,6 +33,7 @@ export const AppContext = React.createContext<IApplicationContext>({
 });
 
 export interface ILegendContext {
+    getBaseIconSize(): number;
     getIconMimeType(): string | undefined;
     getChildren(objectId: string): (MapLayer | MapGroup)[];
     getCurrentScale(): number;
@@ -50,6 +51,7 @@ export interface ILegendContext {
 }
 
 export const LegendContext = React.createContext<ILegendContext>({
+    getBaseIconSize: () => 0,
     getIconMimeType: () => STR_EMPTY,
     getChildren: () => [],
     getCurrentScale: () => -1,

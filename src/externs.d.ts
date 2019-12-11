@@ -16,8 +16,6 @@ declare module "*.png";
 declare module "*.cur";
 declare module "*.gif";
 
-declare module "history";
-
 declare module "react-splitter-layout" {
     import * as React from "react";
 
@@ -71,10 +69,4 @@ interface Array<T> {
 // A hack for the Redux DevTools Chrome extension.
 interface Window {
     __REDUX_DEVTOOLS_EXTENSION__?: () => void;
-}
-
-// webpack-hot-loader sets some extra attributes on node's `module`if that
-// module has been hot-loaded in the browser.
-interface NodeModule {
-    hot: { accept: Function };
 }

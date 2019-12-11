@@ -21,6 +21,7 @@
     "clean": "rimraf viewer/dist/stdassets && rimraf viewer/dist/viewer.* && rimraf package/ && rimraf lib/",
     "lint": "tslint 'src/**/*.tsx' 'src/**/*.ts' 'test/**/*.tsx' 'test/**/*.ts'",
     "postinstall": "yarn run build",
+    "storybook": "start-storybook",
     "test": "jest --verbose",
     "test:e2e": "testcafe chrome e2e/test.*.ts -q -S -s e2e/screenshots",
     "test:appveyor": "jest --verbose --coverage --colors",
@@ -68,8 +69,10 @@
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.7.5",
     "@hanreev/types-ol": "^3.0.0",
     "@gerrit0/typedoc": "0.15.12",
+    "@storybook/react": "^5.2.8",
     "@types/dom4": "2.0.1",
     "@types/enzyme": "3.10.4",
     "@types/jest": "24.0.23",

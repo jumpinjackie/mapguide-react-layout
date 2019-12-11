@@ -38,6 +38,7 @@ export interface IImageIconProps {
 /**
  * An image icon component
  * @param props
+ * @since 0.13
  */
 export const ImageIcon = (props: IImageIconProps) => {
     if (!props.url && !props.spriteClass) {

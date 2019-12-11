@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Icon } from "./icon";
+import { ImageIcon } from "./icon";
 
 /**
  * "Powered by MapGuide" logo
@@ -7,6 +7,6 @@ import { Icon } from "./icon";
  */
 export const PoweredByMapGuide = (props: any) => {
     return <div className="component-pbmg" {...props}>
-        <Icon style={{display: "block"}} spriteClass="PoweredBy_en" />
+        <ImageIcon style={{display: "block"}} spriteClass="PoweredBy_en" />
     </div>;
 };

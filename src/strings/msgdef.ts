@@ -190,4 +190,5 @@ export interface ILocalizedMessages {
     SHARE_LINK_INCLUDE_SESSION: string;
     WINDOW_RESIZING: string;
     WINDOW_MOVING: string;
+    OTHER_THEME_RULE_COUNT: string;
 }

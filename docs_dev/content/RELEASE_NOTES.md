@@ -13,6 +13,7 @@
  * Update Coordinate Tracker component with Blueprint styling
  * [#1040](https://github.com/jumpinjackie/mapguide-react-layout/issues/1040): Refactor toolbar item/command construction to work against a slimmed down version of the application state to avoid excessive toolbar re-rendering, fixing UI sluggishness as a result.
    * This is technically a **breaking change** as any custom commands you may register may have `enabled` or `selected` checks that may break because we are no longer passing the full application state. Please report an issue if there is application state not in this slimmed down version that you need to observe on.
+ * [#1041](https://github.com/jumpinjackie/mapguide-react-layout/issues/1041): Legend now uses blueprint SVG icons for non-theme-rule icons for better scalability
 
 0.12.8
 ======

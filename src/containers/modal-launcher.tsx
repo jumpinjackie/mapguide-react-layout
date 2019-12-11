@@ -49,6 +49,7 @@ const ModalLauncher = (props: { children?: React.ReactNode }) => {
                     return <RndModalDialog title={diag.modal.title}
                         x={MODAL_INIT_X}
                         y={MODAL_INIT_Y}
+                        locale={locale}
                         enableInteractionMask={true}
                         width={diag.modal.size[0]}
                         height={diag.modal.size[1]}
@@ -76,6 +77,7 @@ const ModalLauncher = (props: { children?: React.ReactNode }) => {
                     key={key}
                     x={MODAL_INIT_X}
                     y={MODAL_INIT_Y}
+                    locale={locale}
                     enableInteractionMask={false}
                     width={diag.modal.size[0]}
                     height={diag.modal.size[1]}

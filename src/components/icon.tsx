@@ -4,6 +4,24 @@ import { STD_CSS_SPRITE_RELPATH, ICON_ERROR } from "../constants/assets";
 import { GenericEventHandler } from "../api/common";
 
 export interface IIconProps {
+    style?: React.CSSProperties;
+    onClick?: GenericEventHandler;
+    otherProps?: any;
+    baseSize: number;
+    children: (baseSize: number) => React.ReactElement;
+}
+
+export const Icon = (props: IIconProps) => {
+    const spStyle = { ...(props.style || {}) };
+    if (!spStyle.display) {
+        spStyle.display = "inline-block";
+    }
+    return <div style={spStyle} onClick={props.onClick} {...props.otherProps}>
+        {props.children(props.baseSize)}
+    </div>;
+};
+
+export interface IImageIconProps {
     /**
      * The icon path relative to the standard asset path
      *
@@ -20,8 +38,9 @@ export interface IIconProps {
 /**
  * An image icon component
  * @param props
+ * @since 0.13
  */
-export const Icon = (props: IIconProps) => {
+export const ImageIcon = (props: IImageIconProps) => {
     if (!props.url && !props.spriteClass) {
         return <noscript />;
     }

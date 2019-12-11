@@ -13,7 +13,7 @@ export interface IRndModalDialogProps {
     icon?: IconName;
     onClose?: () => void;
     children: (bodyDim: [number, number]) => React.ReactNode;
-    locale?: string;
+    locale: string;
     enableInteractionMask: boolean;
     disableYOverflow?: boolean;
 }

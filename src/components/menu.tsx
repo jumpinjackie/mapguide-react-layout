@@ -1,7 +1,7 @@
 import * as React from "react";
 import { isMenu } from "../utils/type-guards";
 import { IItem, getIconStyle, getEnabled } from "./toolbar";
-import { Icon } from "./icon";
+import { ImageIcon } from "./icon";
 import { Menu, MenuDivider, MenuItem } from '@blueprintjs/core';
 
 const MENU_ITEM_HEIGHT = 30;
@@ -59,7 +59,7 @@ export const MenuComponent = (props: IMenuComponentProps) => {
                 const text = item.label || "";
                 //NOTE: Not using MenuItem here as we want fine control over the item content
                 return <li key={index}>
-                    <a className="bp3-menu-item" onClick={() => onClick(item)}><Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {text}</a>
+                    <a className="bp3-menu-item" onClick={() => onClick(item)}><ImageIcon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {text}</a>
                 </li>;
             }
         })}

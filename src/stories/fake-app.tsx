@@ -11,6 +11,7 @@ import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { ApplicationDefinition } from '../api/contracts/fusion';
 import { deArrayify } from '../api/builders/deArrayify';
 import { registerLayout } from '../api/registry/layout';
+import { IConfigurationReducerState, IViewerReducerState } from '../api/common';
 const testMap: RuntimeMap = deArrayify(require("./data/test-runtime-map.json"));
 const testAppDef: ApplicationDefinition = deArrayify(require("./data/test-app-def.json"));
 
@@ -22,7 +23,7 @@ class FakeMapAgent extends RequestBuilder {
         return Promise.resolve(testMap.SessionId);
     }
     public getServerSessionTimeout(session: string): Promise<number> {
-        throw new Error("Method not implemented - getServerSessionTimeout.");
+        return Promise.resolve(10000);
     }
     public getResource<T extends ResourceBase>(resourceId: string, args?: any): Promise<T> {
         if (resourceId.endsWith(".ApplicationDefinition")) {
@@ -34,10 +35,10 @@ class FakeMapAgent extends RequestBuilder {
         return Promise.resolve(testMap);
     }
     public queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<QueryMapFeaturesResponse> {
-        throw new Error("Method not implemented - queryMapFeatures.");
+        return Promise.resolve({});
     }
     public queryMapFeatures_v4(options: IQueryMapFeaturesOptions): Promise<QueryMapFeaturesResponse> {
-        throw new Error("Method not implemented - queryMapFeatures_v4.");
+        return Promise.resolve({});
     }
     public describeRuntimeMap(options: IDescribeRuntimeMapOptions): Promise<RuntimeMap> {
         throw new Error("Method not implemented - describeRuntimeMap.");
@@ -69,8 +70,8 @@ export class FakeApp extends React.Component<IFakeAppProps> {
             ...{
                 config: {
                     ...CONFIG_INITIAL_STATE,
-                    ...agentConf
-                },
+                    ...agentConf,  
+                } as IConfigurationReducerState,
                 mapState: {
                     Sheboygan: {
                         currentView: {
@@ -79,7 +80,10 @@ export class FakeApp extends React.Component<IFakeAppProps> {
                             y: 43.744459064634064
                         }
                     }
-                }
+                },
+                viewer: {
+                    featureTooltipsEnabled: false
+                } as IViewerReducerState
             }
         };
         this._store = configureStore(initState);

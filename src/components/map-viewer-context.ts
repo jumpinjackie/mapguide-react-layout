@@ -33,16 +33,85 @@ import olImageLayer from "ol/layer/Image";
 import olLayerGroup from "ol/layer/Group";
 import olTileGrid from "ol/tilegrid/TileGrid";
 import olSource from "ol/source/Source";
-import olImageSource from "ol/source/Image";
+import olImageSource, { defaultImageLoadFunction } from "ol/source/Image";
 import olTileImageSource from "ol/source/TileImage";
 import createMapGuideSource, { isMapGuideImageSource } from "../api/ol-mapguide-source-factory";
 import olOverviewMap from "ol/control/OverviewMap";
 import olImageStaticSource from "ol/source/ImageStatic";
+import olMapGuideSource from "ol/source/ImageMapGuide";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY, BLANK_GIF_DATA_URI } from "../constants/index";
 import { restrictToRange } from "../utils/number";
 import { Size } from "../containers/map-capturer-context";
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
 import OverlayPositioning from 'ol/OverlayPositioning';
+import ImageWrapper from 'ol/Image';
+import { createContext } from "react";
+import { parseUrl } from '../utils/url';
+import { strIsNullOrEmpty } from '../utils/string';
+
+/**
+ * @since 0.13
+ */
+export interface IMapDebugContext {
+    mock?: boolean;
+}
+
+export const MapDebugContext = createContext<IMapDebugContext>({});
+
+function mockMapGuideImageLoadFunction(image: ImageWrapper, src: string) {
+    let el = document.getElementById("mg-debug-text-canvas");
+    if (!el) {
+        el = document.createElement("canvas");
+        el.style.visibility = "hidden";
+        el.id = "mg-debug-text-canvas";
+        document.body.append(el);
+    }
+    const tCtx = (el as HTMLCanvasElement).getContext("2d");
+    if (tCtx) {
+        tCtx.clearRect(0, 0, tCtx.canvas.width, tCtx.canvas.height);
+
+        const strings = [];
+        const parsed = parseUrl(src);
+        strings.push("[Map Image Request]");
+        strings.push(`Agent: ${parsed.url}`);
+
+        const xoff = 10;
+        const yoff = 30;
+        const fontSize = 14;
+        let mm = tCtx.measureText(strings[0])
+        let maxSize = mm.width + xoff;
+
+        let ch = yoff + fontSize + 2;
+
+        maxSize = Math.max(tCtx.measureText(strings[1]).width + xoff, maxSize);
+        ch += (fontSize + 2);
+
+        const keys = Object.keys(parsed.query);
+        for (const k of keys) {
+            if (k == "SETDISPLAYWIDTH" || k == "SETDISPLAYHEIGHT" || k == "SETVIEWCENTERX" || k == "SETVIEWCENTERY" || k == "SETVIEWSCALE") {
+                if (!strIsNullOrEmpty(parsed.query[k])) {
+                    const s = `${k}: ${parsed.query[k]}`;
+                    strings.push(s);
+                    maxSize = Math.max(tCtx.measureText(s).width + xoff, maxSize);
+                    ch += (fontSize + 2);
+                }
+            }
+        }
+
+        tCtx.canvas.width = maxSize;
+        tCtx.canvas.height = ch;
+        //console.log(`Canvas size: [${tCtx.canvas.width}, ${tCtx.canvas.height}]`);
+        tCtx.font = `${fontSize}px sans-serif`;
+
+        let y = yoff;
+        for (const str of strings) {
+            //console.log(`Draw (${str}) at [10, ${y}]`);
+            tCtx.fillText(str, 10, y);
+            y += (fontSize + 1);
+        }
+        (image.getImage() as any).src = tCtx.canvas.toDataURL();
+    }
+}
 
 const HIDDEN_CLASS_NAME = "tooltip-hidden";
 const BLANK_SIZE: Size = { w: 1, h: 1 };
@@ -191,8 +260,8 @@ class FeatureQueryTooltip {
                 this.featureTooltipElement.classList.remove("tooltip-hidden");
             }
         }).then(() => {
-                this.callback.decrementBusyWorker();
-            }).catch (err => {
+            this.callback.decrementBusyWorker();
+        }).catch(err => {
             this.callback.decrementBusyWorker();
             if (isSessionExpiredError(err)) {
                 this.callback.onSessionExpired();
@@ -437,10 +506,22 @@ export class MgLayerSet {
                 resolutions: resolutions
             });
         }
-
-        
         for (const src of sources) {
             this.registerSourceEvents(src);
+        }
+    }
+    public setMapGuideMocking(mock: boolean) {
+        for (const layer of this.allLayers) {
+            if (layer instanceof olImageLayer) {
+                const source = layer.getSource();
+                if (source instanceof olMapGuideSource) {
+                    if (mock) {
+                        source.setImageLoadFunction(mockMapGuideImageLoadFunction);
+                    } else {
+                        source.setImageLoadFunction(defaultImageLoadFunction);
+                    }
+                }
+            }
         }
     }
     private makeActiveSelectedFeatureSource(mapExtent: Bounds, size: Size, url: string = BLANK_GIF_DATA_URI) {
@@ -618,7 +699,7 @@ export class MgLayerSet {
             const center = this.view.getCenter();
             if (center) {
                 ovMap.setView(new olView({
-                    center: [ center[0], center[1] ],
+                    center: [center[0], center[1]],
                     resolution: this.view.getResolution(),
                     projection: this.view.getProjection()
                 }));
@@ -721,7 +802,7 @@ export class MgLayerManager implements ILayerManager {
     }
     getLayers(): ILayerInfo[] {
         return this.layerSet.getCustomLayers();
-    }    
+    }
     hasLayer(name: string): boolean {
         return this.layerSet.hasLayer(name);
     }
@@ -743,6 +824,7 @@ export class MgLayerManager implements ILayerManager {
 }
 
 export interface IMapViewerContextCallback {
+    shouldMock(): boolean | undefined;
     incrementBusyWorker(): void;
     decrementBusyWorker(): void;
     addImageLoading(): void;
@@ -817,6 +899,7 @@ export class MapViewerContext {
         }
         this._ovMap = new olOverviewMap(overviewMapOpts);
         this._map.addControl(this._ovMap);
+        layerSet.setMapGuideMocking(!!this.callback.shouldMock());
         layerSet.attach(this._map, this._ovMap, false);
     }
     public updateOverviewMapElement(overviewMapElementSelector: () => (Element | null)) {
@@ -872,6 +955,7 @@ export class MapViewerContext {
     }
     public refreshOnStateChange(map: RuntimeMap, showGroups: string[] | undefined, showLayers: string[] | undefined, hideGroups: string[] | undefined, hideLayers: string[] | undefined): void {
         const layerSet = this.getLayerSet(map.Name);
+        layerSet.setMapGuideMocking(!!this.callback.shouldMock());
         layerSet.update(showGroups, showLayers, hideGroups, hideLayers);
     }
     public refreshMap(name: string, mode: RefreshMode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly): void {

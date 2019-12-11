@@ -102,6 +102,7 @@ import { ProjectionLike } from 'ol/proj';
  * @extends {IMapViewerContextProps}
  */
 export interface IMapViewerBaseProps extends IMapViewerContextProps {
+    mock?: boolean;
     tool: ActiveMapTool;
     view?: IMapView;
     agentKind: ClientKind;
@@ -583,6 +584,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     private getCallback(): IMapViewerContextCallback {
         return {
+            shouldMock: () => this.props.mock,
             incrementBusyWorker: this.incrementBusyWorker.bind(this),
             decrementBusyWorker: this.decrementBusyWorker.bind(this),
             addImageLoaded: this.addImageLoaded.bind(this),

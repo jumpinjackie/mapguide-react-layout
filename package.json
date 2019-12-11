@@ -21,7 +21,7 @@
     "clean": "rimraf viewer/dist/stdassets && rimraf viewer/dist/viewer.* && rimraf package/ && rimraf lib/",
     "lint": "tslint 'src/**/*.tsx' 'src/**/*.ts' 'test/**/*.tsx' 'test/**/*.ts'",
     "postinstall": "yarn run build",
-    "storybook": "start-storybook -p 4000 -c .storybook",
+    "storybook": "start-storybook -s ./src/stories/static -p 4000 -c .storybook",
     "test": "jest --verbose",
     "test:e2e": "testcafe chrome e2e/test.*.ts -q -S -s e2e/screenshots",
     "test:appveyor": "jest --verbose --coverage --colors",

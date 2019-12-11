@@ -1,6 +1,10 @@
 const path = require("path");
+const webpack = require('webpack');
 
 module.exports = ({ config }) => {
+    config.plugins.push(new webpack.DefinePlugin({
+        __DEV__: process.env.BUILD_MODE !== 'production'
+    }));
     config.module.rules.push({
         test: /\.(ts|tsx)$/,
         use: [

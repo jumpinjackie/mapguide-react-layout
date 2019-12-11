@@ -5,6 +5,7 @@ import * as Common from "./contracts/common";
 import * as RtMap from './contracts/runtime-map';
 import * as Query from "./contracts/query";
 import { ClientKind } from './common';
+import { createRequestBuilder } from './builders/factory';
 
 /**
  * The MapGuide HTTP client
@@ -16,13 +17,7 @@ import { ClientKind } from './common';
 export class Client implements Request.IMapGuideClient {
     private builder: Request.RequestBuilder;
     constructor(agentUri: string, kind: ClientKind) {
-        switch (kind) {
-            case "mapagent":
-                this.builder = new MapAgentRequestBuilder(agentUri);
-                break;
-            default:
-                throw new MgError(`Unknown or unsupported client kind: ${kind}`);
-        }
+        this.builder = createRequestBuilder(agentUri, kind);
     }
     public async getText(url: string): Promise<string> {
         const r = await fetch(url);

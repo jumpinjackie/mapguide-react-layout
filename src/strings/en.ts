@@ -182,7 +182,8 @@ const STRINGS_EN: ILocalizedMessages = {
     "FEATURE_TOOLTIP_URL_HELP_TEXT": "Click for more information",
     "SHARE_LINK_INCLUDE_SESSION": "Include Session ID",
     "WINDOW_RESIZING": "Resizing Window",
-    "WINDOW_MOVING": "Moving Window"
+    "WINDOW_MOVING": "Moving Window",
+    "OTHER_THEME_RULE_COUNT": "... ({count} other theme rules)"
 };
 
 export default STRINGS_EN;

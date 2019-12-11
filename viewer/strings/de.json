@@ -137,5 +137,8 @@
     "OL_OVERVIEWMAP_TIP": "Übersichtskarte",
     "OL_RESET_ROTATION_TIP": "Drehung zurücksetzen",
     "FEATURE_TOOLTIP_URL_HELP_TEXT": "Klicken Sie hier, um weitere Informationen zu erhalten",
-    "SHARE_LINK_INCLUDE_SESSION": "Sitzungs-ID einschließen"
+    "SHARE_LINK_INCLUDE_SESSION": "Sitzungs-ID einschließen",
+    "WINDOW_RESIZING": "Fenstergröße ändern",
+    "WINDOW_MOVING": "bewegliches Fenster",
+    "OTHER_THEME_RULE_COUNT": "... ({count} andere Themenregeln)"
 }

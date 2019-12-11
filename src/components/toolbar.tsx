@@ -3,7 +3,7 @@ import { isMenuRef, isComponentFlyout } from "../utils/type-guards";
 import { IDOMElementMetrics, FlyoutVisibilitySet, GenericEvent } from "../api/common";
 import { ToolbarContext } from "./context";
 import { STR_EMPTY } from "../utils/string";
-import { Icon } from "./icon";
+import { ImageIcon } from "./icon";
 import {
     SPRITE_ICON_MENUARROWUP,
     SPRITE_ICON_MENUARROW
@@ -148,7 +148,7 @@ export const FlyoutMenuChildItem = (props: IFlyoutMenuChildItemProps) => {
     const style = getMenuItemStyle(enabled, selected, height, isMouseOver);
     return <li className="noselect flyout-menu-child-item" title={tt} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick}>
         <div style={style}>
-            <Icon style={imgStyle} url={item.icon} /> {item.label}
+            <ImageIcon style={imgStyle} url={item.icon} /> {item.label}
         </div>
     </li>;
 }
@@ -206,7 +206,7 @@ const ComponentFlyoutItem = (props: IComponentFlyoutItemProps) => {
     const ttip = getTooltip(item);
     return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${isMouseOver ? "mouse-over" : ""}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} style={style} title={ttip}>
         <div data-flyout-id={`flyout-${item.flyoutId}`}>
-            <Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {label} <Icon style={imgStyle} spriteClass={isFlownOut ? SPRITE_ICON_MENUARROWUP : SPRITE_ICON_MENUARROW} />
+            <ImageIcon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {label} <ImageIcon style={imgStyle} spriteClass={isFlownOut ? SPRITE_ICON_MENUARROWUP : SPRITE_ICON_MENUARROW} />
         </div>
     </div>;
 };
@@ -261,7 +261,7 @@ const FlyoutMenuReferenceItem = (props: IFlyoutMenuReferenceItemProps) => {
     const ttip = getTooltip(menu);
     return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${isMouseOver ? "mouse-over" : ""}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} style={style} title={ttip}>
         <div data-flyout-id={`flyout-${menu.flyoutId}`}>
-            <Icon style={imgStyle} url={menu.icon} spriteClass={menu.iconClass} /> {label} <Icon style={imgStyle} spriteClass={isFlownOut ? SPRITE_ICON_MENUARROWUP : SPRITE_ICON_MENUARROW} />
+            <ImageIcon style={imgStyle} url={menu.icon} spriteClass={menu.iconClass} /> {label} <ImageIcon style={imgStyle} spriteClass={isFlownOut ? SPRITE_ICON_MENUARROWUP : SPRITE_ICON_MENUARROW} />
         </div>
     </div>;
 };
@@ -317,7 +317,7 @@ const ToolbarButton = (props: IToolbarButtonProps) => {
         ttip = item.tooltip;
     }
     return <div className={`noselect toolbar-btn ${selected ? "selected-item" : ""} ${(isMouseOver && enabled) ? "mouse-over" : ""}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} style={style} title={ttip} onClick={onClick}>
-        <Icon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {(vertical == true && hideVerticalLabels == true) ? null : item.label}
+        <ImageIcon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {(vertical == true && hideVerticalLabels == true) ? null : item.label}
     </div>;
 }
 

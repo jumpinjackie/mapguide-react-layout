@@ -9,6 +9,6 @@ storiesOf("Task Pane", module)
     .addDecorator(withKnobs)
     .add("Task Pane", () => {
         return <FakeApp>
-            <TaskPaneContainer />;
+            <TaskPaneContainer />
         </FakeApp>;
     });

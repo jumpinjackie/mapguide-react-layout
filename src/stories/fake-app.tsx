@@ -47,24 +47,45 @@ class FakeMapAgent extends RequestBuilder {
     }
 }
 
+export interface IFakeAppProps {
+    children: React.ReactNode;
+}
+
 /**
  * This component sets up a mocked application environment from which any redux container component
  * can be housed within
  */
-export class FakeApp extends React.Component<any> {
-    constructor(props: any) {
+export class FakeApp extends React.Component<IFakeAppProps> {
+    private _store: any;
+    constructor(props: IFakeAppProps) {
         super(props);
         registerRequestBuilder("mapagent", (uri, locale) => new FakeMapAgent(uri, locale));
         registerLayout("fake-app", () => <>{props.children}</>);
-    }
-    render() {
         const agentConf = {
             agentUri: "https://my-mapguide-server/mapguide/mapagent/mapagent.fcgi",
             agentKind: "mapagent"
         };
-        const initState = { ...{ config: { ...CONFIG_INITIAL_STATE, ...agentConf } } };
-        const store = configureStore(initState);
-        return <Provider store={store}>
+        const initState = {
+            ...{
+                config: {
+                    ...CONFIG_INITIAL_STATE,
+                    ...agentConf
+                },
+                mapState: {
+                    Sheboygan: {
+                        currentView: {
+                            scale: 51439.16420267266,
+                            x: -87.73025425093128,
+                            y: 43.744459064634064
+                        }
+                    }
+                }
+            }
+        };
+        this._store = configureStore(initState);
+    }
+    render() {
+        return <Provider store={this._store}>
             <App layout="fake-app" resourceId="Library://Test/Viewer.ApplicationDefinition" {...this.props} />
         </Provider>;
     }

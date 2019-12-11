@@ -134,6 +134,14 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                         ...(hl.length > 0 ? { hideLayers: [ ...hl ] } : {}),
                         ...(hg.length > 0 ? { hideGroups: [ ...hg ] } : {})
                     };
+
+                    // As INIT_APP does not establish a currentView, if a currentView was
+                    // somehow established as part of the initial app state, we will keep
+                    // it instead of it being discarded
+                    if (state?.[mapName]?.currentView) {
+                        newMapState.currentView = state[mapName].currentView;
+                    }
+
                     newState[mapName] = newMapState;
                 }
                 

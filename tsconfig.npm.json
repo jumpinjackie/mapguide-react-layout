@@ -10,6 +10,7 @@
         "node_modules",
         "e2e",
         "src/entries/library.tsx",
+        "src/stories",
         "test",
         "test-data",
         "typings/main",

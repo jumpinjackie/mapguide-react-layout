@@ -50,7 +50,13 @@ test_script:
 
 artifacts:
   - path: .\viewer.zip
-    name: dist
+    name: viewer
+    type: zip
+  - path: .\storybook.zip
+    name: storybook
+    type: zip
+  - path: .\apidocs.zip
+    name: api_docs
     type: zip
 
 deploy:

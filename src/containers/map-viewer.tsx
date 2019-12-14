@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
     ICommand,
     IMapView,
@@ -11,7 +11,6 @@ import {
     Bounds,
     Coordinate2D,
     IExternalBaseLayer,
-    IApplicationState,
     IViewerReducerState,
     IConfigurationReducerState,
     LayerTransparencySet,
@@ -43,28 +42,12 @@ import olGeomPoint from "ol/geom/Point";
 import olGeomLineString from "ol/geom/LineString";
 import olGeomCircle from "ol/geom/Circle";
 import olGeomPolygon from "ol/geom/Polygon";
+import { MapDebugContext } from '../components/map-viewer-context';
 
 export interface IMapViewerContainerProps {
     overviewMapElementSelector?: () => (Element | null);
 }
 
-interface IMapViewerContainerState {
-    config: IConfigurationReducerState;
-    map: RuntimeMap;
-    selection: QueryMapFeaturesResponse;
-    viewer: IViewerReducerState;
-    currentView: IMapView;
-    initialView: IMapView;
-    selectableLayers: any;
-    layerTransparency: LayerTransparencySet;
-    showGroups: string[];
-    showLayers: string[];
-    hideGroups: string[];
-    hideLayers: string[];
-    externalBaseLayers: IExternalBaseLayer[];
-    activeSelectedFeature: ActiveSelectedFeature;
-    isContextMenuOpen: boolean;
-}
 
 interface MVDispatch {
     setActiveTool: (tool: ActiveMapTool) => void;
@@ -270,13 +253,13 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
     const { overviewMapElementSelector } = props;
     const toasterRef = React.useRef<Toaster>(null);
     const innerRef = React.useRef<MapViewerBase>(null);
+    const mapDebugContext = React.useContext(MapDebugContext);
     const locale = useViewerLocale();
     const map = useActiveMapState();
     const selection = useActiveMapSelectionSet();
     const currentView = useActiveMapView();
     const initialView = useActiveMapInitialView();
     const externalBaseLayers = useActiveMapExternalBaseLayers();
-    const selectableLayers = useActiveMapSelectableLayers();
     const layerTransparency = useActiveMapLayerTransparency();
     const showGroups = useActiveMapShowGroups();
     const hideGroups = useActiveMapHideGroups();
@@ -419,6 +402,7 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
             <Toaster usePortal={false} position={Position.TOP} ref={toasterRef} />
             <MapViewerBase ref={innerRef}
                 map={map}
+                mock={mapDebugContext.mock}
                 agentUri={agentUri}
                 agentKind={agentKind}
                 locale={locale}

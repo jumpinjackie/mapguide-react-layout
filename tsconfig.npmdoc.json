@@ -1,11 +1,15 @@
 {
     "extends": "./tsconfig.npm.json",
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true
+    },
     "exclude": [
         "lib",
         "package",
         "e2e",
         "node_modules",
         "src/entries/library.tsx",
+        "src/stories",
         "src/actions/index.ts",
         "src/api/index.ts",
         "src/api/builders/index.ts",

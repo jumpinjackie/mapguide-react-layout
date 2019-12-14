@@ -17,6 +17,14 @@ import * as Common from "../api/common";
 import "../styles/index.css";
 import { bootstrap } from "../api/bootstrap";
 import proj4 from "proj4";
+import * as MapActions from "../actions/map";
+import * as LegendActions from "../actions/legend";
+import * as FlyoutActions from "../actions/flyout";
+import * as ModalActions from "../actions/modal";
+import * as TaskPaneActions from "../actions/taskpane";
+import * as TemplateActions from "../actions/template";
+import { registerRequestBuilder } from '../api/builders/factory';
+import { MapAgentRequestBuilder } from '../api/builders/mapagent';
 
 bootstrap();
 registerLayout("ajax-viewer", () => <AjaxViewerLayout />);
@@ -28,6 +36,9 @@ registerLayout("slate", () => <SlateTemplateLayout />);
 registerLayout("maroon", () => <MaroonTemplateLayout />);
 initDefaultCommands();
 registerDefaultComponents();
+
+//Register the default mapagent request builder (that can be replaced later on if desired)
+registerRequestBuilder("mapagent", (agentUri, locale) => new MapAgentRequestBuilder(agentUri, locale));
 
 /**
  * Indicates if this library is in development mode. If false, this is in production mode
@@ -116,12 +127,7 @@ export const Externals = {
 export { ApplicationViewModel as Application } from "./application";
 export { setAssetRoot } from "../utils/asset";
 
-import * as MapActions from "../actions/map";
-import * as LegendActions from "../actions/legend";
-import * as FlyoutActions from "../actions/flyout";
-import * as ModalActions from "../actions/modal";
-import * as TaskPaneActions from "../actions/taskpane";
-import * as TemplateActions from "../actions/template";
+
 
 /**
  * The top-level namespace for all dispatchable actions

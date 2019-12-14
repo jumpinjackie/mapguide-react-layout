@@ -48,6 +48,12 @@ const MapDependentContainer = (props: MapDependentContainer) => {
             dispatch(q);
         }
     }
+    const doClearSelection = () => {
+        if (activeMapName) {
+            const q = MapActions.setSelection(activeMapName, {});
+            dispatch(q);
+        }
+    }
     const SB_WIDTH = 250;
     return <table>
         <colgroup>
@@ -60,7 +66,7 @@ const MapDependentContainer = (props: MapDependentContainer) => {
                     <ButtonGroup>
                         {!!props.includeSelect && <>
                             <Button onClick={() => doTestSelect()}>Test Select</Button>
-                            <Button disabled={!CommandConditions.hasSelection(state)}>Clear Selection</Button>
+                            <Button onClick={() => doClearSelection()} disabled={!CommandConditions.hasSelection(state)}>Clear Selection</Button>
                         </>}
                     </ButtonGroup>
                 </td>

@@ -111,7 +111,9 @@ storiesOf("Container Components", module)
         </MapDependentContainer>
     </FakeApp>)
     .add("Task Pane", () => <FakeApp>
-        <TaskPaneContainer />
+        <MapDependentContainer>
+            <TaskPaneContainer />
+        </MapDependentContainer>
     </FakeApp>)
     .add("Scale Display", () => <FakeApp>
         <MapDependentContainer>

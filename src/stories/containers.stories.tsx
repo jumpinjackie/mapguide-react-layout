@@ -12,12 +12,33 @@ import SelectionPanelContainer from '../containers/selection-panel';
 import NavigatorContainer from '../containers/navigator';
 import MapMenuContainer from '../containers/map-menu';
 import BaseLayerSwitcherContainer from '../containers/base-layer-switcher';
+//import MeasureContainer from '../containers/measure';
+
+const MapDependentContainer = (props: any) => {
+    return <table>
+        <colgroup>
+            <col width={250} />
+            <col width="*" />
+        </colgroup>
+        <tbody>
+            <tr>
+                <td valign="top">
+                    {props.children}
+                </td>
+                <td valign="top">
+                    <MapDebugContext.Provider value={{ mock: true }}>
+                        <div style={{ width: 640, height: 480 }}>
+                            <MapViewerContainer />
+                        </div>
+                    </MapDebugContext.Provider>
+                </td>
+            </tr>
+        </tbody>
+    </table>;
+}
 
 storiesOf("Container Components", module)
     .addDecorator(withKnobs)
-    .add("Legend", () => <FakeApp>
-        <LegendContainer />
-    </FakeApp>)
     .add("Map Viewer", () => <FakeApp>
         <MapDebugContext.Provider value={{ mock: true }}>
             <div style={{ width: 640, height: 480 }}>
@@ -25,24 +46,48 @@ storiesOf("Container Components", module)
             </div>
         </MapDebugContext.Provider>
     </FakeApp>)
+    .add("Legend", () => <FakeApp>
+        <MapDependentContainer>
+            <LegendContainer />
+        </MapDependentContainer>
+    </FakeApp>)
     .add("Task Pane", () => <FakeApp>
         <TaskPaneContainer />
     </FakeApp>)
     .add("Scale Display", () => <FakeApp>
-        <ScaleDisplayContainer />
+        <MapDependentContainer>
+            <ScaleDisplayContainer />
+        </MapDependentContainer>
     </FakeApp>)
     .add("Selected Feature Count", () => <FakeApp>
-        <SelectedFeatureCountContainer />
+        <MapDependentContainer>
+            <SelectedFeatureCountContainer />
+        </MapDependentContainer>
     </FakeApp>)
     .add("Selection Panel", () => <FakeApp>
-        <SelectionPanelContainer />
+        <MapDependentContainer>
+            <SelectionPanelContainer />
+        </MapDependentContainer>
     </FakeApp>)
     .add("Navigator", () => <FakeApp>
-        <NavigatorContainer />
+        <MapDependentContainer>
+            <NavigatorContainer />
+        </MapDependentContainer>
     </FakeApp>)
     .add("Map Menu", () => <FakeApp>
-        <MapMenuContainer />
+        <MapDependentContainer>
+            <MapMenuContainer />
+        </MapDependentContainer>
     </FakeApp>)
     .add("Base Layer Switcher", () => <FakeApp>
-        <BaseLayerSwitcherContainer />
+        <MapDependentContainer>
+            <BaseLayerSwitcherContainer />
+        </MapDependentContainer>
     </FakeApp>);
+    /*
+    .add("Measure", () => <FakeApp>
+        <MapDependentContainer>
+            <MeasureContainer />
+        </MapDependentContainer>
+    </FakeApp>);
+    */

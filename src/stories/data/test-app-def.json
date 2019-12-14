@@ -41,6 +41,28 @@
                                 "Type": [
                                     "MapGuide"
                                 ]
+                            },
+                            {
+                                "Extension": [
+                                    {
+                                        "Options": [
+                                            {
+                                                "name": [
+                                                    "Stamen (Toner)"
+                                                ],
+                                                "type": [
+                                                    "toner"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "SingleTile": [
+                                    "true"
+                                ],
+                                "Type": [
+                                    "Stamen"
+                                ]
                             }
                         ]
                     },

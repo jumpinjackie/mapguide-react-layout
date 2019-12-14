@@ -12,7 +12,9 @@ import { ApplicationDefinition } from '../api/contracts/fusion';
 import { deArrayify } from '../api/builders/deArrayify';
 import { registerLayout } from '../api/registry/layout';
 import { IConfigurationReducerState, IViewerReducerState } from '../api/common';
-const testMap: RuntimeMap = deArrayify(require("./data/test-runtime-map.json"));
+const testMapSheboygan: RuntimeMap = deArrayify(require("./data/test-runtime-map-sheboygan.json"));
+const testMapRedding: RuntimeMap = deArrayify(require("./data/test-runtime-map-redding.json"));
+const testMapMelbourne: RuntimeMap = deArrayify(require("./data/test-runtime-map-melbourne.json"));
 const testAppDef: ApplicationDefinition = deArrayify(require("./data/test-app-def.json"));
 
 class FakeMapAgent extends RequestBuilder {
@@ -20,7 +22,7 @@ class FakeMapAgent extends RequestBuilder {
         super(uri);
     }
     public createSession(username: string, password: string): Promise<string> {
-        return Promise.resolve(testMap.SessionId);
+        return Promise.resolve(testMapSheboygan.SessionId);
     }
     public getServerSessionTimeout(session: string): Promise<number> {
         return Promise.resolve(10000);
@@ -32,7 +34,15 @@ class FakeMapAgent extends RequestBuilder {
         throw new Error(`Method not implemented - getResource(${resourceId}).`);
     }
     public createRuntimeMap(options: ICreateRuntimeMapOptions): Promise<RuntimeMap> {
-        return Promise.resolve(testMap);
+        switch (options.mapDefinition) {
+            case "Library://Samples/Sheboygan/Maps/Sheboygan.MapDefinition":
+                return Promise.resolve(testMapSheboygan);
+            case "Library://Redding/Maps/Redding.MapDefinition":
+                return Promise.resolve(testMapRedding);
+            case "Library://Samples/Melbourne/Maps/Melbourne.MapDefinition":
+                return Promise.resolve(testMapMelbourne);
+        }
+        return Promise.reject(`Unknown test map: ${options.mapDefinition}`);
     }
     public queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<QueryMapFeaturesResponse> {
         return Promise.resolve({});
@@ -70,7 +80,7 @@ export class FakeApp extends React.Component<IFakeAppProps> {
             ...{
                 config: {
                     ...CONFIG_INITIAL_STATE,
-                    ...agentConf,  
+                    ...agentConf,
                 } as IConfigurationReducerState,
                 mapState: {
                     Sheboygan: {

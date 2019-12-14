@@ -100,6 +100,10 @@ function mockMapGuideImageLoadFunction(image: ImageWrapper, src: string) {
 
         tCtx.canvas.width = maxSize;
         tCtx.canvas.height = ch;
+        tCtx.fillStyle = "rgba(255, 0, 0, 0.5)";
+        tCtx.fillRect(0, 0, maxSize, ch);
+
+        tCtx.fillStyle = "rgba(255, 255, 0, 1.0)";
         //console.log(`Canvas size: [${tCtx.canvas.width}, ${tCtx.canvas.height}]`);
         tCtx.font = `${fontSize}px sans-serif`;
 

@@ -5,7 +5,7 @@ import { LegendContext, ILegendContext } from "./context";
 import { BaseLayerSwitcher } from "./base-layer-switcher";
 import { isLayer } from "../utils/type-guards";
 import { Icon, ImageIcon } from "./icon";
-import { Icon as BpIcon } from "@blueprintjs/core";
+import { Card, Icon as BpIcon } from "@blueprintjs/core";
 import { scaleRangeBetween } from "../utils/number";
 /*
 import {
@@ -495,10 +495,10 @@ export const Legend = (props: ILegendProps) => {
                 if (externalBaseLayers != null &&
                     externalBaseLayers.length > 0 &&
                     props.inlineBaseLayerSwitcher) {
-                    return <div className="bp3-card bp3-interactive">
-                        <h5>{tr("EXTERNAL_BASE_LAYERS", props.locale)}</h5>
+                    return <Card style={{ marginBottom: 10 }}>
+                        <h5 className="bp3-heading"><a href="#">{tr("EXTERNAL_BASE_LAYERS", props.locale)}</a></h5>
                         <BaseLayerSwitcher locale={props.locale} externalBaseLayers={externalBaseLayers} onBaseLayerChanged={onBaseLayerChanged} />
-                    </div>;
+                    </Card>;
                 }
             })()}
             <ul style={UL_LIST_STYLE(props.baseIconSize ?? DEFAULT_ICON_SIZE)}>

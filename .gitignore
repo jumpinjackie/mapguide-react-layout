@@ -27,3 +27,4 @@ package
 webpack.json
 index_frame.html
 slate_frame.html
+storybook-static

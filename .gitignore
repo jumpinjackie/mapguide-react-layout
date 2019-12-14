@@ -24,6 +24,7 @@ declarations
 webconfig.ini
 viewer.zip
 storybook.zip
+apidocs.zip
 package
 webpack.json
 index_frame.html

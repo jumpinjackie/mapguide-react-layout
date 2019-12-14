@@ -55,6 +55,9 @@ artifacts:
   - path: .\storybook.zip
     name: storybook
     type: zip
+  - path: .\apidocs.zip
+    name: api_docs
+    type: zip
 
 deploy:
   release: $(appveyor_repo_tag_name)

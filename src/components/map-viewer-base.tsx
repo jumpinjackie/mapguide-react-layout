@@ -638,6 +638,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             const ovMap = this._mapContext.getOverviewMap();
             oldLayerSet.detach(this._map, ovMap);
             newLayerSet.attach(this._map, ovMap);
+            newLayerSet.setMapGuideMocking(!!props.mock);
             //This would happen if we switch to a map we haven't visited yet
             if (!nextProps.view) {
                 newLayerSet.view.fit(newLayerSet.extent);

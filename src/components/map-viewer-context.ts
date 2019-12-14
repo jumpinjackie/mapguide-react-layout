@@ -72,7 +72,7 @@ function mockMapGuideImageLoadFunction(image: ImageWrapper, src: string) {
 
         const strings = [];
         const parsed = parseUrl(src);
-        strings.push("[Map Image Request]");
+        strings.push("[Mock MapGuide Map Image Request]");
         strings.push(`Agent: ${parsed.url}`);
 
         const xoff = 10;
@@ -88,7 +88,7 @@ function mockMapGuideImageLoadFunction(image: ImageWrapper, src: string) {
 
         const keys = Object.keys(parsed.query);
         for (const k of keys) {
-            if (k == "SETDISPLAYWIDTH" || k == "SETDISPLAYHEIGHT" || k == "SETVIEWCENTERX" || k == "SETVIEWCENTERY" || k == "SETVIEWSCALE") {
+            if (k == "MAPNAME" || k == "SETDISPLAYWIDTH" || k == "SETDISPLAYHEIGHT" || k == "SETVIEWCENTERX" || k == "SETVIEWCENTERY" || k == "SETVIEWSCALE") {
                 if (!strIsNullOrEmpty(parsed.query[k])) {
                     const s = `${k}: ${parsed.query[k]}`;
                     strings.push(s);

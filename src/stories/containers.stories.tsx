@@ -12,6 +12,7 @@ import SelectionPanelContainer from '../containers/selection-panel';
 import NavigatorContainer from '../containers/navigator';
 import MapMenuContainer from '../containers/map-menu';
 import BaseLayerSwitcherContainer from '../containers/base-layer-switcher';
+import CoordinateTrackerContainer from '../containers/coordinate-tracker';
 //import MeasureContainer from '../containers/measure';
 
 const MapDependentContainer = (props: any) => {
@@ -51,6 +52,11 @@ storiesOf("Container Components", module)
             <LegendContainer />
         </MapDependentContainer>
     </FakeApp>)
+    .add("Legend - with base layer switcher", () => <FakeApp>
+        <MapDependentContainer>
+            <LegendContainer inlineBaseLayerSwitcher={true} />
+        </MapDependentContainer>
+    </FakeApp>)
     .add("Task Pane", () => <FakeApp>
         <TaskPaneContainer />
     </FakeApp>)
@@ -82,6 +88,11 @@ storiesOf("Container Components", module)
     .add("Base Layer Switcher", () => <FakeApp>
         <MapDependentContainer>
             <BaseLayerSwitcherContainer />
+        </MapDependentContainer>
+    </FakeApp>)
+    .add("Coordinate Tracker", () => <FakeApp>
+        <MapDependentContainer>
+            <CoordinateTrackerContainer projections={["EPSG:4326", "EPSG:3857"]} />
         </MapDependentContainer>
     </FakeApp>);
     /*

@@ -13,18 +13,71 @@ import NavigatorContainer from '../containers/navigator';
 import MapMenuContainer from '../containers/map-menu';
 import BaseLayerSwitcherContainer from '../containers/base-layer-switcher';
 import CoordinateTrackerContainer from '../containers/coordinate-tracker';
+import { Button, ButtonGroup } from '@blueprintjs/core';
+import { useReducedToolbarAppState, useActiveMapName } from '../containers/hooks';
+import { CommandConditions } from '../api/registry/command';
+import * as MapActions from '../actions/map';
+import { useDispatch } from 'react-redux';
+import { QueryMapFeaturesResponse } from '../api/contracts/query';
+import { deArrayify } from '../api/builders/deArrayify';
+
+const testSelSheboygan: QueryMapFeaturesResponse = deArrayify(require("./data/test-selection-response-sheboygan.json"));
 //import MeasureContainer from '../containers/measure';
 
-const MapDependentContainer = (props: any) => {
+interface MapDependentContainer {
+    includeSelect?: boolean;
+    children: React.ReactNode;
+}
+
+function getQueryMapFeaturesResponse(activeMapName: string) {
+    switch (activeMapName) {
+        case "Sheboygan":
+            return testSelSheboygan;
+    }
+    return {};
+}
+
+const MapDependentContainer = (props: MapDependentContainer) => {
+    const includeTools = !!props.includeSelect;
+    const dispatch = useDispatch();
+    const state = useReducedToolbarAppState();
+    const activeMapName = useActiveMapName();
+    const doTestSelect = () => {
+        if (activeMapName) {
+            const q = MapActions.setSelection(activeMapName, getQueryMapFeaturesResponse(activeMapName));
+            dispatch(q);
+        }
+    }
+    const SB_WIDTH = 250;
     return <table>
         <colgroup>
-            <col width={250} />
+            <col width={SB_WIDTH} />
             <col width="*" />
         </colgroup>
         <tbody>
+            {includeTools && <tr>
+                <td colSpan={2}>
+                    <ButtonGroup>
+                        {!!props.includeSelect && <>
+                            <Button onClick={() => doTestSelect()}>Test Select</Button>
+                            <Button disabled={!CommandConditions.hasSelection(state)}>Clear Selection</Button>
+                        </>}
+                    </ButtonGroup>
+                </td>
+            </tr>}
             <tr>
                 <td valign="top">
-                    {props.children}
+                    <div style={{ position: "absolute", width: SB_WIDTH, height: "100%" }}>
+                        {props.children}
+                        {false && <div>
+                            <p>Active Tool: {state.activeTool}</p>
+                            <p>Busy Count: {state.busyWorkerCount}</p>
+                            <p>Feature TT enabled: {state.featureTooltipsEnabled ? "true" : "false"}</p>
+                            <p>Has Next View: {state.hasNextView ? "true" : "false"}</p>
+                            <p>Has Prev View: {state.hasPreviousView ? "true" : "false"}</p>
+                            <p>Has Selection: {state.hasSelection ? "true" : "false"}</p>
+                        </div>}
+                    </div>
                 </td>
                 <td valign="top">
                     <MapDebugContext.Provider value={{ mock: true }}>
@@ -66,12 +119,12 @@ storiesOf("Container Components", module)
         </MapDependentContainer>
     </FakeApp>)
     .add("Selected Feature Count", () => <FakeApp>
-        <MapDependentContainer>
+        <MapDependentContainer includeSelect={true}>
             <SelectedFeatureCountContainer />
         </MapDependentContainer>
     </FakeApp>)
     .add("Selection Panel", () => <FakeApp>
-        <MapDependentContainer>
+        <MapDependentContainer includeSelect={true}>
             <SelectionPanelContainer />
         </MapDependentContainer>
     </FakeApp>)
@@ -96,9 +149,9 @@ storiesOf("Container Components", module)
         </MapDependentContainer>
     </FakeApp>);
     /*
-    .add("Measure", () => <FakeApp>
-        <MapDependentContainer>
-            <MeasureContainer />
-        </MapDependentContainer>
-    </FakeApp>);
-    */
+.add("Measure", () => <FakeApp>
+<MapDependentContainer>
+    <MeasureContainer />
+</MapDependentContainer>
+</FakeApp>);
+*/

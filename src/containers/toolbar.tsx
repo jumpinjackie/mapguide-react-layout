@@ -7,7 +7,7 @@ import {
     FlyoutVisibilitySet,
     PropType
 } from "../api/common";
-import { mapToolbarReference, IToolbarAppState, reduceAppToToolbarState } from "../api/registry/command";
+import { mapToolbarReference } from "../api/registry/command";
 import { Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import * as MapActions from "../actions/map";
 import { processMenuItems } from "../utils/menu";

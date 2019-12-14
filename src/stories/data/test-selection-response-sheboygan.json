@@ -1,0 +1,3877 @@
+{
+    "FeatureInformation": {
+        "FeatureSet": [
+            {
+                "@xmlns:xsi": [
+                    "http://www.w3.org/2001/XMLSchema-instance"
+                ],
+                "@xsi:noNamespaceSchemaLocation": [
+                    "FeatureSet-1.0.0.xsd"
+                ],
+                "Layer": [
+                    {
+                        "@id": [
+                            "db34473e-1e7e-11ea-8001-0a002700000d"
+                        ],
+                        "Class": [
+                            {
+                                "@id": [
+                                    "SHP_Schema:Parcels"
+                                ],
+                                "ID": [
+                                    "2x4AAA==",
+                                    "4h4AAA==",
+                                    "4x4AAA==",
+                                    "5B4AAA==",
+                                    "5R4AAA==",
+                                    "5h4AAA==",
+                                    "5x4AAA==",
+                                    "6B4AAA==",
+                                    "KR8AAA==",
+                                    "NR8AAA==",
+                                    "Rx8AAA==",
+                                    "UB8AAA==",
+                                    "Xx8AAA==",
+                                    "YB8AAA==",
+                                    "YR8AAA==",
+                                    "Yh8AAA==",
+                                    "Yx8AAA==",
+                                    "ZB8AAA==",
+                                    "ZR8AAA==",
+                                    "Zx8AAA==",
+                                    "aB8AAA==",
+                                    "px8AAA==",
+                                    "rx8AAA==",
+                                    "1R8AAA==",
+                                    "1h8AAA==",
+                                    "1x8AAA==",
+                                    "EiAAAA==",
+                                    "EyAAAA==",
+                                    "JSAAAA==",
+                                    "JiAAAA==",
+                                    "JyAAAA==",
+                                    "KCAAAA==",
+                                    "KiAAAA==",
+                                    "KyAAAA==",
+                                    "cCAAAA==",
+                                    "ciAAAA==",
+                                    "eiAAAA==",
+                                    "lCAAAA==",
+                                    "ziAAAA==",
+                                    "hCEAAA==",
+                                    "mSEAAA==",
+                                    "uSEAAA=="
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "Hyperlink": null,
+        "InlineSelectionImage": null,
+        "SelectedFeatures": [
+            {
+                "SelectedLayer": [
+                    {
+                        "@id": [
+                            "db34473e-1e7e-11ea-8001-0a002700000d"
+                        ],
+                        "@name": [
+                            "Parcels"
+                        ],
+                        "Feature": [
+                            {
+                                "Bounds": [
+                                    "-87.722795366494324 43.756662887792743 -87.721545117334017 43.757359091595923"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "EXM"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "1.12"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "IRREG"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "REHABILITATION CENTE"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "THE W 1/2 OF LOT 1, ALL OF"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": [
+                                            "LOTS 2, 3, 4 & 5; THE N"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "P O BOX 685"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "48870"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": [
+                                            "50.00' OF LOT 6, ALSO THE N"
+                                        ]
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\n2x4AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.721548800290776 43.756941186301994 -87.721431569785551 43.757353225582108"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "WTC"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "30X150"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "UNION PACIFIC RR COM"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "E 1/2 OF LOT 1 BLK 81 EXCEPT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": [
+                                            "VAC ALLEY ADJ."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "P O BOX 2500"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "0"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\n4h4AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.721132461736815 43.75693762394323 -87.720674585524321 43.757351267327486"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "EXM"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.41"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "120X150"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "REHABILITATION CENTE"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "LOTS 5 & 6 BLOCK 80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "P O BOX 685"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "18000"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\n4x4AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.720678274204502 43.756936643600021 -87.720466414841425 43.757349129160872"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.19"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "55X150"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "VETERANS ADMINISTRAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "W 55' OF LOT 4 BLK 80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "5000 W NATIONAL AVE"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "8250"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\n5B4AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.720470104948689 43.756936019228846 -87.720333942679602 43.757348148637767"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.12"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "35X150"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "YANG, GE & JENNIFER"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "W 1/2 OF LOT 3 & E 5' OF LOT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": [
+                                            "4 BLK 80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "1215 ST CLAIR AVE"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "5250"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\n5R4AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.720337633451948 43.756935484156728 -87.720220394906718 43.757347524439041"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.1"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "30X150"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "THAO, DAO"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "E 1/2 OF LOT 3 BLK 80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "1213 ST CLAIR AVE"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "4500"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\n5h4AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.720222708421886 43.757088042202945 -87.719993299607737 43.757346989364912"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.13"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "60X94"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "PERREAULT, JANET B"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "N 94' OF LOT 2 BLK 80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "1209 ST CLAIR AVE"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "5640"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\n5x4AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.719995146408806 43.757139095080454 -87.719766204558141 43.757345918702299"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.1"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "60X75"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "MC COY, JAMES D."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "N 1/2 OF LOT 1 BLK 80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "621 N 10TH ST"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "4500"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\n6B4AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.719996131170788 43.757029360395038 -87.719768051894633 43.757140166191917"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.06"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "40X60"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "MC MULLEN, THOMAS J"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "N 40' OF S 75' OF LOT 1 BLK"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": [
+                                            "80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "N2050 COUNTY ROAD GW"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "2400"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nKR8AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.720224086699432 43.756934413498861 -87.71999561409865 43.757089112687019"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.08"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "60X56"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "AHLES, HENRY C. JR."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "S 56' OF LOT 2 BLK 80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "1209A ST CLAIR AVE"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "3360"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nNR8AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.719996992956695 43.756933342389779 -87.719769037072112 43.757030431329667"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.05"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "35X60"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "CUELLAR, DAWN M."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "S 35' OF LOT 1 BLK 80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "1456 S. 14TH ST."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "2100"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nRx8AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.722347746986827 43.756480834348743 -87.721549021150707 43.756920764342354"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "MER"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.77"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "210X159"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "SNITOVSKY, NORMAN"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "LOTS 9,10 & 11 & W1/2 OF LOT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": [
+                                            "12 BLK 81 & THE S1/2 OF THE"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "2215 ENTERPRISE DR."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "33390"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": [
+                                            "VAC E-W ALLEY ADJ THE AFORE"
+                                        ]
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nUB8AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.721552924677852 43.75648030030694 -87.72143569509079 43.756892339617764"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "WTC"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "30X150"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "UNION PACIFIC RR COM"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "E 1/2 OF LOT 12 BLK 81"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": [
+                                            "EXCEPT VAC ALLEY ADJ."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "P O BOX 2500"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "0"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nXx8AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.721136589318334 43.756477807264687 -87.720905810457865 43.756890381373516"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.21"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "60X150"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "PRIEBE, TODD W & LIS"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "LOT 7 BLK 80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "2522 S. 7TH ST."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "9000"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nYB8AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.720909497535018 43.756476737966125 -87.72067871688229 43.756889312520372"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "MER"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.21"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "60X150"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "PRIEBE, TODD W & LIS"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "LOT 8 BLK 80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "2522 S. 7TH ST."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "9000"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nYR8AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.720682405272967 43.756476203235074 -87.720565169975401 43.756888243392304"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.1"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "30X150"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "SCHMITT, ROBERT W"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "W 1/2 OF LOT 9 BLK 80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "W695 GARTON RD"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "4500"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nYh8AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.720568859386916 43.756475668215629 -87.720451623312911 43.756887708483681"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.1"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "30X150"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "SCHMITT, ROBERT W"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "E 1/2 OF LOT 9 BLK 80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "W695 GARTON RD"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "4500"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nYx8AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.720455313502015 43.756475133259322 -87.720338076409362 43.756887173637445"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.1"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "30X150"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "TULLBERG, LEE & LYNN"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "W 1/2 OF LOT 10 BLK 80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "1502 S. 14TH ST."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "4500"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nZB8AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.720341767377107 43.756474598190209 -87.720224529750226 43.756886638503218"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.1"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "30X150"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "TULLBERG, LEE & LYNN"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "E 1/2 OF LOT 10 BLK 80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "1502 S. 14TH ST."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "4500"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nZR8AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.720226375507011 43.756679280247376 -87.71999743619422 43.75688610343137"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.1"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "60X75"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "HERRERA, CESAR A."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "N 1/2 OF LOT 11 BLK 80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "1116A N. 12TH ST."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "4500"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nZx8AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.7199998983195 43.756609625023195 -87.719770342645432 43.756885032774065"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.14"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "100X60"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "HALEEM, NAFESEH"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "N 100' OF LOT 12 BLK 80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "1108 N. 12TH ST."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "6000"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\naB8AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.720228221253834 43.756473527537295 -87.719999282729617 43.756680350726725"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.1"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "60X75"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "TULLBERG, LEE & LYNN"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "S 1/2 OF LOT 11 BLK 80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "1502 S. 14TH ST."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "4500"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\npx8AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.720001129496268 43.756472456433514 -87.719772805808176 43.756610695952979"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.07"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "50X60"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "SUKOWATY, WILLIAM C."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "S 50' OF LOT 12 BLOCK 80"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "2982 WOODBINE DR"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "3000"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nrx8AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.722788142888234 43.755335868606466 -87.721634440510442 43.756252668096828"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "MER"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "1.61"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "IRREG"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "MRED (14TH/ERIE) ASS"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "CSM REC IN VOL 17 P 242-4 AS"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": [
+                                            "DOC #1593757 ROD BEING PRT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "W228 N745 WESTMOUND"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "70140"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": [
+                                            "OF LOTS 2 & 6 AND ALL OF"
+                                        ]
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\n1R8AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.721783993639846 43.75586600668715 -87.721422848998813 43.756250861467976"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "MFG"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.31"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "95X140"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "MILLENNIUM PROPERTIE"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "LOT 1 & E 35' OF LOT 2 BLK"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": [
+                                            "90, ALSO N 1/2 OF VAC N"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "PO BOX 1005"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "13300"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": [
+                                            "WATER ST ADJ THE AFORE DESC"
+                                        ]
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\n1h8AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.721121273860433 43.75583496112074 -87.719757486350858 43.756249430247053"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "MER"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "1.22"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "IRREG"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "TOBOTIPE, INC"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "LOTS 1,2,3,4,5 & 6 BLK 91"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "4902 N. 18TH ST."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "53300"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\n1x8AAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.721653703295871 43.755270165190019 -87.721500126709785 43.755866497421906"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "EXM"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.19"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "IRREG"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "REDEVELOPMENT AUTHOR"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "THE PRT OF LOT 1 BLK 90 1/2"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": [
+                                            "AND THE S1/2 OF VAC N WATER"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "807 CENTER AVE"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "8280"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": [
+                                            "ST ADJ TO LOT 1 THAT IS"
+                                        ]
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nEiAAAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.721502577700576 43.755234750660989 -87.72142442891051 43.755866170374183"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIG. PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "WTC"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "IRREG"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "UNION PACIFIC RR COM"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "LOT 1 BLK 90 1/2 & S 1/2 OF"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": [
+                                            "VACATED N. WATER ST. ADJ TO"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "1700 FARNAM ST."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "0"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": [
+                                            "LOT 1. EXCEPT THAT PART"
+                                        ]
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nEyAAAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.720861840190551 43.755592030858544 -87.720554220778794 43.755787973083471"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.08"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "IRREG"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "TOBOTIPE, INC"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "LOT 7 & W 1/2 OF LOT 8 BLK"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": [
+                                            "91"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "4902 N. 18TH ST."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "3375"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nJSAAAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.720555027210096 43.755519705614631 -87.720440674351423 43.755787306516758"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.06"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "IRREG"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "WELCHER, RICHARD A."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "THE E 1/2 OF LOT 8 BLK 91"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "1007 N WATER ST"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "2653"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nJiAAAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.720441778455964 43.755464256212981 -87.720353621961863 43.755787060115075"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.06"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "IRREG"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "HUENINK, DAVID & DIA"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "THE W 23' OF LOT 9 BLK 91"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "3711 N. 13TH ST."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "2519"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nJyAAAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.720354954821971 43.755375054785382 -87.720213581256687 43.755786871212827"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.11"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "IRREG"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "WEGMANN, JEFFREY B."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "THE E 37' OF LOT 9 BLK 91"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "W6277 HARBOR LIGHT C"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "4977"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nKCAAAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.72021422752924 43.755629698988692 -87.719986488163769 43.755786567149201"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.08"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "60X57"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "TOBOTIPE, INC"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "THE N 57' OF LOT 10 BLOCK 91"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "4902 N. 18TH ST."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "3420"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nKiAAAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.719987316701619 43.755585310356871 -87.71975939483147 43.755786073556571"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.1"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "60X73"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "TOBOTIPE, INC"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "THE N 73' OF LOT 11 BLOCK 91"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "4902 N. 18TH ST."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "4380"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nKyAAAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.72021528225028 43.755374561369131 -87.719987135028191 43.755630192405448"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.13"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "60X93"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "FLINN, THOMAS W"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "LOT 10 BLOCK 91 EXCEPT THE N"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": [
+                                            "57' THEREOF"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "1117 ONTARIO AVE"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "5580"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\ncCAAAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.721133934289426 43.755079363262183 -87.720664294927616 43.755626212156706"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "EXM"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.37"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "IRREG"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "REDEVELOPMENT AUTHOR"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "LOTS 12 & 13 BLK 110 AND"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": [
+                                            "THAT PRT OF VAC N WATER ST"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "807 CENTER AVE"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "15944"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": [
+                                            "ADJ THERETO"
+                                        ]
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nciAAAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.719988190714076 43.755374067502046 -87.71976022412619 43.755585804399963"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "RES"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.11"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "60X77"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "CARRIVEAU, WARREN G."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "S 77' OF LOT 11 BLOCK 91"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": null
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "1008 N. 12TH ST."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "4620"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\neiAAAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.721004013643338 43.754607862439073 -87.719612065403311 43.755370981302171"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "EXM"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "1.2"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "IRREG"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "REDEVELOPMENT AUTHOR"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "LOTS 4, 5, 6, 7, 8, 9, 10 &"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": [
+                                            "11 BLOCK 110, EXCEPT THAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "807 CENTER AVE"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "52070"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": [
+                                            "PART OF LOTS 5 & 6 BLOCK 110"
+                                        ]
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nlCAAAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.722646669234223 43.754385301052096 -87.722012829296915 43.75511224194878"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "MER"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.69"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "IRREG"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "QUASIUS, WILLARD & C"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "THE W 40' OF LOT 14 & ALL OF"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": [
+                                            "LOTS 15 & 16 BLOCK 111"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "514 N. 26TH ST."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "30030"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": null
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nziAAAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.722162484663968 43.754312771062935 -87.721608769630919 43.754985594929259"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "EXM"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.59"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "IRREG"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "CITY OF SHEBOYGAN"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "LOTS 12 & 13 & PRT OF LOTS"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": [
+                                            "11 & 14 BLK 111 DESC AS: COM"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "828 CENTER AVE"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "25847"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": [
+                                            "IN THE S LINE OF LOT 14,40'"
+                                        ]
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nhCEAAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.721610401472248 43.75318564960952 -87.720860507050233 43.754840625035236"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "WTC"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "IRREG"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "UNION PACIFIC RR COM"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "RIGHT OF WAY 100' WIDE OVER"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": [
+                                            "LOTS 5-6-7-8-9-10 & 11 &"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "P O BOX 2500"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "0"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": [
+                                            "OVER W 30' OF LOTS 1-2-3 & 4"
+                                        ]
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nmSEAAA=="
+                                ]
+                            },
+                            {
+                                "Bounds": [
+                                    "-87.721231389255706 43.754117373413919 -87.720731824089768 43.754669743971775"
+                                ],
+                                "Property": [
+                                    {
+                                        "Name": [
+                                            "Description1"
+                                        ],
+                                        "Value": [
+                                            "ORIGINAL PLAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Zone"
+                                        ],
+                                        "Value": [
+                                            "MER"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Acreage"
+                                        ],
+                                        "Value": [
+                                            "0.48"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Value": [
+                                            "IRREG"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Owner"
+                                        ],
+                                        "Value": [
+                                            "SHEB RIVERSIDE BOAT"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description2"
+                                        ],
+                                        "Value": [
+                                            "LOTS 8-9 & 10 LYING BETW."
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description3"
+                                        ],
+                                        "Value": [
+                                            "SHEB. RIVER & R.R. RIGHT OF"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Billing Address"
+                                        ],
+                                        "Value": [
+                                            "1228A WISCONSIN AVE"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Value": [
+                                            "20800"
+                                        ]
+                                    },
+                                    {
+                                        "Name": [
+                                            "Description4"
+                                        ],
+                                        "Value": [
+                                            "WAY BLK 111"
+                                        ]
+                                    }
+                                ],
+                                "SelectionKey": [
+                                    "\nuSEAAA=="
+                                ]
+                            }
+                        ],
+                        "LayerMetadata": [
+                            {
+                                "Property": [
+                                    {
+                                        "DisplayName": [
+                                            "Description1"
+                                        ],
+                                        "Name": [
+                                            "RLDESCR1"
+                                        ],
+                                        "Type": [
+                                            "9"
+                                        ]
+                                    },
+                                    {
+                                        "DisplayName": [
+                                            "Zone"
+                                        ],
+                                        "Name": [
+                                            "RTYPE"
+                                        ],
+                                        "Type": [
+                                            "9"
+                                        ]
+                                    },
+                                    {
+                                        "DisplayName": [
+                                            "Acreage"
+                                        ],
+                                        "Name": [
+                                            "RACRE"
+                                        ],
+                                        "Type": [
+                                            "9"
+                                        ]
+                                    },
+                                    {
+                                        "DisplayName": [
+                                            "Lot Dimensions"
+                                        ],
+                                        "Name": [
+                                            "RLOT"
+                                        ],
+                                        "Type": [
+                                            "9"
+                                        ]
+                                    },
+                                    {
+                                        "DisplayName": [
+                                            "Owner"
+                                        ],
+                                        "Name": [
+                                            "RNAME"
+                                        ],
+                                        "Type": [
+                                            "9"
+                                        ]
+                                    },
+                                    {
+                                        "DisplayName": [
+                                            "Description2"
+                                        ],
+                                        "Name": [
+                                            "RLDESCR2"
+                                        ],
+                                        "Type": [
+                                            "9"
+                                        ]
+                                    },
+                                    {
+                                        "DisplayName": [
+                                            "Description3"
+                                        ],
+                                        "Name": [
+                                            "RLDESCR3"
+                                        ],
+                                        "Type": [
+                                            "9"
+                                        ]
+                                    },
+                                    {
+                                        "DisplayName": [
+                                            "Billing Address"
+                                        ],
+                                        "Name": [
+                                            "RBILAD"
+                                        ],
+                                        "Type": [
+                                            "9"
+                                        ]
+                                    },
+                                    {
+                                        "DisplayName": [
+                                            "Lot Size (SqFt)"
+                                        ],
+                                        "Name": [
+                                            "RSQFT"
+                                        ],
+                                        "Type": [
+                                            "7"
+                                        ]
+                                    },
+                                    {
+                                        "DisplayName": [
+                                            "Description4"
+                                        ],
+                                        "Name": [
+                                            "RLDESCR4"
+                                        ],
+                                        "Type": [
+                                            "9"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "Tooltip": null
+    }
+}

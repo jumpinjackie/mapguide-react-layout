@@ -23,6 +23,7 @@ viewer/dist
 declarations
 webconfig.ini
 viewer.zip
+storybook.zip
 package
 webpack.json
 index_frame.html

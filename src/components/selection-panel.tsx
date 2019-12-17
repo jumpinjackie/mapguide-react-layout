@@ -3,11 +3,6 @@ import { SelectedFeatureSet, SelectedFeature, LayerMetadata, SelectedLayer, Feat
 import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
 import { tr as xlate, DEFAULT_LOCALE } from "../api/i18n";
 import { GenericEvent } from "../api/common";
-import {
-    SPRITE_CONTROL,
-    SPRITE_CONTROL_180,
-    SPRITE_ICON_ZOOMSELECT
-} from "../constants/assets";
 import { Callout, Intent, HTMLSelect } from '@blueprintjs/core';
 
 export interface ISelectedFeatureProps {
@@ -100,20 +95,20 @@ interface ISelectionPanel {
 function buildToolbarItems(selPanel: ISelectionPanel): IItem[] {
     return [
         {
-            iconClass: SPRITE_CONTROL_180,
+            bpIconName: "arrow-left",
             tooltip: xlate("SELECTION_PREV_FEATURE", selPanel.locale),
             enabled: () => selPanel.canGoPrev(),
             invoke: () => selPanel.prevFeature()
         },
         {
-            iconClass: SPRITE_CONTROL,
+            bpIconName: "arrow-right",
             tooltip: xlate("SELECTION_NEXT_FEATURE", selPanel.locale),
             enabled: () => selPanel.canGoNext(),
             invoke: () => selPanel.nextFeature()
         },
         { isSeparator: true },
         {
-            iconClass: SPRITE_ICON_ZOOMSELECT,
+            bpIconName: "path-search",
             tooltip: xlate("SELECTION_ZOOMTO_FEATURE", selPanel.locale),
             enabled: () => selPanel.canZoomSelectedFeature(),
             invoke: () => selPanel.zoomSelectedFeature()

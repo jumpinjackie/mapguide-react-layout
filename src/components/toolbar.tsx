@@ -5,8 +5,6 @@ import { ToolbarContext } from "./context";
 import { STR_EMPTY } from "../utils/string";
 import { ImageIcon } from "./icon";
 import {
-    SPRITE_ICON_MENUARROWUP,
-    SPRITE_ICON_MENUARROW,
     BlueprintSvgIconNames
 } from "../constants/assets";
 import * as Constants from "../constants";
@@ -48,7 +46,8 @@ function getIconElement(item: IItem, enabled: boolean, size: number): React.Reac
     if (item.iconClass || item.icon) {
         return <ImageIcon style={iconStyle} url={item.icon} spriteClass={item.iconClass} />
     } else if (item.bpIconName) {
-        return <Icon style={iconStyle} icon={item.bpIconName} iconSize={size * SVG_SIZE_RATIO} />
+        const { opacity } = iconStyle; //For SVG, we only care about opacity
+        return <Icon style={{ opacity }} icon={item.bpIconName} iconSize={size * SVG_SIZE_RATIO} />
     } else {
         return <></>;
     }
@@ -165,7 +164,6 @@ export const FlyoutMenuChildItem = (props: IFlyoutMenuChildItemProps) => {
     const selected = getSelected(item);
     const enabled = getEnabled(item);
     const tt = getTooltip(item);
-    const imgStyle = getIconStyle(enabled, height);
     const style = getMenuItemStyle(enabled, selected, height, isMouseOver);
     const iconEl = getIconElement(item, enabled, height);
     return <li className="noselect flyout-menu-child-item" title={tt} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick}>
@@ -175,10 +173,6 @@ export const FlyoutMenuChildItem = (props: IFlyoutMenuChildItemProps) => {
     </li>;
 }
 
-interface IToolbarContentContainerProps {
-    size: number;
-    vertical?: boolean;
-}
 
 
 interface IComponentFlyoutItemProps {
@@ -219,7 +213,6 @@ const ComponentFlyoutItem = (props: IComponentFlyoutItemProps) => {
     };
     const selected = getSelected(item);
     const enabled = getEnabled(item);
-    const imgStyle = getIconStyle(enabled, size);
     const style = getItemStyle(enabled, selected, size, isMouseOver, vertical);
     let label: any = item.label;
     if (vertical === true) {
@@ -271,7 +264,6 @@ const FlyoutMenuReferenceItem = (props: IFlyoutMenuReferenceItemProps) => {
     };
     const selected = getSelected(menu);
     const enabled = getEnabled(menu);
-    const imgStyle = getIconStyle(enabled, size);
     const style = getItemStyle(enabled, selected, size, isMouseOver, vertical);
     let label: any = menu.label;
     if (vertical === true) {
@@ -313,7 +305,6 @@ interface IToolbarButtonProps {
 
 const ToolbarButton = (props: IToolbarButtonProps) => {
     const { height, item, vertical, hideVerticalLabels } = props;
-    const toolbarCtx = React.useContext(ToolbarContext);
     const [isMouseOver, setIsMouseOver] = React.useState(false);
     const onMouseLeave = () => {
         setIsMouseOver(false);
@@ -332,7 +323,6 @@ const ToolbarButton = (props: IToolbarButtonProps) => {
     }
     const selected = getSelected(item);
     const enabled = getEnabled(item);
-    const imgStyle = getIconStyle(enabled, height);
     const style = getItemStyle(enabled, selected, height, isMouseOver, vertical);
     let ttip = null;
     if (typeof (item.tooltip) == 'function') {

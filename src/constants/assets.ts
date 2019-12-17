@@ -189,6 +189,7 @@ export type BlueprintSvgIconNames =
     "menu-open" |
     "multi-select" |
     "new-layer" |
+    "path-search" |
     "play" |
     "print" |
     "select" |

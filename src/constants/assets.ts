@@ -163,6 +163,7 @@ export const SPRITE_GLOBE_SHARE = "globe-share";
  * @since 0.13
  */
 export type BlueprintSvgIconNames =
+    "arrow-left" |
     "arrow-right" |
     "arrows-horizontal" |
     "application" |
@@ -178,6 +179,7 @@ export type BlueprintSvgIconNames =
     "error" |
     "folder-close" |
     "geosearch" |
+    "home" |
     "info-sign" |
     "issue" |
     "layer" |

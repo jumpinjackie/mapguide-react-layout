@@ -13,11 +13,6 @@ import * as TaskPaneActions from "../actions/taskpane";
 import { areUrlsSame, ensureParameters } from "../utils/url";
 import { tr } from "../api/i18n";
 import * as FlyoutActions from "../actions/flyout";
-import {
-    SPRITE_ICON_HOME,
-    SPRITE_BACK,
-    SPRITE_FORWARD
-} from "../constants/assets";
 import { NonIdealState } from '@blueprintjs/core';
 import { useActiveMapBranch, useViewerFlyouts, useTaskPaneInitialUrl, useTaskPaneLastUrlPushed, useTaskPaneNavigationIndex, useTaskPaneNavigationStack, useConfiguredCapabilities, useViewerLocale } from './hooks';
 
@@ -57,60 +52,37 @@ class TaskPaneContainerInner extends React.Component<TaskPaneProps, any> {
         super(props);
         const locale = this.getLocale();
         this.homeAction = {
-            iconClass: SPRITE_ICON_HOME,
+            bpIconName: "home",
             tooltip: tr("TT_GO_HOME", locale),
-            enabled: this.canGoHome.bind(this),
-            invoke: () => {
-                const { goHome } = this.props;
-                if (goHome) {
-                    goHome();
-                }
-            }
+            enabled: this.canGoHome,
+            invoke: () => this.props.goHome?.()
         };
         this.backAction = {
-            iconClass: SPRITE_BACK,
+            bpIconName: "arrow-left",
             tooltip: tr("TT_GO_BACK", locale),
-            enabled: this.canGoBack.bind(this),
-            invoke: () => {
-                const { goBack } = this.props;
-                if (goBack) {
-                    goBack();
-                }
-            }
+            enabled: this.canGoBack,
+            invoke: () => this.props.goBack?.()
         };
         this.forwardAction = {
-            iconClass: SPRITE_FORWARD,
+            bpIconName: "arrow-right",
             tooltip: tr("TT_GO_FORWARD", locale),
-            enabled: this.canGoForward.bind(this),
-            invoke: () => {
-                const { goForward } = this.props;
-                if (goForward) {
-                    goForward();
-                }
-            }
+            enabled: this.canGoForward,
+            invoke: () => this.props.goForward?.()
         };
     }
     private getLocale(): string {
         return this.props.locale;
     }
-    private onCloseFlyout = (id: string) => {
-        if (this.props.closeFlyout) {
-            this.props.closeFlyout(id);
-        }
-    }
-    private onOpenFlyout = (id: string, metrics: IDOMElementMetrics) => {
-        if (this.props.openFlyout) {
-            this.props.openFlyout(id, metrics);
-        }
-    }
+    private onCloseFlyout = (id: string) => this.props.closeFlyout?.(id);
+    private onOpenFlyout = (id: string, metrics: IDOMElementMetrics) => this.props.openFlyout?.(id, metrics);
     private onUrlLoaded = (url: string) => {
         const { navigationStack, navIndex, pushUrl } = this.props;
         const currentUrl = navigationStack[navIndex];
-        if (pushUrl && !areUrlsSame(currentUrl, url)) {
-            pushUrl(url);
+        if (!areUrlsSame(currentUrl, url)) {
+            pushUrl?.(url);
         }
     }
-    private canGoHome(): boolean {
+    private canGoHome = (): boolean => {
         const { initialUrl, navigationStack, navIndex, map } = this.props;
         if (initialUrl) { //An initial URL was set
             const initUrl = map && map.runtimeMap && initialUrl
@@ -121,11 +93,11 @@ class TaskPaneContainerInner extends React.Component<TaskPaneProps, any> {
         }
         return false;
     }
-    private canGoBack(): boolean {
+    private canGoBack = (): boolean => {
         const { navIndex } = this.props;
         return navIndex > 0;
     }
-    private canGoForward(): boolean {
+    private canGoForward = (): boolean => {
         const { navigationStack, navIndex } = this.props;
         return navIndex < navigationStack.length - 1;
     }

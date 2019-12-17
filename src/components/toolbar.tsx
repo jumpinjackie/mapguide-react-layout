@@ -6,12 +6,18 @@ import { STR_EMPTY } from "../utils/string";
 import { ImageIcon } from "./icon";
 import {
     SPRITE_ICON_MENUARROWUP,
-    SPRITE_ICON_MENUARROW
+    SPRITE_ICON_MENUARROW,
+    BlueprintSvgIconNames
 } from "../constants/assets";
 import * as Constants from "../constants";
+import { Icon } from '@blueprintjs/core';
 
 export const DEFAULT_TOOLBAR_SIZE = 29;
 export const TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";
+
+// Size is based on the default toolbar height of 29 (with base image icon size of 16x16)
+// This ratio will help "scale" SVG icons to match
+const SVG_SIZE_RATIO = 16 / DEFAULT_TOOLBAR_SIZE;
 
 function getSelected(item: IItem): boolean {
     const sel = item.selected;
@@ -37,6 +43,21 @@ export function getEnabled(item: IItem): boolean {
     return true;
 }
 
+function getIconElement(item: IItem, enabled: boolean, size: number): React.ReactNode {
+    const iconStyle = getIconStyle(enabled, size);
+    if (item.iconClass || item.icon) {
+        return <ImageIcon style={iconStyle} url={item.icon} spriteClass={item.iconClass} />
+    } else if (item.bpIconName) {
+        return <Icon style={iconStyle} icon={item.bpIconName} iconSize={size * SVG_SIZE_RATIO} />
+    } else {
+        return <></>;
+    }
+}
+
+function getFlyoutIconElement(isFlownOut: boolean | undefined, size: number) {
+    return <Icon icon={isFlownOut ? "chevron-up" : "chevron-down"} iconSize={size * SVG_SIZE_RATIO} />
+}
+
 function getTooltip(item: IItem): string {
     const tt = item.tooltip;
     if (tt != null) {
@@ -55,7 +76,7 @@ export function getIconStyle(enabled: boolean, height: number): React.CSSPropert
         lineHeight: height
     };
     if (!enabled) {
-        imgStyle.opacity = 0.4;
+        imgStyle.opacity = 0.2;
     }
     return imgStyle;
 }
@@ -146,9 +167,10 @@ export const FlyoutMenuChildItem = (props: IFlyoutMenuChildItemProps) => {
     const tt = getTooltip(item);
     const imgStyle = getIconStyle(enabled, height);
     const style = getMenuItemStyle(enabled, selected, height, isMouseOver);
+    const iconEl = getIconElement(item, enabled, height);
     return <li className="noselect flyout-menu-child-item" title={tt} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick}>
         <div style={style}>
-            <ImageIcon style={imgStyle} url={item.icon} /> {item.label}
+            {iconEl} {item.label}
         </div>
     </li>;
 }
@@ -204,9 +226,10 @@ const ComponentFlyoutItem = (props: IComponentFlyoutItemProps) => {
         label = <div className="rotated-text"><span className="rotated-text__inner rotated-text-ccw">{item.label}</span></div>;
     }
     const ttip = getTooltip(item);
+    const iconEl = getIconElement(item, enabled, size);
     return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${isMouseOver ? "mouse-over" : ""}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} style={style} title={ttip}>
         <div data-flyout-id={`flyout-${item.flyoutId}`}>
-            <ImageIcon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {label} <ImageIcon style={imgStyle} spriteClass={isFlownOut ? SPRITE_ICON_MENUARROWUP : SPRITE_ICON_MENUARROW} />
+            {iconEl} {label} {getFlyoutIconElement(isFlownOut, size)}
         </div>
     </div>;
 };
@@ -259,9 +282,10 @@ const FlyoutMenuReferenceItem = (props: IFlyoutMenuReferenceItemProps) => {
         align = (vertical === true) ? "right bottom" : "bottom right";
     }
     const ttip = getTooltip(menu);
+    const iconEl = getIconElement(menu, enabled, size);
     return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${isMouseOver ? "mouse-over" : ""}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} style={style} title={ttip}>
         <div data-flyout-id={`flyout-${menu.flyoutId}`}>
-            <ImageIcon style={imgStyle} url={menu.icon} spriteClass={menu.iconClass} /> {label} <ImageIcon style={imgStyle} spriteClass={isFlownOut ? SPRITE_ICON_MENUARROWUP : SPRITE_ICON_MENUARROW} />
+            {iconEl} {label} {getFlyoutIconElement(isFlownOut, size)}
         </div>
     </div>;
 };
@@ -316,8 +340,9 @@ const ToolbarButton = (props: IToolbarButtonProps) => {
     } else {
         ttip = item.tooltip;
     }
+    const iconEl = getIconElement(item, enabled, height);
     return <div className={`noselect toolbar-btn ${selected ? "selected-item" : ""} ${(isMouseOver && enabled) ? "mouse-over" : ""}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} style={style} title={ttip} onClick={onClick}>
-        <ImageIcon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {(vertical == true && hideVerticalLabels == true) ? null : item.label}
+        {iconEl} {(vertical == true && hideVerticalLabels == true) ? null : item.label}
     </div>;
 }
 
@@ -326,6 +351,7 @@ export interface IItem {
     tooltip?: string | (() => string);
     icon?: string;
     iconClass?: string;
+    bpIconName?: BlueprintSvgIconNames;
     invoke?: () => void;
     enabled?: boolean | (() => boolean);
     selected?: boolean | (() => boolean);

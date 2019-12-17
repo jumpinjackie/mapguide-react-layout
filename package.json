@@ -100,7 +100,7 @@
     "copyfiles": "2.1.1",
     "coveralls": "3.0.9",
     "cross-env": "6.0.3",
-    "css-loader": "3.3.2",
+    "css-loader": "3.4.0",
     "enzyme": "3.10.0",
     "enzyme-adapter-react-16": "1.15.1",
     "file-loader": "5.0.2",

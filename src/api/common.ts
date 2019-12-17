@@ -953,7 +953,7 @@ export interface IModalParameters {
 /**
  * The default modal dialog size
  */
-export const DEFAULT_MODAL_SIZE: [number, number] = [ 300, 500 ];
+export const DEFAULT_MODAL_SIZE: [number, number] = [ 350, 500 ];
 
 /**
  * Base modal display options

@@ -131,7 +131,8 @@
   },
   "resolutions": {
     "handlebars": "4.5.3",
-    "terser-webpack-plugin": "1.4.2"
+    "terser-webpack-plugin": "1.4.2",
+    "file-loader": "5.0.2"
   },
   "greenkeeper": {
     "ignore": [

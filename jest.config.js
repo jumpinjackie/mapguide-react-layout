@@ -29,6 +29,7 @@ module.exports = {
         "<rootDir>/node_modules/"
     ],
     globals: {
-        "__DEV__": true
+        "__DEV__": true,
+        "__COMMITHASH__": "abcd1234"
     }
 };

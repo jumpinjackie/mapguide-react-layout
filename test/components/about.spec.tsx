@@ -12,7 +12,7 @@ describe("components/about", () => {
     it("renders a <hr>", () => {
         const wrapper = shallow(<About />);
         const hr = wrapper.find("hr");
-        expect(hr).toHaveLength(1);
+        expect(hr).toHaveLength(2);
     });
     it("renders 3 <a> links", () => {
         const wrapper = shallow(<About />);

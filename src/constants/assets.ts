@@ -157,3 +157,41 @@ export const SPRITE_SELECT_CENTRE = "select-centre";
  * @since 0.11
  */
 export const SPRITE_GLOBE_SHARE = "globe-share";
+
+/**
+ * Blueprint SVG icon names used by this viewer
+ * @since 0.13
+ */
+export type BlueprintSvgIconNames =
+    "arrow-right" |
+    "arrows-horizontal" |
+    "application" |
+    "caret-down" |
+    "caret-up" |
+    "chevron-down" |
+    "chevron-right" |
+    "chevron-up" |
+    "cross" |
+    "delete" |
+    "disable" |
+    "double-caret-vertical" |
+    "error" |
+    "folder-close" |
+    "geosearch" |
+    "info-sign" |
+    "issue" |
+    "layer" |
+    "layers" |
+    "media" |
+    "menu-closed" |
+    "menu-open" |
+    "multi-select" |
+    "new-layer" |
+    "play" |
+    "print" |
+    "select" |
+    "small-cross" |
+    "stop" |
+    "tag" |
+    "th" |
+    "warning-sign";

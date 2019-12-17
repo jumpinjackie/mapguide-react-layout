@@ -7,20 +7,18 @@ import { isLayer } from "../utils/type-guards";
 import { Icon, ImageIcon } from "./icon";
 import { Card, Icon as BpIcon } from "@blueprintjs/core";
 import { scaleRangeBetween } from "../utils/number";
-/*
-import {
-    SPRITE_LEGEND_LAYER,
-    SPRITE_ICON_SELECT,
-    SPRITE_LC_UNSELECT,
-    SPRITE_LEGEND_THEME,
-    SPRITE_LEGEND_RASTER,
-    SPRITE_LEGEND_TOGGLE,
-    SPRITE_LEGEND_TOGGLE_EXPAND,
-    SPRITE_FOLDER_HORIZONTAL
-} from "../constants/assets";
-*/
 import { tr } from "../api/i18n";
 import * as Constants from "../constants";
+import { BlueprintSvgIconNames } from '../constants/assets';
+
+const ICON_LEGEND_LAYER: BlueprintSvgIconNames = "layer";
+const ICON_SELECT: BlueprintSvgIconNames = "select";
+const ICON_LC_UNSELECT: BlueprintSvgIconNames = "disable";
+const ICON_LEGEND_THEME: BlueprintSvgIconNames = "multi-select";
+const ICON_LEGEND_TOGGLE: BlueprintSvgIconNames = "chevron-down";
+const ICON_LEGEND_TOGGLE_EXPAND: BlueprintSvgIconNames = "chevron-right";
+const ICON_LEGEND_RASTER: BlueprintSvgIconNames = "media";
+const ICON_FOLDER_HORIZONTAL: BlueprintSvgIconNames = "folder-close";
 
 const UL_LIST_STYLE = (baseSize: number) => ({ listStyle: "none", paddingLeft: baseSize + 4, marginTop: 2, marginBottom: 2 });
 const LI_LIST_STYLE = { listStyle: "none", marginTop: 2, marginBottom: 2 };
@@ -135,16 +133,15 @@ export const LayerNode = (props: ILayerNodeProps) => {
 
     let text = label;
     let icon = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE}>
-        {bs => <BpIcon icon="layer" iconSize={bs} />}
-    </Icon> //spriteClass={SPRITE_LEGEND_LAYER} />;
+        {bs => <BpIcon icon={ICON_LEGEND_LAYER} iconSize={bs} />}
+    </Icon>;
     let selectable: JSX.Element | undefined;
     if (layer.Selectable === true) {
         //NOTE: As we've intercepted the BP icons package, we've re-appropriated the "disable" icon for
         //disabling selection
         selectable = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE} onClick={onToggleSelectability}>
-            {bs => <BpIcon icon={getLayerSelectability(layer.ObjectId) ? "select" : "disable"} iconSize={bs} />}
+            {bs => <BpIcon icon={getLayerSelectability(layer.ObjectId) ? ICON_SELECT : ICON_LC_UNSELECT} iconSize={bs} />}
         </Icon>;
-        //spriteClass={getLayerSelectability(layer.ObjectId) ? SPRITE_ICON_SELECT : SPRITE_LC_UNSELECT} />;
     }
     let chkbox: JSX.Element | undefined;
     if (layer.Type == 1) { //Dynamic
@@ -172,8 +169,8 @@ export const LayerNode = (props: ILayerNodeProps) => {
                 }
                 if (isExpanded && totalRuleCount > 1) {
                     icon = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE}>
-                        {bs => <BpIcon icon="multi-select" iconSize={bs} />}
-                    </Icon>; //spriteClass={SPRITE_LEGEND_THEME} />;
+                        {bs => <BpIcon icon={ICON_LEGEND_THEME} iconSize={bs} />}
+                    </Icon>;
 
                     for (let fi = 0; fi < scaleRange.FeatureStyle.length; fi++) {
                         const fts = scaleRange.FeatureStyle[fi];
@@ -197,8 +194,8 @@ export const LayerNode = (props: ILayerNodeProps) => {
                 } else { //Collapsed
                     if (totalRuleCount > 1) {
                         icon = <Icon style={ROW_ITEM_ELEMENT_STYLE} baseSize={legendCtx.getBaseIconSize()}>
-                            {bs => <BpIcon icon="multi-select" iconSize={bs} />}
-                        </Icon>; //spriteClass={SPRITE_LEGEND_THEME} />;
+                            {bs => <BpIcon icon={ICON_LEGEND_THEME} iconSize={bs} />}
+                        </Icon>;
                     } else {
                         const uri = getIconUri(iconMimeType, scaleRange.FeatureStyle[0].Rule[0].Icon);
                         if (uri) {
@@ -214,16 +211,16 @@ export const LayerNode = (props: ILayerNodeProps) => {
                 let expanded: JSX.Element;
                 if (totalRuleCount > 1) {
                     expanded = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE} onClick={onToggleExpansion}>
-                        {bs => <BpIcon icon={isExpanded ? "chevron-down" : "chevron-right"} iconSize={bs} />}
-                    </Icon>;// spriteClass={isExpanded ? SPRITE_LEGEND_TOGGLE : SPRITE_LEGEND_TOGGLE_EXPAND} />;
+                        {bs => <BpIcon icon={isExpanded ? ICON_LEGEND_TOGGLE : ICON_LEGEND_TOGGLE_EXPAND} iconSize={bs} />}
+                    </Icon>;
                 } else {
                     expanded = <EmptyNode baseSize={legendCtx.getBaseIconSize()} />;
                 }
                 return <li title={tooltip} style={nodeStyle} className={nodeClassName}>{expanded} {chkbox} {selectable} {icon} <LegendLabel baseSize={legendCtx.getBaseIconSize()} text={text} /> {body}</li>;
             } else { //This is generally a raster
                 icon = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE}>
-                    {bs => <BpIcon icon="media" iconSize={bs} />}
-                </Icon>; // spriteClass={SPRITE_LEGEND_RASTER} />;
+                    {bs => <BpIcon icon={ICON_LEGEND_RASTER} iconSize={bs} />}
+                </Icon>;
             }
         }
     }
@@ -256,12 +253,12 @@ export const GroupNode = (props: IGroupNodeProps) => {
     const currentScale = legendCtx.getCurrentScale();
     const tree = legendCtx.getTree();
     const icon = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE}>
-        {bs => <BpIcon icon="folder-close" iconSize={bs} />}
-    </Icon>; //spriteClass={SPRITE_FOLDER_HORIZONTAL} />;
+        {bs => <BpIcon icon={ICON_FOLDER_HORIZONTAL} iconSize={bs} />}
+    </Icon>;
     const isExpanded = getExpanded();
     const expanded = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE} onClick={onToggleExpansion}>
-        {bs => <BpIcon icon={isExpanded ? "chevron-down" : "chevron-right"} iconSize={bs} />}
-    </Icon>; //spriteClass={isExpanded ? SPRITE_LEGEND_TOGGLE : SPRITE_LEGEND_TOGGLE_EXPAND} />;
+        {bs => <BpIcon icon={isExpanded ? ICON_LEGEND_TOGGLE : ICON_LEGEND_TOGGLE_EXPAND} iconSize={bs} />}
+    </Icon>;
     const chkbox = <input type='checkbox' className='group-checkbox' style={CHK_STYLE(legendCtx.getBaseIconSize())} value={group.ObjectId} onChange={onVisibilityChanged} checked={(groupVisible)} />;
     const tooltip = group.LegendLabel;
     const nodeClassName = "group-node";

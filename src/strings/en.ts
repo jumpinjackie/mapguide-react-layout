@@ -183,7 +183,8 @@ const STRINGS_EN: ILocalizedMessages = {
     "SHARE_LINK_INCLUDE_SESSION": "Include Session ID",
     "WINDOW_RESIZING": "Resizing Window",
     "WINDOW_MOVING": "Moving Window",
-    "OTHER_THEME_RULE_COUNT": "... ({count} other theme rules)"
+    "OTHER_THEME_RULE_COUNT": "... ({count} other theme rules)",
+    "LEGEND_FILTER_LAYERS": "Filter/search for layers or groups"
 };
 
 export default STRINGS_EN;

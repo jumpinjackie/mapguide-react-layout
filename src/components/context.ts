@@ -34,6 +34,8 @@ export const AppContext = React.createContext<IApplicationContext>({
 });
 
 export interface ILegendContext {
+    isFiltering(): boolean;
+    getFilterText(): string;
     getLocale(): string;
     getBaseIconSize(): number;
     getIconMimeType(): string | undefined;
@@ -53,6 +55,8 @@ export interface ILegendContext {
 }
 
 export const LegendContext = React.createContext<ILegendContext>({
+    isFiltering: () => false,
+    getFilterText: () => STR_EMPTY,
     getLocale: () => DEFAULT_LOCALE,
     getBaseIconSize: () => 0,
     getIconMimeType: () => STR_EMPTY,

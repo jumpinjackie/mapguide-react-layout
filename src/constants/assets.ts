@@ -192,6 +192,7 @@ export type BlueprintSvgIconNames =
     "path-search" |
     "play" |
     "print" |
+    "search" |
     "select" |
     "small-cross" |
     "stop" |

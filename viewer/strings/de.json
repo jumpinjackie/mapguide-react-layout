@@ -140,5 +140,6 @@
     "SHARE_LINK_INCLUDE_SESSION": "Sitzungs-ID einschließen",
     "WINDOW_RESIZING": "Fenstergröße ändern",
     "WINDOW_MOVING": "bewegliches Fenster",
-    "OTHER_THEME_RULE_COUNT": "... ({count} andere Themenregeln)"
+    "OTHER_THEME_RULE_COUNT": "... ({count} andere Themenregeln)",
+    "LEGEND_FILTER_LAYERS": "Filter / Suche nach Ebenen oder Gruppen"
 }

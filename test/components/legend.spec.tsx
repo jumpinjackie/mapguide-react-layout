@@ -7,6 +7,8 @@ import { ILegendContext, LegendContext } from "../../src/components/context";
 // Mocks the ILegendContext needed by LayerNode and other legend sub-components
 function mockContext(): ILegendContext {
     return {
+        isFiltering: () => false,
+        getFilterText: () => "",
         getLocale: () => "en",
         getBaseIconSize: () => 0,
         getIconMimeType: () => "image/png",

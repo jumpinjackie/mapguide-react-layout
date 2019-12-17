@@ -9,6 +9,10 @@
     content: "";
 }
 
+.legend-label-highlight-text {
+    background-color: yellow;
+}
+
 .invalidated-task-pane {
     opacity: 0.6; /* Real browsers */
     filter: alpha(opacity = 60); /* IE */

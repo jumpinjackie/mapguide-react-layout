@@ -191,4 +191,5 @@ export interface ILocalizedMessages {
     WINDOW_RESIZING: string;
     WINDOW_MOVING: string;
     OTHER_THEME_RULE_COUNT: string;
+    LEGEND_FILTER_LAYERS: string;
 }

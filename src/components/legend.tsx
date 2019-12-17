@@ -5,11 +5,12 @@ import { LegendContext, ILegendContext } from "./context";
 import { BaseLayerSwitcher } from "./base-layer-switcher";
 import { isLayer } from "../utils/type-guards";
 import { Icon, ImageIcon } from "./icon";
-import { Card, Icon as BpIcon } from "@blueprintjs/core";
+import { Card, Icon as BpIcon, Button, InputGroup } from "@blueprintjs/core";
 import { scaleRangeBetween } from "../utils/number";
 import { tr } from "../api/i18n";
 import * as Constants from "../constants";
 import { BlueprintSvgIconNames } from '../constants/assets';
+import { strIsNullOrEmpty } from '../utils';
 
 const ICON_LEGEND_LAYER: BlueprintSvgIconNames = "layer";
 const ICON_SELECT: BlueprintSvgIconNames = "select";
@@ -19,6 +20,8 @@ const ICON_LEGEND_TOGGLE: BlueprintSvgIconNames = "chevron-down";
 const ICON_LEGEND_TOGGLE_EXPAND: BlueprintSvgIconNames = "chevron-right";
 const ICON_LEGEND_RASTER: BlueprintSvgIconNames = "media";
 const ICON_FOLDER_HORIZONTAL: BlueprintSvgIconNames = "folder-close";
+const ICON_CLEAR: BlueprintSvgIconNames = "cross";
+const ICON_SEARCH: BlueprintSvgIconNames = "search";
 
 const UL_LIST_STYLE = (baseSize: number) => ({ listStyle: "none", paddingLeft: baseSize + 4, marginTop: 2, marginBottom: 2 });
 const LI_LIST_STYLE = { listStyle: "none", marginTop: 2, marginBottom: 2 };
@@ -34,7 +37,22 @@ interface ILegendLabelProps {
 }
 
 const LegendLabel = (props: ILegendLabelProps) => {
-    return <span style={{ lineHeight: `${props.baseSize}px`, verticalAlign: "middle" }}>{props.text}</span>;
+    const legendCtx = React.useContext(LegendContext);
+    let inner;
+    const ft = legendCtx.getFilterText()?.toLocaleLowerCase();
+    if (legendCtx.isFiltering() && !strIsNullOrEmpty(ft)) {
+        const idx = props.text.toLocaleLowerCase().indexOf(ft);
+        if (idx >= 0) {
+            inner = props.text.substring(0, idx);
+            inner += `<span class='legend-label-highlight-text'>${props.text.substring(idx, idx + ft.length)}</span>`;
+            inner += props.text.substring(idx + ft.length, props.text.length);
+        } else {
+            inner = props.text;
+        }
+    } else {
+        inner = props.text;
+    }
+    return <span className="legend-label" style={{ lineHeight: `${props.baseSize}px`, verticalAlign: "middle" }} dangerouslySetInnerHTML={{ __html: inner }} />;
 };
 
 /**
@@ -315,12 +333,47 @@ function isGroupVisibleAtScale(group: MapGroup, tree: any, scale: number): boole
     return false;
 }
 
+interface TreeState {
+    root: (MapLayer | MapGroup)[],
+    groupChildren: {[objectId: string]: (MapLayer | MapGroup)[]}
+}
+
+function itemTextFilter(items: (MapLayer | MapGroup)[], text: string) {
+    const filtered = items.map(i => {
+        if (isLayer(i)) {
+            if (i.LegendLabel.toLocaleLowerCase().indexOf(text) < 0) {
+                return null;
+            }
+            return i;
+        } else {
+            return i;
+        }
+    }).filter(i => i != null) as (MapLayer | MapGroup)[];
+    return filtered;
+}
+
+function buildFilteredTree(tree: TreeState, text: string): TreeState {
+    const filtered: TreeState = {
+        root: itemTextFilter(tree.root, text),
+        groupChildren: {}
+    };
+    const keys = Object.keys(tree.groupChildren);
+    for (const oid of keys) {
+        filtered.groupChildren[oid] = itemTextFilter(tree.groupChildren[oid], text);
+    }
+    return filtered;
+}
+
 function setupTree(map: RuntimeMap) {
-    const state: any = {
+    const state = {
         Layers: map.Layer,
         Groups: map.Group,
-        LayerMap: {},
-        GroupMap: {}
+        LayerMap: {} as {[objectId: string]: MapLayer},
+        GroupMap: {} as {[objectId: string]: MapGroup},
+        tree: {
+            root: [] as (MapLayer | MapGroup)[],
+            groupChildren: {} as {[objectId: string]: (MapLayer | MapGroup)[]}
+        } as TreeState
     };
     if (map.Layer) {
         for (const layer of map.Layer) {
@@ -333,11 +386,7 @@ function setupTree(map: RuntimeMap) {
         }
     }
     const { Layers, Groups, LayerMap, GroupMap } = state;
-    const tree: any = {
-        root: [],
-        groupChildren: {}
-    };
-    const { root, groupChildren } = tree;
+    const { root, groupChildren } = state.tree;
     if (Groups) {
         const remainingGroups: any = {};
         //1st pass, un-parented groups
@@ -391,7 +440,6 @@ function setupTree(map: RuntimeMap) {
             }
         }
     }
-    state.tree = tree;
     return state;
 }
 
@@ -404,13 +452,34 @@ const DEFAULT_ICON_SIZE = 16;
  */
 export const Legend = (props: ILegendProps) => {
     const [state, setState] = React.useState(setupTree(props.map));
-    const { tree } = state;
+    const { tree: _tree } = state;
     const { currentScale, externalBaseLayers, onBaseLayerChanged, maxHeight } = props;
-    const rootItems: (MapLayer | MapGroup)[] = tree.root;
+    const [isFiltering, setIsFiltering] = React.useState(false);
+    const [filterText, setFilterText] = React.useState("");
+    const [filteredTree, setFilteredTree] = React.useState<TreeState | undefined>(undefined);
     React.useEffect(() => {
+        onExitFilterMode();
         const tree: any = setupTree(props.map);
         setState(tree);
     }, [props.map]);
+    const onEnterFilterMode = () => {
+        setIsFiltering(true);
+        setFilterText("");
+        setFilteredTree(_tree);
+    };
+    const onExitFilterMode = () => {
+        setIsFiltering(false);
+        setFilterText("");
+        setFilteredTree(undefined);
+    };
+    const onFilterUpdate = (text: string) => {
+        setFilterText(text);
+        if (strIsNullOrEmpty(text)) {
+            setFilteredTree(_tree);
+        } else {
+            setFilteredTree(buildFilteredTree(_tree, text.toLocaleLowerCase()));
+        }
+    }
     const getLayerSelectability = (layerId: string): boolean => {
         const items: any = props.overrideSelectableLayers || {};
         return items[layerId];
@@ -469,12 +538,14 @@ export const Legend = (props: ILegendProps) => {
         rootStyle.maxHeight = maxHeight;
     }
     const providerImpl: ILegendContext = {
+        isFiltering: () => isFiltering,
+        getFilterText: () => filterText,
         getLocale: () => props.locale,
         getBaseIconSize: () => props.baseIconSize ?? DEFAULT_ICON_SIZE,
         getIconMimeType: getIconMimeType,
         getChildren: getChildren,
         getCurrentScale: () => props.currentScale,
-        getTree: () => state.tree,
+        getTree: () => isFiltering && filteredTree ? filteredTree : state.tree,
         getGroupVisibility: getGroupVisibility,
         getLayerVisibility: getLayerVisibility,
         setGroupVisibility: setGroupVisibility,
@@ -486,6 +557,8 @@ export const Legend = (props: ILegendProps) => {
         getLayerExpanded: getLayerExpanded,
         setLayerExpanded: setLayerExpanded
     };
+    const daTree = providerImpl.getTree();
+    const rootItems: (MapLayer | MapGroup)[] = daTree.root;
     return <LegendContext.Provider value={providerImpl}>
         <div style={rootStyle}>
             {(() => {
@@ -498,6 +571,19 @@ export const Legend = (props: ILegendProps) => {
                     </Card>;
                 }
             })()}
+            {(() => {
+                if (isFiltering) {
+                    return <InputGroup round
+                        autoFocus
+                        leftIcon={ICON_SEARCH}
+                        placeholder={tr("LEGEND_FILTER_LAYERS", props.locale)}
+                        onChange={(e: any) => onFilterUpdate(e.target.value)}
+                        rightElement={<Button minimal icon={ICON_CLEAR}
+                        onClick={() => onExitFilterMode()} />} />;
+                } else {
+                    return <Button onClick={() => onEnterFilterMode()} title={tr("LEGEND_FILTER_LAYERS", props.locale)} icon={ICON_SEARCH} style={{ position: "absolute", right: 0, top: 0 }} />
+                }
+            })()}
             <ul style={UL_LIST_STYLE(props.baseIconSize ?? DEFAULT_ICON_SIZE)}>
                 {rootItems.map(item => {
                     if (item.DisplayInLegend === true) {
@@ -507,9 +593,18 @@ export const Legend = (props: ILegendProps) => {
                                 return <LayerNode key={item.ObjectId} layer={item} />;
                             }
                         } else {
-                            if (isGroupVisibleAtScale(item, tree, currentScale)) {
+                            const bGroupVisAtScale = isGroupVisibleAtScale(item, daTree, currentScale);
+                            let bGroupVisFilter = false;
+                            if (providerImpl.isFiltering()) {
+                                const bInFilter = item.LegendLabel.toLocaleLowerCase().indexOf(providerImpl.getFilterText().toLocaleLowerCase()) >= 0;
+                                //console.log(`'${item.LegendLabel}' - '${providerImpl.getFilterText()}': ${bInFilter ? "true" : "false"}`);
+                                if (bInFilter) {
+                                    bGroupVisFilter = true;
+                                }
+                            }
+                            if (bGroupVisAtScale || bGroupVisFilter) {
                                 //console.debug(`isGroupVisibleAtScale(${item.Name}, ${currentScale}) = true`);
-                                const children = tree.groupChildren[item.ObjectId] || [];
+                                const children = daTree.groupChildren[item.ObjectId] || [];
                                 return <GroupNode key={item.ObjectId} group={item} childItems={children} />;
                             }
                         }

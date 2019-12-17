@@ -10,6 +10,9 @@
 
 // Stamped by webpack
 declare const __DEV__: boolean;
+declare const __VERSION__: string;
+declare const __COMMITHASH__: string;
+declare const __BRANCH__: string;
 
 // To allow file imports (that webpack will transform)
 declare module "*.png";

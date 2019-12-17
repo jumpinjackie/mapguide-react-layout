@@ -17,8 +17,8 @@ describe("components/toolbar", () => {
             expect((li.at(0).props() as any).title).toBe("Bar");
             const div = wrapper.find("div");
             expect(div).toHaveLength(1);
-            const img = wrapper.find("noscript"); //Because we have no icon settings
-            expect(img).toHaveLength(1);
+            const img = wrapper.find("img");
+            expect(img).toHaveLength(0); //Because we have no icon settings
             expect(div.text().trim()).toBe("Foo");
         });
         it("renders item w/ dynamic tooltip", () => {

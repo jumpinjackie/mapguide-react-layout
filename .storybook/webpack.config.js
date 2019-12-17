@@ -1,16 +1,12 @@
 const path = require("path");
 const webpack = require('webpack');
-const GitRevisionPlugin = require('git-revision-webpack-plugin');
-
-const gitRevisionPlugin = new GitRevisionPlugin();
 
 module.exports = ({ config }) => {
-    config.plugins.push(gitRevisionPlugin);
     config.plugins.push(new webpack.DefinePlugin({
         __DEV__: process.env.BUILD_MODE !== 'production',
-        __VERSION__: JSON.stringify(gitRevisionPlugin.version()),
-        __COMMITHASH__: JSON.stringify(gitRevisionPlugin.commithash()),
-        __BRANCH__: JSON.stringify(gitRevisionPlugin.branch())
+        __VERSION__: JSON.stringify(process.env.APPVEYOR_BUILD_VERSION || ""),
+        __COMMITHASH__: JSON.stringify(process.env.APPVEYOR_REPO_COMMIT || ""),
+        __BRANCH__: JSON.stringify(process.env.APPVEYOR_REPO_BRANCH  || "master")
     }));
     config.module.rules.push({
         test: /\.(ts|tsx)$/,

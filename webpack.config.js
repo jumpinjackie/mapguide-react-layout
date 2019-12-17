@@ -5,7 +5,6 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const GitRevisionPlugin = require('git-revision-webpack-plugin');
 //const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const baseAppEntries = [
@@ -17,18 +16,16 @@ const devAppEntries = [
 ];
 
 const appEntries = baseAppEntries.concat(process.env.BUILD_MODE === 'development' ? devAppEntries : []);
-const gitRevisionPlugin = new GitRevisionPlugin();
 
 const basePlugins = [
-    gitRevisionPlugin,
     new webpack.ProvidePlugin({
         "proj4": "proj4"
     }),
     new webpack.DefinePlugin({
         __DEV__: process.env.BUILD_MODE !== 'production',
-        __VERSION__: JSON.stringify(gitRevisionPlugin.version()),
-        __COMMITHASH__: JSON.stringify(gitRevisionPlugin.commithash()),
-        __BRANCH__: JSON.stringify(gitRevisionPlugin.branch())
+        __VERSION__: JSON.stringify(process.env.APPVEYOR_BUILD_VERSION || ""),
+        __COMMITHASH__: JSON.stringify(process.env.APPVEYOR_REPO_COMMIT || ""),
+        __BRANCH__: JSON.stringify(process.env.APPVEYOR_REPO_BRANCH  || "master")
     }),
     new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output

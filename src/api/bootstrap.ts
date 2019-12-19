@@ -1,7 +1,3 @@
-import proj4 from "proj4";
-import { configureUrlQuery } from 'react-url-query';
-const createHistory = require("history").createBrowserHistory;
-
 /**
  * Sets up key dependencies needed by the viewer:
  *
@@ -15,6 +11,4 @@ const createHistory = require("history").createBrowserHistory;
  */
 export function bootstrap() {
     require('whatwg-fetch');
-    const history = createHistory();
-    configureUrlQuery({ history });
 }

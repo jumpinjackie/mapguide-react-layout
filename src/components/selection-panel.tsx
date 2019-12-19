@@ -59,6 +59,7 @@ const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
 export interface ISelectionPanelProps {
     locale?: string;
     selection: SelectedFeatureSet;
+    onResolveLayerLabel?: (layerId: string, layerName: string) => string | undefined;
     onRequestZoomToFeature: (feat: SelectedFeature) => void;
     onShowSelectedFeature: (layerId: string, selectionKey: string) => void;
     maxHeight?: number;
@@ -248,7 +249,8 @@ export const SelectionPanel = (props: ISelectionPanelProps) => {
                     <div className="bp3-select selection-panel-layer-selector">
                         <HTMLSelect value={selectedLayerIndex} style={LAYER_COMBO_STYLE} onChange={onSelectedLayerChanged}>
                             {selection.SelectedLayer.map((layer: SelectedLayer, index: number) => {
-                                return <option key={`selected-layer-${layer["@id"]}`} value={`${index}`}>{layer["@name"]}</option>
+                                const label = props?.onResolveLayerLabel?.(layer["@id"], layer["@name"]) ?? layer["@name"];
+                                return <option key={`selected-layer-${layer["@id"]}`} value={`${index}`}>{label}</option>
                             })}
                         </HTMLSelect>
                     </div>

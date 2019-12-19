@@ -14,7 +14,7 @@ import {
 } from "../api/common";
 import { Callout, Intent } from '@blueprintjs/core';
 import { AppContext } from '../components/context';
-import { useViewerLocale, useActiveMapSelectionSet, useActiveMapName } from './hooks';
+import { useViewerLocale, useActiveMapSelectionSet, useActiveMapName, useActiveMapState } from './hooks';
 
 export interface ISelectionPanelContainerProps {
     maxHeight?: number;
@@ -24,6 +24,7 @@ export interface ISelectionPanelContainerProps {
 const SelectionPanelContainer = (props: ISelectionPanelContainerProps) => {
     const { maxHeight, selectedFeatureRenderer } = props;
     const locale = useViewerLocale();
+    const map = useActiveMapState();
     const selection = useActiveMapSelectionSet();
     const dispatch = useDispatch();
     const activeMapName = useActiveMapName();
@@ -37,14 +38,21 @@ const SelectionPanelContainer = (props: ISelectionPanelContainerProps) => {
             const view = viewer.getViewForExtent(bbox);
             setCurrentView(view);
         }
-    }
+    };
+    const resolveLayerLabel = (layerId: string, _: string) => {
+        const layer = map?.Layer?.filter?.(l => l.ObjectId == layerId)?.[0];
+        if (layer) {
+            return layer.LegendLabel;
+        }
+    };
     const onShowSelectedFeature = (layerId: string, selectionKey: string) => {
         if (activeMapName) {
             showSelectedFeature(activeMapName, layerId, selectionKey);
         }
-    }
+    };
     if (selection != null && selection.SelectedFeatures != null) {
         return <SelectionPanel locale={locale}
+            onResolveLayerLabel={resolveLayerLabel}
             allowHtmlValues={appContext.allowHtmlValuesInSelection()}
             cleanHTML={appContext.getHTMLCleaner()}
             selection={selection.SelectedFeatures}

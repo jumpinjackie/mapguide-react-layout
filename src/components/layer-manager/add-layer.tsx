@@ -57,10 +57,14 @@ const AddFileLayer = (props: IAddLayerProps) => {
                     name: addLayerName ?? loadedFile.name,
                     locale: props.locale,
                     callback: (res) => {
+                        setIsAddingLayer(false);
                         if (res instanceof Error) {
                             viewer.toastError("error", res.message);
                         } else {
                             viewer.toastSuccess("success", tr("ADDED_LAYER", props.locale, { name: res.name }));
+                            setAddLayerError(undefined);
+                            setLoadedFile(undefined);
+                            setAddLayerName(undefined);
                         }
                     }
                 });

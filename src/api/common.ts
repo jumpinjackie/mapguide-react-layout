@@ -888,6 +888,7 @@ export interface ILoadedLayer {
  */
 export interface IAddFileLayerOptions {
     file: File;
+    name: string;
     projection?: ProjectionLike;
     locale: string;
     callback: (result: Error | ILoadedLayer) => void;

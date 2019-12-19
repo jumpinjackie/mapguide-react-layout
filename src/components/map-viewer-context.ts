@@ -844,8 +844,7 @@ export class MgLayerManager implements ILayerManager {
         return this.layerSet.moveDown(this.map, name);
     }
     addLayerFromFile(options: IAddFileLayerOptions): void {
-        const { file, locale, projection, callback } = options;
-        const layerName = file.name;
+        const { file, name: layerName, locale, projection, callback } = options;
         const reader = new FileReader();
         const that = this;
         const handler = function (e: ProgressEvent<FileReader>) {

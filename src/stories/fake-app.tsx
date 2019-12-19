@@ -51,7 +51,15 @@ class FakeMapAgent extends RequestBuilder {
         return Promise.resolve({});
     }
     public describeRuntimeMap(options: IDescribeRuntimeMapOptions): Promise<RuntimeMap> {
-        throw new Error("Method not implemented - describeRuntimeMap.");
+        switch (options.mapname) {
+            case "Sheboygan":
+                return Promise.resolve(testMapSheboygan);
+            case "Redding":
+                return Promise.resolve(testMapRedding);
+            case "Melbourne":
+                return Promise.resolve(testMapMelbourne);
+        }
+        return Promise.reject(`Unknown test map state: ${options.mapname}`);
     }
     public getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string): string {
         throw new Error("Method not implemented - getTileTemplateUrl.");
@@ -103,9 +111,10 @@ export class FakeApp extends React.Component<IFakeAppProps> {
         return <Provider store={this._store}>
             <App fusionRoot="."
                 initialElementVisibility={{
-                    taskpane: false,
-                    legend: false,
-                    selection: false
+                    //Doesn't matter for the fake app, but this has to be true for the purpose of not breaking the reducer when no physical components are present
+                    taskpane: true,
+                    legend: true,
+                    selection: true
                 }}
                 agent={this._agentConf}
                 layout="fake-app"

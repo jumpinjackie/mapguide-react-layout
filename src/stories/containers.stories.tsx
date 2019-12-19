@@ -13,6 +13,7 @@ import NavigatorContainer from '../containers/navigator';
 import MapMenuContainer from '../containers/map-menu';
 import BaseLayerSwitcherContainer from '../containers/base-layer-switcher';
 import CoordinateTrackerContainer from '../containers/coordinate-tracker';
+import AddManageLayersContainer from '../containers/add-manage-layers';
 import { Button, ButtonGroup } from '@blueprintjs/core';
 import { useReducedToolbarAppState, useActiveMapName } from '../containers/hooks';
 import { CommandConditions } from '../api/registry/command';
@@ -154,6 +155,11 @@ storiesOf("Container Components", module)
     .add("Coordinate Tracker", () => <FakeApp>
         <MapDependentContainer>
             <CoordinateTrackerContainer projections={["EPSG:4326", "EPSG:3857"]} />
+        </MapDependentContainer>
+    </FakeApp>)
+    .add("External Layer Manager", () => <FakeApp>
+        <MapDependentContainer>
+            <AddManageLayersContainer />
         </MapDependentContainer>
     </FakeApp>);
     /*

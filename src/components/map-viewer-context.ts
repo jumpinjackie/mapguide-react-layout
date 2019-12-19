@@ -737,7 +737,12 @@ export class MgLayerSet {
         this.activeSelectedFeatureOverlay.setVisible(true);
     }
     public getCustomLayers(): ILayerInfo[] {
-        return Object.keys(this._customLayers).map(n => ({ name: n, type: this._customLayers[n].get("LAYER_TYPE") }));
+        return Object.keys(this._customLayers).map(n => ({ 
+            visible: this._customLayers[n].getVisible(),
+            name: n,
+            type: this._customLayers[n].get("LAYER_TYPE"),
+            opacity: this._customLayers[n].getOpacity()
+        }));
     }
     public hasLayer(name: string): boolean {
         return this._customLayers[name] != null;
@@ -746,7 +751,7 @@ export class MgLayerSet {
         const bAllow = !!allowReplace;
         if (this._customLayers[name]) {
             if (!bAllow) {
-                throw new MgError(`A layer named ${name} already exists`); //LOCALIZEME
+                throw new MgError(tr("LAYER_NAME_EXISTS", this.callback.getLocale(), { name: name }));
             } else {
                 //Remove the layer that is about to be replaced first 
                 map.removeLayer(this._customLayers[name]);
@@ -765,14 +770,16 @@ export class MgLayerSet {
             return layer;
         }
     }
-    public getLayer<T extends olLayerBase>(map: olMap, name: string, factory: () => T): T {
-        let layer: T;
+    public getLayer<T extends olLayerBase>(map: olMap, name: string, factory?: () => T): T | undefined {
+        let layer: T | undefined;
         if (this._customLayers[name]) {
             layer = this._customLayers[name] as T;
         } else {
-            layer = factory();
-            this._customLayers[name] = layer;
-            map.addLayer(layer);
+            if (typeof(factory) == 'function') {
+                layer = factory();
+                this._customLayers[name] = layer;
+                map.addLayer(layer);
+            }
         }
         return layer;
     }
@@ -834,7 +841,7 @@ export class MgLayerManager implements ILayerManager {
     removeLayer(name: string): olLayerBase | undefined {
         return this.layerSet.removeLayer(this.map, name);
     }
-    getLayer<T extends olLayerBase>(name: string, factory: () => T): T {
+    getLayer<T extends olLayerBase>(name: string, factory?: () => T): T | undefined {
         return this.layerSet.getLayer(this.map, name, factory);
     }
     moveUp(name: string): number {

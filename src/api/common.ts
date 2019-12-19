@@ -872,6 +872,16 @@ export interface ILayerInfo {
      * @memberof ILayerInfo
      */
     type: string;
+    /** 
+     * @since 0.13
+     */
+    visible: boolean;
+    /**
+     * @since 0.13
+     * @type {number}
+     * @memberof ILayerInfo
+     */
+    opacity: number;
 }
 
 /**
@@ -942,7 +952,7 @@ export interface ILayerManager {
      *
      * @memberof IMapViewer
      */
-    getLayer<T extends olLayerBase>(name: string, factory: () => T): T;
+    getLayer<T extends olLayerBase>(name: string, factory?: () => T): T | undefined;
 
     moveUp(name: string): number;
     moveDown(name: string): number;

@@ -1,12 +1,18 @@
 import * as React from "react";
+import { tr } from "../../api/i18n";
 import { ILayerInfo, GenericEvent } from "../../api/common";
-import { ITreeNode, Tree, Button, Intent, ButtonGroup } from '@blueprintjs/core';
+import { ITreeNode, Tree, Button, Intent, ButtonGroup, Card, Icon, Switch, NonIdealState, Slider } from '@blueprintjs/core';
+import { BlueprintSvgIconNames } from 'src/constants';
 
 /**
  * @hidden
  */
 export interface IManageLayersProps {
     layers: ILayerInfo[];
+    locale: string;
+    onSetOpacity: (name: string, value: number) => void;
+    onSetVisibility: (name: string, visible: boolean) => void;
+    onZoomToBounds: (name: string) => void;
     onRemoveLayer: (name: string) => void;
     onMoveLayerUp: (name: string) => void;
     onMoveLayerDown: (name: string) => void;
@@ -15,69 +21,45 @@ export interface IManageLayersProps {
 /**
  * @hidden
  */
-export class ManageLayers extends React.Component<IManageLayersProps, any> {
-    constructor(props: IManageLayersProps) {
-        super(props);
-        this.state = {
-            selectedNode: null,
-            nodes: props.layers.map(li => ({ id: li.name, label: li.name, secondaryLabel: li.type, icon: "layer" }))
-        };
-    }
-    componentDidUpdate(prevProps: IManageLayersProps) {
-        const nextProps = this.props;
-        if (prevProps.layers != nextProps.layers) {
-            const nodes = nextProps.layers.map(li => ({ id: li.name, label: li.name, secondaryLabel: li.type, icon: "layer" }));
-            this.setState({ nodes: nodes });
-        }
-    }
-    private onMoveLayerDown = () => {
-        const { selectedNode } = this.state;
-        if (selectedNode) {
-            this.props.onMoveLayerDown?.(selectedNode.id);
-        }
-    }
-    private onMoveLayerUp = () => {
-        const { selectedNode } = this.state;
-        if (selectedNode) {
-            this.props.onMoveLayerUp?.(selectedNode.id);
-        }
-    }
-    private onRemoveLayer = () => {
-        const { selectedNode } = this.state;
-        if (selectedNode) {
-            this.props.onRemoveLayer?.(selectedNode.id);
-            this.setState({ selectedNode: null });
-        }
-    }
-    private forEachNode(nodes: ITreeNode[], callback: (node: ITreeNode) => void) {
-        if (nodes == null) {
-            return;
-        }
-        for (const node of nodes) {
-            callback(node);
-            if (node.childNodes) {
-                this.forEachNode(node.childNodes, callback);
-            }
-        }
-    }
-    private handleNodeClick = (nodeData: ITreeNode, _nodePath: number[], e: React.MouseEvent<HTMLElement>) => {
-        const originallySelected = nodeData.isSelected;
-        if (!e.shiftKey) {
-            this.forEachNode(this.state.nodes, n => (n.isSelected = false));
-        }
-        nodeData.isSelected = originallySelected == null ? true : !originallySelected;
-        this.setState({ ...this.state, ...{ selectedNode: (nodeData.isSelected ? nodeData : null) } });
-    };
-    render(): JSX.Element {
-        const { selectedNode, nodes } = this.state;
+export const ManageLayers = (props: IManageLayersProps) => {
+    const {
+        locale,
+        onSetOpacity,
+        onRemoveLayer,
+        onMoveLayerUp,
+        onMoveLayerDown,
+        onZoomToBounds,
+        onSetVisibility
+    } = props;
+    const [layers, setLayers] = React.useState(props.layers);
+    React.useEffect(() => {
+        setLayers(props.layers);
+    }, [props.layers]);
+    if (layers.length) {
         return <div>
-            <hr />
-            <ButtonGroup fill>
-                <Button intent={Intent.DANGER} icon="delete" onClick={this.onRemoveLayer} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0}>Remove</Button>
-                <Button intent={Intent.PRIMARY} icon="caret-up" onClick={this.onMoveLayerUp} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0 || selectedNode == nodes[0]}></Button>
-                <Button intent={Intent.PRIMARY} icon="caret-down" onClick={this.onMoveLayerDown} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0 || selectedNode == nodes[nodes.length - 1]}></Button>
-            </ButtonGroup>
-            <Tree contents={nodes} onNodeClick={this.handleNodeClick} />
+            {layers.map(lyr => {
+                const canZoom = lyr.type != "WMS";
+                let iconName: BlueprintSvgIconNames = "layer";
+                if (lyr.type == "WMS") {
+                    iconName = "media";
+                }
+                return <Card key={lyr.name}>
+                    <Switch checked={lyr.visible} onChange={e => onSetVisibility(lyr.name, !lyr.visible)} labelElement={<><Icon icon={iconName} /> {lyr.name}</>} />
+                    <p>Opacity</p>
+                    <Slider min={0} max={1.0} stepSize={0.01} value={lyr.opacity} onChange={e => onSetOpacity(lyr.name, e)} />
+                    <ButtonGroup>
+                        <Button intent={Intent.PRIMARY} icon="caret-up" onClick={(e: any) => onMoveLayerUp(lyr.name)} disabled={layers.length <= 1} />
+                        <Button intent={Intent.PRIMARY} icon="caret-down" onClick={(e: any) => onMoveLayerDown(lyr.name)} disabled={layers.length <= 1} />
+                        <Button intent={Intent.SUCCESS} icon="zoom-to-fit" onClick={(e: any) => onZoomToBounds(lyr.name)} disabled={!canZoom} />
+                        <Button intent={Intent.DANGER} icon="trash" onClick={(e: any) => onRemoveLayer(lyr.name)} />
+                    </ButtonGroup>
+                </Card>;
+            })}
         </div>;
+    } else {
+        return <NonIdealState
+            icon="layers"
+            title={tr("NO_EXTERNAL_LAYERS", locale)}
+            description={tr("NO_EXTERNAL_LAYERS_DESC", locale, { tabName: tr("ADD_LAYER", locale) })} />
     }
 }

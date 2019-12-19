@@ -201,4 +201,8 @@ export interface ILocalizedMessages {
     ADD_LOCAL_FILE_LAYER_FAILURE_NOT_TEXT: string;
     ADD_LOCAL_FILE_LAYER_FAILURE: string;
     WMS_UNSUPPORTED_VERSION: string;
+    NO_EXTERNAL_LAYERS: string;
+    NO_EXTERNAL_LAYERS_DESC: string;
+    LAYER_OPACITY: string;
+    LAYER_NAME_EXISTS: string;
 }

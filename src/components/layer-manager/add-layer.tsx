@@ -82,7 +82,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
             action={<Button loading={isAddingLayer} onClick={(e: any) => onAddFileLayer()} intent={Intent.PRIMARY}>{tr("ADD_LAYER")}</Button>} />
     } else {
         return <Dropzone multiple={false} onDrop={acceptedFiles => onFileDropped(acceptedFiles[0])}>
-            {({ getRootProps, getInputProps }) => (<div style={{ border: "1px dashed black", borderRadius: 5, padding: 5 }} {...getRootProps()}>
+            {({ getRootProps, getInputProps }) => (<div style={{ margin: 10, border: "1px dashed black", borderRadius: 5, padding: 5 }} {...getRootProps()}>
                 <NonIdealState
                     title={tr("ADD_FILE", props.locale)}
                     icon="upload"

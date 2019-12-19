@@ -2,57 +2,123 @@ import * as React from "react";
 import * as Runtime from "../api/runtime";
 import { tr } from "../api/i18n";
 import {
-    ILayerInfo
+    ILayerInfo, Bounds
 } from "../api/common";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
 import { Tabs, Tab, Icon } from '@blueprintjs/core';
-import { useViewerLocale } from './hooks';
+import { useViewerLocale, useActiveMapName } from './hooks';
+import olVectorLayer from "ol/layer/Vector";
+import { transformExtent } from "ol/proj";
 
 interface ILayerManagerProps {
-    locale: string | undefined;
+    locale: string;
+    activeMapName: string | undefined;
 }
 
 const LayerManager = (props: ILayerManagerProps) => {
-    const { locale } = props;
+    const { locale, activeMapName } = props;
     const [layers, setLayers] = React.useState<ILayerInfo[]>([]);
-    React.useEffect(() => {
+    const updateLayersFromViewer = () => {
         const viewer = Runtime.getViewer();
         if (viewer) {
             const layers = viewer.getLayerManager().getLayers();
             setLayers(layers);
         }
-    }, []);
-    const removeHandler = (name: string) => {
+    };
+    React.useEffect(updateLayersFromViewer, []);
+    React.useEffect(updateLayersFromViewer, [activeMapName]);
+    const removeHandler = (layerName: string) => {
         const viewer = Runtime.getViewer();
         if (viewer) {
-            const removed = viewer.getLayerManager().removeLayer(name);
+            const removed = viewer.getLayerManager().removeLayer(layerName);
             if (removed) {
-                viewer.toastSuccess("success", tr("REMOVED_LAYER", locale, { name: name }));
+                viewer.toastSuccess("success", tr("REMOVED_LAYER", locale, { name: layerName }));
                 const layers = viewer.getLayerManager().getLayers();
                 setLayers(layers);
             }
         }
     };
-    const upHandler = (name: string) => {
+    const upHandler = (layerName: string) => {
         const viewer = Runtime.getViewer();
         if (viewer) {
-            if (viewer.getLayerManager().moveUp(name) >= 0) {
+            if (viewer.getLayerManager().moveUp(layerName) >= 0) {
                 const layers = viewer.getLayerManager().getLayers();
                 setLayers(layers);
             }
         }
     };
-    const downHandler = (name: string) => {
+    const downHandler = (layerName: string) => {
         const viewer = Runtime.getViewer();
         if (viewer) {
-            if (viewer.getLayerManager().moveDown(name) >= 0) {
+            if (viewer.getLayerManager().moveDown(layerName) >= 0) {
                 const layers = viewer.getLayerManager().getLayers();
                 setLayers(layers);
             }
         }
     };
-    return <ManageLayers layers={layers} onMoveLayerDown={downHandler} onMoveLayerUp={upHandler} onRemoveLayer={removeHandler} />;
+    const zoomToBounds = (layerName: string) => {
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            const layer = viewer.getLayerManager().getLayer(layerName);
+            if (layer instanceof olVectorLayer) {
+                const source = layer.getSource();
+                let bounds = source.getExtent();
+                const sp = source.getProjection();
+                const dp = viewer.getProjection();
+                if (sp && dp) {
+                    bounds = transformExtent(bounds, sp, dp);
+                }
+                viewer.zoomToExtent(bounds as Bounds);
+            }
+        }
+    };
+    const setVisibility = (layerName: string, visible: boolean) => {
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            const layer = viewer.getLayerManager().getLayer(layerName);
+            if (layer) {
+                layer.setVisible(visible);
+                const updatedLayers = layers.map(lyr => {
+                    if (lyr.name == layerName) {
+                        return {
+                            ...lyr,
+                            visible: visible
+                        }
+                    }
+                    return lyr;
+                });
+                setLayers(updatedLayers);
+            }
+        }
+    };
+    const setOpacity = (layerName: string, value: number) => {
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            const layer = viewer.getLayerManager().getLayer(layerName);
+            if (layer) {
+                layer.setOpacity(value);
+                const updatedLayers = layers.map(lyr => {
+                    if (lyr.name == layerName) {
+                        return {
+                            ...lyr,
+                            opacity: value
+                        }
+                    }
+                    return lyr;
+                });
+                setLayers(updatedLayers);
+            }
+        }
+    };
+    return <ManageLayers layers={layers}
+        locale={locale}
+        onSetOpacity={setOpacity}
+        onSetVisibility={setVisibility}
+        onZoomToBounds={zoomToBounds}
+        onMoveLayerDown={downHandler}
+        onMoveLayerUp={upHandler}
+        onRemoveLayer={removeHandler} />;
 }
 
 
@@ -68,9 +134,10 @@ export interface IAddManageLayersContainerProps {
 
 const AddManageLayersContainer = () => {
     const locale = useViewerLocale();
+    const activeMapName = useActiveMapName();
     return <Tabs id="tabs" renderActiveTabPanelOnly={true}>
         <Tab id="add_layer" title={<span><Icon icon="new-layer" iconSize={Icon.SIZE_STANDARD} /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer locale={locale} />} />
-        <Tab id="manage_layers" title={<span><Icon icon="layers" iconSize={Icon.SIZE_STANDARD} /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<LayerManager locale={locale} />} />
+        <Tab id="manage_layers" title={<span><Icon icon="layers" iconSize={Icon.SIZE_STANDARD} /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<LayerManager activeMapName={activeMapName} locale={locale} />} />
     </Tabs>;
 };
 

@@ -190,10 +190,14 @@ const STRINGS_EN: ILocalizedMessages = {
     "LAYER_KIND_URL": "A remote url-based layer",
     "ADD_FILE": "Add Local File",
     "ADD_FILE_INSTRUCTIONS": "Click here to choose a file or drag and drop a file here to view it locally on the map (it won't be saved or uploaded to the internet)",
-    "FMT_UPLOADED_FILE": "(size: {size}, type: {type})",
+    "FMT_UPLOADED_FILE": "(size: {size} bytes, type: {type})",
     "ADD_LOCAL_FILE_LAYER_FAILURE_NOT_TEXT": "Could not read text content from this file",
     "ADD_LOCAL_FILE_LAYER_FAILURE": "Failed to load file as layer",
-    "WMS_UNSUPPORTED_VERSION": "Unsupported WMS version: {version}"
+    "WMS_UNSUPPORTED_VERSION": "Unsupported WMS version: {version}",
+    "NO_EXTERNAL_LAYERS": "No Layers",
+    "NO_EXTERNAL_LAYERS_DESC": "Add layers via the {tabName} tab above",
+    "LAYER_OPACITY": "Opacity",
+    "LAYER_NAME_EXISTS": "A layer named {name} already exists"
 };
 
 export default STRINGS_EN;

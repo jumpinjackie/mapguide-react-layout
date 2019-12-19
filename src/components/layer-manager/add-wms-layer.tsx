@@ -26,7 +26,7 @@ export interface IAddWmsLayerProps {
 /**
  * @hidden
  */
-const AddWmsLayer = (props: IAddWmsLayerProps) => {
+export const AddWmsLayer = (props: IAddWmsLayerProps) => {
     const { locale } = props;
     const [wmsUrl, setWmsUrl] = React.useState("");
     const [loadingCapabilities, setLoadingCapabilities] = React.useState(false);

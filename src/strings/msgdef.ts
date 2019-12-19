@@ -200,4 +200,5 @@ export interface ILocalizedMessages {
     FMT_UPLOADED_FILE: string;
     ADD_LOCAL_FILE_LAYER_FAILURE_NOT_TEXT: string;
     ADD_LOCAL_FILE_LAYER_FAILURE: string;
+    WMS_UNSUPPORTED_VERSION: string;
 }

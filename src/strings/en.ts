@@ -193,6 +193,7 @@ const STRINGS_EN: ILocalizedMessages = {
     "FMT_UPLOADED_FILE": "(size: {size}, type: {type})",
     "ADD_LOCAL_FILE_LAYER_FAILURE_NOT_TEXT": "Could not read text content from this file",
     "ADD_LOCAL_FILE_LAYER_FAILURE": "Failed to load file as layer",
+    "WMS_UNSUPPORTED_VERSION": "Unsupported WMS version: {version}"
 };
 
 export default STRINGS_EN;

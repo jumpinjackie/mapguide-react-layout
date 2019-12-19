@@ -11,6 +11,7 @@ import * as Runtime from "../../api/runtime";
  */
 export interface IAddLayerProps {
     locale: string;
+    onLayerAdded: () => void;
 }
 
 /**
@@ -22,13 +23,13 @@ export interface IAddLayerState {
 
 interface AddLayerConf {
     label: string;
-    content: (locale: string | undefined) => JSX.Element;
+    content: (locale: string | undefined, onLayerAdded: () => void) => JSX.Element;
 }
 
 const ADD_URL_LAYER_TYPES: { [key: string]: AddLayerConf } = {
     "WMS": {
         label: "WMS",
-        content: (locale: string | undefined) => <AddWmsLayer locale={locale} />
+        content: (locale: string | undefined, onLayerAdded: () => void) => <AddWmsLayer locale={locale} onLayerAdded={onLayerAdded} />
     }
 };
 
@@ -65,6 +66,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
                             setAddLayerError(undefined);
                             setLoadedFile(undefined);
                             setAddLayerName(undefined);
+                            props.onLayerAdded();
                         }
                     }
                 });
@@ -110,7 +112,7 @@ const AddUrlLayer = (props: IAddLayerProps) => {
         </Label>
         {(() => {
             if (selectedUrlType && ADD_URL_LAYER_TYPES[selectedUrlType]) {
-                return ADD_URL_LAYER_TYPES[selectedUrlType].content(locale);
+                return ADD_URL_LAYER_TYPES[selectedUrlType].content(locale, props.onLayerAdded);
             }
         })()}
     </div>;

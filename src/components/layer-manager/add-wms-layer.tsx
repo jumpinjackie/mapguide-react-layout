@@ -21,6 +21,7 @@ import { Spinner, NonIdealState, Intent, ControlGroup, InputGroup, Button } from
  */
 export interface IAddWmsLayerProps {
     locale: string | undefined;
+    onLayerAdded: () => void;
 }
 
 /**
@@ -64,6 +65,7 @@ export const AddWmsLayer = (props: IAddWmsLayerProps) => {
             layer.set("LAYER_TYPE", "WMS");
             viewer.getLayerManager().addLayer(name, layer);
             viewer.toastSuccess("success", tr("ADDED_LAYER", locale, { name: name }));
+            props.onLayerAdded();
         }
     };
     const onLoadCaps = () => {

@@ -736,13 +736,17 @@ export class MgLayerSet {
         this.activeSelectedFeatureOverlay.setSource(this.makeActiveSelectedFeatureSource(mapExtent, size, uri));
         this.activeSelectedFeatureOverlay.setVisible(true);
     }
-    public getCustomLayers(): ILayerInfo[] {
-        return Object.keys(this._customLayers).map(n => ({ 
-            visible: this._customLayers[n].getVisible(),
-            name: n,
-            type: this._customLayers[n].get("LAYER_TYPE"),
-            opacity: this._customLayers[n].getOpacity()
-        }));
+    public getCustomLayers(map: olMap): ILayerInfo[] {
+        const larr = map.getLayers().getArray();
+        const layers = larr
+            .filter(l => this._customLayers[l.get("name")] != null)
+            .map(l => ({
+                visible: l.getVisible(),
+                name: l.get("name"),
+                type: l.get("LAYER_TYPE"),
+                opacity: l.getOpacity()
+            }));
+        return layers;
     }
     public hasLayer(name: string): boolean {
         return this._customLayers[name] != null;
@@ -759,6 +763,7 @@ export class MgLayerSet {
         }
         this._customLayers[name] = layer;
         map.addLayer(layer);
+        layer.set("name", name);
         return layer;
     }
     public removeLayer(map: olMap, name: string): olLayerBase | undefined {
@@ -775,8 +780,9 @@ export class MgLayerSet {
         if (this._customLayers[name]) {
             layer = this._customLayers[name] as T;
         } else {
-            if (typeof(factory) == 'function') {
+            if (typeof (factory) == 'function') {
                 layer = factory();
+                layer.set("name", name);
                 this._customLayers[name] = layer;
                 map.addLayer(layer);
             }
@@ -825,12 +831,12 @@ export class MgLayerManager implements ILayerManager {
             { type: "GeoJSON", readFeatures: (text, opts) => new GeoJSON().readFeatures(text, opts) },
             { type: "KML", readFeatures: (text, opts) => new KML().readFeatures(text, opts) },
             { type: "TopoJSON", readFeatures: (text, opts) => new TopoJSON().readFeatures(text, opts) },
-            { type: "GPX", readFeatures: (text, opts) => new GPX().readFeatures(text, opts) },            
+            { type: "GPX", readFeatures: (text, opts) => new GPX().readFeatures(text, opts) },
             { type: "IGC", readFeatures: (text, opts) => new IGC().readFeatures(text, opts) }
         ];
     }
     getLayers(): ILayerInfo[] {
-        return this.layerSet.getCustomLayers();
+        return this.layerSet.getCustomLayers(this.map);
     }
     hasLayer(name: string): boolean {
         return this.layerSet.hasLayer(name);

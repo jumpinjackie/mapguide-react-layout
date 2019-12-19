@@ -14,16 +14,28 @@ import { transformExtent } from "ol/proj";
 interface ILayerManagerProps {
     locale: string;
     activeMapName: string | undefined;
+    layers: ILayerInfo[];
 }
 
-const LayerManager = (props: ILayerManagerProps) => {
-    const { locale, activeMapName } = props;
+/**
+ * 
+ * @since 0.11
+ * @export
+ * @interface IAddManageLayersContainerProps
+ */
+export interface IAddManageLayersContainerProps {
+
+}
+
+const AddManageLayersContainer = () => {
+    const locale = useViewerLocale();
+    const activeMapName = useActiveMapName();
     const [layers, setLayers] = React.useState<ILayerInfo[]>([]);
     const updateLayersFromViewer = () => {
         const viewer = Runtime.getViewer();
         if (viewer) {
-            const layers = viewer.getLayerManager().getLayers();
-            setLayers(layers);
+            const lyrs = viewer.getLayerManager().getLayers();
+            setLayers(lyrs);
         }
     };
     React.useEffect(updateLayersFromViewer, []);
@@ -79,16 +91,8 @@ const LayerManager = (props: ILayerManagerProps) => {
             const layer = viewer.getLayerManager().getLayer(layerName);
             if (layer) {
                 layer.setVisible(visible);
-                const updatedLayers = layers.map(lyr => {
-                    if (lyr.name == layerName) {
-                        return {
-                            ...lyr,
-                            visible: visible
-                        }
-                    }
-                    return lyr;
-                });
-                setLayers(updatedLayers);
+                const layers = viewer.getLayerManager().getLayers();
+                setLayers(layers);
             }
         }
     };
@@ -98,46 +102,21 @@ const LayerManager = (props: ILayerManagerProps) => {
             const layer = viewer.getLayerManager().getLayer(layerName);
             if (layer) {
                 layer.setOpacity(value);
-                const updatedLayers = layers.map(lyr => {
-                    if (lyr.name == layerName) {
-                        return {
-                            ...lyr,
-                            opacity: value
-                        }
-                    }
-                    return lyr;
-                });
-                setLayers(updatedLayers);
+                const layers = viewer.getLayerManager().getLayers();
+                setLayers(layers);
             }
         }
     };
-    return <ManageLayers layers={layers}
-        locale={locale}
-        onSetOpacity={setOpacity}
-        onSetVisibility={setVisibility}
-        onZoomToBounds={zoomToBounds}
-        onMoveLayerDown={downHandler}
-        onMoveLayerUp={upHandler}
-        onRemoveLayer={removeHandler} />;
-}
-
-
-/**
- * 
- * @since 0.11
- * @export
- * @interface IAddManageLayersContainerProps
- */
-export interface IAddManageLayersContainerProps {
-
-}
-
-const AddManageLayersContainer = () => {
-    const locale = useViewerLocale();
-    const activeMapName = useActiveMapName();
     return <Tabs id="tabs" renderActiveTabPanelOnly={true}>
-        <Tab id="add_layer" title={<span><Icon icon="new-layer" iconSize={Icon.SIZE_STANDARD} /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer locale={locale} />} />
-        <Tab id="manage_layers" title={<span><Icon icon="layers" iconSize={Icon.SIZE_STANDARD} /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<LayerManager activeMapName={activeMapName} locale={locale} />} />
+        <Tab id="add_layer" title={<span><Icon icon="new-layer" iconSize={Icon.SIZE_STANDARD} /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer onLayerAdded={updateLayersFromViewer} locale={locale} />} />
+        <Tab id="manage_layers" title={<span><Icon icon="layers" iconSize={Icon.SIZE_STANDARD} /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<ManageLayers layers={layers}
+            locale={locale}
+            onSetOpacity={setOpacity}
+            onSetVisibility={setVisibility}
+            onZoomToBounds={zoomToBounds}
+            onMoveLayerDown={downHandler}
+            onMoveLayerUp={upHandler}
+            onRemoveLayer={removeHandler} />} />
     </Tabs>;
 };
 

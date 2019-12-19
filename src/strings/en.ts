@@ -184,7 +184,15 @@ const STRINGS_EN: ILocalizedMessages = {
     "WINDOW_RESIZING": "Resizing Window",
     "WINDOW_MOVING": "Moving Window",
     "OTHER_THEME_RULE_COUNT": "... ({count} other theme rules)",
-    "LEGEND_FILTER_LAYERS": "Filter/search for layers or groups"
+    "LEGEND_FILTER_LAYERS": "Filter/search for layers or groups",
+    "ADD_LAYER_KIND_PROMPT": "What kind of layer do you want to add?",
+    "LAYER_KIND_FILE": "A local file-based layer",
+    "LAYER_KIND_URL": "A remote url-based layer",
+    "ADD_FILE": "Add Local File",
+    "ADD_FILE_INSTRUCTIONS": "Click here to choose a file or drag and drop a file here to view it locally on the map (it won't be saved or uploaded to the internet)",
+    "FMT_UPLOADED_FILE": "(size: {size}, type: {type})",
+    "ADD_LOCAL_FILE_LAYER_FAILURE_NOT_TEXT": "Could not read text content from this file",
+    "ADD_LOCAL_FILE_LAYER_FAILURE": "Failed to load file as layer",
 };
 
 export default STRINGS_EN;

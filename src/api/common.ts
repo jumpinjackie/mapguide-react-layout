@@ -875,6 +875,25 @@ export interface ILayerInfo {
 }
 
 /**
+ * @since 0.13
+ */
+export interface ILoadedLayer {
+    name: string;
+    type: string;
+}
+
+/**
+ * Options for adding a file-based layer
+ * @since 0.13
+ */
+export interface IAddFileLayerOptions {
+    file: File;
+    projection?: ProjectionLike;
+    locale: string;
+    callback: (result: Error | ILoadedLayer) => void;
+}
+
+/**
  * Manages custom layers for a map
  * 
  * @export
@@ -926,6 +945,13 @@ export interface ILayerManager {
 
     moveUp(name: string): number;
     moveDown(name: string): number;
+
+    /**
+     * Attempt to add a layer using the given file as a source
+     * @param options
+     * @since 0.13
+     */
+    addLayerFromFile(options: IAddFileLayerOptions): void;
 }
 
 /**

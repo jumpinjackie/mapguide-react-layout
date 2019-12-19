@@ -69,7 +69,7 @@ export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
             }
             layer.set("LAYER_TYPE", "WMS");
             viewer.getLayerManager().addLayer(name, layer);
-            viewer.toastSuccess("icon-success", tr("ADDED_LAYER", locale, { name: name }));
+            viewer.toastSuccess("success", tr("ADDED_LAYER", locale, { name: name }));
         }
     }
     private onLoadCaps = () => {

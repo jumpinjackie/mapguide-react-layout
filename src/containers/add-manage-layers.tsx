@@ -28,7 +28,7 @@ const LayerManager = (props: ILayerManagerProps) => {
         if (viewer) {
             const removed = viewer.getLayerManager().removeLayer(name);
             if (removed) {
-                viewer.toastSuccess("icon-success", tr("REMOVED_LAYER", locale, { name: name }));
+                viewer.toastSuccess("success", tr("REMOVED_LAYER", locale, { name: name }));
                 const layers = viewer.getLayerManager().getLayers();
                 setLayers(layers);
             }

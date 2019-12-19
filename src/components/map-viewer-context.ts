@@ -10,7 +10,8 @@ import {
     IExternalBaseLayer,
     LayerTransparencySet,
     ILayerInfo,
-    ILayerManager
+    ILayerManager,
+    IAddFileLayerOptions
 } from "../api/common";
 import { Client } from '../api/client';
 import { MgError, isSessionExpiredError } from '../api/error';
@@ -33,6 +34,8 @@ import olImageLayer from "ol/layer/Image";
 import olLayerGroup from "ol/layer/Group";
 import olTileGrid from "ol/tilegrid/TileGrid";
 import olSource from "ol/source/Source";
+import olSourceVector from "ol/source/Vector";
+import olVectorLayer from "ol/layer/Vector";
 import olImageSource, { defaultImageLoadFunction } from "ol/source/Image";
 import olTileImageSource from "ol/source/TileImage";
 import createMapGuideSource, { isMapGuideImageSource } from "../api/ol-mapguide-source-factory";
@@ -48,6 +51,9 @@ import ImageWrapper from 'ol/Image';
 import { createContext } from "react";
 import { parseUrl } from '../utils/url';
 import { strIsNullOrEmpty } from '../utils/string';
+import Feature, { FeatureLike } from 'ol/Feature';
+import Geometry from 'ol/geom/Geometry';
+import { GML, GPX, GeoJSON, IGC, KML, TopoJSON } from 'ol/format';
 
 /**
  * @since 0.13
@@ -800,9 +806,21 @@ export class MgLayerSet {
     }
 }
 
-export class MgLayerManager implements ILayerManager {
-    constructor(private map: olMap, private layerSet: MgLayerSet) {
+interface IReadFeatures {
+    type: string;
+    readFeatures(text: string, options: any): Feature<Geometry>[];
+}
 
+export class MgLayerManager implements ILayerManager {
+    private _olFormats: IReadFeatures[];
+    constructor(private map: olMap, private layerSet: MgLayerSet) {
+        this._olFormats = [
+            { type: "GeoJSON", readFeatures: (text, opts) => new GeoJSON().readFeatures(text, opts) },
+            { type: "KML", readFeatures: (text, opts) => new KML().readFeatures(text, opts) },
+            { type: "TopoJSON", readFeatures: (text, opts) => new TopoJSON().readFeatures(text, opts) },
+            { type: "GPX", readFeatures: (text, opts) => new GPX().readFeatures(text, opts) },            
+            { type: "IGC", readFeatures: (text, opts) => new IGC().readFeatures(text, opts) }
+        ];
     }
     getLayers(): ILayerInfo[] {
         return this.layerSet.getCustomLayers();
@@ -824,6 +842,59 @@ export class MgLayerManager implements ILayerManager {
     }
     moveDown(name: string): number {
         return this.layerSet.moveDown(this.map, name);
+    }
+    addLayerFromFile(options: IAddFileLayerOptions): void {
+        const { file, locale, projection, callback } = options;
+        const layerName = file.name;
+        const reader = new FileReader();
+        const that = this;
+        const handler = function (e: ProgressEvent<FileReader>) {
+            const result = e.target?.result;
+            if (result && typeof (result) == 'string') {
+                let proj = projection;
+                if (!proj) {
+                    const view = that.map.getView();
+                    proj = view.getProjection();
+                }
+                const formats = that._olFormats;
+                let features = [] as Feature<Geometry>[];
+                let loadedType: string | undefined;
+                let bLoaded = false;
+                for (let i = 0, ii = formats.length; i < ii; ++i) {
+                    const format = formats[i];
+                    try {
+                        features = format.readFeatures(result, {
+                            featureProjection: projection
+                        });
+                    } catch (e) {
+
+                    }
+                    if (features && features.length > 0) {
+                        loadedType = format.type;
+                        bLoaded = true;
+                        break;
+                    }
+                }
+                if (bLoaded) {
+                    const source = new olSourceVector();
+                    const layer = new olVectorLayer({
+                        source: source
+                    });
+                    source.addFeatures(features);
+                    that.addLayer(layerName, layer);
+                    callback({
+                        type: loadedType!,
+                        name: layerName
+                    });
+                } else {
+                    callback(new Error(tr("ADD_LOCAL_FILE_LAYER_FAILURE", locale)));
+                }
+            } else {
+                callback(new Error(tr("ADD_LOCAL_FILE_LAYER_FAILURE_NOT_TEXT", locale)));
+            }
+        };
+        reader.addEventListener("load", handler);
+        reader.readAsText(file);
     }
 }
 

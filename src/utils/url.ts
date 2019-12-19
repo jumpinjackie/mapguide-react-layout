@@ -249,11 +249,17 @@ export function stringifyQuery(parameters: any): string {
  * @param {*} parameters The parameters to append
  * @param {boolean} [bOverwriteExisting=true] If true, will overwrite any existing parameters if the URL already has them
  * @param {boolean} [bConvertToUppercase=true] If true, will ensure all parameter names are uppercase
+ * @param {boolean} [bDiscardExistingParams=true] If true, will discard existing query string params before appending
  * @since 0.12
  */
-export function appendParameters(url: string, parameters: any, bOverwriteExisting: boolean = true, bConvertToUppercase: boolean = false) {
+export function appendParameters(url: string, parameters: any, bOverwriteExisting: boolean = true, bConvertToUppercase: boolean = false, bDiscardExistingParams: boolean = false) {
     const parsed = parse(url);
-    let currentParams: any = parsed.query != null ? queryString.parse(parsed.query, DEFAULT_PARSE_OPTIONS) : {};
+    let currentParams: any;
+    if (!bDiscardExistingParams) {
+        currentParams = parsed.query != null ? queryString.parse(parsed.query, DEFAULT_PARSE_OPTIONS) : {};
+    } else {
+        currentParams = {};
+    }
 
     const paramNames: any = {};
     for (const key in currentParams) {
@@ -287,4 +293,16 @@ export function appendParameters(url: string, parameters: any, bOverwriteExistin
     }
 
     return result;
+}
+
+/**
+ * Parses the query string section of the given URL and returns the parsed
+ * parameters as an object
+ * @param url The URL to parse
+ * @since 0.13
+ */
+export function parseUrlParameters(url: string): any {
+    const parsed = parse(url);
+    const currentParams: any = parsed.query != null ? queryString.parse(parsed.query, DEFAULT_PARSE_OPTIONS) : {};
+    return currentParams;
 }

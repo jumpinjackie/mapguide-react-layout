@@ -17,26 +17,10 @@ import * as TemplateActions from "../actions/template";
 import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
 import { AppContext } from "../components/context";
-import { UrlValueChangeCallback, IAppUrlStateProps, urlPropsQueryConfig } from './url-state';
-import { addUrlProps } from 'react-url-query';
 import { IElementState } from '../actions/defs';
 import { NonIdealState, Spinner, Intent, Callout } from '@blueprintjs/core';
 import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, useActiveMapBranch, useActiveMapName } from './hooks';
-
-/**
- * Callback interface for propagating changes to URL state
- */
-export interface IAppUrlStateCallback {
-    onChangeUrlX: UrlValueChangeCallback;
-    onChangeUrlY: UrlValueChangeCallback;
-    onChangeUrlScale: UrlValueChangeCallback;
-    onChangeUrlSession: UrlValueChangeCallback;
-    onChangeUrlMap: UrlValueChangeCallback;
-    onChangeUrlShowLayers: UrlValueChangeCallback;
-    onChangeUrlHideLayers: UrlValueChangeCallback;
-    onChangeUrlShowGroups: UrlValueChangeCallback;
-    onChangeUrlHideGroups: UrlValueChangeCallback;
-}
+import { getStateFromUrl, IAppUrlState, updateUrl } from './url-state';
 
 export interface SelectionOptions {
     allowHtmlValues?: boolean;
@@ -128,7 +112,7 @@ export interface IAppDispatch {
     setElementVisibility: (states: IElementState) => void;
 }
 
-type AppInnerProps = IAppProps & IAppState & IAppDispatch & Partial<IAppUrlStateProps> & Partial<IAppUrlStateCallback>;
+type AppInnerProps = IAppProps & IAppState & IAppDispatch;
 
 class AppInner extends React.Component<AppInnerProps, any> {
     constructor(props: AppInnerProps) {
@@ -161,19 +145,21 @@ class AppInner extends React.Component<AppInnerProps, any> {
             session,
             fusionRoot,
             resourceId,
-            externalBaseLayers,
-            urlLocale,
-            urlResource,
-            urlSession,
-            urlX,
-            urlY,
-            urlScale,
-            urlMap,
-            urlShowLayers,
-            urlHideLayers,
-            urlShowGroups,
-            urlHideGroups
+            externalBaseLayers
         } = this.props;
+        const {
+            locale: urlLocale,
+            resource: urlResource,
+            session: urlSession,
+            x: urlX,
+            y: urlY,
+            scale: urlScale,
+            map: urlMap,
+            sl: urlShowLayers,
+            hl: urlHideLayers,
+            sg: urlShowGroups,
+            hg: urlHideGroups
+        } = getStateFromUrl();
         if (setElementVisibility && initialElementVisibility) {
             const { taskpane, legend, selection } = initialElementVisibility;
             const states: IElementState = {
@@ -248,19 +234,26 @@ class AppInner extends React.Component<AppInnerProps, any> {
     }
     componentDidUpdate(prevProps: AppInnerProps) {
         const nextProps = this.props;
+        const curUrlState = getStateFromUrl();
+        //Preserve locale/resources/session if already present in url
+        const nextUrlState: IAppUrlState = {
+            locale: curUrlState.locale ?? this.props.locale,
+            resource: curUrlState.resource ?? this.props.resourceId,
+            session: curUrlState.session ?? this.props.session
+        };
         if (nextProps.map != null && prevProps.map != nextProps.map) {
             this.setState({ isLoading: false });
         }
         if (nextProps.activeMapName) {
             const am = nextProps.activeMapName;
-            nextProps.onChangeUrlMap?.(am);
+            nextUrlState.map = am;
         }
         if (nextProps.map) {
             if (nextProps.map.currentView) {
                 const { x, y, scale } = nextProps.map.currentView;
-                nextProps.onChangeUrlX?.(`${x}`);
-                nextProps.onChangeUrlY?.(`${y}`);
-                nextProps.onChangeUrlScale?.(`${scale}`);
+                nextUrlState.x = x;
+                nextUrlState.y = y;
+                nextUrlState.scale = scale;
             }
             if (nextProps.map.runtimeMap) {
                 const { showGroups, showLayers, hideGroups, hideLayers } = nextProps.map;
@@ -286,14 +279,15 @@ class AppInner extends React.Component<AppInnerProps, any> {
                         }
                     }
                 }
-                nextProps.onChangeUrlShowGroups?.(sg);
-                nextProps.onChangeUrlHideGroups?.(hg);
-                nextProps.onChangeUrlShowLayers?.(sl);
-                nextProps.onChangeUrlHideLayers?.(hl);
+                nextUrlState.sg = sg;
+                nextUrlState.hg = hg;
+                nextUrlState.sl = sl;
+                nextUrlState.hl = hl;
                 const { SessionId } = nextProps.map.runtimeMap;
-                nextProps.onChangeUrlSession?.(SessionId);
+                nextUrlState.session = SessionId;
             }
         }
+        updateUrl(nextUrlState);
     }
     private renderErrorMessage(err: Error | InitError, locale: string, args: any): JSX.Element {
         const msg = err.message;
@@ -399,4 +393,4 @@ const App = (props: IAppProps) => {
         {...props} />;
 }
 
-export default addUrlProps<React.ComponentClass<IAppProps>>({ urlPropsQueryConfig })(App);
+export default App;

@@ -68,11 +68,12 @@ export interface IFakeAppProps {
  */
 export class FakeApp extends React.Component<IFakeAppProps> {
     private _store: any;
+    private _agentConf: any;
     constructor(props: IFakeAppProps) {
         super(props);
         registerRequestBuilder("mapagent", (uri, locale) => new FakeMapAgent(uri, locale));
         registerLayout("fake-app", () => <>{props.children}</>);
-        const agentConf = {
+        this._agentConf = {
             agentUri: "https://my-mapguide-server/mapguide/mapagent/mapagent.fcgi",
             agentKind: "mapagent"
         };
@@ -80,7 +81,7 @@ export class FakeApp extends React.Component<IFakeAppProps> {
             ...{
                 config: {
                     ...CONFIG_INITIAL_STATE,
-                    ...agentConf,
+                    ...this._agentConf,
                 } as IConfigurationReducerState,
                 mapState: {
                     Sheboygan: {
@@ -100,7 +101,16 @@ export class FakeApp extends React.Component<IFakeAppProps> {
     }
     render() {
         return <Provider store={this._store}>
-            <App layout="fake-app" resourceId="Library://Test/Viewer.ApplicationDefinition" {...this.props} />
+            <App fusionRoot="."
+                initialElementVisibility={{
+                    taskpane: false,
+                    legend: false,
+                    selection: false
+                }}
+                agent={this._agentConf}
+                layout="fake-app"
+                resourceId="Library://Test/Viewer.ApplicationDefinition"
+                {...this.props} />
         </Provider>;
     }
 }

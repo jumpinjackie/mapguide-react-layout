@@ -1,13 +1,9 @@
 import * as React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { FlyoutRegion } from "../components/flyout-region";
 import * as FlyoutActions from "../actions/flyout";
 import * as MapActions from "../actions/map";
-import {
-    ICommand,
-    PropType,
-    IApplicationState
-} from "../api/common";
+import { ICommand } from "../api/common";
 import { mapToolbarReference } from "../api/registry/command";
 import { useViewerLocale, useViewerFlyouts, useReducedToolbarAppState } from './hooks';
 
@@ -15,16 +11,10 @@ export interface IFlyoutRegionContainerProps {
 
 }
 
-
-interface FRDispatch {
-    closeFlyout: (id: string) => void;
-    invokeCommand: (cmd: ICommand, parameters?: any) => void;
-}
-
 const FlyoutRegionContainer = () => {
     const dispatch = useDispatch();
-    const closeFlyout: PropType<FRDispatch, "closeFlyout"> = (id) => dispatch(FlyoutActions.closeFlyout(id));
-    const invokeCommand: PropType<FRDispatch, "invokeCommand"> = (cmd, parameters) => dispatch(MapActions.invokeCommand(cmd, parameters));
+    const closeFlyout = (id: string) => dispatch(FlyoutActions.closeFlyout(id));
+    const invokeCommand = (cmd: ICommand, parameters?: any) => dispatch(MapActions.invokeCommand(cmd, parameters));
     const onCloseFlyout = (id: string) => closeFlyout(id);
     const flyouts = useViewerFlyouts();
     const locale = useViewerLocale();
@@ -33,7 +23,7 @@ const FlyoutRegionContainer = () => {
     if (invokeCommand) {
         for (const flyoutId in flyouts) {
             const tb = flyouts[flyoutId];
-            if (typeof(tb.componentName) == 'undefined') {
+            if (typeof (tb.componentName) == 'undefined') {
                 prepared[flyoutId] = mapToolbarReference(tb, tbState, invokeCommand);
                 prepared[flyoutId].open = !!flyouts[flyoutId].open;
                 prepared[flyoutId].metrics = flyouts[flyoutId].metrics;

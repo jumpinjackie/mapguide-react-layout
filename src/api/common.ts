@@ -19,11 +19,6 @@ import { ProjectionLike } from 'ol/proj';
 import { LoadFunction } from 'ol/Image';
 import { IToolbarAppState } from './registry';
 
-/**
- * @since 0.13
- */
-export type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
-
 // Event boilerplate
 export type GenericEvent = any;
 

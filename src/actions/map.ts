@@ -6,7 +6,8 @@ import {
     getCurrentView,
     getRuntimeMap,
     getSelectionSet,
-    UnitOfMeasure
+    UnitOfMeasure,
+    ILayerInfo
 } from "../api/common";
 import { getViewer } from "../api/runtime";
 import { areViewsCloseToEqual } from "../components/map-viewer-base";
@@ -17,7 +18,7 @@ import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml } from '../api/builders/deArrayify';
 import { makeUnique } from "../utils/array";
 import { ActionType } from '../constants/actions';
-import { IMapSetBusyCountAction, IMapSetBaseLayerAction, IMapSetScaleAction, IMapSetMouseCoordinatesAction, IMapSetLayerTransparencyAction, IMapSetViewSizeUnitsAction, IMapPreviousViewAction, IMapNextViewAction, ISetActiveMapToolAction, ISetActiveMapAction, ISetManualFeatureTooltipsEnabledAction, ISetFeatureTooltipsEnabledAction, IMapSetViewRotationAction, IMapSetViewRotationEnabledAction, IShowSelectedFeatureAction, IMapSetSelectionAction, IMapResizedAction } from './defs';
+import { IMapSetBusyCountAction, IMapSetBaseLayerAction, IMapSetScaleAction, IMapSetMouseCoordinatesAction, IMapSetLayerTransparencyAction, IMapSetViewSizeUnitsAction, IMapPreviousViewAction, IMapNextViewAction, ISetActiveMapToolAction, ISetActiveMapAction, ISetManualFeatureTooltipsEnabledAction, ISetFeatureTooltipsEnabledAction, IMapSetViewRotationAction, IMapSetViewRotationEnabledAction, IShowSelectedFeatureAction, IMapSetSelectionAction, IMapResizedAction, IAddedLayerAction, IRemoveLayerAction, ISetLayerIndexAction, ISetLayerOpacityAction, ISetLayerVisibilityAction } from './defs';
 import { storeSelectionSet } from '../api/session-store';
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
 
@@ -546,6 +547,105 @@ export function showSelectedFeature(mapName: string, layerId: string, selectionK
             mapName,
             layerId,
             selectionKey
+        }
+    }
+}
+
+/**
+ * NOTE: Dispatching this action does not add the layer to the map. This is a means to notify others
+ * that a new layer has been added. It is expected to be dispatched by any component that is managing
+ * layers
+ * 
+ * @export
+ * @param {string} mapName
+ * @param {ILayerInfo} layer
+ * @returns {IAddedLayerAction}
+ * @since 0.13
+ */
+export function mapLayerAdded(mapName: string, layer: ILayerInfo): IAddedLayerAction {
+    return {
+        type: ActionType.LAYER_ADDED,
+        payload: {
+            mapName,
+            layer
+        }
+    }
+}
+
+/**
+ *
+ * @export
+ * @param {string} mapName
+ * @param {string} layerName
+ * @returns {IRemoveLayerAction}
+ * @since 0.13
+ */
+export function removeMapLayer(mapName: string, layerName: string): IRemoveLayerAction {
+    return {
+        type: ActionType.REMOVE_LAYER,
+        payload: {
+            mapName,
+            layerName
+        }
+    }
+}
+
+/**
+ *
+ * @export
+ * @param {string} mapName
+ * @param {string} layerName
+ * @param {number} index
+ * @returns {ISetLayerIndexAction}
+ * @since 0.13
+ */
+export function setMapLayerIndex(mapName: string, layerName: string, index: number): ISetLayerIndexAction {
+    return {
+        type: ActionType.SET_LAYER_INDEX,
+        payload: {
+            mapName,
+            layerName,
+            index
+        }
+    }
+}
+
+/**
+ *
+ * @export
+ * @param {string} mapName
+ * @param {string} layerName
+ * @param {number} opacity
+ * @returns {ISetLayerOpacityAction}
+ * @since 0.13
+ */
+export function setMapLayerOpacity(mapName: string, layerName: string, opacity: number): ISetLayerOpacityAction {
+    return {
+        type: ActionType.SET_LAYER_OPACITY,
+        payload: {
+            mapName,
+            layerName,
+            opacity
+        }
+    }
+}
+
+/**
+ *
+ * @export
+ * @param {string} mapName
+ * @param {string} layerName
+ * @param {boolean} visible
+ * @returns {ISetLayerVisibilityAction}
+ * @since 0.13
+ */
+export function setMapLayerVisibility(mapName: string, layerName: string, visible: boolean): ISetLayerVisibilityAction {
+    return {
+        type: ActionType.SET_LAYER_VISIBILITY,
+        payload: {
+            mapName,
+            layerName,
+            visible
         }
     }
 }

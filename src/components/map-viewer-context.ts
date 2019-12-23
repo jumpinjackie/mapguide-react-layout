@@ -740,12 +740,7 @@ export class MgLayerSet {
         const larr = map.getLayers().getArray();
         const layers = larr
             .filter(l => this._customLayers[l.get("name")] != null)
-            .map(l => ({
-                visible: l.getVisible(),
-                name: l.get("name"),
-                type: l.get("LAYER_TYPE"),
-                opacity: l.getOpacity()
-            }));
+            .map(l => getLayerInfo(l, true));
         return layers;
     }
     public hasLayer(name: string): boolean {
@@ -817,11 +812,49 @@ export class MgLayerSet {
         }
         return -1;
     }
+    public apply(map: olMap, layers: ILayerInfo[]): void {
+        const layersByName = layers.reduce((current, layer) => {
+            current[layer.name] = layer;
+            return current;
+        }, {} as any);
+        //Apply opacity/visibility
+        for (const layer of layers) {
+            const oll = this._customLayers[layer.name];
+            if (oll) {
+                oll.setVisible(layer.visible);
+                oll.setOpacity(layer.opacity);
+            }
+        }
+        //Apply removals 
+        for (const layerName in this._customLayers) {
+            if (!layersByName[layerName]) {
+                this.removeLayer(map, layerName);
+            }
+        }
+
+        //Fix order if required
+        for (let i = layers.length - 1; i >= 0; i--) {
+
+        }
+
+        //First item, top-most
+        //Last item, bottom-most
+    }
 }
 
 interface IReadFeatures {
     type: string;
     readFeatures(text: string, options: any): Feature<Geometry>[];
+}
+
+export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInfo {
+    return {
+        visible: layer.getVisible(),
+        name: layer.get("name"),
+        type: layer.get("LAYER_TYPE"),
+        opacity: layer.getOpacity(),
+        isExternal: isExternal
+    }
 }
 
 export class MgLayerManager implements ILayerManager {
@@ -855,6 +888,9 @@ export class MgLayerManager implements ILayerManager {
     }
     moveDown(name: string): number {
         return this.layerSet.moveDown(this.map, name);
+    }
+    apply(layers: ILayerInfo[]): void {
+        this.layerSet.apply(this.map, layers);
     }
     addLayerFromFile(options: IAddFileLayerOptions): void {
         const { file, name: layerName, locale, projection, callback } = options;
@@ -893,11 +929,9 @@ export class MgLayerManager implements ILayerManager {
                         source: source
                     });
                     source.addFeatures(features);
+                    layer.set("LAYER_TYPE", loadedType);
                     that.addLayer(layerName, layer);
-                    callback({
-                        type: loadedType!,
-                        name: layerName
-                    });
+                    callback(getLayerInfo(layer, true));
                 } else {
                     callback(new Error(tr("ADD_LOCAL_FILE_LAYER_FAILURE", locale)));
                 }

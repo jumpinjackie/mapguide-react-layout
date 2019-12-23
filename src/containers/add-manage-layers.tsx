@@ -1,21 +1,15 @@
 import * as React from "react";
 import * as Runtime from "../api/runtime";
 import { tr } from "../api/i18n";
-import {
-    ILayerInfo, Bounds
-} from "../api/common";
+import { ILayerInfo, Bounds } from "../api/common";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
 import { Tabs, Tab, Icon } from '@blueprintjs/core';
-import { useViewerLocale, useActiveMapName } from './hooks';
+import * as MapActions from "../actions/map";
+import { useViewerLocale, useActiveMapName, useActiveMapLayers } from './hooks';
 import olVectorLayer from "ol/layer/Vector";
 import { transformExtent } from "ol/proj";
-
-interface ILayerManagerProps {
-    locale: string;
-    activeMapName: string | undefined;
-    layers: ILayerInfo[];
-}
+import { useDispatch } from 'react-redux';
 
 /**
  * 
@@ -28,19 +22,29 @@ export interface IAddManageLayersContainerProps {
 }
 
 const AddManageLayersContainer = () => {
+    const dispatch = useDispatch();
     const locale = useViewerLocale();
     const activeMapName = useActiveMapName();
-    const [layers, setLayers] = React.useState<ILayerInfo[]>([]);
-    const updateLayersFromViewer = () => {
-        const viewer = Runtime.getViewer();
-        if (viewer) {
-            const lyrs = viewer.getLayerManager().getLayers();
-            setLayers(lyrs);
+    const layers = useActiveMapLayers();
+    const getLayerIndex = (layerName: string) => {
+        if (layers) {
+            for (let i = 0; i < layers.length; i++) {
+                if (layers[i].name == layerName) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    };
+    const onLayerAdded = (layer: ILayerInfo) => {
+        if (activeMapName) {
+            dispatch(MapActions.mapLayerAdded(activeMapName, layer));
         }
     };
-    React.useEffect(updateLayersFromViewer, []);
-    React.useEffect(updateLayersFromViewer, [activeMapName]);
     const removeHandler = (layerName: string) => {
+        if (activeMapName) {
+            dispatch(MapActions.removeMapLayer(activeMapName, layerName));
+        }/*
         const viewer = Runtime.getViewer();
         if (viewer) {
             const removed = viewer.getLayerManager().removeLayer(layerName);
@@ -49,25 +53,34 @@ const AddManageLayersContainer = () => {
                 const layers = viewer.getLayerManager().getLayers();
                 setLayers(layers);
             }
-        }
+        }*/
     };
     const upHandler = (layerName: string) => {
+        const newIndex = getLayerIndex(layerName);
+        if (activeMapName && newIndex >= 0) {
+            dispatch(MapActions.setMapLayerIndex(activeMapName, layerName, newIndex - 1));
+        }/*
         const viewer = Runtime.getViewer();
         if (viewer) {
             if (viewer.getLayerManager().moveUp(layerName) >= 0) {
                 const layers = viewer.getLayerManager().getLayers();
                 setLayers(layers);
             }
-        }
+        }*/
     };
     const downHandler = (layerName: string) => {
+        const newIndex = getLayerIndex(layerName);
+        if (layers && activeMapName && newIndex < layers.length - 1) {
+            dispatch(MapActions.setMapLayerIndex(activeMapName, layerName, newIndex + 1));
+        }
+        /*
         const viewer = Runtime.getViewer();
         if (viewer) {
             if (viewer.getLayerManager().moveDown(layerName) >= 0) {
                 const layers = viewer.getLayerManager().getLayers();
                 setLayers(layers);
             }
-        }
+        }*/
     };
     const zoomToBounds = (layerName: string) => {
         const viewer = Runtime.getViewer();
@@ -86,6 +99,10 @@ const AddManageLayersContainer = () => {
         }
     };
     const setVisibility = (layerName: string, visible: boolean) => {
+        if (activeMapName) {
+            dispatch(MapActions.setMapLayerVisibility(activeMapName, layerName, visible));
+        }
+        /*
         const viewer = Runtime.getViewer();
         if (viewer) {
             const layer = viewer.getLayerManager().getLayer(layerName);
@@ -95,8 +112,13 @@ const AddManageLayersContainer = () => {
                 setLayers(layers);
             }
         }
+        */
     };
     const setOpacity = (layerName: string, value: number) => {
+        if (activeMapName) {
+            dispatch(MapActions.setMapLayerOpacity(activeMapName, layerName, value));
+        }
+        /*
         const viewer = Runtime.getViewer();
         if (viewer) {
             const layer = viewer.getLayerManager().getLayer(layerName);
@@ -106,18 +128,23 @@ const AddManageLayersContainer = () => {
                 setLayers(layers);
             }
         }
+        */
     };
-    return <Tabs id="tabs" renderActiveTabPanelOnly={true}>
-        <Tab id="add_layer" title={<span><Icon icon="new-layer" iconSize={Icon.SIZE_STANDARD} /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer onLayerAdded={updateLayersFromViewer} locale={locale} />} />
-        <Tab id="manage_layers" title={<span><Icon icon="layers" iconSize={Icon.SIZE_STANDARD} /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<ManageLayers layers={layers}
-            locale={locale}
-            onSetOpacity={setOpacity}
-            onSetVisibility={setVisibility}
-            onZoomToBounds={zoomToBounds}
-            onMoveLayerDown={downHandler}
-            onMoveLayerUp={upHandler}
-            onRemoveLayer={removeHandler} />} />
-    </Tabs>;
+    if (layers) {
+        return <Tabs id="tabs" renderActiveTabPanelOnly={true}>
+            <Tab id="add_layer" title={<span><Icon icon="new-layer" iconSize={Icon.SIZE_STANDARD} /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer onLayerAdded={onLayerAdded} locale={locale} />} />
+            <Tab id="manage_layers" title={<span><Icon icon="layers" iconSize={Icon.SIZE_STANDARD} /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<ManageLayers layers={layers}
+                locale={locale}
+                onSetOpacity={setOpacity}
+                onSetVisibility={setVisibility}
+                onZoomToBounds={zoomToBounds}
+                onMoveLayerDown={downHandler}
+                onMoveLayerUp={upHandler}
+                onRemoveLayer={removeHandler} />} />
+        </Tabs>;
+    } else {
+        return <></>;
+    }
 };
 
 export default AddManageLayersContainer;

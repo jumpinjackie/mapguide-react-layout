@@ -1,7 +1,8 @@
 import {
     IBranchedMapState,
     IBranchedMapSubState,
-    IExternalBaseLayer
+    IExternalBaseLayer,
+    ILayerInfo
 } from "../api/common";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { isMapView } from "../utils/type-guards";
@@ -31,13 +32,35 @@ export const MAP_STATE_INITIAL_SUB_STATE: IBranchedMapSubState = {
     hideLayers: [],
     hideGroups: [],
     externalBaseLayers: [],
-    activeSelectedFeature: undefined
+    activeSelectedFeature: undefined,
+    layers: []
 };
 
-function mergeSubState(state: IBranchedMapState, mapName: string, subState: Partial<IBranchedMapSubState>) {
+function setLayerAction<K extends keyof ILayerInfo>(state: IBranchedMapState, mapName: string, layerName: string, selector: () => Pick<ILayerInfo, K>): IBranchedMapState {
+    const subState = state[mapName];
+    if (subState) {
+        const layers = subState.layers.map(l => {
+            if (l.name == layerName) {
+                return {
+                    ...l,
+                    ...(selector())
+                } as ILayerInfo;
+            } else {
+                return l;
+            }
+        });
+        const state1: Partial<IBranchedMapSubState> = {
+            layers
+        };
+        return mergeSubState(state, mapName, { ...subState, ...state1 });
+    }
+    return state;
+}
+
+function mergeSubState(state: IBranchedMapState, mapName: string, subState: Partial<IBranchedMapSubState>): IBranchedMapState {
     const state1: Partial<IBranchedMapState> = {};
     state1[mapName] = { ...state[mapName], ...subState };
-    return { ...state, ...state1 };
+    return { ...state, ...state1 } as IBranchedMapState;
 }
 
 export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerAction) {
@@ -83,7 +106,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                     const sg = [];
                     const hl = [];
                     const hg = [];
-                    
+
                     if (mapName == mapNameToApplyInitialState) {
                         const rtm: RuntimeMap = maps[mapName].map;
                         const isl = payload.initialShowLayers || [];
@@ -129,10 +152,10 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                         ...{ initialView: maps[mapName].initialView },
                         ...(cv || {}),
                         ...(isel || {}),
-                        ...(sl.length > 0 ? { showLayers: [ ...sl ] } : {}),
-                        ...(sg.length > 0 ? { showGroups: [ ...sg ] } : {}),
-                        ...(hl.length > 0 ? { hideLayers: [ ...hl ] } : {}),
-                        ...(hg.length > 0 ? { hideGroups: [ ...hg ] } : {})
+                        ...(sl.length > 0 ? { showLayers: [...sl] } : {}),
+                        ...(sg.length > 0 ? { showGroups: [...sg] } : {}),
+                        ...(hl.length > 0 ? { hideLayers: [...hl] } : {}),
+                        ...(hg.length > 0 ? { hideGroups: [...hg] } : {})
                     };
 
                     // As INIT_APP does not establish a currentView, if a currentView was
@@ -144,7 +167,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
 
                     newState[mapName] = newMapState;
                 }
-                
+
                 return { ...state, ...newState };
             }
         case ActionType.MAP_PREVIOUS_VIEW:
@@ -371,6 +394,70 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                         externalBaseLayers: baseLayers
                     };
                     return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
+                }
+                return state;
+            }
+        case ActionType.LAYER_ADDED:
+            {
+                const { payload } = action;
+                const subState = state[payload.mapName];
+                if (subState) {
+                    const layers = [...subState.layers];
+                    layers.push(payload.layer);
+                    const state1: Partial<IBranchedMapSubState> = {
+                        layers
+                    };
+                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
+                }
+                return state;
+            }
+        case ActionType.REMOVE_LAYER:
+            {
+                const { payload } = action;
+                const subState = state[payload.mapName];
+                if (subState) {
+                    const layers = subState.layers.filter(l => l.name != action.payload.layerName);
+                    const state1: Partial<IBranchedMapSubState> = {
+                        layers
+                    };
+                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
+                }
+                return state;
+            }
+        case ActionType.SET_LAYER_VISIBILITY:
+            {
+                const { mapName, layerName, visible } = action.payload;
+                const state1 = setLayerAction(state, mapName, layerName, () => ({ visible: visible }));
+                return state1;
+            }
+        case ActionType.SET_LAYER_OPACITY:
+            {
+                const { mapName, layerName, opacity } = action.payload;
+                const state1 = setLayerAction(state, mapName, layerName, () => ({ opacity: opacity }));
+                return state1;
+            }
+        case ActionType.SET_LAYER_INDEX:
+            {
+                const { mapName, index, layerName } = action.payload;
+                const subState = state[mapName];
+                if (subState) {
+                    const layers = [...subState.layers];
+                    let currentIdx = -1;
+                    for (let i = 0; i < layers.length; i++) {
+                        if (layers[i].name == layerName) {
+                            currentIdx = i;
+                            break;
+                        }
+                    }
+                    if (currentIdx > 0 && currentIdx != index && index < layers.length - 1 && index >= 0) {
+                        const theLayer = layers[currentIdx];
+                        layers.splice(currentIdx, 1);
+                        layers.splice(index, 0, theLayer);
+                        const state1: Partial<IBranchedMapSubState> = {
+                            layers
+                        };
+                        return mergeSubState(state, mapName, { ...subState, ...state1 });
+                    }
                 }
                 return state;
             }

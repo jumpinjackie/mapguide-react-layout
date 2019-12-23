@@ -2,7 +2,8 @@ import * as React from "react";
 import {
     GenericEvent,
     WmsCapabilitiesDocument,
-    WMSLayerStyle
+    WMSLayerStyle,
+    ILayerInfo
 } from "../../api/common";
 import { tr } from "../../api/i18n";
 import { Error } from "../error";
@@ -15,13 +16,14 @@ import olImageLayer from "ol/layer/Image";
 import olWmsSource from "ol/source/ImageWMS";
 import olTiledWmsSource from "ol/source/TileWMS";
 import { Spinner, NonIdealState, Intent, ControlGroup, InputGroup, Button } from '@blueprintjs/core';
+import { getLayerInfo } from '../map-viewer-context';
 
 /**
  * @hidden
  */
 export interface IAddWmsLayerProps {
     locale: string | undefined;
-    onLayerAdded: () => void;
+    onLayerAdded: (layer: ILayerInfo) => void;
 }
 
 /**
@@ -65,7 +67,7 @@ export const AddWmsLayer = (props: IAddWmsLayerProps) => {
             layer.set("LAYER_TYPE", "WMS");
             viewer.getLayerManager().addLayer(name, layer);
             viewer.toastSuccess("success", tr("ADDED_LAYER", locale, { name: name }));
-            props.onLayerAdded();
+            props.onLayerAdded(getLayerInfo(layer, true));
         }
     };
     const onLoadCaps = () => {

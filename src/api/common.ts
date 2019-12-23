@@ -872,6 +872,10 @@ export interface ILayerInfo {
      * @memberof ILayerInfo
      */
     type: string;
+    /**
+     * @since 0.13
+     */
+    isExternal: boolean;
     /** 
      * @since 0.13
      */
@@ -885,14 +889,6 @@ export interface ILayerInfo {
 }
 
 /**
- * @since 0.13
- */
-export interface ILoadedLayer {
-    name: string;
-    type: string;
-}
-
-/**
  * Options for adding a file-based layer
  * @since 0.13
  */
@@ -901,7 +897,7 @@ export interface IAddFileLayerOptions {
     name: string;
     projection?: ProjectionLike;
     locale: string;
-    callback: (result: Error | ILoadedLayer) => void;
+    callback: (result: Error | ILayerInfo) => void;
 }
 
 /**
@@ -963,6 +959,12 @@ export interface ILayerManager {
      * @since 0.13
      */
     addLayerFromFile(options: IAddFileLayerOptions): void;
+
+    /**
+     * Applies draw order/opacity/visibility
+     * @hidden
+     */
+    apply(layers: ILayerInfo[]): void;
 }
 
 /**
@@ -1126,6 +1128,11 @@ export interface IBranchedMapSubState {
      * @memberof IBranchedMapSubState
      */
     externalBaseLayers: IExternalBaseLayer[];
+    /**
+     * The layers in this viewer. First item is top-most layer. Last item is bottom-most layer.
+     * @since 0.13
+     */
+    layers: ILayerInfo[];
     /**
      * The current map view
      *
@@ -1676,7 +1683,7 @@ export interface IViewerReducerState {
      * @type {boolean}
      * @memberof IViewerReducerState
      */
-    featureTooltipsEnabled: boolean,
+    featureTooltipsEnabled: boolean
 }
 
 /**

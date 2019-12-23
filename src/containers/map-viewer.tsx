@@ -33,7 +33,7 @@ import { tr } from "../api/i18n";
 import { IOLFactory, OLFactory } from "../api/ol-factory";
 import { Toaster, Position, Intent } from '@blueprintjs/core';
 import * as logger from "../utils/logger";
-import { useActiveMapState, useActiveMapSelectionSet, useActiveMapView, useActiveMapInitialView, useActiveMapExternalBaseLayers, useActiveMapSelectableLayers, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapHideLayers, useActiveMapActiveSelectedFeature, useIsContextMenuOpen, useActiveMapName, useActiveMapSessionId, useActiveMapSelectableLayerNames, useViewerActiveTool, useConfiguredAgentUri, useConfiguredAgentKind, useViewerViewRotation, useViewerViewRotationEnabled, useViewerLocale, useViewerImageFormat, useViewerSelectionImageFormat, useViewerSelectionColor, useViewerActiveFeatureSelectionColor as useViewerActiveSelectedFeatureColor, useViewerPointSelectionBuffer, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey } from './hooks';
+import { useActiveMapState, useActiveMapSelectionSet, useActiveMapView, useActiveMapInitialView, useActiveMapExternalBaseLayers, useActiveMapSelectableLayers, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapHideLayers, useActiveMapActiveSelectedFeature, useIsContextMenuOpen, useActiveMapName, useActiveMapSessionId, useActiveMapSelectableLayerNames, useViewerActiveTool, useConfiguredAgentUri, useConfiguredAgentKind, useViewerViewRotation, useViewerViewRotationEnabled, useViewerLocale, useViewerImageFormat, useViewerSelectionImageFormat, useViewerSelectionColor, useViewerActiveFeatureSelectionColor as useViewerActiveSelectedFeatureColor, useViewerPointSelectionBuffer, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useActiveMapLayers } from './hooks';
 import olInteraction from "ol/interaction/Interaction";
 import olOverlay from "ol/Overlay";
 import { ProjectionLike } from "ol/proj";
@@ -261,6 +261,7 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
     const initialView = useActiveMapInitialView();
     const externalBaseLayers = useActiveMapExternalBaseLayers();
     const layerTransparency = useActiveMapLayerTransparency();
+    const layers = useActiveMapLayers();
     const showGroups = useActiveMapShowGroups();
     const hideGroups = useActiveMapHideGroups();
     const showLayers = useActiveMapShowLayers();
@@ -299,6 +300,14 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
     const setFeatureTooltipsEnabled: PropType<MVDispatch, "setFeatureTooltipsEnabled"> = (enabled) => dispatch(MapActions.setFeatureTooltipsEnabled(enabled));
     const showContextMenu: PropType<MVDispatch, "showContextMenu"> = (pos) => dispatch(FlyoutActions.openContextMenu({ x: pos[0], y: pos[1] }));
     const hideContextMenu: PropType<MVDispatch, "hideContextMenu"> = () => dispatch(FlyoutActions.closeContextMenu());
+    // Side-effect to apply the current external layer list
+    React.useEffect(() => {
+        const innerViewer = innerRef.current;
+        if (innerViewer && layers) {
+            const layerManager = innerViewer.getLayerManager();
+            layerManager.apply(layers);
+        }
+    }, [layers]);
     // Side-effect to set the viewer "instance" once the MapViewerBase component has been mounted.
     // Should only happen once.
     React.useEffect(() => {

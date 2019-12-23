@@ -1,6 +1,6 @@
 import * as React from "react";
 import { tr } from "../../api/i18n";
-import { GenericEvent } from "../../api/common";
+import { GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 import Dropzone from "react-dropzone";
 import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText } from '@blueprintjs/core';
@@ -11,7 +11,7 @@ import * as Runtime from "../../api/runtime";
  */
 export interface IAddLayerProps {
     locale: string;
-    onLayerAdded: () => void;
+    onLayerAdded: (layer: ILayerInfo) => void;
 }
 
 /**
@@ -23,13 +23,13 @@ export interface IAddLayerState {
 
 interface AddLayerConf {
     label: string;
-    content: (locale: string | undefined, onLayerAdded: () => void) => JSX.Element;
+    content: (locale: string | undefined, onLayerAdded: (layer: ILayerInfo) => void) => JSX.Element;
 }
 
 const ADD_URL_LAYER_TYPES: { [key: string]: AddLayerConf } = {
     "WMS": {
         label: "WMS",
-        content: (locale: string | undefined, onLayerAdded: () => void) => <AddWmsLayer locale={locale} onLayerAdded={onLayerAdded} />
+        content: (locale: string | undefined, onLayerAdded: (layer: ILayerInfo) => void) => <AddWmsLayer locale={locale} onLayerAdded={onLayerAdded} />
     }
 };
 
@@ -66,7 +66,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
                             setAddLayerError(undefined);
                             setLoadedFile(undefined);
                             setAddLayerName(undefined);
-                            props.onLayerAdded();
+                            props.onLayerAdded(res);
                         }
                     }
                 });

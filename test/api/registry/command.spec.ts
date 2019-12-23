@@ -91,7 +91,8 @@ describe("api/registry/command", () => {
                     showLayers: [],
                     hideGroups: [],
                     hideLayers: [],
-                    activeSelectedFeature: undefined
+                    activeSelectedFeature: undefined,
+                    layers: []
                 }
             }
             state.mapState = { ...state.mapState, ...ms };
@@ -128,7 +129,8 @@ describe("api/registry/command", () => {
                     showLayers: [],
                     hideGroups: [],
                     hideLayers: [],
-                    activeSelectedFeature: undefined
+                    activeSelectedFeature: undefined,
+                    layers: []
                 }
             }
             state.mapState = { ...state.mapState, ...ms };
@@ -169,7 +171,8 @@ describe("api/registry/command", () => {
                     showLayers: [],
                     hideGroups: [],
                     hideLayers: [],
-                    activeSelectedFeature: undefined
+                    activeSelectedFeature: undefined,
+                    layers: []
                 }
             };
             state.mapState = { ...state.mapState, ...ms };
@@ -202,7 +205,8 @@ describe("api/registry/command", () => {
                     showLayers: [],
                     hideGroups: [],
                     hideLayers: [],
-                    activeSelectedFeature: undefined
+                    activeSelectedFeature: undefined,
+                    layers: []
                 }
             };
             state.mapState = { ...state.mapState, ...ms };

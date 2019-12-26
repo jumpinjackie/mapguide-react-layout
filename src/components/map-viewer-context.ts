@@ -16,7 +16,9 @@ import {
     MgLayerType,
     MgBuiltInLayers,
     MG_LAYER_TYPE_NAME,
-    MG_BASE_LAYER_GROUP_NAME
+    MG_BASE_LAYER_GROUP_NAME,
+    LayerExtensions,
+    IWmsLayerExtensions
 } from "../api/common";
 import { Client } from '../api/client';
 import { MgError, isSessionExpiredError } from '../api/error';
@@ -59,6 +61,8 @@ import { strIsNullOrEmpty } from '../utils/string';
 import Feature, { FeatureLike } from 'ol/Feature';
 import Geometry from 'ol/geom/Geometry';
 import { GML, GPX, GeoJSON, IGC, KML, TopoJSON } from 'ol/format';
+import olWmsSource from "ol/source/ImageWMS";
+import olTileWmsSource from "ol/source/TileWMS";
 
 /**
  * @since 0.13
@@ -900,12 +904,23 @@ interface IReadFeatures {
 }
 
 export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInfo {
+    let ext: LayerExtensions | undefined;
+    if (layer instanceof olImageLayer || layer instanceof olTileLayer) {
+        const source = layer.getSource();
+        if (source instanceof olWmsSource || source instanceof olTileWmsSource) {
+            ext = { 
+                type: "WMS",
+                getLegendUrl: (res?: number) => source.getLegendUrl(res)
+            } as IWmsLayerExtensions;
+        }
+    }
     return {
         visible: layer.getVisible(),
         name: layer.get(LayerProperty.LAYER_NAME),
         type: layer.get(LayerProperty.LAYER_TYPE),
         opacity: layer.getOpacity(),
-        isExternal: isExternal
+        isExternal: isExternal,
+        extensions: ext
     }
 }
 

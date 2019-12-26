@@ -852,6 +852,19 @@ export interface IMapViewer {
     updateSize(): void;
 }
 
+/**
+ * @since 0.13
+ */
+export interface IWmsLayerExtensions {
+    type: "WMS";
+    getLegendUrl?: (resolution?: number) => string;
+}
+
+/**
+ * @since 0.13
+ */
+export type LayerExtensions = IWmsLayerExtensions;
+
 export interface ILayerInfo {
     /**
      * The name of the layer
@@ -881,6 +894,10 @@ export interface ILayerInfo {
      * @memberof ILayerInfo
      */
     opacity: number;
+    /**
+     * @since 0.13
+     */
+    extensions?: LayerExtensions;
 }
 
 /**

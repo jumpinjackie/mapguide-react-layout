@@ -6,7 +6,7 @@ import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
 import { Tabs, Tab, Icon } from '@blueprintjs/core';
 import * as MapActions from "../actions/map";
-import { useViewerLocale, useActiveMapName, useActiveMapLayers } from './hooks';
+import { useViewerLocale, useActiveMapName, useActiveMapLayers, useActiveMapView } from './hooks';
 import olVectorLayer from "ol/layer/Vector";
 import { transformExtent } from "ol/proj";
 import { useDispatch } from 'react-redux';
@@ -26,6 +26,7 @@ const AddManageLayersContainer = () => {
     const locale = useViewerLocale();
     const activeMapName = useActiveMapName();
     const layers = useActiveMapLayers();
+    const view = useActiveMapView();
     const getLayerIndex = (layerName: string) => {
         if (layers) {
             for (let i = 0; i < layers.length; i++) {
@@ -89,6 +90,7 @@ const AddManageLayersContainer = () => {
             <Tab id="add_layer" title={<span><Icon icon="new-layer" iconSize={Icon.SIZE_STANDARD} /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer onLayerAdded={onLayerAdded} locale={locale} />} />
             <Tab id="manage_layers" title={<span><Icon icon="layers" iconSize={Icon.SIZE_STANDARD} /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<ManageLayers layers={layers}
                 locale={locale}
+                currentResolution={view?.resolution}
                 onSetOpacity={setOpacity}
                 onSetVisibility={setVisibility}
                 onZoomToBounds={zoomToBounds}

@@ -32,11 +32,11 @@ export const STR_EMPTY = "";
  * Indicates if the given string is null or empty
  *
  * @export
- * @param {(string | undefined)} str
+ * @param {(string | null | undefined)} str
  * @returns {boolean}
  */
-export function strIsNullOrEmpty(str: string | undefined): boolean {
-    return null === str || "" === str;
+export function strIsNullOrEmpty(str: string | null | undefined): boolean {
+    return null == str || "" === str;
 }
 
 /**

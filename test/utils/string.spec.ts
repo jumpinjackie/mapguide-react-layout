@@ -1,6 +1,11 @@
-import { strEndsWith } from '../../src/utils/string';
+import { strEndsWith, strIsNullOrEmpty } from '../../src/utils/string';
 
 describe("utils/string", () => {
+    describe("strIsNullOrEmpty", () => {
+        it("is true for null", () => expect(strIsNullOrEmpty(null)).toBe(true));
+        it("is true for undefined", () => expect(strIsNullOrEmpty(undefined)).toBe(true));
+        it("is true for empty string", () => expect(strIsNullOrEmpty("")).toBe(true));
+    });
     describe("strEndsWith", () => {
         it("Does end with", () => {
             expect(strEndsWith("abcd1234", "1234")).toBe(true);

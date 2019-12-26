@@ -2131,7 +2131,9 @@ export interface MapGuideImageSourceOptions {
  */
 export enum LayerProperty {
     LAYER_TYPE = "layer_type",
-    LAYER_NAME = "name"
+    LAYER_NAME = "name",
+    IS_GROUP = "is_group",
+    IS_EXTERNAL = "is_external"
 }
 
 /**
@@ -2140,4 +2142,23 @@ export enum LayerProperty {
 export enum MgLayerType {
     Untiled = "MapGuide_Untiled",
     Tiled = "MapGuide_Tiled"
+}
+
+/**
+ * @since 0.13
+ */
+export const MG_LAYER_TYPE_NAME = "MapGuide";
+
+/**
+ * @since 0.13
+ */
+export const MG_BASE_LAYER_GROUP_NAME = "Base Tile Layers";
+
+/**
+ * @since 0.13
+ */
+export enum MgBuiltInLayers {
+    Overlay = "MapGuide Dynamic Overlay",
+    SelectionOverlay = "MapGuide Selection Overlay",
+    ActiveFeatureSelectionOverlay = "MapGuide Active Feature Selection Overlay"
 }

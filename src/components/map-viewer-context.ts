@@ -13,7 +13,10 @@ import {
     ILayerManager,
     IAddFileLayerOptions,
     LayerProperty,
-    MgLayerType
+    MgLayerType,
+    MgBuiltInLayers,
+    MG_LAYER_TYPE_NAME,
+    MG_BASE_LAYER_GROUP_NAME
 } from "../api/common";
 import { Client } from '../api/client';
 import { MgError, isSessionExpiredError } from '../api/error';
@@ -402,6 +405,8 @@ export class MgLayerSet {
                 sources.push(tileSource);
                 tileLayer.set(LayerProperty.LAYER_NAME, group.ObjectId);
                 tileLayer.set(LayerProperty.LAYER_TYPE, MgLayerType.Tiled);
+                tileLayer.set(LayerProperty.IS_EXTERNAL, false);
+                tileLayer.set(LayerProperty.IS_GROUP, false);
                 tileLayer.setVisible(group.Visible);
                 groupLayers.push(tileLayer);
                 this.baseLayerGroups.push(tileLayer);
@@ -439,6 +444,10 @@ export class MgLayerSet {
             //name: "MapGuide Dynamic Overlay",
             source: overlaySource
         });
+        this.overlay.set(LayerProperty.LAYER_NAME, MgBuiltInLayers.Overlay);
+        this.overlay.set(LayerProperty.LAYER_TYPE, MG_LAYER_TYPE_NAME);
+        this.overlay.set(LayerProperty.IS_EXTERNAL, false);
+        this.overlay.set(LayerProperty.IS_GROUP, false);
         const overviewOverlaySource = createMapGuideSource({
             projection: this.projection,
             url: props.agentUri,
@@ -451,6 +460,10 @@ export class MgLayerSet {
             //name: "MapGuide Dynamic Overlay",
             source: overviewOverlaySource
         });
+        this.overviewOverlay.set(LayerProperty.LAYER_NAME, MgBuiltInLayers.Overlay);
+        this.overviewOverlay.set(LayerProperty.LAYER_TYPE, MG_LAYER_TYPE_NAME);
+        this.overviewOverlay.set(LayerProperty.IS_EXTERNAL, false);
+        this.overviewOverlay.set(LayerProperty.IS_GROUP, false);
         sources.push(overviewOverlaySource);
         const selectionOverlaySource = createMapGuideSource({
             projection: this.projection,
@@ -464,6 +477,10 @@ export class MgLayerSet {
             //name: "MapGuide Dynamic Overlay",
             source: selectionOverlaySource
         });
+        this.selectionOverlay.set(LayerProperty.LAYER_NAME, MgBuiltInLayers.SelectionOverlay);
+        this.selectionOverlay.set(LayerProperty.LAYER_TYPE, MG_LAYER_TYPE_NAME);
+        this.selectionOverlay.set(LayerProperty.IS_EXTERNAL, false)
+        this.selectionOverlay.set(LayerProperty.IS_GROUP, false);
         sources.push(selectionOverlaySource);
         //NOTE: Not tracking this source atm
         this.activeSelectedFeatureOverlay = new olImageLayer({
@@ -477,6 +494,10 @@ export class MgLayerSet {
                 url: BLANK_GIF_DATA_URI
             })
         });
+        this.activeSelectedFeatureOverlay.set(LayerProperty.LAYER_NAME, MgBuiltInLayers.ActiveFeatureSelectionOverlay);
+        this.activeSelectedFeatureOverlay.set(LayerProperty.LAYER_TYPE, MG_LAYER_TYPE_NAME);
+        this.activeSelectedFeatureOverlay.set(LayerProperty.IS_EXTERNAL, false)
+        this.activeSelectedFeatureOverlay.set(LayerProperty.IS_GROUP, false);
         if (props.externalBaseLayers != null) {
             const groupOpts: any = {
                 title: tr("EXTERNAL_BASE_LAYERS", props.locale),
@@ -492,10 +513,15 @@ export class MgLayerSet {
                     const tl = new olTileLayer(options);
                     tl.set(LayerProperty.LAYER_TYPE, ext.kind);
                     tl.set(LayerProperty.LAYER_NAME, ext.name);
+                    tl.set(LayerProperty.IS_EXTERNAL, false);
+                    tl.set(LayerProperty.IS_GROUP, false);
                     return tl;
                 })
             };
             this.baseLayerGroup = new olLayerGroup(groupOpts);
+            this.baseLayerGroup.set(LayerProperty.LAYER_NAME, MG_BASE_LAYER_GROUP_NAME);
+            this.baseLayerGroup.set(LayerProperty.IS_EXTERNAL, false);
+            this.baseLayerGroup.set(LayerProperty.IS_GROUP, true);
             this.allLayers.push(this.baseLayerGroup);
         }
 
@@ -834,13 +860,20 @@ export class MgLayerSet {
         //Fix order if required
         //First item, top-most
         //Last item, bottom-most
-        const currentLayers = map.getLayers().getArray().map(l => ({
-            name: l.get(LayerProperty.LAYER_NAME)
-        }));
+        const cCurrentLayers = map.getLayers();
+        const aCurrentLayers = cCurrentLayers.getArray();
+        const currentLayers = aCurrentLayers.map(l => ({
+            name: l.get(LayerProperty.LAYER_NAME),
+            type: l.get(LayerProperty.LAYER_TYPE),
+            isExternal: l.get(LayerProperty.IS_EXTERNAL),
+            isGroup: l.get(LayerProperty.IS_GROUP),
+            layer: l
+        })).filter(l => l.isExternal == true);
+        console.assert(currentLayers.length == layers.length);
         console.table(currentLayers);
-        console.table(layers);
+        //console.table(layers);
         for (let i = layers.length - 1; i >= 0; i--) {
-
+            console.log(`Checking if layer (${layers[i].name}) needs re-ordering`);
         }
     }
 }
@@ -934,6 +967,8 @@ export class MgLayerManager implements ILayerManager {
                     source.addFeatures(features);
                     layer.set(LayerProperty.LAYER_NAME, layerName);
                     layer.set(LayerProperty.LAYER_TYPE, loadedType);
+                    layer.set(LayerProperty.IS_EXTERNAL, true)
+                    layer.set(LayerProperty.IS_GROUP, false);
                     that.addLayer(layerName, layer);
                     callback(getLayerInfo(layer, true));
                 } else {

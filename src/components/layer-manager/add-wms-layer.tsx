@@ -66,6 +66,8 @@ export const AddWmsLayer = (props: IAddWmsLayerProps) => {
                 });
             }
             layer.set(LayerProperty.LAYER_TYPE, "WMS");
+            layer.set(LayerProperty.IS_EXTERNAL, true);
+            layer.set(LayerProperty.IS_GROUP, false);
             viewer.getLayerManager().addLayer(name, layer);
             viewer.toastSuccess("success", tr("ADDED_LAYER", locale, { name: name }));
             props.onLayerAdded(getLayerInfo(layer, true));

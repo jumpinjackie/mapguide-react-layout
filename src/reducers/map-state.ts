@@ -402,8 +402,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                 const { payload } = action;
                 const subState = state[payload.mapName];
                 if (subState) {
-                    const layers = [...subState.layers];
-                    layers.push(payload.layer);
+                    const layers = [payload.layer, ...subState.layers];
                     const state1: Partial<IBranchedMapSubState> = {
                         layers
                     };

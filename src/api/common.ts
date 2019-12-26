@@ -2126,3 +2126,19 @@ export interface MapGuideImageSourceOptions {
     crossOrigin?: string;
     defaultImageLoadFunction?: LoadFunction;
 }
+
+/**
+ * @since 0.13
+ */
+export enum LayerProperty {
+    LAYER_TYPE = "layer_type",
+    LAYER_NAME = "name"
+}
+
+/**
+ * @since 0.13
+ */
+export enum MgLayerType {
+    Untiled = "MapGuide_Untiled",
+    Tiled = "MapGuide_Tiled"
+}

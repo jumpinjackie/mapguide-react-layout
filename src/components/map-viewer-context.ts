@@ -11,7 +11,9 @@ import {
     LayerTransparencySet,
     ILayerInfo,
     ILayerManager,
-    IAddFileLayerOptions
+    IAddFileLayerOptions,
+    LayerProperty,
+    MgLayerType
 } from "../api/common";
 import { Client } from '../api/client';
 import { MgError, isSessionExpiredError } from '../api/error';
@@ -398,7 +400,8 @@ export class MgLayerSet {
                     source: tileSource
                 });
                 sources.push(tileSource);
-                tileLayer.set("name", group.ObjectId);
+                tileLayer.set(LayerProperty.LAYER_NAME, group.ObjectId);
+                tileLayer.set(LayerProperty.LAYER_TYPE, MgLayerType.Tiled);
                 tileLayer.setVisible(group.Visible);
                 groupLayers.push(tileLayer);
                 this.baseLayerGroups.push(tileLayer);
@@ -486,7 +489,10 @@ export class MgLayerSet {
                         source: extSource
                     };
                     sources.push(extSource);
-                    return new olTileLayer(options)
+                    const tl = new olTileLayer(options);
+                    tl.set(LayerProperty.LAYER_TYPE, ext.kind);
+                    tl.set(LayerProperty.LAYER_NAME, ext.name);
+                    return tl;
                 })
             };
             this.baseLayerGroup = new olLayerGroup(groupOpts);
@@ -502,7 +508,7 @@ export class MgLayerSet {
         /*
         console.log("Draw Order:");
         for (let i = 0; i < layers.length; i++) {
-            console.log(" " + layers[i].get("name"));
+            console.log(" " + layers[i].get(LayerProperty.LAYER_NAME));
         }
         */
         logger.debug(`Creating OL view with projection ${this.projection} and ${resolutions.length} resolutions`);
@@ -614,7 +620,7 @@ export class MgLayerSet {
         //As MG base layer groups are separate ol layer instances, we have to toggle them on the client-side as well
         if (showGroups && showGroups.length > 0) {
             for (const groupId of showGroups) {
-                const match = this.baseLayerGroups.filter(l => l.get("name") === groupId);
+                const match = this.baseLayerGroups.filter(l => l.get(LayerProperty.LAYER_NAME) === groupId);
                 if (match.length == 1) {
                     match[0].setVisible(true);
                 }
@@ -622,7 +628,7 @@ export class MgLayerSet {
         }
         if (hideGroups && hideGroups.length > 0) {
             for (const groupId of hideGroups) {
-                const match = this.baseLayerGroups.filter(l => l.get("name") === groupId);
+                const match = this.baseLayerGroups.filter(l => l.get(LayerProperty.LAYER_NAME) === groupId);
                 if (match.length == 1) {
                     match[0].setVisible(false);
                 }
@@ -739,7 +745,7 @@ export class MgLayerSet {
     public getCustomLayers(map: olMap): ILayerInfo[] {
         const larr = map.getLayers().getArray();
         const layers = larr
-            .filter(l => this._customLayers[l.get("name")] != null)
+            .filter(l => this._customLayers[l.get(LayerProperty.LAYER_NAME)] != null)
             .map(l => getLayerInfo(l, true));
         return layers;
     }
@@ -758,7 +764,7 @@ export class MgLayerSet {
         }
         this._customLayers[name] = layer;
         map.addLayer(layer);
-        layer.set("name", name);
+        layer.set(LayerProperty.LAYER_NAME, name);
         return layer;
     }
     public removeLayer(map: olMap, name: string): olLayerBase | undefined {
@@ -777,7 +783,7 @@ export class MgLayerSet {
         } else {
             if (typeof (factory) == 'function') {
                 layer = factory();
-                layer.set("name", name);
+                layer.set(LayerProperty.LAYER_NAME, name);
                 this._customLayers[name] = layer;
                 map.addLayer(layer);
             }
@@ -833,12 +839,16 @@ export class MgLayerSet {
         }
 
         //Fix order if required
+        //First item, top-most
+        //Last item, bottom-most
+        const currentLayers = map.getLayers().getArray().map(l => ({
+            name: l.get(LayerProperty.LAYER_NAME)
+        }));
+        console.table(currentLayers);
+        console.table(layers);
         for (let i = layers.length - 1; i >= 0; i--) {
 
         }
-
-        //First item, top-most
-        //Last item, bottom-most
     }
 }
 
@@ -850,8 +860,8 @@ interface IReadFeatures {
 export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInfo {
     return {
         visible: layer.getVisible(),
-        name: layer.get("name"),
-        type: layer.get("LAYER_TYPE"),
+        name: layer.get(LayerProperty.LAYER_NAME),
+        type: layer.get(LayerProperty.LAYER_TYPE),
         opacity: layer.getOpacity(),
         isExternal: isExternal
     }
@@ -929,7 +939,8 @@ export class MgLayerManager implements ILayerManager {
                         source: source
                     });
                     source.addFeatures(features);
-                    layer.set("LAYER_TYPE", loadedType);
+                    layer.set(LayerProperty.LAYER_NAME, layerName);
+                    layer.set(LayerProperty.LAYER_TYPE, loadedType);
                     that.addLayer(layerName, layer);
                     callback(getLayerInfo(layer, true));
                 } else {

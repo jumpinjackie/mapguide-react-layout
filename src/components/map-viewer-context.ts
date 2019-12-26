@@ -809,34 +809,6 @@ export class MgLayerSet {
         }
         return layer;
     }
-    public moveUp(map: olMap, name: string): number {
-        const lyr = this._customLayers[name];
-        if (lyr) {
-            const layers = map.getLayers();
-            const arr = layers.getArray();
-            const idx = arr.indexOf(lyr);
-            if (idx > 0) {
-                layers.remove(lyr);
-                layers.setAt(idx - 1, lyr);
-                return idx - 1;
-            }
-        }
-        return -1;
-    }
-    public moveDown(map: olMap, name: string): number {
-        const lyr = this._customLayers[name];
-        if (lyr) {
-            const layers = map.getLayers();
-            const arr = layers.getArray();
-            const idx = arr.indexOf(lyr);
-            if (idx < arr.length - 1) {
-                layers.remove(lyr);
-                layers.setAt(idx + 1, lyr);
-                return idx + 1;
-            }
-        }
-        return -1;
-    }
     public apply(map: olMap, layers: ILayerInfo[]): void {
         const layersByName = layers.reduce((current, layer) => {
             current[layer.name] = layer;
@@ -937,12 +909,6 @@ export class MgLayerManager implements ILayerManager {
     }
     getLayer<T extends olLayerBase>(name: string): T | undefined {
         return this.layerSet.getLayer(this.map, name);
-    }
-    moveUp(name: string): number {
-        return this.layerSet.moveUp(this.map, name);
-    }
-    moveDown(name: string): number {
-        return this.layerSet.moveDown(this.map, name);
     }
     apply(layers: ILayerInfo[]): void {
         this.layerSet.apply(this.map, layers);

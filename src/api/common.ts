@@ -944,9 +944,6 @@ export interface ILayerManager {
      */
     getLayer<T extends olLayerBase>(name: string): T | undefined;
 
-    moveUp(name: string): number;
-    moveDown(name: string): number;
-
     /**
      * Attempt to add a layer using the given file as a source
      * @param options

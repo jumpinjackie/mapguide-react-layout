@@ -86,18 +86,20 @@ const AddManageLayersContainer = () => {
         }
     };
     if (layers) {
-        return <Tabs id="tabs" renderActiveTabPanelOnly={true}>
-            <Tab id="add_layer" title={<span><Icon icon="new-layer" iconSize={Icon.SIZE_STANDARD} /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer onLayerAdded={onLayerAdded} locale={locale} />} />
-            <Tab id="manage_layers" title={<span><Icon icon="layers" iconSize={Icon.SIZE_STANDARD} /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<ManageLayers layers={layers}
-                locale={locale}
-                currentResolution={view?.resolution}
-                onSetOpacity={setOpacity}
-                onSetVisibility={setVisibility}
-                onZoomToBounds={zoomToBounds}
-                onMoveLayerDown={downHandler}
-                onMoveLayerUp={upHandler}
-                onRemoveLayer={removeHandler} />} />
-        </Tabs>;
+        return <div style={{ padding: 8 }}>
+            <Tabs id="tabs" renderActiveTabPanelOnly={true}>
+                <Tab id="add_layer" title={<span><Icon icon="new-layer" iconSize={Icon.SIZE_STANDARD} /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer onLayerAdded={onLayerAdded} locale={locale} />} />
+                <Tab id="manage_layers" title={<span><Icon icon="layers" iconSize={Icon.SIZE_STANDARD} /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<ManageLayers layers={layers}
+                    locale={locale}
+                    currentResolution={view?.resolution}
+                    onSetOpacity={setOpacity}
+                    onSetVisibility={setVisibility}
+                    onZoomToBounds={zoomToBounds}
+                    onMoveLayerDown={downHandler}
+                    onMoveLayerUp={upHandler}
+                    onRemoveLayer={removeHandler} />} />
+            </Tabs>
+        </div>;
     } else {
         return <></>;
     }

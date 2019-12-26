@@ -10,7 +10,7 @@ import { tr } from "../../api/i18n";
 import { Error } from "../error";
 import * as Runtime from "../../api/runtime";
 import { Client } from "../../api/client";
-import { WmsCapabilitiesTree } from "../wms-capabilities-tree";
+import { WmsCapabilitiesPanel } from "../wms-capabilities-panel";
 import olWmsParser from "ol/format/WMSCapabilities";
 import olTileLayer from "ol/layer/Tile";
 import olImageLayer from "ol/layer/Image";
@@ -23,7 +23,7 @@ import { getLayerInfo } from '../map-viewer-context';
  * @hidden
  */
 export interface IAddWmsLayerProps {
-    locale: string | undefined;
+    locale: string;
     onLayerAdded: (layer: ILayerInfo) => void;
 }
 
@@ -117,7 +117,7 @@ export const AddWmsLayer = (props: IAddWmsLayerProps) => {
                         description={tr("ADD_WMS_LAYER_LOADING_DESC", locale)} />;
                 } else {
                     if (caps) {
-                        return <WmsCapabilitiesTree onAddLayer={onAddLayer} capabilities={caps} locale={locale} />;
+                        return <WmsCapabilitiesPanel onAddLayer={onAddLayer} capabilities={caps} locale={locale} />;
                     } else if (error) {
                         return <Error error={error} />;
                     } else {

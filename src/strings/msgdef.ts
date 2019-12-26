@@ -211,4 +211,7 @@ export interface ILocalizedMessages {
     LAYER_MANAGER_TT_REMOVE: string;
     CANCEL: string;
     UNKNOWN_FILE_TYPE: string;
+    WMS_SERVICE_INFO: string;
+    WMS_AVAILABLE_LAYERS: string;
+    ADD_LAYER_WITH_WMS_STYLE: string;
 }

@@ -24,13 +24,13 @@ export interface IAddLayerState {
 
 interface AddLayerConf {
     label: string;
-    content: (locale: string | undefined, onLayerAdded: (layer: ILayerInfo) => void) => JSX.Element;
+    content: (locale: string, onLayerAdded: (layer: ILayerInfo) => void) => JSX.Element;
 }
 
 const ADD_URL_LAYER_TYPES: { [key: string]: AddLayerConf } = {
     "WMS": {
         label: "WMS",
-        content: (locale: string | undefined, onLayerAdded: (layer: ILayerInfo) => void) => <AddWmsLayer locale={locale} onLayerAdded={onLayerAdded} />
+        content: (locale: string, onLayerAdded: (layer: ILayerInfo) => void) => <AddWmsLayer locale={locale} onLayerAdded={onLayerAdded} />
     }
 };
 

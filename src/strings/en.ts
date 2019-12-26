@@ -203,7 +203,10 @@ const STRINGS_EN: ILocalizedMessages = {
     "LAYER_MANAGER_TT_ZOOM_EXTENTS": "Zoom to the extents of this layer",
     "LAYER_MANAGER_TT_REMOVE": "Remove this layer",
     "CANCEL": "Cancel",
-    "UNKNOWN_FILE_TYPE": "Unknown"
+    "UNKNOWN_FILE_TYPE": "Unknown",
+    "WMS_SERVICE_INFO": "WMS Service Info",
+    "WMS_AVAILABLE_LAYERS": "Available WMS Layers",
+    "ADD_LAYER_WITH_WMS_STYLE": "Add layer ({style})"
 };
 
 export default STRINGS_EN;

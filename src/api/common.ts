@@ -903,7 +903,7 @@ export interface IAddFileLayerOptions {
  */
 export interface ILayerManager {
     /**
-     * Gets all custom layers on this map, sorted by draw order
+     * Gets all custom layers on this map, sorted by draw order (First item is top-most layer. Last item is bottom-most layer.)
      * 
      * @returns {ILayerInfo[]} 
      * @memberof ILayerManager

@@ -773,7 +773,7 @@ export class MgLayerSet {
         const layers = larr
             .filter(l => this._customLayers[l.get(LayerProperty.LAYER_NAME)] != null)
             .map(l => getLayerInfo(l, true));
-        return layers;
+        return layers.reverse();
     }
     public hasLayer(name: string): boolean {
         return this._customLayers[name] != null;

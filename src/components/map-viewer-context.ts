@@ -776,17 +776,10 @@ export class MgLayerSet {
             return layer;
         }
     }
-    public getLayer<T extends olLayerBase>(map: olMap, name: string, factory?: () => T): T | undefined {
+    public getLayer<T extends olLayerBase>(map: olMap, name: string): T | undefined {
         let layer: T | undefined;
         if (this._customLayers[name]) {
             layer = this._customLayers[name] as T;
-        } else {
-            if (typeof (factory) == 'function') {
-                layer = factory();
-                layer.set(LayerProperty.LAYER_NAME, name);
-                this._customLayers[name] = layer;
-                map.addLayer(layer);
-            }
         }
         return layer;
     }
@@ -890,8 +883,8 @@ export class MgLayerManager implements ILayerManager {
     removeLayer(name: string): olLayerBase | undefined {
         return this.layerSet.removeLayer(this.map, name);
     }
-    getLayer<T extends olLayerBase>(name: string, factory?: () => T): T | undefined {
-        return this.layerSet.getLayer(this.map, name, factory);
+    getLayer<T extends olLayerBase>(name: string): T | undefined {
+        return this.layerSet.getLayer(this.map, name);
     }
     moveUp(name: string): number {
         return this.layerSet.moveUp(this.map, name);

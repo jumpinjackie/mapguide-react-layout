@@ -938,12 +938,11 @@ export interface ILayerManager {
      *
      * @template T
      * @param {string} name
-     * @param {() => T} factory
      * @returns {T}
      *
      * @memberof IMapViewer
      */
-    getLayer<T extends olLayerBase>(name: string, factory?: () => T): T | undefined;
+    getLayer<T extends olLayerBase>(name: string): T | undefined;
 
     moveUp(name: string): number;
     moveDown(name: string): number;

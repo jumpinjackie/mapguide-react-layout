@@ -205,4 +205,8 @@ export interface ILocalizedMessages {
     NO_EXTERNAL_LAYERS_DESC: string;
     LAYER_OPACITY: string;
     LAYER_NAME_EXISTS: string;
+    LAYER_MANAGER_TT_MOVE_UP: string;
+    LAYER_MANAGER_TT_MOVE_DOWN: string;
+    LAYER_MANAGER_TT_ZOOM_EXTENTS: string;
+    LAYER_MANAGER_TT_REMOVE: string;
 }

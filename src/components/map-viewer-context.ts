@@ -735,6 +735,14 @@ export class MgLayerSet {
         for (let i = this.allLayers.length - 1; i >= 0; i--) {
             layers.insertAt(0, this.allLayers[i]);
         }
+        // Attach custom layers
+        const customLayers = Object.values(this._customLayers);
+        customLayers.sort((a, b) => {
+            return a.order - b.order;
+        });
+        for (const item of customLayers) {
+            layers.insertAt(0, item.layer);
+        }
         map.setView(this.view);
         if (bSetLayers) {
             const ovMap = ovMapControl.getOverviewMap();
@@ -760,10 +768,14 @@ export class MgLayerSet {
         }
     }
     public detach(map: olMap, ovMapControl: olOverviewMap): void {
-        const ovLayers = this.getLayersForOverviewMap();
         for (const layer of this.allLayers) {
             map.removeLayer(layer);
         }
+        //Detach custom layers
+        for (const layerName in this._customLayers) {
+            map.removeLayer(this._customLayers[layerName].layer);
+        }
+        const ovLayers = this.getLayersForOverviewMap();
         const ovMap = ovMapControl.getOverviewMap();
         for (const layer of ovLayers) {
             ovMap.removeLayer(layer);

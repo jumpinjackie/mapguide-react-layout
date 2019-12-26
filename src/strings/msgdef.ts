@@ -209,4 +209,6 @@ export interface ILocalizedMessages {
     LAYER_MANAGER_TT_MOVE_DOWN: string;
     LAYER_MANAGER_TT_ZOOM_EXTENTS: string;
     LAYER_MANAGER_TT_REMOVE: string;
+    CANCEL: string;
+    UNKNOWN_FILE_TYPE: string;
 }

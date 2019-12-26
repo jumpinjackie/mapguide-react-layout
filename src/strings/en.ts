@@ -202,6 +202,8 @@ const STRINGS_EN: ILocalizedMessages = {
     "LAYER_MANAGER_TT_MOVE_DOWN": "Move this layer down the draw order",
     "LAYER_MANAGER_TT_ZOOM_EXTENTS": "Zoom to the extents of this layer",
     "LAYER_MANAGER_TT_REMOVE": "Remove this layer",
+    "CANCEL": "Cancel",
+    "UNKNOWN_FILE_TYPE": "Unknown"
 };
 
 export default STRINGS_EN;

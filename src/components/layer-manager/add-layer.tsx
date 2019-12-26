@@ -3,8 +3,9 @@ import { tr } from "../../api/i18n";
 import { GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 import Dropzone from "react-dropzone";
-import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText } from '@blueprintjs/core';
+import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup } from '@blueprintjs/core';
 import * as Runtime from "../../api/runtime";
+import { strIsNullOrEmpty } from "../../utils/string";
 
 /**
  * @hidden
@@ -39,6 +40,7 @@ enum AddLayerKind {
 }
 
 const AddFileLayer = (props: IAddLayerProps) => {
+    const { locale } = props;
     const [isAddingLayer, setIsAddingLayer] = React.useState(false);
     const [addLayerError, setAddLayerError] = React.useState<any>(undefined);
     const [loadedFile, setLoadedFile] = React.useState<File | undefined>(undefined);
@@ -46,6 +48,9 @@ const AddFileLayer = (props: IAddLayerProps) => {
     const onFileDropped = (file: File) => {
         setLoadedFile(file);
         setAddLayerName(file.name);
+    };
+    const onCancelAddFile = () => {
+        setLoadedFile(undefined);
     };
     const onAddFileLayer = () => {
         const viewer = Runtime.getViewer();
@@ -80,15 +85,18 @@ const AddFileLayer = (props: IAddLayerProps) => {
         return <NonIdealState
             title={<EditableText value={addLayerName} onChange={v => setAddLayerName(v)} />}
             icon="upload"
-            description={tr("FMT_UPLOADED_FILE", props.locale, { size: loadedFile.size, type: loadedFile.type })}
-            action={<Button loading={isAddingLayer} onClick={(e: any) => onAddFileLayer()} intent={Intent.PRIMARY}>{tr("ADD_LAYER")}</Button>} />
+            description={tr("FMT_UPLOADED_FILE", locale, { size: loadedFile.size, type: (strIsNullOrEmpty(loadedFile.type) ? tr("UNKNOWN_FILE_TYPE", locale) : loadedFile.type) })}
+            action={<ButtonGroup>
+                <Button loading={isAddingLayer} onClick={(e: any) => onAddFileLayer()} intent={Intent.PRIMARY}>{tr("ADD_LAYER", locale)}</Button>
+                <Button loading={isAddingLayer} onClick={(e: any) => onCancelAddFile()} intent={Intent.DANGER}>{tr("CANCEL", locale)}</Button>
+            </ButtonGroup>} />
     } else {
         return <Dropzone multiple={false} onDrop={acceptedFiles => onFileDropped(acceptedFiles[0])}>
             {({ getRootProps, getInputProps }) => (<div style={{ margin: 10, border: "1px dashed black", borderRadius: 5, padding: 5 }} {...getRootProps()}>
                 <NonIdealState
-                    title={tr("ADD_FILE", props.locale)}
+                    title={tr("ADD_FILE", locale)}
                     icon="upload"
-                    description={tr("ADD_FILE_INSTRUCTIONS", props.locale)}
+                    description={tr("ADD_FILE_INSTRUCTIONS", locale)}
                     action={<input {...getInputProps()} />} />
             </div>)}
         </Dropzone>;

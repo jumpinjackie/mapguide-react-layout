@@ -44,43 +44,19 @@ const AddManageLayersContainer = () => {
     const removeHandler = (layerName: string) => {
         if (activeMapName) {
             dispatch(MapActions.removeMapLayer(activeMapName, layerName));
-        }/*
-        const viewer = Runtime.getViewer();
-        if (viewer) {
-            const removed = viewer.getLayerManager().removeLayer(layerName);
-            if (removed) {
-                viewer.toastSuccess("success", tr("REMOVED_LAYER", locale, { name: layerName }));
-                const layers = viewer.getLayerManager().getLayers();
-                setLayers(layers);
-            }
-        }*/
+        }
     };
     const upHandler = (layerName: string) => {
         const newIndex = getLayerIndex(layerName);
         if (activeMapName && newIndex >= 0) {
             dispatch(MapActions.setMapLayerIndex(activeMapName, layerName, newIndex - 1));
-        }/*
-        const viewer = Runtime.getViewer();
-        if (viewer) {
-            if (viewer.getLayerManager().moveUp(layerName) >= 0) {
-                const layers = viewer.getLayerManager().getLayers();
-                setLayers(layers);
-            }
-        }*/
+        }
     };
     const downHandler = (layerName: string) => {
         const newIndex = getLayerIndex(layerName);
         if (layers && activeMapName && newIndex < layers.length - 1) {
             dispatch(MapActions.setMapLayerIndex(activeMapName, layerName, newIndex + 1));
         }
-        /*
-        const viewer = Runtime.getViewer();
-        if (viewer) {
-            if (viewer.getLayerManager().moveDown(layerName) >= 0) {
-                const layers = viewer.getLayerManager().getLayers();
-                setLayers(layers);
-            }
-        }*/
     };
     const zoomToBounds = (layerName: string) => {
         const viewer = Runtime.getViewer();
@@ -102,33 +78,11 @@ const AddManageLayersContainer = () => {
         if (activeMapName) {
             dispatch(MapActions.setMapLayerVisibility(activeMapName, layerName, visible));
         }
-        /*
-        const viewer = Runtime.getViewer();
-        if (viewer) {
-            const layer = viewer.getLayerManager().getLayer(layerName);
-            if (layer) {
-                layer.setVisible(visible);
-                const layers = viewer.getLayerManager().getLayers();
-                setLayers(layers);
-            }
-        }
-        */
     };
     const setOpacity = (layerName: string, value: number) => {
         if (activeMapName) {
             dispatch(MapActions.setMapLayerOpacity(activeMapName, layerName, value));
         }
-        /*
-        const viewer = Runtime.getViewer();
-        if (viewer) {
-            const layer = viewer.getLayerManager().getLayer(layerName);
-            if (layer) {
-                layer.setOpacity(value);
-                const layers = viewer.getLayerManager().getLayers();
-                setLayers(layers);
-            }
-        }
-        */
     };
     if (layers) {
         return <Tabs id="tabs" renderActiveTabPanelOnly={true}>

@@ -129,7 +129,7 @@ class MapViewerAdapter implements IMapViewer {
         return this.inner.isFeatureTooltipEnabled();
     }
     getLayerManager(mapName?: string | undefined): ILayerManager {
-        return this.inner.getLayerManager();
+        return this.inner.getLayerManager(mapName);
     }
     addInteraction<T extends olInteraction>(interaction: T): T {
         return this.inner.addInteraction(interaction);

@@ -907,7 +907,7 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
     let ext: LayerExtensions | undefined;
     if (layer instanceof olImageLayer || layer instanceof olTileLayer) {
         const source = layer.getSource();
-        if (source instanceof olWmsSource || source instanceof olTileWmsSource) {
+        if (layer.get(LayerProperty.HAS_WMS_LEGEND) == true && (source instanceof olWmsSource || source instanceof olTileWmsSource)) {
             ext = { 
                 type: "WMS",
                 getLegendUrl: (res?: number) => source.getLegendUrl(res)

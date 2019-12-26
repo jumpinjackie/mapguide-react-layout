@@ -63,12 +63,13 @@ export const ManageLayers = (props: IManageLayersProps) => {
                         case "WMS":
                             {
                                 isWms = true;
-                                if (extensions.getLegendUrl) {                                    
+                                if (extensions.getLegendUrl) {
                                     extraActions.push(<Button key="toggle-wms-legend" intent={Intent.SUCCESS} icon="info-sign" onClick={() => onToggleWmsLegend(extensions.getLegendUrl as any)} />)
                                 }
                             }
                     }
                 }
+                const isWmsLegendOpen = !strIsNullOrEmpty(wmsLegendUrl);
                 return <Card key={lyr.name}>
                     <Switch checked={lyr.visible} onChange={e => onSetVisibility(lyr.name, !lyr.visible)} labelElement={<><Icon icon={iconName} /> {lyr.name}</>} />
                     <p>Opacity</p>
@@ -80,8 +81,11 @@ export const ManageLayers = (props: IManageLayersProps) => {
                         <Button title={tr("LAYER_MANAGER_TT_REMOVE", locale)} intent={Intent.DANGER} icon="trash" onClick={(e: any) => onRemoveLayer(lyr.name)} />
                         {extraActions}
                     </ButtonGroup>
-                    {isWms && <Collapse isOpen={!strIsNullOrEmpty(wmsLegendUrl)}>
-                        <img src={wmsLegendUrl} />
+                    {isWms && <Collapse isOpen={isWmsLegendOpen}>
+                        <Card>
+                            <h5 className="bp3-heading"><a href="#">{tr("WMS_LEGEND", locale)}</a></h5>
+                            <img src={wmsLegendUrl} />
+                        </Card>
                     </Collapse>}
                 </Card>;
             })}

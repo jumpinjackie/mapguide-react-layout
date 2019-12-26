@@ -206,7 +206,8 @@ const STRINGS_EN: ILocalizedMessages = {
     "UNKNOWN_FILE_TYPE": "Unknown",
     "WMS_SERVICE_INFO": "WMS Service Info",
     "WMS_AVAILABLE_LAYERS": "Available WMS Layers",
-    "ADD_LAYER_WITH_WMS_STYLE": "Add layer ({style})"
+    "ADD_LAYER_WITH_WMS_STYLE": "Add layer ({style})",
+    "WMS_LEGEND": "WMS Legend"
 };
 
 export default STRINGS_EN;

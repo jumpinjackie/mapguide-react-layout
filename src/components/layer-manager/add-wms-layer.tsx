@@ -18,6 +18,7 @@ import olWmsSource from "ol/source/ImageWMS";
 import olTiledWmsSource from "ol/source/TileWMS";
 import { Spinner, NonIdealState, Intent, ControlGroup, InputGroup, Button } from '@blueprintjs/core';
 import { getLayerInfo } from '../map-viewer-context';
+import { strIsNullOrEmpty } from "../../utils/string";
 
 /**
  * @hidden
@@ -68,6 +69,12 @@ export const AddWmsLayer = (props: IAddWmsLayerProps) => {
             layer.set(LayerProperty.LAYER_TYPE, "WMS");
             layer.set(LayerProperty.IS_EXTERNAL, true);
             layer.set(LayerProperty.IS_GROUP, false);
+            if (style) {
+                const legendUrl = style.LegendURL?.[0]?.OnlineResource;
+                if (!strIsNullOrEmpty(legendUrl)) {
+                    layer.set(LayerProperty.HAS_WMS_LEGEND, true);
+                }
+            }
             viewer.getLayerManager().addLayer(name, layer);
             viewer.toastSuccess("success", tr("ADDED_LAYER", locale, { name: name }));
             props.onLayerAdded(getLayerInfo(layer, true));

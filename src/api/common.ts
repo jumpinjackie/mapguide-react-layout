@@ -2147,7 +2147,8 @@ export enum LayerProperty {
     LAYER_TYPE = "layer_type",
     LAYER_NAME = "name",
     IS_GROUP = "is_group",
-    IS_EXTERNAL = "is_external"
+    IS_EXTERNAL = "is_external",
+    HAS_WMS_LEGEND = "has_wms_legend"
 }
 
 /**

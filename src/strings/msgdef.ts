@@ -214,4 +214,5 @@ export interface ILocalizedMessages {
     WMS_SERVICE_INFO: string;
     WMS_AVAILABLE_LAYERS: string;
     ADD_LAYER_WITH_WMS_STYLE: string;
+    WMS_LEGEND: string;
 }

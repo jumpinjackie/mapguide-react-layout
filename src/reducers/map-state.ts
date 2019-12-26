@@ -449,7 +449,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                             break;
                         }
                     }
-                    if (currentIdx > 0 && currentIdx != index && index < layers.length - 1 && index >= 0) {
+                    if (currentIdx >= 0 && currentIdx != index && index < layers.length && index >= 0) {
                         const theLayer = layers[currentIdx];
                         layers.splice(currentIdx, 1);
                         layers.splice(index, 0, theLayer);

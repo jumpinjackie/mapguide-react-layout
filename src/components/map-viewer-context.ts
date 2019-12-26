@@ -869,11 +869,30 @@ export class MgLayerSet {
             isGroup: l.get(LayerProperty.IS_GROUP),
             layer: l
         })).filter(l => l.isExternal == true);
-        console.assert(currentLayers.length == layers.length);
-        console.table(currentLayers);
+        //console.assert(currentLayers.length == layers.length);
+        //console.table(currentLayers);
         //console.table(layers);
+        let bReorder = false;
+        let ii = 0;
         for (let i = layers.length - 1; i >= 0; i--) {
-            console.log(`Checking if layer (${layers[i].name}) needs re-ordering`);
+            const layer = layers[i];
+            //console.log(`Checking if layer (${layer.name}) needs re-ordering`);
+            if (layer.name != currentLayers[ii].name) {
+                bReorder = true;
+                break;
+            }
+            ii++;
+        }
+        if (bReorder) {
+            //console.log("Re-ordering layers");
+            for (const toRemove of currentLayers) {
+                map.removeLayer(toRemove.layer);
+            }
+            //Re-add in order according to layers array
+            for (let i = layers.length - 1; i >= 0; i--) {
+                const toAdd = currentLayers.filter(l => l.name == layers[i].name)[0];
+                map.addLayer(toAdd.layer);
+            }
         }
     }
 }

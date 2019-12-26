@@ -316,7 +316,12 @@ export class MgLayerSet {
     private inPerUnit: number;
     view: olView;
     private callback: IMapViewerContextCallback;
-    private _customLayers: { [name: string]: olLayerBase; };
+    private _customLayers: {
+        [name: string]: {
+            layer: olLayerBase,
+            order: number
+        }
+    };
     constructor(props: IMapViewerContextProps, callback: IMapViewerContextCallback) {
         this.callback = callback;
         this._customLayers = {};
@@ -772,7 +777,11 @@ export class MgLayerSet {
         const larr = map.getLayers().getArray();
         const layers = larr
             .filter(l => this._customLayers[l.get(LayerProperty.LAYER_NAME)] != null)
-            .map(l => getLayerInfo(l, true));
+            .map(l => ({
+                ...getLayerInfo(l, true),
+                //Smuggle this value out for debugging purposes
+                order: this._customLayers[l.get(LayerProperty.LAYER_NAME)].order
+            }));
         return layers.reverse();
     }
     public hasLayer(name: string): boolean {
@@ -785,18 +794,18 @@ export class MgLayerSet {
                 throw new MgError(tr("LAYER_NAME_EXISTS", this.callback.getLocale(), { name: name }));
             } else {
                 //Remove the layer that is about to be replaced first 
-                map.removeLayer(this._customLayers[name]);
+                map.removeLayer(this._customLayers[name].layer);
             }
         }
-        this._customLayers[name] = layer;
         map.addLayer(layer);
+        this._customLayers[name] = { layer, order: map.getLayers().getArray().indexOf(layer) };
         layer.set(LayerProperty.LAYER_NAME, name);
         return layer;
     }
     public removeLayer(map: olMap, name: string): olLayerBase | undefined {
         let layer: olLayerBase;
         if (this._customLayers[name]) {
-            layer = this._customLayers[name];
+            layer = this._customLayers[name].layer;
             map.removeLayer(layer);
             delete this._customLayers[name];
             return layer;
@@ -805,7 +814,7 @@ export class MgLayerSet {
     public getLayer<T extends olLayerBase>(map: olMap, name: string): T | undefined {
         let layer: T | undefined;
         if (this._customLayers[name]) {
-            layer = this._customLayers[name] as T;
+            layer = this._customLayers[name]?.layer as T;
         }
         return layer;
     }
@@ -816,7 +825,7 @@ export class MgLayerSet {
         }, {} as any);
         //Apply opacity/visibility
         for (const layer of layers) {
-            const oll = this._customLayers[layer.name];
+            const oll = this._customLayers[layer.name]?.layer;
             if (oll) {
                 oll.setVisible(layer.visible);
                 oll.setOpacity(layer.opacity);
@@ -864,6 +873,10 @@ export class MgLayerSet {
             for (let i = layers.length - 1; i >= 0; i--) {
                 const toAdd = currentLayers.filter(l => l.name == layers[i].name)[0];
                 map.addLayer(toAdd.layer);
+                const item = this._customLayers[layers[i].name];
+                if (item) {
+                    item.order = cCurrentLayers.getArray().indexOf(toAdd.layer);
+                }
             }
         }
     }

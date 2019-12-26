@@ -184,7 +184,30 @@ const STRINGS_EN: ILocalizedMessages = {
     "WINDOW_RESIZING": "Resizing Window",
     "WINDOW_MOVING": "Moving Window",
     "OTHER_THEME_RULE_COUNT": "... ({count} other theme rules)",
-    "LEGEND_FILTER_LAYERS": "Filter/search for layers or groups"
+    "LEGEND_FILTER_LAYERS": "Filter/search for layers or groups",
+    "ADD_LAYER_KIND_PROMPT": "What kind of layer do you want to add?",
+    "LAYER_KIND_FILE": "A local file-based layer",
+    "LAYER_KIND_URL": "A remote url-based layer",
+    "ADD_FILE": "Add Local File",
+    "ADD_FILE_INSTRUCTIONS": "Click here to choose a file or drag and drop a file here to view it locally on the map (it won't be saved or uploaded to the internet)",
+    "FMT_UPLOADED_FILE": "(size: {size} bytes, type: {type})",
+    "ADD_LOCAL_FILE_LAYER_FAILURE_NOT_TEXT": "Could not read text content from this file",
+    "ADD_LOCAL_FILE_LAYER_FAILURE": "Failed to load file as layer",
+    "WMS_UNSUPPORTED_VERSION": "Unsupported WMS version: {version}",
+    "NO_EXTERNAL_LAYERS": "No Layers",
+    "NO_EXTERNAL_LAYERS_DESC": "Add layers via the {tabName} tab above",
+    "LAYER_OPACITY": "Opacity",
+    "LAYER_NAME_EXISTS": "A layer named {name} already exists",
+    "LAYER_MANAGER_TT_MOVE_UP": "Move this layer up the draw order",
+    "LAYER_MANAGER_TT_MOVE_DOWN": "Move this layer down the draw order",
+    "LAYER_MANAGER_TT_ZOOM_EXTENTS": "Zoom to the extents of this layer",
+    "LAYER_MANAGER_TT_REMOVE": "Remove this layer",
+    "CANCEL": "Cancel",
+    "UNKNOWN_FILE_TYPE": "Unknown",
+    "WMS_SERVICE_INFO": "WMS Service Info",
+    "WMS_AVAILABLE_LAYERS": "Available WMS Layers",
+    "ADD_LAYER_WITH_WMS_STYLE": "Add layer ({style})",
+    "WMS_LEGEND": "WMS Legend"
 };
 
 export default STRINGS_EN;

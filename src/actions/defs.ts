@@ -8,7 +8,7 @@ import { IDOMElementMetrics, IMapView, Dictionary, IExternalBaseLayer, IModalCom
 import { ActionType } from '../constants/actions';
 import { PreparedSubMenuSet } from '../api/registry/command-spec';
 import { RuntimeMap } from '../api/contracts/runtime-map';
-import { QueryMapFeaturesResponse } from '../api';
+import { QueryMapFeaturesResponse, ILayerInfo } from '../api';
 
 /**
  * Opens the context menu
@@ -509,6 +509,64 @@ export interface IMapRefreshAction {
 }
 
 /**
+ * @since 0.13
+ */
+export interface IAddedLayerAction {
+    type: ActionType.LAYER_ADDED,
+    payload: {
+        mapName: string,
+        layer: ILayerInfo
+    }
+}
+
+/**
+ * @since 0.13
+ */
+export interface IRemoveLayerAction {
+    type: ActionType.REMOVE_LAYER,
+    payload: {
+        mapName: string,
+        layerName: string
+    }
+}
+
+/**
+ * @since 0.13
+ */
+export interface ISetLayerIndexAction {
+    type: ActionType.SET_LAYER_INDEX,
+    payload: {
+        mapName: string,
+        layerName: string,
+        index: number
+    }
+}
+
+/**
+ * @since 0.13
+ */
+export interface ISetLayerOpacityAction {
+    type: ActionType.SET_LAYER_OPACITY,
+    payload: {
+        mapName: string,
+        layerName: string,
+        opacity: number
+    }
+}
+
+/**
+ * @since 0.13
+ */
+export interface ISetLayerVisibilityAction {
+    type: ActionType.SET_LAYER_VISIBILITY,
+    payload: {
+        mapName: string,
+        layerName: string,
+        visible: boolean
+    }
+}
+
+/**
  * @since 0.12
  */
 export type ViewerAction = IOpenFlyoutAction 
@@ -556,3 +614,8 @@ export type ViewerAction = IOpenFlyoutAction
     | ILegendSetGroupSelectableAction
     | IMapRefreshAction
     | ISetLocaleAction //@since 0.12.7
+    | IAddedLayerAction //@since 0.13
+    | IRemoveLayerAction //@since 0.13
+    | ISetLayerIndexAction //@since 0.13
+    | ISetLayerOpacityAction //@since 0.13
+    | ISetLayerVisibilityAction //@since 0.13

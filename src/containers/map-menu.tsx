@@ -1,8 +1,5 @@
 import * as React from "react";
 import { useDispatch } from "react-redux";
-import {
-    PropType
-} from "../api/common";
 import { MapMenu } from "../components/map-menu";
 import * as MapActions from "../actions/map";
 import { useViewerLocale, useActiveMapName, useAvailableMaps } from './hooks';

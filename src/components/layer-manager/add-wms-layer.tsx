@@ -2,44 +2,43 @@ import * as React from "react";
 import {
     GenericEvent,
     WmsCapabilitiesDocument,
-    WMSLayerStyle
+    WMSLayerStyle,
+    ILayerInfo,
+    LayerProperty
 } from "../../api/common";
 import { tr } from "../../api/i18n";
 import { Error } from "../error";
 import * as Runtime from "../../api/runtime";
 import { Client } from "../../api/client";
-import { WmsCapabilitiesTree } from "../wms-capabilities-tree";
+import { WmsCapabilitiesPanel } from "../wms-capabilities-panel";
 import olWmsParser from "ol/format/WMSCapabilities";
 import olTileLayer from "ol/layer/Tile";
 import olImageLayer from "ol/layer/Image";
 import olWmsSource from "ol/source/ImageWMS";
 import olTiledWmsSource from "ol/source/TileWMS";
 import { Spinner, NonIdealState, Intent, ControlGroup, InputGroup, Button } from '@blueprintjs/core';
+import { getLayerInfo } from '../map-viewer-context';
+import { strIsNullOrEmpty } from "../../utils/string";
 
 /**
  * @hidden
  */
 export interface IAddWmsLayerProps {
-    locale: string | undefined;
+    locale: string;
+    onLayerAdded: (layer: ILayerInfo) => void;
 }
 
 /**
  * @hidden
  */
-export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
-    constructor(props: IAddWmsLayerProps) {
-        super(props);
-        this.state = {
-            wmsUrl: "",
-            loadingCapabilities: false,
-            caps: null,
-            error: null
-        };
-    }
-    private onAddLayer = (name: string, style: WMSLayerStyle | undefined) => {
+export const AddWmsLayer = (props: IAddWmsLayerProps) => {
+    const { locale } = props;
+    const [wmsUrl, setWmsUrl] = React.useState("");
+    const [loadingCapabilities, setLoadingCapabilities] = React.useState(false);
+    const [caps, setCaps] = React.useState<WmsCapabilitiesDocument | undefined>(undefined);
+    const [error, setError] = React.useState<Error | string | undefined>(undefined);
+    const onAddLayer = (name: string, style: WMSLayerStyle | undefined) => {
         const bTiled = true;
-        const { locale } = this.props;
-        const caps: WmsCapabilitiesDocument = this.state.caps;
         const viewer = Runtime.getViewer();
         if (caps && viewer) {
             const params: any = {
@@ -67,80 +66,75 @@ export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
                     })
                 });
             }
-            layer.set("LAYER_TYPE", "WMS");
+            layer.set(LayerProperty.LAYER_TYPE, "WMS");
+            layer.set(LayerProperty.IS_EXTERNAL, true);
+            layer.set(LayerProperty.IS_GROUP, false);
+            if (style) {
+                const legendUrl = style.LegendURL?.[0]?.OnlineResource;
+                if (!strIsNullOrEmpty(legendUrl)) {
+                    layer.set(LayerProperty.HAS_WMS_LEGEND, true);
+                }
+            }
             viewer.getLayerManager().addLayer(name, layer);
-            viewer.toastSuccess("icon-success", tr("ADDED_LAYER", locale, { name: name }));
+            viewer.toastSuccess("success", tr("ADDED_LAYER", locale, { name: name }));
+            props.onLayerAdded(getLayerInfo(layer, true));
         }
-    }
-    private onLoadCaps = () => {
-        const { wmsUrl } = this.state;
-        this.setState({
-            caps: null,
-            loadingCapabilities: true
-        });
+    };
+    const onLoadCaps = () => {
+        setCaps(undefined);
+        setLoadingCapabilities(true);
         const client = new Client("", "mapagent");
         client.getText(wmsUrl).then(s => {
             const parser = new olWmsParser();
-            const caps = parser.read(s);
+            const caps: WmsCapabilitiesDocument = parser.read(s);
             if (caps.version != "1.3.0") {
-                this.setState({
-                    loadingCapabilities: false,
-                    caps: null,
-                    error: `Unsupported WMS version: ${caps.version}`
-                });
-            }
-            else {
-                this.setState({
-                    loadingCapabilities: false,
-                    caps: caps,
-                    error: null
-                });
+                setLoadingCapabilities(false);
+                setCaps(undefined);
+                setError(tr("WMS_UNSUPPORTED_VERSION", locale, { version: caps.version }));
+            } else {
+                setLoadingCapabilities(false);
+                setCaps(caps);
+                setError(undefined);
             }
         }).catch(err => {
-            this.setState({
-                loadingCapabilities: false,
-                caps: null,
-                error: err
-            });
+            setLoadingCapabilities(false);
+            setCaps(undefined);
+            setError(err);
         });
-    }
-    private onWmsUrlChange = (e: GenericEvent) => {
-        this.setState({ wmsUrl: e.target.value });
-    }
-    render(): JSX.Element {
-        const { locale } = this.props;
-        const { wmsUrl, loadingCapabilities, caps, error } = this.state;
-        return <div>
-            <ControlGroup fill>
-                <InputGroup leftIcon="geosearch"
-                    placeholder={tr("ADD_WMS_LAYER_URL", locale)}
-                    value={wmsUrl}
-                    onChange={this.onWmsUrlChange}
-                    readOnly={loadingCapabilities}
-                    rightElement={<Button intent={Intent.PRIMARY} icon="arrow-right" onClick={this.onLoadCaps} disabled={loadingCapabilities} />} />
-            </ControlGroup>
-            <br />
-            <div>
-                {(() => {
-                    if (loadingCapabilities) {
-                        return <NonIdealState
-                            icon={<Spinner intent={Intent.NONE} size={Spinner.SIZE_LARGE} />}
-                            title={tr("ADD_WMS_LAYER_LOADING", locale)}
-                            description={tr("ADD_WMS_LAYER_LOADING_DESC", locale)} />;
+    };
+    const onWmsUrlChange = (e: GenericEvent) => {
+        setWmsUrl(e.target.value);
+    };
+    return <div>
+        <ControlGroup fill>
+            <InputGroup leftIcon="geosearch"
+                placeholder={tr("ADD_WMS_LAYER_URL", locale)}
+                value={wmsUrl}
+                onChange={onWmsUrlChange}
+                readOnly={loadingCapabilities}
+                rightElement={<Button intent={Intent.PRIMARY} icon="arrow-right" onClick={onLoadCaps} disabled={loadingCapabilities} />} />
+        </ControlGroup>
+        <br />
+        <div>
+            {(() => {
+                if (loadingCapabilities) {
+                    return <NonIdealState
+                        icon={<Spinner intent={Intent.NONE} size={Spinner.SIZE_LARGE} />}
+                        title={tr("ADD_WMS_LAYER_LOADING", locale)}
+                        description={tr("ADD_WMS_LAYER_LOADING_DESC", locale)} />;
+                } else {
+                    if (caps) {
+                        return <WmsCapabilitiesPanel onAddLayer={onAddLayer} capabilities={caps} locale={locale} />;
+                    } else if (error) {
+                        return <Error error={error} />;
                     } else {
-                        if (caps) {
-                            return <WmsCapabilitiesTree onAddLayer={this.onAddLayer} capabilities={caps} locale={locale} />;
-                        } else if (error) {
-                            return <Error error={error} />;
-                        } else {
-                            return <NonIdealState
-                                icon="issue"
-                                title={tr("ADD_WMS_LAYER_NO_LAYERS", locale)}
-                                description={tr("WMS_NO_LAYER_DESCRIPITON", locale)} />;
-                        }
+                        return <NonIdealState
+                            icon="issue"
+                            title={tr("ADD_WMS_LAYER_NO_LAYERS", locale)}
+                            description={tr("WMS_NO_LAYER_DESCRIPITON", locale)} />;
                     }
-                })()}
-            </div>
-        </div>;
-    }
+                }
+            })()}
+        </div>
+    </div>;
 }

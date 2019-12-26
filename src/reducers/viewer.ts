@@ -1,6 +1,7 @@
 import {
     ActiveMapTool,
-    IViewerReducerState
+    IViewerReducerState,
+    ILayerInfo
 } from "../api/common";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';

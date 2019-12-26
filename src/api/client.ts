@@ -21,6 +21,8 @@ export class Client implements Request.IMapGuideClient {
     }
     public async getText(url: string): Promise<string> {
         const r = await fetch(url);
+        if (!r.ok)
+            throw new MgError(r.statusText);
         const text = await r.text();
         return text;
     }

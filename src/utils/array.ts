@@ -19,13 +19,17 @@ export function makeUnique(arr: string[]): string[] {
  * @param other 
  * @since 0.13
  */
-export function areArraysDifferent<T>(arr: T[] | undefined, other: T[] | undefined): boolean {
+export function areArraysDifferent<T>(arr: T[] | undefined, other: T[] | undefined, equalityFn?: (left: T, right: T) => boolean): boolean {
     if (arr && other) {
         if (arr.length != other.length) {
             return true;
         } else {
             for (let i = 0; i < arr.length; i++) {
-                if (arr[i] !== other[i]) {
+                if (equalityFn) {
+                    if (!equalityFn(arr[i], other[i])) {
+                        return true;
+                    }
+                } else if (arr[i] !== other[i]) {
                     return true;
                 }
             }

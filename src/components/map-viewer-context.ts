@@ -10,7 +10,15 @@ import {
     IExternalBaseLayer,
     LayerTransparencySet,
     ILayerInfo,
-    ILayerManager
+    ILayerManager,
+    IAddFileLayerOptions,
+    LayerProperty,
+    MgLayerType,
+    MgBuiltInLayers,
+    MG_LAYER_TYPE_NAME,
+    MG_BASE_LAYER_GROUP_NAME,
+    LayerExtensions,
+    IWmsLayerExtensions
 } from "../api/common";
 import { Client } from '../api/client';
 import { MgError, isSessionExpiredError } from '../api/error';
@@ -33,6 +41,8 @@ import olImageLayer from "ol/layer/Image";
 import olLayerGroup from "ol/layer/Group";
 import olTileGrid from "ol/tilegrid/TileGrid";
 import olSource from "ol/source/Source";
+import olSourceVector from "ol/source/Vector";
+import olVectorLayer from "ol/layer/Vector";
 import olImageSource, { defaultImageLoadFunction } from "ol/source/Image";
 import olTileImageSource from "ol/source/TileImage";
 import createMapGuideSource, { isMapGuideImageSource } from "../api/ol-mapguide-source-factory";
@@ -48,6 +58,11 @@ import ImageWrapper from 'ol/Image';
 import { createContext } from "react";
 import { parseUrl } from '../utils/url';
 import { strIsNullOrEmpty } from '../utils/string';
+import Feature, { FeatureLike } from 'ol/Feature';
+import Geometry from 'ol/geom/Geometry';
+import { GML, GPX, GeoJSON, IGC, KML, TopoJSON } from 'ol/format';
+import olWmsSource from "ol/source/ImageWMS";
+import olTileWmsSource from "ol/source/TileWMS";
 
 /**
  * @since 0.13
@@ -305,7 +320,12 @@ export class MgLayerSet {
     private inPerUnit: number;
     view: olView;
     private callback: IMapViewerContextCallback;
-    private _customLayers: { [name: string]: olLayerBase; };
+    private _customLayers: {
+        [name: string]: {
+            layer: olLayerBase,
+            order: number
+        }
+    };
     constructor(props: IMapViewerContextProps, callback: IMapViewerContextCallback) {
         this.callback = callback;
         this._customLayers = {};
@@ -392,7 +412,10 @@ export class MgLayerSet {
                     source: tileSource
                 });
                 sources.push(tileSource);
-                tileLayer.set("name", group.ObjectId);
+                tileLayer.set(LayerProperty.LAYER_NAME, group.ObjectId);
+                tileLayer.set(LayerProperty.LAYER_TYPE, MgLayerType.Tiled);
+                tileLayer.set(LayerProperty.IS_EXTERNAL, false);
+                tileLayer.set(LayerProperty.IS_GROUP, false);
                 tileLayer.setVisible(group.Visible);
                 groupLayers.push(tileLayer);
                 this.baseLayerGroups.push(tileLayer);
@@ -430,6 +453,10 @@ export class MgLayerSet {
             //name: "MapGuide Dynamic Overlay",
             source: overlaySource
         });
+        this.overlay.set(LayerProperty.LAYER_NAME, MgBuiltInLayers.Overlay);
+        this.overlay.set(LayerProperty.LAYER_TYPE, MG_LAYER_TYPE_NAME);
+        this.overlay.set(LayerProperty.IS_EXTERNAL, false);
+        this.overlay.set(LayerProperty.IS_GROUP, false);
         const overviewOverlaySource = createMapGuideSource({
             projection: this.projection,
             url: props.agentUri,
@@ -442,6 +469,10 @@ export class MgLayerSet {
             //name: "MapGuide Dynamic Overlay",
             source: overviewOverlaySource
         });
+        this.overviewOverlay.set(LayerProperty.LAYER_NAME, MgBuiltInLayers.Overlay);
+        this.overviewOverlay.set(LayerProperty.LAYER_TYPE, MG_LAYER_TYPE_NAME);
+        this.overviewOverlay.set(LayerProperty.IS_EXTERNAL, false);
+        this.overviewOverlay.set(LayerProperty.IS_GROUP, false);
         sources.push(overviewOverlaySource);
         const selectionOverlaySource = createMapGuideSource({
             projection: this.projection,
@@ -455,6 +486,10 @@ export class MgLayerSet {
             //name: "MapGuide Dynamic Overlay",
             source: selectionOverlaySource
         });
+        this.selectionOverlay.set(LayerProperty.LAYER_NAME, MgBuiltInLayers.SelectionOverlay);
+        this.selectionOverlay.set(LayerProperty.LAYER_TYPE, MG_LAYER_TYPE_NAME);
+        this.selectionOverlay.set(LayerProperty.IS_EXTERNAL, false)
+        this.selectionOverlay.set(LayerProperty.IS_GROUP, false);
         sources.push(selectionOverlaySource);
         //NOTE: Not tracking this source atm
         this.activeSelectedFeatureOverlay = new olImageLayer({
@@ -468,6 +503,10 @@ export class MgLayerSet {
                 url: BLANK_GIF_DATA_URI
             })
         });
+        this.activeSelectedFeatureOverlay.set(LayerProperty.LAYER_NAME, MgBuiltInLayers.ActiveFeatureSelectionOverlay);
+        this.activeSelectedFeatureOverlay.set(LayerProperty.LAYER_TYPE, MG_LAYER_TYPE_NAME);
+        this.activeSelectedFeatureOverlay.set(LayerProperty.IS_EXTERNAL, false)
+        this.activeSelectedFeatureOverlay.set(LayerProperty.IS_GROUP, false);
         if (props.externalBaseLayers != null) {
             const groupOpts: any = {
                 title: tr("EXTERNAL_BASE_LAYERS", props.locale),
@@ -480,10 +519,18 @@ export class MgLayerSet {
                         source: extSource
                     };
                     sources.push(extSource);
-                    return new olTileLayer(options)
+                    const tl = new olTileLayer(options);
+                    tl.set(LayerProperty.LAYER_TYPE, ext.kind);
+                    tl.set(LayerProperty.LAYER_NAME, ext.name);
+                    tl.set(LayerProperty.IS_EXTERNAL, false);
+                    tl.set(LayerProperty.IS_GROUP, false);
+                    return tl;
                 })
             };
             this.baseLayerGroup = new olLayerGroup(groupOpts);
+            this.baseLayerGroup.set(LayerProperty.LAYER_NAME, MG_BASE_LAYER_GROUP_NAME);
+            this.baseLayerGroup.set(LayerProperty.IS_EXTERNAL, false);
+            this.baseLayerGroup.set(LayerProperty.IS_GROUP, true);
             this.allLayers.push(this.baseLayerGroup);
         }
 
@@ -496,7 +543,7 @@ export class MgLayerSet {
         /*
         console.log("Draw Order:");
         for (let i = 0; i < layers.length; i++) {
-            console.log(" " + layers[i].get("name"));
+            console.log(" " + layers[i].get(LayerProperty.LAYER_NAME));
         }
         */
         logger.debug(`Creating OL view with projection ${this.projection} and ${resolutions.length} resolutions`);
@@ -608,7 +655,7 @@ export class MgLayerSet {
         //As MG base layer groups are separate ol layer instances, we have to toggle them on the client-side as well
         if (showGroups && showGroups.length > 0) {
             for (const groupId of showGroups) {
-                const match = this.baseLayerGroups.filter(l => l.get("name") === groupId);
+                const match = this.baseLayerGroups.filter(l => l.get(LayerProperty.LAYER_NAME) === groupId);
                 if (match.length == 1) {
                     match[0].setVisible(true);
                 }
@@ -616,7 +663,7 @@ export class MgLayerSet {
         }
         if (hideGroups && hideGroups.length > 0) {
             for (const groupId of hideGroups) {
-                const match = this.baseLayerGroups.filter(l => l.get("name") === groupId);
+                const match = this.baseLayerGroups.filter(l => l.get(LayerProperty.LAYER_NAME) === groupId);
                 if (match.length == 1) {
                     match[0].setVisible(false);
                 }
@@ -692,6 +739,14 @@ export class MgLayerSet {
         for (let i = this.allLayers.length - 1; i >= 0; i--) {
             layers.insertAt(0, this.allLayers[i]);
         }
+        // Attach custom layers
+        const customLayers = Object.values(this._customLayers);
+        customLayers.sort((a, b) => {
+            return a.order - b.order;
+        });
+        for (const item of customLayers) {
+            layers.insertAt(0, item.layer);
+        }
         map.setView(this.view);
         if (bSetLayers) {
             const ovMap = ovMapControl.getOverviewMap();
@@ -717,10 +772,14 @@ export class MgLayerSet {
         }
     }
     public detach(map: olMap, ovMapControl: olOverviewMap): void {
-        const ovLayers = this.getLayersForOverviewMap();
         for (const layer of this.allLayers) {
             map.removeLayer(layer);
         }
+        //Detach custom layers
+        for (const layerName in this._customLayers) {
+            map.removeLayer(this._customLayers[layerName].layer);
+        }
+        const ovLayers = this.getLayersForOverviewMap();
         const ovMap = ovMapControl.getOverviewMap();
         for (const layer of ovLayers) {
             ovMap.removeLayer(layer);
@@ -730,8 +789,16 @@ export class MgLayerSet {
         this.activeSelectedFeatureOverlay.setSource(this.makeActiveSelectedFeatureSource(mapExtent, size, uri));
         this.activeSelectedFeatureOverlay.setVisible(true);
     }
-    public getCustomLayers(): ILayerInfo[] {
-        return Object.keys(this._customLayers).map(n => ({ name: n, type: this._customLayers[n].get("LAYER_TYPE") }));
+    public getCustomLayers(map: olMap): ILayerInfo[] {
+        const larr = map.getLayers().getArray();
+        const layers = larr
+            .filter(l => this._customLayers[l.get(LayerProperty.LAYER_NAME)] != null)
+            .map(l => ({
+                ...getLayerInfo(l, true),
+                //Smuggle this value out for debugging purposes
+                order: this._customLayers[l.get(LayerProperty.LAYER_NAME)].order
+            }));
+        return layers.reverse();
     }
     public hasLayer(name: string): boolean {
         return this._customLayers[name] != null;
@@ -740,72 +807,136 @@ export class MgLayerSet {
         const bAllow = !!allowReplace;
         if (this._customLayers[name]) {
             if (!bAllow) {
-                throw new MgError(`A layer named ${name} already exists`); //LOCALIZEME
+                throw new MgError(tr("LAYER_NAME_EXISTS", this.callback.getLocale(), { name: name }));
             } else {
                 //Remove the layer that is about to be replaced first 
-                map.removeLayer(this._customLayers[name]);
+                map.removeLayer(this._customLayers[name].layer);
             }
         }
-        this._customLayers[name] = layer;
         map.addLayer(layer);
+        this._customLayers[name] = { layer, order: map.getLayers().getArray().indexOf(layer) };
+        layer.set(LayerProperty.LAYER_NAME, name);
         return layer;
     }
     public removeLayer(map: olMap, name: string): olLayerBase | undefined {
         let layer: olLayerBase;
         if (this._customLayers[name]) {
-            layer = this._customLayers[name];
+            layer = this._customLayers[name].layer;
             map.removeLayer(layer);
             delete this._customLayers[name];
             return layer;
         }
     }
-    public getLayer<T extends olLayerBase>(map: olMap, name: string, factory: () => T): T {
-        let layer: T;
+    public getLayer<T extends olLayerBase>(map: olMap, name: string): T | undefined {
+        let layer: T | undefined;
         if (this._customLayers[name]) {
-            layer = this._customLayers[name] as T;
-        } else {
-            layer = factory();
-            this._customLayers[name] = layer;
-            map.addLayer(layer);
+            layer = this._customLayers[name]?.layer as T;
         }
         return layer;
     }
-    public moveUp(map: olMap, name: string): number {
-        const lyr = this._customLayers[name];
-        if (lyr) {
-            const layers = map.getLayers();
-            const arr = layers.getArray();
-            const idx = arr.indexOf(lyr);
-            if (idx > 0) {
-                layers.remove(lyr);
-                layers.setAt(idx - 1, lyr);
-                return idx - 1;
+    public apply(map: olMap, layers: ILayerInfo[]): void {
+        const layersByName = layers.reduce((current, layer) => {
+            current[layer.name] = layer;
+            return current;
+        }, {} as any);
+        //Apply opacity/visibility
+        for (const layer of layers) {
+            const oll = this._customLayers[layer.name]?.layer;
+            if (oll) {
+                oll.setVisible(layer.visible);
+                oll.setOpacity(layer.opacity);
             }
         }
-        return -1;
+        //Apply removals 
+        for (const layerName in this._customLayers) {
+            if (!layersByName[layerName]) {
+                this.removeLayer(map, layerName);
+            }
+        }
+
+        //Fix order if required
+        //First item, top-most
+        //Last item, bottom-most
+        const cCurrentLayers = map.getLayers();
+        const aCurrentLayers = cCurrentLayers.getArray();
+        const currentLayers = aCurrentLayers.map(l => ({
+            name: l.get(LayerProperty.LAYER_NAME),
+            type: l.get(LayerProperty.LAYER_TYPE),
+            isExternal: l.get(LayerProperty.IS_EXTERNAL),
+            isGroup: l.get(LayerProperty.IS_GROUP),
+            layer: l
+        })).filter(l => l.isExternal == true);
+        //console.assert(currentLayers.length == layers.length);
+        //console.table(currentLayers);
+        //console.table(layers);
+        let bReorder = false;
+        let ii = 0;
+        for (let i = layers.length - 1; i >= 0; i--) {
+            const layer = layers[i];
+            //console.log(`Checking if layer (${layer.name}) needs re-ordering`);
+            if (layer.name != currentLayers[ii].name) {
+                bReorder = true;
+                break;
+            }
+            ii++;
+        }
+        if (bReorder) {
+            //console.log("Re-ordering layers");
+            for (const toRemove of currentLayers) {
+                map.removeLayer(toRemove.layer);
+            }
+            //Re-add in order according to layers array
+            for (let i = layers.length - 1; i >= 0; i--) {
+                const toAdd = currentLayers.filter(l => l.name == layers[i].name)[0];
+                map.addLayer(toAdd.layer);
+                const item = this._customLayers[layers[i].name];
+                if (item) {
+                    item.order = cCurrentLayers.getArray().indexOf(toAdd.layer);
+                }
+            }
+        }
     }
-    public moveDown(map: olMap, name: string): number {
-        const lyr = this._customLayers[name];
-        if (lyr) {
-            const layers = map.getLayers();
-            const arr = layers.getArray();
-            const idx = arr.indexOf(lyr);
-            if (idx < arr.length - 1) {
-                layers.remove(lyr);
-                layers.setAt(idx + 1, lyr);
-                return idx + 1;
-            }
+}
+
+interface IReadFeatures {
+    type: string;
+    readFeatures(text: string, options: any): Feature<Geometry>[];
+}
+
+export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInfo {
+    let ext: LayerExtensions | undefined;
+    if (layer instanceof olImageLayer || layer instanceof olTileLayer) {
+        const source = layer.getSource();
+        if (layer.get(LayerProperty.HAS_WMS_LEGEND) == true && (source instanceof olWmsSource || source instanceof olTileWmsSource)) {
+            ext = { 
+                type: "WMS",
+                getLegendUrl: (res?: number) => source.getLegendUrl(res)
+            } as IWmsLayerExtensions;
         }
-        return -1;
+    }
+    return {
+        visible: layer.getVisible(),
+        name: layer.get(LayerProperty.LAYER_NAME),
+        type: layer.get(LayerProperty.LAYER_TYPE),
+        opacity: layer.getOpacity(),
+        isExternal: isExternal,
+        extensions: ext
     }
 }
 
 export class MgLayerManager implements ILayerManager {
+    private _olFormats: IReadFeatures[];
     constructor(private map: olMap, private layerSet: MgLayerSet) {
-
+        this._olFormats = [
+            { type: "GeoJSON", readFeatures: (text, opts) => new GeoJSON().readFeatures(text, opts) },
+            { type: "KML", readFeatures: (text, opts) => new KML().readFeatures(text, opts) },
+            { type: "TopoJSON", readFeatures: (text, opts) => new TopoJSON().readFeatures(text, opts) },
+            { type: "GPX", readFeatures: (text, opts) => new GPX().readFeatures(text, opts) },
+            { type: "IGC", readFeatures: (text, opts) => new IGC().readFeatures(text, opts) }
+        ];
     }
     getLayers(): ILayerInfo[] {
-        return this.layerSet.getCustomLayers();
+        return this.layerSet.getCustomLayers(this.map);
     }
     hasLayer(name: string): boolean {
         return this.layerSet.hasLayer(name);
@@ -816,14 +947,64 @@ export class MgLayerManager implements ILayerManager {
     removeLayer(name: string): olLayerBase | undefined {
         return this.layerSet.removeLayer(this.map, name);
     }
-    getLayer<T extends olLayerBase>(name: string, factory: () => T): T {
-        return this.layerSet.getLayer(this.map, name, factory);
+    getLayer<T extends olLayerBase>(name: string): T | undefined {
+        return this.layerSet.getLayer(this.map, name);
     }
-    moveUp(name: string): number {
-        return this.layerSet.moveUp(this.map, name);
+    apply(layers: ILayerInfo[]): void {
+        this.layerSet.apply(this.map, layers);
     }
-    moveDown(name: string): number {
-        return this.layerSet.moveDown(this.map, name);
+    addLayerFromFile(options: IAddFileLayerOptions): void {
+        const { file, name: layerName, locale, projection, callback } = options;
+        const reader = new FileReader();
+        const that = this;
+        const handler = function (e: ProgressEvent<FileReader>) {
+            const result = e.target?.result;
+            if (result && typeof (result) == 'string') {
+                let proj = projection;
+                if (!proj) {
+                    const view = that.map.getView();
+                    proj = view.getProjection();
+                }
+                const formats = that._olFormats;
+                let features = [] as Feature<Geometry>[];
+                let loadedType: string | undefined;
+                let bLoaded = false;
+                for (let i = 0, ii = formats.length; i < ii; ++i) {
+                    const format = formats[i];
+                    try {
+                        features = format.readFeatures(result, {
+                            featureProjection: projection
+                        });
+                    } catch (e) {
+
+                    }
+                    if (features && features.length > 0) {
+                        loadedType = format.type;
+                        bLoaded = true;
+                        break;
+                    }
+                }
+                if (bLoaded) {
+                    const source = new olSourceVector();
+                    const layer = new olVectorLayer({
+                        source: source
+                    });
+                    source.addFeatures(features);
+                    layer.set(LayerProperty.LAYER_NAME, layerName);
+                    layer.set(LayerProperty.LAYER_TYPE, loadedType);
+                    layer.set(LayerProperty.IS_EXTERNAL, true)
+                    layer.set(LayerProperty.IS_GROUP, false);
+                    that.addLayer(layerName, layer);
+                    callback(getLayerInfo(layer, true));
+                } else {
+                    callback(new Error(tr("ADD_LOCAL_FILE_LAYER_FAILURE", locale)));
+                }
+            } else {
+                callback(new Error(tr("ADD_LOCAL_FILE_LAYER_FAILURE_NOT_TEXT", locale)));
+            }
+        };
+        reader.addEventListener("load", handler);
+        reader.readAsText(file);
     }
 }
 

@@ -1,8 +1,9 @@
 import { IApplicationState, IMapView, UnitOfMeasure, getRuntimeMap, getCurrentView, IExternalBaseLayer, Coordinate2D } from '../api/common';
 import { useSelector } from 'react-redux';
-import { RuntimeMap, getExternalBaseLayers, INameValuePair, ActiveSelectedFeature, LayerTransparencySet, QueryMapFeaturesResponse, ActiveMapTool, ClientKind, ImageFormat, MapLoadIndicatorPositioning, getSelectionSet, IViewerCapabilities, InitError, IBranchedMapState, IBranchedMapSubState, IToolbarAppState, reduceAppToToolbarState } from '../api';
+import { RuntimeMap, getExternalBaseLayers, INameValuePair, ActiveSelectedFeature, LayerTransparencySet, QueryMapFeaturesResponse, ActiveMapTool, ClientKind, ImageFormat, MapLoadIndicatorPositioning, getSelectionSet, IViewerCapabilities, InitError, IBranchedMapState, IBranchedMapSubState, IToolbarAppState, reduceAppToToolbarState, ILayerInfo } from '../api';
 import { WEBLAYOUT_CONTEXTMENU } from '../constants';
 import { useRef, useEffect } from "react";
+import { areArraysDifferent } from "../utils/array";
 
 // From: https://usehooks.com/usePrevious/
 
@@ -26,6 +27,19 @@ export function useActiveMapName() {
 
 export function useActiveMapSessionId() {
     return useSelector<IApplicationState, string | undefined>(state => getRuntimeMap(state)?.SessionId);
+}
+
+export function useActiveMapLayers() {
+    return useSelector<IApplicationState, ILayerInfo[] | undefined>(state => {
+        if (state.config.activeMapName) {
+            return state.mapState[state.config.activeMapName].layers;
+        }
+        return undefined;
+    }, (left, right) => !areArraysDifferent(left, right, (l, r) => {
+        return l.name == r.name
+            && l.opacity == r.opacity
+            && l.visible == r.visible;
+    }));
 }
 
 export function useViewerLocale() {

@@ -19,11 +19,6 @@ import { ProjectionLike } from 'ol/proj';
 import { LoadFunction } from 'ol/Image';
 import { IToolbarAppState } from './registry';
 
-/**
- * @since 0.13
- */
-export type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
-
 // Event boilerplate
 export type GenericEvent = any;
 
@@ -857,6 +852,19 @@ export interface IMapViewer {
     updateSize(): void;
 }
 
+/**
+ * @since 0.13
+ */
+export interface IWmsLayerExtensions {
+    type: "WMS";
+    getLegendUrl?: (resolution?: number) => string;
+}
+
+/**
+ * @since 0.13
+ */
+export type LayerExtensions = IWmsLayerExtensions;
+
 export interface ILayerInfo {
     /**
      * The name of the layer
@@ -872,6 +880,36 @@ export interface ILayerInfo {
      * @memberof ILayerInfo
      */
     type: string;
+    /**
+     * @since 0.13
+     */
+    isExternal: boolean;
+    /** 
+     * @since 0.13
+     */
+    visible: boolean;
+    /**
+     * @since 0.13
+     * @type {number}
+     * @memberof ILayerInfo
+     */
+    opacity: number;
+    /**
+     * @since 0.13
+     */
+    extensions?: LayerExtensions;
+}
+
+/**
+ * Options for adding a file-based layer
+ * @since 0.13
+ */
+export interface IAddFileLayerOptions {
+    file: File;
+    name: string;
+    projection?: ProjectionLike;
+    locale: string;
+    callback: (result: Error | ILayerInfo) => void;
 }
 
 /**
@@ -882,7 +920,7 @@ export interface ILayerInfo {
  */
 export interface ILayerManager {
     /**
-     * Gets all custom layers on this map, sorted by draw order
+     * Gets all custom layers on this map, sorted by draw order (First item is top-most layer. Last item is bottom-most layer.)
      * 
      * @returns {ILayerInfo[]} 
      * @memberof ILayerManager
@@ -917,15 +955,24 @@ export interface ILayerManager {
      *
      * @template T
      * @param {string} name
-     * @param {() => T} factory
      * @returns {T}
      *
      * @memberof IMapViewer
      */
-    getLayer<T extends olLayerBase>(name: string, factory: () => T): T;
+    getLayer<T extends olLayerBase>(name: string): T | undefined;
 
-    moveUp(name: string): number;
-    moveDown(name: string): number;
+    /**
+     * Attempt to add a layer using the given file as a source
+     * @param options
+     * @since 0.13
+     */
+    addLayerFromFile(options: IAddFileLayerOptions): void;
+
+    /**
+     * Applies draw order/opacity/visibility
+     * @hidden
+     */
+    apply(layers: ILayerInfo[]): void;
 }
 
 /**
@@ -1089,6 +1136,11 @@ export interface IBranchedMapSubState {
      * @memberof IBranchedMapSubState
      */
     externalBaseLayers: IExternalBaseLayer[];
+    /**
+     * The layers in this viewer. First item is top-most layer. Last item is bottom-most layer.
+     * @since 0.13
+     */
+    layers: ILayerInfo[];
     /**
      * The current map view
      *
@@ -1639,7 +1691,7 @@ export interface IViewerReducerState {
      * @type {boolean}
      * @memberof IViewerReducerState
      */
-    featureTooltipsEnabled: boolean,
+    featureTooltipsEnabled: boolean
 }
 
 /**
@@ -2086,4 +2138,42 @@ export interface MapGuideImageSourceOptions {
     params?: any;
     crossOrigin?: string;
     defaultImageLoadFunction?: LoadFunction;
+}
+
+/**
+ * @since 0.13
+ */
+export enum LayerProperty {
+    LAYER_TYPE = "layer_type",
+    LAYER_NAME = "name",
+    IS_GROUP = "is_group",
+    IS_EXTERNAL = "is_external",
+    HAS_WMS_LEGEND = "has_wms_legend"
+}
+
+/**
+ * @since 0.13
+ */
+export enum MgLayerType {
+    Untiled = "MapGuide_Untiled",
+    Tiled = "MapGuide_Tiled"
+}
+
+/**
+ * @since 0.13
+ */
+export const MG_LAYER_TYPE_NAME = "MapGuide";
+
+/**
+ * @since 0.13
+ */
+export const MG_BASE_LAYER_GROUP_NAME = "Base Tile Layers";
+
+/**
+ * @since 0.13
+ */
+export enum MgBuiltInLayers {
+    Overlay = "MapGuide Dynamic Overlay",
+    SelectionOverlay = "MapGuide Selection Overlay",
+    ActiveFeatureSelectionOverlay = "MapGuide Active Feature Selection Overlay"
 }

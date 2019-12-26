@@ -1,12 +1,20 @@
 import * as React from "react";
+import { tr } from "../../api/i18n";
 import { ILayerInfo, GenericEvent } from "../../api/common";
-import { ITreeNode, Tree, Button, Intent, ButtonGroup } from '@blueprintjs/core';
+import { ITreeNode, Tree, Button, Intent, ButtonGroup, Card, Icon, Switch, NonIdealState, Slider, Collapse } from '@blueprintjs/core';
+import { BlueprintSvgIconNames } from 'src/constants';
+import { strIsNullOrEmpty } from "../../utils/string";
 
 /**
  * @hidden
  */
 export interface IManageLayersProps {
     layers: ILayerInfo[];
+    locale: string;
+    currentResolution?: number;
+    onSetOpacity: (name: string, value: number) => void;
+    onSetVisibility: (name: string, visible: boolean) => void;
+    onZoomToBounds: (name: string) => void;
     onRemoveLayer: (name: string) => void;
     onMoveLayerUp: (name: string) => void;
     onMoveLayerDown: (name: string) => void;
@@ -15,69 +23,77 @@ export interface IManageLayersProps {
 /**
  * @hidden
  */
-export class ManageLayers extends React.Component<IManageLayersProps, any> {
-    constructor(props: IManageLayersProps) {
-        super(props);
-        this.state = {
-            selectedNode: null,
-            nodes: props.layers.map(li => ({ id: li.name, label: li.name, secondaryLabel: li.type, icon: "layer" }))
-        };
-    }
-    componentDidUpdate(prevProps: IManageLayersProps) {
-        const nextProps = this.props;
-        if (prevProps.layers != nextProps.layers) {
-            const nodes = nextProps.layers.map(li => ({ id: li.name, label: li.name, secondaryLabel: li.type, icon: "layer" }));
-            this.setState({ nodes: nodes });
+export const ManageLayers = (props: IManageLayersProps) => {
+    const {
+        locale,
+        currentResolution,
+        onSetOpacity,
+        onRemoveLayer,
+        onMoveLayerUp,
+        onMoveLayerDown,
+        onZoomToBounds,
+        onSetVisibility
+    } = props;
+    const [layers, setLayers] = React.useState(props.layers);
+    const [wmsLegendUrl, setWmsLegendUrl] = React.useState<string | undefined>(undefined);
+    const onToggleWmsLegend = (action: (res?: number) => string) => {
+        if (wmsLegendUrl) {
+            setWmsLegendUrl(undefined);
+        } else {
+            const url = action(currentResolution);
+            setWmsLegendUrl(url);
         }
-    }
-    private onMoveLayerDown = () => {
-        const { selectedNode } = this.state;
-        if (selectedNode) {
-            this.props.onMoveLayerDown?.(selectedNode.id);
-        }
-    }
-    private onMoveLayerUp = () => {
-        const { selectedNode } = this.state;
-        if (selectedNode) {
-            this.props.onMoveLayerUp?.(selectedNode.id);
-        }
-    }
-    private onRemoveLayer = () => {
-        const { selectedNode } = this.state;
-        if (selectedNode) {
-            this.props.onRemoveLayer?.(selectedNode.id);
-            this.setState({ selectedNode: null });
-        }
-    }
-    private forEachNode(nodes: ITreeNode[], callback: (node: ITreeNode) => void) {
-        if (nodes == null) {
-            return;
-        }
-        for (const node of nodes) {
-            callback(node);
-            if (node.childNodes) {
-                this.forEachNode(node.childNodes, callback);
-            }
-        }
-    }
-    private handleNodeClick = (nodeData: ITreeNode, _nodePath: number[], e: React.MouseEvent<HTMLElement>) => {
-        const originallySelected = nodeData.isSelected;
-        if (!e.shiftKey) {
-            this.forEachNode(this.state.nodes, n => (n.isSelected = false));
-        }
-        nodeData.isSelected = originallySelected == null ? true : !originallySelected;
-        this.setState({ ...this.state, ...{ selectedNode: (nodeData.isSelected ? nodeData : null) } });
     };
-    render(): JSX.Element {
-        const { selectedNode, nodes } = this.state;
+    React.useEffect(() => {
+        setLayers(props.layers);
+    }, [props.layers]);
+    if (layers.length) {
         return <div>
-            <hr />
-            <ButtonGroup fill>
-                <Button intent={Intent.DANGER} icon="delete" onClick={this.onRemoveLayer} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0}>Remove</Button>
-                <Button intent={Intent.PRIMARY} icon="caret-up" onClick={this.onMoveLayerUp} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0 || selectedNode == nodes[0]}></Button>
-                <Button intent={Intent.PRIMARY} icon="caret-down" onClick={this.onMoveLayerDown} disabled={selectedNode == null || selectedNode.id.indexOf("mapguide") == 0 || selectedNode == nodes[nodes.length - 1]}></Button>
-            </ButtonGroup>
-            <Tree contents={nodes} onNodeClick={this.handleNodeClick} />
+            {layers.map((lyr, i) => {
+                const canZoom = lyr.type != "WMS";
+                let iconName: BlueprintSvgIconNames = "layer";
+                if (lyr.type == "WMS") {
+                    iconName = "media";
+                }
+                const extraActions = [] as JSX.Element[];
+                const { extensions } = lyr;
+                let isWms = false;
+                if (extensions) {
+                    switch (extensions.type) {
+                        case "WMS":
+                            {
+                                isWms = true;
+                                if (extensions.getLegendUrl) {
+                                    extraActions.push(<Button key="toggle-wms-legend" intent={Intent.SUCCESS} icon="info-sign" onClick={() => onToggleWmsLegend(extensions.getLegendUrl as any)} />)
+                                }
+                            }
+                    }
+                }
+                const isWmsLegendOpen = !strIsNullOrEmpty(wmsLegendUrl);
+                return <Card key={lyr.name}>
+                    <Switch checked={lyr.visible} onChange={e => onSetVisibility(lyr.name, !lyr.visible)} labelElement={<><Icon icon={iconName} /> {lyr.name}</>} />
+                    <p>Opacity</p>
+                    <Slider min={0} max={1.0} stepSize={0.01} value={lyr.opacity} onChange={e => onSetOpacity(lyr.name, e)} />
+                    <ButtonGroup>
+                        <Button title={tr("LAYER_MANAGER_TT_MOVE_UP", locale)} intent={Intent.PRIMARY} icon="caret-up" onClick={(e: any) => onMoveLayerUp(lyr.name)} disabled={i == 0 || layers.length <= 1} />
+                        <Button title={tr("LAYER_MANAGER_TT_MOVE_DOWN", locale)} intent={Intent.PRIMARY} icon="caret-down" onClick={(e: any) => onMoveLayerDown(lyr.name)} disabled={i >= layers.length - 1 || layers.length <= 1} />
+                        <Button title={tr("LAYER_MANAGER_TT_ZOOM_EXTENTS", locale)} intent={Intent.SUCCESS} icon="zoom-to-fit" onClick={(e: any) => onZoomToBounds(lyr.name)} disabled={!canZoom} />
+                        <Button title={tr("LAYER_MANAGER_TT_REMOVE", locale)} intent={Intent.DANGER} icon="trash" onClick={(e: any) => onRemoveLayer(lyr.name)} />
+                        {extraActions}
+                    </ButtonGroup>
+                    {isWms && <Collapse isOpen={isWmsLegendOpen}>
+                        <Card>
+                            <h5 className="bp3-heading"><a href="#">{tr("WMS_LEGEND", locale)}</a></h5>
+                            <img src={wmsLegendUrl} />
+                        </Card>
+                    </Collapse>}
+                </Card>;
+            })}
         </div>;
+    } else {
+        return <NonIdealState
+            icon="layers"
+            title={tr("NO_EXTERNAL_LAYERS", locale)}
+            description={tr("NO_EXTERNAL_LAYERS_DESC", locale, { tabName: tr("ADD_LAYER", locale) })} />
     }
 }

@@ -4,9 +4,7 @@ import {
     ICommand,
     IDOMElementMetrics,
     IApplicationState,
-    FlyoutVisibilitySet,
-    PropType
-} from "../api/common";
+    FlyoutVisibilitySet} from "../api/common";
 import { mapToolbarReference } from "../api/registry/command";
 import { Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import * as MapActions from "../actions/map";
@@ -22,27 +20,18 @@ export interface IToolbarContainerProps {
     containerStyle?: React.CSSProperties;
 }
 
-// NOTE: Keeping this interface around for ease of typing the dispatchers below
-interface IToolbarContainerDispatch {
-    invokeCommand: (cmd: ICommand, parameters?: any) => void;
-    openFlyout: (id: string, metrics: IDOMElementMetrics) => void;
-    closeFlyout: (id: string) => void;
-    openComponent: (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => void;
-    closeComponent: (id: string) => void;
-}
-
 const ToolbarContainer = (props: IToolbarContainerProps) => {
     const { containerClass, containerStyle, vertical, hideVerticalLabels } = props;
     const dispatch = useDispatch();
     const flyouts = useSelector<IApplicationState, any>(state => state.toolbar.flyouts);
     const toolbar = useSelector<IApplicationState, any>(state => state.toolbar.toolbars[props.id]);
     const tbState = useReducedToolbarAppState();
-    
-    const invokeCommand: PropType<IToolbarContainerDispatch, "invokeCommand"> = (cmd, parameters) => dispatch(MapActions.invokeCommand(cmd, parameters));
-    const openFlyout: PropType<IToolbarContainerDispatch, "openFlyout"> = (id, metrics) => dispatch(FlyoutActions.openFlyout(id, metrics));
-    const closeFlyout: PropType<IToolbarContainerDispatch, "closeFlyout"> = (id) => dispatch(FlyoutActions.closeFlyout(id));
-    const openComponent: PropType<IToolbarContainerDispatch, "openComponent"> = (id, metrics, name, props) => dispatch(FlyoutActions.openComponent(id, metrics, name, props));
-    const closeComponent: PropType<IToolbarContainerDispatch, "closeComponent"> = (id) => dispatch(FlyoutActions.closeComponent(id));
+
+    const invokeCommand = (cmd: ICommand, parameters: any) => dispatch(MapActions.invokeCommand(cmd, parameters));
+    const openFlyout = (id: string, metrics: IDOMElementMetrics) => dispatch(FlyoutActions.openFlyout(id, metrics));
+    const closeFlyout = (id: string) => dispatch(FlyoutActions.closeFlyout(id));
+    const openComponent = (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => dispatch(FlyoutActions.openComponent(id, metrics, name, props));
+    const closeComponent = (id: string) => dispatch(FlyoutActions.closeComponent(id));
 
     const onCloseFlyout = (id: string) => closeFlyout?.(id);
     const onOpenFlyout = (id: string, metrics: IDOMElementMetrics) => openFlyout?.(id, metrics);

@@ -192,4 +192,27 @@ export interface ILocalizedMessages {
     WINDOW_MOVING: string;
     OTHER_THEME_RULE_COUNT: string;
     LEGEND_FILTER_LAYERS: string;
+    ADD_LAYER_KIND_PROMPT: string;
+    LAYER_KIND_FILE: string;
+    LAYER_KIND_URL: string;
+    ADD_FILE: string;
+    ADD_FILE_INSTRUCTIONS: string;
+    FMT_UPLOADED_FILE: string;
+    ADD_LOCAL_FILE_LAYER_FAILURE_NOT_TEXT: string;
+    ADD_LOCAL_FILE_LAYER_FAILURE: string;
+    WMS_UNSUPPORTED_VERSION: string;
+    NO_EXTERNAL_LAYERS: string;
+    NO_EXTERNAL_LAYERS_DESC: string;
+    LAYER_OPACITY: string;
+    LAYER_NAME_EXISTS: string;
+    LAYER_MANAGER_TT_MOVE_UP: string;
+    LAYER_MANAGER_TT_MOVE_DOWN: string;
+    LAYER_MANAGER_TT_ZOOM_EXTENTS: string;
+    LAYER_MANAGER_TT_REMOVE: string;
+    CANCEL: string;
+    UNKNOWN_FILE_TYPE: string;
+    WMS_SERVICE_INFO: string;
+    WMS_AVAILABLE_LAYERS: string;
+    ADD_LAYER_WITH_WMS_STYLE: string;
+    WMS_LEGEND: string;
 }

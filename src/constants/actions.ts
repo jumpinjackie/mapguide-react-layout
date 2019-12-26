@@ -56,5 +56,26 @@ export enum ActionType {
     UPDATE_MOUSE_COORDINATES = 'Status/UPDATE_MOUSE_COORDINATES',
     MODAL_SHOW_COMPONENT = 'Modal/SHOW_COMPONENT',
     MODAL_SHOW_URL = 'Modal/SHOW_URL',
-    MODAL_CLOSE = 'Modal/CLOSE'
+    MODAL_CLOSE = 'Modal/CLOSE',
+
+    /**
+     * @since 0.13
+     */
+    LAYER_ADDED = 'Map/LAYER_ADDED',
+    /**
+     * @since 0.13
+     */
+    REMOVE_LAYER = 'Map/REMOVE_LAYER',
+    /**
+     * @since 0.13
+     */
+    SET_LAYER_INDEX = 'Map/SET_LAYER_INDEX',
+    /**
+     * @since 0.13
+     */
+    SET_LAYER_OPACITY = 'Map/SET_LAYER_OPACITY',
+    /**
+     * @since 0.13
+     */
+    SET_LAYER_VISIBILITY = 'Map/SET_LAYER_VISIBILITY'
 }

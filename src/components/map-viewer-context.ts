@@ -60,7 +60,11 @@ import { parseUrl } from '../utils/url';
 import { strIsNullOrEmpty } from '../utils/string';
 import Feature, { FeatureLike } from 'ol/Feature';
 import Geometry from 'ol/geom/Geometry';
-import { GML, GPX, GeoJSON, IGC, KML, TopoJSON } from 'ol/format';
+import GeoJSON from "ol/format/GeoJSON";
+import GPX from "ol/format/GPX";
+import IGC from "ol/format/IGC";
+import KML from "ol/format/KML";
+import TopoJSON from "ol/format/TopoJSON";
 import olWmsSource from "ol/source/ImageWMS";
 import olTileWmsSource from "ol/source/TileWMS";
 

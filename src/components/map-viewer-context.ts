@@ -744,7 +744,7 @@ export class MgLayerSet {
             layers.insertAt(0, this.allLayers[i]);
         }
         // Attach custom layers
-        const customLayers = Object.values(this._customLayers);
+        const customLayers = Object.keys(this._customLayers).map(k => this._customLayers[k]);
         customLayers.sort((a, b) => {
             return a.order - b.order;
         });

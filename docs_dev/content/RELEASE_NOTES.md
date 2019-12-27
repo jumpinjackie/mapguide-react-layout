@@ -1,6 +1,14 @@
 0.13
 ====
 
+React Component API Breaking Changes:
+
+ * Almost all components are now [functional components with hooks](https://reactjs.org/docs/hooks-intro.html) instead of class-based.
+   * This means component state is now a true implementation detail of the component and cannot be relied on externally (eg. Operating on state of a ref-mounted component instance)
+   * Most TypeScript component state and dispatch interfaces have been removed as a result.
+ * Use the new [react-redux hooks API](https://react-redux.js.org/next/api/hooks) for dispatching viewer actions and subscribing/listening to viewer application state.
+   * Consider using our [collection of custom hooks](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/src/containers/hooks.ts) for listening to particular viewer application state.
+
 API Breaking Changes:
 
  * Removed optional `factory` argument from `ILayerManager.getLayer()`.

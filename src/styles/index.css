@@ -380,27 +380,6 @@ div.InfoText
     border-top-color: #ffcc33;
 }
 
-.component-mouse-coordinates {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    z-index: 100;
-}
-
-.component-scale-display {
-    position: absolute;
-    bottom: 0px;
-    right: 320px;
-    z-index: 100;
-}
-
-.component-selected-feature-count {
-    position: absolute;
-    bottom: 0px;
-    left: 230px;
-    z-index: 100;
-}
-
 .component-navigator {
     position: absolute;
     width: 51px;
@@ -409,20 +388,6 @@ div.InfoText
     cursor: pointer;
     right: 10px;
     top: 10px;
-}
-
-.component-view-size {
-    position: absolute;
-    bottom: 0px;
-    right: 136px;
-    z-index: 100;
-}
-
-.component-pbmg {
-    position: absolute;
-    bottom: 0px;
-    right: 0px;
-    z-index: 100;
 }
 
 .wms-layer-info-tooltip p {

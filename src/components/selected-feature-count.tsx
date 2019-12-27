@@ -35,5 +35,5 @@ export const SelectedFeatureCount = (props: ISelectedFeatureCountProps) => {
             layerCount: props.selection.Layer.length
         });
     }
-    return <div className="component-selected-feature-count" style={props.style}>{label}</div>;
+    return <div className="status-bar-component component-selected-feature-count" style={props.style}>{label}</div>;
 };

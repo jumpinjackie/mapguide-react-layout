@@ -62,5 +62,5 @@ export const ViewSize = (props: IViewSizeProps) => {
     const uom = getUnitOfMeasure(units);
     const [gw, gh] = getMapSize([width, height], metersPerUnit, units, view.resolution, precision);
     //TODO: Support format string extension parameter from fusion widget
-    return <div className="component-view-size"><ViewSizeContent gw={gw} gh={gh} unit={uom.abbreviation(locale)} /></div>;
+    return <div className="status-bar-component component-view-size"><ViewSizeContent gw={gw} gh={gh} unit={uom.abbreviation(locale)} /></div>;
 };

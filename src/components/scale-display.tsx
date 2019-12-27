@@ -46,7 +46,7 @@ export const ScaleDisplay = (props: IScaleDisplayProps) => {
         const fi = getFiniteScaleIndexForScale(finiteScales, view.scale);
         const fiScale = finiteScales[fi];
         //NOTE: Not using BP styled HTML select as the size imposed is not acceptable
-        return <div className="component-scale-display" style={style}>
+        return <div className="status-bar-component component-scale-display" style={style}>
             {label} <select className="scale-input" value={fiScale} onChange={onFiniteScaleChanged}>
                 {finiteScales.map(s => {
                     return <option key={s} value={s}>{s}</option>;
@@ -54,7 +54,7 @@ export const ScaleDisplay = (props: IScaleDisplayProps) => {
             </select>
         </div>;
     } else {
-        return <div className="component-scale-display" style={style}>
+        return <div className="status-bar-component component-scale-display" style={style}>
             {label} <input className="scale-input" type="number" value={localScale || ""} onChange={onScaleInputChanged} onKeyPress={onScaleKeyPressed} />
         </div>;
     }

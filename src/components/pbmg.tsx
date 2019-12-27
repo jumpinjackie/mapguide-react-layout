@@ -6,7 +6,7 @@ import { ImageIcon } from "./icon";
  * @param props
  */
 export const PoweredByMapGuide = (props: any) => {
-    return <div className="component-pbmg" {...props}>
-        <ImageIcon style={{display: "block"}} spriteClass="PoweredBy_en" />
+    return <div className="status-bar-component component-pbmg" {...props}>
+        <ImageIcon style={{ display: "block" }} spriteClass="PoweredBy_en" />
     </div>;
 };

@@ -37,6 +37,5 @@ function formatCoordinates(props: IMouseCoordinatesProps) {
  * @param props
  */
 export const MouseCoordinates = (props: IMouseCoordinatesProps) => {
-    const { coords } = props;
-    return <div className="component-mouse-coordinates" style={props.style}>{formatCoordinates(props)}</div>;
+    return <div className="status-bar-component component-mouse-coordinates" style={props.style}>{formatCoordinates(props)}</div>;
 };

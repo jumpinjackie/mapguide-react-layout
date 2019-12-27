@@ -1,6 +1,7 @@
 import {
     ReducerFunction,
-    ITemplateReducerState
+    ITemplateReducerState,
+    TemplateReducerFunction
 } from "../api/common";
 import { ActionType } from '../constants/actions';
 import { IElementState, ViewerAction } from '../actions/defs';
@@ -10,7 +11,8 @@ export const TEMPLATE_INITIAL_STATE: ITemplateReducerState = {
     initialTaskPaneWidth: 250,
     taskPaneVisible: true,
     selectionPanelVisible: true,
-    legendVisible: true
+    legendVisible: true,
+    autoDisplaySelectionPanelOnSelection: true
 };
 
 /**
@@ -22,12 +24,12 @@ export const TEMPLATE_INITIAL_STATE: ITemplateReducerState = {
  */
 export function isElementState(args: any): args is IElementState {
     return args != null
-        && typeof(args.legendVisible) != 'undefined'
-        && typeof(args.selectionPanelVisible) != 'undefined'
-        && typeof(args.taskPaneVisible) != 'undefined';
+        && typeof (args.legendVisible) != 'undefined'
+        && typeof (args.selectionPanelVisible) != 'undefined'
+        && typeof (args.taskPaneVisible) != 'undefined';
 }
 
-let _ovReducer: ReducerFunction<ITemplateReducerState>;
+let _ovReducer: TemplateReducerFunction;
 
 /**
  * Installs a custom template reducer function. This is generally used by viewer templates
@@ -36,13 +38,31 @@ let _ovReducer: ReducerFunction<ITemplateReducerState>;
  * @export
  * @param {ReducerFunction<ITemplateReducerState>} func
  */
-export function setCustomTemplateReducer(func: ReducerFunction<ITemplateReducerState>): void {
+export function setCustomTemplateReducer(func: TemplateReducerFunction): void {
     _ovReducer = func;
 }
 
-export function templateReducer(state = TEMPLATE_INITIAL_STATE, action: ViewerAction) {
-    if (typeof(_ovReducer) == 'function') {
-        return _ovReducer(state, action);
+export function templateReducer(origState = TEMPLATE_INITIAL_STATE, action: ViewerAction) {
+    let state = origState;
+    //Whether this reducer has been overridden or not, service the MAP_SET_SELECTION action and
+    //if we get modified state, pass that down to the rest of the reducer
+    if (action.type == ActionType.MAP_SET_SELECTION) {
+        const { selection } = action.payload;
+        if (selection && selection.SelectedFeatures) {
+            if (selection.SelectedFeatures.SelectedLayer.length && origState.autoDisplaySelectionPanelOnSelection) {
+                state = {
+                    ...origState,
+                    // The majority of the templates provided have the SelectionPanel/Legend/TaskPane as
+                    // a mutually exclusive visible set, so this new state would be applicable for them.
+                    // For templates that do not, they can fix this state up "in post" against the same action
+                    // in their overridden reducer
+                    ...{ selectionPanelVisible: true, legendVisible: false, taskPaneVisible: false }
+                }
+            }
+        }
+    }
+    if (typeof (_ovReducer) == 'function') {
+        return _ovReducer(origState, state, action);
     } else {
         //If no template present (they would've overridden this reducer), at least service the actions we know affect this
         //particular state branch

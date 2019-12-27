@@ -26,7 +26,7 @@ import { ActionType } from '../constants/actions';
 import { IElementState, ViewerAction } from '../actions/defs';
 import { useCommonTemplateState } from './hooks';
 
-function maroonTemplateReducer(state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
+function maroonTemplateReducer(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
         case ActionType.FUSION_SET_LEGEND_VISIBILITY:
             {

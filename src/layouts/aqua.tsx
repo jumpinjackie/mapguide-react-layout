@@ -20,8 +20,25 @@ import { ViewerAction } from '../actions/defs';
 import { useCommonTemplateState } from './hooks';
 import { useActiveMapState } from '../containers/hooks';
 
-function aquaTemplateReducer(state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
+function aquaTemplateReducer(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
+        case ActionType.MAP_SET_SELECTION:
+            {
+                //This is the only template that does not conform to the selection/legend/taskpane is a mutually
+                //exclusive visible set. We take advantage of the custom template reducer function to apply the
+                //correct visibility state against the *original state* effectively discarding whatever the root
+                //template reducer has done against this action.
+                const { selection } = action.payload;
+                if (selection && selection.SelectedFeatures) {
+                    if (selection.SelectedFeatures.SelectedLayer.length && origState.autoDisplaySelectionPanelOnSelection) {
+                        return {
+                            ...origState,
+                            ...{ selectionPanelVisible: true }
+                        }
+                    }
+                }
+                return state; //No action taken: Return "current" state
+            }
         case ActionType.FUSION_SET_LEGEND_VISIBILITY:
             {
                 const data = action.payload;

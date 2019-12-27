@@ -15,7 +15,7 @@ import { ActionType } from '../constants/actions';
 import { Tabs, Tab } from '@blueprintjs/core';
 import { useCommonTemplateState } from './hooks';
 
-function turquoiseYellowTemplateReducer(state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
+function turquoiseYellowTemplateReducer(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
         case ActionType.FUSION_SET_LEGEND_VISIBILITY:
             {

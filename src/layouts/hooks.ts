@@ -1,14 +1,12 @@
 import * as React from "react";
 import { useViewerLocale, useConfiguredCapabilities, useTemplateSelectionVisible, useTemplateLegendVisible, useTemplateTaskPaneVisible } from '../containers/hooks';
 import { useDispatch } from 'react-redux';
-import { IElementState, ViewerAction } from '../actions/defs';
+import { IElementState } from '../actions/defs';
 import * as TemplateActions from "../actions/template";
 import * as Runtime from "../api/runtime";
-import { ITemplateReducerState, IViewerCapabilities } from '../api/common';
+import { IViewerCapabilities, TemplateReducerFunction } from '../api/common';
 import { setCustomTemplateReducer } from '../reducers/template';
 import { Dispatch } from 'redux';
-
-export type TemplateReducerFunc = (state: ITemplateReducerState, action: ViewerAction) => ITemplateReducerState;
 
 export type CommonTemplateState = {
     isResizing: boolean;
@@ -25,7 +23,7 @@ export type CommonTemplateState = {
     dispatch: Dispatch<any>;
 };
 
-export function useCommonTemplateState(templateReducer?: TemplateReducerFunc): CommonTemplateState {
+export function useCommonTemplateState(templateReducer?: TemplateReducerFunction): CommonTemplateState {
     //TODO: To promote more reusability, the resizing flag should be defined and set on a 
     //dispatcher-defined basis.
     //

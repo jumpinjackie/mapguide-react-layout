@@ -15,7 +15,7 @@ import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 import { useCommonTemplateState } from './hooks';
 
-function slateTemplateReducer(state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
+function slateTemplateReducer(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
         case ActionType.FUSION_SET_LEGEND_VISIBILITY:
             {

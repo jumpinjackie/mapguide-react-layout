@@ -49,7 +49,6 @@ interface ISidebarProps {
     onExpand: () => void;
     onCollapse: () => void;
     onActivateTab: (tab: SidebarTab, collapsed?: boolean) => void;
-    lastAction?: any;
 }
 
 const Sidebar = (props: ISidebarProps) => {
@@ -176,11 +175,11 @@ const Sidebar = (props: ISidebarProps) => {
 const SidebarLayout = () => {
     const dispatch = useDispatch();
     const setElementStates = (states: IElementState) => dispatch(TemplateActions.setElementStates(states));
-    const lastaction = useSelector<IApplicationState, any>(state => state.lastaction);
     const locale = useViewerLocale();
     const showLegend = useTemplateLegendVisible();
     const showSelection = useTemplateSelectionVisible();
     const showTaskPane = useTemplateTaskPaneVisible();
+    console.log(`leg: ${showLegend}, sel: ${showSelection}, task: ${showTaskPane}`);
     const {
         hasTaskPane,
         hasStatusBar,
@@ -198,6 +197,16 @@ const SidebarLayout = () => {
         defaultActiveTab = "selection";
     }
     const [activeTab, setActiveTab] = React.useState(defaultActiveTab);
+    // Need to apply an effect to update active tab from element states in the redux store
+    React.useEffect(() => {
+        let tab: SidebarTab = "tasks";
+        if (showLegend) {
+            tab = "legend";
+        } else if (showSelection) {
+            tab = "selection";
+        }
+        setActiveTab(tab);
+    }, [showLegend, showSelection, showTaskPane]);
     const onCollapse = () => {
         setElementStates({
             taskPaneVisible: false,
@@ -260,8 +269,7 @@ const SidebarLayout = () => {
             activeTab={activeTab || "tasks"}
             onCollapse={onCollapse}
             onActivateTab={onActivateTab}
-            onExpand={onExpand}
-            lastAction={lastaction} />
+            onExpand={onExpand} />
         {(() => {
             if (hasToolbar) {
                 let top = 180;

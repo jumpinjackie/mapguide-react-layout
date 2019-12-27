@@ -363,7 +363,7 @@ export interface IMapSetSelectionAction {
     type: ActionType.MAP_SET_SELECTION;
     payload: {
         mapName: string;
-        selection: any
+        selection: QueryMapFeaturesResponse | undefined;
     }
 }
 

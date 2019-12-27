@@ -1431,7 +1431,19 @@ export interface ITemplateReducerState {
      * @memberof ITemplateReducerState
      */
     selectionPanelVisible: boolean;
+    /**
+     * If true, the selection panel will auto-display when a selection is made
+     * and there are results to show
+     * 
+     * @since 0.13
+     */
+    autoDisplaySelectionPanelOnSelection: boolean;
 }
+
+/**
+ * @since 0.13
+ */
+export type TemplateReducerFunction = (origState: ITemplateReducerState, currentState: ITemplateReducerState, action: ViewerAction) => ITemplateReducerState;
 
 export const KC_ESCAPE = 27;
 export const KC_U = 85;
@@ -1677,21 +1689,21 @@ export interface IViewerReducerState {
      * @type {number}
      * @memberof IViewerReducerState
      */
-    busyCount: number,
+    busyCount: number;
     /**
      * The active map tool
      *
      * @type {ActiveMapTool}
      * @memberof IViewerReducerState
      */
-    tool: ActiveMapTool,
+    tool: ActiveMapTool;
     /**
      * Indicates if feature tooltips are enabled
      *
      * @type {boolean}
      * @memberof IViewerReducerState
      */
-    featureTooltipsEnabled: boolean
+    featureTooltipsEnabled: boolean;
 }
 
 /**

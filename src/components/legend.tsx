@@ -533,7 +533,9 @@ export const Legend = (props: ILegendProps) => {
     const getChildren = (objectId: string): (MapLayer | MapGroup)[] => {
         return state.tree.groupChildren[objectId] || [];
     };
-    const rootStyle: React.CSSProperties = {};
+    const rootStyle: React.CSSProperties = {
+        position: "relative"
+    };
     if (maxHeight) {
         rootStyle.maxHeight = maxHeight;
     }

@@ -21,6 +21,8 @@ import * as MapActions from '../actions/map';
 import { useDispatch } from 'react-redux';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { deArrayify } from '../api/builders/deArrayify';
+import MouseCoordinatesContainer from '../containers/mouse-coordinates';
+import ViewSizeContainer from '../containers/view-size';
 
 const testSelSheboygan: QueryMapFeaturesResponse = deArrayify(require("./data/test-selection-response-sheboygan.json"));
 //import MeasureContainer from '../containers/measure';
@@ -122,6 +124,16 @@ storiesOf("Container Components", module)
             <TaskPaneContainer />
         </MapDependentContainer>
     </FakeApp>)
+    .add("Mouse Coordinates", () => <FakeApp>
+        <MapDependentContainer>
+            <MouseCoordinatesContainer />
+        </MapDependentContainer>
+    </FakeApp>)
+    .add("View Size", () => <FakeApp>
+        <MapDependentContainer>
+            <ViewSizeContainer />
+        </MapDependentContainer>
+    </FakeApp>)
     .add("Scale Display", () => <FakeApp>
         <MapDependentContainer>
             <ScaleDisplayContainer />
@@ -165,7 +177,7 @@ storiesOf("Container Components", module)
     /*
 .add("Measure", () => <FakeApp>
 <MapDependentContainer>
-    <MeasureContainer />
+<MeasureContainer />
 </MapDependentContainer>
 </FakeApp>);
 */

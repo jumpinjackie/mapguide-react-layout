@@ -9,7 +9,7 @@ import { getUnitOfMeasure } from "../utils/units";
 import { useViewerLocale, useCurrentMouseCoordinates, useActiveMapProjection, useConfiguredCoordinateProjection, useConfiguredCoordinateDecimals, useConfiguredCoordinateFormat } from './hooks';
 
 export interface IMouseCoordinatesContainerProps {
-    style: React.CSSProperties;
+    style?: React.CSSProperties;
 }
 
 const MouseCoordinatesContainer = (props: IMouseCoordinatesContainerProps) => {

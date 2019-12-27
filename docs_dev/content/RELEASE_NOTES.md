@@ -1,19 +1,51 @@
 0.13
 ====
 
+API Breaking Changes:
+
+ * Removed optional `factory` argument from `ILayerManager.getLayer()`.
+   * Replacement: Just add the layer yourself aftewards if `ILayerManager.getLayer()` returns `undefined`.
+ * Removed `moveDown` and `moveUp` methods from `ILayerManager`.
+   * Replacement: Dispatch the new `SET_LAYER_INDEX` redux action for your layer with your desired new index positioning.
+ * Custom template reducer function signature has changed.
+   * Old signature: `(state: ITemplateReducerState, action: ViewerAction) => ITemplateReducerState`
+   * New signature: `(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction) => ITemplateReducerState`
+   * Implications:
+     * You only need to care about `origState` if you care to apply custom "selection panel is visible" state (per: [#478](https://github.com/jumpinjackie/mapguide-react-layout/issues/478)) because your custom viewer template does not treat Legend/Selection/TaskPane as a mutually exclusive visible set of components in an accordion or tab-like UI. Refer to the [reducer in the Aqua template](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/src/layouts/aqua.tsx) for an example of why this new reducer function signature is required.
+
+Features/Fixes Overview:
+
  * Major updates of key libraries:
    * [#1034](https://github.com/jumpinjackie/mapguide-react-layout/issues/1034): Upgrade to latest OpenLayers (6.1.1)
    * [#1010](https://github.com/jumpinjackie/mapguide-react-layout/issues/1010): Upgrade to latest Blueprint 3.x (3.22.2)
    * [#1029](https://github.com/jumpinjackie/mapguide-react-layout/issues/1029): Upgrade to latest react-redux package (7.1.2) 
+ * [#963](https://github.com/jumpinjackie/mapguide-react-layout/issues/963): Re-designed External Layer Manager
+   * Can now add file-based layers to the map
+     * GeoJSON/TopoJSON
+     * KML
+     * GPX
+     * IGC
+   * Added layers UI reworked and enhanced:
+     * All layers can now have their visibility and opacity toggled
+     * All vector layers have the ability to zoom to the bounds of that layer
+     * Certain WMS layers can toggle their legend inline (if the WMS service supports the GetLegendURL sub-capability)
+   * Reworked add WMS layer UI to be more informative
+   * Layer management state relocated to the redux store. Adding/removing/reordering external layers is now done through dispatching redux actions.
+ * [#1017](https://github.com/jumpinjackie/mapguide-react-layout/issues/1017): React components now [showcased in Storybook](https://jumpinjackie.github.io/mapguide-react-layout/master/storybook-static/index.html)
+ * [#962](https://github.com/jumpinjackie/mapguide-react-layout/issues/962): Legend now features a search box filter to easily filter down for specific layers in very large layer trees.
  * Internal plumbing changes and restructuring:
    * [#1018](https://github.com/jumpinjackie/mapguide-react-layout/issues/1018): Convert react components over to functional components with hooks and replace internal usages of legacy React context API over to new context API
-   * Remove usage of superfluous libraries to improve bundle size:
+   * Remove usage of superfluous libraries to improve bundle size where possible:
      * [#1015](https://github.com/jumpinjackie/mapguide-react-layout/issues/1015): `lodash.uniq` and `lodash.xor`
+     * [#1038](https://github.com/jumpinjackie/mapguide-react-layout/issues/1038): Replaced `react-url-query` with raw usage of the `history` browser API.
  * Modal dialogs **are now resizable** via `react-rnd`
  * Update Coordinate Tracker component with Blueprint styling
- * [#1040](https://github.com/jumpinjackie/mapguide-react-layout/issues/1040): Refactor toolbar item/command construction to work against a slimmed down version of the application state to avoid excessive toolbar re-rendering, fixing UI sluggishness as a result.
+ * [#588](https://github.com/jumpinjackie/mapguide-react-layout/issues/588): Use legend label for layer names in Selection Panel layer dropdown.
+ * [#1040](https://github.com/jumpinjackie/mapguide-react-layout/issues/1040): Refactor toolbar item/command construction to work against a slimmed down version of the application state to avoid excessive toolbar re-rendering, fixing most UI sluggishness as a result.
    * This is technically a **breaking change** as any custom commands you may register may have `enabled` or `selected` checks that may break because we are no longer passing the full application state. Please report an issue if there is application state not in this slimmed down version that you need to observe on.
  * [#1041](https://github.com/jumpinjackie/mapguide-react-layout/issues/1041): Legend now uses blueprint SVG icons for non-theme-rule icons for better scalability
+ * [#1047](https://github.com/jumpinjackie/mapguide-react-layout/issues/1047): SVG icon replacements for Task Pane and Selection Panel
+ * [#326](https://github.com/jumpinjackie/mapguide-react-layout/issues/326): Moved positioning aspects of status bar element CSS out of the main viewer css and to their template html files
 
 0.12.8
 ======

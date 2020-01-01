@@ -1,7 +1,8 @@
 import * as React from "react";
 import * as Runtime from "../api/runtime";
 import { tr } from "../api/i18n";
-import { ILayerInfo, Bounds, IVectorFeatureStyle } from "../api/common";
+import { ILayerInfo, Bounds } from "../api/common";
+import { IVectorFeatureStyle } from "../api/ol-style-helpers";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
 import { Tabs, Tab, Icon } from '@blueprintjs/core';

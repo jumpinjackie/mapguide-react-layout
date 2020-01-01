@@ -4,11 +4,12 @@
  * Redux action definitions
  */
 
-import { IDOMElementMetrics, IMapView, Dictionary, IExternalBaseLayer, IModalComponentDisplayOptions, IModalDisplayOptions, UnitOfMeasure, ActiveMapTool } from '../api/common';
+import { IDOMElementMetrics, IMapView, Dictionary, IExternalBaseLayer, IModalComponentDisplayOptions, IModalDisplayOptions, UnitOfMeasure, ActiveMapTool, ILayerInfo } from '../api/common';
 import { ActionType } from '../constants/actions';
 import { PreparedSubMenuSet } from '../api/registry/command-spec';
 import { RuntimeMap } from '../api/contracts/runtime-map';
-import { QueryMapFeaturesResponse, ILayerInfo, IVectorFeatureStyle } from '../api';
+import { QueryMapFeaturesResponse } from '../api/contracts/query';
+import { IVectorFeatureStyle } from '../api/ol-style-helpers';
 
 /**
  * Opens the context menu

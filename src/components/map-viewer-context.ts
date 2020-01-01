@@ -18,7 +18,9 @@ import {
     MG_LAYER_TYPE_NAME,
     MG_BASE_LAYER_GROUP_NAME,
     LayerExtensions,
-    IWmsLayerExtensions,
+    IWmsLayerExtensions
+} from "../api/common";
+import {
     IVectorFeatureStyle,
     IOlStyleMap,
     vectorStyleToOLStyleMap,
@@ -27,7 +29,7 @@ import {
     DEFAULT_POLY_STYLE,
     setOLVectorLayerStyle,
     olStyleMapToVectorStyle
-} from "../api/common";
+} from "../api/ol-style-helpers";
 import { Client } from '../api/client';
 import { MgError, isSessionExpiredError } from '../api/error';
 import { RuntimeMap } from "../api/contracts/runtime-map";

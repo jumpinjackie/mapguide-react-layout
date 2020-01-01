@@ -1,5 +1,5 @@
 import * as React from "react";
-import { IVectorFeatureStyle, IBasicVectorPointStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IBasicPointCircleStyle, DEFAULT_POINT_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE } from '../api/common';
+import { IVectorFeatureStyle, IBasicVectorPointStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IBasicPointCircleStyle, DEFAULT_POINT_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE } from '../api/ol-style-helpers';
 import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, Slider } from '@blueprintjs/core';
 import { tr } from "../api/i18n";
 import { ColorPicker } from './color-picker';

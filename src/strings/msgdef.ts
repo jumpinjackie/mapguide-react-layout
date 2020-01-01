@@ -215,4 +215,6 @@ export interface ILocalizedMessages {
     WMS_AVAILABLE_LAYERS: string;
     ADD_LAYER_WITH_WMS_STYLE: string;
     WMS_LEGEND: string;
+    VSED_NO_STYLES_TITLE: string;
+    VSED_NO_STYLES_DESC: string;
 }

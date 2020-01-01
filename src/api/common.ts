@@ -2189,3 +2189,54 @@ export enum MgBuiltInLayers {
     SelectionOverlay = "MapGuide Selection Overlay",
     ActiveFeatureSelectionOverlay = "MapGuide Active Feature Selection Overlay"
 }
+
+/**
+ * @since 0.13
+ */
+export interface IVectorFeatureStyle {
+    point?: IBasicVectorPointStyle;
+    line?: IBasicVectorLineStyle;
+    polygon?: IBasicVectorPolygonStyle;
+}
+
+/**
+ * @since 0.13
+ */
+export interface IBasicPointCircleStyle {
+    fill: IBasicFill;
+    radius: number;
+    stroke: IBasicStroke;
+}
+
+/**
+ * @since 0.13
+ */
+export type IBasicVectorPointStyle = IBasicPointCircleStyle;
+
+/**
+ * @since 0.13
+ */
+export type IBasicVectorLineStyle = IBasicStroke;
+
+/**
+ * @since 0.13
+ */
+export interface IBasicVectorPolygonStyle {
+    fill: IBasicFill;
+    stroke: IBasicStroke;
+}
+
+/**
+ * @since 0.13
+ */
+export interface IBasicStroke {
+    color: string;
+    width: number;
+}
+
+/**
+ * @since 0.13
+ */
+export interface IBasicFill {
+    color: string;
+}

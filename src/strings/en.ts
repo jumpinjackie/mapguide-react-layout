@@ -207,7 +207,9 @@ const STRINGS_EN: ILocalizedMessages = {
     "WMS_SERVICE_INFO": "WMS Service Info",
     "WMS_AVAILABLE_LAYERS": "Available WMS Layers",
     "ADD_LAYER_WITH_WMS_STYLE": "Add layer ({style})",
-    "WMS_LEGEND": "WMS Legend"
+    "WMS_LEGEND": "WMS Legend",
+    "VSED_NO_STYLES_TITLE": "No Styles",
+    "VSED_NO_STYLES_DESC": "This editor is not configured to edit any styles",
 };
 
 export default STRINGS_EN;

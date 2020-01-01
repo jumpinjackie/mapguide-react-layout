@@ -7,7 +7,8 @@ import {
     getRuntimeMap,
     getSelectionSet,
     UnitOfMeasure,
-    ILayerInfo
+    ILayerInfo,
+    IVectorFeatureStyle
 } from "../api/common";
 import { getViewer } from "../api/runtime";
 import { areViewsCloseToEqual } from "../components/map-viewer-base";
@@ -18,7 +19,7 @@ import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml } from '../api/builders/deArrayify';
 import { makeUnique } from "../utils/array";
 import { ActionType } from '../constants/actions';
-import { IMapSetBusyCountAction, IMapSetBaseLayerAction, IMapSetScaleAction, IMapSetMouseCoordinatesAction, IMapSetLayerTransparencyAction, IMapSetViewSizeUnitsAction, IMapPreviousViewAction, IMapNextViewAction, ISetActiveMapToolAction, ISetActiveMapAction, ISetManualFeatureTooltipsEnabledAction, ISetFeatureTooltipsEnabledAction, IMapSetViewRotationAction, IMapSetViewRotationEnabledAction, IShowSelectedFeatureAction, IMapSetSelectionAction, IMapResizedAction, IAddedLayerAction, IRemoveLayerAction, ISetLayerIndexAction, ISetLayerOpacityAction, ISetLayerVisibilityAction } from './defs';
+import { IMapSetBusyCountAction, IMapSetBaseLayerAction, IMapSetScaleAction, IMapSetMouseCoordinatesAction, IMapSetLayerTransparencyAction, IMapSetViewSizeUnitsAction, IMapPreviousViewAction, IMapNextViewAction, ISetActiveMapToolAction, ISetActiveMapAction, ISetManualFeatureTooltipsEnabledAction, ISetFeatureTooltipsEnabledAction, IMapSetViewRotationAction, IMapSetViewRotationEnabledAction, IShowSelectedFeatureAction, IMapSetSelectionAction, IMapResizedAction, IAddedLayerAction, IRemoveLayerAction, ISetLayerIndexAction, ISetLayerOpacityAction, ISetLayerVisibilityAction, ISetMapLayerVectorStyle } from './defs';
 import { storeSelectionSet } from '../api/session-store';
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
 
@@ -234,7 +235,7 @@ export function setCurrentView(view: IMapView): ReduxThunkedAction {
             //If the current map is tiled (has finite scales), "snap" the view's scale
             //to the closest applicable finite scale then do the test 
             const mapState = state.mapState[mapName];
-            if (mapState.runtimeMap && 
+            if (mapState.runtimeMap &&
                 mapState.runtimeMap.FiniteDisplayScale &&
                 mapState.runtimeMap.FiniteDisplayScale.length > 0) {
 
@@ -548,7 +549,7 @@ export function showSelectedFeature(mapName: string, layerId: string, selectionK
             layerId,
             selectionKey
         }
-    }
+    };
 }
 
 /**
@@ -569,7 +570,7 @@ export function mapLayerAdded(mapName: string, layer: ILayerInfo): IAddedLayerAc
             mapName,
             layer
         }
-    }
+    };
 }
 
 /**
@@ -587,7 +588,7 @@ export function removeMapLayer(mapName: string, layerName: string): IRemoveLayer
             mapName,
             layerName
         }
-    }
+    };
 }
 
 /**
@@ -607,7 +608,7 @@ export function setMapLayerIndex(mapName: string, layerName: string, index: numb
             layerName,
             index
         }
-    }
+    };
 }
 
 /**
@@ -627,7 +628,7 @@ export function setMapLayerOpacity(mapName: string, layerName: string, opacity: 
             layerName,
             opacity
         }
-    }
+    };
 }
 
 /**
@@ -647,5 +648,25 @@ export function setMapLayerVisibility(mapName: string, layerName: string, visibl
             layerName,
             visible
         }
-    }
+    };
+}
+
+/**
+ * 
+ * @export
+ * @param {string} mapName
+ * @param {string} layerName
+ * @param {IVectorFeatureStyle} style
+ * @returns {ISetMapLayerVectorStyle}
+ * @since 0.13
+ */
+export function setMapLayerVectorStyle(mapName: string, layerName: string, style: IVectorFeatureStyle): ISetMapLayerVectorStyle {
+    return {
+        type: ActionType.SET_LAYER_VECTOR_STYLE,
+        payload: {
+            mapName,
+            layerName,
+            style
+        }
+    };
 }

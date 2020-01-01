@@ -1,80 +1,70 @@
 import * as React from "react";
-import { IVectorFeatureStyle, IBasicVectorPointStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IBasicPointCircleStyle } from '../api/common';
-import { NonIdealState, Tabs, Tab, FormGroup, NumericInput } from '@blueprintjs/core';
+import { IVectorFeatureStyle, IBasicVectorPointStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IBasicPointCircleStyle, DEFAULT_POINT_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE } from '../api/common';
+import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, Slider } from '@blueprintjs/core';
 import { tr } from "../api/i18n";
 import { ColorPicker } from './color-picker';
 
-const DEFAULT_POINT_STYLE: IBasicVectorPointStyle = {
-    fill: {
-        color: "#0000ff"
-    },
-    radius: 5,
-    stroke: {
-        color: "#0100ff",
-        width: 1
-    }
-};
-
-const DEFAULT_LINE_STYLE: IBasicVectorLineStyle = {
-    color: "#0100ff",
-    width: 1
-};
-
-const DEFAULT_POLY_STYLE: IBasicVectorPolygonStyle = {
-    fill: {
-        color: "#0000ff"
-    },
-    stroke: {
-        color: "#0100ff",
-        width: 1
-    }
-};
-
 interface ISubStyleEditorProps<TStyle> {
     style: TStyle;
+    locale: string;
     onChange: (style: TStyle) => void;
 }
 
-const PointStyleEditor = ({ style, onChange }: ISubStyleEditorProps<IBasicVectorPointStyle>) => {
-    return <>
-        <FormGroup label="Fill Color">
-            <ColorPicker value={style.fill.color} onChange={c => onChange({ ...style, fill: { color: c } })} />
+const PointStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicVectorPointStyle>) => {
+    return <div>
+        <FormGroup label={tr("VSED_PT_FILL_COLOR", locale)}>
+            <ColorPicker value={style.fill.color} onChange={c => onChange({ ...style, fill: { color: c, alpha: style.fill.alpha } })} />
         </FormGroup>
-        <FormGroup label="Radius">
-            <NumericInput value={style.radius} min={1} onValueChange={n => onChange({ ...style, radius: n })} />
+        <FormGroup label={tr("VSED_PT_FILL_COLOR_ALPHA", locale)}>
+            <Slider min={0} max={255} labelStepSize={255} value={style.fill.alpha} onChange={n => onChange({ ...style, fill: { color: style.fill.color, alpha: n } })} />
         </FormGroup>
-        <FormGroup label="Stroke Color">
-            <ColorPicker value={style.stroke.color} onChange={c => onChange({ ...style, stroke: { color: c, width: style.stroke.width } })} />
+        <FormGroup label={tr("VSED_PT_RADIUS", locale)}>
+            <NumericInput fill value={style.radius} min={1} onValueChange={n => onChange({ ...style, radius: n })} />
         </FormGroup>
-        <FormGroup label="Stroke Width">
-            <NumericInput value={style.stroke.width} min={1} onValueChange={n => onChange({ ...style, stroke: { color: style.stroke.color, width: n } })} />
+        <FormGroup label={tr("VSED_PT_OUTLINE_COLOR")}>
+            <ColorPicker value={style.stroke.color} onChange={c => onChange({ ...style, stroke: { color: c, width: style.stroke.width, alpha: style.stroke.alpha } })} />
         </FormGroup>
-    </>;
+        <FormGroup label={tr("VSED_PT_OUTLINE_COLOR_ALPHA")}>
+            <Slider min={0} max={255} labelStepSize={255} value={style.stroke.alpha} onChange={n => onChange({ ...style, stroke: { color: style.stroke.color, width: style.stroke.width, alpha: n } })} />
+        </FormGroup>
+        <FormGroup label={tr("VSED_PT_OUTLINE_WIDTH", locale)}>
+            <NumericInput fill value={style.stroke.width} min={1} onValueChange={n => onChange({ ...style, stroke: { color: style.stroke.color, width: n, alpha: style.stroke.alpha } })} />
+        </FormGroup>
+    </div>;
 }
 
-const LineStyleEditor = ({ style, onChange }: ISubStyleEditorProps<IBasicVectorLineStyle>) => {
-    return <>
-        <FormGroup label="Line Color">
-            <ColorPicker value={style.color} onChange={c => onChange({ color: c, width: style.width })} />
+const LineStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicVectorLineStyle>) => {
+    return <div>
+        <FormGroup label={tr("VSED_LN_OUTLINE_COLOR", locale)}>
+            <ColorPicker value={style.color} onChange={c => onChange({ color: c, width: style.width, alpha: style.alpha })} />
         </FormGroup>
-        <FormGroup label="Line Thickness">
-            <NumericInput value={style.width} min={1} onValueChange={n => onChange({ color: style.color, width: n })} />
+        <FormGroup label={tr("VSED_LN_OUTLINE_COLOR_ALPHA", locale)}>
+            <Slider min={0} max={255} labelStepSize={255} value={style.alpha} onChange={n => onChange({ color: style.color, width: style.width, alpha: n })} />
         </FormGroup>
-    </>;
+        <FormGroup label={tr("VSED_LN_OUTLINE_THICKNESS", locale)}>
+            <NumericInput fill value={style.width} min={1} onValueChange={n => onChange({ color: style.color, width: n, alpha: style.alpha })} />
+        </FormGroup>
+    </div>;
 }
 
-const PolygonStyleEditor = ({ style, onChange }: ISubStyleEditorProps<IBasicVectorPolygonStyle>) => {
-    return <>
-        <FormGroup label="Fill Color">
-            <ColorPicker value={style.fill.color} onChange={c => onChange({ ...style, fill: { color: c } })} />
+const PolygonStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicVectorPolygonStyle>) => {
+    return <div>
+        <FormGroup label={tr("VSED_PL_FILL_COLOR", locale)}>
+            <ColorPicker value={style.fill.color} onChange={c => onChange({ ...style, fill: { color: c, alpha: style.fill.alpha } })} />
         </FormGroup>
-        <FormGroup label="Outline Color">
-            <ColorPicker value={style.stroke.color} onChange={c => onChange({ ...style, stroke: { color: c, width: style.stroke.width } })} />
+        <FormGroup label={tr("VSED_PL_FILL_COLOR_ALPHA", locale)}>
+            <Slider min={0} max={255} labelStepSize={255} value={style.fill.alpha} onChange={n => onChange({ ...style, fill: { color: style.fill.color, alpha: n } })} />
         </FormGroup>
-        <FormGroup label="Outline Width">
-            <NumericInput value={style.stroke.width} min={1} onValueChange={n => onChange({ ...style, stroke: { color: style.stroke.color, width: n } })} />
+        <FormGroup label={tr("VSED_PL_OUTLINE_COLOR", locale)}>
+            <ColorPicker value={style.stroke.color} onChange={c => onChange({ ...style, stroke: { color: c, width: style.stroke.width, alpha: style.stroke.alpha } })} />
         </FormGroup>
-    </>;
+        <FormGroup label={tr("VSED_PL_OUTLINE_COLOR_ALPHA", locale)}>
+            <Slider min={0} max={255} labelStepSize={255} value={style.stroke.alpha} onChange={n => onChange({ ...style, stroke: { color: style.stroke.color, width: style.stroke.width, alpha: n } })} />
+        </FormGroup>
+        <FormGroup label={tr("VSED_PL_OUTLINE_THICKNESS", locale)}>
+            <NumericInput fill value={style.stroke.width} min={1} onValueChange={n => onChange({ ...style, stroke: { color: style.stroke.color, width: n, alpha: style.stroke.alpha } })} />
+        </FormGroup>
+    </div>;
 }
 
 /**
@@ -140,9 +130,9 @@ export const VectorStyleEditor = (props: IVectorStyleEditorProps) => {
             onStyleChanged(pointStyle, lineStyle, st);
         };
         return <Tabs onChange={(t: any) => setSelectedTab(t)} selectedTabId={selectedTab}>
-            {enablePoint && <Tab id="pointStyle" title="Point" panel={<PointStyleEditor style={pointStyle} onChange={onPointStyleChanged} />} />}
-            {enableLine && <Tab id="lineStyle" title="Line" panel={<LineStyleEditor style={lineStyle} onChange={onLineStyleChanged} />} />}
-            {enablePolygon && <Tab id="polyStyle" title="Polygon" panel={<PolygonStyleEditor style={polyStyle} onChange={onPolygonStyleChanged} />} />}
+            {enablePoint && <Tab id="pointStyle" title={tr("VSED_TAB_POINT", locale)} panel={<PointStyleEditor style={pointStyle} locale={locale} onChange={onPointStyleChanged} />} />}
+            {enableLine && <Tab id="lineStyle" title={tr("VSED_TAB_LINE", locale)} panel={<LineStyleEditor style={lineStyle} locale={locale} onChange={onLineStyleChanged} />} />}
+            {enablePolygon && <Tab id="polyStyle" title={tr("VSED_TAB_POLY", locale)} panel={<PolygonStyleEditor style={polyStyle} locale={locale} onChange={onPolygonStyleChanged} />} />}
         </Tabs>
     }
 }

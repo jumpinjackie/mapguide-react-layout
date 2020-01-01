@@ -1,9 +1,10 @@
 import * as React from "react";
 import { tr } from "../../api/i18n";
-import { ILayerInfo, GenericEvent } from "../../api/common";
+import { ILayerInfo, GenericEvent, IVectorFeatureStyle } from "../../api/common";
 import { ITreeNode, Tree, Button, Intent, ButtonGroup, Card, Icon, Switch, NonIdealState, Slider, Collapse } from '@blueprintjs/core';
 import { BlueprintSvgIconNames } from 'src/constants';
 import { strIsNullOrEmpty } from "../../utils/string";
+import { VectorStyleEditor } from '../vector-style-editor';
 
 interface IManageLayerItemProps {
     layer: ILayerInfo;
@@ -17,6 +18,7 @@ interface IManageLayerItemProps {
     onRemoveLayer: (name: string) => void;
     onMoveLayerUp: (name: string) => void;
     onMoveLayerDown: (name: string) => void;
+    onVectorStyleChanged: (name: string, style: IVectorFeatureStyle) => void;
 }
 
 const ManageLayerItem = (props: IManageLayerItemProps) => {
@@ -31,9 +33,11 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
         onMoveLayerUp,
         onMoveLayerDown,
         onZoomToBounds,
-        onSetVisibility
+        onSetVisibility,
+        onVectorStyleChanged
     } = props;
     const [wmsLegendUrl, setWmsLegendUrl] = React.useState<string | undefined>(undefined);
+    const [isEditingVectorStyle, setIsEditingVectorStyle] = React.useState(false);
     const onToggleWmsLegend = (action: (res?: number) => string) => {
         if (wmsLegendUrl) {
             setWmsLegendUrl(undefined);
@@ -62,6 +66,9 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
                 }
         }
     }
+    if (layer.vectorStyle) {
+        extraActions.push(<Button key="edit-vector-style" intent={Intent.PRIMARY} icon="edit" onClick={() => setIsEditingVectorStyle(!isEditingVectorStyle)} />)
+    }
     const isWmsLegendOpen = !strIsNullOrEmpty(wmsLegendUrl);
     return <Card key={layer.name}>
         <Switch checked={layer.visible} onChange={e => onSetVisibility(layer.name, !layer.visible)} labelElement={<><Icon icon={iconName} /> {layer.name}</>} />
@@ -80,6 +87,12 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
                 <img src={wmsLegendUrl} />
             </Card>
         </Collapse>}
+        {layer.vectorStyle && <Collapse isOpen={isEditingVectorStyle}>
+            <Card>
+                <h5 className="bp3-heading"><a href="#">{tr("VECTOR_LAYER_STYLE", locale)}</a></h5>
+                <VectorStyleEditor onChange={st => onVectorStyleChanged(layer.name, st)} locale={locale} style={layer.vectorStyle} enablePoint={true} enableLine={true} enablePolygon={true} />
+            </Card>
+        </Collapse>}
     </Card>;
 }
 
@@ -96,6 +109,7 @@ export interface IManageLayersProps {
     onRemoveLayer: (name: string) => void;
     onMoveLayerUp: (name: string) => void;
     onMoveLayerDown: (name: string) => void;
+    onVectorStyleChanged: (name: string, style: IVectorFeatureStyle) => void;
 }
 
 /**
@@ -110,7 +124,8 @@ export const ManageLayers = (props: IManageLayersProps) => {
         onMoveLayerUp,
         onMoveLayerDown,
         onZoomToBounds,
-        onSetVisibility
+        onSetVisibility,
+        onVectorStyleChanged
     } = props;
     const [layers, setLayers] = React.useState(props.layers);
     const [wmsLegendUrl, setWmsLegendUrl] = React.useState<string | undefined>(undefined);
@@ -131,6 +146,7 @@ export const ManageLayers = (props: IManageLayersProps) => {
                 const cannotMoveUp = (i == 0 || layers.length <= 1);
                 const cannotMoveDown = (i >= layers.length - 1 || layers.length <= 1);
                 return <ManageLayerItem 
+                    key={`manage-layer-${i}`}
                     layer={lyr}
                     locale={locale}
                     canMoveUp={!cannotMoveUp}
@@ -141,7 +157,8 @@ export const ManageLayers = (props: IManageLayersProps) => {
                     onMoveLayerUp={onMoveLayerUp}
                     onMoveLayerDown={onMoveLayerDown}
                     onZoomToBounds={onZoomToBounds}
-                    onSetVisibility={onSetVisibility} />;
+                    onSetVisibility={onSetVisibility}
+                    onVectorStyleChanged={onVectorStyleChanged} />;
             })}
         </div>;
     } else {

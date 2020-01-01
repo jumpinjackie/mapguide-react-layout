@@ -38,7 +38,8 @@ export function useActiveMapLayers() {
     }, (left, right) => !areArraysDifferent(left, right, (l, r) => {
         return l.name == r.name
             && l.opacity == r.opacity
-            && l.visible == r.visible;
+            && l.visible == r.visible
+            && l.vectorStyle == r.vectorStyle;
     }));
 }
 

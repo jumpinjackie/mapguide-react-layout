@@ -77,5 +77,9 @@ export enum ActionType {
     /**
      * @since 0.13
      */
-    SET_LAYER_VISIBILITY = 'Map/SET_LAYER_VISIBILITY'
+    SET_LAYER_VISIBILITY = 'Map/SET_LAYER_VISIBILITY',
+    /**
+     * @since 0.13
+     */
+    SET_LAYER_VECTOR_STYLE = 'Map/SET_LAYER_VECTOR_STYLE'
 }

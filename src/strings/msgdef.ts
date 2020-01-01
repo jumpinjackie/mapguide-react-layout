@@ -217,4 +217,22 @@ export interface ILocalizedMessages {
     WMS_LEGEND: string;
     VSED_NO_STYLES_TITLE: string;
     VSED_NO_STYLES_DESC: string;
+    VECTOR_LAYER_STYLE: string;
+    VSED_PT_FILL_COLOR: string;
+    VSED_PT_FILL_COLOR_ALPHA: string;
+    VSED_PT_RADIUS: string;
+    VSED_PT_OUTLINE_COLOR: string;
+    VSED_PT_OUTLINE_COLOR_ALPHA: string;
+    VSED_PT_OUTLINE_WIDTH: string;
+    VSED_LN_OUTLINE_COLOR: string;
+    VSED_LN_OUTLINE_COLOR_ALPHA: string;
+    VSED_LN_OUTLINE_THICKNESS: string;
+    VSED_PL_FILL_COLOR: string;
+    VSED_PL_FILL_COLOR_ALPHA: string;
+    VSED_PL_OUTLINE_COLOR: string;
+    VSED_PL_OUTLINE_COLOR_ALPHA: string;
+    VSED_PL_OUTLINE_THICKNESS: string;
+    VSED_TAB_POINT: string;
+    VSED_TAB_LINE: string;
+    VSED_TAB_POLY: string;
 }

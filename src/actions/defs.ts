@@ -8,7 +8,7 @@ import { IDOMElementMetrics, IMapView, Dictionary, IExternalBaseLayer, IModalCom
 import { ActionType } from '../constants/actions';
 import { PreparedSubMenuSet } from '../api/registry/command-spec';
 import { RuntimeMap } from '../api/contracts/runtime-map';
-import { QueryMapFeaturesResponse, ILayerInfo } from '../api';
+import { QueryMapFeaturesResponse, ILayerInfo, IVectorFeatureStyle } from '../api';
 
 /**
  * Opens the context menu
@@ -567,6 +567,18 @@ export interface ISetLayerVisibilityAction {
 }
 
 /**
+ * @since 0.13
+ */
+export interface ISetMapLayerVectorStyle {
+    type: ActionType.SET_LAYER_VECTOR_STYLE,
+    payload: {
+        mapName: string,
+        layerName: string,
+        style: IVectorFeatureStyle
+    }
+}
+
+/**
  * @since 0.12
  */
 export type ViewerAction = IOpenFlyoutAction 
@@ -619,3 +631,4 @@ export type ViewerAction = IOpenFlyoutAction
     | ISetLayerIndexAction //@since 0.13
     | ISetLayerOpacityAction //@since 0.13
     | ISetLayerVisibilityAction //@since 0.13
+    | ISetMapLayerVectorStyle //@since 0.13

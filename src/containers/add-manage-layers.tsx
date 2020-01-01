@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as Runtime from "../api/runtime";
 import { tr } from "../api/i18n";
-import { ILayerInfo, Bounds } from "../api/common";
+import { ILayerInfo, Bounds, IVectorFeatureStyle } from "../api/common";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
 import { Tabs, Tab, Icon } from '@blueprintjs/core';
@@ -85,6 +85,11 @@ const AddManageLayersContainer = () => {
             dispatch(MapActions.setMapLayerOpacity(activeMapName, layerName, value));
         }
     };
+    const updateVectorStyle = (layerName: string, value: IVectorFeatureStyle) => {
+        if (activeMapName) {
+            dispatch(MapActions.setMapLayerVectorStyle(activeMapName, layerName, value));
+        }
+    }
     if (layers) {
         return <div style={{ padding: 8 }}>
             <Tabs id="tabs" renderActiveTabPanelOnly={true}>
@@ -97,7 +102,8 @@ const AddManageLayersContainer = () => {
                     onZoomToBounds={zoomToBounds}
                     onMoveLayerDown={downHandler}
                     onMoveLayerUp={upHandler}
-                    onRemoveLayer={removeHandler} />} />
+                    onRemoveLayer={removeHandler}
+                    onVectorStyleChanged={updateVectorStyle} />} />
             </Tabs>
         </div>;
     } else {

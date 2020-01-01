@@ -18,7 +18,15 @@ import {
     MG_LAYER_TYPE_NAME,
     MG_BASE_LAYER_GROUP_NAME,
     LayerExtensions,
-    IWmsLayerExtensions
+    IWmsLayerExtensions,
+    IVectorFeatureStyle,
+    IOlStyleMap,
+    vectorStyleToOLStyleMap,
+    DEFAULT_POINT_STYLE,
+    DEFAULT_LINE_STYLE,
+    DEFAULT_POLY_STYLE,
+    setOLVectorLayerStyle,
+    olStyleMapToVectorStyle
 } from "../api/common";
 import { Client } from '../api/client';
 import { MgError, isSessionExpiredError } from '../api/error';
@@ -58,7 +66,7 @@ import ImageWrapper from 'ol/Image';
 import { createContext } from "react";
 import { parseUrl } from '../utils/url';
 import { strIsNullOrEmpty } from '../utils/string';
-import Feature, { FeatureLike } from 'ol/Feature';
+import Feature from 'ol/Feature';
 import Geometry from 'ol/geom/Geometry';
 import GeoJSON from "ol/format/GeoJSON";
 import GPX from "ol/format/GPX";
@@ -831,7 +839,7 @@ export class MgLayerSet {
             return layer;
         }
     }
-    public getLayer<T extends olLayerBase>(map: olMap, name: string): T | undefined {
+    public getLayer<T extends olLayerBase>(name: string): T | undefined {
         let layer: T | undefined;
         if (this._customLayers[name]) {
             layer = this._customLayers[name]?.layer as T;
@@ -843,12 +851,15 @@ export class MgLayerSet {
             current[layer.name] = layer;
             return current;
         }, {} as any);
-        //Apply opacity/visibility
+        //Apply opacity/visibility/styling
         for (const layer of layers) {
             const oll = this._customLayers[layer.name]?.layer;
             if (oll) {
                 oll.setVisible(layer.visible);
                 oll.setOpacity(layer.opacity);
+                if (oll instanceof olVectorLayer && layer.vectorStyle) {
+                    setOLVectorLayerStyle(oll, layer.vectorStyle);
+                }
             }
         }
         //Apply removals 
@@ -908,6 +919,7 @@ interface IReadFeatures {
 }
 
 export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInfo {
+    let vectorStyle: IVectorFeatureStyle | undefined;
     let ext: LayerExtensions | undefined;
     if (layer instanceof olImageLayer || layer instanceof olTileLayer) {
         const source = layer.getSource();
@@ -918,13 +930,20 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
             } as IWmsLayerExtensions;
         }
     }
+    if (layer instanceof olVectorLayer) {
+        const vs: IOlStyleMap | undefined = layer.get(LayerProperty.VECTOR_STYLE);
+        if (vs) {
+            vectorStyle = olStyleMapToVectorStyle(vs);
+        }
+    }
     return {
         visible: layer.getVisible(),
         name: layer.get(LayerProperty.LAYER_NAME),
         type: layer.get(LayerProperty.LAYER_TYPE),
         opacity: layer.getOpacity(),
         isExternal: isExternal,
-        extensions: ext
+        extensions: ext,
+        vectorStyle
     }
 }
 
@@ -952,7 +971,7 @@ export class MgLayerManager implements ILayerManager {
         return this.layerSet.removeLayer(this.map, name);
     }
     getLayer<T extends olLayerBase>(name: string): T | undefined {
-        return this.layerSet.getLayer(this.map, name);
+        return this.layerSet.getLayer(name);
     }
     apply(layers: ILayerInfo[]): void {
         this.layerSet.apply(this.map, layers);
@@ -998,6 +1017,11 @@ export class MgLayerManager implements ILayerManager {
                     layer.set(LayerProperty.LAYER_TYPE, loadedType);
                     layer.set(LayerProperty.IS_EXTERNAL, true)
                     layer.set(LayerProperty.IS_GROUP, false);
+                    setOLVectorLayerStyle(layer, {
+                        point: DEFAULT_POINT_STYLE,
+                        line: DEFAULT_LINE_STYLE,
+                        polygon: DEFAULT_POLY_STYLE
+                    });
                     that.addLayer(layerName, layer);
                     callback(getLayerInfo(layer, true));
                 } else {

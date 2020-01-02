@@ -534,9 +534,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         if (!this.props.manualFeatureTooltips) {
             this._mapContext.handleFeatureTooltipMouseMove(e);
         }
-        if (this.props.onMouseCoordinateChanged != null) {
-            this.props.onMouseCoordinateChanged(e.coordinate);
-        }
+        this.props.onMouseCoordinateChanged?.(e.coordinate);
     }
     private addImageLoading() {
         const { loading } = this.state;
@@ -563,14 +561,12 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         this.props.onBusyLoading(this._busyWorkers);
     }
     private onRequestZoomToView(view: IMapView): void {
-        if (this.props.onRequestZoomToView != null) {
-            this.props.onRequestZoomToView({
-                x: view.x,
-                y: view.y,
-                scale: view.scale,
-                resolution: view.resolution
-            });
-        }
+        this.props.onRequestZoomToView?.({
+            x: view.x,
+            y: view.y,
+            scale: view.scale,
+            resolution: view.resolution
+        });
     }
     private onImageError(e: GenericEvent) {
         this._keepAlive.lastTry().catch(err => {
@@ -866,9 +862,6 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             <MapLoadIndicator loaded={loaded || 0} loading={loading || 0} position={this.props.loadIndicatorPosition} color={this.props.loadIndicatorColor} />
         </div>;
     }
-    componentWillUnmount() {
-
-    }
     public getViewForExtent(extent: Bounds): IMapView {
         const scale = this.getScaleForExtent(extent);
         const center = olExtent.getCenter(extent);
@@ -879,37 +872,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             resolution: this.getResolution()
         };
     }
-    private onSessionExpired() {
-        if (this.props.onSessionExpired != null) {
-            this.props.onSessionExpired();
-        }
-    }
-    private convertContextMenuItems(items: IItem[] | undefined): any[] {
-        return (items || []).map(i => {
-            if (i.isSeparator === true) {
-                return '-';
-            } else {
-                let cb: (() => void) | undefined;
-                let items: any[] | undefined;
-                if (isMenu(i)) {
-                    items = this.convertContextMenuItems(i.childItems)
-                } else {
-                    cb = () => {
-                        if (getEnabled(i) && i.invoke) { //We have to do this because ol3-contextmenu current has no notion of disabled items
-                            i.invoke();
-                        }
-                    };
-                }
-                return {
-                    text: i.label,
-                    icon: i.icon != null ? getAssetPath(i.icon) : null,
-                    classname: getEnabled(i) === false ? "context-menu-item-disabled" : null,
-                    callback: cb,
-                    items: items
-                }
-            }
-        });
-    }
+    private onSessionExpired = () => this.props.onSessionExpired?.();
     private getScaleForExtent(bounds: Bounds): number {
         const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
         const mcsW = olExtent.getWidth(bounds);

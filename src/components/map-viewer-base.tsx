@@ -421,19 +421,17 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             maxfeatures: -1
         };
         const queryOptions: Partial<IQueryMapFeaturesOptions> = { ...qOrig, ...queryOpts };
-        if (this.props.onQueryMapFeatures) {
-            this.props.onQueryMapFeatures(queryOptions, res => {
-                this.decrementBusyWorker();
-                if (success) {
-                    success(res);
-                }
-            }, err => {
-                this.decrementBusyWorker();
-                if (failure) {
-                    failure(err);
-                }
-            });
-        }
+        this.props.onQueryMapFeatures?.(queryOptions, res => {
+            this.decrementBusyWorker();
+            if (success) {
+                success(res);
+            }
+        }, err => {
+            this.decrementBusyWorker();
+            if (failure) {
+                failure(err);
+            }
+        });
     }
     private zoomByDelta(delta: number) {
         const view = this._map.getView();
@@ -488,11 +486,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             }
         });
     }
-    private onResize(e: GenericEvent) {
-        if (this.props.onMapResized) {
-            this.props.onMapResized(this._map.getSize() as Size2);
-        }
-    }
+    private onResize = (e: GenericEvent) => this.props.onMapResized?.(this._map.getSize() as Size2);
     private onKeyDown = (e: GenericEvent) => {
         const cancelKey = this.props.cancelDigitizationKey || KC_ESCAPE;
         const undoKey = this.props.undoLastPointKey || KC_U;
@@ -933,17 +927,15 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             requestdata: reqQueryFeatures
         };
         const queryOptions = { ...qOrig, ...queryOpts };
-        if (this.props.onQueryMapFeatures) {
-            this.props.onQueryMapFeatures(queryOptions, res => {
-                this.decrementBusyWorker();
-                if (success)
-                    success(res);
-            }, err => {
-                this.decrementBusyWorker();
-                if (failure)
-                    failure(err);
-            });
-        }
+        this.props.onQueryMapFeatures?.(queryOptions, res => {
+            this.decrementBusyWorker();
+            if (success)
+                success(res);
+        }, err => {
+            this.decrementBusyWorker();
+            if (failure)
+                failure(err);
+        });
     }
     public refreshMap(mode: RefreshMode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly): void {
         this._mapContext.refreshMap(this.props.map.Name, mode);

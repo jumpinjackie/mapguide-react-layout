@@ -81,9 +81,7 @@ class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasu
         const { drawType: type, measuring } = this.state;
         if (activeMapName && type && !measuring) {
             //Set to none to prevent select tool interference when measuring
-            if (this.props.setActiveTool) {
-                this.props.setActiveTool(ActiveMapTool.None);
-            }
+            this.props.setActiveTool?.(ActiveMapTool.None);
             const activeMeasure = _measurements.filter(m => m.getMapName() === activeMapName)[0];
             if (activeMeasure) {
                 activeMeasure.startMeasure();

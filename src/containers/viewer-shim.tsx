@@ -740,12 +740,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
      * Although this not part of the "public" API, most AJAX viewer examples test for this
      * flag anyways, so we might as well emulate it here
      */
-    public get mapInit(): boolean {
-        if (this.props.map) {
-            return this.props.map.SessionId != null;
-        }
-        return false;
-    }
+    public get mapInit(): boolean { return this.props.map?.SessionId != null; }
     public ExecuteMapAction(code: AjaxViewerMapActionCode) {
         let cmdName: string;
         switch (code) {
@@ -956,12 +951,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
         return NaN;
     }
-    public GetMapName(): string | undefined {
-        if (this.props.map) {
-            return this.props.map.Name;
-        }
-        return undefined;
-    }
+    public GetMapName = (): string | undefined => this.props.map?.Name;
     public GetMapUnitsType(): string {
         const uom = getUnitOfMeasure(this.props.sizeUnits || UnitOfMeasure.Unknown);
         return uom.name;
@@ -1006,12 +996,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
             return buildSelectionXml(selectionSet.FeatureSet);
         }
     }
-    public GetSessionId(): string | undefined {
-        if (this.props.map) {
-            return this.props.map.SessionId;
-        }
-        return undefined;
-    }
+    public GetSessionId = (): string | undefined => this.props.map?.SessionId;
     public GetSelectedBounds(): IAjaxViewerBounds | null {
         let bounds: IAjaxViewerBounds | null = null;
         const { selectionSet } = this.props;
@@ -1088,12 +1073,8 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
     }
     public Refresh(): void {
         const viewer = Runtime.getViewer();
-        if (viewer) {
-            viewer.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
-        }
-        if (this.props.legendRefresh) {
-            this.props.legendRefresh();
-        }
+        viewer?.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
+        this.props.legendRefresh?.();
     }
     public ScreenToMapUnits(x: number, y: number): IAjaxViewerPoint | undefined {
         const viewer = Runtime.getViewer();
@@ -1136,15 +1117,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         this.formFrame.submit(url, params, frameTarget);
     }
 
-    public goHome(): void {
-        if (this.props.goHome) {
-            this.props.goHome();
-        }
-        //const taskPane = this.app.getTaskPane();
-        //if (taskPane) {
-        //    taskPane.goHome();
-        //}
-    }
+    public goHome = () => this.props.goHome?.();
 
     private RegisterSelectionHandler(handler: SelectionHandlerCallback): number {
         this.userSelectionHandlers.push(handler);

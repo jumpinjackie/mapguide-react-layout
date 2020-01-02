@@ -99,16 +99,8 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             frameContentLoaded: false
         };
     }
-    private onCloseFlyout = (id: string) => {
-        if (this.props.onCloseFlyout) {
-            this.props.onCloseFlyout(id);
-        }
-    }
-    private onOpenFlyout = (id: string, metrics: IDOMElementMetrics) => {
-        if (this.props.onOpenFlyout) {
-            this.props.onOpenFlyout(id, metrics);
-        }
-    }
+    private onCloseFlyout = (id: string) => this.props.onCloseFlyout?.(id);
+    private onOpenFlyout = (id: string, metrics: IDOMElementMetrics) => this.props.onOpenFlyout?.(id, metrics);
     private onFrameMounted = (iframe: HTMLIFrameElement) => {
         this._iframe = iframe;
         if (this._iframe) {

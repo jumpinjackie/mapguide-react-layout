@@ -134,7 +134,7 @@ const TurquoiseYellowTemplateLayout = () => {
                 {(() => {
                     if (showSelection || showTaskPane || showLegend) {
                         return <div className="turquoise-yellow-sidebar" style={{ position: "absolute", left: SIDEBAR_PADDING, top: TOP_BAR_HEIGHT, bottom: SIDEBAR_PADDING, right: 0 }}>
-                            <Tabs id="SidebarTabs" onChange={onActiveElementChanged} {...extraTabsProps}>
+                            <Tabs className="turquoise-yellow-sb-tabs" id="SidebarTabs" onChange={onActiveElementChanged} {...extraTabsProps}>
                                 {(() => {
                                     if (hasTaskPane) {
                                         const panel = <div style={tabPanelStyle}>

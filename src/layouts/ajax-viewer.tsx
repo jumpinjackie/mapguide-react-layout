@@ -12,8 +12,6 @@ import { tr } from "../api/i18n";
 import { useCommonTemplateState } from './hooks';
 import { useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
 
-const SIDEBAR_WIDTH = 250;
-
 const AjaxViewerLayout = () => {
     const {
         isResizing,
@@ -42,13 +40,11 @@ const AjaxViewerLayout = () => {
     const TB_Z_INDEX = 10;
     const topOffset = hasToolbar ? DEFAULT_TOOLBAR_SIZE : 0;
     const bottomOffset = hasStatusBar ? 20 : 0;
-    let sbWidth = initInfoPaneWidth || SIDEBAR_WIDTH;
-    let tpWidth = initTaskPaneWidth || SIDEBAR_WIDTH;
     const lgStyle = {};
     const selStyle = {};
     return <div style={{ width: "100%", height: "100%" }}>
         <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: bottomOffset }}>
-            <SplitterLayout customClassName="ajax-viewer-splitter" primaryIndex={0} secondaryInitialSize={tpWidth} onDragStart={onDragStart} onDragEnd={onDragEnd}>
+            <SplitterLayout customClassName="ajax-viewer-splitter" primaryIndex={0} secondaryInitialSize={initTaskPaneWidth} onDragStart={onDragStart} onDragEnd={onDragEnd}>
                 <div>
                     {(() => {
                         if (hasToolbar) {
@@ -56,7 +52,7 @@ const AjaxViewerLayout = () => {
                         }
                     })()}
                     <div style={{ position: "absolute", left: 0, top: topOffset, bottom: 0, right: 0 }}>
-                        <SplitterLayout customClassName="ajax-viewer-splitter" primaryIndex={1} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={onSplitterChanged}>
+                        <SplitterLayout customClassName="ajax-viewer-splitter" primaryIndex={1} secondaryInitialSize={initInfoPaneWidth} onSecondaryPaneSizeChange={onSplitterChanged}>
                             {(() => {
                                 if (hasLegend || hasSelectionPanel) {
                                     return <SplitterLayout customClassName="ajax-viewer-splitter" vertical={true} onDragStart={onDragStart} onDragEnd={onDragEnd}>

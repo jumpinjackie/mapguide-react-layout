@@ -14,6 +14,7 @@ import { ViewerAction } from '../actions/defs';
 import { ActionType } from '../constants/actions';
 import { Tabs, Tab } from '@blueprintjs/core';
 import { useCommonTemplateState } from './hooks';
+import { useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
 
 function limegoldTemplateReducer(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
@@ -72,7 +73,6 @@ function limegoldTemplateReducer(origState: ITemplateReducerState, state: ITempl
     return state;
 }
 
-const SIDEBAR_WIDTH = 250;
 const SIDEBAR_PADDING = 0;
 const TOP_BAR_HEIGHT = 35;
 const TAB_BAR_HEIGHT = 30;
@@ -105,7 +105,9 @@ const LimeGoldTemplateLayout = () => {
     }
     const bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;
     const topOffset = (TOP_BAR_HEIGHT + (DEFAULT_TOOLBAR_SIZE * 2));
-    const sbWidth = SIDEBAR_WIDTH;
+    const initInfoPaneWidth = useTemplateInitialInfoPaneWidth();
+    const initTaskPaneWidth = useTemplateInitialTaskPaneWidth();
+    const sbWidth = Math.max(initInfoPaneWidth, initTaskPaneWidth);
     const tabPanelStyle: React.CSSProperties = {
         position: "absolute",
         top: TAB_BAR_HEIGHT,

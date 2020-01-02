@@ -25,6 +25,7 @@ import SplitterLayout from "react-splitter-layout";
 import { ActionType } from '../constants/actions';
 import { IElementState, ViewerAction } from '../actions/defs';
 import { useCommonTemplateState } from './hooks';
+import { useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
 
 function maroonTemplateReducer(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
@@ -83,7 +84,6 @@ function maroonTemplateReducer(origState: ITemplateReducerState, state: ITemplat
     return state;
 }
 
-const SIDEBAR_WIDTH = 250;
 const STATUS_BAR_HEIGHT = 18;
 const OUTER_PADDING = 3;
 
@@ -152,10 +152,13 @@ const MaroonTemplateLayout = () => {
     if (active.length == 1) {
         activeId = active[0].id;
     }
+    const initInfoPaneWidth = useTemplateInitialInfoPaneWidth();
+    const initTaskPaneWidth = useTemplateInitialTaskPaneWidth();
+    const sbWidth = Math.max(initInfoPaneWidth, initTaskPaneWidth);
     const TB_Z_INDEX = 0;
     return <div style={{ width: "100%", height: "100%" }}>
         <div style={{ position: "absolute", left: 0, top: 0, bottom: bottomOffset, right: 0 }}>
-            <SplitterLayout customClassName="maroon-splitter" primaryIndex={0} secondaryInitialSize={SIDEBAR_WIDTH} onSecondaryPaneSizeChange={onSplitterChanged} onDragStart={onDragStart} onDragEnd={onDragEnd}>
+            <SplitterLayout customClassName="maroon-splitter" primaryIndex={0} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={onSplitterChanged} onDragStart={onDragStart} onDragEnd={onDragEnd}>
                 <div>
                     <ToolbarContainer id="FileMenu" containerClass="maroon-file-menu" containerStyle={{ position: "absolute", left: OUTER_PADDING, top: OUTER_PADDING, right: 0, zIndex: TB_Z_INDEX }} />
                     <ToolbarContainer id="Toolbar" containerClass="maroon-toolbar" containerStyle={{ position: "absolute", left: OUTER_PADDING, top: DEFAULT_TOOLBAR_SIZE + OUTER_PADDING, right: 0, zIndex: TB_Z_INDEX }} />

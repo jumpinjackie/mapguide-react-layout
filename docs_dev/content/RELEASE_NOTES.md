@@ -9,7 +9,7 @@ React Component API Breaking Changes:
  * Use the new [react-redux hooks API](https://react-redux.js.org/next/api/hooks) for dispatching viewer actions and subscribing/listening to viewer application state.
    * Consider using our [collection of custom hooks](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/src/containers/hooks.ts) for listening to particular viewer application state.
 
-API Breaking Changes:
+Viewer API Breaking Changes:
 
  * Removed optional `factory` argument from `ILayerManager.getLayer()`.
    * Replacement: Just add the layer yourself aftewards if `ILayerManager.getLayer()` returns `undefined`.
@@ -35,7 +35,7 @@ Features/Fixes Overview:
      * IGC
    * Added layers UI reworked and enhanced:
      * All layers can now have their visibility and opacity toggled
-     * All vector layers have the ability to zoom to the bounds of that layer
+     * All vector layers have the ability to zoom to the bounds of that layer and can be styled
      * Certain WMS layers can toggle their legend inline (if the WMS service supports the GetLegendURL sub-capability)
    * Reworked add WMS layer UI to be more informative
    * Layer management state relocated to the redux store. Adding/removing/reordering external layers is now done through dispatching redux actions.

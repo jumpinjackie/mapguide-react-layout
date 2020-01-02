@@ -7,6 +7,7 @@ import olStroke from "ol/style/Stroke";
 import olFill from "ol/style/Fill";
 import olFeature from "ol/Feature";
 import { LayerProperty } from './common';
+import * as shortid from "shortid";
 
 /**
  * @since 0.13
@@ -113,6 +114,7 @@ export const DEFAULT_POLY_STYLE: IBasicVectorPolygonStyle = {
  * @since 0.13
  */
 export interface IOlStyleMap {
+    id: string;
     "Point": olStyle;
     "LineString": olStyle;
     "MultiLineString": olStyle;
@@ -231,26 +233,15 @@ export function vectorStyleToOLStyleMap(style: IVectorFeatureStyle): IOlStyleMap
         })
     });
     //For GeometryCollection, combine point and polygon styles
+    const cpts = pts.clone();
+    const cpls = pls.clone();
     const gcs = new olStyle({
-        image: new olCircleStyle({
-            radius: ptStyle.radius,
-            fill: new olFill({
-                color: toOLColor(ptStyle.fill.color, ptStyle.fill.alpha)
-            }),
-            stroke: new olStroke({
-                color: toOLColor(ptStyle.stroke.color, ptStyle.stroke.alpha),
-                width: ptStyle.stroke.width
-            })
-        }),
-        stroke: new olStroke({
-            color: toOLColor(plStyle.stroke.color, plStyle.stroke.alpha),
-            width: plStyle.stroke.width
-        }),
-        fill: new olFill({
-            color: toOLColor(plStyle.fill.color, plStyle.fill.alpha)
-        })
+        image: cpts.getImage(),
+        stroke: cpls.getStroke(),
+        fill: cpls.getFill()
     });
     return {
+        id: shortid.generate(),
         Point: pts,
         MultiPoint: pts,
         LineString: lns,
@@ -266,15 +257,12 @@ export function vectorStyleToOLStyleMap(style: IVectorFeatureStyle): IOlStyleMap
  * @since 0.13
  */
 export function setOLVectorLayerStyle(layer: olLayerVector, style: IVectorFeatureStyle) {
-    layer.set(LayerProperty.VECTOR_STYLE, vectorStyleToOLStyleMap(style));
+    const ols = vectorStyleToOLStyleMap(style);
+    layer.set(LayerProperty.VECTOR_STYLE, ols);
     const layerStyleFunc = function (feature: olFeature) {
-        const stm = layer.get(LayerProperty.VECTOR_STYLE);
-        if (stm) {
-            const gt = feature.getGeometry().getType();
-            const st = stm[gt];
-            return st;
-        }
-        return undefined;
-    };
+        const gt = feature.getGeometry().getType();
+        const st = this[gt];
+        return st;
+    }.bind(ols);
     layer.setStyle(layerStyleFunc);
 }

@@ -1,8 +1,7 @@
 import * as React from "react";
 import { tr } from "../api/i18n";
 import { WmsCapabilitiesDocument, WMSPublishedLayer, WMSLayerStyle } from "../api/common";
-import * as shortid from "shortid";
-import { Tooltip, ITreeNode, Tree, Card, Button, Intent, ButtonGroup, Icon } from '@blueprintjs/core';
+import { Tooltip, ITreeNode, Card, Button, Intent, ButtonGroup, Icon } from '@blueprintjs/core';
 
 type WMSLayerStylePair = [WMSPublishedLayer, WMSLayerStyle[]];
 
@@ -20,22 +19,6 @@ function extractWmsLayers(caps: WmsCapabilitiesDocument): WMSLayerStylePair[] {
     return layers;
 }
 
-function convertWmsLayerNodes(layers: WMSLayerStylePair[], locale: string | undefined): ITreeNode[] {
-    return layers.map(pair => {
-        const [l, styles] = pair;
-        const tt = <div className="wms-layer-info-tooltip">
-            <p>{tr("WMS_LAYER_NAME", locale, { name: l.Name })}</p>
-            <p>{tr("WMS_LAYER_TITLE", locale, { title: l.Title })}</p>
-            <p>{tr("WMS_LAYER_ABSTRACT", locale, { abstract: l.Abstract })}</p>
-            <p>{tr("WMS_ADD_LAYER_PROMPT", locale)}</p>
-        </div>;
-        return {
-            id: l.Name,
-            icon: "layer",
-            label: <Tooltip content={tt}>{l.Name}</Tooltip>
-        } as ITreeNode;
-    });
-}
 
 export interface IWmsCapabilitiesPanelProps {
     capabilities: WmsCapabilitiesDocument;

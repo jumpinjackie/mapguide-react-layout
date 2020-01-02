@@ -14,6 +14,7 @@ import { ViewerAction } from '../actions/defs';
 import { ActionType } from '../constants/actions';
 import { Tabs, Tab } from '@blueprintjs/core';
 import { useCommonTemplateState } from './hooks';
+import { useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
 
 function turquoiseYellowTemplateReducer(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
@@ -72,7 +73,6 @@ function turquoiseYellowTemplateReducer(origState: ITemplateReducerState, state:
     return state;
 }
 
-const SIDEBAR_WIDTH = 250;
 const SIDEBAR_PADDING = 3;
 const TOP_BAR_HEIGHT = 35;
 const TAB_BAR_HEIGHT = 30;
@@ -104,7 +104,9 @@ const TurquoiseYellowTemplateLayout = () => {
         hasLegend = capabilities.hasLegend;
     }
     const bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;
-    const sbWidth = SIDEBAR_WIDTH;
+    const initInfoPaneWidth = useTemplateInitialInfoPaneWidth();
+    const initTaskPaneWidth = useTemplateInitialTaskPaneWidth();
+    const sbWidth = Math.max(initInfoPaneWidth, initTaskPaneWidth);
     const tabPanelStyle: React.CSSProperties = {
         position: "absolute",
         top: TAB_BAR_HEIGHT,
@@ -132,7 +134,7 @@ const TurquoiseYellowTemplateLayout = () => {
                 {(() => {
                     if (showSelection || showTaskPane || showLegend) {
                         return <div className="turquoise-yellow-sidebar" style={{ position: "absolute", left: SIDEBAR_PADDING, top: TOP_BAR_HEIGHT, bottom: SIDEBAR_PADDING, right: 0 }}>
-                            <Tabs id="SidebarTabs" onChange={onActiveElementChanged} {...extraTabsProps}>
+                            <Tabs className="turquoise-yellow-sb-tabs" id="SidebarTabs" onChange={onActiveElementChanged} {...extraTabsProps}>
                                 {(() => {
                                     if (hasTaskPane) {
                                         const panel = <div style={tabPanelStyle}>

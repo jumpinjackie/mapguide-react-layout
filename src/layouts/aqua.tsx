@@ -18,7 +18,7 @@ import InitWarningDisplay from "../containers/init-warning-display";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 import { useCommonTemplateState } from './hooks';
-import { useActiveMapState } from '../containers/hooks';
+import { useActiveMapState, useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
 
 function aquaTemplateReducer(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
@@ -72,7 +72,6 @@ function aquaTemplateReducer(origState: ITemplateReducerState, state: ITemplateR
     return state;
 }
 
-const SIDEBAR_WIDTH = 250;
 const SELECTION_DIALOG_HEIGHT = 300;
 const LEGEND_DIALOG_HEIGHT = 400;
 const TASK_DIALOG_HEIGHT = 500;
@@ -135,6 +134,8 @@ const AquaTemplateLayout = () => {
         right = tpWidth;
     }*/
     const TB_Z_INDEX = 0;
+    const initInfoPaneWidth = useTemplateInitialInfoPaneWidth();
+    const initTaskPaneWidth = useTemplateInitialTaskPaneWidth();
     return <div style={{ width: "100%", height: "100%" }}>
         <ToolbarContainer id="FileMenu" containerClass="aqua-file-menu" containerStyle={{ position: "absolute", left: 0, top: 0, zIndex: TB_Z_INDEX, right: 0 }} />
         <ToolbarContainer id="Toolbar" containerClass="aqua-toolbar" containerStyle={{ position: "absolute", left: 0, top: DEFAULT_TOOLBAR_SIZE, height: DEFAULT_TOOLBAR_SIZE, zIndex: TB_Z_INDEX, right: 0 }} />
@@ -177,7 +178,7 @@ const AquaTemplateLayout = () => {
                         title={tr("TPL_TITLE_SELECTION_PANEL", locale)}
                         x={40}
                         y={500}
-                        width={SIDEBAR_WIDTH}
+                        width={initInfoPaneWidth}
                         height={SELECTION_DIALOG_HEIGHT}
                         disableYOverflow={true}
                         enableInteractionMask={true}>
@@ -195,7 +196,7 @@ const AquaTemplateLayout = () => {
                         title={tr("TPL_TITLE_LEGEND", locale)}
                         x={40}
                         y={70}
-                        width={SIDEBAR_WIDTH}
+                        width={initInfoPaneWidth}
                         height={LEGEND_DIALOG_HEIGHT}
                         enableInteractionMask={true}>
                         {([, h]) => <PlaceholderComponent locale={locale} id={DefaultComponentNames.Legend} componentProps={{ inlineBaseLayerSwitcher: false, maxHeight: h }} />}
@@ -209,10 +210,10 @@ const AquaTemplateLayout = () => {
                         locale={locale}
                         isOpen={!!showTaskPane}
                         onClose={onHideTaskPane}
-                        width={SIDEBAR_WIDTH}
+                        width={initTaskPaneWidth}
                         height={TASK_DIALOG_HEIGHT}
                         title={tr("TPL_TITLE_TASKPANE", locale)}
-                        x={document.body.clientWidth - SIDEBAR_WIDTH - 70}
+                        x={document.body.clientWidth - initTaskPaneWidth - 70}
                         y={80}
                         disableYOverflow={true}
                         enableInteractionMask={false}>

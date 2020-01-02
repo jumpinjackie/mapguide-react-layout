@@ -14,6 +14,7 @@ import SplitterLayout from "react-splitter-layout";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 import { useCommonTemplateState } from './hooks';
+import { useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
 
 function slateTemplateReducer(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
@@ -72,7 +73,6 @@ function slateTemplateReducer(origState: ITemplateReducerState, state: ITemplate
     return state;
 }
 
-const SIDEBAR_WIDTH = 250;
 const STATUS_BAR_HEIGHT = 18;
 
 const SlateTemplateLayout = () => {
@@ -94,6 +94,9 @@ const SlateTemplateLayout = () => {
         hasStatusBar = capabilities.hasStatusBar;
         hasNavigator = capabilities.hasNavigator;
     }
+    const initInfoPaneWidth = useTemplateInitialInfoPaneWidth();
+    const initTaskPaneWidth = useTemplateInitialTaskPaneWidth();
+    const sbWidth = Math.max(initInfoPaneWidth, initTaskPaneWidth);
     const bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;
     const topOffset = (DEFAULT_TOOLBAR_SIZE * 3);
     const panels: IAccordionPanelSpec[] = [
@@ -143,7 +146,7 @@ const SlateTemplateLayout = () => {
     const TB_Z_INDEX = 0;
     return <div style={{ width: "100%", height: "100%" }}>
         <div style={{ position: "absolute", left: 0, top: 0, bottom: bottomOffset, right: 0 }}>
-            <SplitterLayout customClassName="slate-splitter" primaryIndex={1} secondaryInitialSize={SIDEBAR_WIDTH} onSecondaryPaneSizeChange={onSplitterChanged} onDragStart={onDragStart} onDragEnd={onDragEnd}>
+            <SplitterLayout customClassName="slate-splitter" primaryIndex={1} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={onSplitterChanged} onDragStart={onDragStart} onDragEnd={onDragEnd}>
                 {(() => {
                     if (showSelection || showTaskPane || showLegend) {
                         return <div>

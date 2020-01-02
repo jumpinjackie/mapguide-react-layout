@@ -207,7 +207,29 @@ const STRINGS_EN: ILocalizedMessages = {
     "WMS_SERVICE_INFO": "WMS Service Info",
     "WMS_AVAILABLE_LAYERS": "Available WMS Layers",
     "ADD_LAYER_WITH_WMS_STYLE": "Add layer ({style})",
-    "WMS_LEGEND": "WMS Legend"
+    "WMS_LEGEND": "WMS Legend",
+    "VSED_NO_STYLES_TITLE": "No Styles",
+    "VSED_NO_STYLES_DESC": "This editor is not configured to edit any styles",
+    "VECTOR_LAYER_STYLE": "Vector Layer Style",
+    "VSED_PT_FILL_COLOR": "Point Fill Color",
+    "VSED_PT_FILL_COLOR_ALPHA": "Point Fill Color Alpha",
+    "VSED_PT_RADIUS": "Point Radius",
+    "VSED_PT_OUTLINE_COLOR": "Point Outline Color",
+    "VSED_PT_OUTLINE_COLOR_ALPHA": "Point Outline Color Alpha",
+    "VSED_PT_OUTLINE_WIDTH": "Point Outline Thickness",
+    "VSED_LN_OUTLINE_COLOR": "Line Color",
+    "VSED_LN_OUTLINE_COLOR_ALPHA": "Line Color Alpha",
+    "VSED_LN_OUTLINE_THICKNESS": "Line Thickness",
+    "VSED_PL_FILL_COLOR": "Fill Color",
+    "VSED_PL_FILL_COLOR_ALPHA": "Fill Color Alpha",
+    "VSED_PL_OUTLINE_COLOR": "Outline Color",
+    "VSED_PL_OUTLINE_COLOR_ALPHA": "Outline Color Alpha",
+    "VSED_PL_OUTLINE_THICKNESS": "Outline Thickness",
+    "VSED_TAB_POINT": "Point",
+    "VSED_TAB_LINE": "Line",
+    "VSED_TAB_POLY": "Polygon",
+    "ADD_LAYER_PROJECTION": "Projection of this layer",
+    "ADDING_LAYER_ERROR": "Error adding layer"
 };
 
 export default STRINGS_EN;

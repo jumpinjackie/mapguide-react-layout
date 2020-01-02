@@ -460,6 +460,12 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                 }
                 return state;
             }
+        case ActionType.SET_LAYER_VECTOR_STYLE:
+            {
+                const { mapName, layerName, style } = action.payload;
+                const state1 = setLayerAction(state, mapName, layerName, () => ({ vectorStyle: style }));
+                return state1;
+            }
     }
     return state;
 }

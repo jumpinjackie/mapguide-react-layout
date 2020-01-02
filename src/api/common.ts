@@ -18,6 +18,7 @@ import { ViewerAction } from '../actions/defs';
 import { ProjectionLike } from 'ol/proj';
 import { LoadFunction } from 'ol/Image';
 import { IToolbarAppState } from './registry';
+import { IVectorFeatureStyle } from './ol-style-helpers';
 
 // Event boilerplate
 export type GenericEvent = any;
@@ -27,9 +28,9 @@ export type GenericEventHandler = (e: GenericEvent) => void;
 /**
  * @deprecated Use UnitOfMeasure enum instead
  */
-export type UnitName = 'Unknown' | 'Inches' | 'Feet' | 'Yards' | 'Miles' | 'Nautical Miles' 
-                    | 'Millimeters' | 'Centimeters' | 'Meters' | 'Kilometers' 
-                    | 'Degrees' | 'Decimal Degrees' | 'Degrees Minutes Seconds'| 'Pixels';
+export type UnitName = 'Unknown' | 'Inches' | 'Feet' | 'Yards' | 'Miles' | 'Nautical Miles'
+    | 'Millimeters' | 'Centimeters' | 'Meters' | 'Kilometers'
+    | 'Degrees' | 'Decimal Degrees' | 'Degrees Minutes Seconds' | 'Pixels';
 export enum UnitOfMeasure {
     /**
      * An unknown unit
@@ -844,10 +845,10 @@ export interface IMapViewer {
      */
     screenToMapUnits(x: number, y: number): [number, number];
 
-    toastSuccess(icon: string, message: string|JSX.Element): string | undefined;
-    toastWarning(icon: string, message: string|JSX.Element): string | undefined;
-    toastError(icon: string, message: string|JSX.Element): string | undefined;
-    toastPrimary(icon: string, message: string|JSX.Element): string | undefined;
+    toastSuccess(icon: string, message: string | JSX.Element): string | undefined;
+    toastWarning(icon: string, message: string | JSX.Element): string | undefined;
+    toastError(icon: string, message: string | JSX.Element): string | undefined;
+    toastPrimary(icon: string, message: string | JSX.Element): string | undefined;
     dismissToast(key: string): void;
     updateSize(): void;
 }
@@ -898,6 +899,10 @@ export interface ILayerInfo {
      * @since 0.13
      */
     extensions?: LayerExtensions;
+    /**
+     * @since 0.13
+     */
+    vectorStyle?: IVectorFeatureStyle;
 }
 
 /**
@@ -1000,7 +1005,7 @@ export interface IModalParameters {
 /**
  * The default modal dialog size
  */
-export const DEFAULT_MODAL_SIZE: [number, number] = [ 350, 500 ];
+export const DEFAULT_MODAL_SIZE: [number, number] = [350, 500];
 
 /**
  * Base modal display options
@@ -2031,7 +2036,7 @@ export interface WMSPublishedLayer {
  * @since 0.11
  */
 export interface WMSRootPublishedLayer extends WMSPublishedLayer {
-    Layer: WMSPublishedLayer[];    
+    Layer: WMSPublishedLayer[];
 }
 
 /**
@@ -2160,7 +2165,8 @@ export enum LayerProperty {
     LAYER_NAME = "name",
     IS_GROUP = "is_group",
     IS_EXTERNAL = "is_external",
-    HAS_WMS_LEGEND = "has_wms_legend"
+    HAS_WMS_LEGEND = "has_wms_legend",
+    VECTOR_STYLE = "vector_style"
 }
 
 /**

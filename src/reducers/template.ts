@@ -8,7 +8,7 @@ import { IElementState, ViewerAction } from '../actions/defs';
 
 export const TEMPLATE_INITIAL_STATE: ITemplateReducerState = {
     initialInfoPaneWidth: 250,
-    initialTaskPaneWidth: 250,
+    initialTaskPaneWidth: 300,
     taskPaneVisible: true,
     selectionPanelVisible: true,
     legendVisible: true,

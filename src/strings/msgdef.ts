@@ -235,4 +235,5 @@ export interface ILocalizedMessages {
     VSED_TAB_POINT: string;
     VSED_TAB_LINE: string;
     VSED_TAB_POLY: string;
+    ADD_LAYER_PROJECTION: string;
 }

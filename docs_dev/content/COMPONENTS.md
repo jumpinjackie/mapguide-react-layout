@@ -30,20 +30,20 @@ The following components are available in mapguide-react-layout
 
 URI Format: `component://CoordinateTracker[?projection=proj1[&projection=proj2]]`
 
-Description:
+#### Description:
 
-    Fusion's `CoordinateTracker` widget ported to mapguide-react-layout. 
+Fusion's `CoordinateTracker` widget ported to mapguide-react-layout. 
 
-    NOTE: Any existing CoordinateTracker widget reference in a Fusion Application Definition is already supported.
-    Setting up a new InvokeURL widget with this component URI is not necessary. This is listed here for reference only.
+NOTE: Any existing CoordinateTracker widget reference in a Fusion Application Definition is already supported.
+Setting up a new InvokeURL widget with this component URI is not necessary. This is listed here for reference only.
 
 ### Share Link To View
 
 URI Format: `component://ShareLinkToView`
 
-Description:
+#### Description:
 
-    A component that presents a shareable URL to the current map view.
+A component that presents a shareable URL to the current map view.
 
 ### Add/Manage Layers
 
@@ -51,17 +51,24 @@ Description:
 
 URI Format: `component://AddManageLayers`
 
-Description:
+#### Description:
 
-    A component that allows one to add custom external layers to the current map.
+A component that allows one to add custom external layers to the current map.
 
-    This component supports adding 2 kinds of data
+This component supports adding 2 kinds of data
 
-     * Vector data from a local file in any of the following formats:
-        * GeoJSON
-        * KML
-        * TopoJSON
-        * GPX
-        * IGC
-     * Raster data from a remote data source in any of the following formats:
-        * WMS
+ * Vector data from a local file in any of the following formats:
+ * GeoJSON
+ * KML
+ * TopoJSON
+ * GPX
+ * IGC
+ * Raster data from a remote data source in any of the following formats:
+ * WMS
+
+For vector data, you may specify what projection the data is in. Default is EPSG:4326. The
+list of available projections is:
+
+ * EPSG:4326
+ * EPSG:3857 (and other aliases of it)
+ * Any other projection found amongst your Map Definition and/or pre-registered before mounting the viewer (see: [Known Issues / Viewer](KNOWN_ISSUES.md#viewer))

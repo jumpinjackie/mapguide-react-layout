@@ -998,7 +998,8 @@ export class MgLayerManager implements ILayerManager {
                     const format = formats[i];
                     try {
                         features = format.readFeatures(result, {
-                            featureProjection: projection
+                            dataProjection: projection,
+                            featureProjection: that.map.getView().getProjection()
                         });
                     } catch (e) {
 

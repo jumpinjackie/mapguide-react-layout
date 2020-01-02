@@ -146,7 +146,7 @@ const LimeGoldTemplateLayout = () => {
                 {(() => {
                     if (showSelection || showTaskPane || showLegend) {
                         return <div className="limegold-sidebar" style={{ position: "absolute", right: SIDEBAR_PADDING, top: 0, left: 0, bottom: 0 }}>
-                            <Tabs id="SidebarTabs" onChange={onActiveElementChanged} {...extraTabsProps}>
+                            <Tabs className="limegold-sidebar-tabs" id="SidebarTabs" onChange={onActiveElementChanged} {...extraTabsProps}>
                                 {(() => {
                                     if (hasTaskPane) {
                                         const panel = <div style={tabPanelStyle}>

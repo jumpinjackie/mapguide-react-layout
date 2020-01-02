@@ -3,7 +3,7 @@ import { tr } from "../../api/i18n";
 import { GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 import Dropzone from "react-dropzone";
-import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup, FormGroup } from '@blueprintjs/core';
+import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup, FormGroup, Callout } from '@blueprintjs/core';
 import * as Runtime from "../../api/runtime";
 import { strIsNullOrEmpty } from "../../utils/string";
 import proj4 from "proj4";
@@ -60,9 +60,14 @@ const AddFileLayer = (props: IAddLayerProps) => {
             setIsAddingLayer(true);
             setAddLayerError(undefined);
             try {
-                viewer.getLayerManager().addLayerFromFile({
+                const layerName = addLayerName ?? loadedFile.name;
+                const layerMgr = viewer.getLayerManager();
+                if (layerMgr.hasLayer(layerName)) {
+                    throw new Error(tr("LAYER_NAME_EXISTS", locale, { name: layerName }));
+                }
+                layerMgr.addLayerFromFile({
                     file: loadedFile,
-                    name: addLayerName ?? loadedFile.name,
+                    name: layerName,
                     locale: props.locale,
                     projection: layerProjection,
                     callback: (res) => {
@@ -91,6 +96,9 @@ const AddFileLayer = (props: IAddLayerProps) => {
             icon="upload"
             description={tr("FMT_UPLOADED_FILE", locale, { size: loadedFile.size, type: (strIsNullOrEmpty(loadedFile.type) ? tr("UNKNOWN_FILE_TYPE", locale) : loadedFile.type) })}
             action={<>
+                {addLayerError && <Callout intent={Intent.DANGER} title={tr("ADDING_LAYER_ERROR", locale)}>
+                    {addLayerError.message}
+                </Callout>}
                 <FormGroup label={tr("ADD_LAYER_PROJECTION", locale)}>
                     <HTMLSelect value={addProjection} onChange={e => setAddProjection(e.target.value)}>
                         {projections.map(p => <option key={p} value={p}>{p}</option>)}
@@ -102,15 +110,17 @@ const AddFileLayer = (props: IAddLayerProps) => {
                 </ButtonGroup>
             </>} />
     } else {
-        return <Dropzone multiple={false} onDrop={acceptedFiles => onFileDropped(acceptedFiles[0])}>
-            {({ getRootProps, getInputProps }) => (<div style={{ margin: 10, border: "1px dashed black", borderRadius: 5, padding: 5 }} {...getRootProps()}>
-                <NonIdealState
-                    title={tr("ADD_FILE", locale)}
-                    icon="upload"
-                    description={tr("ADD_FILE_INSTRUCTIONS", locale)}
-                    action={<input {...getInputProps()} />} />
-            </div>)}
-        </Dropzone>;
+        return <>
+            <Dropzone multiple={false} onDrop={acceptedFiles => onFileDropped(acceptedFiles[0])}>
+                {({ getRootProps, getInputProps }) => (<div style={{ margin: 10, border: "1px dashed black", borderRadius: 5, padding: 5 }} {...getRootProps()}>
+                    <NonIdealState
+                        title={tr("ADD_FILE", locale)}
+                        icon="upload"
+                        description={tr("ADD_FILE_INSTRUCTIONS", locale)}
+                        action={<input {...getInputProps()} />} />
+                </div>)}
+            </Dropzone>
+        </>;
     }
 }
 

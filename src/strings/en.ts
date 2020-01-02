@@ -228,7 +228,8 @@ const STRINGS_EN: ILocalizedMessages = {
     "VSED_TAB_POINT": "Point",
     "VSED_TAB_LINE": "Line",
     "VSED_TAB_POLY": "Polygon",
-    "ADD_LAYER_PROJECTION": "Projection of this layer"
+    "ADD_LAYER_PROJECTION": "Projection of this layer",
+    "ADDING_LAYER_ERROR": "Error adding layer"
 };
 
 export default STRINGS_EN;

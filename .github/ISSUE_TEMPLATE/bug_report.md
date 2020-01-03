@@ -11,10 +11,10 @@ A clear and concise description of what the bug is.
 
 **What is your environment?**
 1. MapGuide Installation
-  * Version
-  * OS
-  * WebTier configuration (IIS/Apache)
-2. mapguide-react-layout version
+  * Version:
+  * OS:
+  * WebTier configuration (IIS/Apache):
+2. mapguide-react-layout version:
 
 **To Reproduce**
 Steps to reproduce the behavior:
@@ -24,3 +24,8 @@ Steps to reproduce the behavior:
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
+
+**Screenshots/Browser DevTools output**
+Does your browser devtools (F12) show any console/network errors at the time the problem occurs or is there any visual indicators of the problem?
+
+Include relevant output/screenshots here

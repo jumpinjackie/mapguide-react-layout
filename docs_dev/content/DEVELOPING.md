@@ -1,8 +1,6 @@
-Developer Guide
-===============
+# Developer Guide
 
-Using/Embedding the viewer
---------------------------
+## Using/Embedding the viewer
 
 The existing HTML pages already contains the viewer bootstrapping logic. You can pass a Web Layout
 or Application Definition as a query string to initialize your viewer application.
@@ -45,8 +43,7 @@ following HTML example illustrates how to embed the viewer
 </html>
 ```
 
-Extension Points
-----------------
+## Extension Points
 
 The viewer provides several extension points for customizing viewer functionality and behavior:
 
@@ -58,8 +55,7 @@ The viewer provides a registry API to allow you to register these custom extensi
 existing AJAX/Fusion viewers. To activate these extension points, they must be referenced by the Web Layout
 or Application Definition you pass to the viewer.
 
-Adding a custom command
------------------------
+## Adding a custom command
 
 The viewer supports two types of commands:
 
@@ -83,17 +79,14 @@ Integrated commands are the successor to Invoke Script commands. These commands 
 
 The redux store is also available when evaluating whether the command should be enabled or disabled.
 
-Mount Options
--------------
+## Mount Options
 
 TODO
 
-Adding a custom component
--------------------------
+## Adding a custom component
 
 TODO
 
-Adding a custom layout
-----------------------
+## Adding a custom layout
 
 TODO

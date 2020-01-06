@@ -26,7 +26,8 @@ viewer.zip
 storybook.zip
 apidocs.zip
 package
-webpack.json
+webpack_stats_prod.json
+webpack_stats_dev.json
 index_frame.html
 slate_frame.html
 storybook-static

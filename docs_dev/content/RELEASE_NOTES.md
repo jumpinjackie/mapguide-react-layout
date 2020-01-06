@@ -54,6 +54,7 @@ Features/Fixes Overview:
  * [#1041](https://github.com/jumpinjackie/mapguide-react-layout/issues/1041): Legend now uses blueprint SVG icons for non-theme-rule icons for better scalability
  * [#1047](https://github.com/jumpinjackie/mapguide-react-layout/issues/1047): SVG icon replacements for Task Pane and Selection Panel
  * [#326](https://github.com/jumpinjackie/mapguide-react-layout/issues/326): Moved positioning aspects of status bar element CSS out of the main viewer css and to their template html files
+ * [#1066](https://github.com/jumpinjackie/mapguide-react-layout/issues/1066): Remove es6 promise polyfill and `whatwg-fetch` and replace with script tag reference to `polyfill.io` in viewer html files and storybook to polyfill required bits for IE
 
 0.12.8
 ======

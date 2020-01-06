@@ -7,9 +7,16 @@ import { VectorStyleEditor } from '../components/vector-style-editor';
 
 storiesOf("Common Components", module)
     .addDecorator(withKnobs)
-    .add("Color Picker", () => <ColorPicker onChange={action("color changed")} />)
+    .add("Color Picker", () => {
+        const act = action("color changed");
+        const [color, setColor] = React.useState();
+        const onSetColor = (val: string) => {
+            act(val);
+            setColor(val);
+        };
+        return <ColorPicker value={color} onChange={onSetColor} />;
+    })
     .add("Vector Style Editor", () => {
-
         return <VectorStyleEditor onChange={action("style changed")}
             locale="en"
             enablePoint={boolean("Enable Point", true)}

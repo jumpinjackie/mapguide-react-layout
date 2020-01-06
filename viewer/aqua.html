@@ -4,39 +4,8 @@
         <title>MapGuide React Viewer</title>
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
         <link rel="stylesheet" href="dist/viewer.css" type="text/css" />
-        <!-- NOTE: If you don't care about IE, you can remove/comment the es6-promise script reference and Object.assign polyfill below -->
-        <script type="text/javascript" src="dist/es6-promise.auto.min.js"></script>
-        <script type="text/javascript">
-            if (typeof Object.assign != 'function') {
-                // Must be writable: true, enumerable: false, configurable: true
-                Object.defineProperty(Object, "assign", {
-                    value: function assign(target, varArgs) { // .length of function is 2
-                        'use strict';
-                        if (target == null) { // TypeError if undefined or null
-                            throw new TypeError('Cannot convert undefined or null to object');
-                        }
-
-                        var to = Object(target);
-
-                        for (var index = 1; index < arguments.length; index++) {
-                            var nextSource = arguments[index];
-
-                            if (nextSource != null) { // Skip over if undefined or null
-                                for (var nextKey in nextSource) {
-                                    // Avoid bugs when hasOwnProperty is shadowed
-                                    if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
-                                        to[nextKey] = nextSource[nextKey];
-                                    }
-                                }
-                            }
-                        }
-                        return to;
-                    },
-                    writable: true,
-                    configurable: true
-                });
-            }
-        </script>
+        <!-- NOTE: If you don't care about IE, you can remove/comment the script reference below -->
+        <script type="text/javascript" src="//polyfill.io/v3/polyfill.min.js?features=Object.assign%2Cfetch%2CArray.isArray"></script>
         <script type="text/javascript" src="dist/viewer.js" charset="utf-8"></script>
         <style type="text/css">
             /* Prevent scrollbars due to floating modal dialogs going past the bounds of the root element */

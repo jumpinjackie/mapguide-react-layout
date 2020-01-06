@@ -44,6 +44,8 @@ declare module "ismobilejs" {
 
 declare module "proj4";
 
+declare module "coloreact";
+
 declare module "history/createBrowserHistory" {
     function createHistory(): any;
     export = createHistory;

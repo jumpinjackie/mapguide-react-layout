@@ -57,14 +57,15 @@ A component that allows one to add custom external layers to the current map.
 
 This component supports adding 2 kinds of data
 
- * Vector data from a local file in any of the following formats:
- * GeoJSON
- * KML
- * TopoJSON
- * GPX
- * IGC
- * Raster data from a remote data source in any of the following formats:
- * WMS
+ * Local files in any of the following formats:
+    * GeoJSON
+    * KML
+    * TopoJSON
+    * GPX
+    * IGC
+ * Remote data source in any of the following formats:
+    * WMS
+    * WFS
 
 For vector data, you may specify what projection the data is in. Default is EPSG:4326. The
 list of available projections is:
@@ -72,3 +73,9 @@ list of available projections is:
  * EPSG:4326
  * EPSG:3857 (and other aliases of it)
  * Any other projection found amongst your Map Definition and/or pre-registered before mounting the viewer (see: [Known Issues / Viewer](KNOWN_ISSUES.md#viewer))
+
+For WFS, please observe the following restrictions:
+
+ 1. The viewer bundle does not include the `GML` format driver due to bundle size. Thereforre, the add layer UI will omit layers that does not offer a `GeoJSON` representation when inspecting capabilities.
+ 2. Added layers will use the `bbox` strategy (data will be queried based on the `bbox` of your current map view) only if its supported CRS is `EPSG:4326` or `EPSG:3857`. Otherwise the layer will request all features up-front.
+   * When using the `bbox` strategy, the zoom extents action on this layer will zoom to the layer bounds as reported in the WFS capabilities and not the computed extents of what features have been loaded so far.

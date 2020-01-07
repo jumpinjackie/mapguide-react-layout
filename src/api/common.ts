@@ -2166,7 +2166,8 @@ export enum LayerProperty {
     IS_GROUP = "is_group",
     IS_EXTERNAL = "is_external",
     HAS_WMS_LEGEND = "has_wms_legend",
-    VECTOR_STYLE = "vector_style"
+    VECTOR_STYLE = "vector_style",
+    WGS84_BBOX = "wgs84_bbox"
 }
 
 /**

@@ -2,6 +2,7 @@ import * as React from "react";
 import { tr } from "../../api/i18n";
 import { GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
+import { AddWfsLayer } from "./add-wfs-layer";
 import Dropzone from "react-dropzone";
 import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup, FormGroup, Callout } from '@blueprintjs/core';
 import * as Runtime from "../../api/runtime";
@@ -32,6 +33,10 @@ const ADD_URL_LAYER_TYPES: { [key: string]: AddLayerConf } = {
     "WMS": {
         label: "WMS",
         content: (locale: string, onLayerAdded: (layer: ILayerInfo) => void) => <AddWmsLayer locale={locale} onLayerAdded={onLayerAdded} />
+    },
+    "WFS": {
+        label: "WFS",
+        content: (locale: string, onLayerAdded: (layer: ILayerInfo) => void) => <AddWfsLayer locale={locale} onLayerAdded={onLayerAdded} />
     }
 };
 

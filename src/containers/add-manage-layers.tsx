@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as Runtime from "../api/runtime";
 import { tr } from "../api/i18n";
-import { ILayerInfo, Bounds } from "../api/common";
+import { ILayerInfo, Bounds, LayerProperty } from "../api/common";
 import { IVectorFeatureStyle } from "../api/ol-style-helpers";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
@@ -64,7 +64,12 @@ const AddManageLayersContainer = () => {
         const viewer = Runtime.getViewer();
         if (viewer) {
             const layer = viewer.getLayerManager().getLayer(layerName);
-            if (layer instanceof olVectorLayer) {
+            // If the layer has a WGS84 bbox, we'll use that
+            const ll_bbox = layer?.get(LayerProperty.WGS84_BBOX);
+            if (ll_bbox) {
+                const zoomBounds = transformExtent(ll_bbox, "EPSG:4326", viewer.getProjection());
+                viewer.zoomToExtent(zoomBounds as Bounds);
+            } else if (layer instanceof olVectorLayer) {
                 const source = layer.getSource();
                 let bounds = source.getExtent();
                 const sp = source.getProjection();

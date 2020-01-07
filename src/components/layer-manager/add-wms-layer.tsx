@@ -10,7 +10,7 @@ import { tr } from "../../api/i18n";
 import { Error } from "../error";
 import * as Runtime from "../../api/runtime";
 import { Client } from "../../api/client";
-import { WmsCapabilitiesPanel } from "../wms-capabilities-panel";
+import { WmsCapabilitiesPanel } from "./wms-capabilities-panel";
 import olWmsParser from "ol/format/WMSCapabilities";
 import olTileLayer from "ol/layer/Tile";
 import olImageLayer from "ol/layer/Image";
@@ -131,7 +131,7 @@ export const AddWmsLayer = (props: IAddWmsLayerProps) => {
                         return <NonIdealState
                             icon="issue"
                             title={tr("ADD_WMS_LAYER_NO_LAYERS", locale)}
-                            description={tr("WMS_NO_LAYER_DESCRIPITON", locale)} />;
+                            description={tr("WMS_NO_LAYER_DESCRIPTION", locale)} />;
                     }
                 }
             })()}

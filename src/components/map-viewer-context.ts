@@ -18,7 +18,8 @@ import {
     MG_LAYER_TYPE_NAME,
     MG_BASE_LAYER_GROUP_NAME,
     LayerExtensions,
-    IWmsLayerExtensions
+    IWmsLayerExtensions,
+    SourceProperty
 } from "../api/common";
 import {
     IVectorFeatureStyle,
@@ -572,7 +573,9 @@ export class MgLayerSet {
             });
         }
         for (const src of sources) {
-            this.registerSourceEvents(src);
+            const suppress: boolean | undefined = src.get(SourceProperty.SUPPRESS_LOAD_EVENTS);
+            if (!(suppress == true))
+                this.registerSourceEvents(src);
         }
     }
     public setMapGuideMocking(mock: boolean) {
@@ -859,6 +862,7 @@ export class MgLayerSet {
             if (oll) {
                 oll.setVisible(layer.visible);
                 oll.setOpacity(layer.opacity);
+                oll.set(LayerProperty.IS_BUSY, layer.isBusy);
                 if (oll instanceof olVectorLayer && layer.vectorStyle) {
                     setOLVectorLayerStyle(oll, layer.vectorStyle);
                 }
@@ -945,7 +949,8 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
         opacity: layer.getOpacity(),
         isExternal: isExternal,
         extensions: ext,
-        vectorStyle
+        vectorStyle,
+        isBusy: (layer.get(LayerProperty.IS_BUSY) == true)
     }
 }
 
@@ -1012,6 +1017,7 @@ export class MgLayerManager implements ILayerManager {
                 }
                 if (bLoaded) {
                     const source = new olSourceVector();
+                    source.set(SourceProperty.SUPPRESS_LOAD_EVENTS, true);
                     const layer = new olVectorLayer({
                         source: source
                     });

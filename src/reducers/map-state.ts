@@ -466,6 +466,12 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                 const state1 = setLayerAction(state, mapName, layerName, () => ({ vectorStyle: style }));
                 return state1;
             }
+        case ActionType.SET_LAYER_BUSY:
+            {
+                const { mapName, layerName, busy } = action.payload;
+                const state1 = setLayerAction(state, mapName, layerName, () => ({ isBusy: busy }));
+                return state1;
+            }
     }
     return state;
 }

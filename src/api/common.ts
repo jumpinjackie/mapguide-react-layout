@@ -903,6 +903,10 @@ export interface ILayerInfo {
      * @since 0.13
      */
     vectorStyle?: IVectorFeatureStyle;
+    /**
+     * @since 0.13
+     */
+    isBusy: boolean;
 }
 
 /**
@@ -2167,7 +2171,15 @@ export enum LayerProperty {
     IS_EXTERNAL = "is_external",
     HAS_WMS_LEGEND = "has_wms_legend",
     VECTOR_STYLE = "vector_style",
-    WGS84_BBOX = "wgs84_bbox"
+    WGS84_BBOX = "wgs84_bbox",
+    IS_BUSY = "is_busy"
+}
+
+/**
+ * @since 0.13
+ */
+export enum SourceProperty {
+    SUPPRESS_LOAD_EVENTS = "suppress_load_events"
 }
 
 /**

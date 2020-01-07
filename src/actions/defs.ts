@@ -580,6 +580,18 @@ export interface ISetMapLayerVectorStyle {
 }
 
 /**
+ * @since 0.13
+ */
+export interface ISetMapLayerBusy {
+    type: ActionType.SET_LAYER_BUSY,
+    payload: {
+        mapName: string,
+        layerName: string,
+        busy: boolean
+    }
+}
+
+/**
  * @since 0.12
  */
 export type ViewerAction = IOpenFlyoutAction 
@@ -633,3 +645,4 @@ export type ViewerAction = IOpenFlyoutAction
     | ISetLayerOpacityAction //@since 0.13
     | ISetLayerVisibilityAction //@since 0.13
     | ISetMapLayerVectorStyle //@since 0.13
+    | ISetMapLayerBusy //@since 0.13

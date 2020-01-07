@@ -1,7 +1,7 @@
 import * as React from "react";
 import { tr } from "../../api/i18n";
 import { ILayerInfo } from "../../api/common";
-import { Button, Intent, ButtonGroup, Card, Icon, Switch, NonIdealState, Slider, Collapse } from '@blueprintjs/core';
+import { Button, Intent, ButtonGroup, Card, Icon, Switch, NonIdealState, Slider, Collapse, Spinner } from '@blueprintjs/core';
 import { BlueprintSvgIconNames } from 'src/constants';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { VectorStyleEditor } from '../vector-style-editor';
@@ -68,18 +68,18 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
         }
     }
     if (layer.vectorStyle && layer.type != "KML") {
-        extraActions.push(<Button key="edit-vector-style" intent={Intent.PRIMARY} icon="edit" onClick={() => setIsEditingVectorStyle(!isEditingVectorStyle)} />)
+        extraActions.push(<Button disabled={layer.isBusy} key="edit-vector-style" intent={Intent.PRIMARY} icon="edit" onClick={() => setIsEditingVectorStyle(!isEditingVectorStyle)} />)
     }
     const isWmsLegendOpen = !strIsNullOrEmpty(wmsLegendUrl);
     return <Card key={layer.name}>
-        <Switch checked={layer.visible} onChange={() => onSetVisibility(layer.name, !layer.visible)} labelElement={<><Icon icon={iconName} /> {layer.name}</>} />
-        <p>Opacity</p>
-        <Slider min={0} max={1.0} stepSize={0.01} value={layer.opacity} onChange={e => onSetOpacity(layer.name, e)} />
+        <Switch disabled={layer.isBusy} checked={layer.visible} onChange={() => onSetVisibility(layer.name, !layer.visible)} labelElement={<><Icon icon={iconName} /> {layer.name}</>} />
+        <p>{tr("LAYER_OPACITY", locale)}</p>
+        <Slider disabled={layer.isBusy} min={0} max={1.0} stepSize={0.01} value={layer.opacity} onChange={e => onSetOpacity(layer.name, e)} />
         <ButtonGroup>
-            <Button title={tr("LAYER_MANAGER_TT_MOVE_UP", locale)} intent={Intent.PRIMARY} icon="caret-up" onClick={() => onMoveLayerUp(layer.name)} disabled={!canMoveUp} />
-            <Button title={tr("LAYER_MANAGER_TT_MOVE_DOWN", locale)} intent={Intent.PRIMARY} icon="caret-down" onClick={() => onMoveLayerDown(layer.name)} disabled={!canMoveDown} />
-            <Button title={tr("LAYER_MANAGER_TT_ZOOM_EXTENTS", locale)} intent={Intent.SUCCESS} icon="zoom-to-fit" onClick={() => onZoomToBounds(layer.name)} disabled={!canZoom} />
-            <Button title={tr("LAYER_MANAGER_TT_REMOVE", locale)} intent={Intent.DANGER} icon="trash" onClick={() => onRemoveLayer(layer.name)} />
+            <Button disabled={layer.isBusy || !canMoveUp} title={tr("LAYER_MANAGER_TT_MOVE_UP", locale)} intent={Intent.PRIMARY} icon="caret-up" onClick={() => onMoveLayerUp(layer.name)} />
+            <Button disabled={layer.isBusy || !canMoveDown} title={tr("LAYER_MANAGER_TT_MOVE_DOWN", locale)} intent={Intent.PRIMARY} icon="caret-down" onClick={() => onMoveLayerDown(layer.name)} />
+            <Button disabled={layer.isBusy || !canZoom} title={tr("LAYER_MANAGER_TT_ZOOM_EXTENTS", locale)} intent={Intent.SUCCESS} icon="zoom-to-fit" onClick={() => onZoomToBounds(layer.name)} />
+            <Button disabled={layer.isBusy} title={tr("LAYER_MANAGER_TT_REMOVE", locale)} intent={Intent.DANGER} icon="trash" onClick={() => onRemoveLayer(layer.name)} />
             {extraActions}
         </ButtonGroup>
         {isWms && <Collapse isOpen={isWmsLegendOpen}>
@@ -91,7 +91,7 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
         {layer.vectorStyle && <Collapse isOpen={isEditingVectorStyle}>
             <Card>
                 <h5 className="bp3-heading"><a href="#">{tr("VECTOR_LAYER_STYLE", locale)}</a></h5>
-                <VectorStyleEditor onChange={st => onVectorStyleChanged(layer.name, st)} locale={locale} style={layer.vectorStyle} enablePoint={true} enableLine={true} enablePolygon={true} />
+                <VectorStyleEditor disabled={layer.isBusy} onChange={st => onVectorStyleChanged(layer.name, st)} locale={locale} style={layer.vectorStyle} enablePoint={true} enableLine={true} enablePolygon={true} />
             </Card>
         </Collapse>}
     </Card>;

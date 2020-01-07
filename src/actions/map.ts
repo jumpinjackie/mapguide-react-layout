@@ -18,7 +18,7 @@ import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml } from '../api/builders/deArrayify';
 import { makeUnique } from "../utils/array";
 import { ActionType } from '../constants/actions';
-import { IMapSetBusyCountAction, IMapSetBaseLayerAction, IMapSetScaleAction, IMapSetMouseCoordinatesAction, IMapSetLayerTransparencyAction, IMapSetViewSizeUnitsAction, IMapPreviousViewAction, IMapNextViewAction, ISetActiveMapToolAction, ISetActiveMapAction, ISetManualFeatureTooltipsEnabledAction, ISetFeatureTooltipsEnabledAction, IMapSetViewRotationAction, IMapSetViewRotationEnabledAction, IShowSelectedFeatureAction, IMapSetSelectionAction, IMapResizedAction, IAddedLayerAction, IRemoveLayerAction, ISetLayerIndexAction, ISetLayerOpacityAction, ISetLayerVisibilityAction, ISetMapLayerVectorStyle } from './defs';
+import { IMapSetBusyCountAction, IMapSetBaseLayerAction, IMapSetScaleAction, IMapSetMouseCoordinatesAction, IMapSetLayerTransparencyAction, IMapSetViewSizeUnitsAction, IMapPreviousViewAction, IMapNextViewAction, ISetActiveMapToolAction, ISetActiveMapAction, ISetManualFeatureTooltipsEnabledAction, ISetFeatureTooltipsEnabledAction, IMapSetViewRotationAction, IMapSetViewRotationEnabledAction, IShowSelectedFeatureAction, IMapSetSelectionAction, IMapResizedAction, IAddedLayerAction, IRemoveLayerAction, ISetLayerIndexAction, ISetLayerOpacityAction, ISetLayerVisibilityAction, ISetMapLayerVectorStyle, ISetMapLayerBusy as ISetMapLayerBusyAction } from './defs';
 import { storeSelectionSet } from '../api/session-store';
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
 import { IVectorFeatureStyle } from '../api/ol-style-helpers';
@@ -667,6 +667,26 @@ export function setMapLayerVectorStyle(mapName: string, layerName: string, style
             mapName,
             layerName,
             style
+        }
+    };
+}
+
+/**
+ *
+ * @export
+ * @param {string} mapName
+ * @param {string} layerName
+ * @param {boolean} busy
+ * @returns {ISetMapLayerBusyAction}
+ * @since 0.13
+ */
+export function setMapLayerBusy(mapName: string, layerName: string, busy: boolean): ISetMapLayerBusyAction {
+    return {
+        type: ActionType.SET_LAYER_BUSY,
+        payload: {
+            mapName,
+            layerName,
+            busy
         }
     };
 }

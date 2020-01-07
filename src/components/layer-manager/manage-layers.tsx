@@ -67,7 +67,7 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
                 }
         }
     }
-    if (layer.vectorStyle) {
+    if (layer.vectorStyle && layer.type != "KML") {
         extraActions.push(<Button key="edit-vector-style" intent={Intent.PRIMARY} icon="edit" onClick={() => setIsEditingVectorStyle(!isEditingVectorStyle)} />)
     }
     const isWmsLegendOpen = !strIsNullOrEmpty(wmsLegendUrl);

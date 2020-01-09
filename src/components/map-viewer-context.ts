@@ -856,13 +856,13 @@ export class MgLayerSet {
             current[layer.name] = layer;
             return current;
         }, {} as any);
-        //Apply opacity/visibility/styling
+        //Apply opacity/visibility/styling and other top-level properties
         for (const layer of layers) {
             const oll = this._customLayers[layer.name]?.layer;
             if (oll) {
                 oll.setVisible(layer.visible);
                 oll.setOpacity(layer.opacity);
-                oll.set(LayerProperty.IS_BUSY, layer.isBusy);
+                oll.set(LayerProperty.BUSY_WORKER_COUNT, layer.busyWorkerCount);
                 if (oll instanceof olVectorLayer && layer.vectorStyle) {
                     setOLVectorLayerStyle(oll, layer.vectorStyle);
                 }
@@ -950,7 +950,7 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
         isExternal: isExternal,
         extensions: ext,
         vectorStyle,
-        isBusy: (layer.get(LayerProperty.IS_BUSY) == true)
+        busyWorkerCount: layer.get(LayerProperty.BUSY_WORKER_COUNT) ?? 0
     }
 }
 

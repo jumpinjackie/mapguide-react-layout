@@ -851,6 +851,17 @@ export interface IMapViewer {
     toastPrimary(icon: string, message: string | JSX.Element): string | undefined;
     dismissToast(key: string): void;
     updateSize(): void;
+
+    /**
+     * INTERNAL API. Not for public use
+     * @hidden
+     */
+    addImageLoading(): void;
+    /**
+     * INTERNAL API. Not for public use
+     * @hidden
+     */
+    addImageLoaded(): void;
 }
 
 /**
@@ -906,7 +917,7 @@ export interface ILayerInfo {
     /**
      * @since 0.13
      */
-    isBusy: boolean;
+    busyWorkerCount: number;
 }
 
 /**
@@ -2172,7 +2183,7 @@ export enum LayerProperty {
     HAS_WMS_LEGEND = "has_wms_legend",
     VECTOR_STYLE = "vector_style",
     WGS84_BBOX = "wgs84_bbox",
-    IS_BUSY = "is_busy"
+    BUSY_WORKER_COUNT = "busy_worker_count"
 }
 
 /**

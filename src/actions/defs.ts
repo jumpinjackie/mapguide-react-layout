@@ -582,12 +582,22 @@ export interface ISetMapLayerVectorStyle {
 /**
  * @since 0.13
  */
-export interface ISetMapLayerBusy {
-    type: ActionType.SET_LAYER_BUSY,
+export interface IAddMapLayerBusyWorkerAction {
+    type: ActionType.ADD_LAYER_BUSY_WORKER,
     payload: {
         mapName: string,
-        layerName: string,
-        busy: boolean
+        layerName: string
+    }
+}
+
+/**
+ * @since 0.13
+ */
+export interface IRemoveMapLayerBusyWorkerAction {
+    type: ActionType.REMOVE_LAYER_BUSY_WORKER,
+    payload: {
+        mapName: string,
+        layerName: string
     }
 }
 
@@ -645,4 +655,5 @@ export type ViewerAction = IOpenFlyoutAction
     | ISetLayerOpacityAction //@since 0.13
     | ISetLayerVisibilityAction //@since 0.13
     | ISetMapLayerVectorStyle //@since 0.13
-    | ISetMapLayerBusy //@since 0.13
+    | IAddMapLayerBusyWorkerAction //@since 0.13
+    | IRemoveMapLayerBusyWorkerAction //@since 0.13

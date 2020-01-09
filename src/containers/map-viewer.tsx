@@ -222,6 +222,20 @@ class MapViewerAdapter implements IMapViewer {
     initialView(): void {
         this.inner.initialView();
     }
+    /**
+     * INTERNAL API. Not for public use
+     * @hidden
+     */
+    addImageLoading(): void {
+        this.inner.addImageLoading();
+    }
+    /**
+     * INTERNAL API. Not for public use
+     * @hidden
+     */
+    addImageLoaded(): void {
+        this.inner.addImageLoaded();
+    }
 }
 
 const MapViewerContainer = (props: IMapViewerContainerProps) => {

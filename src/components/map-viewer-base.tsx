@@ -530,13 +530,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         }
         this.props.onMouseCoordinateChanged?.(e.coordinate);
     }
-    private addImageLoading() {
+    public addImageLoading() {
         const { loading } = this.state;
         const newLoading = (loading || 0) + 1;
         this.setState({ loading: newLoading });
         this.incrementBusyWorker();
     }
-    private addImageLoaded() {
+    public addImageLoaded() {
         const { loaded, loading } = this.state;
         const newLoadedCount = (loaded || 0) + 1;
         if (loading === newLoadedCount) {

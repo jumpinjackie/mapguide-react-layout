@@ -36,14 +36,14 @@ export const MAP_STATE_INITIAL_SUB_STATE: IBranchedMapSubState = {
     layers: []
 };
 
-function setLayerAction<K extends keyof ILayerInfo>(state: IBranchedMapState, mapName: string, layerName: string, selector: () => Pick<ILayerInfo, K>): IBranchedMapState {
+function setLayerAction<K extends keyof ILayerInfo>(state: IBranchedMapState, mapName: string, layerName: string, selector: (current: ILayerInfo) => Pick<ILayerInfo, K>): IBranchedMapState {
     const subState = state[mapName];
     if (subState) {
         const layers = subState.layers.map(l => {
             if (l.name == layerName) {
                 return {
                     ...l,
-                    ...(selector())
+                    ...(selector(l))
                 } as ILayerInfo;
             } else {
                 return l;
@@ -466,10 +466,16 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                 const state1 = setLayerAction(state, mapName, layerName, () => ({ vectorStyle: style }));
                 return state1;
             }
-        case ActionType.SET_LAYER_BUSY:
+        case ActionType.ADD_LAYER_BUSY_WORKER:
             {
-                const { mapName, layerName, busy } = action.payload;
-                const state1 = setLayerAction(state, mapName, layerName, () => ({ isBusy: busy }));
+                const { mapName, layerName } = action.payload;
+                const state1 = setLayerAction(state, mapName, layerName, l => ({ busyWorkerCount: l.busyWorkerCount + 1 }));
+                return state1;
+            }
+        case ActionType.REMOVE_LAYER_BUSY_WORKER:
+            {
+                const { mapName, layerName } = action.payload;
+                const state1 = setLayerAction(state, mapName, layerName, l => ({ busyWorkerCount: l.busyWorkerCount - 1 }));
                 return state1;
             }
     }

@@ -43,6 +43,16 @@ const AddManageLayersContainer = () => {
             dispatch(MapActions.mapLayerAdded(activeMapName, layer));
         }
     };
+    const onAddLayerBusyWorker = (name: string) => {
+        if (activeMapName) {
+            dispatch(MapActions.addMapLayerBusyWorker(activeMapName, name));
+        }
+    }
+    const onRemoveLayerBusyWorker = (name: string) => {
+        if (activeMapName) {
+            dispatch(MapActions.removeMapLayerBusyWorker(activeMapName, name));
+        }
+    };
     const removeHandler = (layerName: string) => {
         if (activeMapName) {
             dispatch(MapActions.removeMapLayer(activeMapName, layerName));
@@ -99,7 +109,7 @@ const AddManageLayersContainer = () => {
     if (layers) {
         return <div style={{ padding: 8 }}>
             <Tabs id="tabs" renderActiveTabPanelOnly={true}>
-                <Tab id="add_layer" title={<span><Icon icon="new-layer" iconSize={Icon.SIZE_STANDARD} /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer onLayerAdded={onLayerAdded} locale={locale} />} />
+                <Tab id="add_layer" title={<span><Icon icon="new-layer" iconSize={Icon.SIZE_STANDARD} /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer onLayerAdded={onLayerAdded} onAddLayerBusyWorker={onAddLayerBusyWorker} onRemoveLayerBusyWorker={onRemoveLayerBusyWorker} locale={locale} />} />
                 <Tab id="manage_layers" title={<span><Icon icon="layers" iconSize={Icon.SIZE_STANDARD} /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<ManageLayers layers={layers}
                     locale={locale}
                     currentResolution={view?.resolution}

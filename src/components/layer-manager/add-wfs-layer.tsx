@@ -58,14 +58,14 @@ export const AddWfsLayer = (props: IAddLayerContentProps) => {
                 });
                 // FIXME: I can't seem to get bbox strategy working in general :(
                 if (false) {
-                //if (repsg == 4326 || repsg == 3857) {
+                /*if (repsg == 4326 || repsg == 3857) {
                     urlTemplate += `&bbox={view_extent}`;
                     sourceUrl = function (extent) {
                         const xfextent = transformExtent(extent, sourceProj, resolvedProj);
                         const reqUrl = strReplaceAll(urlTemplate, "{view_extent}", xfextent.join(','));
                         return reqUrl;
                     }
-                    strategy = bbox;/*
+                    strategy = bbox;
                     // We need to "decorate" the underlying loadFeaturesXhr loader so that
                     // we have the means to call busy worker incrementing/decrementing
                     innerLoader = loadFeaturesXhr(sourceUrl, vectorFmt, () => { //success

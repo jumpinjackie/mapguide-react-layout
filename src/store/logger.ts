@@ -14,7 +14,9 @@ const logger = createLogger({
             type !== 'redux-form/TOUCH' &&
             type !== ActionType.MAP_RESIZED &&
             type !== ActionType.UPDATE_MOUSE_COORDINATES &&
-            type !== ActionType.MAP_SET_BUSY_COUNT;
+            type !== ActionType.MAP_SET_BUSY_COUNT &&
+            type !== ActionType.ADD_LAYER_BUSY_WORKER &&
+            type !== ActionType.REMOVE_LAYER_BUSY_WORKER;
     },
 });
 

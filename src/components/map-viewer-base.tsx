@@ -92,7 +92,7 @@ import LineString from "ol/geom/LineString";
 import Circle from "ol/geom/Circle";
 import { areArraysDifferent } from '../utils/array';
 import GeometryType from 'ol/geom/GeometryType';
-import { ProjectionLike } from 'ol/proj';
+import { transform, transformExtent, ProjectionLike } from 'ol/proj';
 
 /**
  * MapViewerBase component props
@@ -530,13 +530,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         }
         this.props.onMouseCoordinateChanged?.(e.coordinate);
     }
-    private addImageLoading() {
+    public addImageLoading() {
         const { loading } = this.state;
         const newLoading = (loading || 0) + 1;
         this.setState({ loading: newLoading });
         this.incrementBusyWorker();
     }
-    private addImageLoaded() {
+    public addImageLoaded() {
         const { loaded, loading } = this.state;
         const newLoadedCount = (loaded || 0) + 1;
         if (loading === newLoadedCount) {
@@ -1079,6 +1079,30 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         x = extX1 + (extX2 - extX1) * (x / mapDevW);
         y = extY1 - (extY1 - extY2) * (y / mapDevH);
         return [x, y];
+    }
+    /**
+     *
+     * @param {Coordinate2D} coord
+     * @param {ProjectionLike} source
+     * @param {ProjectionLike} target
+     * @returns
+     * @memberof ApplicationViewModel
+     * @since 0.13
+     */
+    public transform(coord: Coordinate2D, source: ProjectionLike, target: ProjectionLike) {
+        return transform(coord, source, target);
+    }
+    /**
+     *
+     * @param {Bounds} extent
+     * @param {ProjectionLike} source
+     * @param {ProjectionLike} target
+     * @returns
+     * @memberof ApplicationViewModel
+     * @since 0.13
+     */
+    public transformExtent(extent: Bounds, source: ProjectionLike, target: ProjectionLike) {
+        return transformExtent(extent, source, target);
     }
     //------------------------------------//
 }

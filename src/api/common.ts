@@ -851,6 +851,38 @@ export interface IMapViewer {
     toastPrimary(icon: string, message: string | JSX.Element): string | undefined;
     dismissToast(key: string): void;
     updateSize(): void;
+
+    /**
+     * INTERNAL API. Not for public use
+     * @hidden
+     */
+    addImageLoading(): void;
+    /**
+     * INTERNAL API. Not for public use
+     * @hidden
+     */
+    addImageLoaded(): void;
+
+    /**
+     *
+     * @param {Coordinate2D} coord
+     * @param {ProjectionLike} source
+     * @param {ProjectionLike} target
+     * @returns {Coordinate2D}
+     * @memberof IMapViewer
+     * @since 0.13
+     */
+    transform(coord: Coordinate2D, source: ProjectionLike, target: ProjectionLike): Coordinate2D;
+    /**
+     *
+     * @param {Bounds} extent
+     * @param {ProjectionLike} source
+     * @param {ProjectionLike} target
+     * @returns {Bounds}
+     * @memberof IMapViewer
+     * @since 0.13
+     */
+    transformExtent(extent: Bounds, source: ProjectionLike, target: ProjectionLike): Bounds;
 }
 
 /**
@@ -903,6 +935,10 @@ export interface ILayerInfo {
      * @since 0.13
      */
     vectorStyle?: IVectorFeatureStyle;
+    /**
+     * @since 0.13
+     */
+    busyWorkerCount: number;
 }
 
 /**
@@ -2166,7 +2202,16 @@ export enum LayerProperty {
     IS_GROUP = "is_group",
     IS_EXTERNAL = "is_external",
     HAS_WMS_LEGEND = "has_wms_legend",
-    VECTOR_STYLE = "vector_style"
+    VECTOR_STYLE = "vector_style",
+    WGS84_BBOX = "wgs84_bbox",
+    BUSY_WORKER_COUNT = "busy_worker_count"
+}
+
+/**
+ * @since 0.13
+ */
+export enum SourceProperty {
+    SUPPRESS_LOAD_EVENTS = "suppress_load_events"
 }
 
 /**

@@ -81,5 +81,13 @@ export enum ActionType {
     /**
      * @since 0.13
      */
-    SET_LAYER_VECTOR_STYLE = 'Map/SET_LAYER_VECTOR_STYLE'
+    SET_LAYER_VECTOR_STYLE = 'Map/SET_LAYER_VECTOR_STYLE',
+    /**
+     * @since 0.13
+     */
+    ADD_LAYER_BUSY_WORKER = 'Map/ADD_LAYER_BUSY_WORKER',
+    /**
+     * @since 0.13
+     */
+    REMOVE_LAYER_BUSY_WORKER = 'Map/REMOVE_LAYER_BUSY_WORKER'
 }

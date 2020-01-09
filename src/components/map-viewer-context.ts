@@ -18,7 +18,8 @@ import {
     MG_LAYER_TYPE_NAME,
     MG_BASE_LAYER_GROUP_NAME,
     LayerExtensions,
-    IWmsLayerExtensions
+    IWmsLayerExtensions,
+    SourceProperty
 } from "../api/common";
 import {
     IVectorFeatureStyle,
@@ -572,7 +573,9 @@ export class MgLayerSet {
             });
         }
         for (const src of sources) {
-            this.registerSourceEvents(src);
+            const suppress: boolean | undefined = src.get(SourceProperty.SUPPRESS_LOAD_EVENTS);
+            if (!(suppress == true))
+                this.registerSourceEvents(src);
         }
     }
     public setMapGuideMocking(mock: boolean) {
@@ -853,12 +856,13 @@ export class MgLayerSet {
             current[layer.name] = layer;
             return current;
         }, {} as any);
-        //Apply opacity/visibility/styling
+        //Apply opacity/visibility/styling and other top-level properties
         for (const layer of layers) {
             const oll = this._customLayers[layer.name]?.layer;
             if (oll) {
                 oll.setVisible(layer.visible);
                 oll.setOpacity(layer.opacity);
+                oll.set(LayerProperty.BUSY_WORKER_COUNT, layer.busyWorkerCount);
                 if (oll instanceof olVectorLayer && layer.vectorStyle) {
                     setOLVectorLayerStyle(oll, layer.vectorStyle);
                 }
@@ -945,7 +949,8 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
         opacity: layer.getOpacity(),
         isExternal: isExternal,
         extensions: ext,
-        vectorStyle
+        vectorStyle,
+        busyWorkerCount: layer.get(LayerProperty.BUSY_WORKER_COUNT) ?? 0
     }
 }
 
@@ -1012,6 +1017,7 @@ export class MgLayerManager implements ILayerManager {
                 }
                 if (bLoaded) {
                     const source = new olSourceVector();
+                    source.set(SourceProperty.SUPPRESS_LOAD_EVENTS, true);
                     const layer = new olVectorLayer({
                         source: source
                     });

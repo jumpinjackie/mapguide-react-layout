@@ -18,7 +18,33 @@ import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml } from '../api/builders/deArrayify';
 import { makeUnique } from "../utils/array";
 import { ActionType } from '../constants/actions';
-import { IMapSetBusyCountAction, IMapSetBaseLayerAction, IMapSetScaleAction, IMapSetMouseCoordinatesAction, IMapSetLayerTransparencyAction, IMapSetViewSizeUnitsAction, IMapPreviousViewAction, IMapNextViewAction, ISetActiveMapToolAction, ISetActiveMapAction, ISetManualFeatureTooltipsEnabledAction, ISetFeatureTooltipsEnabledAction, IMapSetViewRotationAction, IMapSetViewRotationEnabledAction, IShowSelectedFeatureAction, IMapSetSelectionAction, IMapResizedAction, IAddedLayerAction, IRemoveLayerAction, ISetLayerIndexAction, ISetLayerOpacityAction, ISetLayerVisibilityAction, ISetMapLayerVectorStyle } from './defs';
+import {
+    IMapSetBusyCountAction,
+    IMapSetBaseLayerAction,
+    IMapSetScaleAction,
+    IMapSetMouseCoordinatesAction,
+    IMapSetLayerTransparencyAction,
+    IMapSetViewSizeUnitsAction,
+    IMapPreviousViewAction,
+    IMapNextViewAction,
+    ISetActiveMapToolAction,
+    ISetActiveMapAction,
+    ISetManualFeatureTooltipsEnabledAction,
+    ISetFeatureTooltipsEnabledAction,
+    IMapSetViewRotationAction,
+    IMapSetViewRotationEnabledAction,
+    IShowSelectedFeatureAction,
+    IMapSetSelectionAction,
+    IMapResizedAction,
+    IAddedLayerAction,
+    IRemoveLayerAction,
+    ISetLayerIndexAction,
+    ISetLayerOpacityAction,
+    ISetLayerVisibilityAction,
+    ISetMapLayerVectorStyle,
+    IAddMapLayerBusyWorkerAction,
+    IRemoveMapLayerBusyWorkerAction
+} from './defs';
 import { storeSelectionSet } from '../api/session-store';
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
 import { IVectorFeatureStyle } from '../api/ol-style-helpers';
@@ -669,4 +695,40 @@ export function setMapLayerVectorStyle(mapName: string, layerName: string, style
             style
         }
     };
+}
+
+/**
+ *
+ * @export
+ * @param {string} mapName
+ * @param {string} layerName
+ * @returns {IAddMapLayerBusyWorkerAction}
+ * @since 0.13
+ */
+export function addMapLayerBusyWorker(mapName: string, layerName: string): IAddMapLayerBusyWorkerAction {
+    return {
+        type: ActionType.ADD_LAYER_BUSY_WORKER,
+        payload: {
+            mapName,
+            layerName
+        }
+    }
+}
+
+/**
+ *
+ * @export
+ * @param {string} mapName
+ * @param {string} layerName
+ * @returns {IRemoveMapLayerBusyWorkerAction}
+ * @since 0.13
+ */
+export function removeMapLayerBusyWorker(mapName: string, layerName: string): IRemoveMapLayerBusyWorkerAction {
+    return {
+        type: ActionType.REMOVE_LAYER_BUSY_WORKER,
+        payload: {
+            mapName,
+            layerName
+        }
+    }
 }

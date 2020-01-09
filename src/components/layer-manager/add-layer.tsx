@@ -2,6 +2,7 @@ import * as React from "react";
 import { tr } from "../../api/i18n";
 import { GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
+import { AddWfsLayer } from "./add-wfs-layer";
 import Dropzone from "react-dropzone";
 import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup, FormGroup, Callout } from '@blueprintjs/core';
 import * as Runtime from "../../api/runtime";
@@ -14,6 +15,8 @@ import proj4 from "proj4";
 export interface IAddLayerProps {
     locale: string;
     onLayerAdded: (layer: ILayerInfo) => void;
+    onAddLayerBusyWorker: (name: string) => void;
+    onRemoveLayerBusyWorker: (name: string) => void;
 }
 
 /**
@@ -23,15 +26,29 @@ export interface IAddLayerState {
     selectedType: string;
 }
 
-interface AddLayerConf {
-    label: string;
-    content: (locale: string, onLayerAdded: (layer: ILayerInfo) => void) => JSX.Element;
+/**
+ * @hidden
+ */
+export interface IAddLayerContentProps {
+    locale: string;
+    onLayerAdded: (layer: ILayerInfo) => void;
+    onAddLayerBusyWorker: (name: string) => void;
+    onRemoveLayerBusyWorker: (name: string) => void;
 }
 
-const ADD_URL_LAYER_TYPES: { [key: string]: AddLayerConf } = {
+interface IAddLayerConf {
+    label: string;
+    content: (props: IAddLayerContentProps) => JSX.Element;
+}
+
+const ADD_URL_LAYER_TYPES: { [key: string]: IAddLayerConf } = {
     "WMS": {
         label: "WMS",
-        content: (locale: string, onLayerAdded: (layer: ILayerInfo) => void) => <AddWmsLayer locale={locale} onLayerAdded={onLayerAdded} />
+        content: (props: IAddLayerContentProps) => <AddWmsLayer {...props} />
+    },
+    "WFS": {
+        label: "WFS",
+        content: (props: IAddLayerContentProps) => <AddWfsLayer {...props} />
     }
 };
 
@@ -141,7 +158,13 @@ const AddUrlLayer = (props: IAddLayerProps) => {
         </Label>
         {(() => {
             if (selectedUrlType && ADD_URL_LAYER_TYPES[selectedUrlType]) {
-                return ADD_URL_LAYER_TYPES[selectedUrlType].content(locale, props.onLayerAdded);
+                const cprops: IAddLayerContentProps = {
+                    locale: locale,
+                    onLayerAdded: props.onLayerAdded,
+                    onAddLayerBusyWorker: props.onAddLayerBusyWorker,
+                    onRemoveLayerBusyWorker: props.onRemoveLayerBusyWorker
+                };
+                return ADD_URL_LAYER_TYPES[selectedUrlType].content(cprops);
             }
         })()}
     </div>;

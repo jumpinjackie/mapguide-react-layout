@@ -4,13 +4,14 @@ import {
     WmsCapabilitiesDocument,
     WMSLayerStyle,
     ILayerInfo,
-    LayerProperty
+    LayerProperty,
+    SourceProperty
 } from "../../api/common";
 import { tr } from "../../api/i18n";
 import { Error } from "../error";
 import * as Runtime from "../../api/runtime";
 import { Client } from "../../api/client";
-import { WmsCapabilitiesPanel } from "../wms-capabilities-panel";
+import { WmsCapabilitiesPanel } from "./wms-capabilities-panel";
 import olWmsParser from "ol/format/WMSCapabilities";
 import olTileLayer from "ol/layer/Tile";
 import olImageLayer from "ol/layer/Image";
@@ -19,19 +20,12 @@ import olTiledWmsSource from "ol/source/TileWMS";
 import { Spinner, NonIdealState, Intent, ControlGroup, InputGroup, Button } from '@blueprintjs/core';
 import { getLayerInfo } from '../map-viewer-context';
 import { strIsNullOrEmpty } from "../../utils/string";
+import { IAddLayerContentProps } from './add-layer';
 
 /**
  * @hidden
  */
-export interface IAddWmsLayerProps {
-    locale: string;
-    onLayerAdded: (layer: ILayerInfo) => void;
-}
-
-/**
- * @hidden
- */
-export const AddWmsLayer = (props: IAddWmsLayerProps) => {
+export const AddWmsLayer = (props: IAddLayerContentProps) => {
     const { locale } = props;
     const [wmsUrl, setWmsUrl] = React.useState("");
     const [loadingCapabilities, setLoadingCapabilities] = React.useState(false);
@@ -51,19 +45,22 @@ export const AddWmsLayer = (props: IAddWmsLayerProps) => {
                 params.TILED = true;
             }
             let layer;
+            let source: olTiledWmsSource | olWmsSource;
             if (bTiled) {
+                source = new olTiledWmsSource({
+                    url: caps.Capability.Request.GetMap.DCPType[0].HTTP.Get.OnlineResource,
+                    params: params
+                });
                 layer = new olTileLayer({
-                    source: new olTiledWmsSource({
-                        url: caps.Capability.Request.GetMap.DCPType[0].HTTP.Get.OnlineResource,
-                        params: params
-                    })
+                    source: source
                 });
             } else {
+                source = new olWmsSource({
+                    url: caps.Capability.Request.GetMap.DCPType[0].HTTP.Get.OnlineResource,
+                    params: params
+                });
                 layer = new olImageLayer({
-                    source: new olWmsSource({
-                        url: caps.Capability.Request.GetMap.DCPType[0].HTTP.Get.OnlineResource,
-                        params: params
-                    })
+                    source: source
                 });
             }
             layer.set(LayerProperty.LAYER_TYPE, "WMS");
@@ -75,6 +72,26 @@ export const AddWmsLayer = (props: IAddWmsLayerProps) => {
                     layer.set(LayerProperty.HAS_WMS_LEGEND, true);
                 }
             }
+            // Suppress automatic load event handling for this as we need our own
+            source.set(SourceProperty.SUPPRESS_LOAD_EVENTS, true);
+            const started = () => {
+                viewer.addImageLoading();
+                props.onAddLayerBusyWorker(name);
+            };
+            const finished = () => {
+                viewer.addImageLoaded();
+                props.onRemoveLayerBusyWorker(name);
+            };
+            if (source instanceof olTiledWmsSource) {  
+                source.on("tileloadstart", started);
+                source.on("tileloadend", finished);
+                source.on("tileloaderror", finished);
+            } else if (source instanceof olWmsSource) {
+                source.on("imageloadstart", started);
+                source.on("imageloadend", finished);
+                source.on("imageloaderror", finished);
+            }
+
             viewer.getLayerManager().addLayer(name, layer);
             viewer.toastSuccess("success", tr("ADDED_LAYER", locale, { name: name }));
             props.onLayerAdded(getLayerInfo(layer, true));
@@ -131,7 +148,7 @@ export const AddWmsLayer = (props: IAddWmsLayerProps) => {
                         return <NonIdealState
                             icon="issue"
                             title={tr("ADD_WMS_LAYER_NO_LAYERS", locale)}
-                            description={tr("WMS_NO_LAYER_DESCRIPITON", locale)} />;
+                            description={tr("WMS_NO_LAYER_DESCRIPTION", locale)} />;
                     }
                 }
             })()}

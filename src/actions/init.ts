@@ -53,6 +53,7 @@ import {
 import { MapInfo, IInitAppActionPayload, IAcknowledgeStartupWarningsAction, IRestoredSelectionSets } from './defs';
 import { ActionType } from '../constants/actions';
 import { getSelectionSet, clearSessionStore } from '../api/session-store';
+import { resolveProjectionFromEpsgIoAsync } from '../api/registry/projections';
 
 function isUIWidget(widget: any): widget is UIWidget {
     return widget.WidgetType === "UiWidgetType";
@@ -206,18 +207,6 @@ function prepareSubMenus(tbConf: Dictionary<ToolbarConf>): [PreparedSubMenuSet, 
         }
     }
     return [prepared, bFoundContextMenu]
-}
-
-async function resolveProjectionAsync(epsg: string, opts: IInitAsyncOptions, mapDef: string): Promise<any> {
-    const r = await fetch(`//epsg.io?format=json&q=${epsg}`);
-    const resp = await r.json();
-    if (resp.results && resp.results.length > 0) {
-        proj4.defs(`EPSG:${epsg}`, resp.results[0].proj4);
-        logger.debug(`Registered projection EPSG:${epsg} from epsg.io`);
-        return proj4.defs[`EPSG:${epsg}`];
-    } else {
-        throw new MgError(tr("INIT_ERROR_UNREGISTERED_EPSG_CODE", opts.locale, { epsg: epsg, mapDefinition: mapDef }));
-    }
 }
 
 function getDesiredTargetMapName(mapDef: string) {
@@ -578,7 +567,7 @@ async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, 
     for (const e of extraEpsgs) {
         fetchEpsgs.push({ epsg: e, mapDef: "" });
     }
-    const epsgs = await Promise.all(fetchEpsgs.map(f => resolveProjectionAsync(f.epsg, opts, f.mapDef)));
+    const epsgs = await Promise.all(fetchEpsgs.map(f => resolveProjectionFromEpsgIoAsync(f.epsg, opts.locale, f.mapDef)));
 
     //Previously, we register proj4 with OpenLayers on the bootstrap phase way before this init
     //process is started. This no longer works for OL6 where it doesn't seem to pick up the extra

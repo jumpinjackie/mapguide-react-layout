@@ -77,5 +77,4 @@ list of available projections is:
 For WFS, please observe the following restrictions:
 
  1. The viewer bundle does not include the `GML` format driver due to bundle size. Thereforre, the add layer UI will omit layers that does not offer a `GeoJSON` representation when inspecting capabilities.
- 2. Added layers will use the `bbox` strategy (data will be queried based on the `bbox` of your current map view) only if its supported CRS is `EPSG:4326` or `EPSG:3857`. Otherwise the layer will request all features up-front.
-   * When using the `bbox` strategy, the zoom extents action on this layer will zoom to the layer bounds as reported in the WFS capabilities and not the computed extents of what features have been loaded so far.
+ 2. Added WFS layers will load all features up-front.

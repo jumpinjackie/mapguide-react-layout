@@ -1256,10 +1256,10 @@
     shelljs "^0.8.3"
     typescript "3.7.x"
 
-"@hanreev/types-ol@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@hanreev/types-ol/-/types-ol-3.0.0.tgz#aa1680a5f1e65a1591ee58fd7b1bc4ee023a2b5e"
-  integrity sha512-O6ehd9vmdjlgim2Yh1VgOF+1zHsHF2yPxfKPwji6ctJ/eava/2O+lX3uXRppAuY5uge/X1I8TjxHnwnIlGfrHA==
+"@hanreev/types-ol@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@hanreev/types-ol/-/types-ol-3.1.0.tgz#854d754d72a54e15bb0a050be2577168f58a14a6"
+  integrity sha512-nNcYfif/u8xLeO7L64q+wCyGXo+II2ZBzPu/BcvCEd9yRXbIIED8eB2JOaz28/DdkOF+cjCz5wlDtXncNHrrnw==
   dependencies:
     "@types/arcgis-rest-api" "^10.4.4"
     "@types/geojson" "^7946.0.7"

@@ -73,7 +73,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.7.7",
-    "@hanreev/types-ol": "^3.0.0",
+    "@hanreev/types-ol": "^3.1.0",
     "@gerrit0/typedoc": "0.15.12",
     "@storybook/react": "^5.2.8",
     "@storybook/addon-actions": "^5.2.8",

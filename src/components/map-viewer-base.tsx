@@ -1080,29 +1080,5 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         y = extY1 - (extY1 - extY2) * (y / mapDevH);
         return [x, y];
     }
-    /**
-     *
-     * @param {Coordinate2D} coord
-     * @param {ProjectionLike} source
-     * @param {ProjectionLike} target
-     * @returns
-     * @memberof ApplicationViewModel
-     * @since 0.13
-     */
-    public transform(coord: Coordinate2D, source: ProjectionLike, target: ProjectionLike) {
-        return transform(coord, source, target);
-    }
-    /**
-     *
-     * @param {Bounds} extent
-     * @param {ProjectionLike} source
-     * @param {ProjectionLike} target
-     * @returns
-     * @memberof ApplicationViewModel
-     * @since 0.13
-     */
-    public transformExtent(extent: Bounds, source: ProjectionLike, target: ProjectionLike) {
-        return transformExtent(extent, source, target);
-    }
     //------------------------------------//
 }

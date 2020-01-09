@@ -862,27 +862,6 @@ export interface IMapViewer {
      * @hidden
      */
     addImageLoaded(): void;
-
-    /**
-     *
-     * @param {Coordinate2D} coord
-     * @param {ProjectionLike} source
-     * @param {ProjectionLike} target
-     * @returns {Coordinate2D}
-     * @memberof IMapViewer
-     * @since 0.13
-     */
-    transform(coord: Coordinate2D, source: ProjectionLike, target: ProjectionLike): Coordinate2D;
-    /**
-     *
-     * @param {Bounds} extent
-     * @param {ProjectionLike} source
-     * @param {ProjectionLike} target
-     * @returns {Bounds}
-     * @memberof IMapViewer
-     * @since 0.13
-     */
-    transformExtent(extent: Bounds, source: ProjectionLike, target: ProjectionLike): Bounds;
 }
 
 /**

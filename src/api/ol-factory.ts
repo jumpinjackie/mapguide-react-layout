@@ -136,13 +136,13 @@ export class OLFactory implements IOLFactory {
         return olExtent.containsXY(extent, x, y);
     }
     public extendExtent(extent: Bounds, other: Bounds): Bounds {
-        return olExtent.extend(extent as number[], other as number[]) as Bounds;
+        return olExtent.extend(extent, other) as Bounds;
     }
     public createProjection(options: ProjectionOptions): olProjection {
         return new olProjection(options);
     }
     public transformCoordinateFromLonLat(lonlat: Coordinate2D, proj?: ProjectionLike): Coordinate2D {
-        return olProj.fromLonLat(lonlat as number[], proj) as Coordinate2D;
+        return olProj.fromLonLat(lonlat, proj) as Coordinate2D;
     }
     public transformCoordinate(coordinate: Coordinate2D, source: ProjectionLike, target: ProjectionLike): Coordinate2D {
         return olProj.transform(coordinate, source, target) as Coordinate2D;

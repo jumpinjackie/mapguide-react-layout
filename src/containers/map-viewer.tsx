@@ -236,12 +236,6 @@ class MapViewerAdapter implements IMapViewer {
     addImageLoaded(): void {
         this.inner.addImageLoaded();
     }
-    transform(coord: Coordinate2D, source: ProjectionLike, target: ProjectionLike): Coordinate2D {
-        return this.inner.transform(coord, source, target) as Coordinate2D;
-    }
-    transformExtent(extent: Bounds, source: ProjectionLike, target: ProjectionLike): Bounds {
-        return this.inner.transformExtent(extent, source, target) as Bounds;
-    }
 }
 
 const MapViewerContainer = (props: IMapViewerContainerProps) => {

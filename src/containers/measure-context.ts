@@ -1,6 +1,7 @@
 import {
     GenericEvent,
-    IMapViewer
+    IMapViewer,
+    Coordinate2D
 } from "../api/common";
 import { IOLFactory } from "../api/ol-factory";
 import { tr } from "../api/i18n";
@@ -104,7 +105,7 @@ export class MeasureContext {
         let length: number;
         let segments: MeasureSegment[] | undefined;
         if (this.parent) {
-            const coordinates = line.getCoordinates();
+            const coordinates = line.getCoordinates() as Coordinate2D[];
             segments = [];
             length = 0;
             const sourceProj = this.viewer.getProjection();
@@ -143,7 +144,7 @@ export class MeasureContext {
             area = olSphere.getArea(geom, { projection: sourceProj });
             logger.debug(`Polygon area: ${area}`);
             const ring = geom.getLinearRing(0);
-            const coordinates = ring.getCoordinates();
+            const coordinates = ring.getCoordinates() as Coordinate2D[];
             for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
                 // Unlike getArea(), getDistance() requires that our input coordinates are in
                 // EPSG:4326 first

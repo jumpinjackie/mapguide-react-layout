@@ -35,7 +35,7 @@ export const STR_EMPTY = "";
  * @param {(string | null | undefined)} str
  * @returns {boolean}
  */
-export function strIsNullOrEmpty(str: string | null | undefined): boolean {
+export function strIsNullOrEmpty(str: string | null | undefined): str is null | undefined {
     return null == str || "" === str;
 }
 

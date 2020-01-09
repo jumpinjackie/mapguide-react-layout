@@ -119,8 +119,6 @@ export interface ILocalizedMessages {
     GEOLOCATION_SUCCESS: string;
     GEOLOCATION_WARN_OUTSIDE_MAP: string;
     GEOLOCATION_ERROR: string;
-    TASK_PANE_CONTENT_FOR_INACTIVE_MAP_TITLE: string;
-    TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING: string;
     TASK_PANE_RESIZING: string;
     TASK_PANE_LOADING: string;
     TASK_PANE_LOADING_DESC: string;

@@ -20,6 +20,9 @@ Viewer API Breaking Changes:
    * New signature: `(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction) => ITemplateReducerState`
    * Implications:
      * You only need to care about `origState` if you care to apply custom "selection panel is visible" state (per: [#478](https://github.com/jumpinjackie/mapguide-react-layout/issues/478)) because your custom viewer template does not treat Legend/Selection/TaskPane as a mutually exclusive visible set of components in an accordion or tab-like UI. Refer to the [reducer in the Aqua template](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/src/layouts/aqua.tsx) for an example of why this new reducer function signature is required.
+  * [#1071](https://github.com/jumpinjackie/mapguide-react-layout/issues/1073): Removed "Invalid Task Pane" warning that may display in multi-map configurations.
+    * Implications:
+      * Your task pane content should not rely on the `MAPNAME` query string parameter to determine what is the current map being viewed, nor should server-side code that renders out HTML/JS use this parameter to determine this. Your task pane content should ask the viewer API directly from JavaScript. You can ignore this note if your application does not involve multiple maps.
 
 Features/Fixes Overview:
 

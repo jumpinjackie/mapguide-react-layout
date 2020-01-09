@@ -210,13 +210,6 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
             })()}
             <div style={taskBodyStyle}>
                 {(() => {
-                    if (invalidated === true) {
-                        return <Callout intent={Intent.WARNING} icon="warning-sign" title={tr("TASK_PANE_CONTENT_FOR_INACTIVE_MAP_TITLE", this.props.locale)}>
-                            {tr("TASK_PANE_CONTENT_FOR_INACTIVE_MAP_WARNING", this.props.locale)}
-                        </Callout>;
-                    }
-                })()}
-                {(() => {
                     if (activeComponent != null) {
                         const cpp = this.state.activeComponentProps;
                         taskComponentContainerStyle.overflowY = "auto";

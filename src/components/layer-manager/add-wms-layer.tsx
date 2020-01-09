@@ -20,21 +20,12 @@ import olTiledWmsSource from "ol/source/TileWMS";
 import { Spinner, NonIdealState, Intent, ControlGroup, InputGroup, Button } from '@blueprintjs/core';
 import { getLayerInfo } from '../map-viewer-context';
 import { strIsNullOrEmpty } from "../../utils/string";
+import { IAddLayerContentProps } from './add-layer';
 
 /**
  * @hidden
  */
-export interface IAddWmsLayerProps {
-    locale: string;
-    onLayerAdded: (layer: ILayerInfo) => void;
-    onAddLayerBusyWorker: (name: string) => void;
-    onRemoveLayerBusyWorker: (name: string) => void;
-}
-
-/**
- * @hidden
- */
-export const AddWmsLayer = (props: IAddWmsLayerProps) => {
+export const AddWmsLayer = (props: IAddLayerContentProps) => {
     const { locale } = props;
     const [wmsUrl, setWmsUrl] = React.useState("");
     const [loadingCapabilities, setLoadingCapabilities] = React.useState(false);

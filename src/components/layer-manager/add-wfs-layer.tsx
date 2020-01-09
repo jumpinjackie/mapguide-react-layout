@@ -1,11 +1,11 @@
 import * as React from "react";
-import { ILayerInfo, WmsCapabilitiesDocument, WMSLayerStyle, LayerProperty, GenericEvent, Bounds } from '../../api/common';
+import { LayerProperty, GenericEvent, Bounds } from '../../api/common';
 import { ControlGroup, InputGroup, Button, Intent, NonIdealState, Spinner } from '@blueprintjs/core';
 import * as Runtime from "../../api/runtime";
 import { tr } from "../../api/i18n";
 import { Error } from "../error";
 import { Client } from "../../api/client";
-import { strIsNullOrEmpty, strReplaceAll } from '../../utils/string';
+import { strReplaceAll } from '../../utils/string';
 import { getLayerInfo } from '../map-viewer-context';
 import { WfsCapabilitiesParser, IWfsServiceCapabilities } from "./wfs-capabilities-parser";
 import { WfsCapabilitiesPanel } from './wfs-capabilities-panel';
@@ -13,7 +13,7 @@ import olVectorSource, { LoadingStrategy } from "ol/source/Vector";
 import olVectorLayer from "ol/layer/Vector";
 import GeoJSON from "ol/format/GeoJSON";
 import { bbox } from 'ol/loadingstrategy';
-import { FeatureUrlFunction } from "ol/featureloader";
+import { FeatureUrlFunction, FeatureLoader } from "ol/featureloader";
 import { transformExtent } from "ol/proj";
 import { parseUrl } from '../../utils/url';
 import { 
@@ -23,19 +23,13 @@ import {
     DEFAULT_POLY_STYLE
 } from '../../api/ol-style-helpers';
 import { ensureProjection } from '../../api/registry/projections';
+import { loadFeaturesXhr } from "ol/featureloader";
+import { IAddLayerContentProps } from './add-layer';
 
 /**
  * @hidden
  */
-export interface IAddWfsLayerProps {
-    locale: string;
-    onLayerAdded: (layer: ILayerInfo) => void;
-}
-
-/**
- * @hidden
- */
-export const AddWfsLayer = (props: IAddWfsLayerProps) => {
+export const AddWfsLayer = (props: IAddLayerContentProps) => {
     const { locale } = props;
     const [wfsUrl, setWfsUrl] = React.useState("");
     const [loadingCapabilities, setLoadingCapabilities] = React.useState(false);
@@ -44,7 +38,7 @@ export const AddWfsLayer = (props: IAddWfsLayerProps) => {
     const onAddLayer = (name: string, version: string, format: string, origCrs: string, epsgCode: number, wfsWgs84Bounds?: Bounds) => {
         const viewer = Runtime.getViewer();
         if (caps && viewer) {
-            ensureProjection(epsgCode, locale).then(([repsg, resolvedProj]) => {
+            ensureProjection(epsgCode, locale, origCrs).then(([repsg, resolvedProj]) => {
                 const sourceProj = viewer.getProjection();
                 //TODO: For correctness, we should be using the URL from the ows:Get element of the
                 //GetFeature operations metadata instead of just re-computing the WFS GetFeature URL
@@ -57,26 +51,42 @@ export const AddWfsLayer = (props: IAddWfsLayerProps) => {
                 let urlTemplate = `${parsed.url}?service=WFS&version=${version}&request=GetFeature&${typeNameKey}=${encodeURIComponent(name)}&outputFormat=${encodeURIComponent(format)}&srsName=${encodeURIComponent(origCrs)}`;
                 let sourceUrl: string | FeatureUrlFunction;
                 let strategy: LoadingStrategy | undefined;
-                // NOTE: I cannot get bbox strategy to reliably work with non-4326/3857 projections, so only use
-                // bbox strategy for these 2 projections
-                if (repsg == 4326 || repsg == 3857) {
+                let innerLoader: FeatureLoader | undefined;
+                const vectorFmt = new GeoJSON({
+                    dataProjection: resolvedProj,
+                    featureProjection: sourceProj
+                });
+                // FIXME: I can't seem to get bbox strategy working in general :(
+                if (false) {
+                //if (repsg == 4326 || repsg == 3857) {
                     urlTemplate += `&bbox={view_extent}`;
                     sourceUrl = function (extent) {
                         const xfextent = transformExtent(extent, sourceProj, resolvedProj);
                         const reqUrl = strReplaceAll(urlTemplate, "{view_extent}", xfextent.join(','));
                         return reqUrl;
                     }
-                    strategy = bbox;
+                    strategy = bbox;/*
+                    // We need to "decorate" the underlying loadFeaturesXhr loader so that
+                    // we have the means to call busy worker incrementing/decrementing
+                    innerLoader = loadFeaturesXhr(sourceUrl, vectorFmt, () => { //success
+                        viewer.addImageLoaded();
+                        props.onRemoveLayerBusyWorker(name);
+                    }, () => { //failure
+                        viewer.addImageLoaded();
+                        props.onRemoveLayerBusyWorker(name);
+                    });*/
                 } else {
                     sourceUrl = urlTemplate;
                 }
                 const source = new olVectorSource({
-                    format: new GeoJSON({
-                        dataProjection: resolvedProj,
-                        featureProjection: sourceProj
-                    }),
+                    format: vectorFmt,
                     url: sourceUrl,
-                    strategy: strategy
+                    strategy: strategy/*,
+                    loader: innerLoader ? (function() {
+                        viewer.addImageLoading();
+                        props.onAddLayerBusyWorker(name);
+                        innerLoader?.apply(source, arguments);
+                    }) : undefined*/
                 });
                 const layer = new olVectorLayer({
                     source: source

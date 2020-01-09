@@ -26,7 +26,10 @@ export interface IAddLayerState {
     selectedType: string;
 }
 
-interface IAddLayerContentProps {
+/**
+ * @hidden
+ */
+export interface IAddLayerContentProps {
     locale: string;
     onLayerAdded: (layer: ILayerInfo) => void;
     onAddLayerBusyWorker: (name: string) => void;

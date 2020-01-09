@@ -2,6 +2,8 @@ import proj4 from "proj4";
 import * as logger from "../../utils/logger";
 import { MgError } from '../error';
 import { tr } from '../i18n';
+import { strIsNullOrEmpty } from '../../utils/string';
+import { register } from 'ol/proj/proj4';
 
 /**
  *
@@ -29,22 +31,34 @@ export async function resolveProjectionFromEpsgIoAsync(epsg: string | number, lo
  * @export
  * @param {number} epsgCode
  * @param {() => Promise<string>} [factoryIfNotFound] A custom factory function to provide the required proj4js string for this projection. If not specified, a lookup to epsg.io will be done instead
+ * @param {string} alias
  * @returns {Promise<string>}
  * @since 0.13
  */
-export async function ensureProjection(epsgCode: number, locale: string, factoryIfNotFound?: () => Promise<string>): Promise<[number, string]> {
+export async function ensureProjection(epsgCode: number, locale: string, alias?: string, factoryIfNotFound?: () => Promise<string>): Promise<[number, string]> {
     let resolvedName: string;
+    let bAdded = false;
     const name = `EPSG:${epsgCode}`;
     if (proj4.defs[name]) {
         resolvedName = name;
     } else {
         if (factoryIfNotFound) {
             proj4.defs[name] = factoryIfNotFound();
+            bAdded = true;
             resolvedName = name;
         } else {
             await resolveProjectionFromEpsgIoAsync(epsgCode, locale, "");
             resolvedName = name;
         }
+    }
+    //Register the alias if specified
+    if (!strIsNullOrEmpty(alias) && !proj4.defs[alias]) {
+        proj4.defs[alias] = proj4.defs[resolvedName];
+        bAdded = true;
+    }
+    //Need to call re-register if proj4.defs got changed so OL can pick it up
+    if (bAdded) {
+        register(proj4);
     }
     return [epsgCode, resolvedName];
 }

@@ -1,7 +1,7 @@
 0.13
 ====
 
-React Component API Breaking Changes:
+## React Component API Breaking Changes:
 
  * Almost all components are now [functional components with hooks](https://reactjs.org/docs/hooks-intro.html) instead of class-based.
    * This means component state is now a true implementation detail of the component and cannot be relied on externally (eg. Operating on state of a ref-mounted component instance)
@@ -9,7 +9,7 @@ React Component API Breaking Changes:
  * Use the new [react-redux hooks API](https://react-redux.js.org/next/api/hooks) for dispatching viewer actions and subscribing/listening to viewer application state.
    * Consider using our [collection of custom hooks](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/src/containers/hooks.ts) for listening to particular viewer application state.
 
-Viewer API Breaking Changes:
+## Viewer API Breaking Changes:
 
  * Removed optional `factory` argument from `ILayerManager.getLayer()`.
    * Replacement: Just add the layer yourself aftewards if `ILayerManager.getLayer()` returns `undefined`.
@@ -24,7 +24,7 @@ Viewer API Breaking Changes:
     * Implications:
       * Your task pane content should not rely on the `MAPNAME` query string parameter to determine what is the current map being viewed, nor should server-side code that renders out HTML/JS use this parameter to determine this. Your task pane content should ask the viewer API directly from JavaScript. You can ignore this note if your application does not involve multiple maps.
 
-Features/Fixes Overview:
+## Features/Fixes Overview:
 
  * Major updates of key libraries:
    * [#1034](https://github.com/jumpinjackie/mapguide-react-layout/issues/1034): Upgrade to latest OpenLayers (6.1.1)

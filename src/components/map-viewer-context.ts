@@ -11,7 +11,6 @@ import {
     LayerTransparencySet,
     ILayerInfo,
     ILayerManager,
-    IAddFileLayerOptions,
     LayerProperty,
     MgLayerType,
     MgBuiltInLayers,
@@ -19,7 +18,9 @@ import {
     MG_BASE_LAYER_GROUP_NAME,
     LayerExtensions,
     IWmsLayerExtensions,
-    SourceProperty
+    SourceProperty,
+    IParseFeaturesFromFileOptions,
+    IAddLayerFromParsedFeaturesOptions
 } from "../api/common";
 import {
     IVectorFeatureStyle,
@@ -78,6 +79,10 @@ import KML from "ol/format/KML";
 import TopoJSON from "ol/format/TopoJSON";
 import olWmsSource from "ol/source/ImageWMS";
 import olTileWmsSource from "ol/source/TileWMS";
+import TextFeature from 'ol/format/TextFeature';
+import JSONFeature from 'ol/format/JSONFeature';
+import XMLFeature from 'ol/format/XMLFeature';
+import { ProjectionLike } from '@hanreev/types-ol/ol/proj';
 
 /**
  * @since 0.13
@@ -930,7 +935,7 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
     if (layer instanceof olImageLayer || layer instanceof olTileLayer) {
         const source = layer.getSource();
         if (layer.get(LayerProperty.HAS_WMS_LEGEND) == true && (source instanceof olWmsSource || source instanceof olTileWmsSource)) {
-            ext = { 
+            ext = {
                 type: "WMS",
                 getLegendUrl: (res?: number) => source.getLegendUrl(res)
             } as IWmsLayerExtensions;
@@ -954,15 +959,40 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
     }
 }
 
+export class ParsedFeatures {
+    constructor(public type: string, public size: number, private features: Feature<Geometry>[]) {
+
+    }
+    public name: string;
+    public addTo(source: olSourceVector<Geometry>, mapProjection: ProjectionLike, dataProjection?: ProjectionLike) {
+        if (dataProjection) {
+            for (const f of this.features) {
+                const g = f.getGeometry();
+                const tg = g.transform(dataProjection, mapProjection)
+                f.setGeometry(tg);
+            }
+        }
+        source.addFeatures(this.features);
+    }
+}
+
+class FormatDriver {
+    constructor(private type: string, private format: TextFeature | JSONFeature | XMLFeature) { }
+    public tryParse(size: number, text: string): ParsedFeatures {
+        const fs = this.format.readFeatures(text);
+        return new ParsedFeatures(this.type, size, fs);
+    }
+}
+
 export class MgLayerManager implements ILayerManager {
-    private _olFormats: IReadFeatures[];
+    private _olFormats: FormatDriver[];
     constructor(private map: olMap, private layerSet: MgLayerSet) {
         this._olFormats = [
-            { type: "GeoJSON", readFeatures: (text, opts) => new GeoJSON().readFeatures(text, opts) },
-            { type: "KML", readFeatures: (text, opts) => new KML().readFeatures(text, opts) },
-            { type: "TopoJSON", readFeatures: (text, opts) => new TopoJSON().readFeatures(text, opts) },
-            { type: "GPX", readFeatures: (text, opts) => new GPX().readFeatures(text, opts) },
-            { type: "IGC", readFeatures: (text, opts) => new IGC().readFeatures(text, opts) }
+            new FormatDriver("GeoJSON", new GeoJSON()),
+            new FormatDriver("TopoJSON", new TopoJSON()),
+            new FormatDriver("KML", new KML()),
+            new FormatDriver("GPX", new GPX()),
+            new FormatDriver("IGC", new IGC())
         ];
     }
     getLayers(): ILayerInfo[] {
@@ -983,65 +1013,75 @@ export class MgLayerManager implements ILayerManager {
     apply(layers: ILayerInfo[]): void {
         this.layerSet.apply(this.map, layers);
     }
-    addLayerFromFile(options: IAddFileLayerOptions): void {
-        const { file, name: layerName, locale, projection, callback } = options;
-        const reader = new FileReader();
+    parseFeaturesFromFile(options: IParseFeaturesFromFileOptions): Promise<ParsedFeatures> {
+        const { file, name: layerName, locale } = options;
         const that = this;
-        const handler = function (e: ProgressEvent<FileReader>) {
-            const result = e.target?.result;
-            if (result && typeof (result) == 'string') {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            const handler = function (e: ProgressEvent<FileReader>) {
+                const result = e.target?.result;
+                if (result && typeof (result) == 'string') {
+                    const formats = that._olFormats;
+                    let loadedType: ParsedFeatures | undefined;
+                    let bLoaded = false;
+                    for (let i = 0, ii = formats.length; i < ii; ++i) {
+                        const format = formats[i];
+                        try {
+                            loadedType = format.tryParse(file.size, result);
+                        } catch (e) {
+
+                        }
+                        if (loadedType) {
+                            loadedType.name = layerName;
+                            bLoaded = true;
+                            break;
+                        }
+                    }
+                    if (bLoaded) {
+                        resolve(loadedType);
+                    } else {
+                        reject(new Error(tr("ADD_LOCAL_FILE_LAYER_FAILURE", locale)));
+                    }
+                } else {
+                    reject(new Error(tr("ADD_LOCAL_FILE_LAYER_FAILURE_NOT_TEXT", locale)));
+                }
+            };
+            reader.addEventListener("load", handler);
+            reader.readAsText(file);
+        });
+    }
+    addLayerFromParsedFeatures(options: IAddLayerFromParsedFeaturesOptions): Promise<ILayerInfo> {
+        const { features, projection } = options;
+        const that = this;
+        return new Promise((resolve, reject) => {
+            try {
                 let proj = projection;
                 if (!proj) {
                     const view = that.map.getView();
                     proj = view.getProjection();
                 }
-                const formats = that._olFormats;
-                let features = [] as Feature<Geometry>[];
-                let loadedType: string | undefined;
-                let bLoaded = false;
-                for (let i = 0, ii = formats.length; i < ii; ++i) {
-                    const format = formats[i];
-                    try {
-                        features = format.readFeatures(result, {
-                            dataProjection: projection,
-                            featureProjection: that.map.getView().getProjection()
-                        });
-                    } catch (e) {
 
-                    }
-                    if (features && features.length > 0) {
-                        loadedType = format.type;
-                        bLoaded = true;
-                        break;
-                    }
-                }
-                if (bLoaded) {
-                    const source = new olSourceVector();
-                    source.set(SourceProperty.SUPPRESS_LOAD_EVENTS, true);
-                    const layer = new olVectorLayer({
-                        source: source
-                    });
-                    source.addFeatures(features);
-                    layer.set(LayerProperty.LAYER_NAME, layerName);
-                    layer.set(LayerProperty.LAYER_TYPE, loadedType);
-                    layer.set(LayerProperty.IS_EXTERNAL, true)
-                    layer.set(LayerProperty.IS_GROUP, false);
-                    setOLVectorLayerStyle(layer, {
-                        point: DEFAULT_POINT_STYLE,
-                        line: DEFAULT_LINE_STYLE,
-                        polygon: DEFAULT_POLY_STYLE
-                    });
-                    that.addLayer(layerName, layer);
-                    callback(getLayerInfo(layer, true));
-                } else {
-                    callback(new Error(tr("ADD_LOCAL_FILE_LAYER_FAILURE", locale)));
-                }
-            } else {
-                callback(new Error(tr("ADD_LOCAL_FILE_LAYER_FAILURE_NOT_TEXT", locale)));
+                const source = new olSourceVector();
+                source.set(SourceProperty.SUPPRESS_LOAD_EVENTS, true);
+                const layer = new olVectorLayer({
+                    source: source
+                });
+                features.addTo(source, that.map.getView().getProjection(), proj);
+                layer.set(LayerProperty.LAYER_NAME, features.name);
+                layer.set(LayerProperty.LAYER_TYPE, features);
+                layer.set(LayerProperty.IS_EXTERNAL, true)
+                layer.set(LayerProperty.IS_GROUP, false);
+                setOLVectorLayerStyle(layer, {
+                    point: DEFAULT_POINT_STYLE,
+                    line: DEFAULT_LINE_STYLE,
+                    polygon: DEFAULT_POLY_STYLE
+                });
+                that.addLayer(features.name, layer);
+                resolve(getLayerInfo(layer, true));
+            } catch (e) {
+                reject(e);
             }
-        };
-        reader.addEventListener("load", handler);
-        reader.readAsText(file);
+        });
     }
 }
 

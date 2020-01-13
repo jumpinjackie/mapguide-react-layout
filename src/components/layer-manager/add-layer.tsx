@@ -8,6 +8,7 @@ import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, Ed
 import * as Runtime from "../../api/runtime";
 import { strIsNullOrEmpty } from "../../utils/string";
 import proj4 from "proj4";
+import { ParsedFeatures } from '../map-viewer-context';
 
 /**
  * @hidden
@@ -57,51 +58,78 @@ enum AddLayerKind {
     Url
 }
 
+interface LoadedFile {
+    name: string;
+    size: number;
+    type: string;
+}
+
 const AddFileLayer = (props: IAddLayerProps) => {
     const { locale } = props;
     const [isAddingLayer, setIsAddingLayer] = React.useState(false);
     const [addLayerError, setAddLayerError] = React.useState<any>(undefined);
-    const [loadedFile, setLoadedFile] = React.useState<File | undefined>(undefined);
+    const [loadedFile, setLoadedFile] = React.useState<LoadedFile | undefined>(undefined);
     const [addLayerName, setAddLayerName] = React.useState<string | undefined>(undefined);
     const [addProjection, setAddProjection] = React.useState("EPSG:4326");
-    const onFileDropped = (file: File) => {
-        setLoadedFile(file);
-        setAddLayerName(file.name);
+    const parsedFeaturesRef = React.useRef<ParsedFeatures | undefined>(undefined);
+    const setParsedFile = (parsed: ParsedFeatures | undefined) => {
+        parsedFeaturesRef.current = parsed;
+        if (parsed) {
+            setAddLayerName(parsed.name);
+            setLoadedFile({
+                name: parsed.name,
+                size: parsed.size,
+                type: parsed.type
+            });
+        } else {
+            setLoadedFile(undefined);
+            parsedFeaturesRef.current = undefined;
+        }
+    };
+    const onFileDropped = async (file: File) => {
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            const layerMgr = viewer.getLayerManager();
+            try {
+                const parsed = await layerMgr.parseFeaturesFromFile({
+                    file: file,
+                    name: file.name,
+                    locale: locale
+                });
+                setParsedFile(parsed);
+            } catch (e) {
+                setAddLayerError(e);
+            }
+        }
     };
     const onCancelAddFile = () => {
-        setLoadedFile(undefined);
+        setParsedFile(undefined);
     };
-    const onAddFileLayer = (layerProjection: string) => {
+    const onAddFileLayer = async (layerProjection: string) => {
         const viewer = Runtime.getViewer();
-        if (loadedFile && viewer) {
+        if (viewer && parsedFeaturesRef?.current) {
             setIsAddingLayer(true);
             setAddLayerError(undefined);
             try {
-                const layerName = addLayerName ?? loadedFile.name;
+                const layerName = addLayerName ?? parsedFeaturesRef.current.name;
                 const layerMgr = viewer.getLayerManager();
                 if (layerMgr.hasLayer(layerName)) {
                     throw new Error(tr("LAYER_NAME_EXISTS", locale, { name: layerName }));
                 }
-                layerMgr.addLayerFromFile({
-                    file: loadedFile,
-                    name: layerName,
-                    locale: props.locale,
-                    projection: layerProjection,
-                    callback: (res) => {
-                        setIsAddingLayer(false);
-                        if (res instanceof Error) {
-                            viewer.toastError("error", res.message);
-                        } else {
-                            viewer.toastSuccess("success", tr("ADDED_LAYER", props.locale, { name: res.name }));
-                            setAddLayerError(undefined);
-                            setLoadedFile(undefined);
-                            setAddLayerName(undefined);
-                            props.onLayerAdded(res);
-                        }
-                    }
+                const layer = await layerMgr.addLayerFromParsedFeatures({
+                    features: parsedFeaturesRef.current
                 });
+                setIsAddingLayer(false);
+                viewer.toastSuccess("success", tr("ADDED_LAYER", props.locale, { name: layer.name }));
+                setAddLayerError(undefined);
+                setLoadedFile(undefined);
+                setAddLayerName(undefined);
+                props.onLayerAdded(layer);
             } catch (e) {
                 setAddLayerError(e);
+                if (!strIsNullOrEmpty(e?.message)) {
+                    viewer.toastError("error", e.message);
+                }
             }
             setIsAddingLayer(false);
         }

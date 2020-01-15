@@ -215,6 +215,7 @@ export interface ILocalizedMessages {
     LAYER_MANAGER_TT_MOVE_DOWN: string;
     LAYER_MANAGER_TT_ZOOM_EXTENTS: string;
     LAYER_MANAGER_TT_REMOVE: string;
+    LAYER_MANAGER_TT_EDIT_STYLE: string;
     CANCEL: string;
     UNKNOWN_FILE_TYPE: string;
     WMS_SERVICE_INFO: string;
@@ -246,4 +247,5 @@ export interface ILocalizedMessages {
     ADD_LAYER_PROJECTION: string;
     ADDING_LAYER_ERROR: string;
     LOADING_LAYER: string;
+    ACTION_CLOSE: string;
 }

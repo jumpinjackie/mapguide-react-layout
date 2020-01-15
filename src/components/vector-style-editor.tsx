@@ -21,10 +21,10 @@ const PointStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBas
         <FormGroup label={tr("VSED_PT_RADIUS", locale)}>
             <NumericInput fill value={style.radius} min={1} onValueChange={n => onChange({ ...style, radius: n })} />
         </FormGroup>
-        <FormGroup label={tr("VSED_PT_OUTLINE_COLOR")}>
+        <FormGroup label={tr("VSED_PT_OUTLINE_COLOR", locale)}>
             <ColorPicker value={style.stroke.color} onChange={c => onChange({ ...style, stroke: { color: c, width: style.stroke.width, alpha: style.stroke.alpha } })} />
         </FormGroup>
-        <FormGroup label={tr("VSED_PT_OUTLINE_COLOR_ALPHA")}>
+        <FormGroup label={tr("VSED_PT_OUTLINE_COLOR_ALPHA", locale)}>
             <Slider min={0} max={255} labelStepSize={255} value={style.stroke.alpha} onChange={n => onChange({ ...style, stroke: { color: style.stroke.color, width: style.stroke.width, alpha: n } })} />
         </FormGroup>
         <FormGroup label={tr("VSED_PT_OUTLINE_WIDTH", locale)}>

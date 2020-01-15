@@ -2,6 +2,7 @@ import * as React from "react";
 import ColoReact from 'coloreact';
 import { Collapse, Button, Intent, Card } from '@blueprintjs/core';
 import { DEFAULT_COLOR } from '../api/ol-style-helpers';
+import { tr } from "../api/i18n";
 import { NBSP } from '../constants';
 
 /**
@@ -25,7 +26,7 @@ export const ColorPicker = (props: IColorPickerProps) => {
         <Collapse isOpen={isPickerOpen}>
             <Card>
                 <ColoReact style={{ height: 200, position: 'relative' }} color={props.value ?? DEFAULT_COLOR} onChange={(c: any) => props.onChange(`#${c.hex}`)} />
-                <Button icon="chevron-up" intent={Intent.PRIMARY} onClick={() => setIsPickerOpen(false)}>Close</Button>
+                <Button icon="chevron-up" intent={Intent.PRIMARY} onClick={() => setIsPickerOpen(false)}>{tr("ACTION_CLOSE", locale)}</Button>
             </Card>
         </Collapse>
     </div>

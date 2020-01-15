@@ -74,7 +74,7 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
         }
     }
     if (layer.vectorStyle && layer.type != "KML") {
-        extraActions.push(<Button key="edit-vector-style" intent={Intent.PRIMARY} icon="edit" onClick={() => setIsEditingVectorStyle(!isEditingVectorStyle)} />)
+        extraActions.push(<Button key="edit-vector-style" title={tr("LAYER_MANAGER_TT_EDIT_STYLE", locale)} intent={Intent.PRIMARY} icon="edit" onClick={() => setIsEditingVectorStyle(!isEditingVectorStyle)} />)
     }
     const isWmsLegendOpen = !strIsNullOrEmpty(wmsLegendUrl);
     return <Card key={layer.name}>

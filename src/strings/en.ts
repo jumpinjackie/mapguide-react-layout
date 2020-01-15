@@ -208,6 +208,7 @@ const STRINGS_EN: ILocalizedMessages = {
     "LAYER_MANAGER_TT_MOVE_DOWN": "Move this layer down the draw order",
     "LAYER_MANAGER_TT_ZOOM_EXTENTS": "Zoom to the extents of this layer",
     "LAYER_MANAGER_TT_REMOVE": "Remove this layer",
+    "LAYER_MANAGER_TT_EDIT_STYLE": "Edit style",
     "CANCEL": "Cancel",
     "UNKNOWN_FILE_TYPE": "Unknown",
     "WMS_SERVICE_INFO": "WMS Service Info",
@@ -238,7 +239,8 @@ const STRINGS_EN: ILocalizedMessages = {
     "VSED_TAB_POLY": "Polygon",
     "ADD_LAYER_PROJECTION": "Projection of this layer",
     "ADDING_LAYER_ERROR": "Error adding layer",
-    "LOADING_LAYER": "Loading layer: {name}"
+    "LOADING_LAYER": "Loading layer: {name}",
+    "ACTION_CLOSE": "Close"
 };
 
 export default STRINGS_EN;

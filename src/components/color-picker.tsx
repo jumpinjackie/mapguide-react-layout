@@ -10,6 +10,7 @@ import { NBSP } from '../constants';
  */
 export interface IColorPickerProps {
     value?: string;
+    locale: string;
     onChange: (value: string) => void;
 }
 
@@ -26,7 +27,7 @@ export const ColorPicker = (props: IColorPickerProps) => {
         <Collapse isOpen={isPickerOpen}>
             <Card>
                 <ColoReact style={{ height: 200, position: 'relative' }} color={props.value ?? DEFAULT_COLOR} onChange={(c: any) => props.onChange(`#${c.hex}`)} />
-                <Button icon="chevron-up" intent={Intent.PRIMARY} onClick={() => setIsPickerOpen(false)}>{tr("ACTION_CLOSE", locale)}</Button>
+                <Button icon="chevron-up" intent={Intent.PRIMARY} onClick={() => setIsPickerOpen(false)}>{tr("ACTION_CLOSE", props.locale)}</Button>
             </Card>
         </Collapse>
     </div>

@@ -13,7 +13,7 @@ interface ISubStyleEditorProps<TStyle> {
 const PointStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicVectorPointStyle>) => {
     return <div>
         <FormGroup label={tr("VSED_PT_FILL_COLOR", locale)}>
-            <ColorPicker value={style.fill.color} onChange={c => onChange({ ...style, fill: { color: c, alpha: style.fill.alpha } })} />
+            <ColorPicker locale={locale} value={style.fill.color} onChange={c => onChange({ ...style, fill: { color: c, alpha: style.fill.alpha } })} />
         </FormGroup>
         <FormGroup label={tr("VSED_PT_FILL_COLOR_ALPHA", locale)}>
             <Slider min={0} max={255} labelStepSize={255} value={style.fill.alpha} onChange={n => onChange({ ...style, fill: { color: style.fill.color, alpha: n } })} />
@@ -22,7 +22,7 @@ const PointStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBas
             <NumericInput fill value={style.radius} min={1} onValueChange={n => onChange({ ...style, radius: n })} />
         </FormGroup>
         <FormGroup label={tr("VSED_PT_OUTLINE_COLOR", locale)}>
-            <ColorPicker value={style.stroke.color} onChange={c => onChange({ ...style, stroke: { color: c, width: style.stroke.width, alpha: style.stroke.alpha } })} />
+            <ColorPicker locale={locale} value={style.stroke.color} onChange={c => onChange({ ...style, stroke: { color: c, width: style.stroke.width, alpha: style.stroke.alpha } })} />
         </FormGroup>
         <FormGroup label={tr("VSED_PT_OUTLINE_COLOR_ALPHA", locale)}>
             <Slider min={0} max={255} labelStepSize={255} value={style.stroke.alpha} onChange={n => onChange({ ...style, stroke: { color: style.stroke.color, width: style.stroke.width, alpha: n } })} />
@@ -36,7 +36,7 @@ const PointStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBas
 const LineStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicVectorLineStyle>) => {
     return <div>
         <FormGroup label={tr("VSED_LN_OUTLINE_COLOR", locale)}>
-            <ColorPicker value={style.color} onChange={c => onChange({ color: c, width: style.width, alpha: style.alpha })} />
+            <ColorPicker locale={locale} value={style.color} onChange={c => onChange({ color: c, width: style.width, alpha: style.alpha })} />
         </FormGroup>
         <FormGroup label={tr("VSED_LN_OUTLINE_COLOR_ALPHA", locale)}>
             <Slider min={0} max={255} labelStepSize={255} value={style.alpha} onChange={n => onChange({ color: style.color, width: style.width, alpha: n })} />
@@ -50,13 +50,13 @@ const LineStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasi
 const PolygonStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicVectorPolygonStyle>) => {
     return <div>
         <FormGroup label={tr("VSED_PL_FILL_COLOR", locale)}>
-            <ColorPicker value={style.fill.color} onChange={c => onChange({ ...style, fill: { color: c, alpha: style.fill.alpha } })} />
+            <ColorPicker locale={locale} value={style.fill.color} onChange={c => onChange({ ...style, fill: { color: c, alpha: style.fill.alpha } })} />
         </FormGroup>
         <FormGroup label={tr("VSED_PL_FILL_COLOR_ALPHA", locale)}>
             <Slider min={0} max={255} labelStepSize={255} value={style.fill.alpha} onChange={n => onChange({ ...style, fill: { color: style.fill.color, alpha: n } })} />
         </FormGroup>
         <FormGroup label={tr("VSED_PL_OUTLINE_COLOR", locale)}>
-            <ColorPicker value={style.stroke.color} onChange={c => onChange({ ...style, stroke: { color: c, width: style.stroke.width, alpha: style.stroke.alpha } })} />
+            <ColorPicker locale={locale} value={style.stroke.color} onChange={c => onChange({ ...style, stroke: { color: c, width: style.stroke.width, alpha: style.stroke.alpha } })} />
         </FormGroup>
         <FormGroup label={tr("VSED_PL_OUTLINE_COLOR_ALPHA", locale)}>
             <Slider min={0} max={255} labelStepSize={255} value={style.stroke.alpha} onChange={n => onChange({ ...style, stroke: { color: style.stroke.color, width: style.stroke.width, alpha: n } })} />

@@ -89,6 +89,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
     const onFileDropped = async (file: File) => {
         const viewer = Runtime.getViewer();
         if (viewer) {
+            setAddLayerError(undefined);
             const layerMgr = viewer.getLayerManager();
             try {
                 const parsed = await layerMgr.parseFeaturesFromFile({
@@ -156,6 +157,9 @@ const AddFileLayer = (props: IAddLayerProps) => {
             </>} />
     } else {
         return <>
+            {addLayerError && <Callout intent={Intent.DANGER} title={tr("ADDING_LAYER_ERROR", locale)}>
+                {addLayerError.message}
+            </Callout>}
             <Dropzone multiple={false} onDrop={acceptedFiles => onFileDropped(acceptedFiles[0])}>
                 {({ getRootProps, getInputProps }) => (<div style={{ margin: 10, border: "1px dashed black", borderRadius: 5, padding: 5 }} {...getRootProps()}>
                     <NonIdealState

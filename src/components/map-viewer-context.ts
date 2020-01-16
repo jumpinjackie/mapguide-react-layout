@@ -967,6 +967,7 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
  */
 export interface IParsedFeatures {
     name: string;
+    hasFeatures(): boolean;
     readonly type: string;
     readonly size: number;
     addTo(source: olSourceVector<Geometry>, mapProjection: ProjectionLike, dataProjection?: ProjectionLike): void;
@@ -976,6 +977,7 @@ class ParsedFeatures implements IParsedFeatures {
     constructor(public type: string, public size: number, private features: Feature<Geometry>[]) {
 
     }
+    public hasFeatures(): boolean { return this.features.length > 0; }
     public name: string;
     public addTo(source: olSourceVector<Geometry>, mapProjection: ProjectionLike, dataProjection?: ProjectionLike) {
         if (dataProjection) {
@@ -1149,7 +1151,7 @@ export class MgLayerManager implements ILayerManager {
                         } catch (e) {
 
                         }
-                        if (loadedType) {
+                        if (loadedType && loadedType.hasFeatures()) {
                             loadedType.name = layerName;
                             bLoaded = true;
                             break;

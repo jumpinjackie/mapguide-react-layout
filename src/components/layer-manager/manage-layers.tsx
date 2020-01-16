@@ -22,6 +22,13 @@ interface IManageLayerItemProps {
     onVectorStyleChanged: (name: string, style: IVectorFeatureStyle) => void;
 }
 
+enum OpenPanel {
+    None,
+    MoreLayerOptions,
+    EditVectorStyle,
+    WmsLegend
+}
+
 const ManageLayerItem = (props: IManageLayerItemProps) => {
     const {
         layer,
@@ -38,14 +45,27 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
         onVectorStyleChanged
     } = props;
     const [wmsLegendUrl, setWmsLegendUrl] = React.useState<string | undefined>(undefined);
-    const [isEditingVectorStyle, setIsEditingVectorStyle] = React.useState(false);
+    const [openPanel, setOpenPanel] = React.useState(OpenPanel.None);
     const onToggleWmsLegend = (action: (res?: number) => string) => {
         if (wmsLegendUrl) {
             setWmsLegendUrl(undefined);
+            setOpenPanel(OpenPanel.None);
         } else {
             const url = action(currentResolution);
             setWmsLegendUrl(url);
+            setOpenPanel(OpenPanel.WmsLegend);
         }
+    };
+    const toggleOpenPanel = (panel: OpenPanel) => {
+        let p = OpenPanel.None;
+        switch (panel) {
+            case OpenPanel.EditVectorStyle:
+            case OpenPanel.MoreLayerOptions:
+            case OpenPanel.WmsLegend:
+                p = (panel == openPanel) ? OpenPanel.None : panel;
+                break;
+        }
+        setOpenPanel(p);
     };
     const isBusy = (layer.busyWorkerCount > 0);
     if (isBusy) {
@@ -73,14 +93,15 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
                 }
         }
     }
-    if (layer.vectorStyle && layer.type != "KML") {
-        extraActions.push(<Button key="edit-vector-style" title={tr("LAYER_MANAGER_TT_EDIT_STYLE", locale)} intent={Intent.PRIMARY} icon="edit" onClick={() => setIsEditingVectorStyle(!isEditingVectorStyle)} />)
+    if (layer.vectorStyle) {
+        if (layer.type != "KML") {
+            extraActions.push(<Button key="edit-vector-style" title={tr("LAYER_MANAGER_TT_EDIT_STYLE", locale)} intent={Intent.PRIMARY} icon="edit" onClick={() => toggleOpenPanel(OpenPanel.EditVectorStyle)} />)
+        }
+        extraActions.push(<Button key="more-layer-options" title={tr("LAYER_MANAGER_TT_MORE_OPTIONS", locale)} intent={Intent.PRIMARY} icon="cog" onClick={() => toggleOpenPanel(OpenPanel.MoreLayerOptions)} />)
     }
     const isWmsLegendOpen = !strIsNullOrEmpty(wmsLegendUrl);
     return <Card key={layer.name}>
         <Switch checked={layer.visible} onChange={() => onSetVisibility(layer.name, !layer.visible)} labelElement={<><Icon icon={iconName} /> {layer.name}</>} />
-        <p>{tr("LAYER_OPACITY", locale)}</p>
-        <Slider min={0} max={1.0} stepSize={0.01} value={layer.opacity} onChange={e => onSetOpacity(layer.name, e)} />
         <ButtonGroup>
             <Button disabled={!canMoveUp} title={tr("LAYER_MANAGER_TT_MOVE_UP", locale)} intent={Intent.PRIMARY} icon="caret-up" onClick={() => onMoveLayerUp(layer.name)} />
             <Button disabled={!canMoveDown} title={tr("LAYER_MANAGER_TT_MOVE_DOWN", locale)} intent={Intent.PRIMARY} icon="caret-down" onClick={() => onMoveLayerDown(layer.name)} />
@@ -88,13 +109,20 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
             <Button title={tr("LAYER_MANAGER_TT_REMOVE", locale)} intent={Intent.DANGER} icon="trash" onClick={() => onRemoveLayer(layer.name)} />
             {extraActions}
         </ButtonGroup>
+        <Collapse isOpen={openPanel == OpenPanel.MoreLayerOptions}>
+            <Card>
+                <h5 className="bp3-heading"><a href="#">{tr("MORE_LAYER_OPTIONS", locale)}</a></h5>
+                <p>{tr("LAYER_OPACITY", locale)}</p>
+                <Slider min={0} max={1.0} stepSize={0.01} value={layer.opacity} onChange={e => onSetOpacity(layer.name, e)} />
+            </Card>
+        </Collapse>
         {isWms && <Collapse isOpen={isWmsLegendOpen}>
             <Card>
                 <h5 className="bp3-heading"><a href="#">{tr("WMS_LEGEND", locale)}</a></h5>
                 <img src={wmsLegendUrl} />
             </Card>
         </Collapse>}
-        {layer.vectorStyle && <Collapse isOpen={isEditingVectorStyle}>
+        {layer.vectorStyle && <Collapse isOpen={openPanel == OpenPanel.EditVectorStyle}>
             <Card>
                 <h5 className="bp3-heading"><a href="#">{tr("VECTOR_LAYER_STYLE", locale)}</a></h5>
                 <VectorStyleEditor onChange={st => onVectorStyleChanged(layer.name, st)} locale={locale} style={layer.vectorStyle} enablePoint={true} enableLine={true} enablePolygon={true} />
@@ -144,7 +172,7 @@ export const ManageLayers = (props: IManageLayersProps) => {
             {layers.map((lyr, i) => {
                 const cannotMoveUp = (i == 0 || layers.length <= 1);
                 const cannotMoveDown = (i >= layers.length - 1 || layers.length <= 1);
-                return <ManageLayerItem 
+                return <ManageLayerItem
                     key={`manage-layer-${i}`}
                     layer={lyr}
                     locale={locale}

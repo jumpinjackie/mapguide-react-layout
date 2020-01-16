@@ -128,6 +128,7 @@ export interface ILocalizedMessages {
     OK: string;
     ADD_MANAGE_LAYERS: string;
     ADD_LAYER: string;
+    ADD_LAYER_TILED: string;
     MANAGE_LAYERS: string;
     LAYER_TYPE: string;
     SELECT_LAYER_TYPE: string;
@@ -224,6 +225,7 @@ export interface ILocalizedMessages {
     WMS_AVAILABLE_LAYERS: string;
     WFS_AVAILABLE_LAYERS: string;
     ADD_LAYER_WITH_WMS_STYLE: string;
+    ADD_LAYER_WITH_WMS_STYLE_TILED: string;
     WMS_LEGEND: string;
     VSED_NO_STYLES_TITLE: string;
     VSED_NO_STYLES_DESC: string;

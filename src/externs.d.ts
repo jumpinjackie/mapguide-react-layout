@@ -19,6 +19,8 @@ declare module "*.png";
 declare module "*.cur";
 declare module "*.gif";
 
+declare module "papaparse";
+
 declare module "react-splitter-layout" {
     import * as React from "react";
 

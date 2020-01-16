@@ -8,7 +8,7 @@ import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, Ed
 import * as Runtime from "../../api/runtime";
 import { strIsNullOrEmpty } from "../../utils/string";
 import proj4 from "proj4";
-import { ParsedFeatures } from '../map-viewer-context';
+import { IParsedFeatures } from '../map-viewer-context';
 
 /**
  * @hidden
@@ -71,8 +71,8 @@ const AddFileLayer = (props: IAddLayerProps) => {
     const [loadedFile, setLoadedFile] = React.useState<LoadedFile | undefined>(undefined);
     const [addLayerName, setAddLayerName] = React.useState<string | undefined>(undefined);
     const [addProjection, setAddProjection] = React.useState("EPSG:4326");
-    const parsedFeaturesRef = React.useRef<ParsedFeatures | undefined>(undefined);
-    const setParsedFile = (parsed: ParsedFeatures | undefined) => {
+    const parsedFeaturesRef = React.useRef<IParsedFeatures | undefined>(undefined);
+    const setParsedFile = (parsed: IParsedFeatures | undefined) => {
         parsedFeaturesRef.current = parsed;
         if (parsed) {
             setAddLayerName(parsed.name);

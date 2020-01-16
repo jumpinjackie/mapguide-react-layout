@@ -25,7 +25,6 @@ import {
 import {
     IVectorFeatureStyle,
     IOlStyleMap,
-    vectorStyleToOLStyleMap,
     DEFAULT_POINT_STYLE,
     DEFAULT_LINE_STYLE,
     DEFAULT_POLY_STYLE,
@@ -83,6 +82,7 @@ import TextFeature from 'ol/format/TextFeature';
 import JSONFeature from 'ol/format/JSONFeature';
 import XMLFeature from 'ol/format/XMLFeature';
 import { ProjectionLike } from '@hanreev/types-ol/ol/proj';
+const Papa = require("papaparse");
 
 /**
  * @since 0.13
@@ -959,7 +959,20 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
     }
 }
 
-export class ParsedFeatures {
+/**
+ *
+ * @export
+ * @interface IParsedFeatures
+ * @since 0.13
+ */
+export interface IParsedFeatures {
+    name: string;
+    readonly type: string;
+    readonly size: number;
+    addTo(source: olSourceVector<Geometry>, mapProjection: ProjectionLike, dataProjection?: ProjectionLike): void;
+}
+
+class ParsedFeatures implements IParsedFeatures {
     constructor(public type: string, public size: number, private features: Feature<Geometry>[]) {
 
     }
@@ -976,18 +989,123 @@ export class ParsedFeatures {
     }
 }
 
-class FormatDriver {
+interface IFormatDriver {
+    tryParse(size: number, text: string): Promise<IParsedFeatures>;
+}
+
+class FormatDriver implements IFormatDriver {
     constructor(private type: string, private format: TextFeature | JSONFeature | XMLFeature) { }
-    public tryParse(size: number, text: string): ParsedFeatures {
+    public async tryParse(size: number, text: string): Promise<IParsedFeatures> {
         const fs = this.format.readFeatures(text);
         return new ParsedFeatures(this.type, size, fs);
     }
 }
 
+interface IPapaParsedResults {
+    data: any[];
+    errors: {
+        type: string;
+        code: string;
+        message: string;
+        row: number;
+    }[];
+    meta: {
+        delimiter?: string;
+        linebreak?: string;
+        aborted?: boolean;
+        fields?: string[];
+        truncated?: boolean;
+    }
+}
+
+class CsvFormatDriver implements IFormatDriver {
+    private type: string;
+    constructor(private aliases: { xColumn: string, yColumn: string }[]) {
+        this.type = "CSV";
+    }
+    public tryParse(size: number, text: string): Promise<IParsedFeatures> {
+        const aliases = this.aliases;
+        const type = this.type;
+        return new Promise((resolve, reject) => {
+            Papa.parse(text, {
+                header: true,
+                complete: function (results: IPapaParsedResults) {
+                    if (!results.data || results.data.length == 0) {
+                        reject(new Error("No data parsed. Probably not a CSV file"));
+                    } else {
+                        if (results.meta.fields) {
+                            let parsed: IParsedFeatures | undefined;
+                            //Run through the alias list and see if we get any matches
+                            for (const alias of aliases) {
+                                if (parsed) {
+                                    break;
+                                }
+                                const xc = results.meta.fields.filter(s => s.toLowerCase() == alias.xColumn.toLowerCase())?.[0];
+                                const yc = results.meta.fields.filter(s => s.toLowerCase() == alias.yColumn.toLowerCase())?.[0];
+                                // We found the columns, but before we accept this set, the columns
+                                // in question must be numeric. Being CSV and all, we'll use the most
+                                // scientific method to determine this: Sample the first row of data /s
+                                if (!strIsNullOrEmpty(xc) && !strIsNullOrEmpty(yc)) {
+                                    const first = results.data[0];
+                                    const firstX = parseFloat(first[xc]);
+                                    const firstY = parseFloat(first[yc]);
+                                    if (first && !isNaN(firstX) && !isNaN(firstY)) {
+                                        const json = {
+                                            type: 'FeatureCollection',
+                                            features: [] as any[]
+                                        };
+                                        for (const d of results.data) {
+                                            const x = parseFloat(d[xc]);
+                                            const y = parseFloat(d[yc]);
+                                            if (!isNaN(x) && !isNaN(y)) {
+                                                const f = {
+                                                    type: 'Feature',
+                                                    geometry: {
+                                                        coordinates: [x, y],
+                                                        type: 'Point'
+                                                    },
+                                                    properties: d
+                                                }
+                                                delete f.properties[xc];
+                                                delete f.properties[yc];
+                                                json.features.push(f);
+                                            }
+                                        }
+                                        const fmt = new GeoJSON();
+                                        const features = fmt.readFeatures(json);
+                                        parsed = new ParsedFeatures(type, size, features);
+                                        break;
+                                    }
+                                }
+                            }
+                            if (parsed) {
+                                resolve(parsed);
+                            } else {
+                                reject(new Error("Data successfully parsed as CSV, but coordinate columns could not be found"));
+                            }
+                        } else {
+                            reject(new Error("No fields found in CSV metadata"));
+                        }
+                    }
+                }
+            });
+        });
+    }
+}
+
+const CSV_COLUMN_ALIASES = [
+    { xColumn: "lon", yColumn: "lat" },
+    { xColumn: "lng", yColumn: "lat" },
+    { xColumn: "longitude", yColumn: "latitude" },
+    { xColumn: "x", yColumn: "y" },
+    { xColumn: "easting", yColumn: "northing" }
+];
+
 export class MgLayerManager implements ILayerManager {
-    private _olFormats: FormatDriver[];
+    private _olFormats: IFormatDriver[];
     constructor(private map: olMap, private layerSet: MgLayerSet) {
         this._olFormats = [
+            new CsvFormatDriver(CSV_COLUMN_ALIASES),
             new FormatDriver("GeoJSON", new GeoJSON()),
             new FormatDriver("TopoJSON", new TopoJSON()),
             new FormatDriver("KML", new KML()),
@@ -1013,21 +1131,21 @@ export class MgLayerManager implements ILayerManager {
     apply(layers: ILayerInfo[]): void {
         this.layerSet.apply(this.map, layers);
     }
-    parseFeaturesFromFile(options: IParseFeaturesFromFileOptions): Promise<ParsedFeatures> {
+    parseFeaturesFromFile(options: IParseFeaturesFromFileOptions): Promise<IParsedFeatures> {
         const { file, name: layerName, locale } = options;
         const that = this;
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
-            const handler = function (e: ProgressEvent<FileReader>) {
+            const handler = async function (e: ProgressEvent<FileReader>) {
                 const result = e.target?.result;
                 if (result && typeof (result) == 'string') {
                     const formats = that._olFormats;
-                    let loadedType: ParsedFeatures | undefined;
+                    let loadedType: IParsedFeatures | undefined;
                     let bLoaded = false;
                     for (let i = 0, ii = formats.length; i < ii; ++i) {
                         const format = formats[i];
                         try {
-                            loadedType = format.tryParse(file.size, result);
+                            loadedType = await format.tryParse(file.size, result);
                         } catch (e) {
 
                         }

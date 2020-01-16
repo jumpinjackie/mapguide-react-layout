@@ -19,7 +19,7 @@ import { ProjectionLike } from 'ol/proj';
 import { LoadFunction } from 'ol/Image';
 import { IToolbarAppState } from './registry';
 import { IVectorFeatureStyle } from './ol-style-helpers';
-import { ParsedFeatures } from 'src/components';
+import { IParsedFeatures } from 'src/components';
 
 // Event boilerplate
 export type GenericEvent = any;
@@ -929,7 +929,7 @@ export interface ILayerInfo {
  */
 export interface IAddLayerFromParsedFeaturesOptions {
     projection?: ProjectionLike;
-    features: ParsedFeatures;
+    features: IParsedFeatures;
 }
 
 /**
@@ -996,11 +996,11 @@ export interface ILayerManager {
     /**
      *
      * @param {IParseFeaturesFromFileOptions} options
-     * @returns {Promise<ParsedFeatures>}
+     * @returns {Promise<IParsedFeatures>}
      * @memberof ILayerManager
      * @since 0.13
      */
-    parseFeaturesFromFile(options: IParseFeaturesFromFileOptions): Promise<ParsedFeatures>;
+    parseFeaturesFromFile(options: IParseFeaturesFromFileOptions): Promise<IParsedFeatures>;
 
     /**
      *

@@ -4,11 +4,12 @@ import { GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 import { AddWfsLayer } from "./add-wfs-layer";
 import Dropzone from "react-dropzone";
-import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup, FormGroup, Callout } from '@blueprintjs/core';
+import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup, FormGroup, Callout, NumericInput } from '@blueprintjs/core';
 import * as Runtime from "../../api/runtime";
 import { strIsNullOrEmpty } from "../../utils/string";
 import proj4 from "proj4";
 import { IParsedFeatures } from '../map-viewer-context';
+import { ensureProjection } from '../../api/registry/projections';
 
 /**
  * @hidden
@@ -70,7 +71,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
     const [addLayerError, setAddLayerError] = React.useState<any>(undefined);
     const [loadedFile, setLoadedFile] = React.useState<LoadedFile | undefined>(undefined);
     const [addLayerName, setAddLayerName] = React.useState<string | undefined>(undefined);
-    const [addProjection, setAddProjection] = React.useState("EPSG:4326");
+    const [addProjection, setAddProjection] = React.useState(4326);
     const parsedFeaturesRef = React.useRef<IParsedFeatures | undefined>(undefined);
     const setParsedFile = (parsed: IParsedFeatures | undefined) => {
         parsedFeaturesRef.current = parsed;
@@ -106,12 +107,13 @@ const AddFileLayer = (props: IAddLayerProps) => {
     const onCancelAddFile = () => {
         setParsedFile(undefined);
     };
-    const onAddFileLayer = async (layerProjection: string) => {
+    const onAddFileLayer = async (layerProjection: number) => {
         const viewer = Runtime.getViewer();
         if (viewer && parsedFeaturesRef?.current) {
             setIsAddingLayer(true);
             setAddLayerError(undefined);
             try {
+                const [_, layerProj] = await ensureProjection(layerProjection, locale);
                 const layerName = addLayerName ?? parsedFeaturesRef.current.name;
                 const layerMgr = viewer.getLayerManager();
                 if (layerMgr.hasLayer(layerName)) {
@@ -119,7 +121,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
                 }
                 const layer = await layerMgr.addLayerFromParsedFeatures({
                     features: parsedFeaturesRef.current,
-                    projection: layerProjection
+                    projection: layerProj
                 });
                 setIsAddingLayer(false);
                 viewer.toastSuccess("success", tr("ADDED_LAYER", props.locale, { name: layer.name }));
@@ -147,9 +149,9 @@ const AddFileLayer = (props: IAddLayerProps) => {
                     {addLayerError.message}
                 </Callout>}
                 <FormGroup label={tr("ADD_LAYER_PROJECTION", locale)}>
-                    <HTMLSelect value={addProjection} onChange={e => setAddProjection(e.target.value)}>
-                        {projections.map(p => <option key={p} value={p}>{p}</option>)}
-                    </HTMLSelect>
+                    <FormGroup label={<a href="https://epsg.io" target="_blank">EPSG:</a>} inline>
+                        <NumericInput style={{ width: 60 }} min={0} value={addProjection} onValueChange={v => setAddProjection(v)} />
+                    </FormGroup>
                 </FormGroup>
                 <ButtonGroup>
                     <Button loading={isAddingLayer} onClick={(e: any) => onAddFileLayer(addProjection)} intent={Intent.PRIMARY}>{tr("ADD_LAYER", locale)}</Button>

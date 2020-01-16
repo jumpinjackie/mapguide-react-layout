@@ -14,8 +14,10 @@
 }
 
 .invalidated-task-pane {
-    opacity: 0.6; /* Real browsers */
-    filter: alpha(opacity = 60); /* IE */
+    opacity: 0.6;
+    /* Real browsers */
+    filter: alpha(opacity=60);
+    /* IE */
 }
 
 .mg-toast {
@@ -65,7 +67,7 @@
     top: auto;
 }
 
-.ol-custom-overviewmap:not(.ol-collapsed)  {
+.ol-custom-overviewmap:not(.ol-collapsed) {
     border: 1px solid black;
 }
 
@@ -77,7 +79,7 @@
     border: 2px solid red;
 }
 
-.ol-custom-overviewmap:not(.ol-collapsed) button{
+.ol-custom-overviewmap:not(.ol-collapsed) button {
     bottom: 1px;
     left: auto;
     right: 1px;
@@ -139,6 +141,7 @@
 .mg-flyout-menu-container {
     position: absolute;
 }
+
 .mg-flyout-component-container {
     position: absolute;
     background-color: white;
@@ -168,51 +171,46 @@
 }
 
 /* Begin QuickPlot */
-div.Label
-{
-    padding:5px 0px;
+div.Label {
+    padding: 5px 0px;
 }
 
-div.Ctrl
-{
-    padding:5px 0px;
+div.Ctrl {
+    padding: 5px 0px;
 }
 
-div.Title
-{
+div.Title {
     font-size: 14px;
     font-weight: bold;
     padding: 10px 0px;
 }
 
-div.HPlaceholder5px
-{
-    font-size:0px;
-    height:5px;
+div.HPlaceholder5px {
+    font-size: 0px;
+    height: 5px;
 }
 
-div.ButtonContainer
-{
+div.ButtonContainer {
     padding: 5px 0px;
     text-align: right;
 }
 
-.FixWidth
-{
+.FixWidth {
     width: 100%;
 }
 
-div.InfoText
-{
+div.InfoText {
     padding: 3px;
     background-color: #FFFFCC;
     color: #666666;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 8pt;
 }
+
 /* End QuickPlot */
 
-.field, .field-label {
+.field,
+.field-label {
     display: block;
 }
 
@@ -238,6 +236,7 @@ div.InfoText
     background-color: #cdcdcd;
     border-bottom: 1px solid black;
 }
+
 .modal-dialog-body {
     padding: 0px;
 }
@@ -253,6 +252,7 @@ div.InfoText
     overflow: hidden;
     width: 1.5em;
 }
+
 .rotated-text-ccw {
     -webkit-transform: rotate(-90deg);
     -moz-transform: rotate(-90deg);
@@ -270,10 +270,12 @@ div.InfoText
     /* Should be unset in IE9+ I think. */
     filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
+
 .rotated-text__inner {
     display: inline-block;
     white-space: nowrap;
 }
+
 .rotated-text__inner:before {
     content: "";
     float: left;
@@ -281,12 +283,18 @@ div.InfoText
 }
 
 .noselect {
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none;   /* Chrome/Safari/Opera */
-    -khtml-user-select: none;    /* Konqueror */
-    -moz-user-select: none;      /* Firefox */
-    -ms-user-select: none;       /* Internet Explorer/Edge */
-    user-select: none;           /* Non-prefixed version, currently
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Chrome/Safari/Opera */
+    -khtml-user-select: none;
+    /* Konqueror */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
                                     not supported by any browser */
 }
 
@@ -310,7 +318,9 @@ div.InfoText
     padding: 5px;
 }
 
-.component-mouse-coordinates, .component-selected-feature-count, .component-view-size {
+.component-mouse-coordinates,
+.component-selected-feature-count,
+.component-view-size {
     padding: 3px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 8pt;
@@ -397,4 +407,175 @@ div.InfoText
 
 .bp3-dark {
     background-color: #30404d;
+}
+
+.colorpicker {
+    position: relative;
+    width: 100%;
+    height: 13em;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 0.25em;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.map {
+    position: absolute;
+    top: 1em;
+    bottom: 1em;
+    right: 2em;
+    left: 1em;
+    overflow: hidden;
+    user-select: none;
+    border-radius: 0.25em;
+}
+
+.map.active {
+    cursor: none;
+}
+
+.map.dark .pointer {
+    border-color: #fff;
+}
+
+.map.light .pointer {
+    border-color: #000;
+}
+
+.map .pointer {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    margin-left: -5px;
+    margin-bottom: -5px;
+    border-radius: 100%;
+    border: 1px solid #000;
+    will-change: left, bottom;
+}
+
+.map .background {
+    top: 0;
+    left: 0;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+.map .background:before,
+.map .background:after {
+    display: block;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.map .background:after {
+    background: linear-gradient(to bottom, transparent 0%, black 100%);
+}
+
+.map .background:before {
+    background: linear-gradient(to right, white 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.slider {
+    position: absolute;
+    user-select: none;
+}
+
+.slider.vertical {
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 10px;
+    cursor: ns-resize;
+}
+
+.slider.vertical .track {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 8px;
+    margin-left: -4px;
+}
+
+.slider.horizontal {
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 10px;
+    cursor: ew-resize;
+}
+
+.slider.horizontal .track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 8px;
+    margin-top: -4px;
+}
+
+.slider .track {
+    border-radius: 3px;
+    background: #888;
+}
+
+.slider .pointer {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin-left: -8px;
+    margin-bottom: -8px;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: inset 0 0 0 1px #ccc, 0 1px 2px #ccc;
+    will-change: left, bottom;
+}
+
+.hue-slider {
+    position: absolute;
+    top: 1em;
+    bottom: 1em;
+    right: 1.3em;
+}
+
+.hue-slider .track {
+    background: linear-gradient(to bottom, #FF0000 0%, #FF0099 10%, #CD00FF 20%, #3200FF 30%, #0066FF 40%, #00FFFD 50%, #00FF66 60%, #35FF00 70%, #CDFF00 80%, #FF9900 90%, #FF0000 100%);
+}
+
+.opacity-slider {
+    position: absolute;
+    bottom: 1.3em;
+    left: 1em;
+    right: 2em;
+}
+
+.opacity-slider .slider {
+    background: #fff url("data:image/gif;base64,R0lGODdhEAAQAPEAAMvLy8zMzP///wAAACwAAAAAEAAQAEACHYxvosstCAEMrq6Jj812Y59NIDQipdY5XLWqH4sVADs=") repeat;
+    background-size: 8px 8px;
+    height: 8px;
+}
+
+.opacity-slider .slider .track {
+    height: 8px;
+    margin-top: -4px;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, #FFF 100%);
+}
+
+.with-opacity-slider {
+    height: 14em;
+}
+
+.with-opacity-slider .map {
+    bottom: 2em;
+}
+
+.with-opacity-slider .hue-slider {
+    bottom: 2em;
 }

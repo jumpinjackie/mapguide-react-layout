@@ -1,9 +1,9 @@
 import * as React from "react";
-import ColoReact from 'coloreact';
 import { Collapse, Button, Intent, Card } from '@blueprintjs/core';
 import { DEFAULT_COLOR } from '../api/ol-style-helpers';
 import { tr } from "../api/i18n";
 import { NBSP } from '../constants';
+const SimpleColorPicker = require("react-simple-colorpicker");
 
 /**
  * @since 0.13
@@ -26,7 +26,7 @@ export const ColorPicker = (props: IColorPickerProps) => {
         <button style={{ width: 80, borderRadius: 3, backgroundColor: props.value ?? DEFAULT_COLOR }} onClick={onPickerToggle}>{NBSP}{NBSP}{NBSP}</button>
         <Collapse isOpen={isPickerOpen}>
             <Card>
-                <ColoReact style={{ height: 200, position: 'relative' }} color={props.value ?? DEFAULT_COLOR} onChange={(c: any) => props.onChange(`#${c.hex}`)} />
+                <SimpleColorPicker color={props.value ?? DEFAULT_COLOR} onChange={(c: any) => props.onChange(c)} />
                 <Button icon="chevron-up" intent={Intent.PRIMARY} onClick={() => setIsPickerOpen(false)}>{tr("ACTION_CLOSE", props.locale)}</Button>
             </Card>
         </Collapse>

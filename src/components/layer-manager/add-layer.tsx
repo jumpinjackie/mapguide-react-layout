@@ -3,8 +3,7 @@ import { tr } from "../../api/i18n";
 import { GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 import { AddWfsLayer } from "./add-wfs-layer";
-import Dropzone from "react-dropzone";
-import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup, FormGroup, Callout, NumericInput } from '@blueprintjs/core';
+import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup, FormGroup, Callout, NumericInput, FileInput } from '@blueprintjs/core';
 import * as Runtime from "../../api/runtime";
 import { strIsNullOrEmpty } from "../../utils/string";
 import proj4 from "proj4";
@@ -163,15 +162,14 @@ const AddFileLayer = (props: IAddLayerProps) => {
             {addLayerError && <Callout intent={Intent.DANGER} title={tr("ADDING_LAYER_ERROR", locale)}>
                 {addLayerError.message}
             </Callout>}
-            <Dropzone multiple={false} onDrop={acceptedFiles => onFileDropped(acceptedFiles[0])}>
-                {({ getRootProps, getInputProps }) => (<div style={{ margin: 10, border: "1px dashed black", borderRadius: 5, padding: 5 }} {...getRootProps()}>
-                    <NonIdealState
-                        title={tr("ADD_FILE", locale)}
-                        icon="upload"
-                        description={tr("ADD_FILE_INSTRUCTIONS", locale)}
-                        action={<input {...getInputProps()} />} />
-                </div>)}
-            </Dropzone>
+            <NonIdealState
+                title={tr("ADD_FILE", locale)}
+                icon="upload"
+                description={tr("ADD_FILE_INSTRUCTIONS", locale)}
+                action={<label className="bp3-file-input bp3-fill">
+                    <input type="file" onChange={e => e.target.files && onFileDropped(e.target.files[0])} />
+                    <span className="bp3-file-upload-input">{tr("CHOOSE_FILE", locale)}</span>
+                </label>} />
         </>;
     }
 }

@@ -196,7 +196,7 @@ const STRINGS_EN: ILocalizedMessages = {
     "LAYER_KIND_FILE": "A local file-based layer",
     "LAYER_KIND_URL": "A remote url-based layer",
     "ADD_FILE": "Add Local File",
-    "ADD_FILE_INSTRUCTIONS": "Click here to choose a file or drag and drop a file here to view it locally on the map (it won't be saved or uploaded to the internet)",
+    "ADD_FILE_INSTRUCTIONS": "Browse and select a file to view it locally on the map (it won't be saved or uploaded to the internet)",
     "FMT_UPLOADED_FILE": "(size: {size} bytes, type: {type})",
     "ADD_LOCAL_FILE_LAYER_FAILURE_NOT_TEXT": "Could not read text content from this file",
     "ADD_LOCAL_FILE_LAYER_FAILURE": "Failed to load file as layer. It is probably an unsupported file format",
@@ -244,7 +244,8 @@ const STRINGS_EN: ILocalizedMessages = {
     "ADDING_LAYER_ERROR": "Error adding layer",
     "LOADING_LAYER": "Loading layer: {name}",
     "ACTION_CLOSE": "Close",
-    "MORE_LAYER_OPTIONS": "More Layer Options"
+    "MORE_LAYER_OPTIONS": "More Layer Options",
+    "CHOOSE_FILE": "Choose file ..."
 };
 
 export default STRINGS_EN;

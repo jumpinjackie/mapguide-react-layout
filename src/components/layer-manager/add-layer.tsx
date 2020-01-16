@@ -118,7 +118,8 @@ const AddFileLayer = (props: IAddLayerProps) => {
                     throw new Error(tr("LAYER_NAME_EXISTS", locale, { name: layerName }));
                 }
                 const layer = await layerMgr.addLayerFromParsedFeatures({
-                    features: parsedFeaturesRef.current
+                    features: parsedFeaturesRef.current,
+                    projection: layerProjection
                 });
                 setIsAddingLayer(false);
                 viewer.toastSuccess("success", tr("ADDED_LAYER", props.locale, { name: layer.name }));

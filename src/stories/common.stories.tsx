@@ -14,7 +14,7 @@ storiesOf("Common Components", module)
             act(val);
             setColor(val);
         };
-        return <ColorPicker value={color} onChange={onSetColor} />;
+        return <ColorPicker locale="en" value={color} onChange={onSetColor} />;
     })
     .add("Vector Style Editor", () => {
         return <VectorStyleEditor onChange={action("style changed")}

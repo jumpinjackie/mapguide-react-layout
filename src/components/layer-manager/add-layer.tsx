@@ -4,10 +4,12 @@ import { GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 import { AddWfsLayer } from "./add-wfs-layer";
 import Dropzone from "react-dropzone";
-import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup, FormGroup, Callout } from '@blueprintjs/core';
+import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup, FormGroup, Callout, NumericInput } from '@blueprintjs/core';
 import * as Runtime from "../../api/runtime";
 import { strIsNullOrEmpty } from "../../utils/string";
 import proj4 from "proj4";
+import { IParsedFeatures } from '../map-viewer-context';
+import { ensureProjection } from '../../api/registry/projections';
 
 /**
  * @hidden
@@ -57,51 +59,81 @@ enum AddLayerKind {
     Url
 }
 
+interface LoadedFile {
+    name: string;
+    size: number;
+    type: string;
+}
+
 const AddFileLayer = (props: IAddLayerProps) => {
     const { locale } = props;
     const [isAddingLayer, setIsAddingLayer] = React.useState(false);
     const [addLayerError, setAddLayerError] = React.useState<any>(undefined);
-    const [loadedFile, setLoadedFile] = React.useState<File | undefined>(undefined);
+    const [loadedFile, setLoadedFile] = React.useState<LoadedFile | undefined>(undefined);
     const [addLayerName, setAddLayerName] = React.useState<string | undefined>(undefined);
-    const [addProjection, setAddProjection] = React.useState("EPSG:4326");
-    const onFileDropped = (file: File) => {
-        setLoadedFile(file);
-        setAddLayerName(file.name);
+    const [addProjection, setAddProjection] = React.useState(4326);
+    const parsedFeaturesRef = React.useRef<IParsedFeatures | undefined>(undefined);
+    const setParsedFile = (parsed: IParsedFeatures | undefined) => {
+        parsedFeaturesRef.current = parsed;
+        if (parsed) {
+            setAddLayerName(parsed.name);
+            setLoadedFile({
+                name: parsed.name,
+                size: parsed.size,
+                type: parsed.type
+            });
+        } else {
+            setLoadedFile(undefined);
+            parsedFeaturesRef.current = undefined;
+        }
+    };
+    const onFileDropped = async (file: File) => {
+        const viewer = Runtime.getViewer();
+        if (viewer) {
+            setAddLayerError(undefined);
+            const layerMgr = viewer.getLayerManager();
+            try {
+                const parsed = await layerMgr.parseFeaturesFromFile({
+                    file: file,
+                    name: file.name,
+                    locale: locale
+                });
+                setParsedFile(parsed);
+            } catch (e) {
+                setAddLayerError(e);
+            }
+        }
     };
     const onCancelAddFile = () => {
-        setLoadedFile(undefined);
+        setParsedFile(undefined);
     };
-    const onAddFileLayer = (layerProjection: string) => {
+    const onAddFileLayer = async (layerProjection: number) => {
         const viewer = Runtime.getViewer();
-        if (loadedFile && viewer) {
+        if (viewer && parsedFeaturesRef?.current) {
             setIsAddingLayer(true);
             setAddLayerError(undefined);
             try {
-                const layerName = addLayerName ?? loadedFile.name;
+                const [_, layerProj] = await ensureProjection(layerProjection, locale);
+                const layerName = addLayerName ?? parsedFeaturesRef.current.name;
                 const layerMgr = viewer.getLayerManager();
                 if (layerMgr.hasLayer(layerName)) {
                     throw new Error(tr("LAYER_NAME_EXISTS", locale, { name: layerName }));
                 }
-                layerMgr.addLayerFromFile({
-                    file: loadedFile,
-                    name: layerName,
-                    locale: props.locale,
-                    projection: layerProjection,
-                    callback: (res) => {
-                        setIsAddingLayer(false);
-                        if (res instanceof Error) {
-                            viewer.toastError("error", res.message);
-                        } else {
-                            viewer.toastSuccess("success", tr("ADDED_LAYER", props.locale, { name: res.name }));
-                            setAddLayerError(undefined);
-                            setLoadedFile(undefined);
-                            setAddLayerName(undefined);
-                            props.onLayerAdded(res);
-                        }
-                    }
+                const layer = await layerMgr.addLayerFromParsedFeatures({
+                    features: parsedFeaturesRef.current,
+                    projection: layerProj
                 });
+                setIsAddingLayer(false);
+                viewer.toastSuccess("success", tr("ADDED_LAYER", props.locale, { name: layer.name }));
+                setAddLayerError(undefined);
+                setLoadedFile(undefined);
+                setAddLayerName(undefined);
+                props.onLayerAdded(layer);
             } catch (e) {
                 setAddLayerError(e);
+                if (!strIsNullOrEmpty(e?.message)) {
+                    viewer.toastError("error", e.message);
+                }
             }
             setIsAddingLayer(false);
         }
@@ -117,9 +149,9 @@ const AddFileLayer = (props: IAddLayerProps) => {
                     {addLayerError.message}
                 </Callout>}
                 <FormGroup label={tr("ADD_LAYER_PROJECTION", locale)}>
-                    <HTMLSelect value={addProjection} onChange={e => setAddProjection(e.target.value)}>
-                        {projections.map(p => <option key={p} value={p}>{p}</option>)}
-                    </HTMLSelect>
+                    <FormGroup label={<a href="https://epsg.io" target="_blank">EPSG:</a>} inline>
+                        <NumericInput style={{ width: 60 }} min={0} value={addProjection} onValueChange={v => setAddProjection(v)} />
+                    </FormGroup>
                 </FormGroup>
                 <ButtonGroup>
                     <Button loading={isAddingLayer} onClick={(e: any) => onAddFileLayer(addProjection)} intent={Intent.PRIMARY}>{tr("ADD_LAYER", locale)}</Button>
@@ -128,6 +160,9 @@ const AddFileLayer = (props: IAddLayerProps) => {
             </>} />
     } else {
         return <>
+            {addLayerError && <Callout intent={Intent.DANGER} title={tr("ADDING_LAYER_ERROR", locale)}>
+                {addLayerError.message}
+            </Callout>}
             <Dropzone multiple={false} onDrop={acceptedFiles => onFileDropped(acceptedFiles[0])}>
                 {({ getRootProps, getInputProps }) => (<div style={{ margin: 10, border: "1px dashed black", borderRadius: 5, padding: 5 }} {...getRootProps()}>
                     <NonIdealState

@@ -121,6 +121,7 @@ const STRINGS_EN: ILocalizedMessages = {
     "MAP_SIZE_DISPLAY_UNITS": "Map view size display units",
     "ADD_MANAGE_LAYERS": "Add/Manage Layers",
     "ADD_LAYER": "Add Layer",
+    "ADD_LAYER_TILED": "Add Tiled Layer",
     "MANAGE_LAYERS": "Manage Layers",
     "LAYER_TYPE": "Layer Type",
     "SELECT_LAYER_TYPE": "Select Layer Type ...",
@@ -198,7 +199,7 @@ const STRINGS_EN: ILocalizedMessages = {
     "ADD_FILE_INSTRUCTIONS": "Click here to choose a file or drag and drop a file here to view it locally on the map (it won't be saved or uploaded to the internet)",
     "FMT_UPLOADED_FILE": "(size: {size} bytes, type: {type})",
     "ADD_LOCAL_FILE_LAYER_FAILURE_NOT_TEXT": "Could not read text content from this file",
-    "ADD_LOCAL_FILE_LAYER_FAILURE": "Failed to load file as layer",
+    "ADD_LOCAL_FILE_LAYER_FAILURE": "Failed to load file as layer. It is probably an unsupported file format",
     "WMS_UNSUPPORTED_VERSION": "Unsupported WMS version: {version}",
     "NO_EXTERNAL_LAYERS": "No Layers",
     "NO_EXTERNAL_LAYERS_DESC": "Add layers via the {tabName} tab above",
@@ -208,6 +209,8 @@ const STRINGS_EN: ILocalizedMessages = {
     "LAYER_MANAGER_TT_MOVE_DOWN": "Move this layer down the draw order",
     "LAYER_MANAGER_TT_ZOOM_EXTENTS": "Zoom to the extents of this layer",
     "LAYER_MANAGER_TT_REMOVE": "Remove this layer",
+    "LAYER_MANAGER_TT_EDIT_STYLE": "Edit style",
+    "LAYER_MANAGER_TT_MORE_OPTIONS": "Show more layer options",
     "CANCEL": "Cancel",
     "UNKNOWN_FILE_TYPE": "Unknown",
     "WMS_SERVICE_INFO": "WMS Service Info",
@@ -215,6 +218,7 @@ const STRINGS_EN: ILocalizedMessages = {
     "WMS_AVAILABLE_LAYERS": "Available WMS Layers",
     "WFS_AVAILABLE_LAYERS": "Available WFS Layers",
     "ADD_LAYER_WITH_WMS_STYLE": "Add layer ({style})",
+    "ADD_LAYER_WITH_WMS_STYLE_TILED": "Add tiled layer ({style})",
     "WMS_LEGEND": "WMS Legend",
     "VSED_NO_STYLES_TITLE": "No Styles",
     "VSED_NO_STYLES_DESC": "This editor is not configured to edit any styles",
@@ -238,7 +242,9 @@ const STRINGS_EN: ILocalizedMessages = {
     "VSED_TAB_POLY": "Polygon",
     "ADD_LAYER_PROJECTION": "Projection of this layer",
     "ADDING_LAYER_ERROR": "Error adding layer",
-    "LOADING_LAYER": "Loading layer: {name}"
+    "LOADING_LAYER": "Loading layer: {name}",
+    "ACTION_CLOSE": "Close",
+    "MORE_LAYER_OPTIONS": "More Layer Options"
 };
 
 export default STRINGS_EN;

@@ -58,6 +58,7 @@ A component that allows one to add custom external layers to the current map.
 This component supports adding 2 kinds of data
 
  * Local files in any of the following formats:
+    * CSV
     * GeoJSON
     * KML
     * TopoJSON
@@ -76,5 +77,17 @@ list of available projections is:
 
 For WFS, please observe the following restrictions:
 
- 1. The viewer bundle does not include the `GML` format driver due to bundle size. Thereforre, the add layer UI will omit layers that does not offer a `GeoJSON` representation when inspecting capabilities.
+ 1. The viewer bundle does not include the `GML` format driver due to bundle size. Therefore, the add layer UI will omit layers that does not offer a `GeoJSON` representation when inspecting capabilities.
  2. Added WFS layers will load all features up-front.
+
+For CSV files, please observe the following behavior:
+
+ 1. It will be accepted as a CSV file if it contains any of the following column headers (case-insensitive) representing point coordinates and the first sampled row is verified to contain numeric data:
+
+      * `x`, `y`
+      * `lon`, `lat`
+      * `lng`, `lat`
+      * `longitude`, `latitude`
+      * `easting`, `northing`
+
+ 2. It will skip over any row where there is missing/incomplete point coordinate data

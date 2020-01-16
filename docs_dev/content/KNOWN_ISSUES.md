@@ -36,6 +36,8 @@ Where applicable, an issue number is attached to indicate that such issues are a
  * Measure
    * Recorded measurements will temporarily disappear on templates with a collapsible Task Pane (eg. Slate) when the Task Pane panel is collapsed.
 
+ * The vertical hue slider of the color picker is inverted/flipped (Due to: https://github.com/elrumordelaluz/coloreact/issues/9)
+
  * Modal dialog backdrops do not work (due to recent Blueprint update)
 
 ## Commands

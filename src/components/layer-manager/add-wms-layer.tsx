@@ -31,8 +31,7 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
     const [loadingCapabilities, setLoadingCapabilities] = React.useState(false);
     const [caps, setCaps] = React.useState<WmsCapabilitiesDocument | undefined>(undefined);
     const [error, setError] = React.useState<Error | string | undefined>(undefined);
-    const onAddLayer = (name: string, style: WMSLayerStyle | undefined) => {
-        const bTiled = true;
+    const onAddLayer = (name: string, isTiled: boolean, style: WMSLayerStyle | undefined) => {
         const viewer = Runtime.getViewer();
         if (caps && viewer) {
             const params: any = {
@@ -41,12 +40,12 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
             if (style) {
                 params.STYLE = style;
             }
-            if (bTiled) {
+            if (isTiled) {
                 params.TILED = true;
             }
             let layer;
             let source: olTiledWmsSource | olWmsSource;
-            if (bTiled) {
+            if (isTiled) {
                 source = new olTiledWmsSource({
                     url: caps.Capability.Request.GetMap.DCPType[0].HTTP.Get.OnlineResource,
                     params: params

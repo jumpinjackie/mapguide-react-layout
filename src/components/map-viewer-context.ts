@@ -11,7 +11,6 @@ import {
     LayerTransparencySet,
     ILayerInfo,
     ILayerManager,
-    IAddFileLayerOptions,
     LayerProperty,
     MgLayerType,
     MgBuiltInLayers,
@@ -19,12 +18,13 @@ import {
     MG_BASE_LAYER_GROUP_NAME,
     LayerExtensions,
     IWmsLayerExtensions,
-    SourceProperty
+    SourceProperty,
+    IParseFeaturesFromFileOptions,
+    IAddLayerFromParsedFeaturesOptions
 } from "../api/common";
 import {
     IVectorFeatureStyle,
     IOlStyleMap,
-    vectorStyleToOLStyleMap,
     DEFAULT_POINT_STYLE,
     DEFAULT_LINE_STYLE,
     DEFAULT_POLY_STYLE,
@@ -78,6 +78,11 @@ import KML from "ol/format/KML";
 import TopoJSON from "ol/format/TopoJSON";
 import olWmsSource from "ol/source/ImageWMS";
 import olTileWmsSource from "ol/source/TileWMS";
+import TextFeature from 'ol/format/TextFeature';
+import JSONFeature from 'ol/format/JSONFeature';
+import XMLFeature from 'ol/format/XMLFeature';
+import { ProjectionLike } from '@hanreev/types-ol/ol/proj';
+const Papa = require("papaparse");
 
 /**
  * @since 0.13
@@ -930,7 +935,7 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
     if (layer instanceof olImageLayer || layer instanceof olTileLayer) {
         const source = layer.getSource();
         if (layer.get(LayerProperty.HAS_WMS_LEGEND) == true && (source instanceof olWmsSource || source instanceof olTileWmsSource)) {
-            ext = { 
+            ext = {
                 type: "WMS",
                 getLegendUrl: (res?: number) => source.getLegendUrl(res)
             } as IWmsLayerExtensions;
@@ -954,15 +959,160 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
     }
 }
 
+/**
+ *
+ * @export
+ * @interface IParsedFeatures
+ * @since 0.13
+ */
+export interface IParsedFeatures {
+    name: string;
+    hasFeatures(): boolean;
+    readonly type: string;
+    readonly size: number;
+    addTo(source: olSourceVector<Geometry>, mapProjection: ProjectionLike, dataProjection?: ProjectionLike): void;
+}
+
+class ParsedFeatures implements IParsedFeatures {
+    constructor(public type: string, public size: number, private features: Feature<Geometry>[]) {
+
+    }
+    public hasFeatures(): boolean { return this.features.length > 0; }
+    public name: string;
+    public addTo(source: olSourceVector<Geometry>, mapProjection: ProjectionLike, dataProjection?: ProjectionLike) {
+        if (dataProjection) {
+            for (const f of this.features) {
+                const g = f.getGeometry();
+                const tg = g.transform(dataProjection, mapProjection)
+                f.setGeometry(tg);
+            }
+        }
+        source.addFeatures(this.features);
+    }
+}
+
+interface IFormatDriver {
+    tryParse(size: number, text: string): Promise<IParsedFeatures>;
+}
+
+class FormatDriver implements IFormatDriver {
+    constructor(private type: string, private format: TextFeature | JSONFeature | XMLFeature) { }
+    public async tryParse(size: number, text: string): Promise<IParsedFeatures> {
+        const fs = this.format.readFeatures(text);
+        return new ParsedFeatures(this.type, size, fs);
+    }
+}
+
+interface IPapaParsedResults {
+    data: any[];
+    errors: {
+        type: string;
+        code: string;
+        message: string;
+        row: number;
+    }[];
+    meta: {
+        delimiter?: string;
+        linebreak?: string;
+        aborted?: boolean;
+        fields?: string[];
+        truncated?: boolean;
+    }
+}
+
+class CsvFormatDriver implements IFormatDriver {
+    private type: string;
+    constructor(private aliases: { xColumn: string, yColumn: string }[]) {
+        this.type = "CSV";
+    }
+    public tryParse(size: number, text: string): Promise<IParsedFeatures> {
+        const aliases = this.aliases;
+        const type = this.type;
+        return new Promise((resolve, reject) => {
+            Papa.parse(text, {
+                header: true,
+                complete: function (results: IPapaParsedResults) {
+                    if (!results.data || results.data.length == 0) {
+                        reject(new Error("No data parsed. Probably not a CSV file"));
+                    } else {
+                        if (results.meta.fields) {
+                            let parsed: IParsedFeatures | undefined;
+                            //Run through the alias list and see if we get any matches
+                            for (const alias of aliases) {
+                                if (parsed) {
+                                    break;
+                                }
+                                const xc = results.meta.fields.filter(s => s.toLowerCase() == alias.xColumn.toLowerCase())?.[0];
+                                const yc = results.meta.fields.filter(s => s.toLowerCase() == alias.yColumn.toLowerCase())?.[0];
+                                // We found the columns, but before we accept this set, the columns
+                                // in question must be numeric. Being CSV and all, we'll use the most
+                                // scientific method to determine this: Sample the first row of data /s
+                                if (!strIsNullOrEmpty(xc) && !strIsNullOrEmpty(yc)) {
+                                    const first = results.data[0];
+                                    const firstX = parseFloat(first[xc]);
+                                    const firstY = parseFloat(first[yc]);
+                                    if (first && !isNaN(firstX) && !isNaN(firstY)) {
+                                        const json = {
+                                            type: 'FeatureCollection',
+                                            features: [] as any[]
+                                        };
+                                        for (const d of results.data) {
+                                            const x = parseFloat(d[xc]);
+                                            const y = parseFloat(d[yc]);
+                                            if (!isNaN(x) && !isNaN(y)) {
+                                                const f = {
+                                                    type: 'Feature',
+                                                    geometry: {
+                                                        coordinates: [x, y],
+                                                        type: 'Point'
+                                                    },
+                                                    properties: d
+                                                }
+                                                delete f.properties[xc];
+                                                delete f.properties[yc];
+                                                json.features.push(f);
+                                            }
+                                        }
+                                        const fmt = new GeoJSON();
+                                        const features = fmt.readFeatures(json);
+                                        parsed = new ParsedFeatures(type, size, features);
+                                        break;
+                                    }
+                                }
+                            }
+                            if (parsed) {
+                                resolve(parsed);
+                            } else {
+                                reject(new Error("Data successfully parsed as CSV, but coordinate columns could not be found"));
+                            }
+                        } else {
+                            reject(new Error("No fields found in CSV metadata"));
+                        }
+                    }
+                }
+            });
+        });
+    }
+}
+
+const CSV_COLUMN_ALIASES = [
+    { xColumn: "lon", yColumn: "lat" },
+    { xColumn: "lng", yColumn: "lat" },
+    { xColumn: "longitude", yColumn: "latitude" },
+    { xColumn: "x", yColumn: "y" },
+    { xColumn: "easting", yColumn: "northing" }
+];
+
 export class MgLayerManager implements ILayerManager {
-    private _olFormats: IReadFeatures[];
+    private _olFormats: IFormatDriver[];
     constructor(private map: olMap, private layerSet: MgLayerSet) {
         this._olFormats = [
-            { type: "GeoJSON", readFeatures: (text, opts) => new GeoJSON().readFeatures(text, opts) },
-            { type: "KML", readFeatures: (text, opts) => new KML().readFeatures(text, opts) },
-            { type: "TopoJSON", readFeatures: (text, opts) => new TopoJSON().readFeatures(text, opts) },
-            { type: "GPX", readFeatures: (text, opts) => new GPX().readFeatures(text, opts) },
-            { type: "IGC", readFeatures: (text, opts) => new IGC().readFeatures(text, opts) }
+            new CsvFormatDriver(CSV_COLUMN_ALIASES),
+            new FormatDriver("GeoJSON", new GeoJSON()),
+            new FormatDriver("TopoJSON", new TopoJSON()),
+            new FormatDriver("KML", new KML()),
+            new FormatDriver("GPX", new GPX()),
+            new FormatDriver("IGC", new IGC())
         ];
     }
     getLayers(): ILayerInfo[] {
@@ -983,65 +1133,75 @@ export class MgLayerManager implements ILayerManager {
     apply(layers: ILayerInfo[]): void {
         this.layerSet.apply(this.map, layers);
     }
-    addLayerFromFile(options: IAddFileLayerOptions): void {
-        const { file, name: layerName, locale, projection, callback } = options;
-        const reader = new FileReader();
+    parseFeaturesFromFile(options: IParseFeaturesFromFileOptions): Promise<IParsedFeatures> {
+        const { file, name: layerName, locale } = options;
         const that = this;
-        const handler = function (e: ProgressEvent<FileReader>) {
-            const result = e.target?.result;
-            if (result && typeof (result) == 'string') {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            const handler = async function (e: ProgressEvent<FileReader>) {
+                const result = e.target?.result;
+                if (result && typeof (result) == 'string') {
+                    const formats = that._olFormats;
+                    let loadedType: IParsedFeatures | undefined;
+                    let bLoaded = false;
+                    for (let i = 0, ii = formats.length; i < ii; ++i) {
+                        const format = formats[i];
+                        try {
+                            loadedType = await format.tryParse(file.size, result);
+                        } catch (e) {
+
+                        }
+                        if (loadedType && loadedType.hasFeatures()) {
+                            loadedType.name = layerName;
+                            bLoaded = true;
+                            break;
+                        }
+                    }
+                    if (bLoaded) {
+                        resolve(loadedType);
+                    } else {
+                        reject(new Error(tr("ADD_LOCAL_FILE_LAYER_FAILURE", locale)));
+                    }
+                } else {
+                    reject(new Error(tr("ADD_LOCAL_FILE_LAYER_FAILURE_NOT_TEXT", locale)));
+                }
+            };
+            reader.addEventListener("load", handler);
+            reader.readAsText(file);
+        });
+    }
+    addLayerFromParsedFeatures(options: IAddLayerFromParsedFeaturesOptions): Promise<ILayerInfo> {
+        const { features, projection } = options;
+        const that = this;
+        return new Promise((resolve, reject) => {
+            try {
                 let proj = projection;
                 if (!proj) {
                     const view = that.map.getView();
                     proj = view.getProjection();
                 }
-                const formats = that._olFormats;
-                let features = [] as Feature<Geometry>[];
-                let loadedType: string | undefined;
-                let bLoaded = false;
-                for (let i = 0, ii = formats.length; i < ii; ++i) {
-                    const format = formats[i];
-                    try {
-                        features = format.readFeatures(result, {
-                            dataProjection: projection,
-                            featureProjection: that.map.getView().getProjection()
-                        });
-                    } catch (e) {
 
-                    }
-                    if (features && features.length > 0) {
-                        loadedType = format.type;
-                        bLoaded = true;
-                        break;
-                    }
-                }
-                if (bLoaded) {
-                    const source = new olSourceVector();
-                    source.set(SourceProperty.SUPPRESS_LOAD_EVENTS, true);
-                    const layer = new olVectorLayer({
-                        source: source
-                    });
-                    source.addFeatures(features);
-                    layer.set(LayerProperty.LAYER_NAME, layerName);
-                    layer.set(LayerProperty.LAYER_TYPE, loadedType);
-                    layer.set(LayerProperty.IS_EXTERNAL, true)
-                    layer.set(LayerProperty.IS_GROUP, false);
-                    setOLVectorLayerStyle(layer, {
-                        point: DEFAULT_POINT_STYLE,
-                        line: DEFAULT_LINE_STYLE,
-                        polygon: DEFAULT_POLY_STYLE
-                    });
-                    that.addLayer(layerName, layer);
-                    callback(getLayerInfo(layer, true));
-                } else {
-                    callback(new Error(tr("ADD_LOCAL_FILE_LAYER_FAILURE", locale)));
-                }
-            } else {
-                callback(new Error(tr("ADD_LOCAL_FILE_LAYER_FAILURE_NOT_TEXT", locale)));
+                const source = new olSourceVector();
+                source.set(SourceProperty.SUPPRESS_LOAD_EVENTS, true);
+                const layer = new olVectorLayer({
+                    source: source
+                });
+                features.addTo(source, that.map.getView().getProjection(), proj);
+                layer.set(LayerProperty.LAYER_NAME, features.name);
+                layer.set(LayerProperty.LAYER_TYPE, features);
+                layer.set(LayerProperty.IS_EXTERNAL, true)
+                layer.set(LayerProperty.IS_GROUP, false);
+                setOLVectorLayerStyle(layer, {
+                    point: DEFAULT_POINT_STYLE,
+                    line: DEFAULT_LINE_STYLE,
+                    polygon: DEFAULT_POLY_STYLE
+                });
+                that.addLayer(features.name, layer);
+                resolve(getLayerInfo(layer, true));
+            } catch (e) {
+                reject(e);
             }
-        };
-        reader.addEventListener("load", handler);
-        reader.readAsText(file);
+        });
     }
 }
 

@@ -128,6 +128,7 @@ export interface ILocalizedMessages {
     OK: string;
     ADD_MANAGE_LAYERS: string;
     ADD_LAYER: string;
+    ADD_LAYER_TILED: string;
     MANAGE_LAYERS: string;
     LAYER_TYPE: string;
     SELECT_LAYER_TYPE: string;
@@ -215,6 +216,8 @@ export interface ILocalizedMessages {
     LAYER_MANAGER_TT_MOVE_DOWN: string;
     LAYER_MANAGER_TT_ZOOM_EXTENTS: string;
     LAYER_MANAGER_TT_REMOVE: string;
+    LAYER_MANAGER_TT_EDIT_STYLE: string;
+    LAYER_MANAGER_TT_MORE_OPTIONS: string;
     CANCEL: string;
     UNKNOWN_FILE_TYPE: string;
     WMS_SERVICE_INFO: string;
@@ -222,6 +225,7 @@ export interface ILocalizedMessages {
     WMS_AVAILABLE_LAYERS: string;
     WFS_AVAILABLE_LAYERS: string;
     ADD_LAYER_WITH_WMS_STYLE: string;
+    ADD_LAYER_WITH_WMS_STYLE_TILED: string;
     WMS_LEGEND: string;
     VSED_NO_STYLES_TITLE: string;
     VSED_NO_STYLES_DESC: string;
@@ -246,4 +250,6 @@ export interface ILocalizedMessages {
     ADD_LAYER_PROJECTION: string;
     ADDING_LAYER_ERROR: string;
     LOADING_LAYER: string;
+    ACTION_CLOSE: string;
+    MORE_LAYER_OPTIONS: string;
 }

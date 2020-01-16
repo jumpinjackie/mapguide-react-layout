@@ -19,6 +19,7 @@ import { ProjectionLike } from 'ol/proj';
 import { LoadFunction } from 'ol/Image';
 import { IToolbarAppState } from './registry';
 import { IVectorFeatureStyle } from './ol-style-helpers';
+import { IParsedFeatures } from 'src/components';
 
 // Event boilerplate
 export type GenericEvent = any;
@@ -921,15 +922,26 @@ export interface ILayerInfo {
 }
 
 /**
- * Options for adding a file-based layer
+ *
+ * @export
+ * @interface IAddLayerFromParsedFeaturesOptions
  * @since 0.13
  */
-export interface IAddFileLayerOptions {
+export interface IAddLayerFromParsedFeaturesOptions {
+    projection?: ProjectionLike;
+    features: IParsedFeatures;
+}
+
+/**
+ *
+ * @export
+ * @interface IParseFeaturesFromFileOptions
+ * @since 0.13
+ */
+export interface IParseFeaturesFromFileOptions {
     file: File;
     name: string;
-    projection?: ProjectionLike;
     locale: string;
-    callback: (result: Error | ILayerInfo) => void;
 }
 
 /**
@@ -982,11 +994,22 @@ export interface ILayerManager {
     getLayer<T extends olLayerBase>(name: string): T | undefined;
 
     /**
-     * Attempt to add a layer using the given file as a source
-     * @param options
+     *
+     * @param {IParseFeaturesFromFileOptions} options
+     * @returns {Promise<IParsedFeatures>}
+     * @memberof ILayerManager
      * @since 0.13
      */
-    addLayerFromFile(options: IAddFileLayerOptions): void;
+    parseFeaturesFromFile(options: IParseFeaturesFromFileOptions): Promise<IParsedFeatures>;
+
+    /**
+     *
+     * @param {IAddLayerFromParsedFeaturesOptions} options
+     * @returns {Promise<ILayerInfo>}
+     * @memberof ILayerManager
+     * @since 0.13
+     */
+    addLayerFromParsedFeatures(options: IAddLayerFromParsedFeaturesOptions): Promise<ILayerInfo>;
 
     /**
      * Applies draw order/opacity/visibility

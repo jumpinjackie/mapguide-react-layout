@@ -166,10 +166,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
                 title={tr("ADD_FILE", locale)}
                 icon="upload"
                 description={tr("ADD_FILE_INSTRUCTIONS", locale)}
-                action={<label className="bp3-file-input bp3-fill">
-                    <input type="file" onChange={e => e.target.files && onFileDropped(e.target.files[0])} />
-                    <span className="bp3-file-upload-input">{tr("CHOOSE_FILE", locale)}</span>
-                </label>} />
+                action={<FileInput fill text={tr("CHOOSE_FILE", locale)} buttonText={tr("BROWSE", locale)} onInputChange={(e: any) => e.target.files && onFileDropped(e.target.files[0])} />} />
         </>;
     }
 }

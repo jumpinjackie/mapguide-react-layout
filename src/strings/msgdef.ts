@@ -253,4 +253,5 @@ export interface ILocalizedMessages {
     ACTION_CLOSE: string;
     MORE_LAYER_OPTIONS: string;
     CHOOSE_FILE: string;
+    BROWSE: string;
 }

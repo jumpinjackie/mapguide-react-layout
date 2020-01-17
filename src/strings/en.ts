@@ -245,7 +245,8 @@ const STRINGS_EN: ILocalizedMessages = {
     "LOADING_LAYER": "Loading layer: {name}",
     "ACTION_CLOSE": "Close",
     "MORE_LAYER_OPTIONS": "More Layer Options",
-    "CHOOSE_FILE": "Choose file ..."
+    "CHOOSE_FILE": "Choose file ...",
+    "BROWSE": "Browse"
 };
 
 export default STRINGS_EN;

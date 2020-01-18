@@ -98,7 +98,7 @@
     "babel-plugin-transform-object-assign": "6.22.0",
     "bestzip": "2.1.5",
     "cache-loader": "^4.1.0",
-    "copyfiles": "2.1.1",
+    "copyfiles": "2.2.0",
     "coveralls": "3.0.9",
     "cross-env": "6.0.3",
     "css-loader": "3.4.2",

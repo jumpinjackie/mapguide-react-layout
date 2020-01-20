@@ -62,7 +62,7 @@ class FusionApiShim {
         let reqUrl = `${Runtime.getFusionRoot()}/${url}`;
         const client = this.parent.getClient();
         const resolve = options.onSuccess || (() => logger.debug(`No success handler defined for this operation`));
-        const fail = options.onFailure || options.onException || ((r: any, res: Error) => logger.error(res));
+        const fail = options.onFailure || options.onException || ((_r: any, res: Error) => logger.error(res));
         if (client) {
             if (typeof (options.parameters) == 'string') {
                 reqUrl += "?" + options.parameters;
@@ -520,7 +520,7 @@ class FusionWidgetApiShim {
             r: circ.getRadius()
         };
     }
-    digitizePoint(handler: FusionGeomDigitizer) { //Map
+    digitizePoint(_options: any, handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizePoint(pt => {
@@ -528,7 +528,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeLine(handler: FusionGeomDigitizer) { //Map
+    digitizeLine(_options: any, handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeLine(ln => {
@@ -536,7 +536,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeLineString(handler: FusionGeomDigitizer) { //Map
+    digitizeLineString(_options: any, handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeLineString(lstr => {
@@ -544,7 +544,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeRectangle(handler: FusionGeomDigitizer) { //Map
+    digitizeRectangle(_options: any, handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeRectangle(rect => {
@@ -552,7 +552,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizePolygon(handler: FusionGeomDigitizer) { //Map
+    digitizePolygon(_options: any, handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizePolygon(poly => {
@@ -560,7 +560,7 @@ class FusionWidgetApiShim {
             });
         }
     }
-    digitizeCircle(handler: FusionGeomDigitizer) { //Map
+    digitizeCircle(_options: any, handler: FusionGeomDigitizer) { //Map
         const viewer = Runtime.getViewer();
         if (viewer) {
             viewer.digitizeCircle(circ => {
@@ -1156,7 +1156,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         this.installShims(browserWindow);
         this.installShims(window.parent);
 
-        this.RegisterSelectionHandler((mapName: string, selection: QueryMapFeaturesResponse | undefined) => {
+        this.RegisterSelectionHandler((_mapName: string, selection: QueryMapFeaturesResponse | undefined) => {
             this.fusionSelectionHandler(selection);
         });
     }

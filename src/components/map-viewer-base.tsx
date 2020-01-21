@@ -92,10 +92,7 @@ import { areArraysDifferent } from '../utils/array';
 import GeometryType from 'ol/geom/GeometryType';
 import { ProjectionLike } from 'ol/proj';
 import Select from 'ol/interaction/Select';
-import MapBrowserEvent from 'ol/MapBrowserEvent';
 import { singleClick } from 'ol/events/condition';
-import { MapFeaturePopup } from './map-feature-popup';
-import { Coordinate } from '@hanreev/types-ol/ol/coordinate';
 
 /**
  * MapViewerBase component props

@@ -1,7 +1,7 @@
 /**
  * map-viewer-base.tsx
  *
- * This is the main map viewer component that wraps the OpenLayers 3 map viewer and its various APIs
+ * This is the main map viewer component that wraps the OpenLayers map viewer and its various APIs
  *
  * This component is designed to be as "dumb" as possible, taking as much of its viewer directives from
  * the props given to it. It carries minimal component state. Where possible, relevant state is farmed off and
@@ -12,7 +12,7 @@
  * components will properly update) and flowing updated props back to this component to actually
  * carry out the requested actions
  *
- * NOTE: This component does not perfectly implement uni-directional data flow (sadly OpenLayers 3 is fighting
+ * NOTE: This component does not perfectly implement uni-directional data flow (sadly OpenLayers is fighting
  * against us in some parts, and is prone to out-of-band updates to map state that we are not properly flowing back),
  * thus it breaks certain debugging capabilities of redux such as "time travel"
  */
@@ -34,7 +34,8 @@ import {
     KC_ESCAPE,
     KC_U,
     SelectionVariant,
-    Size2
+    Size2,
+    LayerProperty
 } from "../api/common";
 import * as RtMap from '../api/contracts/runtime-map';
 import debounce = require("lodash.debounce");
@@ -44,8 +45,6 @@ import { isSessionExpiredError } from '../api/error';
 import { Client } from '../api/client';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
-import { IItem, getEnabled } from '../components/toolbar';
-import { getAssetPath } from "../utils/asset";
 import {
     CURSOR_DIGITIZE_POINT,
     CURSOR_DIGITIZE_LINE,
@@ -57,7 +56,6 @@ import {
     CURSOR_GRAB,
     CURSOR_ZOOM_IN
 } from "../constants/assets";
-import { isMenu } from '../utils/type-guards';
 import { tr } from "../api/i18n";
 const isMobile = require("ismobilejs");
 import { IMapViewerContextCallback, IMapViewerContextProps, MapViewerContext, MgLayerSet, MgLayerManager } from "./map-viewer-context";
@@ -92,7 +90,12 @@ import LineString from "ol/geom/LineString";
 import Circle from "ol/geom/Circle";
 import { areArraysDifferent } from '../utils/array';
 import GeometryType from 'ol/geom/GeometryType';
-import { transform, transformExtent, ProjectionLike } from 'ol/proj';
+import { ProjectionLike } from 'ol/proj';
+import Select from 'ol/interaction/Select';
+import MapBrowserEvent from 'ol/MapBrowserEvent';
+import { singleClick } from 'ol/events/condition';
+import { MapFeaturePopup } from './map-feature-popup';
+import { Coordinate } from '@hanreev/types-ol/ol/coordinate';
 
 /**
  * MapViewerBase component props
@@ -253,15 +256,6 @@ function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4));
 }
 
-function cloneExtent(bounds: Bounds): Bounds {
-    return [
-        bounds[0],
-        bounds[1],
-        bounds[2],
-        bounds[3]
-    ];
-}
-
 export interface IMapViewerBaseState {
     shiftKey: boolean;
     isMouseDown: boolean;
@@ -298,6 +292,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     private _busyWorkers: number;
     private _triggerZoomRequestOnMoveEnd: boolean;
     private _keepAlive: SessionKeepAlive;
+    private _select: Select;
+
     /**
      * This is a throttled version of _refreshOnStateChange(). Call this on any
      * modifications to pendingStateChanges
@@ -712,9 +708,12 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         }
     }
     componentDidMount() {
-        const { map, agentUri, imageFormat, locale } = this.props;
+        const { locale } = this.props;
         const mapNode = ReactDOM.findDOMNode(this);
-
+        this._select = new Select({
+            condition: (e) => this.props.tool == ActiveMapTool.Select && singleClick(e),
+            layers: (layer) => layer.get(LayerProperty.IS_SELECTABLE) == true
+        });
         this._client = new Client(this.props.agentUri, this.props.agentKind);
         this._keepAlive = new SessionKeepAlive(() => this.props.map.SessionId, this._client, this.onSessionExpired.bind(this));
         this._zoomSelectBox = new DragBox({
@@ -734,6 +733,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
                 })
             ],
             interactions: [
+                this._select,
                 new DragRotate(),
                 new DragPan({
                     condition: (e) => {

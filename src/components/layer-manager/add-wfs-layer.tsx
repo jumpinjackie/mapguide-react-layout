@@ -93,6 +93,7 @@ export const AddWfsLayer = (props: IAddLayerContentProps) => {
                 });
                 layer.set(LayerProperty.LAYER_TYPE, "WFS");
                 layer.set(LayerProperty.IS_EXTERNAL, true);
+                layer.set(LayerProperty.IS_SELECTABLE, true);
                 layer.set(LayerProperty.IS_GROUP, false);
                 if (wfsWgs84Bounds) {
                     layer.set(LayerProperty.WGS84_BBOX, wfsWgs84Bounds);

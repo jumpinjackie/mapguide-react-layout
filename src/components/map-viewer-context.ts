@@ -904,7 +904,8 @@ export class MgLayerSet {
             .filter(l => this._customLayers[l.get(LayerProperty.LAYER_NAME)] != null)
             .map(l => ({
                 ...getLayerInfo(l, true),
-                //Smuggle this value out for debugging purposes
+                //Smuggle these values out for debugging purposes
+                isSelectable: this._customLayers[l.get(LayerProperty.LAYER_NAME)].layer.get(LayerProperty.IS_SELECTABLE) == true,
                 order: this._customLayers[l.get(LayerProperty.LAYER_NAME)].order
             }));
         return layers.reverse();
@@ -1275,8 +1276,9 @@ export class MgLayerManager implements ILayerManager {
                 });
                 features.addTo(source, that.map.getView().getProjection(), proj);
                 layer.set(LayerProperty.LAYER_NAME, features.name);
-                layer.set(LayerProperty.LAYER_TYPE, features);
-                layer.set(LayerProperty.IS_EXTERNAL, true)
+                layer.set(LayerProperty.LAYER_TYPE, features.type);
+                layer.set(LayerProperty.IS_SELECTABLE, true);
+                layer.set(LayerProperty.IS_EXTERNAL, true);
                 layer.set(LayerProperty.IS_GROUP, false);
                 setOLVectorLayerStyle(layer, {
                     point: DEFAULT_POINT_STYLE,

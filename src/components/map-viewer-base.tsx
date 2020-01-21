@@ -403,7 +403,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         }
     }
     private sendSelectionQuery(queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) {
-        if (queryOpts != null && queryOpts.layernames != null && queryOpts.layernames.length == 0) {
+        if (queryOpts != null && (queryOpts.layernames ?? []).length == 0) {
             return;
         }
         this.incrementBusyWorker();

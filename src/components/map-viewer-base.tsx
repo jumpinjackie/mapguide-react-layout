@@ -595,11 +595,11 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     private applyView(layerSet: MgLayerSet, vw: IMapView) {
         this._triggerZoomRequestOnMoveEnd = false;
-        layerSet.view.setCenter([vw.x, vw.y]);
+        layerSet.getView().setCenter([vw.x, vw.y]);
         //Don't use this.scaleToResolution() as that uses this.props to determine
         //applicable layer set, but we already have that here
         const res = layerSet.scaleToResolution(vw.scale);
-        layerSet.view.setResolution(res);
+        layerSet.getView().setResolution(res);
         this._triggerZoomRequestOnMoveEnd = true;
     }
     // ----------------- React Lifecycle ----------------- //
@@ -631,7 +631,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             newLayerSet.attach(this._map, ovMap);
             //This would happen if we switch to a map we haven't visited yet
             if (!nextProps.view) {
-                newLayerSet.view.fit(newLayerSet.extent);
+                newLayerSet.fitViewToExtent();
                 bChangedView = true;
             } else {
                 const layerSet = this._mapContext.getLayerSet(nextProps.map.Name);
@@ -787,7 +787,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         if (this.props.view != null) {
             this.zoomToView(this.props.view.x, this.props.view.y, this.props.view.scale);
         } else {
-            this._map.getView().fit(activeLayerSet.extent);
+            this._map.getView().fit(activeLayerSet.getExtent());
         }
         this.onResize(this._map.getSize());
     }
@@ -874,7 +874,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         const size = this._map.getSize();
         const devW = size[0];
         const devH = size[1];
-        const metersPerPixel = 0.0254 / activeLayerSet.dpi;
+        const metersPerPixel = 0.0254 / activeLayerSet.getDpi();
         const metersPerUnit = activeLayerSet.getMetersPerUnit();
         //Scale calculation code from AJAX viewer
         let mapScale: number;
@@ -946,7 +946,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     public initialView(): void {
         const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
-        this.onRequestZoomToView(this.getViewForExtent(activeLayerSet.extent));
+        this.onRequestZoomToView(this.getViewForExtent(activeLayerSet.getExtent()));
     }
     public clearSelection(): void {
         this.setSelectionXml("");

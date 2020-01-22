@@ -255,4 +255,6 @@ export interface ILocalizedMessages {
     MORE_LAYER_OPTIONS: string;
     CHOOSE_FILE: string;
     BROWSE: string;
+    SEL_FEATURE_PROPERTIES: string;
+    SEL_FEATURE_PROPERTIES_NONE: string;
 }

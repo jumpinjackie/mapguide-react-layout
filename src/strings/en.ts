@@ -247,7 +247,9 @@ const STRINGS_EN: ILocalizedMessages = {
     "ACTION_CLOSE": "Close",
     "MORE_LAYER_OPTIONS": "More Layer Options",
     "CHOOSE_FILE": "Choose file ...",
-    "BROWSE": "Browse"
+    "BROWSE": "Browse",
+    "SEL_FEATURE_PROPERTIES": "Feature Properties",
+    "SEL_FEATURE_PROPERTIES_NONE": "No properties"
 };
 
 export default STRINGS_EN;

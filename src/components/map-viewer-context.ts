@@ -22,6 +22,9 @@ import { createContext } from "react";
 import { MouseTrackingTooltip } from './tooltips/mouse';
 import { FeatureQueryTooltip } from './tooltips/feature';
 import { MgLayerSet } from '../api/layer-set';
+import Collection from 'ol/Collection';
+import Feature from 'ol/Feature';
+import { SelectedFeaturesTooltip } from './tooltips/selected-features';
 
 /**
  * @since 0.13
@@ -77,6 +80,7 @@ export class MapViewerContext {
     private _layerSets: Dictionary<MgLayerSet>;
     private _mouseTooltip: MouseTrackingTooltip;
     private _featureTooltip: FeatureQueryTooltip;
+    private _selectTooltip: SelectedFeaturesTooltip;
     private _map: olMap;
     private _ovMap: olOverviewMap;
     private callback: IMapViewerContextCallback;
@@ -86,6 +90,7 @@ export class MapViewerContext {
         this._layerSets = {};
         this._mouseTooltip = new MouseTrackingTooltip(this._map, this.callback.isContextMenuOpen);
         this._featureTooltip = new FeatureQueryTooltip(this._map, callback);
+        this._selectTooltip = new SelectedFeaturesTooltip(this._map);
         //HACK: To avoid chicken-egg problem, we call this.isFeatureTooltipEnabled() instead
         //of callback.isFeatureTooltipEnabled() even though its impl merely forwards to this
         this._featureTooltip.setEnabled(this.isFeatureTooltipEnabled());
@@ -156,9 +161,13 @@ export class MapViewerContext {
         this._mouseTooltip.setText(text);
     }
     public handleMouseTooltipMouseMove(e: GenericEvent) {
-        if (this._mouseTooltip) {
-            this._mouseTooltip.onMouseMove(e);
-        }
+        this._mouseTooltip?.onMouseMove?.(e);
+    }
+    public hideSelectedVectorFeaturesTooltip() {
+        this._selectTooltip?.hide();
+    }
+    public showSelectedVectorFeatures(features: Collection<Feature>, pixel: [number, number], locale?: string) {
+        this._selectTooltip?.showSelectedVectorFeatures(features, pixel, locale);
     }
     public queryFeatureTooltip(pixel: [number, number]) {
         if (this._featureTooltip && this._featureTooltip.isEnabled()) {

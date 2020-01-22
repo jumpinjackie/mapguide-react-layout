@@ -612,10 +612,6 @@ export class MgLayerSet {
         // add and insert them to the front one-by-one, ensuring all the layers we add will be
         // at the bottom of the draw order
         const layers = map.getLayers();
-        const allLayers = this.mainSet.getLayers();
-        for (let i = allLayers.length - 1; i >= 0; i--) {
-            layers.insertAt(0, allLayers[i]);
-        }
         // Attach custom layers
         const customLayers = Object.keys(this._customLayers).map(k => this._customLayers[k]);
         customLayers.sort((a, b) => {
@@ -623,6 +619,11 @@ export class MgLayerSet {
         });
         for (const item of customLayers) {
             layers.insertAt(0, item.layer);
+        }
+        // Then the regular layers
+        const allLayers = this.mainSet.getLayers();
+        for (let i = allLayers.length - 1; i >= 0; i--) {
+            layers.insertAt(0, allLayers[i]);
         }
         map.setView(this.mainSet.view);
         if (bSetLayers) {

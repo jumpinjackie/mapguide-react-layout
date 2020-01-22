@@ -213,13 +213,13 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                     if (activeComponent != null) {
                         const cpp = this.state.activeComponentProps;
                         taskComponentContainerStyle.overflowY = "auto";
-                        return <div className={(invalidated === true ? "invalidated-task-pane" : undefined)} style={taskComponentContainerStyle}>
+                        return <div style={taskComponentContainerStyle}>
                             <PlaceholderComponent id={activeComponent} componentProps={cpp} locale={this.props.locale} />
                         </div>
                     } else {
                         const { frameContentLoaded } = this.state;
                         const components = [
-                            <iframe key="taskPaneFrame" className={(invalidated === true ? "invalidated-task-pane" : undefined)} name="taskPaneFrame" ref={this.onFrameMounted} onLoad={this.onFrameLoaded} style={taskFrameStyle}>
+                            <iframe key="taskPaneFrame" name="taskPaneFrame" ref={this.onFrameMounted} onLoad={this.onFrameLoaded} style={taskFrameStyle}>
                             </iframe>
                         ];
                         if (frameContentLoaded == false) {

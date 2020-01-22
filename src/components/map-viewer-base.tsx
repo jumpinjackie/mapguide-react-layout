@@ -1111,5 +1111,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         y = extY1 - (extY1 - extY2) * (y / mapDevH);
         return [x, y];
     }
+    public getSelectedFeatures() {
+        return this._select.getFeatures();
+    }
     //------------------------------------//
 }

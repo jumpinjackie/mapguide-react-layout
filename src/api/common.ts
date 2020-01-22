@@ -20,6 +20,8 @@ import { LoadFunction } from 'ol/Image';
 import { IToolbarAppState } from './registry';
 import { IVectorFeatureStyle } from './ol-style-helpers';
 import { IParsedFeatures } from './layer-manager/parsed-features';
+import Collection from 'ol/Collection';
+import Feature from 'ol/Feature';
 
 // Event boilerplate
 export type GenericEvent = any;
@@ -852,6 +854,17 @@ export interface IMapViewer {
     toastPrimary(icon: string, message: string | JSX.Element): string | undefined;
     dismissToast(key: string): void;
     updateSize(): void;
+
+    /**
+     * Returns the collection of selected client-side vector features. This collection
+     * is observable, so you may hold onto a reference to this collection and subscribe
+     * to events on this collection for when new features are added or removed from this collection
+     * 
+     * @returns {Collection<Feature>}
+     * @memberof IMapViewer
+     * @since 0.13
+     */
+    getSelectedFeatures(): Collection<Feature>;
 
     /**
      * INTERNAL API. Not for public use

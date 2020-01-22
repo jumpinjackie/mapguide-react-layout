@@ -222,6 +222,9 @@ class MapViewerAdapter implements IMapViewer {
     initialView(): void {
         this.inner.initialView();
     }
+    getSelectedFeatures() {
+        return this.inner.getSelectedFeatures();
+    }
     /**
      * INTERNAL API. Not for public use
      * @hidden

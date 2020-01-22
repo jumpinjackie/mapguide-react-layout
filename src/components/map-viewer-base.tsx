@@ -431,15 +431,17 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         if (!view) {
             return;
         }
-        const currentResolution = view.getResolution();
-        if (currentResolution) {
+        const currentZoom = view.getZoom();
+        if (currentZoom !== undefined) {
+            const newZoom = view.getConstrainedZoom(currentZoom + delta);
+            if (view.getAnimating()) {
+                view.cancelAnimations();
+            }
             view.animate({
-                resolution: currentResolution,
+                zoom: newZoom,
                 duration: 250,
                 easing: olEasing.easeOut
             });
-            const newResolution = view.getConstrainedResolution(currentResolution, delta);
-            view.setResolution(newResolution);
         }
     }
     private _activeDrawInteraction: Draw | null;

@@ -118,7 +118,8 @@ export class MgLayerManager implements ILayerManager {
                 const source = new olSourceVector();
                 source.set(SourceProperty.SUPPRESS_LOAD_EVENTS, true);
                 const layer = new olVectorLayer({
-                    source: source
+                    source: source,
+                    className: "external-vector-layer" //This is to avoid false positives for map.forEachLayerAtPixel
                 });
                 features.addTo(source, that.map.getView().getProjection(), proj);
                 layer.set(LayerProperty.LAYER_NAME, features.name);

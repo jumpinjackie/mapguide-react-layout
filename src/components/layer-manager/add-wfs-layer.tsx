@@ -84,7 +84,8 @@ export const AddWfsLayer = (props: IAddLayerContentProps) => {
                     }) : undefined*/
                 });
                 const layer = new olVectorLayer({
-                    source: source
+                    source: source,
+                    className: "external-vector-layer" //This is to avoid false positives for map.forEachLayerAtPixel
                 });
                 layer.set(LayerProperty.LAYER_TYPE, "WFS");
                 layer.set(LayerProperty.IS_EXTERNAL, true);

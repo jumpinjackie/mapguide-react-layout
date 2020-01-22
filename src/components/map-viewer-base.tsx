@@ -92,9 +92,9 @@ import { areArraysDifferent } from '../utils/array';
 import GeometryType from 'ol/geom/GeometryType';
 import { ProjectionLike } from 'ol/proj';
 import Select from 'ol/interaction/Select';
-import { singleClick } from 'ol/events/condition';
 import { MgLayerSet } from '../api/layer-set';
 import { MgLayerManager } from '../api/layer-manager';
+import MapBrowserEvent from 'ol/MapBrowserEvent';
 
 /**
  * MapViewerBase component props
@@ -343,7 +343,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     public getResolution(): number {
         return this._map.getView().getResolution();
     }
-    private onMapClick(e: GenericEvent) {
+    private onMapClick(e: MapBrowserEvent) {
         if (this.props.isContextMenuOpen) {
             // We're going on the assumption that due to element placement
             // if this event is fired, it meant that the user clicked outside
@@ -354,11 +354,24 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         if (this.isDigitizing()) {
             return;
         }
+        if (this.props.tool == ActiveMapTool.Select) {
+            //Shift+Click is the default OL selection append mode, so if no shift key
+            //pressed, clear the existing selection
+            if (!this.state.shiftKey) {
+                this._select.getFeatures().clear();
+            }
+            this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
+                if (layer.get(LayerProperty.IS_SELECTABLE) == true && feature instanceof Feature) {
+                    this._select.getFeatures().push(feature);
+                }
+            });
+        }
+        const px = e.pixel as [number, number];
         if (this.props.manualFeatureTooltips && this.props.featureTooltipsEnabled) {
-            this._mapContext.queryFeatureTooltip(e.pixel);
+            this._mapContext.queryFeatureTooltip(px);
         } else if (this.props.tool === ActiveMapTool.Select) {
             const ptBuffer = this.props.pointSelectionBuffer || 2;
-            const box = this.getPointSelectionBox(e.pixel, ptBuffer);
+            const box = this.getPointSelectionBox(px, ptBuffer);
             const geom = fromExtent(box);
             const options = this.buildDefaultQueryOptions(geom);
             options.maxfeatures = 1;
@@ -712,7 +725,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         const { locale } = this.props;
         const mapNode = ReactDOM.findDOMNode(this);
         this._select = new Select({
-            condition: (e) => this.props.tool == ActiveMapTool.Select && singleClick(e),
+            condition: (e) => false,
             layers: (layer) => layer.get(LayerProperty.IS_SELECTABLE) == true
         });
         this._client = new Client(this.props.agentUri, this.props.agentKind);

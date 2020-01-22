@@ -2,7 +2,7 @@ import * as React from "react";
 import { tr } from "../../api/i18n";
 import { ILayerInfo } from "../../api/common";
 import { Button, Intent, ButtonGroup, Card, Icon, Switch, NonIdealState, Slider, Collapse, Spinner } from '@blueprintjs/core';
-import { BlueprintSvgIconNames } from 'src/constants';
+import { BlueprintSvgIconNames } from '../../constants';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { VectorStyleEditor } from '../vector-style-editor';
 import { IVectorFeatureStyle } from '../../api/ol-style-helpers';

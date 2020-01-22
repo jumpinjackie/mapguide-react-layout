@@ -7,8 +7,8 @@ import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, Ed
 import * as Runtime from "../../api/runtime";
 import { strIsNullOrEmpty } from "../../utils/string";
 import proj4 from "proj4";
-import { IParsedFeatures } from '../map-viewer-context';
 import { ensureProjection } from '../../api/registry/projections';
+import { IParsedFeatures } from '../../api/layer-manager/parsed-features';
 
 /**
  * @hidden

@@ -3,7 +3,6 @@ import {
     GenericEvent,
     WmsCapabilitiesDocument,
     WMSLayerStyle,
-    ILayerInfo,
     LayerProperty,
     SourceProperty
 } from "../../api/common";
@@ -18,9 +17,9 @@ import olImageLayer from "ol/layer/Image";
 import olWmsSource from "ol/source/ImageWMS";
 import olTiledWmsSource from "ol/source/TileWMS";
 import { Spinner, NonIdealState, Intent, ControlGroup, InputGroup, Button } from '@blueprintjs/core';
-import { getLayerInfo } from '../map-viewer-context';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { IAddLayerContentProps } from './add-layer';
+import { getLayerInfo } from '../../api/layer-manager';
 
 /**
  * @hidden

@@ -19,7 +19,7 @@ import { ProjectionLike } from 'ol/proj';
 import { LoadFunction } from 'ol/Image';
 import { IToolbarAppState } from './registry';
 import { IVectorFeatureStyle } from './ol-style-helpers';
-import { IParsedFeatures } from 'src/components';
+import { IParsedFeatures } from './layer-manager/parsed-features';
 
 // Event boilerplate
 export type GenericEvent = any;

@@ -58,7 +58,7 @@ import {
 } from "../constants/assets";
 import { tr } from "../api/i18n";
 const isMobile = require("ismobilejs");
-import { IMapViewerContextCallback, IMapViewerContextProps, MapViewerContext, MgLayerSet, MgLayerManager } from "./map-viewer-context";
+import { IMapViewerContextCallback, IMapViewerContextProps, MapViewerContext } from "./map-viewer-context";
 
 import * as olExtent from "ol/extent";
 import * as olEasing from "ol/easing";
@@ -93,6 +93,8 @@ import GeometryType from 'ol/geom/GeometryType';
 import { ProjectionLike } from 'ol/proj';
 import Select from 'ol/interaction/Select';
 import { singleClick } from 'ol/events/condition';
+import { MgLayerSet } from '../api/layer-set';
+import { MgLayerManager } from '../api/layer-manager';
 
 /**
  * MapViewerBase component props

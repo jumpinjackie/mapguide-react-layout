@@ -5,16 +5,12 @@ import * as Runtime from "../../api/runtime";
 import { tr } from "../../api/i18n";
 import { Error } from "../error";
 import { Client } from "../../api/client";
-import { strReplaceAll } from '../../utils/string';
-import { getLayerInfo } from '../map-viewer-context';
 import { WfsCapabilitiesParser, IWfsServiceCapabilities } from "./wfs-capabilities-parser";
 import { WfsCapabilitiesPanel } from './wfs-capabilities-panel';
 import olVectorSource, { LoadingStrategy } from "ol/source/Vector";
 import olVectorLayer from "ol/layer/Vector";
 import GeoJSON from "ol/format/GeoJSON";
-import { bbox } from 'ol/loadingstrategy';
-import { FeatureUrlFunction, FeatureLoader } from "ol/featureloader";
-import { transformExtent } from "ol/proj";
+import { FeatureUrlFunction } from "ol/featureloader";
 import { parseUrl } from '../../utils/url';
 import { 
     setOLVectorLayerStyle,
@@ -23,8 +19,8 @@ import {
     DEFAULT_POLY_STYLE
 } from '../../api/ol-style-helpers';
 import { ensureProjection } from '../../api/registry/projections';
-import { loadFeaturesXhr } from "ol/featureloader";
 import { IAddLayerContentProps } from './add-layer';
+import { getLayerInfo } from '../../api/layer-manager';
 
 /**
  * @hidden
@@ -38,7 +34,7 @@ export const AddWfsLayer = (props: IAddLayerContentProps) => {
     const onAddLayer = (name: string, version: string, format: string, origCrs: string, epsgCode: number, wfsWgs84Bounds?: Bounds) => {
         const viewer = Runtime.getViewer();
         if (caps && viewer) {
-            ensureProjection(epsgCode, locale, origCrs).then(([repsg, resolvedProj]) => {
+            ensureProjection(epsgCode, locale, origCrs).then(([, resolvedProj]) => {
                 const sourceProj = viewer.getProjection();
                 //TODO: For correctness, we should be using the URL from the ows:Get element of the
                 //GetFeature operations metadata instead of just re-computing the WFS GetFeature URL
@@ -51,7 +47,6 @@ export const AddWfsLayer = (props: IAddLayerContentProps) => {
                 let urlTemplate = `${parsed.url}?service=WFS&version=${version}&request=GetFeature&${typeNameKey}=${encodeURIComponent(name)}&outputFormat=${encodeURIComponent(format)}&srsName=${encodeURIComponent(origCrs)}`;
                 let sourceUrl: string | FeatureUrlFunction;
                 let strategy: LoadingStrategy | undefined;
-                let innerLoader: FeatureLoader | undefined;
                 const vectorFmt = new GeoJSON({
                     dataProjection: resolvedProj,
                     featureProjection: sourceProj

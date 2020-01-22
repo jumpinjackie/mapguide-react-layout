@@ -10,6 +10,7 @@ import olVectorLayer from "ol/layer/Vector";
 import olInteractionTranslate from "ol/interaction/Translate";
 
 export type Size = { w: number, h: number };
+export const BLANK_SIZE: Size = { w: 1, h: 1 };
 
 export interface IMapCapturerContextCallback {
     updateBoxCoords(box: string, normalizedBox: string): void;

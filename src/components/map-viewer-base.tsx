@@ -354,45 +354,49 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         if (this.isDigitizing()) {
             return;
         }
-        let vfSelected = 0;
-        if (this.props.tool == ActiveMapTool.Select) {
-            /*
-            //Shift+Click is the default OL selection append mode, so if no shift key
-            //pressed, clear the existing selection
-            if (!this.state.shiftKey) {
-                this._select.getFeatures().clear();
-            }
-            */
-            //TODO: Our selected feature tooltip only shows properties of a single feature
-            //and displays upon said feature being selected. As a result, although we can
-            //(and should) allow for multiple features to be selected, we need to figure
-            //out the proper UI for such a case before we enable multiple selection.
-            this._select.getFeatures().clear();
-            this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
-                if (layer.get(LayerProperty.IS_SELECTABLE) == true && feature instanceof Feature) {
-                    this._select.getFeatures().push(feature);
-                    vfSelected++;
-                }
-            });
-        }
-        // We'll only fall through the normal map selection query route if no 
-        // vector features were selected as part of this click
-        const px = e.pixel as [number, number];
-        if (vfSelected == 0) {
-            this._mapContext.hideSelectedVectorFeaturesTooltip();
-            if (this.props.manualFeatureTooltips && this.props.featureTooltipsEnabled) {
-                this._mapContext.queryFeatureTooltip(px);
-            } else if (this.props.tool === ActiveMapTool.Select) {
-                const ptBuffer = this.props.pointSelectionBuffer || 2;
-                const box = this.getPointSelectionBox(px, ptBuffer);
-                const geom = fromExtent(box);
-                const options = this.buildDefaultQueryOptions(geom);
-                options.maxfeatures = 1;
-                this.sendSelectionQuery(options);
-            }
+        if (this.props.tool == ActiveMapTool.WmsQueryFeatures) {
+            this._mapContext.queryWmsFeatures(this._map, this.getLayerManager(), e.coordinate as Coordinate2D);
         } else {
-            const selFeatures = this._select.getFeatures();
-            this._mapContext.showSelectedVectorFeatures(selFeatures, px, this.props.locale);
+            let vfSelected = 0;
+            if (this.props.tool == ActiveMapTool.Select) {
+                /*
+                //Shift+Click is the default OL selection append mode, so if no shift key
+                //pressed, clear the existing selection
+                if (!this.state.shiftKey) {
+                    this._select.getFeatures().clear();
+                }
+                */
+                //TODO: Our selected feature tooltip only shows properties of a single feature
+                //and displays upon said feature being selected. As a result, although we can
+                //(and should) allow for multiple features to be selected, we need to figure
+                //out the proper UI for such a case before we enable multiple selection.
+                this._select.getFeatures().clear();
+                this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
+                    if (layer.get(LayerProperty.IS_SELECTABLE) == true && feature instanceof Feature) {
+                        this._select.getFeatures().push(feature);
+                        vfSelected++;
+                    }
+                });
+            }
+            // We'll only fall through the normal map selection query route if no 
+            // vector features were selected as part of this click
+            const px = e.pixel as [number, number];
+            if (vfSelected == 0) {
+                this._mapContext.hideSelectedVectorFeaturesTooltip();
+                if (this.props.manualFeatureTooltips && this.props.featureTooltipsEnabled) {
+                    this._mapContext.queryFeatureTooltip(px);
+                } else if (this.props.tool === ActiveMapTool.Select) {
+                    const ptBuffer = this.props.pointSelectionBuffer || 2;
+                    const box = this.getPointSelectionBox(px, ptBuffer);
+                    const geom = fromExtent(box);
+                    const options = this.buildDefaultQueryOptions(geom);
+                    options.maxfeatures = 1;
+                    this.sendSelectionQuery(options);
+                }
+            } else {
+                const selFeatures = this._select.getFeatures();
+                this._mapContext.showSelectedVectorFeatures(selFeatures, px, this.props.locale);
+            }
         }
     }
     private getSelectableLayers(): string[] {

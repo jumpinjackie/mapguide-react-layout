@@ -30,14 +30,14 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
     const [loadingCapabilities, setLoadingCapabilities] = React.useState(false);
     const [caps, setCaps] = React.useState<WmsCapabilitiesDocument | undefined>(undefined);
     const [error, setError] = React.useState<Error | string | undefined>(undefined);
-    const onAddLayer = (name: string, isTiled: boolean, style: WMSLayerStyle | undefined) => {
+    const onAddLayer = (name: string, isTiled: boolean, selectable: boolean, style: WMSLayerStyle | undefined) => {
         const viewer = Runtime.getViewer();
         if (caps && viewer) {
             const params: any = {
                 LAYERS: name
             };
             if (style) {
-                params.STYLE = style;
+                params.STYLE = style.Name;
             }
             if (isTiled) {
                 params.TILED = true;
@@ -62,6 +62,7 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
                 });
             }
             layer.set(LayerProperty.LAYER_TYPE, "WMS");
+            layer.set(LayerProperty.IS_SELECTABLE, selectable);
             layer.set(LayerProperty.IS_EXTERNAL, true);
             layer.set(LayerProperty.IS_GROUP, false);
             if (style) {

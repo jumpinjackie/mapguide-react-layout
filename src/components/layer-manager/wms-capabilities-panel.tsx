@@ -23,7 +23,7 @@ function extractWmsLayers(caps: WmsCapabilitiesDocument): WMSLayerStylePair[] {
 export interface IWmsCapabilitiesPanelProps {
     capabilities: WmsCapabilitiesDocument;
     locale: string;
-    onAddLayer: (name: string, isTiled: boolean, style: WMSLayerStyle | undefined, getLegendUrl?: string) => void;
+    onAddLayer: (name: string, isTiled: boolean, queryable: boolean, style: WMSLayerStyle | undefined, getLegendUrl?: string) => void;
 }
 
 export const WmsCapabilitiesPanel = (props: IWmsCapabilitiesPanelProps) => {
@@ -49,14 +49,14 @@ export const WmsCapabilitiesPanel = (props: IWmsCapabilitiesPanelProps) => {
                     {(() => {
                         if (styles.length) {
                             return styles.map(st => <ButtonGroup vertical fill alignText="left">
-                                <Button onClick={() => onAddLayer(layer.Name, false, st, st.LegendURL?.[0]?.OnlineResource)} intent={Intent.PRIMARY} icon="new-layer">{tr("ADD_LAYER_WITH_WMS_STYLE", locale, { style: st.Name })}</Button>
-                                <Button onClick={() => onAddLayer(layer.Name, true, st, st.LegendURL?.[0]?.OnlineResource)} intent={Intent.PRIMARY} icon="new-layer">{tr("ADD_LAYER_WITH_WMS_STYLE_TILED", locale, { style: st.Name })}</Button>
+                                <Button onClick={() => onAddLayer(layer.Name, layer.queryable, false, st, st.LegendURL?.[0]?.OnlineResource)} intent={Intent.PRIMARY} icon="new-layer">{tr("ADD_LAYER_WITH_WMS_STYLE", locale, { style: st.Name })}</Button>
+                                <Button onClick={() => onAddLayer(layer.Name, layer.queryable, true, st, st.LegendURL?.[0]?.OnlineResource)} intent={Intent.PRIMARY} icon="new-layer">{tr("ADD_LAYER_WITH_WMS_STYLE_TILED", locale, { style: st.Name })}</Button>
                                 {otherActions}
                             </ButtonGroup>);
                         } else {
                             return <ButtonGroup vertical fill alignText="left">
-                                <Button onClick={() => onAddLayer(layer.Name, false, undefined)} intent={Intent.PRIMARY} icon="new-layer">{tr("ADD_LAYER", locale)}</Button>
-                                <Button onClick={() => onAddLayer(layer.Name, true, undefined)} intent={Intent.PRIMARY} icon="new-layer">{tr("ADD_LAYER_TILED", locale)}</Button>
+                                <Button onClick={() => onAddLayer(layer.Name, layer.queryable, false, undefined)} intent={Intent.PRIMARY} icon="new-layer">{tr("ADD_LAYER", locale)}</Button>
+                                <Button onClick={() => onAddLayer(layer.Name, layer.queryable, true, undefined)} intent={Intent.PRIMARY} icon="new-layer">{tr("ADD_LAYER_TILED", locale)}</Button>
                                 {otherActions}
                             </ButtonGroup>;
                         }

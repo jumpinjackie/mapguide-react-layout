@@ -379,7 +379,12 @@ export enum ActiveMapTool {
     /**
      * None
      */
-    None
+    None,
+    /**
+     * Query WMS layers via GetFeatureInfo
+     * @since 0.13
+     */
+    WmsQueryFeatures
 }
 
 /**
@@ -914,6 +919,10 @@ export interface ILayerInfo {
      * @since 0.13
      */
     visible: boolean;
+    /**
+     * @since 0.13
+     */
+    selectable: boolean;
     /**
      * @since 0.13
      * @type {number}

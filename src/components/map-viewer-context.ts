@@ -6,7 +6,9 @@ import {
     Dictionary,
     Coordinate2D,
     ImageFormat,
-    IExternalBaseLayer
+    IExternalBaseLayer,
+    ILayerManager,
+    IMapViewer
 } from "../api/common";
 import { Client } from '../api/client';
 import { RuntimeMap } from "../api/contracts/runtime-map";
@@ -168,6 +170,10 @@ export class MapViewerContext {
     }
     public showSelectedVectorFeatures(features: Collection<Feature>, pixel: [number, number], locale?: string) {
         this._selectTooltip?.showSelectedVectorFeatures(features, pixel, locale);
+    }
+    public queryWmsFeatures(map: olMap, layerMgr: ILayerManager, coord: Coordinate2D) {
+        const res = map.getView().getResolution();
+        this._selectTooltip?.queryWmsFeatures(layerMgr, coord, res, this.callback.getLocale());
     }
     public queryFeatureTooltip(pixel: [number, number]) {
         if (this._featureTooltip && this._featureTooltip.isEnabled()) {

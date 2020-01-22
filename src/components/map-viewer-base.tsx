@@ -354,6 +354,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         if (this.isDigitizing()) {
             return;
         }
+        let vfSelected = 0;
         if (this.props.tool == ActiveMapTool.Select) {
             //Shift+Click is the default OL selection append mode, so if no shift key
             //pressed, clear the existing selection
@@ -363,19 +364,24 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
                 if (layer.get(LayerProperty.IS_SELECTABLE) == true && feature instanceof Feature) {
                     this._select.getFeatures().push(feature);
+                    vfSelected++;
                 }
             });
         }
-        const px = e.pixel as [number, number];
-        if (this.props.manualFeatureTooltips && this.props.featureTooltipsEnabled) {
-            this._mapContext.queryFeatureTooltip(px);
-        } else if (this.props.tool === ActiveMapTool.Select) {
-            const ptBuffer = this.props.pointSelectionBuffer || 2;
-            const box = this.getPointSelectionBox(px, ptBuffer);
-            const geom = fromExtent(box);
-            const options = this.buildDefaultQueryOptions(geom);
-            options.maxfeatures = 1;
-            this.sendSelectionQuery(options);
+        // We'll only fall through the normal map selection query route if no 
+        // vector features were selected as part of this click
+        if (vfSelected == 0) {
+            const px = e.pixel as [number, number];
+            if (this.props.manualFeatureTooltips && this.props.featureTooltipsEnabled) {
+                this._mapContext.queryFeatureTooltip(px);
+            } else if (this.props.tool === ActiveMapTool.Select) {
+                const ptBuffer = this.props.pointSelectionBuffer || 2;
+                const box = this.getPointSelectionBox(px, ptBuffer);
+                const geom = fromExtent(box);
+                const options = this.buildDefaultQueryOptions(geom);
+                options.maxfeatures = 1;
+                this.sendSelectionQuery(options);
+            }
         }
     }
     private getSelectableLayers(): string[] {

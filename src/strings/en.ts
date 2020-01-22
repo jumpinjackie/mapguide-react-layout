@@ -181,6 +181,7 @@ const STRINGS_EN: ILocalizedMessages = {
     "UNIT_ABBR_DMS": DEG,
     "UNIT_ABBR_PIXELS": "px",
     "UNIT_FMT_M": "{value} m",
+    "UNIT_FMT_KM": "{value} km",
     "UNIT_FMT_SQM": "{value} m<sup>2</sup>",
     "UNIT_FMT_SQKM": "{value} km<sup>2</sup>",
     "OL_ATTRIBUTION_TIP": "Attributions",

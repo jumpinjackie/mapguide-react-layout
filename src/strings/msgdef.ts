@@ -188,6 +188,7 @@ export interface ILocalizedMessages {
     UNIT_ABBR_DMS: string;
     UNIT_ABBR_PIXELS: string;
     UNIT_FMT_M: string;
+    UNIT_FMT_KM: string;
     UNIT_FMT_SQM: string;
     UNIT_FMT_SQKM: string;
     OL_ATTRIBUTION_TIP: string;

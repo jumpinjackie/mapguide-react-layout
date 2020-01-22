@@ -104,7 +104,9 @@ export class MeasureContext {
     private formatLength(line: olLineString): [string, number, MeasureSegment[] | undefined] {
         let length: number;
         let segments: MeasureSegment[] | undefined;
+        let locale;
         if (this.parent) {
+            locale = this.parent.getLocale();
             const coordinates = line.getCoordinates() as Coordinate2D[];
             segments = [];
             length = 0;
@@ -121,9 +123,9 @@ export class MeasureContext {
         }
         let output: string;
         if (length > 100) {
-            output = (roundTo(length / 1000, 2)) + ' ' + 'km';
+            output = tr("UNIT_FMT_KM", locale, { value: (roundTo(length / 1000, 2)) });
         } else {
-            output = (roundTo(length, 2)) + ' ' + 'm';
+            output = tr("UNIT_FMT_M", locale, { value: (roundTo(length, 2)) });
         }
         return [output, length, segments];
     }

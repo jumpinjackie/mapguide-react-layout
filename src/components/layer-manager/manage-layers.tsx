@@ -97,8 +97,8 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
         if (layer.type != "KML") {
             extraActions.push(<Button key="edit-vector-style" title={tr("LAYER_MANAGER_TT_EDIT_STYLE", locale)} intent={Intent.PRIMARY} icon="edit" onClick={() => toggleOpenPanel(OpenPanel.EditVectorStyle)} />)
         }
-        extraActions.push(<Button key="more-layer-options" title={tr("LAYER_MANAGER_TT_MORE_OPTIONS", locale)} intent={Intent.PRIMARY} icon="cog" onClick={() => toggleOpenPanel(OpenPanel.MoreLayerOptions)} />)
     }
+    extraActions.push(<Button key="more-layer-options" title={tr("LAYER_MANAGER_TT_MORE_OPTIONS", locale)} intent={Intent.PRIMARY} icon="cog" onClick={() => toggleOpenPanel(OpenPanel.MoreLayerOptions)} />)
     const isWmsLegendOpen = !strIsNullOrEmpty(wmsLegendUrl);
     return <Card key={layer.name}>
         <Switch checked={layer.visible} onChange={() => onSetVisibility(layer.name, !layer.visible)} labelElement={<><Icon icon={iconName} /> {layer.name}</>} />

@@ -99,7 +99,7 @@
     "cache-loader": "^4.1.0",
     "copyfiles": "2.2.0",
     "coveralls": "3.0.9",
-    "cross-env": "6.0.3",
+    "cross-env": "7.0.0",
     "css-loader": "3.4.2",
     "docsify-cli": "4.4.0",
     "enzyme": "3.11.0",

@@ -73,6 +73,8 @@ export function convertWidget(widget: UIWidget, locale: string, noToolbarLabels:
     switch (widget.Type) {
         case "Select":
             return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Select, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+        case "WmsQuery":
+            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.WmsQuery, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
         case "Pan":
             return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Pan, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
         //case "PanQuery":

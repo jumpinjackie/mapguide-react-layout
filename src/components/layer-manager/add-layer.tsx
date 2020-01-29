@@ -9,6 +9,7 @@ import { strIsNullOrEmpty } from "../../utils/string";
 import proj4 from "proj4";
 import { ensureProjection } from '../../api/registry/projections';
 import { IParsedFeatures } from '../../api/layer-manager/parsed-features';
+import { parseEpsgCodeFromCRS } from './wfs-capabilities-panel';
 
 /**
  * @hidden
@@ -62,6 +63,7 @@ interface LoadedFile {
     name: string;
     size: number;
     type: string;
+    defaultProjection: string | null;
 }
 
 const AddFileLayer = (props: IAddLayerProps) => {
@@ -79,8 +81,15 @@ const AddFileLayer = (props: IAddLayerProps) => {
             setLoadedFile({
                 name: parsed.name,
                 size: parsed.size,
-                type: parsed.type
+                type: parsed.type,
+                defaultProjection: parsed.projection
             });
+            if (parsed.projection) {
+                const epsg = parseEpsgCodeFromCRS(parsed.projection);
+                if (epsg) {
+                    setAddProjection(epsg);
+                }
+            }
         } else {
             setLoadedFile(undefined);
             parsedFeaturesRef.current = undefined;
@@ -148,9 +157,9 @@ const AddFileLayer = (props: IAddLayerProps) => {
                     {addLayerError.message}
                 </Callout>}
                 <FormGroup label={tr("ADD_LAYER_PROJECTION", locale)}>
-                    <FormGroup label={<a href="https://epsg.io" target="_blank">EPSG:</a>} inline>
+                    {loadedFile.defaultProjection ? <strong>EPSG:{addProjection}</strong> : <FormGroup label={<a href="https://epsg.io" target="_blank">EPSG:</a>} inline>
                         <NumericInput style={{ width: 60 }} min={0} value={addProjection} onValueChange={v => setAddProjection(v)} />
-                    </FormGroup>
+                    </FormGroup>}
                 </FormGroup>
                 <ButtonGroup>
                     <Button loading={isAddingLayer} onClick={(e: any) => onAddFileLayer(addProjection)} intent={Intent.PRIMARY}>{tr("ADD_LAYER", locale)}</Button>

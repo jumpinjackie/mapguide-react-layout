@@ -11,13 +11,19 @@ import Feature from 'ol/Feature';
 export interface IParsedFeatures {
     name: string;
     hasFeatures(): boolean;
+    /**
+     * The projection of this feature. If not set, the projection is unknown and the user should specify
+     * the projection for these features. If set, it should be the projection used when adding the features
+     * to a vector layer
+     */
+    projection: string | null;
     readonly type: string;
     readonly size: number;
     addTo(source: olSourceVector<Geometry>, mapProjection: ProjectionLike, dataProjection?: ProjectionLike): void;
 }
 
 export class ParsedFeatures implements IParsedFeatures {
-    constructor(public type: string, public size: number, private features: Feature<Geometry>[]) {
+    constructor(public type: string, public size: number, private features: Feature<Geometry>[], public projection: string | null = null) {
 
     }
     public hasFeatures(): boolean { return this.features.length > 0; }

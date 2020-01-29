@@ -41,6 +41,7 @@ export class FeatureQueryTooltip {
         this.enabled = true;
         this.isMouseOverTooltip = false;
     }
+    public get isMouseOver() { return this.isMouseOverTooltip; }
     public raiseQueryFromPoint(pixel: [number, number]) {
         const box = this.callback.getPointSelectionBox(pixel);
         const geom = fromExtent(box);

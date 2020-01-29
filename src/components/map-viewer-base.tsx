@@ -372,9 +372,11 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
                 //out the proper UI for such a case before we enable multiple selection.
                 this._select.getFeatures().clear();
                 this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
-                    if (layer.get(LayerProperty.IS_SELECTABLE) == true && feature instanceof Feature) {
-                        this._select.getFeatures().push(feature);
-                        vfSelected++;
+                    if (vfSelected == 0) { //See TODO above
+                        if (layer.get(LayerProperty.IS_SELECTABLE) == true && feature instanceof Feature) {
+                            this._select.getFeatures().push(feature);
+                            vfSelected++;
+                        }
                     }
                 });
             }
@@ -827,6 +829,9 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         this.onResize(this._map.getSize());
     }
     private onContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (this._mapContext.isMouseOverTooltip) {
+            return;
+        }
         e.preventDefault();
         //console.log(`Open context menu at (${e.clientX}, ${e.clientY})`);
         this.props.onContextMenu?.([e.clientX, e.clientY]);

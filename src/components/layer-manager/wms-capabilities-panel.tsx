@@ -23,7 +23,7 @@ function extractWmsLayers(caps: WmsCapabilitiesDocument): WMSLayerStylePair[] {
 export interface IWmsCapabilitiesPanelProps {
     capabilities: WmsCapabilitiesDocument;
     locale: string;
-    onAddLayer: (name: string, isTiled: boolean, queryable: boolean, style: WMSLayerStyle | undefined, getLegendUrl?: string) => void;
+    onAddLayer: (name: string, queryable: boolean, isTiled: boolean, style: WMSLayerStyle | undefined, getLegendUrl?: string) => void;
 }
 
 export const WmsCapabilitiesPanel = (props: IWmsCapabilitiesPanelProps) => {
@@ -48,7 +48,7 @@ export const WmsCapabilitiesPanel = (props: IWmsCapabilitiesPanelProps) => {
                     {/*<p>{tr("OWS_LAYER_ABSTRACT", locale, { abstract: layer.Abstract })}</p>*/}
                     {(() => {
                         if (styles.length) {
-                            return styles.map(st => <ButtonGroup vertical fill alignText="left">
+                            return styles.map(st => <ButtonGroup key={st.Name} vertical fill alignText="left">
                                 <Button onClick={() => onAddLayer(layer.Name, layer.queryable, false, st, st.LegendURL?.[0]?.OnlineResource)} intent={Intent.PRIMARY} icon="new-layer">{tr("ADD_LAYER_WITH_WMS_STYLE", locale, { style: st.Name })}</Button>
                                 <Button onClick={() => onAddLayer(layer.Name, layer.queryable, true, st, st.LegendURL?.[0]?.OnlineResource)} intent={Intent.PRIMARY} icon="new-layer">{tr("ADD_LAYER_WITH_WMS_STYLE_TILED", locale, { style: st.Name })}</Button>
                                 {otherActions}

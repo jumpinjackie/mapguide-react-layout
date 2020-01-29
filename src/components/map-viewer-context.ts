@@ -156,6 +156,7 @@ export class MapViewerContext {
         }
         return layerSet;
     }
+    public get isMouseOverTooltip() { return this._featureTooltip.isMouseOver || this._selectTooltip.isMouseOver; }
     public clearMouseTooltip(): void {
         this._mouseTooltip.clear();
     }

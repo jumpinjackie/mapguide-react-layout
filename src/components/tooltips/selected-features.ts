@@ -18,11 +18,12 @@ export class SelectedFeaturesTooltip {
     private featureTooltip: olOverlay;
     private enabled: boolean;
     private isMouseOverTooltip: boolean;
+    private closerEl: HTMLElement | null;
     constructor(map: olMap) {
         this.featureTooltipElement = document.createElement("div");
         this.featureTooltipElement.addEventListener("mouseover", () => this.isMouseOverTooltip = true);
         this.featureTooltipElement.addEventListener("mouseout", () => this.isMouseOverTooltip = false);
-        this.featureTooltipElement.className = 'feature-tooltip';
+        this.featureTooltipElement.className = 'selected-tooltip';
         this.featureTooltip = new olOverlay({
             element: this.featureTooltipElement,
             offset: [15, 0],
@@ -33,6 +34,7 @@ export class SelectedFeaturesTooltip {
         this.enabled = true;
         this.isMouseOverTooltip = false;
     }
+    public get isMouseOver() { return this.isMouseOverTooltip; }
     public isEnabled(): boolean {
         return this.enabled;
     }
@@ -65,6 +67,8 @@ export class SelectedFeaturesTooltip {
                     this.featureTooltip.setPosition(coord);
                     const html = this.generateFeatureHtml(features[0], locale);
                     this.featureTooltipElement.innerHTML = html;
+                    this.closerEl = document.getElementById("feat-popup-closer");
+                    this.setPopupCloseHandler();
                     if (html == "") {
                         this.featureTooltipElement.classList.add("tooltip-hidden");
                     } else {
@@ -77,8 +81,8 @@ export class SelectedFeaturesTooltip {
     }
     private generateFeatureHtml(feat: Feature, locale?: string) {
         let html = "";
-        html += "<h3>" + tr("SEL_FEATURE_PROPERTIES", locale) + "</h3>";
-        var table = "<table>";
+        html += "<div style='min-width: 190px'><div style='float: left; font-weight: bold; font-size: 1.3em'>" + tr("SEL_FEATURE_PROPERTIES", locale) + "</div><a id='feat-popup-closer' href='#' style='float: right'>[x]</a><div class='clear: both'></div></div>";
+        var table = "<table style='margin-top: 25px'>";
         const f = feat.getProperties();
         let pc = 0;
         for (const key in f) {
@@ -99,12 +103,27 @@ export class SelectedFeaturesTooltip {
         }
         return html;
     }
+    private setPopupCloseHandler = () => {
+        if (this.closerEl) {
+            this.closerEl.onclick = this.closePopup;
+        }
+    }
+    private closePopup = (e: any) => {
+        e.preventDefault();
+        this.hide();
+        if (this.closerEl) {
+            this.closerEl.onclick = null;
+        }
+        return false;
+    };
     public showSelectedVectorFeatures(features: Collection<Feature>, pixel: [number, number], locale?: string) {
         const coords = this.map.getCoordinateFromPixel(pixel);
         if (features.getLength() > 0) {
             this.featureTooltip.setPosition(coords);
             const html = this.generateFeatureHtml(features.item(0), locale);
             this.featureTooltipElement.innerHTML = html;
+            this.closerEl = document.getElementById("feat-popup-closer");
+            this.setPopupCloseHandler();
             if (html == "") {
                 this.featureTooltipElement.classList.add("tooltip-hidden");
             } else {

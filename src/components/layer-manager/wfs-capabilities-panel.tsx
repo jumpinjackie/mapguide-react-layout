@@ -5,7 +5,8 @@ import { Card, Icon, ButtonGroup, Button, Intent } from '@blueprintjs/core';
 import { Bounds } from '../../api/common';
 
 /**
- *
+ * Attempts to extract an EPSG code from the given CRS identifier
+ * 
  * @export
  * @param {string} crs
  * @returns {(number | undefined)}

@@ -68,6 +68,7 @@ const PolygonStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IB
 }
 
 /**
+ * Vector style editor props
  * @since 0.13
  */
 export interface IVectorStyleEditorProps {
@@ -82,6 +83,8 @@ export interface IVectorStyleEditorProps {
 type TabId = "pointStyle" | "lineStyle" | "polyStyle";
 
 /**
+ * A vector style editor component
+ * 
  * @since 0.13
  */
 export const VectorStyleEditor = (props: IVectorStyleEditorProps) => {

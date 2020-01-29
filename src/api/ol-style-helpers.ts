@@ -10,6 +10,7 @@ import { LayerProperty } from './common';
 import * as shortid from "shortid";
 
 /**
+ * Defines a style for a vector layer
  * @since 0.13
  */
 export interface IVectorFeatureStyle {
@@ -19,6 +20,7 @@ export interface IVectorFeatureStyle {
 }
 
 /**
+ * Point circle style settings
  * @since 0.13
  */
 export interface IBasicPointCircleStyle {
@@ -28,16 +30,19 @@ export interface IBasicPointCircleStyle {
 }
 
 /**
+ * Point style settings
  * @since 0.13
  */
 export type IBasicVectorPointStyle = IBasicPointCircleStyle;
 
 /**
+ * Line style settings
  * @since 0.13
  */
 export type IBasicVectorLineStyle = IBasicStroke;
 
 /**
+ * Polygon style settings
  * @since 0.13
  */
 export interface IBasicVectorPolygonStyle {
@@ -46,6 +51,7 @@ export interface IBasicVectorPolygonStyle {
 }
 
 /**
+ * Line stroke settings
  * @since 0.13
  */
 export interface IBasicStroke {
@@ -55,6 +61,7 @@ export interface IBasicStroke {
 }
 
 /**
+ * Color fill settings
  * @since 0.13
  */
 export interface IBasicFill {
@@ -63,6 +70,7 @@ export interface IBasicFill {
 }
 
 /**
+ * The default style for point features
  * @since 0.13
  */
 export const DEFAULT_POINT_STYLE: IBasicVectorPointStyle = {
@@ -79,11 +87,13 @@ export const DEFAULT_POINT_STYLE: IBasicVectorPointStyle = {
 };
 
 /**
+ * The default color
  * @since 0.13
  */
 export const DEFAULT_COLOR = "#000000";
 
 /**
+ * The default style for line features
  * @since 0.13
  */
 export const DEFAULT_LINE_STYLE: IBasicVectorLineStyle = {
@@ -93,6 +103,7 @@ export const DEFAULT_LINE_STYLE: IBasicVectorLineStyle = {
 };
 
 /**
+ * The default style for polygon features
  * @since 0.13
  */
 export const DEFAULT_POLY_STYLE: IBasicVectorPolygonStyle = {
@@ -108,7 +119,8 @@ export const DEFAULT_POLY_STYLE: IBasicVectorPolygonStyle = {
 };
 
 /**
- *
+ * An OpenLayers style map
+ * 
  * @export
  * @interface IOlStyleMap
  * @since 0.13
@@ -164,7 +176,8 @@ function toBasicStroke(s: olStroke): IBasicStroke {
 }
 
 /**
- *
+ * Converts an OpenLayers style map to a vector style
+ * 
  * @export
  * @param {IOlStyleMap} os
  * @returns {IVectorFeatureStyle}
@@ -195,7 +208,8 @@ function toOLColor(color: string, alpha: number) {
 }
 
 /**
- *
+ * Converts a vector style to an OpenLayers style map
+ * 
  * @export
  * @param {IVectorFeatureStyle} style
  * @returns {IOlStyleMap}
@@ -254,6 +268,8 @@ export function vectorStyleToOLStyleMap(style: IVectorFeatureStyle): IOlStyleMap
 }
 
 /**
+ * Sets the vector style for the given OpenLayers vector layer
+ * 
  * @since 0.13
  */
 export function setOLVectorLayerStyle(layer: olLayerVector, style: IVectorFeatureStyle) {

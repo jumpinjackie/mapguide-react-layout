@@ -1,6 +1,7 @@
 import { appendParameters, parseUrlParameters } from '../utils';
 
 /**
+ * All relevant state that can be encoded into the main viewer URL
  * @since 0.13
  */
 export interface IAppUrlState {
@@ -20,6 +21,7 @@ export interface IAppUrlState {
 const S_DELIM = "_"; //This is the current layer/group name delimiter
 
 /**
+ * Updates the main URL with the given applicaton state
  * @since 0.13
  */
 export function updateUrl(state: IAppUrlState): void {
@@ -49,6 +51,7 @@ export function updateUrl(state: IAppUrlState): void {
 }
 
 /**
+ * Gets the application state from the current main URL
  * @since 0.13
  */
 export function getStateFromUrl(): IAppUrlState {

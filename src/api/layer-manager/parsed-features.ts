@@ -2,14 +2,19 @@ import { ProjectionLike } from 'ol/proj';
 import olSourceVector from "ol/source/Vector";
 import Geometry from 'ol/geom/Geometry';
 import Feature from 'ol/Feature';
+
 /**
- *
+ * Defines parsed features
+ * 
  * @export
  * @interface IParsedFeatures
  * @since 0.13
  */
 export interface IParsedFeatures {
     name: string;
+    /**
+     * Indicates if there are any features. If false, it signals that the parsing attempt failed
+     */
     hasFeatures(): boolean;
     /**
      * The projection of this feature. If not set, the projection is unknown and the user should specify

@@ -884,6 +884,8 @@ export interface IMapViewer {
 }
 
 /**
+ * WMS layer extension data
+ * 
  * @since 0.13
  */
 export interface IWmsLayerExtensions {
@@ -892,6 +894,8 @@ export interface IWmsLayerExtensions {
 }
 
 /**
+ * Layer extension data
+ * 
  * @since 0.13
  */
 export type LayerExtensions = IWmsLayerExtensions;
@@ -912,39 +916,55 @@ export interface ILayerInfo {
      */
     type: string;
     /**
+     * Indicates if this layer is an external layer
+     * 
      * @since 0.13
      */
     isExternal: boolean;
     /** 
+     * Indicates if this layer is visible
+     * 
      * @since 0.13
      */
     visible: boolean;
     /**
+     * Indicates if this layer is selectable by the select tool
+     * 
      * @since 0.13
      */
     selectable: boolean;
     /**
+     * The opacity of this layer
+     * 
      * @since 0.13
      * @type {number}
      * @memberof ILayerInfo
      */
     opacity: number;
     /**
+     * Extension data for this layer
+     * 
      * @since 0.13
      */
     extensions?: LayerExtensions;
     /**
+     * The vector style for this layer. Not applicable for raster layers.
+     * 
      * @since 0.13
      */
     vectorStyle?: IVectorFeatureStyle;
     /**
+     * The busy worker count of this layer. If greater than 0, the layer
+     * is considered to be in the process of loading
+     * 
      * @since 0.13
      */
     busyWorkerCount: number;
 }
 
 /**
- *
+ * Options to add a new layer from parsed features
+ * 
  * @export
  * @interface IAddLayerFromParsedFeaturesOptions
  * @since 0.13
@@ -955,7 +975,8 @@ export interface IAddLayerFromParsedFeaturesOptions {
 }
 
 /**
- *
+ * Options for parsing features from a file
+ * 
  * @export
  * @interface IParseFeaturesFromFileOptions
  * @since 0.13
@@ -1016,7 +1037,9 @@ export interface ILayerManager {
     getLayer<T extends olLayerBase>(name: string): T | undefined;
 
     /**
-     *
+     * Attempts to parse features for the given input file. A failed attempt is when
+     * calling hasFeatures() on the returned parsed features returns false.
+     * 
      * @param {IParseFeaturesFromFileOptions} options
      * @returns {Promise<IParsedFeatures>}
      * @memberof ILayerManager
@@ -1025,7 +1048,8 @@ export interface ILayerManager {
     parseFeaturesFromFile(options: IParseFeaturesFromFileOptions): Promise<IParsedFeatures>;
 
     /**
-     *
+     * Adds the given parsed features as a new external layer
+     * 
      * @param {IAddLayerFromParsedFeaturesOptions} options
      * @returns {Promise<ILayerInfo>}
      * @memberof ILayerManager
@@ -1506,6 +1530,8 @@ export interface ITemplateReducerState {
 }
 
 /**
+ * Signature for a template state reducer function
+ * 
  * @since 0.13
  */
 export type TemplateReducerFunction = (origState: ITemplateReducerState, currentState: ITemplateReducerState, action: ViewerAction) => ITemplateReducerState;
@@ -2218,6 +2244,8 @@ export interface MapGuideImageSourceOptions {
 }
 
 /**
+ * Custom properties that can be attached to OpenLayers layer instances
+ * 
  * @since 0.13
  */
 export enum LayerProperty {
@@ -2233,6 +2261,8 @@ export enum LayerProperty {
 }
 
 /**
+ * Custom properties that can be attached to OpenLayers image source instances
+ * 
  * @since 0.13
  */
 export enum SourceProperty {
@@ -2240,6 +2270,8 @@ export enum SourceProperty {
 }
 
 /**
+ * MapGuide layer types
+ * 
  * @since 0.13
  */
 export enum MgLayerType {
@@ -2248,16 +2280,24 @@ export enum MgLayerType {
 }
 
 /**
+ * The type name for a MapGuide layer
+ * 
  * @since 0.13
  */
 export const MG_LAYER_TYPE_NAME = "MapGuide";
 
 /**
+ * The default group name for MapGuide tiled layers. This value
+ * is not meant for localized display
+ * 
  * @since 0.13
  */
 export const MG_BASE_LAYER_GROUP_NAME = "Base Tile Layers";
 
 /**
+ * Default names for MapGuide built-in layer types. These value
+ * are not meant for localized display
+ * 
  * @since 0.13
  */
 export enum MgBuiltInLayers {

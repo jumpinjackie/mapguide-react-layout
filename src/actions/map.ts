@@ -600,7 +600,8 @@ export function mapLayerAdded(mapName: string, layer: ILayerInfo): IAddedLayerAc
 }
 
 /**
- *
+ * Removes a given external layer for the given map
+ * 
  * @export
  * @param {string} mapName
  * @param {string} layerName
@@ -618,7 +619,8 @@ export function removeMapLayer(mapName: string, layerName: string): IRemoveLayer
 }
 
 /**
- *
+ * Sets the display order index for the given external layer for the given map
+ * 
  * @export
  * @param {string} mapName
  * @param {string} layerName
@@ -638,7 +640,8 @@ export function setMapLayerIndex(mapName: string, layerName: string, index: numb
 }
 
 /**
- *
+ * Sets the opacity for the given external layer for the given map
+ * 
  * @export
  * @param {string} mapName
  * @param {string} layerName
@@ -658,7 +661,8 @@ export function setMapLayerOpacity(mapName: string, layerName: string, opacity: 
 }
 
 /**
- *
+ * Sets the visibility for the given external layer for the given map
+ * 
  * @export
  * @param {string} mapName
  * @param {string} layerName
@@ -678,6 +682,7 @@ export function setMapLayerVisibility(mapName: string, layerName: string, visibl
 }
 
 /**
+ * Sets the vector style for the given external layer for the given map
  * 
  * @export
  * @param {string} mapName
@@ -698,7 +703,8 @@ export function setMapLayerVectorStyle(mapName: string, layerName: string, style
 }
 
 /**
- *
+ * Adds a busy worker for the given external layer for the given map
+ * 
  * @export
  * @param {string} mapName
  * @param {string} layerName
@@ -716,7 +722,8 @@ export function addMapLayerBusyWorker(mapName: string, layerName: string): IAddM
 }
 
 /**
- *
+ * Removes a busy worker for the given external layer for the given map
+ * 
  * @export
  * @param {string} mapName
  * @param {string} layerName

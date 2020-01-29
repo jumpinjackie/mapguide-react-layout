@@ -29,6 +29,7 @@ import Feature from 'ol/Feature';
 import { SelectedFeaturesTooltip } from './tooltips/selected-features';
 
 /**
+ * The map debug context, used to check if request mocking should be enabled or not
  * @since 0.13
  */
 export interface IMapDebugContext {

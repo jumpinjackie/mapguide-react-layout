@@ -6,6 +6,8 @@ import { NBSP } from '../constants';
 const SimpleColorPicker = require("react-simple-colorpicker");
 
 /**
+ * Color picker props
+ * 
  * @since 0.13
  */
 export interface IColorPickerProps {
@@ -15,6 +17,8 @@ export interface IColorPickerProps {
 }
 
 /**
+ * A basic color picker component
+ * 
  * @since 0.13
  */
 export const ColorPicker = (props: IColorPickerProps) => {

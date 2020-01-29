@@ -510,6 +510,8 @@ export interface IMapRefreshAction {
 }
 
 /**
+ * An action to signal that a new external layer has been added for a given map
+ * 
  * @since 0.13
  */
 export interface IAddedLayerAction {
@@ -521,6 +523,8 @@ export interface IAddedLayerAction {
 }
 
 /**
+ * Removes a given external layer for the given map
+ * 
  * @since 0.13
  */
 export interface IRemoveLayerAction {
@@ -532,6 +536,8 @@ export interface IRemoveLayerAction {
 }
 
 /**
+ * Sets the display order index for the given external layer for the given map
+ * 
  * @since 0.13
  */
 export interface ISetLayerIndexAction {
@@ -544,6 +550,8 @@ export interface ISetLayerIndexAction {
 }
 
 /**
+ * Sets the opacity for the given external layer for the given map
+ * 
  * @since 0.13
  */
 export interface ISetLayerOpacityAction {
@@ -556,6 +564,8 @@ export interface ISetLayerOpacityAction {
 }
 
 /**
+ * Sets the visibility for the given external layer for the given map
+ * 
  * @since 0.13
  */
 export interface ISetLayerVisibilityAction {
@@ -568,6 +578,8 @@ export interface ISetLayerVisibilityAction {
 }
 
 /**
+ * Sets the vector style for the given external layer for the given map
+ * 
  * @since 0.13
  */
 export interface ISetMapLayerVectorStyle {
@@ -580,6 +592,8 @@ export interface ISetMapLayerVectorStyle {
 }
 
 /**
+ * Adds a busy worker for the given external layer for the given map
+ * 
  * @since 0.13
  */
 export interface IAddMapLayerBusyWorkerAction {
@@ -591,6 +605,8 @@ export interface IAddMapLayerBusyWorkerAction {
 }
 
 /**
+ * Removes a busy worker for the given external layer for the given map
+ * 
  * @since 0.13
  */
 export interface IRemoveMapLayerBusyWorkerAction {

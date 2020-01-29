@@ -6,6 +6,7 @@ import { strIsNullOrEmpty } from '../../utils/string';
 import { register } from 'ol/proj/proj4';
 
 /**
+ * Performs a projection definiiton lookup at epsg.io for the given EPSG code
  *
  * @export
  * @param {string | number} epsg
@@ -27,7 +28,11 @@ export async function resolveProjectionFromEpsgIoAsync(epsg: string | number, lo
 }
 
 /**
- *
+ * Ensures the given projection (by EPSG code) exists and if not invokes the given factory function (or does an epsg.io lookup)
+ * to fetch the definition to be registered.
+ * 
+ * Once registered, it will update the projection set within OpenLayers
+ * 
  * @export
  * @param {number} epsgCode
  * @param {() => Promise<string>} [factoryIfNotFound] A custom factory function to provide the required proj4js string for this projection. If not specified, a lookup to epsg.io will be done instead

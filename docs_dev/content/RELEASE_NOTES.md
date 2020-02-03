@@ -58,6 +58,11 @@
  * [#1047](https://github.com/jumpinjackie/mapguide-react-layout/issues/1047): SVG icon replacements for Task Pane and Selection Panel
  * [#326](https://github.com/jumpinjackie/mapguide-react-layout/issues/326): Moved positioning aspects of status bar element CSS out of the main viewer css and to their template html files
  * [#1066](https://github.com/jumpinjackie/mapguide-react-layout/issues/1066): Remove es6 promise polyfill and `whatwg-fetch` and replace with script tag reference to `polyfill.io` in viewer html files and storybook to polyfill required bits for IE
+ * New ***experimental*** viewer APIs for:
+   * Registering/unregistering subscribers to redux application state without rendering custom react components.
+     * This API is available from both within task pane content and as a `MapGuide.Application` mount option (for embedding scenarios)
+   * Dispatching redux actions.
+   * Refer to this [new TaskPane content example](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/viewer/examples/taskpane/subscriberapi.html) for usage of this new API.
 
 0.12.8
 ======

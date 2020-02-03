@@ -22,6 +22,7 @@ import { IVectorFeatureStyle } from './ol-style-helpers';
 import { IParsedFeatures } from './layer-manager/parsed-features';
 import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
+import { ISubscriberProps } from '../containers/subscriber';
 
 // Event boilerplate
 export type GenericEvent = any;
@@ -881,6 +882,41 @@ export interface IMapViewer {
      * @hidden
      */
     addImageLoaded(): void;
+    /**
+     * EXPERIMENTAL:
+     * Adds the given application state subscribers
+     * 
+     * NOTE: Calling this method will trigger a re-render of the component. Due to this quirk, 
+     * calling this method again while a re-render is taking place may cause the subscriber to
+     * not actually be registered. Calling this method multiple times in succession is therefore
+     * not advised. If you need to add multiple subscribers, pass an array of the subscribers to
+     * register in a single method call.
+     * 
+     * @param props 
+     * @since 0.13
+     */
+    addSubscribers(props: ISubscriberProps[]): string[];
+    /**
+     * EXPERIMENTAL:
+     * Removes application state subscribers of the given names
+     * 
+     * @param name 
+     * @since 0.13
+     */
+    removeSubscribers(names: string[]): boolean;
+    /**
+     * EXPERIMENTAL:
+     * Gets all application state subscriber names
+     * 
+     * @since 0.13
+     */
+    getSubscribers(): string[];
+    /**
+     * Dispatches the given action
+     * 
+     * @since 0.13
+     */
+    dispatch(action: any): void;
 }
 
 /**

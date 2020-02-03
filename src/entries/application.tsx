@@ -8,6 +8,7 @@ import { CONFIG_INITIAL_STATE } from "../reducers/config";
 import { getCommand as getRegisteredCommand } from "../api/registry/command";
 import { IConfigurationReducerState } from '..';
 import { ViewerAction } from '../actions/defs';
+import { Subscriber, ISubscriberProps } from '../containers/subscriber';
 
 /**
  * Extra application mount options.
@@ -17,6 +18,12 @@ import { ViewerAction } from '../actions/defs';
  * @interface IApplicationMountOptions
  */
 export interface IApplicationMountOptions {
+    /**
+     * An array of subscribers to application state
+     * 
+     * @since 0.13
+     */
+    subscribers: ISubscriberProps[];
     /**
      * Initial configuration settings to apply.
      * 
@@ -77,6 +84,7 @@ export class ApplicationViewModel {
      * @memberof ApplicationViewModel
      */
     public mount(node: Element, props: IAppProps & IApplicationMountOptions) {
+        const subs: ISubscriberProps[] = props.subscribers ?? [];
         const agentConf = {
             agentUri: props.agent.uri,
             agentKind: props.agent.kind || "mapagent"
@@ -86,6 +94,7 @@ export class ApplicationViewModel {
         this._store = configureStore(initState, extraReducers);
         ReactDOM.render(<Provider store={this._store}>
             <App {...props} />
+            {subs.map((s, i) => <Subscriber key={`subscriber-${i}-${s.name}`} {...s} />)}
         </Provider>, node);
     }
     /**

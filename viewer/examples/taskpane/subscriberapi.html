@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Plain HTML base layer switcher</title>
+    <script type="text/javascript">
+        var viewer = null;
+        var el = null;
+        var _activeMapName = null;
+
+        function onBaseLayerChange(el) {
+            var baseLayerName = el.value;
+            if (_activeMapName && baseLayerName) {
+                // This is the raw payload for the redux action to set the active base layer
+                viewer.dispatch({
+                    type: 'Map/SET_BASE_LAYER',
+                    payload: {
+                        mapName: _activeMapName,
+                        layerName: baseLayerName
+                    }
+                });
+            }
+        }
+
+        // Subscriber for the active map name state
+        var activeMapNameSubscriber = {
+            name: "active-map-name",
+            appStateSelector: function(state) {
+                return state.config.activeMapName
+            },
+            onNewState: function(mapName) {
+                _activeMapName = mapName;
+                document.getElementById("activeMap").innerHTML = _activeMapName;
+            }
+        };
+        // Subscriber for the base map layer list
+        var baseLayerSubscriber = {
+            name: "base-layers",
+            appStateSelector: function (state) {
+                if (state.config.activeMapName) {
+                    return state.mapState[state.config.activeMapName].externalBaseLayers;
+                }
+                return undefined;
+            },
+            onNewState: function (baseLayers) {
+                if (baseLayers.length == 0) {
+                    el.innerHTML = "<strong>Your current map has no base layers</strong>";
+                } else {
+                    el.innerHTML = baseLayers.map(function (baseLayer) {
+                        return "<input type='radio' onchange='onBaseLayerChange(this)' name='base-layer' value='" + baseLayer.name + "' " + (baseLayer.visible === true ? " checked='checked' " : "") + " /> " + baseLayer.name
+                    }).join("<br/>");
+                }
+            }
+        };
+
+        window.onload = function () {
+            //GetViewerInterface is the new API that Task Pane content
+            //can call to access the new IMapViewer interface
+            viewer = parent.parent.GetViewerInterface();
+            el = document.getElementById("switcher");
+
+            viewer.addSubscribers([
+                baseLayerSubscriber,
+                activeMapNameSubscriber
+            ]);
+            console.log("Subscribers added")
+        };
+
+        window.onunload = function () {
+            //Make sure to do this, otherwise the viewer will be holding onto dangling handlers
+            //as the browser reclaims memory used by this page
+            viewer.removeSubscribers([
+                activeMapNameSubscriber.name,
+                baseLayerSubscriber.name
+            ]);
+            console.log("Subscribers removed")
+        };
+
+    </script>
+</head>
+
+<body>
+    <h1>Subscriber API</h1>
+    <p>This page demonstrates usage of the new subscriber API to implement a base layer switcher</p>
+    <p>This example is best viewed with a Flexible Layout configured for multiple maps, with at least one of these maps having multiple external base layers</p>
+    <p>Active map is: <strong id="activeMap"></strong></p>
+    <div id="switcher">
+
+    </div>
+</body>
+
+</html>

@@ -35,6 +35,7 @@ import olGeomLineString from "ol/geom/LineString";
 import olGeomCircle from "ol/geom/Circle";
 import olGeomPolygon from "ol/geom/Polygon";
 import { MapDebugContext } from '../components/map-viewer-context';
+import { ISubscriberProps, Subscriber } from './subscriber';
 
 export interface IMapViewerContainerProps {
     overviewMapElementSelector?: () => (Element | null);
@@ -56,9 +57,16 @@ type INonBaseMapViewer = Pick<IMapViewer,
     "getSelection" |
     "getSelectionXml" |
     "setActiveTool" |
-    "getActiveTool">;
+    "getActiveTool" |
+    "addSubscribers" |
+    "removeSubscribers" |
+    "getSubscribers" |
+    "dispatch">;
 
 class MapViewerAdapter implements IMapViewer {
+    constructor(private inner: MapViewerBase,
+        private olFactory: OLFactory = new OLFactory()) { }
+    private disp: INonBaseMapViewer;
     getProjection(): ProjectionLike {
         return this.inner.getProjection();
     }
@@ -162,9 +170,6 @@ class MapViewerAdapter implements IMapViewer {
     updateSize(): void {
         this.inner.updateSize();
     }
-    constructor(private inner: MapViewerBase,
-        private olFactory: OLFactory = new OLFactory()) { }
-    private disp: INonBaseMapViewer;
     attachExternal(disp: INonBaseMapViewer): void {
         this.disp = disp;
     }
@@ -239,6 +244,18 @@ class MapViewerAdapter implements IMapViewer {
     addImageLoaded(): void {
         this.inner.addImageLoaded();
     }
+    addSubscribers(props: ISubscriberProps[]): string[] {
+        return this.disp.addSubscribers(props);
+    }
+    removeSubscribers(names: string[]): boolean {
+        return this.disp.removeSubscribers(names);
+    }
+    getSubscribers(): string[] {
+        return this.disp.getSubscribers();
+    }
+    dispatch(action: any): void {
+        this.disp.dispatch(action);
+    }
 }
 
 const MapViewerContainer = (props: IMapViewerContainerProps) => {
@@ -280,6 +297,19 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
     const cancelDigitizationKey = useConfiguredCancelDigitizationKey();
     const undoLastPointKey = useConfiguredUndoLastPointKey();
     const dispatch = useDispatch();
+    const [subscribers, setSubscribers] = React.useState<ISubscriberProps[]>([]);
+
+    const addSubscribers = (props: ISubscriberProps[]) => {
+        const ns = [...subscribers, ...props];
+        setSubscribers(ns);
+        return props.map(p => p.name);
+    };
+    const removeSubscribers = (names: string[]) => {
+        const ol = subscribers.length;
+        const ns = subscribers.filter(s => names.indexOf(s.name) < 0);
+        setSubscribers(ns);
+        return ns.length < ol;
+    };
     const setActiveTool = (tool: ActiveMapTool) => dispatch(MapActions.setActiveTool(tool));
     const setCurrentView = (view: IMapView) => dispatch(MapActions.setCurrentView(view));
     const setBusyCount = (count: number) => dispatch(MapActions.setBusyCount(count));
@@ -343,7 +373,11 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
                 getActiveTool: () => tool,
                 setFeatureTooltipEnabled: setFeatureTooltipsEnabled,
                 getSelection: () => selection,
-                getSelectionXml: (s, layerIds) => buildSelectionXml(s, layerIds)
+                getSelectionXml: (s, layerIds) => buildSelectionXml(s, layerIds),
+                addSubscribers: (props) => addSubscribers(props),
+                removeSubscribers: (name) => removeSubscribers(name),
+                getSubscribers: () => subscribers.map(s => s.name),
+                dispatch: (action) => dispatch(action)
             };
             adapter.attachExternal(external);
             logger.debug(`Attached updated external "API" to runtime viewer instance`);
@@ -442,6 +476,7 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
                 onContextMenu={onContextMenu}
                 onHideContextMenu={onHideContextMenu}
                 isContextMenuOpen={!!isContextMenuOpen} />
+            {subscribers.map((s, i) => <Subscriber key={`subscriber-${i}-${s.name}`} {...s} />)}
         </>;
     }
     return <div>{tr("LOADING_MSG", locale)}</div>;

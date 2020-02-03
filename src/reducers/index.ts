@@ -1,3 +1,9 @@
+/**
+ * @hidden
+ */
+
+/** */
+
 export * from "./config";
 export * from "./init-error";
 export * from "./last-action";

@@ -1,3 +1,9 @@
+/**
+ * @hidden
+ */
+
+/** */
+
 export * from "./about";
 export * from "./accordion";
 export * from "./base-layer-switcher";

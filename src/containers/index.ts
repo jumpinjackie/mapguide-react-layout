@@ -1,3 +1,9 @@
+/**
+ * @hidden
+ */
+
+/** */
+
 export * from "./app";
 export * from "./base-layer-switcher";
 export * from "./coordinate-tracker";

@@ -16,13 +16,13 @@
             "es2015",
             "dom"
         ],
-        "baseUrl": "./",
+        "baseUrl": "./src",
         "paths": {
             "ol": [
-                "node_modules/@hanreev/types-ol/ol"
+                "../node_modules/@hanreev/types-ol/ol"
             ],
             "ol/*": [
-                "node_modules/@hanreev/types-ol/ol/*"
+                "../node_modules/@hanreev/types-ol/ol/*"
             ]
         }
     },

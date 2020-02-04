@@ -29,6 +29,7 @@ import { MgError } from './error';
 import { setOLVectorLayerStyle } from './ol-style-helpers';
 import olVectorLayer from "ol/layer/Vector";
 import { getLayerInfo } from './layer-manager';
+import * as olHas from "ol/has";
 
 function mockMapGuideImageLoadFunction(image: ImageWrapper, src: string) {
     let el = document.getElementById("mg-debug-text-canvas");
@@ -125,10 +126,10 @@ class MgLayerSetInner implements ILayerSetOL {
         return this.inPerUnit / 39.37
     }
     public scaleToResolution(scale: number): number {
-        return scale / this.inPerUnit / this.dpi;
+        return (scale / this.inPerUnit / this.dpi) * olHas.DEVICE_PIXEL_RATIO;
     }
     public resolutionToScale(resolution: number): number {
-        return resolution * this.dpi * this.inPerUnit;
+        return (resolution * this.dpi * this.inPerUnit) / olHas.DEVICE_PIXEL_RATIO;
     }
     public getSourcesForProgressTracking(): olSource[] {
         const sources: olSource[] = [];

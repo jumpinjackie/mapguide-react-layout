@@ -179,7 +179,7 @@ const SidebarLayout = () => {
     const showLegend = useTemplateLegendVisible();
     const showSelection = useTemplateSelectionVisible();
     const showTaskPane = useTemplateTaskPaneVisible();
-    console.log(`leg: ${showLegend}, sel: ${showSelection}, task: ${showTaskPane}`);
+    //console.log(`leg: ${showLegend}, sel: ${showSelection}, task: ${showTaskPane}`);
     const {
         hasTaskPane,
         hasStatusBar,

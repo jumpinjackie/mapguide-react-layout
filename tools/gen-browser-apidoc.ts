@@ -40,6 +40,7 @@ for (const tsModule of apidef.children) {
         {
           if (modMember.children) {
             for (const member of modMember.children) {
+              //TODO: Need to also check generic/union/intersection types
               if (member.type?.id) {
                 dict_put(referencedTypes, member.type.id, {});
               }
@@ -68,11 +69,23 @@ for (const id of ids) {
 project.classes.sort((a, b) => a.globalName.localeCompare(b.globalName));
 project.types.sort((a, b) => a.name.localeCompare(b.name));
 
+/**
+ * TODO:
+ * 
+ *  - Display of type alias definition
+ *  - Use bootstrap badges to indicate types
+ *  - Make the sidebar scrollable somehow
+ *  - Add browser API intro description
+ *  - Add "scroll to top" feature
+ *  - Add more @browserapi annotations to elements we know to be exported to the browser API
+ *  - Display @since version
+ */
+
 // The HTML template to use for our simple docs
 const tmpl = `<!DOCTYPE HTML>
 <html>
   <head>
-    <title>{{project.name}}</title>
+    <title>{{project.name}} browser API reference</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
   </head>
   <body style="position:relative" data-spy="scroll" data-target="#navbar-toc" data-offset="20">

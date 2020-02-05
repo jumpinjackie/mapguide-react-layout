@@ -101,21 +101,20 @@ const tmpl = `<!DOCTYPE HTML>
         <div class="col-8">
           <!-- Main Content -->
           <div>
-            <h4 id="classes">Classes</h4>
+            <h3 id="classes">Classes</h3>
             {{#each project.classes}}
               <h5 id="class_{{this.symbol.id}}">{{this.globalName}}</h5>
               <p>{{this.symbol.comment.shortText}}</p>
               <p>{{this.symbol.comment.text}}</p>
-              <h6>Members</h6>
-              <hr />
-              {{#each symbol.children}}
-                <h6>{{this.name}} ({{this.kindString}})</h6>
-              {{/each}}
+              {{> members members=this.symbol.children }}
             {{/each}}
-            <h4 id="types">Types</h4>
+            <h3 id="types">Types</h3>
             {{#each project.types}}
               <h5 id="type_{{id}}">{{this.name}} ({{this.kindString}})</h5>
               <p>{{this.comment.shortText}}</p>
+              {{#if children.length}}
+              {{> members members=this.children }}
+              {{/if}}
             {{/each}}
           </div>
         </div>
@@ -127,17 +126,104 @@ const tmpl = `<!DOCTYPE HTML>
   </body>
 </html>`;
 
-hbs.registerHelper("typeMemberList", function(options: any) {
-  const items = options.fn(this);
-  let html = `
-  <h6>Members</h6>
-  <hr />
-  `;
-  for (const item of items) {
-    html += `<h6>${item.name} (${item.kindString})</h6>`;
-  }
+hbs.registerPartial("members", `<h6>Members</h6>
+<hr />
+{{#each members}}
+  {{#switch kindString}}
+    {{#case "Enumeration member" break=true}}
+    <div class="card">
+      <div class="card-body">
+        <code>{{this.name}}</code>
+        <p>{{this.comment.shortText}}</p>
+        <p>{{this.comment.text}}</p>
+      </div>
+    </div>
+    {{/case}}
+    {{#case "Method" break=true}}
+    <div class="card">
+      <div class="card-body">
+        <h6 class="card-title">{{this.name}}</h6>
+        {{#each signatures}}
+        <code class="method-defn">{{this.name}}({{> methodParameters method=.}}): {{> typeRef type=this.type }}</code>
+        <p>{{this.comment.shortText}}</p>
+        <p>{{this.comment.text}}</p>
+        {{> parameterDescriptions method=.}}
+        {{/each}}
+      </div>
+    </div>
+    {{/case}}
+    {{#case "Property" break=true}}
+    <div class="card">
+      <div class="card-body">
+        <h6 class="card-title">{{this.name}}</h6>
+        <code>{{this.name}}: {{> typeRef type=this.type }}</code>
+        <p>{{this.comment.shortText}}</p>
+        <p>{{this.comment.text}}</p>
+      </div>
+    </div>
+    {{/case}}
+  {{/switch}}
+{{/each}}`);
+
+// Partial to render a type name and link to it if possible
+hbs.registerPartial("typeRef", `{{#switch type.type ~}}
+  {{#case "reference" break=true ~}}
+    {{~#if this.type.typeArguments ~}}
+      {{this.type.name}}<{{#each this.type.typeArguments ~}}
+        {{~> typeRef type=this ~}}
+        {{~#unless @last}}, {{/unless~}}
+      {{~/each}}>
+    {{~else~}}
+      {{~#if this.type.id ~}}
+      <a href="#type_{{this.type.id}}">{{this.type.name}}</a>
+      {{else}}
+        {{this.type.name}}
+      {{~/if~}}
+    {{~/if~}}
+  {{~/case}}
+  {{#case "intrinsic" break=true ~}}
+    {{this.type.name}}
+  {{~/case}}
+  {{#case "union" break=true ~}}
+    {{#each this.type.types ~}}
+      {{~> typeRef type=this ~}}
+      {{~#unless @last}} | {{/unless~}}
+    {{~/each}}
+  {{~/case}}
+  {{#case "intersection" break=true ~}}
+    {{#each this.type.types ~}}
+      {{~> typeRef type=this ~}}
+      {{~#unless @last}} & {{/unless~}}
+    {{~/each}}
+  {{~/case}}
+{{~/switch}}`);
+hbs.registerPartial("methodParameters", `{{#each parameters ~}}
+  {{~this.name}}: {{> typeRef type=this.type }}
+  {{~#unless @last}}, {{/unless~}}
+{{~/each}}`);
+hbs.registerPartial("parameterDescriptions", `{{#if parameters.length}}
+<h6>Parameters:</h6>
+<ul>
+{{#each parameters ~}}
+  <li><code>{{~this.name}}</code>: {{> typeRef type=this.type }} {{#if this.comment.text.length ~}}- {{this.comment.text}}{{~/if~}}</li>
+{{~/each}}
+</ul>
+{{/if}}`);
+
+// https://github.com/wycats/handlebars.js/issues/927#issuecomment-200784792
+
+hbs.registerHelper("switch", function(value: any, options: any) {
+  this._switch_value_ = value;
+  var html = options.fn(this); // Process the body of the switch block
+  delete this._switch_value_;
   return html;
-})
+});
+
+hbs.registerHelper("case", function(value: any, options: any) {
+  if (value == this._switch_value_) {
+      return options.fn(this);
+  }
+});
 
 // Compile the template with handlebars using our project
 // object as context key

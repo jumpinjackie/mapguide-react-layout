@@ -78,8 +78,8 @@ export class ApplicationViewModel {
      * for you in the template's HTML. If you are creating your own viewer template, be
      * sure to call this method must on the template's HTML.
      *
-     * @param {Element} node
-     * @param {IAppProps & IApplicationMountOptions} props
+     * @param {Element} node The DOM element to mount this viewer application at
+     * @param {IAppProps & IApplicationMountOptions} props Props to mount the component with
      *
      * @memberof ApplicationViewModel
      */

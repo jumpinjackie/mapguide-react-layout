@@ -1,0 +1,11 @@
+{
+    "inputFiles": ["./src/index.ts"],
+    "mode": "modules",
+    "json": "./docs_output/latest/api.json",
+    "excludePrivate": true,
+    "excludeExternals": true,
+    "excludeNotExported": true,
+    "includeDeclarations": true,
+    "includeVersion": true,
+    "tsconfig": "tsconfig.npmdoc.json"
+}

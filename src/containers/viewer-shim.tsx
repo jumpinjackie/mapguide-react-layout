@@ -13,7 +13,7 @@ import { Client } from "../api/client";
 import { MgError } from "../api/error";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { FeatureSet, SelectedFeatureSet, QueryMapFeaturesResponse } from "../api/contracts/query";
-import { RefreshMode, ICommand, ClientKind, UnitOfMeasure, Bounds } from "../api/common";
+import { RefreshMode, ICommand, ClientKind, UnitOfMeasure, Bounds, IMapViewer } from "../api/common";
 import * as MapActions from "../actions/map";
 import * as TaskPaneActions from "../actions/taskpane";
 import * as LegendActions from "../actions/legend";
@@ -25,6 +25,76 @@ import { serialize } from "../api/builders/mapagent";
 import { ILocalizedMessages } from "../strings/msgdef";
 import { getUnitOfMeasure } from '../utils/units';
 import { useActiveMapState, useActiveMapSelectionSet, useConfiguredAgentUri, useConfiguredAgentKind, useViewerBusyCount, useViewerSizeUnits } from './hooks';
+
+/**
+ * The AJAX viewer form frame API
+ * @hidden
+ */
+export interface IAjaxViewerFormFrame {
+    Submit(url: string, params: string[], frameTarget: string): void;
+}
+
+/**
+ * The AJAX viewer map frame API
+ * @hidden
+ */
+export interface IAjaxViewerMapFrame {
+    mapInit: boolean;
+    ClearSelection(): void;
+    DigitizeCircle(handler: (circle: IAjaxViewerCircle) => void): void;
+    DigitizeLine(handler: (geom: AjaxViewerLineStringOrPolygon) => void): void;
+    DigitizePoint(handler: (geom: IAjaxViewerPoint) => void): void;
+    DigitizePolygon(handler: (geom: AjaxViewerLineStringOrPolygon) => void): void
+    DigitizeLineString(handler: (geom: AjaxViewerLineStringOrPolygon) => void): void;
+    DigitizeRectangle(handler: (geom: IAjaxViewerRect) => void): void;
+    ExecuteMapAction(code: AjaxViewerMapActionCode): void;
+    GetCenter(): IAjaxViewerPoint | null;
+    GetLayers(onlyVisible: boolean, onlySelectable: boolean): IAjaxViewerLayer[];
+    GetMetersPerUnit(): number | null;
+    GetMapHeight(): number;
+    GetMapName(): string | undefined;
+    GetMapUnitsType(): string;
+    GetMapWidth(): number;
+    GetScale(): number | null;
+    GetSelectedLayers(): IAjaxViewerLayer[];
+    GetSelectionXML(): string;
+    GetSessionId(): string;
+    GetSelectedBounds(): IAjaxViewerBounds | null;
+    GetSelectedCount(): number;
+    GetSelectedFeatures(): IAjaxViewerSelectionSet | undefined;
+    IsDigitizing(): boolean;
+    IsEnglishUnits(): boolean;
+    IsLatLongDisplayUnits(): boolean;
+    Refresh(): void;
+    ScreenToMapUnits(x: number, y: number): IAjaxViewerPoint | undefined;
+    SetEnglishUnits(usEnglish: boolean): void;
+    SetLatLongDisplayUnits(): void;
+    SetSelectionXML(xmlSet: string): void;
+    ZoomToView(x: number, y: number, scale: number): void;
+    SetStatusMsg(msg: string): void;
+    ZoomToScale(scale: number): void;
+}
+
+/**
+ * @browserapi window
+ * @hidden
+ */
+export interface IBrowserWindowGlobals {
+    formFrame: IAjaxViewerFormFrame;
+    mapFrame: IAjaxViewerMapFrame;
+    UnregisterSelectionHandler: (handler: SelectionHandlerCallback) => number;
+    RegisterSelectionHandler: (handler: SelectionHandlerCallback) => number;
+    GetViewerInterface: () => IMapViewer;
+    GotoHomePage: () => void;
+    ZoomToView: (x: number, y: number, scale: number) => void;
+    SetSelectionXML: (xmlSet: string) => void;
+    Refresh: () => void;
+    ExecuteMapAction: (code: AjaxViewerMapActionCode) => void;
+    GetMapFrame: () => IAjaxViewerMapFrame;
+    OpenLayers: OL2Shim;
+    Fusion: FusionApiShim;
+
+}
 
 function isEmptySelection(selection: QueryMapFeaturesResponse | undefined): boolean {
     if (selection && selection.FeatureSet) {
@@ -1129,7 +1199,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         return this.userSelectionHandlers.length;
     }
 
-    private installShims(browserWindow: any) {
+    private installShims(browserWindow: IBrowserWindowGlobals) {
         browserWindow.Fusion = this.fusionAPI;
         browserWindow.OpenLayers = this.ol2API;
 
@@ -1137,7 +1207,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         //NOTE: mapFrame is technically not part of the "public" API for the AJAX viewer, but since most examples test
         //for this in place of GetMapFrame(), we might as well emulate it here
         browserWindow.mapFrame = browserWindow.GetMapFrame();
-        browserWindow.formFrame = browserWindow.mapFrame;
+        browserWindow.formFrame = (browserWindow.mapFrame as any) as IAjaxViewerFormFrame;
 
         browserWindow.ExecuteMapAction = browserWindow.ExecuteMapAction || ((code: any) => this.ExecuteMapAction(code));
         browserWindow.Refresh = browserWindow.Refresh || (() => this.Refresh());
@@ -1154,7 +1224,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         //Install shims into browser window
         let browserWindow: any = window;
         this.installShims(browserWindow);
-        this.installShims(window.parent);
+        this.installShims((window.parent as any) as IBrowserWindowGlobals);
 
         this.RegisterSelectionHandler((_mapName: string, selection: QueryMapFeaturesResponse | undefined) => {
             this.fusionSelectionHandler(selection);

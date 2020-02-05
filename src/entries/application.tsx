@@ -37,7 +37,7 @@ export interface IApplicationMountOptions {
 /**
  * This is the entry point to the Application component
  *
- * In the browser globals context, this is accessible via MapGuide.Application
+ * @browserapi MapGuide.Application
  */
 export class ApplicationViewModel {
     protected _store: any;

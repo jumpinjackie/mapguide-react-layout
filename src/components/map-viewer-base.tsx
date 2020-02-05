@@ -138,6 +138,7 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
     isContextMenuOpen: boolean;
     onHideContextMenu?: () => void;
     onContextMenu?: (pos: [number, number]) => void;
+    onOpenTooltipLink: (url: string) => void;
 }
 
 /**
@@ -629,7 +630,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             getSessionId: () => this.props.map.SessionId,
             getLocale: () => this.props.locale,
             isFeatureTooltipEnabled: this.isFeatureTooltipEnabled.bind(this),
-            getPointSelectionBox: (point) => this.getPointSelectionBox(point, this.props.pointSelectionBuffer || 2)
+            getPointSelectionBox: (point) => this.getPointSelectionBox(point, this.props.pointSelectionBuffer || 2),
+            openTooltipLink: (url) => this.props.onOpenTooltipLink(url)
         };
     }
     private applyView(layerSet: MgLayerSet, vw: IMapView) {

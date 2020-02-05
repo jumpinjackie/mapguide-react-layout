@@ -36,6 +36,7 @@ import olGeomCircle from "ol/geom/Circle";
 import olGeomPolygon from "ol/geom/Polygon";
 import { MapDebugContext } from '../components/map-viewer-context';
 import { ISubscriberProps, Subscriber } from './subscriber';
+import { ActionType } from '../constants/actions';
 
 export interface IMapViewerContainerProps {
     overviewMapElementSelector?: () => (Element | null);
@@ -421,6 +422,14 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
     };
     const onHideContextMenu = () => hideContextMenu?.();
     const onContextMenu = (pos: [number, number]) => showContextMenu?.(pos);
+    const onOpenTooltipLink = (url: string) => {
+        dispatch({
+            type: ActionType.TASK_INVOKE_URL,
+            payload: {
+                url
+            }
+        });
+    };
     /*
     const store = (this.context as any).store;
     const items: any[] = contextmenu != null ? contextmenu.items : [];
@@ -475,7 +484,8 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
                 activeSelectedFeatureXml={xml}
                 onContextMenu={onContextMenu}
                 onHideContextMenu={onHideContextMenu}
-                isContextMenuOpen={!!isContextMenuOpen} />
+                isContextMenuOpen={!!isContextMenuOpen}
+                onOpenTooltipLink={onOpenTooltipLink} />
             {subscribers.map((s, i) => <Subscriber key={`subscriber-${i}-${s.name}`} {...s} />)}
         </>;
     }

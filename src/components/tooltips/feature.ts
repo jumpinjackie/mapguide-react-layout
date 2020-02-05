@@ -18,6 +18,7 @@ export class FeatureQueryTooltip {
     private throttledMouseMove: GenericEventHandler;
     private featureTooltipElement: HTMLElement;
     private featureTooltip: olOverlay;
+    private linkElement: HTMLElement | null;
     private enabled: boolean;
     private isMouseOverTooltip: boolean;
     private callback: IMapViewerContextCallback;
@@ -59,6 +60,9 @@ export class FeatureQueryTooltip {
         if (!this.enabled) {
             this.featureTooltipElement.innerHTML = "";
             this.featureTooltipElement.classList.add("tooltip-hidden");
+            if (this.linkElement) {
+                this.linkElement.onclick = null;
+            }
         }
     }
     private sendTooltipQuery(geom: olPolygon): void {
@@ -100,11 +104,16 @@ export class FeatureQueryTooltip {
                 html += `<div class='feature-tooltip-body'>${res.Tooltip.replace(/\\n/g, "<br/>")}</div>`;
             }
             if (res.Hyperlink) {
-                html += `<div><a target='taskPaneFrame' href='${res.Hyperlink}'>${tr("FEATURE_TOOLTIP_URL_HELP_TEXT", this.callback.getLocale())}</a></div>`;
+                html += `<div><a id='feature-tooltip-link' href='${res.Hyperlink}'>${tr("FEATURE_TOOLTIP_URL_HELP_TEXT", this.callback.getLocale())}</a></div>`;
             }
             this.featureTooltipElement.innerHTML = html;
+            this.linkElement = document.getElementById("feature-tooltip-link");
+            this.setLinkClickHandler();
             if (html == "") {
                 this.featureTooltipElement.classList.add("tooltip-hidden");
+                if (this.linkElement) {
+                    this.linkElement.onclick = null;
+                }
             } else {
                 this.featureTooltipElement.classList.remove("tooltip-hidden");
             }
@@ -116,5 +125,15 @@ export class FeatureQueryTooltip {
                 this.callback.onSessionExpired();
             }
         });
+    }
+    private setLinkClickHandler = () => {
+        if (this.linkElement) {
+            this.linkElement.onclick = this.handleLinkClick;
+        }
+    }
+    private handleLinkClick = (e: any) => {
+        e.preventDefault();
+        this.callback.openTooltipLink(e.target.href);
+        return false;
     }
 }

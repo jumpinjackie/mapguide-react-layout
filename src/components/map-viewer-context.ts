@@ -8,7 +8,8 @@ import {
     ImageFormat,
     IExternalBaseLayer,
     ILayerManager,
-    IMapViewer
+    IMapViewer,
+    CommandTarget
 } from "../api/common";
 import { Client } from '../api/client';
 import { RuntimeMap } from "../api/contracts/runtime-map";
@@ -27,6 +28,7 @@ import { MgLayerSet } from '../api/layer-set';
 import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
 import { SelectedFeaturesTooltip } from './tooltips/selected-features';
+import { ViewerAction } from 'actions/defs';
 
 /**
  * The map debug context, used to check if request mocking should be enabled or not
@@ -70,6 +72,7 @@ export interface IMapViewerContextCallback {
     getLocale(): string | undefined;
     isFeatureTooltipEnabled(): boolean;
     getPointSelectionBox(point: Coordinate2D): Bounds;
+    openTooltipLink(url: string): void;
 }
 
 /**

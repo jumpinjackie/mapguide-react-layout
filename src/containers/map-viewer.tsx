@@ -37,6 +37,7 @@ import olGeomPolygon from "ol/geom/Polygon";
 import { MapDebugContext } from '../components/map-viewer-context';
 import { ISubscriberProps, Subscriber } from './subscriber';
 import { ActionType } from '../constants/actions';
+import { ensureParameters } from '../utils/url';
 
 export interface IMapViewerContainerProps {
     overviewMapElementSelector?: () => (Element | null);
@@ -423,10 +424,14 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
     const onHideContextMenu = () => hideContextMenu?.();
     const onContextMenu = (pos: [number, number]) => showContextMenu?.(pos);
     const onOpenTooltipLink = (url: string) => {
+        let fixedUrl = url;
+        if (activeMapName && sessionId) {
+            fixedUrl = ensureParameters(url, activeMapName, sessionId, locale);
+        }
         dispatch({
             type: ActionType.TASK_INVOKE_URL,
             payload: {
-                url
+                url: fixedUrl
             }
         });
     };

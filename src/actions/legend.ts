@@ -14,6 +14,8 @@ import { ILegendSetGroupVisibilityAction, ILegendSetGroupExpandedAction, ILegend
  * @param {string} mapName
  * @param {{ id: string, value: boolean }} options
  * @returns
+ * 
+ * @browserapi MapGuide.Actions.Legend
  */
 export function setGroupVisibility(mapName: string, options: { id: string, value: boolean }): ILegendSetGroupVisibilityAction {
     return {
@@ -29,6 +31,8 @@ export function setGroupVisibility(mapName: string, options: { id: string, value
  * @param {string} mapName
  * @param {{ id: string, value: boolean }} options
  * @returns
+ * 
+ * @browserapi MapGuide.Actions.Legend
  */
 export function setLayerVisibility(mapName: string, options: { id: string, value: boolean }): ILegendSetLayerVisibilityAction {
     return {
@@ -44,6 +48,8 @@ export function setLayerVisibility(mapName: string, options: { id: string, value
  * @param {string} mapName
  * @param {{ id: string, value: boolean }} options
  * @returns
+ * 
+ * @browserapi MapGuide.Actions.Legend
  */
 export function setGroupExpanded(mapName: string, options: { id: string, value: boolean }): ILegendSetGroupExpandedAction {
     return {
@@ -59,6 +65,8 @@ export function setGroupExpanded(mapName: string, options: { id: string, value: 
  * @param {string} mapName
  * @param {{ id: string, value: boolean }} options
  * @returns
+ * 
+ * @browserapi MapGuide.Actions.Legend
  */
 export function setLayerSelectable(mapName: string, options: { id: string, value: boolean }): ILegendSetGroupSelectableAction {
     return {
@@ -72,6 +80,8 @@ export function setLayerSelectable(mapName: string, options: { id: string, value
  *
  * @export
  * @returns {ReduxThunkedAction}
+ * 
+ * @browserapi MapGuide.Actions.Legend
  */
 export function refresh(): ReduxThunkedAction {
     return (dispatch, getState) => {

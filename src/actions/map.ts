@@ -181,6 +181,8 @@ export interface QueryMapFeatureActionOptions {
  * @param {string} mapName The name of the current runtime map
  * @param {QueryMapFeatureActionOptions} opts query options
  * @returns {ReduxThunkedAction}
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function queryMapFeatures(mapName: string, opts: QueryMapFeatureActionOptions): ReduxThunkedAction {
     return (dispatch, getState) => {
@@ -244,6 +246,8 @@ export function queryMapFeatures(mapName: string, opts: QueryMapFeatureActionOpt
  * @export
  * @param {IMapView} view The map view to set
  * @returns {ReduxThunkedAction}
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function setCurrentView(view: IMapView): ReduxThunkedAction {
     return (dispatch, getState) => {
@@ -291,6 +295,8 @@ export function setCurrentView(view: IMapView): ReduxThunkedAction {
  * @param {number} width 
  * @param {number} height 
  * @returns {IMapResizedAction} 
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function mapResized(width: number, height: number): IMapResizedAction {
     return {
@@ -309,6 +315,8 @@ export function mapResized(width: number, height: number): IMapResizedAction {
  * @param {string} mapName The name of the current runtime map
  * @param {*} selectionSet The selection set to apply
  * @returns {IMapSetSelectionAction}
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function setSelection(mapName: string, selectionSet: any): IMapSetSelectionAction {
     return {
@@ -327,6 +335,8 @@ export function setSelection(mapName: string, selectionSet: any): IMapSetSelecti
  * @param {ICommand} cmd
  * @param {*} [parameters]
  * @returns {ReduxThunkedAction}
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function invokeCommand(cmd: ICommand, parameters?: any): ReduxThunkedAction {
     return (dispatch, getState) => {
@@ -341,6 +351,8 @@ export function invokeCommand(cmd: ICommand, parameters?: any): ReduxThunkedActi
  * @export
  * @param {number} busyCount The current busy count
  * @returns {IMapSetBusyCountAction}
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function setBusyCount(busyCount: number): IMapSetBusyCountAction {
     return {
@@ -356,6 +368,8 @@ export function setBusyCount(busyCount: number): IMapSetBusyCountAction {
  * @param {string} mapName The name of the current runtime map
  * @param {string} layerName The name of the external base layer to set as active
  * @returns
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function setBaseLayer(mapName: string, layerName: string): IMapSetBaseLayerAction {
     return {
@@ -374,6 +388,8 @@ export function setBaseLayer(mapName: string, layerName: string): IMapSetBaseLay
  * @param {string} mapName The name of the current runtime map
  * @param {number} scale The scale to set
  * @returns
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function setScale(mapName: string, scale: number): IMapSetScaleAction {
     const viewer = getViewer();
@@ -398,6 +414,8 @@ export function setScale(mapName: string, scale: number): IMapSetScaleAction {
  * @param {string} mapName The name of the current runtime map
  * @param {*} coord The current mouse coordinates
  * @returns
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function setMouseCoordinates(mapName: string, coord: any): IMapSetMouseCoordinatesAction {
     return {
@@ -417,6 +435,8 @@ export function setMouseCoordinates(mapName: string, coord: any): IMapSetMouseCo
  * @param {string} layerName The name of the OL layer
  * @param {number} opacity A value between 0 and 1. 1 - Fully Opaque, 0 - Fully Transparent
  * @returns 
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function setLayerTransparency(mapName: string, layerName: string, opacity: number): IMapSetLayerTransparencyAction {
     return {
@@ -435,6 +455,8 @@ export function setLayerTransparency(mapName: string, layerName: string, opacity
  * @export
  * @param {UnitOfMeasure} unit 
  * @returns {IMapSetViewSizeUnitsAction} 
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function setViewSizeUnits(unit: UnitOfMeasure): IMapSetViewSizeUnitsAction {
     return {
@@ -449,6 +471,8 @@ export function setViewSizeUnits(unit: UnitOfMeasure): IMapSetViewSizeUnitsActio
  * @export
  * @param {string} mapName The name of the current runtime map
  * @returns
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function previousView(mapName: string): IMapPreviousViewAction {
     return {
@@ -465,6 +489,8 @@ export function previousView(mapName: string): IMapPreviousViewAction {
  * @export
  * @param {string} mapName The name of the current runtime amp
  * @returns
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function nextView(mapName: string): IMapNextViewAction {
     return {
@@ -481,6 +507,8 @@ export function nextView(mapName: string): IMapNextViewAction {
  * @export
  * @param {ActiveMapTool} tool The active map tool command
  * @returns
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function setActiveTool(tool: ActiveMapTool): ISetActiveMapToolAction {
     return {
@@ -495,6 +523,8 @@ export function setActiveTool(tool: ActiveMapTool): ISetActiveMapToolAction {
  * @export
  * @param {string} mapName The name of the runtime map to set as active
  * @returns
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function setActiveMap(mapName: string): ISetActiveMapAction {
     return {
@@ -509,6 +539,8 @@ export function setActiveMap(mapName: string): ISetActiveMapAction {
  * @export
  * @param {boolean} enabled
  * @returns
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function setFeatureTooltipsEnabled(enabled: boolean): ISetFeatureTooltipsEnabledAction {
     return {
@@ -523,6 +555,8 @@ export function setFeatureTooltipsEnabled(enabled: boolean): ISetFeatureTooltips
  * @export
  * @param {boolean} enabled
  * @returns
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function setManualFeatureTooltipsEnabled(enabled: boolean): ISetManualFeatureTooltipsEnabledAction {
     return {
@@ -537,6 +571,8 @@ export function setManualFeatureTooltipsEnabled(enabled: boolean): ISetManualFea
  * @export
  * @param {number} rotation 
  * @returns 
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function setViewRotation(rotation: number): IMapSetViewRotationAction {
     return {
@@ -550,6 +586,8 @@ export function setViewRotation(rotation: number): IMapSetViewRotationAction {
  * 
  * @export
  * @param {boolean} enabled 
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function setViewRotationEnabled(enabled: boolean): IMapSetViewRotationEnabledAction {
     return {
@@ -566,6 +604,8 @@ export function setViewRotationEnabled(enabled: boolean): IMapSetViewRotationEna
  * @param {string} layerId 
  * @param {string} selectionKey 
  * @returns {IShowSelectedFeatureAction} 
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function showSelectedFeature(mapName: string, layerId: string, selectionKey: string): IShowSelectedFeatureAction {
     return {
@@ -588,6 +628,8 @@ export function showSelectedFeature(mapName: string, layerId: string, selectionK
  * @param {ILayerInfo} layer
  * @returns {IAddedLayerAction}
  * @since 0.13
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function mapLayerAdded(mapName: string, layer: ILayerInfo): IAddedLayerAction {
     return {
@@ -607,6 +649,8 @@ export function mapLayerAdded(mapName: string, layer: ILayerInfo): IAddedLayerAc
  * @param {string} layerName
  * @returns {IRemoveLayerAction}
  * @since 0.13
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function removeMapLayer(mapName: string, layerName: string): IRemoveLayerAction {
     return {
@@ -627,6 +671,8 @@ export function removeMapLayer(mapName: string, layerName: string): IRemoveLayer
  * @param {number} index
  * @returns {ISetLayerIndexAction}
  * @since 0.13
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function setMapLayerIndex(mapName: string, layerName: string, index: number): ISetLayerIndexAction {
     return {
@@ -648,6 +694,8 @@ export function setMapLayerIndex(mapName: string, layerName: string, index: numb
  * @param {number} opacity
  * @returns {ISetLayerOpacityAction}
  * @since 0.13
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function setMapLayerOpacity(mapName: string, layerName: string, opacity: number): ISetLayerOpacityAction {
     return {
@@ -669,6 +717,8 @@ export function setMapLayerOpacity(mapName: string, layerName: string, opacity: 
  * @param {boolean} visible
  * @returns {ISetLayerVisibilityAction}
  * @since 0.13
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function setMapLayerVisibility(mapName: string, layerName: string, visible: boolean): ISetLayerVisibilityAction {
     return {
@@ -690,6 +740,8 @@ export function setMapLayerVisibility(mapName: string, layerName: string, visibl
  * @param {IVectorFeatureStyle} style
  * @returns {ISetMapLayerVectorStyle}
  * @since 0.13
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function setMapLayerVectorStyle(mapName: string, layerName: string, style: IVectorFeatureStyle): ISetMapLayerVectorStyle {
     return {
@@ -710,6 +762,8 @@ export function setMapLayerVectorStyle(mapName: string, layerName: string, style
  * @param {string} layerName
  * @returns {IAddMapLayerBusyWorkerAction}
  * @since 0.13
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function addMapLayerBusyWorker(mapName: string, layerName: string): IAddMapLayerBusyWorkerAction {
     return {
@@ -729,6 +783,8 @@ export function addMapLayerBusyWorker(mapName: string, layerName: string): IAddM
  * @param {string} layerName
  * @returns {IRemoveMapLayerBusyWorkerAction}
  * @since 0.13
+ * 
+ * @browserapi MapGuide.Actions.Map
  */
 export function removeMapLayerBusyWorker(mapName: string, layerName: string): IRemoveMapLayerBusyWorkerAction {
     return {

@@ -10,6 +10,8 @@ import { ITaskPaneBackAction, ITaskPaneForwardAction, ITaskPanePushUrlAction } f
  *
  * @export
  * @returns {ReduxThunkedAction}
+ * 
+ * @browserapi MapGuide.Actions.TaskPane
  */
 export function goHome(): ReduxThunkedAction {
     return (dispatch, getState) => {
@@ -29,6 +31,8 @@ export function goHome(): ReduxThunkedAction {
  *
  * @export
  * @returns
+ * 
+ * @browserapi MapGuide.Actions.TaskPane
  */
 export function goBack(): ITaskPaneBackAction {
     return {
@@ -41,6 +45,8 @@ export function goBack(): ITaskPaneBackAction {
  *
  * @export
  * @returns
+ * 
+ * @browserapi MapGuide.Actions.TaskPane
  */
 export function goForward(): ITaskPaneForwardAction {
     return {
@@ -55,6 +61,8 @@ export function goForward(): ITaskPaneForwardAction {
  * @param {string} url
  * @param {boolean} [silent]
  * @returns
+ * 
+ * @browserapi MapGuide.Actions.TaskPane
  */
 export function pushUrl(url: string, silent?: boolean): ITaskPanePushUrlAction {
     return {

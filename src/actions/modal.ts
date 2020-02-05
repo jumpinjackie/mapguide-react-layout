@@ -11,6 +11,8 @@ import { ICloseModalAction, IShowModalUrlAction, IShowComponentInModalAction } f
  * @export
  * @param {*} options Modal dialog display options
  * @returns {IShowComponentInModalAction}
+ * 
+ * @browserapi MapGuide.Actions.Legend
  */
 export function showModalComponent(options: IModalComponentDisplayOptions): IShowComponentInModalAction {
     return {
@@ -27,6 +29,8 @@ export function showModalComponent(options: IModalComponentDisplayOptions): ISho
  * @export
  * @param {*} options Modal dialog display options
  * @returns {IShowModalUrlAction}
+ * 
+ * @browserapi MapGuide.Actions.Legend
  */
 export function showModalUrl(options: IModalDisplayOptions): IShowModalUrlAction {
     return {
@@ -43,6 +47,8 @@ export function showModalUrl(options: IModalDisplayOptions): IShowModalUrlAction
  * @export
  * @param {*} options Modal dialog hide options
  * @returns {ICloseModalAction}
+ * 
+ * @browserapi MapGuide.Actions.Legend
  */
 export function hideModal(options: any): ICloseModalAction {
     return {

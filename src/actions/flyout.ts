@@ -14,6 +14,8 @@ import { ActionType } from '../constants/actions';
  * 
  * @param position The client x/y position
  * @since 0.13
+ * 
+ * @browserapi MapGuide.Actions.Legend
  */
 export function openContextMenu(position: { x: number, y: number }): IOpenContextMenuAction {
     return {
@@ -28,6 +30,8 @@ export function openContextMenu(position: { x: number, y: number }): IOpenContex
  * Closes the context menu
  * 
  * @since 0.13
+ * 
+ * @browserapi MapGuide.Actions.Legend
  */
 export function closeContextMenu(): ICloseContextMenuAction {
     return {
@@ -42,6 +46,8 @@ export function closeContextMenu(): ICloseContextMenuAction {
  * @param {string} id
  * @param {IDOMElementMetrics} metrics
  * @returns {IOpenFlyoutAction}
+ * 
+ * @browserapi MapGuide.Actions.Legend
  */
 export function openFlyout(id: string, metrics: IDOMElementMetrics): IOpenFlyoutAction {
     return {
@@ -59,6 +65,8 @@ export function openFlyout(id: string, metrics: IDOMElementMetrics): IOpenFlyout
  * @export
  * @param {string} id
  * @returns {ICloseFlyoutAction}
+ * 
+ * @browserapi MapGuide.Actions.Legend
  */
 export function closeFlyout(id: string): ICloseFlyoutAction {
     return {
@@ -78,6 +86,8 @@ export function closeFlyout(id: string): ICloseFlyoutAction {
  * @param {string} name
  * @param {*} props
  * @returns {IOpenComponentInFlyoutAction}
+ * 
+ * @browserapi MapGuide.Actions.Legend
  */
 export function openComponent(id: string, metrics: IDOMElementMetrics, name: string, props: any): IOpenComponentInFlyoutAction {
     return {
@@ -97,6 +107,8 @@ export function openComponent(id: string, metrics: IDOMElementMetrics, name: str
  * @export
  * @param {string} id
  * @returns {ICloseComponentInFlyoutAction}
+ * 
+ * @browserapi MapGuide.Actions.Legend
  */
 export function closeComponent(id: string): ICloseComponentInFlyoutAction {
     return {

@@ -15,6 +15,13 @@ export function getAssetRoot(): string {
     return mRoot;
 }
 
+/**
+ * Sets the base path for all asset URLs
+ *
+ * @export
+ * @param {string} root The base path to set
+ * @browserapi MapGuide
+ */
 export function setAssetRoot(root: string): void {
     mRoot = root;
 }

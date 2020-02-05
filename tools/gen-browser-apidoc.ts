@@ -1,4 +1,4 @@
-import { TsApiDefinition, Dictionary, TsIdentifiable, TsModuleMember, dict_put, dict_count, dict_keys, dict_get } from "./typedoc-api";
+import { TsApiDefinition, Dictionary, TsIdentifiable, TsModuleMember, dict_put, dict_count, dict_keys, dict_get, TsInterface, TsClass, TsFunction, TsVariable } from "./typedoc-api";
 
 const fs = require('fs');
 const hbs = require('handlebars');
@@ -10,12 +10,16 @@ const allSymbolsById: Dictionary<TsModuleMember> = {};
 
 interface IProject {
   name: string;
-  classes: { symbol: TsModuleMember, globalName: string }[];
+  functions: { symbol: TsFunction, globalName: string }[];
+  variables: { symbol: TsVariable, globalName: string }[];
+  classes: { symbol: TsClass | TsInterface, globalName: string }[];
   types: TsModuleMember[];
 }
 
 const project: IProject = {
   name: apidef.name,
+  functions: [],
+  variables: [],
   classes: [],
   types: []
 };
@@ -29,15 +33,16 @@ for (const tsModule of apidef.children) {
   }
   for (const modMember of tsModule.children) {
     dict_put(allSymbolsById, modMember.id, modMember);
-    const bapi = modMember.comment?.tags?.find(t => t.tag == "browserapi");
-    if (bapi?.text) {
-      console.log(`Found: ${bapi.text.trim()}`);
-      project.classes.push({ symbol: modMember, globalName: bapi.text.trim() });
-    }
     switch (modMember.kindString) {
       case "Class":
       case "Interface":
         {
+          const bapi = modMember.comment?.tags?.find(t => t.tag == "browserapi");
+          if (bapi?.text) {
+            const gn = `${bapi.text.trim()}.${modMember.name}`;
+            console.log(`Found Class/Interface: ${gn}`);
+            project.classes.push({ symbol: modMember, globalName: gn });
+          }
           if (modMember.children) {
             for (const member of modMember.children) {
               //TODO: Need to also check generic/union/intersection types
@@ -45,6 +50,26 @@ for (const tsModule of apidef.children) {
                 dict_put(referencedTypes, member.type.id, {});
               }
             }
+          }
+        }
+        break;
+      case "Variable":
+        {
+          const bapi = modMember.comment?.tags?.find(t => t.tag == "browserapi");
+          if (bapi?.text) {
+            const gn = `${bapi.text.trim()}.${modMember.name}`;
+            console.log(`Found Variable: ${gn}`);
+            project.variables.push({ symbol: modMember, globalName: gn });
+          }
+        }
+        break;
+      case "Function":
+        {
+          const bapi = modMember.comment?.tags?.find(t => t.tag == "browserapi");
+          if (bapi?.text) {
+            const gn = `${bapi.text.trim()}.${modMember.name}`;
+            console.log(`Found Function: ${gn}`);
+            project.functions.push({ symbol: modMember, globalName: gn });
           }
         }
         break;

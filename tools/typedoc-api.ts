@@ -40,6 +40,15 @@ export interface TsMethodParameter extends TsIdentifiable {
     type: TsTypeReference;
 }
 
+export interface TsVariable extends TsIdentifiable {
+    kindString: "Variable";
+}
+
+export interface TsFunction extends TsIdentifiable {
+    kindString: "Function";
+    signatures: TsMethodSignature[];
+}
+
 export interface TsClass extends TsIdentifiable {
     kindString: "Class";
     children?: TsTypeMember[];
@@ -50,7 +59,7 @@ export interface TsInterface extends TsIdentifiable {
     children?: TsTypeMember[];
 }
 
-export type TsModuleMember = TsClass | TsInterface;
+export type TsModuleMember = TsClass | TsInterface | TsFunction | TsVariable;
 
 export interface TsModule extends TsIdentifiable {
     name: string;

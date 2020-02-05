@@ -1,5 +1,5 @@
 {
-    "inputFiles": ["./src/index.ts"],
+    "inputFiles": ["./src/entries/library.tsx"],
     "mode": "modules",
     "json": "./docs_output/latest/api.json",
     "excludePrivate": true,

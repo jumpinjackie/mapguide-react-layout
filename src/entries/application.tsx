@@ -35,11 +35,11 @@ export interface IApplicationMountOptions {
 }
 
 /**
- * This is the entry point to the Application component
+ * This is the entry point for initializing the map viewer application component
  *
- * @browserapi MapGuide.Application
+ * @browserapi MapGuide
  */
-export class ApplicationViewModel {
+export class Application {
     protected _store: any;
 
     /**
@@ -56,7 +56,7 @@ export class ApplicationViewModel {
      * @virtual
      * @protected
      * @returns {*} 
-     * @memberof ApplicationViewModel
+     * @memberof Application
      */
     protected getExtraInitialState(): any { return {}; }
     /**
@@ -67,7 +67,7 @@ export class ApplicationViewModel {
      * @virtual
      * @protected
      * @returns {*} 
-     * @memberof ApplicationViewModel
+     * @memberof Application
      */
     protected getExtraReducers(): any { return {}; }
     /**
@@ -81,7 +81,7 @@ export class ApplicationViewModel {
      * @param {Element} node The DOM element to mount this viewer application at
      * @param {IAppProps & IApplicationMountOptions} props Props to mount the component with
      *
-     * @memberof ApplicationViewModel
+     * @memberof Application
      */
     public mount(node: Element, props: IAppProps & IApplicationMountOptions) {
         const subs: ISubscriberProps[] = props.subscribers ?? [];
@@ -101,7 +101,7 @@ export class ApplicationViewModel {
      * Dispatches the given action
      * 
      * @param {(ViewerAction | ReduxThunkedAction)} action 
-     * @memberof ApplicationViewModel
+     * @memberof Application
      */
     public dispatch(action: ViewerAction | ReduxThunkedAction) {
         this._store.dispatch(action);
@@ -111,7 +111,7 @@ export class ApplicationViewModel {
      * 
      * @param {string} commandName 
      * @returns {(ICommand | undefined)} 
-     * @memberof ApplicationViewModel
+     * @memberof Application
      */
     public getCommand(commandName: string): ICommand | undefined {
         return getRegisteredCommand(commandName);
@@ -120,7 +120,7 @@ export class ApplicationViewModel {
      * Returns the current application state. This state is read-only and should not be modified.
      * 
      * @returns {Readonly<IApplicationState>} 
-     * @memberof ApplicationViewModel
+     * @memberof Application
      */
     public getState(): Readonly<IApplicationState> {
         return this._store.getState();

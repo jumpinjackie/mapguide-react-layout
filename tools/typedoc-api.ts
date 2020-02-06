@@ -17,23 +17,29 @@ export interface TsVisibilityFlags {
     isOptional: boolean;
 }
 
-export interface TsTypeMember extends TsIdentifiable {
-    kindString: "Property" | "Method";
-    type: TsTypeReference;
+export interface TsProperty extends TsIdentifiable {
+    kindString: "Property";
+    type?: TsTypeReference;
 }
 
 export interface TsMethod extends TsIdentifiable {
-    signatures: TsMethodSignature[];
+    kindString: "Method";
+    signatures?: TsMethodSignature[];
+    type?: TsTypeReference;
 }
 
+export type TsTypeMember = TsProperty | TsMethod;
+
 export interface TsMethodSignature extends TsIdentifiable {
-    parameters: TsMethodParameter[];
+    parameters?: TsMethodParameter[];
 }
 
 export interface TsTypeReference {
     id?: number;
     type: string;
     name: string;
+    types?: TsTypeReference[];
+    typeArguments?: TsTypeReference[];
 }
 
 export interface TsMethodParameter extends TsIdentifiable {

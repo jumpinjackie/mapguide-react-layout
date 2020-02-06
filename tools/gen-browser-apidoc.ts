@@ -1,4 +1,4 @@
-import { TsApiDefinition, Dictionary, TsIdentifiable, TsModuleMember, dict_put, dict_count, dict_keys, dict_get, TsInterface, TsClass, TsFunction, TsVariable } from "./typedoc-api";
+import { TsApiDefinition, Dictionary, TsIdentifiable, TsModuleMember, dict_put, dict_count, dict_keys, dict_get, TsInterface, TsClass, TsFunction, TsVariable, TsTypeReference } from "./typedoc-api";
 
 const fs = require('fs');
 const hbs = require('handlebars');
@@ -24,6 +24,22 @@ const project: IProject = {
   types: []
 };
 
+function visitType(tr: TsTypeReference) {
+  if (tr.id) {
+    dict_put(referencedTypes, tr.id, {});
+  }
+  if (tr.types) {
+    for (const trt of tr.types) {
+      visitType(trt);
+    }
+  }
+  if (tr.typeArguments) {
+    for (const trt of tr.typeArguments) {
+      visitType(trt);
+    }
+  }
+}
+
 console.log(`1st pass: Scanning all symbols for browser global APIs`)
 
 // 1st pass: Collect all classes with @browserapi
@@ -33,6 +49,11 @@ for (const tsModule of apidef.children) {
   }
   for (const modMember of tsModule.children) {
     dict_put(allSymbolsById, modMember.id, modMember);
+    /*
+    if (modMember.id != 5896) {
+      continue;
+    }*/
+    console.log(`Checking: ${tsModule.name} : ${modMember.name} (${modMember.id}, ${modMember.kindString})`)
     switch (modMember.kindString) {
       case "Class":
       case "Interface":
@@ -40,14 +61,25 @@ for (const tsModule of apidef.children) {
           const bapi = modMember.comment?.tags?.find(t => t.tag == "browserapi");
           if (bapi?.text) {
             const gn = `${bapi.text.trim()}.${modMember.name}`;
-            console.log(`Found Class/Interface: ${gn}`);
+            console.log(`Found Class: ${gn}`);
             project.classes.push({ symbol: modMember, globalName: gn });
           }
           if (modMember.children) {
             for (const member of modMember.children) {
-              //TODO: Need to also check generic/union/intersection types
-              if (member.type?.id) {
-                dict_put(referencedTypes, member.type.id, {});
+              //console.log(`  Checking member: ${member.name} (${member.kindString})`);
+              if (member.type) {
+                visitType(member.type);
+              }
+              if (member.kindString == "Method") {
+                if (member.signatures) {
+                  for (const sig of member.signatures) {
+                    if (sig.parameters) {
+                      for (const param of sig.parameters) {
+                        visitType(param.type);
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -65,17 +97,22 @@ for (const tsModule of apidef.children) {
         break;
       case "Function":
         {
-          const bapi = modMember.comment?.tags?.find(t => t.tag == "browserapi");
-          if (bapi?.text) {
-            const gn = `${bapi.text.trim()}.${modMember.name}`;
-            console.log(`Found Function: ${gn}`);
-            project.functions.push({ symbol: modMember, globalName: gn });
+          for (const sig of modMember.signatures) {
+            const bapi = sig.comment?.tags?.find(t => t.tag == "browserapi");
+            if (bapi?.text) {
+              const gn = `${bapi.text.trim()}.${modMember.name}`;
+              console.log(`Found Function: ${gn}`);
+              project.functions.push({ symbol: modMember, globalName: gn });
+              break;
+            }
           }
         }
         break;
     }
   }
 }
+
+console.log(`1st pass put ${dict_count(allSymbolsById)} types`);
 
 // 2nd pass: Put all other visited types under globals
 console.log("2nd pass: Put all other visited types under globals");
@@ -87,6 +124,8 @@ for (const id of ids) {
   if (sym) {
     console.log(`Adding to referenced types: ${sym.name}`);
     project.types.push(sym);
+  } else {
+    console.warn(`Missing referenced type indicated by id: ${id}`);
   }
 }
 
@@ -121,10 +160,16 @@ const tmpl = `<!DOCTYPE HTML>
           <nav style="position:fixed" id="navbar-toc" class="navbar navbar-light bg-light flex-column">
             <a class="navbar-brand" href="#">{{project.name}}</a>
             <nav style="overflow-y: auto" class="nav nav-pills flex-column">
-              <a class="nav-link" href="#classes">Classes</a>
+              <a class="nav-link" href="#globals">Globals</a>
               <nav class="nav nav-pills flex-column">
                 {{#each project.classes}}
                   <a class="nav-link ml-3 my-1" href="#class_{{this.symbol.id}}">{{this.globalName}}</a>
+                {{/each}}
+                {{#each project.functions}}
+                  <a class="nav-link ml-3 my-1" href="#func_{{this.symbol.id}}">{{this.globalName}}</a>
+                {{/each}}
+                {{#each project.variables}}
+                  <a class="nav-link ml-3 my-1" href="#var_{{this.symbol.id}}">{{this.globalName}}</a>
                 {{/each}}
               </nav>
               <a class="nav-link" href="#types">Types</a>
@@ -139,12 +184,35 @@ const tmpl = `<!DOCTYPE HTML>
         <div class="col-8">
           <!-- Main Content -->
           <div>
-            <h3 id="classes">Classes</h3>
+            <h3 id="globals">Globals</h3>
             {{#each project.classes}}
               <h5 id="class_{{this.symbol.id}}">{{this.globalName}}</h5>
               <p>{{this.symbol.comment.shortText}}</p>
               <p>{{this.symbol.comment.text}}</p>
               {{> members members=this.symbol.children }}
+            {{/each}}
+            {{#each project.functions}}
+              <h5 id="#func_{{this.symbol.id}}">{{this.globalName}}</h6>
+              <div class="card">
+                <div class="card-body">
+                  {{#each symbol.signatures}}
+                  <code class="method-defn">{{this.name}}({{> methodParameters method=.}}): {{> typeRef type=this.type }}</code>
+                  <p>{{this.symbol.comment.shortText}}</p>
+                  <p>{{this.symbol.comment.text}}</p>
+                  {{> parameterDescriptions method=.}}
+                  {{/each}}
+                </div>
+              </div>
+            {{/each}}
+            {{#each project.variables}}
+              <h5 id="var_{{this.symbol.id}}">{{this.globalName}}</h5>
+              <div class="card">
+                <div class="card-body">
+                  <code>{{this.symbol.name}}: {{> typeRef type=this.symbol.type }}</code>
+                  <p>{{this.symbol.comment.shortText}}</p>
+                  <p>{{this.symbol.comment.text}}</p>
+                </div>
+              </div>
             {{/each}}
             <h3 id="types">Types</h3>
             {{#each project.types}}
@@ -209,15 +277,15 @@ hbs.registerPartial("typeRef", `{{#switch type.type ~}}
     {{~#if this.type.typeArguments ~}}
       {{this.type.name}}<{{#each this.type.typeArguments ~}}
         {{~> typeRef type=this ~}}
-        {{~#unless @last}}, {{/unless~}}
-      {{~/each}}>
-    {{~else~}}
+        {{~#unless @last}}, {{/unless ~}}
+      {{~/each ~}}>
+    {{~ else ~}}
       {{~#if this.type.id ~}}
       <a href="#type_{{this.type.id}}">{{this.type.name}}</a>
       {{else}}
         {{this.type.name}}
-      {{~/if~}}
-    {{~/if~}}
+      {{~/if ~}}
+    {{~/if ~}}
   {{~/case}}
   {{#case "intrinsic" break=true ~}}
     {{this.type.name}}
@@ -225,41 +293,41 @@ hbs.registerPartial("typeRef", `{{#switch type.type ~}}
   {{#case "union" break=true ~}}
     {{#each this.type.types ~}}
       {{~> typeRef type=this ~}}
-      {{~#unless @last}} | {{/unless~}}
-    {{~/each}}
+      {{~#unless @last}} | {{/unless ~}}
+    {{~/each ~}}
   {{~/case}}
   {{#case "intersection" break=true ~}}
     {{#each this.type.types ~}}
       {{~> typeRef type=this ~}}
-      {{~#unless @last}} & {{/unless~}}
-    {{~/each}}
+      {{~#unless @last}} & {{/unless ~}}
+    {{~/each ~}}
   {{~/case}}
 {{~/switch}}`);
 hbs.registerPartial("methodParameters", `{{#each parameters ~}}
   {{~this.name}}: {{> typeRef type=this.type }}
-  {{~#unless @last}}, {{/unless~}}
-{{~/each}}`);
+  {{~#unless @last}}, {{/unless ~}}
+{{~/each ~}}`);
 hbs.registerPartial("parameterDescriptions", `{{#if parameters.length}}
 <h6>Parameters:</h6>
 <ul>
 {{#each parameters ~}}
   <li><code>{{~this.name}}</code>: {{> typeRef type=this.type }} {{#if this.comment.text.length ~}}- {{this.comment.text}}{{~/if~}}</li>
-{{~/each}}
+{{~/each ~}}
 </ul>
 {{/if}}`);
 
 // https://github.com/wycats/handlebars.js/issues/927#issuecomment-200784792
 
-hbs.registerHelper("switch", function(value: any, options: any) {
+hbs.registerHelper("switch", function (value: any, options: any) {
   this._switch_value_ = value;
   var html = options.fn(this); // Process the body of the switch block
   delete this._switch_value_;
   return html;
 });
 
-hbs.registerHelper("case", function(value: any, options: any) {
+hbs.registerHelper("case", function (value: any, options: any) {
   if (value == this._switch_value_) {
-      return options.fn(this);
+    return options.fn(this);
   }
 });
 
@@ -268,3 +336,10 @@ hbs.registerHelper("case", function(value: any, options: any) {
 const result = hbs.compile(tmpl)({ project });
 
 fs.writeFileSync(path.resolve(__dirname, '../docs_output/latest/browserapi.html'), result);
+
+// Dump the project out to JSON for template debugging (eg. Why is my API not showing in documentation?)
+fs.writeFileSync(path.resolve(__dirname, '../docs_output/latest/project-scan-debug.json'), JSON.stringify({ 
+  allSymbolsById,
+  referenced: dict_keys(referencedTypes)
+}, null, 4));
+fs.writeFileSync(path.resolve(__dirname, '../docs_output/latest/generated-project.json'), JSON.stringify(project, null, 4));

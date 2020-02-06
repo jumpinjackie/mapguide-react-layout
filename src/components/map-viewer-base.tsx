@@ -95,6 +95,7 @@ import Select from 'ol/interaction/Select';
 import { MgLayerSet } from '../api/layer-set';
 import { MgLayerManager } from '../api/layer-manager';
 import MapBrowserEvent from 'ol/MapBrowserEvent';
+import Collection from 'ol/Collection';
 
 /**
  * MapViewerBase component props
@@ -397,8 +398,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
                     this.sendSelectionQuery(options);
                 }
             } else {
-                const selFeatures = this._select.getFeatures();
-                this._mapContext.showSelectedVectorFeatures(selFeatures, px, this.props.locale);
+                this._mapContext.showSelectedVectorFeatures(this._select.getFeatures(), px, this.props.locale);
             }
         }
     }
@@ -631,7 +631,23 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             getLocale: () => this.props.locale,
             isFeatureTooltipEnabled: this.isFeatureTooltipEnabled.bind(this),
             getPointSelectionBox: (point) => this.getPointSelectionBox(point, this.props.pointSelectionBuffer || 2),
-            openTooltipLink: (url) => this.props.onOpenTooltipLink(url)
+            openTooltipLink: (url) => this.props.onOpenTooltipLink(url),
+            addFeatureToHighlight: (feat, bAppend) => {
+                // Features have to belong to layer in order to be visible and have the highlight style, 
+                // so in addition to adding this new feature to the OL select observable collection, we 
+                // need to also add the feature to a scratch vector layer dedicated for this purpose
+                const layerSet = this._mapContext.getLayerSet(this.props.map.Name);
+                const sf = this._select.getFeatures();
+                if (!bAppend) {
+                    sf.clear();
+                    layerSet.clearScratchLayer();
+                }
+                
+                if (feat) {
+                    layerSet.addScratchFeature(feat);
+                    sf.push(feat);
+                }
+            }
         };
     }
     private applyView(layerSet: MgLayerSet, vw: IMapView) {
@@ -757,7 +773,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         const mapNode = ReactDOM.findDOMNode(this);
         this._select = new Select({
             condition: (e) => false,
-            layers: (layer) => layer.get(LayerProperty.IS_SELECTABLE) == true
+            layers: (layer) => layer.get(LayerProperty.IS_SELECTABLE) == true || layer.get(LayerProperty.IS_SCRATCH) == true
         });
         this._client = new Client(this.props.agentUri, this.props.agentKind);
         this._keepAlive = new SessionKeepAlive(() => this.props.map.SessionId, this._client, this.onSessionExpired.bind(this));

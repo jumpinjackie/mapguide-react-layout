@@ -8,19 +8,19 @@ import { Bounds } from '../../api/common';
  * Attempts to extract an EPSG code from the given CRS identifier
  * 
  * @export
- * @param {string} crs
+ * @param {string | undefined} crs
  * @returns {(number | undefined)}
  * @since 0.13
  */
-export function parseEpsgCodeFromCRS(crs: string): number | undefined {
+export function parseEpsgCodeFromCRS(crs: string | undefined): number | undefined {
     if (crs == "urn:ogc:def:crs:OGC:1.3:CRS84") {
         return 4326;
     }
-    let res = crs.match(/urn:ogc:def:crs:EPSG::(\d+)/);
+    let res = crs?.match(/urn:ogc:def:crs:EPSG::(\d+)/);
     if (res?.length == 2) {
         return parseInt(res[1], 10);
     }
-    res = crs.match(/EPSG:(\d+)/);
+    res = crs?.match(/EPSG:(\d+)/);
     if (res?.length == 2) {
         return parseInt(res[1], 10);
     }

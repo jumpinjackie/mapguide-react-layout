@@ -73,6 +73,7 @@ export interface IMapViewerContextCallback {
     isFeatureTooltipEnabled(): boolean;
     getPointSelectionBox(point: Coordinate2D): Bounds;
     openTooltipLink(url: string): void;
+    addFeatureToHighlight(feat: Feature | undefined, bAppend: boolean): void;
 }
 
 /**
@@ -178,7 +179,7 @@ export class MapViewerContext {
     }
     public queryWmsFeatures(map: olMap, layerMgr: ILayerManager, coord: Coordinate2D) {
         const res = map.getView().getResolution();
-        this._selectTooltip?.queryWmsFeatures(layerMgr, coord, res, this.callback.getLocale());
+        this._selectTooltip?.queryWmsFeatures(layerMgr, coord, res, this.callback);
     }
     public queryFeatureTooltip(pixel: [number, number]) {
         if (this._featureTooltip && this._featureTooltip.isEnabled()) {

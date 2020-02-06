@@ -11,6 +11,9 @@ import Feature from 'ol/Feature';
 import { tr } from '../../api/i18n';
 import { ILayerManager, Coordinate2D } from '../../api/common';
 import { Client } from '../../api/client';
+import { IMapViewerContextCallback } from '../map-viewer-context';
+import { parseEpsgCodeFromCRS } from '../layer-manager/wfs-capabilities-panel';
+import { ProjectionLike } from '@hanreev/types-ol/ol/proj';
 
 export class SelectedFeaturesTooltip {
     private map: olMap;
@@ -49,11 +52,12 @@ export class SelectedFeaturesTooltip {
         this.featureTooltipElement.innerHTML = "";
         this.featureTooltipElement.classList.add("tooltip-hidden");
     }
-    public async queryWmsFeatures(layerMgr: ILayerManager, coord: Coordinate2D, resolution: number, locale?: string) {
+    public async queryWmsFeatures(layerMgr: ILayerManager, coord: Coordinate2D, resolution: number, callback: IMapViewerContextCallback) {
+        let selected = 0;
         //See what WMS layers we have
         const client = new Client("", "mapagent");
         const format = new GeoJSON();
-        const layers = layerMgr.getLayers().filter(l => l.visible && l.selectable && l.extensions?.type == "WMS");
+        const layers = layerMgr.getLayers().filter(l => l.visible && l.selectable && l.type == "WMS");
         for (const layer of layers) {
             const wmsLayer = layerMgr.getLayer(layer.name);
             if (wmsLayer instanceof olImageLayer || wmsLayer instanceof olTileLayer) {
@@ -63,20 +67,40 @@ export class SelectedFeaturesTooltip {
                         'INFO_FORMAT': "application/json"
                     });
                     const resp = await client.getText(url);
-                    const features = format.readFeatures(resp);
-                    this.featureTooltip.setPosition(coord);
-                    const html = this.generateFeatureHtml(features[0], locale);
-                    this.featureTooltipElement.innerHTML = html;
-                    this.closerEl = document.getElementById("feat-popup-closer");
-                    this.setPopupCloseHandler();
-                    if (html == "") {
-                        this.featureTooltipElement.classList.add("tooltip-hidden");
-                    } else {
-                        this.featureTooltipElement.classList.remove("tooltip-hidden");
+                    const json = JSON.parse(resp);
+                    if (json.features?.length > 0) {
+                        let srcProj: ProjectionLike = source.getProjection();
+                        if (!srcProj) {
+                            const epsg = parseEpsgCodeFromCRS(json.crs?.properties?.name);
+                            if (epsg) {
+                                srcProj = `EPSG:${epsg}`;
+                            }
+                        }
+                        const features = format.readFeatures(resp, {
+                            dataProjection: srcProj,
+                            featureProjection: this.map.getView().getProjection()
+                        });
+                        this.featureTooltip.setPosition(coord);
+                        const html = this.generateFeatureHtml(features[0], callback.getLocale());
+                        callback.addFeatureToHighlight(features[0], false);
+                        selected++;
+                        this.featureTooltipElement.innerHTML = html;
+                        this.closerEl = document.getElementById("feat-popup-closer");
+                        this.setPopupCloseHandler();
+                        if (html == "") {
+                            this.featureTooltipElement.classList.add("tooltip-hidden");
+                        } else {
+                            this.featureTooltipElement.classList.remove("tooltip-hidden");
+                        }
+                        return;
                     }
-                    return;
                 }
             }
+        }
+        // Clear if there was no selection made
+        if (selected == 0) {
+            callback.addFeatureToHighlight(undefined, false);
+            this.hide();
         }
     }
     private generateFeatureHtml(feat: Feature, locale?: string) {

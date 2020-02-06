@@ -115,7 +115,6 @@ export class MgLayerManager implements ILayerManager {
                     const view = that.map.getView();
                     proj = view.getProjection();
                 }
-
                 const source = new olSourceVector();
                 source.set(SourceProperty.SUPPRESS_LOAD_EVENTS, true);
                 const layer = new olVectorLayer({

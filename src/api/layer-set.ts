@@ -28,8 +28,10 @@ import olOverviewMap from "ol/control/OverviewMap";
 import { MgError } from './error';
 import { setOLVectorLayerStyle } from './ol-style-helpers';
 import olVectorLayer from "ol/layer/Vector";
+import olSourceVector from "ol/source/Vector";
 import { getLayerInfo } from './layer-manager';
 import * as olHas from "ol/has";
+import Feature from "ol/Feature";
 
 function mockMapGuideImageLoadFunction(image: ImageWrapper, src: string) {
     let el = document.getElementById("mg-debug-text-canvas");
@@ -516,8 +518,10 @@ class MgInnerLayerSetFactory {
 }
 
 export class MgLayerSet {
+    
     private mainSet: ILayerSetOL;
     private overviewSet: ILayerSetOL;
+    private scratchLayer: olVectorLayer;
 
     private callback: IMapViewerContextCallback;
     private _customLayers: {
@@ -557,8 +561,18 @@ export class MgLayerSet {
             if (!(suppress == true))
                 this.registerSourceEvents(src);
         }
-    }
 
+        this.scratchLayer = new olVectorLayer({
+            source: new olSourceVector()
+        });
+        this.scratchLayer.set(LayerProperty.IS_SCRATCH, true);
+    }
+    public addScratchFeature(feat: Feature) {
+        this.scratchLayer.getSource().addFeature(feat);
+    }
+    public clearScratchLayer() {
+        this.scratchLayer.getSource().clear();
+    }
     public setMapGuideMocking(mock: boolean) {
         const allLayers = this.mainSet.getLayers();
         for (const layer of allLayers) {
@@ -613,6 +627,8 @@ export class MgLayerSet {
         // add and insert them to the front one-by-one, ensuring all the layers we add will be
         // at the bottom of the draw order
         const layers = map.getLayers();
+        // Attach scratch layer
+        layers.insertAt(0, this.scratchLayer);
         // Attach custom layers
         const customLayers = Object.keys(this._customLayers).map(k => this._customLayers[k]);
         customLayers.sort((a, b) => {
@@ -659,6 +675,8 @@ export class MgLayerSet {
         for (const layerName in this._customLayers) {
             map.removeLayer(this._customLayers[layerName].layer);
         }
+        //Detach scratch layer
+        map.removeLayer(this.scratchLayer);
         const ovLayers = this.getLayersForOverviewMap();
         const ovMap = ovMapControl.getOverviewMap();
         for (const layer of ovLayers) {

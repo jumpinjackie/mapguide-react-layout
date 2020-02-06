@@ -135,7 +135,7 @@ export function initDefaultCommands() {
     registerCommand(DefaultCommands.WmsQuery, {
         iconClass: SPRITE_SELECT,
         selected: (state) => state.activeTool === ActiveMapTool.WmsQueryFeatures,
-        enabled: () => true,
+        enabled: (state) => state.visibleWmsLayerCount > 0,
         invoke: (dispatch) => dispatch(MapActions.setActiveTool(ActiveMapTool.WmsQueryFeatures))
     });
     //Pan Tool

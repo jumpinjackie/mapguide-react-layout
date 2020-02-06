@@ -144,6 +144,7 @@ export function mapToolbarReference(tb: any, state: IToolbarAppState, commandInv
  * @since 0.13
  */
 export interface IToolbarAppState {
+    visibleWmsLayerCount: number;
     busyWorkerCount: number;
     hasSelection: boolean;
     hasPreviousView: boolean;
@@ -162,15 +163,16 @@ export function reduceAppToToolbarState(state: Readonly<IApplicationState>): Rea
     let hasSelection = false;
     let hasPreviousView = false;
     let hasNextView = false;
+    let visibleWmsLayerCount = 0;
     const selection = getSelectionSet(state);
     hasSelection = (selection != null && selection.SelectedFeatures != null);
     if (state.config.activeMapName) {
         hasPreviousView = state.mapState[state.config.activeMapName].historyIndex > 0;
-    }
-    if (state.config.activeMapName) {
         hasNextView = state.mapState[state.config.activeMapName].historyIndex < state.mapState[state.config.activeMapName].history.length - 1;
+        visibleWmsLayerCount = state.mapState[state.config.activeMapName].layers.filter(l => l.visible && l.extensions?.type == "WMS").length;
     }
     return {
+        visibleWmsLayerCount,
         busyWorkerCount: state.viewer.busyCount,
         hasSelection,
         hasPreviousView,

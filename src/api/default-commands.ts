@@ -134,7 +134,7 @@ export function initDefaultCommands() {
     //WMS Query Tool
     registerCommand(DefaultCommands.WmsQuery, {
         iconClass: SPRITE_SELECT,
-        selected: (state) => state.activeTool === ActiveMapTool.WmsQueryFeatures,
+        selected: (state) => state.activeTool === ActiveMapTool.WmsQueryFeatures && state.visibleWmsLayerCount > 0,
         enabled: (state) => state.visibleWmsLayerCount > 0,
         invoke: (dispatch) => dispatch(MapActions.setActiveTool(ActiveMapTool.WmsQueryFeatures))
     });

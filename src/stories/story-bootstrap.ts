@@ -9,7 +9,6 @@ import GeoJSON from "ol/format/GeoJSON";
 import TopoJSON from "ol/format/TopoJSON";
 
 // Bootstrap the viewer
-/*
 bootstrap();
 addFormatDriver(new CsvFormatDriver(CSV_COLUMN_ALIASES));
 addFormatDriver(new FormatDriver("GeoJSON", new GeoJSON()));
@@ -17,4 +16,3 @@ addFormatDriver(new FormatDriver("TopoJSON", new TopoJSON()));
 addFormatDriver(new FormatDriver("KML", new KML(), "EPSG:4326"));
 addFormatDriver(new FormatDriver("GPX", new GPX(), "EPSG:4326"));
 addFormatDriver(new FormatDriver("IGC", new IGC()));
-*/

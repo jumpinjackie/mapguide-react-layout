@@ -1,4 +1,4 @@
-import { TsApiDefinition, Dictionary, TsIdentifiable, TsModuleMember, dict_put, dict_count, dict_keys, dict_get, TsInterface, TsClass, TsFunction, TsVariable, TsTypeReference } from "./typedoc-api";
+import { TsApiDefinition, Dictionary, TsModuleMember, dict_put, dict_count, dict_keys, dict_get, TsInterface, TsClass, TsFunction, TsVariable, TsTypeReference } from "./typedoc-api";
 
 const fs = require('fs');
 const hbs = require('handlebars');
@@ -338,8 +338,8 @@ const result = hbs.compile(tmpl)({ project });
 fs.writeFileSync(path.resolve(__dirname, '../docs_output/latest/browserapi.html'), result);
 
 // Dump the project out to JSON for template debugging (eg. Why is my API not showing in documentation?)
-fs.writeFileSync(path.resolve(__dirname, '../docs_output/latest/project-scan-debug.json'), JSON.stringify({ 
+fs.writeFileSync(path.resolve(__dirname, '../docs_output/project-scan-debug.json'), JSON.stringify({ 
   allSymbolsById,
   referenced: dict_keys(referencedTypes)
 }, null, 4));
-fs.writeFileSync(path.resolve(__dirname, '../docs_output/latest/generated-project.json'), JSON.stringify(project, null, 4));
+fs.writeFileSync(path.resolve(__dirname, '../docs_output/generated-project.json'), JSON.stringify(project, null, 4));

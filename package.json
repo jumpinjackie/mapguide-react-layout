@@ -6,7 +6,7 @@
     "prebuild": "yarn run clean",
     "build": "yarn run build:apidoc_npm && yarn run build:npm && yarn run build:bundle && yarn run build:storybook",
     "build:bundle": "yarn run build:debug && yarn run build:prod && bestzip viewer.zip viewer/",
-    "build:storybook": "build-storybook -s ./src/stories/static -c .storybook && bestzip storybook.zip storybook-static/",
+    "build:storybook": "rimraf ./storybook.zip && rimraf ./storybook-static && build-storybook -s ./src/stories/static -c .storybook && bestzip storybook.zip storybook-static/",
     "build:sprite": "glue stdassets/images/icons stdassets/sprites --html --png8 --sprite-namespace= --namespace=",
     "build:docs_sprite": "glue stdassets/images/icons docs_output --html --png8 --sprite-namespace= --namespace=",
     "build:npm": "rimraf package && node tools/prepare-package.js && tsc --p tsconfig.npm.json && copyfiles *.md lib/** src/** viewer/** stdassets/** package && rimraf lib",

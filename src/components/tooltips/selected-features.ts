@@ -57,7 +57,7 @@ export class SelectedFeaturesTooltip {
         //See what WMS layers we have
         const client = new Client("", "mapagent");
         const format = new GeoJSON();
-        const layers = layerMgr.getLayers().filter(l => l.visible && l.selectable && l.extensions?.type == "WMS");
+        const layers = layerMgr.getLayers().filter(l => l.visible && l.selectable && l.type == "WMS");
         for (const layer of layers) {
             const wmsLayer = layerMgr.getLayer(layer.name);
             if (wmsLayer instanceof olImageLayer || wmsLayer instanceof olTileLayer) {

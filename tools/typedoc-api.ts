@@ -20,12 +20,14 @@ export interface TsVisibilityFlags {
 export interface TsProperty extends TsIdentifiable {
     kindString: "Property";
     type?: TsTypeReference;
+    inheritedFrom?: TsTypeReference;
 }
 
 export interface TsMethod extends TsIdentifiable {
     kindString: "Method";
     signatures?: TsMethodSignature[];
     type?: TsTypeReference;
+    inheritedFrom?: TsTypeReference;
 }
 
 export type TsTypeMember = TsProperty | TsMethod;

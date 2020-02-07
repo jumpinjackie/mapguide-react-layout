@@ -65,6 +65,7 @@ import {
 } from "../constants/assets";
 import * as olExtent from "ol/extent";
 import { ensureParameters } from "../utils/url";
+import { ITargetedCommandParameters, IRedlineCommandParameters, ICoordinateTrackerCommandParameters, ISelectToolCommandParameters, IGeolocationCommandParameters } from './fusion-metadata';
 
 function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
     const settings: any = {
@@ -97,17 +98,17 @@ function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "l
     dispatch(MapActions.setCurrentView({ x: newPos[0], y: newPos[1], scale: view.scale }));
 }
 
-function buildTargetedCommand(config: Readonly<IConfigurationReducerState>, parameters: any): ITargetedCommand {
-    const cmdTarget = (parameters || {}).Target;
+function buildTargetedCommand(config: Readonly<IConfigurationReducerState>, parameters: ITargetedCommandParameters): ITargetedCommand {
+    const cmdTarget = parameters.Target;
     const cmdDef: ITargetedCommand = {
-        target: cmdTarget || "NewWindow"
+        target: cmdTarget ?? "NewWindow"
     };
     if (config.capabilities.hasTaskPane && cmdTarget == "TaskPane") {
         cmdDef.target = "TaskPane";
     }
     if (cmdTarget == "SpecifiedFrame") {
         cmdDef.target = cmdTarget;
-        cmdDef.targetFrame = (parameters || {}).TargetFrame;
+        cmdDef.targetFrame = parameters?.TargetFrame;
     }
     return cmdDef;
 }
@@ -277,7 +278,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_MEASURE,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer, parameters: ITargetedCommandParameters) => {
             const config = getState().config;
             const url = "component://Measure";
             const cmdDef = buildTargetedCommand(config, parameters);
@@ -289,7 +290,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_PRINT,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer, parameters: ITargetedCommandParameters) => {
             const config = getState().config;
             const url = "component://QuickPlot";
             const cmdDef = buildTargetedCommand(config, parameters);
@@ -301,7 +302,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_OPTIONS,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer, parameters: ITargetedCommandParameters) => {
             const config = getState().config;
             const url = "component://ViewerOptions";
             const cmdDef = buildTargetedCommand(config, parameters);
@@ -313,9 +314,9 @@ export function initDefaultCommands() {
         iconClass: SPRITE_SELECT_RADIUS,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer, parameters: ISelectToolCommandParameters) => {
             if (viewer) {
-                const selMethod = parameters.SelectionType || "INTERSECTS";
+                const selMethod = parameters.SelectionType ?? "INTERSECTS";
                 viewer.digitizeCircle(circle => {
                     const fact = viewer.getOLFactory();
                     const geom = fact.createGeomPolygonFromCircle(circle);
@@ -329,7 +330,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_SELECT_POLYGON,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer, parameters: ISelectToolCommandParameters) => {
             if (viewer) {
                 const selMethod = parameters.SelectionType || "INTERSECTS";
                 viewer.digitizePolygon(geom => {
@@ -446,7 +447,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_GEOLOCATION,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer, parameters: IGeolocationCommandParameters) => {
             const state = getState();
             const view = getCurrentView(state);
             const rtMap = getRuntimeMap(state);
@@ -497,7 +498,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_BUFFER,
         selected: () => false,
         enabled: CommandConditions.hasSelection,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer, parameters: ITargetedCommandParameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
             const config = state.config;
@@ -514,7 +515,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_SELECT_FEATURES,
         selected: () => false,
         enabled: (state, parameters) => !CommandConditions.disabledIfEmptySelection(state, parameters),
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer, parameters: ITargetedCommandParameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
             const config = state.config;
@@ -531,7 +532,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_REDLINE,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer, parameters: IRedlineCommandParameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
             const config = state.config;
@@ -540,7 +541,6 @@ export function initDefaultCommands() {
                 let defaultDataStoreFormat = null;
                 let defaultRedlineGeometryType = 0;
                 let bCreateOnStartup = false;
-                if (parameters.AutogenerateLayerNames)
 
                 if (parameters.StylizationType)
                     bUseAdvancedStylization = (parameters.StylizationType == "advanced");
@@ -587,7 +587,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_FEATURE_INFO,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer, parameters: ITargetedCommandParameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
             const config = state.config;
@@ -603,7 +603,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_QUERY,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer, parameters: ITargetedCommandParameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
             const config = state.config;
@@ -619,7 +619,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_THEME,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer, parameters: ITargetedCommandParameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
             const config = state.config;
@@ -635,19 +635,19 @@ export function initDefaultCommands() {
         iconClass: SPRITE_COORDINATE_TRACKER,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer, parameters: ICoordinateTrackerCommandParameters) => {
             const config = getState().config;
-            const url = `component://CoordinateTracker?${(parameters.Projection || []).map((p: string) => "projections=" + p).join("&")}`;
+            const url = `component://CoordinateTracker?${(parameters.Projection ?? []).map((p: string) => "projections=" + p).join("&")}`;
             const cmdDef = buildTargetedCommand(config, parameters);
             openUrlInTarget(DefaultCommands.CoordinateTracker, cmdDef, config.capabilities.hasTaskPane, dispatch, url, tr("COORDTRACKER", config.locale));
         }
     });
-    //Add WMS Layer
+    //External Layer Manager
     registerCommand(DefaultCommands.AddManageLayers, {
         iconClass: SPRITE_LAYER_ADD,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, viewer, parameters: ITargetedCommandParameters) => {
             const config = getState().config;
             const url = `component://${DefaultComponentNames.AddManageLayers}`;
             const cmdDef = buildTargetedCommand(config, parameters);

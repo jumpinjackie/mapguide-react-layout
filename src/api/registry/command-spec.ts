@@ -4,6 +4,7 @@ import * as shortid from "shortid";
 import { DefaultComponentNames } from './component';
 import { tr } from '../i18n';
 import { Dictionary } from '../common';
+import { IZoomOnClickCommandParameters, IExtentHistoryCommandParameters } from 'api/fusion-metadata';
 
 /**
  * @hidden
@@ -83,7 +84,7 @@ export function convertWidget(widget: UIWidget, locale: string, noToolbarLabels:
             return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Zoom, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
         case "ZoomOnClick": //Covers in and out. Look at Factor parameter
             {
-                const factor = parseFloat(widget.Extension.Factor);
+                const factor = parseFloat((widget.Extension as IZoomOnClickCommandParameters).Factor ?? "2");
                 if (factor >= 1.0) {
                     return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.ZoomIn, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
                 } else {
@@ -96,7 +97,7 @@ export function convertWidget(widget: UIWidget, locale: string, noToolbarLabels:
             return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.ZoomToSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
         case "ExtentHistory": //Covers prev and next. Look at Direction parameter
             {
-                if (widget.Extension.Direction == "previous") {
+                if ((widget.Extension as IExtentHistoryCommandParameters).Direction?.toLowerCase() == "previous") {
                     return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.PreviousView, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
                 } else {
                     return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.NextView, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };

@@ -81,7 +81,7 @@
     "@storybook/addon-console": "^1.2.1",
     "@storybook/addon-links": "^5.3.12",
     "@types/dom4": "2.0.1",
-    "@types/enzyme": "3.10.4",
+    "@types/enzyme": "3.10.5",
     "@types/jest": "25.1.2",
     "@types/lodash.debounce": "4.0.6",
     "@types/qs": "^6.9.0",

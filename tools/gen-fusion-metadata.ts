@@ -5,6 +5,32 @@ const fs = require('fs');
 const path = require("path");
 const apidef: TsApiDefinition = require('../docs_output/latest/api.json');
 
+interface IAllowedValue {
+    name: string;
+    value: string;
+}
+
+interface IContainerMetadata {
+    type: string;
+    localizedType: string;
+    description: string;
+    previewImageUrl: string;
+}
+
+interface ITemplatePanelMetadata {
+    name: string;
+    label: string;
+    description: string;
+}
+
+interface ITemplateMetadata {
+    name: string;
+    locationUrl: string;
+    description: string;
+    previewImageUrl: string;
+    panels: ITemplatePanelMetadata[];
+}
+
 interface IWidgetMetadata {
     name: string;
     label?: string;
@@ -16,21 +42,32 @@ interface IWidgetMetadata {
     provider?: string;
     nonstandard: boolean;
     containableby?: string;
+    parameters: IWidgetParameterMetadata[];
 }
 
 interface IWidgetParameterMetadata {
+    name: string;
+    mandatory: boolean;
     type?: string;
     label?: string;
     description?: string;
     defaultValue?: string;
     min?: number;
     max?: number;
+    allowedValues?: IAllowedValue[];
+}
+
+interface IDesignerMetadata {
+    containers: IContainerMetadata[];
+    widgets: IWidgetMetadata[];
+    templates: ITemplateMetadata[];
 }
 
 const STR_EMPTY = "";
 
+const designerMetaPath = path.resolve(__dirname, `../docs_output/designer-meta.json`);
 const widgetInfoDir = path.resolve(__dirname, `../docs_output/widgetinfo`);
-if (!fs.existsSync(widgetInfoDir)){
+if (!fs.existsSync(widgetInfoDir)) {
     fs.mkdirSync(widgetInfoDir);
 }
 
@@ -50,16 +87,25 @@ function extractWidgetMetadata(modMember: TsModuleMember): IWidgetMetadata | und
     if (wtag?.text) {
         return {
             name: wtag.text.trim(),
-            label: wlabel?.text?.trim(),
-            description: wDesc?.text?.trim(),
-            imageClass: wimgclass?.text?.trim(),
-            tooltip: wtt?.text?.trim(),
-            location: wloc?.text?.trim(),
-            statusText: wst?.text?.trim(),
-            provider: wprovider?.text?.trim(),
-            containableby: wcontainable?.text?.trim(),
-            nonstandard: wnonstandard != null
+            label: wlabel?.text?.trim() ?? STR_EMPTY,
+            description: wDesc?.text?.trim() ?? STR_EMPTY,
+            imageClass: wimgclass?.text?.trim() ?? STR_EMPTY,
+            tooltip: wtt?.text?.trim() ?? STR_EMPTY,
+            location: wloc?.text?.trim() ?? STR_EMPTY,
+            statusText: wst?.text?.trim() ?? STR_EMPTY,
+            provider: wprovider?.text?.trim() ?? STR_EMPTY,
+            containableby: wcontainable?.text?.trim() ?? STR_EMPTY,
+            nonstandard: wnonstandard != null,
+            parameters: []
         }
+    }
+    return undefined;
+}
+
+function strShedSkin(s: string, left: string, right: string) {
+    if (s.startsWith(left) && s.endsWith(right)) {
+        const inner = s.substring(left.length, s.length - right.length);
+        return inner;
     }
     return undefined;
 }
@@ -69,11 +115,47 @@ function extractWidgetParameterMetadata(member: TsTypeMember): IWidgetParameterM
     const mDesc = member.comment?.tags?.find(t => t.tag == "description");
     const mLabel = member.comment?.tags?.find(t => t.tag == "label");
     const mDefault = member.comment?.tags?.find(t => t.tag == "defaultvalue");
+    const mMin = member.comment?.tags?.find(t => t.tag == "min");
+    const mMax = member.comment?.tags?.find(t => t.tag == "max");
+    const mAllowedValues = member.comment?.tags?.find(t => t.tag == "allowedvalues");
+    let min: number | undefined;
+    let max: number | undefined;
+    let allowedValues: IAllowedValue[] | undefined;
+    if (mMin?.text) {
+        min = parseInt(mMin.text?.trim(), 10);
+    }
+    if (mMax?.text) {
+        max = parseInt(mMax.text?.trim(), 10);
+    }
+    if (mAllowedValues?.text) {
+        const s = mAllowedValues.text.trim();
+        const inner = strShedSkin(s, "[", "]");
+        if (inner) {
+            allowedValues = inner.split(',').map(spair => {
+                const pinner = strShedSkin(spair, "{", "}");
+                if (pinner) {
+                    const tokens = pinner.split('|');
+                    if (tokens.length == 2) {
+                        return {
+                            value: tokens[0],
+                            name: tokens[1]
+                        } as IAllowedValue;
+                    }
+                }
+                return undefined;
+            }).filter(item => item != null) as IAllowedValue[];
+        }
+    }
     return {
-        type: mType?.text?.trim(),
-        description: mDesc?.text?.trim(),
-        label: mLabel?.text?.trim(),
-        defaultValue: mDefault?.text?.trim()
+        name: member.name,
+        mandatory: member.flags?.isOptional ?? false,
+        type: mType?.text?.trim() ?? "String",
+        description: mDesc?.text?.trim() ?? STR_EMPTY,
+        label: mLabel?.text?.trim() ?? STR_EMPTY,
+        defaultValue: mDefault?.text?.trim() ?? STR_EMPTY,
+        min,
+        max,
+        allowedValues
     }
 }
 
@@ -93,6 +175,12 @@ for (const tsModule of apidef.children) {
     }
 }
 
+const designer: IDesignerMetadata = {
+    containers: [],
+    widgets: [],
+    templates: []
+};
+
 //2nd pass: Actual processing
 for (const tsModule of apidef.children) {
     if (tsModule.name.indexOf("fusion-metadata") < 0 || !tsModule.children) {
@@ -101,41 +189,62 @@ for (const tsModule of apidef.children) {
     for (const modMember of tsModule.children) {
         const wmeta = extractWidgetMetadata(modMember);
         const parameters = [] as string[];
-        if (modMember.kindString == "Interface" && modMember.children) {
+        if (wmeta && modMember.kindString == "Interface" && modMember.children) {
             for (const member of modMember.children) {
                 const pmeta = extractWidgetParameterMetadata(member);
-                parameters.push(`<Parameter>
-        <Name>${member.name}</Name>
-        <Description>${pmeta.description ?? STR_EMPTY}</Description>
-        <Type>${pmeta.type ?? "String"}</Type>
-        <Label>${pmeta.label ?? STR_EMPTY}</Label>
-        <DefaultValue>${pmeta.defaultValue ?? STR_EMPTY}</DefaultValue>
-        <IsMandatory>${member.flags?.isOptional ?? false}</IsMandatory>
-    </Parameter>`);
+                wmeta.parameters.push(pmeta);
             }
-        }
-        if (wmeta) {
-            const widgetName = wmeta.name;
-            let xml = `<WidgetInfo>
-    <Type>${widgetName}</Type>
-    <LocalizedType>${widgetName}</LocalizedType>
-    <Provider>${wmeta.provider ?? STR_EMPTY}</Provider>
-    <Description>${wmeta.description ?? STR_EMPTY}</Description>
-    <Location>${wmeta.location ?? STR_EMPTY}</Location>
-    <Label>${wmeta.label ?? STR_EMPTY}</Label>
-    <Tooltip>${wmeta.tooltip ?? STR_EMPTY}</Tooltip>
-    <StatusText>${wmeta.statusText ?? STR_EMPTY}</StatusText>
-    <ImageUrl>images/icons.png</ImageUrl>
-    <ImageClass>${wmeta.imageClass ?? STR_EMPTY}</ImageClass>
-    <StandardUi>${!wmeta.nonstandard}</StandardUi>
-    <ContainableBy>${wmeta.containableby}</ContainableBy>`;
-            if (parameters.length > 0) {
-                xml += "\n    " + parameters.join("\n    ")
-            }
-            xml += "\n</WidgetInfo>";
-            const outPath = path.resolve(`${widgetInfoDir}/${widgetName.toLowerCase()}.xml`);
-            fs.writeFileSync(outPath, xml);
-            console.log(`Wrote: ${outPath}`);
+            designer.widgets.push(wmeta);
         }
     }
 }
+
+//Final pass: output
+for (const widget of designer.widgets) {
+    let xml = `<WidgetInfo>
+    <Type>${widget.name}</Type>
+    <LocalizedType>${widget.name}</LocalizedType>
+    <Provider>${widget.provider}</Provider>
+    <Description>${widget.description}</Description>
+    <Location>${widget.location}</Location>
+    <Label>${widget.label}</Label>
+    <Tooltip>${widget.tooltip}</Tooltip>
+    <StatusText>${widget.statusText}</StatusText>
+    <ImageUrl>images/icons.png</ImageUrl>
+    <ImageClass>${widget.imageClass}</ImageClass>
+    <StandardUi>${!widget.nonstandard}</StandardUi>
+    <ContainableBy>${widget.containableby}</ContainableBy>`;
+    if (widget.parameters.length > 0) {
+        for (const pmeta of widget.parameters) {
+            xml += `\n    <Parameter>
+        <Name>${pmeta.name}</Name>
+        <Description>${pmeta.description}</Description>
+        <Type>${pmeta.type ?? "String"}</Type>
+        <Label>${pmeta.label}</Label>`;
+            if (pmeta.allowedValues) {
+                for (const av of pmeta.allowedValues) {
+                    xml += `\n        <AllowedValue>
+            <Name>${av.value}</Name>
+            <Label>${av.name}</Label>
+        </AllowedValue>`;
+                }
+            }
+            xml += `\n        <DefaultValue>${pmeta.defaultValue}</DefaultValue>`;
+            if (pmeta.min != null) {
+                xml += `\n        <Min>${pmeta.min}</Min>`;
+            }
+            if (pmeta.max != null) {
+                xml += `\n        <Min>${pmeta.max}</Min>`;
+            }
+            xml += `\n        <IsMandatory>${pmeta.mandatory}</IsMandatory>`;
+            xml += "\n    </Parameter>";
+        }
+    }
+    xml += "\n</WidgetInfo>";
+    const outPath = path.resolve(`${widgetInfoDir}/${widget.name.toLowerCase()}.xml`);
+    fs.writeFileSync(outPath, xml);
+    console.log(`Wrote: ${outPath}`);
+}
+
+fs.writeFileSync(designerMetaPath, JSON.stringify(designer, null, 4));
+console.log(`Wrote: ${designerMetaPath}`);

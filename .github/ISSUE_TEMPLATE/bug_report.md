@@ -6,6 +6,10 @@ labels:
 
 ---
 
+# IMPORTANT! Please read this first
+
+Issues in this repository concern only the viewer. **Do not submit bug reports concerning the MapGuide Server, FDO or isses in any other web mapping server or services**. Use the appropriate issue trackers for reporting such issues because this repo is not for that!
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 

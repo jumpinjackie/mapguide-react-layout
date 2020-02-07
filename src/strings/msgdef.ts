@@ -257,4 +257,5 @@ export interface ILocalizedMessages {
     BROWSE: string;
     SEL_FEATURE_PROPERTIES: string;
     SEL_FEATURE_PROPERTIES_NONE: string;
+    ADD_LOCAL_FILE_LAYER_FAILURE_NO_FORMATS: string;
 }

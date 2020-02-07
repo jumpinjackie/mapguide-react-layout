@@ -1,6 +1,7 @@
 //import '@storybook/addon-console';
 import { configure, addParameters } from '@storybook/react';
 import { INITIAL_VIEWPORTS, DEFAULT_VIEWPORT } from "@storybook/addon-viewport";
+import "../src/stories/story-bootstrap";
 
 addParameters({
   viewport: {

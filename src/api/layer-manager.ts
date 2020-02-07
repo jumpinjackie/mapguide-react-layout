@@ -77,6 +77,9 @@ export class MgLayerManager implements ILayerManager {
                 const result = e.target?.result;
                 if (result && typeof (result) == 'string') {
                     const formats = that._olFormats;
+                    if (formats.length == 0) {
+                        reject(new Error(tr("ADD_LOCAL_FILE_LAYER_FAILURE_NO_FORMATS", locale)));
+                    }
                     let loadedType: IParsedFeatures | undefined;
                     let bLoaded = false;
                     for (let i = 0, ii = formats.length; i < ii; ++i) {

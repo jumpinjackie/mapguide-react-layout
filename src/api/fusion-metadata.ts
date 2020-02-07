@@ -6,6 +6,7 @@ import { CommandTarget, SelectionVariant } from './common';
  * @label Select
  * @tooltip Click to select features
  * @icon select
+ * @containableby Any
  */
 export interface ISelectCommandParameters { }
 
@@ -15,6 +16,7 @@ export interface ISelectCommandParameters { }
  * @label WmsQuery
  * @tooltip Click to query for features in WMS layers at the point you click
  * @icon select
+ * @containableby Any
  */
 export interface IWmsQueryCommandParameters { }
 
@@ -24,6 +26,7 @@ export interface IWmsQueryCommandParameters { }
  * @label Pan
  * @tooltip Click and drag to pan the map
  * @icon pan
+ * @containableby Any
  */
 export interface IPanParameters { }
 
@@ -34,12 +37,14 @@ export interface IPanParameters { }
  * @tooltip Click or click and drag on the map to zoom in
  * @statustext Click or click and drag on the map to zoom in
  * @icon zoom-in
+ * @containableby Any
  */
 export interface IZoomCommandParameters { }
 
 /**
  * @widget ZoomOnClick
  * @description Zoom the map by a fixed amount when a button is clicked
+ * @containableby Any
  */
 export interface IZoomOnClickCommandParameters {
 
@@ -55,24 +60,28 @@ export interface IZoomOnClickCommandParameters {
 /**
  * @widget PanLeft
  * @description Click to pan the map to the left by a fixed amount when a button is clicked
+ * @containableby Any
  */
 export interface IPanLeftCommandParameters { }
 
 /**
  * @widget PanRight
  * @description Click to pan the map to the right by a fixed amount when a button is clicked
+ * @containableby Any
  */
 export interface IPanRightCommandParameters { }
 
 /**
  * @widget PanUp
  * @description Click to pan the map up by a fixed amount when a button is clicked
+ * @containableby Any
  */
 export interface IPanUpCommandParameters { }
 
 /**
  * @widget PanDown
  * @description Click to pan the map down by a fixed amount when a button is clicked
+ * @containableby Any
  */
 export interface IPanDownCommandParameters { }
 
@@ -83,6 +92,7 @@ export interface IPanDownCommandParameters { }
  * @label Maptip
  * @tooltip Click to Enable/Disable get information about features from Server
  * @icon maptip
+ * @containableby Any
  */
 export interface IMapTipCommandParameters { }
 
@@ -92,6 +102,7 @@ export interface IMapTipCommandParameters { }
  * @label About
  * @tooltip Click to show information about this application
  * @icon about
+ * @containableby Any
  */
 export interface IAboutCommandParameters { }
 
@@ -101,6 +112,7 @@ export interface IAboutCommandParameters { }
  * @label Help
  * @tooltip Click to get help
  * @icon help
+ * @containableby Any
  */
 export interface IHelpCommandParameters { }
 
@@ -124,6 +136,7 @@ export interface ITargetedCommandParameters {
  * @label Measure
  * @tooltip Measure distances and areas on the map
  * @icon measure
+ * @containableby Any
  */
 export interface IMeasureCommandParameters extends ITargetedCommandParameters { }
 
@@ -132,6 +145,7 @@ export interface IMeasureCommandParameters extends ITargetedCommandParameters { 
  * @description This widget offers a quick way to generate a printable PDF of the map
  * @label Quick Plot
  * @tooltip Click to create a PDF plot
+ * @containableby Any
  */
 export interface IQuickPlotCommandParameters extends ITargetedCommandParameters { }
 
@@ -141,6 +155,7 @@ export interface IQuickPlotCommandParameters extends ITargetedCommandParameters 
  * @label Options
  * @tooltip Click to change the viewer options
  * @icon options
+ * @containableby Any
  */
 export interface IViewerOptionsCommandParameters extends ITargetedCommandParameters { }
 
@@ -151,6 +166,7 @@ export interface IViewerOptionsCommandParameters extends ITargetedCommandParamet
  * @label Redline
  * @tooltip Click to draw redline features
  * @icon redline
+ * @containableby Any
  */
 export interface IRedlineCommandParameters extends ITargetedCommandParameters {
     /**
@@ -208,6 +224,7 @@ export interface ISelectToolCommandParameters {
  * @label Select Radius
  * @tooltip Click to select within a radius
  * @icon select-radius
+ * @containableby Any
  */
 export interface ISelectRadiusCommandParameters extends ISelectToolCommandParameters { }
 
@@ -217,6 +234,7 @@ export interface ISelectRadiusCommandParameters extends ISelectToolCommandParame
  * @description Perform a selection using a polygon
  * @label Select Polygon
  * @tooltip Draw a polygon to perform a selection
+ * @containableby Any
  */
 export interface ISelectPolygonCommandParameters extends ISelectToolCommandParameters { }
 
@@ -226,6 +244,7 @@ export interface ISelectPolygonCommandParameters extends ISelectToolCommandParam
  * @label My Location
  * @tooltip Click to zoom to your current geographic location
  * @icon geolocation
+ * @containableby Any
  */
 export interface IGeolocationCommandParameters {
     ZoomLevel?: string;
@@ -240,6 +259,7 @@ export interface IGeolocationCommandParameters {
  * @label Coordinate Tracker
  * @tooltip Click to view mouse coordinates in various projections
  * @icon coordinate-tracker
+ * @containableby Any
  */
 export interface ICoordinateTrackerCommandParameters extends ITargetedCommandParameters {
     Projection?: string[];
@@ -249,6 +269,7 @@ export interface ICoordinateTrackerCommandParameters extends ITargetedCommandPar
  * @widget RestoreView
  * @provider MapGuide
  * @description Click to zoom to the map's initial view
+ * @containableby Any
  */
 export interface IRestoreViewCommandParameters { }
 
@@ -258,6 +279,7 @@ export interface IRestoreViewCommandParameters { }
  * @label Zoom Extents
  * @tooltip Click to zoom to the full map extents
  * @icon zoom-full
+ * @containableby Any
  */
 export interface IZoomExtentsCommandParameters { }
 
@@ -268,6 +290,7 @@ export interface IZoomExtentsCommandParameters { }
  * @label Clear Selection
  * @tooltip Click to clear the current selection
  * @icon select-clear
+ * @containableby Any
  */
 export interface IClearSelectionCommandParameters { }
 
@@ -278,6 +301,7 @@ export interface IClearSelectionCommandParameters { }
  * @label Zoom Selection
  * @tooltip Click to zoom to the selection
  * @icon select-zoom
+ * @containableby Any
  */
 export interface IZoomToSelectionCommandParameters { }
 
@@ -287,12 +311,14 @@ export interface IZoomToSelectionCommandParameters { }
  * @label Refresh
  * @tooltip Click to refresh the map
  * @icon view-refresh
+ * @containableby Any
  */
 export interface IRefreshMapCommandParameters { }
 
 /**
  * @widget ExtentHistory
  * @description A widget to navigate forward or backward in the map view extent history
+ * @containableby Any
  */
 export interface IExtentHistoryCommandParameters {
     /**
@@ -311,6 +337,7 @@ export interface IExtentHistoryCommandParameters {
  * @label Buffer
  * @tooltip Click to create a buffer
  * @icon buffer
+ * @containableby Any
  */
 export interface IBufferCommandParameters extends ITargetedCommandParameters { }
 
@@ -321,6 +348,7 @@ export interface IBufferCommandParameters extends ITargetedCommandParameters { }
  * @label Select within
  * @tooltip Click to select features within this selection
  * @icon select-features
+ * @containableby Any
  */
 export interface ISelectWithinCommandParameters extends ITargetedCommandParameters { }
 
@@ -331,6 +359,7 @@ export interface ISelectWithinCommandParameters extends ITargetedCommandParamete
  * @label Feature Info
  * @tooltip Click to display selected feature info
  * @icon feature-info
+ * @containableby Any
  */
 export interface IFeatureInfoCommandParameters extends ITargetedCommandParameters { }
 
@@ -341,6 +370,7 @@ export interface IFeatureInfoCommandParameters extends ITargetedCommandParameter
  * @label Query
  * @tooltip Click to execute a custom query
  * @icon query
+ * @containableby Any
  */
 export interface IQueryCommandParameters extends ITargetedCommandParameters { }
 
@@ -351,6 +381,7 @@ export interface IQueryCommandParameters extends ITargetedCommandParameters { }
  * @label Theme
  * @tooltip Click to create a themed layer
  * @icon theme
+ * @containableby Any
  */
 export interface IThemeCommandParameters extends ITargetedCommandParameters { }
 
@@ -360,6 +391,7 @@ export interface IThemeCommandParameters extends ITargetedCommandParameters { }
  * @label Manage External Layers
  * @tooltip Manage External Layers
  * @icon legend-layer
+ * @containableby Any
  */
 export interface IExternalLayerManagerCommandParameters extends ITargetedCommandParameters { }
 
@@ -369,6 +401,7 @@ export interface IExternalLayerManagerCommandParameters extends ITargetedCommand
  * @label Center Selection
  * @tooltip Click to center the map on the current selection
  * @icon select-centre
+ * @containableby Any
  */
 export interface ICenterSelectionCommandParameters { }
 
@@ -376,6 +409,7 @@ export interface ICenterSelectionCommandParameters { }
  * @widget InvokeScript
  * @label Invoke Command
  * @description Click to invoke a command by the specified name
+ * @containableby Any
  */
 export interface IInvokeScriptCommandParameters { 
     /**
@@ -388,6 +422,7 @@ export interface IInvokeScriptCommandParameters {
 /**
  * @widget InvokeURL
  * @description A widget to call up a URL into the TaskPane, a new window or HTML element. The map name and Session ID are automatically added to the URL, as well as any additional parameters specifed
+ * @containableby Any
  */
 export interface IInvokeURLCommandParameters extends ITargetedCommandParameters { 
     /**
@@ -408,4 +443,131 @@ export interface IInvokeURLCommandParameters extends ITargetedCommandParameters 
      * @label Additional Parameters
      */
     AdditionalParameter: string;
+}
+
+/**
+ * @widget CursorPosition
+ * @description Provides dynamic cursor tracking as it moves over the map
+ * @label Cursor Position
+ * @tooltip this will display the cursor position
+ * @nonstandard
+ * @containableby Splitterbar
+ */
+export interface ICursorPositionParameters {
+    /**
+     * @description The template string to use to generate the displayed text
+     * @defaultvalue x: {x}, y: {y}
+     * @label Template
+     */
+    Template: string;
+    /**
+     * @description The precision to display for the coordinates
+     * @label Precision
+     * @type integer
+     * @defaultvalue 4
+     * @min 0
+     * @max 15
+     */
+    Precision?: string;
+    /**
+     * @description The projection to display mouse coordinates in. This can be an EPSG code (EPSG:XXXX) or a WKT string. This parameter takes precedence over the Units parameter if specified
+     * @label Display Projection
+     */
+    DisplayProjection?: string;
+    /**
+     * @description The coordinate units
+     * @label Units
+     * @defaultvalue dd
+     */
+    Units: string;
+}
+
+/**
+ * @widget EditableScale
+ * @description This widget displays the map scale and provides a way for the user to enter a scale value at which to display the map
+ * @label Editable Scale
+ * @tooltip Allows display and entry of map scale
+ * @nonstandard
+ * @containableby Splitterbar
+ */
+export interface IEditableScaleParameters {
+
+}
+
+/**
+ * @widget Legend
+ * @provider MapGuide
+ * @description A widget that displays a listing of all layers that make up the map as a tree structure
+ * @label Legend
+ * @tooltip Map Legend
+ * @nonstandard
+ */
+export interface ILegendParameters {
+
+}
+
+/**
+ * @widget Navigator
+ * @description In-map navigator widget
+ * @label Navigator
+ * @tooltip Click to navigate the map
+ * @nonstandard
+ */
+export interface INavigatorParameters {
+
+}
+
+/**
+ * @widget OverviewMap
+ * @description A key map to locate the vewing area of the primary map
+ * @label Overview Map
+ * @tooltip Click and drag to recenter the map
+ * @nonstandard
+ */
+export interface IOverviewMapParameters {
+
+}
+
+/**
+ * @widget SelectionInfo
+ * @provider MapGuide
+ * @description Displays the number of features and number of layers in the current selection
+ * @label Selection info
+ * @nonstandard
+ */
+export interface ISelectionInfoParameters {
+
+}
+
+/**
+ * @widget SelectionPanel
+ * @provider MapGuide
+ * @label Selection Panel
+ * @description The SelectionPanel widget displays attributes for the features that are selected on the map
+ * @nonstandard
+ */
+export interface ISelectionPanelParameters {
+
+}
+
+/**
+ * @widget TaskPane
+ * @description A widget that acts as a generic container for application-specific HTML content
+ * @label Task Pane
+ * @nonstandard
+ */
+export interface ITaskPaneParameters {
+
+}
+
+/**
+ * @widget ViewSize
+ * @description Display the size of the current view in user-definable units
+ * @label View Size
+ * @tooltip The size of the map
+ * @nonstandard
+ * @containableby Splitterbar
+ */
+export interface IViewSizeParameters {
+
 }

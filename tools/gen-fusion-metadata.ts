@@ -14,6 +14,8 @@ interface IWidgetMetadata {
     location?: string;
     statusText?: string;
     provider?: string;
+    nonstandard: boolean;
+    containableby?: string;
 }
 
 interface IWidgetParameterMetadata {
@@ -21,6 +23,8 @@ interface IWidgetParameterMetadata {
     label?: string;
     description?: string;
     defaultValue?: string;
+    min?: number;
+    max?: number;
 }
 
 const STR_EMPTY = "";
@@ -41,6 +45,8 @@ function extractWidgetMetadata(modMember: TsModuleMember): IWidgetMetadata | und
     const wloc = modMember.comment?.tags?.find(t => t.tag == "location");
     const wst = modMember.comment?.tags?.find(t => t.tag == "statustext");
     const wprovider = modMember.comment?.tags?.find(t => t.tag == "provider");
+    const wnonstandard = modMember.comment?.tags?.find(t => t.tag == "nonstandard");
+    const wcontainable = modMember.comment?.tags?.find(t => t.tag == "containableby");
     if (wtag?.text) {
         return {
             name: wtag.text.trim(),
@@ -50,7 +56,9 @@ function extractWidgetMetadata(modMember: TsModuleMember): IWidgetMetadata | und
             tooltip: wtt?.text?.trim(),
             location: wloc?.text?.trim(),
             statusText: wst?.text?.trim(),
-            provider: wprovider?.text?.trim()
+            provider: wprovider?.text?.trim(),
+            containableby: wcontainable?.text?.trim(),
+            nonstandard: wnonstandard != null
         }
     }
     return undefined;
@@ -119,8 +127,8 @@ for (const tsModule of apidef.children) {
     <StatusText>${wmeta.statusText ?? STR_EMPTY}</StatusText>
     <ImageUrl>images/icons.png</ImageUrl>
     <ImageClass>${wmeta.imageClass ?? STR_EMPTY}</ImageClass>
-    <StandardUi>true</StandardUi>
-    <ContainableBy>Any</ContainableBy>`;
+    <StandardUi>${!wmeta.nonstandard}</StandardUi>
+    <ContainableBy>${wmeta.containableby}</ContainableBy>`;
             if (parameters.length > 0) {
                 xml += "\n    " + parameters.join("\n    ")
             }

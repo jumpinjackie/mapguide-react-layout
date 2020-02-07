@@ -54,6 +54,7 @@ import { MapInfo, IInitAppActionPayload, IAcknowledgeStartupWarningsAction, IRes
 import { ActionType } from '../constants/actions';
 import { getSelectionSet, clearSessionStore } from '../api/session-store';
 import { resolveProjectionFromEpsgIoAsync } from '../api/registry/projections';
+import { ICursorPositionParameters } from 'api/fusion-metadata';
 
 function isUIWidget(widget: any): widget is UIWidget {
     return widget.WidgetType === "UiWidgetType";
@@ -419,7 +420,7 @@ function getExtraProjectionsFromFlexLayout(appDef: ApplicationDefinition): strin
                     epsgs.push(p.split(':')[1]);
                 }
             } else if (w.Type == "CursorPosition") {
-                const dp = w.Extension.DisplayProjection;
+                const dp = (w.Extension as ICursorPositionParameters).DisplayProjection;
                 if (dp) {
                     epsgs.push(dp.split(':')[1]);
                 }
@@ -777,9 +778,10 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
         }
         for (const w of widgetSet.Widget) {
             if (w.Type == "CursorPosition") {
-                config.coordinateProjection = w.Extension.DisplayProjection;
-                config.coordinateDecimals = w.Extension.Precision;
-                config.coordinateDisplayFormat = w.Extension.Template;
+                const cext: ICursorPositionParameters = w.Extension;
+                config.coordinateProjection = cext.DisplayProjection;
+                config.coordinateDecimals = parseInt(cext.Precision ?? "4", 10);
+                config.coordinateDisplayFormat = cext.Template;
             }
         }
     }

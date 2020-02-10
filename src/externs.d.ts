@@ -39,10 +39,7 @@ declare module "react-splitter-layout" {
     }
 }
 
-declare module "ismobilejs" {
-    var isMobile: any;
-    export = isMobile;
-}
+declare module "ismobilejs";
 
 declare module "proj4";
 

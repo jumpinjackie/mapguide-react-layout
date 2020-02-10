@@ -4,19 +4,99 @@ import ToolbarContainer from "../containers/toolbar";
 import ViewerApiShim from "../containers/viewer-shim";
 import ModalLauncher from "../containers/modal-launcher";
 import FlyoutRegionContainer from "../containers/flyout-region";
-import { useDispatch, useSelector } from "react-redux";
 import { tr } from "../api/i18n";
 import * as Constants from "../constants";
-import {
-    GenericEvent,
-    IApplicationState
-} from "../api/common";
+import { GenericEvent, ITemplateReducerState } from "../api/common";
 import InitWarningDisplay from "../containers/init-warning-display";
 import { ActionType } from '../constants/actions';
-import { IElementState } from '../actions/defs';
+import { IElementState, ViewerAction } from '../actions/defs';
 import * as TemplateActions from "../actions/template";
 import { Spinner, Intent, Icon } from '@blueprintjs/core';
-import { useTemplateLegendVisible, useTemplateSelectionVisible, useTemplateTaskPaneVisible, useConfiguredCapabilities, useViewerBusyCount, useViewerLocale, useLastDispatchedAction } from '../containers/hooks';
+import { useViewerBusyCount, useLastDispatchedAction, useReducedToolbarAppState } from '../containers/hooks';
+import { useCommonTemplateState } from './hooks';
+import { isElementState } from '../reducers/template';
+import { NBSP } from "../constants";
+import isMobile from "ismobilejs";
+
+function sidebarTemplateReducer(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
+    switch (action.type) {
+        case ActionType.MAP_SET_SELECTION:
+            {
+                //This is the only template that does not conform to the selection/legend/taskpane is a mutually
+                //exclusive visible set. We take advantage of the custom template reducer function to apply the
+                //correct visibility state against the *original state* effectively discarding whatever the root
+                //template reducer has done against this action.
+                const { selection } = action.payload;
+                if (selection && selection.SelectedFeatures) {
+                    const extraState: any = {};
+                    let autoExpandSelectionPanel = origState.autoDisplaySelectionPanelOnSelection;
+                    const ism = isMobile(navigator.userAgent);
+                    if (ism.phone) {
+                        return origState; //Take no action on mobile
+                    }
+                    if (selection.SelectedFeatures.SelectedLayer.length && autoExpandSelectionPanel) {
+                        return {
+                            ...origState,
+                            ...{ selectionPanelVisible: true, taskPaneVisible: false, legendVisible: false }
+                        }
+                    }
+                }
+                return state; //No action taken: Return "current" state
+            }
+        case ActionType.FUSION_SET_LEGEND_VISIBILITY:
+            {
+                const data = action.payload;
+                if (typeof (data) == "boolean") {
+                    let state1: Partial<ITemplateReducerState>;
+                    if (data === true) {
+                        state1 = { legendVisible: true, taskPaneVisible: false, selectionPanelVisible: false };
+                    } else {
+                        state1 = { legendVisible: data };
+                    }
+                    return { ...state, ...state1 };
+                }
+            }
+        case ActionType.FUSION_SET_SELECTION_PANEL_VISIBILITY:
+            {
+                const data = action.payload;
+                if (typeof (data) == "boolean") {
+                    let state1: Partial<ITemplateReducerState>;
+                    if (data === true) {
+                        state1 = { legendVisible: false, taskPaneVisible: false, selectionPanelVisible: true };
+                    } else {
+                        state1 = { selectionPanelVisible: data };
+                    }
+                    return { ...state, ...state1 };
+                }
+            }
+        case ActionType.TASK_INVOKE_URL:
+            {
+                let state1: Partial<ITemplateReducerState> = { taskPaneVisible: true, selectionPanelVisible: false, legendVisible: false };
+                return { ...state, ...state1 };
+            }
+        case ActionType.FUSION_SET_TASK_PANE_VISIBILITY:
+            {
+                const data = action.payload;
+                if (typeof (data) == "boolean") {
+                    let state1: Partial<ITemplateReducerState>;
+                    if (data === true) {
+                        state1 = { legendVisible: false, taskPaneVisible: true, selectionPanelVisible: false };
+                    } else {
+                        state1 = { taskPaneVisible: data };
+                    }
+                    return { ...state, ...state1 };
+                }
+            }
+        case ActionType.FUSION_SET_ELEMENT_STATE:
+            {
+                const data = action.payload;
+                if (isElementState(data)) {
+                    return { ...state, ...data };
+                }
+            }
+    }
+    return state;
+}
 
 
 const SidebarHeader = (props: any) => {
@@ -41,6 +121,7 @@ interface ISidebarProps {
     taskpane: boolean;
     legend: boolean;
     selection: boolean;
+    hasSelection: boolean;
     busy: boolean;
     locale: string;
     position: "left" | "right";
@@ -131,6 +212,7 @@ const Sidebar = (props: ISidebarProps) => {
                     if (props.selection) {
                         return <li className={collapsed == false && activeTab == "selection" ? "active" : ""}>
                             <a onClick={onActivateSelection} title={tr("TPL_SIDEBAR_OPEN_SELECTION_PANEL", props.locale)} role="tab"><Icon icon="th" /></a>
+                            {props.hasSelection && <div className="sidebar-has-selection-badge">{NBSP}</div>}
                         </li>;
                     }
                 })()}
@@ -173,12 +255,16 @@ const Sidebar = (props: ISidebarProps) => {
 }
 
 const SidebarLayout = () => {
-    const dispatch = useDispatch();
+    const {
+        dispatch,
+        locale,
+        capabilities,
+        showSelection,
+        showLegend,
+        showTaskPane,
+    } = useCommonTemplateState(sidebarTemplateReducer);
+    const tbState = useReducedToolbarAppState();
     const setElementStates = (states: IElementState) => dispatch(TemplateActions.setElementStates(states));
-    const locale = useViewerLocale();
-    const showLegend = useTemplateLegendVisible();
-    const showSelection = useTemplateSelectionVisible();
-    const showTaskPane = useTemplateTaskPaneVisible();
     //console.log(`leg: ${showLegend}, sel: ${showSelection}, task: ${showTaskPane}`);
     const {
         hasTaskPane,
@@ -188,7 +274,7 @@ const SidebarLayout = () => {
         hasLegend,
         hasViewSize,
         hasToolbar
-    } = useConfiguredCapabilities();
+    } = capabilities;
     const busyCount = useViewerBusyCount();
     let defaultActiveTab: SidebarTab = "tasks";
     if (showLegend) {
@@ -264,6 +350,7 @@ const SidebarLayout = () => {
             legend={hasLegend}
             selection={hasSelectionPanel}
             taskpane={hasTaskPane}
+            hasSelection={tbState.hasSelection}
             locale={locale}
             collapsed={collapsed || false}
             activeTab={activeTab || "tasks"}

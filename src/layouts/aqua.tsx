@@ -93,8 +93,6 @@ export interface IAquaTemplateDispatch {
     hideSelection: () => void;
 }
 
-
-
 const AquaTemplateLayout = () => {
     const {
         locale,

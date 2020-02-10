@@ -57,7 +57,7 @@ import {
     CURSOR_ZOOM_IN
 } from "../constants/assets";
 import { tr } from "../api/i18n";
-const isMobile = require("ismobilejs");
+import isMobile from "ismobilejs";
 import { IMapViewerContextCallback, IMapViewerContextProps, MapViewerContext } from "./map-viewer-context";
 
 import * as olExtent from "ol/extent";
@@ -309,7 +309,8 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         this._wktFormat = new WKTFormat();
         this._busyWorkers = 0;
         this._triggerZoomRequestOnMoveEnd = true;
-        this._supportsTouch = isMobile.phone || isMobile.tablet;
+        const ism = isMobile(navigator.userAgent);
+        this._supportsTouch = ism.phone || ism.tablet;
         this.state = {
             shiftKey: false,
             isMouseDown: false,

@@ -503,7 +503,12 @@ class MgInnerLayerSetFactory {
             useOverlay: useImageOverlayOp,
             metersPerUnit: metersPerUnit,
             params: params,
-            ratio: 1
+            ratio: 1,
+            // For mobile devices with retina/hidpi displays, the default 96 DPI produces
+            // really low quality map images. For such devices, the DPI should be some
+            // function of the device pixel ratio reported. As this value can be fractional
+            // round it down to the nearest integer
+            displayDpi: Math.floor(olHas.DEVICE_PIXEL_RATIO) * 96 
         });
         const layer = new olImageLayer({
             //name: "MapGuide Dynamic Overlay",

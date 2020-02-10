@@ -61,6 +61,7 @@
  * [#326](https://github.com/jumpinjackie/mapguide-react-layout/issues/326): Moved positioning aspects of status bar element CSS out of the main viewer css and to their template html files
  * [#1066](https://github.com/jumpinjackie/mapguide-react-layout/issues/1066): Remove es6 promise polyfill and `whatwg-fetch` and replace with script tag reference to `polyfill.io` in viewer html files and storybook to polyfill required bits for IE
  * [#1011](https://github.com/jumpinjackie/mapguide-react-layout/issues/1011): Fix incorrect views when browser scaling is involved
+   * [#1118](https://github.com/jumpinjackie/mapguide-react-layout/issues/1118): As a result, for retina/hidpi devices, the map is set up with a higher base DPI to compensate.
  * [#1107](https://github.com/jumpinjackie/mapguide-react-layout/issues/1107): Fix clicking of tooltip links opening in a new window if the Task Pane has a `component://` URI loaded.
  * [#1106](https://github.com/jumpinjackie/mapguide-react-layout/issues/1106): Fix clicking of tooltip links adding 2 entries to the Task Pane's navigation stack
  * [#7](https://github.com/jumpinjackie/mapguide-react-layout/issues/7): Task Pane fixes:

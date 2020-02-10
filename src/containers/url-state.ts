@@ -51,7 +51,7 @@ export function updateUrl(state: IAppUrlState): void {
         }
     }
     const url = appendParameters(window.location.href, st, true, false);
-    window.history.pushState(st, "", url);
+    window.history.replaceState(st, "", url);
 }
 
 /**

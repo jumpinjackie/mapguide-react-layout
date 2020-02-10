@@ -119,6 +119,10 @@ export interface IInitAppActionPayload {
         hasToolbar: boolean,
         hasViewSize: boolean
     },
+    /**
+     * @since 0.13
+     */
+    featureTooltipsEnabled?: boolean;
     initialShowLayers?: string[];
     initialShowGroups?: string[];
     initialHideLayers?: string[];

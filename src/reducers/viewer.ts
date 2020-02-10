@@ -18,12 +18,20 @@ export function viewerReducer(state = VIEWER_INITIAL_STATE, action: ViewerAction
         case ActionType.INIT_APP:
             {
                 let tool = action.payload.initialActiveTool;
+                let ft = action.payload.featureTooltipsEnabled;
+                let state1: Partial<IViewerReducerState> | undefined;
                 if (tool) {
-                    const state1 = {
+                    state1 = {
                         tool: tool
                     };
-                    return { ...state, ...state1 };
                 }
+                let state2 : Partial<IViewerReducerState> | undefined;
+                if (typeof(ft) != 'undefined') {
+                    state2 = {
+                        featureTooltipsEnabled: ft
+                    };
+                }
+                return { ...state, ...state1, ...state2 };
             }
         case ActionType.MAP_SET_ACTIVE_TOOL:
             {

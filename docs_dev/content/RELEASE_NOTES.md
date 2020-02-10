@@ -64,6 +64,7 @@
    * [#1118](https://github.com/jumpinjackie/mapguide-react-layout/issues/1118): As a result, for retina/hidpi devices, the map is set up with a higher base DPI to compensate.
  * [#1107](https://github.com/jumpinjackie/mapguide-react-layout/issues/1107): Fix clicking of tooltip links opening in a new window if the Task Pane has a `component://` URI loaded.
  * [#1106](https://github.com/jumpinjackie/mapguide-react-layout/issues/1106): Fix clicking of tooltip links adding 2 entries to the Task Pane's navigation stack
+ * [#1117](https://github.com/jumpinjackie/mapguide-react-layout/issues/1117): Feature tooltip toggle state is now synced with URL state (as `ft` parameter)
  * [#7](https://github.com/jumpinjackie/mapguide-react-layout/issues/7): Task Pane fixes:
    * Loading URLs into the Task Pane no longer adds new entries to the browser's navigation stack
  * New ***experimental*** viewer APIs for:

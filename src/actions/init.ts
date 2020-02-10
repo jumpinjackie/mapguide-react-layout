@@ -499,6 +499,12 @@ export interface IInitAppLayout {
      */
     initialHideGroups?: string[];
     onInit?: (viewer: IMapViewer) => void;
+    /**
+     * Sets whether feature tooltips should be initially enabled
+     * 
+     * @since 0.13
+     */
+    featureTooltipsEnabled?: boolean;
 }
 
 export interface IInitAsyncOptions extends IInitAppLayout {
@@ -682,6 +688,7 @@ async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOpti
     const tb = prepareSubMenus(menus)[0];
     return {
         activeMapName: firstMapName,
+        featureTooltipsEnabled: opts.featureTooltipsEnabled,
         initialUrl: ensureParameters(webLayout.TaskPane.InitialTask || "server/TaskPane.html", firstMapName, firstSessionId, opts.locale),
         initialTaskPaneWidth: webLayout.TaskPane.Width,
         initialInfoPaneWidth: webLayout.InformationPane.Width,
@@ -814,6 +821,7 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
     return {
         activeMapName: firstMapName,
         initialUrl: ensureParameters(initialTask, firstMapName, firstSessionId, opts.locale),
+        featureTooltipsEnabled: opts.featureTooltipsEnabled,
         locale: opts.locale,
         maps: maps,
         config: config,
@@ -925,6 +933,7 @@ export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
                 initPayload.initialHideLayers = opts.initialHideLayers;
                 initPayload.initialShowGroups = opts.initialShowGroups;
                 initPayload.initialShowLayers = opts.initialShowLayers;
+                initPayload.featureTooltipsEnabled = opts.featureTooltipsEnabled;
                 dispatch({
                     type: ActionType.INIT_APP,
                     payload

@@ -19,7 +19,7 @@ import { setFusionRoot } from "../api/runtime";
 import { AppContext } from "../components/context";
 import { IElementState } from '../actions/defs';
 import { NonIdealState, Spinner, Intent, Callout } from '@blueprintjs/core';
-import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, useActiveMapBranch, useActiveMapName } from './hooks';
+import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, useActiveMapBranch, useActiveMapName, useViewerFeatureTooltipsEnabled } from './hooks';
 import { getStateFromUrl, IAppUrlState, updateUrl } from './url-state';
 
 export interface SelectionOptions {
@@ -99,6 +99,7 @@ export interface IAppState {
     configuredLocale: string;
     map: IBranchedMapSubState | undefined;
     activeMapName: string | undefined;
+    featureTooltipsEnabled: boolean;
 }
 
 /**
@@ -153,6 +154,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
             session: urlSession,
             x: urlX,
             y: urlY,
+            ft: urlFeatureTooltip,
             scale: urlScale,
             map: urlMap,
             sl: urlShowLayers,
@@ -174,6 +176,12 @@ class AppInner extends React.Component<AppInnerProps, any> {
             setFusionRoot(fusionRoot);
         }
         if (initLayout) {
+            let ftArgs: Partial<IInitAppLayout> | undefined;
+            if (typeof(urlFeatureTooltip) != 'undefined') {
+                ftArgs = {
+                    featureTooltipsEnabled: urlFeatureTooltip
+                }
+            }
             let amArgs: Partial<IInitAppLayout> | undefined;
             if (urlMap) {
                 amArgs = {
@@ -222,6 +230,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
                     session: urlSession || session,
                     onInit: onInit
                 },
+                ...(ftArgs || {}),
                 ...(amArgs || {}),
                 ...(ivArgs || {}),
                 ...(slArgs || {}),
@@ -241,6 +250,9 @@ class AppInner extends React.Component<AppInnerProps, any> {
             resource: curUrlState.resource ?? this.props.resourceId,
             session: curUrlState.session ?? this.props.session
         };
+        if (nextProps.featureTooltipsEnabled != prevProps.featureTooltipsEnabled) {
+            nextUrlState.ft = nextProps.featureTooltipsEnabled;
+        }
         if (nextProps.map != null && prevProps.map != nextProps.map) {
             this.setState({ isLoading: false });
         }
@@ -377,6 +389,7 @@ const App = (props: IAppProps) => {
     const configuredLocale = useViewerLocale();
     const map = useActiveMapBranch();
     const activeMapName = useActiveMapName();
+    const ftEnabled = useViewerFeatureTooltipsEnabled();
 
     const dispatch = useDispatch();
     const initLayout = (args: InitActions.IInitAppLayout) => dispatch(InitActions.initLayout(args));
@@ -385,6 +398,7 @@ const App = (props: IAppProps) => {
     return <AppInner error={error}
         includeStack={includeStack}
         initOptions={initOptions}
+        featureTooltipsEnabled={ftEnabled}
         configuredLocale={configuredLocale}
         map={map}
         activeMapName={activeMapName}

@@ -12,6 +12,7 @@ export interface IAppUrlState {
     locale?: string;
     session?: string;
     map?: string;
+    ft?: boolean;
     sl?: string[];
     hl?: string[];
     sg?: string[];
@@ -29,6 +30,9 @@ export function updateUrl(state: IAppUrlState): void {
     for (const k in state) {
         const val: any = (state as any)[k];
         switch (k) {
+            case "ft":
+                st.ft = (val == true) ? 1 : 0;
+                break;
             case "sl":
                 st.sl = val?.join(S_DELIM);
                 break;
@@ -60,6 +64,14 @@ export function getStateFromUrl(): IAppUrlState {
     for (const k in st) {
         const val = st[k];
         switch (k) {
+            case "ft":
+                {
+                    const n = parseInt(val, 10);
+                    if (!isNaN(n)) {
+                        state.ft = (n == 0) ? false : true;
+                    }
+                }
+                break;
             case "x":
                 {
                     const n = parseFloat(val);

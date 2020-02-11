@@ -63,6 +63,28 @@
                                 "Type": [
                                     "Stamen"
                                 ]
+                            },
+                            {
+                                "Extension": [
+                                    {
+                                        "Options": [
+                                            {
+                                                "name": [
+                                                    "Open Street Map"
+                                                ],
+                                                "type": [
+                                                    "Mapnik"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "SingleTile": [
+                                    "true"
+                                ],
+                                "Type": [
+                                    "OpenStreetMap"
+                                ]
                             }
                         ]
                     },
@@ -120,6 +142,28 @@
                                 "Type": [
                                     "Stamen"
                                 ]
+                            },
+                            {
+                                "Extension": [
+                                    {
+                                        "Options": [
+                                            {
+                                                "name": [
+                                                    "Open Street Map"
+                                                ],
+                                                "type": [
+                                                    "Mapnik"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "SingleTile": [
+                                    "true"
+                                ],
+                                "Type": [
+                                    "OpenStreetMap"
+                                ]
                             }
                         ]
                     },
@@ -154,6 +198,28 @@
                                 ],
                                 "Type": [
                                     "MapGuide"
+                                ]
+                            },
+                            {
+                                "Extension": [
+                                    {
+                                        "Options": [
+                                            {
+                                                "name": [
+                                                    "Stamen (Toner)"
+                                                ],
+                                                "type": [
+                                                    "toner"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "SingleTile": [
+                                    "true"
+                                ],
+                                "Type": [
+                                    "Stamen"
                                 ]
                             },
                             {

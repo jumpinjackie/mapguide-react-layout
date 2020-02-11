@@ -28,14 +28,27 @@ import { MgLayerSet } from '../api/layer-set';
 import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
 import { SelectedFeaturesTooltip } from './tooltips/selected-features';
-import { ViewerAction } from 'actions/defs';
+
+/**
+ * @since 0.13
+ */
+export enum MapGuideMockMode {
+    /**
+     * Render a placeholder image showing the key mapagent parameters
+     */
+    RenderPlaceholder,
+    /**
+     * Do not render anything
+     */
+    DoNotRender
+}
 
 /**
  * The map debug context, used to check if request mocking should be enabled or not
  * @since 0.13
  */
 export interface IMapDebugContext {
-    mock?: boolean;
+    mock?: MapGuideMockMode;
 }
 
 export const MapDebugContext = createContext<IMapDebugContext>({});
@@ -55,7 +68,7 @@ export interface IMapViewerContextProps {
 }
 
 export interface IMapViewerContextCallback {
-    shouldMock(): boolean | undefined;
+    getMockMode(): MapGuideMockMode | undefined;
     incrementBusyWorker(): void;
     decrementBusyWorker(): void;
     addImageLoading(): void;
@@ -134,7 +147,7 @@ export class MapViewerContext {
         }
         this._ovMap = new olOverviewMap(overviewMapOpts);
         this._map.addControl(this._ovMap);
-        layerSet.setMapGuideMocking(!!this.callback.shouldMock());
+        layerSet.setMapGuideMocking(this.callback.getMockMode());
         layerSet.attach(this._map, this._ovMap, false);
     }
     public updateOverviewMapElement(overviewMapElementSelector: () => (Element | null)) {
@@ -199,7 +212,7 @@ export class MapViewerContext {
     }
     public refreshOnStateChange(map: RuntimeMap, showGroups: string[] | undefined, showLayers: string[] | undefined, hideGroups: string[] | undefined, hideLayers: string[] | undefined): void {
         const layerSet = this.getLayerSet(map.Name);
-        layerSet.setMapGuideMocking(!!this.callback.shouldMock());
+        layerSet.setMapGuideMocking(this.callback.getMockMode());
         layerSet.update(showGroups, showLayers, hideGroups, hideLayers);
     }
     public refreshMap(name: string, mode: RefreshMode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly): void {

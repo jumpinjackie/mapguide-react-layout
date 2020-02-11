@@ -67,7 +67,8 @@ class FakeMapAgent extends RequestBuilder {
 }
 
 export interface IFakeAppProps {
-    children: React.ReactNode;
+    templateLayout?: () => React.ReactNode;
+    children?: React.ReactNode;
 }
 
 /**
@@ -117,7 +118,7 @@ export class FakeApp extends React.Component<IFakeAppProps> {
                     selection: true
                 }}
                 agent={this._agentConf}
-                layout="fake-app"
+                layout={this.props.templateLayout ?? "fake-app"}
                 resourceId="Library://Test/Viewer.ApplicationDefinition"
                 {...this.props} />
         </Provider>;

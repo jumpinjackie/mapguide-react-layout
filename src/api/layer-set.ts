@@ -15,7 +15,7 @@ import * as olExtent from "ol/extent";
 import olTileLayer from "ol/layer/Tile";
 import olImageLayer from "ol/layer/Image";
 import olLayerBase from "ol/layer/Base";
-import { IMapViewerContextCallback, IMapViewerContextProps } from '../components/map-viewer-context';
+import { IMapViewerContextCallback, IMapViewerContextProps, MapGuideMockMode } from '../components/map-viewer-context';
 import { RuntimeMap } from './contracts/runtime-map';
 import * as logger from '../utils/logger';
 import { createExternalSource } from '../components/external-layer-factory';
@@ -32,6 +32,11 @@ import olSourceVector from "ol/source/Vector";
 import { getLayerInfo } from './layer-manager';
 import * as olHas from "ol/has";
 import Feature from "ol/Feature";
+import { assertNever } from '../utils/never';
+
+function blankImageLoadFunction(image: ImageWrapper) {
+    (image.getImage() as any).src = BLANK_GIF_DATA_URI;
+}
 
 function mockMapGuideImageLoadFunction(image: ImageWrapper, src: string) {
     let el = document.getElementById("mg-debug-text-canvas");
@@ -508,7 +513,7 @@ class MgInnerLayerSetFactory {
             // really low quality map images. For such devices, the DPI should be some
             // function of the device pixel ratio reported. As this value can be fractional
             // round it down to the nearest integer
-            displayDpi: Math.floor(olHas.DEVICE_PIXEL_RATIO) * 96 
+            displayDpi: Math.floor(olHas.DEVICE_PIXEL_RATIO) * 96
         });
         const layer = new olImageLayer({
             //name: "MapGuide Dynamic Overlay",
@@ -523,7 +528,7 @@ class MgInnerLayerSetFactory {
 }
 
 export class MgLayerSet {
-    
+
     private mainSet: ILayerSetOL;
     private overviewSet: ILayerSetOL;
     private scratchLayer: olVectorLayer;
@@ -578,14 +583,24 @@ export class MgLayerSet {
     public clearScratchLayer() {
         this.scratchLayer.getSource().clear();
     }
-    public setMapGuideMocking(mock: boolean) {
+    public setMapGuideMocking(mock: MapGuideMockMode | undefined) {
         const allLayers = this.mainSet.getLayers();
         for (const layer of allLayers) {
             if (layer instanceof olImageLayer) {
                 const source = layer.getSource();
                 if (source instanceof olMapGuideSource) {
-                    if (mock) {
-                        source.setImageLoadFunction(mockMapGuideImageLoadFunction);
+                    if (typeof (mock) != 'undefined') {
+                        switch (mock) {
+                            case MapGuideMockMode.RenderPlaceholder:
+                                source.setImageLoadFunction(mockMapGuideImageLoadFunction);
+                                break;
+                            case MapGuideMockMode.DoNotRender:
+                                source.setImageLoadFunction(blankImageLoadFunction);
+                                break;
+                            default:
+                                assertNever(mock);
+                                break;
+                        }
                     } else {
                         source.setImageLoadFunction(defaultImageLoadFunction);
                     }

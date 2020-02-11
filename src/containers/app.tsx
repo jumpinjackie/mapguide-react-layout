@@ -34,7 +34,7 @@ export interface SelectionOptions {
  * @interface IAppProps
  */
 export interface IAppProps {
-    layout: string;
+    layout: string | (() => React.ReactNode);
     /**
      * A session id to init this viewer with
      */
@@ -365,7 +365,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
                     title={tr("INIT", locale)}
                     description={tr("INIT_DESC", locale)} />;
             } else {
-                const layoutEl = getLayout(layout);
+                const layoutEl = typeof(layout) == 'function' ? layout : getLayout(layout);
                 if (layoutEl) {
                     const providerImpl = {
                         allowHtmlValuesInSelection: () => this.allowHtmlValuesInSelection(),

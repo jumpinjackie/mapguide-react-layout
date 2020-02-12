@@ -1,7 +1,7 @@
 import olPoint from "ol/geom/Point";
 import olLineString from "ol/geom/LineString";
 import olCircle from "ol/geom/Circle";
-import olPolygon from "ol/geom/Polygon";
+import olPolygon, { fromCircle } from "ol/geom/Polygon";
 import olLinearRing from "ol/geom/LinearRing";
 import olMultiLineString from "ol/geom/MultiLineString";
 import olMultiPoint from "ol/geom/MultiPoint";
@@ -166,8 +166,7 @@ export class OLFactory implements IOLFactory {
         return new olPolygon(coordinates);
     }
     public createGeomPolygonFromCircle(circle: olCircle): olPolygon {
-        //HACK: fromCircle not present in our type defn
-        return (olPolygon as any).fromCircle(circle) as olPolygon;
+        return fromCircle(circle);
     }
     public createGeomMultiLineString(coordinates: Coordinate2D[][]): olMultiLineString {
         return new olMultiLineString(coordinates);

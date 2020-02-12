@@ -104,16 +104,14 @@ export class MapViewerContext {
     private _map: olMap;
     private _ovMap: olOverviewMap;
     private callback: IMapViewerContextCallback;
-    constructor(map: olMap, callback: IMapViewerContextCallback) {
+    constructor(map: olMap, callback: IMapViewerContextCallback, initTooltipEnabled: boolean) {
         this.callback = callback;
         this._map = map;
         this._layerSets = {};
         this._mouseTooltip = new MouseTrackingTooltip(this._map, this.callback.isContextMenuOpen);
         this._featureTooltip = new FeatureQueryTooltip(this._map, callback);
         this._selectTooltip = new SelectedFeaturesTooltip(this._map);
-        //HACK: To avoid chicken-egg problem, we call this.isFeatureTooltipEnabled() instead
-        //of callback.isFeatureTooltipEnabled() even though its impl merely forwards to this
-        this._featureTooltip.setEnabled(this.isFeatureTooltipEnabled());
+        this._featureTooltip.setEnabled(initTooltipEnabled);
     }
     public initLayerSet(props: IMapViewerContextProps): MgLayerSet {
         const layerSet = new MgLayerSet(props, this.callback);

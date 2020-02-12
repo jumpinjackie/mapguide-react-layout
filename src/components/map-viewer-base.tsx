@@ -550,16 +550,10 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         }
     }
     private onMouseMove(e: GenericEvent) {
-        //if (this._mouseTooltip) {
-        //    this._mouseTooltip.onMouseMove(e);
-        //}
         this._mapContext.handleMouseTooltipMouseMove(e);
         if (this.props.isContextMenuOpen) {
             return;
         }
-        //if (this._featureTooltip && this._featureTooltip.isEnabled()) {
-        //    this._featureTooltip.onMouseMove(e);
-        //}
         if (!this.props.manualFeatureTooltips) {
             this._mapContext.handleFeatureTooltipMouseMove(e);
         }
@@ -818,7 +812,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         this._map.on("pointermove", this.onMouseMove.bind(this));
         this._map.on("change:size", this.onResize.bind(this));
         const callback = this.getCallback();
-        this._mapContext = new MapViewerContext(this._map, callback);
+        this._mapContext = new MapViewerContext(this._map, callback, this.props.featureTooltipsEnabled);
         const activeLayerSet = this._mapContext.initLayerSet(this.props);
         this._mapContext.initContext(activeLayerSet, locale, this.props.overviewMapElementSelector);
         document.addEventListener("keydown", this.onKeyDown);

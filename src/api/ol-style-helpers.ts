@@ -114,7 +114,7 @@ export const DEFAULT_POINT_ICON_STYLE: IPointIconStyle = {
     type: "Icon",
     anchor: [0.5, 0.5],
     src: MAP_MARKER_ICON,
-    //size: [0, 0],
+    //size: [24, 24],
     rotateWithView: false,
     rotation: 0,
     //opacity: 255,

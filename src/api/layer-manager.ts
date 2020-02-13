@@ -56,7 +56,7 @@ export class MgLayerManager implements ILayerManager {
     hasLayer(name: string): boolean {
         return this.layerSet.hasLayer(name);
     }
-    addLayer<T extends olLayerBase>(name: string, layer: T, allowReplace?: boolean | undefined): T {
+    addLayer<T extends olLayerBase>(name: string, layer: T, allowReplace?: boolean | undefined): ILayerInfo {
         return this.layerSet.addLayer(this.map, name, layer, allowReplace);
     }
     removeLayer(name: string): olLayerBase | undefined {
@@ -67,12 +67,6 @@ export class MgLayerManager implements ILayerManager {
     }
     apply(layers: ILayerInfo[]): void {
         this.layerSet.apply(this.map, layers);
-    }
-    setVectorLayerStyle(name: string, styleToApply: IVectorFeatureStyle) {
-        const layer = this.getLayer(name);
-        if (layer instanceof olVectorLayer) {
-            setOLVectorLayerStyle(layer, styleToApply);
-        }
     }
     parseFeaturesFromFile(options: IParseFeaturesFromFileOptions): Promise<IParsedFeatures> {
         const { file, name: layerName, locale } = options;
@@ -141,8 +135,8 @@ export class MgLayerManager implements ILayerManager {
                     line: DEFAULT_LINE_STYLE,
                     polygon: DEFAULT_POLY_STYLE
                 });
-                that.addLayer(features.name, layer);
-                resolve(getLayerInfo(layer, true));
+                const layerInfo = that.addLayer(features.name, layer);
+                resolve(layerInfo);
             } catch (e) {
                 reject(e);
             }

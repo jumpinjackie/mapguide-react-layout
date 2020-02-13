@@ -269,16 +269,16 @@ class MapViewerAdapter implements IMapViewer {
         this.disp.dispatch(action);
     }
     getDefaultPointCircleStyle(): IBasicPointCircleStyle {
-        return DEFAULT_POINT_CIRCLE_STYLE;
+        return { ...DEFAULT_POINT_CIRCLE_STYLE };
     }
     getDefaultPointIconStyle(): IPointIconStyle {
-        return DEFAULT_POINT_ICON_STYLE;
+        return { ...DEFAULT_POINT_ICON_STYLE };
     }
     getDefaultLineStyle(): IBasicVectorLineStyle {
-        return DEFAULT_LINE_STYLE;
+        return { ...DEFAULT_LINE_STYLE };
     }
     getDefaultPolygonStyle(): IBasicVectorPolygonStyle {
-        return DEFAULT_POLY_STYLE;
+        return { ...DEFAULT_POLY_STYLE };
     }
 }
 

@@ -103,14 +103,17 @@
                 var layer = factory.createVectorLayer({
                     source: source
                 });
-                layerMgr.addLayer(LAYER_NAME, layer);
+                // Set the vector layer style with a custom marker icon
                 var ptStyle = viewer.getDefaultPointIconStyle();
                 ptStyle.src = "examples/taskpane/marker2.png";
-                layerMgr.setVectorLayerStyle(LAYER_NAME, {
+                var defaultVectorStyle = {
                     point: ptStyle,
                     line: viewer.getDefaultLineStyle(),
                     polygon: viewer.getDefaultPolygonStyle()
-                })
+                };
+                var layerInfo = layerMgr.addLayer(LAYER_NAME, layer);
+                // Dispatch mapLayerAdded to notify components like the external layer manager
+                viewer.dispatch(parent.parent.MapGuide.Actions.Map.mapLayerAdded(viewer.getMapName(), layerInfo, defaultVectorStyle));
                 alert("Layer (" + LAYER_NAME + ") added");
                 layerAdded = true;
                 document.getElementById("btnAddLayer").disabled = true;
@@ -184,6 +187,7 @@
 <body>
     <h1>Viewer API drawing examples</h1>
     <p>This page demonstrates the feature drawing APIs provided by mapguide-react-layout that are accesible from Task Pane content</p>
+    <p>The layer added is also accessible from the External Layer Manager (if the widget was specified in your Flexible Layout)</p>
     <fieldset>
         <legend>Actions</legend>
         <button id="btnAddLayer" onclick="addVectorLayer()">Add Vector Layer</button>

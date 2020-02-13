@@ -522,7 +522,8 @@ export interface IAddedLayerAction {
     type: ActionType.LAYER_ADDED,
     payload: {
         mapName: string,
-        layer: ILayerInfo
+        layer: ILayerInfo,
+        defaultStyle?: IVectorFeatureStyle
     }
 }
 

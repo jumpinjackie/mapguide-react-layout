@@ -1087,7 +1087,7 @@ export interface ILayerManager {
      * @returns {T} The added layer
      * @memberof ILayerManager
      */
-    addLayer<T extends olLayerBase>(name: string, layer: T, allowReplace?: boolean): T;
+    addLayer<T extends olLayerBase>(name: string, layer: T, allowReplace?: boolean): ILayerInfo;
     /**
      * Removes a layer by the given name
      *
@@ -1107,15 +1107,6 @@ export interface ILayerManager {
      * @memberof IMapViewer
      */
     getLayer<T extends olLayerBase>(name: string): T | undefined;
-
-    /**
-     * Applies the given style to the given vector layer
-     * 
-     * @param name The name of the vector layer
-     * @param styleToApply The vector style to apply
-     * @since 0.13
-     */
-    setVectorLayerStyle(name: string, styleToApply: IVectorFeatureStyle): void;
 
     /**
      * Attempts to parse features for the given input file. A failed attempt is when

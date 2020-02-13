@@ -26,7 +26,7 @@ import { tr } from './i18n';
 import olMap from "ol/Map";
 import olOverviewMap from "ol/control/OverviewMap";
 import { MgError } from './error';
-import { setOLVectorLayerStyle } from './ol-style-helpers';
+import { setOLVectorLayerStyle, IVectorFeatureStyle } from './ol-style-helpers';
 import olVectorLayer from "ol/layer/Vector";
 import olSourceVector from "ol/source/Vector";
 import { getLayerInfo } from './layer-manager';
@@ -719,7 +719,7 @@ export class MgLayerSet {
     public hasLayer(name: string): boolean {
         return this._customLayers[name] != null;
     }
-    public addLayer<T extends olLayerBase>(map: olMap, name: string, layer: T, allowReplace?: boolean): T {
+    public addLayer<T extends olLayerBase>(map: olMap, name: string, layer: T, allowReplace?: boolean): ILayerInfo {
         const bAllow = !!allowReplace;
         if (this._customLayers[name]) {
             if (!bAllow) {
@@ -732,7 +732,14 @@ export class MgLayerSet {
         map.addLayer(layer);
         this._customLayers[name] = { layer, order: map.getLayers().getArray().indexOf(layer) };
         layer.set(LayerProperty.LAYER_NAME, name);
-        return layer;
+        return {
+            ...getLayerInfo(layer, true),
+            //Smuggle these values out for debugging purposes
+            ...{
+                isSelectable: this._customLayers[name].layer.get(LayerProperty.IS_SELECTABLE) == true,
+                order: this._customLayers[name].order
+            }
+        };
     }
     public removeLayer(map: olMap, name: string): olLayerBase | undefined {
         let layer: olLayerBase;
@@ -789,29 +796,50 @@ export class MgLayerSet {
         //console.assert(currentLayers.length == layers.length);
         //console.table(currentLayers);
         //console.table(layers);
-        let bReorder = false;
-        let ii = 0;
-        for (let i = layers.length - 1; i >= 0; i--) {
-            const layer = layers[i];
-            //console.log(`Checking if layer (${layer.name}) needs re-ordering`);
-            if (layer.name != currentLayers[ii].name) {
-                bReorder = true;
-                break;
-            }
-            ii++;
-        }
-        if (bReorder) {
-            //console.log("Re-ordering layers");
+        
+        //If sizes don't match, do a full invalidation
+        if (currentLayers.length != layers.length) {
+            //Clear everything custom
             for (const toRemove of currentLayers) {
+                map.removeLayer(toRemove.layer);
+            }
+            for (const rn in this._customLayers) {
+                const toRemove = this._customLayers[rn];
                 map.removeLayer(toRemove.layer);
             }
             //Re-add in order according to layers array
             for (let i = layers.length - 1; i >= 0; i--) {
-                const toAdd = currentLayers.filter(l => l.name == layers[i].name)[0];
-                map.addLayer(toAdd.layer);
                 const item = this._customLayers[layers[i].name];
                 if (item) {
-                    item.order = cCurrentLayers.getArray().indexOf(toAdd.layer);
+                    map.addLayer(item.layer);
+                    item.order = cCurrentLayers.getArray().indexOf(item.layer);
+                }
+            }
+        } else { //Otherwise see if we need to re-order
+            let bReorder = false;
+            let ii = 0;
+            for (let i = layers.length - 1; i >= 0; i--) {
+                const layer = layers[i];
+                //console.log(`Checking if layer (${layer.name}) needs re-ordering`);
+                if (layer.name != currentLayers[ii].name) {
+                    bReorder = true;
+                    break;
+                }
+                ii++;
+            }
+            if (bReorder) {
+                //console.log("Re-ordering layers");
+                for (const toRemove of currentLayers) {
+                    map.removeLayer(toRemove.layer);
+                }
+                //Re-add in order according to layers array
+                for (let i = layers.length - 1; i >= 0; i--) {
+                    const toAdd = currentLayers.filter(l => l.name == layers[i].name)[0];
+                    map.addLayer(toAdd.layer);
+                    const item = this._customLayers[layers[i].name];
+                    if (item) {
+                        item.order = cCurrentLayers.getArray().indexOf(toAdd.layer);
+                    }
                 }
             }
         }

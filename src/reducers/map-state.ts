@@ -406,7 +406,12 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                     const state1: Partial<IBranchedMapSubState> = {
                         layers
                     };
-                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
+                    const ss = mergeSubState(state, payload.mapName, { ...subState, ...state1 });
+                    if (payload.defaultStyle) {
+                        const ss1 = setLayerAction(ss, payload.mapName, payload.layer.name, () => ({ vectorStyle: payload.defaultStyle }));
+                        return ss1;
+                    }
+                    return ss;
                 }
                 return state;
             }

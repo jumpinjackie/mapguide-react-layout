@@ -586,15 +586,17 @@ export function showSelectedFeature(mapName: string, layerId: string, selectionK
  * @export
  * @param {string} mapName
  * @param {ILayerInfo} layer
+ * @param {IVectorFeatureStyle} [defaultStyle]
  * @returns {IAddedLayerAction}
  * @since 0.13
  */
-export function mapLayerAdded(mapName: string, layer: ILayerInfo): IAddedLayerAction {
+export function mapLayerAdded(mapName: string, layer: ILayerInfo, defaultStyle?: IVectorFeatureStyle): IAddedLayerAction {
     return {
         type: ActionType.LAYER_ADDED,
         payload: {
             mapName,
-            layer
+            layer,
+            defaultStyle
         }
     };
 }

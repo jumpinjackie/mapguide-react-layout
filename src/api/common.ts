@@ -914,10 +914,10 @@ export interface IMapViewer {
     /**
      * Dispatches the given action
      * 
-     * @warning Usage outside of the react component context (eg. Plain HTML Task Pane content) should be used sparingly. In particular
+     * @remarks Usage outside of the react component context (eg. Plain HTML Task Pane content) should be used sparingly. In particular
      * you should avoid trying to call this method multiple times in succession. You should call this method once in response to a DOM element
      * event (eg. A button click)
-     * @experimental
+     * @alpha
      * @since 0.13
      */
     dispatch(action: any): void;

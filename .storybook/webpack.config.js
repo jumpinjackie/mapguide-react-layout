@@ -2,12 +2,19 @@ const path = require("path");
 const webpack = require('webpack');
 
 module.exports = ({ config }) => {
+    config.devtool = "source-map";
     config.plugins.push(new webpack.DefinePlugin({
         __DEV__: process.env.BUILD_MODE !== 'production',
         __VERSION__: JSON.stringify(process.env.APPVEYOR_BUILD_VERSION || ""),
         __COMMITHASH__: JSON.stringify(process.env.APPVEYOR_REPO_COMMIT || ""),
         __BRANCH__: JSON.stringify(process.env.APPVEYOR_REPO_BRANCH  || "master")
     }));
+    config.module.rules.push({ //sourcemap
+        test: /\.js$/,
+        loader: "source-map-loader",
+        include: /@blueprintjs/,
+        enforce: "pre"
+    });
     config.module.rules.push({
         test: /\.(ts|tsx)$/,
         use: [

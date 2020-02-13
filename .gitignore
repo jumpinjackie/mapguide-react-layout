@@ -11,6 +11,7 @@ build
 coverage
 node_modules
 typings
+temp
 yarn-error.log
 npm-debug.log
 test/**/*.js

@@ -8,6 +8,7 @@
         "lib",
         "package",
         "node_modules",
+        "dist",
         "e2e",
         "src/entries/library.tsx",
         "src/stories",

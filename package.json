@@ -4,6 +4,7 @@
   "description": "A modern react-based map viewer for MapGuide",
   "scripts": {
     "prebuild": "yarn run clean",
+    "build:api_report": "yarn run build:npm && api-extractor run --local --verbose",
     "build": "yarn run build:apidoc_npm && yarn run build:npm && yarn run build:bundle",
     "build:bundle": "yarn run build:debug && yarn run build:prod && bestzip viewer.zip viewer/",
     "build:sprite": "glue stdassets/images/icons stdassets/sprites --html --png8 --sprite-namespace= --namespace=",
@@ -92,6 +93,7 @@
     "@types/react-measure": "2.0.5",
     "@types/react-redux": "^7.1.4",
     "@types/shortid": "0.0.29",
+    "@microsoft/api-extractor": "7.7.8",
     "bestzip": "2.1.5",
     "cache-loader": "^4.1.0",
     "copyfiles": "2.1.1",

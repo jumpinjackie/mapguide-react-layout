@@ -102,6 +102,10 @@ export class ApplicationViewModel {
      * 
      * @param {(ViewerAction | ReduxThunkedAction)} action 
      * @memberof ApplicationViewModel
+     * @warning Usage outside of the react component context should be used sparingly. In particular
+     * you should avoid trying to call this method multiple times in succession. You should call this 
+     * method once in response to a DOM element event (eg. A button click)
+     * @experimental
      */
     public dispatch(action: ViewerAction | ReduxThunkedAction) {
         this._store.dispatch(action);

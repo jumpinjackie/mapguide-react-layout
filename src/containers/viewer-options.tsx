@@ -10,12 +10,12 @@ import {
     IExternalBaseLayer,
     UnitOfMeasure
 } from "../api/common";
-import * as MapActions from "../actions/map";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { Slider } from "@blueprintjs/core";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from "../constants/index";
 import { getUnits, getUnitOfMeasure } from "../utils/units";
 import { safePropAccess } from '../utils/safe-prop';
+import { setManualFeatureTooltipsEnabled, setFeatureTooltipsEnabled, setLayerTransparency, setViewSizeUnits } from '../actions/map';
 
 export interface IViewerOptionsProps {
 
@@ -56,10 +56,10 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IViewerOpt
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IViewerOptionsDispatch> {
     return {
-        toggleManualMapTips: (enabled) => dispatch(MapActions.setManualFeatureTooltipsEnabled(enabled)),
-        toggleMapTips: (enabled) => dispatch(MapActions.setFeatureTooltipsEnabled(enabled)),
-        setLayerTransparency: (mapName, id, opacity) => dispatch(MapActions.setLayerTransparency(mapName, id, opacity)),
-        setViewSizeDisplayUnits: (units) => dispatch(MapActions.setViewSizeUnits(units))
+        toggleManualMapTips: (enabled) => dispatch(setManualFeatureTooltipsEnabled(enabled)),
+        toggleMapTips: (enabled) => dispatch(setFeatureTooltipsEnabled(enabled)),
+        setLayerTransparency: (mapName, id, opacity) => dispatch(setLayerTransparency(mapName, id, opacity)),
+        setViewSizeDisplayUnits: (units) => dispatch(setViewSizeUnits(units))
     };
 }
 

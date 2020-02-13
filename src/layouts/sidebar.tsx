@@ -6,7 +6,6 @@ import ModalLauncher from "../containers/modal-launcher";
 import FlyoutRegionContainer from "../containers/flyout-region";
 import { connect } from "react-redux";
 import { tr } from "../api/i18n";
-import * as Constants from "../constants";
 import {
     GenericEvent,
     IApplicationState,
@@ -19,7 +18,8 @@ import {
 import InitWarningDisplay from "../containers/init-warning-display";
 import { ActionType } from '../constants/actions';
 import { IElementState } from '../actions/defs';
-import * as TemplateActions from "../actions/template";
+import { setElementStates } from '../actions/template';
+import { WEBLAYOUT_TOOLBAR } from '../constants';
 
 const SIDEBAR_WIDTH = 250;
 
@@ -216,7 +216,7 @@ interface ISlateTemplateLayoutDispatch {
 
 function mapDispatchToProps(dispatch: ReduxDispatch): ISlateTemplateLayoutDispatch {
     return {
-        setElementStates: (states: IElementState) => dispatch(TemplateActions.setElementStates(states))
+        setElementStates: (states: IElementState) => dispatch(setElementStates(states))
     };
 }
 
@@ -347,7 +347,7 @@ export class SidebarLayout extends React.Component<SidebarLayoutProps, Partial<S
                         top -= 40;
                     }
                     return <div id="toolbar-region" style={{ top: top }}>
-                        <ToolbarContainer id={Constants.WEBLAYOUT_TOOLBAR} containerClass="sidebar-toolbar" vertical={true} hideVerticalLabels={true} containerStyle={{ position: "absolute", left: 4, right: 6, zIndex: 100 }} />
+                        <ToolbarContainer id={WEBLAYOUT_TOOLBAR} containerClass="sidebar-toolbar" vertical={true} hideVerticalLabels={true} containerStyle={{ position: "absolute", left: 4, right: 6, zIndex: 100 }} />
                     </div>;
                 }
             })()}

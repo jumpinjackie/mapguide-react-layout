@@ -1,6 +1,4 @@
-import * as Constants from "../constants";
 import { Client } from "../api/client";
-import * as Runtime from "../api/runtime";
 import { ReduxDispatch, Dictionary, IMapView, CommandTarget, ActiveMapTool } from "../api/common";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
 import { registerCommand, DefaultCommands } from "../api/registry/command";
@@ -34,7 +32,6 @@ import { IView } from "../api/contracts/common";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { tr } from "../api/i18n";
 import { MgError } from "../api/error";
-import * as logger from "../utils/logger";
 import * as shortid from "shortid";
 import { registerStringBundle, DEFAULT_LOCALE } from "../api/i18n";
 import { assertNever } from "../utils/never";
@@ -52,6 +49,10 @@ import {
 import { MapInfo, IInitAppActionPayload, IAcknowledgeStartupWarningsAction, IRestoredSelectionSets } from './defs';
 import { ActionType } from '../constants/actions';
 import { getSelectionSet, clearSessionStore } from '../api/session-store';
+import { warn, debug } from '../utils/logger';
+import logger from '../store/logger';
+import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU, WEBLAYOUT_TOOLBAR } from '../constants';
+import { getViewer } from '../api/runtime';
 
 function isUIWidget(widget: any): widget is UIWidget {
     return widget.WidgetType === "UiWidgetType";
@@ -92,7 +93,7 @@ function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Diction
         if (isCommandItem(item)) {
             const cmdDef: CommandDef = cmdsByKey[item.Command];
             if (!cmdDef) {
-                logger.warn(`Invalid reference to command: ${item.Command}`);
+                warn(`Invalid reference to command: ${item.Command}`);
                 return { error: tr("UNKNOWN_COMMAND_REFERENCE", locale, { command: item.Command }) } as IUnknownCommandSpec;
             } else if (cmdDef.TargetViewer != "Dwf") {
                 const commonParams: any = {};
@@ -170,12 +171,12 @@ function prepareSubMenus(tbConf: Dictionary<ToolbarConf>): [PreparedSubMenuSet, 
     };
     let bFoundContextMenu = false;
     for (const key in tbConf) {
-        if (key == Constants.WEBLAYOUT_CONTEXTMENU) {
+        if (key == WEBLAYOUT_CONTEXTMENU) {
             bFoundContextMenu = true;
         }
 
         //Special case: Task pane. Transfer all to flyout
-        if (key == Constants.WEBLAYOUT_TASKMENU) {
+        if (key == WEBLAYOUT_TASKMENU) {
             const flyoutId = key;
             prepared.flyouts[flyoutId] = {
                 children: tbConf[key].items
@@ -186,7 +187,7 @@ function prepareSubMenus(tbConf: Dictionary<ToolbarConf>): [PreparedSubMenuSet, 
             };
             for (const item of tbConf[key].items) {
                 //Special case: contextmenu is all inline
-                if (isFlyoutSpec(item) && key != Constants.WEBLAYOUT_CONTEXTMENU) {
+                if (isFlyoutSpec(item) && key != WEBLAYOUT_CONTEXTMENU) {
                     const flyoutId = `${item.label}_${shortid.generate()}`;
                     prepared.toolbars[key].items.push({
                         label: item.label,
@@ -212,7 +213,7 @@ async function resolveProjectionAsync(epsg: string, opts: IInitAsyncOptions, map
     const resp = await r.json();
     if (resp.results && resp.results.length > 0) {
         proj4.defs(`EPSG:${epsg}`, resp.results[0].proj4);
-        logger.debug(`Registered projection EPSG:${epsg} from epsg.io`);
+        debug(`Registered projection EPSG:${epsg} from epsg.io`);
         return proj4.defs[`EPSG:${epsg}`];
     } else {
         throw new MgError(tr("INIT_ERROR_UNREGISTERED_EPSG_CODE", opts.locale, { epsg: epsg, mapDefinition: mapDef }));
@@ -670,13 +671,13 @@ async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOpti
     }
 
     const menus: Dictionary<ToolbarConf> = {};
-    menus[Constants.WEBLAYOUT_TOOLBAR] = {
+    menus[WEBLAYOUT_TOOLBAR] = {
         items: mainToolbar
     };
-    menus[Constants.WEBLAYOUT_TASKMENU] = {
+    menus[WEBLAYOUT_TASKMENU] = {
         items: taskBar
     };
-    menus[Constants.WEBLAYOUT_CONTEXTMENU] = {
+    menus[WEBLAYOUT_CONTEXTMENU] = {
         items: contextMenu
     };
     
@@ -810,7 +811,7 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
     }
     const [tb, bFoundContextMenu] = prepareSubMenus(tbConf);
     if (!bFoundContextMenu) {
-        warnings.push(tr("INIT_WARNING_NO_CONTEXT_MENU", opts.locale, { containerName: Constants.WEBLAYOUT_CONTEXTMENU }));
+        warnings.push(tr("INIT_WARNING_NO_CONTEXT_MENU", opts.locale, { containerName: WEBLAYOUT_CONTEXTMENU }));
     }
     return {
         activeMapName: firstMapName,
@@ -931,7 +932,7 @@ export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
                     payload
                 });
                 if (options.onInit) {
-                    const viewer = Runtime.getViewer();
+                    const viewer = getViewer();
                     if (viewer) {
                         options.onInit(viewer);
                     }

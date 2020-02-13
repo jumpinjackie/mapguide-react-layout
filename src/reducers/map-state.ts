@@ -5,10 +5,10 @@ import {
 } from "../api/common";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { isMapView } from "../utils/type-guards";
-import * as logger from "../utils/logger";
 import uniq = require("lodash.uniq");
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
+import { debug } from '../utils/logger';
 
 export const MAP_STATE_INITIAL_STATE: IBranchedMapState = {
 
@@ -76,7 +76,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                         isel = {
                             selectionSet: payload.initialSelections[mapName]
                         };
-                        logger.debug(`Restoring client-side selection set for: ${mapName}`);
+                        debug(`Restoring client-side selection set for: ${mapName}`);
                     }
 
                     const sl = [];
@@ -112,15 +112,15 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                                 }
                             }
                         }
-                        logger.debug(`Initially showing layers: ${isl.join("|")}`);
-                        logger.debug(`Initially showing groups: ${isg.join("|")}`);
-                        logger.debug(`Initially hiding layers: ${ihl.join("|")}`);
-                        logger.debug(`Initially hiding groups: ${ihg.join("|")}`);
+                        debug(`Initially showing layers: ${isl.join("|")}`);
+                        debug(`Initially showing groups: ${isg.join("|")}`);
+                        debug(`Initially hiding layers: ${ihl.join("|")}`);
+                        debug(`Initially hiding groups: ${ihg.join("|")}`);
 
-                        logger.debug(`Initially showing layer ids: ${sl.join("|")}`);
-                        logger.debug(`Initially showing group ids: ${sg.join("|")}`);
-                        logger.debug(`Initially hiding layer ids: ${hl.join("|")}`);
-                        logger.debug(`Initially hiding group ids: ${hg.join("|")}`);
+                        debug(`Initially showing layer ids: ${sl.join("|")}`);
+                        debug(`Initially showing group ids: ${sg.join("|")}`);
+                        debug(`Initially hiding layer ids: ${hl.join("|")}`);
+                        debug(`Initially hiding group ids: ${hg.join("|")}`);
                     }
                     const newMapState = {
                         ...MAP_STATE_INITIAL_SUB_STATE,

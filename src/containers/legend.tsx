@@ -2,8 +2,6 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { Legend } from "../components/legend";
 import { RuntimeMap } from "../api/contracts/runtime-map";
-import * as LegendActions from "../actions/legend";
-import * as MapActions from "../actions/map";
 import {
     IMapView,
     IApplicationState,
@@ -13,6 +11,8 @@ import {
     getExternalBaseLayers
 } from "../api/common";
 import { tr } from "../api/i18n";
+import { setBaseLayer } from '../actions/map';
+import { setGroupVisibility, setLayerVisibility, setLayerSelectable, setGroupExpanded } from '../actions/legend';
 
 export interface ILegendContainerProps {
     maxHeight?: number;
@@ -78,11 +78,11 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<ILegendCon
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ILegendContainerDispatch> {
     return {
-        setBaseLayer: (mapName: string, layerName: string) => dispatch(MapActions.setBaseLayer(mapName, layerName)),
-        setGroupVisibility: (mapName: string, options) => dispatch(LegendActions.setGroupVisibility(mapName, options)),
-        setLayerVisibility: (mapName: string, options) => dispatch(LegendActions.setLayerVisibility(mapName, options)),
-        setLayerSelectable: (mapName: string, options) => dispatch(LegendActions.setLayerSelectable(mapName, options)),
-        setGroupExpanded: (mapName: string, options) => dispatch(LegendActions.setGroupExpanded(mapName, options))
+        setBaseLayer: (mapName: string, layerName: string) => dispatch(setBaseLayer(mapName, layerName)),
+        setGroupVisibility: (mapName: string, options) => dispatch(setGroupVisibility(mapName, options)),
+        setLayerVisibility: (mapName: string, options) => dispatch(setLayerVisibility(mapName, options)),
+        setLayerSelectable: (mapName: string, options) => dispatch(setLayerSelectable(mapName, options)),
+        setGroupExpanded: (mapName: string, options) => dispatch(setGroupExpanded(mapName, options))
     };
 }
 

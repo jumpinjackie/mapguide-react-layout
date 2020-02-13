@@ -17,13 +17,13 @@ import {
     getRuntimeMap
 } from "../api/common";
 import { Tabs2, Tab2 } from "@blueprintjs/core";
-import * as TemplateActions from "../actions/template";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
 import InitWarningDisplay from "../containers/init-warning-display";
-import * as Runtime from "../api/runtime";
 import SplitterLayout from "react-splitter-layout";
 import { ActionType } from '../constants/actions';
 import { IElementState, ViewerAction } from '../actions/defs';
+import { setElementStates } from '../actions/template';
+import { getViewer } from '../api/runtime';
 
 function turquoiseYellowTemplateReducer(state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
@@ -114,7 +114,7 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<ITurquoise
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ITurquoiseYellowTemplateLayoutDispatch> {
     return {
-        setElementStates: (states: IElementState) => dispatch(TemplateActions.setElementStates(states))
+        setElementStates: (states: IElementState) => dispatch(setElementStates(states))
     };
 }
 
@@ -135,7 +135,7 @@ export class TurquoiseYellowTemplateLayout extends React.Component<TurquoiseYell
         //With the introduction of the splitter, we can no longer rely on a map 
         //filling 100% of its space without needing to manually call updateSize(),
         //so we do it here
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.updateSize();
         }

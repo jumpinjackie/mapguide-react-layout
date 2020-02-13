@@ -17,7 +17,6 @@ import { MgError, isSessionExpiredError } from '../api/error';
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { tr } from "../api/i18n";
 import * as ReactDOM from "react-dom";
-import * as logger from '../utils/logger';
 import debounce = require("lodash.debounce");
 import { createExternalSource } from "./external-layer-factory";
 
@@ -42,6 +41,7 @@ import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY, BLANK_GIF_DAT
 import { restrictToRange } from "../utils/number";
 import { Size } from "../containers/map-capturer-context";
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
+import { debug } from '../utils/logger';
 
 const HIDDEN_CLASS_NAME = "tooltip-hidden";
 
@@ -127,7 +127,7 @@ class FeatureQueryTooltip {
     public raiseQueryFromPoint(pixel: [number, number]) {
         const box = this.callback.getPointSelectionBox(pixel);
         const geom = olPolygon.fromExtent(box);
-        logger.debug(`[${new Date()}] FeatureTooltip - onMouseMove (${box[0]}, ${box[1]}) (${box[2]}, ${box[3]})`);
+        debug(`[${new Date()}] FeatureTooltip - onMouseMove (${box[0]}, ${box[1]}) (${box[2]}, ${box[3]})`);
         this.sendTooltipQuery(geom);
     }
     public onMouseMove(e: GenericEvent) {
@@ -148,7 +148,7 @@ class FeatureQueryTooltip {
             return;
         }
         if (this.isMouseOverTooltip) {
-            logger.debug(`Mouse over tooltip. Doing nothing`);
+            debug(`Mouse over tooltip. Doing nothing`);
             return;
         }
         //const selectedLayerNames = this.onRequestSelectableLayers();
@@ -416,7 +416,7 @@ export class MgLayerSet {
             console.log(" " + layers[i].get("name"));
         }
         */
-        logger.debug(`Creating OL view with projection ${this.projection} and ${resolutions.length} resolutions`);
+        debug(`Creating OL view with projection ${this.projection} and ${resolutions.length} resolutions`);
         if (resolutions.length == 0) {
             this.view = new olView({
                 projection: this.projection

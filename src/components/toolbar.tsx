@@ -8,8 +8,8 @@ import {
     SPRITE_ICON_MENUARROWUP,
     SPRITE_ICON_MENUARROW
 } from "../constants/assets";
-import * as Constants from "../constants";
 import { safePropAccess } from '../utils/safe-prop';
+import { NBSP } from '../constants';
 
 export const DEFAULT_TOOLBAR_SIZE = 29;
 export const TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";
@@ -305,7 +305,7 @@ class ToolbarSeparator extends React.Component<IToolbarSeparatorProps, any> {
         if (this.props.vertical === true) {
             return <div className="noselect toolbar-separator-vertical" style={style} />;
         } else {
-            return <div className="noselect toolbar-separator-horizontal" style={style}>{Constants.NBSP}</div>;
+            return <div className="noselect toolbar-separator-horizontal" style={style}>{NBSP}</div>;
         }
     }
 }

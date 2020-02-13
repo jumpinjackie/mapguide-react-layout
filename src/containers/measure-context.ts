@@ -4,7 +4,6 @@ import {
 } from "../api/common";
 import { IOLFactory } from "../api/ol-factory";
 import { tr } from "../api/i18n";
-import * as logger from "../utils/logger";
 import { roundTo } from "../utils/number";
 import Observable from "ol/observable";
 import olSphere from "ol/sphere";
@@ -15,6 +14,7 @@ import olStyle from "ol/style/style";
 import olInteractionDraw from "ol/interaction/draw";
 import olFeature from "ol/feature";
 import olVectorLayer from "ol/layer/vector";
+import { debug } from '../utils/logger';
 
 const LAYER_NAME = "measure-layer";
 const WGS84_SPHERE = new olSphere(6378137);
@@ -374,7 +374,7 @@ export class MeasureContext {
      */
     public activate(mapName: string, callback: IMeasureCallback) {
         this.callback = callback;
-        logger.debug(`Activating measure context for ${this.mapName}`);
+        debug(`Activating measure context for ${this.mapName}`);
         for (const ov of this.measureOverlays) {
             this.viewer.addOverlay(ov);
         }
@@ -388,7 +388,7 @@ export class MeasureContext {
      */
     public deactivate(mapName: string) {
         this.callback = undefined;
-        logger.debug(`De-activating measure context for ${this.mapName}`);
+        debug(`De-activating measure context for ${this.mapName}`);
         this.endMeasure();
         for (const ov of this.measureOverlays) {
             this.viewer.removeOverlay(ov);

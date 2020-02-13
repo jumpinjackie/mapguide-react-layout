@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as Constants from "../constants";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
 import ToolbarContainer from "../containers/toolbar";
@@ -18,7 +17,8 @@ import {
 import InitWarningDisplay from "../containers/init-warning-display";
 import SplitterLayout from "react-splitter-layout";
 import { DEFAULT_LOCALE, tr } from "../api/i18n";
-import * as Runtime from "../api/runtime";
+import { WEBLAYOUT_TOOLBAR } from '../constants';
+import { getViewer } from '../api/runtime';
 
 const SIDEBAR_WIDTH = 250;
 const LEGEND_HEIGHT = 350;
@@ -69,7 +69,7 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
         //With the introduction of the splitter, we can no longer rely on a map 
         //filling 100% of its space without needing to manually call updateSize(),
         //so we do it here
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.updateSize();
         }
@@ -109,7 +109,7 @@ export class AjaxViewerLayout extends React.Component<AjaxViewerLayoutProps, any
                     <div>
                         {(() => {
                             if (hasToolbar) {
-                                return <ToolbarContainer id={Constants.WEBLAYOUT_TOOLBAR} containerStyle={{ position: "absolute", left: 0, top: 0, right: 0, zIndex: TB_Z_INDEX, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />;
+                                return <ToolbarContainer id={WEBLAYOUT_TOOLBAR} containerStyle={{ position: "absolute", left: 0, top: 0, right: 0, zIndex: TB_Z_INDEX, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />;
                             }
                         })()}
                         <div style={{ position: "absolute", left: 0, top: topOffset, bottom: 0, right: 0 }}>

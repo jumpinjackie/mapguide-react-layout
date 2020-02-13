@@ -17,7 +17,7 @@ import {
     SPRITE_FOLDER_HORIZONTAL
 } from "../constants/assets";
 import { tr } from "../api/i18n";
-import * as Constants from "../constants";
+import { NBSP } from '../constants';
 
 const ICON_HEIGHT = 16;
 const ICON_WIDTH = 16;
@@ -72,7 +72,7 @@ function getIconUri(iconMimeType: string, iconBase64: string | undefined): strin
 }
 
 const EmptyNode: React.StatelessComponent<any> = (props) => {
-    return <div style={EMPTY_STYLE}>{Constants.NBSP}</div>;
+    return <div style={EMPTY_STYLE}>{NBSP}</div>;
 };
 
 interface IRuleNodeProps {
@@ -443,7 +443,9 @@ export class Legend extends React.Component<ILegendProps, any> {
         }
     }
     private getIconMimeType(): string | undefined {
-        return this.props.map.IconMimeType;
+        return this.props.map.IconMimeType 
+            ? `${this.props.map.IconMimeType}`
+            : undefined;
     }
     private getChildren(objectId: string): (MapLayer | MapGroup)[] {
         return this.state.tree.groupChildren[objectId] || [];

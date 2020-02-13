@@ -1,10 +1,10 @@
-import * as Request from '../request-builder';
-import * as Common from "../contracts/common";
-import * as RtMap from '../contracts/runtime-map';
-import * as Query from "../contracts/query";
 import { MgError } from '../error';
 import { deArrayify } from './deArrayify';
 import { DEFAULT_LOCALE } from "../i18n";
+import { RequestBuilder, ICreateRuntimeMapOptions, IQueryMapFeaturesOptions, IDescribeRuntimeMapOptions } from '../request-builder';
+import { ResourceBase, ResourceIdentifier } from '../contracts/common';
+import { RuntimeMap } from '../contracts/runtime-map';
+import { QueryMapFeaturesResponse } from '../contracts/query';
 
 const MG_MAPAGENT_ERROR_CODE = 559;
 
@@ -37,9 +37,9 @@ export function serialize(data: any, uppercase: boolean = true): string {
  *
  * @export
  * @class MapAgentRequestBuilder
- * @extends {Request.RequestBuilder}
+ * @extends {RequestBuilder}
  */
-export class MapAgentRequestBuilder extends Request.RequestBuilder {
+export class MapAgentRequestBuilder extends RequestBuilder {
     private locale: string;
     constructor(agentUri: string, locale: string = DEFAULT_LOCALE) {
         super(agentUri);
@@ -143,7 +143,7 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         }
     }
 
-    public getResource<T extends Common.ResourceBase>(resourceId: Common.ResourceIdentifier, args?: any): Promise<T> {
+    public getResource<T extends ResourceBase>(resourceId: ResourceIdentifier, args?: any): Promise<T> {
         if (args != null) {
             const p1 = { operation: "GETRESOURCECONTENT", resourceId: resourceId };
             const url = this.stringifyGetUrl({ ...args, ...p1 });
@@ -154,26 +154,26 @@ export class MapAgentRequestBuilder extends Request.RequestBuilder {
         }
     }
 
-    public createRuntimeMap(options: Request.ICreateRuntimeMapOptions): Promise<RtMap.RuntimeMap> {
+    public createRuntimeMap(options: ICreateRuntimeMapOptions): Promise<RuntimeMap> {
         const p1 = { operation: "CREATERUNTIMEMAP", version: "3.0.0" };
         const url = this.stringifyGetUrl({ ...options, ...p1 });
-        return this.get<RtMap.RuntimeMap>(url);
+        return this.get<RuntimeMap>(url);
     }
 
-    public queryMapFeatures(options: Request.IQueryMapFeaturesOptions): Promise<Query.QueryMapFeaturesResponse> {
+    public queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<QueryMapFeaturesResponse> {
         const p1 = { operation: "QUERYMAPFEATURES", version: "2.6.0" };
-        return this.post<Query.QueryMapFeaturesResponse>(this.agentUri, { ...options, ...p1 });
+        return this.post<QueryMapFeaturesResponse>(this.agentUri, { ...options, ...p1 });
     }
 
-    public queryMapFeatures_v4(options: Request.IQueryMapFeaturesOptions): Promise<Query.QueryMapFeaturesResponse> {
+    public queryMapFeatures_v4(options: IQueryMapFeaturesOptions): Promise<QueryMapFeaturesResponse> {
         const p1 = { operation: "QUERYMAPFEATURES", version: "4.0.0" };
-        return this.post<Query.QueryMapFeaturesResponse>(this.agentUri, { ...options, ...p1 });
+        return this.post<QueryMapFeaturesResponse>(this.agentUri, { ...options, ...p1 });
     }
 
-    public describeRuntimeMap(options: Request.IDescribeRuntimeMapOptions): Promise<RtMap.RuntimeMap> {
+    public describeRuntimeMap(options: IDescribeRuntimeMapOptions): Promise<RuntimeMap> {
         const p1 = { operation: "DESCRIBERUNTIMEMAP", version: "3.0.0" };
         const url = this.stringifyGetUrl({ ...options, ...p1 });
-        return this.get<RtMap.RuntimeMap>(url);
+        return this.get<RuntimeMap>(url);
     }
 
     public getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string): string {

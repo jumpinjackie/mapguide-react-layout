@@ -1,9 +1,9 @@
 import * as React from "react";
-import * as Constants from "../constants";
 import { MenuComponent } from "./menu";
 import { IDOMElementMetrics } from "../api/common";
 import { PlaceholderComponent } from "../api/registry/component";
 import { IItem } from "../components/toolbar";
+import { WEBLAYOUT_TASKMENU } from '../constants';
 
 export interface IFlyoutConfiguration {
     open?: boolean;
@@ -53,7 +53,7 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                     const open = !!flyout.open;
                     if (open) {
                         const items = flyout.childItems || [];
-                        if (flyoutId === Constants.WEBLAYOUT_TASKMENU) {
+                        if (flyoutId === WEBLAYOUT_TASKMENU) {
                         }
                         const containerStyle: React.CSSProperties = {};
                         containerStyle.zIndex = 2000; //This should be big enough to be above all possible UI elements
@@ -64,7 +64,7 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                             } else {
                                 containerStyle.top = met.posY + met.height;
                             }
-                            if (flyoutId == Constants.WEBLAYOUT_TASKMENU) {
+                            if (flyoutId == WEBLAYOUT_TASKMENU) {
                                 containerStyle.right = window.innerWidth - (met.posX + met.width);
                             } else {
                                 containerStyle.left = met.posX;
@@ -90,7 +90,7 @@ export class FlyoutRegion extends React.Component<IFlyoutRegionProps, any> {
                                 }
                             })()}
                             {(() => {
-                                if (flyoutId === Constants.WEBLAYOUT_TASKMENU) {
+                                if (flyoutId === WEBLAYOUT_TASKMENU) {
                                     //HACK: In order for this flyout to show properly over the task pane iframe
                                     //when it contains embedded content (eg. An ActiveX/Flash/etc control) in IE
                                     //we have to stick an iframe into this flyout

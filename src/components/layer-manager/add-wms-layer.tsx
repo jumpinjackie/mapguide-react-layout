@@ -6,7 +6,6 @@ import {
 } from "../../api/common";
 import { tr } from "../../api/i18n";
 import { Error } from "../error";
-import * as Runtime from "../../api/runtime";
 import { Client } from "../../api/client";
 import { WmsCapabilitiesTree } from "../wms-capabilities-tree";
 import olWmsParser from "ol/format/wmscapabilities";
@@ -14,6 +13,7 @@ import olTileLayer from "ol/layer/tile";
 import olImageLayer from "ol/layer/image";
 import olWmsSource from "ol/source/imagewms";
 import olTiledWmsSource from "ol/source/tilewms";
+import { getViewer } from '../../api/runtime';
 
 /**
  * @hidden
@@ -39,7 +39,7 @@ export class AddWmsLayer extends React.Component<IAddWmsLayerProps, any> {
         const bTiled = true;
         const { locale } = this.props;
         const caps: WmsCapabilitiesDocument = this.state.caps;
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (caps && viewer) {
             const params: any = {
                 LAYERS: name

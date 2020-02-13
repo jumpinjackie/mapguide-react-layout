@@ -1,5 +1,4 @@
 import { IMapViewer, Coordinate } from "../api/common";
-import * as logger from "../utils/logger";
 import { deg2rad } from "../utils/number";
 import olExtent from "ol/extent";
 import olFeature from "ol/feature";
@@ -8,6 +7,7 @@ import olPolygon from "ol/geom/polygon";
 import olVectorSource from "ol/source/vector";
 import olVectorLayer from "ol/layer/vector";
 import olInteractionTranslate from "ol/interaction/translate";
+import { debug } from '../utils/logger';
 
 export type Size = { w: number, h: number };
 
@@ -102,14 +102,14 @@ export class MapCapturerContext {
     public getMapName(): string { return this.mapName; }
     public activate(callback: IMapCapturerContextCallback, paperSize: Size, scaleDenominator: number, rotation: number): void {
         this.activeCallback = callback;
-        logger.debug(`Activating map capturer context for ${this.mapName}`);
+        debug(`Activating map capturer context for ${this.mapName}`);
         this.viewer.getLayerManager().addLayer(this.layerName, this.mapCapturerLayer, true);
         this.updateBox(paperSize, scaleDenominator, rotation);
         this.viewer.addInteraction(this.intTranslate);
     }
     public deactivate(): void {
         this.activeCallback = undefined;
-        logger.debug(`De-activating map capturer context for ${this.mapName}`);
+        debug(`De-activating map capturer context for ${this.mapName}`);
         this.features.clear();
         this.viewer.getLayerManager().removeLayer(this.layerName);
         this.viewer.removeInteraction(this.intTranslate);

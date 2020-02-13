@@ -2,7 +2,6 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { SelectionPanel, ISelectedFeatureProps } from "../components/selection-panel";
 import { QueryMapFeaturesResponse, SelectedFeature } from "../api/contracts/query";
-import * as MapActions from "../actions/map";
 import { getViewer } from "../api/runtime";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import {
@@ -12,7 +11,8 @@ import {
     IConfigurationReducerState,
     getSelectionSet
 } from "../api/common";
-import { APPLICATION_CONTEXT_VALIDATION_MAP, IApplicationContext } from '../index';
+import { setCurrentView, showSelectedFeature } from '../actions/map';
+import { APPLICATION_CONTEXT_VALIDATION_MAP, IApplicationContext } from '../components/context';
 
 export interface ISelectionPanelContainerProps {
     maxHeight?: number;
@@ -38,8 +38,8 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: ISelectio
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ISelectionPanelContainerDispatch> {
     return {
-        setCurrentView: (view) => dispatch(MapActions.setCurrentView(view)),
-        showSelectedFeature: (mapName, layerId, selectionKey) => dispatch(MapActions.showSelectedFeature(mapName, layerId, selectionKey))
+        setCurrentView: (view) => dispatch(setCurrentView(view)),
+        showSelectedFeature: (mapName, layerId, selectionKey) => dispatch(showSelectedFeature(mapName, layerId, selectionKey))
     };
 }
 

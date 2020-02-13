@@ -17,11 +17,11 @@ import {
     IViewerCapabilities,
     getRuntimeMap
 } from "../api/common";
-import * as TemplateActions from "../actions/template";
 import { setCustomTemplateReducer } from "../reducers/template";
 import InitWarningDisplay from "../containers/init-warning-display";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
+import { setLegendVisibility, setSelectionPanelVisibility, setTaskPaneVisibility } from '../actions/template';
 
 function aquaTemplateReducer(state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
@@ -95,9 +95,9 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IAquaTempl
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAquaTemplateDispatch> {
     return {
-        hideLegend: () => dispatch(TemplateActions.setLegendVisibility(false)),
-        hideSelection: () => dispatch(TemplateActions.setSelectionPanelVisibility(false)),
-        hideTaskPane: () => dispatch(TemplateActions.setTaskPaneVisibility(false))
+        hideLegend: () => dispatch(setLegendVisibility(false)),
+        hideSelection: () => dispatch(setSelectionPanelVisibility(false)),
+        hideTaskPane: () => dispatch(setTaskPaneVisibility(false))
     };
 }
 

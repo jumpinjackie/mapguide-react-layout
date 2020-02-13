@@ -12,13 +12,13 @@
  *
  * These functions help "clean" those responses to be of the form we expect (and prefer)
  */
-import * as RtMap from "../contracts/runtime-map";
-import * as Query from "../contracts/query";
-import * as WebLayout from "../contracts/weblayout";
-import * as Fusion from "../contracts/fusion";
-import * as Constants from "../../constants";
 import { MgError } from "../error";
 import { ActiveSelectedFeature } from "../common";
+import { RuleInfo, FeatureStyleInfo, ScaleRangeInfo, FeatureSourceInfo, MapLayer, MapGroup, CoordinateSystemType, EnvCoordinate, Envelope, RuntimeMap } from '../contracts/runtime-map';
+import { FeatureSetClass, FeatureSetLayer, FeatureSet, SelectionImage, FeatureProperty, SelectedFeature, LayerPropertyMetadata, LayerMetadata, SelectedLayer, SelectedFeatureSet, QueryMapFeaturesResponse } from '../contracts/query';
+import { MDF_INFINITY } from '../../constants';
+import { WebLayoutControl, WebLayoutInfoPane, MapView, WebLayoutMap, TaskButton, WebLayoutTaskBar, UIItem, WebLayoutTaskPane, CommandUIItem, FlyoutUIItem, ResultColumnSet, ResultColumn, LayerSet, ParameterPair, CommandDef, BasicCommandDef, InvokeScriptCommandDef, InvokeURLCommandDef, SearchCommandDef, WebLayoutCommandSet, WebLayout, WebLayoutToolbar, WebLayoutContextMenu, WebLayoutStatusBar, WebLayoutZoomControl } from '../contracts/weblayout';
+import { MapSetGroup, MapInitialView, MapConfiguration, MapSet, ContainerItem, FlyoutItem, WidgetItem, ContainerDefinition, Widget, UIWidget, MapWidget, WidgetSet, ApplicationDefinition } from '../contracts/fusion';
 
 type ElementType = "string" | "boolean" | "int" | "float";
 
@@ -46,10 +46,10 @@ function tryGetAsProperty<T>(el: any, name: keyof T, type: ElementType = "string
     }
 }
 
-function deArrayifyRules(rules: any[]): RtMap.RuleInfo[] {
-    const getter = buildPropertyGetter<RtMap.RuleInfo>();
+function deArrayifyRules(rules: any[]): RuleInfo[] {
+    const getter = buildPropertyGetter<RuleInfo>();
     return rules.map(r => {
-        const rule: RtMap.RuleInfo = {
+        const rule: RuleInfo = {
             LegendLabel: getter(r, "LegendLabel"),
             Filter: getter(r, "Filter"),
             Icon: getter(r, "Icon")
@@ -58,13 +58,13 @@ function deArrayifyRules(rules: any[]): RtMap.RuleInfo[] {
     });
 }
 
-function deArrayifyFeatureStyles(fts: any[]): RtMap.FeatureStyleInfo[] {
+function deArrayifyFeatureStyles(fts: any[]): FeatureStyleInfo[] {
     if (!fts) {
         return [];
     }
-    const getter = buildPropertyGetter<RtMap.FeatureStyleInfo>();
+    const getter = buildPropertyGetter<FeatureStyleInfo>();
     return fts.map(ft => {
-        const featureStyle: RtMap.FeatureStyleInfo = {
+        const featureStyle: FeatureStyleInfo = {
             Type: getter(ft, "Type", "int"),
             Rule: deArrayifyRules(ft.Rule)
         };
@@ -72,19 +72,19 @@ function deArrayifyFeatureStyles(fts: any[]): RtMap.FeatureStyleInfo[] {
     });
 }
 
-function deArrayifyScaleRanges(scales: any[]): RtMap.ScaleRangeInfo[] {
+function deArrayifyScaleRanges(scales: any[]): ScaleRangeInfo[] {
     if (!scales) { //Happens with raster layers (this is probably a bug in CREATERUNTIMEMAP)
-        const defaultRange: RtMap.ScaleRangeInfo = {
+        const defaultRange: ScaleRangeInfo = {
             MinScale: 0,
-            MaxScale: Constants.MDF_INFINITY,
+            MaxScale: MDF_INFINITY,
             FeatureStyle: []
         };
         return [defaultRange];
     }
     
-    const getter = buildPropertyGetter<RtMap.ScaleRangeInfo>();
+    const getter = buildPropertyGetter<ScaleRangeInfo>();
     return scales.map(sc => {
-        const scale: RtMap.ScaleRangeInfo = {
+        const scale: ScaleRangeInfo = {
             MinScale: getter(sc, "MinScale", "float"),
             MaxScale: getter(sc, "MaxScale", "float"),
             FeatureStyle: deArrayifyFeatureStyles(sc.FeatureStyle)
@@ -93,11 +93,11 @@ function deArrayifyScaleRanges(scales: any[]): RtMap.ScaleRangeInfo[] {
     });
 }
 
-function deArrayifyFeatureSourceInfo(fs: any[]): RtMap.FeatureSourceInfo | undefined {
+function deArrayifyFeatureSourceInfo(fs: any[]): FeatureSourceInfo | undefined {
     if (!fs || fs.length !== 1) {
         return undefined;
     }
-    const getter = buildPropertyGetter<RtMap.FeatureSourceInfo>();
+    const getter = buildPropertyGetter<FeatureSourceInfo>();
     return {
         ResourceId: getter(fs[0], "ResourceId"),
         ClassName: getter(fs[0], "ClassName"),
@@ -105,13 +105,13 @@ function deArrayifyFeatureSourceInfo(fs: any[]): RtMap.FeatureSourceInfo | undef
     };
 }
 
-function deArrayifyLayers(layers: any[]): RtMap.MapLayer[] {
+function deArrayifyLayers(layers: any[]): MapLayer[] {
     if (!layers)
         return layers;
 
-    const getter = buildPropertyGetter<RtMap.MapLayer>();
+    const getter = buildPropertyGetter<MapLayer>();
     return layers.map(lyr => {
-        const layer: RtMap.MapLayer = {
+        const layer: MapLayer = {
             Type: getter(lyr, "Type", "int"),
             Selectable: getter(lyr, "Selectable", "boolean"),
             LayerDefinition: getter(lyr, "LayerDefinition"),
@@ -136,13 +136,13 @@ function deArrayifyLayers(layers: any[]): RtMap.MapLayer[] {
     });
 }
 
-function deArrayifyGroups(groups: any[]): RtMap.MapGroup[] | undefined {
+function deArrayifyGroups(groups: any[]): MapGroup[] | undefined {
     if (!groups)
         return undefined;
 
-    const getter = buildPropertyGetter<RtMap.MapGroup>();
+    const getter = buildPropertyGetter<MapGroup>();
     return groups.map(grp => {
-        const group: RtMap.MapGroup = {
+        const group: MapGroup = {
             Type: getter(grp, "Type", "int"),
             Name: getter(grp, "Name"),
             LegendLabel: getter(grp, "LegendLabel"),
@@ -157,12 +157,12 @@ function deArrayifyGroups(groups: any[]): RtMap.MapGroup[] | undefined {
     });
 }
 
-function deArrayifyCoordinateSystem(cs: any[]): RtMap.CoordinateSystemType {
+function deArrayifyCoordinateSystem(cs: any[]): CoordinateSystemType {
     if (!cs || cs.length !== 1) {
         throw new MgError("Malformed input. Expected CoordinateSystem element");
     }
-    const getter = buildPropertyGetter<RtMap.CoordinateSystemType>();
-    const res: RtMap.CoordinateSystemType = {
+    const getter = buildPropertyGetter<CoordinateSystemType>();
+    const res: CoordinateSystemType = {
         Wkt: getter(cs[0], "Wkt"),
         MentorCode: getter(cs[0], "MentorCode"),
         EpsgCode: getter(cs[0], "EpsgCode"),
@@ -171,22 +171,22 @@ function deArrayifyCoordinateSystem(cs: any[]): RtMap.CoordinateSystemType {
     return res;
 }
 
-function deArrayifyCoordinate(coord: any[]): RtMap.EnvCoordinate {
+function deArrayifyCoordinate(coord: any[]): EnvCoordinate {
     if (!coord || coord.length !== 1) {
         throw new MgError("Malformed input. Expected coordinate array");
     }
-    const getter = buildPropertyGetter<RtMap.EnvCoordinate>();
+    const getter = buildPropertyGetter<EnvCoordinate>();
     return {
         X: getter(coord[0], "X", "float"),
         Y: getter(coord[0], "Y", "float")
     };
 }
 
-function deArrayifyExtents(extents: any[]): RtMap.Envelope {
+function deArrayifyExtents(extents: any[]): Envelope {
     if (!extents || extents.length !== 1) {
         throw new MgError("Malformed input. Expected extent element");
     }
-    const env: RtMap.Envelope = {
+    const env: Envelope = {
         LowerLeftCoordinate: deArrayifyCoordinate(extents[0].LowerLeftCoordinate),
         UpperRightCoordinate: deArrayifyCoordinate(extents[0].UpperRightCoordinate)
     };
@@ -200,10 +200,10 @@ function deArrayifyFiniteDisplayScales(fds: any[]): number[] | undefined {
     return fds.map(parseFloat);
 }
 
-function deArrayifyRuntimeMap(json: any): RtMap.RuntimeMap {
+function deArrayifyRuntimeMap(json: any): RuntimeMap {
     const root = json;
-    const getter = buildPropertyGetter<RtMap.RuntimeMap>();
-    const rtMap: RtMap.RuntimeMap = {
+    const getter = buildPropertyGetter<RuntimeMap>();
+    const rtMap: RuntimeMap = {
         SessionId: getter(root, "SessionId"),
         SiteVersion: getter(root, "SiteVersion"),
         Name: getter(root, "Name"),
@@ -223,9 +223,9 @@ function deArrayifyRuntimeMap(json: any): RtMap.RuntimeMap {
     return rtMap;
 }
 
-function deArrayifyFeatureSetClass(json: any): Query.FeatureSetClass {
+function deArrayifyFeatureSetClass(json: any): FeatureSetClass {
     const root = json;
-    const getter = buildPropertyGetter<Query.FeatureSetClass>();
+    const getter = buildPropertyGetter<FeatureSetClass>();
     if (root.length != 1) {
         throw new MgError("Malformed input. Expected Class element");
     }
@@ -236,8 +236,8 @@ function deArrayifyFeatureSetClass(json: any): Query.FeatureSetClass {
     return cls;
 }
 
-function deArrayifyFeatureSetLayers(json: any[]): Query.FeatureSetLayer[] {
-    const getter = buildPropertyGetter<Query.FeatureSetLayer>();
+function deArrayifyFeatureSetLayers(json: any[]): FeatureSetLayer[] {
+    const getter = buildPropertyGetter<FeatureSetLayer>();
     return (json || []).map(root => {
         const layer = {
             "@id": getter(root, "@id"),
@@ -248,7 +248,7 @@ function deArrayifyFeatureSetLayers(json: any[]): Query.FeatureSetLayer[] {
     });
 }
 
-function deArrayifyFeatureSet(json: any): Query.FeatureSet | undefined {
+function deArrayifyFeatureSet(json: any): FeatureSet | undefined {
     const root = json;
     if (root == null || root.length != 1) {
         return undefined;
@@ -259,12 +259,12 @@ function deArrayifyFeatureSet(json: any): Query.FeatureSet | undefined {
     return fs;
 }
 
-function deArrayifyInlineSelectionImage(json: any): Query.SelectionImage | undefined {
+function deArrayifyInlineSelectionImage(json: any): SelectionImage | undefined {
     const root = json;
     if (root == null || root.length != 1) {
         return undefined;
     }
-    const getter = buildPropertyGetter<Query.SelectionImage>();
+    const getter = buildPropertyGetter<SelectionImage>();
     const img = {
         MimeType: getter(root[0], "MimeType"),
         Content: getter(root[0], "Content")
@@ -272,8 +272,8 @@ function deArrayifyInlineSelectionImage(json: any): Query.SelectionImage | undef
     return img;
 }
 
-function deArrayifyFeatureProperties(json: any[]): Query.FeatureProperty[] {
-    const getter = buildPropertyGetter<Query.FeatureProperty>();
+function deArrayifyFeatureProperties(json: any[]): FeatureProperty[] {
+    const getter = buildPropertyGetter<FeatureProperty>();
     return (json || []).map(root => {
         const prop = {
             Name: getter(root, "Name"),
@@ -283,8 +283,8 @@ function deArrayifyFeatureProperties(json: any[]): Query.FeatureProperty[] {
     });
 }
 
-function deArrayifyFeatures(json: any[]): Query.SelectedFeature[] {
-    const getter = buildPropertyGetter<Query.SelectedFeature>();
+function deArrayifyFeatures(json: any[]): SelectedFeature[] {
+    const getter = buildPropertyGetter<SelectedFeature>();
     return (json || []).map(root => {
         const feat = {
             Bounds: getter(root, "Bounds"),
@@ -295,8 +295,8 @@ function deArrayifyFeatures(json: any[]): Query.SelectedFeature[] {
     });
 }
 
-function deArrayifyLayerMetadataProperties(json: any[]): Query.LayerPropertyMetadata[] {
-    const getter = buildPropertyGetter<Query.LayerPropertyMetadata>();
+function deArrayifyLayerMetadataProperties(json: any[]): LayerPropertyMetadata[] {
+    const getter = buildPropertyGetter<LayerPropertyMetadata>();
     return (json || []).map(root => {
         const prop = {
             DisplayName: getter(root, "DisplayName"),
@@ -307,7 +307,7 @@ function deArrayifyLayerMetadataProperties(json: any[]): Query.LayerPropertyMeta
     });
 }
 
-function deArrayifyLayerMetadata(json: any): Query.LayerMetadata | undefined {
+function deArrayifyLayerMetadata(json: any): LayerMetadata | undefined {
     const root = json;
     //NOTE: root could be null if the layer selected has no properties beyond id/geom
     if (root == null || root.length != 1) {
@@ -319,8 +319,8 @@ function deArrayifyLayerMetadata(json: any): Query.LayerMetadata | undefined {
     return meta;
 }
 
-function deArrayifySelectedLayer(json: any[]): Query.SelectedLayer[] {
-    const getter = buildPropertyGetter<Query.SelectedLayer>();
+function deArrayifySelectedLayer(json: any[]): SelectedLayer[] {
+    const getter = buildPropertyGetter<SelectedLayer>();
     return (json || []).map(root => {
         const layer = {
             "@id": getter(root, "@id"),
@@ -332,7 +332,7 @@ function deArrayifySelectedLayer(json: any[]): Query.SelectedLayer[] {
     });
 }
 
-function deArrayifySelectedFeatures(json: any): Query.SelectedFeatureSet | undefined {
+function deArrayifySelectedFeatures(json: any): SelectedFeatureSet | undefined {
     const root = json;
     if (root == null || root.length != 1) {
         return undefined;
@@ -343,9 +343,9 @@ function deArrayifySelectedFeatures(json: any): Query.SelectedFeatureSet | undef
     return sf;
 }
 
-function deArrayifyFeatureInformation(json: any): Query.QueryMapFeaturesResponse {
+function deArrayifyFeatureInformation(json: any): QueryMapFeaturesResponse {
     const root = json;
-    const getter = buildPropertyGetter<Query.QueryMapFeaturesResponse>();
+    const getter = buildPropertyGetter<QueryMapFeaturesResponse>();
     const resp = {
         FeatureSet: deArrayifyFeatureSet(root.FeatureSet),
         Hyperlink: getter(root, "Hyperlink"),
@@ -356,7 +356,7 @@ function deArrayifyFeatureInformation(json: any): Query.QueryMapFeaturesResponse
     return resp;
 }
 
-function deArrayifyWebLayoutControl<T extends WebLayout.WebLayoutControl>(json: any): T {
+function deArrayifyWebLayoutControl<T extends WebLayoutControl>(json: any): T {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected control element");
@@ -368,12 +368,12 @@ function deArrayifyWebLayoutControl<T extends WebLayout.WebLayoutControl>(json: 
     return control;
 }
 
-function deArrayifyWebLayoutInfoPane(json: any): WebLayout.WebLayoutInfoPane {
+function deArrayifyWebLayoutInfoPane(json: any): WebLayoutInfoPane {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected InformationPane element");
     }
-    const getter = buildPropertyGetter<WebLayout.WebLayoutInfoPane>();
+    const getter = buildPropertyGetter<WebLayoutInfoPane>();
     const infoPane = {
         Visible: getter(root[0], "Visible", "boolean"),
         Width: getter(root[0], "Width", "int"),
@@ -383,12 +383,12 @@ function deArrayifyWebLayoutInfoPane(json: any): WebLayout.WebLayoutInfoPane {
     return infoPane;
 }
 
-function deArrayifyWebLayoutInitialView(json: any): WebLayout.MapView | undefined {
+function deArrayifyWebLayoutInitialView(json: any): MapView | undefined {
     const root = json;
     if (root == null || root.length != 1) {
         return undefined;
     }
-    const getter = buildPropertyGetter<WebLayout.MapView>();
+    const getter = buildPropertyGetter<MapView>();
     const view = {
         CenterX: getter(root[0], "CenterX", "float"),
         CenterY: getter(root[0], "CenterY", "float"),
@@ -397,12 +397,12 @@ function deArrayifyWebLayoutInitialView(json: any): WebLayout.MapView | undefine
     return view;
 }
 
-function deArrayifyWebLayoutMap(json: any): WebLayout.WebLayoutMap {
+function deArrayifyWebLayoutMap(json: any): WebLayoutMap {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected Map element");
     }
-    const getter = buildPropertyGetter<WebLayout.WebLayoutMap>();
+    const getter = buildPropertyGetter<WebLayoutMap>();
     const map = {
         ResourceId: getter(root[0], "ResourceId"),
         InitialView: deArrayifyWebLayoutInitialView(root[0].InitialView),
@@ -412,12 +412,12 @@ function deArrayifyWebLayoutMap(json: any): WebLayout.WebLayoutMap {
     return map;
 }
 
-function deArrayifyTaskButton(json: any): WebLayout.TaskButton {
+function deArrayifyTaskButton(json: any): TaskButton {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected TaskButton element");
     }
-    const getter = buildPropertyGetter<WebLayout.TaskButton>();
+    const getter = buildPropertyGetter<TaskButton>();
     const button = {
         Name: getter(root[0], "Name"),
         Tooltip: getter(root[0], "Tooltip"),
@@ -428,19 +428,19 @@ function deArrayifyTaskButton(json: any): WebLayout.TaskButton {
     return button;
 }
 
-function deArrayifyWebLayoutTaskBar(json: any): WebLayout.WebLayoutTaskBar {
+function deArrayifyWebLayoutTaskBar(json: any): WebLayoutTaskBar {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected TaskBar element");
     }
-    const getter = buildPropertyGetter<WebLayout.WebLayoutTaskBar>();
+    const getter = buildPropertyGetter<WebLayoutTaskBar>();
     const taskbar = {
         Visible: getter(root[0], "Visible", "boolean"),
         Home: deArrayifyTaskButton(root[0].Home),
         Forward: deArrayifyTaskButton(root[0].Forward),
         Back: deArrayifyTaskButton(root[0].Back),
         Tasks: deArrayifyTaskButton(root[0].Tasks),
-        MenuButton: [] as WebLayout.UIItem[]
+        MenuButton: [] as UIItem[]
     };
     if (root[0].MenuButton) {
         for (const mb of root[0].MenuButton) {
@@ -450,12 +450,12 @@ function deArrayifyWebLayoutTaskBar(json: any): WebLayout.WebLayoutTaskBar {
     return taskbar;
 }
 
-function deArrayifyWebLayoutTaskPane(json: any): WebLayout.WebLayoutTaskPane {
+function deArrayifyWebLayoutTaskPane(json: any): WebLayoutTaskPane {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected TaskPane element");
     }
-    const getter = buildPropertyGetter<WebLayout.WebLayoutTaskPane>();
+    const getter = buildPropertyGetter<WebLayoutTaskPane>();
     const taskPane = {
         Visible: getter(root[0], "Visible", "boolean"),
         InitialTask: getter(root[0], "InitialTask"),
@@ -465,9 +465,9 @@ function deArrayifyWebLayoutTaskPane(json: any): WebLayout.WebLayoutTaskPane {
     return taskPane;
 }
 
-function deArrayifyUIItem(json: any): WebLayout.UIItem {
+function deArrayifyUIItem(json: any): UIItem {
     const root = json;
-    const getter = buildPropertyGetter<WebLayout.UIItem & WebLayout.CommandUIItem & WebLayout.FlyoutUIItem>();
+    const getter = buildPropertyGetter<UIItem & CommandUIItem & FlyoutUIItem>();
     const func: string = getter(root, "Function");
     //Wouldn't it be nice if we could incrementally build up a union type that then becomes a specific
     //type once certain properties are set?
@@ -495,7 +495,7 @@ function deArrayifyUIItem(json: any): WebLayout.UIItem {
     return item;
 }
 
-function deArrayifyItemContainer<T extends WebLayout.WebLayoutControl>(json: any, name: string): T {
+function deArrayifyItemContainer<T extends WebLayoutControl>(json: any, name: string): T {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected container element");
@@ -512,14 +512,14 @@ function deArrayifyItemContainer<T extends WebLayout.WebLayoutControl>(json: any
     return container;
 }
 
-function deArrayifyWebLayoutSearchResultColumnSet(json: any): WebLayout.ResultColumnSet {
+function deArrayifyWebLayoutSearchResultColumnSet(json: any): ResultColumnSet {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected ResultColumns element");
     }
-    const getter = buildPropertyGetter<WebLayout.ResultColumn>();
+    const getter = buildPropertyGetter<ResultColumn>();
     const res = {
-        Column: [] as WebLayout.ResultColumn[]
+        Column: [] as ResultColumn[]
     };
     for (const col of root[0].Column) {
         res.Column.push({
@@ -530,7 +530,7 @@ function deArrayifyWebLayoutSearchResultColumnSet(json: any): WebLayout.ResultCo
     return res;
 }
 
-function deArrayifyWebLayoutInvokeURLLayerSet(json: any): WebLayout.LayerSet | undefined {
+function deArrayifyWebLayoutInvokeURLLayerSet(json: any): LayerSet | undefined {
     const root = json;
     if (root == null || root.length != 1) {
         return undefined;
@@ -541,13 +541,13 @@ function deArrayifyWebLayoutInvokeURLLayerSet(json: any): WebLayout.LayerSet | u
     return layerset;
 }
 
-function deArrayifyWebLayoutParameterPairs(json: any): WebLayout.ParameterPair[] {
+function deArrayifyWebLayoutParameterPairs(json: any): ParameterPair[] {
     const root = json;
-    const pairs = [] as WebLayout.ParameterPair[]
+    const pairs = [] as ParameterPair[]
     if (!root) {
         return pairs;
     }
-    const getter = buildPropertyGetter<WebLayout.ParameterPair>();
+    const getter = buildPropertyGetter<ParameterPair>();
     for (const kvp of root) {
         pairs.push({
             Key: getter(kvp, "Key"),
@@ -557,9 +557,9 @@ function deArrayifyWebLayoutParameterPairs(json: any): WebLayout.ParameterPair[]
     return pairs;
 }
 
-function deArrayifyCommand(json: any): WebLayout.CommandDef {
+function deArrayifyCommand(json: any): CommandDef {
     const root = json;
-    const getter = buildPropertyGetter<WebLayout.CommandDef & WebLayout.BasicCommandDef & WebLayout.InvokeScriptCommandDef & WebLayout.InvokeURLCommandDef & WebLayout.SearchCommandDef>();
+    const getter = buildPropertyGetter<CommandDef & BasicCommandDef & InvokeScriptCommandDef & InvokeURLCommandDef & SearchCommandDef>();
     const cmd: any = {
         "@xsi:type": getter(root, "@xsi:type"),
         Name: getter(root, "Name"),
@@ -605,13 +605,13 @@ function deArrayifyCommand(json: any): WebLayout.CommandDef {
     return cmd;
 }
 
-function deArrayifyWebLayoutCommandSet(json: any): WebLayout.WebLayoutCommandSet {
+function deArrayifyWebLayoutCommandSet(json: any): WebLayoutCommandSet {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected CommandSet element");
     }
     const set = {
-        Command: [] as WebLayout.CommandDef[]
+        Command: [] as CommandDef[]
     };
     if (root[0].Command) {
         for (const cmd of root[0].Command) {
@@ -621,9 +621,9 @@ function deArrayifyWebLayoutCommandSet(json: any): WebLayout.WebLayoutCommandSet
     return set;
 }
 
-function deArrayifyWebLayout(json: any): WebLayout.WebLayout {
+function deArrayifyWebLayout(json: any): WebLayout {
     const root = json;
-    const getter = buildPropertyGetter<WebLayout.WebLayout>();
+    const getter = buildPropertyGetter<WebLayout>();
     const resp = {
         Title: getter(root, "Title"),
         Map: deArrayifyWebLayoutMap(root.Map),
@@ -633,27 +633,27 @@ function deArrayifyWebLayout(json: any): WebLayout.WebLayout {
         MapImageFormat: getter(root, "MapImageFormat"),
         SelectionImageFormat: getter(root, "SelectionImageFormat"),
         StartupScript: getter(root, "StartupScript"),
-        ToolBar: deArrayifyItemContainer<WebLayout.WebLayoutToolbar>(root.ToolBar, "Button"),
+        ToolBar: deArrayifyItemContainer<WebLayoutToolbar>(root.ToolBar, "Button"),
         InformationPane: deArrayifyWebLayoutInfoPane(root.InformationPane),
-        ContextMenu: deArrayifyItemContainer<WebLayout.WebLayoutContextMenu>(root.ContextMenu, "MenuItem"),
+        ContextMenu: deArrayifyItemContainer<WebLayoutContextMenu>(root.ContextMenu, "MenuItem"),
         TaskPane: deArrayifyWebLayoutTaskPane(root.TaskPane),
-        StatusBar: deArrayifyWebLayoutControl<WebLayout.WebLayoutStatusBar>(root.StatusBar),
-        ZoomControl: deArrayifyWebLayoutControl<WebLayout.WebLayoutZoomControl>(root.ZoomControl),
+        StatusBar: deArrayifyWebLayoutControl<WebLayoutStatusBar>(root.StatusBar),
+        ZoomControl: deArrayifyWebLayoutControl<WebLayoutZoomControl>(root.ZoomControl),
         CommandSet: deArrayifyWebLayoutCommandSet(root.CommandSet)
     };
     return resp;
 }
 
-function deArrayifyMapGroup(json: any): Fusion.MapSetGroup {
+function deArrayifyMapGroup(json: any): MapSetGroup {
     const root = json;
     if (root == null) {
         throw new MgError("Malformed input. Expected MapGroup element");
     }
-    const getter = buildPropertyGetter<Fusion.MapSetGroup & Fusion.MapInitialView & Fusion.MapConfiguration>();
-    const mapGroup: Fusion.MapSetGroup = {
+    const getter = buildPropertyGetter<MapSetGroup & MapInitialView & MapConfiguration>();
+    const mapGroup: MapSetGroup = {
         "@id": getter(root, "@id", "string"),
         InitialView: undefined,
-        Map: [] as Fusion.MapConfiguration[]
+        Map: [] as MapConfiguration[]
     };
     if (root.InitialView) {
         const iview = root.InitialView[0];
@@ -675,13 +675,13 @@ function deArrayifyMapGroup(json: any): Fusion.MapSetGroup {
     return mapGroup;
 }
 
-function deArrayifyMapSet(json: any): Fusion.MapSet | undefined {
+function deArrayifyMapSet(json: any): MapSet | undefined {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected MapSet element");
     }
     const set = {
-        MapGroup: [] as Fusion.MapSetGroup[]
+        MapGroup: [] as MapSetGroup[]
     };
     if (root[0].MapGroup) {
         for (const map of root[0].MapGroup) {
@@ -691,9 +691,9 @@ function deArrayifyMapSet(json: any): Fusion.MapSet | undefined {
     return set;
 }
 
-function deArrayifyContainerItems(json: any[]): Fusion.ContainerItem[] {
-    const items = [] as Fusion.ContainerItem[];
-    const getter = buildPropertyGetter<Fusion.ContainerItem & Fusion.FlyoutItem & Fusion.WidgetItem>();
+function deArrayifyContainerItems(json: any[]): ContainerItem[] {
+    const items = [] as ContainerItem[];
+    const getter = buildPropertyGetter<ContainerItem & FlyoutItem & WidgetItem>();
     if (json && json.length) {
         for (const i of json) {
             const func = getter(i, "Function", "string");
@@ -725,9 +725,9 @@ function deArrayifyContainerItems(json: any[]): Fusion.ContainerItem[] {
     return items;
 }
 
-function deArrayifyContainer(json: any[]): Fusion.ContainerDefinition[] {
-    const containers = [] as Fusion.ContainerDefinition[];
-    const getter = buildPropertyGetter<Fusion.ContainerDefinition>();
+function deArrayifyContainer(json: any[]): ContainerDefinition[] {
+    const containers = [] as ContainerDefinition[];
+    const getter = buildPropertyGetter<ContainerDefinition>();
     for (const c of json) {
         containers.push({
             Name: getter(c, "Name", "string"),
@@ -740,8 +740,8 @@ function deArrayifyContainer(json: any[]): Fusion.ContainerDefinition[] {
     return containers;
 }
 
-function deArrayifyWidgets(json: any[]): Fusion.Widget[] {
-    const widgets = [] as Fusion.Widget[];
+function deArrayifyWidgets(json: any[]): Widget[] {
+    const widgets = [] as Widget[];
     for (const w of json) {
         if (w["@xsi:type"] == "UiWidgetType") {
             const uiw = deArrayifyUiWidget(w);
@@ -753,12 +753,12 @@ function deArrayifyWidgets(json: any[]): Fusion.Widget[] {
     return widgets;
 }
 
-function deArrayifyWidget(json: any): Fusion.Widget {
+function deArrayifyWidget(json: any): Widget {
     const root = json;
     if (root == null) {
         throw new MgError("Malformed input. Expected Widget element");
     }
-    const getter = buildPropertyGetter<Fusion.Widget & { "@xsi:type": string }>();
+    const getter = buildPropertyGetter<Widget & { "@xsi:type": string }>();
     const w = {
         WidgetType: getter(root, "@xsi:type", "string"),
         Name: getter(root, "Name", "string"),
@@ -811,12 +811,12 @@ function deArrayifyExtension(json: any, arrayCheck: boolean = true): any {
     return ext;
 }
 
-function deArrayifyUiWidget(json: any): Fusion.UIWidget {
+function deArrayifyUiWidget(json: any): UIWidget {
     const root = json;
     if (root == null) {
         throw new MgError("Malformed input. Expected Widget element");
     }
-    const getter = buildPropertyGetter<Fusion.UIWidget & { "@xsi:type": string }>();
+    const getter = buildPropertyGetter<UIWidget & { "@xsi:type": string }>();
     const w = {
         WidgetType: getter(root, "@xsi:type", "string"),
         ImageUrl: getter(root, "ImageUrl", "string"),
@@ -833,12 +833,12 @@ function deArrayifyUiWidget(json: any): Fusion.UIWidget {
     return w;
 }
 
-function deArrayifyMapWidget(json: any): Fusion.MapWidget {
+function deArrayifyMapWidget(json: any): MapWidget {
     const root = json;
     if (root == null || root.length != 1) {
         throw new MgError("Malformed input. Expected MapWidget element");
     }
-    const getter = buildPropertyGetter<Fusion.MapWidget & { "@xsi:type": string }>();
+    const getter = buildPropertyGetter<MapWidget & { "@xsi:type": string }>();
     const mw = {
         WidgetType: getter(root, "@xsi:type", "string"),
         MapId: getter(root, "MapId", "string"),
@@ -850,8 +850,8 @@ function deArrayifyMapWidget(json: any): Fusion.MapWidget {
     return mw;
 }
 
-function deArrayifyWidgetSet(json: any): Fusion.WidgetSet[] {
-    const widgetSet = [] as Fusion.WidgetSet[];
+function deArrayifyWidgetSet(json: any): WidgetSet[] {
+    const widgetSet = [] as WidgetSet[];
     for (const ws of json) {
         widgetSet.push({
             Container: deArrayifyContainer(ws.Container),
@@ -862,9 +862,9 @@ function deArrayifyWidgetSet(json: any): Fusion.WidgetSet[] {
     return widgetSet;
 }
 
-function deArrayifyFlexibleLayout(json: any): Fusion.ApplicationDefinition {
+function deArrayifyFlexibleLayout(json: any): ApplicationDefinition {
     const root = json;
-    const getter = buildPropertyGetter<Fusion.ApplicationDefinition>();
+    const getter = buildPropertyGetter<ApplicationDefinition>();
     const resp = {
         Title: getter(root, "Title"),
         TemplateUrl: getter(root, "TemplateUrl"),
@@ -906,11 +906,11 @@ export function deArrayify(json: any): any {
  * Builds an XML selection string from the given selection set.
  *
  * @export
- * @param {(Query.FeatureSet | undefined)} selection The selection set
+ * @param {(FeatureSet | undefined)} selection The selection set
  * @param {string[]} [layerIds] If specified, the selection XML will only include selections from the specified layers
  * @returns {string} The selection XML string
  */
-export function buildSelectionXml(selection: Query.FeatureSet | undefined, layerIds?: string[]): string {
+export function buildSelectionXml(selection: FeatureSet | undefined, layerIds?: string[]): string {
     let xml = '<?xml version="1.0" encoding="utf-8"?>';
     xml += '<FeatureSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FeatureSet-1.0.0.xsd">';
     if (selection) {
@@ -938,7 +938,7 @@ export function buildSelectionXml(selection: Query.FeatureSet | undefined, layer
  * @param selection Current selection set
  * @param feat The active selected feature
  */
-export function getActiveSelectedFeatureXml(selection: Query.FeatureSet, feat: ActiveSelectedFeature): string | undefined {
+export function getActiveSelectedFeatureXml(selection: FeatureSet, feat: ActiveSelectedFeature): string | undefined {
     for (const layer of selection.Layer) {
         const layerId = layer["@id"];
         if (layerId == feat.layerId) {

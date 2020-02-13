@@ -15,9 +15,9 @@ import {
     getExternalBaseLayers,
     IMapViewer
 } from "../api/common";
-import * as MapActions from "../actions/map";
 import { MapCapturerContext, Size, IMapCapturerContextCallback } from "./map-capturer-context";
 import { Slider } from "@blueprintjs/core";
+import { setViewRotation, setViewRotationEnabled } from '../actions/map';
 
 function getMargin() {
     /*
@@ -127,8 +127,8 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IQuickPlot
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IQuickPlotContainerDispatch> {
     return {
-        setViewRotation: (rotation) => dispatch(MapActions.setViewRotation(rotation)),
-        setViewRotationEnabled: (enabled) => dispatch(MapActions.setViewRotationEnabled(enabled))
+        setViewRotation: (rotation) => dispatch(setViewRotation(rotation)),
+        setViewRotationEnabled: (enabled) => dispatch(setViewRotationEnabled(enabled))
     };
 }
 

@@ -1,6 +1,5 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import * as Runtime from "../api/runtime";
 import { tr } from "../api/i18n";
 import {
     ReduxDispatch,
@@ -9,6 +8,7 @@ import {
 import { Tab2, Tabs2 } from "@blueprintjs/core";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
+import { getViewer } from '../api/runtime';
 
 interface ILayerManagerProps {
     locale: string | undefined;
@@ -22,7 +22,7 @@ class LayerManager extends React.Component<ILayerManagerProps, any> {
         }
     }
     componentDidMount() {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             const layers = viewer.getLayerManager().getLayers();
             this.setState({ layers: layers });
@@ -30,7 +30,7 @@ class LayerManager extends React.Component<ILayerManagerProps, any> {
     }
     private removeHandler = (name: string) => {
         const { locale } = this.props;
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             const removed = viewer.getLayerManager().removeLayer(name);
             if (removed) {
@@ -41,7 +41,7 @@ class LayerManager extends React.Component<ILayerManagerProps, any> {
         }
     }
     private upHandler = (name: string) => {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             if (viewer.getLayerManager().moveUp(name) >= 0) {
                 const layers = viewer.getLayerManager().getLayers();
@@ -50,7 +50,7 @@ class LayerManager extends React.Component<ILayerManagerProps, any> {
         }
     }
     private downHandler = (name: string) => {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             if (viewer.getLayerManager().moveDown(name) >= 0) {
                 const layers = viewer.getLayerManager().getLayers();

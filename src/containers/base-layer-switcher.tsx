@@ -6,7 +6,7 @@ import {
     IApplicationState
 } from "../api/common";
 import { BaseLayerSwitcher } from "../components/base-layer-switcher";
-import * as MapActions from "../actions/map";
+import { setBaseLayer } from '../actions/map';
 
 export interface IBaseLayerSwitcherContainerProps {
 
@@ -36,7 +36,7 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IBaseLayer
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IBaseLayerSwitcherContainerDispatch> {
     return {
-        setBaseLayer: (mapName: string, layerName: string) => dispatch(MapActions.setBaseLayer(mapName, layerName)),
+        setBaseLayer: (mapName: string, layerName: string) => dispatch(setBaseLayer(mapName, layerName)),
     };
 }
 

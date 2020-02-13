@@ -6,7 +6,7 @@ import {
     IApplicationState
 } from "../api/common";
 import { MapMenu } from "../components/map-menu";
-import * as MapActions from "../actions/map";
+import { setActiveMap } from '../actions/map';
 
 export interface IMapMenuContainerState {
     locale: string;
@@ -28,7 +28,7 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IMapMenuCo
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMapMenuContainerDispatch> {
     return {
-        setActiveMap: (mapName: string) => dispatch(MapActions.setActiveMap(mapName))
+        setActiveMap: (mapName: string) => dispatch(setActiveMap(mapName))
     }
 }
 

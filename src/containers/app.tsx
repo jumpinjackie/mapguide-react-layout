@@ -1,6 +1,5 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import * as logger from "../utils/logger";
 import { getLayout } from "../api/registry/layout";
 import {
     IExternalBaseLayer,
@@ -15,7 +14,6 @@ import {
 import { initLayout, IInitAppLayout } from "../actions/init";
 import { Error, normalizeStack } from "../components/error";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
-import * as TemplateActions from "../actions/template";
 import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
 import { IApplicationContext, APPLICATION_CONTEXT_VALIDATION_MAP } from "../components/context";
@@ -23,6 +21,8 @@ import { safePropAccess } from '../utils/safe-prop';
 import { UrlValueChangeCallback, IAppUrlStateProps, urlPropsQueryConfig } from './url-state';
 import { addUrlProps } from 'react-url-query';
 import { IElementState } from '../actions/defs';
+import { setElementStates } from '../actions/template';
+import { debug } from '../utils/logger';
 
 /**
  * Callback interface for propagating changes to URL state
@@ -144,7 +144,7 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<IAppState>
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IAppDispatch> {
     return {
         initLayout: (args) => dispatch(initLayout(args)),
-        setElementVisibility: (state) => dispatch(TemplateActions.setElementStates(state))
+        setElementVisibility: (state) => dispatch(setElementStates(state))
     };
 }
 
@@ -210,7 +210,7 @@ export class App extends React.Component<AppProps, any> {
             };
             setElementVisibility(states);
         }
-        logger.debug(`Asset root is: ${getAssetRoot()}`);
+        debug(`Asset root is: ${getAssetRoot()}`);
         if (fusionRoot) {
             setFusionRoot(fusionRoot);
         }

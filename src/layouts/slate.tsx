@@ -7,7 +7,6 @@ import ModalLauncher from "../containers/modal-launcher";
 import FlyoutRegionContainer from "../containers/flyout-region";
 import { connect } from "react-redux";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
-import * as Runtime from "../api/runtime";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
     ReduxDispatch,
@@ -17,13 +16,14 @@ import {
     ITemplateReducerState,
     getRuntimeMap
 } from "../api/common";
-import * as TemplateActions from "../actions/template";
 import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../components/accordion";
 import { setCustomTemplateReducer, isElementState } from "../reducers/template";
 import InitWarningDisplay from "../containers/init-warning-display";
 import SplitterLayout from "react-splitter-layout";
 import { ActionType } from '../constants/actions';
 import { IElementState, ViewerAction } from '../actions/defs';
+import { setElementStates } from '../actions/template';
+import { getViewer } from '../api/runtime';
 
 function slateTemplateReducer(state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
@@ -110,7 +110,7 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<ISlateTemp
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ISlateTemplateLayoutDispatch> {
     return {
-        setElementStates: (states: IElementState) => dispatch(TemplateActions.setElementStates(states))
+        setElementStates: (states: IElementState) => dispatch(setElementStates(states))
     };
 }
 
@@ -134,7 +134,7 @@ export class SlateTemplateLayout extends React.Component<SlateLayoutTemplateProp
         //With the introduction of the splitter, we can no longer rely on a map 
         //filling 100% of its space without needing to manually call updateSize(),
         //so we do it here
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.updateSize();
         }

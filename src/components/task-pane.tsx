@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import * as Constants from "../constants";
 import {
     Toolbar,
     IItem,
@@ -16,6 +15,7 @@ import {
     FlyoutVisibilitySet
 } from "../api/common";
 import { parseComponentUri, ensureParameters } from "../utils/url";
+import { FUSION_TASKPANE_NAME, WEBLAYOUT_TASKMENU } from '../constants';
 
 export const TASK_PANE_OVERLAY_BGCOLOR = "#dee8f9";
 
@@ -113,7 +113,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         if (this._iframe) {
             const el = ReactDOM.findDOMNode(this._iframe);
             //This is needed for backcompat with certain fusion widgets
-            (el as any).taskPaneId = Constants.FUSION_TASKPANE_NAME;
+            (el as any).taskPaneId = FUSION_TASKPANE_NAME;
         }
     }
     private onFrameLoaded = (e: GenericEvent) => {
@@ -160,7 +160,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         const taskMenu: IFlyoutMenu = {
             label: tr("MENU_TASKS", locale),
             flyoutAlign: "bottom left",
-            flyoutId: Constants.WEBLAYOUT_TASKMENU
+            flyoutId: WEBLAYOUT_TASKMENU
         };
         const rootStyle: React.CSSProperties = {};
         const taskBarStyle: React.CSSProperties = {

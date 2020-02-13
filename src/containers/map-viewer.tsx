@@ -19,24 +19,23 @@ import {
     LayerTransparencySet,
     ActiveSelectedFeature
 } from "../api/common";
-import * as Constants from "../constants";
 import { MapViewerBase } from "../components/map-viewer-base";
-import * as Runtime from "../api/runtime";
 import { RuntimeMap } from "../api/contracts/runtime-map";
-import * as MapActions from "../actions/map";
 import { IItem, IInlineMenu } from "../components/toolbar";
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml, getActiveSelectedFeatureXml } from '../api/builders/deArrayify';
 import { getCommand, mapToolbarReference, } from "../api/registry/command";
-import { invokeCommand, queryMapFeatures } from "../actions/map";
+import { invokeCommand, queryMapFeatures, QueryMapFeatureActionOptions, setActiveTool, setCurrentView, setBusyCount, setMouseCoordinates, setViewRotation, setViewRotationEnabled, mapResized, setFeatureTooltipsEnabled } from "../actions/map";
 import { showModalComponent } from "../actions/modal";
 import { DefaultComponentNames } from "../api/registry/component";
 import { processMenuItems } from "../utils/menu";
 import { tr } from "../api/i18n";
 import { IOLFactory, OLFactory } from "../api/ol-factory";
 import { Intent, Toaster, Position as BP_Pos } from "@blueprintjs/core";
+import { WEBLAYOUT_CONTEXTMENU, EMPTY_OBJECT } from '../constants';
+import { getViewer, setViewer } from '../api/runtime';
 
 export interface IMapViewerContainerProps {
     overviewMapElementSelector?: () => (Element | null);
@@ -67,7 +66,7 @@ export interface IMapViewerContainerDispatch {
     setMouseCoordinates: (mapName: string, coord: Coordinate) => void;
     invokeCommand: (cmd: ICommand, parameters?: any) => void;
     showModalComponent: (options: any) => void;
-    queryMapFeatures: (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => void;
+    queryMapFeatures: (mapName: string, options: QueryMapFeatureActionOptions) => void;
     setViewRotation: (rotation: number) => void;
     setViewRotationEnabled: (enabled: boolean) => void;
     mapResized: (width: number, height: number) => void;
@@ -111,7 +110,7 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewe
         viewer: state.viewer,
         selection: selection,
         selectableLayers: selectableLayers,
-        contextmenu: state.toolbar.toolbars[Constants.WEBLAYOUT_CONTEXTMENU],
+        contextmenu: state.toolbar.toolbars[WEBLAYOUT_CONTEXTMENU],
         showGroups: showGroups,
         showLayers: showLayers,
         hideGroups: hideGroups,
@@ -124,17 +123,17 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IMapViewe
 
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IMapViewerContainerDispatch> {
     return {
-        setActiveTool: (tool) => dispatch(MapActions.setActiveTool(tool)),
-        setCurrentView: (view) => dispatch(MapActions.setCurrentView(view)),
-        setBusyCount: (count) => dispatch(MapActions.setBusyCount(count)),
-        setMouseCoordinates: (mapName, coord) => dispatch(MapActions.setMouseCoordinates(mapName, coord)),
+        setActiveTool: (tool) => dispatch(setActiveTool(tool)),
+        setCurrentView: (view) => dispatch(setCurrentView(view)),
+        setBusyCount: (count) => dispatch(setBusyCount(count)),
+        setMouseCoordinates: (mapName, coord) => dispatch(setMouseCoordinates(mapName, coord)),
         invokeCommand: (cmd, parameters) => dispatch(invokeCommand(cmd, parameters)),
         showModalComponent: (options) => dispatch(showModalComponent(options)),
         queryMapFeatures: (mapName, options) => dispatch(queryMapFeatures(mapName, options)),
-        setViewRotation: (rotation) => dispatch(MapActions.setViewRotation(rotation)),
-        setViewRotationEnabled: (enabled) => dispatch(MapActions.setViewRotationEnabled(enabled)),
-        mapResized: (width, height) => dispatch(MapActions.mapResized(width, height)),
-        setFeatureTooltipsEnabled: (enabled) => dispatch(MapActions.setFeatureTooltipsEnabled(enabled))
+        setViewRotation: (rotation) => dispatch(setViewRotation(rotation)),
+        setViewRotationEnabled: (enabled) => dispatch(setViewRotationEnabled(enabled)),
+        mapResized: (width, height) => dispatch(mapResized(width, height)),
+        setFeatureTooltipsEnabled: (enabled) => dispatch(setFeatureTooltipsEnabled(enabled))
     };
 }
 
@@ -224,9 +223,9 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
     componentDidMount() {
         const { config } = this.props;
         if (config) {
-            Runtime.setViewer(this);
+            setViewer(this);
             const browserWindow: any = window;
-            browserWindow.getViewer = browserWindow.getViewer || Runtime.getViewer;
+            browserWindow.getViewer = browserWindow.getViewer || getViewer;
             const { agentUri, agentKind } = config;
             if (agentUri) {
                 browserWindow.getClient = browserWindow.getClient || (() => new Client(agentUri, agentKind));
@@ -300,7 +299,7 @@ export class MapViewerContainer extends React.Component<MapViewerContainerProps,
                                     overviewMapElementSelector={overviewMapElementSelector}
                                     loadIndicatorPosition={config.viewer.loadIndicatorPositioning}
                                     loadIndicatorColor={config.viewer.loadIndicatorColor}
-                                    layerTransparency={layerTransparency || Constants.EMPTY_OBJECT}
+                                    layerTransparency={layerTransparency || EMPTY_OBJECT}
                                     onBeginDigitization={this.onBeginDigitization}
                                     onSessionExpired={this.onSessionExpired}
                                     onBusyLoading={this.onBusyLoading}

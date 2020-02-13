@@ -1,7 +1,7 @@
-import * as Common from "./contracts/common";
-import * as RtMap from "./contracts/runtime-map";
-import * as Query from "./contracts/query";
 import { SelectionVariant } from './common';
+import { ResourceIdentifier, ResourceBase } from './contracts/common';
+import { RuntimeMap } from './contracts/runtime-map';
+import { QueryMapFeaturesResponse } from './contracts/query';
 
 /**
  * Describes a request that takes either a session or username/password pair
@@ -65,10 +65,10 @@ export interface ICreateRuntimeMapOptions extends IAuthenticatedRequest {
     /**
      * The map definition id
      *
-     * @type {Common.ResourceIdentifier}
+     * @type {ResourceIdentifier}
      * @memberOf ICreateRuntimeMapOptions
      */
-    mapDefinition: Common.ResourceIdentifier;
+    mapDefinition: ResourceIdentifier;
     /**
      * A bitmask indicating what data to return
      *
@@ -308,25 +308,25 @@ export interface IMapGuideClient {
      * @param {string} resourceId
      * @returns {PromiseLike<T>}
      */
-    getResource<T extends Common.ResourceBase>(resourceId: Common.ResourceIdentifier, args?: any): Promise<T>;
+    getResource<T extends ResourceBase>(resourceId: ResourceIdentifier, args?: any): Promise<T>;
 
     /**
      * Creates a runtime map from the specified map definition
      *
      * @abstract
      * @param {ICreateRuntimeMapOptions} options
-     * @returns {PromiseLike<RtMap.RuntimeMap>}
+     * @returns {PromiseLike<RuntimeMap>}
      */
-    createRuntimeMap(options: ICreateRuntimeMapOptions): Promise<RtMap.RuntimeMap>;
+    createRuntimeMap(options: ICreateRuntimeMapOptions): Promise<RuntimeMap>;
 
     /**
      * Performs a map selection query on the current map
      *
      * @abstract
      * @param {IQueryMapFeaturesOptions} options
-     * @returns {PromiseLike<Query.QueryMapFeaturesResponse>}
+     * @returns {PromiseLike<QueryMapFeaturesResponse>}
      */
-    queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<Query.QueryMapFeaturesResponse>;
+    queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<QueryMapFeaturesResponse>;
 
     /**
      * Performs a map selection query on the current map. Only applicable for use with MapGuide
@@ -334,18 +334,18 @@ export interface IMapGuideClient {
      *
      * @abstract
      * @param {IQueryMapFeaturesOptions} options
-     * @returns {PromiseLike<Query.QueryMapFeaturesResponse>}
+     * @returns {PromiseLike<QueryMapFeaturesResponse>}
      */
-    queryMapFeatures_v4(options: IQueryMapFeaturesOptions): Promise<Query.QueryMapFeaturesResponse>;
+    queryMapFeatures_v4(options: IQueryMapFeaturesOptions): Promise<QueryMapFeaturesResponse>;
 
     /**
      * Describes a runtime map
      *
      * @abstract
      * @param {IDescribeRuntimeMapOptions} options
-     * @returns {PromiseLike<RtMap.RuntimeMap>}
+     * @returns {PromiseLike<RuntimeMap>}
      */
-    describeRuntimeMap(options: IDescribeRuntimeMapOptions): Promise<RtMap.RuntimeMap>;
+    describeRuntimeMap(options: IDescribeRuntimeMapOptions): Promise<RuntimeMap>;
 
     /**
      * Gets the tile template URL used by the viewer to send tile requests
@@ -378,15 +378,15 @@ export abstract class RequestBuilder implements IMapGuideClient {
 
     public abstract getServerSessionTimeout(session: string): Promise<number>;
 
-    public abstract getResource<T extends Common.ResourceBase>(resourceId: Common.ResourceIdentifier, args?: any): Promise<T>;
+    public abstract getResource<T extends ResourceBase>(resourceId: ResourceIdentifier, args?: any): Promise<T>;
 
-    public abstract createRuntimeMap(options: ICreateRuntimeMapOptions): Promise<RtMap.RuntimeMap>;
+    public abstract createRuntimeMap(options: ICreateRuntimeMapOptions): Promise<RuntimeMap>;
 
-    public abstract queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<Query.QueryMapFeaturesResponse>;
+    public abstract queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<QueryMapFeaturesResponse>;
 
-    public abstract queryMapFeatures_v4(options: IQueryMapFeaturesOptions): Promise<Query.QueryMapFeaturesResponse>;
+    public abstract queryMapFeatures_v4(options: IQueryMapFeaturesOptions): Promise<QueryMapFeaturesResponse>;
 
-    public abstract describeRuntimeMap(options: IDescribeRuntimeMapOptions): Promise<RtMap.RuntimeMap>;
+    public abstract describeRuntimeMap(options: IDescribeRuntimeMapOptions): Promise<RuntimeMap>;
 
     public abstract getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string): string;
 }

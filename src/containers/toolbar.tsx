@@ -14,9 +14,9 @@ import { mapToolbarReference } from "../api/registry/command";
 import { Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import { invokeCommand } from "../actions/map";
 import { processMenuItems } from "../utils/menu";
-import * as FlyoutActions from "../actions/flyout";
 import { NULL_ACTION } from "../reducers/last-action";
 import { ActionType } from '../constants/actions';
+import { openFlyout, closeFlyout, openComponent, closeComponent } from '../actions/flyout';
 
 export interface IToolbarContainerProps {
     id: string;
@@ -66,10 +66,10 @@ function mapStateToProps(state: Readonly<IApplicationState>, ownProps: IToolbarC
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<IToolbarContainerDispatch> {
     return {
         invokeCommand: (cmd, parameters) => dispatch(invokeCommand(cmd, parameters)),
-        openFlyout: (id, metrics) => dispatch(FlyoutActions.openFlyout(id, metrics)),
-        closeFlyout: (id) => dispatch(FlyoutActions.closeFlyout(id)),
-        openComponent: (id, metrics, name, props) => dispatch(FlyoutActions.openComponent(id, metrics, name, props)),
-        closeComponent: (id) => dispatch(FlyoutActions.closeComponent(id))
+        openFlyout: (id, metrics) => dispatch(openFlyout(id, metrics)),
+        closeFlyout: (id) => dispatch(closeFlyout(id)),
+        openComponent: (id, metrics, name, props) => dispatch(openComponent(id, metrics, name, props)),
+        closeComponent: (id) => dispatch(closeComponent(id))
     };
 }
 

@@ -35,10 +35,8 @@ import {
     KC_U,
     SelectionVariant
 } from "../api/common";
-import * as RtMap from '../api/contracts/runtime-map';
 import debounce = require("lodash.debounce");
 import { areNumbersEqual } from '../utils/number';
-import * as logger from '../utils/logger';
 import { isSessionExpiredError } from '../api/error';
 import { Client } from '../api/client';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
@@ -99,6 +97,8 @@ import Point from "ol/geom/point";
 import LineString from "ol/geom/linestring";
 import Circle from "ol/geom/circle";
 import { safePropAccess } from '../utils/safe-prop';
+import { RuntimeMap } from '../api/contracts/runtime-map';
+import { warn, debug, info } from '../utils/logger';
 
 plugins.register(PluginType.MAP_RENDERER, MapRenderer);
 plugins.register(PluginType.LAYER_RENDERER, TileLayerRenderer);
@@ -187,11 +187,11 @@ export function areViewsCloseToEqual(view: IMapView | undefined, otherView: IMap
  * Indicates if the given runtime map instances are the same or have the same name
  *
  * @export
- * @param {RtMap.RuntimeMap} map
- * @param {RtMap.RuntimeMap} other
+ * @param {RuntimeMap} map
+ * @param {RuntimeMap} other
  * @returns {boolean}
  */
-export function areMapsSame(map: RtMap.RuntimeMap, other: RtMap.RuntimeMap): boolean {
+export function areMapsSame(map: RuntimeMap, other: RuntimeMap): boolean {
     if (map != other) {
         return map.Name == other.Name;
     }
@@ -651,14 +651,14 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
         const props = prevProps;
         const nextProps = this.props;
         if (nextProps.imageFormat != props.imageFormat) {
-            logger.warn(`Unsupported change of props: imageFormat`);
+            warn(`Unsupported change of props: imageFormat`);
         }
         if (nextProps.agentUri != props.agentUri) {
-            logger.warn(`Unsupported change of props: agentUri`);
+            warn(`Unsupported change of props: agentUri`);
             this._client = new Client(nextProps.agentUri, nextProps.agentKind);
         }
         if (nextProps.agentKind != props.agentKind) {
-            logger.warn(`Unsupported change of props: agentKind`);
+            warn(`Unsupported change of props: agentKind`);
             this._client = new Client(nextProps.agentUri, nextProps.agentKind);
         }
         let bChangedView = false;
@@ -712,7 +712,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
                 const layerSet = this._mapContext.getLayerSet(nextProps.map.Name);
                 this.applyView(layerSet, vw);
             } else {
-                logger.debug(`Skipping zoomToView as next/current views are close enough or target view is null`);
+                debug(`Skipping zoomToView as next/current views are close enough or target view is null`);
             }
         }
         //overviewMapElement
@@ -818,7 +818,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             if (this._triggerZoomRequestOnMoveEnd) {
                 this.onRequestZoomToView(this.getCurrentView());
             } else {
-                logger.info("Triggering zoom request on moveend suppresseed");
+                info("Triggering zoom request on moveend suppresseed");
             }
             if (e.frameState.viewState.rotation != this.props.viewRotation) {
                 safePropAccess(this.props, "onRotationChanged", func => func(e.frameState.viewState.rotation));

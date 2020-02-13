@@ -14,15 +14,15 @@ import {
 import { IItem } from "../components/toolbar";
 import { TaskPane, TASK_PANE_OVERLAY_BGCOLOR } from "../components/task-pane";
 import { invokeCommand } from "../actions/map";
-import * as TaskPaneActions from "../actions/taskpane";
 import { areUrlsSame, ensureParameters } from "../utils/url";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
-import * as FlyoutActions from "../actions/flyout";
 import {
     SPRITE_ICON_HOME,
     SPRITE_BACK,
     SPRITE_FORWARD
 } from "../constants/assets";
+import { goHome, pushUrl, goForward, goBack } from '../actions/taskpane';
+import { openFlyout, closeFlyout } from '..';
 
 export interface ITaskPaneContainerProps {
     maxHeight?: number;
@@ -65,12 +65,12 @@ function mapStateToProps(state: Readonly<IApplicationState>): Partial<ITaskPaneC
 function mapDispatchToProps(dispatch: ReduxDispatch): Partial<ITaskPaneDispatch> {
     return {
         invokeCommand: (cmd, parameters) => dispatch(invokeCommand(cmd, parameters)),
-        goHome: () => dispatch(TaskPaneActions.goHome()),
-        goForward: () => dispatch(TaskPaneActions.goForward()),
-        goBack: () => dispatch(TaskPaneActions.goBack()),
-        pushUrl: (url, silent?) => dispatch(TaskPaneActions.pushUrl(url, silent)),
-        openFlyout: (id, metrics) => dispatch(FlyoutActions.openFlyout(id, metrics)),
-        closeFlyout: (id) => dispatch(FlyoutActions.closeFlyout(id))
+        goHome: () => dispatch(goHome()),
+        goForward: () => dispatch(goForward()),
+        goBack: () => dispatch(goBack()),
+        pushUrl: (url, silent?) => dispatch(pushUrl(url, silent)),
+        openFlyout: (id, metrics) => dispatch(openFlyout(id, metrics)),
+        closeFlyout: (id) => dispatch(closeFlyout(id))
     };
 }
 

@@ -1,7 +1,7 @@
-import * as Common from './common';
+import { ResourceIdentifier, FdoFilter, Base64Content, Version, Color } from './common';
 
 export interface FeatureSourceInfo {
-    ResourceId: Common.ResourceIdentifier;
+    ResourceId: ResourceIdentifier;
     ClassName: string;
     Geometry: string;
 }
@@ -15,8 +15,8 @@ export enum FeatureStyleType {
 
 export interface RuleInfo {
     LegendLabel?: string;
-    Filter?: Common.FdoFilter;
-    Icon?: Common.Base64Content;
+    Filter?: FdoFilter;
+    Icon?: Base64Content;
 }
 
 export interface FeatureStyleInfo {
@@ -100,7 +100,7 @@ export interface MapLayer extends MapElement {
      * @type {boolean}
      */
     Selectable: boolean;
-    LayerDefinition: Common.ResourceIdentifier;
+    LayerDefinition: ResourceIdentifier;
     FeatureSource?: FeatureSourceInfo | undefined;
     ScaleRange?: ScaleRangeInfo[] | undefined;
 }
@@ -168,9 +168,9 @@ export interface RuntimeMap {
     /**
      * The MapGuide Site Version
      *
-     * @type {Common.Version}
+     * @type {Version}
      */
-    SiteVersion: Common.Version;
+    SiteVersion: Version;
     /**
      * The name of the runtime map. This is the value required for any mapagent operation that require a MAPNAME parameter
      *
@@ -186,15 +186,15 @@ export interface RuntimeMap {
     /**
      * The resource id of the Map Definition from which this runtime map was created from
      *
-     * @type {Common.ResourceIdentifier}
+     * @type {ResourceIdentifier}
      */
-    MapDefinition: Common.ResourceIdentifier;
+    MapDefinition: ResourceIdentifier;
     /**
      * The resource id of the Tile Set Definition that this Map Definition is linked from. If this Map Definition does not link to a tile set, this element is omitted
      *
-     * @type {Common.ResourceIdentifier}
+     * @type {ResourceIdentifier}
      */
-    TileSetDefinition?: Common.ResourceIdentifier | undefined;
+    TileSetDefinition?: ResourceIdentifier | undefined;
     /**
      * The tile width as defined by the settings in the Tile Set Definition. If this Map Definition does not link to a tile set, this element is omitted
      *
@@ -210,9 +210,9 @@ export interface RuntimeMap {
     /**
      * The map's background color in ARGB hex string format
      *
-     * @type {Common.Color}
+     * @type {Color}
      */
-    BackgroundColor: Common.Color;
+    BackgroundColor: Color;
     /**
      * The number of dots per inch of the map display
      *
@@ -222,9 +222,9 @@ export interface RuntimeMap {
     /**
      * The mime type of all inline icons
      *
-     * @type {Common.MimeType}
+     * @type {MimeType}
      */
-    IconMimeType?: Common.MimeType | undefined;
+    IconMimeType?: MimeType | undefined;
     CoordinateSystem: CoordinateSystemType;
     Extents: Envelope;
     Group?: MapGroup[] | undefined;

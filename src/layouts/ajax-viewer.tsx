@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as Constants from "../constants";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
 import ToolbarContainer from "../containers/toolbar";
@@ -11,6 +10,7 @@ import SplitterLayout from "react-splitter-layout";
 import { tr } from "../api/i18n";
 import { useCommonTemplateState } from './hooks';
 import { useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
+import { WEBLAYOUT_TOOLBAR } from '../constants';
 
 const AjaxViewerLayout = () => {
     const {
@@ -48,7 +48,7 @@ const AjaxViewerLayout = () => {
                 <div>
                     {(() => {
                         if (hasToolbar) {
-                            return <ToolbarContainer id={Constants.WEBLAYOUT_TOOLBAR} containerStyle={{ position: "absolute", left: 0, top: 0, right: 0, zIndex: TB_Z_INDEX, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />;
+                            return <ToolbarContainer id={WEBLAYOUT_TOOLBAR} containerStyle={{ position: "absolute", left: 0, top: 0, right: 0, zIndex: TB_Z_INDEX, backgroundColor: TOOLBAR_BACKGROUND_COLOR }} />;
                         }
                     })()}
                     <div style={{ position: "absolute", left: 0, top: topOffset, bottom: 0, right: 0 }}>

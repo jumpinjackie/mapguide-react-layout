@@ -18,10 +18,6 @@ import {
     DEFAULT_MODAL_SIZE,
     Bounds
 } from "./common";
-import * as LegendActions from "../actions/legend";
-import * as MapActions from "../actions/map";
-import * as ModalActions from "../actions/modal";
-import * as TemplateActions from "../actions/template";
 import { tr } from "../api/i18n";
 import { DefaultComponentNames } from "../api/registry/component";
 import { getFusionRoot } from "../api/runtime";
@@ -65,6 +61,10 @@ import {
 } from "../constants/assets";
 import * as olExtent from "ol/extent";
 import { ensureParameters } from "../utils/url";
+import { setCurrentView, setActiveTool, setFeatureTooltipsEnabled, previousView, nextView } from '../actions/map';
+import { showModalComponent, showModalUrl } from '../actions/modal';
+import { refresh } from '../actions/legend';
+import { setTaskPaneVisibility, setLegendVisibility, setSelectionPanelVisibility } from '../actions/template';
 
 function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
     const settings: any = {
@@ -94,7 +94,7 @@ function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "l
         ];
     }
 
-    dispatch(MapActions.setCurrentView({ x: newPos[0], y: newPos[1], scale: view.scale }));
+    dispatch(setCurrentView({ x: newPos[0], y: newPos[1], scale: view.scale }));
 }
 
 function buildTargetedCommand(config: Readonly<IConfigurationReducerState>, parameters: any): ITargetedCommand {
@@ -128,7 +128,7 @@ export function initDefaultCommands() {
         },
         enabled: () => true,
         invoke: (dispatch) => {
-            return dispatch(MapActions.setActiveTool(ActiveMapTool.Select));
+            return dispatch(setActiveTool(ActiveMapTool.Select));
         }
     });
     //WMS Query Tool
@@ -136,7 +136,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_SELECT,
         selected: (state) => state.activeTool === ActiveMapTool.WmsQueryFeatures && state.visibleAndSelectableWmsLayerCount > 0,
         enabled: (state) => state.visibleAndSelectableWmsLayerCount > 0,
-        invoke: (dispatch) => dispatch(MapActions.setActiveTool(ActiveMapTool.WmsQueryFeatures))
+        invoke: (dispatch) => dispatch(setActiveTool(ActiveMapTool.WmsQueryFeatures))
     });
     //Pan Tool
     registerCommand(DefaultCommands.Pan, {
@@ -146,7 +146,7 @@ export function initDefaultCommands() {
         },
         enabled: () => true,
         invoke: (dispatch) => {
-            return dispatch(MapActions.setActiveTool(ActiveMapTool.Pan));
+            return dispatch(setActiveTool(ActiveMapTool.Pan));
         }
     });
     //Zoom Tool
@@ -157,7 +157,7 @@ export function initDefaultCommands() {
         },
         enabled: () => true,
         invoke: (dispatch) => {
-            return dispatch(MapActions.setActiveTool(ActiveMapTool.Zoom));
+            return dispatch(setActiveTool(ActiveMapTool.Zoom));
         }
     });
     //Feature Tooltips
@@ -169,7 +169,7 @@ export function initDefaultCommands() {
         enabled: () => true,
         invoke: (dispatch, getState) => {
             const enabled = getState().viewer.featureTooltipsEnabled;
-            return dispatch(MapActions.setFeatureTooltipsEnabled(!enabled));
+            return dispatch(setFeatureTooltipsEnabled(!enabled));
         }
     });
     //Zoom in
@@ -244,7 +244,7 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState) => {
-            dispatch(ModalActions.showModalComponent({
+            dispatch(showModalComponent({
                 modal: {
                     title: tr("ABOUT", getState().config.locale),
                     backdrop: true,
@@ -261,7 +261,7 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: () => true,
         invoke: (dispatch, getState) => {
-            dispatch(ModalActions.showModalUrl({
+            dispatch(showModalUrl({
                 modal: {
                     title: tr("HELP", getState().config.locale),
                     backdrop: true,
@@ -400,7 +400,7 @@ export function initDefaultCommands() {
                 }
                 if (bounds) {
                     const view = viewer.getViewForExtent(bounds);
-                    dispatch(MapActions.setCurrentView(view));
+                    dispatch(setCurrentView(view));
                 }
             }
         }
@@ -413,7 +413,7 @@ export function initDefaultCommands() {
         invoke: (dispatch, getState, viewer) => {
             if (viewer) {
                 viewer.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
-                dispatch(LegendActions.refresh());
+                dispatch(refresh());
             }
         }
     });
@@ -425,7 +425,7 @@ export function initDefaultCommands() {
         invoke: (dispatch, getState) => {
             const mapName = getState().config.activeMapName;
             if (mapName) {
-                dispatch(MapActions.previousView(mapName));
+                dispatch(previousView(mapName));
             }
         }
     });
@@ -437,7 +437,7 @@ export function initDefaultCommands() {
         invoke: (dispatch, getState) => {
             const mapName = getState().config.activeMapName;
             if (mapName) {
-                dispatch(MapActions.nextView(mapName));
+                dispatch(nextView(mapName));
             }
         }
     });
@@ -678,7 +678,7 @@ export function initDefaultCommands() {
                     }
                     if (bbox) {
                         const view = viewer.getViewForExtent(bbox);
-                        dispatch(MapActions.setCurrentView(view));
+                        dispatch(setCurrentView(view));
                     }
                 }
             }
@@ -701,7 +701,7 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState) => {
-            dispatch(TemplateActions.setTaskPaneVisibility(true));
+            dispatch(setTaskPaneVisibility(true));
         }
     });
     registerCommand("showLegend", {
@@ -709,7 +709,7 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState) => {
-            dispatch(TemplateActions.setLegendVisibility(true));
+            dispatch(setLegendVisibility(true));
         }
     });
     registerCommand("showSelectionPanel", {
@@ -717,7 +717,7 @@ export function initDefaultCommands() {
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
         invoke: (dispatch, getState) => {
-            dispatch(TemplateActions.setSelectionPanelVisibility(true));
+            dispatch(setSelectionPanelVisibility(true));
         }
     });
 }

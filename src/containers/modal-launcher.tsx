@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import * as ModalActions from "../actions/modal";
 import { RndModalDialog } from "../components/modal-dialog";
 import { getComponentFactory } from "../api/registry/component";
 import { Error } from "../components/error";
@@ -17,6 +16,7 @@ import {
 import { assertNever } from "../utils/never";
 import { ParsedComponentUri, parseComponentUri, isComponentUri } from "../utils/url";
 import { useViewerLocale } from './hooks';
+import { hideModal } from '../actions/modal';
 
 function getComponentId(diag: IModalComponentDisplayOptions | IModalDisplayOptions): ParsedComponentUri | undefined {
     if (isModalComponentDisplayOptions(diag)) {
@@ -30,8 +30,8 @@ function getComponentId(diag: IModalComponentDisplayOptions | IModalDisplayOptio
 
 const ModalLauncher = (props: { children?: React.ReactNode }) => {
     const dispatch = useDispatch();
-    const hideModal = (options: any) => dispatch(ModalActions.hideModal(options));
-    const onCloseModal = (name: string) => hideModal({ name: name });
+    const hideModalAction = (options: any) => dispatch(hideModal(options));
+    const onCloseModal = (name: string) => hideModalAction({ name: name });
     const modal = useSelector<IApplicationState, IModalReducerState>(state => state.modal);
     const locale = useViewerLocale();
     const MODAL_INIT_X = 500;

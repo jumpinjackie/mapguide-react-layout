@@ -4,12 +4,12 @@ import { GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 import { AddWfsLayer } from "./add-wfs-layer";
 import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup, FormGroup, Callout, NumericInput, FileInput } from '@blueprintjs/core';
-import * as Runtime from "../../api/runtime";
 import { strIsNullOrEmpty } from "../../utils/string";
 import proj4 from "proj4";
 import { ensureProjection } from '../../api/registry/projections';
 import { IParsedFeatures } from '../../api/layer-manager/parsed-features';
 import { parseEpsgCodeFromCRS } from './wfs-capabilities-panel';
+import { getViewer } from '../../api/runtime';
 
 /**
  * @hidden
@@ -96,7 +96,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
         }
     };
     const onFileDropped = async (file: File) => {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             setAddLayerError(undefined);
             const layerMgr = viewer.getLayerManager();
@@ -116,7 +116,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
         setParsedFile(undefined);
     };
     const onAddFileLayer = async (layerProjection: number) => {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer && parsedFeaturesRef?.current) {
             setIsAddingLayer(true);
             setAddLayerError(undefined);

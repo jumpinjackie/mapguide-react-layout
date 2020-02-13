@@ -6,10 +6,10 @@ import {
     KC_ESCAPE, 
     KC_U
 } from "../api/common";
-import * as logger from "../utils/logger";
 import { DEFAULT_LOCALE } from "../api/i18n";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
+import { warn } from '../utils/logger';
 
 export const CONFIG_INITIAL_STATE: IConfigurationReducerState = {
     agentUri: undefined,
@@ -67,7 +67,7 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction
                     availableMaps.push({ name: maps[mapName].mapGroupId, value: mapName });
                 }
                 if (mapNames.indexOf(am) < 0) {
-                    logger.warn(`Invalid initial active map name: ${am}. Probably because we haven't properly implemented recovery of runtime maps on reload yet`);
+                    warn(`Invalid initial active map name: ${am}. Probably because we haven't properly implemented recovery of runtime maps on reload yet`);
                     am = mapNames[0];
                 }
                 const state1: Partial<IConfigurationReducerState> = {

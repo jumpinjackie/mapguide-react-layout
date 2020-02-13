@@ -2,7 +2,6 @@ import * as React from "react";
 import { connect, useDispatch } from "react-redux";
 import { SelectionPanel, ISelectedFeatureProps } from "../components/selection-panel";
 import { QueryMapFeaturesResponse, SelectedFeature } from "../api/contracts/query";
-import * as MapActions from "../actions/map";
 import { getViewer } from "../api/runtime";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import {
@@ -15,6 +14,7 @@ import {
 import { Callout, Intent } from '@blueprintjs/core';
 import { AppContext } from '../components/context';
 import { useViewerLocale, useActiveMapSelectionSet, useActiveMapName, useActiveMapState } from './hooks';
+import { setCurrentView, showSelectedFeature } from '../actions/map';
 
 export interface ISelectionPanelContainerProps {
     maxHeight?: number;
@@ -28,15 +28,15 @@ const SelectionPanelContainer = (props: ISelectionPanelContainerProps) => {
     const selection = useActiveMapSelectionSet();
     const dispatch = useDispatch();
     const activeMapName = useActiveMapName();
-    const setCurrentView = (view: IMapView) => dispatch(MapActions.setCurrentView(view));
-    const showSelectedFeature = (mapName: string, layerId: string, selectionKey: string) => dispatch(MapActions.showSelectedFeature(mapName, layerId, selectionKey));
+    const setCurrentViewAction = (view: IMapView) => dispatch(setCurrentView(view));
+    const showSelectedFeatureAction = (mapName: string, layerId: string, selectionKey: string) => dispatch(showSelectedFeature(mapName, layerId, selectionKey));
     const appContext = React.useContext(AppContext);
     const onZoomToSelectedFeature = (feature: SelectedFeature) => {
         const bbox: any = feature.Bounds.split(" ").map(s => parseFloat(s));
         const viewer = getViewer();
         if (viewer) {
             const view = viewer.getViewForExtent(bbox);
-            setCurrentView(view);
+            setCurrentViewAction(view);
         }
     };
     const resolveLayerLabel = (layerId: string, _: string) => {
@@ -47,7 +47,7 @@ const SelectionPanelContainer = (props: ISelectionPanelContainerProps) => {
     };
     const onShowSelectedFeature = (layerId: string, selectionKey: string) => {
         if (activeMapName) {
-            showSelectedFeature(activeMapName, layerId, selectionKey);
+            showSelectedFeatureAction(activeMapName, layerId, selectionKey);
         }
     };
     if (selection != null && selection.SelectedFeatures != null) {

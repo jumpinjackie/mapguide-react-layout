@@ -5,7 +5,6 @@ import {
 } from "../api/common";
 import { IOLFactory } from "../api/ol-factory";
 import { tr } from "../api/i18n";
-import * as logger from "../utils/logger";
 import { roundTo } from "../utils/number";
 import * as olObservable from "ol/Observable";
 import * as olSphere from "ol/sphere";
@@ -18,6 +17,7 @@ import olFeature from "ol/Feature";
 import olVectorLayer from "ol/layer/Vector";
 import GeometryType from 'ol/geom/GeometryType';
 import OverlayPositioning from 'ol/OverlayPositioning';
+import { debug } from '../utils/logger';
 
 const LAYER_NAME = "measure-layer";
 
@@ -144,7 +144,7 @@ export class MeasureContext {
             const sourceProj = this.viewer.getProjection();
             const geom = polygon;
             area = olSphere.getArea(geom, { projection: sourceProj });
-            logger.debug(`Polygon area: ${area}`);
+            debug(`Polygon area: ${area}`);
             const ring = geom.getLinearRing(0);
             const coordinates = ring.getCoordinates() as Coordinate2D[];
             for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
@@ -381,7 +381,7 @@ export class MeasureContext {
      */
     public activate(mapName: string, callback: IMeasureCallback) {
         this.callback = callback;
-        logger.debug(`Activating measure context for ${this.mapName}`);
+        debug(`Activating measure context for ${this.mapName}`);
         for (const ov of this.measureOverlays) {
             this.viewer.addOverlay(ov);
         }
@@ -395,7 +395,7 @@ export class MeasureContext {
      */
     public deactivate(mapName: string) {
         this.callback = undefined;
-        logger.debug(`De-activating measure context for ${this.mapName}`);
+        debug(`De-activating measure context for ${this.mapName}`);
         this.endMeasure();
         for (const ov of this.measureOverlays) {
             this.viewer.removeOverlay(ov);

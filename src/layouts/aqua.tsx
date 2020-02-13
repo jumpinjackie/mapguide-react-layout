@@ -13,12 +13,12 @@ import {
     ITemplateReducerState,
     IViewerCapabilities
 } from "../api/common";
-import * as TemplateActions from "../actions/template";
 import InitWarningDisplay from "../containers/init-warning-display";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 import { useCommonTemplateState } from './hooks';
 import { useActiveMapState, useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
+import { setLegendVisibility, setSelectionPanelVisibility, setTaskPaneVisibility } from '../actions/template';
 
 function aquaTemplateReducer(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
@@ -103,9 +103,9 @@ const AquaTemplateLayout = () => {
         dispatch
     } = useCommonTemplateState(aquaTemplateReducer);
     const map = useActiveMapState();
-    const hideLegend = () => dispatch(TemplateActions.setLegendVisibility(false));
-    const hideSelection = () => dispatch(TemplateActions.setSelectionPanelVisibility(false));
-    const hideTaskPane = () => dispatch(TemplateActions.setTaskPaneVisibility(false));
+    const hideLegend = () => dispatch(setLegendVisibility(false));
+    const hideSelection = () => dispatch(setSelectionPanelVisibility(false));
+    const hideTaskPane = () => dispatch(setTaskPaneVisibility(false));
     const onHideTaskPane = () => hideTaskPane();
     const onHideLegend = () => hideLegend();
     const onHideSelection = () => hideSelection();

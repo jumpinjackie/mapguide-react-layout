@@ -1,21 +1,21 @@
-import * as Request from './request-builder';
 import { MgError } from './error';
 import { MapAgentRequestBuilder, isErrorResponse, serialize } from './builders/mapagent';
-import * as Common from "./contracts/common";
-import * as RtMap from './contracts/runtime-map';
-import * as Query from "./contracts/query";
 import { ClientKind } from './common';
 import { createRequestBuilder } from './builders/factory';
+import { ResourceBase, ResourceIdentifier } from './contracts/common';
+import { ICreateRuntimeMapOptions, IMapGuideClient, RequestBuilder, IDescribeRuntimeMapOptions, IQueryMapFeaturesOptions } from './request-builder';
+import { RuntimeMap } from './contracts/runtime-map';
+import { QueryMapFeaturesResponse } from './contracts/query';
 
 /**
  * The MapGuide HTTP client
  *
  * @export
  * @class Client
- * @implements {Request.IMapGuideClient}
+ * @implements {IMapGuideClient}
  */
-export class Client implements Request.IMapGuideClient {
-    private builder: Request.RequestBuilder;
+export class Client implements IMapGuideClient {
+    private builder: RequestBuilder;
     constructor(agentUri: string, kind: ClientKind) {
         this.builder = createRequestBuilder(agentUri, kind);
     }
@@ -122,49 +122,49 @@ export class Client implements Request.IMapGuideClient {
      * Retrieves the requested resource
      *
      * @template T
-     * @param {Common.ResourceIdentifier} resourceId
+     * @param {ResourceIdentifier} resourceId
      * @param {*} [args]
      * @returns {Promise<T>}
      *
      * @memberOf Client
      */
-    public getResource<T extends Common.ResourceBase>(resourceId: Common.ResourceIdentifier, args?: any): Promise<T> {
+    public getResource<T extends ResourceBase>(resourceId: ResourceIdentifier, args?: any): Promise<T> {
         return this.builder.getResource<T>(resourceId, args);
     }
 
     /**
      * Creates a runtime map from the specified map definition
      *
-     * @param {Request.ICreateRuntimeMapOptions} options
-     * @returns {Promise<RtMap.RuntimeMap>}
+     * @param {ICreateRuntimeMapOptions} options
+     * @returns {Promise<RuntimeMap>}
      *
      * @memberOf Client
      */
-    public createRuntimeMap(options: Request.ICreateRuntimeMapOptions): Promise<RtMap.RuntimeMap> {
+    public createRuntimeMap(options: ICreateRuntimeMapOptions): Promise<RuntimeMap> {
         return this.builder.createRuntimeMap(options);
     }
 
     /**
      * Describes a runtime map
      *
-     * @param {Request.IDescribeRuntimeMapOptions} options
-     * @returns {Promise<RtMap.RuntimeMap>}
+     * @param {IDescribeRuntimeMapOptions} options
+     * @returns {Promise<RuntimeMap>}
      *
      * @memberOf Client
      */
-    public describeRuntimeMap(options: Request.IDescribeRuntimeMapOptions): Promise<RtMap.RuntimeMap> {
+    public describeRuntimeMap(options: IDescribeRuntimeMapOptions): Promise<RuntimeMap> {
         return this.builder.describeRuntimeMap(options);
     }
 
     /**
      * Performs a map selection query on the current map
      *
-     * @param {Request.IQueryMapFeaturesOptions} options
-     * @returns {Promise<Query.QueryMapFeaturesResponse>}
+     * @param {IQueryMapFeaturesOptions} options
+     * @returns {Promise<QueryMapFeaturesResponse>}
      *
      * @memberOf Client
      */
-    public queryMapFeatures(options: Request.IQueryMapFeaturesOptions): Promise<Query.QueryMapFeaturesResponse> {
+    public queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<QueryMapFeaturesResponse> {
         return this.builder.queryMapFeatures(options);
     }
 
@@ -172,12 +172,12 @@ export class Client implements Request.IMapGuideClient {
      * Performs a map selection query on the current map. Only applicable for use in MapGuide Open Source
      * 4.0 and higher
      *
-     * @param {Request.IQueryMapFeaturesOptions} options
-     * @returns {Promise<Query.QueryMapFeaturesResponse>}
+     * @param {IQueryMapFeaturesOptions} options
+     * @returns {Promise<QueryMapFeaturesResponse>}
      *
      * @memberOf Client
      */
-    public queryMapFeatures_v4(options: Request.IQueryMapFeaturesOptions): Promise<Query.QueryMapFeaturesResponse> {
+    public queryMapFeatures_v4(options: IQueryMapFeaturesOptions): Promise<QueryMapFeaturesResponse> {
         return this.builder.queryMapFeatures_v4(options);
     }
 

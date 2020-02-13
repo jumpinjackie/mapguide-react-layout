@@ -6,17 +6,11 @@ import olLineString from "ol/geom/LineString";
 import olPolygon from "ol/geom/Polygon";
 import olCircle from "ol/geom/Circle";
 import olGeom from "ol/geom/Geometry";
-import * as Constants from "../constants";
-import * as Runtime from "../api/runtime";
-import * as logger from "../utils/logger";
 import { Client } from "../api/client";
 import { MgError } from "../api/error";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { FeatureSet, SelectedFeatureSet, QueryMapFeaturesResponse } from "../api/contracts/query";
 import { RefreshMode, ICommand, ClientKind, UnitOfMeasure, Bounds } from "../api/common";
-import * as MapActions from "../actions/map";
-import * as TaskPaneActions from "../actions/taskpane";
-import * as LegendActions from "../actions/legend";
 import { deArrayify, buildSelectionXml } from "../api/builders/deArrayify";
 import { FormFrameShim } from "../components/form-frame-shim";
 import { getCommand, DefaultCommands } from "../api/registry/command";
@@ -25,6 +19,12 @@ import { serialize } from "../api/builders/mapagent";
 import { ILocalizedMessages } from "../strings/msgdef";
 import { getUnitOfMeasure } from '../utils/units';
 import { useActiveMapState, useActiveMapSelectionSet, useConfiguredAgentUri, useConfiguredAgentKind, useViewerBusyCount, useViewerSizeUnits } from './hooks';
+import { getFusionRoot, getViewer } from '../api/runtime';
+import { debug, error, warn } from '../utils/logger';
+import { QueryMapFeatureActionOptions, queryMapFeatures, setSelection, invokeCommand } from '../actions/map';
+import { refresh } from '../actions/legend';
+import { goHome } from '../actions/taskpane';
+import { FUSION_MAP_NAME, FUSION_TASKPANE_NAME, FUSION_REDLINE_NAME  } from '../constants';
 
 function isEmptySelection(selection: QueryMapFeaturesResponse | undefined): boolean {
     if (selection && selection.FeatureSet) {
@@ -59,10 +59,10 @@ class FusionApiShim {
         }
     }
     ajaxRequest(url: string, options: any) { // onSuccess: Function, onFailure: Function, parameters: any) {
-        let reqUrl = `${Runtime.getFusionRoot()}/${url}`;
+        let reqUrl = `${getFusionRoot()}/${url}`;
         const client = this.parent.getClient();
-        const resolve = options.onSuccess || (() => logger.debug(`No success handler defined for this operation`));
-        const fail = options.onFailure || options.onException || ((_r: any, res: Error) => logger.error(res));
+        const resolve = options.onSuccess || (() => debug(`No success handler defined for this operation`));
+        const fail = options.onFailure || options.onException || ((_r: any, res: Error) => error(res));
         if (client) {
             if (typeof (options.parameters) == 'string') {
                 reqUrl += "?" + options.parameters;
@@ -118,14 +118,14 @@ class FusionApiShim {
         return undefined;
     }
     getWidgetById(id: string): FusionWidgetApiShim | undefined {
-        if (id == Constants.FUSION_TASKPANE_NAME ||
-            id == Constants.FUSION_MAP_NAME) {
+        if (id == FUSION_TASKPANE_NAME ||
+            id == FUSION_MAP_NAME) {
             return new FusionWidgetApiShim(this.parent);
         }
         return undefined;
     }
     getWidgetsByType(type: string): FusionWidgetApiShim[] {
-        if (type == Constants.FUSION_REDLINE_NAME) {
+        if (type == FUSION_REDLINE_NAME) {
             return [
                 new FusionWidgetApiShim(this.parent)
             ];
@@ -316,7 +316,7 @@ class FusionWidgetApiShim {
         return this;
     }
     getExtentFromPoint(x: number, y: number, scale: number): OL2Bounds | undefined { //Map
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             const view = viewer.getCurrentView();
             if (!scale) {
@@ -336,7 +336,7 @@ class FusionWidgetApiShim {
         return undefined;
     }
     setExtents(bounds: OL2Bounds) { //Map
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.zoomToExtent([bounds.left, bounds.bottom, bounds.right, bounds.top]);
         }
@@ -353,13 +353,13 @@ class FusionWidgetApiShim {
         this.parent.ClearSelection();
     }
     cancelDigitization(): void { //Map
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.cancelDigitization();
         }
     }
     query(options: any): void { //Map
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         const { map } = this.parent.props;
         if (map && viewer) {
             const mapName = map.Name;
@@ -379,7 +379,7 @@ class FusionWidgetApiShim {
         }
     }
     setSelection(xml: string, zoomTo: boolean): void { //Map
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             //TODO: Support zoomTo
             viewer.setSelectionXml(xml, {
@@ -442,25 +442,25 @@ class FusionWidgetApiShim {
         this.parent.Refresh();
     }
     info(msg: string): void { //Map MessageBar
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             this._activeToast = viewer.toastPrimary("info-sign", <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />);
         }
     }
     warn(msg: string): void { //Map MessageBar
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             this._activeToast = viewer.toastPrimary("warning-sign", <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />);
         }
     }
     error(msg: string): void { //Map MessageBar
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             this._activeToast = viewer.toastPrimary("error", <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />);
         }
     }
     clear(): void { //Map MessageBar
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer && this._activeToast) {
             viewer.dismissToast(this._activeToast);
         }
@@ -497,7 +497,7 @@ class FusionWidgetApiShim {
         return null;
     }
     pixToGeoMeasure(tolerance: number) { //Map
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             return tolerance * viewer.getResolution();
         }
@@ -521,7 +521,7 @@ class FusionWidgetApiShim {
         };
     }
     digitizePoint(_options: any, handler: FusionGeomDigitizer) { //Map
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.digitizePoint(pt => {
                 handler(new OL2Geom(pt));
@@ -529,7 +529,7 @@ class FusionWidgetApiShim {
         }
     }
     digitizeLine(_options: any, handler: FusionGeomDigitizer) { //Map
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.digitizeLine(ln => {
                 handler(new OL2Geom(ln));
@@ -537,7 +537,7 @@ class FusionWidgetApiShim {
         }
     }
     digitizeLineString(_options: any, handler: FusionGeomDigitizer) { //Map
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.digitizeLineString(lstr => {
                 handler(new OL2Geom(lstr));
@@ -545,7 +545,7 @@ class FusionWidgetApiShim {
         }
     }
     digitizeRectangle(_options: any, handler: FusionGeomDigitizer) { //Map
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.digitizeRectangle(rect => {
                 handler(new OL2Rect(rect));
@@ -553,7 +553,7 @@ class FusionWidgetApiShim {
         }
     }
     digitizePolygon(_options: any, handler: FusionGeomDigitizer) { //Map
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.digitizePolygon(poly => {
                 handler(new OL2Geom(poly));
@@ -561,7 +561,7 @@ class FusionWidgetApiShim {
         }
     }
     digitizeCircle(_options: any, handler: FusionGeomDigitizer) { //Map
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.digitizeCircle(circ => {
                 handler(FusionWidgetApiShim.toOL2Circle(circ));
@@ -661,7 +661,7 @@ interface IViewerApiShimDispatch {
     legendRefresh: () => void;
     invokeCommand: (cmd: ICommand, parameters?: any) => void;
     setSelection: (mapName: string, selectionSet: any) => void;
-    queryMapFeatures: (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => void;
+    queryMapFeatures: (mapName: string, options: QueryMapFeatureActionOptions) => void;
 }
 
 type ViewerApiShimProps = IViewerApiShimProps & IViewerApiShimState & IViewerApiShimDispatch;
@@ -705,23 +705,23 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         return this.fusionAPI;
     }
     public registerForEvent(eventID: number, callback: Function): void {
-        logger.debug(`Fusion registerForEvent - ${eventID}`);
+        debug(`Fusion registerForEvent - ${eventID}`);
         if (!this.fusionEventHandlers[eventID]) {
             this.fusionEventHandlers[eventID] = [];
         }
         this.fusionEventHandlers[eventID].push(callback);
     }
     public deregisterForEvent(eventID: number, callback: Function): void {
-        logger.debug(`Fusion deregisterForEvent - ${eventID}`);
+        debug(`Fusion deregisterForEvent - ${eventID}`);
         if (this.fusionEventHandlers[eventID]) {
             const funcs = this.fusionEventHandlers[eventID].filter(f => f != callback);
             this.fusionEventHandlers[eventID] = funcs;
         } else {
-            logger.debug(`No callbacks registered for fusion event - ${eventID}`);
+            debug(`No callbacks registered for fusion event - ${eventID}`);
         }
     }
     public triggerFusionEvent(eventID: number) {
-        logger.debug(`Trigger Fusion Event ID - ${eventID}`);
+        debug(`Trigger Fusion Event ID - ${eventID}`);
         if (this.fusionEventHandlers[eventID]) {
             for (const cb of this.fusionEventHandlers[eventID]) {
                 cb.apply(null, arguments);
@@ -805,7 +805,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
                 cmdName = DefaultCommands.ZoomToSelection;
                 break;
             default:
-                logger.warn(`Unknown command code: ${code}`);
+                warn(`Unknown command code: ${code}`);
                 return;
         }
         const cmd = getCommand(cmdName);
@@ -814,13 +814,13 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public ClearSelection(): void {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.clearSelection();
         }
     }
     public DigitizeCircle(handler: (circle: IAjaxViewerCircle) => void): void {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.digitizeCircle(circle => {
                 const center = circle.getCenter();
@@ -836,7 +836,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public DigitizeLine(handler: (geom: AjaxViewerLineStringOrPolygon) => void): void {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.digitizeLine(line => {
                 const coords = line.getCoordinates().map<IAjaxViewerPoint>(coord => {
@@ -850,7 +850,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public DigitizePoint(handler: (geom: IAjaxViewerPoint) => void): void {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.digitizePoint(pt => {
                 const coords = pt.getCoordinates();
@@ -859,7 +859,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public DigitizePolygon(handler: (geom: AjaxViewerLineStringOrPolygon) => void): void {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.digitizePolygon(poly => {
                 //Our API isn't expected to allow drawing polygons with holes, so the first (outer) ring
@@ -876,7 +876,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public DigitizeLineString(handler: (geom: AjaxViewerLineStringOrPolygon) => void): void {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.digitizeLineString(line => {
                 const coords = line.getCoordinates().map<IAjaxViewerPoint>(coord => {
@@ -890,7 +890,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public DigitizeRectangle(handler: (geom: IAjaxViewerRect) => void): void {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.digitizeRectangle(rect => {
                 const extent = rect.getExtent();
@@ -908,7 +908,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public GetCenter(): IAjaxViewerPoint | null {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             const view = viewer.getCurrentView();
             return { X: view.x, Y: view.y };
@@ -937,14 +937,14 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         return selLayers;
     }
     public GetMetersPerUnit(): number | null {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             return viewer.getMetersPerUnit();
         }
         return null;
     }
     public GetMapHeight(): number {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             const [, gh] = viewer.getSize();
             return gh;
@@ -957,7 +957,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         return uom.name;
     }
     public GetMapWidth(): number {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             const [gw] = viewer.getSize();
             return gw;
@@ -965,7 +965,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         return NaN;
     }
     public GetScale(): number | null {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             const view = viewer.getCurrentView();
             return view.scale;
@@ -1036,7 +1036,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         return count;
     }
     public GetSelectedFeatures(): IAjaxViewerSelectionSet | undefined {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             const selection = viewer.getSelection();
             if (selection && selection.SelectedFeatures) {
@@ -1055,7 +1055,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public IsDigitizing(): boolean {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             return viewer.isDigitizing();
         } else {
@@ -1072,12 +1072,12 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.MapUnitsToLatLon(x, y)`);
     }
     public Refresh(): void {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         viewer?.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
         this.props.legendRefresh?.();
     }
     public ScreenToMapUnits(x: number, y: number): IAjaxViewerPoint | undefined {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             const [sx, sy] = viewer.screenToMapUnits(x, y);
             return { X: sx, Y: sy };
@@ -1090,13 +1090,13 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         //This is what the AJAX viewer does
     }
     public SetSelectionXML(xmlSet: string): void {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.setSelectionXml(xmlSet);
         }
     }
     public ZoomToView(x: number, y: number, scale: number) {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.zoomToView(x, y, scale);
         }
@@ -1106,7 +1106,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
     }
     //This isn't in the AJAX Viewer API reference, but there are samples referencing it!
     public ZoomToScale(scale: number): void {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             const view = viewer.getCurrentView();
             viewer.zoomToView(view.x, view.y, scale);
@@ -1146,7 +1146,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         browserWindow.GotoHomePage = browserWindow.GotoHomePage || (() => this.goHome());
 
         // ======= Extended Viewer API ========== //
-        browserWindow.GetViewerInterface = browserWindow.GetViewerInterface || (() => Runtime.getViewer());
+        browserWindow.GetViewerInterface = browserWindow.GetViewerInterface || (() => getViewer());
         browserWindow.RegisterSelectionHandler = browserWindow.RegisterSelectionHandler || ((handler: SelectionHandlerCallback) => this.RegisterSelectionHandler(handler));
         browserWindow.UnregisterSelectionHandler = browserWindow.UnregisterSelectionHandler || ((handler: SelectionHandlerCallback) => this.UnregisterSelectionHandler(handler));
     }
@@ -1188,11 +1188,11 @@ const ViewerApiShim = () => {
     const sizeUnits = useViewerSizeUnits();
 
     const dispatch = useDispatch();
-    const goHome = () => dispatch(TaskPaneActions.goHome());
-    const legendRefresh = () => dispatch(LegendActions.refresh());
-    const invokeCommand = (cmd: ICommand, parameters: any) => dispatch(MapActions.invokeCommand(cmd, parameters));
-    const setSelection = (mapName: string, res: any) => dispatch(MapActions.setSelection(mapName, res));
-    const queryMapFeatures = (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => dispatch(MapActions.queryMapFeatures(mapName, options));
+    const goHomeAction = () => dispatch(goHome());
+    const legendRefresh = () => dispatch(refresh());
+    const invokeCommandAction = (cmd: ICommand, parameters: any) => dispatch(invokeCommand(cmd, parameters));
+    const setSelectionAction = (mapName: string, res: any) => dispatch(setSelection(mapName, res));
+    const queryMapFeaturesAction = (mapName: string, options: QueryMapFeatureActionOptions) => dispatch(queryMapFeatures(mapName, options));
 
     return <ViewerApiShimInner map={map}
         selectionSet={selectionSet}
@@ -1200,11 +1200,11 @@ const ViewerApiShim = () => {
         agentKind={agentKind}
         busyCount={busyCount}
         sizeUnits={sizeUnits}
-        goHome={goHome}
+        goHome={goHomeAction}
         legendRefresh={legendRefresh}
-        invokeCommand={invokeCommand}
-        setSelection={setSelection}
-        queryMapFeatures={queryMapFeatures} />;
+        invokeCommand={invokeCommandAction}
+        setSelection={setSelectionAction}
+        queryMapFeatures={queryMapFeaturesAction} />;
 }
 
 export default ViewerApiShim;

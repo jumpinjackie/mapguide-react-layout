@@ -5,12 +5,12 @@ import {
     ActiveMapTool} from "../api/common";
 import { getViewer } from "../api/runtime";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
-import * as MapActions from "../actions/map";
 import { IMeasureCallback, MeasureSegment, MeasureContext, IMeasureComponent } from "./measure-context";
 import { roundTo } from "../utils/number";
 import { Callout, Intent, ButtonGroup, Button, HTMLSelect } from '@blueprintjs/core';
 import { useActiveMapName, useViewerLocale, useAvailableMaps } from './hooks';
 import GeometryType from 'ol/geom/GeometryType';
+import { setActiveTool } from '../actions/map';
 
 export interface IMeasureContainerProps {
 
@@ -241,12 +241,12 @@ const MeasureContainer = (props: IMeasureContainerProps) => {
     const locale = useViewerLocale();
     const mapNames = useAvailableMaps()?.map(m => m.value);
     const dispatch = useDispatch();
-    const setActiveTool = (tool: ActiveMapTool) => dispatch(MapActions.setActiveTool(tool))
+    const setActiveToolAction = (tool: ActiveMapTool) => dispatch(setActiveTool(tool))
     return <MeasureContainerInner 
         activeMapName={activeMapName}
         locale={locale}
         mapNames={mapNames}
-        setActiveTool={setActiveTool}
+        setActiveTool={setActiveToolAction}
         {...props} />;
 };
 

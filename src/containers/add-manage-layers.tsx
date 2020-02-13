@@ -1,16 +1,16 @@
 import * as React from "react";
-import * as Runtime from "../api/runtime";
 import { tr } from "../api/i18n";
 import { ILayerInfo, Bounds, LayerProperty } from "../api/common";
 import { IVectorFeatureStyle } from "../api/ol-style-helpers";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
 import { Tabs, Tab, Icon } from '@blueprintjs/core';
-import * as MapActions from "../actions/map";
 import { useViewerLocale, useActiveMapName, useActiveMapLayers, useActiveMapView } from './hooks';
 import olVectorLayer from "ol/layer/Vector";
 import { transformExtent } from "ol/proj";
 import { useDispatch } from 'react-redux';
+import { mapLayerAdded, addMapLayerBusyWorker, removeMapLayerBusyWorker, removeMapLayer, setMapLayerIndex, setMapLayerVisibility, setMapLayerOpacity, setMapLayerVectorStyle } from '../actions/map';
+import { getViewer } from '../api/runtime';
 
 /**
  * 
@@ -40,38 +40,38 @@ const AddManageLayersContainer = () => {
     };
     const onLayerAdded = (layer: ILayerInfo) => {
         if (activeMapName) {
-            dispatch(MapActions.mapLayerAdded(activeMapName, layer));
+            dispatch(mapLayerAdded(activeMapName, layer));
         }
     };
     const onAddLayerBusyWorker = (name: string) => {
         if (activeMapName) {
-            dispatch(MapActions.addMapLayerBusyWorker(activeMapName, name));
+            dispatch(addMapLayerBusyWorker(activeMapName, name));
         }
     }
     const onRemoveLayerBusyWorker = (name: string) => {
         if (activeMapName) {
-            dispatch(MapActions.removeMapLayerBusyWorker(activeMapName, name));
+            dispatch(removeMapLayerBusyWorker(activeMapName, name));
         }
     };
     const removeHandler = (layerName: string) => {
         if (activeMapName) {
-            dispatch(MapActions.removeMapLayer(activeMapName, layerName));
+            dispatch(removeMapLayer(activeMapName, layerName));
         }
     };
     const upHandler = (layerName: string) => {
         const newIndex = getLayerIndex(layerName);
         if (activeMapName && newIndex >= 0) {
-            dispatch(MapActions.setMapLayerIndex(activeMapName, layerName, newIndex - 1));
+            dispatch(setMapLayerIndex(activeMapName, layerName, newIndex - 1));
         }
     };
     const downHandler = (layerName: string) => {
         const newIndex = getLayerIndex(layerName);
         if (layers && activeMapName && newIndex < layers.length - 1) {
-            dispatch(MapActions.setMapLayerIndex(activeMapName, layerName, newIndex + 1));
+            dispatch(setMapLayerIndex(activeMapName, layerName, newIndex + 1));
         }
     };
     const zoomToBounds = (layerName: string) => {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             const layer = viewer.getLayerManager().getLayer(layerName);
             // If the layer has a WGS84 bbox, we'll use that
@@ -93,17 +93,17 @@ const AddManageLayersContainer = () => {
     };
     const setVisibility = (layerName: string, visible: boolean) => {
         if (activeMapName) {
-            dispatch(MapActions.setMapLayerVisibility(activeMapName, layerName, visible));
+            dispatch(setMapLayerVisibility(activeMapName, layerName, visible));
         }
     };
     const setOpacity = (layerName: string, value: number) => {
         if (activeMapName) {
-            dispatch(MapActions.setMapLayerOpacity(activeMapName, layerName, value));
+            dispatch(setMapLayerOpacity(activeMapName, layerName, value));
         }
     };
     const updateVectorStyle = (layerName: string, value: IVectorFeatureStyle) => {
         if (activeMapName) {
-            dispatch(MapActions.setMapLayerVectorStyle(activeMapName, layerName, value));
+            dispatch(setMapLayerVectorStyle(activeMapName, layerName, value));
         }
     }
     if (layers) {

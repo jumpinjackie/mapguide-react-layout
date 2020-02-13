@@ -16,7 +16,6 @@ import {
     IInvokeUrlCommandParameter,
     ActiveMapTool
 } from "../../api/common";
-import * as ModalActions from "../../actions/modal";
 import { getFusionRoot } from "../../api/runtime";
 import { IItem, IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../../components/toolbar";
 import { tr } from "../i18n";
@@ -25,9 +24,10 @@ import {
     SPRITE_ICON_ERROR
 } from "../../constants/assets";
 import { assertNever } from "../../utils/never";
-import * as logger from "../../utils/logger";
 import { ensureParameters } from "../../utils/url";
 import { ActionType } from '../../constants/actions';
+import { showModalUrl } from '../../actions/modal';
+import { error } from '../../utils/logger';
 
 const FUSION_ICON_REGEX = /images\/icons\/[a-zA-Z\-]*.png/
 
@@ -318,7 +318,7 @@ function isSearchCommand(cmdDef: any): cmdDef is ISearchCommand {
 }
 
 function openModalUrl(name: string, dispatch: ReduxDispatch, url: string, modalTitle?: string) {
-    dispatch(ModalActions.showModalUrl({
+    dispatch(showModalUrl({
         modal: {
             title: modalTitle || tr(name as any),
             backdrop: false,
@@ -367,10 +367,10 @@ export function openUrlInTarget(name: string, cmdDef: ITargetedCommand, hasTaskP
                 }
             }
             if (!bInvoked) {
-                logger.error(`Frame not found: ${cmdDef.targetFrame}`);
+                error(`Frame not found: ${cmdDef.targetFrame}`);
             }
         } else {
-            logger.error(`Command ${name} has a target of "SpecifiedFrame", but does not specify a target frame`);
+            error(`Command ${name} has a target of "SpecifiedFrame", but does not specify a target frame`);
         }
     } else {
         assertNever(target);

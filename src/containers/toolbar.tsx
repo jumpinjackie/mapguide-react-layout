@@ -7,10 +7,10 @@ import {
     FlyoutVisibilitySet} from "../api/common";
 import { mapToolbarReference } from "../api/registry/command";
 import { Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
-import * as MapActions from "../actions/map";
 import { processMenuItems } from "../utils/menu";
-import * as FlyoutActions from "../actions/flyout";
 import { useReducedToolbarAppState } from './hooks';
+import { invokeCommand } from '../actions/map';
+import { openFlyout, closeFlyout, openComponent, closeComponent } from "../actions/flyout";
 
 export interface IToolbarContainerProps {
     id: string;
@@ -27,16 +27,16 @@ const ToolbarContainer = (props: IToolbarContainerProps) => {
     const toolbar = useSelector<IApplicationState, any>(state => state.toolbar.toolbars[props.id]);
     const tbState = useReducedToolbarAppState();
 
-    const invokeCommand = (cmd: ICommand, parameters: any) => dispatch(MapActions.invokeCommand(cmd, parameters));
-    const openFlyout = (id: string, metrics: IDOMElementMetrics) => dispatch(FlyoutActions.openFlyout(id, metrics));
-    const closeFlyout = (id: string) => dispatch(FlyoutActions.closeFlyout(id));
-    const openComponent = (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => dispatch(FlyoutActions.openComponent(id, metrics, name, props));
-    const closeComponent = (id: string) => dispatch(FlyoutActions.closeComponent(id));
+    const invokeCommandAction = (cmd: ICommand, parameters: any) => dispatch(invokeCommand(cmd, parameters));
+    const openFlyoutAction = (id: string, metrics: IDOMElementMetrics) => dispatch(openFlyout(id, metrics));
+    const closeFlyoutAction = (id: string) => dispatch(closeFlyout(id));
+    const openComponentAction = (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => dispatch(openComponent(id, metrics, name, props));
+    const closeComponentAction = (id: string) => dispatch(closeComponent(id));
 
-    const onCloseFlyout = (id: string) => closeFlyout?.(id);
-    const onOpenFlyout = (id: string, metrics: IDOMElementMetrics) => openFlyout?.(id, metrics);
-    const onOpenComponent = (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => openComponent?.(id, metrics, name, props);
-    const onCloseComponent = (id: string) => closeComponent?.(id);
+    const onCloseFlyout = (id: string) => closeFlyoutAction?.(id);
+    const onOpenFlyout = (id: string, metrics: IDOMElementMetrics) => openFlyoutAction?.(id, metrics);
+    const onOpenComponent = (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => openComponentAction?.(id, metrics, name, props);
+    const onCloseComponent = (id: string) => closeComponentAction?.(id);
 
     const flyoutStates: FlyoutVisibilitySet = {};
     if (flyouts) {
@@ -46,14 +46,14 @@ const ToolbarContainer = (props: IToolbarContainerProps) => {
         }
     }
     let tbContainerStyle: React.CSSProperties = { ...(containerStyle || {}) };
-    if (toolbar && toolbar.items && invokeCommand) {
+    if (toolbar && toolbar.items && invokeCommandAction) {
         if (vertical === true) {
             tbContainerStyle.width = DEFAULT_TOOLBAR_SIZE;
         } else {
             tbContainerStyle.height = DEFAULT_TOOLBAR_SIZE;
             tbContainerStyle.overflow = "auto";
         }
-        const items = (toolbar.items as any[]).map(tb => mapToolbarReference(tb, tbState, invokeCommand));
+        const items = (toolbar.items as any[]).map(tb => mapToolbarReference(tb, tbState, invokeCommandAction));
         const childItems = processMenuItems(items);
         return <Toolbar vertical={vertical}
             hideVerticalLabels={hideVerticalLabels}

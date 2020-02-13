@@ -17,7 +17,6 @@ import olImageLayer from "ol/layer/Image";
 import olLayerBase from "ol/layer/Base";
 import { IMapViewerContextCallback, IMapViewerContextProps, MapGuideMockMode } from '../components/map-viewer-context';
 import { RuntimeMap } from './contracts/runtime-map';
-import * as logger from '../utils/logger';
 import { createExternalSource } from '../components/external-layer-factory';
 import { strIsNullOrEmpty } from '../utils/string';
 import { parseUrl } from '../utils/url';
@@ -33,6 +32,7 @@ import { getLayerInfo } from './layer-manager';
 import * as olHas from "ol/has";
 import Feature from "ol/Feature";
 import { assertNever } from '../utils/never';
+import { debug } from '../utils/logger';
 
 function blankImageLoadFunction(image: ImageWrapper) {
     (image.getImage() as any).src = BLANK_GIF_DATA_URI;
@@ -461,7 +461,7 @@ class MgInnerLayerSetFactory {
             externalBaseLayersGroup.set(LayerProperty.IS_GROUP, true);
         }
 
-        logger.debug(`Creating OL view with projection ${projection} and ${resolutions.length} resolutions`);
+        debug(`Creating OL view with projection ${projection} and ${resolutions.length} resolutions`);
         let view: olView;
         if (resolutions.length == 0) {
             view = new olView({

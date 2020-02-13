@@ -5,18 +5,17 @@ import ViewerApiShim from "../containers/viewer-shim";
 import ModalLauncher from "../containers/modal-launcher";
 import FlyoutRegionContainer from "../containers/flyout-region";
 import { tr } from "../api/i18n";
-import * as Constants from "../constants";
 import { GenericEvent, ITemplateReducerState } from "../api/common";
 import InitWarningDisplay from "../containers/init-warning-display";
 import { ActionType } from '../constants/actions';
 import { IElementState, ViewerAction } from '../actions/defs';
-import * as TemplateActions from "../actions/template";
 import { Spinner, Intent, Icon } from '@blueprintjs/core';
 import { useViewerBusyCount, useLastDispatchedAction, useReducedToolbarAppState } from '../containers/hooks';
 import { useCommonTemplateState } from './hooks';
 import { isElementState } from '../reducers/template';
-import { NBSP } from "../constants";
+import { NBSP, WEBLAYOUT_TOOLBAR } from "../constants";
 import isMobile from "ismobilejs";
+import { setElementStates } from '../actions/template';
 
 function sidebarTemplateReducer(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
@@ -264,7 +263,7 @@ const SidebarLayout = () => {
         showTaskPane,
     } = useCommonTemplateState(sidebarTemplateReducer);
     const tbState = useReducedToolbarAppState();
-    const setElementStates = (states: IElementState) => dispatch(TemplateActions.setElementStates(states));
+    const setElementStatesAction = (states: IElementState) => dispatch(setElementStates(states));
     //console.log(`leg: ${showLegend}, sel: ${showSelection}, task: ${showTaskPane}`);
     const {
         hasTaskPane,
@@ -294,7 +293,7 @@ const SidebarLayout = () => {
         setActiveTab(tab);
     }, [showLegend, showSelection, showTaskPane]);
     const onCollapse = () => {
-        setElementStates({
+        setElementStatesAction({
             taskPaneVisible: false,
             legendVisible: false,
             selectionPanelVisible: false
@@ -318,7 +317,7 @@ const SidebarLayout = () => {
                 break;
         }
         if (est.legendVisible || est.selectionPanelVisible || est.taskPaneVisible) {
-            setElementStates(est);
+            setElementStatesAction(est);
         }
     }
     const onActivateTab = (tab: SidebarTab) => {
@@ -339,7 +338,7 @@ const SidebarLayout = () => {
                 break;
         }
         if (est.legendVisible || est.selectionPanelVisible || est.taskPaneVisible) {
-            setElementStates(est);
+            setElementStatesAction(est);
             setActiveTab(tab);
         }
     }
@@ -370,7 +369,7 @@ const SidebarLayout = () => {
                     top -= 40;
                 }
                 return <div id="toolbar-region" style={{ top: top }}>
-                    <ToolbarContainer id={Constants.WEBLAYOUT_TOOLBAR} containerClass="sidebar-toolbar" vertical={true} hideVerticalLabels={true} containerStyle={{ position: "absolute", left: 4, right: 6, zIndex: 100 }} />
+                    <ToolbarContainer id={WEBLAYOUT_TOOLBAR} containerClass="sidebar-toolbar" vertical={true} hideVerticalLabels={true} containerStyle={{ position: "absolute", left: 4, right: 6, zIndex: 100 }} />
                 </div>;
             }
         })()}

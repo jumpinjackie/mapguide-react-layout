@@ -4,12 +4,12 @@ import {
     GenericEvent,
     UnitOfMeasure
 } from "../api/common";
-import * as MapActions from "../actions/map";
 import { tr } from "../api/i18n";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from "../constants/index";
 import { getUnits, getUnitOfMeasure } from "../utils/units";
 import { Slider, HTMLSelect } from '@blueprintjs/core';
 import { useActiveMapName, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSizeUnits, useViewerLocale, useActiveMapLayerTransparency, useActiveMapExternalBaseLayers } from './hooks';
+import { setManualFeatureTooltipsEnabled, setFeatureTooltipsEnabled, setLayerTransparency, setViewSizeUnits } from '../actions/map';
 
 export interface IViewerOptionsProps {
 
@@ -24,13 +24,13 @@ const ViewerOptions = () => {
     const viewSizeUnits = useViewerSizeUnits();
     const locale = useViewerLocale();
     const dispatch = useDispatch();
-    const toggleManualMapTips = (enabled: boolean) => dispatch(MapActions.setManualFeatureTooltipsEnabled(enabled));
-    const toggleMapTips = (enabled: boolean) => dispatch(MapActions.setFeatureTooltipsEnabled(enabled));
-    const setLayerTransparency = (mapName: string, id: string, opacity: number) => dispatch(MapActions.setLayerTransparency(mapName, id, opacity));
-    const setViewSizeDisplayUnits = (units: UnitOfMeasure) => dispatch(MapActions.setViewSizeUnits(units));
+    const toggleManualMapTipsAction = (enabled: boolean) => dispatch(setManualFeatureTooltipsEnabled(enabled));
+    const toggleMapTipsAction = (enabled: boolean) => dispatch(setFeatureTooltipsEnabled(enabled));
+    const setLayerTransparencyAction = (mapName: string, id: string, opacity: number) => dispatch(setLayerTransparency(mapName, id, opacity));
+    const setViewSizeDisplayUnitsAction = (units: UnitOfMeasure) => dispatch(setViewSizeUnits(units));
     const onMgLayerOpacityChanged = (mapName: string | undefined, layerId: string, value: number) => {
         if (mapName) {
-            setLayerTransparency?.(mapName, layerId, value);
+            setLayerTransparencyAction?.(mapName, layerId, value);
         }
     };
     const onBaseOpacityChanged = (value: number) => {
@@ -43,13 +43,13 @@ const ViewerOptions = () => {
         onMgLayerOpacityChanged(mapName, LAYER_ID_MG_SEL_OVERLAY, value);
     };
     const onViewSizeUnitsChanged = (e: GenericEvent) => {
-        setViewSizeDisplayUnits(e.target.value);
+        setViewSizeDisplayUnitsAction(e.target.value);
     };
     const onFeatureTooltipsChanged = (e: GenericEvent) => {
-        toggleMapTips(e.target.checked);
+        toggleMapTipsAction(e.target.checked);
     };
     const onManualFeatureTooltipsChanged = (e: GenericEvent) => {
-        toggleManualMapTips(e.target.checked);
+        toggleManualMapTipsAction(e.target.checked);
     };
     const units = getUnits();
     let opBase = 1.0;

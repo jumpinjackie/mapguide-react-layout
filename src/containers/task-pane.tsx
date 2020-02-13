@@ -8,13 +8,13 @@ import {
 } from "../api/common";
 import { IItem } from "../components/toolbar";
 import { TaskPane, TASK_PANE_OVERLAY_BGCOLOR } from "../components/task-pane";
-import * as MapActions from "../actions/map";
-import * as TaskPaneActions from "../actions/taskpane";
 import { areUrlsSame, ensureParameters } from "../utils/url";
 import { tr } from "../api/i18n";
-import * as FlyoutActions from "../actions/flyout";
 import { NonIdealState } from '@blueprintjs/core';
 import { useActiveMapBranch, useViewerFlyouts, useTaskPaneInitialUrl, useTaskPaneLastUrlPushed, useTaskPaneNavigationIndex, useTaskPaneNavigationStack, useConfiguredCapabilities, useViewerLocale } from './hooks';
+import { invokeCommand } from '../actions/map';
+import { goHome, goForward, goBack, pushUrl } from '../actions/taskpane';
+import { openFlyout, closeFlyout } from '../actions/flyout';
 
 export interface ITaskPaneContainerProps {
     maxHeight?: number;
@@ -154,13 +154,13 @@ const TaskPaneContainer = (props: ITaskPaneContainerProps) => {
     const hasTaskBar = useConfiguredCapabilities().hasTaskBar;
 
     const dispatch = useDispatch();
-    const invokeCommand = (cmd: ICommand, parameters: any) => dispatch(MapActions.invokeCommand(cmd, parameters));
-    const goHome = () => dispatch(TaskPaneActions.goHome());
-    const goForward = () => dispatch(TaskPaneActions.goForward());
-    const goBack = () => dispatch(TaskPaneActions.goBack());
-    const pushUrl = (url: string, silent?: boolean) => dispatch(TaskPaneActions.pushUrl(url, silent));
-    const openFlyout = (id: string, metrics: IDOMElementMetrics) => dispatch(FlyoutActions.openFlyout(id, metrics));
-    const closeFlyout = (id: string) => dispatch(FlyoutActions.closeFlyout(id));
+    const invokeCommandAction = (cmd: ICommand, parameters: any) => dispatch(invokeCommand(cmd, parameters));
+    const goHomeAction = () => dispatch(goHome());
+    const goForwardAction = () => dispatch(goForward());
+    const goBackAction = () => dispatch(goBack());
+    const pushUrlAction = (url: string, silent?: boolean) => dispatch(pushUrl(url, silent));
+    const openFlyoutAction = (id: string, metrics: IDOMElementMetrics) => dispatch(openFlyout(id, metrics));
+    const closeFlyoutAction = (id: string) => dispatch(closeFlyout(id));
 
     return <TaskPaneContainerInner map={map}
         locale={locale}
@@ -169,14 +169,14 @@ const TaskPaneContainer = (props: ITaskPaneContainerProps) => {
         lastUrlPushed={lastUrlPushed}
         navIndex={navIndex}
         navigationStack={navigationStack}
-        invokeCommand={invokeCommand}
+        invokeCommand={invokeCommandAction}
         hasTaskBar={hasTaskBar}
-        goHome={goHome}
-        goForward={goForward}
-        goBack={goBack}
-        pushUrl={pushUrl}
-        openFlyout={openFlyout}
-        closeFlyout={closeFlyout}
+        goHome={goHomeAction}
+        goForward={goForwardAction}
+        goBack={goBackAction}
+        pushUrl={pushUrlAction}
+        openFlyout={openFlyoutAction}
+        closeFlyout={closeFlyoutAction}
         {...props} />;
 };
 

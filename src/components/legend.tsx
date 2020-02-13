@@ -8,9 +8,9 @@ import { Icon, ImageIcon } from "./icon";
 import { Card, Icon as BpIcon, Button, InputGroup } from "@blueprintjs/core";
 import { scaleRangeBetween } from "../utils/number";
 import { tr } from "../api/i18n";
-import * as Constants from "../constants";
 import { BlueprintSvgIconNames } from '../constants/assets';
 import { strIsNullOrEmpty } from '../utils';
+import { NBSP } from '../constants';
 
 const ICON_LEGEND_LAYER: BlueprintSvgIconNames = "layer";
 const ICON_SELECT: BlueprintSvgIconNames = "select";
@@ -95,7 +95,7 @@ interface IEmptyNodeProps {
 }
 
 const EmptyNode: React.StatelessComponent<IEmptyNodeProps> = (props: IEmptyNodeProps) => {
-    return <div style={EMPTY_STYLE(props.baseSize)}>{Constants.NBSP}</div>;
+    return <div style={EMPTY_STYLE(props.baseSize)}>{NBSP}</div>;
 };
 
 interface IRuleNodeProps {
@@ -335,7 +335,7 @@ function isGroupVisibleAtScale(group: MapGroup, tree: any, scale: number): boole
 
 interface TreeState {
     root: (MapLayer | MapGroup)[],
-    groupChildren: {[objectId: string]: (MapLayer | MapGroup)[]}
+    groupChildren: { [objectId: string]: (MapLayer | MapGroup)[] }
 }
 
 function itemTextFilter(items: (MapLayer | MapGroup)[], text: string) {
@@ -368,11 +368,11 @@ function setupTree(map: RuntimeMap) {
     const state = {
         Layers: map.Layer,
         Groups: map.Group,
-        LayerMap: {} as {[objectId: string]: MapLayer},
-        GroupMap: {} as {[objectId: string]: MapGroup},
+        LayerMap: {} as { [objectId: string]: MapLayer },
+        GroupMap: {} as { [objectId: string]: MapGroup },
         tree: {
             root: [] as (MapLayer | MapGroup)[],
-            groupChildren: {} as {[objectId: string]: (MapLayer | MapGroup)[]}
+            groupChildren: {} as { [objectId: string]: (MapLayer | MapGroup)[] }
         } as TreeState
     };
     if (map.Layer) {
@@ -528,7 +528,9 @@ export const Legend = (props: ILegendProps) => {
         props.onLayerVisibilityChanged?.(layerId, visible);
     };
     const getIconMimeType = (): string | undefined => {
-        return props.map.IconMimeType;
+        return props.map.IconMimeType
+            ? `${props.map.IconMimeType}`
+            : undefined;
     };
     const getChildren = (objectId: string): (MapLayer | MapGroup)[] => {
         return state.tree.groupChildren[objectId] || [];
@@ -581,7 +583,7 @@ export const Legend = (props: ILegendProps) => {
                         placeholder={tr("LEGEND_FILTER_LAYERS", props.locale)}
                         onChange={(e: any) => onFilterUpdate(e.target.value)}
                         rightElement={<Button minimal icon={ICON_CLEAR}
-                        onClick={() => onExitFilterMode()} />} />;
+                            onClick={() => onExitFilterMode()} />} />;
                 } else {
                     return <Button onClick={() => onEnterFilterMode()} title={tr("LEGEND_FILTER_LAYERS", props.locale)} icon={ICON_SEARCH} style={{ position: "absolute", right: 0, top: 0 }} />
                 }

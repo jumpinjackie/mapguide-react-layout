@@ -1,4 +1,3 @@
-import * as logger from '../../utils/logger';
 import OverlayPositioning from 'ol/OverlayPositioning';
 import debounce = require('lodash.debounce');
 import olOverlay from "ol/Overlay";
@@ -11,6 +10,7 @@ import { Client } from '../../api/client';
 import * as olExtent from "ol/extent";
 import { isSessionExpiredError } from '../../api/error';
 import { tr } from '../../api/i18n';
+import { debug } from '../../utils/logger';
 
 export class FeatureQueryTooltip {
     private wktFormat: olWKTFormat;
@@ -46,7 +46,7 @@ export class FeatureQueryTooltip {
     public raiseQueryFromPoint(pixel: [number, number]) {
         const box = this.callback.getPointSelectionBox(pixel);
         const geom = fromExtent(box);
-        logger.debug(`[${new Date()}] FeatureTooltip - onMouseMove (${box[0]}, ${box[1]}) (${box[2]}, ${box[3]})`);
+        debug(`[${new Date()}] FeatureTooltip - onMouseMove (${box[0]}, ${box[1]}) (${box[2]}, ${box[3]})`);
         this.sendTooltipQuery(geom);
     }
     public onMouseMove(e: GenericEvent) {
@@ -70,7 +70,7 @@ export class FeatureQueryTooltip {
             return;
         }
         if (this.isMouseOverTooltip) {
-            logger.debug(`Mouse over tooltip. Doing nothing`);
+            debug(`Mouse over tooltip. Doing nothing`);
             return;
         }
         //const selectedLayerNames = this.onRequestSelectableLayers();

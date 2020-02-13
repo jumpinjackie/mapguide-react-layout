@@ -7,8 +7,8 @@ import { ImageIcon } from "./icon";
 import {
     BlueprintSvgIconNames
 } from "../constants/assets";
-import * as Constants from "../constants";
 import { Icon } from '@blueprintjs/core';
+import { NBSP } from '../constants';
 
 export const DEFAULT_TOOLBAR_SIZE = 29;
 export const TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";
@@ -292,7 +292,7 @@ const ToolbarSeparator = (props: IToolbarSeparatorProps) => {
     if (props.vertical === true) {
         return <div className="noselect toolbar-separator-vertical" style={style} />;
     } else {
-        return <div className="noselect toolbar-separator-horizontal" style={style}>{Constants.NBSP}</div>;
+        return <div className="noselect toolbar-separator-horizontal" style={style}>{NBSP}</div>;
     }
 }
 

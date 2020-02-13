@@ -8,7 +8,6 @@ import {
 } from "../../api/common";
 import { tr } from "../../api/i18n";
 import { Error } from "../error";
-import * as Runtime from "../../api/runtime";
 import { Client } from "../../api/client";
 import { WmsCapabilitiesPanel } from "./wms-capabilities-panel";
 import olWmsParser from "ol/format/WMSCapabilities";
@@ -20,6 +19,7 @@ import { Spinner, NonIdealState, Intent, ControlGroup, InputGroup, Button } from
 import { strIsNullOrEmpty } from "../../utils/string";
 import { IAddLayerContentProps } from './add-layer';
 import { getLayerInfo } from '../../api/layer-manager';
+import { getViewer } from '../../api/runtime';
 
 /**
  * @hidden
@@ -31,7 +31,7 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
     const [caps, setCaps] = React.useState<WmsCapabilitiesDocument | undefined>(undefined);
     const [error, setError] = React.useState<Error | string | undefined>(undefined);
     const onAddLayer = (name: string, selectable: boolean, isTiled: boolean, style: WMSLayerStyle | undefined) => {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (caps && viewer) {
             const params: any = {
                 LAYERS: name

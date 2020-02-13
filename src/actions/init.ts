@@ -1,6 +1,4 @@
-import * as Constants from "../constants";
 import { Client } from "../api/client";
-import * as Runtime from "../api/runtime";
 import { ReduxDispatch, Dictionary, IMapView, CommandTarget, ActiveMapTool } from "../api/common";
 import { RuntimeMapFeatureFlags } from "../api/request-builder";
 import { registerCommand, DefaultCommands } from "../api/registry/command";
@@ -34,7 +32,6 @@ import { IView } from "../api/contracts/common";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { tr } from "../api/i18n";
 import { MgError } from "../api/error";
-import * as logger from "../utils/logger";
 import * as shortid from "shortid";
 import { registerStringBundle, DEFAULT_LOCALE } from "../api/i18n";
 import { assertNever } from "../utils/never";
@@ -54,6 +51,9 @@ import { MapInfo, IInitAppActionPayload, IAcknowledgeStartupWarningsAction, IRes
 import { ActionType } from '../constants/actions';
 import { getSelectionSet, clearSessionStore } from '../api/session-store';
 import { resolveProjectionFromEpsgIoAsync } from '../api/registry/projections';
+import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU, WEBLAYOUT_TOOLBAR } from '../constants';
+import { info, debug, warn } from '../utils/logger';
+import { getViewer } from '../api/runtime';
 
 function isUIWidget(widget: any): widget is UIWidget {
     return widget.WidgetType === "UiWidgetType";
@@ -94,7 +94,7 @@ function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Diction
         if (isCommandItem(item)) {
             const cmdDef: CommandDef = cmdsByKey[item.Command];
             if (!cmdDef) {
-                logger.warn(`Invalid reference to command: ${item.Command}`);
+                warn(`Invalid reference to command: ${item.Command}`);
                 return { error: tr("UNKNOWN_COMMAND_REFERENCE", locale, { command: item.Command }) } as IUnknownCommandSpec;
             } else if (cmdDef.TargetViewer != "Dwf") {
                 const commonParams: any = {};
@@ -172,12 +172,12 @@ function prepareSubMenus(tbConf: Dictionary<ToolbarConf>): [PreparedSubMenuSet, 
     };
     let bFoundContextMenu = false;
     for (const key in tbConf) {
-        if (key == Constants.WEBLAYOUT_CONTEXTMENU) {
+        if (key == WEBLAYOUT_CONTEXTMENU) {
             bFoundContextMenu = true;
         }
 
         //Special cases: Task pane and Context Menu. Transfer all to flyout
-        if (key == Constants.WEBLAYOUT_TASKMENU || key == Constants.WEBLAYOUT_CONTEXTMENU) {
+        if (key == WEBLAYOUT_TASKMENU || key == WEBLAYOUT_CONTEXTMENU) {
             const flyoutId = key;
             prepared.flyouts[flyoutId] = {
                 children: tbConf[key].items
@@ -188,7 +188,7 @@ function prepareSubMenus(tbConf: Dictionary<ToolbarConf>): [PreparedSubMenuSet, 
             };
             for (const item of tbConf[key].items) {
                 //Special case: contextmenu is all inline
-                if (isFlyoutSpec(item) && key != Constants.WEBLAYOUT_CONTEXTMENU) {
+                if (isFlyoutSpec(item) && key != WEBLAYOUT_CONTEXTMENU) {
                     const flyoutId = `${item.label}_${shortid.generate()}`;
                     prepared.toolbars[key].items.push({
                         label: item.label,
@@ -543,10 +543,10 @@ async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, 
         //sessionWasReused is a hint whether to create a new runtime map, or recover the last runtime map state from the given map name
         if (sessionWasReused) {
             //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
-            logger.info(`Session ID re-used. Attempting recovery of map state of: ${m.name}`);
+            info(`Session ID re-used. Attempting recovery of map state of: ${m.name}`);
             mapPromises.push(tryDescribeRuntimeMapAsync(client, m.name, session, m.mapDef));
         } else {
-            logger.info(`Creating runtime map state (${m.name}) for: ${m.mapDef}`);
+            info(`Creating runtime map state (${m.name}) for: ${m.mapDef}`);
             mapPromises.push(client.createRuntimeMap({
                 mapDefinition: m.mapDef,
                 requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
@@ -580,7 +580,7 @@ async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, 
     //projections we've registered with proj4 after linking proj4 to OpenLayers. So that registration
     //step has been relocated here, after all the custom projections have been fetched and registered
     //with proj4
-    logger.debug(`Register proj4 with OpenLayers`);
+    debug(`Register proj4 with OpenLayers`);
     register(proj4);
 
     //Build the Dictionary<RuntimeMap> from loaded maps
@@ -675,13 +675,13 @@ async function initFromWebLayoutAsync(webLayout: WebLayout, opts: IInitAsyncOpti
     }
 
     const menus: Dictionary<ToolbarConf> = {};
-    menus[Constants.WEBLAYOUT_TOOLBAR] = {
+    menus[WEBLAYOUT_TOOLBAR] = {
         items: mainToolbar
     };
-    menus[Constants.WEBLAYOUT_TASKMENU] = {
+    menus[WEBLAYOUT_TASKMENU] = {
         items: taskBar
     };
-    menus[Constants.WEBLAYOUT_CONTEXTMENU] = {
+    menus[WEBLAYOUT_CONTEXTMENU] = {
         items: contextMenu
     };
     
@@ -816,7 +816,7 @@ async function initFromAppDefAsync(appDef: ApplicationDefinition, opts: IInitAsy
     }
     const [tb, bFoundContextMenu] = prepareSubMenus(tbConf);
     if (!bFoundContextMenu) {
-        warnings.push(tr("INIT_WARNING_NO_CONTEXT_MENU", opts.locale, { containerName: Constants.WEBLAYOUT_CONTEXTMENU }));
+        warnings.push(tr("INIT_WARNING_NO_CONTEXT_MENU", opts.locale, { containerName: WEBLAYOUT_CONTEXTMENU }));
     }
     return {
         activeMapName: firstMapName,
@@ -868,10 +868,10 @@ async function initAsync(options: IInitAsyncOptions, dispatch: ReduxDispatch, cl
                 type: ActionType.SET_LOCALE,
                 payload: options.locale
             });
-            logger.info(`Registered string bundle for locale: ${options.locale}`);
+            info(`Registered string bundle for locale: ${options.locale}`);
         } else {
             //TODO: Push warning to init error/warning reducer when we implement it
-            logger.warn(`Failed to register string bundle for locale: ${options.locale}`);
+            warn(`Failed to register string bundle for locale: ${options.locale}`);
         }
     }
     let session = options.session;
@@ -879,7 +879,7 @@ async function initAsync(options: IInitAsyncOptions, dispatch: ReduxDispatch, cl
     if (!session) {
         session = await client.createSession("Anonymous", "");
     } else {
-        logger.info(`Re-using session: ${session}`);
+        info(`Re-using session: ${session}`);
         sessionWasReused = true;
     }
     const payload = await sessionAcquiredAsync(options, session, client, sessionWasReused);
@@ -939,7 +939,7 @@ export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
                     payload
                 });
                 if (options.onInit) {
-                    const viewer = Runtime.getViewer();
+                    const viewer = getViewer();
                     if (viewer) {
                         options.onInit(viewer);
                     }

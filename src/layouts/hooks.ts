@@ -2,11 +2,11 @@ import * as React from "react";
 import { useViewerLocale, useConfiguredCapabilities, useTemplateSelectionVisible, useTemplateLegendVisible, useTemplateTaskPaneVisible } from '../containers/hooks';
 import { useDispatch } from 'react-redux';
 import { IElementState } from '../actions/defs';
-import * as TemplateActions from "../actions/template";
-import * as Runtime from "../api/runtime";
 import { IViewerCapabilities, TemplateReducerFunction } from '../api/common';
 import { setCustomTemplateReducer } from '../reducers/template';
 import { Dispatch } from 'redux';
+import { getViewer } from '../api/runtime';
+import { setElementStates } from '../actions/template';
 
 export type CommonTemplateState = {
     isResizing: boolean;
@@ -37,7 +37,7 @@ export function useCommonTemplateState(templateReducer?: TemplateReducerFunction
     const showLegend = useTemplateLegendVisible();
     const showTaskPane = useTemplateTaskPaneVisible();
     const dispatch = useDispatch();
-    const setElementStates = (states: IElementState) => dispatch(TemplateActions.setElementStates(states));
+    const setElementStatesAction = (states: IElementState) => dispatch(setElementStates(states));
     const onDragStart = () => setIsResizing(true);
     const onDragEnd = () => setIsResizing(false);
     //componentDidMount
@@ -50,7 +50,7 @@ export function useCommonTemplateState(templateReducer?: TemplateReducerFunction
         //With the introduction of the splitter, we can no longer rely on a map 
         //filling 100% of its space without needing to manually call updateSize(),
         //so we do it here
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (viewer) {
             viewer.updateSize();
         }
@@ -74,7 +74,7 @@ export function useCommonTemplateState(templateReducer?: TemplateReducerFunction
         }
         //One of these must be true
         if (states.legendVisible || states.taskPaneVisible || states.selectionPanelVisible)
-            setElementStates(states);
+            setElementStatesAction(states);
     };
     return {
         isResizing,

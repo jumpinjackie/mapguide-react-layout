@@ -1,7 +1,6 @@
 import * as React from "react";
 import { LayerProperty, GenericEvent, Bounds } from '../../api/common';
 import { ControlGroup, InputGroup, Button, Intent, NonIdealState, Spinner } from '@blueprintjs/core';
-import * as Runtime from "../../api/runtime";
 import { tr } from "../../api/i18n";
 import { Error } from "../error";
 import { Client } from "../../api/client";
@@ -21,6 +20,7 @@ import {
 import { ensureProjection } from '../../api/registry/projections';
 import { IAddLayerContentProps } from './add-layer';
 import { getLayerInfo } from '../../api/layer-manager';
+import { getViewer } from '../../api/runtime';
 
 /**
  * @hidden
@@ -32,7 +32,7 @@ export const AddWfsLayer = (props: IAddLayerContentProps) => {
     const [caps, setCaps] = React.useState<IWfsServiceCapabilities | undefined>(undefined);
     const [error, setError] = React.useState<Error | string | undefined>(undefined);
     const onAddLayer = (name: string, version: string, format: string, origCrs: string, epsgCode: number, wfsWgs84Bounds?: Bounds) => {
-        const viewer = Runtime.getViewer();
+        const viewer = getViewer();
         if (caps && viewer) {
             ensureProjection(epsgCode, locale, origCrs).then(([, resolvedProj]) => {
                 const sourceProj = viewer.getProjection();

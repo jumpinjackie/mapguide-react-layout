@@ -1,10 +1,10 @@
 import * as React from "react";
 import { useDispatch } from "react-redux";
 import { Legend } from "../components/legend";
-import * as LegendActions from "../actions/legend";
-import * as MapActions from "../actions/map";
 import { tr } from "../api/i18n";
 import { useActiveMapState, useActiveMapView, useActiveMapShowGroups, useActiveMapShowLayers, useActiveMapHideGroups, useActiveMapHideLayers, useActiveMapExpandedGroups, useActiveMapSelectableLayers, useActiveMapExternalBaseLayers, useActiveMapName, useViewerLocale } from './hooks';
+import { setBaseLayer } from '../actions/map';
+import { setGroupVisibility, setLayerVisibility, setLayerSelectable, setGroupExpanded } from '../actions/legend';
 
 export interface ILegendContainerProps {
     maxHeight?: number;
@@ -25,35 +25,35 @@ const LegendContainer = (props: ILegendContainerProps) => {
     const expandedGroups = useActiveMapExpandedGroups();
     const selectableLayers = useActiveMapSelectableLayers();
     const externalBaseLayers = useActiveMapExternalBaseLayers();
-    const setBaseLayer= (mapName: string, layerName: string) => dispatch(MapActions.setBaseLayer(mapName, layerName));
-    const setGroupVisibility = (mapName: string, options: { id: string, value: boolean }) => dispatch(LegendActions.setGroupVisibility(mapName, options));
-    const setLayerVisibility = (mapName: string, options: { id: string, value: boolean }) => dispatch(LegendActions.setLayerVisibility(mapName, options));
-    const setLayerSelectable = (mapName: string, options: { id: string, value: boolean }) => dispatch(LegendActions.setLayerSelectable(mapName, options));
-    const setGroupExpanded = (mapName: string, options: { id: string, value: boolean }) => dispatch(LegendActions.setGroupExpanded(mapName, options));
+    const setBaseLayerAction = (mapName: string, layerName: string) => dispatch(setBaseLayer(mapName, layerName));
+    const setGroupVisibilityAction = (mapName: string, options: { id: string, value: boolean }) => dispatch(setGroupVisibility(mapName, options));
+    const setLayerVisibilityAction = (mapName: string, options: { id: string, value: boolean }) => dispatch(setLayerVisibility(mapName, options));
+    const setLayerSelectableAction = (mapName: string, options: { id: string, value: boolean }) => dispatch(setLayerSelectable(mapName, options));
+    const setGroupExpandedAction = (mapName: string, options: { id: string, value: boolean }) => dispatch(setGroupExpanded(mapName, options));
 
     const onLayerSelectabilityChanged = (id: string, selectable: boolean) => {
         if (activeMapName) {
-            setLayerSelectable?.(activeMapName, { id: id, value: selectable });
+            setLayerSelectableAction?.(activeMapName, { id: id, value: selectable });
         }
     };
     const onGroupExpansionChanged = (id: string, expanded: boolean) => {
-        if (setGroupExpanded && activeMapName) {
-            setGroupExpanded(activeMapName, { id: id, value: expanded });
+        if (setGroupExpandedAction && activeMapName) {
+            setGroupExpandedAction(activeMapName, { id: id, value: expanded });
         }
     };
     const onGroupVisibilityChanged = (groupId: string, visible: boolean) => {
-        if (setGroupVisibility && activeMapName) {
-            setGroupVisibility(activeMapName, { id: groupId, value: visible });
+        if (setGroupVisibilityAction && activeMapName) {
+            setGroupVisibilityAction(activeMapName, { id: groupId, value: visible });
         }
     };
     const onLayerVisibilityChanged = (layerId: string, visible: boolean) => {
-        if (setLayerVisibility && activeMapName) {
-            setLayerVisibility(activeMapName, { id: layerId, value: visible });
+        if (setLayerVisibilityAction && activeMapName) {
+            setLayerVisibilityAction(activeMapName, { id: layerId, value: visible });
         }
     };
     const onBaseLayerChanged = (layerName: string) => {
-        if (setBaseLayer && activeMapName) {
-            setBaseLayer(activeMapName, layerName);
+        if (setBaseLayerAction && activeMapName) {
+            setBaseLayerAction(activeMapName, layerName);
         }
     };
     //overrideSelectableLayers?: any;

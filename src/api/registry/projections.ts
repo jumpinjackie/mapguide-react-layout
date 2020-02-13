@@ -1,12 +1,12 @@
 import proj4 from "proj4";
-import * as logger from "../../utils/logger";
 import { MgError } from '../error';
 import { tr } from '../i18n';
 import { strIsNullOrEmpty } from '../../utils/string';
 import { register } from 'ol/proj/proj4';
+import { debug } from '../../utils/logger';
 
 /**
- * Performs a projection definiiton lookup at epsg.io for the given EPSG code
+ * Performs a projection definititon lookup at epsg.io for the given EPSG code
  *
  * @export
  * @param {string | number} epsg
@@ -20,7 +20,7 @@ export async function resolveProjectionFromEpsgIoAsync(epsg: string | number, lo
     const resp = await r.json();
     if (resp.results && resp.results.length > 0) {
         proj4.defs(`EPSG:${epsg}`, resp.results[0].proj4);
-        logger.debug(`Registered projection EPSG:${epsg} from epsg.io`);
+        debug(`Registered projection EPSG:${epsg} from epsg.io`);
         return proj4.defs[`EPSG:${epsg}`];
     } else {
         throw new MgError(tr("INIT_ERROR_UNREGISTERED_EPSG_CODE", locale, { epsg: epsg, mapDefinition: mapDef }));

@@ -10,21 +10,15 @@ import {
     Bounds,
     Coordinate2D
 } from "../api/common";
-import * as Constants from "../constants";
 import { MapViewerBase } from "../components/map-viewer-base";
-import * as Runtime from "../api/runtime";
-import * as FlyoutActions from "../actions/flyout";
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml, getActiveSelectedFeatureXml } from '../api/builders/deArrayify';
-import * as MapActions from "../actions/map";
-import * as ModalActions from "../actions/modal";
 import { DefaultComponentNames } from "../api/registry/component";
 import { tr } from "../api/i18n";
 import { IOLFactory, OLFactory } from "../api/ol-factory";
 import { Toaster, Position, Intent } from '@blueprintjs/core';
-import * as logger from "../utils/logger";
 import { useActiveMapState, useActiveMapSelectionSet, useActiveMapView, useActiveMapInitialView, useActiveMapExternalBaseLayers, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapHideLayers, useActiveMapActiveSelectedFeature, useIsContextMenuOpen, useActiveMapName, useActiveMapSessionId, useActiveMapSelectableLayerNames, useViewerActiveTool, useConfiguredAgentUri, useConfiguredAgentKind, useViewerViewRotation, useViewerViewRotationEnabled, useViewerLocale, useViewerImageFormat, useViewerSelectionImageFormat, useViewerSelectionColor, useViewerActiveFeatureSelectionColor as useViewerActiveSelectedFeatureColor, useViewerPointSelectionBuffer, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useActiveMapLayers } from './hooks';
 import olInteraction from "ol/interaction/Interaction";
 import olOverlay from "ol/Overlay";
@@ -48,6 +42,12 @@ import {
     IBasicVectorLineStyle,
     IBasicVectorPolygonStyle
 } from "../api/ol-style-helpers";
+import { EMPTY_OBJECT } from '../constants';
+import { getViewer, setViewer } from '../api/runtime';
+import { debug } from '../utils/logger';
+import { closeContextMenu, openContextMenu } from '../actions/flyout';
+import { setActiveTool, setCurrentView, setBusyCount, setMouseCoordinates, QueryMapFeatureActionOptions, queryMapFeatures, setViewRotation, setViewRotationEnabled, mapResized, setFeatureTooltipsEnabled } from '../actions/map';
+import { showModalComponent } from '../actions/modal';
 
 export interface IMapViewerContainerProps {
     overviewMapElementSelector?: () => (Element | null);
@@ -334,18 +334,18 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
         setSubscribers(ns);
         return ns.length < ol;
     };
-    const setActiveTool = (tool: ActiveMapTool) => dispatch(MapActions.setActiveTool(tool));
-    const setCurrentView = (view: IMapView) => dispatch(MapActions.setCurrentView(view));
-    const setBusyCount = (count: number) => dispatch(MapActions.setBusyCount(count));
-    const setMouseCoordinates = (mapName: string, coord: Coordinate2D) => dispatch(MapActions.setMouseCoordinates(mapName, coord));
-    const showModalComponent = (options: any) => dispatch(ModalActions.showModalComponent(options));
-    const queryMapFeatures = (mapName: string, options: MapActions.QueryMapFeatureActionOptions) => dispatch(MapActions.queryMapFeatures(mapName, options));
-    const setViewRotation = (rotation: number) => dispatch(MapActions.setViewRotation(rotation));
-    const setViewRotationEnabled = (enabled: boolean) => dispatch(MapActions.setViewRotationEnabled(enabled));
-    const mapResized = (width: number, height: number) => dispatch(MapActions.mapResized(width, height));
-    const setFeatureTooltipsEnabled = (enabled: boolean) => dispatch(MapActions.setFeatureTooltipsEnabled(enabled));
-    const showContextMenu = (pos: [number, number]) => dispatch(FlyoutActions.openContextMenu({ x: pos[0], y: pos[1] }));
-    const hideContextMenu = () => dispatch(FlyoutActions.closeContextMenu());
+    const setActiveToolAction = (tool: ActiveMapTool) => dispatch(setActiveTool(tool));
+    const setCurrentViewAction = (view: IMapView) => dispatch(setCurrentView(view));
+    const setBusyCountAction = (count: number) => dispatch(setBusyCount(count));
+    const setMouseCoordinatesAction = (mapName: string, coord: Coordinate2D) => dispatch(setMouseCoordinates(mapName, coord));
+    const showModalComponentAction = (options: any) => dispatch(showModalComponent(options));
+    const queryMapFeaturesAction = (mapName: string, options: QueryMapFeatureActionOptions) => dispatch(queryMapFeatures(mapName, options));
+    const setViewRotationAction = (rotation: number) => dispatch(setViewRotation(rotation));
+    const setViewRotationEnabledAction = (enabled: boolean) => dispatch(setViewRotationEnabled(enabled));
+    const mapResizedAction = (width: number, height: number) => dispatch(mapResized(width, height));
+    const setFeatureTooltipsEnabledAction = (enabled: boolean) => dispatch(setFeatureTooltipsEnabled(enabled));
+    const showContextMenuAction = (pos: [number, number]) => dispatch(openContextMenu({ x: pos[0], y: pos[1] }));
+    const hideContextMenuAction = () => dispatch(closeContextMenu());
     // Side-effect to apply the current external layer list
     React.useEffect(() => {
         const innerViewer = innerRef.current;
@@ -357,29 +357,29 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
     // Side-effect to set the viewer "instance" once the MapViewerBase component has been mounted.
     // Should only happen once.
     React.useEffect(() => {
-        logger.debug(`React.useEffect - Change of innerRef.current`);
+        debug(`React.useEffect - Change of innerRef.current`);
         const innerViewer = innerRef.current;
         if (innerViewer) {
             const adapter = new MapViewerAdapter(innerViewer);
-            Runtime.setViewer(adapter);
+            setViewer(adapter);
             const browserWindow: any = window;
-            browserWindow.getViewer = browserWindow.getViewer || Runtime.getViewer;
+            browserWindow.getViewer = browserWindow.getViewer || getViewer;
             if (agentUri) {
                 browserWindow.getClient = browserWindow.getClient || (() => new Client(agentUri, agentKind));
             }
-            logger.debug(`React.useEffect - Attached runtime viewer instance and installed browser global APIs`);
+            debug(`React.useEffect - Attached runtime viewer instance and installed browser global APIs`);
         }
     }, [innerRef, agentUri, agentKind]);
     // Side-effect to imperatively refresh the map upon selection change
     React.useEffect(() => {
-        logger.debug(`React.useEffect - Change of selection`);
+        debug(`React.useEffect - Change of selection`);
         innerRef.current?.refreshMap(RefreshMode.SelectionOnly);
     }, [selection]);
     // Side-effect to attach an updated "external" map viewer API to the current
     // viewer "instance" upon change of any key map state
     React.useEffect(() => {
-        logger.debug(`React.useEffect - Change of any of [toasterRef.current, map, selection, viewer, config]`);
-        const adapter = Runtime.getViewer() as MapViewerAdapter;
+        debug(`React.useEffect - Change of any of [toasterRef.current, map, selection, viewer, config]`);
+        const adapter = getViewer() as MapViewerAdapter;
         if (adapter && sessionId && activeMapName) {
             const external: INonBaseMapViewer = {
                 dismissToast: key => toasterRef.current?.dismiss(key),
@@ -387,15 +387,15 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
                 toastWarning: (iconName, message) => toasterRef.current?.show({ icon: (iconName as any), message: message, intent: Intent.WARNING }),
                 toastError: (iconName, message) => toasterRef.current?.show({ icon: (iconName as any), message: message, intent: Intent.DANGER }),
                 toastPrimary: (iconName, message) => toasterRef.current?.show({ icon: (iconName as any), message: message, intent: Intent.PRIMARY }),
-                setViewRotation: setViewRotation,
-                setViewRotationEnabled: setViewRotationEnabled,
+                setViewRotation: setViewRotationAction,
+                setViewRotationEnabled: setViewRotationEnabledAction,
                 getViewRotation: () => viewRotation,
                 isViewRotationEnabled: () => viewRotationEnabled,
                 getSessionId: () => sessionId,
                 getMapName: () => activeMapName,
-                setActiveTool: setActiveTool,
+                setActiveTool: setActiveToolAction,
                 getActiveTool: () => tool,
-                setFeatureTooltipEnabled: setFeatureTooltipsEnabled,
+                setFeatureTooltipEnabled: setFeatureTooltipsEnabledAction,
                 getSelection: () => selection,
                 getSelectionXml: (s, layerIds) => buildSelectionXml(s, layerIds),
                 addSubscribers: (props) => addSubscribers(props),
@@ -404,21 +404,21 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
                 dispatch: (action) => dispatch(action)
             };
             adapter.attachExternal(external);
-            logger.debug(`Attached updated external "API" to runtime viewer instance`);
+            debug(`Attached updated external "API" to runtime viewer instance`);
         }
     }, [toasterRef, sessionId, activeMapName, selection, tool, viewRotation, viewRotationEnabled]);
 
     const onBeginDigitization = (callback: (cancelled: boolean) => void) => {
-        setActiveTool?.(ActiveMapTool.None);
+        setActiveToolAction?.(ActiveMapTool.None);
         //Could be a small timing issue here, but the active tool should generally
         //be "None" before the user clicks their first digitizing vertex/point
         callback(false);
     };
-    const onMapResized = (size: [number, number]) => mapResized?.(size[0], size[1]);
-    const onRequestZoomToView = (view: IMapView) => setCurrentView?.(view);
+    const onMapResized = (size: [number, number]) => mapResizedAction?.(size[0], size[1]);
+    const onRequestZoomToView = (view: IMapView) => setCurrentViewAction?.(view);
     const onQueryMapFeatures = (options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) => {
         if (activeMapName) {
-            queryMapFeatures?.(activeMapName, {
+            queryMapFeaturesAction?.(activeMapName, {
                 options: options,
                 //append: this.inner.state.shiftKey === true,
                 callback: success,
@@ -426,15 +426,15 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
             });
         }
     };
-    const onBusyLoading = (busyCount: number) => setBusyCount?.(busyCount);
-    const onRotationChanged = (newRotation: number) => setViewRotation?.(newRotation);
+    const onBusyLoading = (busyCount: number) => setBusyCountAction?.(busyCount);
+    const onRotationChanged = (newRotation: number) => setViewRotationAction?.(newRotation);
     const onMouseCoordinateChanged = (coord: Coordinate2D) => {
         if (activeMapName) {
-            setMouseCoordinates?.(activeMapName, coord);
+            setMouseCoordinatesAction?.(activeMapName, coord);
         }
     };
     const onSessionExpired = () => {
-        showModalComponent?.({
+        showModalComponentAction?.({
             modal: {
                 title: tr("SESSION_EXPIRED", locale),
                 backdrop: true
@@ -443,8 +443,8 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
             id: DefaultComponentNames.SessionExpired
         });
     };
-    const onHideContextMenu = () => hideContextMenu?.();
-    const onContextMenu = (pos: [number, number]) => showContextMenu?.(pos);
+    const onHideContextMenu = () => hideContextMenuAction?.();
+    const onContextMenu = (pos: [number, number]) => showContextMenuAction?.(pos);
     const onOpenTooltipLink = (url: string) => {
         let fixedUrl = url;
         if (activeMapName && sessionId) {
@@ -497,7 +497,7 @@ const MapViewerContainer = (props: IMapViewerContainerProps) => {
                 overviewMapElementSelector={overviewMapElementSelector}
                 loadIndicatorPosition={loadIndicatorPositioning}
                 loadIndicatorColor={loadIndicatorColor}
-                layerTransparency={layerTransparency || Constants.EMPTY_OBJECT}
+                layerTransparency={layerTransparency || EMPTY_OBJECT}
                 onBeginDigitization={onBeginDigitization}
                 onSessionExpired={onSessionExpired}
                 onBusyLoading={onBusyLoading}

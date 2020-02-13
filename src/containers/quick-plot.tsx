@@ -15,11 +15,11 @@ import {
     getExternalBaseLayers,
     IMapViewer
 } from "../api/common";
-import * as MapActions from "../actions/map";
 import { MapCapturerContext, Size, IMapCapturerContextCallback } from "./map-capturer-context";
 import { Slider, Button, Intent, Callout, HTMLSelect } from '@blueprintjs/core';
 import { useActiveMapName, useActiveMapState, useActiveMapView, useActiveMapExternalBaseLayers, useViewerLocale, useAvailableMaps, usePrevious } from './hooks';
-import * as logger from "../utils/logger";
+import { setViewRotation, setViewRotationEnabled } from '../actions/map';
+import { debug } from '../utils/logger';
 
 function getMargin() {
     /*
@@ -195,8 +195,8 @@ const QuickPlotContainer = () => {
     const view = useActiveMapView();
     const externalBaseLayers = useActiveMapExternalBaseLayers();
     const dispatch = useDispatch();
-    const setViewRotation = (rotation: number) => dispatch(MapActions.setViewRotation(rotation));
-    const setViewRotationEnabled = (enabled: boolean) => dispatch(MapActions.setViewRotationEnabled(enabled));
+    const setViewRotationAction = (rotation: number) => dispatch(setViewRotation(rotation));
+    const setViewRotationEnabledAction = (enabled: boolean) => dispatch(setViewRotationEnabled(enabled));
 
     const onTitleChanged = (e: GenericEvent) => {
         setTitle(e.target.value);
@@ -252,7 +252,7 @@ const QuickPlotContainer = () => {
                 for (const activeMapName of mapNames) {
                     const activeCapturer = getActiveCapturer(viewer, mapNames, activeMapName);
                     if (activeCapturer) {
-                        logger.debug(`De-activating map capturer for: ${activeMapName}`);
+                        debug(`De-activating map capturer for: ${activeMapName}`);
                         activeCapturer.deactivate();
                     }
                 }
@@ -276,8 +276,8 @@ const QuickPlotContainer = () => {
                     scale,
                     rotation,
                     updateBoxCoords,
-                    setViewRotationEnabled,
-                    setViewRotation);
+                    setViewRotationEnabledAction,
+                    setViewRotationAction);
             }
             if (showAdvanced) {
                 const v = getViewer();
@@ -285,7 +285,7 @@ const QuickPlotContainer = () => {
                     const capturer = getActiveCapturer(v, mapNames, activeMapName);
                     if (capturer) {
                         const ppSize = getPrintSize(v, showAdvanced, paperSize, orientation);
-                        logger.debug(`Updating map capturer for: ${activeMapName}`);
+                        debug(`Updating map capturer for: ${activeMapName}`);
                         capturer.updateBox(ppSize, parseFloat(scale), rotation);
                     }
                 }

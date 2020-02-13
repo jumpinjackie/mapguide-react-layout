@@ -17,13 +17,13 @@ import AddManageLayersContainer from '../containers/add-manage-layers';
 import { Button, ButtonGroup, Card, Elevation, Intent } from '@blueprintjs/core';
 import { useReducedToolbarAppState, useActiveMapName, useActiveMapState } from '../containers/hooks';
 import { CommandConditions } from '../api/registry/command';
-import * as MapActions from '../actions/map';
 import { useDispatch } from 'react-redux';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { deArrayify } from '../api/builders/deArrayify';
 import MouseCoordinatesContainer from '../containers/mouse-coordinates';
 import ViewSizeContainer from '../containers/view-size';
 import ViewerOptions from '../containers/viewer-options';
+import { setSelection } from '../actions/map';
 //import MeasureContainer from '../containers/measure';
 
 const testSelSheboygan: QueryMapFeaturesResponse = deArrayify(require("./data/test-selection-response-sheboygan.json"));
@@ -50,13 +50,13 @@ const MapStoryFrame = (props: MapDependentContainer) => {
     const activeMapName = useActiveMapName();
     const doTestSelect = () => {
         if (activeMapName) {
-            const q = MapActions.setSelection(activeMapName, getQueryMapFeaturesResponse(activeMapName));
+            const q = setSelection(activeMapName, getQueryMapFeaturesResponse(activeMapName));
             dispatch(q);
         }
     }
     const doClearSelection = () => {
         if (activeMapName) {
-            const q = MapActions.setSelection(activeMapName, {});
+            const q = setSelection(activeMapName, {});
             dispatch(q);
         }
     }

@@ -1,9 +1,9 @@
 import * as React from "react";
-import * as Constants from "../constants";
 import { MenuComponent } from "./menu";
 import { IDOMElementMetrics } from "../api/common";
 import { PlaceholderComponent } from "../api/registry/component";
 import { IItem } from "../components/toolbar";
+import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU } from '../constants';
 
 export interface IFlyoutConfiguration {
     open?: boolean;
@@ -49,7 +49,7 @@ export const FlyoutRegion = (props: IFlyoutRegionProps) => {
                     containerStyle.zIndex = 2000; //This should be big enough to be above all possible UI elements
                     if (flyout.metrics) {
                         const met = flyout.metrics;
-                        if (flyoutId == Constants.WEBLAYOUT_CONTEXTMENU) {
+                        if (flyoutId == WEBLAYOUT_CONTEXTMENU) {
                             // TODO: Refine the layout positioning so that it better behaves like it did
                             // previously when the blueprint context menu worked (ie. If right-clicking near
                             // the bottom, the menu should be shown "above" the cursor)
@@ -61,7 +61,7 @@ export const FlyoutRegion = (props: IFlyoutRegionProps) => {
                             } else {
                                 containerStyle.top = met.posY + met.height;
                             }
-                            if (flyoutId == Constants.WEBLAYOUT_TASKMENU) {
+                            if (flyoutId == WEBLAYOUT_TASKMENU) {
                                 containerStyle.right = window.innerWidth - (met.posX + met.width);
                             } else {
                                 containerStyle.left = met.posX;
@@ -88,7 +88,7 @@ export const FlyoutRegion = (props: IFlyoutRegionProps) => {
                             }
                         })()}
                         {(() => {
-                            if (flyoutId === Constants.WEBLAYOUT_TASKMENU) {
+                            if (flyoutId === WEBLAYOUT_TASKMENU) {
                                 //HACK: In order for this flyout to show properly over the task pane iframe
                                 //when it contains embedded content (eg. An ActiveX/Flash/etc control) in IE
                                 //we have to stick an iframe into this flyout

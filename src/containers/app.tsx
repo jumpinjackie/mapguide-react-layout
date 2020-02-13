@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useDispatch } from "react-redux";
-import * as logger from "../utils/logger";
 import { getLayout } from "../api/registry/layout";
 import {
     IExternalBaseLayer,
@@ -9,11 +8,9 @@ import {
     InitError,
     IMapViewer
 } from "../api/common";
-import * as InitActions from "../actions/init";
-import { IInitAppLayout } from "../actions/init";
+import { IInitAppLayout, initLayout } from "../actions/init";
 import { Error, normalizeStack } from "../components/error";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
-import * as TemplateActions from "../actions/template";
 import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
 import { AppContext } from "../components/context";
@@ -21,6 +18,8 @@ import { IElementState } from '../actions/defs';
 import { NonIdealState, Spinner, Intent, Callout } from '@blueprintjs/core';
 import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, useActiveMapBranch, useActiveMapName, useViewerFeatureTooltipsEnabled } from './hooks';
 import { getStateFromUrl, IAppUrlState, updateUrl } from './url-state';
+import { debug } from '../utils/logger';
+import { setElementStates } from '../actions/template';
 
 export interface SelectionOptions {
     allowHtmlValues?: boolean;
@@ -171,7 +170,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
             };
             setElementVisibility(states);
         }
-        logger.debug(`Asset root is: ${getAssetRoot()}`);
+        debug(`Asset root is: ${getAssetRoot()}`);
         if (fusionRoot) {
             setFusionRoot(fusionRoot);
         }
@@ -392,8 +391,8 @@ const App = (props: IAppProps) => {
     const ftEnabled = useViewerFeatureTooltipsEnabled();
 
     const dispatch = useDispatch();
-    const initLayout = (args: InitActions.IInitAppLayout) => dispatch(InitActions.initLayout(args));
-    const setElementVisibility = (state: IElementState) => dispatch(TemplateActions.setElementStates(state));
+    const initLayoutAction = (args: IInitAppLayout) => dispatch(initLayout(args));
+    const setElementVisibility = (state: IElementState) => dispatch(setElementStates(state));
 
     return <AppInner error={error}
         includeStack={includeStack}
@@ -402,7 +401,7 @@ const App = (props: IAppProps) => {
         configuredLocale={configuredLocale}
         map={map}
         activeMapName={activeMapName}
-        initLayout={initLayout}
+        initLayout={initLayoutAction}
         setElementVisibility={setElementVisibility}
         {...props} />;
 }

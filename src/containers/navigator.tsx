@@ -2,9 +2,9 @@ import * as React from "react";
 import { useDispatch } from "react-redux";
 import { ICommand } from "../api/common";
 import { Navigator, ZoomDirection, PanDirection } from "../components/navigator";
-import * as MapActions from "../actions/map";
 import { getCommand, DefaultCommands } from "../api/registry/command";
 import { useViewerLocale, useActiveMapFiniteScales, useActiveMapView, useActiveMapName, useViewerBusyCount } from './hooks';
+import { invokeCommand, setScale } from '../actions/map';
 
 export interface INavigatorContainerProps {
     style?: React.CSSProperties;
@@ -18,8 +18,8 @@ const NavigatorContainer = (props: INavigatorContainerProps) => {
     const view = useActiveMapView();
     const busyCount = useViewerBusyCount();;
     const activeMapName = useActiveMapName();
-    const setScale = (mapName: string, scale: number) => dispatch(MapActions.setScale(mapName, scale));
-    const invokeCommand = (cmd: ICommand, parameters?: any) => dispatch(MapActions.invokeCommand(cmd, parameters));
+    const setScaleAction = (mapName: string, scale: number) => dispatch(setScale(mapName, scale));
+    const invokeCommandAction = (cmd: ICommand, parameters?: any) => dispatch(invokeCommand(cmd, parameters));
     const onZoom = (direction: ZoomDirection) => {
         let cmd: ICommand | undefined;
         switch (direction) {
@@ -31,7 +31,7 @@ const NavigatorContainer = (props: INavigatorContainerProps) => {
                 break;
         }
         if (cmd) {
-            invokeCommand(cmd);
+            invokeCommandAction(cmd);
         }
     };
     const onPan = (direction: PanDirection) => {
@@ -51,12 +51,12 @@ const NavigatorContainer = (props: INavigatorContainerProps) => {
                 break;
         }
         if (cmd) {
-            invokeCommand(cmd);
+            invokeCommandAction(cmd);
         }
     };
     const onRequestZoomToScale = (scale: number) => {
         if (activeMapName) {
-            setScale(activeMapName, scale);
+            setScaleAction(activeMapName, scale);
         }
     };
     if (view) {

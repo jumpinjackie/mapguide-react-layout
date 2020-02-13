@@ -1,6 +1,6 @@
 import * as React from "react";
-import { IVectorFeatureStyle, IBasicVectorPointStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IBasicPointCircleStyle, DEFAULT_POINT_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE } from '../api/ol-style-helpers';
-import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, Slider } from '@blueprintjs/core';
+import { IVectorFeatureStyle, IBasicVectorPointStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IBasicPointCircleStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IPointIconStyle, DEFAULT_POINT_ICON_STYLE } from '../api/ol-style-helpers';
+import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, Slider, RadioGroup, Radio, InputGroup, Switch } from '@blueprintjs/core';
 import { tr } from "../api/i18n";
 import { ColorPicker } from './color-picker';
 
@@ -10,7 +10,40 @@ interface ISubStyleEditorProps<TStyle> {
     onChange: (style: TStyle) => void;
 }
 
-const PointStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicVectorPointStyle>) => {
+const PointIconStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IPointIconStyle>) => {
+    const [localSrc, setLocalSrc] = React.useState(style.src);
+    React.useEffect(() => {
+        setLocalSrc(style.src);
+    }, [style.src]);
+    const onSrcChange = (e: any) => {
+        onChange({
+            ...style,
+            src: localSrc
+        });
+    };
+    return <div>
+        <FormGroup label={tr("VSED_PT_ICON_SRC", locale)}>
+            <InputGroup value={localSrc} onChange={(e: any) => setLocalSrc(e.target.value)} onBlur={onSrcChange} />
+            <img src={style.src} />
+        </FormGroup>
+        <FormGroup label={tr("VSED_PT_ICON_ANCHOR", locale)}>
+            {tr("VSED_PT_ICON_ANCHOR_H", locale)} <NumericInput value={style.anchor[0]} min={0} onValueChange={e => onChange({ ...style, anchor: [e, style.anchor[1]] })} />
+            {tr("VSED_PT_ICON_ANCHOR_V", locale)} <NumericInput value={style.anchor[1]} min={0} onValueChange={e => onChange({ ...style, anchor: [style.anchor[0], e] })} />
+        </FormGroup>
+        <Switch label={tr("VSED_PT_ICON_ROTATE_WITH_VIEW", locale)} checked={style.rotateWithView} onChange={e => onChange({ ...style, rotateWithView: !style.rotateWithView })} />
+        <FormGroup label={tr("VSED_PT_ICON_ROTATION", locale)}>
+            <Slider min={0} max={360} labelStepSize={360} value={style.rotation} onChange={n => onChange({ ...style, rotation: n })} />
+        </FormGroup>
+        {/*<FormGroup label={tr("VSED_PT_ICON_OPACITY", locale)}>
+            <Slider min={0} max={255} labelStepSize={255} value={style.opacity} onChange={n => onChange({ ...style, opacity: n })} />
+        </FormGroup>*/}
+        <FormGroup label={tr("VSED_PT_ICON_SCALE", locale)}>
+            <NumericInput fill value={style.scale} min={1} onValueChange={e => onChange({ ...style, scale: e })} />
+        </FormGroup>
+    </div>;
+};
+
+const PointCircleStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicPointCircleStyle>) => {
     return <div>
         <FormGroup label={tr("VSED_PT_FILL_COLOR", locale)}>
             <ColorPicker locale={locale} value={style.fill.color} onChange={c => onChange({ ...style, fill: { color: c, alpha: style.fill.alpha } })} />
@@ -31,6 +64,67 @@ const PointStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBas
             <NumericInput fill value={style.stroke.width} min={1} onValueChange={n => onChange({ ...style, stroke: { color: style.stroke.color, width: n, alpha: style.stroke.alpha } })} />
         </FormGroup>
     </div>;
+};
+
+const PointStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicVectorPointStyle>) => {
+    const [iconStyle, setIconStyle] = React.useState<IPointIconStyle | undefined>(undefined);
+    const [circleStyle, setCircleStyle] = React.useState<IBasicPointCircleStyle | undefined>(undefined);
+    const [currentStyle, setCurrentStyle] = React.useState(style);
+    const applyCurrentStyle = (s: IBasicVectorPointStyle) => {
+        setCurrentStyle(s);
+        switch (s.type) {
+            case "Circle":
+                setCircleStyle(s);
+                break;
+            case "Icon":
+                setIconStyle(s);
+                break;
+        }
+    }
+    const onStyleChange = (style: IBasicVectorPointStyle) => {
+        applyCurrentStyle(style);
+        onChange(style);
+    };
+    const onStyleTypeChange = (type: "Icon" | "Circle") => {
+        switch(type) {
+            case "Circle":
+                if (circleStyle) {
+                    setCurrentStyle(circleStyle);
+                    onChange(circleStyle);
+                } else {
+                    const s = { ...DEFAULT_POINT_CIRCLE_STYLE };
+                    setCircleStyle(s);
+                    setCurrentStyle(s);
+                    onChange(s);
+                }
+                break;
+            case "Icon":
+                if (iconStyle) {
+                    setCurrentStyle(iconStyle);
+                    onChange(iconStyle);
+                } else {
+                    const s = { ...DEFAULT_POINT_ICON_STYLE };
+                    setIconStyle(s);
+                    setCurrentStyle(s);
+                    onChange(s);
+                }
+                break;
+        }
+    }
+    React.useEffect(() => {
+        applyCurrentStyle(style);
+    }, [style]);
+    return <div>
+        <RadioGroup inline
+            label={tr("VSED_PT_TYPE", locale)}
+            onChange={(e: any) => onStyleTypeChange(e.target.value)}
+            selectedValue={currentStyle.type}>
+            <Radio label={tr("VSED_PT_TYPE_CIRCLE", locale)} value="Circle" />
+            <Radio label={tr("VSED_PT_TYPE_ICON", locale)} value="Icon" />
+        </RadioGroup>
+        {currentStyle.type == "Icon" && <PointIconStyleEditor style={currentStyle} onChange={onChange} locale={locale} />}
+        {currentStyle.type == "Circle" && <PointCircleStyleEditor style={currentStyle} onChange={onChange} locale={locale} />}
+    </div>
 }
 
 const LineStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicVectorLineStyle>) => {
@@ -90,15 +184,15 @@ type TabId = "pointStyle" | "lineStyle" | "polyStyle";
 export const VectorStyleEditor = (props: IVectorStyleEditorProps) => {
     const { locale, style, onChange, enableLine, enablePoint, enablePolygon } = props;
     const [selectedTab, setSelectedTab] = React.useState<TabId | undefined>(undefined);
-    const [pointStyle, setPointStyle] = React.useState(style?.point ?? DEFAULT_POINT_STYLE);
+    const [pointStyle, setPointStyle] = React.useState(style?.point ?? DEFAULT_POINT_CIRCLE_STYLE);
     const [lineStyle, setLineStyle] = React.useState(style?.line ?? DEFAULT_LINE_STYLE);
     const [polyStyle, setPolyStyle] = React.useState(style?.polygon ?? DEFAULT_POLY_STYLE);
     React.useEffect(() => {
-        setPointStyle(style?.point ?? DEFAULT_POINT_STYLE);
+        setPointStyle(style?.point ?? DEFAULT_POINT_CIRCLE_STYLE);
         setLineStyle(style?.line ?? DEFAULT_LINE_STYLE);
         setPolyStyle(style?.polygon ?? DEFAULT_POLY_STYLE);
     }, [style]);
-    const onStyleChanged = (point: IBasicPointCircleStyle, line: IBasicVectorLineStyle, poly: IBasicVectorPolygonStyle) => {
+    const onStyleChanged = (point: IBasicVectorPointStyle, line: IBasicVectorLineStyle, poly: IBasicVectorPolygonStyle) => {
         const newStyle: IVectorFeatureStyle = {};
         if (enablePoint) {
             newStyle.point = point;

@@ -248,6 +248,17 @@ export interface ILocalizedMessages {
     VSED_TAB_POINT: string;
     VSED_TAB_LINE: string;
     VSED_TAB_POLY: string;
+    VSED_PT_TYPE: string;
+    VSED_PT_TYPE_CIRCLE: string;
+    VSED_PT_TYPE_ICON: string;
+    VSED_PT_ICON_ANCHOR: string;
+    VSED_PT_ICON_ANCHOR_H: string;
+    VSED_PT_ICON_ANCHOR_V: string;
+    VSED_PT_ICON_SRC: string;
+    VSED_PT_ICON_ROTATE_WITH_VIEW: string;
+    VSED_PT_ICON_ROTATION: string;
+    //VSED_PT_ICON_OPACITY: string;
+    VSED_PT_ICON_SCALE: string;
     ADD_LAYER_PROJECTION: string;
     ADDING_LAYER_ERROR: string;
     LOADING_LAYER: string;

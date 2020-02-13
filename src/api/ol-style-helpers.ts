@@ -1,6 +1,7 @@
 import olLayerVector from "ol/layer/Vector";
 import olStyle from "ol/style/Style";
 import olCircleStyle from "ol/style/Circle";
+import olIconStyle from "ol/style/Icon";
 import { Color, asString, asArray } from "ol/color";
 import { ColorLike } from "ol/colorlike";
 import olStroke from "ol/style/Stroke";
@@ -8,6 +9,8 @@ import olFill from "ol/style/Fill";
 import olFeature from "ol/Feature";
 import { LayerProperty } from './common';
 import * as shortid from "shortid";
+import { MAP_MARKER_ICON } from '../constants/assets';
+import { rad2deg, deg2rad } from '../utils/number';
 
 /**
  * Defines a style for a vector layer
@@ -24,16 +27,32 @@ export interface IVectorFeatureStyle {
  * @since 0.13
  */
 export interface IBasicPointCircleStyle {
+    type: "Circle";
     fill: IBasicFill;
     radius: number;
     stroke: IBasicStroke;
 }
 
 /**
+ * Point icon style settings
+ * @since 0.13
+ */
+export interface IPointIconStyle {
+    type: "Icon";
+    anchor: [number, number],
+    src: string;
+    //size: [number, number];
+    rotateWithView: boolean;
+    rotation: number;
+    //opacity: number;
+    scale: number;
+}
+
+/**
  * Point style settings
  * @since 0.13
  */
-export type IBasicVectorPointStyle = IBasicPointCircleStyle;
+export type IBasicVectorPointStyle = IBasicPointCircleStyle | IPointIconStyle;
 
 /**
  * Line style settings
@@ -73,7 +92,8 @@ export interface IBasicFill {
  * The default style for point features
  * @since 0.13
  */
-export const DEFAULT_POINT_STYLE: IBasicVectorPointStyle = {
+export const DEFAULT_POINT_CIRCLE_STYLE: IBasicPointCircleStyle = {
+    type: "Circle",
     fill: {
         color: "#ff0000",
         alpha: 255
@@ -85,6 +105,21 @@ export const DEFAULT_POINT_STYLE: IBasicVectorPointStyle = {
         width: 1
     }
 };
+
+/**
+ * The default icon style for point features
+ * @since 0.13
+ */
+export const DEFAULT_POINT_ICON_STYLE: IPointIconStyle = {
+    type: "Icon",
+    anchor: [0.5, 0.5],
+    src: MAP_MARKER_ICON,
+    //size: [0, 0],
+    rotateWithView: false,
+    rotation: 0,
+    //opacity: 255,
+    scale: 1
+}
 
 /**
  * The default color
@@ -188,9 +223,21 @@ export function olStyleMapToVectorStyle(os: IOlStyleMap): IVectorFeatureStyle {
     const pi = os.Point.getImage();
     if (pi instanceof olCircleStyle) {
         style.point = {
+            type: "Circle",
             fill: toBasicFill(pi.getFill()),
             radius: pi.getRadius(),
             stroke: toBasicStroke(pi.getStroke())
+        };
+    } else if (pi instanceof olIconStyle) {
+        style.point = {
+            type: "Icon",
+            anchor: pi.getAnchor() as [number, number],
+            src: pi.getSrc(),
+            //size: pi.getSize() as [number, number],
+            rotateWithView: pi.getRotateWithView(),
+            rotation: rad2deg(pi.getRotation() ?? 0),
+            //opacity: (pi.getOpacity() ?? 0) * 255,
+            scale: pi.getScale()
         };
     }
     style.line = toBasicStroke(os.LineString.getStroke());
@@ -216,9 +263,9 @@ function toOLColor(color: string, alpha: number) {
  * @since 0.13
  */
 export function vectorStyleToOLStyleMap(style: IVectorFeatureStyle): IOlStyleMap {
-    const ptStyle = style.point ?? DEFAULT_POINT_STYLE;
+    const ptStyle = style.point ?? DEFAULT_POINT_CIRCLE_STYLE;
     const pts = new olStyle({
-        image: new olCircleStyle({
+        image: ptStyle.type == "Circle" ? (new olCircleStyle({
             radius: ptStyle.radius,
             fill: new olFill({
                 color: toOLColor(ptStyle.fill.color, ptStyle.fill.alpha)
@@ -227,7 +274,11 @@ export function vectorStyleToOLStyleMap(style: IVectorFeatureStyle): IOlStyleMap
                 color: toOLColor(ptStyle.stroke.color, ptStyle.stroke.alpha),
                 width: ptStyle.stroke.width
             })
-        })
+        })) : (new olIconStyle({
+            ...ptStyle,
+            //opacity: ptStyle.opacity / 255,
+            rotation: deg2rad(ptStyle.rotation)
+        }))
     });
     const lnStyle = style.line ?? DEFAULT_LINE_STYLE;
     const lns = new olStyle({

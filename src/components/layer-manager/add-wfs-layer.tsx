@@ -14,7 +14,7 @@ import { FeatureUrlFunction } from "ol/featureloader";
 import { parseUrl } from '../../utils/url';
 import { 
     setOLVectorLayerStyle,
-    DEFAULT_POINT_STYLE,
+    DEFAULT_POINT_CIRCLE_STYLE,
     DEFAULT_LINE_STYLE,
     DEFAULT_POLY_STYLE
 } from '../../api/ol-style-helpers';
@@ -95,7 +95,7 @@ export const AddWfsLayer = (props: IAddLayerContentProps) => {
                     layer.set(LayerProperty.WGS84_BBOX, wfsWgs84Bounds);
                 }
                 setOLVectorLayerStyle(layer, {
-                    point: DEFAULT_POINT_STYLE,
+                    point: DEFAULT_POINT_CIRCLE_STYLE,
                     line: DEFAULT_LINE_STYLE,
                     polygon: DEFAULT_POLY_STYLE
                 });

@@ -111,6 +111,15 @@ export function deg2rad(deg: number): number {
 }
 
 /**
+ * Converts the given angle in radians to degrees
+ * @param radians 
+ * @since 0.13
+ */
+export function rad2deg(radians: number) {
+    return radians * (180 / Math.PI);
+}
+
+/**
  * Computes the sum of the given array
  * 
  * @since 0.11

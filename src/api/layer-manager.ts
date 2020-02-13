@@ -2,7 +2,7 @@ import { LayerProperty, ILayerManager, ILayerInfo, IParseFeaturesFromFileOptions
 import olSourceVector from "ol/source/Vector";
 import olMap from "ol/Map";
 import olLayerBase from "ol/layer/Base";
-import { setOLVectorLayerStyle, DEFAULT_POINT_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, olStyleMapToVectorStyle, IVectorFeatureStyle, IOlStyleMap } from './ol-style-helpers';
+import { setOLVectorLayerStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, olStyleMapToVectorStyle, IVectorFeatureStyle, IOlStyleMap } from './ol-style-helpers';
 import olTileLayer from "ol/layer/Tile";
 import olImageLayer from "ol/layer/Image";
 import olWmsSource from "ol/source/ImageWMS";
@@ -131,7 +131,7 @@ export class MgLayerManager implements ILayerManager {
                 layer.set(LayerProperty.IS_EXTERNAL, true);
                 layer.set(LayerProperty.IS_GROUP, false);
                 setOLVectorLayerStyle(layer, {
-                    point: DEFAULT_POINT_STYLE,
+                    point: DEFAULT_POINT_CIRCLE_STYLE,
                     line: DEFAULT_LINE_STYLE,
                     polygon: DEFAULT_POLY_STYLE
                 });

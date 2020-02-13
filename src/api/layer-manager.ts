@@ -68,6 +68,12 @@ export class MgLayerManager implements ILayerManager {
     apply(layers: ILayerInfo[]): void {
         this.layerSet.apply(this.map, layers);
     }
+    setVectorLayerStyle(name: string, styleToApply: IVectorFeatureStyle) {
+        const layer = this.getLayer(name);
+        if (layer instanceof olVectorLayer) {
+            setOLVectorLayerStyle(layer, styleToApply);
+        }
+    }
     parseFeaturesFromFile(options: IParseFeaturesFromFileOptions): Promise<IParsedFeatures> {
         const { file, name: layerName, locale } = options;
         const that = this;
@@ -109,7 +115,7 @@ export class MgLayerManager implements ILayerManager {
         });
     }
     addLayerFromParsedFeatures(options: IAddLayerFromParsedFeaturesOptions): Promise<ILayerInfo> {
-        const { features, projection } = options;
+        const { features, projection, defaultStyle } = options;
         const that = this;
         return new Promise((resolve, reject) => {
             try {
@@ -130,7 +136,7 @@ export class MgLayerManager implements ILayerManager {
                 layer.set(LayerProperty.IS_SELECTABLE, true);
                 layer.set(LayerProperty.IS_EXTERNAL, true);
                 layer.set(LayerProperty.IS_GROUP, false);
-                setOLVectorLayerStyle(layer, {
+                setOLVectorLayerStyle(layer, defaultStyle ?? {
                     point: DEFAULT_POINT_CIRCLE_STYLE,
                     line: DEFAULT_LINE_STYLE,
                     polygon: DEFAULT_POLY_STYLE

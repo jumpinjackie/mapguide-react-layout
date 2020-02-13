@@ -160,8 +160,6 @@ export const Externals = {
 export { ApplicationViewModel as Application } from "./application";
 export { setAssetRoot } from "../utils/asset";
 
-
-
 /**
  * The top-level namespace for all dispatchable actions
  */

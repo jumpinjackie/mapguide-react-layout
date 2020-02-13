@@ -18,7 +18,7 @@ import { ViewerAction } from '../actions/defs';
 import { ProjectionLike } from 'ol/proj';
 import { LoadFunction } from 'ol/Image';
 import { IToolbarAppState } from './registry';
-import { IVectorFeatureStyle } from './ol-style-helpers';
+import { IVectorFeatureStyle, IBasicPointCircleStyle, IPointIconStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle } from './ol-style-helpers';
 import { IParsedFeatures } from './layer-manager/parsed-features';
 import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
@@ -917,6 +917,30 @@ export interface IMapViewer {
      * @since 0.13
      */
     dispatch(action: any): void;
+
+    /**
+     * Gets the default point circle style
+     * @since 0.13
+     */
+    getDefaultPointCircleStyle(): IBasicPointCircleStyle;
+
+    /**
+     * Gets the default point icon style
+     * @since 0.13
+     */
+    getDefaultPointIconStyle(): IPointIconStyle;
+
+    /**
+     * Gets the default line style
+     * @since 0.13
+     */
+    getDefaultLineStyle(): IBasicVectorLineStyle;
+
+    /**
+     * Gets the default polygon style
+     * @since 0.13
+     */
+    getDefaultPolygonStyle(): IBasicVectorPolygonStyle;
 }
 
 /**
@@ -1006,8 +1030,20 @@ export interface ILayerInfo {
  * @since 0.13
  */
 export interface IAddLayerFromParsedFeaturesOptions {
+    /**
+     * The projection to assign for this layer. If not specified, the map's projection
+     * is assumed
+     */
     projection?: ProjectionLike;
+    /**
+     * The parsed features to add the layer with
+     */
     features: IParsedFeatures;
+    /**
+     * The style to use for this layer. If not specified, a default style will be assigned
+     * to this layer
+     */
+    defaultStyle?: IVectorFeatureStyle;
 }
 
 /**
@@ -1071,6 +1107,15 @@ export interface ILayerManager {
      * @memberof IMapViewer
      */
     getLayer<T extends olLayerBase>(name: string): T | undefined;
+
+    /**
+     * Applies the given style to the given vector layer
+     * 
+     * @param name The name of the vector layer
+     * @param styleToApply The vector style to apply
+     * @since 0.13
+     */
+    setVectorLayerStyle(name: string, styleToApply: IVectorFeatureStyle): void;
 
     /**
      * Attempts to parse features for the given input file. A failed attempt is when

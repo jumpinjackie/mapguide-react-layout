@@ -48,20 +48,43 @@ import { ProjectionLike } from 'ol/proj';
  * @interface IOLFactory
  */
 export interface IOLFactory {
+    /**
+     * 
+     * @param options 
+     * @deprecated Will be removed in favor of the IVectorFeatureStyle as that better integrates with the external layer manager component
+     */
     createStyle(options?: StyleOptions): olStyle;
+    /**
+     * 
+     * @param options 
+     * @deprecated Will be removed in favor of the IVectorFeatureStyle as that better integrates with the external layer manager component
+     */
     createStyleFill(options?: FillOptions): olStyleFill;
+    /**
+     * 
+     * @param options 
+     * @deprecated Will be removed in favor of the IVectorFeatureStyle as that better integrates with the external layer manager component
+     */
     createStyleStroke(options?: StrokeOptions): olStyleStroke;
+    /**
+     * 
+     * @param options 
+     * @deprecated Will be removed in favor of the IVectorFeatureStyle as that better integrates with the external layer manager component
+     */
     createStyleCircle(options?: CircleOptions): olStyleCircle;
     /**
      * @since 0.12.6
+     * @deprecated Will be removed in favor of the IVectorFeatureStyle as that better integrates with the external layer manager component
      */
     createStyleIcon(options?: IconOptions): olStyleIcon;
     /**
      * @since 0.12.6
+     * @deprecated Will be removed in favor of the IVectorFeatureStyle as that better integrates with the external layer manager component
      */
     createStyleRegularShape(options: RegularShapeOptions): olStyleRegularShape;
     /**
      * @since 0.12.6
+     * @deprecated Will be removed in favor of the IVectorFeatureStyle as that better integrates with the external layer manager component
      */
     createStyleText(options?: TextOptions): olStyleText;
     createFeatureCollection(): olCollection<olFeature>;

@@ -38,6 +38,16 @@ import { MapDebugContext } from '../components/map-viewer-context';
 import { ISubscriberProps, Subscriber } from './subscriber';
 import { ActionType } from '../constants/actions';
 import { ensureParameters } from '../utils/url';
+import { 
+    DEFAULT_POINT_CIRCLE_STYLE,
+    DEFAULT_POINT_ICON_STYLE,
+    DEFAULT_LINE_STYLE,
+    DEFAULT_POLY_STYLE,
+    IBasicPointCircleStyle,
+    IPointIconStyle,
+    IBasicVectorLineStyle,
+    IBasicVectorPolygonStyle
+} from "../api/ol-style-helpers";
 
 export interface IMapViewerContainerProps {
     overviewMapElementSelector?: () => (Element | null);
@@ -257,6 +267,18 @@ class MapViewerAdapter implements IMapViewer {
     }
     dispatch(action: any): void {
         this.disp.dispatch(action);
+    }
+    getDefaultPointCircleStyle(): IBasicPointCircleStyle {
+        return DEFAULT_POINT_CIRCLE_STYLE;
+    }
+    getDefaultPointIconStyle(): IPointIconStyle {
+        return DEFAULT_POINT_ICON_STYLE;
+    }
+    getDefaultLineStyle(): IBasicVectorLineStyle {
+        return DEFAULT_LINE_STYLE;
+    }
+    getDefaultPolygonStyle(): IBasicVectorPolygonStyle {
+        return DEFAULT_POLY_STYLE;
     }
 }
 

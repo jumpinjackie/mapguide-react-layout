@@ -29,7 +29,7 @@
 ## Features/Fixes Overview:
 
  * Major updates of key libraries:
-   * [#1034](https://github.com/jumpinjackie/mapguide-react-layout/issues/1034): Upgrade to latest OpenLayers (6.2.0)
+   * [#1034](https://github.com/jumpinjackie/mapguide-react-layout/issues/1034): Upgrade to latest OpenLayers (6.2.1)
    * [#1010](https://github.com/jumpinjackie/mapguide-react-layout/issues/1010): Upgrade to latest Blueprint 3.x (3.22.2)
    * [#1029](https://github.com/jumpinjackie/mapguide-react-layout/issues/1029): Upgrade to latest react-redux package (7.1.2) 
  * [#963](https://github.com/jumpinjackie/mapguide-react-layout/issues/963): Re-designed External Layer Manager

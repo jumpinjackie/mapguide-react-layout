@@ -9945,10 +9945,10 @@ object.values@^1.1.0, object.values@^1.1.1:
     function-bind "^1.1.1"
     has "^1.0.3"
 
-ol@^6.2.0:
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/ol/-/ol-6.2.0.tgz#e0dc7b0b53965fa230f3eff38492968982f48872"
-  integrity sha512-kbc4mv0W2dkJpYnEopZ/SLoO2yZSKBAfU/+AYe6ozeLBYIMttU1xABsD0SVA6heSCaAXLxaRUrCzwxQTouHCww==
+ol@^6.2.1:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/ol/-/ol-6.2.1.tgz#9ec400729e3d932665ad0b08401b7a156ef6061e"
+  integrity sha512-CT2szew/COd7Zf9Bls+pdzewBYZNgyfxFivJ3L4Jv9Th7JdWjcQAT+pqMPH25L9SbVT+T17RCMq2H2m9uBCl1A==
   dependencies:
     elm-pep "^1.0.4"
     pbf "3.2.1"

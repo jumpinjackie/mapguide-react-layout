@@ -1,6 +1,6 @@
 # Viewer API Compatibility with AJAX/Fusion viewer
 
-mapguide-react-layout offers an compatibility layer to make the process of migrating from an AJAX or Fusion viewer to require minimal to zero modifications.
+mapguide-react-layout offers a compatibility layer to make the process of migrating from an AJAX or Fusion viewer to require minimal to zero modifications.
 
 The following APIs have been implemented
 

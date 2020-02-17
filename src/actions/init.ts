@@ -588,6 +588,7 @@ async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, 
     for (const e of extraEpsgs) {
         fetchEpsgs.push({ epsg: e, mapDef: "" });
     }
+    const epsgs = await Promise.all(fetchEpsgs.map(f => resolveProjectionFromEpsgIoAsync(f.epsg, opts.locale, f.mapDef)));
 
     //Previously, we register proj4 with OpenLayers on the bootstrap phase way before this init
     //process is started. This no longer works for OL6 where it doesn't seem to pick up the extra

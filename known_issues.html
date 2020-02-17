@@ -32,6 +32,7 @@
                 <a href="https://jumpinjackie.github.io/mapguide-react-layout/templates.html" class="btn btn-default">Templates</a>
                 <a href="https://jumpinjackie.github.io/mapguide-react-layout/release_notes.html" class="btn btn-default">Release Notes</a>
                 <a href="https://jumpinjackie.github.io/mapguide-react-layout/apidoc.html" class="btn btn-default">API Docs</a>
+                <a href="https://jumpinjackie.github.io/mapguide-react-layout/master/storybook-static.html" class="btn btn-default">Storybook (master)</a>
             </div>
 
                             <a href="https://github.com/jumpinjackie/mapguide-react-layout">
@@ -48,13 +49,14 @@
 
                 
                 <section class="col-sm-12 content">
-                                            <p>Known viewer issues or limitations are documented here.</p>
+                                            <h1 id="known-issues">Known Issues</h1>
+<p>Known viewer issues or limitations are documented here.</p>
 <p>Where applicable, an issue number is attached to indicate that such issues are actioned to be resolved.</p>
-<h1 id="localization">Localization</h1>
+<h2 id="localization">Localization</h2>
 <ul>
-<li>No known issues</li>
+<li>No known issues. If you identify holes in localization (ie. You still see english text when using non-english locale and string bundles), please report such issues.</li>
 </ul>
-<h1 id="fusion-compatibility">Fusion compatibility</h1>
+<h2 id="fusion-compatibility">Fusion compatibility</h2>
 <ul>
 <li>API
 <ul>
@@ -74,7 +76,7 @@
 </ul></li>
 <li>Due to lack of Google Maps integration, the Google Street View widget is not supported if referenced in an Application Definition (and will not be ported across due to current technical and legal constraints)</li>
 </ul>
-<h1 id="components">Components</h1>
+<h2 id="components">Components</h2>
 <ul>
 <li>
 <p>Task Pane</p>
@@ -95,9 +97,12 @@
 <li>Recorded measurements will temporarily disappear on templates with a collapsible Task Pane (eg. Slate) when the Task Pane panel is collapsed.</li>
 </ul>
 </li>
-<li>Modal dialogs are not resizable</li>
+<li>
+<p>The vertical hue slider of the color picker is inverted/flipped (Due to: <a href="https://github.com/elrumordelaluz/coloreact/issues/9">https://github.com/elrumordelaluz/coloreact/issues/9</a>)</p>
+</li>
+<li>Modal dialog backdrops do not work (due to recent Blueprint update)</li>
 </ul>
-<h1 id="commands">Commands</h1>
+<h2 id="commands">Commands</h2>
 <ul>
 <li>
 <p>General</p>
@@ -122,7 +127,7 @@
 <li>InvokeScript commands are not supported as-is. In the context of mapguide-react-layout, and InvokeScript command merely invokes a registered command of the same name in the command registry. The script content of such commands are completely ignored.</li>
 </ul></li>
 </ul>
-<h1 id="viewer">Viewer</h1>
+<h2 id="viewer">Viewer</h2>
 <ul>
 <li>
 <p>Viewer will only accept Map Definitions in coordinate systems that have a corresponding EPSG code</p>
@@ -141,13 +146,6 @@
 <li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/34">#34</a>: Digitization tools have poor user experience on mobile/tablet devices</li>
 <li><a href="https://github.com/jumpinjackie/mapguide-react-layout/issues/34">#34</a>: Feature Tooltips does not work on mobile/tablet devices</li>
 <li>Due to lack of Google Maps integration, if an Application Definition references Google Maps layers, they will be ignored</li>
-</ul>
-<h1 id="templates">Templates</h1>
-<ul>
-<li>Aqua:
-<ul>
-<li>Floating windows for Legend / Selection / Task Pane have fixed width and height</li>
-</ul></li>
 </ul>
                                     </section>
 

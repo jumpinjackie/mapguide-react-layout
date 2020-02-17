@@ -131,8 +131,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
         } else {
             this.setState({ activeComponent: null, frameContentLoaded: false }, () => {
                 if (this._iframe) {
-                    const navUrl = ensureParameters(url, this.props.mapName, this.props.session, this.props.locale);
-                    this._iframe.contentWindow?.location.replace(navUrl);
+                    this._iframe.contentWindow?.location.replace(url);
                 }
             });
         }

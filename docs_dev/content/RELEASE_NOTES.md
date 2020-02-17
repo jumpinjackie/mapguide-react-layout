@@ -1,3 +1,8 @@
+0.13.1
+======
+
+ * Un-break map switching
+
 0.13
 ====
 

@@ -18,7 +18,6 @@ import {
     ApplicationDefinition,
     Widget,
     UIWidget,
-    MapSetGroup,
     MapConfiguration,
     ContainerItem
 } from "../api/contracts/fusion";
@@ -51,9 +50,18 @@ import { MapInfo, IInitAppActionPayload, IAcknowledgeStartupWarningsAction, IRes
 import { ActionType } from '../constants/actions';
 import { getSelectionSet, clearSessionStore } from '../api/session-store';
 import { resolveProjectionFromEpsgIoAsync } from '../api/registry/projections';
-import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU, WEBLAYOUT_TOOLBAR } from '../constants';
+import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU, WEBLAYOUT_TOOLBAR, SPRITE_INVOKE_URL, SPRITE_INVOKE_SCRIPT } from '../constants';
 import { info, debug, warn } from '../utils/logger';
 import { getViewer } from '../api/runtime';
+
+function tryTranslateImageUrlToSpriteClass(imageUrl: string): string | undefined {
+    switch (imageUrl) {
+        case "../stdicons/icon_invokeurl.gif":
+            return SPRITE_INVOKE_URL;
+        case "../stdicons/icon_invokescript.gif":
+            return SPRITE_INVOKE_SCRIPT;
+    }
+}
 
 function isUIWidget(widget: any): widget is UIWidget {
     return widget.WidgetType === "UiWidgetType";
@@ -97,6 +105,13 @@ function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Diction
                 warn(`Invalid reference to command: ${item.Command}`);
                 return { error: tr("UNKNOWN_COMMAND_REFERENCE", locale, { command: item.Command }) } as IUnknownCommandSpec;
             } else if (cmdDef.TargetViewer != "Dwf") {
+                let icon: Partial<Pick<ICommandSpec, "icon" | "spriteClass">> = {};
+                if (cmdDef.ImageURL) {
+                    icon.spriteClass = tryTranslateImageUrlToSpriteClass(cmdDef.ImageURL);
+                    if (!icon.spriteClass) {
+                        icon.icon = cmdDef.ImageURL;
+                    }
+                }
                 const commonParams: any = {};
                 if (isTargetedCommand(cmdDef)) {
                     commonParams.Target = cmdDef.Target;
@@ -111,7 +126,7 @@ function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Diction
                     } else if (action == "Refresh") {
                         action = DefaultCommands.RefreshMap;
                     }
-                    return { command: action, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams };
+                    return { command: action, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams, ...icon };
                 } else {
                     switch (cmdDef["@xsi:type"]) {
                         case "ViewOptionsCommandType":
@@ -127,7 +142,7 @@ function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Diction
                         case "GetPrintablePageCommandType":
                             return { command: DefaultCommands.QuickPlot, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams };
                         default:
-                            return { command: cmdDef.Name, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams };
+                            return { command: cmdDef.Name, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams, ...icon };
                     }
                 }
             }
@@ -573,7 +588,6 @@ async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, 
     for (const e of extraEpsgs) {
         fetchEpsgs.push({ epsg: e, mapDef: "" });
     }
-    const epsgs = await Promise.all(fetchEpsgs.map(f => resolveProjectionFromEpsgIoAsync(f.epsg, opts.locale, f.mapDef)));
 
     //Previously, we register proj4 with OpenLayers on the bootstrap phase way before this init
     //process is started. This no longer works for OL6 where it doesn't seem to pick up the extra

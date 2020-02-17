@@ -62,19 +62,6 @@ export interface ITaskPaneProps {
 // be recorded in the navigation stack so we can properly go back/forward just like a web browser.
 // But we don't want these recorded URLs to accidentally trigger a re-load of the same url.
 
-// FIXME:
-//
-// While the current iframe works the way we want and we have a nice navigation
-// stack to go forward/back, the iframe is also putting real entries into our
-// browser's history, meaning hitting the actual browser back/forward buttons can
-// throw the internal navigation stack out of whack!
-//
-// There is a solution to this: Replace the current iframe with a new iframe with
-// the new URL (http://stackoverflow.com/questions/821359/reload-an-iframe-without-adding-to-the-history)
-//
-// However, I suspect this doesn't work in React because of the virtual DOM retaining
-// the old iframe element. How can we get React to make a new iframe for each URL?
-
 /**
  * A component that serves as a generic container for content or User Interface for custom functionality
  *

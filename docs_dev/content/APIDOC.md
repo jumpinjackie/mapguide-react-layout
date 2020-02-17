@@ -13,7 +13,7 @@ Click any of the links below for the API documentation for your specific version
 
  * [Global script bundle](0.13.0/api_browser.html)
  * [NPM module](0.13.0/apidoc_npm/index.html)
- * [Storybook](0.13.0/storybook-master/index.html)
+ * [Storybook](0.13.0/storybook-static/index.html)
 
 # 0.12.0
 

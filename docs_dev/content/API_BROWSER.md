@@ -84,6 +84,8 @@ NOTE: `getState()` returns a *copy* of the current application state and not a r
 
 ## Dispatching redux actions
 
+> NOTE: This API is experimental and may be subject to change.
+
 Starting with the 0.10 release, the `MapGuide.Application` class exposes the redux `dispatch()` function for dispatching redux actions.
 
 All available redux action creators are available under the `MapGuide.Actions` namespace.
@@ -99,6 +101,8 @@ var action = MapGuide.Actions.Map.setViewRotation(45);
 viewer.dispatch(action);
 
 ```
+
+> NOTE: This API is experimental as dispatching redux actions *outside* of the react component context from plain HTML/JS is a limited supported scenario. Dispatching actions may not work if any component is currently in the state of (re-)rendering. Do not try to dispatch multiple redux actions in succession, or dispatch actions outside the context of an event handler (eg. `onclick`)
 
 ## Invoking registered commands
 

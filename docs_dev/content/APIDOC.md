@@ -9,6 +9,11 @@ mapguide-react-layout also offers an [API compatibility layer](apicompat.html) w
 
 Click any of the links below for the API documentation for your specific version
 
+# 0.13.0
+
+ * [Global script bundle](0.13.0/api_browser.html)
+ * [NPM module](0.13.0/apidoc_npm/index.html)
+
 # 0.12.0
 
  * [Global script bundle](0.12.0/api_browser.html)

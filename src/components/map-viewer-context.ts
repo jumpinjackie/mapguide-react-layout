@@ -28,6 +28,8 @@ import { MgLayerSet } from '../api/layer-set';
 import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
 import { SelectedFeaturesTooltip } from './tooltips/selected-features';
+import { IQueryMapFeaturesOptions } from '../api/request-builder';
+import { QueryMapFeaturesResponse } from '../api/contracts/query';
 
 /**
  * @since 0.13
@@ -65,6 +67,14 @@ export interface IMapViewerContextProps {
     showLayers?: string[];
     hideGroups?: string[];
     hideLayers?: string[];
+    featureTooltipsEnabled: boolean;
+    pointSelectionBuffer?: number;
+    selectableLayerNames: string[];
+    onSessionExpired?: () => void;
+    onQueryMapFeatures?: (options: Partial<IQueryMapFeaturesOptions>, callback?: (res: QueryMapFeaturesResponse) => void, errBack?: (err: any) => void) => void;
+    agentKind: ClientKind;
+    mock?: MapGuideMockMode;
+    manualFeatureTooltips: boolean;
 }
 
 export interface IMapViewerContextCallback {

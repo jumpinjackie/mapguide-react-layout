@@ -102,38 +102,25 @@ import { warn, debug, info } from '../utils/logger';
  *
  * @export
  * @interface IMapViewerBaseProps
- * @extends {IMapViewerContextProps}
  */
 export interface IMapViewerBaseProps extends IMapViewerContextProps {
-    mock?: MapGuideMockMode;
     tool: ActiveMapTool;
     view?: IMapView;
-    agentKind: ClientKind;
     viewRotationEnabled: boolean;
     viewRotation: number;
-    featureTooltipsEnabled: boolean;
     stateChangeDebounceTimeout?: number;
-    pointSelectionBuffer?: number;
-    selectableLayerNames: string[];
     onRequestZoomToView?: (view: IMapView) => void;
-    onQueryMapFeatures?: (options: Partial<IQueryMapFeaturesOptions>, callback?: (res: QueryMapFeaturesResponse) => void, errBack?: (err: any) => void) => void;
     onMouseCoordinateChanged?: (coords: number[]) => void;
     onBusyLoading: (busyCount: number) => void;
     onRotationChanged: (newRotation: number) => void;
-    onSessionExpired?: () => void;
     onBeginDigitization: (callback: (cancelled: boolean) => void) => void;
     onMapResized?: (size: [number, number]) => void;
     overviewMapElementSelector?: () => (Element | null);
-    showGroups: string[] | undefined;
-    showLayers: string[] | undefined;
-    hideGroups: string[] | undefined;
-    hideLayers: string[] | undefined;
     layerTransparency: LayerTransparencySet;
     loadIndicatorPosition: MapLoadIndicatorPositioning;
     loadIndicatorColor: string;
     activeSelectedFeatureXml?: string;
     activeSelectedFeatureColor: string;
-    manualFeatureTooltips: boolean;
     cancelDigitizationKey?: number;
     undoLastPointKey?: number;
     isContextMenuOpen: boolean;
@@ -197,7 +184,7 @@ export function layerTransparencyChanged(set: LayerTransparencySet, other: Layer
     return false;
 }
 
-class SessionKeepAlive {
+export class SessionKeepAlive {
     private getSession: () => string;
     private client: Client;
     private interval: number;
@@ -253,7 +240,7 @@ const MapLoadIndicator = (props: IMapLoadIndicatorProps) => {
     return <div style={style} />;
 }
 
-function isMiddleMouseDownEvent(e: MouseEvent): boolean {
+export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4));
 }
 

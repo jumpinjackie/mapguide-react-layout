@@ -207,14 +207,14 @@ export class SessionKeepAlive {
     }
 }
 
-interface IMapLoadIndicatorProps {
+export interface IMapLoadIndicatorProps {
     loading: number;
     loaded: number;
     color: string;
     position: MapLoadIndicatorPositioning;
 }
 
-const MapLoadIndicator = (props: IMapLoadIndicatorProps) => {
+export const MapLoadIndicator = (props: IMapLoadIndicatorProps) => {
     const { loaded, loading, color, position } = props;
     let visibility: "visible" | "hidden" = "visible";
     let width = (loaded / loading * 100).toFixed(1) + "%";

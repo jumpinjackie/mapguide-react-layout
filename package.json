@@ -103,7 +103,7 @@
     "docsify-cli": "4.4.0",
     "enzyme": "3.11.0",
     "enzyme-adapter-react-16": "1.15.2",
-    "file-loader": "5.0.2",
+    "file-loader": "5.1.0",
     "fork-ts-checker-webpack-plugin": "^4.0.4",
     "jest": "25.1.0",
     "jsdom": "^16.2.0",

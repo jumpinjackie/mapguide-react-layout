@@ -2,7 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { CURSOR_DIGITIZE_POINT, CURSOR_DIGITIZE_LINE, CURSOR_DIGITIZE_LINESTRING, CURSOR_DIGITIZE_RECT, CURSOR_DIGITIZE_POLYGON, CURSOR_DIGITIZE_CIRCLE, CURSOR_GRABBING, CURSOR_GRAB, CURSOR_ZOOM_IN } from '../constants/assets';
 import { ActiveMapTool, MapLoadIndicatorPositioning, LayerProperty, GenericEvent, IMapView, Bounds, IExternalBaseLayer } from '../api/common';
-import { MapLoadIndicator, isMiddleMouseDownEvent } from './map-viewer-base';
+import { isMiddleMouseDownEvent } from './map-viewer-base';
 import Map from "ol/Map";
 import DragBox from 'ol/interaction/DragBox';
 import { MapOptions } from 'ol/PluggableMap';
@@ -26,6 +26,7 @@ import Layer from 'ol/layer/Layer';
 import { Callout, Intent } from '@blueprintjs/core';
 
 import "ol/ol.css";
+import { MapLoadIndicator } from './map-load-indicator';
 
 export interface IViewerProviderContext {
     isDigitizing(): boolean;

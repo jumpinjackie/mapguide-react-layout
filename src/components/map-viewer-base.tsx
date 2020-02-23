@@ -28,7 +28,6 @@ import {
     Bounds,
     Coordinate2D,
     RefreshMode,
-    ClientKind,
     LayerTransparencySet,
     MapLoadIndicatorPositioning,
     KC_ESCAPE,
@@ -38,7 +37,6 @@ import {
     LayerProperty
 } from "../api/common";
 import debounce = require("lodash.debounce");
-import { areNumbersEqual } from '../utils/number';
 import { isSessionExpiredError } from '../api/error';
 import { Client } from '../api/client';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
@@ -93,9 +91,10 @@ import Select from 'ol/interaction/Select';
 import { MgLayerSet } from '../api/layer-set';
 import { MgLayerManager } from '../api/layer-manager';
 import MapBrowserEvent from 'ol/MapBrowserEvent';
-import Collection from 'ol/Collection';
-import { RuntimeMap } from '../api/contracts/runtime-map';
 import { warn, debug, info } from '../utils/logger';
+import { SessionKeepAlive } from './session-keep-alive';
+import { layerTransparencyChanged, areMapsSame, areViewsCloseToEqual } from '../utils/viewer-state';
+import { MapLoadIndicator } from './map-load-indicator';
 
 /**
  * MapViewerBase component props
@@ -127,117 +126,6 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
     onHideContextMenu?: () => void;
     onContextMenu?: (pos: [number, number]) => void;
     onOpenTooltipLink: (url: string) => void;
-}
-
-/**
- * Determines if the given IMapView instances are equal or close to it
- *
- * @export
- * @param {(IMapView | undefined)} view
- * @param {(IMapView | undefined)} otherView
- * @returns {boolean}
- */
-export function areViewsCloseToEqual(view: IMapView | undefined, otherView: IMapView | undefined): boolean {
-    if (view && otherView) {
-        return areNumbersEqual(view.x, otherView.x) &&
-            areNumbersEqual(view.y, otherView.y) &&
-            areNumbersEqual(view.scale, otherView.scale);
-    } else {
-        return false;
-    }
-}
-
-/**
- * Indicates if the given runtime map instances are the same or have the same name
- *
- * @export
- * @param {RuntimeMap} map
- * @param {RuntimeMap} other
- * @returns {boolean}
- */
-export function areMapsSame(map: RuntimeMap, other: RuntimeMap): boolean {
-    if (map != other) {
-        return map.Name == other.Name;
-    }
-    return true;
-}
-
-/**
- * Indicates if the given layer transparency sets are different
- * @param set 
- * @param other 
- */
-export function layerTransparencyChanged(set: LayerTransparencySet, other: LayerTransparencySet): boolean {
-    if ((!set && other) || (set && !other)) {
-        return true;
-    }
-    const setLayers = Object.keys(set);
-    const otherLayers = Object.keys(other);
-    if (areArraysDifferent(setLayers, otherLayers))
-        return true;
-
-    for (const name of setLayers) {
-        if (set[name] != other[name]) {
-            return true;
-        }
-    }
-    return false;
-}
-
-export class SessionKeepAlive {
-    private getSession: () => string;
-    private client: Client;
-    private interval: number;
-    private timeoutID: any;
-    constructor(getSession: () => string, client: Client, onSessionExpired: () => void) {
-        this.getSession = getSession;
-        this.client = client;
-        this.client.getServerSessionTimeout(this.getSession()).then(tm => {
-            this.interval = tm / 5 * 1000;  //Ping server 5 times each period. Timeout is returned in seconds.
-            this.timeoutID = setTimeout(this.tick.bind(this), this.interval);
-        });
-    }
-    private tick(): void {
-        this.client.getServerSessionTimeout(this.getSession()).then(tm => {
-            this.timeoutID = setTimeout(this.tick.bind(this), this.interval);
-        });
-    }
-    public lastTry(): Promise<number> {
-        return this.client.getServerSessionTimeout(this.getSession());
-    }
-}
-
-export interface IMapLoadIndicatorProps {
-    loading: number;
-    loaded: number;
-    color: string;
-    position: MapLoadIndicatorPositioning;
-}
-
-export const MapLoadIndicator = (props: IMapLoadIndicatorProps) => {
-    const { loaded, loading, color, position } = props;
-    let visibility: "visible" | "hidden" = "visible";
-    let width = (loaded / loading * 100).toFixed(1) + "%";
-    if (loaded === loading) {
-        visibility = "hidden";
-        width = "0";
-    }
-    const style: React.CSSProperties = {
-        position: "absolute",
-        zIndex: 10,
-        visibility: visibility,
-        left: 0,
-        height: 5,
-        width: width,
-        background: color,
-        transition: "width 250ms"
-    };
-    if (position == "top") {
-        style.top = 0;
-    } else {
-        style.bottom = 0;
-    }
-    return <div style={style} />;
 }
 
 export function isMiddleMouseDownEvent(e: MouseEvent): boolean {

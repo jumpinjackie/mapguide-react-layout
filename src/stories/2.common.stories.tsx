@@ -9,7 +9,7 @@ storiesOf("Common Components", module)
     .addDecorator(withKnobs)
     .add("Color Picker", () => {
         const act = action("color changed");
-        const [color, setColor] = React.useState();
+        const [color, setColor] = React.useState<string | undefined>(undefined);
         const onSetColor = (val: string) => {
             act(val);
             setColor(val);

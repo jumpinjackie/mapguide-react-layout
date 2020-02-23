@@ -10,7 +10,6 @@ import {
     ILayerInfo
 } from "../api/common";
 import { getViewer } from "../api/runtime";
-import { areViewsCloseToEqual } from "../components/map-viewer-base";
 import { getFiniteScaleIndexForScale } from '../utils/number';
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet, SelectedFeature, SelectedFeatureSet } from '../api/contracts/query';
@@ -48,6 +47,7 @@ import {
 import { storeSelectionSet } from '../api/session-store';
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
 import { IVectorFeatureStyle } from '../api/ol-style-helpers';
+import { areViewsCloseToEqual } from '../utils/viewer-state';
 
 function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeature[]): SelectedFeature[] {
     const merged: SelectedFeature[] = [];

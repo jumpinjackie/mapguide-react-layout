@@ -15,6 +15,11 @@ import { IMapViewerContextCallback } from '../map-viewer-context';
 import { parseEpsgCodeFromCRS } from '../layer-manager/wfs-capabilities-panel';
 import { ProjectionLike } from '@hanreev/types-ol/ol/proj';
 
+export interface IQueryWmsFeaturesCallback {
+    getLocale(): string | undefined;
+    addFeatureToHighlight(feat: Feature | undefined, bAppend: boolean): void;
+}
+
 export class SelectedFeaturesTooltip {
     private map: olMap;
     private featureTooltipElement: HTMLElement;
@@ -52,7 +57,7 @@ export class SelectedFeaturesTooltip {
         this.featureTooltipElement.innerHTML = "";
         this.featureTooltipElement.classList.add("tooltip-hidden");
     }
-    public async queryWmsFeatures(layerMgr: ILayerManager, coord: Coordinate2D, resolution: number, callback: IMapViewerContextCallback) {
+    public async queryWmsFeatures(layerMgr: ILayerManager, coord: Coordinate2D, resolution: number, callback: IQueryWmsFeaturesCallback) {
         let selected = 0;
         //See what WMS layers we have
         const client = new Client("", "mapagent");

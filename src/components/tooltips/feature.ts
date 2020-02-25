@@ -4,13 +4,27 @@ import olOverlay from "ol/Overlay";
 import olWKTFormat from "ol/format/WKT";
 import olPolygon, { fromExtent } from "ol/geom/Polygon";
 import olMap from "ol/Map";
-import { IMapViewerContextCallback } from '../map-viewer-context';
-import { GenericEvent, GenericEventHandler } from '../../api/common';
+import { IMapViewerContextCallback, MapGuideMockMode } from '../map-viewer-context';
+import { GenericEvent, GenericEventHandler, ClientKind, Coordinate2D, Bounds } from '../../api/common';
 import { Client } from '../../api/client';
 import * as olExtent from "ol/extent";
 import { isSessionExpiredError } from '../../api/error';
 import { tr } from '../../api/i18n';
 import { debug } from '../../utils/logger';
+import Feature from 'ol/Feature';
+
+export interface IFeatureQueryCallback {
+    incrementBusyWorker(): void;
+    decrementBusyWorker(): void;
+    onSessionExpired(): void;
+    getAgentUri(): string;
+    getAgentKind(): ClientKind;
+    getMapName(): string;
+    getSessionId(): string;
+    getLocale(): string | undefined;
+    getPointSelectionBox(point: Coordinate2D): Bounds;
+    openTooltipLink(url: string): void;
+}
 
 export class FeatureQueryTooltip {
     private wktFormat: olWKTFormat;
@@ -21,8 +35,8 @@ export class FeatureQueryTooltip {
     private linkElement: HTMLElement | null;
     private enabled: boolean;
     private isMouseOverTooltip: boolean;
-    private callback: IMapViewerContextCallback;
-    constructor(map: olMap, callback: IMapViewerContextCallback) {
+    private callback: IFeatureQueryCallback;
+    constructor(map: olMap, callback: IFeatureQueryCallback) {
         this.callback = callback;
         this.wktFormat = new olWKTFormat();
         this.featureTooltipElement = document.createElement("div");

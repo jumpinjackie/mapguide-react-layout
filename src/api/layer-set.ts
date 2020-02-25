@@ -1,4 +1,4 @@
-import { RefreshMode, IExternalBaseLayer, Bounds, LayerTransparencySet, LayerProperty, MgBuiltInLayers, MgLayerType, MG_LAYER_TYPE_NAME, MG_BASE_LAYER_GROUP_NAME, SourceProperty, ILayerInfo } from './common';
+import { RefreshMode, IExternalBaseLayer, Bounds, LayerTransparencySet, LayerProperty, MgBuiltInLayers, MgLayerType, MG_LAYER_TYPE_NAME, MG_BASE_LAYER_GROUP_NAME, SourceProperty, ILayerInfo, ImageFormat, GenericEvent, ClientKind, Coordinate2D } from './common';
 import { Size, BLANK_SIZE } from '../containers/map-capturer-context';
 import olLayerGroup from "ol/layer/Group";
 import olTileGrid from "ol/tilegrid/TileGrid";
@@ -33,6 +33,7 @@ import * as olHas from "ol/has";
 import Feature from "ol/Feature";
 import { assertNever } from '../utils/never';
 import { debug } from '../utils/logger';
+import { Client } from './client';
 
 function blankImageLoadFunction(image: ImageWrapper) {
     (image.getImage() as any).src = BLANK_GIF_DATA_URI;
@@ -527,20 +528,52 @@ class MgInnerLayerSetFactory {
     }
 }
 
+export interface IMgLayerSetProps {
+    map: RuntimeMap;
+    imageFormat: ImageFormat;
+    selectionImageFormat?: ImageFormat;
+    selectionColor?: string;
+    agentUri: string;
+    externalBaseLayers?: IExternalBaseLayer[];
+    locale?: string;
+}
+
+export interface IMgLayerSetCallback {
+    getMockMode(): MapGuideMockMode | undefined;
+    incrementBusyWorker(): void;
+    decrementBusyWorker(): void;
+    addImageLoading(): void;
+    addImageLoaded(): void;
+    onImageError(e: GenericEvent): void;
+    onSessionExpired(): void;
+    getSelectableLayers(): string[];
+    getClient(): Client;
+    isContextMenuOpen(): boolean;
+    getAgentUri(): string;
+    getAgentKind(): ClientKind;
+    getMapName(): string;
+    getSessionId(): string;
+    getLocale(): string | undefined;
+    isFeatureTooltipEnabled(): boolean;
+    getPointSelectionBox(point: Coordinate2D): Bounds;
+    openTooltipLink(url: string): void;
+    addFeatureToHighlight(feat: Feature | undefined, bAppend: boolean): void;
+}
+
 export class MgLayerSet {
 
     private mainSet: ILayerSetOL;
     private overviewSet: ILayerSetOL;
     private scratchLayer: olVectorLayer;
 
-    private callback: IMapViewerContextCallback;
+    private callback: IMgLayerSetCallback;
     private _customLayers: {
         [name: string]: {
             layer: olLayerBase,
             order: number
         }
     };
-    constructor(props: IMapViewerContextProps, callback: IMapViewerContextCallback) {
+    constructor(props: IMgLayerSetProps, callback: IMgLayerSetCallback) {
         this.callback = callback;
         this._customLayers = {};
         const factory = new MgInnerLayerSetFactory(callback, props.map, props.agentUri, props.imageFormat, props.selectionImageFormat, props.selectionColor);

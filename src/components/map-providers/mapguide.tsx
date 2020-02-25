@@ -1,10 +1,10 @@
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 
 import { IMapProviderContext } from './context';
-import { MapViewerContext } from '../map-viewer-context';
 import { Client } from '../../api/client';
 import { SessionKeepAlive } from '../session-keep-alive';
-import { Bounds, IMapView, GenericEvent, ActiveMapTool, LayerProperty, ImageFormat, ReduxDispatch, Size2, RefreshMode, DigitizerCallback, KC_U, SelectionVariant, ILayerManager, Coordinate2D } from '../../api/common';
+import { Bounds, IMapView, GenericEvent, ActiveMapTool, LayerProperty, ImageFormat, ReduxDispatch, Size2, RefreshMode, DigitizerCallback, KC_U, SelectionVariant, ILayerManager, Coordinate2D, ClientKind, IExternalBaseLayer, LayerTransparencySet, Dictionary } from '../../api/common';
 import { tr } from '../../api/i18n';
 import { IQueryMapFeaturesOptions } from '../../api/request-builder';
 import { QueryMapFeaturesResponse } from '../../api/contracts/query';
@@ -29,23 +29,72 @@ import Polygon, { fromExtent } from 'ol/geom/Polygon';
 
 import * as olExtent from "ol/extent";
 import * as olEasing from "ol/easing";
-import Geometry from '@hanreev/types-ol/ol/geom/Geometry';
+import Geometry from 'ol/geom/Geometry';
 import { queryMapFeatures } from 'actions/map';
-import { ProjectionLike } from '@hanreev/types-ol/ol/proj';
-import View from '@hanreev/types-ol/ol/View';
-import Point from '@hanreev/types-ol/ol/geom/Point';
-import GeometryType from '@hanreev/types-ol/ol/geom/GeometryType';
-import LineString from '@hanreev/types-ol/ol/geom/LineString';
-import Circle from '@hanreev/types-ol/ol/geom/Circle';
-import Interaction from '@hanreev/types-ol/ol/interaction/Interaction';
-import Overlay from '@hanreev/types-ol/ol/Overlay';
+import { ProjectionLike } from 'ol/proj';
+import View from 'ol/View';
+import Point from 'ol/geom/Point';
+import GeometryType from 'ol/geom/GeometryType';
+import LineString from 'ol/geom/LineString';
+import Circle from 'ol/geom/Circle';
+import Interaction from 'ol/interaction/Interaction';
+import Overlay from 'ol/Overlay';
 import { MgLayerManager } from 'api/layer-manager';
-import Feature from '@hanreev/types-ol/ol/Feature';
-import { toStringHDMS } from '@hanreev/types-ol/ol/coordinate';
-import MapBrowserEvent from '@hanreev/types-ol/ol/MapBrowserEvent';
+import Feature from 'ol/Feature';
+import MapBrowserEvent from 'ol/MapBrowserEvent';
+import debounce = require('lodash.debounce');
+import { areMapsSame, layerTransparencyChanged, areViewsCloseToEqual } from 'utils/viewer-state';
+import { areArraysDifferent } from 'utils/array';
+import OverviewMap from 'ol/control/OverviewMap';
+import { MgLayerSet } from '../../api/layer-set';
+import { MouseTrackingTooltip } from '../tooltips/mouse';
+import { FeatureQueryTooltip } from '../tooltips/feature';
+import { SelectedFeaturesTooltip } from '../tooltips/selected-features';
+import { RuntimeMap } from '../../api/contracts/runtime-map';
+import { debug, warn } from '../../utils/logger';
+import Collection from 'ol/Collection';
+import { BLANK_SIZE, Size } from '../../containers/map-capturer-context';
+import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../../utils/site-version';
+import { BLANK_GIF_DATA_URI } from '../../constants';
+import { MapGuideMockMode } from 'components/map-viewer-context';
+import { isSessionExpiredError } from 'api/error';
 
 function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4));
+}
+
+export interface IProviderState {
+    view: IMapView;
+    viewRotation: number;
+    viewRotationEnabled: boolean;
+    mapName: string;
+    locale: string;
+    externalBaseLayers: IExternalBaseLayer[];
+    overviewMapElementSelector: () => Element | null;
+}
+
+export interface IMapGuideProviderState extends IProviderState {
+    imageFormat: ImageFormat;
+    agentUri: string;
+    agentKind: ClientKind;
+    activeTool: ActiveMapTool;
+    map: RuntimeMap;
+    pointSelectionBuffer: number;
+    manualFeatureTooltips: boolean;
+    featureTooltipsEnabled: boolean;
+    sessionId: string;
+    selectionColor: string;
+    selectionImageFormat: ImageFormat;
+    selectableLayerNames: string[];
+    cancelDigitizationKey: number;
+    undoLastPointKey: number;
+    layerTransparency: LayerTransparencySet;
+    showGroups: string[];
+    hideGroups: string[];
+    showLayers: string[];
+    hideLayers: string[];
+    activeSelectedFeatureXml: string;
+    activeSelectedFeatureColor: string;
 }
 
 export interface IViewerComponent {
@@ -56,6 +105,9 @@ export interface IViewerComponent {
     onBusyLoading: (busyCount: number) => void;
     onBeginDigitization: (callback: (cancelled: boolean) => void) => void;
     onHideContextMenu: () => void;
+    onOpenTooltipLink: (url: string) => void;
+    addImageLoading(): void;
+    addImageLoaded(): void;
 }
 
 export class MapGuideMapProviderContext {
@@ -70,10 +122,16 @@ export class MapGuideMapProviderContext {
      * @type {Map}
      */
     private _map: Map | undefined;
+    private _ovMap: OverviewMap | undefined;
+
+    private _layerSets: Dictionary<MgLayerSet>;
+    private _mouseTooltip: MouseTrackingTooltip;
+    private _featureTooltip: FeatureQueryTooltip;
+    private _selectTooltip: SelectedFeaturesTooltip;
+
     private _comp: IViewerComponent | undefined;
     private _wktFormat: WKTFormat;
     private _zoomSelectBox: DragBox;
-    private _mapContext: MapViewerContext | undefined;
     private _client: Client;
     private _busyWorkers: number;
     private _triggerZoomRequestOnMoveEnd: boolean;
@@ -81,26 +139,242 @@ export class MapGuideMapProviderContext {
     private _dispatcher: ReduxDispatch | undefined;
     private _activeDrawInteraction: Draw | null;
 
+    /**
+     * This is a throttled version of _refreshOnStateChange(). Call this on any
+     * modifications to pendingStateChanges
+     *
+     * @private
+     */
+    private refreshOnStateChange: (mapName: string,
+                                   showGroups: string[] | undefined,
+                                   showLayers: string[] | undefined,
+                                   hideGroups: string[] | undefined,
+                                   hideLayers: string[] | undefined) => void;
+
+    private _state: IMapGuideProviderState;
+
     // ============= MapGuide-specific private state ============== //
     private _keepAlive: SessionKeepAlive;
-    private _activeTool: ActiveMapTool | undefined;
-    private _mapName: string | undefined;
-    private _locale: string | undefined;
-    private _pointSelectionBuffer: number | undefined;
-    private _manualFeatureTooltips: boolean | undefined;
-    private _featureTooltipsEnabled: boolean | undefined;
-    private _sessionId: string | undefined;
-    private _selectionColor: string | undefined;
-    private _selectionImageFormat: ImageFormat | undefined;
-    private _selectableLayerNames: string[] | undefined;
-    private _cancelDigitizationKey: number | undefined;
-    private _undoLastPointKey: number | undefined;
+    // ============================================================= //
+
+    constructor() {
+        this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), 500);
+        this._layerSets = {};
+    }
+
+    //#region IMapViewerContextCallback
+    private onSessionExpired() {
+
+    }
+    private getMockMode() { return MapGuideMockMode.DoNotRender; }
+    private addFeatureToHighlight(feat: Feature | undefined, bAppend: boolean): void {
+        // Features have to belong to layer in order to be visible and have the highlight style, 
+        // so in addition to adding this new feature to the OL select observable collection, we 
+        // need to also add the feature to a scratch vector layer dedicated for this purpose
+        const layerSet = this.getLayerSet(this._state.mapName);
+        const sf = this._select.getFeatures();
+        if (!bAppend) {
+            sf.clear();
+            layerSet.clearScratchLayer();
+        }
+        
+        if (feat) {
+            layerSet.addScratchFeature(feat);
+            sf.push(feat);
+        }
+    }
+    //#endregion
+
+    //#region Map Context
+    public initLayerSet(mapName: string,
+                        showGroups: string[] | undefined,
+                        showLayers: string[] | undefined,
+                        hideGroups: string[] | undefined,
+                        hideLayers: string[] | undefined): MgLayerSet {
+        const layerSet = new MgLayerSet(this._state, {
+            getMockMode: () => this.getMockMode(),
+            incrementBusyWorker: () => this.incrementBusyWorker(),
+            decrementBusyWorker: () => this.decrementBusyWorker(),
+            addImageLoading: () => this._comp?.addImageLoading(),
+            addImageLoaded: () => this._comp?.addImageLoaded(),
+            onImageError: (e) => this.onImageError(e),
+            onSessionExpired: () => this.onSessionExpired(),
+            getSelectableLayers: () => this.getSelectableLayers(),
+            getClient: () => this._client,
+            isContextMenuOpen: () => this._comp?.isContextMenuOpen() ?? false,
+            getAgentUri: () => this._state.agentUri,
+            getAgentKind: () => this._state.agentKind,
+            getMapName: () => this._state.mapName,
+            getSessionId: () => this._state.sessionId,
+            getLocale: () => this._state.locale,
+            isFeatureTooltipEnabled: () => this.isFeatureTooltipEnabled(),
+            getPointSelectionBox: (pt) => this.getPointSelectionBox(pt, this._state.pointSelectionBuffer),
+            openTooltipLink: (url) => this._comp?.onOpenTooltipLink(url),
+            addFeatureToHighlight: (feat, bAppend) => this.addFeatureToHighlight(feat, bAppend)
+        });
+        this._layerSets[mapName] = layerSet;
+        layerSet.update(showGroups, showLayers, hideGroups, hideLayers);
+        return layerSet;
+    }
+    public initContext(layerSet: MgLayerSet, locale?: string, overviewMapElementSelector?: () => (Element | null)) {
+        if (this._map) {
+            // HACK: className property not documented. This needs to be fixed in OL api doc.
+            const overviewMapOpts: any = {
+                className: 'ol-overviewmap ol-custom-overviewmap',
+                layers: layerSet.getLayersForOverviewMap(),
+                view: new View({
+                    projection: layerSet.getProjection()
+                }),
+                tipLabel: tr("OL_OVERVIEWMAP_TIP", locale),
+                collapseLabel: String.fromCharCode(187), //'\u00BB',
+                label: String.fromCharCode(171) //'\u00AB'
+            };
+
+            if (overviewMapElementSelector) {
+                const el = overviewMapElementSelector();
+                if (el) {
+                    overviewMapOpts.target = ReactDOM.findDOMNode(el);
+                    overviewMapOpts.collapsed = false;
+                    overviewMapOpts.collapsible = false;
+                }
+            }
+            this._ovMap = new OverviewMap(overviewMapOpts);
+            this._map.addControl(this._ovMap);
+            layerSet.setMapGuideMocking(this.getMockMode());
+            layerSet.attach(this._map, this._ovMap, false);
+        }
+    }
+    public updateOverviewMapElement(overviewMapElementSelector: () => (Element | null)) {
+        if (this._ovMap) {
+            const el = overviewMapElementSelector();
+            if (el) {
+                this._ovMap.setCollapsed(false);
+                this._ovMap.setCollapsible(false);
+                this._ovMap.setTarget(ReactDOM.findDOMNode(el) as any);
+            } else {
+                this._ovMap.setCollapsed(true);
+                this._ovMap.setCollapsible(true);
+                this._ovMap.setTarget(null as any);
+            }
+        }
+    }
+    private ensureAndGetLayerSet(nextState: IMapGuideProviderState) {
+        let layerSet = this._layerSets[nextState.mapName];
+        if (!layerSet) {
+            layerSet = this.initLayerSet(nextState.mapName, nextState.showGroups, nextState.showLayers, nextState.hideGroups, nextState.hideLayers);
+            this._layerSets[nextState.mapName] = layerSet;
+        }
+        return layerSet;
+    }
+    //public getLayerSet(name: string, bCreate: boolean = false, props?: IMapViewerContextProps): MgLayerSet {
+    public getLayerSet(name: string): MgLayerSet {
+        let layerSet = this._layerSets[name];
+        /*
+        if (!layerSet && props && bCreate) {
+            layerSet = this.initLayerSet(props);
+            this._layerSets[props.map.Name] = layerSet;
+            this._activeMapName = props.map.Name;
+        }
+        */
+        return layerSet;
+    }
+    public get isMouseOverTooltip() { return this._featureTooltip.isMouseOver || this._selectTooltip.isMouseOver; }
+    private clearMouseTooltip(): void {
+        this._mouseTooltip.clear();
+    }
+    private setMouseTooltip(text: string) {
+        this._mouseTooltip.setText(text);
+    }
+    private handleMouseTooltipMouseMove(e: GenericEvent) {
+        this._mouseTooltip?.onMouseMove?.(e);
+    }
+    private hideSelectedVectorFeaturesTooltip() {
+        this._selectTooltip?.hide();
+    }
+    private showSelectedVectorFeatures(features: Collection<Feature>, pixel: [number, number], locale?: string) {
+        this._selectTooltip?.showSelectedVectorFeatures(features, pixel, locale);
+    }
+    private queryWmsFeatures(layerMgr: ILayerManager, coord: Coordinate2D) {
+        if (this._map) {
+            const res = this._map.getView().getResolution();
+            this._selectTooltip?.queryWmsFeatures(layerMgr, coord, res, {
+                getLocale: () => this._state.locale,
+                addFeatureToHighlight: (feat, bAppend) => this.addFeatureToHighlight(feat, bAppend)
+            });
+        }
+    }
+    private queryFeatureTooltip(pixel: [number, number]) {
+        if (this._featureTooltip && this._featureTooltip.isEnabled()) {
+            this._featureTooltip.raiseQueryFromPoint(pixel);
+        }
+    }
+    private handleFeatureTooltipMouseMove(e: GenericEvent) {
+        if (this._featureTooltip && this._featureTooltip.isEnabled()) {
+            this._featureTooltip.onMouseMove(e);
+        }
+    }
+    private enableFeatureTooltips(enabled: boolean): void {
+        this._featureTooltip.setEnabled(enabled);
+    }
+    private refreshMapInternal(name: string, mode: RefreshMode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly): void {
+        const layerSet = this.getLayerSet(name);
+        layerSet.refreshMap(mode);
+    }
+    private async showSelectedFeature(mapExtent: Bounds, size: Size, map: RuntimeMap, selectionColor: string, featureXml: string | undefined) {
+        const sv = getSiteVersion(map);
+        // This operation requires v4.0.0 QUERYMAPFEATURES, so bail if this ain't the right version
+        if (!canUseQueryMapFeaturesV4(sv)) {
+            return;
+        }
+        const layerSet = this.getLayerSet(map.Name);
+        try {
+            if (featureXml) {
+                const r = await this._client.queryMapFeatures_v4({
+                    mapname: map.Name,
+                    session: map.SessionId,
+                    selectionformat: "PNG",
+                    featurefilter: featureXml,
+                    selectioncolor: selectionColor,
+                    requestdata: 2, //Inline selection
+                    layerattributefilter: 0,
+                    persist: 0 //IMPORTANT: This is a transient selection
+                });
+                if (r.InlineSelectionImage) {
+                    const dataUri = `data:${r.InlineSelectionImage.MimeType};base64,${r.InlineSelectionImage.Content}`;
+                    layerSet.showActiveSelectedFeature(mapExtent, size, dataUri);
+                } else {
+                    layerSet.showActiveSelectedFeature(mapExtent, BLANK_SIZE, BLANK_GIF_DATA_URI);
+                }
+            } else {
+                layerSet.showActiveSelectedFeature(mapExtent, BLANK_SIZE, BLANK_GIF_DATA_URI);
+            }
+        } catch (e) {
+            layerSet.showActiveSelectedFeature(mapExtent, BLANK_SIZE, BLANK_GIF_DATA_URI);
+        }
+    }
+    //#endregion
+
+    /**
+     * DO NOT CALL DIRECTLY, call this.refreshOnStateChange() instead, which is a throttled version
+     * of this method
+     * @private
+     */
+    private _refreshOnStateChange(mapName: string,
+                                  showGroups: string[] | undefined,
+                                  showLayers: string[] | undefined,
+                                  hideGroups: string[] | undefined,
+                                  hideLayers: string[] | undefined) {
+        if (showGroups || showLayers || hideGroups || hideLayers) {
+            //this.refreshOnStateChange(map, showGroups, showLayers, hideGroups, hideLayers);
+            const layerSet = this.getLayerSet(mapName);
+            layerSet.setMapGuideMocking(this.getMockMode());
+            layerSet.update(showGroups, showLayers, hideGroups, hideLayers);
+        }
+    }
 
     private getScaleForExtent(bounds: Bounds): number {
-        assertIsDefined(this._mapContext);
         assertIsDefined(this._map);
-        assertIsDefined(this._mapName);
-        const activeLayerSet = this._mapContext.getLayerSet(this._mapName);
+        const activeLayerSet = this.getLayerSet(this._state.mapName);
         const mcsW = olExtent.getWidth(bounds);
         const mcsH = olExtent.getHeight(bounds);
         const size = this._map.getSize();
@@ -130,7 +404,7 @@ export class MapGuideMapProviderContext {
     private onZoomSelectBox(e: GenericEvent) {
         if (this._comp) {
             const extent = this._zoomSelectBox.getGeometry();
-            switch (this._activeTool) {
+            switch (this._state.activeTool) {
                 case ActiveMapTool.Zoom:
                     {
                         const ext: any = extent.getExtent();
@@ -147,19 +421,26 @@ export class MapGuideMapProviderContext {
         }
     }
     private onMouseMove(e: GenericEvent) {
-        if (this._mapContext && this._comp) {
-            this._mapContext.handleMouseTooltipMouseMove(e);
+        if (this._comp) {
+            this.handleMouseTooltipMouseMove(e);
             if (this._comp.isContextMenuOpen()) {
                 return;
             }
-            if (!this._manualFeatureTooltips) {
-                this._mapContext.handleFeatureTooltipMouseMove(e);
+            if (!this._state.manualFeatureTooltips) {
+                this.handleFeatureTooltipMouseMove(e);
             }
             this._comp.onMouseCoordinateChanged?.(e.coordinate);
         }
     }
+    private onImageError(e: GenericEvent) {
+        this._keepAlive.lastTry().catch(err => {
+            if (isSessionExpiredError(err)) {
+                this.onSessionExpired();
+            }
+        });
+    }
     private onMapClick(e: MapBrowserEvent) {
-        if (!this._mapContext || !this._comp || !this._map) {
+        if (!this._comp || !this._map) {
             return;
         }
 
@@ -173,11 +454,11 @@ export class MapGuideMapProviderContext {
         if (this.isDigitizing()) {
             return;
         }
-        if (this._activeTool == ActiveMapTool.WmsQueryFeatures) {
-            this._mapContext.queryWmsFeatures(this._map, this.getLayerManager(), e.coordinate as Coordinate2D);
+        if (this._state.activeTool == ActiveMapTool.WmsQueryFeatures) {
+            this.queryWmsFeatures(this.getLayerManager(), e.coordinate as Coordinate2D);
         } else {
             let vfSelected = 0;
-            if (this._activeTool == ActiveMapTool.Select) {
+            if (this._state.activeTool == ActiveMapTool.Select) {
                 /*
                 //Shift+Click is the default OL selection append mode, so if no shift key
                 //pressed, clear the existing selection
@@ -203,11 +484,11 @@ export class MapGuideMapProviderContext {
             // vector features were selected as part of this click
             const px = e.pixel as [number, number];
             if (vfSelected == 0) {
-                this._mapContext.hideSelectedVectorFeaturesTooltip();
-                if (this._manualFeatureTooltips && this._featureTooltipsEnabled) {
-                    this._mapContext.queryFeatureTooltip(px);
-                } else if (this._activeTool === ActiveMapTool.Select) {
-                    const ptBuffer = this._pointSelectionBuffer ?? 2;
+                this.hideSelectedVectorFeaturesTooltip();
+                if (this._state.manualFeatureTooltips && this._state.featureTooltipsEnabled) {
+                    this.queryFeatureTooltip(px);
+                } else if (this._state.activeTool === ActiveMapTool.Select) {
+                    const ptBuffer = this._state.pointSelectionBuffer ?? 2;
                     const box = this.getPointSelectionBox(px, ptBuffer);
                     const geom = fromExtent(box);
                     const options = this.buildDefaultQueryOptions(geom);
@@ -215,7 +496,7 @@ export class MapGuideMapProviderContext {
                     this.sendSelectionQuery(options);
                 }
             } else {
-                this._mapContext.showSelectedVectorFeatures(this._select.getFeatures(), px, this._locale);
+                this.showSelectedVectorFeatures(this._select.getFeatures(), px, this._state.locale);
             }
         }
     }
@@ -228,11 +509,10 @@ export class MapGuideMapProviderContext {
         this._comp?.onBusyLoading?.(this._busyWorkers);
     }
     private getSelectableLayers(): string[] {
-        return this._selectableLayerNames ?? [];
+        return this._state.selectableLayerNames ?? [];
     }
     private buildDefaultQueryOptions(geom: Geometry | string, reqQueryFeatures: number = 1 /* Attributes */): IQueryMapFeaturesOptions {
-        assertIsDefined(this._mapName);
-        assertIsDefined(this._sessionId);
+        assertIsDefined(this._state.sessionId);
         const names = this.getSelectableLayers();
         let wkt: string;
         if (typeof geom === 'string') {
@@ -241,15 +521,23 @@ export class MapGuideMapProviderContext {
             wkt = this._wktFormat.writeGeometry(geom);
         }
         return {
-            mapname: this._mapName,
-            session: this._sessionId,
+            mapname: this._state.mapName,
+            session: this._state.sessionId,
             geometry: wkt,
             requestdata: reqQueryFeatures,
             layernames: names.length > 0 ? names.join(",") : undefined,
             persist: 1
         };
     }
-    
+    private applyView(layerSet: MgLayerSet, vw: IMapView) {
+        this._triggerZoomRequestOnMoveEnd = false;
+        layerSet.getView().setCenter([vw.x, vw.y]);
+        //Don't use this.scaleToResolution() as that uses this.props to determine
+        //applicable layer set, but we already have that here
+        const res = layerSet.scaleToResolution(vw.scale);
+        layerSet.getView().setResolution(res);
+        this._triggerZoomRequestOnMoveEnd = true;
+    }
     private removeActiveDrawInteraction() {
         if (this._activeDrawInteraction && this._map && this._comp) {
             this._map.removeInteraction(this._activeDrawInteraction);
@@ -258,9 +546,9 @@ export class MapGuideMapProviderContext {
         }
     }
     public cancelDigitization(): void {
-        if (this.isDigitizing() && this._mapContext) {
+        if (this.isDigitizing()) {
             this.removeActiveDrawInteraction();
-            this._mapContext.clearMouseTooltip();
+            this.clearMouseTooltip();
             //this._mouseTooltip.clear();
         }
     }
@@ -272,10 +560,10 @@ export class MapGuideMapProviderContext {
                 assertIsDefined(this._comp);
                 this.removeActiveDrawInteraction();
                 //this._mouseTooltip.clear();
-                this._mapContext?.clearMouseTooltip();
+                this.clearMouseTooltip();
                 if (prompt) {
                     //this._mouseTooltip.setText(prompt);
-                    this._mapContext?.setMouseTooltip(prompt);
+                    this.setMouseTooltip(prompt);
                 }
                 this._activeDrawInteraction = draw;
                 this._activeDrawInteraction.once("drawend", (e: GenericEvent) => {
@@ -296,7 +584,7 @@ export class MapGuideMapProviderContext {
      * @param {Polygon} geom
      * @memberof MapGuideMapProviderContext
      */
-    protected selectFeaturesByExtent(geom: Polygon) { 
+    protected selectFeaturesByExtent(geom: Polygon) {
         this.sendSelectionQuery(this.buildDefaultQueryOptions(geom));
     }
 
@@ -313,11 +601,119 @@ export class MapGuideMapProviderContext {
     /**
      *
      * @virtual
-     * @param {*} extraState
+     * @param {IMapGuideProviderState} nextState
      * @memberof MapGuideMapProviderContext
      */
-    public setExtraState(extraState: any): void {
+    public setProviderState(nextState: IMapGuideProviderState): void {
+        //
+        // React (no pun intended) to prop changes
+        //
+        if (nextState.imageFormat != this._state.imageFormat) {
+            warn(`Unsupported change of props: imageFormat`);
+        }
+        if (nextState.agentUri != this._state.agentUri) {
+            warn(`Unsupported change of props: agentUri`);
+            this._client = new Client(nextState.agentUri, nextState.agentKind);
+        }
+        if (nextState.agentKind != this._state.agentKind) {
+            warn(`Unsupported change of props: agentKind`);
+            this._client = new Client(nextState.agentUri, nextState.agentKind);
+        }
+        let bChangedView = false;
+        //map
+        if (nextState.mapName != this._state.mapName && this._map && this._ovMap) {
+            const oldLayerSet = this.getLayerSet(this._state.mapName);
+            const newLayerSet = this.ensureAndGetLayerSet(nextState);
+            oldLayerSet.detach(this._map, this._ovMap);
+            newLayerSet.setMapGuideMocking(this.getMockMode());
+            newLayerSet.attach(this._map, this._ovMap);
+            //This would happen if we switch to a map we haven't visited yet
+            if (!nextState.view) {
+                newLayerSet.fitViewToExtent();
+                bChangedView = true;
+            } else {
+                const layerSet = this.getLayerSet(nextState.mapName);
+                this.applyView(layerSet, nextState.view);
+            }
+        }
+        //selectionColor
+        if (nextState.selectionColor && nextState.selectionColor != this._state.selectionColor) {
+            const layerSet = this.getLayerSet(nextState.mapName);
+            layerSet.updateSelectionColor(nextState.selectionColor);
+        }
+        //featureTooltipsEnabled
+        if (nextState.featureTooltipsEnabled != this._state.featureTooltipsEnabled) {
+            this.enableFeatureTooltips(nextState.featureTooltipsEnabled);
+        }
+        //externalBaseLayers
+        if (nextState.externalBaseLayers != null &&
+            nextState.externalBaseLayers.length > 0) {
+            const layerSet = this.getLayerSet(nextState.mapName);
+            layerSet.updateExternalBaseLayers(nextState.externalBaseLayers);
+        }
+        //Layer transparency
+        if (layerTransparencyChanged(nextState.layerTransparency, this._state.layerTransparency)) {
+            const layerSet = this.getLayerSet(nextState.mapName);
+            layerSet.updateTransparency(nextState.layerTransparency);
+        }
+        //Layer/Group visibility
+        if (areArraysDifferent(nextState.showGroups, this._state.showGroups) ||
+            areArraysDifferent(nextState.hideGroups, this._state.hideGroups) ||
+            areArraysDifferent(nextState.showLayers, this._state.showLayers) ||
+            areArraysDifferent(nextState.hideLayers, this._state.hideLayers)) {
+            this.refreshOnStateChange(nextState.mapName, nextState.showGroups, nextState.showLayers, nextState.hideGroups, nextState.hideLayers);
+        }
+        //view
+        if (!areViewsCloseToEqual(nextState.view, this._state.view)) {
+            const vw = nextState.view;
+            if (vw != null && !bChangedView) {
+                const layerSet = this.getLayerSet(nextState.mapName);
+                this.applyView(layerSet, vw);
+            } else {
+                debug(`Skipping zoomToView as next/current views are close enough or target view is null`);
+            }
+        }
+        //overviewMapElement
+        if (nextState.overviewMapElementSelector) {
+            this.updateOverviewMapElement(nextState.overviewMapElementSelector);
+        }
+        //viewRotation
+        if (this._state.viewRotation != nextState.viewRotation) {
+            this.getOLView().setRotation(nextState.viewRotation);
+        }
+        //viewRotationEnabled
+        if (this._state.viewRotationEnabled != nextState.viewRotationEnabled) {
+            if (this._map) {
+                const view = this.getOLView();
+                const newView = new View({
+                    enableRotation: nextState.viewRotationEnabled,
+                    rotation: nextState.viewRotation,
+                    center: view.getCenter(),
+                    resolution: view.getResolution(),
+                    resolutions: view.getResolutions(),
+                    minResolution: view.getMinResolution(),
+                    maxResolution: view.getMaxResolution(),
+                    maxZoom: view.getMaxZoom(),
+                    minZoom: view.getMinZoom(),
+                    //constrainRotation: view.constrainRotation(),
+                    projection: view.getProjection(),
+                    zoom: view.getZoom()
+                });
+                this._map.setView(newView);
+            }
+        }
+        //activeSelectedFeatureXml
+        if (this._state.activeSelectedFeatureXml != nextState.activeSelectedFeatureXml) {
+            if (this._map) {
+                const ms = this._map.getSize();
+                const view = this.getOLView();
+                const me: any = view.calculateExtent(ms);
+                const size = { w: ms[0], h: ms[1] };
+                this.showSelectedFeature(me, size, nextState.map, nextState.activeSelectedFeatureColor, nextState.activeSelectedFeatureXml);
+            }
+        }
 
+        this._state = nextState;
     }
 
     public isDigitizing(): boolean {
@@ -334,7 +730,7 @@ export class MapGuideMapProviderContext {
             layers: (layer) => layer.get(LayerProperty.IS_SELECTABLE) == true || layer.get(LayerProperty.IS_SCRATCH) == true
         });
         this._zoomSelectBox = new DragBox({
-            condition: (e) => !this.isDigitizing() && (this._activeTool === ActiveMapTool.Select || this._activeTool === ActiveMapTool.Zoom)
+            condition: (e) => !this.isDigitizing() && (this._state.activeTool === ActiveMapTool.Select || this._state.activeTool === ActiveMapTool.Zoom)
         });
         this._zoomSelectBox.on("boxend", this.onZoomSelectBox.bind(this));
         const mapOptions: MapOptions = {
@@ -343,10 +739,10 @@ export class MapGuideMapProviderContext {
             //view: view,
             controls: [
                 new Attribution({
-                    tipLabel: tr("OL_ATTRIBUTION_TIP", this._locale)
+                    tipLabel: tr("OL_ATTRIBUTION_TIP", this._state.locale)
                 }),
                 new Rotate({
-                    tipLabel: tr("OL_RESET_ROTATION_TIP", this._locale)
+                    tipLabel: tr("OL_RESET_ROTATION_TIP", this._state.locale)
                 })
             ],
             interactions: [
@@ -355,7 +751,7 @@ export class MapGuideMapProviderContext {
                 new DragPan({
                     condition: (e) => {
                         const startingMiddleMouseDrag = e.type == "pointerdown" && isMiddleMouseDownEvent((e as any).originalEvent);
-                        const enabled = (startingMiddleMouseDrag || this._supportsTouch || this._activeTool === ActiveMapTool.Pan);
+                        const enabled = (startingMiddleMouseDrag || this._supportsTouch || this._state.activeTool === ActiveMapTool.Pan);
                         //console.log(e);
                         //console.log(`Allow Pan - ${enabled} (middle mouse: ${startingMiddleMouseDrag})`);
                         return enabled;
@@ -370,21 +766,32 @@ export class MapGuideMapProviderContext {
             ]
         };
         this._map = new Map(mapOptions);
+        this._mouseTooltip = new MouseTrackingTooltip(this._map, this._comp.isContextMenuOpen);
+        this._featureTooltip = new FeatureQueryTooltip(this._map, {
+            incrementBusyWorker: () => this.incrementBusyWorker(),
+            decrementBusyWorker: () => this.decrementBusyWorker(),
+            onSessionExpired: () => this.onSessionExpired(),
+            getAgentUri: () => this._state.agentUri,
+            getAgentKind: () => this._state.agentKind,
+            getMapName: () => this._state.mapName,
+            getSessionId: () => this._state.sessionId,
+            getLocale: () => this._state.locale,
+            getPointSelectionBox: (pt) => this.getPointSelectionBox(pt, this._state.pointSelectionBuffer),
+            openTooltipLink: (url) => this._comp?.onOpenTooltipLink(url)
+        });
+        this._selectTooltip = new SelectedFeaturesTooltip(this._map);
+        this._featureTooltip.setEnabled(false); //initTooltipEnabled);
         this._map.on("pointermove", this.onMouseMove.bind(this));
         //this._map.on("change:size", this.onResize.bind(this));
     }
 
     public scaleToResolution(scale: number): number {
-        assertIsDefined(this._mapContext);
-        assertIsDefined(this._mapName);
-        const activeLayerSet = this._mapContext.getLayerSet(this._mapName);
+        const activeLayerSet = this.getLayerSet(this._state.mapName);
         return activeLayerSet.scaleToResolution(scale);
     }
 
     public resolutionToScale(resolution: number): number {
-        assertIsDefined(this._mapContext);
-        assertIsDefined(this._mapName);
-        const activeLayerSet = this._mapContext.getLayerSet(this._mapName);
+        const activeLayerSet = this.getLayerSet(this._state.mapName);
         return activeLayerSet.resolutionToScale(resolution);
     }
 
@@ -420,7 +827,7 @@ export class MapGuideMapProviderContext {
         }
     }
     public setSelectionXml(xml: string, queryOpts?: Partial<IQueryMapFeaturesOptions>, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void {
-        if (!this._mapName || !this._dispatcher || !this._comp || !this._sessionId || !this._selectionColor) {
+        if (!this._state.mapName || !this._dispatcher || !this._comp || !this._state.sessionId || !this._state.selectionColor) {
             return;
         }
         //NOTE: A quirk of QUERYMAPFEATURES is that when passing in selection XML (instead of geometry),
@@ -428,14 +835,14 @@ export class MapGuideMapProviderContext {
         //selection XML will not be rendered because they may not pass the layer attribute filter
         const reqQueryFeatures = 1; //Attributes
         this.incrementBusyWorker();
-        const mapName = this._mapName;
+        const mapName = this._state.mapName;
         const qOrig = {
             mapname: mapName,
-            session: this._sessionId,
+            session: this._state.sessionId,
             persist: 1,
             featurefilter: xml,
-            selectioncolor: this._selectionColor,
-            selectionformat: this._selectionImageFormat ?? "PNG8",
+            selectioncolor: this._state.selectionColor,
+            selectionformat: this._state.selectionImageFormat ?? "PNG8",
             maxfeatures: -1,
             requestdata: reqQueryFeatures
         };
@@ -448,7 +855,7 @@ export class MapGuideMapProviderContext {
                     success(res);
                 }
             },
-            errBack:  err => {
+            errBack: err => {
                 this.decrementBusyWorker();
                 if (failure) {
                     failure(err);
@@ -458,21 +865,18 @@ export class MapGuideMapProviderContext {
         this._dispatcher(action);
     }
     public refreshMap(mode: RefreshMode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly): void {
-        assertIsDefined(this._mapContext);
-        assertIsDefined(this._mapName);
-        this._mapContext.refreshMap(this._mapName, mode);
+        assertIsDefined(this._state.mapName);
+        this.refreshMapInternal(this._state.mapName, mode);
     }
     public getMetersPerUnit(): number {
-        assertIsDefined(this._mapContext);
-        assertIsDefined(this._mapName);
-        const activeLayerSet = this._mapContext.getLayerSet(this._mapName);
+        assertIsDefined(this._state.mapName);
+        const activeLayerSet = this.getLayerSet(this._state.mapName);
         return activeLayerSet.getMetersPerUnit();
     }
     public initialView(): void {
         assertIsDefined(this._comp);
-        assertIsDefined(this._mapName);
-        assertIsDefined(this._mapContext);
-        const activeLayerSet = this._mapContext.getLayerSet(this._mapName);
+        assertIsDefined(this._state.mapName);
+        const activeLayerSet = this.getLayerSet(this._state.mapName);
         this._comp.onRequestZoomToView(this.getViewForExtent(activeLayerSet.getExtent()));
     }
     public clearSelection(): void {
@@ -492,7 +896,7 @@ export class MapGuideMapProviderContext {
         const draw = new Draw({
             type: GeometryType.POINT // "Point"//ol.geom.GeometryType.POINT
         });
-        this.pushDrawInteraction("Point", draw, handler, prompt || tr("DIGITIZE_POINT_PROMPT", this._locale));
+        this.pushDrawInteraction("Point", draw, handler, prompt || tr("DIGITIZE_POINT_PROMPT", this._state.locale));
     }
     public digitizeLine(handler: DigitizerCallback<LineString>, prompt?: string): void {
         assertIsDefined(this._comp);
@@ -501,7 +905,7 @@ export class MapGuideMapProviderContext {
             minPoints: 2,
             maxPoints: 2
         });
-        this.pushDrawInteraction("Line", draw, handler, prompt || tr("DIGITIZE_LINE_PROMPT", this._locale));
+        this.pushDrawInteraction("Line", draw, handler, prompt || tr("DIGITIZE_LINE_PROMPT", this._state.locale));
     }
     public digitizeLineString(handler: DigitizerCallback<LineString>, prompt?: string): void {
         assertIsDefined(this._comp);
@@ -509,8 +913,8 @@ export class MapGuideMapProviderContext {
             type: GeometryType.LINE_STRING, //"LineString", //ol.geom.GeometryType.LINE_STRING,
             minPoints: 2
         });
-        this.pushDrawInteraction("LineString", draw, handler, prompt || tr("DIGITIZE_LINESTRING_PROMPT", this._locale, {
-            key: String.fromCharCode(this._undoLastPointKey ?? KC_U) //Pray that a sane (printable) key was bound
+        this.pushDrawInteraction("LineString", draw, handler, prompt || tr("DIGITIZE_LINESTRING_PROMPT", this._state.locale, {
+            key: String.fromCharCode(this._state.undoLastPointKey ?? KC_U) //Pray that a sane (printable) key was bound
         }));
     }
     public digitizeCircle(handler: DigitizerCallback<Circle>, prompt?: string): void {
@@ -518,7 +922,7 @@ export class MapGuideMapProviderContext {
         const draw = new Draw({
             type: GeometryType.CIRCLE  // "Circle" //ol.geom.GeometryType.CIRCLE
         });
-        this.pushDrawInteraction("Circle", draw, handler, prompt || tr("DIGITIZE_CIRCLE_PROMPT", this._locale));
+        this.pushDrawInteraction("Circle", draw, handler, prompt || tr("DIGITIZE_CIRCLE_PROMPT", this._state.locale));
     }
     public digitizeRectangle(handler: DigitizerCallback<Polygon>, prompt?: string): void {
         assertIsDefined(this._comp);
@@ -538,15 +942,15 @@ export class MapGuideMapProviderContext {
             maxPoints: 2,
             geometryFunction: geomFunc
         });
-        this.pushDrawInteraction("Rectangle", draw, handler, prompt || tr("DIGITIZE_RECT_PROMPT", this._locale));
+        this.pushDrawInteraction("Rectangle", draw, handler, prompt || tr("DIGITIZE_RECT_PROMPT", this._state.locale));
     }
     public digitizePolygon(handler: DigitizerCallback<Polygon>, prompt?: string): void {
         assertIsDefined(this._comp);
         const draw = new Draw({
             type: GeometryType.POLYGON //"Polygon" //ol.geom.GeometryType.POLYGON
         });
-        this.pushDrawInteraction("Polygon", draw, handler, prompt || tr("DIGITIZE_POLYGON_PROMPT", this._locale, {
-            key: String.fromCharCode(this._undoLastPointKey ?? KC_U) //Pray that a sane (printable) key was bound
+        this.pushDrawInteraction("Polygon", draw, handler, prompt || tr("DIGITIZE_POLYGON_PROMPT", this._state.locale, {
+            key: String.fromCharCode(this._state.undoLastPointKey ?? KC_U) //Pray that a sane (printable) key was bound
         }));
     }
     public selectByGeometry(geom: Geometry, selectionMethod?: SelectionVariant): void {
@@ -560,9 +964,7 @@ export class MapGuideMapProviderContext {
         this.sendSelectionQuery(options, success, failure);
     }
     public isFeatureTooltipEnabled(): boolean {
-        assertIsDefined(this._mapContext);
-        //return this._featureTooltip.isEnabled();
-        return this._mapContext.isFeatureTooltipEnabled();
+        return this._featureTooltip.isEnabled();
     }
     public addInteraction<T extends Interaction>(interaction: T): T {
         assertIsDefined(this._map);
@@ -592,10 +994,9 @@ export class MapGuideMapProviderContext {
         this._map?.updateSize();
     }
     public getLayerManager(mapName?: string): ILayerManager {
-        assertIsDefined(this._mapContext);
         assertIsDefined(this._map);
-        assertIsDefined(this._mapName);
-        const layerSet = this._mapContext.getLayerSet(mapName ?? this._mapName, true, this._comp as any);
+        assertIsDefined(this._state.mapName);
+        const layerSet = this.ensureAndGetLayerSet(this._state); // this.getLayerSet(mapName ?? this._state.mapName, true, this._comp as any);
         return new MgLayerManager(this._map, layerSet);
     }
     public screenToMapUnits(x: number, y: number): [number, number] {
@@ -649,18 +1050,18 @@ export class MapGuideMapProviderContext {
     }
 
     private sendSelectionQuery(queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) {
-        if (!this._mapName || !this._dispatcher || !this._comp || !this._sessionId || !this._selectionColor || (queryOpts != null && (queryOpts.layernames ?? []).length == 0)) {
+        if (!this._state.mapName || !this._dispatcher || !this._comp || !this._state.sessionId || !this._state.selectionColor || (queryOpts != null && (queryOpts.layernames ?? []).length == 0)) {
             return;
         }
         this.incrementBusyWorker();
-        const mapName = this._mapName;
+        const mapName = this._state.mapName;
         const qOrig: Partial<IQueryMapFeaturesOptions> = {
             mapname: mapName,
-            session: this._sessionId,
+            session: this._state.sessionId,
             persist: 1,
             selectionvariant: "INTERSECTS",
-            selectioncolor: this._selectionColor,
-            selectionformat: this._selectionImageFormat ?? "PNG8",
+            selectioncolor: this._state.selectionColor,
+            selectionformat: this._state.selectionImageFormat ?? "PNG8",
             maxfeatures: -1
         };
         const queryOptions: IQueryMapFeaturesOptions = { ...qOrig, ...queryOpts } as IQueryMapFeaturesOptions;
@@ -672,7 +1073,7 @@ export class MapGuideMapProviderContext {
                     success(res);
                 }
             },
-            errBack:  err => {
+            errBack: err => {
                 this.decrementBusyWorker();
                 if (failure) {
                     failure(err);

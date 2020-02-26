@@ -560,14 +560,13 @@ export interface IMgLayerSetCallback {
     addFeatureToHighlight(feat: Feature | undefined, bAppend: boolean): void;
 }
 
-export class MgLayerSet {
+export abstract class LayerSetBase {
+    protected mainSet: ILayerSetOL;
+    protected overviewSet: ILayerSetOL;
+    protected scratchLayer: olVectorLayer;
 
-    private mainSet: ILayerSetOL;
-    private overviewSet: ILayerSetOL;
-    private scratchLayer: olVectorLayer;
-
-    private callback: IMgLayerSetCallback;
-    private _customLayers: {
+    protected callback: IMgLayerSetCallback;
+    protected _customLayers: {
         [name: string]: {
             layer: olLayerBase,
             order: number
@@ -616,31 +615,7 @@ export class MgLayerSet {
     public clearScratchLayer() {
         this.scratchLayer.getSource().clear();
     }
-    public setMapGuideMocking(mock: MapGuideMockMode | undefined) {
-        const allLayers = this.mainSet.getLayers();
-        for (const layer of allLayers) {
-            if (layer instanceof olImageLayer) {
-                const source = layer.getSource();
-                if (source instanceof olMapGuideSource) {
-                    if (typeof (mock) != 'undefined') {
-                        switch (mock) {
-                            case MapGuideMockMode.RenderPlaceholder:
-                                source.setImageLoadFunction(mockMapGuideImageLoadFunction);
-                                break;
-                            case MapGuideMockMode.DoNotRender:
-                                source.setImageLoadFunction(blankImageLoadFunction);
-                                break;
-                            default:
-                                assertNever(mock);
-                                break;
-                        }
-                    } else {
-                        source.setImageLoadFunction(defaultImageLoadFunction);
-                    }
-                }
-            }
-        }
-    }
+    
     private registerSourceEvents(source: olSource): void {
         if (source instanceof olImageSource) {
             source.on("imageloadstart", this.callback.addImageLoading);
@@ -673,7 +648,7 @@ export class MgLayerSet {
     public getMetersPerUnit = () => this.mainSet.getMetersPerUnit();
     public scaleToResolution = (scale: number) => this.mainSet.scaleToResolution(scale);
     public resolutionToScale = (resolution: number) => this.mainSet.resolutionToScale(resolution);
-    public update = (showGroups: string[] | undefined, showLayers: string[] | undefined, hideGroups: string[] | undefined, hideLayers: string[] | undefined) => this.mainSet.update(showGroups, showLayers, hideGroups, hideLayers);
+    
     public attach(map: olMap, ovMapControl: olOverviewMap, bSetLayers = true): void {
         // To guard against the possibility that we may be attaching layers to a map that
         // already has layers (eg. Measurements), we reverse iterate all the layers we need to
@@ -877,4 +852,36 @@ export class MgLayerSet {
             }
         }
     }
+}
+
+export class MgLayerSet extends LayerSetBase {
+    constructor(props: IMgLayerSetProps, callback: IMgLayerSetCallback) {
+        super(props, callback);
+    }
+    public setMapGuideMocking(mock: MapGuideMockMode | undefined) {
+        const allLayers = this.mainSet.getLayers();
+        for (const layer of allLayers) {
+            if (layer instanceof olImageLayer) {
+                const source = layer.getSource();
+                if (source instanceof olMapGuideSource) {
+                    if (typeof (mock) != 'undefined') {
+                        switch (mock) {
+                            case MapGuideMockMode.RenderPlaceholder:
+                                source.setImageLoadFunction(mockMapGuideImageLoadFunction);
+                                break;
+                            case MapGuideMockMode.DoNotRender:
+                                source.setImageLoadFunction(blankImageLoadFunction);
+                                break;
+                            default:
+                                assertNever(mock);
+                                break;
+                        }
+                    } else {
+                        source.setImageLoadFunction(defaultImageLoadFunction);
+                    }
+                }
+            }
+        }
+    }
+    public update = (showGroups: string[] | undefined, showLayers: string[] | undefined, hideGroups: string[] | undefined, hideLayers: string[] | undefined) => this.mainSet.update(showGroups, showLayers, hideGroups, hideLayers);
 }

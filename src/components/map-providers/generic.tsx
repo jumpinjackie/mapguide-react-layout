@@ -5,10 +5,15 @@ import { layerTransparencyChanged, areViewsCloseToEqual } from '../../utils/view
 import View from 'ol/View';
 import { debug } from '../../utils/logger';
 import { LayerSetGroupBase } from '../../api/layer-set-group-base';
+import { ActiveMapTool, KC_ESCAPE, KC_U } from '../../api/common';
+import { DEFAULT_LOCALE } from '../../api/i18n';
 
 export class GenericMapProviderContext extends BaseMapProviderContext<IMapProviderState, GenericLayerSetGroup> {
     constructor() {
         super();
+    }
+    protected getInitialProviderState(): Omit<IMapProviderState, keyof IMapProviderState> {
+        return { };
     }
     protected onProviderMapClick(px: [number, number]): void { }
     protected initLayerSet(nextState: IMapProviderState): LayerSetGroupBase {
@@ -16,37 +21,47 @@ export class GenericMapProviderContext extends BaseMapProviderContext<IMapProvid
     }
     public getProviderName(): string { return "Generic"; }
     public setProviderState(nextState: IMapProviderState): void {
+        // If viewer not mounted yet, just accept the next state and bail
+        if (!this._comp || !this._map) {
+            this._state = nextState;
+            return;
+        }
         //
         // React (no pun intended) to prop changes
         //
         let bChangedView = false;
         //map
-        if (nextState.mapName != this._state.mapName && this._map && this._ovMap) {
-            const oldLayerSet = this.getLayerSet(this._state.mapName);
-            const newLayerSet = this.ensureAndGetLayerSet(nextState);
-            oldLayerSet.detach(this._map, this._ovMap);
+        if (this._state.mapName && nextState.mapName && nextState.mapName != this._state.mapName && this._map && this._ovMap) {
+            const oldLayerSet = this.getLayerSetGroup(this._state.mapName);
+            const newLayerSet = this.ensureAndGetLayerSetGroup(nextState);
+            oldLayerSet?.detach(this._map, this._ovMap);
             newLayerSet.attach(this._map, this._ovMap);
             //This would happen if we switch to a map we haven't visited yet
             if (!nextState.view) {
                 newLayerSet.fitViewToExtent();
                 bChangedView = true;
             } else {
-                const layerSet = this.getLayerSet(nextState.mapName);
-                this.applyView(layerSet, nextState.view);
+                const layerSet = this.getLayerSetGroup(nextState.mapName);
+                if (layerSet) {
+                    this.applyView(layerSet, nextState.view);
+                }
             }
         }
         //externalBaseLayers
-        if (nextState.externalBaseLayers != null &&
+        if (nextState.mapName &&
+            nextState.externalBaseLayers != null &&
             nextState.externalBaseLayers.length > 0) {
-            const layerSet = this.getLayerSet(nextState.mapName);
-            layerSet.updateExternalBaseLayers(nextState.externalBaseLayers);
+            const layerSet = this.getLayerSetGroup(nextState.mapName);
+            layerSet?.updateExternalBaseLayers(nextState.externalBaseLayers);
         }
         //view
-        if (!areViewsCloseToEqual(nextState.view, this._state.view)) {
+        if (nextState.mapName && !areViewsCloseToEqual(nextState.view, this._state.view)) {
             const vw = nextState.view;
             if (vw != null && !bChangedView) {
-                const layerSet = this.getLayerSet(nextState.mapName);
-                this.applyView(layerSet, vw);
+                const layerSet = this.getLayerSetGroup(nextState.mapName);
+                if (layerSet) {
+                    this.applyView(layerSet, vw);
+                }
             } else {
                 debug(`Skipping zoomToView as next/current views are close enough or target view is null`);
             }

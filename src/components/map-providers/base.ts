@@ -1,5 +1,5 @@
 import * as ReactDOM from "react-dom";
-import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D } from '../../api/common';
+import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D, KC_ESCAPE } from '../../api/common';
 import { MgLayerSetGroup } from "../../api/mg-layer-set-group";
 import { MouseTrackingTooltip } from '../tooltips/mouse';
 import Map from "ol/Map";
@@ -8,7 +8,7 @@ import DragBox from 'ol/interaction/DragBox';
 import Select from 'ol/interaction/Select';
 import Draw, { GeometryFunction } from 'ol/interaction/Draw';
 import { SelectedFeaturesTooltip } from '../tooltips/selected-features';
-import { MapGuideMockMode } from 'components/map-viewer-context';
+import { MapGuideMockMode } from '../map-viewer-context';
 import Feature from 'ol/Feature';
 import Polygon from 'ol/geom/Polygon';
 import Geometry from 'ol/geom/Geometry';
@@ -30,13 +30,16 @@ import Circle from 'ol/geom/Circle';
 import Interaction from 'ol/interaction/Interaction';
 import Overlay from 'ol/Overlay';
 import { ProjectionLike } from 'ol/proj';
-import { MgLayerManager } from 'api/layer-manager';
+import { MgLayerManager } from '../../api/layer-manager';
 import Collection from 'ol/Collection';
 import * as olExtent from "ol/extent";
 import * as olEasing from "ol/easing";
 import MapBrowserEvent from 'ol/MapBrowserEvent';
-import { tr } from '../../api/i18n';
+import { tr, DEFAULT_LOCALE } from '../../api/i18n';
 import { LayerSetGroupBase } from '../../api/layer-set-group-base';
+import { assertIsDefined } from '../../utils/assert';
+import { info } from '../../utils/logger';
+import { setCurrentView, setViewRotation, mapResized, setMouseCoordinates, setBusyCount } from '../../actions/map';
 
 export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4));
@@ -45,27 +48,24 @@ export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
 export interface IViewerComponent {
     isContextMenuOpen: () => boolean;
     setDigitizingType: (digitizingType: string | undefined) => void;
-    onMouseCoordinateChanged: (coords: number[]) => void;
-    onRequestZoomToView: (view: IMapView) => void;
-    onBusyLoading: (busyCount: number) => void;
+    onDispatch: ReduxDispatch;
     onBeginDigitization: (callback: (cancelled: boolean) => void) => void;
     onHideContextMenu: () => void;
-    onOpenTooltipLink: (url: string) => void;
     addImageLoading(): void;
     addImageLoaded(): void;
 }
 
 export interface IMapProviderState {
     activeTool: ActiveMapTool;
-    view: IMapView;
+    view: IMapView | undefined;
     viewRotation: number;
     viewRotationEnabled: boolean;
-    mapName: string;
+    mapName: string | undefined;
     locale: string;
-    externalBaseLayers: IExternalBaseLayer[];
+    externalBaseLayers: IExternalBaseLayer[] | undefined;
     cancelDigitizationKey: number;
     undoLastPointKey: number;
-    overviewMapElementSelector: () => Element | null;
+    overviewMapElementSelector?: () => Element | null;
 }
 
 /**
@@ -75,9 +75,16 @@ export interface IMapProviderState {
  */
 export interface IMapProviderContext {
     getProviderName(): string;
+    isDigitizing(): boolean;
+    getActiveTool(): ActiveMapTool;
+    isMouseOverTooltip(): boolean;
+    incrementBusyWorker(): void;
+    decrementBusyWorker(): void;
+    attachToComponent(el: HTMLElement, comp: IViewerComponent): void;
+    setProviderState(nextState: IMapProviderState): void;
 }
 
-export abstract class BaseMapProviderContext<TState extends IMapProviderState, TLayerSet extends LayerSetGroupBase> implements IMapProviderContext {
+export abstract class BaseMapProviderContext<TState extends IMapProviderState, TLayerSetGroup extends LayerSetGroupBase> implements IMapProviderContext {
     protected _state: TState;
     /**
      * Indicates if touch events are supported.
@@ -92,7 +99,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected _map: Map | undefined;
     protected _ovMap: OverviewMap | undefined;
 
-    protected _layerSets: Dictionary<TLayerSet>;
+    protected _layerSetGroups: Dictionary<TLayerSetGroup>;
     protected _mouseTooltip: MouseTrackingTooltip;
 
     protected _selectTooltip: SelectedFeaturesTooltip;
@@ -107,25 +114,41 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected _activeDrawInteraction: Draw | null;
 
     constructor() {
-        this._layerSets = {};
+        this._layerSetGroups = {};
+        this._state = {
+            activeTool: ActiveMapTool.None,
+            view: undefined,
+            viewRotation: 0,
+            viewRotationEnabled: true,
+            locale: DEFAULT_LOCALE,
+            cancelDigitizationKey: KC_ESCAPE,
+            undoLastPointKey: KC_U,
+            mapName: undefined,
+            externalBaseLayers: undefined,
+            ...this.getInitialProviderState()
+        } as TState;
     }
-
+    protected abstract getInitialProviderState() : Omit<TState, keyof IMapProviderState>;
     //#region IMapViewerContextCallback
     protected getMockMode() { return MapGuideMockMode.DoNotRender; }
     protected addFeatureToHighlight(feat: Feature | undefined, bAppend: boolean): void {
-        // Features have to belong to layer in order to be visible and have the highlight style, 
-        // so in addition to adding this new feature to the OL select observable collection, we 
-        // need to also add the feature to a scratch vector layer dedicated for this purpose
-        const layerSet = this.getLayerSet(this._state.mapName);
-        const sf = this._select.getFeatures();
-        if (!bAppend) {
-            sf.clear();
-            layerSet.clearScratchLayer();
-        }
+        if (this._state.mapName) {
+            // Features have to belong to layer in order to be visible and have the highlight style, 
+            // so in addition to adding this new feature to the OL select observable collection, we 
+            // need to also add the feature to a scratch vector layer dedicated for this purpose
+            const layerSet = this.getLayerSetGroup(this._state.mapName);
+            if (layerSet) {
+                const sf = this._select.getFeatures();
+                if (!bAppend) {
+                    sf.clear();
+                    layerSet.clearScratchLayer();
+                }
 
-        if (feat) {
-            layerSet.addScratchFeature(feat);
-            sf.push(feat);
+                if (feat) {
+                    layerSet.addScratchFeature(feat);
+                    sf.push(feat);
+                }
+            }
         }
     }
     //#endregion
@@ -133,7 +156,9 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     //#region Map Context
     protected getScaleForExtent(bounds: Bounds): number {
         assertIsDefined(this._map);
-        const activeLayerSet = this.getLayerSet(this._state.mapName);
+        assertIsDefined(this._state.mapName);
+        const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
+        assertIsDefined(activeLayerSet);
         const mcsW = olExtent.getWidth(bounds);
         const mcsH = olExtent.getHeight(bounds);
         const size = this._map.getSize();
@@ -167,7 +192,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                 case ActiveMapTool.Zoom:
                     {
                         const ext: any = extent.getExtent();
-                        this._comp.onRequestZoomToView(this.getViewForExtent(ext));
+                        this._comp.onDispatch(setCurrentView(this.getViewForExtent(ext)));
                     }
                     break;
                 case ActiveMapTool.Select:
@@ -192,16 +217,18 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             if (this._comp.isContextMenuOpen()) {
                 return;
             }
-            this._comp.onMouseCoordinateChanged?.(e.coordinate);
+            if (this._state.mapName) {
+                this._comp.onDispatch(setMouseCoordinates(this._state.mapName, e.coord));
+            }
         }
     }
-    protected incrementBusyWorker() {
+    public incrementBusyWorker() {
         this._busyWorkers++;
-        this._comp?.onBusyLoading?.(this._busyWorkers);
+        this._comp?.onDispatch(setBusyCount(this._busyWorkers));
     }
-    protected decrementBusyWorker() {
+    public decrementBusyWorker() {
         this._busyWorkers--;
-        this._comp?.onBusyLoading?.(this._busyWorkers);
+        this._comp?.onDispatch(setBusyCount(this._busyWorkers));
     }
     protected applyView(layerSet: LayerSetGroupBase, vw: IMapView) {
         this._triggerZoomRequestOnMoveEnd = false;
@@ -219,6 +246,9 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             this._comp.setDigitizingType(undefined);
         }
     }
+
+    public getActiveTool(): ActiveMapTool { return this._state.activeTool; }
+
     public cancelDigitization(): void {
         if (this.isDigitizing()) {
             this.removeActiveDrawInteraction();
@@ -278,17 +308,18 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             });
         }
     }
-    protected ensureAndGetLayerSet(nextState: TState) {
-        let layerSet = this._layerSets[nextState.mapName];
+    protected ensureAndGetLayerSetGroup(nextState: TState) {
+        assertIsDefined(nextState.mapName);
+        let layerSet = this._layerSetGroups[nextState.mapName];
         if (!layerSet) {
             layerSet = this.initLayerSet(nextState);
-            this._layerSets[nextState.mapName] = layerSet;
+            this._layerSetGroups[nextState.mapName] = layerSet;
         }
         return layerSet;
     }
     //public getLayerSet(name: string, bCreate: boolean = false, props?: IMapViewerContextProps): MgLayerSet {
-    public getLayerSet(name: string): TLayerSet {
-        let layerSet = this._layerSets[name];
+    public getLayerSetGroup(name: string): TLayerSetGroup | undefined {
+        let layerSet = this._layerSetGroups[name];
         /*
         if (!layerSet && props && bCreate) {
             layerSet = this.initLayerSet(props);
@@ -303,7 +334,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      * @readonly
      * @memberof BaseMapProviderContext
      */
-    public get isMouseOverTooltip() { return this._selectTooltip.isMouseOver; }
+    public isMouseOverTooltip() { return this._selectTooltip.isMouseOver; }
     protected clearMouseTooltip(): void {
         this._mouseTooltip.clear();
     }
@@ -389,9 +420,9 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         }
     }
     protected abstract onProviderMapClick(px: [number, number]): void;
-    protected abstract initLayerSet(nextState: TState): TLayerSet;
+    protected abstract initLayerSet(nextState: TState): TLayerSetGroup;
     public abstract getProviderName(): string;
-    
+
     public initContext(layerSet: MgLayerSetGroup, locale?: string, overviewMapElementSelector?: () => (Element | null)) {
         if (this._map) {
             // HACK: className property not documented. This needs to be fixed in OL api doc.
@@ -489,20 +520,57 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             ]
         };
         this._map = new Map(mapOptions);
+        const activeLayerSet = this.ensureAndGetLayerSetGroup(this._state);
         this._mouseTooltip = new MouseTrackingTooltip(this._map, this._comp.isContextMenuOpen);
-        
         this._selectTooltip = new SelectedFeaturesTooltip(this._map);
         this._map.on("pointermove", this.onMouseMove.bind(this));
-        //this._map.on("change:size", this.onResize.bind(this));
-    }
+        this._map.on("change:size", this.onResize.bind(this));
+        this._map.on("moveend", (e: GenericEvent) => {
+            //HACK:
+            //
+            //What we're hoping here is that when the view has been broadcasted back up
+            //and flowed back in through new view props, that the resulting zoom/pan
+            //operation in componentDidUpdate() is effectively a no-op as the intended
+            //zoom/pan location has already been reached by this event right here
+            //
+            //If we look at this through Redux DevTools, we see 2 entries for Map/SET_VIEW
+            //for the initial view (un-desirable), but we still only get one map image request
+            //for the initial view (good!). Everything is fine after that.
+            if (this._triggerZoomRequestOnMoveEnd) {
+                this._comp?.onDispatch(setCurrentView(this.getCurrentView()));
+            } else {
+                info("Triggering zoom request on moveend suppresseed");
+            }
+            if (e.frameState.viewState.rotation != this._state.viewRotation) {
+                this._comp?.onDispatch(setViewRotation(e.frameState.viewState.rotation));
+            }
+        });
 
+        if (this._state.view) {
+            const { x, y, scale } = this._state.view;
+            this.zoomToView(x, y, scale);
+        } else {
+            this._map.getView().fit(activeLayerSet.getExtent());
+        }
+        this.onResize(this._map.getSize());
+    }
+    private onResize = (e: GenericEvent) => {
+        if (this._map) {
+            const [w, h ] = this._map.getSize();
+            this._comp?.onDispatch(mapResized(w, h));
+        }
+    }
     public scaleToResolution(scale: number): number {
-        const activeLayerSet = this.getLayerSet(this._state.mapName);
+        assertIsDefined(this._state.mapName);
+        const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
+        assertIsDefined(activeLayerSet);
         return activeLayerSet.scaleToResolution(scale);
     }
 
     public resolutionToScale(resolution: number): number {
-        const activeLayerSet = this.getLayerSet(this._state.mapName);
+        assertIsDefined(this._state.mapName);
+        const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
+        assertIsDefined(activeLayerSet);
         return activeLayerSet.resolutionToScale(resolution);
     }
 
@@ -545,14 +613,16 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public refreshMap(mode: RefreshMode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly): void { }
     public getMetersPerUnit(): number {
         assertIsDefined(this._state.mapName);
-        const activeLayerSet = this.getLayerSet(this._state.mapName);
+        const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
+        assertIsDefined(activeLayerSet);
         return activeLayerSet.getMetersPerUnit();
     }
     public initialView(): void {
         assertIsDefined(this._comp);
         assertIsDefined(this._state.mapName);
-        const activeLayerSet = this.getLayerSet(this._state.mapName);
-        this._comp.onRequestZoomToView(this.getViewForExtent(activeLayerSet.getExtent()));
+        const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
+        assertIsDefined(activeLayerSet);
+        this._comp.onDispatch(setCurrentView(this.getViewForExtent(activeLayerSet.getExtent())));
     }
 
     public zoomDelta(delta: number): void {
@@ -562,7 +632,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this.zoomByDelta(delta);
     }
     public zoomToExtent(extent: Bounds): void {
-        this._comp?.onRequestZoomToView(this.getViewForExtent(extent));
+        this._comp?.onDispatch(setCurrentView(this.getViewForExtent(extent)));
     }
     public digitizePoint(handler: DigitizerCallback<Point>, prompt?: string): void {
         assertIsDefined(this._comp);
@@ -658,7 +728,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public getLayerManager(mapName?: string): ILayerManager {
         assertIsDefined(this._map);
         assertIsDefined(this._state.mapName);
-        const layerSet = this.ensureAndGetLayerSet(this._state); // this.getLayerSet(mapName ?? this._state.mapName, true, this._comp as any);
+        const layerSet = this.ensureAndGetLayerSetGroup(this._state); // this.getLayerSet(mapName ?? this._state.mapName, true, this._comp as any);
         return new MgLayerManager(this._map, layerSet);
     }
     public screenToMapUnits(x: number, y: number): [number, number] {

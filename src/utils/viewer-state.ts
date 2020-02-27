@@ -42,17 +42,19 @@ export function areMapsSame(map: RuntimeMap, other: RuntimeMap): boolean {
  * @param set 
  * @param other 
  */
-export function layerTransparencyChanged(set: LayerTransparencySet, other: LayerTransparencySet): boolean {
+export function layerTransparencyChanged(set: LayerTransparencySet | undefined, other: LayerTransparencySet | undefined): boolean {
     if ((!set && other) || (set && !other)) {
         return true;
     }
-    const setLayers = Object.keys(set);
-    const otherLayers = Object.keys(other);
+    const s = set ?? {};
+    const o = other ?? {};
+    const setLayers = Object.keys(s);
+    const otherLayers = Object.keys(o);
     if (areArraysDifferent(setLayers, otherLayers))
         return true;
 
     for (const name of setLayers) {
-        if (set[name] != other[name]) {
+        if (s[name] != o[name]) {
             return true;
         }
     }

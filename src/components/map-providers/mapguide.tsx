@@ -10,7 +10,7 @@ import WKTFormat from "ol/format/WKT";
 import Polygon, { fromExtent } from 'ol/geom/Polygon';
 
 import Geometry from 'ol/geom/Geometry';
-import { queryMapFeatures } from 'actions/map';
+import { queryMapFeatures, setMouseCoordinates } from '../../actions/map';
 import View from 'ol/View';
 import debounce = require('lodash.debounce');
 import { layerTransparencyChanged, areViewsCloseToEqual } from '../../utils/viewer-state';
@@ -23,20 +23,24 @@ import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../../utils/site-versi
 import { BLANK_GIF_DATA_URI } from '../../constants';
 import { isSessionExpiredError } from '../../api/error';
 import { BaseMapProviderContext, IMapProviderState, IViewerComponent } from './base';
+import { assertIsDefined } from '../../utils/assert';
+import { STR_EMPTY } from '../../utils/string';
+import { ensureParameters } from '../../utils/url';
+import { ActionType } from '../../constants/actions';
 
 export interface IMapGuideProviderState extends IMapProviderState {
     imageFormat: ImageFormat;
-    agentUri: string;
+    agentUri: string | undefined;
     agentKind: ClientKind;
-    map: RuntimeMap;
+    map: RuntimeMap | undefined;
     pointSelectionBuffer: number;
     manualFeatureTooltips: boolean;
     featureTooltipsEnabled: boolean;
-    sessionId: string;
+    sessionId: string | undefined;
     selectionColor: string;
     selectionImageFormat: ImageFormat;
     selectableLayerNames: string[];
-    layerTransparency: LayerTransparencySet;
+    layerTransparency: LayerTransparencySet | undefined;
     showGroups: string[];
     hideGroups: string[];
     showLayers: string[];
@@ -46,6 +50,7 @@ export interface IMapGuideProviderState extends IMapProviderState {
 }
 
 export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuideProviderState, MgLayerSetGroup> {
+
     /**
      * This is a throttled version of _refreshOnStateChange(). Call this on any
      * modifications to pendingStateChanges
@@ -53,23 +58,46 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @private
      */
     private refreshOnStateChange: (mapName: string,
-                                   showGroups: string[] | undefined,
-                                   showLayers: string[] | undefined,
-                                   hideGroups: string[] | undefined,
-                                   hideLayers: string[] | undefined) => void;
+        showGroups: string[] | undefined,
+        showLayers: string[] | undefined,
+        hideGroups: string[] | undefined,
+        hideLayers: string[] | undefined) => void;
 
-    
+
 
     // ============= MapGuide-specific private state ============== //
     private _client: Client;
     private _keepAlive: SessionKeepAlive;
-    private _featureTooltip: FeatureQueryTooltip;
+    private _featureTooltip: FeatureQueryTooltip | undefined;
     private _wktFormat: WKTFormat;
     // ============================================================= //
 
     constructor() {
         super();
         this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), 500);
+    }
+
+    protected getInitialProviderState(): Omit<IMapGuideProviderState, keyof IMapProviderState> {
+        return {
+            imageFormat: "PNG8",
+            agentUri: undefined,
+            agentKind: "mapagent",
+            map: undefined,
+            pointSelectionBuffer: 2,
+            featureTooltipsEnabled: true,
+            manualFeatureTooltips: false,
+            sessionId: undefined,
+            selectionColor: "0000FF",
+            selectionImageFormat: "PNG8",
+            selectableLayerNames: [],
+            layerTransparency: {},
+            showGroups: [],
+            hideGroups: [],
+            showLayers: [],
+            hideLayers: [],
+            activeSelectedFeatureXml: STR_EMPTY,
+            activeSelectedFeatureColor: "FF0000"
+        }
     }
 
     public getProviderName(): string { return "MapGuide"; }
@@ -109,7 +137,9 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             if (!this._state.manualFeatureTooltips) {
                 this.handleFeatureTooltipMouseMove(e);
             }
-            this._comp.onMouseCoordinateChanged?.(e.coordinate);
+            if (this._state.mapName) {
+                this._comp.onDispatch?.(setMouseCoordinates(this._state.mapName, e.coordinate));
+            }
         }
     }
     private queryFeatureTooltip(pixel: [number, number]) {
@@ -123,11 +153,11 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         }
     }
     private enableFeatureTooltips(enabled: boolean): void {
-        this._featureTooltip.setEnabled(enabled);
+        this._featureTooltip?.setEnabled(enabled);
     }
     private refreshMapInternal(name: string, mode: RefreshMode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly): void {
-        const layerSet = this.getLayerSet(name);
-        layerSet.refreshMap(mode);
+        const layerSet = this.getLayerSetGroup(name);
+        layerSet?.refreshMap(mode);
     }
     private async showSelectedFeature(mapExtent: Bounds, size: Size, map: RuntimeMap, selectionColor: string, featureXml: string | undefined) {
         const sv = getSiteVersion(map);
@@ -135,7 +165,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         if (!canUseQueryMapFeaturesV4(sv)) {
             return;
         }
-        const layerSet = this.getLayerSet(map.Name);
+        const layerSet = this.getLayerSetGroup(map.Name);
         try {
             if (featureXml) {
                 const r = await this._client.queryMapFeatures_v4({
@@ -150,15 +180,15 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
                 });
                 if (r.InlineSelectionImage) {
                     const dataUri = `data:${r.InlineSelectionImage.MimeType};base64,${r.InlineSelectionImage.Content}`;
-                    layerSet.showActiveSelectedFeature(mapExtent, size, dataUri);
+                    layerSet?.showActiveSelectedFeature(mapExtent, size, dataUri);
                 } else {
-                    layerSet.showActiveSelectedFeature(mapExtent, BLANK_SIZE, BLANK_GIF_DATA_URI);
+                    layerSet?.showActiveSelectedFeature(mapExtent, BLANK_SIZE, BLANK_GIF_DATA_URI);
                 }
             } else {
-                layerSet.showActiveSelectedFeature(mapExtent, BLANK_SIZE, BLANK_GIF_DATA_URI);
+                layerSet?.showActiveSelectedFeature(mapExtent, BLANK_SIZE, BLANK_GIF_DATA_URI);
             }
         } catch (e) {
-            layerSet.showActiveSelectedFeature(mapExtent, BLANK_SIZE, BLANK_GIF_DATA_URI);
+            layerSet?.showActiveSelectedFeature(mapExtent, BLANK_SIZE, BLANK_GIF_DATA_URI);
         }
     }
     //#endregion
@@ -169,13 +199,13 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @private
      */
     private _refreshOnStateChange(mapName: string,
-                                  showGroups: string[] | undefined,
-                                  showLayers: string[] | undefined,
-                                  hideGroups: string[] | undefined,
-                                  hideLayers: string[] | undefined) {
+        showGroups: string[] | undefined,
+        showLayers: string[] | undefined,
+        hideGroups: string[] | undefined,
+        hideLayers: string[] | undefined) {
         if (showGroups || showLayers || hideGroups || hideLayers) {
             //this.refreshOnStateChange(map, showGroups, showLayers, hideGroups, hideLayers);
-            const layerSet = this.getLayerSet(mapName);
+            const layerSet = this.getLayerSetGroup(mapName);
             if (layerSet instanceof MgLayerSetGroup) {
                 layerSet.setMapGuideMocking(this.getMockMode());
                 layerSet.update(showGroups, showLayers, hideGroups, hideLayers);
@@ -195,13 +225,14 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             }
         });
     }
-    
-    
+
+
     private getSelectableLayers(): string[] {
         return this._state.selectableLayerNames ?? [];
     }
     private buildDefaultQueryOptions(geom: Geometry | string, reqQueryFeatures: number = 1 /* Attributes */): IQueryMapFeaturesOptions {
         assertIsDefined(this._state.sessionId);
+        assertIsDefined(this._state.mapName);
         const names = this.getSelectableLayers();
         let wkt: string;
         if (typeof geom === 'string') {
@@ -229,12 +260,27 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         this.sendSelectionQuery(this.buildDefaultQueryOptions(geom));
     }
 
+    private onOpenTooltipLink = (url: string) => {
+        let fixedUrl = url;
+        if (this._state.mapName && this._state.sessionId) {
+            fixedUrl = ensureParameters(url, this._state.mapName, this._state.sessionId, this._state.locale);
+        }
+        this._comp?.onDispatch({
+            type: ActionType.TASK_INVOKE_URL,
+            payload: {
+                url: fixedUrl
+            }
+        });
+    };
+
     /**
      * @override
      * @protected
      */
     protected initLayerSet(nextState: IMapGuideProviderState): MgLayerSetGroup {
-        const layerSet = new MgLayerSetGroup(this._state, {
+        assertIsDefined(nextState.mapName);
+        assertIsDefined(this._state.map);
+        const layerSet = new MgLayerSetGroup(this._state as any, {
             getMockMode: () => this.getMockMode(),
             incrementBusyWorker: () => this.incrementBusyWorker(),
             decrementBusyWorker: () => this.decrementBusyWorker(),
@@ -245,17 +291,17 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             getSelectableLayers: () => this.getSelectableLayers(),
             getClient: () => this._client,
             isContextMenuOpen: () => this._comp?.isContextMenuOpen() ?? false,
-            getAgentUri: () => this._state.agentUri,
+            getAgentUri: () => this._state.agentUri!,
             getAgentKind: () => this._state.agentKind,
-            getMapName: () => this._state.mapName,
-            getSessionId: () => this._state.sessionId,
+            getMapName: () => this._state.mapName!,
+            getSessionId: () => this._state.sessionId!,
             getLocale: () => this._state.locale,
             isFeatureTooltipEnabled: () => this.isFeatureTooltipEnabled(),
             getPointSelectionBox: (pt) => this.getPointSelectionBox(pt, this._state.pointSelectionBuffer),
-            openTooltipLink: (url) => this._comp?.onOpenTooltipLink(url),
+            openTooltipLink: (url) => this.onOpenTooltipLink(url),
             addFeatureToHighlight: (feat, bAppend) => this.addFeatureToHighlight(feat, bAppend)
         });
-        this._layerSets[nextState.mapName] = layerSet;
+        this._layerSetGroups[nextState.mapName] = layerSet;
         layerSet.update(nextState.showGroups, nextState.showLayers, nextState.hideGroups, nextState.hideLayers);
         return layerSet;
     }
@@ -265,7 +311,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @readonly
      * @memberof MapGuideMapProviderContext
      */
-    public get isMouseOverTooltip() { return this._featureTooltip.isMouseOver || this._selectTooltip.isMouseOver; }
+    public isMouseOverTooltip() { return this._featureTooltip?.isMouseOver == true || this._selectTooltip.isMouseOver; }
 
     /**
      * @override
@@ -279,15 +325,15 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             incrementBusyWorker: () => this.incrementBusyWorker(),
             decrementBusyWorker: () => this.decrementBusyWorker(),
             onSessionExpired: () => this.onSessionExpired(),
-            getAgentUri: () => this._state.agentUri,
+            getAgentUri: () => this._state.agentUri!,
             getAgentKind: () => this._state.agentKind,
-            getMapName: () => this._state.mapName,
-            getSessionId: () => this._state.sessionId,
+            getMapName: () => this._state.mapName!,
+            getSessionId: () => this._state.sessionId!,
             getLocale: () => this._state.locale,
             getPointSelectionBox: (pt) => this.getPointSelectionBox(pt, this._state.pointSelectionBuffer),
-            openTooltipLink: (url) => this._comp?.onOpenTooltipLink(url)
+            openTooltipLink: (url) => this.onOpenTooltipLink(url)
         });
-        this._featureTooltip.setEnabled(false); //initTooltipEnabled);
+        this._featureTooltip.setEnabled(this._state.featureTooltipsEnabled);
     }
     /**
      * @override
@@ -305,26 +351,31 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @memberof MapGuideMapProviderContext
      */
     public setProviderState(nextState: IMapGuideProviderState): void {
+        // If viewer not mounted yet, just accept the next state and bail
+        if (!this._comp || !this._map) {
+            this._state = nextState;
+            return;
+        }
         //
         // React (no pun intended) to prop changes
         //
         if (nextState.imageFormat != this._state.imageFormat) {
             warn(`Unsupported change of props: imageFormat`);
         }
-        if (nextState.agentUri != this._state.agentUri) {
+        if (nextState.agentUri && nextState.agentUri != this._state.agentUri) {
             warn(`Unsupported change of props: agentUri`);
             this._client = new Client(nextState.agentUri, nextState.agentKind);
         }
-        if (nextState.agentKind != this._state.agentKind) {
+        if (nextState.agentUri && nextState.agentKind != this._state.agentKind) {
             warn(`Unsupported change of props: agentKind`);
             this._client = new Client(nextState.agentUri, nextState.agentKind);
         }
         let bChangedView = false;
         //map
-        if (nextState.mapName != this._state.mapName && this._map && this._ovMap) {
-            const oldLayerSet = this.getLayerSet(this._state.mapName);
-            const newLayerSet = this.ensureAndGetLayerSet(nextState);
-            oldLayerSet.detach(this._map, this._ovMap);
+        if (nextState.mapName && this._state.mapName && nextState.mapName != this._state.mapName && this._map && this._ovMap) {
+            const oldLayerSet = this.getLayerSetGroup(this._state.mapName);
+            const newLayerSet = this.ensureAndGetLayerSetGroup(nextState);
+            oldLayerSet?.detach(this._map, this._ovMap);
             newLayerSet.setMapGuideMocking(this.getMockMode());
             newLayerSet.attach(this._map, this._ovMap);
             //This would happen if we switch to a map we haven't visited yet
@@ -332,42 +383,45 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
                 newLayerSet.fitViewToExtent();
                 bChangedView = true;
             } else {
-                const layerSet = this.getLayerSet(nextState.mapName);
-                this.applyView(layerSet, nextState.view);
+                const layerSet = this.getLayerSetGroup(nextState.mapName);
+                if (layerSet) {
+                    this.applyView(layerSet, nextState.view);
+                }
             }
         }
         //selectionColor
-        if (nextState.selectionColor && nextState.selectionColor != this._state.selectionColor) {
-            const layerSet = this.getLayerSet(nextState.mapName);
-            layerSet.updateSelectionColor(nextState.selectionColor);
+        if (nextState.mapName && nextState.selectionColor && nextState.selectionColor != this._state.selectionColor) {
+            const layerSet = this.getLayerSetGroup(nextState.mapName);
+            layerSet?.updateSelectionColor(nextState.selectionColor);
         }
         //featureTooltipsEnabled
         if (nextState.featureTooltipsEnabled != this._state.featureTooltipsEnabled) {
             this.enableFeatureTooltips(nextState.featureTooltipsEnabled);
         }
         //externalBaseLayers
-        if (nextState.externalBaseLayers != null &&
+        if (nextState.mapName &&
+            nextState.externalBaseLayers != null &&
             nextState.externalBaseLayers.length > 0) {
-            const layerSet = this.getLayerSet(nextState.mapName);
-            layerSet.updateExternalBaseLayers(nextState.externalBaseLayers);
+            const layerSet = this.getLayerSetGroup(nextState.mapName);
+            layerSet?.updateExternalBaseLayers(nextState.externalBaseLayers);
         }
         //Layer transparency
-        if (layerTransparencyChanged(nextState.layerTransparency, this._state.layerTransparency)) {
-            const layerSet = this.getLayerSet(nextState.mapName);
-            layerSet.updateTransparency(nextState.layerTransparency);
+        if (nextState.mapName && nextState.layerTransparency && layerTransparencyChanged(nextState.layerTransparency, this._state.layerTransparency)) {
+            const layerSet = this.getLayerSetGroup(nextState.mapName);
+            layerSet?.updateTransparency(nextState.layerTransparency);
         }
         //Layer/Group visibility
-        if (areArraysDifferent(nextState.showGroups, this._state.showGroups) ||
+        if (nextState.mapName && (areArraysDifferent(nextState.showGroups, this._state.showGroups) ||
             areArraysDifferent(nextState.hideGroups, this._state.hideGroups) ||
             areArraysDifferent(nextState.showLayers, this._state.showLayers) ||
-            areArraysDifferent(nextState.hideLayers, this._state.hideLayers)) {
+            areArraysDifferent(nextState.hideLayers, this._state.hideLayers))) {
             this.refreshOnStateChange(nextState.mapName, nextState.showGroups, nextState.showLayers, nextState.hideGroups, nextState.hideLayers);
         }
         //view
-        if (!areViewsCloseToEqual(nextState.view, this._state.view)) {
+        if (nextState.mapName && !areViewsCloseToEqual(nextState.view, this._state.view)) {
             const vw = nextState.view;
             if (vw != null && !bChangedView) {
-                const layerSet = this.getLayerSet(nextState.mapName);
+                const layerSet = this.ensureAndGetLayerSetGroup(nextState);
                 this.applyView(layerSet, vw);
             } else {
                 debug(`Skipping zoomToView as next/current views are close enough or target view is null`);
@@ -404,7 +458,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         }
         //activeSelectedFeatureXml
         if (this._state.activeSelectedFeatureXml != nextState.activeSelectedFeatureXml) {
-            if (this._map) {
+            if (this._map && nextState.map) {
                 const ms = this._map.getSize();
                 const view = this.getOLView();
                 const me: any = view.calculateExtent(ms);
@@ -454,11 +508,11 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         });
         this._dispatcher(action);
     }
-    
+
     public clearSelection(): void {
         this.setSelectionXml("");
     }
-    
+
     public selectByGeometry(geom: Geometry, selectionMethod?: SelectionVariant): void {
         const options = this.buildDefaultQueryOptions(geom);
         if (selectionMethod) {
@@ -470,12 +524,12 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         this.sendSelectionQuery(options, success, failure);
     }
     public isFeatureTooltipEnabled(): boolean {
-        return this._featureTooltip.isEnabled();
+        return this._featureTooltip?.isEnabled() == true;
     }
 
     // ================= MapGuide-specific =================== //
 
-    
+
 
     private sendSelectionQuery(queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) {
         if (!this._state.mapName || !this._dispatcher || !this._comp || !this._state.sessionId || !this._state.selectionColor || (queryOpts != null && (queryOpts.layernames ?? []).length == 0)) {

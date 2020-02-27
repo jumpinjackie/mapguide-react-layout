@@ -344,6 +344,17 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         assertIsDefined(this._state.mapName);
         this.refreshMapInternal(this._state.mapName, mode);
     }
+
+    /**
+     * @override
+     * @protected
+     * @param {MgLayerSetGroup} layerSetGroup
+     * @memberof MapGuideMapProviderContext
+     */
+    protected onBeforeAttachingLayerSetGroup(layerSetGroup: MgLayerSetGroup): void {
+        layerSetGroup.setMapGuideMocking(this.getMockMode());
+    }
+
     /**
      *
      * @virtual

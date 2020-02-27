@@ -130,7 +130,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
     protected abstract getInitialProviderState() : Omit<TState, keyof IMapProviderState>;
     //#region IMapViewerContextCallback
-    protected getMockMode() { return MapGuideMockMode.DoNotRender; }
+    protected getMockMode() : MapGuideMockMode | undefined { return undefined; }
     protected addFeatureToHighlight(feat: Feature | undefined, bAppend: boolean): void {
         if (this._state.mapName) {
             // Features have to belong to layer in order to be visible and have the highlight style, 
@@ -447,11 +447,19 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             }
             this._ovMap = new OverviewMap(overviewMapOpts);
             this._map.addControl(this._ovMap);
-            //layerSet.setMapGuideMocking(this.getMockMode());
+            this.onBeforeAttachingLayerSetGroup(layerSet);
             layerSet.attach(this._map, this._ovMap, false);
         }
     }
     //#endregion
+
+    /**
+     * @virtual
+     * @protected
+     * @param {TLayerSetGroup} layerSetGroup
+     * @memberof BaseMapProviderContext
+     */
+    protected onBeforeAttachingLayerSetGroup(layerSetGroup: TLayerSetGroup): void { }
 
     /**
      * Sets the redux dispatcher function

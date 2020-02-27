@@ -70,7 +70,16 @@ export interface IMapProviderState {
     overviewMapElementSelector: () => Element | null;
 }
 
-export abstract class BaseMapProviderContext<TState extends IMapProviderState> {
+/**
+ * Defines a mapping provider
+ * 
+ * @since 0.14
+ */
+export interface IMapProviderContext {
+    getProviderName(): string;
+}
+
+export abstract class BaseMapProviderContext<TState extends IMapProviderState, TLayerSet extends LayerSetBase> implements IMapProviderContext {
     protected _state: TState;
     /**
      * Indicates if touch events are supported.
@@ -85,7 +94,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState> {
     protected _map: Map | undefined;
     protected _ovMap: OverviewMap | undefined;
 
-    protected _layerSets: Dictionary<LayerSetBase>;
+    protected _layerSets: Dictionary<TLayerSet>;
     protected _mouseTooltip: MouseTrackingTooltip;
 
     protected _selectTooltip: SelectedFeaturesTooltip;
@@ -280,7 +289,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState> {
         return layerSet;
     }
     //public getLayerSet(name: string, bCreate: boolean = false, props?: IMapViewerContextProps): MgLayerSet {
-    public getLayerSet(name: string): LayerSetBase {
+    public getLayerSet(name: string): TLayerSet {
         let layerSet = this._layerSets[name];
         /*
         if (!layerSet && props && bCreate) {
@@ -382,7 +391,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState> {
         }
     }
     protected abstract onProviderMapClick(px: [number, number]): void;
-    protected abstract initLayerSet(nextState: TState): LayerSetBase;
+    protected abstract initLayerSet(nextState: TState): TLayerSet;
+    public abstract getProviderName(): string;
     
     public initContext(layerSet: MgLayerSet, locale?: string, overviewMapElementSelector?: () => (Element | null)) {
         if (this._map) {

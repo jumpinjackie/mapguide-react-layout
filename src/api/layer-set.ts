@@ -117,7 +117,102 @@ export interface ILayerSetOL {
     updateSelectionColor(color: string): void;
 }
 
-class MgLayerSetInner implements ILayerSetOL {
+export abstract class BaseLayerSetOL implements ILayerSetOL {
+    constructor(public readonly externalBaseLayersGroup: olLayerGroup | undefined,
+        public readonly projection: string | undefined,
+        public readonly dpi: number,
+        public readonly extent: Bounds,
+        private readonly inPerUnit: number,
+        public readonly view: olView) {
+
+    }
+    public getMetersPerUnit(): number {
+        return this.inPerUnit / 39.37
+    }
+    public scaleToResolution(scale: number): number {
+        return (scale / this.inPerUnit / this.dpi) * olHas.DEVICE_PIXEL_RATIO;
+    }
+    public resolutionToScale(resolution: number): number {
+        return (resolution * this.dpi * this.inPerUnit) / olHas.DEVICE_PIXEL_RATIO;
+    }
+    public updateExternalBaseLayers(externalBaseLayers: IExternalBaseLayer[]) {
+        if (this.externalBaseLayersGroup) {
+            const layers = this.externalBaseLayersGroup.getLayers();
+            layers.forEach((l: olLayerBase) => {
+                const match = (externalBaseLayers || []).filter(el => el.name === l.get("title"));
+                if (match.length == 1) {
+                    l.setVisible(!!match[0].visible);
+                } else {
+                    l.setVisible(false);
+                }
+            });
+        }
+    }
+    /**
+     *
+     * @virtual
+     * @param {RefreshMode} mode
+     * @memberof BaseLayerSetOL
+     */
+    refreshMap(mode: RefreshMode): void { }
+    abstract getLayers(): olLayerBase[];
+    abstract getSourcesForProgressTracking(): olSource[];
+    abstract updateTransparency(trans: LayerTransparencySet): void;
+    abstract showActiveSelectedFeature(mapExtent: Bounds, size: Size, uri: string): void;
+    abstract update(showGroups: string[] | undefined, showLayers: string[] | undefined, hideGroups: string[] | undefined, hideLayers: string[] | undefined): void;
+    abstract updateSelectionColor(color: string): void;
+}
+
+class GenericLayerSetOL extends BaseLayerSetOL {
+    constructor(public subjectLayer: olLayerBase,
+        externalBaseLayersGroup: olLayerGroup | undefined,
+        projection: string | undefined,
+        dpi: number,
+        extent: Bounds,
+        inPerUnit: number,
+        view: olView) {
+        super(externalBaseLayersGroup, projection, dpi, extent, inPerUnit, view);
+    }
+    getLayers(): olLayerBase[] {
+        const layers: olLayerBase[] = [];
+        if (this.externalBaseLayersGroup) {
+            layers.push(this.externalBaseLayersGroup);
+        }
+        layers.push(this.subjectLayer);
+        return layers;
+    }
+    getSourcesForProgressTracking(): olSource[] {
+        const sources: olSource[] = [];
+        if (this.externalBaseLayersGroup) {
+            const bls = this.externalBaseLayersGroup.getLayersArray();
+            for (const bl of bls) {
+                if (bl instanceof olImageLayer || bl instanceof olTileLayer) {
+                    sources.push(bl.getSource());
+                }
+            }
+        }
+        if (this.subjectLayer instanceof olImageLayer) {
+            sources.push(this.subjectLayer.getSource())
+        } else if (this.subjectLayer instanceof olTileLayer) {
+            sources.push(this.subjectLayer.getSource())
+        }
+        return sources;
+    }
+    updateTransparency(trans: LayerTransparencySet): void {
+        //throw new Error("Method not implemented.");
+    }
+    showActiveSelectedFeature(mapExtent: Bounds, size: Size, uri: string): void {
+        //throw new Error("Method not implemented.");
+    }
+    update(showGroups: string[] | undefined, showLayers: string[] | undefined, hideGroups: string[] | undefined, hideLayers: string[] | undefined): void {
+        //throw new Error("Method not implemented.");
+    }
+    updateSelectionColor(color: string): void {
+        //throw new Error("Method not implemented.");
+    }
+}
+
+class MgLayerSetOL implements ILayerSetOL {
     constructor(public readonly mgTiledLayers: olTileLayer[],
         public readonly externalBaseLayersGroup: olLayerGroup | undefined,
         public readonly overlay: olImageLayer,
@@ -475,7 +570,7 @@ class MgInnerLayerSetFactory {
             });
         }
 
-        const layerSet = new MgLayerSetInner(mgTiledLayers,
+        const layerSet = new MgLayerSetOL(mgTiledLayers,
             externalBaseLayersGroup,
             overlay,
             projection,
@@ -538,13 +633,17 @@ export interface IMgLayerSetProps {
     locale?: string;
 }
 
-export interface IMgLayerSetCallback {
-    getMockMode(): MapGuideMockMode | undefined;
-    incrementBusyWorker(): void;
-    decrementBusyWorker(): void;
+export interface IImageLayerEvents {
     addImageLoading(): void;
     addImageLoaded(): void;
     onImageError(e: GenericEvent): void;
+    getLocale(): string | undefined;
+}
+
+export interface IMgLayerSetCallback extends IImageLayerEvents {
+    getMockMode(): MapGuideMockMode | undefined;
+    incrementBusyWorker(): void;
+    decrementBusyWorker(): void;
     onSessionExpired(): void;
     getSelectableLayers(): string[];
     getClient(): Client;
@@ -553,7 +652,6 @@ export interface IMgLayerSetCallback {
     getAgentKind(): ClientKind;
     getMapName(): string;
     getSessionId(): string;
-    getLocale(): string | undefined;
     isFeatureTooltipEnabled(): boolean;
     getPointSelectionBox(point: Coordinate2D): Bounds;
     openTooltipLink(url: string): void;
@@ -564,46 +662,15 @@ export abstract class LayerSetBase {
     protected mainSet: ILayerSetOL;
     protected overviewSet: ILayerSetOL;
     protected scratchLayer: olVectorLayer;
-
-    protected callback: IMgLayerSetCallback;
+    protected callback: IImageLayerEvents;
     protected _customLayers: {
         [name: string]: {
             layer: olLayerBase,
             order: number
         }
     };
-    constructor(props: IMgLayerSetProps, callback: IMgLayerSetCallback) {
-        this.callback = callback;
+    constructor() {
         this._customLayers = {};
-        const factory = new MgInnerLayerSetFactory(callback, props.map, props.agentUri, props.imageFormat, props.selectionImageFormat, props.selectionColor);
-
-        //NOTE: MapGuide does not like concurrent map rendering operations of the same mapname/session pair, which
-        //this will do when the MG overlay is shared between the main viewer and the overview map. This is probably
-        //because the concurrent requests both have SET[X/Y/SCALE/DPI/etc] parameters attached, so there is concurrent
-        //requests to modify and persist the runtime map state (in addition to the rendering) and there is most likely
-        //server-side lock contention to safely update the map state. Long story short: re-using the main overlay for the
-        //OverviewMap control IS A BAD THING. Same thing happens with selection overlays
-        //
-        //As of OL6, this unwanted behavior from shared layers extends to all layer types, so what this means is that
-        //we have to create 2 sets of layers, one for the main map and one for the overview map. We CANNOT and DO NOT share
-        //any of these layer instances between the main map and the overview map!
-
-        this.mainSet = factory.create(props.locale, props.externalBaseLayers, true);
-        this.overviewSet = factory.create(props.locale, props.externalBaseLayers, false);
-        const progressNotifySources = this.mainSet.getSourcesForProgressTracking();
-        /*
-        console.log("Draw Order:");
-        for (let i = 0; i < layers.length; i++) {
-            console.log(" " + layers[i].get(LayerProperty.LAYER_NAME));
-        }
-        */
-
-        for (const src of progressNotifySources) {
-            const suppress: boolean | undefined = src.get(SourceProperty.SUPPRESS_LOAD_EVENTS);
-            if (!(suppress == true))
-                this.registerSourceEvents(src);
-        }
-
         this.scratchLayer = new olVectorLayer({
             source: new olSourceVector()
         });
@@ -616,7 +683,7 @@ export abstract class LayerSetBase {
         this.scratchLayer.getSource().clear();
     }
     
-    private registerSourceEvents(source: olSource): void {
+    protected registerSourceEvents(source: olSource): void {
         if (source instanceof olImageSource) {
             source.on("imageloadstart", this.callback.addImageLoading);
             //onImageError is a MapGuide-specific callback
@@ -631,7 +698,7 @@ export abstract class LayerSetBase {
             source.on("tileloadend", this.callback.addImageLoaded);
         }
     }
-    public updateSelectionColor = (color: string) => this.mainSet.updateSelectionColor(color);
+    
     public updateExternalBaseLayers(externalBaseLayers: IExternalBaseLayer[]) {
         this.mainSet.updateExternalBaseLayers(externalBaseLayers);
         this.overviewSet.updateExternalBaseLayers(externalBaseLayers);
@@ -711,7 +778,6 @@ export abstract class LayerSetBase {
             ovMap.removeLayer(layer);
         }
     }
-
     public getCustomLayers(map: olMap): ILayerInfo[] {
         const larr = map.getLayers().getArray();
         const layers = larr
@@ -854,10 +920,47 @@ export abstract class LayerSetBase {
     }
 }
 
+export class GenericLayerSet extends LayerSetBase {
+    constructor() {
+        super();
+    }
+}
+
 export class MgLayerSet extends LayerSetBase {
     constructor(props: IMgLayerSetProps, callback: IMgLayerSetCallback) {
-        super(props, callback);
+        super();
+        this.callback = callback;
+        const factory = new MgInnerLayerSetFactory(callback, props.map, props.agentUri, props.imageFormat, props.selectionImageFormat, props.selectionColor);
+
+        //NOTE: MapGuide does not like concurrent map rendering operations of the same mapname/session pair, which
+        //this will do when the MG overlay is shared between the main viewer and the overview map. This is probably
+        //because the concurrent requests both have SET[X/Y/SCALE/DPI/etc] parameters attached, so there is concurrent
+        //requests to modify and persist the runtime map state (in addition to the rendering) and there is most likely
+        //server-side lock contention to safely update the map state. Long story short: re-using the main overlay for the
+        //OverviewMap control IS A BAD THING. Same thing happens with selection overlays
+        //
+        //As of OL6, this unwanted behavior from shared layers extends to all layer types, so what this means is that
+        //we have to create 2 sets of layers, one for the main map and one for the overview map. We CANNOT and DO NOT share
+        //any of these layer instances between the main map and the overview map!
+
+        this.mainSet = factory.create(props.locale, props.externalBaseLayers, true);
+        this.overviewSet = factory.create(props.locale, props.externalBaseLayers, false);
+
+        const progressNotifySources = this.mainSet.getSourcesForProgressTracking();
+        /*
+        console.log("Draw Order:");
+        for (let i = 0; i < layers.length; i++) {
+            console.log(" " + layers[i].get(LayerProperty.LAYER_NAME));
+        }
+        */
+
+        for (const src of progressNotifySources) {
+            const suppress: boolean | undefined = src.get(SourceProperty.SUPPRESS_LOAD_EVENTS);
+            if (!(suppress == true))
+                this.registerSourceEvents(src);
+        }
     }
+    public updateSelectionColor = (color: string) => this.mainSet.updateSelectionColor(color);
     public setMapGuideMocking(mock: MapGuideMockMode | undefined) {
         const allLayers = this.mainSet.getLayers();
         for (const layer of allLayers) {

@@ -1,62 +1,27 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
 
-import { IMapProviderContext } from './context';
 import { Client } from '../../api/client';
 import { SessionKeepAlive } from '../session-keep-alive';
-import { Bounds, IMapView, GenericEvent, ActiveMapTool, LayerProperty, ImageFormat, ReduxDispatch, Size2, RefreshMode, DigitizerCallback, KC_U, SelectionVariant, ILayerManager, Coordinate2D, ClientKind, IExternalBaseLayer, LayerTransparencySet, Dictionary } from '../../api/common';
-import { tr } from '../../api/i18n';
+import { Bounds, GenericEvent, ActiveMapTool, ImageFormat, RefreshMode, SelectionVariant, ClientKind, LayerTransparencySet } from '../../api/common';
 import { IQueryMapFeaturesOptions } from '../../api/request-builder';
 import { QueryMapFeaturesResponse } from '../../api/contracts/query';
 
-import Map from "ol/Map";
 import WKTFormat from "ol/format/WKT";
-import Select from 'ol/interaction/Select';
-import DragBox from 'ol/interaction/DragBox';
-import Draw, { GeometryFunction } from 'ol/interaction/Draw';
 
-import { MapOptions } from 'ol/PluggableMap';
-import Attribution from 'ol/control/Attribution';
-import Rotate from 'ol/control/Rotate';
-import DragRotate from 'ol/interaction/DragRotate';
-import DragPan from 'ol/interaction/DragPan';
-import PinchRotate from 'ol/interaction/PinchRotate';
-import PinchZoom from 'ol/interaction/PinchZoom';
-import KeyboardPan from 'ol/interaction/KeyboardPan';
-import KeyboardZoom from 'ol/interaction/KeyboardZoom';
-import MouseWheelZoom from 'ol/interaction/MouseWheelZoom';
 import Polygon, { fromExtent } from 'ol/geom/Polygon';
 
-import * as olExtent from "ol/extent";
-import * as olEasing from "ol/easing";
 import Geometry from 'ol/geom/Geometry';
 import { queryMapFeatures } from 'actions/map';
-import { ProjectionLike } from 'ol/proj';
 import View from 'ol/View';
-import Point from 'ol/geom/Point';
-import GeometryType from 'ol/geom/GeometryType';
-import LineString from 'ol/geom/LineString';
-import Circle from 'ol/geom/Circle';
-import Interaction from 'ol/interaction/Interaction';
-import Overlay from 'ol/Overlay';
-import { MgLayerManager } from 'api/layer-manager';
-import Feature from 'ol/Feature';
-import MapBrowserEvent from 'ol/MapBrowserEvent';
 import debounce = require('lodash.debounce');
-import { areMapsSame, layerTransparencyChanged, areViewsCloseToEqual } from 'utils/viewer-state';
-import { areArraysDifferent } from 'utils/array';
-import OverviewMap from 'ol/control/OverviewMap';
+import { layerTransparencyChanged, areViewsCloseToEqual } from '../../utils/viewer-state';
+import { areArraysDifferent } from '../../utils/array';
 import { MgLayerSet, LayerSetBase } from '../../api/layer-set';
-import { MouseTrackingTooltip } from '../tooltips/mouse';
 import { FeatureQueryTooltip } from '../tooltips/feature';
-import { SelectedFeaturesTooltip } from '../tooltips/selected-features';
 import { RuntimeMap } from '../../api/contracts/runtime-map';
 import { debug, warn } from '../../utils/logger';
-import Collection from 'ol/Collection';
 import { BLANK_SIZE, Size } from '../../containers/map-capturer-context';
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../../utils/site-version';
 import { BLANK_GIF_DATA_URI } from '../../constants';
-import { MapGuideMockMode } from '../map-viewer-context';
 import { isSessionExpiredError } from '../../api/error';
 import { BaseMapProviderContext, IMapProviderState, IViewerComponent } from './base';
 
@@ -81,7 +46,7 @@ export interface IMapGuideProviderState extends IMapProviderState {
     activeSelectedFeatureColor: string;
 }
 
-export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuideProviderState> {
+export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuideProviderState, MgLayerSet> {
     /**
      * This is a throttled version of _refreshOnStateChange(). Call this on any
      * modifications to pendingStateChanges
@@ -107,6 +72,8 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         super();
         this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), 500);
     }
+
+    public getProviderName(): string { return "MapGuide"; }
 
     //#region IMapViewerContextCallback
     private onSessionExpired() {
@@ -267,7 +234,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @override
      * @protected
      */
-    protected initLayerSet(nextState: IMapGuideProviderState): LayerSetBase {
+    protected initLayerSet(nextState: IMapGuideProviderState): MgLayerSet {
         const layerSet = new MgLayerSet(this._state, {
             getMockMode: () => this.getMockMode(),
             incrementBusyWorker: () => this.incrementBusyWorker(),
@@ -359,9 +326,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             const oldLayerSet = this.getLayerSet(this._state.mapName);
             const newLayerSet = this.ensureAndGetLayerSet(nextState);
             oldLayerSet.detach(this._map, this._ovMap);
-            if (newLayerSet instanceof MgLayerSet) {
-                newLayerSet.setMapGuideMocking(this.getMockMode());
-            }
+            newLayerSet.setMapGuideMocking(this.getMockMode());
             newLayerSet.attach(this._map, this._ovMap);
             //This would happen if we switch to a map we haven't visited yet
             if (!nextState.view) {
@@ -547,11 +512,3 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         this._dispatcher(action);
     }
 }
-
-/**
- * MapGuide context provider
- * @since 0.14
- */
-export const MAPGUIDE_PROVIDER: IMapProviderContext = {
-    providerName: "MapGuide"
-};

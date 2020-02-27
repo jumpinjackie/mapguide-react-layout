@@ -1,11 +1,10 @@
-import { RefreshMode, IExternalBaseLayer, Bounds, LayerTransparencySet, LayerProperty, MgBuiltInLayers, MgLayerType, MG_LAYER_TYPE_NAME, MG_BASE_LAYER_GROUP_NAME, SourceProperty, ILayerInfo, ImageFormat, GenericEvent, ClientKind, Coordinate2D } from './common';
-import { Size, BLANK_SIZE } from '../containers/map-capturer-context';
+import { RefreshMode, IExternalBaseLayer, Bounds, LayerTransparencySet, LayerProperty, MgBuiltInLayers, MgLayerType, MG_LAYER_TYPE_NAME, MG_BASE_LAYER_GROUP_NAME, SourceProperty, ILayerInfo, ImageFormat, GenericEvent, ClientKind, Coordinate2D, Size, BLANK_SIZE } from './common';
 import olLayerGroup from "ol/layer/Group";
 import olTileGrid from "ol/tilegrid/TileGrid";
 import olSource from "ol/source/Source";
-import olImageSource, { defaultImageLoadFunction } from "ol/source/Image";
+import { defaultImageLoadFunction } from "ol/source/Image";
 import olTileImageSource from "ol/source/TileImage";
-import createMapGuideSource, { isMapGuideImageSource } from "./ol-mapguide-source-factory";
+import createMapGuideSource from "./ol-mapguide-source-factory";
 import olImageStaticSource from "ol/source/ImageStatic";
 import olMapGuideSource from "ol/source/ImageMapGuide";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY, BLANK_GIF_DATA_URI } from "../constants/index";
@@ -15,25 +14,20 @@ import * as olExtent from "ol/extent";
 import olTileLayer from "ol/layer/Tile";
 import olImageLayer from "ol/layer/Image";
 import olLayerBase from "ol/layer/Base";
-import { IMapViewerContextCallback, IMapViewerContextProps, MapGuideMockMode } from '../components/map-viewer-context';
+import { IMapViewerContextCallback, MapGuideMockMode } from '../components/map-viewer-context';
 import { RuntimeMap } from './contracts/runtime-map';
 import { createExternalSource } from '../components/external-layer-factory';
 import { strIsNullOrEmpty } from '../utils/string';
 import { parseUrl } from '../utils/url';
 import ImageWrapper from 'ol/Image';
 import { tr } from './i18n';
-import olMap from "ol/Map";
-import olOverviewMap from "ol/control/OverviewMap";
-import { MgError } from './error';
-import { setOLVectorLayerStyle, IVectorFeatureStyle } from './ol-style-helpers';
-import olVectorLayer from "ol/layer/Vector";
-import olSourceVector from "ol/source/Vector";
-import { getLayerInfo } from './layer-manager';
 import * as olHas from "ol/has";
 import Feature from "ol/Feature";
 import { assertNever } from '../utils/never';
 import { debug } from '../utils/logger';
 import { Client } from './client';
+import { LayerSetGroupBase } from './layer-set-group-base';
+import { ILayerSetOL, IImageLayerEvents } from './layer-set-contracts';
 
 function blankImageLoadFunction(image: ImageWrapper) {
     (image.getImage() as any).src = BLANK_GIF_DATA_URI;
@@ -95,120 +89,6 @@ function mockMapGuideImageLoadFunction(image: ImageWrapper, src: string) {
             y += (fontSize + 1);
         }
         (image.getImage() as any).src = tCtx.canvas.toDataURL();
-    }
-}
-
-export interface ILayerSetOL {
-    view: olView;
-    extent: olExtent.Extent;
-    dpi: number;
-    projection: string | undefined;
-    scaleToResolution(scale: number): number;
-    resolutionToScale(resolution: number): number;
-    refreshMap(mode: RefreshMode): void;
-    getMetersPerUnit(): number;
-    getLayers(): olLayerBase[];
-    getSourcesForProgressTracking(): olSource[];
-    updateExternalBaseLayers(externalBaseLayers: IExternalBaseLayer[]): void;
-    updateTransparency(trans: LayerTransparencySet): void;
-    // ====== This is MapGuide-specific ======== //
-    showActiveSelectedFeature(mapExtent: Bounds, size: Size, uri: string): void;
-    update(showGroups: string[] | undefined, showLayers: string[] | undefined, hideGroups: string[] | undefined, hideLayers: string[] | undefined): void;
-    updateSelectionColor(color: string): void;
-}
-
-export abstract class BaseLayerSetOL implements ILayerSetOL {
-    constructor(public readonly externalBaseLayersGroup: olLayerGroup | undefined,
-        public readonly projection: string | undefined,
-        public readonly dpi: number,
-        public readonly extent: Bounds,
-        private readonly inPerUnit: number,
-        public readonly view: olView) {
-
-    }
-    public getMetersPerUnit(): number {
-        return this.inPerUnit / 39.37
-    }
-    public scaleToResolution(scale: number): number {
-        return (scale / this.inPerUnit / this.dpi) * olHas.DEVICE_PIXEL_RATIO;
-    }
-    public resolutionToScale(resolution: number): number {
-        return (resolution * this.dpi * this.inPerUnit) / olHas.DEVICE_PIXEL_RATIO;
-    }
-    public updateExternalBaseLayers(externalBaseLayers: IExternalBaseLayer[]) {
-        if (this.externalBaseLayersGroup) {
-            const layers = this.externalBaseLayersGroup.getLayers();
-            layers.forEach((l: olLayerBase) => {
-                const match = (externalBaseLayers || []).filter(el => el.name === l.get("title"));
-                if (match.length == 1) {
-                    l.setVisible(!!match[0].visible);
-                } else {
-                    l.setVisible(false);
-                }
-            });
-        }
-    }
-    /**
-     *
-     * @virtual
-     * @param {RefreshMode} mode
-     * @memberof BaseLayerSetOL
-     */
-    refreshMap(mode: RefreshMode): void { }
-    abstract getLayers(): olLayerBase[];
-    abstract getSourcesForProgressTracking(): olSource[];
-    abstract updateTransparency(trans: LayerTransparencySet): void;
-    abstract showActiveSelectedFeature(mapExtent: Bounds, size: Size, uri: string): void;
-    abstract update(showGroups: string[] | undefined, showLayers: string[] | undefined, hideGroups: string[] | undefined, hideLayers: string[] | undefined): void;
-    abstract updateSelectionColor(color: string): void;
-}
-
-class GenericLayerSetOL extends BaseLayerSetOL {
-    constructor(public subjectLayer: olLayerBase,
-        externalBaseLayersGroup: olLayerGroup | undefined,
-        projection: string | undefined,
-        dpi: number,
-        extent: Bounds,
-        inPerUnit: number,
-        view: olView) {
-        super(externalBaseLayersGroup, projection, dpi, extent, inPerUnit, view);
-    }
-    getLayers(): olLayerBase[] {
-        const layers: olLayerBase[] = [];
-        if (this.externalBaseLayersGroup) {
-            layers.push(this.externalBaseLayersGroup);
-        }
-        layers.push(this.subjectLayer);
-        return layers;
-    }
-    getSourcesForProgressTracking(): olSource[] {
-        const sources: olSource[] = [];
-        if (this.externalBaseLayersGroup) {
-            const bls = this.externalBaseLayersGroup.getLayersArray();
-            for (const bl of bls) {
-                if (bl instanceof olImageLayer || bl instanceof olTileLayer) {
-                    sources.push(bl.getSource());
-                }
-            }
-        }
-        if (this.subjectLayer instanceof olImageLayer) {
-            sources.push(this.subjectLayer.getSource())
-        } else if (this.subjectLayer instanceof olTileLayer) {
-            sources.push(this.subjectLayer.getSource())
-        }
-        return sources;
-    }
-    updateTransparency(trans: LayerTransparencySet): void {
-        //throw new Error("Method not implemented.");
-    }
-    showActiveSelectedFeature(mapExtent: Bounds, size: Size, uri: string): void {
-        //throw new Error("Method not implemented.");
-    }
-    update(showGroups: string[] | undefined, showLayers: string[] | undefined, hideGroups: string[] | undefined, hideLayers: string[] | undefined): void {
-        //throw new Error("Method not implemented.");
-    }
-    updateSelectionColor(color: string): void {
-        //throw new Error("Method not implemented.");
     }
 }
 
@@ -633,13 +513,6 @@ export interface IMgLayerSetProps {
     locale?: string;
 }
 
-export interface IImageLayerEvents {
-    addImageLoading(): void;
-    addImageLoaded(): void;
-    onImageError(e: GenericEvent): void;
-    getLocale(): string | undefined;
-}
-
 export interface IMgLayerSetCallback extends IImageLayerEvents {
     getMockMode(): MapGuideMockMode | undefined;
     incrementBusyWorker(): void;
@@ -658,275 +531,15 @@ export interface IMgLayerSetCallback extends IImageLayerEvents {
     addFeatureToHighlight(feat: Feature | undefined, bAppend: boolean): void;
 }
 
-export abstract class LayerSetBase {
-    protected mainSet: ILayerSetOL;
-    protected overviewSet: ILayerSetOL;
-    protected scratchLayer: olVectorLayer;
-    protected callback: IImageLayerEvents;
-    protected _customLayers: {
-        [name: string]: {
-            layer: olLayerBase,
-            order: number
-        }
-    };
-    constructor() {
-        this._customLayers = {};
-        this.scratchLayer = new olVectorLayer({
-            source: new olSourceVector()
-        });
-        this.scratchLayer.set(LayerProperty.IS_SCRATCH, true);
-    }
-    public addScratchFeature(feat: Feature) {
-        this.scratchLayer.getSource().addFeature(feat);
-    }
-    public clearScratchLayer() {
-        this.scratchLayer.getSource().clear();
-    }
-    
-    protected registerSourceEvents(source: olSource): void {
-        if (source instanceof olImageSource) {
-            source.on("imageloadstart", this.callback.addImageLoading);
-            //onImageError is a MapGuide-specific callback
-            if (isMapGuideImageSource(source)) {
-                source.on("imageloaderror", this.callback.onImageError);
-            }
-            source.on("imageloaderror", this.callback.addImageLoaded);
-            source.on("imageloadend", this.callback.addImageLoaded);
-        } else if (source instanceof olTileImageSource) {
-            source.on("tileloadstart", this.callback.addImageLoading);
-            source.on("tileloaderror", this.callback.addImageLoaded);
-            source.on("tileloadend", this.callback.addImageLoaded);
-        }
-    }
-    
-    public updateExternalBaseLayers(externalBaseLayers: IExternalBaseLayer[]) {
-        this.mainSet.updateExternalBaseLayers(externalBaseLayers);
-        this.overviewSet.updateExternalBaseLayers(externalBaseLayers);
-    }
-    public updateTransparency = (trans: LayerTransparencySet) => this.mainSet.updateTransparency(trans);
-    public fitViewToExtent = () => this.mainSet.view.fit(this.mainSet.extent);
-    public getView = () => this.mainSet.view;
-    public getDpi = () => this.mainSet.dpi;
-    public getExtent = () => this.mainSet.extent;
-    public getLayersForOverviewMap = () => this.overviewSet.getLayers();
-    public getProjection = () => this.mainSet.projection;
-    public refreshMap = (mode: RefreshMode) => this.mainSet.refreshMap(mode);
-    public showActiveSelectedFeature = (mapExtent: Bounds, size: Size, uri: string) => this.mainSet.showActiveSelectedFeature(mapExtent, size, uri);
-    public getMetersPerUnit = () => this.mainSet.getMetersPerUnit();
-    public scaleToResolution = (scale: number) => this.mainSet.scaleToResolution(scale);
-    public resolutionToScale = (resolution: number) => this.mainSet.resolutionToScale(resolution);
-    
-    public attach(map: olMap, ovMapControl: olOverviewMap, bSetLayers = true): void {
-        // To guard against the possibility that we may be attaching layers to a map that
-        // already has layers (eg. Measurements), we reverse iterate all the layers we need to
-        // add and insert them to the front one-by-one, ensuring all the layers we add will be
-        // at the bottom of the draw order
-        const layers = map.getLayers();
-        // Attach scratch layer
-        layers.insertAt(0, this.scratchLayer);
-        // Attach custom layers
-        const customLayers = Object.keys(this._customLayers).map(k => this._customLayers[k]);
-        customLayers.sort((a, b) => {
-            return a.order - b.order;
-        });
-        for (const item of customLayers) {
-            layers.insertAt(0, item.layer);
-        }
-        // Then the regular layers
-        const allLayers = this.mainSet.getLayers();
-        for (let i = allLayers.length - 1; i >= 0; i--) {
-            layers.insertAt(0, allLayers[i]);
-        }
-        map.setView(this.mainSet.view);
-        if (bSetLayers) {
-            const ovMap = ovMapControl.getOverviewMap();
-            const ovLayers = this.getLayersForOverviewMap();
-            for (const layer of ovLayers) {
-                ovMap.addLayer(layer);
-            }
-            //ol.View has immutable projection, so we have to replace the whole view on the OverviewMap
-            const center = this.mainSet.view.getCenter();
-            if (center) {
-                ovMap.setView(new olView({
-                    center: [center[0], center[1]],
-                    resolution: this.mainSet.view.getResolution(),
-                    projection: this.mainSet.view.getProjection()
-                }));
-            } else {
-                const view = new olView({
-                    projection: this.mainSet.view.getProjection()
-                });
-                ovMap.setView(view);
-                view.fit(this.mainSet.extent, { size: ovMap.getSize() });
-            }
-        }
-    }
-    public detach(map: olMap, ovMapControl: olOverviewMap): void {
-        const allLayers = this.mainSet.getLayers();
-        for (const layer of allLayers) {
-            map.removeLayer(layer);
-        }
-        //Detach custom layers
-        for (const layerName in this._customLayers) {
-            map.removeLayer(this._customLayers[layerName].layer);
-        }
-        //Detach scratch layer
-        map.removeLayer(this.scratchLayer);
-        const ovLayers = this.getLayersForOverviewMap();
-        const ovMap = ovMapControl.getOverviewMap();
-        for (const layer of ovLayers) {
-            ovMap.removeLayer(layer);
-        }
-    }
-    public getCustomLayers(map: olMap): ILayerInfo[] {
-        const larr = map.getLayers().getArray();
-        const layers = larr
-            .filter(l => this._customLayers[l.get(LayerProperty.LAYER_NAME)] != null)
-            .map(l => ({
-                ...getLayerInfo(l, true),
-                //Smuggle these values out for debugging purposes
-                isSelectable: this._customLayers[l.get(LayerProperty.LAYER_NAME)].layer.get(LayerProperty.IS_SELECTABLE) == true,
-                order: this._customLayers[l.get(LayerProperty.LAYER_NAME)].order
-            }));
-        return layers.reverse();
-    }
-    public hasLayer(name: string): boolean {
-        return this._customLayers[name] != null;
-    }
-    public addLayer<T extends olLayerBase>(map: olMap, name: string, layer: T, allowReplace?: boolean): ILayerInfo {
-        const bAllow = !!allowReplace;
-        if (this._customLayers[name]) {
-            if (!bAllow) {
-                throw new MgError(tr("LAYER_NAME_EXISTS", this.callback.getLocale(), { name: name }));
-            } else {
-                //Remove the layer that is about to be replaced first 
-                map.removeLayer(this._customLayers[name].layer);
-            }
-        }
-        map.addLayer(layer);
-        this._customLayers[name] = { layer, order: map.getLayers().getArray().indexOf(layer) };
-        layer.set(LayerProperty.LAYER_NAME, name);
-        return {
-            ...getLayerInfo(layer, true),
-            //Smuggle these values out for debugging purposes
-            ...{
-                isSelectable: this._customLayers[name].layer.get(LayerProperty.IS_SELECTABLE) == true,
-                order: this._customLayers[name].order
-            }
-        };
-    }
-    public removeLayer(map: olMap, name: string): olLayerBase | undefined {
-        let layer: olLayerBase;
-        if (this._customLayers[name]) {
-            layer = this._customLayers[name].layer;
-            map.removeLayer(layer);
-            delete this._customLayers[name];
-            return layer;
-        }
-    }
-    public getLayer<T extends olLayerBase>(name: string): T | undefined {
-        let layer: T | undefined;
-        if (this._customLayers[name]) {
-            layer = this._customLayers[name]?.layer as T;
-        }
-        return layer;
-    }
-    public apply(map: olMap, layers: ILayerInfo[]): void {
-        const layersByName = layers.reduce((current, layer) => {
-            current[layer.name] = layer;
-            return current;
-        }, {} as any);
-        //Apply opacity/visibility/styling and other top-level properties
-        for (const layer of layers) {
-            const oll = this._customLayers[layer.name]?.layer;
-            if (oll) {
-                oll.setVisible(layer.visible);
-                oll.setOpacity(layer.opacity);
-                oll.set(LayerProperty.BUSY_WORKER_COUNT, layer.busyWorkerCount);
-                if (oll instanceof olVectorLayer && layer.vectorStyle) {
-                    setOLVectorLayerStyle(oll, layer.vectorStyle);
-                }
-            }
-        }
-        //Apply removals 
-        for (const layerName in this._customLayers) {
-            if (!layersByName[layerName]) {
-                this.removeLayer(map, layerName);
-            }
-        }
 
-        //Fix order if required
-        //First item, top-most
-        //Last item, bottom-most
-        const cCurrentLayers = map.getLayers();
-        const aCurrentLayers = cCurrentLayers.getArray();
-        const currentLayers = aCurrentLayers.map(l => ({
-            name: l.get(LayerProperty.LAYER_NAME),
-            type: l.get(LayerProperty.LAYER_TYPE),
-            isExternal: l.get(LayerProperty.IS_EXTERNAL),
-            isGroup: l.get(LayerProperty.IS_GROUP),
-            layer: l
-        })).filter(l => l.isExternal == true);
-        //console.assert(currentLayers.length == layers.length);
-        //console.table(currentLayers);
-        //console.table(layers);
-        
-        //If sizes don't match, do a full invalidation
-        if (currentLayers.length != layers.length) {
-            //Clear everything custom
-            for (const toRemove of currentLayers) {
-                map.removeLayer(toRemove.layer);
-            }
-            for (const rn in this._customLayers) {
-                const toRemove = this._customLayers[rn];
-                map.removeLayer(toRemove.layer);
-            }
-            //Re-add in order according to layers array
-            for (let i = layers.length - 1; i >= 0; i--) {
-                const item = this._customLayers[layers[i].name];
-                if (item) {
-                    map.addLayer(item.layer);
-                    item.order = cCurrentLayers.getArray().indexOf(item.layer);
-                }
-            }
-        } else { //Otherwise see if we need to re-order
-            let bReorder = false;
-            let ii = 0;
-            for (let i = layers.length - 1; i >= 0; i--) {
-                const layer = layers[i];
-                //console.log(`Checking if layer (${layer.name}) needs re-ordering`);
-                if (layer.name != currentLayers[ii].name) {
-                    bReorder = true;
-                    break;
-                }
-                ii++;
-            }
-            if (bReorder) {
-                //console.log("Re-ordering layers");
-                for (const toRemove of currentLayers) {
-                    map.removeLayer(toRemove.layer);
-                }
-                //Re-add in order according to layers array
-                for (let i = layers.length - 1; i >= 0; i--) {
-                    const toAdd = currentLayers.filter(l => l.name == layers[i].name)[0];
-                    map.addLayer(toAdd.layer);
-                    const item = this._customLayers[layers[i].name];
-                    if (item) {
-                        item.order = cCurrentLayers.getArray().indexOf(toAdd.layer);
-                    }
-                }
-            }
-        }
-    }
-}
 
-export class GenericLayerSet extends LayerSetBase {
+export class GenericLayerSet extends LayerSetGroupBase {
     constructor() {
         super();
     }
 }
 
-export class MgLayerSet extends LayerSetBase {
+export class MgLayerSet extends LayerSetGroupBase {
     constructor(props: IMgLayerSetProps, callback: IMgLayerSetCallback) {
         super();
         this.callback = callback;

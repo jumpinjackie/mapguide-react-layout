@@ -1,7 +1,7 @@
 
 import { Client } from '../../api/client';
 import { SessionKeepAlive } from '../session-keep-alive';
-import { Bounds, GenericEvent, ActiveMapTool, ImageFormat, RefreshMode, SelectionVariant, ClientKind, LayerTransparencySet } from '../../api/common';
+import { Bounds, GenericEvent, ActiveMapTool, ImageFormat, RefreshMode, SelectionVariant, ClientKind, LayerTransparencySet, Size, BLANK_SIZE } from '../../api/common';
 import { IQueryMapFeaturesOptions } from '../../api/request-builder';
 import { QueryMapFeaturesResponse } from '../../api/contracts/query';
 
@@ -15,11 +15,10 @@ import View from 'ol/View';
 import debounce = require('lodash.debounce');
 import { layerTransparencyChanged, areViewsCloseToEqual } from '../../utils/viewer-state';
 import { areArraysDifferent } from '../../utils/array';
-import { MgLayerSet, LayerSetBase } from '../../api/layer-set';
+import { MgLayerSet } from '../../api/layer-set';
 import { FeatureQueryTooltip } from '../tooltips/feature';
 import { RuntimeMap } from '../../api/contracts/runtime-map';
 import { debug, warn } from '../../utils/logger';
-import { BLANK_SIZE, Size } from '../../containers/map-capturer-context';
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../../utils/site-version';
 import { BLANK_GIF_DATA_URI } from '../../constants';
 import { isSessionExpiredError } from '../../api/error';

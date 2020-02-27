@@ -1,4 +1,4 @@
-import { IMapViewer, Coordinate2D } from "../api/common";
+import { IMapViewer, Coordinate2D, Size } from "../api/common";
 import { deg2rad } from "../utils/number";
 import * as olExtent from "ol/extent";
 import olFeature from "ol/Feature";
@@ -8,9 +8,6 @@ import olVectorSource from "ol/source/Vector";
 import olVectorLayer from "ol/layer/Vector";
 import olInteractionTranslate from "ol/interaction/Translate";
 import { debug } from '../utils/logger';
-
-export type Size = { w: number, h: number };
-export const BLANK_SIZE: Size = { w: 1, h: 1 };
 
 export interface IMapCapturerContextCallback {
     updateBoxCoords(box: string, normalizedBox: string): void;

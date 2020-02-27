@@ -13,9 +13,10 @@ import {
     getRuntimeMap,
     getCurrentView,
     getExternalBaseLayers,
-    IMapViewer
+    IMapViewer,
+    Size
 } from "../api/common";
-import { MapCapturerContext, Size, IMapCapturerContextCallback } from "./map-capturer-context";
+import { MapCapturerContext, IMapCapturerContextCallback } from "./map-capturer-context";
 import { Slider, Button, Intent, Callout, HTMLSelect } from '@blueprintjs/core';
 import { useActiveMapName, useActiveMapState, useActiveMapView, useActiveMapExternalBaseLayers, useViewerLocale, useAvailableMaps, usePrevious } from './hooks';
 import { setViewRotation, setViewRotationEnabled } from '../actions/map';

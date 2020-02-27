@@ -1,16 +1,17 @@
 import * as React from "react";
 import { BaseMapProviderContext, IMapProviderState } from './base';
-import { LayerSetBase, GenericLayerSet } from '../../api/layer-set';
+import { GenericLayerSet } from '../../api/layer-set';
 import { layerTransparencyChanged, areViewsCloseToEqual } from '../../utils/viewer-state';
 import View from 'ol/View';
 import { debug } from '../../utils/logger';
+import { LayerSetGroupBase } from '../../api/layer-set-group-base';
 
 export class GenericMapProviderContext extends BaseMapProviderContext<IMapProviderState, GenericLayerSet> {
     constructor() {
         super();
     }
     protected onProviderMapClick(px: [number, number]): void { }
-    protected initLayerSet(nextState: IMapProviderState): LayerSetBase {
+    protected initLayerSet(nextState: IMapProviderState): LayerSetGroupBase {
         throw new Error("Method not implemented.");
     }
     public getProviderName(): string { return "Generic"; }

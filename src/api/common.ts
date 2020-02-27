@@ -29,6 +29,10 @@ export type GenericEvent = any;
 
 export type GenericEventHandler = (e: GenericEvent) => void;
 
+export type Size = { w: number, h: number };
+
+export const BLANK_SIZE: Size = { w: 1, h: 1 };
+
 /**
  * @deprecated Use UnitOfMeasure enum instead
  */

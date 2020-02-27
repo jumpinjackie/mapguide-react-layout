@@ -9,7 +9,9 @@ import {
     IExternalBaseLayer,
     ILayerManager,
     IMapViewer,
-    CommandTarget
+    CommandTarget,
+    BLANK_SIZE,
+    Size
 } from "../api/common";
 import { Client } from '../api/client';
 import { RuntimeMap } from "../api/contracts/runtime-map";
@@ -19,7 +21,6 @@ import olMap from "ol/Map";
 import olView from "ol/View";
 import olOverviewMap from "ol/control/OverviewMap";
 import { BLANK_GIF_DATA_URI } from "../constants/index";
-import { Size, BLANK_SIZE } from "../containers/map-capturer-context";
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
 import { createContext } from "react";
 import { MouseTrackingTooltip } from './tooltips/mouse';

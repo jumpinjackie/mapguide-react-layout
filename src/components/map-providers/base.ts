@@ -1,10 +1,9 @@
 import * as ReactDOM from "react-dom";
 import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D } from '../../api/common';
-import { MgLayerSet, LayerSetBase } from '../../api/layer-set';
+import { MgLayerSet } from '../../api/layer-set';
 import { MouseTrackingTooltip } from '../tooltips/mouse';
 import Map from "ol/Map";
 import OverviewMap from 'ol/control/OverviewMap';
-import WKTFormat from "ol/format/WKT";
 import DragBox from 'ol/interaction/DragBox';
 import Select from 'ol/interaction/Select';
 import Draw, { GeometryFunction } from 'ol/interaction/Draw';
@@ -23,7 +22,6 @@ import PinchZoom from 'ol/interaction/PinchZoom';
 import KeyboardPan from 'ol/interaction/KeyboardPan';
 import KeyboardZoom from 'ol/interaction/KeyboardZoom';
 import MouseWheelZoom from 'ol/interaction/MouseWheelZoom';
-import { FeatureQueryTooltip } from 'components/tooltips/feature';
 import View from 'ol/View';
 import Point from 'ol/geom/Point';
 import GeometryType from 'ol/geom/GeometryType';
@@ -37,8 +35,8 @@ import Collection from 'ol/Collection';
 import * as olExtent from "ol/extent";
 import * as olEasing from "ol/easing";
 import MapBrowserEvent from 'ol/MapBrowserEvent';
-import { tr } from 'api/i18n';
-import { LayerSet } from 'api';
+import { tr } from '../../api/i18n';
+import { LayerSetGroupBase } from '../../api/layer-set-group-base';
 
 export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4));
@@ -79,7 +77,7 @@ export interface IMapProviderContext {
     getProviderName(): string;
 }
 
-export abstract class BaseMapProviderContext<TState extends IMapProviderState, TLayerSet extends LayerSetBase> implements IMapProviderContext {
+export abstract class BaseMapProviderContext<TState extends IMapProviderState, TLayerSet extends LayerSetGroupBase> implements IMapProviderContext {
     protected _state: TState;
     /**
      * Indicates if touch events are supported.
@@ -205,7 +203,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._busyWorkers--;
         this._comp?.onBusyLoading?.(this._busyWorkers);
     }
-    protected applyView(layerSet: LayerSetBase, vw: IMapView) {
+    protected applyView(layerSet: LayerSetGroupBase, vw: IMapView) {
         this._triggerZoomRequestOnMoveEnd = false;
         layerSet.getView().setCenter([vw.x, vw.y]);
         //Don't use this.scaleToResolution() as that uses this.props to determine

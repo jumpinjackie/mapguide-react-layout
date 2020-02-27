@@ -1,4 +1,3 @@
-import { Size } from "../../containers/map-capturer-context";
 import olOverlay from "ol/Overlay";
 import olMap from "ol/Map";
 import OverlayPositioning from 'ol/OverlayPositioning';

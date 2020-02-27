@@ -25,7 +25,7 @@ import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version'
 import { createContext } from "react";
 import { MouseTrackingTooltip } from './tooltips/mouse';
 import { FeatureQueryTooltip } from './tooltips/feature';
-import { MgLayerSet } from '../api/layer-set';
+import { MgLayerSetGroup } from "../api/mg-layer-set-group";
 import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
 import { SelectedFeaturesTooltip } from './tooltips/selected-features';
@@ -108,7 +108,7 @@ export interface IMapViewerContextCallback {
  */
 export class MapViewerContext {
     private _activeMapName: string;
-    private _layerSets: Dictionary<MgLayerSet>;
+    private _layerSets: Dictionary<MgLayerSetGroup>;
     private _mouseTooltip: MouseTrackingTooltip;
     private _featureTooltip: FeatureQueryTooltip;
     private _selectTooltip: SelectedFeaturesTooltip;
@@ -124,8 +124,8 @@ export class MapViewerContext {
         this._selectTooltip = new SelectedFeaturesTooltip(this._map);
         this._featureTooltip.setEnabled(initTooltipEnabled);
     }
-    public initLayerSet(props: IMapViewerContextProps): MgLayerSet {
-        const layerSet = new MgLayerSet(props, this.callback);
+    public initLayerSet(props: IMapViewerContextProps): MgLayerSetGroup {
+        const layerSet = new MgLayerSetGroup(props, this.callback);
         this._layerSets[props.map.Name] = layerSet;
         if (!this._activeMapName) {
             this._activeMapName = props.map.Name;
@@ -133,7 +133,7 @@ export class MapViewerContext {
         layerSet.update(props.showGroups, props.showLayers, props.hideGroups, props.hideLayers);
         return layerSet;
     }
-    public initContext(layerSet: MgLayerSet, locale?: string, overviewMapElementSelector?: () => (Element | null)) {
+    public initContext(layerSet: MgLayerSetGroup, locale?: string, overviewMapElementSelector?: () => (Element | null)) {
         // HACK: className property not documented. This needs to be fixed in OL api doc.
         const overviewMapOpts: any = {
             className: 'ol-overviewmap ol-custom-overviewmap',
@@ -174,7 +174,7 @@ export class MapViewerContext {
     public getOverviewMap(): olOverviewMap {
         return this._ovMap;
     }
-    public getLayerSet(name: string, bCreate: boolean = false, props?: IMapViewerContextProps): MgLayerSet {
+    public getLayerSet(name: string, bCreate: boolean = false, props?: IMapViewerContextProps): MgLayerSetGroup {
         let layerSet = this._layerSets[name];
         if (!layerSet && props && bCreate) {
             layerSet = this.initLayerSet(props);

@@ -1,12 +1,10 @@
-import { RefreshMode, IExternalBaseLayer, Bounds, LayerTransparencySet, LayerProperty, MgBuiltInLayers, MgLayerType, MG_LAYER_TYPE_NAME, MG_BASE_LAYER_GROUP_NAME, SourceProperty, ILayerInfo, ImageFormat, GenericEvent, ClientKind, Coordinate2D, Size, BLANK_SIZE } from './common';
+import { RefreshMode, IExternalBaseLayer, Bounds, LayerTransparencySet, LayerProperty, MgBuiltInLayers, MgLayerType, MG_LAYER_TYPE_NAME, MG_BASE_LAYER_GROUP_NAME, ILayerInfo, ImageFormat, GenericEvent, ClientKind, Coordinate2D, Size, BLANK_SIZE } from './common';
 import olLayerGroup from "ol/layer/Group";
 import olTileGrid from "ol/tilegrid/TileGrid";
 import olSource from "ol/source/Source";
-import { defaultImageLoadFunction } from "ol/source/Image";
 import olTileImageSource from "ol/source/TileImage";
 import createMapGuideSource from "./ol-mapguide-source-factory";
 import olImageStaticSource from "ol/source/ImageStatic";
-import olMapGuideSource from "ol/source/ImageMapGuide";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY, BLANK_GIF_DATA_URI } from "../constants/index";
 import { restrictToRange } from "../utils/number";
 import olView from "ol/View";
@@ -23,17 +21,15 @@ import ImageWrapper from 'ol/Image';
 import { tr } from './i18n';
 import * as olHas from "ol/has";
 import Feature from "ol/Feature";
-import { assertNever } from '../utils/never';
 import { debug } from '../utils/logger';
 import { Client } from './client';
-import { LayerSetGroupBase } from './layer-set-group-base';
 import { ILayerSetOL, IImageLayerEvents } from './layer-set-contracts';
 
-function blankImageLoadFunction(image: ImageWrapper) {
+export function blankImageLoadFunction(image: ImageWrapper) {
     (image.getImage() as any).src = BLANK_GIF_DATA_URI;
 }
 
-function mockMapGuideImageLoadFunction(image: ImageWrapper, src: string) {
+export function mockMapGuideImageLoadFunction(image: ImageWrapper, src: string) {
     let el = document.getElementById("mg-debug-text-canvas");
     if (!el) {
         el = document.createElement("canvas");
@@ -266,7 +262,7 @@ class MgLayerSetOL implements ILayerSetOL {
     }
 }
 
-class MgInnerLayerSetFactory {
+export class MgInnerLayerSetFactory {
     private dynamicOverlayParams: any;
     private staticOverlayParams: any;
     private selectionOverlayParams: any;
@@ -533,71 +529,3 @@ export interface IMgLayerSetCallback extends IImageLayerEvents {
 
 
 
-export class GenericLayerSet extends LayerSetGroupBase {
-    constructor() {
-        super();
-    }
-}
-
-export class MgLayerSet extends LayerSetGroupBase {
-    constructor(props: IMgLayerSetProps, callback: IMgLayerSetCallback) {
-        super();
-        this.callback = callback;
-        const factory = new MgInnerLayerSetFactory(callback, props.map, props.agentUri, props.imageFormat, props.selectionImageFormat, props.selectionColor);
-
-        //NOTE: MapGuide does not like concurrent map rendering operations of the same mapname/session pair, which
-        //this will do when the MG overlay is shared between the main viewer and the overview map. This is probably
-        //because the concurrent requests both have SET[X/Y/SCALE/DPI/etc] parameters attached, so there is concurrent
-        //requests to modify and persist the runtime map state (in addition to the rendering) and there is most likely
-        //server-side lock contention to safely update the map state. Long story short: re-using the main overlay for the
-        //OverviewMap control IS A BAD THING. Same thing happens with selection overlays
-        //
-        //As of OL6, this unwanted behavior from shared layers extends to all layer types, so what this means is that
-        //we have to create 2 sets of layers, one for the main map and one for the overview map. We CANNOT and DO NOT share
-        //any of these layer instances between the main map and the overview map!
-
-        this.mainSet = factory.create(props.locale, props.externalBaseLayers, true);
-        this.overviewSet = factory.create(props.locale, props.externalBaseLayers, false);
-
-        const progressNotifySources = this.mainSet.getSourcesForProgressTracking();
-        /*
-        console.log("Draw Order:");
-        for (let i = 0; i < layers.length; i++) {
-            console.log(" " + layers[i].get(LayerProperty.LAYER_NAME));
-        }
-        */
-
-        for (const src of progressNotifySources) {
-            const suppress: boolean | undefined = src.get(SourceProperty.SUPPRESS_LOAD_EVENTS);
-            if (!(suppress == true))
-                this.registerSourceEvents(src);
-        }
-    }
-    public updateSelectionColor = (color: string) => this.mainSet.updateSelectionColor(color);
-    public setMapGuideMocking(mock: MapGuideMockMode | undefined) {
-        const allLayers = this.mainSet.getLayers();
-        for (const layer of allLayers) {
-            if (layer instanceof olImageLayer) {
-                const source = layer.getSource();
-                if (source instanceof olMapGuideSource) {
-                    if (typeof (mock) != 'undefined') {
-                        switch (mock) {
-                            case MapGuideMockMode.RenderPlaceholder:
-                                source.setImageLoadFunction(mockMapGuideImageLoadFunction);
-                                break;
-                            case MapGuideMockMode.DoNotRender:
-                                source.setImageLoadFunction(blankImageLoadFunction);
-                                break;
-                            default:
-                                assertNever(mock);
-                                break;
-                        }
-                    } else {
-                        source.setImageLoadFunction(defaultImageLoadFunction);
-                    }
-                }
-            }
-        }
-    }
-    public update = (showGroups: string[] | undefined, showLayers: string[] | undefined, hideGroups: string[] | undefined, hideLayers: string[] | undefined) => this.mainSet.update(showGroups, showLayers, hideGroups, hideLayers);
-}

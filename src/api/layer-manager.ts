@@ -11,7 +11,7 @@ import olVectorLayer from "ol/layer/Vector";
 import { getFormatDrivers } from './layer-manager/driver-registry';
 import { IFormatDriver } from './layer-manager/format-driver';
 import { tr } from './i18n';
-import { MgLayerSet } from './layer-set';
+import { MgLayerSetGroup } from "./mg-layer-set-group";
 import { IParsedFeatures } from './layer-manager/parsed-features';
 import { LayerSetGroupBase } from './layer-set-group-base';
 

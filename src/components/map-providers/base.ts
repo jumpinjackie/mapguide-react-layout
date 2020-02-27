@@ -1,6 +1,6 @@
 import * as ReactDOM from "react-dom";
 import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D } from '../../api/common';
-import { MgLayerSet } from '../../api/layer-set';
+import { MgLayerSetGroup } from "../../api/mg-layer-set-group";
 import { MouseTrackingTooltip } from '../tooltips/mouse';
 import Map from "ol/Map";
 import OverviewMap from 'ol/control/OverviewMap';
@@ -392,7 +392,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected abstract initLayerSet(nextState: TState): TLayerSet;
     public abstract getProviderName(): string;
     
-    public initContext(layerSet: MgLayerSet, locale?: string, overviewMapElementSelector?: () => (Element | null)) {
+    public initContext(layerSet: MgLayerSetGroup, locale?: string, overviewMapElementSelector?: () => (Element | null)) {
         if (this._map) {
             // HACK: className property not documented. This needs to be fixed in OL api doc.
             const overviewMapOpts: any = {

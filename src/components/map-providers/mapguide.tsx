@@ -15,7 +15,7 @@ import View from 'ol/View';
 import debounce = require('lodash.debounce');
 import { layerTransparencyChanged, areViewsCloseToEqual } from '../../utils/viewer-state';
 import { areArraysDifferent } from '../../utils/array';
-import { MgLayerSet } from '../../api/layer-set';
+import { MgLayerSetGroup } from "../../api/mg-layer-set-group";
 import { FeatureQueryTooltip } from '../tooltips/feature';
 import { RuntimeMap } from '../../api/contracts/runtime-map';
 import { debug, warn } from '../../utils/logger';
@@ -45,7 +45,7 @@ export interface IMapGuideProviderState extends IMapProviderState {
     activeSelectedFeatureColor: string;
 }
 
-export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuideProviderState, MgLayerSet> {
+export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuideProviderState, MgLayerSetGroup> {
     /**
      * This is a throttled version of _refreshOnStateChange(). Call this on any
      * modifications to pendingStateChanges
@@ -176,7 +176,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         if (showGroups || showLayers || hideGroups || hideLayers) {
             //this.refreshOnStateChange(map, showGroups, showLayers, hideGroups, hideLayers);
             const layerSet = this.getLayerSet(mapName);
-            if (layerSet instanceof MgLayerSet) {
+            if (layerSet instanceof MgLayerSetGroup) {
                 layerSet.setMapGuideMocking(this.getMockMode());
                 layerSet.update(showGroups, showLayers, hideGroups, hideLayers);
             }
@@ -233,8 +233,8 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @override
      * @protected
      */
-    protected initLayerSet(nextState: IMapGuideProviderState): MgLayerSet {
-        const layerSet = new MgLayerSet(this._state, {
+    protected initLayerSet(nextState: IMapGuideProviderState): MgLayerSetGroup {
+        const layerSet = new MgLayerSetGroup(this._state, {
             getMockMode: () => this.getMockMode(),
             incrementBusyWorker: () => this.incrementBusyWorker(),
             decrementBusyWorker: () => this.decrementBusyWorker(),

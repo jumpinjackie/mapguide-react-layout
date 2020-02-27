@@ -1,12 +1,12 @@
 import * as React from "react";
 import { BaseMapProviderContext, IMapProviderState } from './base';
-import { GenericLayerSet } from '../../api/layer-set';
+import { GenericLayerSetGroup } from "../../api/generic-layer-set-group";
 import { layerTransparencyChanged, areViewsCloseToEqual } from '../../utils/viewer-state';
 import View from 'ol/View';
 import { debug } from '../../utils/logger';
 import { LayerSetGroupBase } from '../../api/layer-set-group-base';
 
-export class GenericMapProviderContext extends BaseMapProviderContext<IMapProviderState, GenericLayerSet> {
+export class GenericMapProviderContext extends BaseMapProviderContext<IMapProviderState, GenericLayerSetGroup> {
     constructor() {
         super();
     }

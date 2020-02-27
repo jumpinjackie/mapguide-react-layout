@@ -88,7 +88,7 @@ import { areArraysDifferent } from '../utils/array';
 import GeometryType from 'ol/geom/GeometryType';
 import { ProjectionLike } from 'ol/proj';
 import Select from 'ol/interaction/Select';
-import { MgLayerSet } from '../api/layer-set';
+import { MgLayerSetGroup } from "../api/mg-layer-set-group";
 import { MgLayerManager } from '../api/layer-manager';
 import MapBrowserEvent from 'ol/MapBrowserEvent';
 import { warn, debug, info } from '../utils/logger';
@@ -520,7 +520,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             }
         };
     }
-    private applyView(layerSet: MgLayerSet, vw: IMapView) {
+    private applyView(layerSet: MgLayerSetGroup, vw: IMapView) {
         this._triggerZoomRequestOnMoveEnd = false;
         layerSet.getView().setCenter([vw.x, vw.y]);
         //Don't use this.scaleToResolution() as that uses this.props to determine

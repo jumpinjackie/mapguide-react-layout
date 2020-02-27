@@ -423,7 +423,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected abstract initLayerSet(nextState: TState): TLayerSetGroup;
     public abstract getProviderName(): string;
 
-    public initContext(layerSet: MgLayerSetGroup, locale?: string, overviewMapElementSelector?: () => (Element | null)) {
+    protected initContext(layerSet: TLayerSetGroup, locale?: string, overviewMapElementSelector?: () => (Element | null)) {
         if (this._map) {
             // HACK: className property not documented. This needs to be fixed in OL api doc.
             const overviewMapOpts: any = {
@@ -447,7 +447,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             }
             this._ovMap = new OverviewMap(overviewMapOpts);
             this._map.addControl(this._ovMap);
-            layerSet.setMapGuideMocking(this.getMockMode());
+            //layerSet.setMapGuideMocking(this.getMockMode());
             layerSet.attach(this._map, this._ovMap, false);
         }
     }
@@ -521,6 +521,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         };
         this._map = new Map(mapOptions);
         const activeLayerSet = this.ensureAndGetLayerSetGroup(this._state);
+        this.initContext(activeLayerSet, this._state.locale, this._state.overviewMapElementSelector);
         this._mouseTooltip = new MouseTrackingTooltip(this._map, this._comp.isContextMenuOpen);
         this._selectTooltip = new SelectedFeaturesTooltip(this._map);
         this._map.on("pointermove", this.onMouseMove.bind(this));

@@ -4,6 +4,7 @@ import { areViewsCloseToEqual } from '../../utils/viewer-state';
 import View from 'ol/View';
 import { debug } from '../../utils/logger';
 import { LayerSetGroupBase } from '../../api/layer-set-group-base';
+import { assertIsDefined } from '../../utils/assert';
 
 export class GenericMapProviderContext extends BaseMapProviderContext<IMapProviderState, GenericLayerSetGroup> {
     constructor() {
@@ -14,7 +15,10 @@ export class GenericMapProviderContext extends BaseMapProviderContext<IMapProvid
     }
     protected onProviderMapClick(px: [number, number]): void { }
     protected initLayerSet(nextState: IMapProviderState): LayerSetGroupBase {
-        throw new Error("Method not implemented.");
+        assertIsDefined(nextState.mapName);
+        const layerSet = new GenericLayerSetGroup();
+        this._layerSetGroups[nextState.mapName] = layerSet;
+        return layerSet;
     }
     public getProviderName(): string { return "Generic"; }
     public setProviderState(nextState: IMapProviderState): void {

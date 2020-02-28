@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { IMapProviderContext, IViewerComponent } from '../components/map-providers/base';
+import { IMapProviderContext, IViewerComponent, IMapProviderState } from '../components/map-providers/base';
 import { CURSOR_DIGITIZE_POINT, CURSOR_DIGITIZE_LINE, CURSOR_DIGITIZE_LINESTRING, CURSOR_DIGITIZE_RECT, CURSOR_DIGITIZE_POLYGON, CURSOR_DIGITIZE_CIRCLE, CURSOR_GRABBING, CURSOR_GRAB, CURSOR_ZOOM_IN } from '../constants/assets';
 import { MapLoadIndicator } from '../components/map-load-indicator';
 import { ActiveMapTool, MapLoadIndicatorPositioning, GenericEvent, ReduxDispatch, RefreshMode } from '../api/common';
@@ -184,6 +184,7 @@ export const MgMapViewer = () => {
     const cancelDigitizationKey = useConfiguredCancelDigitizationKey();
     const undoLastPointKey = useConfiguredUndoLastPointKey();
     const layers = useActiveMapLayers();
+    const dispatch = useDispatch();
     // ============== MapGuide-specific ================== //
     const imageFormat = useViewerImageFormat();
     const agentUri = useConfiguredAgentUri();
@@ -204,7 +205,6 @@ export const MgMapViewer = () => {
     const activeSelectedFeature = useActiveMapActiveSelectedFeature();
     const activeSelectedFeatureColor = useViewerActiveFeatureSelectionColor();
     const selection = useActiveMapSelectionSet();
-    const dispatch = useDispatch();
 
     let bgColor: string | undefined;
     if (map) {
@@ -290,4 +290,57 @@ export const MgMapViewer = () => {
 
 export const GenericMapViewer = () => {
     const context = React.useContext(MapProviderContext);
+    const toasterRef = React.useRef<Toaster>(null);
+    const loadIndicatorPositioning = useConfiguredLoadIndicatorPositioning();
+    const loadIndicatorColor = useConfiguredLoadIndicatorColor();
+    const activeTool = useViewerActiveTool();
+    const view = useActiveMapView();
+    const viewRotation = useViewerViewRotation();
+    const viewRotationEnabled = useViewerViewRotationEnabled();
+    const mapName = useActiveMapName();
+    const locale = useViewerLocale();
+    const externalBaseLayers = useActiveMapExternalBaseLayers();
+    const cancelDigitizationKey = useConfiguredCancelDigitizationKey();
+    const undoLastPointKey = useConfiguredUndoLastPointKey();
+    const layers = useActiveMapLayers();
+    const dispatch = useDispatch();
+
+    const nextState: IMapProviderState = {
+        activeTool,
+        view,
+        viewRotation,
+        viewRotationEnabled,
+        mapName,
+        locale,
+        externalBaseLayers,
+        cancelDigitizationKey,
+        undoLastPointKey
+    };
+    context.setProviderState(nextState);
+
+    // Side-effect to apply the current external layer list
+    React.useEffect(() => {
+        if (layers) {
+            const layerManager = context.getLayerManager();
+            layerManager.apply(layers);
+        }
+    }, [context, layers]);
+    // Side-effect to set the viewer "instance" once the MapViewerBase component has been mounted.
+    // Should only happen once.
+    React.useEffect(() => {
+        debug(`React.useEffect - Change of innerRef.current`);
+        setViewer(context);
+        const browserWindow: any = window;
+        browserWindow.getViewer = browserWindow.getViewer || getViewer;
+        debug(`React.useEffect - Attached runtime viewer instance and installed browser global APIs`);
+    }, [context]);
+
+    return <>
+        {/* HACK: usePortal=false to workaround what I think is: https://github.com/palantir/blueprint/issues/3248 */}
+        <Toaster usePortal={false} position={Position.TOP} ref={toasterRef} />
+        <CoreMapViewer context={context}
+            onDispatch={dispatch}
+            loadIndicatorPosition={loadIndicatorPositioning}
+            loadIndicatorColor={loadIndicatorColor} />
+    </>;
 };

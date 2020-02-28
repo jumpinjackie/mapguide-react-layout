@@ -81,11 +81,27 @@ export interface ICloseComponentInFlyoutAction {
 }
 
 /**
+ * 
+ * @export
+ * @interface IGenericSubjectMapLayer
+ * @since 0.14
+ */
+export interface IGenericSubjectMapLayer {
+    type: string;
+    sourceParams: any;
+    name: string;
+}
+
+export function isGenericSubjectMapLayer(map: RuntimeMap | IGenericSubjectMapLayer): map is IGenericSubjectMapLayer {
+    return typeof((map as any).type) == 'string';
+}
+
+/**
  * @since 0.12
  */
 export type MapInfo = {
     mapGroupId: string;
-    map: RuntimeMap;
+    map: RuntimeMap | IGenericSubjectMapLayer;
     initialView: IMapView | undefined;
     externalBaseLayers: IExternalBaseLayer[];
 }

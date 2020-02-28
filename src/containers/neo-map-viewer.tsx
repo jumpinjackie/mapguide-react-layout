@@ -77,6 +77,13 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
         //console.log(`Open context menu at (${e.clientX}, ${e.clientY})`);
         this.props.onContextMenu?.([e.clientX, e.clientY]);
     }
+    private onKeyDown = (e: GenericEvent) => {
+        this.props.context.onKeyDown(e);
+        this.setState({ shiftKey: e.shiftKey });
+    }
+    private onKeyUp = (e: GenericEvent) => {
+        this.setState({ shiftKey: e.shiftKey });
+    }
     private onMouseDown = (e: GenericEvent) => {
         if (!this.state.isMouseDown) {
             this.setState({
@@ -92,6 +99,8 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
         }
     }
     componentDidMount() {
+        document.addEventListener("keydown", this.onKeyDown);
+        document.addEventListener("keyup", this.onKeyUp);
         const mapNode: any = ReactDOM.findDOMNode(this);
         this.props.context.attachToComponent(mapNode, this);
     }
@@ -163,7 +172,6 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
 export const MgMapViewer = () => {
     const context: IMapProviderContext = React.useContext(MapProviderContext);
     const toasterRef = React.useRef<Toaster>(null);
-    const innerRef = React.useRef<CoreMapViewer>(null);
     const loadIndicatorPositioning = useConfiguredLoadIndicatorPositioning();
     const loadIndicatorColor = useConfiguredLoadIndicatorColor();
     const activeTool = useViewerActiveTool();
@@ -265,8 +273,7 @@ export const MgMapViewer = () => {
         return <>
             {/* HACK: usePortal=false to workaround what I think is: https://github.com/palantir/blueprint/issues/3248 */}
             <Toaster usePortal={false} position={Position.TOP} ref={toasterRef} />
-            <CoreMapViewer ref={innerRef}
-                context={context}
+            <CoreMapViewer context={context}
                 onDispatch={dispatch}
                 loadIndicatorPosition={loadIndicatorPositioning}
                 loadIndicatorColor={loadIndicatorColor} />

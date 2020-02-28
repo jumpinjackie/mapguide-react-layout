@@ -85,6 +85,7 @@ export interface IMapProviderContext extends IMapViewer {
     decrementBusyWorker(): void;
     attachToComponent(el: HTMLElement, comp: IViewerComponent): void;
     setProviderState(nextState: IMapProviderState): void;
+    onKeyDown(e: GenericEvent): void;
 }
 
 export abstract class BaseMapProviderContext<TState extends IMapProviderState, TLayerSetGroup extends LayerSetGroupBase> implements IMapProviderContext {
@@ -564,6 +565,16 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
 
     public abstract setProviderState(nextState: TState): void;
+
+    public onKeyDown(e: GenericEvent) {
+        const cancelKey = this._state.cancelDigitizationKey ?? KC_ESCAPE;
+        const undoKey = this._state.undoLastPointKey ?? KC_U;
+        if (e.keyCode == cancelKey) {
+            this.cancelDigitization();
+        } else if (e.keyCode == undoKey && this._activeDrawInteraction) {
+            this._activeDrawInteraction.removeLastPoint();
+        }
+    }
 
     public isDigitizing(): boolean {
         if (!this._map)

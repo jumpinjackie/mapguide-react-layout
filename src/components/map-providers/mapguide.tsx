@@ -307,7 +307,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
     protected initLayerSet(nextState: IMapGuideProviderState): MgLayerSetGroup {
         assertIsDefined(nextState.mapName);
         assertIsDefined(this._state.map);
-        const layerSet = new MgLayerSetGroup(this._state as any, {
+        const layerSet = new MgLayerSetGroup(nextState as any, {
             getMockMode: () => this.getMockMode(),
             incrementBusyWorker: () => this.incrementBusyWorker(),
             decrementBusyWorker: () => this.decrementBusyWorker(),

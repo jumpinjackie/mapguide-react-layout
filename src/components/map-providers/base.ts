@@ -637,6 +637,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._selectTooltip = new SelectedFeaturesTooltip(this._map);
         this._map.on("pointermove", this.onMouseMove.bind(this));
         this._map.on("change:size", this.onResize.bind(this));
+        this._map.on("click", this.onMapClick.bind(this));
         this._map.on("moveend", (e: GenericEvent) => {
             //HACK:
             //

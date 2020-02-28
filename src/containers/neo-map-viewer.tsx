@@ -16,6 +16,8 @@ import { debug } from '../utils/logger';
 import { setViewer, getViewer } from '../api/runtime';
 import { Client } from '../api/client';
 
+import "ol/ol.css";
+
 interface ICoreMapViewerProps {
     context: IMapProviderContext;
     loadIndicatorPosition: MapLoadIndicatorPositioning;
@@ -229,7 +231,8 @@ export const MgMapViewer = () => {
         showLayers: showLayers ?? [],
         hideLayers: hideLayers ?? [],
         activeSelectedFeatureXml: activeSelectedFeatureXml ?? STR_EMPTY,
-        activeSelectedFeatureColor
+        activeSelectedFeatureColor,
+        selection
     };
     context.setProviderState(nextState);
 

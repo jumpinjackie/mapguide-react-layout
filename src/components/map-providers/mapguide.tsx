@@ -3,14 +3,14 @@ import { Client } from '../../api/client';
 import { SessionKeepAlive } from '../session-keep-alive';
 import { Bounds, GenericEvent, ActiveMapTool, ImageFormat, RefreshMode, SelectionVariant, ClientKind, LayerTransparencySet, Size, BLANK_SIZE, IMapGuideViewerSupport } from '../../api/common';
 import { IQueryMapFeaturesOptions } from '../../api/request-builder';
-import { QueryMapFeaturesResponse } from '../../api/contracts/query';
+import { QueryMapFeaturesResponse, FeatureSet } from '../../api/contracts/query';
 
 import WKTFormat from "ol/format/WKT";
 
 import Polygon, { fromExtent } from 'ol/geom/Polygon';
 
 import Geometry from 'ol/geom/Geometry';
-import { queryMapFeatures, setMouseCoordinates } from '../../actions/map';
+import { queryMapFeatures, setMouseCoordinates, setFeatureTooltipsEnabled } from '../../actions/map';
 import View from 'ol/View';
 import debounce = require('lodash.debounce');
 import { layerTransparencyChanged, areViewsCloseToEqual } from '../../utils/viewer-state';
@@ -27,6 +27,7 @@ import { assertIsDefined } from '../../utils/assert';
 import { STR_EMPTY } from '../../utils/string';
 import { ensureParameters } from '../../utils/url';
 import { ActionType } from '../../constants/actions';
+import { buildSelectionXml } from '../../api/builders/deArrayify';
 
 export interface IMapGuideProviderState extends IMapProviderState {
     imageFormat: ImageFormat;
@@ -47,6 +48,7 @@ export interface IMapGuideProviderState extends IMapProviderState {
     hideLayers: string[];
     activeSelectedFeatureXml: string;
     activeSelectedFeatureColor: string;
+    selection: QueryMapFeaturesResponse | null;
 }
 
 export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuideProviderState, MgLayerSetGroup> implements IMapGuideViewerSupport {
@@ -96,7 +98,8 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             showLayers: [],
             hideLayers: [],
             activeSelectedFeatureXml: STR_EMPTY,
-            activeSelectedFeatureColor: "FF0000"
+            activeSelectedFeatureColor: "FF0000",
+            selection: null
         }
     }
 
@@ -113,16 +116,16 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
 
     //#region IMapGuideViewerSupport
     getSelection(): QueryMapFeaturesResponse | null {
-        throw new Error("Method not implemented.");
+        return this._state.selection;
     }
-    getSelectionXml(selection: import("../../api/contracts/query").FeatureSet, layerIds?: string[] | undefined): string {
-        throw new Error("Method not implemented.");
+    getSelectionXml(selection: FeatureSet, layerIds?: string[] | undefined): string {
+        return buildSelectionXml(selection, layerIds);
     }
     getSessionId(): string {
-        throw new Error("Method not implemented.");
+        return this._state.sessionId!;
     }
     setFeatureTooltipEnabled(enabled: boolean): void {
-        throw new Error("Method not implemented.");
+        this._comp?.onDispatch(setFeatureTooltipsEnabled(enabled));
     }
     //#endregion
 

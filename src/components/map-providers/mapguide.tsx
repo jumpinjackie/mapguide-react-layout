@@ -1,7 +1,7 @@
 
 import { Client } from '../../api/client';
 import { SessionKeepAlive } from '../session-keep-alive';
-import { Bounds, GenericEvent, ActiveMapTool, ImageFormat, RefreshMode, SelectionVariant, ClientKind, LayerTransparencySet, Size, BLANK_SIZE } from '../../api/common';
+import { Bounds, GenericEvent, ActiveMapTool, ImageFormat, RefreshMode, SelectionVariant, ClientKind, LayerTransparencySet, Size, BLANK_SIZE, IMapGuideViewerSupport } from '../../api/common';
 import { IQueryMapFeaturesOptions } from '../../api/request-builder';
 import { QueryMapFeaturesResponse } from '../../api/contracts/query';
 
@@ -49,8 +49,7 @@ export interface IMapGuideProviderState extends IMapProviderState {
     activeSelectedFeatureColor: string;
 }
 
-export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuideProviderState, MgLayerSetGroup> {
-
+export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuideProviderState, MgLayerSetGroup> implements IMapGuideViewerSupport {
     /**
      * This is a throttled version of _refreshOnStateChange(). Call this on any
      * modifications to pendingStateChanges
@@ -102,6 +101,30 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
     }
 
     public getProviderName(): string { return "MapGuide"; }
+
+    /**
+     * @override
+     * @returns {(IMapGuideViewerSupport | undefined)}
+     * @memberof MapGuideMapProviderContext
+     */
+    mapguideSupport(): IMapGuideViewerSupport | undefined {
+        return this;
+    }
+
+    //#region IMapGuideViewerSupport
+    getSelection(): QueryMapFeaturesResponse | null {
+        throw new Error("Method not implemented.");
+    }
+    getSelectionXml(selection: import("../../api/contracts/query").FeatureSet, layerIds?: string[] | undefined): string {
+        throw new Error("Method not implemented.");
+    }
+    getSessionId(): string {
+        throw new Error("Method not implemented.");
+    }
+    setFeatureTooltipEnabled(enabled: boolean): void {
+        throw new Error("Method not implemented.");
+    }
+    //#endregion
 
     //#region IMapViewerContextCallback
     private onSessionExpired() {

@@ -41,7 +41,7 @@ import { info } from '../../utils/logger';
 import { setCurrentView, setViewRotation, mapResized, setMouseCoordinates, setBusyCount, setViewRotationEnabled, setActiveTool } from '../../actions/map';
 import { IBasicPointCircleStyle, DEFAULT_POINT_CIRCLE_STYLE, IPointIconStyle, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, DEFAULT_LINE_STYLE, IBasicVectorPolygonStyle, DEFAULT_POLY_STYLE } from '../../api/ol-style-helpers';
 import { Toaster, Intent } from '@blueprintjs/core';
-import { IOLFactory } from '../../api/ol-factory';
+import { IOLFactory, OLFactory } from '../../api/ol-factory';
 import { ISubscriberProps } from '../../containers/subscriber';
 import isMobile from "ismobilejs";
 
@@ -53,7 +53,6 @@ export interface IViewerComponent {
     isContextMenuOpen: () => boolean;
     setDigitizingType: (digitizingType: string | undefined) => void;
     onDispatch: ReduxDispatch;
-    onBeginDigitization: (callback: (cancelled: boolean) => void) => void;
     onHideContextMenu: () => void;
     addImageLoading(): void;
     addImageLoaded(): void;
@@ -118,7 +117,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected _dispatcher: ReduxDispatch | undefined;
     protected _activeDrawInteraction: Draw | null;
 
-    constructor() {
+    constructor(private olFactory: OLFactory = new OLFactory()) {
         this._busyWorkers = 0;
         this._layerSetGroups = {};
         this._triggerZoomRequestOnMoveEnd = true;
@@ -139,6 +138,11 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
 
     //#region IMapViewer
+    /**
+     * @virtual
+     * @returns {(IMapGuideViewerSupport | undefined)}
+     * @memberof BaseMapProviderContext
+     */
     mapguideSupport(): IMapGuideViewerSupport | undefined {
         return undefined;
     }
@@ -146,7 +150,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._comp?.onDispatch(setActiveTool(tool));
     }
     getOLFactory(): IOLFactory {
-        throw new Error("Method not implemented.");
+        return this.olFactory;
     }
     getMapName(): string {
         return this._state.mapName!;
@@ -338,9 +342,15 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             //this._mouseTooltip.clear();
         }
     }
+    private onBeginDigitization = (callback: (cancelled: boolean) => void) => {
+        this._comp?.onDispatch(setActiveTool(ActiveMapTool.None));
+        //Could be a small timing issue here, but the active tool should generally
+        //be "None" before the user clicks their first digitizing vertex/point
+        callback(false);
+    };
     protected pushDrawInteraction<T extends Geometry>(digitizingType: string, draw: Draw, handler: DigitizerCallback<T>, prompt?: string): void {
         assertIsDefined(this._comp);
-        this._comp.onBeginDigitization(cancel => {
+        this.onBeginDigitization(cancel => {
             if (!cancel) {
                 assertIsDefined(this._map);
                 assertIsDefined(this._comp);

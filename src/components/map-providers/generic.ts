@@ -1,12 +1,9 @@
-import * as React from "react";
 import { BaseMapProviderContext, IMapProviderState } from './base';
 import { GenericLayerSetGroup } from "../../api/generic-layer-set-group";
-import { layerTransparencyChanged, areViewsCloseToEqual } from '../../utils/viewer-state';
+import { areViewsCloseToEqual } from '../../utils/viewer-state';
 import View from 'ol/View';
 import { debug } from '../../utils/logger';
 import { LayerSetGroupBase } from '../../api/layer-set-group-base';
-import { ActiveMapTool, KC_ESCAPE, KC_U } from '../../api/common';
-import { DEFAULT_LOCALE } from '../../api/i18n';
 
 export class GenericMapProviderContext extends BaseMapProviderContext<IMapProviderState, GenericLayerSetGroup> {
     constructor() {
@@ -31,7 +28,7 @@ export class GenericMapProviderContext extends BaseMapProviderContext<IMapProvid
         //
         let bChangedView = false;
         //map
-        if (this._state.mapName && nextState.mapName && nextState.mapName != this._state.mapName && this._map && this._ovMap) {
+        if (nextState.mapName != this._state.mapName && this._map && this._ovMap) {
             const oldLayerSet = this.getLayerSetGroup(this._state.mapName);
             const newLayerSet = this.ensureAndGetLayerSetGroup(nextState);
             oldLayerSet?.detach(this._map, this._ovMap);
@@ -48,14 +45,13 @@ export class GenericMapProviderContext extends BaseMapProviderContext<IMapProvid
             }
         }
         //externalBaseLayers
-        if (nextState.mapName &&
-            nextState.externalBaseLayers != null &&
+        if (nextState.externalBaseLayers != null &&
             nextState.externalBaseLayers.length > 0) {
             const layerSet = this.getLayerSetGroup(nextState.mapName);
             layerSet?.updateExternalBaseLayers(nextState.externalBaseLayers);
         }
         //view
-        if (nextState.mapName && !areViewsCloseToEqual(nextState.view, this._state.view)) {
+        if (!areViewsCloseToEqual(nextState.view, this._state.view)) {
             const vw = nextState.view;
             if (vw != null && !bChangedView) {
                 const layerSet = this.getLayerSetGroup(nextState.mapName);

@@ -414,7 +414,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         }
         let bChangedView = false;
         //map
-        if (nextState.mapName && this._state.mapName && nextState.mapName != this._state.mapName && this._map && this._ovMap) {
+        if (nextState.mapName != this._state.mapName && this._map && this._ovMap) {
             const oldLayerSet = this.getLayerSetGroup(this._state.mapName);
             const newLayerSet = this.ensureAndGetLayerSetGroup(nextState);
             oldLayerSet?.detach(this._map, this._ovMap);
@@ -432,7 +432,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             }
         }
         //selectionColor
-        if (nextState.mapName && nextState.selectionColor && nextState.selectionColor != this._state.selectionColor) {
+        if (nextState.selectionColor && nextState.selectionColor != this._state.selectionColor) {
             const layerSet = this.getLayerSetGroup(nextState.mapName);
             layerSet?.updateSelectionColor(nextState.selectionColor);
         }
@@ -441,14 +441,13 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             this.enableFeatureTooltips(nextState.featureTooltipsEnabled);
         }
         //externalBaseLayers
-        if (nextState.mapName &&
-            nextState.externalBaseLayers != null &&
+        if (nextState.externalBaseLayers != null &&
             nextState.externalBaseLayers.length > 0) {
             const layerSet = this.getLayerSetGroup(nextState.mapName);
             layerSet?.updateExternalBaseLayers(nextState.externalBaseLayers);
         }
         //Layer transparency
-        if (nextState.mapName && nextState.layerTransparency && layerTransparencyChanged(nextState.layerTransparency, this._state.layerTransparency)) {
+        if (nextState.layerTransparency && layerTransparencyChanged(nextState.layerTransparency, this._state.layerTransparency)) {
             const layerSet = this.getLayerSetGroup(nextState.mapName);
             layerSet?.updateTransparency(nextState.layerTransparency);
         }
@@ -460,7 +459,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             this.refreshOnStateChange(nextState.mapName, nextState.showGroups, nextState.showLayers, nextState.hideGroups, nextState.hideLayers);
         }
         //view
-        if (nextState.mapName && !areViewsCloseToEqual(nextState.view, this._state.view)) {
+        if (!areViewsCloseToEqual(nextState.view, this._state.view)) {
             const vw = nextState.view;
             if (vw != null && !bChangedView) {
                 const layerSet = this.ensureAndGetLayerSetGroup(nextState);

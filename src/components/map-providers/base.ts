@@ -411,15 +411,18 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         return layerSet;
     }
     //public getLayerSet(name: string, bCreate: boolean = false, props?: IMapViewerContextProps): MgLayerSet {
-    public getLayerSetGroup(name: string): TLayerSetGroup | undefined {
-        let layerSet = this._layerSetGroups[name];
-        /*
-        if (!layerSet && props && bCreate) {
-            layerSet = this.initLayerSet(props);
-            this._layerSets[props.map.Name] = layerSet;
-            this._activeMapName = props.map.Name;
+    public getLayerSetGroup(name: string | undefined): TLayerSetGroup | undefined {
+        let layerSet: TLayerSetGroup | undefined;
+        if (name) {
+            layerSet = this._layerSetGroups[name];
+            /*
+            if (!layerSet && props && bCreate) {
+                layerSet = this.initLayerSet(props);
+                this._layerSets[props.map.Name] = layerSet;
+                this._activeMapName = props.map.Name;
+            }
+            */
         }
-        */
         return layerSet;
     }
     /**

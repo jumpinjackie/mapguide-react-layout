@@ -24,6 +24,7 @@ interface ICoreMapViewerProps {
     loadIndicatorColor: string;
     onContextMenu?: (pos: [number, number]) => void;
     onDispatch: ReduxDispatch;
+    backgroundColor?: string;
 }
 
 interface ICoreMapViewerState {
@@ -105,7 +106,7 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
         this.props.context.attachToComponent(mapNode, this);
     }
     render(): JSX.Element {
-        const { context } = this.props;
+        const { context, backgroundColor } = this.props;
         const { isMouseDown } = this.state;
         const tool = context.getActiveTool();
         const style: React.CSSProperties = {
@@ -157,11 +158,10 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
                     break;
             }
         }
-        /*
-        if (map) {
-            style.backgroundColor = `#${map.BackgroundColor.substring(2)}`;
+        if (backgroundColor) {
+            style.backgroundColor = backgroundColor;
+            //style.backgroundColor = `#${map.BackgroundColor.substring(2)}`;
         }
-        */
         const { loading, loaded } = this.state;
         return <div className="map-viewer-component" style={style} onContextMenu={this.onContextMenu} onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp}>
             <MapLoadIndicator loaded={loaded || 0} loading={loading || 0} position={this.props.loadIndicatorPosition} color={this.props.loadIndicatorColor} />
@@ -170,7 +170,7 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
 }
 
 export const MgMapViewer = () => {
-    const context: IMapProviderContext = React.useContext(MapProviderContext);
+    const context = React.useContext(MapProviderContext);
     const toasterRef = React.useRef<Toaster>(null);
     const loadIndicatorPositioning = useConfiguredLoadIndicatorPositioning();
     const loadIndicatorColor = useConfiguredLoadIndicatorColor();
@@ -206,6 +206,10 @@ export const MgMapViewer = () => {
     const selection = useActiveMapSelectionSet();
     const dispatch = useDispatch();
 
+    let bgColor: string | undefined;
+    if (map) {
+        bgColor = `#${map.BackgroundColor.substring(2)}`;
+    }
     let activeSelectedFeatureXml;
     if (activeSelectedFeature && selection && selection.FeatureSet) {
         activeSelectedFeatureXml = getActiveSelectedFeatureXml(selection.FeatureSet, activeSelectedFeature);
@@ -275,6 +279,7 @@ export const MgMapViewer = () => {
             <Toaster usePortal={false} position={Position.TOP} ref={toasterRef} />
             <CoreMapViewer context={context}
                 onDispatch={dispatch}
+                backgroundColor={bgColor}
                 loadIndicatorPosition={loadIndicatorPositioning}
                 loadIndicatorColor={loadIndicatorColor} />
         </>;

@@ -74,6 +74,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
 
     constructor() {
         super();
+        this._wktFormat = new WKTFormat();
         this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), 500);
     }
 
@@ -321,6 +322,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      */
     public attachToComponent(el: HTMLElement, comp: IViewerComponent): void {
         super.attachToComponent(el, comp);
+        this._keepAlive = new SessionKeepAlive(() => this._state.sessionId!, this._client, this.onSessionExpired.bind(this));
         this._featureTooltip = new FeatureQueryTooltip(this._map!, {
             incrementBusyWorker: () => this.incrementBusyWorker(),
             decrementBusyWorker: () => this.decrementBusyWorker(),
@@ -364,6 +366,9 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
     public setProviderState(nextState: IMapGuideProviderState): void {
         // If viewer not mounted yet, just accept the next state and bail
         if (!this._comp || !this._map) {
+            if (nextState.agentUri) {
+                this._client = new Client(nextState.agentUri, nextState.agentKind);
+            }
             this._state = nextState;
             return;
         }
@@ -482,7 +487,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
     }
 
     public setSelectionXml(xml: string, queryOpts?: Partial<IQueryMapFeaturesOptions>, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void {
-        if (!this._state.mapName || !this._dispatcher || !this._comp || !this._state.sessionId || !this._state.selectionColor) {
+        if (!this._state.mapName || !this._comp || !this._state.sessionId || !this._state.selectionColor) {
             return;
         }
         //NOTE: A quirk of QUERYMAPFEATURES is that when passing in selection XML (instead of geometry),
@@ -517,7 +522,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
                 }
             }
         });
-        this._dispatcher(action);
+        this._comp.onDispatch(action);
     }
 
     public clearSelection(): void {
@@ -543,7 +548,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
 
 
     private sendSelectionQuery(queryOpts?: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void) {
-        if (!this._state.mapName || !this._dispatcher || !this._comp || !this._state.sessionId || !this._state.selectionColor || (queryOpts != null && (queryOpts.layernames ?? []).length == 0)) {
+        if (!this._state.mapName || !this._comp || !this._state.sessionId || !this._state.selectionColor || (queryOpts != null && (queryOpts.layernames ?? []).length == 0)) {
             return;
         }
         this.incrementBusyWorker();
@@ -573,6 +578,6 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
                 }
             }
         });
-        this._dispatcher(action);
+        this._comp.onDispatch(action);
     }
 }

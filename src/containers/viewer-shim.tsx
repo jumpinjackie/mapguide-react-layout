@@ -359,7 +359,7 @@ class FusionWidgetApiShim {
         }
     }
     query(options: any): void { //Map
-        const viewer = getViewer();
+        const viewer = getViewer()?.mapguideSupport();
         const { map } = this.parent.props;
         if (map && viewer) {
             const mapName = map.Name;
@@ -380,9 +380,10 @@ class FusionWidgetApiShim {
     }
     setSelection(xml: string, zoomTo: boolean): void { //Map
         const viewer = getViewer();
-        if (viewer) {
+        const mgSupport = viewer?.mapguideSupport();
+        if (viewer && mgSupport) {
             //TODO: Support zoomTo
-            viewer.setSelectionXml(xml, {
+            mgSupport.setSelectionXml(xml, {
                 layerattributefilter: 0 //Need to set this in order for requestdata to be respected
             }, (selection) => {
                 if (zoomTo) {
@@ -814,10 +815,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public ClearSelection(): void {
-        const viewer = getViewer();
-        if (viewer) {
-            viewer.clearSelection();
-        }
+        getViewer()?.mapguideSupport()?.clearSelection();
     }
     public DigitizeCircle(handler: (circle: IAjaxViewerCircle) => void): void {
         const viewer = getViewer();
@@ -1036,7 +1034,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         return count;
     }
     public GetSelectedFeatures(): IAjaxViewerSelectionSet | undefined {
-        const viewer = getViewer();
+        const viewer = getViewer()?.mapguideSupport();
         if (viewer) {
             const selection = viewer.getSelection();
             if (selection && selection.SelectedFeatures) {
@@ -1090,7 +1088,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         //This is what the AJAX viewer does
     }
     public SetSelectionXML(xmlSet: string): void {
-        const viewer = getViewer();
+        const viewer = getViewer()?.mapguideSupport();
         if (viewer) {
             viewer.setSelectionXml(xmlSet);
         }

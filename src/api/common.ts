@@ -473,12 +473,107 @@ export enum RefreshMode {
 export type SelectionVariant = "INTERSECTS" | "TOUCHES" | "WITHIN" | "ENVELOPEINTERSECTS";
 
 /**
+ * MapGuide-specific viewer functionality
+ *
+ * @export
+ * @interface IMapGuideViewerSupport
+ * @since 0.14
+ */
+export interface IMapGuideViewerSupport {
+    /**
+     * Sets the selection XML
+     *
+     * @param {string} xml
+     * @param {IQueryMapFeaturesOptions} [queryOpts]
+     * @param {(res: QueryMapFeaturesResponse) => void} [success]
+     * @param {(err: Error) => void} [failure]
+     *
+     * @memberof IMapViewer
+     */
+    setSelectionXml(xml: string, queryOpts?: Partial<IQueryMapFeaturesOptions>, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void;
+    /**
+     * Clears the map selection
+     *
+     *
+     * @memberof IMapViewer
+     */
+    clearSelection(): void;
+    /**
+     * Performs a map selection by the given geometry
+     *
+     * @param {olGeometry} geom The geometry to select with
+     * @param {SelectionVariant} selectionMethod The selection method
+     * @memberof IMapViewer
+     */
+    selectByGeometry(geom: olGeometry, selectionMethod?: SelectionVariant): void;
+    /**
+     * Performs a map selection by the given query options
+     *
+     * @param {IQueryMapFeaturesOptions} options
+     * @param {(res: QueryMapFeaturesResponse) => void} [success]
+     * @param {(err: Error) => void} [failure]
+     *
+     * @memberof IMapViewer
+     */
+    queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void;
+    /**
+     * Gets the current selection model
+     *
+     * @returns {QueryMapFeaturesResponse}
+     *
+     * @memberof IMapViewer
+     */
+    getSelection(): QueryMapFeaturesResponse | null;
+    /**
+     * Gets the current selection model as a selection XML string
+     *
+     * @param {FeatureSet} selection
+     * @param {string[]} [layerIds]
+     * @returns {string}
+     *
+     * @memberof IMapViewer
+     */
+    getSelectionXml(selection: FeatureSet, layerIds?: string[]): string;
+    /**
+     * Gets the current session id
+     * 
+     * @returns {string}
+     * @memberof IMapViewer
+     */
+    getSessionId(): string;
+    /**
+     * Gets whether feature tooltips are enabled
+     *
+     * @returns {boolean}
+     *
+     * @memberof IMapViewer
+     */
+    isFeatureTooltipEnabled(): boolean;
+    /**
+     * Enables/disables feature tooltips
+     *
+     * @param {boolean} enabled
+     *
+     * @memberof IMapViewer
+     */
+    setFeatureTooltipEnabled(enabled: boolean): void;
+}
+
+/**
  * Describes the API for interacting with the map viewer
  *
  * @export
  * @interface IMapViewer
  */
 export interface IMapViewer {
+    /**
+     * Gets MapGuide-specific viewer functionality. If this viewer was not set up with MapGuide support, this is undefined
+     *
+     * @returns {(IMapGuideViewerSupport | undefined)}
+     * @memberof IMapViewer
+     * @since 0.14
+     */
+    mapguideSupport(): IMapGuideViewerSupport | undefined;
     /**
      * Gets the projection of the map
      *
@@ -531,17 +626,6 @@ export interface IMapViewer {
      */
     zoomToView(x: number, y: number, scale: number): void;
     /**
-     * Sets the selection XML
-     *
-     * @param {string} xml
-     * @param {IQueryMapFeaturesOptions} [queryOpts]
-     * @param {(res: QueryMapFeaturesResponse) => void} [success]
-     * @param {(err: Error) => void} [failure]
-     *
-     * @memberof IMapViewer
-     */
-    setSelectionXml(xml: string, queryOpts?: Partial<IQueryMapFeaturesOptions>, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void;
-    /**
      * Refreshes the map
      *
      * @param {RefreshMode} [mode]
@@ -580,13 +664,6 @@ export interface IMapViewer {
      * @memberof IMapViewer
      */
     initialView(): void;
-    /**
-     * Clears the map selection
-     *
-     *
-     * @memberof IMapViewer
-     */
-    clearSelection(): void;
     /**
      * Zooms in or out by the specified delta
      *
@@ -664,24 +741,6 @@ export interface IMapViewer {
      */
     digitizePolygon(handler: DigitizerCallback<olPolygon>, prompt?: string): void;
     /**
-     * Performs a map selection by the given geometry
-     *
-     * @param {olGeometry} geom The geometry to select with
-     * @param {SelectionVariant} selectionMethod The selection method
-     * @memberof IMapViewer
-     */
-    selectByGeometry(geom: olGeometry, selectionMethod?: SelectionVariant): void;
-    /**
-     * Performs a map selection by the given query options
-     *
-     * @param {IQueryMapFeaturesOptions} options
-     * @param {(res: QueryMapFeaturesResponse) => void} [success]
-     * @param {(err: Error) => void} [failure]
-     *
-     * @memberof IMapViewer
-     */
-    queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void;
-    /**
      * Zooms to the specified extent
      *
      * @param {Bounds} extent
@@ -689,40 +748,6 @@ export interface IMapViewer {
      * @memberof IMapViewer
      */
     zoomToExtent(extent: Bounds): void;
-    /**
-     * Gets whether feature tooltips are enabled
-     *
-     * @returns {boolean}
-     *
-     * @memberof IMapViewer
-     */
-    isFeatureTooltipEnabled(): boolean;
-    /**
-     * Enables/disables feature tooltips
-     *
-     * @param {boolean} enabled
-     *
-     * @memberof IMapViewer
-     */
-    setFeatureTooltipEnabled(enabled: boolean): void;
-    /**
-     * Gets the current selection model
-     *
-     * @returns {QueryMapFeaturesResponse}
-     *
-     * @memberof IMapViewer
-     */
-    getSelection(): QueryMapFeaturesResponse | null;
-    /**
-     * Gets the current selection model as a selection XML string
-     *
-     * @param {FeatureSet} selection
-     * @param {string[]} [layerIds]
-     * @returns {string}
-     *
-     * @memberof IMapViewer
-     */
-    getSelectionXml(selection: FeatureSet, layerIds?: string[]): string;
     /**
      * Gets the layer manager for the given map. If map name is not specifed
      * it will get the layer manager for the currently active map.
@@ -813,13 +838,6 @@ export interface IMapViewer {
      * @memberof IMapViewer
      */
     getMapName(): string;
-    /**
-     * Gets the current session id
-     * 
-     * @returns {string}
-     * @memberof IMapViewer
-     */
-    getSessionId(): string;
     /**
      * Sets the current view rotation
      * 

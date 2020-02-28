@@ -8,7 +8,8 @@ import {
     RefreshMode,
     DigitizerCallback,
     Bounds,
-    Coordinate2D
+    Coordinate2D,
+    IMapGuideViewerSupport
 } from "../api/common";
 import { MapViewerBase } from "../components/map-viewer-base";
 import { Client } from "../api/client";
@@ -53,7 +54,7 @@ export interface IMapViewerContainerProps {
     overviewMapElementSelector?: () => (Element | null);
 }
 
-type INonBaseMapViewer = Pick<IMapViewer,
+type INonBaseMapViewer = Pick<IMapViewer & IMapGuideViewerSupport,
     "toastSuccess" |
     "toastWarning" |
     "toastError" |
@@ -75,10 +76,11 @@ type INonBaseMapViewer = Pick<IMapViewer,
     "getSubscribers" |
     "dispatch">;
 
-class MapViewerAdapter implements IMapViewer {
+class MapViewerAdapter implements IMapViewer, IMapGuideViewerSupport {
     constructor(private inner: MapViewerBase,
         private olFactory: OLFactory = new OLFactory()) { }
     private disp: INonBaseMapViewer;
+    mapguideSupport() { return this; }
     getProjection(): ProjectionLike {
         return this.inner.getProjection();
     }

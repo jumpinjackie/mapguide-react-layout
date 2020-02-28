@@ -3,15 +3,18 @@ import * as ReactDOM from "react-dom";
 import { IMapProviderContext, IViewerComponent } from '../components/map-providers/base';
 import { CURSOR_DIGITIZE_POINT, CURSOR_DIGITIZE_LINE, CURSOR_DIGITIZE_LINESTRING, CURSOR_DIGITIZE_RECT, CURSOR_DIGITIZE_POLYGON, CURSOR_DIGITIZE_CIRCLE, CURSOR_GRABBING, CURSOR_GRAB, CURSOR_ZOOM_IN } from '../constants/assets';
 import { MapLoadIndicator } from '../components/map-load-indicator';
-import { ActiveMapTool, MapLoadIndicatorPositioning, GenericEvent, IMapView, ReduxDispatch } from '../api/common';
+import { ActiveMapTool, MapLoadIndicatorPositioning, GenericEvent, ReduxDispatch, RefreshMode } from '../api/common';
 import { MapProviderContext } from '../components/map-providers/context';
-import { useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useActiveMapState, useViewerPointSelectionBuffer, useViewerSelectionColor, useViewerSelectionImageFormat, useActiveMapSelectableLayerNames, useConfiguredManualFeatureTooltips, useActiveMapSessionId, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapActiveSelectedFeature, useActiveMapHideLayers, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useViewerFeatureTooltipsEnabled } from './hooks';
+import { useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useActiveMapState, useViewerPointSelectionBuffer, useViewerSelectionColor, useViewerSelectionImageFormat, useActiveMapSelectableLayerNames, useConfiguredManualFeatureTooltips, useActiveMapSessionId, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapActiveSelectedFeature, useActiveMapHideLayers, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useViewerFeatureTooltipsEnabled, useActiveMapLayers } from './hooks';
 import { Toaster, Position } from '@blueprintjs/core';
 import { IMapGuideProviderState } from '../components/map-providers/mapguide';
 import { getActiveSelectedFeatureXml } from '../api/builders/deArrayify';
 import { STR_EMPTY } from '../utils/string';
 import { tr } from '../api/i18n';
 import { useDispatch } from 'react-redux';
+import { debug } from '../utils/logger';
+import { setViewer, getViewer } from '../api/runtime';
+import { Client } from '../api/client';
 
 interface ICoreMapViewerProps {
     context: IMapProviderContext;
@@ -43,10 +46,6 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
     //#region IViewerComponent
     isContextMenuOpen = () => false;
     setDigitizingType = (digitizingType: string | undefined) => this.setState({ digitizingType });
-    onMouseCoordinateChanged = (coords: number[]) => { };
-    onRequestZoomToView = (view: IMapView) => { };
-    onRotationChanged = (rot: number) => { };
-    onBusyLoading = (busyCount: number) => { };
     onBeginDigitization = (callback: (cancelled: boolean) => void) => { };
     onHideContextMenu = () => { };
     onOpenTooltipLink = (url: string) => { };
@@ -174,6 +173,7 @@ export const MgMapViewer = () => {
     const externalBaseLayers = useActiveMapExternalBaseLayers();
     const cancelDigitizationKey = useConfiguredCancelDigitizationKey();
     const undoLastPointKey = useConfiguredUndoLastPointKey();
+    const layers = useActiveMapLayers();
     // ============== MapGuide-specific ================== //
     const imageFormat = useViewerImageFormat();
     const agentUri = useConfiguredAgentUri();
@@ -192,7 +192,7 @@ export const MgMapViewer = () => {
     const showLayers = useActiveMapShowLayers();
     const hideLayers = useActiveMapHideLayers();
     const activeSelectedFeature = useActiveMapActiveSelectedFeature();
-    const activeSelectedFeatureColor =  useViewerActiveFeatureSelectionColor();
+    const activeSelectedFeatureColor = useViewerActiveFeatureSelectionColor();
     const selection = useActiveMapSelectionSet();
     const dispatch = useDispatch();
 
@@ -233,9 +233,32 @@ export const MgMapViewer = () => {
     };
     context.setProviderState(nextState);
 
+    // Side-effect to apply the current external layer list
+    React.useEffect(() => {
+        if (layers) {
+            const layerManager = context.getLayerManager();
+            layerManager.apply(layers);
+        }
+    }, [context, layers]);
+    // Side-effect to set the viewer "instance" once the MapViewerBase component has been mounted.
+    // Should only happen once.
+    React.useEffect(() => {
+        debug(`React.useEffect - Change of innerRef.current`);
+        setViewer(context);
+        const browserWindow: any = window;
+        browserWindow.getViewer = browserWindow.getViewer || getViewer;
+        if (agentUri) {
+            browserWindow.getClient = browserWindow.getClient || (() => new Client(agentUri, agentKind));
+        }
+        debug(`React.useEffect - Attached runtime viewer instance and installed browser global APIs`);
+    }, [context, agentUri, agentKind]);
+    // Side-effect to imperatively refresh the map upon selection change
+    React.useEffect(() => {
+        debug(`React.useEffect - Change of selection`);
+        context.refreshMap(RefreshMode.SelectionOnly);
+    }, [context, selection]);
+
     if (agentUri && map && sessionId && layerTransparency) {
-        
-    
         return <>
             {/* HACK: usePortal=false to workaround what I think is: https://github.com/palantir/blueprint/issues/3248 */}
             <Toaster usePortal={false} position={Position.TOP} ref={toasterRef} />

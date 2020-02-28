@@ -1,6 +1,5 @@
 import * as ReactDOM from "react-dom";
-import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D, KC_ESCAPE } from '../../api/common';
-import { MgLayerSetGroup } from "../../api/mg-layer-set-group";
+import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D, KC_ESCAPE, IMapViewer, IMapGuideViewerSupport } from '../../api/common';
 import { MouseTrackingTooltip } from '../tooltips/mouse';
 import Map from "ol/Map";
 import OverviewMap from 'ol/control/OverviewMap';
@@ -39,7 +38,12 @@ import { tr, DEFAULT_LOCALE } from '../../api/i18n';
 import { LayerSetGroupBase } from '../../api/layer-set-group-base';
 import { assertIsDefined } from '../../utils/assert';
 import { info } from '../../utils/logger';
-import { setCurrentView, setViewRotation, mapResized, setMouseCoordinates, setBusyCount } from '../../actions/map';
+import { setCurrentView, setViewRotation, mapResized, setMouseCoordinates, setBusyCount, setViewRotationEnabled, setActiveTool } from '../../actions/map';
+import { IBasicPointCircleStyle, DEFAULT_POINT_CIRCLE_STYLE, IPointIconStyle, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, DEFAULT_LINE_STYLE, IBasicVectorPolygonStyle, DEFAULT_POLY_STYLE } from '../../api/ol-style-helpers';
+import { Toaster, Intent } from '@blueprintjs/core';
+import { IOLFactory } from '../../api/ol-factory';
+import { ISubscriberProps } from '../../containers/subscriber';
+import isMobile from "ismobilejs";
 
 export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4));
@@ -73,7 +77,7 @@ export interface IMapProviderState {
  * 
  * @since 0.14
  */
-export interface IMapProviderContext {
+export interface IMapProviderContext extends IMapViewer {
     getProviderName(): string;
     isDigitizing(): boolean;
     getActiveTool(): ActiveMapTool;
@@ -85,6 +89,7 @@ export interface IMapProviderContext {
 }
 
 export abstract class BaseMapProviderContext<TState extends IMapProviderState, TLayerSetGroup extends LayerSetGroupBase> implements IMapProviderContext {
+    private _toasterRef: React.RefObject<Toaster> | undefined;
     protected _state: TState;
     /**
      * Indicates if touch events are supported.
@@ -114,7 +119,11 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected _activeDrawInteraction: Draw | null;
 
     constructor() {
+        this._busyWorkers = 0;
         this._layerSetGroups = {};
+        this._triggerZoomRequestOnMoveEnd = true;
+        const ism = isMobile(navigator.userAgent);
+        this._supportsTouch = ism.phone || ism.tablet;
         this._state = {
             activeTool: ActiveMapTool.None,
             view: undefined,
@@ -128,6 +137,79 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             ...this.getInitialProviderState()
         } as TState;
     }
+
+    //#region IMapViewer
+    mapguideSupport(): IMapGuideViewerSupport | undefined {
+        return undefined;
+    }
+    setActiveTool(tool: ActiveMapTool): void {
+        this._comp?.onDispatch(setActiveTool(tool));
+    }
+    getOLFactory(): IOLFactory {
+        throw new Error("Method not implemented.");
+    }
+    getMapName(): string {
+        return this._state.mapName!;
+    }
+    setViewRotation(rotation: number): void {
+        this._comp?.onDispatch(setViewRotation(rotation));
+    }
+    getViewRotation(): number {
+        return this._state.viewRotation;
+    }
+    isViewRotationEnabled(): boolean {
+        return this._state.viewRotationEnabled;
+    }
+    setViewRotationEnabled(enabled: boolean): void {
+        this._comp?.onDispatch(setViewRotationEnabled(enabled));
+    }
+    toastSuccess(iconName: string, message: string | JSX.Element): string | undefined {
+        return this._toasterRef?.current?.show({ icon: (iconName as any), message: message, intent: Intent.SUCCESS });
+    }
+    toastWarning(iconName: string, message: string | JSX.Element): string | undefined {
+        return this._toasterRef?.current?.show({ icon: (iconName as any), message: message, intent: Intent.WARNING });
+    }
+    toastError(iconName: string, message: string | JSX.Element): string | undefined {
+        return this._toasterRef?.current?.show({ icon: (iconName as any), message: message, intent: Intent.DANGER });
+    }
+    toastPrimary(iconName: string, message: string | JSX.Element): string | undefined {
+        return this._toasterRef?.current?.show({ icon: (iconName as any), message: message, intent: Intent.PRIMARY });
+    }
+    dismissToast(key: string): void {
+        this._toasterRef?.current?.dismiss(key);
+    }
+    addImageLoading(): void {
+        this._comp?.addImageLoading();
+    }
+    addImageLoaded(): void {
+        this._comp?.addImageLoaded();
+    }
+    addSubscribers(props: ISubscriberProps[]): string[] {
+        throw new Error("Method not implemented.");
+    }
+    removeSubscribers(names: string[]): boolean {
+        throw new Error("Method not implemented.");
+    }
+    getSubscribers(): string[] {
+        throw new Error("Method not implemented.");
+    }
+    dispatch(action: any): void {
+        this._comp?.onDispatch(action);
+    }
+    getDefaultPointCircleStyle(): IBasicPointCircleStyle {
+        return { ...DEFAULT_POINT_CIRCLE_STYLE };
+    }
+    getDefaultPointIconStyle(): IPointIconStyle {
+        return { ...DEFAULT_POINT_ICON_STYLE };
+    }
+    getDefaultLineStyle(): IBasicVectorLineStyle {
+        return { ...DEFAULT_LINE_STYLE };
+    }
+    getDefaultPolygonStyle(): IBasicVectorPolygonStyle {
+        return { ...DEFAULT_POLY_STYLE };
+    }
+    //#endregion
+
     protected abstract getInitialProviderState() : Omit<TState, keyof IMapProviderState>;
     //#region IMapViewerContextCallback
     protected getMockMode() : MapGuideMockMode | undefined { return undefined; }
@@ -174,7 +256,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             mapScale = mcsH * metersPerUnit / (devH * metersPerPixel); // height-limited
         return mapScale;
     }
-    protected getViewForExtent(extent: Bounds): IMapView {
+    public getViewForExtent(extent: Bounds): IMapView {
         assertIsDefined(this._map);
         const scale = this.getScaleForExtent(extent);
         const center = olExtent.getCenter(extent);

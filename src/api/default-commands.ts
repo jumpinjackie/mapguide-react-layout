@@ -177,7 +177,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_ZOOM_IN_FIXED,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (_dispatch, _getState, viewer) => {
             if (viewer) {
                 viewer.zoomDelta(1);
             }
@@ -188,7 +188,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_ZOOM_OUT_FIXED,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (_dispatch, _getState, viewer) => {
             if (viewer) {
                 viewer.zoomDelta(-1);
             }
@@ -199,7 +199,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_PAN_WEST,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, _getState, viewer) => {
             if (viewer) {
                 panMap(dispatch, viewer, "left");
             }
@@ -210,7 +210,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_PAN_EAST,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, _getState, viewer) => {
             if (viewer) {
                 panMap(dispatch, viewer, "right");
             }
@@ -221,7 +221,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_PAN_NORTH,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, _getState, viewer) => {
             if (viewer) {
                 panMap(dispatch, viewer, "up");
             }
@@ -232,7 +232,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_PAN_SOUTH,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, _getState, viewer) => {
             if (viewer) {
                 panMap(dispatch, viewer, "down");
             }
@@ -277,7 +277,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_MEASURE,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, _viewer, parameters) => {
             const config = getState().config;
             const url = "component://Measure";
             const cmdDef = buildTargetedCommand(config, parameters);
@@ -289,7 +289,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_PRINT,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, _viewer, parameters) => {
             const config = getState().config;
             const url = "component://QuickPlot";
             const cmdDef = buildTargetedCommand(config, parameters);
@@ -301,7 +301,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_OPTIONS,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, _viewer, parameters) => {
             const config = getState().config;
             const url = "component://ViewerOptions";
             const cmdDef = buildTargetedCommand(config, parameters);
@@ -313,13 +313,13 @@ export function initDefaultCommands() {
         iconClass: SPRITE_SELECT_RADIUS,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (_dispatch, _getState, viewer, parameters) => {
             if (viewer) {
                 const selMethod = parameters.SelectionType || "INTERSECTS";
                 viewer.digitizeCircle(circle => {
                     const fact = viewer.getOLFactory();
                     const geom = fact.createGeomPolygonFromCircle(circle);
-                    viewer.selectByGeometry(geom, selMethod);
+                    viewer.mapguideSupport()?.selectByGeometry(geom, selMethod);
                 });
             }
         }
@@ -329,11 +329,11 @@ export function initDefaultCommands() {
         iconClass: SPRITE_SELECT_POLYGON,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (_dispatch, _getState, viewer, parameters) => {
             if (viewer) {
                 const selMethod = parameters.SelectionType || "INTERSECTS";
                 viewer.digitizePolygon(geom => {
-                    viewer.selectByGeometry(geom, selMethod);
+                    viewer.mapguideSupport()?.selectByGeometry(geom, selMethod);
                 });
             }
         }
@@ -343,7 +343,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_INITIAL_CENTER,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (_dispatch, getState, viewer) => {
             if (viewer) {
                 const view = getInitialView(getState());
                 if (view != null) {
@@ -359,7 +359,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_ZOOM_FULL,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (_dispatch, _getState, viewer) => {
             if (viewer) {
                 viewer.initialView();
             }
@@ -370,10 +370,8 @@ export function initDefaultCommands() {
         iconClass: SPRITE_SELECT_CLEAR,
         selected: () => false,
         enabled: CommandConditions.hasSelection,
-        invoke: (dispatch, getState, viewer) => {
-            if (viewer) {
-                viewer.clearSelection();
-            }
+        invoke: (_dispatch, _getState, viewer) => {
+            viewer?.mapguideSupport()?.clearSelection();
         }
     });
     //Zoom to Selection
@@ -410,7 +408,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_ICON_REFRESHMAP,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer) => {
+        invoke: (dispatch, _getState, viewer) => {
             if (viewer) {
                 viewer.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
                 dispatch(refresh());
@@ -446,7 +444,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_GEOLOCATION,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (_dispatch, getState, viewer, parameters) => {
             const state = getState();
             const view = getCurrentView(state);
             const rtMap = getRuntimeMap(state);
@@ -497,7 +495,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_BUFFER,
         selected: () => false,
         enabled: CommandConditions.hasSelection,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, _viewer, parameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
             const config = state.config;
@@ -514,7 +512,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_SELECT_FEATURES,
         selected: () => false,
         enabled: (state, parameters) => !CommandConditions.disabledIfEmptySelection(state, parameters),
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, _viewer, parameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
             const config = state.config;
@@ -587,7 +585,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_FEATURE_INFO,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, _viewer, parameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
             const config = state.config;
@@ -603,7 +601,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_QUERY,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, _viewer, parameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
             const config = state.config;
@@ -619,7 +617,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_THEME,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, _viewer, parameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
             const config = state.config;
@@ -635,7 +633,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_COORDINATE_TRACKER,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, _viewer, parameters) => {
             const config = getState().config;
             const url = `component://CoordinateTracker?${(parameters.Projection || []).map((p: string) => "projections=" + p).join("&")}`;
             const cmdDef = buildTargetedCommand(config, parameters);
@@ -647,7 +645,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_LAYER_ADD,
         selected: () => false,
         enabled: () => true,
-        invoke: (dispatch, getState, viewer, parameters) => {
+        invoke: (dispatch, getState, _viewer, parameters) => {
             const config = getState().config;
             const url = `component://${DefaultComponentNames.AddManageLayers}`;
             const cmdDef = buildTargetedCommand(config, parameters);
@@ -700,7 +698,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_INVOKE_SCRIPT,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState) => {
+        invoke: (dispatch, _getState) => {
             dispatch(setTaskPaneVisibility(true));
         }
     });
@@ -708,7 +706,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_INVOKE_SCRIPT,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState) => {
+        invoke: (dispatch, _getState) => {
             dispatch(setLegendVisibility(true));
         }
     });
@@ -716,7 +714,7 @@ export function initDefaultCommands() {
         iconClass: SPRITE_INVOKE_SCRIPT,
         selected: () => false,
         enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState) => {
+        invoke: (dispatch, _getState) => {
             dispatch(setSelectionPanelVisibility(true));
         }
     });

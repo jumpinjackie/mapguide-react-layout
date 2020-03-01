@@ -101,7 +101,7 @@ export function isGenericSubjectMapLayer(map: RuntimeMap | IGenericSubjectMapLay
  */
 export type MapInfo = {
     mapGroupId: string;
-    map: RuntimeMap | IGenericSubjectMapLayer;
+    map: RuntimeMap; // | IGenericSubjectMapLayer;
     initialView: IMapView | undefined;
     externalBaseLayers: IExternalBaseLayer[];
 }

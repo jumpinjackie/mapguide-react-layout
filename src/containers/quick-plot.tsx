@@ -6,21 +6,17 @@ import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
     GenericEvent,
     IMapView,
-    ReduxDispatch,
-    IApplicationState,
     IConfigurationReducerState,
     IExternalBaseLayer,
-    getRuntimeMap,
-    getCurrentView,
-    getExternalBaseLayers,
     IMapViewer,
     Size
 } from "../api/common";
 import { MapCapturerContext, IMapCapturerContextCallback } from "./map-capturer-context";
 import { Slider, Button, Intent, Callout, HTMLSelect } from '@blueprintjs/core';
-import { useActiveMapName, useActiveMapState, useActiveMapView, useActiveMapExternalBaseLayers, useViewerLocale, useAvailableMaps, usePrevious } from './hooks';
+import { useActiveMapName, useActiveMapView, useActiveMapExternalBaseLayers, useViewerLocale, useAvailableMaps, usePrevious } from './hooks';
 import { setViewRotation, setViewRotationEnabled } from '../actions/map';
 import { debug } from '../utils/logger';
+import { useActiveMapState } from './hooks-mapguide';
 
 function getMargin() {
     /*

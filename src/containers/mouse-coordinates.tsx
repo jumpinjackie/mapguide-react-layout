@@ -6,7 +6,8 @@ import {
 import { MouseCoordinates } from "../components/mouse-coordinates";
 import * as olProj from "ol/proj";
 import { getUnitOfMeasure } from "../utils/units";
-import { useViewerLocale, useCurrentMouseCoordinates, useActiveMapProjection, useConfiguredCoordinateProjection, useConfiguredCoordinateDecimals, useConfiguredCoordinateFormat } from './hooks';
+import { useViewerLocale, useCurrentMouseCoordinates, useConfiguredCoordinateProjection, useConfiguredCoordinateDecimals, useConfiguredCoordinateFormat } from './hooks';
+import { useActiveMapProjection } from './hooks-mapguide';
 
 export interface IMouseCoordinatesContainerProps {
     style?: React.CSSProperties;

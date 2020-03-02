@@ -20,7 +20,7 @@ import { DefaultComponentNames } from "../api/registry/component";
 import { tr } from "../api/i18n";
 import { IOLFactory, OLFactory } from "../api/ol-factory";
 import { Toaster, Position, Intent } from '@blueprintjs/core';
-import { useActiveMapState, useActiveMapSelectionSet, useActiveMapView, useActiveMapInitialView, useActiveMapExternalBaseLayers, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapHideLayers, useActiveMapActiveSelectedFeature, useIsContextMenuOpen, useActiveMapName, useActiveMapSessionId, useActiveMapSelectableLayerNames, useViewerActiveTool, useConfiguredAgentUri, useConfiguredAgentKind, useViewerViewRotation, useViewerViewRotationEnabled, useViewerLocale, useViewerImageFormat, useViewerSelectionImageFormat, useViewerSelectionColor, useViewerActiveFeatureSelectionColor as useViewerActiveSelectedFeatureColor, useViewerPointSelectionBuffer, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useActiveMapLayers } from './hooks';
+import { useActiveMapSelectionSet, useActiveMapView, useActiveMapInitialView, useActiveMapExternalBaseLayers, useIsContextMenuOpen, useActiveMapName, useViewerActiveTool, useConfiguredAgentUri, useConfiguredAgentKind, useViewerViewRotation, useViewerViewRotationEnabled, useViewerLocale, useViewerImageFormat, useViewerSelectionImageFormat, useViewerSelectionColor, useViewerActiveFeatureSelectionColor as useViewerActiveSelectedFeatureColor, useViewerPointSelectionBuffer, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useActiveMapLayers } from './hooks';
 import olInteraction from "ol/interaction/Interaction";
 import olOverlay from "ol/Overlay";
 import { ProjectionLike } from "ol/proj";
@@ -49,6 +49,7 @@ import { debug } from '../utils/logger';
 import { closeContextMenu, openContextMenu } from '../actions/flyout';
 import { setActiveTool, setCurrentView, setBusyCount, setMouseCoordinates, QueryMapFeatureActionOptions, queryMapFeatures, setViewRotation, setViewRotationEnabled, mapResized, setFeatureTooltipsEnabled } from '../actions/map';
 import { showModalComponent } from '../actions/modal';
+import { useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapHideLayers, useActiveMapActiveSelectedFeature, useActiveMapSelectableLayerNames, useActiveMapState, useActiveMapSessionId } from './hooks-mapguide';
 
 export interface IMapViewerContainerProps {
     overviewMapElementSelector?: () => (Element | null);

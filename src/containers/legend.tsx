@@ -2,9 +2,10 @@ import * as React from "react";
 import { useDispatch } from "react-redux";
 import { Legend } from "../components/legend";
 import { tr } from "../api/i18n";
-import { useActiveMapState, useActiveMapView, useActiveMapShowGroups, useActiveMapShowLayers, useActiveMapHideGroups, useActiveMapHideLayers, useActiveMapExpandedGroups, useActiveMapSelectableLayers, useActiveMapExternalBaseLayers, useActiveMapName, useViewerLocale } from './hooks';
+import { useActiveMapView, useActiveMapExternalBaseLayers, useActiveMapName, useViewerLocale } from './hooks';
 import { setBaseLayer } from '../actions/map';
 import { setGroupVisibility, setLayerVisibility, setLayerSelectable, setGroupExpanded } from '../actions/legend';
+import { useActiveMapState, useActiveMapShowGroups, useActiveMapShowLayers, useActiveMapHideGroups, useActiveMapHideLayers, useActiveMapExpandedGroups, useActiveMapSelectableLayers } from './hooks-mapguide';
 
 export interface ILegendContainerProps {
     maxHeight?: number;

@@ -1,8 +1,9 @@
 import * as React from "react";
 import { tr } from "../api/i18n";
 import * as olProj from "ol/proj";
-import { Callout, Intent, Elevation, Card } from '@blueprintjs/core';
-import { useViewerLocale, useCurrentMouseCoordinates, useActiveMapProjection } from './hooks';
+import { Callout, Intent, Card } from '@blueprintjs/core';
+import { useViewerLocale, useCurrentMouseCoordinates } from './hooks';
+import { useActiveMapProjection } from './hooks-mapguide';
 
 export interface ICoordinateTrackerContainerProps {
     projections: string[];

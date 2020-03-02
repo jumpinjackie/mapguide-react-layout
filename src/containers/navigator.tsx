@@ -3,8 +3,9 @@ import { useDispatch } from "react-redux";
 import { ICommand } from "../api/common";
 import { Navigator, ZoomDirection, PanDirection } from "../components/navigator";
 import { getCommand, DefaultCommands } from "../api/registry/command";
-import { useViewerLocale, useActiveMapFiniteScales, useActiveMapView, useActiveMapName, useViewerBusyCount } from './hooks';
+import { useViewerLocale, useActiveMapView, useActiveMapName, useViewerBusyCount } from './hooks';
 import { invokeCommand, setScale } from '../actions/map';
+import { useActiveMapFiniteScales } from './hooks-mapguide';
 
 export interface INavigatorContainerProps {
     style?: React.CSSProperties;
@@ -16,7 +17,7 @@ const NavigatorContainer = (props: INavigatorContainerProps) => {
     const locale = useViewerLocale();
     const finiteScales = useActiveMapFiniteScales();
     const view = useActiveMapView();
-    const busyCount = useViewerBusyCount();;
+    const busyCount = useViewerBusyCount();
     const activeMapName = useActiveMapName();
     const setScaleAction = (mapName: string, scale: number) => dispatch(setScale(mapName, scale));
     const invokeCommandAction = (cmd: ICommand, parameters?: any) => dispatch(invokeCommand(cmd, parameters));

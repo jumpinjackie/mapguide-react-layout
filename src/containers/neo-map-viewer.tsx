@@ -5,7 +5,7 @@ import { CURSOR_DIGITIZE_POINT, CURSOR_DIGITIZE_LINE, CURSOR_DIGITIZE_LINESTRING
 import { MapLoadIndicator } from '../components/map-load-indicator';
 import { ActiveMapTool, MapLoadIndicatorPositioning, GenericEvent, ReduxDispatch, RefreshMode } from '../api/common';
 import { MapProviderContext } from '../components/map-providers/context';
-import { useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useActiveMapState, useViewerPointSelectionBuffer, useViewerSelectionColor, useViewerSelectionImageFormat, useActiveMapSelectableLayerNames, useConfiguredManualFeatureTooltips, useActiveMapSessionId, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapActiveSelectedFeature, useActiveMapHideLayers, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useViewerFeatureTooltipsEnabled, useActiveMapLayers } from './hooks';
+import { useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useViewerPointSelectionBuffer, useViewerSelectionColor, useViewerSelectionImageFormat, useConfiguredManualFeatureTooltips, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useViewerFeatureTooltipsEnabled, useActiveMapLayers } from './hooks';
 import { Toaster, Position } from '@blueprintjs/core';
 import { IMapGuideProviderState } from '../components/map-providers/mapguide';
 import { getActiveSelectedFeatureXml } from '../api/builders/deArrayify';
@@ -17,6 +17,7 @@ import { setViewer, getViewer } from '../api/runtime';
 import { Client } from '../api/client';
 
 import "ol/ol.css";
+import { useActiveMapSelectableLayerNames, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapHideLayers, useActiveMapActiveSelectedFeature, useActiveMapState, useActiveMapSessionId } from './hooks-mapguide';
 
 interface ICoreMapViewerProps {
     context: IMapProviderContext;

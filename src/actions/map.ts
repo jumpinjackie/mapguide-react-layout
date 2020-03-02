@@ -261,12 +261,11 @@ export function setCurrentView(view: IMapView): ReduxThunkedAction {
             //If the current map is tiled (has finite scales), "snap" the view's scale
             //to the closest applicable finite scale then do the test 
             const mapState = state.mapState[mapName];
-            if (mapState.runtimeMap &&
-                mapState.runtimeMap.FiniteDisplayScale &&
-                mapState.runtimeMap.FiniteDisplayScale.length > 0) {
+            const fs = mapState?.mapguide?.runtimeMap?.FiniteDisplayScale;
+            if (fs && fs.length > 0) {
 
-                const fi = getFiniteScaleIndexForScale(mapState.runtimeMap.FiniteDisplayScale, newView.scale);
-                newView.scale = mapState.runtimeMap.FiniteDisplayScale[fi];
+                const fi = getFiniteScaleIndexForScale(fs, newView.scale);
+                newView.scale = fs[fi];
             }
             if (areViewsCloseToEqual(currentView, newView)) {
                 dispatchThis = false;

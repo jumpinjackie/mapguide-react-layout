@@ -176,7 +176,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
         }
         if (initLayout) {
             let ftArgs: Partial<IInitAppLayout> | undefined;
-            if (typeof(urlFeatureTooltip) != 'undefined') {
+            if (typeof (urlFeatureTooltip) != 'undefined') {
                 ftArgs = {
                     featureTooltipsEnabled: urlFeatureTooltip
                 }
@@ -266,14 +266,16 @@ class AppInner extends React.Component<AppInnerProps, any> {
                 nextUrlState.y = y;
                 nextUrlState.scale = scale;
             }
-            if (nextProps.map.runtimeMap) {
-                const { showGroups, showLayers, hideGroups, hideLayers } = nextProps.map;
+            const mgs = nextProps.map.mapguide;
+            if (mgs) {
+                const rtm = mgs.runtimeMap;
+                const { showGroups, showLayers, hideGroups, hideLayers } = mgs;
                 const sg = [] as string[];
                 const hg = [] as string[];
                 const sl = [] as string[];
                 const hl = [] as string[];
-                if (nextProps.map.runtimeMap.Group) {
-                    for (const g of nextProps.map.runtimeMap.Group) {
+                if (rtm?.Group) {
+                    for (const g of rtm.Group) {
                         if (showGroups.indexOf(g.ObjectId) >= 0) {
                             sg.push(g.Name);
                         } else if (hideGroups.indexOf(g.ObjectId) >= 0) {
@@ -281,8 +283,8 @@ class AppInner extends React.Component<AppInnerProps, any> {
                         }
                     }
                 }
-                if (nextProps.map.runtimeMap.Layer) {
-                    for (const l of nextProps.map.runtimeMap.Layer) {
+                if (rtm?.Layer) {
+                    for (const l of rtm.Layer) {
                         if (showLayers.indexOf(l.ObjectId) >= 0) {
                             sl.push(l.Name);
                         } else if (hideLayers.indexOf(l.ObjectId) >= 0) {
@@ -294,8 +296,10 @@ class AppInner extends React.Component<AppInnerProps, any> {
                 nextUrlState.hg = hg;
                 nextUrlState.sl = sl;
                 nextUrlState.hl = hl;
-                const { SessionId } = nextProps.map.runtimeMap;
-                nextUrlState.session = SessionId;
+                if (rtm) {
+                    const { SessionId } = rtm;
+                    nextUrlState.session = SessionId;
+                }
             }
         }
         updateUrl(nextUrlState);
@@ -359,12 +363,12 @@ class AppInner extends React.Component<AppInnerProps, any> {
             //NOTE: Locale may not have been set at this point, so use default
             const locale = configuredLocale;
             if (isLoading) {
-                return <NonIdealState 
+                return <NonIdealState
                     icon={<Spinner intent={Intent.NONE} size={Spinner.SIZE_LARGE} />}
                     title={tr("INIT", locale)}
                     description={tr("INIT_DESC", locale)} />;
             } else {
-                const layoutEl = typeof(layout) == 'function' ? layout : getLayout(layout);
+                const layoutEl = typeof (layout) == 'function' ? layout : getLayout(layout);
                 if (layoutEl) {
                     const providerImpl = {
                         allowHtmlValuesInSelection: () => this.allowHtmlValuesInSelection(),

@@ -1310,52 +1310,13 @@ export interface ActiveSelectedFeature {
 }
 
 /**
- * Describes the reducer state branch for a runtime map
+ * MapGuide-specific map sub-state
  *
  * @export
- * @interface IBranchedMapSubState
+ * @interface IMapGuideSubState
+ * @since 0.14
  */
-export interface IBranchedMapSubState {
-    /**
-     * The external base layers for the runtime map
-     *
-     * @type {IExternalBaseLayer[]}
-     * @memberof IBranchedMapSubState
-     */
-    externalBaseLayers: IExternalBaseLayer[];
-    /**
-     * The layers in this viewer. First item is top-most layer. Last item is bottom-most layer.
-     * @since 0.13
-     */
-    layers: ILayerInfo[];
-    /**
-     * The current map view
-     *
-     * @type {(IMapView | undefined)}
-     * @memberof IBranchedMapSubState
-     */
-    currentView: IMapView | undefined;
-    /**
-     * The initial map view
-     *
-     * @type {(IMapView | undefined)}
-     * @memberof IBranchedMapSubState
-     */
-    initialView: IMapView | undefined;
-    /**
-     * The view navigation history stack
-     *
-     * @type {IMapView[]}
-     * @memberof IBranchedMapSubState
-     */
-    history: IMapView[];
-    /**
-     * The current position in the view navigation history stack
-     *
-     * @type {number}
-     * @memberof IBranchedMapSubState
-     */
-    historyIndex: number;
+export interface IMapGuideSubState {
     /**
      * The runtime map state
      *
@@ -1439,7 +1400,64 @@ export interface IBranchedMapSubState {
      * @type {(ActiveSelectedFeature | undefined)}
      * @memberof IBranchedMapSubState
      */
-    activeSelectedFeature: ActiveSelectedFeature | undefined
+    activeSelectedFeature: ActiveSelectedFeature | undefined;
+}
+
+/**
+ * Describes the reducer state branch for a particular map group
+ *
+ * @export
+ * @interface IBranchedMapSubState
+ */
+export interface IBranchedMapSubState {
+    /**
+     * The external base layers for the map group
+     *
+     * @type {IExternalBaseLayer[]}
+     * @memberof IBranchedMapSubState
+     */
+    externalBaseLayers: IExternalBaseLayer[];
+    /**
+     * The layers in this viewer. First item is top-most layer. Last item is bottom-most layer.
+     * @since 0.13
+     */
+    layers: ILayerInfo[];
+    /**
+     * The current map view
+     *
+     * @type {(IMapView | undefined)}
+     * @memberof IBranchedMapSubState
+     */
+    currentView: IMapView | undefined;
+    /**
+     * The initial map view
+     *
+     * @type {(IMapView | undefined)}
+     * @memberof IBranchedMapSubState
+     */
+    initialView: IMapView | undefined;
+    /**
+     * The view navigation history stack
+     *
+     * @type {IMapView[]}
+     * @memberof IBranchedMapSubState
+     */
+    history: IMapView[];
+    /**
+     * The current position in the view navigation history stack
+     *
+     * @type {number}
+     * @memberof IBranchedMapSubState
+     */
+    historyIndex: number;
+    /**
+     * MapGuide-specific sub-state
+     *
+     * @type {IMapGuideSubState}
+     * @memberof IBranchedMapSubState
+     * @since 0.14
+     */
+    mapguide: IMapGuideSubState | undefined;
 }
 
 /**
@@ -2104,6 +2122,21 @@ export function getInitialView(state: Readonly<IApplicationState>): IMapView | u
 }
 
 /**
+ * Helper function to get the mapguide-specific sub state of the current map group
+ *
+ * @export
+ * @param {Readonly<IApplicationState>} state
+ * @returns {(IMapGuideSubState | undefined)}
+ * @since 0.14
+ */
+export function getMapGuideSubState(state: Readonly<IApplicationState>): IMapGuideSubState | undefined {
+    if (state.config.activeMapName) {
+        return state.mapState[state.config.activeMapName].mapguide;
+    }
+    return undefined;
+}
+
+/**
  * Helper function to get the current selection set from the application state
  *
  * @export
@@ -2111,10 +2144,7 @@ export function getInitialView(state: Readonly<IApplicationState>): IMapView | u
  * @returns {(QueryMapFeaturesResponse | undefined)}
  */
 export function getSelectionSet(state: Readonly<IApplicationState>): QueryMapFeaturesResponse | undefined {
-    if (state.config.activeMapName) {
-        return state.mapState[state.config.activeMapName].selectionSet;
-    }
-    return undefined;
+    return getMapGuideSubState(state)?.selectionSet;
 }
 
 /**
@@ -2125,10 +2155,7 @@ export function getSelectionSet(state: Readonly<IApplicationState>): QueryMapFea
  * @returns {(RuntimeMap | undefined)}
  */
 export function getRuntimeMap(state: Readonly<IApplicationState>): RuntimeMap | undefined {
-    if (state.config.activeMapName) {
-        return state.mapState[state.config.activeMapName].runtimeMap;
-    }
-    return undefined;
+    return getMapGuideSubState(state)?.runtimeMap;
 }
 
 /**

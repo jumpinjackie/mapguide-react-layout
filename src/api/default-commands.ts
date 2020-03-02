@@ -662,9 +662,10 @@ export function initDefaultCommands() {
             const mapName = state.config.activeMapName;
             if (mapName && viewer) {
                 const mapState = state.mapState[mapName];
-                if (mapState.selectionSet && mapState.selectionSet.SelectedFeatures) {
+                const sf = mapState?.mapguide?.selectionSet?.SelectedFeatures;
+                if (sf) {
                     let bbox;
-                    for (const layer of mapState.selectionSet.SelectedFeatures.SelectedLayer) {
+                    for (const layer of sf.SelectedLayer) {
                         for (const f of layer.Feature) {
                             const b: any = f.Bounds.split(" ").map(s => parseFloat(s));
                             if (!bbox) {

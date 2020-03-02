@@ -1,5 +1,6 @@
 import { CommandConditions, mergeInvokeUrlParameters, reduceAppToToolbarState } from "../../../src/api/registry/command";
 import { createInitialState, createMap, createSelectionSet } from "../../../test-data";
+import { IBranchedMapSubState } from '../../../src/api/common';
 
 describe("api/registry/command", () => {
     describe("mergeInvokeUrlParameters", () => {
@@ -49,10 +50,10 @@ describe("api/registry/command", () => {
     describe("CommandConditions", () => {
         it("isNotBusy", () => {
             const state = createInitialState();
-            state.viewer = { ...state.viewer, ... { busyCount: 1 }};
+            state.viewer = { ...state.viewer, ... { busyCount: 1 } };
             let result = CommandConditions.isNotBusy(reduceAppToToolbarState(state));
             expect(result).toBe(false);
-            state.viewer = { ...state.viewer, ... { busyCount: 0 }};
+            state.viewer = { ...state.viewer, ... { busyCount: 0 } };
             result = CommandConditions.isNotBusy(reduceAppToToolbarState(state));
             expect(result).toBe(true);
         });
@@ -78,22 +79,24 @@ describe("api/registry/command", () => {
                     initialView: undefined,
                     history: [],
                     historyIndex: -1,
-                    runtimeMap: createMap(),
-                    selectableLayers: [],
-                    expandedGroups: [],
-                    selectionSet: {
-                        SelectedFeatures: createSelectionSet()
+                    mapguide: {
+                        runtimeMap: createMap(),
+                        selectableLayers: [],
+                        expandedGroups: [],
+                        selectionSet: {
+                            SelectedFeatures: createSelectionSet()
+                        },
+                        layerIndex: -1,
+                        featureIndex: -1,
+                        showGroups: [],
+                        showLayers: [],
+                        hideGroups: [],
+                        hideLayers: [],
+                        activeSelectedFeature: undefined,
+                        layerTransparency: {}
                     },
-                    layerTransparency: {},
-                    layerIndex: -1,
-                    featureIndex: -1,
-                    showGroups: [],
-                    showLayers: [],
-                    hideGroups: [],
-                    hideLayers: [],
-                    activeSelectedFeature: undefined,
                     layers: []
-                }
+                } as IBranchedMapSubState
             }
             state.mapState = { ...state.mapState, ...ms };
             state.config = { ...state.config, ...{ activeMapName: "Foo" } };
@@ -118,20 +121,22 @@ describe("api/registry/command", () => {
                     initialView: undefined,
                     history: [],
                     historyIndex: -1,
-                    runtimeMap: createMap(),
-                    selectableLayers: [],
-                    expandedGroups: [],
-                    selectionSet: undefined,
-                    layerTransparency: {},
-                    layerIndex: -1,
-                    featureIndex: -1,
-                    showGroups: [],
-                    showLayers: [],
-                    hideGroups: [],
-                    hideLayers: [],
-                    activeSelectedFeature: undefined,
+                    mapguide: {
+                        runtimeMap: createMap(),
+                        selectableLayers: [],
+                        expandedGroups: [],
+                        selectionSet: undefined,
+                        layerTransparency: {},
+                        layerIndex: -1,
+                        featureIndex: -1,
+                        showGroups: [],
+                        showLayers: [],
+                        hideGroups: [],
+                        hideLayers: [],
+                        activeSelectedFeature: undefined
+                    },
                     layers: []
-                }
+                } as IBranchedMapSubState
             }
             state.mapState = { ...state.mapState, ...ms };
             result = CommandConditions.hasSelection(reduceAppToToolbarState(state));
@@ -139,7 +144,8 @@ describe("api/registry/command", () => {
             state.config = { ...state.config, ...{ activeMapName: "Foo" } };
             result = CommandConditions.hasSelection(reduceAppToToolbarState(state));
             expect(result).toBe(false);
-            state.mapState["Foo"].selectionSet = {
+            expect(state.mapState["Foo"].mapguide).not.toBeUndefined();
+            state.mapState["Foo"].mapguide!.selectionSet = {
                 SelectedFeatures: createSelectionSet()
             };
             result = CommandConditions.hasSelection(reduceAppToToolbarState(state));
@@ -160,20 +166,22 @@ describe("api/registry/command", () => {
                     initialView: undefined,
                     history: [],
                     historyIndex: -1,
-                    runtimeMap: createMap(),
-                    selectableLayers: [],
-                    expandedGroups: [],
-                    selectionSet: undefined,
-                    layerTransparency: {},
-                    layerIndex: -1,
-                    featureIndex: -1,
-                    showGroups: [],
-                    showLayers: [],
-                    hideGroups: [],
-                    hideLayers: [],
-                    activeSelectedFeature: undefined,
+                    mapguide: {
+                        runtimeMap: createMap(),
+                        selectableLayers: [],
+                        expandedGroups: [],
+                        selectionSet: undefined,
+                        layerTransparency: {},
+                        layerIndex: -1,
+                        featureIndex: -1,
+                        showGroups: [],
+                        showLayers: [],
+                        hideGroups: [],
+                        hideLayers: [],
+                        activeSelectedFeature: undefined
+                    },
                     layers: []
-                }
+                } as IBranchedMapSubState
             };
             state.mapState = { ...state.mapState, ...ms };
             result = CommandConditions.hasPreviousView(reduceAppToToolbarState(state));
@@ -194,20 +202,22 @@ describe("api/registry/command", () => {
                     initialView: undefined,
                     history: [],
                     historyIndex: -1,
-                    runtimeMap: createMap(),
-                    selectableLayers: [],
-                    expandedGroups: [],
-                    selectionSet: undefined,
-                    layerTransparency: {},
-                    layerIndex: -1,
-                    featureIndex: -1,
-                    showGroups: [],
-                    showLayers: [],
-                    hideGroups: [],
-                    hideLayers: [],
-                    activeSelectedFeature: undefined,
+                    mapguide: {
+                        runtimeMap: createMap(),
+                        selectableLayers: [],
+                        expandedGroups: [],
+                        selectionSet: undefined,
+                        layerTransparency: {},
+                        layerIndex: -1,
+                        featureIndex: -1,
+                        showGroups: [],
+                        showLayers: [],
+                        hideGroups: [],
+                        hideLayers: [],
+                        activeSelectedFeature: undefined
+                    },
                     layers: []
-                }
+                } as IBranchedMapSubState
             };
             state.mapState = { ...state.mapState, ...ms };
             result = CommandConditions.hasNextView(reduceAppToToolbarState(state));

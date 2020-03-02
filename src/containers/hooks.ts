@@ -70,8 +70,8 @@ export function useActiveMapMetersPerUnit() {
         let mpu = 1.0;
         if (state.config.activeMapName) {
             const ms = state.mapState[state.config.activeMapName];
-            if (ms.runtimeMap) {
-                mpu = ms.runtimeMap.CoordinateSystem.MetersPerUnit;
+            if (ms.mapguide?.runtimeMap) {
+                mpu = ms.mapguide.runtimeMap.CoordinateSystem.MetersPerUnit;
             }
         }
         return mpu;
@@ -93,7 +93,7 @@ export function useActiveMapProjection() {
     return useSelector<IApplicationState, string | undefined>(state => {
         let proj;
         if (state.config.activeMapName) {
-            const map = state.mapState[state.config.activeMapName].runtimeMap;
+            const map = state.mapState[state.config.activeMapName].mapguide?.runtimeMap;
             if (map) {
                 proj = `EPSG:${map.CoordinateSystem.EpsgCode}`;
             }
@@ -138,27 +138,27 @@ export function useActiveMapBranch() {
 }
 
 export function useActiveMapExpandedGroups() {
-    return useSelector<IApplicationState, string[]>(state => getActiveMapBranch(state)?.expandedGroups);
+    return useSelector<IApplicationState, string[]>(state => getActiveMapBranch(state)?.mapguide?.expandedGroups);
 }
 
 export function useActiveMapSelectableLayers() {
-    return useSelector<IApplicationState, any>(state => getActiveMapBranch(state)?.selectableLayers);
+    return useSelector<IApplicationState, any>(state => getActiveMapBranch(state)?.mapguide?.selectableLayers);
 }
 
 export function useActiveMapShowGroups() {
-    return useSelector<IApplicationState, string[] | undefined>(state => getActiveMapBranch(state)?.showGroups);
+    return useSelector<IApplicationState, string[] | undefined>(state => getActiveMapBranch(state)?.mapguide?.showGroups);
 }
 
 export function useActiveMapShowLayers() {
-    return useSelector<IApplicationState, string[] | undefined>(state => getActiveMapBranch(state)?.showLayers);
+    return useSelector<IApplicationState, string[] | undefined>(state => getActiveMapBranch(state)?.mapguide?.showLayers);
 }
 
 export function useActiveMapHideGroups() {
-    return useSelector<IApplicationState, string[] | undefined>(state => getActiveMapBranch(state)?.hideGroups);
+    return useSelector<IApplicationState, string[] | undefined>(state => getActiveMapBranch(state)?.mapguide?.hideGroups);
 }
 
 export function useActiveMapHideLayers() {
-    return useSelector<IApplicationState, string[] | undefined>(state => getActiveMapBranch(state)?.hideLayers);
+    return useSelector<IApplicationState, string[] | undefined>(state => getActiveMapBranch(state)?.mapguide?.hideLayers);
 }
 
 export function useActiveMapSelectableLayerNames() {
@@ -174,11 +174,11 @@ export function useActiveMapSelectableLayerNames() {
 }
 
 export function useActiveMapLayerTransparency() {
-    return useSelector<IApplicationState, LayerTransparencySet | undefined>(state => getActiveMapBranch(state)?.layerTransparency);
+    return useSelector<IApplicationState, LayerTransparencySet | undefined>(state => getActiveMapBranch(state)?.mapguide?.layerTransparency);
 }
 
 export function useActiveMapActiveSelectedFeature() {
-    return useSelector<IApplicationState, ActiveSelectedFeature | undefined>(state => getActiveMapBranch(state)?.activeSelectedFeature);
+    return useSelector<IApplicationState, ActiveSelectedFeature | undefined>(state => getActiveMapBranch(state)?.mapguide?.activeSelectedFeature);
 }
 
 export function useActiveMapSelectionSet() {

@@ -1,5 +1,6 @@
 import queryString = require("qs");
 import { IInvokeUrlCommandParameter } from "../api/common";
+import { strIsNullOrEmpty } from './string';
 const parse = require("url-parse");
 
 const DEFAULT_PARSE_OPTIONS = { ignoreQueryPrefix: true };
@@ -127,14 +128,14 @@ export function parseComponentUri(uri: string): ParsedComponentUri | undefined {
  * 
  * @export
  * @param {string} url The url to normalize
- * @param {string} mapName The name of the current runtime map
- * @param {string} session The current session id
+ * @param {(string | undefined)} mapName The name of the current runtime map
+ * @param {(string | undefined)} session The current session id
  * @param {string} [locale] An optional locale
  * @param {boolean} [uppercase=true] If true, will uppercase all parameter names
  * @param {IInvokeUrlCommandParameter[]} [extraParameters=[]] Any extra parameters to append to the URL
  * @returns {string} 
  */
-export function ensureParameters(url: string, mapName: string, session: string, locale?: string, uppercase = true, extraParameters: IInvokeUrlCommandParameter[] = []): string {
+export function ensureParameters(url: string, mapName: string | undefined, session: string | undefined, locale?: string, uppercase = true, extraParameters: IInvokeUrlCommandParameter[] = []): string {
     //If this is a component URL, let it be
     if (isComponentUri(url)) {
         return url;
@@ -158,14 +159,14 @@ export function ensureParameters(url: string, mapName: string, session: string, 
                 break;
         }
     }
-    if (bNeedMapName) {
+    if (bNeedMapName && !strIsNullOrEmpty(mapName)) {
         if (uppercase) {
             params.MAPNAME = mapName;
         } else {
             params.mapname = mapName;
         }
     }
-    if (bNeedSession) {
+    if (bNeedSession && !strIsNullOrEmpty(session)) {
         if (uppercase) {
             params.SESSION = session;
         } else {

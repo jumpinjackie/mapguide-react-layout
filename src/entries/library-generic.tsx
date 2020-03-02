@@ -31,6 +31,7 @@ import { registerMapGuideComponents } from '../api/mapguide-components';
 import { MapProviderContext } from '../components/map-providers/context';
 import { GenericMapViewer } from '../containers/neo-map-viewer';
 import { GenericMapProviderContext } from '../components/map-providers/generic';
+import GenericLayout from '../layouts/generic';
 
 bootstrap();
 addFormatDriver(new CsvFormatDriver(CSV_COLUMN_ALIASES));
@@ -39,6 +40,7 @@ addFormatDriver(new FormatDriver("TopoJSON", new TopoJSON()));
 addFormatDriver(new FormatDriver("KML", new KML(), "EPSG:4326"));
 addFormatDriver(new FormatDriver("GPX", new GPX(), "EPSG:4326"));
 addFormatDriver(new FormatDriver("IGC", new IGC()));
+registerLayout("generic", () => <GenericLayout />);
 initDefaultCommands();
 initMapGuideCommands();
 registerDefaultComponents();

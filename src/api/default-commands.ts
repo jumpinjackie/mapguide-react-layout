@@ -10,23 +10,18 @@ import {
     RefreshMode,
     ReduxDispatch,
     getInitialView,
-    getSelectionSet,
     getRuntimeMap,
     getCurrentView,
     ITargetedCommand,
     IConfigurationReducerState,
-    DEFAULT_MODAL_SIZE,
-    Bounds
+    DEFAULT_MODAL_SIZE
 } from "./common";
 import { tr } from "../api/i18n";
 import { DefaultComponentNames } from "../api/registry/component";
-import { getFusionRoot } from "../api/runtime";
-import { enableRedlineMessagePrompt } from "../containers/viewer-shim";
 import {
     SPRITE_SELECT,
     SPRITE_PAN,
     SPRITE_ZOOM_IN,
-    SPRITE_MAPTIP,
     SPRITE_ZOOM_IN_FIXED,
     SPRITE_ZOOM_OUT_FIXED,
     SPRITE_PAN_WEST,
@@ -36,32 +31,17 @@ import {
     SPRITE_ABOUT,
     SPRITE_HELP,
     SPRITE_MEASURE,
-    SPRITE_PRINT,
-    SPRITE_OPTIONS,
-    SPRITE_SELECT_RADIUS,
-    SPRITE_SELECT_POLYGON,
     SPRITE_INITIAL_CENTER,
     SPRITE_ZOOM_FULL,
-    SPRITE_SELECT_CLEAR,
-    SPRITE_ICON_ZOOMSELECT,
     SPRITE_VIEW_BACK,
     SPRITE_ICON_REFRESHMAP,
     SPRITE_VIEW_FORWARD,
     SPRITE_GEOLOCATION,
-    SPRITE_BUFFER,
-    SPRITE_SELECT_FEATURES,
-    SPRITE_REDLINE,
-    SPRITE_FEATURE_INFO,
-    SPRITE_QUERY,
-    SPRITE_THEME,
     SPRITE_INVOKE_SCRIPT,
     SPRITE_COORDINATE_TRACKER,
-    SPRITE_LAYER_ADD,
-    SPRITE_SELECT_CENTRE
+    SPRITE_LAYER_ADD
 } from "../constants/assets";
-import * as olExtent from "ol/extent";
-import { ensureParameters } from "../utils/url";
-import { setCurrentView, setActiveTool, setFeatureTooltipsEnabled, previousView, nextView } from '../actions/map';
+import { setCurrentView, setActiveTool, previousView, nextView } from '../actions/map';
 import { showModalComponent, showModalUrl } from '../actions/modal';
 import { refresh } from '../actions/legend';
 import { setTaskPaneVisibility, setLegendVisibility, setSelectionPanelVisibility } from '../actions/template';
@@ -97,7 +77,7 @@ function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "l
     dispatch(setCurrentView({ x: newPos[0], y: newPos[1], scale: view.scale }));
 }
 
-function buildTargetedCommand(config: Readonly<IConfigurationReducerState>, parameters: any): ITargetedCommand {
+export function buildTargetedCommand(config: Readonly<IConfigurationReducerState>, parameters: any): ITargetedCommand {
     const cmdTarget = (parameters || {}).Target;
     const cmdDef: ITargetedCommand = {
         target: cmdTarget || "NewWindow"
@@ -158,18 +138,6 @@ export function initDefaultCommands() {
         enabled: () => true,
         invoke: (dispatch) => {
             return dispatch(setActiveTool(ActiveMapTool.Zoom));
-        }
-    });
-    //Feature Tooltips
-    registerCommand(DefaultCommands.MapTip, {
-        iconClass: SPRITE_MAPTIP,
-        selected: (state) => {
-            return state.featureTooltipsEnabled === true;
-        },
-        enabled: () => true,
-        invoke: (dispatch, getState) => {
-            const enabled = getState().viewer.featureTooltipsEnabled;
-            return dispatch(setFeatureTooltipsEnabled(!enabled));
         }
     });
     //Zoom in
@@ -284,60 +252,7 @@ export function initDefaultCommands() {
             openUrlInTarget(DefaultCommands.Measure, cmdDef, config.capabilities.hasTaskPane, dispatch, url, tr("MEASURE", config.locale));
         }
     });
-    //Quick Plot
-    registerCommand(DefaultCommands.QuickPlot, {
-        iconClass: SPRITE_PRINT,
-        selected: () => false,
-        enabled: () => true,
-        invoke: (dispatch, getState, _viewer, parameters) => {
-            const config = getState().config;
-            const url = "component://QuickPlot";
-            const cmdDef = buildTargetedCommand(config, parameters);
-            openUrlInTarget(DefaultCommands.QuickPlot, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
-        }
-    });
-    //Viewer Options
-    registerCommand(DefaultCommands.ViewerOptions, {
-        iconClass: SPRITE_OPTIONS,
-        selected: () => false,
-        enabled: () => true,
-        invoke: (dispatch, getState, _viewer, parameters) => {
-            const config = getState().config;
-            const url = "component://ViewerOptions";
-            const cmdDef = buildTargetedCommand(config, parameters);
-            openUrlInTarget(DefaultCommands.ViewerOptions, cmdDef, config.capabilities.hasTaskPane, dispatch, url, tr("VIEWER_OPTIONS", config.locale));
-        }
-    });
-    //Select Radius
-    registerCommand(DefaultCommands.SelectRadius, {
-        iconClass: SPRITE_SELECT_RADIUS,
-        selected: () => false,
-        enabled: () => true,
-        invoke: (_dispatch, _getState, viewer, parameters) => {
-            if (viewer) {
-                const selMethod = parameters.SelectionType || "INTERSECTS";
-                viewer.digitizeCircle(circle => {
-                    const fact = viewer.getOLFactory();
-                    const geom = fact.createGeomPolygonFromCircle(circle);
-                    viewer.mapguideSupport()?.selectByGeometry(geom, selMethod);
-                });
-            }
-        }
-    });
-    //Select Polygon
-    registerCommand(DefaultCommands.SelectPolygon, {
-        iconClass: SPRITE_SELECT_POLYGON,
-        selected: () => false,
-        enabled: () => true,
-        invoke: (_dispatch, _getState, viewer, parameters) => {
-            if (viewer) {
-                const selMethod = parameters.SelectionType || "INTERSECTS";
-                viewer.digitizePolygon(geom => {
-                    viewer.mapguideSupport()?.selectByGeometry(geom, selMethod);
-                });
-            }
-        }
-    });
+    
     //Initial Center and scale
     registerCommand(DefaultCommands.RestoreView, {
         iconClass: SPRITE_INITIAL_CENTER,
@@ -362,44 +277,6 @@ export function initDefaultCommands() {
         invoke: (_dispatch, _getState, viewer) => {
             if (viewer) {
                 viewer.initialView();
-            }
-        }
-    });
-    //Clear Selection
-    registerCommand(DefaultCommands.ClearSelection, {
-        iconClass: SPRITE_SELECT_CLEAR,
-        selected: () => false,
-        enabled: CommandConditions.hasSelection,
-        invoke: (_dispatch, _getState, viewer) => {
-            viewer?.mapguideSupport()?.clearSelection();
-        }
-    });
-    //Zoom to Selection
-    registerCommand(DefaultCommands.ZoomToSelection, {
-        iconClass: SPRITE_ICON_ZOOMSELECT,
-        selected: () => false,
-        enabled: CommandConditions.hasSelection,
-        invoke: (dispatch, getState, viewer) => {
-            if (viewer) {
-                const fact = viewer.getOLFactory();
-                const selection = getSelectionSet(getState());
-                let bounds: Bounds | null = null;
-                if (selection != null && selection.SelectedFeatures != null) {
-                    selection.SelectedFeatures.SelectedLayer.forEach(layer => {
-                        layer.Feature.forEach(feat => {
-                            const b: any = feat.Bounds.split(" ").map(s => parseFloat(s));
-                            if (bounds == null) {
-                                bounds = b;
-                            } else {
-                                bounds = fact.extendExtent(bounds, b);
-                            }
-                        })
-                    });
-                }
-                if (bounds) {
-                    const view = viewer.getViewForExtent(bounds);
-                    dispatch(setCurrentView(view));
-                }
             }
         }
     });
@@ -490,144 +367,6 @@ export function initDefaultCommands() {
             }
         }
     });
-    //Buffer
-    registerCommand(DefaultCommands.Buffer, {
-        iconClass: SPRITE_BUFFER,
-        selected: () => false,
-        enabled: CommandConditions.hasSelection,
-        invoke: (dispatch, getState, _viewer, parameters) => {
-            const state = getState();
-            const map = getRuntimeMap(state);
-            const config = state.config;
-            if (map) {
-                let url = ensureParameters(`${getFusionRoot()}/widgets/BufferPanel/BufferPanel.php`, map.Name, map.SessionId, config.locale, false);
-                url += "&popup=false&us=0";
-                const cmdDef = buildTargetedCommand(config, parameters);
-                openUrlInTarget(DefaultCommands.Buffer, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
-            }
-        }
-    });
-    //Select Within
-    registerCommand(DefaultCommands.SelectWithin, {
-        iconClass: SPRITE_SELECT_FEATURES,
-        selected: () => false,
-        enabled: (state, parameters) => !CommandConditions.disabledIfEmptySelection(state, parameters),
-        invoke: (dispatch, getState, _viewer, parameters) => {
-            const state = getState();
-            const map = getRuntimeMap(state);
-            const config = state.config;
-            if (map) {
-                let url = ensureParameters(`${getFusionRoot()}/widgets/SelectWithin/SelectWithinPanel.php`, map.Name, map.SessionId, config.locale, false);
-                url += "&popup=false";
-                const cmdDef = buildTargetedCommand(config, parameters);
-                openUrlInTarget(DefaultCommands.SelectWithin, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
-            }
-        }
-    });
-    //Redline
-    registerCommand(DefaultCommands.Redline, {
-        iconClass: SPRITE_REDLINE,
-        selected: () => false,
-        enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, viewer, parameters) => {
-            const state = getState();
-            const map = getRuntimeMap(state);
-            const config = state.config;
-            if (map) {
-                let bUseAdvancedStylization = true;
-                let defaultDataStoreFormat = null;
-                let defaultRedlineGeometryType = 0;
-                let bCreateOnStartup = false;
-                if (parameters.AutogenerateLayerNames)
-
-                if (parameters.StylizationType)
-                    bUseAdvancedStylization = (parameters.StylizationType == "advanced");
-                
-                if (parameters.DataStoreFormat && parameters.RedlineGeometryFormat) {
-                    if (parameters.DataStoreFormat == "SDF" ||
-                        parameters.DataStoreFormat == "SHP" ||
-                        parameters.DataStoreFormat == "SQLite") {
-                        
-                        var geomTypes = parseInt(parameters.RedlineGeometryFormat);
-                        if (parameters.DataStoreFormat == "SHP") {
-                            //Only accept if geometry type is singular
-                            if (geomTypes == 1 || geomTypes == 2 || geomTypes == 4) {
-                                defaultDataStoreFormat = parameters.DataStoreFormat;
-                                defaultRedlineGeometryType = geomTypes;
-                                if (parameters.AutoCreateOnStartup)
-                                    bCreateOnStartup = (parameters.AutoCreateOnStartup == "true");
-                            }
-                        } else {
-                            defaultDataStoreFormat = parameters.DataStoreFormat;
-                            defaultRedlineGeometryType = geomTypes;
-                            if (parameters.AutoCreateOnStartup)
-                                bCreateOnStartup = (parameters.AutoCreateOnStartup == "true");
-                        }
-                    }
-                }
-
-                enableRedlineMessagePrompt(parameters.UseMapMessage == "true");
-                let url = ensureParameters(`${getFusionRoot()}/widgets/Redline/markupmain.php`, map.Name, map.SessionId, config.locale, true);
-                url += "&POPUP=false";
-                if (defaultDataStoreFormat != null && defaultRedlineGeometryType > 0) {
-                    url += `&REDLINEFORMAT=${defaultDataStoreFormat}`;
-                    url += `&REDLINEGEOMTYPE=${defaultRedlineGeometryType}`;
-                    url += `&AUTOCREATE=${bCreateOnStartup ? "1" : "0"}`;
-                }
-                url += `&REDLINESTYLIZATION=${bUseAdvancedStylization ? "ADVANCED" : "BASIC"}`;
-                const cmdDef = buildTargetedCommand(config, parameters);
-                openUrlInTarget(DefaultCommands.Redline, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
-            }
-        }
-    });
-    //Feature Info
-    registerCommand(DefaultCommands.FeatureInfo, {
-        iconClass: SPRITE_FEATURE_INFO,
-        selected: () => false,
-        enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, _viewer, parameters) => {
-            const state = getState();
-            const map = getRuntimeMap(state);
-            const config = state.config;
-            if (map) {
-                const url = ensureParameters(`${getFusionRoot()}/widgets/FeatureInfo/featureinfomain.php`, map.Name, map.SessionId, config.locale, true);
-                const cmdDef = buildTargetedCommand(config, parameters);
-                openUrlInTarget(DefaultCommands.FeatureInfo, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
-            }
-        }
-    });
-    //Query
-    registerCommand(DefaultCommands.Query, {
-        iconClass: SPRITE_QUERY,
-        selected: () => false,
-        enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, _viewer, parameters) => {
-            const state = getState();
-            const map = getRuntimeMap(state);
-            const config = state.config;
-            if (map) {
-                const url = ensureParameters(`${getFusionRoot()}/widgets/Query/querymain.php`, map.Name, map.SessionId, config.locale, true);
-                const cmdDef = buildTargetedCommand(config, parameters);
-                openUrlInTarget(DefaultCommands.Query, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
-            }
-        }
-    });
-    //Theme
-    registerCommand(DefaultCommands.Theme, {
-        iconClass: SPRITE_THEME,
-        selected: () => false,
-        enabled: CommandConditions.isNotBusy,
-        invoke: (dispatch, getState, _viewer, parameters) => {
-            const state = getState();
-            const map = getRuntimeMap(state);
-            const config = state.config;
-            if (map) {
-                const url = ensureParameters(`${getFusionRoot()}/widgets/Theme/thememain.php`, map.Name, map.SessionId, config.locale, true);
-                const cmdDef = buildTargetedCommand(config, parameters);
-                openUrlInTarget(DefaultCommands.Theme, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
-            }
-        }
-    });
     //Coordinate Tracker
     registerCommand(DefaultCommands.CoordinateTracker, {
         iconClass: SPRITE_COORDINATE_TRACKER,
@@ -640,7 +379,7 @@ export function initDefaultCommands() {
             openUrlInTarget(DefaultCommands.CoordinateTracker, cmdDef, config.capabilities.hasTaskPane, dispatch, url, tr("COORDTRACKER", config.locale));
         }
     });
-    //Add WMS Layer
+    //External Layer Manager
     registerCommand(DefaultCommands.AddManageLayers, {
         iconClass: SPRITE_LAYER_ADD,
         selected: () => false,
@@ -652,38 +391,6 @@ export function initDefaultCommands() {
             openUrlInTarget(DefaultCommands.AddManageLayers, cmdDef, config.capabilities.hasTaskPane, dispatch, url, tr("ADD_MANAGE_LAYERS", config.locale));
         }
     });
-    //Center Selection
-    registerCommand(DefaultCommands.CenterSelection, {
-        iconClass: SPRITE_SELECT_CENTRE,
-        selected: () => false,
-        enabled: CommandConditions.hasSelection,
-        invoke: (dispatch, getState, viewer) => {
-            const state = getState();
-            const mapName = state.config.activeMapName;
-            if (mapName && viewer) {
-                const mapState = state.mapState[mapName];
-                const sf = mapState?.mapguide?.selectionSet?.SelectedFeatures;
-                if (sf) {
-                    let bbox;
-                    for (const layer of sf.SelectedLayer) {
-                        for (const f of layer.Feature) {
-                            const b: any = f.Bounds.split(" ").map(s => parseFloat(s));
-                            if (!bbox) {
-                                bbox = b;
-                            } else {
-                                bbox = olExtent.extend(bbox, b);
-                            }
-                        }
-                    }
-                    if (bbox) {
-                        const view = viewer.getViewForExtent(bbox);
-                        dispatch(setCurrentView(view));
-                    }
-                }
-            }
-        }
-    });
-
     //Fusion template helper commands
     /*
     registerCommand("showOverview", {

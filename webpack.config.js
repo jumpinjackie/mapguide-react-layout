@@ -7,15 +7,21 @@ const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 //const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
-const baseAppEntries = [
-    './src/entries/library.tsx',
+const mgBaseAppEntries = [
+    './src/entries/library.tsx'
 ];
-
-const devAppEntries = [
+const mgDevAppEntries = [
     //   'webpack-hot-middleware/client?reload=true',
 ];
+const mgAppEntries = mgBaseAppEntries.concat(process.env.BUILD_MODE === 'development' ? mgDevAppEntries : []);
 
-const appEntries = baseAppEntries.concat(process.env.BUILD_MODE === 'development' ? devAppEntries : []);
+const genericBaseAppEntries = [
+    './src/entries/library-generic.tsx'
+];
+const genericDevAppEntries = [
+    //   'webpack-hot-middleware/client?reload=true',
+];
+const genericAppEntries = genericBaseAppEntries.concat(process.env.BUILD_MODE === 'development' ? genericDevAppEntries : []);
 
 const basePlugins = [
     new webpack.ProvidePlugin({
@@ -185,7 +191,8 @@ module.exports = {
     optimization: opts,
     mode: (process.env.BUILD_MODE === 'development' ? 'development' : 'none'),
     entry: {
-        viewer: appEntries
+        viewer: mgAppEntries,
+        "viewer-generic": genericAppEntries
     },
     devtool: 'source-map',
     output: {

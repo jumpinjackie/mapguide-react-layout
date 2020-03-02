@@ -2,13 +2,6 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { registerStringBundle } from "../api/i18n";
 import { initDefaultCommands } from "../api/default-commands";
-import AjaxViewerLayout from "../layouts/ajax-viewer";
-import SidebarLayout from "../layouts/sidebar";
-import AquaTemplateLayout from "../layouts/aqua";
-import TurquoiseYellowTemplateLayout from "../layouts/turquoise-yellow";
-import LimeGoldTemplateLayout from "../layouts/limegold";
-import SlateTemplateLayout from "../layouts/slate";
-import MaroonTemplateLayout from "../layouts/maroon";
 import { registerLayout } from "../api/registry/layout";
 import { registerCommand } from "../api/registry/command";
 import { registerComponentFactory, DefaultComponentNames } from "../api/registry/component";
@@ -35,9 +28,9 @@ import GPX from "ol/format/GPX";
 import IGC from "ol/format/IGC";
 import { initMapGuideCommands } from '../api/mapguide-commands';
 import { registerMapGuideComponents } from '../api/mapguide-components';
-import { MapGuideMapProviderContext } from '../components/map-providers/mapguide';
 import { MapProviderContext } from '../components/map-providers/context';
-import { MgMapViewer } from '../containers/neo-map-viewer';
+import { GenericMapViewer } from '../containers/neo-map-viewer';
+import { GenericMapProviderContext } from '../components/map-providers/generic';
 
 bootstrap();
 addFormatDriver(new CsvFormatDriver(CSV_COLUMN_ALIASES));
@@ -46,22 +39,15 @@ addFormatDriver(new FormatDriver("TopoJSON", new TopoJSON()));
 addFormatDriver(new FormatDriver("KML", new KML(), "EPSG:4326"));
 addFormatDriver(new FormatDriver("GPX", new GPX(), "EPSG:4326"));
 addFormatDriver(new FormatDriver("IGC", new IGC()));
-registerLayout("ajax-viewer", () => <AjaxViewerLayout />);
-registerLayout("sidebar", () => <SidebarLayout />);
-registerLayout("aqua", () => <AquaTemplateLayout />);
-registerLayout("turquoise-yellow", () => <TurquoiseYellowTemplateLayout />);
-registerLayout("limegold", () => <LimeGoldTemplateLayout />);
-registerLayout("slate", () => <SlateTemplateLayout />);
-registerLayout("maroon", () => <MaroonTemplateLayout />);
 initDefaultCommands();
 initMapGuideCommands();
 registerDefaultComponents();
 registerMapGuideComponents();
 
-// Register our MapGuide-specific viewer implementation
-const PROVIDER_IMPL = new MapGuideMapProviderContext();
+// Register our generic viewer implementation
+const PROVIDER_IMPL = new GenericMapProviderContext();
 registerComponentFactory(DefaultComponentNames.Map, (props) => <MapProviderContext.Provider value={PROVIDER_IMPL}>
-    <MgMapViewer {...props} />
+    <GenericMapViewer {...props} />
 </MapProviderContext.Provider>);
 
 //Register the default mapagent request builder (that can be replaced later on if desired)

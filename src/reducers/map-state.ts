@@ -3,12 +3,13 @@ import {
     IBranchedMapSubState,
     IExternalBaseLayer,
     ILayerInfo,
-    IMapGuideSubState
+    IMapGuideSubState,
+    IGenericLayerSubState
 } from "../api/common";
 import { isMapView } from "../utils/type-guards";
 import { makeUnique } from "../utils/array";
 import { ActionType } from '../constants/actions';
-import { ViewerAction, isGenericSubjectMapLayer } from '../actions/defs';
+import { ViewerAction, isGenericSubjectMapLayer, IGenericSubjectMapLayer } from '../actions/defs';
 import { debug } from '../utils/logger';
 
 export const MAP_STATE_INITIAL_STATE: IBranchedMapState = {
@@ -37,7 +38,8 @@ export const MAP_STATE_INITIAL_SUB_STATE: IBranchedMapSubState = {
     historyIndex: -1,
     externalBaseLayers: [],
     layers: [],
-    mapguide: undefined
+    mapguide: undefined,
+    generic: undefined
 };
 
 function applyMapGuideSubState(state: IBranchedMapState, mapName: string, applyFn: (current: IMapGuideSubState) => Partial<IMapGuideSubState>) {
@@ -127,6 +129,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                     const hl = [];
                     const hg = [];
                     let mrtm;
+                    let mgeneric: IGenericLayerSubState | undefined;
 
                     if (mapName == mapNameToApplyInitialState) {
                         const rtm = maps[mapName].map;
@@ -168,6 +171,8 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                             debug(`Initially hiding group ids: ${hg.join("|")}`);
 
                             mrtm = { runtimeMap: rtm };
+                        } else {
+                            mgeneric = { subject: { ...rtm } };
                         }
                     }
                     const newMgSubState = {
@@ -181,6 +186,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                     };
                     const newMapState = {
                         ...MAP_STATE_INITIAL_SUB_STATE,
+                        ...{ generic: mgeneric },
                         ...{ externalBaseLayers: maps[mapName].externalBaseLayers },
                         ...{ initialView: maps[mapName].initialView },
                         ...(cv || {}),
@@ -365,7 +371,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
         case ActionType.MAP_SET_SELECTION:
             {
                 const { payload } = action;
-                return applyMapGuideSubState(state, payload.mapName, mgSubState => ({
+                return applyMapGuideSubState(state, payload.mapName, _ => ({
                     selectionSet: payload.selection,
                     layerIndex: -1,
                     featureIndex: -1,
@@ -375,7 +381,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
         case ActionType.MAP_SHOW_SELECTED_FEATURE:
             {
                 const { payload } = action;
-                return applyMapGuideSubState(state, payload.mapName, mgSubState => ({
+                return applyMapGuideSubState(state, payload.mapName, _ => ({
                     activeSelectedFeature: {
                         layerId: payload.layerId,
                         selectionKey: payload.selectionKey

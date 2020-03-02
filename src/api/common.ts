@@ -14,7 +14,7 @@ import olInteraction from "ol/interaction/Interaction";
 import olOverlay from "ol/Overlay";
 
 import { IOLFactory } from "./ol-factory";
-import { ViewerAction } from '../actions/defs';
+import { ViewerAction, IGenericSubjectMapLayer } from '../actions/defs';
 import { ProjectionLike } from 'ol/proj';
 import { LoadFunction } from 'ol/Image';
 import { IToolbarAppState } from './registry';
@@ -1310,6 +1310,23 @@ export interface ActiveSelectedFeature {
 }
 
 /**
+ * Generic layer sub-state
+ *
+ * @export
+ * @interface IGenericLayerSubState
+ * @since 0.14
+ */
+export interface IGenericLayerSubState {
+    /**
+     * The subject layer
+     *
+     * @type {IGenericSubjectMapLayer}
+     * @memberof IGenericLayerSubState
+     */
+    subject: IGenericSubjectMapLayer;
+}
+
+/**
  * MapGuide-specific map sub-state
  *
  * @export
@@ -1458,6 +1475,14 @@ export interface IBranchedMapSubState {
      * @since 0.14
      */
     mapguide: IMapGuideSubState | undefined;
+    /**
+     * Generic layer sub-state
+     *
+     * @type {(IGenericLayerSubState | undefined)}
+     * @memberof IBranchedMapSubState
+     * @since 0.14
+     */
+    generic: IGenericLayerSubState | undefined;
 }
 
 /**

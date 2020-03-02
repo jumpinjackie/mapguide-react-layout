@@ -131,8 +131,14 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                     let mrtm;
                     let mgeneric: IGenericLayerSubState | undefined;
 
+                    const rtm = maps[mapName].map;
+                    if (!isGenericSubjectMapLayer(rtm)) {
+                        mrtm = { runtimeMap: rtm };
+                    } else {
+                        mgeneric = { subject: { ...rtm } };
+                    }
+
                     if (mapName == mapNameToApplyInitialState) {
-                        const rtm = maps[mapName].map;
                         if (!isGenericSubjectMapLayer(rtm)) {
                             const isl = payload.initialShowLayers ?? [];
                             const isg = payload.initialShowGroups ?? [];
@@ -169,10 +175,6 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                             debug(`Initially showing group ids: ${sg.join("|")}`);
                             debug(`Initially hiding layer ids: ${hl.join("|")}`);
                             debug(`Initially hiding group ids: ${hg.join("|")}`);
-
-                            mrtm = { runtimeMap: rtm };
-                        } else {
-                            mgeneric = { subject: { ...rtm } };
                         }
                     }
                     const newMgSubState = {

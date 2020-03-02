@@ -1,18 +1,438 @@
-import { ApplicationDefinition, MapConfiguration } from '../api/contracts/fusion';
+import { ApplicationDefinition, MapConfiguration, Widget } from '../api/contracts/fusion';
 import { RuntimeMap } from '../api/contracts/runtime-map';
-import { Dictionary, IExternalBaseLayer } from '../api/common';
-import { MapInfo } from './defs';
-import { tr, DEFAULT_LOCALE } from '../api/i18n';
+import { Dictionary, IExternalBaseLayer, ReduxDispatch, ActiveMapTool, IConfigurationReducerState } from '../api/common';
+import { MapInfo, IInitAppActionPayload, IRestoredSelectionSets } from './defs';
+import { tr, DEFAULT_LOCALE, registerStringBundle } from '../api/i18n';
 import { IView } from '../api/contracts/common';
-import { strReplaceAll } from '../utils/string';
+import { strEndsWith } from '../utils/string';
 import { Client } from '../api/client';
-import { IInitAsyncOptions } from './init';
+import { IInitAsyncOptions, processLayerInMapGroup } from './init';
 import { RuntimeMapFeatureFlags } from '../api/request-builder';
-import { info, debug } from '../utils/logger';
+import { info, debug, warn } from '../utils/logger';
 import { MgError } from '../api/error';
 import { resolveProjectionFromEpsgIoAsync } from '../api/registry/projections';
 import { register } from 'ol/proj/proj4';
 import proj4 from "proj4";
+import { ViewerInitCommand } from './init-command';
+import { ActionType } from '../constants/actions';
+import { WebLayout, isInvokeURLCommand, isSearchCommand } from '../api/contracts/weblayout';
+import { ToolbarConf } from '../api/registry/command-spec';
+import { clearSessionStore, getSelectionSet } from '../api/session-store';
+import * as shortid from 'shortid';
+import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU, WEBLAYOUT_TOOLBAR } from "../constants";
+import { registerCommand } from '../api/registry/command';
+import { ensureParameters } from '../utils/url';
+
+export class MgViewerInitCommand extends ViewerInitCommand {
+    constructor(dispatch: ReduxDispatch, options: IInitAsyncOptions, private client: Client) {
+        super(dispatch, options);
+    }
+    private getDesiredTargetMapName(mapDef: string) {
+        const lastSlash = mapDef.lastIndexOf("/");
+        const lastDot = mapDef.lastIndexOf(".");
+        if (lastSlash >= 0 && lastDot >= 0 && lastDot > lastSlash) {
+            return `${mapDef.substring(lastSlash + 1, lastDot)}`;
+        } else {
+            return `Map_${shortid.generate()}`;
+        }
+    }    
+    private async initFromWebLayoutAsync(webLayout: WebLayout, session: string, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
+        const [mapsByName, warnings] = await this.createRuntimeMapsAsync(session, webLayout, wl => [{ name: this.getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId }], () => [], sessionWasReused);
+        const cmdsByKey: any = {};
+        const { locale, featureTooltipsEnabled, externalBaseLayers } = this.options;
+        //Register any InvokeURL and Search commands
+        for (const cmd of webLayout.CommandSet.Command) {
+            if (isInvokeURLCommand(cmd)) {
+                registerCommand(cmd.Name, {
+                    url: cmd.URL,
+                    disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
+                    target: cmd.Target,
+                    targetFrame: cmd.TargetFrame,
+                    parameters: (cmd.AdditionalParameter || []).map(p => {
+                        return { name: p.Key, value: p.Value };
+                    }),
+                    title: cmd.Label
+                });
+            } else if (isSearchCommand(cmd)) {
+                registerCommand(cmd.Name, {
+                    layer: cmd.Layer,
+                    prompt: cmd.Prompt,
+                    target: cmd.Target,
+                    targetFrame: cmd.TargetFrame,
+                    resultColumns: cmd.ResultColumns,
+                    filter: cmd.Filter,
+                    matchLimit: cmd.MatchLimit,
+                    title: cmd.Label
+                });
+            }
+            cmdsByKey[cmd.Name] = cmd;
+        }
+        const mainToolbar = (webLayout.ToolBar.Visible
+            ? this.convertWebLayoutUIItems(webLayout.ToolBar.Button, cmdsByKey, locale)
+            : []);
+        const taskBar = (webLayout.TaskPane.TaskBar.Visible
+            ? this.convertWebLayoutUIItems(webLayout.TaskPane.TaskBar.MenuButton, cmdsByKey, locale, false)
+            : []);
+        const contextMenu = (webLayout.ContextMenu.Visible
+            ? this.convertWebLayoutUIItems(webLayout.ContextMenu.MenuItem, cmdsByKey, locale, false)
+            : []);
+        const config: any = {};
+        if (webLayout.SelectionColor != null) {
+            config.selectionColor = webLayout.SelectionColor;
+        }
+        if (webLayout.MapImageFormat != null) {
+            config.imageFormat = webLayout.MapImageFormat;
+        }
+        if (webLayout.SelectionImageFormat != null) {
+            config.selectionImageFormat = webLayout.SelectionImageFormat;
+        }
+        if (webLayout.PointSelectionBuffer != null) {
+            config.pointSelectionBuffer = webLayout.PointSelectionBuffer;
+        }
+        let initialView: IView | null = null;
+        if (webLayout.Map.InitialView != null) {
+            initialView = {
+                x: webLayout.Map.InitialView.CenterX,
+                y: webLayout.Map.InitialView.CenterY,
+                scale: webLayout.Map.InitialView.Scale
+            };
+        }
+
+        if (webLayout.Title != "") {
+            document.title = webLayout.Title || document.title;
+        }
+
+        const maps: any = {};
+        let firstMapName = "";
+        let firstSessionId = "";
+        for (const mapName in mapsByName) {
+            if (!firstMapName && !firstSessionId) {
+                const map = mapsByName[mapName];
+                firstMapName = map.Name;
+                firstSessionId = map.SessionId;
+                maps[firstMapName] = {
+                    mapGroupId: map.Name,
+                    map: map,
+                    externalBaseLayers: externalBaseLayers,
+                    initialView: initialView
+                };
+                break;
+            }
+        }
+
+        const menus: Dictionary<ToolbarConf> = {};
+        menus[WEBLAYOUT_TOOLBAR] = {
+            items: mainToolbar
+        };
+        menus[WEBLAYOUT_TASKMENU] = {
+            items: taskBar
+        };
+        menus[WEBLAYOUT_CONTEXTMENU] = {
+            items: contextMenu
+        };
+
+        const tb = this.prepareSubMenus(menus)[0];
+        return {
+            activeMapName: firstMapName,
+            featureTooltipsEnabled: featureTooltipsEnabled,
+            initialUrl: ensureParameters(webLayout.TaskPane.InitialTask || "server/TaskPane.html", firstMapName, firstSessionId, locale),
+            initialTaskPaneWidth: webLayout.TaskPane.Width,
+            initialInfoPaneWidth: webLayout.InformationPane.Width,
+            maps: maps,
+            locale: locale,
+            config: config,
+            capabilities: {
+                hasTaskPane: webLayout.TaskPane.Visible,
+                hasTaskBar: webLayout.TaskPane.TaskBar.Visible,
+                hasStatusBar: webLayout.StatusBar.Visible,
+                hasNavigator: webLayout.ZoomControl.Visible,
+                hasSelectionPanel: webLayout.InformationPane.Visible && webLayout.InformationPane.PropertiesVisible,
+                hasLegend: webLayout.InformationPane.Visible && webLayout.InformationPane.LegendVisible,
+                hasToolbar: webLayout.ToolBar.Visible,
+                hasViewSize: webLayout.StatusBar.Visible
+            },
+            toolbars: tb,
+            warnings: warnings,
+            initialActiveTool: ActiveMapTool.Pan
+        };
+    }
+    private async tryDescribeRuntimeMapAsync(mapName: string, session: string, mapDef: string) {
+        try {
+            const map = await this.client.describeRuntimeMap({
+                mapname: mapName,
+                requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+                session: session
+            });
+            return map;
+        } catch (e) {
+            if (e.message === "MgResourceNotFoundException") {
+                const map = await this.client.createRuntimeMap({
+                    mapDefinition: mapDef,
+                    requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+                    session: session,
+                    targetMapName: mapName
+                });
+                return map;
+            }
+            throw e;
+        }
+    }
+    private async createRuntimeMapsAsync<TLayout>(session: string, res: TLayout, mapDefSelector: (res: TLayout) => MapToLoad[], projectionSelector: (res: TLayout) => string[], sessionWasReused: boolean): Promise<[Dictionary<RuntimeMap>, string[]]> {
+        const mapDefs = mapDefSelector(res);
+        const mapPromises: Promise<RuntimeMap>[] = [];
+        const warnings = [] as string[];
+        const { locale } = this.options;
+        for (const m of mapDefs) {
+            //sessionWasReused is a hint whether to create a new runtime map, or recover the last runtime map state from the given map name
+            if (sessionWasReused) {
+                //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
+                info(`Session ID re-used. Attempting recovery of map state of: ${m.name}`);
+                mapPromises.push(this.tryDescribeRuntimeMapAsync(m.name, session, m.mapDef));
+            } else {
+                info(`Creating runtime map state (${m.name}) for: ${m.mapDef}`);
+                mapPromises.push(this.client.createRuntimeMap({
+                    mapDefinition: m.mapDef,
+                    requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+                    session: session,
+                    targetMapName: m.name
+                }));
+            }
+        }
+        const maps = await Promise.all(mapPromises);
+        const fetchEpsgs: { epsg: string, mapDef: string }[] = [];
+        //All must be non-zero
+        for (const m of maps) {
+            const epsg = m.CoordinateSystem.EpsgCode;
+            const mapDef = m.MapDefinition;
+            if (epsg == "0") {
+                throw new MgError(tr("INIT_ERROR_UNSUPPORTED_COORD_SYS", locale || DEFAULT_LOCALE, { mapDefinition: mapDef }));
+            }
+            //Must be registered to proj4js if not 4326 or 3857
+            if (!proj4.defs[`EPSG:${epsg}`]) {
+                fetchEpsgs.push({ epsg: epsg, mapDef: mapDef });
+            }
+        }
+        const extraEpsgs = projectionSelector(res);
+        for (const e of extraEpsgs) {
+            fetchEpsgs.push({ epsg: e, mapDef: "" });
+        }
+        const epsgs = await Promise.all(fetchEpsgs.map(f => resolveProjectionFromEpsgIoAsync(f.epsg, locale, f.mapDef)));
+    
+        //Previously, we register proj4 with OpenLayers on the bootstrap phase way before this init
+        //process is started. This no longer works for OL6 where it doesn't seem to pick up the extra
+        //projections we've registered with proj4 after linking proj4 to OpenLayers. So that registration
+        //step has been relocated here, after all the custom projections have been fetched and registered
+        //with proj4
+        debug(`Register proj4 with OpenLayers`);
+        register(proj4);
+    
+        //Build the Dictionary<RuntimeMap> from loaded maps
+        const mapsByName: Dictionary<RuntimeMap> = {};
+        for (const map of maps) {
+            mapsByName[map.Name] = map;
+        }
+        return [mapsByName, warnings];
+    }
+    private async initFromAppDefAsync(appDef: ApplicationDefinition, session: string, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
+        const [mapsByName, warnings] = await this.createRuntimeMapsAsync(session, appDef, fl => getMapDefinitionsFromFlexLayout(fl), fl => this.getExtraProjectionsFromFlexLayout(fl), sessionWasReused);
+        let initialTask: string;
+        let taskPane: Widget | undefined;
+        let viewSize: Widget | undefined;
+        let hasLegend = false;
+        let hasStatus = false;
+        let hasNavigator = false;
+        let hasSelectionPanel = false;
+        let hasTaskBar = false;
+        const { locale, featureTooltipsEnabled } = this.options;
+        const config: any = {};
+        const tbConf: Dictionary<ToolbarConf> = {};
+        const widgetsByKey: Dictionary<Widget> = {};
+        //Register any InvokeURL and Search commands. Also set capabilities along the way
+        for (const widgetSet of appDef.WidgetSet) {
+            for (const widget of widgetSet.Widget) {
+                const cmd = widget.Extension;
+                switch (widget.Type) {
+                    case "TaskPane":
+                        taskPane = widget;
+                        break;
+                    case "ViewSize":
+                        viewSize = widget;
+                        break;
+                    case "Legend":
+                        hasLegend = true;
+                        break;
+                    case "SelectionPanel":
+                        hasSelectionPanel = true;
+                        break;
+                    case "CursorPosition":
+                    case "SelectionInfo":
+                        hasStatus = true;
+                        break;
+                    case "Navigator":
+                        hasNavigator = true;
+                        break;
+                    case "Search":
+                        registerCommand(widget.Name, {
+                            layer: cmd.Layer,
+                            prompt: cmd.Prompt,
+                            resultColumns: cmd.ResultColumns,
+                            filter: cmd.Filter,
+                            matchLimit: cmd.MatchLimit,
+                            title: (cmd.Title || (this.isUIWidget(widget) ? widget.Label : undefined)),
+                            target: this.convertToCommandTarget(cmd.Target),
+                            targetFrame: cmd.Target
+                        });
+                        break;
+                    case "InvokeURL":
+                        registerCommand(widget.Name, {
+                            url: cmd.Url,
+                            disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
+                            target: this.convertToCommandTarget(cmd.Target),
+                            targetFrame: cmd.Target,
+                            parameters: (cmd.AdditionalParameter || []).map((p: any) => {
+                                return { name: p.Key, value: p.Value };
+                            }),
+                            title: this.isUIWidget(widget) ? widget.Label : undefined
+                        });
+                        break;
+                }
+                widgetsByKey[widget.Name] = widget;
+            }
+        }
+        //Now build toolbar layouts
+        for (const widgetSet of appDef.WidgetSet) {
+            for (const cont of widgetSet.Container) {
+                let tbName = cont.Name;
+                tbConf[tbName] = { items: this.convertFlexLayoutUIItems(cont.Item, widgetsByKey, locale) };
+            }
+            for (const w of widgetSet.Widget) {
+                if (w.Type == "CursorPosition") {
+                    config.coordinateProjection = w.Extension.DisplayProjection;
+                    config.coordinateDecimals = w.Extension.Precision;
+                    config.coordinateDisplayFormat = w.Extension.Template;
+                }
+            }
+        }
+
+        const maps = setupMaps(appDef, mapsByName, config, warnings);
+
+        if (taskPane) {
+            hasTaskBar = true; //Fusion flex layouts can't control the visiblity of this
+            initialTask = taskPane.Extension.InitialTask || "server/TaskPane.html";
+        } else {
+            initialTask = "server/TaskPane.html";
+        }
+
+        if (appDef.Title) {
+            document.title = appDef.Title || document.title;
+        }
+
+        let firstMapName = "";
+        let firstSessionId = "";
+        for (const mapName in mapsByName) {
+            if (!firstMapName && !firstSessionId) {
+                const map = mapsByName[mapName];
+                firstMapName = map.Name;
+                firstSessionId = map.SessionId;
+                break;
+            }
+        }
+        const [tb, bFoundContextMenu] = this.prepareSubMenus(tbConf);
+        if (!bFoundContextMenu) {
+            warnings.push(tr("INIT_WARNING_NO_CONTEXT_MENU", locale, { containerName: WEBLAYOUT_CONTEXTMENU }));
+        }
+        return {
+            activeMapName: firstMapName,
+            initialUrl: ensureParameters(initialTask, firstMapName, firstSessionId, locale),
+            featureTooltipsEnabled: featureTooltipsEnabled,
+            locale: locale,
+            maps: maps,
+            config: config,
+            capabilities: {
+                hasTaskPane: (taskPane != null),
+                hasTaskBar: hasTaskBar,
+                hasStatusBar: hasStatus,
+                hasNavigator: hasNavigator,
+                hasSelectionPanel: hasSelectionPanel,
+                hasLegend: hasLegend,
+                hasToolbar: (Object.keys(tbConf).length > 0),
+                hasViewSize: (viewSize != null)
+            },
+            toolbars: tb,
+            warnings: warnings,
+            initialActiveTool: ActiveMapTool.Pan
+        };
+    }
+    private async sessionAcquiredAsync(session: string, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
+        const { resourceId, locale } = this.options;
+        if (!resourceId) {
+            throw new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", locale));
+        } else {
+            if (typeof (resourceId) == 'string') {
+                if (strEndsWith(resourceId, "WebLayout")) {
+                    const wl = await this.client.getResource<WebLayout>(resourceId, { SESSION: session });
+                    return await this.initFromWebLayoutAsync(wl, session, sessionWasReused);
+                } else if (strEndsWith(resourceId, "ApplicationDefinition")) {
+                    const fl = await this.client.getResource<ApplicationDefinition>(resourceId, { SESSION: session });
+                    return await this.initFromAppDefAsync(fl, session, sessionWasReused);
+                } else {
+                    throw new MgError(tr("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", locale, { resourceId: resourceId }));
+                }
+            } else {
+                const fl = await resourceId();
+                return await this.initFromAppDefAsync(fl, session, sessionWasReused);
+            }
+        }
+    }
+    public async runAsync(): Promise<IInitAppActionPayload> {
+        //English strings are baked into this bundle. For non-en locales, we assume a strings/{locale}.json
+        //exists for us to fetch
+        const { locale } = this.options;
+        let session = this.options.session;
+        if (locale != DEFAULT_LOCALE) {
+            const r = await fetch(`strings/${locale}.json`);
+            if (r.ok) {
+                const res = await r.json();
+                registerStringBundle(locale, res);
+                // Dispatch the SET_LOCALE as it is safe to change UI strings at this point
+                this.dispatch({
+                    type: ActionType.SET_LOCALE,
+                    payload: locale
+                });
+                info(`Registered string bundle for locale: ${locale}`);
+            } else {
+                //TODO: Push warning to init error/warning reducer when we implement it
+                warn(`Failed to register string bundle for locale: ${locale}`);
+            }
+        }
+        let sessionWasReused = false;
+        if (!session) {
+            session = await this.client.createSession("Anonymous", "");
+        } else {
+            info(`Re-using session: ${session}`);
+            sessionWasReused = true;
+        }
+        const payload = await this.sessionAcquiredAsync(session, sessionWasReused);
+        if (sessionWasReused) {
+            let initSelections: IRestoredSelectionSets = {};
+            for (const mapName in payload.maps) {
+                const sset = await getSelectionSet(session, mapName);
+                if (sset) {
+                    initSelections[mapName] = sset;
+                }
+            }
+            payload.initialSelections = initSelections;
+            try {
+                //In the interest of being a responsible citizen, clean up all selection-related stuff from
+                //session store
+                await clearSessionStore();
+            } catch (e) {
+
+            }
+        }
+        return payload;
+    }
+}
 
 function getMapGuideConfiguration(appDef: ApplicationDefinition): [string, MapConfiguration][] {
     const configs = [] as [string, MapConfiguration][];
@@ -67,111 +487,7 @@ export function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<
                         }
                     }
                 } else {
-                    switch (map.Type) {
-                        case "Google":
-                            warnings.push(tr("INIT_WARNING_UNSUPPORTED_GOOGLE_MAPS", config.locale));
-                            break;
-                        case "VirtualEarth":
-                            {
-                                //HACK: De-arrayification of arbitrary extension elements
-                                //is shallow (hence name/type is string[]). Do we bother to fix this?
-                                const name = map.Extension.Options.name[0];
-                                const type = map.Extension.Options.type[0];
-                                const options: any = {};
-                                let bAdd = true;
-                                switch (type)
-                                {
-                                    case "Aerial":
-                                    case "a":
-                                        options.imagerySet = "Aerial";
-                                        break;
-                                    case "AerialWithLabels":
-                                        options.imagerySet = "AerialWithLabels";
-                                        break;
-                                    case "Road":
-                                        options.imagerySet = "Road";
-                                        break;
-                                    default:
-                                        bAdd = false;
-                                        warnings.push(tr("INIT_WARNING_BING_UNKNOWN_LAYER", config.locale, { type: type }));
-                                        break;
-                                }
-
-                                if (appDef.Extension.BingMapKey) {
-                                    options.key = appDef.Extension.BingMapKey;
-                                } else {
-                                    bAdd = false;
-                                    warnings.push(tr("INIT_WARNING_BING_API_KEY_REQD", config.locale));
-                                }
-
-                                if (bAdd) {
-                                    externalBaseLayers.push({
-                                        name: name,
-                                        kind: "BingMaps",
-                                        options: options
-                                    });
-                                }
-                            }
-                            break;
-                        case "OpenStreetMap":
-                            {
-                                //HACK: De-arrayification of arbitrary extension elements
-                                //is shallow (hence name/type is string[]). Do we bother to fix this?
-                                const name = map.Extension.Options.name[0];
-                                const type = map.Extension.Options.type[0];
-                                const options: any = {};
-                                switch (type) {
-                                    case "CycleMap":
-                                        options.url = "http://{a-c}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png";
-                                        break;
-                                    case "TransportMap":
-                                        options.url = "http://tile2.opencyclemap.org/transport/{z}/{x}/{y}.png";
-                                        break;
-                                }
-                                externalBaseLayers.push({
-                                    name: name,
-                                    kind: "OSM",
-                                    options: options
-                                });
-                            }
-                            break;
-                        case "Stamen":
-                            {
-                                //HACK: De-arrayification of arbitrary extension elements
-                                //is shallow (hence name/type is string[]). Do we bother to fix this?
-                                const name = map.Extension.Options.name[0];
-                                const type = map.Extension.Options.type[0];
-                                externalBaseLayers.push({
-                                    name: name,
-                                    kind: "Stamen",
-                                    options: {
-                                        layer: type
-                                    }
-                                });
-                            }
-                            break;
-                        case "XYZ":
-                            {
-                                //HACK: De-arrayification of arbitrary extension elements
-                                //is shallow (hence name/type is string[]). Do we bother to fix this?
-                                const name = map.Extension.Options.name[0];
-                                const type = map.Extension.Options.type[0];
-                                //NOTE: From a fusion appdef, we're expecting placeholder tokens to be in ${this_format} instead of
-                                //{this_format} as the primary consumer is the Fusion viewer that is based on OpenLayers 2
-                                //As we're not using OL2, but OL4+ the expected format is {this_format}, so we need to convert these
-                                //placeholder tokens
-                                const urls = (map.Extension.Options.urls || []).map((s: string) => strReplaceAll(s, "${", "{"));
-                                externalBaseLayers.push({
-                                    name: name,
-                                    kind: "XYZ",
-                                    options: {
-                                        layer: type,
-                                        urls: urls
-                                    }
-                                });
-                            }
-                            break;
-                    }
+                    processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayers);
                 }
             }
             //First come, first served
@@ -202,82 +518,4 @@ export function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<
     return dict;
 }
 
-export async function tryDescribeRuntimeMapAsync(client: Client, mapName: string, session: string, mapDef: string) {
-    try {
-        const map = await client.describeRuntimeMap({
-            mapname: mapName,
-            requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-            session: session
-        });
-        return map;
-    } catch (e) {
-        if (e.message === "MgResourceNotFoundException") {
-            const map = await client.createRuntimeMap({
-                mapDefinition: mapDef,
-                requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-                session: session,
-                targetMapName: mapName
-            });
-            return map;
-        }
-        throw e;
-    }
-}
-
 export type MapToLoad = { name: string, mapDef: string };
-
-export async function createRuntimeMapsAsync<TLayout>(client: Client, session: string, opts: IInitAsyncOptions, res: TLayout, mapDefSelector: (res: TLayout) => MapToLoad[], projectionSelector: (res: TLayout) => string[], sessionWasReused: boolean): Promise<[Dictionary<RuntimeMap>, string[]]> {
-    const mapDefs = mapDefSelector(res);
-    const mapPromises: Promise<RuntimeMap>[] = [];
-    const warnings = [] as string[];
-    for (const m of mapDefs) {
-        //sessionWasReused is a hint whether to create a new runtime map, or recover the last runtime map state from the given map name
-        if (sessionWasReused) {
-            //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
-            info(`Session ID re-used. Attempting recovery of map state of: ${m.name}`);
-            mapPromises.push(tryDescribeRuntimeMapAsync(client, m.name, session, m.mapDef));
-        } else {
-            info(`Creating runtime map state (${m.name}) for: ${m.mapDef}`);
-            mapPromises.push(client.createRuntimeMap({
-                mapDefinition: m.mapDef,
-                requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-                session: session,
-                targetMapName: m.name
-            }));
-        }
-    }
-    const maps = await Promise.all(mapPromises);
-    const fetchEpsgs: { epsg: string, mapDef: string }[] = [];
-    //All must be non-zero
-    for (const m of maps) {
-        const epsg = m.CoordinateSystem.EpsgCode;
-        const mapDef = m.MapDefinition;
-        if (epsg == "0") {
-            throw new MgError(tr("INIT_ERROR_UNSUPPORTED_COORD_SYS", opts.locale || DEFAULT_LOCALE, { mapDefinition: mapDef }));
-        }
-        //Must be registered to proj4js if not 4326 or 3857
-        if (!proj4.defs[`EPSG:${epsg}`]) {
-            fetchEpsgs.push({ epsg: epsg, mapDef: mapDef });
-        }
-    }
-    const extraEpsgs = projectionSelector(res);
-    for (const e of extraEpsgs) {
-        fetchEpsgs.push({ epsg: e, mapDef: "" });
-    }
-    const epsgs = await Promise.all(fetchEpsgs.map(f => resolveProjectionFromEpsgIoAsync(f.epsg, opts.locale, f.mapDef)));
-
-    //Previously, we register proj4 with OpenLayers on the bootstrap phase way before this init
-    //process is started. This no longer works for OL6 where it doesn't seem to pick up the extra
-    //projections we've registered with proj4 after linking proj4 to OpenLayers. So that registration
-    //step has been relocated here, after all the custom projections have been fetched and registered
-    //with proj4
-    debug(`Register proj4 with OpenLayers`);
-    register(proj4);
-
-    //Build the Dictionary<RuntimeMap> from loaded maps
-    const mapsByName: Dictionary<RuntimeMap> = {};
-    for (const map of maps) {
-        mapsByName[map.Name] = map;
-    }
-    return [mapsByName, warnings];
-}

@@ -20,6 +20,8 @@ import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, 
 import { getStateFromUrl, IAppUrlState, updateUrl } from './url-state';
 import { debug } from '../utils/logger';
 import { setElementStates } from '../actions/template';
+import { IViewerInitCommand } from '../actions/init-command';
+import { MgViewerInitCommand } from '../actions/init-mapguide';
 
 export interface SelectionOptions {
     allowHtmlValues?: boolean;
@@ -33,6 +35,14 @@ export interface SelectionOptions {
  * @interface IAppProps
  */
 export interface IAppProps {
+    /**
+     * The command that will carry out viewer initialization
+     *
+     * @type {IViewerInitCommand}
+     * @memberof IAppProps
+     * @since 0.14
+     */
+    initCommand: IViewerInitCommand;
     layout: string | (() => React.ReactNode);
     /**
      * A session id to init this viewer with
@@ -108,7 +118,7 @@ export interface IAppState {
  * @interface IAppDispatch
  */
 export interface IAppDispatch {
-    initLayout: (args: IInitAppLayout) => void;
+    initLayout: (cmd: IViewerInitCommand, args: IInitAppLayout) => void;
     setElementVisibility: (states: IElementState) => void;
 }
 
@@ -145,7 +155,8 @@ class AppInner extends React.Component<AppInnerProps, any> {
             session,
             fusionRoot,
             resourceId,
-            externalBaseLayers
+            externalBaseLayers,
+            initCommand
         } = this.props;
         const {
             locale: urlLocale,
@@ -237,7 +248,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
                 ...(sgArgs || {}),
                 ...(hgArgs || {})
             };
-            initLayout(args);
+            initLayout(initCommand, args);
         }
     }
     componentDidUpdate(prevProps: AppInnerProps) {
@@ -385,7 +396,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
     }
 }
 
-const App = (props: IAppProps) => {
+const App = (props: Omit<IAppProps, "initCommand">) => {
     const error = useInitError();
     const includeStack = useInitErrorStack();
     const initOptions = useInitErrorOptions();
@@ -395,11 +406,12 @@ const App = (props: IAppProps) => {
     const ftEnabled = useViewerFeatureTooltipsEnabled();
 
     const dispatch = useDispatch();
-    const initLayoutAction = (args: IInitAppLayout) => dispatch(initLayout(args));
+    const initLayoutAction = (cmd: IViewerInitCommand, args: IInitAppLayout) => dispatch(initLayout(cmd, args));
     const setElementVisibility = (state: IElementState) => dispatch(setElementStates(state));
-
+    const initCommand = new MgViewerInitCommand(dispatch);
     return <AppInner error={error}
         includeStack={includeStack}
+        initCommand={initCommand}
         initOptions={initOptions}
         featureTooltipsEnabled={ftEnabled}
         configuredLocale={configuredLocale}

@@ -11,16 +11,19 @@ import { UIItem, CommandDef, isCommandItem, isTargetedCommand, isBasicCommand, i
 import { warn } from '../utils/logger';
 import { DefaultCommands } from '../api/registry/command';
 import { tr } from '../api/i18n';
-import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU, WEBLAYOUT_TOOLBAR } from "../constants";
+import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU } from "../constants";
 import * as shortid from 'shortid';
+import { Client } from '../api/client';
 
 export interface IViewerInitCommand {
-    runAsync(): Promise<IInitAppActionPayload>;
+    attachClient(client: Client): void;
+    runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
 }
 
 export abstract class ViewerInitCommand implements IViewerInitCommand {
-    constructor(protected readonly dispatch: ReduxDispatch, protected readonly options: IInitAsyncOptions) { }
-    public abstract runAsync(): Promise<IInitAppActionPayload>;
+    constructor(protected readonly dispatch: ReduxDispatch) { }
+    public abstract attachClient(client: Client): void;
+    public abstract runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
     protected tryTranslateImageUrlToSpriteClass(imageUrl: string): string | undefined {
         switch (imageUrl) {
             case "../stdicons/icon_invokeurl.gif":

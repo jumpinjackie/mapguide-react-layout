@@ -24,8 +24,13 @@ import { registerCommand } from '../api/registry/command';
 import { ensureParameters } from '../utils/url';
 
 export class MgViewerInitCommand extends ViewerInitCommand {
-    constructor(dispatch: ReduxDispatch, options: IInitAsyncOptions, private client: Client) {
-        super(dispatch, options);
+    private client: Client;
+    private options: IInitAsyncOptions;
+    constructor(dispatch: ReduxDispatch) {
+        super(dispatch);
+    }
+    public attachClient(client: Client): void {
+        this.client = client;
     }
     private getDesiredTargetMapName(mapDef: string) {
         const lastSlash = mapDef.lastIndexOf("/");
@@ -384,7 +389,8 @@ export class MgViewerInitCommand extends ViewerInitCommand {
             }
         }
     }
-    public async runAsync(): Promise<IInitAppActionPayload> {
+    public async runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload> {
+        this.options = options;
         //English strings are baked into this bundle. For non-en locales, we assume a strings/{locale}.json
         //exists for us to fetch
         const { locale } = this.options;

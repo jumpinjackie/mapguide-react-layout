@@ -15,6 +15,7 @@ import { ActionType } from '../constants/actions';
 import { getViewer } from '../api/runtime';
 import { MgViewerInitCommand } from './init-mapguide';
 import { tr } from '../api/i18n';
+import { IViewerInitCommand } from './init-command';
 
 function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: IInitAsyncOptions): void {
     if (error.stack) {
@@ -208,10 +209,11 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
  * Initializes the viewer
  *
  * @export
+ * @param {IViewerInitCommand} cmd
  * @param {IInitAppLayout} options
  * @returns {ReduxThunkedAction}
  */
-export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
+export function initLayout(cmd: IViewerInitCommand, options: IInitAppLayout): ReduxThunkedAction {
     const opts: IInitAsyncOptions = { ...options };
     return (dispatch, getState) => {
         const args = getState().config;
@@ -220,8 +222,8 @@ export function initLayout(options: IInitAppLayout): ReduxThunkedAction {
         //non-english string bundle
         if (args.agentUri && args.agentKind) {
             const client = new Client(args.agentUri, args.agentKind);
-            const cmd = new MgViewerInitCommand(dispatch, options, client);
-            cmd.runAsync().then(payload => {
+            cmd.attachClient(client);
+            cmd.runAsync(options).then(payload => {
                 let initPayload = payload;
                 if (opts.initialView) {
                     initPayload.initialView = {

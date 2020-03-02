@@ -12,6 +12,7 @@ import { ApplicationDefinition } from '../api/contracts/fusion';
 import { deArrayify } from '../api/builders/deArrayify';
 import { registerLayout } from '../api/registry/layout';
 import { IConfigurationReducerState, IViewerReducerState } from '../api/common';
+import { MgViewerInitCommand } from 'actions/init-mapguide';
 const testMapSheboygan: RuntimeMap = deArrayify(require("./data/test-runtime-map-sheboygan.json"));
 const testMapRedding: RuntimeMap = deArrayify(require("./data/test-runtime-map-redding.json"));
 const testMapMelbourne: RuntimeMap = deArrayify(require("./data/test-runtime-map-melbourne.json"));

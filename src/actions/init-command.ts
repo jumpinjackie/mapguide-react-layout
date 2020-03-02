@@ -1,6 +1,6 @@
 import { IInitAsyncOptions } from './init';
-import { ReduxDispatch, Dictionary, CommandTarget, IConfigurationReducerState } from '../api/common';
-import { IInitAppActionPayload } from './defs';
+import { ReduxDispatch, Dictionary, CommandTarget, ActiveMapTool } from '../api/common';
+import { IInitAppActionPayload, MapInfo } from './defs';
 import { IFlyoutSpec, ISeparatorSpec, IUnknownCommandSpec, ICommandSpec, convertWidget, ToolbarConf, PreparedSubMenuSet, isFlyoutSpec } from '../api/registry/command-spec';
 import { makeUnique } from '../utils/array';
 import { UIWidget, ContainerItem, Widget, ApplicationDefinition } from '../api/contracts/fusion';
@@ -8,22 +8,47 @@ import { assertNever } from '../utils/never';
 import { strIsNullOrEmpty } from '../utils/string';
 import { SPRITE_INVOKE_URL, SPRITE_INVOKE_SCRIPT } from '../constants/assets';
 import { UIItem, CommandDef, isCommandItem, isTargetedCommand, isBasicCommand, isSeparatorItem, isFlyoutItem } from '../api/contracts/weblayout';
-import { warn } from '../utils/logger';
-import { DefaultCommands } from '../api/registry/command';
-import { tr } from '../api/i18n';
+import { warn, info } from '../utils/logger';
+import { DefaultCommands, registerCommand } from '../api/registry/command';
+import { tr, registerStringBundle, DEFAULT_LOCALE } from '../api/i18n';
 import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU } from "../constants";
 import * as shortid from 'shortid';
 import { Client } from '../api/client';
+import { ActionType } from '../constants/actions';
+import { ensureParameters } from '../utils/url';
 
 export interface IViewerInitCommand {
     attachClient(client: Client): void;
     runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
 }
 
-export abstract class ViewerInitCommand implements IViewerInitCommand {
+export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand {
     constructor(protected readonly dispatch: ReduxDispatch) { }
     public abstract attachClient(client: Client): void;
     public abstract runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
+    protected abstract establishInitialMapNameAndSession(mapsByName: Dictionary<TSubject>): [string, string];
+    protected abstract setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<TSubject>, config: any, warnings: string[]): Dictionary<MapInfo>;
+    protected async initLocaleAsync(options: IInitAsyncOptions): Promise<void> {
+        //English strings are baked into this bundle. For non-en locales, we assume a strings/{locale}.json
+        //exists for us to fetch
+        const { locale } = options;
+        if (locale != DEFAULT_LOCALE) {
+            const r = await fetch(`strings/${locale}.json`);
+            if (r.ok) {
+                const res = await r.json();
+                registerStringBundle(locale, res);
+                // Dispatch the SET_LOCALE as it is safe to change UI strings at this point
+                this.dispatch({
+                    type: ActionType.SET_LOCALE,
+                    payload: locale
+                });
+                info(`Registered string bundle for locale: ${locale}`);
+            } else {
+                //TODO: Push warning to init error/warning reducer when we implement it
+                warn(`Failed to register string bundle for locale: ${locale}`);
+            }
+        }
+    }
     protected tryTranslateImageUrlToSpriteClass(imageUrl: string): string | undefined {
         switch (imageUrl) {
             case "../stdicons/icon_invokeurl.gif":
@@ -208,5 +233,125 @@ export abstract class ViewerInitCommand implements IViewerInitCommand {
             }
         }
         return [prepared, bFoundContextMenu]
+    }
+    protected async initFromAppDefCoreAsync(appDef: ApplicationDefinition, options: IInitAsyncOptions, mapsByName: Dictionary<TSubject>, warnings: string[]): Promise<IInitAppActionPayload> {
+        let initialTask: string;
+        let taskPane: Widget | undefined;
+        let viewSize: Widget | undefined;
+        let hasLegend = false;
+        let hasStatus = false;
+        let hasNavigator = false;
+        let hasSelectionPanel = false;
+        let hasTaskBar = false;
+        const { locale, featureTooltipsEnabled } = options;
+        const config: any = {};
+        const tbConf: Dictionary<ToolbarConf> = {};
+        const widgetsByKey: Dictionary<Widget> = {};
+        //Register any InvokeURL and Search commands. Also set capabilities along the way
+        for (const widgetSet of appDef.WidgetSet) {
+            for (const widget of widgetSet.Widget) {
+                const cmd = widget.Extension;
+                switch (widget.Type) {
+                    case "TaskPane":
+                        taskPane = widget;
+                        break;
+                    case "ViewSize":
+                        viewSize = widget;
+                        break;
+                    case "Legend":
+                        hasLegend = true;
+                        break;
+                    case "SelectionPanel":
+                        hasSelectionPanel = true;
+                        break;
+                    case "CursorPosition":
+                    case "SelectionInfo":
+                        hasStatus = true;
+                        break;
+                    case "Navigator":
+                        hasNavigator = true;
+                        break;
+                    case "Search":
+                        registerCommand(widget.Name, {
+                            layer: cmd.Layer,
+                            prompt: cmd.Prompt,
+                            resultColumns: cmd.ResultColumns,
+                            filter: cmd.Filter,
+                            matchLimit: cmd.MatchLimit,
+                            title: (cmd.Title || (this.isUIWidget(widget) ? widget.Label : undefined)),
+                            target: this.convertToCommandTarget(cmd.Target),
+                            targetFrame: cmd.Target
+                        });
+                        break;
+                    case "InvokeURL":
+                        registerCommand(widget.Name, {
+                            url: cmd.Url,
+                            disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
+                            target: this.convertToCommandTarget(cmd.Target),
+                            targetFrame: cmd.Target,
+                            parameters: (cmd.AdditionalParameter || []).map((p: any) => {
+                                return { name: p.Key, value: p.Value };
+                            }),
+                            title: this.isUIWidget(widget) ? widget.Label : undefined
+                        });
+                        break;
+                }
+                widgetsByKey[widget.Name] = widget;
+            }
+        }
+        //Now build toolbar layouts
+        for (const widgetSet of appDef.WidgetSet) {
+            for (const cont of widgetSet.Container) {
+                let tbName = cont.Name;
+                tbConf[tbName] = { items: this.convertFlexLayoutUIItems(cont.Item, widgetsByKey, locale) };
+            }
+            for (const w of widgetSet.Widget) {
+                if (w.Type == "CursorPosition") {
+                    config.coordinateProjection = w.Extension.DisplayProjection;
+                    config.coordinateDecimals = w.Extension.Precision;
+                    config.coordinateDisplayFormat = w.Extension.Template;
+                }
+            }
+        }
+
+        const maps = this.setupMaps(appDef, mapsByName, config, warnings);
+
+        if (taskPane) {
+            hasTaskBar = true; //Fusion flex layouts can't control the visiblity of this
+            initialTask = taskPane.Extension.InitialTask || "server/TaskPane.html";
+        } else {
+            initialTask = "server/TaskPane.html";
+        }
+
+        if (appDef.Title) {
+            document.title = appDef.Title || document.title;
+        }
+
+        const [firstMapName, firstSessionId] = this.establishInitialMapNameAndSession(mapsByName);
+        const [tb, bFoundContextMenu] = this.prepareSubMenus(tbConf);
+        if (!bFoundContextMenu) {
+            warnings.push(tr("INIT_WARNING_NO_CONTEXT_MENU", locale, { containerName: WEBLAYOUT_CONTEXTMENU }));
+        }
+        return {
+            activeMapName: firstMapName,
+            initialUrl: ensureParameters(initialTask, firstMapName, firstSessionId, locale),
+            featureTooltipsEnabled: featureTooltipsEnabled,
+            locale: locale,
+            maps: maps,
+            config: config,
+            capabilities: {
+                hasTaskPane: (taskPane != null),
+                hasTaskBar: hasTaskBar,
+                hasStatusBar: hasStatus,
+                hasNavigator: hasNavigator,
+                hasSelectionPanel: hasSelectionPanel,
+                hasLegend: hasLegend,
+                hasToolbar: (Object.keys(tbConf).length > 0),
+                hasViewSize: (viewSize != null)
+            },
+            toolbars: tb,
+            warnings: warnings,
+            initialActiveTool: ActiveMapTool.Pan
+        };
     }
 }

@@ -23,7 +23,7 @@ import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU, WEBLAYOUT_TOOLBAR } from "..
 import { registerCommand } from '../api/registry/command';
 import { ensureParameters } from '../utils/url';
 
-export class MgViewerInitCommand extends ViewerInitCommand {
+export class MgViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
     private client: Client;
     private options: IInitAsyncOptions;
     constructor(dispatch: ReduxDispatch) {
@@ -31,6 +31,25 @@ export class MgViewerInitCommand extends ViewerInitCommand {
     }
     public attachClient(client: Client): void {
         this.client = client;
+    }
+    /**
+     * @override
+     * @protected
+     * @param {Dictionary<RuntimeMap>} mapsByName
+     * @memberof MgViewerInitCommand
+     */
+    protected establishInitialMapNameAndSession(mapsByName: Dictionary<RuntimeMap>): [string, string] {
+        let firstMapName = "";
+        let firstSessionId = "";
+        for (const mapName in mapsByName) {
+            if (!firstMapName && !firstSessionId) {
+                const map = mapsByName[mapName];
+                firstMapName = map.Name;
+                firstSessionId = map.SessionId;
+                break;
+            }
+        }
+        return [firstMapName, firstSessionId];
     }
     private getDesiredTargetMapName(mapDef: string) {
         const lastSlash = mapDef.lastIndexOf("/");
@@ -40,7 +59,7 @@ export class MgViewerInitCommand extends ViewerInitCommand {
         } else {
             return `Map_${shortid.generate()}`;
         }
-    }    
+    }
     private async initFromWebLayoutAsync(webLayout: WebLayout, session: string, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
         const [mapsByName, warnings] = await this.createRuntimeMapsAsync(session, webLayout, wl => [{ name: this.getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId }], () => [], sessionWasReused);
         const cmdsByKey: any = {};
@@ -222,7 +241,7 @@ export class MgViewerInitCommand extends ViewerInitCommand {
             fetchEpsgs.push({ epsg: e, mapDef: "" });
         }
         const epsgs = await Promise.all(fetchEpsgs.map(f => resolveProjectionFromEpsgIoAsync(f.epsg, locale, f.mapDef)));
-    
+
         //Previously, we register proj4 with OpenLayers on the bootstrap phase way before this init
         //process is started. This no longer works for OL6 where it doesn't seem to pick up the extra
         //projections we've registered with proj4 after linking proj4 to OpenLayers. So that registration
@@ -230,7 +249,7 @@ export class MgViewerInitCommand extends ViewerInitCommand {
         //with proj4
         debug(`Register proj4 with OpenLayers`);
         register(proj4);
-    
+
         //Build the Dictionary<RuntimeMap> from loaded maps
         const mapsByName: Dictionary<RuntimeMap> = {};
         for (const map of maps) {
@@ -238,135 +257,80 @@ export class MgViewerInitCommand extends ViewerInitCommand {
         }
         return [mapsByName, warnings];
     }
+    /**
+     * @override
+     * @protected
+     * @param {ApplicationDefinition} appDef
+     * @param {Dictionary<RuntimeMap>} mapsByName
+     * @param {*} config
+     * @param {string[]} warnings
+     * @returns {Dictionary<MapInfo>}
+     * @memberof MgViewerInitCommand
+     */
+    protected setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<RuntimeMap>, config: any, warnings: string[]): Dictionary<MapInfo> {
+        const dict: Dictionary<MapInfo> = {};
+        if (appDef.MapSet) {
+            for (const mgGroup of appDef.MapSet.MapGroup) {
+                let mapName: string | undefined;
+                //Setup external layers
+                const externalBaseLayers = [] as IExternalBaseLayer[];
+                for (const map of mgGroup.Map) {
+                    if (map.Type === "MapGuide") {
+                        //TODO: Based on the schema, different MG map groups could have different
+                        //settings here and our redux tree should reflect that. Currently the first one "wins"
+                        if (!config.selectionColor && map.Extension.SelectionColor != null) {
+                            config.selectionColor = map.Extension.SelectionColor;
+                        }
+                        if (!config.imageFormat && map.Extension.ImageFormat != null) {
+                            config.imageFormat = map.Extension.ImageFormat;
+                        }
+                        if (!config.selectionImageFormat && map.Extension.SelectionFormat != null) {
+                            config.selectionImageFormat = map.Extension.SelectionFormat;
+                        }
+
+                        //NOTE: Although non-sensical, if the same map definition exists across multiple
+                        //MapGroups, we might be matching the wrong one. We just assume such non-sensical
+                        //AppDefs won't exist
+                        for (const name in mapsByName) {
+                            if (mapsByName[name].MapDefinition == map.Extension.ResourceId) {
+                                mapName = name;
+                                break;
+                            }
+                        }
+                    } else {
+                        processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayers);
+                    }
+                }
+                //First come, first served
+                if (externalBaseLayers.length > 0) {
+                    externalBaseLayers[0].visible = true;
+                }
+
+                //Setup initial view
+                let initialView: IView | undefined;
+                if (mgGroup.InitialView) {
+                    initialView = {
+                        x: mgGroup.InitialView.CenterX,
+                        y: mgGroup.InitialView.CenterY,
+                        scale: mgGroup.InitialView.Scale
+                    };
+                }
+
+                if (mapName) {
+                    dict[mapName] = {
+                        mapGroupId: mgGroup["@id"],
+                        map: mapsByName[mapName],
+                        initialView: initialView,
+                        externalBaseLayers: externalBaseLayers
+                    };
+                }
+            }
+        }
+        return dict;
+    }
     private async initFromAppDefAsync(appDef: ApplicationDefinition, session: string, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
         const [mapsByName, warnings] = await this.createRuntimeMapsAsync(session, appDef, fl => getMapDefinitionsFromFlexLayout(fl), fl => this.getExtraProjectionsFromFlexLayout(fl), sessionWasReused);
-        let initialTask: string;
-        let taskPane: Widget | undefined;
-        let viewSize: Widget | undefined;
-        let hasLegend = false;
-        let hasStatus = false;
-        let hasNavigator = false;
-        let hasSelectionPanel = false;
-        let hasTaskBar = false;
-        const { locale, featureTooltipsEnabled } = this.options;
-        const config: any = {};
-        const tbConf: Dictionary<ToolbarConf> = {};
-        const widgetsByKey: Dictionary<Widget> = {};
-        //Register any InvokeURL and Search commands. Also set capabilities along the way
-        for (const widgetSet of appDef.WidgetSet) {
-            for (const widget of widgetSet.Widget) {
-                const cmd = widget.Extension;
-                switch (widget.Type) {
-                    case "TaskPane":
-                        taskPane = widget;
-                        break;
-                    case "ViewSize":
-                        viewSize = widget;
-                        break;
-                    case "Legend":
-                        hasLegend = true;
-                        break;
-                    case "SelectionPanel":
-                        hasSelectionPanel = true;
-                        break;
-                    case "CursorPosition":
-                    case "SelectionInfo":
-                        hasStatus = true;
-                        break;
-                    case "Navigator":
-                        hasNavigator = true;
-                        break;
-                    case "Search":
-                        registerCommand(widget.Name, {
-                            layer: cmd.Layer,
-                            prompt: cmd.Prompt,
-                            resultColumns: cmd.ResultColumns,
-                            filter: cmd.Filter,
-                            matchLimit: cmd.MatchLimit,
-                            title: (cmd.Title || (this.isUIWidget(widget) ? widget.Label : undefined)),
-                            target: this.convertToCommandTarget(cmd.Target),
-                            targetFrame: cmd.Target
-                        });
-                        break;
-                    case "InvokeURL":
-                        registerCommand(widget.Name, {
-                            url: cmd.Url,
-                            disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
-                            target: this.convertToCommandTarget(cmd.Target),
-                            targetFrame: cmd.Target,
-                            parameters: (cmd.AdditionalParameter || []).map((p: any) => {
-                                return { name: p.Key, value: p.Value };
-                            }),
-                            title: this.isUIWidget(widget) ? widget.Label : undefined
-                        });
-                        break;
-                }
-                widgetsByKey[widget.Name] = widget;
-            }
-        }
-        //Now build toolbar layouts
-        for (const widgetSet of appDef.WidgetSet) {
-            for (const cont of widgetSet.Container) {
-                let tbName = cont.Name;
-                tbConf[tbName] = { items: this.convertFlexLayoutUIItems(cont.Item, widgetsByKey, locale) };
-            }
-            for (const w of widgetSet.Widget) {
-                if (w.Type == "CursorPosition") {
-                    config.coordinateProjection = w.Extension.DisplayProjection;
-                    config.coordinateDecimals = w.Extension.Precision;
-                    config.coordinateDisplayFormat = w.Extension.Template;
-                }
-            }
-        }
-
-        const maps = setupMaps(appDef, mapsByName, config, warnings);
-
-        if (taskPane) {
-            hasTaskBar = true; //Fusion flex layouts can't control the visiblity of this
-            initialTask = taskPane.Extension.InitialTask || "server/TaskPane.html";
-        } else {
-            initialTask = "server/TaskPane.html";
-        }
-
-        if (appDef.Title) {
-            document.title = appDef.Title || document.title;
-        }
-
-        let firstMapName = "";
-        let firstSessionId = "";
-        for (const mapName in mapsByName) {
-            if (!firstMapName && !firstSessionId) {
-                const map = mapsByName[mapName];
-                firstMapName = map.Name;
-                firstSessionId = map.SessionId;
-                break;
-            }
-        }
-        const [tb, bFoundContextMenu] = this.prepareSubMenus(tbConf);
-        if (!bFoundContextMenu) {
-            warnings.push(tr("INIT_WARNING_NO_CONTEXT_MENU", locale, { containerName: WEBLAYOUT_CONTEXTMENU }));
-        }
-        return {
-            activeMapName: firstMapName,
-            initialUrl: ensureParameters(initialTask, firstMapName, firstSessionId, locale),
-            featureTooltipsEnabled: featureTooltipsEnabled,
-            locale: locale,
-            maps: maps,
-            config: config,
-            capabilities: {
-                hasTaskPane: (taskPane != null),
-                hasTaskBar: hasTaskBar,
-                hasStatusBar: hasStatus,
-                hasNavigator: hasNavigator,
-                hasSelectionPanel: hasSelectionPanel,
-                hasLegend: hasLegend,
-                hasToolbar: (Object.keys(tbConf).length > 0),
-                hasViewSize: (viewSize != null)
-            },
-            toolbars: tb,
-            warnings: warnings,
-            initialActiveTool: ActiveMapTool.Pan
-        };
+        return await this.initFromAppDefCoreAsync(appDef, this.options, mapsByName, warnings);
     }
     private async sessionAcquiredAsync(session: string, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
         const { resourceId, locale } = this.options;
@@ -391,26 +355,8 @@ export class MgViewerInitCommand extends ViewerInitCommand {
     }
     public async runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload> {
         this.options = options;
-        //English strings are baked into this bundle. For non-en locales, we assume a strings/{locale}.json
-        //exists for us to fetch
-        const { locale } = this.options;
         let session = this.options.session;
-        if (locale != DEFAULT_LOCALE) {
-            const r = await fetch(`strings/${locale}.json`);
-            if (r.ok) {
-                const res = await r.json();
-                registerStringBundle(locale, res);
-                // Dispatch the SET_LOCALE as it is safe to change UI strings at this point
-                this.dispatch({
-                    type: ActionType.SET_LOCALE,
-                    payload: locale
-                });
-                info(`Registered string bundle for locale: ${locale}`);
-            } else {
-                //TODO: Push warning to init error/warning reducer when we implement it
-                warn(`Failed to register string bundle for locale: ${locale}`);
-            }
-        }
+        await this.initLocaleAsync(this.options);
         let sessionWasReused = false;
         if (!session) {
             session = await this.client.createSession("Anonymous", "");
@@ -460,68 +406,6 @@ export function getMapDefinitionsFromFlexLayout(appDef: ApplicationDefinition): 
         return configs.map(c => ({ name: c[0], mapDef: c[1].Extension.ResourceId }));
     }
     throw new MgError("No Map Definition found in Application Definition");
-}
-
-export function setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<RuntimeMap>, config: any, warnings: string[]): Dictionary<MapInfo> {
-    const dict: Dictionary<MapInfo> = {};
-    if (appDef.MapSet) {
-        for (const mgGroup of appDef.MapSet.MapGroup) {
-            let mapName: string | undefined;
-            //Setup external layers
-            const externalBaseLayers = [] as IExternalBaseLayer[];
-            for (const map of mgGroup.Map) {
-                if (map.Type === "MapGuide") {
-                    //TODO: Based on the schema, different MG map groups could have different
-                    //settings here and our redux tree should reflect that. Currently the first one "wins"
-                    if (!config.selectionColor && map.Extension.SelectionColor != null) {
-                        config.selectionColor = map.Extension.SelectionColor;
-                    }
-                    if (!config.imageFormat && map.Extension.ImageFormat != null) {
-                        config.imageFormat = map.Extension.ImageFormat;
-                    }
-                    if (!config.selectionImageFormat && map.Extension.SelectionFormat != null) {
-                        config.selectionImageFormat = map.Extension.SelectionFormat;
-                    }
-
-                    //NOTE: Although non-sensical, if the same map definition exists across multiple
-                    //MapGroups, we might be matching the wrong one. We just assume such non-sensical
-                    //AppDefs won't exist
-                    for (const name in mapsByName) {
-                        if (mapsByName[name].MapDefinition == map.Extension.ResourceId) {
-                            mapName = name;
-                            break;
-                        }
-                    }
-                } else {
-                    processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayers);
-                }
-            }
-            //First come, first served
-            if (externalBaseLayers.length > 0) {
-                externalBaseLayers[0].visible = true;
-            }
-
-            //Setup initial view
-            let initialView: IView | undefined;
-            if (mgGroup.InitialView) {
-                initialView = {
-                    x: mgGroup.InitialView.CenterX,
-                    y: mgGroup.InitialView.CenterY,
-                    scale: mgGroup.InitialView.Scale
-                };
-            }
-
-            if (mapName) {
-                dict[mapName] = {
-                    mapGroupId: mgGroup["@id"],
-                    map: mapsByName[mapName],
-                    initialView: initialView,
-                    externalBaseLayers: externalBaseLayers
-                };
-            }
-        }
-    }
-    return dict;
 }
 
 export type MapToLoad = { name: string, mapDef: string };

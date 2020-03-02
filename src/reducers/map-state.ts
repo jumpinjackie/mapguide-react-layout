@@ -5,11 +5,10 @@ import {
     ILayerInfo,
     IMapGuideSubState
 } from "../api/common";
-import { RuntimeMap } from "../api/contracts/runtime-map";
 import { isMapView } from "../utils/type-guards";
 import { makeUnique } from "../utils/array";
 import { ActionType } from '../constants/actions';
-import { ViewerAction } from '../actions/defs';
+import { ViewerAction, isGenericSubjectMapLayer } from '../actions/defs';
 import { debug } from '../utils/logger';
 
 export const MAP_STATE_INITIAL_STATE: IBranchedMapState = {
@@ -127,48 +126,53 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                     const sg = [];
                     const hl = [];
                     const hg = [];
+                    let mrtm;
 
                     if (mapName == mapNameToApplyInitialState) {
-                        const rtm: RuntimeMap = maps[mapName].map;
-                        const isl = payload.initialShowLayers || [];
-                        const isg = payload.initialShowGroups || [];
-                        const ihl = payload.initialHideLayers || [];
-                        const ihg = payload.initialHideGroups || [];
+                        const rtm = maps[mapName].map;
+                        if (!isGenericSubjectMapLayer(rtm)) {
+                            const isl = payload.initialShowLayers ?? [];
+                            const isg = payload.initialShowGroups ?? [];
+                            const ihl = payload.initialHideLayers ?? [];
+                            const ihg = payload.initialHideGroups ?? [];
 
-                        //Only initally show what is initially hidden and vice versa
-                        //NOTE: A map could have duplicate group/layer names, we make no attempt
-                        //to pick out the "correct" one. It's first come first serve.
-                        if (rtm.Layer) {
-                            for (const l of rtm.Layer) {
-                                if (isl.indexOf(l.Name) >= 0 && !l.Visible) {
-                                    sl.push(l.ObjectId);
-                                } else if (ihl.indexOf(l.Name) >= 0 && l.Visible) {
-                                    hl.push(l.ObjectId);
+                            //Only initally show what is initially hidden and vice versa
+                            //NOTE: A map could have duplicate group/layer names, we make no attempt
+                            //to pick out the "correct" one. It's first come first serve.
+                            if (rtm.Layer) {
+                                for (const l of rtm.Layer) {
+                                    if (isl.indexOf(l.Name) >= 0 && !l.Visible) {
+                                        sl.push(l.ObjectId);
+                                    } else if (ihl.indexOf(l.Name) >= 0 && l.Visible) {
+                                        hl.push(l.ObjectId);
+                                    }
                                 }
                             }
-                        }
-                        if (rtm.Group) {
-                            for (const g of rtm.Group) {
-                                if (isg.indexOf(g.Name) >= 0 && !g.Visible) {
-                                    sg.push(g.ObjectId);
-                                } else if (ihg.indexOf(g.Name) >= 0 && g.Visible) {
-                                    hg.push(g.ObjectId);
+                            if (rtm.Group) {
+                                for (const g of rtm.Group) {
+                                    if (isg.indexOf(g.Name) >= 0 && !g.Visible) {
+                                        sg.push(g.ObjectId);
+                                    } else if (ihg.indexOf(g.Name) >= 0 && g.Visible) {
+                                        hg.push(g.ObjectId);
+                                    }
                                 }
                             }
-                        }
-                        debug(`Initially showing layers: ${isl.join("|")}`);
-                        debug(`Initially showing groups: ${isg.join("|")}`);
-                        debug(`Initially hiding layers: ${ihl.join("|")}`);
-                        debug(`Initially hiding groups: ${ihg.join("|")}`);
+                            debug(`Initially showing layers: ${isl.join("|")}`);
+                            debug(`Initially showing groups: ${isg.join("|")}`);
+                            debug(`Initially hiding layers: ${ihl.join("|")}`);
+                            debug(`Initially hiding groups: ${ihg.join("|")}`);
 
-                        debug(`Initially showing layer ids: ${sl.join("|")}`);
-                        debug(`Initially showing group ids: ${sg.join("|")}`);
-                        debug(`Initially hiding layer ids: ${hl.join("|")}`);
-                        debug(`Initially hiding group ids: ${hg.join("|")}`);
+                            debug(`Initially showing layer ids: ${sl.join("|")}`);
+                            debug(`Initially showing group ids: ${sg.join("|")}`);
+                            debug(`Initially hiding layer ids: ${hl.join("|")}`);
+                            debug(`Initially hiding group ids: ${hg.join("|")}`);
+
+                            mrtm = { runtimeMap: rtm };
+                        }
                     }
                     const newMgSubState = {
                         ...MG_INITIAL_SUB_STATE,
-                        ...{ runtimeMap: maps[mapName].map },
+                        ...mrtm,
                         ...(isel || {}),
                         ...(sl.length > 0 ? { showLayers: [...sl] } : {}),
                         ...(sg.length > 0 ? { showGroups: [...sg] } : {}),
@@ -182,7 +186,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                         ...(cv || {}),
                         ...{ mapguide: newMgSubState }
                     };
-                    
+
 
                     // As INIT_APP does not establish a currentView, if a currentView was
                     // somehow established as part of the initial app state, we will keep

@@ -84,6 +84,7 @@ export interface IMapProviderContext extends IMapViewer {
     incrementBusyWorker(): void;
     decrementBusyWorker(): void;
     attachToComponent(el: HTMLElement, comp: IViewerComponent): void;
+    setToasterRef(ref: React.RefObject<Toaster>): void;
     setProviderState(nextState: IMapProviderState): void;
     onKeyDown(e: GenericEvent): void;
 }
@@ -556,17 +557,9 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      * @memberof BaseMapProviderContext
      */
     protected onBeforeAttachingLayerSetGroup(layerSetGroup: TLayerSetGroup): void { }
-
-    /**
-     * Sets the redux dispatcher function
-     *
-     * @param {ReduxDispatch} dispatch
-     * @memberof MapGuideMapProviderContext
-     */
-    public setDispatcher(dispatch: ReduxDispatch) {
-        this._dispatcher = dispatch;
+    public setToasterRef(ref: React.RefObject<Toaster>) {
+        this._toasterRef = ref;
     }
-
     public abstract setProviderState(nextState: TState): void;
 
     public onKeyDown(e: GenericEvent) {

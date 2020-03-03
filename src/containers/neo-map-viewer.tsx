@@ -249,6 +249,7 @@ export const MgMapViewer = () => {
         activeSelectedFeatureColor,
         selection
     };
+    context.setToasterRef(toasterRef);
     context.setProviderState(nextState);
 
     // Side-effect to apply the current external layer list
@@ -323,6 +324,7 @@ export const GenericMapViewer = () => {
         // ================ Generic-specific =================== //
         subject
     };
+    context.setToasterRef(toasterRef);
     context.setProviderState(nextState);
 
     // Side-effect to apply the current external layer list

@@ -338,7 +338,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @readonly
      * @memberof MapGuideMapProviderContext
      */
-    public isMouseOverTooltip() { return this._featureTooltip?.isMouseOver == true || this._selectTooltip.isMouseOver; }
+    public isMouseOverTooltip() { return this._featureTooltip?.isMouseOver == true || this._selectTooltip?.isMouseOver == true; }
 
     /**
      * @override

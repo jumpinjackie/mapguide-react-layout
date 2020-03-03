@@ -11,6 +11,8 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Source from 'ol/source/Source';
 import ImageSource from 'ol/source/Image';
+import ImageWMSSource from "ol/source/ImageWMS";
+import TileWMSSource from "ol/source/TileWMS";
 import TileImageSource from "ol/source/TileImage";
 import Map from "ol/Map";
 import OverviewMap from "ol/control/OverviewMap"
@@ -39,7 +41,7 @@ export abstract class LayerSetGroupBase {
     public clearScratchLayer() {
         this.scratchLayer.getSource().clear();
     }
-    
+    public abstract tryGetWmsSource(): ImageWMSSource | TileWMSSource | undefined;
     protected registerSourceEvents(source: Source): void {
         if (source instanceof ImageSource) {
             source.on("imageloadstart", this.callback.addImageLoading);

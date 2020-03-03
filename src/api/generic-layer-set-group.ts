@@ -9,7 +9,9 @@ import LayerGroup from 'ol/layer/Group';
 import TileLayer from 'ol/layer/Tile';
 import { get } from "ol/proj";
 import TileWMS from 'ol/source/TileWMS';
+import ImageWMS from 'ol/source/ImageWMS';
 import { IImageLayerEvents } from './layer-set-contracts';
+import ImageLayer from "ol/layer/Image";
 
 const DEFAULT_BOUNDS_3857: Bounds = [
     -20026376.39,
@@ -45,6 +47,17 @@ export class GenericLayerSetGroup extends LayerSetGroupBase {
             if (!(suppress == true))
                 this.registerSourceEvents(src);
         }
+    }
+    public tryGetWmsSource() {
+        const mainLayer = this.mainSet as GenericLayerSetOL;
+        const { subjectLayer } = mainLayer;
+        if (subjectLayer instanceof ImageLayer || subjectLayer instanceof TileLayer) {
+            const source = subjectLayer.getSource();
+            if (source instanceof ImageWMS || source instanceof TileWMS) {
+                return source;
+            }
+        }
+        return undefined;
     }
     private createExternalBaseLayer(ext: IExternalBaseLayer) {
         const extSource = createExternalSource(ext);

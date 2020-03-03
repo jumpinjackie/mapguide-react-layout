@@ -105,9 +105,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected _ovMap: OverviewMap | undefined;
 
     protected _layerSetGroups: Dictionary<TLayerSetGroup>;
-    protected _mouseTooltip: MouseTrackingTooltip;
-
-    protected _selectTooltip: SelectedFeaturesTooltip;
+    protected _mouseTooltip: MouseTrackingTooltip | undefined;
+    protected _selectTooltip: SelectedFeaturesTooltip | undefined;
 
     protected _comp: IViewerComponent | undefined;
     protected _zoomSelectBox: DragBox;
@@ -430,12 +429,12 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      * @readonly
      * @memberof BaseMapProviderContext
      */
-    public isMouseOverTooltip() { return this._selectTooltip.isMouseOver; }
+    public isMouseOverTooltip() { return this._selectTooltip?.isMouseOver ?? false; }
     protected clearMouseTooltip(): void {
-        this._mouseTooltip.clear();
+        this._mouseTooltip?.clear();
     }
     protected setMouseTooltip(text: string) {
-        this._mouseTooltip.setText(text);
+        this._mouseTooltip?.setText(text);
     }
     protected handleMouseTooltipMouseMove(e: GenericEvent) {
         this._mouseTooltip?.onMouseMove?.(e);
@@ -446,10 +445,10 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected showSelectedVectorFeatures(features: Collection<Feature>, pixel: [number, number], locale?: string) {
         this._selectTooltip?.showSelectedVectorFeatures(features, pixel, locale);
     }
-    protected queryWmsFeatures(layerMgr: ILayerManager, coord: Coordinate2D) {
+    protected queryWmsFeatures(currentLayerSet: LayerSetGroupBase | undefined, layerMgr: ILayerManager, coord: Coordinate2D) {
         if (this._map) {
             const res = this._map.getView().getResolution();
-            this._selectTooltip?.queryWmsFeatures(layerMgr, coord, res, {
+            this._selectTooltip?.queryWmsFeatures(currentLayerSet, layerMgr, coord, res, {
                 getLocale: () => this._state.locale,
                 addFeatureToHighlight: (feat, bAppend) => this.addFeatureToHighlight(feat, bAppend)
             });
@@ -479,7 +478,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             return;
         }
         if (this._state.activeTool == ActiveMapTool.WmsQueryFeatures) {
-            this.queryWmsFeatures(this.getLayerManager(), e.coordinate as Coordinate2D);
+            const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
+            this.queryWmsFeatures(activeLayerSet, this.getLayerManager(), e.coordinate as Coordinate2D);
         } else {
             let vfSelected = 0;
             if (this._state.activeTool == ActiveMapTool.Select) {

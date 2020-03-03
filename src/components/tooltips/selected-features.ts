@@ -14,6 +14,7 @@ import { Client } from '../../api/client';
 import { IMapViewerContextCallback } from '../map-viewer-context';
 import { parseEpsgCodeFromCRS } from '../layer-manager/wfs-capabilities-panel';
 import { ProjectionLike } from '@hanreev/types-ol/ol/proj';
+import { LayerSetGroupBase } from 'api/layer-set-group-base';
 
 export interface IQueryWmsFeaturesCallback {
     getLocale(): string | undefined;
@@ -57,49 +58,58 @@ export class SelectedFeaturesTooltip {
         this.featureTooltipElement.innerHTML = "";
         this.featureTooltipElement.classList.add("tooltip-hidden");
     }
-    public async queryWmsFeatures(layerMgr: ILayerManager, coord: Coordinate2D, resolution: number, callback: IQueryWmsFeaturesCallback) {
+    public async queryWmsFeatures(currentLayerSet: LayerSetGroupBase | undefined, layerMgr: ILayerManager, coord: Coordinate2D, resolution: number, callback: IQueryWmsFeaturesCallback) {
         let selected = 0;
         //See what WMS layers we have
         const client = new Client("", "mapagent");
         const format = new GeoJSON();
+        const wmsSources: (olSourceWMS | olSourceTileWMS)[] = [];
+        //The active layer set may have a WMS layer
+        const currentWmsSource = currentLayerSet?.tryGetWmsSource();
+        if (currentWmsSource) {
+            wmsSources.push(currentWmsSource);
+        }
         const layers = layerMgr.getLayers().filter(l => l.visible && l.selectable && l.type == "WMS");
         for (const layer of layers) {
             const wmsLayer = layerMgr.getLayer(layer.name);
             if (wmsLayer instanceof olImageLayer || wmsLayer instanceof olTileLayer) {
                 const source = wmsLayer.getSource();
                 if (source instanceof olSourceWMS || source instanceof olSourceTileWMS) {
-                    const url = source.getFeatureInfoUrl(coord, resolution, this.map.getView().getProjection(), {
-                        'INFO_FORMAT': "application/json"
-                    });
-                    const resp = await client.getText(url);
-                    const json = JSON.parse(resp);
-                    if (json.features?.length > 0) {
-                        let srcProj: ProjectionLike = source.getProjection();
-                        if (!srcProj) {
-                            const epsg = parseEpsgCodeFromCRS(json.crs?.properties?.name);
-                            if (epsg) {
-                                srcProj = `EPSG:${epsg}`;
-                            }
-                        }
-                        const features = format.readFeatures(resp, {
-                            dataProjection: srcProj,
-                            featureProjection: this.map.getView().getProjection()
-                        });
-                        this.featureTooltip.setPosition(coord);
-                        const html = this.generateFeatureHtml(features[0], callback.getLocale());
-                        callback.addFeatureToHighlight(features[0], false);
-                        selected++;
-                        this.featureTooltipElement.innerHTML = html;
-                        this.closerEl = document.getElementById("feat-popup-closer");
-                        this.setPopupCloseHandler();
-                        if (html == "") {
-                            this.featureTooltipElement.classList.add("tooltip-hidden");
-                        } else {
-                            this.featureTooltipElement.classList.remove("tooltip-hidden");
-                        }
-                        return;
+                    wmsSources.push(source);
+                }
+            }
+        }
+        for (const source of wmsSources) {
+            const url = source.getFeatureInfoUrl(coord, resolution, this.map.getView().getProjection(), {
+                'INFO_FORMAT': "application/json"
+            });
+            const resp = await client.getText(url);
+            const json = JSON.parse(resp);
+            if (json.features?.length > 0) {
+                let srcProj: ProjectionLike = source.getProjection();
+                if (!srcProj) {
+                    const epsg = parseEpsgCodeFromCRS(json.crs?.properties?.name);
+                    if (epsg) {
+                        srcProj = `EPSG:${epsg}`;
                     }
                 }
+                const features = format.readFeatures(resp, {
+                    dataProjection: srcProj,
+                    featureProjection: this.map.getView().getProjection()
+                });
+                this.featureTooltip.setPosition(coord);
+                const html = this.generateFeatureHtml(features[0], callback.getLocale());
+                callback.addFeatureToHighlight(features[0], false);
+                selected++;
+                this.featureTooltipElement.innerHTML = html;
+                this.closerEl = document.getElementById("feat-popup-closer");
+                this.setPopupCloseHandler();
+                if (html == "") {
+                    this.featureTooltipElement.classList.add("tooltip-hidden");
+                } else {
+                    this.featureTooltipElement.classList.remove("tooltip-hidden");
+                }
+                return;
             }
         }
         // Clear if there was no selection made

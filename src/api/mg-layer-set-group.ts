@@ -35,6 +35,14 @@ export class MgLayerSetGroup extends LayerSetGroupBase {
                 this.registerSourceEvents(src);
         }
     }
+    /**
+     * @override
+     * @returns
+     * @memberof MgLayerSetGroup
+     */
+    public tryGetWmsSource() {
+        return undefined;
+    }
     public updateSelectionColor = (color: string) => this.mainSet.updateSelectionColor(color);
     public setMapGuideMocking(mock: MapGuideMockMode | undefined) {
         const allLayers = this.mainSet.getLayers();

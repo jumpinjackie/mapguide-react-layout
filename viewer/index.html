@@ -58,14 +58,15 @@
             var el = document.getElementById("map");
             var viewer = new MapGuide.Application();
             viewer.mount(el, {
+                initCommandFactory: function(dispatch) { return new MapGuide.MapGuideViewerInitCommand(dispatch); },
                 layout: "ajax-viewer",/*
                 externalBaseLayers: [
                     { name: "OpenStreetMap", kind: "OSM" },
                     { name: "Stamen - Toner", kind: "Stamen", visible: true, options: { layer: "toner" } },
                     { name: "Stamen - Watercolor", kind: "Stamen", options: { layer: "watercolor" } }
                 ],*/
-                agent: {
-                    uri: "../mapagent/mapagent.fcgi"
+                mapguide: {
+                    agentUri: "../mapagent/mapagent.fcgi"
                 }
             });
         </script>

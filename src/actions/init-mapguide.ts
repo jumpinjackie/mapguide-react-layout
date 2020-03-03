@@ -1,20 +1,19 @@
-import { ApplicationDefinition, MapConfiguration, Widget } from '../api/contracts/fusion';
+import { ApplicationDefinition, MapConfiguration } from '../api/contracts/fusion';
 import { RuntimeMap } from '../api/contracts/runtime-map';
-import { Dictionary, IExternalBaseLayer, ReduxDispatch, ActiveMapTool, IConfigurationReducerState } from '../api/common';
+import { Dictionary, IExternalBaseLayer, ReduxDispatch, ActiveMapTool } from '../api/common';
 import { MapInfo, IInitAppActionPayload, IRestoredSelectionSets } from './defs';
-import { tr, DEFAULT_LOCALE, registerStringBundle } from '../api/i18n';
+import { tr, DEFAULT_LOCALE } from '../api/i18n';
 import { IView } from '../api/contracts/common';
 import { strEndsWith } from '../utils/string';
 import { Client } from '../api/client';
 import { IInitAsyncOptions, processLayerInMapGroup } from './init';
 import { RuntimeMapFeatureFlags } from '../api/request-builder';
-import { info, debug, warn } from '../utils/logger';
+import { info, debug } from '../utils/logger';
 import { MgError } from '../api/error';
 import { resolveProjectionFromEpsgIoAsync } from '../api/registry/projections';
 import { register } from 'ol/proj/proj4';
 import proj4 from "proj4";
 import { ViewerInitCommand } from './init-command';
-import { ActionType } from '../constants/actions';
 import { WebLayout, isInvokeURLCommand, isSearchCommand } from '../api/contracts/weblayout';
 import { ToolbarConf } from '../api/registry/command-spec';
 import { clearSessionStore, getSelectionSet } from '../api/session-store';
@@ -22,9 +21,10 @@ import * as shortid from 'shortid';
 import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU, WEBLAYOUT_TOOLBAR } from "../constants";
 import { registerCommand } from '../api/registry/command';
 import { ensureParameters } from '../utils/url';
+import { assertIsDefined } from '../utils/assert';
 
-export class MgViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
-    private client: Client;
+export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
+    private client: Client | undefined;
     private options: IInitAsyncOptions;
     constructor(dispatch: ReduxDispatch) {
         super(dispatch);
@@ -181,6 +181,7 @@ export class MgViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
         };
     }
     private async tryDescribeRuntimeMapAsync(mapName: string, session: string, mapDef: string) {
+        assertIsDefined(this.client);
         try {
             const map = await this.client.describeRuntimeMap({
                 mapname: mapName,
@@ -202,6 +203,7 @@ export class MgViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
         }
     }
     private async createRuntimeMapsAsync<TLayout>(session: string, res: TLayout, mapDefSelector: (res: TLayout) => MapToLoad[], projectionSelector: (res: TLayout) => string[], sessionWasReused: boolean): Promise<[Dictionary<RuntimeMap>, string[]]> {
+        assertIsDefined(this.client);
         const mapDefs = mapDefSelector(res);
         const mapPromises: Promise<RuntimeMap>[] = [];
         const warnings = [] as string[];
@@ -333,6 +335,7 @@ export class MgViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
         return await this.initFromAppDefCoreAsync(appDef, this.options, mapsByName, warnings);
     }
     private async sessionAcquiredAsync(session: string, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
+        assertIsDefined(this.client);
         const { resourceId, locale } = this.options;
         if (!resourceId) {
             throw new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", locale));
@@ -354,6 +357,7 @@ export class MgViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
         }
     }
     public async runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload> {
+        assertIsDefined(this.client);
         this.options = options;
         let session = this.options.session;
         await this.initLocaleAsync(this.options);

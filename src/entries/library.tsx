@@ -172,6 +172,7 @@ export const Externals = {
 };
 export { ApplicationViewModel as Application } from "./application";
 export { setAssetRoot } from "../utils/asset";
+export { MapGuideViewerInitCommand } from "../actions/init-mapguide";
 
 /**
  * The top-level namespace for all dispatchable actions

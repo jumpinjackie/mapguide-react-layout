@@ -190,13 +190,13 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._comp?.addImageLoaded();
     }
     addSubscribers(props: ISubscriberProps[]): string[] {
-        throw new Error("Method not implemented.");
+        throw new Error("Method not implemented (addSubscribers).");
     }
     removeSubscribers(names: string[]): boolean {
-        throw new Error("Method not implemented.");
+        throw new Error("Method not implemented (removeSubscribers).");
     }
     getSubscribers(): string[] {
-        throw new Error("Method not implemented.");
+        throw new Error("Method not implemented (getSubscribers).");
     }
     dispatch(action: any): void {
         this._comp?.onDispatch(action);

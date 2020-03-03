@@ -1,36 +1,207 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>MapGuide React Viewer</title>
-        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-        <link rel="stylesheet" href="dist/viewer.css" type="text/css" />
-        <!-- NOTE: If you don't care about IE, you can remove/comment the script reference below -->
-        <script type="text/javascript" src="//polyfill.io/v3/polyfill.min.js?features=Object.assign%2Cfetch%2CArray.isArray"></script>
-        <script type="text/javascript" src="dist/viewer-generic.js" charset="utf-8"></script>
-        <style type="text/css">
-            html, body, #map { padding: 0; margin: 0; font: 10pt Verdana, sans-serif; }
-            #map { position: absolute; left: 0; right: 0; top: 0; bottom: 0; }
-        </style>
-    </head>
-    <body>
-        <div id="map"></div>
-        <script type="text/javascript">
-            var appDef = {
-                
-            };
-            var el = document.getElementById("map");
-            var viewer = new MapGuide.Application();
-            viewer.mount(el, {
-                resourceId: function() {
-                    return Promise.resolve(appDef)
-                },
-                layout: "generic",/*
+
+<head>
+    <title>MapGuide React Viewer</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" href="dist/viewer.css" type="text/css" />
+    <!-- NOTE: If you don't care about IE, you can remove/comment the script reference below -->
+    <script type="text/javascript"
+        src="//polyfill.io/v3/polyfill.min.js?features=Object.assign%2Cfetch%2CArray.isArray"></script>
+    <script type="text/javascript" src="dist/viewer-generic.js" charset="utf-8"></script>
+    <style type="text/css">
+        html,
+        body,
+        #map {
+            padding: 0;
+            margin: 0;
+            font: 10pt Verdana, sans-serif;
+        }
+
+        #map {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script type="text/javascript">
+        var appDef = {
+            "Title": "Generic",
+            "TemplateUrl": "fusion/templates/mapguide/slate/index.html",
+            "MapSet": {
+                "MapGroup": [
+                    {
+                        "@id": "Sheboygan",
+                        "Map": [
+                            {
+                                "Type": "OLGeneric",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "ResourceId": "Library://Samples/Sheboygan/Maps/Sheboygan.MapDefinition"
+                                }
+                            },
+                            {
+                                "Type": "Stamen",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "Options": {
+                                        "name": [
+                                            "Stamen (Toner)"
+                                        ],
+                                        "type": [
+                                            "toner"
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                "Type": "OpenStreetMap",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "Options": {
+                                        "name": [
+                                            "Open Street Map"
+                                        ],
+                                        "type": [
+                                            "Mapnik"
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "@id": "Redding",
+                        "Map": [
+                            {
+                                "Type": "OLGeneric",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "Options": {
+                                        "isBaseLayer": [
+                                            "false"
+                                        ],
+                                        "projection": [
+                                            "EPSG:900913"
+                                        ],
+                                        "useOverlay": [
+                                            "true"
+                                        ]
+                                    },
+                                    "ResourceId": "Library://Redding/Maps/Redding.MapDefinition"
+                                }
+                            },
+                            {
+                                "Type": "Stamen",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "Options": {
+                                        "name": [
+                                            "Stamen (Toner)"
+                                        ],
+                                        "type": [
+                                            "toner"
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                "Type": "OpenStreetMap",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "Options": {
+                                        "name": [
+                                            "Open Street Map"
+                                        ],
+                                        "type": [
+                                            "Mapnik"
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "@id": "Melbourne",
+                        "Map": [
+                            {
+                                "Type": "OLGeneric",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "Options": {
+                                        "isBaseLayer": [
+                                            "false"
+                                        ],
+                                        "projection": [
+                                            "EPSG:900913"
+                                        ],
+                                        "useOverlay": [
+                                            "true"
+                                        ]
+                                    },
+                                    "ResourceId": "Library://Samples/Melbourne/Maps/Melbourne.MapDefinition"
+                                }
+                            },
+                            {
+                                "Type": "Stamen",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "Options": {
+                                        "name": [
+                                            "Stamen (Toner)"
+                                        ],
+                                        "type": [
+                                            "toner"
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                "Type": "OpenStreetMap",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "Options": {
+                                        "name": [
+                                            "Open Street Map"
+                                        ],
+                                        "type": [
+                                            "Mapnik"
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "WidgetSet": [
+                {
+                    "Container": [],
+                    "Widget": []
+                }
+            ]
+        };
+        var el = document.getElementById("map");
+        var viewer = new MapGuide.Application();
+        viewer.mount(el, {
+            initCommandFactory: function (dispatch) { return new MapGuide.GenericViewerInitCommand(dispatch); },
+            resourceId: function () {
+                return Promise.resolve(appDef)
+            },
+            layout: "generic",/*
                 externalBaseLayers: [
                     { name: "OpenStreetMap", kind: "OSM" },
                     { name: "Stamen - Toner", kind: "Stamen", visible: true, options: { layer: "toner" } },
                     { name: "Stamen - Watercolor", kind: "Stamen", options: { layer: "watercolor" } }
                 ],*/
-            });
-        </script>
-    </body>
+        });
+    </script>
+</body>
+
 </html>

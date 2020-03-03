@@ -2,13 +2,14 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import App, { IAppProps } from "../containers/app";
-import { ReduxThunkedAction, ICommand, IApplicationState } from "../api/common";
+import { ReduxThunkedAction, ICommand, IApplicationState, ReduxDispatch } from "../api/common";
 import configureStore from "../store/configure-store";
 import { CONFIG_INITIAL_STATE } from "../reducers/config";
 import { getCommand as getRegisteredCommand } from "../api/registry/command";
 import { IConfigurationReducerState } from '..';
 import { ViewerAction } from '../actions/defs';
 import { Subscriber, ISubscriberProps } from '../containers/subscriber';
+import { IViewerInitCommand } from '../actions/init-command';
 
 /**
  * Extra application mount options.
@@ -18,6 +19,7 @@ import { Subscriber, ISubscriberProps } from '../containers/subscriber';
  * @interface IApplicationMountOptions
  */
 export interface IApplicationMountOptions {
+    initCommandFactory: (dispatch: ReduxDispatch) => IViewerInitCommand;
     /**
      * An array of subscribers to application state
      * 
@@ -86,14 +88,15 @@ export class ApplicationViewModel {
     public mount(node: Element, props: IAppProps & IApplicationMountOptions) {
         const subs: ISubscriberProps[] = props.subscribers ?? [];
         const agentConf = {
-            agentUri: props.agent.uri,
-            agentKind: props.agent.kind || "mapagent"
+            agentUri: props.mapguide?.agentUri,
+            agentKind: props.mapguide?.agentKind ?? "mapagent"
         };
         const initState = { ...{ config: { ...CONFIG_INITIAL_STATE, ...agentConf, ...(props.initialConfig || {}) } }, ...this.getExtraInitialState() };
         const extraReducers = this.getExtraReducers();
         this._store = configureStore(initState, extraReducers);
+        const initCommand = props.initCommandFactory(this._store.dispatch);
         ReactDOM.render(<Provider store={this._store}>
-            <App {...props} />
+            <App {...props} initCommand={initCommand} />
             {subs.map((s, i) => <Subscriber key={`subscriber-${i}-${s.name}`} {...s} />)}
         </Provider>, node);
     }

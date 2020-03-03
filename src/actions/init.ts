@@ -10,10 +10,9 @@ import {
     IMapViewer
 } from "../api/common";
 import { strReplaceAll } from "../utils/string";
-import { IInitAppActionPayload, IAcknowledgeStartupWarningsAction } from './defs';
+import { IAcknowledgeStartupWarningsAction } from './defs';
 import { ActionType } from '../constants/actions';
 import { getViewer } from '../api/runtime';
-import { MgViewerInitCommand } from './init-mapguide';
 import { tr } from '../api/i18n';
 import { IViewerInitCommand } from './init-command';
 
@@ -223,35 +222,35 @@ export function initLayout(cmd: IViewerInitCommand, options: IInitAppLayout): Re
         if (args.agentUri && args.agentKind) {
             const client = new Client(args.agentUri, args.agentKind);
             cmd.attachClient(client);
-            cmd.runAsync(options).then(payload => {
-                let initPayload = payload;
-                if (opts.initialView) {
-                    initPayload.initialView = {
-                        ...opts.initialView
-                    };
-                }
-                if (opts.initialActiveMap) {
-                    initPayload.activeMapName = opts.initialActiveMap;
-                }
-                initPayload.initialHideGroups = opts.initialHideGroups;
-                initPayload.initialHideLayers = opts.initialHideLayers;
-                initPayload.initialShowGroups = opts.initialShowGroups;
-                initPayload.initialShowLayers = opts.initialShowLayers;
-                initPayload.featureTooltipsEnabled = opts.featureTooltipsEnabled;
-                dispatch({
-                    type: ActionType.INIT_APP,
-                    payload
-                });
-                if (options.onInit) {
-                    const viewer = getViewer();
-                    if (viewer) {
-                        options.onInit(viewer);
-                    }
-                }
-            }).catch(err => {
-                processAndDispatchInitError(err, false, dispatch, opts);
-            })
         }
+        cmd.runAsync(options).then(payload => {
+            let initPayload = payload;
+            if (opts.initialView) {
+                initPayload.initialView = {
+                    ...opts.initialView
+                };
+            }
+            if (opts.initialActiveMap) {
+                initPayload.activeMapName = opts.initialActiveMap;
+            }
+            initPayload.initialHideGroups = opts.initialHideGroups;
+            initPayload.initialHideLayers = opts.initialHideLayers;
+            initPayload.initialShowGroups = opts.initialShowGroups;
+            initPayload.initialShowLayers = opts.initialShowLayers;
+            initPayload.featureTooltipsEnabled = opts.featureTooltipsEnabled;
+            dispatch({
+                type: ActionType.INIT_APP,
+                payload
+            });
+            if (options.onInit) {
+                const viewer = getViewer();
+                if (viewer) {
+                    options.onInit(viewer);
+                }
+            }
+        }).catch(err => {
+            processAndDispatchInitError(err, false, dispatch, opts);
+        })
     };
 }
 

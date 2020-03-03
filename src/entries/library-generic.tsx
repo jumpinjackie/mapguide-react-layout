@@ -160,6 +160,7 @@ export const Externals = {
 };
 export { ApplicationViewModel as Application } from "./application";
 export { setAssetRoot } from "../utils/asset";
+export { GenericViewerInitCommand } from "../actions/init-generic";
 
 /**
  * The top-level namespace for all dispatchable actions

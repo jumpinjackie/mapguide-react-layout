@@ -12,10 +12,10 @@ export class GenericViewerInitCommand extends ViewerInitCommand<IGenericSubjectM
     }
     public attachClient(client: Client): void { }
     protected establishInitialMapNameAndSession(mapsByName: Dictionary<IGenericSubjectMapLayer>): [string, string] {
-        throw new Error("Method not implemented.");
+        throw new Error("Method not implemented (establishInitialMapNameAndSession).");
     }
     protected setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<IGenericSubjectMapLayer>, config: any, warnings: string[]): Dictionary<MapInfo> {
-        throw new Error("Method not implemented.");
+        throw new Error("Method not implemented (setupMaps).");
     }
     private async createRuntimeMapsAsync(res: ApplicationDefinition, projectionSelector: (res: ApplicationDefinition) => string[]): Promise<[Dictionary<IGenericSubjectMapLayer>, string[]]> {
         const warnings = [] as string[];

@@ -11,9 +11,9 @@ import olVectorLayer from "ol/layer/Vector";
 import { getFormatDrivers } from './layer-manager/driver-registry';
 import { IFormatDriver } from './layer-manager/format-driver';
 import { tr } from './i18n';
-import { MgLayerSetGroup } from "./mg-layer-set-group";
 import { IParsedFeatures } from './layer-manager/parsed-features';
 import { LayerSetGroupBase } from './layer-set-group-base';
+import { IInitialExternalLayer } from 'actions/defs';
 
 export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInfo {
     let vectorStyle: IVectorFeatureStyle | undefined;
@@ -50,6 +50,9 @@ export class MgLayerManager implements ILayerManager {
     private _olFormats: IFormatDriver[];
     constructor(private map: olMap, private layerSet: LayerSetGroupBase) {
         this._olFormats = getFormatDrivers();
+    }
+    addExternalLayer(extLayer: IInitialExternalLayer) {
+        return this.layerSet.addExternalLayer(this.map, extLayer);
     }
     getLayers(): ILayerInfo[] {
         return this.layerSet.getCustomLayers(this.map);

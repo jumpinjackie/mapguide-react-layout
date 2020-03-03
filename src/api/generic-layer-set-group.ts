@@ -12,6 +12,7 @@ import TileWMS from 'ol/source/TileWMS';
 import ImageWMS from 'ol/source/ImageWMS';
 import { IImageLayerEvents } from './layer-set-contracts';
 import ImageLayer from "ol/layer/Image";
+import { createOLLayerFromSubjectDefn } from './ol-factory';
 
 const DEFAULT_BOUNDS_3857: Bounds = [
     -20026376.39,
@@ -97,17 +98,7 @@ export class GenericLayerSetGroup extends LayerSetGroupBase {
         }
         let subjectLayer;
         if (subject) {
-            switch (subject.type) {
-                case "TileWMS":
-                    subjectLayer = new TileLayer({
-                        source: new TileWMS({ 
-                            ...subject.sourceParams
-                        })
-                    });
-                    break;
-                default:
-                    throw new Error(`Unknown subject layer type: ${subject.type}`);
-            }
+            subjectLayer = createOLLayerFromSubjectDefn(subject, false);
             if (subject.meta) {
                 projection = subject.meta.projection;
                 bounds = subject.meta.extents;

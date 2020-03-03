@@ -3,9 +3,9 @@ import { GenericLayerSetGroup } from "../../api/generic-layer-set-group";
 import { areViewsCloseToEqual } from '../../utils/viewer-state';
 import View from 'ol/View';
 import { debug } from '../../utils/logger';
-import { LayerSetGroupBase } from '../../api/layer-set-group-base';
 import { assertIsDefined } from '../../utils/assert';
-import { IGenericSubjectMapLayer } from 'actions/defs';
+import { IGenericSubjectMapLayer } from '../../actions/defs';
+import { mapLayerAdded } from '../../actions/map';
 
 export interface IGenericMapProviderState extends IMapProviderState {
     subject: IGenericSubjectMapLayer | undefined;

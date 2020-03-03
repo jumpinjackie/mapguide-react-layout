@@ -17,6 +17,8 @@ import TileImageSource from "ol/source/TileImage";
 import Map from "ol/Map";
 import OverviewMap from "ol/control/OverviewMap"
 import View from 'ol/View';
+import { IInitialExternalLayer } from '../actions/defs';
+import { createOLLayerFromSubjectDefn } from './ol-factory';
 
 export abstract class LayerSetGroupBase {
     protected mainSet: ILayerSetOL;
@@ -88,6 +90,10 @@ export abstract class LayerSetGroupBase {
         customLayers.sort((a, b) => {
             return a.order - b.order;
         });
+        // External layers may have been pre-loaded, to clear out any existing external layers
+        for (const item of customLayers) {
+            layers.remove(item.layer);
+        }
         for (const item of customLayers) {
             layers.insertAt(0, item.layer);
         }
@@ -151,6 +157,10 @@ export abstract class LayerSetGroupBase {
     }
     public hasLayer(name: string): boolean {
         return this._customLayers[name] != null;
+    }
+    public addExternalLayer(map: Map, extLayer: IInitialExternalLayer): ILayerInfo {
+        const layer = createOLLayerFromSubjectDefn(extLayer, true);
+        return this.addLayer(map, extLayer.name, layer);
     }
     public addLayer<T extends LayerBase>(map: Map, name: string, layer: T, allowReplace?: boolean): ILayerInfo {
         const bAllow = !!allowReplace;

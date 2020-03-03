@@ -44,6 +44,7 @@ import { Toaster, Intent } from '@blueprintjs/core';
 import { IOLFactory, OLFactory } from '../../api/ol-factory';
 import { ISubscriberProps } from '../../containers/subscriber';
 import isMobile from "ismobilejs";
+import { IInitialExternalLayer } from 'actions/defs';
 
 export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4));
@@ -69,6 +70,7 @@ export interface IMapProviderState {
     cancelDigitizationKey: number;
     undoLastPointKey: number;
     overviewMapElementSelector?: () => Element | null;
+    initialExternalLayers: IInitialExternalLayer[];
 }
 
 /**
@@ -77,6 +79,7 @@ export interface IMapProviderState {
  * @since 0.14
  */
 export interface IMapProviderContext extends IMapViewer {
+    isReady(): boolean;
     getProviderName(): string;
     isDigitizing(): boolean;
     getActiveTool(): ActiveMapTool;
@@ -124,7 +127,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._triggerZoomRequestOnMoveEnd = true;
         const ism = isMobile(navigator.userAgent);
         this._supportsTouch = ism.phone || ism.tablet;
-        this._state = {
+        const baseInitialState: IMapProviderState = {
             activeTool: ActiveMapTool.None,
             view: undefined,
             viewRotation: 0,
@@ -134,9 +137,15 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             undoLastPointKey: KC_U,
             mapName: undefined,
             externalBaseLayers: undefined,
+            initialExternalLayers: []
+        };
+        this._state = {
+            ...baseInitialState,
             ...this.getInitialProviderState()
         } as TState;
     }
+
+    public isReady(): boolean { return !!(this._map && this._comp); }
 
     //#region IMapViewer
     /**
@@ -834,12 +843,15 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public updateSize() {
         this._map?.updateSize();
     }
-
+    protected getLayerManagerForLayerSet(layerSet: TLayerSetGroup) {
+        assertIsDefined(this._map);
+        return new MgLayerManager(this._map, layerSet);
+    }
     public getLayerManager(mapName?: string): ILayerManager {
         assertIsDefined(this._map);
         assertIsDefined(this._state.mapName);
         const layerSet = this.ensureAndGetLayerSetGroup(this._state); // this.getLayerSet(mapName ?? this._state.mapName, true, this._comp as any);
-        return new MgLayerManager(this._map, layerSet);
+        return this.getLayerManagerForLayerSet(layerSet);
     }
     public screenToMapUnits(x: number, y: number): [number, number] {
         let bAllowOutsideWindow = false;

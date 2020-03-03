@@ -5,7 +5,7 @@ import { CURSOR_DIGITIZE_POINT, CURSOR_DIGITIZE_LINE, CURSOR_DIGITIZE_LINESTRING
 import { MapLoadIndicator } from '../components/map-load-indicator';
 import { ActiveMapTool, MapLoadIndicatorPositioning, GenericEvent, ReduxDispatch, RefreshMode } from '../api/common';
 import { MapProviderContext } from '../components/map-providers/context';
-import { useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useViewerPointSelectionBuffer, useViewerSelectionColor, useViewerSelectionImageFormat, useConfiguredManualFeatureTooltips, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useViewerFeatureTooltipsEnabled, useActiveMapLayers } from './hooks';
+import { useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useViewerPointSelectionBuffer, useViewerSelectionColor, useViewerSelectionImageFormat, useConfiguredManualFeatureTooltips, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useViewerFeatureTooltipsEnabled, useActiveMapLayers, useActiveMapInitialExternalLayers } from './hooks';
 import { Toaster, Position } from '@blueprintjs/core';
 import { IMapGuideProviderState } from '../components/map-providers/mapguide';
 import { getActiveSelectedFeatureXml } from '../api/builders/deArrayify';
@@ -19,7 +19,9 @@ import { Client } from '../api/client';
 import "ol/ol.css";
 import { useActiveMapSelectableLayerNames, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapHideLayers, useActiveMapActiveSelectedFeature, useActiveMapState, useActiveMapSessionId } from './hooks-mapguide';
 import { useActiveMapSubjectLayer } from './hooks-generic';
-import { IGenericMapProviderState } from 'components/map-providers/generic';
+import { IGenericMapProviderState } from '../components/map-providers/generic';
+import { MgLayerManager } from '../api/layer-manager';
+import { mapLayerAdded } from '../actions/map';
 
 interface ICoreMapViewerProps {
     context: IMapProviderContext;
@@ -187,6 +189,7 @@ export const MgMapViewer = () => {
     const cancelDigitizationKey = useConfiguredCancelDigitizationKey();
     const undoLastPointKey = useConfiguredUndoLastPointKey();
     const layers = useActiveMapLayers();
+    const initialExternalLayers = useActiveMapInitialExternalLayers();
     const dispatch = useDispatch();
     // ============== MapGuide-specific ================== //
     const imageFormat = useViewerImageFormat();
@@ -228,6 +231,7 @@ export const MgMapViewer = () => {
         externalBaseLayers,
         cancelDigitizationKey,
         undoLastPointKey,
+        initialExternalLayers,
         // =========== MapGuide-specific ============== //
         imageFormat,
         agentUri,
@@ -254,6 +258,7 @@ export const MgMapViewer = () => {
 
     // Side-effect to apply the current external layer list
     React.useEffect(() => {
+        debug(`React.useEffect - Change of external layers`);
         if (layers) {
             const layerManager = context.getLayerManager();
             layerManager.apply(layers);
@@ -262,7 +267,7 @@ export const MgMapViewer = () => {
     // Side-effect to set the viewer "instance" once the MapViewerBase component has been mounted.
     // Should only happen once.
     React.useEffect(() => {
-        debug(`React.useEffect - Change of innerRef.current`);
+        debug(`React.useEffect - Change of context and/or agent URI/kind`);
         setViewer(context);
         const browserWindow: any = window;
         browserWindow.getViewer = browserWindow.getViewer || getViewer;
@@ -307,6 +312,7 @@ export const GenericMapViewer = () => {
     const cancelDigitizationKey = useConfiguredCancelDigitizationKey();
     const undoLastPointKey = useConfiguredUndoLastPointKey();
     const layers = useActiveMapLayers();
+    const initialExternalLayers = useActiveMapInitialExternalLayers();
     const dispatch = useDispatch();
     // ================ Generic-specific =================== //
     const subject = useActiveMapSubjectLayer();
@@ -321,15 +327,29 @@ export const GenericMapViewer = () => {
         externalBaseLayers,
         cancelDigitizationKey,
         undoLastPointKey,
+        initialExternalLayers,
         // ================ Generic-specific =================== //
         subject
     };
     context.setToasterRef(toasterRef);
     context.setProviderState(nextState);
 
+    React.useEffect(() => {
+        debug(`React.useEffect - Change of initial external layers for [${mapName}] (change should only happen once per mapName!)`);
+        if (mapName && initialExternalLayers) {
+            const layerManager = context.getLayerManager(mapName) as MgLayerManager;
+            for (const extLayer of initialExternalLayers) {
+                const added = layerManager.addExternalLayer(extLayer);
+                dispatch(mapLayerAdded(mapName, added));
+            }
+        }
+    }, [context, mapName, initialExternalLayers]);
+
     // Side-effect to apply the current external layer list
     React.useEffect(() => {
-        if (layers) {
+        console.log(layers);
+        debug(`React.useEffect - Change of external layers`);
+        if (context.isReady() && layers) {
             const layerManager = context.getLayerManager();
             layerManager.apply(layers);
         }
@@ -337,7 +357,7 @@ export const GenericMapViewer = () => {
     // Side-effect to set the viewer "instance" once the MapViewerBase component has been mounted.
     // Should only happen once.
     React.useEffect(() => {
-        debug(`React.useEffect - Change of innerRef.current`);
+        debug(`React.useEffect - Change of context`);
         setViewer(context);
         const browserWindow: any = window;
         browserWindow.getViewer = browserWindow.getViewer || getViewer;

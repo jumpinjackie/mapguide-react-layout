@@ -322,7 +322,8 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
                         mapGroupId: mGroup["@id"],
                         map: mapsByName[mapName],
                         initialView: initialView,
-                        externalBaseLayers: externalBaseLayers
+                        externalBaseLayers: externalBaseLayers,
+                        initialExternalLayers: []
                     };
                 }
             }

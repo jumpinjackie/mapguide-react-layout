@@ -4,6 +4,7 @@ import { getExternalBaseLayers, INameValuePair, QueryMapFeaturesResponse, Active
 import { WEBLAYOUT_CONTEXTMENU } from '../constants';
 import { useRef, useEffect } from "react";
 import { areArraysDifferent } from "../utils/array";
+import { IInitialExternalLayer } from 'actions/defs';
 
 // From: https://usehooks.com/usePrevious/
 
@@ -23,6 +24,15 @@ export function usePrevious<T>(value: T) {
 
 export function useActiveMapName() {
     return useSelector<IApplicationState, string | undefined>(state => state.config.activeMapName);
+}
+
+export function useActiveMapInitialExternalLayers() {
+    return useSelector<IApplicationState, IInitialExternalLayer[]>(state => {
+        if (state.config.activeMapName) {
+            return state.mapState[state.config.activeMapName].initialExternalLayers;
+        }
+        return [];
+    });
 }
 
 export function useActiveMapLayers() {

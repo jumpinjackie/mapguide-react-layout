@@ -37,7 +37,8 @@ export const MAP_STATE_INITIAL_SUB_STATE: IBranchedMapSubState = {
     history: [],
     historyIndex: -1,
     externalBaseLayers: [],
-    layers: [],
+    initialExternalLayers: [],
+    layers: undefined,
     mapguide: undefined,
     generic: undefined
 };
@@ -60,7 +61,7 @@ function applyMapGuideSubState(state: IBranchedMapState, mapName: string, applyF
 
 function setLayerAction<K extends keyof ILayerInfo>(state: IBranchedMapState, mapName: string, layerName: string, selector: (current: ILayerInfo) => Pick<ILayerInfo, K>): IBranchedMapState {
     const subState = state[mapName];
-    if (subState) {
+    if (subState && subState.layers) {
         const layers = subState.layers.map(l => {
             if (l.name == layerName) {
                 return {
@@ -191,6 +192,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                         ...MAP_STATE_INITIAL_SUB_STATE,
                         ...{ generic: mgeneric },
                         ...{ externalBaseLayers: maps[mapName].externalBaseLayers },
+                        ...{ initialExternalLayers: maps[mapName].initialExternalLayers },
                         ...{ initialView: maps[mapName].initialView },
                         ...(cv || {}),
                         ...{ mapguide: newMgSubState }
@@ -416,7 +418,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                 const { payload } = action;
                 const subState = state[payload.mapName];
                 if (subState) {
-                    const layers = [payload.layer, ...subState.layers];
+                    const layers = [payload.layer, ...(subState.layers ?? [])];
                     const state1: Partial<IBranchedMapSubState> = {
                         layers
                     };
@@ -433,7 +435,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
             {
                 const { payload } = action;
                 const subState = state[payload.mapName];
-                if (subState) {
+                if (subState && subState.layers) {
                     const layers = subState.layers.filter(l => l.name != action.payload.layerName);
                     const state1: Partial<IBranchedMapSubState> = {
                         layers
@@ -458,7 +460,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
             {
                 const { mapName, index, layerName } = action.payload;
                 const subState = state[mapName];
-                if (subState) {
+                if (subState && subState.layers) {
                     const layers = [...subState.layers];
                     let currentIdx = -1;
                     for (let i = 0; i < layers.length; i++) {

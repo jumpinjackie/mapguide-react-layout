@@ -105,17 +105,30 @@ export interface IGenericSubjectMapLayerMetadata {
 }
 
 /**
+ * Valid generic subject layer types
+ * 
+ * @export
+ * @enum {string}
+ * @since 0.14
+ */
+export enum GenericSubjectLayerType {
+    TileWMS = "TileWMS"
+}
+
+/**
  * 
  * @export
  * @interface IGenericSubjectMapLayer
  * @since 0.14
  */
 export interface IGenericSubjectMapLayer {
-    type: string;
+    type: GenericSubjectLayerType;
     meta: IGenericSubjectMapLayerMetadata | undefined;
     sourceParams: any;
     name: string;
 }
+
+export type IInitialExternalLayer = IGenericSubjectMapLayer;
 
 export function isGenericSubjectMapLayer(map: RuntimeMap | IGenericSubjectMapLayer): map is IGenericSubjectMapLayer {
     return typeof((map as any)?.type) == 'string';
@@ -129,6 +142,13 @@ export type MapInfo = {
     map: RuntimeMap | IGenericSubjectMapLayer | undefined;
     initialView: IMapView | undefined;
     externalBaseLayers: IExternalBaseLayer[];
+    /**
+     * The initial set of external layers
+     *
+     * @type {IInitialExternalLayer[]}
+     * @since 0.14
+     */
+    initialExternalLayers: IInitialExternalLayer[];
 }
 
 /**

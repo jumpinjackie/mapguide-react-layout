@@ -14,7 +14,7 @@ import olInteraction from "ol/interaction/Interaction";
 import olOverlay from "ol/Overlay";
 
 import { IOLFactory } from "./ol-factory";
-import { ViewerAction, IGenericSubjectMapLayer } from '../actions/defs';
+import { ViewerAction, IGenericSubjectMapLayer, IInitialExternalLayer } from '../actions/defs';
 import { ProjectionLike } from 'ol/proj';
 import { LoadFunction } from 'ol/Image';
 import { IToolbarAppState } from './registry';
@@ -1435,10 +1435,19 @@ export interface IBranchedMapSubState {
      */
     externalBaseLayers: IExternalBaseLayer[];
     /**
+     * Initial external layers. This does not reflect the current state of external layers added. This merely instructs what external layers
+     * to pre-load on viewer startup.
+     *
+     * @type {IInitialExternalLayer[]}
+     * @memberof IBranchedMapSubState
+     * @since 0.14
+     */
+    initialExternalLayers: IInitialExternalLayer[];
+    /**
      * The layers in this viewer. First item is top-most layer. Last item is bottom-most layer.
      * @since 0.13
      */
-    layers: ILayerInfo[];
+    layers: ILayerInfo[] | undefined;
     /**
      * The current map view
      *

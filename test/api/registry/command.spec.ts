@@ -75,6 +75,7 @@ describe("api/registry/command", () => {
             const ms = {
                 ["Foo"]: {
                     externalBaseLayers: [],
+                    initialExternalLayers: [],
                     currentView: undefined,
                     initialView: undefined,
                     history: [],
@@ -118,6 +119,7 @@ describe("api/registry/command", () => {
             const ms = {
                 ["Foo"]: {
                     externalBaseLayers: [],
+                    initialExternalLayers: [],
                     currentView: undefined,
                     initialView: undefined,
                     history: [],
@@ -164,6 +166,7 @@ describe("api/registry/command", () => {
             const ms = {
                 ["Foo"]: {
                     externalBaseLayers: [],
+                    initialExternalLayers: [],
                     currentView: undefined,
                     initialView: undefined,
                     history: [],
@@ -201,6 +204,7 @@ describe("api/registry/command", () => {
             const ms = {
                 ["Foo"]: {
                     externalBaseLayers: [],
+                    initialExternalLayers: [],
                     currentView: undefined,
                     initialView: undefined,
                     history: [],

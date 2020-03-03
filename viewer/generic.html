@@ -38,11 +38,12 @@
                 "MapGroup": [
                     {
                         "@id": "Melbourne",
-                        "Map": [/*
+                        "Map": [
                             {
-                                "Type": "OLGeneric",
+                                "Type": "External",
                                 "SingleTile": true,
                                 "Extension": {
+                                    "layer_name": "SA1 2011 Boundaries",
                                     "source_type": "TileWMS",
                                     "source_param_url": "http://geoserver.nationalmap.nicta.com.au/admin_bnds_abs/ows",
                                     "source_param_params": {
@@ -52,7 +53,7 @@
                                     "meta_extents": [96.816941408, -43.74050960205765, 159.109219008, -9.142175976703609],
                                     "meta_projection": "EPSG:4326"
                                 }
-                            },*/
+                            },
                             {
                                 "Type": "OpenStreetMap",
                                 "SingleTile": true,
@@ -82,12 +83,12 @@
                                 }
                             }
                         ]
-                    },
+                    }/*,
                     {
                         "@id": "Sheboygan",
                         "Map": [
                             {
-                                "Type": "OLGeneric",
+                                "Type": "SubjectLayer",
                                 "Extension": {
                                     "source_type": "TileWMS",
                                     "source_param_url": "https://www.fws.gov/wetlands/arcgis/services/Wetlands_Raster/ImageServer/WMSServer",
@@ -133,7 +134,7 @@
                         "@id": "Redding",
                         "Map": [
                             {
-                                "Type": "OLGeneric",
+                                "Type": "SubjectLayer",
                                 "SingleTile": true,
                                 "Extension": {
                                     "Options": {
@@ -180,6 +181,7 @@
                             }
                         ]
                     }
+                    */
                 ]
             },
             "WidgetSet": [

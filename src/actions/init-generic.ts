@@ -2,10 +2,37 @@ import { ViewerInitCommand } from './init-command';
 import { Client } from '../api/client';
 import { ReduxDispatch, Dictionary, IExternalBaseLayer, IMapView } from '../api/common';
 import { IInitAsyncOptions, processLayerInMapGroup } from './init';
-import { IInitAppActionPayload, IGenericSubjectMapLayer, MapInfo } from './defs';
-import { ApplicationDefinition } from '../api/contracts/fusion';
+import { IInitAppActionPayload, IGenericSubjectMapLayer, MapInfo, IInitialExternalLayer } from './defs';
+import { ApplicationDefinition, MapConfiguration } from '../api/contracts/fusion';
 import { MgError } from '../api/error';
 import { STR_EMPTY } from '../utils/string';
+
+export const TYPE_SUBJECT = "SubjectLayer";
+export const TYPE_EXTERNAL = "External";
+
+function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGenericSubjectMapLayer {
+    const st = map.Extension.source_type;
+    const sp: any = {};
+    const meta: any = {};
+    const keys = Object.keys(map.Extension);
+    for (const k of keys) {
+        const spidx = k.indexOf("source_param_");
+        const midx = k.indexOf("meta_");
+        if (spidx == 0) {
+            const kn = k.substring("source_param_".length);
+            sp[kn] = map.Extension[k];
+        } else if (midx == 0) {
+            const kn = k.substring("meta_".length);
+            meta[kn] = map.Extension[k];
+        }
+    }
+    return {
+        name: name,
+        type: st,
+        sourceParams: sp,
+        meta: (Object.keys(meta).length > 0 ? meta : undefined) 
+    } as IGenericSubjectMapLayer;
+}
 
 export class GenericViewerInitCommand extends ViewerInitCommand<IGenericSubjectMapLayer> {
     constructor(dispatch: ReduxDispatch) {
@@ -22,9 +49,14 @@ export class GenericViewerInitCommand extends ViewerInitCommand<IGenericSubjectM
                 const mapName = mGroup["@id"];
                 //Setup external layers
                 const externalBaseLayers = [] as IExternalBaseLayer[];
+                const initialExternalLayers = [] as IInitialExternalLayer[];
                 for (const map of mGroup.Map) {
-                    if (map.Type != "OLGeneric") {
-                        processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayers);
+                    if (map.Type != TYPE_SUBJECT) {
+                        if (map.Type == TYPE_EXTERNAL) {
+                            initialExternalLayers.push(buildSubjectLayerDefn( map.Extension.layer_name, map));
+                        } else {
+                            processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayers);
+                        }
                     }
                 }
 
@@ -47,7 +79,8 @@ export class GenericViewerInitCommand extends ViewerInitCommand<IGenericSubjectM
                     mapGroupId: mapName,
                     map: mapsByName[mapName],
                     initialView: initialView,
-                    externalBaseLayers: externalBaseLayers
+                    externalBaseLayers: externalBaseLayers,
+                    initialExternalLayers: initialExternalLayers
                 }
             }
         }
@@ -59,29 +92,9 @@ export class GenericViewerInitCommand extends ViewerInitCommand<IGenericSubjectM
         if (res.MapSet?.MapGroup) {
             for (const mGroup of res.MapSet.MapGroup) {
                 for (const map of mGroup.Map) {
-                    if (map.Type == "OLGeneric") {
+                    if (map.Type == TYPE_SUBJECT) {
                         const name = mGroup["@id"];
-                        const st = map.Extension.source_type;
-                        const sp: any = {};
-                        const meta: any = {};
-                        const keys = Object.keys(map.Extension);
-                        for (const k of keys) {
-                            const spidx = k.indexOf("source_param_");
-                            const midx = k.indexOf("meta_");
-                            if (spidx == 0) {
-                                const kn = k.substring("source_param_".length);
-                                sp[kn] = map.Extension[k];
-                            } else if (midx == 0) {
-                                const kn = k.substring("meta_".length);
-                                meta[kn] = map.Extension[k];
-                            }
-                        }
-                        mapsByName[name] = {
-                            name: name,
-                            type: st,
-                            sourceParams: sp,
-                            meta: (Object.keys(meta).length > 0 ? meta : undefined) 
-                        } as IGenericSubjectMapLayer;
+                        mapsByName[name] = buildSubjectLayerDefn(name, map);
                     }
                 }
             }

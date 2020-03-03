@@ -38,8 +38,33 @@ import olStyleText, { Options as TextOptions } from "ol/style/Text";
 import olStyleFill, { Options as FillOptions } from "ol/style/Fill";
 import olStyleStroke, { Options as StrokeOptions } from "ol/style/Stroke";
 import olStyleCircle, { Options as CircleOptions } from "ol/style/Circle";
-import { Bounds, Coordinate2D } from './common';
+import { Bounds, Coordinate2D, LayerProperty } from './common';
 import { ProjectionLike } from 'ol/proj';
+import olLayerBase from "ol/layer/Base";
+import { IGenericSubjectMapLayer, IInitialExternalLayer, GenericSubjectLayerType } from '../actions/defs';
+
+import TileLayer from "ol/layer/Tile";
+import TileWMS from "ol/source/TileWMS";
+
+export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IInitialExternalLayer, isExternal: boolean): olLayerBase {
+    switch (defn.type) {
+        case GenericSubjectLayerType.TileWMS:
+            {
+                const layer = new TileLayer({
+                    source: new TileWMS({ 
+                        ...defn.sourceParams
+                    })
+                });
+                layer.set(LayerProperty.LAYER_TYPE, "WMS");
+                layer.set(LayerProperty.IS_SELECTABLE, true); //Let's assume this WMS service is capable of GetFeatureInfo in GeoJSON representation
+                layer.set(LayerProperty.IS_EXTERNAL, isExternal);
+                layer.set(LayerProperty.IS_GROUP, false);
+                return layer;
+            }
+        default:
+            throw new Error(`Unknown subject layer type: ${defn.type}`);
+    }
+}
 
 /**
  * Creates various OpenLayers types used by the viewer

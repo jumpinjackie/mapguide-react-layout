@@ -1,30 +1,66 @@
 import { ViewerInitCommand } from './init-command';
 import { Client } from '../api/client';
-import { ReduxDispatch, Dictionary } from '../api/common';
-import { IInitAsyncOptions } from './init';
+import { ReduxDispatch, Dictionary, IExternalBaseLayer, IMapView } from '../api/common';
+import { IInitAsyncOptions, processLayerInMapGroup } from './init';
 import { IInitAppActionPayload, IGenericSubjectMapLayer, MapInfo } from './defs';
 import { ApplicationDefinition } from '../api/contracts/fusion';
 import { MgError } from '../api/error';
+import { STR_EMPTY } from '../utils/string';
 
 export class GenericViewerInitCommand extends ViewerInitCommand<IGenericSubjectMapLayer> {
     constructor(dispatch: ReduxDispatch) {
         super(dispatch);
     }
-    public attachClient(client: Client): void { }
+    public attachClient(_client: Client): void { }
     protected establishInitialMapNameAndSession(mapsByName: Dictionary<IGenericSubjectMapLayer>): [string, string] {
-        throw new Error("Method not implemented (establishInitialMapNameAndSession).");
+        return [STR_EMPTY, STR_EMPTY];
     }
     protected setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<IGenericSubjectMapLayer>, config: any, warnings: string[]): Dictionary<MapInfo> {
-        throw new Error("Method not implemented (setupMaps).");
+        const dict: Dictionary<MapInfo> = {};
+        if (appDef.MapSet) {
+            for (const mGroup of appDef.MapSet.MapGroup) {
+                const mapName = mGroup["@id"];
+                //Setup external layers
+                const externalBaseLayers = [] as IExternalBaseLayer[];
+                for (const map of mGroup.Map) {
+                    if (map.Type != "OLGeneric") {
+                        processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayers);
+                    }
+                }
+
+                //First come, first served
+                if (externalBaseLayers.length > 0) {
+                    externalBaseLayers[0].visible = true;
+                }
+
+                //Setup initial view
+                let initialView: IMapView | undefined;
+                if (mGroup.InitialView) {
+                    initialView = {
+                        x: mGroup.InitialView.CenterX,
+                        y: mGroup.InitialView.CenterY,
+                        scale: mGroup.InitialView.Scale
+                    };
+                }
+
+                dict[mapName] = {
+                    mapGroupId: mapName,
+                    map: mapsByName[mapName],
+                    initialView: initialView,
+                    externalBaseLayers: externalBaseLayers
+                }
+            }
+        }
+        return dict;
     }
     private async createRuntimeMapsAsync(res: ApplicationDefinition, projectionSelector: (res: ApplicationDefinition) => string[]): Promise<[Dictionary<IGenericSubjectMapLayer>, string[]]> {
         const warnings = [] as string[];
         const mapsByName: Dictionary<IGenericSubjectMapLayer> = {};
         if (res.MapSet?.MapGroup) {
-            for (const mgrp of res.MapSet.MapGroup) {
-                for (const map of mgrp.Map) {
+            for (const mGroup of res.MapSet.MapGroup) {
+                for (const map of mGroup.Map) {
                     if (map.Type == "OLGeneric") {
-                        const name = mgrp["@id"];
+                        const name = mGroup["@id"];
                         const { sourceType, ...rest } = map.Extension;
                         mapsByName[name] = {
                             name: name,

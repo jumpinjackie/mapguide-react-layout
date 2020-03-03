@@ -1,9 +1,4 @@
-import * as Constants from "../../src/constants";
-import { IView } from "../../src/api/contracts/common";
-import { IApplicationState } from "../../src/api/common";
-import { RuntimeMap } from "../../src/api/contracts/runtime-map";
-import thunk from 'redux-thunk';
-import { createMap, createInitAction, createInitialState } from "../../test-data";
+import { createInitialState } from "../../test-data";
 import { initErrorReducer } from "../../src/reducers/init-error";
 import { ActionType } from '../../src/constants/actions';
 import { IInitErrorAction } from '../../src/actions/defs';

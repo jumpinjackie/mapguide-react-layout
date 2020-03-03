@@ -1,9 +1,8 @@
 import { ApplicationDefinition, MapConfiguration } from '../api/contracts/fusion';
 import { RuntimeMap } from '../api/contracts/runtime-map';
-import { Dictionary, IExternalBaseLayer, ReduxDispatch, ActiveMapTool } from '../api/common';
+import { Dictionary, IExternalBaseLayer, ReduxDispatch, ActiveMapTool, IMapView } from '../api/common';
 import { MapInfo, IInitAppActionPayload, IRestoredSelectionSets } from './defs';
 import { tr, DEFAULT_LOCALE } from '../api/i18n';
-import { IView } from '../api/contracts/common';
 import { strEndsWith } from '../utils/string';
 import { Client } from '../api/client';
 import { IInitAsyncOptions, processLayerInMapGroup } from './init';
@@ -113,7 +112,7 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
         if (webLayout.PointSelectionBuffer != null) {
             config.pointSelectionBuffer = webLayout.PointSelectionBuffer;
         }
-        let initialView: IView | null = null;
+        let initialView: IMapView | null = null;
         if (webLayout.Map.InitialView != null) {
             initialView = {
                 x: webLayout.Map.InitialView.CenterX,
@@ -272,11 +271,11 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
     protected setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<RuntimeMap>, config: any, warnings: string[]): Dictionary<MapInfo> {
         const dict: Dictionary<MapInfo> = {};
         if (appDef.MapSet) {
-            for (const mgGroup of appDef.MapSet.MapGroup) {
+            for (const mGroup of appDef.MapSet.MapGroup) {
                 let mapName: string | undefined;
                 //Setup external layers
                 const externalBaseLayers = [] as IExternalBaseLayer[];
-                for (const map of mgGroup.Map) {
+                for (const map of mGroup.Map) {
                     if (map.Type === "MapGuide") {
                         //TODO: Based on the schema, different MG map groups could have different
                         //settings here and our redux tree should reflect that. Currently the first one "wins"
@@ -309,18 +308,18 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
                 }
 
                 //Setup initial view
-                let initialView: IView | undefined;
-                if (mgGroup.InitialView) {
+                let initialView: IMapView | undefined;
+                if (mGroup.InitialView) {
                     initialView = {
-                        x: mgGroup.InitialView.CenterX,
-                        y: mgGroup.InitialView.CenterY,
-                        scale: mgGroup.InitialView.Scale
+                        x: mGroup.InitialView.CenterX,
+                        y: mGroup.InitialView.CenterY,
+                        scale: mGroup.InitialView.Scale
                     };
                 }
 
                 if (mapName) {
                     dict[mapName] = {
-                        mapGroupId: mgGroup["@id"],
+                        mapGroupId: mGroup["@id"],
                         map: mapsByName[mapName],
                         initialView: initialView,
                         externalBaseLayers: externalBaseLayers

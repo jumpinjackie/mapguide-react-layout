@@ -13,11 +13,7 @@ const GenericLayout = () => {
     } = useCommonTemplateState();
     return <div style={{ width: "100%", height: "100%" }}>
         <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />
-        {(() => {
-            if (capabilities.hasNavigator) {
-                return <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />;
-            }
-        })()}
+        <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />
         <ViewerApiShim />
         <ModalLauncher />
         <FlyoutRegionContainer />

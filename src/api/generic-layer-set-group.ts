@@ -8,6 +8,7 @@ import View from 'ol/View';
 import LayerGroup from 'ol/layer/Group';
 import TileLayer from 'ol/layer/Tile';
 import { get } from "ol/proj";
+import TileWMS from 'ol/source/TileWMS';
 
 const DEFAULT_BOUNDS_3857: Bounds = [
     -20026376.39,
@@ -68,9 +69,22 @@ export class GenericLayerSetGroup extends LayerSetGroupBase {
             bounds = DEFAULT_BOUNDS_3857;
         }
         let subjectLayer;
-        if (subject?.meta) {
-            projection = subject.meta.projection;
-            bounds = subject.meta.extents;
+        if (subject) {
+            switch (subject.type) {
+                case "TileWMS":
+                    subjectLayer = new TileLayer({
+                        source: new TileWMS({ 
+                            ...subject.sourceParams
+                        })
+                    });
+                    break;
+                default:
+                    throw new Error(`Unknown subject layer type: ${subject.type}`);
+            }
+            if (subject.meta) {
+                projection = subject.meta.projection;
+                bounds = subject.meta.extents;
+            }
         }
         if (!projection && !bounds) {
             projection = "EPSG:4326";

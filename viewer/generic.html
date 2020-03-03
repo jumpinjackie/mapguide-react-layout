@@ -41,11 +41,15 @@
                         "Map": [
                             {
                                 "Type": "OLGeneric",
-                                "SingleTile": true,
                                 "Extension": {
-                                    "meta_projection": "",
-                                    "meta_extents": "",
-                                    "ResourceId": "Library://Samples/Sheboygan/Maps/Sheboygan.MapDefinition"
+                                    "source_type": "TileWMS",
+                                    "source_param_url": "https://www.fws.gov/wetlands/arcgis/services/Wetlands_Raster/ImageServer/WMSServer",
+                                    "source_param_params": {
+                                        "LAYERS": "0",
+                                        "TILED": true
+                                    },
+                                    "meta_extents": [-14.424688, -170.898427, 71.439690, 145.883474],
+                                    "meta_projection": "EPSG:4326"
                                 }
                             },
                             {

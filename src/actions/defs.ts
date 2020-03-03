@@ -96,13 +96,6 @@ export interface IGenericSubjectMapLayerMetadata {
      */
     extents: Bounds;
     /**
-     * The meters-per-unit resolution (derived from the projection)
-     *
-     * @type {number}
-     * @memberof IGenericSubjectMapLayerMetadata
-     */
-    metersPerUnit?: number;
-    /**
      * The projection of this layer
      *
      * @type {string}

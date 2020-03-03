@@ -61,11 +61,26 @@ export class GenericViewerInitCommand extends ViewerInitCommand<IGenericSubjectM
                 for (const map of mGroup.Map) {
                     if (map.Type == "OLGeneric") {
                         const name = mGroup["@id"];
-                        const { sourceType, ...rest } = map.Extension;
+                        const st = map.Extension.source_type;
+                        const sp: any = {};
+                        const meta: any = {};
+                        const keys = Object.keys(map.Extension);
+                        for (const k of keys) {
+                            const spidx = k.indexOf("source_param_");
+                            const midx = k.indexOf("meta_");
+                            if (spidx == 0) {
+                                const kn = k.substring("source_param_".length);
+                                sp[kn] = map.Extension[k];
+                            } else if (midx == 0) {
+                                const kn = k.substring("meta_".length);
+                                meta[kn] = map.Extension[k];
+                            }
+                        }
                         mapsByName[name] = {
                             name: name,
-                            type: sourceType,
-                            sourceParams: rest
+                            type: st,
+                            sourceParams: sp,
+                            meta: (Object.keys(meta).length > 0 ? meta : undefined) 
                         } as IGenericSubjectMapLayer;
                     }
                 }

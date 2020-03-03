@@ -5,23 +5,30 @@ import View from 'ol/View';
 import { debug } from '../../utils/logger';
 import { LayerSetGroupBase } from '../../api/layer-set-group-base';
 import { assertIsDefined } from '../../utils/assert';
+import { IGenericSubjectMapLayer } from 'actions/defs';
 
-export class GenericMapProviderContext extends BaseMapProviderContext<IMapProviderState, GenericLayerSetGroup> {
+export interface IGenericMapProviderState extends IMapProviderState {
+    subject: IGenericSubjectMapLayer | undefined;
+}
+
+export class GenericMapProviderContext extends BaseMapProviderContext<IGenericMapProviderState, GenericLayerSetGroup> {
     constructor() {
         super();
     }
-    protected getInitialProviderState(): Omit<IMapProviderState, keyof IMapProviderState> {
-        return { };
+    protected getInitialProviderState(): Omit<IGenericMapProviderState, keyof IMapProviderState> {
+        return {
+            subject: undefined
+        };
     }
     protected onProviderMapClick(px: [number, number]): void { }
-    protected initLayerSet(nextState: IMapProviderState): LayerSetGroupBase {
+    protected initLayerSet(nextState: IGenericMapProviderState): GenericLayerSetGroup {
         assertIsDefined(nextState.mapName);
-        const layerSet = new GenericLayerSetGroup();
+        const layerSet = new GenericLayerSetGroup(nextState.subject, nextState.externalBaseLayers, nextState.locale);
         this._layerSetGroups[nextState.mapName] = layerSet;
         return layerSet;
     }
     public getProviderName(): string { return "Generic"; }
-    public setProviderState(nextState: IMapProviderState): void {
+    public setProviderState(nextState: IGenericMapProviderState): void {
         // If viewer not mounted yet, just accept the next state and bail
         if (!this._comp || !this._map) {
             this._state = nextState;

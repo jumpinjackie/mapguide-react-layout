@@ -7,22 +7,28 @@ import LayerBase from "ol/layer/Base";
 import TileLayer from "ol/layer/Tile";
 import ImageLayer from "ol/layer/Image";
 
+export const DEFAULT_METERS_PER_UNIT = 1.0;
+const M_TO_IN = 39.37;
+const DEFAULT_DPI = 96;
+
 export class GenericLayerSetOL extends BaseLayerSetOL {
-    constructor(public subjectLayer: LayerBase,
-        externalBaseLayersGroup: LayerGroup | undefined,
-        projection: string | undefined,
-        dpi: number,
+    constructor(view: View,
+        public subjectLayer: LayerBase | undefined,
         extent: Bounds,
-        inPerUnit: number,
-        view: View) {
-        super(externalBaseLayersGroup, projection, dpi, extent, inPerUnit, view);
+        externalBaseLayersGroup: LayerGroup | undefined,
+        projection: string,
+        metersPerUnit: number = DEFAULT_METERS_PER_UNIT,
+        dpi: number = DEFAULT_DPI) {
+        super(externalBaseLayersGroup, projection, dpi, extent, M_TO_IN * metersPerUnit, view);
     }
     getLayers(): LayerBase[] {
         const layers: LayerBase[] = [];
         if (this.externalBaseLayersGroup) {
             layers.push(this.externalBaseLayersGroup);
         }
-        layers.push(this.subjectLayer);
+        if (this.subjectLayer) {
+            layers.push(this.subjectLayer);
+        }
         return layers;
     }
     getSourcesForProgressTracking(): Source[] {

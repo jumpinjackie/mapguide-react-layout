@@ -4,7 +4,7 @@
  * Redux action definitions
  */
 
-import { IDOMElementMetrics, IMapView, Dictionary, IExternalBaseLayer, IModalComponentDisplayOptions, IModalDisplayOptions, UnitOfMeasure, ActiveMapTool, ILayerInfo } from '../api/common';
+import { IDOMElementMetrics, IMapView, Dictionary, IExternalBaseLayer, IModalComponentDisplayOptions, IModalDisplayOptions, UnitOfMeasure, ActiveMapTool, ILayerInfo, Bounds } from '../api/common';
 import { ActionType } from '../constants/actions';
 import { PreparedSubMenuSet } from '../api/registry/command-spec';
 import { RuntimeMap } from '../api/contracts/runtime-map';
@@ -81,6 +81,37 @@ export interface ICloseComponentInFlyoutAction {
 }
 
 /**
+ * Metadata about the generic subject layer
+ * 
+ * @export
+ * @interface IGenericSubjectMapLayerMetadata
+ * @since 0.14
+ */
+export interface IGenericSubjectMapLayerMetadata {
+    /**
+     * The bounds of this layer
+     *
+     * @type {Bounds}
+     * @memberof IGenericSubjectMapLayerMetadata
+     */
+    extents: Bounds;
+    /**
+     * The meters-per-unit resolution (derived from the projection)
+     *
+     * @type {number}
+     * @memberof IGenericSubjectMapLayerMetadata
+     */
+    metersPerUnit?: number;
+    /**
+     * The projection of this layer
+     *
+     * @type {string}
+     * @memberof IGenericSubjectMapLayerMetadata
+     */
+    projection: string;
+}
+
+/**
  * 
  * @export
  * @interface IGenericSubjectMapLayer
@@ -88,6 +119,7 @@ export interface ICloseComponentInFlyoutAction {
  */
 export interface IGenericSubjectMapLayer {
     type: string;
+    meta: IGenericSubjectMapLayerMetadata | undefined;
     sourceParams: any;
     name: string;
 }

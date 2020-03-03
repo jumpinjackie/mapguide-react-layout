@@ -18,6 +18,8 @@ import { Client } from '../api/client';
 
 import "ol/ol.css";
 import { useActiveMapSelectableLayerNames, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapHideLayers, useActiveMapActiveSelectedFeature, useActiveMapState, useActiveMapSessionId } from './hooks-mapguide';
+import { useActiveMapSubjectLayer } from './hooks-generic';
+import { IGenericMapProviderState } from 'components/map-providers/generic';
 
 interface ICoreMapViewerProps {
     context: IMapProviderContext;
@@ -305,8 +307,10 @@ export const GenericMapViewer = () => {
     const undoLastPointKey = useConfiguredUndoLastPointKey();
     const layers = useActiveMapLayers();
     const dispatch = useDispatch();
+    // ================ Generic-specific =================== //
+    const subject = useActiveMapSubjectLayer();
 
-    const nextState: IMapProviderState = {
+    const nextState: IGenericMapProviderState = {
         activeTool,
         view,
         viewRotation,
@@ -315,7 +319,9 @@ export const GenericMapViewer = () => {
         locale,
         externalBaseLayers,
         cancelDigitizationKey,
-        undoLastPointKey
+        undoLastPointKey,
+        // ================ Generic-specific =================== //
+        subject
     };
     context.setProviderState(nextState);
 

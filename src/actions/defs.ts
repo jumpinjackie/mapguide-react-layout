@@ -118,7 +118,7 @@ export interface IGenericSubjectMapLayer {
 }
 
 export function isGenericSubjectMapLayer(map: RuntimeMap | IGenericSubjectMapLayer): map is IGenericSubjectMapLayer {
-    return typeof((map as any).type) == 'string';
+    return typeof((map as any)?.type) == 'string';
 }
 
 /**
@@ -126,7 +126,7 @@ export function isGenericSubjectMapLayer(map: RuntimeMap | IGenericSubjectMapLay
  */
 export type MapInfo = {
     mapGroupId: string;
-    map: RuntimeMap | IGenericSubjectMapLayer;
+    map: RuntimeMap | IGenericSubjectMapLayer | undefined;
     initialView: IMapView | undefined;
     externalBaseLayers: IExternalBaseLayer[];
 }

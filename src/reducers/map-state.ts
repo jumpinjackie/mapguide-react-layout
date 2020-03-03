@@ -132,14 +132,15 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                     let mgeneric: IGenericLayerSubState | undefined;
 
                     const rtm = maps[mapName].map;
-                    if (!isGenericSubjectMapLayer(rtm)) {
-                        mrtm = { runtimeMap: rtm };
-                    } else {
-                        mgeneric = { subject: { ...rtm } };
-                    }
-
-                    if (mapName == mapNameToApplyInitialState) {
+                    if (rtm) {
                         if (!isGenericSubjectMapLayer(rtm)) {
+                            mrtm = { runtimeMap: rtm };
+                        } else {
+                            mgeneric = { subject: { ...rtm } };
+                        }
+                    }
+                    if (mapName == mapNameToApplyInitialState) {
+                        if (rtm && !isGenericSubjectMapLayer(rtm)) {
                             const isl = payload.initialShowLayers ?? [];
                             const isg = payload.initialShowGroups ?? [];
                             const ihl = payload.initialHideLayers ?? [];

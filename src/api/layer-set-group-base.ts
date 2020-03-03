@@ -20,14 +20,13 @@ export abstract class LayerSetGroupBase {
     protected mainSet: ILayerSetOL;
     protected overviewSet: ILayerSetOL;
     protected scratchLayer: VectorLayer;
-    protected callback: IImageLayerEvents;
     protected _customLayers: {
         [name: string]: {
             layer: LayerBase,
             order: number
         }
     };
-    constructor() {
+    constructor(protected callback: IImageLayerEvents) {
         this._customLayers = {};
         this.scratchLayer = new VectorLayer({
             source: new VectorSource()

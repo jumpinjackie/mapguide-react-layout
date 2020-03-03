@@ -8,8 +8,7 @@ import { LayerSetGroupBase } from './layer-set-group-base';
 import { IMgLayerSetProps, IMgLayerSetCallback, MgInnerLayerSetFactory, mockMapGuideImageLoadFunction, blankImageLoadFunction } from './layer-set';
 export class MgLayerSetGroup extends LayerSetGroupBase {
     constructor(props: IMgLayerSetProps, callback: IMgLayerSetCallback) {
-        super();
-        this.callback = callback;
+        super(callback);
         const factory = new MgInnerLayerSetFactory(callback, props.map, props.agentUri, props.imageFormat, props.selectionImageFormat, props.selectionColor);
         //NOTE: MapGuide does not like concurrent map rendering operations of the same mapname/session pair, which
         //this will do when the MG overlay is shared between the main viewer and the overview map. This is probably

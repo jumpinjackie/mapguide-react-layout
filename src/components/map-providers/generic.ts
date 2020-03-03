@@ -23,7 +23,12 @@ export class GenericMapProviderContext extends BaseMapProviderContext<IGenericMa
     protected onProviderMapClick(px: [number, number]): void { }
     protected initLayerSet(nextState: IGenericMapProviderState): GenericLayerSetGroup {
         assertIsDefined(nextState.mapName);
-        const layerSet = new GenericLayerSetGroup(nextState.subject, nextState.externalBaseLayers, nextState.locale);
+        const layerSet = new GenericLayerSetGroup({
+            getLocale: () => this._state.locale,
+            addImageLoading: () => this._comp?.addImageLoading(),
+            addImageLoaded: () => this._comp?.addImageLoaded(),
+            onImageError: (e) => this.onImageError(e)
+        }, nextState.subject, nextState.externalBaseLayers, nextState.locale);
         this._layerSetGroups[nextState.mapName] = layerSet;
         return layerSet;
     }

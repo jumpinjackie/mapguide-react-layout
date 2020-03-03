@@ -3,12 +3,13 @@ import { IGenericSubjectMapLayer } from '../actions/defs';
 import { GenericLayerSetOL } from './generic-layer-set';
 import { createExternalSource } from '../components/external-layer-factory';
 import { tr } from './i18n';
-import { IExternalBaseLayer, LayerProperty, MG_BASE_LAYER_GROUP_NAME, Bounds } from './common';
+import { IExternalBaseLayer, LayerProperty, MG_BASE_LAYER_GROUP_NAME, Bounds, SourceProperty } from './common';
 import View from 'ol/View';
 import LayerGroup from 'ol/layer/Group';
 import TileLayer from 'ol/layer/Tile';
 import { get } from "ol/proj";
 import TileWMS from 'ol/source/TileWMS';
+import { IImageLayerEvents } from './layer-set-contracts';
 
 const DEFAULT_BOUNDS_3857: Bounds = [
     -20026376.39,
@@ -25,12 +26,25 @@ function getMetersPerUnit(projection: string) {
 }
 
 export class GenericLayerSetGroup extends LayerSetGroupBase {
-    constructor(subject: IGenericSubjectMapLayer | undefined,
+    constructor(callback: IImageLayerEvents,
+        subject: IGenericSubjectMapLayer | undefined,
         externalBaseLayers: IExternalBaseLayer[] | undefined,
         locale: string | undefined) {
-        super();
+        super(callback);
         this.mainSet = this.createLayerSetOL(subject, externalBaseLayers, locale);
         this.overviewSet = this.createLayerSetOL(subject, externalBaseLayers, locale);
+        const progressNotifySources = this.mainSet.getSourcesForProgressTracking();
+        /*
+        console.log("Draw Order:");
+        for (let i = 0; i < layers.length; i++) {
+            console.log(" " + layers[i].get(LayerProperty.LAYER_NAME));
+        }
+        */
+        for (const src of progressNotifySources) {
+            const suppress: boolean | undefined = src.get(SourceProperty.SUPPRESS_LOAD_EVENTS);
+            if (!(suppress == true))
+                this.registerSourceEvents(src);
+        }
     }
     private createExternalBaseLayer(ext: IExternalBaseLayer) {
         const extSource = createExternalSource(ext);

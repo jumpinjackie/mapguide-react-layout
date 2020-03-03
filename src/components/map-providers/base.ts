@@ -666,7 +666,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             const { x, y, scale } = this._state.view;
             this.zoomToView(x, y, scale);
         } else {
-            this._map.getView().fit(activeLayerSet.getExtent());
+            const extents = activeLayerSet.getExtent();
+            this._map.getView().fit(extents);
         }
         this.onResize(this._map.getSize());
     }

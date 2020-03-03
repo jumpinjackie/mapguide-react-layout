@@ -37,6 +37,53 @@
             "MapSet": {
                 "MapGroup": [
                     {
+                        "@id": "Melbourne",
+                        "Map": [
+                            {
+                                "Type": "OLGeneric",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "source_type": "TileWMS",
+                                    "source_param_url": "http://geoserver.nationalmap.nicta.com.au/admin_bnds_abs/ows",
+                                    "source_param_params": {
+                                        "LAYERS": "admin_bnds:SA1_2011_AUST",
+                                        "TILED": true
+                                    },
+                                    "meta_extents": [96.816941408, -43.74050960205765, 159.109219008, -9.142175976703609],
+                                    "meta_projection": "EPSG:4326"
+                                }
+                            },
+                            {
+                                "Type": "Stamen",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "Options": {
+                                        "name": [
+                                            "Stamen (Toner)"
+                                        ],
+                                        "type": [
+                                            "toner"
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                "Type": "OpenStreetMap",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "Options": {
+                                        "name": [
+                                            "Open Street Map"
+                                        ],
+                                        "type": [
+                                            "Mapnik"
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
                         "@id": "Sheboygan",
                         "Map": [
                             {
@@ -48,7 +95,7 @@
                                         "LAYERS": "0",
                                         "TILED": true
                                     },
-                                    "meta_extents": [-14.424688, -170.898427, 71.439690, 145.883474],
+                                    "meta_extents": [-87.76, 43.69, -87.69, 43.79],
                                     "meta_projection": "EPSG:4326"
                                 }
                             },
@@ -101,57 +148,6 @@
                                         ]
                                     },
                                     "ResourceId": "Library://Redding/Maps/Redding.MapDefinition"
-                                }
-                            },
-                            {
-                                "Type": "Stamen",
-                                "SingleTile": true,
-                                "Extension": {
-                                    "Options": {
-                                        "name": [
-                                            "Stamen (Toner)"
-                                        ],
-                                        "type": [
-                                            "toner"
-                                        ]
-                                    }
-                                }
-                            },
-                            {
-                                "Type": "OpenStreetMap",
-                                "SingleTile": true,
-                                "Extension": {
-                                    "Options": {
-                                        "name": [
-                                            "Open Street Map"
-                                        ],
-                                        "type": [
-                                            "Mapnik"
-                                        ]
-                                    }
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "@id": "Melbourne",
-                        "Map": [
-                            {
-                                "Type": "OLGeneric",
-                                "SingleTile": true,
-                                "Extension": {
-                                    "Options": {
-                                        "isBaseLayer": [
-                                            "false"
-                                        ],
-                                        "projection": [
-                                            "EPSG:900913"
-                                        ],
-                                        "useOverlay": [
-                                            "true"
-                                        ]
-                                    },
-                                    "ResourceId": "Library://Samples/Melbourne/Maps/Melbourne.MapDefinition"
                                 }
                             },
                             {

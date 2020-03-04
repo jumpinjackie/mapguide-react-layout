@@ -29,6 +29,9 @@ export const BaseLayerSwitcher = (props: IBaseLayerSwitcherProps) => {
         setSelected(value);
         props.onBaseLayerChanged?.(value);
     }
+    React.useEffect(() => {
+        setSelected(visLayers.length == 1 ? visLayers[0].name : STR_EMPTY);
+    }, [visLayers]);
     return <div>
         <div className="base-layer-switcher-item-container">
             <label className="bp3-control bp3-radio">

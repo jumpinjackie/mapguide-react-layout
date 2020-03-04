@@ -11,10 +11,9 @@ import Feature from 'ol/Feature';
 import { tr } from '../../api/i18n';
 import { ILayerManager, Coordinate2D } from '../../api/common';
 import { Client } from '../../api/client';
-import { IMapViewerContextCallback } from '../map-viewer-context';
 import { parseEpsgCodeFromCRS } from '../layer-manager/wfs-capabilities-panel';
-import { ProjectionLike } from '@hanreev/types-ol/ol/proj';
-import { LayerSetGroupBase } from 'api/layer-set-group-base';
+import { ProjectionLike } from 'ol/proj';
+import { LayerSetGroupBase } from '../../api/layer-set-group-base';
 
 export interface IQueryWmsFeaturesCallback {
     getLocale(): string | undefined;

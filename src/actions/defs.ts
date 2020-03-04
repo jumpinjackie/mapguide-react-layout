@@ -113,7 +113,9 @@ export interface IGenericSubjectMapLayerMetadata {
  */
 export enum GenericSubjectLayerType {
     TileWMS = "TileWMS",
-    CSV = "CSV"
+    CSV = "CSV",
+    KML = "KML",
+    GeoJSON = "GeoJSON"
 }
 
 /**

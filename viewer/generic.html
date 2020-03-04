@@ -33,7 +33,6 @@
     <script type="text/javascript">
         var appDef = {
             "Title": "Generic",
-            "TemplateUrl": "fusion/templates/mapguide/slate/index.html",
             "MapSet": {
                 "MapGroup": [
                     {
@@ -59,6 +58,15 @@
                                     "layer_name": "Medicare Offices",
                                     "source_type": "CSV",
                                     "source_param_url": "https://data.gov.au/data/dataset/70f76a9e-d450-4567-9760-290dea54229c/resource/7eb30338-768e-436c-9dde-dc7a1066c9c9/download/medicare-office-locations-as-at-9-october-19.csv",
+                                    "meta_projection": "EPSG:4326"
+                                }
+                            },
+                            {
+                                "Type": "External",
+                                "Extension": {
+                                    "layer_name": "Digital Hubs",
+                                    "source_type": "KML",
+                                    "source_param_url": "http://data.gov.au/storage/f/2013-08-12T02%3A04%3A22.954Z/digital-hubs-external.kml",
                                     "meta_projection": "EPSG:4326"
                                 }
                             },
@@ -106,6 +114,15 @@
                                         "TILED": true
                                     },
                                     "meta_extents": [-87.76, 43.69, -87.69, 43.79],
+                                    "meta_projection": "EPSG:4326"
+                                }
+                            },
+                            {
+                                "Type": "External",
+                                "Extension": {
+                                    "layer_name": "Buildings of Cambridge, MA",
+                                    "source_type": "GeoJSON",
+                                    "source_param_url": "https://raw.githubusercontent.com/cambridgegis/cambridgegis_data_basemap/master/Buildings/BASEMAP_Buildings.geojson",
                                     "meta_projection": "EPSG:4326"
                                 }
                             },

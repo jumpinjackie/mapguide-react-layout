@@ -13,9 +13,35 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { setOLVectorLayerStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE } from '../api/ol-style-helpers';
 import { CsvFormatDriver, CSV_COLUMN_ALIASES } from '../api/layer-manager/csv-driver';
+import KML from 'ol/format/KML';
+import GeoJSON from "ol/format/GeoJSON";
+
+function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExternalLayer, layer: LayerBase) {
+    layer.set(LayerProperty.LAYER_NAME, defn.name);
+    layer.set(LayerProperty.LAYER_TYPE, defn.type);
+    layer.set(LayerProperty.IS_SELECTABLE, true);
+    layer.set(LayerProperty.IS_EXTERNAL, true);
+    layer.set(LayerProperty.IS_GROUP, false);
+}
 
 export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IInitialExternalLayer, isExternal: boolean): LayerBase {
     switch (defn.type) {
+        case GenericSubjectLayerType.GeoJSON:
+            {
+                const layer = new VectorLayer({
+                    source: new VectorSource({
+                        url: defn.sourceParams.url,
+                        format: new GeoJSON()
+                    })
+                });
+                setOLVectorLayerStyle(layer, defn.vectorStyle ?? {
+                    point: DEFAULT_POINT_CIRCLE_STYLE,
+                    line: DEFAULT_LINE_STYLE,
+                    polygon: DEFAULT_POLY_STYLE
+                });
+                applyVectorLayerProperties(defn, layer);
+                return layer;
+            }
         case GenericSubjectLayerType.CSV:
             {
                 const vectorSource = new VectorSource({
@@ -45,11 +71,18 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                     line: DEFAULT_LINE_STYLE,
                     polygon: DEFAULT_POLY_STYLE
                 });
-                layer.set(LayerProperty.LAYER_NAME, defn.name);
-                layer.set(LayerProperty.LAYER_TYPE, defn.type);
-                layer.set(LayerProperty.IS_SELECTABLE, true);
-                layer.set(LayerProperty.IS_EXTERNAL, true);
-                layer.set(LayerProperty.IS_GROUP, false);
+                applyVectorLayerProperties(defn, layer);
+                return layer;
+            }
+        case GenericSubjectLayerType.KML:
+            {
+                const layer = new VectorLayer({
+                    source: new VectorSource({
+                        url: defn.sourceParams.url,
+                        format: new KML()
+                    })
+                });
+                applyVectorLayerProperties(defn, layer);
                 return layer;
             }
         case GenericSubjectLayerType.TileWMS:

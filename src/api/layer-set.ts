@@ -114,7 +114,7 @@ class MgLayerSetOL implements ILayerSetOL {
     public getSourcesForProgressTracking(): AbstractSource[] {
         const sources: AbstractSource[] = [];
         if (this.externalBaseLayersGroup) {
-            const bls = this.externalBaseLayersGroup.getLayersArray(undefined); /* ol-ts-bug */
+            const bls = this.externalBaseLayersGroup.getLayersArray();
             for (const bl of bls) {
                 if (bl instanceof ImageLayer || bl instanceof TileLayer) {
                     sources.push(bl.getSource());
@@ -253,7 +253,7 @@ class MgLayerSetOL implements ILayerSetOL {
             imageExtent: mapExtent,
             imageSize: [size.w, size.h],
             url: url
-        } as any /* ol-ts-bug */);
+        });
     }
     public showActiveSelectedFeature(mapExtent: Bounds, size: Size, uri: string) {
         if (this.activeSelectedFeatureOverlay) {
@@ -431,7 +431,7 @@ export class MgInnerLayerSetFactory {
                     imageExtent: extent,
                     imageSize: [BLANK_SIZE.w, BLANK_SIZE.h],
                     url: BLANK_GIF_DATA_URI
-                } as any /* ol-ts-bug */)
+                })
             });
             activeSelectedFeatureOverlay.set(LayerProperty.LAYER_NAME, MgBuiltInLayers.ActiveFeatureSelectionOverlay);
             activeSelectedFeatureOverlay.set(LayerProperty.LAYER_TYPE, MG_LAYER_TYPE_NAME);
@@ -498,7 +498,7 @@ export class MgInnerLayerSetFactory {
     }
     private createMgOverlayLayer(layerName: string, agentUri: string, metersPerUnit: number, projection: string | undefined, useImageOverlayOp: boolean, params: any): ImageLayer {
         const overlaySource = createMapGuideSource({
-            projection: projection as any, /* ol-ts-bug */
+            projection: projection,
             url: agentUri,
             useOverlay: useImageOverlayOp,
             metersPerUnit: metersPerUnit,

@@ -745,7 +745,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         assertIsDefined(this._state.mapName);
         const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
         assertIsDefined(activeLayerSet);
-        this._comp.onDispatch(setCurrentView(this.getViewForExtent(activeLayerSet.getExtent() as Bounds))); /* ol-ts-bug */
+        this._comp.onDispatch(setCurrentView(this.getViewForExtent(activeLayerSet.getExtent())));
     }
 
     public zoomDelta(delta: number): void {
@@ -760,14 +760,14 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public digitizePoint(handler: DigitizerCallback<Point>, prompt?: string): void {
         assertIsDefined(this._comp);
         const draw = new Draw({
-            type: GeometryType.POINT as any /* ol-ts-bug */
+            type: GeometryType.POINT
         });
         this.pushDrawInteraction("Point", draw, handler, prompt || tr("DIGITIZE_POINT_PROMPT", this._state.locale));
     }
     public digitizeLine(handler: DigitizerCallback<LineString>, prompt?: string): void {
         assertIsDefined(this._comp);
         const draw = new Draw({
-            type: GeometryType.LINE_STRING as any, /* ol-ts-bug */
+            type: GeometryType.LINE_STRING,
             minPoints: 2,
             maxPoints: 2
         });
@@ -776,7 +776,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public digitizeLineString(handler: DigitizerCallback<LineString>, prompt?: string): void {
         assertIsDefined(this._comp);
         const draw = new Draw({
-            type: GeometryType.LINE_STRING as any, /* ol-ts-bug */
+            type: GeometryType.LINE_STRING,
             minPoints: 2
         });
         this.pushDrawInteraction("LineString", draw, handler, prompt || tr("DIGITIZE_LINESTRING_PROMPT", this._state.locale, {
@@ -786,7 +786,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public digitizeCircle(handler: DigitizerCallback<Circle>, prompt?: string): void {
         assertIsDefined(this._comp);
         const draw = new Draw({
-            type: GeometryType.CIRCLE as any /* ol-ts-bug */
+            type: GeometryType.CIRCLE
         });
         this.pushDrawInteraction("Circle", draw, handler, prompt || tr("DIGITIZE_CIRCLE_PROMPT", this._state.locale));
     }
@@ -804,7 +804,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             return geometry;
         };
         const draw = new Draw({
-            type: GeometryType.LINE_STRING as any, /* ol-ts-bug */
+            type: GeometryType.LINE_STRING,
             maxPoints: 2,
             geometryFunction: geomFunc
         });
@@ -813,7 +813,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public digitizePolygon(handler: DigitizerCallback<Polygon>, prompt?: string): void {
         assertIsDefined(this._comp);
         const draw = new Draw({
-            type: GeometryType.POLYGON as any /* ol-ts-bug */
+            type: GeometryType.POLYGON
         });
         this.pushDrawInteraction("Polygon", draw, handler, prompt || tr("DIGITIZE_POLYGON_PROMPT", this._state.locale, {
             key: String.fromCharCode(this._state.undoLastPointKey ?? KC_U) //Pray that a sane (printable) key was bound

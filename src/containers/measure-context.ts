@@ -262,7 +262,7 @@ export class MeasureContext {
         const source = this.measureLayer.getSource();
         return this.olFactory.createInteractionDraw({
             source: source,
-            type: /** @type {ol.geom.GeometryType} */ (type) as any, /* ol-ts-bug */
+            type: /** @type {ol.geom.GeometryType} */ (type),
             style: this.olFactory.createStyle({
                 fill: this.olFactory.createStyleFill({
                     color: 'rgba(255, 255, 255, 0.2)'
@@ -299,7 +299,7 @@ export class MeasureContext {
         this.helpTooltip = this.olFactory.createOverlay({
             element: this.helpTooltipElement,
             offset: [15, 0],
-            positioning: OverlayPositioning.CENTER_LEFT as any /* ol-ts-bug */
+            positioning: OverlayPositioning.CENTER_LEFT
         });
         this.viewer.addOverlay(this.helpTooltip);
     }
@@ -317,7 +317,7 @@ export class MeasureContext {
         this.measureTooltip = this.olFactory.createOverlay({
             element: this.measureTooltipElement,
             offset: [0, -15],
-            positioning: OverlayPositioning.BOTTOM_CENTER as any /* ol-ts-bug */
+            positioning: OverlayPositioning.BOTTOM_CENTER
         });
         this.viewer.addOverlay(this.measureTooltip);
     }

@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import { IMapProviderContext, IViewerComponent, IMapProviderState } from '../components/map-providers/base';
 import { CURSOR_DIGITIZE_POINT, CURSOR_DIGITIZE_LINE, CURSOR_DIGITIZE_LINESTRING, CURSOR_DIGITIZE_RECT, CURSOR_DIGITIZE_POLYGON, CURSOR_DIGITIZE_CIRCLE, CURSOR_GRABBING, CURSOR_GRAB, CURSOR_ZOOM_IN } from '../constants/assets';
 import { MapLoadIndicator } from '../components/map-load-indicator';
-import { ActiveMapTool, MapLoadIndicatorPositioning, GenericEvent, ReduxDispatch, RefreshMode } from '../api/common';
+import { ActiveMapTool, MapLoadIndicatorPositioning, GenericEvent, ReduxDispatch, RefreshMode, ILayerInfo, ClientKind } from '../api/common';
 import { MapProviderContext } from '../components/map-providers/context';
 import { useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useViewerPointSelectionBuffer, useViewerSelectionColor, useViewerSelectionImageFormat, useConfiguredManualFeatureTooltips, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useViewerFeatureTooltipsEnabled, useActiveMapLayers, useActiveMapInitialExternalLayers } from './hooks';
 import { Toaster, Position } from '@blueprintjs/core';
@@ -22,6 +22,56 @@ import { useActiveMapSubjectLayer } from './hooks-generic';
 import { IGenericMapProviderState } from '../components/map-providers/generic';
 import { LayerManager } from '../api/layer-manager';
 import { mapLayerAdded } from '../actions/map';
+import { QueryMapFeaturesResponse } from 'api';
+import { IInitialExternalLayer } from 'actions/defs';
+
+function useViewerSideEffects(context: IMapProviderContext,
+    mapName: string | undefined,
+    layers: ILayerInfo[] | undefined,
+    initialExternalLayers: IInitialExternalLayer[] | undefined,
+    agentUri: string | undefined = undefined,
+    agentKind: ClientKind | undefined = undefined,
+    selection: QueryMapFeaturesResponse | null = null) {
+    const dispatch = useDispatch();
+    // Side-effect to pre-load external layers. Should only happen once per map name
+    React.useEffect(() => {
+        debug(`React.useEffect - Change of initial external layers for [${mapName}] (change should only happen once per mapName!)`);
+        if (mapName && initialExternalLayers) {
+            const layerManager = context.getLayerManager(mapName) as LayerManager;
+            for (const extLayer of initialExternalLayers) {
+                const added = layerManager.addExternalLayer(extLayer, true);
+                if (added) {
+                    dispatch(mapLayerAdded(mapName, added));
+                }
+            }
+        }
+    }, [context, mapName, initialExternalLayers]);
+    // Side-effect to apply the current external layer list
+    React.useEffect(() => {
+        debug(`React.useEffect - Change of external layers`);
+        if (context.isReady() && layers) {
+            const layerManager = context.getLayerManager(mapName);
+            layerManager.apply(layers);
+        }
+    }, [context, mapName, layers]);
+    // Side-effect to set the viewer "instance" once the MapViewerBase component has been mounted.
+    // Should only happen once.
+    React.useEffect(() => {
+        debug(`React.useEffect - Change of context and/or agent URI/kind`);
+        setViewer(context);
+        const browserWindow: any = window;
+        browserWindow.getViewer = browserWindow.getViewer || getViewer;
+        if (agentUri && agentKind) {
+            browserWindow.getClient = browserWindow.getClient || (() => new Client(agentUri, agentKind));
+        }
+        debug(`React.useEffect - Attached runtime viewer instance and installed browser global APIs`);
+    }, [context, agentUri, agentKind]);
+    // Side-effect to imperatively refresh the map upon selection change
+    React.useEffect(() => {
+        debug(`React.useEffect - Change of selection`);
+        context.refreshMap(RefreshMode.SelectionOnly);
+    }, [context, selection]);
+}
 
 interface ICoreMapViewerProps {
     context: IMapProviderContext;
@@ -255,32 +305,7 @@ export const MgMapViewer = () => {
     };
     context.setToasterRef(toasterRef);
     context.setProviderState(nextState);
-
-    // Side-effect to apply the current external layer list
-    React.useEffect(() => {
-        debug(`React.useEffect - Change of external layers`);
-        if (layers) {
-            const layerManager = context.getLayerManager();
-            layerManager.apply(layers);
-        }
-    }, [context, layers]);
-    // Side-effect to set the viewer "instance" once the MapViewerBase component has been mounted.
-    // Should only happen once.
-    React.useEffect(() => {
-        debug(`React.useEffect - Change of context and/or agent URI/kind`);
-        setViewer(context);
-        const browserWindow: any = window;
-        browserWindow.getViewer = browserWindow.getViewer || getViewer;
-        if (agentUri) {
-            browserWindow.getClient = browserWindow.getClient || (() => new Client(agentUri, agentKind));
-        }
-        debug(`React.useEffect - Attached runtime viewer instance and installed browser global APIs`);
-    }, [context, agentUri, agentKind]);
-    // Side-effect to imperatively refresh the map upon selection change
-    React.useEffect(() => {
-        debug(`React.useEffect - Change of selection`);
-        context.refreshMap(RefreshMode.SelectionOnly);
-    }, [context, selection]);
+    useViewerSideEffects(context, mapName, layers, initialExternalLayers, agentUri, agentKind, selection);
 
     if (agentUri && map && sessionId && layerTransparency) {
         return <>
@@ -333,37 +358,7 @@ export const GenericMapViewer = () => {
     };
     context.setToasterRef(toasterRef);
     context.setProviderState(nextState);
-
-    // Side-effect to pre-load external layers. Should only happen once per map name
-    React.useEffect(() => {
-        debug(`React.useEffect - Change of initial external layers for [${mapName}] (change should only happen once per mapName!)`);
-        if (mapName && initialExternalLayers) {
-            const layerManager = context.getLayerManager(mapName) as LayerManager;
-            for (const extLayer of initialExternalLayers) {
-                const added = layerManager.addExternalLayer(extLayer, true);
-                if (added) {
-                    dispatch(mapLayerAdded(mapName, added));
-                }
-            }
-        }
-    }, [context, mapName, initialExternalLayers]);
-    // Side-effect to apply the current external layer list
-    React.useEffect(() => {
-        debug(`React.useEffect - Change of external layers`);
-        if (context.isReady() && layers) {
-            const layerManager = context.getLayerManager(mapName);
-            layerManager.apply(layers);
-        }
-    }, [context, mapName, layers]);
-    // Side-effect to set the viewer "instance" once the MapViewerBase component has been mounted.
-    // Should only happen once.
-    React.useEffect(() => {
-        debug(`React.useEffect - Change of context`);
-        setViewer(context);
-        const browserWindow: any = window;
-        browserWindow.getViewer = browserWindow.getViewer || getViewer;
-        debug(`React.useEffect - Attached runtime viewer instance and installed browser global APIs`);
-    }, [context]);
+    useViewerSideEffects(context, mapName, layers, initialExternalLayers);
 
     return <>
         {/* HACK: usePortal=false to workaround what I think is: https://github.com/palantir/blueprint/issues/3248 */}

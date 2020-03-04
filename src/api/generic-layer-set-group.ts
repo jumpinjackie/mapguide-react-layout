@@ -1,7 +1,7 @@
 import { LayerSetGroupBase } from './layer-set-group-base';
 import { IGenericSubjectMapLayer } from '../actions/defs';
 import { GenericLayerSetOL } from './generic-layer-set';
-import { createExternalSource } from '../components/external-layer-factory';
+import { createExternalSource, createOLLayerFromSubjectDefn } from '../components/external-layer-factory';
 import { tr } from './i18n';
 import { IExternalBaseLayer, LayerProperty, MG_BASE_LAYER_GROUP_NAME, Bounds, SourceProperty } from './common';
 import View from 'ol/View';
@@ -12,7 +12,6 @@ import TileWMS from 'ol/source/TileWMS';
 import ImageWMS from 'ol/source/ImageWMS';
 import { IImageLayerEvents } from './layer-set-contracts';
 import ImageLayer from "ol/layer/Image";
-import { createOLLayerFromSubjectDefn } from './ol-factory';
 
 const DEFAULT_BOUNDS_3857: Bounds = [
     -20026376.39,

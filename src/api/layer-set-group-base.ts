@@ -18,7 +18,7 @@ import Map from "ol/Map";
 import OverviewMap from "ol/control/OverviewMap"
 import View from 'ol/View';
 import { IInitialExternalLayer } from '../actions/defs';
-import { createOLLayerFromSubjectDefn } from './ol-factory';
+import { createOLLayerFromSubjectDefn } from '../components/external-layer-factory';
 
 export abstract class LayerSetGroupBase {
     protected mainSet: ILayerSetOL;

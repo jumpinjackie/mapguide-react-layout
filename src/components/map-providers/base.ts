@@ -487,42 +487,43 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         if (this.isDigitizing()) {
             return;
         }
-        if (this._state.activeTool == ActiveMapTool.WmsQueryFeatures) {
-            const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
-            this.queryWmsFeatures(activeLayerSet, this.getLayerManager(), e.coordinate as Coordinate2D);
-        } else {
-            let vfSelected = 0;
-            if (this._state.activeTool == ActiveMapTool.Select) {
-                /*
-                //Shift+Click is the default OL selection append mode, so if no shift key
-                //pressed, clear the existing selection
-                if (!this.state.shiftKey) {
-                    this._select.getFeatures().clear();
-                }
-                */
-                //TODO: Our selected feature tooltip only shows properties of a single feature
-                //and displays upon said feature being selected. As a result, although we can
-                //(and should) allow for multiple features to be selected, we need to figure
-                //out the proper UI for such a case before we enable multiple selection.
+
+        let vfSelected = 0;
+        if (this._state.activeTool == ActiveMapTool.Select || this._state.activeTool == ActiveMapTool.WmsQueryFeatures) {
+            /*
+            //Shift+Click is the default OL selection append mode, so if no shift key
+            //pressed, clear the existing selection
+            if (!this.state.shiftKey) {
                 this._select.getFeatures().clear();
-                this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
-                    if (vfSelected == 0) { //See TODO above
-                        if (layer.get(LayerProperty.IS_SELECTABLE) == true && feature instanceof Feature) {
-                            this._select.getFeatures().push(feature);
-                            vfSelected++;
-                        }
+            }
+            */
+            //TODO: Our selected feature tooltip only shows properties of a single feature
+            //and displays upon said feature being selected. As a result, although we can
+            //(and should) allow for multiple features to be selected, we need to figure
+            //out the proper UI for such a case before we enable multiple selection.
+            this._select.getFeatures().clear();
+            this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
+                if (vfSelected == 0) { //See TODO above
+                    if (layer.get(LayerProperty.IS_SELECTABLE) == true && feature instanceof Feature) {
+                        this._select.getFeatures().push(feature);
+                        vfSelected++;
                     }
-                });
-            }
-            // We'll only fall through the normal map selection query route if no 
-            // vector features were selected as part of this click
-            const px = e.pixel as [number, number];
-            if (vfSelected == 0) {
-                this.hideSelectedVectorFeaturesTooltip();
-                this.onProviderMapClick(px);
+                }
+            });
+        }
+        // We'll only fall through the normal map selection query route if no 
+        // vector features were selected as part of this click
+        const px = e.pixel as [number, number];
+        if (vfSelected == 0) {
+            this.hideSelectedVectorFeaturesTooltip();
+            if (this._state.activeTool == ActiveMapTool.WmsQueryFeatures) {
+                const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
+                this.queryWmsFeatures(activeLayerSet, this.getLayerManager(), e.coordinate as Coordinate2D);
             } else {
-                this.showSelectedVectorFeatures(this._select.getFeatures(), px, this._state.locale);
+                this.onProviderMapClick(px);
             }
+        } else {
+            this.showSelectedVectorFeatures(this._select.getFeatures(), px, this._state.locale);
         }
     }
     protected abstract onProviderMapClick(px: [number, number]): void;

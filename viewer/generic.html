@@ -41,7 +41,6 @@
                         "Map": [
                             {
                                 "Type": "External",
-                                "SingleTile": true,
                                 "Extension": {
                                     "layer_name": "SA1 2011 Boundaries",
                                     "source_type": "TileWMS",
@@ -51,6 +50,15 @@
                                         "TILED": true
                                     },
                                     "meta_extents": [96.816941408, -43.74050960205765, 159.109219008, -9.142175976703609],
+                                    "meta_projection": "EPSG:4326"
+                                }
+                            },
+                            {
+                                "Type": "External",
+                                "Extension": {
+                                    "layer_name": "Medicare Offices",
+                                    "source_type": "CSV",
+                                    "source_param_url": "https://data.gov.au/data/dataset/70f76a9e-d450-4567-9760-290dea54229c/resource/7eb30338-768e-436c-9dde-dc7a1066c9c9/download/medicare-office-locations-as-at-9-october-19.csv",
                                     "meta_projection": "EPSG:4326"
                                 }
                             },

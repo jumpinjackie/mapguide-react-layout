@@ -112,7 +112,8 @@ export interface IGenericSubjectMapLayerMetadata {
  * @since 0.14
  */
 export enum GenericSubjectLayerType {
-    TileWMS = "TileWMS"
+    TileWMS = "TileWMS",
+    CSV = "CSV"
 }
 
 /**
@@ -126,6 +127,7 @@ export interface IGenericSubjectMapLayer {
     meta: IGenericSubjectMapLayerMetadata | undefined;
     sourceParams: any;
     name: string;
+    vectorStyle?: IVectorFeatureStyle;
 }
 
 export type IInitialExternalLayer = IGenericSubjectMapLayer;

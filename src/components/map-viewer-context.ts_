@@ -33,30 +33,6 @@ import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import Geometry from 'ol/geom/Geometry';
 
-/**
- * @since 0.13
- */
-export enum MapGuideMockMode {
-    /**
-     * Render a placeholder image showing the key mapagent parameters
-     */
-    RenderPlaceholder,
-    /**
-     * Do not render anything
-     */
-    DoNotRender
-}
-
-/**
- * The map debug context, used to check if request mocking should be enabled or not
- * @since 0.13
- */
-export interface IMapDebugContext {
-    mock?: MapGuideMockMode;
-}
-
-export const MapDebugContext = createContext<IMapDebugContext>({});
-
 export interface IMapViewerContextProps {
     map: RuntimeMap;
     imageFormat: ImageFormat;
@@ -77,28 +53,6 @@ export interface IMapViewerContextProps {
     agentKind: ClientKind;
     mock?: MapGuideMockMode;
     manualFeatureTooltips: boolean;
-}
-
-export interface IMapViewerContextCallback {
-    getMockMode(): MapGuideMockMode | undefined;
-    incrementBusyWorker(): void;
-    decrementBusyWorker(): void;
-    addImageLoading(): void;
-    addImageLoaded(): void;
-    onImageError(e: GenericEvent): void;
-    onSessionExpired(): void;
-    getSelectableLayers(): string[];
-    getClient(): Client;
-    isContextMenuOpen(): boolean;
-    getAgentUri(): string;
-    getAgentKind(): ClientKind;
-    getMapName(): string;
-    getSessionId(): string;
-    getLocale(): string | undefined;
-    isFeatureTooltipEnabled(): boolean;
-    getPointSelectionBox(point: Coordinate2D): Bounds;
-    openTooltipLink(url: string): void;
-    addFeatureToHighlight(feat: Feature<Geometry> | undefined, bAppend: boolean): void;
 }
 
 /**

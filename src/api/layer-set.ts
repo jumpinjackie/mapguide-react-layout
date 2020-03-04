@@ -12,7 +12,6 @@ import * as olExtent from "ol/extent";
 import TileLayer from "ol/layer/Tile";
 import ImageLayer from "ol/layer/Image";
 import LayerBase from "ol/layer/Base";
-import { IMapViewerContextCallback, MapGuideMockMode } from '../components/map-viewer-context';
 import { RuntimeMap } from './contracts/runtime-map';
 import { createExternalSource } from '../components/external-layer-factory';
 import { strIsNullOrEmpty } from '../utils/string';
@@ -25,6 +24,7 @@ import { debug } from '../utils/logger';
 import { Client } from './client';
 import { ILayerSetOL, IImageLayerEvents } from './layer-set-contracts';
 import Geometry from 'ol/geom/Geometry';
+import { MapGuideMockMode } from '../components/mapguide-debug-context';
 
 export function blankImageLoadFunction(image: ImageWrapper) {
     (image.getImage() as any).src = BLANK_GIF_DATA_URI;
@@ -261,6 +261,28 @@ class MgLayerSetOL implements ILayerSetOL {
             this.activeSelectedFeatureOverlay.setVisible(true);
         }
     }
+}
+
+export interface IMapViewerContextCallback {
+    getMockMode(): MapGuideMockMode | undefined;
+    incrementBusyWorker(): void;
+    decrementBusyWorker(): void;
+    addImageLoading(): void;
+    addImageLoaded(): void;
+    onImageError(e: GenericEvent): void;
+    onSessionExpired(): void;
+    getSelectableLayers(): string[];
+    getClient(): Client;
+    isContextMenuOpen(): boolean;
+    getAgentUri(): string;
+    getAgentKind(): ClientKind;
+    getMapName(): string;
+    getSessionId(): string;
+    getLocale(): string | undefined;
+    isFeatureTooltipEnabled(): boolean;
+    getPointSelectionBox(point: Coordinate2D): Bounds;
+    openTooltipLink(url: string): void;
+    addFeatureToHighlight(feat: Feature<Geometry> | undefined, bAppend: boolean): void;
 }
 
 export class MgInnerLayerSetFactory {

@@ -2,10 +2,10 @@ import { SourceProperty } from './common';
 import { defaultImageLoadFunction } from "ol/source/Image";
 import olMapGuideSource from "ol/source/ImageMapGuide";
 import olImageLayer from "ol/layer/Image";
-import { MapGuideMockMode } from '../components/map-viewer-context';
 import { assertNever } from '../utils/never';
 import { LayerSetGroupBase } from './layer-set-group-base';
 import { IMgLayerSetProps, IMgLayerSetCallback, MgInnerLayerSetFactory, mockMapGuideImageLoadFunction, blankImageLoadFunction } from './layer-set';
+import { MapGuideMockMode } from '../components/mapguide-debug-context';
 export class MgLayerSetGroup extends LayerSetGroupBase {
     constructor(props: IMgLayerSetProps, callback: IMgLayerSetCallback) {
         super(callback);

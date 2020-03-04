@@ -7,7 +7,6 @@ import DragBox from 'ol/interaction/DragBox';
 import Select from 'ol/interaction/Select';
 import Draw, { GeometryFunction } from 'ol/interaction/Draw';
 import { SelectedFeaturesTooltip } from '../tooltips/selected-features';
-import { MapGuideMockMode } from '../map-viewer-context';
 import Feature from 'ol/Feature';
 import Polygon from 'ol/geom/Polygon';
 import Geometry from 'ol/geom/Geometry';
@@ -45,6 +44,7 @@ import { IOLFactory, OLFactory } from '../../api/ol-factory';
 import { ISubscriberProps } from '../../containers/subscriber';
 import isMobile from "ismobilejs";
 import { IInitialExternalLayer } from '../../actions/defs';
+import { MapGuideMockMode } from '../mapguide-debug-context';
 
 export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4));

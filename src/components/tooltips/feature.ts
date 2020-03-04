@@ -4,7 +4,6 @@ import olOverlay from "ol/Overlay";
 import olWKTFormat from "ol/format/WKT";
 import olPolygon, { fromExtent } from "ol/geom/Polygon";
 import olMap from "ol/Map";
-import { IMapViewerContextCallback, MapGuideMockMode } from '../map-viewer-context';
 import { GenericEvent, GenericEventHandler, ClientKind, Coordinate2D, Bounds } from '../../api/common';
 import { Client } from '../../api/client';
 import * as olExtent from "ol/extent";

@@ -28,6 +28,7 @@ import { STR_EMPTY } from '../../utils/string';
 import { ensureParameters } from '../../utils/url';
 import { ActionType } from '../../constants/actions';
 import { buildSelectionXml } from '../../api/builders/deArrayify';
+import { MapGuideMockMode } from '../mapguide-debug-context';
 
 export interface IMapGuideProviderState extends IMapProviderState {
     imageFormat: ImageFormat;
@@ -73,11 +74,24 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
     private _wktFormat: WKTFormat;
     // ============================================================= //
 
-    constructor() {
+    constructor(public mockMode: MapGuideMockMode | undefined = undefined) {
         super();
         this._wktFormat = new WKTFormat();
         this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), 500);
     }
+
+    public setMockMode(mode: MapGuideMockMode | undefined): void {
+        this.mockMode = mode;
+    }
+
+    /**
+     *
+     * @override
+     * @protected
+     * @returns {(MapGuideMockMode | undefined)}
+     * @memberof MapGuideMapProviderContext
+     */
+    protected getMockMode() : MapGuideMockMode | undefined { return this.mockMode; }
 
     protected getInitialProviderState(): Omit<IMapGuideProviderState, keyof IMapProviderState> {
         return {

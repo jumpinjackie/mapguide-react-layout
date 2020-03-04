@@ -12,6 +12,7 @@ export const TYPE_EXTERNAL = "External";
 
 function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGenericSubjectMapLayer {
     const st = map.Extension.source_type;
+    const initiallyVisible = map.Extension.initially_visible ?? true;
     const sp: any = {};
     const meta: any = {};
     const keys = Object.keys(map.Extension);
@@ -30,7 +31,8 @@ function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGenericSub
         name: name,
         type: st,
         sourceParams: sp,
-        meta: (Object.keys(meta).length > 0 ? meta : undefined) 
+        meta: (Object.keys(meta).length > 0 ? meta : undefined),
+        initiallyVisible
     } as IGenericSubjectMapLayer;
 }
 

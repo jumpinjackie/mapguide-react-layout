@@ -129,6 +129,7 @@ export interface IGenericSubjectMapLayer {
     meta: IGenericSubjectMapLayerMetadata | undefined;
     sourceParams: any;
     name: string;
+    initiallyVisible: boolean;
     vectorStyle?: IVectorFeatureStyle;
 }
 

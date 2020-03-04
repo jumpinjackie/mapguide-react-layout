@@ -22,6 +22,7 @@ function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExte
     layer.set(LayerProperty.IS_SELECTABLE, true);
     layer.set(LayerProperty.IS_EXTERNAL, true);
     layer.set(LayerProperty.IS_GROUP, false);
+    layer.setVisible(defn.initiallyVisible);
 }
 
 export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IInitialExternalLayer, isExternal: boolean): LayerBase {
@@ -96,6 +97,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 layer.set(LayerProperty.IS_SELECTABLE, true); //Let's assume this WMS service is capable of GetFeatureInfo in GeoJSON representation
                 layer.set(LayerProperty.IS_EXTERNAL, isExternal);
                 layer.set(LayerProperty.IS_GROUP, false);
+                layer.setVisible(defn.initiallyVisible);
                 return layer;
             }
         default:

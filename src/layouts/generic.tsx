@@ -5,7 +5,7 @@ import ModalLauncher from '../containers/modal-launcher';
 import FlyoutRegionContainer from '../containers/flyout-region';
 import InitWarningDisplay from '../containers/init-warning-display';
 import { useCommonTemplateState } from './hooks';
-import { ButtonGroup, Button, Intent, Drawer, Position } from '@blueprintjs/core';
+import { ButtonGroup, Button, Intent, Drawer, Position, Popover, PopoverInteractionKind, IPopoverProps, Card, Elevation } from '@blueprintjs/core';
 import { useDispatch } from 'react-redux';
 import { ICommand, ActiveMapTool } from '../api/common';
 import { invokeCommand, setActiveTool } from '../actions/map';
@@ -40,6 +40,15 @@ const GenericLayout = () => {
             <Button icon="zoom-to-fit" onClick={zoomExtents} />
             <Button icon="select" intent={activeTool == ActiveMapTool.WmsQueryFeatures ? Intent.PRIMARY : Intent.NONE} onClick={select} />
             <Button icon="layers" intent={isLayerManagerOpen ? Intent.PRIMARY : Intent.NONE} onClick={onToggleLayerManager} />
+            <Popover usePortal={false} position="right" minimal={false}>
+                <Button icon="cog" />
+                <Card interactive={true} elevation={Elevation.TWO} style={{ minWidth: 200 }}>
+                    <h5 className="bp3-heading"><a href="#">Active Base Layer</a></h5>
+                    <PlaceholderComponent id={DefaultComponentNames.BaseMapSwitcher} locale={locale} />
+                    <h5 className="bp3-heading"><a href="#">Current Map</a></h5>
+                    <PlaceholderComponent id={DefaultComponentNames.MapMenu} locale={locale} />
+                </Card>
+            </Popover>
         </ButtonGroup>
         <ViewerApiShim />
         <Drawer size={Drawer.SIZE_SMALL} canOutsideClickClose={true} onClose={() => setIsLayerManagerOpen(false)} title="External Layer Manager" position={Position.LEFT} usePortal={false} isOpen={isLayerManagerOpen}>

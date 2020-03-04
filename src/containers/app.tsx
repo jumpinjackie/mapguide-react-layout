@@ -21,8 +21,7 @@ import { getStateFromUrl, IAppUrlState, updateUrl } from './url-state';
 import { debug } from '../utils/logger';
 import { setElementStates } from '../actions/template';
 import { IViewerInitCommand } from '../actions/init-command';
-import { MapGuideViewerInitCommand } from '../actions/init-mapguide';
-import { ApplicationDefinition } from 'api';
+import { ApplicationDefinition } from '../api/contracts/fusion';
 
 export interface SelectionOptions {
     allowHtmlValues?: boolean;

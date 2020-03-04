@@ -89,7 +89,7 @@ import GeometryType from 'ol/geom/GeometryType';
 import { ProjectionLike } from 'ol/proj';
 import Select from 'ol/interaction/Select';
 import { MgLayerSetGroup } from "../api/mg-layer-set-group";
-import { MgLayerManager } from '../api/layer-manager';
+import { LayerManager } from '../api/layer-manager';
 import MapBrowserEvent from 'ol/MapBrowserEvent';
 import { warn, debug, info } from '../utils/logger';
 import { SessionKeepAlive } from './session-keep-alive';
@@ -997,7 +997,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     public getLayerManager(mapName?: string): ILayerManager {
         const layerSet = this._mapContext.getLayerSet(mapName || this.props.map.Name, true, this.props);
-        return new MgLayerManager(this._map, layerSet);
+        return new LayerManager(this._map, layerSet);
     }
     public screenToMapUnits(x: number, y: number): [number, number] {
         let bAllowOutsideWindow = false;

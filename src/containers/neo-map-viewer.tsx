@@ -20,7 +20,7 @@ import "ol/ol.css";
 import { useActiveMapSelectableLayerNames, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapHideLayers, useActiveMapActiveSelectedFeature, useActiveMapState, useActiveMapSessionId } from './hooks-mapguide';
 import { useActiveMapSubjectLayer } from './hooks-generic';
 import { IGenericMapProviderState } from '../components/map-providers/generic';
-import { MgLayerManager } from '../api/layer-manager';
+import { LayerManager } from '../api/layer-manager';
 import { mapLayerAdded } from '../actions/map';
 
 interface ICoreMapViewerProps {
@@ -334,26 +334,27 @@ export const GenericMapViewer = () => {
     context.setToasterRef(toasterRef);
     context.setProviderState(nextState);
 
+    // Side-effect to pre-load external layers. Should only happen once per map name
     React.useEffect(() => {
         debug(`React.useEffect - Change of initial external layers for [${mapName}] (change should only happen once per mapName!)`);
         if (mapName && initialExternalLayers) {
-            const layerManager = context.getLayerManager(mapName) as MgLayerManager;
+            const layerManager = context.getLayerManager(mapName) as LayerManager;
             for (const extLayer of initialExternalLayers) {
-                const added = layerManager.addExternalLayer(extLayer);
-                dispatch(mapLayerAdded(mapName, added));
+                const added = layerManager.addExternalLayer(extLayer, true);
+                if (added) {
+                    dispatch(mapLayerAdded(mapName, added));
+                }
             }
         }
     }, [context, mapName, initialExternalLayers]);
-
     // Side-effect to apply the current external layer list
     React.useEffect(() => {
-        console.log(layers);
         debug(`React.useEffect - Change of external layers`);
         if (context.isReady() && layers) {
-            const layerManager = context.getLayerManager();
+            const layerManager = context.getLayerManager(mapName);
             layerManager.apply(layers);
         }
-    }, [context, layers]);
+    }, [context, mapName, layers]);
     // Side-effect to set the viewer "instance" once the MapViewerBase component has been mounted.
     // Should only happen once.
     React.useEffect(() => {

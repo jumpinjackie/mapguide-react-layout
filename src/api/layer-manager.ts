@@ -46,12 +46,21 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
     }
 }
 
-export class MgLayerManager implements ILayerManager {
+export class LayerManager implements ILayerManager {
     private _olFormats: IFormatDriver[];
     constructor(private map: olMap, private layerSet: LayerSetGroupBase) {
         this._olFormats = getFormatDrivers();
     }
-    addExternalLayer(extLayer: IInitialExternalLayer) {
+    /**
+     * INTERNAL API
+     * @param {IInitialExternalLayer} extLayer
+     * @returns
+     * @memberof LayerManager
+     */
+    addExternalLayer(extLayer: IInitialExternalLayer, onlyAddIfNotExists: boolean) {
+        if (onlyAddIfNotExists && this.hasLayer(extLayer.name)) {
+            return undefined;
+        }
         return this.layerSet.addExternalLayer(this.map, extLayer);
     }
     getLayers(): ILayerInfo[] {

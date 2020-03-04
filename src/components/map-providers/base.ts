@@ -29,7 +29,7 @@ import Circle from 'ol/geom/Circle';
 import Interaction from 'ol/interaction/Interaction';
 import Overlay from 'ol/Overlay';
 import { ProjectionLike } from 'ol/proj';
-import { MgLayerManager } from '../../api/layer-manager';
+import { LayerManager } from '../../api/layer-manager';
 import Collection from 'ol/Collection';
 import * as olExtent from "ol/extent";
 import * as olEasing from "ol/easing";
@@ -845,7 +845,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
     protected getLayerManagerForLayerSet(layerSet: TLayerSetGroup) {
         assertIsDefined(this._map);
-        return new MgLayerManager(this._map, layerSet);
+        return new LayerManager(this._map, layerSet);
     }
     public getLayerManager(mapName?: string): ILayerManager {
         assertIsDefined(this._map);

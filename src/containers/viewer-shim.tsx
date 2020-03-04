@@ -723,8 +723,8 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public triggerFusionEvent(eventID: number) {
-        debug(`Trigger Fusion Event ID - ${eventID}`);
         if (this.fusionEventHandlers[eventID]) {
+            debug(`Trigger Fusion Event ID - ${eventID}`);
             for (const cb of this.fusionEventHandlers[eventID]) {
                 cb.apply(null, arguments);
             }

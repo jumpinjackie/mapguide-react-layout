@@ -114,7 +114,7 @@ class MgLayerSetOL implements ILayerSetOL {
     public getSourcesForProgressTracking(): AbstractSource[] {
         const sources: AbstractSource[] = [];
         if (this.externalBaseLayersGroup) {
-            const bls = this.externalBaseLayersGroup.getLayersArray({}); /* ol-ts-bug */
+            const bls = this.externalBaseLayersGroup.getLayersArray(undefined); /* ol-ts-bug */
             for (const bl of bls) {
                 if (bl instanceof ImageLayer || bl instanceof TileLayer) {
                     sources.push(bl.getSource());

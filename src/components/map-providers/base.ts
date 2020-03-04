@@ -57,6 +57,9 @@ export interface IViewerComponent {
     onHideContextMenu: () => void;
     addImageLoading(): void;
     addImageLoaded(): void;
+    addSubscribers(props: ISubscriberProps[]): string[];
+    removeSubscribers(names: string[]): boolean;
+    getSubscribers(): string[];
 }
 
 export interface IMapProviderState {
@@ -199,13 +202,13 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._comp?.addImageLoaded();
     }
     addSubscribers(props: ISubscriberProps[]): string[] {
-        throw new Error("Method not implemented (addSubscribers).");
+        return this._comp?.addSubscribers(props) ?? [];
     }
     removeSubscribers(names: string[]): boolean {
-        throw new Error("Method not implemented (removeSubscribers).");
+        return this._comp?.removeSubscribers(names) ?? false;
     }
     getSubscribers(): string[] {
-        throw new Error("Method not implemented (getSubscribers).");
+        return this._comp?.getSubscribers() ?? [];
     }
     dispatch(action: any): void {
         this._comp?.onDispatch(action);

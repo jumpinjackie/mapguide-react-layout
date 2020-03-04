@@ -24,6 +24,7 @@ import { LayerManager } from '../api/layer-manager';
 import { mapLayerAdded } from '../actions/map';
 import { IInitialExternalLayer } from '../actions/defs';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
+import { ISubscriberProps, Subscriber } from './subscriber';
 
 function useViewerSideEffects(context: IMapProviderContext,
     mapName: string | undefined,
@@ -88,6 +89,7 @@ interface ICoreMapViewerState {
     digitizingType: string | undefined;
     loading: number;
     loaded: number;
+    subscribers: ISubscriberProps[];
 }
 
 class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerState> implements IViewerComponent {
@@ -98,7 +100,8 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
             isMouseDown: false,
             digitizingType: undefined,
             loaded: 0,
-            loading: 0
+            loading: 0,
+            subscribers: []
         }
     }
     //#region IViewerComponent
@@ -113,6 +116,21 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
         const newLoading = (loading || 0) + 1;
         this.setState({ loading: newLoading });
         this.props.context.incrementBusyWorker();
+    }
+    addSubscribers = (props: ISubscriberProps[]) => {
+        const subscribers = [...this.state.subscribers, ...props];
+        this.setState({ subscribers });
+        return props.map(p => p.name);
+    }
+    removeSubscribers = (names: string[]) => {
+        const { subscribers } = this.state;
+        const ol = subscribers.length;
+        const ns = subscribers.filter(s => names.indexOf(s.name) < 0);
+        this.setState({ subscribers });
+        return ns.length < ol;
+    }
+    getSubscribers(): string[] {
+        return this.state.subscribers.map(s => s.name);
     }
     addImageLoaded(): void {
         const { loaded, loading } = this.state;
@@ -217,9 +235,10 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
             style.backgroundColor = backgroundColor;
             //style.backgroundColor = `#${map.BackgroundColor.substring(2)}`;
         }
-        const { loading, loaded } = this.state;
+        const { loading, loaded, subscribers } = this.state;
         return <div className="map-viewer-component" style={style} onContextMenu={this.onContextMenu} onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp}>
             <MapLoadIndicator loaded={loaded || 0} loading={loading || 0} position={this.props.loadIndicatorPosition} color={this.props.loadIndicatorColor} />
+            {subscribers.map((s, i) => <Subscriber key={`subscriber-${i}-${s.name}`} {...s} />)}
         </div>;
     }
 }

@@ -1,16 +1,17 @@
-import olLayerVector from "ol/layer/Vector";
-import olStyle from "ol/style/Style";
-import olCircleStyle from "ol/style/Circle";
-import olIconStyle from "ol/style/Icon";
+import VectorLayer from "ol/layer/Vector";
+import Style from "ol/style/Style";
+import CircleStyle from "ol/style/Circle";
+import IconStyle from "ol/style/Icon";
 import { Color, asString, asArray } from "ol/color";
 import { ColorLike } from "ol/colorlike";
-import olStroke from "ol/style/Stroke";
-import olFill from "ol/style/Fill";
-import olFeature from "ol/Feature";
+import Stroke from "ol/style/Stroke";
+import Fill from "ol/style/Fill";
+import Feature from "ol/Feature";
 import { LayerProperty } from './common';
 import * as shortid from "shortid";
 import { MAP_MARKER_ICON } from '../constants/assets';
 import { rad2deg, deg2rad } from '../utils/number';
+import Geometry from 'ol/geom/Geometry';
 
 /**
  * Defines a style for a vector layer
@@ -162,14 +163,14 @@ export const DEFAULT_POLY_STYLE: IBasicVectorPolygonStyle = {
  */
 export interface IOlStyleMap {
     id: string;
-    "Point": olStyle;
-    "LineString": olStyle;
-    "MultiLineString": olStyle;
-    "MultiPoint": olStyle;
-    "MultiPolygon": olStyle;
-    "Polygon": olStyle;
-    "GeometryCollection": olStyle;
-    "Circle": olStyle;
+    "Point": Style;
+    "LineString": Style;
+    "MultiLineString": Style;
+    "MultiPoint": Style;
+    "MultiPolygon": Style;
+    "Polygon": Style;
+    "GeometryCollection": Style;
+    "Circle": Style;
 }
 
 function lpad(inStr: string | number, len: number,  padChar: string = '0') {
@@ -191,7 +192,7 @@ function toHtmlColor(c: Color | ColorLike): [string, number] {
     return [DEFAULT_COLOR, 0];
 }
 
-function toBasicFill(f: olFill): IBasicFill {
+function toBasicFill(f: Fill): IBasicFill {
     const [c, alpha] = toHtmlColor(f.getColor());
     const fi: IBasicFill = {
         color: c,
@@ -200,7 +201,7 @@ function toBasicFill(f: olFill): IBasicFill {
     return fi;
 }
 
-function toBasicStroke(s: olStroke): IBasicStroke {
+function toBasicStroke(s: Stroke): IBasicStroke {
     const [c, alpha] = toHtmlColor(s.getColor());
     const bs: IBasicStroke = {
         color: c,
@@ -221,14 +222,14 @@ function toBasicStroke(s: olStroke): IBasicStroke {
 export function olStyleMapToVectorStyle(os: IOlStyleMap): IVectorFeatureStyle {
     const style: IVectorFeatureStyle = {};
     const pi = os.Point.getImage();
-    if (pi instanceof olCircleStyle) {
+    if (pi instanceof CircleStyle) {
         style.point = {
             type: "Circle",
             fill: toBasicFill(pi.getFill()),
             radius: pi.getRadius(),
             stroke: toBasicStroke(pi.getStroke())
         };
-    } else if (pi instanceof olIconStyle) {
+    } else if (pi instanceof IconStyle) {
         style.point = {
             type: "Icon",
             anchor: pi.getAnchor() as [number, number],
@@ -262,45 +263,45 @@ function toOLColor(color: string, alpha: number) {
  * @returns {IOlStyleMap}
  * @since 0.13
  */
-export function vectorStyleToOLStyleMap(style: IVectorFeatureStyle): IOlStyleMap {
+export function vectorStyleToStyleMap(style: IVectorFeatureStyle): IOlStyleMap {
     const ptStyle = style.point ?? DEFAULT_POINT_CIRCLE_STYLE;
-    const pts = new olStyle({
-        image: ptStyle.type == "Circle" ? (new olCircleStyle({
+    const pts = new Style({
+        image: ptStyle.type == "Circle" ? (new CircleStyle({
             radius: ptStyle.radius,
-            fill: new olFill({
+            fill: new Fill({
                 color: toOLColor(ptStyle.fill.color, ptStyle.fill.alpha)
             }),
-            stroke: new olStroke({
+            stroke: new Stroke({
                 color: toOLColor(ptStyle.stroke.color, ptStyle.stroke.alpha),
                 width: ptStyle.stroke.width
             })
-        })) : (new olIconStyle({
+        })) : (new IconStyle({
             ...ptStyle,
             //opacity: ptStyle.opacity / 255,
             rotation: deg2rad(ptStyle.rotation)
         }))
     });
     const lnStyle = style.line ?? DEFAULT_LINE_STYLE;
-    const lns = new olStyle({
-        stroke: new olStroke({
+    const lns = new Style({
+        stroke: new Stroke({
             color: toOLColor(lnStyle.color, lnStyle.alpha),
             width: lnStyle.width
         })
     });
     const plStyle = style.polygon ?? DEFAULT_POLY_STYLE;
-    const pls = new olStyle({
-        stroke: new olStroke({
+    const pls = new Style({
+        stroke: new Stroke({
             color: toOLColor(plStyle.stroke.color, plStyle.stroke.alpha),
             width: plStyle.stroke.width
         }),
-        fill: new olFill({
+        fill: new Fill({
             color: toOLColor(plStyle.fill.color, plStyle.fill.alpha)
         })
     });
     //For GeometryCollection, combine point and polygon styles
     const cpts = pts.clone();
     const cpls = pls.clone();
-    const gcs = new olStyle({
+    const gcs = new Style({
         image: cpts.getImage(),
         stroke: cpls.getStroke(),
         fill: cpls.getFill()
@@ -323,10 +324,10 @@ export function vectorStyleToOLStyleMap(style: IVectorFeatureStyle): IOlStyleMap
  * 
  * @since 0.13
  */
-export function setOLVectorLayerStyle(layer: olLayerVector, style: IVectorFeatureStyle) {
-    const ols = vectorStyleToOLStyleMap(style);
+export function setOLVectorLayerStyle(layer: VectorLayer, style: IVectorFeatureStyle) {
+    const ols = vectorStyleToStyleMap(style);
     layer.set(LayerProperty.VECTOR_STYLE, ols);
-    const layerStyleFunc = function (feature: olFeature) {
+    const layerStyleFunc = function (feature: Feature<Geometry>) {
         const gt = feature.getGeometry().getType();
         const st = this[gt];
         return st;

@@ -13,7 +13,7 @@ import { IFormatDriver } from './layer-manager/format-driver';
 import { tr } from './i18n';
 import { IParsedFeatures } from './layer-manager/parsed-features';
 import { LayerSetGroupBase } from './layer-set-group-base';
-import { IInitialExternalLayer } from 'actions/defs';
+import { IInitialExternalLayer } from '../actions/defs';
 
 export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInfo {
     let vectorStyle: IVectorFeatureStyle | undefined;

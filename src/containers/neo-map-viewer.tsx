@@ -22,8 +22,8 @@ import { useActiveMapSubjectLayer } from './hooks-generic';
 import { IGenericMapProviderState } from '../components/map-providers/generic';
 import { LayerManager } from '../api/layer-manager';
 import { mapLayerAdded } from '../actions/map';
-import { QueryMapFeaturesResponse } from 'api';
-import { IInitialExternalLayer } from 'actions/defs';
+import { IInitialExternalLayer } from '../actions/defs';
+import { QueryMapFeaturesResponse } from '../api/contracts/query';
 
 function useViewerSideEffects(context: IMapProviderContext,
     mapName: string | undefined,

@@ -23,6 +23,7 @@ import { IParsedFeatures } from './layer-manager/parsed-features';
 import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
 import { ISubscriberProps } from '../containers/subscriber';
+import Geometry from 'ol/geom/Geometry';
 
 // Event boilerplate
 export type GenericEvent = any;
@@ -892,7 +893,7 @@ export interface IMapViewer {
      * @memberof IMapViewer
      * @since 0.13
      */
-    getSelectedFeatures(): Collection<Feature>;
+    getSelectedFeatures(): Collection<Feature<Geometry>>;
 
     /**
      * INTERNAL API. Not for public use
@@ -2352,54 +2353,6 @@ export interface WMSServiceDescription {
 export interface IMapGuideImageSource {
     on(event: string, handler: Function): void;
     updateParams(params: any): void;
-}
-
-export interface MapGuideImageSourceOptions {
-    /**
-     * The mapagent url.
-     */
-    url?: string;
-    /**
-     * The display resolution. Default is `96`.
-     */
-    displayDpi?: number;
-    /**
-     * The meters-per-unit value. Default is `1`.
-     */
-    metersPerUnit?: number;
-    /**
-     * Use the `ol.Map#pixelRatio` value when requesting the image from the remote
-     * server. Default is `true`.
-     */
-    hidpi?: boolean;
-    /**
-     * If `true`, will use `GETDYNAMICMAPOVERLAYIMAGE`.
-     */
-    useOverlay?: boolean;
-    /**
-     * Projection.
-     */
-    projection?: ProjectionLike;
-    /**
-     * Ratio. `1` means image requests are the size of the map viewport, `2` means
-     * twice the width and height of the map viewport, and so on. Must be `1` or
-     * higher. Default is `1`.
-     */
-    ratio?: number;
-    /**
-     * Resolutions. If specified, requests will be made for these resolutions only.
-     */
-    resolutions?: number[];
-    /**
-     * Optional function to load an image given a URL.
-     */
-    imageLoadFunction?: LoadFunction;
-    /**
-     * Additional parameters.
-     */
-    params?: any;
-    crossOrigin?: string;
-    defaultImageLoadFunction?: LoadFunction;
 }
 
 /**

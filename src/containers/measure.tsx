@@ -11,6 +11,7 @@ import { Callout, Intent, ButtonGroup, Button, HTMLSelect } from '@blueprintjs/c
 import { useActiveMapName, useViewerLocale, useAvailableMaps } from './hooks';
 import GeometryType from 'ol/geom/GeometryType';
 import { setActiveTool } from '../actions/map';
+import { OLGeometryType } from '../api/ol-types';
 
 export interface IMeasureContainerProps {
 
@@ -28,7 +29,7 @@ interface IMeasureContainerDispatch {
 
 interface IMeasureContainerState {
     measuring: boolean;
-    drawType: GeometryType;
+    drawType: OLGeometryType;
     activeType: "LineString" | "Area";
     segmentTotal: number;
     segments: MeasureSegment[];
@@ -106,7 +107,7 @@ class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasu
     clearSegments(): void {
         this.setState({ segments: undefined });
     }
-    getCurrentDrawType(): GeometryType | undefined { return this.state.drawType; }
+    getCurrentDrawType(): OLGeometryType | undefined { return this.state.drawType; }
     getLocale(): string {
         return this.props.locale || DEFAULT_LOCALE;
     }

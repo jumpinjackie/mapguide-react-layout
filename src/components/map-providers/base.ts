@@ -44,7 +44,7 @@ import { Toaster, Intent } from '@blueprintjs/core';
 import { IOLFactory, OLFactory } from '../../api/ol-factory';
 import { ISubscriberProps } from '../../containers/subscriber';
 import isMobile from "ismobilejs";
-import { IInitialExternalLayer } from 'actions/defs';
+import { IInitialExternalLayer } from '../../actions/defs';
 
 export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4));
@@ -227,7 +227,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected abstract getInitialProviderState() : Omit<TState, keyof IMapProviderState>;
     //#region IMapViewerContextCallback
     protected getMockMode() : MapGuideMockMode | undefined { return undefined; }
-    protected addFeatureToHighlight(feat: Feature | undefined, bAppend: boolean): void {
+    protected addFeatureToHighlight(feat: Feature<Geometry> | undefined, bAppend: boolean): void {
         if (this._state.mapName) {
             // Features have to belong to layer in order to be visible and have the highlight style, 
             // so in addition to adding this new feature to the OL select observable collection, we 
@@ -373,7 +373,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                 }
                 this._activeDrawInteraction = draw;
                 this._activeDrawInteraction.once("drawend", (e: GenericEvent) => {
-                    const drawnFeature: Feature = e.feature;
+                    const drawnFeature: Feature<Geometry> = e.feature;
                     const geom: T = drawnFeature.getGeometry() as T;
                     this.cancelDigitization();
                     handler(geom);
@@ -452,7 +452,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected hideSelectedVectorFeaturesTooltip() {
         this._selectTooltip?.hide();
     }
-    protected showSelectedVectorFeatures(features: Collection<Feature>, pixel: [number, number], locale?: string) {
+    protected showSelectedVectorFeatures(features: Collection<Feature<Geometry>>, pixel: [number, number], locale?: string) {
         this._selectTooltip?.showSelectedVectorFeatures(features, pixel, locale);
     }
     protected queryWmsFeatures(currentLayerSet: LayerSetGroupBase | undefined, layerMgr: ILayerManager, coord: Coordinate2D) {
@@ -742,7 +742,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         assertIsDefined(this._state.mapName);
         const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
         assertIsDefined(activeLayerSet);
-        this._comp.onDispatch(setCurrentView(this.getViewForExtent(activeLayerSet.getExtent())));
+        this._comp.onDispatch(setCurrentView(this.getViewForExtent(activeLayerSet.getExtent() as Bounds))); /* ol-ts-bug */
     }
 
     public zoomDelta(delta: number): void {
@@ -757,14 +757,14 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public digitizePoint(handler: DigitizerCallback<Point>, prompt?: string): void {
         assertIsDefined(this._comp);
         const draw = new Draw({
-            type: GeometryType.POINT // "Point"//ol.geom.GeometryType.POINT
+            type: GeometryType.POINT as any /* ol-ts-bug */
         });
         this.pushDrawInteraction("Point", draw, handler, prompt || tr("DIGITIZE_POINT_PROMPT", this._state.locale));
     }
     public digitizeLine(handler: DigitizerCallback<LineString>, prompt?: string): void {
         assertIsDefined(this._comp);
         const draw = new Draw({
-            type: GeometryType.LINE_STRING, // "LineString", //ol.geom.GeometryType.LINE_STRING,
+            type: GeometryType.LINE_STRING as any, /* ol-ts-bug */
             minPoints: 2,
             maxPoints: 2
         });
@@ -773,7 +773,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public digitizeLineString(handler: DigitizerCallback<LineString>, prompt?: string): void {
         assertIsDefined(this._comp);
         const draw = new Draw({
-            type: GeometryType.LINE_STRING, //"LineString", //ol.geom.GeometryType.LINE_STRING,
+            type: GeometryType.LINE_STRING as any, /* ol-ts-bug */
             minPoints: 2
         });
         this.pushDrawInteraction("LineString", draw, handler, prompt || tr("DIGITIZE_LINESTRING_PROMPT", this._state.locale, {
@@ -783,7 +783,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public digitizeCircle(handler: DigitizerCallback<Circle>, prompt?: string): void {
         assertIsDefined(this._comp);
         const draw = new Draw({
-            type: GeometryType.CIRCLE  // "Circle" //ol.geom.GeometryType.CIRCLE
+            type: GeometryType.CIRCLE as any /* ol-ts-bug */
         });
         this.pushDrawInteraction("Circle", draw, handler, prompt || tr("DIGITIZE_CIRCLE_PROMPT", this._state.locale));
     }
@@ -801,7 +801,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             return geometry;
         };
         const draw = new Draw({
-            type: GeometryType.LINE_STRING, //"LineString", //ol.geom.GeometryType.LINE_STRING,
+            type: GeometryType.LINE_STRING as any, /* ol-ts-bug */
             maxPoints: 2,
             geometryFunction: geomFunc
         });
@@ -810,7 +810,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public digitizePolygon(handler: DigitizerCallback<Polygon>, prompt?: string): void {
         assertIsDefined(this._comp);
         const draw = new Draw({
-            type: GeometryType.POLYGON //"Polygon" //ol.geom.GeometryType.POLYGON
+            type: GeometryType.POLYGON as any /* ol-ts-bug */
         });
         this.pushDrawInteraction("Polygon", draw, handler, prompt || tr("DIGITIZE_POLYGON_PROMPT", this._state.locale, {
             key: String.fromCharCode(this._state.undoLastPointKey ?? KC_U) //Pray that a sane (printable) key was bound

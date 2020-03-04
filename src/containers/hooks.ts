@@ -4,7 +4,7 @@ import { getExternalBaseLayers, INameValuePair, QueryMapFeaturesResponse, Active
 import { WEBLAYOUT_CONTEXTMENU } from '../constants';
 import { useRef, useEffect } from "react";
 import { areArraysDifferent } from "../utils/array";
-import { IInitialExternalLayer } from 'actions/defs';
+import { IInitialExternalLayer } from '../actions/defs';
 
 // From: https://usehooks.com/usePrevious/
 

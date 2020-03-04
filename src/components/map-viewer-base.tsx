@@ -386,7 +386,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
                 }
                 this._activeDrawInteraction = draw;
                 this._activeDrawInteraction.once("drawend", (e: GenericEvent) => {
-                    const drawnFeature: Feature = e.feature;
+                    const drawnFeature: Feature<Geometry> = e.feature;
                     const geom: T = drawnFeature.getGeometry() as T;
                     this.cancelDigitization();
                     handler(geom);
@@ -880,7 +880,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     public initialView(): void {
         const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
-        this.onRequestZoomToView(this.getViewForExtent(activeLayerSet.getExtent()));
+        this.onRequestZoomToView(this.getViewForExtent(activeLayerSet.getExtent() as Bounds));
     }
     public clearSelection(): void {
         this.setSelectionXml("");
@@ -902,13 +902,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     public digitizePoint(handler: DigitizerCallback<Point>, prompt?: string): void {
         const draw = new Draw({
-            type: GeometryType.POINT // "Point"//ol.geom.GeometryType.POINT
+            type: GeometryType.POINT as any /* ol-ts-bug */
         });
         this.pushDrawInteraction("Point", draw, handler, prompt || tr("DIGITIZE_POINT_PROMPT", this.props.locale));
     }
     public digitizeLine(handler: DigitizerCallback<LineString>, prompt?: string): void {
         const draw = new Draw({
-            type: GeometryType.LINE_STRING, // "LineString", //ol.geom.GeometryType.LINE_STRING,
+            type: GeometryType.LINE_STRING as any, /* ol-ts-bug */
             minPoints: 2,
             maxPoints: 2
         });
@@ -916,7 +916,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     public digitizeLineString(handler: DigitizerCallback<LineString>, prompt?: string): void {
         const draw = new Draw({
-            type: GeometryType.LINE_STRING, //"LineString", //ol.geom.GeometryType.LINE_STRING,
+            type: GeometryType.LINE_STRING as any, /* ol-ts-bug */
             minPoints: 2
         });
         this.pushDrawInteraction("LineString", draw, handler, prompt || tr("DIGITIZE_LINESTRING_PROMPT", this.props.locale, {
@@ -925,7 +925,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     public digitizeCircle(handler: DigitizerCallback<Circle>, prompt?: string): void {
         const draw = new Draw({
-            type: GeometryType.CIRCLE  // "Circle" //ol.geom.GeometryType.CIRCLE
+            type: GeometryType.CIRCLE as any /* ol-ts-bug */
         });
         this.pushDrawInteraction("Circle", draw, handler, prompt || tr("DIGITIZE_CIRCLE_PROMPT", this.props.locale));
     }
@@ -942,7 +942,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             return geometry;
         };
         const draw = new Draw({
-            type: GeometryType.LINE_STRING, //"LineString", //ol.geom.GeometryType.LINE_STRING,
+            type: GeometryType.LINE_STRING as any, /* ol-ts-bug */
             maxPoints: 2,
             geometryFunction: geomFunc
         });
@@ -950,7 +950,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     public digitizePolygon(handler: DigitizerCallback<Polygon>, prompt?: string): void {
         const draw = new Draw({
-            type: GeometryType.POLYGON //"Polygon" //ol.geom.GeometryType.POLYGON
+            type: GeometryType.POLYGON as any /* ol-ts-bug */
         });
         this.pushDrawInteraction("Polygon", draw, handler, prompt || tr("DIGITIZE_POLYGON_PROMPT", this.props.locale, {
             key: String.fromCharCode(this.props.undoLastPointKey || KC_U) //Pray that a sane (printable) key was bound

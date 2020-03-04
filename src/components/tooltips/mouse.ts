@@ -20,7 +20,7 @@ export class MouseTrackingTooltip {
         this.tooltip = new olOverlay({
             element: this.tooltipElement,
             offset: [15, 0],
-            positioning: OverlayPositioning.CENTER_LEFT // "center-left" /*ol.OverlayPositioning.CENTER_LEFT*/
+            positioning: OverlayPositioning.CENTER_LEFT as any /* ol-ts-bug */
         })
         this.map.addOverlay(this.tooltip);
         this.text = null;

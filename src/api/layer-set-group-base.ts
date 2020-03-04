@@ -19,6 +19,7 @@ import OverviewMap from "ol/control/OverviewMap"
 import View from 'ol/View';
 import { IInitialExternalLayer } from '../actions/defs';
 import { createOLLayerFromSubjectDefn } from '../components/external-layer-factory';
+import Geometry from 'ol/geom/Geometry';
 
 export abstract class LayerSetGroupBase {
     protected mainSet: ILayerSetOL;
@@ -37,7 +38,7 @@ export abstract class LayerSetGroupBase {
         });
         this.scratchLayer.set(LayerProperty.IS_SCRATCH, true);
     }
-    public addScratchFeature(feat: Feature) {
+    public addScratchFeature(feat: Feature<Geometry>) {
         this.scratchLayer.getSource().addFeature(feat);
     }
     public clearScratchLayer() {

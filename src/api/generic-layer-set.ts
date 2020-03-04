@@ -34,7 +34,7 @@ export class GenericLayerSetOL extends BaseLayerSetOL {
     getSourcesForProgressTracking(): Source[] {
         const sources: Source[] = [];
         if (this.externalBaseLayersGroup) {
-            const bls = this.externalBaseLayersGroup.getLayersArray();
+            const bls = this.externalBaseLayersGroup.getLayersArray({}); /* ol-ts-bug */
             for (const bl of bls) {
                 if (bl instanceof ImageLayer || bl instanceof TileLayer) {
                     sources.push(bl.getSource());

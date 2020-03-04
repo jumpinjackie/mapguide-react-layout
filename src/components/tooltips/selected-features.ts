@@ -14,10 +14,11 @@ import { Client } from '../../api/client';
 import { parseEpsgCodeFromCRS } from '../layer-manager/wfs-capabilities-panel';
 import { ProjectionLike } from 'ol/proj';
 import { LayerSetGroupBase } from '../../api/layer-set-group-base';
+import Geometry from 'ol/geom/Geometry';
 
 export interface IQueryWmsFeaturesCallback {
     getLocale(): string | undefined;
-    addFeatureToHighlight(feat: Feature | undefined, bAppend: boolean): void;
+    addFeatureToHighlight(feat: Feature<Geometry> | undefined, bAppend: boolean): void;
 }
 
 export class SelectedFeaturesTooltip {
@@ -35,7 +36,7 @@ export class SelectedFeaturesTooltip {
         this.featureTooltip = new olOverlay({
             element: this.featureTooltipElement,
             offset: [15, 0],
-            positioning: OverlayPositioning.CENTER_LEFT // "center-left" /* ol.OverlayPositioning.CENTER_LEFT */
+            positioning: OverlayPositioning.CENTER_LEFT as any /* ol-ts-bug */
         })
         this.map = map;
         this.map.addOverlay(this.featureTooltip);
@@ -117,7 +118,7 @@ export class SelectedFeaturesTooltip {
             this.hide();
         }
     }
-    private generateFeatureHtml(feat: Feature, locale?: string) {
+    private generateFeatureHtml(feat: Feature<Geometry>, locale?: string) {
         let html = "";
         html += "<div style='min-width: 190px'><div style='float: left; font-weight: bold; font-size: 1.3em'>" + tr("SEL_FEATURE_PROPERTIES", locale) + "</div><a id='feat-popup-closer' href='#' style='float: right'>[x]</a><div class='clear: both'></div></div>";
         var table = "<table style='margin-top: 25px'>";
@@ -154,7 +155,7 @@ export class SelectedFeaturesTooltip {
         }
         return false;
     };
-    public showSelectedVectorFeatures(features: Collection<Feature>, pixel: [number, number], locale?: string) {
+    public showSelectedVectorFeatures(features: Collection<Feature<Geometry>>, pixel: [number, number], locale?: string) {
         const coords = this.map.getCoordinateFromPixel(pixel);
         if (features.getLength() > 0) {
             this.featureTooltip.setPosition(coords);

@@ -31,6 +31,7 @@ import Feature from 'ol/Feature';
 import { SelectedFeaturesTooltip } from './tooltips/selected-features';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
+import Geometry from 'ol/geom/Geometry';
 
 /**
  * @since 0.13
@@ -97,7 +98,7 @@ export interface IMapViewerContextCallback {
     isFeatureTooltipEnabled(): boolean;
     getPointSelectionBox(point: Coordinate2D): Bounds;
     openTooltipLink(url: string): void;
-    addFeatureToHighlight(feat: Feature | undefined, bAppend: boolean): void;
+    addFeatureToHighlight(feat: Feature<Geometry> | undefined, bAppend: boolean): void;
 }
 
 /**
@@ -196,7 +197,7 @@ export class MapViewerContext {
     public hideSelectedVectorFeaturesTooltip() {
         this._selectTooltip?.hide();
     }
-    public showSelectedVectorFeatures(features: Collection<Feature>, pixel: [number, number], locale?: string) {
+    public showSelectedVectorFeatures(features: Collection<Feature<Geometry>>, pixel: [number, number], locale?: string) {
         this._selectTooltip?.showSelectedVectorFeatures(features, pixel, locale);
     }
     public queryWmsFeatures(map: olMap, layerMgr: ILayerManager, coord: Coordinate2D) {

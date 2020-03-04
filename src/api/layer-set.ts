@@ -1,17 +1,17 @@
 import { RefreshMode, IExternalBaseLayer, Bounds, LayerTransparencySet, LayerProperty, MgBuiltInLayers, MgLayerType, MG_LAYER_TYPE_NAME, MG_BASE_LAYER_GROUP_NAME, ILayerInfo, ImageFormat, GenericEvent, ClientKind, Coordinate2D, Size, BLANK_SIZE } from './common';
-import olLayerGroup from "ol/layer/Group";
-import olTileGrid from "ol/tilegrid/TileGrid";
-import olSource from "ol/source/Source";
-import olTileImageSource from "ol/source/TileImage";
+import LayerGroup from "ol/layer/Group";
+import TileGrid from "ol/tilegrid/TileGrid";
+import AbstractSource from "ol/source/Source";
+import TileImageSource from "ol/source/TileImage";
 import createMapGuideSource from "./ol-mapguide-source-factory";
-import olImageStaticSource from "ol/source/ImageStatic";
+import ImageStaticSource from "ol/source/ImageStatic";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY, BLANK_GIF_DATA_URI } from "../constants/index";
 import { restrictToRange } from "../utils/number";
-import olView from "ol/View";
+import View from "ol/View";
 import * as olExtent from "ol/extent";
-import olTileLayer from "ol/layer/Tile";
-import olImageLayer from "ol/layer/Image";
-import olLayerBase from "ol/layer/Base";
+import TileLayer from "ol/layer/Tile";
+import ImageLayer from "ol/layer/Image";
+import LayerBase from "ol/layer/Base";
 import { IMapViewerContextCallback, MapGuideMockMode } from '../components/map-viewer-context';
 import { RuntimeMap } from './contracts/runtime-map';
 import { createExternalSource } from '../components/external-layer-factory';
@@ -24,6 +24,7 @@ import Feature from "ol/Feature";
 import { debug } from '../utils/logger';
 import { Client } from './client';
 import { ILayerSetOL, IImageLayerEvents } from './layer-set-contracts';
+import Geometry from 'ol/geom/Geometry';
 
 export function blankImageLoadFunction(image: ImageWrapper) {
     (image.getImage() as any).src = BLANK_GIF_DATA_URI;
@@ -89,17 +90,17 @@ export function mockMapGuideImageLoadFunction(image: ImageWrapper, src: string) 
 }
 
 class MgLayerSetOL implements ILayerSetOL {
-    constructor(public readonly mgTiledLayers: olTileLayer[],
-        public readonly externalBaseLayersGroup: olLayerGroup | undefined,
-        public readonly overlay: olImageLayer,
+    constructor(public readonly mgTiledLayers: TileLayer[],
+        public readonly externalBaseLayersGroup: LayerGroup | undefined,
+        public readonly overlay: ImageLayer,
         public readonly projection: string | undefined,
         public readonly dpi: number,
         public readonly extent: Bounds,
         private readonly inPerUnit: number,
-        public readonly view: olView) { }
+        public readonly view: View) { }
 
-    public selectionOverlay: olImageLayer | undefined;
-    public activeSelectedFeatureOverlay: olImageLayer | undefined;
+    public selectionOverlay: ImageLayer | undefined;
+    public activeSelectedFeatureOverlay: ImageLayer | undefined;
 
     public getMetersPerUnit(): number {
         return this.inPerUnit / 39.37
@@ -110,12 +111,12 @@ class MgLayerSetOL implements ILayerSetOL {
     public resolutionToScale(resolution: number): number {
         return (resolution * this.dpi * this.inPerUnit) / olHas.DEVICE_PIXEL_RATIO;
     }
-    public getSourcesForProgressTracking(): olSource[] {
-        const sources: olSource[] = [];
+    public getSourcesForProgressTracking(): AbstractSource[] {
+        const sources: AbstractSource[] = [];
         if (this.externalBaseLayersGroup) {
-            const bls = this.externalBaseLayersGroup.getLayersArray();
+            const bls = this.externalBaseLayersGroup.getLayersArray({}); /* ol-ts-bug */
             for (const bl of bls) {
-                if (bl instanceof olImageLayer || bl instanceof olTileLayer) {
+                if (bl instanceof ImageLayer || bl instanceof TileLayer) {
                     sources.push(bl.getSource());
                 }
             }
@@ -132,8 +133,8 @@ class MgLayerSetOL implements ILayerSetOL {
         }
         return sources;
     }
-    public getLayers(): olLayerBase[] {
-        const layers: olLayerBase[] = [];
+    public getLayers(): LayerBase[] {
+        const layers: LayerBase[] = [];
         if (this.externalBaseLayersGroup) {
             layers.push(this.externalBaseLayersGroup);
         }
@@ -190,7 +191,7 @@ class MgLayerSetOL implements ILayerSetOL {
     public updateExternalBaseLayers(externalBaseLayers: IExternalBaseLayer[]) {
         if (this.externalBaseLayersGroup) {
             const layers = this.externalBaseLayersGroup.getLayers();
-            layers.forEach((l: olLayerBase) => {
+            layers.forEach((l: LayerBase) => {
                 const match = (externalBaseLayers || []).filter(el => el.name === l.get("title"));
                 if (match.length == 1) {
                     l.setVisible(!!match[0].visible);
@@ -248,11 +249,11 @@ class MgLayerSetOL implements ILayerSetOL {
         }
     }
     private makeActiveSelectedFeatureSource(mapExtent: Bounds, size: Size, url: string = BLANK_GIF_DATA_URI) {
-        return new olImageStaticSource({
+        return new ImageStaticSource({
             imageExtent: mapExtent,
             imageSize: [size.w, size.h],
             url: url
-        });
+        } as any /* ol-ts-bug */);
     }
     public showActiveSelectedFeature(mapExtent: Bounds, size: Size, uri: string) {
         if (this.activeSelectedFeatureOverlay) {
@@ -337,7 +338,7 @@ export class MgInnerLayerSetFactory {
             projection = `EPSG:${map.CoordinateSystem.EpsgCode}`;
         }
 
-        const tileGrid = new olTileGrid({
+        const tileGrid = new TileGrid({
             origin: olExtent.getTopLeft(extent),
             resolutions: resolutions,
             tileSize: [tileWidth, tileHeight]
@@ -346,20 +347,20 @@ export class MgInnerLayerSetFactory {
         const zOrigin = finiteScales.length - 1;
         const mgTiledLayers = [];
 
-        //const groupLayers = [] as olTileLayer[];
+        //const groupLayers = [] as TileLayer[];
         if (map.Group) {
             for (let i = 0; i < map.Group.length; i++) {
                 const group = map.Group[i];
                 if (group.Type != 2 && group.Type != 3) { //BaseMap or LinkedTileSet
                     continue;
                 }
-                const tileSource = new olTileImageSource({
+                const tileSource = new TileImageSource({
                     tileGrid: tileGrid,
                     projection: projection,
                     tileUrlFunction: this.getTileUrlFunctionForGroup(resourceId, group.Name, zOrigin),
                     wrapX: false
                 });
-                const tileLayer = new olTileLayer({
+                const tileLayer = new TileLayer({
                     //name: group.Name,
                     source: tileSource
                 });
@@ -392,30 +393,30 @@ export class MgInnerLayerSetFactory {
         */
         const overlay = this.createMgOverlayLayer(MgBuiltInLayers.Overlay, agentUri, metersPerUnit, projection, isNotForOverviewMap, isNotForOverviewMap ? this.dynamicOverlayParams : this.staticOverlayParams);
 
-        let selectionOverlay: olImageLayer | undefined;
-        let activeSelectedFeatureOverlay: olImageLayer | undefined;
+        let selectionOverlay: ImageLayer | undefined;
+        let activeSelectedFeatureOverlay: ImageLayer | undefined;
         if (isNotForOverviewMap) {
             selectionOverlay = this.createMgOverlayLayer(MgBuiltInLayers.SelectionOverlay, agentUri, metersPerUnit, projection, isNotForOverviewMap, this.selectionOverlayParams);
         }
         if (isNotForOverviewMap) {
             //NOTE: Not tracking this source atm
-            activeSelectedFeatureOverlay = new olImageLayer({
+            activeSelectedFeatureOverlay = new ImageLayer({
                 //OL6: need to specify a source up-front otherwise it will error blindly
                 //trying to get a source out of this URL, so set up a source with an empty
                 //image data URI, it will be updated if we receive a request to show an
                 //active selected feature image
-                source: new olImageStaticSource({
+                source: new ImageStaticSource({
                     imageExtent: extent,
                     imageSize: [BLANK_SIZE.w, BLANK_SIZE.h],
                     url: BLANK_GIF_DATA_URI
-                })
+                } as any /* ol-ts-bug */)
             });
             activeSelectedFeatureOverlay.set(LayerProperty.LAYER_NAME, MgBuiltInLayers.ActiveFeatureSelectionOverlay);
             activeSelectedFeatureOverlay.set(LayerProperty.LAYER_TYPE, MG_LAYER_TYPE_NAME);
             activeSelectedFeatureOverlay.set(LayerProperty.IS_EXTERNAL, false)
             activeSelectedFeatureOverlay.set(LayerProperty.IS_GROUP, false);
         }
-        let externalBaseLayersGroup: olLayerGroup | undefined;
+        let externalBaseLayersGroup: LayerGroup | undefined;
         //NOTE: Don't bother adding external base layers for overview map as the main map in the
         //overview is rendered with GETMAPIMAGE and not GETDYNAMICMAPOVERLAYIMAGE meaning the background
         //is opaque and you won't be able to see the base layers underneath anyways.
@@ -427,20 +428,20 @@ export class MgInnerLayerSetFactory {
                     return tl;
                 })
             };
-            externalBaseLayersGroup = new olLayerGroup(groupOpts);
+            externalBaseLayersGroup = new LayerGroup(groupOpts);
             externalBaseLayersGroup.set(LayerProperty.LAYER_NAME, MG_BASE_LAYER_GROUP_NAME);
             externalBaseLayersGroup.set(LayerProperty.IS_EXTERNAL, false);
             externalBaseLayersGroup.set(LayerProperty.IS_GROUP, true);
         }
 
         debug(`Creating OL view with projection ${projection} and ${resolutions.length} resolutions`);
-        let view: olView;
+        let view: View;
         if (resolutions.length == 0) {
-            view = new olView({
+            view = new View({
                 projection: projection
             });
         } else {
-            view = new olView({
+            view = new View({
                 projection: projection,
                 resolutions: resolutions
             });
@@ -451,7 +452,7 @@ export class MgInnerLayerSetFactory {
             overlay,
             projection,
             dpi,
-            extent,
+            extent as Bounds,
             inPerUnit,
             view);
         layerSet.selectionOverlay = selectionOverlay;
@@ -466,16 +467,16 @@ export class MgInnerLayerSetFactory {
             visible: ext.visible === true,
             source: extSource
         };
-        const tl = new olTileLayer(options);
+        const tl = new TileLayer(options);
         tl.set(LayerProperty.LAYER_TYPE, ext.kind);
         tl.set(LayerProperty.LAYER_NAME, ext.name);
         tl.set(LayerProperty.IS_EXTERNAL, false);
         tl.set(LayerProperty.IS_GROUP, false);
         return tl;
     }
-    private createMgOverlayLayer(layerName: string, agentUri: string, metersPerUnit: number, projection: string | undefined, useImageOverlayOp: boolean, params: any): olImageLayer {
+    private createMgOverlayLayer(layerName: string, agentUri: string, metersPerUnit: number, projection: string | undefined, useImageOverlayOp: boolean, params: any): ImageLayer {
         const overlaySource = createMapGuideSource({
-            projection: projection,
+            projection: projection as any, /* ol-ts-bug */
             url: agentUri,
             useOverlay: useImageOverlayOp,
             metersPerUnit: metersPerUnit,
@@ -487,7 +488,7 @@ export class MgInnerLayerSetFactory {
             // round it down to the nearest integer
             displayDpi: Math.floor(olHas.DEVICE_PIXEL_RATIO) * 96
         });
-        const layer = new olImageLayer({
+        const layer = new ImageLayer({
             //name: "MapGuide Dynamic Overlay",
             source: overlaySource
         });
@@ -524,7 +525,7 @@ export interface IMgLayerSetCallback extends IImageLayerEvents {
     isFeatureTooltipEnabled(): boolean;
     getPointSelectionBox(point: Coordinate2D): Bounds;
     openTooltipLink(url: string): void;
-    addFeatureToHighlight(feat: Feature | undefined, bAppend: boolean): void;
+    addFeatureToHighlight(feat: Feature<Geometry> | undefined, bAppend: boolean): void;
 }
 
 

@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { IApplicationState, ActiveSelectedFeature, LayerTransparencySet, getRuntimeMap } from '../api/common';
 import { getActiveMapBranch } from './hooks';
-import { RuntimeMap } from 'api';
+import { RuntimeMap } from '../api/contracts/runtime-map';
 
 export function useActiveMapMetersPerUnit() {
     return useSelector<IApplicationState, number | undefined>(state => {
@@ -65,7 +65,7 @@ export function useActiveMapSelectableLayerNames() {
     const map = useActiveMapState();
     const selectableLayers = useActiveMapSelectableLayers();
     if (map) {
-        const selectableLayerNames = (map.Layer || [])
+        const selectableLayerNames = (map.Layer ?? [])
             .filter(layer => layer.Selectable && selectableLayers[layer.ObjectId] !== false)
             .map(layer => layer.Name);
         return selectableLayerNames;

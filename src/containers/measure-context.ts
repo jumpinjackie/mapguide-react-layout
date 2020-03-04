@@ -8,16 +8,17 @@ import { tr } from "../api/i18n";
 import { roundTo } from "../utils/number";
 import * as olObservable from "ol/Observable";
 import * as olSphere from "ol/sphere";
-import olOverlay from "ol/Overlay";
-import olLineString from "ol/geom/LineString";
-import olPolygon from "ol/geom/Polygon";
-import olStyle from "ol/style/Style";
-import olInteractionDraw from "ol/interaction/Draw";
-import olFeature from "ol/Feature";
-import olVectorLayer from "ol/layer/Vector";
-import GeometryType from 'ol/geom/GeometryType';
+import Overlay from "ol/Overlay";
+import LineString from "ol/geom/LineString";
+import Polygon from "ol/geom/Polygon";
+import Style from "ol/style/Style";
+import DrawInteraction from "ol/interaction/Draw";
+import Feature from "ol/Feature";
+import VectorLayer from "ol/layer/Vector";
 import OverlayPositioning from 'ol/OverlayPositioning';
 import { debug } from '../utils/logger';
+import { OLGeometryType } from '../api/ol-types';
+import Geometry from 'ol/geom/Geometry';
 
 const LAYER_NAME = "measure-layer";
 
@@ -41,7 +42,7 @@ export interface IMeasureCallback {
  * @hidden
  */
 export interface IMeasureComponent {
-    getCurrentDrawType(): GeometryType | undefined;
+    getCurrentDrawType(): OLGeometryType | undefined;
     getLocale(): string;
 }
 
@@ -50,16 +51,16 @@ export interface IMeasureComponent {
  */
 export class MeasureContext {
     private olFactory: IOLFactory;
-    private draw: olInteractionDraw;
-    private measureOverlays: olOverlay[];
-    private measureLayer: olVectorLayer;
+    private draw: DrawInteraction;
+    private measureOverlays: Overlay[];
+    private measureLayer: VectorLayer;
     private viewer: IMapViewer;
-    private sketch: olFeature | null;
+    private sketch: Feature<Geometry> | null;
     private listener: any;
     private helpTooltipElement: HTMLElement;
-    private helpTooltip: olOverlay;
+    private helpTooltip: Overlay;
     private measureTooltipElement: HTMLElement | null;
-    private measureTooltip: olOverlay;
+    private measureTooltip: Overlay;
     private mapName: string;
     private layerName: string;
     private parent: IMeasureComponent | undefined;
@@ -101,7 +102,7 @@ export class MeasureContext {
      * @param {LineString} line The line.
      * @return {string} The formatted length.
      */
-    private formatLength(line: olLineString): [string, number, MeasureSegment[] | undefined] {
+    private formatLength(line: LineString): [string, number, MeasureSegment[] | undefined] {
         let length: number;
         let segments: MeasureSegment[] | undefined;
         let locale;
@@ -134,7 +135,7 @@ export class MeasureContext {
      * @param {Polygon} polygon The polygon.
      * @return {string} Formatted area.
      */
-    private formatArea(polygon: olPolygon): [string, number, MeasureSegment[] | undefined] {
+    private formatArea(polygon: Polygon): [string, number, MeasureSegment[] | undefined] {
         let area: number;
         let segments: MeasureSegment[] | undefined;
         let locale;
@@ -184,14 +185,14 @@ export class MeasureContext {
             this.listener = this.sketch.getGeometry().on('change', (e: GenericEvent) => {
                 const geom = e.target;
                 let output: string;
-                if (geom instanceof olPolygon) {
+                if (geom instanceof Polygon) {
                     const [o, total, segments] = this.formatArea(geom);
                     output = o;
                     if (this.callback) {
                         this.callback.updateSegments("Area", total, segments);
                     }
                     tooltipCoord = geom.getInteriorPoint().getCoordinates();
-                } else if (geom instanceof olLineString) {
+                } else if (geom instanceof LineString) {
                     const [o, total, segments] = this.formatLength(geom);
                     output = o;
                     if (this.callback) {
@@ -229,9 +230,9 @@ export class MeasureContext {
         let helpMsg = tr("MEASUREMENT_START_DRAWING", locale);
         if (this.sketch) {
             const geom = (this.sketch.getGeometry());
-            if (geom instanceof olPolygon) {
+            if (geom instanceof Polygon) {
                 helpMsg = tr("MEASUREMENT_CONTINUE_POLYGON", locale);
-            } else if (geom instanceof olLineString) {
+            } else if (geom instanceof LineString) {
                 helpMsg = tr("MEASUREMENT_CONTINUE_LINE", locale);
             }
         }
@@ -240,7 +241,7 @@ export class MeasureContext {
         this.helpTooltipElement.classList.remove('hidden');
     }
     public getMapName(): string { return this.mapName; }
-    private createMeasureStyle(): olStyle {
+    private createMeasureStyle(): Style {
         return this.olFactory.createStyle({
             fill: this.olFactory.createStyleFill({
                 color: 'rgba(255, 255, 255, 0.2)'
@@ -257,11 +258,11 @@ export class MeasureContext {
             })
         });
     }
-    private createDrawInteraction(type: GeometryType): olInteractionDraw {
+    private createDrawInteraction(type: OLGeometryType): DrawInteraction {
         const source = this.measureLayer.getSource();
         return this.olFactory.createInteractionDraw({
             source: source,
-            type: /** @type {ol.geom.GeometryType} */ (type),
+            type: /** @type {ol.geom.GeometryType} */ (type) as any, /* ol-ts-bug */
             style: this.olFactory.createStyle({
                 fill: this.olFactory.createStyleFill({
                     color: 'rgba(255, 255, 255, 0.2)'
@@ -298,7 +299,7 @@ export class MeasureContext {
         this.helpTooltip = this.olFactory.createOverlay({
             element: this.helpTooltipElement,
             offset: [15, 0],
-            positioning: OverlayPositioning.CENTER_LEFT // 'center-left'
+            positioning: OverlayPositioning.CENTER_LEFT as any /* ol-ts-bug */
         });
         this.viewer.addOverlay(this.helpTooltip);
     }
@@ -316,11 +317,11 @@ export class MeasureContext {
         this.measureTooltip = this.olFactory.createOverlay({
             element: this.measureTooltipElement,
             offset: [0, -15],
-            positioning: OverlayPositioning.BOTTOM_CENTER //'bottom-center'
+            positioning: OverlayPositioning.BOTTOM_CENTER as any /* ol-ts-bug */
         });
         this.viewer.addOverlay(this.measureTooltip);
     }
-    private setActiveInteraction(type: GeometryType) {
+    private setActiveInteraction(type: OLGeometryType) {
         if (this.draw) {
             this.draw.un("drawstart", this.onDrawStart);
             this.draw.un("drawend", this.onDrawEnd);

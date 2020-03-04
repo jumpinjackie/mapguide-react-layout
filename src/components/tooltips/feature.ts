@@ -46,7 +46,7 @@ export class FeatureQueryTooltip {
         this.featureTooltip = new olOverlay({
             element: this.featureTooltipElement,
             offset: [15, 0],
-            positioning: OverlayPositioning.CENTER_LEFT // "center-left" /* ol.OverlayPositioning.CENTER_LEFT */
+            positioning: OverlayPositioning.CENTER_LEFT as any /* ol-ts-bug */
         })
         this.map = map;
         this.map.addOverlay(this.featureTooltip);

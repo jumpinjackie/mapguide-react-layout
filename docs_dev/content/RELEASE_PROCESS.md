@@ -29,3 +29,14 @@ Release Process
    8.3. `npm publish`
 
 9. Go to the new GitHub release and publish it with the new release notes.
+
+
+Release Process - Pre-release packages
+======================================
+
+Pre-release packages should be published under the `next` tag
+
+1. Set version in `package.json` to include a pre-release suffix (eg. `-alpha.123`)
+2. Run `yarn run build:npm`
+3. `cd package`
+4. Run `npm publish --tag next`

@@ -16,17 +16,35 @@ import { CsvFormatDriver, CSV_COLUMN_ALIASES } from '../api/layer-manager/csv-dr
 import KML from 'ol/format/KML';
 import GeoJSON from "ol/format/GeoJSON";
 
-function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExternalLayer, layer: LayerBase) {
+function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExternalLayer, layer: LayerBase, isExternal: boolean) {
     layer.set(LayerProperty.LAYER_NAME, defn.name);
     layer.set(LayerProperty.LAYER_TYPE, defn.type);
     layer.set(LayerProperty.IS_SELECTABLE, true);
-    layer.set(LayerProperty.IS_EXTERNAL, true);
+    layer.set(LayerProperty.IS_EXTERNAL, isExternal);
     layer.set(LayerProperty.IS_GROUP, false);
     layer.setVisible(defn.initiallyVisible);
 }
 
+const EMPTY_GEOJSON = { type: "FeatureCollection", features: [] as any[] };
+
 export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IInitialExternalLayer, isExternal: boolean): LayerBase {
     switch (defn.type) {
+        case GenericSubjectLayerType.GeoJSON_Inline:
+            {
+                const features = (new GeoJSON()).readFeatures(defn.sourceParams.features ?? EMPTY_GEOJSON);
+                const layer = new VectorLayer({
+                    source: new VectorSource({
+                        features: features
+                    })
+                });
+                setOLVectorLayerStyle(layer, defn.vectorStyle ?? {
+                    point: DEFAULT_POINT_CIRCLE_STYLE,
+                    line: DEFAULT_LINE_STYLE,
+                    polygon: DEFAULT_POLY_STYLE
+                });
+                applyVectorLayerProperties(defn, layer, isExternal);
+                return layer;
+            }
         case GenericSubjectLayerType.GeoJSON:
             {
                 const layer = new VectorLayer({
@@ -40,7 +58,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                     line: DEFAULT_LINE_STYLE,
                     polygon: DEFAULT_POLY_STYLE
                 });
-                applyVectorLayerProperties(defn, layer);
+                applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }
         case GenericSubjectLayerType.CSV:
@@ -72,7 +90,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                     line: DEFAULT_LINE_STYLE,
                     polygon: DEFAULT_POLY_STYLE
                 });
-                applyVectorLayerProperties(defn, layer);
+                applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }
         case GenericSubjectLayerType.KML:
@@ -83,7 +101,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                         format: new KML()
                     })
                 });
-                applyVectorLayerProperties(defn, layer);
+                applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }
         case GenericSubjectLayerType.TileWMS:

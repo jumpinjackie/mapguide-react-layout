@@ -115,7 +115,8 @@ export enum GenericSubjectLayerType {
     TileWMS = "TileWMS",
     CSV = "CSV",
     KML = "KML",
-    GeoJSON = "GeoJSON"
+    GeoJSON = "GeoJSON",
+    GeoJSON_Inline = "GeoJSON_Inline"
 }
 
 /**

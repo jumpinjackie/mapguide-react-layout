@@ -38,6 +38,80 @@
                     {
                         "@id": "Melbourne",
                         "Map": [
+                        {
+                                "Type": "SubjectLayer",
+                                "Extension": {
+                                    "source_type": "GeoJSON_Inline",
+                                    "source_param_features": {
+                                        "type": "FeatureCollection",
+                                        "crs": {
+                                            "type": "name",
+                                            "properties": {
+                                                "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+                                            }
+                                        },
+                                        "features": [/*
+                                        {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              132.275390625,
+              -16.13026201203474
+            ],
+            [
+              121.46484375,
+              -22.105998799750566
+            ],
+            [
+              121.28906250000001,
+              -33.28461996888768
+            ],
+            [
+              130.693359375,
+              -30.977609093348676
+            ],
+            [
+              138.8671875,
+              -36.17335693522159
+            ],
+            [
+              146.162109375,
+              -35.675147436084664
+            ],
+            [
+              149.501953125,
+              -31.278550858946517
+            ],
+            [
+              149.85351562499997,
+              -25.48295117535531
+            ],
+            [
+              142.294921875,
+              -18.562947442888298
+            ],
+            [
+              137.109375,
+              -20.96143961409684
+            ],
+            [
+              132.275390625,
+              -16.13026201203474
+            ]
+          ]
+        ]
+      }
+    }
+*/]
+                                    },
+                                    "meta_extents": [113.34, -43.63, 153.57, -10.67],
+                                    "meta_projection": "EPSG:4326"
+                                }
+                            },
                             {
                                 "Type": "External",
                                 "Extension": {
@@ -49,7 +123,8 @@
                                         "TILED": true
                                     },
                                     "meta_extents": [96.816941408, -43.74050960205765, 159.109219008, -9.142175976703609],
-                                    "meta_projection": "EPSG:4326"
+                                    "meta_projection": "EPSG:4326",
+                                    "initially_visible": false
                                 }
                             },
                             {
@@ -58,7 +133,8 @@
                                     "layer_name": "Medicare Offices",
                                     "source_type": "CSV",
                                     "source_param_url": "https://data.gov.au/data/dataset/70f76a9e-d450-4567-9760-290dea54229c/resource/7eb30338-768e-436c-9dde-dc7a1066c9c9/download/medicare-office-locations-as-at-9-october-19.csv",
-                                    "meta_projection": "EPSG:4326"
+                                    "meta_projection": "EPSG:4326",
+                                    "initially_visible": false
                                 }
                             },
                             {
@@ -67,7 +143,8 @@
                                     "layer_name": "Digital Hubs",
                                     "source_type": "KML",
                                     "source_param_url": "http://data.gov.au/storage/f/2013-08-12T02%3A04%3A22.954Z/digital-hubs-external.kml",
-                                    "meta_projection": "EPSG:4326"
+                                    "meta_projection": "EPSG:4326",
+                                    "initially_visible": false
                                 }
                             },
                             {

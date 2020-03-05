@@ -32,7 +32,8 @@ function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGenericSub
         type: st,
         sourceParams: sp,
         meta: (Object.keys(meta).length > 0 ? meta : undefined),
-        initiallyVisible
+        initiallyVisible,
+        vectorStyle: map.Extension.vector_layer_style
     } as IGenericSubjectMapLayer;
 }
 

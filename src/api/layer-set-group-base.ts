@@ -38,6 +38,12 @@ export abstract class LayerSetGroupBase {
         });
         this.scratchLayer.set(LayerProperty.IS_SCRATCH, true);
     }
+    /**
+     * @virtual
+     * @returns {(LayerBase | undefined)}
+     * @memberof LayerSetGroupBase
+     */
+    public tryGetSubjectLayer(): LayerBase | undefined { return undefined; }
     public addScratchFeature(feat: Feature<Geometry>) {
         this.scratchLayer.getSource().addFeature(feat);
     }

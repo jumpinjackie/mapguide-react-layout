@@ -1094,6 +1094,15 @@ export interface IParseFeaturesFromFileOptions {
  */
 export interface ILayerManager {
     /**
+     * Get the active subject layer if present on the current map. In a MapGuide-specific context, subject layers do not exist
+     * and this method will always return undefined in such cases
+     *
+     * @returns {olLayerBase}
+     * @memberof ILayerManager
+     * @since 0.14
+     */
+    tryGetSubjectLayer(): olLayerBase | undefined;
+    /**
      * Gets all custom layers on this map, sorted by draw order (First item is top-most layer. Last item is bottom-most layer.)
      * 
      * @returns {ILayerInfo[]} 

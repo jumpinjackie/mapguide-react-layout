@@ -51,6 +51,9 @@ export class LayerManager implements ILayerManager {
     constructor(private map: olMap, private layerSet: LayerSetGroupBase) {
         this._olFormats = getFormatDrivers();
     }
+    tryGetSubjectLayer(): olLayerBase | undefined {
+        return this.layerSet.tryGetSubjectLayer();
+    }
     /**
      * INTERNAL API
      * @param {IInitialExternalLayer} extLayer

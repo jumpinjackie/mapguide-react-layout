@@ -5,6 +5,7 @@ import { createExternalSource, createOLLayerFromSubjectDefn } from '../component
 import { tr } from './i18n';
 import { IExternalBaseLayer, LayerProperty, MG_BASE_LAYER_GROUP_NAME, Bounds, SourceProperty } from './common';
 import View from 'ol/View';
+import LayerBase from "ol/layer/Base";
 import LayerGroup from 'ol/layer/Group';
 import TileLayer from 'ol/layer/Tile';
 import { get } from "ol/proj";
@@ -47,6 +48,15 @@ export class GenericLayerSetGroup extends LayerSetGroupBase {
             if (!(suppress == true))
                 this.registerSourceEvents(src);
         }
+    }
+    /**
+     * @override
+     * @returns {(LayerBase | undefined)}
+     * @memberof GenericLayerSetGroup
+     */
+    public tryGetSubjectLayer(): LayerBase | undefined {
+        const gl = this.mainSet as GenericLayerSetOL;
+        return gl.subjectLayer;
     }
     public tryGetWmsSource() {
         const mainLayer = this.mainSet as GenericLayerSetOL;

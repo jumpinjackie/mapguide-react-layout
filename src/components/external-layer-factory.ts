@@ -34,7 +34,8 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 const features = (new GeoJSON()).readFeatures(defn.sourceParams.features ?? EMPTY_GEOJSON);
                 const layer = new VectorLayer({
                     source: new VectorSource({
-                        features: features
+                        features: features,
+                        attributions: defn.sourceParams.attributions
                     })
                 });
                 setOLVectorLayerStyle(layer, defn.vectorStyle ?? {
@@ -50,7 +51,8 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 const layer = new VectorLayer({
                     source: new VectorSource({
                         url: defn.sourceParams.url,
-                        format: new GeoJSON()
+                        format: new GeoJSON(),
+                        attributions: defn.sourceParams.attributions
                     })
                 });
                 setOLVectorLayerStyle(layer, defn.vectorStyle ?? {
@@ -80,7 +82,8 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                             }
                         }
                         xhr.send();
-                    }
+                    },
+                    attributions: defn.sourceParams.attributions
                 });
                 const layer = new VectorLayer({
                     source: vectorSource
@@ -98,7 +101,8 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 const layer = new VectorLayer({
                     source: new VectorSource({
                         url: defn.sourceParams.url,
-                        format: new KML()
+                        format: new KML(),
+                        attributions: defn.sourceParams.attributions
                     })
                 });
                 applyVectorLayerProperties(defn, layer, isExternal);

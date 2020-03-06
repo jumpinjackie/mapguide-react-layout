@@ -132,6 +132,7 @@ export interface IGenericSubjectMapLayer {
     name: string;
     initiallyVisible: boolean;
     vectorStyle?: IVectorFeatureStyle;
+    attributions?: string[];
 }
 
 export type IInitialExternalLayer = IGenericSubjectMapLayer;

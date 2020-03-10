@@ -138,7 +138,7 @@ export class SelectedFeaturesTooltip {
         if (pc > 0) {
             html += table;
         } else {
-            html += "<p>" + tr("SEL_FEATURE_PROPERTIES_NONE", locale) + "</p>";
+            html += "<div style='clear: both; margin-top: 20px'>" + tr("SEL_FEATURE_PROPERTIES_NONE", locale) + "</div>";
         }
         return html;
     }

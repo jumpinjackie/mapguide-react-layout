@@ -9,12 +9,16 @@ import OverlayPositioning from 'ol/OverlayPositioning';
 import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
 import { tr } from '../../api/i18n';
-import { ILayerManager, Coordinate2D } from '../../api/common';
+import { ILayerManager, Coordinate2D, LayerProperty } from '../../api/common';
 import { Client } from '../../api/client';
 import { parseEpsgCodeFromCRS } from '../layer-manager/wfs-capabilities-panel';
 import { ProjectionLike } from 'ol/proj';
 import { LayerSetGroupBase } from '../../api/layer-set-group-base';
 import Geometry from 'ol/geom/Geometry';
+import { ISelectedFeaturePopupTemplateConfiguration } from '../../actions/defs';
+import { strIsNullOrEmpty } from '../../utils/string';
+import Layer from 'ol/layer/Layer';
+import Source from 'ol/source/Source';
 
 export interface IQueryWmsFeaturesCallback {
     getLocale(): string | undefined;
@@ -118,27 +122,48 @@ export class SelectedFeaturesTooltip {
             this.hide();
         }
     }
-    private generateFeatureHtml(feat: Feature<Geometry>, locale?: string) {
+    private generateFeatureHtml(feat: Feature<Geometry>, locale?: string, popupConfig?: ISelectedFeaturePopupTemplateConfiguration) {
         let html = "";
-        html += "<div style='min-width: 190px'><div style='float: left; font-weight: bold; font-size: 1.3em'>" + tr("SEL_FEATURE_PROPERTIES", locale) + "</div><a id='feat-popup-closer' href='#' style='float: right'>[x]</a><div class='clear: both'></div></div>";
+        const title = strIsNullOrEmpty(popupConfig?.title) ? tr("SEL_FEATURE_PROPERTIES", locale) : popupConfig?.title;
+        html += "<div style='min-width: 190px'><div style='float: left; font-weight: bold; font-size: 1.3em'>" + title + "</div><a id='feat-popup-closer' href='#' style='float: right'>[x]</a><div class='clear: both'></div></div>";
         var table = "<table style='margin-top: 25px'>";
         const f = feat.getProperties();
         let pc = 0;
-        for (const key in f) {
-            if (key == feat.getGeometryName()) {
-                continue;
+        if (popupConfig?.propertyMappings) {
+            for (const pm of popupConfig.propertyMappings) {
+                if (pm.name == feat.getGeometryName()) {
+                    continue;
+                }
+                table += "<tr>";
+                table += "<td><strong>" + pm.value + "</strong></td>";
+                table += "<td>" + f[pm.name] + "</td>";
+                table += "</tr>";
+                pc++;
             }
-            table += "<tr>";
-            table += "<td><strong>" + key + "</strong></td>";
-            table += "<td>" + f[key] + "</td>";
-            table += "</tr>";
-            pc++;
+        } else {
+            for (const key in f) {
+                if (key == feat.getGeometryName()) {
+                    continue;
+                }
+                table += "<tr>";
+                table += "<td><strong>" + key + "</strong></td>";
+                table += "<td>" + f[key] + "</td>";
+                table += "</tr>";
+                pc++;
+            }
         }
         table += "</table>";
         if (pc > 0) {
             html += table;
         } else {
             html += "<div style='clear: both; margin-top: 20px'>" + tr("SEL_FEATURE_PROPERTIES_NONE", locale) + "</div>";
+        }
+        if (popupConfig?.linkProperty) {
+            const { name, label, linkTarget } = popupConfig.linkProperty;
+            const linkHref = f[name];
+            if (!strIsNullOrEmpty(linkHref)) {
+                html += `<div style='margin-top: 20px'><a href='${linkHref}' target='${linkTarget}'>${label}</a></div>`;
+            }
         }
         return html;
     }
@@ -155,11 +180,18 @@ export class SelectedFeaturesTooltip {
         }
         return false;
     };
-    public showSelectedVectorFeatures(features: Collection<Feature<Geometry>>, pixel: [number, number], locale?: string) {
+    public showSelectedVectorFeatures(features: Collection<Feature<Geometry>>, pixel: [number, number], featureToLayerMap: [Feature<Geometry>, Layer<Source>][], locale?: string) {
         const coords = this.map.getCoordinateFromPixel(pixel);
         if (features.getLength() > 0) {
             this.featureTooltip.setPosition(coords);
-            const html = this.generateFeatureHtml(features.item(0), locale);
+            const f = features.item(0);
+            let popupConf: ISelectedFeaturePopupTemplateConfiguration | undefined;
+            const pair = featureToLayerMap.find(([feat, _]) => feat == f);
+            if (pair) {
+                const layer = pair[1];
+                popupConf = layer.get(LayerProperty.SELECTED_POPUP_CONFIGURATION);
+            }
+            const html = this.generateFeatureHtml(f, locale, popupConf);
             this.featureTooltipElement.innerHTML = html;
             this.closerEl = document.getElementById("feat-popup-closer");
             this.setPopupCloseHandler();

@@ -2379,7 +2379,8 @@ export enum LayerProperty {
     HAS_WMS_LEGEND = "has_wms_legend",
     VECTOR_STYLE = "vector_style",
     WGS84_BBOX = "wgs84_bbox",
-    BUSY_WORKER_COUNT = "busy_worker_count"
+    BUSY_WORKER_COUNT = "busy_worker_count",
+    SELECTED_POPUP_CONFIGURATION = "popup_config"
 }
 
 /**

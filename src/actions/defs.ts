@@ -4,7 +4,7 @@
  * Redux action definitions
  */
 
-import { IDOMElementMetrics, IMapView, Dictionary, IExternalBaseLayer, IModalComponentDisplayOptions, IModalDisplayOptions, UnitOfMeasure, ActiveMapTool, ILayerInfo, Bounds } from '../api/common';
+import { IDOMElementMetrics, IMapView, Dictionary, IExternalBaseLayer, IModalComponentDisplayOptions, IModalDisplayOptions, UnitOfMeasure, ActiveMapTool, ILayerInfo, Bounds, INameValuePair } from '../api/common';
 import { ActionType } from '../constants/actions';
 import { PreparedSubMenuSet } from '../api/registry/command-spec';
 import { RuntimeMap } from '../api/contracts/runtime-map';
@@ -120,6 +120,70 @@ export enum GenericSubjectLayerType {
 }
 
 /**
+ * Popup link control options
+ *
+ * @export
+ * @interface ISelectedFeaturePopupLinkProperty
+ * @since 0.14
+ */
+export interface ISelectedFeaturePopupLinkProperty {
+    /**
+     * The feature property that contains the link
+     *
+     * @type {string}
+     * @memberof ISelectedFeaturePopupLinkProperty
+     */
+    name: string;
+    /**
+     * The anchor label to render
+     *
+     * @type {string}
+     * @memberof ISelectedFeaturePopupLinkProperty
+     */
+    label: string;
+    /**
+     * The hyperlink target
+     *
+     * @type {string}
+     * @memberof ISelectedFeaturePopupLinkProperty
+     */
+    linkTarget: string;
+}
+
+/**
+ * Selected feature popup configuration for an external layer
+ *
+ * @export
+ * @interface ISelectedFeaturePopupTemplateConfiguration
+ * @since 0.14
+ */
+export interface ISelectedFeaturePopupTemplateConfiguration {
+    /**
+     * Custom popup title. If not set, the default title "Feature Properties" 
+     * (string value dependent on your locale's string bundle) will be used
+     *
+     * @type {string}
+     * @memberof ISelectedFeaturePopupTemplateConfiguration
+     */
+    title?: string;
+    /**
+     * If specified, restricts the display of feature properties only to what is
+     * specified here. The value part determines the display label.
+     *
+     * @type {INameValuePair[]}
+     * @memberof ISelectedFeaturePopupTemplateConfiguration
+     */
+    propertyMappings?: INameValuePair[];
+    /**
+     * If specified, controls link display for the popup
+     *
+     * @type {INameValuePair}
+     * @memberof ISelectedFeaturePopupTemplateConfiguration
+     */
+    linkProperty?: ISelectedFeaturePopupLinkProperty;
+}
+
+/**
  * 
  * @export
  * @interface IGenericSubjectMapLayer
@@ -134,6 +198,7 @@ export interface IGenericSubjectMapLayer {
     selectable: boolean;
     vectorStyle?: IVectorFeatureStyle;
     attributions?: string[];
+    popupTemplate?: ISelectedFeaturePopupTemplateConfiguration;
 }
 
 export type IInitialExternalLayer = IGenericSubjectMapLayer;

@@ -192,7 +192,22 @@
                                     "source_type": "KML",
                                     "source_param_url": "http://data.gov.au/storage/f/2013-08-12T02%3A04%3A22.954Z/digital-hubs-external.kml",
                                     "meta_projection": "EPSG:4326",
-                                    "initially_visible": false
+                                    "initially_visible": false,
+                                    "popup_template": {
+                                        "title": "Selected Digital Hub",
+                                        "propertyMappings": [
+                                            { "name": "NAME", "value": "Name"},
+                                            { "name": "STREET", "value": "Street"},
+                                            { "name": "SUBURB", "value": "Suburb"},
+                                            { "name": "STATE", "value": "State"},
+                                            { "name": "POSTCODE", "value": "Postcode"}
+                                        ],
+                                        "linkProperty": {
+                                            "name": "INFO_LINK",
+                                            "label": "Click to open hub link in a new window",
+                                            "linkTarget": "_blank"
+                                        }
+                                    }
                                 }
                             },
                             {

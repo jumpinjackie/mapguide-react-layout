@@ -45,6 +45,8 @@ import { ISubscriberProps } from '../../containers/subscriber';
 import isMobile from "ismobilejs";
 import { IInitialExternalLayer } from '../../actions/defs';
 import { MapGuideMockMode } from '../mapguide-debug-context';
+import Layer from 'ol/layer/Layer';
+import Source from 'ol/source/Source';
 
 export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4));
@@ -455,8 +457,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected hideSelectedVectorFeaturesTooltip() {
         this._selectTooltip?.hide();
     }
-    protected showSelectedVectorFeatures(features: Collection<Feature<Geometry>>, pixel: [number, number], locale?: string) {
-        this._selectTooltip?.showSelectedVectorFeatures(features, pixel, locale);
+    protected showSelectedVectorFeatures(features: Collection<Feature<Geometry>>, pixel: [number, number], featureToLayerMap: [Feature<Geometry>, Layer<Source>][], locale?: string) {
+        this._selectTooltip?.showSelectedVectorFeatures(features, pixel, featureToLayerMap, locale);
     }
     protected queryWmsFeatures(currentLayerSet: LayerSetGroupBase | undefined, layerMgr: ILayerManager, coord: Coordinate2D) {
         if (this._map) {
@@ -491,7 +493,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             return;
         }
 
-        let vfSelected = 0;
+        const featureToLayerMap = [] as [Feature<Geometry>, Layer<Source>][];
         if (this._state.activeTool == ActiveMapTool.Select || this._state.activeTool == ActiveMapTool.WmsQueryFeatures) {
             /*
             //Shift+Click is the default OL selection append mode, so if no shift key
@@ -506,10 +508,10 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             //out the proper UI for such a case before we enable multiple selection.
             this._select.getFeatures().clear();
             this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
-                if (vfSelected == 0) { //See TODO above
+                if (featureToLayerMap.length == 0) { //See TODO above
                     if (layer.get(LayerProperty.IS_SELECTABLE) == true && feature instanceof Feature) {
                         this._select.getFeatures().push(feature);
-                        vfSelected++;
+                        featureToLayerMap.push([feature, layer]);
                     }
                 }
             });
@@ -517,7 +519,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         // We'll only fall through the normal map selection query route if no 
         // vector features were selected as part of this click
         const px = e.pixel as [number, number];
-        if (vfSelected == 0) {
+        if (featureToLayerMap.length == 0) {
             this.hideSelectedVectorFeaturesTooltip();
             if (this._state.activeTool == ActiveMapTool.WmsQueryFeatures) {
                 const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
@@ -526,7 +528,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                 this.onProviderMapClick(px);
             }
         } else {
-            this.showSelectedVectorFeatures(this._select.getFeatures(), px, this._state.locale);
+            this.showSelectedVectorFeatures(this._select.getFeatures(), px, featureToLayerMap, this._state.locale);
         }
     }
     protected abstract onProviderMapClick(px: [number, number]): void;

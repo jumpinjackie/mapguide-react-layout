@@ -131,6 +131,7 @@ export interface IGenericSubjectMapLayer {
     sourceParams: any;
     name: string;
     initiallyVisible: boolean;
+    selectable: boolean;
     vectorStyle?: IVectorFeatureStyle;
     attributions?: string[];
 }

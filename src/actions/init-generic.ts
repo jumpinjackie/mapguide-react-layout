@@ -16,6 +16,7 @@ function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGenericSub
     const sp: any = {};
     const meta: any = {};
     const keys = Object.keys(map.Extension);
+    let selectable: boolean | undefined = map.Extension.is_selectable ?? true;
     for (const k of keys) {
         const spidx = k.indexOf("source_param_");
         const midx = k.indexOf("meta_");
@@ -33,6 +34,7 @@ function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGenericSub
         sourceParams: sp,
         meta: (Object.keys(meta).length > 0 ? meta : undefined),
         initiallyVisible,
+        selectable,
         vectorStyle: map.Extension.vector_layer_style
     } as IGenericSubjectMapLayer;
 }

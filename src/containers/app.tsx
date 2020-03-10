@@ -322,10 +322,14 @@ class AppInner extends React.Component<AppInnerProps, any> {
                         }
                     }
                 }
-                nextUrlState.sg = sg;
-                nextUrlState.hg = hg;
-                nextUrlState.sl = sl;
-                nextUrlState.hl = hl;
+                if (sg.length > 0)
+                    nextUrlState.sg = sg;
+                if (hg.length > 0)
+                    nextUrlState.hg = hg;
+                if (sl.length > 0)
+                    nextUrlState.sl = sl;
+                if (hl.length > 0)
+                    nextUrlState.hl = hl;
                 if (rtm) {
                     const { SessionId } = rtm;
                     nextUrlState.session = SessionId;

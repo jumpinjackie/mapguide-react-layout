@@ -173,8 +173,8 @@ export interface IOlStyleMap {
     "Circle": Style;
 }
 
-function lpad(inStr: string | number, len: number,  padChar: string = '0') {
-    return (new Array(len || 2).join( padChar) + inStr).slice(-len)
+function lpad(inStr: string | number, len: number, padChar: string = '0') {
+    return (new Array(len || 2).join(padChar) + inStr).slice(-len)
 }
 
 function num2hex(n: number) {
@@ -232,7 +232,7 @@ export function olStyleMapToVectorStyle(os: IOlStyleMap): IVectorFeatureStyle {
     } else if (pi instanceof IconStyle) {
         style.point = {
             type: "Icon",
-            anchor: pi.getAnchor() as [number, number],
+            anchor: (pi.getAnchor() ?? [0.5, 0.5]) as [number, number],
             src: pi.getSrc(),
             //size: pi.getSize() as [number, number],
             rotateWithView: pi.getRotateWithView(),

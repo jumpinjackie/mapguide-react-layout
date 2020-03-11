@@ -11,8 +11,9 @@ export interface IMapLoadIndicatorProps {
 export const MapLoadIndicator = (props: IMapLoadIndicatorProps) => {
     const { loaded, loading, color, position } = props;
     let visibility: "visible" | "hidden" = "visible";
-    let width = Math.min(100, (loaded / loading * 100)).toFixed(1) + "%";
-    if (loaded === loading || width == "100%") {
+    const pc = Math.min(100, (loaded / loading * 100));
+    let width = pc.toFixed(1) + "%";
+    if (loaded === loading || pc >= 100) {
         visibility = "hidden";
         width = "0";
     }

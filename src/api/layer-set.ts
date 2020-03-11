@@ -387,6 +387,7 @@ export class MgInnerLayerSetFactory {
                     source: tileSource
                 });
                 tileLayer.set(LayerProperty.LAYER_NAME, group.ObjectId);
+                tileLayer.set(LayerProperty.LAYER_DISPLAY_NAME, group.ObjectId);
                 tileLayer.set(LayerProperty.LAYER_TYPE, MgLayerType.Tiled);
                 tileLayer.set(LayerProperty.IS_EXTERNAL, false);
                 tileLayer.set(LayerProperty.IS_GROUP, false);
@@ -434,6 +435,7 @@ export class MgInnerLayerSetFactory {
                 })
             });
             activeSelectedFeatureOverlay.set(LayerProperty.LAYER_NAME, MgBuiltInLayers.ActiveFeatureSelectionOverlay);
+            activeSelectedFeatureOverlay.set(LayerProperty.LAYER_DISPLAY_NAME, MgBuiltInLayers.ActiveFeatureSelectionOverlay);
             activeSelectedFeatureOverlay.set(LayerProperty.LAYER_TYPE, MG_LAYER_TYPE_NAME);
             activeSelectedFeatureOverlay.set(LayerProperty.IS_EXTERNAL, false)
             activeSelectedFeatureOverlay.set(LayerProperty.IS_GROUP, false);
@@ -452,6 +454,7 @@ export class MgInnerLayerSetFactory {
             };
             externalBaseLayersGroup = new LayerGroup(groupOpts);
             externalBaseLayersGroup.set(LayerProperty.LAYER_NAME, MG_BASE_LAYER_GROUP_NAME);
+            externalBaseLayersGroup.set(LayerProperty.LAYER_DISPLAY_NAME, MG_BASE_LAYER_GROUP_NAME);
             externalBaseLayersGroup.set(LayerProperty.IS_EXTERNAL, false);
             externalBaseLayersGroup.set(LayerProperty.IS_GROUP, true);
         }
@@ -492,6 +495,7 @@ export class MgInnerLayerSetFactory {
         const tl = new TileLayer(options);
         tl.set(LayerProperty.LAYER_TYPE, ext.kind);
         tl.set(LayerProperty.LAYER_NAME, ext.name);
+        tl.set(LayerProperty.LAYER_DISPLAY_NAME, ext.name);
         tl.set(LayerProperty.IS_EXTERNAL, false);
         tl.set(LayerProperty.IS_GROUP, false);
         return tl;
@@ -515,6 +519,7 @@ export class MgInnerLayerSetFactory {
             source: overlaySource
         });
         layer.set(LayerProperty.LAYER_NAME, layerName);
+        layer.set(LayerProperty.LAYER_DISPLAY_NAME, layerName);
         layer.set(LayerProperty.LAYER_TYPE, MG_LAYER_TYPE_NAME);
         layer.set(LayerProperty.IS_EXTERNAL, false);
         layer.set(LayerProperty.IS_GROUP, false);

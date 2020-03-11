@@ -31,6 +31,7 @@ function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGenericSub
     }
     return {
         name: name,
+        displayName: map.Extension.display_name,
         type: st,
         sourceParams: sp,
         meta: (Object.keys(meta).length > 0 ? meta : undefined),
@@ -60,7 +61,7 @@ export class GenericViewerInitCommand extends ViewerInitCommand<IGenericSubjectM
                 for (const map of mGroup.Map) {
                     if (map.Type != TYPE_SUBJECT) {
                         if (map.Type == TYPE_EXTERNAL) {
-                            initialExternalLayers.push(buildSubjectLayerDefn( map.Extension.layer_name, map));
+                            initialExternalLayers.push(buildSubjectLayerDefn(map.Extension.layer_name, map));
                         } else {
                             processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayers);
                         }

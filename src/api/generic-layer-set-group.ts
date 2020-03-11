@@ -80,6 +80,7 @@ export class GenericLayerSetGroup extends LayerSetGroupBase {
         const tl = new TileLayer(options);
         tl.set(LayerProperty.LAYER_TYPE, ext.kind);
         tl.set(LayerProperty.LAYER_NAME, ext.name);
+        tl.set(LayerProperty.LAYER_DISPLAY_NAME, ext.name);
         tl.set(LayerProperty.IS_EXTERNAL, false);
         tl.set(LayerProperty.IS_GROUP, false);
         return tl;

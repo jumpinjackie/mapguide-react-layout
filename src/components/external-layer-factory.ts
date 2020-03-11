@@ -18,6 +18,7 @@ import GeoJSON from "ol/format/GeoJSON";
 
 function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExternalLayer, layer: LayerBase, isExternal: boolean) {
     layer.set(LayerProperty.LAYER_NAME, defn.name);
+    layer.set(LayerProperty.LAYER_DISPLAY_NAME, defn.displayName);
     layer.set(LayerProperty.LAYER_TYPE, defn.type);
     layer.set(LayerProperty.IS_SELECTABLE, defn.selectable);
     layer.set(LayerProperty.IS_EXTERNAL, isExternal);

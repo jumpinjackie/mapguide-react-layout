@@ -181,7 +181,11 @@ export abstract class LayerSetGroupBase {
         }
         map.addLayer(layer);
         this._customLayers[name] = { layer, order: map.getLayers().getArray().indexOf(layer) };
-        layer.set(LayerProperty.LAYER_NAME, name);
+        //These layer properties may have already been set, so only set if not set already (display name) or it is different (layer name)
+        if (layer.get(LayerProperty.LAYER_NAME) != name)
+            layer.set(LayerProperty.LAYER_NAME, name);
+        if (!layer.get(LayerProperty.LAYER_DISPLAY_NAME))
+            layer.set(LayerProperty.LAYER_DISPLAY_NAME, name);
         return {
             ...getLayerInfo(layer, true),
             //Smuggle these values out for debugging purposes

@@ -39,6 +39,7 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
         visible: layer.getVisible(),
         selectable: layer.get(LayerProperty.IS_SELECTABLE) == true,
         name: layer.get(LayerProperty.LAYER_NAME),
+        displayName: layer.get(LayerProperty.LAYER_DISPLAY_NAME) ?? layer.get(LayerProperty.LAYER_NAME),
         type: layer.get(LayerProperty.LAYER_TYPE),
         opacity: layer.getOpacity(),
         isExternal: isExternal,
@@ -144,6 +145,7 @@ export class LayerManager implements ILayerManager {
                 });
                 features.addTo(source, that.map.getView().getProjection(), proj);
                 layer.set(LayerProperty.LAYER_NAME, features.name);
+                layer.set(LayerProperty.LAYER_DISPLAY_NAME, features.name);
                 layer.set(LayerProperty.LAYER_TYPE, features.type);
                 layer.set(LayerProperty.IS_SELECTABLE, true);
                 layer.set(LayerProperty.IS_EXTERNAL, true);

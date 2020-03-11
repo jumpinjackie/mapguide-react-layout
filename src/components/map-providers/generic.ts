@@ -44,6 +44,7 @@ export class GenericMapProviderContext extends BaseMapProviderContext<IGenericMa
         let bChangedView = false;
         //map
         if (nextState.mapName != this._state.mapName && this._map && this._ovMap) {
+            this.hideAllPopups();
             const oldLayerSet = this.getLayerSetGroup(this._state.mapName);
             const newLayerSet = this.ensureAndGetLayerSetGroup(nextState);
             oldLayerSet?.detach(this._map, this._ovMap);

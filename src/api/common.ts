@@ -996,6 +996,14 @@ export interface ILayerInfo {
     * */
     name: string;
     /**
+     * The display name of this layer
+     *
+     * @type {string}
+     * @memberof ILayerInfo
+     * @since 0.14
+     */
+    displayName: string;
+    /**
      * The type of layer
      * 
      * @type {string}
@@ -2372,6 +2380,10 @@ export interface IMapGuideImageSource {
 export enum LayerProperty {
     LAYER_TYPE = "layer_type",
     LAYER_NAME = "name",
+    /**
+     * @since 0.14
+     */
+    LAYER_DISPLAY_NAME = "display_name",
     IS_GROUP = "is_group",
     IS_EXTERNAL = "is_external",
     IS_SELECTABLE = "is_selectable",
@@ -2380,6 +2392,9 @@ export enum LayerProperty {
     VECTOR_STYLE = "vector_style",
     WGS84_BBOX = "wgs84_bbox",
     BUSY_WORKER_COUNT = "busy_worker_count",
+    /**
+     * @since 0.14
+     */
     SELECTED_POPUP_CONFIGURATION = "popup_config"
 }
 

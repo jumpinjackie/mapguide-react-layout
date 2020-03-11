@@ -85,6 +85,14 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
     }
 
     /**
+     * @override
+     */
+    public hideAllPopups() {
+        super.hideAllPopups();
+        this._featureTooltip?.setEnabled(false);
+    }
+
+    /**
      *
      * @override
      * @protected

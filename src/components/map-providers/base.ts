@@ -95,6 +95,7 @@ export interface IMapProviderContext extends IMapViewer {
     setToasterRef(ref: React.RefObject<Toaster>): void;
     setProviderState(nextState: IMapProviderState): void;
     onKeyDown(e: GenericEvent): void;
+    hideAllPopups(): void;
 }
 
 export abstract class BaseMapProviderContext<TState extends IMapProviderState, TLayerSetGroup extends LayerSetGroupBase> implements IMapProviderContext {
@@ -148,6 +149,14 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             ...baseInitialState,
             ...this.getInitialProviderState()
         } as TState;
+    }
+
+    /**
+     * @virtual
+     */
+    public hideAllPopups() {
+        this._mouseTooltip?.clear();
+        this._selectTooltip?.hide();
     }
 
     public isReady(): boolean { return !!(this._map && this._comp); }

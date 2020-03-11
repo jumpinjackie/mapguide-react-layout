@@ -5,7 +5,6 @@ import View from 'ol/View';
 import { debug } from '../../utils/logger';
 import { assertIsDefined } from '../../utils/assert';
 import { IGenericSubjectMapLayer } from '../../actions/defs';
-import { mapLayerAdded } from '../../actions/map';
 
 export interface IGenericMapProviderState extends IMapProviderState {
     subject: IGenericSubjectMapLayer | undefined;

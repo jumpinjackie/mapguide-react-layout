@@ -166,6 +166,8 @@ export { ApplicationViewModel as Application } from "./application";
 export { setAssetRoot } from "../utils/asset";
 export { GenericViewerInitCommand } from "../actions/init-generic";
 
+export { updateUrl, getStateFromUrl } from "../containers/url-state";
+
 /**
  * The top-level namespace for all dispatchable actions
  */

@@ -178,6 +178,8 @@ export { ApplicationViewModel as Application } from "./application";
 export { setAssetRoot } from "../utils/asset";
 export { MapGuideViewerInitCommand } from "../actions/init-mapguide";
 
+export { updateUrl, getStateFromUrl } from "../containers/url-state";
+
 /**
  * The top-level namespace for all dispatchable actions
  */

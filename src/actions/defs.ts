@@ -663,6 +663,16 @@ export interface IAddedLayerAction {
 }
 
 /**
+ * @since 0.14
+ */
+export interface IExternalLayersReadyAction {
+    type: ActionType.EXTERNAL_LAYERS_READY,
+    payload: {
+        mapName: string
+    }
+}
+
+/**
  * Removes a given external layer for the given map
  * 
  * @since 0.13
@@ -813,3 +823,4 @@ export type ViewerAction = IOpenFlyoutAction
     | ISetMapLayerVectorStyle //@since 0.13
     | IAddMapLayerBusyWorkerAction //@since 0.13
     | IRemoveMapLayerBusyWorkerAction //@since 0.13
+    | IExternalLayersReadyAction //@since 0.14

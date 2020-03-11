@@ -601,6 +601,22 @@ export function mapLayerAdded(mapName: string, layer: ILayerInfo, defaultStyle?:
 }
 
 /**
+ * An action that signals the externa layers for the given map name is ready. This action
+ * is only dispatched when there is no external layers to initially add
+ * 
+ * @param mapName 
+ * @since 0.14
+ */
+export function externalLayersReady(mapName: string) {
+    return {
+        type: ActionType.EXTERNAL_LAYERS_READY,
+        payload: {
+            mapName
+        }
+    }
+}
+
+/**
  * Removes a given external layer for the given map
  * 
  * @export

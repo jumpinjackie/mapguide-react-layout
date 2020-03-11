@@ -413,6 +413,19 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                 }
                 return state;
             }
+        case ActionType.EXTERNAL_LAYERS_READY:
+            {
+                const { payload } = action;
+                const subState = state[payload.mapName];
+                if (subState) {
+                    const layers = subState.layers ?? [];
+                    const state1: Partial<IBranchedMapSubState> = {
+                        layers
+                    };
+                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
+                }
+                return state;
+            }
         case ActionType.LAYER_ADDED:
             {
                 const { payload } = action;

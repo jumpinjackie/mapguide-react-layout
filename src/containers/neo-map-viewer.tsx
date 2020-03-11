@@ -21,7 +21,7 @@ import { useActiveMapSelectableLayerNames, useActiveMapLayerTransparency, useAct
 import { useActiveMapSubjectLayer } from './hooks-generic';
 import { IGenericMapProviderState } from '../components/map-providers/generic';
 import { LayerManager } from '../api/layer-manager';
-import { mapLayerAdded } from '../actions/map';
+import { mapLayerAdded, externalLayersReady } from '../actions/map';
 import { IInitialExternalLayer } from '../actions/defs';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { ISubscriberProps, Subscriber } from './subscriber';
@@ -37,16 +37,22 @@ function useViewerSideEffects(context: IMapProviderContext,
     // Side-effect to pre-load external layers. Should only happen once per map name
     React.useEffect(() => {
         debug(`React.useEffect - Change of initial external layers for [${mapName}] (change should only happen once per mapName!)`);
-        if (mapName && initialExternalLayers) {
-            const layerManager = context.getLayerManager(mapName) as LayerManager;
-            for (const extLayer of initialExternalLayers) {
-                const added = layerManager.addExternalLayer(extLayer, true);
-                if (added) {
-                    dispatch(mapLayerAdded(mapName, added));
+        if (mapName && !layers) {
+            if (initialExternalLayers && initialExternalLayers.length > 0) {
+                debug(`React.useEffect - First-time loading of external layers for [${mapName}]`);
+                const layerManager = context.getLayerManager(mapName) as LayerManager;
+                for (const extLayer of initialExternalLayers) {
+                    const added = layerManager.addExternalLayer(extLayer, true);
+                    if (added) {
+                        dispatch(mapLayerAdded(mapName, added));
+                    }
                 }
+            } else {
+                debug(`React.useEffect - Signal that external layers are ready for [${mapName}]`);
+                dispatch(externalLayersReady(mapName));
             }
         }
-    }, [context, mapName, initialExternalLayers]);
+    }, [context, mapName, initialExternalLayers, layers]);
     // Side-effect to apply the current external layer list
     React.useEffect(() => {
         debug(`React.useEffect - Change of external layers`);

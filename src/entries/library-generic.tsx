@@ -7,7 +7,6 @@ import { registerCommand } from "../api/registry/command";
 import { registerComponentFactory, DefaultComponentNames } from "../api/registry/component";
 import { registerDefaultComponents } from "../api/default-components";
 import * as Common from "../api/common";
-import "../styles/index.css";
 import { bootstrap } from "../api/bootstrap";
 import proj4 from "proj4";
 import * as MapActions from "../actions/map";
@@ -32,6 +31,11 @@ import { MapProviderContext } from '../components/map-providers/context';
 import { GenericMapViewer } from '../containers/neo-map-viewer';
 import { GenericMapProviderContext } from '../components/map-providers/generic';
 import GenericLayout from '../layouts/generic';
+
+import "../styles/index.css";
+import "ol/ol.css";
+import "@blueprintjs/core/lib/css/blueprint.css";
+import "react-splitter-layout/lib/index.css";
 
 bootstrap();
 addFormatDriver(new CsvFormatDriver(CSV_COLUMN_ALIASES));

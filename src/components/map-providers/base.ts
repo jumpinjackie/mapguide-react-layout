@@ -617,6 +617,28 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._comp = undefined;
         this._select?.dispose();
         this._select = undefined;
+
+        if (this._boundZoomSelectBox) {
+            this._zoomSelectBox?.un("boxend", this._boundZoomSelectBox as any);
+            this._boundZoomSelectBox = undefined;
+        }
+        if (this._boundClick) {
+            this._map?.un("click", this._boundClick as any);
+            this._boundClick = undefined;
+        }
+        if (this._boundMouseMove) {
+            this._map?.un("pointermove", this._boundMouseMove as any);
+            this._boundMouseMove = undefined;
+        }
+        if (this._boundResize) {
+            this._map?.un("change:size", this._boundResize as any);
+            this._boundResize = undefined;
+        }
+        if (this._boundMoveEnd) {
+            this._map?.un("moveend", this._boundMoveEnd as any);
+            this._boundMoveEnd = undefined;
+        }
+
         this._zoomSelectBox?.dispose();
         this._zoomSelectBox = undefined;
         this._activeDrawInteraction?.dispose();
@@ -631,6 +653,33 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._ovMap = undefined;
         debug(`Map provider context detached from component and reset to initial state`);
     }
+
+    private onMoveEnd(e: GenericEvent) {
+        //HACK:
+        //
+        //What we're hoping here is that when the view has been broadcasted back up
+        //and flowed back in through new view props, that the resulting zoom/pan
+        //operation in componentDidUpdate() is effectively a no-op as the intended
+        //zoom/pan location has already been reached by this event right here
+        //
+        //If we look at this through Redux DevTools, we see 2 entries for Map/SET_VIEW
+        //for the initial view (un-desirable), but we still only get one map image request
+        //for the initial view (good!). Everything is fine after that.
+        if (this._triggerZoomRequestOnMoveEnd) {
+            this._comp?.onDispatch(setCurrentView(this.getCurrentView()));
+        } else {
+            info("Triggering zoom request on moveend suppresseed");
+        }
+        if (e.frameState.viewState.rotation != this._state.viewRotation) {
+            this._comp?.onDispatch(setViewRotation(e.frameState.viewState.rotation));
+        }
+    }
+
+    private _boundZoomSelectBox: Function | undefined;
+    private _boundMouseMove: Function | undefined;
+    private _boundResize: Function | undefined;
+    private _boundClick: Function | undefined;
+    private _boundMoveEnd: Function | undefined;
 
     /**
      * @virtual
@@ -647,7 +696,14 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._zoomSelectBox = new DragBox({
             condition: (e) => !this.isDigitizing() && (this._state.activeTool === ActiveMapTool.Select || this._state.activeTool === ActiveMapTool.Zoom)
         });
-        this._zoomSelectBox.on("boxend", this.onZoomSelectBox.bind(this));
+
+        this._boundZoomSelectBox = this.onZoomSelectBox.bind(this);
+        this._boundMouseMove = this.onMouseMove.bind(this);
+        this._boundResize = this.onResize.bind(this);
+        this._boundClick = this.onMapClick.bind(this);
+        this._boundMoveEnd = this.onMoveEnd.bind(this);
+
+        this._zoomSelectBox.on("boxend", this._boundZoomSelectBox as any);
         const mapOptions: MapOptions = {
             target: el as any,
             //layers: layers,
@@ -685,29 +741,11 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this.initContext(activeLayerSet, this._state.locale, this._state.overviewMapElementSelector);
         this._mouseTooltip = new MouseTrackingTooltip(this._map, this._comp.isContextMenuOpen);
         this._selectTooltip = new SelectedFeaturesTooltip(this._map);
-        this._map.on("pointermove", this.onMouseMove.bind(this));
-        this._map.on("change:size", this.onResize.bind(this));
-        this._map.on("click", this.onMapClick.bind(this));
-        this._map.on("moveend", (e: GenericEvent) => {
-            //HACK:
-            //
-            //What we're hoping here is that when the view has been broadcasted back up
-            //and flowed back in through new view props, that the resulting zoom/pan
-            //operation in componentDidUpdate() is effectively a no-op as the intended
-            //zoom/pan location has already been reached by this event right here
-            //
-            //If we look at this through Redux DevTools, we see 2 entries for Map/SET_VIEW
-            //for the initial view (un-desirable), but we still only get one map image request
-            //for the initial view (good!). Everything is fine after that.
-            if (this._triggerZoomRequestOnMoveEnd) {
-                this._comp?.onDispatch(setCurrentView(this.getCurrentView()));
-            } else {
-                info("Triggering zoom request on moveend suppresseed");
-            }
-            if (e.frameState.viewState.rotation != this._state.viewRotation) {
-                this._comp?.onDispatch(setViewRotation(e.frameState.viewState.rotation));
-            }
-        });
+
+        this._map.on("pointermove", this._boundMouseMove as any);
+        this._map.on("change:size", this._boundResize as any);
+        this._map.on("click", this._boundClick as any);
+        this._map.on("moveend", this._boundMoveEnd as any);
 
         if (this._state.view) {
             const { x, y, scale } = this._state.view;

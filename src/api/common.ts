@@ -892,8 +892,9 @@ export interface IMapViewer {
      * @returns {Collection<Feature>}
      * @memberof IMapViewer
      * @since 0.13
+     * @since 0.14 - The return value may be undefined if called when the map viewer is detached/disposed/destroyed
      */
-    getSelectedFeatures(): Collection<Feature<Geometry>>;
+    getSelectedFeatures(): Collection<Feature<Geometry>> | undefined;
 
     /**
      * INTERNAL API. Not for public use

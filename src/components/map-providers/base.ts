@@ -36,7 +36,7 @@ import MapBrowserEvent from 'ol/MapBrowserEvent';
 import { tr, DEFAULT_LOCALE } from '../../api/i18n';
 import { LayerSetGroupBase } from '../../api/layer-set-group-base';
 import { assertIsDefined } from '../../utils/assert';
-import { info } from '../../utils/logger';
+import { info, debug } from '../../utils/logger';
 import { setCurrentView, setViewRotation, mapResized, setMouseCoordinates, setBusyCount, setViewRotationEnabled, setActiveTool } from '../../actions/map';
 import { IBasicPointCircleStyle, DEFAULT_POINT_CIRCLE_STYLE, IPointIconStyle, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, DEFAULT_LINE_STYLE, IBasicVectorPolygonStyle, DEFAULT_POLY_STYLE } from '../../api/ol-style-helpers';
 import { Toaster, Intent } from '@blueprintjs/core';
@@ -92,6 +92,7 @@ export interface IMapProviderContext extends IMapViewer {
     incrementBusyWorker(): void;
     decrementBusyWorker(): void;
     attachToComponent(el: HTMLElement, comp: IViewerComponent): void;
+    detachFromComponent(): void;
     setToasterRef(ref: React.RefObject<Toaster>): void;
     setProviderState(nextState: IMapProviderState): void;
     onKeyDown(e: GenericEvent): void;
@@ -119,11 +120,11 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected _selectTooltip: SelectedFeaturesTooltip | undefined;
 
     protected _comp: IViewerComponent | undefined;
-    protected _zoomSelectBox: DragBox;
+    protected _zoomSelectBox: DragBox | undefined;
 
     protected _busyWorkers: number;
     protected _triggerZoomRequestOnMoveEnd: boolean;
-    protected _select: Select;
+    protected _select: Select | undefined;
     protected _dispatcher: ReduxDispatch | undefined;
     protected _activeDrawInteraction: Draw | null;
 
@@ -238,9 +239,9 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
     //#endregion
 
-    protected abstract getInitialProviderState() : Omit<TState, keyof IMapProviderState>;
+    protected abstract getInitialProviderState(): Omit<TState, keyof IMapProviderState>;
     //#region IMapViewerContextCallback
-    protected getMockMode() : MapGuideMockMode | undefined { return undefined; }
+    protected getMockMode(): MapGuideMockMode | undefined { return undefined; }
     protected addFeatureToHighlight(feat: Feature<Geometry> | undefined, bAppend: boolean): void {
         if (this._state.mapName) {
             // Features have to belong to layer in order to be visible and have the highlight style, 
@@ -248,15 +249,17 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             // need to also add the feature to a scratch vector layer dedicated for this purpose
             const layerSet = this.getLayerSetGroup(this._state.mapName);
             if (layerSet) {
-                const sf = this._select.getFeatures();
-                if (!bAppend) {
-                    sf.clear();
-                    layerSet.clearScratchLayer();
-                }
+                const sf = this._select?.getFeatures();
+                if (sf) {
+                    if (!bAppend) {
+                        sf.clear();
+                        layerSet.clearScratchLayer();
+                    }
 
-                if (feat) {
-                    layerSet.addScratchFeature(feat);
-                    sf.push(feat);
+                    if (feat) {
+                        layerSet.addScratchFeature(feat);
+                        sf.push(feat);
+                    }
                 }
             }
         }
@@ -297,7 +300,10 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
     protected onZoomSelectBox(e: GenericEvent) {
         if (this._comp) {
-            const extent = this._zoomSelectBox.getGeometry();
+            const extent = this._zoomSelectBox?.getGeometry();
+            if (!extent) {
+                return;
+            }
             switch (this._state.activeTool) {
                 case ActiveMapTool.Zoom:
                     {
@@ -503,7 +509,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         }
 
         const featureToLayerMap = [] as [Feature<Geometry>, Layer<Source>][];
-        if (this._state.activeTool == ActiveMapTool.Select || this._state.activeTool == ActiveMapTool.WmsQueryFeatures) {
+        if ((this._state.activeTool == ActiveMapTool.Select || this._state.activeTool == ActiveMapTool.WmsQueryFeatures) && this._select) {
             /*
             //Shift+Click is the default OL selection append mode, so if no shift key
             //pressed, clear the existing selection
@@ -519,8 +525,10 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
                 if (featureToLayerMap.length == 0) { //See TODO above
                     if (layer.get(LayerProperty.IS_SELECTABLE) == true && feature instanceof Feature) {
-                        this._select.getFeatures().push(feature);
-                        featureToLayerMap.push([feature, layer]);
+                        if (this._select) {
+                            this._select.getFeatures().push(feature);
+                            featureToLayerMap.push([feature, layer]);
+                        }
                     }
                 }
             });
@@ -537,7 +545,9 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                 this.onProviderMapClick(px);
             }
         } else {
-            this.showSelectedVectorFeatures(this._select.getFeatures(), px, featureToLayerMap, this._state.locale);
+            if (this._select) {
+                this.showSelectedVectorFeatures(this._select.getFeatures(), px, featureToLayerMap, this._state.locale);
+            }
         }
     }
     protected abstract onProviderMapClick(px: [number, number]): void;
@@ -602,6 +612,26 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         const activeDraw = this._map.getInteractions().getArray().filter(inter => inter instanceof Draw)[0];
         return activeDraw != null;
     }
+
+    public detachFromComponent(): void {
+        this._comp = undefined;
+        this._select?.dispose();
+        this._select = undefined;
+        this._zoomSelectBox?.dispose();
+        this._zoomSelectBox = undefined;
+        this._activeDrawInteraction?.dispose();
+        this._activeDrawInteraction = null;
+        this._selectTooltip?.dispose();
+        this._selectTooltip = undefined;
+        this._mouseTooltip?.dispose()
+        this._mouseTooltip = undefined;
+        this._map?.setTarget(undefined);
+        this._ovMap?.setMap(undefined as any);
+        this._map = undefined;
+        this._ovMap = undefined;
+        debug(`Map provider context detached from component and reset to initial state`);
+    }
+
     /**
      * @virtual
      * @param {HTMLElement} el
@@ -690,7 +720,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
     private onResize = (e: GenericEvent) => {
         if (this._map) {
-            const [w, h ] = this._map.getSize();
+            const [w, h] = this._map.getSize();
             this._comp?.onDispatch(mapResized(w, h));
         }
     }
@@ -884,7 +914,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         return [x, y];
     }
     public getSelectedFeatures() {
-        return this._select.getFeatures();
+        return this._select?.getFeatures();
     }
     public getPointSelectionBox(point: Coordinate2D, ptBuffer: number): Bounds {
         assertIsDefined(this._map);

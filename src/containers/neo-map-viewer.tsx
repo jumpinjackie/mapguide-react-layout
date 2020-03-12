@@ -184,6 +184,9 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
         const mapNode: any = ReactDOM.findDOMNode(this);
         this.props.context.attachToComponent(mapNode, this);
     }
+    componentWillUnmount() {
+        this.props.context.detachFromComponent();
+    }
     render(): JSX.Element {
         const { context, backgroundColor } = this.props;
         const { isMouseDown } = this.state;

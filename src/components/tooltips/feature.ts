@@ -55,6 +55,9 @@ export class FeatureQueryTooltip {
         this.enabled = true;
         this.isMouseOverTooltip = false;
     }
+    public dispose() {
+        this.featureTooltip.dispose();
+    }
     public get isMouseOver() { return this.isMouseOverTooltip; }
     public raiseQueryFromPoint(pixel: [number, number]) {
         const box = this.callback.getPointSelectionBox(pixel);

@@ -12,6 +12,9 @@ export class SessionKeepAlive {
             this.timeoutID = setTimeout(this.tick.bind(this), this.interval);
         });
     }
+    public dispose() {
+        clearTimeout(this.timeoutID);
+    }
     private tick(): void {
         this.client.getServerSessionTimeout(this.getSession()).then(tm => {
             this.timeoutID = setTimeout(this.tick.bind(this), this.interval);

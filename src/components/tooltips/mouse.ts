@@ -26,6 +26,9 @@ export class MouseTrackingTooltip {
         this.text = null;
         this.tooltipElement.classList.add(HIDDEN_CLASS_NAME);
     }
+    public dispose() {
+        this.tooltip.dispose();
+    }
     public onMouseMove(e: GenericEvent) {
         if (this.isContextMenuOpen())
             return;

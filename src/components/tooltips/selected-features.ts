@@ -47,6 +47,9 @@ export class SelectedFeaturesTooltip {
         this.enabled = true;
         this.isMouseOverTooltip = false;
     }
+    public dispose() {
+        this.featureTooltip.dispose();
+    }
     public get isMouseOver() { return this.isMouseOverTooltip; }
     public isEnabled(): boolean {
         return this.enabled;

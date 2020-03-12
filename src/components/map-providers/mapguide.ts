@@ -69,7 +69,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
 
     // ============= MapGuide-specific private state ============== //
     private _client: Client;
-    private _keepAlive: SessionKeepAlive;
+    private _keepAlive: SessionKeepAlive | undefined;
     private _featureTooltip: FeatureQueryTooltip | undefined;
     private _wktFormat: WKTFormat;
     // ============================================================= //
@@ -268,7 +268,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @memberof MapGuideMapProviderContext
      */
     protected onImageError(e: GenericEvent) {
-        this._keepAlive.lastTry().catch(err => {
+        this._keepAlive?.lastTry().catch(err => {
             if (isSessionExpiredError(err)) {
                 this.onSessionExpired();
             }
@@ -361,6 +361,17 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @memberof MapGuideMapProviderContext
      */
     public isMouseOverTooltip() { return this._featureTooltip?.isMouseOver == true || this._selectTooltip?.isMouseOver == true; }
+
+    /**
+     * @override
+     */
+    public detachFromComponent(): void {
+        this._keepAlive?.dispose();
+        this._keepAlive = undefined;
+        this._featureTooltip?.dispose();
+        this._featureTooltip = undefined;
+        super.detachFromComponent();
+    }
 
     /**
      * @override

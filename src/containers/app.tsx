@@ -109,6 +109,15 @@ export interface IAppProps {
      * @memberof IAppProps
      */
     externalBaseLayers?: IExternalBaseLayer[];
+    /**
+     * If specified, tells the application to not sync the following URL params to the URL, and to skip
+     * reading these params when initializing/refreshing.
+     *
+     * @type {string[]}
+     * @memberof IAppProps
+     * @since 0.14
+     */
+    urlPropsIgnore?: string[];
     onInit?: (viewer: IMapViewer) => void;
     locale?: string;
     /**
@@ -188,7 +197,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
             hl: urlHideLayers,
             sg: urlShowGroups,
             hg: urlHideGroups
-        } = getStateFromUrl();
+        } = getStateFromUrl(this.props.urlPropsIgnore);
         if (setElementVisibility && mapguide?.initialElementVisibility) {
             const { taskpane, legend, selection } = mapguide.initialElementVisibility;
             const states: IElementState = {

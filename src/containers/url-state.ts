@@ -62,11 +62,16 @@ export function updateUrl(state: IAppUrlState, extraState?: any): void {
 /**
  * Gets the application state from the current main URL
  * @since 0.13
+ * @since 0.14 - New optional ignoreKeys to avoid reading out certain properties from URL state
  */
-export function getStateFromUrl(): IAppUrlState {
+export function getStateFromUrl(ignoreKeys?: string[]): IAppUrlState {
     const st = parseUrlParameters(window.location.href);
     const state: IAppUrlState = {};
+    const ignore = ignoreKeys ?? [];
     for (const k in st) {
+        if (ignore.indexOf(k) >= 0) {
+            continue;
+        }
         const val = st[k];
         switch (k) {
             case "ft":

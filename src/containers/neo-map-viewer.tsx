@@ -48,6 +48,9 @@ function useViewerSideEffects(context: IMapProviderContext,
                     }
                 }
             } else {
+                //Even if no initial external layers were loaded, the layers state still needs to be set
+                //otherwise components that depend on this state (eg. External Layer Manager) will assume
+                //this is still not ready yet
                 debug(`React.useEffect - Signal that external layers are ready for [${mapName}]`);
                 dispatch(externalLayersReady(mapName));
             }

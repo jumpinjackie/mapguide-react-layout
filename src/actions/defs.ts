@@ -120,6 +120,15 @@ export enum GenericSubjectLayerType {
 }
 
 /**
+ * Defines an expression for a popup link
+ */
+export interface IPopupLinkExpression {
+    expression: string;
+    placeholderBegin?: string;
+    placeholderEnd?: string;
+}
+
+/**
  * Popup link control options
  *
  * @export
@@ -133,7 +142,7 @@ export interface ISelectedFeaturePopupLinkProperty {
      * @type {string}
      * @memberof ISelectedFeaturePopupLinkProperty
      */
-    name: string;
+    name: string | IPopupLinkExpression;
     /**
      * The anchor label to render
      *

@@ -162,7 +162,22 @@
                                     ],
                                     "meta_extents": [96.816941408, -43.74050960205765, 159.109219008, -9.142175976703609],
                                     "meta_projection": "EPSG:4326",
-                                    "initially_visible": false
+                                    "initially_visible": false,
+                                    "popup_template": {
+                                        "title": "SA1 Boundary",
+                                        "propertyMappings": [
+                                            { "name": "SA1_7DIG11", "value": "Code (7-digit)" }
+                                        ],
+                                        "linkProperty": {
+                                            "name": {
+                                                "expression": "https://quickstats.censusdata.abs.gov.au/census_services/getproduct/census/2011/quickstat/{SA1_7DIG11}",
+                                                "placeholderBegin": "{",
+                                                "placeholderEnd": "}"
+                                            },
+                                            "label": "Click here to view the SA1 details in ABS quickstat",
+                                            "linkTarget": "_blank"
+                                        }
+                                    }
                                 }
                             },
                             {

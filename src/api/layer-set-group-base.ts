@@ -50,7 +50,7 @@ export abstract class LayerSetGroupBase {
     public clearScratchLayer() {
         this.scratchLayer.getSource().clear();
     }
-    public abstract tryGetWmsSource(): ImageWMSSource | TileWMSSource | undefined;
+    public abstract tryGetWmsSource(): [LayerBase, (ImageWMSSource | TileWMSSource)] | undefined;
     protected registerSourceEvents(source: Source): void {
         if (source instanceof ImageSource) {
             source.on("imageloadstart", this.callback.addImageLoading);

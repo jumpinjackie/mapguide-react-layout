@@ -58,13 +58,13 @@ export class GenericLayerSetGroup extends LayerSetGroupBase {
         const gl = this.mainSet as GenericLayerSetOL;
         return gl.subjectLayer;
     }
-    public tryGetWmsSource() {
+    public tryGetWmsSource(): [LayerBase, (ImageWMS | TileWMS)] | undefined {
         const mainLayer = this.mainSet as GenericLayerSetOL;
         const { subjectLayer } = mainLayer;
         if (subjectLayer instanceof ImageLayer || subjectLayer instanceof TileLayer) {
             const source = subjectLayer.getSource();
             if (source instanceof ImageWMS || source instanceof TileWMS) {
-                return source;
+                return [subjectLayer, source];
             }
         }
         return undefined;

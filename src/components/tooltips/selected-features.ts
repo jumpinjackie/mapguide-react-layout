@@ -16,8 +16,9 @@ import { ProjectionLike } from 'ol/proj';
 import { LayerSetGroupBase } from '../../api/layer-set-group-base';
 import Geometry from 'ol/geom/Geometry';
 import { ISelectedFeaturePopupTemplateConfiguration } from '../../actions/defs';
-import { strIsNullOrEmpty } from '../../utils/string';
+import { strIsNullOrEmpty, extractPlaceholderTokens, strReplaceAll } from '../../utils/string';
 import Layer from 'ol/layer/Layer';
+import LayerBase from "ol/layer/Base";
 import Source from 'ol/source/Source';
 
 export interface IQueryWmsFeaturesCallback {
@@ -70,7 +71,7 @@ export class SelectedFeaturesTooltip {
         //See what WMS layers we have
         const client = new Client("", "mapagent");
         const format = new GeoJSON();
-        const wmsSources: (olSourceWMS | olSourceTileWMS)[] = [];
+        const wmsSources: [LayerBase, (olSourceWMS | olSourceTileWMS)][] = [];
         //The active layer set may have a WMS layer
         const currentWmsSource = currentLayerSet?.tryGetWmsSource();
         if (currentWmsSource) {
@@ -82,11 +83,12 @@ export class SelectedFeaturesTooltip {
             if (wmsLayer instanceof olImageLayer || wmsLayer instanceof olTileLayer) {
                 const source = wmsLayer.getSource();
                 if (source instanceof olSourceWMS || source instanceof olSourceTileWMS) {
-                    wmsSources.push(source);
+                    wmsSources.push([wmsLayer, source]);
                 }
             }
         }
-        for (const source of wmsSources) {
+        for (const pair of wmsSources) {
+            const [ layer, source ] = pair;
             const url = source.getFeatureInfoUrl(coord, resolution, this.map.getView().getProjection(), {
                 'INFO_FORMAT': "application/json"
             });
@@ -105,7 +107,8 @@ export class SelectedFeaturesTooltip {
                     featureProjection: this.map.getView().getProjection()
                 });
                 this.featureTooltip.setPosition(coord);
-                const html = this.generateFeatureHtml(features[0], callback.getLocale());
+                const popupConf: ISelectedFeaturePopupTemplateConfiguration | undefined = layer.get(LayerProperty.SELECTED_POPUP_CONFIGURATION);
+                const html = this.generateFeatureHtml(features[0], callback.getLocale(), popupConf);
                 callback.addFeatureToHighlight(features[0], false);
                 selected++;
                 this.featureTooltipElement.innerHTML = html;
@@ -163,7 +166,21 @@ export class SelectedFeaturesTooltip {
         }
         if (popupConfig?.linkProperty) {
             const { name, label, linkTarget } = popupConfig.linkProperty;
-            const linkHref = f[name];
+            let linkHref: string | undefined;
+            if (typeof(name) == 'string') {
+                linkHref = f[name];
+            } else {
+                const expr = name.expression;
+                let url = expr;
+                const pBegin = name.placeholderBegin ?? "{";
+                const pEnd = name.placeholderEnd ?? "}";
+                const tokens = extractPlaceholderTokens(expr, pBegin, pEnd);
+                for (const t of tokens) {
+                    const al = f[t] ?? "";
+                    url = strReplaceAll(url, `${pBegin}${t}${pEnd}`, al);
+                }
+                linkHref = url;
+            }
             if (!strIsNullOrEmpty(linkHref)) {
                 html += `<div style='margin-top: 20px'><a href='${linkHref}' target='${linkTarget}'>${label}</a></div>`;
             }

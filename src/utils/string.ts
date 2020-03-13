@@ -63,7 +63,7 @@ export function strTrim(str: string): string {
  * @since 0.14
  */
 export function extractPlaceholderTokens(expr: string, delimBegin: string, delimEnd: string) {
-    const regex = new RegExp(`${delimBegin}(.*?)${delimEnd}`);
+    const regex = new RegExp(`${delimBegin}(.*?)${delimEnd}`, "g");
     const matches = expr.match(regex);
     return matches?.map(m => m.replace(delimBegin, "").replace(delimEnd, "")) ?? [];
 }

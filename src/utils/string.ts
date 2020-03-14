@@ -51,3 +51,19 @@ export function strTrim(str: string): string {
     }
     return str.trim();
 }
+
+/**
+ *
+ *
+ * @export
+ * @param {string} expr
+ * @param {string} delimBegin
+ * @param {string} delimEnd
+ * @returns
+ * @since 0.14
+ */
+export function extractPlaceholderTokens(expr: string, delimBegin: string, delimEnd: string) {
+    const regex = new RegExp(`${delimBegin}(.*?)${delimEnd}`, "g");
+    const matches = expr.match(regex);
+    return matches?.map(m => m.replace(delimBegin, "").replace(delimEnd, "")) ?? [];
+}

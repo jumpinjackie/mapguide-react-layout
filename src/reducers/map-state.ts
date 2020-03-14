@@ -2,24 +2,21 @@ import {
     IBranchedMapState,
     IBranchedMapSubState,
     IExternalBaseLayer,
-    ILayerInfo
+    ILayerInfo,
+    IMapGuideSubState,
+    IGenericLayerSubState
 } from "../api/common";
-import { RuntimeMap } from "../api/contracts/runtime-map";
 import { isMapView } from "../utils/type-guards";
 import { makeUnique } from "../utils/array";
 import { ActionType } from '../constants/actions';
-import { ViewerAction } from '../actions/defs';
+import { ViewerAction, isGenericSubjectMapLayer, IGenericSubjectMapLayer } from '../actions/defs';
 import { debug } from '../utils/logger';
 
 export const MAP_STATE_INITIAL_STATE: IBranchedMapState = {
 
 };
 
-export const MAP_STATE_INITIAL_SUB_STATE: IBranchedMapSubState = {
-    currentView: undefined,
-    initialView: undefined,
-    history: [],
-    historyIndex: -1,
+export const MG_INITIAL_SUB_STATE: IMapGuideSubState = {
     selectionSet: undefined,
     layerIndex: -1,
     featureIndex: -1,
@@ -31,14 +28,40 @@ export const MAP_STATE_INITIAL_SUB_STATE: IBranchedMapSubState = {
     showGroups: [],
     hideLayers: [],
     hideGroups: [],
-    externalBaseLayers: [],
     activeSelectedFeature: undefined,
-    layers: []
+}
+
+export const MAP_STATE_INITIAL_SUB_STATE: IBranchedMapSubState = {
+    currentView: undefined,
+    initialView: undefined,
+    history: [],
+    historyIndex: -1,
+    externalBaseLayers: [],
+    initialExternalLayers: [],
+    layers: undefined,
+    mapguide: undefined,
+    generic: undefined
 };
+
+function applyMapGuideSubState(state: IBranchedMapState, mapName: string, applyFn: (current: IMapGuideSubState) => Partial<IMapGuideSubState>) {
+    const subState = state[mapName]
+    if (subState) {
+        const mgSubState = subState.mapguide;
+        if (mgSubState) {
+            const toApply = applyFn(mgSubState);
+            const mgSubState1 = {
+                ...mgSubState,
+                ...toApply
+            };
+            return mergeSubState(state, mapName, { ...subState, ...{ mapguide: mgSubState1 } });
+        }
+    }
+    return state;
+}
 
 function setLayerAction<K extends keyof ILayerInfo>(state: IBranchedMapState, mapName: string, layerName: string, selector: (current: ILayerInfo) => Pick<ILayerInfo, K>): IBranchedMapState {
     const subState = state[mapName];
-    if (subState) {
+    if (subState && subState.layers) {
         const layers = subState.layers.map(l => {
             if (l.name == layerName) {
                 return {
@@ -94,7 +117,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                             currentView: { ...payload.initialView }
                         };
                     }
-                    let isel: Partial<IBranchedMapSubState> | undefined;
+                    let isel: Partial<IMapGuideSubState> | undefined;
                     if (payload.initialSelections && payload.initialSelections[mapName]) {
                         isel = {
                             selectionSet: payload.initialSelections[mapName]
@@ -106,57 +129,75 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                     const sg = [];
                     const hl = [];
                     const hg = [];
+                    let mrtm;
+                    let mgeneric: IGenericLayerSubState | undefined;
 
-                    if (mapName == mapNameToApplyInitialState) {
-                        const rtm: RuntimeMap = maps[mapName].map;
-                        const isl = payload.initialShowLayers || [];
-                        const isg = payload.initialShowGroups || [];
-                        const ihl = payload.initialHideLayers || [];
-                        const ihg = payload.initialHideGroups || [];
-
-                        //Only initally show what is initially hidden and vice versa
-                        //NOTE: A map could have duplicate group/layer names, we make no attempt
-                        //to pick out the "correct" one. It's first come first serve.
-                        if (rtm.Layer) {
-                            for (const l of rtm.Layer) {
-                                if (isl.indexOf(l.Name) >= 0 && !l.Visible) {
-                                    sl.push(l.ObjectId);
-                                } else if (ihl.indexOf(l.Name) >= 0 && l.Visible) {
-                                    hl.push(l.ObjectId);
-                                }
-                            }
+                    const rtm = maps[mapName].map;
+                    if (rtm) {
+                        if (!isGenericSubjectMapLayer(rtm)) {
+                            mrtm = { runtimeMap: rtm };
+                        } else {
+                            mgeneric = { subject: { ...rtm } };
                         }
-                        if (rtm.Group) {
-                            for (const g of rtm.Group) {
-                                if (isg.indexOf(g.Name) >= 0 && !g.Visible) {
-                                    sg.push(g.ObjectId);
-                                } else if (ihg.indexOf(g.Name) >= 0 && g.Visible) {
-                                    hg.push(g.ObjectId);
-                                }
-                            }
-                        }
-                        debug(`Initially showing layers: ${isl.join("|")}`);
-                        debug(`Initially showing groups: ${isg.join("|")}`);
-                        debug(`Initially hiding layers: ${ihl.join("|")}`);
-                        debug(`Initially hiding groups: ${ihg.join("|")}`);
-
-                        debug(`Initially showing layer ids: ${sl.join("|")}`);
-                        debug(`Initially showing group ids: ${sg.join("|")}`);
-                        debug(`Initially hiding layer ids: ${hl.join("|")}`);
-                        debug(`Initially hiding group ids: ${hg.join("|")}`);
                     }
-                    const newMapState = {
-                        ...MAP_STATE_INITIAL_SUB_STATE,
-                        ...{ runtimeMap: maps[mapName].map },
-                        ...{ externalBaseLayers: maps[mapName].externalBaseLayers },
-                        ...{ initialView: maps[mapName].initialView },
-                        ...(cv || {}),
+                    if (mapName == mapNameToApplyInitialState) {
+                        if (rtm && !isGenericSubjectMapLayer(rtm)) {
+                            const isl = payload.initialShowLayers ?? [];
+                            const isg = payload.initialShowGroups ?? [];
+                            const ihl = payload.initialHideLayers ?? [];
+                            const ihg = payload.initialHideGroups ?? [];
+
+                            //Only initally show what is initially hidden and vice versa
+                            //NOTE: A map could have duplicate group/layer names, we make no attempt
+                            //to pick out the "correct" one. It's first come first serve.
+                            if (rtm.Layer) {
+                                for (const l of rtm.Layer) {
+                                    if (isl.indexOf(l.Name) >= 0 && !l.Visible) {
+                                        sl.push(l.ObjectId);
+                                    } else if (ihl.indexOf(l.Name) >= 0 && l.Visible) {
+                                        hl.push(l.ObjectId);
+                                    }
+                                }
+                            }
+                            if (rtm.Group) {
+                                for (const g of rtm.Group) {
+                                    if (isg.indexOf(g.Name) >= 0 && !g.Visible) {
+                                        sg.push(g.ObjectId);
+                                    } else if (ihg.indexOf(g.Name) >= 0 && g.Visible) {
+                                        hg.push(g.ObjectId);
+                                    }
+                                }
+                            }
+                            debug(`Initially showing layers: ${isl.join("|")}`);
+                            debug(`Initially showing groups: ${isg.join("|")}`);
+                            debug(`Initially hiding layers: ${ihl.join("|")}`);
+                            debug(`Initially hiding groups: ${ihg.join("|")}`);
+
+                            debug(`Initially showing layer ids: ${sl.join("|")}`);
+                            debug(`Initially showing group ids: ${sg.join("|")}`);
+                            debug(`Initially hiding layer ids: ${hl.join("|")}`);
+                            debug(`Initially hiding group ids: ${hg.join("|")}`);
+                        }
+                    }
+                    const newMgSubState = {
+                        ...MG_INITIAL_SUB_STATE,
+                        ...mrtm,
                         ...(isel || {}),
                         ...(sl.length > 0 ? { showLayers: [...sl] } : {}),
                         ...(sg.length > 0 ? { showGroups: [...sg] } : {}),
                         ...(hl.length > 0 ? { hideLayers: [...hl] } : {}),
                         ...(hg.length > 0 ? { hideGroups: [...hg] } : {})
                     };
+                    const newMapState = {
+                        ...MAP_STATE_INITIAL_SUB_STATE,
+                        ...{ generic: mgeneric },
+                        ...{ externalBaseLayers: maps[mapName].externalBaseLayers },
+                        ...{ initialExternalLayers: maps[mapName].initialExternalLayers },
+                        ...{ initialView: maps[mapName].initialView },
+                        ...(cv || {}),
+                        ...{ mapguide: newMgSubState }
+                    };
+
 
                     // As INIT_APP does not establish a currentView, if a currentView was
                     // somehow established as part of the initial app state, we will keep
@@ -256,52 +297,42 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
         case ActionType.MAP_SET_LAYER_TRANSPARENCY:
             {
                 const { payload } = action;
-                const subState = state[payload.mapName];
-                if (subState) {
-                    const trans = { ...subState.layerTransparency };
+                return applyMapGuideSubState(state, payload.mapName, mgSubState => {
+                    const trans = { ...mgSubState.layerTransparency };
                     trans[payload.layerName] = payload.opacity;
-                    const state1: Partial<IBranchedMapSubState> = {
+                    return {
                         layerTransparency: trans
                     };
-                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
-                }
-                return state;
+                });
             }
         case ActionType.LEGEND_SET_LAYER_SELECTABLE:
             {
                 const { payload } = action;
-                const subState = state[payload.mapName];
-                if (subState) {
-                    const layers = { ...subState.selectableLayers };
+                return applyMapGuideSubState(state, payload.mapName, mgSubState => {
+                    const layers = { ...mgSubState.selectableLayers };
                     layers[payload.id] = payload.value;
-                    const state1: Partial<IBranchedMapSubState> = {
+                    return {
                         selectableLayers: layers
                     };
-                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
-                }
-                return state;
+                });
             }
         case ActionType.LEGEND_SET_GROUP_EXPANDABLE:
             {
                 const { payload } = action;
-                const subState = state[payload.mapName];
-                if (subState) {
-                    const groups = { ...subState.expandedGroups };
+                return applyMapGuideSubState(state, payload.mapName, mgSubState => {
+                    const groups = { ...mgSubState.expandedGroups };
                     groups[payload.id] = payload.value;
-                    const state1: Partial<IBranchedMapSubState> = {
+                    return {
                         expandedGroups: groups
                     };
-                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
-                }
-                return state;
+                });
             }
         case ActionType.LEGEND_SET_GROUP_VISIBILITY:
             {
                 const { payload } = action;
-                const subState = state[payload.mapName];
-                if (subState) {
-                    let showGroups: string[] = [...subState.showGroups];
-                    let hideGroups: string[] = [...subState.hideGroups];
+                return applyMapGuideSubState(state, payload.mapName, mgSubState => {
+                    let showGroups: string[] = [...mgSubState.showGroups];
+                    let hideGroups: string[] = [...mgSubState.hideGroups];
                     if (payload.value === true) { //Show it
                         showGroups.push(payload.id);
                         showGroups = makeUnique(showGroups);
@@ -311,23 +342,20 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                         hideGroups = makeUnique(hideGroups);
                         showGroups = showGroups.filter(g => g != payload.id);
                     }
-                    const state1: Partial<IBranchedMapSubState> = {
-                        showLayers: subState.showLayers,
+                    return {
+                        showLayers: mgSubState.showLayers,
                         showGroups: showGroups,
-                        hideLayers: subState.hideLayers,
+                        hideLayers: mgSubState.hideLayers,
                         hideGroups: hideGroups
                     };
-                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
-                }
-                return state;
+                });
             }
         case ActionType.LEGEND_SET_LAYER_VISIBILITY:
             {
                 const { payload } = action;
-                const subState = state[payload.mapName];
-                if (subState) {
-                    let showLayers: string[] = [...subState.showLayers];
-                    let hideLayers: string[] = [...subState.hideLayers];
+                return applyMapGuideSubState(state, payload.mapName, mgSubState => {
+                    let showLayers: string[] = [...mgSubState.showLayers];
+                    let hideLayers: string[] = [...mgSubState.hideLayers];
                     if (payload.value === true) { //Show it
                         showLayers.push(payload.id);
                         showLayers = makeUnique(showLayers);
@@ -337,45 +365,33 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                         hideLayers = makeUnique(hideLayers);
                         showLayers = showLayers.filter(g => g != payload.id);
                     }
-                    const state1 = {
+                    return {
                         showLayers: showLayers,
-                        showGroups: subState.showGroups,
+                        showGroups: mgSubState.showGroups,
                         hideLayers: hideLayers,
-                        hideGroups: subState.hideGroups
+                        hideGroups: mgSubState.hideGroups
                     };
-                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
-                }
-                return state;
+                });
             }
         case ActionType.MAP_SET_SELECTION:
             {
                 const { payload } = action;
-                const subState = state[payload.mapName];
-                if (subState) {
-                    const state1: Partial<IBranchedMapSubState> = {
-                        selectionSet: payload.selection,
-                        layerIndex: -1,
-                        featureIndex: -1,
-                        activeSelectedFeature: undefined
-                    };
-                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
-                }
-                return state;
+                return applyMapGuideSubState(state, payload.mapName, _ => ({
+                    selectionSet: payload.selection,
+                    layerIndex: -1,
+                    featureIndex: -1,
+                    activeSelectedFeature: undefined
+                }));
             }
         case ActionType.MAP_SHOW_SELECTED_FEATURE:
             {
                 const { payload } = action;
-                const subState = state[payload.mapName];
-                if (subState) {
-                    const state1: Partial<IBranchedMapSubState> = {
-                        activeSelectedFeature: {
-                            layerId: payload.layerId,
-                            selectionKey: payload.selectionKey
-                        }
-                    };
-                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
-                }
-                return state;
+                return applyMapGuideSubState(state, payload.mapName, _ => ({
+                    activeSelectedFeature: {
+                        layerId: payload.layerId,
+                        selectionKey: payload.selectionKey
+                    }
+                }));
             }
         case ActionType.MAP_SET_BASE_LAYER:
             {
@@ -397,12 +413,25 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                 }
                 return state;
             }
+        case ActionType.EXTERNAL_LAYERS_READY:
+            {
+                const { payload } = action;
+                const subState = state[payload.mapName];
+                if (subState) {
+                    const layers = subState.layers ?? [];
+                    const state1: Partial<IBranchedMapSubState> = {
+                        layers
+                    };
+                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
+                }
+                return state;
+            }
         case ActionType.LAYER_ADDED:
             {
                 const { payload } = action;
                 const subState = state[payload.mapName];
                 if (subState) {
-                    const layers = [payload.layer, ...subState.layers];
+                    const layers = [payload.layer, ...(subState.layers ?? [])];
                     const state1: Partial<IBranchedMapSubState> = {
                         layers
                     };
@@ -419,7 +448,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
             {
                 const { payload } = action;
                 const subState = state[payload.mapName];
-                if (subState) {
+                if (subState && subState.layers) {
                     const layers = subState.layers.filter(l => l.name != action.payload.layerName);
                     const state1: Partial<IBranchedMapSubState> = {
                         layers
@@ -444,7 +473,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
             {
                 const { mapName, index, layerName } = action.payload;
                 const subState = state[mapName];
-                if (subState) {
+                if (subState && subState.layers) {
                     const layers = [...subState.layers];
                     let currentIdx = -1;
                     for (let i = 0; i < layers.length; i++) {

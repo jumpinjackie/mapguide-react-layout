@@ -1,20 +1,15 @@
 import * as React from "react";
-import { connect, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { SelectionPanel, ISelectedFeatureProps } from "../components/selection-panel";
-import { QueryMapFeaturesResponse, SelectedFeature } from "../api/contracts/query";
+import { SelectedFeature } from "../api/contracts/query";
 import { getViewer } from "../api/runtime";
-import { tr, DEFAULT_LOCALE } from "../api/i18n";
-import {
-    IMapView,
-    ReduxDispatch,
-    IApplicationState,
-    IConfigurationReducerState,
-    getSelectionSet
-} from "../api/common";
+import { tr } from "../api/i18n";
+import { IMapView } from "../api/common";
 import { Callout, Intent } from '@blueprintjs/core';
 import { AppContext } from '../components/context';
-import { useViewerLocale, useActiveMapSelectionSet, useActiveMapName, useActiveMapState } from './hooks';
+import { useViewerLocale, useActiveMapSelectionSet, useActiveMapName } from './hooks';
 import { setCurrentView, showSelectedFeature } from '../actions/map';
+import { useActiveMapState } from './hooks-mapguide';
 
 export interface ISelectionPanelContainerProps {
     maxHeight?: number;

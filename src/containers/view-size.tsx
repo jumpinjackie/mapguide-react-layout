@@ -1,7 +1,8 @@
 import * as React from "react";
 import { UnitOfMeasure } from "../api/common";
 import { ViewSize } from "../components/view-size";
-import { useActiveMapWidth, useActiveMapHeight, useViewerSizeUnits, useActiveMapMetersPerUnit, useActiveMapView, useViewerLocale } from './hooks';
+import { useActiveMapWidth, useActiveMapHeight, useViewerSizeUnits, useActiveMapView, useViewerLocale } from './hooks';
+import { useActiveMapMetersPerUnit } from './hooks-mapguide';
 
 export interface IViewSizeContainerProps { }
 

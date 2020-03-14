@@ -11,10 +11,9 @@ import SlateTemplateLayout from "../layouts/slate";
 import MaroonTemplateLayout from "../layouts/maroon";
 import { registerLayout } from "../api/registry/layout";
 import { registerCommand } from "../api/registry/command";
-import { registerComponentFactory } from "../api/registry/component";
+import { registerComponentFactory, DefaultComponentNames } from "../api/registry/component";
 import { registerDefaultComponents } from "../api/default-components";
 import * as Common from "../api/common";
-import "../styles/index.css";
 import { bootstrap } from "../api/bootstrap";
 import proj4 from "proj4";
 import * as MapActions from "../actions/map";
@@ -33,6 +32,16 @@ import TopoJSON from "ol/format/TopoJSON";
 import KML from "ol/format/KML";
 import GPX from "ol/format/GPX";
 import IGC from "ol/format/IGC";
+import { initMapGuideCommands } from '../api/mapguide-commands';
+import { registerMapGuideComponents } from '../api/mapguide-components';
+import { MapGuideMapProviderContext } from '../components/map-providers/mapguide';
+import { MapProviderContext } from '../components/map-providers/context';
+import { MgMapViewer } from '../containers/neo-map-viewer';
+
+import "../styles/index.css";
+import "ol/ol.css";
+import "@blueprintjs/core/lib/css/blueprint.css";
+import "react-splitter-layout/lib/index.css";
 
 bootstrap();
 addFormatDriver(new CsvFormatDriver(CSV_COLUMN_ALIASES));
@@ -49,7 +58,15 @@ registerLayout("limegold", () => <LimeGoldTemplateLayout />);
 registerLayout("slate", () => <SlateTemplateLayout />);
 registerLayout("maroon", () => <MaroonTemplateLayout />);
 initDefaultCommands();
+initMapGuideCommands();
 registerDefaultComponents();
+registerMapGuideComponents();
+
+// Register our MapGuide-specific viewer implementation
+const PROVIDER_IMPL = new MapGuideMapProviderContext();
+registerComponentFactory(DefaultComponentNames.Map, (props) => <MapProviderContext.Provider value={PROVIDER_IMPL}>
+    <MgMapViewer {...props} />
+</MapProviderContext.Provider>);
 
 //Register the default mapagent request builder (that can be replaced later on if desired)
 registerRequestBuilder("mapagent", (agentUri, locale) => new MapAgentRequestBuilder(agentUri, locale));
@@ -159,6 +176,9 @@ export const Externals = {
 };
 export { ApplicationViewModel as Application } from "./application";
 export { setAssetRoot } from "../utils/asset";
+export { MapGuideViewerInitCommand } from "../actions/init-mapguide";
+
+export { updateUrl, getStateFromUrl } from "../containers/url-state";
 
 /**
  * The top-level namespace for all dispatchable actions

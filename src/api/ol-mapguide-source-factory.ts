@@ -1,6 +1,7 @@
-import { MapGuideImageSourceOptions, IMapGuideImageSource } from "./common";
+import { IMapGuideImageSource } from "./common";
 //import { MapGuideImageSource } from "./ol-mapguide-source";
 import olMapGuideSource from "ol/source/ImageMapGuide";
+import { OLMapGuideImageSourceOptions } from './ol-types';
 
 /**
  * @hidden
@@ -12,7 +13,7 @@ export function isMapGuideImageSource(arg: any): arg is IMapGuideImageSource {
 /**
  * @hidden
  */
-export default function createMapGuideSource(options: MapGuideImageSourceOptions): olMapGuideSource {
+export default function createMapGuideSource(options: OLMapGuideImageSourceOptions): olMapGuideSource {
     //const ctor: any = MapGuideImageSource;
     //const source = new ctor(options);
     const source = new olMapGuideSource(options);

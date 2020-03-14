@@ -28,7 +28,6 @@ import {
     Bounds,
     Coordinate2D,
     RefreshMode,
-    ClientKind,
     LayerTransparencySet,
     MapLoadIndicatorPositioning,
     KC_ESCAPE,
@@ -38,7 +37,6 @@ import {
     LayerProperty
 } from "../api/common";
 import debounce = require("lodash.debounce");
-import { areNumbersEqual } from '../utils/number';
 import { isSessionExpiredError } from '../api/error';
 import { Client } from '../api/client';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
@@ -90,50 +88,38 @@ import { areArraysDifferent } from '../utils/array';
 import GeometryType from 'ol/geom/GeometryType';
 import { ProjectionLike } from 'ol/proj';
 import Select from 'ol/interaction/Select';
-import { MgLayerSet } from '../api/layer-set';
-import { MgLayerManager } from '../api/layer-manager';
+import { MgLayerSetGroup } from "../api/mg-layer-set-group";
+import { LayerManager } from '../api/layer-manager';
 import MapBrowserEvent from 'ol/MapBrowserEvent';
-import Collection from 'ol/Collection';
-import { RuntimeMap } from '../api/contracts/runtime-map';
 import { warn, debug, info } from '../utils/logger';
+import { SessionKeepAlive } from './session-keep-alive';
+import { layerTransparencyChanged, areMapsSame, areViewsCloseToEqual } from '../utils/viewer-state';
+import { MapLoadIndicator } from './map-load-indicator';
 
 /**
  * MapViewerBase component props
  *
  * @export
  * @interface IMapViewerBaseProps
- * @extends {IMapViewerContextProps}
  */
 export interface IMapViewerBaseProps extends IMapViewerContextProps {
-    mock?: MapGuideMockMode;
     tool: ActiveMapTool;
     view?: IMapView;
-    agentKind: ClientKind;
     viewRotationEnabled: boolean;
     viewRotation: number;
-    featureTooltipsEnabled: boolean;
     stateChangeDebounceTimeout?: number;
-    pointSelectionBuffer?: number;
-    selectableLayerNames: string[];
     onRequestZoomToView?: (view: IMapView) => void;
-    onQueryMapFeatures?: (options: Partial<IQueryMapFeaturesOptions>, callback?: (res: QueryMapFeaturesResponse) => void, errBack?: (err: any) => void) => void;
     onMouseCoordinateChanged?: (coords: number[]) => void;
     onBusyLoading: (busyCount: number) => void;
     onRotationChanged: (newRotation: number) => void;
-    onSessionExpired?: () => void;
     onBeginDigitization: (callback: (cancelled: boolean) => void) => void;
     onMapResized?: (size: [number, number]) => void;
     overviewMapElementSelector?: () => (Element | null);
-    showGroups: string[] | undefined;
-    showLayers: string[] | undefined;
-    hideGroups: string[] | undefined;
-    hideLayers: string[] | undefined;
     layerTransparency: LayerTransparencySet;
     loadIndicatorPosition: MapLoadIndicatorPositioning;
     loadIndicatorColor: string;
     activeSelectedFeatureXml?: string;
     activeSelectedFeatureColor: string;
-    manualFeatureTooltips: boolean;
     cancelDigitizationKey?: number;
     undoLastPointKey?: number;
     isContextMenuOpen: boolean;
@@ -142,118 +128,7 @@ export interface IMapViewerBaseProps extends IMapViewerContextProps {
     onOpenTooltipLink: (url: string) => void;
 }
 
-/**
- * Determines if the given IMapView instances are equal or close to it
- *
- * @export
- * @param {(IMapView | undefined)} view
- * @param {(IMapView | undefined)} otherView
- * @returns {boolean}
- */
-export function areViewsCloseToEqual(view: IMapView | undefined, otherView: IMapView | undefined): boolean {
-    if (view && otherView) {
-        return areNumbersEqual(view.x, otherView.x) &&
-            areNumbersEqual(view.y, otherView.y) &&
-            areNumbersEqual(view.scale, otherView.scale);
-    } else {
-        return false;
-    }
-}
-
-/**
- * Indicates if the given runtime map instances are the same or have the same name
- *
- * @export
- * @param {RuntimeMap} map
- * @param {RuntimeMap} other
- * @returns {boolean}
- */
-export function areMapsSame(map: RuntimeMap, other: RuntimeMap): boolean {
-    if (map != other) {
-        return map.Name == other.Name;
-    }
-    return true;
-}
-
-/**
- * Indicates if the given layer transparency sets are different
- * @param set 
- * @param other 
- */
-export function layerTransparencyChanged(set: LayerTransparencySet, other: LayerTransparencySet): boolean {
-    if ((!set && other) || (set && !other)) {
-        return true;
-    }
-    const setLayers = Object.keys(set);
-    const otherLayers = Object.keys(other);
-    if (areArraysDifferent(setLayers, otherLayers))
-        return true;
-
-    for (const name of setLayers) {
-        if (set[name] != other[name]) {
-            return true;
-        }
-    }
-    return false;
-}
-
-class SessionKeepAlive {
-    private getSession: () => string;
-    private client: Client;
-    private interval: number;
-    private timeoutID: any;
-    constructor(getSession: () => string, client: Client, onSessionExpired: () => void) {
-        this.getSession = getSession;
-        this.client = client;
-        this.client.getServerSessionTimeout(this.getSession()).then(tm => {
-            this.interval = tm / 5 * 1000;  //Ping server 5 times each period. Timeout is returned in seconds.
-            this.timeoutID = setTimeout(this.tick.bind(this), this.interval);
-        });
-    }
-    private tick(): void {
-        this.client.getServerSessionTimeout(this.getSession()).then(tm => {
-            this.timeoutID = setTimeout(this.tick.bind(this), this.interval);
-        });
-    }
-    public lastTry(): Promise<number> {
-        return this.client.getServerSessionTimeout(this.getSession());
-    }
-}
-
-interface IMapLoadIndicatorProps {
-    loading: number;
-    loaded: number;
-    color: string;
-    position: MapLoadIndicatorPositioning;
-}
-
-const MapLoadIndicator = (props: IMapLoadIndicatorProps) => {
-    const { loaded, loading, color, position } = props;
-    let visibility: "visible" | "hidden" = "visible";
-    let width = (loaded / loading * 100).toFixed(1) + "%";
-    if (loaded === loading) {
-        visibility = "hidden";
-        width = "0";
-    }
-    const style: React.CSSProperties = {
-        position: "absolute",
-        zIndex: 10,
-        visibility: visibility,
-        left: 0,
-        height: 5,
-        width: width,
-        background: color,
-        transition: "width 250ms"
-    };
-    if (position == "top") {
-        style.top = 0;
-    } else {
-        style.bottom = 0;
-    }
-    return <div style={style} />;
-}
-
-function isMiddleMouseDownEvent(e: MouseEvent): boolean {
+export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4));
 }
 
@@ -511,7 +386,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
                 }
                 this._activeDrawInteraction = draw;
                 this._activeDrawInteraction.once("drawend", (e: GenericEvent) => {
-                    const drawnFeature: Feature = e.feature;
+                    const drawnFeature: Feature<Geometry> = e.feature;
                     const geom: T = drawnFeature.getGeometry() as T;
                     this.cancelDigitization();
                     handler(geom);
@@ -645,7 +520,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             }
         };
     }
-    private applyView(layerSet: MgLayerSet, vw: IMapView) {
+    private applyView(layerSet: MgLayerSetGroup, vw: IMapView) {
         this._triggerZoomRequestOnMoveEnd = false;
         layerSet.getView().setCenter([vw.x, vw.y]);
         //Don't use this.scaleToResolution() as that uses this.props to determine
@@ -1005,7 +880,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     public initialView(): void {
         const activeLayerSet = this._mapContext.getLayerSet(this.props.map.Name);
-        this.onRequestZoomToView(this.getViewForExtent(activeLayerSet.getExtent()));
+        this.onRequestZoomToView(this.getViewForExtent(activeLayerSet.getExtent() as Bounds));
     }
     public clearSelection(): void {
         this.setSelectionXml("");
@@ -1027,13 +902,13 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     public digitizePoint(handler: DigitizerCallback<Point>, prompt?: string): void {
         const draw = new Draw({
-            type: GeometryType.POINT // "Point"//ol.geom.GeometryType.POINT
+            type: GeometryType.POINT as any /* ol-ts-bug */
         });
         this.pushDrawInteraction("Point", draw, handler, prompt || tr("DIGITIZE_POINT_PROMPT", this.props.locale));
     }
     public digitizeLine(handler: DigitizerCallback<LineString>, prompt?: string): void {
         const draw = new Draw({
-            type: GeometryType.LINE_STRING, // "LineString", //ol.geom.GeometryType.LINE_STRING,
+            type: GeometryType.LINE_STRING as any, /* ol-ts-bug */
             minPoints: 2,
             maxPoints: 2
         });
@@ -1041,7 +916,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     public digitizeLineString(handler: DigitizerCallback<LineString>, prompt?: string): void {
         const draw = new Draw({
-            type: GeometryType.LINE_STRING, //"LineString", //ol.geom.GeometryType.LINE_STRING,
+            type: GeometryType.LINE_STRING as any, /* ol-ts-bug */
             minPoints: 2
         });
         this.pushDrawInteraction("LineString", draw, handler, prompt || tr("DIGITIZE_LINESTRING_PROMPT", this.props.locale, {
@@ -1050,7 +925,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     public digitizeCircle(handler: DigitizerCallback<Circle>, prompt?: string): void {
         const draw = new Draw({
-            type: GeometryType.CIRCLE  // "Circle" //ol.geom.GeometryType.CIRCLE
+            type: GeometryType.CIRCLE as any /* ol-ts-bug */
         });
         this.pushDrawInteraction("Circle", draw, handler, prompt || tr("DIGITIZE_CIRCLE_PROMPT", this.props.locale));
     }
@@ -1067,7 +942,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
             return geometry;
         };
         const draw = new Draw({
-            type: GeometryType.LINE_STRING, //"LineString", //ol.geom.GeometryType.LINE_STRING,
+            type: GeometryType.LINE_STRING as any, /* ol-ts-bug */
             maxPoints: 2,
             geometryFunction: geomFunc
         });
@@ -1075,7 +950,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     public digitizePolygon(handler: DigitizerCallback<Polygon>, prompt?: string): void {
         const draw = new Draw({
-            type: GeometryType.POLYGON //"Polygon" //ol.geom.GeometryType.POLYGON
+            type: GeometryType.POLYGON as any /* ol-ts-bug */
         });
         this.pushDrawInteraction("Polygon", draw, handler, prompt || tr("DIGITIZE_POLYGON_PROMPT", this.props.locale, {
             key: String.fromCharCode(this.props.undoLastPointKey || KC_U) //Pray that a sane (printable) key was bound
@@ -1122,7 +997,7 @@ export class MapViewerBase extends React.Component<IMapViewerBaseProps, Partial<
     }
     public getLayerManager(mapName?: string): ILayerManager {
         const layerSet = this._mapContext.getLayerSet(mapName || this.props.map.Name, true, this.props);
-        return new MgLayerManager(this._map, layerSet);
+        return new LayerManager(this._map, layerSet);
     }
     public screenToMapUnits(x: number, y: number): [number, number] {
         let bAllowOutsideWindow = false;

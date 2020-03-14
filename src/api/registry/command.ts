@@ -169,7 +169,7 @@ export function reduceAppToToolbarState(state: Readonly<IApplicationState>): Rea
     if (state.config.activeMapName) {
         hasPreviousView = state.mapState[state.config.activeMapName].historyIndex > 0;
         hasNextView = state.mapState[state.config.activeMapName].historyIndex < state.mapState[state.config.activeMapName].history.length - 1;
-        visibleWmsLayerCount = state.mapState[state.config.activeMapName].layers.filter(l => l.visible && l.selectable && l.type == "WMS").length;
+        visibleWmsLayerCount = (state.mapState[state.config.activeMapName].layers ?? []).filter(l => l.visible && l.selectable && l.type == "WMS").length;
     }
     return {
         visibleAndSelectableWmsLayerCount: visibleWmsLayerCount,

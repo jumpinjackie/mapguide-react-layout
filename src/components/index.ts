@@ -15,8 +15,6 @@ export * from "./form-frame-shim";
 export * from "./icon";
 export * from "./legend";
 export * from "./map-menu";
-export * from "./map-viewer-base";
-export * from "./map-viewer-context";
 export * from "./menu";
 export * from "./modal-dialog";
 export * from "./mouse-coordinates";

@@ -3,11 +3,11 @@ import { ResourceBase } from "./common";
 export type IExtension = any;
 
 export interface ApplicationDefinition extends ResourceBase {
-    Title: string | undefined;
-    TemplateUrl: string | undefined;
-    MapSet: MapSet | undefined;
+    Title?: string;
+    TemplateUrl?: string;
+    MapSet?: MapSet;
     WidgetSet: WidgetSet[];
-    Extension: IExtension | undefined;
+    Extension?: IExtension;
 }
 
 export interface MapSet {
@@ -16,7 +16,7 @@ export interface MapSet {
 
 export interface MapSetGroup {
     "@id": string;
-    InitialView: MapInitialView | undefined;
+    InitialView?: MapInitialView;
     Map: MapConfiguration[];
 }
 
@@ -28,13 +28,13 @@ export interface MapInitialView {
 
 export interface MapConfiguration {
     Type: string;
-    SingleTile: boolean | undefined;
-    Extension: IExtension | undefined;
+    SingleTile?: boolean;
+    Extension?: IExtension;
 }
 
 export interface WidgetSet {
     Container: ContainerDefinition[];
-    MapWidget: MapWidget;
+    MapWidget?: MapWidget;
     Widget: Widget[];
 }
 

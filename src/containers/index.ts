@@ -12,7 +12,6 @@ export * from "./init-warning-display";
 export * from "./legend";
 export * from "./map-capturer-context";
 export * from "./map-menu";
-export * from "./map-viewer";
 //export * from "./measure-context";
 export * from "./measure";
 export * from "./modal-launcher";

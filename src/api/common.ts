@@ -14,7 +14,7 @@ import olInteraction from "ol/interaction/Interaction";
 import olOverlay from "ol/Overlay";
 
 import { IOLFactory } from "./ol-factory";
-import { ViewerAction } from '../actions/defs';
+import { ViewerAction, IGenericSubjectMapLayer, IInitialExternalLayer } from '../actions/defs';
 import { ProjectionLike } from 'ol/proj';
 import { LoadFunction } from 'ol/Image';
 import { IToolbarAppState } from './registry';
@@ -23,11 +23,16 @@ import { IParsedFeatures } from './layer-manager/parsed-features';
 import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
 import { ISubscriberProps } from '../containers/subscriber';
+import Geometry from 'ol/geom/Geometry';
 
 // Event boilerplate
 export type GenericEvent = any;
 
 export type GenericEventHandler = (e: GenericEvent) => void;
+
+export type Size = { w: number, h: number };
+
+export const BLANK_SIZE: Size = { w: 1, h: 1 };
 
 /**
  * @deprecated Use UnitOfMeasure enum instead
@@ -469,12 +474,107 @@ export enum RefreshMode {
 export type SelectionVariant = "INTERSECTS" | "TOUCHES" | "WITHIN" | "ENVELOPEINTERSECTS";
 
 /**
+ * MapGuide-specific viewer functionality
+ *
+ * @export
+ * @interface IMapGuideViewerSupport
+ * @since 0.14
+ */
+export interface IMapGuideViewerSupport {
+    /**
+     * Sets the selection XML
+     *
+     * @param {string} xml
+     * @param {IQueryMapFeaturesOptions} [queryOpts]
+     * @param {(res: QueryMapFeaturesResponse) => void} [success]
+     * @param {(err: Error) => void} [failure]
+     *
+     * @memberof IMapViewer
+     */
+    setSelectionXml(xml: string, queryOpts?: Partial<IQueryMapFeaturesOptions>, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void;
+    /**
+     * Clears the map selection
+     *
+     *
+     * @memberof IMapViewer
+     */
+    clearSelection(): void;
+    /**
+     * Performs a map selection by the given geometry
+     *
+     * @param {olGeometry} geom The geometry to select with
+     * @param {SelectionVariant} selectionMethod The selection method
+     * @memberof IMapViewer
+     */
+    selectByGeometry(geom: olGeometry, selectionMethod?: SelectionVariant): void;
+    /**
+     * Performs a map selection by the given query options
+     *
+     * @param {IQueryMapFeaturesOptions} options
+     * @param {(res: QueryMapFeaturesResponse) => void} [success]
+     * @param {(err: Error) => void} [failure]
+     *
+     * @memberof IMapViewer
+     */
+    queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void;
+    /**
+     * Gets the current selection model
+     *
+     * @returns {QueryMapFeaturesResponse}
+     *
+     * @memberof IMapViewer
+     */
+    getSelection(): QueryMapFeaturesResponse | null;
+    /**
+     * Gets the current selection model as a selection XML string
+     *
+     * @param {FeatureSet} selection
+     * @param {string[]} [layerIds]
+     * @returns {string}
+     *
+     * @memberof IMapViewer
+     */
+    getSelectionXml(selection: FeatureSet, layerIds?: string[]): string;
+    /**
+     * Gets the current session id
+     * 
+     * @returns {string}
+     * @memberof IMapViewer
+     */
+    getSessionId(): string;
+    /**
+     * Gets whether feature tooltips are enabled
+     *
+     * @returns {boolean}
+     *
+     * @memberof IMapViewer
+     */
+    isFeatureTooltipEnabled(): boolean;
+    /**
+     * Enables/disables feature tooltips
+     *
+     * @param {boolean} enabled
+     *
+     * @memberof IMapViewer
+     */
+    setFeatureTooltipEnabled(enabled: boolean): void;
+}
+
+/**
  * Describes the API for interacting with the map viewer
  *
  * @export
  * @interface IMapViewer
  */
 export interface IMapViewer {
+    /**
+     * Gets MapGuide-specific viewer functionality. If this viewer was not set up with MapGuide support, this is undefined
+     *
+     * @returns {(IMapGuideViewerSupport | undefined)}
+     * @memberof IMapViewer
+     * @since 0.14
+     */
+    mapguideSupport(): IMapGuideViewerSupport | undefined;
     /**
      * Gets the projection of the map
      *
@@ -527,17 +627,6 @@ export interface IMapViewer {
      */
     zoomToView(x: number, y: number, scale: number): void;
     /**
-     * Sets the selection XML
-     *
-     * @param {string} xml
-     * @param {IQueryMapFeaturesOptions} [queryOpts]
-     * @param {(res: QueryMapFeaturesResponse) => void} [success]
-     * @param {(err: Error) => void} [failure]
-     *
-     * @memberof IMapViewer
-     */
-    setSelectionXml(xml: string, queryOpts?: Partial<IQueryMapFeaturesOptions>, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void;
-    /**
      * Refreshes the map
      *
      * @param {RefreshMode} [mode]
@@ -576,13 +665,6 @@ export interface IMapViewer {
      * @memberof IMapViewer
      */
     initialView(): void;
-    /**
-     * Clears the map selection
-     *
-     *
-     * @memberof IMapViewer
-     */
-    clearSelection(): void;
     /**
      * Zooms in or out by the specified delta
      *
@@ -660,24 +742,6 @@ export interface IMapViewer {
      */
     digitizePolygon(handler: DigitizerCallback<olPolygon>, prompt?: string): void;
     /**
-     * Performs a map selection by the given geometry
-     *
-     * @param {olGeometry} geom The geometry to select with
-     * @param {SelectionVariant} selectionMethod The selection method
-     * @memberof IMapViewer
-     */
-    selectByGeometry(geom: olGeometry, selectionMethod?: SelectionVariant): void;
-    /**
-     * Performs a map selection by the given query options
-     *
-     * @param {IQueryMapFeaturesOptions} options
-     * @param {(res: QueryMapFeaturesResponse) => void} [success]
-     * @param {(err: Error) => void} [failure]
-     *
-     * @memberof IMapViewer
-     */
-    queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void;
-    /**
      * Zooms to the specified extent
      *
      * @param {Bounds} extent
@@ -685,40 +749,6 @@ export interface IMapViewer {
      * @memberof IMapViewer
      */
     zoomToExtent(extent: Bounds): void;
-    /**
-     * Gets whether feature tooltips are enabled
-     *
-     * @returns {boolean}
-     *
-     * @memberof IMapViewer
-     */
-    isFeatureTooltipEnabled(): boolean;
-    /**
-     * Enables/disables feature tooltips
-     *
-     * @param {boolean} enabled
-     *
-     * @memberof IMapViewer
-     */
-    setFeatureTooltipEnabled(enabled: boolean): void;
-    /**
-     * Gets the current selection model
-     *
-     * @returns {QueryMapFeaturesResponse}
-     *
-     * @memberof IMapViewer
-     */
-    getSelection(): QueryMapFeaturesResponse | null;
-    /**
-     * Gets the current selection model as a selection XML string
-     *
-     * @param {FeatureSet} selection
-     * @param {string[]} [layerIds]
-     * @returns {string}
-     *
-     * @memberof IMapViewer
-     */
-    getSelectionXml(selection: FeatureSet, layerIds?: string[]): string;
     /**
      * Gets the layer manager for the given map. If map name is not specifed
      * it will get the layer manager for the currently active map.
@@ -810,13 +840,6 @@ export interface IMapViewer {
      */
     getMapName(): string;
     /**
-     * Gets the current session id
-     * 
-     * @returns {string}
-     * @memberof IMapViewer
-     */
-    getSessionId(): string;
-    /**
      * Sets the current view rotation
      * 
      * @param {number} rotation 
@@ -869,8 +892,9 @@ export interface IMapViewer {
      * @returns {Collection<Feature>}
      * @memberof IMapViewer
      * @since 0.13
+     * @since 0.14 - The return value may be undefined if called when the map viewer is detached/disposed/destroyed
      */
-    getSelectedFeatures(): Collection<Feature>;
+    getSelectedFeatures(): Collection<Feature<Geometry>> | undefined;
 
     /**
      * INTERNAL API. Not for public use
@@ -973,6 +997,14 @@ export interface ILayerInfo {
     * */
     name: string;
     /**
+     * The display name of this layer
+     *
+     * @type {string}
+     * @memberof ILayerInfo
+     * @since 0.14
+     */
+    displayName: string;
+    /**
      * The type of layer
      * 
      * @type {string}
@@ -1070,6 +1102,15 @@ export interface IParseFeaturesFromFileOptions {
  * @interface ILayerManager
  */
 export interface ILayerManager {
+    /**
+     * Get the active subject layer if present on the current map. In a MapGuide-specific context, subject layers do not exist
+     * and this method will always return undefined in such cases
+     *
+     * @returns {olLayerBase}
+     * @memberof ILayerManager
+     * @since 0.14
+     */
+    tryGetSubjectLayer(): olLayerBase | undefined;
     /**
      * Gets all custom layers on this map, sorted by draw order (First item is top-most layer. Last item is bottom-most layer.)
      * 
@@ -1288,52 +1329,30 @@ export interface ActiveSelectedFeature {
 }
 
 /**
- * Describes the reducer state branch for a runtime map
+ * Generic layer sub-state
  *
  * @export
- * @interface IBranchedMapSubState
+ * @interface IGenericLayerSubState
+ * @since 0.14
  */
-export interface IBranchedMapSubState {
+export interface IGenericLayerSubState {
     /**
-     * The external base layers for the runtime map
+     * The subject layer
      *
-     * @type {IExternalBaseLayer[]}
-     * @memberof IBranchedMapSubState
+     * @type {IGenericSubjectMapLayer}
+     * @memberof IGenericLayerSubState
      */
-    externalBaseLayers: IExternalBaseLayer[];
-    /**
-     * The layers in this viewer. First item is top-most layer. Last item is bottom-most layer.
-     * @since 0.13
-     */
-    layers: ILayerInfo[];
-    /**
-     * The current map view
-     *
-     * @type {(IMapView | undefined)}
-     * @memberof IBranchedMapSubState
-     */
-    currentView: IMapView | undefined;
-    /**
-     * The initial map view
-     *
-     * @type {(IMapView | undefined)}
-     * @memberof IBranchedMapSubState
-     */
-    initialView: IMapView | undefined;
-    /**
-     * The view navigation history stack
-     *
-     * @type {IMapView[]}
-     * @memberof IBranchedMapSubState
-     */
-    history: IMapView[];
-    /**
-     * The current position in the view navigation history stack
-     *
-     * @type {number}
-     * @memberof IBranchedMapSubState
-     */
-    historyIndex: number;
+    subject: IGenericSubjectMapLayer;
+}
+
+/**
+ * MapGuide-specific map sub-state
+ *
+ * @export
+ * @interface IMapGuideSubState
+ * @since 0.14
+ */
+export interface IMapGuideSubState {
     /**
      * The runtime map state
      *
@@ -1417,7 +1436,81 @@ export interface IBranchedMapSubState {
      * @type {(ActiveSelectedFeature | undefined)}
      * @memberof IBranchedMapSubState
      */
-    activeSelectedFeature: ActiveSelectedFeature | undefined
+    activeSelectedFeature: ActiveSelectedFeature | undefined;
+}
+
+/**
+ * Describes the reducer state branch for a particular map group
+ *
+ * @export
+ * @interface IBranchedMapSubState
+ */
+export interface IBranchedMapSubState {
+    /**
+     * The external base layers for the map group
+     *
+     * @type {IExternalBaseLayer[]}
+     * @memberof IBranchedMapSubState
+     */
+    externalBaseLayers: IExternalBaseLayer[];
+    /**
+     * Initial external layers. This does not reflect the current state of external layers added. This merely instructs what external layers
+     * to pre-load on viewer startup.
+     *
+     * @type {IInitialExternalLayer[]}
+     * @memberof IBranchedMapSubState
+     * @since 0.14
+     */
+    initialExternalLayers: IInitialExternalLayer[];
+    /**
+     * The layers in this viewer. First item is top-most layer. Last item is bottom-most layer.
+     * @since 0.13
+     */
+    layers: ILayerInfo[] | undefined;
+    /**
+     * The current map view
+     *
+     * @type {(IMapView | undefined)}
+     * @memberof IBranchedMapSubState
+     */
+    currentView: IMapView | undefined;
+    /**
+     * The initial map view
+     *
+     * @type {(IMapView | undefined)}
+     * @memberof IBranchedMapSubState
+     */
+    initialView: IMapView | undefined;
+    /**
+     * The view navigation history stack
+     *
+     * @type {IMapView[]}
+     * @memberof IBranchedMapSubState
+     */
+    history: IMapView[];
+    /**
+     * The current position in the view navigation history stack
+     *
+     * @type {number}
+     * @memberof IBranchedMapSubState
+     */
+    historyIndex: number;
+    /**
+     * MapGuide-specific sub-state
+     *
+     * @type {IMapGuideSubState}
+     * @memberof IBranchedMapSubState
+     * @since 0.14
+     */
+    mapguide: IMapGuideSubState | undefined;
+    /**
+     * Generic layer sub-state
+     *
+     * @type {(IGenericLayerSubState | undefined)}
+     * @memberof IBranchedMapSubState
+     * @since 0.14
+     */
+    generic: IGenericLayerSubState | undefined;
 }
 
 /**
@@ -2082,6 +2175,21 @@ export function getInitialView(state: Readonly<IApplicationState>): IMapView | u
 }
 
 /**
+ * Helper function to get the mapguide-specific sub state of the current map group
+ *
+ * @export
+ * @param {Readonly<IApplicationState>} state
+ * @returns {(IMapGuideSubState | undefined)}
+ * @since 0.14
+ */
+export function getMapGuideSubState(state: Readonly<IApplicationState>): IMapGuideSubState | undefined {
+    if (state.config.activeMapName) {
+        return state.mapState[state.config.activeMapName].mapguide;
+    }
+    return undefined;
+}
+
+/**
  * Helper function to get the current selection set from the application state
  *
  * @export
@@ -2089,10 +2197,7 @@ export function getInitialView(state: Readonly<IApplicationState>): IMapView | u
  * @returns {(QueryMapFeaturesResponse | undefined)}
  */
 export function getSelectionSet(state: Readonly<IApplicationState>): QueryMapFeaturesResponse | undefined {
-    if (state.config.activeMapName) {
-        return state.mapState[state.config.activeMapName].selectionSet;
-    }
-    return undefined;
+    return getMapGuideSubState(state)?.selectionSet;
 }
 
 /**
@@ -2103,10 +2208,7 @@ export function getSelectionSet(state: Readonly<IApplicationState>): QueryMapFea
  * @returns {(RuntimeMap | undefined)}
  */
 export function getRuntimeMap(state: Readonly<IApplicationState>): RuntimeMap | undefined {
-    if (state.config.activeMapName) {
-        return state.mapState[state.config.activeMapName].runtimeMap;
-    }
-    return undefined;
+    return getMapGuideSubState(state)?.runtimeMap;
 }
 
 /**
@@ -2271,54 +2373,6 @@ export interface IMapGuideImageSource {
     updateParams(params: any): void;
 }
 
-export interface MapGuideImageSourceOptions {
-    /**
-     * The mapagent url.
-     */
-    url?: string;
-    /**
-     * The display resolution. Default is `96`.
-     */
-    displayDpi?: number;
-    /**
-     * The meters-per-unit value. Default is `1`.
-     */
-    metersPerUnit?: number;
-    /**
-     * Use the `ol.Map#pixelRatio` value when requesting the image from the remote
-     * server. Default is `true`.
-     */
-    hidpi?: boolean;
-    /**
-     * If `true`, will use `GETDYNAMICMAPOVERLAYIMAGE`.
-     */
-    useOverlay?: boolean;
-    /**
-     * Projection.
-     */
-    projection?: ProjectionLike;
-    /**
-     * Ratio. `1` means image requests are the size of the map viewport, `2` means
-     * twice the width and height of the map viewport, and so on. Must be `1` or
-     * higher. Default is `1`.
-     */
-    ratio?: number;
-    /**
-     * Resolutions. If specified, requests will be made for these resolutions only.
-     */
-    resolutions?: number[];
-    /**
-     * Optional function to load an image given a URL.
-     */
-    imageLoadFunction?: LoadFunction;
-    /**
-     * Additional parameters.
-     */
-    params?: any;
-    crossOrigin?: string;
-    defaultImageLoadFunction?: LoadFunction;
-}
-
 /**
  * Custom properties that can be attached to OpenLayers layer instances
  * 
@@ -2327,6 +2381,10 @@ export interface MapGuideImageSourceOptions {
 export enum LayerProperty {
     LAYER_TYPE = "layer_type",
     LAYER_NAME = "name",
+    /**
+     * @since 0.14
+     */
+    LAYER_DISPLAY_NAME = "display_name",
     IS_GROUP = "is_group",
     IS_EXTERNAL = "is_external",
     IS_SELECTABLE = "is_selectable",
@@ -2334,7 +2392,11 @@ export enum LayerProperty {
     HAS_WMS_LEGEND = "has_wms_legend",
     VECTOR_STYLE = "vector_style",
     WGS84_BBOX = "wgs84_bbox",
-    BUSY_WORKER_COUNT = "busy_worker_count"
+    BUSY_WORKER_COUNT = "busy_worker_count",
+    /**
+     * @since 0.14
+     */
+    SELECTED_POPUP_CONFIGURATION = "popup_config"
 }
 
 /**

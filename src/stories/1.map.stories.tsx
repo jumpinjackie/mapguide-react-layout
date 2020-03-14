@@ -2,9 +2,7 @@ import * as React from "react";
 import { storiesOf } from "@storybook/react";
 import { withKnobs } from '@storybook/addon-knobs';
 import { FakeApp } from './fake-app';
-import { MapDebugContext, MapGuideMockMode } from '../components/map-viewer-context';
 import LegendContainer from '../containers/legend';
-import MapViewerContainer from '../containers/map-viewer';
 import TaskPaneContainer from '../containers/task-pane';
 import ScaleDisplayContainer from '../containers/scale-display';
 import SelectedFeatureCountContainer from '../containers/selected-feature-count';
@@ -14,8 +12,8 @@ import MapMenuContainer from '../containers/map-menu';
 import BaseLayerSwitcherContainer from '../containers/base-layer-switcher';
 import CoordinateTrackerContainer from '../containers/coordinate-tracker';
 import AddManageLayersContainer from '../containers/add-manage-layers';
-import { Button, ButtonGroup, Card, Elevation, Intent } from '@blueprintjs/core';
-import { useReducedToolbarAppState, useActiveMapName, useActiveMapState } from '../containers/hooks';
+import { Button, ButtonGroup, Card, Intent } from '@blueprintjs/core';
+import { useReducedToolbarAppState, useActiveMapName } from '../containers/hooks';
 import { CommandConditions } from '../api/registry/command';
 import { useDispatch } from 'react-redux';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
@@ -24,12 +22,17 @@ import MouseCoordinatesContainer from '../containers/mouse-coordinates';
 import ViewSizeContainer from '../containers/view-size';
 import ViewerOptions from '../containers/viewer-options';
 import { setSelection } from '../actions/map';
+import { MapGuideMockMode, MapDebugContext } from '../components/mapguide-debug-context';
+import { MgMapViewer } from '../containers/neo-map-viewer';
+import { MapProviderContext } from '../components/map-providers/context';
+import { MapGuideMapProviderContext } from '../components/map-providers/mapguide';
+
 //import MeasureContainer from '../containers/measure';
 
 const testSelSheboygan: QueryMapFeaturesResponse = deArrayify(require("./data/test-selection-response-sheboygan.json"));
 
 interface MapDependentContainer {
-    mgMockMode: MapGuideMockMode;
+    
     includeSelect?: boolean;
     children: React.ReactNode;
 }
@@ -48,6 +51,7 @@ const MapStoryFrame = (props: MapDependentContainer) => {
     const dispatch = useDispatch();
     const state = useReducedToolbarAppState();
     const activeMapName = useActiveMapName();
+    const context = React.useContext(MapProviderContext) as MapGuideMapProviderContext;
     const doTestSelect = () => {
         if (activeMapName) {
             const q = setSelection(activeMapName, getQueryMapFeaturesResponse(activeMapName));
@@ -65,8 +69,8 @@ const MapStoryFrame = (props: MapDependentContainer) => {
             {props.children}
         </div>
         <div style={{ position: "absolute", left: SB_WIDTH, top: 0, bottom: 0, right: 0 }}>
-            <MapDebugContext.Provider value={{ mock: props.mgMockMode }}>
-                <MapViewerContainer />
+            <MapDebugContext.Provider value={{ mock: context.mockMode }}>
+                <MgMapViewer />
                 {props.includeSelect && <ButtonGroup style={{ position: "absolute", right: 15, top: 15 }}>
                     <Button intent={Intent.PRIMARY} onClick={() => doTestSelect()}>Test Select</Button>
                     <Button intent={Intent.DANGER} onClick={() => doClearSelection()} disabled={!CommandConditions.hasSelection(state)}>Clear Selection</Button>
@@ -78,8 +82,8 @@ const MapStoryFrame = (props: MapDependentContainer) => {
 
 storiesOf("Map and Map Interaction Components", module)
     .addDecorator(withKnobs)
-    .addDecorator(storyFn => <FakeApp>
-        <MapStoryFrame mgMockMode={MapGuideMockMode.DoNotRender}>
+    .addDecorator(storyFn => <FakeApp mgMockMode={MapGuideMockMode.DoNotRender}>
+        <MapStoryFrame>
             {storyFn()}
         </MapStoryFrame>
     </FakeApp>)
@@ -121,8 +125,8 @@ storiesOf("Map and Map Interaction Components", module)
 
 storiesOf("Map and Map Interaction Components / MapGuide-specific", module)
     .addDecorator(withKnobs)
-    .addDecorator(storyFn => <FakeApp>
-        <MapStoryFrame mgMockMode={MapGuideMockMode.RenderPlaceholder} includeSelect={true}>
+    .addDecorator(storyFn => <FakeApp mgMockMode={MapGuideMockMode.RenderPlaceholder}>
+        <MapStoryFrame includeSelect={true}>
             {storyFn()}
         </MapStoryFrame>
     </FakeApp>)

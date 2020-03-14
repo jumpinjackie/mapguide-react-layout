@@ -11,8 +11,11 @@ import olVectorLayer from "ol/layer/Vector";
 import { getFormatDrivers } from './layer-manager/driver-registry';
 import { IFormatDriver } from './layer-manager/format-driver';
 import { tr } from './i18n';
-import { MgLayerSet } from './layer-set';
 import { IParsedFeatures } from './layer-manager/parsed-features';
+import { LayerSetGroupBase } from './layer-set-group-base';
+import { IInitialExternalLayer } from '../actions/defs';
+import Feature from 'ol/Feature';
+import Geometry from 'ol/geom/Geometry';
 
 export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInfo {
     let vectorStyle: IVectorFeatureStyle | undefined;
@@ -36,6 +39,7 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
         visible: layer.getVisible(),
         selectable: layer.get(LayerProperty.IS_SELECTABLE) == true,
         name: layer.get(LayerProperty.LAYER_NAME),
+        displayName: layer.get(LayerProperty.LAYER_DISPLAY_NAME) ?? layer.get(LayerProperty.LAYER_NAME),
         type: layer.get(LayerProperty.LAYER_TYPE),
         opacity: layer.getOpacity(),
         isExternal: isExternal,
@@ -45,10 +49,25 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
     }
 }
 
-export class MgLayerManager implements ILayerManager {
+export class LayerManager implements ILayerManager {
     private _olFormats: IFormatDriver[];
-    constructor(private map: olMap, private layerSet: MgLayerSet) {
+    constructor(private map: olMap, private layerSet: LayerSetGroupBase) {
         this._olFormats = getFormatDrivers();
+    }
+    tryGetSubjectLayer(): olLayerBase | undefined {
+        return this.layerSet.tryGetSubjectLayer();
+    }
+    /**
+     * INTERNAL API
+     * @param {IInitialExternalLayer} extLayer
+     * @returns
+     * @memberof LayerManager
+     */
+    addExternalLayer(extLayer: IInitialExternalLayer, onlyAddIfNotExists: boolean) {
+        if (onlyAddIfNotExists && this.hasLayer(extLayer.name)) {
+            return undefined;
+        }
+        return this.layerSet.addExternalLayer(this.map, extLayer);
     }
     getLayers(): ILayerInfo[] {
         return this.layerSet.getCustomLayers(this.map);
@@ -126,6 +145,7 @@ export class MgLayerManager implements ILayerManager {
                 });
                 features.addTo(source, that.map.getView().getProjection(), proj);
                 layer.set(LayerProperty.LAYER_NAME, features.name);
+                layer.set(LayerProperty.LAYER_DISPLAY_NAME, features.name);
                 layer.set(LayerProperty.LAYER_TYPE, features.type);
                 layer.set(LayerProperty.IS_SELECTABLE, true);
                 layer.set(LayerProperty.IS_EXTERNAL, true);

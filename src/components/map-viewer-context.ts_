@@ -9,7 +9,9 @@ import {
     IExternalBaseLayer,
     ILayerManager,
     IMapViewer,
-    CommandTarget
+    CommandTarget,
+    BLANK_SIZE,
+    Size
 } from "../api/common";
 import { Client } from '../api/client';
 import { RuntimeMap } from "../api/contracts/runtime-map";
@@ -19,39 +21,17 @@ import olMap from "ol/Map";
 import olView from "ol/View";
 import olOverviewMap from "ol/control/OverviewMap";
 import { BLANK_GIF_DATA_URI } from "../constants/index";
-import { Size, BLANK_SIZE } from "../containers/map-capturer-context";
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
 import { createContext } from "react";
 import { MouseTrackingTooltip } from './tooltips/mouse';
 import { FeatureQueryTooltip } from './tooltips/feature';
-import { MgLayerSet } from '../api/layer-set';
+import { MgLayerSetGroup } from "../api/mg-layer-set-group";
 import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
 import { SelectedFeaturesTooltip } from './tooltips/selected-features';
-
-/**
- * @since 0.13
- */
-export enum MapGuideMockMode {
-    /**
-     * Render a placeholder image showing the key mapagent parameters
-     */
-    RenderPlaceholder,
-    /**
-     * Do not render anything
-     */
-    DoNotRender
-}
-
-/**
- * The map debug context, used to check if request mocking should be enabled or not
- * @since 0.13
- */
-export interface IMapDebugContext {
-    mock?: MapGuideMockMode;
-}
-
-export const MapDebugContext = createContext<IMapDebugContext>({});
+import { IQueryMapFeaturesOptions } from '../api/request-builder';
+import { QueryMapFeaturesResponse } from '../api/contracts/query';
+import Geometry from 'ol/geom/Geometry';
 
 export interface IMapViewerContextProps {
     map: RuntimeMap;
@@ -65,28 +45,14 @@ export interface IMapViewerContextProps {
     showLayers?: string[];
     hideGroups?: string[];
     hideLayers?: string[];
-}
-
-export interface IMapViewerContextCallback {
-    getMockMode(): MapGuideMockMode | undefined;
-    incrementBusyWorker(): void;
-    decrementBusyWorker(): void;
-    addImageLoading(): void;
-    addImageLoaded(): void;
-    onImageError(e: GenericEvent): void;
-    onSessionExpired(): void;
-    getSelectableLayers(): string[];
-    getClient(): Client;
-    isContextMenuOpen(): boolean;
-    getAgentUri(): string;
-    getAgentKind(): ClientKind;
-    getMapName(): string;
-    getSessionId(): string;
-    getLocale(): string | undefined;
-    isFeatureTooltipEnabled(): boolean;
-    getPointSelectionBox(point: Coordinate2D): Bounds;
-    openTooltipLink(url: string): void;
-    addFeatureToHighlight(feat: Feature | undefined, bAppend: boolean): void;
+    featureTooltipsEnabled: boolean;
+    pointSelectionBuffer?: number;
+    selectableLayerNames: string[];
+    onSessionExpired?: () => void;
+    onQueryMapFeatures?: (options: Partial<IQueryMapFeaturesOptions>, callback?: (res: QueryMapFeaturesResponse) => void, errBack?: (err: any) => void) => void;
+    agentKind: ClientKind;
+    mock?: MapGuideMockMode;
+    manualFeatureTooltips: boolean;
 }
 
 /**
@@ -97,7 +63,7 @@ export interface IMapViewerContextCallback {
  */
 export class MapViewerContext {
     private _activeMapName: string;
-    private _layerSets: Dictionary<MgLayerSet>;
+    private _layerSets: Dictionary<MgLayerSetGroup>;
     private _mouseTooltip: MouseTrackingTooltip;
     private _featureTooltip: FeatureQueryTooltip;
     private _selectTooltip: SelectedFeaturesTooltip;
@@ -113,8 +79,8 @@ export class MapViewerContext {
         this._selectTooltip = new SelectedFeaturesTooltip(this._map);
         this._featureTooltip.setEnabled(initTooltipEnabled);
     }
-    public initLayerSet(props: IMapViewerContextProps): MgLayerSet {
-        const layerSet = new MgLayerSet(props, this.callback);
+    public initLayerSet(props: IMapViewerContextProps): MgLayerSetGroup {
+        const layerSet = new MgLayerSetGroup(props, this.callback);
         this._layerSets[props.map.Name] = layerSet;
         if (!this._activeMapName) {
             this._activeMapName = props.map.Name;
@@ -122,7 +88,7 @@ export class MapViewerContext {
         layerSet.update(props.showGroups, props.showLayers, props.hideGroups, props.hideLayers);
         return layerSet;
     }
-    public initContext(layerSet: MgLayerSet, locale?: string, overviewMapElementSelector?: () => (Element | null)) {
+    public initContext(layerSet: MgLayerSetGroup, locale?: string, overviewMapElementSelector?: () => (Element | null)) {
         // HACK: className property not documented. This needs to be fixed in OL api doc.
         const overviewMapOpts: any = {
             className: 'ol-overviewmap ol-custom-overviewmap',
@@ -163,7 +129,7 @@ export class MapViewerContext {
     public getOverviewMap(): olOverviewMap {
         return this._ovMap;
     }
-    public getLayerSet(name: string, bCreate: boolean = false, props?: IMapViewerContextProps): MgLayerSet {
+    public getLayerSet(name: string, bCreate: boolean = false, props?: IMapViewerContextProps): MgLayerSetGroup {
         let layerSet = this._layerSets[name];
         if (!layerSet && props && bCreate) {
             layerSet = this.initLayerSet(props);
@@ -185,12 +151,12 @@ export class MapViewerContext {
     public hideSelectedVectorFeaturesTooltip() {
         this._selectTooltip?.hide();
     }
-    public showSelectedVectorFeatures(features: Collection<Feature>, pixel: [number, number], locale?: string) {
+    public showSelectedVectorFeatures(features: Collection<Feature<Geometry>>, pixel: [number, number], locale?: string) {
         this._selectTooltip?.showSelectedVectorFeatures(features, pixel, locale);
     }
     public queryWmsFeatures(map: olMap, layerMgr: ILayerManager, coord: Coordinate2D) {
         const res = map.getView().getResolution();
-        this._selectTooltip?.queryWmsFeatures(layerMgr, coord, res, this.callback);
+        this._selectTooltip?.queryWmsFeatures(undefined, layerMgr, coord, res, this.callback);
     }
     public queryFeatureTooltip(pixel: [number, number]) {
         if (this._featureTooltip && this._featureTooltip.isEnabled()) {

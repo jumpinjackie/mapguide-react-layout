@@ -63,6 +63,10 @@ export enum ActionType {
      */
     LAYER_ADDED = 'Map/LAYER_ADDED',
     /**
+     * @since 0.14
+     */
+    EXTERNAL_LAYERS_READY = 'Map/EXTERNAL_LAYERS_READY',
+    /**
      * @since 0.13
      */
     REMOVE_LAYER = 'Map/REMOVE_LAYER',

@@ -20,10 +20,62 @@ import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, 
 import { getStateFromUrl, IAppUrlState, updateUrl } from './url-state';
 import { debug } from '../utils/logger';
 import { setElementStates } from '../actions/template';
+import { IViewerInitCommand } from '../actions/init-command';
+import { ApplicationDefinition } from '../api/contracts/fusion';
 
 export interface SelectionOptions {
     allowHtmlValues?: boolean;
     cleanHtml?: (value: string) => string;
+}
+
+/**
+ * MapGuide-specific application options
+ *
+ * @export
+ * @interface IMapGuideAppProps
+ * @since 0.14
+ */
+export interface IMapGuideAppProps {
+    /**
+     * A session id to init this viewer with
+     */
+    session?: string;
+    /**
+     * The mapagent URI
+     *
+     * @type {string}
+     * @memberof IMapGuideAppProps
+     */
+    agentUri: string;
+    /**
+     * The agent kind
+     *
+     * @type {ClientKind}
+     * @memberof IMapGuideAppProps
+     */
+    agentKind?: ClientKind;
+    /**
+     * The base URL for fusion. Used to determine the paths to the PHP backends for servicing tools like buffer/theme/featureinfo/redline/theme/etc
+     */
+    fusionRoot: string;
+    /**
+     * Settings that control the selection panel (if provided by the template)
+     */
+    selectionSettings?: SelectionOptions;
+    /**
+     * Defines initial element visibility
+     *
+     * @type {{
+        *         taskpane: boolean;
+        *         legend: boolean;
+        *         selection: boolean;
+        *     }}
+        */
+       initialElementVisibility: {
+           taskpane: boolean;
+           legend: boolean;
+           selection: boolean;
+       }
 }
 
 /**
@@ -33,55 +85,49 @@ export interface SelectionOptions {
  * @interface IAppProps
  */
 export interface IAppProps {
+    /**
+     * The command that will carry out viewer initialization
+     *
+     * @type {IViewerInitCommand}
+     * @memberof IAppProps
+     * @since 0.14
+     */
+    initCommand: IViewerInitCommand;
     layout: string | (() => React.ReactNode);
     /**
-     * A session id to init this viewer with
-     */
-    session?: string;
-    /**
-     * Agent configuration
+     * A resource id to a Map Definition or Application Definition or a function that will fetch the required Application Definition. 
+     * 
+     * MapGuide-only: If passing a Map Definition, a default viewer layout will be created
      *
-     * @type {{
-     *         uri: string,
-     *         kind?: ClientKind
-     *     }}
+     * @memberof IAppProps
      */
-    agent: {
-        uri: string,
-        kind?: ClientKind
-    },
+    resourceId: string | (() => Promise<ApplicationDefinition>);
     /**
-     * Defines initial element visibility
+     * The list of external base layers
      *
-     * @type {{
-     *         taskpane: boolean;
-     *         legend: boolean;
-     *         selection: boolean;
-     *     }}
+     * @type {IExternalBaseLayer[]}
+     * @memberof IAppProps
      */
-    initialElementVisibility: {
-        taskpane: boolean;
-        legend: boolean;
-        selection: boolean;
-    }
-    /**
-     * A resource id to a Map Definition or Application Definition. If passing a Map Definition,
-     * a default viewer layout will be created
-     *
-     * @type {string}
-     */
-    resourceId: string;
-    /**
-     * The base URL for fusion. Used to determine the paths to the PHP backends for servicing tools like buffer/theme/featureinfo/redline/theme/etc
-     */
-    fusionRoot: string;
     externalBaseLayers?: IExternalBaseLayer[];
+    /**
+     * If specified, tells the application to not sync the following URL params to the URL, and to skip
+     * reading these params when initializing/refreshing.
+     *
+     * @type {string[]}
+     * @memberof IAppProps
+     * @since 0.14
+     */
+    urlPropsIgnore?: string[];
     onInit?: (viewer: IMapViewer) => void;
     locale?: string;
     /**
-     * Settings that control the selection panel (if provided by the template)
+     * MapGuide-specific options
+     *
+     * @type {IMapGuideAppProps}
+     * @memberof IAppProps
+     * @since 0.14
      */
-    selectionSettings?: SelectionOptions;
+    mapguide?: IMapGuideAppProps;
 }
 
 /**
@@ -108,7 +154,7 @@ export interface IAppState {
  * @interface IAppDispatch
  */
 export interface IAppDispatch {
-    initLayout: (args: IInitAppLayout) => void;
+    initLayout: (cmd: IViewerInitCommand, args: IInitAppLayout) => void;
     setElementVisibility: (states: IElementState) => void;
 }
 
@@ -122,30 +168,21 @@ class AppInner extends React.Component<AppInnerProps, any> {
         };
     }
     private allowHtmlValuesInSelection(): boolean {
-        const { selectionSettings } = this.props;
-        if (selectionSettings) {
-            return selectionSettings.allowHtmlValues || false;
-        }
-        return false;
+        return this.props.mapguide?.selectionSettings?.allowHtmlValues ?? false;
     }
     private getHtmlCleaner(): (value: string) => string {
-        const { selectionSettings } = this.props;
-        if (selectionSettings && selectionSettings.cleanHtml) {
-            return selectionSettings.cleanHtml;
-        }
-        return v => v;
+        return this.props.mapguide?.selectionSettings?.cleanHtml ?? (v => v);
     }
     componentDidMount() {
         const {
             onInit,
             setElementVisibility,
-            initialElementVisibility,
+            mapguide,
             initLayout,
             locale,
-            session,
-            fusionRoot,
             resourceId,
-            externalBaseLayers
+            externalBaseLayers,
+            initCommand
         } = this.props;
         const {
             locale: urlLocale,
@@ -160,9 +197,9 @@ class AppInner extends React.Component<AppInnerProps, any> {
             hl: urlHideLayers,
             sg: urlShowGroups,
             hg: urlHideGroups
-        } = getStateFromUrl();
-        if (setElementVisibility && initialElementVisibility) {
-            const { taskpane, legend, selection } = initialElementVisibility;
+        } = getStateFromUrl(this.props.urlPropsIgnore);
+        if (setElementVisibility && mapguide?.initialElementVisibility) {
+            const { taskpane, legend, selection } = mapguide.initialElementVisibility;
             const states: IElementState = {
                 taskPaneVisible: typeof (taskpane) != 'undefined' ? taskpane : true,
                 legendVisible: typeof (legend) != 'undefined' ? legend : true,
@@ -171,12 +208,12 @@ class AppInner extends React.Component<AppInnerProps, any> {
             setElementVisibility(states);
         }
         debug(`Asset root is: ${getAssetRoot()}`);
-        if (fusionRoot) {
-            setFusionRoot(fusionRoot);
+        if (mapguide?.fusionRoot) {
+            setFusionRoot(mapguide.fusionRoot);
         }
         if (initLayout) {
             let ftArgs: Partial<IInitAppLayout> | undefined;
-            if (typeof(urlFeatureTooltip) != 'undefined') {
+            if (typeof (urlFeatureTooltip) != 'undefined') {
                 ftArgs = {
                     featureTooltipsEnabled: urlFeatureTooltip
                 }
@@ -223,21 +260,21 @@ class AppInner extends React.Component<AppInnerProps, any> {
             }
             const args: IInitAppLayout = {
                 ...{
-                    resourceId: urlResource || resourceId,
-                    locale: urlLocale || locale || DEFAULT_LOCALE,
+                    resourceId: urlResource ?? resourceId,
+                    locale: urlLocale ?? locale ?? DEFAULT_LOCALE,
                     externalBaseLayers: externalBaseLayers,
-                    session: urlSession || session,
+                    session: urlSession ?? mapguide?.session,
                     onInit: onInit
                 },
-                ...(ftArgs || {}),
-                ...(amArgs || {}),
-                ...(ivArgs || {}),
-                ...(slArgs || {}),
-                ...(hlArgs || {}),
-                ...(sgArgs || {}),
-                ...(hgArgs || {})
+                ...(ftArgs ?? {}),
+                ...(amArgs ?? {}),
+                ...(ivArgs ?? {}),
+                ...(slArgs ?? {}),
+                ...(hlArgs ?? {}),
+                ...(sgArgs ?? {}),
+                ...(hgArgs ?? {})
             };
-            initLayout(args);
+            initLayout(initCommand, args);
         }
     }
     componentDidUpdate(prevProps: AppInnerProps) {
@@ -246,9 +283,11 @@ class AppInner extends React.Component<AppInnerProps, any> {
         //Preserve locale/resources/session if already present in url
         const nextUrlState: IAppUrlState = {
             locale: curUrlState.locale ?? this.props.locale,
-            resource: curUrlState.resource ?? this.props.resourceId,
-            session: curUrlState.session ?? this.props.session
+            session: curUrlState.session ?? this.props.mapguide?.session
         };
+        if (typeof(this.props.resourceId) == 'string') {
+            nextUrlState.resource = curUrlState.resource ?? this.props.resourceId
+        }
         if (nextProps.featureTooltipsEnabled != prevProps.featureTooltipsEnabled) {
             nextUrlState.ft = nextProps.featureTooltipsEnabled;
         }
@@ -266,14 +305,16 @@ class AppInner extends React.Component<AppInnerProps, any> {
                 nextUrlState.y = y;
                 nextUrlState.scale = scale;
             }
-            if (nextProps.map.runtimeMap) {
-                const { showGroups, showLayers, hideGroups, hideLayers } = nextProps.map;
+            const mgs = nextProps.map.mapguide;
+            if (mgs) {
+                const rtm = mgs.runtimeMap;
+                const { showGroups, showLayers, hideGroups, hideLayers } = mgs;
                 const sg = [] as string[];
                 const hg = [] as string[];
                 const sl = [] as string[];
                 const hl = [] as string[];
-                if (nextProps.map.runtimeMap.Group) {
-                    for (const g of nextProps.map.runtimeMap.Group) {
+                if (rtm?.Group) {
+                    for (const g of rtm.Group) {
                         if (showGroups.indexOf(g.ObjectId) >= 0) {
                             sg.push(g.Name);
                         } else if (hideGroups.indexOf(g.ObjectId) >= 0) {
@@ -281,8 +322,8 @@ class AppInner extends React.Component<AppInnerProps, any> {
                         }
                     }
                 }
-                if (nextProps.map.runtimeMap.Layer) {
-                    for (const l of nextProps.map.runtimeMap.Layer) {
+                if (rtm?.Layer) {
+                    for (const l of rtm.Layer) {
                         if (showLayers.indexOf(l.ObjectId) >= 0) {
                             sl.push(l.Name);
                         } else if (hideLayers.indexOf(l.ObjectId) >= 0) {
@@ -290,12 +331,18 @@ class AppInner extends React.Component<AppInnerProps, any> {
                         }
                     }
                 }
-                nextUrlState.sg = sg;
-                nextUrlState.hg = hg;
-                nextUrlState.sl = sl;
-                nextUrlState.hl = hl;
-                const { SessionId } = nextProps.map.runtimeMap;
-                nextUrlState.session = SessionId;
+                if (sg.length > 0)
+                    nextUrlState.sg = sg;
+                if (hg.length > 0)
+                    nextUrlState.hg = hg;
+                if (sl.length > 0)
+                    nextUrlState.sl = sl;
+                if (hl.length > 0)
+                    nextUrlState.hl = hl;
+                if (rtm) {
+                    const { SessionId } = rtm;
+                    nextUrlState.session = SessionId;
+                }
             }
         }
         updateUrl(nextUrlState);
@@ -359,12 +406,12 @@ class AppInner extends React.Component<AppInnerProps, any> {
             //NOTE: Locale may not have been set at this point, so use default
             const locale = configuredLocale;
             if (isLoading) {
-                return <NonIdealState 
+                return <NonIdealState
                     icon={<Spinner intent={Intent.NONE} size={Spinner.SIZE_LARGE} />}
                     title={tr("INIT", locale)}
                     description={tr("INIT_DESC", locale)} />;
             } else {
-                const layoutEl = typeof(layout) == 'function' ? layout : getLayout(layout);
+                const layoutEl = typeof (layout) == 'function' ? layout : getLayout(layout);
                 if (layoutEl) {
                     const providerImpl = {
                         allowHtmlValuesInSelection: () => this.allowHtmlValuesInSelection(),
@@ -391,9 +438,8 @@ const App = (props: IAppProps) => {
     const ftEnabled = useViewerFeatureTooltipsEnabled();
 
     const dispatch = useDispatch();
-    const initLayoutAction = (args: IInitAppLayout) => dispatch(initLayout(args));
+    const initLayoutAction = (cmd: IViewerInitCommand, args: IInitAppLayout) => dispatch(initLayout(cmd, args));
     const setElementVisibility = (state: IElementState) => dispatch(setElementStates(state));
-
     return <AppInner error={error}
         includeStack={includeStack}
         initOptions={initOptions}

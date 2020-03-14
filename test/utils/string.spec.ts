@@ -1,4 +1,4 @@
-import { strEndsWith, strIsNullOrEmpty } from '../../src/utils/string';
+import { strEndsWith, strIsNullOrEmpty, extractPlaceholderTokens } from '../../src/utils/string';
 
 describe("utils/string", () => {
     describe("strIsNullOrEmpty", () => {
@@ -23,5 +23,11 @@ describe("utils/string", () => {
             expect(strEndsWith("abcd1234", "")).toBe(true);
             expect(strEndsWith("", "")).toBe(true);
         });
+    });
+    describe("extractPlaceholderTokens", () => {
+        const tokens = extractPlaceholderTokens("http://foo.com/bar/{BAR_ID}/{WHAT}", "{", "}");
+        expect(tokens).toHaveLength(2);
+        expect(tokens).toContain("BAR_ID");
+        expect(tokens).toContain("WHAT");
     });
 });

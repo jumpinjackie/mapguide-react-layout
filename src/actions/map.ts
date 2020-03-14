@@ -10,7 +10,6 @@ import {
     ILayerInfo
 } from "../api/common";
 import { getViewer } from "../api/runtime";
-import { areViewsCloseToEqual } from "../components/map-viewer-base";
 import { getFiniteScaleIndexForScale } from '../utils/number';
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet, SelectedFeature, SelectedFeatureSet } from '../api/contracts/query';
@@ -48,6 +47,7 @@ import {
 import { storeSelectionSet } from '../api/session-store';
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
 import { IVectorFeatureStyle } from '../api/ol-style-helpers';
+import { areViewsCloseToEqual } from '../utils/viewer-state';
 
 function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeature[]): SelectedFeature[] {
     const merged: SelectedFeature[] = [];
@@ -261,12 +261,11 @@ export function setCurrentView(view: IMapView): ReduxThunkedAction {
             //If the current map is tiled (has finite scales), "snap" the view's scale
             //to the closest applicable finite scale then do the test 
             const mapState = state.mapState[mapName];
-            if (mapState.runtimeMap &&
-                mapState.runtimeMap.FiniteDisplayScale &&
-                mapState.runtimeMap.FiniteDisplayScale.length > 0) {
+            const fs = mapState?.mapguide?.runtimeMap?.FiniteDisplayScale;
+            if (fs && fs.length > 0) {
 
-                const fi = getFiniteScaleIndexForScale(mapState.runtimeMap.FiniteDisplayScale, newView.scale);
-                newView.scale = mapState.runtimeMap.FiniteDisplayScale[fi];
+                const fi = getFiniteScaleIndexForScale(fs, newView.scale);
+                newView.scale = fs[fi];
             }
             if (areViewsCloseToEqual(currentView, newView)) {
                 dispatchThis = false;
@@ -599,6 +598,22 @@ export function mapLayerAdded(mapName: string, layer: ILayerInfo, defaultStyle?:
             defaultStyle
         }
     };
+}
+
+/**
+ * An action that signals the externa layers for the given map name is ready. This action
+ * is only dispatched when there is no external layers to initially add
+ * 
+ * @param mapName 
+ * @since 0.14
+ */
+export function externalLayersReady(mapName: string) {
+    return {
+        type: ActionType.EXTERNAL_LAYERS_READY,
+        payload: {
+            mapName
+        }
+    }
 }
 
 /**

@@ -82,6 +82,7 @@
             var el = document.getElementById("map");
             var viewer = new MapGuide.Application();
             viewer.mount(el, {
+                initCommandFactory: function(dispatch) { return new MapGuide.MapGuideViewerInitCommand(dispatch); },
                 layout: "aqua",/*
                 externalBaseLayers: [
                     { name: "OpenStreetMap", kind: "OSM" },
@@ -94,8 +95,8 @@
                     selection: false
                 },
                 */
-                agent: {
-                    uri: "../mapagent/mapagent.fcgi"
+                mapguide: {
+                    agentUri: "../mapagent/mapagent.fcgi"
                 }
             });
         </script>

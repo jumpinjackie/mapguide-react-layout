@@ -4,7 +4,7 @@
  * Redux action definitions
  */
 
-import { IDOMElementMetrics, IMapView, Dictionary, IExternalBaseLayer, IModalComponentDisplayOptions, IModalDisplayOptions, UnitOfMeasure, ActiveMapTool, ILayerInfo } from '../api/common';
+import { IDOMElementMetrics, IMapView, Dictionary, IExternalBaseLayer, IModalComponentDisplayOptions, IModalDisplayOptions, UnitOfMeasure, ActiveMapTool, ILayerInfo, Bounds, INameValuePair } from '../api/common';
 import { ActionType } from '../constants/actions';
 import { PreparedSubMenuSet } from '../api/registry/command-spec';
 import { RuntimeMap } from '../api/contracts/runtime-map';
@@ -81,13 +81,157 @@ export interface ICloseComponentInFlyoutAction {
 }
 
 /**
+ * Metadata about the generic subject layer
+ * 
+ * @export
+ * @interface IGenericSubjectMapLayerMetadata
+ * @since 0.14
+ */
+export interface IGenericSubjectMapLayerMetadata {
+    /**
+     * The bounds of this layer
+     *
+     * @type {Bounds}
+     * @memberof IGenericSubjectMapLayerMetadata
+     */
+    extents: Bounds;
+    /**
+     * The projection of this layer
+     *
+     * @type {string}
+     * @memberof IGenericSubjectMapLayerMetadata
+     */
+    projection: string;
+}
+
+/**
+ * Valid generic subject layer types
+ * 
+ * @export
+ * @enum {string}
+ * @since 0.14
+ */
+export enum GenericSubjectLayerType {
+    TileWMS = "TileWMS",
+    CSV = "CSV",
+    KML = "KML",
+    GeoJSON = "GeoJSON",
+    GeoJSON_Inline = "GeoJSON_Inline"
+}
+
+/**
+ * Defines an expression for a popup link
+ */
+export interface IPopupLinkExpression {
+    expression: string;
+    placeholderBegin?: string;
+    placeholderEnd?: string;
+}
+
+/**
+ * Popup link control options
+ *
+ * @export
+ * @interface ISelectedFeaturePopupLinkProperty
+ * @since 0.14
+ */
+export interface ISelectedFeaturePopupLinkProperty {
+    /**
+     * The feature property that contains the link
+     *
+     * @type {string}
+     * @memberof ISelectedFeaturePopupLinkProperty
+     */
+    name: string | IPopupLinkExpression;
+    /**
+     * The anchor label to render
+     *
+     * @type {string}
+     * @memberof ISelectedFeaturePopupLinkProperty
+     */
+    label: string;
+    /**
+     * The hyperlink target
+     *
+     * @type {string}
+     * @memberof ISelectedFeaturePopupLinkProperty
+     */
+    linkTarget: string;
+}
+
+/**
+ * Selected feature popup configuration for an external layer
+ *
+ * @export
+ * @interface ISelectedFeaturePopupTemplateConfiguration
+ * @since 0.14
+ */
+export interface ISelectedFeaturePopupTemplateConfiguration {
+    /**
+     * Custom popup title. If not set, the default title "Feature Properties" 
+     * (string value dependent on your locale's string bundle) will be used
+     *
+     * @type {string}
+     * @memberof ISelectedFeaturePopupTemplateConfiguration
+     */
+    title?: string;
+    /**
+     * If specified, restricts the display of feature properties only to what is
+     * specified here. The value part determines the display label.
+     *
+     * @type {INameValuePair[]}
+     * @memberof ISelectedFeaturePopupTemplateConfiguration
+     */
+    propertyMappings?: INameValuePair[];
+    /**
+     * If specified, controls link display for the popup
+     *
+     * @type {INameValuePair}
+     * @memberof ISelectedFeaturePopupTemplateConfiguration
+     */
+    linkProperty?: ISelectedFeaturePopupLinkProperty;
+}
+
+/**
+ * 
+ * @export
+ * @interface IGenericSubjectMapLayer
+ * @since 0.14
+ */
+export interface IGenericSubjectMapLayer {
+    type: GenericSubjectLayerType;
+    meta: IGenericSubjectMapLayerMetadata | undefined;
+    sourceParams: any;
+    name: string;
+    displayName?: string;
+    initiallyVisible: boolean;
+    selectable: boolean;
+    vectorStyle?: IVectorFeatureStyle;
+    attributions?: string[];
+    popupTemplate?: ISelectedFeaturePopupTemplateConfiguration;
+}
+
+export type IInitialExternalLayer = IGenericSubjectMapLayer;
+
+export function isGenericSubjectMapLayer(map: RuntimeMap | IGenericSubjectMapLayer): map is IGenericSubjectMapLayer {
+    return typeof((map as any)?.type) == 'string';
+}
+
+/**
  * @since 0.12
  */
 export type MapInfo = {
     mapGroupId: string;
-    map: RuntimeMap;
+    map: RuntimeMap | IGenericSubjectMapLayer | undefined;
     initialView: IMapView | undefined;
     externalBaseLayers: IExternalBaseLayer[];
+    /**
+     * The initial set of external layers
+     *
+     * @type {IInitialExternalLayer[]}
+     * @since 0.14
+     */
+    initialExternalLayers: IInitialExternalLayer[];
 }
 
 /**
@@ -528,6 +672,16 @@ export interface IAddedLayerAction {
 }
 
 /**
+ * @since 0.14
+ */
+export interface IExternalLayersReadyAction {
+    type: ActionType.EXTERNAL_LAYERS_READY,
+    payload: {
+        mapName: string
+    }
+}
+
+/**
  * Removes a given external layer for the given map
  * 
  * @since 0.13
@@ -678,3 +832,4 @@ export type ViewerAction = IOpenFlyoutAction
     | ISetMapLayerVectorStyle //@since 0.13
     | IAddMapLayerBusyWorkerAction //@since 0.13
     | IRemoveMapLayerBusyWorkerAction //@since 0.13
+    | IExternalLayersReadyAction //@since 0.14

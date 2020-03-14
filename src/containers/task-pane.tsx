@@ -85,8 +85,8 @@ class TaskPaneContainerInner extends React.Component<TaskPaneProps, any> {
     private canGoHome = (): boolean => {
         const { initialUrl, navigationStack, navIndex, map } = this.props;
         if (initialUrl) { //An initial URL was set
-            const initUrl = map && map.runtimeMap && initialUrl
-                ? ensureParameters(initialUrl, map.runtimeMap.Name, map.runtimeMap.SessionId, this.getLocale())
+            const initUrl = map?.mapguide?.runtimeMap && initialUrl
+                ? ensureParameters(initialUrl, map?.mapguide?.runtimeMap?.Name, map?.mapguide?.runtimeMap?.SessionId, this.getLocale())
                 : initialUrl;
             return navigationStack.length > 0 //We have a navigation stack
                 && !areUrlsSame(navigationStack[navIndex], initUrl); //The current URL is not initial.
@@ -103,41 +103,39 @@ class TaskPaneContainerInner extends React.Component<TaskPaneProps, any> {
     }
     render(): JSX.Element {
         const { navigationStack, navIndex, hasTaskBar, lastUrlPushed, map, maxHeight, flyouts, isResizing } = this.props;
-        if (map && map.runtimeMap) {
-            if (navigationStack[navIndex]) {
-                const flyoutStates: FlyoutVisibilitySet = {};
-                if (flyouts) {
-                    const ids = Object.keys(flyouts);
-                    for (const fid of ids) {
-                        flyoutStates[fid] = !!flyouts[fid].open;
-                    }
+        if (navigationStack[navIndex]) {
+            const flyoutStates: FlyoutVisibilitySet = {};
+            if (flyouts) {
+                const ids = Object.keys(flyouts);
+                for (const fid of ids) {
+                    flyoutStates[fid] = !!flyouts[fid].open;
                 }
-                return <div>
-                    <TaskPane currentUrl={navigationStack[navIndex]}
-                        showTaskBar={hasTaskBar}
-                        lastUrlPushed={lastUrlPushed}
-                        homeAction={this.homeAction}
-                        backAction={this.backAction}
-                        onOpenFlyout={this.onOpenFlyout}
-                        onCloseFlyout={this.onCloseFlyout}
-                        forwardAction={this.forwardAction}
-                        session={map.runtimeMap.SessionId}
-                        mapName={map.runtimeMap.Name}
-                        onUrlLoaded={this.onUrlLoaded}
-                        maxHeight={maxHeight}
-                        flyoutStates={flyoutStates}
-                        locale={this.getLocale()} />
-                    {(() => {
-                        if (isResizing == true) {
-                            return <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: TASK_PANE_OVERLAY_BGCOLOR }}>
-                                <NonIdealState
-                                    icon="arrows-horizontal"
-                                    description={tr("TASK_PANE_RESIZING", this.getLocale())} />
-                            </div>
-                        }
-                    })()}
-                </div>
             }
+            return <div>
+                <TaskPane currentUrl={navigationStack[navIndex]}
+                    showTaskBar={hasTaskBar}
+                    lastUrlPushed={lastUrlPushed}
+                    homeAction={this.homeAction}
+                    backAction={this.backAction}
+                    onOpenFlyout={this.onOpenFlyout}
+                    onCloseFlyout={this.onCloseFlyout}
+                    forwardAction={this.forwardAction}
+                    session={map?.mapguide?.runtimeMap?.SessionId}
+                    mapName={map?.mapguide?.runtimeMap?.Name}
+                    onUrlLoaded={this.onUrlLoaded}
+                    maxHeight={maxHeight}
+                    flyoutStates={flyoutStates}
+                    locale={this.getLocale()} />
+                {(() => {
+                    if (isResizing == true) {
+                        return <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: TASK_PANE_OVERLAY_BGCOLOR }}>
+                            <NonIdealState
+                                icon="arrows-horizontal"
+                                description={tr("TASK_PANE_RESIZING", this.getLocale())} />
+                        </div>
+                    }
+                })()}
+            </div>;
         }
         return <noscript />;
     }

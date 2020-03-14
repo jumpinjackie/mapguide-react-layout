@@ -23,10 +23,15 @@ const S_DELIM = "_"; //This is the current layer/group name delimiter
 
 /**
  * Updates the main URL with the given applicaton state
+ *
+ * @export
+ * @param {IAppUrlState} state
+ * @param {*} [extraState]
  * @since 0.13
+ * @since 0.14 - New optional extraState argument
  */
-export function updateUrl(state: IAppUrlState): void {
-    const st: any = {};
+export function updateUrl(state: IAppUrlState, extraState?: any): void {
+    const st: any = { ...extraState };
     for (const k in state) {
         const val: any = (state as any)[k];
         switch (k) {
@@ -57,11 +62,16 @@ export function updateUrl(state: IAppUrlState): void {
 /**
  * Gets the application state from the current main URL
  * @since 0.13
+ * @since 0.14 - New optional ignoreKeys to avoid reading out certain properties from URL state
  */
-export function getStateFromUrl(): IAppUrlState {
+export function getStateFromUrl(ignoreKeys?: string[]): IAppUrlState {
     const st = parseUrlParameters(window.location.href);
     const state: IAppUrlState = {};
+    const ignore = ignoreKeys ?? [];
     for (const k in st) {
+        if (ignore.indexOf(k) >= 0) {
+            continue;
+        }
         const val = st[k];
         switch (k) {
             case "ft":

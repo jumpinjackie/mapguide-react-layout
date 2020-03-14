@@ -1,5 +1,4 @@
-import { IView } from "../src/api/contracts/common";
-import { SelectedFeatureSet, SelectedFeature } from "../src/api/contracts/query";
+import { SelectedFeatureSet } from "../src/api/contracts/query";
 import { RuntimeMap } from "../src/api/contracts/runtime-map";
 import {
     IApplicationState,
@@ -9,11 +8,10 @@ import {
     ITaskPaneReducerState,
     IModalReducerState,
     IViewerReducerState,
-    IBranchedMapState,
     IMouseReducerState,
-    ITemplateReducerState
+    ITemplateReducerState,
+    IMapView
 } from "../src/api/common";
-import * as Constants from "../src/constants";
 import { CONFIG_INITIAL_STATE } from "../src/reducers/config";
 import { INIT_ERROR_INITIAL_STATE } from "../src/reducers/init-error";
 import { MODAL_INITIAL_STATE } from "../src/reducers/modal";
@@ -24,7 +22,7 @@ import { MOUSE_INITIAL_STATE } from "../src/reducers/mouse";
 import { TEMPLATE_INITIAL_STATE } from "../src/reducers/template";
 import { ActionType } from '../src/constants/actions';
 
-export function createMap(): any {
+export function createMap(): any /*RuntimeMap*/ {
     return {
         "SiteVersion": "3.1.0.9064",
         "SessionId": "dc65cd9c-cb5e-11e6-8000-0a0027000015_en_MTI3LjAuMC4x0AFC0AFB0AFA",
@@ -575,7 +573,7 @@ export function createSelectionSet(): SelectedFeatureSet {
     };
 }
 
-export function createInitAction(map: RuntimeMap, initialView: IView, locale = "en") {
+export function createInitAction(map: RuntimeMap, initialView: IMapView, locale = "en") {
     const maps: any = {};
     maps[map.Name] = map;
     return {

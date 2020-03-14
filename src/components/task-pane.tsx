@@ -14,16 +14,16 @@ import {
     IDOMElementMetrics,
     FlyoutVisibilitySet
 } from "../api/common";
-import { parseComponentUri, ensureParameters } from "../utils/url";
-import { Callout, Intent, NonIdealState, Spinner } from '@blueprintjs/core';
+import { parseComponentUri } from "../utils/url";
+import { Intent, NonIdealState, Spinner } from '@blueprintjs/core';
 import { FUSION_TASKPANE_NAME, WEBLAYOUT_TASKMENU } from '../constants';
 
 export const TASK_PANE_OVERLAY_BGCOLOR = "#dee8f9";
 
-function currentUrlDoesNotMatchMapName(currentUrl: string, mapName: string): boolean {
+function currentUrlDoesNotMatchMapName(currentUrl: string, mapName: string | undefined): boolean {
     const normUrl = currentUrl.toLowerCase();
     //Only invalidate if url has mapname and it doesn't match our current one
-    if (normUrl.indexOf("mapname=") >= 0) {
+    if (normUrl.indexOf("mapname=") >= 0 && mapName) {
         return normUrl.indexOf(`mapname=${mapName.toLowerCase()}`) < 0;
     } else {
         return false;
@@ -38,8 +38,8 @@ function currentUrlDoesNotMatchMapName(currentUrl: string, mapName: string): boo
  */
 export interface ITaskPaneProps {
     currentUrl?: string;
-    mapName: string;
-    session: string;
+    mapName?: string;
+    session?: string;
     locale: string;
     homeAction: IItem;
     backAction: IItem;

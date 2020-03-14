@@ -8,8 +8,9 @@ import { tr } from "../api/i18n";
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from "../constants/index";
 import { getUnits, getUnitOfMeasure } from "../utils/units";
 import { Slider, HTMLSelect } from '@blueprintjs/core';
-import { useActiveMapName, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSizeUnits, useViewerLocale, useActiveMapLayerTransparency, useActiveMapExternalBaseLayers } from './hooks';
+import { useActiveMapName, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSizeUnits, useViewerLocale, useActiveMapExternalBaseLayers } from './hooks';
 import { setManualFeatureTooltipsEnabled, setFeatureTooltipsEnabled, setLayerTransparency, setViewSizeUnits } from '../actions/map';
+import { useActiveMapLayerTransparency } from './hooks-mapguide';
 
 export interface IViewerOptionsProps {
 

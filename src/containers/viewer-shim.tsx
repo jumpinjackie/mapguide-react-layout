@@ -18,13 +18,14 @@ import { tr } from "../api/i18n";
 import { serialize } from "../api/builders/mapagent";
 import { ILocalizedMessages } from "../strings/msgdef";
 import { getUnitOfMeasure } from '../utils/units';
-import { useActiveMapState, useActiveMapSelectionSet, useConfiguredAgentUri, useConfiguredAgentKind, useViewerBusyCount, useViewerSizeUnits } from './hooks';
+import { useActiveMapSelectionSet, useConfiguredAgentUri, useConfiguredAgentKind, useViewerBusyCount, useViewerSizeUnits } from './hooks';
 import { getFusionRoot, getViewer } from '../api/runtime';
 import { debug, error, warn } from '../utils/logger';
 import { QueryMapFeatureActionOptions, queryMapFeatures, setSelection, invokeCommand } from '../actions/map';
 import { refresh } from '../actions/legend';
 import { goHome } from '../actions/taskpane';
 import { FUSION_MAP_NAME, FUSION_TASKPANE_NAME, FUSION_REDLINE_NAME  } from '../constants';
+import { useActiveMapState } from './hooks-mapguide';
 
 function isEmptySelection(selection: QueryMapFeaturesResponse | undefined): boolean {
     if (selection && selection.FeatureSet) {
@@ -359,7 +360,7 @@ class FusionWidgetApiShim {
         }
     }
     query(options: any): void { //Map
-        const viewer = getViewer();
+        const viewer = getViewer()?.mapguideSupport();
         const { map } = this.parent.props;
         if (map && viewer) {
             const mapName = map.Name;
@@ -380,9 +381,10 @@ class FusionWidgetApiShim {
     }
     setSelection(xml: string, zoomTo: boolean): void { //Map
         const viewer = getViewer();
-        if (viewer) {
+        const mgSupport = viewer?.mapguideSupport();
+        if (viewer && mgSupport) {
             //TODO: Support zoomTo
-            viewer.setSelectionXml(xml, {
+            mgSupport.setSelectionXml(xml, {
                 layerattributefilter: 0 //Need to set this in order for requestdata to be respected
             }, (selection) => {
                 if (zoomTo) {
@@ -721,8 +723,8 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public triggerFusionEvent(eventID: number) {
-        debug(`Trigger Fusion Event ID - ${eventID}`);
         if (this.fusionEventHandlers[eventID]) {
+            debug(`Trigger Fusion Event ID - ${eventID}`);
             for (const cb of this.fusionEventHandlers[eventID]) {
                 cb.apply(null, arguments);
             }
@@ -814,10 +816,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public ClearSelection(): void {
-        const viewer = getViewer();
-        if (viewer) {
-            viewer.clearSelection();
-        }
+        getViewer()?.mapguideSupport()?.clearSelection();
     }
     public DigitizeCircle(handler: (circle: IAjaxViewerCircle) => void): void {
         const viewer = getViewer();
@@ -1036,7 +1035,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         return count;
     }
     public GetSelectedFeatures(): IAjaxViewerSelectionSet | undefined {
-        const viewer = getViewer();
+        const viewer = getViewer()?.mapguideSupport();
         if (viewer) {
             const selection = viewer.getSelection();
             if (selection && selection.SelectedFeatures) {
@@ -1090,7 +1089,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         //This is what the AJAX viewer does
     }
     public SetSelectionXML(xmlSet: string): void {
-        const viewer = getViewer();
+        const viewer = getViewer()?.mapguideSupport();
         if (viewer) {
             viewer.setSelectionXml(xmlSet);
         }

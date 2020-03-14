@@ -1,4 +1,3 @@
-import { Size } from "../../containers/map-capturer-context";
 import olOverlay from "ol/Overlay";
 import olMap from "ol/Map";
 import OverlayPositioning from 'ol/OverlayPositioning';
@@ -21,11 +20,14 @@ export class MouseTrackingTooltip {
         this.tooltip = new olOverlay({
             element: this.tooltipElement,
             offset: [15, 0],
-            positioning: OverlayPositioning.CENTER_LEFT // "center-left" /*ol.OverlayPositioning.CENTER_LEFT*/
+            positioning: OverlayPositioning.CENTER_LEFT
         })
         this.map.addOverlay(this.tooltip);
         this.text = null;
         this.tooltipElement.classList.add(HIDDEN_CLASS_NAME);
+    }
+    public dispose() {
+        this.tooltip.dispose();
     }
     public onMouseMove(e: GenericEvent) {
         if (this.isContextMenuOpen())

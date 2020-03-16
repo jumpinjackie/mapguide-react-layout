@@ -1,10 +1,50 @@
-import { BaseMapProviderContext, IMapProviderState } from './base';
+import { BaseMapProviderContext, IMapProviderState, IMapProviderStateExtras } from './base';
 import { GenericLayerSetGroup } from "../../api/generic-layer-set-group";
 import { areViewsCloseToEqual } from '../../utils/viewer-state';
 import View from 'ol/View';
 import { debug } from '../../utils/logger';
 import { assertIsDefined } from '../../utils/assert';
 import { IGenericSubjectMapLayer } from '../../actions/defs';
+import { useActiveMapSubjectLayer } from '../../containers/hooks-generic';
+import { useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useActiveMapLayers, useActiveMapInitialExternalLayers } from '../../containers/hooks';
+import { useDispatch } from 'react-redux';
+
+function useGenericMapViewerState() {
+    const activeTool = useViewerActiveTool();
+    const view = useActiveMapView();
+    const viewRotation = useViewerViewRotation();
+    const viewRotationEnabled = useViewerViewRotationEnabled();
+    const mapName = useActiveMapName();
+    const locale = useViewerLocale();
+    const externalBaseLayers = useActiveMapExternalBaseLayers();
+    const cancelDigitizationKey = useConfiguredCancelDigitizationKey();
+    const undoLastPointKey = useConfiguredUndoLastPointKey();
+    const layers = useActiveMapLayers();
+    const initialExternalLayers = useActiveMapInitialExternalLayers();
+    const dispatch = useDispatch();
+    // ================ Generic-specific =================== //
+    const subject = useActiveMapSubjectLayer();
+
+    const nextState: IGenericMapProviderState & IMapProviderStateExtras = {
+        activeTool,
+        view,
+        viewRotation,
+        viewRotationEnabled,
+        mapName,
+        locale,
+        externalBaseLayers,
+        cancelDigitizationKey,
+        undoLastPointKey,
+        initialExternalLayers,
+        // ========== IMapProviderStateExtras ========== //
+        isReady: true,
+        bgColor: undefined,
+        layers,
+        // ================ Generic-specific =================== //
+        subject
+    };
+    return nextState;
+}
 
 export interface IGenericMapProviderState extends IMapProviderState {
     subject: IGenericSubjectMapLayer | undefined;
@@ -13,6 +53,12 @@ export interface IGenericMapProviderState extends IMapProviderState {
 export class GenericMapProviderContext extends BaseMapProviderContext<IGenericMapProviderState, GenericLayerSetGroup> {
     constructor() {
         super();
+    }
+    /**
+     * @override
+     */
+    public getHookFunction(): () => IMapProviderState & IMapProviderStateExtras {
+        return useGenericMapViewerState;
     }
     protected getInitialProviderState(): Omit<IGenericMapProviderState, keyof IMapProviderState> {
         return {

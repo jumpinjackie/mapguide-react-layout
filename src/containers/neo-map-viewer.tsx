@@ -1,13 +1,13 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { IMapProviderContext, IViewerComponent, IMapProviderState } from '../components/map-providers/base';
+import { IMapProviderContext, IViewerComponent, IMapProviderState, useViewerSideEffects, IMapProviderStateExtras } from '../components/map-providers/base';
 import { CURSOR_DIGITIZE_POINT, CURSOR_DIGITIZE_LINE, CURSOR_DIGITIZE_LINESTRING, CURSOR_DIGITIZE_RECT, CURSOR_DIGITIZE_POLYGON, CURSOR_DIGITIZE_CIRCLE, CURSOR_GRABBING, CURSOR_GRAB, CURSOR_ZOOM_IN } from '../constants/assets';
 import { MapLoadIndicator } from '../components/map-load-indicator';
 import { ActiveMapTool, MapLoadIndicatorPositioning, GenericEvent, ReduxDispatch, RefreshMode, ILayerInfo, ClientKind } from '../api/common';
 import { MapProviderContext } from '../components/map-providers/context';
 import { useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useViewerPointSelectionBuffer, useViewerSelectionColor, useViewerSelectionImageFormat, useConfiguredManualFeatureTooltips, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useViewerFeatureTooltipsEnabled, useActiveMapLayers, useActiveMapInitialExternalLayers } from './hooks';
 import { Toaster, Position } from '@blueprintjs/core';
-import { IMapGuideProviderState } from '../components/map-providers/mapguide';
+import { IMapGuideProviderState, isMapGuideProviderState } from '../components/map-providers/mapguide';
 import { getActiveSelectedFeatureXml } from '../api/builders/deArrayify';
 import { STR_EMPTY } from '../utils/string';
 import { tr } from '../api/i18n';
@@ -26,62 +26,7 @@ import { IInitialExternalLayer } from '../actions/defs';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { ISubscriberProps, Subscriber } from './subscriber';
 
-function useViewerSideEffects(context: IMapProviderContext,
-    mapName: string | undefined,
-    layers: ILayerInfo[] | undefined,
-    initialExternalLayers: IInitialExternalLayer[] | undefined,
-    agentUri: string | undefined = undefined,
-    agentKind: ClientKind | undefined = undefined,
-    selection: QueryMapFeaturesResponse | null = null) {
-    const dispatch = useDispatch();
-    // Side-effect to pre-load external layers. Should only happen once per map name
-    React.useEffect(() => {
-        debug(`React.useEffect - Change of initial external layers for [${mapName}] (change should only happen once per mapName!)`);
-        if (mapName && !layers) {
-            if (initialExternalLayers && initialExternalLayers.length > 0) {
-                debug(`React.useEffect - First-time loading of external layers for [${mapName}]`);
-                const layerManager = context.getLayerManager(mapName) as LayerManager;
-                for (const extLayer of initialExternalLayers) {
-                    const added = layerManager.addExternalLayer(extLayer, true);
-                    if (added) {
-                        dispatch(mapLayerAdded(mapName, added));
-                    }
-                }
-            } else {
-                //Even if no initial external layers were loaded, the layers state still needs to be set
-                //otherwise components that depend on this state (eg. External Layer Manager) will assume
-                //this is still not ready yet
-                debug(`React.useEffect - Signal that external layers are ready for [${mapName}]`);
-                dispatch(externalLayersReady(mapName));
-            }
-        }
-    }, [context, mapName, initialExternalLayers, layers]);
-    // Side-effect to apply the current external layer list
-    React.useEffect(() => {
-        debug(`React.useEffect - Change of external layers`);
-        if (context.isReady() && layers) {
-            const layerManager = context.getLayerManager(mapName);
-            layerManager.apply(layers);
-        }
-    }, [context, mapName, layers]);
-    // Side-effect to set the viewer "instance" once the MapViewerBase component has been mounted.
-    // Should only happen once.
-    React.useEffect(() => {
-        debug(`React.useEffect - Change of context and/or agent URI/kind`);
-        setViewer(context);
-        const browserWindow: any = window;
-        browserWindow.getViewer = browserWindow.getViewer || getViewer;
-        if (agentUri && agentKind) {
-            browserWindow.getClient = browserWindow.getClient || (() => new Client(agentUri, agentKind));
-        }
-        debug(`React.useEffect - Attached runtime viewer instance and installed browser global APIs`);
-    }, [context, agentUri, agentKind]);
-    // Side-effect to imperatively refresh the map upon selection change
-    React.useEffect(() => {
-        debug(`React.useEffect - Change of selection`);
-        context.refreshMap(RefreshMode.SelectionOnly);
-    }, [context, selection]);
-}
+
 
 interface ICoreMapViewerProps {
     context: IMapProviderContext;
@@ -255,90 +200,35 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
     }
 }
 
-export const MgMapViewer = () => {
+export const MapViewer = () => {
     const context = React.useContext(MapProviderContext);
     const toasterRef = React.useRef<Toaster>(null);
     const loadIndicatorPositioning = useConfiguredLoadIndicatorPositioning();
     const loadIndicatorColor = useConfiguredLoadIndicatorColor();
-    const activeTool = useViewerActiveTool();
-    const view = useActiveMapView();
-    const viewRotation = useViewerViewRotation();
-    const viewRotationEnabled = useViewerViewRotationEnabled();
-    const mapName = useActiveMapName();
-    const locale = useViewerLocale();
-    const externalBaseLayers = useActiveMapExternalBaseLayers();
-    const cancelDigitizationKey = useConfiguredCancelDigitizationKey();
-    const undoLastPointKey = useConfiguredUndoLastPointKey();
-    const layers = useActiveMapLayers();
-    const initialExternalLayers = useActiveMapInitialExternalLayers();
     const dispatch = useDispatch();
-    // ============== MapGuide-specific ================== //
-    const imageFormat = useViewerImageFormat();
-    const agentUri = useConfiguredAgentUri();
-    const agentKind = useConfiguredAgentKind();
-    const map = useActiveMapState();
-    const pointSelectionBuffer = useViewerPointSelectionBuffer();
-    const featureTooltipsEnabled = useViewerFeatureTooltipsEnabled();
-    const manualFeatureTooltips = useConfiguredManualFeatureTooltips();
-    const sessionId = useActiveMapSessionId();
-    const selectionColor = useViewerSelectionColor();
-    const selectionImageFormat = useViewerSelectionImageFormat();
-    const selectableLayerNames = useActiveMapSelectableLayerNames();
-    const layerTransparency = useActiveMapLayerTransparency();
-    const showGroups = useActiveMapShowGroups();
-    const hideGroups = useActiveMapHideGroups();
-    const showLayers = useActiveMapShowLayers();
-    const hideLayers = useActiveMapHideLayers();
-    const activeSelectedFeature = useActiveMapActiveSelectedFeature();
-    const activeSelectedFeatureColor = useViewerActiveFeatureSelectionColor();
-    const selection = useActiveMapSelectionSet();
-
-    let bgColor: string | undefined;
-    if (map) {
-        bgColor = `#${map.BackgroundColor.substring(2)}`;
-    }
-    let activeSelectedFeatureXml;
-    if (activeSelectedFeature && selection && selection.FeatureSet) {
-        activeSelectedFeatureXml = getActiveSelectedFeatureXml(selection.FeatureSet, activeSelectedFeature);
-    }
-
-    const nextState: IMapGuideProviderState = {
-        activeTool,
-        view,
-        viewRotation,
-        viewRotationEnabled,
+    const hookFunc = context.getHookFunction();
+    const nextState = hookFunc();
+    const {
         mapName,
-        locale,
-        externalBaseLayers,
-        cancelDigitizationKey,
-        undoLastPointKey,
+        layers,
         initialExternalLayers,
-        // =========== MapGuide-specific ============== //
-        imageFormat,
-        agentUri,
-        agentKind,
-        map,
-        pointSelectionBuffer,
-        featureTooltipsEnabled,
-        manualFeatureTooltips,
-        sessionId,
-        selectionColor,
-        selectionImageFormat,
-        selectableLayerNames,
-        layerTransparency,
-        showGroups: showGroups ?? [],
-        hideGroups: hideGroups ?? [],
-        showLayers: showLayers ?? [],
-        hideLayers: hideLayers ?? [],
-        activeSelectedFeatureXml: activeSelectedFeatureXml ?? STR_EMPTY,
-        activeSelectedFeatureColor,
-        selection
-    };
+        bgColor,
+        locale
+    } = nextState;
+    //HACK: Still have some MG-specific state we're needing to check for here. Minor abstraction leakage.
+    let agentUri: string | undefined;
+    let agentKind: ClientKind | undefined;
+    let selection: QueryMapFeaturesResponse | null = null;
+    if (isMapGuideProviderState(nextState)) {
+        agentUri = nextState.agentUri;
+        agentKind = nextState.agentKind;
+        selection = nextState.selection;
+    }
     context.setToasterRef(toasterRef);
     context.setProviderState(nextState);
     useViewerSideEffects(context, mapName, layers, initialExternalLayers, agentUri, agentKind, selection);
 
-    if (agentUri && map && sessionId && layerTransparency) {
+    if (nextState.isReady) {
         return <>
             {/* HACK: usePortal=false to workaround what I think is: https://github.com/palantir/blueprint/issues/3248 */}
             <Toaster usePortal={false} position={Position.TOP} ref={toasterRef} />
@@ -351,52 +241,4 @@ export const MgMapViewer = () => {
     } else {
         return <div>{tr("LOADING_MSG", locale)}</div>;
     }
-};
-
-export const GenericMapViewer = () => {
-    const context = React.useContext(MapProviderContext);
-    const toasterRef = React.useRef<Toaster>(null);
-    const loadIndicatorPositioning = useConfiguredLoadIndicatorPositioning();
-    const loadIndicatorColor = useConfiguredLoadIndicatorColor();
-    const activeTool = useViewerActiveTool();
-    const view = useActiveMapView();
-    const viewRotation = useViewerViewRotation();
-    const viewRotationEnabled = useViewerViewRotationEnabled();
-    const mapName = useActiveMapName();
-    const locale = useViewerLocale();
-    const externalBaseLayers = useActiveMapExternalBaseLayers();
-    const cancelDigitizationKey = useConfiguredCancelDigitizationKey();
-    const undoLastPointKey = useConfiguredUndoLastPointKey();
-    const layers = useActiveMapLayers();
-    const initialExternalLayers = useActiveMapInitialExternalLayers();
-    const dispatch = useDispatch();
-    // ================ Generic-specific =================== //
-    const subject = useActiveMapSubjectLayer();
-
-    const nextState: IGenericMapProviderState = {
-        activeTool,
-        view,
-        viewRotation,
-        viewRotationEnabled,
-        mapName,
-        locale,
-        externalBaseLayers,
-        cancelDigitizationKey,
-        undoLastPointKey,
-        initialExternalLayers,
-        // ================ Generic-specific =================== //
-        subject
-    };
-    context.setToasterRef(toasterRef);
-    context.setProviderState(nextState);
-    useViewerSideEffects(context, mapName, layers, initialExternalLayers);
-
-    return <>
-        {/* HACK: usePortal=false to workaround what I think is: https://github.com/palantir/blueprint/issues/3248 */}
-        <Toaster usePortal={false} position={Position.TOP} ref={toasterRef} />
-        <CoreMapViewer context={context}
-            onDispatch={dispatch}
-            loadIndicatorPosition={loadIndicatorPositioning}
-            loadIndicatorColor={loadIndicatorColor} />
-    </>;
-};
+}

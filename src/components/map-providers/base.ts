@@ -1,5 +1,6 @@
+import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D, KC_ESCAPE, IMapViewer, IMapGuideViewerSupport } from '../../api/common';
+import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D, KC_ESCAPE, IMapViewer, IMapGuideViewerSupport, ILayerInfo, ClientKind } from '../../api/common';
 import { MouseTrackingTooltip } from '../tooltips/mouse';
 import Map from "ol/Map";
 import OverviewMap from 'ol/control/OverviewMap';
@@ -37,7 +38,7 @@ import { tr, DEFAULT_LOCALE } from '../../api/i18n';
 import { LayerSetGroupBase } from '../../api/layer-set-group-base';
 import { assertIsDefined } from '../../utils/assert';
 import { info, debug } from '../../utils/logger';
-import { setCurrentView, setViewRotation, mapResized, setMouseCoordinates, setBusyCount, setViewRotationEnabled, setActiveTool } from '../../actions/map';
+import { setCurrentView, setViewRotation, mapResized, setMouseCoordinates, setBusyCount, setViewRotationEnabled, setActiveTool, mapLayerAdded, externalLayersReady } from '../../actions/map';
 import { IBasicPointCircleStyle, DEFAULT_POINT_CIRCLE_STYLE, IPointIconStyle, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, DEFAULT_LINE_STYLE, IBasicVectorPolygonStyle, DEFAULT_POLY_STYLE } from '../../api/ol-style-helpers';
 import { Toaster, Intent } from '@blueprintjs/core';
 import { IOLFactory, OLFactory } from '../../api/ol-factory';
@@ -47,9 +48,68 @@ import { IInitialExternalLayer } from '../../actions/defs';
 import { MapGuideMockMode } from '../mapguide-debug-context';
 import Layer from 'ol/layer/Layer';
 import Source from 'ol/source/Source';
+import { QueryMapFeaturesResponse, setViewer, getViewer, Client } from '../..';
+import { useDispatch } from 'react-redux';
 
 export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4));
+}
+
+export function useViewerSideEffects(context: IMapProviderContext,
+    mapName: string | undefined,
+    layers: ILayerInfo[] | undefined,
+    initialExternalLayers: IInitialExternalLayer[] | undefined,
+    agentUri: string | undefined = undefined,
+    agentKind: ClientKind | undefined = undefined,
+    selection: QueryMapFeaturesResponse | null = null) {
+    const dispatch = useDispatch();
+    // Side-effect to pre-load external layers. Should only happen once per map name
+    React.useEffect(() => {
+        debug(`React.useEffect - Change of initial external layers for [${mapName}] (change should only happen once per mapName!)`);
+        if (mapName && !layers) {
+            if (initialExternalLayers && initialExternalLayers.length > 0) {
+                debug(`React.useEffect - First-time loading of external layers for [${mapName}]`);
+                const layerManager = context.getLayerManager(mapName) as LayerManager;
+                for (const extLayer of initialExternalLayers) {
+                    const added = layerManager.addExternalLayer(extLayer, true);
+                    if (added) {
+                        dispatch(mapLayerAdded(mapName, added));
+                    }
+                }
+            } else {
+                //Even if no initial external layers were loaded, the layers state still needs to be set
+                //otherwise components that depend on this state (eg. External Layer Manager) will assume
+                //this is still not ready yet
+                debug(`React.useEffect - Signal that external layers are ready for [${mapName}]`);
+                dispatch(externalLayersReady(mapName));
+            }
+        }
+    }, [context, mapName, initialExternalLayers, layers]);
+    // Side-effect to apply the current external layer list
+    React.useEffect(() => {
+        debug(`React.useEffect - Change of external layers`);
+        if (context.isReady() && layers) {
+            const layerManager = context.getLayerManager(mapName);
+            layerManager.apply(layers);
+        }
+    }, [context, mapName, layers]);
+    // Side-effect to set the viewer "instance" once the MapViewerBase component has been mounted.
+    // Should only happen once.
+    React.useEffect(() => {
+        debug(`React.useEffect - Change of context and/or agent URI/kind`);
+        setViewer(context);
+        const browserWindow: any = window;
+        browserWindow.getViewer = browserWindow.getViewer || getViewer;
+        if (agentUri && agentKind) {
+            browserWindow.getClient = browserWindow.getClient || (() => new Client(agentUri, agentKind));
+        }
+        debug(`React.useEffect - Attached runtime viewer instance and installed browser global APIs`);
+    }, [context, agentUri, agentKind]);
+    // Side-effect to imperatively refresh the map upon selection change
+    React.useEffect(() => {
+        debug(`React.useEffect - Change of selection`);
+        context.refreshMap(RefreshMode.SelectionOnly);
+    }, [context, selection]);
 }
 
 export interface IViewerComponent {
@@ -78,6 +138,12 @@ export interface IMapProviderState {
     initialExternalLayers: IInitialExternalLayer[];
 }
 
+export interface IMapProviderStateExtras {
+    isReady: boolean;
+    bgColor?: string;
+    layers: ILayerInfo[] | undefined;
+}
+
 /**
  * Defines a mapping provider
  * 
@@ -97,6 +163,7 @@ export interface IMapProviderContext extends IMapViewer {
     setProviderState(nextState: IMapProviderState): void;
     onKeyDown(e: GenericEvent): void;
     hideAllPopups(): void;
+    getHookFunction(): () => IMapProviderState & IMapProviderStateExtras;
 }
 
 export abstract class BaseMapProviderContext<TState extends IMapProviderState, TLayerSetGroup extends LayerSetGroupBase> implements IMapProviderContext {
@@ -238,6 +305,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         return { ...DEFAULT_POLY_STYLE };
     }
     //#endregion
+
+    public abstract getHookFunction(): () => IMapProviderState & IMapProviderStateExtras;
 
     protected abstract getInitialProviderState(): Omit<TState, keyof IMapProviderState>;
     //#region IMapViewerContextCallback

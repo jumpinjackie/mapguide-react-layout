@@ -23,7 +23,7 @@ import ViewSizeContainer from '../containers/view-size';
 import ViewerOptions from '../containers/viewer-options';
 import { setSelection } from '../actions/map';
 import { MapGuideMockMode, MapDebugContext } from '../components/mapguide-debug-context';
-import { MgMapViewer } from '../containers/neo-map-viewer';
+import { MapViewer } from '../containers/neo-map-viewer';
 import { MapProviderContext } from '../components/map-providers/context';
 import { MapGuideMapProviderContext } from '../components/map-providers/mapguide';
 
@@ -70,7 +70,7 @@ const MapStoryFrame = (props: MapDependentContainer) => {
         </div>
         <div style={{ position: "absolute", left: SB_WIDTH, top: 0, bottom: 0, right: 0 }}>
             <MapDebugContext.Provider value={{ mock: context.mockMode }}>
-                <MgMapViewer />
+                <MapViewer />
                 {props.includeSelect && <ButtonGroup style={{ position: "absolute", right: 15, top: 15 }}>
                     <Button intent={Intent.PRIMARY} onClick={() => doTestSelect()}>Test Select</Button>
                     <Button intent={Intent.DANGER} onClick={() => doClearSelection()} disabled={!CommandConditions.hasSelection(state)}>Clear Selection</Button>

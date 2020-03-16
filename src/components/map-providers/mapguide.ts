@@ -22,13 +22,108 @@ import { debug, warn } from '../../utils/logger';
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../../utils/site-version';
 import { BLANK_GIF_DATA_URI } from '../../constants';
 import { isSessionExpiredError } from '../../api/error';
-import { BaseMapProviderContext, IMapProviderState, IViewerComponent } from './base';
+import { BaseMapProviderContext, IMapProviderState, IViewerComponent, IMapProviderStateExtras } from './base';
 import { assertIsDefined } from '../../utils/assert';
 import { STR_EMPTY } from '../../utils/string';
 import { ensureParameters } from '../../utils/url';
 import { ActionType } from '../../constants/actions';
-import { buildSelectionXml } from '../../api/builders/deArrayify';
+import { buildSelectionXml, getActiveSelectedFeatureXml } from '../../api/builders/deArrayify';
 import { MapGuideMockMode } from '../mapguide-debug-context';
+import { useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useViewerPointSelectionBuffer, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSelectionColor, useViewerSelectionImageFormat, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useActiveMapLayers, useActiveMapInitialExternalLayers } from '../../containers/hooks';
+import { useActiveMapState, useActiveMapSessionId, useActiveMapSelectableLayerNames, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapHideLayers, useActiveMapActiveSelectedFeature } from '../../containers/hooks-mapguide';
+import { useDispatch } from 'react-redux';
+
+export function isMapGuideProviderState(arg: any): arg is IMapGuideProviderState {
+    return typeof(arg.agentUri) == 'string'
+        && typeof(arg.agentKind) == 'string';
+}
+
+function useMapGuideViewerState() {
+    const activeTool = useViewerActiveTool();
+    const view = useActiveMapView();
+    const viewRotation = useViewerViewRotation();
+    const viewRotationEnabled = useViewerViewRotationEnabled();
+    const mapName = useActiveMapName();
+    const locale = useViewerLocale();
+    const externalBaseLayers = useActiveMapExternalBaseLayers();
+    const cancelDigitizationKey = useConfiguredCancelDigitizationKey();
+    const undoLastPointKey = useConfiguredUndoLastPointKey();
+    const layers = useActiveMapLayers();
+    const initialExternalLayers = useActiveMapInitialExternalLayers();
+    const dispatch = useDispatch();
+    // ============== MapGuide-specific ================== //
+    const imageFormat = useViewerImageFormat();
+    const agentUri = useConfiguredAgentUri();
+    const agentKind = useConfiguredAgentKind();
+    const map = useActiveMapState();
+    const pointSelectionBuffer = useViewerPointSelectionBuffer();
+    const featureTooltipsEnabled = useViewerFeatureTooltipsEnabled();
+    const manualFeatureTooltips = useConfiguredManualFeatureTooltips();
+    const sessionId = useActiveMapSessionId();
+    const selectionColor = useViewerSelectionColor();
+    const selectionImageFormat = useViewerSelectionImageFormat();
+    const selectableLayerNames = useActiveMapSelectableLayerNames();
+    const layerTransparency = useActiveMapLayerTransparency();
+    const showGroups = useActiveMapShowGroups();
+    const hideGroups = useActiveMapHideGroups();
+    const showLayers = useActiveMapShowLayers();
+    const hideLayers = useActiveMapHideLayers();
+    const activeSelectedFeature = useActiveMapActiveSelectedFeature();
+    const activeSelectedFeatureColor = useViewerActiveFeatureSelectionColor();
+    const selection = useActiveMapSelectionSet();
+
+    let bgColor: string | undefined;
+    if (map) {
+        bgColor = `#${map.BackgroundColor.substring(2)}`;
+    }
+    let activeSelectedFeatureXml;
+    if (activeSelectedFeature && selection && selection.FeatureSet) {
+        activeSelectedFeatureXml = getActiveSelectedFeatureXml(selection.FeatureSet, activeSelectedFeature);
+    }
+
+    let isReady = false;
+    if (agentUri && map && sessionId && layerTransparency) {
+        isReady = true;
+    }
+
+    const nextState: IMapGuideProviderState & IMapProviderStateExtras = {
+        activeTool,
+        view,
+        viewRotation,
+        viewRotationEnabled,
+        mapName,
+        locale,
+        externalBaseLayers,
+        cancelDigitizationKey,
+        undoLastPointKey,
+        initialExternalLayers,
+        // ========== IMapProviderStateExtras ========== //
+        isReady,
+        bgColor,
+        layers,
+        // =========== MapGuide-specific ============== //
+        imageFormat,
+        agentUri,
+        agentKind,
+        map,
+        pointSelectionBuffer,
+        featureTooltipsEnabled,
+        manualFeatureTooltips,
+        sessionId,
+        selectionColor,
+        selectionImageFormat,
+        selectableLayerNames,
+        layerTransparency,
+        showGroups: showGroups ?? [],
+        hideGroups: hideGroups ?? [],
+        showLayers: showLayers ?? [],
+        hideLayers: hideLayers ?? [],
+        activeSelectedFeatureXml: activeSelectedFeatureXml ?? STR_EMPTY,
+        activeSelectedFeatureColor,
+        selection
+    };
+    return nextState;
+}
 
 export interface IMapGuideProviderState extends IMapProviderState {
     imageFormat: ImageFormat;
@@ -80,6 +175,13 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         this.refreshOnStateChange = debounce(this._refreshOnStateChange.bind(this), 500);
     }
 
+    /**
+     * @override
+     */
+    public getHookFunction(): () => IMapProviderState & IMapProviderStateExtras {
+        return useMapGuideViewerState;
+    }
+
     public setMockMode(mode: MapGuideMockMode | undefined): void {
         this.mockMode = mode;
     }
@@ -99,7 +201,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @returns {(MapGuideMockMode | undefined)}
      * @memberof MapGuideMapProviderContext
      */
-    protected getMockMode() : MapGuideMockMode | undefined { return this.mockMode; }
+    protected getMockMode(): MapGuideMockMode | undefined { return this.mockMode; }
 
     protected getInitialProviderState(): Omit<IMapGuideProviderState, keyof IMapProviderState> {
         return {

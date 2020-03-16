@@ -36,7 +36,7 @@ import { initMapGuideCommands } from '../api/mapguide-commands';
 import { registerMapGuideComponents } from '../api/mapguide-components';
 import { MapGuideMapProviderContext } from '../components/map-providers/mapguide';
 import { MapProviderContext } from '../components/map-providers/context';
-import { MgMapViewer } from '../containers/neo-map-viewer';
+import { MapViewer } from '../containers/neo-map-viewer';
 
 import "../styles/index.css";
 import "ol/ol.css";
@@ -65,7 +65,7 @@ registerMapGuideComponents();
 // Register our MapGuide-specific viewer implementation
 const PROVIDER_IMPL = new MapGuideMapProviderContext();
 registerComponentFactory(DefaultComponentNames.Map, (props) => <MapProviderContext.Provider value={PROVIDER_IMPL}>
-    <MgMapViewer {...props} />
+    <MapViewer {...props} />
 </MapProviderContext.Provider>);
 
 //Register the default mapagent request builder (that can be replaced later on if desired)

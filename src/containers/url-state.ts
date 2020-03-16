@@ -22,11 +22,19 @@ export interface IAppUrlState {
 const S_DELIM = "_"; //This is the current layer/group name delimiter
 
 /**
- * Updates the main URL with the given applicaton state
+ * Updates the main URL with the given application state. If passing extra custom state,
+ * this extra custom state is also included when getStateFromUrl() is called.
+ * 
+ * Also if the custom state shares the same keys as the main application state, the application
+ * state takes precedence (ie. The key/value in the custom state *will not* overwrite the application state for the same key). 
+ * 
+ * To avoid this, you should delete/omit said keys from the application state when calling this method if
+ * you want to take the equivalent key/value from the custom state.
  *
  * @export
  * @param {IAppUrlState} state
- * @param {*} [extraState]
+ * @param {*} [extraState] Any extra state to include into the main URL
+ * @rem
  * @since 0.13
  * @since 0.14 - New optional extraState argument
  */
@@ -60,7 +68,12 @@ export function updateUrl(state: IAppUrlState, extraState?: any): void {
 }
 
 /**
- * Gets the application state from the current main URL
+ * Gets the application state from the current main URL. If the URL was updated with custom state
+ * via updateUrl(), they will also be included in the returned state.
+ *
+ * @export
+ * @param {string[]} [ignoreKeys]
+ * @returns {IAppUrlState}
  * @since 0.13
  * @since 0.14 - New optional ignoreKeys to avoid reading out certain properties from URL state
  */

@@ -4,7 +4,7 @@
 [![Build status](https://travis-ci.org/jumpinjackie/mapguide-react-layout.svg)](https://travis-ci.org/jumpinjackie/mapguide-react-layout)
 [![Build status](https://ci.appveyor.com/api/projects/status/urdvk8788w6h26ae?svg=true)](https://ci.appveyor.com/project/jumpinjackie/mapguide-react-layout)
 [![Coverage Status](https://coveralls.io/repos/github/jumpinjackie/mapguide-react-layout/badge.svg?branch=master)](https://coveralls.io/github/jumpinjackie/mapguide-react-layout?branch=master)
-
+[![Known Vulnerabilities](https://snyk.io/test/github/jumpinjackie/mapguide-react-layout/badge.svg?targetFile=package.json)](https://snyk.io/test/github/jumpinjackie/mapguide-react-layout?targetFile=package.json)
 
 mapguide-react-layout is a modern map viewer for MapGuide.
 

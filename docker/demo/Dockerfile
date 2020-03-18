@@ -19,7 +19,7 @@ RUN apt-get install -y --no-install-recommends fontconfig ttf-mscorefonts-instal
 # ADD localfonts.conf /etc/fonts/local.conf
 # RUN fc-cache -f -v
 
-RUN wget https://github.com/jumpinjackie/mapguide-react-layout/releases/download/v0.9.6/viewer.zip -O /tmp/viewer.zip
-RUN wget http://download.osgeo.org/mapguide/releases/3.0.0/extras/Sheboygan.mgp -O /usr/local/mapguideopensource-3.1.0/server/Packages/Sheboygan.mgp
-RUN unzip /tmp/viewer.zip -d /usr/local/mapguideopensource-3.1.0/webserverextensions/www
-ADD index.php /usr/local/mapguideopensource-3.1.0/webserverextensions/www
+RUN wget https://github.com/jumpinjackie/mapguide-react-layout/releases/download/v0.13.1/viewer.zip -O /tmp/viewer.zip
+RUN wget http://download.osgeo.org/mapguide/releases/3.0.0/extras/Sheboygan.mgp -O /usr/local/mapguideopensource-3.1.2/server/Packages/Sheboygan.mgp
+RUN unzip /tmp/viewer.zip -d /usr/local/mapguideopensource-3.1.2/webserverextensions/www
+ADD index.php /usr/local/mapguideopensource-3.1.2/webserverextensions/www

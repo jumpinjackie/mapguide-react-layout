@@ -132,8 +132,5 @@
   },
   "resolutions": {
     "file-loader": "5.0.2"
-  },
-  "greenkeeper": {
-    "ignore": []
   }
 }

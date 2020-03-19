@@ -52,7 +52,9 @@ const GenericLayout = () => {
         </ButtonGroup>
         <ViewerApiShim />
         <Drawer size={Drawer.SIZE_SMALL} canOutsideClickClose={true} onClose={() => setIsLayerManagerOpen(false)} title="External Layer Manager" position={Position.LEFT} usePortal={false} isOpen={isLayerManagerOpen}>
-            <PlaceholderComponent id={DefaultComponentNames.AddManageLayers} locale={locale} />
+            <div style={{ overflowY: "auto" }}>
+                <PlaceholderComponent id={DefaultComponentNames.AddManageLayers} locale={locale} />
+            </div>
         </Drawer>
         <ModalLauncher />
         <FlyoutRegionContainer />

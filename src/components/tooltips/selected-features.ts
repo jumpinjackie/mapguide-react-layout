@@ -168,7 +168,7 @@ export class SelectedFeaturesTooltip {
             const { name, label, linkTarget } = popupConfig.linkProperty;
             let linkHref: string | undefined;
             if (typeof(name) == 'string') {
-                linkHref = f[name];
+                linkHref = encodeURI(f[name]);
             } else {
                 const expr = name.expression;
                 let url = expr;
@@ -176,13 +176,13 @@ export class SelectedFeaturesTooltip {
                 const pEnd = name.placeholderEnd ?? "}";
                 const tokens = extractPlaceholderTokens(expr, pBegin, pEnd);
                 for (const t of tokens) {
-                    const al = f[t] ?? "";
+                    const al = encodeURIComponent(f[t] ?? "");
                     url = strReplaceAll(url, `${pBegin}${t}${pEnd}`, al);
                 }
                 linkHref = url;
             }
             if (!strIsNullOrEmpty(linkHref)) {
-                html += `<div style='margin-top: 20px'><a href='${linkHref}' target='${linkTarget}'>${label}</a></div>`;
+                html += `<div style='margin-top: 20px'><a href="${linkHref}" target='${linkTarget}'>${label}</a></div>`;
             }
         }
         return html;

@@ -22,6 +22,8 @@ import { debug } from '../utils/logger';
 import { setElementStates } from '../actions/template';
 import { IViewerInitCommand } from '../actions/init-command';
 import { ApplicationDefinition } from '../api/contracts/fusion';
+import Loader from 'calcite-react/Loader';
+import styled from "styled-components";
 
 export interface SelectionOptions {
     allowHtmlValues?: boolean;
@@ -71,11 +73,11 @@ export interface IMapGuideAppProps {
         *         selection: boolean;
         *     }}
         */
-       initialElementVisibility: {
-           taskpane: boolean;
-           legend: boolean;
-           selection: boolean;
-       }
+    initialElementVisibility: {
+        taskpane: boolean;
+        legend: boolean;
+        selection: boolean;
+    }
 }
 
 /**
@@ -159,6 +161,13 @@ export interface IAppDispatch {
 }
 
 type AppInnerProps = IAppProps & IAppState & IAppDispatch;
+
+const AppLoaderContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+`;
 
 class AppInner extends React.Component<AppInnerProps, any> {
     constructor(props: AppInnerProps) {
@@ -285,7 +294,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
             locale: curUrlState.locale ?? this.props.locale,
             session: curUrlState.session ?? this.props.mapguide?.session
         };
-        if (typeof(this.props.resourceId) == 'string') {
+        if (typeof (this.props.resourceId) == 'string') {
             nextUrlState.resource = curUrlState.resource ?? this.props.resourceId
         }
         if (nextProps.featureTooltipsEnabled != prevProps.featureTooltipsEnabled) {
@@ -406,10 +415,9 @@ class AppInner extends React.Component<AppInnerProps, any> {
             //NOTE: Locale may not have been set at this point, so use default
             const locale = configuredLocale;
             if (isLoading) {
-                return <NonIdealState
-                    icon={<Spinner intent={Intent.NONE} size={Spinner.SIZE_LARGE} />}
-                    title={tr("INIT", locale)}
-                    description={tr("INIT_DESC", locale)} />;
+                return <AppLoaderContainer>
+                    <Loader sizeRatio={2} text={tr("INIT_DESC", locale)} />
+                </AppLoaderContainer>;
             } else {
                 const layoutEl = typeof (layout) == 'function' ? layout : getLayout(layout);
                 if (layoutEl) {

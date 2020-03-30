@@ -126,6 +126,16 @@ declare module "calcite-react/CalciteThemeProvider" {
     const CalciteThemeProvider: React.StatelessComponent<CalciteThemeProviderProps>;
     export default CalciteThemeProvider;
 }
+declare module "calcite-react/Loader" {
+    import * as React from "react";
+    export type LoaderProps = {
+        text?: string;
+        sizeRatio?: number;
+        color?: string;
+    }
+    const Loader: React.StatelessComponent<LoaderProps>;
+    export default Loader;
+}
 
 declare module "ismobilejs";
 

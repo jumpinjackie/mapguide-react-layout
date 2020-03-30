@@ -39,6 +39,94 @@ declare module "react-splitter-layout" {
     }
 }
 
+declare module "calcite-react/CopyToClipboard" {
+    import * as React from "react";
+    export type CopyToClipboardProps = {
+        copyValue?: string;
+        tooltip?: string;
+        successTooltip?: string;
+        appendToBody?: boolean;
+        copyIcon?: React.ReactNode;
+        copySuccessIcon?: React.ReactNode;
+        children?: React.ReactNode;
+    }
+    export default class CopyToClipboard extends React.Component<CopyToClipboardProps> {
+            
+    }
+}
+declare module "calcite-react/Button" {
+    import * as React from "react";
+    export type ButtonProps = {
+        children?: React.ReactNode;
+        type?: "button" | "reset" | "submit";
+        inline?: boolean;
+        transparent?: boolean;
+        clear?: boolean;
+        clearGray?: boolean;
+        clearWhite?: boolean;
+        white?: boolean;
+        small?: boolean;
+        large?: boolean;
+        extraLarge?: boolean;
+        fullWidth?: boolean;
+        half?: boolean;
+        red?: boolean;
+        green?: boolean;
+        disabled?: boolean;
+        href?: string;
+        icon?: React.ReactNode;
+        iconButton?: boolean;
+        iconPosition?: "after" | "before";
+    }
+    export default class Button extends React.Component<ButtonProps> {
+
+    }
+}
+declare module "calcite-react/TextField" {
+    import * as React from "react";
+    export interface TextFieldProps {
+        onChange?: React.ChangeEventHandler<HTMLInputElement>;
+        onBlur?: React.FocusEventHandler<HTMLInputElement>;
+        rows?: number;
+        placeholder?: string;
+        readOnly?: boolean;
+        type?: "color" | "email" | "file" | "image" | "number" | "password" | "tel" | "text" | "url" | "textarea";
+        value?: React.ReactNode;
+        error?: boolean;
+        success?: boolean;
+        search?: boolean;
+        fullWidth?: boolean;
+        minimal?: boolean;
+        horizontal?: boolean;
+        id?: string;
+        name?: string;
+    }
+    const TextField: React.StatelessComponent<TextFieldProps>;
+    export default TextField;
+}
+declare module "calcite-react/Checkbox" {
+    import * as React from "react";
+    export type CheckboxProps = {
+        disabled?: boolean;
+        onChange?: React.ChangeEventHandler<HTMLInputElement>;
+        children?: React.ReactNode;
+        value?: string;
+        name?: string;
+        checked?: boolean;
+        labelStyle?: React.CSSProperties;
+    };
+    export default class Checkbox extends React.Component<CheckboxProps> { }
+}
+declare module "calcite-react/CalciteThemeProvider" {
+    import * as React from "react";
+    export type CalciteThemeProviderProps = {
+        children?: React.ReactNode;
+        theme?: any;
+    }
+    const CalciteThemeProvider: React.StatelessComponent<CalciteThemeProviderProps>;
+    export default CalciteThemeProvider;
+}
+
 declare module "ismobilejs";
 
 declare module "proj4";

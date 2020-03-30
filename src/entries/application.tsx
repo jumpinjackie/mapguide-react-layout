@@ -10,6 +10,7 @@ import { IConfigurationReducerState } from '..';
 import { ViewerAction } from '../actions/defs';
 import { Subscriber, ISubscriberProps } from '../containers/subscriber';
 import { IViewerInitCommand } from '../actions/init-command';
+import CalciteThemeProvider from 'calcite-react/CalciteThemeProvider';
 
 /**
  * Extra application mount options.
@@ -95,10 +96,12 @@ export class ApplicationViewModel {
         const extraReducers = this.getExtraReducers();
         this._store = configureStore(initState, extraReducers);
         const initCommand = props.initCommandFactory(this._store.dispatch);
-        ReactDOM.render(<Provider store={this._store}>
-            <App {...props} initCommand={initCommand} />
-            {subs.map((s, i) => <Subscriber key={`subscriber-${i}-${s.name}`} {...s} />)}
-        </Provider>, node);
+        ReactDOM.render(<CalciteThemeProvider>
+            <Provider store={this._store}>
+                <App {...props} initCommand={initCommand} />
+                {subs.map((s, i) => <Subscriber key={`subscriber-${i}-${s.name}`} {...s} />)}
+            </Provider>
+        </CalciteThemeProvider>, node);
     }
     /**
      * Dispatches the given action

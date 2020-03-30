@@ -1,10 +1,13 @@
 import * as React from "react";
 import { tr } from '../api/i18n';
 import { getViewer } from '../api/runtime';
-import CopyToClipboard = require('react-copy-to-clipboard');
+import CopyToClipboard from 'calcite-react/CopyToClipboard';
 import { parseUrl, stringifyQuery } from "../utils/url";
-import { TextArea, Checkbox } from '@blueprintjs/core';
 import { useViewerLocale } from './hooks';
+import Button from 'calcite-react/Button';
+import TextField from 'calcite-react/TextField';
+import styled from "styled-components";
+import Checkbox from 'calcite-react/Checkbox';
 
 /**
  * 
@@ -15,6 +18,10 @@ import { useViewerLocale } from './hooks';
 export interface IShareLinkToViewContainerProps {
 
 }
+
+const FullWidthTextField = styled(TextField)`
+    width: 100%;
+`;
 
 function NOOP() {}
 
@@ -34,12 +41,12 @@ const ShareLinkToViewContainer = () => {
     }
     const shareUrl = `${parsed.url}?${stringifyQuery(parsed.query)}`;
     return <div>
-        <TextArea fill={true} rows={16} readOnly value={shareUrl} onChange={NOOP} />
+        <FullWidthTextField type="textarea" rows={8} readOnly value={shareUrl} onChange={NOOP} />
         <br />
         <div style={{ padding: 15 }}>
-            <Checkbox checked={showSession} label={tr("SHARE_LINK_INCLUDE_SESSION", locale)} onChange={onShowSessionChanged} />
-            <CopyToClipboard text={shareUrl} onCopy={onCopied}>
-                <button className="pt-button">{tr("SHARE_LINK_COPY_CLIPBOARD", locale)}</button>
+            <Checkbox checked={showSession} onChange={onShowSessionChanged}>{tr("SHARE_LINK_INCLUDE_SESSION", locale)}</Checkbox>
+            <CopyToClipboard copyValue={shareUrl}>
+                <Button>{tr("SHARE_LINK_COPY_CLIPBOARD", locale)}</Button>
             </CopyToClipboard>
         </div>
     </div>;

@@ -136,6 +136,25 @@ declare module "calcite-react/Loader" {
     const Loader: React.StatelessComponent<LoaderProps>;
     export default Loader;
 }
+declare module "calcite-react/Accordion" {
+    import * as React from "react";
+    export type AccordionProps = {
+        activeSectionIndexes?: number[];
+        iconPosition?: "start" | "end";
+        onAccordionChange?: (evt: any, index: number) => void;
+    };
+    export default class Accordion extends React.Component<AccordionProps> {}
+    export type AccordionTitleProps = {};
+    export const AccordionTitle: React.StatelessComponent<AccordionTitleProps>;
+    export type AccordionSectionProps = {};
+    export const AccordionSection: React.StatelessComponent<AccordionSectionProps>;
+    export type AccordionContentProps = {};
+    export const AccordionContent: React.StatelessComponent<AccordionContentProps>;
+}
+
+// Calcite icons we're using
+declare module "calcite-ui-icons-react/ChevronDownIcon";
+declare module "calcite-ui-icons-react/ChevronUpIcon";
 
 declare module "ismobilejs";
 

@@ -2444,3 +2444,12 @@ export enum MgBuiltInLayers {
     SelectionOverlay = "MapGuide Selection Overlay",
     ActiveFeatureSelectionOverlay = "MapGuide Active Feature Selection Overlay"
 }
+
+/**
+ * @since 0.14
+ */
+export interface ICalciteIconProps {
+    size?: number;
+    filled?: boolean;
+    color?: string;
+}

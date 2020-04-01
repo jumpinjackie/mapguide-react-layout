@@ -1,9 +1,9 @@
 import * as React from "react";
-import {
-    GenericEvent
-} from "../api/common";
-import { Collapse, Icon as BpIcon } from '@blueprintjs/core';
+import { GenericEvent, ICalciteIconProps } from "../api/common";
 import useDimensions from './hooks/use-dimensions';
+import styled from 'styled-components';
+import ChevronDownIcon from "calcite-ui-icons-react/ChevronDownIcon";
+import ChevronUpIcon from "calcite-ui-icons-react/ChevronUpIcon";
 
 /**
  * Accordion panel dimensions
@@ -40,6 +40,12 @@ export interface IAccordionProps {
     onActivePanelChanged?: (id: string) => void;
     activePanelId?: string;
     isResizing?: boolean;
+    /**
+     * @type {ICalciteIconProps}
+     * @memberof IAccordionProps
+     * @since 0.14
+     */
+    globalIconProps?: ICalciteIconProps;
 }
 
 const PANEL_HEADER_HEIGHT = 24;
@@ -53,6 +59,22 @@ function validatePanelId(panels: IAccordionPanelSpec[], id: string | undefined):
         return id;
     }
     return null;
+}
+
+export const AccordionWrapper = styled.div``;
+export const AccordionSectionPanel = styled.div``;
+export const AccordionSectionHeading = styled.div`
+    cursor: pointer;
+    box-sizing: border-box;
+    height: ${PANEL_HEADER_HEIGHT}px !important;
+`;
+
+const AccordionCollapsible = ({ isOpen, children }: { isOpen: boolean, children: React.ReactNode }) => {
+    if (isOpen) {
+        return <div style={{ position: "relative" }}>{children}</div>;
+    } else {
+        return <></>;
+    }
 }
 
 /**
@@ -73,7 +95,25 @@ export const Accordion = (props: IAccordionProps) => {
             setOpenPanel(id);
             onActivePanelChanged?.(id);
         }
-    }
+    };
+    const baseIconProps: ICalciteIconProps = {
+        size: 16,
+        ...props.globalIconProps
+    };
+    return <AccordionWrapper ref={ref} style={style}>
+        {panels.map(p => {
+            const isOpen = (p.id == openPanel);
+            return <AccordionSectionPanel key={p.id}>
+                <AccordionSectionHeading data-accordion-panel-id={p.id} onClick={onTogglePanel}>
+                    {isOpen ? <ChevronUpIcon {...baseIconProps} /> : <ChevronDownIcon {...baseIconProps} />} {p.title}
+                </AccordionSectionHeading>
+                <AccordionCollapsible isOpen={isOpen}>
+                    {p.contentRenderer({ width: width, height: (height - (panels.length * PANEL_HEADER_HEIGHT)) }, isResizing)}
+                </AccordionCollapsible>
+            </AccordionSectionPanel>;
+        })}
+    </AccordionWrapper>
+    /*
     return <div ref={ref} style={style} className="component-accordion">
         {panels.map(p => {
             const isOpen = (p.id == openPanel);
@@ -87,4 +127,5 @@ export const Accordion = (props: IAccordionProps) => {
             </div>;
         })}
     </div>;
+    */
 }

@@ -100,6 +100,7 @@ export const Accordion = (props: IAccordionProps) => {
         size: 16,
         ...props.globalIconProps
     };
+    //TODO: Verify that previous accordion un-mounted child content of collapsed panels
     return <AccordionWrapper ref={ref} style={style}>
         {panels.map(p => {
             const isOpen = (p.id == openPanel);
@@ -112,20 +113,5 @@ export const Accordion = (props: IAccordionProps) => {
                 </AccordionCollapsible>
             </AccordionSectionPanel>;
         })}
-    </AccordionWrapper>
-    /*
-    return <div ref={ref} style={style} className="component-accordion">
-        {panels.map(p => {
-            const isOpen = (p.id == openPanel);
-            return <div key={p.id} className="component-accordion-panel">
-                <div className="component-accordion-panel-header" style={{ height: PANEL_HEADER_HEIGHT }} data-accordion-panel-id={p.id} onClick={onTogglePanel}>
-                    <BpIcon icon={isOpen ? "chevron-up" : "chevron-down"} /> {p.title}
-                </div>
-                <Collapse isOpen={isOpen}>
-                    {p.contentRenderer({ width: width, height: (height - (panels.length * PANEL_HEADER_HEIGHT)) }, isResizing)}
-                </Collapse>
-            </div>;
-        })}
-    </div>;
-    */
+    </AccordionWrapper>;
 }

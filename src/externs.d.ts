@@ -77,6 +77,7 @@ declare module "calcite-react/Button" {
         icon?: React.ReactNode;
         iconButton?: boolean;
         iconPosition?: "after" | "before";
+        onClick?: React.MouseEventHandler<HTMLButtonElement>;
     }
     export default class Button extends React.Component<ButtonProps> {
 
@@ -150,6 +151,31 @@ declare module "calcite-react/Accordion" {
     export const AccordionSection: React.StatelessComponent<AccordionSectionProps>;
     export type AccordionContentProps = {};
     export const AccordionContent: React.StatelessComponent<AccordionContentProps>;
+}
+
+declare module "calcite-react/Card" {
+    import * as React from "react";
+    export type CardProps = {
+        bar?: string;
+        shaped?: boolean;
+        wide?: boolean;
+    };
+    const Card: React.StatelessComponent<CardProps>;
+    export default Card;
+    export type CardTitleProps = {
+
+    };
+    export const CardTitle: React.StatelessComponent<CardTitleProps>;
+    export type CardContentProps = {
+
+    };
+    export const CardContent: React.StatelessComponent<CardContentProps>;
+    export type CardImageProps = {
+        src?: string;
+        caption?: string;
+        alt?: string;
+    };
+    export const CardImage: React.StatelessComponent<CardImageProps>;
 }
 
 // Calcite icons we're using

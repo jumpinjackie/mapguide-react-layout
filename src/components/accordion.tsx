@@ -2,7 +2,8 @@ import * as React from "react";
 import {
     GenericEvent
 } from "../api/common";
-import { Collapse, Icon as BpIcon, ResizeSensor, IResizeEntry } from '@blueprintjs/core';
+import { Collapse, Icon as BpIcon } from '@blueprintjs/core';
+import useDimensions from './hooks/use-dimensions';
 
 /**
  * Accordion panel dimensions
@@ -61,17 +62,11 @@ function validatePanelId(panels: IAccordionPanelSpec[], id: string | undefined):
 export const Accordion = (props: IAccordionProps) => {
     const { style, panels, isResizing, onActivePanelChanged } = props;
     const activeId = validatePanelId(props.panels, props.activePanelId);
-    const [dim, setDim] = React.useState<Pick<DOMRectReadOnly, "width" | "height">>({
-        width: -1,
-        height: -1
-    });
     const [openPanel, setOpenPanel] = React.useState(activeId || panels[panels.length - 1].id);
+    const [ref, { width, height }] = useDimensions();
     React.useEffect(() => {
         setOpenPanel(activeId || panels[panels.length - 1].id);
     }, [activeId]);
-    const onResize = (entries: IResizeEntry[]) => {
-        setDim(entries[0].contentRect);
-    };
     const onTogglePanel = (e: GenericEvent) => {
         const id = e.currentTarget.attributes["data-accordion-panel-id"].value;
         if (openPanel != id) {
@@ -79,19 +74,17 @@ export const Accordion = (props: IAccordionProps) => {
             onActivePanelChanged?.(id);
         }
     }
-    return <ResizeSensor onResize={onResize}>
-        <div style={style} className="component-accordion">
-            {panels.map(p => {
-                const isOpen = (p.id == openPanel);
-                return <div key={p.id} className="component-accordion-panel">
-                    <div className="component-accordion-panel-header" style={{ height: PANEL_HEADER_HEIGHT }} data-accordion-panel-id={p.id} onClick={onTogglePanel}>
-                        <BpIcon icon={isOpen ? "chevron-up" : "chevron-down"} /> {p.title}
-                    </div>
-                    <Collapse isOpen={isOpen}>
-                        {p.contentRenderer({ width: dim.width, height: (dim.height - (panels.length * PANEL_HEADER_HEIGHT)) }, isResizing)}
-                    </Collapse>
-                </div>;
-            })}
-        </div>
-    </ResizeSensor>;
+    return <div ref={ref} style={style} className="component-accordion">
+        {panels.map(p => {
+            const isOpen = (p.id == openPanel);
+            return <div key={p.id} className="component-accordion-panel">
+                <div className="component-accordion-panel-header" style={{ height: PANEL_HEADER_HEIGHT }} data-accordion-panel-id={p.id} onClick={onTogglePanel}>
+                    <BpIcon icon={isOpen ? "chevron-up" : "chevron-down"} /> {p.title}
+                </div>
+                <Collapse isOpen={isOpen}>
+                    {p.contentRenderer({ width: width, height: (height - (panels.length * PANEL_HEADER_HEIGHT)) }, isResizing)}
+                </Collapse>
+            </div>;
+        })}
+    </div>;
 }

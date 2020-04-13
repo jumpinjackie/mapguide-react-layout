@@ -1,3 +1,8 @@
+0.13.2
+======
+
+ * [#1160](https://github.com/jumpinjackie/mapguide-react-layout/issues/1160): Un-break MapGuide tiled maps support (due to change in tile grid coordinate format introduced in OpenLayers 6.0)
+
 0.13.1
 ======
 

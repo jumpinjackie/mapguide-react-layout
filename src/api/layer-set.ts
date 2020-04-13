@@ -324,10 +324,13 @@ class MgInnerLayerSetFactory {
     private getTileUrlFunctionForGroup(resourceId: string, groupName: string, zOrigin: number) {
         const urlTemplate = this.callback.getClient().getTileTemplateUrl(resourceId, groupName, '{x}', '{y}', '{z}');
         return function (tileCoord: [number, number, number]) {
+            const z = tileCoord[0];
+            const x = tileCoord[1];
+            const y = tileCoord[2]; //NOTE: tileCoord format changed in OL 6.0, no longer need to negate and subtract by 1
             return urlTemplate
-                .replace('{z}', (zOrigin - tileCoord[0]).toString())
-                .replace('{x}', tileCoord[1].toString())
-                .replace('{y}', (-tileCoord[2] - 1).toString());
+                .replace('{z}', (zOrigin - z).toString())
+                .replace('{x}', x.toString())
+                .replace('{y}', (y).toString());
         };
     }
     public create(locale: string | undefined,
@@ -408,9 +411,13 @@ class MgInnerLayerSetFactory {
                         tileGrid: tileGrid,
                         projection: projection,
                         tileUrlFunction: function(tileCoord) {
-                            return urlTemplate.replace('{z}', (zOrigin - tileCoord[0]).toString())
-                                .replace('{x}', tileCoord[1].toString())
-                                .replace('{y}', (-tileCoord[2] - 1).toString());
+                            const z = tileCoord[0];
+                            const x = tileCoord[1];
+                            const y = tileCoord[2]; //NOTE: tileCoord format changed in OL 6.0, no longer need to negate and subtract by 1
+                            return urlTemplate
+                                .replace('{z}', (zOrigin - z).toString())
+                                .replace('{x}', x.toString())
+                                .replace('{y}', (y).toString());
                         },
                         wrapX: false
                     })

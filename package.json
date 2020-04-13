@@ -50,7 +50,7 @@
   "dependencies": {
     "@blueprintjs/core": "^3.24.0",
     "history": "^4.10.1",
-    "ismobilejs": "^1.0.3",
+    "ismobilejs": "^1.0.4",
     "lodash.debounce": "^4.0.8",
     "ol": "6.2.1",
     "papaparse": "^5.2.0",

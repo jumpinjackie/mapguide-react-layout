@@ -55,7 +55,7 @@
     "ol": "6.2.1",
     "papaparse": "^5.2.0",
     "proj4": "2.6.1",
-    "qs": "^6.9.2",
+    "qs": "^6.9.3",
     "react": "^16.13.1",
     "react-addons-update": "^15.6.2",
     "react-copy-to-clipboard": "^5.0.2",

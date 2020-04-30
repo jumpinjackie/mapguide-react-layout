@@ -297,5 +297,12 @@ export abstract class LayerSetGroupBase {
                 }
             }
         }
+        // The scratch layer (where client-side selection overlays and other temp vector features reside) must always be topmost
+        if (cCurrentLayers.item(cCurrentLayers.getLength() - 1) != this.scratchLayer) {
+            map.removeLayer(this.scratchLayer);
+            map.addLayer(this.scratchLayer);
+            //const layers2 = cCurrentLayers.getArray();
+            //console.log(layers2);
+        }
     }
 }

@@ -131,7 +131,7 @@ export class SelectedFeaturesTooltip {
     private generateFeatureHtml(feat: Feature<Geometry>, locale?: string, popupConfig?: ISelectedFeaturePopupTemplateConfiguration) {
         let html = "";
         const title = strIsNullOrEmpty(popupConfig?.title) ? tr("SEL_FEATURE_PROPERTIES", locale) : popupConfig?.title;
-        html += "<div style='min-width: 190px'><div style='float: left; font-weight: bold; font-size: 1.3em'>" + title + "</div><a id='feat-popup-closer' href='#' style='float: right'>[x]</a><div class='clear: both'></div></div>";
+        html += "<div style='min-width: 190px'><div style='float: left; font-weight: bold; font-size: 1.3em; margin-right: 5px'>" + title + "</div><a id='feat-popup-closer' href='#' style='float: right'>[x]</a><div class='clear: both'></div></div>";
         var table = "<table style='margin-top: 25px'>";
         const f = feat.getProperties();
         let pc = 0;

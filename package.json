@@ -68,7 +68,7 @@
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
     "shortid": "^2.2.15",
-    "tslib": "^1.11.1",
+    "tslib": "^1.11.2",
     "url-parse": "^1.4.7"
   },
   "devDependencies": {

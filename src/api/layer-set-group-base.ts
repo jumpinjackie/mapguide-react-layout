@@ -1,5 +1,5 @@
 import LayerBase from "ol/layer/Base";
-import { LayerProperty, IExternalBaseLayer, LayerTransparencySet, RefreshMode, Bounds, Size, ILayerInfo } from './common';
+import { LayerProperty, IExternalBaseLayer, LayerTransparencySet, RefreshMode, Bounds, Size, ILayerInfo, Dictionary } from './common';
 import { ILayerSetOL, IImageLayerEvents } from './layer-set-contracts';
 import Feature from 'ol/Feature';
 import { isMapGuideImageSource } from './ol-mapguide-source-factory';
@@ -20,6 +20,12 @@ import View from 'ol/View';
 import { IInitialExternalLayer } from '../actions/defs';
 import { createOLLayerFromSubjectDefn } from '../components/external-layer-factory';
 import Geometry from 'ol/geom/Geometry';
+import { LoadFunction as TileLoadFunction } from 'ol/Tile';
+import { LoadFunction as ImageLoadFunction } from 'ol/Image';
+import TileLayer from 'ol/layer/Tile';
+import UrlTile from 'ol/source/UrlTile';
+import { debug, warn } from '../utils';
+import ImageLayer from 'ol/layer/Image';
 
 export abstract class LayerSetGroupBase {
     protected mainSet: ILayerSetOL;
@@ -31,8 +37,12 @@ export abstract class LayerSetGroupBase {
             order: number
         }
     };
+    private _tileLoaders: Dictionary<TileLoadFunction>;
+    private _imageLoaders: Dictionary<ImageLoadFunction>;
     constructor(protected callback: IImageLayerEvents) {
         this._customLayers = {};
+        this._tileLoaders = {};
+        this._imageLoaders = {};
         this.scratchLayer = new VectorLayer({
             source: new VectorSource()
         });
@@ -186,6 +196,42 @@ export abstract class LayerSetGroupBase {
             layer.set(LayerProperty.LAYER_NAME, name);
         if (!layer.get(LayerProperty.LAYER_DISPLAY_NAME))
             layer.set(LayerProperty.LAYER_DISPLAY_NAME, name);
+
+        for (const k in this._tileLoaders) {
+            const func = this._tileLoaders[k];
+            const layer = this.getLayer(k);
+            if (layer) {
+                if (layer instanceof TileLayer) {
+                    const source = layer.getSource();
+                    if (source instanceof UrlTile) {
+                        source.setTileLoadFunction(func);
+                        debug(`Added custom tile loader for layer: ${k}`);
+                    }/* else {
+                        warn(`Layer has a source is not a valid candidate for adding a custom tile loader: ${k}`);
+                    }*/
+                }/* else {
+                    warn(`Layer is not a valid candidate for adding a custom tile loader: ${k}`);
+                }*/
+            }
+        }
+        for (const k in this._imageLoaders) {
+            const func = this._imageLoaders[k];
+            const layer = this.getLayer(k);
+            if (layer) {
+                if (layer instanceof ImageLayer) {
+                    const source: any = layer.getSource();
+                    if (typeof(source.setImageLoadFunction) == 'function') {
+                        source.setImageLoadFunction(func);
+                        debug(`Added custom tile loader for layer: ${k}`);
+                    }/* else {
+                        warn(`Layer has a source is not a valid candidate for adding a custom tile loader: ${k}`);
+                    }*/
+                }/* else {
+                    warn(`Layer is not a valid candidate for adding a custom tile loader: ${k}`);
+                }*/
+            }
+        }
+
         return {
             ...getLayerInfo(layer, true),
             //Smuggle these values out for debugging purposes
@@ -304,5 +350,13 @@ export abstract class LayerSetGroupBase {
             //const layers2 = cCurrentLayers.getArray();
             //console.log(layers2);
         }
+    }
+
+    attachTileLoaders(tileLoaders: Dictionary<TileLoadFunction>) {
+        this._tileLoaders = tileLoaders;
+    }
+
+    attachImageLoaders(imageLoaders: Dictionary<ImageLoadFunction>) {
+        this._imageLoaders = imageLoaders;
     }
 }

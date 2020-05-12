@@ -50,6 +50,8 @@ import Layer from 'ol/layer/Layer';
 import Source from 'ol/source/Source';
 import { QueryMapFeaturesResponse, setViewer, getViewer, Client } from '../..';
 import { useDispatch } from 'react-redux';
+import { LoadFunction as TileLoadFunction } from 'ol/Tile';
+import { LoadFunction as ImageLoadFunction } from 'ol/Image';
 
 export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4));
@@ -166,8 +168,13 @@ export interface IMapProviderContext extends IMapViewer {
     getHookFunction(): () => IMapProviderState & IMapProviderStateExtras;
 }
 
+export type WmsQueryAugmentation = (getFeatureInfoUrl: string) => string;
+
 export abstract class BaseMapProviderContext<TState extends IMapProviderState, TLayerSetGroup extends LayerSetGroupBase> implements IMapProviderContext {
     private _toasterRef: React.RefObject<Toaster> | undefined;
+    private _tileSourceLoaders: Dictionary<Dictionary<TileLoadFunction>>;
+    private _imageSourceLoaders: Dictionary<Dictionary<ImageLoadFunction>>;
+    private _wmsQueryAugmentations: Dictionary<Dictionary<WmsQueryAugmentation>>;
     protected _state: TState;
     /**
      * Indicates if touch events are supported.
@@ -192,12 +199,14 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected _busyWorkers: number;
     protected _triggerZoomRequestOnMoveEnd: boolean;
     protected _select: Select | undefined;
-    protected _dispatcher: ReduxDispatch | undefined;
     protected _activeDrawInteraction: Draw | null;
 
     constructor(private olFactory: OLFactory = new OLFactory()) {
         this._busyWorkers = 0;
         this._layerSetGroups = {};
+        this._tileSourceLoaders = {};
+        this._imageSourceLoaders = {};
+        this._wmsQueryAugmentations = {};
         this._triggerZoomRequestOnMoveEnd = true;
         const ism = isMobile(navigator.userAgent);
         this._supportsTouch = ism.phone || ism.tablet;
@@ -217,6 +226,57 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             ...baseInitialState,
             ...this.getInitialProviderState()
         } as TState;
+    }
+
+    /**
+     * Adds a custom tile load function for a given image tile layer
+     * @param mapName
+     * @param layerName The layer this function should apply for
+     * @param func The custom tile load function 
+     * @since 0.14
+     */
+    public addTileLoadFunction(mapName: string, layerName: string, func: TileLoadFunction) {
+        if (!this._tileSourceLoaders) {
+            this._tileSourceLoaders = {};
+        }
+        if (!this._tileSourceLoaders[mapName]) {
+            this._tileSourceLoaders[mapName] = {};
+        }
+        this._tileSourceLoaders[mapName][layerName] = func;
+    }
+
+    /**
+     * Adds a custom image load function for a given image layer
+     * @param mapName
+     * @param layerName The layer this function should apply for
+     * @param func The custom tile load function 
+     * @since 0.14
+     */
+    public addImageLoadFunction(mapName: string, layerName: string, func: ImageLoadFunction) {
+        if (!this._imageSourceLoaders) {
+            this._imageSourceLoaders = {};
+        }
+        if (!this._imageSourceLoaders[mapName]) {
+            this._imageSourceLoaders[mapName] = {};
+        }
+        this._imageSourceLoaders[mapName][layerName] = func;
+    }
+
+    /**
+     * Adds a custom image load function for a given image layer
+     * @param mapName
+     * @param layerName The layer this function should apply for
+     * @param func The custom tile load function 
+     * @since 0.14
+     */
+    public addWmsQueryAugmentation(mapName: string, layerName: string, func: WmsQueryAugmentation) {
+        if (!this._wmsQueryAugmentations) {
+            this._wmsQueryAugmentations = {};
+        }
+        if (!this._wmsQueryAugmentations[mapName]) {
+            this._wmsQueryAugmentations[mapName] = {};
+        }
+        this._wmsQueryAugmentations[mapName][layerName] = func;
     }
 
     /**
@@ -505,6 +565,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         if (!layerSet) {
             layerSet = this.initLayerSet(nextState);
             this._layerSetGroups[nextState.mapName] = layerSet;
+            layerSet.attachTileLoaders(this._tileSourceLoaders[nextState.mapName] ?? {});
+            layerSet.attachImageLoaders(this._imageSourceLoaders[nextState.mapName] ?? {});
         }
         return layerSet;
     }
@@ -810,6 +872,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this.initContext(activeLayerSet, this._state.locale, this._state.overviewMapElementSelector);
         this._mouseTooltip = new MouseTrackingTooltip(this._map, this._comp.isContextMenuOpen);
         this._selectTooltip = new SelectedFeaturesTooltip(this._map);
+        if (this._state.mapName)
+            this._selectTooltip.attachWmsQueryAugmentations(this._wmsQueryAugmentations[this._state.mapName])
 
         this._map.on("pointermove", this._boundMouseMove as any);
         this._map.on("change:size", this._boundResize as any);

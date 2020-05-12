@@ -873,7 +873,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._mouseTooltip = new MouseTrackingTooltip(this._map, this._comp.isContextMenuOpen);
         this._selectTooltip = new SelectedFeaturesTooltip(this._map);
         if (this._state.mapName)
-            this._selectTooltip.attachWmsQueryAugmentations(this._wmsQueryAugmentations[this._state.mapName])
+            this._selectTooltip.attachWmsQueryAugmentations(this._wmsQueryAugmentations[this._state.mapName] ?? {});
 
         this._map.on("pointermove", this._boundMouseMove as any);
         this._map.on("change:size", this._boundResize as any);

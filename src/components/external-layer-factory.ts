@@ -15,6 +15,8 @@ import { setOLVectorLayerStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_LINE_STYLE, 
 import { CsvFormatDriver, CSV_COLUMN_ALIASES } from '../api/layer-manager/csv-driver';
 import KML from 'ol/format/KML';
 import GeoJSON from "ol/format/GeoJSON";
+import { ExternalLayerFactoryRegistry } from '../api/registry/external-layer';
+import { strIsNullOrEmpty } from '../utils/string';
 
 function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExternalLayer, layer: LayerBase, isExternal: boolean) {
     layer.set(LayerProperty.LAYER_NAME, defn.name);
@@ -123,6 +125,25 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 layer.set(LayerProperty.IS_GROUP, false);
                 layer.set(LayerProperty.SELECTED_POPUP_CONFIGURATION, defn.popupTemplate);
                 layer.setVisible(defn.initiallyVisible);
+                return layer;
+            }
+        case GenericSubjectLayerType.CustomVector:
+            {
+                if (strIsNullOrEmpty(defn.driverName)) {
+                    throw new Error("Missing required driverName");
+                }
+                const reg = ExternalLayerFactoryRegistry.getInstance();
+                const factory = reg.getExternalVectorLayerCreator(defn.driverName);
+                if (!factory) {
+                    throw new Error(`Could not resolve an approriate factory for the given driver: ${defn.driverName}`);
+                }
+                const layer = factory(defn.sourceParams);
+                setOLVectorLayerStyle(layer as VectorLayer, defn.vectorStyle ?? {
+                    point: DEFAULT_POINT_CIRCLE_STYLE,
+                    line: DEFAULT_LINE_STYLE,
+                    polygon: DEFAULT_POLY_STYLE
+                });
+                applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }
         default:

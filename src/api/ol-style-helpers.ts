@@ -383,6 +383,9 @@ export function setOLVectorLayerStyle(layer: VectorLayer, style: IVectorLayerSty
         exprs[f] = parser.parse(f);
     }
     const layerStyleFunc = function (feature: Feature<Geometry>) {
+        //TODO: Perf opportunity, cache styles by type_filter|default. Of course, if we ever
+        //decide to go for fully dynamic styles (where any property could be an expression to evaluate)
+        //such styles are not candidates for caching.
         const sset: OLStyleMapSet = this;
         const gt = feature.getGeometry().getType();
         const vals = feature.getProperties();

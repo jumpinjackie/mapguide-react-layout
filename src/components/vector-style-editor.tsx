@@ -1,6 +1,6 @@
 import * as React from "react";
 import { IVectorFeatureStyle, IBasicVectorPointStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IBasicPointCircleStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IPointIconStyle, DEFAULT_POINT_ICON_STYLE, IVectorLayerStyle, DEFAULT_STYLE_KEY } from '../api/ol-style-helpers';
-import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, Slider, RadioGroup, Radio, InputGroup, Switch } from '@blueprintjs/core';
+import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, Slider, RadioGroup, Radio, InputGroup, Switch, Button } from '@blueprintjs/core';
 import { tr } from "../api/i18n";
 import { ColorPicker } from './color-picker';
 
@@ -270,7 +270,7 @@ const FilterItem = (props: IFilterItemProps) => {
     }
     return <div>
         {isDefault ? <strong>Default Style</strong> : <input type="text" value={localFilter} />}
-        <button onClick={onToggle}>{isStyleEditorOpen ? "Hide" : "Show"}</button>
+        <Button onClick={onToggle}>{isStyleEditorOpen ? "Hide" : "Show"}</Button>
         {isStyleEditorOpen && <VectorStyleEditor style={featureStyle}
             onChange={onInnerStyleChanged}
             enableLine={props.enableLine}

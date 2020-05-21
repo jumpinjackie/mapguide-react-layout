@@ -13,6 +13,7 @@ import { MAP_MARKER_ICON } from '../constants/assets';
 import { rad2deg, deg2rad } from '../utils/number';
 import Geometry from 'ol/geom/Geometry';
 import { Expression } from 'expr-eval';
+import { strReplaceAll } from '../utils/string';
 const Parser = require('expr-eval').Parser;
 
 /**
@@ -384,9 +385,19 @@ export function setOLVectorLayerStyle(layer: VectorLayer, style: IVectorLayerSty
     const layerStyleFunc = function (feature: Feature<Geometry>) {
         const sset: OLStyleMapSet = this;
         const gt = feature.getGeometry().getType();
+        const vals = feature.getProperties();
+        //UGLY: We have no guarantee that the properties in question will not have
+        //spaces in them (that will break evaluation), so force the matter by replacing
+        //spaces with underscores. What this means is if we find a property named "OFFICE TYPE", it
+        //will be converted to "OFFICE_TYPE"
+        const keys = Object.keys(vals);
+        const cvals: any = {};
+        for (const k of keys) {
+            cvals[strReplaceAll(k, " ", "_")] = vals[k];
+        }
         for (const filter in exprs) {
             // Does this feature match an expression?
-            if (exprs[filter].evaluate<boolean>(filter)) {
+            if (exprs[filter].evaluate<boolean>(cvals)) {
                 //Use its corresponding style
                 return (sset[filter] as any)[gt];
             }

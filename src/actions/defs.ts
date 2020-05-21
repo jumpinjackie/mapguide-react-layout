@@ -116,7 +116,8 @@ export enum GenericSubjectLayerType {
     CSV = "CSV",
     KML = "KML",
     GeoJSON = "GeoJSON",
-    GeoJSON_Inline = "GeoJSON_Inline"
+    GeoJSON_Inline = "GeoJSON_Inline",
+    CustomVector = "CustomVector"
 }
 
 /**
@@ -209,6 +210,10 @@ export interface IGenericSubjectMapLayer {
     vectorStyle?: IVectorFeatureStyle;
     attributions?: string[];
     popupTemplate?: ISelectedFeaturePopupTemplateConfiguration;
+    /**
+     * The driver name for custom external layers
+     */
+    driverName?: string;
 }
 
 export type IInitialExternalLayer = IGenericSubjectMapLayer;

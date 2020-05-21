@@ -249,8 +249,8 @@ export function stringifyQuery(parameters: any): string {
  * @param {string} url The URL to append parameters to
  * @param {*} parameters The parameters to append
  * @param {boolean} [bOverwriteExisting=true] If true, will overwrite any existing parameters if the URL already has them
- * @param {boolean} [bConvertToUppercase=true] If true, will ensure all parameter names are uppercase
- * @param {boolean} [bDiscardExistingParams=true] If true, will discard existing query string params before appending
+ * @param {boolean} [bConvertToUppercase=false] If true, will ensure all parameter names are uppercase
+ * @param {boolean} [bDiscardExistingParams=false] If true, will discard existing query string params before appending
  * @since 0.12
  */
 export function appendParameters(url: string, parameters: any, bOverwriteExisting: boolean = true, bConvertToUppercase: boolean = false, bDiscardExistingParams: boolean = false) {

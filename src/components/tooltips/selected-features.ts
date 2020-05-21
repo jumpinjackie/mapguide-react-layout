@@ -9,7 +9,7 @@ import OverlayPositioning from 'ol/OverlayPositioning';
 import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
 import { tr } from '../../api/i18n';
-import { ILayerManager, Coordinate2D, LayerProperty } from '../../api/common';
+import { ILayerManager, Coordinate2D, LayerProperty, Dictionary } from '../../api/common';
 import { Client } from '../../api/client';
 import { parseEpsgCodeFromCRS } from '../layer-manager/wfs-capabilities-panel';
 import { ProjectionLike } from 'ol/proj';
@@ -20,6 +20,7 @@ import { strIsNullOrEmpty, extractPlaceholderTokens, strReplaceAll } from '../..
 import Layer from 'ol/layer/Layer';
 import LayerBase from "ol/layer/Base";
 import Source from 'ol/source/Source';
+import { WmsQueryAugmentation } from '../map-providers/base';
 
 export interface IQueryWmsFeaturesCallback {
     getLocale(): string | undefined;
@@ -33,6 +34,7 @@ export class SelectedFeaturesTooltip {
     private enabled: boolean;
     private isMouseOverTooltip: boolean;
     private closerEl: HTMLElement | null;
+    private wmsQueryAugs: Dictionary<WmsQueryAugmentation>;
     constructor(map: olMap) {
         this.featureTooltipElement = document.createElement("div");
         this.featureTooltipElement.addEventListener("mouseover", () => this.isMouseOverTooltip = true);
@@ -66,6 +68,9 @@ export class SelectedFeaturesTooltip {
         this.featureTooltipElement.innerHTML = "";
         this.featureTooltipElement.classList.add("tooltip-hidden");
     }
+    public attachWmsQueryAugmentations(augs: Dictionary<WmsQueryAugmentation>) {
+        this.wmsQueryAugs = augs;
+    }
     public async queryWmsFeatures(currentLayerSet: LayerSetGroupBase | undefined, layerMgr: ILayerManager, coord: Coordinate2D, resolution: number, callback: IQueryWmsFeaturesCallback) {
         let selected = 0;
         //See what WMS layers we have
@@ -89,9 +94,13 @@ export class SelectedFeaturesTooltip {
         }
         for (const pair of wmsSources) {
             const [ layer, source ] = pair;
-            const url = source.getFeatureInfoUrl(coord, resolution, this.map.getView().getProjection(), {
+            let url = source.getFeatureInfoUrl(coord, resolution, this.map.getView().getProjection(), {
                 'INFO_FORMAT': "application/json"
             });
+            //Check if we have an augmentation for this
+            if (this.wmsQueryAugs[layer.get(LayerProperty.LAYER_NAME)]) {
+                url = this.wmsQueryAugs[layer.get(LayerProperty.LAYER_NAME)](url);
+            }
             const resp = await client.getText(url);
             const json = JSON.parse(resp);
             if (json.features?.length > 0) {
@@ -131,7 +140,7 @@ export class SelectedFeaturesTooltip {
     private generateFeatureHtml(feat: Feature<Geometry>, locale?: string, popupConfig?: ISelectedFeaturePopupTemplateConfiguration) {
         let html = "";
         const title = strIsNullOrEmpty(popupConfig?.title) ? tr("SEL_FEATURE_PROPERTIES", locale) : popupConfig?.title;
-        html += "<div style='min-width: 190px'><div style='float: left; font-weight: bold; font-size: 1.3em'>" + title + "</div><a id='feat-popup-closer' href='#' style='float: right'>[x]</a><div class='clear: both'></div></div>";
+        html += "<div style='min-width: 190px'><div style='float: left; font-weight: bold; font-size: 1.3em; margin-right: 5px'>" + title + "</div><a id='feat-popup-closer' href='#' style='float: right'>[x]</a><div class='clear: both'></div></div>";
         var table = "<table style='margin-top: 25px'>";
         const f = feat.getProperties();
         let pc = 0;

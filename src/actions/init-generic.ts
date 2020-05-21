@@ -32,6 +32,7 @@ function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGenericSub
     return {
         name: name,
         displayName: map.Extension.display_name,
+        driverName: map.Extension.driver_name,
         type: st,
         sourceParams: sp,
         meta: (Object.keys(meta).length > 0 ? meta : undefined),

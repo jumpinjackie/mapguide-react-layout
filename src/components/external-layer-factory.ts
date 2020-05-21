@@ -11,7 +11,7 @@ import TileWMS from 'ol/source/TileWMS';
 import LayerBase from "ol/layer/Base";
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import { setOLVectorLayerStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE } from '../api/ol-style-helpers';
+import { setOLVectorLayerStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, DEFAULT_VECTOR_LAYER_STYLE } from '../api/ol-style-helpers';
 import { CsvFormatDriver, CSV_COLUMN_ALIASES } from '../api/layer-manager/csv-driver';
 import KML from 'ol/format/KML';
 import GeoJSON from "ol/format/GeoJSON";
@@ -42,11 +42,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                         attributions: defn.sourceParams.attributions
                     })
                 });
-                setOLVectorLayerStyle(layer, defn.vectorStyle ?? {
-                    point: DEFAULT_POINT_CIRCLE_STYLE,
-                    line: DEFAULT_LINE_STYLE,
-                    polygon: DEFAULT_POLY_STYLE
-                });
+                setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }
@@ -59,11 +55,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                         attributions: defn.sourceParams.attributions
                     })
                 });
-                setOLVectorLayerStyle(layer, defn.vectorStyle ?? {
-                    point: DEFAULT_POINT_CIRCLE_STYLE,
-                    line: DEFAULT_LINE_STYLE,
-                    polygon: DEFAULT_POLY_STYLE
-                });
+                setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }
@@ -92,11 +84,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 const layer = new VectorLayer({
                     source: vectorSource
                 });
-                setOLVectorLayerStyle(layer, defn.vectorStyle ?? {
-                    point: DEFAULT_POINT_CIRCLE_STYLE,
-                    line: DEFAULT_LINE_STYLE,
-                    polygon: DEFAULT_POLY_STYLE
-                });
+                setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }
@@ -138,11 +126,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                     throw new Error(`Could not resolve an approriate factory for the given driver: ${defn.driverName}`);
                 }
                 const layer = factory(defn.sourceParams);
-                setOLVectorLayerStyle(layer as VectorLayer, defn.vectorStyle ?? {
-                    point: DEFAULT_POINT_CIRCLE_STYLE,
-                    line: DEFAULT_LINE_STYLE,
-                    polygon: DEFAULT_POLY_STYLE
-                });
+                setOLVectorLayerStyle(layer as VectorLayer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }

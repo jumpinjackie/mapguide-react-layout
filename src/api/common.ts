@@ -18,7 +18,7 @@ import { ViewerAction, IGenericSubjectMapLayer, IInitialExternalLayer } from '..
 import { ProjectionLike } from 'ol/proj';
 import { LoadFunction } from 'ol/Image';
 import { IToolbarAppState } from './registry';
-import { IVectorFeatureStyle, IBasicPointCircleStyle, IPointIconStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle } from './ol-style-helpers';
+import { IVectorFeatureStyle, IBasicPointCircleStyle, IPointIconStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorLayerStyle } from './ol-style-helpers';
 import { IParsedFeatures } from './layer-manager/parsed-features';
 import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
@@ -1047,8 +1047,9 @@ export interface ILayerInfo {
      * The vector style for this layer. Not applicable for raster layers.
      * 
      * @since 0.13
+     * @since 0.14 Changed to IVectorLayerStyle
      */
-    vectorStyle?: IVectorFeatureStyle;
+    vectorStyle?: IVectorLayerStyle;
     /**
      * The busy worker count of this layer. If greater than 0, the layer
      * is considered to be in the process of loading
@@ -1078,8 +1079,11 @@ export interface IAddLayerFromParsedFeaturesOptions {
     /**
      * The style to use for this layer. If not specified, a default style will be assigned
      * to this layer
+     * 
+     * @since 0.13
+     * @since 0.14 changed to IVectorLayerStyle
      */
-    defaultStyle?: IVectorFeatureStyle;
+    defaultStyle?: IVectorLayerStyle;
 }
 
 /**

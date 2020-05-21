@@ -1,6 +1,6 @@
 import * as React from "react";
-import { IVectorFeatureStyle, IBasicVectorPointStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IBasicPointCircleStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IPointIconStyle, DEFAULT_POINT_ICON_STYLE } from '../api/ol-style-helpers';
-import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, Slider, RadioGroup, Radio, InputGroup, Switch } from '@blueprintjs/core';
+import { IVectorFeatureStyle, IBasicVectorPointStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IBasicPointCircleStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IPointIconStyle, DEFAULT_POINT_ICON_STYLE, IVectorLayerStyle, DEFAULT_STYLE_KEY } from '../api/ol-style-helpers';
+import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, Slider, RadioGroup, Radio, InputGroup, Switch, Button } from '@blueprintjs/core';
 import { tr } from "../api/i18n";
 import { ColorPicker } from './color-picker';
 
@@ -86,7 +86,7 @@ const PointStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBas
         onChange(style);
     };
     const onStyleTypeChange = (type: "Icon" | "Circle") => {
-        switch(type) {
+        switch (type) {
             case "Circle":
                 if (circleStyle) {
                     setCurrentStyle(circleStyle);
@@ -232,4 +232,101 @@ export const VectorStyleEditor = (props: IVectorStyleEditorProps) => {
             {enablePolygon && <Tab id="polyStyle" title={tr("VSED_TAB_POLY", locale)} panel={<PolygonStyleEditor style={polyStyle} locale={locale} onChange={onPolygonStyleChanged} />} />}
         </Tabs>
     }
+}
+
+/**
+ * Vector layer style editor props
+ * @since 0.14
+ */
+export interface IVectorLayerStyleEditorProps {
+    style: IVectorLayerStyle;
+    onChange?: (style: IVectorLayerStyle) => void;
+    enablePoint: boolean;
+    enableLine: boolean;
+    enablePolygon: boolean;
+    locale: string;
+}
+
+interface IFilterItemProps extends Omit<IVectorLayerStyleEditorProps, "onChange" | "style"> {
+    onChange: (filter: string, style: IVectorFeatureStyle) => void;
+    featureStyle: IVectorFeatureStyle;
+    filter?: string;
+    isDefault: boolean;
+    isStyleEditorOpen: boolean;
+    onToggleStyleEditor: (visible: boolean) => void;
+}
+
+const FilterItem = (props: IFilterItemProps) => {
+    const { filter, isDefault, isStyleEditorOpen, featureStyle, onChange } = props;
+    const [localFilter, setLocalFilter] = React.useState(filter ?? "");
+    React.useEffect(() => {
+        setLocalFilter(localFilter);
+    }, [filter]);
+    const onToggle = () => {
+        props.onToggleStyleEditor(!isStyleEditorOpen);
+    };
+    const onInnerStyleChanged = (style: IVectorFeatureStyle) => {
+        onChange?.(isDefault ? localFilter : "", style);
+    }
+    return <div>
+        {isDefault ? <strong>Default Style</strong> : <input type="text" value={localFilter} />}
+        <Button onClick={onToggle}>{isStyleEditorOpen ? "Hide" : "Show"}</Button>
+        {isStyleEditorOpen && <VectorStyleEditor style={featureStyle}
+            onChange={onInnerStyleChanged}
+            enableLine={props.enableLine}
+            enablePoint={props.enablePoint}
+            enablePolygon={props.enablePolygon}
+            locale={props.locale} />}
+    </div>
+}
+
+export const VectorLayerStyleEditor = (props: IVectorLayerStyleEditorProps) => {
+    const filters = Object.keys(props.style).filter(k => k != DEFAULT_STYLE_KEY);
+    const [openStyleEditors, setOpenStyleEditors] = React.useState<any>({});
+    const onFeatureStyleChanged = (index: number | string, filter: string, style: IVectorFeatureStyle) => {
+        const updatedStyle = {
+            ...props.style
+        };
+        if (index == DEFAULT_STYLE_KEY) {
+            updatedStyle.default = style;
+        } else {
+            const oldFilter = filters[index as number];
+            delete updatedStyle[oldFilter];
+            updatedStyle[filter] = style;
+        }
+        props.onChange?.(updatedStyle);
+    };
+    const onToggleStyleEditor = (index: number | string, visible: boolean) => {
+        const opEds = { ...openStyleEditors };
+        if (!visible) {
+            delete opEds[index];
+        } else {
+            opEds[index] = true;
+        }
+        setOpenStyleEditors(opEds);
+    };
+    return <div>
+        {filters.map((f, i) => <FilterItem
+            key={`filter-${i}`}
+            filter={f}
+            isDefault={false}
+            onChange={(f, s) => onFeatureStyleChanged(i, f, s)}
+            featureStyle={props.style[filters[i]]}
+            isStyleEditorOpen={typeof (openStyleEditors[i]) != 'undefined'}
+            onToggleStyleEditor={(v) => onToggleStyleEditor(i, v)}
+            locale={props.locale}
+            enableLine={props.enableLine}
+            enablePoint={props.enablePoint}
+            enablePolygon={props.enablePolygon} />)}
+        <FilterItem
+            isDefault
+            onChange={(f, s) => onFeatureStyleChanged(DEFAULT_STYLE_KEY, f, s)}
+            featureStyle={props.style.default}
+            isStyleEditorOpen={typeof (openStyleEditors[DEFAULT_STYLE_KEY]) != 'undefined'}
+            onToggleStyleEditor={(v) => onToggleStyleEditor(DEFAULT_STYLE_KEY, v)}
+            locale={props.locale}
+            enableLine={props.enableLine}
+            enablePoint={props.enablePoint}
+            enablePolygon={props.enablePolygon} />
+    </div>;
 }

@@ -15,7 +15,8 @@ import {
     setOLVectorLayerStyle,
     DEFAULT_POINT_CIRCLE_STYLE,
     DEFAULT_LINE_STYLE,
-    DEFAULT_POLY_STYLE
+    DEFAULT_POLY_STYLE,
+    DEFAULT_VECTOR_LAYER_STYLE
 } from '../../api/ol-style-helpers';
 import { ensureProjection } from '../../api/registry/projections';
 import { IAddLayerContentProps } from './add-layer';
@@ -94,11 +95,7 @@ export const AddWfsLayer = (props: IAddLayerContentProps) => {
                 if (wfsWgs84Bounds) {
                     layer.set(LayerProperty.WGS84_BBOX, wfsWgs84Bounds);
                 }
-                setOLVectorLayerStyle(layer, {
-                    point: DEFAULT_POINT_CIRCLE_STYLE,
-                    line: DEFAULT_LINE_STYLE,
-                    polygon: DEFAULT_POLY_STYLE
-                });
+                setOLVectorLayerStyle(layer, DEFAULT_VECTOR_LAYER_STYLE);
                 viewer.getLayerManager().addLayer(name, layer);
                 viewer.toastSuccess("success", tr("ADDED_LAYER", locale, { name: name }));
                 props.onLayerAdded(getLayerInfo(layer, true));

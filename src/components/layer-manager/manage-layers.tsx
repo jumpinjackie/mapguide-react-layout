@@ -4,8 +4,8 @@ import { ILayerInfo } from "../../api/common";
 import { Button, Intent, ButtonGroup, Card, Icon, Switch, NonIdealState, Slider, Collapse, Spinner } from '@blueprintjs/core';
 import { BlueprintSvgIconNames } from '../../constants';
 import { strIsNullOrEmpty } from "../../utils/string";
-import { VectorStyleEditor } from '../vector-style-editor';
-import { IVectorFeatureStyle } from '../../api/ol-style-helpers';
+import { VectorStyleEditor, VectorLayerStyleEditor } from '../vector-style-editor';
+import { IVectorFeatureStyle, IVectorLayerStyle } from '../../api/ol-style-helpers';
 
 interface IManageLayerItemProps {
     layer: ILayerInfo;
@@ -19,7 +19,7 @@ interface IManageLayerItemProps {
     onRemoveLayer: (name: string) => void;
     onMoveLayerUp: (name: string) => void;
     onMoveLayerDown: (name: string) => void;
-    onVectorStyleChanged: (name: string, style: IVectorFeatureStyle) => void;
+    onVectorStyleChanged: (name: string, style: IVectorLayerStyle) => void;
 }
 
 enum OpenPanel {
@@ -125,7 +125,7 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
         {layer.vectorStyle && <Collapse isOpen={openPanel == OpenPanel.EditVectorStyle}>
             <Card>
                 <h5 className="bp3-heading"><a href="#">{tr("VECTOR_LAYER_STYLE", locale)}</a></h5>
-                <VectorStyleEditor onChange={st => onVectorStyleChanged(layer.name, st)} locale={locale} style={layer.vectorStyle} enablePoint={true} enableLine={true} enablePolygon={true} />
+                <VectorLayerStyleEditor onChange={st => onVectorStyleChanged(layer.name, st)} locale={locale} style={layer.vectorStyle} enablePoint={true} enableLine={true} enablePolygon={true} />
             </Card>
         </Collapse>}
     </Card>;
@@ -144,7 +144,7 @@ export interface IManageLayersProps {
     onRemoveLayer: (name: string) => void;
     onMoveLayerUp: (name: string) => void;
     onMoveLayerDown: (name: string) => void;
-    onVectorStyleChanged: (name: string, style: IVectorFeatureStyle) => void;
+    onVectorStyleChanged: (name: string, style: IVectorLayerStyle) => void;
 }
 
 /**

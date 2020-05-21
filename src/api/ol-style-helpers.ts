@@ -12,12 +12,30 @@ import * as shortid from "shortid";
 import { MAP_MARKER_ICON } from '../constants/assets';
 import { rad2deg, deg2rad } from '../utils/number';
 import Geometry from 'ol/geom/Geometry';
+import { Expression } from 'expr-eval';
+import { strReplaceAll } from '../utils/string';
+const Parser = require('expr-eval').Parser;
 
 /**
  * Defines a style for a vector layer
+ */
+export interface IVectorLayerStyle {
+    /**
+     * The vector style for the given filter
+     */
+    [filter: string]: IVectorFeatureStyle;
+    /**
+     * The default vector style
+     */
+    default: IVectorFeatureStyle;
+}
+
+/**
+ * Defines a style for vector features
  * @since 0.13
  */
 export interface IVectorFeatureStyle {
+    label?: string;
     point?: IBasicVectorPointStyle;
     line?: IBasicVectorLineStyle;
     polygon?: IBasicVectorPolygonStyle;
@@ -155,6 +173,18 @@ export const DEFAULT_POLY_STYLE: IBasicVectorPolygonStyle = {
 };
 
 /**
+ * The default vector layer style
+ * @since 0.14
+ */
+export const DEFAULT_VECTOR_LAYER_STYLE = {
+    default: {
+        point: DEFAULT_POINT_CIRCLE_STYLE,
+        line: DEFAULT_LINE_STYLE,
+        polygon: DEFAULT_POLY_STYLE
+    }
+};
+
+/**
  * An OpenLayers style map
  * 
  * @export
@@ -219,7 +249,7 @@ function toBasicStroke(s: Stroke): IBasicStroke {
  * @returns {IVectorFeatureStyle}
  * @since 0.13
  */
-export function olStyleMapToVectorStyle(os: IOlStyleMap): IVectorFeatureStyle {
+function olStyleMapToVectorStyle(os: IOlStyleMap): IVectorFeatureStyle {
     const style: IVectorFeatureStyle = {};
     const pi = os.Point.getImage();
     if (pi instanceof CircleStyle) {
@@ -319,18 +349,79 @@ export function vectorStyleToStyleMap(style: IVectorFeatureStyle): IOlStyleMap {
     }
 }
 
+export const DEFAULT_STYLE_KEY = "default";
+
+export type OLStyleMapSet = {
+    [filter: string]: IOlStyleMap;
+    default: IOlStyleMap;
+}
+
+type ExprCache = {
+    [filter: string]: Expression;
+}
+
 /**
- * Sets the vector style for the given OpenLayers vector layer
+ * Sets the vector layer style for the given OpenLayers vector layer
  * 
  * @since 0.13
+ * @since 0.14 style now takes IVectorLayerStyle instead of IVectorFeatureStyle
  */
-export function setOLVectorLayerStyle(layer: VectorLayer, style: IVectorFeatureStyle) {
-    const ols = vectorStyleToStyleMap(style);
-    layer.set(LayerProperty.VECTOR_STYLE, ols);
+export function setOLVectorLayerStyle(layer: VectorLayer, style: IVectorLayerStyle) {
+    const olstyles: OLStyleMapSet = {
+        default: vectorStyleToStyleMap(style.default)
+    }
+    for (const k in style) {
+        if (k != DEFAULT_STYLE_KEY && style[k]) {
+            olstyles[k] = vectorStyleToStyleMap(style[k]);
+        }
+    }
+    layer.set(LayerProperty.VECTOR_STYLE, olstyles);
+    const filters = Object.keys(olstyles).filter(f => f != DEFAULT_STYLE_KEY);
+    const exprs: ExprCache = {};
+    const parser = new Parser();
+    for (const f of filters) {
+        exprs[f] = parser.parse(f);
+    }
     const layerStyleFunc = function (feature: Feature<Geometry>) {
+        const sset: OLStyleMapSet = this;
         const gt = feature.getGeometry().getType();
-        const st = this[gt];
-        return st;
-    }.bind(ols);
+        const vals = feature.getProperties();
+        //UGLY: We have no guarantee that the properties in question will not have
+        //spaces in them (that will break evaluation), so force the matter by replacing
+        //spaces with underscores. What this means is if we find a property named "OFFICE TYPE", it
+        //will be converted to "OFFICE_TYPE"
+        const keys = Object.keys(vals);
+        const cvals: any = {};
+        for (const k of keys) {
+            cvals[strReplaceAll(k, " ", "_")] = vals[k];
+        }
+        for (const filter in exprs) {
+            // Does this feature match an expression?
+            if (exprs[filter].evaluate<boolean>(cvals)) {
+                //Use its corresponding style
+                return (sset[filter] as any)[gt];
+            }
+        }
+        //Fallback to default
+        return (sset.default as any)[gt];
+    }.bind(olstyles);
     layer.setStyle(layerStyleFunc);
+}
+
+/**
+ * Converts an OpenLayers style map set to a vector layer style
+ *
+ * @param {OLStyleMapSet} oss
+ * @returns {IVectorLayerStyle}
+ */
+export function olStyleMapSetToVectorStyle(oss: OLStyleMapSet): IVectorLayerStyle {
+    const layerStyle: IVectorLayerStyle = {
+        default: olStyleMapToVectorStyle(oss.default)
+    };
+    for (const k in oss) {
+        if (k != DEFAULT_STYLE_KEY) {
+            layerStyle[k] = olStyleMapToVectorStyle(oss[k]);
+        }
+    }
+    return layerStyle;
 }

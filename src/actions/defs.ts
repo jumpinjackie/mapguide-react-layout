@@ -9,7 +9,7 @@ import { ActionType } from '../constants/actions';
 import { PreparedSubMenuSet } from '../api/registry/command-spec';
 import { RuntimeMap } from '../api/contracts/runtime-map';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
-import { IVectorFeatureStyle } from '../api/ol-style-helpers';
+import { IVectorFeatureStyle, IVectorLayerStyle } from '../api/ol-style-helpers';
 
 /**
  * Opens the context menu
@@ -207,7 +207,7 @@ export interface IGenericSubjectMapLayer {
     displayName?: string;
     initiallyVisible: boolean;
     selectable: boolean;
-    vectorStyle?: IVectorFeatureStyle;
+    vectorStyle?: IVectorLayerStyle;
     attributions?: string[];
     popupTemplate?: ISelectedFeaturePopupTemplateConfiguration;
     /**
@@ -666,13 +666,14 @@ export interface IMapRefreshAction {
  * An action to signal that a new external layer has been added for a given map
  * 
  * @since 0.13
+ * @since 0.14 payload.defaultStyle changed to IVectorLayerStyle
  */
 export interface IAddedLayerAction {
     type: ActionType.LAYER_ADDED,
     payload: {
         mapName: string,
         layer: ILayerInfo,
-        defaultStyle?: IVectorFeatureStyle
+        defaultStyle?: IVectorLayerStyle
     }
 }
 
@@ -745,13 +746,14 @@ export interface ISetLayerVisibilityAction {
  * Sets the vector style for the given external layer for the given map
  * 
  * @since 0.13
+ * @since 0.14 payload.style changed to IVectorLayerStyle
  */
 export interface ISetMapLayerVectorStyle {
     type: ActionType.SET_LAYER_VECTOR_STYLE,
     payload: {
         mapName: string,
         layerName: string,
-        style: IVectorFeatureStyle
+        style: IVectorLayerStyle
     }
 }
 

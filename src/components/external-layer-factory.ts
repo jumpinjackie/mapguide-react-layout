@@ -125,7 +125,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 if (!factory) {
                     throw new Error(`Could not resolve an approriate factory for the given driver: ${defn.driverName}`);
                 }
-                const layer = factory(defn.sourceParams);
+                const layer = factory(defn.sourceParams, defn.meta);
                 setOLVectorLayerStyle(layer as VectorLayer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;

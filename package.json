@@ -65,14 +65,14 @@
     "react-simple-colorpicker": "1.4.2",
     "react-splitter-layout": "^4.0.0",
     "redux": "^4.0.5",
-    "redux-logger": "^3.0.6",
+    "redux-logger": "^4.0.0",
     "redux-thunk": "^2.3.0",
     "shortid": "^2.2.15",
     "tslib": "^2.0.0",
     "url-parse": "^1.4.7"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0",
+    "@babel/core": "^7.9.6",
     "@storybook/react": "^5.3.18",
     "@storybook/addon-actions": "^5.3.18",
     "@storybook/addon-knobs": "^5.3.18",

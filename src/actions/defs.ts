@@ -202,6 +202,7 @@ export interface ISelectedFeaturePopupTemplateConfiguration {
 export interface IGenericSubjectMapLayer {
     type: GenericSubjectLayerType;
     meta: IGenericSubjectMapLayerMetadata | undefined;
+    layerOptions: any;
     sourceParams: any;
     name: string;
     displayName?: string;

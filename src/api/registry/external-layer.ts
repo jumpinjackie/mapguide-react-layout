@@ -6,7 +6,7 @@ import { IGenericSubjectMapLayerMetadata } from '../../actions/defs';
  * 
  * @since 0.14
  */
-export type ExternalLayerCreator = (data: any, meta: IGenericSubjectMapLayerMetadata | undefined) => BaseLayer;
+export type ExternalLayerCreator = (data: any, meta: IGenericSubjectMapLayerMetadata | undefined, layerOptions: any) => BaseLayer;
 
 export class ExternalLayerFactoryRegistry {
 

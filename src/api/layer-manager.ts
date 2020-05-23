@@ -2,7 +2,7 @@ import { LayerProperty, ILayerManager, ILayerInfo, IParseFeaturesFromFileOptions
 import olSourceVector from "ol/source/Vector";
 import olMap from "ol/Map";
 import olLayerBase from "ol/layer/Base";
-import { setOLVectorLayerStyle, olStyleMapSetToVectorStyle, IVectorLayerStyle, IVectorFeatureStyle, DEFAULT_VECTOR_LAYER_STYLE, OLStyleMapSet } from './ol-style-helpers';
+import { setOLVectorLayerStyle, IVectorLayerStyle, IVectorFeatureStyle, DEFAULT_VECTOR_LAYER_STYLE, OLStyleMapSet } from './ol-style-helpers';
 import olTileLayer from "ol/layer/Tile";
 import olImageLayer from "ol/layer/Image";
 import olWmsSource from "ol/source/ImageWMS";
@@ -30,7 +30,7 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
     if (layer instanceof olVectorLayer) {
         const vs: OLStyleMapSet | undefined = layer.get(LayerProperty.VECTOR_STYLE);
         if (vs) {
-            vectorStyle = olStyleMapSetToVectorStyle(vs);
+            vectorStyle = vs.toVectorLayerStyle();
         }
     }
     return {

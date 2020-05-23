@@ -1,5 +1,6 @@
 import VectorLayer from "ol/layer/Vector";
 import Style from "ol/style/Style";
+import TextStyle, { Options as TextStyleOptions } from "ol/style/Text";
 import CircleStyle from "ol/style/Circle";
 import IconStyle from "ol/style/Icon";
 import { Color, asString, asArray } from "ol/color";
@@ -109,7 +110,7 @@ export interface IVectorFeatureStyle {
  * Point circle style settings
  * @since 0.13
  */
-export interface IBasicPointCircleStyle {
+export interface IBasicPointCircleStyle extends IVectorLabelSettings {
     type: "Circle";
     fill: IBasicFill;
     radius: ExprOr<number>;
@@ -120,7 +121,7 @@ export interface IBasicPointCircleStyle {
  * Point icon style settings
  * @since 0.13
  */
-export interface IPointIconStyle {
+export interface IPointIconStyle extends IVectorLabelSettings {
     type: "Icon";
     anchor: [number, number],
     src: ExprOr<string>;
@@ -428,6 +429,129 @@ function evalFeature<T>(expr: ExprOr<T>, feat: Feature | undefined, context: Exp
     }
 }
 
+function isDynamicStroke(stroke: IBasicStroke | undefined): boolean {
+    if (!stroke) {
+        return false;
+    }
+    return isEvaluatable(stroke.alpha)
+        || isEvaluatable(stroke.color)
+        || isEvaluatable(stroke.width);
+}
+
+function isDynamicFill(fill: IBasicFill | undefined): boolean {
+    if (!fill) {
+        return false;
+    }
+    return isEvaluatable(fill.alpha)
+        || isEvaluatable(fill.color);
+}
+
+function isDynamicLabel(labelSettings: IVectorLabelSettings): boolean {
+    const { label } = labelSettings;
+    if (!label) {
+        return false;
+    }
+    return isDynamicFill(label.backgroundFill)
+        || isDynamicStroke(label.backgroundStroke)
+        || isDynamicFill(label.fill)
+        || isEvaluatable(label.font)
+        || isEvaluatable(label.maxAngle)
+        || isEvaluatable(label.offsetX)
+        || isEvaluatable(label.offsetY)
+        || isEvaluatable(label.overflow)
+        || isEvaluatable(label.padding)
+        || isEvaluatable(label.placement)
+        || isEvaluatable(label.rotateWithView)
+        || isEvaluatable(label.rotation)
+        || isEvaluatable(label.scale)
+        || isDynamicStroke(label.stroke)
+        || isEvaluatable(label.text)
+        || isEvaluatable(label.textAlign)
+        || isEvaluatable(label.textBaseline);
+}
+
+function isDynamicPointStyle(style: IBasicVectorPointStyle): boolean {
+    const apts: any = style;
+    const isBaseDynamic = isEvaluatable(apts.radius)
+        || isDynamicFill(apts.fill)
+        || isDynamicStroke(apts.stroke);
+    if (isBaseDynamic) {
+        return true;
+    }
+    return isDynamicLabel(style);
+}
+
+function isDynamicLineStyle(style: IBasicVectorLineStyle): boolean {
+    return isDynamicStroke(style)
+        || isDynamicLabel(style);
+}
+
+function isDynamicPolygonStyle(style: IBasicVectorPolygonStyle): boolean {
+    return isDynamicStroke(style.stroke)
+        || isDynamicFill(style.fill)
+        || isDynamicLabel(style);
+}
+
+function buildStroke(stroke: IBasicStroke, feat: Feature | undefined, context: ExprEvalContext | undefined): Stroke {
+    return new Stroke({
+        color: toOLColor(evalFeature(stroke.color, feat, context), evalFeature(stroke.alpha, feat, context)),
+        width: evalFeature(stroke.width, feat, context)
+    })
+}
+
+function buildFill(fill: IBasicFill, feat: Feature | undefined, context: ExprEvalContext | undefined): Fill {
+    return new Fill({
+        color: toOLColor(evalFeature(fill.color, feat, context), evalFeature(fill.alpha, feat, context))
+    });
+}
+
+function setIfNotUndefined<T, K extends keyof T>(obj: T, prop: K, value: T[K]) {
+    if (typeof(value) != 'undefined') {
+        obj[prop] = value;
+    }
+}
+
+function tryBuildTextStyle(style: IVectorLabelSettings, feat: Feature | undefined, context: ExprEvalContext | undefined): TextStyle | undefined {
+    const { label } = style;
+    if (label) {
+        const textOpts: TextStyleOptions = {};
+        setIfNotUndefined(textOpts, "font", evalFeature(label.font, feat, context));
+        setIfNotUndefined(textOpts, "maxAngle", evalFeature(label.maxAngle, feat, context));
+        setIfNotUndefined(textOpts, "offsetX", evalFeature(label.offsetX, feat, context));
+        setIfNotUndefined(textOpts, "offsetY", evalFeature(label.offsetY, feat, context));
+        setIfNotUndefined(textOpts, "overflow", evalFeature(label.overflow, feat, context));
+        setIfNotUndefined(textOpts, "placement", evalFeature(label.placement, feat, context));
+        setIfNotUndefined(textOpts, "rotateWithView", evalFeature(label.rotateWithView, feat, context));
+        setIfNotUndefined(textOpts, "rotation", evalFeature(label.rotation, feat, context));
+        setIfNotUndefined(textOpts, "scale", evalFeature(label.scale, feat, context));
+        setIfNotUndefined(textOpts, "text", evalFeature(label.text, feat, context));
+        setIfNotUndefined(textOpts, "textAlign", evalFeature(label.textAlign, feat, context));
+        setIfNotUndefined(textOpts, "textBaseline", evalFeature(label.textBaseline, feat, context));
+        const text = new TextStyle(textOpts);
+        if (label.padding) {
+            text.setPadding(label.padding);
+        }
+        if (label.fill) {
+            const f = buildFill(label.fill, feat, context);
+            text.setFill(f);
+        }
+        if (label.backgroundFill) {
+            const f = buildFill(label.backgroundFill, feat, context);
+            text.setBackgroundFill(f);
+        }
+        if (label.stroke) {
+            const s = buildStroke(label.stroke, feat, context);
+            text.setStroke(s);
+        }
+        if (label.backgroundStroke) {
+            const s = buildStroke(label.backgroundStroke, feat, context);
+            text.setBackgroundStroke(s);
+        }
+        return text;
+    }
+    return undefined;
+}
+
 function vectorStyleToStyleMap(style: IVectorFeatureStyle): IOlStyleMap | DynamicStyleMap {
     const ptStyle = style.point ?? DEFAULT_POINT_CIRCLE_STYLE;
     const lnStyle = style.line ?? DEFAULT_LINE_STYLE;
@@ -438,13 +562,8 @@ function vectorStyleToStyleMap(style: IVectorFeatureStyle): IOlStyleMap | Dynami
         if (ptStyle.type == "Circle") {
             pts.setImage(new CircleStyle({
                 radius: evalFeature(ptStyle.radius, feat, context),
-                fill: new Fill({
-                    color: toOLColor(evalFeature(ptStyle.fill.color, feat, context), evalFeature(ptStyle.fill.alpha, feat, context))
-                }),
-                stroke: new Stroke({
-                    color: toOLColor(evalFeature(ptStyle.stroke.color, feat, context), evalFeature(ptStyle.stroke.alpha, feat, context)),
-                    width: evalFeature(ptStyle.stroke.width, feat, context)
-                })
+                fill: buildFill(ptStyle.fill, feat, context),
+                stroke: buildStroke(ptStyle.stroke, feat, context)
             }));
         } else {
             pts.setImage(new IconStyle({
@@ -455,39 +574,32 @@ function vectorStyleToStyleMap(style: IVectorFeatureStyle): IOlStyleMap | Dynami
                 scale: evalFeature(ptStyle.scale, feat, context)
             }));
         }
-    
         const lns = new Style({
-            stroke: new Stroke({
-                color: toOLColor(evalFeature(lnStyle.color, feat, context), evalFeature(lnStyle.alpha, feat, context)),
-                width: evalFeature(lnStyle.width, feat, context)
-            })
+            stroke: buildStroke(lnStyle, feat, context)
         });
-    
         const pls = new Style({
-            stroke: new Stroke({
-                color: toOLColor(evalFeature(plStyle.stroke.color, feat, context), evalFeature(plStyle.stroke.alpha, feat, context)),
-                width: evalFeature(plStyle.stroke.width, feat, context)
-            }),
-            fill: new Fill({
-                color: toOLColor(evalFeature(plStyle.fill.color, feat, context), evalFeature(plStyle.fill.alpha, feat, context))
-            })
+            stroke: buildStroke(plStyle.stroke, feat, context),
+            fill: buildFill(plStyle.fill, feat, context)
         });
+
+        const ptText = tryBuildTextStyle(ptStyle, feat, context);
+        const lnText = tryBuildTextStyle(lnStyle, feat, context);
+        const plsText = tryBuildTextStyle(plStyle, feat, context);
+        if (ptText) {
+            pts.setText(ptText);
+        }
+        if (lnText) {
+            lns.setText(lnText);
+        }
+        if (plsText) {
+            pls.setText(plsText);
+        }
         return buildStyleMap(pts, lns, pls);
     }
 
-    const apts: any = ptStyle;
-    const alns: any = lnStyle;
-    const apls: any = plStyle;
-    const isDynamic = isEvaluatable(apts.radius)
-        || isEvaluatable(apts.fill?.color)
-        || isEvaluatable(apts.stroke?.color)
-        || isEvaluatable(apts.stroke?.width)
-        || isEvaluatable(apts.rotation)
-        || isEvaluatable(alns.color)
-        || isEvaluatable(alns.width)
-        || isEvaluatable(apls.fill?.color)
-        || isEvaluatable(apls.stroke?.color)
-        || isEvaluatable(apls.stroke?.width);
+    const isDynamic = isDynamicPointStyle(ptStyle)
+        || isDynamicLineStyle(lnStyle)
+        || isDynamicPolygonStyle(plStyle);
 
     if (isDynamic) {
         return builder;
@@ -503,6 +615,9 @@ export const DEFAULT_STYLE_KEY = "default";
 
 type DynamicStyleMap = (feature: Feature | undefined, context: ExprEvalContext | undefined) => IOlStyleMap;
 
+/**
+ * @since 0.14
+ */
 export class OLStyleMapSet {
     rules: {
         [filter: string]: IOlStyleMap | DynamicStyleMap;
@@ -542,20 +657,20 @@ export function setOLVectorLayerStyle(layer: VectorLayer, style: IVectorLayerSty
         //decide to go for fully dynamic styles (where any property could be an expression to evaluate)
         //such styles are not candidates for caching.
         const sset: OLStyleMapSet = this;
-        const gt = feature.getGeometry().getType();
+        const gt: any = feature.getGeometry().getType();
         const filter = exprContext.evaluateFilter(feature);
         let matchingStyle: IOlStyleMap | DynamicStyleMap;
         if (filter) {
-            //Use its corresponding style
-            matchingStyle = (sset.rules[filter] as any)[gt];
+            matchingStyle = sset.rules[filter];
         } else {
             //Fallback to default
-            matchingStyle = (sset.rules.default as any)[gt];
+            matchingStyle = sset.rules.default;
         }
         if (typeof(matchingStyle) == 'function') {
-            return matchingStyle(feature, exprContext);
+            const esm = matchingStyle(feature, exprContext);
+            return (esm as any)[gt];
         } else {
-            return matchingStyle;
+            return (matchingStyle as any)[gt];
         }
     }.bind(olstyles);
     layer.setStyle(layerStyleFunc);

@@ -14,16 +14,21 @@ function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGenericSub
     const st = map.Extension.source_type;
     const initiallyVisible = map.Extension.initially_visible ?? true;
     const sp: any = {};
+    const lo: any = {};
     const meta: any = {};
     const keys = Object.keys(map.Extension);
     let popupTemplate = map.Extension.popup_template;
     let selectable: boolean | undefined = map.Extension.is_selectable ?? true;
     for (const k of keys) {
         const spidx = k.indexOf("source_param_");
+        const loidx = k.indexOf("layer_opt_");
         const midx = k.indexOf("meta_");
         if (spidx == 0) {
             const kn = k.substring("source_param_".length);
             sp[kn] = map.Extension[k];
+        } else if (loidx == 0) {
+            const kn = k.substring("layer_opt_".length);
+            lo[kn] = map.Extension[k];
         } else if (midx == 0) {
             const kn = k.substring("meta_".length);
             meta[kn] = map.Extension[k];
@@ -34,6 +39,7 @@ function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGenericSub
         displayName: map.Extension.display_name,
         driverName: map.Extension.driver_name,
         type: st,
+        layerOptions: lo,
         sourceParams: sp,
         meta: (Object.keys(meta).length > 0 ? meta : undefined),
         initiallyVisible,

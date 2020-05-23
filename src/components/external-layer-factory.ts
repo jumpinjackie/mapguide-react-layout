@@ -37,6 +37,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
             {
                 const features = (new GeoJSON()).readFeatures(defn.sourceParams.features ?? EMPTY_GEOJSON);
                 const layer = new VectorLayer({
+                    ...defn.layerOptions,
                     source: new VectorSource({
                         features: features,
                         attributions: defn.sourceParams.attributions
@@ -49,6 +50,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
         case GenericSubjectLayerType.GeoJSON:
             {
                 const layer = new VectorLayer({
+                    ...defn.layerOptions,
                     source: new VectorSource({
                         url: defn.sourceParams.url,
                         format: new GeoJSON(),
@@ -82,6 +84,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                     attributions: defn.sourceParams.attributions
                 });
                 const layer = new VectorLayer({
+                    ...defn.layerOptions,
                     source: vectorSource
                 });
                 setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE);
@@ -91,6 +94,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
         case GenericSubjectLayerType.KML:
             {
                 const layer = new VectorLayer({
+                    ...defn.layerOptions,
                     source: new VectorSource({
                         url: defn.sourceParams.url,
                         format: new KML(),
@@ -125,7 +129,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 if (!factory) {
                     throw new Error(`Could not resolve an approriate factory for the given driver: ${defn.driverName}`);
                 }
-                const layer = factory(defn.sourceParams, defn.meta);
+                const layer = factory(defn.sourceParams, defn.meta, defn.layerOptions);
                 setOLVectorLayerStyle(layer as VectorLayer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;

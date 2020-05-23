@@ -190,6 +190,7 @@
                                     "display_name": "Medicare Offices",
                                     "source_type": "CSV",
                                     "source_param_url": "https://data.gov.au/data/dataset/70f76a9e-d450-4567-9760-290dea54229c/resource/7eb30338-768e-436c-9dde-dc7a1066c9c9/download/medicare-office-locations-as-at-9-october-19.csv",
+                                    "layer_opt_declutter": true,
                                     "meta_projection": "EPSG:4326",
                                     "initially_visible": false,
                                     "vector_layer_style": {
@@ -201,7 +202,14 @@
                                                 "src": SVC_CENTER_ICON,
                                                 "rotateWithView": false,
                                                 "rotation": 0,
-                                                "scale": 0.5
+                                                "scale": 0.5,
+                                                "label": {
+                                                    "text": {
+                                                        "expr": "SITE_NAME"
+                                                    },
+                                                    "textAlign": "left",
+                                                    "offsetX": 15
+                                                }
                                             }
                                         },
                                         "default": {
@@ -211,7 +219,14 @@
                                                 "src": MAP_MARKER_ICON,
                                                 "rotateWithView": false,
                                                 "rotation": 0,
-                                                "scale": 1
+                                                "scale": 1,
+                                                "label": {
+                                                    "text": {
+                                                        "expr": "SITE_NAME"
+                                                    },
+                                                    "textAlign": "left",
+                                                    "offsetX": 15
+                                                }
                                             }
                                         }
                                     }

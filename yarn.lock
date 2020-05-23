@@ -904,12 +904,12 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@blueprintjs/core@^3.27.0":
-  version "3.27.0"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-3.27.0.tgz#de3aab22519e86244fd7f1167f6325e36f1cf058"
-  integrity sha512-ZzwXENczeC9FnzTJ2XiDR+6YNzb68u1fj2HstKarvfrepW/C+0g4Eojo5vi2KWlNw5+RUu/MG7sZc8i7698pQw==
+"@blueprintjs/core@^3.28.0":
+  version "3.28.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-3.28.0.tgz#5fb75878a6c082905a51f3e190c97d4609feb811"
+  integrity sha512-KTnvVT1hUR8GLtJwHSe3Z9AoSG6h4PIilKmBVdGVt55hRJx/I4PiXPkFGEM1sLFr6c+IojoOgrY/4e79VZWs0A==
   dependencies:
-    "@blueprintjs/icons" "^3.17.0"
+    "@blueprintjs/icons" "^3.18.0"
     "@types/dom4" "^2.0.1"
     classnames "^2.2"
     dom4 "^2.1.5"
@@ -921,10 +921,10 @@
     resize-observer-polyfill "^1.5.1"
     tslib "~1.10.0"
 
-"@blueprintjs/icons@^3.17.0":
-  version "3.17.0"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-3.17.0.tgz#999fa458252914e111c537b5ed05fb2e12b52ce2"
-  integrity sha512-DRUIxVe0V7eeKYxKFl9bEmQvdpqmMbSUsJjKl9ACgXUQ1wksd2oaFTNLBQEToui/RAWpybWLCl39AG3rlJQeYQ==
+"@blueprintjs/icons@^3.18.0":
+  version "3.18.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-3.18.0.tgz#acf7a6915baeb0558d1bec323c0083dbae48ae51"
+  integrity sha512-emvW6AHWcilE3QoYnTs0eCkAZvpn13liTLnfajMfMVPB2/KKeYDa+TVbEqhVXWhrPanXkvJlZCVcizQvFeEYxw==
   dependencies:
     classnames "^2.2"
     tslib "~1.10.0"

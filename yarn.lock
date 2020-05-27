@@ -904,10 +904,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@blueprintjs/core@^3.28.0":
-  version "3.28.0"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-3.28.0.tgz#5fb75878a6c082905a51f3e190c97d4609feb811"
-  integrity sha512-KTnvVT1hUR8GLtJwHSe3Z9AoSG6h4PIilKmBVdGVt55hRJx/I4PiXPkFGEM1sLFr6c+IojoOgrY/4e79VZWs0A==
+"@blueprintjs/core@^3.28.1":
+  version "3.28.1"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-3.28.1.tgz#cb4056c9637b09d8b8c46bd4efe7363cdb796b8d"
+  integrity sha512-Ws4+FrtHh5U4TMaqhFW1PXajJobn2By72LOxu18q8ksY4CuyUzvo8xIOooViQdA7ZLx9pwhC6dytsYdykwRy0w==
   dependencies:
     "@blueprintjs/icons" "^3.18.0"
     "@types/dom4" "^2.0.1"

@@ -344,9 +344,11 @@ function olStyleMapToVectorStyle(os: IOlStyleMap): IVectorFeatureStyle {
     return style;
 }
 
-function toOLColor(color: string, alpha: number) {
+function toOLColor(color: string, alpha: number | undefined) {
     const c = asArray(color);
-    c[3] = (alpha / 255);
+    if (typeof(alpha) != 'undefined') {
+        c[3] = (alpha / 255);
+    }
     return c;
 }
 

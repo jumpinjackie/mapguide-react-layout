@@ -1,7 +1,7 @@
 import * as React from "react";
 import { tr } from "../api/i18n";
 import { ILayerInfo, Bounds, LayerProperty } from "../api/common";
-import { IVectorFeatureStyle } from "../api/ol-style-helpers";
+import { IVectorFeatureStyle, IVectorLayerStyle } from "../api/ol-style-helpers";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
 import { Tabs, Tab, Icon } from '@blueprintjs/core';
@@ -101,7 +101,7 @@ const AddManageLayersContainer = () => {
             dispatch(setMapLayerOpacity(activeMapName, layerName, value));
         }
     };
-    const updateVectorStyle = (layerName: string, value: IVectorFeatureStyle) => {
+    const updateVectorStyle = (layerName: string, value: IVectorLayerStyle) => {
         if (activeMapName) {
             dispatch(setMapLayerVectorStyle(activeMapName, layerName, value));
         }

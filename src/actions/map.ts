@@ -46,7 +46,7 @@ import {
 } from './defs';
 import { storeSelectionSet } from '../api/session-store';
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
-import { IVectorFeatureStyle } from '../api/ol-style-helpers';
+import { IVectorFeatureStyle, IVectorLayerStyle } from '../api/ol-style-helpers';
 import { areViewsCloseToEqual } from '../utils/viewer-state';
 
 function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeature[]): SelectedFeature[] {
@@ -585,11 +585,12 @@ export function showSelectedFeature(mapName: string, layerId: string, selectionK
  * @export
  * @param {string} mapName
  * @param {ILayerInfo} layer
- * @param {IVectorFeatureStyle} [defaultStyle]
+ * @param {IVectorLayerStyle} [defaultStyle]
  * @returns {IAddedLayerAction}
  * @since 0.13
+ * @since 0.14 defaultStyle argument changed to IVectorLayerStyle
  */
-export function mapLayerAdded(mapName: string, layer: ILayerInfo, defaultStyle?: IVectorFeatureStyle): IAddedLayerAction {
+export function mapLayerAdded(mapName: string, layer: ILayerInfo, defaultStyle?: IVectorLayerStyle): IAddedLayerAction {
     return {
         type: ActionType.LAYER_ADDED,
         payload: {
@@ -704,11 +705,12 @@ export function setMapLayerVisibility(mapName: string, layerName: string, visibl
  * @export
  * @param {string} mapName
  * @param {string} layerName
- * @param {IVectorFeatureStyle} style
+ * @param {IVectorLayerStyle} style
  * @returns {ISetMapLayerVectorStyle}
  * @since 0.13
+ * @since 0.14 style argument changed to IVectorLayerStyle
  */
-export function setMapLayerVectorStyle(mapName: string, layerName: string, style: IVectorFeatureStyle): ISetMapLayerVectorStyle {
+export function setMapLayerVectorStyle(mapName: string, layerName: string, style: IVectorLayerStyle): ISetMapLayerVectorStyle {
     return {
         type: ActionType.SET_LAYER_VECTOR_STYLE,
         payload: {

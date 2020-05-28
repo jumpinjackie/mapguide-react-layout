@@ -67,14 +67,17 @@ export class GenericMapProviderContext extends BaseMapProviderContext<IGenericMa
     }
     protected onProviderMapClick(px: [number, number]): void { }
     protected initLayerSet(nextState: IGenericMapProviderState): GenericLayerSetGroup {
-        assertIsDefined(nextState.mapName);
+        const { mapName } = nextState;
+        assertIsDefined(mapName);
         const layerSet = new GenericLayerSetGroup({
+            getImageLoaders: () => super.getImageSourceLoaders(mapName),
+            getTileLoaders: () => super.getTileSourceLoaders(mapName),
             getLocale: () => this._state.locale,
             addImageLoading: () => this._comp?.addImageLoading(),
             addImageLoaded: () => this._comp?.addImageLoaded(),
             onImageError: (e) => this.onImageError(e)
         }, nextState.subject, nextState.externalBaseLayers, nextState.locale);
-        this._layerSetGroups[nextState.mapName] = layerSet;
+        this._layerSetGroups[mapName] = layerSet;
         return layerSet;
     }
     public getProviderName(): string { return "Generic"; }

@@ -1,11 +1,12 @@
 import BaseLayer from 'ol/layer/Base';
+import { IGenericSubjectMapLayerMetadata } from '../../actions/defs';
 
 /**
  * A factory method for creating OpenLayers layers from a JSON definition
  * 
  * @since 0.14
  */
-export type ExternalLayerCreator = (data: any) => BaseLayer;
+export type ExternalLayerCreator = (data: any, meta: IGenericSubjectMapLayerMetadata | undefined, layerOptions: any) => BaseLayer;
 
 export class ExternalLayerFactoryRegistry {
 

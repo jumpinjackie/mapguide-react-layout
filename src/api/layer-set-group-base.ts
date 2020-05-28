@@ -20,8 +20,6 @@ import View from 'ol/View';
 import { IInitialExternalLayer } from '../actions/defs';
 import { createOLLayerFromSubjectDefn } from '../components/external-layer-factory';
 import Geometry from 'ol/geom/Geometry';
-import { LoadFunction as TileLoadFunction } from 'ol/Tile';
-import { LoadFunction as ImageLoadFunction } from 'ol/Image';
 import TileLayer from 'ol/layer/Tile';
 import UrlTile from 'ol/source/UrlTile';
 import { debug, warn } from '../utils';
@@ -37,12 +35,8 @@ export abstract class LayerSetGroupBase {
             order: number
         }
     };
-    private _tileLoaders: Dictionary<TileLoadFunction>;
-    private _imageLoaders: Dictionary<ImageLoadFunction>;
     constructor(protected callback: IImageLayerEvents) {
         this._customLayers = {};
-        this._tileLoaders = {};
-        this._imageLoaders = {};
         this.scratchLayer = new VectorLayer({
             source: new VectorSource()
         });
@@ -197,8 +191,9 @@ export abstract class LayerSetGroupBase {
         if (!layer.get(LayerProperty.LAYER_DISPLAY_NAME))
             layer.set(LayerProperty.LAYER_DISPLAY_NAME, name);
 
-        for (const k in this._tileLoaders) {
-            const func = this._tileLoaders[k];
+        const tileLoaders = this.callback.getTileLoaders();
+        for (const k in tileLoaders) {
+            const func = tileLoaders[k];
             const layer = this.getLayer(k);
             if (layer) {
                 if (layer instanceof TileLayer) {
@@ -214,8 +209,9 @@ export abstract class LayerSetGroupBase {
                 }*/
             }
         }
-        for (const k in this._imageLoaders) {
-            const func = this._imageLoaders[k];
+        const imageLoaders = this.callback.getImageLoaders();
+        for (const k in imageLoaders) {
+            const func = imageLoaders[k];
             const layer = this.getLayer(k);
             if (layer) {
                 if (layer instanceof ImageLayer) {
@@ -350,13 +346,5 @@ export abstract class LayerSetGroupBase {
             //const layers2 = cCurrentLayers.getArray();
             //console.log(layers2);
         }
-    }
-
-    attachTileLoaders(tileLoaders: Dictionary<TileLoadFunction>) {
-        this._tileLoaders = tileLoaders;
-    }
-
-    attachImageLoaders(imageLoaders: Dictionary<ImageLoadFunction>) {
-        this._imageLoaders = imageLoaders;
     }
 }

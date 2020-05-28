@@ -2,7 +2,7 @@ import { LayerProperty, ILayerManager, ILayerInfo, IParseFeaturesFromFileOptions
 import olSourceVector from "ol/source/Vector";
 import olMap from "ol/Map";
 import olLayerBase from "ol/layer/Base";
-import { setOLVectorLayerStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, olStyleMapToVectorStyle, IVectorFeatureStyle, IOlStyleMap } from './ol-style-helpers';
+import { setOLVectorLayerStyle, IVectorLayerStyle, IVectorFeatureStyle, DEFAULT_VECTOR_LAYER_STYLE, OLStyleMapSet } from './ol-style-helpers';
 import olTileLayer from "ol/layer/Tile";
 import olImageLayer from "ol/layer/Image";
 import olWmsSource from "ol/source/ImageWMS";
@@ -14,11 +14,9 @@ import { tr } from './i18n';
 import { IParsedFeatures } from './layer-manager/parsed-features';
 import { LayerSetGroupBase } from './layer-set-group-base';
 import { IInitialExternalLayer } from '../actions/defs';
-import Feature from 'ol/Feature';
-import Geometry from 'ol/geom/Geometry';
 
 export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInfo {
-    let vectorStyle: IVectorFeatureStyle | undefined;
+    let vectorStyle: IVectorLayerStyle | undefined;
     let ext: LayerExtensions | undefined;
     if (layer instanceof olImageLayer || layer instanceof olTileLayer) {
         const source = layer.getSource();
@@ -30,9 +28,9 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
         }
     }
     if (layer instanceof olVectorLayer) {
-        const vs: IOlStyleMap | undefined = layer.get(LayerProperty.VECTOR_STYLE);
+        const vs: OLStyleMapSet | undefined = layer.get(LayerProperty.VECTOR_STYLE);
         if (vs) {
-            vectorStyle = olStyleMapToVectorStyle(vs);
+            vectorStyle = vs.toVectorLayerStyle();
         }
     }
     return {
@@ -150,11 +148,7 @@ export class LayerManager implements ILayerManager {
                 layer.set(LayerProperty.IS_SELECTABLE, true);
                 layer.set(LayerProperty.IS_EXTERNAL, true);
                 layer.set(LayerProperty.IS_GROUP, false);
-                setOLVectorLayerStyle(layer, defaultStyle ?? {
-                    point: DEFAULT_POINT_CIRCLE_STYLE,
-                    line: DEFAULT_LINE_STYLE,
-                    polygon: DEFAULT_POLY_STYLE
-                });
+                setOLVectorLayerStyle(layer, defaultStyle ?? DEFAULT_VECTOR_LAYER_STYLE);
                 const layerInfo = that.addLayer(features.name, layer);
                 resolve(layerInfo);
             } catch (e) {

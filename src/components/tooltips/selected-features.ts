@@ -25,6 +25,7 @@ import { WmsQueryAugmentation } from '../map-providers/base';
 export interface IQueryWmsFeaturesCallback {
     getLocale(): string | undefined;
     addFeatureToHighlight(feat: Feature<Geometry> | undefined, bAppend: boolean): void;
+    getWmsRequestAugmentations(): Dictionary<WmsQueryAugmentation>;
 }
 
 export class SelectedFeaturesTooltip {

@@ -1,8 +1,10 @@
-import { RefreshMode, IExternalBaseLayer, LayerTransparencySet, Bounds, Size, GenericEvent } from './common';
+import { RefreshMode, IExternalBaseLayer, LayerTransparencySet, Bounds, Size, GenericEvent, Dictionary } from './common';
 import { Extent } from 'ol/extent';
 import View from 'ol/View';
 import Source from 'ol/source/Source';
 import LayerBase from "ol/layer/Base";
+import { LoadFunction as TileLoadFunction } from 'ol/Tile';
+import { LoadFunction as ImageLoadFunction } from 'ol/Image';
 
 export interface ILayerSetOL {
     view: View;
@@ -28,4 +30,6 @@ export interface IImageLayerEvents {
     addImageLoaded(): void;
     onImageError(e: GenericEvent): void;
     getLocale(): string | undefined;
+    getTileLoaders(): Dictionary<TileLoadFunction>;
+    getImageLoaders(): Dictionary<ImageLoadFunction>;
 }

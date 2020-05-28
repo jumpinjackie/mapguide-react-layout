@@ -368,6 +368,13 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
 
     public abstract getHookFunction(): () => IMapProviderState & IMapProviderStateExtras;
 
+    protected getTileSourceLoaders(mapName: string): Dictionary<TileLoadFunction> {
+        return this._tileSourceLoaders[mapName] ?? {};
+    }
+    protected getImageSourceLoaders(mapName: string): Dictionary<ImageLoadFunction> {
+        return this._imageSourceLoaders[mapName] ?? {};
+    }
+
     protected abstract getInitialProviderState(): Omit<TState, keyof IMapProviderState>;
     //#region IMapViewerContextCallback
     protected getMockMode(): MapGuideMockMode | undefined { return undefined; }
@@ -565,8 +572,6 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         if (!layerSet) {
             layerSet = this.initLayerSet(nextState);
             this._layerSetGroups[nextState.mapName] = layerSet;
-            layerSet.attachTileLoaders(this._tileSourceLoaders[nextState.mapName] ?? {});
-            layerSet.attachImageLoaders(this._imageSourceLoaders[nextState.mapName] ?? {});
         }
         return layerSet;
     }
@@ -606,12 +611,15 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected showSelectedVectorFeatures(features: Collection<Feature<Geometry>>, pixel: [number, number], featureToLayerMap: [Feature<Geometry>, Layer<Source>][], locale?: string) {
         this._selectTooltip?.showSelectedVectorFeatures(features, pixel, featureToLayerMap, locale);
     }
-    protected queryWmsFeatures(currentLayerSet: LayerSetGroupBase | undefined, layerMgr: ILayerManager, coord: Coordinate2D) {
-        if (this._map) {
+    protected queryWmsFeatures(mapName: string | undefined, coord: Coordinate2D) {
+        if (mapName && this._map) {
+            const activeLayerSet = this.getLayerSetGroup(mapName);
+            const layerMgr = this.getLayerManager(mapName);
             const res = this._map.getView().getResolution();
-            this._selectTooltip?.queryWmsFeatures(currentLayerSet, layerMgr, coord, res, {
+            this._selectTooltip?.queryWmsFeatures(activeLayerSet, layerMgr, coord, res, {
                 getLocale: () => this._state.locale,
-                addFeatureToHighlight: (feat, bAppend) => this.addFeatureToHighlight(feat, bAppend)
+                addFeatureToHighlight: (feat, bAppend) => this.addFeatureToHighlight(feat, bAppend),
+                getWmsRequestAugmentations: () => this._wmsQueryAugmentations[mapName] ?? {}
             });
         }
     }
@@ -670,8 +678,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         if (featureToLayerMap.length == 0) {
             this.hideSelectedVectorFeaturesTooltip();
             if (this._state.activeTool == ActiveMapTool.WmsQueryFeatures) {
-                const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
-                this.queryWmsFeatures(activeLayerSet, this.getLayerManager(), e.coordinate as Coordinate2D);
+                this.queryWmsFeatures(this._state.mapName, e.coordinate as Coordinate2D);
             } else {
                 this.onProviderMapClick(px);
             }

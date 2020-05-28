@@ -429,9 +429,12 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @protected
      */
     protected initLayerSet(nextState: IMapGuideProviderState): MgLayerSetGroup {
-        assertIsDefined(nextState.mapName);
+        const { mapName } = nextState;
+        assertIsDefined(mapName);
         assertIsDefined(this._state.map);
         const layerSet = new MgLayerSetGroup(nextState as any, {
+            getImageLoaders: () => super.getImageSourceLoaders(mapName),
+            getTileLoaders: () => super.getTileSourceLoaders(mapName),
             getMockMode: () => this.getMockMode(),
             incrementBusyWorker: () => this.incrementBusyWorker(),
             decrementBusyWorker: () => this.decrementBusyWorker(),
@@ -452,7 +455,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             openTooltipLink: (url) => this.onOpenTooltipLink(url),
             addFeatureToHighlight: (feat, bAppend) => this.addFeatureToHighlight(feat, bAppend)
         });
-        this._layerSetGroups[nextState.mapName] = layerSet;
+        this._layerSetGroups[mapName] = layerSet;
         layerSet.update(nextState.showGroups, nextState.showLayers, nextState.hideGroups, nextState.hideLayers);
         return layerSet;
     }

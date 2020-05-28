@@ -29,12 +29,6 @@ const ShareLinkToViewContainer = () => {
     const [showSession, setShowSession] = React.useState(false);
     const locale = useViewerLocale();
     const onShowSessionChanged = () => setShowSession(!showSession);
-    const onCopied = () => {
-        const v = getViewer();
-        if (v) {
-            v.toastSuccess("clipboard", tr("SHARE_LINK_COPIED", locale));
-        }
-    };
     const parsed = parseUrl(`${window.location}`);
     if (!showSession) {
         delete parsed.query.session;

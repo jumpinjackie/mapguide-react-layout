@@ -15,8 +15,6 @@ import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
 import { AppContext } from "../components/context";
 import { IElementState } from '../actions/defs';
-import { NonIdealState, Spinner, Intent, Callout } from '@blueprintjs/core';
-import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, useActiveMapBranch, useActiveMapName, useViewerFeatureTooltipsEnabled } from './hooks';
 import { getStateFromUrl, IAppUrlState, updateUrl } from './url-state';
 import { debug } from '../utils/logger';
 import { setElementStates } from '../actions/template';
@@ -24,6 +22,9 @@ import { IViewerInitCommand } from '../actions/init-command';
 import { ApplicationDefinition } from '../api/contracts/fusion';
 import Loader from 'calcite-react/Loader';
 import styled from "styled-components";
+import Alert, { AlertTitle, AlertMessage } from 'calcite-react/Alert';
+import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, useActiveMapBranch, useActiveMapName, useViewerFeatureTooltipsEnabled } from './hooks';
+import { ToastContainer } from "react-toastify";
 
 export interface SelectionOptions {
     allowHtmlValues?: boolean;
@@ -402,9 +403,10 @@ class AppInner extends React.Component<AppInnerProps, any> {
         }
         //Not showing stack as the error cases are well-defined here and we know where they
         //originate from
-        return <Callout intent={Intent.DANGER} title={tr("INIT_ERROR_TITLE", locale)} icon="error">
-            {this.renderErrorMessage(err, locale, initOptions || {})}
-        </Callout>;
+        return <Alert red showIcon>
+            <AlertTitle>{tr("INIT_ERROR_TITLE", locale)}</AlertTitle>
+            <AlertMessage>{this.renderErrorMessage(err, locale, initOptions || {})}</AlertMessage>
+        </Alert>;
     }
     render(): JSX.Element {
         const { layout, configuredLocale, error } = this.props;
@@ -448,16 +450,19 @@ const App = (props: IAppProps) => {
     const dispatch = useDispatch();
     const initLayoutAction = (cmd: IViewerInitCommand, args: IInitAppLayout) => dispatch(initLayout(cmd, args));
     const setElementVisibility = (state: IElementState) => dispatch(setElementStates(state));
-    return <AppInner error={error}
-        includeStack={includeStack}
-        initOptions={initOptions}
-        featureTooltipsEnabled={ftEnabled}
-        configuredLocale={configuredLocale}
-        map={map}
-        activeMapName={activeMapName}
-        initLayout={initLayoutAction}
-        setElementVisibility={setElementVisibility}
-        {...props} />;
+    return <>
+        <AppInner error={error}
+            includeStack={includeStack}
+            initOptions={initOptions}
+            featureTooltipsEnabled={ftEnabled}
+            configuredLocale={configuredLocale}
+            map={map}
+            activeMapName={activeMapName}
+            initLayout={initLayoutAction}
+            setElementVisibility={setElementVisibility}
+            {...props} />
+        <ToastContainer />
+    </>;
 }
 
 export default App;

@@ -40,7 +40,6 @@ import { assertIsDefined } from '../../utils/assert';
 import { info, debug } from '../../utils/logger';
 import { setCurrentView, setViewRotation, mapResized, setMouseCoordinates, setBusyCount, setViewRotationEnabled, setActiveTool, mapLayerAdded, externalLayersReady } from '../../actions/map';
 import { IBasicPointCircleStyle, DEFAULT_POINT_CIRCLE_STYLE, IPointIconStyle, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, DEFAULT_LINE_STYLE, IBasicVectorPolygonStyle, DEFAULT_POLY_STYLE } from '../../api/ol-style-helpers';
-import { Toaster, Intent } from '@blueprintjs/core';
 import { IOLFactory, OLFactory } from '../../api/ol-factory';
 import { ISubscriberProps } from '../../containers/subscriber';
 import isMobile from "ismobilejs";
@@ -52,6 +51,7 @@ import { QueryMapFeaturesResponse, setViewer, getViewer, Client } from '../..';
 import { useDispatch } from 'react-redux';
 import { LoadFunction as TileLoadFunction } from 'ol/Tile';
 import { LoadFunction as ImageLoadFunction } from 'ol/Image';
+import { notify } from 'calcite-react/Toaster';
 
 export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4));
@@ -161,7 +161,6 @@ export interface IMapProviderContext extends IMapViewer {
     decrementBusyWorker(): void;
     attachToComponent(el: HTMLElement, comp: IViewerComponent): void;
     detachFromComponent(): void;
-    setToasterRef(ref: React.RefObject<Toaster>): void;
     setProviderState(nextState: IMapProviderState): void;
     onKeyDown(e: GenericEvent): void;
     hideAllPopups(): void;
@@ -171,7 +170,6 @@ export interface IMapProviderContext extends IMapViewer {
 export type WmsQueryAugmentation = (getFeatureInfoUrl: string) => string;
 
 export abstract class BaseMapProviderContext<TState extends IMapProviderState, TLayerSetGroup extends LayerSetGroupBase> implements IMapProviderContext {
-    private _toasterRef: React.RefObject<Toaster> | undefined;
     private _tileSourceLoaders: Dictionary<Dictionary<TileLoadFunction>>;
     private _imageSourceLoaders: Dictionary<Dictionary<ImageLoadFunction>>;
     private _wmsQueryAugmentations: Dictionary<Dictionary<WmsQueryAugmentation>>;
@@ -319,20 +317,17 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     setViewRotationEnabled(enabled: boolean): void {
         this._comp?.onDispatch(setViewRotationEnabled(enabled));
     }
-    toastSuccess(iconName: string, message: string | JSX.Element): string | undefined {
-        return this._toasterRef?.current?.show({ icon: (iconName as any), message: message, intent: Intent.SUCCESS });
+    toastSuccess(message: string | JSX.Element) {
+        notify(message, { type: 'success', position: "top-center", showIcon: true });
     }
-    toastWarning(iconName: string, message: string | JSX.Element): string | undefined {
-        return this._toasterRef?.current?.show({ icon: (iconName as any), message: message, intent: Intent.WARNING });
+    toastWarning(message: string | JSX.Element) {
+        notify(message, { type: 'warning', position: "top-center", showIcon: true });
     }
-    toastError(iconName: string, message: string | JSX.Element): string | undefined {
-        return this._toasterRef?.current?.show({ icon: (iconName as any), message: message, intent: Intent.DANGER });
+    toastError(message: string | JSX.Element) {
+        notify(message, { type: 'error', position: "top-center", showIcon: true });
     }
-    toastPrimary(iconName: string, message: string | JSX.Element): string | undefined {
-        return this._toasterRef?.current?.show({ icon: (iconName as any), message: message, intent: Intent.PRIMARY });
-    }
-    dismissToast(key: string): void {
-        this._toasterRef?.current?.dismiss(key);
+    toastPrimary(message: string | JSX.Element) {
+        notify(message, { type: 'info', position: "top-center", showIcon: true });
     }
     addImageLoading(): void {
         this._comp?.addImageLoading();
@@ -729,9 +724,6 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      * @memberof BaseMapProviderContext
      */
     protected onBeforeAttachingLayerSetGroup(layerSetGroup: TLayerSetGroup): void { }
-    public setToasterRef(ref: React.RefObject<Toaster>) {
-        this._toasterRef = ref;
-    }
     public abstract setProviderState(nextState: TState): void;
 
     public onKeyDown(e: GenericEvent) {

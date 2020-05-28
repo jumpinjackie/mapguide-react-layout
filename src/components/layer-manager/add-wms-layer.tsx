@@ -92,7 +92,7 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
             }
 
             viewer.getLayerManager().addLayer(name, layer);
-            viewer.toastSuccess("success", tr("ADDED_LAYER", locale, { name: name }));
+            viewer.toastSuccess(tr("ADDED_LAYER", locale, { name: name }));
             props.onLayerAdded(getLayerInfo(layer, true));
         }
     };

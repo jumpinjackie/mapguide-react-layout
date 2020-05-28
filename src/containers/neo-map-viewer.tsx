@@ -1,32 +1,17 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { IMapProviderContext, IViewerComponent, IMapProviderState, useViewerSideEffects, IMapProviderStateExtras } from '../components/map-providers/base';
+import { IMapProviderContext, IViewerComponent, useViewerSideEffects } from '../components/map-providers/base';
 import { CURSOR_DIGITIZE_POINT, CURSOR_DIGITIZE_LINE, CURSOR_DIGITIZE_LINESTRING, CURSOR_DIGITIZE_RECT, CURSOR_DIGITIZE_POLYGON, CURSOR_DIGITIZE_CIRCLE, CURSOR_GRABBING, CURSOR_GRAB, CURSOR_ZOOM_IN } from '../constants/assets';
 import { MapLoadIndicator } from '../components/map-load-indicator';
-import { ActiveMapTool, MapLoadIndicatorPositioning, GenericEvent, ReduxDispatch, RefreshMode, ILayerInfo, ClientKind } from '../api/common';
+import { ActiveMapTool, MapLoadIndicatorPositioning, GenericEvent, ReduxDispatch, ClientKind } from '../api/common';
 import { MapProviderContext } from '../components/map-providers/context';
-import { useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useViewerPointSelectionBuffer, useViewerSelectionColor, useViewerSelectionImageFormat, useConfiguredManualFeatureTooltips, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useViewerFeatureTooltipsEnabled, useActiveMapLayers, useActiveMapInitialExternalLayers } from './hooks';
-import { Toaster, Position } from '@blueprintjs/core';
-import { IMapGuideProviderState, isMapGuideProviderState } from '../components/map-providers/mapguide';
-import { getActiveSelectedFeatureXml } from '../api/builders/deArrayify';
-import { STR_EMPTY } from '../utils/string';
+import { useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor } from './hooks';
+import { isMapGuideProviderState } from '../components/map-providers/mapguide';
 import { tr } from '../api/i18n';
 import { useDispatch } from 'react-redux';
-import { debug } from '../utils/logger';
-import { setViewer, getViewer } from '../api/runtime';
-import { Client } from '../api/client';
-
 import "ol/ol.css";
-import { useActiveMapSelectableLayerNames, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapHideLayers, useActiveMapActiveSelectedFeature, useActiveMapState, useActiveMapSessionId } from './hooks-mapguide';
-import { useActiveMapSubjectLayer } from './hooks-generic';
-import { IGenericMapProviderState } from '../components/map-providers/generic';
-import { LayerManager } from '../api/layer-manager';
-import { mapLayerAdded, externalLayersReady } from '../actions/map';
-import { IInitialExternalLayer } from '../actions/defs';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { ISubscriberProps, Subscriber } from './subscriber';
-
-
 
 interface ICoreMapViewerProps {
     context: IMapProviderContext;
@@ -202,7 +187,6 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
 
 export const MapViewer = () => {
     const context = React.useContext(MapProviderContext);
-    const toasterRef = React.useRef<Toaster>(null);
     const loadIndicatorPositioning = useConfiguredLoadIndicatorPositioning();
     const loadIndicatorColor = useConfiguredLoadIndicatorColor();
     const dispatch = useDispatch();
@@ -224,14 +208,11 @@ export const MapViewer = () => {
         agentKind = nextState.agentKind;
         selection = nextState.selection;
     }
-    context.setToasterRef(toasterRef);
     context.setProviderState(nextState);
     useViewerSideEffects(context, mapName, layers, initialExternalLayers, agentUri, agentKind, selection);
 
     if (nextState.isReady) {
         return <>
-            {/* HACK: usePortal=false to workaround what I think is: https://github.com/palantir/blueprint/issues/3248 */}
-            <Toaster usePortal={false} position={Position.TOP} ref={toasterRef} />
             <CoreMapViewer context={context}
                 onDispatch={dispatch}
                 backgroundColor={bgColor}

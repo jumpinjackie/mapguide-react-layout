@@ -408,7 +408,7 @@ class ExprEvalContext {
         const cvals = this.cleanValues(feat);
         for (const filter in this.filterCache) {
             // Does this feature match an expression?
-            if (this.filterCache[filter].evaluate<boolean>(cvals)) {
+            if (this.filterCache[filter].evaluate(cvals)) {
                 return filter;
             }
         }

@@ -1,14 +1,19 @@
 import * as React from "react";
 import { tr } from "../api/i18n";
 import * as olProj from "ol/proj";
-import { Callout, Intent, Card } from '@blueprintjs/core';
 import { useViewerLocale, useCurrentMouseCoordinates } from './hooks';
 import { useActiveMapProjection } from './hooks-mapguide';
+import Panel, { PanelTitle, PanelText } from 'calcite-react/Panel';
+import styled from 'styled-components';
+import Alert, { AlertTitle, AlertMessage } from 'calcite-react/Alert';
 
 export interface ICoordinateTrackerContainerProps {
     projections: string[];
 }
 
+const CoordinateTrackerPanel = styled(Panel)`
+    margin-bottom: 10px;
+`;
 
 const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerProps) => {
     const { projections } = props;
@@ -28,17 +33,20 @@ const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerProps) => 
 
                     }
                 }
-                return <Card style={{ marginBottom: 10 }}>
-                    <h5 className="bp3-heading"><a href="#">{p}</a></h5>
-                    <p><strong>X:</strong> {x}</p>
-                    <p><strong>Y:</strong> {y}</p>
-                </Card>;
+                return <CoordinateTrackerPanel>
+                    <PanelTitle>{p}</PanelTitle>
+                    <PanelText>
+                        <p><strong>X:</strong> {x}</p>
+                        <p><strong>Y:</strong> {y}</p>
+                    </PanelText>
+                </CoordinateTrackerPanel>;
             })}
         </div>;
     } else {
-        return <Callout intent={Intent.DANGER} title={tr("ERROR", locale)} icon="error">
-            {tr("COORDTRACKER_NO_PROJECTIONS", locale)}
-        </Callout>;
+        return <Alert red showIcon>
+            <AlertTitle>{tr("ERROR", locale)}</AlertTitle>
+            <AlertMessage>{tr("COORDTRACKER_NO_PROJECTIONS", locale)}</AlertMessage>
+        </Alert>;
     }
 }
 

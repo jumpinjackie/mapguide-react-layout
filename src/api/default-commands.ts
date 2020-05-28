@@ -354,15 +354,12 @@ export function initDefaultCommands() {
                         rtMap.Extents.UpperRightCoordinate.Y
                     ];
                     if (fact.extentContainsXY(extents, testCoord[0], testCoord[1])) {
-                        viewer.toastSuccess("geolocation", tr("GEOLOCATION_SUCCESS", locale));
-                        //getTopToaster().show({ icon: "geolocation", message: tr("GEOLOCATION_SUCCESS", locale), intent: Intent.SUCCESS });
+                        viewer.toastSuccess(tr("GEOLOCATION_SUCCESS", locale));
                     } else {
-                        viewer.toastWarning("warning-sign", tr("GEOLOCATION_WARN_OUTSIDE_MAP", locale));
-                        //getTopToaster().show({ icon: "warning-sign", message: tr("GEOLOCATION_WARN_OUTSIDE_MAP", locale), intent: Intent.WARNING });
+                        viewer.toastWarning(tr("GEOLOCATION_WARN_OUTSIDE_MAP", locale));
                     }
                 }, err => {
-                    viewer.toastError("error", tr("GEOLOCATION_ERROR", locale, { message: err.message, code: err.code }));
-                    //getTopToaster().show({ icon: "error", message: tr("GEOLOCATION_ERROR", locale, { message: err.message, code: err.code }), intent: Intent.DANGER });
+                    viewer.toastError(tr("GEOLOCATION_ERROR", locale, { message: err.message, code: err.code }));
                 }, geoOptions);
             }
         }

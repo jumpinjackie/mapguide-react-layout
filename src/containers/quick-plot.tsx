@@ -122,7 +122,7 @@ function toggleMapCapturerLayer(locale: string,
                 //is active
                 setViewRotationEnabled(false);
                 setViewRotation(0);
-                viewer.toastPrimary("info-sign", tr("QUICKPLOT_BOX_INFO", locale));
+                viewer.toastPrimary(tr("QUICKPLOT_BOX_INFO", locale));
             } else {
                 activeCapturer.deactivate();
                 setViewRotationEnabled(true);

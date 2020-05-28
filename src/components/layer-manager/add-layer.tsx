@@ -132,7 +132,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
                     projection: layerProj
                 });
                 setIsAddingLayer(false);
-                viewer.toastSuccess("success", tr("ADDED_LAYER", props.locale, { name: layer.name }));
+                viewer.toastSuccess(tr("ADDED_LAYER", props.locale, { name: layer.name }));
                 setAddLayerError(undefined);
                 setLoadedFile(undefined);
                 setAddLayerName(undefined);
@@ -140,7 +140,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
             } catch (e) {
                 setAddLayerError(e);
                 if (!strIsNullOrEmpty(e?.message)) {
-                    viewer.toastError("error", e.message);
+                    viewer.toastError(e.message);
                 }
             }
             setIsAddingLayer(false);

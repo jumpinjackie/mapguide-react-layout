@@ -21,18 +21,6 @@ declare module "*.gif";
 
 declare module "papaparse";
 
-declare module "expr-eval" {
-    export class Parser {
-        constructor();
-        parse(expr: string): Expression;
-        static evaluate<T>(expr: string, arg: any): T;
-    }
-
-    export interface Expression {
-        evaluate<T>(args: any): T;
-    }
-}
-
 declare module "react-splitter-layout" {
     import * as React from "react";
 
@@ -49,6 +37,55 @@ declare module "react-splitter-layout" {
     export default class SplitterLayout extends React.Component<ISplitterLayoutProps, any> {
 
     }
+}
+
+declare module "calcite-react/Alert" {
+    import * as React from "react";
+    export type AlertProps = {
+        showIcon?: boolean;
+        icon?: React.ReactNode;
+        blue?: boolean;
+        green?: boolean;
+        yellow?: boolean;
+        red?: boolean;
+        full?: boolean;
+        showCloseLabel?: boolean;
+        closeLabel?: React.ReactNode;
+        onClose?: () => void;
+    }
+    export default class Alert extends React.Component<AlertProps> {
+
+    }
+    export class AlertTitle extends React.Component {}
+    export class AlertMessage extends React.Component {}
+}
+
+declare module "calcite-react/Toaster" {
+    export type NotifyArgs = {
+        type?: "default" | "success" | "info" | "warning" | "error";
+        position?: "top-left" | "top-center" | "top-right" | "bottom-right" | "bottom-center" | "bottom-left";
+        showProgress?: boolean;
+        showIcon?: boolean;
+        toastId?: string;
+        autoClose?: boolean | number;
+    }
+    export function notify(content: React.ReactNode, args?: NotifyArgs): void;
+}
+
+declare module "calcite-react/Panel" {
+    export class PanelTitle extends React.Component {}
+    export class PanelText extends React.Component {}
+    export type PanelProps = {
+        noBorder?: boolean;
+        noPadding?: boolean;
+        dark?: boolean;
+        black?: boolean;
+        white?: boolean;
+        lightBlue?: boolean;
+        blue?: boolean;
+        darkBlue?: boolean;
+    };
+    export default class Panel extends React.Component<PanelProps> {}
 }
 
 declare module "calcite-react/CopyToClipboard" {

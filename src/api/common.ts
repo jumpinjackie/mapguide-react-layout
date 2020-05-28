@@ -876,12 +876,30 @@ export interface IMapViewer {
      * @memberof IMapViewer
      */
     screenToMapUnits(x: number, y: number): [number, number];
-
-    toastSuccess(icon: string, message: string | JSX.Element): string | undefined;
-    toastWarning(icon: string, message: string | JSX.Element): string | undefined;
-    toastError(icon: string, message: string | JSX.Element): string | undefined;
-    toastPrimary(icon: string, message: string | JSX.Element): string | undefined;
-    dismissToast(key: string): void;
+    /**
+     * 
+     * @param message 
+     * @since 0.14 removed icon argument and return type is now void
+     */
+    toastSuccess(message: string | JSX.Element): void;
+    /**
+     * 
+     * @param message 
+     * @since 0.14 removed icon argument and return type is now void
+     */
+    toastWarning(message: string | JSX.Element): void;
+    /**
+     * 
+     * @param message 
+     * @since 0.14 removed icon argument and return type is now void
+     */
+    toastError(message: string | JSX.Element): void;
+    /**
+     * 
+     * @param message 
+     * @since 0.14 removed icon argument and return type is now void
+     */
+    toastPrimary(message: string | JSX.Element): void;
     updateSize(): void;
 
     /**

@@ -444,28 +444,16 @@ class FusionWidgetApiShim {
         this.parent.Refresh();
     }
     info(msg: string): void { //Map MessageBar
-        const viewer = getViewer();
-        if (viewer) {
-            this._activeToast = viewer.toastPrimary("info-sign", <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />);
-        }
+        getViewer()?.toastPrimary(<div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />);
     }
     warn(msg: string): void { //Map MessageBar
-        const viewer = getViewer();
-        if (viewer) {
-            this._activeToast = viewer.toastPrimary("warning-sign", <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />);
-        }
+        getViewer()?.toastWarning(<div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />);
     }
     error(msg: string): void { //Map MessageBar
-        const viewer = getViewer();
-        if (viewer) {
-            this._activeToast = viewer.toastPrimary("error", <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />);
-        }
+        getViewer()?.toastError(<div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />);
     }
     clear(): void { //Map MessageBar
-        const viewer = getViewer();
-        if (viewer && this._activeToast) {
-            viewer.dismissToast(this._activeToast);
-        }
+        warn("Called un-implemented clear() method");
     }
     get mapMessagePrompt(): boolean { //Redline
         return isRedlineMessagePromptEnabled();

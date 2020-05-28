@@ -97,7 +97,7 @@ export const AddWfsLayer = (props: IAddLayerContentProps) => {
                 }
                 setOLVectorLayerStyle(layer, DEFAULT_VECTOR_LAYER_STYLE);
                 viewer.getLayerManager().addLayer(name, layer);
-                viewer.toastSuccess("success", tr("ADDED_LAYER", locale, { name: name }));
+                viewer.toastSuccess(tr("ADDED_LAYER", locale, { name: name }));
                 props.onLayerAdded(getLayerInfo(layer, true));
             });
         }

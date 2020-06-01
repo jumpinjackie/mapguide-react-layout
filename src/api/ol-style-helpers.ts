@@ -526,7 +526,10 @@ function tryBuildTextStyle(style: IVectorLabelSettings, feat: Feature | undefine
         setIfNotUndefined(textOpts, "rotateWithView", evalFeature(label.rotateWithView, feat, context));
         setIfNotUndefined(textOpts, "rotation", evalFeature(label.rotation, feat, context));
         setIfNotUndefined(textOpts, "scale", evalFeature(label.scale, feat, context));
-        setIfNotUndefined(textOpts, "text", evalFeature(label.text, feat, context));
+        const txt = evalFeature(label.text, feat, context);
+        if (typeof(txt) != 'undefined') {
+            textOpts.text = `${txt}`; //Need to stringify this
+        }
         setIfNotUndefined(textOpts, "textAlign", evalFeature(label.textAlign, feat, context));
         setIfNotUndefined(textOpts, "textBaseline", evalFeature(label.textBaseline, feat, context));
         const text = new TextStyle(textOpts);

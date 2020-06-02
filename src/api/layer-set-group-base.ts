@@ -266,7 +266,7 @@ export abstract class LayerSetGroupBase {
                 oll.setOpacity(layer.opacity);
                 oll.set(LayerProperty.BUSY_WORKER_COUNT, layer.busyWorkerCount);
                 if (oll instanceof VectorLayer && layer.vectorStyle) {
-                    setOLVectorLayerStyle(oll, layer.vectorStyle);
+                    setOLVectorLayerStyle(oll, layer.vectorStyle, layer.cluster);
                 }
             }
         }

@@ -46,8 +46,8 @@ import {
 } from './defs';
 import { storeSelectionSet } from '../api/session-store';
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
-import { IVectorFeatureStyle, IVectorLayerStyle } from '../api/ol-style-helpers';
 import { areViewsCloseToEqual } from '../utils/viewer-state';
+import { IVectorLayerStyle } from '../api/ol-style-contracts';
 
 function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeature[]): SelectedFeature[] {
     const merged: SelectedFeature[] = [];

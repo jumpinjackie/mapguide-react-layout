@@ -1,9 +1,9 @@
 import * as React from "react";
-import { isEvaluatable, IVectorFeatureStyle, IBasicVectorPointStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IBasicPointCircleStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IPointIconStyle, DEFAULT_POINT_ICON_STYLE, IVectorLayerStyle, DEFAULT_STYLE_KEY, ExprOr } from '../api/ol-style-helpers';
 import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, Slider, RadioGroup, Radio, InputGroup, Switch, Button, INumericInputProps, HTMLInputProps, ISliderProps, ISwitchProps, IInputGroupProps } from '@blueprintjs/core';
 import { tr } from "../api/i18n";
 import { ColorPicker, IColorPickerProps } from './color-picker';
-import { AssertionError } from 'ol';
+import { ExprOr, isEvaluatable, IPointIconStyle, IBasicPointCircleStyle, IBasicVectorPointStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorFeatureStyle, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IVectorLayerStyle } from '../api/ol-style-contracts';
+import { DEFAULT_STYLE_KEY } from '../api/ol-style-helpers';
 
 interface IExprEditorProps<T> {
     converter: (value: string) => ExprOr<T>;

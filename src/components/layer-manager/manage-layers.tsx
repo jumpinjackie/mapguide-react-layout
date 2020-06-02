@@ -4,8 +4,8 @@ import { ILayerInfo } from "../../api/common";
 import { Button, Intent, ButtonGroup, Card, Icon, Switch, NonIdealState, Slider, Collapse, Spinner } from '@blueprintjs/core';
 import { BlueprintSvgIconNames } from '../../constants';
 import { strIsNullOrEmpty } from "../../utils/string";
-import { VectorStyleEditor, VectorLayerStyleEditor } from '../vector-style-editor';
-import { IVectorFeatureStyle, IVectorLayerStyle } from '../../api/ol-style-helpers';
+import { IVectorLayerStyle } from '../../api/ol-style-contracts';
+import { VectorLayerStyleEditor } from '../vector-style-editor';
 
 interface IManageLayerItemProps {
     layer: ILayerInfo;

@@ -11,17 +11,12 @@ import olVectorLayer from "ol/layer/Vector";
 import GeoJSON from "ol/format/GeoJSON";
 import { FeatureUrlFunction } from "ol/featureloader";
 import { parseUrl } from '../../utils/url';
-import { 
-    setOLVectorLayerStyle,
-    DEFAULT_POINT_CIRCLE_STYLE,
-    DEFAULT_LINE_STYLE,
-    DEFAULT_POLY_STYLE,
-    DEFAULT_VECTOR_LAYER_STYLE
-} from '../../api/ol-style-helpers';
 import { ensureProjection } from '../../api/registry/projections';
 import { IAddLayerContentProps } from './add-layer';
 import { getLayerInfo } from '../../api/layer-manager';
 import { getViewer } from '../../api/runtime';
+import { setOLVectorLayerStyle } from '../../api/ol-style-helpers';
+import { DEFAULT_VECTOR_LAYER_STYLE } from '../../api/ol-style-contracts';
 
 /**
  * @hidden
@@ -95,7 +90,7 @@ export const AddWfsLayer = (props: IAddLayerContentProps) => {
                 if (wfsWgs84Bounds) {
                     layer.set(LayerProperty.WGS84_BBOX, wfsWgs84Bounds);
                 }
-                setOLVectorLayerStyle(layer, DEFAULT_VECTOR_LAYER_STYLE);
+                setOLVectorLayerStyle(layer, DEFAULT_VECTOR_LAYER_STYLE, undefined);
                 viewer.getLayerManager().addLayer(name, layer);
                 viewer.toastSuccess("success", tr("ADDED_LAYER", locale, { name: name }));
                 props.onLayerAdded(getLayerInfo(layer, true));

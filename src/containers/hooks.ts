@@ -45,7 +45,8 @@ export function useActiveMapLayers() {
         return l.name == r.name
             && l.opacity == r.opacity
             && l.visible == r.visible
-            && l.vectorStyle == r.vectorStyle;
+            && l.vectorStyle == r.vectorStyle
+            && l.cluster == r.cluster;
     }));
 }
 

@@ -21,6 +21,8 @@ import Layer from 'ol/layer/Layer';
 import LayerBase from "ol/layer/Base";
 import Source from 'ol/source/Source';
 import { WmsQueryAugmentation } from '../map-providers/base';
+import { isClusteredFeature } from '../../api/ol-style-helpers';
+import stickybits from 'stickybits';
 
 export interface IQueryWmsFeaturesCallback {
     getLocale(): string | undefined;
@@ -42,59 +44,94 @@ export interface ISelectionPopupContentOverrideProvider {
 
 function defaultPopupContentRenderer(feat: Feature<Geometry>, locale?: string, popupConfig?: ISelectedFeaturePopupTemplateConfiguration) {
     let html = "";
-    const title = strIsNullOrEmpty(popupConfig?.title) ? tr("SEL_FEATURE_PROPERTIES", locale) : popupConfig?.title;
-    html += "<div style='min-width: 190px'><div style='float: left; font-weight: bold; font-size: 1.3em; margin-right: 5px'>" + title + "</div><a id='feat-popup-closer' href='#' style='float: right'>[x]</a><div class='clear: both'></div></div>";
-    var table = "<table style='margin-top: 25px'>";
-    const f = feat.getProperties();
-    let pc = 0;
-    if (popupConfig?.propertyMappings) {
-        for (const pm of popupConfig.propertyMappings) {
-            if (pm.name == feat.getGeometryName()) {
-                continue;
-            }
-            table += "<tr>";
-            table += "<td><strong>" + pm.value + "</strong></td>";
-            table += "<td>" + f[pm.name] + "</td>";
-            table += "</tr>";
-            pc++;
-        }
-    } else {
-        for (const key in f) {
-            if (key == feat.getGeometryName()) {
-                continue;
-            }
-            table += "<tr>";
-            table += "<td><strong>" + key + "</strong></td>";
-            table += "<td>" + f[key] + "</td>";
-            table += "</tr>";
-            pc++;
-        }
+    const bClustered = isClusteredFeature(feat);
+
+    let title = popupConfig?.title ?? tr("SEL_FEATURE_PROPERTIES", locale);
+    if (bClustered) {
+        title = popupConfig?.clusteredTitle ?? tr("SEL_CLUSTER_PROPERTIES", locale);
     }
-    table += "</table>";
-    if (pc > 0) {
-        html += table;
+    html += "<div class='selected-popup-header'><div>" + title + "</div><a id='feat-popup-closer' class='closer' href='#'>[x]</a><div class='clearit'></div></div>";
+
+    if (bClustered) {
+        let table = "<table class='selected-popup-cluster-table'>";
+        const subFeatures = feat.get("features");
+        const fheadings = popupConfig?.propertyMappings
+            ? popupConfig.propertyMappings.filter(pm => pm.name != subFeatures[0].getGeometryName()).map(pm => pm.value)
+            : Object.keys(subFeatures[0].getProperties()).filter(pn => pn != subFeatures[0].getGeometryName());
+        const fprops = popupConfig?.propertyMappings
+            ? popupConfig.propertyMappings.map(pm => pm.value)
+            : Object.keys(subFeatures[0].getProperties()).filter(pn => pn != subFeatures[0].getGeometryName());
+        table += "<thead><tr>";
+        for (const heading of fheadings) {
+            table += `<th>${heading}</th>`;
+        }
+        table += "</tr></thead>";
+        table += "<tbody>"
+        for (const f of subFeatures) {
+            table += "<tr>";
+            for (const property of fprops) {
+                table += `<td>${f.get(property)}</td>`;
+            }
+            table += "</tr>";
+        }
+        table += "</tbody>";
+        table += "</table>";
+        html += `<div class='selected-popup-content-wrapper'>${table}</div>`;
     } else {
-        html += "<div style='clear: both; margin-top: 20px'>" + tr("SEL_FEATURE_PROPERTIES_NONE", locale) + "</div>";
-    }
-    if (popupConfig?.linkProperty) {
-        const { name, label, linkTarget } = popupConfig.linkProperty;
-        let linkHref: string | undefined;
-        if (typeof(name) == 'string') {
-            linkHref = encodeURI(f[name]);
+        let table = "<table class='selected-popup-single-properties-table'>";
+        table += "<tbody>";
+        const f = feat.getProperties();
+        let pc = 0;
+        if (popupConfig?.propertyMappings) {
+            for (const pm of popupConfig.propertyMappings) {
+                if (pm.name == feat.getGeometryName()) {
+                    continue;
+                }
+                table += "<tr>";
+                table += "<td class='property-name-cell'>" + pm.value + "</td>";
+                table += "<td class='property-value-cell'>" + f[pm.name] + "</td>";
+                table += "</tr>";
+                pc++;
+            }
         } else {
-            const expr = name.expression;
-            let url = expr;
-            const pBegin = name.placeholderBegin ?? "{";
-            const pEnd = name.placeholderEnd ?? "}";
-            const tokens = extractPlaceholderTokens(expr, pBegin, pEnd);
-            for (const t of tokens) {
-                const al = encodeURIComponent(f[t] ?? "");
-                url = strReplaceAll(url, `${pBegin}${t}${pEnd}`, al);
+            for (const key in f) {
+                if (key == feat.getGeometryName()) {
+                    continue;
+                }
+                table += "<tr>";
+                table += "<td class='property-name-cell'>" + key + "</td>";
+                table += "<td class='property-value-cell'>" + f[key] + "</td>";
+                table += "</tr>";
+                pc++;
             }
-            linkHref = url;
         }
-        if (!strIsNullOrEmpty(linkHref)) {
-            html += `<div style='margin-top: 20px'><a href="${linkHref}" target='${linkTarget}'>${label}</a></div>`;
+        table += "</tbody>";
+        table += "</table>";
+        if (pc > 0) {
+            html += `<div class='selected-popup-content-wrapper'>${table}</div>`;
+        } else {
+            html += "<div class='selected-popup-content-none'>" + tr("SEL_FEATURE_PROPERTIES_NONE", locale) + "</div>";
+        }
+        if (popupConfig?.linkProperty) {
+            const { name, label, linkTarget } = popupConfig.linkProperty;
+            let linkHref: string | undefined;
+            if (typeof (name) == 'string') {
+                linkHref = encodeURI(f[name]);
+            } else {
+                const expr = name.expression;
+                let url = expr;
+                const pBegin = name.placeholderBegin ?? "{";
+                const pEnd = name.placeholderEnd ?? "}";
+                const tokens = extractPlaceholderTokens(expr, pBegin, pEnd);
+                for (const t of tokens) {
+                    const al = encodeURIComponent(f[t] ?? "");
+                    url = strReplaceAll(url, `${pBegin}${t}${pEnd}`, al);
+                }
+                linkHref = url;
+            }
+            if (!strIsNullOrEmpty(linkHref)) {
+                html += `<div class='select-popup-single-link-wrapper'><a href="${linkHref}" target='${linkTarget}'>${label}</a></div>`;
+            }
         }
     }
     return html;
@@ -166,7 +203,7 @@ export class SelectedFeaturesTooltip {
             }
         }
         for (const pair of wmsSources) {
-            const [ layer, source ] = pair;
+            const [layer, source] = pair;
             let url = source.getFeatureInfoUrl(coord, resolution, this.map.getView().getProjection(), {
                 'INFO_FORMAT': "application/json"
             });
@@ -195,6 +232,7 @@ export class SelectedFeaturesTooltip {
                 callback.addFeatureToHighlight(features[0], false);
                 selected++;
                 this.featureTooltipElement.innerHTML = html;
+                stickybits(".selected-popup-cluster-table th");
                 this.closerEl = document.getElementById("feat-popup-closer");
                 this.setPopupCloseHandler();
                 if (html == "") {
@@ -250,6 +288,7 @@ export class SelectedFeaturesTooltip {
             }
             const html = this.generateFeatureHtml(layerName, f, locale, popupConf);
             this.featureTooltipElement.innerHTML = html;
+            stickybits(".selected-popup-cluster-table th");
             this.closerEl = document.getElementById("feat-popup-closer");
             this.setPopupCloseHandler();
             if (html == "") {

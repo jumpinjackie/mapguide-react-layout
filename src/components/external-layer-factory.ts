@@ -11,12 +11,15 @@ import TileWMS from 'ol/source/TileWMS';
 import LayerBase from "ol/layer/Base";
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import { setOLVectorLayerStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, DEFAULT_VECTOR_LAYER_STYLE } from '../api/ol-style-helpers';
+import ClusterSource from 'ol/source/Cluster';
 import { CsvFormatDriver, CSV_COLUMN_ALIASES } from '../api/layer-manager/csv-driver';
 import KML from 'ol/format/KML';
 import GeoJSON from "ol/format/GeoJSON";
 import { ExternalLayerFactoryRegistry } from '../api/registry/external-layer';
 import { strIsNullOrEmpty } from '../utils/string';
+import GeometryType from 'ol/geom/GeometryType';
+import { setOLVectorLayerStyle } from '../api/ol-style-helpers';
+import { DEFAULT_VECTOR_LAYER_STYLE } from '../api/ol-style-contracts';
 
 function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExternalLayer, layer: LayerBase, isExternal: boolean) {
     layer.set(LayerProperty.LAYER_NAME, defn.name);
@@ -31,33 +34,53 @@ function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExte
 
 const EMPTY_GEOJSON = { type: "FeatureCollection", features: [] as any[] };
 
+function clusterSourceIfRequired(source: VectorSource, def: IGenericSubjectMapLayer): ClusterSource | VectorSource {
+    if (def.cluster) {
+        const cluster = new ClusterSource({
+            source: source,
+            distance: def.cluster.distance,
+            geometryFunction: (feature) => {
+                const geometry = feature.getGeometry();
+                if (geometry && geometry.getType() == GeometryType.POINT) {
+                    return geometry;
+                }
+                return undefined as any;
+            }
+        });
+        return cluster;
+    }
+    return source;
+}
+
 export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IInitialExternalLayer, isExternal: boolean): LayerBase {
     switch (defn.type) {
         case GenericSubjectLayerType.GeoJSON_Inline:
             {
                 const features = (new GeoJSON()).readFeatures(defn.sourceParams.features ?? EMPTY_GEOJSON);
+                const source = new VectorSource({
+                    features: features,
+                    attributions: defn.sourceParams.attributions
+                });
                 const layer = new VectorLayer({
                     ...defn.layerOptions,
-                    source: new VectorSource({
-                        features: features,
-                        attributions: defn.sourceParams.attributions
-                    })
+                    source: clusterSourceIfRequired(source, defn)
                 });
-                setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE);
+                setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }
         case GenericSubjectLayerType.GeoJSON:
             {
+                const source = new VectorSource({
+                    url: defn.sourceParams.url,
+                    format: new GeoJSON(),
+                    attributions: defn.sourceParams.attributions
+                });
                 const layer = new VectorLayer({
                     ...defn.layerOptions,
-                    source: new VectorSource({
-                        url: defn.sourceParams.url,
-                        format: new GeoJSON(),
-                        attributions: defn.sourceParams.attributions
-                    })
+                    source: clusterSourceIfRequired(source, defn)
                 });
-                setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE);
+                setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }
@@ -85,21 +108,22 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 });
                 const layer = new VectorLayer({
                     ...defn.layerOptions,
-                    source: vectorSource
+                    source: clusterSourceIfRequired(vectorSource, defn)
                 });
-                setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE);
+                setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }
         case GenericSubjectLayerType.KML:
             {
+                const source = new VectorSource({
+                    url: defn.sourceParams.url,
+                    format: new KML(),
+                    attributions: defn.sourceParams.attributions
+                });
                 const layer = new VectorLayer({
                     ...defn.layerOptions,
-                    source: new VectorSource({
-                        url: defn.sourceParams.url,
-                        format: new KML(),
-                        attributions: defn.sourceParams.attributions
-                    })
+                    source: clusterSourceIfRequired(source, defn)
                 });
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
@@ -130,7 +154,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                     throw new Error(`Could not resolve an approriate factory for the given driver: ${defn.driverName}`);
                 }
                 const layer = factory(defn.sourceParams, defn.meta, defn.layerOptions);
-                setOLVectorLayerStyle(layer as VectorLayer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE);
+                setOLVectorLayerStyle(layer as VectorLayer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }

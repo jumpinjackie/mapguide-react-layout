@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Collapse, Button, Intent, Card } from '@blueprintjs/core';
-import { DEFAULT_COLOR } from '../api/ol-style-helpers';
 import { tr } from "../api/i18n";
 import { NBSP } from '../constants';
+import { DEFAULT_COLOR } from '../api/ol-style-contracts';
 const SimpleColorPicker = require("react-simple-colorpicker");
 
 /**

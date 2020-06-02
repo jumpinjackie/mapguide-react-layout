@@ -39,7 +39,6 @@ import { LayerSetGroupBase } from '../../api/layer-set-group-base';
 import { assertIsDefined } from '../../utils/assert';
 import { info, debug } from '../../utils/logger';
 import { setCurrentView, setViewRotation, mapResized, setMouseCoordinates, setBusyCount, setViewRotationEnabled, setActiveTool, mapLayerAdded, externalLayersReady } from '../../actions/map';
-import { IBasicPointCircleStyle, DEFAULT_POINT_CIRCLE_STYLE, IPointIconStyle, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, DEFAULT_LINE_STYLE, IBasicVectorPolygonStyle, DEFAULT_POLY_STYLE } from '../../api/ol-style-helpers';
 import { Toaster, Intent } from '@blueprintjs/core';
 import { IOLFactory, OLFactory } from '../../api/ol-factory';
 import { ISubscriberProps } from '../../containers/subscriber';
@@ -52,6 +51,7 @@ import { QueryMapFeaturesResponse, setViewer, getViewer, Client } from '../..';
 import { useDispatch } from 'react-redux';
 import { LoadFunction as TileLoadFunction } from 'ol/Tile';
 import { LoadFunction as ImageLoadFunction } from 'ol/Image';
+import { IBasicPointCircleStyle, DEFAULT_POINT_CIRCLE_STYLE, IPointIconStyle, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, DEFAULT_LINE_STYLE, IBasicVectorPolygonStyle, DEFAULT_POLY_STYLE } from '../../api/ol-style-contracts';
 
 export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4));
@@ -67,8 +67,8 @@ export function useViewerSideEffects(context: IMapProviderContext,
     const dispatch = useDispatch();
     // Side-effect to pre-load external layers. Should only happen once per map name
     React.useEffect(() => {
-        debug(`React.useEffect - Change of initial external layers for [${mapName}] (change should only happen once per mapName!)`);
         if (mapName && !layers) {
+            debug(`React.useEffect - Change of initial external layers for [${mapName}] (change should only happen once per mapName!)`);
             if (initialExternalLayers && initialExternalLayers.length > 0) {
                 debug(`React.useEffect - First-time loading of external layers for [${mapName}]`);
                 const layerManager = context.getLayerManager(mapName) as LayerManager;

@@ -2,7 +2,7 @@ import { LayerProperty, ILayerManager, ILayerInfo, IParseFeaturesFromFileOptions
 import olSourceVector from "ol/source/Vector";
 import olMap from "ol/Map";
 import olLayerBase from "ol/layer/Base";
-import { setOLVectorLayerStyle, IVectorLayerStyle, IVectorFeatureStyle, DEFAULT_VECTOR_LAYER_STYLE, OLStyleMapSet } from './ol-style-helpers';
+import { setOLVectorLayerStyle } from './ol-style-helpers';
 import olTileLayer from "ol/layer/Tile";
 import olImageLayer from "ol/layer/Image";
 import olWmsSource from "ol/source/ImageWMS";
@@ -14,9 +14,12 @@ import { tr } from './i18n';
 import { IParsedFeatures } from './layer-manager/parsed-features';
 import { LayerSetGroupBase } from './layer-set-group-base';
 import { IInitialExternalLayer } from '../actions/defs';
+import { IVectorLayerStyle, DEFAULT_VECTOR_LAYER_STYLE, IClusterSettings } from './ol-style-contracts';
+import { OLStyleMapSet } from './ol-style-map-set';
 
 export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInfo {
     let vectorStyle: IVectorLayerStyle | undefined;
+    let cs: IClusterSettings | undefined;
     let ext: LayerExtensions | undefined;
     if (layer instanceof olImageLayer || layer instanceof olTileLayer) {
         const source = layer.getSource();
@@ -31,6 +34,7 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
         const vs: OLStyleMapSet | undefined = layer.get(LayerProperty.VECTOR_STYLE);
         if (vs) {
             vectorStyle = vs.toVectorLayerStyle();
+            cs = vs.toClusterSettings();
         }
     }
     return {
@@ -43,6 +47,7 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
         isExternal: isExternal,
         extensions: ext,
         vectorStyle,
+        cluster: cs,
         busyWorkerCount: layer.get(LayerProperty.BUSY_WORKER_COUNT) ?? 0
     }
 }
@@ -148,7 +153,7 @@ export class LayerManager implements ILayerManager {
                 layer.set(LayerProperty.IS_SELECTABLE, true);
                 layer.set(LayerProperty.IS_EXTERNAL, true);
                 layer.set(LayerProperty.IS_GROUP, false);
-                setOLVectorLayerStyle(layer, defaultStyle ?? DEFAULT_VECTOR_LAYER_STYLE);
+                setOLVectorLayerStyle(layer, defaultStyle ?? DEFAULT_VECTOR_LAYER_STYLE, undefined);
                 const layerInfo = that.addLayer(features.name, layer);
                 resolve(layerInfo);
             } catch (e) {

@@ -1,7 +1,6 @@
 import * as React from "react";
 import { tr } from "../api/i18n";
 import { ILayerInfo, Bounds, LayerProperty } from "../api/common";
-import { IVectorFeatureStyle, IVectorLayerStyle } from "../api/ol-style-helpers";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
 import { Tabs, Tab, Icon } from '@blueprintjs/core';
@@ -11,6 +10,7 @@ import { transformExtent } from "ol/proj";
 import { useDispatch } from 'react-redux';
 import { mapLayerAdded, addMapLayerBusyWorker, removeMapLayerBusyWorker, removeMapLayer, setMapLayerIndex, setMapLayerVisibility, setMapLayerOpacity, setMapLayerVectorStyle } from '../actions/map';
 import { getViewer } from '../api/runtime';
+import { IVectorLayerStyle } from '../api/ol-style-contracts';
 
 /**
  * 

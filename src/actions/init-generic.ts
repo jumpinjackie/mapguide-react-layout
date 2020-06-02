@@ -6,6 +6,7 @@ import { IInitAppActionPayload, IGenericSubjectMapLayer, MapInfo, IInitialExtern
 import { ApplicationDefinition, MapConfiguration } from '../api/contracts/fusion';
 import { MgError } from '../api/error';
 import { STR_EMPTY } from '../utils/string';
+import { IClusterSettings } from '../api/ol-style-contracts';
 
 export const TYPE_SUBJECT = "SubjectLayer";
 export const TYPE_EXTERNAL = "External";
@@ -34,7 +35,7 @@ function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGenericSub
             meta[kn] = map.Extension[k];
         }
     }
-    return {
+    const sl = {
         name: name,
         displayName: map.Extension.display_name,
         driverName: map.Extension.driver_name,
@@ -47,6 +48,14 @@ function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGenericSub
         popupTemplate,
         vectorStyle: map.Extension.vector_layer_style
     } as IGenericSubjectMapLayer;
+
+    if (map.Extension.cluster) {
+        sl.cluster = {
+            distance: map.Extension.cluster.distance,
+            style: map.Extension.cluster.style
+        } as IClusterSettings;
+    }
+    return sl;
 }
 
 export class GenericViewerInitCommand extends ViewerInitCommand<IGenericSubjectMapLayer> {

@@ -9,7 +9,7 @@ import { ActionType } from '../constants/actions';
 import { PreparedSubMenuSet } from '../api/registry/command-spec';
 import { RuntimeMap } from '../api/contracts/runtime-map';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
-import { IVectorFeatureStyle, IVectorLayerStyle } from '../api/ol-style-helpers';
+import { IVectorLayerStyle, IClusterSettings } from '../api/ol-style-contracts';
 
 /**
  * Opens the context menu
@@ -177,6 +177,12 @@ export interface ISelectedFeaturePopupTemplateConfiguration {
      */
     title?: string;
     /**
+     * The popup title for a selected cluster. If not set, the default title "Cluster Properties"
+     * (string value dependent on your locale's string bundle) will be used
+     * @since 0.14
+     */
+    clusteredTitle?: string;
+    /**
      * If specified, restricts the display of feature properties only to what is
      * specified here. The value part determines the display label.
      *
@@ -209,6 +215,7 @@ export interface IGenericSubjectMapLayer {
     initiallyVisible: boolean;
     selectable: boolean;
     vectorStyle?: IVectorLayerStyle;
+    cluster?: IClusterSettings;
     attributions?: string[];
     popupTemplate?: ISelectedFeaturePopupTemplateConfiguration;
     /**

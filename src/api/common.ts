@@ -16,14 +16,13 @@ import olOverlay from "ol/Overlay";
 import { IOLFactory } from "./ol-factory";
 import { ViewerAction, IGenericSubjectMapLayer, IInitialExternalLayer } from '../actions/defs';
 import { ProjectionLike } from 'ol/proj';
-import { LoadFunction } from 'ol/Image';
 import { IToolbarAppState } from './registry';
-import { IVectorFeatureStyle, IBasicPointCircleStyle, IPointIconStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorLayerStyle } from './ol-style-helpers';
 import { IParsedFeatures } from './layer-manager/parsed-features';
 import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
 import { ISubscriberProps } from '../containers/subscriber';
 import Geometry from 'ol/geom/Geometry';
+import { IBasicPointCircleStyle, IPointIconStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorLayerStyle, IClusterSettings } from './ol-style-contracts';
 
 // Event boilerplate
 export type GenericEvent = any;
@@ -1050,6 +1049,11 @@ export interface ILayerInfo {
      * @since 0.14 Changed to IVectorLayerStyle
      */
     vectorStyle?: IVectorLayerStyle;
+    /**
+     * Cluster style settings
+     * @since 0.14
+     */
+    cluster?: IClusterSettings;
     /**
      * The busy worker count of this layer. If greater than 0, the layer
      * is considered to be in the process of loading

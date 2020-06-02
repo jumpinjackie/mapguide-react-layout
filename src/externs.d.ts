@@ -21,17 +21,7 @@ declare module "*.gif";
 
 declare module "papaparse";
 
-declare module "expr-eval" {
-    export class Parser {
-        constructor();
-        parse(expr: string): Expression;
-        static evaluate<T>(expr: string, arg: any): T;
-    }
-
-    export interface Expression {
-        evaluate<T>(args: any): T;
-    }
-}
+declare module "stickybits";
 
 declare module "react-splitter-layout" {
     import * as React from "react";

@@ -69,6 +69,7 @@
     "redux-logger": "^4.0.0",
     "redux-thunk": "^2.3.0",
     "shortid": "^2.2.15",
+    "stickybits": "3.7.7",
     "tslib": "^2.0.0",
     "url-parse": "^1.4.7"
   },

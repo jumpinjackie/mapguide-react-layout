@@ -354,6 +354,59 @@ div.InfoText {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
+.selected-popup-header {
+    min-width: 190px;
+}
+.selected-popup-header div {
+    float: left;
+    font-weight: bold;
+    font-size: 1.3em;
+    margin-right: 5px;
+}
+.selected-popup-header .closer {
+    float: right;
+}
+.selected-popup-header .clearit {
+    clear: both;
+}
+
+.selected-popup-content-wrapper {
+    clear: both;
+    margin-top: 25px;
+    max-height: 300px;
+    overflow: auto;
+}
+
+.selected-popup-cluster-table {
+    border-collapse: collapse;
+}
+
+.selected-popup-content-none {
+    clear: both;
+    margin-top: 20px;
+}
+
+.select-popup-single-link-wrapper {
+    margin-top: 20px;
+}
+
+.selected-popup-single-properties-table {
+    max-width: 400px;
+}
+
+.selected-popup-single-properties-table th,
+.selected-popup-single-properties-table td {
+    text-align: left;
+}
+
+.selected-popup-single-properties-table .property-name-cell {
+    font-weight: bold;
+}
+
+.selected-popup-single-properties-table .property-value-cell {
+    font-weight: none;
+}
+
 .tooltip-hidden {
     display: none;
 }

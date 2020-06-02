@@ -3,7 +3,6 @@ import Geometry from 'ol/geom/Geometry';
 import { Expression, Parser } from 'expr-eval';
 import { strReplaceAll } from '../utils/string';
 import { isClusteredFeature } from './ol-style-helpers';
-import { array } from '@storybook/addon-knobs';
 export class ExprEvalContext {
     private exprCache: {
         [expr: string]: Expression;

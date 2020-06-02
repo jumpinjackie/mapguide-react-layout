@@ -153,8 +153,10 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 if (!factory) {
                     throw new Error(`Could not resolve an approriate factory for the given driver: ${defn.driverName}`);
                 }
-                const layer = factory(defn.sourceParams, defn.meta, defn.layerOptions);
-                setOLVectorLayerStyle(layer as VectorLayer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
+                const layer = factory(defn.sourceParams, defn.meta, defn.layerOptions) as VectorLayer;
+                const source = clusterSourceIfRequired(layer.getSource(), defn);
+                layer.setSource(source);
+                setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }

@@ -7,7 +7,7 @@ import OverviewMap from 'ol/control/OverviewMap';
 import DragBox from 'ol/interaction/DragBox';
 import Select from 'ol/interaction/Select';
 import Draw, { GeometryFunction } from 'ol/interaction/Draw';
-import { SelectedFeaturesTooltip } from '../tooltips/selected-features';
+import { SelectedFeaturesTooltip, ISelectionPopupContentOverrideProvider, SelectionPopupContentRenderer } from '../tooltips/selected-features';
 import Feature from 'ol/Feature';
 import Polygon from 'ol/geom/Polygon';
 import Geometry from 'ol/geom/Geometry';
@@ -151,7 +151,7 @@ export interface IMapProviderStateExtras {
  * 
  * @since 0.14
  */
-export interface IMapProviderContext extends IMapViewer {
+export interface IMapProviderContext extends IMapViewer, ISelectionPopupContentOverrideProvider {
     isReady(): boolean;
     getProviderName(): string;
     isDigitizing(): boolean;
@@ -166,6 +166,7 @@ export interface IMapProviderContext extends IMapViewer {
     onKeyDown(e: GenericEvent): void;
     hideAllPopups(): void;
     getHookFunction(): () => IMapProviderState & IMapProviderStateExtras;
+    addCustomSelectionPopupRenderer(mapName: string | undefined, layerName: string | undefined, renderer: SelectionPopupContentRenderer): void;
 }
 
 export type WmsQueryAugmentation = (getFeatureInfoUrl: string) => string;
@@ -175,6 +176,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     private _tileSourceLoaders: Dictionary<Dictionary<TileLoadFunction>>;
     private _imageSourceLoaders: Dictionary<Dictionary<ImageLoadFunction>>;
     private _wmsQueryAugmentations: Dictionary<Dictionary<WmsQueryAugmentation>>;
+    private _globalCustomSelectionPopupRenderer: SelectionPopupContentRenderer | undefined;
+    private _customSelectionPopupRenderers: Dictionary<Dictionary<SelectionPopupContentRenderer>>;
     protected _state: TState;
     /**
      * Indicates if touch events are supported.
@@ -277,6 +280,42 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             this._wmsQueryAugmentations[mapName] = {};
         }
         this._wmsQueryAugmentations[mapName][layerName] = func;
+    }
+
+    public addCustomSelectionPopupRenderer(mapName: string | undefined, layerName: string | undefined, renderer: SelectionPopupContentRenderer) {
+        if (mapName && layerName) {
+            if (!this._customSelectionPopupRenderers) {
+                this._customSelectionPopupRenderers = {};
+            }
+            if (!this._customSelectionPopupRenderers[mapName]) {
+                this._customSelectionPopupRenderers[mapName] = {};
+            }
+            this._customSelectionPopupRenderers[mapName][layerName] = renderer;
+        } else {
+            this._globalCustomSelectionPopupRenderer = renderer;
+        }
+    }
+
+    public getSelectionPopupRenderer(layerName: string): SelectionPopupContentRenderer | undefined {
+        if (!this._customSelectionPopupRenderers) {
+            this._customSelectionPopupRenderers = {};
+        }
+        const { mapName } = this._state;
+        if (mapName) {
+            if (!this._customSelectionPopupRenderers[mapName]) {
+                this._customSelectionPopupRenderers[mapName] = {};
+            }
+            const r = this._customSelectionPopupRenderers[mapName][layerName];
+            if (r) {
+                return r;
+            }
+        }
+
+        if (this._globalCustomSelectionPopupRenderer) {
+            return this._globalCustomSelectionPopupRenderer;
+        }
+
+        return undefined;
     }
 
     /**
@@ -878,7 +917,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         const activeLayerSet = this.ensureAndGetLayerSetGroup(this._state);
         this.initContext(activeLayerSet, this._state.locale, this._state.overviewMapElementSelector);
         this._mouseTooltip = new MouseTrackingTooltip(this._map, this._comp.isContextMenuOpen);
-        this._selectTooltip = new SelectedFeaturesTooltip(this._map);
+        this._selectTooltip = new SelectedFeaturesTooltip(this._map, this);
         if (this._state.mapName)
             this._selectTooltip.attachWmsQueryAugmentations(this._wmsQueryAugmentations[this._state.mapName] ?? {});
 

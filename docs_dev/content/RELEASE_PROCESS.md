@@ -37,6 +37,7 @@ Release Process - Pre-release packages
 Pre-release packages should be published under the `next` tag
 
 1. Set version in `package.json` to include a pre-release suffix (eg. `-alpha.123`)
-2. Run `yarn run build:npm`
-3. `cd package`
-4. Run `npm publish --tag next`
+2. Run `yarn run build:barrels`
+3. Run `yarn run build:npm`
+4. `cd package`
+5. Run `npm publish --tag next`

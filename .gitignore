@@ -27,3 +27,4 @@ webpack_stats_dev.json
 index_frame.html
 slate_frame.html
 storybook-static
+src/index.ts

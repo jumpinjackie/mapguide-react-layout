@@ -15,7 +15,7 @@ import proj4 from "proj4";
 import { ViewerInitCommand } from './init-command';
 import { WebLayout, isInvokeURLCommand, isSearchCommand } from '../api/contracts/weblayout';
 import { ToolbarConf } from '../api/registry/command-spec';
-import { clearSessionStore, getSelectionSet } from '../api/session-store';
+import { clearSessionStore, retrieveSelectionSetFromLocalStorage } from '../api/session-store';
 import * as shortid from 'shortid';
 import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU, WEBLAYOUT_TOOLBAR } from "../constants";
 import { registerCommand } from '../api/registry/command';
@@ -372,7 +372,7 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
         if (sessionWasReused) {
             let initSelections: IRestoredSelectionSets = {};
             for (const mapName in payload.maps) {
-                const sset = await getSelectionSet(session, mapName);
+                const sset = await retrieveSelectionSetFromLocalStorage(session, mapName);
                 if (sset) {
                     initSelections[mapName] = sset;
                 }

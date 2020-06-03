@@ -25,7 +25,7 @@ function encodeKey(sessionId: string, mapName: string) {
     return `selection_${sessionId}_${mapName}`;
 }
 
-export async function storeSelectionSet(sessionId: string, mapName: string, resp: QueryMapFeaturesResponse): Promise<void> {
+export async function persistSelectionSetToLocalStorage(sessionId: string, mapName: string, resp: QueryMapFeaturesResponse): Promise<void> {
     const key = encodeKey(sessionId, mapName);
     const value = JSON.stringify(resp);
     try {
@@ -35,7 +35,7 @@ export async function storeSelectionSet(sessionId: string, mapName: string, resp
     }
 }
 
-export async function getSelectionSet(sessionId: string, mapName: string): Promise<QueryMapFeaturesResponse | undefined> {
+export async function retrieveSelectionSetFromLocalStorage(sessionId: string, mapName: string): Promise<QueryMapFeaturesResponse | undefined> {
     const key = encodeKey(sessionId, mapName);
     const content = window.localStorage.getItem(key);
     if (content) {

@@ -44,7 +44,7 @@ import {
     IAddMapLayerBusyWorkerAction,
     IRemoveMapLayerBusyWorkerAction
 } from './defs';
-import { storeSelectionSet } from '../api/session-store';
+import { persistSelectionSetToLocalStorage } from '../api/session-store';
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
 import { areViewsCloseToEqual } from '../utils/viewer-state';
 import { IVectorLayerStyle } from '../api/ol-style-contracts';
@@ -217,12 +217,12 @@ export function queryMapFeatures(mapName: string, opts: QueryMapFeatureActionOpt
                             persist: 1,
                             featurefilter: mergedXml
                         }).then(() => {
-                            storeSelectionSet(map.SessionId, mapName, combined); // set and forget
+                            persistSelectionSetToLocalStorage(map.SessionId, mapName, combined); // set and forget
                             dispatch(setSelection(mapName, combined));
                             success(combined);
                         });
                     } else {
-                        storeSelectionSet(map.SessionId, mapName, res); // set and forget
+                        persistSelectionSetToLocalStorage(map.SessionId, mapName, res); // set and forget
                         dispatch(setSelection(mapName, res));
                         success(res);
                     }

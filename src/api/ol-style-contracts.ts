@@ -18,6 +18,14 @@ export interface IVectorLayerStyle {
 }
 
 /**
+ * @since 0.14
+ */
+export enum ClusterClickAction {
+    ZoomToClusterExtents = "ZoomToClusterExtents",
+    ShowPopup = "ShowPopup"
+}
+
+/**
  * Point cluster settings
  * 
  * @since 0.14
@@ -27,6 +35,10 @@ export interface IClusterSettings {
      * The clustering distance
      */
     distance: number;
+    /**
+     * What happens if this cluster is clicked
+     */
+    onClick: ClusterClickAction;
     /**
      * The style to use for point clusters
      */

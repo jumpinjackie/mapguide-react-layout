@@ -51,8 +51,7 @@ function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGenericSub
 
     if (map.Extension.cluster) {
         sl.cluster = {
-            distance: map.Extension.cluster.distance,
-            style: map.Extension.cluster.style
+            ...map.Extension.cluster
         } as IClusterSettings;
     }
     return sl;

@@ -2,7 +2,7 @@ import { DEFAULT_STYLE_KEY, isClusteredFeature } from './ol-style-helpers';
 import { ExprEvalContext } from './expr-eval-context';
 import Feature from 'ol/Feature';
 import Geometry from 'ol/geom/Geometry';
-import { DynamicStyleMap, IOlStyleMap, IVectorLayerStyle, IVectorFeatureStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IBasicStroke, isEvaluatable, IBasicFill, IVectorLabelSettings, IBasicVectorPointStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IClusterSettings } from './ol-style-contracts';
+import { DynamicStyleMap, IOlStyleMap, IVectorLayerStyle, IVectorFeatureStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IBasicStroke, isEvaluatable, IBasicFill, IVectorLabelSettings, IBasicVectorPointStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IClusterSettings, ClusterClickAction } from './ol-style-contracts';
 import Style from 'ol/style/Style';
 import CircleStyle from 'ol/style/Circle';
 import { deg2rad } from '..';
@@ -199,6 +199,9 @@ export class OLStyleMapSet {
     }
     public toClusterSettings(): IClusterSettings | undefined {
         return this.clusterStyleDef;
+    }
+    public getClusterClickAction(): ClusterClickAction | undefined {
+        return this.clusterStyleDef?.onClick;
     }
     public evaluateStyle(feature: Feature<Geometry>) {
         try {

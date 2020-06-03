@@ -21,7 +21,7 @@ import Layer from 'ol/layer/Layer';
 import LayerBase from "ol/layer/Base";
 import Source from 'ol/source/Source';
 import { WmsQueryAugmentation } from '../map-providers/base';
-import { isClusteredFeature } from '../../api/ol-style-helpers';
+import { isClusteredFeature, getClusterSubFeatures } from '../../api/ol-style-helpers';
 import stickybits from 'stickybits';
 
 export interface IQueryWmsFeaturesCallback {
@@ -47,14 +47,13 @@ function defaultPopupContentRenderer(feat: Feature<Geometry>, locale?: string, p
     const bClustered = isClusteredFeature(feat);
 
     let title = popupConfig?.title ?? tr("SEL_FEATURE_PROPERTIES", locale);
-    if (bClustered) {
+    if (bClustered && getClusterSubFeatures(feat).length > 1) {
         title = popupConfig?.clusteredTitle ?? tr("SEL_CLUSTER_PROPERTIES", locale);
     }
     html += "<div class='selected-popup-header'><div>" + title + "</div><a id='feat-popup-closer' class='closer' href='#'>[x]</a><div class='clearit'></div></div>";
 
-    if (bClustered) {
+    const renderForMultiple = (subFeatures: Feature[]) => {
         let table = "<table class='selected-popup-cluster-table'>";
-        const subFeatures = feat.get("features");
         const fheadings = popupConfig?.propertyMappings
             ? popupConfig.propertyMappings.filter(pm => pm.name != subFeatures[0].getGeometryName()).map(pm => pm.value)
             : Object.keys(subFeatures[0].getProperties()).filter(pn => pn != subFeatures[0].getGeometryName());
@@ -76,11 +75,13 @@ function defaultPopupContentRenderer(feat: Feature<Geometry>, locale?: string, p
         }
         table += "</tbody>";
         table += "</table>";
-        html += `<div class='selected-popup-content-wrapper'>${table}</div>`;
-    } else {
+        return table
+    };
+    const renderForSingle = (feature: Feature): [string, number, string|undefined] => {
+        let linkFragment: string | undefined;
         let table = "<table class='selected-popup-single-properties-table'>";
         table += "<tbody>";
-        const f = feat.getProperties();
+        const f = feature.getProperties();
         let pc = 0;
         if (popupConfig?.propertyMappings) {
             for (const pm of popupConfig.propertyMappings) {
@@ -107,11 +108,7 @@ function defaultPopupContentRenderer(feat: Feature<Geometry>, locale?: string, p
         }
         table += "</tbody>";
         table += "</table>";
-        if (pc > 0) {
-            html += `<div class='selected-popup-content-wrapper'>${table}</div>`;
-        } else {
-            html += "<div class='selected-popup-content-none'>" + tr("SEL_FEATURE_PROPERTIES_NONE", locale) + "</div>";
-        }
+
         if (popupConfig?.linkProperty) {
             const { name, label, linkTarget } = popupConfig.linkProperty;
             let linkHref: string | undefined;
@@ -130,9 +127,33 @@ function defaultPopupContentRenderer(feat: Feature<Geometry>, locale?: string, p
                 linkHref = url;
             }
             if (!strIsNullOrEmpty(linkHref)) {
-                html += `<div class='select-popup-single-link-wrapper'><a href="${linkHref}" target='${linkTarget}'>${label}</a></div>`;
+                linkFragment = `<div class='select-popup-single-link-wrapper'><a href="${linkHref}" target='${linkTarget}'>${label}</a></div>`;
             }
         }
+        return [table, pc, linkFragment];
+    };
+    const singlePopupContentRender = (feature: Feature, appendHtml: (h: string) => void) => {
+        const [table, pc, linkFragment] = renderForSingle(feature);
+        if (pc > 0) {
+            appendHtml(`<div class='selected-popup-content-wrapper'>${table}</div>`);
+        } else {
+            appendHtml("<div class='selected-popup-content-none'>" + tr("SEL_FEATURE_PROPERTIES_NONE", locale) + "</div>");
+        }
+        if (!strIsNullOrEmpty(linkFragment)) {
+            appendHtml(linkFragment);
+        }
+    }
+
+    if (bClustered) {
+        const subFeatures = getClusterSubFeatures(feat);
+        if (subFeatures.length == 1) {
+            singlePopupContentRender(subFeatures[0], h => html += h);
+        } else {
+            const table = renderForMultiple(subFeatures);
+            html += `<div class='selected-popup-content-wrapper'>${table}</div>`;
+        }
+    } else {
+        singlePopupContentRender(feat, h => html += h);
     }
     return html;
 }

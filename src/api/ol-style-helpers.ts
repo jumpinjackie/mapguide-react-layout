@@ -11,7 +11,14 @@ import { LayerProperty } from './common';
 export const DEFAULT_STYLE_KEY = "default";
 
 export function isClusteredFeature(feature: Feature): boolean {
-    return feature.get("features")?.length;
+    if (getClusterSubFeatures(feature)?.length) {
+        return true;
+    }
+    return false;
+}
+
+export function getClusterSubFeatures(feature: Feature): Feature[] {
+    return feature.get("features");
 }
 
 /**

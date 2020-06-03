@@ -51,7 +51,9 @@ import { QueryMapFeaturesResponse, setViewer, getViewer, Client } from '../..';
 import { useDispatch } from 'react-redux';
 import { LoadFunction as TileLoadFunction } from 'ol/Tile';
 import { LoadFunction as ImageLoadFunction } from 'ol/Image';
-import { IBasicPointCircleStyle, DEFAULT_POINT_CIRCLE_STYLE, IPointIconStyle, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, DEFAULT_LINE_STYLE, IBasicVectorPolygonStyle, DEFAULT_POLY_STYLE } from '../../api/ol-style-contracts';
+import { IBasicPointCircleStyle, DEFAULT_POINT_CIRCLE_STYLE, IPointIconStyle, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, DEFAULT_LINE_STYLE, IBasicVectorPolygonStyle, DEFAULT_POLY_STYLE, ClusterClickAction } from '../../api/ol-style-contracts';
+import { isClusteredFeature, getClusterSubFeatures } from '../../api/ol-style-helpers';
+import { OLStyleMapSet } from '../../api/ol-style-map-set';
 
 export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4));
@@ -703,13 +705,19 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
                 if (featureToLayerMap.length == 0) { //See TODO above
                     if (layer.get(LayerProperty.IS_SELECTABLE) == true && feature instanceof Feature) {
-                        if (this._select) {
-                            this._select.getFeatures().push(feature);
-                            featureToLayerMap.push([feature, layer]);
-                        }
+                        featureToLayerMap.push([feature, layer]);
                     }
                 }
             });
+            if (this._select && featureToLayerMap.length == 1) {
+                const [f, l] = featureToLayerMap[0];
+                if (isClusteredFeature(f) && getClusterSubFeatures(f).length > 1 && (l.get(LayerProperty.VECTOR_STYLE) as OLStyleMapSet)?.getClusterClickAction() == ClusterClickAction.ZoomToClusterExtents) {
+                    const zoomBounds = getClusterSubFeatures(f).reduce((bounds, currentFeatures) => olExtent.extend(bounds, currentFeatures.getGeometry().getExtent()), olExtent.createEmpty());
+                    this.zoomToExtent(zoomBounds);
+                } else {
+                    this._select.getFeatures().push(f);
+                }
+            }
         }
         // We'll only fall through the normal map selection query route if no 
         // vector features were selected as part of this click

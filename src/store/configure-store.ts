@@ -10,8 +10,6 @@ function configureStore(initialState: any, extraReducers?: any) {
         _getMiddleware(),
         ..._getEnhancers()
     )(createStore)(root, initialState);
-
-    _enableHotLoader(store);
     return store;
 }
 
@@ -35,15 +33,5 @@ function _getEnhancers() {
     }
     return enhancers;
 }
-
-function _enableHotLoader(store: any) {
-    if (__DEV__ && module.hot) {
-        module.hot.accept('../reducers', () => {
-            const nextRootReducer = require('../reducers');
-            store.replaceReducer(nextRootReducer);
-        });
-    }
-}
-
 
 export default configureStore;

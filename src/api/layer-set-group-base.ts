@@ -22,8 +22,8 @@ import { createOLLayerFromSubjectDefn } from '../components/external-layer-facto
 import Geometry from 'ol/geom/Geometry';
 import TileLayer from 'ol/layer/Tile';
 import UrlTile from 'ol/source/UrlTile';
-import { debug, warn } from '../utils';
 import ImageLayer from 'ol/layer/Image';
+import { debug } from '../utils/logger';
 
 export abstract class LayerSetGroupBase {
     protected mainSet: ILayerSetOL;

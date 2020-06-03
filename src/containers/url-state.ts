@@ -1,4 +1,4 @@
-import { appendParameters, parseUrlParameters } from '../utils';
+import { appendParameters, parseUrlParameters } from '../utils/url';
 
 /**
  * All relevant state that can be encoded into the main viewer URL

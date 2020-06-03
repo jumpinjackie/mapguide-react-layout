@@ -6,8 +6,8 @@
 import * as React from "react";
 import { IDOMElementMetrics } from "../api/common";
 import { MapLayer, MapGroup } from "../api/contracts/runtime-map";
-import { STR_EMPTY } from '../utils';
 import { DEFAULT_LOCALE } from '../api/i18n';
+import { STR_EMPTY } from '../utils/string';
 
 const VOID_NOOP = () => {}
 

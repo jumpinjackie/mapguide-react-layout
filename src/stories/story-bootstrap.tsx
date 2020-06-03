@@ -1,4 +1,4 @@
-import { bootstrap } from "../api";
+import { bootstrap } from '../api/bootstrap';
 import { addFormatDriver } from "../api/layer-manager/driver-registry";
 import { CsvFormatDriver, CSV_COLUMN_ALIASES } from "../api/layer-manager/csv-driver";
 import { FormatDriver } from "../api/layer-manager/format-driver";

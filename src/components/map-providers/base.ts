@@ -47,13 +47,15 @@ import { IInitialExternalLayer } from '../../actions/defs';
 import { MapGuideMockMode } from '../mapguide-debug-context';
 import Layer from 'ol/layer/Layer';
 import Source from 'ol/source/Source';
-import { QueryMapFeaturesResponse, setViewer, getViewer, Client } from '../..';
 import { useDispatch } from 'react-redux';
 import { LoadFunction as TileLoadFunction } from 'ol/Tile';
 import { LoadFunction as ImageLoadFunction } from 'ol/Image';
 import { IBasicPointCircleStyle, DEFAULT_POINT_CIRCLE_STYLE, IPointIconStyle, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, DEFAULT_LINE_STYLE, IBasicVectorPolygonStyle, DEFAULT_POLY_STYLE, ClusterClickAction } from '../../api/ol-style-contracts';
 import { isClusteredFeature, getClusterSubFeatures } from '../../api/ol-style-helpers';
 import { OLStyleMapSet } from '../../api/ol-style-map-set';
+import { QueryMapFeaturesResponse } from '../../api/contracts/query';
+import { setViewer, getViewer } from '../../api/runtime';
+import { Client } from '../../api/client';
 
 export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4));

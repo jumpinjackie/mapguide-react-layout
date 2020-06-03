@@ -1,12 +1,10 @@
-import { QueryMapFeaturesResponse } from './contracts';
+import { QueryMapFeaturesResponse } from './contracts/query';
 
 /**
  * session-store.ts
  * 
  * A thin-wrapper layer over local storage for storing any data related to viewer sessions
  */
-
-
 
 /**
  * @since 0.12

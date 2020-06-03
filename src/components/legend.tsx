@@ -9,8 +9,8 @@ import { Card, Icon as BpIcon, Button, InputGroup } from "@blueprintjs/core";
 import { scaleRangeBetween } from "../utils/number";
 import { tr } from "../api/i18n";
 import { BlueprintSvgIconNames } from '../constants/assets';
-import { strIsNullOrEmpty } from '../utils';
 import { NBSP } from '../constants';
+import { strIsNullOrEmpty } from '../utils/string';
 
 const ICON_LEGEND_LAYER: BlueprintSvgIconNames = "layer";
 const ICON_SELECT: BlueprintSvgIconNames = "select";

@@ -2,10 +2,10 @@ import * as React from "react";
 import { tr } from "../../api/i18n";
 import { ILayerInfo } from "../../api/common";
 import { Button, Intent, ButtonGroup, Card, Icon, Switch, NonIdealState, Slider, Collapse, Spinner } from '@blueprintjs/core';
-import { BlueprintSvgIconNames } from '../../constants';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { IVectorLayerStyle } from '../../api/ol-style-contracts';
 import { VectorLayerStyleEditor } from '../vector-style-editor';
+import { BlueprintSvgIconNames } from '../../constants/assets';
 
 interface IManageLayerItemProps {
     layer: ILayerInfo;

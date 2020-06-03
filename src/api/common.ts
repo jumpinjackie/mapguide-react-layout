@@ -16,13 +16,13 @@ import olOverlay from "ol/Overlay";
 import { IOLFactory } from "./ol-factory";
 import { ViewerAction, IGenericSubjectMapLayer, IInitialExternalLayer } from '../actions/defs';
 import { ProjectionLike } from 'ol/proj';
-import { IToolbarAppState } from './registry';
 import { IParsedFeatures } from './layer-manager/parsed-features';
 import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
 import { ISubscriberProps } from '../containers/subscriber';
 import Geometry from 'ol/geom/Geometry';
 import { IBasicPointCircleStyle, IPointIconStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorLayerStyle, IClusterSettings } from './ol-style-contracts';
+import { IToolbarAppState } from './registry/command';
 
 // Event boilerplate
 export type GenericEvent = any;

@@ -5,7 +5,6 @@ import AbstractSource from "ol/source/Source";
 import TileImageSource from "ol/source/TileImage";
 import createMapGuideSource from "./ol-mapguide-source-factory";
 import ImageStaticSource from "ol/source/ImageStatic";
-import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY, BLANK_GIF_DATA_URI } from "../constants/index";
 import { restrictToRange } from "../utils/number";
 import View from "ol/View";
 import * as olExtent from "ol/extent";
@@ -25,6 +24,7 @@ import { Client } from './client';
 import { ILayerSetOL, IImageLayerEvents } from './layer-set-contracts';
 import Geometry from 'ol/geom/Geometry';
 import { MapGuideMockMode } from '../components/mapguide-debug-context';
+import { BLANK_GIF_DATA_URI, LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from '../constants';
 
 export function blankImageLoadFunction(image: ImageWrapper) {
     (image.getImage() as any).src = BLANK_GIF_DATA_URI;

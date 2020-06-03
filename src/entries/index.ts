@@ -1,7 +1,0 @@
-/**
- * @hidden
- */
-
-/** */
-
-export * from "./application";

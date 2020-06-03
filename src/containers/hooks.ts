@@ -1,10 +1,11 @@
-import { IApplicationState, IMapView, UnitOfMeasure, getCurrentView, IExternalBaseLayer, Coordinate2D } from '../api/common';
+import { IApplicationState, IMapView, UnitOfMeasure, getCurrentView, IExternalBaseLayer, Coordinate2D, ILayerInfo, getExternalBaseLayers, InitError, IBranchedMapSubState, getSelectionSet, INameValuePair, ActiveMapTool, ClientKind, ImageFormat, MapLoadIndicatorPositioning, IViewerCapabilities } from '../api/common';
 import { useSelector } from 'react-redux';
-import { getExternalBaseLayers, INameValuePair, QueryMapFeaturesResponse, ActiveMapTool, ClientKind, ImageFormat, MapLoadIndicatorPositioning, getSelectionSet, IViewerCapabilities, InitError, IBranchedMapState, IBranchedMapSubState, IToolbarAppState, reduceAppToToolbarState, ILayerInfo } from '../api';
 import { WEBLAYOUT_CONTEXTMENU } from '../constants';
 import { useRef, useEffect } from "react";
 import { areArraysDifferent } from "../utils/array";
 import { IInitialExternalLayer } from '../actions/defs';
+import { QueryMapFeaturesResponse } from '../api/contracts/query';
+import { IToolbarAppState, reduceAppToToolbarState } from '../api/registry/command';
 
 // From: https://usehooks.com/usePrevious/
 

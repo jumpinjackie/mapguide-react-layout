@@ -5,10 +5,10 @@ import Geometry from 'ol/geom/Geometry';
 import { DynamicStyleMap, IOlStyleMap, IVectorLayerStyle, IVectorFeatureStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IBasicStroke, isEvaluatable, IBasicFill, IVectorLabelSettings, IBasicVectorPointStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IClusterSettings, ClusterClickAction } from './ol-style-contracts';
 import Style from 'ol/style/Style';
 import CircleStyle from 'ol/style/Circle';
-import { deg2rad } from '..';
 import { buildFill, buildStroke, tryBuildTextStyle, evalFeature } from './ol-style-builders';
 import IconStyle from "ol/style/Icon";
 import * as shortid from "shortid";
+import { deg2rad } from '../utils/number';
 
 function isDynamicStroke(stroke: IBasicStroke | undefined): boolean {
     if (!stroke) {

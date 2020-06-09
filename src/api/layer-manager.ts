@@ -42,6 +42,7 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
         selectable: layer.get(LayerProperty.IS_SELECTABLE) == true,
         name: layer.get(LayerProperty.LAYER_NAME),
         displayName: layer.get(LayerProperty.LAYER_DISPLAY_NAME) ?? layer.get(LayerProperty.LAYER_NAME),
+        description: layer.get(LayerProperty.LAYER_DESCRIPTION),
         type: layer.get(LayerProperty.LAYER_TYPE),
         opacity: layer.getOpacity(),
         isExternal: isExternal,

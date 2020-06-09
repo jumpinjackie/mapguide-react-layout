@@ -211,6 +211,7 @@ export interface IGenericSubjectMapLayer {
     layerOptions: any;
     sourceParams: any;
     name: string;
+    description?: string;
     displayName?: string;
     initiallyVisible: boolean;
     selectable: boolean;

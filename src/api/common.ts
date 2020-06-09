@@ -1011,6 +1011,14 @@ export interface ILayerInfo {
      */
     type: string;
     /**
+     * An optional description for the layer
+     *
+     * @type {string}
+     * @memberof ILayerInfo
+     * @since 0.14
+     */
+    description?: string;
+    /**
      * Indicates if this layer is an external layer
      * 
      * @since 0.13
@@ -2404,7 +2412,11 @@ export enum LayerProperty {
     /**
      * @since 0.14
      */
-    SELECTED_POPUP_CONFIGURATION = "popup_config"
+    SELECTED_POPUP_CONFIGURATION = "popup_config",
+    /**
+     * @since 0.14
+     */
+    LAYER_DESCRIPTION = "layer_description"
 }
 
 /**

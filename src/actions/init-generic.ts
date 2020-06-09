@@ -37,6 +37,7 @@ function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGenericSub
     }
     const sl = {
         name: name,
+        description: map.Extension.layer_description,
         displayName: map.Extension.display_name,
         driverName: map.Extension.driver_name,
         type: st,

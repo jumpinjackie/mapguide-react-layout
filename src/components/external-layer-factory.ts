@@ -23,6 +23,7 @@ import { DEFAULT_VECTOR_LAYER_STYLE } from '../api/ol-style-contracts';
 
 function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExternalLayer, layer: LayerBase, isExternal: boolean) {
     layer.set(LayerProperty.LAYER_NAME, defn.name);
+    layer.set(LayerProperty.LAYER_DESCRIPTION, defn.description);
     layer.set(LayerProperty.LAYER_DISPLAY_NAME, defn.displayName);
     layer.set(LayerProperty.LAYER_TYPE, defn.type);
     layer.set(LayerProperty.IS_SELECTABLE, defn.selectable);
@@ -135,6 +136,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                         ...defn.sourceParams
                     })
                 });
+                layer.set(LayerProperty.LAYER_DESCRIPTION, defn.description);
                 layer.set(LayerProperty.LAYER_TYPE, "WMS");
                 layer.set(LayerProperty.IS_SELECTABLE, true); //Let's assume this WMS service is capable of GetFeatureInfo in GeoJSON representation
                 layer.set(LayerProperty.IS_EXTERNAL, isExternal);

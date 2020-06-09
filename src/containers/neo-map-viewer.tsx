@@ -47,8 +47,10 @@ interface ICoreMapViewerState {
 }
 
 class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerState> implements IViewerComponent {
+    private mounted: boolean;
     constructor(props: ICoreMapViewerProps) {
         super(props);
+        this.mounted = false;
         this.state = {
             shiftKey: false,
             isMouseDown: false,
@@ -98,6 +100,8 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
     }
     //#endregion
     private onContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!this.mounted)
+            return;
         if (this.props.context.isMouseOverTooltip()) {
             return;
         }
@@ -106,13 +110,19 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
         this.props.onContextMenu?.([e.clientX, e.clientY]);
     }
     private onKeyDown = (e: GenericEvent) => {
+        if (!this.mounted)
+            return;
         this.props.context.onKeyDown(e);
         this.setState({ shiftKey: e.shiftKey });
     }
     private onKeyUp = (e: GenericEvent) => {
+        if (!this.mounted)
+            return;
         this.setState({ shiftKey: e.shiftKey });
     }
     private onMouseDown = (e: GenericEvent) => {
+        if (!this.mounted)
+            return;
         if (!this.state.isMouseDown) {
             this.setState({
                 isMouseDown: true
@@ -120,6 +130,8 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
         }
     }
     private onMouseUp = (e: GenericEvent) => {
+        if (!this.mounted)
+            return;
         if (this.state.isMouseDown) {
             this.setState({
                 isMouseDown: false
@@ -131,9 +143,11 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
         document.addEventListener("keyup", this.onKeyUp);
         const mapNode: any = ReactDOM.findDOMNode(this);
         this.props.context.attachToComponent(mapNode, this);
+        this.mounted = true;
     }
     componentWillUnmount() {
         this.props.context.detachFromComponent();
+        this.mounted = false;
     }
     render(): JSX.Element {
         const { context, backgroundColor } = this.props;

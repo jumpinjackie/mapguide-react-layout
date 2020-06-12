@@ -131,10 +131,12 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
             }
         case GenericSubjectLayerType.TileWMS:
             {
+                const sourceArgs = {
+                    crossOrigin: "anonymous",
+                    ...defn.sourceParams
+                };
                 const layer = new TileLayer({
-                    source: new TileWMS({
-                        ...defn.sourceParams
-                    })
+                    source: new TileWMS(sourceArgs)
                 });
                 layer.set(LayerProperty.LAYER_DESCRIPTION, defn.description);
                 layer.set(LayerProperty.LAYER_TYPE, "WMS");
@@ -198,7 +200,7 @@ export function createExternalSource(layer: IExternalBaseLayer): olSource {
             throw new MgError(`Unknown external base layer provider: ${layer.kind}`);
     }
     if (typeof (layer.options) != 'undefined')
-        return new sourceCtor(layer.options);
+        return new sourceCtor({ crossOrigin: "Anonymous", ...layer.options });
     else
-        return new sourceCtor();
+        return new sourceCtor({ crossOrigin: "Anonymous" });
 }

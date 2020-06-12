@@ -560,6 +560,36 @@ export interface IMapGuideViewerSupport {
 }
 
 /**
+ * Map image export options
+ *
+ * @export
+ * @interface IMapImageExportOptions
+ * @since 0.14
+ */
+export interface IMapImageExportOptions {
+    /**
+     * The size of the image to export. If not specified, it will use the map's current size
+     *
+     * @type {Size2}
+     * @memberof IMapImageExportOptions
+     */
+    size?: Size2;
+    /**
+     * The type to export the mime type as. If not specified, it will default to PNG (image/png)
+     *
+     * @type {string}
+     * @memberof IMapImageExportOptions
+     */
+    exportMimeType?: string;
+    /**
+     * The callback that will receive the content of the exported map image
+     *
+     * @memberof IMapImageExportOptions
+     */
+    callback: (imageBase64: string) => void;
+}
+
+/**
  * Describes the API for interacting with the map viewer
  *
  * @export
@@ -968,6 +998,15 @@ export interface IMapViewer {
      * @since 0.13
      */
     getDefaultPolygonStyle(): IBasicVectorPolygonStyle;
+
+    /**
+     * Exports an image of the current map view
+     *
+     * @param {IMapImageExportOptions} options
+     * @memberof IMapViewer
+     * @since 0.14
+     */
+    exportImage(options: IMapImageExportOptions): void;
 }
 
 /**

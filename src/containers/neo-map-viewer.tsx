@@ -35,6 +35,7 @@ interface ICoreMapViewerProps {
     onContextMenu?: (pos: [number, number]) => void;
     onDispatch: ReduxDispatch;
     backgroundColor?: string;
+    children?: React.ReactNode;
 }
 
 interface ICoreMapViewerState {
@@ -210,11 +211,12 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
         return <div className="map-viewer-component" style={style} onContextMenu={this.onContextMenu} onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp}>
             <MapLoadIndicator loaded={loaded || 0} loading={loading || 0} position={this.props.loadIndicatorPosition} color={this.props.loadIndicatorColor} />
             {subscribers.map((s, i) => <Subscriber key={`subscriber-${i}-${s.name}`} {...s} />)}
+            {this.props.children}
         </div>;
     }
 }
 
-export const MapViewer = () => {
+export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
     const context = React.useContext(MapProviderContext);
     const toasterRef = React.useRef<Toaster>(null);
     const loadIndicatorPositioning = useConfiguredLoadIndicatorPositioning();
@@ -250,7 +252,9 @@ export const MapViewer = () => {
                 onDispatch={dispatch}
                 backgroundColor={bgColor}
                 loadIndicatorPosition={loadIndicatorPositioning}
-                loadIndicatorColor={loadIndicatorColor} />
+                loadIndicatorColor={loadIndicatorColor}>
+                {children}
+            </CoreMapViewer>
         </>;
     } else {
         return <div>{tr("LOADING_MSG", locale)}</div>;

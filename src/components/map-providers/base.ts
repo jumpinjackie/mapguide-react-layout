@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D, KC_ESCAPE, IMapViewer, IMapGuideViewerSupport, ILayerInfo, ClientKind } from '../../api/common';
+import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D, KC_ESCAPE, IMapViewer, IMapGuideViewerSupport, ILayerInfo, ClientKind, IMapImageExportOptions } from '../../api/common';
 import { MouseTrackingTooltip } from '../tooltips/mouse';
 import Map from "ol/Map";
 import OverviewMap from 'ol/control/OverviewMap';
@@ -233,6 +233,51 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             ...baseInitialState,
             ...this.getInitialProviderState()
         } as TState;
+    }
+
+    /**
+     * Exports an image of the current map view
+     *
+     * @param {IMapImageExportOptions} options
+     * @memberof IMapViewer
+     * @since 0.14
+     */
+    public exportImage(options: IMapImageExportOptions): void {
+        if (this._map) {
+            const map = this._map;
+            map.once('rendercomplete', function () {
+                const mapCanvas = document.createElement('canvas');
+                if (options.size) {
+                    const [w, h] = options.size;
+                    mapCanvas.width = w;
+                    mapCanvas.height = h;
+                } else {
+                    const size = map.getSize();
+                    mapCanvas.width = size[0];
+                    mapCanvas.height = size[1];
+                }
+                const mapContext = mapCanvas.getContext('2d');
+                if (mapContext) {
+                    Array.prototype.forEach.call(document.querySelectorAll('.ol-layer canvas'), function (canvas: HTMLCanvasElement) {
+                        if (canvas.width > 0) {
+                            const parentNode = canvas.parentNode;
+                            const opacity = (parentNode as any)?.style?.opacity ?? "";
+                            mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
+                            const transform = canvas.style.transform;
+                            // Get the transform parameters from the style's transform matrix
+                            const matrix = transform.match(/^matrix\(([^\(]*)\)$/)?.[1]?.split(',')?.map(Number);
+                            if (matrix) {
+                                // Apply the transform to the export map context
+                                CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
+                                mapContext.drawImage(canvas, 0, 0);
+                            }
+                        }
+                    });
+                    options.callback(mapCanvas.toDataURL(options.exportMimeType));
+                }
+            });
+            map.renderSync();
+        }
     }
 
     /**

@@ -435,6 +435,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         const layerSet = new MgLayerSetGroup(nextState as any, {
             getImageLoaders: () => super.getImageSourceLoaders(mapName),
             getTileLoaders: () => super.getTileSourceLoaders(mapName),
+            getBaseTileLoaders: () => super.getBaseTileSourceLoaders(mapName),
             getMockMode: () => this.getMockMode(),
             incrementBusyWorker: () => this.incrementBusyWorker(),
             decrementBusyWorker: () => this.decrementBusyWorker(),

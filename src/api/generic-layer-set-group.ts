@@ -13,6 +13,7 @@ import TileWMS from 'ol/source/TileWMS';
 import ImageWMS from 'ol/source/ImageWMS';
 import { IImageLayerEvents } from './layer-set-contracts';
 import ImageLayer from "ol/layer/Image";
+import UrlTile from 'ol/source/UrlTile';
 
 const DEFAULT_BOUNDS_3857: Bounds = [
     -20026376.39,
@@ -21,7 +22,6 @@ const DEFAULT_BOUNDS_3857: Bounds = [
     20048966.10
 ];
 const DEFAULT_BOUNDS_4326: Bounds = [-180, -90, 180, 90];
-const DEFAULT_MPU_4326 = 111319.49079327358;
 
 function getMetersPerUnit(projection: string) {
     const proj = get(projection);
@@ -34,8 +34,8 @@ export class GenericLayerSetGroup extends LayerSetGroupBase {
         externalBaseLayers: IExternalBaseLayer[] | undefined,
         locale: string | undefined) {
         super(callback);
-        this.mainSet = this.createLayerSetOL(subject, externalBaseLayers, locale);
-        this.overviewSet = this.createLayerSetOL(subject, externalBaseLayers, locale);
+        this.mainSet = this.createLayerSetOL(subject, externalBaseLayers, locale, callback);
+        this.overviewSet = this.createLayerSetOL(subject, externalBaseLayers, locale, callback);
         const progressNotifySources = this.mainSet.getSourcesForProgressTracking();
         /*
         console.log("Draw Order:");
@@ -69,8 +69,13 @@ export class GenericLayerSetGroup extends LayerSetGroupBase {
         }
         return undefined;
     }
-    private createExternalBaseLayer(ext: IExternalBaseLayer) {
+    private createExternalBaseLayer(ext: IExternalBaseLayer, callback: IImageLayerEvents) {
         const extSource = createExternalSource(ext);
+        if (extSource instanceof UrlTile) {
+            const loaders = callback.getBaseTileLoaders();
+            if (loaders[ext.name])
+                extSource.setTileLoadFunction(loaders[ext.name]);
+        }
         const options: any = {
             title: ext.name,
             type: "base",
@@ -87,7 +92,8 @@ export class GenericLayerSetGroup extends LayerSetGroupBase {
     }
     private createLayerSetOL(subject: IGenericSubjectMapLayer | undefined,
         externalBaseLayers: IExternalBaseLayer[] | undefined,
-        locale: string | undefined): GenericLayerSetOL {
+        locale: string | undefined,
+        callback: IImageLayerEvents): GenericLayerSetOL {
         let projection = subject?.meta?.projection;
         let bounds: Bounds | undefined;
         let externalBaseLayersGroup: LayerGroup | undefined;
@@ -95,7 +101,7 @@ export class GenericLayerSetGroup extends LayerSetGroupBase {
             const groupOpts: any = {
                 title: tr("EXTERNAL_BASE_LAYERS", locale),
                 layers: externalBaseLayers.map(ext => {
-                    const tl = this.createExternalBaseLayer(ext);
+                    const tl = this.createExternalBaseLayer(ext, callback);
                     return tl;
                 })
             };

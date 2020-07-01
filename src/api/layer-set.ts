@@ -1,4 +1,4 @@
-import { RefreshMode, IExternalBaseLayer, Bounds, LayerTransparencySet, LayerProperty, MgBuiltInLayers, MgLayerType, MG_LAYER_TYPE_NAME, MG_BASE_LAYER_GROUP_NAME, ILayerInfo, ImageFormat, GenericEvent, ClientKind, Coordinate2D, Size, BLANK_SIZE } from './common';
+import { RefreshMode, IExternalBaseLayer, Bounds, LayerTransparencySet, LayerProperty, MgBuiltInLayers, MgLayerType, MG_LAYER_TYPE_NAME, MG_BASE_LAYER_GROUP_NAME, ILayerInfo, ImageFormat, GenericEvent, ClientKind, Coordinate2D, Size, BLANK_SIZE, Dictionary } from './common';
 import LayerGroup from "ol/layer/Group";
 import TileGrid from "ol/tilegrid/TileGrid";
 import AbstractSource from "ol/source/Source";
@@ -23,6 +23,8 @@ import { debug } from '../utils/logger';
 import { Client } from './client';
 import { ILayerSetOL, IImageLayerEvents } from './layer-set-contracts';
 import Geometry from 'ol/geom/Geometry';
+import UrlTile from 'ol/source/UrlTile';
+import { LoadFunction as TileLoadFunction } from 'ol/Tile';
 import { MapGuideMockMode } from '../components/mapguide-debug-context';
 import { BLANK_GIF_DATA_URI, LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from '../constants';
 
@@ -283,6 +285,7 @@ export interface IMapViewerContextCallback {
     getPointSelectionBox(point: Coordinate2D): Bounds;
     openTooltipLink(url: string): void;
     addFeatureToHighlight(feat: Feature<Geometry> | undefined, bAppend: boolean): void;
+    getBaseTileLoaders(): Dictionary<TileLoadFunction>;
 }
 
 export class MgInnerLayerSetFactory {
@@ -493,6 +496,11 @@ export class MgInnerLayerSetFactory {
     }
     private createExternalBaseLayer(ext: IExternalBaseLayer) {
         const extSource = createExternalSource(ext);
+        if (extSource instanceof UrlTile) {
+            const loaders = this.callback.getBaseTileLoaders();
+            if (loaders[ext.name])
+                extSource.setTileLoadFunction(loaders[ext.name]);
+        }
         const options: any = {
             title: ext.name,
             type: "base",

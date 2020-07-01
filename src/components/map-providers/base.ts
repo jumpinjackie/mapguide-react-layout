@@ -177,6 +177,7 @@ export type WmsQueryAugmentation = (getFeatureInfoUrl: string) => string;
 
 export abstract class BaseMapProviderContext<TState extends IMapProviderState, TLayerSetGroup extends LayerSetGroupBase> implements IMapProviderContext {
     private _toasterRef: React.RefObject<Toaster> | undefined;
+    private _baseTileSourceLoaders: Dictionary<Dictionary<TileLoadFunction>>;
     private _tileSourceLoaders: Dictionary<Dictionary<TileLoadFunction>>;
     private _imageSourceLoaders: Dictionary<Dictionary<ImageLoadFunction>>;
     private _wmsQueryAugmentations: Dictionary<Dictionary<WmsQueryAugmentation>>;
@@ -281,13 +282,32 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
 
     /**
-     * Adds a custom tile load function for a given image tile layer
+     * Adds a custom tile load function for a given base image tile layer.
+     * 
+     * NOTE: Unlike other load function registrations this must be done before the viewer is mounted. New load functions added at runtime will not be recognized
      * @param mapName
-     * @param layerName The layer this function should apply for
-     * @param func The custom tile load function 
+     * @param layerName The base layer this function should apply for
+     * @param func The custom tile load function
      * @since 0.14
      */
-    public addTileLoadFunction(mapName: string, layerName: string, func: TileLoadFunction) {
+    addBaseTileLoadFunction(mapName: string, layerName: string, func: TileLoadFunction) {
+        if (!this._baseTileSourceLoaders) {
+            this._baseTileSourceLoaders = {};
+        }
+        if (!this._baseTileSourceLoaders[mapName]) {
+            this._baseTileSourceLoaders[mapName] = {};
+        }
+        this._baseTileSourceLoaders[mapName][layerName] = func;
+    }
+
+    /**
+     * Adds a custom tile load function for a given overlay image tile layer
+     * @param mapName
+     * @param layerName The layer this function should apply for
+     * @param func The custom tile load function
+     * @since 0.14
+     */
+    addTileLoadFunction(mapName: string, layerName: string, func: TileLoadFunction) {
         if (!this._tileSourceLoaders) {
             this._tileSourceLoaders = {};
         }
@@ -298,13 +318,13 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
 
     /**
-     * Adds a custom image load function for a given image layer
+     * Adds a custom image load function for a given overlay image layer
      * @param mapName
      * @param layerName The layer this function should apply for
-     * @param func The custom tile load function 
+     * @param func The custom tile load function
      * @since 0.14
      */
-    public addImageLoadFunction(mapName: string, layerName: string, func: ImageLoadFunction) {
+    addImageLoadFunction(mapName: string, layerName: string, func: ImageLoadFunction) {
         if (!this._imageSourceLoaders) {
             this._imageSourceLoaders = {};
         }
@@ -315,13 +335,13 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
 
     /**
-     * Adds a custom image load function for a given image layer
+     * Adds a WMS query augmentation for the given WMS overlay layer
      * @param mapName
      * @param layerName The layer this function should apply for
-     * @param func The custom tile load function 
+     * @param func The WMS query augmentation
      * @since 0.14
      */
-    public addWmsQueryAugmentation(mapName: string, layerName: string, func: WmsQueryAugmentation) {
+    addWmsQueryAugmentation(mapName: string, layerName: string, func: WmsQueryAugmentation) {
         if (!this._wmsQueryAugmentations) {
             this._wmsQueryAugmentations = {};
         }
@@ -455,12 +475,14 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     //#endregion
 
     public abstract getHookFunction(): () => IMapProviderState & IMapProviderStateExtras;
-
+    protected getBaseTileSourceLoaders(mapName: string): Dictionary<TileLoadFunction> {
+        return this._baseTileSourceLoaders?.[mapName] ?? {};
+    }
     protected getTileSourceLoaders(mapName: string): Dictionary<TileLoadFunction> {
-        return this._tileSourceLoaders[mapName] ?? {};
+        return this._tileSourceLoaders?.[mapName] ?? {};
     }
     protected getImageSourceLoaders(mapName: string): Dictionary<ImageLoadFunction> {
-        return this._imageSourceLoaders[mapName] ?? {};
+        return this._imageSourceLoaders?.[mapName] ?? {};
     }
 
     protected abstract getInitialProviderState(): Omit<TState, keyof IMapProviderState>;

@@ -1,5 +1,5 @@
 import LayerBase from "ol/layer/Base";
-import { LayerProperty, IExternalBaseLayer, LayerTransparencySet, RefreshMode, Bounds, Size, ILayerInfo, Dictionary } from './common';
+import { LayerProperty, IExternalBaseLayer, LayerTransparencySet, RefreshMode, Bounds, Size, ILayerInfo } from './common';
 import { ILayerSetOL, IImageLayerEvents } from './layer-set-contracts';
 import Feature from 'ol/Feature';
 import { isMapGuideImageSource } from './ol-mapguide-source-factory';

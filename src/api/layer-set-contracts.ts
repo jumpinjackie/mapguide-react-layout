@@ -30,6 +30,7 @@ export interface IImageLayerEvents {
     addImageLoaded(): void;
     onImageError(e: GenericEvent): void;
     getLocale(): string | undefined;
+    getBaseTileLoaders(): Dictionary<TileLoadFunction>;
     getTileLoaders(): Dictionary<TileLoadFunction>;
     getImageLoaders(): Dictionary<ImageLoadFunction>;
 }

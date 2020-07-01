@@ -72,6 +72,7 @@ export class GenericMapProviderContext extends BaseMapProviderContext<IGenericMa
         const layerSet = new GenericLayerSetGroup({
             getImageLoaders: () => super.getImageSourceLoaders(mapName),
             getTileLoaders: () => super.getTileSourceLoaders(mapName),
+            getBaseTileLoaders: () => super.getBaseTileSourceLoaders(mapName),
             getLocale: () => this._state.locale,
             addImageLoading: () => this._comp?.addImageLoading(),
             addImageLoaded: () => this._comp?.addImageLoaded(),

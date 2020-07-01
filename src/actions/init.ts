@@ -186,6 +186,7 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
                 //is shallow (hence name/type is string[]). Do we bother to fix this?
                 const name = map.Extension.Options.name[0];
                 const type = map.Extension.Options.type[0];
+                const attributions = map.Extension.Options.attributions;
                 //NOTE: From a fusion appdef, we're expecting placeholder tokens to be in ${this_format} instead of
                 //{this_format} as the primary consumer is the Fusion viewer that is based on OpenLayers 2
                 //As we're not using OL2, but OL4+ the expected format is {this_format}, so we need to convert these
@@ -196,7 +197,8 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
                     kind: "XYZ",
                     options: {
                         layer: type,
-                        urls: urls
+                        urls,
+                        attributions
                     }
                 });
             }

@@ -165,7 +165,6 @@ export class SelectedFeaturesTooltip {
     private enabled: boolean;
     private isMouseOverTooltip: boolean;
     private closerEl: HTMLElement | null;
-    private wmsQueryAugs: Dictionary<WmsQueryAugmentation>;
     constructor(map: olMap, private parent: ISelectionPopupContentOverrideProvider) {
         this.featureTooltipElement = document.createElement("div");
         this.featureTooltipElement.addEventListener("mouseover", () => this.isMouseOverTooltip = true);
@@ -199,9 +198,6 @@ export class SelectedFeaturesTooltip {
         this.featureTooltipElement.innerHTML = "";
         this.featureTooltipElement.classList.add("tooltip-hidden");
     }
-    public attachWmsQueryAugmentations(augs: Dictionary<WmsQueryAugmentation>) {
-        this.wmsQueryAugs = augs;
-    }
     public async queryWmsFeatures(currentLayerSet: LayerSetGroupBase | undefined, layerMgr: ILayerManager, coord: Coordinate2D, resolution: number, callback: IQueryWmsFeaturesCallback) {
         let selected = 0;
         //See what WMS layers we have
@@ -230,8 +226,9 @@ export class SelectedFeaturesTooltip {
             });
             const layerName = layer.get(LayerProperty.LAYER_NAME);
             //Check if we have an augmentation for this
-            if (this.wmsQueryAugs[layerName]) {
-                url = this.wmsQueryAugs[layerName](url);
+            const augs = callback.getWmsRequestAugmentations();
+            if (augs[layerName]) {
+                url = augs[layerName](url);
             }
             const resp = await client.getText(url);
             const json = JSON.parse(resp);

@@ -973,9 +973,6 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this.initContext(activeLayerSet, this._state.locale, this._state.overviewMapElementSelector);
         this._mouseTooltip = new MouseTrackingTooltip(this._map, this._comp.isContextMenuOpen);
         this._selectTooltip = new SelectedFeaturesTooltip(this._map, this);
-        if (this._state.mapName)
-            this._selectTooltip.attachWmsQueryAugmentations(this._wmsQueryAugmentations[this._state.mapName] ?? {});
-
         this._map.on("pointermove", this._boundMouseMove as any);
         this._map.on("change:size", this._boundResize as any);
         this._map.on("click", this._boundClick as any);

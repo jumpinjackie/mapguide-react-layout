@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>MapGuide React Viewer</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" href="dist/viewer.css" type="text/css" />
+    <!-- NOTE: If you don't care about IE, you can remove/comment the script reference below -->
+    <script type="text/javascript"
+        src="//polyfill.io/v3/polyfill.min.js?features=Object.assign%2Cfetch%2CArray.isArray"></script>
+    <script type="text/javascript" src="dist/viewer-generic.js" charset="utf-8"></script>
+    <style type="text/css">
+        html,
+        body,
+        #map {
+            padding: 0;
+            margin: 0;
+            font: 10pt Verdana, sans-serif;
+        }
+
+        #map {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script type="text/javascript">
+        var MAP_MARKER_ICON = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEZUlEQVRYR8WWXUxbZRjHn/ecnlLaHqBkyIeAwIaTUuIH4GiB9Yxo5sZIZiLGJSYu8YY74wW7cIksLplxIXq5mF1o9Ga6GNTAFqKGImsLMrwYBYeOBWSUUeWjPf047fl4zWEhnrK2p6ebsbfP+///f+d53/fpi+B//iGt+XO9Vr0lUtyFELYDQpUgAUII/EDAJCvQP9Rfvx7X4pk1AG5upu5XGN4BjM8AECVpQjYxwCfxsG6w1uXisgHJCuCvo53lAgnfAYFbszGVAGaRJPVUXPMsq61XBfD3MPsQTrgBiKfVzJR1jOEeReJDJd+7/Zl0qgBrJ9pHANBxLeH/rsUTZcNuJwLA6fQZAda6O7sB4eFUYlHCEBOFHWuDjgQdQaTMQBidKhuZuJITwOorHW5CB46k1gKG9UgMQlwcMEjrEhASCVBeYMiDUlM+IEj+JhGwr3LY3aQZINDLmPkoHyQQSvo0PxsBlk98ThLE+c4bs3dl47G2Z2oQQQ6YKer0k7T5oSxESaVlQ55AKoi0W3C/h2nDWPAqRVFegJUQO8B45z5IZTbmsJ2rok0DJopKKou8dKJy1DOiCeD3l1/so/P0l5Siv8PRVZvr16p0hwoDELNHnr9XYjKVK3URXnz/wKj3vCaA+Zda+i0Gw0WlaDPCfdU4dvONTDdirqvl62KjoVe5ZpuLDzb8ON2vCWCGeeHNCrPxS6UozMe/qR+dfi0TwOLRQ0NGijqpXBMIx/qfdc0MagIYb7M11BQXzOsV14sX8UZVgCtHMzN8KrM/jh3Ly8fba6SOtOzWRYzhztaGg/HcTjpPu/W0h1DeTx/THNpnzjcpwxDA5dKWG33oHEjJ1xPQWnfHZYTg7aRt46JCQNikj7iWUv43ZBxEP9utl2otRX0PDRlJGscEXKAI5OUxJ5LI0C4J+CwQhFMZLmEMy1uhbx2e2Vc1zwFZMNFuraYp/Z1Sszn5XmU6BIpaIMbhjXC8tWtqdiYnAFnksjd9XFtEv6snU4/adMaCJMHidvAK45k7lYlX9c/IY28spkjdn5VFdNJZUGuCn40kwlH+gHPat/JIADtdaGs8U11Ef5Sv06nl7tTjgghLweCHjHf+PTWBagdkgzGmxmCUCperC+gn1Azl+grLbiUE7qkO9wKrtj4rgB2INuvpykL6M/OeOb83IMLzsBpi+5ze+U/VwuV61gDyXPA4bLfrLEX16VTyq2M5GFpcKTt48PWrV8XHCiCbjbc3HC8z0iMFefqU3kEuAesxttvp/u1aNuGaOrBr6Om0emoKLfa9Dw956CxtsxPt7luHsw3PCcDlaGwtMeb/UmwwJOUEojEcjMSfOzzlu/WfAuxMSIdtqM5SeJJAD46QIGG4uxX8wun1vaUlPKcOyKKfHLb9hTpioZymSYwB/OFwPCFydR3uhYxP8FRwWd+CvWKX3XoRAD14ZGB0lpn0XdD69Tl3YDfI5WiyS5IodU3OT+US/sgAuYYqdTlvweMIlz3+AXmLlDDLPM0mAAAAAElFTkSuQmCC";
+        var SVC_CENTER_ICON = "data:image/png;base64,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";
+        var appDef = {
+            "Title": "Generic",
+            "MapSet": {
+                "MapGroup": [
+                    {
+                        "@id": "Melbourne",
+                        "Map": [
+                            {
+                                "Type": "SubjectLayer",
+                                "Extension": {
+                                    "source_type": "GeoJSON_Inline",
+                                    "source_param_attributions": [
+                                        "(c) ACME Corporation"
+                                    ],
+                                    "source_param_features": {
+                                        "type": "FeatureCollection",
+                                        "crs": {
+                                            "type": "name",
+                                            "properties": {
+                                                "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+                                            }
+                                        },
+                                        "features": [{
+                                            "type": "Feature",
+                                            "properties": {},
+                                            "geometry": {
+                                                "type": "Polygon",
+                                                "coordinates": [
+                                                [
+                                                    [
+                                                    132.275390625,
+                                                    -16.13026201203474
+                                                    ],
+                                                    [
+                                                    121.46484375,
+                                                    -22.105998799750566
+                                                    ],
+                                                    [
+                                                    121.28906250000001,
+                                                    -33.28461996888768
+                                                    ],
+                                                    [
+                                                    130.693359375,
+                                                    -30.977609093348676
+                                                    ],
+                                                    [
+                                                    138.8671875,
+                                                    -36.17335693522159
+                                                    ],
+                                                    [
+                                                    146.162109375,
+                                                    -35.675147436084664
+                                                    ],
+                                                    [
+                                                    149.501953125,
+                                                    -31.278550858946517
+                                                    ],
+                                                    [
+                                                    149.85351562499997,
+                                                    -25.48295117535531
+                                                    ],
+                                                    [
+                                                    142.294921875,
+                                                    -18.562947442888298
+                                                    ],
+                                                    [
+                                                    137.109375,
+                                                    -20.96143961409684
+                                                    ],
+                                                    [
+                                                    132.275390625,
+                                                    -16.13026201203474
+                                                    ]
+                                                ]
+                                                ]
+                                            }
+                                            }
+                                        ]
+                                    },
+                                    "meta_extents": [113.34, -43.63, 153.57, -10.67],
+                                    "meta_projection": "EPSG:4326",
+                                    "is_selectable": false,
+                                    "vector_layer_style": {
+                                        "default": {
+                                            "point": {
+                                                "type": "Circle",
+                                                "fill": {
+                                                    "color": "#ff0000",
+                                                    "alpha": 255
+                                                },
+                                                "radius": 5,
+                                                "stroke": {
+                                                    "color": "#0000ff",
+                                                    "alpha": 255,
+                                                    "width": 1
+                                                }
+                                            },
+                                            "line": {
+                                                "color": "#0000ff",
+                                                "alpha": 255,
+                                                "width": 1
+                                            },
+                                            "polygon": {
+                                                "fill": {
+                                                    "color": "rgba(44,97,190,1)",
+                                                    "alpha": 15
+                                                },
+                                                "stroke": {
+                                                    "color": "rgba(13,21,166,1)",
+                                                    "width": 4,
+                                                    "alpha": 255
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "Type": "External",
+                                "Extension": {
+                                    "layer_name": "SA1 2011 Boundaries",
+                                    "layer_description": "ABS Statistical Area Level 1 (SA1) Boundaries (2011)",
+                                    "source_type": "TileWMS",
+                                    "source_param_url": "http://geoserver.nationalmap.nicta.com.au/admin_bnds_abs/ows",
+                                    "source_param_params": {
+                                        "LAYERS": "admin_bnds:SA1_2011_AUST",
+                                        "TILED": true
+                                    },
+                                    "source_param_attributions": [
+                                        "(c) <a target='_blank' href='https://abs.gov.au'>Australian Bureau Of Statistics</a>"
+                                    ],
+                                    "meta_extents": [96.816941408, -43.74050960205765, 159.109219008, -9.142175976703609],
+                                    "meta_projection": "EPSG:4326",
+                                    "initially_visible": false,
+                                    "popup_template": {
+                                        "title": "SA1 Boundary",
+                                        "propertyMappings": [
+                                            { "name": "SA1_7DIG11", "value": "Code (7-digit)" }
+                                        ],
+                                        "linkProperty": {
+                                            "name": {
+                                                "expression": "https://quickstats.censusdata.abs.gov.au/census_services/getproduct/census/2011/quickstat/{SA1_7DIG11}",
+                                                "placeholderBegin": "{",
+                                                "placeholderEnd": "}"
+                                            },
+                                            "label": "Click here to view the SA1 details in ABS quickstat",
+                                            "linkTarget": "_blank"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "Type": "External",
+                                "Extension": {
+                                    "layer_name": "e754cca3-a854-481b-97b3-93cf23634acb",
+                                    "display_name": "Medicare Offices",
+                                    "source_type": "CSV",
+                                    "source_param_url": "https://data.gov.au/data/dataset/70f76a9e-d450-4567-9760-290dea54229c/resource/7eb30338-768e-436c-9dde-dc7a1066c9c9/download/medicare-office-locations-as-at-9-october-19.csv",
+                                    "layer_opt_declutter": true,
+                                    "meta_projection": "EPSG:4326",
+                                    "initially_visible": false,
+                                    "vector_layer_style": {
+                                        "OFFICE_TYPE == 'Service Centre - Centrelink/Medicare'": {
+                                            "label": "Service Centre - Centrelink/Medicare",
+                                            "point": {
+                                                "type": "Icon",
+                                                "anchor": [0.5, 0.5],
+                                                "src": SVC_CENTER_ICON,
+                                                "rotateWithView": false,
+                                                "rotation": 0,
+                                                "scale": 0.5,
+                                                "label": {
+                                                    "font": "12px Calibri,sans-serif",
+                                                    "text": {
+                                                        "expr": "SITE_NAME"
+                                                    },
+                                                    "textAlign": "left",
+                                                    "offsetX": 15,
+                                                    "fill": {
+                                                        "color": "#000"
+                                                    },
+                                                    "stroke": {
+                                                        "color": "#fff",
+                                                        "width": 3
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "default": {
+                                            "point": {
+                                                "type": "Icon",
+                                                "anchor": [0.5, 0.5],
+                                                "src": MAP_MARKER_ICON,
+                                                "rotateWithView": false,
+                                                "rotation": 0,
+                                                "scale": 1,
+                                                "label": {
+                                                    "font": "12px Calibri,sans-serif",
+                                                    "text": {
+                                                        "expr": "SITE_NAME"
+                                                    },
+                                                    "textAlign": "left",
+                                                    "offsetX": 15,
+                                                    "fill": {
+                                                        "color": "#000"
+                                                    },
+                                                    "stroke": {
+                                                        "color": "#fff",
+                                                        "width": 3
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "Type": "External",
+                                "Extension": {
+                                    "layer_name": "e91f4c30-d64a-4734-b1af-6afe310d0278",
+                                    "display_name": "Digital Hubs",
+                                    "source_type": "KML",
+                                    "source_param_url": "http://data.gov.au/storage/f/2013-08-12T02%3A04%3A22.954Z/digital-hubs-external.kml",
+                                    "layer_opt_declutter": true,
+                                    "meta_projection": "EPSG:4326",
+                                    "initially_visible": false,
+                                    "popup_template": {
+                                        "title": "Selected Digital Hub",
+                                        "propertyMappings": [
+                                            { "name": "NAME", "value": "Name"},
+                                            { "name": "STREET", "value": "Street"},
+                                            { "name": "SUBURB", "value": "Suburb"},
+                                            { "name": "STATE", "value": "State"},
+                                            { "name": "POSTCODE", "value": "Postcode"}
+                                        ],
+                                        "linkProperty": {
+                                            "name": "INFO_LINK",
+                                            "label": "Click to open hub link in a new window",
+                                            "linkTarget": "_blank"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "Type": "OpenStreetMap",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "Options": {
+                                        "name": [
+                                            "Open Street Map"
+                                        ],
+                                        "type": [
+                                            "Mapnik"
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                "Type": "Stamen",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "Options": {
+                                        "name": [
+                                            "Stamen (Toner)"
+                                        ],
+                                        "type": [
+                                            "toner"
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "@id": "Sheboygan",
+                        "Map": [
+                            {
+                                "Type": "External",
+                                "Extension": {
+                                    "layer_name": "US Wetlands",
+                                    "source_type": "TileWMS",
+                                    "source_param_url": "https://www.fws.gov/wetlands/arcgis/services/Wetlands_Raster/ImageServer/WMSServer",
+                                    "source_param_params": {
+                                        "LAYERS": "0",
+                                        "TILED": true
+                                    },
+                                    "meta_extents": [-87.76, 43.69, -87.69, 43.79],
+                                    "meta_projection": "EPSG:4326"
+                                }
+                            },
+                            {
+                                "Type": "External",
+                                "Extension": {
+                                    "layer_name": "Buildings of Cambridge, MA",
+                                    "source_type": "GeoJSON",
+                                    "source_param_url": "https://raw.githubusercontent.com/cambridgegis/cambridgegis_data_basemap/master/Buildings/BASEMAP_Buildings.geojson",
+                                    "meta_projection": "EPSG:4326",
+                                    "initially_visible": false
+                                }
+                            },
+                            {
+                                "Type": "Stamen",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "Options": {
+                                        "name": [
+                                            "Stamen (Toner)"
+                                        ],
+                                        "type": [
+                                            "toner"
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                "Type": "OpenStreetMap",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "Options": {
+                                        "name": [
+                                            "Open Street Map"
+                                        ],
+                                        "type": [
+                                            "Mapnik"
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }/*,
+                    {
+                        "@id": "Redding",
+                        "Map": [
+                            {
+                                "Type": "SubjectLayer",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "Options": {
+                                        "isBaseLayer": [
+                                            "false"
+                                        ],
+                                        "projection": [
+                                            "EPSG:900913"
+                                        ],
+                                        "useOverlay": [
+                                            "true"
+                                        ]
+                                    },
+                                    "ResourceId": "Library://Redding/Maps/Redding.MapDefinition"
+                                }
+                            },
+                            {
+                                "Type": "Stamen",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "Options": {
+                                        "name": [
+                                            "Stamen (Toner)"
+                                        ],
+                                        "type": [
+                                            "toner"
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                "Type": "OpenStreetMap",
+                                "SingleTile": true,
+                                "Extension": {
+                                    "Options": {
+                                        "name": [
+                                            "Open Street Map"
+                                        ],
+                                        "type": [
+                                            "Mapnik"
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                    */
+                ]
+            },
+            "WidgetSet": [
+                {
+                    "Container": [],
+                    "Widget": []
+                }
+            ]
+        };
+        var el = document.getElementById("map");
+        var viewer = new MapGuide.Application();
+        viewer.mount(el, {
+            initCommandFactory: function (dispatch) { return new MapGuide.GenericViewerInitCommand(dispatch); },
+            resourceId: function () {
+                return Promise.resolve(appDef)
+            },
+            layout: "generic",/*
+                externalBaseLayers: [
+                    { name: "OpenStreetMap", kind: "OSM" },
+                    { name: "Stamen - Toner", kind: "Stamen", visible: true, options: { layer: "toner" } },
+                    { name: "Stamen - Watercolor", kind: "Stamen", options: { layer: "watercolor" } }
+                ],*/
+        });
+    </script>
+</body>
+
+</html>

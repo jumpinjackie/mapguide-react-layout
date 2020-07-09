@@ -45,11 +45,6 @@ declare module "ismobilejs";
 
 declare module "proj4";
 
-declare module "history/createBrowserHistory" {
-    function createHistory(): any;
-    export = createHistory;
-}
-
 // Monkey patching Array.filter to support type narrowing
 // https://github.com/Microsoft/TypeScript/issues/7657
 interface Array<T> {

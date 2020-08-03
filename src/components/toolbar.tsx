@@ -13,6 +13,11 @@ import { NBSP } from '../constants';
 export const DEFAULT_TOOLBAR_SIZE = 29;
 export const TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";
 
+// Custom type guard to workaround: https://github.com/microsoft/TypeScript/issues/39879
+function isNumeric(arg: any): arg is number {
+    return typeof(arg) == 'number';
+}
+
 // Size is based on the default toolbar height of 29 (with base image icon size of 16x16)
 // This ratio will help "scale" SVG icons to match
 const SVG_SIZE_RATIO = 16 / DEFAULT_TOOLBAR_SIZE;
@@ -411,7 +416,7 @@ export const Toolbar = (props: IToolbarProps) => {
     let height = DEFAULT_TOOLBAR_SIZE;
     if (containerStyle) {
         const ch = containerStyle.height;
-        if (typeof (ch) == 'number') {
+        if (isNumeric(ch)) {
             height = ch;
         }
     }

@@ -11774,10 +11774,10 @@ react-redux@^7.2.1:
     prop-types "^15.7.2"
     react-is "^16.9.0"
 
-react-rnd@^10.2.1:
-  version "10.2.1"
-  resolved "https://registry.yarnpkg.com/react-rnd/-/react-rnd-10.2.1.tgz#9de12e2836ed3b2cd1c4be91927b3387ba1afc77"
-  integrity sha512-DLOgEsgBNerBrfWYSib/5EwwIOhv1z12P1bHqY5FoCHz6R3P24YJvO4aXlEnq7fLRwfkJcQgz0/egU5EVVVCAw==
+react-rnd@^10.2.2:
+  version "10.2.2"
+  resolved "https://registry.yarnpkg.com/react-rnd/-/react-rnd-10.2.2.tgz#378017178179c9e6cdca57280dee22cf48925b5a"
+  integrity sha512-UoQnNehseKEspimfPFaO0gN0vSVJ8uCZeG39nCibUVyGTjZ5d+bnY/zHEp9SObHQ9tKW4vFSa9+8Mf7QZrQrUw==
   dependencies:
     re-resizable "6.3.2"
     react-draggable "4.4.3"

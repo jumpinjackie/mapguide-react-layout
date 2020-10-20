@@ -49,6 +49,7 @@
     "url": "https://github.com/jumpinjackie/mapguide-react-layout/issues"
   },
   "homepage": "https://github.com/jumpinjackie/mapguide-react-layout#readme",
+  "browserslist": "IE >= 10",
   "dependencies": {
     "@blueprintjs/core": "^3.34.0",
     "expr-eval": "2.0.2",

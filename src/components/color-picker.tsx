@@ -3,7 +3,7 @@ import { Collapse, Button, Intent, Card } from '@blueprintjs/core';
 import { tr } from "../api/i18n";
 import { NBSP } from '../constants';
 import { DEFAULT_COLOR } from '../api/ol-style-contracts';
-const SimpleColorPicker = require("react-simple-colorpicker");
+import { HexColorPicker } from "react-colorful";
 
 /**
  * Color picker props
@@ -30,7 +30,7 @@ export const ColorPicker = (props: IColorPickerProps) => {
         <button style={{ width: 80, borderRadius: 3, backgroundColor: props.value ?? DEFAULT_COLOR }} onClick={onPickerToggle}>{NBSP}{NBSP}{NBSP}</button>
         <Collapse isOpen={isPickerOpen}>
             <Card>
-                <SimpleColorPicker color={props.value ?? DEFAULT_COLOR} onChange={(c: any) => props.onChange(c)} />
+                <HexColorPicker color={props.value ?? DEFAULT_COLOR} onChange={(c: any) => props.onChange(c)} />
                 <Button icon="chevron-up" intent={Intent.PRIMARY} onClick={() => setIsPickerOpen(false)}>{tr("ACTION_CLOSE", props.locale)}</Button>
             </Card>
         </Collapse>

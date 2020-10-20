@@ -639,3 +639,7 @@ div.InfoText {
 .with-opacity-slider .hue-slider {
     bottom: 2em;
 }
+
+.react-colorful {
+    width: 100%;
+}

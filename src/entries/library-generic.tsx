@@ -32,6 +32,7 @@ import { MapViewer } from '../containers/neo-map-viewer';
 import { GenericMapProviderContext } from '../components/map-providers/generic';
 import GenericLayout from '../layouts/generic';
 
+import "react-colorful/dist/index.css";
 import "../styles/index.css";
 import "ol/ol.css";
 import "@blueprintjs/core/lib/css/blueprint.css";

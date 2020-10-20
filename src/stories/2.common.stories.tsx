@@ -5,6 +5,9 @@ import { ColorPicker } from '../components/color-picker';
 import { withKnobs, text, boolean } from '@storybook/addon-knobs';
 import { VectorStyleEditor } from '../components/vector-style-editor';
 
+import "react-colorful/dist/index.css";
+import "../styles/index.css";
+
 storiesOf("Common Components", module)
     .addDecorator(withKnobs)
     .add("Color Picker", () => {

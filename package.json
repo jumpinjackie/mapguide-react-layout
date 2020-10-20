@@ -64,7 +64,7 @@
     "react-dom": "^16.14.0",
     "react-redux": "^7.2.1",
     "react-rnd": "^10.2.3",
-    "react-simple-colorpicker": "1.4.2",
+    "react-colorful": "^4.1.4",
     "react-splitter-layout": "^4.0.0",
     "redux": "^4.0.5",
     "redux-logger": "^4.0.0",

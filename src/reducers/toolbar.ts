@@ -1,5 +1,5 @@
 import { IToolbarReducerState, IDOMElementMetrics } from "../api/common";
-import update = require("react-addons-update");
+import update from 'immutability-helper';
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 import { isElementState } from './template';

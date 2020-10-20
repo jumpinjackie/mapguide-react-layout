@@ -28,6 +28,8 @@ const basePlugins = [
         "proj4": "proj4"
     }),
     new webpack.DefinePlugin({
+        //Needed for blueprint
+        'process.env.BLUEPRINT_NAMESPACE': JSON.stringify("bp3"),
         __DEV__: process.env.BUILD_MODE !== 'production',
         __VERSION__: JSON.stringify(process.env.APPVEYOR_BUILD_VERSION || ""),
         __COMMITHASH__: JSON.stringify(process.env.APPVEYOR_REPO_COMMIT || ""),
@@ -49,10 +51,12 @@ const basePlugins = [
 
 const devPlugins = [
     new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.WatchIgnorePlugin([
-        /\.js$/,
-        /\.d\.ts$/
-    ])
+    new webpack.WatchIgnorePlugin({
+        paths: [
+            /\.js$/,
+            /\.d\.ts$/
+        ]
+    })
 ];
 
 const prodPlugins = [
@@ -95,7 +99,10 @@ const rules = [
     },
     { //less
         test: /\.less$/,
-        loader: 'less-loader!css-loader',
+        use: [
+            'less-loader',
+            'css-loader'
+        ],
         exclude: /node_modules/
     },
     { //fonts
@@ -176,20 +183,14 @@ if (process.env.BUILD_MODE === 'production' || process.env.DEBUG_BUILD === '1') 
 const opts = (process.env.BUILD_MODE === 'production')
     ? {
         minimizer: [
-            new TerserPlugin({
-                extractComments: true,
-                cache: true,
-                parallel: true,
-                sourceMap: true // set to true if you want JS source maps
-            }),
+            new TerserPlugin(),
             new OptimizeCSSAssetsPlugin({})
         ]
     }
     : { minimize: false }
 
 module.exports = {
-    optimization: opts,
-    mode: (process.env.BUILD_MODE === 'development' ? 'development' : 'none'),
+    mode: (process.env.BUILD_MODE === 'development' ? 'development' : 'production'),
     entry: {
         viewer: mgAppEntries,
         "viewer-generic": genericAppEntries

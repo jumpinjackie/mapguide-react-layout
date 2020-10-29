@@ -63,7 +63,7 @@
     "react": "^16.14.0",
     "react-copy-to-clipboard": "^5.0.2",
     "react-dom": "^16.14.0",
-    "react-redux": "^7.2.1",
+    "react-redux": "^7.2.2",
     "react-rnd": "^10.2.3",
     "react-colorful": "^4.3.0",
     "react-splitter-layout": "^4.0.0",

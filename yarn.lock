@@ -1031,12 +1031,12 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@blueprintjs/core@^3.35.0":
-  version "3.35.0"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-3.35.0.tgz#ed48ad7e6692f7dc32e28200a7984e029102ce3f"
-  integrity sha512-2coEMDX1JJuHvDCt6wZSB6zntDlKvUmi4rqjLeGR+ZOo4TtFB92GSjycMtupka1PURM1A66oQZvnMiBIjuMW6Q==
+"@blueprintjs/core@^3.36.0":
+  version "3.36.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-3.36.0.tgz#0a271092050c17b84f29426594708180a1b5401a"
+  integrity sha512-7VUyF+qWelDysajK0Xowlou+iqbGAFfGaM3znpmm7OEEIli5XRWjG9rhNuEk3sP7zbdOJpyqh5PAPDQvm5Sxmg==
   dependencies:
-    "@blueprintjs/icons" "^3.22.0"
+    "@blueprintjs/icons" "^3.23.0"
     "@types/dom4" "^2.0.1"
     classnames "^2.2"
     dom4 "^2.1.5"
@@ -1048,10 +1048,10 @@
     resize-observer-polyfill "^1.5.1"
     tslib "~1.13.0"
 
-"@blueprintjs/icons@^3.22.0":
-  version "3.22.0"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-3.22.0.tgz#6a7c177e9aa96f0ed10bc93d88f7c6687db336ad"
-  integrity sha512-clfdwRQlzqs2sDxjwQr4p10Z3bGNTnqpsLgN+4TN1ECf7plEEukhvQh6YK/Lfd5xDhEBEEZ/YQCawZbyAYjfXg==
+"@blueprintjs/icons@^3.23.0":
+  version "3.23.0"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-3.23.0.tgz#4cfe0db4363971ac5d8a0a59590a6efc16115dc6"
+  integrity sha512-QOQ3P5bU1FiEwnMBl5Chn433ONSSTIMgC+zZJttyXV0m8R7D1bPBJJqIMuANXtRld/Fj+8IzoQ6jfaVUG16slA==
   dependencies:
     classnames "^2.2"
     tslib "~1.13.0"

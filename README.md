@@ -1,7 +1,7 @@
 # mapguide-react-layout
 
 [![npm version](https://badge.fury.io/js/mapguide-react-layout.svg)](https://badge.fury.io/js/mapguide-react-layout)
-[![Build Status](https://github.com/jumpinjackie/mapguide-react-layout/workflows/CI/badge.svg?branch=master)]
+![Build Status](https://github.com/jumpinjackie/mapguide-react-layout/workflows/CI/badge.svg?branch=master)]
 [![Build status](https://ci.appveyor.com/api/projects/status/urdvk8788w6h26ae?svg=true)](https://ci.appveyor.com/project/jumpinjackie/mapguide-react-layout)
 [![Coverage Status](https://coveralls.io/repos/github/jumpinjackie/mapguide-react-layout/badge.svg?branch=master)](https://coveralls.io/github/jumpinjackie/mapguide-react-layout?branch=master)
 [![Known Vulnerabilities](https://snyk.io/test/github/jumpinjackie/mapguide-react-layout/badge.svg?targetFile=package.json)](https://snyk.io/test/github/jumpinjackie/mapguide-react-layout?targetFile=package.json)

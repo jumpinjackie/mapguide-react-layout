@@ -30,9 +30,9 @@
     "test": "jest --runInBand --verbose",
     "test:e2e": "testcafe chrome e2e/test.*.ts -q -S -s e2e/screenshots",
     "test:appveyor": "jest --verbose --coverage --colors",
-    "test:travis": "jest --runInBand --verbose --coverage --colors && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "test:gha": "jest --runInBand --verbose --coverage --colors && cat ./coverage/lcov.info",
     "ci:appveyor": "yarn run lint && yarn run test:appveyor",
-    "ci:travis": "yarn run lint && yarn run test:travis"
+    "ci:gha": "yarn run lint && yarn run test:gha"
   },
   "repository": {
     "type": "git",

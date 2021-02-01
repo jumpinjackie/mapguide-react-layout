@@ -9,7 +9,7 @@ import { viewerReducer } from "./viewer";
 import { mouseReducer } from "./mouse";
 import { templateReducer } from "./template";
 
-const rootReducer: any = {
+export const rootReducer: any = {
     initError: initErrorReducer,
     config: configReducer,
     template: templateReducer,
@@ -21,5 +21,3 @@ const rootReducer: any = {
     mouse: mouseReducer,
     lastaction: lastAction
 };
-
-export default rootReducer;

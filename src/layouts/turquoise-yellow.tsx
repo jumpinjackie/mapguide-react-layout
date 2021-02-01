@@ -1,14 +1,14 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
-import ToolbarContainer from "../containers/toolbar";
-import ViewerApiShim from "../containers/viewer-shim";
-import ModalLauncher from "../containers/modal-launcher";
-import FlyoutRegionContainer from "../containers/flyout-region";
+import { ToolbarContainer } from "../containers/toolbar";
+import { ViewerApiShim } from "../containers/viewer-shim";
+import { ModalLauncher } from "../containers/modal-launcher";
+import { FlyoutRegionContainer } from "../containers/flyout-region";
 import { tr } from "../api/i18n";
 import { ITemplateReducerState } from "../api/common";
 import { isElementState } from "../reducers/template";
-import InitWarningDisplay from "../containers/init-warning-display";
+import { InitWarningDisplay } from "../containers/init-warning-display";
 import SplitterLayout from "react-splitter-layout";
 import { ViewerAction } from '../actions/defs';
 import { ActionType } from '../constants/actions';
@@ -78,7 +78,7 @@ const TOP_BAR_HEIGHT = 35;
 const TAB_BAR_HEIGHT = 30;
 const STATUS_BAR_HEIGHT = 18;
 
-const TurquoiseYellowTemplateLayout = () => {
+export const TurquoiseYellowTemplateLayout = () => {
     const {
         isResizing,
         locale,
@@ -196,5 +196,3 @@ const TurquoiseYellowTemplateLayout = () => {
         <InitWarningDisplay />
     </div>;
 }
-
-export default TurquoiseYellowTemplateLayout;

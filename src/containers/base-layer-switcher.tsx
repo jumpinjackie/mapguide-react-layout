@@ -8,7 +8,7 @@ export interface IBaseLayerSwitcherContainerProps {
 
 }
 
-const BaseLayerSwitcherContainer = () => {
+export const BaseLayerSwitcherContainer = () => {
     const mapName = useActiveMapName();
     const locale = useViewerLocale();
     const externalBaseLayers = useActiveMapExternalBaseLayers();
@@ -25,5 +25,3 @@ const BaseLayerSwitcherContainer = () => {
         return <noscript />;
     }
 }
-
-export default BaseLayerSwitcherContainer;

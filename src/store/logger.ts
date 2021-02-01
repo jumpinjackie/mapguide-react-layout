@@ -1,7 +1,7 @@
 import { ActionType } from '../constants/actions';
 const createLogger = require("redux-logger").createLogger;
 
-const logger = createLogger({
+export const logger = createLogger({
     collapsed: true,
     stateTransformer: (state: any) => {
         return state;
@@ -19,6 +19,3 @@ const logger = createLogger({
             type !== ActionType.REMOVE_LAYER_BUSY_WORKER;
     },
 });
-
-
-export default logger;

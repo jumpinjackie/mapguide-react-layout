@@ -12,7 +12,7 @@ export interface ILegendContainerProps {
     inlineBaseLayerSwitcher?: boolean;
 }
 
-const LegendContainer = (props: ILegendContainerProps) => {
+export const LegendContainer = (props: ILegendContainerProps) => {
     const { maxHeight, inlineBaseLayerSwitcher } = props;
     const dispatch = useDispatch();
     const activeMapName = useActiveMapName();
@@ -86,5 +86,3 @@ const LegendContainer = (props: ILegendContainerProps) => {
         return <div>{tr("LOADING_MSG", locale)}</div>;
     }
 }
-
-export default LegendContainer;

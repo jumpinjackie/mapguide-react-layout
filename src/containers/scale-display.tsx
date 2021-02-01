@@ -9,7 +9,7 @@ export interface IScaleDisplayContainerProps {
     style?: React.CSSProperties;
 }
 
-const ScaleDisplayContainer = (props: IScaleDisplayContainerProps) => {
+export const ScaleDisplayContainer = (props: IScaleDisplayContainerProps) => {
     const { style } = props;
     const dispatch = useDispatch();
     const locale = useViewerLocale();
@@ -32,5 +32,3 @@ const ScaleDisplayContainer = (props: IScaleDisplayContainerProps) => {
         return <noscript />;
     }
 };
-
-export default ScaleDisplayContainer;

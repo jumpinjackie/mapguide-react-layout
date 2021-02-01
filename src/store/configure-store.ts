@@ -1,10 +1,10 @@
 import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
-import promiseMiddleware from './promise-middleware';
-import logger from './logger';
-import rootReducer from '../reducers/root';
+import { promiseMiddleware } from './promise-middleware';
+import { logger } from './logger';
+import { rootReducer } from '../reducers/root';
 
-function configureStore(initialState: any, extraReducers?: any) {
+export function configureStore(initialState: any, extraReducers?: any) {
     const root = extraReducers ? combineReducers({ ...rootReducer, ...extraReducers }) : combineReducers(rootReducer);
     const store = (<any>compose)( //HACK: Something bogus about the compose() declaration
         _getMiddleware(),
@@ -33,5 +33,3 @@ function _getEnhancers() {
     }
     return enhancers;
 }
-
-export default configureStore;

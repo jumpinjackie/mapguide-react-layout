@@ -148,8 +148,6 @@ export interface IQuickPlotContainerDispatch {
     setViewRotationEnabled: (enabled: boolean) => void;
 }
 
-
-
 export interface IQuickPlotContainerState {
     title: string;
     subTitle: string;
@@ -168,7 +166,7 @@ export interface IQuickPlotContainerState {
     normalizedBox: string;
 }
 
-const QuickPlotContainer = () => {
+export const QuickPlotContainer = () => {
     const [title, setTitle] = React.useState(""); ``
     const [subTitle, setSubTitle] = React.useState("");
     const [showLegend, setShowLegend] = React.useState(false);
@@ -461,5 +459,3 @@ const QuickPlotContainer = () => {
         </form>
     </div>;
 }
-
-export default QuickPlotContainer;

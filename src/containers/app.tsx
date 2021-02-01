@@ -428,7 +428,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
     }
 }
 
-const App = (props: IAppProps) => {
+export const App = (props: IAppProps) => {
     const error = useInitError();
     const includeStack = useInitErrorStack();
     const initOptions = useInitErrorOptions();
@@ -451,5 +451,3 @@ const App = (props: IAppProps) => {
         setElementVisibility={setElementVisibility}
         {...props} />;
 }
-
-export default App;

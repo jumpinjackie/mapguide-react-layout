@@ -10,7 +10,7 @@ export interface IInitWarningDisplayProps {
 }
 
 
-const InitWarningDisplay = () => {
+export const InitWarningDisplay = () => {
     const dispatch = useDispatch();
     const acknowledge = () => dispatch(acknowledgeInitWarnings());
     const warnings = useInitWarnings();
@@ -41,5 +41,3 @@ const InitWarningDisplay = () => {
         return <noscript />;
     }
 }
-
-export default InitWarningDisplay;

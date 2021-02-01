@@ -14,7 +14,7 @@ function isPromise(value: any) {
 /**
  * @hidden
  */
-export default function promiseMiddleware({ dispatch }: { dispatch: any }) {
+export function promiseMiddleware({ dispatch }: { dispatch: any }) {
     return (next: any) => (action: any) => {
         if (!isPromise(action.payload)) {
             return next(action);

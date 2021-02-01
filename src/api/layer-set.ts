@@ -3,7 +3,7 @@ import LayerGroup from "ol/layer/Group";
 import TileGrid from "ol/tilegrid/TileGrid";
 import AbstractSource from "ol/source/Source";
 import TileImageSource from "ol/source/TileImage";
-import createMapGuideSource from "./ol-mapguide-source-factory";
+import { createMapGuideSource } from "./ol-mapguide-source-factory";
 import ImageStaticSource from "ol/source/ImageStatic";
 import { restrictToRange } from "../utils/number";
 import View from "ol/View";

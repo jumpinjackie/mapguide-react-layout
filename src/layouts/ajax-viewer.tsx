@@ -1,18 +1,18 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "../components/toolbar";
-import ToolbarContainer from "../containers/toolbar";
-import FlyoutRegionContainer from "../containers/flyout-region";
-import ViewerApiShim from "../containers/viewer-shim";
-import ModalLauncher from "../containers/modal-launcher";
-import InitWarningDisplay from "../containers/init-warning-display";
+import { ToolbarContainer } from "../containers/toolbar";
+import { FlyoutRegionContainer } from "../containers/flyout-region";
+import { ViewerApiShim } from "../containers/viewer-shim";
+import { ModalLauncher } from "../containers/modal-launcher";
+import { InitWarningDisplay } from "../containers/init-warning-display";
 import SplitterLayout from "react-splitter-layout";
 import { tr } from "../api/i18n";
 import { useCommonTemplateState } from './hooks';
 import { useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
 import { WEBLAYOUT_TOOLBAR } from '../constants';
 
-const AjaxViewerLayout = () => {
+export const AjaxViewerLayout = () => {
     const {
         isResizing,
         locale,
@@ -118,5 +118,3 @@ const AjaxViewerLayout = () => {
         <InitWarningDisplay />
     </div>;
 };
-
-export default AjaxViewerLayout;

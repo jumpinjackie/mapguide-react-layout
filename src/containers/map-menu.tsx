@@ -4,7 +4,7 @@ import { MapMenu } from "../components/map-menu";
 import { useViewerLocale, useActiveMapName, useAvailableMaps } from './hooks';
 import { setActiveMap } from '../actions/map';
 
-const MapMenuContainer = () => {
+export const MapMenuContainer = () => {
     const dispatch = useDispatch();
     const locale = useViewerLocale();
     const activeMapName = useActiveMapName();
@@ -21,5 +21,3 @@ const MapMenuContainer = () => {
         return <noscript />;
     }
 }
-
-export default MapMenuContainer;

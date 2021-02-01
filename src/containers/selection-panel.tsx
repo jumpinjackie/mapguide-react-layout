@@ -16,7 +16,7 @@ export interface ISelectionPanelContainerProps {
     selectedFeatureRenderer?: (props: ISelectedFeatureProps) => JSX.Element;
 }
 
-const SelectionPanelContainer = (props: ISelectionPanelContainerProps) => {
+export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) => {
     const { maxHeight, selectedFeatureRenderer } = props;
     const locale = useViewerLocale();
     const map = useActiveMapState();
@@ -61,5 +61,3 @@ const SelectionPanelContainer = (props: ISelectionPanelContainerProps) => {
         </Callout>;
     }
 }
-
-export default SelectionPanelContainer;

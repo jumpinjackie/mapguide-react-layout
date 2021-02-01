@@ -1,27 +1,18 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
-import ToolbarContainer from "../containers/toolbar";
-import ViewerApiShim from "../containers/viewer-shim";
-import ModalLauncher from "../containers/modal-launcher";
-import FlyoutRegionContainer from "../containers/flyout-region";
-import { connect } from "react-redux";
-import { tr, DEFAULT_LOCALE } from "../api/i18n";
-import { RuntimeMap } from "../api/contracts/runtime-map";
-import {
-    ReduxDispatch,
-    IApplicationState,
-    IConfigurationReducerState,
-    IViewerCapabilities,
-    ITemplateReducerState,
-    getRuntimeMap
-} from "../api/common";
+import { ToolbarContainer } from "../containers/toolbar";
+import { ViewerApiShim } from "../containers/viewer-shim";
+import { ModalLauncher } from "../containers/modal-launcher";
+import { FlyoutRegionContainer } from "../containers/flyout-region";
+import { tr } from "../api/i18n";
+import { ITemplateReducerState } from "../api/common";
 import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../components/accordion";
-import { setCustomTemplateReducer, isElementState } from "../reducers/template";
-import InitWarningDisplay from "../containers/init-warning-display";
+import { isElementState } from "../reducers/template";
+import { InitWarningDisplay } from "../containers/init-warning-display";
 import SplitterLayout from "react-splitter-layout";
 import { ActionType } from '../constants/actions';
-import { IElementState, ViewerAction } from '../actions/defs';
+import { ViewerAction } from '../actions/defs';
 import { useCommonTemplateState } from './hooks';
 import { useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
 
@@ -85,7 +76,7 @@ function maroonTemplateReducer(origState: ITemplateReducerState, state: ITemplat
 const STATUS_BAR_HEIGHT = 18;
 const OUTER_PADDING = 3;
 
-const MaroonTemplateLayout = () => {
+export const MaroonTemplateLayout = () => {
     const {
         isResizing,
         locale,
@@ -196,5 +187,3 @@ const MaroonTemplateLayout = () => {
         <InitWarningDisplay />
     </div>;
 };
-
-export default MaroonTemplateLayout;

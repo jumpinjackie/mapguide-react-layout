@@ -16,7 +16,7 @@ export interface IViewerOptionsProps {
 
 }
 
-const ViewerOptions = () => {
+export const ViewerOptions = () => {
     const externalBaseLayers = useActiveMapExternalBaseLayers();
     const mapName = useActiveMapName();
     const layerTransparency = useActiveMapLayerTransparency();
@@ -123,5 +123,3 @@ const ViewerOptions = () => {
         </label>
     </div>;
 };
-
-export default ViewerOptions;

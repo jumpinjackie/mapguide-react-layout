@@ -6,7 +6,7 @@ export interface ISelectedFeatureCountContainerProps {
     style?: React.CSSProperties;
 }
 
-const SelectedFeatureCountContainer = (props: ISelectedFeatureCountContainerProps) => {
+export const SelectedFeatureCountContainer = (props: ISelectedFeatureCountContainerProps) => {
     const { style } = props;
     const selection = useActiveMapSelectionSet();
     const locale = useViewerLocale();
@@ -16,5 +16,3 @@ const SelectedFeatureCountContainer = (props: ISelectedFeatureCountContainerProp
         return <div />;
     }
 }
-
-export default SelectedFeatureCountContainer;

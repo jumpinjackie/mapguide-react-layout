@@ -6,7 +6,7 @@ import { useActiveMapMetersPerUnit } from './hooks-mapguide';
 
 export interface IViewSizeContainerProps { }
 
-const ViewSizeContainer = () => {
+export const ViewSizeContainer = () => {
     const width = useActiveMapWidth();
     const height = useActiveMapHeight();
     const sizeUnits = useViewerSizeUnits();
@@ -19,5 +19,3 @@ const ViewSizeContainer = () => {
         return <noscript />;
     }
 };
-
-export default ViewSizeContainer;

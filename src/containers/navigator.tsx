@@ -11,7 +11,7 @@ export interface INavigatorContainerProps {
     style?: React.CSSProperties;
 }
 
-const NavigatorContainer = (props: INavigatorContainerProps) => {
+export const NavigatorContainer = (props: INavigatorContainerProps) => {
     const { style } = props;
     const dispatch = useDispatch();
     const locale = useViewerLocale();
@@ -73,5 +73,3 @@ const NavigatorContainer = (props: INavigatorContainerProps) => {
         return <div />;
     }
 }
-
-export default NavigatorContainer;

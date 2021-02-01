@@ -22,7 +22,7 @@ export interface IAddManageLayersContainerProps {
 
 }
 
-const AddManageLayersContainer = () => {
+export const AddManageLayersContainer = () => {
     const dispatch = useDispatch();
     const locale = useViewerLocale();
     const activeMapName = useActiveMapName();
@@ -126,5 +126,3 @@ const AddManageLayersContainer = () => {
         return <></>;
     }
 };
-
-export default AddManageLayersContainer;

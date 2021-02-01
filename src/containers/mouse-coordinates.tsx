@@ -13,7 +13,7 @@ export interface IMouseCoordinatesContainerProps {
     style?: React.CSSProperties;
 }
 
-const MouseCoordinatesContainer = (props: IMouseCoordinatesContainerProps) => {
+export const MouseCoordinatesContainer = (props: IMouseCoordinatesContainerProps) => {
     const { style } = props;
     const mapProjection = useActiveMapProjection();
     const projection = useConfiguredCoordinateProjection();
@@ -56,5 +56,3 @@ const MouseCoordinatesContainer = (props: IMouseCoordinatesContainerProps) => {
         return <div />;
     }
 };
-
-export default MouseCoordinatesContainer;

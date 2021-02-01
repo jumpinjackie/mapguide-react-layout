@@ -18,7 +18,7 @@ export interface IShareLinkToViewContainerProps {
 
 function NOOP() {}
 
-const ShareLinkToViewContainer = () => {
+export const ShareLinkToViewContainer = () => {
     const [showSession, setShowSession] = React.useState(false);
     const locale = useViewerLocale();
     const onShowSessionChanged = () => setShowSession(!showSession);
@@ -44,5 +44,3 @@ const ShareLinkToViewContainer = () => {
         </div>
     </div>;
 };
-
-export default ShareLinkToViewContainer;

@@ -1178,7 +1178,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
     }
 }
 
-const ViewerApiShim = () => {
+export const ViewerApiShim = () => {
     const map = useActiveMapState();
     const selectionSet = useActiveMapSelectionSet();
     const agentUri = useConfiguredAgentUri();
@@ -1205,5 +1205,3 @@ const ViewerApiShim = () => {
         setSelection={setSelectionAction}
         queryMapFeatures={queryMapFeaturesAction} />;
 }
-
-export default ViewerApiShim;

@@ -1,12 +1,12 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
-import ToolbarContainer from "../containers/toolbar";
-import ViewerApiShim from "../containers/viewer-shim";
-import ModalLauncher from "../containers/modal-launcher";
-import FlyoutRegionContainer from "../containers/flyout-region";
+import { ToolbarContainer } from "../containers/toolbar";
+import { ViewerApiShim } from "../containers/viewer-shim";
+import { ModalLauncher } from "../containers/modal-launcher";
+import { FlyoutRegionContainer } from "../containers/flyout-region";
 import { tr } from "../api/i18n";
 import { GenericEvent, ITemplateReducerState } from "../api/common";
-import InitWarningDisplay from "../containers/init-warning-display";
+import { InitWarningDisplay } from "../containers/init-warning-display";
 import { ActionType } from '../constants/actions';
 import { IElementState, ViewerAction } from '../actions/defs';
 import { Spinner, Intent, Icon } from '@blueprintjs/core';
@@ -253,7 +253,7 @@ const Sidebar = (props: ISidebarProps) => {
     </div>;
 }
 
-const SidebarLayout = () => {
+export const SidebarLayout = () => {
     const {
         dispatch,
         locale,
@@ -406,5 +406,3 @@ const SidebarLayout = () => {
         <PlaceholderComponent id={DefaultComponentNames.PoweredByMapGuide} locale={locale} />
     </div>;
 };
-
-export default SidebarLayout;

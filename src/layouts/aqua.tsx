@@ -1,10 +1,10 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
-import ToolbarContainer from "../containers/toolbar";
-import ViewerApiShim from "../containers/viewer-shim";
-import ModalLauncher from "../containers/modal-launcher";
-import FlyoutRegionContainer from "../containers/flyout-region";
+import { ToolbarContainer } from "../containers/toolbar";
+import { ViewerApiShim } from "../containers/viewer-shim";
+import { ModalLauncher } from "../containers/modal-launcher";
+import { FlyoutRegionContainer } from "../containers/flyout-region";
 import { RndModalDialog } from "../components/modal-dialog";
 import { tr } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
@@ -13,7 +13,7 @@ import {
     ITemplateReducerState,
     IViewerCapabilities
 } from "../api/common";
-import InitWarningDisplay from "../containers/init-warning-display";
+import { InitWarningDisplay } from "../containers/init-warning-display";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 import { useCommonTemplateState } from './hooks';
@@ -94,7 +94,7 @@ export interface IAquaTemplateDispatch {
     hideSelection: () => void;
 }
 
-const AquaTemplateLayout = () => {
+export const AquaTemplateLayout = () => {
     const {
         locale,
         capabilities,
@@ -225,5 +225,3 @@ const AquaTemplateLayout = () => {
         <InitWarningDisplay />
     </div>;
 };
-
-export default AquaTemplateLayout;

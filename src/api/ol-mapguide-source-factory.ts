@@ -13,7 +13,7 @@ export function isMapGuideImageSource(arg: any): arg is IMapGuideImageSource {
 /**
  * @hidden
  */
-export default function createMapGuideSource(options: OLMapGuideImageSourceOptions): olMapGuideSource {
+export function createMapGuideSource(options: OLMapGuideImageSourceOptions): olMapGuideSource {
     //const ctor: any = MapGuideImageSource;
     //const source = new ctor(options);
     const source = new olMapGuideSource(options);

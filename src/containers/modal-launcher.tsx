@@ -28,7 +28,7 @@ function getComponentId(diag: IModalComponentDisplayOptions | IModalDisplayOptio
     }
 }
 
-const ModalLauncher = (props: { children?: React.ReactNode }) => {
+export const ModalLauncher = (props: { children?: React.ReactNode }) => {
     const dispatch = useDispatch();
     const hideModalAction = (options: any) => dispatch(hideModal(options));
     const onCloseModal = (name: string) => hideModalAction({ name: name });
@@ -91,5 +91,3 @@ const ModalLauncher = (props: { children?: React.ReactNode }) => {
         {props.children}
     </div>;
 };
-
-export default ModalLauncher;

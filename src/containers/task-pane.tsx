@@ -141,7 +141,7 @@ class TaskPaneContainerInner extends React.Component<TaskPaneProps, any> {
     }
 }
 
-const TaskPaneContainer = (props: ITaskPaneContainerProps) => {
+export const TaskPaneContainer = (props: ITaskPaneContainerProps) => {
     const locale = useViewerLocale();
     const map = useActiveMapBranch();
     const flyouts = useViewerFlyouts();
@@ -177,5 +177,3 @@ const TaskPaneContainer = (props: ITaskPaneContainerProps) => {
         closeFlyout={closeFlyoutAction}
         {...props} />;
 };
-
-export default TaskPaneContainer;

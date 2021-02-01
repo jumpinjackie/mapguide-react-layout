@@ -10,7 +10,7 @@ export interface ICoordinateTrackerContainerProps {
 }
 
 
-const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerProps) => {
+export const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerProps) => {
     const { projections } = props;
     const locale = useViewerLocale();
     const mouse = useCurrentMouseCoordinates();
@@ -41,5 +41,3 @@ const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerProps) => 
         </Callout>;
     }
 }
-
-export default CoordinateTrackerContainer;

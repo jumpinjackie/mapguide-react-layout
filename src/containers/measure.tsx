@@ -237,7 +237,7 @@ class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasu
     }
 }
 
-const MeasureContainer = (props: IMeasureContainerProps) => {
+export const MeasureContainer = (props: IMeasureContainerProps) => {
     const activeMapName = useActiveMapName();
     const locale = useViewerLocale();
     const mapNames = useAvailableMaps()?.map(m => m.value);
@@ -250,5 +250,3 @@ const MeasureContainer = (props: IMeasureContainerProps) => {
         setActiveTool={setActiveToolAction}
         {...props} />;
 };
-
-export default MeasureContainer;

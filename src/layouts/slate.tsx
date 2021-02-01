@@ -1,15 +1,15 @@
 import * as React from "react";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component";
 import { DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
-import ToolbarContainer from "../containers/toolbar";
-import ViewerApiShim from "../containers/viewer-shim";
-import ModalLauncher from "../containers/modal-launcher";
-import FlyoutRegionContainer from "../containers/flyout-region";
+import { ToolbarContainer } from "../containers/toolbar";
+import { ViewerApiShim } from "../containers/viewer-shim";
+import { ModalLauncher } from "../containers/modal-launcher";
+import { FlyoutRegionContainer } from "../containers/flyout-region";
 import { tr } from "../api/i18n";
 import { ITemplateReducerState } from "../api/common";
 import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../components/accordion";
 import { isElementState } from "../reducers/template";
-import InitWarningDisplay from "../containers/init-warning-display";
+import { InitWarningDisplay } from "../containers/init-warning-display";
 import SplitterLayout from "react-splitter-layout";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
@@ -75,7 +75,7 @@ function slateTemplateReducer(origState: ITemplateReducerState, state: ITemplate
 
 const STATUS_BAR_HEIGHT = 18;
 
-const SlateTemplateLayout = () => {
+export const SlateTemplateLayout = () => {
     const {
         isResizing,
         locale,
@@ -186,5 +186,3 @@ const SlateTemplateLayout = () => {
         <InitWarningDisplay />
     </div>;
 }
-
-export default SlateTemplateLayout;

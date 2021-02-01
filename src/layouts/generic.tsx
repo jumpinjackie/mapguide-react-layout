@@ -1,10 +1,10 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component"
-import ViewerApiShim from '../containers/viewer-shim';
-import ModalLauncher from '../containers/modal-launcher';
-import FlyoutRegionContainer from '../containers/flyout-region';
-import InitWarningDisplay from '../containers/init-warning-display';
+import { ViewerApiShim } from '../containers/viewer-shim';
+import { ModalLauncher } from '../containers/modal-launcher';
+import { FlyoutRegionContainer } from '../containers/flyout-region';
+import { InitWarningDisplay } from '../containers/init-warning-display';
 import { useCommonTemplateState } from './hooks';
 import { ButtonGroup, Button, Intent, Drawer, Position, Popover, PopoverInteractionKind, IPopoverProps, Card, Elevation } from '@blueprintjs/core';
 import { useDispatch } from 'react-redux';
@@ -97,7 +97,7 @@ const MapToolbar = () => {
     </>
 }
 
-const GenericLayout = () => {
+export const GenericLayout = () => {
     const {
         locale,
     } = useCommonTemplateState();
@@ -110,5 +110,3 @@ const GenericLayout = () => {
         <InitWarningDisplay />
     </div>
 };
-
-export default GenericLayout;

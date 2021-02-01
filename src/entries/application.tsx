@@ -1,9 +1,9 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-import App, { IAppProps } from "../containers/app";
+import { App, IAppProps } from "../containers/app";
 import { ReduxThunkedAction, ICommand, IApplicationState, ReduxDispatch, IConfigurationReducerState } from "../api/common";
-import configureStore from "../store/configure-store";
+import { configureStore } from "../store/configure-store";
 import { CONFIG_INITIAL_STATE } from "../reducers/config";
 import { getCommand as getRegisteredCommand } from "../api/registry/command";
 import { ViewerAction } from '../actions/defs';

@@ -1,12 +1,11 @@
 import * as React from "react";
-
-import LegendContainer from "../containers/legend";
-import SelectedFeatureCountContainer from "../containers/selected-feature-count";
-import SelectionPanelContainer from "../containers/selection-panel";
+import { LegendContainer } from "../containers/legend";
+import { SelectedFeatureCountContainer } from "../containers/selected-feature-count";
+import { SelectionPanelContainer } from "../containers/selection-panel";
 import { PoweredByMapGuide } from "../components/pbmg";
 import { SessionExpired } from "../components/session-expired";
-import ViewerOptions from "../containers/viewer-options";
-import QuickPlotContainer from "../containers/quick-plot";
+import { ViewerOptions } from "../containers/viewer-options";
+import { QuickPlotContainer } from "../containers/quick-plot";
 import { registerComponentFactory, DefaultComponentNames } from "../api/registry/component";
 
 export function registerMapGuideComponents() {

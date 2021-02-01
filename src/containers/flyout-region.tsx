@@ -11,7 +11,7 @@ export interface IFlyoutRegionContainerProps {
 
 }
 
-const FlyoutRegionContainer = () => {
+export const FlyoutRegionContainer = () => {
     const dispatch = useDispatch();
     const closeFlyoutAction = (id: string) => dispatch(closeFlyout(id));
     const invokeCommandAction = (cmd: ICommand, parameters?: any) => dispatch(invokeCommand(cmd, parameters));
@@ -34,5 +34,3 @@ const FlyoutRegionContainer = () => {
     }
     return <FlyoutRegion flyoutConf={prepared} onCloseFlyout={onCloseFlyout} locale={locale} />;
 };
-
-export default FlyoutRegionContainer;

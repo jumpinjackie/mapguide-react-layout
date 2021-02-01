@@ -1,4 +1,4 @@
-import STRINGS_EN from "../strings/en";
+import { STRINGS_EN } from "../strings/en";
 import { ILocalizedMessages } from "../strings/msgdef";
 import { warn } from '../utils/logger';
 

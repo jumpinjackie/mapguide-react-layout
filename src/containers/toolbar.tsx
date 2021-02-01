@@ -20,7 +20,7 @@ export interface IToolbarContainerProps {
     containerStyle?: React.CSSProperties;
 }
 
-const ToolbarContainer = (props: IToolbarContainerProps) => {
+export const ToolbarContainer = (props: IToolbarContainerProps) => {
     const { containerClass, containerStyle, vertical, hideVerticalLabels } = props;
     const dispatch = useDispatch();
     const flyouts = useSelector<IApplicationState, any>(state => state.toolbar.flyouts);
@@ -69,5 +69,3 @@ const ToolbarContainer = (props: IToolbarContainerProps) => {
         return <div />;
     }
 }
-
-export default ToolbarContainer;

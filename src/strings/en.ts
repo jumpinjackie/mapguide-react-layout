@@ -1,7 +1,7 @@
 import { ILocalizedMessages } from "./msgdef";
 import { DEG } from '../constants';
 
-const STRINGS_EN: ILocalizedMessages = {
+export const STRINGS_EN: ILocalizedMessages = {
     "OK": "OK",
     "NONE": "NONE",
     "ERROR": "Error",
@@ -263,5 +263,3 @@ const STRINGS_EN: ILocalizedMessages = {
     "SEL_CLUSTER_PROPERTIES": "Cluster Properties",
     "ADD_LOCAL_FILE_LAYER_FAILURE_NO_FORMATS": "Failed to add layer. No format drivers registered"
 };
-
-export default STRINGS_EN;

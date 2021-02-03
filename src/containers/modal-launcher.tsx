@@ -1,14 +1,13 @@
 import * as React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { RndModalDialog } from "../components/modal-dialog";
 import { getComponentFactory } from "../api/registry/component";
 import { Error } from "../components/error";
 import { tr } from "../api/i18n";
 import {
-    IApplicationState,
     IModalReducerState,
     IModalComponentDisplayOptions,
-    IModalDisplayOptions} from "../api/common";
+    IModalDisplayOptions
+} from "../api/common";
 import {
     isModalComponentDisplayOptions,
     isModalDisplayOptions
@@ -17,6 +16,7 @@ import { assertNever } from "../utils/never";
 import { ParsedComponentUri, parseComponentUri, isComponentUri } from "../utils/url";
 import { useViewerLocale } from './hooks';
 import { hideModal } from '../actions/modal';
+import { useAppState, useReduxDispatch } from "../components/map-providers/context";
 
 function getComponentId(diag: IModalComponentDisplayOptions | IModalDisplayOptions): ParsedComponentUri | undefined {
     if (isModalComponentDisplayOptions(diag)) {
@@ -29,10 +29,10 @@ function getComponentId(diag: IModalComponentDisplayOptions | IModalDisplayOptio
 }
 
 export const ModalLauncher = (props: { children?: React.ReactNode }) => {
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     const hideModalAction = (options: any) => dispatch(hideModal(options));
     const onCloseModal = (name: string) => hideModalAction({ name: name });
-    const modal = useSelector<IApplicationState, IModalReducerState>(state => state.modal);
+    const modal = useAppState<IModalReducerState>(state => state.modal);
     const locale = useViewerLocale();
     const MODAL_INIT_X = 500;
     const MODAL_INIT_Y = 80;

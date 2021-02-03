@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useDispatch } from "react-redux";
 import { getLayout } from "../api/registry/layout";
 import {
     IExternalBaseLayer,
@@ -22,6 +21,7 @@ import { debug } from '../utils/logger';
 import { setElementStates } from '../actions/template';
 import { IViewerInitCommand } from '../actions/init-command';
 import { ApplicationDefinition } from '../api/contracts/fusion';
+import { useReduxDispatch } from "../components/map-providers/context";
 
 export interface SelectionOptions {
     allowHtmlValues?: boolean;
@@ -437,7 +437,7 @@ export const App = (props: IAppProps) => {
     const activeMapName = useActiveMapName();
     const ftEnabled = useViewerFeatureTooltipsEnabled();
 
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     const initLayoutAction = (cmd: IViewerInitCommand, args: IInitAppLayout) => dispatch(initLayout(cmd, args));
     const setElementVisibility = (state: IElementState) => dispatch(setElementStates(state));
     return <AppInner error={error}

@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useDispatch } from "react-redux";
 import {
     GenericEvent,
     UnitOfMeasure
@@ -11,6 +10,7 @@ import { useActiveMapName, useViewerFeatureTooltipsEnabled, useConfiguredManualF
 import { setManualFeatureTooltipsEnabled, setFeatureTooltipsEnabled, setLayerTransparency, setViewSizeUnits } from '../actions/map';
 import { useActiveMapLayerTransparency } from './hooks-mapguide';
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from '../constants';
+import { useReduxDispatch } from "../components/map-providers/context";
 
 export interface IViewerOptionsProps {
 
@@ -24,7 +24,7 @@ export const ViewerOptions = () => {
     const manualFeatureTooltips = useConfiguredManualFeatureTooltips();
     const viewSizeUnits = useViewerSizeUnits();
     const locale = useViewerLocale();
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     const toggleManualMapTipsAction = (enabled: boolean) => dispatch(setManualFeatureTooltipsEnabled(enabled));
     const toggleMapTipsAction = (enabled: boolean) => dispatch(setFeatureTooltipsEnabled(enabled));
     const setLayerTransparencyAction = (mapName: string, id: string, opacity: number) => dispatch(setLayerTransparency(mapName, id, opacity));

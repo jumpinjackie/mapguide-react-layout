@@ -1,6 +1,6 @@
 import * as React from "react";
-import { useSelector } from 'react-redux';
 import { IApplicationState } from '../api/common';
+import { useAppState } from "../components/map-providers/context";
 
 /**
  * @since 0.13
@@ -18,7 +18,7 @@ export interface ISubscriberProps {
  * @since 0.13
  */
 export const Subscriber = (props: ISubscriberProps) => {
-    const state = useSelector<IApplicationState, any>(props.appStateSelector, props.appStateEqualityFn);
+    const state = useAppState<any>(props.appStateSelector, props.appStateEqualityFn);
     React.useEffect(() => {
         props.onNewState(state);
     }, [state]);

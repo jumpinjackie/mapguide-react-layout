@@ -1,11 +1,11 @@
 import * as React from "react";
-import { useDispatch } from "react-redux";
 import { MapMenu } from "../components/map-menu";
 import { useViewerLocale, useActiveMapName, useAvailableMaps } from './hooks';
 import { setActiveMap } from '../actions/map';
+import { useReduxDispatch } from "../components/map-providers/context";
 
 export const MapMenuContainer = () => {
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     const locale = useViewerLocale();
     const activeMapName = useActiveMapName();
     const availableMaps = useAvailableMaps();

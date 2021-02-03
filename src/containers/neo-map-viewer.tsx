@@ -1,30 +1,18 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { IMapProviderContext, IViewerComponent, IMapProviderState, useViewerSideEffects, IMapProviderStateExtras } from '../components/map-providers/base';
+import { IMapProviderContext, IViewerComponent, useViewerSideEffects } from '../components/map-providers/base';
 import { CURSOR_DIGITIZE_POINT, CURSOR_DIGITIZE_LINE, CURSOR_DIGITIZE_LINESTRING, CURSOR_DIGITIZE_RECT, CURSOR_DIGITIZE_POLYGON, CURSOR_DIGITIZE_CIRCLE, CURSOR_GRABBING, CURSOR_GRAB, CURSOR_ZOOM_IN } from '../constants/assets';
 import { MapLoadIndicator } from '../components/map-load-indicator';
-import { ActiveMapTool, MapLoadIndicatorPositioning, GenericEvent, ReduxDispatch, RefreshMode, ILayerInfo, ClientKind } from '../api/common';
-import { useMapProviderContext } from '../components/map-providers/context';
-import { useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useViewerPointSelectionBuffer, useViewerSelectionColor, useViewerSelectionImageFormat, useConfiguredManualFeatureTooltips, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useViewerFeatureTooltipsEnabled, useActiveMapLayers, useActiveMapInitialExternalLayers } from './hooks';
+import { ActiveMapTool, MapLoadIndicatorPositioning, GenericEvent, ReduxDispatch, ClientKind } from '../api/common';
+import { useMapProviderContext, useReduxDispatch } from '../components/map-providers/context';
 import { Toaster, Position } from '@blueprintjs/core';
-import { IMapGuideProviderState, isMapGuideProviderState } from '../components/map-providers/mapguide';
-import { getActiveSelectedFeatureXml } from '../api/builders/deArrayify';
-import { STR_EMPTY } from '../utils/string';
+import { isMapGuideProviderState } from '../components/map-providers/mapguide';
 import { tr } from '../api/i18n';
-import { useDispatch } from 'react-redux';
-import { debug } from '../utils/logger';
-import { setViewer, getViewer } from '../api/runtime';
-import { Client } from '../api/client';
 
 import "ol/ol.css";
-import { useActiveMapSelectableLayerNames, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapHideLayers, useActiveMapActiveSelectedFeature, useActiveMapState, useActiveMapSessionId } from './hooks-mapguide';
-import { useActiveMapSubjectLayer } from './hooks-generic';
-import { IGenericMapProviderState } from '../components/map-providers/generic';
-import { LayerManager } from '../api/layer-manager';
-import { mapLayerAdded, externalLayersReady } from '../actions/map';
-import { IInitialExternalLayer } from '../actions/defs';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { ISubscriberProps, Subscriber } from './subscriber';
+import { useConfiguredLoadIndicatorColor, useConfiguredLoadIndicatorPositioning } from "./hooks";
 
 
 
@@ -221,7 +209,7 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
     const toasterRef = React.useRef<Toaster>(null);
     const loadIndicatorPositioning = useConfiguredLoadIndicatorPositioning();
     const loadIndicatorColor = useConfiguredLoadIndicatorColor();
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     const hookFunc = context.getHookFunction();
     const nextState = hookFunc();
     const {

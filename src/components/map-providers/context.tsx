@@ -1,7 +1,8 @@
 import * as React from "react";
 import { GenericMapProviderContext } from './generic';
 import type { IMapProviderContext } from './base';
-import { Provider } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
+import type { IApplicationState } from "../../api/common";
 
 const MapProviderContext = React.createContext<IMapProviderContext>(new GenericMapProviderContext());
 
@@ -10,6 +11,22 @@ const MapProviderContext = React.createContext<IMapProviderContext>(new GenericM
  * @since 0.14
  */
 export const ReduxProvider: React.FC<{ store: ReduxStoreImpl }> = ({ store, children }) => <Provider store={store}>{children}</Provider>
+
+/**
+ * Wraps useDispatch from react-redux
+ * @since 0.14
+ */
+export function useReduxDispatch() {
+    return useDispatch();
+}
+
+/**
+ * Fetches the requested sub-section of the application state
+ * @since 0.14
+ */
+export function useAppState<TState>(selector: (state: IApplicationState) => TState, equalityFn?: (left: TState, right: TState) => boolean) {
+    return useSelector<IApplicationState, TState>(selector, equalityFn);
+}
 
 /**
  * @since 0.14

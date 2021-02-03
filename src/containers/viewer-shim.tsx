@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useDispatch } from "react-redux";
 import { getWidth, getHeight } from "ol/extent";
 import olPoint from "ol/geom/Point";
 import olLineString from "ol/geom/LineString";
@@ -26,6 +25,7 @@ import { refresh } from '../actions/legend';
 import { goHome } from '../actions/taskpane';
 import { FUSION_MAP_NAME, FUSION_TASKPANE_NAME, FUSION_REDLINE_NAME  } from '../constants';
 import { useActiveMapState } from './hooks-mapguide';
+import { useReduxDispatch } from "../components/map-providers/context";
 
 function isEmptySelection(selection: QueryMapFeaturesResponse | undefined): boolean {
     if (selection && selection.FeatureSet) {
@@ -1186,7 +1186,7 @@ export const ViewerApiShim = () => {
     const busyCount = useViewerBusyCount();
     const sizeUnits = useViewerSizeUnits();
 
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     const goHomeAction = () => dispatch(goHome());
     const legendRefresh = () => dispatch(refresh());
     const invokeCommandAction = (cmd: ICommand, parameters: any) => dispatch(invokeCommand(cmd, parameters));

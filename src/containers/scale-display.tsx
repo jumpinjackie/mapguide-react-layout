@@ -1,9 +1,9 @@
 import * as React from "react";
-import { useDispatch } from "react-redux";
 import { ScaleDisplay } from "../components/scale-display";
 import { useActiveMapView, useActiveMapName, useViewerLocale } from './hooks';
 import { setScale } from '../actions/map';
 import { useActiveMapFiniteScales } from './hooks-mapguide';
+import { useReduxDispatch } from "../components/map-providers/context";
 
 export interface IScaleDisplayContainerProps {
     style?: React.CSSProperties;
@@ -11,7 +11,7 @@ export interface IScaleDisplayContainerProps {
 
 export const ScaleDisplayContainer = (props: IScaleDisplayContainerProps) => {
     const { style } = props;
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     const locale = useViewerLocale();
     const activeMapName = useActiveMapName();
     const view = useActiveMapView();

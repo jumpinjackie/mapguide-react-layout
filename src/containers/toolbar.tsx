@@ -1,16 +1,16 @@
 import * as React from "react";
-import { useSelector, useDispatch } from "react-redux";
 import {
     ICommand,
     IDOMElementMetrics,
-    IApplicationState,
-    FlyoutVisibilitySet} from "../api/common";
+    FlyoutVisibilitySet
+} from "../api/common";
 import { mapToolbarReference } from "../api/registry/command";
 import { Toolbar, DEFAULT_TOOLBAR_SIZE } from "../components/toolbar";
 import { processMenuItems } from "../utils/menu";
 import { useReducedToolbarAppState } from './hooks';
 import { invokeCommand } from '../actions/map';
 import { openFlyout, closeFlyout, openComponent, closeComponent } from "../actions/flyout";
+import { useAppState, useReduxDispatch } from "../components/map-providers/context";
 
 export interface IToolbarContainerProps {
     id: string;
@@ -22,9 +22,9 @@ export interface IToolbarContainerProps {
 
 export const ToolbarContainer = (props: IToolbarContainerProps) => {
     const { containerClass, containerStyle, vertical, hideVerticalLabels } = props;
-    const dispatch = useDispatch();
-    const flyouts = useSelector<IApplicationState, any>(state => state.toolbar.flyouts);
-    const toolbar = useSelector<IApplicationState, any>(state => state.toolbar.toolbars[props.id]);
+    const dispatch = useReduxDispatch();
+    const flyouts = useAppState<any>(state => state.toolbar.flyouts);
+    const toolbar = useAppState<any>(state => state.toolbar.toolbars[props.id]);
     const tbState = useReducedToolbarAppState();
 
     const invokeCommandAction = (cmd: ICommand, parameters: any) => dispatch(invokeCommand(cmd, parameters));

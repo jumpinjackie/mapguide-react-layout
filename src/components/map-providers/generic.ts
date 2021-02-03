@@ -6,8 +6,8 @@ import { debug } from '../../utils/logger';
 import { assertIsDefined } from '../../utils/assert';
 import { IGenericSubjectMapLayer } from '../../actions/defs';
 import { useActiveMapSubjectLayer } from '../../containers/hooks-generic';
-import { useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useActiveMapLayers, useActiveMapInitialExternalLayers } from '../../containers/hooks';
-import { useDispatch } from 'react-redux';
+import { useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useActiveMapLayers, useActiveMapInitialExternalLayers } from '../../containers/hooks';
+import { useReduxDispatch } from './context';
 
 function useGenericMapViewerState() {
     const activeTool = useViewerActiveTool();
@@ -21,7 +21,7 @@ function useGenericMapViewerState() {
     const undoLastPointKey = useConfiguredUndoLastPointKey();
     const layers = useActiveMapLayers();
     const initialExternalLayers = useActiveMapInitialExternalLayers();
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     // ================ Generic-specific =================== //
     const subject = useActiveMapSubjectLayer();
 

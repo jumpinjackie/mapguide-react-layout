@@ -1,12 +1,12 @@
 import * as React from "react";
 import { useViewerLocale, useConfiguredCapabilities, useTemplateSelectionVisible, useTemplateLegendVisible, useTemplateTaskPaneVisible } from '../containers/hooks';
-import { useDispatch } from 'react-redux';
 import { IElementState } from '../actions/defs';
 import { IViewerCapabilities, TemplateReducerFunction } from '../api/common';
 import { setCustomTemplateReducer } from '../reducers/template';
 import { Dispatch } from 'redux';
 import { getViewer } from '../api/runtime';
 import { setElementStates } from '../actions/template';
+import { useReduxDispatch } from "../components/map-providers/context";
 
 export type CommonTemplateState = {
     isResizing: boolean;
@@ -36,7 +36,7 @@ export function useCommonTemplateState(templateReducer?: TemplateReducerFunction
     const showSelection = useTemplateSelectionVisible();
     const showLegend = useTemplateLegendVisible();
     const showTaskPane = useTemplateTaskPaneVisible();
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     const setElementStatesAction = (states: IElementState) => dispatch(setElementStates(states));
     const onDragStart = () => setIsResizing(true);
     const onDragEnd = () => setIsResizing(false);

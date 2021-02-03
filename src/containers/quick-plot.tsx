@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useDispatch } from "react-redux";
 import { getViewer, getFusionRoot } from "../api/runtime";
 import { tr as xlate, tr } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
@@ -17,6 +16,7 @@ import { useActiveMapName, useActiveMapView, useActiveMapExternalBaseLayers, use
 import { setViewRotation, setViewRotationEnabled } from '../actions/map';
 import { debug } from '../utils/logger';
 import { useActiveMapState } from './hooks-mapguide';
+import { useReduxDispatch } from "../components/map-providers/context";
 
 function getMargin() {
     /*
@@ -189,7 +189,7 @@ export const QuickPlotContainer = () => {
     const map = useActiveMapState();
     const view = useActiveMapView();
     const externalBaseLayers = useActiveMapExternalBaseLayers();
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     const setViewRotationAction = (rotation: number) => dispatch(setViewRotation(rotation));
     const setViewRotationEnabledAction = (enabled: boolean) => dispatch(setViewRotationEnabled(enabled));
 

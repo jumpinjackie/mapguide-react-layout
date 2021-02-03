@@ -1,11 +1,11 @@
 import * as React from "react";
-import { useDispatch } from "react-redux";
 import { ICommand } from "../api/common";
 import { Navigator, ZoomDirection, PanDirection } from "../components/navigator";
 import { getCommand, DefaultCommands } from "../api/registry/command";
 import { useViewerLocale, useActiveMapView, useActiveMapName, useViewerBusyCount } from './hooks';
 import { invokeCommand, setScale } from '../actions/map';
 import { useActiveMapFiniteScales } from './hooks-mapguide';
+import { useReduxDispatch } from "../components/map-providers/context";
 
 export interface INavigatorContainerProps {
     style?: React.CSSProperties;
@@ -13,7 +13,7 @@ export interface INavigatorContainerProps {
 
 export const NavigatorContainer = (props: INavigatorContainerProps) => {
     const { style } = props;
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     const locale = useViewerLocale();
     const finiteScales = useActiveMapFiniteScales();
     const view = useActiveMapView();

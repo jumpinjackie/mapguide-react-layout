@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useDispatch } from "react-redux";
 import { SelectionPanel, ISelectedFeatureProps } from "../components/selection-panel";
 import { SelectedFeature } from "../api/contracts/query";
 import { getViewer } from "../api/runtime";
@@ -10,6 +9,7 @@ import { AppContext } from '../components/context';
 import { useViewerLocale, useActiveMapSelectionSet, useActiveMapName } from './hooks';
 import { setCurrentView, showSelectedFeature } from '../actions/map';
 import { useActiveMapState } from './hooks-mapguide';
+import { useReduxDispatch } from "../components/map-providers/context";
 
 export interface ISelectionPanelContainerProps {
     maxHeight?: number;
@@ -21,7 +21,7 @@ export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) =>
     const locale = useViewerLocale();
     const map = useActiveMapState();
     const selection = useActiveMapSelectionSet();
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     const activeMapName = useActiveMapName();
     const setCurrentViewAction = (view: IMapView) => dispatch(setCurrentView(view));
     const showSelectedFeatureAction = (mapName: string, layerId: string, selectionKey: string) => dispatch(showSelectedFeature(mapName, layerId, selectionKey));

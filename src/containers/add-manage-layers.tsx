@@ -7,10 +7,10 @@ import { Tabs, Tab, Icon } from '@blueprintjs/core';
 import { useViewerLocale, useActiveMapName, useActiveMapLayers, useActiveMapView } from './hooks';
 import olVectorLayer from "ol/layer/Vector";
 import { transformExtent } from "ol/proj";
-import { useDispatch } from 'react-redux';
 import { mapLayerAdded, addMapLayerBusyWorker, removeMapLayerBusyWorker, removeMapLayer, setMapLayerIndex, setMapLayerVisibility, setMapLayerOpacity, setMapLayerVectorStyle } from '../actions/map';
 import { getViewer } from '../api/runtime';
 import { IVectorLayerStyle } from '../api/ol-style-contracts';
+import { useReduxDispatch } from "../components/map-providers/context";
 
 /**
  * 
@@ -23,7 +23,7 @@ export interface IAddManageLayersContainerProps {
 }
 
 export const AddManageLayersContainer = () => {
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     const locale = useViewerLocale();
     const activeMapName = useActiveMapName();
     const layers = useActiveMapLayers();

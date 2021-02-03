@@ -1,18 +1,18 @@
 import * as React from "react";
-import { useDispatch } from "react-redux";
 import { FlyoutRegion } from "../components/flyout-region";
 import { ICommand } from "../api/common";
 import { mapToolbarReference } from "../api/registry/command";
 import { useViewerLocale, useViewerFlyouts, useReducedToolbarAppState } from './hooks';
 import { closeFlyout } from '../actions/flyout';
 import { invokeCommand } from '../actions/map';
+import { useReduxDispatch } from "../components/map-providers/context";
 
 export interface IFlyoutRegionContainerProps {
 
 }
 
 export const FlyoutRegionContainer = () => {
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     const closeFlyoutAction = (id: string) => dispatch(closeFlyout(id));
     const invokeCommandAction = (cmd: ICommand, parameters?: any) => dispatch(invokeCommand(cmd, parameters));
     const onCloseFlyout = (id: string) => closeFlyoutAction(id);

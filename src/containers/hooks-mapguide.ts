@@ -1,10 +1,10 @@
-import { useSelector } from 'react-redux';
-import { IApplicationState, ActiveSelectedFeature, LayerTransparencySet, getRuntimeMap } from '../api/common';
+import { ActiveSelectedFeature, LayerTransparencySet, getRuntimeMap } from '../api/common';
 import { getActiveMapBranch } from './hooks';
 import { RuntimeMap } from '../api/contracts/runtime-map';
+import { useAppState } from '../components/map-providers/context';
 
 export function useActiveMapMetersPerUnit() {
-    return useSelector<IApplicationState, number | undefined>(state => {
+    return useAppState<number | undefined>(state => {
         let mpu = 1.0;
         if (state.config.activeMapName) {
             const ms = state.mapState[state.config.activeMapName];
@@ -17,7 +17,7 @@ export function useActiveMapMetersPerUnit() {
 }
 
 export function useActiveMapProjection() {
-    return useSelector<IApplicationState, string | undefined>(state => {
+    return useAppState<string | undefined>(state => {
         let proj;
         if (state.config.activeMapName) {
             const map = state.mapState[state.config.activeMapName].mapguide?.runtimeMap;
@@ -30,35 +30,35 @@ export function useActiveMapProjection() {
 }
 
 export function useActiveMapExpandedGroups() {
-    return useSelector<IApplicationState, string[]>(state => getActiveMapBranch(state)?.mapguide?.expandedGroups);
+    return useAppState<string[]>(state => getActiveMapBranch(state)?.mapguide?.expandedGroups);
 }
 
 export function useActiveMapSelectableLayers() {
-    return useSelector<IApplicationState, any>(state => getActiveMapBranch(state)?.mapguide?.selectableLayers);
+    return useAppState<any>(state => getActiveMapBranch(state)?.mapguide?.selectableLayers);
 }
 
 export function useActiveMapShowGroups() {
-    return useSelector<IApplicationState, string[] | undefined>(state => getActiveMapBranch(state)?.mapguide?.showGroups);
+    return useAppState<string[] | undefined>(state => getActiveMapBranch(state)?.mapguide?.showGroups);
 }
 
 export function useActiveMapShowLayers() {
-    return useSelector<IApplicationState, string[] | undefined>(state => getActiveMapBranch(state)?.mapguide?.showLayers);
+    return useAppState<string[] | undefined>(state => getActiveMapBranch(state)?.mapguide?.showLayers);
 }
 
 export function useActiveMapHideGroups() {
-    return useSelector<IApplicationState, string[] | undefined>(state => getActiveMapBranch(state)?.mapguide?.hideGroups);
+    return useAppState<string[] | undefined>(state => getActiveMapBranch(state)?.mapguide?.hideGroups);
 }
 
 export function useActiveMapHideLayers() {
-    return useSelector<IApplicationState, string[] | undefined>(state => getActiveMapBranch(state)?.mapguide?.hideLayers);
+    return useAppState<string[] | undefined>(state => getActiveMapBranch(state)?.mapguide?.hideLayers);
 }
 
 export function useActiveMapLayerTransparency() {
-    return useSelector<IApplicationState, LayerTransparencySet | undefined>(state => getActiveMapBranch(state)?.mapguide?.layerTransparency);
+    return useAppState<LayerTransparencySet | undefined>(state => getActiveMapBranch(state)?.mapguide?.layerTransparency);
 }
 
 export function useActiveMapActiveSelectedFeature() {
-    return useSelector<IApplicationState, ActiveSelectedFeature | undefined>(state => getActiveMapBranch(state)?.mapguide?.activeSelectedFeature);
+    return useAppState<ActiveSelectedFeature | undefined>(state => getActiveMapBranch(state)?.mapguide?.activeSelectedFeature);
 }
 
 export function useActiveMapSelectableLayerNames() {
@@ -74,16 +74,16 @@ export function useActiveMapSelectableLayerNames() {
 }
 
 export function useActiveMapSessionId() {
-    return useSelector<IApplicationState, string | undefined>(state => getRuntimeMap(state)?.SessionId);
+    return useAppState<string | undefined>(state => getRuntimeMap(state)?.SessionId);
 }
 
 export function useActiveMapFiniteScales() {
-    return useSelector<IApplicationState, number[] | undefined>(state => {
+    return useAppState<number[] | undefined>(state => {
         const map = getRuntimeMap(state);
         return map != null ? map.FiniteDisplayScale : undefined;
     });
 }
 
 export function useActiveMapState() {
-    return useSelector<IApplicationState, RuntimeMap | undefined>(state => getRuntimeMap(state));
+    return useAppState<RuntimeMap | undefined>(state => getRuntimeMap(state));
 }

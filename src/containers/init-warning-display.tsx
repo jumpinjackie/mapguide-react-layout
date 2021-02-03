@@ -1,9 +1,9 @@
 import * as React from "react";
 import { acknowledgeInitWarnings } from "../actions/init";
-import { useDispatch } from "react-redux";
 import { tr } from "../api/i18n";
 import { Dialog, Button, Intent } from '@blueprintjs/core';
 import { useInitWarnings, useViewerLocale } from './hooks';
+import { useReduxDispatch } from "../components/map-providers/context";
 
 export interface IInitWarningDisplayProps {
 
@@ -11,7 +11,7 @@ export interface IInitWarningDisplayProps {
 
 
 export const InitWarningDisplay = () => {
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     const acknowledge = () => dispatch(acknowledgeInitWarnings());
     const warnings = useInitWarnings();
     const locale = useViewerLocale();

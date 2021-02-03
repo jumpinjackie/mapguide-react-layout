@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useDispatch } from "react-redux";
 import {
     GenericEvent,
     ActiveMapTool} from "../api/common";
@@ -12,6 +11,7 @@ import { useActiveMapName, useViewerLocale, useAvailableMaps } from './hooks';
 import GeometryType from 'ol/geom/GeometryType';
 import { setActiveTool } from '../actions/map';
 import { OLGeometryType } from '../api/ol-types';
+import { useReduxDispatch } from "../components/map-providers/context";
 
 export interface IMeasureContainerProps {
 
@@ -241,7 +241,7 @@ export const MeasureContainer = (props: IMeasureContainerProps) => {
     const activeMapName = useActiveMapName();
     const locale = useViewerLocale();
     const mapNames = useAvailableMaps()?.map(m => m.value);
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     const setActiveToolAction = (tool: ActiveMapTool) => dispatch(setActiveTool(tool))
     return <MeasureContainerInner 
         activeMapName={activeMapName}

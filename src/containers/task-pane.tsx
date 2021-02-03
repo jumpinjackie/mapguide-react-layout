@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useDispatch } from "react-redux";
 import {
     ICommand,
     IDOMElementMetrics,
@@ -15,6 +14,7 @@ import { useActiveMapBranch, useViewerFlyouts, useTaskPaneInitialUrl, useTaskPan
 import { invokeCommand } from '../actions/map';
 import { goHome, goForward, goBack, pushUrl } from '../actions/taskpane';
 import { openFlyout, closeFlyout } from '../actions/flyout';
+import { useReduxDispatch } from "../components/map-providers/context";
 
 export interface ITaskPaneContainerProps {
     maxHeight?: number;
@@ -151,7 +151,7 @@ export const TaskPaneContainer = (props: ITaskPaneContainerProps) => {
     const navigationStack = useTaskPaneNavigationStack();
     const hasTaskBar = useConfiguredCapabilities().hasTaskBar;
 
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     const invokeCommandAction = (cmd: ICommand, parameters: any) => dispatch(invokeCommand(cmd, parameters));
     const goHomeAction = () => dispatch(goHome());
     const goForwardAction = () => dispatch(goForward());

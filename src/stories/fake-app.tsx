@@ -1,10 +1,9 @@
 import * as React from "react";
 import { configureStore } from '../store/configure-store';
-import { App, IAppProps } from "../containers/app";
-import { Provider } from 'react-redux';
+import { App } from "../containers/app";
 import { CONFIG_INITIAL_STATE } from '../reducers/config';
 import { registerRequestBuilder } from '../api/builders/factory';
-import { RequestBuilder, ICreateRuntimeMapOptions, IQueryMapFeaturesOptions, IDescribeRuntimeMapOptions, QueryFeaturesSet } from '../api/request-builder';
+import { RequestBuilder, ICreateRuntimeMapOptions, IQueryMapFeaturesOptions, IDescribeRuntimeMapOptions } from '../api/request-builder';
 import { ResourceBase } from '../api/contracts/common';
 import { RuntimeMap } from '../api/contracts/runtime-map';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';

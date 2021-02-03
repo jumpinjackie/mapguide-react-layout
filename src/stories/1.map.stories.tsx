@@ -15,7 +15,6 @@ import { AddManageLayersContainer } from '../containers/add-manage-layers';
 import { Button, ButtonGroup, Card, Intent } from '@blueprintjs/core';
 import { useReducedToolbarAppState, useActiveMapName } from '../containers/hooks';
 import { CommandConditions } from '../api/registry/command';
-import { useDispatch } from 'react-redux';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { deArrayify } from '../api/builders/deArrayify';
 import { MouseCoordinatesContainer } from '../containers/mouse-coordinates';
@@ -24,7 +23,7 @@ import { ViewerOptions } from '../containers/viewer-options';
 import { setSelection } from '../actions/map';
 import { MapGuideMockMode, MapDebugContext } from '../components/mapguide-debug-context';
 import { MapViewer } from '../containers/neo-map-viewer';
-import { useMapProviderContext } from '../components/map-providers/context';
+import { useMapProviderContext, useReduxDispatch } from '../components/map-providers/context';
 import { MapGuideMapProviderContext } from '../components/map-providers/mapguide';
 
 //import MeasureContainer from '../containers/measure';
@@ -48,7 +47,7 @@ function getQueryMapFeaturesResponse(activeMapName: string) {
 const MapStoryFrame = (props: MapDependentContainer) => {
     const SB_WIDTH = 350;
     const includeTools = !!props.includeSelect;
-    const dispatch = useDispatch();
+    const dispatch = useReduxDispatch();
     const state = useReducedToolbarAppState();
     const activeMapName = useActiveMapName();
     const context = useMapProviderContext() as MapGuideMapProviderContext;

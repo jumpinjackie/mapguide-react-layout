@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Provider } from "react-redux";
 import { App, IAppProps } from "../containers/app";
 import { ReduxThunkedAction, ICommand, IApplicationState, ReduxDispatch, IConfigurationReducerState } from "../api/common";
 import { configureStore } from "../store/configure-store";
@@ -9,6 +8,7 @@ import { getCommand as getRegisteredCommand } from "../api/registry/command";
 import { ViewerAction } from '../actions/defs';
 import { Subscriber, ISubscriberProps } from '../containers/subscriber';
 import { IViewerInitCommand } from '../actions/init-command';
+import { ReduxProvider } from "../components/map-providers/context";
 
 /**
  * Extra application mount options.
@@ -94,10 +94,10 @@ export class ApplicationViewModel {
         const extraReducers = this.getExtraReducers();
         this._store = configureStore(initState, extraReducers);
         const initCommand = props.initCommandFactory(this._store.dispatch);
-        ReactDOM.render(<Provider store={this._store}>
+        ReactDOM.render(<ReduxProvider store={this._store}>
             <App {...props} initCommand={initCommand} />
             {subs.map((s, i) => <Subscriber key={`subscriber-${i}-${s.name}`} {...s} />)}
-        </Provider>, node);
+        </ReduxProvider>, node);
     }
     /**
      * Dispatches the given action

@@ -3,8 +3,9 @@ import thunk from 'redux-thunk';
 import { promiseMiddleware } from './promise-middleware';
 import { logger } from './logger';
 import { rootReducer } from '../reducers/root';
+import type { ReduxStoreImpl } from '../components/map-providers/context';
 
-export function configureStore(initialState: any, extraReducers?: any) {
+export function configureStore(initialState: any, extraReducers?: any): ReduxStoreImpl {
     const root = extraReducers ? combineReducers({ ...rootReducer, ...extraReducers }) : combineReducers(rootReducer);
     const store = (<any>compose)( //HACK: Something bogus about the compose() declaration
         _getMiddleware(),

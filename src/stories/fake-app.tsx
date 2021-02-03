@@ -14,7 +14,7 @@ import { registerLayout } from '../api/registry/layout';
 import { IConfigurationReducerState, IViewerReducerState, ClientKind } from '../api/common';
 import { MapGuideViewerInitCommand } from '../actions/init-mapguide';
 import { IViewerInitCommand } from '../actions/init-command';
-import { MapProviderContext } from '../components/map-providers/context';
+import { MapContextProvider } from '../components/map-providers/context';
 import { MapGuideMapProviderContext } from '../components/map-providers/mapguide';
 import { MapGuideMockMode } from '../components/mapguide-debug-context';
 const testMapSheboygan: RuntimeMap = deArrayify(require("./data/test-runtime-map-sheboygan.json"));
@@ -122,24 +122,22 @@ export class FakeApp extends React.Component<IFakeAppProps> {
         PROVIDER_IMPL.setMockMode(props.mgMockMode);
     }
     render() {
-        return <MapProviderContext.Provider value={PROVIDER_IMPL}>
-            <Provider store={this._store}>
-                <App initCommand={this._initCommand}
-                    mapguide={{
-                        fusionRoot: ".",
-                        agentUri: this._agentUri,
-                        agentKind: this._agentKind,
-                        initialElementVisibility: {
-                            //Doesn't matter for the fake app, but this has to be true for the purpose of not breaking the reducer when no physical components are present
-                            taskpane: true,
-                            legend: true,
-                            selection: true
-                        }
-                    }}
-                    layout={this.props.templateLayout ?? "fake-app"}
-                    resourceId="Library://Test/Viewer.ApplicationDefinition"
-                    {...this.props} />
-            </Provider>
-        </MapProviderContext.Provider>;
+        return <MapContextProvider value={PROVIDER_IMPL} store={this._store}>
+            <App initCommand={this._initCommand}
+                mapguide={{
+                    fusionRoot: ".",
+                    agentUri: this._agentUri,
+                    agentKind: this._agentKind,
+                    initialElementVisibility: {
+                        //Doesn't matter for the fake app, but this has to be true for the purpose of not breaking the reducer when no physical components are present
+                        taskpane: true,
+                        legend: true,
+                        selection: true
+                    }
+                }}
+                layout={this.props.templateLayout ?? "fake-app"}
+                resourceId="Library://Test/Viewer.ApplicationDefinition"
+                {...this.props} />
+        </MapContextProvider>;
     }
 }

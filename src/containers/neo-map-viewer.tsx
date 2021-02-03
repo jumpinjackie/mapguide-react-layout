@@ -4,7 +4,7 @@ import { IMapProviderContext, IViewerComponent, IMapProviderState, useViewerSide
 import { CURSOR_DIGITIZE_POINT, CURSOR_DIGITIZE_LINE, CURSOR_DIGITIZE_LINESTRING, CURSOR_DIGITIZE_RECT, CURSOR_DIGITIZE_POLYGON, CURSOR_DIGITIZE_CIRCLE, CURSOR_GRABBING, CURSOR_GRAB, CURSOR_ZOOM_IN } from '../constants/assets';
 import { MapLoadIndicator } from '../components/map-load-indicator';
 import { ActiveMapTool, MapLoadIndicatorPositioning, GenericEvent, ReduxDispatch, RefreshMode, ILayerInfo, ClientKind } from '../api/common';
-import { MapProviderContext } from '../components/map-providers/context';
+import { useMapProviderContext } from '../components/map-providers/context';
 import { useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useViewerPointSelectionBuffer, useViewerSelectionColor, useViewerSelectionImageFormat, useConfiguredManualFeatureTooltips, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useViewerFeatureTooltipsEnabled, useActiveMapLayers, useActiveMapInitialExternalLayers } from './hooks';
 import { Toaster, Position } from '@blueprintjs/core';
 import { IMapGuideProviderState, isMapGuideProviderState } from '../components/map-providers/mapguide';
@@ -217,7 +217,7 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
 }
 
 export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
-    const context = React.useContext(MapProviderContext);
+    const context = useMapProviderContext();
     const toasterRef = React.useRef<Toaster>(null);
     const loadIndicatorPositioning = useConfiguredLoadIndicatorPositioning();
     const loadIndicatorColor = useConfiguredLoadIndicatorColor();

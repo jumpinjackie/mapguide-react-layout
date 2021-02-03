@@ -12,7 +12,7 @@ import { ICommand, ActiveMapTool } from '../api/common';
 import { invokeCommand, setActiveTool } from '../actions/map';
 import { getCommand, DefaultCommands } from '../api/registry/command';
 import { useViewerActiveTool, useViewerLocale } from '../containers/hooks';
-import { MapProviderContext } from '../components/map-providers/context';
+import { useMapProviderContext } from '../components/map-providers/context';
 
 interface IPrintViewProps {
     imageUrl: string;
@@ -23,7 +23,7 @@ const PrintView = (props: IPrintViewProps) => {
 }
 
 const MapToolbar = () => {
-    const context = React.useContext(MapProviderContext);
+    const context = useMapProviderContext();
     const dispatch = useDispatch();
     const [isLayerManagerOpen, setIsLayerManagerOpen] = React.useState(false);
     const [isExportingImage, setIsExportingImage] = React.useState(false);

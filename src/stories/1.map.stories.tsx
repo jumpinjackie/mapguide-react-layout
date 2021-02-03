@@ -24,7 +24,7 @@ import { ViewerOptions } from '../containers/viewer-options';
 import { setSelection } from '../actions/map';
 import { MapGuideMockMode, MapDebugContext } from '../components/mapguide-debug-context';
 import { MapViewer } from '../containers/neo-map-viewer';
-import { MapProviderContext } from '../components/map-providers/context';
+import { useMapProviderContext } from '../components/map-providers/context';
 import { MapGuideMapProviderContext } from '../components/map-providers/mapguide';
 
 //import MeasureContainer from '../containers/measure';
@@ -51,7 +51,7 @@ const MapStoryFrame = (props: MapDependentContainer) => {
     const dispatch = useDispatch();
     const state = useReducedToolbarAppState();
     const activeMapName = useActiveMapName();
-    const context = React.useContext(MapProviderContext) as MapGuideMapProviderContext;
+    const context = useMapProviderContext() as MapGuideMapProviderContext;
     const doTestSelect = () => {
         if (activeMapName) {
             const q = setSelection(activeMapName, getQueryMapFeaturesResponse(activeMapName));

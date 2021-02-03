@@ -27,7 +27,7 @@ import GPX from "ol/format/GPX";
 import IGC from "ol/format/IGC";
 import { initMapGuideCommands } from '../api/mapguide-commands';
 import { registerMapGuideComponents } from '../api/mapguide-components';
-import { MapProviderContext } from '../components/map-providers/context';
+import { MapProviderContextProvider } from '../components/map-providers/context';
 import { MapViewer } from '../containers/neo-map-viewer';
 import { GenericMapProviderContext } from '../components/map-providers/generic';
 import { GenericLayout } from '../layouts/generic';
@@ -53,9 +53,9 @@ registerMapGuideComponents();
 
 // Register our generic viewer implementation
 const PROVIDER_IMPL = new GenericMapProviderContext();
-registerComponentFactory(DefaultComponentNames.Map, (props) => <MapProviderContext.Provider value={PROVIDER_IMPL}>
+registerComponentFactory(DefaultComponentNames.Map, (props) => <MapProviderContextProvider value={PROVIDER_IMPL}>
     <MapViewer {...props} />
-</MapProviderContext.Provider>);
+</MapProviderContextProvider>);
 
 //Register the default mapagent request builder (that can be replaced later on if desired)
 registerRequestBuilder("mapagent", (agentUri, locale) => new MapAgentRequestBuilder(agentUri, locale));

@@ -4,6 +4,7 @@ import VectorLayer from 'ol/layer/Vector';
 import { OLStyleMapSet } from './ol-style-map-set';
 import Geometry from 'ol/geom/Geometry';
 import { LayerProperty } from './common';
+import VectorTileLayer from 'ol/layer/VectorTile';
 
 /**
  * @since 0.14
@@ -25,9 +26,10 @@ export function getClusterSubFeatures(feature: Feature): Feature[] {
  * Sets the vector layer style for the given OpenLayers vector layer
  * 
  * @since 0.13
- * @since 0.14 style now takes IVectorLayerStyle instead of IVectorFeatureStyle and accepts an optional cluster style
+ * @since 0.14 style now takes IVectorLayerStyle instead of IVectorFeatureStyle and accepts an optional cluster style 
+ * and layer can be either a vector layer or a vector tile layer
  */
-export function setOLVectorLayerStyle(layer: VectorLayer, style: IVectorLayerStyle, clusterStyle: IClusterSettings | undefined) {
+export function setOLVectorLayerStyle(layer: VectorLayer | VectorTileLayer, style: IVectorLayerStyle, clusterStyle: IClusterSettings | undefined) {
     const olstyles = new OLStyleMapSet(style, clusterStyle);
     layer.set(LayerProperty.VECTOR_STYLE, olstyles);
     const layerStyleFunc = function (feature: Feature<Geometry>) {

@@ -12,14 +12,20 @@ import LayerBase from "ol/layer/Base";
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import ClusterSource from 'ol/source/Cluster';
+import VectorTileSource from 'ol/source/VectorTile';
+import VectorTileLayer from 'ol/layer/VectorTile';
 import { CsvFormatDriver, CSV_COLUMN_ALIASES } from '../api/layer-manager/csv-driver';
 import KML from 'ol/format/KML';
 import GeoJSON from "ol/format/GeoJSON";
+import MVT from 'ol/format/MVT';
+import type { Options as MVTOptions } from 'ol/format/MVT';
 import { ExternalLayerFactoryRegistry } from '../api/registry/external-layer';
 import { strIsNullOrEmpty } from '../utils/string';
 import GeometryType from 'ol/geom/GeometryType';
 import { setOLVectorLayerStyle } from '../api/ol-style-helpers';
 import { DEFAULT_VECTOR_LAYER_STYLE } from '../api/ol-style-contracts';
+import VectorTile from "ol/VectorTile";
+import Feature from "ol/Feature";
 
 function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExternalLayer, layer: LayerBase, isExternal: boolean) {
     layer.set(LayerProperty.LAYER_NAME, defn.name);
@@ -80,6 +86,45 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 const layer = new VectorLayer({
                     ...defn.layerOptions,
                     source: clusterSourceIfRequired(source, defn)
+                });
+                setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
+                applyVectorLayerProperties(defn, layer, isExternal);
+                return layer;
+            }
+        case GenericSubjectLayerType.MVT:
+            {
+                const mo: MVTOptions = {
+                    idProperty: defn.sourceParams.mvtIdProperty
+                };
+                switch (defn.sourceParams.mvtFeatureClass) {
+                    case "feature":
+                        mo.featureClass = Feature as any //Bug: Typing probably should've been (typeof Feature | typeof RenderFeature) instead of (Feature | RenderFeature)
+                        break;
+                }
+                const source = new VectorTileSource({
+                    url: defn.sourceParams.url,
+                    format: new MVT(mo),
+                    attributions: defn.sourceParams.attributions,
+                    tileLoadFunction: function (tile: VectorTile, url) {
+                        tile.setLoader(function (extent, resolution, projection) {
+                            fetch(url).then(function (response) {
+                                if (response.status == 200) {
+                                    response.arrayBuffer().then(function (data) {
+                                        const format = tile.getFormat() // ol/format/MVT configured as source format
+                                        const features = format.readFeatures(data, {
+                                            extent: extent,
+                                            featureProjection: projection
+                                        });
+                                        tile.setFeatures(features as any); //Bug: Typing for setFeatures() should be accepting FeatureLike[]
+                                    });
+                                }
+                            });
+                        });
+                    }
+                });
+                const layer = new VectorTileLayer({
+                    ...defn.layerOptions,
+                    source: source
                 });
                 setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                 applyVectorLayerProperties(defn, layer, isExternal);

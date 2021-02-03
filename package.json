@@ -4,7 +4,7 @@
   "description": "A modern react-based map viewer for MapGuide",
   "scripts": {
     "prebuild": "yarn run clean",
-    "build": "yarn run build:apidoc_npm && yarn run build:npm && yarn run build:bundle && yarn run build:storybook",
+    "build": "yarn run clean:barrels && yarn run build:apidoc_npm && yarn run build:npm && yarn run build:bundle && yarn run build:storybook",
     "build:bundle": "yarn run clean:barrels && yarn run build:debug && yarn run build:prod && bestzip viewer.zip viewer/",
     "build:storybook": "rimraf ./storybook.zip && rimraf ./storybook-static && build-storybook -s ./src/stories/static -c .storybook && bestzip storybook.zip storybook-static/",
     "build:sprite": "glue stdassets/images/icons stdassets/sprites --html --png8 --sprite-namespace= --namespace=",

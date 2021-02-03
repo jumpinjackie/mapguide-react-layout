@@ -36,8 +36,6 @@ Where applicable, an issue number is attached to indicate that such issues are a
  * Measure
    * Recorded measurements will temporarily disappear on templates with a collapsible Task Pane (eg. Slate) when the Task Pane panel is collapsed.
 
- * The vertical hue slider of the color picker is inverted/flipped (Due to: https://github.com/elrumordelaluz/coloreact/issues/9)
-
  * Modal dialog backdrops do not work (due to recent Blueprint update)
 
 ## Commands
@@ -69,3 +67,9 @@ Where applicable, an issue number is attached to indicate that such issues are a
  * [#34](https://github.com/jumpinjackie/mapguide-react-layout/issues/34): Digitization tools have poor user experience on mobile/tablet devices
  * [#34](https://github.com/jumpinjackie/mapguide-react-layout/issues/34): Feature Tooltips does not work on mobile/tablet devices
  * Due to lack of Google Maps integration, if an Application Definition references Google Maps layers, they will be ignored
+
+
+## Mapbox Vector Tiles
+
+ * In order to display Mapbox Vector Tiles, your primary Map Definition (or the first layer of your external layer set in a generic viewer context) has to be in `EPSG:3857`
+ * Despite being a vector layer, Mapbox Vector Tile layers are not selectable for performance reasons. To make them selectable, set the property `layer_opt_renderMode` to `feature` in your MVT external layer definition.

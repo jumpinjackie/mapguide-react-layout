@@ -117,7 +117,8 @@ export enum GenericSubjectLayerType {
     KML = "KML",
     GeoJSON = "GeoJSON",
     GeoJSON_Inline = "GeoJSON_Inline",
-    CustomVector = "CustomVector"
+    CustomVector = "CustomVector",
+    MVT = "MVT"
 }
 
 /**

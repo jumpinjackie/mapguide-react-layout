@@ -114,7 +114,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                                         const features = format.readFeatures(data, {
                                             extent: extent,
                                             featureProjection: projection
-                                        });
+                                        }).filter(f => f != null);
                                         tile.setFeatures(features as any); //Bug: Typing for setFeatures() should be accepting FeatureLike[]
                                     });
                                 }

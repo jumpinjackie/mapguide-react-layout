@@ -20,15 +20,24 @@ describe("utils/url", () => {
     });
     describe("appendParameters", () => {
         it("appends specified parameters", () => {
-            expect(appendParameters("https://www.google.com", { foo: "bar" })).toBe("https://www.google.com?foo=bar");
-            expect(appendParameters("https://www.google.com?", { foo: "bar" })).toBe("https://www.google.com?foo=bar");
-            expect(appendParameters("https://www.google.com", { foo: "bar" }, true, true)).toBe("https://www.google.com?FOO=bar");
+            expect(appendParameters("https://www.google.com", { foo: "bar" })).toBe("https://www.google.com/?foo=bar");
+            expect(appendParameters("https://www.google.com?", { foo: "bar" })).toBe("https://www.google.com/?foo=bar");
+            expect(appendParameters("https://www.google.com", { foo: "bar" }, true, true)).toBe("https://www.google.com/?FOO=bar");
+
+            expect(appendParameters("https://localhost/mapguide/demo/test.php", { foo: "bar" })).toBe("https://localhost/mapguide/demo/test.php?foo=bar");
+            expect(appendParameters("https://localhost/mapguide/demo/test.php?", { foo: "bar" })).toBe("https://localhost/mapguide/demo/test.php?foo=bar");
+            expect(appendParameters("https://localhost/mapguide/demo/test.php", { foo: "bar" }, true, true)).toBe("https://localhost/mapguide/demo/test.php?FOO=bar");
         });
         it("only overwrites existing parameters if specified", () => {
-            expect(appendParameters("https://www.google.com?foo=bar", { foo: "baz" }, true, false)).toBe("https://www.google.com?foo=baz");
-            expect(appendParameters("https://www.google.com?foo=bar", { foo: "baz" }, false, false)).toBe("https://www.google.com?foo=bar");
-            expect(appendParameters("https://www.google.com?foo=bar", { foo: "baz" }, false, true)).toBe("https://www.google.com?FOO=bar");
-            expect(appendParameters("https://www.google.com?foo=bar", { foo: "baz" }, true, true)).toBe("https://www.google.com?FOO=baz");
+            expect(appendParameters("https://www.google.com?foo=bar", { foo: "baz" }, true, false)).toBe("https://www.google.com/?foo=baz");
+            expect(appendParameters("https://www.google.com?foo=bar", { foo: "baz" }, false, false)).toBe("https://www.google.com/?foo=bar");
+            expect(appendParameters("https://www.google.com?foo=bar", { foo: "baz" }, false, true)).toBe("https://www.google.com/?FOO=bar");
+            expect(appendParameters("https://www.google.com?foo=bar", { foo: "baz" }, true, true)).toBe("https://www.google.com/?FOO=baz");
+
+            expect(appendParameters("https://localhost/mapguide/demo/test.php?foo=bar", { foo: "baz" }, true, false)).toBe("https://localhost/mapguide/demo/test.php?foo=baz");
+            expect(appendParameters("https://localhost/mapguide/demo/test.php?foo=bar", { foo: "baz" }, false, false)).toBe("https://localhost/mapguide/demo/test.php?foo=bar");
+            expect(appendParameters("https://localhost/mapguide/demo/test.php?foo=bar", { foo: "baz" }, false, true)).toBe("https://localhost/mapguide/demo/test.php?FOO=bar");
+            expect(appendParameters("https://localhost/mapguide/demo/test.php?foo=bar", { foo: "baz" }, true, true)).toBe("https://localhost/mapguide/demo/test.php?FOO=baz");
         });
     })
     describe("ensureParameters", () => {
@@ -39,10 +48,15 @@ describe("utils/url", () => {
             expect(ensureParameters("component://Foo", mapName, session, locale)).toBe("component://Foo");
         });
         it("does not append parameters that are already appended", () => {
-            expect(ensureParameters("https://www.google.com", mapName, session, locale)).toBe(`https://www.google.com?MAPNAME=${mapName}&SESSION=${session}&LOCALE=${locale}`);
-            expect(ensureParameters("https://www.google.com?mapName=Foo", mapName, session, locale)).toBe(`https://www.google.com?mapName=Foo&SESSION=${session}&LOCALE=${locale}`);
-            expect(ensureParameters("https://www.google.com?mapName=Foo&session=sdfjsds", mapName, session, locale)).toBe(`https://www.google.com?mapName=Foo&session=sdfjsds&LOCALE=${locale}`);
-            expect(ensureParameters("https://www.google.com?mapName=Foo&session=sdfjsds&locale=de", mapName, session, locale)).toBe(`https://www.google.com?mapName=Foo&session=sdfjsds&locale=de`);
+            expect(ensureParameters("https://www.google.com", mapName, session, locale)).toBe(`https://www.google.com/?MAPNAME=${mapName}&SESSION=${session}&LOCALE=${locale}`);
+            expect(ensureParameters("https://www.google.com?mapName=Foo", mapName, session, locale)).toBe(`https://www.google.com/?mapName=Foo&SESSION=${session}&LOCALE=${locale}`);
+            expect(ensureParameters("https://www.google.com?mapName=Foo&session=sdfjsds", mapName, session, locale)).toBe(`https://www.google.com/?mapName=Foo&session=sdfjsds&LOCALE=${locale}`);
+            expect(ensureParameters("https://www.google.com?mapName=Foo&session=sdfjsds&locale=de", mapName, session, locale)).toBe(`https://www.google.com/?mapName=Foo&session=sdfjsds&locale=de`);
+
+            expect(ensureParameters("https://localhost/mapguide/demo/test.php", mapName, session, locale)).toBe(`https://localhost/mapguide/demo/test.php?MAPNAME=${mapName}&SESSION=${session}&LOCALE=${locale}`);
+            expect(ensureParameters("https://localhost/mapguide/demo/test.php?mapName=Foo", mapName, session, locale)).toBe(`https://localhost/mapguide/demo/test.php?mapName=Foo&SESSION=${session}&LOCALE=${locale}`);
+            expect(ensureParameters("https://localhost/mapguide/demo/test.php?mapName=Foo&session=sdfjsds", mapName, session, locale)).toBe(`https://localhost/mapguide/demo/test.php?mapName=Foo&session=sdfjsds&LOCALE=${locale}`);
+            expect(ensureParameters("https://localhost/mapguide/demo/test.php?mapName=Foo&session=sdfjsds&locale=de", mapName, session, locale)).toBe(`https://localhost/mapguide/demo/test.php?mapName=Foo&session=sdfjsds&locale=de`);
         });
     });
     describe("isComponentUri", () => {

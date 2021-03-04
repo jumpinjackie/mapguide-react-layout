@@ -1108,6 +1108,13 @@ export interface ILayerInfo {
      * @since 0.13
      */
     busyWorkerCount: number;
+    /**
+     * Metadata attached to the layer
+     * 
+     * @since 0.14
+     * @memberof ILayerInfo
+     */
+    metadata?: any;
 }
 
 /**
@@ -2455,7 +2462,11 @@ export enum LayerProperty {
     /**
      * @since 0.14
      */
-    LAYER_DESCRIPTION = "layer_description"
+    LAYER_DESCRIPTION = "layer_description",
+    /**
+     * @since 0.14
+     */
+    LAYER_METADATA = "layer_metadata"
 }
 
 /**

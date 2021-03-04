@@ -102,6 +102,10 @@ export interface IGenericSubjectMapLayerMetadata {
      * @memberof IGenericSubjectMapLayerMetadata
      */
     projection: string;
+    /**
+     * An other arbitrary metadata properties
+     */
+    properties?: any;
 }
 
 /**

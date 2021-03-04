@@ -36,6 +36,7 @@ function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExte
     layer.set(LayerProperty.IS_EXTERNAL, isExternal);
     layer.set(LayerProperty.SELECTED_POPUP_CONFIGURATION, defn.popupTemplate);
     layer.set(LayerProperty.IS_GROUP, false);
+    layer.set(LayerProperty.LAYER_METADATA, defn.meta);
     layer.setVisible(defn.initiallyVisible);
 }
 
@@ -189,6 +190,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 layer.set(LayerProperty.IS_EXTERNAL, isExternal);
                 layer.set(LayerProperty.IS_GROUP, false);
                 layer.set(LayerProperty.SELECTED_POPUP_CONFIGURATION, defn.popupTemplate);
+                layer.set(LayerProperty.LAYER_METADATA, defn.meta);
                 layer.setVisible(defn.initiallyVisible);
                 return layer;
             }

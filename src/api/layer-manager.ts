@@ -49,7 +49,8 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
         extensions: ext,
         vectorStyle,
         cluster: cs,
-        busyWorkerCount: layer.get(LayerProperty.BUSY_WORKER_COUNT) ?? 0
+        busyWorkerCount: layer.get(LayerProperty.BUSY_WORKER_COUNT) ?? 0,
+        metadata: layer.get(LayerProperty.LAYER_METADATA)
     }
 }
 

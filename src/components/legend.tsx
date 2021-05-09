@@ -252,8 +252,8 @@ export interface IGroupNodeProps {
 
 export const GroupNode = (props: IGroupNodeProps) => {
     const { group } = props;
-    const [groupVisible, setGroupVisible] = React.useState(group.Visible);
     const legendCtx = React.useContext(LegendContext);
+    const [groupVisible, setGroupVisible] = React.useState(legendCtx.getGroupVisibility(group));
     const getExpanded = () => {
         let expanded = legendCtx.getGroupExpanded(group.ObjectId);
         if (expanded == null)

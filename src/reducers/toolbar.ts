@@ -9,6 +9,9 @@ function mergeFlyoutState(flyoutId: string, state: any, flyoutPayload: any, flyo
     const updateSpec: any = {
         flyouts: {}
     };
+    if (!state.flyouts[flyoutId]) {
+        return state;
+    }
     const flyoutUpdateSpec: any = {};
     flyoutUpdateSpec[flyoutUpdateAction] = flyoutPayload;
     updateSpec.flyouts[flyoutId] = flyoutUpdateSpec;

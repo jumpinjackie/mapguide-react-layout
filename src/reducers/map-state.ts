@@ -91,14 +91,9 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
         case ActionType.MAP_REFRESH:
             {
                 const { payload } = action;
-                const subState = state[payload.mapName];
-                if (subState) {
-                    const state1 = {
-                        runtimeMap: payload.map
-                    };
-                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
-                }
-                return state;
+                return applyMapGuideSubState(state, payload.mapName, _ => ({
+                    runtimeMap: payload.map
+                }));
             }
         case ActionType.INIT_APP:
             {

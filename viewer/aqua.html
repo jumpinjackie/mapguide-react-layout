@@ -82,21 +82,20 @@
             var el = document.getElementById("map");
             var viewer = new MapGuide.Application();
             viewer.mount(el, {
-                initCommandFactory: function(dispatch) { return new MapGuide.MapGuideViewerInitCommand(dispatch); },
                 layout: "aqua",/*
                 externalBaseLayers: [
                     { name: "OpenStreetMap", kind: "OSM" },
                     { name: "Stamen - Toner", kind: "Stamen", visible: true, options: { layer: "toner" } },
                     { name: "Stamen - Watercolor", kind: "Stamen", options: { layer: "watercolor" } }
                 ],
+                initialElementVisibility: {
+                    taskpane: false,
+                    legend: false,
+                    selection: false
+                },
                 */
-                mapguide: {
-                    agentUri: "../mapagent/mapagent.fcgi"/*,
-                    initialElementVisibility: {
-                        taskpane: false,
-                        legend: false,
-                        selection: false
-                    }*/
+                agent: {
+                    uri: "../mapagent/mapagent.fcgi"
                 }
             });
         </script>

@@ -1,4 +1,4 @@
-version: 0.13.2.{build}
+version: 0.13.3.{build}
 shallow_clone: true
 # Don't actually build. This is not a .net project
 build: off

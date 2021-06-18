@@ -59,7 +59,7 @@
     "lodash.debounce": "^4.0.8",
     "ol": "6.5.0",
     "papaparse": "^5.3.1",
-    "proj4": "2.7.2",
+    "proj4": "2.7.4",
     "qs": "^6.10.1",
     "react": "^16.14.0",
     "react-copy-to-clipboard": "^5.0.3",

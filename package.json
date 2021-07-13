@@ -57,7 +57,7 @@
     "ismobilejs": "^1.1.1",
     "immutability-helper": "^3.1.1",
     "lodash.debounce": "^4.0.8",
-    "ol": "6.5.0",
+    "ol": "6.6.0",
     "papaparse": "^5.3.1",
     "proj4": "2.7.2",
     "qs": "^6.10.1",

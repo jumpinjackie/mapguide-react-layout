@@ -138,5 +138,10 @@
     "webpack": "5.44.0",
     "webpack-cli": "^4.7.2"
   },
-  "resolutions": {}
+  "resolutions": {
+    "marked": "2.0.1",
+    "browserslist": "4.16.5",
+    "glob-parent": "5.1.2",
+    "trim": "0.0.3"
+  }
 }

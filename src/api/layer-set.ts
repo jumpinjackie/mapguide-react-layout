@@ -27,6 +27,7 @@ import UrlTile from 'ol/source/UrlTile';
 import { LoadFunction as TileLoadFunction } from 'ol/Tile';
 import { MapGuideMockMode } from '../components/mapguide-debug-context';
 import { BLANK_GIF_DATA_URI, LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from '../constants';
+import { OLImageLayer, OLTileLayer } from './ol-types';
 
 export function blankImageLoadFunction(image: ImageWrapper) {
     (image.getImage() as any).src = BLANK_GIF_DATA_URI;
@@ -92,17 +93,17 @@ export function mockMapGuideImageLoadFunction(image: ImageWrapper, src: string) 
 }
 
 class MgLayerSetOL implements ILayerSetOL {
-    constructor(public readonly mgTiledLayers: TileLayer[],
+    constructor(public readonly mgTiledLayers: OLTileLayer[],
         public readonly externalBaseLayersGroup: LayerGroup | undefined,
-        public readonly overlay: ImageLayer,
+        public readonly overlay: OLImageLayer,
         public readonly projection: string | undefined,
         public readonly dpi: number,
         public readonly extent: Bounds,
         private readonly inPerUnit: number,
         public readonly view: View) { }
 
-    public selectionOverlay: ImageLayer | undefined;
-    public activeSelectedFeatureOverlay: ImageLayer | undefined;
+    public selectionOverlay: OLImageLayer | undefined;
+    public activeSelectedFeatureOverlay: OLImageLayer | undefined;
 
     public getMetersPerUnit(): number {
         return this.inPerUnit / 39.37
@@ -426,8 +427,8 @@ export class MgInnerLayerSetFactory {
         */
         const overlay = this.createMgOverlayLayer(MgBuiltInLayers.Overlay, agentUri, metersPerUnit, projection, isNotForOverviewMap, isNotForOverviewMap ? this.dynamicOverlayParams : this.staticOverlayParams);
 
-        let selectionOverlay: ImageLayer | undefined;
-        let activeSelectedFeatureOverlay: ImageLayer | undefined;
+        let selectionOverlay: OLImageLayer | undefined;
+        let activeSelectedFeatureOverlay: OLImageLayer | undefined;
         if (isNotForOverviewMap) {
             selectionOverlay = this.createMgOverlayLayer(MgBuiltInLayers.SelectionOverlay, agentUri, metersPerUnit, projection, isNotForOverviewMap, this.selectionOverlayParams);
         }
@@ -515,7 +516,7 @@ export class MgInnerLayerSetFactory {
         tl.set(LayerProperty.IS_GROUP, false);
         return tl;
     }
-    private createMgOverlayLayer(layerName: string, agentUri: string, metersPerUnit: number, projection: string | undefined, useImageOverlayOp: boolean, params: any): ImageLayer {
+    private createMgOverlayLayer(layerName: string, agentUri: string, metersPerUnit: number, projection: string | undefined, useImageOverlayOp: boolean, params: any): OLImageLayer {
         const overlaySource = createMapGuideSource({
             projection: projection,
             url: agentUri,

@@ -16,7 +16,7 @@ export interface IMapCapturerContextCallback {
 
 export class MapCapturerContext {
     private mapCapturerSource: VectorSource<Geometry>;
-    private mapCapturerLayer: VectorLayer;
+    private mapCapturerLayer: VectorLayer<VectorSource<Geometry>>;
     private layerName: string;
     private intTranslate: Translate;
     private features: Collection<Feature<Geometry>>;

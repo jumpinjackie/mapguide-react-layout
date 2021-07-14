@@ -1,7 +1,7 @@
 import Style from 'ol/style/Style';
 import { MAP_MARKER_ICON } from '../constants/assets';
-import { Feature } from 'ol';
 import { ExprEvalContext } from './expr-eval-context';
+import { OLFeature } from './ol-types';
 
 /**
  * Defines a style for a vector layer
@@ -282,4 +282,4 @@ export interface IOlStyleMap {
     "Circle": Style;
 }
 
-export type DynamicStyleMap = (feature: Feature | undefined, context: ExprEvalContext | undefined) => IOlStyleMap;
+export type DynamicStyleMap = (feature: OLFeature | undefined, context: ExprEvalContext | undefined) => IOlStyleMap;

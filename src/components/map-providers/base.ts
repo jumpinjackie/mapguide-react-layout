@@ -746,7 +746,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      */
     protected onImageError(e: GenericEvent) { }
 
-    protected onMapClick(e: MapBrowserEvent) {
+    protected onMapClick(e: MapBrowserEvent<any>) {
         if (!this._comp || !this._map) {
             return;
         }
@@ -793,7 +793,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                         } else {
                             return bounds;
                         }
-                    }, olExtent.createEmpty());
+                    }, olExtent.createEmpty()) as Bounds;
                     this.zoomToExtent(zoomBounds);
                 } else {
                     this._select.getFeatures().push(f);
@@ -913,7 +913,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._selectTooltip = undefined;
         this._mouseTooltip?.dispose()
         this._mouseTooltip = undefined;
-        this._map?.setTarget(undefined);
+        this._map?.setTarget(undefined as any); //HACK: Workaround typing bug
         this._ovMap?.setMap(undefined as any);
         this._map = undefined;
         this._ovMap = undefined;
@@ -1186,10 +1186,10 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         return this._map.getView().getProjection();
     }
     public addHandler(eventName: string, handler: Function) {
-        this._map?.on(eventName, handler as any);
+        this._map?.on(eventName as any, handler as any);
     }
     public removeHandler(eventName: string, handler: Function) {
-        this._map?.un(eventName, handler as any);
+        this._map?.un(eventName as any, handler as any);
     }
     public updateSize() {
         this._map?.updateSize();

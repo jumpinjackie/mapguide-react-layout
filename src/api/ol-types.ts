@@ -7,7 +7,21 @@
  */
 
 import { Options as MGImageSourceOptions } from "ol/source/ImageMapGuide";
-import GeometryType from 'ol/geom/GeometryType';
+import Feature from "ol/Feature";
+import Geometry from "ol/geom/Geometry";
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
+import ImageSource from "ol/source/Image";
+import ImageLayer from "ol/layer/Image";
+import TileLayer from "ol/layer/Tile";
+import TileSource from "ol/source/Tile";
+import { Options as VectorLayerOptions } from "ol/layer/BaseVector";
 
-export type OLGeometryType = GeometryType;
+export type OLFeature = Feature<Geometry>;
+export type OLGeometryType = string;
 export type OLMapGuideImageSourceOptions = MGImageSourceOptions;
+export type OLVectorSource = VectorSource<Geometry>;
+export type OLVectorLayer = VectorLayer<OLVectorSource>;
+export type OLImageLayer = ImageLayer<ImageSource>;
+export type OLTileLayer = TileLayer<TileSource>;
+export type OLVectorLayerOptions = VectorLayerOptions<OLVectorSource>;

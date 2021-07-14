@@ -1,5 +1,4 @@
 import { RefreshMode, IExternalBaseLayer, LayerTransparencySet, Bounds, Size, GenericEvent, Dictionary } from './common';
-import { Extent } from 'ol/extent';
 import View from 'ol/View';
 import Source from 'ol/source/Source';
 import LayerBase from "ol/layer/Base";
@@ -8,7 +7,7 @@ import { LoadFunction as ImageLoadFunction } from 'ol/Image';
 
 export interface ILayerSetOL {
     view: View;
-    extent: Extent;
+    extent: Bounds;
     dpi: number;
     projection: string | undefined;
     scaleToResolution(scale: number): number;

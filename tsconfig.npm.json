@@ -3,7 +3,8 @@
     "compilerOptions": {
         "esModuleInterop": true,
         "declaration": true,
-        "outDir": "lib"
+        "outDir": "lib",
+        "skipLibCheck": true
     },
     "exclude": [
         "lib",

@@ -24,11 +24,12 @@ import TileLayer from 'ol/layer/Tile';
 import UrlTile from 'ol/source/UrlTile';
 import ImageLayer from 'ol/layer/Image';
 import { debug } from '../utils/logger';
+import { OLVectorLayer } from "./ol-types";
 
 export abstract class LayerSetGroupBase {
     protected mainSet: ILayerSetOL;
     protected overviewSet: ILayerSetOL;
-    protected scratchLayer: VectorLayer;
+    protected scratchLayer: OLVectorLayer;
     protected _customLayers: {
         [name: string]: {
             layer: LayerBase,

@@ -40,6 +40,7 @@ import StrokeStyle, { Options as StrokeOptions } from "ol/style/Stroke";
 import CircleStyle, { Options as CircleOptions } from "ol/style/Circle";
 import { Bounds, Coordinate2D } from './common';
 import { ProjectionLike } from 'ol/proj';
+import { OLVectorLayer, OLVectorLayerOptions } from "./ol-types";
 
 /**
  * Creates various OpenLayers types used by the viewer
@@ -105,7 +106,7 @@ export interface IOLFactory {
     createGeomMultiPolygon(coordinates: Coordinate2D[][][]): MultiPolygon;
     createGeomCollection(geometries: Geometry[]): GeometryCollection;
     createVectorSource(options?: VectorOptions): VectorSource<Geometry>;
-    createVectorLayer(options?: VectorLayerOptions | undefined): VectorLayer;
+    createVectorLayer(options?: OLVectorLayerOptions | undefined): OLVectorLayer;
     createOverlay(options: OverlayOptions): Overlay;
     createInteractionDraw(options: DrawOptions): DrawInteraction;
     /**
@@ -206,7 +207,7 @@ export class OLFactory implements IOLFactory {
     public createVectorSource(options?: VectorOptions): VectorSource<Geometry> {
         return new VectorSource(options);
     }
-    public createVectorLayer(options?: VectorLayerOptions | undefined): VectorLayer {
+    public createVectorLayer(options?: OLVectorLayerOptions | undefined): OLVectorLayer {
         return new VectorLayer(options);
     }
     public createOverlay(options: OverlayOptions): Overlay {

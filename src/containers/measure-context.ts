@@ -19,6 +19,7 @@ import OverlayPositioning from 'ol/OverlayPositioning';
 import { debug } from '../utils/logger';
 import { OLGeometryType } from '../api/ol-types';
 import Geometry from 'ol/geom/Geometry';
+import VectorSource from "ol/source/Vector";
 
 const LAYER_NAME = "measure-layer";
 
@@ -53,7 +54,7 @@ export class MeasureContext {
     private olFactory: IOLFactory;
     private draw: DrawInteraction;
     private measureOverlays: Overlay[];
-    private measureLayer: VectorLayer;
+    private measureLayer: VectorLayer<VectorSource<Geometry>>;
     private viewer: IMapViewer;
     private sketch: Feature<Geometry> | null;
     private listener: any;

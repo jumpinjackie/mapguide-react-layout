@@ -1,10 +1,10 @@
 import { ExprOr, isEvaluatable, IVectorLabelSettings, IBasicStroke, IBasicFill } from "./ol-style-contracts";
-import { Feature } from "ol";
 import { ExprEvalContext } from "./expr-eval-context";
 import TextStyle, { Options as TextStyleOptions } from "ol/style/Text";
 import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
 import { asArray } from 'ol/color';
+import { OLFeature } from "./ol-types";
 
 function toOLColor(color: string, alpha: number | undefined) {
     const c = asArray(color);
@@ -14,7 +14,7 @@ function toOLColor(color: string, alpha: number | undefined) {
     return c;
 }
 
-export function evalFeature<T>(expr: ExprOr<T>, feat: Feature | undefined, context: ExprEvalContext | undefined): any | undefined {
+export function evalFeature<T>(expr: ExprOr<T>, feat: OLFeature | undefined, context: ExprEvalContext | undefined): any | undefined {
     if (!isEvaluatable(expr)) {
         return expr;
     } else if (feat && context) {
@@ -30,20 +30,20 @@ function setIfNotUndefined<T, K extends keyof T>(obj: T, prop: K, value: T[K]) {
     }
 }
 
-export function buildStroke(stroke: IBasicStroke, feat: Feature | undefined, context: ExprEvalContext | undefined): Stroke {
+export function buildStroke(stroke: IBasicStroke, feat: OLFeature | undefined, context: ExprEvalContext | undefined): Stroke {
     return new Stroke({
         color: toOLColor(evalFeature(stroke.color, feat, context), evalFeature(stroke.alpha, feat, context)),
         width: evalFeature(stroke.width, feat, context)
     })
 }
 
-export function buildFill(fill: IBasicFill, feat: Feature | undefined, context: ExprEvalContext | undefined): Fill {
+export function buildFill(fill: IBasicFill, feat: OLFeature | undefined, context: ExprEvalContext | undefined): Fill {
     return new Fill({
         color: toOLColor(evalFeature(fill.color, feat, context), evalFeature(fill.alpha, feat, context))
     });
 }
 
-export function tryBuildTextStyle(style: IVectorLabelSettings, feat: Feature | undefined, context: ExprEvalContext | undefined): TextStyle | undefined {
+export function tryBuildTextStyle(style: IVectorLabelSettings, feat: OLFeature | undefined, context: ExprEvalContext | undefined): TextStyle | undefined {
     const { label } = style;
     if (label) {
         const textOpts: TextStyleOptions = {};

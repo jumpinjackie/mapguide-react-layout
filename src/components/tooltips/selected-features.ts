@@ -23,6 +23,7 @@ import Source from 'ol/source/Source';
 import { WmsQueryAugmentation } from '../map-providers/base';
 import { isClusteredFeature, getClusterSubFeatures } from '../../api/ol-style-helpers';
 import stickybits from 'stickybits';
+import { OLFeature } from "../../api/ol-types";
 
 export interface IQueryWmsFeaturesCallback {
     getLocale(): string | undefined;
@@ -42,7 +43,7 @@ export interface ISelectionPopupContentOverrideProvider {
     getSelectionPopupRenderer(layerName: string): SelectionPopupContentRenderer | undefined;
 }
 
-function defaultPopupContentRenderer(feat: Feature<Geometry>, locale?: string, popupConfig?: ISelectedFeaturePopupTemplateConfiguration) {
+function defaultPopupContentRenderer(feat: OLFeature, locale?: string, popupConfig?: ISelectedFeaturePopupTemplateConfiguration) {
     let html = "";
     const bClustered = isClusteredFeature(feat);
 
@@ -52,7 +53,7 @@ function defaultPopupContentRenderer(feat: Feature<Geometry>, locale?: string, p
     }
     html += "<div class='selected-popup-header'><div>" + title + "</div><a id='feat-popup-closer' class='closer' href='#'>[x]</a><div class='clearit'></div></div>";
 
-    const renderForMultiple = (subFeatures: Feature[]) => {
+    const renderForMultiple = (subFeatures: OLFeature[]) => {
         let table = "<table class='selected-popup-cluster-table'>";
         const fheadings = popupConfig?.propertyMappings
             ? popupConfig.propertyMappings.filter(pm => pm.name != subFeatures[0].getGeometryName()).map(pm => pm.value)
@@ -77,7 +78,7 @@ function defaultPopupContentRenderer(feat: Feature<Geometry>, locale?: string, p
         table += "</table>";
         return table
     };
-    const renderForSingle = (feature: Feature): [string, number, string | undefined] => {
+    const renderForSingle = (feature: OLFeature): [string, number, string | undefined] => {
         let linkFragment: string | undefined;
         let table = "<table class='selected-popup-single-properties-table'>";
         table += "<tbody>";
@@ -132,7 +133,7 @@ function defaultPopupContentRenderer(feat: Feature<Geometry>, locale?: string, p
         }
         return [table, pc, linkFragment];
     };
-    const singlePopupContentRender = (feature: Feature, appendHtml: (h: string) => void) => {
+    const singlePopupContentRender = (feature: OLFeature, appendHtml: (h: string) => void) => {
         const [table, pc, linkFragment] = renderForSingle(feature);
         if (pc > 0) {
             appendHtml(`<div class='selected-popup-content-wrapper'>${table}</div>`);

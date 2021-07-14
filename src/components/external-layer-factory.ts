@@ -26,6 +26,7 @@ import { setOLVectorLayerStyle } from '../api/ol-style-helpers';
 import { DEFAULT_VECTOR_LAYER_STYLE } from '../api/ol-style-contracts';
 import VectorTile from "ol/VectorTile";
 import Feature from "ol/Feature";
+import { OLVectorLayer, OLVectorSource } from "../api/ol-types";
 
 function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExternalLayer, layer: LayerBase, isExternal: boolean) {
     layer.set(LayerProperty.LAYER_NAME, defn.name);
@@ -42,7 +43,7 @@ function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExte
 
 const EMPTY_GEOJSON = { type: "FeatureCollection", features: [] as any[] };
 
-function clusterSourceIfRequired(source: VectorSource, def: IGenericSubjectMapLayer): ClusterSource | VectorSource {
+function clusterSourceIfRequired(source: OLVectorSource, def: IGenericSubjectMapLayer): ClusterSource | OLVectorSource {
     if (def.cluster) {
         const cluster = new ClusterSource({
             source: source,
@@ -204,7 +205,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 if (!factory) {
                     throw new Error(`Could not resolve an approriate factory for the given driver: ${defn.driverName}`);
                 }
-                const layer = factory(defn.sourceParams, defn.meta, defn.layerOptions) as VectorLayer;
+                const layer = factory(defn.sourceParams, defn.meta, defn.layerOptions) as OLVectorLayer;
                 const source = clusterSourceIfRequired(layer.getSource(), defn);
                 layer.setSource(source);
                 setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);

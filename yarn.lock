@@ -9829,10 +9829,10 @@ ol-mapbox-style@^6.4.1:
     mapbox-to-css-font "^2.4.0"
     webfont-matcher "^1.1.0"
 
-ol@6.6.0:
-  version "6.6.0"
-  resolved "https://registry.yarnpkg.com/ol/-/ol-6.6.0.tgz#04c93dda422b22b4b0a9374bf86602bfb60401cd"
-  integrity sha512-4kJM5JKNRlOJnF2ndIoD4qpFmnoYQ8n+Q2qj6u6q63O4yDIrGHombea2OGrrlDPn1kLlKdCPLce8Vams1VIqow==
+ol@6.6.1:
+  version "6.6.1"
+  resolved "https://registry.yarnpkg.com/ol/-/ol-6.6.1.tgz#eba3b2bd5c2f6d4f24f4ddcb713523bd3a13234f"
+  integrity sha512-QHNth7ty7UAPi5oEL5N5rJB/cgdFGAAzigYEM8LTUKCq/StTOTWDf2fFrom3wQVmsr1etf6i6hTBowtY/LiGgg==
   dependencies:
     ol-mapbox-style "^6.4.1"
     pbf "3.2.1"

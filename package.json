@@ -74,7 +74,7 @@
     "shortid": "^2.2.16",
     "stickybits": "3.7.9",
     "tslib": "^2.3.0",
-    "url-parse": "^1.5.1"
+    "url-parse": "^1.5.2"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",

@@ -73,7 +73,7 @@
     "redux-thunk": "^2.3.0",
     "shortid": "^2.2.16",
     "stickybits": "3.7.9",
-    "tslib": "^2.3.0",
+    "tslib": "^2.3.1",
     "url-parse": "^1.5.3"
   },
   "devDependencies": {

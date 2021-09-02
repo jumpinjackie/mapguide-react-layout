@@ -123,10 +123,10 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
             </Card>
         </Collapse>}
         {layer.vectorStyle && <Collapse isOpen={openPanel == OpenPanel.EditVectorStyle}>
-            <Card>
+            <div style={{ padding: 5 }}>
                 <h5 className="bp3-heading"><a href="#">{tr("VECTOR_LAYER_STYLE", locale)}</a></h5>
                 <VectorLayerStyleEditor onChange={st => onVectorStyleChanged(layer.name, st)} locale={locale} style={layer.vectorStyle} enablePoint={true} enableLine={true} enablePolygon={true} />
-            </Card>
+            </div>
         </Collapse>}
     </Card>;
 }

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, Slider, RadioGroup, Radio, InputGroup, Switch, Button, INumericInputProps, HTMLInputProps, ISliderProps, ISwitchProps, IInputGroupProps } from '@blueprintjs/core';
+import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, Slider, RadioGroup, Radio, InputGroup, Switch, Button, INumericInputProps, HTMLInputProps, ISliderProps, ISwitchProps, IInputGroupProps, Intent } from '@blueprintjs/core';
 import { tr } from "../api/i18n";
 import { ColorPicker, IColorPickerProps } from './color-picker';
 import { ExprOr, isEvaluatable, IPointIconStyle, IBasicPointCircleStyle, IBasicVectorPointStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorFeatureStyle, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IVectorLayerStyle } from '../api/ol-style-contracts';
@@ -66,7 +66,7 @@ const DynamicSwitch = (props: Omit<Omit<ISwitchProps, "checked">, "onChange"> & 
         const innerProps = {
             ...props,
             checked: props.expr,
-            onChange: (e: any) => props.onExprChanged(e)
+            onChange: (e: any) => props.onExprChanged(e.target.checked)
         };
         return <Switch {...innerProps} />;
     }
@@ -351,18 +351,24 @@ const FilterItem = (props: IFilterItemProps) => {
         props.onToggleStyleEditor(!isStyleEditorOpen);
     };
     const onInnerStyleChanged = (style: IVectorFeatureStyle) => {
-        onChange?.(isDefault ? localFilter : "", style);
+        onChange?.(isDefault ? DEFAULT_STYLE_KEY : localFilter, style);
     }
-    return <div>
-        {isDefault ? <strong>Default Style</strong> : <input type="text" value={localFilter} />}
-        <Button onClick={onToggle}>{isStyleEditorOpen ? "Hide" : "Show"}</Button>
-        {isStyleEditorOpen && <VectorStyleEditor style={featureStyle}
-            onChange={onInnerStyleChanged}
-            enableLine={props.enableLine}
-            enablePoint={props.enablePoint}
-            enablePolygon={props.enablePolygon}
-            locale={props.locale} />}
-    </div>
+    return <>
+        <tr>
+            <td>{isDefault ? <strong>Default Style</strong> : <input type="text" style={{ width: "100%" }} title={localFilter} value={localFilter} />}</td>
+            <td><Button intent={Intent.PRIMARY} onClick={onToggle}>{isStyleEditorOpen ? "Hide" : "Show"}</Button></td>
+        </tr>
+        {isStyleEditorOpen && <tr>
+            <td colSpan={2}>
+                <VectorStyleEditor style={featureStyle}
+                    onChange={onInnerStyleChanged}
+                    enableLine={props.enableLine}
+                    enablePoint={props.enablePoint}
+                    enablePolygon={props.enablePolygon}
+                    locale={props.locale} />
+            </td>
+        </tr>}
+    </>
 }
 
 export const VectorLayerStyleEditor = (props: IVectorLayerStyleEditorProps) => {
@@ -390,28 +396,30 @@ export const VectorLayerStyleEditor = (props: IVectorLayerStyleEditorProps) => {
         }
         setOpenStyleEditors(opEds);
     };
-    return <div>
-        {filters.map((f, i) => <FilterItem
-            key={`filter-${i}`}
-            filter={f}
-            isDefault={false}
-            onChange={(f, s) => onFeatureStyleChanged(i, f, s)}
-            featureStyle={props.style[filters[i]]}
-            isStyleEditorOpen={typeof (openStyleEditors[i]) != 'undefined'}
-            onToggleStyleEditor={(v) => onToggleStyleEditor(i, v)}
-            locale={props.locale}
-            enableLine={props.enableLine}
-            enablePoint={props.enablePoint}
-            enablePolygon={props.enablePolygon} />)}
-        <FilterItem
-            isDefault
-            onChange={(f, s) => onFeatureStyleChanged(DEFAULT_STYLE_KEY, f, s)}
-            featureStyle={props.style.default}
-            isStyleEditorOpen={typeof (openStyleEditors[DEFAULT_STYLE_KEY]) != 'undefined'}
-            onToggleStyleEditor={(v) => onToggleStyleEditor(DEFAULT_STYLE_KEY, v)}
-            locale={props.locale}
-            enableLine={props.enableLine}
-            enablePoint={props.enablePoint}
-            enablePolygon={props.enablePolygon} />
-    </div>;
+    return <table style={{ width: "100%" }}>
+        <tbody>
+            {filters.map((f, i) => <FilterItem
+                key={`filter-${i}`}
+                filter={f}
+                isDefault={false}
+                onChange={(f, s) => onFeatureStyleChanged(i, f, s)}
+                featureStyle={props.style[filters[i]]}
+                isStyleEditorOpen={typeof (openStyleEditors[i]) != 'undefined'}
+                onToggleStyleEditor={(v) => onToggleStyleEditor(i, v)}
+                locale={props.locale}
+                enableLine={props.enableLine}
+                enablePoint={props.enablePoint}
+                enablePolygon={props.enablePolygon} />)}
+            <FilterItem
+                isDefault
+                onChange={(f, s) => onFeatureStyleChanged(DEFAULT_STYLE_KEY, f, s)}
+                featureStyle={props.style.default}
+                isStyleEditorOpen={typeof (openStyleEditors[DEFAULT_STYLE_KEY]) != 'undefined'}
+                onToggleStyleEditor={(v) => onToggleStyleEditor(DEFAULT_STYLE_KEY, v)}
+                locale={props.locale}
+                enableLine={props.enableLine}
+                enablePoint={props.enablePoint}
+                enablePolygon={props.enablePolygon} />
+        </tbody>
+    </table>;
 }

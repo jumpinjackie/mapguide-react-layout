@@ -42,7 +42,7 @@ install:
   # - del yarn.lock
   # install packages, this will also do a production build as a postinstall
   - yarn install
-  - yarn audit
+  - yarn audit --groups "dependencies"
 
 test_script:
   - yarn --version

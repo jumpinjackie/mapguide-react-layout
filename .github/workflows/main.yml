@@ -31,8 +31,8 @@ jobs:
           export PATH="$HOME/.yarn/bin:$PATH"
           yarn install
           
-      - name: Audit packages
-        run: yarn audit
+      - name: Audit packages (production packages only)
+        run: yarn audit --groups "dependencies"
         
       - name: Lint and run tests
         run: yarn run ci:gha

@@ -5,11 +5,11 @@ import { ViewerAction } from '../actions/defs';
 import { isElementState } from './template';
 import { WEBLAYOUT_TASKMENU, WEBLAYOUT_CONTEXTMENU } from '../constants';
 
-function mergeFlyoutState(flyoutId: string, state: any, flyoutPayload: any, flyoutUpdateAction: "$set" | "$merge", closeOtherFlyouts: boolean = false) {
+function mergeFlyoutState(flyoutId: string, state: any, flyoutPayload: any, flyoutUpdateAction: "$set" | "$merge", closeOtherFlyouts: boolean = false, bSettingStates: boolean = false) {
     const updateSpec: any = {
         flyouts: {}
     };
-    if (!state.flyouts[flyoutId]) {
+    if (!state.flyouts[flyoutId] && bSettingStates) {
         return state;
     }
     const flyoutUpdateSpec: any = {};
@@ -31,11 +31,11 @@ function mergeFlyoutState(flyoutId: string, state: any, flyoutPayload: any, flyo
     return newState;
 }
 
-function mergeFlyoutCloseState(flyoutId: string, state: any) {
+function mergeFlyoutCloseState(flyoutId: string, state: any, bSettingStates: boolean = false) {
     return mergeFlyoutState(flyoutId, state, {
         open: false,
         metrics: null
-    }, "$merge");
+    }, "$merge", false, bSettingStates);
 }
 
 export const TOOLBAR_INITIAL_STATE: IToolbarReducerState = {
@@ -103,7 +103,7 @@ export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: ViewerActi
         case ActionType.FUSION_SET_ELEMENT_STATE:
             {
                 if (isElementState(action.payload) && !action.payload.taskPaneVisible) {
-                    return mergeFlyoutCloseState(WEBLAYOUT_TASKMENU, state);
+                    return mergeFlyoutCloseState(WEBLAYOUT_TASKMENU, state, true);
                 }
                 return state;
             }

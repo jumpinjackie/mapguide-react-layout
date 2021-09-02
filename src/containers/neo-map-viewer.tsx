@@ -12,7 +12,9 @@ import { tr } from '../api/i18n';
 import "ol/ol.css";
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { ISubscriberProps, Subscriber } from './subscriber';
-import { useConfiguredLoadIndicatorColor, useConfiguredLoadIndicatorPositioning } from "./hooks";
+import { useConfiguredLoadIndicatorColor, useConfiguredLoadIndicatorPositioning, useViewerFlyouts } from "./hooks";
+import { closeContextMenu, openContextMenu } from "../actions/flyout";
+import { WEBLAYOUT_CONTEXTMENU } from "../constants";
 
 
 
@@ -20,10 +22,12 @@ interface ICoreMapViewerProps {
     context: IMapProviderContext;
     loadIndicatorPosition: MapLoadIndicatorPositioning;
     loadIndicatorColor: string;
-    onContextMenu?: (pos: [number, number]) => void;
+    onContextMenu: (pos: [number, number]) => void;
+    onHideContextMenu: () => void;
     onDispatch: ReduxDispatch;
     backgroundColor?: string;
     children?: React.ReactNode;
+    isContextMenuOpen: boolean;
 }
 
 interface ICoreMapViewerState {
@@ -50,10 +54,10 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
         }
     }
     //#region IViewerComponent
-    isContextMenuOpen = () => false;
+    isContextMenuOpen = () => this.props.isContextMenuOpen;
     setDigitizingType = (digitizingType: string | undefined) => this.setState({ digitizingType });
     onBeginDigitization = (callback: (cancelled: boolean) => void) => { };
-    onHideContextMenu = () => { };
+    onHideContextMenu = () => this.props.onHideContextMenu?.();
     onOpenTooltipLink = (url: string) => { };
     onDispatch = (action: any) => this.props.onDispatch(action);
     addImageLoading(): void {
@@ -219,6 +223,11 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
         bgColor,
         locale
     } = nextState;
+    const flyouts = useViewerFlyouts();
+    const bContextMenuOpen = (flyouts[WEBLAYOUT_CONTEXTMENU]?.open == true);
+    const showContextMenuAction = (pos: [number, number]) => dispatch(openContextMenu({ x: pos[0], y: pos[1] }));
+    const hideContextMenuAction = () => dispatch(closeContextMenu());
+    const onContextMenu = (pos: [number, number]) => showContextMenuAction?.(pos);
     //HACK: Still have some MG-specific state we're needing to check for here. Minor abstraction leakage.
     let agentUri: string | undefined;
     let agentKind: ClientKind | undefined;
@@ -239,6 +248,9 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
             <CoreMapViewer context={context}
                 onDispatch={dispatch}
                 backgroundColor={bgColor}
+                onContextMenu={onContextMenu}
+                onHideContextMenu={hideContextMenuAction}
+                isContextMenuOpen={bContextMenuOpen}
                 loadIndicatorPosition={loadIndicatorPositioning}
                 loadIndicatorColor={loadIndicatorColor}>
                 {children}

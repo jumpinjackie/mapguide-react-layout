@@ -4,6 +4,7 @@ import { tr } from "../api/i18n";
 import { ColorPicker, IColorPickerProps } from './color-picker';
 import { ExprOr, isEvaluatable, IPointIconStyle, IBasicPointCircleStyle, IBasicVectorPointStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorFeatureStyle, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IVectorLayerStyle } from '../api/ol-style-contracts';
 import { DEFAULT_STYLE_KEY } from '../api/ol-style-helpers';
+import { Parser } from "expr-eval";
 
 interface IExprEditorProps<T> {
     converter: (value: string) => ExprOr<T>;
@@ -341,21 +342,50 @@ interface IFilterItemProps extends Omit<IVectorLayerStyleEditorProps, "onChange"
     onToggleStyleEditor: (visible: boolean) => void;
 }
 
+const parser = new Parser();
+
 const FilterItem = (props: IFilterItemProps) => {
     const { filter, isDefault, isStyleEditorOpen, featureStyle, onChange } = props;
     const [localFilter, setLocalFilter] = React.useState(filter ?? "");
+    const [isLocalFilterValid, setIsLocalFilterValid] = React.useState(true);
     React.useEffect(() => {
         setLocalFilter(localFilter);
     }, [filter]);
+    React.useEffect(() => {
+        try {
+            const expr: any = parser.parse(localFilter);
+            let bHaveVar = false;
+            let bHaveOperator = false;
+            for (const t of expr.tokens) {
+                switch (t.type) {
+                    case "IVAR":
+                        bHaveVar = true;
+                        break;
+                    case "IOP2":
+                        bHaveOperator = true;
+                        break;  
+                }
+            }
+            setIsLocalFilterValid(bHaveVar && bHaveOperator && expr.tokens.length == 3);
+        } catch (e) {
+            setIsLocalFilterValid(false);
+        }
+    }, [localFilter]);
     const onToggle = () => {
         props.onToggleStyleEditor(!isStyleEditorOpen);
     };
     const onInnerStyleChanged = (style: IVectorFeatureStyle) => {
         onChange?.(isDefault ? DEFAULT_STYLE_KEY : localFilter, style);
     }
+    let iconTip;
+    let outerModifier;
+    if (!isLocalFilterValid) {
+        outerModifier = Intent.DANGER;
+        iconTip = "This filter is not valid";
+    }
     return <>
         <tr>
-            <td>{isDefault ? <strong>Default Style</strong> : <input type="text" style={{ width: "100%" }} title={localFilter} value={localFilter} />}</td>
+            <td>{isDefault ? <strong>Default Style</strong> : <InputGroup intent={outerModifier} fill leftIcon={(isLocalFilterValid ? "tick" : "warning-sign")} title={localFilter} value={localFilter} onChange={e => setLocalFilter(e.target.value)} />}</td>
             <td><Button intent={Intent.PRIMARY} onClick={onToggle}>{isStyleEditorOpen ? "Hide" : "Show"}</Button></td>
         </tr>
         {isStyleEditorOpen && <tr>

@@ -21,10 +21,11 @@ const PrintView = (props: IPrintViewProps) => {
     return <img src={props.imageUrl} alt="Map Image" />;
 }
 
-const MapToolbar = () => {
+const MapToolbar: React.FC<{ isLayerManagerOpen: boolean, setIsLayerManagerOpen: (f: boolean) => void }> = (props) => {
+    const { isLayerManagerOpen, setIsLayerManagerOpen } = props;
     const context = useMapProviderContext();
     const dispatch = useReduxDispatch();
-    const [isLayerManagerOpen, setIsLayerManagerOpen] = React.useState(false);
+
     const [isExportingImage, setIsExportingImage] = React.useState(false);
     const invokeCommandAction = (cmd: ICommand | undefined, parameters?: any) => {
         if (cmd) {
@@ -38,7 +39,6 @@ const MapToolbar = () => {
     const pan = () => dispatch(setActiveTool(ActiveMapTool.Pan));
     const zoomExtents = () => invokeCommandAction(getCommand(DefaultCommands.ZoomExtents));
     const select = () => dispatch(setActiveTool(ActiveMapTool.WmsQueryFeatures));
-    const onToggleLayerManager = () => setIsLayerManagerOpen(!isLayerManagerOpen);
     const onPrint = () => {
         setIsExportingImage(true);
         context.exportImage({
@@ -76,7 +76,7 @@ const MapToolbar = () => {
             <Button icon="hand" intent={activeTool == ActiveMapTool.Pan ? Intent.PRIMARY : Intent.NONE} onClick={pan} />
             <Button icon="zoom-to-fit" onClick={zoomExtents} />
             <Button icon="select" intent={activeTool == ActiveMapTool.WmsQueryFeatures ? Intent.PRIMARY : Intent.NONE} onClick={select} />
-            <Button icon="layers" intent={isLayerManagerOpen ? Intent.PRIMARY : Intent.NONE} onClick={onToggleLayerManager} />
+            <Button icon="layers" intent={isLayerManagerOpen ? Intent.PRIMARY : Intent.NONE} onClick={() => setIsLayerManagerOpen(!isLayerManagerOpen)} />
             <Popover usePortal={false} position="right" minimal={false}>
                 <Button icon="cog" />
                 <Card interactive={true} elevation={Elevation.TWO} style={{ minWidth: 200 }}>
@@ -88,11 +88,6 @@ const MapToolbar = () => {
             </Popover>
             <Button icon="print" onClick={onPrint} />
         </ButtonGroup>
-        <Drawer size={DrawerSize.SMALL} canOutsideClickClose={true} onClose={() => setIsLayerManagerOpen(false)} title="External Layer Manager" position={Position.LEFT} usePortal={false} isOpen={isLayerManagerOpen}>
-            <div style={{ overflowY: "auto" }}>
-                <PlaceholderComponent id={DefaultComponentNames.AddManageLayers} locale={locale} />
-            </div>
-        </Drawer>
     </>
 }
 
@@ -100,9 +95,20 @@ export const GenericLayout = () => {
     const {
         locale,
     } = useCommonTemplateState();
+    const [isLayerManagerOpen, setIsLayerManagerOpen] = React.useState(false);
+    const onToggleLayerManager = () => setIsLayerManagerOpen(!isLayerManagerOpen);
     return <div style={{ width: "100%", height: "100%" }}>
         <ModalLauncher />
-        <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} componentProps={{ children: <MapToolbar /> }} />
+        <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} componentProps={{
+            children: <MapToolbar
+                isLayerManagerOpen={isLayerManagerOpen}
+                setIsLayerManagerOpen={f => setIsLayerManagerOpen(f)} />
+        }} />
+        <Drawer size={DrawerSize.SMALL} canOutsideClickClose={true} onClose={() => setIsLayerManagerOpen(false)} title="External Layer Manager" position={Position.LEFT} usePortal={false} isOpen={isLayerManagerOpen}>
+            <div style={{ overflowY: "auto" }}>
+                <PlaceholderComponent id={DefaultComponentNames.AddManageLayers} locale={locale} />
+            </div>
+        </Drawer>
         <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />
         <ViewerApiShim />
         <FlyoutRegionContainer />

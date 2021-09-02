@@ -261,7 +261,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                 }
                 const mapContext = mapCanvas.getContext('2d');
                 if (mapContext) {
-                    Array.prototype.forEach.call(document.querySelectorAll('.ol-layer canvas'), function (canvas: HTMLCanvasElement) {
+                    const canvasSelector = '.ol-layer canvas, .external-vector-layer canvas';
+                    Array.prototype.forEach.call(document.querySelectorAll(canvasSelector), function (canvas: HTMLCanvasElement) {
                         if (canvas.width > 0) {
                             const parentNode = canvas.parentNode;
                             const opacity = (parentNode as any)?.style?.opacity ?? "";

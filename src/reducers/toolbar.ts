@@ -68,6 +68,9 @@ export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: ViewerActi
             }
         case ActionType.COMPONENT_CLOSE:
             {
+                if (!state.flyouts[WEBLAYOUT_CONTEXTMENU]) {
+                    return state;
+                }
                 let flyoutId = action.payload.flyoutId;
                 if (flyoutId) {
                     return mergeFlyoutState(flyoutId, state, {
@@ -81,6 +84,9 @@ export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: ViewerActi
             }
         case ActionType.CONTEXT_MENU_OPEN:
             {
+                if (!state.flyouts[WEBLAYOUT_CONTEXTMENU]) {
+                    return state;
+                }
                 return mergeFlyoutState(WEBLAYOUT_CONTEXTMENU, state, {
                     open: true,
                     metrics: {

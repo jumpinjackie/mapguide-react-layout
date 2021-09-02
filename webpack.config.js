@@ -132,6 +132,7 @@ const rules = [
         loader: "file-loader",
         options: {
             name(file) {
+                //console.log(`[file-loader]: Processing: ${file}`);
                 var fidx = file.indexOf("stdassets");
                 var relPath = file.substring(fidx).replace(/\\/g, "/");
                 if (relPath.startsWith("stdassets/images/icons/")) {
@@ -143,15 +144,6 @@ const rules = [
                 }
             },
             publicPath: "./dist"
-        }
-    },
-    { //Image sprite
-        test: /icons\.(png|gif)$/,
-        loader: "file-loader",
-        options: {
-            name(file) {
-                return "[path][name].[ext]";
-            }
         }
     },
     { //Cursors

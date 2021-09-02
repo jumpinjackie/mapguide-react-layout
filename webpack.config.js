@@ -5,7 +5,6 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-//const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const mgBaseAppEntries = [
     './src/entries/library.tsx'

@@ -112,7 +112,6 @@
     "docsify-cli": "4.4.3",
     "enzyme": "3.11.0",
     "file-loader": "6.2.0",
-    "fork-ts-checker-webpack-plugin": "^6.3.2",
     "jest": "27.1.0",
     "jsdom": "^17.0.0",
     "jsdom-global": "^3.0.2",
@@ -138,10 +137,5 @@
     "webpack": "5.51.1",
     "webpack-cli": "^4.8.0"
   },
-  "resolutions": {
-    "marked": "2.0.1",
-    "browserslist": "4.16.5",
-    "glob-parent": "5.1.2",
-    "trim": "0.0.3"
-  }
+  "resolutions": {}
 }

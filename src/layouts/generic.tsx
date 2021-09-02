@@ -6,7 +6,7 @@ import { ModalLauncher } from '../containers/modal-launcher';
 import { FlyoutRegionContainer } from '../containers/flyout-region';
 import { InitWarningDisplay } from '../containers/init-warning-display';
 import { useCommonTemplateState } from './hooks';
-import { ButtonGroup, Button, Intent, Drawer, Position, Popover, PopoverInteractionKind, IPopoverProps, Card, Elevation } from '@blueprintjs/core';
+import { ButtonGroup, Button, Intent, Drawer, Position, Popover, PopoverInteractionKind, IPopoverProps, Card, Elevation, DrawerSize } from '@blueprintjs/core';
 import { ICommand, ActiveMapTool } from '../api/common';
 import { invokeCommand, setActiveTool } from '../actions/map';
 import { getCommand, DefaultCommands } from '../api/registry/command';
@@ -88,7 +88,7 @@ const MapToolbar = () => {
             </Popover>
             <Button icon="print" onClick={onPrint} />
         </ButtonGroup>
-        <Drawer size={Drawer.SIZE_SMALL} canOutsideClickClose={true} onClose={() => setIsLayerManagerOpen(false)} title="External Layer Manager" position={Position.LEFT} usePortal={false} isOpen={isLayerManagerOpen}>
+        <Drawer size={DrawerSize.SMALL} canOutsideClickClose={true} onClose={() => setIsLayerManagerOpen(false)} title="External Layer Manager" position={Position.LEFT} usePortal={false} isOpen={isLayerManagerOpen}>
             <div style={{ overflowY: "auto" }}>
                 <PlaceholderComponent id={DefaultComponentNames.AddManageLayers} locale={locale} />
             </div>
@@ -101,10 +101,10 @@ export const GenericLayout = () => {
         locale,
     } = useCommonTemplateState();
     return <div style={{ width: "100%", height: "100%" }}>
+        <ModalLauncher />
         <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} componentProps={{ children: <MapToolbar /> }} />
         <PlaceholderComponent id={DefaultComponentNames.Navigator} locale={locale} />
         <ViewerApiShim />
-        <ModalLauncher />
         <FlyoutRegionContainer />
         <InitWarningDisplay />
     </div>

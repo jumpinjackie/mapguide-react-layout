@@ -122,10 +122,12 @@ const AddFileLayer = (props: IAddLayerProps) => {
             setAddLayerError(undefined);
             try {
                 const [_, layerProj] = await ensureProjection(layerProjection, locale);
-                const layerName = addLayerName ?? parsedFeaturesRef.current.name;
+                if (!strIsNullOrEmpty(addLayerName)) {
+                    parsedFeaturesRef.current.name = addLayerName;
+                }
                 const layerMgr = viewer.getLayerManager();
-                if (layerMgr.hasLayer(layerName)) {
-                    throw new Error(tr("LAYER_NAME_EXISTS", locale, { name: layerName }));
+                if (layerMgr.hasLayer(parsedFeaturesRef.current.name)) {
+                    throw new Error(tr("LAYER_NAME_EXISTS", locale, { name: parsedFeaturesRef.current.name }));
                 }
                 const layer = await layerMgr.addLayerFromParsedFeatures({
                     features: parsedFeaturesRef.current,

@@ -29,6 +29,8 @@ enum OpenPanel {
     WmsLegend
 }
 
+const LAYER_SWITCH_STYLE: React.CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" };
+
 const ManageLayerItem = (props: IManageLayerItemProps) => {
     const {
         layer,
@@ -100,8 +102,9 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
     }
     extraActions.push(<Button key="more-layer-options" title={tr("LAYER_MANAGER_TT_MORE_OPTIONS", locale)} intent={Intent.PRIMARY} icon="cog" onClick={() => toggleOpenPanel(OpenPanel.MoreLayerOptions)} />)
     const isWmsLegendOpen = !strIsNullOrEmpty(wmsLegendUrl);
+    const layerLabel = layer.displayName ?? layer.name;
     return <Card key={layer.name}>
-        <Switch checked={layer.visible} onChange={() => onSetVisibility(layer.name, !layer.visible)} labelElement={<><Icon icon={iconName} /> {layer.displayName ?? layer.name}</>} />
+        <Switch style={LAYER_SWITCH_STYLE} checked={layer.visible} onChange={() => onSetVisibility(layer.name, !layer.visible)} labelElement={<span title={layerLabel}><Icon icon={iconName} /> {layerLabel}</span>} />
         <ButtonGroup>
             <Button disabled={!canMoveUp} title={tr("LAYER_MANAGER_TT_MOVE_UP", locale)} intent={Intent.PRIMARY} icon="caret-up" onClick={() => onMoveLayerUp(layer.name)} />
             <Button disabled={!canMoveDown} title={tr("LAYER_MANAGER_TT_MOVE_DOWN", locale)} intent={Intent.PRIMARY} icon="caret-down" onClick={() => onMoveLayerDown(layer.name)} />

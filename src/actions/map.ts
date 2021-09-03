@@ -47,7 +47,7 @@ import {
 import { persistSelectionSetToLocalStorage } from '../api/session-store';
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
 import { areViewsCloseToEqual } from '../utils/viewer-state';
-import { IVectorLayerStyle } from '../api/ol-style-contracts';
+import { IVectorLayerStyle, VectorStyleSource } from '../api/ol-style-contracts';
 
 function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeature[]): SelectedFeature[] {
     const merged: SelectedFeature[] = [];
@@ -706,17 +706,19 @@ export function setMapLayerVisibility(mapName: string, layerName: string, visibl
  * @param {string} mapName
  * @param {string} layerName
  * @param {IVectorLayerStyle} style
+ * @param {VectorStyleSource} which
  * @returns {ISetMapLayerVectorStyle}
  * @since 0.13
- * @since 0.14 style argument changed to IVectorLayerStyle
+ * @since 0.14 style and which arguments changed to IVectorLayerStyle
  */
-export function setMapLayerVectorStyle(mapName: string, layerName: string, style: IVectorLayerStyle): ISetMapLayerVectorStyle {
+export function setMapLayerVectorStyle(mapName: string, layerName: string, style: IVectorLayerStyle, which: VectorStyleSource): ISetMapLayerVectorStyle {
     return {
         type: ActionType.SET_LAYER_VECTOR_STYLE,
         payload: {
             mapName,
             layerName,
-            style
+            style,
+            which
         }
     };
 }

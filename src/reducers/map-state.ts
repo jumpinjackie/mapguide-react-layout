@@ -11,6 +11,7 @@ import { makeUnique } from "../utils/array";
 import { ActionType } from '../constants/actions';
 import { ViewerAction, isGenericSubjectMapLayer, IGenericSubjectMapLayer } from '../actions/defs';
 import { debug } from '../utils/logger';
+import { IClusterSettings, VectorStyleSource } from "../api/ol-style-contracts";
 
 export const MAP_STATE_INITIAL_STATE: IBranchedMapState = {
 
@@ -491,8 +492,21 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
             }
         case ActionType.SET_LAYER_VECTOR_STYLE:
             {
-                const { mapName, layerName, style } = action.payload;
-                const state1 = setLayerAction(state, mapName, layerName, () => ({ vectorStyle: style }));
+                const { mapName, layerName, style, which } = action.payload;
+                const state1 = setLayerAction(state, mapName, layerName, (current) => {
+                    if (which == VectorStyleSource.Base) {
+                        return { vectorStyle: style }
+                    } else if (which == VectorStyleSource.Cluster) {
+                        return {
+                            cluster: {
+                                ...current.cluster,
+                                style: { ...style }
+                            } as IClusterSettings
+                        };
+                    } else {
+                        return {};
+                    }
+                });
                 return state1;
             }
         case ActionType.ADD_LAYER_BUSY_WORKER:

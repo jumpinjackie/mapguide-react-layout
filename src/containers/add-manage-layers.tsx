@@ -6,10 +6,11 @@ import { AddLayer } from "../components/layer-manager/add-layer";
 import { Tabs, Tab, Icon } from '@blueprintjs/core';
 import { useViewerLocale, useActiveMapName, useActiveMapLayers, useActiveMapView } from './hooks';
 import olVectorLayer from "ol/layer/Vector";
+import olClusterSource from "ol/source/Cluster";
 import { transformExtent } from "ol/proj";
 import { mapLayerAdded, addMapLayerBusyWorker, removeMapLayerBusyWorker, removeMapLayer, setMapLayerIndex, setMapLayerVisibility, setMapLayerOpacity, setMapLayerVectorStyle } from '../actions/map';
 import { getViewer } from '../api/runtime';
-import { IVectorLayerStyle } from '../api/ol-style-contracts';
+import { IVectorLayerStyle, VectorStyleSource } from '../api/ol-style-contracts';
 import { useReduxDispatch } from "../components/map-providers/context";
 
 export function zoomToLayerExtents(layerName: string, viewer: IMapViewer) {
@@ -21,13 +22,25 @@ export function zoomToLayerExtents(layerName: string, viewer: IMapViewer) {
         viewer.zoomToExtent(zoomBounds as Bounds);
     } else if (layer instanceof olVectorLayer) {
         const source = layer.getSource();
-        let bounds = source.getExtent();
+        let bounds;
+        if (source instanceof olClusterSource) {
+            bounds = source.getSource().getExtent();
+        } else {
+            bounds = source.getExtent();
+        }
         const sp = source.getProjection();
         const dp = viewer.getProjection();
         if (sp && dp) {
             bounds = transformExtent(bounds, sp, dp);
         }
-        viewer.zoomToExtent(bounds as Bounds);
+        if (Number.isFinite(bounds[0]) &&
+            Number.isFinite(bounds[1]) &&
+            Number.isFinite(bounds[2]) &&
+            Number.isFinite(bounds[3])) {
+            viewer.zoomToExtent(bounds as Bounds);
+        } else {
+            console.warn(`Attempted to zoom to invalid bounds for layer: ${layerName}`);
+        }
     }
 }
 
@@ -105,9 +118,9 @@ export const AddManageLayersContainer = () => {
             dispatch(setMapLayerOpacity(activeMapName, layerName, value));
         }
     };
-    const updateVectorStyle = (layerName: string, value: IVectorLayerStyle) => {
+    const updateVectorStyle = (layerName: string, value: IVectorLayerStyle, which: VectorStyleSource) => {
         if (activeMapName) {
-            dispatch(setMapLayerVectorStyle(activeMapName, layerName, value));
+            dispatch(setMapLayerVectorStyle(activeMapName, layerName, value, which));
         }
     }
     if (layers) {

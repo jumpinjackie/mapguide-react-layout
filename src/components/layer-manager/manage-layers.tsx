@@ -3,7 +3,7 @@ import { tr } from "../../api/i18n";
 import { ILayerInfo } from "../../api/common";
 import { Button, Intent, ButtonGroup, Card, Icon, Switch, NonIdealState, Slider, Collapse, Spinner } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
-import { IVectorLayerStyle } from '../../api/ol-style-contracts';
+import { IVectorLayerStyle, VectorStyleSource } from '../../api/ol-style-contracts';
 import { VectorLayerStyleEditor } from '../vector-style-editor';
 import { BlueprintSvgIconNames } from '../../constants/assets';
 
@@ -19,7 +19,7 @@ interface IManageLayerItemProps {
     onRemoveLayer: (name: string) => void;
     onMoveLayerUp: (name: string) => void;
     onMoveLayerDown: (name: string) => void;
-    onVectorStyleChanged: (name: string, style: IVectorLayerStyle) => void;
+    onVectorStyleChanged: (name: string, style: IVectorLayerStyle, which: VectorStyleSource) => void;
 }
 
 enum OpenPanel {
@@ -103,6 +103,13 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
     extraActions.push(<Button key="more-layer-options" title={tr("LAYER_MANAGER_TT_MORE_OPTIONS", locale)} intent={Intent.PRIMARY} icon="cog" onClick={() => toggleOpenPanel(OpenPanel.MoreLayerOptions)} />)
     const isWmsLegendOpen = !strIsNullOrEmpty(wmsLegendUrl);
     const layerLabel = layer.displayName ?? layer.name;
+    const theVectorStyle = layer.cluster?.style ?? layer.vectorStyle;
+    let which: VectorStyleSource;
+    if (theVectorStyle == layer.vectorStyle) {
+        which = VectorStyleSource.Base;
+    } else if (theVectorStyle == layer.cluster?.style) {
+        which = VectorStyleSource.Cluster;
+    }
     return <Card key={layer.name}>
         <Switch style={LAYER_SWITCH_STYLE} checked={layer.visible} onChange={() => onSetVisibility(layer.name, !layer.visible)} labelElement={<span title={layerLabel}><Icon icon={iconName} /> {layerLabel}</span>} />
         <ButtonGroup>
@@ -125,10 +132,10 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
                 <img src={wmsLegendUrl} />
             </Card>
         </Collapse>}
-        {layer.vectorStyle && <Collapse isOpen={openPanel == OpenPanel.EditVectorStyle}>
+        {theVectorStyle && <Collapse isOpen={openPanel == OpenPanel.EditVectorStyle}>
             <div style={{ padding: 5 }}>
                 <h5 className="bp3-heading"><a href="#">{tr("VECTOR_LAYER_STYLE", locale)}</a></h5>
-                <VectorLayerStyleEditor onChange={st => onVectorStyleChanged(layer.name, st)} locale={locale} style={layer.vectorStyle} enablePoint={true} enableLine={true} enablePolygon={true} />
+                <VectorLayerStyleEditor onChange={st => onVectorStyleChanged(layer.name, st, which)} locale={locale} style={theVectorStyle} enablePoint={true} enableLine={true} enablePolygon={true} />
             </div>
         </Collapse>}
     </Card>;
@@ -147,7 +154,7 @@ export interface IManageLayersProps {
     onRemoveLayer: (name: string) => void;
     onMoveLayerUp: (name: string) => void;
     onMoveLayerDown: (name: string) => void;
-    onVectorStyleChanged: (name: string, style: IVectorLayerStyle) => void;
+    onVectorStyleChanged: (name: string, style: IVectorLayerStyle, which: VectorStyleSource) => void;
 }
 
 /**

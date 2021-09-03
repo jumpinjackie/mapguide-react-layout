@@ -9,7 +9,7 @@ import { ActionType } from '../constants/actions';
 import { PreparedSubMenuSet } from '../api/registry/command-spec';
 import { RuntimeMap } from '../api/contracts/runtime-map';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
-import { IVectorLayerStyle, IClusterSettings } from '../api/ol-style-contracts';
+import { IVectorLayerStyle, IClusterSettings, VectorStyleSource } from '../api/ol-style-contracts';
 
 /**
  * Opens the context menu
@@ -760,14 +760,15 @@ export interface ISetLayerVisibilityAction {
  * Sets the vector style for the given external layer for the given map
  * 
  * @since 0.13
- * @since 0.14 payload.style changed to IVectorLayerStyle
+ * @since 0.14 payload.style changed to IVectorLayerStyle and which property added
  */
 export interface ISetMapLayerVectorStyle {
     type: ActionType.SET_LAYER_VECTOR_STYLE,
     payload: {
         mapName: string,
         layerName: string,
-        style: IVectorLayerStyle
+        style: IVectorLayerStyle,
+        which: VectorStyleSource
     }
 }
 

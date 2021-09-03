@@ -5,6 +5,22 @@ import { expr } from './ol-style-builders';
 import { OLFeature } from './ol-types';
 
 /**
+ * The source of a vector layer style
+ * 
+ * @since 0.14
+ */
+export enum VectorStyleSource {
+    /**
+     * The base vector layer style
+     */
+    Base,
+    /**
+     * The clustered layer style
+     */
+    Cluster
+}
+
+/**
  * Defines a style for a vector layer
  */
 export interface IVectorLayerStyle {

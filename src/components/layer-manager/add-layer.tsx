@@ -10,6 +10,7 @@ import { ensureProjection } from '../../api/registry/projections';
 import { IParsedFeatures } from '../../api/layer-manager/parsed-features';
 import { parseEpsgCodeFromCRS } from './wfs-capabilities-panel';
 import { getViewer } from '../../api/runtime';
+import { zoomToLayerExtents } from "../../containers/add-manage-layers";
 
 /**
  * @hidden
@@ -140,6 +141,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
                     projection: layerProj,
                     clusterDistance: clusterDist
                 });
+                zoomToLayerExtents(layer.name, viewer);
                 setIsAddingLayer(false);
                 viewer.toastSuccess("success", tr("ADDED_LAYER", props.locale, { name: layer.name }));
                 setAddLayerError(undefined);

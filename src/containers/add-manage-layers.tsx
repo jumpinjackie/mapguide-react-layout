@@ -1,6 +1,6 @@
 import * as React from "react";
 import { tr } from "../api/i18n";
-import { ILayerInfo, Bounds, LayerProperty } from "../api/common";
+import { ILayerInfo, Bounds, LayerProperty, IMapViewer } from "../api/common";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
 import { Tabs, Tab, Icon } from '@blueprintjs/core';
@@ -11,6 +11,25 @@ import { mapLayerAdded, addMapLayerBusyWorker, removeMapLayerBusyWorker, removeM
 import { getViewer } from '../api/runtime';
 import { IVectorLayerStyle } from '../api/ol-style-contracts';
 import { useReduxDispatch } from "../components/map-providers/context";
+
+export function zoomToLayerExtents(layerName: string, viewer: IMapViewer) {
+    const layer = viewer.getLayerManager().getLayer(layerName);
+    // If the layer has a WGS84 bbox, we'll use that
+    const ll_bbox = layer?.get(LayerProperty.WGS84_BBOX);
+    if (ll_bbox) {
+        const zoomBounds = transformExtent(ll_bbox, "EPSG:4326", viewer.getProjection());
+        viewer.zoomToExtent(zoomBounds as Bounds);
+    } else if (layer instanceof olVectorLayer) {
+        const source = layer.getSource();
+        let bounds = source.getExtent();
+        const sp = source.getProjection();
+        const dp = viewer.getProjection();
+        if (sp && dp) {
+            bounds = transformExtent(bounds, sp, dp);
+        }
+        viewer.zoomToExtent(bounds as Bounds);
+    }
+}
 
 /**
  * 
@@ -73,22 +92,7 @@ export const AddManageLayersContainer = () => {
     const zoomToBounds = (layerName: string) => {
         const viewer = getViewer();
         if (viewer) {
-            const layer = viewer.getLayerManager().getLayer(layerName);
-            // If the layer has a WGS84 bbox, we'll use that
-            const ll_bbox = layer?.get(LayerProperty.WGS84_BBOX);
-            if (ll_bbox) {
-                const zoomBounds = transformExtent(ll_bbox, "EPSG:4326", viewer.getProjection());
-                viewer.zoomToExtent(zoomBounds as Bounds);
-            } else if (layer instanceof olVectorLayer) {
-                const source = layer.getSource();
-                let bounds = source.getExtent();
-                const sp = source.getProjection();
-                const dp = viewer.getProjection();
-                if (sp && dp) {
-                    bounds = transformExtent(bounds, sp, dp);
-                }
-                viewer.zoomToExtent(bounds as Bounds);
-            }
+            zoomToLayerExtents(layerName, viewer);
         }
     };
     const setVisibility = (layerName: string, visible: boolean) => {

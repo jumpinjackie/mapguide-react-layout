@@ -110,6 +110,13 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
     } else if (theVectorStyle == layer.cluster?.style) {
         which = VectorStyleSource.Cluster;
     }
+    let enableLine = true;
+    let enablePoint = true;
+    let enablePolygon = true;
+    if (layer.type == "CSV") {
+        enableLine = false;
+        enablePolygon = false;
+    }
     return <Card key={layer.name}>
         <Switch style={LAYER_SWITCH_STYLE} checked={layer.visible} onChange={() => onSetVisibility(layer.name, !layer.visible)} labelElement={<span title={layerLabel}><Icon icon={iconName} /> {layerLabel}</span>} />
         <ButtonGroup>
@@ -135,7 +142,12 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
         {theVectorStyle && <Collapse isOpen={openPanel == OpenPanel.EditVectorStyle}>
             <div style={{ padding: 5 }}>
                 <h5 className="bp3-heading"><a href="#">{tr("VECTOR_LAYER_STYLE", locale)}</a></h5>
-                <VectorLayerStyleEditor onChange={st => onVectorStyleChanged(layer.name, st, which)} locale={locale} style={theVectorStyle} enablePoint={true} enableLine={true} enablePolygon={true} />
+                <VectorLayerStyleEditor onChange={st => onVectorStyleChanged(layer.name, st, which)}
+                    locale={locale}
+                    style={theVectorStyle}
+                    enablePoint={enablePoint}
+                    enableLine={enableLine}
+                    enablePolygon={enablePolygon} />
             </div>
         </Collapse>}
     </Card>;

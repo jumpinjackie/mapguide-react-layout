@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Card, Collapse, InputGroup, Intent, Popover, Radio, Slider, Switch } from "@blueprintjs/core";
+import { Button, ButtonGroup, Card, Collapse, InputGroup, Intent, NumericInput, Popover, Radio, Slider, Switch } from "@blueprintjs/core";
 import * as React from "react";
 import { tr } from "../../api/i18n";
 import { ExprOr, isEvaluatable } from "../../api/ol-style-contracts";
@@ -173,7 +173,7 @@ export const NumberExprEditor: React.FC<ExprEditorProps<number> & { min?: number
         locale={props.locale}
         value={props.value}
         onChange={props.onChange}
-        renderValueEditor={(v, oc, loc, disabled) => <input disabled={disabled} type="number" min={min} max={max} className="bp3-input" value={stringifyExprIf(v, "edit-value")} onChange={e => oc(parseInt(e.target.value, 10))} />} />;
+        renderValueEditor={(v, oc, loc, disabled) => <NumericInput disabled={disabled} min={min} max={max} value={parseInt(stringifyExprIf(v, "edit-value"), 10)} onValueChange={e => oc(e)} />} />;
 }
 
 export const SliderExprEditor: React.FC<ExprEditorProps<number> & { min?: number, max?: number, labelStepSize?: number }> = props => {

@@ -30,6 +30,12 @@ export class ExprEvalContext {
             }
             return undefined;
         };
+        this.parser.functions.arr_size = function(collectionProperty: any) {
+            if (Array.isArray(collectionProperty)) {
+                return collectionProperty.length;
+            }
+            return 1;
+        }
     }
     public addFilter(expr: string) {
         if (!this.filterCache[expr]) {

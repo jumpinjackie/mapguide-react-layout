@@ -1,10 +1,16 @@
-import { ExprOr, isEvaluatable, IVectorLabelSettings, IBasicStroke, IBasicFill } from "./ol-style-contracts";
+import { ExprOr, isEvaluatable, IVectorLabelSettings, IBasicStroke, IBasicFill, IEvaluatable } from "./ol-style-contracts";
 import { ExprEvalContext } from "./expr-eval-context";
 import TextStyle, { Options as TextStyleOptions } from "ol/style/Text";
 import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
 import { asArray } from 'ol/color';
 import { OLFeature } from "./ol-types";
+
+export function expr(sExpr: string): IEvaluatable {
+    return {
+        expr: sExpr
+    };
+}
 
 function toOLColor(color: string, alpha: number | undefined) {
     const c = asArray(color);

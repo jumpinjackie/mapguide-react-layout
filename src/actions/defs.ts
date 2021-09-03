@@ -186,7 +186,7 @@ export interface ISelectedFeaturePopupTemplateConfiguration {
      * (string value dependent on your locale's string bundle) will be used
      * @since 0.14
      */
-    clusteredTitle?: string;
+    clusteredTitle?: (size: number) => string;
     /**
      * If specified, restricts the display of feature properties only to what is
      * specified here. The value part determines the display label.

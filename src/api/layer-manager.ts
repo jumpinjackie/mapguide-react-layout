@@ -14,8 +14,9 @@ import { tr } from './i18n';
 import { IParsedFeatures } from './layer-manager/parsed-features';
 import { LayerSetGroupBase } from './layer-set-group-base';
 import { IInitialExternalLayer } from '../actions/defs';
-import { IVectorLayerStyle, DEFAULT_VECTOR_LAYER_STYLE, IClusterSettings } from './ol-style-contracts';
+import { IVectorLayerStyle, DEFAULT_VECTOR_LAYER_STYLE, IClusterSettings, ClusterClickAction, DEFAULT_CLUSTERED_LAYER_STYLE } from './ol-style-contracts';
 import { OLStyleMapSet } from './ol-style-map-set';
+import { clusterSourceIfRequired } from '../components/external-layer-factory';
 
 export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInfo {
     let vectorStyle: IVectorLayerStyle | undefined;
@@ -133,7 +134,7 @@ export class LayerManager implements ILayerManager {
         });
     }
     addLayerFromParsedFeatures(options: IAddLayerFromParsedFeaturesOptions): Promise<ILayerInfo> {
-        const { features, projection, defaultStyle } = options;
+        const { features, projection, defaultStyle, clusterDistance, clusterStyle } = options;
         const that = this;
         return new Promise((resolve, reject) => {
             try {
@@ -144,8 +145,15 @@ export class LayerManager implements ILayerManager {
                 }
                 const source = new olSourceVector();
                 source.set(SourceProperty.SUPPRESS_LOAD_EVENTS, true);
+
+                let csArgs;
+                if (clusterDistance) {
+                    csArgs = {
+                        distance: clusterDistance
+                    };
+                }
                 const layer = new olVectorLayer({
-                    source: source,
+                    source: clusterSourceIfRequired(source, { cluster: csArgs }),
                     className: "external-vector-layer" //This is to avoid false positives for map.forEachLayerAtPixel
                 });
                 features.addTo(source, that.map.getView().getProjection(), proj);
@@ -155,7 +163,15 @@ export class LayerManager implements ILayerManager {
                 layer.set(LayerProperty.IS_SELECTABLE, true);
                 layer.set(LayerProperty.IS_EXTERNAL, true);
                 layer.set(LayerProperty.IS_GROUP, false);
-                setOLVectorLayerStyle(layer, defaultStyle ?? DEFAULT_VECTOR_LAYER_STYLE, undefined);
+                let clusterSettings: IClusterSettings | undefined;
+                if (clusterDistance) {
+                    clusterSettings = {
+                        distance: clusterDistance,
+                        onClick: ClusterClickAction.ShowPopup,
+                        style: JSON.parse(JSON.stringify(clusterStyle ?? defaultStyle ?? DEFAULT_CLUSTERED_LAYER_STYLE))
+                    };
+                }
+                setOLVectorLayerStyle(layer, defaultStyle ?? DEFAULT_VECTOR_LAYER_STYLE, clusterSettings);
                 const layerInfo = that.addLayer(features.name, layer);
                 resolve(layerInfo);
             } catch (e) {

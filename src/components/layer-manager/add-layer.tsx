@@ -3,7 +3,7 @@ import { tr } from "../../api/i18n";
 import { GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 import { AddWfsLayer } from "./add-wfs-layer";
-import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup, FormGroup, Callout, NumericInput, FileInput } from '@blueprintjs/core';
+import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup, FormGroup, Callout, NumericInput, FileInput, Switch } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
 import proj4 from "proj4";
 import { ensureProjection } from '../../api/registry/projections';
@@ -73,6 +73,8 @@ const AddFileLayer = (props: IAddLayerProps) => {
     const [loadedFile, setLoadedFile] = React.useState<LoadedFile | undefined>(undefined);
     const [addLayerName, setAddLayerName] = React.useState<string | undefined>(undefined);
     const [addProjection, setAddProjection] = React.useState(4326);
+    const [enableClustering, setEnableClustering] = React.useState(false);
+    const [clusterDistance, setClusterDistance] = React.useState(10);
     const parsedFeaturesRef = React.useRef<IParsedFeatures | undefined>(undefined);
     const setParsedFile = (parsed: IParsedFeatures | undefined) => {
         parsedFeaturesRef.current = parsed;
@@ -115,7 +117,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
     const onCancelAddFile = () => {
         setParsedFile(undefined);
     };
-    const onAddFileLayer = async (layerProjection: number) => {
+    const onAddFileLayer = React.useCallback(async (layerProjection: number) => {
         const viewer = getViewer();
         if (viewer && parsedFeaturesRef?.current) {
             setIsAddingLayer(true);
@@ -129,9 +131,14 @@ const AddFileLayer = (props: IAddLayerProps) => {
                 if (layerMgr.hasLayer(parsedFeaturesRef.current.name)) {
                     throw new Error(tr("LAYER_NAME_EXISTS", locale, { name: parsedFeaturesRef.current.name }));
                 }
+                let clusterDist;
+                if (enableClustering) {
+                    clusterDist = clusterDistance;
+                }
                 const layer = await layerMgr.addLayerFromParsedFeatures({
                     features: parsedFeaturesRef.current,
-                    projection: layerProj
+                    projection: layerProj,
+                    clusterDistance: clusterDist
                 });
                 setIsAddingLayer(false);
                 viewer.toastSuccess("success", tr("ADDED_LAYER", props.locale, { name: layer.name }));
@@ -147,7 +154,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
             }
             setIsAddingLayer(false);
         }
-    };
+    }, [enableClustering, clusterDistance]);
     if (loadedFile) {
         const projections = Object.keys(proj4.defs);
         return <NonIdealState
@@ -163,6 +170,10 @@ const AddFileLayer = (props: IAddLayerProps) => {
                         <NumericInput style={{ width: 60 }} min={0} value={addProjection} onValueChange={v => setAddProjection(v)} />
                     </FormGroup>}
                 </FormGroup>
+                <Switch checked={enableClustering} min={1} onChange={(e: any) => setEnableClustering(e.target.checked)} label={tr("ENABLE_CLUSTERING", locale)} />
+                {enableClustering && <FormGroup label={tr("POINT_CLUSTER_DISTANCE", locale)}>
+                    <NumericInput min={1} value={clusterDistance} onValueChange={v => setClusterDistance(v)} />
+                </FormGroup>}
                 <ButtonGroup>
                     <Button loading={isAddingLayer} onClick={(e: any) => onAddFileLayer(addProjection)} intent={Intent.PRIMARY}>{tr("ADD_LAYER", locale)}</Button>
                     <Button loading={isAddingLayer} onClick={(e: any) => onCancelAddFile()} intent={Intent.DANGER}>{tr("CANCEL", locale)}</Button>

@@ -270,4 +270,6 @@ export interface ILocalizedMessages {
     SEL_FEATURE_PROPERTIES_NONE: string;
     SEL_CLUSTER_PROPERTIES: string;
     ADD_LOCAL_FILE_LAYER_FAILURE_NO_FORMATS: string;
+    ENABLE_CLUSTERING: string;
+    POINT_CLUSTER_DISTANCE: string;
 }

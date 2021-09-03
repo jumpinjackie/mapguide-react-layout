@@ -43,7 +43,7 @@ function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExte
 
 const EMPTY_GEOJSON = { type: "FeatureCollection", features: [] as any[] };
 
-function clusterSourceIfRequired(source: OLVectorSource, def: IGenericSubjectMapLayer): ClusterSource | OLVectorSource {
+export function clusterSourceIfRequired(source: OLVectorSource, def: { cluster?: { distance: number } }): ClusterSource | OLVectorSource {
     if (def.cluster) {
         const cluster = new ClusterSource({
             source: source,

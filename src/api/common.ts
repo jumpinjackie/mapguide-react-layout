@@ -1142,6 +1142,23 @@ export interface IAddLayerFromParsedFeaturesOptions {
      * @since 0.14 changed to IVectorLayerStyle
      */
     defaultStyle?: IVectorLayerStyle;
+    /**
+     * The distance to use for clustering. Setting this value will create a clustered layer.
+     * 
+     *  * If {@see clusterDistance} is set, but {@see clusterStyle} is not set, the {@see defaultStyle} will be use if set, otherwise the default vector style will be used
+     * 
+     * @since 0.14
+     */
+    clusterDistance?: number;
+    /**
+     * The style to use for this clustered layer. 
+     * 
+     *  * If {@see clusterDistance} is not set, this has no effect
+     *  * If {@see clusterDistance} is set but this is not set, the {@see defaultStyle} will be use if set, otherwise the default vector style will be used
+     * 
+     * @since 0.14
+     */
+    clusterStyle?: IVectorLayerStyle;
 }
 
 /**

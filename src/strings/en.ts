@@ -260,6 +260,8 @@ export const STRINGS_EN: ILocalizedMessages = {
     "BROWSE": "Browse",
     "SEL_FEATURE_PROPERTIES": "Feature Properties",
     "SEL_FEATURE_PROPERTIES_NONE": "No properties",
-    "SEL_CLUSTER_PROPERTIES": "Cluster Properties",
-    "ADD_LOCAL_FILE_LAYER_FAILURE_NO_FORMATS": "Failed to add layer. No format drivers registered"
+    "SEL_CLUSTER_PROPERTIES": "Cluster Properties (size: {size})",
+    "ADD_LOCAL_FILE_LAYER_FAILURE_NO_FORMATS": "Failed to add layer. No format drivers registered",
+    "ENABLE_CLUSTERING": "Enable Clustering",
+    "POINT_CLUSTER_DISTANCE": "Point Cluster Distance"
 };

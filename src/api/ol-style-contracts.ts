@@ -1,6 +1,7 @@
 import Style from 'ol/style/Style';
 import { MAP_MARKER_ICON } from '../constants/assets';
 import { ExprEvalContext } from './expr-eval-context';
+import { expr } from './ol-style-builders';
 import { OLFeature } from './ol-types';
 
 /**
@@ -205,6 +206,28 @@ export const DEFAULT_POINT_CIRCLE_STYLE: IBasicPointCircleStyle = {
 };
 
 /**
+ * The default style for clustered point features
+ * @since 0.14
+ */
+export const DEFAULT_CLUSTERED_POINT_CIRCLE_STYLE: IBasicPointCircleStyle = {
+    type: "Circle",
+    fill: {
+        color: "#ff0000",
+        alpha: 255
+    },
+    radius: expr("if(arr_size(features) > 5, min(arr_size(features), 25), 5)"),
+    /*
+    label: {
+        text: expr("if(arr_size(features) > 1, '', arr_size(features))"),
+    },*/
+    stroke: {
+        color: "#0000ff",
+        alpha: 255,
+        width: 1
+    }
+}
+
+/**
  * The default icon style for point features
  * @since 0.13
  */
@@ -260,6 +283,16 @@ export const DEFAULT_VECTOR_LAYER_STYLE = {
         point: DEFAULT_POINT_CIRCLE_STYLE,
         line: DEFAULT_LINE_STYLE,
         polygon: DEFAULT_POLY_STYLE
+    }
+};
+
+/**
+ * The default vector layer style for clustered points
+ * @since 0.14
+ */
+export const DEFAULT_CLUSTERED_LAYER_STYLE = {
+    default: {
+        point: DEFAULT_CLUSTERED_POINT_CIRCLE_STYLE
     }
 };
 

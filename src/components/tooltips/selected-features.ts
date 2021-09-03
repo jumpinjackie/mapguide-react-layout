@@ -48,8 +48,9 @@ function defaultPopupContentRenderer(feat: OLFeature, locale?: string, popupConf
     const bClustered = isClusteredFeature(feat);
 
     let title = popupConfig?.title ?? tr("SEL_FEATURE_PROPERTIES", locale);
-    if (bClustered && getClusterSubFeatures(feat).length > 1) {
-        title = popupConfig?.clusteredTitle ?? tr("SEL_CLUSTER_PROPERTIES", locale);
+    const size = getClusterSubFeatures(feat)?.length;;
+    if (bClustered && size > 1) {
+        title = popupConfig?.clusteredTitle?.(size) ?? tr("SEL_CLUSTER_PROPERTIES", locale, { size });
     }
     html += "<div class='selected-popup-header'><div>" + title + "</div><a id='feat-popup-closer' class='closer' href='#'>[x]</a><div class='clearit'></div></div>";
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, Slider, RadioGroup, Radio, InputGroup, Switch, Button, INumericInputProps, HTMLInputProps, ISliderProps, ISwitchProps, IInputGroupProps, Intent } from '@blueprintjs/core';
+import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, Slider, RadioGroup, Radio, InputGroup, Switch, Button, INumericInputProps, HTMLInputProps, ISliderProps, ISwitchProps, Intent, InputGroupProps2 } from '@blueprintjs/core';
 import { tr } from "../api/i18n";
 import { ColorPicker, IColorPickerProps } from './color-picker';
 import { ExprOr, isEvaluatable, IPointIconStyle, IBasicPointCircleStyle, IBasicVectorPointStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorFeatureStyle, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IVectorLayerStyle } from '../api/ol-style-contracts';
@@ -72,7 +72,7 @@ const DynamicSwitch = (props: Omit<Omit<ISwitchProps, "checked">, "onChange"> & 
         return <Switch {...innerProps} />;
     }
 }
-type InputGroupProps = IInputGroupProps & HTMLInputProps;
+type InputGroupProps = InputGroupProps2 & HTMLInputProps;
 const DynamicInputGroup = (props: Omit<Omit<InputGroupProps, "value">, "onChange"> & Omit<IExprEditorProps<string>, "converter">) => {
     if (isEvaluatable(props.expr)) {
         return <ExprEditor<string> {...props} converter={v => v} />

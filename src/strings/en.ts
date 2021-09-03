@@ -263,5 +263,15 @@ export const STRINGS_EN: ILocalizedMessages = {
     "SEL_CLUSTER_PROPERTIES": "Cluster Properties (size: {size})",
     "ADD_LOCAL_FILE_LAYER_FAILURE_NO_FORMATS": "Failed to add layer. No format drivers registered",
     "ENABLE_CLUSTERING": "Enable Clustering",
-    "POINT_CLUSTER_DISTANCE": "Point Cluster Distance"
+    "POINT_CLUSTER_DISTANCE": "Point Cluster Distance",
+    "EXPR_NOT_SET": "(Not set)",
+    "ENABLE_LABELS": "Enable Labels",
+    "LABEL_TEXT": "Label Text",
+    "LABEL_SIZE": "Label Size",
+    "LABEL_COLOR": "Label Color",
+    "LABEL_OUTLINE_COLOR": "Label Outline Color",
+    "LABEL_OUTLINE_THICKNESS": "Label Outline Thickness",
+    "LABEL_BOLD": "Bold",
+    "LABEL_ITALIC": "Italic",
+    "LABEL_LINE_PLACEMENT": "Line Placement"
 };

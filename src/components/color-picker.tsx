@@ -14,6 +14,7 @@ export interface IColorPickerProps {
     value?: string;
     locale: string;
     onChange: (value: string) => void;
+    disabled?: boolean;
 }
 
 /**
@@ -27,7 +28,7 @@ export const ColorPicker = (props: IColorPickerProps) => {
         setIsPickerOpen(!isPickerOpen);
     };
     return <div>
-        <button style={{ width: 80, borderRadius: 3, backgroundColor: props.value ?? DEFAULT_COLOR }} onClick={onPickerToggle}>{NBSP}{NBSP}{NBSP}</button>
+        <button disabled={props.disabled} style={{ width: 80, borderRadius: 3, backgroundColor: props.value ?? DEFAULT_COLOR }} onClick={onPickerToggle}>{NBSP}{NBSP}{NBSP}</button>
         <Collapse isOpen={isPickerOpen}>
             <Card>
                 <HexColorPicker style={{ width: "100%" }} color={props.value ?? DEFAULT_COLOR} onChange={(c: any) => props.onChange(c)} />

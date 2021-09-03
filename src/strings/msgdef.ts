@@ -1,3 +1,5 @@
+import { IAcknowledgeStartupWarningsAction } from "../actions/defs";
+
 /**
  * Defines our localized message bundle. Any property name here
  * can be used as a key in any {@link tr} call
@@ -272,4 +274,14 @@ export interface ILocalizedMessages {
     ADD_LOCAL_FILE_LAYER_FAILURE_NO_FORMATS: string;
     ENABLE_CLUSTERING: string;
     POINT_CLUSTER_DISTANCE: string;
+    EXPR_NOT_SET: string;
+    ENABLE_LABELS: string;
+    LABEL_TEXT: string;
+    LABEL_SIZE: string;
+    LABEL_COLOR: string;
+    LABEL_OUTLINE_COLOR: string;
+    LABEL_OUTLINE_THICKNESS: string;
+    LABEL_BOLD: string;
+    LABEL_ITALIC: string;
+    LABEL_LINE_PLACEMENT: string;
 }

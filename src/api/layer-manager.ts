@@ -154,7 +154,8 @@ export class LayerManager implements ILayerManager {
                 }
                 const layer = new olVectorLayer({
                     source: clusterSourceIfRequired(source, { cluster: csArgs }),
-                    className: "external-vector-layer" //This is to avoid false positives for map.forEachLayerAtPixel
+                    className: "external-vector-layer", //This is to avoid false positives for map.forEachLayerAtPixel
+                    declutter: true
                 });
                 features.addTo(source, that.map.getView().getProjection(), proj);
                 layer.set(LayerProperty.LAYER_NAME, features.name);

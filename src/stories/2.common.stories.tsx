@@ -2,13 +2,47 @@ import * as React from "react";
 import { storiesOf } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import { ColorPicker } from '../components/color-picker';
-import { withKnobs, text, boolean } from '@storybook/addon-knobs';
+import { withKnobs, boolean, number } from '@storybook/addon-knobs';
 import { VectorStyleEditor } from '../components/vector-style-editor';
-
 import "../styles/index.css";
+import { BooleanExprEditor, ColorExprEditor, NumberExprEditor, SliderExprEditor, StringExprEditor } from "../components/layer-manager/common";
+import { ExprOr } from "../api/ol-style-contracts";
+import { DEFAULT_LOCALE } from "../api/i18n";
 
 storiesOf("Common Components", module)
     .addDecorator(withKnobs)
+    .add("String Expr Editor", () => {
+        const locale = DEFAULT_LOCALE;
+        const act = action("Value changed");
+        const [expr, setExpr] = React.useState<ExprOr<string> | undefined>(undefined);
+        return <StringExprEditor locale={locale} value={expr} onChange={e => setExpr(e)} />;
+    })
+    .add("Number Expr Editor", () => {
+        const locale = DEFAULT_LOCALE;
+        const act = action("Value changed");
+        const [expr, setExpr] = React.useState<ExprOr<number> | undefined>(undefined);
+        return <NumberExprEditor locale={locale} value={expr} onChange={e => setExpr(e)} />;
+    })
+    .add("Slider Expr Editor", () => {
+        const locale = DEFAULT_LOCALE;
+        const act = action("Value changed");
+        const min = number("Min Value", 0);
+        const max = number("Max Value", 100);
+        const [expr, setExpr] = React.useState<ExprOr<number> | undefined>(undefined);
+        return <SliderExprEditor min={min} max={max} labelStepSize={max} locale={locale} value={expr} onChange={e => setExpr(e)} />;
+    })
+    .add("Color Expr Editor", () => {
+        const locale = DEFAULT_LOCALE;
+        const act = action("Value changed");
+        const [expr, setExpr] = React.useState<ExprOr<string> | undefined>(undefined);
+        return <ColorExprEditor locale={locale} value={expr} onChange={e => setExpr(e)} />;
+    })
+    .add("Boolean Expr Editor", () => {
+        const locale = DEFAULT_LOCALE;
+        const act = action("Value changed");
+        const [expr, setExpr] = React.useState<ExprOr<boolean> | undefined>(undefined);
+        return <BooleanExprEditor locale={locale} value={expr} onChange={e => setExpr(e)} />;
+    })
     .add("Color Picker", () => {
         const act = action("color changed");
         const [color, setColor] = React.useState<string | undefined>(undefined);

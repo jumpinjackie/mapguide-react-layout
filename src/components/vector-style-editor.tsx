@@ -1,10 +1,12 @@
 import * as React from "react";
-import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, Slider, RadioGroup, Radio, InputGroup, Switch, Button, INumericInputProps, HTMLInputProps, ISliderProps, ISwitchProps, Intent, InputGroupProps2 } from '@blueprintjs/core';
+import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, Slider, RadioGroup, Radio, InputGroup, Switch, Button, INumericInputProps, HTMLInputProps, ISliderProps, ISwitchProps, Intent, InputGroupProps2, ButtonGroup } from '@blueprintjs/core';
 import { tr } from "../api/i18n";
 import { ColorPicker, IColorPickerProps } from './color-picker';
-import { ExprOr, isEvaluatable, IPointIconStyle, IBasicPointCircleStyle, IBasicVectorPointStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorFeatureStyle, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IVectorLayerStyle } from '../api/ol-style-contracts';
+import { ExprOr, isEvaluatable, IPointIconStyle, IBasicPointCircleStyle, IBasicVectorPointStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorFeatureStyle, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IVectorLayerStyle, IVectorLabelSettings, ILabelSettings, IBasicStroke, IBasicFill } from '../api/ol-style-contracts';
 import { DEFAULT_STYLE_KEY } from '../api/ol-style-helpers';
 import { Parser } from "expr-eval";
+import { ColorExprEditor, NumberExprEditor, SliderExprEditor, StringExprEditor } from "./layer-manager/common";
+import { STR_EMPTY } from "../utils/string";
 
 interface IExprEditorProps<T> {
     converter: (value: string) => ExprOr<T>;
@@ -22,44 +24,6 @@ function ExprEditor<T>(props: IExprEditorProps<T>) {
     return <>Expr: <input type="text" value={`${props.expr}`} onChange={e => props.onExprChanged(props.converter(e.target.value))} /></>;
 }
 
-type NumericInputProps = HTMLInputProps & INumericInputProps;
-
-const DynamicNumericInput = (props: Omit<Omit<NumericInputProps, "value">, "onChange"> & Omit<IExprEditorProps<number>, "converter">) => {
-    if (isEvaluatable(props.expr)) {
-        return <ExprEditor<number> {...props} converter={v => parseFloat(v)} />
-    } else {
-        const innerProps = {
-            ...props,
-            value: props.expr,
-            onChange: (e: any) => props.onExprChanged(e)
-        };
-        return <NumericInput {...innerProps} />;
-    }
-}
-const DynamicColorPicker = (props: Omit<Omit<IColorPickerProps, "value">, "onChange"> & Omit<IExprEditorProps<string>, "converter">) => {
-    if (isEvaluatable(props.expr)) {
-        return <ExprEditor<string> {...props} converter={v => v} />
-    } else {
-        const innerProps = {
-            ...props,
-            value: props.expr,
-            onChange: (e: any) => props.onExprChanged(e)
-        };
-        return <ColorPicker {...innerProps} />;
-    }
-}
-const DynamicSlider = (props: Omit<Omit<ISliderProps, "value">, "onChange"> & Omit<IExprEditorProps<number>, "converter">) => {
-    if (isEvaluatable(props.expr)) {
-        return <ExprEditor<number> {...props} converter={v => parseFloat(v)} />
-    } else {
-        const innerProps = {
-            ...props,
-            value: props.expr,
-            onChange: (e: any) => props.onExprChanged(e)
-        };
-        return <Slider {...innerProps} />;
-    }
-}
 const DynamicSwitch = (props: Omit<Omit<ISwitchProps, "checked">, "onChange"> & Omit<IExprEditorProps<boolean>, "converter">) => {
     if (isEvaluatable(props.expr)) {
         return <ExprEditor<boolean> {...props} converter={v => v?.toLowerCase() == "true"} />
@@ -72,23 +36,96 @@ const DynamicSwitch = (props: Omit<Omit<ISwitchProps, "checked">, "onChange"> & 
         return <Switch {...innerProps} />;
     }
 }
-type InputGroupProps = InputGroupProps2 & HTMLInputProps;
-const DynamicInputGroup = (props: Omit<Omit<InputGroupProps, "value">, "onChange"> & Omit<IExprEditorProps<string>, "converter">) => {
-    if (isEvaluatable(props.expr)) {
-        return <ExprEditor<string> {...props} converter={v => v} />
-    } else {
-        const innerProps = {
-            ...props,
-            value: props.expr,
-            onChange: (e: any) => props.onExprChanged(e)
-        };
-        return <InputGroup {...innerProps} />;
-    }
+
+interface ILabelStyleEditor {
+    isLine?: boolean;
+    style: IVectorLabelSettings;
+    locale: string;
+    onChange: (style: IVectorLabelSettings) => void;
 }
-//const DynamicColorPicker = WithExprEditor(ColorPicker, "value", "onChange");
-//const DynamicSlider = WithExprEditor(Slider, "value", "onChange"); //ISliderProps
-//const DynamicSwitch = WithExprEditor(Switch, "checked", "onChange");
-//const DynamicInputGroup = WithExprEditor(InputGroup, "value", "onChange");
+
+//TODO: Either surface the font as another editable property or offload to configuration
+const buildFont = (size: number, bold: boolean, italic: boolean, font = "sans-serif") =>
+    `${bold ? "bold" : STR_EMPTY} ${italic ? "italic" : STR_EMPTY} ${size}px ${font}`;
+
+function coalesceExpr<T>(expr: ExprOr<T> | undefined, defaultVal: T): T {
+    if (isEvaluatable(expr)) {
+        return defaultVal;
+    }
+    return expr ?? defaultVal;
+}
+
+const DEFAULT_FONT_SIZE = 14;
+
+const LabelStyleEditor: React.FC<ILabelStyleEditor> = props => {
+    const { style, locale, onChange, isLine } = props;
+    const [bold, setBold] = React.useState(false);
+    const [italic, setItalic] = React.useState(false);
+    const [localBgColor, setLocalBgColor] = React.useState<ExprOr<string>>(style.label?.fill?.color ?? "#000000");
+    const [localBgColorAlpha, setLocalColorAlpha] = React.useState<ExprOr<number>>(style.label?.fill?.alpha ?? 255);
+    const [localStrokeColor, setLocalStrokeColor] = React.useState<ExprOr<string>>(style.label?.stroke?.color ?? "#ffffff");
+    const [localStrokeWidth, setLocalStrokeWidth] = React.useState<ExprOr<number>>(style.label?.stroke?.width ?? 1);
+    const [localFontSize, setLocalFontSize] = React.useState(DEFAULT_FONT_SIZE);
+    const [localLabel, setLocalLabel] = React.useState({ font: buildFont(localFontSize, bold, italic), ...style.label });
+    const [hasLabel, setHasLabel] = React.useState(style.label != null);
+    const onToggleLinePlacement = React.useCallback(() => {
+        if (localLabel.placement == "line") {
+            const { placement, ...rest } = localLabel;
+            setLocalLabel(rest);
+        } else {
+            setLocalLabel({ ...localLabel, placement: "line" });
+        }
+    }, [localLabel]);
+    React.useEffect(() => {
+        if (hasLabel) {
+            onChange({ ...style, label: localLabel });
+        } else {
+            const { label, ...rest } = style;
+            onChange(rest);
+        }
+    }, [localLabel, hasLabel]);
+    React.useEffect(() => {
+        setLocalLabel({ ...localLabel, font: buildFont(localFontSize, bold, italic) });
+    }, [localFontSize, bold, italic]);
+    React.useEffect(() => {
+        setLocalLabel({
+            ...localLabel,
+            fill: { 
+                ...localLabel.fill,
+                color: localBgColor,
+                alpha: localBgColorAlpha
+            } as IBasicFill,
+            stroke: {
+                ...localLabel.stroke,
+                color: localStrokeColor,
+                width: localStrokeWidth
+            } as IBasicStroke
+        })
+    }, [localStrokeColor, localStrokeWidth, localBgColorAlpha, localBgColor]);
+    return <>
+        <Switch checked={hasLabel} onChange={(e: any) => setHasLabel(e.target.checked)} label={tr("ENABLE_LABELS", locale)} />
+        {hasLabel && <FormGroup label={tr("LABEL_TEXT", locale)}>
+            <StringExprEditor locale={locale} value={localLabel.text} onChange={t => setLocalLabel({ ...localLabel, text: t })} />
+        </FormGroup>}
+        {hasLabel && <FormGroup label={tr("LABEL_SIZE", locale)}>
+            <NumberExprEditor locale={locale} value={localFontSize} onChange={t => setLocalFontSize(coalesceExpr(t, DEFAULT_FONT_SIZE))} />
+        </FormGroup>}
+        {hasLabel && <ButtonGroup>
+            <Button intent={Intent.PRIMARY} active={bold} onClick={e => setBold(!bold)}>{tr("LABEL_BOLD", locale)}</Button>
+            <Button intent={Intent.PRIMARY} active={italic} onClick={e => setItalic(!italic)}>{tr("LABEL_ITALIC", locale)}</Button>
+            {isLine && <Button intent={Intent.PRIMARY} active={localLabel.placement == "line"} onClick={e => onToggleLinePlacement()}>{tr("LABEL_LINE_PLACEMENT", locale)}</Button>}
+        </ButtonGroup>}
+        {hasLabel && <FormGroup label={tr("LABEL_COLOR", locale)}>
+            <ColorExprEditor locale={locale} value={localBgColor} onChange={(c: any) => setLocalBgColor(c)} />
+        </FormGroup>}
+        {hasLabel && <FormGroup label={tr("LABEL_OUTLINE_COLOR", locale)}>
+            <ColorExprEditor locale={locale} value={localStrokeColor} onChange={(c: any) => setLocalStrokeColor(c)} />
+        </FormGroup>}
+        {hasLabel && <FormGroup label={tr("LABEL_OUTLINE_THICKNESS", locale)}>
+            <NumberExprEditor locale={locale} value={localStrokeWidth} onChange={t => setLocalStrokeWidth(t!)} />
+        </FormGroup>}
+    </>;
+}
 
 interface ISubStyleEditorProps<TStyle> {
     style: TStyle;
@@ -109,7 +146,7 @@ const PointIconStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<
     };
     return <div>
         <FormGroup label={tr("VSED_PT_ICON_SRC", locale)}>
-            <DynamicInputGroup expr={localSrc} onExprChanged={(e: any) => setLocalSrc(e)} onBlur={onSrcChange} />
+            <StringExprEditor value={localSrc} onChange={e => setLocalSrc(e!)} locale={locale} />
             {!isEvaluatable(style.src) && <img src={style.src} />}
         </FormGroup>
         <FormGroup label={tr("VSED_PT_ICON_ANCHOR", locale)}>
@@ -118,13 +155,13 @@ const PointIconStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<
         </FormGroup>
         <DynamicSwitch label={tr("VSED_PT_ICON_ROTATE_WITH_VIEW", locale)} expr={style.rotateWithView} onExprChanged={(e: any) => onChange({ ...style, rotateWithView: e })} />
         <FormGroup label={tr("VSED_PT_ICON_ROTATION", locale)}>
-            <DynamicSlider min={0} max={360} labelStepSize={360} expr={style.rotation} onExprChanged={(n: any) => onChange({ ...style, rotation: n })} />
+            <SliderExprEditor locale={locale} min={0} max={360} labelStepSize={360} value={style.rotation} onChange={(n: any) => onChange({ ...style, rotation: n })} />
         </FormGroup>
         {/*<FormGroup label={tr("VSED_PT_ICON_OPACITY", locale)}>
             <DynamicSlider min={0} max={255} labelStepSize={255} expr={style.opacity} onExprChanged={(n: any) => onChange({ ...style, opacity: n })} />
         </FormGroup>*/}
         <FormGroup label={tr("VSED_PT_ICON_SCALE", locale)}>
-            <DynamicNumericInput fill expr={style.scale} min={1} onExprChanged={(n: any) => onChange({ ...style, scale: n })} />
+            <NumberExprEditor value={style.scale} onChange={n => onChange({ ...style, scale: n! })} locale={locale} />
         </FormGroup>
     </div>;
 };
@@ -132,22 +169,22 @@ const PointIconStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<
 const PointCircleStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicPointCircleStyle>) => {
     return <div>
         <FormGroup label={tr("VSED_PT_FILL_COLOR", locale)}>
-            <DynamicColorPicker locale={locale} expr={style.fill.color} onExprChanged={(c: any) => onChange({ ...style, fill: { color: c, alpha: style.fill.alpha } })} />
+            <ColorExprEditor locale={locale} value={style.fill.color} onChange={(c: any) => onChange({ ...style, fill: { color: c, alpha: style.fill.alpha } })} />
         </FormGroup>
         <FormGroup label={tr("VSED_PT_FILL_COLOR_ALPHA", locale)}>
-            <DynamicSlider min={0} max={255} labelStepSize={255} expr={style.fill.alpha} onExprChanged={(n: any) => onChange({ ...style, fill: { color: style.fill.color, alpha: n } })} />
+            <SliderExprEditor locale={locale} min={0} max={255} labelStepSize={255} value={style.fill.alpha} onChange={(n: any) => onChange({ ...style, fill: { color: style.fill.color, alpha: n } })} />
         </FormGroup>
         <FormGroup label={tr("VSED_PT_RADIUS", locale)}>
-            <DynamicNumericInput fill expr={style.radius} min={1} onExprChanged={(n: any) => onChange({ ...style, radius: n })} />
+            <NumberExprEditor locale={locale} value={style.radius} min={1} onChange={(n: any) => onChange({ ...style, radius: n })} />
         </FormGroup>
         <FormGroup label={tr("VSED_PT_OUTLINE_COLOR", locale)}>
-            <DynamicColorPicker locale={locale} expr={style.stroke.color} onExprChanged={(c: any) => onChange({ ...style, stroke: { color: c, width: style.stroke.width, alpha: style.stroke.alpha } })} />
+            <ColorExprEditor locale={locale} value={style.stroke.color} onChange={(c: any) => onChange({ ...style, stroke: { color: c, width: style.stroke.width, alpha: style.stroke.alpha } })} />
         </FormGroup>
         <FormGroup label={tr("VSED_PT_OUTLINE_COLOR_ALPHA", locale)}>
-            <DynamicSlider min={0} max={255} labelStepSize={255} expr={style.stroke.alpha} onExprChanged={(n: any) => onChange({ ...style, stroke: { color: style.stroke.color, width: style.stroke.width, alpha: n } })} />
+            <SliderExprEditor locale={locale} min={0} max={255} labelStepSize={255} value={style.stroke.alpha} onChange={(n: any) => onChange({ ...style, stroke: { color: style.stroke.color, width: style.stroke.width, alpha: n } })} />
         </FormGroup>
         <FormGroup label={tr("VSED_PT_OUTLINE_WIDTH", locale)}>
-            <DynamicNumericInput fill expr={style.stroke.width} min={1} onExprChanged={(n: any) => onChange({ ...style, stroke: { color: style.stroke.color, width: n, alpha: style.stroke.alpha } })} />
+            <NumberExprEditor locale={locale} value={style.stroke.width} min={1} onChange={(n: any) => onChange({ ...style, stroke: { color: style.stroke.color, width: n, alpha: style.stroke.alpha } })} />
         </FormGroup>
     </div>;
 };
@@ -167,10 +204,6 @@ const PointStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBas
                 break;
         }
     }
-    const onStyleChange = (style: IBasicVectorPointStyle) => {
-        applyCurrentStyle(style);
-        onChange(style);
-    };
     const onStyleTypeChange = (type: "Icon" | "Circle") => {
         switch (type) {
             case "Circle":
@@ -210,40 +243,43 @@ const PointStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBas
         </RadioGroup>
         {currentStyle.type == "Icon" && <PointIconStyleEditor style={currentStyle} onChange={onChange} locale={locale} />}
         {currentStyle.type == "Circle" && <PointCircleStyleEditor style={currentStyle} onChange={onChange} locale={locale} />}
+        <LabelStyleEditor style={currentStyle} locale={locale} onChange={onChange} />
     </div>
 }
 
 const LineStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicVectorLineStyle>) => {
     return <div>
         <FormGroup label={tr("VSED_LN_OUTLINE_COLOR", locale)}>
-            <DynamicColorPicker locale={locale} expr={style.color} onExprChanged={(c: any) => onChange({ color: c, width: style.width, alpha: style.alpha })} />
+            <ColorExprEditor locale={locale} value={style.color} onChange={(c: any) => onChange({ color: c, width: style.width, alpha: style.alpha })} />
         </FormGroup>
         <FormGroup label={tr("VSED_LN_OUTLINE_COLOR_ALPHA", locale)}>
-            <DynamicSlider min={0} max={255} labelStepSize={255} expr={style.alpha} onExprChanged={(n: any) => onChange({ color: style.color, width: style.width, alpha: n })} />
+            <SliderExprEditor locale={locale} min={0} max={255} labelStepSize={255} value={style.alpha} onChange={(n: any) => onChange({ color: style.color, width: style.width, alpha: n })} />
         </FormGroup>
         <FormGroup label={tr("VSED_LN_OUTLINE_THICKNESS", locale)}>
-            <DynamicNumericInput fill expr={style.width} min={1} onExprChanged={(n: any) => onChange({ color: style.color, width: n, alpha: style.alpha })} />
+            <NumberExprEditor locale={locale} min={1} value={style.width} onChange={(n: any) => onChange({ color: style.color, width: n, alpha: style.alpha })} />
         </FormGroup>
+        <LabelStyleEditor style={style} locale={locale} onChange={onChange} isLine />
     </div>;
 }
 
 const PolygonStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicVectorPolygonStyle>) => {
     return <div>
         <FormGroup label={tr("VSED_PL_FILL_COLOR", locale)}>
-            <DynamicColorPicker locale={locale} expr={style.fill.color} onExprChanged={(c: any) => onChange({ ...style, fill: { color: c, alpha: style.fill.alpha } })} />
+            <ColorExprEditor locale={locale} value={style.fill.color} onChange={(c: any) => onChange({ ...style, fill: { color: c, alpha: style.fill.alpha } })} />
         </FormGroup>
         <FormGroup label={tr("VSED_PL_FILL_COLOR_ALPHA", locale)}>
-            <DynamicSlider min={0} max={255} labelStepSize={255} expr={style.fill.alpha} onExprChanged={(n: any) => onChange({ ...style, fill: { color: style.fill.color, alpha: n } })} />
+            <SliderExprEditor locale={locale} min={0} max={255} labelStepSize={255} value={style.fill.alpha} onChange={(n: any) => onChange({ ...style, fill: { color: style.fill.color, alpha: n } })} />
         </FormGroup>
         <FormGroup label={tr("VSED_PL_OUTLINE_COLOR", locale)}>
-            <DynamicColorPicker locale={locale} expr={style.stroke.color} onExprChanged={(c: any) => onChange({ ...style, stroke: { color: c, width: style.stroke.width, alpha: style.stroke.alpha } })} />
+            <ColorExprEditor locale={locale} value={style.stroke.color} onChange={(c: any) => onChange({ ...style, stroke: { color: c, width: style.stroke.width, alpha: style.stroke.alpha } })} />
         </FormGroup>
         <FormGroup label={tr("VSED_PL_OUTLINE_COLOR_ALPHA", locale)}>
-            <DynamicSlider min={0} max={255} labelStepSize={255} expr={style.stroke.alpha} onExprChanged={(n: any) => onChange({ ...style, stroke: { color: style.stroke.color, width: style.stroke.width, alpha: n } })} />
+            <SliderExprEditor locale={locale} min={0} max={255} labelStepSize={255} value={style.stroke.alpha} onChange={(n: any) => onChange({ ...style, stroke: { color: style.stroke.color, width: style.stroke.width, alpha: n } })} />
         </FormGroup>
         <FormGroup label={tr("VSED_PL_OUTLINE_THICKNESS", locale)}>
-            <DynamicNumericInput fill expr={style.stroke.width} min={1} onExprChanged={(n: any) => onChange({ ...style, stroke: { color: style.stroke.color, width: n, alpha: style.stroke.alpha } })} />
+            <NumberExprEditor locale={locale} value={style.stroke.width} min={1} onChange={(n: any) => onChange({ ...style, stroke: { color: style.stroke.color, width: n, alpha: style.stroke.alpha } })} />
         </FormGroup>
+        <LabelStyleEditor style={style} locale={locale} onChange={onChange} />
     </div>;
 }
 
@@ -363,7 +399,7 @@ const FilterItem = (props: IFilterItemProps) => {
                         break;
                     case "IOP2":
                         bHaveOperator = true;
-                        break;  
+                        break;
                 }
             }
             setIsLocalFilterValid(bHaveVar && bHaveOperator && expr.tokens.length == 3);

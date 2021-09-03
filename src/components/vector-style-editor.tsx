@@ -250,13 +250,13 @@ const PointStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBas
 const LineStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicVectorLineStyle>) => {
     return <div>
         <FormGroup label={tr("VSED_LN_OUTLINE_COLOR", locale)}>
-            <ColorExprEditor locale={locale} value={style.color} onChange={(c: any) => onChange({ color: c, width: style.width, alpha: style.alpha })} />
+            <ColorExprEditor locale={locale} value={style.color} onChange={(c: any) => onChange({ ...style, color: c, width: style.width, alpha: style.alpha })} />
         </FormGroup>
         <FormGroup label={tr("VSED_LN_OUTLINE_COLOR_ALPHA", locale)}>
-            <SliderExprEditor locale={locale} min={0} max={255} labelStepSize={255} value={style.alpha} onChange={(n: any) => onChange({ color: style.color, width: style.width, alpha: n })} />
+            <SliderExprEditor locale={locale} min={0} max={255} labelStepSize={255} value={style.alpha} onChange={(n: any) => onChange({ ...style, color: style.color, width: style.width, alpha: n })} />
         </FormGroup>
         <FormGroup label={tr("VSED_LN_OUTLINE_THICKNESS", locale)}>
-            <NumberExprEditor locale={locale} min={1} value={style.width} onChange={(n: any) => onChange({ color: style.color, width: n, alpha: style.alpha })} />
+            <NumberExprEditor locale={locale} min={1} value={style.width} onChange={(n: any) => onChange({ ...style, color: style.color, width: n, alpha: style.alpha })} />
         </FormGroup>
         <LabelStyleEditor style={style} locale={locale} onChange={onChange} isLine />
     </div>;

@@ -284,4 +284,5 @@ export interface ILocalizedMessages {
     LABEL_BOLD: string;
     LABEL_ITALIC: string;
     LABEL_LINE_PLACEMENT: string;
+    ADD_FILE_PROCESSING: string;
 }

@@ -273,5 +273,6 @@ export const STRINGS_EN: ILocalizedMessages = {
     "LABEL_OUTLINE_THICKNESS": "Label Outline Thickness",
     "LABEL_BOLD": "Bold",
     "LABEL_ITALIC": "Italic",
-    "LABEL_LINE_PLACEMENT": "Line Placement"
+    "LABEL_LINE_PLACEMENT": "Line Placement",
+    "ADD_FILE_PROCESSING": "Processing file ..."
 };

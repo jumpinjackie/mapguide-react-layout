@@ -3,7 +3,7 @@ import { tr } from "../../api/i18n";
 import { GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 import { AddWfsLayer } from "./add-wfs-layer";
-import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup, FormGroup, Callout, NumericInput, FileInput, Switch } from '@blueprintjs/core';
+import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup, FormGroup, Callout, NumericInput, FileInput, Switch, Spinner, SpinnerSize } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
 import proj4 from "proj4";
 import { ensureProjection } from '../../api/registry/projections';
@@ -69,6 +69,7 @@ interface LoadedFile {
 
 const AddFileLayer = (props: IAddLayerProps) => {
     const { locale } = props;
+    const [isProcessingFile, setIsProcessingFile] = React.useState(false);
     const [isAddingLayer, setIsAddingLayer] = React.useState(false);
     const [addLayerError, setAddLayerError] = React.useState<any>(undefined);
     const [loadedFile, setLoadedFile] = React.useState<LoadedFile | undefined>(undefined);
@@ -101,6 +102,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
     const onFileDropped = async (file: File) => {
         const viewer = getViewer();
         if (viewer) {
+            setIsProcessingFile(true);
             setAddLayerError(undefined);
             const layerMgr = viewer.getLayerManager();
             try {
@@ -113,6 +115,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
             } catch (e) {
                 setAddLayerError(e);
             }
+            setIsProcessingFile(false);
         }
     };
     const onCancelAddFile = () => {
@@ -181,6 +184,10 @@ const AddFileLayer = (props: IAddLayerProps) => {
                     <Button loading={isAddingLayer} onClick={(e: any) => onCancelAddFile()} intent={Intent.DANGER}>{tr("CANCEL", locale)}</Button>
                 </ButtonGroup>
             </>} />
+    } else if (isProcessingFile) {
+        return <NonIdealState
+            icon={<Spinner intent={Intent.NONE} size={SpinnerSize.LARGE} />}
+            title={tr("ADD_FILE_PROCESSING", locale)} />
     } else {
         return <>
             {addLayerError && <Callout intent={Intent.DANGER} title={tr("ADDING_LAYER_ERROR", locale)}>

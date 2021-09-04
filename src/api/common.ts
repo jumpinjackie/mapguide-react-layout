@@ -1250,6 +1250,7 @@ export interface ILayerManager {
      * @returns {Promise<ILayerInfo>}
      * @memberof ILayerManager
      * @since 0.13
+     * @since 0.14 Styles for geometry types not found in the parsed features will be deleted
      */
     addLayerFromParsedFeatures(options: IAddLayerFromParsedFeaturesOptions): Promise<ILayerInfo>;
 

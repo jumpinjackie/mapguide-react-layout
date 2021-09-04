@@ -22,13 +22,30 @@ export interface IParsedFeatures {
      * to a vector layer
      */
     projection: string | null;
+    /**
+     * The type of the source file
+     */
     readonly type: string;
+    /**
+     * The size of the source file
+     */
     readonly size: number;
+    /**
+     * Adds the parsed features from this file to the given vector data source
+     * @param source 
+     * @param mapProjection 
+     * @param dataProjection 
+     */
     addTo(source: olSourceVector<Geometry>, mapProjection: ProjectionLike, dataProjection?: ProjectionLike): void;
+    /**
+     * The geometry types encountered in this source file
+     * @since 0.14
+     */
+    geometryTypes: ("Point" | "LineString" | "Polygon")[];
 }
 
 export class ParsedFeatures implements IParsedFeatures {
-    constructor(public type: string, public size: number, private features: Feature<Geometry>[], public projection: string | null = null) {
+    constructor(public type: string, public size: number, private features: Feature<Geometry>[], public geometryTypes: ("Point" | "LineString" | "Polygon")[], public projection: string | null = null) {
 
     }
     public hasFeatures(): boolean { return this.features.length > 0; }

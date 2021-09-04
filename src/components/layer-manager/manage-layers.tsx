@@ -110,12 +110,19 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
     } else if (theVectorStyle == layer.cluster?.style) {
         which = VectorStyleSource.Cluster;
     }
-    let enableLine = true;
-    let enablePoint = true;
-    let enablePolygon = true;
-    if (layer.type == "CSV") {
-        enableLine = false;
-        enablePolygon = false;
+    let enableLine = false;
+    let enablePoint = false;
+    let enablePolygon = false;
+    for (const k in theVectorStyle) {
+        if (theVectorStyle[k].point) {
+            enablePoint = true;
+        }
+        if (theVectorStyle[k].line) {
+            enableLine = true;
+        }
+        if (theVectorStyle[k].polygon) {
+            enablePolygon = true;
+        }
     }
     return <Card key={layer.name}>
         <Switch style={LAYER_SWITCH_STYLE} checked={layer.visible} onChange={() => onSetVisibility(layer.name, !layer.visible)} labelElement={<span title={layerLabel}><Icon icon={iconName} /> {layerLabel}</span>} />

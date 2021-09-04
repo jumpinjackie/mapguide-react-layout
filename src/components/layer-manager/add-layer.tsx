@@ -88,6 +88,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
                 type: parsed.type,
                 defaultProjection: parsed.projection
             });
+            setEnableClustering(parsed.geometryTypes.includes("Point"));
             if (parsed.projection) {
                 const epsg = parseEpsgCodeFromCRS(parsed.projection);
                 if (epsg) {
@@ -175,7 +176,6 @@ const AddFileLayer = (props: IAddLayerProps) => {
                         <NumericInput style={{ width: 60 }} min={0} value={addProjection} onValueChange={v => setAddProjection(v)} />
                     </FormGroup>}
                 </FormGroup>
-                <Switch checked={enableClustering} min={1} onChange={(e: any) => setEnableClustering(e.target.checked)} label={tr("ENABLE_CLUSTERING", locale)} />
                 {enableClustering && <FormGroup label={tr("POINT_CLUSTER_DISTANCE", locale)}>
                     <NumericInput min={1} value={clusterDistance} onValueChange={v => setClusterDistance(v)} />
                 </FormGroup>}

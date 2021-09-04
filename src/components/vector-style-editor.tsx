@@ -29,7 +29,7 @@ const DynamicSwitch = (props: Omit<Omit<SwitchProps, "checked">, "onChange"> & O
     if (isEvaluatable(props.expr)) {
         return <ExprEditor<boolean> {...props} converter={v => v?.toLowerCase() == "true"} />
     } else {
-        const { expr, ...rest } = props;
+        const { expr, onExprChanged, ...rest } = props;
         const innerProps = {
             ...rest,
             checked: props.expr,

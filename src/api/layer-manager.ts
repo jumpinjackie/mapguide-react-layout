@@ -172,7 +172,21 @@ export class LayerManager implements ILayerManager {
                         style: JSON.parse(JSON.stringify(clusterStyle ?? defaultStyle ?? DEFAULT_CLUSTERED_LAYER_STYLE))
                     };
                 }
-                setOLVectorLayerStyle(layer, defaultStyle ?? DEFAULT_VECTOR_LAYER_STYLE, clusterSettings);
+                // Delete irrelevant styles based on geometry types encountered
+                const bStyle = defaultStyle ?? DEFAULT_VECTOR_LAYER_STYLE;
+                if (!features.geometryTypes.includes("Point")) {
+                    delete bStyle.default.point;
+                    delete clusterSettings?.style.default.point;
+                }
+                if (!features.geometryTypes.includes("LineString")) {
+                    delete bStyle.default.line;
+                    delete clusterSettings?.style.default.line;
+                }
+                if (!features.geometryTypes.includes("Polygon")) {
+                    delete bStyle.default.polygon;
+                    delete clusterSettings?.style.default.polygon;
+                }
+                setOLVectorLayerStyle(layer, bStyle, clusterSettings);
                 const layerInfo = that.addLayer(features.name, layer);
                 resolve(layerInfo);
             } catch (e) {

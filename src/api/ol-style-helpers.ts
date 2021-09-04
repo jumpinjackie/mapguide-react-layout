@@ -41,3 +41,23 @@ export function setOLVectorLayerStyle(layer: OLVectorLayer | VectorTileLayer, st
     }.bind(olstyles);
     layer.setStyle(layerStyleFunc);
 }
+
+/**
+ * Gets the OL style function for the given style
+ * 
+ * @param style 
+ * @param clusterStyle 
+ * @returns 
+ * @since 0.14
+ */
+export function getOLStyleFunction(style: IVectorLayerStyle, clusterStyle: IClusterSettings | undefined) {
+    const olstyles = new OLStyleMapSet(style, clusterStyle);
+    const layerStyleFunc = function (feature: Feature<Geometry>) {
+        //TODO: Perf opportunity, cache styles by type_filter|default. Of course, if we ever
+        //decide to go for fully dynamic styles (where any property could be an expression to evaluate)
+        //such styles are not candidates for caching.
+        const sset: OLStyleMapSet = this;
+        return sset.evaluateStyle(feature);
+    }.bind(olstyles);
+    return layerStyleFunc;
+}

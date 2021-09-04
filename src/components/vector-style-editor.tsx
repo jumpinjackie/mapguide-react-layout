@@ -1,12 +1,13 @@
 import * as React from "react";
-import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, Slider, RadioGroup, Radio, InputGroup, Switch, Button, INumericInputProps, HTMLInputProps, ISliderProps, ISwitchProps, Intent, InputGroupProps2, ButtonGroup } from '@blueprintjs/core';
+import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, RadioGroup, Radio, InputGroup, Switch, Button, Intent, ButtonGroup, SwitchProps } from '@blueprintjs/core';
 import { tr } from "../api/i18n";
-import { ColorPicker, IColorPickerProps } from './color-picker';
-import { ExprOr, isEvaluatable, IPointIconStyle, IBasicPointCircleStyle, IBasicVectorPointStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorFeatureStyle, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IVectorLayerStyle, IVectorLabelSettings, ILabelSettings, IBasicStroke, IBasicFill } from '../api/ol-style-contracts';
+import { ExprOr, isEvaluatable, IPointIconStyle, IBasicPointCircleStyle, IBasicVectorPointStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorFeatureStyle, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IVectorLayerStyle, IVectorLabelSettings, IBasicStroke, IBasicFill } from '../api/ol-style-contracts';
 import { DEFAULT_STYLE_KEY } from '../api/ol-style-helpers';
 import { Parser } from "expr-eval";
 import { ColorExprEditor, NumberExprEditor, SliderExprEditor, StringExprEditor } from "./layer-manager/common";
 import { STR_EMPTY } from "../utils/string";
+import { getLegendImage } from "./layer-manager/legend";
+import { vectorStyleToStyleMap } from "../api/ol-style-map-set";
 
 interface IExprEditorProps<T> {
     converter: (value: string) => ExprOr<T>;
@@ -24,12 +25,13 @@ function ExprEditor<T>(props: IExprEditorProps<T>) {
     return <>Expr: <input type="text" value={`${props.expr}`} onChange={e => props.onExprChanged(props.converter(e.target.value))} /></>;
 }
 
-const DynamicSwitch = (props: Omit<Omit<ISwitchProps, "checked">, "onChange"> & Omit<IExprEditorProps<boolean>, "converter">) => {
+const DynamicSwitch = (props: Omit<Omit<SwitchProps, "checked">, "onChange"> & Omit<IExprEditorProps<boolean>, "converter">) => {
     if (isEvaluatable(props.expr)) {
         return <ExprEditor<boolean> {...props} converter={v => v?.toLowerCase() == "true"} />
     } else {
+        const { expr, ...rest } = props;
         const innerProps = {
-            ...props,
+            ...rest,
             checked: props.expr,
             onChange: (e: any) => props.onExprChanged(e.target.checked)
         };
@@ -90,7 +92,7 @@ const LabelStyleEditor: React.FC<ILabelStyleEditor> = props => {
     React.useEffect(() => {
         setLocalLabel({
             ...localLabel,
-            fill: { 
+            fill: {
                 ...localLabel.fill,
                 color: localBgColor,
                 alpha: localBgColorAlpha
@@ -384,6 +386,9 @@ const FilterItem = (props: IFilterItemProps) => {
     const { filter, isDefault, isStyleEditorOpen, featureStyle, onChange } = props;
     const [localFilter, setLocalFilter] = React.useState(filter ?? "");
     const [isLocalFilterValid, setIsLocalFilterValid] = React.useState(true);
+    const [pointStyleUrl, setPointStyleUrl] = React.useState<string | undefined>(undefined);
+    const [lineStyleUrl, setLineStyleUrl] = React.useState<string | undefined>(undefined);
+    const [polyStyleUrl, setPolyStyleUrl] = React.useState<string | undefined>(undefined);
     React.useEffect(() => {
         setLocalFilter(localFilter);
     }, [filter]);
@@ -407,6 +412,36 @@ const FilterItem = (props: IFilterItemProps) => {
             setIsLocalFilterValid(false);
         }
     }, [localFilter]);
+    React.useEffect(() => {
+        const olstyle = vectorStyleToStyleMap(featureStyle);
+        let pos: any;
+        let ls: any;
+        let pls: any;
+        if (typeof(olstyle) == 'function') {
+            pos = olstyle;
+            ls = olstyle;
+            pls = olstyle;
+        } else {
+            pos = olstyle.Point;
+            ls = olstyle.LineString;
+            pls = olstyle.Polygon;
+        }
+        const cPoint = getLegendImage({
+            typeGeom: "Point",
+            style: pos
+        });
+        const cLineString = getLegendImage({
+            typeGeom: "LineString",
+            style: ls
+        });
+        const cPolygon = getLegendImage({
+            typeGeom: "Polygon",
+            style: pls
+        });
+        setPointStyleUrl(cPoint.toDataURL());
+        setLineStyleUrl(cLineString.toDataURL());
+        setPolyStyleUrl(cPolygon.toDataURL());
+    }, [featureStyle]);
     const onToggle = () => {
         props.onToggleStyleEditor(!isStyleEditorOpen);
     };
@@ -419,13 +454,23 @@ const FilterItem = (props: IFilterItemProps) => {
         outerModifier = Intent.DANGER;
         iconTip = "This filter is not valid";
     }
+    let colSpan = 5;
+    if (!props.enableLine)
+        colSpan--;
+    if (!props.enablePoint)
+        colSpan--;
+    if (!props.enablePolygon)
+        colSpan--;
     return <>
         <tr>
+            {props.enablePoint && <td>{pointStyleUrl && <img src={pointStyleUrl} />}</td>}
+            {props.enableLine && <td>{lineStyleUrl && <img src={lineStyleUrl} />}</td>}
+            {props.enablePolygon && <td>{polyStyleUrl && <img src={polyStyleUrl} />}</td>}
             <td>{isDefault ? <strong>Default Style</strong> : <InputGroup intent={outerModifier} fill leftIcon={(isLocalFilterValid ? "tick" : "warning-sign")} title={localFilter} value={localFilter} onChange={e => setLocalFilter(e.target.value)} />}</td>
             <td><Button intent={Intent.PRIMARY} onClick={onToggle}>{isStyleEditorOpen ? "Hide" : "Show"}</Button></td>
         </tr>
         {isStyleEditorOpen && <tr>
-            <td colSpan={2}>
+            <td colSpan={colSpan}>
                 <VectorStyleEditor style={featureStyle}
                     onChange={onInnerStyleChanged}
                     enableLine={props.enableLine}
@@ -463,6 +508,13 @@ export const VectorLayerStyleEditor = (props: IVectorLayerStyleEditorProps) => {
         setOpenStyleEditors(opEds);
     };
     return <table style={{ width: "100%" }}>
+        <colgroup>
+            {props.enablePoint && <col span={1} style={{ width: 25 }} />}
+            {props.enableLine && <col span={1} style={{ width: 25 }} />}
+            {props.enablePolygon && <col span={1} style={{ width: 25 }} />}
+            <col span={1} />
+            <col span={1} style={{ width: 120 }} />
+        </colgroup>
         <tbody>
             {filters.map((f, i) => <FilterItem
                 key={`filter-${i}`}

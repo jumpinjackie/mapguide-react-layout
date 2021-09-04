@@ -95,7 +95,7 @@ function buildStyleMap(pts: Style, lns: Style, pls: Style) {
     };
 }
 
-function vectorStyleToStyleMap(style: IVectorFeatureStyle): IOlStyleMap | DynamicStyleMap {
+export function vectorStyleToStyleMap(style: IVectorFeatureStyle): IOlStyleMap | DynamicStyleMap {
     const ptStyle = style.point ?? DEFAULT_POINT_CIRCLE_STYLE;
     const lnStyle = style.line ?? DEFAULT_LINE_STYLE;
     const plStyle = style.polygon ?? DEFAULT_POLY_STYLE;

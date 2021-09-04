@@ -448,11 +448,9 @@ const FilterItem = (props: IFilterItemProps) => {
     const onInnerStyleChanged = (style: IVectorFeatureStyle) => {
         onChange?.(isDefault ? DEFAULT_STYLE_KEY : localFilter, style);
     }
-    let iconTip;
     let outerModifier;
     if (!isLocalFilterValid) {
         outerModifier = Intent.DANGER;
-        iconTip = "This filter is not valid";
     }
     let colSpan = 5;
     if (!props.enableLine)
@@ -467,7 +465,7 @@ const FilterItem = (props: IFilterItemProps) => {
             {props.enableLine && <td>{lineStyleUrl && <img src={lineStyleUrl} />}</td>}
             {props.enablePolygon && <td>{polyStyleUrl && <img src={polyStyleUrl} />}</td>}
             <td>{isDefault ? <strong>Default Style</strong> : <InputGroup intent={outerModifier} fill leftIcon={(isLocalFilterValid ? "tick" : "warning-sign")} title={localFilter} value={localFilter} onChange={e => setLocalFilter(e.target.value)} />}</td>
-            <td><Button intent={Intent.PRIMARY} onClick={onToggle}>{isStyleEditorOpen ? "Hide" : "Show"}</Button></td>
+            <td><Button intent={isStyleEditorOpen ? Intent.DANGER : Intent.PRIMARY} onClick={onToggle} icon={isStyleEditorOpen ? "cross" : "edit"} /></td>
         </tr>
         {isStyleEditorOpen && <tr>
             <td colSpan={colSpan}>
@@ -509,11 +507,11 @@ export const VectorLayerStyleEditor = (props: IVectorLayerStyleEditorProps) => {
     };
     return <table style={{ width: "100%" }}>
         <colgroup>
-            {props.enablePoint && <col span={1} style={{ width: 25 }} />}
-            {props.enableLine && <col span={1} style={{ width: 25 }} />}
-            {props.enablePolygon && <col span={1} style={{ width: 25 }} />}
+            {props.enablePoint && <col span={1} style={{ width: 24 }} />}
+            {props.enableLine && <col span={1} style={{ width: 24 }} />}
+            {props.enablePolygon && <col span={1} style={{ width: 24 }} />}
             <col span={1} />
-            <col span={1} />
+            <col span={1} style={{ width: 32 }} />
         </colgroup>
         <tbody>
             {filters.map((f, i) => <FilterItem

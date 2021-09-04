@@ -1118,6 +1118,46 @@ export interface ILayerInfo {
 }
 
 /**
+ * Point layer clustering options
+ * 
+ * @since 0.14
+ */
+export interface AddVectorLayerClusteringOptions {
+    kind: "Cluster";
+    /**
+     * The distance to use for clustering. Setting this value will create a clustered layer.
+     * 
+     *  * If {@see clusterDistance} is set, but {@see clusterStyle} is not set, the {@see IAddLayerFromParsedFeaturesOptions.defaultStyle} will be used if set, otherwise the default vector style will be used
+     */
+     clusterDistance: number;
+     /**
+      * The style to use for this clustered layer. 
+      * 
+      *  * If {@see clusterDistance} is not set, this has no effect
+      *  * If {@see clusterDistance} is set but this is not set, the {@see IAddLayerFromParsedFeaturesOptions.defaultStyle} will be used if set, otherwise the default vector style will be used
+      */
+     clusterStyle?: IVectorLayerStyle;
+}
+
+/**
+ * Theming options
+ * @since 0.14
+ */
+export interface AddVectorLayerThemeOptions {
+    kind: "Theme";
+    /**
+     * Generate a thematic ramp based on the given property
+     */
+    themeOnProperty: string;
+    /**
+     * The colorbrewer theme to apply
+     */
+    colorBrewerTheme: string;
+}
+
+export type AddVectorLayerExtraOptions = AddVectorLayerClusteringOptions | AddVectorLayerThemeOptions;
+
+/**
  * Options to add a new layer from parsed features
  * 
  * @export
@@ -1143,22 +1183,10 @@ export interface IAddLayerFromParsedFeaturesOptions {
      */
     defaultStyle?: IVectorLayerStyle;
     /**
-     * The distance to use for clustering. Setting this value will create a clustered layer.
-     * 
-     *  * If {@see clusterDistance} is set, but {@see clusterStyle} is not set, the {@see defaultStyle} will be use if set, otherwise the default vector style will be used
-     * 
+     * Extra options for the layer to be added
      * @since 0.14
      */
-    clusterDistance?: number;
-    /**
-     * The style to use for this clustered layer. 
-     * 
-     *  * If {@see clusterDistance} is not set, this has no effect
-     *  * If {@see clusterDistance} is set but this is not set, the {@see defaultStyle} will be use if set, otherwise the default vector style will be used
-     * 
-     * @since 0.14
-     */
-    clusterStyle?: IVectorLayerStyle;
+    extraOptions?: AddVectorLayerExtraOptions;
 }
 
 /**

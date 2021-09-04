@@ -285,4 +285,8 @@ export interface ILocalizedMessages {
     LABEL_ITALIC: string;
     LABEL_LINE_PLACEMENT: string;
     ADD_FILE_PROCESSING: string;
+    GENERATE_THEMABLE_LAYER: string;
+    THEME_ON_PROPERTY: string;
+    COLORBREWER_THEME: string;
+    ERR_CONFLICTING_ADD_VECTOR_LAYER_OPTIONS: string;
 }

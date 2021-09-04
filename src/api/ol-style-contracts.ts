@@ -206,6 +206,7 @@ export interface IBasicFill {
 /**
  * The default style for point features
  * @since 0.13
+ * @since 0.14 Made deep const immutable
  */
 export const DEFAULT_POINT_CIRCLE_STYLE: IBasicPointCircleStyle = {
     type: "Circle",
@@ -219,7 +220,7 @@ export const DEFAULT_POINT_CIRCLE_STYLE: IBasicPointCircleStyle = {
         alpha: 255,
         width: 1
     }
-};
+} as const;
 
 /**
  * The default style for clustered point features
@@ -241,22 +242,23 @@ export const DEFAULT_CLUSTERED_POINT_CIRCLE_STYLE: IBasicPointCircleStyle = {
         alpha: 255,
         width: 1
     }
-}
+} as const;
 
 /**
  * The default icon style for point features
  * @since 0.13
+ * @since 0.14 Made deep const immutable
  */
 export const DEFAULT_POINT_ICON_STYLE: IPointIconStyle = {
     type: "Icon",
-    anchor: [0.5, 0.5],
+    anchor: [0.5, 0.5] as [number, number],
     src: MAP_MARKER_ICON,
     //size: [24, 24],
     rotateWithView: false,
     rotation: 0,
     //opacity: 255,
     scale: 1
-}
+} as const;
 
 /**
  * The default color
@@ -267,16 +269,18 @@ export const DEFAULT_COLOR = "#000000";
 /**
  * The default style for line features
  * @since 0.13
+ * @since 0.14 Made deep const immutable
  */
 export const DEFAULT_LINE_STYLE: IBasicVectorLineStyle = {
     color: "#0000ff",
     alpha: 255,
     width: 1
-};
+} as const;
 
 /**
  * The default style for polygon features
  * @since 0.13
+ * @since 0.14 Made deep const immutable
  */
 export const DEFAULT_POLY_STYLE: IBasicVectorPolygonStyle = {
     fill: {
@@ -288,7 +292,7 @@ export const DEFAULT_POLY_STYLE: IBasicVectorPolygonStyle = {
         alpha: 255,
         width: 1
     }
-};
+} as const;
 
 /**
  * The default vector layer style
@@ -300,7 +304,7 @@ export const DEFAULT_VECTOR_LAYER_STYLE = {
         line: DEFAULT_LINE_STYLE,
         polygon: DEFAULT_POLY_STYLE
     }
-};
+} as const;
 
 /**
  * The default vector layer style for clustered points
@@ -310,7 +314,7 @@ export const DEFAULT_CLUSTERED_LAYER_STYLE = {
     default: {
         point: DEFAULT_CLUSTERED_POINT_CIRCLE_STYLE
     }
-};
+} as const;
 
 /**
  * An OpenLayers style map

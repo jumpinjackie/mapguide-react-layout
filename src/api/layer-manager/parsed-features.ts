@@ -2,6 +2,7 @@ import { ProjectionLike } from 'ol/proj';
 import olSourceVector from "ol/source/Vector";
 import Geometry from 'ol/geom/Geometry';
 import Feature from 'ol/Feature';
+import { strIsNullOrEmpty } from '../../utils/string';
 
 /**
  * Defines parsed features
@@ -11,6 +12,9 @@ import Feature from 'ol/Feature';
  * @since 0.13
  */
 export interface IParsedFeatures {
+    /**
+     * The name of this source
+     */
     name: string;
     /**
      * Indicates if there are any features. If false, it signals that the parsing attempt failed
@@ -42,12 +46,26 @@ export interface IParsedFeatures {
      * @since 0.14
      */
     geometryTypes: ("Point" | "LineString" | "Polygon")[];
+    /**
+     * The property names of features in this source file. This is generally based on sampling the first feature.
+     * @since 0.14
+     */
+    propertyNames: string[];
+    /**
+     * Get all distinct values for the given property name
+     * @param propertyName
+     * @since 0.14
+     */
+    getDistinctValues(propertyName: string): string[];
 }
 
 export class ParsedFeatures implements IParsedFeatures {
-    constructor(public type: string, public size: number, private features: Feature<Geometry>[], public geometryTypes: ("Point" | "LineString" | "Polygon")[], public projection: string | null = null) {
-
-    }
+    constructor(public type: string,
+        public size: number,
+        private features: Feature<Geometry>[],
+        public geometryTypes: ("Point" | "LineString" | "Polygon")[],
+        public propertyNames: string[],
+        public projection: string | null = null) { }
     public hasFeatures(): boolean { return this.features.length > 0; }
     public name: string;
     public addTo(source: olSourceVector<Geometry>, mapProjection: ProjectionLike, dataProjection?: ProjectionLike) {
@@ -61,5 +79,14 @@ export class ParsedFeatures implements IParsedFeatures {
             }
         }
         source.addFeatures(this.features);
+    }
+    public getDistinctValues(propertyName: string): string[] {
+        const values = [] as string[];
+        for (const f of this.features) {
+            const v = f.get(propertyName);
+            if (!strIsNullOrEmpty(v) && !values.includes(v))
+                values.push(v);
+        }
+        return values;
     }
 }

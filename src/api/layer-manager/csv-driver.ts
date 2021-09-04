@@ -77,7 +77,17 @@ export class CsvFormatDriver implements IFormatDriver {
                                         }
                                         const fmt = new GeoJSON();
                                         const features = fmt.readFeatures(json);
-                                        parsed = new ParsedFeatures(type, size, features, ["Point"]);
+                                        const propNames: string[] = [];
+                                        if (features.length > 0) {
+                                            const first = features[0];
+                                            for (const k in first.getProperties()) {
+                                                if (k == first.getGeometryName()) {
+                                                    continue;
+                                                }
+                                                propNames.push(k);
+                                            }
+                                        }
+                                        parsed = new ParsedFeatures(type, size, features, ["Point"], propNames);
                                         break;
                                     }
                                 }

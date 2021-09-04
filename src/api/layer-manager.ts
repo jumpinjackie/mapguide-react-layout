@@ -14,9 +14,46 @@ import { tr } from './i18n';
 import { IParsedFeatures } from './layer-manager/parsed-features';
 import { LayerSetGroupBase } from './layer-set-group-base';
 import { IInitialExternalLayer } from '../actions/defs';
-import { IVectorLayerStyle, DEFAULT_VECTOR_LAYER_STYLE, IClusterSettings, ClusterClickAction, DEFAULT_CLUSTERED_LAYER_STYLE } from './ol-style-contracts';
+import { IVectorLayerStyle, DEFAULT_VECTOR_LAYER_STYLE, IClusterSettings, ClusterClickAction, DEFAULT_CLUSTERED_LAYER_STYLE, IBasicVectorPointStyle, IBasicVectorPolygonStyle } from './ol-style-contracts';
 import { OLStyleMapSet } from './ol-style-map-set';
 import { clusterSourceIfRequired } from '../components/external-layer-factory';
+import { IBasicVectorLineStyle } from '../../lib/api/ol-style-contracts';
+import colorbrewer from "colorbrewer";
+
+export const COLOR_BREWER_LIMIT = 9;
+
+function cloneObject<T>(obj: T) {
+    return JSON.parse(JSON.stringify(obj)) as T;
+}
+
+function clonePointWithFill(baseTemplate: IBasicVectorPointStyle | undefined, fillColor: string) {
+    if (!baseTemplate) {
+        return undefined;
+    }
+    const clone = cloneObject(baseTemplate);
+    switch (clone.type) {
+        case "Circle":
+            clone.fill.color = fillColor;
+            break;
+    }
+    return clone;
+}
+function cloneLineWithFill(baseTemplate: IBasicVectorLineStyle | undefined, fillColor: string) {
+    if (!baseTemplate) {
+        return undefined;
+    }
+    const clone = cloneObject(baseTemplate);
+    clone.color = fillColor;
+    return clone;
+}
+function clonePolyWithFill(baseTemplate: IBasicVectorPolygonStyle | undefined, fillColor: string) {
+    if (!baseTemplate) {
+        return undefined;
+    }
+    const clone = cloneObject(baseTemplate);
+    clone.fill.color = fillColor;
+    return clone;
+}
 
 export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInfo {
     let vectorStyle: IVectorLayerStyle | undefined;
@@ -112,7 +149,7 @@ export class LayerManager implements ILayerManager {
                         try {
                             loadedType = await format.tryParse(file.size, result);
                         } catch (e) {
-
+                            //console.log(e);
                         }
                         if (loadedType && loadedType.hasFeatures()) {
                             loadedType.name = layerName;
@@ -134,7 +171,7 @@ export class LayerManager implements ILayerManager {
         });
     }
     addLayerFromParsedFeatures(options: IAddLayerFromParsedFeaturesOptions): Promise<ILayerInfo> {
-        const { features, projection, defaultStyle, clusterDistance, clusterStyle } = options;
+        const { features, projection, defaultStyle, extraOptions } = options;
         const that = this;
         return new Promise((resolve, reject) => {
             try {
@@ -147,9 +184,9 @@ export class LayerManager implements ILayerManager {
                 source.set(SourceProperty.SUPPRESS_LOAD_EVENTS, true);
 
                 let csArgs;
-                if (clusterDistance) {
+                if (extraOptions?.kind == "Cluster") {
                     csArgs = {
-                        distance: clusterDistance
+                        distance: extraOptions.clusterDistance
                     };
                 }
                 const layer = new olVectorLayer({
@@ -165,15 +202,15 @@ export class LayerManager implements ILayerManager {
                 layer.set(LayerProperty.IS_EXTERNAL, true);
                 layer.set(LayerProperty.IS_GROUP, false);
                 let clusterSettings: IClusterSettings | undefined;
-                if (clusterDistance) {
+                if (extraOptions?.kind == "Cluster") {
                     clusterSettings = {
-                        distance: clusterDistance,
+                        distance: extraOptions.clusterDistance,
                         onClick: ClusterClickAction.ShowPopup,
-                        style: JSON.parse(JSON.stringify(clusterStyle ?? defaultStyle ?? DEFAULT_CLUSTERED_LAYER_STYLE))
+                        style: cloneObject(extraOptions.clusterStyle ?? defaultStyle ?? DEFAULT_CLUSTERED_LAYER_STYLE)
                     };
                 }
                 // Delete irrelevant styles based on geometry types encountered
-                const bStyle = defaultStyle ?? DEFAULT_VECTOR_LAYER_STYLE;
+                const bStyle: IVectorLayerStyle = defaultStyle ?? cloneObject(DEFAULT_VECTOR_LAYER_STYLE);
                 if (!features.geometryTypes.includes("Point")) {
                     delete bStyle.default.point;
                     delete clusterSettings?.style.default.point;
@@ -186,6 +223,31 @@ export class LayerManager implements ILayerManager {
                     delete bStyle.default.polygon;
                     delete clusterSettings?.style.default.polygon;
                 }
+
+                if (extraOptions?.kind == "Theme") {
+                    const values = features.getDistinctValues(extraOptions.themeOnProperty);
+                    let baseTemplatePoint = bStyle.default.point;
+                    let baseTemplateLine = bStyle.default.line;
+                    let baseTemplatePoly = bStyle.default.polygon;
+                    const ruleCount = Math.min(values.length, COLOR_BREWER_LIMIT);
+                    const th = extraOptions.colorBrewerTheme;
+                    let ramp = colorbrewer[th];
+                    if (!ramp) {
+                        ramp = colorbrewer.Blues;
+                    }
+                    const palette = ramp[ruleCount];
+                    for (let i = 0; i < ruleCount; i++) {
+                        const v = values[i];
+                        const filter = `${extraOptions.themeOnProperty} == '${v}'`;
+                        (bStyle as any)[filter] = {
+                            label: v,
+                            point: clonePointWithFill(baseTemplatePoint, palette[i]),
+                            line: cloneLineWithFill(baseTemplateLine, palette[i]),
+                            polygon: clonePolyWithFill(baseTemplatePoly, palette[i]),
+                        }
+                    }
+                }
+
                 setOLVectorLayerStyle(layer, bStyle, clusterSettings);
                 const layerInfo = that.addLayer(features.name, layer);
                 resolve(layerInfo);

@@ -20,8 +20,8 @@ declare module "*.cur";
 declare module "*.gif";
 
 declare module "papaparse";
-
 declare module "stickybits";
+declare module "colorbrewer";
 
 declare module "react-splitter-layout" {
     import * as React from "react";

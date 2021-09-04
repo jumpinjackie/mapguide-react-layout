@@ -43,7 +43,7 @@ export class FormatDriver implements IFormatDriver {
         let bHasPoly = false;
         for (const f of fs) {
             const g: Geometry = f.getGeometry();
-            switch (g.getType())
+            switch (g?.getType())
             {
                 case "Point":
                     bHasPoint = true;
@@ -84,6 +84,16 @@ export class FormatDriver implements IFormatDriver {
         if (bHasPoly) {
             geomTypes.push("Polygon");
         }
-        return new ParsedFeatures(this.type, size, fs, geomTypes, this.defaultProjection);
+        const propNames: string[] = [];
+        if (fs.length > 0) {
+            const first = fs[0];
+            for (const k in first.getProperties()) {
+                if (k == first.getGeometryName()) {
+                    continue;
+                }
+                propNames.push(k);
+            }
+        }
+        return new ParsedFeatures(this.type, size, fs, geomTypes, propNames, this.defaultProjection);
     }
 }

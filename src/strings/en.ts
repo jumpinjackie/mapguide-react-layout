@@ -274,5 +274,9 @@ export const STRINGS_EN: ILocalizedMessages = {
     "LABEL_BOLD": "Bold",
     "LABEL_ITALIC": "Italic",
     "LABEL_LINE_PLACEMENT": "Line Placement",
-    "ADD_FILE_PROCESSING": "Processing file ..."
+    "ADD_FILE_PROCESSING": "Processing file ...",
+    "GENERATE_THEMABLE_LAYER": "Generate Themable Layer",
+    "THEME_ON_PROPERTY": "Theme On Property",
+    "COLORBREWER_THEME": "<a href='https://colorbrewer2.org/' target='_blank'>ColorBrewer</a> theme",
+    "ERR_CONFLICTING_ADD_VECTOR_LAYER_OPTIONS": "You cannot specify both theme and clustering options at the same time"
 };

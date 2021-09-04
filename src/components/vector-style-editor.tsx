@@ -459,12 +459,13 @@ const FilterItem = (props: IFilterItemProps) => {
         colSpan--;
     if (!props.enablePolygon)
         colSpan--;
+    const filterExprEd = <span>{featureStyle.label}</span> //<InputGroup intent={outerModifier} fill leftIcon={(isLocalFilterValid ? "tick" : "warning-sign")} title={localFilter} value={localFilter} onChange={e => setLocalFilter(e.target.value)} />;
     return <>
         <tr>
             {props.enablePoint && <td>{pointStyleUrl && <img src={pointStyleUrl} />}</td>}
             {props.enableLine && <td>{lineStyleUrl && <img src={lineStyleUrl} />}</td>}
             {props.enablePolygon && <td>{polyStyleUrl && <img src={polyStyleUrl} />}</td>}
-            <td>{isDefault ? <strong>Default Style</strong> : <InputGroup intent={outerModifier} fill leftIcon={(isLocalFilterValid ? "tick" : "warning-sign")} title={localFilter} value={localFilter} onChange={e => setLocalFilter(e.target.value)} />}</td>
+            <td>{isDefault ? <strong>Default Style</strong> : filterExprEd}</td>
             <td><Button intent={isStyleEditorOpen ? Intent.DANGER : Intent.PRIMARY} onClick={onToggle} icon={isStyleEditorOpen ? "cross" : "edit"} /></td>
         </tr>
         {isStyleEditorOpen && <tr>

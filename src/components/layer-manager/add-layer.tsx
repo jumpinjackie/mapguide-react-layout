@@ -1,16 +1,44 @@
 import * as React from "react";
 import { tr } from "../../api/i18n";
-import { GenericEvent, ILayerInfo } from "../../api/common";
+import { AddVectorLayerExtraOptions, GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 import { AddWfsLayer } from "./add-wfs-layer";
 import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup, FormGroup, Callout, NumericInput, FileInput, Switch, Spinner, SpinnerSize } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
-import proj4 from "proj4";
 import { ensureProjection } from '../../api/registry/projections';
 import { IParsedFeatures } from '../../api/layer-manager/parsed-features';
 import { parseEpsgCodeFromCRS } from './wfs-capabilities-panel';
 import { getViewer } from '../../api/runtime';
 import { zoomToLayerExtents } from "../../containers/add-manage-layers";
+import colorbrewer from "colorbrewer";
+import { COLOR_BREWER_LIMIT } from "../../api/layer-manager";
+
+function getColorBrewerRamps() {
+    const ramps = [];
+    for (const cat in colorbrewer.schemeGroups) {
+        for (const scheme of colorbrewer.schemeGroups[cat]) {
+            ramps.push({ name: `${cat} - ${scheme}`, value: scheme });
+        }
+    }
+    return ramps;
+}
+
+const ColorBrewerRamp: React.FC<{ theme: string }> = props => {
+    const ramp: string[] = colorbrewer[props.theme][COLOR_BREWER_LIMIT];
+    if (ramp) {
+        return <table>
+            <colgroup>
+                {ramp.map((r, i) => <col key={`ramp-col-${i}`} span={1} style={{ width: 12 }} />)}
+            </colgroup>
+            <tbody>
+                <tr>
+                    {ramp.map((r, i) => <td key={`ramp-${i}`} style={{ border: "1px solid black", backgroundColor: r }}>&nbsp;</td>)}
+                </tr>
+            </tbody>
+        </table>
+    };
+    return <></>;
+};
 
 /**
  * @hidden
@@ -75,8 +103,14 @@ const AddFileLayer = (props: IAddLayerProps) => {
     const [loadedFile, setLoadedFile] = React.useState<LoadedFile | undefined>(undefined);
     const [addLayerName, setAddLayerName] = React.useState<string | undefined>(undefined);
     const [addProjection, setAddProjection] = React.useState(4326);
+    const [canCluster, setCanCluster] = React.useState(false);
     const [enableClustering, setEnableClustering] = React.useState(false);
+    const [enableTheme, setEnableTheme] = React.useState(false);
+    const [themeOnProperty, setThemeOnProperty] = React.useState<string | undefined>(undefined);
+    const [themableProperties, setThemableProperties] = React.useState<string[]>([]);
+    const [themeToUse, setThemeToUse] = React.useState("Blues");
     const [clusterDistance, setClusterDistance] = React.useState(10);
+    const [themableRamps, _] = React.useState(getColorBrewerRamps());
     const parsedFeaturesRef = React.useRef<IParsedFeatures | undefined>(undefined);
     const setParsedFile = (parsed: IParsedFeatures | undefined) => {
         parsedFeaturesRef.current = parsed;
@@ -88,7 +122,10 @@ const AddFileLayer = (props: IAddLayerProps) => {
                 type: parsed.type,
                 defaultProjection: parsed.projection
             });
-            setEnableClustering(parsed.geometryTypes.includes("Point"));
+            setCanCluster(parsed.geometryTypes.includes("Point"));
+            setThemableProperties(parsed.propertyNames);
+            if (parsed.propertyNames.length > 0)
+                setThemeOnProperty(parsed.propertyNames[0]);
             if (parsed.projection) {
                 const epsg = parseEpsgCodeFromCRS(parsed.projection);
                 if (epsg) {
@@ -136,14 +173,23 @@ const AddFileLayer = (props: IAddLayerProps) => {
                 if (layerMgr.hasLayer(parsedFeaturesRef.current.name)) {
                     throw new Error(tr("LAYER_NAME_EXISTS", locale, { name: parsedFeaturesRef.current.name }));
                 }
-                let clusterDist;
+                let extraOpts: AddVectorLayerExtraOptions | undefined;
                 if (enableClustering) {
-                    clusterDist = clusterDistance;
+                    extraOpts = {
+                        kind: "Cluster",
+                        clusterDistance: clusterDistance
+                    };
+                } else if (enableTheme && !strIsNullOrEmpty(themeOnProperty)) {
+                    extraOpts = {
+                        kind: "Theme",
+                        themeOnProperty: themeOnProperty,
+                        colorBrewerTheme: themeToUse
+                    }
                 }
                 const layer = await layerMgr.addLayerFromParsedFeatures({
                     features: parsedFeaturesRef.current,
                     projection: layerProj,
-                    clusterDistance: clusterDist
+                    extraOptions: extraOpts
                 });
                 zoomToLayerExtents(layer.name, viewer);
                 setIsAddingLayer(false);
@@ -160,9 +206,10 @@ const AddFileLayer = (props: IAddLayerProps) => {
             }
             setIsAddingLayer(false);
         }
-    }, [enableClustering, clusterDistance]);
+    }, [enableClustering, clusterDistance, enableTheme, themeOnProperty, themeToUse]);
     if (loadedFile) {
-        const projections = Object.keys(proj4.defs);
+        const canAdd = !(enableTheme && enableClustering);
+        const colorBrewerLabel = <div dangerouslySetInnerHTML={{ __html: tr("COLORBREWER_THEME", locale) }} />;
         return <NonIdealState
             title={<EditableText value={addLayerName} onChange={v => setAddLayerName(v)} />}
             icon="upload"
@@ -176,11 +223,29 @@ const AddFileLayer = (props: IAddLayerProps) => {
                         <NumericInput style={{ width: 60 }} min={0} value={addProjection} onValueChange={v => setAddProjection(v)} />
                     </FormGroup>}
                 </FormGroup>
-                {enableClustering && <FormGroup label={tr("POINT_CLUSTER_DISTANCE", locale)}>
+                {themableProperties && <Switch label={tr("GENERATE_THEMABLE_LAYER", locale)} checked={enableTheme} onChange={(e: any) => setEnableTheme(e.target.checked)} />}
+                {themableProperties && enableTheme && <>
+                    <FormGroup label={tr("THEME_ON_PROPERTY", locale)}>
+                        <HTMLSelect value={themeOnProperty} onChange={e => setThemeOnProperty(e.target.value)}>
+                            {themableProperties.map((th, i) => <option key={th} value={th}>{th}</option>)}
+                        </HTMLSelect>
+                    </FormGroup>
+                    <FormGroup label={colorBrewerLabel}>
+                        <HTMLSelect value={themeToUse} onChange={e => setThemeToUse(e.target.value)}>
+                            {themableRamps.map((th, i) => <option key={th.name} value={th.value}>{th.name}</option>)}
+                        </HTMLSelect>
+                    </FormGroup>
+                    {themeToUse && <ColorBrewerRamp theme={themeToUse} />}
+                </>}
+                {canCluster && <Switch label={tr("ENABLE_CLUSTERING", locale)} checked={enableClustering} onChange={(e: any) => setEnableClustering(e.target.checked)} />}
+                {canCluster && enableClustering && <FormGroup label={tr("POINT_CLUSTER_DISTANCE", locale)}>
                     <NumericInput min={1} value={clusterDistance} onValueChange={v => setClusterDistance(v)} />
                 </FormGroup>}
+                {enableTheme && enableClustering && <Callout intent={Intent.DANGER}>
+                    <p>{tr("ERR_CONFLICTING_ADD_VECTOR_LAYER_OPTIONS", locale)}</p>
+                </Callout>}
                 <ButtonGroup>
-                    <Button loading={isAddingLayer} onClick={(e: any) => onAddFileLayer(addProjection)} intent={Intent.PRIMARY}>{tr("ADD_LAYER", locale)}</Button>
+                    <Button disabled={!canAdd} loading={isAddingLayer} onClick={(e: any) => onAddFileLayer(addProjection)} intent={Intent.PRIMARY}>{tr("ADD_LAYER", locale)}</Button>
                     <Button loading={isAddingLayer} onClick={(e: any) => onCancelAddFile()} intent={Intent.DANGER}>{tr("CANCEL", locale)}</Button>
                 </ButtonGroup>
             </>} />

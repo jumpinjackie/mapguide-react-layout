@@ -14,10 +14,9 @@ import { tr } from './i18n';
 import { IParsedFeatures } from './layer-manager/parsed-features';
 import { LayerSetGroupBase } from './layer-set-group-base';
 import { IInitialExternalLayer } from '../actions/defs';
-import { IVectorLayerStyle, DEFAULT_VECTOR_LAYER_STYLE, IClusterSettings, ClusterClickAction, DEFAULT_CLUSTERED_LAYER_STYLE, IBasicVectorPointStyle, IBasicVectorPolygonStyle } from './ol-style-contracts';
+import { IVectorLayerStyle, DEFAULT_VECTOR_LAYER_STYLE, IClusterSettings, ClusterClickAction, DEFAULT_CLUSTERED_LAYER_STYLE, IBasicVectorPointStyle, IBasicVectorPolygonStyle, IBasicVectorLineStyle } from './ol-style-contracts';
 import { OLStyleMapSet } from './ol-style-map-set';
 import { clusterSourceIfRequired } from '../components/external-layer-factory';
-import { IBasicVectorLineStyle } from '../../lib/api/ol-style-contracts';
 import colorbrewer from "colorbrewer";
 
 export const COLOR_BREWER_LIMIT = 9;

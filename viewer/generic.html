@@ -6,8 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <link rel="stylesheet" href="dist/viewer-generic.css" type="text/css" />
     <!-- NOTE: If you don't care about IE, you can remove/comment the script reference below -->
-    <script type="text/javascript"
-        src="//polyfill.io/v3/polyfill.min.js?features=Object.assign%2Cfetch%2CArray.isArray"></script>
+    <script type="text/javascript" src="//polyfill.io/v3/polyfill.min.js?features=Object.assign%2CArray.isArray%2CArray.prototype.find%2CArray.prototype.includes%2CMath.log2"></script>
     <script type="text/javascript" src="dist/viewer-generic.js" charset="utf-8"></script>
     <style type="text/css">
         /* Prevent scrollbars due to floating modal dialogs going past the bounds of the root element */
@@ -170,19 +169,19 @@
                                         }
                                     }
                                 }
-                            },
+                            },/*
                             {
                                 "Type": "External",
                                 "Extension": {
-                                    "layer_name": "e754cca3-a854-481b-97b3-93cf23634acb",
-                                    "display_name": "Medicare Offices",
+                                    "layer_name": "schools",
+                                    "display_name": "Victorian Schools",
                                     "source_type": "CSV",
-                                    "source_param_url": "https://data.gov.au/data/dataset/70f76a9e-d450-4567-9760-290dea54229c/resource/7eb30338-768e-436c-9dde-dc7a1066c9c9/download/medicare-office-locations-as-at-9-october-19.csv",
+                                    "source_param_url": "dv296-schoollocations2020.csv",
                                     "layer_opt_declutter": true,
                                     "meta_projection": "EPSG:4326",
                                     "initially_visible": false,
                                     "vector_layer_style": {
-                                        "OFFICE_TYPE == 'Service Centre - Centrelink/Medicare'": {
+                                        "School_Type == 'Primary'": {
                                             "label": "Service Centre - Centrelink/Medicare",
                                             "point": {
                                                 "type": "Icon",
@@ -194,7 +193,7 @@
                                                 "label": {
                                                     "font": "12px Calibri,sans-serif",
                                                     "text": {
-                                                        "expr": "SITE_NAME"
+                                                        "expr": "School_Name"
                                                     },
                                                     "textAlign": "left",
                                                     "offsetX": 15,
@@ -219,7 +218,7 @@
                                                 "label": {
                                                     "font": "12px Calibri,sans-serif",
                                                     "text": {
-                                                        "expr": "SITE_NAME"
+                                                        "expr": "School_Name"
                                                     },
                                                     "textAlign": "left",
                                                     "offsetX": 15,
@@ -235,7 +234,7 @@
                                         }
                                     }
                                 }
-                            },
+                            },*/
                             {
                                 "Type": "External",
                                 "Extension": {

@@ -43,8 +43,7 @@ export class FormatDriver implements IFormatDriver {
         let bHasPoly = false;
         for (const f of fs) {
             const g: Geometry = f.getGeometry();
-            switch (g?.getType())
-            {
+            switch (g?.getType()) {
                 case "Point":
                     bHasPoint = true;
                     break;
@@ -87,7 +86,7 @@ export class FormatDriver implements IFormatDriver {
         const propNames: string[] = [];
         if (fs.length > 0) {
             const first = fs[0];
-            for (const k in first.getProperties()) {
+            for (const k of first.getKeys()) {
                 if (k == first.getGeometryName()) {
                     continue;
                 }

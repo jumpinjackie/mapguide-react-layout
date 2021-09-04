@@ -80,7 +80,7 @@ export class CsvFormatDriver implements IFormatDriver {
                                         const propNames: string[] = [];
                                         if (features.length > 0) {
                                             const first = features[0];
-                                            for (const k in first.getProperties()) {
+                                            for (const k of first.getKeys()) {
                                                 if (k == first.getGeometryName()) {
                                                     continue;
                                                 }

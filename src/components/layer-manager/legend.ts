@@ -109,19 +109,21 @@ export function getLegendImage(item: olLegendItemOptions, canvas: HTMLCanvasElem
         }
         if (!(style instanceof Array)) style = [style];
 
+        const styles: Style[] = style;
         let cx = width / 2;
         let cy = height / 2;
         const sx = size[0] / 2;
         const sy = size[1] / 2;
-        let i, s;
+        let i;
+        let s: Style;
         // Get point offset
         if (typeGeom === 'Point') {
             let extent = null;
-            for (i = 0; s = style[i]; i++) {
+            for (let i = 0; s = styles[i]; i++) {
                 const img = s.getImage();
                 // Refresh legend on image load
                 if (img) {
-                    const imgElt = img.getImage();
+                    const imgElt: any = img.getImage(devicePixelRatio);
                     // Check image is loaded
                     if (imgElt && imgElt.complete && !imgElt.naturalWidth) {
                         if (typeof (item.onload) === 'function') {

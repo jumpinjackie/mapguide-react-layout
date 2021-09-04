@@ -418,9 +418,9 @@ const FilterItem = (props: IFilterItemProps) => {
         let ls: any;
         let pls: any;
         if (typeof(olstyle) == 'function') {
-            pos = olstyle;
-            ls = olstyle;
-            pls = olstyle;
+            pos = (feat: any) => olstyle(feat, undefined)["Point"];
+            ls = (feat: any) => olstyle(feat, undefined)["LineString"];
+            pls = (feat: any) => olstyle(feat, undefined)["Polygon"];
         } else {
             pos = olstyle.Point;
             ls = olstyle.LineString;
@@ -513,7 +513,7 @@ export const VectorLayerStyleEditor = (props: IVectorLayerStyleEditorProps) => {
             {props.enableLine && <col span={1} style={{ width: 25 }} />}
             {props.enablePolygon && <col span={1} style={{ width: 25 }} />}
             <col span={1} />
-            <col span={1} style={{ width: 120 }} />
+            <col span={1} />
         </colgroup>
         <tbody>
             {filters.map((f, i) => <FilterItem

@@ -18,8 +18,7 @@ import { IVectorLayerStyle, DEFAULT_VECTOR_LAYER_STYLE, IClusterSettings, Cluste
 import { OLStyleMapSet } from './ol-style-map-set';
 import { clusterSourceIfRequired } from '../components/external-layer-factory';
 import colorbrewer from "colorbrewer";
-
-export const COLOR_BREWER_LIMIT = 9;
+import { getMaxRamp } from '../components/layer-manager/add-layer';
 
 function cloneObject<T>(obj: T) {
     return JSON.parse(JSON.stringify(obj)) as T;
@@ -228,12 +227,14 @@ export class LayerManager implements ILayerManager {
                     let baseTemplatePoint = bStyle.default.point;
                     let baseTemplateLine = bStyle.default.line;
                     let baseTemplatePoly = bStyle.default.polygon;
-                    const ruleCount = Math.min(values.length, COLOR_BREWER_LIMIT);
+                    
                     const th = extraOptions.colorBrewerTheme;
                     let ramp = colorbrewer[th];
                     if (!ramp) {
                         ramp = colorbrewer.Blues;
                     }
+                    const chosenRamp = getMaxRamp(ramp);
+                    const ruleCount = Math.min(values.length, chosenRamp.length);
                     const palette = ramp[ruleCount];
                     for (let i = 0; i < ruleCount; i++) {
                         const v = values[i];

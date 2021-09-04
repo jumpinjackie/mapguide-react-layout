@@ -11,7 +11,6 @@ import { parseEpsgCodeFromCRS } from './wfs-capabilities-panel';
 import { getViewer } from '../../api/runtime';
 import { zoomToLayerExtents } from "../../containers/add-manage-layers";
 import colorbrewer from "colorbrewer";
-import { COLOR_BREWER_LIMIT } from "../../api/layer-manager";
 
 function getColorBrewerRamps() {
     const ramps = [];
@@ -23,8 +22,21 @@ function getColorBrewerRamps() {
     return ramps;
 }
 
+export function getMaxRamp(scheme: any) {
+    let theScheme;
+    let len = 0;
+    for (const s in scheme) {
+        const arr = scheme[s];
+        if (arr.length > len) {
+            theScheme = arr;
+            len = arr.length;
+        }
+    }
+    return theScheme;
+}
+
 const ColorBrewerRamp: React.FC<{ theme: string }> = props => {
-    const ramp: string[] = colorbrewer[props.theme][COLOR_BREWER_LIMIT];
+    const ramp: string[] = getMaxRamp(colorbrewer[props.theme]);
     if (ramp) {
         return <table>
             <colgroup>

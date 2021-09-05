@@ -1,7 +1,7 @@
 import * as React from "react";
 import { tr } from '../api/i18n';
 import { getViewer } from '../api/runtime';
-import CopyToClipboard = require('react-copy-to-clipboard');
+import CopyToClipboard from 'react-copy-to-clipboard';
 import { parseUrl, stringifyQuery } from "../utils/url";
 import { TextArea, Checkbox } from '@blueprintjs/core';
 import { useViewerLocale } from './hooks';

@@ -12,7 +12,7 @@ import Polygon, { fromExtent } from 'ol/geom/Polygon';
 import Geometry from 'ol/geom/Geometry';
 import { queryMapFeatures, setMouseCoordinates, setFeatureTooltipsEnabled } from '../../actions/map';
 import View from 'ol/View';
-import debounce = require('lodash.debounce');
+import debounce from 'lodash.debounce';
 import { layerTransparencyChanged, areViewsCloseToEqual } from '../../utils/viewer-state';
 import { areArraysDifferent } from '../../utils/array';
 import { MgLayerSetGroup } from "../../api/mg-layer-set-group";

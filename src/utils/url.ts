@@ -1,4 +1,4 @@
-import queryString = require("qs");
+import queryString from "qs";
 import { IInvokeUrlCommandParameter } from "../api/common";
 import { strIsNullOrEmpty } from './string';
 const parse = require("url-parse");

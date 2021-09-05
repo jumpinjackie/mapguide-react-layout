@@ -1,5 +1,5 @@
 import OverlayPositioning from 'ol/OverlayPositioning';
-import debounce = require('lodash.debounce');
+import debounce from 'lodash.debounce';
 import olOverlay from "ol/Overlay";
 import olWKTFormat from "ol/format/WKT";
 import olPolygon, { fromExtent } from "ol/geom/Polygon";

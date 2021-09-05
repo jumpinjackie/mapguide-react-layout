@@ -6,25 +6,13 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <link rel="stylesheet" href="dist/viewer-generic.css" type="text/css" />
     <!-- NOTE: If you don't care about IE, you can remove/comment the script reference below -->
-    <script type="text/javascript"
-        src="//polyfill.io/v3/polyfill.min.js?features=Object.assign%2Cfetch%2CArray.isArray"></script>
+    <script type="text/javascript" src="//polyfill.io/v3/polyfill.min.js?features=Promise%2CPromise.prototype.finally%2CArray.isArray%2CArray.prototype.find%2CArray.prototype.includes%2CObject.assign%2CMath.log2%2Cfetch%2CNumber.isFinite"></script>
     <script type="text/javascript" src="dist/viewer-generic.js" charset="utf-8"></script>
     <style type="text/css">
-        html,
-        body,
-        #map {
-            padding: 0;
-            margin: 0;
-            font: 10pt Verdana, sans-serif;
-        }
-
-        #map {
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 0;
-            bottom: 0;
-        }
+        /* Prevent scrollbars due to floating modal dialogs going past the bounds of the root element */
+        html { overflow: hidden; }
+        html, body, #map { padding: 0; margin: 0; font: 10pt Verdana, sans-serif; }
+        #map { overflow: hidden; position: absolute; left: 0; right: 0; top: 0; bottom: 0; }
     </style>
 </head>
 
@@ -181,19 +169,19 @@
                                         }
                                     }
                                 }
-                            },
+                            },/*
                             {
                                 "Type": "External",
                                 "Extension": {
-                                    "layer_name": "e754cca3-a854-481b-97b3-93cf23634acb",
-                                    "display_name": "Medicare Offices",
+                                    "layer_name": "schools",
+                                    "display_name": "Victorian Schools",
                                     "source_type": "CSV",
-                                    "source_param_url": "https://data.gov.au/data/dataset/70f76a9e-d450-4567-9760-290dea54229c/resource/7eb30338-768e-436c-9dde-dc7a1066c9c9/download/medicare-office-locations-as-at-9-october-19.csv",
+                                    "source_param_url": "dv296-schoollocations2020.csv",
                                     "layer_opt_declutter": true,
                                     "meta_projection": "EPSG:4326",
                                     "initially_visible": false,
                                     "vector_layer_style": {
-                                        "OFFICE_TYPE == 'Service Centre - Centrelink/Medicare'": {
+                                        "School_Type == 'Primary'": {
                                             "label": "Service Centre - Centrelink/Medicare",
                                             "point": {
                                                 "type": "Icon",
@@ -205,7 +193,7 @@
                                                 "label": {
                                                     "font": "12px Calibri,sans-serif",
                                                     "text": {
-                                                        "expr": "SITE_NAME"
+                                                        "expr": "School_Name"
                                                     },
                                                     "textAlign": "left",
                                                     "offsetX": 15,
@@ -230,7 +218,7 @@
                                                 "label": {
                                                     "font": "12px Calibri,sans-serif",
                                                     "text": {
-                                                        "expr": "SITE_NAME"
+                                                        "expr": "School_Name"
                                                     },
                                                     "textAlign": "left",
                                                     "offsetX": 15,
@@ -246,14 +234,14 @@
                                         }
                                     }
                                 }
-                            },
+                            },*/
                             {
                                 "Type": "External",
                                 "Extension": {
                                     "layer_name": "e91f4c30-d64a-4734-b1af-6afe310d0278",
                                     "display_name": "Digital Hubs",
                                     "source_type": "KML",
-                                    "source_param_url": "http://data.gov.au/storage/f/2013-08-12T02%3A04%3A22.954Z/digital-hubs-external.kml",
+                                    "source_param_url": "https://data.gov.au/storage/f/2013-08-12T02%3A04%3A22.954Z/digital-hubs-external.kml",
                                     "layer_opt_declutter": true,
                                     "meta_projection": "EPSG:4326",
                                     "initially_visible": false,
@@ -417,8 +405,218 @@
             },
             "WidgetSet": [
                 {
-                    "Container": [],
-                    "Widget": []
+                    "Container": [
+                        {
+                            "Name": "MapContextMenu",
+                            "Type": "ContextMenu",
+                            "Position": "top",
+                            "Extension": null,
+                            "Item": [
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "RefreshMap"
+                                },
+                                {
+                                    "Function": "Separator"
+                                },
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "Pan"
+                                },
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "Zoom"
+                                },
+                                {
+                                    "Function": "Separator"
+                                },
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "ZoomIn"
+                                },
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "ZoomOut"
+                                },
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "Measure"
+                                },
+                                {
+                                    "Function": "Separator"
+                                },
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "ViewOptions"
+                                },
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "Help"
+                                },
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "About"
+                                }
+                            ]
+                        }
+                    ],
+                    "Widget": [
+                        {
+                            "WidgetType": "UiWidgetType",
+                            "ImageUrl": "images/icons.png",
+                            "ImageClass": "about",
+                            "Label": "About",
+                            "Tooltip": "Click to show information about this application",
+                            "StatusText": null,
+                            "Disabled": false,
+                            "Name": "About",
+                            "Type": "About",
+                            "Location": null,
+                            "Extension": {
+                                "AboutURL": "widgets/About/About.html"
+                            }
+                        },
+                        {
+                            "WidgetType": "UiWidgetType",
+                            "ImageUrl": "images/icons.png",
+                            "ImageClass": "pan",
+                            "Label": "Pan",
+                            "Tooltip": "Click and drag to pan the map",
+                            "StatusText": null,
+                            "Disabled": false,
+                            "Name": "Pan",
+                            "Type": "Pan",
+                            "Location": null,
+                            "Extension": null
+                        },
+                        {
+                            "WidgetType": "UiWidgetType",
+                            "ImageUrl": "images/icons.png",
+                            "ImageClass": "zoom-in",
+                            "Label": "Zoom Rectangle",
+                            "Tooltip": "Click or click and drag on the map to zoom in",
+                            "StatusText": "Click or click and drag on the map to zoom in",
+                            "Disabled": false,
+                            "Name": "Zoom",
+                            "Type": "Zoom",
+                            "Location": null,
+                            "Extension": {
+                                "Direction": "in",
+                                "Factor": "2",
+                                "Tolerance": "5"
+                            }
+                        },
+                        {
+                            "WidgetType": "UiWidgetType",
+                            "ImageUrl": "images/icons.png",
+                            "ImageClass": "zoom-in-fixed",
+                            "Label": "Zoom In",
+                            "Tooltip": "Zoom in by a preset increment",
+                            "StatusText": "Zoom in by a preset increment",
+                            "Disabled": false,
+                            "Name": "ZoomIn",
+                            "Type": "ZoomOnClick",
+                            "Location": null,
+                            "Extension": {
+                                "Factor": "2"
+                            }
+                        },
+                        {
+                            "WidgetType": "UiWidgetType",
+                            "ImageUrl": "images/icons.png",
+                            "ImageClass": "zoom-out-fixed",
+                            "Label": "Zoom Out",
+                            "Tooltip": "Zoom out by a preset increment",
+                            "StatusText": "Zoom out by a preset increment",
+                            "Disabled": false,
+                            "Name": "ZoomOut",
+                            "Type": "ZoomOnClick",
+                            "Location": null,
+                            "Extension": {
+                                "Factor": "0.5"
+                            }
+                        },
+                        {
+                            "WidgetType": "UiWidgetType",
+                            "ImageUrl": "images/icons.png",
+                            "ImageClass": "measure",
+                            "Label": "Measure",
+                            "Tooltip": "Measure",
+                            "StatusText": "Measure distances and areas on the map",
+                            "Disabled": false,
+                            "Name": "Measure",
+                            "Type": "Measure",
+                            "Location": null,
+                            "Extension": {
+                                "AreaPrecision": "0",
+                                "DistancePrecision": "0",
+                                "MeasureTooltipContainer": "MeasureResult",
+                                "MeasureTooltipType": "dynamic",
+                                "Target": "TaskPane",
+                                "Type": "both",
+                                "Units": "meters"
+                            }
+                        },
+                        {
+                            "WidgetType": "UiWidgetType",
+                            "ImageUrl": "images/icons.png",
+                            "ImageClass": "options",
+                            "Label": "Options",
+                            "Tooltip": "Click to change the units displayed",
+                            "StatusText": null,
+                            "Disabled": false,
+                            "Name": "ViewOptions",
+                            "Type": "ViewOptions",
+                            "Location": null,
+                            "Extension": {}
+                        },
+                        {
+                            "WidgetType": "UiWidgetType",
+                            "ImageUrl": "images/icons.png",
+                            "ImageClass": "help",
+                            "Label": "Help",
+                            "Tooltip": "Click to get help",
+                            "StatusText": null,
+                            "Disabled": false,
+                            "Name": "Help",
+                            "Type": "Help",
+                            "Location": null,
+                            "Extension": {
+                                "Target": "HelpWindow",
+                                "Url": "widgets/Help/Help.html"
+                            }
+                        },
+                        {
+                            "WidgetType": "UiWidgetType",
+                            "ImageUrl": "images/icons.png",
+                            "ImageClass": "view-refresh",
+                            "Label": "Refresh",
+                            "Tooltip": "Click to redraw the map",
+                            "StatusText": null,
+                            "Disabled": false,
+                            "Name": "RefreshMap",
+                            "Type": "RefreshMap",
+                            "Location": null,
+                            "Extension": null
+                        },
+                        {
+                            "WidgetType": "UiWidgetType",
+                            "ImageUrl": "images/icons.png",
+                            "ImageClass": "select",
+                            "Label": "Select",
+                            "Tooltip": "Click to select features",
+                            "StatusText": null,
+                            "Disabled": false,
+                            "Name": "Select",
+                            "Type": "Select",
+                            "Location": null,
+                            "Extension": {
+                                "QueryActiveLayer": "false",
+                                "SelectionType": "INTERSECTS",
+                                "Tolerance": "3"
+                            }
+                        }
+                    ]
                 }
             ]
         };

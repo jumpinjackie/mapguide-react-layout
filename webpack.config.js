@@ -3,8 +3,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const TerserPlugin = require('terser-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 const mgBaseAppEntries = [
     './src/entries/library.tsx'
@@ -111,20 +109,6 @@ const rules = [
             name: "stdassets/fonts/[name].[ext]"
         }
     },
-    { //babel
-        test: /\.js$/,
-        exclude: /node_modules/,
-        /*
-        include: [
-          path.resolve(__dirname, "../node_modules/history")
-        ],*/
-        use: {
-            loader: "babel-loader",
-            options: {
-                plugins: ["babel-plugin-transform-object-assign"]
-            }
-        }
-    },
     { //Non-sprite images
         test: /\.(png|gif)$/,
         exclude: /(node_modules|icons\.png)/,
@@ -162,23 +146,6 @@ const rules = [
         exclude: /(node_modules|test-utils|\.test\.ts$)/
     }
 ];
-/*
-if (process.env.BUILD_MODE === 'production' || process.env.DEBUG_BUILD === '1') {
-    rules.push(loaders.tsx);
-} else {
-    rules.push(loaders.tsx_multithreaded);
-    plugins.push(new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }));
-}
-*/
-
-const opts = (process.env.BUILD_MODE === 'production')
-    ? {
-        minimizer: [
-            new TerserPlugin(),
-            new OptimizeCSSAssetsPlugin({})
-        ]
-    }
-    : { minimize: false }
 
 module.exports = {
     mode: (process.env.BUILD_MODE === 'development' ? 'development' : 'production'),

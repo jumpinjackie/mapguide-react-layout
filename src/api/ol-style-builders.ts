@@ -24,7 +24,11 @@ export function evalFeature<T>(expr: ExprOr<T>, feat: OLFeature | undefined, con
     if (!isEvaluatable(expr)) {
         return expr;
     } else if (feat && context) {
-        return context.evaluate(expr.expr, feat);
+        try {
+            return context.evaluate(expr.expr, feat);
+        } catch (e) {
+            return undefined;
+        }
     } else {
         return undefined;
     }

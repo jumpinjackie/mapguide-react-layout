@@ -118,6 +118,8 @@ const AddFileLayer = (props: IAddLayerProps) => {
     const [canCluster, setCanCluster] = React.useState(false);
     const [enableClustering, setEnableClustering] = React.useState(false);
     const [enableTheme, setEnableTheme] = React.useState(false);
+    const [enableLabels, setEnableLabels] = React.useState(false);
+    const [labelOnProperty, setLabelOnProperty] = React.useState<string | undefined>(undefined);
     const [themeOnProperty, setThemeOnProperty] = React.useState<string | undefined>(undefined);
     const [themableProperties, setThemableProperties] = React.useState<string[]>([]);
     const [themeToUse, setThemeToUse] = React.useState("Blues");
@@ -136,8 +138,10 @@ const AddFileLayer = (props: IAddLayerProps) => {
             });
             setCanCluster(parsed.geometryTypes.includes("Point"));
             setThemableProperties(parsed.propertyNames);
-            if (parsed.propertyNames.length > 0)
+            if (parsed.propertyNames.length > 0) {
                 setThemeOnProperty(parsed.propertyNames[0]);
+                setLabelOnProperty(parsed.propertyNames[0]);
+            }
             if (parsed.projection) {
                 const epsg = parseEpsgCodeFromCRS(parsed.projection);
                 if (epsg) {
@@ -198,10 +202,15 @@ const AddFileLayer = (props: IAddLayerProps) => {
                         colorBrewerTheme: themeToUse
                     }
                 }
+                let labelProp;
+                if (enableLabels) {
+                    labelProp = labelOnProperty;
+                }
                 const layer = await layerMgr.addLayerFromParsedFeatures({
                     features: parsedFeaturesRef.current,
                     projection: layerProj,
-                    extraOptions: extraOpts
+                    extraOptions: extraOpts,
+                    labelOnProperty: labelProp
                 });
                 zoomToLayerExtents(layer.name, viewer);
                 setIsAddingLayer(false);
@@ -218,7 +227,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
             }
             setIsAddingLayer(false);
         }
-    }, [enableClustering, clusterDistance, enableTheme, themeOnProperty, themeToUse]);
+    }, [enableClustering, clusterDistance, enableTheme, themeOnProperty, themeToUse, enableLabels, labelOnProperty]);
     if (loadedFile) {
         const canAdd = !(enableTheme && enableClustering);
         const colorBrewerLabel = <div dangerouslySetInnerHTML={{ __html: tr("COLORBREWER_THEME", locale) }} />;
@@ -235,6 +244,12 @@ const AddFileLayer = (props: IAddLayerProps) => {
                         <NumericInput style={{ width: 60 }} min={0} value={addProjection} onValueChange={v => setAddProjection(v)} />
                     </FormGroup>}
                 </FormGroup>
+                <Switch label={tr("ENABLE_LABELS", locale)} checked={enableLabels} onChange={(e: any) => setEnableLabels(e.target.checked)} />
+                {enableLabels && <FormGroup label={tr("LABEL_USING_PROPERTY", locale)}>
+                    <HTMLSelect value={labelOnProperty} onChange={e => setLabelOnProperty(e.target.value)}>
+                        {themableProperties.map((th, i) => <option key={th} value={th}>{th}</option>)}
+                    </HTMLSelect>
+                </FormGroup>}
                 {themableProperties && <Switch label={tr("GENERATE_THEMABLE_LAYER", locale)} checked={enableTheme} onChange={(e: any) => setEnableTheme(e.target.checked)} />}
                 {themableProperties && enableTheme && <>
                     <FormGroup label={tr("THEME_ON_PROPERTY", locale)}>

@@ -1187,6 +1187,11 @@ export interface IAddLayerFromParsedFeaturesOptions {
      * @since 0.14
      */
     extraOptions?: AddVectorLayerExtraOptions;
+    /**
+     * The property to use for labeling
+     * @since 0.14
+     */
+    labelOnProperty?: string;
 }
 
 /**

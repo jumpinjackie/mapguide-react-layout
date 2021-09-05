@@ -289,4 +289,5 @@ export interface ILocalizedMessages {
     THEME_ON_PROPERTY: string;
     COLORBREWER_THEME: string;
     ERR_CONFLICTING_ADD_VECTOR_LAYER_OPTIONS: string;
+    LABEL_USING_PROPERTY: string;
 }

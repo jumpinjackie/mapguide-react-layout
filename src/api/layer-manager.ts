@@ -14,11 +14,12 @@ import { tr } from './i18n';
 import { IParsedFeatures } from './layer-manager/parsed-features';
 import { LayerSetGroupBase } from './layer-set-group-base';
 import { IInitialExternalLayer } from '../actions/defs';
-import { IVectorLayerStyle, DEFAULT_VECTOR_LAYER_STYLE, IClusterSettings, ClusterClickAction, DEFAULT_CLUSTERED_LAYER_STYLE, IBasicVectorPointStyle, IBasicVectorPolygonStyle, IBasicVectorLineStyle } from './ol-style-contracts';
+import { IVectorLayerStyle, DEFAULT_VECTOR_LAYER_STYLE, IClusterSettings, ClusterClickAction, DEFAULT_CLUSTERED_LAYER_STYLE, IBasicVectorPointStyle, IBasicVectorPolygonStyle, IBasicVectorLineStyle, IVectorLabelSettings, ExprOr, IVectorFeatureStyle } from './ol-style-contracts';
 import { OLStyleMapSet } from './ol-style-map-set';
 import { clusterSourceIfRequired } from '../components/external-layer-factory';
 import colorbrewer from "colorbrewer";
 import { getMaxRamp } from '../components/layer-manager/add-layer';
+import { strIsNullOrEmpty } from '../utils/string';
 
 function cloneObject<T>(obj: T) {
     return JSON.parse(JSON.stringify(obj)) as T;
@@ -51,6 +52,40 @@ function clonePolyWithFill(baseTemplate: IBasicVectorPolygonStyle | undefined, f
     const clone = cloneObject(baseTemplate);
     clone.fill.color = fillColor;
     return clone;
+}
+function ensureLabelText(style: IVectorLabelSettings, expr: ExprOr<string>, isLine: boolean = false) {
+    if (!style.label) {
+        style.label = {
+            text: expr,
+            textAlign: "left",
+            offsetX: 15,
+            fill: {
+                color: "#000000",
+                alpha: 255
+            },
+            stroke: {
+                color: "#ffffff",
+                alpha: 255,
+                width: 3
+            }
+        };
+        if (isLine) {
+            style.label.placement = "line";
+        }
+    } else {
+        style.label.text = expr;
+    }
+}
+function ensureLabelTextForStyle(fstyle: IVectorFeatureStyle, expr: ExprOr<string>) {
+    if (fstyle.line) {
+        ensureLabelText(fstyle.line, expr, true);
+    }
+    if (fstyle.point) {
+        ensureLabelText(fstyle.point, expr);
+    }
+    if (fstyle.polygon) {
+        ensureLabelText(fstyle.polygon, expr);
+    }
 }
 
 export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInfo {
@@ -169,7 +204,7 @@ export class LayerManager implements ILayerManager {
         });
     }
     addLayerFromParsedFeatures(options: IAddLayerFromParsedFeaturesOptions): Promise<ILayerInfo> {
-        const { features, projection, defaultStyle, extraOptions } = options;
+        const { features, projection, defaultStyle, extraOptions, labelOnProperty } = options;
         const that = this;
         return new Promise((resolve, reject) => {
             try {
@@ -206,6 +241,11 @@ export class LayerManager implements ILayerManager {
                         onClick: ClusterClickAction.ShowPopup,
                         style: cloneObject(extraOptions.clusterStyle ?? defaultStyle ?? DEFAULT_CLUSTERED_LAYER_STYLE)
                     };
+                    if (!strIsNullOrEmpty(labelOnProperty)) {
+                        for (const k in clusterSettings.style) {
+                            ensureLabelTextForStyle(clusterSettings.style[k], { expr: `if (arr_size(features) == 1, feat_property(features[0], '${labelOnProperty}'), '')` });
+                        }
+                    }
                 }
                 // Delete irrelevant styles based on geometry types encountered
                 const bStyle: IVectorLayerStyle = defaultStyle ?? cloneObject(DEFAULT_VECTOR_LAYER_STYLE);
@@ -220,6 +260,10 @@ export class LayerManager implements ILayerManager {
                 if (!features.geometryTypes.includes("Polygon")) {
                     delete bStyle.default.polygon;
                     delete clusterSettings?.style.default.polygon;
+                }
+
+                if (!strIsNullOrEmpty(labelOnProperty)) {
+                    ensureLabelTextForStyle(bStyle.default, { expr: labelOnProperty });
                 }
 
                 if (extraOptions?.kind == "Theme") {
@@ -239,12 +283,16 @@ export class LayerManager implements ILayerManager {
                     for (let i = 0; i < ruleCount; i++) {
                         const v = values[i];
                         const filter = `${extraOptions.themeOnProperty} == '${v}'`;
-                        (bStyle as any)[filter] = {
+                        const style = {
                             label: v,
                             point: clonePointWithFill(baseTemplatePoint, palette[i]),
                             line: cloneLineWithFill(baseTemplateLine, palette[i]),
                             polygon: clonePolyWithFill(baseTemplatePoly, palette[i]),
+                        };
+                        if (!strIsNullOrEmpty(labelOnProperty)) {
+                            ensureLabelTextForStyle(style, { expr: labelOnProperty });
                         }
+                        (bStyle as any)[filter] = style;
                     }
                 }
 

@@ -35,6 +35,13 @@ export class ExprEvalContext {
                 return collectionProperty.length;
             }
             return 1;
+        };
+        this.parser.functions.feat_property = function(feature: any, name: string) {
+            if (feature) {
+                return feature.get(name);
+            } else {
+                return undefined;
+            }
         }
     }
     public addFilter(expr: string) {

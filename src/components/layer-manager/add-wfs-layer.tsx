@@ -17,6 +17,7 @@ import { getLayerInfo } from '../../api/layer-manager';
 import { getViewer } from '../../api/runtime';
 import { setOLVectorLayerStyle } from '../../api/ol-style-helpers';
 import { DEFAULT_VECTOR_LAYER_STYLE } from '../../api/ol-style-contracts';
+import { zoomToLayerExtents } from "../../containers/add-manage-layers";
 
 /**
  * @hidden
@@ -93,7 +94,9 @@ export const AddWfsLayer = (props: IAddLayerContentProps) => {
                 setOLVectorLayerStyle(layer, DEFAULT_VECTOR_LAYER_STYLE, undefined);
                 viewer.getLayerManager().addLayer(name, layer);
                 viewer.toastSuccess("success", tr("ADDED_LAYER", locale, { name: name }));
-                props.onLayerAdded(getLayerInfo(layer, true));
+                const li = getLayerInfo(layer, true);
+                zoomToLayerExtents(li.name, viewer);
+                props.onLayerAdded(li);
             });
         }
     };

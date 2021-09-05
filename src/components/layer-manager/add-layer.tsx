@@ -127,6 +127,9 @@ const AddFileLayer = (props: IAddLayerProps) => {
     const [themableRamps, _] = React.useState(getColorBrewerRamps());
     const parsedFeaturesRef = React.useRef<IParsedFeatures | undefined>(undefined);
     const setParsedFile = (parsed: IParsedFeatures | undefined) => {
+        setEnableClustering(false);
+        setEnableLabels(false);
+        setEnableTheme(false);
         parsedFeaturesRef.current = parsed;
         if (parsed) {
             setAddLayerName(parsed.name);

@@ -290,4 +290,7 @@ export interface ILocalizedMessages {
     COLORBREWER_THEME: string;
     ERR_CONFLICTING_ADD_VECTOR_LAYER_OPTIONS: string;
     LABEL_USING_PROPERTY: string;
+    CLUSTER_CLICK_ACTION: string;
+    CLUSTER_CLICK_ACTION_SHOW_POPUP: string;
+    CLUSTER_CLICK_ACTION_ZOOM_EXTENTS: string;
 }

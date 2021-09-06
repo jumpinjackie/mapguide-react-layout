@@ -232,7 +232,7 @@ export const DEFAULT_CLUSTERED_POINT_CIRCLE_STYLE: IBasicPointCircleStyle = {
         color: "#ff0000",
         alpha: 255
     },
-    radius: expr("if(arr_size(features) > 5, min(arr_size(features), 25), 5)"),
+    radius: expr( "min(arr_size(features) + 4, 25)"),
     /*
     label: {
         text: expr("if(arr_size(features) > 1, '', arr_size(features))"),

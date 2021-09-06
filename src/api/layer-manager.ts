@@ -238,7 +238,7 @@ export class LayerManager implements ILayerManager {
                 if (extraOptions?.kind == "Cluster") {
                     clusterSettings = {
                         distance: extraOptions.clusterDistance,
-                        onClick: ClusterClickAction.ShowPopup,
+                        onClick: extraOptions.onClusterClickAction ?? ClusterClickAction.ShowPopup,
                         style: cloneObject(extraOptions.clusterStyle ?? defaultStyle ?? DEFAULT_CLUSTERED_LAYER_STYLE)
                     };
                     if (!strIsNullOrEmpty(labelOnProperty)) {

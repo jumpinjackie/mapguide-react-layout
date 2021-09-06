@@ -11,6 +11,7 @@ import { parseEpsgCodeFromCRS } from './wfs-capabilities-panel';
 import { getViewer } from '../../api/runtime';
 import { zoomToLayerExtents } from "../../containers/add-manage-layers";
 import { getColorBrewerRamps, ColorBrewerSwatch } from "./color-brewer";
+import { ClusterClickAction } from "../../api/ol-style-contracts";
 
 /**
  * @hidden
@@ -85,6 +86,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
     const [themeToUse, setThemeToUse] = React.useState("Blues");
     const [clusterDistance, setClusterDistance] = React.useState(10);
     const [themableRamps, _] = React.useState(getColorBrewerRamps());
+    const [clusterClickAction, setClusterClickAction] = React.useState(ClusterClickAction.ShowPopup);
     const parsedFeaturesRef = React.useRef<IParsedFeatures | undefined>(undefined);
     const setParsedFile = (parsed: IParsedFeatures | undefined) => {
         setEnableClustering(false);
@@ -156,7 +158,8 @@ const AddFileLayer = (props: IAddLayerProps) => {
                 if (enableClustering) {
                     extraOpts = {
                         kind: "Cluster",
-                        clusterDistance: clusterDistance
+                        clusterDistance: clusterDistance,
+                        onClusterClickAction: clusterClickAction
                     };
                 } else if (enableTheme && !strIsNullOrEmpty(themeOnProperty)) {
                     extraOpts = {
@@ -190,7 +193,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
             }
             setIsAddingLayer(false);
         }
-    }, [enableClustering, clusterDistance, enableTheme, themeOnProperty, themeToUse, enableLabels, labelOnProperty]);
+    }, [enableClustering, clusterDistance, enableTheme, themeOnProperty, themeToUse, enableLabels, labelOnProperty, clusterClickAction]);
     if (loadedFile) {
         const canAdd = !(enableTheme && enableClustering);
         const colorBrewerLabel = <div dangerouslySetInnerHTML={{ __html: tr("COLORBREWER_THEME", locale) }} />;
@@ -228,9 +231,17 @@ const AddFileLayer = (props: IAddLayerProps) => {
                     {themeToUse && <ColorBrewerSwatch theme={themeToUse} />}
                 </>}
                 {canCluster && <Switch label={tr("ENABLE_CLUSTERING", locale)} checked={enableClustering} onChange={(e: any) => setEnableClustering(e.target.checked)} />}
-                {canCluster && enableClustering && <FormGroup label={tr("POINT_CLUSTER_DISTANCE", locale)}>
+                {canCluster && enableClustering && <>
+                <FormGroup label={tr("POINT_CLUSTER_DISTANCE", locale)}>
                     <NumericInput min={1} value={clusterDistance} onValueChange={v => setClusterDistance(v)} />
-                </FormGroup>}
+                </FormGroup>
+                <FormGroup label={tr("CLUSTER_CLICK_ACTION", locale)}>
+                    <HTMLSelect value={clusterClickAction} onChange={(e: any) => setClusterClickAction(e.target.value)}>
+                        <option value={ClusterClickAction.ShowPopup}>{tr("CLUSTER_CLICK_ACTION_SHOW_POPUP", locale)}</option>
+                        <option value={ClusterClickAction.ZoomToClusterExtents}>{tr("CLUSTER_CLICK_ACTION_ZOOM_EXTENTS", locale)}</option>
+                    </HTMLSelect>
+                </FormGroup>
+                </>}
                 {enableTheme && enableClustering && <Callout intent={Intent.DANGER}>
                     <p>{tr("ERR_CONFLICTING_ADD_VECTOR_LAYER_OPTIONS", locale)}</p>
                 </Callout>}

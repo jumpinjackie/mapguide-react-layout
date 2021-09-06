@@ -21,7 +21,7 @@ import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
 import { ISubscriberProps } from '../containers/subscriber';
 import Geometry from 'ol/geom/Geometry';
-import { IBasicPointCircleStyle, IPointIconStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorLayerStyle, IClusterSettings } from './ol-style-contracts';
+import { IBasicPointCircleStyle, IPointIconStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorLayerStyle, IClusterSettings, ClusterClickAction } from './ol-style-contracts';
 import { IToolbarAppState } from './registry/command';
 
 // Event boilerplate
@@ -1129,14 +1129,18 @@ export interface AddVectorLayerClusteringOptions {
      * 
      *  * If {@see clusterDistance} is set, but {@see clusterStyle} is not set, the {@see IAddLayerFromParsedFeaturesOptions.defaultStyle} will be used if set, otherwise the default vector style will be used
      */
-     clusterDistance: number;
-     /**
-      * The style to use for this clustered layer. 
-      * 
-      *  * If {@see clusterDistance} is not set, this has no effect
-      *  * If {@see clusterDistance} is set but this is not set, the {@see IAddLayerFromParsedFeaturesOptions.defaultStyle} will be used if set, otherwise the default vector style will be used
-      */
-     clusterStyle?: IVectorLayerStyle;
+    clusterDistance: number;
+    /**
+     * The style to use for this clustered layer. 
+     * 
+     *  * If {@see clusterDistance} is not set, this has no effect
+     *  * If {@see clusterDistance} is set but this is not set, the {@see IAddLayerFromParsedFeaturesOptions.defaultStyle} will be used if set, otherwise the default vector style will be used
+     */
+    clusterStyle?: IVectorLayerStyle;
+    /**
+     * The action to perform when the cluster is clicked
+     */
+    onClusterClickAction?: ClusterClickAction;
 }
 
 /**

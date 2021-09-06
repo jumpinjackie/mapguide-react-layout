@@ -2,12 +2,13 @@ import * as React from "react";
 import { storiesOf } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import { ColorPicker } from '../components/color-picker';
-import { withKnobs, boolean, number } from '@storybook/addon-knobs';
+import { withKnobs, boolean, number, select } from '@storybook/addon-knobs';
 import { VectorLayerStyleEditor, VectorStyleEditor } from '../components/vector-style-editor';
 import "../styles/index.css";
 import { BooleanExprEditor, ColorExprEditor, NumberExprEditor, SliderExprEditor, StringExprEditor } from "../components/layer-manager/common";
 import { DEFAULT_VECTOR_LAYER_STYLE, ExprOr, IVectorLayerStyle } from "../api/ol-style-contracts";
 import { DEFAULT_LOCALE } from "../api/i18n";
+import { ColorBrewerSwatch, getColorBrewerRamps } from "../components/layer-manager/color-brewer";
 
 storiesOf("Common Components", module)
     .addDecorator(withKnobs)
@@ -73,4 +74,17 @@ storiesOf("Common Components", module)
             enableLine={boolean("Enable Line", true)}
             enablePolygon={boolean("Enable Polygon", true)}
             locale={DEFAULT_LOCALE} />;
+    })
+    .add("ColorBrewer Swatch", () => {
+        const ramps = getColorBrewerRamps();
+        let defaultValue;
+        const options: any = {};
+        for (const r of ramps) {
+            if (!defaultValue) {
+                defaultValue = r.scheme;
+            }
+            options[r.displayName] = r.scheme;
+        }
+        const scheme = select("ColorBrewer Theme", options, defaultValue);
+        return <ColorBrewerSwatch theme={scheme!} />
     });

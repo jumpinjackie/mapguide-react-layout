@@ -18,8 +18,8 @@ import { IVectorLayerStyle, DEFAULT_VECTOR_LAYER_STYLE, IClusterSettings, Cluste
 import { OLStyleMapSet } from './ol-style-map-set';
 import { clusterSourceIfRequired } from '../components/external-layer-factory';
 import colorbrewer from "colorbrewer";
-import { getMaxRamp } from '../components/layer-manager/add-layer';
 import { strIsNullOrEmpty } from '../utils/string';
+import { getMaxRamp } from '../components/layer-manager/color-brewer';
 
 function cloneObject<T>(obj: T) {
     return JSON.parse(JSON.stringify(obj)) as T;

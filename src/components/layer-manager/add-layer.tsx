@@ -10,47 +10,7 @@ import { IParsedFeatures } from '../../api/layer-manager/parsed-features';
 import { parseEpsgCodeFromCRS } from './wfs-capabilities-panel';
 import { getViewer } from '../../api/runtime';
 import { zoomToLayerExtents } from "../../containers/add-manage-layers";
-import colorbrewer from "colorbrewer";
-
-function getColorBrewerRamps() {
-    const ramps = [];
-    for (const cat in colorbrewer.schemeGroups) {
-        for (const scheme of colorbrewer.schemeGroups[cat]) {
-            ramps.push({ name: `${cat} - ${scheme}`, value: scheme });
-        }
-    }
-    return ramps;
-}
-
-export function getMaxRamp(scheme: any) {
-    let theScheme;
-    let len = 0;
-    for (const s in scheme) {
-        const arr = scheme[s];
-        if (arr.length > len) {
-            theScheme = arr;
-            len = arr.length;
-        }
-    }
-    return theScheme;
-}
-
-const ColorBrewerRamp: React.FC<{ theme: string }> = props => {
-    const ramp: string[] = getMaxRamp(colorbrewer[props.theme]);
-    if (ramp) {
-        return <table>
-            <colgroup>
-                {ramp.map((r, i) => <col key={`ramp-col-${i}`} span={1} style={{ width: 12 }} />)}
-            </colgroup>
-            <tbody>
-                <tr>
-                    {ramp.map((r, i) => <td key={`ramp-${i}`} style={{ border: "1px solid black", backgroundColor: r }}>&nbsp;</td>)}
-                </tr>
-            </tbody>
-        </table>
-    };
-    return <></>;
-};
+import { getColorBrewerRamps, ColorBrewerSwatch } from "./color-brewer";
 
 /**
  * @hidden
@@ -262,10 +222,10 @@ const AddFileLayer = (props: IAddLayerProps) => {
                     </FormGroup>
                     <FormGroup label={colorBrewerLabel}>
                         <HTMLSelect value={themeToUse} onChange={e => setThemeToUse(e.target.value)}>
-                            {themableRamps.map((th, i) => <option key={th.name} value={th.value}>{th.name}</option>)}
+                            {themableRamps.map((th, i) => <option key={th.displayName} value={th.scheme}>{th.displayName}</option>)}
                         </HTMLSelect>
                     </FormGroup>
-                    {themeToUse && <ColorBrewerRamp theme={themeToUse} />}
+                    {themeToUse && <ColorBrewerSwatch theme={themeToUse} />}
                 </>}
                 {canCluster && <Switch label={tr("ENABLE_CLUSTERING", locale)} checked={enableClustering} onChange={(e: any) => setEnableClustering(e.target.checked)} />}
                 {canCluster && enableClustering && <FormGroup label={tr("POINT_CLUSTER_DISTANCE", locale)}>

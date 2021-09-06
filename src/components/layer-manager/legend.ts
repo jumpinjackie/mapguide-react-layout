@@ -46,7 +46,10 @@ import { Size2 } from '../../api/common';
 import Style, { StyleFunction } from 'ol/style/Style';
 import { OLFeature } from '../../api/ol-types';
 
-export type olLegendItemOptions = {
+/**
+ * @since 0.14
+ */
+export type LegendItemOptions = {
     onload?: Function;
     margin?: number;
     size?: Size2;
@@ -59,12 +62,14 @@ export type olLegendItemOptions = {
 
 const DEFAULT_SIZE = [16, 16];
 
-/** Get a symbol image for a given legend item
- * @param {olLegendItemOptions} item 
- * @param {Canvas|undefined} canvas a canvas to draw in, if none creat one
- * @param {int|undefined} row row number to draw in canvas, default 0
+/** 
+ * Get a symbol image for a given legend item
+ * @param {LegendItemOptions} item 
+ * @param {HTMLCanvasElement|undefined} canvas a canvas to draw in, if none create one
+ * @param {number|undefined} row row number to draw in canvas, default 0
+ * @since 0.14
  */
-export function getLegendImage(item: olLegendItemOptions, canvas: HTMLCanvasElement | undefined = undefined, row: number | undefined = 0) {
+export function getLegendImage(item: LegendItemOptions, canvas: HTMLCanvasElement | undefined = undefined, row: number | undefined = 0) {
     item = item || {};
     if (typeof (item.margin) === 'undefined') item.margin = 10;
     const size = item.size || DEFAULT_SIZE;

@@ -317,7 +317,9 @@ export const VectorStyleEditor = (props: IVectorStyleEditorProps) => {
         setPolyStyle(style?.polygon ?? DEFAULT_POLY_STYLE);
     }, [style]);
     const onStyleChanged = (point: IBasicVectorPointStyle, line: IBasicVectorLineStyle, poly: IBasicVectorPolygonStyle) => {
-        const newStyle: IVectorFeatureStyle = {};
+        const newStyle: IVectorFeatureStyle = {
+            label: style?.label
+        };
         if (enablePoint) {
             newStyle.point = point;
         }
@@ -483,18 +485,12 @@ const FilterItem = (props: IFilterItemProps) => {
 
 export const VectorLayerStyleEditor = (props: IVectorLayerStyleEditorProps) => {
     const filters = Object.keys(props.style).filter(k => k != DEFAULT_STYLE_KEY);
-    const [openStyleEditors, setOpenStyleEditors] = React.useState<any>({});
-    const onFeatureStyleChanged = (index: number | string, filter: string, style: IVectorFeatureStyle) => {
+    const [openStyleEditors, setOpenStyleEditors] = React.useState<{ [filter: string]: boolean }>({});
+    const onFeatureStyleChanged = (filter: string, style: IVectorFeatureStyle) => {
         const updatedStyle = {
             ...props.style
         };
-        if (index == DEFAULT_STYLE_KEY) {
-            updatedStyle.default = style;
-        } else {
-            const oldFilter = filters[index as number];
-            delete updatedStyle[oldFilter];
-            updatedStyle[filter] = style;
-        }
+        updatedStyle[filter] = style;
         props.onChange?.(updatedStyle);
     };
     const onToggleStyleEditor = (index: number | string, visible: boolean) => {
@@ -519,20 +515,20 @@ export const VectorLayerStyleEditor = (props: IVectorLayerStyleEditorProps) => {
                 key={`filter-${i}`}
                 filter={f}
                 isDefault={false}
-                onChange={(f, s) => onFeatureStyleChanged(i, f, s)}
+                onChange={(f, s) => onFeatureStyleChanged( f, s)}
                 featureStyle={props.style[filters[i]]}
-                isStyleEditorOpen={typeof (openStyleEditors[i]) != 'undefined'}
-                onToggleStyleEditor={(v) => onToggleStyleEditor(i, v)}
+                isStyleEditorOpen={openStyleEditors[f] === true}
+                onToggleStyleEditor={(isVisible) => onToggleStyleEditor(f, isVisible)}
                 locale={props.locale}
                 enableLine={props.enableLine}
                 enablePoint={props.enablePoint}
                 enablePolygon={props.enablePolygon} />)}
             <FilterItem
                 isDefault
-                onChange={(f, s) => onFeatureStyleChanged(DEFAULT_STYLE_KEY, f, s)}
+                onChange={(f, s) => onFeatureStyleChanged(DEFAULT_STYLE_KEY, s)}
                 featureStyle={props.style.default}
-                isStyleEditorOpen={typeof (openStyleEditors[DEFAULT_STYLE_KEY]) != 'undefined'}
-                onToggleStyleEditor={(v) => onToggleStyleEditor(DEFAULT_STYLE_KEY, v)}
+                isStyleEditorOpen={openStyleEditors[DEFAULT_STYLE_KEY] === true}
+                onToggleStyleEditor={(isVisible) => onToggleStyleEditor(DEFAULT_STYLE_KEY, isVisible)}
                 locale={props.locale}
                 enableLine={props.enableLine}
                 enablePoint={props.enablePoint}

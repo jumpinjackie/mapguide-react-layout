@@ -204,7 +204,7 @@ export class LayerManager implements ILayerManager {
         });
     }
     addLayerFromParsedFeatures(options: IAddLayerFromParsedFeaturesOptions): Promise<ILayerInfo> {
-        const { features, projection, defaultStyle, extraOptions, labelOnProperty } = options;
+        const { features, projection, defaultStyle, extraOptions, labelOnProperty, selectedPopupTemplate } = options;
         const that = this;
         return new Promise((resolve, reject) => {
             try {
@@ -234,6 +234,11 @@ export class LayerManager implements ILayerManager {
                 layer.set(LayerProperty.IS_SELECTABLE, true);
                 layer.set(LayerProperty.IS_EXTERNAL, true);
                 layer.set(LayerProperty.IS_GROUP, false);
+
+                if (selectedPopupTemplate) {
+                    layer.set(LayerProperty.SELECTED_POPUP_CONFIGURATION, selectedPopupTemplate);
+                }
+
                 let clusterSettings: IClusterSettings | undefined;
                 if (extraOptions?.kind == "Cluster") {
                     clusterSettings = {

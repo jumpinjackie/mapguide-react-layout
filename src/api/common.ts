@@ -14,7 +14,7 @@ import olInteraction from "ol/interaction/Interaction";
 import olOverlay from "ol/Overlay";
 
 import { IOLFactory } from "./ol-factory";
-import { ViewerAction, IGenericSubjectMapLayer, IInitialExternalLayer } from '../actions/defs';
+import { ViewerAction, IGenericSubjectMapLayer, IInitialExternalLayer, ISelectedFeaturePopupTemplateConfiguration } from '../actions/defs';
 import { ProjectionLike } from 'ol/proj';
 import { IParsedFeatures } from './layer-manager/parsed-features';
 import Collection from 'ol/Collection';
@@ -1196,6 +1196,11 @@ export interface IAddLayerFromParsedFeaturesOptions {
      * @since 0.14
      */
     labelOnProperty?: string;
+    /**
+     * The popup template to use when features are selected on this layer
+     * @since 0.14
+     */
+    selectedPopupTemplate?: ISelectedFeaturePopupTemplateConfiguration;
 }
 
 /**

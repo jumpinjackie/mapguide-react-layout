@@ -39,8 +39,9 @@ export interface IParsedFeatures {
      * @param source 
      * @param mapProjection 
      * @param dataProjection 
+     * @since 0.14 This method is now async (returns a promise)
      */
-    addTo(source: olSourceVector<Geometry>, mapProjection: ProjectionLike, dataProjection?: ProjectionLike): void;
+    addTo(source: olSourceVector<Geometry>, mapProjection: ProjectionLike, dataProjection?: ProjectionLike): Promise<void>;
     /**
      * The geometry types encountered in this source file
      * @since 0.14
@@ -56,21 +57,23 @@ export interface IParsedFeatures {
      * @param propertyName
      * @since 0.14
      */
-    getDistinctValues(propertyName: string): string[];
+    getDistinctValues(propertyName: string): Promise<string[]>;
 }
 
 export class ParsedFeatures implements IParsedFeatures {
     constructor(public type: string,
         public size: number,
-        private features: Feature<Geometry>[],
+        private features: Promise<Feature<Geometry>[]>,
+        private hasFeaturesFlag: boolean,
         public geometryTypes: ("Point" | "LineString" | "Polygon")[],
         public propertyNames: string[],
         public projection: string | null = null) { }
-    public hasFeatures(): boolean { return this.features.length > 0; }
+    public hasFeatures(): boolean { return this.hasFeaturesFlag; }
     public name: string;
-    public addTo(source: olSourceVector<Geometry>, mapProjection: ProjectionLike, dataProjection?: ProjectionLike) {
+    public async addTo(source: olSourceVector<Geometry>, mapProjection: ProjectionLike, dataProjection?: ProjectionLike) {
+        const features = await this.features;
         if (dataProjection) {
-            for (const f of this.features) {
+            for (const f of features) {
                 const g = f.getGeometry();
                 if (g) {
                     const tg = g.transform(dataProjection, mapProjection)
@@ -78,11 +81,12 @@ export class ParsedFeatures implements IParsedFeatures {
                 }
             }
         }
-        source.addFeatures(this.features);
+        source.addFeatures(features);
     }
-    public getDistinctValues(propertyName: string): string[] {
+    public async getDistinctValues(propertyName: string): Promise<string[]> {
         const values = [] as string[];
-        for (const f of this.features) {
+        const features = await this.features;
+        for (const f of features) {
             const v = f.get(propertyName);
             if (!strIsNullOrEmpty(v) && !values.includes(v))
                 values.push(v);

@@ -203,110 +203,104 @@ export class LayerManager implements ILayerManager {
             reader.readAsText(file);
         });
     }
-    addLayerFromParsedFeatures(options: IAddLayerFromParsedFeaturesOptions): Promise<ILayerInfo> {
+    async addLayerFromParsedFeatures(options: IAddLayerFromParsedFeaturesOptions): Promise<ILayerInfo> {
         const { features, projection, defaultStyle, extraOptions, labelOnProperty, selectedPopupTemplate } = options;
-        const that = this;
-        return new Promise((resolve, reject) => {
-            try {
-                let proj = projection;
-                if (!proj) {
-                    const view = that.map.getView();
-                    proj = view.getProjection();
-                }
-                const source = new olSourceVector();
-                source.set(SourceProperty.SUPPRESS_LOAD_EVENTS, true);
 
-                let csArgs;
-                if (extraOptions?.kind == "Cluster") {
-                    csArgs = {
-                        distance: extraOptions.clusterDistance
-                    };
-                }
-                const layer = new olVectorLayer({
-                    source: clusterSourceIfRequired(source, { cluster: csArgs }),
-                    className: "external-vector-layer", //This is to avoid false positives for map.forEachLayerAtPixel
-                    declutter: true
-                });
-                features.addTo(source, that.map.getView().getProjection(), proj);
-                layer.set(LayerProperty.LAYER_NAME, features.name);
-                layer.set(LayerProperty.LAYER_DISPLAY_NAME, features.name);
-                layer.set(LayerProperty.LAYER_TYPE, features.type);
-                layer.set(LayerProperty.IS_SELECTABLE, true);
-                layer.set(LayerProperty.IS_EXTERNAL, true);
-                layer.set(LayerProperty.IS_GROUP, false);
+        let proj = projection;
+        if (!proj) {
+            const view = this.map.getView();
+            proj = view.getProjection();
+        }
+        const source = new olSourceVector();
+        source.set(SourceProperty.SUPPRESS_LOAD_EVENTS, true);
 
-                if (selectedPopupTemplate) {
-                    layer.set(LayerProperty.SELECTED_POPUP_CONFIGURATION, selectedPopupTemplate);
-                }
-
-                let clusterSettings: IClusterSettings | undefined;
-                if (extraOptions?.kind == "Cluster") {
-                    clusterSettings = {
-                        distance: extraOptions.clusterDistance,
-                        onClick: extraOptions.onClusterClickAction ?? ClusterClickAction.ShowPopup,
-                        style: cloneObject(extraOptions.clusterStyle ?? defaultStyle ?? DEFAULT_CLUSTERED_LAYER_STYLE)
-                    };
-                    if (!strIsNullOrEmpty(labelOnProperty)) {
-                        for (const k in clusterSettings.style) {
-                            ensureLabelTextForStyle(clusterSettings.style[k], { expr: `if (arr_size(features) == 1, feat_property(features[0], '${labelOnProperty}'), '')` });
-                        }
-                    }
-                }
-                // Delete irrelevant styles based on geometry types encountered
-                const bStyle: IVectorLayerStyle = defaultStyle ?? cloneObject(DEFAULT_VECTOR_LAYER_STYLE);
-                if (!features.geometryTypes.includes("Point")) {
-                    delete bStyle.default.point;
-                    delete clusterSettings?.style.default.point;
-                }
-                if (!features.geometryTypes.includes("LineString")) {
-                    delete bStyle.default.line;
-                    delete clusterSettings?.style.default.line;
-                }
-                if (!features.geometryTypes.includes("Polygon")) {
-                    delete bStyle.default.polygon;
-                    delete clusterSettings?.style.default.polygon;
-                }
-
-                if (!strIsNullOrEmpty(labelOnProperty)) {
-                    ensureLabelTextForStyle(bStyle.default, { expr: labelOnProperty });
-                }
-
-                if (extraOptions?.kind == "Theme") {
-                    const values = features.getDistinctValues(extraOptions.themeOnProperty);
-                    let baseTemplatePoint = bStyle.default.point;
-                    let baseTemplateLine = bStyle.default.line;
-                    let baseTemplatePoly = bStyle.default.polygon;
-                    
-                    const th = extraOptions.colorBrewerTheme;
-                    let ramp = colorbrewer[th];
-                    if (!ramp) {
-                        ramp = colorbrewer.Blues;
-                    }
-                    const chosenRamp = getMaxRamp(ramp);
-                    const ruleCount = Math.min(values.length, chosenRamp.length);
-                    const palette = ramp[ruleCount];
-                    for (let i = 0; i < ruleCount; i++) {
-                        const v = values[i];
-                        const filter = `${extraOptions.themeOnProperty} == '${v}'`;
-                        const style = {
-                            label: v,
-                            point: clonePointWithFill(baseTemplatePoint, palette[i]),
-                            line: cloneLineWithFill(baseTemplateLine, palette[i]),
-                            polygon: clonePolyWithFill(baseTemplatePoly, palette[i]),
-                        };
-                        if (!strIsNullOrEmpty(labelOnProperty)) {
-                            ensureLabelTextForStyle(style, { expr: labelOnProperty });
-                        }
-                        (bStyle as any)[filter] = style;
-                    }
-                }
-
-                setOLVectorLayerStyle(layer, bStyle, clusterSettings);
-                const layerInfo = that.addLayer(features.name, layer);
-                resolve(layerInfo);
-            } catch (e) {
-                reject(e);
-            }
+        let csArgs;
+        if (extraOptions?.kind == "Cluster") {
+            csArgs = {
+                distance: extraOptions.clusterDistance
+            };
+        }
+        const layer = new olVectorLayer({
+            source: clusterSourceIfRequired(source, { cluster: csArgs }),
+            className: "external-vector-layer", //This is to avoid false positives for map.forEachLayerAtPixel
+            declutter: true
         });
+        await features.addTo(source, this.map.getView().getProjection(), proj);
+        layer.set(LayerProperty.LAYER_NAME, features.name);
+        layer.set(LayerProperty.LAYER_DISPLAY_NAME, features.name);
+        layer.set(LayerProperty.LAYER_TYPE, features.type);
+        layer.set(LayerProperty.IS_SELECTABLE, true);
+        layer.set(LayerProperty.IS_EXTERNAL, true);
+        layer.set(LayerProperty.IS_GROUP, false);
+
+        if (selectedPopupTemplate) {
+            layer.set(LayerProperty.SELECTED_POPUP_CONFIGURATION, selectedPopupTemplate);
+        }
+
+        let clusterSettings: IClusterSettings | undefined;
+        if (extraOptions?.kind == "Cluster") {
+            clusterSettings = {
+                distance: extraOptions.clusterDistance,
+                onClick: extraOptions.onClusterClickAction ?? ClusterClickAction.ShowPopup,
+                style: cloneObject(extraOptions.clusterStyle ?? defaultStyle ?? DEFAULT_CLUSTERED_LAYER_STYLE)
+            };
+            if (!strIsNullOrEmpty(labelOnProperty)) {
+                for (const k in clusterSettings.style) {
+                    ensureLabelTextForStyle(clusterSettings.style[k], { expr: `if (arr_size(features) == 1, feat_property(features[0], '${labelOnProperty}'), '')` });
+                }
+            }
+        }
+        // Delete irrelevant styles based on geometry types encountered
+        const bStyle: IVectorLayerStyle = defaultStyle ?? cloneObject(DEFAULT_VECTOR_LAYER_STYLE);
+        if (!features.geometryTypes.includes("Point")) {
+            delete bStyle.default.point;
+            delete clusterSettings?.style.default.point;
+        }
+        if (!features.geometryTypes.includes("LineString")) {
+            delete bStyle.default.line;
+            delete clusterSettings?.style.default.line;
+        }
+        if (!features.geometryTypes.includes("Polygon")) {
+            delete bStyle.default.polygon;
+            delete clusterSettings?.style.default.polygon;
+        }
+
+        if (!strIsNullOrEmpty(labelOnProperty)) {
+            ensureLabelTextForStyle(bStyle.default, { expr: labelOnProperty });
+        }
+
+        if (extraOptions?.kind == "Theme") {
+            const values = await features.getDistinctValues(extraOptions.themeOnProperty);
+            let baseTemplatePoint = bStyle.default.point;
+            let baseTemplateLine = bStyle.default.line;
+            let baseTemplatePoly = bStyle.default.polygon;
+
+            const th = extraOptions.colorBrewerTheme;
+            let ramp = colorbrewer[th];
+            if (!ramp) {
+                ramp = colorbrewer.Blues;
+            }
+            const chosenRamp = getMaxRamp(ramp);
+            const ruleCount = Math.min(values.length, chosenRamp.length);
+            const palette = ramp[ruleCount];
+            for (let i = 0; i < ruleCount; i++) {
+                const v = values[i];
+                const filter = `${extraOptions.themeOnProperty} == '${v}'`;
+                const style = {
+                    label: v,
+                    point: clonePointWithFill(baseTemplatePoint, palette[i]),
+                    line: cloneLineWithFill(baseTemplateLine, palette[i]),
+                    polygon: clonePolyWithFill(baseTemplatePoly, palette[i]),
+                };
+                if (!strIsNullOrEmpty(labelOnProperty)) {
+                    ensureLabelTextForStyle(style, { expr: labelOnProperty });
+                }
+                (bStyle as any)[filter] = style;
+            }
+        }
+
+        setOLVectorLayerStyle(layer, bStyle, clusterSettings);
+        const layerInfo = this.addLayer(features.name, layer);
+        return layerInfo;
     }
 }

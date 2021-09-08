@@ -87,7 +87,8 @@ export class CsvFormatDriver implements IFormatDriver {
                                                 propNames.push(k);
                                             }
                                         }
-                                        parsed = new ParsedFeatures(type, size, features, ["Point"], propNames);
+                                        const pfs = Promise.resolve(features);
+                                        parsed = new ParsedFeatures(type, size, pfs, features.length > 0, ["Point"], propNames);
                                         break;
                                     }
                                 }

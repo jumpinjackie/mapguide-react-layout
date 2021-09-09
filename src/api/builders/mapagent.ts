@@ -4,7 +4,7 @@ import { DEFAULT_LOCALE } from "../i18n";
 import { RequestBuilder, ICreateRuntimeMapOptions, IQueryMapFeaturesOptions, IDescribeRuntimeMapOptions } from '../request-builder';
 import { RuntimeMap } from '../contracts/runtime-map';
 import { QueryMapFeaturesResponse } from '../contracts/query';
-import { ResourceIdentifier, ResourceBase } from '../contracts/common';
+import { ResourceIdentifier, ResourceBase, SiteVersion } from '../contracts/common';
 
 const MG_MAPAGENT_ERROR_CODE = 559;
 
@@ -152,6 +152,12 @@ export class MapAgentRequestBuilder extends RequestBuilder {
             const url = this.stringifyGetUrl({ operation: "GETRESOURCE", resourceId: resourceId });
             return this.get<T>(url);
         }
+    }
+
+    public getSiteVersion(): Promise<SiteVersion> {
+        const p1 = { operation: "GETSITEVERSION", version: "1.0.0", username: "Anonymous" };
+        const url = this.stringifyGetUrl({ ...p1 });
+        return this.get<SiteVersion>(url);
     }
 
     public createRuntimeMap(options: ICreateRuntimeMapOptions): Promise<RuntimeMap> {

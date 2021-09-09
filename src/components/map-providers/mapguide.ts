@@ -83,8 +83,14 @@ function useMapGuideViewerState() {
     }
 
     let isReady = false;
-    if (agentUri && map && sessionId && layerTransparency) {
-        isReady = true;
+    if (agentUri && map && layerTransparency) {
+        if (!stateless) {
+            if (sessionId) {
+                isReady = true;
+            }
+        } else {
+            isReady = true;
+        }
     }
 
     const nextState: IMapGuideProviderState & IMapProviderStateExtras = {

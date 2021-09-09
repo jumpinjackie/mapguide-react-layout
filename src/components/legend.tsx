@@ -64,6 +64,7 @@ const LegendLabel = (props: ILegendLabelProps) => {
 export interface ILegendProps {
     baseIconSize?: number;
     map: RuntimeMap;
+    stateless: boolean;
     showLayers: string[] | undefined;
     showGroups: string[] | undefined;
     hideLayers: string[] | undefined;
@@ -288,12 +289,12 @@ export const GroupNode = (props: IGroupNodeProps) => {
                 return <ul style={UL_LIST_STYLE(legendCtx.getBaseIconSize())}>{props.childItems.map(item => {
                     if (item.DisplayInLegend === true) {
                         if (isLayer(item)) {
-                            if (isLayerVisibleAtScale(item, currentScale)) {
+                            if (isLayerVisibleAtScale(item, currentScale, legendCtx.stateless)) {
                                 //console.debug(`isLayerVisibleAtScale(${item.Name}, ${currentScale}) = true`);
                                 return <LayerNode key={item.ObjectId} layer={item} />;
                             }
                         } else {
-                            if (isGroupVisibleAtScale(item, tree, currentScale)) {
+                            if (isGroupVisibleAtScale(item, tree, currentScale, legendCtx.stateless)) {
                                 //console.debug(`isGroupVisibleAtScale(${item.Name}, ${currentScale}) = true`);
                                 const children = tree.groupChildren[item.ObjectId] || [];
                                 return <GroupNode key={item.ObjectId} group={item} childItems={children} />;
@@ -306,29 +307,39 @@ export const GroupNode = (props: IGroupNodeProps) => {
     </li>;
 };
 
-function isLayerVisibleAtScale(layer: MapLayer, scale: number): boolean {
+function isLayerVisibleAtScale(layer: MapLayer, scale: number, stateless: boolean): boolean {
     if (layer.ScaleRange) {
         for (const sr of layer.ScaleRange) {
             if (scaleRangeBetween(scale, sr.MinScale, sr.MaxScale)) {
                 return true;
             }
         }
+    } else {
+        // In stateless mode, it is potentially expensive to fetch all the required layer defs to get the scale range information,
+        // so we must operate under the assumption that such information just doesn't exist, so in such cases assume the layer is
+        // visible (in the legend), even if it is not visible (in the map)
+        if (stateless) {
+            return true;
+        }
     }
     return false;
 }
 
-function isGroupVisibleAtScale(group: MapGroup, tree: any, scale: number): boolean {
+function isGroupVisibleAtScale(group: MapGroup, tree: any, scale: number, stateless: boolean): boolean {
     const children: (MapLayer | MapGroup)[] = tree.groupChildren[group.ObjectId] || [];
     for (const child of children) {
         if (isLayer(child)) {
-            if (isLayerVisibleAtScale(child, scale)) {
+            if (isLayerVisibleAtScale(child, scale, stateless)) {
                 return true;
             }
         } else {
-            if (isGroupVisibleAtScale(child, tree, scale)) {
+            if (isGroupVisibleAtScale(child, tree, scale, stateless)) {
                 return true;
             }
         }
+    }
+    if (stateless) {
+        return true;
     }
     return false;
 }
@@ -542,6 +553,7 @@ export const Legend = (props: ILegendProps) => {
         rootStyle.maxHeight = maxHeight;
     }
     const providerImpl: ILegendContext = {
+        stateless: props.stateless,
         isFiltering: () => isFiltering,
         getFilterText: () => filterText,
         getLocale: () => props.locale,
@@ -592,12 +604,12 @@ export const Legend = (props: ILegendProps) => {
                 {rootItems.map(item => {
                     if (item.DisplayInLegend === true) {
                         if (isLayer(item)) {
-                            if (isLayerVisibleAtScale(item, currentScale)) {
+                            if (isLayerVisibleAtScale(item, currentScale, props.stateless)) {
                                 //console.debug(`isLayerVisibleAtScale(${item.Name}, ${currentScale}) = true`);
                                 return <LayerNode key={item.ObjectId} layer={item} />;
                             }
                         } else {
-                            const bGroupVisAtScale = isGroupVisibleAtScale(item, daTree, currentScale);
+                            const bGroupVisAtScale = isGroupVisibleAtScale(item, daTree, currentScale, props.stateless);
                             let bGroupVisFilter = false;
                             if (providerImpl.isFiltering()) {
                                 const bInFilter = item.LegendLabel.toLocaleLowerCase().indexOf(providerImpl.getFilterText().toLocaleLowerCase()) >= 0;

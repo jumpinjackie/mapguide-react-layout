@@ -1,5 +1,5 @@
 import { SelectionVariant } from './common';
-import { ResourceIdentifier, ResourceBase } from './contracts/common';
+import { ResourceIdentifier, ResourceBase, SiteVersion } from './contracts/common';
 import { RuntimeMap } from './contracts/runtime-map';
 import { QueryMapFeaturesResponse } from './contracts/query';
 
@@ -389,4 +389,6 @@ export abstract class RequestBuilder implements IMapGuideClient {
     public abstract describeRuntimeMap(options: IDescribeRuntimeMapOptions): Promise<RuntimeMap>;
 
     public abstract getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string): string;
+
+    public abstract getSiteVersion(): Promise<SiteVersion>;
 }

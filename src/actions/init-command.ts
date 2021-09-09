@@ -17,6 +17,10 @@ import { Client } from '../api/client';
 import { ActionType } from '../constants/actions';
 import { ensureParameters } from '../utils/url';
 
+export function isStateless(appDef: ApplicationDefinition) {
+    return (appDef.Extension.Stateless == "true");
+}
+
 export interface IViewerInitCommand {
     attachClient(client: Client): void;
     runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
@@ -245,7 +249,7 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
         let hasTaskBar = false;
         const { locale, featureTooltipsEnabled } = options;
         const config: any = {};
-        config.isStateless = (appDef.Extension.Stateless == "true");
+        config.isStateless = isStateless(appDef);
         const tbConf: Dictionary<ToolbarConf> = {};
         const widgetsByKey: Dictionary<Widget> = {};
         //Register any InvokeURL and Search commands. Also set capabilities along the way

@@ -34,6 +34,7 @@ export const AppContext = React.createContext<IApplicationContext>({
 });
 
 export interface ILegendContext {
+    stateless: boolean;
     isFiltering(): boolean;
     getFilterText(): string;
     getLocale(): string;
@@ -55,6 +56,7 @@ export interface ILegendContext {
 }
 
 export const LegendContext = React.createContext<ILegendContext>({
+    stateless: false,
     isFiltering: () => false,
     getFilterText: () => STR_EMPTY,
     getLocale: () => DEFAULT_LOCALE,

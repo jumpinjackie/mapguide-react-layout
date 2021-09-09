@@ -204,7 +204,7 @@ export class LayerManager implements ILayerManager {
         });
     }
     async addLayerFromParsedFeatures(options: IAddLayerFromParsedFeaturesOptions): Promise<ILayerInfo> {
-        const { features, projection, defaultStyle, extraOptions, labelOnProperty, selectedPopupTemplate } = options;
+        const { features, projection, defaultStyle, extraOptions, labelOnProperty, selectedPopupTemplate, metadata } = options;
 
         let proj = projection;
         if (!proj) {
@@ -232,7 +232,9 @@ export class LayerManager implements ILayerManager {
         layer.set(LayerProperty.IS_SELECTABLE, true);
         layer.set(LayerProperty.IS_EXTERNAL, true);
         layer.set(LayerProperty.IS_GROUP, false);
-
+        if (metadata) {
+            layer.set(LayerProperty.LAYER_METADATA, metadata);
+        }
         if (selectedPopupTemplate) {
             layer.set(LayerProperty.SELECTED_POPUP_CONFIGURATION, selectedPopupTemplate);
         }

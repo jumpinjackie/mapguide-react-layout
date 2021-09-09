@@ -1201,6 +1201,11 @@ export interface IAddLayerFromParsedFeaturesOptions {
      * @since 0.14
      */
     selectedPopupTemplate?: ISelectedFeaturePopupTemplateConfiguration;
+    /**
+     * Metadata for this layer
+     * @since 0.14
+     */
+    metadata?: any;
 }
 
 /**

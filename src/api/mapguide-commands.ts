@@ -16,7 +16,7 @@ export function initMapGuideCommands() {
         selected: (state) => {
             return state.featureTooltipsEnabled === true;
         },
-        enabled: () => true,
+        enabled: state => !state.stateless,
         invoke: (dispatch, getState) => {
             const enabled = getState().viewer.featureTooltipsEnabled;
             return dispatch(setFeatureTooltipsEnabled(!enabled));
@@ -26,7 +26,7 @@ export function initMapGuideCommands() {
     registerCommand(DefaultCommands.QuickPlot, {
         iconClass: SPRITE_PRINT,
         selected: () => false,
-        enabled: () => true,
+        enabled: state => !state.stateless,
         invoke: (dispatch, getState, _viewer, parameters) => {
             const config = getState().config;
             const url = "component://QuickPlot";
@@ -50,7 +50,7 @@ export function initMapGuideCommands() {
     registerCommand(DefaultCommands.SelectRadius, {
         iconClass: SPRITE_SELECT_RADIUS,
         selected: () => false,
-        enabled: () => true,
+        enabled: state => !state.stateless,
         invoke: (_dispatch, _getState, viewer, parameters) => {
             if (viewer) {
                 const selMethod = parameters.SelectionType || "INTERSECTS";
@@ -66,7 +66,7 @@ export function initMapGuideCommands() {
     registerCommand(DefaultCommands.SelectPolygon, {
         iconClass: SPRITE_SELECT_POLYGON,
         selected: () => false,
-        enabled: () => true,
+        enabled: state => !state.stateless,
         invoke: (_dispatch, _getState, viewer, parameters) => {
             if (viewer) {
                 const selMethod = parameters.SelectionType || "INTERSECTS";
@@ -79,7 +79,7 @@ export function initMapGuideCommands() {
     //Clear Selection
     registerCommand(DefaultCommands.ClearSelection, {
         iconClass: SPRITE_SELECT_CLEAR,
-        selected: () => false,
+        selected: state => !state.stateless,
         enabled: CommandConditions.hasSelection,
         invoke: (_dispatch, _getState, viewer) => {
             viewer?.mapguideSupport()?.clearSelection();
@@ -88,7 +88,7 @@ export function initMapGuideCommands() {
     //Zoom to Selection
     registerCommand(DefaultCommands.ZoomToSelection, {
         iconClass: SPRITE_ICON_ZOOMSELECT,
-        selected: () => false,
+        selected: state => !state.stateless,
         enabled: CommandConditions.hasSelection,
         invoke: (dispatch, getState, viewer) => {
             if (viewer) {
@@ -118,7 +118,7 @@ export function initMapGuideCommands() {
     registerCommand(DefaultCommands.Buffer, {
         iconClass: SPRITE_BUFFER,
         selected: () => false,
-        enabled: CommandConditions.hasSelection,
+        enabled: state => !state.stateless && CommandConditions.hasSelection(state),
         invoke: (dispatch, getState, _viewer, parameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
@@ -135,7 +135,7 @@ export function initMapGuideCommands() {
     registerCommand(DefaultCommands.SelectWithin, {
         iconClass: SPRITE_SELECT_FEATURES,
         selected: () => false,
-        enabled: (state, parameters) => !CommandConditions.disabledIfEmptySelection(state, parameters),
+        enabled: (state, parameters) => !state.stateless && !CommandConditions.disabledIfEmptySelection(state, parameters),
         invoke: (dispatch, getState, _viewer, parameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
@@ -152,7 +152,7 @@ export function initMapGuideCommands() {
     registerCommand(DefaultCommands.Redline, {
         iconClass: SPRITE_REDLINE,
         selected: () => false,
-        enabled: CommandConditions.isNotBusy,
+        enabled: state => !state.stateless && CommandConditions.isNotBusy(state),
         invoke: (dispatch, getState, viewer, parameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
@@ -208,7 +208,7 @@ export function initMapGuideCommands() {
     registerCommand(DefaultCommands.FeatureInfo, {
         iconClass: SPRITE_FEATURE_INFO,
         selected: () => false,
-        enabled: CommandConditions.isNotBusy,
+        enabled: state => !state.stateless && CommandConditions.isNotBusy(state),
         invoke: (dispatch, getState, _viewer, parameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
@@ -224,7 +224,7 @@ export function initMapGuideCommands() {
     registerCommand(DefaultCommands.Query, {
         iconClass: SPRITE_QUERY,
         selected: () => false,
-        enabled: CommandConditions.isNotBusy,
+        enabled: state => !state.stateless && CommandConditions.isNotBusy(state),
         invoke: (dispatch, getState, _viewer, parameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
@@ -240,7 +240,7 @@ export function initMapGuideCommands() {
     registerCommand(DefaultCommands.Theme, {
         iconClass: SPRITE_THEME,
         selected: () => false,
-        enabled: CommandConditions.isNotBusy,
+        enabled: state => !state.stateless && CommandConditions.isNotBusy(state),
         invoke: (dispatch, getState, _viewer, parameters) => {
             const state = getState();
             const map = getRuntimeMap(state);
@@ -256,7 +256,7 @@ export function initMapGuideCommands() {
     registerCommand(DefaultCommands.CenterSelection, {
         iconClass: SPRITE_SELECT_CENTRE,
         selected: () => false,
-        enabled: CommandConditions.hasSelection,
+        enabled: state => !state.stateless && CommandConditions.hasSelection(state),
         invoke: (dispatch, getState, viewer) => {
             const state = getState();
             const mapName = state.config.activeMapName;

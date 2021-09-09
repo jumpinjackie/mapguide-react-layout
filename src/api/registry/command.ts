@@ -144,6 +144,10 @@ export function mapToolbarReference(tb: any, state: IToolbarAppState, commandInv
  * @since 0.13
  */
 export interface IToolbarAppState {
+    /**
+     * @since 0.14
+     */
+    stateless: boolean;
     visibleAndSelectableWmsLayerCount: number;
     busyWorkerCount: number;
     hasSelection: boolean;
@@ -172,6 +176,7 @@ export function reduceAppToToolbarState(state: Readonly<IApplicationState>): Rea
         visibleWmsLayerCount = (state.mapState[state.config.activeMapName].layers ?? []).filter(l => l.visible && l.selectable && l.type == "WMS").length;
     }
     return {
+        stateless: state.config.viewer.isStateless,
         visibleAndSelectableWmsLayerCount: visibleWmsLayerCount,
         busyWorkerCount: state.viewer.busyCount,
         hasSelection,

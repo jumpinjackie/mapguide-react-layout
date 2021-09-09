@@ -301,12 +301,12 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         }
     }
     private queryFeatureTooltip(pixel: [number, number]) {
-        if (this._featureTooltip && this._featureTooltip.isEnabled()) {
+        if (!this._state.stateless && this._featureTooltip && this._featureTooltip.isEnabled()) {
             this._featureTooltip.raiseQueryFromPoint(pixel);
         }
     }
     private handleFeatureTooltipMouseMove(e: GenericEvent) {
-        if (this._featureTooltip && this._featureTooltip.isEnabled()) {
+        if (!this._state.stateless && this._featureTooltip && this._featureTooltip.isEnabled()) {
             this._featureTooltip.onMouseMove(e);
         }
     }

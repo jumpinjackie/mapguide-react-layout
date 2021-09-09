@@ -98,6 +98,8 @@ export interface IInitAsyncOptions extends IInitAppLayout {
     locale: string;
 }
 
+let _counter = 0;
+
 export function processLayerInMapGroup(map: MapConfiguration, warnings: string[], config: any, appDef: ApplicationDefinition, externalBaseLayers: IExternalBaseLayer[]) {
     switch (map.Type) {
         case "Google":
@@ -178,6 +180,20 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
                         layer: type
                     }
                 });
+            }
+            break;
+        case "UTFGrid":
+            {
+                externalBaseLayers.push({
+                    name: `UTFGridSource${_counter++}`,
+                    kind: "UTFGrid",
+                    options: {
+                        tileJSON: {
+                            scheme: "xyz",
+                            grids: Array.isArray(map.Extension.UrlTemplate) ? [...map.Extension.UrlTemplate] : [map.Extension.UrlTemplate]
+                        }
+                    }
+                })
             }
             break;
         case "XYZ":

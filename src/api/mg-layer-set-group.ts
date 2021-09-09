@@ -4,7 +4,7 @@ import olMapGuideSource from "ol/source/ImageMapGuide";
 import olImageLayer from "ol/layer/Image";
 import { assertNever } from '../utils/never';
 import { LayerSetGroupBase } from './layer-set-group-base';
-import { IMgLayerSetProps, IMgLayerSetCallback, MgInnerLayerSetFactory, mockMapGuideImageLoadFunction, blankImageLoadFunction } from './layer-set';
+import { IMgLayerSetProps, IMgLayerSetCallback, MgInnerLayerSetFactory, mockMapGuideImageLoadFunction, blankImageLoadFunction, MgLayerSetMode } from './layer-set';
 import { MapGuideMockMode } from '../components/mapguide-debug-context';
 export class MgLayerSetGroup extends LayerSetGroupBase {
     constructor(props: IMgLayerSetProps, callback: IMgLayerSetCallback) {
@@ -20,12 +20,8 @@ export class MgLayerSetGroup extends LayerSetGroupBase {
         //As of OL6, this unwanted behavior from shared layers extends to all layer types, so what this means is that
         //we have to create 2 sets of layers, one for the main map and one for the overview map. We CANNOT and DO NOT share
         //any of these layer instances between the main map and the overview map!
-        let isNotForOverviewMap = true;
-        if (props.stateless === true) {
-            isNotForOverviewMap = false;
-        }
-        this.mainSet = factory.create(props.locale, props.externalBaseLayers, isNotForOverviewMap);
-        this.overviewSet = factory.create(props.locale, props.externalBaseLayers, false);
+        this.mainSet = factory.create(props.locale, props.externalBaseLayers, props.stateless ? MgLayerSetMode.Stateless : MgLayerSetMode.Stateful);
+        this.overviewSet = factory.create(props.locale, props.externalBaseLayers, MgLayerSetMode.OverviewMap);
         const progressNotifySources = this.mainSet.getSourcesForProgressTracking();
         /*
         console.log("Draw Order:");

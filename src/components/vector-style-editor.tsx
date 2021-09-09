@@ -415,7 +415,19 @@ const FilterItem = (props: IFilterItemProps) => {
         }
     }, [localFilter]);
     React.useEffect(() => {
-        const olstyle = vectorStyleToStyleMap(featureStyle);
+        let fs = featureStyle;
+        // A default clustered style will have a dynamic expression for the radius, the legend preview isn't
+        // smart enough to know what this should be since we don't (and can't) pass an "example" feature to
+        // know what this value should be. So in the event we find a clustered point style, we'll replace
+        // the dynamic radius expression with a constant value
+        if (featureStyle?.point?.type == "Circle" && isEvaluatable(featureStyle.point.radius)) {
+            fs = JSON.parse(JSON.stringify(featureStyle));
+            if (fs.point?.type == "Circle") {
+                fs.point.radius = 5;
+            }
+        }
+        const olstyle = vectorStyleToStyleMap(fs);
+
         let pos: any;
         let ls: any;
         let pls: any;
@@ -428,6 +440,7 @@ const FilterItem = (props: IFilterItemProps) => {
             ls = olstyle.LineString;
             pls = olstyle.Polygon;
         }
+
         const cPoint = getLegendImage({
             typeGeom: "Point",
             style: pos

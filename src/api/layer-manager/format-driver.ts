@@ -93,7 +93,7 @@ export class FormatDriver implements IFormatDriver {
                 propNames.push(k);
             }
         }
-        const features = Promise.resolve(fs);
+        const features = async () => fs;
         return new ParsedFeatures(this.type, size, features, fs.length > 0, geomTypes, propNames, this.defaultProjection);
     }
 }

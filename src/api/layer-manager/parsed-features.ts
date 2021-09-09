@@ -63,7 +63,7 @@ export interface IParsedFeatures {
 export class ParsedFeatures implements IParsedFeatures {
     constructor(public type: string,
         public size: number,
-        private features: Promise<Feature<Geometry>[]>,
+        private features: () => Promise<Feature<Geometry>[]>,
         private hasFeaturesFlag: boolean,
         public geometryTypes: ("Point" | "LineString" | "Polygon")[],
         public propertyNames: string[],
@@ -71,7 +71,7 @@ export class ParsedFeatures implements IParsedFeatures {
     public hasFeatures(): boolean { return this.hasFeaturesFlag; }
     public name: string;
     public async addTo(source: olSourceVector<Geometry>, mapProjection: ProjectionLike, dataProjection?: ProjectionLike) {
-        const features = await this.features;
+        const features = await this.features();
         if (dataProjection) {
             for (const f of features) {
                 const g = f.getGeometry();
@@ -85,7 +85,7 @@ export class ParsedFeatures implements IParsedFeatures {
     }
     public async getDistinctValues(propertyName: string): Promise<string[]> {
         const values = [] as string[];
-        const features = await this.features;
+        const features = await this.features();
         for (const f of features) {
             const v = f.get(propertyName);
             if (!strIsNullOrEmpty(v) && !values.includes(v))

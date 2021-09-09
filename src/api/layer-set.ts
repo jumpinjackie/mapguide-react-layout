@@ -545,6 +545,11 @@ export class MgInnerLayerSetFactory {
 
 export interface IMgLayerSetProps {
     map: RuntimeMap;
+    /**
+     * Use stateless GETMAP requests for map rendering
+     * @since 0.14
+     */
+    stateless?: boolean;
     imageFormat: ImageFormat;
     selectionImageFormat?: ImageFormat;
     selectionColor?: string;

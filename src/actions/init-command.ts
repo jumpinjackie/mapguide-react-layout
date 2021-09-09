@@ -245,6 +245,7 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
         let hasTaskBar = false;
         const { locale, featureTooltipsEnabled } = options;
         const config: any = {};
+        config.isStateless = (appDef.Extension.Stateless == "true");
         const tbConf: Dictionary<ToolbarConf> = {};
         const widgetsByKey: Dictionary<Widget> = {};
         //Register any InvokeURL and Search commands. Also set capabilities along the way

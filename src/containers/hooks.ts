@@ -170,6 +170,10 @@ export function useIsContextMenuOpen() {
     })
 }
 
+export function useViewerIsStateless() {
+    return useAppState<boolean>(state => state.config.viewer.isStateless);
+}
+
 export function useViewerImageFormat() {
     return useAppState<ImageFormat>(state => state.config.viewer.imageFormat);
 }

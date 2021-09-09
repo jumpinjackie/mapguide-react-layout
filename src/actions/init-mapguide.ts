@@ -386,6 +386,7 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
 
             }
         }
+
         return payload;
     }
 }

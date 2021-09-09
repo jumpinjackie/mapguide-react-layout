@@ -1906,6 +1906,12 @@ export interface IConfigurationReducerState {
      */
     viewer: {
         /**
+         * Whether this viewer will use stateless MapGuide rendering operations
+         * 
+         * @since 0.14
+         */
+        isStateless: boolean;
+        /**
          * The current image format
          *
          * @type {ImageFormat}

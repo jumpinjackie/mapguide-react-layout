@@ -29,7 +29,7 @@ import { ensureParameters } from '../../utils/url';
 import { ActionType } from '../../constants/actions';
 import { buildSelectionXml, getActiveSelectedFeatureXml } from '../../api/builders/deArrayify';
 import { MapGuideMockMode } from '../mapguide-debug-context';
-import { useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useViewerPointSelectionBuffer, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSelectionColor, useViewerSelectionImageFormat, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useActiveMapLayers, useActiveMapInitialExternalLayers } from '../../containers/hooks';
+import { useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useViewerPointSelectionBuffer, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSelectionColor, useViewerSelectionImageFormat, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useActiveMapLayers, useActiveMapInitialExternalLayers, useViewerIsStateless } from '../../containers/hooks';
 import { useActiveMapState, useActiveMapSessionId, useActiveMapSelectableLayerNames, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapHideLayers, useActiveMapActiveSelectedFeature } from '../../containers/hooks-mapguide';
 import { useReduxDispatch } from './context';
 
@@ -52,6 +52,7 @@ function useMapGuideViewerState() {
     const initialExternalLayers = useActiveMapInitialExternalLayers();
     const dispatch = useReduxDispatch();
     // ============== MapGuide-specific ================== //
+    const stateless = useViewerIsStateless();
     const imageFormat = useViewerImageFormat();
     const agentUri = useConfiguredAgentUri();
     const agentKind = useConfiguredAgentKind();
@@ -87,6 +88,7 @@ function useMapGuideViewerState() {
     }
 
     const nextState: IMapGuideProviderState & IMapProviderStateExtras = {
+        stateless,
         activeTool,
         view,
         viewRotation,
@@ -126,6 +128,10 @@ function useMapGuideViewerState() {
 }
 
 export interface IMapGuideProviderState extends IMapProviderState {
+    /**
+     * @since 0.14
+     */
+    stateless: boolean;
     imageFormat: ImageFormat;
     agentUri: string | undefined;
     agentKind: ClientKind;
@@ -205,6 +211,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
 
     protected getInitialProviderState(): Omit<IMapGuideProviderState, keyof IMapProviderState> {
         return {
+            stateless: false,
             imageFormat: "PNG8",
             agentUri: undefined,
             agentKind: "mapagent",

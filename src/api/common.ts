@@ -2367,7 +2367,9 @@ export function getCurrentView(state: Readonly<IApplicationState>): IMapView | u
  */
 export function getExternalBaseLayers(state: Readonly<IApplicationState>): IExternalBaseLayer[] | undefined {
     if (state.config.activeMapName) {
-        return state.mapState[state.config.activeMapName].externalBaseLayers;
+        // UTFGrid may exist as a "base layer", but it has no visual representation so it is not a switchable candidate, so
+        // exclude it from the list if present
+        return state.mapState[state.config.activeMapName].externalBaseLayers.filter(ebl => ebl.kind != "UTFGrid");
     }
     return undefined;
 }

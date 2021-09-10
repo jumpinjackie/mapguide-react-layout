@@ -170,6 +170,11 @@ export function useIsContextMenuOpen() {
     })
 }
 
+/**
+ * Gets whether the viewer is in stateless mode
+ * @returns true if the viewer is in stateless mode
+ * @since 0.14
+ */
 export function useViewerIsStateless() {
     return useAppState<boolean>(state => state.config.viewer.isStateless);
 }

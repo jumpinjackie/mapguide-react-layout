@@ -108,7 +108,7 @@ export function getLegendImage(item: LegendItemOptions, canvas: HTMLCanvasElemen
             if (!style) {
                 style = typeof (item.style) === 'function' ? item.style(feature) : item.style || [];
             }
-            typeGeom = feature.getGeometry().getType();
+            typeGeom = feature.getGeometry()?.getType();
         } else {
             style = [];
         }

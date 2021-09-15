@@ -29,34 +29,36 @@ export class UTFGridTrackingTooltip {
         if (this.isContextMenuOpen())
             return;
         //this.tooltip.setPosition(e.coordinate);
-        var viewResolution = /** @type {number} */ (this.map.getView().getResolution());
-        this.gridSource.forDataAtCoordinateAndResolution(e.coordinate, viewResolution, (data) => {
-            // If you want to use the template from the TileJSON,
-            //  load the mustache.js library separately and call
-            //
-            //mapElement.style.cursor = data ? 'pointer' : '';
-            if (data) {
-                /*
-                var html = "<table>";
-                for (var key in data) {
-                    html += "<tr><td>" + key + "</td><td>" + data[key] + "</td></tr>";
+        const viewResolution = /** @type {number} */ (this.map.getView().getResolution());
+        if (viewResolution) {
+            this.gridSource.forDataAtCoordinateAndResolution(e.coordinate, viewResolution, (data) => {
+                // If you want to use the template from the TileJSON,
+                //  load the mustache.js library separately and call
+                //
+                //mapElement.style.cursor = data ? 'pointer' : '';
+                if (data) {
+                    /*
+                    var html = "<table>";
+                    for (var key in data) {
+                        html += "<tr><td>" + key + "</td><td>" + data[key] + "</td></tr>";
+                    }
+                    html += "</table>";
+                    */
+                    var html = "";
+                    if (data.MG_TOOLTIP)
+                        html += data.MG_TOOLTIP.replace(/(\\n)+/g, '<br />');
+                    if (data.MG_URL) {
+                        html += "<br/><br/>";
+                        html += "<strong>CTRL + Click for more information</strong>";
+                    }
+                    this.tooltipElement.innerHTML = html
                 }
-                html += "</table>";
-                */
-                var html = "";
-                if (data.MG_TOOLTIP)
-                    html += data.MG_TOOLTIP.replace(/(\\n)+/g, '<br />');
-                if (data.MG_URL) {
-                    html += "<br/><br/>";
-                    html += "<strong>CTRL + Click for more information</strong>";
-                }
-                this.tooltipElement.innerHTML = html
-            }
-            this.tooltip.setPosition(data ? e.coordinate : undefined);
-        });
+                this.tooltip.setPosition(data ? e.coordinate : undefined);
+            });
+        }
     }
     private onMouseOut() {
-        
+
     }
     public setText(prompt: string) {
         this.text = prompt;

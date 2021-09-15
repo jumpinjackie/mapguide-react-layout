@@ -933,8 +933,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._selectTooltip = undefined;
         this._mouseTooltip?.dispose()
         this._mouseTooltip = undefined;
-        this._map?.setTarget(undefined as any); //HACK: Workaround typing bug
-        this._ovMap?.setMap(undefined as any);
+        this._map?.setTarget(undefined);
+        this._ovMap?.setMap(undefined as any); //HACK: Typings workaround
         this._map = undefined;
         this._ovMap = undefined;
         debug(`Map provider context detached from component and reset to initial state`);

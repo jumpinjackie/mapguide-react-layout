@@ -86,6 +86,11 @@ Starting with the `0.14` release, the viewer supports a new "stateless" mode. In
 
 There are several caveats to using stateless mode, which are detailed below:
 
+ * Stateless mode is only supported in Application Definition resources. Stateless mode will never activate from a Web Layout.
+ * You must add extra metadata to the `<Extension>` element of the `<Map>` element in the Application Definition 
+   * `Meta_MentorCode`: The CS-Map coordinate system code (eg. `<Meta_MentorCode>WGS84.PseudoMercator</Meta_MentorCode>`)
+   * `Meta_EpsgCode`: The EPSG code of the coordinate system (eg. `<Meta_EpsgCode>3857</Meta_EpsgCode>`)
+   * `Meta_MetersPerUnit`: The meters-per-unit value of the coordinate system (eg. `<Meta_MetersPerUnit>1</Meta_MetersPerUnit>`)
  * Unsupported commands are logged as console warnings on viewer startup
  * There is no session id created, so any viewer API to get this session id will return an empty string
  * MapGuide selection is not supported due to its inherently stateful nature always requiring MAPNAME/SESSION parameters to work

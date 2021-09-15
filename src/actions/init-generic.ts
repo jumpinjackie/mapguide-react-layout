@@ -1,7 +1,7 @@
 import { ViewerInitCommand } from './init-command';
 import { Client } from '../api/client';
 import { ReduxDispatch, Dictionary, IExternalBaseLayer, IMapView } from '../api/common';
-import { IInitAsyncOptions, processLayerInMapGroup } from './init';
+import { applyInitialBaseLayerVisibility, IInitAsyncOptions, processLayerInMapGroup } from './init';
 import { IInitAppActionPayload, IGenericSubjectMapLayer, MapInfo, IInitialExternalLayer } from './defs';
 import { ApplicationDefinition, MapConfiguration } from '../api/contracts/fusion';
 import { MgError } from '../api/error';
@@ -84,10 +84,7 @@ export class GenericViewerInitCommand extends ViewerInitCommand<IGenericSubjectM
                     }
                 }
 
-                //First come, first served
-                if (externalBaseLayers.length > 0) {
-                    externalBaseLayers[0].visible = true;
-                }
+                applyInitialBaseLayerVisibility(externalBaseLayers);
 
                 //Setup initial view
                 let initialView: IMapView | undefined;

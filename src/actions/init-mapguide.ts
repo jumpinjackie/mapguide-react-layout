@@ -5,7 +5,7 @@ import { MapInfo, IInitAppActionPayload, IRestoredSelectionSets } from './defs';
 import { tr, DEFAULT_LOCALE } from '../api/i18n';
 import { strEndsWith, strIsNullOrEmpty } from '../utils/string';
 import { Client } from '../api/client';
-import { IInitAsyncOptions, processLayerInMapGroup } from './init';
+import { applyInitialBaseLayerVisibility, IInitAsyncOptions, processLayerInMapGroup } from './init';
 import { RuntimeMapFeatureFlags } from '../api/request-builder';
 import { info, debug } from '../utils/logger';
 import { MgError } from '../api/error';
@@ -429,10 +429,8 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
                         processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayers);
                     }
                 }
-                //First come, first served
-                if (externalBaseLayers.length > 0) {
-                    externalBaseLayers[0].visible = true;
-                }
+                
+                applyInitialBaseLayerVisibility(externalBaseLayers);
 
                 //Setup initial view
                 let initialView: IMapView | undefined;

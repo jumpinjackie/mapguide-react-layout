@@ -16,6 +16,21 @@ import { getViewer } from '../api/runtime';
 import { tr } from '../api/i18n';
 import { IViewerInitCommand } from './init-command';
 
+export function applyInitialBaseLayerVisibility(externalBaseLayers: IExternalBaseLayer[]) {
+    if (externalBaseLayers.length > 0) {
+        // First visual base layer, first served
+        const firstBase = externalBaseLayers.find(bl => bl.kind != "UTFGrid");
+        if (firstBase) {
+            firstBase.visible = true;
+        }
+        // Make all non-visual base layers (ie. UTFGrid) visible
+        const nonVisuals = externalBaseLayers.filter(bl => bl.kind == "UTFGrid");
+        for (const nv of nonVisuals) {
+            nv.visible = true;
+        }
+    }
+}
+
 function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: IInitAsyncOptions): void {
     if (error.stack) {
         dispatch({

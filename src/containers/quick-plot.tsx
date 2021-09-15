@@ -188,7 +188,7 @@ export const QuickPlotContainer = () => {
     const mapNames = useAvailableMaps()?.map(m => m.value);
     const map = useActiveMapState();
     const view = useActiveMapView();
-    const externalBaseLayers = useActiveMapExternalBaseLayers();
+    const externalBaseLayers = useActiveMapExternalBaseLayers(false);
     const dispatch = useReduxDispatch();
     const setViewRotationAction = (rotation: number) => dispatch(setViewRotation(rotation));
     const setViewRotationEnabledAction = (enabled: boolean) => dispatch(setViewRotationEnabled(enabled));

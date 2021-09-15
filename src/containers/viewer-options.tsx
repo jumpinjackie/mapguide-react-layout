@@ -17,7 +17,7 @@ export interface IViewerOptionsProps {
 }
 
 export const ViewerOptions = () => {
-    const externalBaseLayers = useActiveMapExternalBaseLayers();
+    const externalBaseLayers = useActiveMapExternalBaseLayers(false);
     const mapName = useActiveMapName();
     const layerTransparency = useActiveMapLayerTransparency();
     const featureTooltipsEnabled = useViewerFeatureTooltipsEnabled();

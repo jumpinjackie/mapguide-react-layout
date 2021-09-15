@@ -25,7 +25,7 @@ export const LegendContainer = (props: ILegendContainerProps) => {
     const hideLayers=  useActiveMapHideLayers();
     const expandedGroups = useActiveMapExpandedGroups();
     const selectableLayers = useActiveMapSelectableLayers();
-    const externalBaseLayers = useActiveMapExternalBaseLayers();
+    const externalBaseLayers = useActiveMapExternalBaseLayers(false);
     const stateless = useViewerIsStateless();
     const setBaseLayerAction = (mapName: string, layerName: string) => dispatch(setBaseLayer(mapName, layerName));
     const setGroupVisibilityAction = (mapName: string, options: { id: string, value: boolean }) => dispatch(setGroupVisibility(mapName, options));

@@ -396,7 +396,10 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                 if (subState) {
                     const layers: IExternalBaseLayer[] = (subState.externalBaseLayers || []);
                     const baseLayers = layers.map(layer => {
-                        layer.visible = false;
+                        // Non-visual base layers like UTFGrid will always stay visible
+                        if (layer.kind != "UTFGrid") {
+                            layer.visible = false;
+                        }
                         if (layer.name == payload.layerName) {
                             layer.visible = true;
                         }

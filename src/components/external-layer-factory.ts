@@ -6,6 +6,7 @@ import XYZ from "ol/source/XYZ";
 import OSM from "ol/source/OSM";
 import Stamen from "ol/source/Stamen";
 import BingMaps from "ol/source/BingMaps";
+import UTFGrid from "ol/source/UTFGrid";
 import TileLayer from 'ol/layer/Tile';
 import TileWMS from 'ol/source/TileWMS';
 import LayerBase from "ol/layer/Base";
@@ -230,7 +231,6 @@ interface OLSourceCtor {
  */
 export function createExternalSource(layer: IExternalBaseLayer): olSource {
     let sourceCtor: OLSourceCtor;
-
     switch (layer.kind) {
         case "XYZ":
             sourceCtor = XYZ;
@@ -243,6 +243,9 @@ export function createExternalSource(layer: IExternalBaseLayer): olSource {
             break;
         case "BingMaps":
             sourceCtor = BingMaps;
+            break;
+        case "UTFGrid":
+            sourceCtor = UTFGrid;
             break;
         default:
             throw new MgError(`Unknown external base layer provider: ${layer.kind}`);

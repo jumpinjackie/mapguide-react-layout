@@ -5,17 +5,25 @@ import { IFlyoutSpec, ISeparatorSpec, IUnknownCommandSpec, ICommandSpec, convert
 import { makeUnique } from '../utils/array';
 import { UIWidget, ContainerItem, Widget, ApplicationDefinition } from '../api/contracts/fusion';
 import { assertNever } from '../utils/never';
-import { strIsNullOrEmpty } from '../utils/string';
+import { strEndsWith, strIsNullOrEmpty, strStartsWith } from '../utils/string';
 import { SPRITE_INVOKE_URL, SPRITE_INVOKE_SCRIPT } from '../constants/assets';
 import { UIItem, CommandDef, isCommandItem, isTargetedCommand, isBasicCommand, isSeparatorItem, isFlyoutItem } from '../api/contracts/weblayout';
 import { warn, info } from '../utils/logger';
-import { DefaultCommands, registerCommand } from '../api/registry/command';
+import { DefaultCommands, isSupportedCommandInStatelessMode, registerCommand } from '../api/registry/command';
 import { tr, registerStringBundle, DEFAULT_LOCALE } from '../api/i18n';
 import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU } from "../constants";
 import * as shortid from 'shortid';
 import { Client } from '../api/client';
 import { ActionType } from '../constants/actions';
 import { ensureParameters } from '../utils/url';
+
+function isCommandSpec(cmd: ICommandSpec | IUnknownCommandSpec): cmd is ICommandSpec {
+    return !strIsNullOrEmpty((cmd as any).command);
+}
+
+export function isStateless(appDef: ApplicationDefinition) {
+    return (appDef.Extension.Stateless == "true");
+}
 
 export interface IViewerInitCommand {
     attachClient(client: Client): void;
@@ -60,14 +68,18 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
     protected isUIWidget(widget: any): widget is UIWidget {
         return widget.WidgetType === "UiWidgetType";
     }
-    protected convertFlexLayoutUIItems(items: ContainerItem[], widgetsByKey: Dictionary<Widget>, locale: string, noToolbarLabels = false): (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[] {
+    protected convertFlexLayoutUIItems(isStateless: boolean, items: ContainerItem[], widgetsByKey: Dictionary<Widget>, locale: string, noToolbarLabels = false): (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[] {
         const converted = items.map(item => {
             switch (item.Function) {
                 case "Widget":
                     {
                         const widget = widgetsByKey[item.Widget];
                         if (widget && this.isUIWidget(widget)) {
-                            return convertWidget(widget, locale, noToolbarLabels);
+                            const cmd = convertWidget(widget, locale, noToolbarLabels);
+                            if (isStateless && isCommandSpec(cmd) && !isSupportedCommandInStatelessMode(cmd.command)) {
+                                console.warn(`The widget (${widget.Name}) references a command (${cmd.command}) that is not supported in stateless mode. This widget will always be disabled`);
+                            }
+                            return cmd;
                         }
                     }
                 case "Separator":
@@ -78,7 +90,7 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
                         tooltip: item.Tooltip,
                         icon: item.ImageUrl,
                         spriteClass: item.ImageClass,
-                        children: this.convertFlexLayoutUIItems(item.Item, widgetsByKey, locale)
+                        children: this.convertFlexLayoutUIItems(isStateless, item.Item, widgetsByKey, locale)
                     } as IFlyoutSpec;
                 default:
                     assertNever(item);
@@ -245,6 +257,7 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
         let hasTaskBar = false;
         const { locale, featureTooltipsEnabled } = options;
         const config: any = {};
+        config.isStateless = isStateless(appDef);
         const tbConf: Dictionary<ToolbarConf> = {};
         const widgetsByKey: Dictionary<Widget> = {};
         //Register any InvokeURL and Search commands. Also set capabilities along the way
@@ -282,6 +295,9 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
                             target: this.convertToCommandTarget(cmd.Target),
                             targetFrame: cmd.Target
                         });
+                        if (config.isStateless) {
+                            console.warn(`The search command (${widget.Name}) is not supported in stateless mode. This widget will always be disabled`);
+                        }
                         break;
                     case "InvokeURL":
                         registerCommand(widget.Name, {
@@ -293,7 +309,10 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
                                 return { name: p.Key, value: p.Value };
                             }),
                             title: this.isUIWidget(widget) ? widget.Label : undefined
-                        });
+                        });/*
+                        if (config.isStateless && !strStartsWith(cmd.Url, "component://")) {
+                            console.warn(`The InvokeURL command (${widget.Name}) is not supported in stateless mode. This widget will always be disabled`);
+                        }*/
                         break;
                 }
                 widgetsByKey[widget.Name] = widget;
@@ -303,7 +322,7 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
         for (const widgetSet of appDef.WidgetSet) {
             for (const cont of widgetSet.Container) {
                 let tbName = cont.Name;
-                tbConf[tbName] = { items: this.convertFlexLayoutUIItems(cont.Item, widgetsByKey, locale) };
+                tbConf[tbName] = { items: this.convertFlexLayoutUIItems(isStateless(appDef), cont.Item, widgetsByKey, locale) };
             }
             for (const w of widgetSet.Widget) {
                 if (w.Type == "CursorPosition") {

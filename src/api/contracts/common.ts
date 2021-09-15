@@ -19,3 +19,10 @@ export type Base64Content = string;
 export interface ResourceBase {
     
 }
+
+/**
+ * @since 0.14
+ */
+export interface SiteVersion {
+    Version: string;
+}

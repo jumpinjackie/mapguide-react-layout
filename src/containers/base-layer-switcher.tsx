@@ -11,7 +11,7 @@ export interface IBaseLayerSwitcherContainerProps {
 export const BaseLayerSwitcherContainer = () => {
     const mapName = useActiveMapName();
     const locale = useViewerLocale();
-    const externalBaseLayers = useActiveMapExternalBaseLayers();
+    const externalBaseLayers = useActiveMapExternalBaseLayers(false);
     const dispatch = useReduxDispatch();
     const setBaseLayerAction = (mapName: string, layerName: string) => dispatch(setBaseLayer(mapName, layerName));
     const onBaseLayerChanged = (layerName: string) => {

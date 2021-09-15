@@ -38,7 +38,7 @@
             name: "base-layers",
             appStateSelector: function (state) {
                 if (state.config.activeMapName) {
-                    return state.mapState[state.config.activeMapName].externalBaseLayers;
+                    return state.mapState[state.config.activeMapName].externalBaseLayers.filter(function (bl) { return bl.kind != "UTFGrid" });
                 }
                 return undefined;
             },

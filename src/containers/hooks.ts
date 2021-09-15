@@ -73,8 +73,15 @@ export function useViewerSizeUnits() {
     return useAppState<UnitOfMeasure>(state => state.config.viewSizeUnits);
 }
 
-export function useActiveMapExternalBaseLayers() {
-    return useAppState<IExternalBaseLayer[] | undefined>(state => getExternalBaseLayers(state));
+/**
+ * Gets the current set of available external base layers
+ * 
+ * @param includeNonVisual Include "non-visual" base layers like UTFGrid tile sets
+ * @returns The current set of available external base layers
+ * @since 0.14 New required includeNonVisual parameter
+ */
+export function useActiveMapExternalBaseLayers(includeNonVisual: boolean) {
+    return useAppState<IExternalBaseLayer[] | undefined>(state => getExternalBaseLayers(state, includeNonVisual));
 }
 
 export function useCurrentMouseCoordinates() {
@@ -168,6 +175,15 @@ export function useIsContextMenuOpen() {
         }
         return isContextMenuOpen;
     })
+}
+
+/**
+ * Gets whether the viewer is in stateless mode
+ * @returns true if the viewer is in stateless mode
+ * @since 0.14
+ */
+export function useViewerIsStateless() {
+    return useAppState<boolean>(state => state.config.viewer.isStateless);
 }
 
 export function useViewerImageFormat() {

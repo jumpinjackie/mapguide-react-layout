@@ -27,6 +27,7 @@ export const CONFIG_INITIAL_STATE: IConfigurationReducerState = {
         decimals: 6
     } as ICoordinateConfiguration,
     viewer: {
+        isStateless: false,
         imageFormat: "PNG",
         selectionImageFormat: "PNG8",
         selectionColor: "0x0000FFAA", //Blue
@@ -58,7 +59,7 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction
             }
         case ActionType.INIT_APP:
             {
-                const payload: any = action.payload || {};
+                const payload = action.payload ?? {};
                 const maps = payload.maps;
                 const availableMaps = [];
                 let am = payload.activeMapName;
@@ -80,6 +81,9 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction
                 if (payload.config != null && Object.keys(payload.config).length > 0) {
                     const coordConfig = { ...state.coordinates };
                     const viewerConfig = { ...state.viewer };
+                    if (payload.config.isStateless != null) {
+                        viewerConfig.isStateless = payload.config.isStateless;
+                    }
                     if (payload.config.imageFormat != null) {
                         viewerConfig.imageFormat = payload.config.imageFormat;
                     }

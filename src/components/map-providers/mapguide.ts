@@ -22,16 +22,20 @@ import { debug, warn } from '../../utils/logger';
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../../utils/site-version';
 import { BLANK_GIF_DATA_URI } from '../../constants';
 import { isSessionExpiredError } from '../../api/error';
-import { BaseMapProviderContext, IMapProviderState, IViewerComponent, IMapProviderStateExtras } from './base';
+import { BaseMapProviderContext, IMapProviderState, IViewerComponent, IMapProviderStateExtras, recursiveFindLayer } from './base';
 import { assertIsDefined } from '../../utils/assert';
 import { STR_EMPTY } from '../../utils/string';
 import { ensureParameters } from '../../utils/url';
 import { ActionType } from '../../constants/actions';
 import { buildSelectionXml, getActiveSelectedFeatureXml } from '../../api/builders/deArrayify';
 import { MapGuideMockMode } from '../mapguide-debug-context';
-import { useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useViewerPointSelectionBuffer, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSelectionColor, useViewerSelectionImageFormat, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useActiveMapLayers, useActiveMapInitialExternalLayers } from '../../containers/hooks';
+import { useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useViewerPointSelectionBuffer, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSelectionColor, useViewerSelectionImageFormat, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useActiveMapLayers, useActiveMapInitialExternalLayers, useViewerIsStateless } from '../../containers/hooks';
 import { useActiveMapState, useActiveMapSessionId, useActiveMapSelectableLayerNames, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapHideLayers, useActiveMapActiveSelectedFeature } from '../../containers/hooks-mapguide';
 import { useReduxDispatch } from './context';
+import { UTFGridTrackingTooltip } from '../tooltips/utfgrid';
+import olTileLayer from "ol/layer/Tile";
+import olUtfGridSource from "ol/source/UTFGrid";
+import TileSource from 'ol/source/Tile';
 
 export function isMapGuideProviderState(arg: any): arg is IMapGuideProviderState {
     return typeof (arg.agentUri) == 'string'
@@ -45,13 +49,14 @@ function useMapGuideViewerState() {
     const viewRotationEnabled = useViewerViewRotationEnabled();
     const mapName = useActiveMapName();
     const locale = useViewerLocale();
-    const externalBaseLayers = useActiveMapExternalBaseLayers();
+    const externalBaseLayers = useActiveMapExternalBaseLayers(true);
     const cancelDigitizationKey = useConfiguredCancelDigitizationKey();
     const undoLastPointKey = useConfiguredUndoLastPointKey();
     const layers = useActiveMapLayers();
     const initialExternalLayers = useActiveMapInitialExternalLayers();
     const dispatch = useReduxDispatch();
     // ============== MapGuide-specific ================== //
+    const stateless = useViewerIsStateless();
     const imageFormat = useViewerImageFormat();
     const agentUri = useConfiguredAgentUri();
     const agentKind = useConfiguredAgentKind();
@@ -82,11 +87,18 @@ function useMapGuideViewerState() {
     }
 
     let isReady = false;
-    if (agentUri && map && sessionId && layerTransparency) {
-        isReady = true;
+    if (agentUri && map && layerTransparency) {
+        if (!stateless) {
+            if (sessionId) {
+                isReady = true;
+            }
+        } else {
+            isReady = true;
+        }
     }
 
     const nextState: IMapGuideProviderState & IMapProviderStateExtras = {
+        stateless,
         activeTool,
         view,
         viewRotation,
@@ -126,6 +138,10 @@ function useMapGuideViewerState() {
 }
 
 export interface IMapGuideProviderState extends IMapProviderState {
+    /**
+     * @since 0.14
+     */
+    stateless: boolean;
     imageFormat: ImageFormat;
     agentUri: string | undefined;
     agentKind: ClientKind;
@@ -166,6 +182,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
     private _client: Client;
     private _keepAlive: SessionKeepAlive | undefined;
     private _featureTooltip: FeatureQueryTooltip | undefined;
+    private _utfGridTooltip: UTFGridTrackingTooltip | undefined;
     private _wktFormat: WKTFormat;
     // ============================================================= //
 
@@ -205,6 +222,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
 
     protected getInitialProviderState(): Omit<IMapGuideProviderState, keyof IMapProviderState> {
         return {
+            stateless: false,
             imageFormat: "PNG8",
             agentUri: undefined,
             agentKind: "mapagent",
@@ -288,18 +306,21 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             if (!this._state.manualFeatureTooltips) {
                 this.handleFeatureTooltipMouseMove(e);
             }
+            if (this._utfGridTooltip) {
+                this._utfGridTooltip.onMouseMove(e);
+            }
             if (this._state.mapName) {
                 this._comp.onDispatch?.(setMouseCoordinates(this._state.mapName, e.coordinate));
             }
         }
     }
     private queryFeatureTooltip(pixel: [number, number]) {
-        if (this._featureTooltip && this._featureTooltip.isEnabled()) {
+        if (!this._state.stateless && this._featureTooltip && this._featureTooltip.isEnabled()) {
             this._featureTooltip.raiseQueryFromPoint(pixel);
         }
     }
     private handleFeatureTooltipMouseMove(e: GenericEvent) {
-        if (this._featureTooltip && this._featureTooltip.isEnabled()) {
+        if (!this._state.stateless && this._featureTooltip && this._featureTooltip.isEnabled()) {
             this._featureTooltip.onMouseMove(e);
         }
     }
@@ -488,6 +509,22 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
     public attachToComponent(el: HTMLElement, comp: IViewerComponent): void {
         super.attachToComponent(el, comp);
         this._keepAlive = new SessionKeepAlive(() => this._state.sessionId!, this._client, this.onSessionExpired.bind(this));
+
+        let bFoundUtfGrid = false;
+        const utfGridLayer = recursiveFindLayer(this._map!.getLayers(), oll => {
+            if (oll instanceof olTileLayer) {
+                const source = oll.getSource();
+                if (source instanceof olUtfGridSource) {
+                    return true;
+                }
+            }
+            return false;
+        });
+        if (utfGridLayer) {
+            const source = (utfGridLayer as olTileLayer<TileSource>).getSource() as olUtfGridSource;
+            this._utfGridTooltip = new UTFGridTrackingTooltip(this._map!, source, this._comp?.isContextMenuOpen ?? (() => false));
+        }
+
         this._featureTooltip = new FeatureQueryTooltip(this._map!, {
             incrementBusyWorker: () => this.incrementBusyWorker(),
             decrementBusyWorker: () => this.decrementBusyWorker(),

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Legend } from "../components/legend";
 import { tr } from "../api/i18n";
-import { useActiveMapView, useActiveMapExternalBaseLayers, useActiveMapName, useViewerLocale } from './hooks';
+import { useActiveMapView, useActiveMapExternalBaseLayers, useActiveMapName, useViewerLocale, useViewerIsStateless } from './hooks';
 import { setBaseLayer } from '../actions/map';
 import { setGroupVisibility, setLayerVisibility, setLayerSelectable, setGroupExpanded } from '../actions/legend';
 import { useActiveMapState, useActiveMapShowGroups, useActiveMapShowLayers, useActiveMapHideGroups, useActiveMapHideLayers, useActiveMapExpandedGroups, useActiveMapSelectableLayers } from './hooks-mapguide';
@@ -25,7 +25,8 @@ export const LegendContainer = (props: ILegendContainerProps) => {
     const hideLayers=  useActiveMapHideLayers();
     const expandedGroups = useActiveMapExpandedGroups();
     const selectableLayers = useActiveMapSelectableLayers();
-    const externalBaseLayers = useActiveMapExternalBaseLayers();
+    const externalBaseLayers = useActiveMapExternalBaseLayers(false);
+    const stateless = useViewerIsStateless();
     const setBaseLayerAction = (mapName: string, layerName: string) => dispatch(setBaseLayer(mapName, layerName));
     const setGroupVisibilityAction = (mapName: string, options: { id: string, value: boolean }) => dispatch(setGroupVisibility(mapName, options));
     const setLayerVisibilityAction = (mapName: string, options: { id: string, value: boolean }) => dispatch(setLayerVisibility(mapName, options));
@@ -63,6 +64,7 @@ export const LegendContainer = (props: ILegendContainerProps) => {
         let scale = view.scale;
         if (scale) {
             return <Legend map={map}
+                stateless={stateless}
                 maxHeight={maxHeight}
                 currentScale={scale}
                 showLayers={showLayers}

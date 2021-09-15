@@ -13,12 +13,15 @@
  * These functions help "clean" those responses to be of the form we expect (and prefer)
  */
 import { MgError } from "../error";
-import { ActiveSelectedFeature } from "../common";
+import { ActiveSelectedFeature, getExternalBaseLayers } from "../common";
 import { RuleInfo, FeatureStyleInfo, ScaleRangeInfo, FeatureSourceInfo, MapLayer, MapGroup, CoordinateSystemType, EnvCoordinate, Envelope, RuntimeMap } from '../contracts/runtime-map';
 import { FeatureSetClass, FeatureSetLayer, FeatureSet, SelectionImage, FeatureProperty, SelectedFeature, LayerPropertyMetadata, LayerMetadata, SelectedLayer, SelectedFeatureSet, QueryMapFeaturesResponse } from '../contracts/query';
 import { WebLayoutMap, WebLayoutControl, WebLayoutInfoPane, MapView, TaskButton, WebLayoutTaskBar, UIItem, WebLayoutTaskPane, CommandUIItem, FlyoutUIItem, ResultColumnSet, ResultColumn, LayerSet, ParameterPair, CommandDef, BasicCommandDef, InvokeScriptCommandDef, InvokeURLCommandDef, SearchCommandDef, WebLayoutCommandSet, WebLayout, WebLayoutToolbar, WebLayoutContextMenu, WebLayoutStatusBar, WebLayoutZoomControl } from '../contracts/weblayout';
 import { MapSetGroup, MapInitialView, MapConfiguration, MapSet, ContainerItem, FlyoutItem, WidgetItem, ContainerDefinition, Widget, UIWidget, MapWidget, WidgetSet, ApplicationDefinition } from '../contracts/fusion';
 import { MDF_INFINITY } from '../../constants';
+import { MapDefinition, MapLayerGroup, MapLayer as MdfLayer, TileSetSource } from "../contracts/map-definition";
+import { BaseMapLayer, BaseMapLayerGroup, TileSetDefinition, TileStoreParameters } from "../contracts/tile-set-definition";
+import { SiteVersion } from '../contracts/common';
 
 type ElementType = "string" | "boolean" | "int" | "float";
 
@@ -875,6 +878,134 @@ function deArrayifyFlexibleLayout(json: any): ApplicationDefinition {
     return resp;
 }
 
+function deArrayifyMapDefinitionGroups(json: any): MapLayerGroup[] {
+    const groups = [] as MapLayerGroup[];
+    const getter = buildPropertyGetter<MapLayerGroup>();
+    for (const g of json) {
+        groups.push({
+            Name: getter(g, "Name"),
+            ExpandInLegend: getter(g, "ExpandInLegend", "boolean"),
+            ShowInLegend: getter(g, "ShowInLegend", "boolean"),
+            Visible: getter(g, "Visible", "boolean"),
+            LegendLabel: getter(g, "LegendLabel"),
+            Group: getter(g, "Group")
+        });
+    }
+    return groups;
+}
+
+function deArrayifyMapDefinitionLayers(json: any): MdfLayer[] {
+    const layers = [] as MdfLayer[];
+    const getter = buildPropertyGetter<MdfLayer>();
+    for (const g of json) {
+        layers.push({
+            Name: getter(g, "Name"),
+            ResourceId: getter(g, "ResourceId"),
+            ExpandInLegend: getter(g, "ExpandInLegend", "boolean"),
+            ShowInLegend: getter(g, "ShowInLegend", "boolean"),
+            Selectable: getter(g, "Selectable", "boolean"),
+            Visible: getter(g, "Visible", "boolean"),
+            LegendLabel: getter(g, "LegendLabel"),
+            Group: getter(g, "Group"),
+        });
+    }
+    return layers;
+}
+
+function deArrayifyMapDefinition(json: any): MapDefinition {
+    const root = json;
+    const getter = buildPropertyGetter<MapDefinition>();
+    const eGetter = buildPropertyGetter<MapDefinition["Extents"]>();
+    const resp: MapDefinition = {
+        BackgroundColor: getter(root, "BackgroundColor"),
+        CoordinateSystem: getter(root, "CoordinateSystem"),
+        Extents: {
+            MinX: eGetter(root.Extents[0], "MinX", "float"),
+            MinY: eGetter(root.Extents[0], "MinY", "float"),
+            MaxX: eGetter(root.Extents[0], "MaxX", "float"),
+            MaxY: eGetter(root.Extents[0], "MaxY", "float")
+        },
+        MapLayer: deArrayifyMapDefinitionLayers(root.MapLayer),
+        MapLayerGroup: deArrayifyMapDefinitionGroups(root.MapLayerGroup)
+    };
+    if (root.TileSetSource) {
+        const tGetter = buildPropertyGetter<TileSetSource>();
+        resp.TileSetSource = {
+            ResourceId: tGetter(root.TileSetSource, "ResourceId")
+        };
+    }
+    return resp;
+}
+
+function deArrayifyTileSetDefinitionLayers(json: any): BaseMapLayer[] {
+    const getter = buildPropertyGetter<BaseMapLayer>();
+    const layers = [] as BaseMapLayer[];
+    for (const l of json) {
+        layers.push({
+            Name: getter(l, "Name"),
+            ResourceId: getter(l, "ResourceId"),
+            Selectable: getter(l, "Selectable", "boolean"),
+            ShowInLegend: getter(l, "ShowInLegend", "boolean"),
+            LegendLabel: getter(l, "LegendLabel"),
+            ExpandInLegend: getter(l, "ExpandInLegend", "boolean")
+        })
+    }
+    return layers;
+}
+
+function deArrayifyTileSetDefinitionGroups(json: any): BaseMapLayerGroup[] {
+    const getter = buildPropertyGetter<BaseMapLayerGroup>();
+    const groups = []  as BaseMapLayerGroup[];
+    for (const g of json) {
+        groups.push({
+            Name: getter(g, "Name"),
+            Visible: getter(g, "Visible", "boolean"),
+            ShowInLegend: getter(g, "ShowInLegend", "boolean"),
+            ExpandInLegend: getter(g, "ExpandInLegend", "boolean"),
+            LegendLabel: getter(g, "LegendLabel"),
+            BaseMapLayer: deArrayifyTileSetDefinitionLayers(g.BaseMapLayer)
+        });
+    }
+    return groups;
+}
+
+function deArrayifyTileSetDefinitionParamList(root: any): { Name: string, Value: string }[] {
+    const getter = buildPropertyGetter<{ Name: string, Value: string }>();
+    const params = [] as { Name: string, Value: string }[];
+    for (const p of root) {
+        params.push({
+            Name: getter(p, "Name"),
+            Value: getter(p, "Value")
+        });
+    }
+    return params;
+}
+
+function deArrayifyTileSetDefinitionParams(root: any): TileStoreParameters {
+    const getter = buildPropertyGetter<TileStoreParameters>();
+    const eGetter = buildPropertyGetter<TileStoreParameters["Extents"]>();
+    const tsp: TileStoreParameters = {
+        TileProvider: getter(root, "TileProvider"),
+        Extents: {
+            MinX: eGetter(root.Extents[0], "MinX", "float"),
+            MinY: eGetter(root.Extents[0], "MinY", "float"),
+            MaxX: eGetter(root.Extents[0], "MaxX", "float"),
+            MaxY: eGetter(root.Extents[0], "MaxY", "float")
+        },
+        Parameter: deArrayifyTileSetDefinitionParamList(root.Parameter)
+    };
+    return tsp;
+}
+
+function deArrayifyTileSetDefinition(json: any): TileSetDefinition {
+    const root = json;
+    const resp: TileSetDefinition = {
+        TileStoreParameters: deArrayifyTileSetDefinitionParams(json.TileStoreParameters),
+        BaseMapLayerGroup: deArrayifyTileSetDefinitionGroups(json.BaseMapLayerGroup)
+    };
+    return resp;
+}
+
 /**
  * Normalizes the given JSON object to match the content model of its original XML form
  *
@@ -894,6 +1025,17 @@ export function deArrayify(json: any): any {
     }
     if (json["ApplicationDefinition"]) {
         return deArrayifyFlexibleLayout(json.ApplicationDefinition);
+    }
+    if (json["MapDefinition"]) {
+        return deArrayifyMapDefinition(json.MapDefinition);
+    }
+    if (json["TileSetDefinition"]) {
+        return deArrayifyTileSetDefinition(json.TileSetDefinition);
+    }
+    if (json["SiteVersion"]) {
+        return {
+            Version: json.SiteVersion.Version[0]
+        } as SiteVersion;
     }
     const keys = [] as string[];
     for (const k in json) {

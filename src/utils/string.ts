@@ -11,6 +11,18 @@ export function strEndsWith(str: string, suffix: string): boolean {
 }
 
 /**
+ * Indicates if the given string starts with the given string
+ * 
+ * @param {string} str 
+ * @param {string} word 
+ * @returns {boolean}
+ * @since 0.14
+ */
+export function strStartsWith(str: string, word: string) {
+    return str.lastIndexOf(word, 0) === 0;
+}
+
+/**
  * Replaces all occurrences of the given string with the specified replacement in the target
  * string
  * 

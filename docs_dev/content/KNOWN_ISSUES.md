@@ -73,3 +73,31 @@ Where applicable, an issue number is attached to indicate that such issues are a
 
  * In order to display Mapbox Vector Tiles, your primary Map Definition (or the first layer of your external layer set in a generic viewer context) has to be in `EPSG:3857`
  * Despite being a vector layer, Mapbox Vector Tile layers are not selectable for performance reasons. To make them selectable, set the property `layer_opt_renderMode` to `feature` in your MVT external layer definition.
+
+## UTFGrid tiles
+
+Starting with the `0.14` release, the viewer supports UTFGrid tilesets with the following usage caveats:
+
+ * You must pair it with a MapDefinition that has a coordinate system of `WGS84.PseudoMercator` (aka. `EPSG:3857`)
+
+## Stateless mode
+
+Starting with the `0.14` release, the viewer supports a new "stateless" mode. In "stateless" mode, no MapGuide session ids are created and all viewer operations/commands that rely on session ids are permanently disabled. Map rendering is done through `GETMAPIMAGE` requests instead of `GETDYNAMICMAPOVERLAYIMAGE` requests.
+
+There are several caveats to using stateless mode, which are detailed below:
+
+ * Stateless mode is only supported in Application Definition resources. Stateless mode will never activate from a Web Layout.
+ * You must add extra metadata to the `<Extension>` element of the `<Map>` element in the Application Definition 
+   * `Meta_MentorCode`: The CS-Map coordinate system code (eg. `<Meta_MentorCode>WGS84.PseudoMercator</Meta_MentorCode>`)
+   * `Meta_EpsgCode`: The EPSG code of the coordinate system (eg. `<Meta_EpsgCode>3857</Meta_EpsgCode>`)
+   * `Meta_MetersPerUnit`: The meters-per-unit value of the coordinate system (eg. `<Meta_MetersPerUnit>1</Meta_MetersPerUnit>`)
+ * Unsupported commands are logged as console warnings on viewer startup
+ * There is no session id created, so any viewer API to get this session id will return an empty string
+ * MapGuide selection is not supported due to its inherently stateful nature always requiring MAPNAME/SESSION parameters to work
+   * Viewer selection is limited to selection of externally added WMS or vector layers
+ * InvokeURL commands are supported to the extent that your command is assumed to be able to operate without a MAPNAME/SESSION parameter pair passed to it
+ * To avoid excessive requests for the required information in stateless mode, the legend will present a simplified layer/group structure:
+   * Said layers/groups are visible (in the legend) at all scale ranges
+   * Layer items will not render their style icons
+   * Layer items do not indicate selectability (due to MapGuide selection not being supported)
+ * You can still mix Map Definitions with external XYZ layers like OSM without needing to re-project the Map Definition to `WGS84.PseudoMercator` (ie. `EPSG:3857`). Just make sure to set the Map Definition to having a background color with full transparency, otherwise the Map Definition's background will fully obscure the XYZ backdrop layer.

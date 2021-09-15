@@ -144,6 +144,10 @@ export function mapToolbarReference(tb: any, state: IToolbarAppState, commandInv
  * @since 0.13
  */
 export interface IToolbarAppState {
+    /**
+     * @since 0.14
+     */
+    stateless: boolean;
     visibleAndSelectableWmsLayerCount: number;
     busyWorkerCount: number;
     hasSelection: boolean;
@@ -172,6 +176,7 @@ export function reduceAppToToolbarState(state: Readonly<IApplicationState>): Rea
         visibleWmsLayerCount = (state.mapState[state.config.activeMapName].layers ?? []).filter(l => l.visible && l.selectable && l.type == "WMS").length;
     }
     return {
+        stateless: state.config.viewer.isStateless,
         visibleAndSelectableWmsLayerCount: visibleWmsLayerCount,
         busyWorkerCount: state.viewer.busyCount,
         hasSelection,
@@ -330,6 +335,27 @@ function openModalUrl(name: string, dispatch: ReduxDispatch, url: string, modalT
     }));
 }
 
+export function isSupportedCommandInStatelessMode(name: string | undefined) {
+    switch (name) {
+        case DefaultCommands.Select:
+        case DefaultCommands.MapTip:
+        case DefaultCommands.QuickPlot:
+        case DefaultCommands.SelectRadius:
+        case DefaultCommands.SelectPolygon:
+        case DefaultCommands.ClearSelection:
+        case DefaultCommands.ZoomToSelection:
+        case DefaultCommands.Buffer:
+        case DefaultCommands.SelectWithin:
+        case DefaultCommands.Redline:
+        case DefaultCommands.FeatureInfo:
+        case DefaultCommands.Query:
+        case DefaultCommands.Theme:
+        case DefaultCommands.CenterSelection:
+            return false;
+    }
+    return true;
+}
+
 /**
  * Opens the given URL in the specified target
  *
@@ -414,7 +440,7 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
             icon: cmdDef.icon,
             iconClass: cmdDef.iconClass,
             title: cmdDef.title,
-            enabled: () => true,
+            enabled: state => !state.stateless,
             selected: () => false,
             invoke: (dispatch: ReduxDispatch, getState: () => IApplicationState, viewer: IMapViewer, parameters?: any) => {
                 const state = getState();

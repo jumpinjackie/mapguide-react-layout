@@ -46,6 +46,8 @@ import isMobile from "ismobilejs";
 import { IInitialExternalLayer } from '../../actions/defs';
 import { MapGuideMockMode } from '../mapguide-debug-context';
 import Layer from 'ol/layer/Layer';
+import LayerBase from 'ol/layer/Base';
+import LayerGroup from 'ol/layer/Group';
 import Source from 'ol/source/Source';
 import { LoadFunction as TileLoadFunction } from 'ol/Tile';
 import { LoadFunction as ImageLoadFunction } from 'ol/Image';
@@ -56,6 +58,23 @@ import { QueryMapFeaturesResponse } from '../../api/contracts/query';
 import { setViewer, getViewer } from '../../api/runtime';
 import { Client } from '../../api/client';
 import { useReduxDispatch } from "./context";
+
+export function recursiveFindLayer(layers: Collection<LayerBase>, predicate: (layer: LayerBase) => boolean): LayerBase | undefined {
+    for (let i = 0; i < layers.getLength(); i++) {
+        const layer = layers.item(i);
+        if (layer instanceof LayerGroup) {
+            const match = recursiveFindLayer(layer.getLayers(), predicate);
+            if (match) {
+                return match;
+            }
+        } else {
+            if (predicate(layer)) {
+                return layer;
+            }
+        }
+    }
+    return undefined;
+}
 
 export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
     return (e && (e.which == 2 || e.button == 4));
@@ -914,8 +933,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._selectTooltip = undefined;
         this._mouseTooltip?.dispose()
         this._mouseTooltip = undefined;
-        this._map?.setTarget(undefined as any); //HACK: Workaround typing bug
-        this._ovMap?.setMap(undefined as any);
+        this._map?.setTarget(undefined);
+        this._ovMap?.setMap(undefined as any); //HACK: Typings workaround
         this._map = undefined;
         this._ovMap = undefined;
         debug(`Map provider context detached from component and reset to initial state`);

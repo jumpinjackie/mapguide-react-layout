@@ -92,6 +92,12 @@ export function mockMapGuideImageLoadFunction(image: ImageWrapper, src: string) 
     }
 }
 
+export enum MgLayerSetMode {
+    Stateless,
+    Stateful,
+    OverviewMap
+}
+
 class MgLayerSetOL implements ILayerSetOL {
     constructor(public readonly mgTiledLayers: OLTileLayer[],
         public readonly externalBaseLayersGroup: LayerGroup | undefined,
@@ -334,7 +340,7 @@ export class MgInnerLayerSetFactory {
     }
     public create(locale: string | undefined,
         externalBaseLayers: IExternalBaseLayer[] | undefined,
-        isNotForOverviewMap: boolean): ILayerSetOL {
+        mode: MgLayerSetMode): ILayerSetOL {
         const { map, agentUri } = this;
         //If a tile set definition is defined it takes precedence over the map definition, this enables
         //this example to work with older releases of MapGuide where no such resource type exists.
@@ -425,14 +431,14 @@ export class MgInnerLayerSetFactory {
             );
         }
         */
-        const overlay = this.createMgOverlayLayer(MgBuiltInLayers.Overlay, agentUri, metersPerUnit, projection, isNotForOverviewMap, isNotForOverviewMap ? this.dynamicOverlayParams : this.staticOverlayParams);
+        const overlay = this.createMgOverlayLayer(MgBuiltInLayers.Overlay, agentUri, metersPerUnit, projection, mode == MgLayerSetMode.Stateful, mode == MgLayerSetMode.Stateful ? this.dynamicOverlayParams : this.staticOverlayParams);
 
         let selectionOverlay: OLImageLayer | undefined;
         let activeSelectedFeatureOverlay: OLImageLayer | undefined;
-        if (isNotForOverviewMap) {
-            selectionOverlay = this.createMgOverlayLayer(MgBuiltInLayers.SelectionOverlay, agentUri, metersPerUnit, projection, isNotForOverviewMap, this.selectionOverlayParams);
+        if (mode == MgLayerSetMode.Stateful) {
+            selectionOverlay = this.createMgOverlayLayer(MgBuiltInLayers.SelectionOverlay, agentUri, metersPerUnit, projection, true, this.selectionOverlayParams);
         }
-        if (isNotForOverviewMap) {
+        if (mode == MgLayerSetMode.Stateful) {
             //NOTE: Not tracking this source atm
             activeSelectedFeatureOverlay = new ImageLayer({
                 //OL6: need to specify a source up-front otherwise it will error blindly
@@ -455,7 +461,7 @@ export class MgInnerLayerSetFactory {
         //NOTE: Don't bother adding external base layers for overview map as the main map in the
         //overview is rendered with GETMAPIMAGE and not GETDYNAMICMAPOVERLAYIMAGE meaning the background
         //is opaque and you won't be able to see the base layers underneath anyways.
-        if (isNotForOverviewMap && externalBaseLayers != null) {
+        if (mode != MgLayerSetMode.OverviewMap && externalBaseLayers != null) {
             const groupOpts: any = {
                 title: tr("EXTERNAL_BASE_LAYERS", locale),
                 layers: externalBaseLayers.map(ext => {
@@ -545,6 +551,11 @@ export class MgInnerLayerSetFactory {
 
 export interface IMgLayerSetProps {
     map: RuntimeMap;
+    /**
+     * Use stateless GETMAP requests for map rendering
+     * @since 0.14
+     */
+    stateless?: boolean;
     imageFormat: ImageFormat;
     selectionImageFormat?: ImageFormat;
     selectionColor?: string;

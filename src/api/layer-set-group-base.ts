@@ -133,6 +133,8 @@ export abstract class LayerSetGroupBase {
         // add and insert them to the front one-by-one, ensuring all the layers we add will be
         // at the bottom of the draw order
         const layers = map.getLayers();
+        // Attach hover layers
+        layers.insertAt(0, this.hoverHighlightLayer);
         // Attach scratch layer
         layers.insertAt(0, this.scratchLayer);
         // Attach custom layers

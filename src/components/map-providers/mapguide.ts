@@ -300,6 +300,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
     protected onMouseMove(e: GenericEvent) {
         if (this._comp) {
             this.handleMouseTooltipMouseMove(e);
+            this.handleHighlightHover(e);
             if (this._comp.isContextMenuOpen()) {
                 return;
             }

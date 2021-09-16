@@ -25,11 +25,36 @@ import UrlTile from 'ol/source/UrlTile';
 import ImageLayer from 'ol/layer/Image';
 import { debug } from '../utils/logger';
 import { OLVectorLayer } from "./ol-types";
+import Fill from "ol/style/Fill";
+import Stroke from "ol/style/Stroke";
+import Style from "ol/style/Style";
+import Text from "ol/style/Text";
+
+const HIGHLIGHT_STYLE = new Style({
+    stroke: new Stroke({
+      color: '#f00',
+      width: 3,
+    }),
+    fill: new Fill({
+      color: 'rgba(255,0,0,0.1)',
+    }),
+    text: new Text({
+      font: '12px Calibri,sans-serif',
+      fill: new Fill({
+        color: '#000',
+      }),
+      stroke: new Stroke({
+        color: '#f00',
+        width: 3,
+      }),
+    }),
+  });
 
 export abstract class LayerSetGroupBase {
     protected mainSet: ILayerSetOL;
     protected overviewSet: ILayerSetOL;
     protected scratchLayer: OLVectorLayer;
+    protected hoverHighlightLayer: OLVectorLayer;
     protected _customLayers: {
         [name: string]: {
             layer: LayerBase,
@@ -42,6 +67,19 @@ export abstract class LayerSetGroupBase {
             source: new VectorSource()
         });
         this.scratchLayer.set(LayerProperty.IS_SCRATCH, true);
+        this.hoverHighlightLayer = new VectorLayer({
+            source: new VectorSource(),
+            style: feature => {
+                return HIGHLIGHT_STYLE
+            }
+        });
+        this.hoverHighlightLayer.set(LayerProperty.IS_HOVER_HIGHLIGHT, true)
+    }
+    addHighlightedFeature(feature: Feature<Geometry>) {
+        this.hoverHighlightLayer.getSource().addFeature(feature);
+    }
+    removeHighlightedFeature(feature: Feature<Geometry>) {
+        this.hoverHighlightLayer.getSource().removeFeature(feature);
     }
     /**
      * @virtual
@@ -149,6 +187,8 @@ export abstract class LayerSetGroupBase {
         }
         //Detach scratch layer
         map.removeLayer(this.scratchLayer);
+        //Detach hover highlight layer
+        map.removeLayer(this.hoverHighlightLayer);
         const ovLayers = this.getLayersForOverviewMap();
         const ovMap = ovMapControl.getOverviewMap();
         for (const layer of ovLayers) {
@@ -344,6 +384,13 @@ export abstract class LayerSetGroupBase {
         if (cCurrentLayers.item(cCurrentLayers.getLength() - 1) != this.scratchLayer) {
             map.removeLayer(this.scratchLayer);
             map.addLayer(this.scratchLayer);
+            //const layers2 = cCurrentLayers.getArray();
+            //console.log(layers2);
+        }
+        // And the hover highlight layer on top of that
+        if (cCurrentLayers.item(cCurrentLayers.getLength() - 1) != this.hoverHighlightLayer) {
+            map.removeLayer(this.hoverHighlightLayer);
+            map.addLayer(this.hoverHighlightLayer);
             //const layers2 = cCurrentLayers.getArray();
             //console.log(layers2);
         }

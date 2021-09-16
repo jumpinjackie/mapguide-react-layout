@@ -58,6 +58,9 @@ import { QueryMapFeaturesResponse } from '../../api/contracts/query';
 import { setViewer, getViewer } from '../../api/runtime';
 import { Client } from '../../api/client';
 import { useReduxDispatch } from "./context";
+import { OLFeature } from "../../api/ol-types";
+import RenderFeature from "ol/render/Feature";
+import { textHeights } from "ol/render/canvas";
 
 export function recursiveFindLayer(layers: Collection<LayerBase>, predicate: (layer: LayerBase) => boolean): LayerBase | undefined {
     for (let i = 0; i < layers.getLength(); i++) {
@@ -599,6 +602,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected onMouseMove(e: GenericEvent) {
         if (this._comp) {
             this.handleMouseTooltipMouseMove(e);
+            this.handleHighlightHover(e);
             if (this._comp.isContextMenuOpen()) {
                 return;
             }
@@ -737,6 +741,42 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
     protected handleMouseTooltipMouseMove(e: GenericEvent) {
         this._mouseTooltip?.onMouseMove?.(e);
+    }
+    private _highlightedFeature: Feature<Geometry> | undefined;
+    private isLayerHoverable(layer: Layer<Source>) {
+        return !(layer.get(LayerProperty.IS_HOVER_HIGHLIGHT) == true);
+    }
+    protected handleHighlightHover(e: GenericEvent) {
+        if (e.dragging) {
+            return;
+        }
+        if (this._state.mapName && this._map) {
+            const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
+            if (activeLayerSet) {
+                const pixel = this._map.getEventPixel(e.originalEvent);
+                if (pixel) {
+                    const featureToLayerMap = [] as [Feature<Geometry>, Layer<Source>][];
+                    this._map.forEachFeatureAtPixel(pixel, (feature, layer) => {
+                        if (this.isLayerHoverable(layer) && feature instanceof Feature) {
+                            featureToLayerMap.push([feature, layer]);
+                        }
+                    });
+                    const feature = featureToLayerMap.length ? featureToLayerMap[0][0] : undefined;
+
+                    //const featuresAtPixel = this._map?.getFeaturesAtPixel(pixel);
+                    //const feature = featuresAtPixel?.length ? featuresAtPixel[0] : undefined;
+                    if (feature != this._highlightedFeature && feature instanceof Feature) {
+                        if (this._highlightedFeature) {
+                            activeLayerSet.removeHighlightedFeature(this._highlightedFeature);
+                        }
+                        if (feature) {
+                            activeLayerSet.addHighlightedFeature(feature);
+                        }
+                        this._highlightedFeature = feature;
+                    }
+                }
+            }
+        }
     }
     protected hideSelectedVectorFeaturesTooltip() {
         this._selectTooltip?.hide();

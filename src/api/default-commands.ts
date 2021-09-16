@@ -106,7 +106,7 @@ export function initDefaultCommands() {
         selected: (state) => {
             return state.activeTool === ActiveMapTool.Select;
         },
-        enabled: state => !state.stateless,
+        enabled: () => true,
         invoke: (dispatch) => {
             return dispatch(setActiveTool(ActiveMapTool.Select));
         }

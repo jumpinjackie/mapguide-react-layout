@@ -1,7 +1,25 @@
-import { extend } from "ol/extent";
 import { ICompositeSelectionLayer, ICompositeSelection, Bounds } from "./common";
 import { ClientSelectionLayer, ClientSelectionSet } from "./contracts/common";
 import { SelectedFeature, SelectedLayer, FeatureProperty, SelectedFeatureSet } from "./contracts/query";
+
+//FIXME: We are inlining extend of ol/Extent here so that this module can be included in any jest test case
+//without jest complaining about not being able to import ol's ES6 modules. I don't know how to get jest to
+//recognize ol imports. None of the solutions I tried worked!
+function extend(extent1: Bounds, extent2: Bounds) {
+    if (extent2[0] < extent1[0]) {
+        extent1[0] = extent2[0];
+    }
+    if (extent2[2] > extent1[2]) {
+        extent1[2] = extent2[2];
+    }
+    if (extent2[1] < extent1[1]) {
+        extent1[1] = extent2[1];
+    }
+    if (extent2[3] > extent1[3]) {
+        extent1[3] = extent2[3];
+    }
+    return extent1;
+}
 
 export class CompositeSelectionLayer implements ICompositeSelectionLayer {
     private features: SelectedFeature[];
@@ -42,7 +60,7 @@ export class CompositeSelectionLayer implements ICompositeSelectionLayer {
         let bounds: Bounds | undefined;
         if (this.isSelectedLayer(this.layer)) {
             this.layer.Feature.forEach(feat => {
-                const b: Bounds | undefined = feat.Bounds 
+                const b: Bounds | undefined = feat.Bounds
                     ? (feat.Bounds.split(" ").map(s => parseFloat(s)) as Bounds)
                     : undefined;
                 if (b) {

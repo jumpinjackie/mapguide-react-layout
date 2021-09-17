@@ -6,16 +6,16 @@
  * (whenever that time comes)
  */
 
-import { Options as MGImageSourceOptions } from "ol/source/ImageMapGuide";
-import Feature from "ol/Feature";
-import Geometry from "ol/geom/Geometry";
-import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
-import ImageSource from "ol/source/Image";
-import ImageLayer from "ol/layer/Image";
-import TileLayer from "ol/layer/Tile";
-import TileSource from "ol/source/Tile";
-import { Options as VectorLayerOptions } from "ol/layer/BaseVector";
+import type { Options as MGImageSourceOptions } from "ol/source/ImageMapGuide";
+import type Feature from "ol/Feature";
+import type Geometry from "ol/geom/Geometry";
+import type VectorLayer from "ol/layer/Vector";
+import type VectorSource from "ol/source/Vector";
+import type ImageSource from "ol/source/Image";
+import type ImageLayer from "ol/layer/Image";
+import type TileLayer from "ol/layer/Tile";
+import type TileSource from "ol/source/Tile";
+import type { Options as VectorLayerOptions } from "ol/layer/BaseVector";
 
 export type OLFeature = Feature<Geometry>;
 export type OLGeometryType = string;

@@ -10,7 +10,8 @@ import {
     IViewerReducerState,
     IMouseReducerState,
     ITemplateReducerState,
-    IMapView
+    IMapView,
+    Dictionary
 } from "../src/api/common";
 import { CONFIG_INITIAL_STATE } from "../src/reducers/config";
 import { INIT_ERROR_INITIAL_STATE } from "../src/reducers/init-error";
@@ -22,6 +23,7 @@ import { MOUSE_INITIAL_STATE } from "../src/reducers/mouse";
 import { TEMPLATE_INITIAL_STATE } from "../src/reducers/template";
 import { ActionType } from '../src/constants/actions';
 import { ClientSelectionSet } from "../src/api/contracts/common";
+import { IInitAppAction, MapInfo } from "../src/actions/defs";
 
 export function createMap(): any /*RuntimeMap*/ {
     return {
@@ -603,16 +605,40 @@ export function createSelectionSet(): SelectedFeatureSet {
     };
 }
 
-export function createInitAction(map: RuntimeMap, initialView: IMapView, locale = "en") {
-    const maps: any = {};
-    maps[map.Name] = map;
+export function createInitAction(map: RuntimeMap,
+    initialView: IMapView,
+    locale = "en",
+    imageFormat = "PNG",
+    selectionImageFormat = "PNG",
+    selectionColor = "0x0000FFAA",
+    coordinateDecimals = "4",
+    coordinateDisplayFormat = "X: {x} {units}, Y: {y} {units}",
+    coordinateProjection = "EPSG:4326"): IInitAppAction {
+    const maps: Dictionary<MapInfo> = {};
+    maps[map.Name] = {
+        map: map,
+        mapGroupId: "MainMap",
+        initialView: initialView,
+        initialExternalLayers: [],
+        externalBaseLayers: []
+    };
     return {
         type: ActionType.INIT_APP,
         payload: {
+            activeMapName: map.Name,
             initialUrl: "server/TaskPane.html",
             maps: maps,
             locale: locale,
             initialView: initialView,
+            config: {
+                imageFormat,
+                selectionImageFormat,
+                selectionColor,
+                coordinateDecimals,
+                coordinateDisplayFormat,
+                coordinateProjection
+            },
+            warnings: [],
             capabilities: {
                 hasTaskPane: true,
                 hasTaskBar: true,
@@ -620,9 +646,14 @@ export function createInitAction(map: RuntimeMap, initialView: IMapView, locale 
                 hasNavigator: true,
                 hasSelectionPanel: true,
                 hasLegend: true,
-                hasToolbar: false
+                hasToolbar: false,
+                hasViewSize: true
             },
-            toolbars: {}
+            featureTooltipsEnabled: true,
+            toolbars: {
+                toolbars: {},
+                flyouts: {}
+            }
         }
     };
 }
@@ -633,7 +664,7 @@ export function createInitialState(): IApplicationState {
     const toolbar: IToolbarReducerState = { ...TOOLBAR_INITIAL_STATE };
     const taskpane: ITaskPaneReducerState = { ...TASK_PANE_INITIAL_STATE };
     const modal: IModalReducerState = { ...MODAL_INITIAL_STATE };
-    const viewer: IViewerReducerState =  { ...VIEWER_INITIAL_STATE };
+    const viewer: IViewerReducerState = { ...VIEWER_INITIAL_STATE };
     const mouse: IMouseReducerState = { ...MOUSE_INITIAL_STATE };
     const template: ITemplateReducerState = { ...TEMPLATE_INITIAL_STATE };
     const lastaction: any = null;

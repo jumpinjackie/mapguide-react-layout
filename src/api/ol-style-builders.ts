@@ -6,12 +6,6 @@ import Fill from 'ol/style/Fill';
 import { asArray } from 'ol/color';
 import { OLFeature } from "./ol-types";
 
-export function expr(sExpr: string): IEvaluatable {
-    return {
-        expr: sExpr
-    };
-}
-
 function toOLColor(color: string, alpha: number | undefined) {
     const c = asArray(color);
     if (typeof (alpha) != 'undefined') {

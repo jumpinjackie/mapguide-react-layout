@@ -1,7 +1,6 @@
-import Style from 'ol/style/Style';
+import type Style from 'ol/style/Style';
 import { MAP_MARKER_ICON } from '../constants/assets';
 import { ExprEvalContext } from './expr-eval-context';
-import { expr } from './ol-style-builders';
 import { OLFeature } from './ol-types';
 
 /**
@@ -232,7 +231,7 @@ export const DEFAULT_CLUSTERED_POINT_CIRCLE_STYLE: IBasicPointCircleStyle = {
         color: "#ff0000",
         alpha: 255
     },
-    radius: expr( "min(arr_size(features) + 4, 25)"),
+    radius: { expr: "min(arr_size(features) + 4, 25)" },
     /*
     label: {
         text: expr("if(arr_size(features) > 1, '', arr_size(features))"),

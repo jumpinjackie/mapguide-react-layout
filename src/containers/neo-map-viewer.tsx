@@ -12,7 +12,7 @@ import { tr } from '../api/i18n';
 import "ol/ol.css";
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { ISubscriberProps, Subscriber } from './subscriber';
-import { useConfiguredLoadIndicatorColor, useConfiguredLoadIndicatorPositioning, useViewerFlyouts } from "./hooks";
+import { useActiveMapClientSelectionSet, useConfiguredLoadIndicatorColor, useConfiguredLoadIndicatorPositioning, useViewerFlyouts } from "./hooks";
 import { closeContextMenu, openContextMenu } from "../actions/flyout";
 import { WEBLAYOUT_CONTEXTMENU } from "../constants";
 
@@ -215,6 +215,7 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
     const loadIndicatorColor = useConfiguredLoadIndicatorColor();
     const dispatch = useReduxDispatch();
     const hookFunc = context.getHookFunction();
+    const clientSelection = useActiveMapClientSelectionSet();
     const nextState = hookFunc();
     const {
         mapName,
@@ -224,6 +225,11 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
         locale
     } = nextState;
     const flyouts = useViewerFlyouts();
+    React.useEffect(() => {
+        if (!clientSelection) {
+            context.getSelectedFeatures()?.clear();
+        }
+    }, [clientSelection]);
     const bContextMenuOpen = (flyouts[WEBLAYOUT_CONTEXTMENU]?.open == true);
     const showContextMenuAction = (pos: [number, number]) => dispatch(openContextMenu({ x: pos[0], y: pos[1] }));
     const hideContextMenuAction = () => dispatch(closeContextMenu());

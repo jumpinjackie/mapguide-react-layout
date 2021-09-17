@@ -151,6 +151,10 @@ export interface IToolbarAppState {
     visibleAndSelectableWmsLayerCount: number;
     busyWorkerCount: number;
     hasSelection: boolean;
+    /**
+     * @since 0.14
+     */
+    hasClientSelection: boolean;
     hasPreviousView: boolean;
     hasNextView: boolean;
     featureTooltipsEnabled: boolean;
@@ -165,12 +169,14 @@ export interface IToolbarAppState {
  */
 export function reduceAppToToolbarState(state: Readonly<IApplicationState>): Readonly<IToolbarAppState> {
     let hasSelection = false;
+    let hasClientSelection = false;
     let hasPreviousView = false;
     let hasNextView = false;
     let visibleWmsLayerCount = 0;
     const selection = getSelectionSet(state);
     hasSelection = (selection != null && selection.SelectedFeatures != null);
     if (state.config.activeMapName) {
+        hasClientSelection = state.mapState[state.config.activeMapName].clientSelection != null;
         hasPreviousView = state.mapState[state.config.activeMapName].historyIndex > 0;
         hasNextView = state.mapState[state.config.activeMapName].historyIndex < state.mapState[state.config.activeMapName].history.length - 1;
         visibleWmsLayerCount = (state.mapState[state.config.activeMapName].layers ?? []).filter(l => l.visible && l.selectable && l.type == "WMS").length;
@@ -180,6 +186,7 @@ export function reduceAppToToolbarState(state: Readonly<IApplicationState>): Rea
         visibleAndSelectableWmsLayerCount: visibleWmsLayerCount,
         busyWorkerCount: state.viewer.busyCount,
         hasSelection,
+        hasClientSelection,
         hasPreviousView,
         hasNextView,
         activeTool: state.viewer.tool,
@@ -207,7 +214,7 @@ export class CommandConditions {
         return state.busyWorkerCount == 0;
     }
     /**
-     * The viewer has a selection set
+     * The viewer has a MapGuide selection set
      *
      * @static
      * @param {Readonly<IToolbarAppState>} state
@@ -217,6 +224,18 @@ export class CommandConditions {
      */
     public static hasSelection(state: Readonly<IToolbarAppState>): boolean {
         return state.hasSelection;
+    }
+    /**
+     * The viewer has a client-side selection set
+     *
+     * @static
+     * @param state 
+     * @returns 
+     * 
+     * @since 0.14
+     */
+    public static hasClientSelection(state: Readonly<IToolbarAppState>): boolean {
+        return state.hasClientSelection;
     }
     /**
      * The command is set to be disabled if selection is empty

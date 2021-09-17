@@ -81,10 +81,10 @@ export function initMapGuideCommands() {
     registerCommand(DefaultCommands.ClearSelection, {
         iconClass: SPRITE_SELECT_CLEAR,
         selected: () => false,
-        enabled: CommandConditions.hasSelection,
+        enabled: state => CommandConditions.hasSelection(state) || CommandConditions.hasClientSelection(state),
         invoke: (dispatch, getState, viewer) => {
             const st = getState();
-            if (st.config.viewer.isStateless && st.config.activeMapName) {
+            if (st.config.activeMapName) {
                 dispatch(clearClientSelection(st.config.activeMapName));
             }
             viewer?.mapguideSupport()?.clearSelection();
@@ -94,7 +94,7 @@ export function initMapGuideCommands() {
     registerCommand(DefaultCommands.ZoomToSelection, {
         iconClass: SPRITE_ICON_ZOOMSELECT,
         selected: () => false,
-        enabled: CommandConditions.hasSelection,
+        enabled: state => CommandConditions.hasSelection(state) || CommandConditions.hasClientSelection(state),
         invoke: (dispatch, getState, viewer) => {
             if (viewer) {
                 const fact = viewer.getOLFactory();

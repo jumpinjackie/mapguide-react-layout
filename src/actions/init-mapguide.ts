@@ -12,7 +12,7 @@ import { MgError } from '../api/error';
 import { resolveProjectionFromEpsgIoAsync } from '../api/registry/projections';
 import { register } from 'ol/proj/proj4';
 import proj4 from "proj4";
-import { isStateless, ViewerInitCommand } from './init-command';
+import { getMapDefinitionsFromFlexLayout, isStateless, MapToLoad, ViewerInitCommand } from './init-command';
 import { WebLayout, isInvokeURLCommand, isSearchCommand } from '../api/contracts/weblayout';
 import { ToolbarConf } from '../api/registry/command-spec';
 import { clearSessionStore, retrieveSelectionSetFromLocalStorage } from '../api/session-store';
@@ -515,42 +515,3 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
         return payload;
     }
 }
-
-function getMapGuideConfiguration(appDef: ApplicationDefinition): [string, MapConfiguration][] {
-    const configs = [] as [string, MapConfiguration][];
-    if (appDef.MapSet) {
-        for (const mg of appDef.MapSet.MapGroup) {
-            for (const map of mg.Map) {
-                if (map.Type == "MapGuide") {
-                    configs.push([mg["@id"], map]);
-                }
-            }
-        }
-    }
-    return configs;
-}
-
-function tryExtractMapMetadata(extension: any) {
-    const ext: any = {};
-    for (const k in extension) {
-        if (k.startsWith("Meta_")) {
-            const sk = k.substring("Meta_".length);
-            ext[sk] = extension[k];
-        }
-    }
-    return ext;
-}
-
-export function getMapDefinitionsFromFlexLayout(appDef: ApplicationDefinition): MapToLoad[] {
-    const configs = getMapGuideConfiguration(appDef);
-    if (configs.length > 0) {
-        return configs.map(c => ({ 
-            name: c[0],
-            mapDef: c[1].Extension.ResourceId,
-            metadata: tryExtractMapMetadata(c[1].Extension)
-        }));
-    }
-    throw new MgError("No Map Definition found in Application Definition");
-}
-
-export type MapToLoad = { name: string, mapDef: string, metadata: any };

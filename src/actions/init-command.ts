@@ -3,7 +3,7 @@ import { ReduxDispatch, Dictionary, CommandTarget, ActiveMapTool } from '../api/
 import { IInitAppActionPayload, MapInfo } from './defs';
 import { IFlyoutSpec, ISeparatorSpec, IUnknownCommandSpec, ICommandSpec, convertWidget, ToolbarConf, PreparedSubMenuSet, isFlyoutSpec } from '../api/registry/command-spec';
 import { makeUnique } from '../utils/array';
-import { UIWidget, ContainerItem, Widget, ApplicationDefinition } from '../api/contracts/fusion';
+import { UIWidget, ContainerItem, Widget, ApplicationDefinition, MapConfiguration } from '../api/contracts/fusion';
 import { assertNever } from '../utils/never';
 import { strEndsWith, strIsNullOrEmpty, strStartsWith } from '../utils/string';
 import { SPRITE_INVOKE_URL, SPRITE_INVOKE_SCRIPT } from '../constants/assets';
@@ -16,13 +16,64 @@ import * as shortid from 'shortid';
 import { Client } from '../api/client';
 import { ActionType } from '../constants/actions';
 import { ensureParameters } from '../utils/url';
+import { MgError } from '../api/error';
+
+function getMapGuideConfiguration(appDef: ApplicationDefinition): [string, MapConfiguration][] {
+    const configs = [] as [string, MapConfiguration][];
+    if (appDef.MapSet) {
+        for (const mg of appDef.MapSet.MapGroup) {
+            for (const map of mg.Map) {
+                if (map.Type == "MapGuide") {
+                    configs.push([mg["@id"], map]);
+                }
+            }
+        }
+    }
+    return configs;
+}
+
+function tryExtractMapMetadata(extension: any) {
+    const ext: any = {};
+    for (const k in extension) {
+        if (k.startsWith("Meta_")) {
+            const sk = k.substring("Meta_".length);
+            ext[sk] = extension[k];
+        }
+    }
+    return ext;
+}
+
+export function getMapDefinitionsFromFlexLayout(appDef: ApplicationDefinition): MapToLoad[] {
+    const configs = getMapGuideConfiguration(appDef);
+    if (configs.length > 0) {
+        return configs.map(c => ({ 
+            name: c[0],
+            mapDef: c[1].Extension.ResourceId,
+            metadata: tryExtractMapMetadata(c[1].Extension)
+        }));
+    }
+    throw new MgError("No Map Definition found in Application Definition");
+}
+
+export type MapToLoad = { name: string, mapDef: string, metadata: any };
 
 function isCommandSpec(cmd: ICommandSpec | IUnknownCommandSpec): cmd is ICommandSpec {
     return !strIsNullOrEmpty((cmd as any).command);
 }
 
 export function isStateless(appDef: ApplicationDefinition) {
-    return (appDef.Extension?.Stateless == "true");
+    // This appdef is stateless if:
+    //
+    //  1. It has a Stateless extension property set to "true" (ie. The author has opted-in to this feature)
+    //  2. No MapGuide Map Definitions were found in the appdef
+    if (appDef.Extension?.Stateless == "true")
+        return true;
+
+    try {
+        return getMapDefinitionsFromFlexLayout(appDef).length == 0;
+    } catch (e) {
+        return true;
+    }
 }
 
 export interface IViewerInitCommand {

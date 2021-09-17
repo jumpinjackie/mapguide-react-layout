@@ -810,8 +810,21 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         if (this._select)
             this._select.getFeatures().push(f);
         if (this._state.mapName) {
-            const p = { ...f.getProperties() };
-            delete p[f.getGeometryName()];
+            const features = f.get("features");
+            let theFeature;
+            //Are we clustered?
+            if (Array.isArray(features)) {
+                // Only proceeed with dispatch if single item array
+                if (features.length == 1) {
+                    theFeature = features[0];
+                } else {
+                    return;
+                }
+            } else {
+                theFeature = f;
+            }
+            const p = { ...theFeature.getProperties() };
+            delete p[theFeature.getGeometryName()];
             this.dispatch(addClientSelectedFeature(this._state.mapName, l.get(LayerProperty.LAYER_NAME), p));
         }
     }

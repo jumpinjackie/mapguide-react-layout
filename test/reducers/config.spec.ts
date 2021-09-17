@@ -1,11 +1,13 @@
 import {
-    IMapView
+    IMapView, UnitOfMeasure
 } from "../../src/api/common";
 import { createMap, createInitAction, createInitialState } from "../../test-data";
 import { configReducer } from "../../src/reducers/config";
+import { ActionType } from "../../src/constants/actions";
+import { setActiveMap, setManualFeatureTooltipsEnabled, setViewRotation, setViewRotationEnabled, setViewSizeUnits } from "../../src/actions/map";
 
 describe("reducers/config", () => {
-    describe("INIT_APP", () => {
+    describe(ActionType.INIT_APP, () => {
         it("updates", () => {
             const initialState = createInitialState();
             const map = createMap();
@@ -59,6 +61,50 @@ describe("reducers/config", () => {
             expect(caps.hasSelectionPanel).toBe(true);
             expect(caps.hasLegend).toBe(true);
             expect(caps.hasToolbar).toBe(false);
+        });
+    });
+    describe(ActionType.MAP_SET_VIEW_ROTATION, () => {
+        it("updates", () => {
+            const initialState = createInitialState();
+            const action = setViewRotation(123);
+            const state = configReducer(initialState.config, action);
+            expect(state.viewRotation).toBe(123);
+        });
+    });
+    describe(ActionType.MAP_SET_VIEW_ROTATION_ENABLED, () => {
+        it("updates", () => {
+            const initialState = createInitialState();
+            const action = setViewRotationEnabled(true);
+            const state = configReducer(initialState.config, action);
+            expect(state.viewRotationEnabled).toBe(true);
+            const state2 = configReducer(state, setViewRotationEnabled(false));
+            expect(state2.viewRotationEnabled).toBe(false);
+        });
+    });
+    describe(ActionType.MAP_SET_ACTIVE_MAP, () => {
+        it("updates", () => {
+            const initialState = createInitialState();
+            const action = setActiveMap("FooBar");
+            const state = configReducer(initialState.config, action);
+            expect(state.activeMapName).toBe("FooBar");
+        });
+    });
+    describe(ActionType.MAP_SET_VIEW_SIZE_UNITS, () => {
+        it("updates", () => {
+            const initialState = createInitialState();
+            const action = setViewSizeUnits(UnitOfMeasure.NauticalMiles);
+            const state = configReducer(initialState.config, action);
+            expect(state.viewSizeUnits).toBe(UnitOfMeasure.NauticalMiles);
+        });
+    });
+    describe(ActionType.MAP_SET_MANUAL_MAPTIP, () => {
+        it("updates", () => {
+            const initialState = createInitialState();
+            const action = setManualFeatureTooltipsEnabled(true);
+            const state = configReducer(initialState.config, action);
+            expect(state.manualFeatureTooltips).toBe(true);
+            const state2 = configReducer(state, setManualFeatureTooltipsEnabled(false));
+            expect(state2.manualFeatureTooltips).toBe(false);
         });
     });
 });

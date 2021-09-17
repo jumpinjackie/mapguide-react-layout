@@ -48,7 +48,7 @@ export const CONFIG_INITIAL_STATE: IConfigurationReducerState = {
     } as IViewerCapabilities
 };
 
-export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction) {
+export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction): IConfigurationReducerState {
     switch (action.type) {
         case ActionType.SET_LOCALE:
             {
@@ -77,7 +77,7 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction
                     activeMapName: am,
                     availableMaps: availableMaps
                 };
-                const newState: Partial<IConfigurationReducerState> = { ...state, ...state1 };
+                const newState = { ...state, ...state1 };
                 if (payload.config != null && Object.keys(payload.config).length > 0) {
                     const coordConfig = { ...state.coordinates };
                     const viewerConfig = { ...state.viewer };
@@ -134,7 +134,10 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction
             }
         case ActionType.MAP_SET_VIEW_SIZE_UNITS:
             {
-                return { ...state, ...{ viewSizeUnits: action.payload } };
+                //HACK: Huh? It's typed UnitOfMeasure on both ends, so where is the string coming from that causes
+                //the RHS type to be string | UnitOfMeasure?
+                const state1: Partial<IConfigurationReducerState> = { viewSizeUnits: action.payload as UnitOfMeasure };
+                return { ...state, ...state1 };
             }
         case ActionType.MAP_SET_MANUAL_MAPTIP:
             {

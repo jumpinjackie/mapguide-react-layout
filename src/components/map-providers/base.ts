@@ -38,7 +38,7 @@ import { tr, DEFAULT_LOCALE } from '../../api/i18n';
 import { LayerSetGroupBase } from '../../api/layer-set-group-base';
 import { assertIsDefined } from '../../utils/assert';
 import { info, debug } from '../../utils/logger';
-import { setCurrentView, setViewRotation, mapResized, setMouseCoordinates, setBusyCount, setViewRotationEnabled, setActiveTool, mapLayerAdded, externalLayersReady } from '../../actions/map';
+import { setCurrentView, setViewRotation, mapResized, setMouseCoordinates, setBusyCount, setViewRotationEnabled, setActiveTool, mapLayerAdded, externalLayersReady, addClientSelectedFeature, clearClientSelection } from '../../actions/map';
 import { Toaster, Intent } from '@blueprintjs/core';
 import { IOLFactory, OLFactory } from '../../api/ol-factory';
 import { ISubscriberProps } from '../../containers/subscriber';
@@ -806,6 +806,24 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      */
     protected onImageError(e: GenericEvent) { }
 
+    private addClientSelectedFeature(f: Feature<Geometry>, l: Layer<Source>) {
+        if (this._select)
+            this._select.getFeatures().push(f);
+        if (this._state.mapName) {
+            const p = { ...f.getProperties() };
+            delete p[f.getGeometryName()];
+            this.dispatch(addClientSelectedFeature(this._state.mapName, l.get(LayerProperty.LAYER_NAME), p));
+        }
+    }
+
+    private clearClientSelectedFeatures() {
+        if (this._select)
+            this._select.getFeatures().clear();
+        if (this._state.mapName) {
+            this.dispatch(clearClientSelection(this._state.mapName));
+        }
+    }
+
     protected onMapClick(e: MapBrowserEvent<any>) {
         if (!this._comp || !this._map) {
             return;
@@ -828,14 +846,14 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             //Shift+Click is the default OL selection append mode, so if no shift key
             //pressed, clear the existing selection
             if (!this.state.shiftKey) {
-                this._select.getFeatures().clear();
+                this.clearClientSelectedFeatures();
             }
             */
             //TODO: Our selected feature tooltip only shows properties of a single feature
             //and displays upon said feature being selected. As a result, although we can
             //(and should) allow for multiple features to be selected, we need to figure
             //out the proper UI for such a case before we enable multiple selection.
-            this._select.getFeatures().clear();
+            this.clearClientSelectedFeatures();
             this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
                 if (featureToLayerMap.length == 0) { //See TODO above
                     if (layer.get(LayerProperty.IS_SELECTABLE) == true && feature instanceof Feature) {
@@ -856,7 +874,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                     }, olExtent.createEmpty()) as Bounds;
                     this.zoomToExtent(zoomBounds);
                 } else {
-                    this._select.getFeatures().push(f);
+                    this.addClientSelectedFeature(f, l);
                 }
             }
         }

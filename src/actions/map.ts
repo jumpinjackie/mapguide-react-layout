@@ -42,7 +42,9 @@ import {
     ISetLayerVisibilityAction,
     ISetMapLayerVectorStyle,
     IAddMapLayerBusyWorkerAction,
-    IRemoveMapLayerBusyWorkerAction
+    IRemoveMapLayerBusyWorkerAction,
+    IAddClientSelectedFeatureAction,
+    IClearClientSelectionAction
 } from './defs';
 import { persistSelectionSetToLocalStorage } from '../api/session-store';
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
@@ -757,6 +759,41 @@ export function removeMapLayerBusyWorker(mapName: string, layerName: string): IR
         payload: {
             mapName,
             layerName
+        }
+    }
+}
+
+/**
+ * Adds a feature to the client selection set for the given map
+ * 
+ * @param mapName 
+ * @param layerName 
+ * @param properties The attributes of the selected feature
+ * @returns 
+ * @since 0.14
+ */
+export function addClientSelectedFeature(mapName: string, layerName: string, properties: any): IAddClientSelectedFeatureAction {
+    return {
+        type: ActionType.MAP_ADD_CLIENT_SELECTED_FEATURE,
+        payload: {
+            mapName,
+            layerName,
+            properties
+        }
+    }
+}
+
+/**
+ * Clears the client selection set for the given map
+ * 
+ * @param mapName 
+ * @since 0.14
+ */
+export function clearClientSelection(mapName: string): IClearClientSelectionAction {
+    return {
+        type: ActionType.MAP_CLEAR_CLIENT_SELECTION,
+        payload: {
+            mapName
         }
     }
 }

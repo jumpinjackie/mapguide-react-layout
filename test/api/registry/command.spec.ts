@@ -81,6 +81,7 @@ describe("api/registry/command", () => {
                     history: [],
                     historyIndex: -1,
                     generic: undefined,
+                    clientSelection: undefined,
                     mapguide: {
                         runtimeMap: createMap(),
                         selectableLayers: [],
@@ -125,6 +126,7 @@ describe("api/registry/command", () => {
                     history: [],
                     historyIndex: -1,
                     generic: undefined,
+                    clientSelection: undefined,
                     mapguide: {
                         runtimeMap: createMap(),
                         selectableLayers: [],
@@ -172,6 +174,7 @@ describe("api/registry/command", () => {
                     history: [],
                     historyIndex: -1,
                     generic: undefined,
+                    clientSelection: undefined,
                     mapguide: {
                         runtimeMap: createMap(),
                         selectableLayers: [],
@@ -210,6 +213,7 @@ describe("api/registry/command", () => {
                     history: [],
                     historyIndex: -1,
                     generic: undefined,
+                    clientSelection: undefined,
                     mapguide: {
                         runtimeMap: createMap(),
                         selectableLayers: [],

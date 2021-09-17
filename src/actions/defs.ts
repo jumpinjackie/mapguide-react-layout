@@ -883,3 +883,5 @@ export type ViewerAction = IOpenFlyoutAction
     | IAddMapLayerBusyWorkerAction //@since 0.13
     | IRemoveMapLayerBusyWorkerAction //@since 0.13
     | IExternalLayersReadyAction //@since 0.14
+    | IAddClientSelectedFeatureAction //@since 0.14
+    | IClearClientSelectionAction //@since 0.14

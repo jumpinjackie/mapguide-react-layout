@@ -9,7 +9,7 @@ import {
 import { isMapView } from "../utils/type-guards";
 import { makeUnique } from "../utils/array";
 import { ActionType } from '../constants/actions';
-import { ViewerAction, isGenericSubjectMapLayer, IGenericSubjectMapLayer } from '../actions/defs';
+import { ViewerAction, isGenericSubjectMapLayer } from '../actions/defs';
 import { debug } from '../utils/logger';
 import { IClusterSettings, VectorStyleSource } from "../api/ol-style-contracts";
 
@@ -41,7 +41,8 @@ export const MAP_STATE_INITIAL_SUB_STATE: IBranchedMapSubState = {
     initialExternalLayers: [],
     layers: undefined,
     mapguide: undefined,
-    generic: undefined
+    generic: undefined,
+    clientSelection: undefined
 };
 
 function applyMapGuideSubState(state: IBranchedMapState, mapName: string, applyFn: (current: IMapGuideSubState) => Partial<IMapGuideSubState>) {
@@ -378,6 +379,42 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                     featureIndex: -1,
                     activeSelectedFeature: undefined
                 }));
+            }
+        case ActionType.MAP_ADD_CLIENT_SELECTED_FEATURE:
+            {
+                const { payload } = action;
+                const subState = state[payload.mapName];
+                if (subState) {
+                    const cs = subState.clientSelection ?? {
+                        layers: []
+                    };
+                    let lyr = cs.layers.find(l => l.name == payload.layerName);
+                    if (!lyr) {
+                        lyr = {
+                            name: payload.layerName,
+                            features: []
+                        };
+                        cs.layers.push(lyr);
+                    }
+                    lyr.features.push(payload.properties);
+                    return mergeSubState(state, payload.mapName, {
+                        ...subState,
+                        clientSelection: cs
+                    });
+                }
+                return state;
+            }
+        case ActionType.MAP_CLEAR_CLIENT_SELECTION:
+            {
+                const { payload } = action;
+                const subState = state[payload.mapName];
+                if (subState) {
+                    return mergeSubState(state, payload.mapName, {
+                        ...subState,
+                        clientSelection: undefined
+                    });
+                }
+                return state;
             }
         case ActionType.MAP_SHOW_SELECTED_FEATURE:
             {

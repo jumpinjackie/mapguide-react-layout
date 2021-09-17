@@ -23,6 +23,7 @@ import { ISubscriberProps } from '../containers/subscriber';
 import Geometry from 'ol/geom/Geometry';
 import { IBasicPointCircleStyle, IPointIconStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorLayerStyle, IClusterSettings, ClusterClickAction } from './ol-style-contracts';
 import { IToolbarAppState } from './registry/command';
+import { ClientSelectionSet } from "./contracts/common";
 
 // Event boilerplate
 export type GenericEvent = any;
@@ -1502,7 +1503,7 @@ export interface IMapGuideSubState {
      */
     expandedGroups: any;
     /**
-     * The current selection state
+     * The current MapGuide selection state
      *
      * @type {(QueryMapFeaturesResponse | undefined)}
      * @memberof IBranchedMapSubState
@@ -1630,6 +1631,12 @@ export interface IBranchedMapSubState {
      * @since 0.14
      */
     mapguide: IMapGuideSubState | undefined;
+    /**
+     * The current client-side selection state
+     * 
+     * @since 0.14
+     */
+    clientSelection: ClientSelectionSet | undefined;
     /**
      * Generic layer sub-state
      *

@@ -26,3 +26,18 @@ export interface ResourceBase {
 export interface SiteVersion {
     Version: string;
 }
+
+/**
+ * @since 0.14
+ */
+export interface ClientSelectionLayer {
+    name: string;
+    features: any[];
+}
+
+/**
+ * @since 0.14
+ */
+export interface ClientSelectionSet {
+    layers: ClientSelectionLayer[];
+}

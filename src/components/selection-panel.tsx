@@ -176,7 +176,7 @@ export const SelectionPanel = (props: ISelectionPanelProps) => {
     };
     const canZoomSelectedFeature = (): boolean => {
         const feat = getCurrentFeature();
-        return feat != null && feat.Bounds != null;
+        return feat?.Bounds != null;
     };
     const prevFeature = () => {
         const newIndex = featureIndex - 1;
@@ -217,8 +217,8 @@ export const SelectionPanel = (props: ISelectionPanelProps) => {
     let meta: LayerMetadata | undefined;
     if (selection != null && selectedLayerIndex >= 0 && featureIndex >= 0) {
         const selLayer = selection.getLayerAt(selectedLayerIndex);
-        feat = selLayer.getFeatureAt(featureIndex);
-        meta = selLayer.getLayerMetadata();
+        feat = selLayer?.getFeatureAt(featureIndex);
+        meta = selLayer?.getLayerMetadata();
     }
     let selBodyStyle: React.CSSProperties | undefined;
     if (maxHeight) {

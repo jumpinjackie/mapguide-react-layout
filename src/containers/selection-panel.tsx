@@ -29,11 +29,13 @@ export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) =>
     const showSelectedFeatureAction = (mapName: string, layerId: string, selectionKey: string) => dispatch(showSelectedFeature(mapName, layerId, selectionKey));
     const appContext = React.useContext(AppContext);
     const onZoomToSelectedFeature = (feature: SelectedFeature) => {
-        const bbox: any = feature.Bounds.split(" ").map(s => parseFloat(s));
-        const viewer = getViewer();
-        if (viewer) {
-            const view = viewer.getViewForExtent(bbox);
-            setCurrentViewAction(view);
+        if (feature.Bounds) {
+            const bbox: any = feature.Bounds.split(" ").map(s => parseFloat(s));
+            const viewer = getViewer();
+            if (viewer) {
+                const view = viewer.getViewForExtent(bbox);
+                setCurrentViewAction(view);
+            }
         }
     };
     const resolveLayerLabel = (layerId: string, _: string) => {

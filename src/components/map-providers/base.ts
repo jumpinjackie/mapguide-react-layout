@@ -61,6 +61,7 @@ import { useReduxDispatch } from "./context";
 import { OLFeature } from "../../api/ol-types";
 import RenderFeature from "ol/render/Feature";
 import { textHeights } from "ol/render/canvas";
+import { ClientSelectionFeature } from "../../api/contracts/common";
 
 export function recursiveFindLayer(layers: Collection<LayerBase>, predicate: (layer: LayerBase) => boolean): LayerBase | undefined {
     for (let i = 0; i < layers.getLength(); i++) {
@@ -811,7 +812,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             this._select.getFeatures().push(f);
         if (this._state.mapName) {
             const features = f.get("features");
-            let theFeature;
+            let theFeature: Feature<Geometry>;
             //Are we clustered?
             if (Array.isArray(features)) {
                 // Only proceeed with dispatch if single item array
@@ -825,7 +826,12 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             }
             const p = { ...theFeature.getProperties() };
             delete p[theFeature.getGeometryName()];
-            this.dispatch(addClientSelectedFeature(this._state.mapName, l.get(LayerProperty.LAYER_NAME), p));
+            const proj = l.getSource().getProjection();
+            const feat: ClientSelectionFeature = {
+                bounds: theFeature.getGeometry()?.getExtent() as Bounds,
+                properties: p
+            };
+            this.dispatch(addClientSelectedFeature(this._state.mapName, l.get(LayerProperty.LAYER_NAME), proj?.getCode(), feat));
         }
     }
 

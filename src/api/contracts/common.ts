@@ -4,6 +4,8 @@
  * Common contracts and type aliases
  */
 
+import { Bounds } from "../common";
+
 export type ResourceIdentifier = string;
 
 export type Version = string;
@@ -30,9 +32,18 @@ export interface SiteVersion {
 /**
  * @since 0.14
  */
+export interface ClientSelectionFeature {
+    bounds?: Bounds;
+    properties: any;
+}
+
+/**
+ * @since 0.14
+ */
 export interface ClientSelectionLayer {
     name: string;
-    features: any[];
+    projection: string;
+    features: ClientSelectionFeature[];
 }
 
 /**

@@ -1,10 +1,54 @@
 import * as React from "react";
-import { shallow, mount, render } from "enzyme";
+import { mount } from "enzyme";
 import { SelectionPanel } from "../../src/components/selection-panel";
-import { SelectedFeatureSet, SelectedFeature } from "../../src/api/contracts/query";
+import { SelectedFeatureSet, SelectedFeature, SelectedLayer, LayerMetadata } from "../../src/api/contracts/query";
 import { tr } from "../../src/api/i18n";
 import { createSelectionSet } from "../../test-data";
-import { CompositeSelection } from "../../src/api/composite-selection";
+import { ICompositeSelection, ICompositeSelectionLayer } from "../../src/api/common";
+
+class MockCompositeSelectionLayer implements ICompositeSelectionLayer {
+    constructor(private layer: SelectedLayer) { }
+    getLayerId(): string | undefined {
+        return this.layer["@id"];
+    }
+    getName(): string {
+        return this.layer["@name"];
+    }
+    getLayerMetadata(): LayerMetadata | undefined {
+        return this.layer.LayerMetadata;
+    }
+    getFeatureAt(featureIndex: number): SelectedFeature {
+        return (this.layer.Feature ?? [])[featureIndex];
+    }
+    getFeatureCount(): number {
+        return this.layer.Feature?.length ?? 0;
+    }
+}
+
+class MockCompositeSelection implements ICompositeSelection {
+    constructor(private mgSelection: SelectedFeatureSet) {
+
+    }
+    getLayerCount(): number {
+        return this.mgSelection.SelectedLayer.length;
+    }
+    getLayers(): ICompositeSelectionLayer[] {
+        return this.mgSelection.SelectedLayer.map(lyr => new MockCompositeSelectionLayer(lyr));
+    }
+    getLayerAt(layerIndex: number): ICompositeSelectionLayer | undefined {
+        const lyr = this.mgSelection.SelectedLayer[layerIndex];
+        if (lyr)
+            return new MockCompositeSelectionLayer(lyr);
+        return undefined;
+    }
+    getFeatureAt(layerIndex: number, featureIndex: number): SelectedFeature | undefined {
+        return this.getLayerAt(layerIndex)?.getFeatureAt(featureIndex);
+    }
+}
+
+function makeCompositeSelection(set: SelectedFeatureSet): ICompositeSelection {
+    return new MockCompositeSelection(set);
+}
 
 type ZoomFeatureFunc = (feat: SelectedFeature) => void;
 
@@ -17,7 +61,7 @@ describe("components/selection-panel", () => {
         };
         const cleanHTML = jest.fn();
         const allowHTMLValues = false;
-        const sel = new CompositeSelection(set);
+        const sel = makeCompositeSelection(set);
         const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(0);
         expect(wrapper.find(".selection-panel-property-grid")).toHaveLength(0);
@@ -32,7 +76,7 @@ describe("components/selection-panel", () => {
         };
         const cleanHTML = jest.fn();
         const allowHTMLValues = false;
-        const sel = new CompositeSelection(set);
+        const sel = makeCompositeSelection(set);
         const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(0);
         expect(wrapper.find(".selection-panel-property-grid")).toHaveLength(0);
@@ -45,7 +89,7 @@ describe("components/selection-panel", () => {
         const set: SelectedFeatureSet = createSelectionSet();
         const cleanHTML = jest.fn();
         const allowHTMLValues = false;
-        const sel = new CompositeSelection(set);
+        const sel = makeCompositeSelection(set);
         const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(1);
         expect(wrapper.find(".selection-panel-property-grid")).toHaveLength(1);
@@ -58,7 +102,7 @@ describe("components/selection-panel", () => {
         const set: SelectedFeatureSet = createSelectionSet();
         const cleanHTML = jest.fn();
         const allowHTMLValues = false;
-        const sel = new CompositeSelection(set);
+        const sel = makeCompositeSelection(set);
         const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(1);
         expect(wrapper.find(".toolbar-btn")).toHaveLength(3);
@@ -75,7 +119,7 @@ describe("components/selection-panel", () => {
         const set: SelectedFeatureSet = createSelectionSet();
         const cleanHTML = jest.fn();
         const allowHTMLValues = false;
-        const sel = new CompositeSelection(set);
+        const sel = makeCompositeSelection(set);
         const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(1);
         expect(wrapper.find(".toolbar-btn")).toHaveLength(3);
@@ -91,7 +135,7 @@ describe("components/selection-panel", () => {
         const set: SelectedFeatureSet = createSelectionSet();
         const cleanHTML = jest.fn();
         const allowHTMLValues = false;
-        const sel = new CompositeSelection(set);
+        const sel = makeCompositeSelection(set);
         const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(1); //, "Has Toolbar");
         expect(wrapper.find(".toolbar-btn")).toHaveLength(3); //, "Has Toolbar Buttons");

@@ -11,6 +11,7 @@ import { RuntimeMap } from '../api/contracts/runtime-map';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { IVectorLayerStyle, IClusterSettings, VectorStyleSource } from '../api/ol-style-contracts';
 import { Action } from 'redux';
+import { ClientSelectionFeature } from '../api/contracts/common';
 
 /**
  * Opens the context menu
@@ -807,12 +808,10 @@ export interface IRemoveMapLayerBusyWorkerAction {
 export interface IAddClientSelectedFeatureAction {
     type: ActionType.MAP_ADD_CLIENT_SELECTED_FEATURE,
     payload: {
-        mapName: string,
-        layerName: string,
-        /**
-         * Attributes of the selected feature
-         */
-        properties: any
+        mapName: string;
+        layerName: string;
+        projection: string;
+        feature: ClientSelectionFeature;
     }
 }
 

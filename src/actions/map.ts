@@ -7,7 +7,8 @@ import {
     getRuntimeMap,
     getSelectionSet,
     UnitOfMeasure,
-    ILayerInfo
+    ILayerInfo,
+    Bounds
 } from "../api/common";
 import { getViewer } from "../api/runtime";
 import { getFiniteScaleIndexForScale } from '../utils/number';
@@ -50,6 +51,7 @@ import { persistSelectionSetToLocalStorage } from '../api/session-store';
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
 import { areViewsCloseToEqual } from '../utils/viewer-state';
 import { IVectorLayerStyle, VectorStyleSource } from '../api/ol-style-contracts';
+import { ClientSelectionFeature } from "../api/contracts/common";
 
 function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeature[]): SelectedFeature[] {
     const merged: SelectedFeature[] = [];
@@ -768,17 +770,19 @@ export function removeMapLayerBusyWorker(mapName: string, layerName: string): IR
  * 
  * @param mapName 
  * @param layerName 
- * @param properties The attributes of the selected feature
+ * @param projection
+ * @param feature
  * @returns 
  * @since 0.14
  */
-export function addClientSelectedFeature(mapName: string, layerName: string, properties: any): IAddClientSelectedFeatureAction {
+export function addClientSelectedFeature(mapName: string, layerName: string, projection: string, feature: ClientSelectionFeature): IAddClientSelectedFeatureAction {
     return {
         type: ActionType.MAP_ADD_CLIENT_SELECTED_FEATURE,
         payload: {
             mapName,
             layerName,
-            properties
+            projection,
+            feature
         }
     }
 }

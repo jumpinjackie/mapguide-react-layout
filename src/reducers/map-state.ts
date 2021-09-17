@@ -12,6 +12,7 @@ import { ActionType } from '../constants/actions';
 import { ViewerAction, isGenericSubjectMapLayer } from '../actions/defs';
 import { debug } from '../utils/logger';
 import { IClusterSettings, VectorStyleSource } from "../api/ol-style-contracts";
+import { ClientSelectionLayer } from "../api/contracts/common";
 
 export const MAP_STATE_INITIAL_STATE: IBranchedMapState = {
 
@@ -390,11 +391,12 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                     if (!lyr) {
                         lyr = {
                             name: payload.layerName,
+                            projection: payload.projection,
                             features: []
-                        };
+                        } as ClientSelectionLayer;
                         cs.layers.push(lyr);
                     }
-                    lyr.features.push(payload.properties);
+                    lyr.features.push(payload.feature);
                     return mergeSubState(state, payload.mapName, {
                         ...subState,
                         clientSelection: cs

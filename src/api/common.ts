@@ -2603,6 +2603,6 @@ export interface ICompositeSelectionLayer {
 export interface ICompositeSelection {
     getLayerCount(): number;
     getLayers(): ICompositeSelectionLayer[];
-    getLayerAt(layerIndex: number): ICompositeSelectionLayer;
-    getFeatureAt(layerIndex: number, featureIndex: number): SelectedFeature;
+    getLayerAt(layerIndex: number): ICompositeSelectionLayer | undefined;
+    getFeatureAt(layerIndex: number, featureIndex: number): SelectedFeature | undefined;
 }

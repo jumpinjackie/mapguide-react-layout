@@ -1,9 +1,9 @@
 import * as React from "react";
-import { shallow, mount, render } from "enzyme";
+import { shallow } from "enzyme";
 import { SelectedFeatureCount } from "../../src/components/selected-feature-count";
 import { FeatureSet } from "../../src/api/contracts/query";
 import { tr } from "../../src/api/i18n";
-import { CompositeSelection } from "../../src/api/composite-selection";
+import { countSelection } from "../../src/api/selection-count";
 
 function createSelectionSet(): FeatureSet {
     return {
@@ -39,20 +39,20 @@ describe("components/selected-feature-count", () => {
         const set: FeatureSet = {
             Layer: []
         };
-        const summary = CompositeSelection.count(set);
+        const summary = countSelection(set);
         const wrapper = shallow(<SelectedFeatureCount summary={summary} />);
         expect(wrapper.text()).toBe("");
     });
     it("Non-empty selection results in count displayed", () => {
         const set = createSelectionSet();
-        const summary = CompositeSelection.count(set);
+        const summary = countSelection(set);
         const wrapper = shallow(<SelectedFeatureCount summary={summary} locale="en" />);
         expect(wrapper.text()).toBe(tr("FMT_SELECTION_COUNT", "en", { total: 4, layerCount: 2 }));
     });
     it("Non-empty selection results with unsupported locale results in localization key", () => {
         const spy = jest.spyOn(console, "warn").mockImplementation(() => {});
         const set = createSelectionSet();
-        const summary = CompositeSelection.count(set);
+        const summary = countSelection(set);
         const wrapper = shallow(<SelectedFeatureCount summary={summary} locale="zh" />);
         expect(wrapper.text()).toBe("FMT_SELECTION_COUNT");
         expect(spy).toHaveBeenCalledTimes(1);
@@ -60,13 +60,13 @@ describe("components/selected-feature-count", () => {
     });
     it("Non-empty selection with custom format results in count displayed in specified format", () => {
         const set = createSelectionSet();
-        const summary = CompositeSelection.count(set);
+        const summary = countSelection(set);
         const wrapper = shallow(<SelectedFeatureCount summary={summary} locale="en" format="Selected {total}/{layerCount}" />);
         expect(wrapper.text()).toBe("Selected 4/2");
     });
     it("Non-empty selection with custom format containing invalid placeholders results in count displayed in specified format with unresolved placeholders remaining", () => {
         const set = createSelectionSet();
-        const summary = CompositeSelection.count(set);
+        const summary = countSelection(set);
         const wrapper = shallow(<SelectedFeatureCount summary={summary} locale="en" format="Selected {total}/{layerCount} on {map}" />);
         expect(wrapper.text()).toBe("Selected 4/2 on {map}");
     });
@@ -74,7 +74,7 @@ describe("components/selected-feature-count", () => {
         const set: FeatureSet = {
             Layer: []
         };
-        const summary = CompositeSelection.count(set);
+        const summary = countSelection(set);
         const wrapper = shallow(<SelectedFeatureCount summary={summary} format="Selected {total}/{layerCount}" />);
         expect(wrapper.text()).toBe("");
     });

@@ -62,8 +62,8 @@ export function templateReducer(origState = TEMPLATE_INITIAL_STATE, action: View
         }
     }
     if (action.type == ActionType.MAP_ADD_CLIENT_SELECTED_FEATURE) {
-        const { properties } = action.payload;
-        if (properties) {
+        const { feature } = action.payload;
+        if (feature?.properties) {
             state = {
                 ...origState,
                 // The majority of the templates provided have the SelectionPanel/Legend/TaskPane as

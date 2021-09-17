@@ -23,7 +23,7 @@ import { debug, error, warn } from '../utils/logger';
 import { QueryMapFeatureActionOptions, queryMapFeatures, setSelection, invokeCommand } from '../actions/map';
 import { refresh } from '../actions/legend';
 import { goHome } from '../actions/taskpane';
-import { FUSION_MAP_NAME, FUSION_TASKPANE_NAME, FUSION_REDLINE_NAME  } from '../constants';
+import { FUSION_MAP_NAME, FUSION_TASKPANE_NAME, FUSION_REDLINE_NAME } from '../constants';
 import { useActiveMapState } from './hooks-mapguide';
 import { useReduxDispatch } from "../components/map-providers/context";
 
@@ -393,11 +393,13 @@ class FusionWidgetApiShim {
                     if (selection != null && selection.SelectedFeatures != null) {
                         selection.SelectedFeatures.SelectedLayer.forEach(layer => {
                             layer.Feature.forEach(feat => {
-                                const b: any = feat.Bounds.split(" ").map(s => parseFloat(s));
-                                if (bounds == null) {
-                                    bounds = b;
-                                } else {
-                                    bounds = fact.extendExtent(bounds, b);
+                                if (feat.Bounds) {
+                                    const b: any = feat.Bounds.split(" ").map(s => parseFloat(s));
+                                    if (bounds == null) {
+                                        bounds = b;
+                                    } else {
+                                        bounds = fact.extendExtent(bounds, b);
+                                    }
                                 }
                             })
                         });
@@ -1006,18 +1008,22 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
             const fset: SelectedFeatureSet = selectionSet.SelectedFeatures;
             fset.SelectedLayer.forEach(layer => {
                 layer.Feature.forEach(feature => {
-                    const bbox = feature.Bounds.split(" ").map(s => parseFloat(s));
-                    if (bounds == null) {
-                        bounds = { minx: bbox[0], miny: bbox[1], maxx: bbox[2], maxy: bbox[3] };
-                    } else {
-                        if (bbox[0] < bounds.minx)
-                            bounds.minx = bbox[0];
-                        if (bbox[1] < bounds.miny)
-                            bounds.miny = bbox[1];
-                        if (bbox[2] > bounds.maxx)
-                            bounds.maxx = bbox[2];
-                        if (bbox[3] > bounds.maxy)
-                            bounds.maxy = bbox[3];
+                    const bbox = feature.Bounds
+                        ? feature.Bounds.split(" ").map(s => parseFloat(s))
+                        : undefined;
+                    if (bbox) {
+                        if (bounds == null) {
+                            bounds = { minx: bbox[0], miny: bbox[1], maxx: bbox[2], maxy: bbox[3] };
+                        } else {
+                            if (bbox[0] < bounds.minx)
+                                bounds.minx = bbox[0];
+                            if (bbox[1] < bounds.miny)
+                                bounds.miny = bbox[1];
+                            if (bbox[2] > bounds.maxx)
+                                bounds.maxx = bbox[2];
+                            if (bbox[3] > bounds.maxy)
+                                bounds.maxy = bbox[3];
+                        }
                     }
                 });
             });
@@ -1045,12 +1051,15 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
                 const sel: IAjaxViewerSelectionSet = {};
                 for (const sl of selection.SelectedFeatures.SelectedLayer) {
                     sel[sl["@name"]] = sl.Feature.map(f => {
-                        const bbox = f.Bounds.split(" ").map(s => parseFloat(s));
-                        return {
-                            zoom: { minx: bbox[0], miny: bbox[1], maxx: bbox[2], maxy: bbox[3] },
-                            values: f.Property.map(p => ({ name: p.Name, value: p.Value }))
-                        };
-                    })
+                        if (f.Bounds) {
+                            const bbox = f.Bounds.split(" ").map(s => parseFloat(s));
+                            return {
+                                zoom: { minx: bbox[0], miny: bbox[1], maxx: bbox[2], maxy: bbox[3] },
+                                values: f.Property.map(p => ({ name: p.Name, value: p.Value }))
+                            };
+                        }
+                        return undefined;
+                    }).filter(f => f != null);
                 }
                 return sel;
             }

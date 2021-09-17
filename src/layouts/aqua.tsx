@@ -46,8 +46,8 @@ function aquaTemplateReducer(origState: ITemplateReducerState, state: ITemplateR
                 //exclusive visible set. We take advantage of the custom template reducer function to apply the
                 //correct visibility state against the *original state* effectively discarding whatever the root
                 //template reducer has done against this action.
-                const { properties } = action.payload;
-                if (properties) {
+                const { feature } = action.payload;
+                if (feature?.properties) {
                     return {
                         ...origState,
                         ...{ selectionPanelVisible: true }

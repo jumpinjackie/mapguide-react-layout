@@ -22,7 +22,7 @@ function isCommandSpec(cmd: ICommandSpec | IUnknownCommandSpec): cmd is ICommand
 }
 
 export function isStateless(appDef: ApplicationDefinition) {
-    return (appDef.Extension.Stateless == "true");
+    return (appDef.Extension?.Stateless == "true");
 }
 
 export interface IViewerInitCommand {

@@ -1382,13 +1382,10 @@ export interface IModalComponentDisplayOptions extends IModalDisplayOptionsBase 
     componentProps?: any;
 }
 
-export type IToolbarReducerState = any;
-
-/*
 export interface IToolbarReducerState {
-
+    toolbars: any;
+    flyouts: any;
 }
-*/
 
 /**
  * Describes the reducer state branch for Task Pane component

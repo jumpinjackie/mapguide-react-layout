@@ -1,4 +1,5 @@
-import { sum, roundTo, areNumbersEqual, scaleRangeBetween, getFiniteScaleIndexForScale, getClosestScaleIndex } from "../../src/utils/number";
+import { exportAllDeclaration } from "@babel/types";
+import { sum, roundTo, areNumbersEqual, scaleRangeBetween, getFiniteScaleIndexForScale, getClosestScaleIndex, restrictToRange, deg2rad, rad2deg } from "../../src/utils/number";
 
 const SCALES = [390.625, 781.25, 1562.5, 3125, 6250, 12500, 25000, 50000, 100000, 200000];
 
@@ -9,6 +10,14 @@ describe("utils/number", () => {
             expect(areNumbersEqual(0, 0)).toBe(true);
             expect(areNumbersEqual(0, 0 + SHIM_EPSILON)).toBe(true);
             expect(areNumbersEqual(0 + SHIM_EPSILON, 0)).toBe(true);
+        });
+    });
+    describe("restrictToRange", () => {
+        it("Snaps to lower limit", () => {
+            expect(restrictToRange(3, 1, 2)).toBe(2);
+        });
+        it("Snaps to upper limit",() => {
+            expect(restrictToRange(0, 1, 2)).toBe(1);
         });
     });
     describe("scaleRangeBetween", () => {
@@ -72,4 +81,10 @@ describe("utils/number", () => {
             expect(roundTo(123.45483454, 4)).toBe(123.4548);
         });
     });
+    describe("deg2rad/rad2deg", () => {
+        it("roundtrips", () => {
+            const val = 32.54;
+            expect(rad2deg(deg2rad(val))).toBe(val);
+        })
+    })
 });

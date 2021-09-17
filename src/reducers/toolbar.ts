@@ -43,7 +43,7 @@ export const TOOLBAR_INITIAL_STATE: IToolbarReducerState = {
     flyouts: {}
 };
 
-export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: ViewerAction) {
+export function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action: ViewerAction): IToolbarReducerState {
     switch (action.type) {
         case ActionType.INIT_APP:
             {

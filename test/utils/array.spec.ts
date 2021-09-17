@@ -10,6 +10,7 @@ describe("utils/array", () => {
     });
     describe("areArraysDifferent", () => {
         it ("works as advertised", () => {
+            expect(areArraysDifferent(undefined, undefined)).toBe(true);
             expect(areArraysDifferent([1, 2], [1, 3, 2])).toBe(true);
             expect(areArraysDifferent([1, 2, null], [1, 2])).toBe(true);
             expect(areArraysDifferent([1, 2, undefined], [1, 2])).toBe(true);
@@ -17,6 +18,7 @@ describe("utils/array", () => {
             expect(areArraysDifferent([1, 2, 3], [1, 2, 3])).toBe(false);
             expect(areArraysDifferent([], [])).toBe(false);
             expect(areArraysDifferent([1, 2, 3], [1, "2", 3])).toBe(true);
+            expect(areArraysDifferent([1, 2, 3], [1, "2", 3], (left, right) => left == right)).toBe(false);
         });
     })
 });

@@ -58,9 +58,6 @@ import { QueryMapFeaturesResponse } from '../../api/contracts/query';
 import { setViewer, getViewer } from '../../api/runtime';
 import { Client } from '../../api/client';
 import { useReduxDispatch } from "./context";
-import { OLFeature } from "../../api/ol-types";
-import RenderFeature from "ol/render/Feature";
-import { textHeights } from "ol/render/canvas";
 import { ClientSelectionFeature } from "../../api/contracts/common";
 
 export function recursiveFindLayer(layers: Collection<LayerBase>, predicate: (layer: LayerBase) => boolean): LayerBase | undefined {
@@ -826,12 +823,11 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             }
             const p = { ...theFeature.getProperties() };
             delete p[theFeature.getGeometryName()];
-            const proj = l.getSource().getProjection();
             const feat: ClientSelectionFeature = {
                 bounds: theFeature.getGeometry()?.getExtent() as Bounds,
                 properties: p
             };
-            this.dispatch(addClientSelectedFeature(this._state.mapName, l.get(LayerProperty.LAYER_NAME), proj?.getCode(), feat));
+            this.dispatch(addClientSelectedFeature(this._state.mapName, l.get(LayerProperty.LAYER_NAME), feat));
         }
     }
 

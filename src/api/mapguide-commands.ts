@@ -105,7 +105,7 @@ export function initMapGuideCommands() {
                     cs = st.mapState[st.config.activeMapName].clientSelection;
                 }
                 const compSel = new CompositeSelection(selection?.SelectedFeatures, cs);
-                const bounds = compSel.getBounds(viewer.getProjection());
+                const bounds = compSel.getBounds();
                 if (bounds) {
                     const view = viewer.getViewForExtent(bounds);
                     dispatch(setCurrentView(view));

@@ -4,7 +4,7 @@
  * Common contracts and type aliases
  */
 
-import { Bounds } from "../common";
+import type { Bounds } from "../common";
 
 export type ResourceIdentifier = string;
 
@@ -42,7 +42,6 @@ export interface ClientSelectionFeature {
  */
 export interface ClientSelectionLayer {
     name: string;
-    projection: string;
     features: ClientSelectionFeature[];
 }
 

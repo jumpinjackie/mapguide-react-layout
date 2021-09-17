@@ -770,18 +770,16 @@ export function removeMapLayerBusyWorker(mapName: string, layerName: string): IR
  * 
  * @param mapName 
  * @param layerName 
- * @param projection
- * @param feature
+ * @param feature 
  * @returns 
  * @since 0.14
  */
-export function addClientSelectedFeature(mapName: string, layerName: string, projection: string, feature: ClientSelectionFeature): IAddClientSelectedFeatureAction {
+export function addClientSelectedFeature(mapName: string, layerName: string, feature: ClientSelectionFeature): IAddClientSelectedFeatureAction {
     return {
         type: ActionType.MAP_ADD_CLIENT_SELECTED_FEATURE,
         payload: {
             mapName,
             layerName,
-            projection,
             feature
         }
     }

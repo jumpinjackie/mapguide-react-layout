@@ -1,13 +1,11 @@
 import { extend } from "ol/extent";
-import { transformExtent } from "ol/proj";
-import type { ProjectionLike } from "ol/proj";
 import { ICompositeSelectionLayer, ICompositeSelection, Bounds } from "./common";
 import { ClientSelectionLayer, ClientSelectionSet } from "./contracts/common";
-import { SelectedFeature, SelectedLayer, FeatureProperty, SelectedFeatureSet, FeatureSet } from "./contracts/query";
+import { SelectedFeature, SelectedLayer, FeatureProperty, SelectedFeatureSet } from "./contracts/query";
 
 export class CompositeSelectionLayer implements ICompositeSelectionLayer {
     private features: SelectedFeature[];
-    constructor(private layer: SelectedLayer | ClientSelectionLayer, private projection: ProjectionLike | undefined) {
+    constructor(private layer: SelectedLayer | ClientSelectionLayer) {
         this.features = [];
         if (this.isSelectedLayer(this.layer)) {
             for (const f of this.layer.Feature) {
@@ -35,6 +33,11 @@ export class CompositeSelectionLayer implements ICompositeSelectionLayer {
             && (layer as any)["@id"]
             && (layer as any)["@name"]
     }
+    /**
+     * Gets the combined bounds of all selected features
+     * 
+     * @returns The combined bounds of all selected features in the projection of the current map view
+     */
     public getBounds(): Bounds | undefined {
         let bounds: Bounds | undefined;
         if (this.isSelectedLayer(this.layer)) {
@@ -62,9 +65,6 @@ export class CompositeSelectionLayer implements ICompositeSelectionLayer {
             }
         }
         return bounds;
-    }
-    public getProjection(): ProjectionLike | undefined {
-        return this.projection;
     }
     public getLayerId() {
         if (this.isSelectedLayer(this.layer)) {
@@ -97,28 +97,23 @@ export class CompositeSelection implements ICompositeSelection {
         this.layers = [];
         if (mgSelection) {
             for (const layer of mgSelection.SelectedLayer) {
-                this.layers.push(new CompositeSelectionLayer(layer, undefined));
+                this.layers.push(new CompositeSelectionLayer(layer));
             }
         }
         if (clientSelection) {
             for (const layer of clientSelection.layers) {
-                this.layers.push(new CompositeSelectionLayer(layer, layer.projection));
+                this.layers.push(new CompositeSelectionLayer(layer));
             }
         }
     }
-    public getBounds(viewProjection: ProjectionLike): Bounds | undefined {
+    public getBounds(): Bounds | undefined {
         if (this.layers.length == 0) {
             return undefined;
         }
-
         let bounds: Bounds | undefined;
         for (const lyr of this.layers) {
             let layerBounds = lyr.getBounds();
-            const layerProj = lyr.getProjection();
             if (layerBounds) {
-                if (layerProj && viewProjection != layerProj) {
-                    layerBounds = transformExtent(layerBounds, layerProj, viewProjection) as Bounds;
-                }
                 if (bounds) {
                     bounds = extend(bounds, layerBounds) as Bounds;
                 } else {

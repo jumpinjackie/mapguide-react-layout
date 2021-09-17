@@ -810,7 +810,6 @@ export interface IAddClientSelectedFeatureAction {
     payload: {
         mapName: string;
         layerName: string;
-        projection: string;
         feature: ClientSelectionFeature;
     }
 }

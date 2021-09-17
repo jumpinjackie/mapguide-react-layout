@@ -391,7 +391,6 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                     if (!lyr) {
                         lyr = {
                             name: payload.layerName,
-                            projection: payload.projection,
                             features: []
                         } as ClientSelectionLayer;
                         cs.layers.push(lyr);

@@ -19,8 +19,6 @@ export const MAP_STATE_INITIAL_STATE: IBranchedMapState = {
 
 export const MG_INITIAL_SUB_STATE: IMapGuideSubState = {
     selectionSet: undefined,
-    layerIndex: -1,
-    featureIndex: -1,
     layerTransparency: {},
     selectableLayers: {},
     expandedGroups: {},

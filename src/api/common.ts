@@ -1,6 +1,6 @@
 import { ResultColumnSet } from "./contracts/weblayout";
 import { RuntimeMap } from "./contracts/runtime-map";
-import { FeatureSet, QueryMapFeaturesResponse } from "./contracts/query";
+import { FeatureSet, LayerMetadata, QueryMapFeaturesResponse, SelectedFeature } from "./contracts/query";
 import { IQueryMapFeaturesOptions } from './request-builder';
 
 import olPoint from "ol/geom/Point";
@@ -1510,20 +1510,6 @@ export interface IMapGuideSubState {
      */
     selectionSet: QueryMapFeaturesResponse | undefined;
     /**
-     * The current selected layer index
-     *
-     * @type {number}
-     * @memberof IBranchedMapSubState
-     */
-    layerIndex: number;
-    /**
-     * The current selected feature index
-     *
-     * @type {number}
-     * @memberof IBranchedMapSubState
-     */
-    featureIndex: number;
-    /**
      * The array of ids of layers to show
      *
      * @type {string[]}
@@ -2604,4 +2590,19 @@ export enum MgBuiltInLayers {
     Overlay = "MapGuide Dynamic Overlay",
     SelectionOverlay = "MapGuide Selection Overlay",
     ActiveFeatureSelectionOverlay = "MapGuide Active Feature Selection Overlay"
+}
+
+export interface ICompositeSelectionLayer {
+    getLayerId(): string | undefined;
+    getName(): string;
+    getLayerMetadata(): LayerMetadata | undefined;
+    getFeatureAt(featureIndex: number): SelectedFeature;
+    getFeatureCount(): number;
+}
+
+export interface ICompositeSelection {
+    getLayerCount(): number;
+    getLayers(): ICompositeSelectionLayer[];
+    getLayerAt(layerIndex: number): ICompositeSelectionLayer;
+    getFeatureAt(layerIndex: number, featureIndex: number): SelectedFeature;
 }

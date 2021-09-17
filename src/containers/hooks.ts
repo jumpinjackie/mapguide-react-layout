@@ -6,6 +6,7 @@ import { IInitialExternalLayer } from '../actions/defs';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { IToolbarAppState, reduceAppToToolbarState } from '../api/registry/command';
 import { useAppState } from '../components/map-providers/context';
+import { ClientSelectionSet } from '../api/contracts/common';
 
 // From: https://usehooks.com/usePrevious/
 
@@ -121,6 +122,14 @@ export function useActiveMapBranch() {
 
 export function useActiveMapSelectionSet() {
     return useAppState<QueryMapFeaturesResponse | null>(state => getSelectionSet(state) ?? null);
+}
+
+/**
+ * Gets the client-side selection set
+ * @since 0.14
+ */
+export function useActiveMapClientSelectionSet() {
+    return useAppState<ClientSelectionSet | undefined>(state => getActiveMapBranch(state)?.clientSelection);
 }
 
 export function useActiveMapInitialView() {

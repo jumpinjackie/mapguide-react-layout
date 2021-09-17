@@ -4,6 +4,7 @@ import { SelectionPanel } from "../../src/components/selection-panel";
 import { SelectedFeatureSet, SelectedFeature } from "../../src/api/contracts/query";
 import { tr } from "../../src/api/i18n";
 import { createSelectionSet } from "../../test-data";
+import { CompositeSelection } from "../../src/api/composite-selection";
 
 type ZoomFeatureFunc = (feat: SelectedFeature) => void;
 
@@ -16,7 +17,8 @@ describe("components/selection-panel", () => {
         };
         const cleanHTML = jest.fn();
         const allowHTMLValues = false;
-        const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={set} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
+        const sel = new CompositeSelection(set);
+        const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(0);
         expect(wrapper.find(".selection-panel-property-grid")).toHaveLength(0);
         expect(wrapper.find(".selection-panel-no-selection")).toHaveLength(1);
@@ -30,7 +32,8 @@ describe("components/selection-panel", () => {
         };
         const cleanHTML = jest.fn();
         const allowHTMLValues = false;
-        const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={set} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
+        const sel = new CompositeSelection(set);
+        const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(0);
         expect(wrapper.find(".selection-panel-property-grid")).toHaveLength(0);
         expect(wrapper.find(".selection-panel-no-selection")).toHaveLength(1);
@@ -42,7 +45,8 @@ describe("components/selection-panel", () => {
         const set: SelectedFeatureSet = createSelectionSet();
         const cleanHTML = jest.fn();
         const allowHTMLValues = false;
-        const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={set} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
+        const sel = new CompositeSelection(set);
+        const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(1);
         expect(wrapper.find(".selection-panel-property-grid")).toHaveLength(1);
         expect(wrapper.find({ "data-property-value-for": "Name" }).text()).toBe("Foo / Feature 1");
@@ -54,7 +58,8 @@ describe("components/selection-panel", () => {
         const set: SelectedFeatureSet = createSelectionSet();
         const cleanHTML = jest.fn();
         const allowHTMLValues = false;
-        const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={set} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
+        const sel = new CompositeSelection(set);
+        const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(1);
         expect(wrapper.find(".toolbar-btn")).toHaveLength(3);
         const back = wrapper.find(".toolbar-btn").at(0);
@@ -70,7 +75,8 @@ describe("components/selection-panel", () => {
         const set: SelectedFeatureSet = createSelectionSet();
         const cleanHTML = jest.fn();
         const allowHTMLValues = false;
-        const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={set} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
+        const sel = new CompositeSelection(set);
+        const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(1);
         expect(wrapper.find(".toolbar-btn")).toHaveLength(3);
         const zoom = wrapper.find(".toolbar-btn").at(2);
@@ -85,7 +91,8 @@ describe("components/selection-panel", () => {
         const set: SelectedFeatureSet = createSelectionSet();
         const cleanHTML = jest.fn();
         const allowHTMLValues = false;
-        const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={set} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
+        const sel = new CompositeSelection(set);
+        const wrapper = mount(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
         expect(wrapper.find(".selection-panel-toolbar")).toHaveLength(1); //, "Has Toolbar");
         expect(wrapper.find(".toolbar-btn")).toHaveLength(3); //, "Has Toolbar Buttons");
         const fwd = wrapper.find(".toolbar-btn").at(1);

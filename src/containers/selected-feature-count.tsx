@@ -1,6 +1,7 @@
 import * as React from "react";
+import { CompositeSelection } from "../api/composite-selection";
 import { SelectedFeatureCount } from "../components/selected-feature-count";
-import { useViewerLocale, useActiveMapSelectionSet } from './hooks';
+import { useViewerLocale, useActiveMapSelectionSet, useActiveMapClientSelectionSet } from './hooks';
 
 export interface ISelectedFeatureCountContainerProps {
     style?: React.CSSProperties;
@@ -9,9 +10,11 @@ export interface ISelectedFeatureCountContainerProps {
 export const SelectedFeatureCountContainer = (props: ISelectedFeatureCountContainerProps) => {
     const { style } = props;
     const selection = useActiveMapSelectionSet();
+    const clientSelection = useActiveMapClientSelectionSet();
     const locale = useViewerLocale();
-    if (selection && selection.FeatureSet) {
-        return <SelectedFeatureCount locale={locale} style={style} selection={selection.FeatureSet} />;
+    const summary = CompositeSelection.count(selection?.FeatureSet, clientSelection);
+    if (summary) {
+        return <SelectedFeatureCount locale={locale} style={style} summary={summary} />;
     } else {
         return <div />;
     }

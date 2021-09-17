@@ -40,6 +40,21 @@ function aquaTemplateReducer(origState: ITemplateReducerState, state: ITemplateR
                 }
                 return state; //No action taken: Return "current" state
             }
+        case ActionType.MAP_ADD_CLIENT_SELECTED_FEATURE:
+            {
+                //This is the only template that does not conform to the selection/legend/taskpane is a mutually
+                //exclusive visible set. We take advantage of the custom template reducer function to apply the
+                //correct visibility state against the *original state* effectively discarding whatever the root
+                //template reducer has done against this action.
+                const { properties } = action.payload;
+                if (properties) {
+                    return {
+                        ...origState,
+                        ...{ selectionPanelVisible: true }
+                    }
+                }
+                return state; //No action taken: Return "current" state
+            }
         case ActionType.FUSION_SET_LEGEND_VISIBILITY:
             {
                 const data = action.payload;

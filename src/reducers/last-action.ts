@@ -1,5 +1,5 @@
 // A reducer to remember the last dispatched action. This is primarily used by layout
-// templates to listen on certain actions and be able to update their
+// templates to listen on certain actions and be able to update their panel states
 //
 // As suggested by the creator of redux:
 // https://github.com/reactjs/redux/issues/580
@@ -15,6 +15,7 @@ export function lastAction(state = null, action: ViewerAction) {
             case ActionType.MAP_SET_BUSY_COUNT:
             case ActionType.TASK_INVOKE_URL:
             case ActionType.MAP_SET_SELECTION:
+            case ActionType.MAP_ADD_CLIENT_SELECTED_FEATURE:
             case ActionType.MAP_SET_MAPTIP:
             case ActionType.MAP_SET_ACTIVE_TOOL:
                 return action;

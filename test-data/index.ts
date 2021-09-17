@@ -21,6 +21,7 @@ import { VIEWER_INITIAL_STATE } from "../src/reducers/viewer";
 import { MOUSE_INITIAL_STATE } from "../src/reducers/mouse";
 import { TEMPLATE_INITIAL_STATE } from "../src/reducers/template";
 import { ActionType } from '../src/constants/actions';
+import { ClientSelectionSet } from "../src/api/contracts/common";
 
 export function createMap(): any /*RuntimeMap*/ {
     return {
@@ -509,6 +510,35 @@ export function createMap(): any /*RuntimeMap*/ {
             }
         ]
     };
+}
+
+export function createClientSelectionSet(): ClientSelectionSet {
+    return {
+        layers: [
+            {
+                name: "Trees",
+                features: [
+                    {
+                        properties: {
+                            id: 1,
+                            name: "Foo"
+                        }
+                    }
+                ]
+            },
+            {
+                name: "Incidents",
+                features: [
+                    {
+                        properties: {
+                            id: 2,
+                            description: "Bar"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
 }
 
 export function createSelectionSet(): SelectedFeatureSet {

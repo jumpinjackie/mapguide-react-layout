@@ -1,6 +1,6 @@
 import { DefaultCommands, registerCommand, openUrlInTarget, CommandConditions } from './registry/command';
 import { SPRITE_MAPTIP, SPRITE_PRINT, SPRITE_OPTIONS, SPRITE_SELECT_RADIUS, SPRITE_SELECT_POLYGON, SPRITE_SELECT_CLEAR, SPRITE_ICON_ZOOMSELECT, SPRITE_BUFFER, SPRITE_SELECT_FEATURES, SPRITE_REDLINE, SPRITE_FEATURE_INFO, SPRITE_QUERY, SPRITE_THEME, SPRITE_SELECT_CENTRE } from '../constants/assets';
-import { setFeatureTooltipsEnabled, setCurrentView } from '../actions/map';
+import { setFeatureTooltipsEnabled, setCurrentView, clearClientSelection } from '../actions/map';
 import { ensureParameters } from '../utils/url';
 import { getRuntimeMap, getSelectionSet, Bounds } from './common';
 import { getFusionRoot } from './runtime';
@@ -8,6 +8,7 @@ import { tr } from './i18n';
 import { buildTargetedCommand } from './default-commands';
 import { enableRedlineMessagePrompt } from '../containers/viewer-shim';
 import * as olExtent from "ol/extent";
+import { CompositeSelection } from './composite-selection';
 
 export function initMapGuideCommands() {
     //Feature Tooltips
@@ -79,34 +80,32 @@ export function initMapGuideCommands() {
     //Clear Selection
     registerCommand(DefaultCommands.ClearSelection, {
         iconClass: SPRITE_SELECT_CLEAR,
-        selected: state => !state.stateless,
-        enabled: CommandConditions.hasSelection,
-        invoke: (_dispatch, _getState, viewer) => {
+        selected: () => false,
+        enabled: state => CommandConditions.hasSelection(state) || CommandConditions.hasClientSelection(state),
+        invoke: (dispatch, getState, viewer) => {
+            const st = getState();
+            if (st.config.activeMapName) {
+                dispatch(clearClientSelection(st.config.activeMapName));
+            }
             viewer?.mapguideSupport()?.clearSelection();
         }
     });
     //Zoom to Selection
     registerCommand(DefaultCommands.ZoomToSelection, {
         iconClass: SPRITE_ICON_ZOOMSELECT,
-        selected: state => !state.stateless,
-        enabled: CommandConditions.hasSelection,
+        selected: () => false,
+        enabled: state => CommandConditions.hasSelection(state) || CommandConditions.hasClientSelection(state),
         invoke: (dispatch, getState, viewer) => {
             if (viewer) {
                 const fact = viewer.getOLFactory();
-                const selection = getSelectionSet(getState());
-                let bounds: Bounds | null = null;
-                if (selection != null && selection.SelectedFeatures != null) {
-                    selection.SelectedFeatures.SelectedLayer.forEach(layer => {
-                        layer.Feature.forEach(feat => {
-                            const b: any = feat.Bounds.split(" ").map(s => parseFloat(s));
-                            if (bounds == null) {
-                                bounds = b;
-                            } else {
-                                bounds = fact.extendExtent(bounds, b);
-                            }
-                        })
-                    });
+                const st = getState();
+                const selection = getSelectionSet(st);
+                let cs;
+                if (st.config.activeMapName) {
+                    cs = st.mapState[st.config.activeMapName].clientSelection;
                 }
+                const compSel = new CompositeSelection(selection?.SelectedFeatures, cs);
+                const bounds = compSel.getBounds();
                 if (bounds) {
                     const view = viewer.getViewForExtent(bounds);
                     dispatch(setCurrentView(view));
@@ -266,8 +265,8 @@ export function initMapGuideCommands() {
                 if (sf) {
                     let bbox;
                     for (const layer of sf.SelectedLayer) {
-                        for (const f of layer.Feature) {
-                            const b: any = f.Bounds.split(" ").map(s => parseFloat(s));
+                        for (const f of layer.Feature.filter(f => f.Bounds != null)) {
+                            const b: any = f.Bounds!.split(" ").map(s => parseFloat(s));
                             if (!bbox) {
                                 bbox = b;
                             } else {

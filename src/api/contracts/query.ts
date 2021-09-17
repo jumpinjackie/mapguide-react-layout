@@ -35,7 +35,7 @@ export interface FeatureProperty {
 
 export interface SelectedFeature {
     SelectionKey?: string;
-    Bounds: string;
+    Bounds?: string;
     Property: FeatureProperty[];
 }
 

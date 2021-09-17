@@ -10,6 +10,8 @@ import { PreparedSubMenuSet } from '../api/registry/command-spec';
 import { RuntimeMap } from '../api/contracts/runtime-map';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { IVectorLayerStyle, IClusterSettings, VectorStyleSource } from '../api/ol-style-contracts';
+import { Action } from 'redux';
+import { ClientSelectionFeature } from '../api/contracts/common';
 
 /**
  * Opens the context menu
@@ -799,6 +801,30 @@ export interface IRemoveMapLayerBusyWorkerAction {
 }
 
 /**
+ * Adds a feature to the client selection set for the given map
+ * 
+ * @since 0.14
+ */
+export interface IAddClientSelectedFeatureAction {
+    type: ActionType.MAP_ADD_CLIENT_SELECTED_FEATURE,
+    payload: {
+        mapName: string;
+        layerName: string;
+        feature: ClientSelectionFeature;
+    }
+}
+
+/**
+ * Clears the client selection set for the given map
+ */
+export interface IClearClientSelectionAction {
+    type: ActionType.MAP_CLEAR_CLIENT_SELECTION,
+    payload: {
+        mapName: string
+    }
+}
+
+/**
  * @since 0.12
  */
 export type ViewerAction = IOpenFlyoutAction 
@@ -855,3 +881,5 @@ export type ViewerAction = IOpenFlyoutAction
     | IAddMapLayerBusyWorkerAction //@since 0.13
     | IRemoveMapLayerBusyWorkerAction //@since 0.13
     | IExternalLayersReadyAction //@since 0.14
+    | IAddClientSelectedFeatureAction //@since 0.14
+    | IClearClientSelectionAction //@since 0.14

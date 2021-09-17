@@ -61,6 +61,19 @@ export function templateReducer(origState = TEMPLATE_INITIAL_STATE, action: View
             }
         }
     }
+    if (action.type == ActionType.MAP_ADD_CLIENT_SELECTED_FEATURE) {
+        const { feature } = action.payload;
+        if (feature?.properties) {
+            state = {
+                ...origState,
+                // The majority of the templates provided have the SelectionPanel/Legend/TaskPane as
+                // a mutually exclusive visible set, so this new state would be applicable for them.
+                // For templates that do not, they can fix this state up "in post" against the same action
+                // in their overridden reducer
+                ...{ selectionPanelVisible: true, legendVisible: false, taskPaneVisible: false }
+            }
+        }
+    }
     if (typeof (_ovReducer) == 'function') {
         return _ovReducer(origState, state, action);
     } else {

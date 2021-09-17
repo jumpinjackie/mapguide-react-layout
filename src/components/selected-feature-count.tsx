@@ -1,5 +1,4 @@
 import * as React from "react";
-import { FeatureSet } from "../api/contracts/query";
 import { tr, fmt } from "../api/i18n";
 
 /**
@@ -9,18 +8,13 @@ import { tr, fmt } from "../api/i18n";
  * @interface ISelectedFeatureCountProps
  */
 export interface ISelectedFeatureCountProps {
-    selection: FeatureSet;
+    summary?: {
+        total: number;
+        layerCount: number;
+    },
     locale?: string;
     format?: string;
     style?: React.CSSProperties;
-}
-
-function countTotalSelected(featureSet: FeatureSet): number {
-    let total = 0;
-    featureSet.Layer.map(layer => layer.Class.ID.length).forEach(subTotal => {
-        total += subTotal;
-    });
-    return total;
 }
 
 /**
@@ -29,11 +23,8 @@ function countTotalSelected(featureSet: FeatureSet): number {
 export const SelectedFeatureCount = (props: ISelectedFeatureCountProps) => {
     const format = props.format || tr("FMT_SELECTION_COUNT", props.locale);
     let label: string | undefined;
-    if (props.selection.Layer.length > 0) {
-        label = fmt(format, {
-            total: countTotalSelected(props.selection),
-            layerCount: props.selection.Layer.length
-        });
+    if (props.summary) {
+        label = fmt(format, props.summary);
     }
     return <div className="status-bar-component component-selected-feature-count" style={props.style}>{label}</div>;
 };

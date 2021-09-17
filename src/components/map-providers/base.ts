@@ -28,7 +28,7 @@ import LineString from 'ol/geom/LineString';
 import Circle from 'ol/geom/Circle';
 import Interaction from 'ol/interaction/Interaction';
 import Overlay from 'ol/Overlay';
-import { ProjectionLike } from 'ol/proj';
+import { transformExtent, ProjectionLike } from 'ol/proj';
 import { LayerManager } from '../../api/layer-manager';
 import Collection from 'ol/Collection';
 import * as olExtent from "ol/extent";
@@ -38,7 +38,7 @@ import { tr, DEFAULT_LOCALE } from '../../api/i18n';
 import { LayerSetGroupBase } from '../../api/layer-set-group-base';
 import { assertIsDefined } from '../../utils/assert';
 import { info, debug } from '../../utils/logger';
-import { setCurrentView, setViewRotation, mapResized, setMouseCoordinates, setBusyCount, setViewRotationEnabled, setActiveTool, mapLayerAdded, externalLayersReady } from '../../actions/map';
+import { setCurrentView, setViewRotation, mapResized, setMouseCoordinates, setBusyCount, setViewRotationEnabled, setActiveTool, mapLayerAdded, externalLayersReady, addClientSelectedFeature, clearClientSelection } from '../../actions/map';
 import { Toaster, Intent } from '@blueprintjs/core';
 import { IOLFactory, OLFactory } from '../../api/ol-factory';
 import { ISubscriberProps } from '../../containers/subscriber';
@@ -58,9 +58,7 @@ import { QueryMapFeaturesResponse } from '../../api/contracts/query';
 import { setViewer, getViewer } from '../../api/runtime';
 import { Client } from '../../api/client';
 import { useReduxDispatch } from "./context";
-import { OLFeature } from "../../api/ol-types";
-import RenderFeature from "ol/render/Feature";
-import { textHeights } from "ol/render/canvas";
+import { ClientSelectionFeature } from "../../api/contracts/common";
 
 export function recursiveFindLayer(layers: Collection<LayerBase>, predicate: (layer: LayerBase) => boolean): LayerBase | undefined {
     for (let i = 0; i < layers.getLength(); i++) {
@@ -561,8 +559,29 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
     public getViewForExtent(extent: Bounds): IMapView {
         assertIsDefined(this._map);
-        const scale = this.getScaleForExtent(extent);
-        const center = olExtent.getCenter(extent);
+
+        let scale, center;
+        // If this is a zero-width/height extent, we need to "inflate" it to something small
+        // so that we do not enter an infinite loop due to attempting to get a x/y/scale from
+        // a zero-width/height extent.
+        //
+        // This generally happens if we want to zoom to the bounds of a selected point
+        if (olExtent.getWidth(extent) == 0 || olExtent.getHeight(extent) == 0) {
+            const thisProj = this.getProjection();
+            // We need to inflate this bbox by a known unit of measure (meters), so re-project this extent to a meter's based coordinate system (EPSG:3857)
+            const webmBounds = transformExtent(extent, thisProj, "EPSG:3857");
+            // Inflate the box by 20 meters
+            const webmBounds2 = olExtent.buffer(webmBounds, 30);
+            // Re-project this extent back to the original projection
+            const inflatedBounds = transformExtent(webmBounds2, "EPSG:3857", thisProj) as Bounds;
+            // Now we can safely extract the scale/center
+            scale = this.getScaleForExtent(inflatedBounds);
+            center = olExtent.getCenter(inflatedBounds);
+        } else {
+            scale = this.getScaleForExtent(extent);
+            center = olExtent.getCenter(extent);
+        }
+
         return {
             x: center[0],
             y: center[1],
@@ -806,6 +825,41 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      */
     protected onImageError(e: GenericEvent) { }
 
+    private addClientSelectedFeature(f: Feature<Geometry>, l: Layer<Source>) {
+        if (this._select)
+            this._select.getFeatures().push(f);
+        if (this._state.mapName) {
+            const features = f.get("features");
+            let theFeature: Feature<Geometry>;
+            //Are we clustered?
+            if (Array.isArray(features)) {
+                // Only proceeed with dispatch if single item array
+                if (features.length == 1) {
+                    theFeature = features[0];
+                } else {
+                    return;
+                }
+            } else {
+                theFeature = f;
+            }
+            const p = { ...theFeature.getProperties() };
+            delete p[theFeature.getGeometryName()];
+            const feat: ClientSelectionFeature = {
+                bounds: theFeature.getGeometry()?.getExtent() as Bounds,
+                properties: p
+            };
+            this.dispatch(addClientSelectedFeature(this._state.mapName, l.get(LayerProperty.LAYER_NAME), feat));
+        }
+    }
+
+    private clearClientSelectedFeatures() {
+        if (this._select)
+            this._select.getFeatures().clear();
+        if (this._state.mapName) {
+            this.dispatch(clearClientSelection(this._state.mapName));
+        }
+    }
+
     protected onMapClick(e: MapBrowserEvent<any>) {
         if (!this._comp || !this._map) {
             return;
@@ -828,14 +882,14 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             //Shift+Click is the default OL selection append mode, so if no shift key
             //pressed, clear the existing selection
             if (!this.state.shiftKey) {
-                this._select.getFeatures().clear();
+                this.clearClientSelectedFeatures();
             }
             */
             //TODO: Our selected feature tooltip only shows properties of a single feature
             //and displays upon said feature being selected. As a result, although we can
             //(and should) allow for multiple features to be selected, we need to figure
             //out the proper UI for such a case before we enable multiple selection.
-            this._select.getFeatures().clear();
+            this.clearClientSelectedFeatures();
             this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
                 if (featureToLayerMap.length == 0) { //See TODO above
                     if (layer.get(LayerProperty.IS_SELECTABLE) == true && feature instanceof Feature) {
@@ -856,7 +910,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                     }, olExtent.createEmpty()) as Bounds;
                     this.zoomToExtent(zoomBounds);
                 } else {
-                    this._select.getFeatures().push(f);
+                    this.addClientSelectedFeature(f, l);
                 }
             }
         }

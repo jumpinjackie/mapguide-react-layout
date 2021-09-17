@@ -1,6 +1,6 @@
 import { ResultColumnSet } from "./contracts/weblayout";
 import { RuntimeMap } from "./contracts/runtime-map";
-import { FeatureSet, QueryMapFeaturesResponse } from "./contracts/query";
+import { FeatureSet, LayerMetadata, QueryMapFeaturesResponse, SelectedFeature } from "./contracts/query";
 import { IQueryMapFeaturesOptions } from './request-builder';
 
 import olPoint from "ol/geom/Point";
@@ -23,6 +23,7 @@ import { ISubscriberProps } from '../containers/subscriber';
 import Geometry from 'ol/geom/Geometry';
 import { IBasicPointCircleStyle, IPointIconStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorLayerStyle, IClusterSettings, ClusterClickAction } from './ol-style-contracts';
 import { IToolbarAppState } from './registry/command';
+import { ClientSelectionSet } from "./contracts/common";
 
 // Event boilerplate
 export type GenericEvent = any;
@@ -619,6 +620,7 @@ export interface IMapViewer {
      * @returns {IMapView}
      *
      * @memberof IMapViewer
+     * @since 0.14 If given an extent with zero-width or zero-height, the view will be computed off of an "inflated" version of this extent. If inflation is required, it will be inflated by 30 meters
      */
     getViewForExtent(extent: Bounds): IMapView;
     /**
@@ -1502,26 +1504,12 @@ export interface IMapGuideSubState {
      */
     expandedGroups: any;
     /**
-     * The current selection state
+     * The current MapGuide selection state
      *
      * @type {(QueryMapFeaturesResponse | undefined)}
      * @memberof IBranchedMapSubState
      */
     selectionSet: QueryMapFeaturesResponse | undefined;
-    /**
-     * The current selected layer index
-     *
-     * @type {number}
-     * @memberof IBranchedMapSubState
-     */
-    layerIndex: number;
-    /**
-     * The current selected feature index
-     *
-     * @type {number}
-     * @memberof IBranchedMapSubState
-     */
-    featureIndex: number;
     /**
      * The array of ids of layers to show
      *
@@ -1630,6 +1618,12 @@ export interface IBranchedMapSubState {
      * @since 0.14
      */
     mapguide: IMapGuideSubState | undefined;
+    /**
+     * The current client-side selection state
+     * 
+     * @since 0.14
+     */
+    clientSelection: ClientSelectionSet | undefined;
     /**
      * Generic layer sub-state
      *
@@ -2597,4 +2591,19 @@ export enum MgBuiltInLayers {
     Overlay = "MapGuide Dynamic Overlay",
     SelectionOverlay = "MapGuide Selection Overlay",
     ActiveFeatureSelectionOverlay = "MapGuide Active Feature Selection Overlay"
+}
+
+export interface ICompositeSelectionLayer {
+    getLayerId(): string | undefined;
+    getName(): string;
+    getLayerMetadata(): LayerMetadata | undefined;
+    getFeatureAt(featureIndex: number): SelectedFeature;
+    getFeatureCount(): number;
+}
+
+export interface ICompositeSelection {
+    getLayerCount(): number;
+    getLayers(): ICompositeSelectionLayer[];
+    getLayerAt(layerIndex: number): ICompositeSelectionLayer | undefined;
+    getFeatureAt(layerIndex: number, featureIndex: number): SelectedFeature | undefined;
 }

@@ -2,12 +2,12 @@ import * as React from "react";
 import { SelectedFeatureSet, SelectedFeature, LayerMetadata, SelectedLayer, FeatureProperty } from "../api/contracts/query";
 import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
 import { tr as xlate, DEFAULT_LOCALE } from "../api/i18n";
-import { GenericEvent } from "../api/common";
+import { GenericEvent, ICompositeSelection } from "../api/common";
 import { Callout, Intent, HTMLSelect } from '@blueprintjs/core';
 
 export interface ISelectedFeatureProps {
     selectedFeature: SelectedFeature;
-    selectedLayer: LayerMetadata;
+    selectedLayer?: LayerMetadata;
     locale: string;
     allowHtmlValues: boolean;
     cleanHTML?: (html: string) => string;
@@ -16,10 +16,16 @@ export interface ISelectedFeatureProps {
 const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
     const { selectedFeature, selectedLayer, locale, allowHtmlValues, cleanHTML } = props;
     const featureProps = [] as FeatureProperty[];
-    for (const lp of selectedLayer.Property) {
-        const matches = selectedFeature.Property.filter(fp => fp.Name === lp.DisplayName);
-        if (matches.length === 1) {
-            featureProps.push(matches[0]);
+    if (selectedLayer?.Property) {
+        for (const lp of selectedLayer.Property) {
+            const matches = selectedFeature.Property.filter(fp => fp.Name === lp.DisplayName);
+            if (matches.length === 1) {
+                featureProps.push(matches[0]);
+            }
+        }
+    } else {
+        for (const fp of selectedFeature.Property) {
+            featureProps.push(fp);
         }
     }
     return <table className="selection-panel-property-grid bp3-html-table bp3-html-table-condensed bp3-html-table-bordered">
@@ -58,7 +64,10 @@ const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
  */
 export interface ISelectionPanelProps {
     locale?: string;
-    selection: SelectedFeatureSet;
+    /**
+     * @since 0.14
+     */
+    selection: ICompositeSelection;
     onResolveLayerLabel?: (layerId: string, layerName: string) => string | undefined;
     onRequestZoomToFeature: (feat: SelectedFeature) => void;
     onShowSelectedFeature: (layerId: string, selectionKey: string) => void;
@@ -122,6 +131,8 @@ const SELECTION_PANEL_TOOLBAR_STYLE: React.CSSProperties = { height: DEFAULT_TOO
 const LAYER_COMBO_STYLE: React.CSSProperties = { float: "left", height: DEFAULT_TOOLBAR_SIZE };
 const FloatClear = () => <div style={{ clear: "both" }} />;
 
+
+
 /**
  * Displays attributes of selected features with the ability to zoom in on selected features
  * @param props 
@@ -139,24 +150,16 @@ export const SelectionPanel = (props: ISelectionPanelProps) => {
     const [selectedLayerIndex, setSelectedLayerIndex] = React.useState(-1);
     const [featureIndex, setFeatureIndex] = React.useState(-1);
     React.useEffect(() => {
-        if (selection != null) {
-            if ((selection.SelectedLayer || []).length > 0) {
-                setSelectedLayerIndex(0);
-                setFeatureIndex(0);
-            }
+        if (selection.getLayerCount() > 0) {
+            setSelectedLayerIndex(0);
+            setFeatureIndex(0);
         }
     }, [selection]);
     const getCurrentLayer = () => {
-        if (selection == null)
-            return null;
-        return selection.SelectedLayer[selectedLayerIndex];
+        return selection.getLayerAt(selectedLayerIndex);
     };
     const getFeatureAt = (index: number) => {
-        const layer = getCurrentLayer();
-        if (layer != null) {
-            return layer.Feature[index];
-        }
-        return null;
+        return selection.getFeatureAt(selectedLayerIndex, index);
     };
     const getCurrentFeature = () => {
         return getFeatureAt(featureIndex);
@@ -167,22 +170,22 @@ export const SelectionPanel = (props: ISelectionPanelProps) => {
     const canGoNext = (): boolean => {
         const layer = getCurrentLayer();
         if (layer != null) {
-            return featureIndex + 1 < layer.Feature.length;
+            return featureIndex + 1 < layer.getFeatureCount();
         }
         return false;
     };
     const canZoomSelectedFeature = (): boolean => {
         const feat = getCurrentFeature();
-        return feat != null && feat.Bounds != null;
+        return feat?.Bounds != null;
     };
     const prevFeature = () => {
         const newIndex = featureIndex - 1;
         setFeatureIndex(newIndex);
         const layer = getCurrentLayer();
         if (layer) {
-            const layerId = layer["@id"];
+            const layerId = layer.getLayerId();
             const sKey = getFeatureAt(newIndex)?.SelectionKey;
-            if (sKey) {
+            if (sKey && layerId) {
                 onShowSelectedFeature?.(layerId, sKey);
             }
         }
@@ -192,9 +195,9 @@ export const SelectionPanel = (props: ISelectionPanelProps) => {
         setFeatureIndex(newIndex);
         const layer = getCurrentLayer();
         if (layer) {
-            const layerId = layer["@id"];
+            const layerId = layer.getLayerId();
             const sKey = getFeatureAt(newIndex)?.SelectionKey;
-            if (sKey) {
+            if (sKey && layerId) {
                 onShowSelectedFeature?.(layerId, sKey);
             }
         }
@@ -213,9 +216,9 @@ export const SelectionPanel = (props: ISelectionPanelProps) => {
     let feat: SelectedFeature | undefined;
     let meta: LayerMetadata | undefined;
     if (selection != null && selectedLayerIndex >= 0 && featureIndex >= 0) {
-        const selLayer = selection.SelectedLayer[selectedLayerIndex];
-        feat = selLayer.Feature[featureIndex];
-        meta = selLayer.LayerMetadata;
+        const selLayer = selection.getLayerAt(selectedLayerIndex);
+        feat = selLayer?.getFeatureAt(featureIndex);
+        meta = selLayer?.getLayerMetadata();
     }
     let selBodyStyle: React.CSSProperties | undefined;
     if (maxHeight) {
@@ -235,7 +238,7 @@ export const SelectionPanel = (props: ISelectionPanelProps) => {
     }
     return <div>
         {(() => {
-            if (selection != null && selection.SelectedLayer != null && selection.SelectedLayer.length > 0) {
+            if (selection?.getLayerCount() > 0) {
                 const selectionToolbarItems = buildToolbarItems({
                     locale,
                     canGoPrev,
@@ -248,9 +251,13 @@ export const SelectionPanel = (props: ISelectionPanelProps) => {
                 return <div className="selection-panel-toolbar" style={SELECTION_PANEL_TOOLBAR_STYLE}>
                     <div className="bp3-select selection-panel-layer-selector">
                         <HTMLSelect value={selectedLayerIndex} style={LAYER_COMBO_STYLE} onChange={onSelectedLayerChanged}>
-                            {selection.SelectedLayer.map((layer: SelectedLayer, index: number) => {
-                                const label = props?.onResolveLayerLabel?.(layer["@id"], layer["@name"]) ?? layer["@name"];
-                                return <option key={`selected-layer-${layer["@id"]}`} value={`${index}`}>{label}</option>
+                            {selection.getLayers().map((layer, index) => {
+                                const lid = layer.getLayerId();
+                                const lname = layer.getName();
+                                const lkey = lid ?? index;
+                                const label = lid ? (props?.onResolveLayerLabel?.(lid, lname) ?? lname)
+                                    : lname;
+                                return <option key={`selected-layer-${lkey}`} value={`${index}`}>{label}</option>
                             })}
                         </HTMLSelect>
                     </div>
@@ -261,13 +268,13 @@ export const SelectionPanel = (props: ISelectionPanelProps) => {
         })()}
         <div className="selection-panel-body" style={selBodyStyle}>
             {(() => {
-                if (feat && meta) {
+                if (feat) {
                     if (selectedFeatureRenderer) {
                         return selectedFeatureRenderer({ selectedFeature: feat, cleanHTML: cleanHTML, allowHtmlValues: allowHtmlValues, selectedLayer: meta, locale: locale });
                     } else {
                         return <DefaultSelectedFeature selectedFeature={feat} cleanHTML={cleanHTML} allowHtmlValues={allowHtmlValues} selectedLayer={meta} locale={locale} />;
                     }
-                } else if (selection == null || (selection.SelectedLayer || []).length == 0) {
+                } else if (!(selection?.getLayerCount() > 0)) {
                     return <Callout intent={Intent.PRIMARY} icon="info-sign">
                         <p className="selection-panel-no-selection">{xlate("NO_SELECTED_FEATURES", locale)}</p>
                     </Callout>;

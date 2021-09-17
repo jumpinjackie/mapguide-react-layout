@@ -27,7 +27,6 @@ function sidebarTemplateReducer(origState: ITemplateReducerState, state: ITempla
                 //template reducer has done against this action.
                 const { selection } = action.payload;
                 if (selection && selection.SelectedFeatures) {
-                    const extraState: any = {};
                     let autoExpandSelectionPanel = origState.autoDisplaySelectionPanelOnSelection;
                     const ism = isMobile(navigator.userAgent);
                     if (ism.phone) {
@@ -41,6 +40,27 @@ function sidebarTemplateReducer(origState: ITemplateReducerState, state: ITempla
                     }
                 }
                 return state; //No action taken: Return "current" state
+            }
+        case ActionType.MAP_ADD_CLIENT_SELECTED_FEATURE:
+            {
+                //This is the only template that does not conform to the selection/legend/taskpane is a mutually
+                //exclusive visible set. We take advantage of the custom template reducer function to apply the
+                //correct visibility state against the *original state* effectively discarding whatever the root
+                //template reducer has done against this action.
+                const { feature } = action.payload;
+                if (feature?.properties) {
+                    let autoExpandSelectionPanel = origState.autoDisplaySelectionPanelOnSelection;
+                    const ism = isMobile(navigator.userAgent);
+                    if (ism.phone) {
+                        return origState; //Take no action on mobile
+                    }
+                    if (autoExpandSelectionPanel) {
+                        return {
+                            ...origState,
+                            ...{ selectionPanelVisible: true, taskPaneVisible: false, legendVisible: false }
+                        }
+                    }
+                }
             }
         case ActionType.FUSION_SET_LEGEND_VISIBILITY:
             {
@@ -171,6 +191,7 @@ const Sidebar = (props: ISidebarProps) => {
                 }
                 break;
             case ActionType.MAP_SET_SELECTION:
+            case ActionType.MAP_ADD_CLIENT_SELECTED_FEATURE:
                 break;
         }
     }, [lastAction]);

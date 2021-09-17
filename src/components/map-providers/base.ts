@@ -28,7 +28,7 @@ import LineString from 'ol/geom/LineString';
 import Circle from 'ol/geom/Circle';
 import Interaction from 'ol/interaction/Interaction';
 import Overlay from 'ol/Overlay';
-import { ProjectionLike } from 'ol/proj';
+import { transformExtent, ProjectionLike } from 'ol/proj';
 import { LayerManager } from '../../api/layer-manager';
 import Collection from 'ol/Collection';
 import * as olExtent from "ol/extent";
@@ -559,8 +559,29 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
     public getViewForExtent(extent: Bounds): IMapView {
         assertIsDefined(this._map);
-        const scale = this.getScaleForExtent(extent);
-        const center = olExtent.getCenter(extent);
+
+        let scale, center;
+        // If this is a zero-width/height extent, we need to "inflate" it to something small
+        // so that we do not enter an infinite loop due to attempting to get a x/y/scale from
+        // a zero-width/height extent.
+        //
+        // This generally happens if we want to zoom to the bounds of a selected point
+        if (olExtent.getWidth(extent) == 0 || olExtent.getHeight(extent) == 0) {
+            const thisProj = this.getProjection();
+            // We need to inflate this bbox by a known unit of measure (meters), so re-project this extent to a meter's based coordinate system (EPSG:3857)
+            const webmBounds = transformExtent(extent, thisProj, "EPSG:3857");
+            // Inflate the box by 20 meters
+            const webmBounds2 = olExtent.buffer(webmBounds, 30);
+            // Re-project this extent back to the original projection
+            const inflatedBounds = transformExtent(webmBounds2, "EPSG:3857", thisProj) as Bounds;
+            // Now we can safely extract the scale/center
+            scale = this.getScaleForExtent(inflatedBounds);
+            center = olExtent.getCenter(inflatedBounds);
+        } else {
+            scale = this.getScaleForExtent(extent);
+            center = olExtent.getCenter(extent);
+        }
+
         return {
             x: center[0],
             y: center[1],

@@ -620,6 +620,7 @@ export interface IMapViewer {
      * @returns {IMapView}
      *
      * @memberof IMapViewer
+     * @since 0.14 If given an extent with zero-width or zero-height, the view will be computed off of an "inflated" version of this extent. If inflation is required, it will be inflated by 30 meters
      */
     getViewForExtent(extent: Bounds): IMapView;
     /**

@@ -1,11 +1,9 @@
 import { IInitAsyncOptions } from './init';
-import { ReduxDispatch, Dictionary, CommandTarget, ActiveMapTool } from '../api/common';
+import { ReduxDispatch, Dictionary, ActiveMapTool } from '../api/common';
 import { IInitAppActionPayload, MapInfo } from './defs';
 import { ICommandSpec, ToolbarConf, PreparedSubMenuSet, isFlyoutSpec, convertFlexLayoutUIItems, parseWidgetsInAppDef } from '../api/registry/command-spec';
 import { makeUnique } from '../utils/array';
 import { ApplicationDefinition, MapConfiguration } from '../api/contracts/fusion';
-import { strIsNullOrEmpty } from '../utils/string';
-import { SPRITE_INVOKE_URL, SPRITE_INVOKE_SCRIPT } from '../constants/assets';
 import { warn, info } from '../utils/logger';
 import { registerCommand } from '../api/registry/command';
 import { tr, registerStringBundle, DEFAULT_LOCALE } from '../api/i18n';

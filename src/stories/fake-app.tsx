@@ -8,7 +8,7 @@ import { ResourceBase, SiteVersion } from '../api/contracts/common';
 import { RuntimeMap } from '../api/contracts/runtime-map';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { ApplicationDefinition } from '../api/contracts/fusion';
-import { deArrayify } from '../api/builders/deArrayify';
+import { deArrayify, isRuntimeMap } from '../api/builders/deArrayify';
 import { registerLayout } from '../api/registry/layout';
 import { IConfigurationReducerState, IViewerReducerState, ClientKind } from '../api/common';
 import { MapGuideViewerInitCommand } from '../actions/init-mapguide';
@@ -16,10 +16,10 @@ import { IViewerInitCommand } from '../actions/init-command';
 import { MapContextProvider } from '../components/map-providers/context';
 import { MapGuideMapProviderContext } from '../components/map-providers/mapguide';
 import { MapGuideMockMode } from '../components/mapguide-debug-context';
-const testMapSheboygan: RuntimeMap = deArrayify(require("./data/test-runtime-map-sheboygan.json"));
-const testMapRedding: RuntimeMap = deArrayify(require("./data/test-runtime-map-redding.json"));
-const testMapMelbourne: RuntimeMap = deArrayify(require("./data/test-runtime-map-melbourne.json"));
-const testAppDef: ApplicationDefinition = deArrayify(require("./data/test-app-def.json"));
+const testMapSheboygan = deArrayify(require("./data/test-runtime-map-sheboygan.json"));
+const testMapRedding = deArrayify(require("./data/test-runtime-map-redding.json"));
+const testMapMelbourne = deArrayify(require("./data/test-runtime-map-melbourne.json"));
+const testAppDef = deArrayify(require("./data/test-app-def.json"));
 
 const PROVIDER_IMPL = new MapGuideMapProviderContext();
 
@@ -31,7 +31,10 @@ class FakeMapAgent extends RequestBuilder {
         super(uri);
     }
     public createSession(username: string, password: string): Promise<string> {
-        return Promise.resolve(testMapSheboygan.SessionId);
+        if (isRuntimeMap(testMapSheboygan)) {
+            return Promise.resolve(testMapSheboygan.SessionId);
+        }
+        return Promise.reject("Not a runtime map");
     }
     public getServerSessionTimeout(session: string): Promise<number> {
         return Promise.resolve(10000);
@@ -45,11 +48,11 @@ class FakeMapAgent extends RequestBuilder {
     public createRuntimeMap(options: ICreateRuntimeMapOptions): Promise<RuntimeMap> {
         switch (options.mapDefinition) {
             case "Library://Samples/Sheboygan/Maps/Sheboygan.MapDefinition":
-                return Promise.resolve(testMapSheboygan);
+                return isRuntimeMap(testMapSheboygan) ? Promise.resolve(testMapSheboygan) : Promise.reject("Not a runtime map");
             case "Library://Redding/Maps/Redding.MapDefinition":
-                return Promise.resolve(testMapRedding);
+                return isRuntimeMap(testMapRedding) ? Promise.resolve(testMapRedding) : Promise.reject("Not a runtime map");
             case "Library://Samples/Melbourne/Maps/Melbourne.MapDefinition":
-                return Promise.resolve(testMapMelbourne);
+                return isRuntimeMap(testMapMelbourne) ? Promise.resolve(testMapMelbourne) : Promise.reject("Not a runtime map");
         }
         return Promise.reject(`Unknown test map: ${options.mapDefinition}`);
     }
@@ -62,11 +65,11 @@ class FakeMapAgent extends RequestBuilder {
     public describeRuntimeMap(options: IDescribeRuntimeMapOptions): Promise<RuntimeMap> {
         switch (options.mapname) {
             case "Sheboygan":
-                return Promise.resolve(testMapSheboygan);
+                return isRuntimeMap(testMapSheboygan) ? Promise.resolve(testMapSheboygan) : Promise.reject("Not a runtime map");
             case "Redding":
-                return Promise.resolve(testMapRedding);
+                return isRuntimeMap(testMapRedding) ? Promise.resolve(testMapRedding) : Promise.reject("Not a runtime map");
             case "Melbourne":
-                return Promise.resolve(testMapMelbourne);
+                return isRuntimeMap(testMapMelbourne) ? Promise.resolve(testMapMelbourne) : Promise.reject("Not a runtime map");
         }
         return Promise.reject(`Unknown test map state: ${options.mapname}`);
     }

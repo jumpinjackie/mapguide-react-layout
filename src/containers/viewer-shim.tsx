@@ -10,7 +10,7 @@ import { MgError } from "../api/error";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { FeatureSet, SelectedFeatureSet, QueryMapFeaturesResponse } from "../api/contracts/query";
 import { RefreshMode, ICommand, ClientKind, UnitOfMeasure, Bounds } from "../api/common";
-import { deArrayify, buildSelectionXml } from "../api/builders/deArrayify";
+import { deArrayify, buildSelectionXml, isQueryMapFeaturesResponse } from "../api/builders/deArrayify";
 import { FormFrameShim } from "../components/form-frame-shim";
 import { getCommand, DefaultCommands } from "../api/registry/command";
 import { tr } from "../api/i18n";
@@ -291,9 +291,11 @@ class FusionWidgetApiShim {
     processFeatureInfo(r: any): void {
         const o = JSON.parse(r.responseText);
         if (o.FeatureInformation) {
-            const norm: QueryMapFeaturesResponse = deArrayify(o);
-            const selXml = buildSelectionXml(norm.FeatureSet);
-            this.setSelection(selXml, false);
+            const norm = deArrayify(o);
+            if (isQueryMapFeaturesResponse(norm)) {
+                const selXml = buildSelectionXml(norm.FeatureSet);
+                this.setSelection(selXml, false);
+            }
         } else if (o.Message) {
             this.warn(o.Message);
         }

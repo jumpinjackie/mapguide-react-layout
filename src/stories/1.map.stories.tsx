@@ -16,7 +16,7 @@ import { Button, ButtonGroup, Card, Intent } from '@blueprintjs/core';
 import { useReducedToolbarAppState, useActiveMapName } from '../containers/hooks';
 import { CommandConditions } from '../api/registry/command';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
-import { deArrayify } from '../api/builders/deArrayify';
+import { deArrayify, isQueryMapFeaturesResponse } from '../api/builders/deArrayify';
 import { MouseCoordinatesContainer } from '../containers/mouse-coordinates';
 import { ViewSizeContainer } from '../containers/view-size';
 import { ViewerOptions } from '../containers/viewer-options';
@@ -28,7 +28,7 @@ import { MapGuideMapProviderContext } from '../components/map-providers/mapguide
 
 //import MeasureContainer from '../containers/measure';
 
-const testSelSheboygan: QueryMapFeaturesResponse = deArrayify(require("./data/test-selection-response-sheboygan.json"));
+const testSelSheboygan = deArrayify(require("./data/test-selection-response-sheboygan.json"));
 
 interface MapDependentContainer {
     
@@ -39,7 +39,8 @@ interface MapDependentContainer {
 function getQueryMapFeaturesResponse(activeMapName: string) {
     switch (activeMapName) {
         case "Sheboygan":
-            return testSelSheboygan;
+            if (isQueryMapFeaturesResponse(testSelSheboygan))
+                return testSelSheboygan;
     }
     return {};
 }

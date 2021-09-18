@@ -1,5 +1,6 @@
 .vscode
 .cache-loader
+coverage-report
 e2e/screenshots
 docs_output
 dist

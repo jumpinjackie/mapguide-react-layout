@@ -31,6 +31,7 @@
     "test:e2e": "testcafe chrome e2e/test.*.ts -q -S -s e2e/screenshots",
     "test:appveyor": "jest --verbose --coverage --colors",
     "test:gha": "jest --runInBand --verbose --coverage --colors && cat ./coverage/lcov.info",
+    "test:covrpt": "jest --coverage --coverageDirectory='coverage-report'",
     "ci:appveyor": "yarn run lint && yarn run test:appveyor",
     "ci:gha": "yarn run lint && yarn run test:gha"
   },

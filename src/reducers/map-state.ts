@@ -87,7 +87,7 @@ function mergeSubState(state: IBranchedMapState, mapName: string, subState: Part
     return { ...state, ...state1 } as IBranchedMapState;
 }
 
-export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerAction) {
+export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerAction): IBranchedMapState {
     switch (action.type) {
         case ActionType.MAP_REFRESH:
             {
@@ -101,7 +101,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                 const { payload } = action;
                 const maps = payload.maps;
                 const mapKeys = Object.keys(maps);
-                const newState: Partial<IBranchedMapState> = {};
+                const newState: IBranchedMapState = {};
                 let mapNameToApplyInitialState = payload.activeMapName;
                 if (!mapNameToApplyInitialState && mapKeys.length == 1) {
                     mapNameToApplyInitialState = mapKeys[0];
@@ -213,11 +213,13 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                 const subState = state[payload.mapName];
                 if (subState) {
                     const index = subState.historyIndex - 1;
-                    const state1: Partial<IBranchedMapSubState> = {
-                        historyIndex: index,
-                        currentView: subState.history[index]
-                    };
-                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
+                    if (index >= 0) {
+                        const state1: Partial<IBranchedMapSubState> = {
+                            historyIndex: index,
+                            currentView: subState.history[index]
+                        };
+                        return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
+                    }
                 }
                 return state;
             }
@@ -227,11 +229,13 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                 const subState = state[payload.mapName];
                 if (subState) {
                     const index = subState.historyIndex + 1;
-                    const state1: Partial<IBranchedMapSubState> = {
-                        historyIndex: index,
-                        currentView: subState.history[index]
-                    };
-                    return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
+                    if (index < subState.history.length) {
+                        const state1: Partial<IBranchedMapSubState> = {
+                            historyIndex: index,
+                            currentView: subState.history[index]
+                        };
+                        return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
+                    }
                 }
                 return state;
             }

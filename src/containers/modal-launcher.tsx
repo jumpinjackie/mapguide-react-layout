@@ -30,8 +30,8 @@ function getComponentId(diag: IModalComponentDisplayOptions | IModalDisplayOptio
 
 export const ModalLauncher = (props: { children?: React.ReactNode }) => {
     const dispatch = useReduxDispatch();
-    const hideModalAction = (options: any) => dispatch(hideModal(options));
-    const onCloseModal = (name: string) => hideModalAction({ name: name });
+    const hideModalAction = (name: string) => dispatch(hideModal(name));
+    const onCloseModal = (name: string) => hideModalAction(name);
     const modal = useAppState<IModalReducerState>(state => state.modal);
     const locale = useViewerLocale();
     const MODAL_INIT_X = 500;

@@ -307,13 +307,14 @@ export function mapResized(width: number, height: number): IMapResizedAction {
 
 /**
  * Sets the selection set for the given map
- *
- * @export
- * @param {string} mapName The name of the current runtime map
- * @param {*} selectionSet The selection set to apply
- * @returns {IMapSetSelectionAction}
+ * 
+ * @param mapName 
+ * @param selectionSet 
+ * @returns 
+ * 
+ * @since 0.14 Fixed up the type of selectionSet parameter
  */
-export function setSelection(mapName: string, selectionSet: any): IMapSetSelectionAction {
+export function setSelection(mapName: string, selectionSet: QueryMapFeaturesResponse | undefined): IMapSetSelectionAction {
     return {
         type: ActionType.MAP_SET_SELECTION,
         payload: {

@@ -41,12 +41,12 @@ export function showModalUrl(options: IModalDisplayOptions): IShowModalUrlAction
  * Hides an open modal dialog
  *
  * @export
- * @param {*} options Modal dialog hide options
+ * @param name The name of the modal to hide
  * @returns {ICloseModalAction}
  */
-export function hideModal(options: any): ICloseModalAction {
+export function hideModal(name: string): ICloseModalAction {
     return {
         type: ActionType.MODAL_CLOSE,
-        payload: options.name
+        payload: name
     };
 }

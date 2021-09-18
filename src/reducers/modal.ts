@@ -1,9 +1,10 @@
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
+import { IModalReducerState } from '../api/common';
 
-export const MODAL_INITIAL_STATE = { };
+export const MODAL_INITIAL_STATE: IModalReducerState = { };
 
-export function modalReducer(state = MODAL_INITIAL_STATE, action: ViewerAction) {
+export function modalReducer(state = MODAL_INITIAL_STATE, action: ViewerAction): IModalReducerState {
     switch (action.type) {
         case ActionType.MODAL_SHOW_COMPONENT:
             {

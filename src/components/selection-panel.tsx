@@ -4,6 +4,7 @@ import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "
 import { tr as xlate, DEFAULT_LOCALE } from "../api/i18n";
 import { GenericEvent, ICompositeSelection } from "../api/common";
 import { Callout, Intent, HTMLSelect } from '@blueprintjs/core';
+import { strIsNullOrEmpty } from "../utils/string";
 
 export interface ISelectedFeatureProps {
     selectedFeature: SelectedFeature;
@@ -41,7 +42,7 @@ const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
                     <td className="property-name-cell" data-property-name={prop.Name}>{prop.Name}</td>
                     {(() => {
                         let value = prop.Value;
-                        if (allowHtmlValues) {
+                        if (allowHtmlValues && !strIsNullOrEmpty(value)) {
                             if (cleanHTML) {
                                 value = cleanHTML(value);
                             }

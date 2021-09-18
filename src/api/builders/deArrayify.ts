@@ -983,23 +983,23 @@ function deArrayifyTileSetDefinitionParamList(root: any): { Name: string, Value:
 
 function deArrayifyTileSetDefinitionParams(root: any): TileStoreParameters {
     const getter = buildPropertyGetter<TileStoreParameters>();
-    const eGetter = buildPropertyGetter<TileStoreParameters["Extents"]>();
     const tsp: TileStoreParameters = {
         TileProvider: getter(root, "TileProvider"),
-        Extents: {
-            MinX: eGetter(root.Extents[0], "MinX", "float"),
-            MinY: eGetter(root.Extents[0], "MinY", "float"),
-            MaxX: eGetter(root.Extents[0], "MaxX", "float"),
-            MaxY: eGetter(root.Extents[0], "MaxY", "float")
-        },
-        Parameter: deArrayifyTileSetDefinitionParamList(root.Parameter)
+        Parameter: deArrayifyTileSetDefinitionParamList(root[0].Parameter)
     };
     return tsp;
 }
 
 function deArrayifyTileSetDefinition(json: any): TileSetDefinition {
     const root = json;
+    const eGetter = buildPropertyGetter<TileSetDefinition["Extents"]>();
     const resp: TileSetDefinition = {
+        Extents: {
+            MinX: eGetter(root.Extents[0], "MinX", "float"),
+            MinY: eGetter(root.Extents[0], "MinY", "float"),
+            MaxX: eGetter(root.Extents[0], "MaxX", "float"),
+            MaxY: eGetter(root.Extents[0], "MaxY", "float")
+        },
         TileStoreParameters: deArrayifyTileSetDefinitionParams(json.TileStoreParameters),
         BaseMapLayerGroup: deArrayifyTileSetDefinitionGroups(json.BaseMapLayerGroup)
     };

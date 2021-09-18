@@ -1,4 +1,4 @@
-import { SelectedFeatureSet } from "../src/api/contracts/query";
+import { QueryMapFeaturesResponse, SelectedFeatureSet } from "../src/api/contracts/query";
 import { RuntimeMap } from "../src/api/contracts/runtime-map";
 import {
     IApplicationState,
@@ -603,6 +603,1404 @@ export function createSelectionSet(): SelectedFeatureSet {
             }
         ]
     };
+}
+
+export function createQueryMapFeaturesResponse(): QueryMapFeaturesResponse {
+    return {
+        "FeatureSet": {
+            "Layer": [
+                {
+                    "@id": "efb5ce9a-189f-11ec-8005-0a002700000e",
+                    "@name": null,
+                    "Class": {
+                        "@id": "SHP_Schema:Parcels",
+                        "ID": [
+                            "hB0AAA==",
+                            "hR0AAA==",
+                            "iR0AAA==",
+                            "ih0AAA==",
+                            "jR0AAA==",
+                            "jx0AAA==",
+                            "9h0AAA==",
+                            "CB4AAA==",
+                            "Lh4AAA==",
+                            "MB4AAA==",
+                            "MR4AAA==",
+                            "Mx4AAA==",
+                            "NB4AAA==",
+                            "NR4AAA==",
+                            "hh4AAA==",
+                            "sB4AAA==",
+                            "2B4AAA==",
+                            "2R4AAA==",
+                            "2h4AAA==",
+                            "3B4AAA==",
+                            "3R4AAA==",
+                            "3h4AAA==",
+                            "3x4AAA==",
+                            "Fh8AAA==",
+                            "JR8AAA==",
+                            "Jx8AAA==",
+                            "Px8AAA==",
+                            "QR8AAA=="
+                        ]
+                    }
+                }
+            ]
+        },
+        "SelectedFeatures": {
+            "SelectedLayer": [
+                {
+                    "@id": "efb5ce9a-189f-11ec-8005-0a002700000e",
+                    "@name": "Parcels",
+                    "Feature": [
+                        {
+                            "Bounds": "-87.725223747565352 43.758044143831945 -87.725106539852931 43.758456179454434",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.1"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "30X150"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "WOODS, JANET MARIE"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "THE W 1/2 OF LOT 2 & THE E"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": "1.5' OF THE S 14.5' OF THE N"
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "1509 MICHIGAN AVE"
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "4500"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": "36.5' OF LOT 3 BLOCK 56"
+                                }
+                            ],
+                            "SelectionKey": "\nhB0AAA=="
+                        },
+                        {
+                            "Bounds": "-87.725110198446075 43.75804361332915 -87.72499299019934 43.758455649062533",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "MER"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.1"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "30X150"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "LYON, STEVEN E"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "E 1/2 OF LOT 2 BLK 56"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": null
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "1417 LENZ CT"
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "4500"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\nhR0AAA=="
+                        },
+                        {
+                            "Bounds": "-87.724182906167712 43.758036356937964 -87.724027841868377 43.75844857068175",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.14"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "40X150"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "FELSINGER, ALICE MAY"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "THE W 40' OF THE E 45' OF"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": "LOT 5 BLK 57"
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "38 IRELAND BROOK DR."
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "6000"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\niR0AAA=="
+                        },
+                        {
+                            "Bounds": "-87.724031507853368 43.758035648206338 -87.723876442034936 43.758447862322413",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.14"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "40X150"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "RUSSELL, KEVIN F."
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "W 35' OF LOT 4 & E 5' OF LOT"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": "5 BLK 57"
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "1423 MICHIGAN AVE"
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "6000"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\nih0AAA=="
+                        },
+                        {
+                            "Bounds": "-87.723880108815266 43.758034939448628 -87.723725042446674 43.75844715358734",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.14"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "40X150"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "XIONG, PHIA & HOUA Y"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "THE W 15' OF LOT 3 & E 25'"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": "OF LOT 4 BLK 57"
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "1426A S. 12TH ST."
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "6000"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\njR0AAA=="
+                        },
+                        {
+                            "Bounds": "-87.723728710507302 43.758034230315893 -87.723573642861837 43.758446444651319",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.14"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "40X150"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "KONZ, FRANK D"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "W 40' OF E 45' OF LOT 3 BLK"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": "57"
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "2226 ERIE AVE"
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "6000"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\njx0AAA=="
+                        },
+                        {
+                            "Bounds": "-87.72499664957013 43.758042552161108 -87.724767721123072 43.758249366034804",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.1"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "75X60"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "HEIMERL, GLORIA L."
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "S 1/2 OF LOT 1 BLK 56"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": null
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "1220 N. 15TH ST."
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "4500"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\n9h0AAA=="
+                        },
+                        {
+                            "Bounds": "-87.724466778680451 43.758037065470155 -87.7241818067845 43.75816184473576",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.08"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "45X75"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "EICKHOFF, DANIEL"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "THE S 45' OF LOT 6 & THE S"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": "45' OF THE W 15' OF LOT 5"
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "1219 N. 15TH ST."
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "3375"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": "BLK 57"
+                                }
+                            ],
+                            "SelectionKey": "\nCB4AAA=="
+                        },
+                        {
+                            "Bounds": "-87.725225649574256 43.757829630640877 -87.724997088701841 43.757995293493252",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.08"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "60X60"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "BEAUDOIN, GARY E."
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "N 60' OF LOT 11 BLK 56"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": null
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "4725 FOX GROVE RD"
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "3600"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\nLh4AAA=="
+                        },
+                        {
+                            "Bounds": "-87.725000747784293 43.757581666177273 -87.724769990899929 43.757994232776994",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "EXM"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.21"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "60X150"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "SAINT JUDE'S CHILDRE"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "LOT 12 BLK 56"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": null
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "1504 ST CLAIR AVE"
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "9000"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\nMB4AAA=="
+                        },
+                        {
+                            "Bounds": "-87.724469782176257 43.757575736714521 -87.724088722038601 43.757989012634134",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "MER"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.25"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "IRREG"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "KENNEDY, JAMES F."
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "THE N 105' OF LOT 7 AND THE"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": "N 105' OF THE W 40' OF LOT 8"
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "310 SUPERIOR AVE"
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "10815"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": "AND ALSO THE E 7' OF THE W"
+                                }
+                            ],
+                            "SelectionKey": "\nMR4AAA=="
+                        },
+                        {
+                            "Bounds": "-87.724092387346545 43.757575028060828 -87.723937323608354 43.757987241957537",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.14"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "40X150"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "JUNGE, RALPH"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "E 20' OF LOT 8 & W 20' OF"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": "LOT 9 BLK 57"
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "1426 ST CLAIR AVE"
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "6000"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\nMx4AAA=="
+                        },
+                        {
+                            "Bounds": "-87.723940989953846 43.757574319206576 -87.723785924939349 43.757986533300745",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.14"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "40X150"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "MUELLER, KENNETH A"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "E 40' OF LOT 9 BLK 57"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": null
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "1422 ST CLAIR AVE"
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "6000"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\nNB4AAA=="
+                        },
+                        {
+                            "Bounds": "-87.723789592564074 43.757573610327704 -87.723634526514985 43.757985824619347",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.14"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "40X150"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "SHAW, ERIC R & AMAND"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "W 40' OF LOT 10 BLK 57"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": null
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "1416 ST CLAIR AVE"
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "6000"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\nNR4AAA=="
+                        },
+                        {
+                            "Bounds": "-87.725227844036453 43.757582727340179 -87.7249985523883 43.757830691355309",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.12"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "60X90"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "HAACK, DONALD W."
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "S 90' OF LOT 11 BLK 56"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": null
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "1033 SOMMER DR"
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "5400"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\nhh4AAA=="
+                        },
+                        {
+                            "Bounds": "-87.724470881203715 43.757575860695141 -87.724117782375572 43.75770095894417",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.1"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "45X93"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "GADZINSKI, SUSAN A"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "THE S 45' OF LOT 7 & THE S"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": "45' OF THE W 33' OF LOT 8"
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "507 N. 27TH ST."
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "4185"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": "BLK 57"
+                                }
+                            ],
+                            "SelectionKey": "\nsB4AAA=="
+                        },
+                        {
+                            "Bounds": "-87.725220205378733 43.756951690555638 -87.724989452160884 43.757364256773748",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.21"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "60X150"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "KRUTZIK, KAREN K"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "LOT 2 BLK 83"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": null
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "1511 ST CLAIR AVE"
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "9000"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\n2B4AAA=="
+                        },
+                        {
+                            "Bounds": "-87.724990428040371 43.757252399966902 -87.724762356745714 43.757363196038213",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.06"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "40X60"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "SCHAAL, GARRY M"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "THE N 40' OF LOT 1 BLK 83"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": null
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "5417 LONG ACRE RD"
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "2400"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\n2R4AAA=="
+                        },
+                        {
+                            "Bounds": "-87.724462273177082 43.757054292811837 -87.724052648477652 43.757357975850113",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "EXM"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.21"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "IRREG"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "THE S WI DIST-LUTH C"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "THE W 12' OF THE N 75' OF"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": "LOT 5 & THE S 35' OF THE N"
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "8100 W. CAPITOL DR."
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "9250"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": "110' OF THE W 48' OF LOT 5 &"
+                                }
+                            ],
+                            "SelectionKey": "\n2h4AAA=="
+                        },
+                        {
+                            "Bounds": "-87.724188905240041 43.757150310836032 -87.724050815579659 43.757356701038205",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "EXM"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.06"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "36X75"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "THE S WI DIST-LUTH C"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "W 36' OF E 48' OF N 75' LOT"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": "5 BLK 82"
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "8100 W. CAPITOL DR."
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "2700"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\n3B4AAA=="
+                        },
+                        {
+                            "Bounds": "-87.724054481364803 43.756943920291192 -87.723914558352774 43.757356063388599",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.12"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "36X150"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "BAILEY, TERRANCE M"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "W 24' OF LOT 4 & E 12' OF"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": "LOT 5 BLK 82"
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "1425 ST CLAIR AVE"
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "5400"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\n3R4AAA=="
+                        },
+                        {
+                            "Bounds": "-87.723918225071145 43.756943282319483 -87.723778301127737 43.757355425752117",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.12"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "36X150"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "GEIDEL, FREDRIC R."
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "E 36' OF LOT 4 BLK 82"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": null
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "907 N MAIN ST"
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "5400"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\n3h4AAA=="
+                        },
+                        {
+                            "Bounds": "-87.723780134958957 43.757148148728483 -87.723589055026238 43.757354787777629",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.09"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "50X75"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "ROBSON, DAVID R."
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "W 50' OF N 75' OF LOT 3 BLK"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": "82"
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "2414 N. 4TH ST."
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "3750"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\n3x4AAA=="
+                        },
+                        {
+                            "Bounds": "-87.724991403917457 43.757142665255046 -87.724763332797991 43.757253461152054",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.06"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "40X60"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "CHANG, HUE G."
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "S 40' OF N 80' OF LOT 1 BLK"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": "83"
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "1126 N. 15TH ST."
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "2400"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\nFh8AAA=="
+                        },
+                        {
+                            "Bounds": "-87.723781968779875 43.75694009019989 -87.723099769404769 43.757149035052272",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.21"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "IRREG"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "LEAVENS, DARIUS S"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "THE S 1/4 OF LOTS 1 & 2, AND"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": "THE S 75' OF LOT 3 BLOCK 82"
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "30 SOUTH 6TH ST"
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "9000"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\nJR8AAA=="
+                        },
+                        {
+                            "Bounds": "-87.72499225771621 43.757046647227284 -87.724764309332301 43.757143726439359",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.05"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "35X60"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "BOHN, ARTHUR & KATHR"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "N 35' OF S 70' OF LOT 1 BLK"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": "83"
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "5305 SUPERIOR AVE"
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "2100"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\nJx8AAA=="
+                        },
+                        {
+                            "Bounds": "-87.724463250259518 43.756944558100471 -87.724053503777583 43.757056205092056",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.1"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "40X108"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "BOHN, ARTHUR & KATHR"
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "THE S 40' OF THE W 108' OF"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": "LOTS 5 & 6 BLK 82"
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "5305 SUPERIOR AVE"
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "4320"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": null
+                                }
+                            ],
+                            "SelectionKey": "\nPx8AAA=="
+                        },
+                        {
+                            "Bounds": "-87.724993111513243 43.756950629373485 -87.724765163494197 43.757047708410525",
+                            "Property": [
+                                {
+                                    "Name": "Description1",
+                                    "Value": "ORIGINAL PLAT"
+                                },
+                                {
+                                    "Name": "Zone",
+                                    "Value": "RES"
+                                },
+                                {
+                                    "Name": "Acreage",
+                                    "Value": "0.05"
+                                },
+                                {
+                                    "Name": "Lot Dimensions",
+                                    "Value": "35X60"
+                                },
+                                {
+                                    "Name": "Owner",
+                                    "Value": "THEUNE, MATTHEW J."
+                                },
+                                {
+                                    "Name": "Description2",
+                                    "Value": "S 35' OF LOT 1 BLK 83"
+                                },
+                                {
+                                    "Name": "Description3",
+                                    "Value": null
+                                },
+                                {
+                                    "Name": "Billing Address",
+                                    "Value": "1120 N. 15TH ST."
+                                },
+                                {
+                                    "Name": "Lot Size (SqFt)",
+                                    "Value": "2100"
+                                },
+                                {
+                                    "Name": "Description4",
+                                    "Value": ""
+                                }
+                            ],
+                            "SelectionKey": "\nQR8AAA=="
+                        }
+                    ],
+                    "LayerMetadata": {
+                        "Property": [
+                            {
+                                "DisplayName": "Description1",
+                                "Name": "RLDESCR1",
+                                "Type": 9
+                            },
+                            {
+                                "DisplayName": "Zone",
+                                "Name": "RTYPE",
+                                "Type": 9
+                            },
+                            {
+                                "DisplayName": "Acreage",
+                                "Name": "RACRE",
+                                "Type": 9
+                            },
+                            {
+                                "DisplayName": "Lot Dimensions",
+                                "Name": "RLOT",
+                                "Type": 9
+                            },
+                            {
+                                "DisplayName": "Owner",
+                                "Name": "RNAME",
+                                "Type": 9
+                            },
+                            {
+                                "DisplayName": "Description2",
+                                "Name": "RLDESCR2",
+                                "Type": 9
+                            },
+                            {
+                                "DisplayName": "Description3",
+                                "Name": "RLDESCR3",
+                                "Type": 9
+                            },
+                            {
+                                "DisplayName": "Billing Address",
+                                "Name": "RBILAD",
+                                "Type": 9
+                            },
+                            {
+                                "DisplayName": "Lot Size (SqFt)",
+                                "Name": "RSQFT",
+                                "Type": 7
+                            },
+                            {
+                                "DisplayName": "Description4",
+                                "Name": "RLDESCR4",
+                                "Type": 9
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
 }
 
 export function createInitAction(map: RuntimeMap,

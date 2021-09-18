@@ -5,7 +5,10 @@ export interface FeatureSetClass {
 
 export interface FeatureSetLayer {
     "@id": string;
-    "@name": string;
+    /**
+     * @since 0.14 Added null as possible type
+     */
+    "@name": string | null;
     Class: FeatureSetClass;
 }
 export interface FeatureSet {
@@ -28,9 +31,11 @@ export interface FeatureProperty {
     /**
      * The value of the feature property
      *
-     * @type {string}
+     * @type {string | null}
+     * 
+     * @since 0.14 added null as possible type
      */
-    Value: string;
+    Value: string | null
 }
 
 export interface SelectedFeature {

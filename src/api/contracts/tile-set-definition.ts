@@ -30,18 +30,18 @@ export interface BaseMapLayerGroup {
 export interface TileStoreParameters {
     TileProvider: string;
     Parameter: { Name: string, Value: string }[];
-    Extents: {
-        MinX: number;
-        MinY: number;
-        MaxX: number;
-        MaxY: number;
-    }
 }
 
 /**
  * @since 0.14
  */
 export interface TileSetDefinition extends ResourceBase {
+    Extents: {
+        MinX: number;
+        MinY: number;
+        MaxX: number;
+        MaxY: number;
+    }
     TileStoreParameters: TileStoreParameters;
     BaseMapLayerGroup: BaseMapLayerGroup[];
 }

@@ -1,3 +1,4 @@
+import { strStartsWith } from '../utils/string';
 import { QueryMapFeaturesResponse } from './contracts/query';
 
 /**
@@ -12,7 +13,7 @@ import { QueryMapFeaturesResponse } from './contracts/query';
 export async function clearSessionStore(): Promise<void> {
     try {
         for (const key in window.localStorage) {
-            if (key.startsWith("selection_")) {
+            if (strStartsWith(key, "selection_")) {
                 window.localStorage.removeItem(key);
             }
         }

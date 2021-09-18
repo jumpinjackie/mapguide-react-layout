@@ -13,6 +13,7 @@ import { Client } from '../api/client';
 import { ActionType } from '../constants/actions';
 import { ensureParameters } from '../utils/url';
 import { MgError } from '../api/error';
+import { strStartsWith } from '../utils/string';
 
 function getMapGuideConfiguration(appDef: ApplicationDefinition): [string, MapConfiguration][] {
     const configs = [] as [string, MapConfiguration][];
@@ -31,7 +32,7 @@ function getMapGuideConfiguration(appDef: ApplicationDefinition): [string, MapCo
 function tryExtractMapMetadata(extension: any) {
     const ext: any = {};
     for (const k in extension) {
-        if (k.startsWith("Meta_")) {
+        if (strStartsWith(k, "Meta_")) {
             const sk = k.substring("Meta_".length);
             ext[sk] = extension[k];
         }

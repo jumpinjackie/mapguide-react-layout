@@ -14,7 +14,7 @@ const basePlugins = [
         __DEV__: process.env.BUILD_MODE !== 'production',
         __VERSION__: JSON.stringify(process.env.APPVEYOR_BUILD_VERSION || ""),
         __COMMITHASH__: JSON.stringify(process.env.APPVEYOR_REPO_COMMIT || ""),
-        __BRANCH__: JSON.stringify(process.env.APPVEYOR_REPO_BRANCH  || "master")
+        __BRANCH__: JSON.stringify(process.env.APPVEYOR_REPO_BRANCH || "master")
     }),
     new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output
@@ -161,5 +161,18 @@ module.exports = {
     plugins: plugins,
     module: {
         rules: rules
+    },
+    optimization: {
+        splitChunks: {
+            name: false,
+            cacheGroups: {
+                default: false,
+                commons: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: "vendor",
+                    chunks: "all"
+                }
+            }
+        }
     }
 };

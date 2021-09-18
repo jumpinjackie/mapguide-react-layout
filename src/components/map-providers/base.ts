@@ -1074,7 +1074,10 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             layers: (layer) => layer.get(LayerProperty.IS_SELECTABLE) == true || layer.get(LayerProperty.IS_SCRATCH) == true
         });
         this._zoomSelectBox = new DragBox({
-            condition: (e) => !this.isDigitizing() && (this._state.activeTool === ActiveMapTool.Select || this._state.activeTool === ActiveMapTool.Zoom)
+            condition: (e) => {
+                const startingMiddleMouseDrag = e.type == "pointerdown" && isMiddleMouseDownEvent((e as any).originalEvent);
+                return !this.isDigitizing() && !startingMiddleMouseDrag && (this._state.activeTool === ActiveMapTool.Select || this._state.activeTool === ActiveMapTool.Zoom)
+            }
         });
 
         this._boundZoomSelectBox = this.onZoomSelectBox.bind(this);

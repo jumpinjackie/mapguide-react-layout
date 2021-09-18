@@ -4,22 +4,6 @@ const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const mgBaseAppEntries = [
-    './src/entries/library.tsx'
-];
-const mgDevAppEntries = [
-    //   'webpack-hot-middleware/client?reload=true',
-];
-const mgAppEntries = mgBaseAppEntries.concat(process.env.BUILD_MODE === 'development' ? mgDevAppEntries : []);
-
-const genericBaseAppEntries = [
-    './src/entries/library-generic.tsx'
-];
-const genericDevAppEntries = [
-    //   'webpack-hot-middleware/client?reload=true',
-];
-const genericAppEntries = genericBaseAppEntries.concat(process.env.BUILD_MODE === 'development' ? genericDevAppEntries : []);
-
 const basePlugins = [
     new webpack.ProvidePlugin({
         "proj4": "proj4"
@@ -150,8 +134,12 @@ const rules = [
 module.exports = {
     mode: (process.env.BUILD_MODE === 'development' ? 'development' : 'production'),
     entry: {
-        viewer: mgAppEntries,
-        "viewer-generic": genericAppEntries
+        viewer: {
+            import: './src/entries/library.tsx'
+        },
+        "viewer-generic": {
+            import: './src/entries/library-generic.tsx'
+        }
     },
     devtool: 'source-map',
     output: {

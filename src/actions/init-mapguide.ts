@@ -14,7 +14,7 @@ import { register } from 'ol/proj/proj4';
 import proj4 from "proj4";
 import { getMapDefinitionsFromFlexLayout, isStateless, MapToLoad, ViewerInitCommand } from './init-command';
 import { WebLayout, isInvokeURLCommand, isSearchCommand } from '../api/contracts/weblayout';
-import { ToolbarConf } from '../api/registry/command-spec';
+import { convertWebLayoutUIItems, parseCommandsInWebLayout, ToolbarConf } from '../api/registry/command-spec';
 import { clearSessionStore, retrieveSelectionSetFromLocalStorage } from '../api/session-store';
 import * as shortid from 'shortid';
 import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU, WEBLAYOUT_TOOLBAR } from "../constants";
@@ -63,43 +63,16 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
     }
     private async initFromWebLayoutAsync(webLayout: WebLayout, session: string, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
         const [mapsByName, warnings] = await this.createRuntimeMapsAsync(session, webLayout, false, wl => [{ name: this.getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId, metadata: {} }], () => [], sessionWasReused);
-        const cmdsByKey: any = {};
         const { locale, featureTooltipsEnabled, externalBaseLayers } = this.options;
-        //Register any InvokeURL and Search commands
-        for (const cmd of webLayout.CommandSet.Command) {
-            if (isInvokeURLCommand(cmd)) {
-                registerCommand(cmd.Name, {
-                    url: cmd.URL,
-                    disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
-                    target: cmd.Target,
-                    targetFrame: cmd.TargetFrame,
-                    parameters: (cmd.AdditionalParameter || []).map(p => {
-                        return { name: p.Key, value: p.Value };
-                    }),
-                    title: cmd.Label
-                });
-            } else if (isSearchCommand(cmd)) {
-                registerCommand(cmd.Name, {
-                    layer: cmd.Layer,
-                    prompt: cmd.Prompt,
-                    target: cmd.Target,
-                    targetFrame: cmd.TargetFrame,
-                    resultColumns: cmd.ResultColumns,
-                    filter: cmd.Filter,
-                    matchLimit: cmd.MatchLimit,
-                    title: cmd.Label
-                });
-            }
-            cmdsByKey[cmd.Name] = cmd;
-        }
+        const cmdsByKey = parseCommandsInWebLayout(webLayout, registerCommand);
         const mainToolbar = (webLayout.ToolBar.Visible
-            ? this.convertWebLayoutUIItems(webLayout.ToolBar.Button, cmdsByKey, locale)
+            ? convertWebLayoutUIItems(webLayout.ToolBar.Button, cmdsByKey, locale)
             : []);
         const taskBar = (webLayout.TaskPane.TaskBar.Visible
-            ? this.convertWebLayoutUIItems(webLayout.TaskPane.TaskBar.MenuButton, cmdsByKey, locale, false)
+            ? convertWebLayoutUIItems(webLayout.TaskPane.TaskBar.MenuButton, cmdsByKey, locale, false)
             : []);
         const contextMenu = (webLayout.ContextMenu.Visible
-            ? this.convertWebLayoutUIItems(webLayout.ContextMenu.MenuItem, cmdsByKey, locale, false)
+            ? convertWebLayoutUIItems(webLayout.ContextMenu.MenuItem, cmdsByKey, locale, false)
             : []);
         const config: any = {};
         if (webLayout.SelectionColor != null) {

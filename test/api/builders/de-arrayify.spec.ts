@@ -12,18 +12,49 @@ import MDF_MELBOURNE from "../../../test-data/mdf_melbourne";
 import MDF_REDDING from "../../../test-data/mdf_redding";
 import { deArrayify } from '../../../src/api/builders/deArrayify';
 import { isStateless } from "../../../src/actions/init-command";
+import { convertFlexLayoutUIItems, convertWebLayoutUIItems, parseCommandsInWebLayout, parseWidgetsInAppDef } from "../../../src/api/registry/command-spec";
 
 describe("de-arrayify", () => {
     it("Fixes #631", () => {
         const appDef = deArrayify(TEST_DATA);
+        const locale = "en";
+        const tbConf: any = {};
+        const registerCmd = jest.fn();
+        const { widgetsByKey } = parseWidgetsInAppDef(appDef, registerCmd);
+        for (const widgetSet of appDef.WidgetSet) {
+            for (const cont of widgetSet.Container) {
+                let tbName = cont.Name;
+                tbConf[tbName] = { items: convertFlexLayoutUIItems(isStateless(appDef), cont.Item, widgetsByKey, locale) };
+            }
+        }
     })
     it("MultiMap appdef", () => {
         const appDef = deArrayify(MULTIMAP_APPDEF);
         expect(isStateless(appDef)).toBe(false);
+        const locale = "en";
+        const tbConf: any = {};
+        const registerCmd = jest.fn();
+        const { widgetsByKey } = parseWidgetsInAppDef(appDef, registerCmd);
+        for (const widgetSet of appDef.WidgetSet) {
+            for (const cont of widgetSet.Container) {
+                let tbName = cont.Name;
+                tbConf[tbName] = { items: convertFlexLayoutUIItems(isStateless(appDef), cont.Item, widgetsByKey, locale) };
+            }
+        }
     });
     it("MultiMap stateless appdef", () => {
         const appDef = deArrayify(MULTIMAP_STATELESS_APPDEF);
         expect(isStateless(appDef)).toBe(true);
+        const locale = "en";
+        const tbConf: any = {};
+        const registerCmd = jest.fn();
+        const { widgetsByKey } = parseWidgetsInAppDef(appDef, registerCmd);
+        for (const widgetSet of appDef.WidgetSet) {
+            for (const cont of widgetSet.Container) {
+                let tbName = cont.Name;
+                tbConf[tbName] = { items: convertFlexLayoutUIItems(isStateless(appDef), cont.Item, widgetsByKey, locale) };
+            }
+        }
     });
     it("Sheboygan RuntimeMap", () => {
         const rtMap = deArrayify(RTMAP_SHEBOYGAN);
@@ -38,7 +69,19 @@ describe("de-arrayify", () => {
         const qmf = deArrayify(QMF_SHEBOYGAN);
     });
     it("Sheboygan WebLayout", () => {
-        const wl = deArrayify(WL_SHEBOYGAN);
+        const webLayout = deArrayify(WL_SHEBOYGAN);
+        const locale = "en";
+        const registerCmd = jest.fn();
+        const cmdsByKey = parseCommandsInWebLayout(webLayout, registerCmd);
+        const mainToolbar = (webLayout.ToolBar.Visible
+            ? convertWebLayoutUIItems(webLayout.ToolBar.Button, cmdsByKey, locale)
+            : []);
+        const taskBar = (webLayout.TaskPane.TaskBar.Visible
+            ? convertWebLayoutUIItems(webLayout.TaskPane.TaskBar.MenuButton, cmdsByKey, locale, false)
+            : []);
+        const contextMenu = (webLayout.ContextMenu.Visible
+            ? convertWebLayoutUIItems(webLayout.ContextMenu.MenuItem, cmdsByKey, locale, false)
+            : []);
     });
     it("Sheboygan XYZ TileSet", () => {
         const tsd = deArrayify(TSD_XYZ_SHEBOYGAN);

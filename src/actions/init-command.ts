@@ -1,15 +1,13 @@
 import { IInitAsyncOptions } from './init';
 import { ReduxDispatch, Dictionary, CommandTarget, ActiveMapTool } from '../api/common';
 import { IInitAppActionPayload, MapInfo } from './defs';
-import { IFlyoutSpec, ISeparatorSpec, IUnknownCommandSpec, ICommandSpec, convertWidget, ToolbarConf, PreparedSubMenuSet, isFlyoutSpec } from '../api/registry/command-spec';
+import { ICommandSpec, ToolbarConf, PreparedSubMenuSet, isFlyoutSpec, convertFlexLayoutUIItems, parseWidgetsInAppDef } from '../api/registry/command-spec';
 import { makeUnique } from '../utils/array';
-import { UIWidget, ContainerItem, Widget, ApplicationDefinition, MapConfiguration } from '../api/contracts/fusion';
-import { assertNever } from '../utils/never';
-import { strEndsWith, strIsNullOrEmpty, strStartsWith } from '../utils/string';
+import { ApplicationDefinition, MapConfiguration } from '../api/contracts/fusion';
+import { strIsNullOrEmpty } from '../utils/string';
 import { SPRITE_INVOKE_URL, SPRITE_INVOKE_SCRIPT } from '../constants/assets';
-import { UIItem, CommandDef, isCommandItem, isTargetedCommand, isBasicCommand, isSeparatorItem, isFlyoutItem } from '../api/contracts/weblayout';
 import { warn, info } from '../utils/logger';
-import { DefaultCommands, isSupportedCommandInStatelessMode, registerCommand } from '../api/registry/command';
+import { registerCommand } from '../api/registry/command';
 import { tr, registerStringBundle, DEFAULT_LOCALE } from '../api/i18n';
 import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU } from "../constants";
 import * as shortid from 'shortid';
@@ -56,10 +54,6 @@ export function getMapDefinitionsFromFlexLayout(appDef: ApplicationDefinition): 
 }
 
 export type MapToLoad = { name: string, mapDef: string, metadata: any };
-
-function isCommandSpec(cmd: ICommandSpec | IUnknownCommandSpec): cmd is ICommandSpec {
-    return !strIsNullOrEmpty((cmd as any).command);
-}
 
 export function isStateless(appDef: ApplicationDefinition) {
     // This appdef is stateless if:
@@ -108,66 +102,6 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
             }
         }
     }
-    protected tryTranslateImageUrlToSpriteClass(imageUrl: string): string | undefined {
-        switch (imageUrl) {
-            case "../stdicons/icon_invokeurl.gif":
-                return SPRITE_INVOKE_URL;
-            case "../stdicons/icon_invokescript.gif":
-                return SPRITE_INVOKE_SCRIPT;
-        }
-    }
-    protected isUIWidget(widget: any): widget is UIWidget {
-        return widget.WidgetType === "UiWidgetType";
-    }
-    protected convertFlexLayoutUIItems(isStateless: boolean, items: ContainerItem[], widgetsByKey: Dictionary<Widget>, locale: string, noToolbarLabels = false): (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[] {
-        const converted = items.map(item => {
-            switch (item.Function) {
-                case "Widget":
-                    {
-                        const widget = widgetsByKey[item.Widget];
-                        if (widget && this.isUIWidget(widget)) {
-                            const cmd = convertWidget(widget, locale, noToolbarLabels);
-                            if (isStateless && isCommandSpec(cmd) && !isSupportedCommandInStatelessMode(cmd.command)) {
-                                console.warn(`The widget (${widget.Name}) references a command (${cmd.command}) that is not supported in stateless mode. This widget will always be disabled`);
-                            }
-                            return cmd;
-                        }
-                    }
-                case "Separator":
-                    return { isSeparator: true } as ISeparatorSpec;
-                case "Flyout":
-                    return {
-                        label: item.Label,
-                        tooltip: item.Tooltip,
-                        icon: item.ImageUrl,
-                        spriteClass: item.ImageClass,
-                        children: this.convertFlexLayoutUIItems(isStateless, item.Item, widgetsByKey, locale)
-                    } as IFlyoutSpec;
-                default:
-                    assertNever(item);
-            }
-            return null;
-        })
-            .filter(i => i != null)
-            .map(i => i as (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec));
-        return converted;
-    }
-
-    protected convertToCommandTarget(fusionCmdTarget: string): CommandTarget {
-        //Treat empty/undefined target as new window
-        if (strIsNullOrEmpty(fusionCmdTarget)) {
-            return "NewWindow";
-        }
-        switch (fusionCmdTarget) {
-            case "SearchWindow":
-            case "InvokeUrlWindow":
-                return "NewWindow";
-            case "TaskPane":
-                return "TaskPane";
-            default:
-                return "SpecifiedFrame";
-        }
-    }
     protected getExtraProjectionsFromFlexLayout(appDef: ApplicationDefinition): string[] {
         //The only widget we care about is the coordinate tracker
         const epsgs: string[] = [];
@@ -187,72 +121,6 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
             }
         }
         return makeUnique(epsgs);
-    }
-    protected convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Dictionary<CommandDef>, locale: string, noToolbarLabels = true): (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[] {
-        const converted = (items || []).map(item => {
-            if (isCommandItem(item)) {
-                const cmdDef: CommandDef = cmdsByKey[item.Command];
-                if (!cmdDef) {
-                    warn(`Invalid reference to command: ${item.Command}`);
-                    return { error: tr("UNKNOWN_COMMAND_REFERENCE", locale, { command: item.Command }) } as IUnknownCommandSpec;
-                } else if (cmdDef.TargetViewer != "Dwf") {
-                    let icon: Partial<Pick<ICommandSpec, "icon" | "spriteClass">> = {};
-                    if (cmdDef.ImageURL) {
-                        icon.spriteClass = this.tryTranslateImageUrlToSpriteClass(cmdDef.ImageURL);
-                        if (!icon.spriteClass) {
-                            icon.icon = cmdDef.ImageURL;
-                        }
-                    }
-                    const commonParams: any = {};
-                    if (isTargetedCommand(cmdDef)) {
-                        commonParams.Target = cmdDef.Target;
-                        commonParams.TargetFrame = cmdDef.TargetFrame;
-                    }
-                    if (isBasicCommand(cmdDef)) {
-                        let action: string = cmdDef.Action;
-                        if (action == "ZoomRectangle") {
-                            action = DefaultCommands.Zoom;
-                        } else if (action == "FitToWindow") {
-                            action = DefaultCommands.ZoomExtents;
-                        } else if (action == "Refresh") {
-                            action = DefaultCommands.RefreshMap;
-                        }
-                        return { command: action, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams, ...icon };
-                    } else {
-                        switch (cmdDef["@xsi:type"]) {
-                            case "ViewOptionsCommandType":
-                                return { command: DefaultCommands.ViewerOptions, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams };
-                            case "MeasureCommandType":
-                                return { command: DefaultCommands.Measure, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams };
-                            case "HelpCommandType":
-                                return { command: DefaultCommands.Help, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams };
-                            case "BufferCommandType":
-                                return { command: DefaultCommands.Buffer, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams };
-                            case "SelectWithinCommandType":
-                                return { command: DefaultCommands.SelectWithin, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams };
-                            case "GetPrintablePageCommandType":
-                                return { command: DefaultCommands.QuickPlot, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams };
-                            default:
-                                return { command: cmdDef.Name, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams, ...icon };
-                        }
-                    }
-                }
-            } else if (isSeparatorItem(item)) {
-                return { isSeparator: true } as ISeparatorSpec;
-            } else if (isFlyoutItem(item)) {
-                return {
-                    label: item.Label,
-                    tooltip: item.Tooltip,
-                    children: this.convertWebLayoutUIItems(item.SubItem, cmdsByKey, locale, false)
-                } as IFlyoutSpec;
-            } else {
-                assertNever(item);
-            }
-            return null;
-        })
-            .filter(i => i != null)
-            .map(i => i as (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec));
-        return converted;
     }
     protected prepareSubMenus(tbConf: Dictionary<ToolbarConf>): [PreparedSubMenuSet, boolean] {
         const prepared: PreparedSubMenuSet = {
@@ -298,82 +166,28 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
         return [prepared, bFoundContextMenu]
     }
     protected async initFromAppDefCoreAsync(appDef: ApplicationDefinition, options: IInitAsyncOptions, mapsByName: Dictionary<TSubject>, warnings: string[]): Promise<IInitAppActionPayload> {
-        let initialTask: string;
-        let taskPane: Widget | undefined;
-        let viewSize: Widget | undefined;
-        let hasLegend = false;
-        let hasStatus = false;
-        let hasNavigator = false;
-        let hasSelectionPanel = false;
-        let hasTaskBar = false;
+        const {
+            taskPane,
+            hasTaskBar,
+            hasStatus,
+            hasNavigator,
+            hasSelectionPanel,
+            hasLegend,
+            viewSize,
+            widgetsByKey,
+            isStateless,
+            initialTask
+        } = parseWidgetsInAppDef(appDef, registerCommand);
         const { locale, featureTooltipsEnabled } = options;
         const config: any = {};
-        config.isStateless = isStateless(appDef);
+        config.isStateless = isStateless;
         const tbConf: Dictionary<ToolbarConf> = {};
-        const widgetsByKey: Dictionary<Widget> = {};
-        //Register any InvokeURL and Search commands. Also set capabilities along the way
-        for (const widgetSet of appDef.WidgetSet) {
-            for (const widget of widgetSet.Widget) {
-                const cmd = widget.Extension;
-                switch (widget.Type) {
-                    case "TaskPane":
-                        taskPane = widget;
-                        break;
-                    case "ViewSize":
-                        viewSize = widget;
-                        break;
-                    case "Legend":
-                        hasLegend = true;
-                        break;
-                    case "SelectionPanel":
-                        hasSelectionPanel = true;
-                        break;
-                    case "CursorPosition":
-                    case "SelectionInfo":
-                        hasStatus = true;
-                        break;
-                    case "Navigator":
-                        hasNavigator = true;
-                        break;
-                    case "Search":
-                        registerCommand(widget.Name, {
-                            layer: cmd.Layer,
-                            prompt: cmd.Prompt,
-                            resultColumns: cmd.ResultColumns,
-                            filter: cmd.Filter,
-                            matchLimit: cmd.MatchLimit,
-                            title: (cmd.Title || (this.isUIWidget(widget) ? widget.Label : undefined)),
-                            target: this.convertToCommandTarget(cmd.Target),
-                            targetFrame: cmd.Target
-                        });
-                        if (config.isStateless) {
-                            console.warn(`The search command (${widget.Name}) is not supported in stateless mode. This widget will always be disabled`);
-                        }
-                        break;
-                    case "InvokeURL":
-                        registerCommand(widget.Name, {
-                            url: cmd.Url,
-                            disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
-                            target: this.convertToCommandTarget(cmd.Target),
-                            targetFrame: cmd.Target,
-                            parameters: (cmd.AdditionalParameter || []).map((p: any) => {
-                                return { name: p.Key, value: p.Value };
-                            }),
-                            title: this.isUIWidget(widget) ? widget.Label : undefined
-                        });/*
-                        if (config.isStateless && !strStartsWith(cmd.Url, "component://")) {
-                            console.warn(`The InvokeURL command (${widget.Name}) is not supported in stateless mode. This widget will always be disabled`);
-                        }*/
-                        break;
-                }
-                widgetsByKey[widget.Name] = widget;
-            }
-        }
+        
         //Now build toolbar layouts
         for (const widgetSet of appDef.WidgetSet) {
             for (const cont of widgetSet.Container) {
                 let tbName = cont.Name;
-                tbConf[tbName] = { items: this.convertFlexLayoutUIItems(isStateless(appDef), cont.Item, widgetsByKey, locale) };
+                tbConf[tbName] = { items: convertFlexLayoutUIItems(isStateless, cont.Item, widgetsByKey, locale) };
             }
             for (const w of widgetSet.Widget) {
                 if (w.Type == "CursorPosition") {
@@ -386,12 +200,7 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
 
         const maps = this.setupMaps(appDef, mapsByName, config, warnings);
 
-        if (taskPane) {
-            hasTaskBar = true; //Fusion flex layouts can't control the visiblity of this
-            initialTask = taskPane.Extension.InitialTask || "server/TaskPane.html";
-        } else {
-            initialTask = "server/TaskPane.html";
-        }
+        
 
         if (appDef.Title) {
             document.title = appDef.Title || document.title;

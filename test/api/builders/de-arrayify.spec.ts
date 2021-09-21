@@ -10,6 +10,7 @@ import TSD_XYZ_SHEBOYGAN from "../../../test-data/tsd_xyz_sheboygan";
 import MDF_SHEBOYGAN from "../../../test-data/mdf_sheboygan";
 import MDF_MELBOURNE from "../../../test-data/mdf_melbourne";
 import MDF_REDDING from "../../../test-data/mdf_redding";
+import MDF_WORLD from "../../../test-data/mdf_world";
 import { deArrayify, isAppDef, isMapDef, isQueryMapFeaturesResponse, isRuntimeMap, isTileSet, isWebLayout } from '../../../src/api/builders/deArrayify';
 import { isStateless } from "../../../src/actions/init-command";
 import { convertFlexLayoutUIItems, convertWebLayoutUIItems, parseCommandsInWebLayout, parseWidgetsInAppDef } from "../../../src/api/registry/command-spec";
@@ -118,4 +119,8 @@ describe("de-arrayify", () => {
         const mdf = deArrayify(MDF_MELBOURNE);
         expect(isMapDef(mdf));
     });
+    it("World mdf", () => {
+        const mdf = deArrayify(MDF_WORLD);
+        expect(isMapDef(mdf));
+    })
 });

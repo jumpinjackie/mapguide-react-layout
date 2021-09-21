@@ -925,8 +925,8 @@ function deArrayifyMapDefinition(json: any): MapDefinition {
             MaxX: eGetter(root.Extents[0], "MaxX", "float"),
             MaxY: eGetter(root.Extents[0], "MaxY", "float")
         },
-        MapLayer: deArrayifyMapDefinitionLayers(root.MapLayer),
-        MapLayerGroup: deArrayifyMapDefinitionGroups(root.MapLayerGroup)
+        MapLayer: deArrayifyMapDefinitionLayers(root.MapLayer ?? []),
+        MapLayerGroup: deArrayifyMapDefinitionGroups(root.MapLayerGroup ?? [])
     };
     if (root.TileSetSource) {
         const tGetter = buildPropertyGetter<TileSetSource>();

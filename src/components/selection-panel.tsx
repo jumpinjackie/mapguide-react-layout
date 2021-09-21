@@ -152,8 +152,20 @@ export const SelectionPanel = (props: ISelectionPanelProps) => {
     const [featureIndex, setFeatureIndex] = React.useState(-1);
     React.useEffect(() => {
         if (selection.getLayerCount() > 0) {
-            setSelectedLayerIndex(0);
-            setFeatureIndex(0);
+            if (selectedLayerIndex < 0) {
+                setSelectedLayerIndex(0);
+                setFeatureIndex(0);
+            } else {
+                const sl = selection.getLayerAt(selectedLayerIndex);
+                if (!sl) {
+                    setSelectedLayerIndex(0);
+                    setFeatureIndex(0);
+                } else {
+                    if (featureIndex < 0 && sl.getFeatureCount() > 0) {
+                        setFeatureIndex(0);
+                    }
+                }
+            }
         }
     }, [selection]);
     const getCurrentLayer = () => {

@@ -42,6 +42,7 @@ import "../styles/index.css";
 import "ol/ol.css";
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "react-splitter-layout/lib/index.css";
+import { GenericLayout } from "../layouts/generic";
 
 bootstrap();
 addFormatDriver(new CsvFormatDriver(CSV_COLUMN_ALIASES));
@@ -57,6 +58,7 @@ registerLayout("turquoise-yellow", () => <TurquoiseYellowTemplateLayout />);
 registerLayout("limegold", () => <LimeGoldTemplateLayout />);
 registerLayout("slate", () => <SlateTemplateLayout />);
 registerLayout("maroon", () => <MaroonTemplateLayout />);
+registerLayout("generic", () => <GenericLayout />);
 initDefaultCommands();
 initMapGuideCommands();
 registerDefaultComponents();

@@ -1,7 +1,7 @@
-import { ApplicationDefinition, MapConfiguration } from '../api/contracts/fusion';
+import { ApplicationDefinition } from '../api/contracts/fusion';
 import { MapGroup, MapLayer, RuntimeMap } from '../api/contracts/runtime-map';
 import { Dictionary, IExternalBaseLayer, ReduxDispatch, ActiveMapTool, IMapView } from '../api/common';
-import { MapInfo, IInitAppActionPayload, IRestoredSelectionSets } from './defs';
+import { MapInfo, IInitAppActionPayload, IRestoredSelectionSets, IGenericSubjectMapLayer } from './defs';
 import { tr, DEFAULT_LOCALE } from '../api/i18n';
 import { strEndsWith, strIsNullOrEmpty } from '../utils/string';
 import { Client } from '../api/client';
@@ -13,7 +13,7 @@ import { resolveProjectionFromEpsgIoAsync } from '../api/registry/projections';
 import { register } from 'ol/proj/proj4';
 import proj4 from "proj4";
 import { getMapDefinitionsFromFlexLayout, isStateless, MapToLoad, ViewerInitCommand } from './init-command';
-import { WebLayout, isInvokeURLCommand, isSearchCommand } from '../api/contracts/weblayout';
+import { WebLayout } from '../api/contracts/weblayout';
 import { convertWebLayoutUIItems, parseCommandsInWebLayout, ToolbarConf } from '../api/registry/command-spec';
 import { clearSessionStore, retrieveSelectionSetFromLocalStorage } from '../api/session-store';
 import * as shortid from 'shortid';
@@ -23,8 +23,13 @@ import { ensureParameters } from '../utils/url';
 import { assertIsDefined } from '../utils/assert';
 import { MapDefinition } from '../api/contracts/map-definition';
 import { TileSetDefinition } from '../api/contracts/tile-set-definition';
+import { AsyncLazy } from '../api/lazy';
+import { SiteVersion } from '../api/contracts/common';
+import { TYPE_SUBJECT } from './init-generic';
 
-export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
+export type MgSubjectLayerType = RuntimeMap | IGenericSubjectMapLayer;
+
+export class MapGuideViewerInitCommand extends ViewerInitCommand<MgSubjectLayerType> {
     private client: Client | undefined;
     private options: IInitAsyncOptions;
     constructor(dispatch: ReduxDispatch) {
@@ -39,15 +44,17 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
      * @param {Dictionary<RuntimeMap>} mapsByName
      * @memberof MgViewerInitCommand
      */
-    protected establishInitialMapNameAndSession(mapsByName: Dictionary<RuntimeMap>): [string, string] {
+    protected establishInitialMapNameAndSession(mapsByName: Dictionary<MgSubjectLayerType>): [string, string] {
         let firstMapName = "";
         let firstSessionId = "";
         for (const mapName in mapsByName) {
             if (!firstMapName && !firstSessionId) {
                 const map = mapsByName[mapName];
-                firstMapName = map.Name;
-                firstSessionId = map.SessionId;
-                break;
+                if (this.isRuntimeMap(map)) {
+                    firstMapName = map.Name;
+                    firstSessionId = map.SessionId;
+                    break;
+                }
             }
         }
         return [firstMapName, firstSessionId];
@@ -61,7 +68,7 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
             return `Map_${shortid.generate()}`;
         }
     }
-    private async initFromWebLayoutAsync(webLayout: WebLayout, session: string, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
+    private async initFromWebLayoutAsync(webLayout: WebLayout, session: AsyncLazy<string>, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
         const [mapsByName, warnings] = await this.createRuntimeMapsAsync(session, webLayout, false, wl => [{ name: this.getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId, metadata: {} }], () => [], sessionWasReused);
         const { locale, featureTooltipsEnabled, externalBaseLayers } = this.options;
         const cmdsByKey = parseCommandsInWebLayout(webLayout, registerCommand);
@@ -101,22 +108,7 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
         }
 
         const maps: any = {};
-        let firstMapName = "";
-        let firstSessionId = "";
-        for (const mapName in mapsByName) {
-            if (!firstMapName && !firstSessionId) {
-                const map = mapsByName[mapName];
-                firstMapName = map.Name;
-                firstSessionId = map.SessionId;
-                maps[firstMapName] = {
-                    mapGroupId: map.Name,
-                    map: map,
-                    externalBaseLayers: externalBaseLayers,
-                    initialView: initialView
-                };
-                break;
-            }
-        }
+        const [firstMapName, firstSessionId] = this.establishInitialMapNameAndSession(mapsByName);
 
         const menus: Dictionary<ToolbarConf> = {};
         menus[WEBLAYOUT_TOOLBAR] = {
@@ -154,13 +146,13 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
             initialActiveTool: ActiveMapTool.Pan
         };
     }
-    private async tryDescribeRuntimeMapAsync(mapName: string, session: string, mapDef: string) {
+    private async tryDescribeRuntimeMapAsync(mapName: string, session: AsyncLazy<string>, mapDef: string) {
         assertIsDefined(this.client);
         try {
             const map = await this.client.describeRuntimeMap({
                 mapname: mapName,
                 requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-                session: session
+                session: await session.getValueAsync()
             });
             return map;
         } catch (e) {
@@ -168,7 +160,7 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
                 const map = await this.client.createRuntimeMap({
                     mapDefinition: mapDef,
                     requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-                    session: session,
+                    session: await session.getValueAsync(),
                     targetMapName: mapName
                 });
                 return map;
@@ -176,32 +168,52 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
             throw e;
         }
     }
-    private async createRuntimeMapsAsync<TLayout>(session: string, res: TLayout, isStateless: boolean, mapDefSelector: (res: TLayout) => MapToLoad[], projectionSelector: (res: TLayout) => string[], sessionWasReused: boolean): Promise<[Dictionary<RuntimeMap>, string[]]> {
-        assertIsDefined(this.client);
+    private isRuntimeMap(arg: RuntimeMap | IGenericSubjectMapLayer): arg is RuntimeMap {
+        return (arg as any).SiteVersion != null
+            && (arg as any).CoordinateSystem != null
+            && (arg as any).MapDefinition != null;
+    }
+    private isMapDefinition(arg: MapToLoad | IGenericSubjectMapLayer): arg is MapToLoad {
+        return (arg as any).mapDef != null;
+    }
+    private async createRuntimeMapsAsync<TLayout>(session: AsyncLazy<string>, res: TLayout, isStateless: boolean, mapDefSelector: (res: TLayout) => (MapToLoad | IGenericSubjectMapLayer)[], projectionSelector: (res: TLayout) => string[], sessionWasReused: boolean): Promise<[Dictionary<MgSubjectLayerType>, string[]]> {
         const mapDefs = mapDefSelector(res);
         const mapPromises: Promise<RuntimeMap>[] = [];
         const warnings = [] as string[];
         const { locale } = this.options;
+        const subjectLayers: Dictionary<IGenericSubjectMapLayer> = {};
         if (isStateless) {
-            const siteVersion = await this.client.getSiteVersion();
+            // We use an AsyncLazy because we only want to fetch the site version *iff* we encounter a MG map defn
+            const siteVersion = new AsyncLazy<SiteVersion>(async () => {
+                assertIsDefined(this.client);
+                const sv = await this.client.getSiteVersion();
+                return sv;
+            });
             for (const m of mapDefs) {
-                mapPromises.push(this.describeRuntimeMapStateless(this.client, siteVersion.Version, m));
+                if (this.isMapDefinition(m)) {
+                    const siteVer = await siteVersion.getValueAsync();
+                    assertIsDefined(this.client);
+                    mapPromises.push(this.describeRuntimeMapStateless(this.client, siteVer.Version, m));
+                }
             }
         } else {
             for (const m of mapDefs) {
-                //sessionWasReused is a hint whether to create a new runtime map, or recover the last runtime map state from the given map name
-                if (sessionWasReused) {
-                    //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
-                    info(`Session ID re-used. Attempting recovery of map state of: ${m.name}`);
-                    mapPromises.push(this.tryDescribeRuntimeMapAsync(m.name, session, m.mapDef));
-                } else {
-                    info(`Creating runtime map state (${m.name}) for: ${m.mapDef}`);
-                    mapPromises.push(this.client.createRuntimeMap({
-                        mapDefinition: m.mapDef,
-                        requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-                        session: session,
-                        targetMapName: m.name
-                    }));
+                if (this.isMapDefinition(m)) {
+                    //sessionWasReused is a hint whether to create a new runtime map, or recover the last runtime map state from the given map name
+                    if (sessionWasReused) {
+                        //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
+                        info(`Session ID re-used. Attempting recovery of map state of: ${m.name}`);
+                        mapPromises.push(this.tryDescribeRuntimeMapAsync(m.name, session, m.mapDef));
+                    } else {
+                        info(`Creating runtime map state (${m.name}) for: ${m.mapDef}`);
+                        assertIsDefined(this.client);
+                        mapPromises.push(this.client.createRuntimeMap({
+                            mapDefinition: m.mapDef,
+                            requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+                            session: await session.getValueAsync(),
+                            targetMapName: m.name
+                        }));
+                    }
                 }
             }
         }
@@ -233,10 +245,15 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
         debug(`Register proj4 with OpenLayers`);
         register(proj4);
 
-        //Build the Dictionary<RuntimeMap> from loaded maps
-        const mapsByName: Dictionary<RuntimeMap> = {};
+        //Build the Dictionary<MgSubjectLayerType> from loaded maps
+        const mapsByName: Dictionary<MgSubjectLayerType> = {};
         for (const map of maps) {
             mapsByName[map.Name] = map;
+        }
+        for (const gs of mapDefs) {
+            if (!this.isMapDefinition(gs)) {
+                mapsByName[gs.name] = gs;
+            }
         }
         return [mapsByName, warnings];
     }
@@ -309,7 +326,7 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
                         Name: lyr.Name,
                         DisplayInLegend: lyr.ShowInLegend,
                         // We don't have stateless QUERYMAPFEATURES (yet), so there is no point actually respecting this flag
-                        Selectable:  false, //lyr.Selectable,
+                        Selectable: false, //lyr.Selectable,
                         LegendLabel: lyr.LegendLabel,
                         ExpandInLegend: lyr.ExpandInLegend,
                         Visible: true,
@@ -362,13 +379,13 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
      * @override
      * @protected
      * @param {ApplicationDefinition} appDef
-     * @param {Dictionary<RuntimeMap>} mapsByName
+     * @param {Dictionary<MgSubjectLayerType>} mapsByName
      * @param {*} config
      * @param {string[]} warnings
      * @returns {Dictionary<MapInfo>}
      * @memberof MgViewerInitCommand
      */
-    protected setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<RuntimeMap>, config: any, warnings: string[]): Dictionary<MapInfo> {
+    protected setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<MgSubjectLayerType>, config: any, warnings: string[]): Dictionary<MapInfo> {
         const dict: Dictionary<MapInfo> = {};
         if (appDef.MapSet) {
             for (const mGroup of appDef.MapSet.MapGroup) {
@@ -393,16 +410,19 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
                         //MapGroups, we might be matching the wrong one. We just assume such non-sensical
                         //AppDefs won't exist
                         for (const name in mapsByName) {
-                            if (mapsByName[name].MapDefinition == map.Extension.ResourceId) {
+                            const mapDef = mapsByName[name];
+                            if (this.isRuntimeMap(mapDef) && mapDef.MapDefinition == map.Extension.ResourceId) {
                                 mapName = name;
                                 break;
                             }
                         }
+                    } else if (map.Type == TYPE_SUBJECT) {
+                        mapName = mGroup["@id"];
                     } else {
                         processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayers);
                     }
                 }
-                
+
                 applyInitialBaseLayerVisibility(externalBaseLayers);
 
                 //Setup initial view
@@ -428,21 +448,22 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
         }
         return dict;
     }
-    private async initFromAppDefAsync(appDef: ApplicationDefinition, session: string, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
+    private async initFromAppDefAsync(appDef: ApplicationDefinition, session: AsyncLazy<string>, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
         const [mapsByName, warnings] = await this.createRuntimeMapsAsync(session, appDef, isStateless(appDef), fl => getMapDefinitionsFromFlexLayout(fl), fl => this.getExtraProjectionsFromFlexLayout(fl), sessionWasReused);
         return await this.initFromAppDefCoreAsync(appDef, this.options, mapsByName, warnings);
     }
-    private async sessionAcquiredAsync(session: string, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
-        assertIsDefined(this.client);
+    private async sessionAcquiredAsync(session: AsyncLazy<string>, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
         const { resourceId, locale } = this.options;
         if (!resourceId) {
             throw new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", locale));
         } else {
             if (typeof (resourceId) == 'string') {
                 if (strEndsWith(resourceId, "WebLayout")) {
+                    assertIsDefined(this.client);
                     const wl = await this.client.getResource<WebLayout>(resourceId, { SESSION: session });
                     return await this.initFromWebLayoutAsync(wl, session, sessionWasReused);
                 } else if (strEndsWith(resourceId, "ApplicationDefinition")) {
+                    assertIsDefined(this.client);
                     const fl = await this.client.getResource<ApplicationDefinition>(resourceId, { SESSION: session });
                     return await this.initFromAppDefAsync(fl, session, sessionWasReused);
                 } else {
@@ -455,16 +476,20 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<RuntimeMap> {
         }
     }
     public async runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload> {
-        assertIsDefined(this.client);
         this.options = options;
-        let session = this.options.session;
         await this.initLocaleAsync(this.options);
         let sessionWasReused = false;
-        if (!session) {
-            session = await this.client.createSession("Anonymous", "");
+        let session: AsyncLazy<string>;
+        if (!this.options.session) {
+            session = new AsyncLazy<string>(async () => {
+                assertIsDefined(this.client);
+                const sid = await this.client.createSession("Anonymous", "");
+                return sid;
+            });
         } else {
-            info(`Re-using session: ${session}`);
+            info(`Re-using session: ${this.options.session}`);
             sessionWasReused = true;
+            session = new AsyncLazy<string>(() => Promise.resolve(this.options.session!));
         }
         const payload = await this.sessionAcquiredAsync(session, sessionWasReused);
         if (sessionWasReused) {

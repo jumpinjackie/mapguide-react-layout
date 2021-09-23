@@ -1,5 +1,6 @@
 import { strStartsWith } from '../utils/string';
 import { QueryMapFeaturesResponse } from './contracts/query';
+import { AsyncLazy } from './lazy';
 
 /**
  * session-store.ts
@@ -36,8 +37,8 @@ export async function persistSelectionSetToLocalStorage(sessionId: string, mapNa
     }
 }
 
-export async function retrieveSelectionSetFromLocalStorage(sessionId: string, mapName: string): Promise<QueryMapFeaturesResponse | undefined> {
-    const key = encodeKey(sessionId, mapName);
+export async function retrieveSelectionSetFromLocalStorage(sessionId: AsyncLazy<string>, mapName: string): Promise<QueryMapFeaturesResponse | undefined> {
+    const key = encodeKey(await sessionId.getValueAsync(), mapName);
     const content = window.localStorage.getItem(key);
     if (content) {
         return JSON.parse(content);

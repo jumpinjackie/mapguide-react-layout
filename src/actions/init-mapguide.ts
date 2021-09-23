@@ -26,6 +26,7 @@ import { TileSetDefinition } from '../api/contracts/tile-set-definition';
 import { AsyncLazy } from '../api/lazy';
 import { SiteVersion } from '../api/contracts/common';
 import { TYPE_SUBJECT } from './init-generic';
+import { isRuntimeMap } from '../utils/type-guards';
 
 export type MgSubjectLayerType = RuntimeMap | IGenericSubjectMapLayer;
 
@@ -50,7 +51,7 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<MgSubjectLayerT
         for (const mapName in mapsByName) {
             if (!firstMapName && !firstSessionId) {
                 const map = mapsByName[mapName];
-                if (this.isRuntimeMap(map)) {
+                if (isRuntimeMap(map)) {
                     firstMapName = map.Name;
                     firstSessionId = map.SessionId;
                     break;
@@ -167,11 +168,6 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<MgSubjectLayerT
             }
             throw e;
         }
-    }
-    private isRuntimeMap(arg: RuntimeMap | IGenericSubjectMapLayer): arg is RuntimeMap {
-        return (arg as any).SiteVersion != null
-            && (arg as any).CoordinateSystem != null
-            && (arg as any).MapDefinition != null;
     }
     private isMapDefinition(arg: MapToLoad | IGenericSubjectMapLayer): arg is MapToLoad {
         return (arg as any).mapDef != null;
@@ -411,7 +407,7 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<MgSubjectLayerT
                         //AppDefs won't exist
                         for (const name in mapsByName) {
                             const mapDef = mapsByName[name];
-                            if (this.isRuntimeMap(mapDef) && mapDef.MapDefinition == map.Extension.ResourceId) {
+                            if (isRuntimeMap(mapDef) && mapDef.MapDefinition == map.Extension.ResourceId) {
                                 mapName = name;
                                 break;
                             }
@@ -460,11 +456,11 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<MgSubjectLayerT
             if (typeof (resourceId) == 'string') {
                 if (strEndsWith(resourceId, "WebLayout")) {
                     assertIsDefined(this.client);
-                    const wl = await this.client.getResource<WebLayout>(resourceId, { SESSION: session });
+                    const wl = await this.client.getResource<WebLayout>(resourceId, { SESSION: await session.getValueAsync() });
                     return await this.initFromWebLayoutAsync(wl, session, sessionWasReused);
                 } else if (strEndsWith(resourceId, "ApplicationDefinition")) {
                     assertIsDefined(this.client);
-                    const fl = await this.client.getResource<ApplicationDefinition>(resourceId, { SESSION: session });
+                    const fl = await this.client.getResource<ApplicationDefinition>(resourceId, { SESSION: await session.getValueAsync() });
                     return await this.initFromAppDefAsync(fl, session, sessionWasReused);
                 } else {
                     throw new MgError(tr("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", locale, { resourceId: resourceId }));

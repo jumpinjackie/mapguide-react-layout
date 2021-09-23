@@ -763,7 +763,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
     private _highlightedFeature: Feature<Geometry> | undefined;
     private isLayerHoverable(layer: Layer<Source>) {
-        return !(layer.get(LayerProperty.IS_HOVER_HIGHLIGHT) == true);
+        return !(layer?.get(LayerProperty.IS_HOVER_HIGHLIGHT) == true);
     }
     protected handleHighlightHover(e: GenericEvent) {
         if (e.dragging) {

@@ -4,9 +4,9 @@ import {
     IModalDisplayOptions,
     IModalComponentDisplayOptions
 } from "../api/common";
-import { MapLayer } from "../api/contracts/runtime-map";
+import { MapLayer, RuntimeMap } from "../api/contracts/runtime-map";
 import { IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../components/toolbar";
-import { ViewerAction } from '../actions/defs';
+import { IGenericSubjectMapLayer, ViewerAction } from '../actions/defs';
 
 /**
  * Indicates if the given argument is an IModalDisplayOptions
@@ -133,4 +133,17 @@ export function isCoordinate(coord: any): coord is [number, number] {
 export function isAction(action: any): action is ViewerAction {
     return typeof (action.type) != 'undefined'
         && typeof (action.payload) != 'undefined';
+}
+
+/**
+ * Indicates if the given argument is a RuntimeMap
+ * 
+ * @param arg 
+ * @returns 
+ * @since 0.14
+ */
+export function isRuntimeMap(arg: RuntimeMap | IGenericSubjectMapLayer): arg is RuntimeMap {
+    return (arg as any).SiteVersion != null
+        && (arg as any).CoordinateSystem != null
+        && (arg as any).MapDefinition != null;
 }

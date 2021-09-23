@@ -4,12 +4,24 @@ import olMapGuideSource from "ol/source/ImageMapGuide";
 import olImageLayer from "ol/layer/Image";
 import { assertNever } from '../utils/never';
 import { LayerSetGroupBase } from './layer-set-group-base';
-import { IMgLayerSetProps, IMgLayerSetCallback, MgInnerLayerSetFactory, mockMapGuideImageLoadFunction, blankImageLoadFunction, MgLayerSetMode } from './layer-set';
+import { IMgLayerSetProps, IMgLayerSetCallback, MgInnerLayerSetFactory, mockMapGuideImageLoadFunction, blankImageLoadFunction, MgLayerSetMode, ILayerSetFactory, GenericLayerSetFactory } from './layer-set';
 import { MapGuideMockMode } from '../components/mapguide-debug-context';
+import { isRuntimeMap } from '../utils/type-guards';
+import { strIsNullOrEmpty } from '../utils/string';
+import { MgError } from './error';
+
 export class MgLayerSetGroup extends LayerSetGroupBase {
     constructor(props: IMgLayerSetProps, callback: IMgLayerSetCallback) {
         super(callback);
-        const factory = new MgInnerLayerSetFactory(callback, props.map, props.agentUri, props.imageFormat, props.selectionImageFormat, props.selectionColor);
+        let factory: ILayerSetFactory;
+        if (props.map && isRuntimeMap(props.map)) {
+            if (strIsNullOrEmpty(props.agentUri)) {
+                throw new MgError("Expected agentUri to be set");
+            }
+            factory = new MgInnerLayerSetFactory(callback, props.map, props.agentUri, props.imageFormat, props.selectionImageFormat, props.selectionColor);
+        } else {
+            factory = new GenericLayerSetFactory(callback, props.map);
+        }
         //NOTE: MapGuide does not like concurrent map rendering operations of the same mapname/session pair, which
         //this will do when the MG overlay is shared between the main viewer and the overview map. This is probably
         //because the concurrent requests both have SET[X/Y/SCALE/DPI/etc] parameters attached, so there is concurrent

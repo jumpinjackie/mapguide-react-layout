@@ -12,7 +12,7 @@ import TileLayer from "ol/layer/Tile";
 import ImageLayer from "ol/layer/Image";
 import LayerBase from "ol/layer/Base";
 import { RuntimeMap } from './contracts/runtime-map';
-import { createExternalSource } from '../components/external-layer-factory';
+import { createExternalSource, createOLLayerFromSubjectDefn } from '../components/external-layer-factory';
 import { strIsNullOrEmpty } from '../utils/string';
 import { parseUrl } from '../utils/url';
 import ImageWrapper from 'ol/Image';
@@ -28,6 +28,22 @@ import { LoadFunction as TileLoadFunction } from 'ol/Tile';
 import { MapGuideMockMode } from '../components/mapguide-debug-context';
 import { BLANK_GIF_DATA_URI, LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from '../constants';
 import { OLImageLayer, OLTileLayer } from './ol-types';
+import { IGenericSubjectMapLayer } from '../actions/defs';
+import { GenericLayerSetOL } from './generic-layer-set';
+import { get } from "ol/proj";
+
+const DEFAULT_BOUNDS_3857: Bounds = [
+    -20026376.39,
+    -20048966.10,
+    20026376.39,
+    20048966.10
+];
+const DEFAULT_BOUNDS_4326: Bounds = [-180, -90, 180, 90];
+
+function getMetersPerUnit(projection: string) {
+    const proj = get(projection);
+    return proj.getMetersPerUnit();
+}
 
 export function blankImageLoadFunction(image: ImageWrapper) {
     (image.getImage() as any).src = BLANK_GIF_DATA_URI;
@@ -295,7 +311,75 @@ export interface IMapViewerContextCallback {
     getBaseTileLoaders(): Dictionary<TileLoadFunction>;
 }
 
-export class MgInnerLayerSetFactory {
+export interface ILayerSetFactory {
+    create(locale: string | undefined,
+        externalBaseLayers: IExternalBaseLayer[] | undefined,
+        mode: MgLayerSetMode): ILayerSetOL
+}
+
+export class GenericLayerSetFactory implements ILayerSetFactory {
+    constructor(private callback: IImageLayerEvents, private subject?: IGenericSubjectMapLayer) { }
+    private createExternalBaseLayer(ext: IExternalBaseLayer, callback: IImageLayerEvents) {
+        const extSource = createExternalSource(ext);
+        if (extSource instanceof UrlTile) {
+            const loaders = callback.getBaseTileLoaders();
+            if (loaders[ext.name])
+                extSource.setTileLoadFunction(loaders[ext.name]);
+        }
+        const options: any = {
+            title: ext.name,
+            type: "base",
+            visible: ext.visible === true,
+            source: extSource
+        };
+        const tl = new TileLayer(options);
+        tl.set(LayerProperty.LAYER_TYPE, ext.kind);
+        tl.set(LayerProperty.LAYER_NAME, ext.name);
+        tl.set(LayerProperty.LAYER_DISPLAY_NAME, ext.name);
+        tl.set(LayerProperty.IS_EXTERNAL, false);
+        tl.set(LayerProperty.IS_GROUP, false);
+        return tl;
+    }
+    create(locale: string | undefined, externalBaseLayers: IExternalBaseLayer[] | undefined, mode: MgLayerSetMode): ILayerSetOL {
+        let projection = this.subject?.meta?.projection;
+        let bounds: Bounds | undefined;
+        let externalBaseLayersGroup: LayerGroup | undefined;
+        if (externalBaseLayers != null) {
+            const groupOpts: any = {
+                title: tr("EXTERNAL_BASE_LAYERS", locale),
+                layers: externalBaseLayers.map(ext => {
+                    const tl = this.createExternalBaseLayer(ext, this.callback);
+                    return tl;
+                })
+            };
+            externalBaseLayersGroup = new LayerGroup(groupOpts);
+            externalBaseLayersGroup.set(LayerProperty.LAYER_NAME, MG_BASE_LAYER_GROUP_NAME);
+            externalBaseLayersGroup.set(LayerProperty.IS_EXTERNAL, false);
+            externalBaseLayersGroup.set(LayerProperty.IS_GROUP, true);
+            projection = "EPSG:3857";
+            bounds = DEFAULT_BOUNDS_3857;
+        }
+        let subjectLayer;
+        if (this.subject) {
+            subjectLayer = createOLLayerFromSubjectDefn(this.subject, false);
+            if (this.subject.meta) {
+                projection = this.subject.meta.projection;
+                bounds = this.subject.meta.extents;
+            }
+        }
+        if (!projection && !bounds) {
+            projection = "EPSG:4326";
+            bounds = DEFAULT_BOUNDS_4326;
+        }
+        const metersPerUnit = getMetersPerUnit(projection!);
+        const view = new View({
+            projection: projection
+        });
+        return new GenericLayerSetOL(view, subjectLayer, bounds!, externalBaseLayersGroup, projection!, metersPerUnit);
+    }
+}
+
+export class MgInnerLayerSetFactory implements ILayerSetFactory {
     private dynamicOverlayParams: any;
     private staticOverlayParams: any;
     private selectionOverlayParams: any;
@@ -550,7 +634,10 @@ export class MgInnerLayerSetFactory {
 }
 
 export interface IMgLayerSetProps {
-    map: RuntimeMap;
+    /**
+     * @since 0.14 This property can now also be a IGenericSubjectMapLayer
+     */
+    map: RuntimeMap | IGenericSubjectMapLayer | undefined;
     /**
      * Use stateless GETMAP requests for map rendering
      * @since 0.14
@@ -559,7 +646,10 @@ export interface IMgLayerSetProps {
     imageFormat: ImageFormat;
     selectionImageFormat?: ImageFormat;
     selectionColor?: string;
-    agentUri: string;
+    /**
+     * @since 0.14 Made optional
+     */
+    agentUri?: string;
     externalBaseLayers?: IExternalBaseLayer[];
     locale?: string;
 }

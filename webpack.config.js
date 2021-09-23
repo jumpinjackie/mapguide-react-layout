@@ -136,9 +136,6 @@ module.exports = {
     entry: {
         viewer: {
             import: './src/entries/library.tsx'
-        },
-        "viewer-generic": {
-            import: './src/entries/library-generic.tsx'
         }
     },
     devtool: 'source-map',

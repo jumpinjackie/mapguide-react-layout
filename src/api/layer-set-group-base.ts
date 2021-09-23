@@ -32,23 +32,23 @@ import Text from "ol/style/Text";
 
 const HIGHLIGHT_STYLE = new Style({
     stroke: new Stroke({
-      color: '#f00',
-      width: 3,
-    }),
-    fill: new Fill({
-      color: 'rgba(255,0,0,0.1)',
-    }),
-    text: new Text({
-      font: '12px Calibri,sans-serif',
-      fill: new Fill({
-        color: '#000',
-      }),
-      stroke: new Stroke({
         color: '#f00',
         width: 3,
-      }),
     }),
-  });
+    fill: new Fill({
+        color: 'rgba(255,0,0,0.1)',
+    }),
+    text: new Text({
+        font: '12px Calibri,sans-serif',
+        fill: new Fill({
+            color: '#000',
+        }),
+        stroke: new Stroke({
+            color: '#f00',
+            width: 3,
+        }),
+    }),
+});
 
 export abstract class LayerSetGroupBase {
     protected mainSet: ILayerSetOL;
@@ -66,6 +66,7 @@ export abstract class LayerSetGroupBase {
         this.scratchLayer = new VectorLayer({
             source: new VectorSource()
         });
+        this.scratchLayer.set(LayerProperty.LAYER_NAME, "__SCRATCH__"); //NOXLATE
         this.scratchLayer.set(LayerProperty.IS_SCRATCH, true);
         this.hoverHighlightLayer = new VectorLayer({
             source: new VectorSource(),
@@ -73,13 +74,19 @@ export abstract class LayerSetGroupBase {
                 return HIGHLIGHT_STYLE
             }
         });
+        this.hoverHighlightLayer.set(LayerProperty.LAYER_NAME, "__HOVER_HIGHLIGHT__"); //NOXLATE
         this.hoverHighlightLayer.set(LayerProperty.IS_HOVER_HIGHLIGHT, true)
     }
     addHighlightedFeature(feature: Feature<Geometry>) {
         this.hoverHighlightLayer.getSource().addFeature(feature);
     }
     removeHighlightedFeature(feature: Feature<Geometry>) {
-        this.hoverHighlightLayer.getSource().removeFeature(feature);
+        const hs = this.hoverHighlightLayer.getSource();
+        if (hs.hasFeature(feature))
+            hs.removeFeature(feature);
+    }
+    clearHighlightedFeatures() {
+        this.hoverHighlightLayer.getSource().clear();
     }
     /**
      * @virtual
@@ -109,7 +116,7 @@ export abstract class LayerSetGroupBase {
             source.on("tileloadend", this.callback.addImageLoaded);
         }
     }
-    
+
     public updateExternalBaseLayers(externalBaseLayers: IExternalBaseLayer[]) {
         this.mainSet.updateExternalBaseLayers(externalBaseLayers);
         this.overviewSet.updateExternalBaseLayers(externalBaseLayers);
@@ -126,7 +133,7 @@ export abstract class LayerSetGroupBase {
     public getMetersPerUnit = () => this.mainSet.getMetersPerUnit();
     public scaleToResolution = (scale: number) => this.mainSet.scaleToResolution(scale);
     public resolutionToScale = (resolution: number) => this.mainSet.resolutionToScale(resolution);
-    
+
     public attach(map: Map, ovMapControl: OverviewMap, bSetLayers = true): void {
         // To guard against the possibility that we may be attaching layers to a map that
         // already has layers (eg. Measurements), we reverse iterate all the layers we need to
@@ -226,13 +233,22 @@ export abstract class LayerSetGroupBase {
                 map.removeLayer(this._customLayers[name].layer);
             }
         }
-        map.addLayer(layer);
-        this._customLayers[name] = { layer, order: map.getLayers().getArray().indexOf(layer) };
+
         //These layer properties may have already been set, so only set if not set already (display name) or it is different (layer name)
         if (layer.get(LayerProperty.LAYER_NAME) != name)
             layer.set(LayerProperty.LAYER_NAME, name);
         if (!layer.get(LayerProperty.LAYER_DISPLAY_NAME))
             layer.set(LayerProperty.LAYER_DISPLAY_NAME, name);
+
+        //console.log(`addLayer(): ${layer.get(LayerProperty.LAYER_NAME)}`);
+        
+        //HACK: For reasons unknown, measurement layers aren't being cleanly detached/attached during apply() so there is a possibility
+        //we are re-adding this measurement layer (from measure context activation), and the layer is already there!
+        //
+        //So as a nuclear solution, remove the layer we're about to add (as un-intutitive as that sounds!)
+        map.removeLayer(layer);
+        map.addLayer(layer);
+        this._customLayers[name] = { layer, order: map.getLayers().getArray().indexOf(layer) };
 
         const tileLoaders = this.callback.getTileLoaders();
         for (const k in tileLoaders) {
@@ -259,7 +275,7 @@ export abstract class LayerSetGroupBase {
             if (layer) {
                 if (layer instanceof ImageLayer) {
                     const source: any = layer.getSource();
-                    if (typeof(source.setImageLoadFunction) == 'function') {
+                    if (typeof (source.setImageLoadFunction) == 'function') {
                         source.setImageLoadFunction(func);
                         debug(`Added custom tile loader for layer: ${k}`);
                     }/* else {
@@ -284,6 +300,7 @@ export abstract class LayerSetGroupBase {
         let layer: LayerBase;
         if (this._customLayers[name]) {
             layer = this._customLayers[name].layer;
+            //console.log(`removeLayer(): ${layer.get(LayerProperty.LAYER_NAME)}`);
             map.removeLayer(layer);
             delete this._customLayers[name];
             return layer;
@@ -313,10 +330,18 @@ export abstract class LayerSetGroupBase {
                 }
             }
         }
+
+        //Measurement layer is hidden and is not tracked by the layer manager (in terms of round-tripped layer information)
+        //so if it is present in our custom layers set, it may be removed. So if we find it, capture it for restoration
+        let theMeasureLayer: LayerBase | undefined;
         //Apply removals 
         for (const layerName in this._customLayers) {
             if (!layersByName[layerName]) {
-                this.removeLayer(map, layerName);
+                const removed = this.removeLayer(map, layerName);
+                if (removed?.get(LayerProperty.IS_MEASURE) === true) {
+                    //console.log(`Removed measurement layer: ${removed.get(LayerProperty.LAYER_NAME)}`);
+                    theMeasureLayer = removed;
+                }
             }
         }
 
@@ -335,7 +360,7 @@ export abstract class LayerSetGroupBase {
         //console.assert(currentLayers.length == layers.length);
         //console.table(currentLayers);
         //console.table(layers);
-        
+
         //If sizes don't match, do a full invalidation
         if (currentLayers.length != layers.length) {
             //Clear everything custom
@@ -395,6 +420,15 @@ export abstract class LayerSetGroupBase {
             map.addLayer(this.hoverHighlightLayer);
             //const layers2 = cCurrentLayers.getArray();
             //console.log(layers2);
+        }
+
+        // And then the measurement layer, if present
+        if (theMeasureLayer) {
+            if (cCurrentLayers.item(cCurrentLayers.getLength() - 1) != theMeasureLayer) {
+                map.removeLayer(theMeasureLayer);
+                map.addLayer(theMeasureLayer);
+                //console.log(`Re-adding measurement layer: ${theMeasureLayer.get(LayerProperty.LAYER_NAME)}`);
+            }
         }
     }
 }

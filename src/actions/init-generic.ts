@@ -6,57 +6,9 @@ import { IInitAppActionPayload, IGenericSubjectMapLayer, MapInfo, IInitialExtern
 import { ApplicationDefinition, MapConfiguration } from '../api/contracts/fusion';
 import { MgError } from '../api/error';
 import { STR_EMPTY } from '../utils/string';
-import { IClusterSettings } from '../api/ol-style-contracts';
 
 export const TYPE_SUBJECT = "SubjectLayer";
 export const TYPE_EXTERNAL = "External";
-
-function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGenericSubjectMapLayer {
-    const st = map.Extension.source_type;
-    const initiallyVisible = map.Extension.initially_visible ?? true;
-    const sp: any = {};
-    const lo: any = {};
-    const meta: any = {};
-    const keys = Object.keys(map.Extension);
-    let popupTemplate = map.Extension.popup_template;
-    let selectable: boolean | undefined = map.Extension.is_selectable ?? true;
-    for (const k of keys) {
-        const spidx = k.indexOf("source_param_");
-        const loidx = k.indexOf("layer_opt_");
-        const midx = k.indexOf("meta_");
-        if (spidx == 0) {
-            const kn = k.substring("source_param_".length);
-            sp[kn] = map.Extension[k];
-        } else if (loidx == 0) {
-            const kn = k.substring("layer_opt_".length);
-            lo[kn] = map.Extension[k];
-        } else if (midx == 0) {
-            const kn = k.substring("meta_".length);
-            meta[kn] = map.Extension[k];
-        }
-    }
-    const sl = {
-        name: name,
-        description: map.Extension.layer_description,
-        displayName: map.Extension.display_name,
-        driverName: map.Extension.driver_name,
-        type: st,
-        layerOptions: lo,
-        sourceParams: sp,
-        meta: (Object.keys(meta).length > 0 ? meta : undefined),
-        initiallyVisible,
-        selectable,
-        popupTemplate,
-        vectorStyle: map.Extension.vector_layer_style
-    } as IGenericSubjectMapLayer;
-
-    if (map.Extension.cluster) {
-        sl.cluster = {
-            ...map.Extension.cluster
-        } as IClusterSettings;
-    }
-    return sl;
-}
 
 export class GenericViewerInitCommand extends ViewerInitCommand<IGenericSubjectMapLayer> {
     constructor(dispatch: ReduxDispatch) {
@@ -132,4 +84,8 @@ export class GenericViewerInitCommand extends ViewerInitCommand<IGenericSubjectM
         const res = await this.initFromAppDefCoreAsync(appDef, options, mapsByName, warnings);
         return res;
     }
+}
+
+function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGenericSubjectMapLayer {
+    throw new Error('Function not implemented.');
 }

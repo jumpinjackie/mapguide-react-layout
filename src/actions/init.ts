@@ -219,8 +219,8 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
                 const type = map.Extension.Options.type[0];
                 const attributions = map.Extension.Options.attributions;
                 let tilePixelRatio = 1;
-                if (map.Extension.meta_tilePixelRatio) {
-                    tilePixelRatio = parseInt(map.Extension.meta_tilePixelRatio, 10);
+                if (map.Extension.Options.tilePixelRatio) {
+                    tilePixelRatio = parseInt(map.Extension.Options.tilePixelRatio[0], 10);
                 }
                 //NOTE: From a fusion appdef, we're expecting placeholder tokens to be in ${this_format} instead of
                 //{this_format} as the primary consumer is the Fusion viewer that is based on OpenLayers 2

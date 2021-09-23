@@ -36,6 +36,9 @@ import { UTFGridTrackingTooltip } from '../tooltips/utfgrid';
 import olTileLayer from "ol/layer/Tile";
 import olUtfGridSource from "ol/source/UTFGrid";
 import TileSource from 'ol/source/Tile';
+import { useActiveMapSubjectLayer } from '../../containers/hooks-generic';
+import { IGenericSubjectMapLayer } from '../../actions/defs';
+import { isRuntimeMap } from '../../utils/type-guards';
 
 export function isMapGuideProviderState(arg: any): arg is IMapGuideProviderState {
     return typeof (arg.agentUri) == 'string'
@@ -55,6 +58,8 @@ function useMapGuideViewerState() {
     const layers = useActiveMapLayers();
     const initialExternalLayers = useActiveMapInitialExternalLayers();
     const dispatch = useReduxDispatch();
+    // ============== Generic ============== //
+    const subject = useActiveMapSubjectLayer();
     // ============== MapGuide-specific ================== //
     const stateless = useViewerIsStateless();
     const imageFormat = useViewerImageFormat();
@@ -87,7 +92,7 @@ function useMapGuideViewerState() {
     }
 
     let isReady = false;
-    if (agentUri && map && layerTransparency) {
+    if (agentUri && (map || subject) && layerTransparency) {
         if (!stateless) {
             if (sessionId) {
                 isReady = true;
@@ -95,6 +100,8 @@ function useMapGuideViewerState() {
         } else {
             isReady = true;
         }
+    } else if (subject && layerTransparency) {
+        isReady = true;
     }
 
     const nextState: IMapGuideProviderState & IMapProviderStateExtras = {
@@ -117,7 +124,7 @@ function useMapGuideViewerState() {
         imageFormat,
         agentUri,
         agentKind,
-        map,
+        map: map ?? subject,
         pointSelectionBuffer,
         featureTooltipsEnabled,
         manualFeatureTooltips,
@@ -145,7 +152,7 @@ export interface IMapGuideProviderState extends IMapProviderState {
     imageFormat: ImageFormat;
     agentUri: string | undefined;
     agentKind: ClientKind;
-    map: RuntimeMap | undefined;
+    map: RuntimeMap | IGenericSubjectMapLayer | undefined;
     pointSelectionBuffer: number;
     manualFeatureTooltips: boolean;
     featureTooltipsEnabled: boolean;
@@ -454,7 +461,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         const { mapName } = nextState;
         assertIsDefined(mapName);
         assertIsDefined(this._state.map);
-        const layerSet = new MgLayerSetGroup(nextState as any, {
+        const layerSet = new MgLayerSetGroup(nextState, {
             getImageLoaders: () => super.getImageSourceLoaders(mapName),
             getTileLoaders: () => super.getTileSourceLoaders(mapName),
             getBaseTileLoaders: () => super.getBaseTileSourceLoaders(mapName),
@@ -509,9 +516,9 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      */
     public attachToComponent(el: HTMLElement, comp: IViewerComponent): void {
         super.attachToComponent(el, comp);
-        this._keepAlive = new SessionKeepAlive(() => this._state.sessionId!, this._client, this.onSessionExpired.bind(this));
+        const bCheckSession = (this._state.map && isRuntimeMap(this._state.map)) ?? false;
+        this._keepAlive = new SessionKeepAlive(() => this._state.sessionId!, this._client, this.onSessionExpired.bind(this), bCheckSession);
 
-        let bFoundUtfGrid = false;
         const utfGridLayer = recursiveFindLayer(this._map!.getLayers(), oll => {
             if (oll instanceof olTileLayer) {
                 const source = oll.getSource();
@@ -526,19 +533,22 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             this._utfGridTooltip = new UTFGridTrackingTooltip(this._map!, source, this._comp?.isContextMenuOpen ?? (() => false));
         }
 
-        this._featureTooltip = new FeatureQueryTooltip(this._map!, {
-            incrementBusyWorker: () => this.incrementBusyWorker(),
-            decrementBusyWorker: () => this.decrementBusyWorker(),
-            onSessionExpired: () => this.onSessionExpired(),
-            getAgentUri: () => this._state.agentUri!,
-            getAgentKind: () => this._state.agentKind,
-            getMapName: () => this._state.mapName!,
-            getSessionId: () => this._state.sessionId!,
-            getLocale: () => this._state.locale,
-            getPointSelectionBox: (pt) => this.getPointSelectionBox(pt, this._state.pointSelectionBuffer),
-            openTooltipLink: (url) => this.onOpenTooltipLink(url)
-        });
-        this._featureTooltip.setEnabled(this._state.featureTooltipsEnabled);
+        const bEnable = (this._state.map && isRuntimeMap(this._state.map)) ?? false;
+        if (bEnable) {
+            this._featureTooltip = new FeatureQueryTooltip(this._map!, {
+                incrementBusyWorker: () => this.incrementBusyWorker(),
+                decrementBusyWorker: () => this.decrementBusyWorker(),
+                onSessionExpired: () => this.onSessionExpired(),
+                getAgentUri: () => this._state.agentUri!,
+                getAgentKind: () => this._state.agentKind,
+                getMapName: () => this._state.mapName!,
+                getSessionId: () => this._state.sessionId!,
+                getLocale: () => this._state.locale,
+                getPointSelectionBox: (pt) => this.getPointSelectionBox(pt, this._state.pointSelectionBuffer),
+                openTooltipLink: (url) => this.onOpenTooltipLink(url)
+            });
+            this._featureTooltip.setEnabled(this._state.featureTooltipsEnabled);
+        }
     }
     /**
      * @override
@@ -595,6 +605,11 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             this.hideAllPopups();
             const oldLayerSet = this.getLayerSetGroup(this._state.mapName);
             const newLayerSet = this.ensureAndGetLayerSetGroup(nextState);
+
+            //Clear any stray hover highlighted features as part of switch
+            oldLayerSet?.clearHighlightedFeatures();
+            newLayerSet.clearHighlightedFeatures();
+
             oldLayerSet?.detach(this._map, this._ovMap);
             newLayerSet.setMapGuideMocking(this.getMockMode());
             newLayerSet.attach(this._map, this._ovMap);
@@ -679,7 +694,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         if (this._state.activeSelectedFeatureXml != nextState.activeSelectedFeatureXml) {
             if (this._map && nextState.map) {
                 const ms = this._map.getSize();
-                if (ms) {
+                if (ms && isRuntimeMap(nextState.map)) {
                     const view = this.getOLView();
                     const me: any = view.calculateExtent(ms);
                     const size = { w: ms[0], h: ms[1] };

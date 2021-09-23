@@ -60,6 +60,16 @@ import { Client } from '../../api/client';
 import { useReduxDispatch } from "./context";
 import { ClientSelectionFeature } from "../../api/contracts/common";
 
+export function inflateBoundsByMeters(thisProj: ProjectionLike, extent: Bounds, meters: number) {
+    // We need to inflate this bbox by a known unit of measure (meters), so re-project this extent to a meter's based coordinate system (EPSG:3857)
+    const webmBounds = transformExtent(extent, thisProj, "EPSG:3857");
+    // Inflate the box by specified amount
+    const webmBounds2 = olExtent.buffer(webmBounds, meters);
+    // Re-project this extent back to the original projection
+    const inflatedBounds = transformExtent(webmBounds2, "EPSG:3857", thisProj) as Bounds;
+    return inflatedBounds;
+}
+
 export function recursiveFindLayer(layers: Collection<LayerBase>, predicate: (layer: LayerBase) => boolean): LayerBase | undefined {
     for (let i = 0; i < layers.getLength(); i++) {
         const layer = layers.item(i);
@@ -568,12 +578,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         // This generally happens if we want to zoom to the bounds of a selected point
         if (olExtent.getWidth(extent) == 0 || olExtent.getHeight(extent) == 0) {
             const thisProj = this.getProjection();
-            // We need to inflate this bbox by a known unit of measure (meters), so re-project this extent to a meter's based coordinate system (EPSG:3857)
-            const webmBounds = transformExtent(extent, thisProj, "EPSG:3857");
             // Inflate the box by 20 meters
-            const webmBounds2 = olExtent.buffer(webmBounds, 30);
-            // Re-project this extent back to the original projection
-            const inflatedBounds = transformExtent(webmBounds2, "EPSG:3857", thisProj) as Bounds;
+            const inflatedBounds = inflateBoundsByMeters(thisProj, extent, 20);
             // Now we can safely extract the scale/center
             scale = this.getScaleForExtent(inflatedBounds);
             center = olExtent.getCenter(inflatedBounds);
@@ -909,7 +915,11 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                             return bounds;
                         }
                     }, olExtent.createEmpty()) as Bounds;
-                    this.zoomToExtent(zoomBounds);
+
+                    // Inflate the bounds by 20 meters so that the new view has some "breathing space" and you don't see points
+                    // of the cluster on the edge of the view
+                    const inflatedBounds = inflateBoundsByMeters(this.getProjection(), zoomBounds, 20);
+                    this.zoomToExtent(inflatedBounds);
                 } else {
                     this.addClientSelectedFeature(f, l);
                 }

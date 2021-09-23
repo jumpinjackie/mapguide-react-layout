@@ -605,6 +605,11 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             this.hideAllPopups();
             const oldLayerSet = this.getLayerSetGroup(this._state.mapName);
             const newLayerSet = this.ensureAndGetLayerSetGroup(nextState);
+
+            //Clear any stray hover highlighted features as part of switch
+            oldLayerSet?.clearHighlightedFeatures();
+            newLayerSet.clearHighlightedFeatures();
+
             oldLayerSet?.detach(this._map, this._ovMap);
             newLayerSet.setMapGuideMocking(this.getMockMode());
             newLayerSet.attach(this._map, this._ovMap);

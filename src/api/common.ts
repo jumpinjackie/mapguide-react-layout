@@ -2541,7 +2541,11 @@ export enum LayerProperty {
     /**
      * @since 0.14
      */
-    IS_HOVER_HIGHLIGHT = "is_hover_highlight"
+    IS_HOVER_HIGHLIGHT = "is_hover_highlight",
+    /**
+     * @since 0.14
+     */
+    IS_MEASURE = "is_measure"
 }
 
 /**

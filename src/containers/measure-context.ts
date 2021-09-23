@@ -1,7 +1,8 @@
 import {
     GenericEvent,
     IMapViewer,
-    Coordinate2D
+    Coordinate2D,
+    LayerProperty
 } from "../api/common";
 import { IOLFactory } from "../api/ol-factory";
 import { tr } from "../api/i18n";
@@ -76,6 +77,7 @@ export class MeasureContext {
         this.measureLayer = this.olFactory.createVectorLayer({
             source: this.olFactory.createVectorSource()
         });
+        this.measureLayer.set(LayerProperty.IS_MEASURE, true);
         this.measureLayer.setStyle(this.createMeasureStyle());
     }
     /**

@@ -1,10 +1,9 @@
 import * as React from "react";
-import { GenericMapProviderContext } from './generic';
 import type { IMapProviderContext } from './base';
 import { Provider, useDispatch, useSelector } from "react-redux";
 import type { IApplicationState } from "../../api/common";
 
-const MapProviderContext = React.createContext<IMapProviderContext>(new GenericMapProviderContext());
+const MapProviderContext = React.createContext<IMapProviderContext>({} as any);
 
 /**
  * Wraps the provider component of react-redux

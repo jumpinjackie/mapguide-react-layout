@@ -12,7 +12,7 @@ import { MgError } from '../api/error';
 import { resolveProjectionFromEpsgIoAsync } from '../api/registry/projections';
 import { register } from 'ol/proj/proj4';
 import proj4 from "proj4";
-import { getMapDefinitionsFromFlexLayout, isStateless, MapToLoad, ViewerInitCommand } from './init-command';
+import { buildSubjectLayerDefn, getMapDefinitionsFromFlexLayout, isStateless, MapToLoad, ViewerInitCommand } from './init-command';
 import { WebLayout } from '../api/contracts/weblayout';
 import { convertWebLayoutUIItems, parseCommandsInWebLayout, ToolbarConf } from '../api/registry/command-spec';
 import { clearSessionStore, retrieveSelectionSetFromLocalStorage } from '../api/session-store';
@@ -25,8 +25,10 @@ import { MapDefinition } from '../api/contracts/map-definition';
 import { TileSetDefinition } from '../api/contracts/tile-set-definition';
 import { AsyncLazy } from '../api/lazy';
 import { SiteVersion } from '../api/contracts/common';
-import { TYPE_SUBJECT } from './init-generic';
 import { isRuntimeMap } from '../utils/type-guards';
+
+const TYPE_SUBJECT = "SubjectLayer";
+const TYPE_EXTERNAL = "External";
 
 export type MgSubjectLayerType = RuntimeMap | IGenericSubjectMapLayer;
 
@@ -387,6 +389,7 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<MgSubjectLayerT
             for (const mGroup of appDef.MapSet.MapGroup) {
                 let mapName: string | undefined;
                 //Setup external layers
+                const initExternalLayers = [] as IGenericSubjectMapLayer[];
                 const externalBaseLayers = [] as IExternalBaseLayer[];
                 for (const map of mGroup.Map) {
                     if (map.Type === "MapGuide") {
@@ -415,7 +418,11 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<MgSubjectLayerT
                     } else if (map.Type == TYPE_SUBJECT) {
                         mapName = mGroup["@id"];
                     } else {
-                        processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayers);
+                        if (map.Type == TYPE_EXTERNAL) {
+                            initExternalLayers.push(buildSubjectLayerDefn(map.Extension.layer_name, map));
+                        } else {
+                            processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayers);
+                        }
                     }
                 }
 
@@ -437,7 +444,7 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<MgSubjectLayerT
                         map: mapsByName[mapName],
                         initialView: initialView,
                         externalBaseLayers: externalBaseLayers,
-                        initialExternalLayers: []
+                        initialExternalLayers: initExternalLayers
                     };
                 }
             }

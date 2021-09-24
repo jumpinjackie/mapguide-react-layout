@@ -43,6 +43,7 @@ import "ol/ol.css";
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "react-splitter-layout/lib/index.css";
 import { GenericLayout } from "../layouts/generic";
+import { ExternalLayerCreator, ExternalLayerFactoryRegistry } from "../api/registry/external-layer";
 
 bootstrap();
 addFormatDriver(new CsvFormatDriver(CSV_COLUMN_ALIASES));
@@ -157,6 +158,18 @@ export class Registry {
      */
     public static registerComponentFactory(id: string, factory: (props: any) => JSX.Element) {
         registerComponentFactory(id, factory);
+    }
+
+    /**
+     * Registers the given external vector layer factory method
+     * 
+     * @param driverName 
+     * @param creator 
+     * @since 0.14
+     */
+    public static registerExternalVectorLayerCreator(driverName: string, creator: ExternalLayerCreator) {
+        const reg = ExternalLayerFactoryRegistry.getInstance();
+        reg.registerExternalVectorLayerCreator(driverName, creator);
     }
 }
 /**

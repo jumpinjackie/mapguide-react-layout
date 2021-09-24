@@ -220,7 +220,7 @@ export abstract class LayerSetGroupBase {
         return this._customLayers[name] != null;
     }
     public addExternalLayer(map: Map, extLayer: IInitialExternalLayer, appSettings: Dictionary<string>): ILayerInfo {
-        const layer = createOLLayerFromSubjectDefn(extLayer, true, appSettings);
+        const layer = createOLLayerFromSubjectDefn(extLayer, map.getView().getProjection(), true, appSettings);
         return this.addLayer(map, extLayer.name, layer);
     }
     public addLayer<T extends LayerBase>(map: Map, name: string, layer: T, allowReplace?: boolean): ILayerInfo {

@@ -22,6 +22,7 @@ declare module "*.gif";
 declare module "papaparse";
 declare module "stickybits";
 declare module "colorbrewer";
+declare module "geojson-vt";
 
 declare module "react-splitter-layout" {
     import * as React from "react";

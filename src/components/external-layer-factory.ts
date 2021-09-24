@@ -28,6 +28,56 @@ import { DEFAULT_VECTOR_LAYER_STYLE } from '../api/ol-style-contracts';
 import VectorTile from "ol/VectorTile";
 import Feature from "ol/Feature";
 import { OLVectorLayer, OLVectorSource } from "../api/ol-types";
+import geojsonvt from 'geojson-vt';
+import Projection from "ol/proj/Projection";
+import { ProjectionLike, get, equivalent } from "ol/proj";
+import { AsyncLazy } from "../api/lazy";
+
+function sameProjectionAs(proj1: ProjectionLike, proj2: ProjectionLike) {
+    const nproj1 = get(proj1);
+    const nproj2 = get(proj2);
+    return equivalent(nproj1, nproj2);
+}
+
+// Converts geojson-vt data to GeoJSON
+const geoJsonVt2GeoJSON = (key: string, value: any) => {
+    if (value.geometry) {
+        let type;
+        const rawType = value.type;
+        let geometry = value.geometry;
+
+        if (rawType === 1) {
+            type = 'MultiPoint';
+            if (geometry.length == 1) {
+                type = 'Point';
+                geometry = geometry[0];
+            }
+        } else if (rawType === 2) {
+            type = 'MultiLineString';
+            if (geometry.length == 1) {
+                type = 'LineString';
+                geometry = geometry[0];
+            }
+        } else if (rawType === 3) {
+            type = 'Polygon';
+            if (geometry.length > 1) {
+                type = 'MultiPolygon';
+                geometry = [geometry];
+            }
+        }
+
+        return {
+            'type': 'Feature',
+            'geometry': {
+                'type': type,
+                'coordinates': geometry,
+            },
+            'properties': value.tags,
+        };
+    } else {
+        return value;
+    }
+};
 
 function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExternalLayer, layer: LayerBase, isExternal: boolean) {
     layer.set(LayerProperty.LAYER_NAME, defn.name);
@@ -62,7 +112,7 @@ export function clusterSourceIfRequired(source: OLVectorSource, def: { cluster?:
     return source;
 }
 
-export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IInitialExternalLayer, isExternal: boolean, appSettings: Dictionary<string>): LayerBase {
+export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IInitialExternalLayer, mapProjection: ProjectionLike, isExternal: boolean, appSettings: Dictionary<string>): LayerBase {
     switch (defn.type) {
         case GenericSubjectLayerType.GeoJSON_Inline:
             {
@@ -81,18 +131,89 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
             }
         case GenericSubjectLayerType.GeoJSON:
             {
-                const source = new VectorSource({
-                    url: defn.sourceParams.url,
-                    format: new GeoJSON(),
-                    attributions: defn.sourceParams.attributions
-                });
-                const layer = new VectorLayer({
-                    ...defn.layerOptions,
-                    source: clusterSourceIfRequired(source, defn)
-                });
-                setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
-                applyVectorLayerProperties(defn, layer, isExternal);
-                return layer;
+                const isWebM = sameProjectionAs(mapProjection, "EPSG:3857");
+                const asVT = defn.meta?.geojson_as_vt == true;
+                if (asVT && isWebM) {
+                    const lazyTileIndex = new AsyncLazy(async () => {
+                        console.log(`Fetching url: ${defn.sourceParams.url}`);
+                        const resp = await fetch(defn.sourceParams.url);
+                        let json = await resp.json();
+                        if (defn.meta?.projection != "EPSG:4326") {
+                            const gj = new GeoJSON({
+                                dataProjection: defn.meta?.projection,
+                                featureProjection: "EPSG:4326"
+                            });
+                            const features = gj.readFeatures(json);
+                            json = gj.writeFeaturesObject(features, {
+                                dataProjection: "EPSG:4326"
+                            });
+                        }
+                        const tileIndex = geojsonvt(json, {
+                            extent: 4096
+                        });
+                        return tileIndex;
+                    });
+                    const format = new GeoJSON({
+                        // Data returned from geojson-vt is in tile pixel units
+                        dataProjection: new Projection({
+                            code: 'TILE_PIXELS',
+                            units: 'tile-pixels',
+                            extent: [0, 0, 4096, 4096],
+                        }),
+                    });
+                    const vectorSource = new VectorTileSource({
+                        projection: mapProjection,
+                        tileUrlFunction: (tileCoord) => {
+                            // Use the tile coordinate as a pseudo URL for caching purposes
+                            return JSON.stringify(tileCoord);
+                        },
+                        tileLoadFunction: (tile: VectorTile, url) => {
+                            const tileCoord = JSON.parse(url);
+                            lazyTileIndex.getValueAsync().then(tileIndex => {
+                                const data = tileIndex.getTile(
+                                    tileCoord[0],
+                                    tileCoord[1],
+                                    tileCoord[2]
+                                );
+                                //console.log("Fetching tile", tileCoord, data);
+                                const geojson = JSON.stringify(
+                                    {
+                                        type: 'FeatureCollection',
+                                        features: data ? data.features : [],
+                                    },
+                                    geoJsonVt2GeoJSON
+                                );
+                                const features = format.readFeatures(geojson, {
+                                    extent: vectorSource.getTileGrid().getTileCoordExtent(tileCoord),
+                                    featureProjection: mapProjection,
+                                });
+                                tile.setFeatures(features);
+                            });
+                        }
+                    });
+                    const vectorLayer = new VectorTileLayer({
+                        source: vectorSource,
+                    });
+                    setOLVectorLayerStyle(vectorLayer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
+                    applyVectorLayerProperties(defn, vectorLayer, isExternal);
+                    return vectorLayer;
+                } else {
+                    if (asVT) {
+                        console.warn("The geojson_as_vt meta option only applies if the MapGuide map or Primary Subject Layer is in EPSG:3857. This layer will be loaded as a regular GeoJSON layer");
+                    }
+                    const source = new VectorSource({
+                        url: defn.sourceParams.url,
+                        format: new GeoJSON(),
+                        attributions: defn.sourceParams.attributions
+                    });
+                    const layer = new VectorLayer({
+                        ...defn.layerOptions,
+                        source: clusterSourceIfRequired(source, defn)
+                    });
+                    setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
+                    applyVectorLayerProperties(defn, layer, isExternal);
+                    return layer;
+                }
             }
         case GenericSubjectLayerType.MVT:
             {
@@ -101,7 +222,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 };
                 switch (defn.sourceParams.mvtFeatureClass) {
                     case "feature":
-                        mo.featureClass = Feature as any //Bug: Typing probably should've been (typeof Feature | typeof RenderFeature) instead of (Feature | RenderFeature)
+                        mo.featureClass = Feature;
                         break;
                 }
                 const source = new VectorTileSource({

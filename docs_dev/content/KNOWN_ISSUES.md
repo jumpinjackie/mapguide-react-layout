@@ -80,6 +80,16 @@ Starting with the `0.14` release, the viewer supports UTFGrid tilesets with the 
 
  * You must pair it with a MapDefinition that has a coordinate system of `WGS84.PseudoMercator` (aka. `EPSG:3857`)
 
+## GeoJSON layers as vector tile layers
+
+Starting with the `0.14` release, the viewer supports external GeoJSON layers to be specified in the Application Definition and be loaded in initially as an external layer.
+
+For "heavy" GeoJSON layers, you may specify a `meta_geojson_as_vt` property to `true` to indicate that that the GeoJSON data source should be loaded in as a Vector Tile layer.
+
+Vector Tile layers perform better than regular vector layers as they can handle more features being displayed, but come with their own set of trade-offs
+
+For this option to work, your main MapGuide map or Primary Subject Layer must be in `EPSG:3857`. If it is not in this projection, the layer will be loaded in as a regular GeoJSON layer and a warning will be logged to the browser console.
+
 ## Stateless mode
 
 Starting with the `0.14` release, the viewer supports a new "stateless" mode. In "stateless" mode, no MapGuide session ids are created and all viewer operations/commands that rely on session ids are permanently disabled. Map rendering is done through `GETMAPIMAGE` requests instead of `GETDYNAMICMAPOVERLAYIMAGE` requests.

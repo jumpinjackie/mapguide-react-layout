@@ -230,14 +230,16 @@
                         ]
                     },
                     {
-                        "@id": "Sheboygan",
+                        "@id": "United States",
                         "Map": [
                             {
                                 "Type": "SubjectLayer",
                                 "Extension": {
                                     "source_type": "GeoJSON_Inline",
-                                    "meta_extents": [-127.001953, 23.241346, -59.853516, 49.781264],
-                                    "meta_projection": "EPSG:4326",
+                                    //"meta_extents": [-127.001953, 23.241346, -59.853516, 49.781264],
+                                    //"meta_projection": "EPSG:4326",
+                                    "meta_extents": [-14088873.053524, 3209132.195525, -7161843.802208, 6408480.451429],
+                                    "meta_projection": "EPSG:3857",
                                     "is_selectable": false
                                 }
                             },
@@ -263,6 +265,7 @@
                                     "source_type": "GeoJSON",
                                     "source_param_url": "https://raw.githubusercontent.com/cambridgegis/cambridgegis_data_basemap/master/Buildings/BASEMAP_Buildings.geojson",
                                     "meta_projection": "EPSG:4326",
+                                    "meta_geojson_as_vt": true, //This will cause the layer to be loaded as vector tiles
                                     "initially_visible": false
                                 }
                             },

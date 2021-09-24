@@ -362,7 +362,7 @@ export class GenericLayerSetFactory implements ILayerSetFactory {
         }
         let subjectLayer;
         if (this.subject) {
-            subjectLayer = createOLLayerFromSubjectDefn(this.subject, false, appSettings);
+            subjectLayer = createOLLayerFromSubjectDefn(this.subject, projection, false, appSettings);
             if (this.subject.meta) {
                 projection = this.subject.meta.projection;
                 bounds = this.subject.meta.extents;

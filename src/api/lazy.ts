@@ -10,11 +10,11 @@ export class Lazy<T> {
 }
 
 export class AsyncLazy<T> {
-    private _value: T | undefined;
+    private _value: Promise<T> | undefined;
     constructor(private value: () => Promise<T>) { }
-    public async getValueAsync() { 
+    public getValueAsync(): Promise<T> { 
         if (!this._value) {
-            this._value = await this.value();
+            this._value = this.value();
         }
         return this._value;
     }

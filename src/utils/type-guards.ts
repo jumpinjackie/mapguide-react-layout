@@ -7,6 +7,7 @@ import {
 import { MapLayer, RuntimeMap } from "../api/contracts/runtime-map";
 import { IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../components/toolbar";
 import { IGenericSubjectMapLayer, ViewerAction } from '../actions/defs';
+import { DeArrayifiedResult } from "../api/builders/deArrayify";
 
 /**
  * Indicates if the given argument is an IModalDisplayOptions
@@ -142,8 +143,10 @@ export function isAction(action: any): action is ViewerAction {
  * @returns 
  * @since 0.14
  */
-export function isRuntimeMap(arg: RuntimeMap | IGenericSubjectMapLayer): arg is RuntimeMap {
-    return (arg as any).SiteVersion != null
+export function isRuntimeMap(arg: DeArrayifiedResult | RuntimeMap | IGenericSubjectMapLayer): arg is RuntimeMap {
+    return (arg as any).Extents != null
+        && (arg as any).BackgroundColor != null
         && (arg as any).CoordinateSystem != null
-        && (arg as any).MapDefinition != null;
+        && (arg as any).MapDefinition != null
+        && (arg as any).DisplayDpi != null;
 }

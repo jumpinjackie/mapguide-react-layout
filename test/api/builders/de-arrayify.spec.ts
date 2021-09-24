@@ -11,9 +11,10 @@ import MDF_SHEBOYGAN from "../../../test-data/mdf_sheboygan";
 import MDF_MELBOURNE from "../../../test-data/mdf_melbourne";
 import MDF_REDDING from "../../../test-data/mdf_redding";
 import MDF_WORLD from "../../../test-data/mdf_world";
-import { deArrayify, isAppDef, isMapDef, isQueryMapFeaturesResponse, isRuntimeMap, isTileSet, isWebLayout } from '../../../src/api/builders/deArrayify';
+import { deArrayify, isAppDef, isMapDef, isQueryMapFeaturesResponse, isTileSet, isWebLayout } from '../../../src/api/builders/deArrayify';
 import { isStateless } from "../../../src/actions/init-command";
 import { convertFlexLayoutUIItems, convertWebLayoutUIItems, parseCommandsInWebLayout, parseWidgetsInAppDef } from "../../../src/api/registry/command-spec";
+import { isRuntimeMap } from "../../../src/utils/type-guards";
 
 describe("de-arrayify", () => {
     it("Fixes #631", () => {

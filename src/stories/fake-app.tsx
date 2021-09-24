@@ -7,8 +7,7 @@ import { RequestBuilder, ICreateRuntimeMapOptions, IQueryMapFeaturesOptions, IDe
 import { ResourceBase, SiteVersion } from '../api/contracts/common';
 import { RuntimeMap } from '../api/contracts/runtime-map';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
-import { ApplicationDefinition } from '../api/contracts/fusion';
-import { deArrayify, isRuntimeMap } from '../api/builders/deArrayify';
+import { deArrayify } from '../api/builders/deArrayify';
 import { registerLayout } from '../api/registry/layout';
 import { IConfigurationReducerState, IViewerReducerState, ClientKind } from '../api/common';
 import { MapGuideViewerInitCommand } from '../actions/init-mapguide';
@@ -16,6 +15,7 @@ import { IViewerInitCommand } from '../actions/init-command';
 import { MapContextProvider } from '../components/map-providers/context';
 import { MapGuideMapProviderContext } from '../components/map-providers/mapguide';
 import { MapGuideMockMode } from '../components/mapguide-debug-context';
+import { isRuntimeMap } from "../utils/type-guards";
 const testMapSheboygan = deArrayify(require("./data/test-runtime-map-sheboygan.json"));
 const testMapRedding = deArrayify(require("./data/test-runtime-map-redding.json"));
 const testMapMelbourne = deArrayify(require("./data/test-runtime-map-melbourne.json"));

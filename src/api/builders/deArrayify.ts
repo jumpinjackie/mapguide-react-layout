@@ -1009,17 +1009,6 @@ function deArrayifyTileSetDefinition(json: any): TileSetDefinition {
 /**
  * @since 0.14
  */
-export function isRuntimeMap(arg: DeArrayifiedResult): arg is RuntimeMap {
-    return (arg as any).Extents != null
-        && (arg as any).BackgroundColor != null
-        && (arg as any).CoordinateSystem != null
-        && (arg as any).MapDefinition != null
-        && (arg as any).DisplayDpi != null;
-}
-
-/**
- * @since 0.14
- */
 export function isWebLayout(arg: DeArrayifiedResult): arg is WebLayout {
     return (arg as any).CommandSet != null
         && (arg as any).ContextMenu != null

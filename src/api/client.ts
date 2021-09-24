@@ -2,7 +2,7 @@ import { MgError } from './error';
 import { MapAgentRequestBuilder, isErrorResponse, serialize } from './builders/mapagent';
 import { ClientKind } from './common';
 import { createRequestBuilder } from './builders/factory';
-import { ResourceBase, ResourceIdentifier, SiteVersion } from './contracts/common';
+import { ResourceBase, ResourceIdentifier, SiteVersionResponse } from './contracts/common';
 import { ICreateRuntimeMapOptions, IMapGuideClient, RequestBuilder, IDescribeRuntimeMapOptions, IQueryMapFeaturesOptions } from './request-builder';
 import { RuntimeMap } from './contracts/runtime-map';
 import { QueryMapFeaturesResponse } from './contracts/query';
@@ -123,7 +123,7 @@ export class Client implements IMapGuideClient {
      * 
      * @since 0.14
      */
-    public getSiteVersion(): Promise<SiteVersion> {
+    public getSiteVersion(): Promise<SiteVersionResponse> {
         return this.builder.getSiteVersion();
     }
 

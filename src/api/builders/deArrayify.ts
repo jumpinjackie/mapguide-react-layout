@@ -21,7 +21,7 @@ import { MapSetGroup, MapInitialView, MapConfiguration, MapSet, ContainerItem, F
 import { MDF_INFINITY } from '../../constants';
 import { MapDefinition, MapLayerGroup, MapLayer as MdfLayer, TileSetSource } from "../contracts/map-definition";
 import { BaseMapLayer, BaseMapLayerGroup, TileSetDefinition, TileStoreParameters } from "../contracts/tile-set-definition";
-import { SiteVersion } from '../contracts/common';
+import { SiteVersionResponse } from '../contracts/common';
 
 type ElementType = "string" | "boolean" | "int" | "float";
 
@@ -1045,7 +1045,7 @@ export function isTileSet(arg: DeArrayifiedResult): arg is TileSetDefinition {
 /**
  * @since 0.14
  */
-export function isSiteVersion(arg: DeArrayifiedResult): arg is SiteVersion {
+export function isSiteVersion(arg: DeArrayifiedResult): arg is SiteVersionResponse {
     return (arg as any).Version != null;
 }
 
@@ -1065,7 +1065,7 @@ export function isQueryMapFeaturesResponse(arg: DeArrayifiedResult): arg is Quer
  * 
  * @since 0.14
  */
-export type DeArrayifiedResult = RuntimeMap | QueryMapFeaturesResponse | WebLayout | ApplicationDefinition | MapDefinition | TileSetDefinition | SiteVersion;
+export type DeArrayifiedResult = RuntimeMap | QueryMapFeaturesResponse | WebLayout | ApplicationDefinition | MapDefinition | TileSetDefinition | SiteVersionResponse;
 
 /**
  * Normalizes the given JSON object to match the content model of its original XML form
@@ -1096,7 +1096,7 @@ export function deArrayify(json: any): DeArrayifiedResult {
     if (json["SiteVersion"]) {
         return {
             Version: json.SiteVersion.Version[0]
-        } as SiteVersion;
+        } as SiteVersionResponse;
     }
     const keys = [] as string[];
     for (const k in json) {

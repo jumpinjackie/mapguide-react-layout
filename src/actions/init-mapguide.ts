@@ -24,7 +24,7 @@ import { assertIsDefined } from '../utils/assert';
 import { MapDefinition } from '../api/contracts/map-definition';
 import { TileSetDefinition } from '../api/contracts/tile-set-definition';
 import { AsyncLazy } from '../api/lazy';
-import { SiteVersion } from '../api/contracts/common';
+import { SiteVersionResponse } from '../api/contracts/common';
 import { isRuntimeMap } from '../utils/type-guards';
 
 const TYPE_SUBJECT = "SubjectLayer";
@@ -182,7 +182,7 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<MgSubjectLayerT
         const subjectLayers: Dictionary<IGenericSubjectMapLayer> = {};
         if (isStateless) {
             // We use an AsyncLazy because we only want to fetch the site version *iff* we encounter a MG map defn
-            const siteVersion = new AsyncLazy<SiteVersion>(async () => {
+            const siteVersion = new AsyncLazy<SiteVersionResponse>(async () => {
                 assertIsDefined(this.client);
                 const sv = await this.client.getSiteVersion();
                 return sv;

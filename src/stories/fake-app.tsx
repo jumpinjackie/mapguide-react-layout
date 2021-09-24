@@ -4,7 +4,7 @@ import { App } from "../containers/app";
 import { CONFIG_INITIAL_STATE } from '../reducers/config';
 import { registerRequestBuilder } from '../api/builders/factory';
 import { RequestBuilder, ICreateRuntimeMapOptions, IQueryMapFeaturesOptions, IDescribeRuntimeMapOptions } from '../api/request-builder';
-import { ResourceBase, SiteVersion } from '../api/contracts/common';
+import { ResourceBase, SiteVersionResponse } from '../api/contracts/common';
 import { RuntimeMap } from '../api/contracts/runtime-map';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { deArrayify } from '../api/builders/deArrayify';
@@ -24,7 +24,7 @@ const testAppDef = deArrayify(require("./data/test-app-def.json"));
 const PROVIDER_IMPL = new MapGuideMapProviderContext();
 
 class FakeMapAgent extends RequestBuilder {
-    public getSiteVersion(): Promise<SiteVersion> {
+    public getSiteVersion(): Promise<SiteVersionResponse> {
         return Promise.resolve({ Version: "4.0.0.0" });
     }
     constructor(private uri: string, private locale?: string) {

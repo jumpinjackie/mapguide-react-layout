@@ -25,7 +25,7 @@ export interface ResourceBase {
 /**
  * @since 0.14
  */
-export interface SiteVersion {
+export interface SiteVersionResponse {
     Version: string;
 }
 

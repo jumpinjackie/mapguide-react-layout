@@ -125,6 +125,16 @@ export function useActiveMapSelectionSet() {
 }
 
 /**
+ * Gets custom app settings
+ * 
+ * @returns 
+ * @since 0.14
+ */
+export function useCustomAppSettings() {
+    return useAppState(state => state.config.appSettings);
+}
+
+/**
  * Gets the client-side selection set
  * @since 0.14
  */

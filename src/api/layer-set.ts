@@ -314,7 +314,8 @@ export interface IMapViewerContextCallback {
 export interface ILayerSetFactory {
     create(locale: string | undefined,
         externalBaseLayers: IExternalBaseLayer[] | undefined,
-        mode: MgLayerSetMode): ILayerSetOL
+        mode: MgLayerSetMode,
+        appSettings: Dictionary<string>): ILayerSetOL
 }
 
 export class GenericLayerSetFactory implements ILayerSetFactory {
@@ -340,7 +341,7 @@ export class GenericLayerSetFactory implements ILayerSetFactory {
         tl.set(LayerProperty.IS_GROUP, false);
         return tl;
     }
-    create(locale: string | undefined, externalBaseLayers: IExternalBaseLayer[] | undefined, mode: MgLayerSetMode): ILayerSetOL {
+    create(locale: string | undefined, externalBaseLayers: IExternalBaseLayer[] | undefined, mode: MgLayerSetMode, appSettings: Dictionary<string>): ILayerSetOL {
         let projection = this.subject?.meta?.projection;
         let bounds: Bounds | undefined;
         let externalBaseLayersGroup: LayerGroup | undefined;
@@ -361,7 +362,7 @@ export class GenericLayerSetFactory implements ILayerSetFactory {
         }
         let subjectLayer;
         if (this.subject) {
-            subjectLayer = createOLLayerFromSubjectDefn(this.subject, false);
+            subjectLayer = createOLLayerFromSubjectDefn(this.subject, projection, false, appSettings);
             if (this.subject.meta) {
                 projection = this.subject.meta.projection;
                 bounds = this.subject.meta.extents;
@@ -424,7 +425,8 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
     }
     public create(locale: string | undefined,
         externalBaseLayers: IExternalBaseLayer[] | undefined,
-        mode: MgLayerSetMode): ILayerSetOL {
+        mode: MgLayerSetMode,
+        appSettings: Dictionary<string>): ILayerSetOL {
         const { map, agentUri } = this;
         //If a tile set definition is defined it takes precedence over the map definition, this enables
         //this example to work with older releases of MapGuide where no such resource type exists.
@@ -652,6 +654,10 @@ export interface IMgLayerSetProps {
     agentUri?: string;
     externalBaseLayers?: IExternalBaseLayer[];
     locale?: string;
+    /**
+     * @since 0.14
+     */
+    appSettings: Dictionary<string>;
 }
 
 export interface IMgLayerSetCallback extends IImageLayerEvents {

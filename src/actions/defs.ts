@@ -108,6 +108,10 @@ export interface IGenericSubjectMapLayerMetadata {
      * An other arbitrary metadata properties
      */
     properties?: any;
+    /**
+     * If true, the GeoJSON layer will be loaded as a vector tile layer. Has no effect if this layer is not a GeoJSON layer
+     */
+    geojson_as_vt?: boolean;
 }
 
 /**

@@ -49,7 +49,7 @@ function tryExtractMapMetadata(extension: any) {
     return ext;
 }
 
-function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGenericSubjectMapLayer {
+export function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGenericSubjectMapLayer {
     const st = map.Extension.source_type;
     const initiallyVisible = map.Extension.initially_visible ?? true;
     const sp: any = {};

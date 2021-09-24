@@ -12,7 +12,7 @@ import { tr } from '../api/i18n';
 import "ol/ol.css";
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { ISubscriberProps, Subscriber } from './subscriber';
-import { useActiveMapClientSelectionSet, useConfiguredLoadIndicatorColor, useConfiguredLoadIndicatorPositioning, useViewerFlyouts } from "./hooks";
+import { useActiveMapClientSelectionSet, useConfiguredLoadIndicatorColor, useConfiguredLoadIndicatorPositioning, useCustomAppSettings, useViewerFlyouts } from "./hooks";
 import { closeContextMenu, openContextMenu } from "../actions/flyout";
 import { WEBLAYOUT_CONTEXTMENU } from "../constants";
 
@@ -216,6 +216,7 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
     const dispatch = useReduxDispatch();
     const hookFunc = context.getHookFunction();
     const clientSelection = useActiveMapClientSelectionSet();
+    const appSettings = useCustomAppSettings();
     const nextState = hookFunc();
     const {
         mapName,
@@ -245,7 +246,7 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
     }
     context.setToasterRef(toasterRef);
     context.setProviderState(nextState);
-    useViewerSideEffects(context, mapName, layers, initialExternalLayers, agentUri, agentKind, selection);
+    useViewerSideEffects(context, appSettings ?? {}, mapName, layers, initialExternalLayers, agentUri, agentKind, selection);
 
     if (nextState.isReady) {
         return <>

@@ -1,6 +1,6 @@
 import { ResourceBase } from "./common";
 
-export interface MapLayerCommon {
+export interface MapDefinitionLayerCommon {
     Name: string;
     Visible: boolean;
     ShowInLegend: boolean;
@@ -9,11 +9,11 @@ export interface MapLayerCommon {
     Group: string;
 }
 
-export interface MapLayerGroup extends MapLayerCommon {
+export interface MapDefinitionLayerGroup extends MapDefinitionLayerCommon {
 
 }
 
-export interface MapLayer extends MapLayerCommon {
+export interface MapDefinitionLayer extends MapDefinitionLayerCommon {
     ResourceId: string;
     Selectable: boolean;
 }
@@ -31,7 +31,7 @@ export interface MapDefinition extends ResourceBase {
         MaxY: number;
     },
     BackgroundColor: string;
-    MapLayer: MapLayer[];
-    MapLayerGroup: MapLayerGroup[];
+    MapLayer: MapDefinitionLayer[];
+    MapLayerGroup: MapDefinitionLayerGroup[];
     TileSetSource?: TileSetSource;
 }

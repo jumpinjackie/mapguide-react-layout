@@ -19,7 +19,7 @@ import { FeatureSetClass, FeatureSetLayer, FeatureSet, SelectionImage, FeaturePr
 import { WebLayoutMap, WebLayoutControl, WebLayoutInfoPane, MapView, TaskButton, WebLayoutTaskBar, UIItem, WebLayoutTaskPane, CommandUIItem, FlyoutUIItem, ResultColumnSet, ResultColumn, LayerSet, ParameterPair, CommandDef, BasicCommandDef, InvokeScriptCommandDef, InvokeURLCommandDef, SearchCommandDef, WebLayoutCommandSet, WebLayout, WebLayoutToolbar, WebLayoutContextMenu, WebLayoutStatusBar, WebLayoutZoomControl } from '../contracts/weblayout';
 import { MapSetGroup, MapInitialView, MapConfiguration, MapSet, ContainerItem, FlyoutItem, WidgetItem, ContainerDefinition, Widget, UIWidget, MapWidget, WidgetSet, ApplicationDefinition } from '../contracts/fusion';
 import { MDF_INFINITY } from '../../constants';
-import { MapDefinition, MapLayerGroup, MapLayer as MdfLayer, TileSetSource } from "../contracts/map-definition";
+import { MapDefinition, MapDefinitionLayerGroup, MapDefinitionLayer as MdfLayer, TileSetSource } from "../contracts/map-definition";
 import { BaseMapLayer, BaseMapLayerGroup, TileSetDefinition, TileStoreParameters } from "../contracts/tile-set-definition";
 import { SiteVersionResponse } from '../contracts/common';
 
@@ -878,9 +878,9 @@ function deArrayifyFlexibleLayout(json: any): ApplicationDefinition {
     return resp;
 }
 
-function deArrayifyMapDefinitionGroups(json: any): MapLayerGroup[] {
-    const groups = [] as MapLayerGroup[];
-    const getter = buildPropertyGetter<MapLayerGroup>();
+function deArrayifyMapDefinitionGroups(json: any): MapDefinitionLayerGroup[] {
+    const groups = [] as MapDefinitionLayerGroup[];
+    const getter = buildPropertyGetter<MapDefinitionLayerGroup>();
     for (const g of json) {
         groups.push({
             Name: getter(g, "Name"),

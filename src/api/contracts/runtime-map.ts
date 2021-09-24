@@ -1,9 +1,4 @@
-import { ResourceIdentifier, Version, Color, FdoFilter, Base64Content } from './common';
-
-/**
- * @since 0.14
- */
-export type MimeType = string;
+import { ResourceIdentifier, Version, Color, FdoFilter, Base64Content, MimeType } from './common';
 
 export interface FeatureSourceInfo {
     ResourceId: ResourceIdentifier;

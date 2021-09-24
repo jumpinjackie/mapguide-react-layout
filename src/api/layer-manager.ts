@@ -1,4 +1,4 @@
-import { LayerProperty, ILayerManager, ILayerInfo, IParseFeaturesFromFileOptions, IAddLayerFromParsedFeaturesOptions, SourceProperty, IWmsLayerExtensions, LayerExtensions } from './common';
+import { LayerProperty, ILayerManager, ILayerInfo, IParseFeaturesFromFileOptions, IAddLayerFromParsedFeaturesOptions, SourceProperty, IWmsLayerExtensions, LayerExtensions, Dictionary } from './common';
 import olSourceVector from "ol/source/Vector";
 import olMap from "ol/Map";
 import olLayerBase from "ol/layer/Base";
@@ -139,11 +139,11 @@ export class LayerManager implements ILayerManager {
      * @returns
      * @memberof LayerManager
      */
-    addExternalLayer(extLayer: IInitialExternalLayer, onlyAddIfNotExists: boolean) {
+    addExternalLayer(extLayer: IInitialExternalLayer, onlyAddIfNotExists: boolean, appSettings: Dictionary<string>) {
         if (onlyAddIfNotExists && this.hasLayer(extLayer.name)) {
             return undefined;
         }
-        return this.layerSet.addExternalLayer(this.map, extLayer);
+        return this.layerSet.addExternalLayer(this.map, extLayer, appSettings);
     }
     getLayers(): ILayerInfo[] {
         return this.layerSet.getCustomLayers(this.map);

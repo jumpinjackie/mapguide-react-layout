@@ -32,8 +32,8 @@ export class MgLayerSetGroup extends LayerSetGroupBase {
         //As of OL6, this unwanted behavior from shared layers extends to all layer types, so what this means is that
         //we have to create 2 sets of layers, one for the main map and one for the overview map. We CANNOT and DO NOT share
         //any of these layer instances between the main map and the overview map!
-        this.mainSet = factory.create(props.locale, props.externalBaseLayers, props.stateless ? MgLayerSetMode.Stateless : MgLayerSetMode.Stateful);
-        this.overviewSet = factory.create(props.locale, props.externalBaseLayers, MgLayerSetMode.OverviewMap);
+        this.mainSet = factory.create(props.locale, props.externalBaseLayers, props.stateless ? MgLayerSetMode.Stateless : MgLayerSetMode.Stateful, props.appSettings);
+        this.overviewSet = factory.create(props.locale, props.externalBaseLayers, MgLayerSetMode.OverviewMap, props.appSettings);
         const progressNotifySources = this.mainSet.getSourcesForProgressTracking();
         /*
         console.log("Draw Order:");

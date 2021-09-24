@@ -92,6 +92,7 @@ export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
 }
 
 export function useViewerSideEffects(context: IMapProviderContext,
+    appSettings: Dictionary<string>,
     mapName: string | undefined,
     layers: ILayerInfo[] | undefined,
     initialExternalLayers: IInitialExternalLayer[] | undefined,
@@ -107,7 +108,7 @@ export function useViewerSideEffects(context: IMapProviderContext,
                 debug(`React.useEffect - First-time loading of external layers for [${mapName}]`);
                 const layerManager = context.getLayerManager(mapName) as LayerManager;
                 for (const extLayer of initialExternalLayers) {
-                    const added = layerManager.addExternalLayer(extLayer, true);
+                    const added = layerManager.addExternalLayer(extLayer, true, appSettings);
                     if (added) {
                         dispatch(mapLayerAdded(mapName, added));
                     }

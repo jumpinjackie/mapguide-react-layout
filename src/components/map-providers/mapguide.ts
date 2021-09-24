@@ -1,7 +1,7 @@
 
 import { Client } from '../../api/client';
 import { SessionKeepAlive } from '../session-keep-alive';
-import { Bounds, GenericEvent, ActiveMapTool, ImageFormat, RefreshMode, SelectionVariant, ClientKind, LayerTransparencySet, Size, BLANK_SIZE, IMapGuideViewerSupport } from '../../api/common';
+import { Bounds, GenericEvent, ActiveMapTool, ImageFormat, RefreshMode, SelectionVariant, ClientKind, LayerTransparencySet, Size, BLANK_SIZE, IMapGuideViewerSupport, Dictionary } from '../../api/common';
 import { IQueryMapFeaturesOptions } from '../../api/request-builder';
 import { QueryMapFeaturesResponse, FeatureSet } from '../../api/contracts/query';
 
@@ -29,7 +29,7 @@ import { ensureParameters } from '../../utils/url';
 import { ActionType } from '../../constants/actions';
 import { buildSelectionXml, getActiveSelectedFeatureXml } from '../../api/builders/deArrayify';
 import { MapGuideMockMode } from '../mapguide-debug-context';
-import { useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useViewerPointSelectionBuffer, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSelectionColor, useViewerSelectionImageFormat, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useActiveMapLayers, useActiveMapInitialExternalLayers, useViewerIsStateless } from '../../containers/hooks';
+import { useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useViewerPointSelectionBuffer, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSelectionColor, useViewerSelectionImageFormat, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useActiveMapLayers, useActiveMapInitialExternalLayers, useViewerIsStateless, useCustomAppSettings } from '../../containers/hooks';
 import { useActiveMapState, useActiveMapSessionId, useActiveMapSelectableLayerNames, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapHideLayers, useActiveMapActiveSelectedFeature } from '../../containers/hooks-mapguide';
 import { useReduxDispatch } from './context';
 import { UTFGridTrackingTooltip } from '../tooltips/utfgrid';
@@ -58,6 +58,7 @@ function useMapGuideViewerState() {
     const layers = useActiveMapLayers();
     const initialExternalLayers = useActiveMapInitialExternalLayers();
     const dispatch = useReduxDispatch();
+    const appSettings = useCustomAppSettings();
     // ============== Generic ============== //
     const subject = useActiveMapSubjectLayer();
     // ============== MapGuide-specific ================== //
@@ -116,6 +117,7 @@ function useMapGuideViewerState() {
         cancelDigitizationKey,
         undoLastPointKey,
         initialExternalLayers,
+        appSettings: appSettings ?? {},
         // ========== IMapProviderStateExtras ========== //
         isReady,
         bgColor,
@@ -150,6 +152,10 @@ export interface IMapGuideProviderState extends IMapProviderState {
      */
     stateless: boolean;
     imageFormat: ImageFormat;
+    /**
+     * @since 0.14
+     */
+    appSettings: Dictionary<string>;
     agentUri: string | undefined;
     agentKind: ClientKind;
     map: RuntimeMap | IGenericSubjectMapLayer | undefined;
@@ -242,6 +248,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             selectionImageFormat: "PNG8",
             selectableLayerNames: [],
             layerTransparency: {},
+            appSettings: {},
             showGroups: [],
             hideGroups: [],
             showLayers: [],

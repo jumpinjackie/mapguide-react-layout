@@ -1885,6 +1885,12 @@ export interface IConfigurationReducerState {
      */
     capabilities: IViewerCapabilities;
     /**
+     * A dictionary of arbitrary app settings
+     * 
+     * @since 0.14
+     */
+    appSettings?: Dictionary<string>;
+    /**
      * Viewer configuration
      *
      * @type {{

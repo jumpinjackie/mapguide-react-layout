@@ -1,5 +1,5 @@
 import LayerBase from "ol/layer/Base";
-import { LayerProperty, IExternalBaseLayer, LayerTransparencySet, RefreshMode, Bounds, Size, ILayerInfo } from './common';
+import { LayerProperty, IExternalBaseLayer, LayerTransparencySet, RefreshMode, Bounds, Size, ILayerInfo, Dictionary } from './common';
 import { ILayerSetOL, IImageLayerEvents } from './layer-set-contracts';
 import Feature from 'ol/Feature';
 import { isMapGuideImageSource } from './ol-mapguide-source-factory';
@@ -219,8 +219,8 @@ export abstract class LayerSetGroupBase {
     public hasLayer(name: string): boolean {
         return this._customLayers[name] != null;
     }
-    public addExternalLayer(map: Map, extLayer: IInitialExternalLayer): ILayerInfo {
-        const layer = createOLLayerFromSubjectDefn(extLayer, true);
+    public addExternalLayer(map: Map, extLayer: IInitialExternalLayer, appSettings: Dictionary<string>): ILayerInfo {
+        const layer = createOLLayerFromSubjectDefn(extLayer, true, appSettings);
         return this.addLayer(map, extLayer.name, layer);
     }
     public addLayer<T extends LayerBase>(map: Map, name: string, layer: T, allowReplace?: boolean): ILayerInfo {

@@ -1,5 +1,5 @@
 import { MgError } from "../api/error";
-import { IExternalBaseLayer, LayerProperty } from "../api/common";
+import { Dictionary, IExternalBaseLayer, LayerProperty } from "../api/common";
 import { IGenericSubjectMapLayer, IInitialExternalLayer, GenericSubjectLayerType } from '../actions/defs';
 import olSource from "ol/source/Source";
 import XYZ from "ol/source/XYZ";
@@ -62,7 +62,7 @@ export function clusterSourceIfRequired(source: OLVectorSource, def: { cluster?:
     return source;
 }
 
-export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IInitialExternalLayer, isExternal: boolean): LayerBase {
+export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IInitialExternalLayer, isExternal: boolean, appSettings: Dictionary<string>): LayerBase {
     switch (defn.type) {
         case GenericSubjectLayerType.GeoJSON_Inline:
             {
@@ -206,7 +206,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 if (!factory) {
                     throw new Error(`Could not resolve an approriate factory for the given driver: ${defn.driverName}`);
                 }
-                const layer = factory(defn.sourceParams, defn.meta, defn.layerOptions) as OLVectorLayer;
+                const layer = factory(defn.sourceParams, defn.meta, defn.layerOptions, appSettings) as OLVectorLayer;
                 const source = clusterSourceIfRequired(layer.getSource(), defn);
                 layer.setSource(source);
                 setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);

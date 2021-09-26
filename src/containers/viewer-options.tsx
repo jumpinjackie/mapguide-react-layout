@@ -8,9 +8,10 @@ import { getUnits, getUnitOfMeasure } from "../utils/units";
 import { Slider, HTMLSelect } from '@blueprintjs/core';
 import { useActiveMapName, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSizeUnits, useViewerLocale, useActiveMapExternalBaseLayers, useViewerIsStateless } from './hooks';
 import { setManualFeatureTooltipsEnabled, setFeatureTooltipsEnabled, setLayerTransparency, setViewSizeUnits } from '../actions/map';
-import { useActiveMapLayerTransparency } from './hooks-mapguide';
+import { useActiveMapLayerTransparency, useActiveMapState } from './hooks-mapguide';
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from '../constants';
 import { useReduxDispatch } from "../components/map-providers/context";
+import { isRuntimeMap } from "../utils/type-guards";
 
 export interface IViewerOptionsProps {
 
@@ -24,6 +25,7 @@ export const ViewerOptions = () => {
     const manualFeatureTooltips = useConfiguredManualFeatureTooltips();
     const viewSizeUnits = useViewerSizeUnits();
     const stateless = useViewerIsStateless();
+    const map = useActiveMapState();
     const locale = useViewerLocale();
     const dispatch = useReduxDispatch();
     const toggleManualMapTipsAction = (enabled: boolean) => dispatch(setManualFeatureTooltipsEnabled(enabled));
@@ -68,16 +70,20 @@ export const ViewerOptions = () => {
             opMgSelOverlay = layerTransparency[LAYER_ID_MG_SEL_OVERLAY];
         }
     }
+    let isStateless = stateless;
+    if (!map) {
+        isStateless = true;
+    }
     return <div className="component-viewer-options">
         <h5>{tr("VIEWER_OPTIONS", locale)}</h5>
         <hr />
-        {!stateless && <label className="bp3-control bp3-switch">
+        {!isStateless && <label className="bp3-control bp3-switch">
             <input type="checkbox" checked={featureTooltipsEnabled} onChange={onFeatureTooltipsChanged} />
             <span className="bp3-control-indicator"></span>
             {tr("FEATURE_TOOLTIPS", locale)}
         </label>}
         {(() => {
-            if (!stateless && featureTooltipsEnabled) {
+            if (!isStateless && featureTooltipsEnabled) {
                 return <label className="bp3-control bp3-switch">
                     <input type="checkbox" checked={manualFeatureTooltips} onChange={onManualFeatureTooltipsChanged} />
                     <span className="bp3-control-indicator"></span>
@@ -98,12 +104,12 @@ export const ViewerOptions = () => {
                 }
             })()}
             <label className="bp3-label noselect">
-                {tr("LAYER_ID_MG_BASE", locale)}
+                {map ? tr("LAYER_ID_MG_BASE", locale) : tr("LAYER_ID_SUBJECT", locale)}
                 <div style={{ paddingLeft: 8, paddingRight: 8 }}>
                     <Slider min={0} max={1.0} stepSize={0.01} value={opMgBase} onChange={onMgOpacityChanged} />
                 </div>
             </label>
-            {!stateless && <label className="bp3-label noselect">
+            {!isStateless && <label className="bp3-label noselect">
                 {tr("LAYER_ID_MG_SEL_OVERLAY", locale)}
                 <div style={{ paddingLeft: 8, paddingRight: 8 }}>
                     <Slider min={0} max={1.0} stepSize={0.01} value={opMgSelOverlay} onChange={onMgSelOpacityChanged} />

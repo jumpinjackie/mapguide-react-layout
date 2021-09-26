@@ -16,7 +16,7 @@ import { createExternalSource, createOLLayerFromSubjectDefn } from '../component
 import { strIsNullOrEmpty } from '../utils/string';
 import { parseUrl } from '../utils/url';
 import ImageWrapper from 'ol/Image';
-import { tr } from './i18n';
+import { DEFAULT_LOCALE, tr } from './i18n';
 import * as olHas from "ol/has";
 import Feature from "ol/Feature";
 import { debug } from '../utils/logger';
@@ -33,6 +33,7 @@ import { GenericLayerSetOL } from './generic-layer-set';
 import { get } from "ol/proj";
 import { isRuntimeMap } from '../utils/type-guards';
 import { MgError } from './error';
+import { Source } from 'webpack-sources';
 
 const DEFAULT_BOUNDS_3857: Bounds = [
     -20026376.39,
@@ -463,12 +464,12 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
                 );
             }
             */
-            const overlay = this.createMgOverlayLayer(MgBuiltInLayers.Overlay, agentUri, metersPerUnit, projection, mode == MgLayerSetMode.Stateful, mode == MgLayerSetMode.Stateful ? this.dynamicOverlayParams : this.staticOverlayParams);
+            const overlay = this.createMgOverlayLayer(MgBuiltInLayers.Overlay, agentUri, locale, metersPerUnit, projection, mode == MgLayerSetMode.Stateful, mode == MgLayerSetMode.Stateful ? this.dynamicOverlayParams : this.staticOverlayParams);
 
             let selectionOverlay: OLImageLayer | undefined;
             let activeSelectedFeatureOverlay: OLImageLayer | undefined;
             if (mode == MgLayerSetMode.Stateful) {
-                selectionOverlay = this.createMgOverlayLayer(MgBuiltInLayers.SelectionOverlay, agentUri, metersPerUnit, projection, true, this.selectionOverlayParams);
+                selectionOverlay = this.createMgOverlayLayer(MgBuiltInLayers.SelectionOverlay, agentUri, locale, metersPerUnit, projection, true, this.selectionOverlayParams);
             }
             if (mode == MgLayerSetMode.Stateful) {
                 //NOTE: Not tracking this source atm
@@ -591,7 +592,7 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
         tl.set(LayerProperty.IS_GROUP, false);
         return tl;
     }
-    private createMgOverlayLayer(layerName: string, agentUri: string, metersPerUnit: number, projection: string | undefined, useImageOverlayOp: boolean, params: any): OLImageLayer {
+    private createMgOverlayLayer(layerName: string, agentUri: string, locale: string | undefined, metersPerUnit: number, projection: string | undefined, useImageOverlayOp: boolean, params: any): OLImageLayer {
         const overlaySource = createMapGuideSource({
             projection: projection,
             url: agentUri,
@@ -605,6 +606,7 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
             // round it down to the nearest integer
             displayDpi: Math.floor(olHas.DEVICE_PIXEL_RATIO) * 96
         });
+        overlaySource.setAttributions(tr("PBMG", locale ?? DEFAULT_LOCALE));
         const layer = new ImageLayer({
             //name: "MapGuide Dynamic Overlay",
             source: overlaySource

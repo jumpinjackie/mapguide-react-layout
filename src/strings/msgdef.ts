@@ -14,6 +14,7 @@ export interface ILocalizedMessages {
     NONE: string;
     ERROR: string;
     WARNING: string;
+    PBMG: string;
     INIT_WARNINGS_FOUND: string;
     INIT_WARNING_BING_API_KEY_REQD: string;
     INIT_WARNING_BING_UNKNOWN_LAYER: string;
@@ -22,6 +23,7 @@ export interface ILocalizedMessages {
     LAYER_TRANSPARENCY: string;
     LAYER_ID_BASE: string;
     LAYER_ID_MG_BASE: string;
+    LAYER_ID_SUBJECT: string;
     LAYER_ID_MG_SEL_OVERLAY: string;
     UNKNOWN_WIDGET: string;
     UNKNOWN_COMMAND_REFERENCE: string;

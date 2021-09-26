@@ -96,7 +96,9 @@ export class FakeApp extends React.Component<IFakeAppProps> {
     constructor(props: IFakeAppProps) {
         super(props);
         registerRequestBuilder("mapagent", (uri, locale) => new FakeMapAgent(uri, locale));
-        registerLayout("fake-app", () => <>{props.children}</>);
+        registerLayout("fake-app", () => <>{props.children}</>, {
+            hasTaskPane: true
+        });
         this._agentUri = "https://my-mapguide-server/mapguide/mapagent/mapagent.fcgi";
         this._agentKind = "mapagent";
         const initState = {

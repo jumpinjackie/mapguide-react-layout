@@ -3,7 +3,26 @@
  */
 export type LayoutFactory = (() => JSX.Element);
 
+/**
+ * @since 0.14
+ */
+export type LayoutCapabilities = {
+    hasTaskPane: boolean;
+};
+
 const layouts: { [key: string]: LayoutFactory } = {};
+const layoutCaps: { [key: string]: LayoutCapabilities } = {};
+
+/**
+ * Gets the capabilities of the given layout template
+ * 
+ * @param name 
+ * @returns 
+ * @since 0.14
+ */
+export function getLayoutCapabilities(name: string): LayoutCapabilities | undefined {
+    return layoutCaps[name];
+}
 
 /**
  * Register the given react layout template component factory function for the given
@@ -12,9 +31,12 @@ const layouts: { [key: string]: LayoutFactory } = {};
  * @export
  * @param {string} name
  * @param {LayoutFactory} factory
+ * @param caps The capabilities of this template
+ * @since 0.14 
  */
-export function registerLayout(name: string, factory: LayoutFactory) {
+export function registerLayout(name: string, factory: LayoutFactory, caps: LayoutCapabilities) {
     layouts[name] = factory;
+    layoutCaps[name] = caps;
 }
 
 /**

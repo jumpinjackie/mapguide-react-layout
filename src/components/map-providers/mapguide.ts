@@ -297,15 +297,17 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
 
     }
     protected onProviderMapClick(px: [number, number]): void {
-        if (this._state.manualFeatureTooltips && this._state.featureTooltipsEnabled) {
-            this.queryFeatureTooltip(px);
-        } else if (this._state.activeTool === ActiveMapTool.Select) {
-            const ptBuffer = this._state.pointSelectionBuffer ?? 2;
-            const box = this.getPointSelectionBox(px, ptBuffer);
-            const geom = fromExtent(box);
-            const options = this.buildDefaultQueryOptions(geom);
-            options.maxfeatures = 1;
-            this.sendSelectionQuery(options);
+        if (this._state.mapName && this._state.sessionId) {
+            if (this._state.manualFeatureTooltips && this._state.featureTooltipsEnabled) {
+                this.queryFeatureTooltip(px);
+            } else if (this._state.activeTool === ActiveMapTool.Select) {
+                const ptBuffer = this._state.pointSelectionBuffer ?? 2;
+                const box = this.getPointSelectionBox(px, ptBuffer);
+                const geom = fromExtent(box);
+                const options = this.buildDefaultQueryOptions(geom);
+                options.maxfeatures = 1;
+                this.sendSelectionQuery(options);
+            }
         }
     }
     //#endregion

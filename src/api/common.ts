@@ -385,12 +385,7 @@ export enum ActiveMapTool {
     /**
      * None
      */
-    None,
-    /**
-     * Query WMS layers via GetFeatureInfo
-     * @since 0.13
-     */
-    WmsQueryFeatures
+    None
 }
 
 /**

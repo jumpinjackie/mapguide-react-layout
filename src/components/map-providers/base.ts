@@ -614,7 +614,6 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                     break;
                 case ActiveMapTool.Select:
                     {
-                        //this.sendSelectionQuery(this.buildDefaultQueryOptions(extent));
                         this.selectFeaturesByExtent(extent);
                     }
                     break;
@@ -814,13 +813,13 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected showSelectedVectorFeatures(features: Collection<Feature<Geometry>>, pixel: [number, number], featureToLayerMap: [Feature<Geometry>, Layer<Source>][], locale?: string) {
         this._selectTooltip?.showSelectedVectorFeatures(features, pixel, featureToLayerMap, locale);
     }
-    protected queryWmsFeatures(mapName: string | undefined, coord: Coordinate2D) {
+    protected async queryWmsFeatures(mapName: string | undefined, coord: Coordinate2D) {
         if (mapName && this._map) {
             const activeLayerSet = this.getLayerSetGroup(mapName);
             const layerMgr = this.getLayerManager(mapName);
             const res = this._map.getView().getResolution();
-            if (res) {
-                this._selectTooltip?.queryWmsFeatures(activeLayerSet, layerMgr, coord, res, {
+            if (res && this._selectTooltip) {
+                await this._selectTooltip.queryWmsFeatures(activeLayerSet, layerMgr, coord, res, {
                     getLocale: () => this._state.locale,
                     addFeatureToHighlight: (feat, bAppend) => this.addFeatureToHighlight(feat, bAppend),
                     getWmsRequestAugmentations: () => this._wmsQueryAugmentations[mapName] ?? {}
@@ -888,7 +887,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         }
 
         const featureToLayerMap = [] as [Feature<Geometry>, Layer<Source>][];
-        if ((this._state.activeTool == ActiveMapTool.Select || this._state.activeTool == ActiveMapTool.WmsQueryFeatures) && this._select) {
+        if ((this._state.activeTool == ActiveMapTool.Select) && this._select) {
             /*
             //Shift+Click is the default OL selection append mode, so if no shift key
             //pressed, clear the existing selection
@@ -934,8 +933,10 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         const px = e.pixel as [number, number];
         if (featureToLayerMap.length == 0) {
             this.hideSelectedVectorFeaturesTooltip();
-            if (this._state.activeTool == ActiveMapTool.WmsQueryFeatures) {
-                this.queryWmsFeatures(this._state.mapName, e.coordinate as Coordinate2D);
+            if (this._state.activeTool == ActiveMapTool.Select) {
+                this.queryWmsFeatures(this._state.mapName, e.coordinate as Coordinate2D).then(() => {
+                    this.onProviderMapClick(px);
+                })
             } else {
                 this.onProviderMapClick(px);
             }

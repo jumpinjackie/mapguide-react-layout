@@ -111,13 +111,6 @@ export function initDefaultCommands() {
             return dispatch(setActiveTool(ActiveMapTool.Select));
         }
     });
-    //WMS Query Tool
-    registerCommand(DefaultCommands.WmsQuery, {
-        iconClass: SPRITE_SELECT,
-        selected: (state) => state.activeTool === ActiveMapTool.WmsQueryFeatures && state.visibleAndSelectableWmsLayerCount > 0,
-        enabled: (state) => state.visibleAndSelectableWmsLayerCount > 0,
-        invoke: (dispatch) => dispatch(setActiveTool(ActiveMapTool.WmsQueryFeatures))
-    });
     //Pan Tool
     registerCommand(DefaultCommands.Pan, {
         iconClass: SPRITE_PAN,

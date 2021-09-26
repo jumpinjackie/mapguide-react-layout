@@ -1,3 +1,23 @@
+0.14
+====
+
+TODO: Expand this changelog (it is HUGE)
+
+## Breaking changes:
+
+ * The `WmsQuery` command has been remmoved and consolidated into the `Select` command/widget. Update your Application Definitions accordingly.
+
+0.13.3
+======
+
+ * Fix initialElementVisibility not applying for Aqua template
+ * Fix inconsistent layer/group visibility in legend if doing a refresh after server-side layer/group state changes
+
+0.13.2
+======
+
+ * Un-break MapGuide tiled maps support (due to change in tile grid coordinate format introduced in OpenLayers 6.0)
+
 0.13.1
 ======
 

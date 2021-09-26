@@ -3,7 +3,7 @@ import { MapGroup, MapLayer, RuntimeMap } from '../api/contracts/runtime-map';
 import { Dictionary, IExternalBaseLayer, ReduxDispatch, ActiveMapTool, IMapView } from '../api/common';
 import { MapInfo, IInitAppActionPayload, IRestoredSelectionSets, IGenericSubjectMapLayer } from './defs';
 import { tr, DEFAULT_LOCALE } from '../api/i18n';
-import { strEndsWith, strIsNullOrEmpty } from '../utils/string';
+import { isResourceId, strEndsWith, strIsNullOrEmpty } from '../utils/string';
 import { Client } from '../api/client';
 import { applyInitialBaseLayerVisibility, IInitAsyncOptions, processLayerInMapGroup } from './init';
 import { RuntimeMapFeatureFlags } from '../api/request-builder';
@@ -470,7 +470,20 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<MgSubjectLayerT
                     const fl = await this.client.getResource<ApplicationDefinition>(resourceId, { SESSION: await session.getValueAsync() });
                     return await this.initFromAppDefAsync(fl, session, sessionWasReused);
                 } else {
-                    throw new MgError(tr("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", locale, { resourceId: resourceId }));
+                    if (isResourceId(resourceId)) {
+                        throw new MgError(tr("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", locale, { resourceId: resourceId }));
+                    } else {
+                        //Assume URL to a appdef json document
+                        let fl: ApplicationDefinition;
+                        if (!this.client) {
+                            // This wasn't set up with a mapagent URI (probably a non-MG viewer template), so make a new client on-the-fly
+                            const cl = new Client("", "mapagent");
+                            fl = await cl.get<ApplicationDefinition>(resourceId);
+                        } else {
+                            fl = await this.client.get<ApplicationDefinition>(resourceId);
+                        }
+                        return await this.initFromAppDefAsync(fl, session, sessionWasReused);
+                    }
                 }
             } else {
                 const fl = await resourceId();

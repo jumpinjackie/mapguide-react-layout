@@ -90,6 +90,8 @@ Vector Tile layers perform better than regular vector layers as they can handle 
 
 For this option to work, your main MapGuide map or Primary Subject Layer must be in `EPSG:3857`. If it is not in this projection, the layer will be loaded in as a regular GeoJSON layer and a warning will be logged to the browser console.
 
+GeoJSON layers as vector tile layers are selectable, but for reasons currently unknown the selected features from these layers do not render properly (you can still see their feature attributes in a popup or selection panel)
+
 ## Stateless mode
 
 Starting with the `0.14` release, the viewer supports a new "stateless" mode. In "stateless" mode, no MapGuide session ids are created and all viewer operations/commands that rely on session ids are permanently disabled. Map rendering is done through `GETMAPIMAGE` requests instead of `GETDYNAMICMAPOVERLAYIMAGE` requests.

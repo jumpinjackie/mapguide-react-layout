@@ -191,7 +191,7 @@ export const Externals = {
 };
 export { ApplicationViewModel as Application } from "./application";
 export { setAssetRoot } from "../utils/asset";
-export { MapGuideViewerInitCommand } from "../actions/init-mapguide";
+export { DefaultViewerInitCommand as MapGuideViewerInitCommand } from "../actions/init-mapguide";
 
 export { updateUrl, getStateFromUrl } from "../containers/url-state";
 

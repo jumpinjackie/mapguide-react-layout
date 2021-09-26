@@ -30,9 +30,17 @@ import { isRuntimeMap } from '../utils/type-guards';
 const TYPE_SUBJECT = "SubjectLayer";
 const TYPE_EXTERNAL = "External";
 
-export type MgSubjectLayerType = RuntimeMap | IGenericSubjectMapLayer;
+/**
+ * @since 0.14
+ */
+export type SubjectLayerType = RuntimeMap | IGenericSubjectMapLayer;
 
-export class MapGuideViewerInitCommand extends ViewerInitCommand<MgSubjectLayerType> {
+/**
+ * Default viewer init commmand
+ * 
+ * @since 0.14
+ */
+export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType> {
     private client: Client | undefined;
     private options: IInitAsyncOptions;
     constructor(dispatch: ReduxDispatch) {
@@ -47,7 +55,7 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<MgSubjectLayerT
      * @param {Dictionary<RuntimeMap>} mapsByName
      * @memberof MgViewerInitCommand
      */
-    protected establishInitialMapNameAndSession(mapsByName: Dictionary<MgSubjectLayerType>): [string, string] {
+    protected establishInitialMapNameAndSession(mapsByName: Dictionary<SubjectLayerType>): [string, string] {
         let firstMapName = "";
         let firstSessionId = "";
         for (const mapName in mapsByName) {
@@ -174,7 +182,7 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<MgSubjectLayerT
     private isMapDefinition(arg: MapToLoad | IGenericSubjectMapLayer): arg is MapToLoad {
         return (arg as any).mapDef != null;
     }
-    private async createRuntimeMapsAsync<TLayout>(session: AsyncLazy<string>, res: TLayout, isStateless: boolean, mapDefSelector: (res: TLayout) => (MapToLoad | IGenericSubjectMapLayer)[], projectionSelector: (res: TLayout) => string[], sessionWasReused: boolean): Promise<[Dictionary<MgSubjectLayerType>, string[]]> {
+    private async createRuntimeMapsAsync<TLayout>(session: AsyncLazy<string>, res: TLayout, isStateless: boolean, mapDefSelector: (res: TLayout) => (MapToLoad | IGenericSubjectMapLayer)[], projectionSelector: (res: TLayout) => string[], sessionWasReused: boolean): Promise<[Dictionary<SubjectLayerType>, string[]]> {
         const mapDefs = mapDefSelector(res);
         const mapPromises: Promise<RuntimeMap>[] = [];
         const warnings = [] as string[];
@@ -244,7 +252,7 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<MgSubjectLayerT
         register(proj4);
 
         //Build the Dictionary<MgSubjectLayerType> from loaded maps
-        const mapsByName: Dictionary<MgSubjectLayerType> = {};
+        const mapsByName: Dictionary<SubjectLayerType> = {};
         for (const map of maps) {
             mapsByName[map.Name] = map;
         }
@@ -377,13 +385,13 @@ export class MapGuideViewerInitCommand extends ViewerInitCommand<MgSubjectLayerT
      * @override
      * @protected
      * @param {ApplicationDefinition} appDef
-     * @param {Dictionary<MgSubjectLayerType>} mapsByName
+     * @param {Dictionary<SubjectLayerType>} mapsByName
      * @param {*} config
      * @param {string[]} warnings
      * @returns {Dictionary<MapInfo>}
      * @memberof MgViewerInitCommand
      */
-    protected setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<MgSubjectLayerType>, config: any, warnings: string[]): Dictionary<MapInfo> {
+    protected setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<SubjectLayerType>, config: any, warnings: string[]): Dictionary<MapInfo> {
         const dict: Dictionary<MapInfo> = {};
         if (appDef.MapSet) {
             for (const mGroup of appDef.MapSet.MapGroup) {

@@ -246,7 +246,7 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
     }
     context.setToasterRef(toasterRef);
     context.setProviderState(nextState);
-    useViewerSideEffects(context, appSettings ?? {}, mapName, layers, initialExternalLayers, agentUri, agentKind, selection);
+    useViewerSideEffects(context, appSettings ?? {}, nextState.isReady, mapName, layers, initialExternalLayers, agentUri, agentKind, selection);
 
     if (nextState.isReady) {
         return <>

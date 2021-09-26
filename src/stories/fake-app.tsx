@@ -10,7 +10,7 @@ import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { deArrayify } from '../api/builders/deArrayify';
 import { registerLayout } from '../api/registry/layout';
 import { IConfigurationReducerState, IViewerReducerState, ClientKind } from '../api/common';
-import { MapGuideViewerInitCommand } from '../actions/init-mapguide';
+import { DefaultViewerInitCommand } from '../actions/init-mapguide';
 import { IViewerInitCommand } from '../actions/init-command';
 import { MapContextProvider } from '../components/map-providers/context';
 import { MapGuideMapProviderContext } from '../components/map-providers/mapguide';
@@ -123,7 +123,7 @@ export class FakeApp extends React.Component<IFakeAppProps> {
             }
         };
         this._store = configureStore(initState);
-        this._initCommand = new MapGuideViewerInitCommand(this._store.dispatch);
+        this._initCommand = new DefaultViewerInitCommand(this._store.dispatch);
         PROVIDER_IMPL.setMockMode(props.mgMockMode);
     }
     render() {

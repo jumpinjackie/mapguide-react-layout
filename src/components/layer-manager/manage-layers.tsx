@@ -7,6 +7,14 @@ import { IVectorLayerStyle, VectorStyleSource } from '../../api/ol-style-contrac
 import { VectorLayerStyleEditor } from '../vector-style-editor';
 import { BlueprintSvgIconNames } from '../../constants/assets';
 
+function isBoundsZoomable(layer: ILayerInfo) {
+    //TODO: See if WGS84_BBOX [is/can be] surfaced to ILayerInfo
+    if (layer.metadata?.geojson_as_vt === true) {
+        return false;
+    }
+    return layer.type != "WMS";
+}
+
 interface IManageLayerItemProps {
     layer: ILayerInfo;
     locale: string;
@@ -76,7 +84,7 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
             <p style={{ textAlign: "center", marginTop: 5 }}>{tr("LOADING_LAYER", locale, { name: layer.name })}</p>
         </Card>;
     }
-    const canZoom = layer.type != "WMS";
+    const canZoom = isBoundsZoomable(layer);
     let iconName: BlueprintSvgIconNames = "layer";
     if (layer.type == "WMS") {
         iconName = "media";

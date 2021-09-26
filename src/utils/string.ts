@@ -79,3 +79,13 @@ export function extractPlaceholderTokens(expr: string, delimBegin: string, delim
     const matches = expr.match(regex);
     return matches?.map(m => m.replace(delimBegin, "").replace(delimEnd, "")) ?? [];
 }
+
+/**
+ * Gets whether the given string is a resource identifier
+ * 
+ * @param str The string to test
+ * @since 0.14
+ */
+export function isResourceId(str: string): boolean {
+    return strStartsWith(str, "Library://")
+}

@@ -31,6 +31,8 @@ import { OLImageLayer, OLTileLayer } from './ol-types';
 import { IGenericSubjectMapLayer } from '../actions/defs';
 import { GenericLayerSetOL } from './generic-layer-set';
 import { get } from "ol/proj";
+import { isRuntimeMap } from '../utils/type-guards';
+import { MgError } from './error';
 
 const DEFAULT_BOUNDS_3857: Bounds = [
     -20026376.39,
@@ -318,98 +320,38 @@ export interface ILayerSetFactory {
         appSettings: Dictionary<string>): ILayerSetOL
 }
 
-export class GenericLayerSetFactory implements ILayerSetFactory {
-    constructor(private callback: IImageLayerEvents, private subject?: IGenericSubjectMapLayer) { }
-    private createExternalBaseLayer(ext: IExternalBaseLayer, callback: IImageLayerEvents) {
-        const extSource = createExternalSource(ext);
-        if (extSource instanceof UrlTile) {
-            const loaders = callback.getBaseTileLoaders();
-            if (loaders[ext.name])
-                extSource.setTileLoadFunction(loaders[ext.name]);
-        }
-        const options: any = {
-            title: ext.name,
-            type: "base",
-            visible: ext.visible === true,
-            source: extSource
-        };
-        const tl = new TileLayer(options);
-        tl.set(LayerProperty.LAYER_TYPE, ext.kind);
-        tl.set(LayerProperty.LAYER_NAME, ext.name);
-        tl.set(LayerProperty.LAYER_DISPLAY_NAME, ext.name);
-        tl.set(LayerProperty.IS_EXTERNAL, false);
-        tl.set(LayerProperty.IS_GROUP, false);
-        return tl;
-    }
-    create(locale: string | undefined, externalBaseLayers: IExternalBaseLayer[] | undefined, mode: MgLayerSetMode, appSettings: Dictionary<string>): ILayerSetOL {
-        let projection = this.subject?.meta?.projection;
-        let bounds: Bounds | undefined;
-        let externalBaseLayersGroup: LayerGroup | undefined;
-        if (externalBaseLayers != null) {
-            const groupOpts: any = {
-                title: tr("EXTERNAL_BASE_LAYERS", locale),
-                layers: externalBaseLayers.map(ext => {
-                    const tl = this.createExternalBaseLayer(ext, this.callback);
-                    return tl;
-                })
-            };
-            externalBaseLayersGroup = new LayerGroup(groupOpts);
-            externalBaseLayersGroup.set(LayerProperty.LAYER_NAME, MG_BASE_LAYER_GROUP_NAME);
-            externalBaseLayersGroup.set(LayerProperty.IS_EXTERNAL, false);
-            externalBaseLayersGroup.set(LayerProperty.IS_GROUP, true);
-            projection = "EPSG:3857";
-            bounds = DEFAULT_BOUNDS_3857;
-        }
-        let subjectLayer;
-        if (this.subject) {
-            subjectLayer = createOLLayerFromSubjectDefn(this.subject, projection, false, appSettings);
-            if (this.subject.meta) {
-                projection = this.subject.meta.projection;
-                bounds = this.subject.meta.extents;
-            }
-        }
-        if (!projection && !bounds) {
-            projection = "EPSG:4326";
-            bounds = DEFAULT_BOUNDS_4326;
-        }
-        const metersPerUnit = getMetersPerUnit(projection!);
-        const view = new View({
-            projection: projection
-        });
-        return new GenericLayerSetOL(view, subjectLayer, bounds!, externalBaseLayersGroup, projection!, metersPerUnit);
-    }
-}
-
 export class MgInnerLayerSetFactory implements ILayerSetFactory {
     private dynamicOverlayParams: any;
     private staticOverlayParams: any;
     private selectionOverlayParams: any;
     constructor(private callback: IMapViewerContextCallback,
-        private map: RuntimeMap,
-        private agentUri: string,
+        private map: RuntimeMap | IGenericSubjectMapLayer,
+        private agentUri: string | undefined,
         imageFormat: string,
         selectionImageFormat: string | undefined,
         selectionColor: string | undefined) {
-        this.dynamicOverlayParams = {
-            MAPNAME: map.Name,
-            FORMAT: imageFormat,
-            SESSION: map.SessionId,
-            BEHAVIOR: 2
-        };
-        this.staticOverlayParams = {
-            MAPDEFINITION: map.MapDefinition,
-            FORMAT: imageFormat,
-            CLIENTAGENT: "ol.source.ImageMapGuide for OverviewMap",
-            USERNAME: "Anonymous",
-            VERSION: "3.0.0"
-        };
-        this.selectionOverlayParams = {
-            MAPNAME: map.Name,
-            FORMAT: selectionImageFormat || "PNG8",
-            SESSION: map.SessionId,
-            SELECTIONCOLOR: selectionColor,
-            BEHAVIOR: 1 | 4 //selected features + include outside current scale
-        };
+        if (isRuntimeMap(map)) {
+            this.dynamicOverlayParams = {
+                MAPNAME: map.Name,
+                FORMAT: imageFormat,
+                SESSION: map.SessionId,
+                BEHAVIOR: 2
+            };
+            this.staticOverlayParams = {
+                MAPDEFINITION: map.MapDefinition,
+                FORMAT: imageFormat,
+                CLIENTAGENT: "ol.source.ImageMapGuide for OverviewMap",
+                USERNAME: "Anonymous",
+                VERSION: "3.0.0"
+            };
+            this.selectionOverlayParams = {
+                MAPNAME: map.Name,
+                FORMAT: selectionImageFormat || "PNG8",
+                SESSION: map.SessionId,
+                SELECTIONCOLOR: selectionColor,
+                BEHAVIOR: 1 | 4 //selected features + include outside current scale
+            };
+        }
     }
     private getTileUrlFunctionForGroup(resourceId: string, groupName: string, zOrigin: number) {
         const urlTemplate = this.callback.getClient().getTileTemplateUrl(resourceId, groupName, '{x}', '{y}', '{z}');
@@ -428,164 +370,205 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
         mode: MgLayerSetMode,
         appSettings: Dictionary<string>): ILayerSetOL {
         const { map, agentUri } = this;
-        //If a tile set definition is defined it takes precedence over the map definition, this enables
-        //this example to work with older releases of MapGuide where no such resource type exists.
-        const resourceId = map.TileSetDefinition || map.MapDefinition;
-        //On MGOS 2.6 or older, tile width/height is never returned, so default to 300x300
-        const tileWidth = map.TileWidth || 300;
-        const tileHeight = map.TileHeight || 300;
-        const metersPerUnit = map.CoordinateSystem.MetersPerUnit;
-        const finiteScales = [] as number[];
-        if (map.FiniteDisplayScale) {
-            for (let i = map.FiniteDisplayScale.length - 1; i >= 0; i--) {
-                finiteScales.push(map.FiniteDisplayScale[i]);
+        if (isRuntimeMap(map)) {
+            if (strIsNullOrEmpty(agentUri)) {
+                throw new MgError("Expected agentUri to be set");
             }
-        }
-        const extent: olExtent.Extent = [
-            map.Extents.LowerLeftCoordinate.X,
-            map.Extents.LowerLeftCoordinate.Y,
-            map.Extents.UpperRightCoordinate.X,
-            map.Extents.UpperRightCoordinate.Y
-        ];
-        const dpi = map.DisplayDpi;
-        const inPerUnit = 39.37 * map.CoordinateSystem.MetersPerUnit;
-        const resolutions = new Array(finiteScales.length);
-        let projection: string | undefined;
-        for (let i = 0; i < finiteScales.length; ++i) {
-            resolutions[i] = finiteScales[i] / inPerUnit / dpi;
-        }
-
-        if (map.CoordinateSystem.EpsgCode.length > 0) {
-            projection = `EPSG:${map.CoordinateSystem.EpsgCode}`;
-        }
-
-        const tileGrid = new TileGrid({
-            origin: olExtent.getTopLeft(extent),
-            resolutions: resolutions,
-            tileSize: [tileWidth, tileHeight]
-        });
-
-        const zOrigin = finiteScales.length - 1;
-        const mgTiledLayers = [];
-
-        //const groupLayers = [] as TileLayer[];
-        if (map.Group) {
-            for (let i = 0; i < map.Group.length; i++) {
-                const group = map.Group[i];
-                if (group.Type != 2 && group.Type != 3) { //BaseMap or LinkedTileSet
-                    continue;
+            //If a tile set definition is defined it takes precedence over the map definition, this enables
+            //this example to work with older releases of MapGuide where no such resource type exists.
+            const resourceId = map.TileSetDefinition || map.MapDefinition;
+            //On MGOS 2.6 or older, tile width/height is never returned, so default to 300x300
+            const tileWidth = map.TileWidth || 300;
+            const tileHeight = map.TileHeight || 300;
+            const metersPerUnit = map.CoordinateSystem.MetersPerUnit;
+            const finiteScales = [] as number[];
+            if (map.FiniteDisplayScale) {
+                for (let i = map.FiniteDisplayScale.length - 1; i >= 0; i--) {
+                    finiteScales.push(map.FiniteDisplayScale[i]);
                 }
-                const tileSource = new TileImageSource({
-                    tileGrid: tileGrid,
-                    projection: projection,
-                    tileUrlFunction: this.getTileUrlFunctionForGroup(resourceId, group.Name, zOrigin),
-                    wrapX: false
-                });
-                const tileLayer = new TileLayer({
-                    //name: group.Name,
-                    source: tileSource
-                });
-                tileLayer.set(LayerProperty.LAYER_NAME, group.ObjectId);
-                tileLayer.set(LayerProperty.LAYER_DISPLAY_NAME, group.ObjectId);
-                tileLayer.set(LayerProperty.LAYER_TYPE, MgLayerType.Tiled);
-                tileLayer.set(LayerProperty.IS_EXTERNAL, false);
-                tileLayer.set(LayerProperty.IS_GROUP, false);
-                tileLayer.setVisible(group.Visible);
-                //groupLayers.push(tileLayer);
-                mgTiledLayers.push(tileLayer);
             }
-        }
-        /*
-        if (groupLayers.length > 0) {
-            groupLayers.push(
-                new ol.layer.Tile({
-                    source: new ol.source.TileDebug({
+            const extent: olExtent.Extent = [
+                map.Extents.LowerLeftCoordinate.X,
+                map.Extents.LowerLeftCoordinate.Y,
+                map.Extents.UpperRightCoordinate.X,
+                map.Extents.UpperRightCoordinate.Y
+            ];
+            const dpi = map.DisplayDpi;
+            const inPerUnit = 39.37 * map.CoordinateSystem.MetersPerUnit;
+            const resolutions = new Array(finiteScales.length);
+            let projection: string | undefined;
+            for (let i = 0; i < finiteScales.length; ++i) {
+                resolutions[i] = finiteScales[i] / inPerUnit / dpi;
+            }
+
+            if (map.CoordinateSystem.EpsgCode.length > 0) {
+                projection = `EPSG:${map.CoordinateSystem.EpsgCode}`;
+            }
+
+            const tileGrid = new TileGrid({
+                origin: olExtent.getTopLeft(extent),
+                resolutions: resolutions,
+                tileSize: [tileWidth, tileHeight]
+            });
+
+            const zOrigin = finiteScales.length - 1;
+            const mgTiledLayers = [];
+
+            //const groupLayers = [] as TileLayer[];
+            if (map.Group) {
+                for (let i = 0; i < map.Group.length; i++) {
+                    const group = map.Group[i];
+                    if (group.Type != 2 && group.Type != 3) { //BaseMap or LinkedTileSet
+                        continue;
+                    }
+                    const tileSource = new TileImageSource({
                         tileGrid: tileGrid,
                         projection: projection,
-                        tileUrlFunction: function(tileCoord) {
-                            const z = tileCoord[0];
-                            const x = tileCoord[1];
-                            const y = tileCoord[2]; //NOTE: tileCoord format changed in OL 6.0, no longer need to negate and subtract by 1
-                            return urlTemplate
-                                .replace('{z}', (zOrigin - z).toString())
-                                .replace('{x}', x.toString())
-                                .replace('{y}', (y).toString());
-                        },
+                        tileUrlFunction: this.getTileUrlFunctionForGroup(resourceId, group.Name, zOrigin),
                         wrapX: false
+                    });
+                    const tileLayer = new TileLayer({
+                        //name: group.Name,
+                        source: tileSource
+                    });
+                    tileLayer.set(LayerProperty.LAYER_NAME, group.ObjectId);
+                    tileLayer.set(LayerProperty.LAYER_DISPLAY_NAME, group.ObjectId);
+                    tileLayer.set(LayerProperty.LAYER_TYPE, MgLayerType.Tiled);
+                    tileLayer.set(LayerProperty.IS_EXTERNAL, false);
+                    tileLayer.set(LayerProperty.IS_GROUP, false);
+                    tileLayer.setVisible(group.Visible);
+                    //groupLayers.push(tileLayer);
+                    mgTiledLayers.push(tileLayer);
+                }
+            }
+            /*
+            if (groupLayers.length > 0) {
+                groupLayers.push(
+                    new ol.layer.Tile({
+                        source: new ol.source.TileDebug({
+                            tileGrid: tileGrid,
+                            projection: projection,
+                            tileUrlFunction: function(tileCoord) {
+                                const z = tileCoord[0];
+                                const x = tileCoord[1];
+                                const y = tileCoord[2]; //NOTE: tileCoord format changed in OL 6.0, no longer need to negate and subtract by 1
+                                return urlTemplate
+                                    .replace('{z}', (zOrigin - z).toString())
+                                    .replace('{x}', x.toString())
+                                    .replace('{y}', (y).toString());
+                            },
+                            wrapX: false
+                        })
                     })
-                })
-            );
-        }
-        */
-        const overlay = this.createMgOverlayLayer(MgBuiltInLayers.Overlay, agentUri, metersPerUnit, projection, mode == MgLayerSetMode.Stateful, mode == MgLayerSetMode.Stateful ? this.dynamicOverlayParams : this.staticOverlayParams);
+                );
+            }
+            */
+            const overlay = this.createMgOverlayLayer(MgBuiltInLayers.Overlay, agentUri, metersPerUnit, projection, mode == MgLayerSetMode.Stateful, mode == MgLayerSetMode.Stateful ? this.dynamicOverlayParams : this.staticOverlayParams);
 
-        let selectionOverlay: OLImageLayer | undefined;
-        let activeSelectedFeatureOverlay: OLImageLayer | undefined;
-        if (mode == MgLayerSetMode.Stateful) {
-            selectionOverlay = this.createMgOverlayLayer(MgBuiltInLayers.SelectionOverlay, agentUri, metersPerUnit, projection, true, this.selectionOverlayParams);
-        }
-        if (mode == MgLayerSetMode.Stateful) {
-            //NOTE: Not tracking this source atm
-            activeSelectedFeatureOverlay = new ImageLayer({
-                //OL6: need to specify a source up-front otherwise it will error blindly
-                //trying to get a source out of this URL, so set up a source with an empty
-                //image data URI, it will be updated if we receive a request to show an
-                //active selected feature image
-                source: new ImageStaticSource({
-                    imageExtent: extent,
-                    imageSize: [BLANK_SIZE.w, BLANK_SIZE.h],
-                    url: BLANK_GIF_DATA_URI
-                })
-            });
-            activeSelectedFeatureOverlay.set(LayerProperty.LAYER_NAME, MgBuiltInLayers.ActiveFeatureSelectionOverlay);
-            activeSelectedFeatureOverlay.set(LayerProperty.LAYER_DISPLAY_NAME, MgBuiltInLayers.ActiveFeatureSelectionOverlay);
-            activeSelectedFeatureOverlay.set(LayerProperty.LAYER_TYPE, MG_LAYER_TYPE_NAME);
-            activeSelectedFeatureOverlay.set(LayerProperty.IS_EXTERNAL, false)
-            activeSelectedFeatureOverlay.set(LayerProperty.IS_GROUP, false);
-        }
-        let externalBaseLayersGroup: LayerGroup | undefined;
-        //NOTE: Don't bother adding external base layers for overview map as the main map in the
-        //overview is rendered with GETMAPIMAGE and not GETDYNAMICMAPOVERLAYIMAGE meaning the background
-        //is opaque and you won't be able to see the base layers underneath anyways.
-        if (mode != MgLayerSetMode.OverviewMap && externalBaseLayers != null) {
-            const groupOpts: any = {
-                title: tr("EXTERNAL_BASE_LAYERS", locale),
-                layers: externalBaseLayers.map(ext => {
-                    const tl = this.createExternalBaseLayer(ext);
-                    return tl;
-                })
-            };
-            externalBaseLayersGroup = new LayerGroup(groupOpts);
-            externalBaseLayersGroup.set(LayerProperty.LAYER_NAME, MG_BASE_LAYER_GROUP_NAME);
-            externalBaseLayersGroup.set(LayerProperty.LAYER_DISPLAY_NAME, MG_BASE_LAYER_GROUP_NAME);
-            externalBaseLayersGroup.set(LayerProperty.IS_EXTERNAL, false);
-            externalBaseLayersGroup.set(LayerProperty.IS_GROUP, true);
-        }
+            let selectionOverlay: OLImageLayer | undefined;
+            let activeSelectedFeatureOverlay: OLImageLayer | undefined;
+            if (mode == MgLayerSetMode.Stateful) {
+                selectionOverlay = this.createMgOverlayLayer(MgBuiltInLayers.SelectionOverlay, agentUri, metersPerUnit, projection, true, this.selectionOverlayParams);
+            }
+            if (mode == MgLayerSetMode.Stateful) {
+                //NOTE: Not tracking this source atm
+                activeSelectedFeatureOverlay = new ImageLayer({
+                    //OL6: need to specify a source up-front otherwise it will error blindly
+                    //trying to get a source out of this URL, so set up a source with an empty
+                    //image data URI, it will be updated if we receive a request to show an
+                    //active selected feature image
+                    source: new ImageStaticSource({
+                        imageExtent: extent,
+                        imageSize: [BLANK_SIZE.w, BLANK_SIZE.h],
+                        url: BLANK_GIF_DATA_URI
+                    })
+                });
+                activeSelectedFeatureOverlay.set(LayerProperty.LAYER_NAME, MgBuiltInLayers.ActiveFeatureSelectionOverlay);
+                activeSelectedFeatureOverlay.set(LayerProperty.LAYER_DISPLAY_NAME, MgBuiltInLayers.ActiveFeatureSelectionOverlay);
+                activeSelectedFeatureOverlay.set(LayerProperty.LAYER_TYPE, MG_LAYER_TYPE_NAME);
+                activeSelectedFeatureOverlay.set(LayerProperty.IS_EXTERNAL, false)
+                activeSelectedFeatureOverlay.set(LayerProperty.IS_GROUP, false);
+            }
+            let externalBaseLayersGroup: LayerGroup | undefined;
+            //NOTE: Don't bother adding external base layers for overview map as the main map in the
+            //overview is rendered with GETMAPIMAGE and not GETDYNAMICMAPOVERLAYIMAGE meaning the background
+            //is opaque and you won't be able to see the base layers underneath anyways.
+            if (mode != MgLayerSetMode.OverviewMap && externalBaseLayers != null) {
+                const groupOpts: any = {
+                    title: tr("EXTERNAL_BASE_LAYERS", locale),
+                    layers: externalBaseLayers.map(ext => {
+                        const tl = this.createExternalBaseLayer(ext);
+                        return tl;
+                    })
+                };
+                externalBaseLayersGroup = new LayerGroup(groupOpts);
+                externalBaseLayersGroup.set(LayerProperty.LAYER_NAME, MG_BASE_LAYER_GROUP_NAME);
+                externalBaseLayersGroup.set(LayerProperty.LAYER_DISPLAY_NAME, MG_BASE_LAYER_GROUP_NAME);
+                externalBaseLayersGroup.set(LayerProperty.IS_EXTERNAL, false);
+                externalBaseLayersGroup.set(LayerProperty.IS_GROUP, true);
+            }
 
-        debug(`Creating OL view with projection ${projection} and ${resolutions.length} resolutions`);
-        let view: View;
-        if (resolutions.length == 0) {
-            view = new View({
+            debug(`Creating OL view with projection ${projection} and ${resolutions.length} resolutions`);
+            let view: View;
+            if (resolutions.length == 0) {
+                view = new View({
+                    projection: projection
+                });
+            } else {
+                view = new View({
+                    projection: projection,
+                    resolutions: resolutions
+                });
+            }
+
+            const layerSet = new MgLayerSetOL(mgTiledLayers,
+                externalBaseLayersGroup,
+                overlay,
+                projection,
+                dpi,
+                extent as Bounds,
+                inPerUnit,
+                view);
+            layerSet.selectionOverlay = selectionOverlay;
+            layerSet.activeSelectedFeatureOverlay = activeSelectedFeatureOverlay;
+            return layerSet;
+        } else {
+            let projection = map?.meta?.projection;
+            let bounds: Bounds | undefined;
+            let externalBaseLayersGroup: LayerGroup | undefined;
+            if (externalBaseLayers != null) {
+                const groupOpts: any = {
+                    title: tr("EXTERNAL_BASE_LAYERS", locale),
+                    layers: externalBaseLayers.map(ext => {
+                        const tl = this.createExternalBaseLayer(ext);
+                        return tl;
+                    })
+                };
+                externalBaseLayersGroup = new LayerGroup(groupOpts);
+                externalBaseLayersGroup.set(LayerProperty.LAYER_NAME, MG_BASE_LAYER_GROUP_NAME);
+                externalBaseLayersGroup.set(LayerProperty.IS_EXTERNAL, false);
+                externalBaseLayersGroup.set(LayerProperty.IS_GROUP, true);
+                projection = "EPSG:3857";
+                bounds = DEFAULT_BOUNDS_3857;
+            }
+            let subjectLayer;
+            if (map) {
+                subjectLayer = createOLLayerFromSubjectDefn(map, projection, false, appSettings);
+                if (map.meta) {
+                    projection = map.meta.projection;
+                    bounds = map.meta.extents;
+                }
+            }
+            if (!projection && !bounds) {
+                projection = "EPSG:4326";
+                bounds = DEFAULT_BOUNDS_4326;
+            }
+            const metersPerUnit = getMetersPerUnit(projection!);
+            const view = new View({
                 projection: projection
             });
-        } else {
-            view = new View({
-                projection: projection,
-                resolutions: resolutions
-            });
+            return new GenericLayerSetOL(view, subjectLayer, bounds!, externalBaseLayersGroup, projection!, metersPerUnit);
         }
-
-        const layerSet = new MgLayerSetOL(mgTiledLayers,
-            externalBaseLayersGroup,
-            overlay,
-            projection,
-            dpi,
-            extent as Bounds,
-            inPerUnit,
-            view);
-        layerSet.selectionOverlay = selectionOverlay;
-        layerSet.activeSelectedFeatureOverlay = activeSelectedFeatureOverlay;
-        return layerSet;
     }
     private createExternalBaseLayer(ext: IExternalBaseLayer) {
         const extSource = createExternalSource(ext);
@@ -639,7 +622,7 @@ export interface IMgLayerSetProps {
     /**
      * @since 0.14 This property can now also be a IGenericSubjectMapLayer
      */
-    map: RuntimeMap | IGenericSubjectMapLayer | undefined;
+    map: RuntimeMap | IGenericSubjectMapLayer;
     /**
      * Use stateless GETMAP requests for map rendering
      * @since 0.14

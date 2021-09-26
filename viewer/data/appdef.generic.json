@@ -1,0 +1,431 @@
+{
+    "Title": "Generic",
+    "MapSet": {
+        "MapGroup": [
+            {
+                "@id": "Australia",
+                "Map": [
+                    {
+                        "Type": "SubjectLayer",
+                        "Extension": {
+                            "source_type": "GeoJSON_Inline",
+                            "source_param_attributions": [],
+                            "meta_extents": [113.34, -43.63, 153.57, -10.67],
+                            "meta_projection": "EPSG:4326",
+                            "is_selectable": false,
+                            "vector_layer_style": {
+                                "default": {
+                                    "point": {
+                                        "type": "Circle",
+                                        "fill": {
+                                            "color": "#ff0000",
+                                            "alpha": 255
+                                        },
+                                        "radius": 5,
+                                        "stroke": {
+                                            "color": "#0000ff",
+                                            "alpha": 255,
+                                            "width": 1
+                                        }
+                                    },
+                                    "line": {
+                                        "color": "#0000ff",
+                                        "alpha": 255,
+                                        "width": 1
+                                    },
+                                    "polygon": {
+                                        "fill": {
+                                            "color": "rgba(44,97,190,1)",
+                                            "alpha": 15
+                                        },
+                                        "stroke": {
+                                            "color": "rgba(13,21,166,1)",
+                                            "width": 4,
+                                            "alpha": 255
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "Type": "External",
+                        "Extension": {
+                            "layer_name": "SA1 2011 Boundaries",
+                            "layer_description": "ABS Statistical Area Level 1 (SA1) Boundaries (2011)",
+                            "source_type": "TileWMS",
+                            "source_param_url": "http://geoserver.nationalmap.nicta.com.au/admin_bnds_abs/ows",
+                            "source_param_params": {
+                                "LAYERS": "admin_bnds:SA1_2011_AUST",
+                                "TILED": true
+                            },
+                            "source_param_attributions": [
+                                "(c) <a target='_blank' href='https://abs.gov.au'>Australian Bureau Of Statistics</a>"
+                            ],
+                            "meta_extents": [96.816941408, -43.74050960205765, 159.109219008, -9.142175976703609],
+                            "meta_projection": "EPSG:4326",
+                            "initially_visible": false,
+                            "popup_template": {
+                                "title": "SA1 Boundary",
+                                "propertyMappings": [
+                                    { "name": "SA1_7DIG11", "value": "Code (7-digit)" }
+                                ],
+                                "linkProperty": {
+                                    "name": {
+                                        "expression": "https://quickstats.censusdata.abs.gov.au/census_services/getproduct/census/2011/quickstat/{SA1_7DIG11}",
+                                        "placeholderBegin": "{",
+                                        "placeholderEnd": "}"
+                                    },
+                                    "label": "Click here to view the SA1 details in ABS quickstat",
+                                    "linkTarget": "_blank"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "Type": "External",
+                        "Extension": {
+                            "layer_name": "e91f4c30-d64a-4734-b1af-6afe310d0278",
+                            "display_name": "Digital Hubs",
+                            "source_type": "KML",
+                            "source_param_url": "https://data.gov.au/storage/f/2013-08-12T02%3A04%3A22.954Z/digital-hubs-external.kml",
+                            "layer_opt_declutter": true,
+                            "meta_projection": "EPSG:4326",
+                            "initially_visible": false,
+                            "popup_template": {
+                                "title": "Selected Digital Hub",
+                                "propertyMappings": [
+                                    { "name": "NAME", "value": "Name"},
+                                    { "name": "STREET", "value": "Street"},
+                                    { "name": "SUBURB", "value": "Suburb"},
+                                    { "name": "STATE", "value": "State"},
+                                    { "name": "POSTCODE", "value": "Postcode"}
+                                ],
+                                "linkProperty": {
+                                    "name": "INFO_LINK",
+                                    "label": "Click to open hub link in a new window",
+                                    "linkTarget": "_blank"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "Type": "OpenStreetMap",
+                        "SingleTile": true,
+                        "Extension": {
+                            "Options": {
+                                "name": [
+                                    "Open Street Map"
+                                ],
+                                "type": [
+                                    "Mapnik"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "Type": "Stamen",
+                        "SingleTile": true,
+                        "Extension": {
+                            "Options": {
+                                "name": [
+                                    "Stamen (Toner)"
+                                ],
+                                "type": [
+                                    "toner"
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "@id": "United States",
+                "Map": [
+                    {
+                        "Type": "SubjectLayer",
+                        "Extension": {
+                            "source_type": "GeoJSON_Inline",
+                            "__meta_extents": [-127.001953, 23.241346, -59.853516, 49.781264],
+                            "__meta_projection": "EPSG:4326",
+                            "meta_extents": [-14088873.053524, 3209132.195525, -7161843.802208, 6408480.451429],
+                            "meta_projection": "EPSG:3857",
+                            "is_selectable": false
+                        }
+                    },
+                    {
+                        "Type": "External",
+                        "Extension": {
+                            "layer_name": "US Wetlands",
+                            "source_type": "TileWMS",
+                            "source_param_url": "https://www.fws.gov/wetlands/arcgis/services/Wetlands_Raster/ImageServer/WMSServer",
+                            "source_param_params": {
+                                "LAYERS": "0",
+                                "TILED": true
+                            },
+                            "meta_extents": [-87.76, 43.69, -87.69, 43.79],
+                            "meta_projection": "EPSG:4326",
+                            "initially_visible": false
+                        }
+                    },
+                    {
+                        "Type": "External",
+                        "Extension": {
+                            "layer_name": "Buildings of Cambridge, MA",
+                            "source_type": "GeoJSON",
+                            "source_param_url": "https://raw.githubusercontent.com/cambridgegis/cambridgegis_data_basemap/master/Buildings/BASEMAP_Buildings.geojson",
+                            "meta_projection": "EPSG:4326",
+                            "meta_geojson_as_vt": true,
+                            "initially_visible": false,
+                            "__comments": "This will cause the layer to be loaded as vector tiles"
+                        }
+                    },
+                    {
+                        "Type": "Stamen",
+                        "SingleTile": true,
+                        "Extension": {
+                            "Options": {
+                                "name": [
+                                    "Stamen (Toner)"
+                                ],
+                                "type": [
+                                    "toner"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "Type": "OpenStreetMap",
+                        "SingleTile": true,
+                        "Extension": {
+                            "Options": {
+                                "name": [
+                                    "Open Street Map"
+                                ],
+                                "type": [
+                                    "Mapnik"
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "WidgetSet": [
+        {
+            "Container": [
+                {
+                    "Name": "MapContextMenu",
+                    "Type": "ContextMenu",
+                    "Position": "top",
+                    "Extension": null,
+                    "Item": [
+                        {
+                            "Function": "Widget",
+                            "Widget": "RefreshMap"
+                        },
+                        {
+                            "Function": "Separator"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "Pan"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "Zoom"
+                        },
+                        {
+                            "Function": "Separator"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "ZoomIn"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "ZoomOut"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "Measure"
+                        },
+                        {
+                            "Function": "Separator"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "ViewOptions"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "Help"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "About"
+                        }
+                    ]
+                }
+            ],
+            "Widget": [
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "about",
+                    "Label": "About",
+                    "Tooltip": "Click to show information about this application",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "About",
+                    "Type": "About",
+                    "Location": null,
+                    "Extension": {
+                        "AboutURL": "widgets/About/About.html"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "pan",
+                    "Label": "Pan",
+                    "Tooltip": "Click and drag to pan the map",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "Pan",
+                    "Type": "Pan",
+                    "Location": null,
+                    "Extension": null
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "zoom-in",
+                    "Label": "Zoom Rectangle",
+                    "Tooltip": "Click or click and drag on the map to zoom in",
+                    "StatusText": "Click or click and drag on the map to zoom in",
+                    "Disabled": false,
+                    "Name": "Zoom",
+                    "Type": "Zoom",
+                    "Location": null,
+                    "Extension": {
+                        "Direction": "in",
+                        "Factor": "2",
+                        "Tolerance": "5"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "zoom-in-fixed",
+                    "Label": "Zoom In",
+                    "Tooltip": "Zoom in by a preset increment",
+                    "StatusText": "Zoom in by a preset increment",
+                    "Disabled": false,
+                    "Name": "ZoomIn",
+                    "Type": "ZoomOnClick",
+                    "Location": null,
+                    "Extension": {
+                        "Factor": "2"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "zoom-out-fixed",
+                    "Label": "Zoom Out",
+                    "Tooltip": "Zoom out by a preset increment",
+                    "StatusText": "Zoom out by a preset increment",
+                    "Disabled": false,
+                    "Name": "ZoomOut",
+                    "Type": "ZoomOnClick",
+                    "Location": null,
+                    "Extension": {
+                        "Factor": "0.5"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "measure",
+                    "Label": "Measure",
+                    "Tooltip": "Measure",
+                    "StatusText": "Measure distances and areas on the map",
+                    "Disabled": false,
+                    "Name": "Measure",
+                    "Type": "Measure",
+                    "Location": null,
+                    "Extension": {
+                        "AreaPrecision": "0",
+                        "DistancePrecision": "0",
+                        "MeasureTooltipContainer": "MeasureResult",
+                        "MeasureTooltipType": "dynamic",
+                        "Target": "TaskPane",
+                        "Type": "both",
+                        "Units": "meters"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "options",
+                    "Label": "Options",
+                    "Tooltip": "Click to change the units displayed",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "ViewOptions",
+                    "Type": "ViewOptions",
+                    "Location": null,
+                    "Extension": {}
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "help",
+                    "Label": "Help",
+                    "Tooltip": "Click to get help",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "Help",
+                    "Type": "Help",
+                    "Location": null,
+                    "Extension": {
+                        "Target": "HelpWindow",
+                        "Url": "widgets/Help/Help.html"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "view-refresh",
+                    "Label": "Refresh",
+                    "Tooltip": "Click to redraw the map",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "RefreshMap",
+                    "Type": "RefreshMap",
+                    "Location": null,
+                    "Extension": null
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "select",
+                    "Label": "Select",
+                    "Tooltip": "Click to select features",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "Select",
+                    "Type": "Select",
+                    "Location": null,
+                    "Extension": {
+                        "QueryActiveLayer": "false",
+                        "SelectionType": "INTERSECTS",
+                        "Tolerance": "3"
+                    }
+                }
+            ]
+        }
+    ]
+}

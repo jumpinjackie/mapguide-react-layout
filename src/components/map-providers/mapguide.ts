@@ -92,17 +92,24 @@ function useMapGuideViewerState() {
         activeSelectedFeatureXml = getActiveSelectedFeatureXml(selection.FeatureSet, activeSelectedFeature);
     }
 
+    let theMap = map ?? subject;
     let isReady = false;
-    if (agentUri && (map || subject) && layerTransparency) {
-        if (!stateless) {
-            if (sessionId) {
+    // Regardless of inferred readiness, the map/subject must be set
+    if (!theMap) {
+        isReady = false;
+        theMap = {} as IGenericSubjectMapLayer;
+    } else {
+        if (subject && layerTransparency) {
+            isReady = true;
+        } else if (agentUri && theMap && layerTransparency) {
+            if (!stateless) {
+                if (isRuntimeMap(theMap) && sessionId) {
+                    isReady = true;
+                }
+            } else {
                 isReady = true;
             }
-        } else {
-            isReady = true;
         }
-    } else if (subject && layerTransparency) {
-        isReady = true;
     }
 
     const nextState: IMapGuideProviderState & IMapProviderStateExtras = {
@@ -126,7 +133,7 @@ function useMapGuideViewerState() {
         imageFormat,
         agentUri,
         agentKind,
-        map: map ?? subject,
+        map: theMap,
         pointSelectionBuffer,
         featureTooltipsEnabled,
         manualFeatureTooltips,
@@ -158,7 +165,7 @@ export interface IMapGuideProviderState extends IMapProviderState {
     appSettings: Dictionary<string>;
     agentUri: string | undefined;
     agentKind: ClientKind;
-    map: RuntimeMap | IGenericSubjectMapLayer | undefined;
+    map: RuntimeMap | IGenericSubjectMapLayer;
     pointSelectionBuffer: number;
     manualFeatureTooltips: boolean;
     featureTooltipsEnabled: boolean;
@@ -239,7 +246,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             imageFormat: "PNG8",
             agentUri: undefined,
             agentKind: "mapagent",
-            map: undefined,
+            map: {} as IGenericSubjectMapLayer,
             pointSelectionBuffer: 2,
             featureTooltipsEnabled: true,
             manualFeatureTooltips: false,

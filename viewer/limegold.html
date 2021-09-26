@@ -79,7 +79,6 @@
             var el = document.getElementById("map");
             var viewer = new MapGuide.Application();
             viewer.mount(el, {
-                initCommandFactory: function(dispatch) { return new MapGuide.MapGuideViewerInitCommand(dispatch); },
                 layout: "limegold",/*
                 externalBaseLayers: [
                     { name: "OpenStreetMap", kind: "OSM" },

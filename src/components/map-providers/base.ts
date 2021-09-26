@@ -93,6 +93,7 @@ export function isMiddleMouseDownEvent(e: MouseEvent): boolean {
 
 export function useViewerSideEffects(context: IMapProviderContext,
     appSettings: Dictionary<string>,
+    isReady: boolean,
     mapName: string | undefined,
     layers: ILayerInfo[] | undefined,
     initialExternalLayers: IInitialExternalLayer[] | undefined,
@@ -102,26 +103,28 @@ export function useViewerSideEffects(context: IMapProviderContext,
     const dispatch = useReduxDispatch();
     // Side-effect to pre-load external layers. Should only happen once per map name
     React.useEffect(() => {
-        if (mapName && !layers) {
-            debug(`React.useEffect - Change of initial external layers for [${mapName}] (change should only happen once per mapName!)`);
-            if (initialExternalLayers && initialExternalLayers.length > 0) {
-                debug(`React.useEffect - First-time loading of external layers for [${mapName}]`);
-                const layerManager = context.getLayerManager(mapName) as LayerManager;
-                for (const extLayer of initialExternalLayers) {
-                    const added = layerManager.addExternalLayer(extLayer, true, appSettings);
-                    if (added) {
-                        dispatch(mapLayerAdded(mapName, added));
+        if (isReady) {
+            if (mapName && !layers) {
+                debug(`React.useEffect - Change of initial external layers for [${mapName}] (change should only happen once per mapName!)`);
+                if (initialExternalLayers && initialExternalLayers.length > 0) {
+                    debug(`React.useEffect - First-time loading of external layers for [${mapName}]`);
+                    const layerManager = context.getLayerManager(mapName) as LayerManager;
+                    for (const extLayer of initialExternalLayers) {
+                        const added = layerManager.addExternalLayer(extLayer, true, appSettings);
+                        if (added) {
+                            dispatch(mapLayerAdded(mapName, added));
+                        }
                     }
+                } else {
+                    //Even if no initial external layers were loaded, the layers state still needs to be set
+                    //otherwise components that depend on this state (eg. External Layer Manager) will assume
+                    //this is still not ready yet
+                    debug(`React.useEffect - Signal that external layers are ready for [${mapName}]`);
+                    dispatch(externalLayersReady(mapName));
                 }
-            } else {
-                //Even if no initial external layers were loaded, the layers state still needs to be set
-                //otherwise components that depend on this state (eg. External Layer Manager) will assume
-                //this is still not ready yet
-                debug(`React.useEffect - Signal that external layers are ready for [${mapName}]`);
-                dispatch(externalLayersReady(mapName));
             }
         }
-    }, [context, mapName, initialExternalLayers, layers]);
+    }, [context, mapName, initialExternalLayers, layers, isReady]);
     // Side-effect to apply the current external layer list
     React.useEffect(() => {
         debug(`React.useEffect - Change of external layers`);

@@ -32,6 +32,7 @@ import geojsonvt from 'geojson-vt';
 import Projection from "ol/proj/Projection";
 import { ProjectionLike, get, equivalent } from "ol/proj";
 import { AsyncLazy } from "../api/lazy";
+import { debug } from "../utils/logger";
 
 function sameProjectionAs(proj1: ProjectionLike, proj2: ProjectionLike) {
     const nproj1 = get(proj1);
@@ -135,7 +136,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 const asVT = defn.meta?.geojson_as_vt == true;
                 if (asVT && isWebM) {
                     const lazyTileIndex = new AsyncLazy(async () => {
-                        console.log(`Fetching url: ${defn.sourceParams.url}`);
+                        debug(`Fetching url: ${defn.sourceParams.url}`);
                         const resp = await fetch(defn.sourceParams.url);
                         let json = await resp.json();
                         if (defn.meta?.projection != "EPSG:4326") {

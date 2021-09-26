@@ -105,6 +105,13 @@ function useMapGuideViewerState() {
         isReady = true;
     }
 
+    // Regardless of inferred readiness, the map/subject must be set
+    let theMap = map ?? subject;
+    if (!theMap) {
+        isReady = false;
+        theMap = {} as IGenericSubjectMapLayer;
+    }
+
     const nextState: IMapGuideProviderState & IMapProviderStateExtras = {
         stateless,
         activeTool,
@@ -126,7 +133,7 @@ function useMapGuideViewerState() {
         imageFormat,
         agentUri,
         agentKind,
-        map: map ?? subject,
+        map: theMap,
         pointSelectionBuffer,
         featureTooltipsEnabled,
         manualFeatureTooltips,
@@ -158,7 +165,7 @@ export interface IMapGuideProviderState extends IMapProviderState {
     appSettings: Dictionary<string>;
     agentUri: string | undefined;
     agentKind: ClientKind;
-    map: RuntimeMap | IGenericSubjectMapLayer | undefined;
+    map: RuntimeMap | IGenericSubjectMapLayer;
     pointSelectionBuffer: number;
     manualFeatureTooltips: boolean;
     featureTooltipsEnabled: boolean;
@@ -239,7 +246,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             imageFormat: "PNG8",
             agentUri: undefined,
             agentKind: "mapagent",
-            map: undefined,
+            map: {} as IGenericSubjectMapLayer,
             pointSelectionBuffer: 2,
             featureTooltipsEnabled: true,
             manualFeatureTooltips: false,

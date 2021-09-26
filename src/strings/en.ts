@@ -47,7 +47,7 @@ export const STRINGS_EN: ILocalizedMessages = {
     "MENU_TASKS": "Tasks",
     "NO_SELECTED_FEATURES": "No selected features",
     "FMT_SCALE_DISPLAY": "Scale - 1:{scale}",
-    "FMT_SELECTION_COUNT": "Selected {total} features in {layerCount} layers",
+    "FMT_SELECTION_COUNT": "Selected {total} feature(s) in {layerCount} layer(s)",
     "DIGITIZE_POINT_PROMPT": "Click to finish and draw a point at this location<br/><br/>Press ESC to cancel",
     "DIGITIZE_LINE_PROMPT": "Click to set this position as the start.<br/>Click again to finish the line at this position<br/><br/>Press ESC to cancel",
     "DIGITIZE_LINESTRING_PROMPT": "Click to set this position as the start.<br/>Click again to add a vertex at this position.<br/>If you drew a vertex at the wrong spot, you can press {key} to undo.<br/>Hold SHIFT and drag while digitizing to draw in freehand mode<br/></br>Double click to finish<br/>Press ESC to cancel",

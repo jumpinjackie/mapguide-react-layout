@@ -451,6 +451,9 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @memberof MapGuideMapProviderContext
      */
     protected selectFeaturesByExtent(geom: Polygon) {
+        if (!this._state.mapName || !this._comp || !this._state.sessionId || !this._state.selectionColor) {
+            return;
+        }
         this.sendSelectionQuery(this.buildDefaultQueryOptions(geom));
     }
 

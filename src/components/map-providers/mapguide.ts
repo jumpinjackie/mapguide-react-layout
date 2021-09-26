@@ -92,24 +92,24 @@ function useMapGuideViewerState() {
         activeSelectedFeatureXml = getActiveSelectedFeatureXml(selection.FeatureSet, activeSelectedFeature);
     }
 
-    let isReady = false;
-    if (agentUri && (map || subject) && layerTransparency) {
-        if (!stateless) {
-            if (sessionId) {
-                isReady = true;
-            }
-        } else {
-            isReady = true;
-        }
-    } else if (subject && layerTransparency) {
-        isReady = true;
-    }
-
-    // Regardless of inferred readiness, the map/subject must be set
     let theMap = map ?? subject;
+    let isReady = false;
+    // Regardless of inferred readiness, the map/subject must be set
     if (!theMap) {
         isReady = false;
         theMap = {} as IGenericSubjectMapLayer;
+    } else {
+        if (subject && layerTransparency) {
+            isReady = true;
+        } else if (agentUri && theMap && layerTransparency) {
+            if (!stateless) {
+                if (isRuntimeMap(theMap) && sessionId) {
+                    isReady = true;
+                }
+            } else {
+                isReady = true;
+            }
+        }
     }
 
     const nextState: IMapGuideProviderState & IMapProviderStateExtras = {

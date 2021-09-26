@@ -934,6 +934,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         if (featureToLayerMap.length == 0) {
             this.hideSelectedVectorFeaturesTooltip();
             if (this._state.activeTool == ActiveMapTool.Select) {
+                // TODO: WMS selected features can participate in hovering
+                // TODO: Selecting a client feature does not de-select an active WMS selected feature
                 this.queryWmsFeatures(this._state.mapName, e.coordinate as Coordinate2D).then(() => {
                     this.onProviderMapClick(px);
                 })

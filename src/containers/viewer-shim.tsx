@@ -385,7 +385,6 @@ class FusionWidgetApiShim {
         const viewer = getViewer();
         const mgSupport = viewer?.mapguideSupport();
         if (viewer && mgSupport) {
-            //TODO: Support zoomTo
             mgSupport.setSelectionXml(xml, {
                 layerattributefilter: 0 //Need to set this in order for requestdata to be respected
             }, (selection) => {

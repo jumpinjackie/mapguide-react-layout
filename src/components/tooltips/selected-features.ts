@@ -27,6 +27,13 @@ import { OLFeature } from "../../api/ol-types";
 
 export interface IQueryWmsFeaturesCallback {
     getLocale(): string | undefined;
+    /**
+     * 
+     * @param feat 
+     * @param l 
+     * @since 0.14
+     */
+    addClientSelectedFeature(feat: Feature<Geometry>, l: LayerBase): void;
     addFeatureToHighlight(feat: Feature<Geometry> | undefined, bAppend: boolean): void;
     getWmsRequestAugmentations(): Dictionary<WmsQueryAugmentation>;
 }
@@ -200,7 +207,7 @@ export class SelectedFeaturesTooltip {
         this.featureTooltipElement.innerHTML = "";
         this.featureTooltipElement.classList.add("tooltip-hidden");
     }
-    public async queryWmsFeatures(currentLayerSet: LayerSetGroupBase | undefined, layerMgr: ILayerManager, coord: Coordinate2D, resolution: number, callback: IQueryWmsFeaturesCallback) {
+    public async queryWmsFeatures(currentLayerSet: LayerSetGroupBase | undefined, layerMgr: ILayerManager, coord: Coordinate2D, resolution: number, bAppendMode: boolean, callback: IQueryWmsFeaturesCallback) {
         let selected = 0;
         //See what WMS layers we have
         const client = new Client("", "mapagent");
@@ -250,7 +257,10 @@ export class SelectedFeaturesTooltip {
                     this.featureTooltip.setPosition(coord);
                     const popupConf: ISelectedFeaturePopupTemplateConfiguration | undefined = layer.get(LayerProperty.SELECTED_POPUP_CONFIGURATION);
                     const html = this.generateFeatureHtml(layerName, features[0], callback.getLocale(), popupConf);
-                    callback.addFeatureToHighlight(features[0], false);
+                    callback.addClientSelectedFeature(features[0], layer);
+                    currentLayerSet?.clearWmsSelectionOverlay();
+                    currentLayerSet?.addWmsSelectionOverlay(features[0]);
+                    callback.addFeatureToHighlight(features[0], bAppendMode);
                     selected++;
                     this.featureTooltipElement.innerHTML = html;
                     stickybits(".selected-popup-cluster-table th");
@@ -261,7 +271,7 @@ export class SelectedFeaturesTooltip {
                     } else {
                         this.featureTooltipElement.classList.remove("tooltip-hidden");
                     }
-                    return;
+                    return true;
                 }
             }
         }
@@ -270,6 +280,7 @@ export class SelectedFeaturesTooltip {
             callback.addFeatureToHighlight(undefined, false);
             this.hide();
         }
+        return false;
     }
     private generateFeatureHtml(layerName: string | undefined, feat: Feature<Geometry>, locale?: string, popupConfig?: ISelectedFeaturePopupTemplateConfiguration) {
         if (layerName) {

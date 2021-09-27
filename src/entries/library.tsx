@@ -9,7 +9,7 @@ import { TurquoiseYellowTemplateLayout } from "../layouts/turquoise-yellow";
 import { LimeGoldTemplateLayout } from "../layouts/limegold";
 import { SlateTemplateLayout } from "../layouts/slate";
 import { MaroonTemplateLayout } from "../layouts/maroon";
-import { registerLayout } from "../api/registry/layout";
+import { LayoutCapabilities, registerLayout } from "../api/registry/layout";
 import { registerCommand } from "../api/registry/command";
 import { registerComponentFactory, DefaultComponentNames } from "../api/registry/component";
 import { registerDefaultComponents } from "../api/default-components";
@@ -52,14 +52,19 @@ addFormatDriver(new FormatDriver("TopoJSON", new TopoJSON()));
 addFormatDriver(new FormatDriver("KML", new KML(), "EPSG:4326"));
 addFormatDriver(new FormatDriver("GPX", new GPX(), "EPSG:4326"));
 addFormatDriver(new FormatDriver("IGC", new IGC()));
-registerLayout("ajax-viewer", () => <AjaxViewerLayout />);
-registerLayout("sidebar", () => <SidebarLayout />);
-registerLayout("aqua", () => <AquaTemplateLayout />);
-registerLayout("turquoise-yellow", () => <TurquoiseYellowTemplateLayout />);
-registerLayout("limegold", () => <LimeGoldTemplateLayout />);
-registerLayout("slate", () => <SlateTemplateLayout />);
-registerLayout("maroon", () => <MaroonTemplateLayout />);
-registerLayout("generic", () => <GenericLayout />);
+const DEFAULT_CAPS: LayoutCapabilities = {
+    hasTaskPane: true
+};
+registerLayout("ajax-viewer", () => <AjaxViewerLayout />, DEFAULT_CAPS);
+registerLayout("sidebar", () => <SidebarLayout />, DEFAULT_CAPS);
+registerLayout("aqua", () => <AquaTemplateLayout />, DEFAULT_CAPS);
+registerLayout("turquoise-yellow", () => <TurquoiseYellowTemplateLayout />, DEFAULT_CAPS);
+registerLayout("limegold", () => <LimeGoldTemplateLayout />, DEFAULT_CAPS);
+registerLayout("slate", () => <SlateTemplateLayout />, DEFAULT_CAPS);
+registerLayout("maroon", () => <MaroonTemplateLayout />, DEFAULT_CAPS);
+registerLayout("generic", () => <GenericLayout />, {
+    hasTaskPane: false
+});
 initDefaultCommands();
 initMapGuideCommands();
 registerDefaultComponents();
@@ -129,11 +134,13 @@ export class Registry {
      * @static
      * @param {string} name The viewer template name
      * @param {() => JSX.Element} factory The JSX element factory that creates the viewer template component
+     * @param caps Viewer template capabilities
      *
      * @memberof Registry
+     * @since 0.14 Added required caps parameter
      */
-    public static registerLayout(name: string, factory: () => JSX.Element) {
-        registerLayout(name, factory);
+    public static registerLayout(name: string, factory: () => JSX.Element, caps: LayoutCapabilities) {
+        registerLayout(name, factory, caps);
     }
     /**
      * Registers the given command with the given name

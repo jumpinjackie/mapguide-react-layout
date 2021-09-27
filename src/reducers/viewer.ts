@@ -20,7 +20,7 @@ export function viewerReducer(state = VIEWER_INITIAL_STATE, action: ViewerAction
                 let tool = action.payload.initialActiveTool;
                 let ft = action.payload.featureTooltipsEnabled;
                 let state1: Partial<IViewerReducerState> | undefined;
-                if (tool) {
+                if (tool != null) {
                     state1 = {
                         tool: tool
                     };

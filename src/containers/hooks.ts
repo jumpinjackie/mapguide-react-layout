@@ -294,12 +294,32 @@ export function useLastDispatchedAction() {
 }
 
 export function useReducedToolbarAppState() {
-    return useAppState<IToolbarAppState>(state => reduceAppToToolbarState(state), (left, right) => {
+    const selection = useActiveMapSelectionSet();
+    const clientSelection = useActiveMapClientSelectionSet();
+    const tbState = useAppState(state => reduceAppToToolbarState(state), (left, right) => {
         return left?.busyWorkerCount == right?.busyWorkerCount
             && left?.hasNextView == right?.hasNextView
             && left?.hasPreviousView == right?.hasPreviousView
-            && left?.hasSelection == right?.hasSelection
             && left?.featureTooltipsEnabled == right?.featureTooltipsEnabled
             && left?.activeTool == right?.activeTool;
     });
+    //Overwrite whatever selection flags from the reduceAppToToolbarState result
+    let hasClientSelection = false;
+    let hasSelection = false;
+    if (selection) {
+        if (selection.FeatureSet && selection.FeatureSet.Layer.length > 0) {
+            hasSelection = true;
+        }
+        if (selection.SelectedFeatures && selection.SelectedFeatures.SelectedLayer.length > 0) {
+            hasSelection = true;
+        }
+    }
+    if (clientSelection && clientSelection.layers.length > 0) {
+        hasClientSelection = true;
+    }
+    return {
+        ...tbState,
+        hasClientSelection,
+        hasSelection
+    };
 }

@@ -1,16 +1,18 @@
 import * as React from "react";
-import { IExternalBaseLayer, GenericEvent } from "../api/common";
+import { IExternalBaseLayer, GenericEvent, ILayerInfo } from "../api/common";
 import { RuntimeMap, MapLayer, MapGroup, RuleInfo } from "../api/contracts/runtime-map";
 import { LegendContext, ILegendContext } from "./context";
 import { BaseLayerSwitcher } from "./base-layer-switcher";
 import { isLayer } from "../utils/type-guards";
 import { Icon, ImageIcon } from "./icon";
-import { Card, Icon as BpIcon, Button, InputGroup } from "@blueprintjs/core";
+import { Card, Icon as BpIcon, Button, InputGroup, IconName } from "@blueprintjs/core";
 import { scaleRangeBetween } from "../utils/number";
 import { tr } from "../api/i18n";
 import { BlueprintSvgIconNames } from '../constants/assets';
 import { NBSP } from '../constants';
 import { strIsNullOrEmpty } from '../utils/string';
+import { useReduxDispatch } from "./map-providers/context";
+import { setMapLayerVisibility } from "../actions/map";
 
 const ICON_LEGEND_LAYER: BlueprintSvgIconNames = "layer";
 const ICON_SELECT: BlueprintSvgIconNames = "select";
@@ -63,7 +65,10 @@ const LegendLabel = (props: ILegendLabelProps) => {
  */
 export interface ILegendProps {
     baseIconSize?: number;
-    map: RuntimeMap;
+    /**
+     * @since 0.14 made optional
+     */
+    map?: RuntimeMap;
     stateless: boolean;
     showLayers: string[] | undefined;
     showGroups: string[] | undefined;
@@ -81,6 +86,8 @@ export interface ILegendProps {
     overrideExpandedItems?: any | undefined;
     maxHeight?: number;
     inlineBaseLayerSwitcher: boolean;
+    externalLayers?: ILayerInfo[];
+    activeMapName?: string;
 }
 
 function getIconUri(iconMimeType: string | undefined, iconBase64: string | undefined): string | undefined {
@@ -246,6 +253,51 @@ export const LayerNode = (props: ILayerNodeProps) => {
     return <li title={tooltip} style={nodeStyle} className={nodeClassName}><EmptyNode baseSize={legendCtx.getBaseIconSize()} /> {chkbox} {selectable} {icon} {label}</li>;
 };
 
+const ExternalLayerNode: React.FC<{ layer: ILayerInfo }> = ({ layer }) => {
+    const legendCtx = React.useContext(LegendContext);
+    const nodeClassName = "layer-node";
+    const nodeStyle: React.CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", ...LI_LIST_STYLE };
+    const dispatch = useReduxDispatch();
+    const onVisibilityChanged = (visible: boolean) => {
+        const activeMapName = legendCtx.getMapName();
+        if (activeMapName) {
+            dispatch(setMapLayerVisibility(activeMapName, layer.name, visible));
+        }
+    };
+    const chkbox = <input type='checkbox'
+        className='layer-checkbox'
+        style={CHK_STYLE(legendCtx.getBaseIconSize())}
+        onChange={e => onVisibilityChanged(e.target.checked)}
+        checked={layer.visible} />;
+    let iconToUse: IconName = ICON_LEGEND_LAYER;
+    if (layer.type == "WMS") {
+        iconToUse = ICON_LEGEND_RASTER;
+    }
+    const icon = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE}>
+        {bs => <BpIcon icon={iconToUse} iconSize={bs} />}
+    </Icon>;
+    return <li style={nodeStyle} className={nodeClassName}>{chkbox} {icon} {layer.displayName}</li>;
+}
+
+const ExternalLayersGroupNode: React.FC<{ layers: ILayerInfo[] }> = ({ layers }) => {
+    const legendCtx = React.useContext(LegendContext);
+    if (layers.length == 0) {
+        return <></>;
+    } else {
+        const nodeClassName = "group-node";
+        const icon = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE}>
+            {bs => <BpIcon icon={ICON_FOLDER_HORIZONTAL} iconSize={bs} />}
+        </Icon>;
+        const nodeStyle: React.CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", ...LI_LIST_STYLE };
+        return <li style={nodeStyle} className={nodeClassName}>
+            <span>{icon} <LegendLabel baseSize={legendCtx.getBaseIconSize()} text={tr("EXTERNAL_LAYERS", legendCtx.getLocale())} /></span>
+            <ul style={UL_LIST_STYLE(legendCtx.getBaseIconSize())}>
+                {layers.map((layer, i) => <ExternalLayerNode key={`external-layer=${layer.name}`} layer={layer} />)}
+            </ul>
+        </li>;
+    }
+}
+
 export interface IGroupNodeProps {
     group: MapGroup;
     childItems: (MapLayer | MapGroup)[];
@@ -375,10 +427,10 @@ function buildFilteredTree(tree: TreeState, text: string): TreeState {
     return filtered;
 }
 
-function setupTree(map: RuntimeMap) {
+function setupTree(map: RuntimeMap | undefined) {
     const state = {
-        Layers: map.Layer,
-        Groups: map.Group,
+        Layers: map?.Layer ?? [],
+        Groups: map?.Group ?? [],
         LayerMap: {} as { [objectId: string]: MapLayer },
         GroupMap: {} as { [objectId: string]: MapGroup },
         tree: {
@@ -386,12 +438,12 @@ function setupTree(map: RuntimeMap) {
             groupChildren: {} as { [objectId: string]: (MapLayer | MapGroup)[] }
         } as TreeState
     };
-    if (map.Layer) {
+    if (map?.Layer) {
         for (const layer of map.Layer) {
             state.LayerMap[layer.ObjectId] = layer;
         }
     }
-    if (map.Group) {
+    if (map?.Group) {
         for (const group of map.Group) {
             state.GroupMap[group.ObjectId] = group;
         }
@@ -539,7 +591,7 @@ export const Legend = (props: ILegendProps) => {
         props.onLayerVisibilityChanged?.(layerId, visible);
     };
     const getIconMimeType = (): string | undefined => {
-        return props.map.IconMimeType
+        return props.map?.IconMimeType
             ? `${props.map.IconMimeType}`
             : undefined;
     };
@@ -557,6 +609,7 @@ export const Legend = (props: ILegendProps) => {
         isFiltering: () => isFiltering,
         getFilterText: () => filterText,
         getLocale: () => props.locale,
+        getMapName: () => props.activeMapName,
         getBaseIconSize: () => props.baseIconSize ?? DEFAULT_ICON_SIZE,
         getIconMimeType: getIconMimeType,
         getChildren: getChildren,
@@ -626,6 +679,7 @@ export const Legend = (props: ILegendProps) => {
                         }
                     }
                 })}
+                {props.externalLayers && <ExternalLayersGroupNode layers={props.externalLayers} />}
             </ul>
         </div>
     </LegendContext.Provider>;

@@ -9,12 +9,14 @@ import {
     ReduxThunkedAction,
     IMapViewer
 } from "../api/common";
-import { strReplaceAll } from "../utils/string";
-import { IAcknowledgeStartupWarningsAction } from './defs';
+import { strIsNullOrEmpty, strReplaceAll } from "../utils/string";
+import { IAcknowledgeStartupWarningsAction, IInitAppActionPayload } from './defs';
 import { ActionType } from '../constants/actions';
 import { getViewer } from '../api/runtime';
 import { tr } from '../api/i18n';
 import { IViewerInitCommand } from './init-command';
+import { getLayoutCapabilities } from "../api/registry/layout";
+import { debug } from "../utils/logger";
 
 export function applyInitialBaseLayerVisibility(externalBaseLayers: IExternalBaseLayer[]) {
     if (externalBaseLayers.length > 0) {
@@ -107,6 +109,26 @@ export interface IInitAppLayout {
      * @since 0.13
      */
     featureTooltipsEnabled?: boolean;
+    /**
+     * @since 0.14
+     */
+    layout: string | undefined;
+}
+
+/**
+ * @hidden
+ */
+export function normalizeInitPayload(payload: IInitAppActionPayload, layout: string | undefined): IInitAppActionPayload {
+    if (!strIsNullOrEmpty(layout)) {
+        const caps = getLayoutCapabilities(layout);
+        if (caps) {
+            if (!caps.hasTaskPane) {
+                debug("Overriding hasTaskPane capability to false");
+                payload.capabilities.hasTaskPane = false;
+            }
+        }
+    }
+    return payload;
 }
 
 export interface IInitAsyncOptions extends IInitAppLayout {

@@ -264,7 +264,8 @@ class AppInner extends React.Component<AppInnerProps, any> {
                     locale: urlLocale ?? locale ?? DEFAULT_LOCALE,
                     externalBaseLayers: externalBaseLayers,
                     session: urlSession ?? mapguide?.session,
-                    onInit: onInit
+                    onInit: onInit,
+                    layout: typeof(this.props.layout) == 'string' ? this.props.layout : undefined
                 },
                 ...(ftArgs ?? {}),
                 ...(amArgs ?? {}),

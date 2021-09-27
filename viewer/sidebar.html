@@ -18,6 +18,11 @@
                 margin: 0;
             }
 
+            /* Prevent scrollbars due to floating modal dialogs going past the bounds of the root element */
+            html {
+                overflow: hidden;
+            }
+
             #map {
                 position: absolute;
                 left: 0;

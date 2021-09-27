@@ -49,14 +49,13 @@ export class MapCapturerContext {
             const box = this.features.item(0);
             const poly = box.getGeometry() as Polygon;
             const coords = poly.getCoordinates()[0];
-            const boxCoords = coords.map((c: any) => `${c[0]},${c[1]}`).join(",");
+            const boxCoords = coords.map(c => `${c[0]},${c[1]}`).join(",");
             //Process normalized one
             const npoly = poly.clone() as Polygon;
             const ncenter = olExtent.getCenter(npoly.getExtent());
             npoly.rotate(deg2rad(this.rotation), ncenter);
-            //HACK: Missing getCoordinates() from type defn
             const ncoords = npoly.getCoordinates()[0];
-            const nBoxCoords = ncoords.map((c: any) => `${c[0]},${c[1]}`).join(",");
+            const nBoxCoords = ncoords.map(c => `${c[0]},${c[1]}`).join(",");
             this.activeCallback.updateBoxCoords(boxCoords, nBoxCoords);
         }
     }

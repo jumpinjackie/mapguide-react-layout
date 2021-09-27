@@ -15,7 +15,7 @@ describe("reducers/viewer", () => {
                 scale: 70000
             };
             const action = createInitAction(map, view);
-            action.payload.initialActiveTool = ActiveMapTool.WmsQueryFeatures;
+            action.payload.initialActiveTool = ActiveMapTool.Zoom;
             action.payload.featureTooltipsEnabled = true;
             const state = viewerReducer(initialState.viewer, action);
 

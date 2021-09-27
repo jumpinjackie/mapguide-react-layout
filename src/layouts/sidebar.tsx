@@ -370,7 +370,7 @@ export const SidebarLayout = () => {
             legend={hasLegend}
             selection={hasSelectionPanel}
             taskpane={hasTaskPane}
-            hasSelection={tbState.hasSelection}
+            hasSelection={tbState.hasSelection || tbState.hasClientSelection}
             locale={locale}
             collapsed={collapsed || false}
             activeTab={activeTab || "tasks"}

@@ -324,11 +324,7 @@ export enum DefaultCommands {
     /**
      * @since 0.11
      */
-    CenterSelection = "CenterSelection",
-    /**
-     * @since 0.13
-     */
-    WmsQuery = "WmsQuery"
+    CenterSelection = "CenterSelection"
 }
 
 const commands: Dictionary<ICommand> = {};

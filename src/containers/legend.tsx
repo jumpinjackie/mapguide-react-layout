@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Legend } from "../components/legend";
 import { tr } from "../api/i18n";
-import { useActiveMapView, useActiveMapExternalBaseLayers, useActiveMapName, useViewerLocale, useViewerIsStateless } from './hooks';
+import { useActiveMapView, useActiveMapExternalBaseLayers, useActiveMapName, useViewerLocale, useViewerIsStateless, useActiveMapLayers } from './hooks';
 import { setBaseLayer } from '../actions/map';
 import { setGroupVisibility, setLayerVisibility, setLayerSelectable, setGroupExpanded } from '../actions/legend';
 import { useActiveMapState, useActiveMapShowGroups, useActiveMapShowLayers, useActiveMapHideGroups, useActiveMapHideLayers, useActiveMapExpandedGroups, useActiveMapSelectableLayers } from './hooks-mapguide';
@@ -32,7 +32,7 @@ export const LegendContainer = (props: ILegendContainerProps) => {
     const setLayerVisibilityAction = (mapName: string, options: { id: string, value: boolean }) => dispatch(setLayerVisibility(mapName, options));
     const setLayerSelectableAction = (mapName: string, options: { id: string, value: boolean }) => dispatch(setLayerSelectable(mapName, options));
     const setGroupExpandedAction = (mapName: string, options: { id: string, value: boolean }) => dispatch(setGroupExpanded(mapName, options));
-
+    const layers = useActiveMapLayers();
     const onLayerSelectabilityChanged = (id: string, selectable: boolean) => {
         if (activeMapName) {
             setLayerSelectableAction?.(activeMapName, { id: id, value: selectable });
@@ -58,15 +58,15 @@ export const LegendContainer = (props: ILegendContainerProps) => {
             setBaseLayerAction(activeMapName, layerName);
         }
     };
-    //overrideSelectableLayers?: any;
-    //overrideExpandedItems?: any;
-    if (map && view) {
+    if ((map || layers) && view) {
         let scale = view.scale;
-        if (scale) {
+        if (scale || layers) {
             return <Legend map={map}
+                activeMapName={activeMapName}
                 stateless={stateless}
                 maxHeight={maxHeight}
                 currentScale={scale}
+                externalLayers={layers}
                 showLayers={showLayers}
                 showGroups={showGroups}
                 hideLayers={hideLayers}

@@ -9,6 +9,7 @@ function mockContext(): ILegendContext {
     return {
         stateless: false,
         isFiltering: () => false,
+        getMapName: () => undefined,
         getFilterText: () => "",
         getLocale: () => "en",
         getBaseIconSize: () => 0,

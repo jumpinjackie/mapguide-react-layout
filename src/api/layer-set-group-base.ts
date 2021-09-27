@@ -53,6 +53,7 @@ const HIGHLIGHT_STYLE = new Style({
 export abstract class LayerSetGroupBase {
     protected mainSet: ILayerSetOL;
     protected overviewSet: ILayerSetOL;
+    protected wmsSelOverlayLayer: OLVectorLayer;
     protected scratchLayer: OLVectorLayer;
     protected hoverHighlightLayer: OLVectorLayer;
     protected _customLayers: {
@@ -68,6 +69,11 @@ export abstract class LayerSetGroupBase {
         });
         this.scratchLayer.set(LayerProperty.LAYER_NAME, "__SCRATCH__"); //NOXLATE
         this.scratchLayer.set(LayerProperty.IS_SCRATCH, true);
+        this.wmsSelOverlayLayer = new VectorLayer({
+            source: new VectorSource()
+        });
+        this.wmsSelOverlayLayer.set(LayerProperty.LAYER_NAME, "__WMS_SELECTION_OVERLAY__");
+        this.wmsSelOverlayLayer.set(LayerProperty.IS_WMS_SELECTION_OVERLAY, true);
         this.hoverHighlightLayer = new VectorLayer({
             source: new VectorSource(),
             style: feature => {
@@ -82,8 +88,9 @@ export abstract class LayerSetGroupBase {
     }
     removeHighlightedFeature(feature: Feature<Geometry>) {
         const hs = this.hoverHighlightLayer.getSource();
-        if (hs.hasFeature(feature))
+        if (hs.hasFeature(feature)) {
             hs.removeFeature(feature);
+        }
     }
     clearHighlightedFeatures() {
         this.hoverHighlightLayer.getSource().clear();
@@ -94,6 +101,12 @@ export abstract class LayerSetGroupBase {
      * @memberof LayerSetGroupBase
      */
     public tryGetSubjectLayer(): LayerBase | undefined { return undefined; }
+    public addWmsSelectionOverlay(feat: Feature<Geometry>) {
+        this.wmsSelOverlayLayer.getSource().addFeature(feat);
+    }
+    public clearWmsSelectionOverlay() {
+        this.wmsSelOverlayLayer.getSource().clear();
+    }
     public addScratchFeature(feat: Feature<Geometry>) {
         this.scratchLayer.getSource().addFeature(feat);
     }
@@ -414,6 +427,15 @@ export abstract class LayerSetGroupBase {
             //const layers2 = cCurrentLayers.getArray();
             //console.log(layers2);
         }
+
+        // And the wms selection overlay layer
+        if (cCurrentLayers.item(cCurrentLayers.getLength() - 1) != this.wmsSelOverlayLayer) {
+            map.removeLayer(this.wmsSelOverlayLayer);
+            map.addLayer(this.wmsSelOverlayLayer);
+            //const layers2 = cCurrentLayers.getArray();
+            //console.log(layers2);
+        }
+
         // And the hover highlight layer on top of that
         if (cCurrentLayers.item(cCurrentLayers.getLength() - 1) != this.hoverHighlightLayer) {
             map.removeLayer(this.hoverHighlightLayer);

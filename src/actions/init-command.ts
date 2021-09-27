@@ -1,4 +1,4 @@
-import { IInitAsyncOptions } from './init';
+import { IInitAsyncOptions, normalizeInitPayload } from './init';
 import { ReduxDispatch, Dictionary, ActiveMapTool } from '../api/common';
 import { IGenericSubjectMapLayer, IInitAppActionPayload, MapInfo } from './defs';
 import { ICommandSpec, ToolbarConf, PreparedSubMenuSet, isFlyoutSpec, convertFlexLayoutUIItems, parseWidgetsInAppDef } from '../api/registry/command-spec';
@@ -279,7 +279,7 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
         if (!bFoundContextMenu) {
             warnings.push(tr("INIT_WARNING_NO_CONTEXT_MENU", locale, { containerName: WEBLAYOUT_CONTEXTMENU }));
         }
-        return {
+        return normalizeInitPayload({
             activeMapName: firstMapName,
             initialUrl: ensureParameters(initialTask, firstMapName, firstSessionId, locale),
             featureTooltipsEnabled: featureTooltipsEnabled,
@@ -299,6 +299,6 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
             toolbars: tb,
             warnings: warnings,
             initialActiveTool: ActiveMapTool.Pan
-        };
+        }, options.layout);
     }
 }

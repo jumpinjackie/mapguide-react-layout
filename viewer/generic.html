@@ -33,6 +33,54 @@
             top: 0;
             bottom: 0;
         }
+
+        /* BEGIN - Common status bar CSS */
+        .status-bar-component {
+            position: absolute;
+            bottom: 0px;
+            z-index: 10;
+        }
+        .component-mouse-coordinates { left: 0px; }
+        .component-scale-display { right: 320px; }
+        .component-selected-feature-count { right: 570px; }
+        .component-view-size { right: 136px; }
+        .component-pbmg { right: 0px; }
+        /* END - Common status bar CSS */
+
+        .component-scale-display {
+            background-color: rgba(0, 60, 136, 0.8);
+            color: white;
+        }
+
+        .component-selected-feature-count {
+            background-color: rgba(0, 60, 136, 0.8);
+            color: white;
+        }
+
+        .component-view-size {
+            background-color: rgba(0, 60, 136, 0.8);
+            color: white;
+        }
+
+        .component-mouse-coordinates {
+            background-color: rgba(0, 60, 136, 0.8);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .component-mouse-coordinates {
+                display: none;
+            }
+            .component-scale-display {
+                display: none;
+            }
+            .component-view-size {
+                display: none;
+            }
+            .component-selected-feature-count {
+                display: none;
+            }
+        }
     </style>
 </head>
 

@@ -27,6 +27,12 @@ import { OLFeature } from "../../api/ol-types";
 
 export interface IQueryWmsFeaturesCallback {
     getLocale(): string | undefined;
+    /**
+     * 
+     * @param feat 
+     * @param l 
+     * @since 0.14
+     */
     addClientSelectedFeature(feat: Feature<Geometry>, l: LayerBase): void;
     addFeatureToHighlight(feat: Feature<Geometry> | undefined, bAppend: boolean): void;
     getWmsRequestAugmentations(): Dictionary<WmsQueryAugmentation>;

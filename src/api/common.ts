@@ -2546,7 +2546,11 @@ export enum LayerProperty {
     /**
      * @since 0.14
      */
-    IS_MEASURE = "is_measure"
+    IS_MEASURE = "is_measure",
+    /**
+     * @since 0.14
+     */
+    IS_WMS_SELECTION_OVERLAY = "is_wms_selection_overlay"
 }
 
 /**

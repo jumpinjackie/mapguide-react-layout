@@ -536,11 +536,9 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                 if (sf) {
                     if (!bAppend) {
                         sf.clear();
-                        layerSet.clearScratchLayer();
                     }
 
                     if (feat) {
-                        layerSet.addScratchFeature(feat);
                         sf.push(feat);
                     }
                 }
@@ -773,6 +771,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     private _highlightedFeature: Feature<Geometry> | undefined;
     private isLayerHoverable(layer: Layer<Source>) {
         return !(layer?.get(LayerProperty.IS_HOVER_HIGHLIGHT) == true)
+            && !(layer?.get(LayerProperty.IS_WMS_SELECTION_OVERLAY) == true)
             && !(layer?.get(LayerProperty.IS_MEASURE) == true);
     }
     protected handleHighlightHover(e: GenericEvent) {
@@ -813,14 +812,15 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected showSelectedVectorFeatures(features: Collection<Feature<Geometry>>, pixel: [number, number], featureToLayerMap: [Feature<Geometry>, Layer<Source>][], locale?: string) {
         this._selectTooltip?.showSelectedVectorFeatures(features, pixel, featureToLayerMap, locale);
     }
-    protected async queryWmsFeatures(mapName: string | undefined, coord: Coordinate2D) {
+    protected async queryWmsFeatures(mapName: string | undefined, coord: Coordinate2D, bAppendMode: boolean) {
         if (mapName && this._map) {
             const activeLayerSet = this.getLayerSetGroup(mapName);
             const layerMgr = this.getLayerManager(mapName);
             const res = this._map.getView().getResolution();
             if (res && this._selectTooltip) {
-                await this._selectTooltip.queryWmsFeatures(activeLayerSet, layerMgr, coord, res, {
+                await this._selectTooltip.queryWmsFeatures(activeLayerSet, layerMgr, coord, res, bAppendMode, {
                     getLocale: () => this._state.locale,
+                    addClientSelectedFeature: (feat, layer) => this.addClientSelectedFeature(feat, layer),
                     addFeatureToHighlight: (feat, bAppend) => this.addFeatureToHighlight(feat, bAppend),
                     getWmsRequestAugmentations: () => this._wmsQueryAugmentations[mapName] ?? {}
                 });
@@ -835,7 +835,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      */
     protected onImageError(e: GenericEvent) { }
 
-    private addClientSelectedFeature(f: Feature<Geometry>, l: Layer<Source>) {
+    private addClientSelectedFeature(f: Feature<Geometry>, l: LayerBase) {
         if (this._select)
             this._select.getFeatures().push(f);
         if (this._state.mapName) {
@@ -886,20 +886,17 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             return;
         }
 
+        //TODO: Our selected feature tooltip only shows properties of a single feature
+        //and displays upon said feature being selected. As a result, although we can
+        //(and should) allow for multiple features to be selected, we need to figure
+        //out the proper UI for such a case before we enable multiple selection.
+        const bAppendMode = false;
+
         const featureToLayerMap = [] as [Feature<Geometry>, Layer<Source>][];
         if ((this._state.activeTool == ActiveMapTool.Select) && this._select) {
-            /*
-            //Shift+Click is the default OL selection append mode, so if no shift key
-            //pressed, clear the existing selection
-            if (!this.state.shiftKey) {
+            if (!bAppendMode) {
                 this.clearClientSelectedFeatures();
             }
-            */
-            //TODO: Our selected feature tooltip only shows properties of a single feature
-            //and displays upon said feature being selected. As a result, although we can
-            //(and should) allow for multiple features to be selected, we need to figure
-            //out the proper UI for such a case before we enable multiple selection.
-            this.clearClientSelectedFeatures();
             this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
                 if (featureToLayerMap.length == 0) { //See TODO above
                     if (layer.get(LayerProperty.IS_SELECTABLE) == true && feature instanceof Feature) {
@@ -934,9 +931,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         if (featureToLayerMap.length == 0) {
             this.hideSelectedVectorFeaturesTooltip();
             if (this._state.activeTool == ActiveMapTool.Select) {
-                // TODO: WMS selected features can participate in hovering
-                // TODO: Selecting a client feature does not de-select an active WMS selected feature
-                this.queryWmsFeatures(this._state.mapName, e.coordinate as Coordinate2D).then(() => {
+                this.queryWmsFeatures(this._state.mapName, e.coordinate as Coordinate2D, bAppendMode).then(() => {
                     this.onProviderMapClick(px);
                 })
             } else {
@@ -944,6 +939,12 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             }
         } else {
             if (this._select) {
+                if (!bAppendMode) {
+                    if (this._state.mapName) {
+                        const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
+                        activeLayerSet?.clearWmsSelectionOverlay();
+                    }
+                }
                 this.showSelectedVectorFeatures(this._select.getFeatures(), px, featureToLayerMap, this._state.locale);
             }
         }

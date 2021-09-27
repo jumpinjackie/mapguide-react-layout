@@ -271,7 +271,7 @@ export class SelectedFeaturesTooltip {
                     } else {
                         this.featureTooltipElement.classList.remove("tooltip-hidden");
                     }
-                    return;
+                    return true;
                 }
             }
         }
@@ -280,6 +280,7 @@ export class SelectedFeaturesTooltip {
             callback.addFeatureToHighlight(undefined, false);
             this.hide();
         }
+        return false;
     }
     private generateFeatureHtml(layerName: string | undefined, feat: Feature<Geometry>, locale?: string, popupConfig?: ISelectedFeaturePopupTemplateConfiguration) {
         if (layerName) {

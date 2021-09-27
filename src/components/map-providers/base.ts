@@ -818,7 +818,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             const layerMgr = this.getLayerManager(mapName);
             const res = this._map.getView().getResolution();
             if (res && this._selectTooltip) {
-                await this._selectTooltip.queryWmsFeatures(activeLayerSet, layerMgr, coord, res, bAppendMode, {
+                return await this._selectTooltip.queryWmsFeatures(activeLayerSet, layerMgr, coord, res, bAppendMode, {
                     getLocale: () => this._state.locale,
                     addClientSelectedFeature: (feat, layer) => this.addClientSelectedFeature(feat, layer),
                     addFeatureToHighlight: (feat, bAppend) => this.addFeatureToHighlight(feat, bAppend),
@@ -826,6 +826,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                 });
             }
         }
+        return false;
     }
     /**
      * @virtual
@@ -931,8 +932,12 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         if (featureToLayerMap.length == 0) {
             this.hideSelectedVectorFeaturesTooltip();
             if (this._state.activeTool == ActiveMapTool.Select) {
-                this.queryWmsFeatures(this._state.mapName, e.coordinate as Coordinate2D, bAppendMode).then(() => {
-                    this.onProviderMapClick(px);
+                this.queryWmsFeatures(this._state.mapName, e.coordinate as Coordinate2D, bAppendMode).then(madeSelection => {
+                    if (!madeSelection) {
+                        this.onProviderMapClick(px);
+                    } else {
+                        console.log("Made WMS selection. Skipping provider click event");
+                    }
                 })
             } else {
                 this.onProviderMapClick(px);

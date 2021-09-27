@@ -295,4 +295,5 @@ export interface ILocalizedMessages {
     CLUSTER_CLICK_ACTION: string;
     CLUSTER_CLICK_ACTION_SHOW_POPUP: string;
     CLUSTER_CLICK_ACTION_ZOOM_EXTENTS: string;
+    EXTERNAL_LAYERS: string;
 }

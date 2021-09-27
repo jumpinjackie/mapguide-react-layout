@@ -284,5 +284,6 @@ export const STRINGS_EN: ILocalizedMessages = {
     "LABEL_USING_PROPERTY": "Label Using Property",
     "CLUSTER_CLICK_ACTION": "Action to perform when cluster is clicked",
     "CLUSTER_CLICK_ACTION_SHOW_POPUP": "Display attributes of points in a popup",
-    "CLUSTER_CLICK_ACTION_ZOOM_EXTENTS": "Zoom into selected cluster"
+    "CLUSTER_CLICK_ACTION_ZOOM_EXTENTS": "Zoom into selected cluster",
+    "EXTERNAL_LAYERS": "External Layers"
 };

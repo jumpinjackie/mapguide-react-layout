@@ -36,6 +36,7 @@ export const AppContext = React.createContext<IApplicationContext>({
 export interface ILegendContext {
     stateless: boolean;
     isFiltering(): boolean;
+    getMapName(): string | undefined;
     getFilterText(): string;
     getLocale(): string;
     getBaseIconSize(): number;
@@ -57,6 +58,7 @@ export interface ILegendContext {
 
 export const LegendContext = React.createContext<ILegendContext>({
     stateless: false,
+    getMapName: () => undefined,
     isFiltering: () => false,
     getFilterText: () => STR_EMPTY,
     getLocale: () => DEFAULT_LOCALE,

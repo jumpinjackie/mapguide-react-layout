@@ -10,6 +10,7 @@
     "build:sprite": "glue stdassets/images/icons stdassets/sprites --html --png8 --sprite-namespace= --namespace=",
     "build:docs_sprite": "glue stdassets/images/icons docs_output --html --png8 --sprite-namespace= --namespace=",
     "build:barrels": "rimraf src/index.ts && barrelsby -d src --exclude src/entries --exclude src/stories",
+    "build:dts": "rimraf index.d.ts && rimraf package && node tools/prepare-package.js && tsc --p tsconfig.dts.json",
     "build:npm": "rimraf package && node tools/prepare-package.js && tsc --p tsconfig.npm.json && copyfiles *.md lib/** src/** viewer/** stdassets/** package && rimraf lib",
     "build:site": "copyfiles docs_dev/content/** docs_output && yarn run build:docs_sprite",
     "build:apidoc_npm_inner": "rimraf ./docs_output/latest/apidoc_npm && typedoc --options typedoc.json",

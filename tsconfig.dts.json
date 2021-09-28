@@ -1,0 +1,9 @@
+{
+    "extends": "./tsconfig.npm.json",
+    "compilerOptions": {
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "outFile": "index.d.ts",
+        "skipLibCheck": true
+    }
+}

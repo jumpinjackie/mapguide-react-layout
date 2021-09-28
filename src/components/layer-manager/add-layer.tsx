@@ -78,12 +78,15 @@ enum CreateVectorLayerAs {
 
 type GeomTypeList = IParsedFeatures["geometryTypes"];
 
-const CREATE_VECTOR_AS: { value: CreateVectorLayerAs, label: string, isValid: (geomTypes: GeomTypeList) => boolean }[] = [
-    { value: CreateVectorLayerAs.Vector, label: "Vector Layer", isValid: (geomTypes) => true },
-    { value: CreateVectorLayerAs.Themed, label: "Themed Vector Layer", isValid: (geomTypes) => true },
-    { value: CreateVectorLayerAs.Clustered, label: "Clustered Point Layer", isValid: (geomTypes) => geomTypes.length == 1 && geomTypes.includes("Point") },
-    { value: CreateVectorLayerAs.Heatmap, label: "Heatmap Layer", isValid: (geomTypes) => geomTypes.length == 1 && geomTypes.includes("Point") }
-]
+function getCreateVectorLayerOptions(geomTypes: GeomTypeList, locale: string) {
+    const options: { value: CreateVectorLayerAs, label: string, isValid: (geomTypes: GeomTypeList) => boolean }[] = [
+        { value: CreateVectorLayerAs.Vector, label: tr("CREATE_VECTOR_LAYER", locale), isValid: (geomTypes) => true },
+        { value: CreateVectorLayerAs.Themed, label: tr("CREATE_VECTOR_THEMED", locale), isValid: (geomTypes) => true },
+        { value: CreateVectorLayerAs.Clustered, label: tr("CREATE_VECTOR_CLUSTERED", locale), isValid: (geomTypes) => geomTypes.length == 1 && geomTypes.includes("Point") },
+        { value: CreateVectorLayerAs.Heatmap, label: tr("CREATE_VECTOR_HEATMAP", locale), isValid: (geomTypes) => geomTypes.length == 1 && geomTypes.includes("Point") }
+    ];
+    return options.filter(o => o.isValid(geomTypes));
+}
 
 const AddFileLayer = (props: IAddLayerProps) => {
     const { locale } = props;
@@ -93,7 +96,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
     const [loadedFile, setLoadedFile] = React.useState<LoadedFile | undefined>(undefined);
     const [addLayerName, setAddLayerName] = React.useState<string | undefined>(undefined);
     const [addProjection, setAddProjection] = React.useState(4326);
-    const [createOptions, setCreateOptions] = React.useState(CREATE_VECTOR_AS.filter(o => o.isValid([])));
+    const [createOptions, setCreateOptions] = React.useState(getCreateVectorLayerOptions([], locale));
     const [enableLabels, setEnableLabels] = React.useState(false);
     const [labelOnProperty, setLabelOnProperty] = React.useState<string | undefined>(undefined);
     const [themeOnProperty, setThemeOnProperty] = React.useState<string | undefined>(undefined);
@@ -106,7 +109,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
     const parsedFeaturesRef = React.useRef<IParsedFeatures | undefined>(undefined);
     const setParsedFile = (parsed: IParsedFeatures | undefined) => {
         setEnableLabels(false);
-        setCreateOptions(CREATE_VECTOR_AS.filter(o => o.isValid([])));
+        setCreateOptions(getCreateVectorLayerOptions([], locale));
         parsedFeaturesRef.current = parsed;
         if (parsed) {
             setAddLayerName(parsed.name);
@@ -116,7 +119,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
                 type: parsed.type,
                 defaultProjection: parsed.projection
             });
-            setCreateOptions(CREATE_VECTOR_AS.filter(cv => cv.isValid(parsed.geometryTypes)));
+            setCreateOptions(getCreateVectorLayerOptions(parsed.geometryTypes, locale));
             setThemableProperties(parsed.propertyNames);
             if (parsed.propertyNames.length > 0) {
                 setThemeOnProperty(parsed.propertyNames[0]);

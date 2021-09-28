@@ -286,5 +286,9 @@ export const STRINGS_EN: ILocalizedMessages = {
     "CLUSTER_CLICK_ACTION": "Action to perform when cluster is clicked",
     "CLUSTER_CLICK_ACTION_SHOW_POPUP": "Display attributes of points in a popup",
     "CLUSTER_CLICK_ACTION_ZOOM_EXTENTS": "Zoom into selected cluster",
-    "EXTERNAL_LAYERS": "External Layers"
+    "EXTERNAL_LAYERS": "External Layers",
+    "CREATE_VECTOR_LAYER": "Vector Layer",
+    "CREATE_VECTOR_THEMED": "Themed Vector Layer",
+    "CREATE_VECTOR_CLUSTERED": "Clustered Point Layer",
+    "CREATE_VECTOR_HEATMAP": "Heatmap Layer"
 };

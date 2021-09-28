@@ -297,4 +297,8 @@ export interface ILocalizedMessages {
     CLUSTER_CLICK_ACTION_SHOW_POPUP: string;
     CLUSTER_CLICK_ACTION_ZOOM_EXTENTS: string;
     EXTERNAL_LAYERS: string;
+    CREATE_VECTOR_LAYER: string;
+    CREATE_VECTOR_THEMED: string;
+    CREATE_VECTOR_CLUSTERED: string;
+    CREATE_VECTOR_HEATMAP: string;
 }

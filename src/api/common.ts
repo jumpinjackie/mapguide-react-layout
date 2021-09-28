@@ -21,7 +21,7 @@ import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
 import { ISubscriberProps } from '../containers/subscriber';
 import Geometry from 'ol/geom/Geometry';
-import { IBasicPointCircleStyle, IPointIconStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorLayerStyle, IClusterSettings, ClusterClickAction } from './ol-style-contracts';
+import { IBasicPointCircleStyle, IPointIconStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorLayerStyle, IClusterSettings, ClusterClickAction, IHeatmapSettings } from './ol-style-contracts';
 import { IToolbarAppState } from './registry/command';
 import { ClientSelectionSet } from "./contracts/common";
 
@@ -1099,6 +1099,11 @@ export interface ILayerInfo {
      */
     cluster?: IClusterSettings;
     /**
+     * Heatmap settings
+     * @since 0.14
+     */
+    heatmap?: IHeatmapSettings;
+    /**
      * The busy worker count of this layer. If greater than 0, the layer
      * is considered to be in the process of loading
      * 
@@ -1156,7 +1161,19 @@ export interface AddVectorLayerThemeOptions {
     colorBrewerTheme: string;
 }
 
-export type AddVectorLayerExtraOptions = AddVectorLayerClusteringOptions | AddVectorLayerThemeOptions;
+/**
+ * Heatmap options
+ * @since 0.14
+ */
+export interface AddVectorLayerHeatmapOptions {
+    kind: "Heatmap",
+    /**
+     * The weight property
+     */
+    weightProperty?: string;
+}
+
+export type AddVectorLayerExtraOptions = AddVectorLayerClusteringOptions | AddVectorLayerThemeOptions | AddVectorLayerHeatmapOptions;
 
 /**
  * Options to add a new layer from parsed features
@@ -2550,7 +2567,11 @@ export enum LayerProperty {
     /**
      * @since 0.14
      */
-    IS_WMS_SELECTION_OVERLAY = "is_wms_selection_overlay"
+    IS_WMS_SELECTION_OVERLAY = "is_wms_selection_overlay",
+    /**
+     * @since 0.14
+     */
+    IS_HEATMAP = "is_heatmap"
 }
 
 /**

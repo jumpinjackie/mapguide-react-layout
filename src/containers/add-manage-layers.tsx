@@ -8,7 +8,7 @@ import { useViewerLocale, useActiveMapName, useActiveMapLayers, useActiveMapView
 import olVectorLayer from "ol/layer/Vector";
 import olClusterSource from "ol/source/Cluster";
 import { transformExtent } from "ol/proj";
-import { mapLayerAdded, addMapLayerBusyWorker, removeMapLayerBusyWorker, removeMapLayer, setMapLayerIndex, setMapLayerVisibility, setMapLayerOpacity, setMapLayerVectorStyle } from '../actions/map';
+import { mapLayerAdded, addMapLayerBusyWorker, removeMapLayerBusyWorker, removeMapLayer, setMapLayerIndex, setMapLayerVisibility, setMapLayerOpacity, setMapLayerVectorStyle, setHeatmapLayerBlur, setHeatmapLayerRadius } from '../actions/map';
 import { getViewer } from '../api/runtime';
 import { IVectorLayerStyle, VectorStyleSource } from '../api/ol-style-contracts';
 import { useReduxDispatch } from "../components/map-providers/context";
@@ -118,6 +118,16 @@ export const AddManageLayersContainer = () => {
             dispatch(setMapLayerOpacity(activeMapName, layerName, value));
         }
     };
+    const setHeatmapBlur = (layerName: string, value: number) => {
+        if (activeMapName) {
+            dispatch(setHeatmapLayerBlur(activeMapName, layerName, value));
+        }
+    };
+    const setHeatmapRadius = (layerName: string, value: number) => {
+        if (activeMapName) {
+            dispatch(setHeatmapLayerRadius(activeMapName, layerName, value));
+        }
+    };
     const updateVectorStyle = (layerName: string, value: IVectorLayerStyle, which: VectorStyleSource) => {
         if (activeMapName) {
             dispatch(setMapLayerVectorStyle(activeMapName, layerName, value, which));
@@ -131,6 +141,8 @@ export const AddManageLayersContainer = () => {
                     locale={locale}
                     currentResolution={view?.resolution}
                     onSetOpacity={setOpacity}
+                    onSetHeatmapBlur={setHeatmapBlur}
+                    onSetHeatmapRadius={setHeatmapRadius}
                     onSetVisibility={setVisibility}
                     onZoomToBounds={zoomToBounds}
                     onMoveLayerDown={downHandler}

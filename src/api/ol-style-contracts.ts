@@ -62,6 +62,21 @@ export interface IClusterSettings {
 }
 
 /**
+ * Heatmap layer settings
+ * @since 0.14
+ */
+export interface IHeatmapSettings {
+    /**
+     * Heatmap blur
+     */
+    blur: number;
+    /**
+     * Heatmap radius
+     */
+    radius: number;
+}
+
+/**
  * @since 0.14
  */
 export type TextPlacement = "point" | "line";

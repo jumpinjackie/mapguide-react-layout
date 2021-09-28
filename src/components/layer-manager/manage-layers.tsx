@@ -1,7 +1,7 @@
 import * as React from "react";
 import { tr } from "../../api/i18n";
 import { ILayerInfo } from "../../api/common";
-import { Button, Intent, ButtonGroup, Card, Icon, Switch, NonIdealState, Slider, Collapse, Spinner } from '@blueprintjs/core';
+import { Button, Intent, ButtonGroup, Card, Icon, Switch, NonIdealState, Slider, Collapse, Spinner, FormGroup } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { IVectorLayerStyle, VectorStyleSource } from '../../api/ol-style-contracts';
 import { VectorLayerStyleEditor } from '../vector-style-editor';
@@ -22,6 +22,8 @@ interface IManageLayerItemProps {
     canMoveUp: boolean;
     canMoveDown: boolean;
     onSetOpacity: (name: string, value: number) => void;
+    onSetHeatmapBlur: (name: string, value: number) => void;
+    onSetHeatmapRadius: (name: string, value: number) => void;
     onSetVisibility: (name: string, visible: boolean) => void;
     onZoomToBounds: (name: string) => void;
     onRemoveLayer: (name: string) => void;
@@ -37,6 +39,8 @@ enum OpenPanel {
     WmsLegend
 }
 
+const HEATMAP_SLIDER_RAMP = [0, 10, 20, 30, 40, 50];
+
 const LAYER_SWITCH_STYLE: React.CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" };
 
 const ManageLayerItem = (props: IManageLayerItemProps) => {
@@ -47,6 +51,8 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
         canMoveDown,
         currentResolution,
         onSetOpacity,
+        onSetHeatmapBlur,
+        onSetHeatmapRadius,
         onRemoveLayer,
         onMoveLayerUp,
         onMoveLayerDown,
@@ -103,8 +109,9 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
                 }
         }
     }
+
     if (layer.vectorStyle) {
-        if (layer.type != "KML") {
+        if (layer.type != "KML" && layer.heatmap == null) {
             extraActions.push(<Button key="edit-vector-style" title={tr("LAYER_MANAGER_TT_EDIT_STYLE", locale)} intent={Intent.PRIMARY} icon="edit" onClick={() => toggleOpenPanel(OpenPanel.EditVectorStyle)} />)
         }
     }
@@ -144,8 +151,17 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
         <Collapse isOpen={openPanel == OpenPanel.MoreLayerOptions}>
             <Card>
                 <h5 className="bp3-heading"><a href="#">{tr("MORE_LAYER_OPTIONS", locale)}</a></h5>
-                <p>{tr("LAYER_OPACITY", locale)}</p>
-                <Slider min={0} max={1.0} stepSize={0.01} value={layer.opacity} onChange={e => onSetOpacity(layer.name, e)} />
+                <FormGroup label={tr("LAYER_OPACITY", locale)}>
+                    <Slider min={0} max={1.0} stepSize={0.01} value={layer.opacity} onChange={e => onSetOpacity(layer.name, e)} />
+                </FormGroup>
+                {layer.heatmap && <>
+                    <FormGroup label={tr("LAYER_HEATMAP_BLUR", locale)}>
+                        <Slider min={1} max={50} stepSize={1} labelValues={HEATMAP_SLIDER_RAMP} value={layer.heatmap.blur} onChange={e => onSetHeatmapBlur(layer.name, e)} />
+                    </FormGroup>
+                    <FormGroup label={tr("LAYER_HEATMAP_RADIUS", locale)}>
+                        <Slider min={1} max={50} stepSize={1} labelValues={HEATMAP_SLIDER_RAMP} value={layer.heatmap.radius} onChange={e => onSetHeatmapRadius(layer.name, e)} />
+                    </FormGroup>
+                </>}
             </Card>
         </Collapse>
         {isWms && <Collapse isOpen={isWmsLegendOpen}>
@@ -176,6 +192,8 @@ export interface IManageLayersProps {
     locale: string;
     currentResolution?: number;
     onSetOpacity: (name: string, value: number) => void;
+    onSetHeatmapBlur: (name: string, value: number) => void;
+    onSetHeatmapRadius: (name: string, value: number) => void;
     onSetVisibility: (name: string, visible: boolean) => void;
     onZoomToBounds: (name: string) => void;
     onRemoveLayer: (name: string) => void;
@@ -192,6 +210,8 @@ export const ManageLayers = (props: IManageLayersProps) => {
         locale,
         currentResolution,
         onSetOpacity,
+        onSetHeatmapBlur,
+        onSetHeatmapRadius,
         onRemoveLayer,
         onMoveLayerUp,
         onMoveLayerDown,
@@ -200,7 +220,6 @@ export const ManageLayers = (props: IManageLayersProps) => {
         onVectorStyleChanged
     } = props;
     const [layers, setLayers] = React.useState(props.layers);
-    const [wmsLegendUrl, setWmsLegendUrl] = React.useState<string | undefined>(undefined);
     React.useEffect(() => {
         setLayers(props.layers);
     }, [props.layers]);
@@ -217,6 +236,8 @@ export const ManageLayers = (props: IManageLayersProps) => {
                     canMoveDown={!cannotMoveDown}
                     currentResolution={currentResolution}
                     onSetOpacity={onSetOpacity}
+                    onSetHeatmapBlur={onSetHeatmapBlur}
+                    onSetHeatmapRadius={onSetHeatmapRadius}
                     onRemoveLayer={onRemoveLayer}
                     onMoveLayerUp={onMoveLayerUp}
                     onMoveLayerDown={onMoveLayerDown}

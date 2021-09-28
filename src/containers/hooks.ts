@@ -7,6 +7,7 @@ import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { IToolbarAppState, reduceAppToToolbarState } from '../api/registry/command';
 import { useAppState } from '../components/map-providers/context';
 import { ClientSelectionSet } from '../api/contracts/common';
+import { IHeatmapSettings } from '../api/ol-style-contracts';
 
 // From: https://usehooks.com/usePrevious/
 
@@ -37,6 +38,15 @@ export function useActiveMapInitialExternalLayers() {
     });
 }
 
+function sameHeatmapSettings(left: IHeatmapSettings | undefined, right: IHeatmapSettings | undefined): boolean {
+    if (left && right) {
+        return left.blur == right.blur
+            && left.radius == right.radius;
+    }
+    return false;
+}
+
+
 export function useActiveMapLayers() {
     return useAppState<ILayerInfo[] | undefined>(state => {
         if (state.config.activeMapName) {
@@ -48,7 +58,8 @@ export function useActiveMapLayers() {
             && l.opacity == r.opacity
             && l.visible == r.visible
             && l.vectorStyle == r.vectorStyle
-            && l.cluster == r.cluster;
+            && l.cluster == r.cluster
+            && sameHeatmapSettings(l.heatmap, r.heatmap);
     }));
 }
 

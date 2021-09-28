@@ -216,6 +216,8 @@ export interface ILocalizedMessages {
     NO_EXTERNAL_LAYERS: string;
     NO_EXTERNAL_LAYERS_DESC: string;
     LAYER_OPACITY: string;
+    LAYER_HEATMAP_BLUR: string;
+    LAYER_HEATMAP_RADIUS: string;
     LAYER_NAME_EXISTS: string;
     LAYER_MANAGER_TT_MOVE_UP: string;
     LAYER_MANAGER_TT_MOVE_DOWN: string;
@@ -290,10 +292,13 @@ export interface ILocalizedMessages {
     GENERATE_THEMABLE_LAYER: string;
     THEME_ON_PROPERTY: string;
     COLORBREWER_THEME: string;
-    ERR_CONFLICTING_ADD_VECTOR_LAYER_OPTIONS: string;
     LABEL_USING_PROPERTY: string;
     CLUSTER_CLICK_ACTION: string;
     CLUSTER_CLICK_ACTION_SHOW_POPUP: string;
     CLUSTER_CLICK_ACTION_ZOOM_EXTENTS: string;
     EXTERNAL_LAYERS: string;
+    CREATE_VECTOR_LAYER: string;
+    CREATE_VECTOR_THEMED: string;
+    CREATE_VECTOR_CLUSTERED: string;
+    CREATE_VECTOR_HEATMAP: string;
 }

@@ -207,6 +207,8 @@ export const STRINGS_EN: ILocalizedMessages = {
     "NO_EXTERNAL_LAYERS": "No Layers",
     "NO_EXTERNAL_LAYERS_DESC": "Add layers via the {tabName} tab above",
     "LAYER_OPACITY": "Opacity",
+    "LAYER_HEATMAP_BLUR": "Heatmap Blur Size",
+    "LAYER_HEATMAP_RADIUS": "Heatmap Radius Size",
     "LAYER_NAME_EXISTS": "A layer named {name} already exists",
     "LAYER_MANAGER_TT_MOVE_UP": "Move this layer up the draw order",
     "LAYER_MANAGER_TT_MOVE_DOWN": "Move this layer down the draw order",
@@ -280,10 +282,13 @@ export const STRINGS_EN: ILocalizedMessages = {
     "GENERATE_THEMABLE_LAYER": "Generate Themable Layer",
     "THEME_ON_PROPERTY": "Theme On Property",
     "COLORBREWER_THEME": "<a href='https://colorbrewer2.org/' target='_blank'>ColorBrewer</a> theme",
-    "ERR_CONFLICTING_ADD_VECTOR_LAYER_OPTIONS": "You cannot specify both theme and clustering options at the same time",
     "LABEL_USING_PROPERTY": "Label Using Property",
     "CLUSTER_CLICK_ACTION": "Action to perform when cluster is clicked",
     "CLUSTER_CLICK_ACTION_SHOW_POPUP": "Display attributes of points in a popup",
     "CLUSTER_CLICK_ACTION_ZOOM_EXTENTS": "Zoom into selected cluster",
-    "EXTERNAL_LAYERS": "External Layers"
+    "EXTERNAL_LAYERS": "External Layers",
+    "CREATE_VECTOR_LAYER": "Vector Layer",
+    "CREATE_VECTOR_THEMED": "Themed Vector Layer",
+    "CREATE_VECTOR_CLUSTERED": "Clustered Point Layer",
+    "CREATE_VECTOR_HEATMAP": "Heatmap Layer"
 };

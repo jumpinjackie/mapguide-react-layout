@@ -772,6 +772,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     private isLayerHoverable(layer: Layer<Source>) {
         return !(layer?.get(LayerProperty.IS_HOVER_HIGHLIGHT) == true)
             && !(layer?.get(LayerProperty.IS_WMS_SELECTION_OVERLAY) == true)
+            && !(layer?.get(LayerProperty.IS_HEATMAP) == true)
             && !(layer?.get(LayerProperty.IS_MEASURE) == true);
     }
     protected handleHighlightHover(e: GenericEvent) {

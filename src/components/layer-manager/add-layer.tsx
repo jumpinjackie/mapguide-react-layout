@@ -12,6 +12,7 @@ import { getViewer } from '../../api/runtime';
 import { zoomToLayerExtents } from "../../containers/add-manage-layers";
 import { getColorBrewerRamps, ColorBrewerSwatch } from "./color-brewer";
 import { ClusterClickAction } from "../../api/ol-style-contracts";
+import { assertNever } from "../../utils/never";
 
 /**
  * @hidden
@@ -68,6 +69,22 @@ interface LoadedFile {
     defaultProjection: string | null;
 }
 
+enum CreateVectorLayerAs {
+    Vector = "Vector",
+    Themed = "Themed",
+    Clustered = "Clustered",
+    Heatmap = "Heatmap"
+}
+
+type GeomTypeList = IParsedFeatures["geometryTypes"];
+
+const CREATE_VECTOR_AS: { value: CreateVectorLayerAs, label: string, isValid: (geomTypes: GeomTypeList) => boolean }[] = [
+    { value: CreateVectorLayerAs.Vector, label: "Vector Layer", isValid: (geomTypes) => true },
+    { value: CreateVectorLayerAs.Themed, label: "Themed Vector Layer", isValid: (geomTypes) => true },
+    { value: CreateVectorLayerAs.Clustered, label: "Clustered Point Layer", isValid: (geomTypes) => geomTypes.length == 1 && geomTypes.includes("Point") },
+    { value: CreateVectorLayerAs.Heatmap, label: "Heatmap Layer", isValid: (geomTypes) => geomTypes.length == 1 && geomTypes.includes("Point") }
+]
+
 const AddFileLayer = (props: IAddLayerProps) => {
     const { locale } = props;
     const [isProcessingFile, setIsProcessingFile] = React.useState(false);
@@ -76,22 +93,20 @@ const AddFileLayer = (props: IAddLayerProps) => {
     const [loadedFile, setLoadedFile] = React.useState<LoadedFile | undefined>(undefined);
     const [addLayerName, setAddLayerName] = React.useState<string | undefined>(undefined);
     const [addProjection, setAddProjection] = React.useState(4326);
-    const [canCluster, setCanCluster] = React.useState(false);
-    const [enableClustering, setEnableClustering] = React.useState(false);
-    const [enableTheme, setEnableTheme] = React.useState(false);
+    const [createOptions, setCreateOptions] = React.useState(CREATE_VECTOR_AS.filter(o => o.isValid([])));
     const [enableLabels, setEnableLabels] = React.useState(false);
     const [labelOnProperty, setLabelOnProperty] = React.useState<string | undefined>(undefined);
     const [themeOnProperty, setThemeOnProperty] = React.useState<string | undefined>(undefined);
     const [themableProperties, setThemableProperties] = React.useState<string[]>([]);
     const [themeToUse, setThemeToUse] = React.useState("Blues");
+    const [createLayerAs, setCreateLayerAs] = React.useState<CreateVectorLayerAs>(CreateVectorLayerAs.Vector);
     const [clusterDistance, setClusterDistance] = React.useState(10);
     const [themableRamps, _] = React.useState(getColorBrewerRamps());
     const [clusterClickAction, setClusterClickAction] = React.useState(ClusterClickAction.ShowPopup);
     const parsedFeaturesRef = React.useRef<IParsedFeatures | undefined>(undefined);
     const setParsedFile = (parsed: IParsedFeatures | undefined) => {
-        setEnableClustering(false);
         setEnableLabels(false);
-        setEnableTheme(false);
+        setCreateOptions(CREATE_VECTOR_AS.filter(o => o.isValid([])));
         parsedFeaturesRef.current = parsed;
         if (parsed) {
             setAddLayerName(parsed.name);
@@ -101,7 +116,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
                 type: parsed.type,
                 defaultProjection: parsed.projection
             });
-            setCanCluster(parsed.geometryTypes.includes("Point"));
+            setCreateOptions(CREATE_VECTOR_AS.filter(cv => cv.isValid(parsed.geometryTypes)));
             setThemableProperties(parsed.propertyNames);
             if (parsed.propertyNames.length > 0) {
                 setThemeOnProperty(parsed.propertyNames[0]);
@@ -155,18 +170,26 @@ const AddFileLayer = (props: IAddLayerProps) => {
                     throw new Error(tr("LAYER_NAME_EXISTS", locale, { name: parsedFeaturesRef.current.name }));
                 }
                 let extraOpts: AddVectorLayerExtraOptions | undefined;
-                if (enableClustering) {
-                    extraOpts = {
-                        kind: "Cluster",
-                        clusterDistance: clusterDistance,
-                        onClusterClickAction: clusterClickAction
-                    };
-                } else if (enableTheme && !strIsNullOrEmpty(themeOnProperty)) {
-                    extraOpts = {
-                        kind: "Theme",
-                        themeOnProperty: themeOnProperty,
-                        colorBrewerTheme: themeToUse
-                    }
+                switch (createLayerAs) {
+                    case CreateVectorLayerAs.Clustered:
+                        extraOpts = {
+                            kind: "Cluster",
+                            clusterDistance: clusterDistance,
+                            onClusterClickAction: clusterClickAction
+                        };
+                        break;
+                    case CreateVectorLayerAs.Themed:
+                        extraOpts = {
+                            kind: "Theme",
+                            themeOnProperty: themeOnProperty!,
+                            colorBrewerTheme: themeToUse
+                        };
+                        break;
+                    case CreateVectorLayerAs.Heatmap:
+                        extraOpts = {
+                            kind: "Heatmap"
+                        };
+                        break;
                 }
                 let labelProp;
                 if (enableLabels) {
@@ -193,10 +216,49 @@ const AddFileLayer = (props: IAddLayerProps) => {
             }
             setIsAddingLayer(false);
         }
-    }, [enableClustering, clusterDistance, enableTheme, themeOnProperty, themeToUse, enableLabels, labelOnProperty, clusterClickAction]);
+    }, [clusterDistance, createLayerAs, themeOnProperty, themeToUse, enableLabels, labelOnProperty, clusterClickAction]);
     if (loadedFile) {
-        const canAdd = !(enableTheme && enableClustering);
+        let canAdd = true;
+        if (createLayerAs == CreateVectorLayerAs.Themed) {
+            if (strIsNullOrEmpty(themeOnProperty)) {
+                canAdd = false;
+            }
+        }
+        const labelEl = <>
+            <Switch label={tr("ENABLE_LABELS", locale)} checked={enableLabels} onChange={(e: any) => setEnableLabels(e.target.checked)} />
+            {enableLabels && <FormGroup label={tr("LABEL_USING_PROPERTY", locale)}>
+                <HTMLSelect value={labelOnProperty} onChange={e => setLabelOnProperty(e.target.value)}>
+                    {themableProperties.map((th, i) => <option key={th} value={th}>{th}</option>)}
+                </HTMLSelect>
+            </FormGroup>}
+        </>;
+
         const colorBrewerLabel = <div dangerouslySetInnerHTML={{ __html: tr("COLORBREWER_THEME", locale) }} />;
+        const themeEl = <>
+            <FormGroup label={tr("THEME_ON_PROPERTY", locale)}>
+                <HTMLSelect value={themeOnProperty} onChange={e => setThemeOnProperty(e.target.value)}>
+                    {themableProperties.map((th, i) => <option key={th} value={th}>{th}</option>)}
+                </HTMLSelect>
+            </FormGroup>
+            <FormGroup label={colorBrewerLabel}>
+                <HTMLSelect value={themeToUse} onChange={e => setThemeToUse(e.target.value)}>
+                    {themableRamps.map((th, i) => <option key={th.displayName} value={th.scheme}>{th.displayName}</option>)}
+                </HTMLSelect>
+            </FormGroup>
+            {themeToUse && <ColorBrewerSwatch theme={themeToUse} />}
+        </>;
+
+        const clusterEl = <>
+            <FormGroup label={tr("POINT_CLUSTER_DISTANCE", locale)}>
+                <NumericInput min={1} value={clusterDistance} onValueChange={v => setClusterDistance(v)} />
+            </FormGroup>
+            <FormGroup label={tr("CLUSTER_CLICK_ACTION", locale)}>
+                <HTMLSelect value={clusterClickAction} onChange={(e: any) => setClusterClickAction(e.target.value)}>
+                    <option value={ClusterClickAction.ShowPopup}>{tr("CLUSTER_CLICK_ACTION_SHOW_POPUP", locale)}</option>
+                    <option value={ClusterClickAction.ZoomToClusterExtents}>{tr("CLUSTER_CLICK_ACTION_ZOOM_EXTENTS", locale)}</option>
+                </HTMLSelect>
+            </FormGroup>
+        </>;
         return <NonIdealState
             title={<EditableText value={addLayerName} onChange={v => setAddLayerName(v)} />}
             icon="upload"
@@ -210,41 +272,25 @@ const AddFileLayer = (props: IAddLayerProps) => {
                         <NumericInput style={{ width: 60 }} min={0} value={addProjection} onValueChange={v => setAddProjection(v)} />
                     </FormGroup>}
                 </FormGroup>
-                <Switch label={tr("ENABLE_LABELS", locale)} checked={enableLabels} onChange={(e: any) => setEnableLabels(e.target.checked)} />
-                {enableLabels && <FormGroup label={tr("LABEL_USING_PROPERTY", locale)}>
-                    <HTMLSelect value={labelOnProperty} onChange={e => setLabelOnProperty(e.target.value)}>
-                        {themableProperties.map((th, i) => <option key={th} value={th}>{th}</option>)}
-                    </HTMLSelect>
-                </FormGroup>}
-                {themableProperties && <Switch label={tr("GENERATE_THEMABLE_LAYER", locale)} checked={enableTheme} onChange={(e: any) => setEnableTheme(e.target.checked)} />}
-                {themableProperties && enableTheme && <>
-                    <FormGroup label={tr("THEME_ON_PROPERTY", locale)}>
-                        <HTMLSelect value={themeOnProperty} onChange={e => setThemeOnProperty(e.target.value)}>
-                            {themableProperties.map((th, i) => <option key={th} value={th}>{th}</option>)}
-                        </HTMLSelect>
-                    </FormGroup>
-                    <FormGroup label={colorBrewerLabel}>
-                        <HTMLSelect value={themeToUse} onChange={e => setThemeToUse(e.target.value)}>
-                            {themableRamps.map((th, i) => <option key={th.displayName} value={th.scheme}>{th.displayName}</option>)}
-                        </HTMLSelect>
-                    </FormGroup>
-                    {themeToUse && <ColorBrewerSwatch theme={themeToUse} />}
-                </>}
-                {canCluster && <Switch label={tr("ENABLE_CLUSTERING", locale)} checked={enableClustering} onChange={(e: any) => setEnableClustering(e.target.checked)} />}
-                {canCluster && enableClustering && <>
-                <FormGroup label={tr("POINT_CLUSTER_DISTANCE", locale)}>
-                    <NumericInput min={1} value={clusterDistance} onValueChange={v => setClusterDistance(v)} />
-                </FormGroup>
-                <FormGroup label={tr("CLUSTER_CLICK_ACTION", locale)}>
-                    <HTMLSelect value={clusterClickAction} onChange={(e: any) => setClusterClickAction(e.target.value)}>
-                        <option value={ClusterClickAction.ShowPopup}>{tr("CLUSTER_CLICK_ACTION_SHOW_POPUP", locale)}</option>
-                        <option value={ClusterClickAction.ZoomToClusterExtents}>{tr("CLUSTER_CLICK_ACTION_ZOOM_EXTENTS", locale)}</option>
+                <FormGroup label="Create Layer As">
+                    <HTMLSelect value={createLayerAs} onChange={e => setCreateLayerAs(e.target.value as CreateVectorLayerAs)}>
+                        {createOptions.map((kind, i) => <option key={kind.value} value={kind.value}>{kind.label}</option>)}
                     </HTMLSelect>
                 </FormGroup>
-                </>}
-                {enableTheme && enableClustering && <Callout intent={Intent.DANGER}>
-                    <p>{tr("ERR_CONFLICTING_ADD_VECTOR_LAYER_OPTIONS", locale)}</p>
-                </Callout>}
+                {(() => {
+                    switch (createLayerAs) {
+                        case CreateVectorLayerAs.Vector:
+                            return <>{labelEl}</>;
+                        case CreateVectorLayerAs.Themed:
+                            return <>{labelEl}{themeEl}</>;
+                        case CreateVectorLayerAs.Clustered:
+                            return <>{labelEl}{clusterEl}</>;
+                        case CreateVectorLayerAs.Heatmap:
+                            return <></>;
+                        default:
+                            assertNever(createLayerAs);
+                    }
+                })()}
                 <ButtonGroup>
                     <Button disabled={!canAdd} loading={isAddingLayer} onClick={(e: any) => onAddFileLayer(addProjection)} intent={Intent.PRIMARY}>{tr("ADD_LAYER", locale)}</Button>
                     <Button loading={isAddingLayer} onClick={(e: any) => onCancelAddFile()} intent={Intent.DANGER}>{tr("CANCEL", locale)}</Button>

@@ -1156,7 +1156,19 @@ export interface AddVectorLayerThemeOptions {
     colorBrewerTheme: string;
 }
 
-export type AddVectorLayerExtraOptions = AddVectorLayerClusteringOptions | AddVectorLayerThemeOptions;
+/**
+ * Heatmap options
+ * @since 0.14
+ */
+export interface AddVectorLayerHeatmapOptions {
+    kind: "Heatmap",
+    /**
+     * The weight property
+     */
+    weightProperty?: string;
+}
+
+export type AddVectorLayerExtraOptions = AddVectorLayerClusteringOptions | AddVectorLayerThemeOptions | AddVectorLayerHeatmapOptions;
 
 /**
  * Options to add a new layer from parsed features

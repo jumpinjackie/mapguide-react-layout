@@ -280,7 +280,6 @@ export const STRINGS_EN: ILocalizedMessages = {
     "GENERATE_THEMABLE_LAYER": "Generate Themable Layer",
     "THEME_ON_PROPERTY": "Theme On Property",
     "COLORBREWER_THEME": "<a href='https://colorbrewer2.org/' target='_blank'>ColorBrewer</a> theme",
-    "ERR_CONFLICTING_ADD_VECTOR_LAYER_OPTIONS": "You cannot specify both theme and clustering options at the same time",
     "LABEL_USING_PROPERTY": "Label Using Property",
     "CLUSTER_CLICK_ACTION": "Action to perform when cluster is clicked",
     "CLUSTER_CLICK_ACTION_SHOW_POPUP": "Display attributes of points in a popup",

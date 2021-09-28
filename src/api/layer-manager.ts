@@ -8,6 +8,7 @@ import olImageLayer from "ol/layer/Image";
 import olWmsSource from "ol/source/ImageWMS";
 import olTileWmsSource from "ol/source/TileWMS";
 import olVectorLayer from "ol/layer/Vector";
+import olHeatmapLayer from "ol/layer/Heatmap";
 import { getFormatDrivers } from './layer-manager/driver-registry';
 import { IFormatDriver } from './layer-manager/format-driver';
 import { tr } from './i18n';
@@ -220,11 +221,19 @@ export class LayerManager implements ILayerManager {
                 distance: extraOptions.clusterDistance
             };
         }
-        const layer = new olVectorLayer({
-            source: clusterSourceIfRequired(source, { cluster: csArgs }),
-            className: "external-vector-layer", //This is to avoid false positives for map.forEachLayerAtPixel
-            declutter: true
-        });
+        let layer: olLayerBase;
+        if (extraOptions?.kind == "Heatmap") {
+            layer = new olHeatmapLayer({
+                source: source,
+                weight: extraOptions.weightProperty
+            });
+        } else {
+            layer = new olVectorLayer({
+                source: clusterSourceIfRequired(source, { cluster: csArgs }),
+                className: "external-vector-layer", //This is to avoid false positives for map.forEachLayerAtPixel
+                declutter: true
+            });
+        }
         await features.addTo(source, this.map.getView().getProjection(), proj);
         layer.set(LayerProperty.LAYER_NAME, features.name);
         layer.set(LayerProperty.LAYER_DISPLAY_NAME, features.name);
@@ -300,8 +309,9 @@ export class LayerManager implements ILayerManager {
                 (bStyle as any)[filter] = style;
             }
         }
-
-        setOLVectorLayerStyle(layer, bStyle, clusterSettings);
+        if (layer instanceof olVectorLayer) {
+            setOLVectorLayerStyle(layer, bStyle, clusterSettings);
+        }
         const layerInfo = this.addLayer(features.name, layer);
         return layerInfo;
     }

@@ -2562,7 +2562,11 @@ export enum LayerProperty {
     /**
      * @since 0.14
      */
-    IS_WMS_SELECTION_OVERLAY = "is_wms_selection_overlay"
+    IS_WMS_SELECTION_OVERLAY = "is_wms_selection_overlay",
+    /**
+     * @since 0.14
+     */
+    IS_HEATMAP = "is_heatmap"
 }
 
 /**

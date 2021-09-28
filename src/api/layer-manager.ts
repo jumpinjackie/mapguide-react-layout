@@ -238,7 +238,11 @@ export class LayerManager implements ILayerManager {
         layer.set(LayerProperty.LAYER_NAME, features.name);
         layer.set(LayerProperty.LAYER_DISPLAY_NAME, features.name);
         layer.set(LayerProperty.LAYER_TYPE, features.type);
-        layer.set(LayerProperty.IS_SELECTABLE, true);
+        if (extraOptions?.kind == "Heatmap") {
+            layer.set(LayerProperty.IS_HEATMAP, true);
+        } else {
+            layer.set(LayerProperty.IS_SELECTABLE, true);
+        }
         layer.set(LayerProperty.IS_EXTERNAL, true);
         layer.set(LayerProperty.IS_GROUP, false);
         if (metadata) {

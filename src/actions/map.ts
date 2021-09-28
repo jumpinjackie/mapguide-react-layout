@@ -45,7 +45,9 @@ import {
     IAddMapLayerBusyWorkerAction,
     IRemoveMapLayerBusyWorkerAction,
     IAddClientSelectedFeatureAction,
-    IClearClientSelectionAction
+    IClearClientSelectionAction,
+    ISetHeatmapLayerBlurAction,
+    ISetHeatmapLayerRadiusAction
 } from './defs';
 import { persistSelectionSetToLocalStorage } from '../api/session-store';
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
@@ -679,6 +681,42 @@ export function setMapLayerOpacity(mapName: string, layerName: string, opacity: 
             mapName,
             layerName,
             opacity
+        }
+    };
+}
+
+/**
+ * Sets the heatmap blur for the given external heatmap layer for the given map
+ * 
+ * @param mapName 
+ * @param layerName 
+ * @param blur 
+ */
+export function setHeatmapLayerBlur(mapName: string, layerName: string, blur: number): ISetHeatmapLayerBlurAction {
+    return {
+        type: ActionType.SET_HEATMAP_LAYER_BLUR,
+        payload: {
+            mapName,
+            layerName,
+            blur
+        }
+    };
+}
+
+/**
+ * Sets the heatmap radius for the given external heatmap layer for the given map
+ * 
+ * @param mapName 
+ * @param layerName 
+ * @param radius 
+ */
+export function setHeatmapLayerRadius(mapName: string, layerName: string, radius: number): ISetHeatmapLayerRadiusAction {
+    return {
+        type: ActionType.SET_HEATMAP_LAYER_RADIUS,
+        payload: {
+            mapName,
+            layerName,
+            radius
         }
     };
 }

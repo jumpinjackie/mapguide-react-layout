@@ -29,6 +29,7 @@ import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import Style from "ol/style/Style";
 import Text from "ol/style/Text";
+import Heatmap from "ol/layer/Heatmap";
 
 const HIGHLIGHT_STYLE = new Style({
     stroke: new Stroke({
@@ -254,7 +255,7 @@ export abstract class LayerSetGroupBase {
             layer.set(LayerProperty.LAYER_DISPLAY_NAME, name);
 
         //console.log(`addLayer(): ${layer.get(LayerProperty.LAYER_NAME)}`);
-        
+
         //HACK: For reasons unknown, measurement layers aren't being cleanly detached/attached during apply() so there is a possibility
         //we are re-adding this measurement layer (from measure context activation), and the layer is already there!
         //
@@ -340,6 +341,12 @@ export abstract class LayerSetGroupBase {
                 oll.set(LayerProperty.BUSY_WORKER_COUNT, layer.busyWorkerCount);
                 if (oll instanceof VectorLayer && layer.vectorStyle) {
                     setOLVectorLayerStyle(oll, layer.vectorStyle, layer.cluster);
+                }
+                if (layer.heatmap) {
+                    if (oll instanceof Heatmap) {
+                        oll.setBlur(layer.heatmap.blur);
+                        oll.setRadius(layer.heatmap.radius);
+                    }
                 }
             }
         }

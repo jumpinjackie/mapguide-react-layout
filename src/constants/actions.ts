@@ -101,5 +101,13 @@ export enum ActionType {
     /**
      * @since 0.13
      */
-    REMOVE_LAYER_BUSY_WORKER = 'Map/REMOVE_LAYER_BUSY_WORKER'
+    REMOVE_LAYER_BUSY_WORKER = 'Map/REMOVE_LAYER_BUSY_WORKER',
+    /**
+     * @since 0.14
+     */
+    SET_HEATMAP_LAYER_BLUR = 'Map/SET_HEATMAP_LAYER_BLUR',
+    /**
+     * @since 0.14
+     */
+    SET_HEATMAP_LAYER_RADIUS = 'Map/SET_HEATMAP_LAYER_RADIUS'
 }

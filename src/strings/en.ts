@@ -207,6 +207,8 @@ export const STRINGS_EN: ILocalizedMessages = {
     "NO_EXTERNAL_LAYERS": "No Layers",
     "NO_EXTERNAL_LAYERS_DESC": "Add layers via the {tabName} tab above",
     "LAYER_OPACITY": "Opacity",
+    "LAYER_HEATMAP_BLUR": "Heatmap Blur Size",
+    "LAYER_HEATMAP_RADIUS": "Heatmap Radius Size",
     "LAYER_NAME_EXISTS": "A layer named {name} already exists",
     "LAYER_MANAGER_TT_MOVE_UP": "Move this layer up the draw order",
     "LAYER_MANAGER_TT_MOVE_DOWN": "Move this layer down the draw order",

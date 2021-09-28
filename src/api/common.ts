@@ -21,7 +21,7 @@ import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
 import { ISubscriberProps } from '../containers/subscriber';
 import Geometry from 'ol/geom/Geometry';
-import { IBasicPointCircleStyle, IPointIconStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorLayerStyle, IClusterSettings, ClusterClickAction } from './ol-style-contracts';
+import { IBasicPointCircleStyle, IPointIconStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorLayerStyle, IClusterSettings, ClusterClickAction, IHeatmapSettings } from './ol-style-contracts';
 import { IToolbarAppState } from './registry/command';
 import { ClientSelectionSet } from "./contracts/common";
 
@@ -1098,6 +1098,11 @@ export interface ILayerInfo {
      * @since 0.14
      */
     cluster?: IClusterSettings;
+    /**
+     * Heatmap settings
+     * @since 0.14
+     */
+    heatmap?: IHeatmapSettings;
     /**
      * The busy worker count of this layer. If greater than 0, the layer
      * is considered to be in the process of loading

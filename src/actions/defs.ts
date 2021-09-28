@@ -749,6 +749,34 @@ export interface ISetLayerOpacityAction {
 }
 
 /**
+ * Sets the heatmap blur for the given external heatmap layer for the given map
+ * 
+ * @since 0.14
+ */
+export interface ISetHeatmapLayerBlurAction {
+    type: ActionType.SET_HEATMAP_LAYER_BLUR,
+    payload: {
+        mapName: string,
+        layerName: string,
+        blur: number
+    }
+}
+
+/**
+ * Sets the heatmap radius for the given external heatmap layer for the given map
+ * 
+ * @since 0.14
+ */
+export interface ISetHeatmapLayerRadiusAction {
+    type: ActionType.SET_HEATMAP_LAYER_RADIUS,
+    payload: {
+        mapName: string,
+        layerName: string,
+        radius: number
+    }
+}
+
+/**
  * Sets the visibility for the given external layer for the given map
  * 
  * @since 0.13
@@ -887,3 +915,5 @@ export type ViewerAction = IOpenFlyoutAction
     | IExternalLayersReadyAction //@since 0.14
     | IAddClientSelectedFeatureAction //@since 0.14
     | IClearClientSelectionAction //@since 0.14
+    | ISetHeatmapLayerBlurAction //@since 0.14
+    | ISetHeatmapLayerRadiusAction //@since 0.14

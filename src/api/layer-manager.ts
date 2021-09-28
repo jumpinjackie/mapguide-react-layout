@@ -15,7 +15,7 @@ import { tr } from './i18n';
 import { IParsedFeatures } from './layer-manager/parsed-features';
 import { LayerSetGroupBase } from './layer-set-group-base';
 import { IInitialExternalLayer } from '../actions/defs';
-import { IVectorLayerStyle, DEFAULT_VECTOR_LAYER_STYLE, IClusterSettings, ClusterClickAction, DEFAULT_CLUSTERED_LAYER_STYLE, IBasicVectorPointStyle, IBasicVectorPolygonStyle, IBasicVectorLineStyle, IVectorLabelSettings, ExprOr, IVectorFeatureStyle } from './ol-style-contracts';
+import { IVectorLayerStyle, DEFAULT_VECTOR_LAYER_STYLE, IClusterSettings, ClusterClickAction, DEFAULT_CLUSTERED_LAYER_STYLE, IBasicVectorPointStyle, IBasicVectorPolygonStyle, IBasicVectorLineStyle, IVectorLabelSettings, ExprOr, IVectorFeatureStyle, IHeatmapSettings } from './ol-style-contracts';
 import { OLStyleMapSet } from './ol-style-map-set';
 import { clusterSourceIfRequired } from '../components/external-layer-factory';
 import colorbrewer from "colorbrewer";
@@ -93,6 +93,7 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
     let vectorStyle: IVectorLayerStyle | undefined;
     let cs: IClusterSettings | undefined;
     let ext: LayerExtensions | undefined;
+    let hs: IHeatmapSettings | undefined;
     if (layer instanceof olImageLayer || layer instanceof olTileLayer) {
         const source = layer.getSource();
         if (layer.get(LayerProperty.HAS_WMS_LEGEND) == true && (source instanceof olWmsSource || source instanceof olTileWmsSource)) {
@@ -109,6 +110,12 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
             cs = vs.toClusterSettings();
         }
     }
+    if (layer instanceof olHeatmapLayer) {
+        hs = {
+            blur: layer.getBlur(),
+            radius: layer.getRadius()
+        };
+    }
     return {
         visible: layer.getVisible(),
         selectable: layer.get(LayerProperty.IS_SELECTABLE) == true,
@@ -121,6 +128,7 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
         extensions: ext,
         vectorStyle,
         cluster: cs,
+        heatmap: hs,
         busyWorkerCount: layer.get(LayerProperty.BUSY_WORKER_COUNT) ?? 0,
         metadata: layer.get(LayerProperty.LAYER_METADATA)
     }

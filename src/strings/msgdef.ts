@@ -216,6 +216,8 @@ export interface ILocalizedMessages {
     NO_EXTERNAL_LAYERS: string;
     NO_EXTERNAL_LAYERS_DESC: string;
     LAYER_OPACITY: string;
+    LAYER_HEATMAP_BLUR: string;
+    LAYER_HEATMAP_RADIUS: string;
     LAYER_NAME_EXISTS: string;
     LAYER_MANAGER_TT_MOVE_UP: string;
     LAYER_MANAGER_TT_MOVE_DOWN: string;

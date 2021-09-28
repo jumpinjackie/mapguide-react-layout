@@ -508,6 +508,28 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                 const state1 = setLayerAction(state, mapName, layerName, () => ({ opacity: opacity }));
                 return state1;
             }
+        case ActionType.SET_HEATMAP_LAYER_BLUR:
+            {
+                const { mapName, layerName, blur } = action.payload;
+                const state1 = setLayerAction(state, mapName, layerName, (layer) => ({
+                    heatmap: {
+                        ...(layer.heatmap ?? { blur: 15, radius: 5 }),
+                        blur
+                    }
+                }));
+                return state1;
+            }
+        case ActionType.SET_HEATMAP_LAYER_RADIUS:
+            {
+                const { mapName, layerName, radius } = action.payload;
+                const state1 = setLayerAction(state, mapName, layerName, (layer) => ({
+                    heatmap: {
+                        ...(layer.heatmap ?? { blur: 15, radius: 5 }),
+                        radius
+                    }
+                }));
+                return state1;
+            }
         case ActionType.SET_LAYER_INDEX:
             {
                 const { mapName, index, layerName } = action.payload;

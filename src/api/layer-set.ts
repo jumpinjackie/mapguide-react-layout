@@ -117,7 +117,10 @@ export enum MgLayerSetMode {
     OverviewMap
 }
 
-class MgLayerSetOL implements ILayerSetOL {
+/**
+ * @hidden
+ */
+export class MgLayerSetOL implements ILayerSetOL {
     constructor(public readonly mgTiledLayers: OLTileLayer[],
         public readonly externalBaseLayersGroup: LayerGroup | undefined,
         public readonly overlay: OLImageLayer,

@@ -4,7 +4,7 @@ import olMapGuideSource from "ol/source/ImageMapGuide";
 import olImageLayer from "ol/layer/Image";
 import { assertNever } from '../utils/never';
 import { LayerSetGroupBase } from './layer-set-group-base';
-import { IMgLayerSetProps, IMgLayerSetCallback, MgInnerLayerSetFactory, mockMapGuideImageLoadFunction, blankImageLoadFunction, MgLayerSetMode } from './layer-set';
+import { IMgLayerSetProps, IMgLayerSetCallback, MgInnerLayerSetFactory, mockMapGuideImageLoadFunction, blankImageLoadFunction, MgLayerSetMode, MgLayerSetOL } from './layer-set';
 import { MapGuideMockMode } from '../components/mapguide-debug-context';
 import { isRuntimeMap } from '../utils/type-guards';
 import { strIsNullOrEmpty } from '../utils/string';
@@ -60,6 +60,8 @@ export class MgLayerSetGroup extends LayerSetGroupBase {
     public tryGetSubjectLayer() {
         if (this.mainSet instanceof GenericLayerSetOL) {
             return this.mainSet.subjectLayer;
+        } else if (this.mainSet instanceof MgLayerSetOL) {
+            return this.mainSet.overlay;
         }
         return undefined;
     }

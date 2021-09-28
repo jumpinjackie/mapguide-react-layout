@@ -24,7 +24,7 @@ import { BLANK_GIF_DATA_URI } from '../../constants';
 import { isSessionExpiredError } from '../../api/error';
 import { BaseMapProviderContext, IMapProviderState, IViewerComponent, IMapProviderStateExtras, recursiveFindLayer } from './base';
 import { assertIsDefined } from '../../utils/assert';
-import { STR_EMPTY } from '../../utils/string';
+import { strIsNullOrEmpty, STR_EMPTY } from '../../utils/string';
 import { ensureParameters } from '../../utils/url';
 import { ActionType } from '../../constants/actions';
 import { buildSelectionXml, getActiveSelectedFeatureXml } from '../../api/builders/deArrayify';
@@ -671,11 +671,13 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             this.refreshOnStateChange(nextState.mapName, nextState.showGroups, nextState.showLayers, nextState.hideGroups, nextState.hideLayers);
         }
         //view
+        let bViewChanged = false;
         if (!areViewsCloseToEqual(nextState.view, this._state.view)) {
             const vw = nextState.view;
             if (vw != null && !bChangedView) {
                 const layerSet = this.ensureAndGetLayerSetGroup(nextState);
                 this.applyView(layerSet, vw);
+                bViewChanged = true;
             } else {
                 debug(`Skipping zoomToView as next/current views are close enough or target view is null`);
             }
@@ -710,14 +712,29 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             }
         }
         //activeSelectedFeatureXml
-        if (this._state.activeSelectedFeatureXml != nextState.activeSelectedFeatureXml) {
+        const bDiffSelectionXml = this._state.activeSelectedFeatureXml != nextState.activeSelectedFeatureXml;
+        const bRefreshActiveFeatureSelection = !strIsNullOrEmpty(nextState.activeSelectedFeatureXml) && bViewChanged;
+        if (bDiffSelectionXml || bRefreshActiveFeatureSelection) {
             if (this._map && nextState.map) {
                 const ms = this._map.getSize();
                 if (ms && isRuntimeMap(nextState.map)) {
-                    const view = this.getOLView();
-                    const me: any = view.calculateExtent(ms);
-                    const size = { w: ms[0], h: ms[1] };
-                    this.showSelectedFeature(me, size, nextState.map, nextState.activeSelectedFeatureColor, nextState.activeSelectedFeatureXml);
+                    const nmap = nextState.map;
+                    // We don't want to request for an updated feature selection while there are still rendering operations in progress
+                    // otherwise we may request a feature selection for a map whose internal view has been changed by the in-progress rendering
+                    // operation
+                    const checkReady = () => {
+                        if (this._busyWorkers == 0) {
+                            //console.log("Ready to request updated feature selection");
+                            const view = this.getOLView();
+                            const me: any = view.calculateExtent(ms);
+                            const size = { w: ms[0], h: ms[1] };
+                            this.showSelectedFeature(me, size, nmap, nextState.activeSelectedFeatureColor, nextState.activeSelectedFeatureXml);
+                        } else {
+                            //console.log("Still busy. Hold off on request for updated feature selection");
+                            window.setTimeout(checkReady, 100);
+                        }
+                    };
+                    checkReady();
                 }
             }
         }

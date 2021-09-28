@@ -1,6 +1,6 @@
 import * as React from "react";
 import { configureStore } from '../store/configure-store';
-import { App } from "../containers/app";
+import { AdHocLayoutTemplate, App } from "../containers/app";
 import { CONFIG_INITIAL_STATE } from '../reducers/config';
 import { registerRequestBuilder } from '../api/builders/factory';
 import { RequestBuilder, ICreateRuntimeMapOptions, IQueryMapFeaturesOptions, IDescribeRuntimeMapOptions } from '../api/request-builder';
@@ -79,7 +79,7 @@ class FakeMapAgent extends RequestBuilder {
 }
 
 export interface IFakeAppProps {
-    templateLayout?: () => React.ReactNode;
+    templateLayout?: AdHocLayoutTemplate;
     mgMockMode: MapGuideMockMode;
     children?: React.ReactNode;
 }

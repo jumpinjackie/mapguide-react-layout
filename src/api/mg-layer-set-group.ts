@@ -9,6 +9,12 @@ import { MapGuideMockMode } from '../components/mapguide-debug-context';
 import { isRuntimeMap } from '../utils/type-guards';
 import { strIsNullOrEmpty } from '../utils/string';
 import { MgError } from './error';
+import { GenericLayerSetOL } from './generic-layer-set';
+import ImageLayer from 'ol/layer/Image';
+import TileLayer from 'ol/layer/Tile';
+import TileWMS from 'ol/source/TileWMS';
+import ImageWMS from 'ol/source/ImageWMS';
+import LayerBase from "ol/layer/Base";
 
 export class MgLayerSetGroup extends LayerSetGroupBase {
     constructor(props: IMgLayerSetProps, callback: IMgLayerSetCallback) {
@@ -50,10 +56,26 @@ export class MgLayerSetGroup extends LayerSetGroupBase {
     }
     /**
      * @override
+     */
+    public tryGetSubjectLayer() {
+        if (this.mainSet instanceof GenericLayerSetOL) {
+            return this.mainSet.subjectLayer;
+        }
+        return undefined;
+    }
+    /**
+     * @override
      * @returns
      * @memberof MgLayerSetGroup
      */
-    public tryGetWmsSource() {
+    public tryGetWmsSource(): [LayerBase, (ImageWMS | TileWMS)] | undefined {
+        const subjectLayer = this.tryGetSubjectLayer();
+        if (subjectLayer instanceof ImageLayer || subjectLayer instanceof TileLayer) {
+            const source = subjectLayer.getSource();
+            if (source instanceof ImageWMS || source instanceof TileWMS) {
+                return [subjectLayer, source];
+            }
+        }
         return undefined;
     }
     public updateSelectionColor = (color: string) => this.mainSet.updateSelectionColor(color);

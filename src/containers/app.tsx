@@ -1,5 +1,5 @@
 import * as React from "react";
-import { getLayout } from "../api/registry/layout";
+import { getLayout, LayoutCapabilities } from "../api/registry/layout";
 import {
     IExternalBaseLayer,
     IBranchedMapSubState,
@@ -79,6 +79,14 @@ export interface IMapGuideAppProps {
 }
 
 /**
+ * Describes an ad-hoc layout template
+ */
+export type AdHocLayoutTemplate = {
+    factory: (() => React.ReactNode);
+    capabilities: LayoutCapabilities;
+}
+
+/**
  * App component properties
  *
  * @export
@@ -93,7 +101,11 @@ export interface IAppProps {
      * @since 0.14
      */
     initCommand: IViewerInitCommand;
-    layout: string | (() => React.ReactNode);
+    /**
+     * The layout to use
+     * @since 0.14 type changed to include AdHocLayoutTemplate
+     */
+    layout: string | AdHocLayoutTemplate;
     /**
      * A resource id to a Map Definition or Application Definition or a function that will fetch the required Application Definition. 
      * 
@@ -412,7 +424,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
                     title={tr("INIT", locale)}
                     description={tr("INIT_DESC", locale)} />;
             } else {
-                const layoutEl = typeof (layout) == 'function' ? layout : getLayout(layout);
+                const layoutEl = typeof (layout) == 'string' ? getLayout(layout) : layout.factory;
                 if (layoutEl) {
                     const providerImpl = {
                         allowHtmlValuesInSelection: () => this.allowHtmlValuesInSelection(),

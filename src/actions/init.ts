@@ -112,7 +112,7 @@ export interface IInitAppLayout {
     /**
      * @since 0.14
      */
-    layout: string | undefined;
+    layout?: string;
 }
 
 /**

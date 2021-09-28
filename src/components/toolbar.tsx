@@ -335,6 +335,9 @@ const ToolbarButton = (props: IToolbarButtonProps) => {
     } else {
         ttip = item.tooltip;
     }
+    if (!enabled) {
+        style.opacity = 0.2;
+    }
     const iconEl = getIconElement(item, enabled, height);
     return <div className={`noselect toolbar-btn ${selected ? "selected-item" : ""} ${(isMouseOver && enabled) ? "mouse-over" : ""}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} style={style} title={ttip} onClick={onClick}>
         {iconEl} {(vertical == true && hideVerticalLabels == true) ? null : item.label}

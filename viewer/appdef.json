@@ -469,24 +469,6 @@
                 },
                 {
                     "WidgetType": "UiWidgetType",
-                    "ImageUrl": "../../../widgets/GoogleStreetViewer/GoogleStreetView.png",
-                    "ImageClass": null,
-                    "Label": "Google StreetView",
-                    "Tooltip": "Click to show Google StreetView",
-                    "StatusText": null,
-                    "Disabled": false,
-                    "Name": "GoogleStreetViewer",
-                    "Type": "GoogleStreetViewer",
-                    "Location": null,
-                    "Extension": {
-                        "DirectionLength": "22",
-                        "ShowDirection": "true",
-                        "SymbolLayerName": "GoogleStreetViewerSymbolLayer",
-                        "Target": "TaskPane"
-                    }
-                },
-                {
-                    "WidgetType": "UiWidgetType",
                     "ImageUrl": "images/icons.png",
                     "ImageClass": "help",
                     "Label": "Help",

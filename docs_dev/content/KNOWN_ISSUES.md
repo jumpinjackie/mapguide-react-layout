@@ -14,6 +14,7 @@ Where applicable, an issue number is attached to indicate that such issues are a
    * Only a subset of the Fusion events are supported (only what's necessary to support the widgets converted to work in this viewer)
    * [Only a subset of the Fusion client-side API](https://jumpinjackie.github.io/mapguide-react-layout/apicompat.html) is supported
  * The following widgets are not supported (and there are no plans to port across) due to incompatible widget semantics or their limited usefulness in the context of this viewer:
+   * `GoogleStreetViewer`
    * `ColorPicker`
    * `ActivityIndicator`
    * `SaveMap` (QuickPlot supercedes this)

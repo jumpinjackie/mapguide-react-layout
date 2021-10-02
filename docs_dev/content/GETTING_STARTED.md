@@ -8,7 +8,7 @@ You can use `mapguide-react-layout` in 2 ways
 
 If you are serving a MapGuide application with this viewer, you can create an Application Definition using [MapGuide Maestro](https://github.com/jumpinjackie/mapguide-maestro).
 
-If you are serving a non-MapGuide application with this viewer (and have no MapGuide Server installation), you can create an Application Definition JSON document instead.
+If you are serving a non-MapGuide application with this viewer (and have no MapGuide Server installation), you can create an Application Definition JSON document instead. You can use the `ApplicationDefinition.schema.json` JSON schema provided with the viewer to assist in editing an Application Definition JSON document
 
 ### 2. Load your viewer
 

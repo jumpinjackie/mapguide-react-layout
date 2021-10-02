@@ -670,7 +670,7 @@ function deArrayifyMapGroup(json: any): MapSetGroup {
         for (const m of root.Map) {
             mapGroup.Map.push({
                 Type: getter(m, "Type", "string"),
-                SingleTile: getter(m, "SingleTile", "boolean"),
+                //SingleTile: getter(m, "SingleTile", "boolean"),
                 Extension: deArrayifyExtension(m.Extension)
             });
         }
@@ -735,7 +735,7 @@ function deArrayifyContainer(json: any[]): ContainerDefinition[] {
         containers.push({
             Name: getter(c, "Name", "string"),
             Type: getter(c, "Type", "string"),
-            Position: getter(c, "Position", "string"),
+            //Position: getter(c, "Position", "string"),
             Extension: deArrayifyExtension(c.Extension),
             Item: deArrayifyContainerItems(c.Item)
         });
@@ -762,11 +762,11 @@ function deArrayifyWidget(json: any): Widget {
         throw new MgError("Malformed input. Expected Widget element");
     }
     const getter = buildPropertyGetter<Widget & { "@xsi:type": string }>();
-    const w = {
+    const w: Widget = {
         WidgetType: getter(root, "@xsi:type", "string"),
         Name: getter(root, "Name", "string"),
         Type: getter(root, "Type", "string"),
-        Location: getter(root, "Location", "string"),
+        //Location: getter(root, "Location", "string"),
         Extension: deArrayifyExtension(root.Extension)
     };
     return w;
@@ -820,7 +820,7 @@ function deArrayifyUiWidget(json: any): UIWidget {
         throw new MgError("Malformed input. Expected Widget element");
     }
     const getter = buildPropertyGetter<UIWidget & { "@xsi:type": string }>();
-    const w = {
+    const w: UIWidget = {
         WidgetType: getter(root, "@xsi:type", "string"),
         ImageUrl: getter(root, "ImageUrl", "string"),
         ImageClass: getter(root, "ImageClass", "string"),
@@ -830,7 +830,7 @@ function deArrayifyUiWidget(json: any): UIWidget {
         Disabled: getter(root, "Disabled", "boolean"),
         Name: getter(root, "Name", "string"),
         Type: getter(root, "Type", "string"),
-        Location: getter(root, "Location", "string"),
+        //Location: getter(root, "Location", "string"),
         Extension: deArrayifyExtension(root.Extension)
     };
     return w;
@@ -842,12 +842,12 @@ function deArrayifyMapWidget(json: any): MapWidget {
         throw new MgError("Malformed input. Expected MapWidget element");
     }
     const getter = buildPropertyGetter<MapWidget & { "@xsi:type": string }>();
-    const mw = {
+    const mw: MapWidget = {
         WidgetType: getter(root, "@xsi:type", "string"),
         MapId: getter(root, "MapId", "string"),
         Name: getter(root, "Name", "string"),
         Type: getter(root, "Type", "string"),
-        Location: getter(root, "Location", "string"),
+        //Location: getter(root, "Location", "string"),
         Extension: deArrayifyExtension(root.Extension)
     };
     return mw;

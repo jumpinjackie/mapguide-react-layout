@@ -4,14 +4,18 @@ The `mapguide-react-layout` viewer employs the following layer structure (from t
 
 > TODO: A better visual diagram here would help
 
+ * (hidden from listing): Vector layer for measurement results
+ * (hidden from listing): Hover highlight layer for client-side vector layers
+ * (hidden from listing): Scratch vector layer for selected WMS features
  * External Layer Set
     * 0 or more external layers
  * Core Map Layer Set
-    * MapGuide 
-        * Active Selected Feature (if sub-selection is requested from Selection Panel)
-        * Selection Overlay (if features have been selected)
-        * Primary Map Overlay (Legend component toggles the layer/group visibility of this overlay)
-        * 0 or more tiled layer groups (if defined in Map Definition)
+    * MapGuide -or- Subject Layer
+        * If MapGuide
+            * Active Selected Feature (if sub-selection is requested from Selection Panel)
+            * Selection Overlay (if features have been selected)
+            * Primary Map Overlay (Legend component toggles the layer/group visibility of this overlay)
+             * 0 or more tiled layer groups (if defined in Map Definition)
     * External Base Layer
         * 1 of any of the following:
             * None

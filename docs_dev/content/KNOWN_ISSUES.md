@@ -16,10 +16,11 @@ Where applicable, an issue number is attached to indicate that such issues are a
  * The following widgets are not supported (and there are no plans to port across) due to incompatible widget semantics or their limited usefulness in the context of this viewer:
    * `ColorPicker`
    * `ActivityIndicator`
-   * `Print` (QuickPlot supercedes this)
    * `SaveMap` (QuickPlot supercedes this)
    * `LinkToView` (Replaced with `ShareLinkToView` component)
    * `SelectRadiusValue` (Replacement planned)
+   * `Scalebar`
+   * `ScalebarDual`
    * `PanQuery`
    * `PanOnClick`
  * Due to lack of Google Maps integration, the Google Street View widget is not supported if referenced in an Application Definition (and will not be ported across due to current technical and legal constraints)

@@ -21,6 +21,11 @@ function extend(extent1: Bounds, extent2: Bounds) {
     return extent1;
 }
 
+/**
+ * A layer of a {@link CompositeSelection}
+ * 
+ * @since 0.14
+ */
 export class CompositeSelectionLayer implements ICompositeSelectionLayer {
     private features: SelectedFeature[];
     constructor(private layer: SelectedLayer | ClientSelectionLayer) {
@@ -109,6 +114,11 @@ export class CompositeSelectionLayer implements ICompositeSelectionLayer {
     }
 }
 
+/**
+ * A composition of a MapGuide selection set and a client-side vector feature selection
+ * 
+ * @since 0.14
+ */
 export class CompositeSelection implements ICompositeSelection {
     private layers: CompositeSelectionLayer[];
     constructor(mgSelection?: SelectedFeatureSet, clientSelection?: ClientSelectionSet) {

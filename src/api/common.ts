@@ -30,9 +30,15 @@ export type GenericEvent = any;
 
 export type GenericEventHandler = (e: GenericEvent) => void;
 
+/**
+ * Defines a size
+ */
 export type Size = { w: number, h: number };
 
-export const BLANK_SIZE: Size = { w: 1, h: 1 };
+/**
+ * The default blank size
+ */
+export const BLANK_SIZE: Size = { w: 1, h: 1 } as const;
 
 /**
  * @deprecated Use UnitOfMeasure enum instead
@@ -466,6 +472,9 @@ export enum RefreshMode {
     SelectionOnly = 2
 }
 
+/**
+ * The spatial operator to use for selection operations
+ */
 export type SelectionVariant = "INTERSECTS" | "TOUCHES" | "WITHIN" | "ENVELOPEINTERSECTS";
 
 /**
@@ -1449,8 +1458,14 @@ export interface IModalReducerState {
 }
 */
 
+/**
+ * A set of layer transpareny values by layer name
+ */
 export type LayerTransparencySet = { [layerName: string]: number };
 
+/**
+ * Selection key of an active selected feature
+ */
 export interface ActiveSelectedFeature {
     /**
      * The selected layer id
@@ -1835,9 +1850,19 @@ export interface ITemplateReducerState {
  */
 export type TemplateReducerFunction = (origState: ITemplateReducerState, currentState: ITemplateReducerState, action: ViewerAction) => ITemplateReducerState;
 
+/**
+ * Keyboard code for ESCAPE
+ */
 export const KC_ESCAPE = 27;
+
+/**
+ * Keyboard code for the letter U
+ */
 export const KC_U = 85;
 
+/**
+ * The positioning of the map load indicator
+ */
 export type MapLoadIndicatorPositioning = "top" | "bottom";
 
 /**
@@ -2620,17 +2645,59 @@ export enum MgBuiltInLayers {
     ActiveFeatureSelectionOverlay = "MapGuide Active Feature Selection Overlay"
 }
 
+/**
+ * A layer of a {@link ICompositeSelection}
+ * 
+ * @since 0.14
+ */
 export interface ICompositeSelectionLayer {
+    /**
+     * The id of this selection layer
+     */
     getLayerId(): string | undefined;
+    /**
+     * The name of this layer
+     */
     getName(): string;
+    /**
+     * The metadata of this layer
+     */
     getLayerMetadata(): LayerMetadata | undefined;
+    /**
+     * Gets the feature at the given index
+     */
     getFeatureAt(featureIndex: number): SelectedFeature;
+    /**
+     * Gets the total number of features in this layer
+     */
     getFeatureCount(): number;
 }
 
+/**
+ * A composition of a MapGuide selection set and a client-side vector feature selection
+ * 
+ * @since 0.14
+ */
 export interface ICompositeSelection {
+    /**
+     * Gets the number of layers in this selection set
+     */
     getLayerCount(): number;
+    /**
+     * Gets the array of layers in this selection set
+     */
     getLayers(): ICompositeSelectionLayer[];
+    /**
+     * Gets the layer at the specified index
+     * 
+     * @param layerIndex The selection layer index
+     */
     getLayerAt(layerIndex: number): ICompositeSelectionLayer | undefined;
+    /**
+     * Gets the feature for the given layer at the specified indices
+     * 
+     * @param layerIndex The selection layer index
+     * @param featureIndex The feature index
+     */
     getFeatureAt(layerIndex: number, featureIndex: number): SelectedFeature | undefined;
 }

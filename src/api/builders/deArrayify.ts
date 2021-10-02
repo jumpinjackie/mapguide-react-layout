@@ -1007,6 +1007,8 @@ function deArrayifyTileSetDefinition(json: any): TileSetDefinition {
 }
 
 /**
+ * Indicates if the de-arrayified result is a {@link WebLayout}
+ * 
  * @since 0.14
  */
 export function isWebLayout(arg: DeArrayifiedResult): arg is WebLayout {
@@ -1016,6 +1018,8 @@ export function isWebLayout(arg: DeArrayifiedResult): arg is WebLayout {
 }
 
 /**
+ * Indicates if the de-arrayified result is an {@link ApplicationDefinition}
+ * 
  * @since 0.14
  */
 export function isAppDef(arg: DeArrayifiedResult): arg is ApplicationDefinition {
@@ -1023,6 +1027,8 @@ export function isAppDef(arg: DeArrayifiedResult): arg is ApplicationDefinition 
 }
 
 /**
+ * Indicates if the de-arrayified result is a {@link MapDefinition}
+ * 
  * @since 0.14
  */
 export function isMapDef(arg: DeArrayifiedResult): arg is MapDefinition {
@@ -1034,6 +1040,8 @@ export function isMapDef(arg: DeArrayifiedResult): arg is MapDefinition {
 }
 
 /**
+ * Indicates if the de-arrayified result is a {@link TileSetDefinition}
+ * 
  * @since 0.14
  */
 export function isTileSet(arg: DeArrayifiedResult): arg is TileSetDefinition {
@@ -1043,6 +1051,8 @@ export function isTileSet(arg: DeArrayifiedResult): arg is TileSetDefinition {
 }
 
 /**
+ * Indicates if the de-arrayified result is a {@link SiteVersionResponse}
+ * 
  * @since 0.14
  */
 export function isSiteVersion(arg: DeArrayifiedResult): arg is SiteVersionResponse {
@@ -1050,6 +1060,8 @@ export function isSiteVersion(arg: DeArrayifiedResult): arg is SiteVersionRespon
 }
 
 /**
+ * Indicates if the de-arrayified result is a {@link QueryMapFeaturesResponse}
+ * 
  * @since 0.14
  */
 export function isQueryMapFeaturesResponse(arg: DeArrayifiedResult): arg is QueryMapFeaturesResponse {
@@ -1139,6 +1151,7 @@ export function buildSelectionXml(selection: FeatureSet | undefined, layerIds?: 
 
 /**
  * Can only be used for a v4.0.0 or higher QUERYMAPFEATURES request
+ * 
  * @param selection Current selection set
  * @param feat The active selected feature
  */

@@ -122,12 +122,33 @@ export interface IGenericSubjectMapLayerMetadata {
  * @since 0.14
  */
 export enum GenericSubjectLayerType {
+    /**
+     * A tiled WMS layer
+     */
     TileWMS = "TileWMS",
+    /**
+     * A vector layer based on an external CSV file
+     */
     CSV = "CSV",
+    /**
+     * A vector layer based on an external KML file
+     */
     KML = "KML",
+    /**
+     * A vector layer based on an external GeoJSON file
+     */
     GeoJSON = "GeoJSON",
+    /**
+     * A vector layer based on an inline GeoJSON fragment
+     */
     GeoJSON_Inline = "GeoJSON_Inline",
+    /**
+     * A vector layer based on a custom-defined format whose driver was registered with {@link ExternalLayerFactoryRegistry.registerExternalVectorLayerCreator}
+     */
     CustomVector = "CustomVector",
+    /**
+     * A vector layer based on a Mapbox Vector Tile set
+     */
     MVT = "MVT"
 }
 

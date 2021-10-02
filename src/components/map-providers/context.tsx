@@ -7,12 +7,14 @@ const MapProviderContext = React.createContext<IMapProviderContext>({} as any);
 
 /**
  * Wraps the provider component of react-redux
+ * 
  * @since 0.14
  */
 export const ReduxProvider: React.FC<{ store: ReduxStoreImpl }> = ({ store, children }) => <Provider store={store}>{children}</Provider>
 
 /**
  * Wraps useDispatch from react-redux
+ * 
  * @since 0.14
  */
 export function useReduxDispatch() {
@@ -21,6 +23,7 @@ export function useReduxDispatch() {
 
 /**
  * Fetches the requested sub-section of the application state
+ * 
  * @since 0.14
  */
 export function useAppState<TState>(selector: (state: IApplicationState) => TState, equalityFn?: (left: TState, right: TState) => boolean) {
@@ -37,6 +40,8 @@ export const MapProviderContextProvider: React.FC<{ value: IMapProviderContext }
 }
 
 /**
+ * Obtains the current map provider context, which provides imperative access to the current map
+ * 
  * @since 0.14
  */
 export function useMapProviderContext() {

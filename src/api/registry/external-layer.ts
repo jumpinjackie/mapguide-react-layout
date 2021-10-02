@@ -9,6 +9,9 @@ import { Dictionary } from '../common';
  */
 export type ExternalLayerCreator = (data: any, meta: IGenericSubjectMapLayerMetadata | undefined, layerOptions: any, appSettings: Dictionary<string>) => BaseLayer;
 
+/**
+ * Defines a registry of custom vector layer source drivers
+ */
 export class ExternalLayerFactoryRegistry {
 
     private static _instance: ExternalLayerFactoryRegistry = new ExternalLayerFactoryRegistry();

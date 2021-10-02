@@ -80,6 +80,8 @@ export interface IMapGuideAppProps {
 
 /**
  * Describes an ad-hoc layout template
+ * 
+ * @since 0.14
  */
 export type AdHocLayoutTemplate = {
     factory: (() => React.ReactNode);

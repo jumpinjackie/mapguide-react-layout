@@ -60,6 +60,7 @@ export function isReady(): boolean {
  *
  * @export
  * @returns {IMapViewer}
+ * @deprecated You should be using the map provider context accessed via the {@link useMapProviderContext} hook where possible
  */
 export function getViewer(): IMapViewer | undefined {
     return _viewer;

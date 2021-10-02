@@ -3,181 +3,30 @@
     "MapSet": {
         "MapGroup": [
             {
-                "@id": "Australia",
+                "@id": "World",
                 "Map": [
                     {
                         "Type": "SubjectLayer",
                         "Extension": {
                             "source_type": "GeoJSON_Inline",
                             "source_param_attributions": [],
-                            "meta_extents": [113.34, -43.63, 153.57, -10.67],
+                            "meta_extents": [-180, -90, 180, 90],
                             "meta_projection": "EPSG:4326",
-                            "is_selectable": false,
-                            "vector_layer_style": {
-                                "default": {
-                                    "point": {
-                                        "type": "Circle",
-                                        "fill": {
-                                            "color": "#ff0000",
-                                            "alpha": 255
-                                        },
-                                        "radius": 5,
-                                        "stroke": {
-                                            "color": "#0000ff",
-                                            "alpha": 255,
-                                            "width": 1
-                                        }
-                                    },
-                                    "line": {
-                                        "color": "#0000ff",
-                                        "alpha": 255,
-                                        "width": 1
-                                    },
-                                    "polygon": {
-                                        "fill": {
-                                            "color": "rgba(44,97,190,1)",
-                                            "alpha": 15
-                                        },
-                                        "stroke": {
-                                            "color": "rgba(13,21,166,1)",
-                                            "width": 4,
-                                            "alpha": 255
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    {
-                        "Type": "External",
-                        "Extension": {
-                            "layer_name": "SA1 2011 Boundaries",
-                            "layer_description": "ABS Statistical Area Level 1 (SA1) Boundaries (2011)",
-                            "source_type": "TileWMS",
-                            "source_param_url": "http://geoserver.nationalmap.nicta.com.au/admin_bnds_abs/ows",
-                            "source_param_params": {
-                                "LAYERS": "admin_bnds:SA1_2011_AUST",
-                                "TILED": true
-                            },
-                            "source_param_attributions": [
-                                "(c) <a target='_blank' href='https://abs.gov.au'>Australian Bureau Of Statistics</a>"
-                            ],
-                            "meta_extents": [96.816941408, -43.74050960205765, 159.109219008, -9.142175976703609],
-                            "meta_projection": "EPSG:4326",
-                            "initially_visible": false,
-                            "popup_template": {
-                                "title": "SA1 Boundary",
-                                "propertyMappings": [
-                                    { "name": "SA1_7DIG11", "value": "Code (7-digit)" }
-                                ],
-                                "linkProperty": {
-                                    "name": {
-                                        "expression": "https://quickstats.censusdata.abs.gov.au/census_services/getproduct/census/2011/quickstat/{SA1_7DIG11}",
-                                        "placeholderBegin": "{",
-                                        "placeholderEnd": "}"
-                                    },
-                                    "label": "Click here to view the SA1 details in ABS quickstat",
-                                    "linkTarget": "_blank"
-                                }
-                            }
-                        }
-                    },
-                    {
-                        "Type": "External",
-                        "Extension": {
-                            "layer_name": "e91f4c30-d64a-4734-b1af-6afe310d0278",
-                            "display_name": "Digital Hubs",
-                            "source_type": "KML",
-                            "source_param_url": "https://data.gov.au/storage/f/2013-08-12T02%3A04%3A22.954Z/digital-hubs-external.kml",
-                            "layer_opt_declutter": true,
-                            "meta_projection": "EPSG:4326",
-                            "initially_visible": false,
-                            "popup_template": {
-                                "title": "Selected Digital Hub",
-                                "propertyMappings": [
-                                    { "name": "NAME", "value": "Name"},
-                                    { "name": "STREET", "value": "Street"},
-                                    { "name": "SUBURB", "value": "Suburb"},
-                                    { "name": "STATE", "value": "State"},
-                                    { "name": "POSTCODE", "value": "Postcode"}
-                                ],
-                                "linkProperty": {
-                                    "name": "INFO_LINK",
-                                    "label": "Click to open hub link in a new window",
-                                    "linkTarget": "_blank"
-                                }
-                            }
-                        }
-                    },
-                    {
-                        "Type": "OpenStreetMap",
-                        "SingleTile": true,
-                        "Extension": {
-                            "Options": {
-                                "name": [
-                                    "Open Street Map"
-                                ],
-                                "type": [
-                                    "Mapnik"
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        "Type": "Stamen",
-                        "SingleTile": true,
-                        "Extension": {
-                            "Options": {
-                                "name": [
-                                    "Stamen (Toner)"
-                                ],
-                                "type": [
-                                    "toner"
-                                ]
-                            }
-                        }
-                    }
-                ]
-            },
-            {
-                "@id": "United States",
-                "Map": [
-                    {
-                        "Type": "SubjectLayer",
-                        "Extension": {
-                            "source_type": "GeoJSON_Inline",
-                            "__meta_extents": [-127.001953, 23.241346, -59.853516, 49.781264],
-                            "__meta_projection": "EPSG:4326",
-                            "meta_extents": [-14088873.053524, 3209132.195525, -7161843.802208, 6408480.451429],
-                            "meta_projection": "EPSG:3857",
                             "is_selectable": false
                         }
                     },
                     {
-                        "Type": "External",
+                        "Type": "OpenStreetMap",
+                        "SingleTile": true,
                         "Extension": {
-                            "layer_name": "US Wetlands",
-                            "source_type": "TileWMS",
-                            "source_param_url": "https://www.fws.gov/wetlands/arcgis/services/Wetlands_Raster/ImageServer/WMSServer",
-                            "source_param_params": {
-                                "LAYERS": "0",
-                                "TILED": true
-                            },
-                            "meta_extents": [-87.76, 43.69, -87.69, 43.79],
-                            "meta_projection": "EPSG:4326",
-                            "initially_visible": false
-                        }
-                    },
-                    {
-                        "Type": "External",
-                        "Extension": {
-                            "layer_name": "Buildings of Cambridge, MA",
-                            "source_type": "GeoJSON",
-                            "source_param_url": "https://raw.githubusercontent.com/cambridgegis/cambridgegis_data_basemap/master/Buildings/BASEMAP_Buildings.geojson",
-                            "meta_projection": "EPSG:4326",
-                            "meta_geojson_as_vt": true,
-                            "initially_visible": false,
-                            "__comments": "This will cause the layer to be loaded as vector tiles"
+                            "Options": {
+                                "name": [
+                                    "Open Street Map"
+                                ],
+                                "type": [
+                                    "Mapnik"
+                                ]
+                            }
                         }
                     },
                     {
@@ -190,20 +39,6 @@
                                 ],
                                 "type": [
                                     "toner"
-                                ]
-                            }
-                        }
-                    },
-                    {
-                        "Type": "OpenStreetMap",
-                        "SingleTile": true,
-                        "Extension": {
-                            "Options": {
-                                "name": [
-                                    "Open Street Map"
-                                ],
-                                "type": [
-                                    "Mapnik"
                                 ]
                             }
                         }

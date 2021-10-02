@@ -466,7 +466,14 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
     private async sessionAcquiredAsync(session: AsyncLazy<string>, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
         const { resourceId, locale } = this.options;
         if (!resourceId) {
-            throw new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", locale));
+            //Try assumed default location of appdef.json that we are assuming sits in the same place as the viewer html files
+            const cl = new Client("", "mapagent");
+            try {
+                const fl = await cl.get<ApplicationDefinition>("appdef.json");
+                return await this.initFromAppDefAsync(fl, session, sessionWasReused);
+            } catch (e) { //The appdef.json doesn't exist at the assumed default location?
+                throw new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", locale));
+            }
         } else {
             if (typeof (resourceId) == 'string') {
                 if (strEndsWith(resourceId, "WebLayout")) {

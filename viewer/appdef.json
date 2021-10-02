@@ -256,9 +256,6 @@
                         {
                             "Function": "Flyout",
                             "Label": "View",
-                            "Tooltip": null,
-                            "ImageUrl": null,
-                            "ImageClass": null,
                             "Item": [
                                 {
                                     "Function": "Widget",
@@ -281,9 +278,6 @@
                         {
                             "Function": "Flyout",
                             "Label": "Viewer API",
-                            "Tooltip": null,
-                            "ImageUrl": null,
-                            "ImageClass": null,
                             "Item": [
                                 {
                                     "Function": "Widget",
@@ -302,9 +296,6 @@
                         {
                             "Function": "Flyout",
                             "Label": "Tools",
-                            "Tooltip": null,
-                            "ImageUrl": null,
-                            "ImageClass": null,
                             "Item": [
                                 {
                                     "Function": "Widget",
@@ -388,7 +379,6 @@
                     }
                 },
                 {
-                    "WidgetType": null,
                     "Name": "ActivityIndicator",
                     "Type": "ActivityIndicator",
                     "Location": null,
@@ -435,19 +425,6 @@
                 },
                 {
                     "WidgetType": "UiWidgetType",
-                    "ImageUrl": null,
-                    "ImageClass": null,
-                    "Label": "Color picker",
-                    "Tooltip": "Use this tool to select a color",
-                    "StatusText": null,
-                    "Disabled": false,
-                    "Name": "ColorPicker",
-                    "Type": "ColorPicker",
-                    "Location": null,
-                    "Extension": {}
-                },
-                {
-                    "WidgetType": "UiWidgetType",
                     "ImageUrl": "images/icons.png",
                     "ImageClass": "coordinate-tracker",
                     "Label": "Coordinate Tracker",
@@ -466,7 +443,6 @@
                     }
                 },
                 {
-                    "WidgetType": null,
                     "Name": "EditableScale",
                     "Type": "EditableScale",
                     "Location": null,
@@ -541,7 +517,6 @@
                     }
                 },
                 {
-                    "WidgetType": null,
                     "Name": "Legend",
                     "Type": "Legend",
                     "Location": null,
@@ -559,13 +534,6 @@
                     }
                 },
                 {
-                    "WidgetType": null,
-                    "Name": "LinkToView",
-                    "Type": "LinkToView",
-                    "Location": null,
-                    "Extension": null
-                },
-                {
                     "WidgetType": "UiWidgetType",
                     "ImageUrl": "images/icons.png",
                     "ImageClass": "legend-map",
@@ -579,14 +547,12 @@
                     "Extension": {}
                 },
                 {
-                    "WidgetType": null,
                     "Name": "Navigator",
                     "Type": "Navigator",
                     "Location": null,
                     "Extension": null
                 },
                 {
-                    "WidgetType": null,
                     "Name": "OverviewMap",
                     "Type": "OverviewMap",
                     "Location": null,
@@ -607,39 +573,6 @@
                     "Type": "Pan",
                     "Location": null,
                     "Extension": null
-                },
-                {
-                    "WidgetType": "UiWidgetType",
-                    "ImageUrl": null,
-                    "ImageClass": null,
-                    "Label": null,
-                    "Tooltip": null,
-                    "StatusText": null,
-                    "Disabled": false,
-                    "Name": "PanOnClick",
-                    "Type": "PanOnClick",
-                    "Location": null,
-                    "Extension": {
-                        "Direction": "none",
-                        "Percentage": "75"
-                    }
-                },
-                {
-                    "WidgetType": "UiWidgetType",
-                    "ImageUrl": "images/icons.png",
-                    "ImageClass": "pan",
-                    "Label": "Pan query",
-                    "Tooltip": "Drag the mouse to pan, click to query",
-                    "StatusText": null,
-                    "Disabled": false,
-                    "Name": "PanQuery",
-                    "Type": "PanQuery",
-                    "Location": null,
-                    "Extension": {
-                        "QueryActiveLayer": "false",
-                        "SelectionType": "INTERSECTS",
-                        "Tolerance": "3"
-                    }
                 },
                 {
                     "WidgetType": "UiWidgetType",
@@ -675,51 +608,6 @@
                 {
                     "WidgetType": "UiWidgetType",
                     "ImageUrl": "images/icons.png",
-                    "ImageClass": "file-save",
-                    "Label": "Save map",
-                    "Tooltip": "Click to save the map as an image",
-                    "StatusText": null,
-                    "Disabled": false,
-                    "Name": "SaveMap",
-                    "Type": "SaveMap",
-                    "Location": null,
-                    "Extension": {
-                        "Format": "png"
-                    }
-                },
-                {
-                    "WidgetType": null,
-                    "Name": "Scalebar",
-                    "Type": "Scalebar",
-                    "Location": null,
-                    "Extension": {
-                        "AbbreviateLabel": "true",
-                        "DisplaySystem": "metric",
-                        "Divisions": "2",
-                        "MaxWidth": "200",
-                        "MinWidth": "100",
-                        "ShowMinorMeasures": "true",
-                        "SingleLine": "false",
-                        "Style": "thin",
-                        "SubDivisions": "2"
-                    }
-                },
-                {
-                    "WidgetType": null,
-                    "Name": "ScalebarDual",
-                    "Type": "ScalebarDual",
-                    "Location": null,
-                    "Extension": {
-                        "BottomInUnits": "m",
-                        "BottomOutUnits": "km",
-                        "MaxWidth": "300",
-                        "TopInUnits": "ft",
-                        "TopOutUnits": "mi"
-                    }
-                },
-                {
-                    "WidgetType": "UiWidgetType",
-                    "ImageUrl": "images/icons.png",
                     "ImageClass": "select",
                     "Label": "Select",
                     "Tooltip": "Click to select features",
@@ -748,7 +636,6 @@
                     "Extension": null
                 },
                 {
-                    "WidgetType": null,
                     "Name": "SelectionPanel",
                     "Type": "SelectionPanel",
                     "Location": null,
@@ -824,7 +711,6 @@
                     }
                 },
                 {
-                    "WidgetType": null,
                     "Name": "TaskPane",
                     "Type": "TaskPane",
                     "Location": null,
@@ -1035,7 +921,6 @@
                     }
                 },
                 {
-                    "WidgetType": null,
                     "Name": "statusCoordinates",
                     "Type": "CursorPosition",
                     "Location": null,
@@ -1047,7 +932,6 @@
                     }
                 },
                 {
-                    "WidgetType": null,
                     "Name": "statusSelection",
                     "Type": "SelectionInfo",
                     "Location": null,
@@ -1057,7 +941,6 @@
                     }
                 },
                 {
-                    "WidgetType": null,
                     "Name": "statusViewSize",
                     "Type": "ViewSize",
                     "Location": null,

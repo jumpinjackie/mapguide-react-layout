@@ -81,7 +81,7 @@ function fixChildItems(childItems: any[], state: IToolbarAppState, commandInvoke
 /**
  * @hidden
  */
-export function mapToolbarReference(tb: any, state: IToolbarAppState, commandInvoker: (cmd: ICommand, parameters?: any) => void): IItem|IInlineMenu|IFlyoutMenu|IComponentFlyoutItem|null {
+export function mapToolbarReference(tb: any, state: IToolbarAppState, commandInvoker: (cmd: ICommand, parameters?: any) => void): IItem | IInlineMenu | IFlyoutMenu | IComponentFlyoutItem | null {
     if (tb.error) {
         const cmdItem: IItem = {
             iconClass: SPRITE_ICON_ERROR,
@@ -443,11 +443,9 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
                 const state = getState();
                 const config = state.config;
                 const map = getRuntimeMap(state);
-                if (map) {
-                    const params = mergeInvokeUrlParameters(cmdDef.parameters, parameters);
-                    const url = ensureParameters(cmdDef.url, map.Name, map.SessionId, config.locale, true, params);
-                    openUrlInTarget(name, cmdDef, config.capabilities.hasTaskPane, dispatch, url, cmd.title);
-                }
+                const params = mergeInvokeUrlParameters(cmdDef.parameters, parameters);
+                const url = ensureParameters(cmdDef.url, map?.Name, map?.SessionId, config.locale, true, params);
+                openUrlInTarget(name, cmdDef, config.capabilities.hasTaskPane, dispatch, url, cmd.title);
             }
         };
     } else if (isSearchCommand(cmdDef)) {

@@ -94,22 +94,9 @@ const LEGEND_DIALOG_HEIGHT = 400;
 const TASK_DIALOG_HEIGHT = 500;
 const STATUS_BAR_HEIGHT = 18;
 
-export interface IAquaTemplateLayoutState {
-    map: RuntimeMap;
-    config: IConfigurationReducerState;
-    capabilities: IViewerCapabilities;
-    lastAction: any;
-    showTaskPane: boolean;
-    showSelection: boolean;
-    showLegend: boolean;
-}
-
-export interface IAquaTemplateDispatch {
-    hideTaskPane: () => void;
-    hideLegend: () => void;
-    hideSelection: () => void;
-}
-
+/**
+ * A viewer template that resembles the Aqua Fusion template
+ */
 export const AquaTemplateLayout = () => {
     const {
         locale,

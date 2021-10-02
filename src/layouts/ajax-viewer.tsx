@@ -12,6 +12,9 @@ import { useCommonTemplateState } from './hooks';
 import { useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
 import { WEBLAYOUT_TOOLBAR } from '../constants';
 
+/**
+ * A viewer template that resembles the MapGuide AJAX viewer
+ */
 export const AjaxViewerLayout = () => {
     const {
         isResizing,

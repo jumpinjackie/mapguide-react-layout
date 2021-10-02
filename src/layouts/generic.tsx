@@ -63,6 +63,11 @@ const MapToolbar: React.FC<MapToolbarProps> = (props) => {
     </>
 }
 
+/**
+ * A viewer template geared towards general purpose display of maps
+ * 
+ * @since 0.14
+ */
 export const GenericLayout = () => {
     const [isLayerManagerOpen, setIsLayerManagerOpen] = React.useState(false);
     const [isLegendOpen, setIsLegendOpen] = React.useState(false);

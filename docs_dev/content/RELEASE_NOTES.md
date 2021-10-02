@@ -42,6 +42,7 @@
      * [#1197](https://github.com/jumpinjackie/mapguide-react-layout/issues/1197): Support for attributions
  * The `resource` query string parameter can now refer to either a MapGuide WebLayout/ApplicaitonDefinition resource ID or a URL to an Application Definition JSON document
      * If this parameter is not specified, the viewer will now try to load from an Application Definition JSON document named `appdef.json` at the same root as the viewer html files
+ * [#543](https://github.com/jumpinjackie/mapguide-react-layout/issues/543): When zooming in or out, if an active feature highlight is shown, it will now properly refresh
 
 ## Breaking changes:
 

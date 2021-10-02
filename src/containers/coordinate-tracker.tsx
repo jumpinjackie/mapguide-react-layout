@@ -28,7 +28,7 @@ export const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerPro
 
                     }
                 }
-                return <Card style={{ marginBottom: 10 }}>
+                return <Card key={p} style={{ marginBottom: 10 }}>
                     <h5 className="bp3-heading"><a href="#">{p}</a></h5>
                     <p><strong>X:</strong> {x}</p>
                     <p><strong>Y:</strong> {y}</p>

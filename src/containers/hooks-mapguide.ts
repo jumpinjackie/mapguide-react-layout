@@ -21,8 +21,11 @@ export function useActiveMapProjection() {
         let proj;
         if (state.config.activeMapName) {
             const map = state.mapState[state.config.activeMapName].mapguide?.runtimeMap;
+            const subject = state.mapState[state.config.activeMapName].generic?.subject;
             if (map) {
                 proj = `EPSG:${map.CoordinateSystem.EpsgCode}`;
+            } else if (subject) {
+                proj = subject.meta?.projection;
             }
         }
         return proj;

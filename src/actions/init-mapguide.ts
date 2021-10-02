@@ -14,7 +14,7 @@ import { register } from 'ol/proj/proj4';
 import proj4 from "proj4";
 import { buildSubjectLayerDefn, getMapDefinitionsFromFlexLayout, isStateless, MapToLoad, ViewerInitCommand } from './init-command';
 import { WebLayout } from '../api/contracts/weblayout';
-import { convertWebLayoutUIItems, parseCommandsInWebLayout, ToolbarConf } from '../api/registry/command-spec';
+import { convertWebLayoutUIItems, parseCommandsInWebLayout, prepareSubMenus, ToolbarConf } from '../api/registry/command-spec';
 import { clearSessionStore, retrieveSelectionSetFromLocalStorage } from '../api/session-store';
 import * as shortid from 'shortid';
 import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU, WEBLAYOUT_TOOLBAR } from "../constants";
@@ -132,7 +132,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             items: contextMenu
         };
 
-        const tb = this.prepareSubMenus(menus)[0];
+        const tb = prepareSubMenus(menus)[0];
         return {
             activeMapName: firstMapName,
             featureTooltipsEnabled: featureTooltipsEnabled,

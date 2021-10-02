@@ -10,6 +10,7 @@ import { warn } from '../../utils/logger';
 import { UIItem, CommandDef, isCommandItem, isTargetedCommand, isBasicCommand, isSeparatorItem, isFlyoutItem, WebLayout, isInvokeURLCommand, isSearchCommand } from '../contracts/weblayout';
 import { isStateless } from '../../actions/init-command';
 import { SPRITE_INVOKE_SCRIPT, SPRITE_INVOKE_URL } from '../../constants/assets';
+import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU } from '../../constants';
 
 function isCommandSpec(cmd: ICommandSpec | IUnknownCommandSpec): cmd is ICommandSpec {
     return !strIsNullOrEmpty((cmd as any).command);
@@ -20,14 +21,14 @@ export function isUIWidget(widget: any): widget is UIWidget {
 }
 
 /**
- * @hidden
+ *
  */
 export interface ToolbarConf {
     items: (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[];
 }
 
 /**
- * @hidden
+ *
  */
 export interface PreparedSubMenuSet {
     toolbars: Dictionary<ToolbarConf>;
@@ -42,7 +43,7 @@ export function isFlyoutSpec(item: any): item is IFlyoutSpec {
 }
 
 /**
- * @hidden
+ *
  */
 export interface IFlyoutSpec {
     label?: string;
@@ -53,21 +54,21 @@ export interface IFlyoutSpec {
 }
 
 /**
- * @hidden
+ *
  */
 export interface ISeparatorSpec {
     isSeparator: boolean;
 }
 
 /**
- * @hidden
+ *
  */
 export interface IUnknownCommandSpec {
     error: string;
 }
 
 /**
- * @hidden
+ *
  */
 export interface ICommandSpec {
     icon: string;
@@ -84,10 +85,7 @@ function makeCommand(widget: UIWidget, noToolbarLabels: boolean, cmdType: Defaul
     return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: cmdType, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
 }
 
-/**
- * @hidden
- */
-export function convertWidget(widget: UIWidget, locale: string, noToolbarLabels: boolean): ICommandSpec | IUnknownCommandSpec {
+function convertWidget(widget: UIWidget, locale: string, noToolbarLabels: boolean): ICommandSpec | IUnknownCommandSpec {
     switch (widget.Type) {
         case "Select":
             return makeCommand(widget, noToolbarLabels, DefaultCommands.Select);
@@ -178,6 +176,16 @@ export function convertWidget(widget: UIWidget, locale: string, noToolbarLabels:
     }
 }
 
+/**
+ * @hidden
+ * 
+ * @param isStateless 
+ * @param items 
+ * @param widgetsByKey 
+ * @param locale 
+ * @param noToolbarLabels 
+ * @returns 
+ */
 export function convertFlexLayoutUIItems(isStateless: boolean, items: ContainerItem[], widgetsByKey: Dictionary<Widget>, locale: string, noToolbarLabels = false): (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[] {
     const converted = items.map(item => {
         switch (item.Function) {
@@ -221,6 +229,15 @@ function tryTranslateImageUrlToSpriteClass(imageUrl: string): string | undefined
     }
 }
 
+/**
+ * @hidden
+ * 
+ * @param items 
+ * @param cmdsByKey 
+ * @param locale 
+ * @param noToolbarLabels 
+ * @returns 
+ */
 export function convertWebLayoutUIItems(items: UIItem[] | undefined, cmdsByKey: Dictionary<CommandDef>, locale: string, noToolbarLabels = true): (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[] {
     const converted = (items || []).map(item => {
         if (isCommandItem(item)) {
@@ -426,4 +443,54 @@ export function parseCommandsInWebLayout(webLayout: WebLayout, cmdRegister: Comm
         cmdsByKey[cmd.Name] = cmd;
     }
     return cmdsByKey;
+}
+
+/**
+ * @hidden
+ * 
+ * @param tbConf 
+ * @returns 
+ */
+export function prepareSubMenus(tbConf: Dictionary<ToolbarConf>): [PreparedSubMenuSet, boolean] {
+    const prepared: PreparedSubMenuSet = {
+        toolbars: {},
+        flyouts: {}
+    };
+    let bFoundContextMenu = false;
+    for (const key in tbConf) {
+        if (key == WEBLAYOUT_CONTEXTMENU) {
+            bFoundContextMenu = true;
+        }
+
+        //Special cases: Task pane and Context Menu. Transfer all to flyout
+        if (key == WEBLAYOUT_TASKMENU || key == WEBLAYOUT_CONTEXTMENU) {
+            const flyoutId = key;
+            prepared.flyouts[flyoutId] = {
+                children: tbConf[key].items
+            }
+        } else {
+            prepared.toolbars[key] = {
+                items: []
+            };
+            for (const item of tbConf[key].items) {
+                //Special case: contextmenu is all inline
+                if (isFlyoutSpec(item) && key != WEBLAYOUT_CONTEXTMENU) {
+                    const flyoutId = `${item.label}_${shortid.generate()}`;
+                    prepared.toolbars[key].items.push({
+                        label: item.label,
+                        tooltip: item.tooltip,
+                        icon: item.icon,
+                        spriteClass: item.spriteClass,
+                        flyoutId: flyoutId
+                    } as ICommandSpec);
+                    prepared.flyouts[flyoutId] = {
+                        children: item.children
+                    }
+                } else {
+                    prepared.toolbars[key].items.push(item);
+                }
+            }
+        }
+    }
+    return [prepared, bFoundContextMenu]
 }

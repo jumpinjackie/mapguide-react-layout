@@ -1,11 +1,55 @@
 0.14
 ====
 
-TODO: Expand this changelog (it is HUGE)
+# New Features
+
+ * [#1175](https://github.com/jumpinjackie/mapguide-react-layout/issues/1175): New powerful declarative styles for vector layers
+ * External Layer Manager enhancements:
+    * New options to add a file-based vector layer as:
+       * [#1175](https://github.com/jumpinjackie/mapguide-react-layout/issues/1175):  A themed layer with optional labeling
+       * For point-based layers:
+          * [#1184](https://github.com/jumpinjackie/mapguide-react-layout/issues/1184): A clustered layer with optional labeling
+          * [#1324](https://github.com/jumpinjackie/mapguide-react-layout/issues/1324): A heatmap layer
+    * Styles of vector layers are previewable and editable via new powerful style editor components
+ * [#398](https://github.com/jumpinjackie/mapguide-react-layout/issues/398): Viewer can now be used in a non-MapGuide context (no MapGuide Server required!)
+    * To use this viewer in a general purpose context, you must have a `<Map>` element that refers to a "subject layer" instead of a Map Definition. A "subject layer" can be:
+       * A WMS layer
+       * A vector layer
+    * In a non-MapGuide context, commands that require a `SESSION`/`MAPNAME` pair to operate are disabled in all toolbars and menus where the command is referenced. Examples of such commands include:
+       * `Buffer`
+       * `Theme`
+       * `Query`
+       * `QuickPlot`
+       * `FeatureInfo`
+       * `Redline`
+       * `SelectWithin`
+    * Refer to [this example appdef](../../viewer/data/appdef.generic.json) for an example of a general-purpose Application Definiion
+    * All viewer templates have been refactored to work in a non-MapGuide context
+    * Various components have been refactored to be useful in a non-MapGuide context
+       * Legend: Shows external layers in a separate top-level `External Layers` root folder
+       * [#1156](https://github.com/jumpinjackie/mapguide-react-layout/issues/1156) Selection Panel: Can now show attributes of selected client-side vector features
+ * New "generic" viewer template. This is an opinionated viewer template geared for use in a general purpose context.
+    * [Demo](https://jumpinjackie.github.io/mapguide-react-layout/master/generic-demo/index.html?resource=data/appdef.generic.json)
+ * [#1288](https://github.com/jumpinjackie/mapguide-react-layout/issues/1288): New "stateless" mode for MapGuide
+    * In this mode, no session id is created 
+    * Just like the general purpose context, commands that require a `SESSION`/`MAPNAME` pair to operate are disabled in all toolbars and menus where the command is referenced.
+    * No `CREATERUNTIMEMAP` request is made to build the layer/group structure for display in the Legend component. Instead, an anonymous `GETRESOURCECONTENT` request for the required Map Definition and the layer/group structure is built from that.
+ * [#1289](https://github.com/jumpinjackie/mapguide-react-layout/issues/1289) New support for UTFGrid layers
+ * [#1187](https://github.com/jumpinjackie/mapguide-react-layout/issues/1187): Client-side vector layers are hover-able
+ * [#1329](https://github.com/jumpinjackie/mapguide-react-layout/issues/1329): Added support for the Fusion print command/widget
+ * XYZ tileset improvements:
+     * [#1298](https://github.com/jumpinjackie/mapguide-react-layout/issues/1298): Support for retina scaling
+     * [#1197](https://github.com/jumpinjackie/mapguide-react-layout/issues/1197): Support for attributions
 
 ## Breaking changes:
 
  * The `WmsQuery` command has been remmoved and consolidated into the `Select` command/widget. Update your Application Definitions accordingly.
+ * The viewer bundle is now split into 2 files:
+    * `vendor.js`
+    * `viewer.js`
+   
+   If you are using a custom template, you now must load `vendor.js` before `viewer.js` and also make sure to include `vendor.css` alongisde the `viewer.css` stylesheet.
+ * Due to the introduction of stateless mode and general-purpose usage context, your usage of the current viewer APIs can no longer assume that you will always have a session id to work with.
 
 0.13.3
 ======

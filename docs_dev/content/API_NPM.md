@@ -36,15 +36,6 @@ With yarn: `yarn add mapguide-react-layout`
 
 # Importing Modules
 
-Modules in `mapguide-react-layout` can be imported in two ways
+All APIs provided/documented by this library are importable from the main `mapguide-react-layout`
 
-For all the modules referenced on the right hand side, prepend `mapguide-react-layout/lib` for the actual module name to import
-
-For example the module ["api/common"](modules/_api_common_.html) should be imported as `mapguide-react-layout/lib/api/common`
-
-For convenience you can also import whatever you require through the "catch-all" `mapguide-react-layout` module.
-
-For example, the ["setCurrentView"](modules/_actions_map_.html#setcurrentview) action can be imported in two ways:
-
- * `import { setCurrentView } from "mapguide-react-layout/lib/actions/map";`
- * `import { setCurrentView } from "mapguide-react-layout";`
+> Previous releases allowed you to "piecemeal" import what you want by importing from `mapguide-react-layout/lib/path/to/module`. This style of import is no longer supported and you should just import whatever you require from `mapguide-react-layout` itself

@@ -1,7 +1,8 @@
 {
-    "entryPoints": ["./src/index.ts"],
-    "theme": "./docs_dev/themes/typedoc-default",
+    "entryPoints": ["./src"],
+    "entryPointStrategy": "expand",
     "readme": "./docs_dev/content/API_NPM.md",
+    "disableSources": true,
     "excludePrivate": true,
     "excludeExternals": true,
     "includeVersion": true,

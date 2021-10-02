@@ -134,6 +134,9 @@ const SidebarHeader = (props: any) => {
     </h1>;
 };
 
+/**
+ * Base sidebar tabs
+ */
 export type SidebarTab = "legend" | "tasks" | "selection";
 
 interface ISidebarProps {
@@ -274,6 +277,9 @@ const Sidebar = (props: ISidebarProps) => {
     </div>;
 }
 
+/**
+ * A viewer template that is based on the design of the {@link https://github.com/Turbo87/sidebar-v2 Sidebar Map Layout}
+ */
 export const SidebarLayout = () => {
     const {
         dispatch,

@@ -78,6 +78,9 @@ const TOP_BAR_HEIGHT = 35;
 const TAB_BAR_HEIGHT = 30;
 const STATUS_BAR_HEIGHT = 18;
 
+/**
+ * A viewer template that resembles the TurquoiseYellow Fusion template
+ */
 export const TurquoiseYellowTemplateLayout = () => {
     const {
         isResizing,

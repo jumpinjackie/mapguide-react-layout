@@ -1,7 +1,7 @@
 import { IInitAsyncOptions, normalizeInitPayload } from './init';
 import { ReduxDispatch, Dictionary, ActiveMapTool } from '../api/common';
 import { IGenericSubjectMapLayer, IInitAppActionPayload, MapInfo } from './defs';
-import { ICommandSpec, ToolbarConf, PreparedSubMenuSet, isFlyoutSpec, convertFlexLayoutUIItems, parseWidgetsInAppDef } from '../api/registry/command-spec';
+import { ICommandSpec, ToolbarConf, PreparedSubMenuSet, isFlyoutSpec, convertFlexLayoutUIItems, parseWidgetsInAppDef, prepareSubMenus } from '../api/registry/command-spec';
 import { makeUnique } from '../utils/array';
 import { ApplicationDefinition, MapConfiguration } from '../api/contracts/fusion';
 import { warn, info } from '../utils/logger';
@@ -193,49 +193,7 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
         }
         return makeUnique(epsgs);
     }
-    protected prepareSubMenus(tbConf: Dictionary<ToolbarConf>): [PreparedSubMenuSet, boolean] {
-        const prepared: PreparedSubMenuSet = {
-            toolbars: {},
-            flyouts: {}
-        };
-        let bFoundContextMenu = false;
-        for (const key in tbConf) {
-            if (key == WEBLAYOUT_CONTEXTMENU) {
-                bFoundContextMenu = true;
-            }
-
-            //Special cases: Task pane and Context Menu. Transfer all to flyout
-            if (key == WEBLAYOUT_TASKMENU || key == WEBLAYOUT_CONTEXTMENU) {
-                const flyoutId = key;
-                prepared.flyouts[flyoutId] = {
-                    children: tbConf[key].items
-                }
-            } else {
-                prepared.toolbars[key] = {
-                    items: []
-                };
-                for (const item of tbConf[key].items) {
-                    //Special case: contextmenu is all inline
-                    if (isFlyoutSpec(item) && key != WEBLAYOUT_CONTEXTMENU) {
-                        const flyoutId = `${item.label}_${shortid.generate()}`;
-                        prepared.toolbars[key].items.push({
-                            label: item.label,
-                            tooltip: item.tooltip,
-                            icon: item.icon,
-                            spriteClass: item.spriteClass,
-                            flyoutId: flyoutId
-                        } as ICommandSpec);
-                        prepared.flyouts[flyoutId] = {
-                            children: item.children
-                        }
-                    } else {
-                        prepared.toolbars[key].items.push(item);
-                    }
-                }
-            }
-        }
-        return [prepared, bFoundContextMenu]
-    }
+    
     protected async initFromAppDefCoreAsync(appDef: ApplicationDefinition, options: IInitAsyncOptions, mapsByName: Dictionary<TSubject | IGenericSubjectMapLayer>, warnings: string[]): Promise<IInitAppActionPayload> {
         const {
             taskPane,
@@ -275,7 +233,7 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
             document.title = appDef.Title || document.title;
         }
         const [firstMapName, firstSessionId] = this.establishInitialMapNameAndSession(mapsDict);
-        const [tb, bFoundContextMenu] = this.prepareSubMenus(tbConf);
+        const [tb, bFoundContextMenu] = prepareSubMenus(tbConf);
         if (!bFoundContextMenu) {
             warnings.push(tr("INIT_WARNING_NO_CONTEXT_MENU", locale, { containerName: WEBLAYOUT_CONTEXTMENU }));
         }

@@ -1,6 +1,4 @@
-/**
- * Console wrappers that are only active in development mode
- */
+// Console wrappers that are only active in development mode
 
 /**
  * Log an informational message. Does nothing in a production build

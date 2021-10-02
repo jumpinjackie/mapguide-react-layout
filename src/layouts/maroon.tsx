@@ -76,6 +76,9 @@ function maroonTemplateReducer(origState: ITemplateReducerState, state: ITemplat
 const STATUS_BAR_HEIGHT = 18;
 const OUTER_PADDING = 3;
 
+/**
+ * A viewer template that resembles the Maroon Fusion template
+ */
 export const MaroonTemplateLayout = () => {
     const {
         isResizing,

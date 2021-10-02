@@ -13,7 +13,7 @@ export type RequestBuilderFactory = (agentUri: string, locale?: string) => Reque
 const _builders: { [kind: string]: RequestBuilderFactory } = {};
 
 /**
- * Registers a factory for creating request builders for the given kind
+ * Registers a factory for creating request builders for the given kind. This only needs to be called in the entry point of your custom viewer bundle.
  * 
  * @param kind 
  * @param factory 

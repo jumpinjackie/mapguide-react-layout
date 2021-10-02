@@ -75,6 +75,9 @@ function slateTemplateReducer(origState: ITemplateReducerState, state: ITemplate
 
 const STATUS_BAR_HEIGHT = 18;
 
+/**
+ * A viewer template that resembles the Slate Fusion template
+ */
 export const SlateTemplateLayout = () => {
     const {
         isResizing,

@@ -1,3 +1,8 @@
+/**
+ * @module
+ * @hidden
+ */
+
 import { ILayerSetOL } from './layer-set-contracts';
 import LayerGroup from 'ol/layer/Group';
 import { Bounds, IExternalBaseLayer, RefreshMode, LayerTransparencySet, Size } from './common';
@@ -6,6 +11,9 @@ import LayerBase from "ol/layer/Base";
 import * as olHas from "ol/has";
 import Source from 'ol/source/Source';
 
+/**
+ * @hidden
+ */
 export abstract class BaseLayerSetOL implements ILayerSetOL {
     constructor(public readonly externalBaseLayersGroup: LayerGroup | undefined,
         public readonly projection: string | undefined,

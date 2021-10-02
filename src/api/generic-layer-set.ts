@@ -11,6 +11,9 @@ export const DEFAULT_METERS_PER_UNIT = 1.0;
 const M_TO_IN = 39.37;
 const DEFAULT_DPI = 96;
 
+/**
+ * @hidden
+ */
 export class GenericLayerSetOL extends BaseLayerSetOL {
     constructor(view: View,
         public subjectLayer: LayerBase | undefined,

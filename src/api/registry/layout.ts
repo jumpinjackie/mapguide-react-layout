@@ -4,10 +4,15 @@
 export type LayoutFactory = (() => JSX.Element);
 
 /**
+ * Capabilities of a viewer layout template
+ * 
  * @since 0.14
  */
 export type LayoutCapabilities = {
-    hasTaskPane: boolean;
+    /**
+     * Indicates if this viewer layout template has a task pane
+     */
+    readonly hasTaskPane: boolean;
 };
 
 const layouts: { [key: string]: LayoutFactory } = {};

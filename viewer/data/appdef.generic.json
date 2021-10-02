@@ -267,6 +267,273 @@
                             "Widget": "About"
                         }
                     ]
+                },
+                {
+                    "Name": "Toolbar",
+                    "Type": "Toolbar",
+                    "Position": "top",
+                    "Extension": null,
+                    "Item": [
+                        {
+                            "Function": "Widget",
+                            "Widget": "Print"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "RefreshMap"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "Maptip"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "Select"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "ClearSelection"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "Measure"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "ViewOptions"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "About"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "Help"
+                        }
+                    ]
+                },
+                {
+                    "Name": "ToolbarSecondary",
+                    "Type": "Toolbar",
+                    "Position": "top",
+                    "Extension": null,
+                    "Item": [
+                        {
+                            "Function": "Widget",
+                            "Widget": "Select"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "Pan"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "Zoom"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "ZoomIn"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "ZoomOut"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "InitialMapView"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "ZoomToSelection"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "PreviousView"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "NextView"
+                        }
+                    ]
+                },
+                {
+                    "Name": "ToolbarVertical",
+                    "Type": "Toolbar",
+                    "Position": "left",
+                    "Extension": null,
+                    "Item": [
+                        {
+                            "Function": "Widget",
+                            "Widget": "vertSelect"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "WmsQuery"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "vertPan"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "vertZoom"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "vertZoomIn"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "vertZoomOut"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "vertInitialMapView"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "vertZoomToSelection"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "vertPreviousView"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "vertNextView"
+                        }
+                    ]
+                },
+                {
+                    "Name": "FileMenu",
+                    "Type": "Toolbar",
+                    "Position": "top",
+                    "Extension": null,
+                    "Item": [
+                        {
+                            "Function": "Widget",
+                            "Widget": "MapMenu"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "BasemapSwitcher"
+                        },
+                        {
+                            "Function": "Flyout",
+                            "Label": "View",
+                            "Tooltip": null,
+                            "ImageUrl": null,
+                            "ImageClass": null,
+                            "Item": [
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "showOverview"
+                                },
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "showTaskPane"
+                                },
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "showLegend"
+                                },
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "showSelectionPanel"
+                                }
+                            ]
+                        },
+                        {
+                            "Function": "Flyout",
+                            "Label": "Viewer API",
+                            "Tooltip": null,
+                            "ImageUrl": null,
+                            "ImageClass": null,
+                            "Item": [
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "ViewerApiExample"
+                                },
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "DrawingExample"
+                                },
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "SubscriberExample"
+                                }
+                            ]
+                        },
+                        {
+                            "Function": "Flyout",
+                            "Label": "Tools",
+                            "Tooltip": null,
+                            "ImageUrl": null,
+                            "ImageClass": null,
+                            "Item": [
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "AddExternalLayers"
+                                },
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "ShareLink"
+                                },
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "Geolocation"
+                                },
+                                {
+                                    "Function": "Widget",
+                                    "Widget": "CoordinateTracker"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "Name": "Statusbar",
+                    "Type": "Splitterbar",
+                    "Position": "bottom",
+                    "Extension": null,
+                    "Item": [
+                        {
+                            "Function": "Widget",
+                            "Widget": "statusCoordinates"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "statusSelection"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "EditableScale"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "statusViewSize"
+                        }
+                    ]
+                },
+                {
+                    "Name": "TaskMenu",
+                    "Type": "ContextMenu",
+                    "Position": "top",
+                    "Extension": null,
+                    "Item": [
+                        {
+                            "Function": "Widget",
+                            "Widget": "Measure"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "AddExternalLayers"
+                        },
+                        {
+                            "Function": "Widget",
+                            "Widget": "CoordinateTracker"
+                        }
+                    ]
                 }
             ],
             "Widget": [
@@ -286,6 +553,214 @@
                     }
                 },
                 {
+                    "WidgetType": null,
+                    "Name": "ActivityIndicator",
+                    "Type": "ActivityIndicator",
+                    "Location": null,
+                    "Extension": {}
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "options",
+                    "Label": "External Providers",
+                    "Tooltip": "Click to change the basemap",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "BasemapSwitcher",
+                    "Type": "BasemapSwitcher",
+                    "Location": null,
+                    "Extension": null
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "select-centre",
+                    "Label": "Center selection",
+                    "Tooltip": "Click to center the map on the current selection",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "CenterSelection",
+                    "Type": "CenterSelection",
+                    "Location": null,
+                    "Extension": null
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "select-clear",
+                    "Label": "Clear Selection",
+                    "Tooltip": "Click to clear the current selection",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "ClearSelection",
+                    "Type": "ClearSelection",
+                    "Location": null,
+                    "Extension": null
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": null,
+                    "ImageClass": null,
+                    "Label": "Color picker",
+                    "Tooltip": "Use this tool to select a color",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "ColorPicker",
+                    "Type": "ColorPicker",
+                    "Location": null,
+                    "Extension": {}
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "coordinate-tracker",
+                    "Label": "Coordinate Tracker",
+                    "Tooltip": "Click to view mouse coordinates in various projections",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "CoordinateTracker",
+                    "Type": "CoordinateTracker",
+                    "Location": null,
+                    "Extension": {
+                        "Projection": [
+                            "EPSG:4326",
+                            "EPSG:3857"
+                        ],
+                        "Target": "TaskPane"
+                    }
+                },
+                {
+                    "WidgetType": null,
+                    "Name": "EditableScale",
+                    "Type": "EditableScale",
+                    "Location": null,
+                    "Extension": {
+                        "Precision": "4"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "geolocation",
+                    "Label": "My Location",
+                    "Tooltip": "Click to zoom to your current geographic location",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "Geolocation",
+                    "Type": "Geolocation",
+                    "Location": null,
+                    "Extension": {
+                        "EnableHighAccuracy": "false",
+                        "MaximumAge": "0",
+                        "Timeout": "5000"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "../../../widgets/GoogleStreetViewer/GoogleStreetView.png",
+                    "ImageClass": null,
+                    "Label": "Google StreetView",
+                    "Tooltip": "Click to show Google StreetView",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "GoogleStreetViewer",
+                    "Type": "GoogleStreetViewer",
+                    "Location": null,
+                    "Extension": {
+                        "DirectionLength": "22",
+                        "ShowDirection": "true",
+                        "SymbolLayerName": "GoogleStreetViewerSymbolLayer",
+                        "Target": "TaskPane"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "help",
+                    "Label": "Help",
+                    "Tooltip": "Click to get help",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "Help",
+                    "Type": "Help",
+                    "Location": null,
+                    "Extension": {
+                        "Target": "HelpWindow",
+                        "Url": "widgets/Help/Help.html"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "zoom-full",
+                    "Label": "Zoom Extents",
+                    "Tooltip": "Click to zoom to the full map extents",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "InitialMapView",
+                    "Type": "InitialMapView",
+                    "Location": null,
+                    "Extension": {
+                        "ViewType": "initial"
+                    }
+                },
+                {
+                    "WidgetType": null,
+                    "Name": "Legend",
+                    "Type": "Legend",
+                    "Location": null,
+                    "Extension": {
+                        "DisabledLayerIcon": "images/icons/legend-layer.png",
+                        "GroupInfoIcon": "images/icons/tree_group_info.png",
+                        "HideInvisibleLayers": "true",
+                        "LayerDWFIcon": "images/icons/legend-DWF.png",
+                        "LayerInfoIcon": "images/icons/tree_layer_info.png",
+                        "LayerRasterIcon": "images/icons/legend-raster.png",
+                        "LayerThemeIcon": "images/icons/legend-theme.png",
+                        "RootFolderIcon": "images/icons/legend-map.png",
+                        "ShowMapFolder": "false",
+                        "ShowRootFolder": "false"
+                    }
+                },
+                {
+                    "WidgetType": null,
+                    "Name": "LinkToView",
+                    "Type": "LinkToView",
+                    "Location": null,
+                    "Extension": null
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "legend-map",
+                    "Label": "Maps",
+                    "Tooltip": "Choose a map theme",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "MapMenu",
+                    "Type": "MapMenu",
+                    "Location": null,
+                    "Extension": {}
+                },
+                {
+                    "WidgetType": null,
+                    "Name": "Navigator",
+                    "Type": "Navigator",
+                    "Location": null,
+                    "Extension": null
+                },
+                {
+                    "WidgetType": null,
+                    "Name": "OverviewMap",
+                    "Type": "OverviewMap",
+                    "Location": null,
+                    "Extension": {
+                        "MaxRatio": "128",
+                        "MinRatio": "32"
+                    }
+                },
+                {
                     "WidgetType": "UiWidgetType",
                     "ImageUrl": "images/icons.png",
                     "ImageClass": "pan",
@@ -297,6 +772,243 @@
                     "Type": "Pan",
                     "Location": null,
                     "Extension": null
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": null,
+                    "ImageClass": null,
+                    "Label": null,
+                    "Tooltip": null,
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "PanOnClick",
+                    "Type": "PanOnClick",
+                    "Location": null,
+                    "Extension": {
+                        "Direction": "none",
+                        "Percentage": "75"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "pan",
+                    "Label": "Pan query",
+                    "Tooltip": "Drag the mouse to pan, click to query",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "PanQuery",
+                    "Type": "PanQuery",
+                    "Location": null,
+                    "Extension": {
+                        "QueryActiveLayer": "false",
+                        "SelectionType": "INTERSECTS",
+                        "Tolerance": "3"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "file-print",
+                    "Label": "Print",
+                    "Tooltip": "Print the current map view",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "Print",
+                    "Type": "Print",
+                    "Location": null,
+                    "Extension": {
+                        "ShowLegend": "false",
+                        "ShowNorthArrow": "false",
+                        "ShowPrintUI": "true",
+                        "ShowTitle": "false"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "view-refresh",
+                    "Label": "Refresh",
+                    "Tooltip": "Click to redraw the map",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "RefreshMap",
+                    "Type": "RefreshMap",
+                    "Location": null,
+                    "Extension": null
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "file-save",
+                    "Label": "Save map",
+                    "Tooltip": "Click to save the map as an image",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "SaveMap",
+                    "Type": "SaveMap",
+                    "Location": null,
+                    "Extension": {
+                        "Format": "png"
+                    }
+                },
+                {
+                    "WidgetType": null,
+                    "Name": "Scalebar",
+                    "Type": "Scalebar",
+                    "Location": null,
+                    "Extension": {
+                        "AbbreviateLabel": "true",
+                        "DisplaySystem": "metric",
+                        "Divisions": "2",
+                        "MaxWidth": "200",
+                        "MinWidth": "100",
+                        "ShowMinorMeasures": "true",
+                        "SingleLine": "false",
+                        "Style": "thin",
+                        "SubDivisions": "2"
+                    }
+                },
+                {
+                    "WidgetType": null,
+                    "Name": "ScalebarDual",
+                    "Type": "ScalebarDual",
+                    "Location": null,
+                    "Extension": {
+                        "BottomInUnits": "m",
+                        "BottomOutUnits": "km",
+                        "MaxWidth": "300",
+                        "TopInUnits": "ft",
+                        "TopOutUnits": "mi"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "select",
+                    "Label": "Select",
+                    "Tooltip": "Click to select features",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "Select",
+                    "Type": "Select",
+                    "Location": null,
+                    "Extension": {
+                        "QueryActiveLayer": "false",
+                        "SelectionType": "INTERSECTS",
+                        "Tolerance": "3"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "select",
+                    "Label": "WMS Query",
+                    "Tooltip": "Click to query for features in WMS layers at the point you click",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "WmsQuery",
+                    "Type": "WmsQuery",
+                    "Location": null,
+                    "Extension": null
+                },
+                {
+                    "WidgetType": null,
+                    "Name": "SelectionPanel",
+                    "Type": "SelectionPanel",
+                    "Location": null,
+                    "Extension": {
+                        "ResultsPerPage": "0",
+                        "SelectionRenderer": "Fusion.Widget.SelectionPanel.SelectionRendererDefault"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "select-polygon",
+                    "Label": "Select Polygon",
+                    "Tooltip": "Draw a polygon to perform a selection",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "SelectPolygon",
+                    "Type": "SelectPolygon",
+                    "Location": null,
+                    "Extension": {
+                        "SelectionType": "INTERSECTS",
+                        "Tolerance": "3"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "select-radius",
+                    "Label": "Select Radius",
+                    "Tooltip": "Click to select within a radius",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "SelectRadius",
+                    "Type": "SelectRadius",
+                    "Location": null,
+                    "Extension": {
+                        "DefaultRadius": "20",
+                        "RadiusTooltipType": "dynamic",
+                        "SelectionType": "INTERSECTS",
+                        "Tolerance": "3"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": null,
+                    "ImageClass": null,
+                    "Label": "Select radius value",
+                    "Tooltip": "enter the radius for the Select by Radius tool",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "SelectRadiusValue",
+                    "Type": "SelectRadiusValue",
+                    "Location": null,
+                    "Extension": {
+                        "RadiusName": "SelectRadius"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "select-features",
+                    "Label": "Select within",
+                    "Tooltip": "Click to select features within this selection",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "SelectWithin",
+                    "Type": "SelectWithin",
+                    "Location": null,
+                    "Extension": {
+                        "DisableIfSelectionEmpty": "true",
+                        "OmitInvisibleLayers": "false",
+                        "Target": "TaskPane"
+                    }
+                },
+                {
+                    "WidgetType": null,
+                    "Name": "TaskPane",
+                    "Type": "TaskPane",
+                    "Location": null,
+                    "Extension": {
+                        "MenuContainer": "TaskMenu"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "options",
+                    "Label": "Options",
+                    "Tooltip": "Click to change the units displayed",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "ViewOptions",
+                    "Type": "ViewOptions",
+                    "Location": null,
+                    "Extension": {}
                 },
                 {
                     "WidgetType": "UiWidgetType",
@@ -313,6 +1025,22 @@
                         "Direction": "in",
                         "Factor": "2",
                         "Tolerance": "5"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "select-zoom",
+                    "Label": "Zoom Selection",
+                    "Tooltip": "Click to zoom to the selection",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "ZoomToSelection",
+                    "Type": "ZoomToSelection",
+                    "Location": null,
+                    "Extension": {
+                        "MaximumZoomDimension": "-1",
+                        "ZoomFactor": "2"
                     }
                 },
                 {
@@ -348,6 +1076,51 @@
                 {
                     "WidgetType": "UiWidgetType",
                     "ImageUrl": "images/icons.png",
+                    "ImageClass": "view-back",
+                    "Label": "Previous",
+                    "Tooltip": "Go to previous view",
+                    "StatusText": "Go to previous view",
+                    "Disabled": false,
+                    "Name": "PreviousView",
+                    "Type": "ExtentHistory",
+                    "Location": null,
+                    "Extension": {
+                        "Direction": "previous"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "view-forward",
+                    "Label": "Next",
+                    "Tooltip": "Go to next view",
+                    "StatusText": "Go to next view",
+                    "Disabled": false,
+                    "Name": "NextView",
+                    "Type": "ExtentHistory",
+                    "Location": null,
+                    "Extension": {
+                        "Direction": "next"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "buffer",
+                    "Label": "Buffer",
+                    "Tooltip": "Measure distances and areas on the map",
+                    "StatusText": "Create buffers around the selected features",
+                    "Disabled": false,
+                    "Name": "tbBuffer",
+                    "Type": "BufferPanel",
+                    "Location": null,
+                    "Extension": {
+                        "Target": "TaskPane"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
                     "ImageClass": "measure",
                     "Label": "Measure",
                     "Tooltip": "Measure",
@@ -368,61 +1141,323 @@
                 },
                 {
                     "WidgetType": "UiWidgetType",
-                    "ImageUrl": "images/icons.png",
-                    "ImageClass": "options",
-                    "Label": "Options",
-                    "Tooltip": "Click to change the units displayed",
+                    "ImageUrl": null,
+                    "ImageClass": null,
+                    "Label": "Show Overview",
+                    "Tooltip": null,
                     "StatusText": null,
                     "Disabled": false,
-                    "Name": "ViewOptions",
-                    "Type": "ViewOptions",
+                    "Name": "showOverview",
+                    "Type": "InvokeScript",
                     "Location": null,
-                    "Extension": {}
+                    "Extension": {
+                        "Script": "showOverviewMap()"
+                    }
                 },
                 {
                     "WidgetType": "UiWidgetType",
-                    "ImageUrl": "images/icons.png",
-                    "ImageClass": "help",
-                    "Label": "Help",
-                    "Tooltip": "Click to get help",
+                    "ImageUrl": null,
+                    "ImageClass": null,
+                    "Label": "Show Task Pane",
+                    "Tooltip": null,
                     "StatusText": null,
                     "Disabled": false,
-                    "Name": "Help",
-                    "Type": "Help",
+                    "Name": "showTaskPane",
+                    "Type": "InvokeScript",
                     "Location": null,
                     "Extension": {
-                        "Target": "HelpWindow",
-                        "Url": "widgets/Help/Help.html"
+                        "Script": "showTaskPane()"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": null,
+                    "ImageClass": null,
+                    "Label": "Show Legend",
+                    "Tooltip": null,
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "showLegend",
+                    "Type": "InvokeScript",
+                    "Location": null,
+                    "Extension": {
+                        "Script": "showLegend()"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": null,
+                    "ImageClass": null,
+                    "Label": "Show Selection Panel",
+                    "Tooltip": null,
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "showSelectionPanel",
+                    "Type": "InvokeScript",
+                    "Location": null,
+                    "Extension": {
+                        "Script": "showSelectionPanel()"
+                    }
+                },
+                {
+                    "WidgetType": null,
+                    "Name": "statusCoordinates",
+                    "Type": "CursorPosition",
+                    "Location": null,
+                    "Extension": {
+                        "EmptyText": "&amp;nbsp;",
+                        "Precision": "4",
+                        "Template": "X: {x} {units}, Y: {y} {units}",
+                        "Units": "dd"
+                    }
+                },
+                {
+                    "WidgetType": null,
+                    "Name": "statusSelection",
+                    "Type": "SelectionInfo",
+                    "Location": null,
+                    "Extension": {
+                        "EmptyText": "No selection",
+                        "Template": "{0} feature(s) selected on {1} layer(s)"
+                    }
+                },
+                {
+                    "WidgetType": null,
+                    "Name": "statusViewSize",
+                    "Type": "ViewSize",
+                    "Location": null,
+                    "Extension": {
+                        "Precision": "2",
+                        "Template": "{w} x {h} ({units})",
+                        "Units": "Meters"
                     }
                 },
                 {
                     "WidgetType": "UiWidgetType",
                     "ImageUrl": "images/icons.png",
-                    "ImageClass": "view-refresh",
-                    "Label": "Refresh",
-                    "Tooltip": "Click to redraw the map",
-                    "StatusText": null,
+                    "ImageClass": "zoom-in-fixed",
+                    "Label": null,
+                    "Tooltip": "Zoom in by a preset increment",
+                    "StatusText": "Zoom in by a preset increment",
                     "Disabled": false,
-                    "Name": "RefreshMap",
-                    "Type": "RefreshMap",
+                    "Name": "vertZoomIn",
+                    "Type": "ZoomOnClick",
                     "Location": null,
-                    "Extension": null
+                    "Extension": {
+                        "Factor": "2"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "zoom-out-fixed",
+                    "Label": null,
+                    "Tooltip": "Zoom out by a preset increment",
+                    "StatusText": "Zoom out by a preset increment",
+                    "Disabled": false,
+                    "Name": "vertZoomOut",
+                    "Type": "ZoomOnClick",
+                    "Location": null,
+                    "Extension": {
+                        "Factor": "0.5"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "view-back",
+                    "Label": null,
+                    "Tooltip": "Go to previous view",
+                    "StatusText": "Go to previous view",
+                    "Disabled": false,
+                    "Name": "vertPreviousView",
+                    "Type": "ExtentHistory",
+                    "Location": null,
+                    "Extension": {
+                        "Direction": "previous"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "view-forward",
+                    "Label": null,
+                    "Tooltip": "Go to next view",
+                    "StatusText": "Go to next view",
+                    "Disabled": false,
+                    "Name": "vertNextView",
+                    "Type": "ExtentHistory",
+                    "Location": null,
+                    "Extension": {
+                        "Direction": "next"
+                    }
                 },
                 {
                     "WidgetType": "UiWidgetType",
                     "ImageUrl": "images/icons.png",
                     "ImageClass": "select",
-                    "Label": "Select",
+                    "Label": null,
                     "Tooltip": "Click to select features",
                     "StatusText": null,
                     "Disabled": false,
-                    "Name": "Select",
+                    "Name": "vertSelect",
                     "Type": "Select",
                     "Location": null,
                     "Extension": {
                         "QueryActiveLayer": "false",
                         "SelectionType": "INTERSECTS",
                         "Tolerance": "3"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "pan",
+                    "Label": null,
+                    "Tooltip": "Click and drag to pan the map",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "vertPan",
+                    "Type": "Pan",
+                    "Location": null,
+                    "Extension": null
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "zoom-in",
+                    "Label": null,
+                    "Tooltip": "Click or click and drag on the map to zoom in",
+                    "StatusText": "Click or click and drag on the map to zoom in",
+                    "Disabled": false,
+                    "Name": "vertZoom",
+                    "Type": "Zoom",
+                    "Location": null,
+                    "Extension": {
+                        "Direction": "in",
+                        "Factor": "2",
+                        "Tolerance": "5"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "zoom-full",
+                    "Label": null,
+                    "Tooltip": "Click to zoom to the full map extents",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "vertInitialMapView",
+                    "Type": "InitialMapView",
+                    "Location": null,
+                    "Extension": {
+                        "ViewType": "initial"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "select-zoom",
+                    "Label": null,
+                    "Tooltip": "Click to zoom to the selection",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "vertZoomToSelection",
+                    "Type": "ZoomToSelection",
+                    "Location": null,
+                    "Extension": {
+                        "MaximumZoomDimension": "-1",
+                        "ZoomFactor": "2"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": null,
+                    "ImageClass": null,
+                    "Label": "Manage External Layers",
+                    "Tooltip": null,
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "AddExternalLayers",
+                    "Type": "InvokeURL",
+                    "Location": null,
+                    "Extension": {
+                        "AdditionalParameter": null,
+                        "DisableIfSelectionEmpty": "false",
+                        "Target": "TaskPane",
+                        "Url": "component://AddManageLayers"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": null,
+                    "ImageClass": null,
+                    "Label": "Share Link to View",
+                    "Tooltip": null,
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "ShareLink",
+                    "Type": "InvokeURL",
+                    "Location": null,
+                    "Extension": {
+                        "AdditionalParameter": null,
+                        "DisableIfSelectionEmpty": "false",
+                        "Target": "InvokeUrlWindow",
+                        "Url": "component://ShareLinkToView"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": null,
+                    "ImageClass": null,
+                    "Label": "Viewer API Example",
+                    "Tooltip": null,
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "ViewerApiExample",
+                    "Type": "InvokeURL",
+                    "Location": null,
+                    "Extension": {
+                        "AdditionalParameter": null,
+                        "DisableIfSelectionEmpty": "false",
+                        "Target": "TaskPane",
+                        "Url": "examples/taskpane/viewerapi.html"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": null,
+                    "ImageClass": null,
+                    "Label": "Drawing Example",
+                    "Tooltip": null,
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "DrawingExample",
+                    "Type": "InvokeURL",
+                    "Location": null,
+                    "Extension": {
+                        "AdditionalParameter": null,
+                        "DisableIfSelectionEmpty": "false",
+                        "Target": "TaskPane",
+                        "Url": "examples/taskpane/drawing.html"
+                    }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": null,
+                    "ImageClass": null,
+                    "Label": "Subscriber API Example",
+                    "Tooltip": null,
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "SubscriberExample",
+                    "Type": "InvokeURL",
+                    "Location": null,
+                    "Extension": {
+                        "AdditionalParameter": null,
+                        "DisableIfSelectionEmpty": "false",
+                        "Target": "TaskPane",
+                        "Url": "examples/taskpane/subscriberapi.html"
                     }
                 }
             ]

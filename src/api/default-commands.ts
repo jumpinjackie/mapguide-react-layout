@@ -39,12 +39,15 @@ import {
     SPRITE_GEOLOCATION,
     SPRITE_INVOKE_SCRIPT,
     SPRITE_COORDINATE_TRACKER,
-    SPRITE_LAYER_ADD
+    SPRITE_LAYER_ADD,
+    SPRITE_PRINT
 } from "../constants/assets";
 import { setCurrentView, setActiveTool, previousView, nextView } from '../actions/map';
 import { showModalComponent, showModalUrl } from '../actions/modal';
 import { refresh } from '../actions/legend';
 import { setTaskPaneVisibility, setLegendVisibility, setSelectionPanelVisibility } from '../actions/template';
+import React from "react";
+import ReactDOM from "react-dom";
 
 function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
     const settings: any = {
@@ -382,6 +385,40 @@ export function initDefaultCommands() {
             const url = `component://${DefaultComponentNames.AddManageLayers}`;
             const cmdDef = buildTargetedCommand(config, parameters);
             openUrlInTarget(DefaultCommands.AddManageLayers, cmdDef, config.capabilities.hasTaskPane, dispatch, url, tr("ADD_MANAGE_LAYERS", config.locale));
+        }
+    });
+    //Print
+    registerCommand(DefaultCommands.Print, {
+        iconClass: SPRITE_PRINT,
+        selected: () => false,
+        enabled: () => true,
+        invoke: (_dispatch, _getState, viewer, _parameters) => {
+            viewer?.exportImage({
+                callback: (image) => {
+                    const el = React.createElement("img", { src: image });
+                    const printWindow = window.open();
+                    if (printWindow) {
+                        // Open and immediately close the document. This works around a problem in Firefox that is
+                        // captured here: https://bugzilla.mozilla.org/show_bug.cgi?id=667227.
+                        // Essentially, when we first create an iframe, it has no document loaded and asynchronously
+                        // starts a load of "about:blank". If we access the document object and start manipulating it
+                        // before that async load completes, a new document will be automatically created. But then
+                        // when the async load completes, the original, automatically-created document gets unloaded
+                        // and the new "about:blank" gets swapped in. End result: everything we add to the DOM before
+                        // the async load complete gets lost and Firefox ends up printing a blank page.
+                        // Explicitly opening and then closing a new document _seems_ to avoid this.
+                        printWindow.document.open();
+                        printWindow.document.close();
+    
+                        printWindow.document.head.innerHTML = `
+                                <meta charset="UTF-8">
+                                <title>Print View</title>
+                                `;
+                        printWindow.document.body.innerHTML = '<div id="print"></div>';
+                        ReactDOM.render(el, printWindow.document.getElementById("print"));
+                    }
+                }
+            });
         }
     });
     //Fusion template helper commands

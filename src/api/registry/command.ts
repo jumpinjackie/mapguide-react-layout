@@ -324,7 +324,11 @@ export enum DefaultCommands {
     /**
      * @since 0.11
      */
-    CenterSelection = "CenterSelection"
+    CenterSelection = "CenterSelection",
+    /**
+     * @since 0.14
+     */
+    Print = "Print"
 }
 
 const commands: Dictionary<ICommand> = {};

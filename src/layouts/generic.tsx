@@ -1,28 +1,19 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 import { PlaceholderComponent, DefaultComponentNames } from "../api/registry/component"
 import { ViewerApiShim } from '../containers/viewer-shim';
 import { ModalLauncher } from '../containers/modal-launcher';
 import { FlyoutRegionContainer } from '../containers/flyout-region';
 import { InitWarningDisplay } from '../containers/init-warning-display';
 import { ButtonGroup, Button, Intent, Drawer, Position, Popover, Card, Elevation, DrawerSize } from '@blueprintjs/core';
-import { ICommand, ActiveMapTool } from '../api/common';
+import { ActiveMapTool } from '../api/common';
 import { invokeCommand, setActiveTool, setFeatureTooltipsEnabled } from '../actions/map';
 import { getCommand, DefaultCommands } from '../api/registry/command';
-import { useReducedToolbarAppState, useViewerActiveTool, useViewerLocale } from '../containers/hooks';
-import { useMapProviderContext, useReduxDispatch } from '../components/map-providers/context';
+import { useReducedToolbarAppState, useViewerActiveTool } from '../containers/hooks';
+import { useMapProviderContext } from '../components/map-providers/context';
 import { useActiveMapState } from "../containers/hooks-mapguide";
 import { tr } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { useCommonTemplateState } from "./hooks";
-
-interface IPrintViewProps {
-    imageUrl: string;
-}
-
-const PrintView = (props: IPrintViewProps) => {
-    return <img src={props.imageUrl} alt="Map Image" />;
-}
 
 type MapToolbarProps = {
     locale: string;
@@ -43,36 +34,6 @@ const MapToolbar: React.FC<MapToolbarProps> = (props) => {
     const { locale, featureTooltipsEnabled, hasSelection, map, onInvokeCommand, onSetActiveTool, activeTool, isLayerManagerOpen, setIsLayerManagerOpen, setIsLegendOpen, setIsSelectionPanelOpen, onSetFeatureTooltips } = props;
     const context = useMapProviderContext();
     const [isExportingImage, setIsExportingImage] = React.useState(false);
-    const onPrint = () => {
-        setIsExportingImage(true);
-        context.exportImage({
-            callback: (image) => {
-                setIsExportingImage(false);
-                const el = <PrintView imageUrl={image} />;
-                const printWindow = window.open();
-                if (printWindow) {
-                    // Open and immediately close the document. This works around a problem in Firefox that is
-                    // captured here: https://bugzilla.mozilla.org/show_bug.cgi?id=667227.
-                    // Essentially, when we first create an iframe, it has no document loaded and asynchronously
-                    // starts a load of "about:blank". If we access the document object and start manipulating it
-                    // before that async load completes, a new document will be automatically created. But then
-                    // when the async load completes, the original, automatically-created document gets unloaded
-                    // and the new "about:blank" gets swapped in. End result: everything we add to the DOM before
-                    // the async load complete gets lost and Firefox ends up printing a blank page.
-                    // Explicitly opening and then closing a new document _seems_ to avoid this.
-                    printWindow.document.open();
-                    printWindow.document.close();
-
-                    printWindow.document.head.innerHTML = `
-                            <meta charset="UTF-8">
-                            <title>Print View</title>
-                            `;
-                    printWindow.document.body.innerHTML = '<div id="print"></div>';
-                    ReactDOM.render(el, printWindow.document.getElementById("print"));
-                }
-            }
-        });
-    };
     return <>
         <ButtonGroup vertical style={{ position: "absolute", left: 30, top: 30 }}>
             <Button icon="plus" title={tr("NAVIGATOR_ZOOM_IN")} onClick={() => onInvokeCommand(DefaultCommands.ZoomIn)} />
@@ -97,7 +58,7 @@ const MapToolbar: React.FC<MapToolbarProps> = (props) => {
                 <Button icon="cog" title={tr("VIEWER_OPTIONS", locale)} />
                 <PlaceholderComponent id={DefaultComponentNames.ViewerOptions} />
             </Popover>
-            <Button icon="print" onClick={() => onPrint()} />
+            <Button icon="print" onClick={() => onInvokeCommand(DefaultCommands.Print)} />
         </ButtonGroup>
     </>
 }

@@ -80,89 +80,95 @@ export interface ICommandSpec {
     flyoutId?: string;
 }
 
+function makeCommand(widget: UIWidget, noToolbarLabels: boolean, cmdType: DefaultCommands): ICommandSpec {
+    return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: cmdType, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+}
+
 /**
  * @hidden
  */
 export function convertWidget(widget: UIWidget, locale: string, noToolbarLabels: boolean): ICommandSpec | IUnknownCommandSpec {
     switch (widget.Type) {
         case "Select":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Select, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.Select);
         case "Pan":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Pan, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.Pan);
         //case "PanQuery":
         //case "PanOnClick":
         case "Zoom":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Zoom, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.Zoom);
         case "ZoomOnClick": //Covers in and out. Look at Factor parameter
             {
                 const factor = parseFloat(widget.Extension.Factor);
                 if (factor >= 1.0) {
-                    return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.ZoomIn, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+                    return makeCommand(widget, noToolbarLabels, DefaultCommands.ZoomIn);
                 } else {
-                    return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.ZoomOut, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+                    return makeCommand(widget, noToolbarLabels, DefaultCommands.ZoomOut);
                 }
             }
         case "InitialMapView":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.ZoomExtents, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.ZoomExtents);
         case "ZoomToSelection":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.ZoomToSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.ZoomToSelection);
         case "ExtentHistory": //Covers prev and next. Look at Direction parameter
             {
                 if (widget.Extension.Direction == "previous") {
-                    return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.PreviousView, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+                    return makeCommand(widget, noToolbarLabels, DefaultCommands.PreviousView);
                 } else {
-                    return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.NextView, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+                    return makeCommand(widget, noToolbarLabels, DefaultCommands.NextView);
                 }
             }
         case "CenterSelection":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.CenterSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.CenterSelection);
         case "About":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.About, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.About);
         case "BufferPanel":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Buffer, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.Buffer);
         case "ClearSelection":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.ClearSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.ClearSelection);
         //case "ColorPicker":
         case "CoordinateTracker":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.CoordinateTracker, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.CoordinateTracker);
         case "FeatureInfo":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.FeatureInfo, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.FeatureInfo);
         case "Geolocation":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Geolocation, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.Geolocation);
         //case "GoogleStreetViewer":
         case "Help":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Help, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.Help);
         case "Maptip":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.MapTip, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.MapTip);
         case "MapMenu":
             return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: DefaultComponentNames.MapMenu, flyoutId: `${DefaultComponentNames.MapMenu}_${shortid.generate()}`, parameters: widget.Extension };
         case "Query":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Query, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.Query);
         case "QuickPlot":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.QuickPlot, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.QuickPlot);
         case "Redline":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Redline, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.Redline);
         case "RefreshMap":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.RefreshMap, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.RefreshMap);
         //case "SaveMap":
         case "InvokeURL": //Commands with this name would've been registered beforehand
         case "Search":
             return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: widget.Name, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
         case "SelectPolygon":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.SelectPolygon, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.SelectPolygon);
         case "SelectRadius":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.SelectRadius, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.SelectRadius);
         //case "SelectRadiusValue":
         case "SelectWithin":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.SelectWithin, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.SelectWithin);
         case "Theme":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Theme, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.Theme);
         case "ViewOptions":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.ViewerOptions, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.ViewerOptions);
         case "ZoomToSelection":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.ZoomToSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.ZoomToSelection);
         case "Measure":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: DefaultCommands.Measure, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.Measure);
+        case "Print":
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.Print);
         case "BasemapSwitcher":
             return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: DefaultComponentNames.BaseMapSwitcher, flyoutId: `${DefaultComponentNames.BaseMapSwitcher}_${shortid.generate()}`, parameters: widget.Extension };
         case "InvokeScript":

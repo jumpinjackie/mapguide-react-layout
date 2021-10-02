@@ -3,8 +3,9 @@ import { tr } from '../api/i18n';
 import { getViewer } from '../api/runtime';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { parseUrl, stringifyQuery } from "../utils/url";
-import { TextArea, Checkbox } from '@blueprintjs/core';
+import { TextArea, Checkbox, Intent, Button } from '@blueprintjs/core';
 import { useViewerLocale } from './hooks';
+import { useActiveMapState } from "./hooks-mapguide";
 
 /**
  * 
@@ -21,6 +22,7 @@ function NOOP() {}
 export const ShareLinkToViewContainer = () => {
     const [showSession, setShowSession] = React.useState(false);
     const locale = useViewerLocale();
+    const map = useActiveMapState();
     const onShowSessionChanged = () => setShowSession(!showSession);
     const onCopied = () => {
         const v = getViewer();
@@ -37,9 +39,9 @@ export const ShareLinkToViewContainer = () => {
         <TextArea fill={true} rows={16} readOnly value={shareUrl} onChange={NOOP} />
         <br />
         <div style={{ padding: 15 }}>
-            <Checkbox checked={showSession} label={tr("SHARE_LINK_INCLUDE_SESSION", locale)} onChange={onShowSessionChanged} />
+            {map && <Checkbox checked={showSession} label={tr("SHARE_LINK_INCLUDE_SESSION", locale)} onChange={onShowSessionChanged} />}
             <CopyToClipboard text={shareUrl} onCopy={onCopied}>
-                <button className="pt-button">{tr("SHARE_LINK_COPY_CLIPBOARD", locale)}</button>
+                <Button intent={Intent.PRIMARY}>{tr("SHARE_LINK_COPY_CLIPBOARD", locale)}</Button>
             </CopyToClipboard>
         </div>
     </div>;

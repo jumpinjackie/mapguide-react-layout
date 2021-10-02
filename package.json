@@ -18,7 +18,7 @@
     "build:prod": "cross-env BUILD_MODE=production webpack --progress",
     "build:debug": "cross-env BUILD_MODE=development DEBUG_BUILD=1 webpack --progress",
     "build:dev": "cross-env BUILD_MODE=development webpack --progress",
-    "build:json_schema": "typescript-json-schema tsconfig.npm.json ApplicationDefinition --out ApplicationDefinition.schema.json",
+    "build:json_schema": "typescript-json-schema tsconfig.npm.json ApplicationDefinition --out viewer/ApplicationDefinition.schema.json",
     "clean:barrels": "rimraf src/index.ts",
     "watch:site": "docsify serve docs_dev/content",
     "watch:dev": "yarn run clean:barrels && cross-env BUILD_MODE=development webpack -w --progress",

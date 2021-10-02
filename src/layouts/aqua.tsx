@@ -20,6 +20,7 @@ import { useCommonTemplateState } from './hooks';
 import { useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
 import { setLegendVisibility, setSelectionPanelVisibility, setTaskPaneVisibility } from '../actions/template';
 import { useActiveMapState } from '../containers/hooks-mapguide';
+import { useActiveMapSubjectLayer } from "../containers/hooks-generic";
 
 function aquaTemplateReducer(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
@@ -119,6 +120,7 @@ export const AquaTemplateLayout = () => {
         dispatch
     } = useCommonTemplateState(aquaTemplateReducer);
     const map = useActiveMapState();
+    const subject = useActiveMapSubjectLayer();
     const hideLegend = () => dispatch(setLegendVisibility(false));
     const hideSelection = () => dispatch(setSelectionPanelVisibility(false));
     const hideTaskPane = () => dispatch(setTaskPaneVisibility(false));
@@ -159,7 +161,8 @@ export const AquaTemplateLayout = () => {
                 //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
                 //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()
                 //call to fix
-                if (map != null) {
+                const theMap = map ?? subject;
+                if (theMap) {
                     return <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} />;
                 }
             })()}

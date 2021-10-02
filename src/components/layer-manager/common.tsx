@@ -146,7 +146,7 @@ function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
             setIsEditing(true);
         }
     };
-    const editButton = <Button icon="edit" minimal intent={Intent.PRIMARY} style={{ color: "white", backgroundColor: "#137cbd" }} onClick={e => onEditClick()} />
+    const editButton = <Button icon="edit" minimal intent={Intent.PRIMARY} style={{ color: "white", backgroundColor: "#137cbd" }} onClick={(e: any) => onEditClick()} />
     return <>
         <InputGroup style={roStyle} readOnly value={stringifyExpr(props.value, locale)} rightElement={editButton} />
         <Collapse isOpen={isEditing} keepChildrenMounted={false}>
@@ -159,8 +159,8 @@ function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
                 <input disabled={editMode != "edit-expr"} type="text" className="bp3-input" value={stringifyExprIf(localValue, "edit-expr")} onChange={e => onUpdateLocalValue({ expr: e.target.value })} />
                 <br /><br />
                 <ButtonGroup>
-                    <Button disabled={!isEditValid} intent={Intent.SUCCESS} onClick={e => onApplyValue()}>Apply</Button>
-                    <Button intent={Intent.DANGER} onClick={e => onCancelEditing()}>Cancel</Button>
+                    <Button disabled={!isEditValid} intent={Intent.SUCCESS} onClick={(e: any) => onApplyValue()}>Apply</Button>
+                    <Button intent={Intent.DANGER} onClick={(e: any) => onCancelEditing()}>Cancel</Button>
                 </ButtonGroup>
             </Card>
         </Collapse>

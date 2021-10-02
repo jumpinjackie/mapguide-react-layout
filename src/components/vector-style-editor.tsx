@@ -113,9 +113,9 @@ const LabelStyleEditor: React.FC<ILabelStyleEditor> = props => {
             <NumberExprEditor locale={locale} value={localFontSize} onChange={t => setLocalFontSize(coalesceExpr(t, DEFAULT_FONT_SIZE))} />
         </FormGroup>}
         {hasLabel && <ButtonGroup>
-            <Button intent={Intent.PRIMARY} active={bold} onClick={e => setBold(!bold)}>{tr("LABEL_BOLD", locale)}</Button>
-            <Button intent={Intent.PRIMARY} active={italic} onClick={e => setItalic(!italic)}>{tr("LABEL_ITALIC", locale)}</Button>
-            {isLine && <Button intent={Intent.PRIMARY} active={localLabel.placement == "line"} onClick={e => onToggleLinePlacement()}>{tr("LABEL_LINE_PLACEMENT", locale)}</Button>}
+            <Button intent={Intent.PRIMARY} active={bold} onClick={(e: any) => setBold(!bold)}>{tr("LABEL_BOLD", locale)}</Button>
+            <Button intent={Intent.PRIMARY} active={italic} onClick={(e: any) => setItalic(!italic)}>{tr("LABEL_ITALIC", locale)}</Button>
+            {isLine && <Button intent={Intent.PRIMARY} active={localLabel.placement == "line"} onClick={(e: any) => onToggleLinePlacement()}>{tr("LABEL_LINE_PLACEMENT", locale)}</Button>}
         </ButtonGroup>}
         {hasLabel && <FormGroup label={tr("LABEL_COLOR", locale)}>
             <ColorExprEditor locale={locale} value={localBgColor} onChange={(c: any) => setLocalBgColor(c)} />

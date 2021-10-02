@@ -1,14 +1,13 @@
 import { IInitAsyncOptions, normalizeInitPayload } from './init';
 import { ReduxDispatch, Dictionary, ActiveMapTool } from '../api/common';
 import { IGenericSubjectMapLayer, IInitAppActionPayload, MapInfo } from './defs';
-import { ICommandSpec, ToolbarConf, PreparedSubMenuSet, isFlyoutSpec, convertFlexLayoutUIItems, parseWidgetsInAppDef, prepareSubMenus } from '../api/registry/command-spec';
+import { ToolbarConf, convertFlexLayoutUIItems, parseWidgetsInAppDef, prepareSubMenus } from '../api/registry/command-spec';
 import { makeUnique } from '../utils/array';
 import { ApplicationDefinition, MapConfiguration } from '../api/contracts/fusion';
 import { warn, info } from '../utils/logger';
 import { registerCommand } from '../api/registry/command';
 import { tr, registerStringBundle, DEFAULT_LOCALE } from '../api/i18n';
-import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU } from "../constants";
-import * as shortid from 'shortid';
+import { WEBLAYOUT_CONTEXTMENU } from "../constants";
 import { Client } from '../api/client';
 import { ActionType } from '../constants/actions';
 import { ensureParameters } from '../utils/url';

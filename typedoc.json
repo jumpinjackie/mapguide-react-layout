@@ -2,6 +2,7 @@
     "entryPoints": ["./src"],
     "entryPointStrategy": "expand",
     "readme": "./docs_dev/content/API_NPM.md",
+    "disableSources": true,
     "excludePrivate": true,
     "excludeExternals": true,
     "includeVersion": true,

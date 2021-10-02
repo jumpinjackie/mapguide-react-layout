@@ -1,7 +1,7 @@
 0.14
 ====
 
-# New Features
+## New Features
 
  * [#1175](https://github.com/jumpinjackie/mapguide-react-layout/issues/1175): New powerful declarative styles for vector layers
  * External Layer Manager enhancements:

@@ -3,7 +3,7 @@
 > A modern map viewer for MapGuide Open Source
 
 [GitHub](https://github.com/jumpinjackie/mapguide-react-layout)
-[Get Started](README.md)
+[Get Started](GETTING_STARTED.md)
 [Release Notes](RELEASE_NOTES.md)
 [Download](https://github.com/jumpinjackie/mapguide-react-layout/releases/latest)
 

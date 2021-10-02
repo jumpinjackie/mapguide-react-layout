@@ -1,3 +1,4 @@
+- [Getting Started](GETTING_STARTED.md)
 - [About](README.md)
 - [Release Notes](RELEASE_NOTES.md)
 - Guide

@@ -79,9 +79,6 @@ export function getIconStyle(enabled: boolean, height: number): React.CSSPropert
         verticalAlign: "middle",
         lineHeight: height
     };
-    if (!enabled) {
-        imgStyle.opacity = 0.2;
-    }
     return imgStyle;
 }
 
@@ -336,7 +333,7 @@ const ToolbarButton = (props: IToolbarButtonProps) => {
         ttip = item.tooltip;
     }
     if (!enabled) {
-        style.opacity = 0.2;
+        style.opacity = 0.3;
     }
     const iconEl = getIconElement(item, enabled, height);
     return <div className={`noselect toolbar-btn ${selected ? "selected-item" : ""} ${(isMouseOver && enabled) ? "mouse-over" : ""}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} style={style} title={ttip} onClick={onClick}>

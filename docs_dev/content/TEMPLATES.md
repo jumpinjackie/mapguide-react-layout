@@ -75,6 +75,14 @@ The following templates are included with this viewer.
  * Supports Flexible Layouts: `yes`
  * Supports Web Layouts: `no`^
 
+## Generic
+
+![](https://github.com/jumpinjackie/mapguide-react-layout/raw/master/docs_dev/content/generic.png)
+
+ * Entry point: `generic.html`
+ * Supports Flexible Layouts: `yes`
+ * Supports Web Layouts: `no`
+
 ### Footnotes
 
 ^ The viewer will still load, but most likely will not have any toolbars initialized

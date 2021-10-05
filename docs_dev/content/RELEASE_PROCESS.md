@@ -22,11 +22,13 @@ Release Process
 
 8. Switch to this new tag to publish the real npm package
 
-   8.1. `yarn run build:npm`
+   8.1. `yarn run build:barrels`
 
-   8.2. `cd package`
+   8.2. `yarn run build:npm`
 
-   8.3. `npm publish`
+   8.3. `cd package`
+
+   8.4. `npm publish`
 
 9. Go to the new GitHub release and publish it with the new release notes.
 

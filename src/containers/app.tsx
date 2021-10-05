@@ -109,9 +109,7 @@ export interface IAppProps {
      */
     layout: string | AdHocLayoutTemplate;
     /**
-     * A resource id to a Map Definition or Application Definition or a function that will fetch the required Application Definition. 
-     * 
-     * MapGuide-only: If passing a Map Definition, a default viewer layout will be created
+     * A resource id to a Web Layout or Application Definition or a function that will fetch the required Application Definition. 
      *
      * @memberof IAppProps
      */
@@ -121,6 +119,10 @@ export interface IAppProps {
      *
      * @type {IExternalBaseLayer[]}
      * @memberof IAppProps
+     * 
+     * @remarks This option is for when you are passing in a Web Layout to the viewer, but you still want to provide external 
+     * base layers. If passing in an Application Definition, this option is redundant as the Application Definition itself can
+     * define the set of external base layers
      */
     externalBaseLayers?: IExternalBaseLayer[];
     /**
@@ -132,7 +134,13 @@ export interface IAppProps {
      * @since 0.14
      */
     urlPropsIgnore?: string[];
+    /**
+     * A callback function that will be called when the viewer has finished initializing
+     */
     onInit?: (viewer: IMapViewer) => void;
+    /**
+     * The locale to use
+     */
     locale?: string;
     /**
      * MapGuide-specific options

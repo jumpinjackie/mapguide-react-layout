@@ -40,6 +40,6 @@ A `Widget` defines a discrete piece of map viewer functionality. For some widget
 
 ## Other Resources
 
- * [ApplicationDefinition API documentation](TBD) that describes/documents the full JSON structure
+ * [ApplicationDefinition API documentation](https://jumpinjackie.github.io/mapguide-react-layout/0.14.0/apidoc_npm/interfaces/api_contracts_fusion.ApplicationDefinition.html) that describes/documents the full JSON structure
  * [The default appdef.json](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/viewer/appdef.json)
  * The viewer bundle includes a JSON schema (`ApplicationDefinition.schema.json`) to assist in editing appdef JSON documents

@@ -11,6 +11,10 @@ or Application Definition as a query string to initialize your viewer applicatio
 
 `http://servername/mapguide/react/index.html?resource=Library://Path/To/Your.ApplicationDefinition`
 
+- OR
+
+`http://servername/mapguide/react/index.html?resource=url/to/your/appdef.json`
+
 If the provided HTML pages are not suitable (you have custom requirements for embedding), then the
 following HTML example illustrates how to embed the viewer
 
@@ -19,11 +23,14 @@ following HTML example illustrates how to embed the viewer
 <html>
     <head>
         <title>Viewer example</title>
+        <link rel="stylesheet" href="dist/vendor.css" type="text/css" />
+        <link rel="stylesheet" href="dist/viewer.css" type="text/css" />
     </head>
     <body>
         <!-- The viewer will mount at this element -->
         <div id="map"></div>
         <!-- Reference the main viewer bundle -->
+        <script type="text/javascript" src="dist/vendor.js"></script>
         <script type="text/javascript" src="dist/viewer.js"></script>
         <script type="text/javascript">
             // Get the HTML element for the mount point
@@ -81,12 +88,17 @@ The redux store is also available when evaluating whether the command should be 
 
 ## Mount Options
 
-TODO
+Refer to the [API docs for mount](https://jumpinjackie.github.io/mapguide-react-layout/latest/apidoc_npm/classes/entries_application.ApplicationViewModel.html#mount) to see what other options you can pass to
+the `mount` method
 
 ## Adding a custom component
+
+> This option is only available if you are creating a custom viewer bundle
 
 TODO
 
 ## Adding a custom layout
+
+> This option is only available if you are creating a custom viewer bundle
 
 TODO

@@ -26,6 +26,10 @@ The following templates are included with this viewer.
  * Entry Point: `index.html`
  * Supports Flexible Layouts: `yes`~
  * Supports Web Layouts: `yes`
+ * Customizable containers:
+    * Main toolbar
+    * Context Menu
+    * Task Pane Menu
 
 ## Sidebar
 
@@ -34,6 +38,10 @@ The following templates are included with this viewer.
  * Entry Point: `sidebar.html`
  * Supports Flexible Layouts: `yes`~
  * Supports Web Layouts: `yes`
+ * Customizable containers:
+    * Main vertical toolbar
+    * Context Menu
+    * Task Pane Menu
 
 ## Slate
 
@@ -42,6 +50,10 @@ The following templates are included with this viewer.
  * Entry Point: `slate.html`
  * Supports Flexible Layouts: `yes`
  * Supports Web Layouts: `no`^
+ * Customizable containers:
+    * Main toolbars
+    * Context Menu
+    * Task Pane Menu
 
 ## Maroon
 
@@ -50,6 +62,11 @@ The following templates are included with this viewer.
  * Entry Point: `maroon.html`
  * Supports Flexible Layouts: `yes`
  * Supports Web Layouts: `no`^
+ * Customizable containers:
+    * Main horizontal toolbar
+    * Main vertical toolbar
+    * Context Menu
+    * Task Pane Menu
 
 ## Aqua
 
@@ -58,6 +75,11 @@ The following templates are included with this viewer.
  * Entry Point: `aqua.html`
  * Supports Flexible Layouts: `yes`
  * Supports Web Layouts: `no`^
+ * Customizable containers:
+    * Main horizontal toolbars
+    * Main vertical toolbar
+    * Context Menu
+    * Task Pane Menu
 
 ## LimeGold
 
@@ -66,6 +88,10 @@ The following templates are included with this viewer.
  * Entry Point: `limegold.html`
  * Supports Flexible Layouts: `yes`
  * Supports Web Layouts: `no`^
+ * Customizable containers:
+   * Main horizontal toolbars
+   * Context Menu
+   * Task Pane Menu
 
 ## TurquoiseYellow
 
@@ -74,6 +100,11 @@ The following templates are included with this viewer.
  * Entry Point: `turquoiseyellow.html`
  * Supports Flexible Layouts: `yes`
  * Supports Web Layouts: `no`^
+ * Customizable containers:
+   * Main horizontal toolbars
+   * Main vertical toolbar
+   * Context Menu
+   * Task Pane Menu
 
 ## Generic
 
@@ -82,6 +113,13 @@ The following templates are included with this viewer.
  * Entry point: `generic.html`
  * Supports Flexible Layouts: `yes`
  * Supports Web Layouts: `no`
+ * Customizable containers:
+    * Context Menu
+
+> NOTE: This template is opinionated and several elements of this template are hard-coded and cannot be customised by the appdef you pass into it. These include:
+  * The main vertical toolbar
+  * The zoom slider on the right
+  * The mouse coordinates
 
 ### Footnotes
 

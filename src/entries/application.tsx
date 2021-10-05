@@ -9,7 +9,7 @@ import { ViewerAction } from '../actions/defs';
 import { Subscriber, ISubscriberProps } from '../containers/subscriber';
 import { IViewerInitCommand } from '../actions/init-command';
 import { ReduxProvider } from "../components/map-providers/context";
-import { MapGuideViewerInitCommand } from "./library";
+import { DefaultViewerInitCommand } from "../actions/init-mapguide";
 
 /**
  * Extra application mount options.
@@ -98,7 +98,7 @@ export class ApplicationViewModel {
         if (props.initCommandFactory)
             initCommand = props.initCommandFactory(this._store.dispatch)
         else
-            initCommand = new MapGuideViewerInitCommand(this._store.dispatch);
+            initCommand = new DefaultViewerInitCommand(this._store.dispatch);
         ReactDOM.render(<ReduxProvider store={this._store}>
             <App {...props} initCommand={initCommand} />
             {subs.map((s, i) => <Subscriber key={`subscriber-${i}-${s.name}`} {...s} />)}

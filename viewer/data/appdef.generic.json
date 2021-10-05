@@ -111,15 +111,10 @@
                     },
                     {
                         "Type": "OpenStreetMap",
-                        "SingleTile": true,
                         "Extension": {
                             "Options": {
-                                "name": [
-                                    "Open Street Map"
-                                ],
-                                "type": [
-                                    "Mapnik"
-                                ]
+                                "name": "Open Street Map",
+                                "type": "Mapnik"
                             }
                         }
                     },
@@ -128,12 +123,8 @@
                         "SingleTile": true,
                         "Extension": {
                             "Options": {
-                                "name": [
-                                    "Stamen (Toner)"
-                                ],
-                                "type": [
-                                    "toner"
-                                ]
+                                "name": "Stamen (Toner)",
+                                "type": "toner"
                             }
                         }
                     }
@@ -185,12 +176,8 @@
                         "SingleTile": true,
                         "Extension": {
                             "Options": {
-                                "name": [
-                                    "Stamen (Toner)"
-                                ],
-                                "type": [
-                                    "toner"
-                                ]
+                                "name": "Stamen (Toner)",
+                                "type": "toner"
                             }
                         }
                     },
@@ -199,12 +186,8 @@
                         "SingleTile": true,
                         "Extension": {
                             "Options": {
-                                "name": [
-                                    "Open Street Map"
-                                ],
-                                "type": [
-                                    "Mapnik"
-                                ]
+                                "name": "Open Street Map",
+                                "type": "Mapnik"
                             }
                         }
                     }

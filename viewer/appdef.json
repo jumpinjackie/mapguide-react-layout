@@ -10,36 +10,44 @@
                         "Extension": {
                             "source_type": "GeoJSON_Inline",
                             "source_param_attributions": [],
-                            "meta_extents": [-180, -90, 180, 90],
-                            "meta_projection": "EPSG:4326",
+                            "meta_extents": [-20026376.39, -20048966.10, 20026376.39, 20048966.10],
+                            "meta_projection": "EPSG:3857",
                             "is_selectable": false
                         }
                     },
                     {
                         "Type": "OpenStreetMap",
-                        "SingleTile": true,
                         "Extension": {
                             "Options": {
-                                "name": [
-                                    "Open Street Map"
-                                ],
-                                "type": [
-                                    "Mapnik"
-                                ]
+                                "name": "Open Street Map",
+                                "type": "Mapnik"
                             }
                         }
                     },
                     {
                         "Type": "Stamen",
-                        "SingleTile": true,
                         "Extension": {
                             "Options": {
-                                "name": [
-                                    "Stamen (Toner)"
-                                ],
-                                "type": [
-                                    "toner"
-                                ]
+                                "name": "Stamen (Toner)",
+                                "type": "toner"
+                            }
+                        }
+                    },
+                    {
+                        "Type": "Stamen",
+                        "Extension": {
+                            "Options": {
+                                "name": "Stamen (Watercolor)",
+                                "type": "watercolor"
+                            }
+                        }
+                    },
+                    {
+                        "Type": "Stamen",
+                        "Extension": {
+                            "Options": {
+                                "name": "Stamen (Terrain)",
+                                "type": "terrain"
                             }
                         }
                     }
@@ -910,7 +918,8 @@
                         "EmptyText": "&amp;nbsp;",
                         "Precision": "4",
                         "Template": "Lon: {x} {units}, Lat: {y} {units}",
-                        "Units": "dd"
+                        "Units": "dd",
+                        "DisplayProjection": "EPSG:4326"
                     }
                 },
                 {

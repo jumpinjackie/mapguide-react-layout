@@ -4,6 +4,7 @@
 - Guide
   - [Templates](TEMPLATES.md)
   - [Developer Guide](DEVELOPING.md)
+  - [Application Definiton Reference](APPDEF.md)
   - [Components](COMPONENTS.md)
   - [Known Issues](KNOWN_ISSUES.md)
 - [API](APIDOC.md)

@@ -146,11 +146,12 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
             {
                 //HACK: De-arrayification of arbitrary extension elements
                 //is shallow (hence name/type is string[]). Do we bother to fix this?
-                const name = map.Extension.Options.name[0];
-                const type = map.Extension.Options.type[0];
+                const { name, type } = map.Extension.Options;
+                const sName = Array.isArray(name) ? name[0] : name;
+                const sType = Array.isArray(type) ? type[0] : type;
                 const options: any = {};
                 let bAdd = true;
-                switch (type) {
+                switch (sType) {
                     case "Aerial":
                     case "a":
                         options.imagerySet = "Aerial";
@@ -175,7 +176,7 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
                 }
                 if (bAdd) {
                     externalBaseLayers.push({
-                        name: name,
+                        name: sName,
                         kind: "BingMaps",
                         options: options
                     });
@@ -186,10 +187,11 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
             {
                 //HACK: De-arrayification of arbitrary extension elements
                 //is shallow (hence name/type is string[]). Do we bother to fix this?
-                const name = map.Extension.Options.name[0];
-                const type = map.Extension.Options.type[0];
+                const { name, type } = map.Extension.Options;
+                const sName = Array.isArray(name) ? name[0] : name;
+                const sType = Array.isArray(type) ? type[0] : type;
                 const options: any = {};
-                switch (type) {
+                switch (sType) {
                     case "CycleMap":
                         options.url = "http://{a-c}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png";
                         break;
@@ -198,7 +200,7 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
                         break;
                 }
                 externalBaseLayers.push({
-                    name: name,
+                    name: sName,
                     kind: "OSM",
                     options: options
                 });
@@ -208,13 +210,14 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
             {
                 //HACK: De-arrayification of arbitrary extension elements
                 //is shallow (hence name/type is string[]). Do we bother to fix this?
-                const name = map.Extension.Options.name[0];
-                const type = map.Extension.Options.type[0];
+                const { name, type } = map.Extension.Options;
+                const sName = Array.isArray(name) ? name[0] : name;
+                const sType = Array.isArray(type) ? type[0] : type;
                 externalBaseLayers.push({
-                    name: name,
+                    name: sName,
                     kind: "Stamen",
                     options: {
-                        layer: type
+                        layer: sType
                     }
                 });
             }
@@ -237,9 +240,9 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
             {
                 //HACK: De-arrayification of arbitrary extension elements
                 //is shallow (hence name/type is string[]). Do we bother to fix this?
-                const name = map.Extension.Options.name[0];
-                const type = map.Extension.Options.type[0];
-                const attributions = map.Extension.Options.attributions;
+                const { name, type, attributions } = map.Extension.Options;
+                const sName = Array.isArray(name) ? name[0] : name;
+                const sType = Array.isArray(type) ? type[0] : type;
                 let tilePixelRatio = 1;
                 if (map.Extension.Options.tilePixelRatio) {
                     tilePixelRatio = parseInt(map.Extension.Options.tilePixelRatio[0], 10);
@@ -250,10 +253,10 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
                 //placeholder tokens
                 const urls = (map.Extension.Options.urls || []).map((s: string) => strReplaceAll(s, "${", "{"));
                 externalBaseLayers.push({
-                    name: name,
+                    name: sName,
                     kind: "XYZ",
                     options: {
-                        layer: type,
+                        layer: sType,
                         urls,
                         attributions,
                         tilePixelRatio

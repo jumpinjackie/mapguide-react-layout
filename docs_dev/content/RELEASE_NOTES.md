@@ -1,3 +1,8 @@
+0.14.1
+======
+
+ * Fix npm package due to unwanted modules being pulled in from a bad import
+
 0.14
 ====
 

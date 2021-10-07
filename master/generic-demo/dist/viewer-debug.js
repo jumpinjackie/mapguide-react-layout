@@ -1143,12 +1143,33 @@ exports.isGenericSubjectMapLayer = exports.GenericSubjectLayerType = void 0;
  */
 var GenericSubjectLayerType;
 (function (GenericSubjectLayerType) {
+    /**
+     * A tiled WMS layer
+     */
     GenericSubjectLayerType["TileWMS"] = "TileWMS";
+    /**
+     * A vector layer based on an external CSV file
+     */
     GenericSubjectLayerType["CSV"] = "CSV";
+    /**
+     * A vector layer based on an external KML file
+     */
     GenericSubjectLayerType["KML"] = "KML";
+    /**
+     * A vector layer based on an external GeoJSON file
+     */
     GenericSubjectLayerType["GeoJSON"] = "GeoJSON";
+    /**
+     * A vector layer based on an inline GeoJSON fragment
+     */
     GenericSubjectLayerType["GeoJSON_Inline"] = "GeoJSON_Inline";
+    /**
+     * A vector layer based on a custom-defined format whose driver was registered with {@link ExternalLayerFactoryRegistry.registerExternalVectorLayerCreator}
+     */
     GenericSubjectLayerType["CustomVector"] = "CustomVector";
+    /**
+     * A vector layer based on a Mapbox Vector Tile set
+     */
     GenericSubjectLayerType["MVT"] = "MVT";
 })(GenericSubjectLayerType = exports.GenericSubjectLayerType || (exports.GenericSubjectLayerType = {}));
 function isGenericSubjectMapLayer(map) {
@@ -1291,7 +1312,6 @@ var logger_1 = __webpack_require__(/*! ../utils/logger */ "./src/utils/logger.ts
 var command_1 = __webpack_require__(/*! ../api/registry/command */ "./src/api/registry/command.ts");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
-var shortid = (0, tslib_1.__importStar)(__webpack_require__(/*! shortid */ "./node_modules/shortid/index.js"));
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
 var url_1 = __webpack_require__(/*! ../utils/url */ "./src/utils/url.ts");
 var error_1 = __webpack_require__(/*! ../api/error */ "./src/api/error.ts");
@@ -1478,51 +1498,6 @@ var ViewerInitCommand = /** @class */ (function () {
         }
         return (0, array_1.makeUnique)(epsgs);
     };
-    ViewerInitCommand.prototype.prepareSubMenus = function (tbConf) {
-        var prepared = {
-            toolbars: {},
-            flyouts: {}
-        };
-        var bFoundContextMenu = false;
-        for (var key in tbConf) {
-            if (key == constants_1.WEBLAYOUT_CONTEXTMENU) {
-                bFoundContextMenu = true;
-            }
-            //Special cases: Task pane and Context Menu. Transfer all to flyout
-            if (key == constants_1.WEBLAYOUT_TASKMENU || key == constants_1.WEBLAYOUT_CONTEXTMENU) {
-                var flyoutId = key;
-                prepared.flyouts[flyoutId] = {
-                    children: tbConf[key].items
-                };
-            }
-            else {
-                prepared.toolbars[key] = {
-                    items: []
-                };
-                for (var _i = 0, _a = tbConf[key].items; _i < _a.length; _i++) {
-                    var item = _a[_i];
-                    //Special case: contextmenu is all inline
-                    if ((0, command_spec_1.isFlyoutSpec)(item) && key != constants_1.WEBLAYOUT_CONTEXTMENU) {
-                        var flyoutId = item.label + "_" + shortid.generate();
-                        prepared.toolbars[key].items.push({
-                            label: item.label,
-                            tooltip: item.tooltip,
-                            icon: item.icon,
-                            spriteClass: item.spriteClass,
-                            flyoutId: flyoutId
-                        });
-                        prepared.flyouts[flyoutId] = {
-                            children: item.children
-                        };
-                    }
-                    else {
-                        prepared.toolbars[key].items.push(item);
-                    }
-                }
-            }
-        }
-        return [prepared, bFoundContextMenu];
-    };
     ViewerInitCommand.prototype.initFromAppDefCoreAsync = function (appDef, options, mapsByName, warnings) {
         return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
             var _a, taskPane, hasTaskBar, hasStatus, hasNavigator, hasSelectionPanel, hasLegend, viewSize, widgetsByKey, isStateless, initialTask, locale, featureTooltipsEnabled, config, tbConf, _i, _b, widgetSet, _c, _d, cont, tbName, _e, _f, w, mapsDict, maps, _g, firstMapName, firstSessionId, _h, tb, bFoundContextMenu;
@@ -1555,7 +1530,7 @@ var ViewerInitCommand = /** @class */ (function () {
                     document.title = appDef.Title || document.title;
                 }
                 _g = this.establishInitialMapNameAndSession(mapsDict), firstMapName = _g[0], firstSessionId = _g[1];
-                _h = this.prepareSubMenus(tbConf), tb = _h[0], bFoundContextMenu = _h[1];
+                _h = (0, command_spec_1.prepareSubMenus)(tbConf), tb = _h[0], bFoundContextMenu = _h[1];
                 if (!bFoundContextMenu) {
                     warnings.push((0, i18n_1.tr)("INIT_WARNING_NO_CONTEXT_MENU", locale, { containerName: constants_1.WEBLAYOUT_CONTEXTMENU }));
                 }
@@ -1724,7 +1699,7 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
                         menus[constants_1.WEBLAYOUT_CONTEXTMENU] = {
                             items: contextMenu
                         };
-                        tb = this.prepareSubMenus(menus)[0];
+                        tb = (0, command_spec_1.prepareSubMenus)(menus)[0];
                         return [2 /*return*/, {
                                 activeMapName: firstMapName,
                                 featureTooltipsEnabled: featureTooltipsEnabled,
@@ -2143,70 +2118,82 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
     };
     DefaultViewerInitCommand.prototype.sessionAcquiredAsync = function (session, sessionWasReused) {
         return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
-            var _a, resourceId, locale, wl, _b, _c, _d, fl, _e, _f, _g, fl, cl, fl;
+            var _a, resourceId, locale, cl, fl, e_2, wl, _b, _c, _d, fl, _e, _f, _g, fl, cl, fl;
             var _h, _j;
             return (0, tslib_1.__generator)(this, function (_k) {
                 switch (_k.label) {
                     case 0:
                         _a = this.options, resourceId = _a.resourceId, locale = _a.locale;
-                        if (!!resourceId) return [3 /*break*/, 1];
-                        throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_MISSING_RESOURCE_PARAM", locale));
+                        if (!!resourceId) return [3 /*break*/, 6];
+                        cl = new client_1.Client("", "mapagent");
+                        _k.label = 1;
                     case 1:
-                        if (!(typeof (resourceId) == 'string')) return [3 /*break*/, 17];
-                        if (!(0, string_1.strEndsWith)(resourceId, "WebLayout")) return [3 /*break*/, 5];
+                        _k.trys.push([1, 4, , 5]);
+                        return [4 /*yield*/, cl.get("appdef.json")];
+                    case 2:
+                        fl = _k.sent();
+                        return [4 /*yield*/, this.initFromAppDefAsync(fl, session, sessionWasReused)];
+                    case 3: return [2 /*return*/, _k.sent()];
+                    case 4:
+                        e_2 = _k.sent();
+                        throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_MISSING_RESOURCE_PARAM", locale));
+                    case 5: return [3 /*break*/, 25];
+                    case 6:
+                        if (!(typeof (resourceId) == 'string')) return [3 /*break*/, 22];
+                        if (!(0, string_1.strEndsWith)(resourceId, "WebLayout")) return [3 /*break*/, 10];
                         (0, assert_1.assertIsDefined)(this.client);
                         _c = (_b = this.client).getResource;
                         _d = [resourceId];
                         _h = {};
                         return [4 /*yield*/, session.getValueAsync()];
-                    case 2: return [4 /*yield*/, _c.apply(_b, _d.concat([(_h.SESSION = _k.sent(), _h)]))];
-                    case 3:
+                    case 7: return [4 /*yield*/, _c.apply(_b, _d.concat([(_h.SESSION = _k.sent(), _h)]))];
+                    case 8:
                         wl = _k.sent();
                         return [4 /*yield*/, this.initFromWebLayoutAsync(wl, session, sessionWasReused)];
-                    case 4: return [2 /*return*/, _k.sent()];
-                    case 5:
-                        if (!(0, string_1.strEndsWith)(resourceId, "ApplicationDefinition")) return [3 /*break*/, 9];
+                    case 9: return [2 /*return*/, _k.sent()];
+                    case 10:
+                        if (!(0, string_1.strEndsWith)(resourceId, "ApplicationDefinition")) return [3 /*break*/, 14];
                         (0, assert_1.assertIsDefined)(this.client);
                         _f = (_e = this.client).getResource;
                         _g = [resourceId];
                         _j = {};
                         return [4 /*yield*/, session.getValueAsync()];
-                    case 6: return [4 /*yield*/, _f.apply(_e, _g.concat([(_j.SESSION = _k.sent(), _j)]))];
-                    case 7:
+                    case 11: return [4 /*yield*/, _f.apply(_e, _g.concat([(_j.SESSION = _k.sent(), _j)]))];
+                    case 12:
                         fl = _k.sent();
                         return [4 /*yield*/, this.initFromAppDefAsync(fl, session, sessionWasReused)];
-                    case 8: return [2 /*return*/, _k.sent()];
-                    case 9:
-                        if (!(0, string_1.isResourceId)(resourceId)) return [3 /*break*/, 10];
+                    case 13: return [2 /*return*/, _k.sent()];
+                    case 14:
+                        if (!(0, string_1.isResourceId)(resourceId)) return [3 /*break*/, 15];
                         throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", locale, { resourceId: resourceId }));
-                    case 10:
+                    case 15:
                         fl = void 0;
-                        if (!!this.client) return [3 /*break*/, 12];
+                        if (!!this.client) return [3 /*break*/, 17];
                         cl = new client_1.Client("", "mapagent");
                         return [4 /*yield*/, cl.get(resourceId)];
-                    case 11:
+                    case 16:
                         fl = _k.sent();
-                        return [3 /*break*/, 14];
-                    case 12: return [4 /*yield*/, this.client.get(resourceId)];
-                    case 13:
-                        fl = _k.sent();
-                        _k.label = 14;
-                    case 14: return [4 /*yield*/, this.initFromAppDefAsync(fl, session, sessionWasReused)];
-                    case 15: return [2 /*return*/, _k.sent()];
-                    case 16: return [3 /*break*/, 20];
-                    case 17: return [4 /*yield*/, resourceId()];
+                        return [3 /*break*/, 19];
+                    case 17: return [4 /*yield*/, this.client.get(resourceId)];
                     case 18:
                         fl = _k.sent();
+                        _k.label = 19;
+                    case 19: return [4 /*yield*/, this.initFromAppDefAsync(fl, session, sessionWasReused)];
+                    case 20: return [2 /*return*/, _k.sent()];
+                    case 21: return [3 /*break*/, 25];
+                    case 22: return [4 /*yield*/, resourceId()];
+                    case 23:
+                        fl = _k.sent();
                         return [4 /*yield*/, this.initFromAppDefAsync(fl, session, sessionWasReused)];
-                    case 19: return [2 /*return*/, _k.sent()];
-                    case 20: return [2 /*return*/];
+                    case 24: return [2 /*return*/, _k.sent()];
+                    case 25: return [2 /*return*/];
                 }
             });
         });
     };
     DefaultViewerInitCommand.prototype.runAsync = function (options) {
         return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
-            var sessionWasReused, session, payload, initSelections, _a, _b, _i, mapName, sset, e_2;
+            var sessionWasReused, session, payload, initSelections, _a, _b, _i, mapName, sset, e_3;
             var _this = this;
             return (0, tslib_1.__generator)(this, function (_c) {
                 switch (_c.label) {
@@ -2273,7 +2260,7 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
                         _c.sent();
                         return [3 /*break*/, 10];
                     case 9:
-                        e_2 = _c.sent();
+                        e_3 = _c.sent();
                         return [3 /*break*/, 10];
                     case 10: return [2 /*return*/, payload];
                 }
@@ -2375,11 +2362,12 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
             {
                 //HACK: De-arrayification of arbitrary extension elements
                 //is shallow (hence name/type is string[]). Do we bother to fix this?
-                var name_1 = map.Extension.Options.name[0];
-                var type = map.Extension.Options.type[0];
+                var _a = map.Extension.Options, name_1 = _a.name, type = _a.type;
+                var sName = Array.isArray(name_1) ? name_1[0] : name_1;
+                var sType = Array.isArray(type) ? type[0] : type;
                 var options = {};
                 var bAdd = true;
-                switch (type) {
+                switch (sType) {
                     case "Aerial":
                     case "a":
                         options.imagerySet = "Aerial";
@@ -2404,7 +2392,7 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
                 }
                 if (bAdd) {
                     externalBaseLayers.push({
-                        name: name_1,
+                        name: sName,
                         kind: "BingMaps",
                         options: options
                     });
@@ -2415,10 +2403,11 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
             {
                 //HACK: De-arrayification of arbitrary extension elements
                 //is shallow (hence name/type is string[]). Do we bother to fix this?
-                var name_2 = map.Extension.Options.name[0];
-                var type = map.Extension.Options.type[0];
+                var _b = map.Extension.Options, name_2 = _b.name, type = _b.type;
+                var sName = Array.isArray(name_2) ? name_2[0] : name_2;
+                var sType = Array.isArray(type) ? type[0] : type;
                 var options = {};
-                switch (type) {
+                switch (sType) {
                     case "CycleMap":
                         options.url = "http://{a-c}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png";
                         break;
@@ -2427,7 +2416,7 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
                         break;
                 }
                 externalBaseLayers.push({
-                    name: name_2,
+                    name: sName,
                     kind: "OSM",
                     options: options
                 });
@@ -2437,13 +2426,14 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
             {
                 //HACK: De-arrayification of arbitrary extension elements
                 //is shallow (hence name/type is string[]). Do we bother to fix this?
-                var name_3 = map.Extension.Options.name[0];
-                var type = map.Extension.Options.type[0];
+                var _c = map.Extension.Options, name_3 = _c.name, type = _c.type;
+                var sName = Array.isArray(name_3) ? name_3[0] : name_3;
+                var sType = Array.isArray(type) ? type[0] : type;
                 externalBaseLayers.push({
-                    name: name_3,
+                    name: sName,
                     kind: "Stamen",
                     options: {
-                        layer: type
+                        layer: sType
                     }
                 });
             }
@@ -2466,9 +2456,9 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
             {
                 //HACK: De-arrayification of arbitrary extension elements
                 //is shallow (hence name/type is string[]). Do we bother to fix this?
-                var name_4 = map.Extension.Options.name[0];
-                var type = map.Extension.Options.type[0];
-                var attributions = map.Extension.Options.attributions;
+                var _d = map.Extension.Options, name_4 = _d.name, type = _d.type, attributions = _d.attributions;
+                var sName = Array.isArray(name_4) ? name_4[0] : name_4;
+                var sType = Array.isArray(type) ? type[0] : type;
                 var tilePixelRatio = 1;
                 if (map.Extension.Options.tilePixelRatio) {
                     tilePixelRatio = parseInt(map.Extension.Options.tilePixelRatio[0], 10);
@@ -2479,10 +2469,10 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
                 //placeholder tokens
                 var urls = (map.Extension.Options.urls || []).map(function (s) { return (0, string_1.strReplaceAll)(s, "${", "{"); });
                 externalBaseLayers.push({
-                    name: name_4,
+                    name: sName,
                     kind: "XYZ",
                     options: {
-                        layer: type,
+                        layer: sType,
                         urls: urls,
                         attributions: attributions,
                         tilePixelRatio: tilePixelRatio
@@ -3654,10 +3644,17 @@ exports.setLegendVisibility = setLegendVisibility;
 
 "use strict";
 
+/**
+ * @module
+ * @hidden
+ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BaseLayerSetOL = void 0;
 var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 var olHas = (0, tslib_1.__importStar)(__webpack_require__(/*! ol/has */ "./node_modules/ol/has.js"));
+/**
+ * @hidden
+ */
 var BaseLayerSetOL = /** @class */ (function () {
     function BaseLayerSetOL(externalBaseLayersGroup, projection, dpi, extent, inPerUnit, view) {
         this.externalBaseLayersGroup = externalBaseLayersGroup;
@@ -3715,7 +3712,7 @@ exports.BaseLayerSetOL = BaseLayerSetOL;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.bootstrap = void 0;
 /**
- * Sets up key dependencies needed by the viewer
+ * Sets up key dependencies needed by the viewer. This only needs to be called on the entry point of your custom viewer bundle
  *
  * @export
  */
@@ -4364,7 +4361,7 @@ function deArrayifyMapGroup(json) {
             var m = _a[_i];
             mapGroup.Map.push({
                 Type: getter(m, "Type", "string"),
-                SingleTile: getter(m, "SingleTile", "boolean"),
+                //SingleTile: getter(m, "SingleTile", "boolean"),
                 Extension: deArrayifyExtension(m.Extension)
             });
         }
@@ -4429,7 +4426,7 @@ function deArrayifyContainer(json) {
         containers.push({
             Name: getter(c, "Name", "string"),
             Type: getter(c, "Type", "string"),
-            Position: getter(c, "Position", "string"),
+            //Position: getter(c, "Position", "string"),
             Extension: deArrayifyExtension(c.Extension),
             Item: deArrayifyContainerItems(c.Item)
         });
@@ -4460,7 +4457,7 @@ function deArrayifyWidget(json) {
         WidgetType: getter(root, "@xsi:type", "string"),
         Name: getter(root, "Name", "string"),
         Type: getter(root, "Type", "string"),
-        Location: getter(root, "Location", "string"),
+        //Location: getter(root, "Location", "string"),
         Extension: deArrayifyExtension(root.Extension)
     };
     return w;
@@ -4525,7 +4522,7 @@ function deArrayifyUiWidget(json) {
         Disabled: getter(root, "Disabled", "boolean"),
         Name: getter(root, "Name", "string"),
         Type: getter(root, "Type", "string"),
-        Location: getter(root, "Location", "string"),
+        //Location: getter(root, "Location", "string"),
         Extension: deArrayifyExtension(root.Extension)
     };
     return w;
@@ -4541,7 +4538,7 @@ function deArrayifyMapWidget(json) {
         MapId: getter(root, "MapId", "string"),
         Name: getter(root, "Name", "string"),
         Type: getter(root, "Type", "string"),
-        Location: getter(root, "Location", "string"),
+        //Location: getter(root, "Location", "string"),
         Extension: deArrayifyExtension(root.Extension)
     };
     return mw;
@@ -4697,6 +4694,8 @@ function deArrayifyTileSetDefinition(json) {
     return resp;
 }
 /**
+ * Indicates if the de-arrayified result is a {@link WebLayout}
+ *
  * @since 0.14
  */
 function isWebLayout(arg) {
@@ -4706,6 +4705,8 @@ function isWebLayout(arg) {
 }
 exports.isWebLayout = isWebLayout;
 /**
+ * Indicates if the de-arrayified result is an {@link ApplicationDefinition}
+ *
  * @since 0.14
  */
 function isAppDef(arg) {
@@ -4713,6 +4714,8 @@ function isAppDef(arg) {
 }
 exports.isAppDef = isAppDef;
 /**
+ * Indicates if the de-arrayified result is a {@link MapDefinition}
+ *
  * @since 0.14
  */
 function isMapDef(arg) {
@@ -4724,6 +4727,8 @@ function isMapDef(arg) {
 }
 exports.isMapDef = isMapDef;
 /**
+ * Indicates if the de-arrayified result is a {@link TileSetDefinition}
+ *
  * @since 0.14
  */
 function isTileSet(arg) {
@@ -4733,6 +4738,8 @@ function isTileSet(arg) {
 }
 exports.isTileSet = isTileSet;
 /**
+ * Indicates if the de-arrayified result is a {@link SiteVersionResponse}
+ *
  * @since 0.14
  */
 function isSiteVersion(arg) {
@@ -4740,6 +4747,8 @@ function isSiteVersion(arg) {
 }
 exports.isSiteVersion = isSiteVersion;
 /**
+ * Indicates if the de-arrayified result is a {@link QueryMapFeaturesResponse}
+ *
  * @since 0.14
  */
 function isQueryMapFeaturesResponse(arg) {
@@ -4824,6 +4833,7 @@ function buildSelectionXml(selection, layerIds) {
 exports.buildSelectionXml = buildSelectionXml;
 /**
  * Can only be used for a v4.0.0 or higher QUERYMAPFEATURES request
+ *
  * @param selection Current selection set
  * @param feat The active selected feature
  */
@@ -4863,7 +4873,7 @@ exports.createRequestBuilder = exports.registerRequestBuilder = void 0;
 var error_1 = __webpack_require__(/*! ../error */ "./src/api/error.ts");
 var _builders = {};
 /**
- * Registers a factory for creating request builders for the given kind
+ * Registers a factory for creating request builders for the given kind. This only needs to be called in the entry point of your custom viewer bundle.
  *
  * @param kind
  * @param factory
@@ -5349,6 +5359,9 @@ exports.Client = Client;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MgBuiltInLayers = exports.MG_BASE_LAYER_GROUP_NAME = exports.MG_LAYER_TYPE_NAME = exports.MgLayerType = exports.SourceProperty = exports.LayerProperty = exports.getExternalBaseLayers = exports.getCurrentView = exports.getRuntimeMap = exports.getSelectionSet = exports.getMapGuideSubState = exports.getInitialView = exports.ALWAYS_TRUE = exports.ALWAYS_FALSE = exports.NOOP = exports.KC_U = exports.KC_ESCAPE = exports.DEFAULT_MODAL_SIZE = exports.RefreshMode = exports.ActiveMapTool = exports.UnitOfMeasure = exports.BLANK_SIZE = void 0;
+/**
+ * The default blank size
+ */
 exports.BLANK_SIZE = { w: 1, h: 1 };
 var UnitOfMeasure;
 (function (UnitOfMeasure) {
@@ -5455,7 +5468,13 @@ var RefreshMode;
  * The default modal dialog size
  */
 exports.DEFAULT_MODAL_SIZE = [350, 500];
+/**
+ * Keyboard code for ESCAPE
+ */
 exports.KC_ESCAPE = 27;
+/**
+ * Keyboard code for the letter U
+ */
 exports.KC_U = 85;
 /**
  * A function that does nothing
@@ -5697,6 +5716,11 @@ function extend(extent1, extent2) {
     }
     return extent1;
 }
+/**
+ * A layer of a {@link CompositeSelection}
+ *
+ * @since 0.14
+ */
 var CompositeSelectionLayer = /** @class */ (function () {
     function CompositeSelectionLayer(layer) {
         this.layer = layer;
@@ -5794,6 +5818,11 @@ var CompositeSelectionLayer = /** @class */ (function () {
     return CompositeSelectionLayer;
 }());
 exports.CompositeSelectionLayer = CompositeSelectionLayer;
+/**
+ * A composition of a MapGuide selection set and a client-side vector feature selection
+ *
+ * @since 0.14
+ */
 var CompositeSelection = /** @class */ (function () {
     function CompositeSelection(mgSelection, clientSelection) {
         this.layers = [];
@@ -5900,6 +5929,7 @@ exports.isSearchCommand = isSearchCommand;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.initDefaultCommands = exports.buildTargetedCommand = void 0;
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 var command_1 = __webpack_require__(/*! ./registry/command */ "./src/api/registry/command.ts");
 var common_1 = __webpack_require__(/*! ./common */ "./src/api/common.ts");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
@@ -5909,6 +5939,8 @@ var map_1 = __webpack_require__(/*! ../actions/map */ "./src/actions/map.ts");
 var modal_1 = __webpack_require__(/*! ../actions/modal */ "./src/actions/modal.ts");
 var legend_1 = __webpack_require__(/*! ../actions/legend */ "./src/actions/legend.ts");
 var template_1 = __webpack_require__(/*! ../actions/template */ "./src/actions/template.ts");
+var react_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var react_dom_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
 function panMap(dispatch, viewer, value) {
     var settings = {
         "right": [2, 1],
@@ -6243,6 +6275,36 @@ function initDefaultCommands() {
             (0, command_1.openUrlInTarget)(command_1.DefaultCommands.AddManageLayers, cmdDef, config.capabilities.hasTaskPane, dispatch, url, (0, i18n_1.tr)("ADD_MANAGE_LAYERS", config.locale));
         }
     });
+    //Print
+    (0, command_1.registerCommand)(command_1.DefaultCommands.Print, {
+        iconClass: assets_1.SPRITE_PRINT,
+        selected: function () { return false; },
+        enabled: function () { return true; },
+        invoke: function (_dispatch, _getState, viewer, _parameters) {
+            viewer === null || viewer === void 0 ? void 0 : viewer.exportImage({
+                callback: function (image) {
+                    var el = react_1.default.createElement("img", { src: image });
+                    var printWindow = window.open();
+                    if (printWindow) {
+                        // Open and immediately close the document. This works around a problem in Firefox that is
+                        // captured here: https://bugzilla.mozilla.org/show_bug.cgi?id=667227.
+                        // Essentially, when we first create an iframe, it has no document loaded and asynchronously
+                        // starts a load of "about:blank". If we access the document object and start manipulating it
+                        // before that async load completes, a new document will be automatically created. But then
+                        // when the async load completes, the original, automatically-created document gets unloaded
+                        // and the new "about:blank" gets swapped in. End result: everything we add to the DOM before
+                        // the async load complete gets lost and Firefox ends up printing a blank page.
+                        // Explicitly opening and then closing a new document _seems_ to avoid this.
+                        printWindow.document.open();
+                        printWindow.document.close();
+                        printWindow.document.head.innerHTML = "\n                                <meta charset=\"UTF-8\">\n                                <title>Print View</title>\n                                ";
+                        printWindow.document.body.innerHTML = '<div id="print"></div>';
+                        react_dom_1.default.render(el, printWindow.document.getElementById("print"));
+                    }
+                }
+            });
+        }
+    });
     //Fusion template helper commands
     /*
     registerCommand("showOverview", {
@@ -6501,6 +6563,9 @@ var Image_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Imag
 exports.DEFAULT_METERS_PER_UNIT = 1.0;
 var M_TO_IN = 39.37;
 var DEFAULT_DPI = 96;
+/**
+ * @hidden
+ */
 var GenericLayerSetOL = /** @class */ (function (_super) {
     (0, tslib_1.__extends)(GenericLayerSetOL, _super);
     function GenericLayerSetOL(view, subjectLayer, extent, externalBaseLayersGroup, projection, metersPerUnit, dpi) {
@@ -9682,7 +9747,7 @@ exports.OLStyleMapSet = OLStyleMapSet;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.parseCommandsInWebLayout = exports.parseWidgetsInAppDef = exports.convertWebLayoutUIItems = exports.convertFlexLayoutUIItems = exports.convertWidget = exports.isFlyoutSpec = exports.isUIWidget = void 0;
+exports.prepareSubMenus = exports.parseCommandsInWebLayout = exports.parseWidgetsInAppDef = exports.convertWebLayoutUIItems = exports.convertFlexLayoutUIItems = exports.isFlyoutSpec = exports.isUIWidget = void 0;
 var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 var command_1 = __webpack_require__(/*! ./command */ "./src/api/registry/command.ts");
 var shortid = (0, tslib_1.__importStar)(__webpack_require__(/*! shortid */ "./node_modules/shortid/index.js"));
@@ -9694,6 +9759,7 @@ var logger_1 = __webpack_require__(/*! ../../utils/logger */ "./src/utils/logger
 var weblayout_1 = __webpack_require__(/*! ../contracts/weblayout */ "./src/api/contracts/weblayout.ts");
 var init_command_1 = __webpack_require__(/*! ../../actions/init-command */ "./src/actions/init-command.ts");
 var assets_1 = __webpack_require__(/*! ../../constants/assets */ "./src/constants/assets.ts");
+var constants_1 = __webpack_require__(/*! ../../constants */ "./src/constants.ts");
 function isCommandSpec(cmd) {
     return !(0, string_1.strIsNullOrEmpty)(cmd.command);
 }
@@ -9708,91 +9774,93 @@ function isFlyoutSpec(item) {
     return typeof (item.children) != 'undefined';
 }
 exports.isFlyoutSpec = isFlyoutSpec;
-/**
- * @hidden
- */
+function makeCommand(widget, noToolbarLabels, cmdType) {
+    return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: cmdType, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+}
 function convertWidget(widget, locale, noToolbarLabels) {
     switch (widget.Type) {
         case "Select":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.Select, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.Select);
         case "Pan":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.Pan, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.Pan);
         //case "PanQuery":
         //case "PanOnClick":
         case "Zoom":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.Zoom, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.Zoom);
         case "ZoomOnClick": //Covers in and out. Look at Factor parameter
             {
                 var factor = parseFloat(widget.Extension.Factor);
                 if (factor >= 1.0) {
-                    return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.ZoomIn, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+                    return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.ZoomIn);
                 }
                 else {
-                    return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.ZoomOut, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+                    return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.ZoomOut);
                 }
             }
         case "InitialMapView":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.ZoomExtents, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.ZoomExtents);
         case "ZoomToSelection":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.ZoomToSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.ZoomToSelection);
         case "ExtentHistory": //Covers prev and next. Look at Direction parameter
             {
                 if (widget.Extension.Direction == "previous") {
-                    return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.PreviousView, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+                    return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.PreviousView);
                 }
                 else {
-                    return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.NextView, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+                    return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.NextView);
                 }
             }
         case "CenterSelection":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.CenterSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.CenterSelection);
         case "About":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.About, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.About);
         case "BufferPanel":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.Buffer, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.Buffer);
         case "ClearSelection":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.ClearSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.ClearSelection);
         //case "ColorPicker":
         case "CoordinateTracker":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.CoordinateTracker, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.CoordinateTracker);
         case "FeatureInfo":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.FeatureInfo, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.FeatureInfo);
         case "Geolocation":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.Geolocation, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.Geolocation);
         //case "GoogleStreetViewer":
         case "Help":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.Help, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.Help);
         case "Maptip":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.MapTip, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.MapTip);
         case "MapMenu":
             return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: component_1.DefaultComponentNames.MapMenu, flyoutId: component_1.DefaultComponentNames.MapMenu + "_" + shortid.generate(), parameters: widget.Extension };
         case "Query":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.Query, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.Query);
         case "QuickPlot":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.QuickPlot, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.QuickPlot);
         case "Redline":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.Redline, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.Redline);
         case "RefreshMap":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.RefreshMap, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.RefreshMap);
         //case "SaveMap":
         case "InvokeURL": //Commands with this name would've been registered beforehand
         case "Search":
             return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: widget.Name, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
         case "SelectPolygon":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.SelectPolygon, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.SelectPolygon);
         case "SelectRadius":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.SelectRadius, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.SelectRadius);
         //case "SelectRadiusValue":
         case "SelectWithin":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.SelectWithin, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.SelectWithin);
         case "Theme":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.Theme, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.Theme);
         case "ViewOptions":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.ViewerOptions, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.ViewerOptions);
         case "ZoomToSelection":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.ZoomToSelection, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.ZoomToSelection);
         case "Measure":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: command_1.DefaultCommands.Measure, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.Measure);
+        case "Print":
+            return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.Print);
         case "BasemapSwitcher":
             return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: component_1.DefaultComponentNames.BaseMapSwitcher, flyoutId: component_1.DefaultComponentNames.BaseMapSwitcher + "_" + shortid.generate(), parameters: widget.Extension };
         case "InvokeScript":
@@ -9801,7 +9869,16 @@ function convertWidget(widget, locale, noToolbarLabels) {
             return { error: (0, i18n_1.tr)("UNKNOWN_WIDGET", locale, { widget: widget.Type }) };
     }
 }
-exports.convertWidget = convertWidget;
+/**
+ * @hidden
+ *
+ * @param isStateless
+ * @param items
+ * @param widgetsByKey
+ * @param locale
+ * @param noToolbarLabels
+ * @returns
+ */
 function convertFlexLayoutUIItems(isStateless, items, widgetsByKey, locale, noToolbarLabels) {
     if (noToolbarLabels === void 0) { noToolbarLabels = false; }
     var converted = items.map(function (item) {
@@ -9845,6 +9922,15 @@ function tryTranslateImageUrlToSpriteClass(imageUrl) {
             return assets_1.SPRITE_INVOKE_SCRIPT;
     }
 }
+/**
+ * @hidden
+ *
+ * @param items
+ * @param cmdsByKey
+ * @param locale
+ * @param noToolbarLabels
+ * @returns
+ */
 function convertWebLayoutUIItems(items, cmdsByKey, locale, noToolbarLabels) {
     if (noToolbarLabels === void 0) { noToolbarLabels = true; }
     var converted = (items || []).map(function (item) {
@@ -10061,6 +10147,58 @@ function parseCommandsInWebLayout(webLayout, cmdRegister) {
     return cmdsByKey;
 }
 exports.parseCommandsInWebLayout = parseCommandsInWebLayout;
+/**
+ * @hidden
+ *
+ * @param tbConf
+ * @returns
+ */
+function prepareSubMenus(tbConf) {
+    var prepared = {
+        toolbars: {},
+        flyouts: {}
+    };
+    var bFoundContextMenu = false;
+    for (var key in tbConf) {
+        if (key == constants_1.WEBLAYOUT_CONTEXTMENU) {
+            bFoundContextMenu = true;
+        }
+        //Special cases: Task pane and Context Menu. Transfer all to flyout
+        if (key == constants_1.WEBLAYOUT_TASKMENU || key == constants_1.WEBLAYOUT_CONTEXTMENU) {
+            var flyoutId = key;
+            prepared.flyouts[flyoutId] = {
+                children: tbConf[key].items
+            };
+        }
+        else {
+            prepared.toolbars[key] = {
+                items: []
+            };
+            for (var _i = 0, _a = tbConf[key].items; _i < _a.length; _i++) {
+                var item = _a[_i];
+                //Special case: contextmenu is all inline
+                if (isFlyoutSpec(item) && key != constants_1.WEBLAYOUT_CONTEXTMENU) {
+                    var flyoutId = item.label + "_" + shortid.generate();
+                    prepared.toolbars[key].items.push({
+                        label: item.label,
+                        tooltip: item.tooltip,
+                        icon: item.icon,
+                        spriteClass: item.spriteClass,
+                        flyoutId: flyoutId
+                    });
+                    prepared.flyouts[flyoutId] = {
+                        children: item.children
+                    };
+                }
+                else {
+                    prepared.toolbars[key].items.push(item);
+                }
+            }
+        }
+    }
+    return [prepared, bFoundContextMenu];
+}
+exports.prepareSubMenus = prepareSubMenus;
 
 
 /***/ }),
@@ -10368,6 +10506,10 @@ var DefaultCommands;
      * @since 0.11
      */
     DefaultCommands["CenterSelection"] = "CenterSelection";
+    /**
+     * @since 0.14
+     */
+    DefaultCommands["Print"] = "Print";
 })(DefaultCommands = exports.DefaultCommands || (exports.DefaultCommands = {}));
 var commands = {};
 function isInvokeUrlCommand(cmdDef) {
@@ -10486,11 +10628,9 @@ function registerCommand(name, cmdDef) {
                 var state = getState();
                 var config = state.config;
                 var map = (0, common_1.getRuntimeMap)(state);
-                if (map) {
-                    var params = mergeInvokeUrlParameters(cmdDef.parameters, parameters);
-                    var url = (0, url_1.ensureParameters)(cmdDef.url, map.Name, map.SessionId, config.locale, true, params);
-                    openUrlInTarget(name, cmdDef, config.capabilities.hasTaskPane, dispatch, url, cmd.title);
-                }
+                var params = mergeInvokeUrlParameters(cmdDef.parameters, parameters);
+                var url = (0, url_1.ensureParameters)(cmdDef.url, map === null || map === void 0 ? void 0 : map.Name, map === null || map === void 0 ? void 0 : map.SessionId, config.locale, true, params);
+                openUrlInTarget(name, cmdDef, config.capabilities.hasTaskPane, dispatch, url, cmd.title);
             }
         };
     }
@@ -10648,6 +10788,9 @@ exports.PlaceholderComponent = PlaceholderComponent;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ExternalLayerFactoryRegistry = void 0;
+/**
+ * Defines a registry of custom vector layer source drivers
+ */
 var ExternalLayerFactoryRegistry = /** @class */ (function () {
     function ExternalLayerFactoryRegistry() {
         this._vectorCreators = {};
@@ -10986,6 +11129,7 @@ exports.isReady = isReady;
  *
  * @export
  * @returns {IMapViewer}
+ * @deprecated You should be using the map provider context accessed via the {@link useMapProviderContext} hook where possible
  */
 function getViewer() {
     return _viewer;
@@ -11147,7 +11291,7 @@ var About = function (props) {
         React.createElement("hr", null),
         React.createElement("p", null,
             "Hash: ",
-            "9aae66695348b501e106a808fad591cb72387369"),
+            "6af7ef515a5454592a8ebec928a4097479942627"),
         React.createElement("hr", null),
         React.createElement("p", null,
             React.createElement("a", { target: "_blank", href: "https://github.com/jumpinjackie/mapguide-react-layout" }, "GitHub")),
@@ -15663,6 +15807,7 @@ var react_redux_1 = __webpack_require__(/*! react-redux */ "./node_modules/react
 var MapProviderContext = React.createContext({});
 /**
  * Wraps the provider component of react-redux
+ *
  * @since 0.14
  */
 var ReduxProvider = function (_a) {
@@ -15672,6 +15817,7 @@ var ReduxProvider = function (_a) {
 exports.ReduxProvider = ReduxProvider;
 /**
  * Wraps useDispatch from react-redux
+ *
  * @since 0.14
  */
 function useReduxDispatch() {
@@ -15680,6 +15826,7 @@ function useReduxDispatch() {
 exports.useReduxDispatch = useReduxDispatch;
 /**
  * Fetches the requested sub-section of the application state
+ *
  * @since 0.14
  */
 function useAppState(selector, equalityFn) {
@@ -15695,6 +15842,8 @@ var MapProviderContextProvider = function (_a) {
 };
 exports.MapProviderContextProvider = MapProviderContextProvider;
 /**
+ * Obtains the current map provider context, which provides imperative access to the current map
+ *
  * @since 0.14
  */
 function useMapProviderContext() {
@@ -17615,9 +17764,6 @@ function getIconStyle(enabled, height) {
         verticalAlign: "middle",
         lineHeight: height
     };
-    if (!enabled) {
-        imgStyle.opacity = 0.2;
-    }
     return imgStyle;
 }
 exports.getIconStyle = getIconStyle;
@@ -17845,7 +17991,7 @@ var ToolbarButton = function (props) {
         ttip = item.tooltip;
     }
     if (!enabled) {
-        style.opacity = 0.2;
+        style.opacity = 0.3;
     }
     var iconEl = getIconElement(item, enabled, height);
     return React.createElement("div", { className: "noselect toolbar-btn " + (selected ? "selected-item" : "") + " " + ((isMouseOver && enabled) ? "mouse-over" : ""), onMouseEnter: onMouseEnter, onMouseLeave: onMouseLeave, style: style, title: ttip, onClick: onClick },
@@ -19958,7 +20104,7 @@ var CoordinateTrackerContainer = function (props) {
                     catch (e) {
                     }
                 }
-                return React.createElement(core_1.Card, { style: { marginBottom: 10 } },
+                return React.createElement(core_1.Card, { key: p, style: { marginBottom: 10 } },
                     React.createElement("h5", { className: "bp3-heading" },
                         React.createElement("a", { href: "#" }, p)),
                     React.createElement("p", null,
@@ -20081,12 +20227,16 @@ function useActiveMapMetersPerUnit() {
 exports.useActiveMapMetersPerUnit = useActiveMapMetersPerUnit;
 function useActiveMapProjection() {
     return (0, context_1.useAppState)(function (state) {
-        var _a;
+        var _a, _b, _c;
         var proj;
         if (state.config.activeMapName) {
             var map = (_a = state.mapState[state.config.activeMapName].mapguide) === null || _a === void 0 ? void 0 : _a.runtimeMap;
+            var subject = (_b = state.mapState[state.config.activeMapName].generic) === null || _b === void 0 ? void 0 : _b.subject;
             if (map) {
                 proj = "EPSG:" + map.CoordinateSystem.EpsgCode;
+            }
+            else if (subject) {
+                proj = (_c = subject.meta) === null || _c === void 0 ? void 0 : _c.projection;
             }
         }
         return proj;
@@ -22404,10 +22554,12 @@ var react_copy_to_clipboard_1 = (0, tslib_1.__importDefault)(__webpack_require__
 var url_1 = __webpack_require__(/*! ../utils/url */ "./src/utils/url.ts");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
+var hooks_mapguide_1 = __webpack_require__(/*! ./hooks-mapguide */ "./src/containers/hooks-mapguide.ts");
 function NOOP() { }
 var ShareLinkToViewContainer = function () {
     var _a = React.useState(false), showSession = _a[0], setShowSession = _a[1];
     var locale = (0, hooks_1.useViewerLocale)();
+    var map = (0, hooks_mapguide_1.useActiveMapState)();
     var onShowSessionChanged = function () { return setShowSession(!showSession); };
     var onCopied = function () {
         var v = (0, runtime_1.getViewer)();
@@ -22424,9 +22576,9 @@ var ShareLinkToViewContainer = function () {
         React.createElement(core_1.TextArea, { fill: true, rows: 16, readOnly: true, value: shareUrl, onChange: NOOP }),
         React.createElement("br", null),
         React.createElement("div", { style: { padding: 15 } },
-            React.createElement(core_1.Checkbox, { checked: showSession, label: (0, i18n_1.tr)("SHARE_LINK_INCLUDE_SESSION", locale), onChange: onShowSessionChanged }),
+            map && React.createElement(core_1.Checkbox, { checked: showSession, label: (0, i18n_1.tr)("SHARE_LINK_INCLUDE_SESSION", locale), onChange: onShowSessionChanged }),
             React.createElement(react_copy_to_clipboard_1.default, { text: shareUrl, onCopy: onCopied },
-                React.createElement("button", { className: "pt-button" }, (0, i18n_1.tr)("SHARE_LINK_COPY_CLIPBOARD", locale)))));
+                React.createElement(core_1.Button, { intent: core_1.Intent.PRIMARY }, (0, i18n_1.tr)("SHARE_LINK_COPY_CLIPBOARD", locale)))));
 };
 exports.ShareLinkToViewContainer = ShareLinkToViewContainer;
 
@@ -24196,7 +24348,7 @@ var config_1 = __webpack_require__(/*! ../reducers/config */ "./src/reducers/con
 var command_1 = __webpack_require__(/*! ../api/registry/command */ "./src/api/registry/command.ts");
 var subscriber_1 = __webpack_require__(/*! ../containers/subscriber */ "./src/containers/subscriber.tsx");
 var context_1 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
-var library_1 = __webpack_require__(/*! ./library */ "./src/entries/library.tsx");
+var init_mapguide_1 = __webpack_require__(/*! ../actions/init-mapguide */ "./src/actions/init-mapguide.ts");
 /**
  * This is the entry point to the Application component
  *
@@ -24257,7 +24409,7 @@ var ApplicationViewModel = /** @class */ (function () {
         if (props.initCommandFactory)
             initCommand = props.initCommandFactory(this._store.dispatch);
         else
-            initCommand = new library_1.MapGuideViewerInitCommand(this._store.dispatch);
+            initCommand = new init_mapguide_1.DefaultViewerInitCommand(this._store.dispatch);
         ReactDOM.render(React.createElement(context_1.ReduxProvider, { store: this._store },
             React.createElement(app_1.App, (0, tslib_1.__assign)({}, props, { initCommand: initCommand })),
             subs.map(function (s, i) { return React.createElement(subscriber_1.Subscriber, (0, tslib_1.__assign)({ key: "subscriber-" + i + "-" + s.name }, s)); })), node);
@@ -24528,6 +24680,9 @@ var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/layouts/hooks.ts");
 var hooks_2 = __webpack_require__(/*! ../containers/hooks */ "./src/containers/hooks.ts");
 var constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
+/**
+ * A viewer template that resembles the MapGuide AJAX viewer
+ */
 var AjaxViewerLayout = function () {
     var _a = (0, hooks_1.useCommonTemplateState)(), isResizing = _a.isResizing, locale = _a.locale, capabilities = _a.capabilities, onDragStart = _a.onDragStart, onDragEnd = _a.onDragEnd, onSplitterChanged = _a.onSplitterChanged;
     var initInfoPaneWidth = (0, hooks_2.useTemplateInitialInfoPaneWidth)();
@@ -24643,6 +24798,7 @@ var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/layouts/hooks.ts");
 var hooks_2 = __webpack_require__(/*! ../containers/hooks */ "./src/containers/hooks.ts");
 var template_1 = __webpack_require__(/*! ../actions/template */ "./src/actions/template.ts");
 var hooks_mapguide_1 = __webpack_require__(/*! ../containers/hooks-mapguide */ "./src/containers/hooks-mapguide.ts");
+var hooks_generic_1 = __webpack_require__(/*! ../containers/hooks-generic */ "./src/containers/hooks-generic.ts");
 function aquaTemplateReducer(origState, state, action) {
     switch (action.type) {
         case actions_1.ActionType.MAP_SET_SELECTION:
@@ -24707,9 +24863,13 @@ var SELECTION_DIALOG_HEIGHT = 300;
 var LEGEND_DIALOG_HEIGHT = 400;
 var TASK_DIALOG_HEIGHT = 500;
 var STATUS_BAR_HEIGHT = 18;
+/**
+ * A viewer template that resembles the Aqua Fusion template
+ */
 var AquaTemplateLayout = function () {
     var _a = (0, hooks_1.useCommonTemplateState)(aquaTemplateReducer), locale = _a.locale, capabilities = _a.capabilities, showSelection = _a.showSelection, showLegend = _a.showLegend, showTaskPane = _a.showTaskPane, dispatch = _a.dispatch;
     var map = (0, hooks_mapguide_1.useActiveMapState)();
+    var subject = (0, hooks_generic_1.useActiveMapSubjectLayer)();
     var hideLegend = function () { return dispatch((0, template_1.setLegendVisibility)(false)); };
     var hideSelection = function () { return dispatch((0, template_1.setSelectionPanelVisibility)(false)); };
     var hideTaskPane = function () { return dispatch((0, template_1.setTaskPaneVisibility)(false)); };
@@ -24750,7 +24910,8 @@ var AquaTemplateLayout = function () {
                 //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
                 //sidebar elements not being ready, which may result in a distorted OL map when it mounts, requiring a updateSize()
                 //call to fix
-                if (map != null) {
+                var theMap = map !== null && map !== void 0 ? map : subject;
+                if (theMap) {
                     return React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.Map, locale: locale });
                 }
             })(),
@@ -24815,7 +24976,6 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GenericLayout = void 0;
 var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-var ReactDOM = (0, tslib_1.__importStar)(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
 var component_1 = __webpack_require__(/*! ../api/registry/component */ "./src/api/registry/component.tsx");
 var viewer_shim_1 = __webpack_require__(/*! ../containers/viewer-shim */ "./src/containers/viewer-shim.tsx");
 var modal_launcher_1 = __webpack_require__(/*! ../containers/modal-launcher */ "./src/containers/modal-launcher.tsx");
@@ -24830,39 +24990,10 @@ var context_1 = __webpack_require__(/*! ../components/map-providers/context */ "
 var hooks_mapguide_1 = __webpack_require__(/*! ../containers/hooks-mapguide */ "./src/containers/hooks-mapguide.ts");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var hooks_2 = __webpack_require__(/*! ./hooks */ "./src/layouts/hooks.ts");
-var PrintView = function (props) {
-    return React.createElement("img", { src: props.imageUrl, alt: "Map Image" });
-};
 var MapToolbar = function (props) {
     var locale = props.locale, featureTooltipsEnabled = props.featureTooltipsEnabled, hasSelection = props.hasSelection, map = props.map, onInvokeCommand = props.onInvokeCommand, onSetActiveTool = props.onSetActiveTool, activeTool = props.activeTool, isLayerManagerOpen = props.isLayerManagerOpen, setIsLayerManagerOpen = props.setIsLayerManagerOpen, setIsLegendOpen = props.setIsLegendOpen, setIsSelectionPanelOpen = props.setIsSelectionPanelOpen, onSetFeatureTooltips = props.onSetFeatureTooltips;
     var context = (0, context_1.useMapProviderContext)();
     var _a = React.useState(false), isExportingImage = _a[0], setIsExportingImage = _a[1];
-    var onPrint = function () {
-        setIsExportingImage(true);
-        context.exportImage({
-            callback: function (image) {
-                setIsExportingImage(false);
-                var el = React.createElement(PrintView, { imageUrl: image });
-                var printWindow = window.open();
-                if (printWindow) {
-                    // Open and immediately close the document. This works around a problem in Firefox that is
-                    // captured here: https://bugzilla.mozilla.org/show_bug.cgi?id=667227.
-                    // Essentially, when we first create an iframe, it has no document loaded and asynchronously
-                    // starts a load of "about:blank". If we access the document object and start manipulating it
-                    // before that async load completes, a new document will be automatically created. But then
-                    // when the async load completes, the original, automatically-created document gets unloaded
-                    // and the new "about:blank" gets swapped in. End result: everything we add to the DOM before
-                    // the async load complete gets lost and Firefox ends up printing a blank page.
-                    // Explicitly opening and then closing a new document _seems_ to avoid this.
-                    printWindow.document.open();
-                    printWindow.document.close();
-                    printWindow.document.head.innerHTML = "\n                            <meta charset=\"UTF-8\">\n                            <title>Print View</title>\n                            ";
-                    printWindow.document.body.innerHTML = '<div id="print"></div>';
-                    ReactDOM.render(el, printWindow.document.getElementById("print"));
-                }
-            }
-        });
-    };
     return React.createElement(React.Fragment, null,
         React.createElement(core_1.ButtonGroup, { vertical: true, style: { position: "absolute", left: 30, top: 30 } },
             React.createElement(core_1.Button, { icon: "plus", title: (0, i18n_1.tr)("NAVIGATOR_ZOOM_IN"), onClick: function () { return onInvokeCommand(command_1.DefaultCommands.ZoomIn); } }),
@@ -24886,8 +25017,13 @@ var MapToolbar = function (props) {
             React.createElement(core_1.Popover, { usePortal: false, position: "right", minimal: false },
                 React.createElement(core_1.Button, { icon: "cog", title: (0, i18n_1.tr)("VIEWER_OPTIONS", locale) }),
                 React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.ViewerOptions })),
-            React.createElement(core_1.Button, { icon: "print", onClick: function () { return onPrint(); } })));
+            React.createElement(core_1.Button, { icon: "print", onClick: function () { return onInvokeCommand(command_1.DefaultCommands.Print); } })));
 };
+/**
+ * A viewer template geared towards general purpose display of maps
+ *
+ * @since 0.14
+ */
 var GenericLayout = function () {
     var _a = React.useState(false), isLayerManagerOpen = _a[0], setIsLayerManagerOpen = _a[1];
     var _b = React.useState(false), isLegendOpen = _b[0], setIsLegendOpen = _b[1];
@@ -25114,6 +25250,9 @@ var SIDEBAR_PADDING = 0;
 var TOP_BAR_HEIGHT = 35;
 var TAB_BAR_HEIGHT = 30;
 var STATUS_BAR_HEIGHT = 18;
+/**
+ * A viewer template that resembles the LimeGold Fusion template
+ */
 var LimeGoldTemplateLayout = function () {
     var _a = (0, hooks_1.useCommonTemplateState)(limegoldTemplateReducer), isResizing = _a.isResizing, locale = _a.locale, capabilities = _a.capabilities, showSelection = _a.showSelection, showLegend = _a.showLegend, showTaskPane = _a.showTaskPane, onDragStart = _a.onDragStart, onDragEnd = _a.onDragEnd, onSplitterChanged = _a.onSplitterChanged, onActiveElementChanged = _a.onActiveElementChanged;
     var hasTaskPane = false;
@@ -25302,6 +25441,9 @@ function maroonTemplateReducer(origState, state, action) {
 }
 var STATUS_BAR_HEIGHT = 18;
 var OUTER_PADDING = 3;
+/**
+ * A viewer template that resembles the Maroon Fusion template
+ */
 var MaroonTemplateLayout = function () {
     var _a = (0, hooks_1.useCommonTemplateState)(maroonTemplateReducer), isResizing = _a.isResizing, locale = _a.locale, capabilities = _a.capabilities, showSelection = _a.showSelection, showLegend = _a.showLegend, showTaskPane = _a.showTaskPane, onDragStart = _a.onDragStart, onDragEnd = _a.onDragEnd, onSplitterChanged = _a.onSplitterChanged, onActiveElementChanged = _a.onActiveElementChanged;
     var hasStatusBar = false;
@@ -25643,6 +25785,9 @@ var Sidebar = function (props) {
                 }
             })()));
 };
+/**
+ * A viewer template that is based on the design of the {@link https://github.com/Turbo87/sidebar-v2 Sidebar Map Layout}
+ */
 var SidebarLayout = function () {
     var _a = (0, hooks_2.useCommonTemplateState)(sidebarTemplateReducer), dispatch = _a.dispatch, locale = _a.locale, capabilities = _a.capabilities, showSelection = _a.showSelection, showLegend = _a.showLegend, showTaskPane = _a.showTaskPane;
     var tbState = (0, hooks_1.useReducedToolbarAppState)();
@@ -25861,6 +26006,9 @@ function slateTemplateReducer(origState, state, action) {
     return state;
 }
 var STATUS_BAR_HEIGHT = 18;
+/**
+ * A viewer template that resembles the Slate Fusion template
+ */
 var SlateTemplateLayout = function () {
     var _a = (0, hooks_1.useCommonTemplateState)(slateTemplateReducer), isResizing = _a.isResizing, locale = _a.locale, capabilities = _a.capabilities, showSelection = _a.showSelection, showLegend = _a.showLegend, showTaskPane = _a.showTaskPane, onDragStart = _a.onDragStart, onDragEnd = _a.onDragEnd, onSplitterChanged = _a.onSplitterChanged, onActiveElementChanged = _a.onActiveElementChanged;
     var hasStatusBar = false;
@@ -26040,6 +26188,9 @@ var SIDEBAR_PADDING = 3;
 var TOP_BAR_HEIGHT = 35;
 var TAB_BAR_HEIGHT = 30;
 var STATUS_BAR_HEIGHT = 18;
+/**
+ * A viewer template that resembles the TurquoiseYellow Fusion template
+ */
 var TurquoiseYellowTemplateLayout = function () {
     var _a = (0, hooks_1.useCommonTemplateState)(turquoiseYellowTemplateReducer), isResizing = _a.isResizing, locale = _a.locale, capabilities = _a.capabilities, showSelection = _a.showSelection, showLegend = _a.showLegend, showTaskPane = _a.showTaskPane, onDragStart = _a.onDragStart, onDragEnd = _a.onDragEnd, onSplitterChanged = _a.onSplitterChanged, onActiveElementChanged = _a.onActiveElementChanged;
     var hasTaskPane = false;
@@ -27689,7 +27840,7 @@ exports.STRINGS_EN = {
     "INIT_DESC": "Please wait while the viewer is loading required assets ...",
     "INIT_ERROR_TITLE": "An error occurred during startup",
     "INIT_ERROR_UNKNOWN_RESOURCE_TYPE": "<p>Unknown or unsupported resource type for resource: <strong>{resourceId}</strong></p>",
-    "INIT_ERROR_MISSING_RESOURCE_PARAM": "<p>No <strong>resource</strong> parameter found. This viewer requires this parameter to be set in the query string and must refer to a valid Web Layout or Application Definition</p>",
+    "INIT_ERROR_MISSING_RESOURCE_PARAM": "<p>No <strong>resource</strong> parameter found. This viewer assumes this parameter to be set in the query string and must refer to a valid Web Layout or Application Definition. If not specified, it will try to init from a Application Definition document at <strong>appdef.json</strong></p>",
     "INIT_ERROR_UNSUPPORTED_COORD_SYS": "<p>The Map Definition <strong>{mapDefinition}</strong>, uses a coordinate system that does not resolve to a valid EPSG code and cannot be loaded in this viewer</p><p>Solution:</p><ul><li>Change the coordinate system of this Map Definition to one that resolves to an EPSG code</li><li>Please note: There will be a small performance overhead for server-side re-projection as a result of doing this</li></ul>",
     "INIT_ERROR_UNREGISTERED_EPSG_CODE": "<p>The Map Definition <strong>{mapDefinition}</strong>, uses a coordinate system that resolves to a valid EPSG code (<strong>EPSG:{epsg}</strong>), but no projection for this EPSG code has been registered</p><p>Solution:</p><ol><li>Search for the matching proj4js definition at <a href='http://epsg.io/'>http://epsg.io/</a></li><li>Register this projection to the viewer before mounting it</li></ol>",
     "INIT_ERROR_EXPIRED_SESSION": "<p>The session id given has expired: <strong>{sessionId}</strong></p><p>Reload the viewer without the <strong>session</strong> parameter, or supply a valid session id for the <strong>session</strong> parameter</p>",
@@ -28085,9 +28236,7 @@ exports.getRelativeIconPath = getRelativeIconPath;
 
 "use strict";
 
-/**
- * Console wrappers that are only active in development mode
- */
+// Console wrappers that are only active in development mode
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.debug = exports.error = exports.warn = exports.info = void 0;
 /**

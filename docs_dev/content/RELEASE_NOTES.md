@@ -45,13 +45,13 @@
  * XYZ tileset improvements:
      * [#1298](https://github.com/jumpinjackie/mapguide-react-layout/issues/1298): Support for retina scaling
      * [#1197](https://github.com/jumpinjackie/mapguide-react-layout/issues/1197): Support for attributions
- * The `resource` query string parameter can now refer to either a MapGuide WebLayout/ApplicaitonDefinition resource ID or a URL to an Application Definition JSON document
+ * The `resource` query string parameter can now refer to either a MapGuide WebLayout/ApplicationDefinition resource ID or a URL to an Application Definition JSON document
      * If this parameter is not specified, the viewer will now try to load from an Application Definition JSON document named `appdef.json` at the same root as the viewer html files
  * [#543](https://github.com/jumpinjackie/mapguide-react-layout/issues/543): When zooming in or out, if an active feature highlight is shown, it will now properly refresh
 
 ## Breaking changes:
 
- * The `WmsQuery` command has been remmoved and consolidated into the `Select` command/widget. Update your Application Definitions accordingly.
+ * The `WmsQuery` command has been removed and consolidated into the `Select` command/widget. Update your Application Definitions accordingly.
  * The viewer bundle is now split into 2 files:
     * `vendor.js`
     * `viewer.js`

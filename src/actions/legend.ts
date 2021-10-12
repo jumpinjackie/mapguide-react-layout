@@ -77,24 +77,26 @@ export function refresh(): ReduxThunkedAction {
     return (dispatch, getState) => {
         const state = getState();
         const args = state.config;
-        const map = getRuntimeMap(state);
-        if (map && args.agentUri && args.agentKind) {
-            const client = new Client(args.agentUri, args.agentKind);
-            client.describeRuntimeMap({
-                mapname: map.Name,
-                session: map.SessionId,
-                requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups
-            }).then(res => {
-                if (args.activeMapName) {
-                    dispatch({
-                        type: ActionType.MAP_REFRESH,
-                        payload: {
-                            mapName: args.activeMapName,
-                            map: res
-                        }
-                    });
-                }
-            });
+        if (!args.viewer.isStateless) {
+            const map = getRuntimeMap(state);
+            if (map && args.agentUri && args.agentKind) {
+                const client = new Client(args.agentUri, args.agentKind);
+                client.describeRuntimeMap({
+                    mapname: map.Name,
+                    session: map.SessionId,
+                    requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups
+                }).then(res => {
+                    if (args.activeMapName) {
+                        dispatch({
+                            type: ActionType.MAP_REFRESH,
+                            payload: {
+                                mapName: args.activeMapName,
+                                map: res
+                            }
+                        });
+                    }
+                });
+            }
         }
     };
 }

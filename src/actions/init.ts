@@ -236,6 +236,16 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
                 })
             }
             break;
+        case "XYZDebug":
+            //HACK: De-arrayification of arbitrary extension elements
+            //is shallow (hence name/type is string[]). Do we bother to fix this?
+            const { name } = map.Extension.Options;
+            const sName = Array.isArray(name) ? name[0] : name;
+            externalBaseLayers.push({
+                name: sName,
+                kind: "XYZDebug"
+            });
+            break;
         case "XYZ":
             {
                 //HACK: De-arrayification of arbitrary extension elements

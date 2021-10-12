@@ -4,6 +4,7 @@ import { IGenericSubjectMapLayer, IInitialExternalLayer, GenericSubjectLayerType
 import olSource from "ol/source/Source";
 import XYZ from "ol/source/XYZ";
 import OSM from "ol/source/OSM";
+import TileDebug from "ol/source/TileDebug";
 import Stamen from "ol/source/Stamen";
 import BingMaps from "ol/source/BingMaps";
 import UTFGrid from "ol/source/UTFGrid";
@@ -356,6 +357,9 @@ export function createExternalSource(layer: IExternalBaseLayer): olSource {
     switch (layer.kind) {
         case "XYZ":
             sourceCtor = XYZ;
+            break;
+        case "XYZDebug":
+            sourceCtor = TileDebug;
             break;
         case "OSM":
             sourceCtor = OSM;

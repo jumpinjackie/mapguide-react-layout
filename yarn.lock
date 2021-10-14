@@ -1781,13 +1781,10 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@petamoriken/float16@^1.0.7":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@petamoriken/float16/-/float16-1.1.1.tgz#faffb09ac1df7c93822687af4d59b6e1faadef9e"
-  integrity sha512-0r8nE5Q60tj3FbWWYLjAdGnWZgP7CMWXNaI5UsNzypRyxLDb/uvOl5SDw8GcPNu6pSTOt+KSI+0oL6fhSpNOFQ==
-  dependencies:
-    lodash ">=4.17.5 <5.0.0"
-    lodash-es ">=4.17.5 <5.0.0"
+"@petamoriken/float16@^3.4.7":
+  version "3.4.11"
+  resolved "https://registry.yarnpkg.com/@petamoriken/float16/-/float16-3.4.11.tgz#8a785b8ee549a3fd138ee3fdd6e4d8acc10e7387"
+  integrity sha512-oVf38eZjdG7Wt5BXSK36M5Dcp6SnjNof+BFzhWnSghzKbJWj48XtcUVnxlkrzbYjX9mNYSyE00rC4rYUPpXVmA==
 
 "@pmmmwh/react-refresh-webpack-plugin@^0.4.3":
   version "0.4.3"
@@ -7093,18 +7090,18 @@ geojson-vt@^3.2.1:
   resolved "https://registry.yarnpkg.com/geojson-vt/-/geojson-vt-3.2.1.tgz#f8adb614d2c1d3f6ee7c4265cad4bbf3ad60c8b7"
   integrity sha512-EvGQQi/zPrDA6zr6BnJD/YhwAkBP8nnJ9emh3EnHQKVMfg/MRVtPbMYdgVy/IaEmn4UfagD2a6fafPDL5hbtwg==
 
-geotiff@1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/geotiff/-/geotiff-1.0.6.tgz#499a11e0dad8d08b99cc20ffd1765b3157e9e8a1"
-  integrity sha512-QpThfg270taZirnyZyN3INoo5OfUOtedYEbiotML5ts1Qou7rxtHrU9nUW2J07biEuSV6qWq784z7brUH7/gRQ==
+geotiff@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/geotiff/-/geotiff-1.0.8.tgz#b5f21b51927a2118a9bd20751cae433a047040df"
+  integrity sha512-3YA6NpGuuXF+WwwgA7moSHIw1U0XHxBY8W5bjjoSGBCVuw6s+DOgt7Z95Y3bf5k19RHixv6zW8KpW/yrRno43Q==
   dependencies:
-    "@petamoriken/float16" "^1.0.7"
+    "@petamoriken/float16" "^3.4.7"
     lerc "^3.0.0"
     lru-cache "^6.0.0"
     pako "^2.0.4"
     parse-headers "^2.0.2"
-    threads "^1.3.1"
-    txml "^5.0.0"
+    threads "^1.7.0"
+    xml-utils "^1.0.2"
 
 get-caller-file@^2.0.1, get-caller-file@^2.0.5:
   version "2.0.5"
@@ -9387,11 +9384,6 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
-"lodash-es@>=4.17.5 <5.0.0":
-  version "4.17.21"
-  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
-  integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
-
 lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
@@ -9442,7 +9434,7 @@ lodash.uniq@4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
   integrity sha1-0CJTc662Uq3BvILklFM5qEJ1R3M=
 
-"lodash@4.6.1 || ^4.16.1", lodash@4.x, "lodash@>=4.17.5 <5.0.0", lodash@^4.14.0, lodash@^4.17.13, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.17.21, lodash@^4.7.0:
+"lodash@4.6.1 || ^4.16.1", lodash@4.x, lodash@^4.14.0, lodash@^4.17.13, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.17.21, lodash@^4.7.0:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -10360,12 +10352,12 @@ ol-mapbox-style@^6.5.1:
     mapbox-to-css-font "^2.4.0"
     webfont-matcher "^1.1.0"
 
-ol@6.8.1:
-  version "6.8.1"
-  resolved "https://registry.yarnpkg.com/ol/-/ol-6.8.1.tgz#460f23e9359de14d651cef517d3774b2ccccd2d6"
-  integrity sha512-atGAkVsOf8sUhnKVdcGhpTqCAWrOREl9e07KmRi0mHsCa6j1r/BhSnjeuGTmnj0qkeMrz9MLd9PBjgWqL4EFPg==
+ol@6.9.0:
+  version "6.9.0"
+  resolved "https://registry.yarnpkg.com/ol/-/ol-6.9.0.tgz#3e1b39a76f99ede117ad79e66464698d6915df0b"
+  integrity sha512-VmU5HKHwO2O1uGgmBcng/dL1PouVB1jKiYUbiXPR5l1i/3B3qatexl4rapZAnsGx0vsOC7lI1GLx7jEZro8C8Q==
   dependencies:
-    geotiff "1.0.6"
+    geotiff "^1.0.8"
     ol-mapbox-style "^6.5.1"
     pbf "3.2.1"
     rbush "^3.0.1"
@@ -11718,7 +11710,7 @@ read-pkg@^5.2.0:
     string_decoder "~1.1.1"
     util-deprecate "~1.0.1"
 
-"readable-stream@2 || 3", readable-stream@^3.1.1, readable-stream@^3.4.0, readable-stream@^3.6.0:
+readable-stream@^3.1.1, readable-stream@^3.4.0, readable-stream@^3.6.0:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-3.6.0.tgz#337bbda3adc0706bd3e024426a286d4b4b2c9198"
   integrity sha512-BViHy7LKeTz4oNnkcLJ+lVSL6vpiFeX6/d3oSH8zCW7UxP2onchk+vTGB143xuFjHS3deTgkKoXXymXqymiIdA==
@@ -13362,10 +13354,10 @@ thread-loader@^3.0.4:
     neo-async "^2.6.2"
     schema-utils "^3.0.0"
 
-threads@^1.3.1:
-  version "1.6.5"
-  resolved "https://registry.yarnpkg.com/threads/-/threads-1.6.5.tgz#5cee7f139e3e147c5a64f0134844ee92469932a5"
-  integrity sha512-yL1NN4qZ25crW8wDoGn7TqbENJ69w3zCEjIGXpbqmQ4I+QHrG8+DLaZVKoX74OQUXWCI2lbbrUxDxAbr1xjDGQ==
+threads@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/threads/-/threads-1.7.0.tgz#d9e9627bfc1ef22ada3b733c2e7558bbe78e589c"
+  integrity sha512-Mx5NBSHX3sQYR6iI9VYbgHKBLisyB+xROCBGjjWm1O9wb9vfLxdaGtmT/KCjUqMsSNW6nERzCW3T6H43LqjDZQ==
   dependencies:
     callsites "^3.1.0"
     debug "^4.2.0"
@@ -13391,14 +13383,6 @@ through2@^2.0.0, through2@^2.0.1:
   dependencies:
     readable-stream "~2.3.6"
     xtend "~4.0.1"
-
-through2@^3.0.1:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/through2/-/through2-3.0.2.tgz#99f88931cfc761ec7678b41d5d7336b5b6a07bf4"
-  integrity sha512-enaDQ4MUyP2W6ZyT6EsMzqBPZaM/avg8iuo+l2d3QCs0J+6RaqkHV/2/lOwDTueBHeJ/2LG9lrLW3d5rWPucuQ==
-  dependencies:
-    inherits "^2.0.4"
-    readable-stream "2 || 3"
 
 time-limit-promise@^1.0.2:
   version "1.0.4"
@@ -13697,13 +13681,6 @@ tweezer.js@^1.4.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/tweezer.js/-/tweezer.js-1.5.0.tgz#ca50ac5215022203fd3be4d28617e8e2305f5c0c"
   integrity sha512-aSiJz7rGWNAQq7hjMK9ZYDuEawXupcCWgl3woQQSoDP2Oh8O4srWb/uO1PzzHIsrPEOqrjJ2sUb9FERfzuBabQ==
-
-txml@^5.0.0:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/txml/-/txml-5.0.1.tgz#4f821ccbb45b8bfc4ee3c9ca88740ca68d1c9f55"
-  integrity sha512-T4JOQUCzKEUbSI7y4lKBf0e/JNNB8/CGdpStgrq7F37GuiR+uhKaD+zbs4hVIztrPzvZuopKCVGLVmO8B3HogQ==
-  dependencies:
-    through2 "^3.0.1"
 
 type-check@~0.3.2:
   version "0.3.2"
@@ -14673,6 +14650,11 @@ xml-name-validator@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/xml-name-validator/-/xml-name-validator-4.0.0.tgz#79a006e2e63149a8600f15430f0a4725d1524835"
   integrity sha512-ICP2e+jsHvAj2E2lIHxa5tjXRlKDJo4IdvPvCXbXQGdzSfmSpNVyIKMvoZHjDY9DP0zV17iI85o90vRFXNccRw==
+
+xml-utils@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/xml-utils/-/xml-utils-1.0.2.tgz#8081bfefb87b72e03e4adbabdd217ccbbc395eeb"
+  integrity sha512-rEn0FvKi+YGjv9omf22oAf+0d6Ly/sgJ/CUufU/nOzS7SRLmgwSujrewc03KojXxt+aPaTRpm593TgehtUBMSQ==
 
 xmlchars@^2.2.0:
   version "2.2.0"

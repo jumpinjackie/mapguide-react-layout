@@ -1,3 +1,10 @@
+0.14.2
+======
+
+ * [#1343](https://github.com/jumpinjackie/mapguide-react-layout/issues/1343): New flag to control whether the select tool can pan via mouse drag
+ * [#1340](https://github.com/jumpinjackie/mapguide-react-layout/issues/1340): Do not try to rebuild (non-existent) MapGuide runtime map layer/group structure in stateless mode
+ * [#1341](https://github.com/jumpinjackie/mapguide-react-layout/issues/1341): Add XYZ tile debug layer
+
 0.14.1
 ======
 

@@ -47,7 +47,8 @@ import {
     IAddClientSelectedFeatureAction,
     IClearClientSelectionAction,
     ISetHeatmapLayerBlurAction,
-    ISetHeatmapLayerRadiusAction
+    ISetHeatmapLayerRadiusAction,
+    IEnableSelectDragPanAction
 } from './defs';
 import { persistSelectionSetToLocalStorage } from '../api/session-store';
 import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
@@ -521,6 +522,19 @@ export function setFeatureTooltipsEnabled(enabled: boolean): ISetFeatureTooltips
         type: ActionType.MAP_SET_MAPTIP,
         payload: enabled
     };
+}
+
+/**
+ * Sets whether the select tool can pan while dragging
+ * 
+ * @param enabled 
+ * @since 0.14.2
+ */
+export function enableSelectDragPan(enabled: boolean): IEnableSelectDragPanAction {
+    return {
+        type: ActionType.MAP_ENABLE_SELECT_DRAGPAN,
+        payload: enabled
+    }
 }
 
 /**

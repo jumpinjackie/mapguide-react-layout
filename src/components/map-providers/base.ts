@@ -162,6 +162,7 @@ export interface IViewerComponent {
     addSubscribers(props: ISubscriberProps[]): string[];
     removeSubscribers(names: string[]): boolean;
     getSubscribers(): string[];
+    selectCanDragPan(): boolean;
 }
 
 export interface IMapProviderState {
@@ -1100,11 +1101,14 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         });
         this._zoomSelectBox = new DragBox({
             condition: (e) => {
+                // DragBox needs to be suppressed if the select tool can drag pan
+                if (this._state.activeTool == ActiveMapTool.Select && this._comp?.selectCanDragPan() === true) {
+                    return false;
+                }
                 const startingMiddleMouseDrag = e.type == "pointerdown" && isMiddleMouseDownEvent((e as any).originalEvent);
                 return !this.isDigitizing() && !startingMiddleMouseDrag && (this._state.activeTool === ActiveMapTool.Select || this._state.activeTool === ActiveMapTool.Zoom)
             }
         });
-
         this._boundZoomSelectBox = this.onZoomSelectBox.bind(this);
         this._boundMouseMove = this.onMouseMove.bind(this);
         this._boundResize = this.onResize.bind(this);
@@ -1129,6 +1133,10 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                 new DragRotate(),
                 new DragPan({
                     condition: (e) => {
+                        // We'll allow for select tool to pan if instructed from above
+                        if (this._state.activeTool == ActiveMapTool.Select && this._comp?.selectCanDragPan() === true) {
+                            return true;
+                        }
                         const startingMiddleMouseDrag = e.type == "pointerdown" && isMiddleMouseDownEvent((e as any).originalEvent);
                         const enabled = (startingMiddleMouseDrag || this._supportsTouch || this._state.activeTool === ActiveMapTool.Pan);
                         //console.log(e);

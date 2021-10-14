@@ -240,6 +240,13 @@ export function useViewerFeatureTooltipsEnabled() {
     return useAppState<boolean>(state => state.viewer.featureTooltipsEnabled);
 }
 
+/**
+ * @since 0.14.2
+ */
+export function useViewerSelectCanDragPan() {
+    return useAppState<boolean>(state => state.config.selectCanDragPan);
+}
+
 export function useConfiguredManualFeatureTooltips() {
     return useAppState<boolean>(state => state.config.manualFeatureTooltips);
 }

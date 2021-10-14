@@ -290,5 +290,6 @@ export const STRINGS_EN: ILocalizedMessages = {
     "CREATE_VECTOR_LAYER": "Vector Layer",
     "CREATE_VECTOR_THEMED": "Themed Vector Layer",
     "CREATE_VECTOR_CLUSTERED": "Clustered Point Layer",
-    "CREATE_VECTOR_HEATMAP": "Heatmap Layer"
+    "CREATE_VECTOR_HEATMAP": "Heatmap Layer",
+    "ENABLE_SELECT_DRAGPAN": "Enable pan dragging for select tool"
 };

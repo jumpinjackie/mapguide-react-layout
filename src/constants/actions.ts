@@ -21,6 +21,10 @@ export enum ActionType {
     MAP_SET_SCALE = 'Map/SET_SCALE',
     MAP_SET_ACTIVE_TOOL = 'Map/SET_ACTIVE_TOOL',
     MAP_SET_MAPTIP = 'Map/SET_MAPTIP',
+    /**
+     * @since 0.14.2
+     */
+    MAP_ENABLE_SELECT_DRAGPAN = 'Map/ENABLE_SELECT_DRAGPAN',
     MAP_SET_MANUAL_MAPTIP = 'Map/MAP_SET_MANUAL_MAPTIP',
     MAP_SET_SELECTION = 'Map/SET_SELECTION',
     /**

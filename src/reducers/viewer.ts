@@ -17,16 +17,16 @@ export function viewerReducer(state = VIEWER_INITIAL_STATE, action: ViewerAction
     switch (action.type) {
         case ActionType.INIT_APP:
             {
-                let tool = action.payload.initialActiveTool;
-                let ft = action.payload.featureTooltipsEnabled;
+                const tool = action.payload.initialActiveTool;
+                const ft = action.payload.featureTooltipsEnabled;
                 let state1: Partial<IViewerReducerState> | undefined;
                 if (tool != null) {
                     state1 = {
                         tool: tool
                     };
                 }
-                let state2 : Partial<IViewerReducerState> | undefined;
-                if (typeof(ft) != 'undefined') {
+                let state2: Partial<IViewerReducerState> | undefined;
+                if (typeof (ft) != 'undefined') {
                     state2 = {
                         featureTooltipsEnabled: ft
                     };
@@ -44,6 +44,13 @@ export function viewerReducer(state = VIEWER_INITIAL_STATE, action: ViewerAction
             {
                 const state1 = {
                     featureTooltipsEnabled: action.payload
+                };
+                return { ...state, ...state1 };
+            }
+        case ActionType.MAP_ENABLE_SELECT_DRAGPAN:
+            {
+                const state1 = {
+                    selectCanDragPan: action.payload
                 };
                 return { ...state, ...state1 };
             }

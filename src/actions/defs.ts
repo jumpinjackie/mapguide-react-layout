@@ -609,6 +609,14 @@ export interface ISetFeatureTooltipsEnabledAction {
 }
 
 /**
+ * @since 0.14.2
+ */
+export interface IEnableSelectDragPanAction {
+    type: ActionType.MAP_ENABLE_SELECT_DRAGPAN;
+    payload: boolean;
+}
+
+/**
  * @since 0.12
  */
 export interface ISetManualFeatureTooltipsEnabledAction {
@@ -938,3 +946,4 @@ export type ViewerAction = IOpenFlyoutAction
     | IClearClientSelectionAction //@since 0.14
     | ISetHeatmapLayerBlurAction //@since 0.14
     | ISetHeatmapLayerRadiusAction //@since 0.14
+    | IEnableSelectDragPanAction //@since 0.14.2

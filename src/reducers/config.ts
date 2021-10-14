@@ -23,6 +23,7 @@ export const CONFIG_INITIAL_STATE: IConfigurationReducerState = {
     manualFeatureTooltips: false,
     cancelDigitizationKey: KC_ESCAPE,
     undoLastPointKey: KC_U,
+    selectCanDragPan: false,
     coordinates: {
         decimals: 6
     } as ICoordinateConfiguration,
@@ -113,6 +114,10 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction
                 } else {
                     return newState;
                 }
+            }
+        case ActionType.MAP_ENABLE_SELECT_DRAGPAN:
+            {
+                return  { ...state, ...{ selectCanDragPan: action.payload } };
             }
         case ActionType.MAP_SET_VIEW_ROTATION:
             {

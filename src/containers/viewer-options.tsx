@@ -6,8 +6,8 @@ import {
 import { tr } from "../api/i18n";
 import { getUnits, getUnitOfMeasure } from "../utils/units";
 import { Slider, HTMLSelect } from '@blueprintjs/core';
-import { useActiveMapName, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSizeUnits, useViewerLocale, useActiveMapExternalBaseLayers, useViewerIsStateless } from './hooks';
-import { setManualFeatureTooltipsEnabled, setFeatureTooltipsEnabled, setLayerTransparency, setViewSizeUnits } from '../actions/map';
+import { useActiveMapName, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSizeUnits, useViewerLocale, useActiveMapExternalBaseLayers, useViewerIsStateless, useViewerSelectCanDragPan } from './hooks';
+import { setManualFeatureTooltipsEnabled, setFeatureTooltipsEnabled, setLayerTransparency, setViewSizeUnits, enableSelectDragPan } from '../actions/map';
 import { useActiveMapLayerTransparency, useActiveMapState } from './hooks-mapguide';
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from '../constants';
 import { useReduxDispatch } from "../components/map-providers/context";
@@ -22,6 +22,7 @@ export const ViewerOptions = () => {
     const mapName = useActiveMapName();
     const layerTransparency = useActiveMapLayerTransparency();
     const featureTooltipsEnabled = useViewerFeatureTooltipsEnabled();
+    const selectDragPanEnabled = useViewerSelectCanDragPan();
     const manualFeatureTooltips = useConfiguredManualFeatureTooltips();
     const viewSizeUnits = useViewerSizeUnits();
     const stateless = useViewerIsStateless();
@@ -30,6 +31,7 @@ export const ViewerOptions = () => {
     const dispatch = useReduxDispatch();
     const toggleManualMapTipsAction = (enabled: boolean) => dispatch(setManualFeatureTooltipsEnabled(enabled));
     const toggleMapTipsAction = (enabled: boolean) => dispatch(setFeatureTooltipsEnabled(enabled));
+    const toggleSelectDragPanAction = (enabled: boolean) => dispatch(enableSelectDragPan(enabled));
     const setLayerTransparencyAction = (mapName: string, id: string, opacity: number) => dispatch(setLayerTransparency(mapName, id, opacity));
     const setViewSizeDisplayUnitsAction = (units: UnitOfMeasure) => dispatch(setViewSizeUnits(units));
     const onMgLayerOpacityChanged = (mapName: string | undefined, layerId: string, value: number) => {
@@ -52,6 +54,9 @@ export const ViewerOptions = () => {
     const onFeatureTooltipsChanged = (e: GenericEvent) => {
         toggleMapTipsAction(e.target.checked);
     };
+    const onSelectDragPanEnabled = (e: GenericEvent) => {
+        toggleSelectDragPanAction(e.target.checked);
+    }
     const onManualFeatureTooltipsChanged = (e: GenericEvent) => {
         toggleManualMapTipsAction(e.target.checked);
     };
@@ -91,6 +96,11 @@ export const ViewerOptions = () => {
                 </label>;
             }
         })()}
+        <label className="bp3-control bp3-switch">
+            <input type="checkbox" checked={selectDragPanEnabled} onChange={onSelectDragPanEnabled} />
+            <span className="bp3-control-indicator"></span>
+            {tr("ENABLE_SELECT_DRAGPAN", locale)}
+        </label>
         <fieldset>
             <legend>{tr("LAYER_TRANSPARENCY", locale)}</legend>
             {(() => {

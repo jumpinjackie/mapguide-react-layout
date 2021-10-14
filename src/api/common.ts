@@ -1929,13 +1929,7 @@ export interface IConfigurationReducerState {
     appSettings?: Dictionary<string>;
     /**
      * Viewer configuration
-     *
-     * @type {{
-     *         imageFormat: ImageFormat;
-     *         selectionImageFormat: ImageFormat;
-     *         selectionColor: string;
-     *         pointSelectionBuffer: number;
-     *     }}
+     * 
      * @memberof IConfigurationReducerState
      */
     viewer: {
@@ -2009,6 +2003,10 @@ export interface IConfigurationReducerState {
      * @memberof IConfigurationReducerState
      */
     viewSizeUnits: UnitOfMeasure;
+    /**
+     * @since 0.14.2
+     */
+    selectCanDragPan: boolean;
     /**
      * If specified and true and the MapTip component is active, then feature tooltips are activated
      * by mouse click instead of idle mouse cursor at a given point on the map for a certain period of time. 

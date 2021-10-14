@@ -12,7 +12,7 @@ import { tr } from '../api/i18n';
 import "ol/ol.css";
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { ISubscriberProps, Subscriber } from './subscriber';
-import { useActiveMapClientSelectionSet, useConfiguredLoadIndicatorColor, useConfiguredLoadIndicatorPositioning, useCustomAppSettings, useViewerFlyouts } from "./hooks";
+import { useActiveMapClientSelectionSet, useConfiguredLoadIndicatorColor, useConfiguredLoadIndicatorPositioning, useCustomAppSettings, useViewerFlyouts, useViewerSelectCanDragPan } from "./hooks";
 import { closeContextMenu, openContextMenu } from "../actions/flyout";
 import { WEBLAYOUT_CONTEXTMENU } from "../constants";
 
@@ -28,6 +28,7 @@ interface ICoreMapViewerProps {
     backgroundColor?: string;
     children?: React.ReactNode;
     isContextMenuOpen: boolean;
+    selectCanDragPan: boolean;
 }
 
 interface ICoreMapViewerState {
@@ -54,6 +55,7 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
         }
     }
     //#region IViewerComponent
+    selectCanDragPan = () => this.props.selectCanDragPan;
     isContextMenuOpen = () => this.props.isContextMenuOpen;
     setDigitizingType = (digitizingType: string | undefined) => this.setState({ digitizingType });
     onBeginDigitization = (callback: (cancelled: boolean) => void) => { };
@@ -232,6 +234,7 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
         }
     }, [clientSelection]);
     const bContextMenuOpen = (flyouts[WEBLAYOUT_CONTEXTMENU]?.open == true);
+    const bSelectCanDragPan = useViewerSelectCanDragPan();
     const showContextMenuAction = (pos: [number, number]) => dispatch(openContextMenu({ x: pos[0], y: pos[1] }));
     const hideContextMenuAction = () => dispatch(closeContextMenu());
     const onContextMenu = (pos: [number, number]) => showContextMenuAction?.(pos);
@@ -258,6 +261,7 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
                 onContextMenu={onContextMenu}
                 onHideContextMenu={hideContextMenuAction}
                 isContextMenuOpen={bContextMenuOpen}
+                selectCanDragPan={bSelectCanDragPan}
                 loadIndicatorPosition={loadIndicatorPositioning}
                 loadIndicatorColor={loadIndicatorColor}>
                 {children}

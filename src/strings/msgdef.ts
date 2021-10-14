@@ -301,4 +301,5 @@ export interface ILocalizedMessages {
     CREATE_VECTOR_THEMED: string;
     CREATE_VECTOR_CLUSTERED: string;
     CREATE_VECTOR_HEATMAP: string;
+    ENABLE_SELECT_DRAGPAN: string;
 }

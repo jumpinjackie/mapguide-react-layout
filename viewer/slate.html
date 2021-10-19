@@ -5,6 +5,8 @@
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
         <link rel="stylesheet" href="dist/vendor.css" type="text/css" />
         <link rel="stylesheet" href="dist/viewer.css" type="text/css" />
+        <!-- Template specific css -->
+        <link rel="stylesheet" href="css/slate.css" type="text/css" />
         <!-- NOTE: If you don't care about IE, you can remove/comment the script reference below -->
         <script type="text/javascript" src="//polyfill.io/v3/polyfill.min.js?features=Promise%2CPromise.prototype.finally%2CArray.isArray%2CArray.prototype.find%2CArray.prototype.includes%2CObject.assign%2CMath.log2%2Cfetch%2CNumber.isFinite"></script>
         <script type="text/javascript" src="dist/vendor.js" charset="utf-8"></script>
@@ -13,73 +15,7 @@
             /* Prevent scrollbars due to floating modal dialogs going past the bounds of the root element */
             html { overflow: hidden; }
             html, body, #map { padding: 0; margin: 0; font: 10pt Verdana, sans-serif; }
-            #map { overflow: hidden; position: absolute; left: 0; right: 0; top: 0; bottom: 0; }
-            #map { background-color: #EBECEC; }
-            /* BEGIN - Common status bar CSS */
-            .status-bar-component {
-                position: absolute;
-                bottom: 0px;
-                z-index: 100;
-            }
-            .component-mouse-coordinates { left: 0px; }
-            .component-scale-display { right: 320px; }
-            .component-selected-feature-count { left: 260px; }
-            .component-view-size { right: 136px; }
-            .component-pbmg { right: 0px; }
-            /* END - Common status bar CSS */
-            .slate-file-menu {
-                color: white;
-                /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#7d7e7d+0,0e0e0e+100;Black+3D */
-                background: #7d7e7d; /* Old browsers */
-                background: -moz-linear-gradient(top,  #7d7e7d 0%, #0e0e0e 100%); /* FF3.6-15 */
-                background: -webkit-linear-gradient(top,  #7d7e7d 0%,#0e0e0e 100%); /* Chrome10-25,Safari5.1-6 */
-                background: linear-gradient(to bottom,  #7d7e7d 0%,#0e0e0e 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7d7e7d', endColorstr='#0e0e0e',GradientType=0 ); /* IE6-9 */
-            }
-            .slate-file-menu .mouse-over, .slate-file-menu .selected-item {
-                background-color: #B52F38;
-                color: white;
-                border-color: black;
-                border-radius: 3px;
-            }
-            .slate-toolbar, .component-accordion-panel-header {
-                color: white;
-                /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#878787+0,747474+50,6e7774+50,555555+51,5e6666+100 */
-                background: #878787; /* Old browsers */
-                background: -moz-linear-gradient(top,  #878787 0%, #747474 50%, #6e7774 50%, #555555 51%, #5e6666 100%); /* FF3.6-15 */
-                background: -webkit-linear-gradient(top,  #878787 0%,#747474 50%,#6e7774 50%,#555555 51%,#5e6666 100%); /* Chrome10-25,Safari5.1-6 */
-                background: linear-gradient(to bottom,  #878787 0%,#747474 50%,#6e7774 50%,#555555 51%,#5e6666 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#878787', endColorstr='#5e6666',GradientType=0 ); /* IE6-9 */
-            }
-            .slate-toolbar .mouse-over, .slate-toolbar .selected-item {
-                background-color: #A8A8A8;
-                color: white;
-                border-color: black;
-            }
-            .component-accordion {
-                background-color: #E4E3E3;
-            }
-            .component-accordion-panel-header {
-                border: 1px solid black;
-                font-weight: bold;
-            }
-            .slate-toolbar-secondary {
-                /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f0f0f0+0,cdcdcd+100 */
-                background: #f0f0f0; /* Old browsers */
-                background: -moz-linear-gradient(top,  #f0f0f0 0%, #cdcdcd 100%); /* FF3.6-15 */
-                background: -webkit-linear-gradient(top,  #f0f0f0 0%,#cdcdcd 100%); /* Chrome10-25,Safari5.1-6 */
-                background: linear-gradient(to bottom,  #f0f0f0 0%,#cdcdcd 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f0f0', endColorstr='#cdcdcd',GradientType=0 ); /* IE6-9 */
-            }
-            .slate-toolbar-secondary .mouse-over, .slate-toolbar-secondary .selected-item {
-                background-color: #A8A8A8;
-                color: white;
-                border-color: black;
-            }
-            .slate-status-bar {
-                background-color: #999999;
-                color: white;
-            }
+            
         </style>
     </head>
     <body>

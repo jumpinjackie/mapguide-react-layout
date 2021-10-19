@@ -6,6 +6,8 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <link rel="stylesheet" href="dist/vendor.css" type="text/css" />
     <link rel="stylesheet" href="dist/viewer.css" type="text/css" />
+    <!-- Template specific css -->
+    <link rel="stylesheet" href="css/generic.css" type="text/css" />
     <!-- NOTE: If you don't care about IE, you can remove/comment the script reference below -->
     <script type="text/javascript"
         src="//polyfill.io/v3/polyfill.min.js?features=Promise%2CPromise.prototype.finally%2CArray.isArray%2CArray.prototype.find%2CArray.prototype.includes%2CObject.assign%2CMath.log2%2Cfetch%2CNumber.isFinite"></script>
@@ -25,62 +27,6 @@
             font: 10pt Verdana, sans-serif;
         }
 
-        #map {
-            overflow: hidden;
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 0;
-            bottom: 0;
-        }
-
-        /* BEGIN - Common status bar CSS */
-        .status-bar-component {
-            position: absolute;
-            bottom: 0px;
-            z-index: 10;
-        }
-        .component-mouse-coordinates { left: 0px; }
-        .component-scale-display { right: 320px; }
-        .component-selected-feature-count { right: 570px; }
-        .component-view-size { right: 136px; }
-        .component-pbmg { right: 0px; }
-        /* END - Common status bar CSS */
-
-        .component-scale-display {
-            background-color: rgba(0, 60, 136, 0.8);
-            color: white;
-        }
-
-        .component-selected-feature-count {
-            background-color: rgba(0, 60, 136, 0.8);
-            color: white;
-        }
-
-        .component-view-size {
-            background-color: rgba(0, 60, 136, 0.8);
-            color: white;
-        }
-
-        .component-mouse-coordinates {
-            background-color: rgba(0, 60, 136, 0.8);
-            color: white;
-        }
-
-        @media (max-width: 768px) {
-            .component-mouse-coordinates {
-                display: none;
-            }
-            .component-scale-display {
-                display: none;
-            }
-            .component-view-size {
-                display: none;
-            }
-            .component-selected-feature-count {
-                display: none;
-            }
-        }
     </style>
 </head>
 

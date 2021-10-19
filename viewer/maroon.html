@@ -5,6 +5,8 @@
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
         <link rel="stylesheet" href="dist/vendor.css" type="text/css" />
         <link rel="stylesheet" href="dist/viewer.css" type="text/css" />
+        <!-- Template specific css -->
+        <link rel="stylesheet" href="css/maroon.css" type="text/css" />
         <!-- NOTE: If you don't care about IE, you can remove/comment the script reference below -->
         <script type="text/javascript" src="//polyfill.io/v3/polyfill.min.js?features=Promise%2CPromise.prototype.finally%2CArray.isArray%2CArray.prototype.find%2CArray.prototype.includes%2CObject.assign%2CMath.log2%2Cfetch%2CNumber.isFinite"></script>
         <script type="text/javascript" src="dist/vendor.js" charset="utf-8"></script>
@@ -14,65 +16,6 @@
             html { overflow: hidden; }
             html, body, #map { padding: 0; margin: 0; font: 10pt Verdana, sans-serif; }
             #map { overflow: hidden; position: absolute; left: 0; right: 0; top: 0; bottom: 0; }
-            /* BEGIN - Common status bar CSS */
-            .status-bar-component {
-                position: absolute;
-                bottom: 0px;
-                z-index: 100;
-            }
-            .component-mouse-coordinates { left: 0px; }
-            .component-scale-display { right: 320px; }
-            .component-selected-feature-count { left: 260px; }
-            .component-view-size { right: 136px; }
-            .component-pbmg { right: 0px; }
-            /* END - Common status bar CSS */
-            #map { background-color: #3E5C5F; }
-            .maroon-file-menu, .component-accordion-panel-header {
-                color: white;
-                /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#7f0019+0,a5132e+50,a5132e+100 */
-                background: #7f0019; /* Old browsers */
-                background: -moz-linear-gradient(top,  #7f0019 0%, #a5132e 50%, #a5132e 100%); /* FF3.6-15 */
-                background: -webkit-linear-gradient(top,  #7f0019 0%,#a5132e 50%,#a5132e 100%); /* Chrome10-25,Safari5.1-6 */
-                background: linear-gradient(to bottom,  #7f0019 0%,#a5132e 50%,#a5132e 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7f0019', endColorstr='#a5132e',GradientType=0 ); /* IE6-9 */
-            }
-            .maroon-file-menu .mouse-over, .maroon-file-menu .selected-item {
-                color: white;
-                background-color: #E45E67;
-                border-color: #E45E67;
-            }
-            .maroon-toolbar {
-                background-color: #500000;
-                color: white;
-            }
-            .maroon-toolbar .mouse-over, .maroon-toolbar .selected-item {
-                color: white;
-                background-color: #A35858;
-                border-color: #A35858;
-            }
-            .maroon-toolbar-vertical {
-                background-color: #500000;
-                color: white;
-            }
-            .maroon-toolbar-vertical .mouse-over, .maroon-toolbar-vertical .selected-item {
-                color: black;
-                border-color: black;
-                background-color: #8FC5FF;
-            }
-            .maroon-status-bar {
-                background-color: #A5132E;
-                color: white;
-            }
-            .maroon-splitter > .layout-splitter {
-                background-color: #3E5C5F;
-            }
-            .component-accordion {
-                background-color: #E4E3E3;
-            }
-            .component-accordion-panel-header {
-                border: 1px solid black;
-                font-weight: bold;
-            }
         </style>
     </head>
     <body>

@@ -5,6 +5,8 @@
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
         <link rel="stylesheet" href="dist/vendor.css" type="text/css" />
         <link rel="stylesheet" href="dist/viewer.css" type="text/css" />
+        <!-- Template specific css -->
+        <link rel="stylesheet" href="css/limegold.css" type="text/css" />
         <!-- NOTE: If you don't care about IE, you can remove/comment the script reference below -->
         <script type="text/javascript" src="//polyfill.io/v3/polyfill.min.js?features=Promise%2CPromise.prototype.finally%2CArray.isArray%2CArray.prototype.find%2CArray.prototype.includes%2CObject.assign%2CMath.log2%2Cfetch%2CNumber.isFinite"></script>
         <script type="text/javascript" src="dist/vendor.js" charset="utf-8"></script>
@@ -14,63 +16,6 @@
             html { overflow: hidden; }
             html, body, #map { padding: 0; margin: 0; font: 10pt Verdana, sans-serif; }
             #map { overflow: hidden; position: absolute; left: 0; right: 0; top: 0; bottom: 0; }
-            /* BEGIN - Common status bar CSS */
-            .status-bar-component {
-                position: absolute;
-                bottom: 0px;
-                z-index: 100;
-            }
-            .component-mouse-coordinates { left: 0px; }
-            .component-scale-display { right: 320px; }
-            .component-selected-feature-count { left: 260px; }
-            .component-view-size { right: 136px; }
-            .component-pbmg { right: 0px; }
-            /* END - Common status bar CSS */
-            .limegold-toolbar {
-                /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#9ddb56+0,dcf5bf+100 */
-                background: #9ddb56; /* Old browsers */
-                background: -moz-linear-gradient(top,  #9ddb56 0%, #dcf5bf 100%); /* FF3.6-15 */
-                background: -webkit-linear-gradient(top,  #9ddb56 0%,#dcf5bf 100%); /* Chrome10-25,Safari5.1-6 */
-                background: linear-gradient(to bottom,  #9ddb56 0%,#dcf5bf 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9ddb56', endColorstr='#dcf5bf',GradientType=0 ); /* IE6-9 */
-            }
-            .limegold-file-menu .mouse-over, .limegold-file-menu .selected-item {
-                color: black;
-                background-color: #FDEC7C;
-                border-color: black;
-                border-radius: 3px;
-            }
-            .limegold-toolbar .mouse-over, .limegold-toolbar .selected-item {
-                color: black;
-                border-color: black;
-                background-color: #E0F5C4;
-            }
-            .limegold-toolbar-secondary {
-                background: #FCFFBF;
-            }
-            .limegold-toolbar-secondary .mouse-over, .limegold-toolbar-secondary .selected-item {
-                color: black;
-                border-color: black;
-                background-color: #BBE581;
-            }
-            .limegold-status-bar {
-                background: #FFFEBE;
-            }
-            .bp3-tab[aria-selected="true"], .bp3-tab:not([aria-disabled="true"]):hover {
-                color: black;
-            }
-            .bp3-tab-indicator-wrapper .bp3-tab-indicator {
-                background-color: black;
-            }
-            .limegold-sidebar-tabs > .bp3-tab-list {
-                padding-left: 8px;
-                /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f48000+0,fabb00+100 */
-                background: #f48000; /* Old browsers */
-                background: -moz-linear-gradient(top,  #f48000 0%, #fabb00 100%); /* FF3.6-15 */
-                background: -webkit-linear-gradient(top,  #f48000 0%,#fabb00 100%); /* Chrome10-25,Safari5.1-6 */
-                background: linear-gradient(to bottom,  #f48000 0%,#fabb00 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f48000', endColorstr='#fabb00',GradientType=0 ); /* IE6-9 */
-            }
         </style>
     </head>
     <body>

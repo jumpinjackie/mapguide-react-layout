@@ -1229,6 +1229,13 @@ export interface IAddLayerFromParsedFeaturesOptions {
      * @since 0.14
      */
     metadata?: any;
+    /**
+     * A definition to attach to this layer. This definition is application-defined and is primarily to
+     * assist the application in implementing persistence/restoration of this layer on an application-defined
+     * basis 
+     * @since 0.14.3
+     */
+    defn?: any;
 }
 
 /**
@@ -2594,7 +2601,14 @@ export enum LayerProperty {
     /**
      * @since 0.14
      */
-    IS_HEATMAP = "is_heatmap"
+    IS_HEATMAP = "is_heatmap",
+    /**
+     * A source definition to attach to the layer. This is to assist in persistence of this layer for easy
+     * restoration on an application-defined basis
+     * 
+     * @since 0.14.3
+     */
+    LAYER_DEFN = "layer_defn"
 }
 
 /**

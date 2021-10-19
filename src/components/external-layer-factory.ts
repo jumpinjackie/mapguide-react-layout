@@ -1,5 +1,5 @@
 import { MgError } from "../api/error";
-import { Dictionary, IExternalBaseLayer, LayerProperty } from "../api/common";
+import { Dictionary, IExternalBaseLayer, ILayerInfo, LayerProperty } from "../api/common";
 import { IGenericSubjectMapLayer, IInitialExternalLayer, GenericSubjectLayerType } from '../actions/defs';
 import olSource from "ol/source/Source";
 import XYZ from "ol/source/XYZ";
@@ -91,6 +91,7 @@ function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExte
     layer.set(LayerProperty.SELECTED_POPUP_CONFIGURATION, defn.popupTemplate);
     layer.set(LayerProperty.IS_GROUP, false);
     layer.set(LayerProperty.LAYER_METADATA, defn.meta);
+    layer.set(LayerProperty.LAYER_DEFN, defn);
     layer.setVisible(defn.initiallyVisible);
 }
 
@@ -316,6 +317,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 layer.set(LayerProperty.IS_GROUP, false);
                 layer.set(LayerProperty.SELECTED_POPUP_CONFIGURATION, defn.popupTemplate);
                 layer.set(LayerProperty.LAYER_METADATA, defn.meta);
+                layer.set(LayerProperty.LAYER_DEFN, defn);
                 layer.setVisible(defn.initiallyVisible);
                 return layer;
             }

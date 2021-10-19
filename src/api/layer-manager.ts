@@ -213,7 +213,7 @@ export class LayerManager implements ILayerManager {
         });
     }
     async addLayerFromParsedFeatures(options: IAddLayerFromParsedFeaturesOptions): Promise<ILayerInfo> {
-        const { features, projection, defaultStyle, extraOptions, labelOnProperty, selectedPopupTemplate, metadata } = options;
+        const { features, projection, defaultStyle, extraOptions, labelOnProperty, selectedPopupTemplate, metadata, defn } = options;
 
         let proj = projection;
         if (!proj) {
@@ -246,6 +246,7 @@ export class LayerManager implements ILayerManager {
         layer.set(LayerProperty.LAYER_NAME, features.name);
         layer.set(LayerProperty.LAYER_DISPLAY_NAME, features.name);
         layer.set(LayerProperty.LAYER_TYPE, features.type);
+        layer.set(LayerProperty.LAYER_DEFN, defn);
         if (extraOptions?.kind == "Heatmap") {
             layer.set(LayerProperty.IS_HEATMAP, true);
         } else {

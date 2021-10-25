@@ -50,6 +50,15 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
     public attachClient(client: Client): void {
         this.client = client;
     }
+    protected isArbitraryCoordSys(subject: SubjectLayerType | undefined) {
+        if (subject) {
+            if (isRuntimeMap(subject)) {
+                const arbCs = tryParseArbitraryCs(subject.CoordinateSystem.MentorCode);
+                return arbCs != null;
+            }
+        }
+        return false;
+    }
     /**
      * @override
      * @protected
@@ -395,7 +404,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
      * @returns {Dictionary<MapInfo>}
      * @memberof MgViewerInitCommand
      */
-    protected setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<SubjectLayerType>, config: any, warnings: string[]): Dictionary<MapInfo> {
+    protected setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<SubjectLayerType>, config: any, warnings: string[], locale: string): Dictionary<MapInfo> {
         const dict: Dictionary<MapInfo> = {};
         if (appDef.MapSet) {
             for (const mGroup of appDef.MapSet.MapGroup) {
@@ -403,6 +412,8 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                 //Setup external layers
                 const initExternalLayers = [] as IGenericSubjectMapLayer[];
                 const externalBaseLayers = [] as IExternalBaseLayer[];
+                let subject: SubjectLayerType | undefined;
+                //Need to do this in 2 passes. 1st pass to try and get the MG map
                 for (const map of mGroup.Map) {
                     if (map.Type === "MapGuide") {
                         //TODO: Based on the schema, different MG map groups could have different
@@ -424,16 +435,42 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                             const mapDef = mapsByName[name];
                             if (isRuntimeMap(mapDef) && mapDef.MapDefinition == map.Extension.ResourceId) {
                                 mapName = name;
+                                subject = mapDef;
                                 break;
                             }
                         }
-                    } else if (map.Type == TYPE_SUBJECT) {
+                    }
+                }
+                const isArbitrary = this.isArbitraryCoordSys(subject);
+                //2nd pass to process non-MG maps
+                for (const map of mGroup.Map) {
+                    if (map.Type == "MapGuide") {
+                        continue;
+                    }
+                    if (map.Type == TYPE_SUBJECT) {
                         mapName = mGroup["@id"];
                     } else {
-                        if (map.Type == TYPE_EXTERNAL) {
-                            initExternalLayers.push(buildSubjectLayerDefn(map.Extension.layer_name, map));
+                        if (isArbitrary) {
+                            warnings.push(tr("INIT_WARNING_ARBITRARY_COORDSYS_INCOMPATIBLE_LAYER", locale, { mapId: mGroup["@id"], type: map.Type }));
                         } else {
-                            processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayers);
+                            if (map.Type == TYPE_EXTERNAL) {
+                                initExternalLayers.push(buildSubjectLayerDefn(map.Extension.layer_name, map));
+                            } else {
+                                processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayers);
+                            }
+                        }
+                    }
+                }
+
+                if (isArbitrary) {
+                    //Check for incompatible widgets
+                    for (const wset of appDef.WidgetSet) {
+                        for (const widget of wset.Widget) {
+                            switch (widget.Type) {
+                                case "CoordinateTracker":
+                                    warnings.push(tr("INIT_WARNING_ARBITRARY_COORDSYS_UNSUPPORTED_WIDGET", locale, { mapId: mGroup["@id"], widget: widget.Type }));
+                                    break;
+                            }
                         }
                     }
                 }

@@ -149,8 +149,9 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
     constructor(protected readonly dispatch: ReduxDispatch) { }
     public abstract attachClient(client: Client): void;
     public abstract runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
+    protected abstract isArbitraryCoordSys(map: TSubject): boolean;
     protected abstract establishInitialMapNameAndSession(mapsByName: Dictionary<TSubject>): [string, string];
-    protected abstract setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<TSubject>, config: any, warnings: string[]): Dictionary<MapInfo>;
+    protected abstract setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<TSubject>, config: any, warnings: string[], locale: string): Dictionary<MapInfo>;
     protected async initLocaleAsync(options: IInitAsyncOptions): Promise<void> {
         //English strings are baked into this bundle. For non-en locales, we assume a strings/{locale}.json
         //exists for us to fetch
@@ -227,7 +228,7 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
         }
 
         const mapsDict: any  = mapsByName; //HACK: TS generics doesn't want to play nice with us
-        const maps = this.setupMaps(appDef, mapsDict, config, warnings);
+        const maps = this.setupMaps(appDef, mapsDict, config, warnings, locale);
         if (appDef.Title) {
             document.title = appDef.Title || document.title;
         }

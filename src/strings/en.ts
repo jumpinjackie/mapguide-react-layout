@@ -291,5 +291,7 @@ export const STRINGS_EN: ILocalizedMessages = {
     "CREATE_VECTOR_THEMED": "Themed Vector Layer",
     "CREATE_VECTOR_CLUSTERED": "Clustered Point Layer",
     "CREATE_VECTOR_HEATMAP": "Heatmap Layer",
-    "ENABLE_SELECT_DRAGPAN": "Enable pan dragging for select tool"
+    "ENABLE_SELECT_DRAGPAN": "Enable pan dragging for select tool",
+    "INIT_WARNING_ARBITRARY_COORDSYS_INCOMPATIBLE_LAYER": "This viewer refers to a map ({mapId}) with an arbitrary coordinate system, which is incompatible with this layer type ({type})",
+    "INIT_WARNING_ARBITRARY_COORDSYS_UNSUPPORTED_WIDGET": "This viewer refers to a map ({mapId}) with an arbitrary coordinate system, which is incompatible with this widget ({widget})",
 };

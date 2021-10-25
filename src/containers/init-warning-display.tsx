@@ -19,6 +19,7 @@ export const InitWarningDisplay = () => {
         return <Dialog
             icon="warning-sign"
             isOpen={true}
+            usePortal={false}
             onClose={acknowledge}
             title={tr("WARNING", locale)}>
             <div className="bp3-dialog-body">

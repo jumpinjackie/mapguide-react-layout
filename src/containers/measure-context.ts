@@ -21,8 +21,16 @@ import { debug } from '../utils/logger';
 import { OLGeometryType } from '../api/ol-types';
 import Geometry from 'ol/geom/Geometry';
 import VectorSource from "ol/source/Vector";
+import { Projection, ProjectionLike } from "ol/proj";
 
 const LAYER_NAME = "measure-layer";
+
+function isArbitraryProjection(proj: ProjectionLike) {
+    if (proj instanceof Projection) {
+        return /XY-[A-Z]+/.test(proj.getCode());
+    }
+    return false;
+}
 
 /**
  * @hidden
@@ -115,12 +123,25 @@ export class MeasureContext {
             segments = [];
             length = 0;
             const sourceProj = this.viewer.getProjection();
-            for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-                const c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, 'EPSG:4326');
-                const c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, 'EPSG:4326');
-                const dist = olSphere.getDistance(c1, c2);
-                length += dist;
-                segments.push({ segment: (i + 1), length: dist });
+            if (isArbitraryProjection(sourceProj)) {
+                // Do euclidean distance
+                for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
+                    const c1 = coordinates[i];
+                    const c2 = coordinates[i + 1];
+                    const a = c1[0] - c2[0];
+                    const b = c1[1] - c2[1];
+                    const dist = Math.sqrt(a * a + b * b);
+                    length += dist;
+                    segments.push({ segment: (i + 1), length: dist });
+                }
+            } else {
+                for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
+                    const c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, 'EPSG:4326');
+                    const c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, 'EPSG:4326');
+                    const dist = olSphere.getDistance(c1, c2);
+                    length += dist;
+                    segments.push({ segment: (i + 1), length: dist });
+                }
             }
         } else {
             length = NaN;
@@ -147,17 +168,32 @@ export class MeasureContext {
             segments = [];
             const sourceProj = this.viewer.getProjection();
             const geom = polygon;
-            area = olSphere.getArea(geom, { projection: sourceProj });
-            debug(`Polygon area: ${area}`);
-            const ring = geom.getLinearRing(0);
-            const coordinates = ring.getCoordinates() as Coordinate2D[];
-            for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-                // Unlike getArea(), getDistance() requires that our input coordinates are in
-                // EPSG:4326 first
-                const c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, 'EPSG:4326');
-                const c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, 'EPSG:4326');
-                const dist = olSphere.getDistance(c1, c2);
-                segments.push({ segment: (i + 1), length: dist });
+            if (isArbitraryProjection(sourceProj)) {
+                area = geom.getArea();
+                // Do euclidean distance
+                const ring = geom.getLinearRing(0);
+                const coordinates = ring.getCoordinates() as Coordinate2D[];
+                for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
+                    const c1 = coordinates[i];
+                    const c2 = coordinates[i + 1];
+                    const a = c1[0] - c2[0];
+                    const b = c1[1] - c2[1];
+                    const dist = Math.sqrt(a * a + b * b);
+                    segments.push({ segment: (i + 1), length: dist });
+                }
+            } else {
+                area = olSphere.getArea(geom, { projection: sourceProj });
+                debug(`Polygon area: ${area}`);
+                const ring = geom.getLinearRing(0);
+                const coordinates = ring.getCoordinates() as Coordinate2D[];
+                for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
+                    // Unlike getArea(), getDistance() requires that our input coordinates are in
+                    // EPSG:4326 first
+                    const c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, 'EPSG:4326');
+                    const c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, 'EPSG:4326');
+                    const dist = olSphere.getDistance(c1, c2);
+                    segments.push({ segment: (i + 1), length: dist });
+                }
             }
         } else {
             area = NaN;

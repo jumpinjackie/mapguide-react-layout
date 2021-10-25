@@ -1,5 +1,5 @@
 import { Size2, UnitOfMeasure } from "../../src/api/common";
-import { getMapSize, getUnitOfMeasure, getUnits, getUnitsOfMeasure } from "../../src/utils/units";
+import { getMapSize, getUnitOfMeasure, getUnits, getUnitsOfMeasure, tryParseArbitraryCs } from "../../src/utils/units";
 
 describe("utils/units", () => {
     describe("getUnitOfMeasure", () => {
@@ -43,4 +43,62 @@ describe("utils/units", () => {
             expect(msize[1]).toBe(expected[uom][1]);
         }
     });
+    it("tryParseArbitraryCs", () => {
+        const arb1 = tryParseArbitraryCs("XY-M");
+        expect(arb1).not.toBeUndefined();
+        expect(arb1?.code).toBe("XY-M");
+        expect(arb1?.units).toBe(UnitOfMeasure.Meters);
+        
+        const arb2 = tryParseArbitraryCs("XY-FT");
+        expect(arb2).not.toBeUndefined();
+        expect(arb2?.code).toBe("XY-FT");
+        expect(arb2?.units).toBe(UnitOfMeasure.Feet);
+        
+        const arb3 = tryParseArbitraryCs("XY-IN");
+        expect(arb3).not.toBeUndefined();
+        expect(arb3?.code).toBe("XY-IN");
+        expect(arb3?.units).toBe(UnitOfMeasure.Inches);
+
+        const arb4 = tryParseArbitraryCs("XY-CM");
+        expect(arb4).not.toBeUndefined();
+        expect(arb4?.code).toBe("XY-CM");
+        expect(arb4?.units).toBe(UnitOfMeasure.Centimeters);
+
+        const arb5 = tryParseArbitraryCs("XY-KM");
+        expect(arb5).not.toBeUndefined();
+        expect(arb5?.code).toBe("XY-KM");
+        expect(arb5?.units).toBe(UnitOfMeasure.Kilometers);
+
+        const arb6 = tryParseArbitraryCs("XY-YD");
+        expect(arb6).not.toBeUndefined();
+        expect(arb6?.code).toBe("XY-YD");
+        expect(arb6?.units).toBe(UnitOfMeasure.Yards);
+
+        const arb7 = tryParseArbitraryCs("XY-MM");
+        expect(arb7).not.toBeUndefined();
+        expect(arb7?.code).toBe("XY-MM");
+        expect(arb7?.units).toBe(UnitOfMeasure.Millimeters);
+
+        const arb8 = tryParseArbitraryCs("XY-MI");
+        expect(arb8).not.toBeUndefined();
+        expect(arb8?.code).toBe("XY-MI");
+        expect(arb8?.units).toBe(UnitOfMeasure.Miles);
+
+        const arb9 = tryParseArbitraryCs("XY-NM");
+        expect(arb9).not.toBeUndefined();
+        expect(arb9?.code).toBe("XY-NM");
+        expect(arb9?.units).toBe(UnitOfMeasure.NauticalMiles);
+
+        const arb10 = tryParseArbitraryCs("LL84");
+        expect(arb10).toBeUndefined();
+
+        const arb11 = tryParseArbitraryCs("WGS84.PseudoMercator");
+        expect(arb11).toBeUndefined();
+
+        const arb12 = tryParseArbitraryCs("AnythingElse");
+        expect(arb12).toBeUndefined();
+
+        const arb13 = tryParseArbitraryCs(undefined);
+        expect(arb13).toBeUndefined();
+    })
 });

@@ -1,4 +1,4 @@
-import { RefreshMode, IExternalBaseLayer, Bounds, LayerTransparencySet, LayerProperty, MgBuiltInLayers, MgLayerType, MG_LAYER_TYPE_NAME, MG_BASE_LAYER_GROUP_NAME, ILayerInfo, ImageFormat, GenericEvent, ClientKind, Coordinate2D, Size, BLANK_SIZE, Dictionary } from './common';
+import { RefreshMode, IExternalBaseLayer, Bounds, LayerTransparencySet, LayerProperty, MgBuiltInLayers, MgLayerType, MG_LAYER_TYPE_NAME, MG_BASE_LAYER_GROUP_NAME, ImageFormat, GenericEvent, ClientKind, Coordinate2D, Size, BLANK_SIZE, Dictionary, UnitOfMeasure } from './common';
 import LayerGroup from "ol/layer/Group";
 import TileGrid from "ol/tilegrid/TileGrid";
 import AbstractSource from "ol/source/Source";
@@ -30,10 +30,10 @@ import { BLANK_GIF_DATA_URI, LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OV
 import { OLImageLayer, OLTileLayer } from './ol-types';
 import { IGenericSubjectMapLayer } from '../actions/defs';
 import { GenericLayerSetOL } from './generic-layer-set';
-import { get } from "ol/proj";
+import { get, Projection, ProjectionLike } from "ol/proj";
 import { isRuntimeMap } from '../utils/type-guards';
 import { MgError } from './error';
-import { Source } from 'webpack-sources';
+import { tryParseArbitraryCs } from '../utils/units';
 
 const DEFAULT_BOUNDS_3857: Bounds = [
     -20026376.39,
@@ -41,11 +41,35 @@ const DEFAULT_BOUNDS_3857: Bounds = [
     20026376.39,
     20048966.10
 ];
+
 const DEFAULT_BOUNDS_4326: Bounds = [-180, -90, 180, 90];
 
 function getMetersPerUnit(projection: string) {
     const proj = get(projection);
     return proj.getMetersPerUnit();
+}
+
+function toProjUnit(unit: UnitOfMeasure) {
+    switch (unit) {
+        case UnitOfMeasure.Meters:
+            return "m";
+        case UnitOfMeasure.Feet:
+            return "ft";
+        case UnitOfMeasure.Inches:
+            return "in";
+        case UnitOfMeasure.Centimeters:
+            return "cm";
+        case UnitOfMeasure.Kilometers:
+            return "km";
+        case UnitOfMeasure.Yards:
+            return "yd";
+        case UnitOfMeasure.Millimeters:
+            return "mm";
+        case UnitOfMeasure.Miles:
+            return "mi";
+        case UnitOfMeasure.NauticalMiles:
+            return "nm";
+    }
 }
 
 export function blankImageLoadFunction(image: ImageWrapper) {
@@ -124,7 +148,7 @@ export class MgLayerSetOL implements ILayerSetOL {
     constructor(public readonly mgTiledLayers: OLTileLayer[],
         public readonly externalBaseLayersGroup: LayerGroup | undefined,
         public readonly overlay: OLImageLayer,
-        public readonly projection: string | undefined,
+        public readonly projection: ProjectionLike,
         public readonly dpi: number,
         public readonly extent: Bounds,
         private readonly inPerUnit: number,
@@ -400,13 +424,21 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
             const dpi = map.DisplayDpi;
             const inPerUnit = 39.37 * map.CoordinateSystem.MetersPerUnit;
             const resolutions = new Array(finiteScales.length);
-            let projection: string | undefined;
+            let projection: ProjectionLike;
             for (let i = 0; i < finiteScales.length; ++i) {
                 resolutions[i] = finiteScales[i] / inPerUnit / dpi;
             }
 
-            if (map.CoordinateSystem.EpsgCode.length > 0) {
-                projection = `EPSG:${map.CoordinateSystem.EpsgCode}`;
+            const parsedArb = tryParseArbitraryCs(map.CoordinateSystem.MentorCode);
+            if (parsedArb) {
+                projection = new Projection({
+                    code: parsedArb.code,
+                    units: toProjUnit(parsedArb.units)
+                })
+            } else {
+                if (map.CoordinateSystem.EpsgCode.length > 0) {
+                    projection = `EPSG:${map.CoordinateSystem.EpsgCode}`;
+                }
             }
 
             const tileGrid = new TileGrid({
@@ -595,7 +627,7 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
         tl.set(LayerProperty.IS_GROUP, false);
         return tl;
     }
-    private createMgOverlayLayer(layerName: string, agentUri: string, locale: string | undefined, metersPerUnit: number, projection: string | undefined, useImageOverlayOp: boolean, params: any): OLImageLayer {
+    private createMgOverlayLayer(layerName: string, agentUri: string, locale: string | undefined, metersPerUnit: number, projection: ProjectionLike, useImageOverlayOp: boolean, params: any): OLImageLayer {
         const overlaySource = createMapGuideSource({
             projection: projection,
             url: agentUri,
@@ -665,6 +697,3 @@ export interface IMgLayerSetCallback extends IImageLayerEvents {
     openTooltipLink(url: string): void;
     addFeatureToHighlight(feat: Feature<Geometry> | undefined, bAppend: boolean): void;
 }
-
-
-

@@ -14,9 +14,18 @@ import { RuntimeMap } from '../api/contracts/runtime-map';
  */
 export function areViewsCloseToEqual(view: IMapView | undefined, otherView: IMapView | undefined): boolean {
     if (view && otherView) {
-        return areNumbersEqual(view.x, otherView.x) &&
+        const basePartsEqual = areNumbersEqual(view.x, otherView.x) &&
             areNumbersEqual(view.y, otherView.y) &&
             areNumbersEqual(view.scale, otherView.scale);
+        if (view.resolution != null && otherView.resolution != null) {
+            return basePartsEqual && areNumbersEqual(view.resolution, otherView.resolution);
+        } else {
+            if ((view.resolution == null && otherView.resolution != null) || (view.resolution != null && otherView.resolution == null)) {
+                return false;
+            } else {
+                return basePartsEqual;
+            }
+        }
     } else {
         return false;
     }

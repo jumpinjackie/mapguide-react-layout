@@ -4,12 +4,13 @@ import Source from 'ol/source/Source';
 import LayerBase from "ol/layer/Base";
 import { LoadFunction as TileLoadFunction } from 'ol/Tile';
 import { LoadFunction as ImageLoadFunction } from 'ol/Image';
+import type { ProjectionLike } from 'ol/proj';
 
 export interface ILayerSetOL {
     view: View;
     extent: Bounds;
     dpi: number;
-    projection: string | undefined;
+    projection: ProjectionLike;
     scaleToResolution(scale: number): number;
     resolutionToScale(resolution: number): number;
     refreshMap(mode: RefreshMode): void;

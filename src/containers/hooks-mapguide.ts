@@ -2,6 +2,23 @@ import { ActiveSelectedFeature, LayerTransparencySet, getRuntimeMap } from '../a
 import { getActiveMapBranch } from './hooks';
 import { RuntimeMap } from '../api/contracts/runtime-map';
 import { useAppState } from '../components/map-providers/context';
+import { tryParseArbitraryCs } from '../utils/units';
+
+/**
+ * @since 0.14.3
+ */
+export function useActiveMapIsArbitraryCoordSys() {
+    return useAppState<boolean>(state => {
+        let arbCs=  false;
+        if (state.config.activeMapName) {
+            const ms = state.mapState[state.config.activeMapName];
+            if (ms.mapguide?.runtimeMap) {
+                arbCs = tryParseArbitraryCs(ms.mapguide.runtimeMap.CoordinateSystem.MentorCode) != null
+            }
+        }
+        return arbCs;
+    });
+}
 
 export function useActiveMapMetersPerUnit() {
     return useAppState<number | undefined>(state => {

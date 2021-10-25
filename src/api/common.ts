@@ -1521,6 +1521,11 @@ export interface IMapGuideSubState {
      */
     runtimeMap: RuntimeMap | undefined;
     /**
+     * Indicates if this map is based on an arbitrary coordinate system
+     * @since 0.14.3
+     */
+    isArbitraryCs: boolean;
+    /**
      * A set of selectable layer ids
      *
      * @type {*}

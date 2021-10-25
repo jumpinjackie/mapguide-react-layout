@@ -84,6 +84,7 @@ describe("api/registry/command", () => {
                     clientSelection: undefined,
                     mapguide: {
                         runtimeMap: createMap(),
+                        isArbitraryCs: false,
                         selectableLayers: [],
                         expandedGroups: [],
                         selectionSet: {
@@ -129,6 +130,7 @@ describe("api/registry/command", () => {
                     clientSelection: undefined,
                     mapguide: {
                         runtimeMap: createMap(),
+                        isArbitraryCs: false,
                         selectableLayers: [],
                         expandedGroups: [],
                         selectionSet: undefined,
@@ -177,6 +179,7 @@ describe("api/registry/command", () => {
                     clientSelection: undefined,
                     mapguide: {
                         runtimeMap: createMap(),
+                        isArbitraryCs: false,
                         selectableLayers: [],
                         expandedGroups: [],
                         selectionSet: undefined,
@@ -216,6 +219,7 @@ describe("api/registry/command", () => {
                     clientSelection: undefined,
                     mapguide: {
                         runtimeMap: createMap(),
+                        isArbitraryCs: false,
                         selectableLayers: [],
                         expandedGroups: [],
                         selectionSet: undefined,
@@ -238,7 +242,7 @@ describe("api/registry/command", () => {
             state.mapState["Foo"].history = [
                 { x: 1, y: 1, scale: 1 },
                 { x: 1, y: 1, scale: 1 },
-                { x: 1, y: 1, scale: 1 },
+                { x: 1, y: 1, scale: 1 }
             ]
             result = CommandConditions.hasNextView(reduceAppToToolbarState(state));
             expect(result).toBe(true);

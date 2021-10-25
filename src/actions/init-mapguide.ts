@@ -26,6 +26,7 @@ import { TileSetDefinition } from '../api/contracts/tile-set-definition';
 import { AsyncLazy } from '../api/lazy';
 import { SiteVersionResponse } from '../api/contracts/common';
 import { isRuntimeMap } from '../utils/type-guards';
+import { tryParseArbitraryCs } from '../utils/units';
 
 const TYPE_SUBJECT = "SubjectLayer";
 const TYPE_EXTERNAL = "External";
@@ -229,12 +230,15 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         for (const m of maps) {
             const epsg = m.CoordinateSystem.EpsgCode;
             const mapDef = m.MapDefinition;
-            if (epsg == "0") {
-                throw new MgError(tr("INIT_ERROR_UNSUPPORTED_COORD_SYS", locale || DEFAULT_LOCALE, { mapDefinition: mapDef }));
-            }
-            //Must be registered to proj4js if not 4326 or 3857
-            if (!proj4.defs[`EPSG:${epsg}`]) {
-                fetchEpsgs.push({ epsg: epsg, mapDef: mapDef });
+            const arbCs = tryParseArbitraryCs(m.CoordinateSystem.MentorCode);
+            if (!arbCs) {
+                if (epsg == "0") {
+                    throw new MgError(tr("INIT_ERROR_UNSUPPORTED_COORD_SYS", locale || DEFAULT_LOCALE, { mapDefinition: mapDef }));
+                }
+                //Must be registered to proj4js if not 4326 or 3857
+                if (!proj4.defs[`EPSG:${epsg}`]) {
+                    fetchEpsgs.push({ epsg: epsg, mapDef: mapDef });
+                }
             }
         }
         const extraEpsgs = projectionSelector(res);

@@ -2,6 +2,7 @@ import * as React from "react";
 import { tr } from "../api/i18n";
 import { DEG } from "../constants";
 import { UnitInfo, UnitOfMeasure, UnitName, IMapView } from "../api/common";
+import { strIsNullOrEmpty, strStartsWith } from "./string";
 
 const mUnits: UnitInfo[] = [
     { name: "Unknown", localizedName: (locale) => tr("UNIT_UNKNOWN", locale), abbreviation: (locale) => tr("UNIT_ABBR_UNKNOWN", locale), unitsPerMeter: 1.0, metersPerUnit: 1.0 },
@@ -102,4 +103,40 @@ export function getMapSize(displaySize: [number, number], metersPerUnit: number,
         }
     }
     return [gw, gh];
+}
+
+/**
+ * Attempts to be parse unit information for the given mentor CS code 
+ * 
+ * @param csCode 
+ * @since 0.14.3
+ * @returns 
+ */
+export function tryParseArbitraryCs(csCode: string | undefined): { code: string, units: UnitOfMeasure } | undefined {
+    if (!strIsNullOrEmpty(csCode) && strStartsWith(csCode, "XY-")) {
+        // We'll only cover arbitrary CSes that are clearly mappable to our UOM set
+        const suffix = csCode.substring(3);
+        switch (suffix) {
+            case "M":
+                return { code: csCode, units: UnitOfMeasure.Meters };
+            case "FT":
+                return { code: csCode, units: UnitOfMeasure.Feet };
+            case "IN":
+                return { code: csCode, units: UnitOfMeasure.Inches };
+            case "CM":
+                return { code: csCode, units: UnitOfMeasure.Centimeters };
+            case "KM":
+                return { code: csCode, units: UnitOfMeasure.Kilometers };
+            case "YD":
+                return { code: csCode, units: UnitOfMeasure.Yards };
+            case "MM":
+                return { code: csCode, units: UnitOfMeasure.Millimeters };
+            case "MI":
+                return { code: csCode, units: UnitOfMeasure.Miles };
+            case "NM":
+                return { code: csCode, units: UnitOfMeasure.NauticalMiles };
+        }
+    }
+
+    return undefined;
 }

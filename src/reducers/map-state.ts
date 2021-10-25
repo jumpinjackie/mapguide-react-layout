@@ -13,6 +13,7 @@ import { ViewerAction, isGenericSubjectMapLayer } from '../actions/defs';
 import { debug } from '../utils/logger';
 import { IClusterSettings, VectorStyleSource } from "../api/ol-style-contracts";
 import { ClientSelectionLayer } from "../api/contracts/common";
+import { tryParseArbitraryCs } from "../utils/units";
 
 export const MAP_STATE_INITIAL_STATE: IBranchedMapState = {
 
@@ -24,6 +25,7 @@ export const MG_INITIAL_SUB_STATE: IMapGuideSubState = {
     selectableLayers: {},
     expandedGroups: {},
     runtimeMap: undefined,
+    isArbitraryCs: false,
     showLayers: [],
     showGroups: [],
     hideLayers: [],
@@ -93,7 +95,8 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
             {
                 const { payload } = action;
                 return applyMapGuideSubState(state, payload.mapName, _ => ({
-                    runtimeMap: payload.map
+                    runtimeMap: payload.map,
+                    isArbitraryCs: tryParseArbitraryCs(payload.map.CoordinateSystem.MentorCode) != null
                 }));
             }
         case ActionType.INIT_APP:
@@ -131,7 +134,8 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                     const rtm = maps[mapName].map;
                     if (rtm) {
                         if (!isGenericSubjectMapLayer(rtm)) {
-                            mrtm = { runtimeMap: rtm };
+                            const arbCs = tryParseArbitraryCs(rtm.CoordinateSystem.MentorCode);
+                            mrtm = { runtimeMap: rtm, isArbitraryCs: arbCs != null };
                         } else {
                             mgeneric = { subject: { ...rtm } };
                         }

@@ -46,6 +46,7 @@ Since the `0.14.3` release, the viewer has basic support for MapGuide Map Defini
    * `CoordinateTracker`
  * The measure tool will measure in cartesian distances for such maps instead of great circle distances
  * The view size widget will display the cartesian dimensions of the current map view in the units inferred from the arbitrary coordinate system.
+ * Maps with arbitrary coordinate systems *cannot* currently be used in stateless mode
 
 ## Components
 

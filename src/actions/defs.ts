@@ -149,7 +149,13 @@ export enum GenericSubjectLayerType {
     /**
      * A vector layer based on a Mapbox Vector Tile set
      */
-    MVT = "MVT"
+    MVT = "MVT",
+    /**
+     * A XYZ tileset
+     * @since 0.14.3
+     * @remarks A XYZ subject layer will not be added as a base layer. It will be considered as an "overlay" with respect to any existing base layers present
+     */
+    XYZ = "XYZ"
 }
 
 /**

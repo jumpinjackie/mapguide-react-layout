@@ -117,6 +117,25 @@ export function clusterSourceIfRequired(source: OLVectorSource, def: { cluster?:
 
 export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IInitialExternalLayer, mapProjection: ProjectionLike, isExternal: boolean, appSettings: Dictionary<string>): LayerBase {
     switch (defn.type) {
+        case GenericSubjectLayerType.XYZ:
+            {
+                const sourceArgs = {
+                    crossOrigin: "anonymous",
+                    ...defn.sourceParams
+                };
+                const layer = new TileLayer({
+                    source: new XYZ(sourceArgs)
+                });
+                layer.set(LayerProperty.LAYER_DESCRIPTION, defn.description);
+                layer.set(LayerProperty.LAYER_TYPE, "XYZ");
+                layer.set(LayerProperty.IS_SELECTABLE, false);
+                layer.set(LayerProperty.IS_EXTERNAL, isExternal);
+                layer.set(LayerProperty.IS_GROUP, false);
+                layer.set(LayerProperty.LAYER_METADATA, defn.meta);
+                layer.set(LayerProperty.LAYER_DEFN, defn);
+                layer.setVisible(defn.initiallyVisible);
+                return layer;
+            }
         case GenericSubjectLayerType.GeoJSON_Inline:
             {
                 const features = (new GeoJSON()).readFeatures(defn.sourceParams.features ?? EMPTY_GEOJSON);

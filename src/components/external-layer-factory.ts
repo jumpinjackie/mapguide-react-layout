@@ -34,6 +34,8 @@ import Projection from "ol/proj/Projection";
 import { ProjectionLike, get, equivalent } from "ol/proj";
 import { AsyncLazy } from "../api/lazy";
 import { debug } from "../utils/logger";
+import ImageLayer from "ol/layer/Image";
+import Static from "ol/source/ImageStatic";
 
 function sameProjectionAs(proj1: ProjectionLike, proj2: ProjectionLike) {
     const nproj1 = get(proj1);
@@ -117,6 +119,27 @@ export function clusterSourceIfRequired(source: OLVectorSource, def: { cluster?:
 
 export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IInitialExternalLayer, mapProjection: ProjectionLike, isExternal: boolean, appSettings: Dictionary<string>): LayerBase {
     switch (defn.type) {
+        case GenericSubjectLayerType.StaticImage:
+            {
+                const sourceArgs = {
+                    crossOrigin: "anonymous",
+                    ...defn.sourceParams
+                };
+                if (!sourceArgs.imageExtent)
+                    sourceArgs.imageExtent = defn.meta?.extents;
+                const layer = new ImageLayer({
+                    source: new Static(sourceArgs)
+                });
+                layer.set(LayerProperty.LAYER_DESCRIPTION, defn.description);
+                layer.set(LayerProperty.LAYER_TYPE, "StaticImage");
+                layer.set(LayerProperty.IS_SELECTABLE, false);
+                layer.set(LayerProperty.IS_EXTERNAL, isExternal);
+                layer.set(LayerProperty.IS_GROUP, false);
+                layer.set(LayerProperty.LAYER_METADATA, defn.meta);
+                layer.set(LayerProperty.LAYER_DEFN, defn);
+                layer.setVisible(defn.initiallyVisible);
+                return layer;
+            }
         case GenericSubjectLayerType.XYZ:
             {
                 const sourceArgs = {

@@ -1,6 +1,6 @@
 import { IInitAsyncOptions, normalizeInitPayload } from './init';
 import { ReduxDispatch, Dictionary, ActiveMapTool } from '../api/common';
-import { IGenericSubjectMapLayer, IInitAppActionPayload, MapInfo } from './defs';
+import { IGenericSubjectMapLayer, IInitAppActionPayload, isGenericSubjectMapLayer, MapInfo } from './defs';
 import { ToolbarConf, convertFlexLayoutUIItems, parseWidgetsInAppDef, prepareSubMenus } from '../api/registry/command-spec';
 import { makeUnique } from '../utils/array';
 import { ApplicationDefinition, MapConfiguration } from '../api/contracts/fusion';
@@ -125,6 +125,10 @@ export function getMapDefinitionsFromFlexLayout(appDef: ApplicationDefinition): 
 
 export type MapToLoad = { name: string, mapDef: string, metadata: any };
 
+export function isMapDefinition(arg: MapToLoad | IGenericSubjectMapLayer): arg is MapToLoad {
+    return (arg as any).mapDef != null;
+}
+
 export function isStateless(appDef: ApplicationDefinition) {
     // This appdef is stateless if:
     //
@@ -134,7 +138,13 @@ export function isStateless(appDef: ApplicationDefinition) {
         return true;
 
     try {
-        return getMapDefinitionsFromFlexLayout(appDef).length == 0;
+        const maps = getMapDefinitionsFromFlexLayout(appDef);
+        for (const m of maps) {
+            if (isMapDefinition(m)) {
+                return false;
+            }
+        }
+        return true;
     } catch (e) {
         return true;
     }

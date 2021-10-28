@@ -10,13 +10,14 @@ import View from 'ol/View';
 import LayerBase from "ol/layer/Base";
 import * as olHas from "ol/has";
 import Source from 'ol/source/Source';
+import { ProjectionLike } from 'ol/proj';
 
 /**
  * @hidden
  */
 export abstract class BaseLayerSetOL implements ILayerSetOL {
     constructor(public readonly externalBaseLayersGroup: LayerGroup | undefined,
-        public readonly projection: string | undefined,
+        public readonly projection: ProjectionLike,
         public readonly dpi: number,
         public readonly extent: Bounds,
         private readonly inPerUnit: number,

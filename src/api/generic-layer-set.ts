@@ -6,6 +6,7 @@ import Source from 'ol/source/Source';
 import LayerBase from "ol/layer/Base";
 import TileLayer from "ol/layer/Tile";
 import ImageLayer from "ol/layer/Image";
+import { ProjectionLike } from 'ol/proj';
 
 export const DEFAULT_METERS_PER_UNIT = 1.0;
 const M_TO_IN = 39.37;
@@ -19,7 +20,7 @@ export class GenericLayerSetOL extends BaseLayerSetOL {
         public subjectLayer: LayerBase | undefined,
         extent: Bounds,
         externalBaseLayersGroup: LayerGroup | undefined,
-        projection: string,
+        projection: ProjectionLike,
         metersPerUnit: number = DEFAULT_METERS_PER_UNIT,
         dpi: number = DEFAULT_DPI) {
         super(externalBaseLayersGroup, projection, dpi, extent, M_TO_IN * metersPerUnit, view);

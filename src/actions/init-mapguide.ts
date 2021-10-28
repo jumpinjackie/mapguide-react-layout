@@ -12,7 +12,7 @@ import { MgError } from '../api/error';
 import { resolveProjectionFromEpsgIoAsync } from '../api/registry/projections';
 import { register } from 'ol/proj/proj4';
 import proj4 from "proj4";
-import { buildSubjectLayerDefn, getMapDefinitionsFromFlexLayout, isStateless, MapToLoad, ViewerInitCommand } from './init-command';
+import { buildSubjectLayerDefn, getMapDefinitionsFromFlexLayout, isMapDefinition, isStateless, MapToLoad, ViewerInitCommand } from './init-command';
 import { WebLayout } from '../api/contracts/weblayout';
 import { convertWebLayoutUIItems, parseCommandsInWebLayout, prepareSubMenus, ToolbarConf } from '../api/registry/command-spec';
 import { clearSessionStore, retrieveSelectionSetFromLocalStorage } from '../api/session-store';
@@ -189,9 +189,6 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             throw e;
         }
     }
-    private isMapDefinition(arg: MapToLoad | IGenericSubjectMapLayer): arg is MapToLoad {
-        return (arg as any).mapDef != null;
-    }
     private async createRuntimeMapsAsync<TLayout>(session: AsyncLazy<string>, res: TLayout, isStateless: boolean, mapDefSelector: (res: TLayout) => (MapToLoad | IGenericSubjectMapLayer)[], projectionSelector: (res: TLayout) => string[], sessionWasReused: boolean): Promise<[Dictionary<SubjectLayerType>, string[]]> {
         const mapDefs = mapDefSelector(res);
         const mapPromises: Promise<RuntimeMap>[] = [];
@@ -206,7 +203,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                 return sv;
             });
             for (const m of mapDefs) {
-                if (this.isMapDefinition(m)) {
+                if (isMapDefinition(m)) {
                     const siteVer = await siteVersion.getValueAsync();
                     assertIsDefined(this.client);
                     mapPromises.push(this.describeRuntimeMapStateless(this.client, siteVer.Version, m));
@@ -214,7 +211,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             }
         } else {
             for (const m of mapDefs) {
-                if (this.isMapDefinition(m)) {
+                if (isMapDefinition(m)) {
                     //sessionWasReused is a hint whether to create a new runtime map, or recover the last runtime map state from the given map name
                     if (sessionWasReused) {
                         //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
@@ -270,7 +267,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             mapsByName[map.Name] = map;
         }
         for (const gs of mapDefs) {
-            if (!this.isMapDefinition(gs)) {
+            if (!isMapDefinition(gs)) {
                 mapsByName[gs.name] = gs;
             }
         }

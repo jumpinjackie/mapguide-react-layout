@@ -9,11 +9,13 @@ import { tryParseArbitraryCs } from '../utils/units';
  */
 export function useActiveMapIsArbitraryCoordSys() {
     return useAppState<boolean>(state => {
-        let arbCs=  false;
+        let arbCs = false;
         if (state.config.activeMapName) {
             const ms = state.mapState[state.config.activeMapName];
             if (ms.mapguide?.runtimeMap) {
                 arbCs = tryParseArbitraryCs(ms.mapguide.runtimeMap.CoordinateSystem.MentorCode) != null
+            } else if (ms.generic?.subject) {
+                arbCs = tryParseArbitraryCs(ms.generic.subject.meta?.projection) != null;
             }
         }
         return arbCs;

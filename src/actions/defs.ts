@@ -155,7 +155,12 @@ export enum GenericSubjectLayerType {
      * @since 0.14.3
      * @remarks A XYZ subject layer will not be added as a base layer. It will be considered as an "overlay" with respect to any existing base layers present
      */
-    XYZ = "XYZ"
+    XYZ = "XYZ",
+    /**
+     * A static image layer
+     * @since 0.14.3
+     */
+    StaticImage = "StaticImage"
 }
 
 /**

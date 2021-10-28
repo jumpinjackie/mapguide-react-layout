@@ -569,7 +569,7 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
             layerSet.activeSelectedFeatureOverlay = activeSelectedFeatureOverlay;
             return layerSet;
         } else {
-            let projection = map?.meta?.projection;
+            let projection: ProjectionLike = map?.meta?.projection;
             let bounds: Bounds | undefined;
             let externalBaseLayersGroup: LayerGroup | undefined;
             if (externalBaseLayers != null) {
@@ -599,7 +599,18 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
                 projection = "EPSG:4326";
                 bounds = DEFAULT_BOUNDS_4326;
             }
-            const metersPerUnit = getMetersPerUnit(projection!);
+
+            const parsedArb = tryParseArbitraryCs(projection);
+            let metersPerUnit: number | undefined = 1;
+            if (parsedArb) {
+                projection = new Projection({
+                    code: parsedArb.code,
+                    units: toProjUnit(parsedArb.units),
+                    extent: bounds
+                });
+            } else {
+                metersPerUnit = getMetersPerUnit(projection!);
+            }
             const view = new View({
                 projection: projection
             });

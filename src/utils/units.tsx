@@ -135,6 +135,8 @@ export function tryParseArbitraryCs(csCode: string | undefined): { code: string,
                 return { code: csCode, units: UnitOfMeasure.Miles };
             case "NM":
                 return { code: csCode, units: UnitOfMeasure.NauticalMiles };
+            case "PX": //Not supported by MapGuide, but our own defn to support static images
+                return { code: csCode, units: UnitOfMeasure.Pixels };
         }
     }
 

@@ -3,13 +3,15 @@ import {
     ICoordinateConfiguration,
     IViewerCapabilities,
     UnitOfMeasure,
-    KC_ESCAPE, 
+    KC_ESCAPE,
     KC_U
 } from "../api/common";
 import { DEFAULT_LOCALE } from "../api/i18n";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 import { warn } from '../utils/logger';
+import { tryParseArbitraryCs } from "../utils/units";
+import { isRuntimeMap } from "../utils/type-guards";
 
 export const CONFIG_INITIAL_STATE: IConfigurationReducerState = {
     agentUri: undefined,
@@ -107,8 +109,23 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction
                         coordConfig.format = payload.config.coordinateDisplayFormat;
                     }
                     const state2: Partial<IConfigurationReducerState> = { viewer: viewerConfig, coordinates: coordConfig };
+                    const mapKeys = Object.keys(payload.maps);
                     if (payload.config.viewSizeUnits != null) {
                         state2.viewSizeUnits = payload.config.viewSizeUnits;
+                    } else if (mapKeys.length == 1) {
+                        const m = payload.maps[mapKeys[0]].map;
+                        if (m) {
+                            let arbCs;
+                            if (isRuntimeMap(m)) {
+                                arbCs = tryParseArbitraryCs(m.CoordinateSystem.MentorCode);
+                            } else {
+                                arbCs = tryParseArbitraryCs(m?.meta?.projection);
+                            }
+                            // If arbitrary, infer units from it
+                            if (arbCs) {
+                                state2.viewSizeUnits = arbCs.units;
+                            }
+                        }
                     }
                     return { ...newState, ...state2 };
                 } else {
@@ -117,7 +134,7 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction
             }
         case ActionType.MAP_ENABLE_SELECT_DRAGPAN:
             {
-                return  { ...state, ...{ selectCanDragPan: action.payload } };
+                return { ...state, ...{ selectCanDragPan: action.payload } };
             }
         case ActionType.MAP_SET_VIEW_ROTATION:
             {

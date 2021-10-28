@@ -117,13 +117,15 @@ export class MeasureContext {
         let length: number;
         let segments: MeasureSegment[] | undefined;
         let locale;
+        let isArbitrary = false;
+        const sourceProj = this.viewer.getProjection();
         if (this.parent) {
             locale = this.parent.getLocale();
             const coordinates = line.getCoordinates() as Coordinate2D[];
             segments = [];
             length = 0;
-            const sourceProj = this.viewer.getProjection();
             if (isArbitraryProjection(sourceProj)) {
+                isArbitrary = true;
                 // Do euclidean distance
                 for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
                     const c1 = coordinates[i];
@@ -147,10 +149,14 @@ export class MeasureContext {
             length = NaN;
         }
         let output: string;
-        if (length > 100) {
-            output = tr("UNIT_FMT_KM", locale, { value: (roundTo(length / 1000, 2)) });
+        if (isArbitrary && sourceProj instanceof Projection) {
+            output = `${roundTo(length, 2)} ${sourceProj.getUnits()}`;
         } else {
-            output = tr("UNIT_FMT_M", locale, { value: (roundTo(length, 2)) });
+            if (length > 100) {
+                output = tr("UNIT_FMT_KM", locale, { value: (roundTo(length / 1000, 2)) });
+            } else {
+                output = tr("UNIT_FMT_M", locale, { value: (roundTo(length, 2)) });
+            }
         }
         return [output, length, segments];
     }
@@ -163,12 +169,14 @@ export class MeasureContext {
         let area: number;
         let segments: MeasureSegment[] | undefined;
         let locale;
+        let isArbitrary = false;
+        const sourceProj = this.viewer.getProjection();
         if (this.parent) {
             locale = this.parent.getLocale();
             segments = [];
-            const sourceProj = this.viewer.getProjection();
             const geom = polygon;
             if (isArbitraryProjection(sourceProj)) {
+                isArbitrary = true;
                 area = geom.getArea();
                 // Do euclidean distance
                 const ring = geom.getLinearRing(0);
@@ -199,17 +207,21 @@ export class MeasureContext {
             area = NaN;
         }
         let output: string;
-        //TODO: The dynamic switch in display of measurement unit based on size of value may prove to be
-        //jarring, so we should provide a fixed unit value option in the future that will be used to 
-        //display regardless of the size of value
-        if (area > 10000) {
-            output = tr("UNIT_FMT_SQKM", locale, {
-                value: `${(roundTo(area / 1000000, 2))}`
-            });
+        if (isArbitrary && sourceProj instanceof Projection) {
+            output = `${roundTo(area, 2)} ${sourceProj.getUnits()}<sup>2</sup>`;
         } else {
-            output = tr("UNIT_FMT_SQM", locale, {
-                value: `${(roundTo(area, 2))}`
-            });
+            //TODO: The dynamic switch in display of measurement unit based on size of value may prove to be
+            //jarring, so we should provide a fixed unit value option in the future that will be used to 
+            //display regardless of the size of value
+            if (area > 10000) {
+                output = tr("UNIT_FMT_SQKM", locale, {
+                    value: `${(roundTo(area / 1000000, 2))}`
+                });
+            } else {
+                output = tr("UNIT_FMT_SQM", locale, {
+                    value: `${(roundTo(area, 2))}`
+                });
+            }
         }
         return [output, area, segments];
     }

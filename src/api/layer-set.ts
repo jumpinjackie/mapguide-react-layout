@@ -49,7 +49,7 @@ function getMetersPerUnit(projection: string) {
     return proj.getMetersPerUnit();
 }
 
-function toProjUnit(unit: UnitOfMeasure) {
+export function toProjUnit(unit: UnitOfMeasure) {
     switch (unit) {
         case UnitOfMeasure.Meters:
             return "m";
@@ -69,6 +69,8 @@ function toProjUnit(unit: UnitOfMeasure) {
             return "mi";
         case UnitOfMeasure.NauticalMiles:
             return "nm";
+        case UnitOfMeasure.Pixels:
+            return "px";
     }
 }
 

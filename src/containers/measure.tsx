@@ -1,7 +1,9 @@
 import * as React from "react";
 import {
     GenericEvent,
-    ActiveMapTool} from "../api/common";
+    ActiveMapTool,
+    UnitOfMeasure
+} from "../api/common";
 import { getViewer } from "../api/runtime";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { IMeasureCallback, MeasureSegment, MeasureContext, IMeasureComponent } from "./measure-context";
@@ -12,9 +14,11 @@ import GeometryType from 'ol/geom/GeometryType';
 import { setActiveTool } from '../actions/map';
 import { OLGeometryType } from '../api/ol-types';
 import { useReduxDispatch } from "../components/map-providers/context";
+import { useActiveMapIsArbitraryCoordSys, useActiveMapProjectionUnits } from "./hooks-mapguide";
+import { toProjUnit } from "../api/layer-set";
 
 export interface IMeasureContainerProps {
-
+    measureUnits?: UnitOfMeasure;
 }
 
 interface IMeasureContainerReducerState {
@@ -167,6 +171,7 @@ class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasu
     }
     render(): JSX.Element {
         const { measuring, drawType: type } = this.state;
+        const { measureUnits } = this.props;
         const locale = this.getLocale();
         return <div className="component-measure">
             <form className="form-inline">
@@ -203,7 +208,9 @@ class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasu
                                             {this.state.segments.map(s => {
                                                 return <tr key={`segment-${s.segment}`}>
                                                     <td>{tr("MEASURE_SEGMENT_PART", locale, { segment: s.segment })}</td>
-                                                    <td>{tr("UNIT_FMT_M", locale, { value: roundTo(s.length, 2) })}</td>
+                                                    {measureUnits
+                                                        ? <td>{`${roundTo(s.length, 2)} ${toProjUnit(measureUnits)}`}</td>
+                                                        : <td>{tr("UNIT_FMT_M", locale, { value: roundTo(s.length, 2) })}</td>}
                                                 </tr>
                                             })}
                                             {(() => {
@@ -213,12 +220,20 @@ class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasu
                                                             if (this.state.activeType == "Area") {
                                                                 return <>
                                                                     <td><strong>{tr("MEASURE_TOTAL_AREA", locale)}</strong></td>
-                                                                    <td><div dangerouslySetInnerHTML={{ __html: tr("UNIT_FMT_SQM", locale, { value: `${roundTo(this.state.segmentTotal, 4)}` }) }} /></td>
+                                                                    <td>
+                                                                        {measureUnits
+                                                                            ? <div dangerouslySetInnerHTML={{ __html: `${roundTo(this.state.segmentTotal, 4)} ${toProjUnit(measureUnits)} <sup>2</sup>` }} />
+                                                                            : <div dangerouslySetInnerHTML={{ __html: tr("UNIT_FMT_SQM", locale, { value: `${roundTo(this.state.segmentTotal, 4)}` }) }} />}
+                                                                    </td>
                                                                 </>
                                                             } else {
                                                                 return <>
                                                                     <td><strong>{tr("MEASURE_TOTAL_LENGTH", locale)}</strong></td>
-                                                                    <td><div dangerouslySetInnerHTML={{ __html: tr("UNIT_FMT_M", locale, { value: `${roundTo(this.state.segmentTotal, 4)}` }) }} /></td>
+                                                                    <td>
+                                                                        {measureUnits
+                                                                            ? <div dangerouslySetInnerHTML={{ __html: `${roundTo(this.state.segmentTotal, 4)} ${toProjUnit(measureUnits)}` }} />
+                                                                            : <div dangerouslySetInnerHTML={{ __html: tr("UNIT_FMT_M", locale, { value: `${roundTo(this.state.segmentTotal, 4)}` }) }} />}
+                                                                    </td>
                                                                 </>
                                                             }
                                                         })()}
@@ -242,11 +257,14 @@ export const MeasureContainer = (props: IMeasureContainerProps) => {
     const locale = useViewerLocale();
     const mapNames = useAvailableMaps()?.map(m => m.value);
     const dispatch = useReduxDispatch();
-    const setActiveToolAction = (tool: ActiveMapTool) => dispatch(setActiveTool(tool))
-    return <MeasureContainerInner 
+    const setActiveToolAction = (tool: ActiveMapTool) => dispatch(setActiveTool(tool));
+    const isArbitrary = useActiveMapIsArbitraryCoordSys();
+    const projUnits = useActiveMapProjectionUnits();
+    return <MeasureContainerInner
         activeMapName={activeMapName}
         locale={locale}
         mapNames={mapNames}
         setActiveTool={setActiveToolAction}
+        measureUnits={isArbitrary ? projUnits : undefined}
         {...props} />;
 };

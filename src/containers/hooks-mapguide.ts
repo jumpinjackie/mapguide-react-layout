@@ -1,4 +1,4 @@
-import { ActiveSelectedFeature, LayerTransparencySet, getRuntimeMap } from '../api/common';
+import { ActiveSelectedFeature, LayerTransparencySet, getRuntimeMap, UnitOfMeasure } from '../api/common';
 import { getActiveMapBranch } from './hooks';
 import { RuntimeMap } from '../api/contracts/runtime-map';
 import { useAppState } from '../components/map-providers/context';
@@ -48,6 +48,25 @@ export function useActiveMapProjection() {
             }
         }
         return proj;
+    });
+}
+
+/**
+ * @since 0.14.3
+ */
+export function useActiveMapProjectionUnits() {
+    return useAppState<UnitOfMeasure | undefined>(state => {
+        let arbUnits;
+        if (state.config.activeMapName) {
+            const map = state.mapState[state.config.activeMapName].mapguide?.runtimeMap;
+            const subject = state.mapState[state.config.activeMapName].generic?.subject;
+            if (map) {
+                arbUnits = tryParseArbitraryCs(map.CoordinateSystem.MentorCode)?.units;
+            } else if (subject) {
+                arbUnits = tryParseArbitraryCs(subject.meta?.projection)?.units;
+            }
+        }
+        return arbUnits;
     });
 }
 

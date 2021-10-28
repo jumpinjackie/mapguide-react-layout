@@ -300,6 +300,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
             }
         case ActionType.MAP_SET_LAYER_TRANSPARENCY:
             {
+                //TODO: Move state to non-MG branch for next major release
                 const { payload } = action;
                 return applyMapGuideSubState(state, payload.mapName, mgSubState => {
                     const trans = { ...mgSubState.layerTransparency };

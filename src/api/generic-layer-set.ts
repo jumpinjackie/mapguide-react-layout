@@ -7,6 +7,8 @@ import LayerBase from "ol/layer/Base";
 import TileLayer from "ol/layer/Tile";
 import ImageLayer from "ol/layer/Image";
 import { ProjectionLike } from 'ol/proj';
+import { LAYER_ID_BASE, LAYER_ID_MG_BASE } from '../constants';
+import { restrictToRange } from '../utils/number';
 
 export const DEFAULT_METERS_PER_UNIT = 1.0;
 const M_TO_IN = 39.37;
@@ -53,7 +55,23 @@ export class GenericLayerSetOL extends BaseLayerSetOL {
         return sources;
     }
     updateTransparency(trans: LayerTransparencySet): void {
-        //throw new Error("Method not implemented.");
+        //If no external layers defined, this won't be set
+        if (this.externalBaseLayersGroup) {
+            if (LAYER_ID_BASE in trans) {
+                this.externalBaseLayersGroup.setOpacity(restrictToRange(trans[LAYER_ID_BASE], 0, 1.0));
+            } else {
+                this.externalBaseLayersGroup.setOpacity(1.0);
+            }
+        }
+
+        if (this.subjectLayer) {
+            if (LAYER_ID_MG_BASE in trans) {
+                const opacity = restrictToRange(trans[LAYER_ID_MG_BASE], 0, 1.0);
+                this.subjectLayer.setOpacity(opacity);
+            } else {
+                this.subjectLayer.setOpacity(1.0);
+            }
+        }
     }
     showActiveSelectedFeature(mapExtent: Bounds, size: Size, uri: string): void {
         //throw new Error("Method not implemented.");

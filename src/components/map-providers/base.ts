@@ -60,6 +60,19 @@ import { Client } from '../../api/client';
 import { useReduxDispatch } from "./context";
 import { ClientSelectionFeature } from "../../api/contracts/common";
 
+function isValidView(view: IMapView) {
+    if (view.resolution) {
+        return !isNaN(view.x)
+            && !isNaN(view.y)
+            && !isNaN(view.scale)
+            && !isNaN(view.resolution);
+    } else {
+        return !isNaN(view.x)
+            && !isNaN(view.y)
+            && !isNaN(view.scale);
+    }
+}
+
 export function inflateBoundsByMeters(thisProj: ProjectionLike, extent: Bounds, meters: number) {
     // We need to inflate this bbox by a known unit of measure (meters), so re-project this extent to a meter's based coordinate system (EPSG:3857)
     const webmBounds = transformExtent(extent, thisProj, "EPSG:3857");
@@ -1072,7 +1085,12 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         //for the initial view (un-desirable), but we still only get one map image request
         //for the initial view (good!). Everything is fine after that.
         if (this._triggerZoomRequestOnMoveEnd) {
-            this._comp?.onDispatch(setCurrentView(this.getCurrentView()));
+            const cv = this.getCurrentView();
+            if (isValidView(cv)) {
+                this._comp?.onDispatch(setCurrentView(cv));
+            } else {
+                console.warn("Attempt to set invalid view",cv);
+            }
         } else {
             info("Triggering zoom request on moveend suppresseed");
         }
